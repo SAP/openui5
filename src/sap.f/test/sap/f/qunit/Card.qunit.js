@@ -193,11 +193,15 @@ function (
 		// Arrange
 		var oCard = createCard(CardHeader);
 
-		oCard.addCustomData(new BadgeCustomData({value: 10}));
+		oCard.addCustomData(new BadgeCustomData({value: "New"}));
 		Core.applyChanges();
 
+		var $badgeIndicator = oCard.$().find(".sapMBadgeIndicator");
+
 		// Assert
-		assert.strictEqual(oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "10", "Badge indicator is correctly rendered");
+		assert.strictEqual($badgeIndicator.attr("data-badge"), "New", "Badge indicator is correctly rendered");
+		assert.strictEqual($badgeIndicator.attr("aria-label"), "New", "Badge aria-label correctly rendered");
+		assert.ok(oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) > -1, "aria-labelledby contains the badge indicator id");
 
 		oCard.destroy();
 	});
@@ -207,17 +211,21 @@ function (
 		// Arrange
 		var oCard = createCard(CardHeader);
 
-		oCard.addCustomData(new BadgeCustomData({value: 10}));
+		oCard.addCustomData(new BadgeCustomData({value: "New"}));
 		Core.applyChanges();
 
 		oCard.focus();
 
+		var $badgeIndicator = oCard.$().find(".sapMBadgeIndicator");
+
 		// Assert
-		assert.ok(oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
+		assert.ok($badgeIndicator.attr("data-badge"), "Badge indicator is rendered");
 
 		this.clock.tick(4000);
 
 		assert.equal(oCard._isBadgeAttached, false, "Badge indicator is not rendered");
+		assert.notOk($badgeIndicator.attr("aria-label"), "Badge aria-label is removed");
+		assert.ok(oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
 
 		oCard.destroy();
 	});

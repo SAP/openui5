@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/f/CardRenderer",
 	"sap/f/library",
+	"sap/m/library",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
 	"sap/m/BadgeEnabler"
@@ -12,6 +13,7 @@ sap.ui.define([
 	Control,
 	CardRenderer,
 	library,
+	mLibrary,
 	InvisibleText,
 	Core,
 	BadgeEnabler
@@ -19,6 +21,8 @@ sap.ui.define([
 	"use strict";
 
 	var HeaderPosition = library.cards.HeaderPosition;
+
+	var BadgeState = mLibrary.BadgeState;
 
 	var BADGE_AUTOHIDE_TIME = 3000;
 
@@ -133,8 +137,12 @@ sap.ui.define([
 	 */
 	Card.prototype.init = function () {
 		this._oRb  = Core.getLibraryResourceBundle("sap.f");
+
 		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
 		this._ariaText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
+
+		this._ariaContentText = new InvisibleText({id: this.getId() + "-ariaContentText"});
+		this._ariaContentText.setText(this._oRb.getText("ARIA_LABEL_CARD_CONTENT"));
 
 		this.initBadgeEnablement({
 			accentColor: "AccentColor6"
@@ -143,9 +151,16 @@ sap.ui.define([
 
 	Card.prototype.exit = function () {
 
+		this._oRb = null;
+
 		if (this._ariaText) {
 			this._ariaText.destroy();
 			this._ariaText = null;
+		}
+
+		if (this._ariaContentText) {
+			this._ariaContentText.destroy();
+			this._ariaContentText = null;
 		}
 	};
 
@@ -210,6 +225,40 @@ sap.ui.define([
 		}
 
 		this._iHideBadgeTimeout = null;
+	};
+
+	Card.prototype.onBadgeUpdate = function (sValue, sState, sBadgeId) {
+
+		var oHeader = this.getCardHeader(),
+			oDomRef,
+			sAriaLabelledBy;
+
+		if (oHeader) {
+			oDomRef = oHeader.getDomRef();
+		} else {
+			oDomRef = this.getDomRef("contentSection");
+		}
+
+		if (!oDomRef) {
+			return;
+		}
+
+		sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby") || "";
+
+		switch (sState) {
+			case BadgeState.Appear:
+				sAriaLabelledBy = sBadgeId + " " + sAriaLabelledBy;
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
+				break;
+			case BadgeState.Disappear:
+				sAriaLabelledBy =  sAriaLabelledBy.replace(sBadgeId, "").trim();
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
+				break;
+		}
+	};
+
+	Card.prototype.getAriaLabelBadgeText = function () {
+		return this.getBadgeCustomData().getValue();
 	};
 
 	return Card;

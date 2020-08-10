@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/f/CardRenderer",
 	"sap/f/library",
+	"sap/m/library",
 	"sap/ui/integration/library",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/integration/util/Destinations",
@@ -47,6 +48,7 @@ sap.ui.define([
 	LoaderExtensions,
 	FCardRenderer,
 	fLibrary,
+	mLibrary,
 	library,
 	InvisibleText,
 	Destinations,
@@ -76,6 +78,8 @@ sap.ui.define([
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
 
 	var CardDataMode = library.CardDataMode;
+
+	var BadgeState = mLibrary.BadgeState;
 
 	var BADGE_AUTOHIDE_TIME = 3000;
 
@@ -337,13 +341,17 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.init = function () {
-		this._ariaText = new InvisibleText({ id: this.getId() + "-ariaText" });
 		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.setModel(new JSONModel(), "parameters");
 		this._busyStates = new Map();
 		this._oExtension = null;
 		this._oContentFactory = new ContentFactory(this);
 		this._mFilters = new Map();
+
+		this._ariaText = new InvisibleText({ id: this.getId() + "-ariaText" });
+
+		this._ariaContentText = new InvisibleText({id: this.getId() + "-ariaContentText"});
+		this._ariaContentText.setText(this._oRb.getText("ARIA_LABEL_CARD_CONTENT"));
 
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
@@ -670,6 +678,11 @@ sap.ui.define([
 		if (this._ariaText) {
 			this._ariaText.destroy();
 			this._ariaText = null;
+		}
+
+		if (this._ariaContentText) {
+			this._ariaContentText.destroy();
+			this._ariaContentText = null;
 		}
 	};
 
@@ -1445,6 +1458,40 @@ sap.ui.define([
 		}
 
 		this._iHideBadgeTimeout = null;
+	};
+
+	Card.prototype.onBadgeUpdate = function (sValue, sState, sBadgeId) {
+
+		var oHeader = this.getCardHeader(),
+			oDomRef,
+			sAriaLabelledBy;
+
+		if (oHeader) {
+			oDomRef = oHeader.getDomRef();
+		} else {
+			oDomRef = this.getDomRef("contentSection");
+		}
+
+		if (!oDomRef) {
+			return;
+		}
+
+		sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby") || "";
+
+		switch (sState) {
+			case BadgeState.Appear:
+				sAriaLabelledBy = sBadgeId + " " + sAriaLabelledBy;
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
+				break;
+			case BadgeState.Disappear:
+				sAriaLabelledBy =  sAriaLabelledBy.replace(sBadgeId, "").trim();
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
+				break;
+		}
+	};
+
+	Card.prototype.getAriaLabelBadgeText = function () {
+		return this.getBadgeCustomData().getValue();
 	};
 
 	return Card;

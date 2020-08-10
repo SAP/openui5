@@ -10,8 +10,8 @@ sap.ui.define([
 			var oCard1 = this.getView().byId("cardId1"),
 				oCard2 = this.getView().byId("cardId2");
 
-			oCard1.getBadgeCustomData().setValue("New");
-			oCard2.getBadgeCustomData().setValue("New");
+			oCard1.getBadgeCustomData().setVisible(true);
+			oCard2.getBadgeCustomData().setVisible(true);
 		}
 	});
 });
