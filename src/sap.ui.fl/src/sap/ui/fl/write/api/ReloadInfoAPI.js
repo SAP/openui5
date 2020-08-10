@@ -111,6 +111,8 @@ sap.ui.define([
 		 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 		 * @param  {boolean} oReloadInfo.hasDraftChanges - Indicates if a draft is available
 		 * @param  {string} oReloadInfo.parameters - The URL parameters to be modified
+		 * @param  {string} oReloadInfo.versionSwitch - Indicates if we are in a version switch scenario
+		 * @param  {string} oReloadInfo.version - Version we want to switch to
 		 *
 		 * @returns {string} The modified URL
 		 */
@@ -120,12 +122,16 @@ sap.ui.define([
 			}
 
 			// removes any version number set (original, draft, inactive and active versions)
-			var oVersionRegExp = new RegExp(sap.ui.fl.Versions.UrlParameter + "=-?\\d*\&?", "g");
+			var oVersionRegExp = new RegExp("\&*" + sap.ui.fl.Versions.UrlParameter + "=-?\\d*\&?", "g");
 			oReloadInfo.parameters = oReloadInfo.parameters.replace(oVersionRegExp, "");
 
 			// startup reload due to draft
 			if (oReloadInfo.hasDraftChanges) {
 				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, sap.ui.fl.Versions.UrlParameter, sap.ui.fl.Versions.Draft);
+			}
+
+			if (oReloadInfo.versionSwitch) {
+				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, sap.ui.fl.Versions.UrlParameter, oReloadInfo.version);
 			}
 
 			// clean up if the last parameter was removed
@@ -188,6 +194,7 @@ sap.ui.define([
 		 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 		 * @param  {boolean} oReloadInfo.changesNeedReload - Indicates if changes (e.g. app descriptor changes) need hard reload
 		 * @param  {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when entering UI adaptation
+		 * @param  {boolean} oReloadInfo.activeVersion - Indicates the current active version
 		 *
 		 * @returns {boolean} <code>true</code> if a draft got activated and had a draft initially when entering UI adaptation
 		 */
@@ -202,13 +209,16 @@ sap.ui.define([
 			// TODO fix app descriptor handling and reload behavior
 			// TODO move changesNeedReload near flexState; set flag when saving change that needs a reload
 			oReloadInfo.hasDraft = oReloadInfo.hasDirtyDraftChanges || ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
-
+			if (oReloadInfo.activeVersion > sap.ui.fl.Versions.Original) {
+				oReloadInfo.activeVersionNotSelected = oReloadInfo.activeVersion && !ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.activeVersion.toString()});
+			}
 			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
 			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			if (oReloadInfo.changesNeedReload
 				|| oReloadInfo.hasDraft
 				|| oReloadInfo.hasHigherLayerChanges
 				|| oReloadInfo.initialDraftGotActivated
+				|| oReloadInfo.activeVersionNotSelected
 			) {
 				oReloadInfo.reloadMethod = oRELOAD.RELOAD_PAGE;
 				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes (changesNeedReload = true)

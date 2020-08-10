@@ -33,7 +33,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function(mPropertyBag) {
-			if (mPropertyBag.version === -1) {
+			if (mPropertyBag.version === sap.ui.fl.Versions.Original) {
 				// the "Original App" has no changes. A resolve is sufficient and the Storage will ensure an empty flex response
 				return Promise.resolve();
 			}

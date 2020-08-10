@@ -16,13 +16,15 @@ sap.ui.define([
 	"use strict";
 
 	function getReferenceAndAppVersion(oAppComponent) {
+		var sReference;
+		var sAppVersion;
 		if (oAppComponent) {
 			var oManifest = oAppComponent.getManifest();
-			var sReference = ManifestUtils.getFlexReference({
+			sReference = ManifestUtils.getFlexReference({
 				manifest: oManifest,
 				componentData: oAppComponent.getComponentData()
 			});
-			var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
+			sAppVersion = Utils.getAppVersionFromManifest(oManifest);
 		}
 
 		return {
@@ -117,11 +119,30 @@ sap.ui.define([
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
 	VersionsAPI.loadDraftForApplication = function (mPropertyBag) {
+		mPropertyBag.version = sap.ui.fl.Versions.Draft;
+		return VersionsAPI.loadVersionForApplication(mPropertyBag);
+	};
+
+	/**
+	 * Removes the internal stored state of a given application and refreshes the state including a draft for the given layer;
+	 * an actual reload of the application has to be triggered by the caller.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @param {number} mPropertyBag.version - Version number to be loaded
+	 *
+	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
+	 */
+	VersionsAPI.loadVersionForApplication = function (mPropertyBag) {
 		if (!mPropertyBag.selector) {
 			return Promise.reject("No selector was provided");
 		}
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
+		}
+		if (!Number.isInteger(mPropertyBag.version)) {
+			return Promise.reject("No version was provided");
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
@@ -132,7 +153,7 @@ sap.ui.define([
 		return FlexState.clearAndInitialize({
 			componentId: oAppComponent.getId(),
 			reference: oAppInfo.reference,
-			version: sap.ui.fl.Versions.Draft
+			version: mPropertyBag.version
 		});
 	};
 

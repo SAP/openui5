@@ -292,6 +292,56 @@ sap.ui.define([
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
 		});
 
+		QUnit.test("another version (not the active one) is selected/previewed", function(assert) {
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				selector: {},
+				changesNeedReload: false,
+				hasDirtyDraftChanges: false,
+				versioningEnabled: true,
+				activeVersion: 2
+			};
+
+			var mParsedHash = {
+				params: {
+					"sap-ui-fl-version": ["1"]
+				}
+			};
+
+			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
+
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+
+			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
+			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+		});
+
+		QUnit.test("current active version is selected/previewed", function(assert) {
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				selector: {},
+				changesNeedReload: false,
+				hasDirtyDraftChanges: false,
+				versioningEnabled: true,
+				activeVersion: 2
+			};
+
+			var mParsedHash = {
+				params: {
+					"sap-ui-fl-version": ["2"]
+				}
+			};
+
+			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
+
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+
+			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
+			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
+		});
+
 		QUnit.test("and sap-ui-fl-max-layer parameter exist", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,

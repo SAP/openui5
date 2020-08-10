@@ -18,8 +18,8 @@
                         icon="sap-icon://megamenu"
                         iconFirst="false"
                         visible="{versions>/versioningEnabled}"
-                        text="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionButtonText'}"
-                        tooltip="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionButtonText'}"
+                        text="{parts: [{path: 'versions>/versions'}, {path: 'versions>/displayedVersion'}], formatter: '.formatVersionButtonText'}"
+                        tooltip="{parts: [{path: 'versions>/versions'}, {path: 'versions>/displayedVersion'}], formatter: '.formatVersionButtonText'}"
                         press=".showVersionHistory">
                     <layoutData>
                         <OverflowToolbarLayoutData priority="NeverOverflow"/>

@@ -100,20 +100,26 @@ function(
 		oButton.setIcon(sIcon || "");
 	}
 
-	Adaptation.prototype.formatVersionButtonText = function (bDraftAvailable, aVersions) {
+	Adaptation.prototype.formatVersionButtonText = function (aVersions, nDisplayedVersion) {
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sText = "";
 		var sType = "Active";
 
-		if (aVersions.length > 0) {
-			sType = aVersions[0].type;
-			if (bDraftAvailable) {
-				sText = oTextResources.getText("TIT_DRAFT");
-			} else {
-				sText = aVersions[0].title || oTextResources.getText("TIT_VERSION_1");
-			}
-		} else {
+		if (nDisplayedVersion === Versions.Original) {
 			sText = oTextResources.getText("TIT_ORIGINAL_APP");
+			sType = aVersions.length ? "inactive" : "active";
+		} else {
+			var oDisplayedVersion = aVersions.find(function (oVersion) {
+				return oVersion.version === nDisplayedVersion;
+			});
+			if (oDisplayedVersion) {
+				sType = oDisplayedVersion.type;
+				if (nDisplayedVersion === Versions.Draft) {
+					sText = oTextResources.getText("TIT_DRAFT");
+				} else {
+					sText = oDisplayedVersion.title || oTextResources.getText("TIT_VERSION_1");
+				}
+			}
 		}
 
 		this.setVersionButtonAccentColor(sType);
@@ -178,14 +184,14 @@ function(
 
 	Adaptation.prototype.versionSelected = function (oEvent) {
 		var oVersionsBindingContext = oEvent.getSource().getBindingContext("versions");
-		var nVersionNumber = Versions.Original;
+		var nVersion = Versions.Original;
 
 		if (oVersionsBindingContext) {
 			// the original Version does not have a version binding Context
-			nVersionNumber = oVersionsBindingContext.getProperty("versionNumber");
+			nVersion = oVersionsBindingContext.getProperty("version");
 		}
 
-		this.fireEvent("switchVersion", {versionNumber: nVersionNumber});
+		this.fireEvent("switchVersion", {version: nVersion});
 	};
 
 	Adaptation.prototype.showVersionHistory = function (oEvent) {
@@ -347,12 +353,18 @@ function(
 
 	Adaptation.prototype.setVersionButtonAccentColor = function (sType) {
 		var oVersionButton = this.getControl("versionButton");
-		if (sType === "draft") {
-			oVersionButton.addStyleClass(DRAFT_ACCENT_COLOR);
-			oVersionButton.removeStyleClass(ACTIVE_ACCENT_COLOR);
-		} else {
-			oVersionButton.addStyleClass(ACTIVE_ACCENT_COLOR);
-			oVersionButton.removeStyleClass(DRAFT_ACCENT_COLOR);
+		switch (sType) {
+			case "draft":
+				oVersionButton.addStyleClass(DRAFT_ACCENT_COLOR);
+				oVersionButton.removeStyleClass(ACTIVE_ACCENT_COLOR);
+				break;
+			case "active":
+				oVersionButton.addStyleClass(ACTIVE_ACCENT_COLOR);
+				oVersionButton.removeStyleClass(DRAFT_ACCENT_COLOR);
+				break;
+			default:
+				oVersionButton.removeStyleClass(ACTIVE_ACCENT_COLOR);
+				oVersionButton.removeStyleClass(DRAFT_ACCENT_COLOR);
 		}
 	};
 

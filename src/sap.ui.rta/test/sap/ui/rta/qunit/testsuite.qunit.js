@@ -631,6 +631,19 @@ sap.ui.define([
 						}
 					}
 				},
+				"RuntimeAuthoring-versioning": {
+					coverage: {
+						only: ["sap/ui/rta/RuntimeAuthoring"]
+					},
+					ui5: {
+						flexibilityServices: '[{"connector": "LocalStorageConnector"}]',
+						resourceroots: {
+							qunit: "test-resources/sap/ui/rta/qunit/",
+							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+						}
+					}
+				},
 				"integration/SimpleFormRemove": {
 					group: "Integration",
 					ui5: {

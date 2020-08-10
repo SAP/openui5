@@ -183,7 +183,8 @@ function(
 			this.oVersionsModel = new JSONModel({
 				versioningEnabled: false,
 				versions: [],
-				draftAvailable: false
+				draftAvailable: false,
+				displayedVersion: sap.ui.fl.Versions.Original
 			});
 			this.oToolbarControlsModel = new JSONModel({
 				undoEnabled: false,
@@ -214,24 +215,26 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given a version without any title is the first version in the list", function(assert) {
+		QUnit.test("Given a version without any title is the first and active version in the list", function(assert) {
 			var aVersions = [{
-				versionNumber: 1
+				version: 1,
+				type: "active"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(false, aVersions);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, 1);
 			var sExpectedText = this.oTextResources.getText("TIT_VERSION_1");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Version 1'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is not a active version accent");
 		});
 
-		QUnit.test("Given a version with a title is the first version in the list", function(assert) {
+		QUnit.test("Given a version with a title is the first and active version in the list", function(assert) {
 			var sTitle = "Version Title";
 			var aVersions = [{
-				versionNumber: 1,
-				title: sTitle
+				version: 1,
+				title: sTitle,
+				type: "active"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(false, aVersions);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, 1);
 			this.oVersionsModel.updateBindings();
 
 			assert.equal(sText, sTitle, "then the button text matches the version title");
@@ -239,15 +242,16 @@ function(
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is not a active version accent");
 		});
 
-		QUnit.test("Given a draft version is the first version in the list", function(assert) {
+		QUnit.test("Given a draft version is the draft version in the list", function(assert) {
 			var aVersions = [{
-				versionNumber: 0,
+				version: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			}, {
-				versionNumber: 1,
-				title: "Version Title"
+				version: 1,
+				title: "Version Title",
+				type: "active"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(true, aVersions);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Draft);
 
 			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
@@ -255,13 +259,55 @@ function(
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not a active version accent");
 		});
 
+		QUnit.test("Given two versions and a draft and the displayed version is the second one", function(assert) {
+			var sVersionTitle2 = "Version Title 2";
+			var aVersions = [{
+				version: sap.ui.fl.Versions.Draft,
+				type: "draft"
+			}, {
+				version: 2,
+				title: sVersionTitle2,
+				type: "active"
+			}, {
+				version: 1,
+				title: "Version Title 1",
+				type: "inactive"
+			}];
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, 2);
+
+			assert.equal(sText, sVersionTitle2, "then the button text matches 'Draft'");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is a active version accent");
+		});
+
+		QUnit.test("Given two versions and a draft and the displayed version is the first one", function(assert) {
+			var sVersionTitle1 = "Version Title 1";
+			var aVersions = [{
+				version: sap.ui.fl.Versions.Draft,
+				type: "draft"
+			}, {
+				version: 2,
+				title: "Version Title 2",
+				type: "active"
+			}, {
+				version: 1,
+				title: sVersionTitle1,
+				type: "inactive"
+			}];
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, 1);
+
+			assert.equal(sText, sVersionTitle1, "then the button text matches 'Draft'");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not a active version accent");
+		});
+
 		QUnit.test("Given no version is present", function(assert) {
-			var sText = this.oToolbar.formatVersionButtonText(false, []);
+			var sText = this.oToolbar.formatVersionButtonText([], sap.ui.fl.Versions.Original);
 			this.oVersionsModel.updateBindings();
 			var sExpectedText = this.oTextResources.getText("TIT_ORIGINAL_APP");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Original App'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
-			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is not a active version accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is a active version accent");
 		});
 	});
 
@@ -384,14 +430,14 @@ function(
 		});
 	});
 
-	function createControlWithStubbedBindingContextFireSwitchAndAssert(assert, oToolbar, nVersionNumber) {
+	function createControlWithStubbedBindingContextFireSwitchAndAssert(assert, oToolbar, nVersion) {
 		var done = assert.async();
 
 		oToolbar.attachSwitchVersion(function (oEvent) {
-			if (nVersionNumber !== undefined) {
-				assert.equal(oEvent.getParameter("versionNumber"), nVersionNumber, "the event was fired with the bound version number");
+			if (nVersion !== undefined) {
+				assert.equal(oEvent.getParameter("version"), nVersion, "the event was fired with the bound version number");
 			} else {
-				assert.equal(oEvent.getParameter("versionNumber"), sap.ui.fl.Versions.Original, "the event was fired with the original app number");
+				assert.equal(oEvent.getParameter("version"), sap.ui.fl.Versions.Original, "the event was fired with the original app number");
 			}
 			done();
 		});
@@ -400,13 +446,13 @@ function(
 			getSource: function () {
 				return {
 					getBindingContext: function () {
-						if (nVersionNumber === undefined) {
+						if (!Number.isInteger(nVersion)) {
 							return;
 						}
 
 						return {
 							getProperty: function () {
-								return nVersionNumber;
+								return nVersion;
 							}
 						};
 					}

@@ -544,13 +544,15 @@ function(
 		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	};
 
+	RuntimeAuthoring.prototype._setVersionsModel = function(oModel) {
+		this._oVersionsModel = oModel;
+	};
+
 	RuntimeAuthoring.prototype._initVersioning = function() {
 		return VersionsAPI.initialize({
 			selector: this.getRootControlInstance(),
 			layer: this.getLayer()
-		}).then(function (oVersionsModel) {
-			this._oVersionsModel = oVersionsModel;
-		}.bind(this));
+		}).then(this._setVersionsModel.bind(this));
 	};
 
 	/**
@@ -828,8 +830,7 @@ function(
 
 		if (this.getShowToolbars()) {
 			// TODO: move to the setter to the ChangesState
-			var oVersionsModel = this.getToolbar().getModel("versions");
-			oVersionsModel.setDirtyChanges(bCanUndo);
+			this._oVersionsModel.setDirtyChanges(bCanUndo);
 			this._oToolbarControlsModel.setProperty("/undoEnabled", bCanUndo);
 			this._oToolbarControlsModel.setProperty("/redoEnabled", bCanRedo);
 			this._oToolbarControlsModel.setProperty("/publishEnabled", this.bInitialPublishEnabled || bCanUndo);
@@ -966,8 +967,7 @@ function(
 		var oCommandStack = this.getCommandStack();
 		var bUnsaved = oCommandStack.canUndo() || oCommandStack.canRedo();
 		if (bUnsaved && this.getShowWindowUnloadDialog()) {
-			var sMessage = this._getTextResources().getText("MSG_UNSAVED_CHANGES");
-			return sMessage;
+			return this._getTextResources().getText("MSG_UNSAVED_CHANGES");
 		}
 		window.onbeforeunload = this._oldUnloadHandler;
 	};
@@ -1050,6 +1050,44 @@ function(
 		}.bind(this));
 	};
 
+	RuntimeAuthoring.prototype._onSwitchVersion = function (oEvent) {
+		if (this.canUndo()) {
+			// TODO: give the user an option to save changes and continue
+			return;
+		}
+		// handle FLP and stand alone case to change the URL-parameter
+		var nVersion = oEvent.getParameter("version");
+		var sVersion = nVersion.toString();
+		var sUrlVersionValue = FlexUtils.getParameter(sap.ui.fl.Versions.UrlParameter);
+
+		if (sVersion === sUrlVersionValue) {
+			// already selected version
+			return;
+		}
+
+		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
+
+		if (!FlexUtils.getUshellContainer()) {
+			var oReloadInfo = {
+				versionSwitch: true,
+				version: sVersion
+			};
+			return this._triggerHardReload(oReloadInfo);
+		}
+		var mParsedHash = FlexUtils.getParsedURLHash();
+		mParsedHash.params[sap.ui.fl.Versions.UrlParameter] = sVersion;
+		VersionsAPI.loadVersionForApplication({
+			selector: this.getRootControlInstance(),
+			layer: this.getLayer(),
+			version: nVersion
+		});
+		this._triggerCrossAppNavigation(mParsedHash);
+	};
+
+	RuntimeAuthoring.prototype._setUriParameter = function (sParameters) {
+		document.location.search = sParameters;
+	};
+
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
 		if (!this.getDependent('toolbar')) {
 			var fnConstructor;
@@ -1083,7 +1121,8 @@ function(
 					appVariantOverview: this._onGetAppVariantOverview.bind(this),
 					saveAs: RtaAppVariantFeature.onSaveAs.bind(RtaAppVariantFeature, true, true, this.getLayer(), null),
 					activateDraft: this._onActivateDraft.bind(this),
-					discardDraft: this._onDiscardDraft.bind(this)
+					discardDraft: this._onDiscardDraft.bind(this),
+					switchVersion: this._onSwitchVersion.bind(this)
 				}), 'toolbar');
 			}
 
@@ -1223,6 +1262,7 @@ function(
 	 * the changes for both places will be deleted. For App Variants all the changes are saved in one place.
 	 *
 	 * @private
+	 * @returns {Promise}
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
 		var sLayer = this.getLayer();
@@ -1274,8 +1314,7 @@ function(
 	 * @returns {boolean} Returns true if restart is needed
 	 */
 	RuntimeAuthoring.needsRestart = function(sLayer) {
-		var bRestart = !!window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
-		return bRestart;
+		return !!window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
 	};
 
 	/**
@@ -1310,6 +1349,7 @@ function(
 	 * the restoring to the default app state
 	 *
 	 * @private
+	 * @returns {Promise}
 	 */
 	RuntimeAuthoring.prototype._onRestore = function() {
 		var sLayer = this.getLayer();
@@ -1697,13 +1737,14 @@ function(
 	 * Change URL parameters if necessary, which will trigger an reload;
 	 * This function must only be called outside of the ushell.
 	 *
-	 * @param  {Object} oReloadInfo - Information to determine reload is needed
+	 * @param {Object} oReloadInfo - Information to determine reload is needed
+	 * @returns {Promise}
 	 */
 	RuntimeAuthoring.prototype._triggerHardReload = function(oReloadInfo) {
 		oReloadInfo.parameters = document.location.search;
 		var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
 		if (document.location.search !== sParameters) {
-			document.location.search = sParameters;
+			this._setUriParameter(sParameters);
 			return Promise.resolve();
 		}
 		return this._reloadPage();

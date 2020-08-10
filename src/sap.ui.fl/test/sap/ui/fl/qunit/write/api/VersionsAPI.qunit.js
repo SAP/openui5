@@ -133,7 +133,56 @@ sap.ui.define([
 		});
 	});
 
+
 	QUnit.module("Given VersionsAPI.loadDraftForApplication is called", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getId: function () {
+					return "sComponentId";
+				},
+				getComponentData: function () {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+		},
+		beforeEach: function () {
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVersioningEnabled: function () {
+					return true;
+				}
+			});
+		},
+		afterEach: function() {
+			sandbox.restore();
+			Versions.clearInstances();
+		}
+	}, function() {
+		QUnit.test("when no selector is provided", function (assert) {
+			var oSelector = new Control();
+			var mPropertyBag = {
+				layer : Layer.CUSTOMER,
+				selector: oSelector
+			};
+
+			var oLoadVersionForApplicationStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
+
+			return VersionsAPI.loadDraftForApplication(mPropertyBag)
+			.then(function () {
+				assert.equal(oLoadVersionForApplicationStub.callCount, 1, "loadVersionsForApplication was called once");
+				var oParameters = oLoadVersionForApplicationStub.getCall(0).args[0];
+				assert.equal(oParameters.layer, Layer.CUSTOMER, "and the layer was passed");
+				assert.equal(oParameters.selector, oSelector, "as well as the selector was passed");
+				assert.equal(oParameters.version, sap.ui.fl.Versions.Draft, "and the version number of the draft was passed");
+			});
+		});
+	});
+
+	QUnit.module("Given VersionsAPI.loadVersionForApplication is called", {
 		before: function() {
 			this.oAppComponent = {
 				getManifest: function () {
@@ -166,27 +215,40 @@ sap.ui.define([
 				layer : Layer.CUSTOMER
 			};
 
-			return VersionsAPI.loadDraftForApplication(mPropertyBag).catch(function (sErrorMessage) {
+			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
 			});
 		});
+
 		QUnit.test("when no layer is provided", function (assert) {
 			var mPropertyBag = {
 				selector : new Control()
 			};
 
-			return VersionsAPI.loadDraftForApplication(mPropertyBag).catch(function (sErrorMessage) {
+			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
 			});
 		});
 
-		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function (assert) {
+		QUnit.test("when no version is provided", function (assert) {
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				selector : new Control()
+				selector : new Control(),
+				layer: Layer.CUSTOMER
 			};
 
-			return VersionsAPI.loadDraftForApplication(mPropertyBag).catch(function (sErrorMessage) {
+			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No version was provided", "then an Error is thrown");
+			});
+		});
+
+		QUnit.test("when a selector, a layer and a version were provided, but no app ID could be determined", function (assert) {
+			var mPropertyBag = {
+				layer : Layer.CUSTOMER,
+				selector : new Control(),
+				version: sap.ui.fl.Versions.Original
+			};
+
+			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "The application ID could not be determined", "then an Error is thrown");
 			});
 		});
@@ -198,7 +260,8 @@ sap.ui.define([
 				layer : sLayer,
 				selector : new Control(),
 				componentData: {},
-				manifest: {}
+				manifest: {},
+				version: sap.ui.fl.Versions.Draft
 			};
 
 			var sReference = "com.sap.app";
@@ -207,7 +270,7 @@ sap.ui.define([
 			var aReturnedVersions = [];
 			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves(aReturnedVersions);
 
-			return VersionsAPI.loadDraftForApplication(mPropertyBag)
+			return VersionsAPI.loadVersionForApplication(mPropertyBag)
 				.then(function () {
 					assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
 					var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];

@@ -49,6 +49,8 @@ sap.ui.define([
 			bSwitchVersionsActive = true;
 		}
 
+		var sPersistedBasisForDisplayedVersion = Utils.getParameter(sap.ui.fl.Versions.UrlParameter);
+		var nPersistedBasisForDisplayedVersion = sPersistedBasisForDisplayedVersion ? parseInt(sPersistedBasisForDisplayedVersion) : nActiveVersion;
 
 		var oModel = new JSONModel({
 			versioningEnabled: bVersioningEnabled,
@@ -57,7 +59,9 @@ sap.ui.define([
 			backendDraft: bBackendDraft,
 			dirtyChanges: false,
 			draftAvailable: bBackendDraft,
-			switchVersionsActive: bSwitchVersionsActive
+			switchVersionsActive: bSwitchVersionsActive,
+			persistedVersion: nPersistedBasisForDisplayedVersion,
+			displayedVersion: nPersistedBasisForDisplayedVersion
 		});
 
 		oModel.setDefaultBindingMode(BindingMode.OneWay);
@@ -81,12 +85,14 @@ sap.ui.define([
 			// add draft
 			if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
 				aVersions.splice(0, 0, {version: sap.ui.fl.Versions.Draft, type: "draft"});
+				oModel.setProperty("/displayedVersion", 0);
 				oModel.updateBindings(true);
 			}
 
 			// remove draft
 			if (_doesDraftExistInVersions(aVersions) && !bDraftAvailable) {
 				aVersions.shift();
+				oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
 				oModel.updateBindings(true);
 			}
 		};
@@ -263,6 +269,7 @@ sap.ui.define([
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
 			oModel.setProperty("/activeVersion", oVersion.version);
+			oModel.setProperty("/displayedVersion", oVersion.version);
 			oModel.updateBindings(true);
 		});
 	};
@@ -275,7 +282,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.appVersion - Version of the app
-	 * @returns {Promise<object>} Promise resolving to an object to indicate if a discarding took place on backend side and/or dirtychanges were discarded;
+	 * @returns {Promise<object>} Promise resolving to an object to indicate if a discarding took place on backend side and/or dirty changes were discarded;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	Versions.discardDraft = function(mPropertyBag) {
@@ -290,6 +297,7 @@ sap.ui.define([
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
+			oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
 			oModel.updateBindings(true);
 			// in case of a existing draft known by the backend;
 			// we remove dirty changes only after successful DELETE request
