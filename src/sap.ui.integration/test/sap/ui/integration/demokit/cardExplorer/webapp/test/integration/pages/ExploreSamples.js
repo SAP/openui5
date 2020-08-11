@@ -23,13 +23,11 @@ sap.ui.define([
 					return this.waitFor({
 						viewName: sViewName,
 						id: "downloadSampleButton",
-						actions: [
-							function () {
+						actions: function (oButton) {
 								oFileSaveStub = sinon.stub(File, "save");
 								oJSZipFileStub = sinon.stub(JSZip.prototype, "file");
-							},
-							new Press()
-						],
+								oButton._getButtonControl().firePress();
+						},
 						errorMessage: "Could not find tab with name download sample menu",
 						success: function (oMenu) {
 							return this.waitFor({
