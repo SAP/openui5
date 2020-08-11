@@ -1138,8 +1138,9 @@ function(
 					}
 
 				} else if (childNode.nodeType === 3 /* TEXT_NODE */) {
-					if (jQuery.trim(childNode.textContent || childNode.text)) { // whitespace would be okay
-						throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: " + jQuery.trim(childNode.textContent || childNode.text));
+					var sTextContent = childNode.textContent || childNode.text;
+					if (sTextContent && sTextContent.trim()) { // whitespace would be okay
+						throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: " + sTextContent.trim());
 					}
 				} // other nodes types are silently ignored
 
