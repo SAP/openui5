@@ -83,22 +83,6 @@ function(
 	}
 
 	/**
-	 * Unwraps the given SyncPromise and synchronously returns the resolution value.
-	 * @param {SyncPromise} pSyncPromise The promise to unwrap
-	 * @returns {*} the resolution value of the SyncPromise
-	 * @throws An Error if the SyncPromise was rejected
-	 * @private
-	 */
-	function unwrapSyncPromise(pSyncPromise) {
-		// unwrap SyncPromise resolve value
-		if (pSyncPromise.isRejected()) {
-			// sync promises store the error within the result if they are rejected
-			throw pSyncPromise.getResult();
-		}
-		return pSyncPromise.getResult();
-	}
-
-	/**
 	 * Creates a function based on the passed mode and callback which applies a callback to each child of a node.
 	 * @param {boolean} bAsync The strategy to choose
 	 * @param {function} fnCallback The callback to apply
@@ -116,7 +100,7 @@ function(
 			for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
 				vChild = fnCallback(node, oAggregation, mAggregations, childNode, false, pRequireContext);
 				if (vChild) {
-					aChildren.push(unwrapSyncPromise(vChild));
+					aChildren.push(vChild.unwrap());
 				}
 			}
 			return SyncPromise.resolve(aChildren);
@@ -247,7 +231,7 @@ function(
 	 * @return {Array} an array containing Controls and/or plain HTML element strings
 	 */
 	XMLTemplateProcessor.parseTemplate = function(xmlNode, oView) {
-		return unwrapSyncPromise(XMLTemplateProcessor.parseTemplatePromise(xmlNode, oView, false));
+		return XMLTemplateProcessor.parseTemplatePromise(xmlNode, oView, false).unwrap();
 	};
 
 	/**
@@ -1081,7 +1065,7 @@ function(
 										bAsync = false;
 
 										try {
-											return unwrapSyncPromise(handleChild(node, oAggregation, mAggregations, childNode, true, pRequireContext));
+											return handleChild(node, oAggregation, mAggregations, childNode, true, pRequireContext).unwrap();
 										} finally {
 											// EVO-Todo:revert back to the original async/sync behavior
 											// if we moved to the sync path for the stashed control, we might now go back to the async path.
