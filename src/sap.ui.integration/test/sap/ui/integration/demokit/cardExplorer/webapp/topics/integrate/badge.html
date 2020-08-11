@@ -17,7 +17,7 @@
 		<div class="content">
 			<h1 id="overview">Overview</h1>
 			<div class="messageStripWarning">
-				This feature is experimental. The API may change.
+				This feature is experimental. Added since version 1.81. The API may change.
 			</div>
 			<p>
 				Badges can be used to display very short and important
@@ -35,12 +35,12 @@
 			</p>
 			<h2 id="usage">When to Use</h2>
 			<p>
-				Use a badge to display if:
+				Use the badge when:
 				<ul>
 					<li>The card is new in the user's home page.</li>
 					<li>The card is added to the user's home page by an admin, key user or the user himself.</li>
 				</ul>
-				Do not use a badge if:
+				Do not use the badge if:
 				<ul>
 					<li>You want to display the message text 'temporarily unavailable'. Use the disabled state of the card instead.</li>
 					<li>The card should not be visible or used by the user. Don’t display the card in the home page in this case.</li>
@@ -56,6 +56,7 @@
 				for more than 3 seconds.
 			</p>
 			<h2 id="example">Example</h2>
+			<h3>Use the Badge in UI5</h3>
 			To display a Badge in a Card, you need to create a BadgeCustomData
 			with a specific text and add it to the "customData" aggregation of the Card.
 			<br />
@@ -63,7 +64,7 @@
 			For more information, see <a data-demokit-href="/api/sap.m.BadgeCustomData" target="_blank"><code>BadgeCustomData</code></a>
 			<p>
 				An example with a Card with a Badge would look like:
-<pre class="prettyprint lang-xml">
+			<pre class="prettyprint lang-xml">
 &lt;mvc:View xmlns="sap.m" xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card id="card1" manifest="./manifest.json"&gt;
 		&lt;w:customData&gt;
@@ -72,8 +73,7 @@
 	&lt;/w:Card&gt;
 &lt;/mvc:View&gt;</pre>
 			<br />
-			<br />
-			A typical usage using a data binding would look like:
+			A typical usage using data binding would look like:
 			<br />
 			<br />
 			Controller:
@@ -84,7 +84,6 @@ model.setData({
 });
 this.getView().setModel(model);
 </pre>
-
 			XML View:
 			<pre class="prettyprint lang-xml">
 &lt;mvc:View xmlns="sap.m" xmlns:w="sap.ui.integration.widgets"&gt;
@@ -93,9 +92,26 @@ this.getView().setModel(model);
 			&lt;BadgeCustomData value="{/badgeText}" /&gt;
 		&lt;/w:customData&gt;
 	&lt;/w:Card&gt;
-&lt;/mvc:Viewd&gt;</pre>
-
+&lt;/mvc:View&gt;</pre>
 			<a class="try-button" href="../../index.html#/explore/badge" target="_parent">Try it Out</a>
+
+			<h3>Use the Badge in an HTML Page</h3>
+			To display a Badge when the Card is consumed as an HTML custom element, write its text to the "badge" attribute of the element.
+			<pre class="prettyprint lang-html">
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;script
+			id="sap-ui-bootstrap"
+			src="https://ui5.sap.com/resources/sap-ui-integration.js"&gt;
+		&lt;/script&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;ui-integration-card manifest="./manifest.json" badge="New"&gt;&lt;/ui-integration-card&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<a class="try-button" href="../../index.html#/explore/htmlConsumption" target="_parent">Try it Out</a>
 			</p>
 		</div>
 		<div class="navigation">
