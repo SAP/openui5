@@ -1045,6 +1045,8 @@ sap.ui.define(
             ]);
             assert.deepEqual(fnFilterMatcher([1, 2, 3, 6, "Test", 42]), [6, 42]);
             assert.deepEqual(fnFilterMatcher([1, 3, "Test"]), []);
+            assert.deepEqual(fnFilterMatcher(null), []);
+            assert.deepEqual(fnFilterMatcher(undefined), []);
         });
 
         QUnit.test("'match' should return a matcher that applies all given matchers in given order to one item", function(assert) {
@@ -1060,6 +1062,8 @@ sap.ui.define(
             assert.deepEqual(fnMatcher(2), false);
             assert.deepEqual(fnMatcher("Test"), false);
             assert.deepEqual(fnMatcher(42), 42);
+            assert.deepEqual(fnMatcher(null), false);
+            assert.deepEqual(fnMatcher(undefined), false);
         });
 
         QUnit.test("'conditional' should return a conditional matcher that executes follow up matcher under a certain condition", function(assert) {
