@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit, sinon*/
 
 sap.ui.define([
 	"sap/ui/core/ComponentContainer",
@@ -163,11 +163,15 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 				viewName: "view.UxAP-InfoBlocks"
 			}).then(function (oView) {
 				this.oObjectPageInfoView = oView;
+				this.oObjectPageInfoView.placeAt('qunit-fixture');
+				Core.applyChanges();
 				done();
 			}.bind(this));
+			this.sandbox = sinon.sandbox.create();
 		},
 		afterEach: function () {
 			this.oObjectPageInfoView.destroy();
+			this.sandbox.restore();
 		}
 	});
 
@@ -178,17 +182,77 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 			oBlock = oTargetSubSection.getBlocks()[0],
 			done = assert.async();
 
-		assert.expect(1);
+		assert.expect(2);
 
-		oBlock.attachEvent("viewInit", function(oEvent) {
-			var oView = oEvent.getParameter("view");
-			assert.ok(oView, "event is fired");
-			done();
+		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
+			oBlock._selectView("Expanded");
+			oBlock.attachEvent("viewInit", function(oEvent) {
+				var oView = oEvent.getParameter("view");
+				assert.ok(oView, "event is fired");
+				assert.strictEqual(oView.getViewName(), "sap.uxap.testblocks.objectpageblock.InfoButtonExpanded");
+				done();
+			});
 		});
 
-		this.oObjectPageInfoView.placeAt('qunit-fixture');
-		Core.applyChanges();
+	});
 
+	QUnit.test("view is created only once", function (assert) {
+
+		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
+			oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
+			oBlock = oTargetSubSection.getBlocks()[0],
+			oExpandViewMetadata = oBlock.getMetadata().getView("Expanded"),
+			createSpy = this.sandbox.spy(sap.ui.core.mvc.View, "create"),
+			done = assert.async();
+
+		oExpandViewMetadata.id = oBlock.getId() + "-Expanded"; // setup
+
+		assert.expect(1);
+
+		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
+
+			// Setup
+			createSpy.reset();
+
+			// Act: request create the same view more than once
+			oBlock.createView(oExpandViewMetadata);
+			oBlock.createView(oExpandViewMetadata); // request the same view twice
+
+			// Check
+			oBlock.attachEventOnce("viewInit", function () {
+				assert.ok(createSpy.calledOnce, "creation is called once only");
+				done();
+			});
+		});
+	});
+
+	QUnit.test("notification for view selection only once", function (assert) {
+
+		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
+			oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
+			oBlock = oTargetSubSection.getBlocks()[0],
+			notifySpy = this.sandbox.spy(oBlock, "_notifyForLoadingInMode"),
+			done = assert.async();
+
+		assert.expect(1);
+
+		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
+
+			// Setup
+			notifySpy.reset();
+
+			// Act: request select the same view more than once
+			oBlock._selectView("Expanded");
+			oBlock._selectView("Expanded"); // request the same view twice
+
+			// Check
+			oBlock.attachEventOnce("viewInit", function () {
+				setTimeout(function() {
+					assert.ok(notifySpy.calledOnce, "notification is called once only");
+					done();
+				}, 0);
+			});
+		});
 	});
 
 });
