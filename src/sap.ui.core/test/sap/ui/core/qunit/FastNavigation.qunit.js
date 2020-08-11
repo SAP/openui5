@@ -7,15 +7,6 @@ sap.ui.define([
 ], function(F6Navigation, KeyCodes, qutils, fastnav) {
 	"use strict";
 
-	// exports of 'fastnav'
-	var oPopup1 = window.oPopup1;
-	var oPopup2 = window.oPopup2;
-	var oPopup3 = window.oPopup3;
-	var oPopup4 = window.oPopup4;
-	var oPopup5 = window.oPopup5;
-	var oPopup6 = window.oPopup6;
-	var oPopup7 = window.oPopup7;
-
 	// Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM) and the target of the event instead of the activeElement
 	// to be more focus independent (-> More test stability)
 	F6Navigation.handleF6GroupNavigation_orig = F6Navigation.handleF6GroupNavigation;
@@ -37,6 +28,14 @@ sap.ui.define([
 
 
 	sap.ui.getCore().getEventBus().subscribe("fastnav", "screenready", function() {
+		// exports of 'fastnav'
+		var oPopup1 = window.oPopup1;
+		var oPopup2 = window.oPopup2;
+		var oPopup3 = window.oPopup3;
+		var oPopup4 = window.oPopup4;
+		var oPopup5 = window.oPopup5;
+		var oPopup6 = window.oPopup6;
+		var oPopup7 = window.oPopup7;
 
 		function injectFocusSpies(oContext, aFields, fnGenerateId){
 

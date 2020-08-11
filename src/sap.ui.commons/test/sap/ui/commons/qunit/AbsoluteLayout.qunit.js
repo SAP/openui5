@@ -375,14 +375,14 @@ sap.ui.define([
 		assert.ok(layout4.$().hasClass("sapUiLayoutAbsOvrflwXScroll"), "Horizontal Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
 		assert.ok(layout4.$().hasClass("sapUiLayoutAbsOvrflwYScroll"), "Vertical Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
 
-		assert.equal(layout4.$().css("width"), jQuery("#uiArea4").css("width"), "Height of the layout before setWidth");
-		assert.equal(layout4.$().css("height"), jQuery("#uiArea4").css("height"), "Height of the layout before setWidth");
+		assert.equal(layout4.$().outerWidth() /* include scrollbar width */, jQuery("#uiArea4").width(), "Height of the layout before setWidth");
+		assert.equal(layout4.$().outerHeight(), jQuery("#uiArea4").height(), "Height of the layout before setWidth");
 		layout4.setWidth("100px");
-		assert.equal(layout4.$().css("width"), "100px", "Height of the layout after setWidth");
-		assert.equal(layout4.$().css("height"), jQuery("#uiArea4").css("height"), "Height of the layout after setWidth");
+		assert.equal(layout4.$().outerWidth(), "100", "Height of the layout after setWidth");
+		assert.equal(layout4.$().outerHeight(), jQuery("#uiArea4").height(), "Height of the layout after setWidth");
 		layout4.setHeight("100px");
-		assert.equal(layout4.$().css("width"), "100px", "Height of the layout after setHeight");
-		assert.equal(layout4.$().css("height"), "100px", "Height of the layout after setHeight");
+		assert.equal(layout4.$().outerWidth(), "100", "Height of the layout after setHeight");
+		assert.equal(layout4.$().outerHeight(), "100", "Height of the layout after setHeight");
 	});
 
 	QUnit.test("Center Positioning", function(assert) {
