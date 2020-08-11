@@ -295,7 +295,7 @@ sap.ui.define([
 			return Promise.reject(new Error("Nothing to select"));
 		}
 
-		return this.addSelectionInterval(0, iSelectableCount - 1, oEventPayload);
+		return this.addSelectionInterval(0, this._getHighestSelectableIndex(), oEventPayload);
 	};
 
 	/**
