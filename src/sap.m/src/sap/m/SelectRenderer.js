@@ -148,6 +148,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			for (i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
 				oRm.openStart("option");
 				oRm.attr("value", aItems[i].getText());
+				oRm.attr("hidden", true);
 				oRm.openEnd();
 				oRm.text(aItems[i].getText());
 				oRm.close("option");
@@ -394,7 +395,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.accessibilityState(null, {
 				role: this.getAriaRole(oSelect),
 				roledescription: oSelect._sAriaRoleDescription,
-				disabled: !oSelect.getEnabled(),
 				readonly: bIconOnly ? undefined : oSelect.getEnabled() && !oSelect.getEditable(),
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
