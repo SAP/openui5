@@ -103,6 +103,7 @@ sap.ui.define([
 				/**
 				 * The default pane that will remain always visible
 				 * If no defaultPane is specified, the ResponsiveSplitter sets the first SplitPane that is added to a PaneContainer in it as a default.
+				 * If <code>requiredParentWidth</code> is reached, the pane will be hidden from the screen even if it is set as default.
 				 */
 				defaultPane: { type: "sap.ui.layout.SplitPane", multiple: false }
 			},
