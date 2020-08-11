@@ -4,17 +4,19 @@
 
 // Provides control sap.m.Button.
 sap.ui.define([
-	'./library',
-	'sap/ui/core/Control',
-	'sap/ui/core/ShortcutHintsMixin',
-	'sap/ui/core/EnabledPropagator',
-	'sap/ui/core/IconPool',
-	'sap/ui/Device',
-	'sap/ui/core/ContextMenuSupport',
-	'sap/ui/core/library',
-	'./ButtonRenderer',
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/ShortcutHintsMixin",
+	"sap/ui/core/EnabledPropagator",
+	"sap/ui/core/IconPool",
+	"sap/ui/Device",
+	"sap/ui/core/ContextMenuSupport",
+	"sap/ui/core/library",
+	"./ButtonRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/LabelEnablement"
+	"sap/ui/core/LabelEnablement",
+	"sap/m/BadgeEnabler",
+	"sap/ui/core/InvisibleText"
 ], function(
 	library,
 	Control,
@@ -26,7 +28,9 @@ sap.ui.define([
 	coreLibrary,
 	ButtonRenderer,
 	KeyCodes,
-	LabelEnablement
+	LabelEnablement,
+	BadgeEnabler,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -38,6 +42,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.ButtonAccessibilityType
 	var ButtonAccessibilityType = library.ButtonAccessibilityType;
+
+	// shortcut for sap.m.BadgeState
+	var BadgeState = library.BadgeState;
 
 	/**
 	 * Constructor for a new <code>Button</code>.
@@ -176,6 +183,7 @@ sap.ui.define([
 
 	EnabledPropagator.call(Button.prototype);
 	ContextMenuSupport.apply(Button.prototype);
+	BadgeEnabler.call(Button.prototype);
 
 	Button.prototype.init = function() {
 		this._onmouseenter = this._onmouseenter.bind(this);
@@ -186,6 +194,87 @@ sap.ui.define([
 				position: "0 4",
 				addAccessibilityLabel: true
 			}, this);
+
+		this.initBadgeEnablement({
+			position: "topRight",
+			selector: {suffix: "inner"}
+		});
+		this._oBadgeData = {
+			value: "",
+			state: ""
+		};
+	};
+
+	/**
+	 * Badge update handler - called when there is Badge value and/or state update
+	 *
+	 * @param {number | string} vValue value of the badge
+	 * @param {string} sState state of the badge
+	 * @private
+	 */
+	Button.prototype.onBadgeUpdate = function(vValue, sState) {
+		var iValue = parseInt(vValue);
+
+		if (!this.getDomRef()) {
+			return;
+		}
+
+		// limit value of the badge
+		if (iValue < 1 && sState !== BadgeState.Disappear) {
+			this.updateBadgeVisibility(false);
+			return;
+		} else if (iValue > 9999 && vValue.indexOf("+") === -1) {
+			vValue = "999+";
+			this.updateBadgeValue(vValue);
+			return;
+		}
+
+		if (this._oBadgeData.value !== vValue || this._oBadgeData.state !== sState) {
+			this._updateBadgeInvisibleText(vValue);
+			this._oBadgeData = {
+				value: vValue,
+				state: sState
+			};
+			this.invalidate();
+		}
+	};
+
+	/**
+	 * Updates invisible text values after Badge value and/or state update
+	 *
+	 * @param {number | string} vValue value of the badge
+	 * @private
+	 */
+	Button.prototype._updateBadgeInvisibleText = function(vValue) {
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sInvisibleTextValue,
+			iPlusPos;
+
+		// set invisible text with badge value
+		vValue = vValue.toString().trim();
+
+		iPlusPos = vValue.indexOf("+");
+		if (iPlusPos !== -1) {
+			sInvisibleTextValue = oRb.getText("BUTTON_BADGE_MORE_THAN_ITEMS", vValue.substr(0, iPlusPos));
+		} else {
+			switch (vValue) {
+				case "":		sInvisibleTextValue = ""; break;
+				case "1":		sInvisibleTextValue = oRb.getText("BUTTON_BADGE_ONE_ITEM", vValue); break;
+				default:		sInvisibleTextValue = oRb.getText("BUTTON_BADGE_MANY_ITEMS", vValue);
+			}
+		}
+
+		this._getBadgeInvisibleText().setText(sInvisibleTextValue);
+	};
+
+	/**
+	 * Returns an instance of the badge invisible text
+	 *
+	 * @returns {sap.ui.core.InvisibleText}
+	 * @private
+	 */
+	Button.prototype._getBadgeInvisibleText = function() {
+		return this._oBadgeInvisibleText || (this._oBadgeInvisibleText = new InvisibleText(this.getId() + "-badge").toStatic());
 	};
 
 	/**
@@ -202,6 +291,11 @@ sap.ui.define([
 
 		if (this._iconBtn) {
 			this._iconBtn.destroy();
+		}
+
+		if (this._oBadgeInvisibleText) {
+			this._oBadgeInvisibleText.destroy();
+			this._oBadgeData = null;
 		}
 
 		this.$().off("mouseenter", this._onmouseenter);
@@ -719,7 +813,7 @@ sap.ui.define([
 			bHasReferencingLabels = LabelEnablement.getReferencingLabels(this).length > 0,
 			bHasSemanticType = this.getType() !== ButtonType.Default,
 			bHasLabelling = bHasAriaLabelledBy || bHasReferencingLabels,
-			bHasDescription = bHasAriaDescribedBy || bHasSemanticType,
+			bHasDescription = bHasAriaDescribedBy || bHasSemanticType || (this._oBadgeData.value !== "" && this._oBadgeData.State !== BadgeState.Disappear),
 			sAccType;
 
 		// Conditions are separated instead of grouped to improve readability afterwards.

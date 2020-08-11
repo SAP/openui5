@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/dnd/DragInfo",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/m/BadgeCustomData"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Text,
 	InvisibleText,
 	DragInfo,
-	KeyCodes
+	KeyCodes,
+	BadgeCustomData
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -1460,4 +1462,68 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
 	});
+
+	QUnit.module("Badge on Button", {
+		beforeEach: function () {
+			this.oButton = new Button("badgedButton", {
+				icon: "sap-icon://home",
+				text: "I have a badge!",
+				customData: [
+					new sap.m.BadgeCustomData({
+						key: "badge",
+						value: "3",
+						visible: true
+					})
+				]
+			});
+
+			this.oButton.placeAt("qunit-fixture");
+			this.oBadgeData = this.oButton.getBadgeCustomData();
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("Check badge visibility and value", function (assert) {
+		var $oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator").first();
+
+		// check for badge visibility and value
+		assert.equal($oBadgeIndicator.hasClass(	"sapMBadgeAnimationAdd"), true, "Badge Indicator DOM element exists and is visible");
+		assert.equal($oBadgeIndicator.attr("data-badge"), this.oBadgeData.getValue(), "Badge value is correct");
+
+		// change badge value
+		this.oBadgeData.setValue("6");
+		sap.ui.getCore().applyChanges();
+
+		// check for new badge value
+		assert.equal($oBadgeIndicator.attr("data-badge"), this.oBadgeData.getValue(), "Badge value is correct after the change");
+
+		// hide badge
+		this.oBadgeData.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		// check for badge visibility
+		assert.equal(this.oButton.$().find(".sapMBadgeIndicator").length, 0, "Badge Indicator DOM element exists and is hidden");
+	});
+
+	QUnit.test("Check badge aria-describedby and invisible text", function (assert) {
+		var oBadgeInvisibleText = this.oButton._getBadgeInvisibleText();
+
+		// check invisible text
+		assert.ok(oBadgeInvisibleText, "Invisible text for badge exists");
+		// check if aria-describedby contains invisible text id
+		assert.ok(this.oButton.$().attr("aria-describedby").indexOf(oBadgeInvisibleText.getId()) !== -1,
+				  "When the Badge is visible, aria-describedby attribute of the button contains invisible text id");
+
+		// hide badge
+		this.oBadgeData.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		// check if aria-describedby contains invisible text id
+		assert.notOk(this.oButton.$().attr("aria-describedby"),
+				  "When the Badge is not visible, aria-describedby attribute of the button does not exist (and it doesn't contain invisible text id)");
+	});
+
 });
