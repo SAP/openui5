@@ -3,10 +3,11 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/UIArea",
+	"sap/ui/core/Control",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/core/HTML",
 	"sap/base/Log"
-], function(createAndAppendDiv, UIArea, TestButton, HTML, Log) {
+], function(createAndAppendDiv, UIArea, Control, TestButton, HTML, Log) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -263,6 +264,57 @@ sap.ui.define([
 
 		// cleanup
 		UIArea.configureEventLogging({mouseover: 1});
+	});
+
+
+	QUnit.module("Dependents", {
+		beforeEach: function() {
+			var oControl = new Control();
+			oCore.createUIArea("uiArea1").addDependent(oControl);
+			this.uiArea = oControl.getUIArea();
+			this.uiArea.addDependent(new Control());
+			this.spy(this.uiArea, "invalidate");
+		},
+		afterEach: function(assert) {
+			assert.notOk(this.uiArea.invalidate.called, "...then the UIArea should not invalidate");
+		}
+	});
+
+	QUnit.test("When an item is added...", function(assert) {
+		this.uiArea.addDependent(new Control());
+	});
+
+	QUnit.test("When an item is inserted...", function(assert) {
+		this.uiArea.insertDependent(new Control(), 0);
+	});
+
+	QUnit.test("When an item is removed...", function(assert) {
+		this.uiArea.removeDependent(0);
+	});
+
+	QUnit.test("When all items are removed...", function(assert) {
+		this.uiArea.removeAllDependents();
+	});
+
+	QUnit.test("When all items are destroyed...", function(assert) {
+		this.uiArea.destroyDependents();
+	});
+
+	QUnit.test("When an item is added twice...", function(assert) {
+		this.uiArea.addDependent(this.uiArea.getDependents()[0]);
+	});
+
+	QUnit.test("When an item is inserted twice...", function(assert) {
+		this.uiArea.insertDependent(0, this.uiArea.getDependents()[1]);
+	});
+
+	QUnit.test("When an item is destroyed...", function(assert) {
+		this.uiArea.getDependents()[0].destroy();
+	});
+
+	QUnit.test("When an item is moved to another parent...", function(assert) {
+		var oOther = new Control();
+		oOther.addDependent(this.uiArea.getDependents()[0]);
 	});
 
 });
