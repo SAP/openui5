@@ -29,7 +29,7 @@ sap.ui.define([
 		rRequestKey = /^(\S+) (\S+)$/,
 		rRequestLine = /^(GET|DELETE|MERGE|PATCH|POST) (\S+) HTTP\/1\.1$/,
 		mData = {},
-		rODataHeaders = /^(OData-Version|DataServiceVersion)$/i,
+		rODataHeaders = /^(OData-Version|DataServiceVersion)$/,
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
 		bRealOData = bProxy || sRealOData === "direct",
 		bSupportAssistant = oUriParameters.get("supportAssistant") === "true",
@@ -216,7 +216,7 @@ sap.ui.define([
 		 * Direct HEAD requests with no matching response in the fixture are responded with code 200
 		 * and no content.
 		 *
-		 * The headers "OData-Version" and "DataserviceVersion" are copied from the request to the
+		 * The headers "OData-Version" and "DataServiceVersion" are copied from the request to the
 		 * response unless specified in the fixture.
 		 *
 		 * @param {object} oSandbox
@@ -329,7 +329,7 @@ sap.ui.define([
 				return mUrls;
 			}
 
-			// calculates the context type from the given resource name
+			// calculates the content type from the given resource name
 			function contentType(sName) {
 				if (/\.xml$/.test(sName)) {
 					return "application/xml";
