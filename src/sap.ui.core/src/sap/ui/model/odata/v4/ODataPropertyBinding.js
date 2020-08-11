@@ -110,14 +110,15 @@ sap.ui.define([
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
 	 *   The reason for the 'change' event could be
 	 *   <ul>
-	 *   <li> {@link sap.ui.model.ChangeReason.Change Change} when the binding is initialized, when
-	 *     it gets a new type via {@link #setType}, or when the data state is reset via
-	 *     {@link sap.ui.model.odata.v4.ODataModel#resetChanges},
-	 *     {@link sap.ui.model.odata.v4.ODataContextBinding#resetChanges},
-	 *     {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or
-	 *     {@link sap.ui.model.odata.v4.ODataPropertyBinding#resetChanges},
-	 *   <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} when the binding is refreshed,
-	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is changed.
+	 *     <li> {@link sap.ui.model.ChangeReason.Change Change} when the binding is initialized,
+	 *       when it gets a new type via {@link #setType}, or when the data state is reset via
+	 *       {@link sap.ui.model.odata.v4.ODataModel#resetChanges},
+	 *       {@link sap.ui.model.odata.v4.ODataContextBinding#resetChanges},
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or
+	 *       {@link sap.ui.model.odata.v4.ODataPropertyBinding#resetChanges},
+	 *     <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} when the binding is refreshed,
+	 *     <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is
+	 *       changed.
 	 *   </ul>
 	 *
 	 * @event
@@ -683,12 +684,12 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If one of the following situations occurs:
 	 *   <ul>
-	 *   <li> The binding's root binding is suspended.
-	 *   <li> The new value is not primitive.
-	 *   <li> No value has been read before and the binding does not have the parameter
-	 *     <code>$$noPatch</code>.
-	 *   <li> The binding is not relative to a {@link sap.ui.model.odata.v4.Context}.
-	 *   <li> The binding has the parameter <code>$$noPatch</code> and a group ID has been given.
+	 *     <li> The binding's root binding is suspended.
+	 *     <li> The new value is not primitive.
+	 *     <li> No value has been read before and the binding does not have the parameter
+	 *       <code>$$noPatch</code>.
+	 *     <li> The binding is not relative to a {@link sap.ui.model.odata.v4.Context}.
+	 *     <li> The binding has the parameter <code>$$noPatch</code> and a group ID has been given.
 	 *   </ul>
 	 *
 	 * @public

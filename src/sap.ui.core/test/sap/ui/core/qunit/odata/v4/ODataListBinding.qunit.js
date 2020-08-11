@@ -3410,6 +3410,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_delete: kept-alive context not in the collection", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			aContexts = [{iIndex : 0}, {iIndex : 1}],
+			oKeptAliveContext = {
+				created : function () { return false; },
+				destroy : function () {},
+				getPath : function () { return "~contextpath~"; }
+			};
+
+		// simulate created entities which are already persisted
+		oBinding.aContexts = aContexts;
+		oBinding.iMaxLength = 42;
+		oBinding.mPreviousContextsByPath = {
+			"~contextpath~" : oKeptAliveContext,
+			doNotDelete : {bKeepAlive : true}
+		};
+
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("~contextpath~", "/EMPLOYEES").returns("~predicate~");
+		oBindingMock.expects("deleteFromCache")
+			.withExactArgs("myGroup", "EMPLOYEES('1')", "~predicate~", "oETagEntity",
+				sinon.match.func)
+			.callsArgWith(4, undefined, [/*unused*/])
+			.resolves();
+		this.mock(oKeptAliveContext).expects("destroy");
+		oBindingMock.expects("_fireChange").never();
+
+		// code under test
+		return oBinding._delete("myGroup", "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity")
+			.then(function () {
+				assert.deepEqual(oBinding.mPreviousContextsByPath,
+					{doNotDelete : {bKeepAlive : true}});
+				assert.deepEqual(oBinding.aContexts, aContexts);
+				assert.strictEqual(oBinding.iMaxLength, 41);
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: callbacks and eventing", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
@@ -6261,12 +6300,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchDownloadUrl: empty meta path", function (assert) {
+	QUnit.test("fetchDownloadUrl", function (assert) {
 		var oBinding = this.bindList("n/a"),
 			oCache = {
-				sMetaPath : "meta/path",
-				mQueryOptions : {},
-				sResourcePath : "resource/path"
+				getDownloadUrl : function () {}
 			},
 			oExpectation,
 			oPromise = {};
@@ -6277,57 +6314,12 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
 
-		this.mock(_Helper).expects("getMetaPath")
-			.withExactArgs("").returns("");
-		this.mock(this.oModel.oRequestor).expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions))
-			.returns("?query");
+		this.mock(oCache).expects("getDownloadUrl")
+			.withExactArgs("~path~", sinon.match.same(this.oModel.mUriParameters))
+			.returns("~url~");
 
 		// code under test - callback function
-		assert.strictEqual(oExpectation.args[0][0](oCache, ""),
-			"/service/resource/path?query");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchDownloadUrl: non-empty meta path", function (assert) {
-		var oBinding = this.bindList("n/a"),
-			oCache = {
-				sMetaPath : "meta/path",
-				mQueryOptions : {},
-				sResourcePath : "resource/path"
-			},
-			oExpectation,
-			oHelperMock = this.mock(_Helper),
-			oPromise = {},
-			mQueryOptions = {},
-			mQueryOptionsForPath = {};
-
-		this.mock(oBinding).expects("isResolved").returns(true);
-		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
-
-		// code under test
-		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
-
-		oHelperMock.expects("getMetaPath")
-			.withExactArgs("relative/path").returns("relative/metapath");
-		oHelperMock.expects("getQueryOptionsForPath")
-			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "relative/path")
-			.returns(mQueryOptionsForPath);
-		oHelperMock.expects("merge")
-			.withExactArgs({}, sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mQueryOptionsForPath))
-			.returns(mQueryOptions);
-		oHelperMock.expects("buildPath").withExactArgs(oCache.sResourcePath, "relative/path")
-			.returns("resource/path/relative/path");
-		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "relative/metapath")
-			.returns("meta/path/relative/metapath");
-		this.mock(this.oModel.oRequestor).expects("buildQueryString")
-			.withExactArgs("meta/path/relative/metapath", sinon.match.same(mQueryOptions))
-			.returns("?query");
-
-		// code under test - callback function
-		assert.strictEqual(oExpectation.args[0][0](oCache, "relative/path"),
-			"/service/resource/path/relative/path?query");
+		assert.strictEqual(oExpectation.args[0][0](oCache, "~path~"), "~url~");
 	});
 
 	//*********************************************************************************************

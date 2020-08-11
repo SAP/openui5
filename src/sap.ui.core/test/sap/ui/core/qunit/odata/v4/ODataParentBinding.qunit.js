@@ -839,7 +839,7 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oCache = { // cache sent read request
-					bSentRequest : true,
+					hasSentRequest : function () { return true; },
 					setQueryOptions : function () {}
 				},
 				oCachePromise = bRejected
@@ -963,7 +963,7 @@ sap.ui.define([
 				getReducedPath : function () {}
 			},
 			oCache = {
-				bSentRequest : true,
+				hasSentRequest : function () { return true; },
 				setLateQueryOptions : function () {},
 				setQueryOptions : function () {}
 			},
@@ -1080,11 +1080,10 @@ sap.ui.define([
 				getReducedPath : function () {}
 			},
 			oCache0 = {
-				bSentRequest : false,
-				bSharedRequest : oFixture.shared,
+				getResourcePath : function () {},
+				hasSentRequest : function () { return false; },
 				setActive : function () {},
-				setQueryOptions : function () {},
-				sResourcePath : "resource/path"
+				setQueryOptions : function () {}
 			},
 			oCache0Mock = this.mock(oCache0),
 			oCache1,
@@ -1104,7 +1103,8 @@ sap.ui.define([
 					resolve : function () {},
 					mUriParameters : {}
 				},
-				sPath : "/Set"
+				sPath : "/Set",
+				bSharedRequest : oFixture.shared
 			}),
 			oBindingMock = this.mock(oBinding),
 			mChildLocalQueryOptions = {},
@@ -1161,9 +1161,10 @@ sap.ui.define([
 		oBindingMock.expects("createAndSetCache").never();
 		if (oFixture.shared) {
 			oCache0Mock.expects("setActive").withExactArgs(false);
+			oCache0Mock.expects("getResourcePath").withExactArgs().returns("resource/path");
 			oBindingMock.expects("createAndSetCache")
 				.withExactArgs(sinon.match.same(oBinding.mAggregatedQueryOptions),
-					oCache0.sResourcePath, sinon.match.same(oContext))
+					"resource/path", sinon.match.same(oContext))
 				.returns(oCache1);
 		} else if (!oFixture.operation) {
 			oHelperMock.expects("merge").withExactArgs({},
@@ -1368,7 +1369,7 @@ sap.ui.define([
 				resolve : function () {}
 			},
 			oCache = {
-				bSentRequest : bImmutable,
+				hasSentRequest : function () { return bImmutable; },
 				setQueryOptions : function () {}
 			},
 			oBinding = new ODataParentBinding({
@@ -1674,7 +1675,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = {
-				bSentRequest : bImmutable,
+				hasSentRequest : function () { return bImmutable; },
 				setQueryOptions : function () {}
 			},
 			oMetaModel = {

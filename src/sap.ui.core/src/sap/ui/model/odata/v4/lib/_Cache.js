@@ -152,8 +152,9 @@ sap.ui.define([
 		this.addPendingRequest();
 
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
-			var oEntity = vDeleteProperty
-					? vCacheData[Cache.from$skip(vDeleteProperty, vCacheData)]
+			var vCachePath = Cache.from$skip(vDeleteProperty, vCacheData),
+				oEntity = vDeleteProperty
+					? vCacheData[vCachePath] || vCacheData.$byPredicate[vCachePath]
 					: vCacheData, // deleting at root level
 				mHeaders,
 				sKeyPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
@@ -805,6 +806,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a URL by which the complete content of the list with the given path can be downloaded
+	 * in JSON format.
+	 *
+	 * @param {string} sPath The list's path relative to the cache
+	 * @param {object} mCustomQueryOptions The custom query options
+	 * @returns {string} The download URL
+	 *
+	 * @public
+	 */
+	Cache.prototype.getDownloadUrl = function (sPath, mCustomQueryOptions) {
+		var mQueryOptions = this.mQueryOptions;
+
+		if (sPath) {
+			// reduce the query options to the child path
+			mQueryOptions = _Helper.getQueryOptionsForPath(mQueryOptions, sPath);
+			// add the custom query options again
+			mQueryOptions = _Helper.merge({}, mCustomQueryOptions, mQueryOptions);
+		}
+		return this.oRequestor.getServiceUrl()
+			+ _Helper.buildPath(this.sResourcePath, sPath)
+			+ this.oRequestor.buildQueryString(
+				_Helper.buildPath(this.sMetaPath, _Helper.getMetaPath(sPath)), mQueryOptions);
+	};
+
+	/**
 	 * Returns the query options for late properties.
 	 *
 	 * @returns {object} The late query options
@@ -859,6 +885,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the cache's resource path.
+	 *
+	 * @returns {string} The resource path
+	 *
+	 * @public
+	 */
+	Cache.prototype.getResourcePath = function () {
+		return this.sResourcePath;
+	};
+
+	/**
 	 * Tells whether there are any registered change listeners.
 	 *
 	 * @returns {boolean}
@@ -891,6 +928,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether the cache has already sent a request.
+	 *
+	 * @returns {boolean} <code>true</code> if the cache has sent a request
+	 *
+	 * @public
+	 */
+	Cache.prototype.hasSentRequest = function () {
+		return this.bSentRequest;
+	};
+
+		/**
 	 * Patches the cache at the given path with the given data.
 	 *
 	 * @param {string} sPath The path (as used by change listeners)
@@ -1068,12 +1116,16 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
-		var oElement, sTransientPredicate;
+		var bIsKeptAlive = isNaN(iIndex),
+			oElement,
+			sTransientPredicate;
 
-		// the element might have moved due to parallel insert/delete
-		iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
-		oElement = aElements[iIndex];
-		aElements.splice(iIndex, 1);
+		oElement = aElements.$byPredicate[sPredicate];
+		if (!bIsKeptAlive) {
+			// the element might have moved due to parallel insert/delete
+			iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
+			aElements.splice(iIndex, 1);
+		}
 		delete aElements.$byPredicate[sPredicate];
 		sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 		if (sTransientPredicate) {
@@ -1082,8 +1134,10 @@ sap.ui.define([
 		} else if (!sPath) {
 			// Note: sPath is empty only in a CollectionCache, so we may use iLmit and
 			// adjustReadRequests
-			this.iLimit -= 1;
-			this.adjustReadRequests(iIndex, -1);
+			this.iLimit -= 1; // this doesn't change Infinity
+			if (!bIsKeptAlive) {
+				this.adjustReadRequests(iIndex, -1);
+			}
 		}
 		addToCount(this.mChangeListeners, sPath, aElements, -1);
 		return iIndex;
@@ -1976,7 +2030,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.getResourcePath = function (iStart, iEnd) {
+	CollectionCache.prototype.getResourcePathWithQuery = function (iStart, iEnd) {
 		var iCreated = this.aElements.$created,
 			sQueryString = this.getQueryString(),
 			sDelimiter = sQueryString ? "&" : "?",
@@ -2210,7 +2264,7 @@ sap.ui.define([
 		this.aReadRequests.push(oReadRequest);
 		this.bSentRequest = true;
 		oPromise = SyncPromise.all([
-			this.oRequestor.request("GET", this.getResourcePath(iStart, iEnd), oGroupLock,
+			this.oRequestor.request("GET", this.getResourcePathWithQuery(iStart, iEnd), oGroupLock,
 				undefined, undefined, fnDataRequested),
 			this.fetchTypes()
 		]).then(function (aResult) {
@@ -2912,8 +2966,8 @@ sap.ui.define([
 	 *
 	 * Examples:
 	 * <ul>
-	 * <li>["Age"], 42 -> {Age: 42}
-	 * <li>["Address", "City"], "Walldorf" -> {Address: {City: "Walldorf"}}
+	 *   <li> ["Age"], 42 -> {Age: 42}
+	 *   <li> ["Address", "City"], "Walldorf" -> {Address: {City: "Walldorf"}}
 	 * </ul>
 	 *
 	 * @param {string[]} aPropertyPath
