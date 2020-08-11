@@ -106,7 +106,145 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		}
 	}});
 
+	/*
+	* these are the rules for the FeedInput
+	*/
+	var _renderingRules = {};
 
+	// rules for the allowed attributes
+	_renderingRules.ATTRIBS = {
+		'style': 1,
+		'class': 1,
+		'a::href': 1,
+		'a::target': 1
+	};
+
+	// rules for the allowed tags
+	_renderingRules.ELEMENTS = {
+		// Text Module Tags
+		'a': { cssClass: 'sapMLnk' },
+		'abbr': 1,
+		'blockquote': 1,
+		'br': 1,
+		'cite': 1,
+		'code': 1,
+		'em': 1,
+		'h1': { cssClass: 'sapMTitle sapMTitleStyleH1' },
+		'h2': { cssClass: 'sapMTitle sapMTitleStyleH2' },
+		'h3': { cssClass: 'sapMTitle sapMTitleStyleH3' },
+		'h4': { cssClass: 'sapMTitle sapMTitleStyleH4' },
+		'h5': { cssClass: 'sapMTitle sapMTitleStyleH5' },
+		'h6': { cssClass: 'sapMTitle sapMTitleStyleH6' },
+		'p': 1,
+		'pre': 1,
+		'strong': 1,
+		'span': 1,
+		'u': 1,
+
+		// List Module Tags
+		'dl': 1,
+		'dt': 1,
+		'dd': 1,
+		'ol': 1,
+		'ul': 1,
+		'li': 1
+	};
+
+	/**
+	 * Sanitizes attributes on an HTML tag.
+	 *
+	 * @param {string} tagName An HTML tag name in lower case
+	 * @param {array} attribs An array of alternating names and values
+	 * @return {array} The sanitized attributes as a list of alternating names and values. Value <code>null</code> removes the attribute.
+	 * @private
+	 */
+	function fnSanitizeAttribs(tagName, attribs) {
+
+		var sWarning;
+		var attr,
+			value,
+			addTarget = tagName === "a";
+		// add UI5 specific classes when appropriate
+		var cssClass = _renderingRules.ELEMENTS[tagName].cssClass || "";
+
+		for (var i = 0; i < attribs.length; i += 2) {
+			// attribs[i] is the name of the tag's attribute.
+			// attribs[i+1] is its corresponding value.
+			// (i.e. <span class="foo"> -> attribs[i] = "class" | attribs[i+1] = "foo")
+			attr = attribs[i];
+			value = attribs[i + 1];
+
+			if (!_renderingRules.ATTRIBS[attr] && !_renderingRules.ATTRIBS[tagName + "::" + attr]) {
+				sWarning = 'FeedInput: <' + tagName + '> with attribute [' + attr + '="' + value + '"] is not allowed';
+				jQuery.sap.log.warning(sWarning, this);
+				// to remove the attribute by the sanitizer, set the value to null
+				attribs[i + 1] = null;
+				continue;
+			}
+
+			// sanitize hrefs
+			if (attr == "href") { // a::href
+				if (!jQuery.sap.validateUrl(value)) {
+					jQuery.sap.log.warning("FeedInput: incorrect href attribute:" + value, this);
+					attribs[i + 1] = "#";
+					addTarget = false;
+				}
+			}
+			if (attr == "target") { // a::target already exists
+				addTarget = false;
+			}
+
+			// add UI5 classes to the user defined
+			if (cssClass && attr.toLowerCase() == "class") {
+				attribs[i + 1] = cssClass + " " + value;
+				cssClass = "";
+			}
+		}
+
+		if (addTarget) {
+			attribs.push("target");
+			attribs.push("_blank");
+		}
+
+		// add UI5 classes, if not done before
+		if (cssClass) {
+			attribs.push("class");
+			attribs.push(cssClass);
+		}
+
+		return attribs;
+	}
+
+	/**
+	 * Sanitizes HTML tags and attributes according to a given policy.
+	 *
+	 * @param {string} tagName An HTML tag name in lower case
+	 * @param {array} attribs An array of alternating names and values
+	 * @return {string} The sanitized HTML
+	 * @private
+	 */
+	function fnPolicy(tagName, attribs) {
+		if (_renderingRules.ELEMENTS[tagName]) {
+			return fnSanitizeAttribs(tagName, attribs);
+		} else {
+			var sWarning = '<' + tagName + '> is not allowed';
+			jQuery.sap.log.warning(sWarning, this);
+		}
+	}
+
+	function uriRewriter(sUrl) {
+		// by default we use the URL whitelist to check the URL's
+		if (jQuery.sap.validateUrl(sUrl)) {
+			return sUrl;
+		}
+	}
+
+	FeedInput.prototype._sanitizeHTML = function (sText) {
+		return jQuery.sap._sanitizeHTML(sText, {
+			tagPolicy: fnPolicy,
+			uriRewriter: uriRewriter
+		});
+	};
 
 	/////////////////////////////////// Lifecycle /////////////////////////////////////////////////////////
 
@@ -217,7 +355,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 				press : jQuery.proxy(function () {
 					this._oTextArea.focus();
 					this.firePost({
-						value : this.getValue()
+						value : this._sanitizeHTML(this.getValue())
 					});
 					this.setValue(null);
 				}, this)
