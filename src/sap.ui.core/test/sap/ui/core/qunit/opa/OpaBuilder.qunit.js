@@ -1106,6 +1106,33 @@ sap.ui.define(
             assert.strictEqual(oElseMatcher.callCount, 1);
             oSuccessMatcher.reset();
             oElseMatcher.reset();
+
+            // check boolean parameter for conditional matchers
+            fnMatcher = OpaBuilder.Matchers.conditional(true, oSuccessMatcher, oElseMatcher);
+            assert.strictEqual(fnMatcher(5), false);
+            assert.strictEqual(oSuccessMatcher.callCount, 1);
+            assert.strictEqual(oElseMatcher.callCount, 0);
+            oSuccessMatcher.reset();
+            oElseMatcher.reset();
+
+            assert.strictEqual(fnMatcher(4), 4);
+            assert.strictEqual(oSuccessMatcher.callCount, 1);
+            assert.strictEqual(oElseMatcher.callCount, 0);
+            oSuccessMatcher.reset();
+            oElseMatcher.reset();
+
+            fnMatcher = OpaBuilder.Matchers.conditional(false, oSuccessMatcher, oElseMatcher);
+            assert.strictEqual(fnMatcher(5), 5);
+            assert.strictEqual(oSuccessMatcher.callCount, 0);
+            assert.strictEqual(oElseMatcher.callCount, 1);
+            oSuccessMatcher.reset();
+            oElseMatcher.reset();
+
+            assert.strictEqual(fnMatcher(4), false);
+            assert.strictEqual(oSuccessMatcher.callCount, 0);
+            assert.strictEqual(oElseMatcher.callCount, 1);
+            oSuccessMatcher.reset();
+            oElseMatcher.reset();
         });
 
         QUnit.test("'some' should return a matcher function that checks for at least one successful match from a group of matchers", function(assert) {
@@ -1174,6 +1201,33 @@ sap.ui.define(
             oFailureAction.reset();
 
             fnAction(5);
+            assert.strictEqual(oSuccessAction.callCount, 0);
+            assert.strictEqual(oFailureAction.callCount, 1);
+            oSuccessAction.reset();
+            oFailureAction.reset();
+
+            // check boolean parameter for conditional actions
+            var fnAction = OpaBuilder.Actions.conditional(true, oSuccessAction, oFailureAction);
+            fnAction(6);
+            assert.strictEqual(oSuccessAction.callCount, 1);
+            assert.strictEqual(oFailureAction.callCount, 0);
+            oSuccessAction.reset();
+            oFailureAction.reset();
+
+            fnAction(2);
+            assert.strictEqual(oSuccessAction.callCount, 1);
+            assert.strictEqual(oFailureAction.callCount, 0);
+            oSuccessAction.reset();
+            oFailureAction.reset();
+
+            var fnAction = OpaBuilder.Actions.conditional(false, oSuccessAction, oFailureAction);
+            fnAction(6);
+            assert.strictEqual(oSuccessAction.callCount, 0);
+            assert.strictEqual(oFailureAction.callCount, 1);
+            oSuccessAction.reset();
+            oFailureAction.reset();
+
+            fnAction(2);
             assert.strictEqual(oSuccessAction.callCount, 0);
             assert.strictEqual(oFailureAction.callCount, 1);
             oSuccessAction.reset();
