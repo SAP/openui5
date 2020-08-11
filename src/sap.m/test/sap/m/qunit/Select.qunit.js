@@ -4916,18 +4916,15 @@ sap.ui.define([
 			Core.applyChanges();
 			document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
 
-			var fnFocusSpy = this.spy(oSelect.getFocusDomRef(), "focus");
-
 			// act
 			qutils.triggerTouchEvent("tap", oSelect.getDomRef(), {
 				srcControl: oSelect
 			});
+
 			this.clock.tick(1000);
 
 			// assert
 			assert.ok(oSelect.isOpen(), "Select is open");
-
-			assert.equal(fnFocusSpy.callCount, 1, "Focus was called");
 
 			// act
 			oSelect.close();
