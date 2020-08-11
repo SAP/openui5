@@ -11882,6 +11882,34 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Nested list bindings with autoExpandSelect. This leads to a list binding with a
+	// virtual parent context. Such a binding must not try to read data from the cache because it is
+	// immediately destroyed again.
+	// BCP: 2080321417
+	QUnit.test("BCP: 2080321417: Auto-$expand/$select and nested list bindings", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<List id="select" items="{path : \'SO_2_SOITEM\', templateShareable : false}">\
+		<CustomListItem>\
+			<Text text="{ItemPosition}"/>\
+		</CustomListItem>\
+	</List>\
+</Table>',
+			that = this;
+
+		return oModel.getMetaModel().fetchObject("/SalesOrderList").then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)&$skip=0&$top=100",
+					{value : [{SalesOrderID : "1", SO_2_SOITEM : []}]})
+				.expectChange("id", ["1"]);
+
+			return that.createView(assert, sView, oModel);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: updates for advertised action's title caused by: refresh, side effect of edit,
 	// bound action
 	// CPOUI5UISERVICESV3-905, CPOUI5UISERVICESV3-1714
