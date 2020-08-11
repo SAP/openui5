@@ -152,7 +152,8 @@
 						maxConditions="1"
 						placeholder="{/#Product/Date/@sap:label}"
 						change="handleChange"
-						liveChange="handleLiveChange">
+						liveChange="handleLiveChange"
+						fieldHelp="CFH1">
 					</mdc:FilterField>
 
 					<m:Label text="single value field (Date) only between"></m:Label>
@@ -180,7 +181,8 @@
 						operators="EQ"
 						placeholder="{/#Product/Date/@sap:label}"
 						change="handleChange"
-						liveChange="handleLiveChange">
+						liveChange="handleLiveChange"
+						fieldHelp="CFH1">
 					</mdc:FilterField>
 
 					<m:Label text="single value field (Status)"></m:Label>
@@ -256,7 +258,8 @@
 						maxConditions="2"
 						placeholder="{/#Product/Quantity/@sap:label}"
 						change="handleChange"
-						liveChange="handleLiveChange">
+						liveChange="handleLiveChange"
+						fieldHelp="CFH1">
 					</mdc:FilterField>
 
 					<m:Label text="multi value field in display mode  (Quantity)"></m:Label>
@@ -626,6 +629,9 @@
 					<m:Label text="Conditions"></m:Label>
 					<m:TextArea id="Cond" editable="false" rows="10"></m:TextArea>
 
+					<form:dependents>
+						<mdcField:ConditionFieldHelp id="CFH1" />
+					</form:dependents>
 				</form:SimpleForm>
 			</m:ScrollContainer>
 			<m:ScrollContainer vertical="true" height="33%">

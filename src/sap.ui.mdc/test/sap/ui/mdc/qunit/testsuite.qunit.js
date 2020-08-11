@@ -47,6 +47,16 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 					qunitBridge: true
 				}
 			},
+			"ConditionFieldHelp": {
+				group: "Field",
+				module: "./field/ConditionFieldHelp.qunit",
+				coverage: {
+					only: "[sap/ui/mdc/field]"
+				},
+				sinon: {
+					qunitBridge: true
+				}
+			},
 			"ConditionModel": {
 				group: "Condition",
 				module: "./condition/ConditionModel.qunit",

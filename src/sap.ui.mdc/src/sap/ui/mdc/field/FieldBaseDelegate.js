@@ -96,7 +96,7 @@ sap.ui.define([
 	 */
 	FieldBaseDelegate.isInputValidationEnabled = function(oPayload, oFieldHelp) {
 
-		if (oFieldHelp) {
+		if (oFieldHelp && oFieldHelp.isValidationSupported()) {
 			return true;
 		} else {
 			return false;
