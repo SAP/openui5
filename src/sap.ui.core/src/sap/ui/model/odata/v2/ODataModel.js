@@ -4846,32 +4846,6 @@ sap.ui.define([
 	 *   The name of the function import starting with a slash, for example <code>/Activate</code>.
 	 * @param {object} [mParameters]
 	 *   The parameter map containing any of the following properties:
-	 * @param {string} [mParameters.method='GET']
-	 *   The HTTP method used for the function import call as specified in the metadata definition
-	 *   of the function import
-	 * @param {Object<string,string>} [mParameters.urlParameters]
-	 *   Maps the function import parameter name as specified in the function import's metadata to
-	 *   its value; the value is formatted based on the paramter's type as specified in the metadata
-	 * @param {function} [mParameters.success]
-	 *   A callback function which is called when the data has been successfully retrieved; the
-	 *   handler can have the following parameters: <code>oData</code> and <code>response</code>.
-	 * @param {function} [mParameters.error]
-	 *   A callback function which is called when the request failed. The handler can have the
-	 *   parameter: <code>oError</code> which contains additional error information.
-	 * @param {Object<string,string>} [mParameters.headers]
-	 *   A map of headers for this request
-	 * @param {string} [mParameters.groupId]
-	 *   ID of a request group; requests belonging to the same group are bundled in one batch
-	 *   request
-	 * @param {string} [mParameters.eTag]
-	 *   If the function import changes an entity, the ETag for this entity can be passed with this
-	 *   parameter
-	 * @param {string} [mParameters.changeSetId]
-	 *   ID of the <code>ChangeSet</code> that this request belongs to
-	 * @param {boolean} [mParameters.refreshAfterChange]
-	 *   Defines whether to update all bindings after submitting this change operation; since 1.46.
-	 *   See {@link #setRefreshAfterChange}. If given, this overrules the model-wide
-	 *   <code>refreshAfterChange</code> flag for this operation only.
 	 * @param {function} [mParameters.adjustDeepPath]
 	 *   Defines a callback function to adjust the deep path for the resulting entity of the
 	 *   function import call; since 1.82. The deep path of an entity is the resolved path relative
@@ -4890,6 +4864,32 @@ sap.ui.define([
 	 *       </li>
 	 *     <li><code>{object} mParameters.response</code>: A copy of the OData response object</li>
 	 *   </ul>
+	 * @param {string} [mParameters.changeSetId]
+	 *   ID of the <code>ChangeSet</code> that this request belongs to
+	 * @param {function} [mParameters.error]
+	 *   A callback function which is called when the request failed. The handler can have the
+	 *   parameter: <code>oError</code> which contains additional error information.
+	 * @param {string} [mParameters.eTag]
+	 *   If the function import changes an entity, the ETag for this entity can be passed with this
+	 *   parameter
+	 * @param {string} [mParameters.groupId]
+	 *   ID of a request group; requests belonging to the same group are bundled in one batch
+	 *   request
+	 * @param {Object<string,string>} [mParameters.headers]
+	 *   A map of headers for this request
+	 * @param {string} [mParameters.method='GET']
+	 *   The HTTP method used for the function import call as specified in the metadata definition
+	 *   of the function import
+	 * @param {boolean} [mParameters.refreshAfterChange]
+	 *   Defines whether to update all bindings after submitting this change operation; since 1.46.
+	 *   See {@link #setRefreshAfterChange}. If given, this overrules the model-wide
+	 *   <code>refreshAfterChange</code> flag for this operation only.
+	 * @param {function} [mParameters.success]
+	 *   A callback function which is called when the data has been successfully retrieved; the
+	 *   handler can have the following parameters: <code>oData</code> and <code>response</code>.
+	 * @param {Object<string,string>} [mParameters.urlParameters]
+	 *   Maps the function import parameter name as specified in the function import's metadata to
+	 *   its value; the value is formatted based on the paramter's type as specified in the metadata
 	 * @param {string} [mParameters.batchGroupId]
 	 *   <b>Deprecated - use <code>groupId</code> instead</b>
 	 *
