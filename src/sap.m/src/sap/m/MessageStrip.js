@@ -132,6 +132,8 @@ sap.ui.define([
 				 *	<li><code>strong</code></li>
 				 *	<li><code>u</code></li>
 				 * </ul>
+				 *
+				 * @since 1.50
 				 */
 				enableFormattedText: { type: "boolean", group: "Appearance", defaultValue: false }
 			},
