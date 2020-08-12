@@ -53,7 +53,9 @@ sap.ui.define([
 							move: "moveSort"
 						},
 						adaptationUI: "sap/ui/mdc/p13n/panels/SortPanel",
-						title: oResourceBundle.getText("sort.PERSONALIZATION_DIALOG_TITLE")
+						containerSettings: {
+							title: oResourceBundle.getText("sort.PERSONALIZATION_DIALOG_TITLE")
+						}
 					}
 				},
 				/*
@@ -62,9 +64,11 @@ sap.ui.define([
 			   filterConfig: {
 				   type: "object",
 				   defaultValue: {
-					   adaptationUI: null,
-					   initializeControl: null, //Will be called after the personalization model structure has been bound to the UI
-					   title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
+						adaptationUI: null,
+						initializeControl: null, //Will be called after the personalization model structure has been bound to the UI
+						containerSettings: {
+							title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
+						}
 				   }
 			   },
 				/**
@@ -168,7 +172,7 @@ sap.ui.define([
 				this.oAdaptationControlDelegate = oDelegate;
 				this.sP13nType = sP13nType;
 
-				this._retrieveP13nContainer(this.getTypeConfig(sP13nType).title).then(function(oContainer){
+				this._retrieveP13nContainer().then(function(oContainer){
 					var oP13nUI = oContainer.getContent()[0];
 
 					var oP13nData = this._prepareAdaptationData(aPropertyInfo);
@@ -367,7 +371,7 @@ sap.ui.define([
 			ignoreIndex: oP13nConfig ? oP13nConfig.ignoreIndex : false,
 			adaptationUI: oP13nConfig ? oP13nConfig.adaptationUI : undefined,
 			initializeControl: oP13nConfig && oP13nConfig.initializeControl ? oP13nConfig.initializeControl : function(){ return Promise.resolve();},
-			title: oP13nConfig ? oP13nConfig.title : undefined
+			containerSettings: oP13nConfig && oP13nConfig.containerSettings ? oP13nConfig.containerSettings : {}
 		};
 	};
 
@@ -449,7 +453,7 @@ sap.ui.define([
 		this.oState = merge({}, oP13nData);
 	};
 
-	AdaptationController.prototype._retrieveP13nContainer = function (sTitle) {
+	AdaptationController.prototype._retrieveP13nContainer = function () {
 		return new Promise(function (resolve, reject) {
 
 			var bLiveMode = this.getLiveMode();
@@ -462,7 +466,7 @@ sap.ui.define([
 					}.bind(this));
 				}
 
-				this._createP13nContainer(oP13nUI, sTitle).then(function(oDialog){
+				this._createP13nContainer(oP13nUI).then(function(oDialog){
 					resolve(oDialog);
 				});
 			}.bind(this);
@@ -505,14 +509,14 @@ sap.ui.define([
 		});
 	};
 
-	AdaptationController.prototype._createP13nContainer = function (oPanel, sTitle) {
+	AdaptationController.prototype._createP13nContainer = function (oPanel) {
 
 		var oContainerPromise;
 
 		if (this.getLiveMode()) {
-			oContainerPromise = this._createPopover(oPanel, sTitle);
+			oContainerPromise = this._createPopover(oPanel);
 		} else {
-			oContainerPromise = this._createModalDialog(oPanel, sTitle);
+			oContainerPromise = this._createModalDialog(oPanel);
 		}
 
 		return oContainerPromise.then(function(oContainer){
@@ -525,7 +529,7 @@ sap.ui.define([
 
 	};
 
-	AdaptationController.prototype._createPopover = function(oPanel, sTitle){
+	AdaptationController.prototype._createPopover = function(oPanel){
 
 		var fnAfterDialogClose = function (oEvt) {
 			var oPopover = oEvt.getSource();
@@ -537,17 +541,16 @@ sap.ui.define([
 			this.bIsDialogOpen = false;
 		}.bind(this);
 
-		var mSettings = {
-			title: sTitle,
+		var mSettings = Object.assign({
 			verticalScrolling: true,
 			afterClose: fnAfterDialogClose
-		};
+		}, this.getTypeConfig(this.sP13nType).containerSettings);
 
 		return P13nBuilder.createP13nPopover(oPanel, mSettings);
 
 	};
 
-	AdaptationController.prototype._createModalDialog = function(oPanel, sTitle){
+	AdaptationController.prototype._createModalDialog = function(oPanel){
 
 		var fnDialogOk = function (oEvt) {
 			var oDialog = oEvt.getSource().getParent();
@@ -574,14 +577,13 @@ sap.ui.define([
 			oDialog.destroy();
 		}.bind(this);
 
-		var mSettings = {
-			verticalScrolling: false,
-			title: sTitle,
+		var mSettings = Object.assign({
+			verticalScrolling: true,
 			confirm: {
 				handler: fnDialogOk
 			},
 			cancel: fnDialogCancel
-		};
+		}, this.getTypeConfig(this.sP13nType).containerSettings);
 
 		return P13nBuilder.createP13nDialog(oPanel, mSettings);
 	};

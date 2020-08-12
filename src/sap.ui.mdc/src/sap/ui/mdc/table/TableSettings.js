@@ -129,7 +129,9 @@ sap.ui.define([
 					adaptationUI: oAdaptationFilterBar,
 					applyFilterChangeOn: oAdaptationFilterBar,
 					initializeControl: oAdaptationFilterBar.createFilterFields,
-					title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
+					containerSettings: {
+						title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
+					}
 				};
 				oControl.enhanceAdaptationConfig({filterConfig: oFilterConfig});
 				return oAdaptationFilterBar;
