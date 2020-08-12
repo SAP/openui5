@@ -65,4 +65,12 @@ describe("sap.m.TimePicker", function() {
 		//Assert
 		expect(takeScreenshot(element(by.id("TP1-toolbar")))).toLookAs("input_value_selected");
 	});
+
+	it("time picker disabled", function() {
+		var oTimePickerIcon = element(by.id("TP2-icon"));
+		//Act
+		oTimePickerIcon.click();
+		//Assert
+		expect(takeScreenshot(element(by.id("TP2-toolbar")))).toLookAs("time_picker_not_opened");
+	});
 });

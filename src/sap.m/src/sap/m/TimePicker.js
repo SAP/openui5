@@ -382,7 +382,9 @@ function(
 		};
 
 		TimePicker.prototype.toggleOpen = function (bOpened) {
-			this[bOpened ? "_closePicker" : "_openPicker"]();
+			if (this.getEditable() && this.getEnabled()) {
+				this[bOpened ? "_closePicker" : "_openPicker"]();
+			}
 		};
 
 		/**
