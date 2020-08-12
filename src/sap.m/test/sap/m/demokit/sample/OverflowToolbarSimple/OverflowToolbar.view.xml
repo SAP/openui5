@@ -287,7 +287,7 @@
 		<Button text="Button 2" type="Transparent"/>
 		<ToggleButton text="Toggle Button" type="Transparent"/>
 		<Button text="Button 3" type="Transparent"/>
-		<SegmentedButton>
+		<SegmentedButton tooltip="Segmented Button">
 			<Button text="Segmented" type="Transparent"/>
 			<Button text="Button" type="Transparent"/>
 		</SegmentedButton>
