@@ -38,30 +38,47 @@
 					  Alias="SAP__ParentService" />
 	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema Namespace="com.sap.gateway.f4.h_tcurc-sh.v0001" Alias="SAP__self">
-			<EntityType Name="H_TCURC_SH">
+		<Schema Namespace="com.sap.gateway.f4.h_epm_pr-sh.v0001" Alias="SAP__self">
+			<EntityType Name="H_EPM_BP_SH">
 				<Key>
-					<PropertyRef Name="WAERS" />
+					<PropertyRef Name="NODE_KEY" />
 				</Key>
-				<Property Name="WAERS" Type="Edm.String" Nullable="false" MaxLength="5" />
-				<Property Name="LTEXT" Type="Edm.String" Nullable="false" MaxLength="40" />
-				<Property Name="CURRDEC" Type="Edm.Byte" Nullable="false" />
+				<Property Name="NODE_KEY" Type="Edm.Guid" Nullable="false" />
+				<Property Name="BP_ID" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="COMPANY_NAME" Type="Edm.String" Nullable="false" MaxLength="80" />
 			</EntityType>
-			<EntityType Name="TCURC_CT">
+			<EntityType Name="H_EPM_PR_SH">
 				<Key>
-					<PropertyRef Name="WAERS" />
+					<PropertyRef Name="NODE_KEY" />
+					<PropertyRef Name="PRODUCT_ID" />
+					<PropertyRef Name="LANGU" />
+					<PropertyRef Name="TEXT" />
+					<PropertyRef Name="SUPPLIER_KEY" />
+					<PropertyRef Name="SUPPLIER_ID" />
 				</Key>
-				<Property Name="WAERS" Type="Edm.String" Nullable="false" MaxLength="5" />
-				<Property Name="LTEXT" Type="Edm.String" Nullable="false" MaxLength="40" />
-				<Property Name="CURRDEC" Type="Edm.Byte" Nullable="false" />
+				<Property Name="NODE_KEY" Type="Edm.Guid" Nullable="false" />
+				<Property Name="PRODUCT_ID" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="LANGU" Type="Edm.String" Nullable="false" MaxLength="2" />
+				<Property Name="TEXT" Type="Edm.String" Nullable="false" MaxLength="255" />
+				<Property Name="SUPPLIER_KEY" Type="Edm.Guid" Nullable="false" />
+				<Property Name="SUPPLIER_ID" Type="Edm.String" Nullable="false" MaxLength="10" />
+			</EntityType>
+			<EntityType Name="H_T002_SH">
+				<Key>
+					<PropertyRef Name="SPRAS" />
+				</Key>
+				<Property Name="SPRAS" Type="Edm.String" Nullable="false" MaxLength="2" />
+				<Property Name="SPTXT" Type="Edm.String" Nullable="false" MaxLength="16" />
 			</EntityType>
 			<EntityContainer Name="Container">
-				<EntitySet Name="H_TCURC_SH_Set"
-						   EntityType="com.sap.gateway.f4.h_tcurc-sh.v0001.H_TCURC_SH" />
-				<EntitySet Name="TCURC_CT_Set"
-						   EntityType="com.sap.gateway.f4.h_tcurc-sh.v0001.TCURC_CT" />
+				<EntitySet Name="H_EPM_BP_SH_Set"
+						   EntityType="com.sap.gateway.f4.h_epm_pr-sh.v0001.H_EPM_BP_SH" />
+				<EntitySet Name="H_EPM_PR_SH_Set"
+						   EntityType="com.sap.gateway.f4.h_epm_pr-sh.v0001.H_EPM_PR_SH" />
+				<EntitySet Name="H_T002_SH_Set"
+						   EntityType="com.sap.gateway.f4.h_epm_pr-sh.v0001.H_T002_SH" />
 			</EntityContainer>
-			<Annotations Target="SAP__self.Container/H_TCURC_SH_Set">
+			<Annotations Target="SAP__self.Container/H_EPM_PR_SH_Set">
 				<Annotation Term="SAP__capabilities.SearchRestrictions">
 					<Record>
 						<PropertyValue Property="Searchable" Bool="false" />
@@ -72,7 +89,7 @@
 						<PropertyValue Property="FilterExpressionRestrictions">
 							<Collection>
 								<Record>
-									<PropertyValue Property="Property" PropertyPath="WAERS" />
+									<PropertyValue Property="Property" PropertyPath="LANGU" />
 									<PropertyValue Property="AllowedExpressions"
 												   String="MultiValue" />
 								</Record>
@@ -90,46 +107,30 @@
 					</Record>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="SAP__ParentService.SalesOrder/CurrencyCode">
+			<Annotations Target="SAP__ParentService.SOLineItem/ProductID">
 				<Annotation Term="SAP__common.ValueListMapping">
 					<Record>
-						<PropertyValue Property="CollectionPath" String="H_TCURC_SH_Set" />
+						<PropertyValue Property="CollectionPath" String="H_EPM_PR_SH_Set" />
 						<PropertyValue Property="Parameters">
 							<Collection>
 								<Record Type="SAP__common.ValueListParameterInOut">
 									<PropertyValue Property="LocalDataProperty"
-												   PropertyPath="CurrencyCode" />
-									<PropertyValue Property="ValueListProperty" String="WAERS" />
+												   PropertyPath="ProductID" />
+									<PropertyValue Property="ValueListProperty"
+												   String="PRODUCT_ID" />
 								</Record>
 								<Record Type="SAP__common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="LTEXT" />
+									<PropertyValue Property="ValueListProperty" String="LANGU" />
+								</Record>
+								<Record Type="SAP__common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="TEXT" />
 								</Record>
 							</Collection>
 						</PropertyValue>
 					</Record>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="SAP__self.H_TCURC_SH/WAERS">
-				<Annotation Term="SAP__common.UnitSpecificScale" Path="CURRDEC" />
-				<Annotation Term="SAP__common.ValueListMapping">
-					<Record>
-						<PropertyValue Property="CollectionPath" String="TCURC_CT_Set" />
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="SAP__common.ValueListParameterInOut">
-									<PropertyValue Property="LocalDataProperty"
-												   PropertyPath="WAERS" />
-									<PropertyValue Property="ValueListProperty" String="WAERS" />
-								</Record>
-								<Record Type="SAP__common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="LTEXT" />
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Container/TCURC_CT_Set">
+			<Annotations Target="SAP__self.Container/H_T002_SH_Set">
 				<Annotation Term="SAP__capabilities.SearchRestrictions">
 					<Record>
 						<PropertyValue Property="Searchable" Bool="false" />
@@ -140,7 +141,7 @@
 						<PropertyValue Property="FilterExpressionRestrictions">
 							<Collection>
 								<Record>
-									<PropertyValue Property="Property" PropertyPath="WAERS" />
+									<PropertyValue Property="Property" PropertyPath="SPRAS" />
 									<PropertyValue Property="AllowedExpressions"
 												   String="MultiValue" />
 								</Record>
@@ -158,8 +159,60 @@
 					</Record>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="SAP__self.TCURC_CT/WAERS">
-				<Annotation Term="SAP__common.UnitSpecificScale" Path="CURRDEC" />
+			<Annotations Target="SAP__self.H_EPM_PR_SH/LANGU">
+				<Annotation Term="SAP__common.ValueListMapping">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="H_T002_SH_Set" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="SAP__common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="LANGU" />
+									<PropertyValue Property="ValueListProperty" String="SPRAS" />
+								</Record>
+								<Record Type="SAP__common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="SPTXT" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/H_EPM_BP_SH_Set">
+				<Annotation Term="SAP__capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.H_EPM_PR_SH/SUPPLIER_ID">
+				<Annotation Term="SAP__common.ValueListMapping">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="H_EPM_BP_SH_Set" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="SAP__common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="SUPPLIER_ID" />
+									<PropertyValue Property="ValueListProperty" String="BP_ID" />
+								</Record>
+								<Record Type="SAP__common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="COMPANY_NAME" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Container">
 				<Annotation Term="SAP__capabilities.FilterFunctions">

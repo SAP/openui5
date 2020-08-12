@@ -97,8 +97,8 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.earlyRequests=false]
 	 *   Whether the following is requested at the earliest convenience:
 	 *   <ul>
-	 *   <li> root $metadata document and annotation files;
-	 *   <li> the security token.
+	 *     <li> root $metadata document and annotation files;
+	 *     <li> the security token.
 	 *   </ul>
 	 *   Note: The root $metadata document and annotation files are just requested but not yet
 	 *   converted from XML to JSON unless really needed.
@@ -179,21 +179,19 @@ sap.ui.define([
 	 *
 	 *   <b>Group IDs</b> control the model's use of batch requests. Valid group IDs are:
 	 *   <ul>
-	 *   <li><b>$auto</b> and <b>$auto.*</b>: Bundles requests from the model in a batch request
-	 *   which is sent automatically before rendering. You can use different '$auto.*' group IDs to
-	 *   use different batch requests. The suffix may be any non-empty string consisting of
-	 *   alphanumeric characters from the basic Latin alphabet, including the underscore. The submit
-	 *   mode for these group IDs is always {@link sap.ui.model.odata.v4.SubmitMode#Auto}.
-	 *   </li>
-	 *   <li><b>$direct</b>: Sends requests directly without batch. The submit mode for this group
-	 *   ID is always {@link sap.ui.model.odata.v4.SubmitMode#Direct}.
-	 *   </li>
-	 *   <li>An application group ID, which is a non-empty string consisting of alphanumeric
-	 *   characters from the basic Latin alphabet, including the underscore. By default, an
-	 *   application group has the submit mode {@link sap.ui.model.odata.v4.SubmitMode#API}. It is
-	 *   possible to use a different submit mode; for details see
-	 *   <code>mParameters.groupProperties</code>.
-	 *   </li>
+	 *     <li> <b>$auto</b> and <b>$auto.*</b>: Bundles requests from the model in a batch request
+	 *       which is sent automatically before rendering. You can use different '$auto.*' group IDs
+	 *       to use different batch requests. The suffix may be any non-empty string consisting of
+	 *       alphanumeric characters from the basic Latin alphabet, including the underscore. The
+	 *       submit mode for these group IDs is always
+	 *       {@link sap.ui.model.odata.v4.SubmitMode#Auto}.
+	 *     <li> <b>$direct</b>: Sends requests directly without batch. The submit mode for this
+	 *       group ID is always {@link sap.ui.model.odata.v4.SubmitMode#Direct}.
+	 *     <li> An application group ID, which is a non-empty string consisting of alphanumeric
+	 *       characters from the basic Latin alphabet, including the underscore. By default, an
+	 *       application group has the submit mode {@link sap.ui.model.odata.v4.SubmitMode#API}. It
+	 *       is possible to use a different submit mode; for details see
+	 *       <code>mParameters.groupProperties</code>.
 	 *   </ul>
 	 *
 	 * @extends sap.ui.model.Model
@@ -485,11 +483,11 @@ sap.ui.define([
 	 *   {@link #createBindingContext}.
 	 *   The following OData query options are allowed:
 	 *   <ul>
-	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $count, $expand, $filter, $levels, $orderby, $search and $select
-	 *   "5.1 System Query Options"; OData V4 only allows $count, $filter, $levels, $orderby and
-	 *   $search inside resource paths that identify a collection. In our case here, this means you
-	 *   can only use them inside $expand.
+	 *     <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *     <li> The $count, $expand, $filter, $levels, $orderby, $search and $select
+	 *       "5.1 System Query Options"; OData V4 only allows $count, $filter, $levels, $orderby and
+	 *       $search inside resource paths that identify a collection. In our case here, this means
+	 *       you can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -596,9 +594,9 @@ sap.ui.define([
 	 *   or if it has sorters or filters.
 	 *   The following OData query options are allowed:
 	 *   <ul>
-	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $count, $expand, $filter, $levels, $orderby, $search, and $select
-	 *   "5.1 System Query Options"
+	 *     <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *     <li> The $apply, $count, $expand, $filter, $levels, $orderby, $search, and $select
+	 *       "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -638,26 +636,26 @@ sap.ui.define([
 	 *   <b>Note:</b> These bindings are read-only, so they may especially be useful for value
 	 *   lists; the following APIs are <b>not</b> allowed
 	 *   <ul>
-	 *   <li> for the list binding itself:
-	 *   <ul>
-	 *   <li> {@link sap.ui.model.odata.v4.ODataListBinding#create}
-	 *   </ul>
-	 *   <li> for the {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header context}
-	 *   of a list binding:
-	 *   <ul>
-	 *   <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
-	 *   </ul>
-	 *   <li> for the context of a list binding representing a single entity:
-	 *   <ul>
-	 *   <li> {@link sap.ui.model.odata.v4.Context#delete}
-	 *   <li> {@link sap.ui.model.odata.v4.Context#refresh}
-	 *   <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
-	 *   <li> {@link sap.ui.model.odata.v4.Context#setProperty}
-	 *   </ul>
-	 *   <li> for a dependent property binding of the list binding:
-	 *   <ul>
-	 *   <li> {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}
-	 *   </ul>
+	 *     <li> for the list binding itself:
+	 *       <ul>
+	 *         <li> {@link sap.ui.model.odata.v4.ODataListBinding#create}
+	 *       </ul>
+	 *     <li> for the {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header
+	 *       context} of a list binding:
+	 *       <ul>
+	 *         <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
+	 *       </ul>
+	 *     <li> for the context of a list binding representing a single entity:
+	 *       <ul>
+	 *         <li> {@link sap.ui.model.odata.v4.Context#delete}
+	 *         <li> {@link sap.ui.model.odata.v4.Context#refresh}
+	 *         <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
+	 *         <li> {@link sap.ui.model.odata.v4.Context#setProperty}
+	 *       </ul>
+	 *     <li> for a dependent property binding of the list binding:
+	 *       <ul>
+	 *         <li> {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}
+	 *       </ul>
 	 *   </ul>
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
@@ -757,10 +755,10 @@ sap.ui.define([
 	 * of a back-end query; they are ignored and not added to the map.
 	 * The following query options are disallowed:
 	 * <ul>
-	 * <li> System query options (key starts with "$"), unless
-	 * <code>bSystemQueryOptionsAllowed</code> is set
-	 * <li> Parameter aliases (key starts with "@")
-	 * <li> Custom query options starting with "sap-", unless <code>bSapAllowed</code> is set
+	 *   <li> System query options (key starts with "$"), unless
+	 *     <code>bSystemQueryOptionsAllowed</code> is set
+	 *   <li> Parameter aliases (key starts with "@")
+	 *   <li> Custom query options starting with "sap-", unless <code>bSapAllowed</code> is set
 	 * </ul>
 	 *
 	 * @param {object} [mParameters={}]
@@ -863,12 +861,12 @@ sap.ui.define([
 	 * headers: Headers with an <code>undefined</code> value are removed, the other headers are set,
 	 * and missing headers remain unchanged. The following headers must not be used:
 	 * <ul>
-	 * <li> OData V4 requests headers as specified in "8.1 Common Headers" and
-	 *   "8.2 Request Headers" of the specification "OData Version 4.0 Part 1: Protocol"
-	 * <li> OData V2 request headers as specified in "2.2.5 HTTP Header Fields" of the specification
-	 *   "OData Version 2 v10.1"
-	 * <li> The headers "Content-Id" and "Content-Transfer-Encoding"
-	 * <li> The header "SAP-ContextId"
+	 *   <li> OData V4 requests headers as specified in "8.1 Common Headers" and
+	 *     "8.2 Request Headers" of the specification "OData Version 4.0 Part 1: Protocol"
+	 *   <li> OData V2 request headers as specified in "2.2.5 HTTP Header Fields" of the
+	 *     specification "OData Version 2 v10.1"
+	 *   <li> The headers "Content-Id" and "Content-Transfer-Encoding"
+	 *   <li> The header "SAP-ContextId"
 	 * </ul>
 	 * Note: The "X-CSRF-Token" header will not be used for metadata requests.
 	 *
@@ -1002,17 +1000,17 @@ sap.ui.define([
 	 *
 	 * Examples:
 	 * <ul>
-	 * <li><code>/Products('42')/Name##@com.sap.vocabularies.Common.v1.Label</code>
-	 *   points to the "Label" annotation of the "Name" property of the entity set "Products".
-	 * <li><code>/##Products/Name@com.sap.vocabularies.Common.v1.Label</code> has no data path part
-	 *   and thus starts at the metadata root. It also points to the "Label" annotation of the
-	 *   "Name" property of the entity set "Products".
-	 * <li><code>/Products##/</code>
-	 *   points to the entity type (note the trailing '/') of the entity set "Products".
-	 * <li><code>/EMPLOYEES('1')/##com.sap.Action</code>
-	 *   points to the metadata of an action bound to the entity set "EMPLOYEES".
-	 * <li><code>/EMPLOYEES('1')/#com.sap.Action</code>
-	 *   does not point to metadata, but to the action advertisement.
+	 *   <li> <code>/Products('42')/Name##@com.sap.vocabularies.Common.v1.Label</code>
+	 *     points to the "Label" annotation of the "Name" property of the entity set "Products".
+	 *   <li> <code>/##Products/Name@com.sap.vocabularies.Common.v1.Label</code> has no data path
+	 *     part and thus starts at the metadata root. It also points to the "Label" annotation of
+	 *     the "Name" property of the entity set "Products".
+	 *   <li> <code>/Products##/</code>
+	 *     points to the entity type (note the trailing '/') of the entity set "Products".
+	 *   <li> <code>/EMPLOYEES('1')/##com.sap.Action</code>
+	 *     points to the metadata of an action bound to the entity set "EMPLOYEES".
+	 *   <li> <code>/EMPLOYEES('1')/#com.sap.Action</code>
+	 *     does not point to metadata, but to the action advertisement.
 	 * </ul>
 	 *
 	 * @param {string} sPath

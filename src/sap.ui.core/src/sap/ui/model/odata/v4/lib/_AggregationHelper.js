@@ -114,21 +114,21 @@ sap.ui.define([
 		 *   A map from aggregatable property names or aliases to objects containing the following
 		 *   details:
 		 *   <ul>
-		 *   <li><code>grandTotal</code>: An optional boolean that tells whether a grand total for
-		 *     this aggregatable property is needed (since 1.59.0)
-		 *   <li><code>min</code>: An optional boolean that tells whether the minimum value
-		 *     (ignoring currencies or units of measure) for this aggregatable property is needed
-		 *   <li><code>max</code>: An optional boolean that tells whether the maximum value
-		 *     (ignoring currencies or units of measure) for this aggregatable property is needed
-		 *   <li><code>subtotals</code>: An optional boolean that tells whether subtotals for this
-		 *     aggregatable property are needed
-		 *   <li><code>with</code>: An optional string that provides the name of the method (for
-		 *     example "sum") used for aggregation of this aggregatable property; see
-		 *     "3.1.2 Keyword with". Both, "average" and "countdistinct" are not supported for
-		 *     subtotals or grand totals.
-		 *   <li><code>name</code>: An optional string that provides the original aggregatable
-		 *     property name in case a different alias is chosen as the name of the dynamic property
-		 *     used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
+		 *     <li> <code>grandTotal</code>: An optional boolean that tells whether a grand total
+		 *       for this aggregatable property is needed (since 1.59.0)
+		 *     <li> <code>min</code>: An optional boolean that tells whether the minimum value
+		 *       (ignoring currencies or units of measure) for this aggregatable property is needed
+		 *     <li> <code>max</code>: An optional boolean that tells whether the maximum value
+		 *       (ignoring currencies or units of measure) for this aggregatable property is needed
+		 *     <li> <code>subtotals</code>: An optional boolean that tells whether subtotals for
+		 *       this aggregatable property are needed
+		 *     <li> <code>with</code>: An optional string that provides the name of the method (for
+		 *       example "sum") used for aggregation of this aggregatable property; see
+		 *       "3.1.2 Keyword with". Both, "average" and "countdistinct" are not supported for
+		 *       subtotals or grand totals.
+		 *     <li> <code>name</code>: An optional string that provides the original aggregatable
+		 *       property name in case a different alias is chosen as the name of the dynamic
+		 *       property used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
 		 *   </ul>
 		 * @param {object} [oAggregation.group]
 		 *   A map from groupable property names to empty objects

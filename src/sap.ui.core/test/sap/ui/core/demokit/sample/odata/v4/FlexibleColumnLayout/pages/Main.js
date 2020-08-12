@@ -4,19 +4,43 @@
 sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/actions/Press"
-], function (Helper, Opa5, Press) {
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/Properties"
+], function (Helper, Opa5, Press, Properties) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main";
 
 	Opa5.createPageObjects({
 		onTheApplication : {
 			actions : {
+				closeDialog : function (sTitle) {
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						matchers : new Properties({title : sTitle}),
+						success : function (aControls) {
+							new Press().executeOn(aControls[0].getButtons()[0]);
+							Opa5.assert.ok(true, "Success Dialog closed");
+						}
+					});
+				},
 				pressCancel : function () {
 					return Helper.pressButton(this, sViewName, "cancel");
 				},
 				pressSave : function () {
 					return Helper.pressButton(this, sViewName, "save");
+				}
+			},
+			assertions : {
+				checkMessagesButtonCount : function (iExpectedCount) {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						id : "showMessages",
+						success : function (oButton) {
+							Opa5.assert.strictEqual(parseInt(oButton.getText()), iExpectedCount,
+								"Message count is as expected: " + iExpectedCount);
+						},
+						viewName : sViewName
+					});
 				}
 			}
 		},
@@ -75,6 +99,17 @@ sap.ui.define([
 			actions : {
 				changeNote : function (sNote) {
 					return Helper.changeInputValue(this, sViewName, "SalesOrder::note", sNote);
+				},
+				deleteSalesOrder : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "deleteSalesOrder",
+						success : function () {
+							Opa5.assert.ok(true, "Sales order deleted");
+						},
+						viewName : sViewName
+					});
 				},
 				selectSalesOrderItem : function (iRow) {
 					return this.waitFor({
@@ -146,6 +181,17 @@ sap.ui.define([
 				changeQuantity : function (sQuantity) {
 					return Helper.changeInputValue(this, sViewName, "SO_2_ITEM::quantity",
 						sQuantity);
+				},
+				deleteSalesOrderItem : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "deleteSalesOrderItem",
+						success : function () {
+							Opa5.assert.ok(true, "Sales order item deleted");
+						},
+						viewName : sViewName
+					});
 				}
 			},
 			assertions : {

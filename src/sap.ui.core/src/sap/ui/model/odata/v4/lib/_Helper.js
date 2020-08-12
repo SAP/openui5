@@ -248,16 +248,16 @@ sap.ui.define([
 		 * @returns {Error}
 		 *   An <code>Error</code> instance with the following properties:
 		 *   <ul>
-		 *     <li><code>error</code>: The "error" value from the OData V4 error response JSON
-		 *     object (if available)
-		 *     <li><code>isConcurrentModification</code>: <code>true</code> In case of a
-		 *     concurrent modification detected via ETags (i.e. HTTP status code 412)
-		 *     <li><code>message</code>: Error message
-		 *     <li><code>requestUrl</code>: The request URL
-		 *     <li><code>resourcePath</code>: The path by which this resource has originally been
-		 *     requested
-		 *     <li><code>status</code>: HTTP status code
-		 *     <li><code>statusText</code>: (optional) HTTP status text
+		 *     <li> <code>error</code>: The "error" value from the OData V4 error response JSON
+		 *       object (if available)
+		 *     <li> <code>isConcurrentModification</code>: <code>true</code> In case of a
+		 *       concurrent modification detected via ETags (i.e. HTTP status code 412)
+		 *     <li> <code>message</code>: Error message
+		 *     <li> <code>requestUrl</code>: The request URL
+		 *     <li> <code>resourcePath</code>: The path by which this resource has originally been
+		 *       requested
+		 *     <li> <code>status</code>: HTTP status code
+		 *     <li> <code>statusText</code>: (optional) HTTP status text
 		 *   </ul>
 		 * @see <a href=
 		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html"
@@ -1368,8 +1368,8 @@ sap.ui.define([
 		 * - oTarget and oSource are expected to have the same structure; when there is an
 		 *   object at a given path in either of them, the other one must have an object or
 		 *   <code>null</code>.
-		 * - no change events for collection-valued properties
-		 * - does not update collection-valued navigation properties
+		 * - no change events for collection-valued properties; list bindings without own cache must
+		 *   refresh when updateAll is used to update cache data.
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path
 		 * @param {string} sPath The path of the old object in mChangeListeners
@@ -1401,8 +1401,7 @@ sap.ui.define([
 						_Helper.setPrivateAnnotation(oTarget, "predicate", sSourcePredicate);
 					}
 				} else if (Array.isArray(vSourceProperty)) {
-					// copy complete collection; no change events as long as collection-valued
-					// properties are not supported
+					// copy complete collection w/o firing change events
 					oTarget[sProperty] = vSourceProperty;
 				} else if (vSourceProperty && typeof vSourceProperty === "object") {
 					oTarget[sProperty]

@@ -677,7 +677,7 @@ sap.ui.define([
 		// become pending again
 		bCacheImmutable = this.oCachePromise.isRejected()
 			|| this.oCache === null
-			|| this.oCache && this.oCache.bSentRequest;
+			|| this.oCache && this.oCache.hasSentRequest();
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sFullMetaPath = oMetaModel.getMetaPath(sResolvedChildPath);
 		aPromises = [
@@ -776,11 +776,11 @@ sap.ui.define([
 
 				// Note: in operation bindings mAggregatedQueryOptions misses the options from
 				// $$inheritExpandSelect
-				if (oCache && !oCache.bSentRequest && !that.oOperation) {
-					if (oCache.bSharedRequest) {
+				if (oCache && !oCache.hasSentRequest() && !that.oOperation) {
+					if (that.bSharedRequest) {
 						oCache.setActive(false);
 						oCache = that.createAndSetCache(that.mAggregatedQueryOptions,
-							oCache.sResourcePath, oContext);
+							oCache.getResourcePath(), oContext);
 					} else {
 						oCache.setQueryOptions(_Helper.merge({}, that.oModel.mUriParameters,
 							that.mAggregatedQueryOptions));
