@@ -359,10 +359,11 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#resolveDestination as resolveDestination
 		 * @borrows sap.ui.integration.widgets.Card#request as request
 		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
-		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as showMessage
+		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as getBaseUrl
+		 * @borrows sap.ui.integration.widgets.Card#getResourceBundle as getResourceBundle
 		 */
 		this._oLimitedInterface = new Interface(this, [
-			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl"
+			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getResourceBundle"
 		]);
 
 		this.initBadgeEnablement({
@@ -858,6 +859,25 @@ sap.ui.define([
 		}
 
 		oContent.showMessage(sMessage, sType);
+	};
+
+	/**
+	 * Gets the i18n resource bundle for the card.
+	 * This is the bundle that includes the texts from the i18n properties file defined in the manifest.
+	 *
+	 * @public
+	 * @experimental As of version 1.82.
+	 * @return {sap.base.i18n.ResourceBundle} The card's resource bundle.
+	 */
+	Card.prototype.getResourceBundle = function () {
+		var oModel = this.getModel("i18n");
+
+		if (!oModel) {
+			Log.warning("There are no translations available. Either the i18n configuration is missing or the method is called too early.");
+			return null;
+		}
+
+		return oModel.getResourceBundle();
 	};
 
 	/**

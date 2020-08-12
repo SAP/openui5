@@ -301,4 +301,47 @@ sap.ui.define([
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
+
+	QUnit.module("Use translations from inside the extension", {
+		beforeEach: function () {
+			this.fnOnCardReadyStub = sinon.stub(Extension.prototype, "onCardReady");
+
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				manifest: {
+					"sap.app": {
+						"id": "test",
+						"i18n": "manifests/translation/i18n/i18n.properties"
+					},
+					"sap.card": {
+						"type": "List",
+						"extension": "./extensions/Extension1"
+					}
+				}
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+			this.fnOnCardReadyStub.restore();
+		}
+	});
+
+	QUnit.test("Call getResourceBundle in onCardReady", function (assert) {
+		// arrange
+		var done = assert.async();
+
+		this.fnOnCardReadyStub.callsFake(function (oCard) {
+			var oBundle = oCard.getResourceBundle();
+
+			// Assert
+			assert.ok(oBundle, "The resource bundle is returned");
+			assert.strictEqual(oBundle.getText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
+
+			done();
+		});
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
 });
