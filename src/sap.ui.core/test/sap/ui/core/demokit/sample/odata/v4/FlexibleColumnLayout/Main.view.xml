@@ -70,6 +70,8 @@
 					<form:toolbar>
 						<Toolbar design="Transparent">
 							<Title id="objectPageTitle" level="H2" text="Sales Order Details"/>
+							<Button enabled="true" icon="sap-icon://delete" id="deleteSalesOrder"
+								press="onDeleteSalesOrder" tooltip="Delete sales order"/>
 						</Toolbar>
 					</form:toolbar>
 					<Toolbar design="Transparent" id="salesOrderDetailsToolbar">
@@ -138,7 +140,15 @@
 		</f:midColumnPages>
 		<f:endColumnPages>
 			<VBox id="subObjectPage" visible="{=${ui>/bSalesOrderItemSelected}}">
-				<form:SimpleForm editable="true" layout="ColumnLayout" title="Line Item Details">
+				<form:SimpleForm editable="true" layout="ColumnLayout">
+					<form:toolbar>
+						<Toolbar design="Transparent">
+							<Title level="H2" text="Line Item Details"/>
+							<Button enabled="true" icon="sap-icon://delete"
+								id="deleteSalesOrderItem" press="onDeleteSalesOrderItem"
+								tooltip="Delete sales order item"/>
+						</Toolbar>
+					</form:toolbar>
 					<Label labelFor="SO_2_ITEM::productId" text="ProductId"/>
 					<Input editable="false" id="SO_2_ITEM::productId" value="{ProductID}"/>
 					<Label labelFor="SO_2_ITEM::itemPosition" text="Sales Order Item Position"/>

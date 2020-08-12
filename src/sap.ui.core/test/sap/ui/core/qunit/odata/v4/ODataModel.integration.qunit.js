@@ -11882,6 +11882,34 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Nested list bindings with autoExpandSelect. This leads to a list binding with a
+	// virtual parent context. Such a binding must not try to read data from the cache because it is
+	// immediately destroyed again.
+	// BCP: 2080321417
+	QUnit.test("BCP: 2080321417: Auto-$expand/$select and nested list bindings", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<List id="select" items="{path : \'SO_2_SOITEM\', templateShareable : false}">\
+		<CustomListItem>\
+			<Text text="{ItemPosition}"/>\
+		</CustomListItem>\
+	</List>\
+</Table>',
+			that = this;
+
+		return oModel.getMetaModel().fetchObject("/SalesOrderList").then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)&$skip=0&$top=100",
+					{value : [{SalesOrderID : "1", SO_2_SOITEM : []}]})
+				.expectChange("id", ["1"]);
+
+			return that.createView(assert, sView, oModel);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: updates for advertised action's title caused by: refresh, side effect of edit,
 	// bound action
 	// CPOUI5UISERVICESV3-905, CPOUI5UISERVICESV3-1714
@@ -27746,6 +27774,99 @@ sap.ui.define([
 			.expectChange("currency", "");
 
 		return this.createView(assert, sView, oModel);
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario:
+	// 1. Create a view with an object page showing a sales order. Ensure that the order shares
+	//    the list's cache.
+	// 2. Select a sales order. Keep its context alive.
+	// (3. Filter the list, so that the context drops out of it. Check that the context is still
+	//    alive and has its data.)
+	// 4. Delete the kept-alive context. Check the context is deleted.
+	// JIRA: CPOUI5ODATAV4-365
+[false, true].forEach(function (bFilter) {
+	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bFilter = " + bFilter;
+	QUnit.test(sTitle, function (assert) {
+		var oKeptContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<Table id="listReport" growing="true" growingThreshold="1"\
+		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="salesOrderId" text="{SalesOrderID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=1", {
+			"@odata.count" : "42",
+			value : [{SalesOrderID : "1"}]
+		})
+		.expectChange("count")
+		.expectChange("id", ["1"])
+		.expectChange("salesOrderId");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("listReport").getBinding("items");
+
+			that.expectChange("count", "42");
+
+			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oTable = that.oView.byId("listReport");
+			oKeptContext = oTable.getItems()[0].getBindingContext();
+
+			that.expectChange("salesOrderId", "1");
+
+			// code under test
+			oKeptContext.setKeepAlive(true);
+			that.oView.byId("objectPage").setBindingContext(oKeptContext);
+
+			return that.waitForChanges(assert, "(2)");
+		}).then(function () {
+			if (!bFilter) {
+				return;
+			}
+
+			that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+				+ "&$filter=SalesOrderID ne '1'&$skip=0&$top=1", {
+				"@odata.count" : "42",
+				value : [{SalesOrderID : "2"}]
+			})
+			.expectChange("id", ["2"]);
+
+			oTable.getBinding("items").filter(new Filter("SalesOrderID", FilterOperator.NE, "1"));
+
+			return that.waitForChanges(assert, "(3)");
+		}).then(function () {
+			that.expectRequest({
+				method : "DELETE",
+				url : "SalesOrderList('1')"
+			})
+			.expectChange("salesOrderId", null)
+			.expectChange("count", "41");
+
+			if (!bFilter) {// reload data
+				that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=1",
+					{
+						value : [{SalesOrderID : "2"}]
+					})
+				.expectChange("id", ["2"]);
+			}
+
+			return Promise.all([
+				// code under test
+				oKeptContext.delete(),
+				that.waitForChanges(assert, "(4)")
+			]);
+		});
 	});
 });
 

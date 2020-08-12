@@ -1575,9 +1575,9 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with an object having the following properties:
 	 *   <ul>
-	 *    <li><code>editUrl</code>: The edit URL or undefined if the entity is transient
-	 *    <li><code>entityPath</code>: The resolved, absolute path of the entity to be PATCHed
-	 *    <li><code>propertyPath</code>: The path of the property relative to the entity
+	 *     <li> <code>editUrl</code>: The edit URL or undefined if the entity is transient
+	 *     <li> <code>entityPath</code>: The resolved, absolute path of the entity to be PATCHed
+	 *     <li> <code>propertyPath</code>: The path of the property relative to the entity
 	 *   </ul>
 	 *   The promise is rejected if the requested metadata cannot be loaded or the key predicate
 	 *   cannot be determined.
@@ -2403,14 +2403,14 @@ sap.ui.define([
 	 *   A promise resolving with the customizing which is a map from the code key to an object with
 	 *   the following properties:
 	 *   <ul>
-	 *   <li>StandardCode: The language-independent standard code (e.g. ISO) for the code as
-	 *     referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code> annotation
-	 *     on the code's key, if present
-	 *   <li>Text: The language-dependent text for the code as referred to via the
-	 *     <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the code's key
-	 *   <li>UnitSpecificScale: The decimals for the code as referred to via the
-	 *     <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the code's
-	 *     key; entries where this would be <code>null</code> are ignored, and an error is logged
+	 *     <li> StandardCode: The language-independent standard code (e.g. ISO) for the code as
+	 *       referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code>
+	 *       annotation on the code's key, if present
+	 *     <li> Text: The language-dependent text for the code as referred to via the
+	 *       <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the code's key
+	 *     <li> UnitSpecificScale: The decimals for the code as referred to via the
+	 *       <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the code's
+	 *       key; entries where this would be <code>null</code> are ignored, and an error is logged
 	 *   </ul>
 	 *   It resolves with <code>null</code>, if no given
 	 *   <code>com.sap.vocabularies.CodeList.v1.*</code> annotation is found.
@@ -2585,15 +2585,15 @@ sap.ui.define([
 	 *   A promise resolving with the currency customizing which is a map from currency key to an
 	 *   object with the following properties:
 	 *   <ul>
-	 *   <li>StandardCode: The language-independent standard code (e.g. ISO) for the currency as
-	 *     referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code> annotation
-	 *     on the currency's key, if present
-	 *   <li>Text: The language-dependent text for the currency as referred to via the
-	 *     <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the currency's key
-	 *   <li>UnitSpecificScale: The decimals for the currency as referred to via the
-	 *     <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the
-	 *     currency's key; entries where this would be <code>null</code> are ignored, and an error
-	 *     is logged
+	 *     <li> StandardCode: The language-independent standard code (e.g. ISO) for the currency as
+	 *       referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code>
+	 *       annotation on the currency's key, if present
+	 *     <li> Text: The language-dependent text for the currency as referred to via the
+	 *       <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the currency's key
+	 *     <li> UnitSpecificScale: The decimals for the currency as referred to via the
+	 *       <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the
+	 *       currency's key; entries where this would be <code>null</code> are ignored, and an error
+	 *       is logged
 	 *   </ul>
 	 *   It resolves with <code>null</code>, if no
 	 *   <code>com.sap.vocabularies.CodeList.v1.CurrencyCodes</code> annotation is found.
@@ -2682,15 +2682,15 @@ sap.ui.define([
 	 * The segment "@sapui.name" refers back to the last OData name (simple identifier or qualified
 	 * name) or annotation name encountered during path traversal immediately before "@sapui.name":
 	 * <ul>
-	 * <li> "/EMPLOYEES@sapui.name" results in "EMPLOYEES" and "/EMPLOYEES/@sapui.name"
-	 * results in the same as "/EMPLOYEES/$Type", that is, the qualified name of the entity set's
-	 * type (see below how "$Type" is inserted implicitly). Note how the separating slash again
-	 * makes a difference here.
-	 * <li> "/EMPLOYEES/@com.sap.vocabularies.Common.v1.Label@sapui.name" results in
-	 * "@com.sap.vocabularies.Common.v1.Label" and a slash does not make any difference as long as
-	 * the annotation does not have a "$Type" property.
-	 * <li> A technical property (that is, a numerical segment or one starting with a "$")
-	 * immediately before "@sapui.name" is invalid, for example "/$EntityContainer@sapui.name".
+	 *   <li> "/EMPLOYEES@sapui.name" results in "EMPLOYEES" and "/EMPLOYEES/@sapui.name"
+	 *     results in the same as "/EMPLOYEES/$Type", that is, the qualified name of the entity
+	 *     set's type (see below how "$Type" is inserted implicitly). Note how the separating slash
+	 *     again makes a difference here.
+	 *   <li> "/EMPLOYEES/@com.sap.vocabularies.Common.v1.Label@sapui.name" results in
+	 *     "@com.sap.vocabularies.Common.v1.Label" and a slash does not make any difference as long
+	 *     as the annotation does not have a "$Type" property.
+	 *   <li> A technical property (that is, a numerical segment or one starting with a "$")
+	 *     immediately before "@sapui.name" is invalid, for example "/$EntityContainer@sapui.name".
 	 * </ul>
 	 * The path must not continue after "@sapui.name".
 	 *
@@ -2750,14 +2750,14 @@ sap.ui.define([
 	 * and returns the result of this {@link #requestObject} call. The additional details are given
 	 * as an object with the following properties:
 	 * <ul>
-	 * <li><code>{boolean} $$valueAsPromise</code> Whether the computed annotation may return a
-	 *   <code>Promise</code> resolving with its value (since 1.57.0)
-	 * <li><code>{@link sap.ui.model.Context} context</code> Points to the current object
-	 * <li><code>{object} overload</code> In case of annotations of an operation or a parameter, if
-	 *   filtering by binding parameter determines a single operation overload, that overload is
-	 *   passed (since 1.71.0), else <code>undefined</code>
-	 * <li><code>{string} schemaChildName</code> The qualified name of the schema child where the
-	 *   computed annotation has been found
+	 *   <li> <code>{boolean} $$valueAsPromise</code> Whether the computed annotation may return a
+	 *     <code>Promise</code> resolving with its value (since 1.57.0)
+	 *   <li> <code>{@link sap.ui.model.Context} context</code> Points to the current object
+	 *   <li> <code>{object} overload</code> In case of annotations of an operation or a parameter,
+	 *     if filtering by binding parameter determines a single operation overload, that overload
+	 *     is passed (since 1.71.0), else <code>undefined</code>
+	 *   <li> <code>{string} schemaChildName</code> The qualified name of the schema child where the
+	 *     computed annotation has been found
 	 * </ul>
 	 * Computed annotations cannot be iterated by "@". The path must not continue after a computed
 	 * annotation. Since 1.77.0, arguments can be given to a computed annotation much like a
@@ -2781,55 +2781,56 @@ sap.ui.define([
 	 * since 1.71.0, or "$Parameter", since 1.73.0) needs special preparations. The same applies to
 	 * the empty segment after a trailing slash.
 	 * <ol>
-	 * <li> If the current object has a "$Action", "$Function" or "$Type" property, it is used for
-	 *    scope lookup first. This way, "/EMPLOYEES/ENTRYDATE" addresses the same object as
-	 *    "/EMPLOYEES/$Type/ENTRYDATE", namely the "ENTRYDATE" child of the entity type
-	 *    corresponding to the "EMPLOYEES" child of the entity container. The other cases jump from
-	 *    an operation import to the corresponding operation overloads.
-	 * <li> Else if the segment is the first one within its path, the last schema child addressed
-	 *    via scope lookup is used instead of the current object. This can only happen indirectly as
-	 *    in "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/..." where the schema child is the
-	 *    entity container and the navigation property binding can contain the simple identifier of
-	 *    another entity set within the same container.
+	 *   <li> If the current object has a "$Action", "$Function" or "$Type" property, it is used for
+	 *     scope lookup first. This way, "/EMPLOYEES/ENTRYDATE" addresses the same object as
+	 *     "/EMPLOYEES/$Type/ENTRYDATE", namely the "ENTRYDATE" child of the entity type
+	 *     corresponding to the "EMPLOYEES" child of the entity container. The other cases jump
+	 *     from an operation import to the corresponding operation overloads.
+	 *   <li> Else if the segment is the first one within its path, the last schema child addressed
+	 *     via scope lookup is used instead of the current object. This can only happen indirectly
+	 *     as in "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/..." where the schema child is
+	 *     the entity container and the navigation property binding can contain the simple
+	 *     identifier of another entity set within the same container.
 	 *
-	 *    If the segment is the first one overall, "$EntityContainer" is inserted into the path
-	 *    implicitly. In other words, the entity container is used as the initial schema child.
-	 *    This way, "/EMPLOYEES" addresses the same object as "/$EntityContainer/EMPLOYEES", namely
-	 *    the "EMPLOYEES" child of the entity container.
-	 * <li> Afterwards, if the current object is an array, it represents overloads for an operation.
-	 *    Annotations of an operation (since 1.71.0) or a parameter (since 1.66.0) can be
-	 *    immediately addressed, no matter if they apply for a single overload or for all overloads
-	 *    at the same time, for example "/TEAMS/acme.NewAction@" or
-	 *    "/TEAMS/acme.NewAction/Team_ID@". Annotations of an unbound operation overload can be
-	 *    addressed like "/OperationImport/@$ui5.overload@", while "/OperationImport/@" addresses
-	 *    annotations of the operation import itself. The special name "$ReturnType" can be used
-	 *    (since 1.71.0) like a parameter to address annotations of the return type instead, for
-	 *    example "/TEAMS/acme.NewAction/$ReturnType@".
+	 *     If the segment is the first one overall, "$EntityContainer" is inserted into the path
+	 *     implicitly. In other words, the entity container is used as the initial schema child.
+	 *     This way, "/EMPLOYEES" addresses the same object as "/$EntityContainer/EMPLOYEES", namely
+	 *     the "EMPLOYEES" child of the entity container.
+	 *   <li> Afterwards, if the current object is an array, it represents overloads for an
+	 *     operation. Annotations of an operation (since 1.71.0) or a parameter (since 1.66.0) can be
+	 *     immediately addressed, no matter if they apply for a single overload or for all overloads
+	 *     at the same time, for example "/TEAMS/acme.NewAction@" or
+	 *     "/TEAMS/acme.NewAction/Team_ID@". Annotations of an unbound operation overload can be
+	 *     addressed like "/OperationImport/@$ui5.overload@", while "/OperationImport/@" addresses
+	 *     annotations of the operation import itself. The special name "$ReturnType" can be used
+	 *     (since 1.71.0) like a parameter to address annotations of the return type instead, for
+	 *     example "/TEAMS/acme.NewAction/$ReturnType@".
 	 *
-	 *    Operation overloads are then filtered by binding parameter; multiple overloads after
-	 *    filtering are invalid except if addressing all overloads via the segment "@$ui5.overload",
-	 *    for example "/acme.NewAction/@$ui5.overload".
+	 *     Operation overloads are then filtered by binding parameter; multiple overloads after
+	 *     filtering are invalid except if addressing all overloads via the segment
+	 *     "@$ui5.overload", for example "/acme.NewAction/@$ui5.overload".
 	 *
-	 *    Once a single overload has been determined, its parameters can be immediately addressed,
-	 *    for example "/TEAMS/acme.NewAction/Team_ID", or the special name "$Parameter" can be used
-	 *    (since 1.73.0), for example "/TEAMS/acme.NewAction/$Parameter/Team_ID". The special name
-	 *    "$ReturnType" can be used (since 1.71.0) like a parameter to address the return type
-	 *    instead, for example "/TEAMS/acme.NewAction/$ReturnType". For all other names, the
-	 *    overload's "$ReturnType/$Type" is used for scope lookup. This way, "/GetOldestWorker/AGE"
-	 *    addresses the same object as "/GetOldestWorker/$ReturnType/AGE" or
-	 *    "/GetOldestWorker/$Function/0/$ReturnType/$Type/AGE", and
-	 *    "/TEAMS/acme.NewAction/MemberCount" (assuming "MemberCount" is not a parameter in this
-	 *    example) addresses the same object as "/TEAMS/acme.NewAction/$ReturnType/MemberCount" or
-	 *    "/TEAMS/acme.NewAction/@$ui5.overload/0/$ReturnType/$Type/MemberCount". In case a name
-	 *    can refer both to a parameter and to a property of the return type, an empty segment can
-	 *    be used instead of "@$ui5.overload/0/$ReturnType/$Type" or "$ReturnType" to force return
-	 *    type lookup, for example "/TEAMS/acme.NewAction//Team_ID".
+	 *     Once a single overload has been determined, its parameters can be immediately addressed,
+	 *     for example "/TEAMS/acme.NewAction/Team_ID", or the special name "$Parameter" can be used
+	 *     (since 1.73.0), for example "/TEAMS/acme.NewAction/$Parameter/Team_ID". The special name
+	 *     "$ReturnType" can be used (since 1.71.0) like a parameter to address the return type
+	 *     instead, for example "/TEAMS/acme.NewAction/$ReturnType". For all other names, the
+	 *     overload's "$ReturnType/$Type" is used for scope lookup. This way, "/GetOldestWorker/AGE"
+	 *     addresses the same object as "/GetOldestWorker/$ReturnType/AGE" or
+	 *     "/GetOldestWorker/$Function/0/$ReturnType/$Type/AGE", and
+	 *     "/TEAMS/acme.NewAction/MemberCount" (assuming "MemberCount" is not a parameter in this
+	 *     example) addresses the same object as "/TEAMS/acme.NewAction/$ReturnType/MemberCount" or
+	 *     "/TEAMS/acme.NewAction/@$ui5.overload/0/$ReturnType/$Type/MemberCount". In case a name
+	 *     can refer both to a parameter and to a property of the return type, an empty segment can
+	 *     be used instead of "@$ui5.overload/0/$ReturnType/$Type" or "$ReturnType" to force return
+	 *     type lookup, for example "/TEAMS/acme.NewAction//Team_ID".
 	 *
-	 *    For primitive return types, the special segment "value" can be used to refer to the return
-	 *    type itself (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). This way,
-	 *    "/GetOldestAge/value" addresses the same object as "/GetOldestAge/$ReturnType"
-	 *    or "/GetOldestAge/$Function/0/$ReturnType" or "/GetOldestAge/@$ui5.overload/0/$ReturnType"
-	 *    (which is needed for automatic type determination, see {@link #requestUI5Type}).
+	 *     For primitive return types, the special segment "value" can be used to refer to the
+	 *     return type itself (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). This
+	 *     way, "/GetOldestAge/value" addresses the same object as "/GetOldestAge/$ReturnType"
+	 *     or "/GetOldestAge/$Function/0/$ReturnType" or
+	 *     "/GetOldestAge/@$ui5.overload/0/$ReturnType" (which is needed for automatic type
+	 *     determination, see {@link #requestUI5Type}).
 	 * </ol>
 	 *
 	 * A trailing slash can be used to continue a path and thus force scope lookup or OData simple
@@ -2914,14 +2915,14 @@ sap.ui.define([
 	 *   A promise resolving with the unit customizing which is a map from unit key to an object
 	 *   with the following properties:
 	 *   <ul>
-	 *   <li>StandardCode: The language-independent standard code (e.g. ISO) for the unit as
-	 *     referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code> annotation
-	 *     on the unit's key, if present
-	 *   <li>Text: The language-dependent text for the unit as referred to via the
-	 *     <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the unit's key
-	 *   <li>UnitSpecificScale: The decimals for the unit as referred to via the
-	 *     <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the unit's
-	 *     key; entries where this would be <code>null</code> are ignored, and an error is logged
+	 *     <li> StandardCode: The language-independent standard code (e.g. ISO) for the unit as
+	 *       referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code>
+	 *       annotation on the unit's key, if present
+	 *     <li> Text: The language-dependent text for the unit as referred to via the
+	 *       <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the unit's key
+	 *     <li> UnitSpecificScale: The decimals for the unit as referred to via the
+	 *       <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the unit's
+	 *       key; entries where this would be <code>null</code> are ignored, and an error is logged
 	 *   </ul>
 	 *   It resolves with <code>null</code>, if no
 	 *   <code>com.sap.vocabularies.CodeList.v1.UnitOfMeasure</code> annotation is found.

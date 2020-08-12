@@ -163,7 +163,6 @@ sap.ui.define([
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheSuccessInfo.confirm();
 				When.onTheMainPage.pressConfirmSalesOrderButton();
-				//TODO how to wait until confirmation is done?
 
 				// test refresh single row
 				// preparation
@@ -181,6 +180,21 @@ sap.ui.define([
 				// test: refresh single refreshes also dependent bindings
 				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
 				Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
+
+				// Create a sales order line item; change Product ID manually
+				When.onTheMainPage.pressCreateSalesOrderItemButton();
+				When.onTheMainPage.selectSalesOrderItemWithPosition("");
+				When.onTheMainPage.changeProductIDinLineItem(1, "HT-1010");
+				When.onTheMainPage.pressSaveSalesOrderButton();
+				When.onTheSuccessInfo.confirm();
+				Then.onTheMainPage.checkProductNameInLineItem(1, "Notebook Professional 15");
+				Then.onTheMainPage.checkSalesOrderItemsCount(2);
+				// and via value help
+				When.onTheMainPage.pressValueHelpOnProductID(1);
+				When.onTheValueHelpPopover.selectByKey("HT-1000");
+				Then.onTheMainPage.checkProductNameInLineItem(1, "Notebook Professional 15");
+				When.onTheMainPage.pressSaveSalesOrderButton();
+				Then.onTheMainPage.checkProductNameInLineItem(1, "Notebook Basic 15");
 			}
 
 			// delete created sales orders

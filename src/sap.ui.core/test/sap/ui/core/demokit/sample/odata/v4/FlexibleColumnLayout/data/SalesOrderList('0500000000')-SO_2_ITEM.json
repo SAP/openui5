@@ -10,8 +10,7 @@
 		"Quantity" : "4.000",
 		"QuantityUnit" : "EA",
 		"ProductID" : "HT-1002"
-	},
-	{
+	}, {
 		"SalesOrderID" : "0500000000",
 		"ItemPosition" : "0000000020",
 		"CurrencyCode" : "EUR",
@@ -19,8 +18,7 @@
 		"Quantity" : "2.000",
 		"QuantityUnit" : "EA",
 		"ProductID" : "HT-1001"
-	},
-	{
+	}, {
 		"SalesOrderID" : "0500000000",
 		"ItemPosition" : "0000000030",
 		"CurrencyCode" : "EUR",
@@ -28,8 +26,7 @@
 		"Quantity" : "2.000",
 		"QuantityUnit" : "EA",
 		"ProductID" : "HT-1020"
-	},
-	{
+	}, {
 		"SalesOrderID" : "0500000000",
 		"ItemPosition" : "0000000040",
 		"CurrencyCode" : "EUR",
@@ -37,8 +34,7 @@
 		"Quantity" : "2.000",
 		"QuantityUnit" : "EA",
 		"ProductID" : "HT-1003"
-	},
-	{
+	}, {
 		"SalesOrderID" : "0500000000",
 		"ItemPosition" : "0000000050",
 		"CurrencyCode" : "USD",

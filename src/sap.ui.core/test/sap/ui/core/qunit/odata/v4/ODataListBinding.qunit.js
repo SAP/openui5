@@ -1617,6 +1617,22 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Note: This happens for a list binding below another list binding during autoExpandSelect
+	QUnit.test("getContexts: below a virtual context", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/},
+				"/TEAMS('1')/" + Context.VIRTUAL, Context.VIRTUAL),
+			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("fetchContexts").never();
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		assert.deepEqual(oBinding.getContexts(0, 10, 100), []);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getContexts: RemoveVirtualContext", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
@@ -1639,25 +1655,30 @@ sap.ui.define([
 [
 	{bCanceled : true, bDataRequested : true},
 	{bCanceled : false, bDataRequested : false},
-	{bCanceled : false, bDataRequested : true}
+	{bCanceled : false, bDataRequested : true},
+	{bCanceled : false, bDataRequested : true, bDestroyed : true}
 ].forEach(function (oFixture) {
-	var sTitle = "getContexts: error in fetchContexts, dataRequested=" + oFixture.bDataRequested
-			+ ", canceled=" + oFixture.bCanceled;
+	var sTitle = "getContexts: error in fetchContexts, " + JSON.stringify(oFixture);
 
 	QUnit.test(sTitle, function (assert) {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oError = {canceled : oFixture.bCanceled},
 			oFetchContextsCall,
-			oFetchContextsPromise = SyncPromise.resolve(Promise.reject(oError));
+			oFetchContextsPromise = SyncPromise.resolve(Promise.resolve().then(function () {
+				if (oFixture.bDestroyed) {
+					oBinding.destroy();
+				}
+				throw oError;
+			}));
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
 		oFetchContextsCall = this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(0, 10, 100, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
 		this.mock(oBinding.oModel).expects("reportError")
 			.withExactArgs("Failed to get contexts for /service/~ with start index 0 and length 10",
 				sClassName, sinon.match.same(oError));
@@ -3406,6 +3427,45 @@ sap.ui.define([
 		return oBinding._delete("myGroup", "EMPLOYEES('1')", oContext0, oETagEntity)
 			.then(function () {
 				assert.strictEqual(oBinding.iMaxLength, 42, "iMaxLength has not been reduced");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_delete: kept-alive context not in the collection", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			aContexts = [{iIndex : 0}, {iIndex : 1}],
+			oKeptAliveContext = {
+				created : function () { return false; },
+				destroy : function () {},
+				getPath : function () { return "~contextpath~"; }
+			};
+
+		// simulate created entities which are already persisted
+		oBinding.aContexts = aContexts;
+		oBinding.iMaxLength = 42;
+		oBinding.mPreviousContextsByPath = {
+			"~contextpath~" : oKeptAliveContext,
+			doNotDelete : {bKeepAlive : true}
+		};
+
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("~contextpath~", "/EMPLOYEES").returns("~predicate~");
+		oBindingMock.expects("deleteFromCache")
+			.withExactArgs("myGroup", "EMPLOYEES('1')", "~predicate~", "oETagEntity",
+				sinon.match.func)
+			.callsArgWith(4, undefined, [/*unused*/])
+			.resolves();
+		this.mock(oKeptAliveContext).expects("destroy");
+		oBindingMock.expects("_fireChange").never();
+
+		// code under test
+		return oBinding._delete("myGroup", "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity")
+			.then(function () {
+				assert.deepEqual(oBinding.mPreviousContextsByPath,
+					{doNotDelete : {bKeepAlive : true}});
+				assert.deepEqual(oBinding.aContexts, aContexts);
+				assert.strictEqual(oBinding.iMaxLength, 41);
 			});
 	});
 
@@ -6261,12 +6321,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchDownloadUrl: empty meta path", function (assert) {
+	QUnit.test("fetchDownloadUrl", function (assert) {
 		var oBinding = this.bindList("n/a"),
 			oCache = {
-				sMetaPath : "meta/path",
-				mQueryOptions : {},
-				sResourcePath : "resource/path"
+				getDownloadUrl : function () {}
 			},
 			oExpectation,
 			oPromise = {};
@@ -6277,57 +6335,12 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
 
-		this.mock(_Helper).expects("getMetaPath")
-			.withExactArgs("").returns("");
-		this.mock(this.oModel.oRequestor).expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions))
-			.returns("?query");
+		this.mock(oCache).expects("getDownloadUrl")
+			.withExactArgs("~path~", sinon.match.same(this.oModel.mUriParameters))
+			.returns("~url~");
 
 		// code under test - callback function
-		assert.strictEqual(oExpectation.args[0][0](oCache, ""),
-			"/service/resource/path?query");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchDownloadUrl: non-empty meta path", function (assert) {
-		var oBinding = this.bindList("n/a"),
-			oCache = {
-				sMetaPath : "meta/path",
-				mQueryOptions : {},
-				sResourcePath : "resource/path"
-			},
-			oExpectation,
-			oHelperMock = this.mock(_Helper),
-			oPromise = {},
-			mQueryOptions = {},
-			mQueryOptionsForPath = {};
-
-		this.mock(oBinding).expects("isResolved").returns(true);
-		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
-
-		// code under test
-		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
-
-		oHelperMock.expects("getMetaPath")
-			.withExactArgs("relative/path").returns("relative/metapath");
-		oHelperMock.expects("getQueryOptionsForPath")
-			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "relative/path")
-			.returns(mQueryOptionsForPath);
-		oHelperMock.expects("merge")
-			.withExactArgs({}, sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mQueryOptionsForPath))
-			.returns(mQueryOptions);
-		oHelperMock.expects("buildPath").withExactArgs(oCache.sResourcePath, "relative/path")
-			.returns("resource/path/relative/path");
-		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "relative/metapath")
-			.returns("meta/path/relative/metapath");
-		this.mock(this.oModel.oRequestor).expects("buildQueryString")
-			.withExactArgs("meta/path/relative/metapath", sinon.match.same(mQueryOptions))
-			.returns("?query");
-
-		// code under test - callback function
-		assert.strictEqual(oExpectation.args[0][0](oCache, "relative/path"),
-			"/service/resource/path/relative/path?query");
+		assert.strictEqual(oExpectation.args[0][0](oCache, "~path~"), "~url~");
 	});
 
 	//*********************************************************************************************

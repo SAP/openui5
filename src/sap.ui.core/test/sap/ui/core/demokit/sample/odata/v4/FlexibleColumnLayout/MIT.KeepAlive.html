@@ -42,37 +42,56 @@
 		<ol>
 			<li>Select the first sales order in the sales order list report.</li>
 			<li><b>Check:</b> A new object page for the sales order appears.</li>
-			<li>Press the button <code>Sales Order ID</code> in the header of the respective column
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective column
 				of the sales orders table of the list report.</li>
 			<li><b>Check:</b> The sales order list is sorted by the <code>SalesOrderID</code>
 				and the selected sales order does no longer appear in the list report. It is still
 				present in the object page.</li>
 			<li>Enter 'Test' into the input field <code>Note</code> of the object page.</li>
-			<li>Press the button <code>Save</code>.</li>
-			<li>Press the button <code>Sales Order ID</code> in the header of the respective column
+			<li>Press the <code>Save</code> button.</li>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective column
 				of the sales orders table of the list report.</li>
 			<li><b>Check:</b> The sales order appears again in the list report and and its property
 				<code>Note</code> has the value 'Test'.</li>
 			<li>Enter 'Test (changed)' into the input field <code>Note</code> (of the object page)
 				and leave the field.</li>
 			<li><b>Check:</b> Both the list report and the object page are in sync.</li>
-			<li>Press the button <code>Cancel</code>.</li>
+			<li>Press the <code>Cancel</code> button.</li>
 			<li><b>Check:</b> Both the list report and the object page are in sync.</li>
 		</ol>
 
 		<h3>Object page and sub-object page are in sync</h3>
 		<ol>
-			<li>Select the first sales order item on the object page.</li>
+			<li>Select the first sales order line item on the object page.</li>
 			<li><b>Check:</b> A new sub-object page with item details appears.</li>
-			<li>Press the button <code>Gross Amount</code>.</li>
+			<li>Press the <code>Gross Amount</code> button.</li>
 			<li><b>Check:</b> The sales order item list is sorted by the <code>GrossAmount</code>
 				and the selected sales order item is no longer part	of the items list. In the
 				sub-object page it is still present.</li>
 			<li>Enter '2' into the input field <code>Quantity</code> of the sub-object page.</li>
 			<li>Press 'More' on the item table of the object page.</li>
 			<li><b>Check:</b> Both the object page and the sub-object page are in sync.</li>
-			<li>Press the button <code>Cancel</code>.</li>
+			<li>Press the <code>Cancel</code> button.</li>
 			<li><b>Check:</b> Both the object page and the sub-object page are in sync.</li>
+		</ol>
+
+		<h3>Delete a kept-alive context that is not visible in the sales orders table</h3>
+		<ol>
+			<li>Select the first sales order on the list report that is currently sorted
+				descending by the <code>Sales Order ID</code>.</li>
+			<li><b>Check:</b> The current sub-object vanishes and the sales order object page is
+				updated.</li>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective
+				column of the sales orders table of the list report.</li>
+			<li><b>Check:</b> The sales order list is sorted by the <code>SalesOrderID</code>
+				and the selected sales order does no longer appear in the list report. It is still
+				present in the object page.</li>
+			<li>Press the <code>Delete</code> button on the sales order object page.</li>
+			<li><b>Check:</b> The object page vanishes and there is no error message.</li>
+			<li>In case of <code>realOData=true</code> press the <code>Sales Order ID</code>
+				button in the header of the respective column of the sales orders table of the list
+				report.</li>
+			<li><b>Check:</b> The deleted sales order is not visible in the list report.</li>
 		</ol>
 	</body>
 </html>

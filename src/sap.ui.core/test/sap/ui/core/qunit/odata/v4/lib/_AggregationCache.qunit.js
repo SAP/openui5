@@ -194,10 +194,10 @@ sap.ui.define([
 			sApply = "A.P.P.L.E.",
 			oCache,
 			iEnd = 13,
-			fnGetResourcePath = function () {},
+			fnGetResourcePathWithQuery = function () {},
 			fnHandleResponse = function () {},
 			oFirstLevelCache = {
-				getResourcePath : fnGetResourcePath,
+				getResourcePathWithQuery : fnGetResourcePathWithQuery,
 				handleResponse : fnHandleResponse
 			},
 			mMeasureRange = {},
@@ -233,9 +233,9 @@ sap.ui.define([
 					"sap-client" : "123"
 				}, true)
 			.returns(oFirstLevelCache);
-		// getResourcePath and handleResponse need to be mocked before an _AggregationCache
+		// getResourcePathWithQuery and handleResponse need to be mocked before an _AggregationCache
 		// instance is created
-		oAggregationCacheMock.expects("getResourcePath")
+		oAggregationCacheMock.expects("getResourcePathWithQuery")
 			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions), iStart,
 				iEnd)
 			.on(oFirstLevelCache);
@@ -266,7 +266,8 @@ sap.ui.define([
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptions, "not modified");
 		assert.strictEqual(JSON.stringify(oAggregation), sAggregation, "not modified");
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
-		assert.notEqual(oCache.oFirstLevel.getResourcePath, fnGetResourcePath, "replaced");
+		assert.notEqual(oCache.oFirstLevel.getResourcePathWithQuery, fnGetResourcePathWithQuery,
+			"replaced");
 		assert.notEqual(oCache.oFirstLevel.handleResponse, fnHandleResponse, "replaced");
 
 		oCache.oMeasureRangePromise.then(function (mMeasureRange0) {
@@ -277,7 +278,7 @@ sap.ui.define([
 			assert.notOk(bMeasureRangePromiseResolved, "measure range promise is unresolved");
 
 			// code under test
-			oCache.oFirstLevel.getResourcePath(iStart, iEnd);
+			oCache.oFirstLevel.getResourcePathWithQuery(iStart, iEnd);
 
 			// code under test
 			oCache.oFirstLevel.handleResponse(iStart, iEnd, aResult);
@@ -372,11 +373,11 @@ sap.ui.define([
 			oCache,
 			fnDataRequested = {},
 			iEnd = 13,
-			fnGetResourcePath = function () {},
+			fnGetResourcePathWithQuery = function () {},
 			oGroupLock = {},
 			fnHandleResponse = function () {},
 			oFirstLevelCache = {
-				getResourcePath : fnGetResourcePath,
+				getResourcePathWithQuery : fnGetResourcePathWithQuery,
 				handleResponse : fnHandleResponse,
 				read : function () {}
 			},
@@ -392,9 +393,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), true)
 			.returns(oFirstLevelCache);
-		// getResourcePath and handleResponse need to be mocked before an _AggregationCache
+		// getResourcePathWithQuery and handleResponse need to be mocked before an _AggregationCache
 		// instance is created
-		oAggregationCacheMock.expects("getResourcePath")
+		oAggregationCacheMock.expects("getResourcePathWithQuery")
 			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions), iStart,
 				iEnd)
 			.on(oFirstLevelCache);
@@ -421,11 +422,12 @@ sap.ui.define([
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptions, "not modified");
 		assert.strictEqual(JSON.stringify(oAggregation), sAggregation, "not modified");
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
-		assert.notEqual(oCache.oFirstLevel.getResourcePath, fnGetResourcePath, "replaced");
+		assert.notEqual(oCache.oFirstLevel.getResourcePathWithQuery, fnGetResourcePathWithQuery,
+			"replaced");
 		assert.notEqual(oCache.oFirstLevel.handleResponse, fnHandleResponse, "replaced");
 
 		// code under test
-		oCache.oFirstLevel.getResourcePath(iStart, iEnd);
+		oCache.oFirstLevel.getResourcePathWithQuery(iStart, iEnd);
 
 		// code under test
 		oCache.oFirstLevel.handleResponse(iStart, iEnd, aResult);
@@ -484,7 +486,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getResourcePath", function (assert) {
+	QUnit.test("getResourcePathWithQuery", function (assert) {
 		var oAggregation = {},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			bCount = "/*false,true*/", // dummy value suitable for deepEqual()
@@ -512,7 +514,7 @@ sap.ui.define([
 			.returns("?$apply=1st");
 
 		// code under test
-		sResourcePath = _AggregationCache.getResourcePath.call(oFirstLevelCache,
+		sResourcePath = _AggregationCache.getResourcePathWithQuery.call(oFirstLevelCache,
 			oAggregation, mQueryOptions, 42, 99);
 
 		assert.strictEqual(sResourcePath, "SalesOrderList?$apply=1st");
@@ -532,7 +534,7 @@ sap.ui.define([
 			.returns("?$apply=2nd");
 
 		// code under test
-		sResourcePath = _AggregationCache.getResourcePath.call(oFirstLevelCache,
+		sResourcePath = _AggregationCache.getResourcePathWithQuery.call(oFirstLevelCache,
 			oAggregation, mQueryOptions, 42, 99);
 
 		assert.strictEqual(sResourcePath, "SalesOrderList?$apply=2nd");
