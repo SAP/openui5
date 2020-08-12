@@ -215,4 +215,42 @@ sap.ui.define([
 		//Assert
 		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
 	});
+
+	QUnit.module("Drag and drop", {
+		beforeEach: function () {
+			this.$RootNode = jQuery(document.body);
+			this.oUploadSet = new UploadSet("uploadSet", {
+				items: {
+					path: "/items",
+					template: TestUtils.createItemTemplate(),
+					templateShareable: false
+				}
+			}).setModel(new JSONModel(getData()));
+			this.oUploadSet.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	QUnit.test("Drag & Drop behaviour on change of UploadEnabled property", function(assert) {
+		//Arrange
+		this.oUploadSet.setUploadEnabled(true);
+		//Act
+		this.$RootNode.trigger("dragenter");
+		//Assert
+		assert.notOk(this.oUploadSet.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible when UploadEnabled is true");
+
+		//Arrange
+		this.oUploadSet.$("drag-drop-area").addClass("sapMUCDragDropOverlayHide");
+		this.oUploadSet.setUploadEnabled(false);
+		//Act
+		this.$RootNode.trigger("dragenter");
+		//Assert
+		assert.ok(this.oUploadSet.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is not visible when UploadEnabled is false");
+	});
+
+
 });

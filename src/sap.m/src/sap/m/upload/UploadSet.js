@@ -869,13 +869,13 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype._onDragEnterSet = function (oEvent) {
-		if (oEvent.target === this._$DragDropArea[0]) {
+		if (oEvent.target === this._$DragDropArea[0] && this.getUploadEnabled()) {
 			this._$DragDropArea.addClass("sapMUCDropIndicator");
 		}
 	};
 
 	UploadSet.prototype._onDragLeaveSet = function (oEvent) {
-		if (oEvent.target === this._$DragDropArea[0]) {
+		if (oEvent.target === this._$DragDropArea[0] && this.getUploadEnabled()) {
 			this._$DragDropArea.removeClass("sapMUCDropIndicator");
 		}
 	};
@@ -888,7 +888,7 @@ sap.ui.define([
 		var oFiles;
 
 		oEvent.preventDefault();
-		if (oEvent.target === this._$DragDropArea[0]) {
+		if (oEvent.target === this._$DragDropArea[0] && this.getUploadEnabled()) {
 			this._$DragDropArea.removeClass("sapMUCDropIndicator");
 			this._$DragDropArea.addClass("sapMUCDragDropOverlayHide");
 
@@ -898,23 +898,29 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype._onDragEnterBody = function (oEvent) {
-		this._oLastEnteredTarget = oEvent.target;
-		this._$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
+		if (this.getUploadEnabled()) {
+			this._oLastEnteredTarget = oEvent.target;
+			this._$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
+		}
 	};
 
 	UploadSet.prototype._onDragLeaveBody = function (oEvent) {
-		if (this._oLastEnteredTarget === oEvent.target) {
+		if (this._oLastEnteredTarget === oEvent.target && this.getUploadEnabled()) {
 			this._$DragDropArea.addClass("sapMUCDragDropOverlayHide");
 		}
 	};
 
 	UploadSet.prototype._onDragOverBody = function (oEvent) {
 		oEvent.preventDefault();
-		this._$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
+		if (this.getUploadEnabled()) {
+			this._$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
+		}
 	};
 
 	UploadSet.prototype._onDropOnBody = function (oEvent) {
-		this._$DragDropArea.addClass("sapMUCDragDropOverlayHide");
+		if (this.getUploadEnabled()) {
+			this._$DragDropArea.addClass("sapMUCDragDropOverlayHide");
+		}
 	};
 
 	/* =============== */
