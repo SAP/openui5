@@ -79,6 +79,24 @@ sap.ui.define([
 		};
 
 	/**
+	 * Checks that the header is as expected.
+	 *
+	 * @param {object} assert The QUnit assert object
+	 * @param {string} sHeaderString The headers as in XMLHttpRequest#getAllResponseHeaders
+	 * @param {string} sName The header name
+	 * @param {string} [sValue] The expected header value
+	 */
+	function checkHeader(assert, sHeaderString, sName, sValue) {
+		sHeaderString = sHeaderString + "\r\n";
+
+		if (sValue) {
+			assert.ok(sHeaderString.includes("\r\n" + sName + ": " + sValue + "\r\n"), sName);
+		} else {
+			assert.notOk(sHeaderString.includes("\r\n" + sName + ": ", sName));
+		}
+	}
+
+	/**
 	 * Formats the headers to a string similar to XMLHttpRequest#getAllResponseHeaders
 	 *
 	 * @param {map} mHeaders The headers
@@ -219,7 +237,7 @@ sap.ui.define([
 		requestBody : '{"foo":"bar"}',
 		status : 204,
 		responseHeaders : {
-			"dataserviceversion" : "2.0"
+			"DataServiceVersion" : "2.0"
 		},
 		responseBody : ''
 	}, {
@@ -231,7 +249,7 @@ sap.ui.define([
 		requestBody : '{"foo":"bar"}',
 		status : 204,
 		responseHeaders : {
-			"dataserviceversion" : "2.0"
+			"DataServiceVersion" : "2.0"
 		},
 		responseBody : ''
 	}, { // "auto responder"
@@ -316,7 +334,7 @@ sap.ui.define([
 		var sRequest = oFixture.method + " " + oFixture.url;
 
 		QUnit.test("useFakeServer: " + sRequest + " (direct)", function (assert) {
-			var mHeaders = oFixture.method === "MERGE" ? {"dataserviceversion" : "2.0"}
+			var mHeaders = oFixture.method === "MERGE" ? {"DataServiceVersion" : "2.0"}
 				: {"OData-Version" : "4.0"};
 
 			Object.keys(oFixture.requestHeaders || {}).forEach(function (sKey) {
@@ -342,8 +360,8 @@ sap.ui.define([
 				sUrl = oFixture.url.replace("/Foo/", "");
 
 			if (oFixture.method === "MERGE") {
-				mInitialHeaders["dataserviceversion"] = "2.0";
-				mBatchHeaders["dataserviceversion"] = "2.0";
+				mInitialHeaders["DataServiceVersion"] = "2.0";
+				mBatchHeaders["DataServiceVersion"] = "2.0";
 			} else {
 				mInitialHeaders["OData-Version"] = "4.0";
 				mBatchHeaders["OData-Version"] = "4.0";
@@ -548,33 +566,23 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		requestHeaders : { "oDaTa-VeRsIoN" : "Foo" }, // handle headers case-insensitive
+		requestHeaders : { "OData-Version" : "Foo" },
 		responseHeaders : {},
 		expectedODataVersion : "Foo",
 		expectedDataServiceVersion : null
 	}, {
-		requestHeaders : { "OData-Version" : "Bar" },
-		responseHeaders : {},
-		expectedODataVersion : "Bar",
-		expectedDataServiceVersion : null
-	}, {
 		requestHeaders : { "OData-Version" : "4.0" },
-		responseHeaders : { "ODaTa-VeRsIoN" : "4.01" }, // handle headers case-insensitive
+		responseHeaders : { "OData-Version" : "4.01" },
 		expectedODataVersion : "4.01",
 		expectedDataServiceVersion : null
 	}, {
-		requestHeaders : { "dataserviceversion" : "Foo" }, // handle headers case-insensitive
+		requestHeaders : { "DataServiceVersion" : "Foo" },
 		responseHeaders : {},
 		expectedODataVersion : null,
 		expectedDataServiceVersion : "Foo"
 	}, {
-		requestHeaders : { "DataServiceVersion" : "Bar" },
-		responseHeaders : {},
-		expectedODataVersion : null,
-		expectedDataServiceVersion : "Bar"
-	}, {
 		requestHeaders : { "DataServiceVersion" : "Foo" },
-		responseHeaders : { "daTaserViceverSion" : "Bar" }, // handle headers case-insensitive
+		responseHeaders : { "DataServiceVersion" : "Bar" },
 		expectedODataVersion : null,
 		expectedDataServiceVersion : "Bar"
 	}, {
@@ -599,9 +607,9 @@ sap.ui.define([
 				method : "GET",
 				headers : oFixture.requestHeaders
 			}).then(function (vData, sTextStatus, jqXHR) {
-				assert.strictEqual(jqXHR.getResponseHeader("odata-version"),
+				assert.strictEqual(jqXHR.getResponseHeader("OData-Version"),
 					oFixture.expectedODataVersion);
-				assert.strictEqual(jqXHR.getResponseHeader("dataserviceversion"),
+				assert.strictEqual(jqXHR.getResponseHeader("DataServiceVersion"),
 					oFixture.expectedDataServiceVersion);
 				// fixture must not be modified
 				assert.deepEqual(oFixture.responseHeaders, oOriginalResponseHeaders);
@@ -624,47 +632,22 @@ sap.ui.define([
 				method : "POST",
 				headers : oFixture.requestHeaders
 			}).then(function (vData, sTextStatus, jqXHR) {
-				var aBatchResponseParts,
-					bExpectedODataVersion = oFixture.expectedODataVersion !== null
-						|| oFixture.expectedDataServiceVersion !== null,
-					bFoundODataVersionHeaders,
-					sKey,
-					aResponseHeaders;
+				var sResponseHeaders;
 
 				// check that $batch response header contains same OData version as in the request
-				sKey = Object.keys(oFixture.requestHeaders)[0];
-
-				assert.strictEqual(jqXHR.getResponseHeader("odata-version"),
-					sKey && sKey.toLowerCase() === "odata-version"
-						? oFixture.requestHeaders[sKey] : null);
-				assert.strictEqual(jqXHR.getResponseHeader("dataserviceversion"),
-					sKey && sKey.toLowerCase() === "dataserviceversion"
-						? oFixture.requestHeaders[sKey] : null);
+				assert.strictEqual(jqXHR.getResponseHeader("OData-Version"),
+					oFixture.requestHeaders["OData-Version"] || null);
+				assert.strictEqual(jqXHR.getResponseHeader("DataServiceVersion"),
+					oFixture.requestHeaders["DataServiceVersion"] || null);
 				// fixture must not be modified
 				assert.deepEqual(oFixture.responseHeaders, oOriginalResponseHeaders);
 
 				// OData service version is same as in the header of each response within the batch
-				aBatchResponseParts = vData.split("\r\n\r\n");
-				aResponseHeaders = aBatchResponseParts[1].split("\r\n");
-				bFoundODataVersionHeaders = aResponseHeaders.some(function (sHeader) {
-					var i, sHeaderKey, sHeaderValue;
-
-					i = sHeader.indexOf(":");
-					sHeaderKey = i >= 0 ? sHeader.slice(0, i) : sHeader;
-					sHeaderValue = i >= 0 ? sHeader.slice(i + 1) : "";
-					return sHeaderKey.toLowerCase() === "odata-version"
-							&& sHeaderValue.trim() === oFixture.expectedODataVersion
-						|| sHeaderKey.toLowerCase() === "dataserviceversion"
-							&& sHeaderValue.trim() === oFixture.expectedDataServiceVersion;
-				});
-				assert.strictEqual(bFoundODataVersionHeaders, bExpectedODataVersion,
-					"OData service version as expected in $batch response");
-				aResponseHeaders = aResponseHeaders.map(function (sHeader) {
-					return sHeader.toLowerCase();
-				});
-				assert.notOk(aResponseHeaders.some(function(sHeader, i) {
-					return aResponseHeaders.indexOf(sHeader, i + 1) !== -1;
-				}), "no duplicates");
+				sResponseHeaders = (vData.split("\r\n\r\n"))[1];
+				checkHeader(assert, sResponseHeaders, "OData-Version",
+					oFixture.expectedODataVersion);
+				checkHeader(assert, sResponseHeaders, "DataServiceVersion",
+					oFixture.expectedDataServiceVersion);
 			});
 		});
 	});
@@ -674,13 +657,11 @@ sap.ui.define([
 	// version headers are simply taken from the request
 	["DELETE", "PATCH", "POST"].forEach(function (sMethod) {
 		[{
-			requestHeaders : {
-				"oDaTa-VeRsIoN" : "Foo" // handle headers case-insensitive
-			},
+			requestHeaders : {"OData-Version" : "Foo"},
 			expectedODataVersion : "Foo",
 			expectedDataServiceVersion : null
 		}, {
-			requestHeaders : { "daTaserViceverSion" : "Foo" }, // handle headers case-insensitive
+			requestHeaders : { "DataServiceVersion" : "Foo" },
 			expectedODataVersion : null,
 			expectedDataServiceVersion : "Foo"
 		}, {
@@ -699,10 +680,10 @@ sap.ui.define([
 					method : sMethod,
 					headers : oFixture.requestHeaders
 				}).then(function (vData, sTextStatus, jqXHR) {
-					assert.strictEqual(jqXHR.getResponseHeader("odata-version"),
+					assert.strictEqual(jqXHR.getResponseHeader("OData-Version"),
 						oFixture.expectedODataVersion);
-					assert.strictEqual(jqXHR.getResponseHeader("odata-maxversion"), null);
-					assert.strictEqual(jqXHR.getResponseHeader("dataserviceversion"),
+					assert.strictEqual(jqXHR.getResponseHeader("OData-MaxVersion"), null);
+					assert.strictEqual(jqXHR.getResponseHeader("DataServiceVersion"),
 						oFixture.expectedDataServiceVersion);
 				});
 			});
@@ -723,39 +704,20 @@ sap.ui.define([
 					method : "POST",
 					headers : oFixture.requestHeaders
 				}).then(function (vData, sTextStatus, jqXHR) {
-					var aBatchResponseParts,
-						bExpectedODataVersion = oFixture.expectedODataVersion !== null
-							|| oFixture.expectedDataServiceVersion !== null,
-						bFoundODataVersionHeaders,
-						sKey,
-						aResponseHeaders;
+					var sResponseHeaders;
 
 					// check that $batch response header contains same OData version as the request
-					sKey = Object.keys(oFixture.requestHeaders)[0];
-
-					assert.strictEqual(jqXHR.getResponseHeader("odata-version"),
-						sKey && sKey.toLowerCase() === "odata-version"
-							? oFixture.requestHeaders[sKey] : null);
-					assert.strictEqual(jqXHR.getResponseHeader("dataserviceversion"),
-						sKey && sKey.toLowerCase() === "dataserviceversion"
-							? oFixture.requestHeaders[sKey] : null);
+					assert.strictEqual(jqXHR.getResponseHeader("OData-Version"),
+						oFixture.requestHeaders["OData-Version"] || null);
+					assert.strictEqual(jqXHR.getResponseHeader("DataServiceVersion"),
+						oFixture.requestHeaders["DataServiceVersion"] || null);
 
 					// check OData service version in the headers of each response within the batch
-					aBatchResponseParts = vData.split("\r\n\r\n");
-					aResponseHeaders = aBatchResponseParts[1].split("\r\n");
-					bFoundODataVersionHeaders = aResponseHeaders.some(function (sHeader) {
-						var i, sHeaderKey, sHeaderValue;
-
-						i = sHeader.indexOf(":");
-						sHeaderKey = i >= 0 ? sHeader.slice(0, i) : sHeader;
-						sHeaderValue = i >= 0 ? sHeader.slice(i + 1) : "";
-						return sHeaderKey.toLowerCase() === "odata-version"
-								&& sHeaderValue.trim() === oFixture.expectedODataVersion
-							|| sHeaderKey.toLowerCase() === "dataserviceversion"
-								&& sHeaderValue.trim() === oFixture.expectedDataServiceVersion;
-					});
-					assert.strictEqual(bFoundODataVersionHeaders, bExpectedODataVersion,
-						"OData service version as expected in $batch response");
+					sResponseHeaders = (vData.split("\r\n\r\n"))[1];
+					checkHeader(assert, sResponseHeaders, "OData-Version",
+						oFixture.expectedODataVersion);
+					checkHeader(assert, sResponseHeaders, "DataServiceVersion",
+						oFixture.expectedDataServiceVersion);
 				});
 			});
 		});
