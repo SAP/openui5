@@ -37,7 +37,9 @@ sap.ui.define([
 			success : function(data) {
 				sSource = oConfig.receiveSource(data);
 			},
-			async : false
+			async : false,
+			// avoid that jQuery executes the loaded code in case of JSView which causes CSP violation
+			dataType: sType === "js" ? "text" : undefined
 		});
 
 		// fake an asynchronous resource request to have control over the delay
