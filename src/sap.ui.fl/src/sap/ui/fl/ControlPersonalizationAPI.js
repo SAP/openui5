@@ -69,10 +69,11 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Element} oControl - The control for which a variant management control has to be evaluated
 		 * @param {boolean} [bIgnoreVariantManagement=false] - If flag is set to true then variant management will be ignored
+		 * @param {boolean} [bUseStaticArea=false] - If flag is set to true then the static area is used to determine the variant management control
 		 * @returns {object} Returns a map with needed parameters
 		 * @private
 		 */
-		_determineParameters : function(oControl, bIgnoreVariantManagement) {
+		_determineParameters : function(oControl, bIgnoreVariantManagement, bUseStaticArea) {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 			var oRootControl = oAppComponent.getRootControl();
@@ -83,11 +84,18 @@ sap.ui.define([
 			};
 
 			if (!bIgnoreVariantManagement) {
+				var aVMControls;
 				var oVMControl;
 				var aForControlTypes;
 				mParams.variantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 				mParams.variantManagement = {};
-				jQuery.makeArray(mParams.rootControl.$().find(".sapUiFlVarMngmt")).map(function (oVariantManagementNode) {
+				if (!bUseStaticArea) {
+					aVMControls = jQuery.makeArray(mParams.rootControl.$().find(".sapUiFlVarMngmt"));
+				}
+				if (bUseStaticArea || aVMControls.length === 0) {
+					aVMControls = jQuery.makeArray(jQuery(sap.ui.getCore().getStaticAreaRef()).find(".sapUiFlVarMngmt"));
+				}
+				aVMControls.map(function (oVariantManagementNode) {
 					oVMControl = sap.ui.getCore().byId(oVariantManagementNode.id);
 					if (oVMControl.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
 						aForControlTypes = oVMControl.getFor();
@@ -245,6 +253,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Changes along with other settings that need to be added
 		 * @param {array} mPropertyBag.controlChanges - Array of control changes of type {@link sap.ui.fl.ControlPersonalizationAPI.PersonalizationChange}
 		 * @param {boolean} [mPropertyBag.ignoreVariantManagement=false] - If flag is set to true then variant management will be ignored
+		 * @param {boolean} [mPropertyBag.useStaticArea=false] - If flag is set to true then the static area is used to determine the variant management control
 		 *
 		 * @returns {Promise} Returns Promise resolving to an array of successfully applied changes,
 		 * after the changes have been written to the map of dirty changes and applied to the control
@@ -267,7 +276,7 @@ sap.ui.define([
 				function fnCheckCreateApplyChange() {
 					return this._checkChangeSpecificData(oChange, sLayer)
 						.then(function() {
-							var mParams = this._determineParameters(oChange.selectorControl, mPropertyBag.ignoreVariantManagement);
+							var mParams = this._determineParameters(oChange.selectorControl, mPropertyBag.ignoreVariantManagement, mPropertyBag.useStaticArea);
 							if (!mPropertyBag.ignoreVariantManagement) {
 								// check for preset variantReference
 								if (!oChange.changeSpecificData.variantReference) {
