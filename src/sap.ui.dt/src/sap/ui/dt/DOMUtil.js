@@ -77,7 +77,7 @@ function(
 		}
 
 		if (sap.ui.getCore().getConfiguration().getRTL()) {
-			var iParentWidth = $Parent ? $Parent.width() : jQuery(window).width();
+			var iParentWidth = $Parent ? $Parent.outerWidth() : jQuery(window).outerWidth();
 			//TODO: Workaround - remove when bug in Safari (issue 336512063) is solved
 			if (Device.browser.safari && !Device.browser.mobile && DOMUtil.hasVerticalScrollBar($Parent)) {
 				mOffset.left -= DOMUtil.getScrollbarWidth();

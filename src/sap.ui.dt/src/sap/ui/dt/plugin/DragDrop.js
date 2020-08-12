@@ -717,10 +717,10 @@ function(
 		var iScrollMultiplier = 1;
 
 		if (sDirection === "top" || sDirection === "bottom") {
-			iSize = $element.height();
+			iSize = $element.outerHeight();
 			fnScrollFunction = $element.scrollTop.bind($element);
 		} else {
-			iSize = $element.width();
+			iSize = $element.outerWidth();
 			fnScrollFunction = $element.scrollLeft.bind($element);
 		}
 		if (sDirection === "top" || sDirection === "left") {

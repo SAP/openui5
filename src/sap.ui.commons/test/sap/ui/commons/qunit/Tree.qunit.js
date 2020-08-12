@@ -904,6 +904,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Store references to the selected hidden children", function(assert) {
+		var done = assert.async();
 		var oDeepTree = new Tree("tr2tree", {
 			nodes: [
 				new TreeNode("tr2node1", {
@@ -947,12 +948,16 @@ sap.ui.define([
 		this.stub(TreeNode, "ANIMATION_DURATION").value(0);
 		oNode1.expand();
 
-		assert.equal(oNode1.getSelectedForNodes().length, 0, "References of its selected hidden children removed when expanded.");
-		assert.equal(oNode11.getSelectedForNodes().length, 1, "Node references propagated to the first collapsed parent of the selected hidden children.");
-		assert.equal(oNode11.getSelectedForNodes()[0], "tr2node1111", "Node references propagated to the first collapsed parent of the selected hidden children.");
-		assert.equal(oNode111.getSelectedForNodes().length, 0, "Node references not propagated to the other collapsed parents of the selected hidden children.");
+		setTimeout(function() {
+			assert.equal(oNode1.getSelectedForNodes().length, 0, "References of its selected hidden children removed when expanded.");
+			assert.equal(oNode11.getSelectedForNodes().length, 1, "Node references propagated to the first collapsed parent of the selected hidden children.");
+			assert.equal(oNode11.getSelectedForNodes()[0], "tr2node1111", "Node references propagated to the first collapsed parent of the selected hidden children.");
+			assert.equal(oNode111.getSelectedForNodes().length, 0, "Node references not propagated to the other collapsed parents of the selected hidden children.");
 
-		oDeepTree.destroy();
+			oDeepTree.destroy();
+			done();
+		}, 0);
+
 	});
 
 	QUnit.module("Helper methods", {
