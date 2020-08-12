@@ -53,7 +53,7 @@ The code deals with HTML when using the DOM part of the jQuery API, for example:
 
 ### Indirect jQuery API usage
 It may also be possible that the jQuery API is used indirectly:
-- `sap.ui.core.Element.prototype.$("<div/><a/>")`
+- `sap.ui.core.Element.prototype.$()`
 
 Usages of the jQuery API can be found in JavaScript source files (typical extension `js`) as well as in HTML files (typical extensions `html` / `htm`) with inline script.
 
