@@ -11,6 +11,7 @@ module.exports = [
 	"Carousel.spec.js",
 	"CarouselNoPages.spec.js",
 	"CheckBox.spec.js",
+	"ColorPalette.spec.js",
 	"ComboBox.spec.js",
 	"ComboBoxShowItems.spec.js",
 	"ContextMenuSupportIntegration.spec.js",

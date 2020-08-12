@@ -557,8 +557,8 @@ sap.ui.define([
 			var oCP = new ColorPalette(),
 				oEvent = new jQuery.Event(),
 				oStubGetElementInfo = this.stub(ColorPalette.prototype, "_getElementInfo").returns({
-					bIsDefaultColorButton: true,
-					bIsMoreColorsButton: false
+					bIsDefaultColorButton: false,
+					bIsMoreColorsButton: true
 				}),
 				oSpyEvtPreventDefault = this.spy(oEvent, "preventDefault"),
 				oSpyEvtStopImmediatePropagation = this.spy(oEvent, "stopImmediatePropagation");
@@ -594,13 +594,6 @@ sap.ui.define([
 				assert.equal(oSpyEvtStopImmediatePropagation.callCount, 0, "..should not prevent immediate propagation");
 				// Cleanup - not needed
 			});
-
-		QUnit.test("ColorPalette.prototype.onsapend has the same implementation as ColorPalette.prototype.onsapend ",
-			function (assert) {
-				assert.deepEqual(ColorPalette.prototype.onsaphome, ColorPalette.prototype.onsapend,
-					"Both should share a common implementation. Otherwise the onsapend should be tested as well");
-			}
-		);
 
 		QUnit.module("Keyboard color select", function (hooks) {
 			hooks.beforeEach(function () {
