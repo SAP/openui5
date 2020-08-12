@@ -57,7 +57,11 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 					/**
 					 * The data state object.
 					 */
-					dataState: {type: "sap.ui.model.DataState"}
+					dataState: {type: "sap.ui.model.DataState"},
+					/**
+					 * The messages (@see sap.ui.core.message.Message) from the current <code>dataState</code> object filtered by the given <code>filter</code> function.
+					 */
+					filteredMessages: {type: "any[]"}
 				}
 			}
 		}
