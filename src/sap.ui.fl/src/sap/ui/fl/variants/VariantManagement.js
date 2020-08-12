@@ -288,20 +288,18 @@ sap.ui.define([
 		 * @param {sap.ui.core.RenderManager} oRm - <code>RenderManager</code> that can be used for writing to the render output buffer
 		 * @param {sap.ui.core.Control} oControl - Object representation of the control that should be rendered
 		 */
-		renderer: function(oRm, oControl) {
-			oRm.write("<div ");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUiFlVarMngmt");
-			oRm.writeClasses();
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl)
+					.class("sapUiFlVarMngmt")
+					.attr("title", oControl._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT"))
+					.openEnd();
 
+				oRm.renderControl(oControl.oVariantLayout);
 
-			var sTooltip = oControl._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT");
-			oRm.write(" title='" + sTooltip + "'");
-
-			oRm.write(">");
-
-			oRm.renderControl(oControl.oVariantLayout);
-			oRm.write("</div>");
+				oRm.close("div");
+			}
 		}
 	});
 

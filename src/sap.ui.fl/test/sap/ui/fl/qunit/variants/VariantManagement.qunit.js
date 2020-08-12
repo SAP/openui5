@@ -154,19 +154,26 @@ sap.ui.define([
 		QUnit.test("Check rendering", function(assert) {
 			var sString = "";
 			var oRm = {
-				write: function(s) {
+				openStart: function(s) {
 					sString += s;
+					return this;
 				},
-				writeControlData: function() {
-				},
-				addClass: function(s) {
+				'class': function(s) {
 					sString += ('class=\"' + s + '\"');
+					return this;
 				},
-				writeClasses: function() {
+				attr: function() {
+					return this;
 				},
-				writeAccessibilityState: function() {
+				openEnd: function() {
+					return this;
+				},
+				close: function(s) {
+					sString += s;
+					return this;
 				},
 				renderControl: function() {
+					return this;
 				}
 			};
 
