@@ -1388,6 +1388,8 @@ function(
 				}
 
 				if (Device.system.phone) {
+					// focus has to be set to the native select DOM element in order to restore the focus back to it
+					// after the select dialog is closed
 					this._getHiddenSelect().focus();
 				}
 
