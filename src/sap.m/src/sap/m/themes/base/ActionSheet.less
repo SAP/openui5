@@ -26,8 +26,14 @@
 	display: block;
 }
 
-.sapMActionSheetButton > .sapMBtnInner {
-	text-align: start;
+.sapMActionSheetButton.sapMBtn:not(.sapMActionSheetCancelButton) > .sapMBtnInner {
+	justify-content: flex-start;
+}
+
+.sapMActionSheetDialogWithTitle .sapMBarMiddle .sapMBarPH {
+	// The left/right padding should be 1rem, but there is already 0.25rem right/left padding from the Dialog title
+	padding: 0 0.75rem 0.5rem;
+	justify-content: flex-start;
 }
 
 html[data-sap-ui-browser^=ie] .sapMActionSheetButton > .sapMBtnInner,
@@ -61,11 +67,6 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetButton > .sapMBtnInner {
 
 .sapMActionSheetDialog .sapMActionSheetButton.sapMActionSheetCancelButton > .sapMBtnInner {
 	text-align: center;
-}
-
-.sapMActionSheetDialog .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
-	text-align: start;
-	padding: 0 1rem;
 }
 
 html[data-sap-ui-browser^=ie] .sapMActionSheetDialog .sapMBar.sapMHeader-CTX > .sapMBarMiddle, /* TODO remove after the end of support for Internet Explorer */
