@@ -260,17 +260,26 @@ sap.ui.define([
 				/**
 				 * Sets the conditions that represent the values of the field.
 				 *
-				 * This should be bound to a <code>ConditionModel</code> using the corresponding fieldPath
+				 * This should be bound to a <code>ConditionModel</code> using the corresponding fieldPath.
 				 *
-				 * <b>Note</b> In case of the FilterField the conditions property must be used to bind the FilterFields to a ConditionModel.
-				 * e.g. for FilterFields inside a Filterbar the binding is like:
-				 * 		conditions="{$filters>/conditions/name}"
-				 * where '$filters' is the name of the conditionmodel
-				 * 		'/conditions/' is a required static part of thr binding
-				 * 		'name' the property name of the model
-				 * For Any/All FilterFields the binding is like:
-				 * 		conditions='{$filters>/conditions/navPath* /propertyPath}'
-				 * 		conditions="{$filters>/conditions/navPath+/propertyPath}"
+				 * <b>Note</b> For <code>FilterField</code> controls, the <code>conditions</code> property must be used to bind <code>FilterField</code> to a <code>ConditionModel</code>.</br>
+				 * For example, for a <code>FilterField</code> control inside a <code>FilterBar</code> control the binding looks like this:
+				 * <code>conditions="{$filters>/conditions/propertyPath}"</code> with the following data:
+				 * <ul>
+				 * <li><code>$filters</code> as the name of the condition model</li>
+				 * <li><code>/conditions/</code> as a required static part of the binding</li>
+				 * <li><code>propertyPath</code> as the property name</li>
+				 * </ul>
+				 *
+				 * For an Any (see {@link sap.ui.model.FilterOperator}) <code>FilterField</code> control, the binding looks like this:
+				 * <code>conditions='{$filters>/conditions/navPath&#42;/propertyPath}'</code> with the following data:
+				 * <ul>
+				 * <li><code>$filters</code> as the name of the condition model</li>
+				 * <li><code>/conditions/</code> as a required static part of the binding</li>
+				 * <li><code>navPath#42;/</code> as the navigation property name</li>
+				 * <li><code>propertyPath</code> as the property name</li>
+				 * </ul>
+				 * Between <code>navPath</code> and <code>propertyPath</code>, <b>&#42;/</b> is required.
 				 */
 				conditions: {
 					type: "object[]",
