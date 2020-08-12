@@ -734,6 +734,30 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Accessibility Test for ColumnListItem", function(assert) {
+		var oListItem = new ColumnListItem({
+			type: "Navigation",
+			header: "header",
+			cells: [
+				new Label({text: "Max"}),
+				new Label({text: "Mustermann"})
+			]
+		});
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this.oTable = new Table({
+			mode: "MultiSelect",
+			header: "header",
+			columns: [
+				new Column({width: "125px", header: new Label({text: "First Name"})}),
+				new Column({width: "auto", header: new Label({text: "Last Name"})})
+			],
+			items: oListItem
+		});
+
+		assert.strictEqual(oListItem.getContentAnnouncement(), "First Name Max . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
+		assert.strictEqual(oListItem.getAccessibilityInfo().description, oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
+	});
+
 	QUnit.test("Internal SelectAll checkbox should not be disabled by the EnabledPropagator",function(assert) {
 		var sut = createSUT("idTableSelectAll", true, false, "MultiSelect"),
 			oVerticalLayout = new VerticalLayout({
@@ -2138,4 +2162,5 @@ sap.ui.define([
 		Core.applyChanges();
 		assert.ok(oGHLI.getDomRef().classList.contains("sapMListTblRowHasDummyCell"), "GroupHeaderListItem contains DummyCell class added");
 	});
+
 });

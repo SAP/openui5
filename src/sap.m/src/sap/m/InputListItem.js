@@ -64,12 +64,11 @@ sap.ui.define([
 	}});
 
 	InputListItem.prototype.getContentAnnouncement = function() {
-		var sAnnouncement = this.getLabel();
+		var sAnnouncement = this.getLabel() + " . ";
 		this.getContent().forEach(function(oContent) {
 			sAnnouncement += ListItemBase.getAccessibilityText(oContent) + " ";
 		});
-
-		return sAnnouncement;
+		return sAnnouncement.trim();
 	};
 
 	return InputListItem;

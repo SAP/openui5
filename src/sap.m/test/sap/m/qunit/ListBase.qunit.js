@@ -3151,5 +3151,71 @@ sap.ui.define([
 			}
 		});
 
+		QUnit.module("Accessibilty", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
+
+		QUnit.test("Accessibility Text for Standard List Item", function(assert) {
+			var oListItem = new StandardListItem({
+				title: "Title",
+				description: "Description"
+			});
+
+			bindListData(oList, data3, "/items", oListItem);
+			var oBundle = Core.getLibraryResourceBundle("sap.m");
+
+			oList.setMode("None");
+			var sStates = oList.getAccessibilityStates();
+			assert.strictEqual(sStates, "", "No Punctuation added since no text available");
+
+			oList.setMode("MultiSelect");
+			sStates = oList.getAccessibilityStates();
+			assert.strictEqual(sStates, oBundle.getText("LIST_MULTISELECTABLE") + " . ", "Punctuation added to Multi SelectMode");
+
+			oList.setMode("Delete");
+			sStates = oList.getAccessibilityStates();
+			assert.strictEqual(sStates, oBundle.getText("LIST_DELETABLE") + " . ", "Punctuation added to Delete mode");
+
+			oList.setMode("SingleSelect");
+			assert.strictEqual(oList.getAccessibilityStates(), oBundle.getText("LIST_SELECTABLE") + " . ", "Punctuation added to mode None");
+
+			var oSorter = new sap.ui.model.Sorter("items", false, function(oContext){
+				return oContext.getProperty("items"); // group by first letter of Name
+			});
+
+			oList.getBinding("items").sort(oSorter);
+			oList.setMode("MultiSelect");
+			assert.strictEqual(oList.isGrouped(), true, "Grouping enabled");
+			assert.strictEqual(oList.getAccessibilityStates(), oBundle.getText("LIST_MULTISELECTABLE") + " . " + oBundle.getText("LIST_GROUPED") + " . ", "Punctuation added to Multi SelectMode");
+
+			assert.strictEqual(oListItem.getAccessibilityInfo().description,"Title . Description",  "Content annoucement for Standard List Item with Punctuation" );
+			oListItem.setSelected(true);
+			oListItem.setHighlight("Information");
+			oListItem.setNavigated(true);
+			oListItem.setType("Active");
+			assert.strictEqual(oListItem.getAccessibilityInfo().description,oBundle.getText("LIST_ITEM_SELECTED") + " . " + oListItem.getHighlight() + " . " + oBundle.getText("LIST_ITEM_ACTIVE") + " . " + "Title . Description . " + oBundle.getText("LIST_ITEM_NAVIGATED"),  "Content annoucement for Standard List Item with Punctuation" );
+		});
+
+		QUnit.test("Accessibility Text for Input List Item", function(assert) {
+			var oInputListItem = new InputListItem({
+				title: "Title",
+				label: "Label",
+				content : new Input({
+					value: "Content"
+				})
+			});
+			var oBundle = Core.getLibraryResourceBundle("sap.m");
+
+			oInputListItem.setSelected(true);
+			oInputListItem.setHighlight("Information");
+			oInputListItem.setNavigated(true);
+			oInputListItem.setType("Active");
+			assert.strictEqual(oInputListItem.getAccessibilityInfo().description,oBundle.getText("LIST_ITEM_SELECTED") + " . " + oInputListItem.getHighlight() + " . " + oBundle.getText("LIST_ITEM_ACTIVE") + " . " + "Label . Input Content . " + oBundle.getText("LIST_ITEM_NAVIGATED"),  "Content annoucement for Standard List Item with Punctuation" );
+		});
 	}
 );
