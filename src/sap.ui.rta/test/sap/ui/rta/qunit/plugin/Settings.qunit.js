@@ -18,8 +18,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	'sap/ui/base/ManagedObject',
 	"sap/base/Log"
-],
-function (
+], function(
 	sinon,
 	Button,
 	VerticalLayout,
@@ -42,76 +41,92 @@ function (
 
 	var sDefaultSettingsIcon = "sap-icon://key-user-settings";
 	var oMockedAppComponent = {
-		getLocalId: function () {
+		getLocalId: function() {
 			return undefined;
 		},
-		getManifestEntry: function () {
+		getManifestEntry: function() {
 			return {};
 		},
-		getMetadata: function () {
+		getMetadata: function() {
 			return {
-				getName: function () {
+				getName: function() {
 					return "someName";
 				}
 			};
 		},
-		getManifest: function () {
+		getManifest: function() {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					},
-					id : "appId"
+					id: "appId"
 				}
 			};
 		},
-		getModel: function () {}
+		getModel: function() {}
 	};
 	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 	var oCompleteChangeContentStub = sinon.stub(PropertyChange, "completeChangeContent");
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		oGetAppComponentForControlStub.restore();
 		oCompleteChangeContentStub.restore();
 	});
 
 	var sandbox = sinon.sandbox.create();
 
+	function createOverlayWithSettingsAction(oElement, vSettingsAction, bNoFunction) {
+		var oSettingsAction = bNoFunction ? vSettingsAction : function() {
+			return vSettingsAction;
+		};
+		return new ElementOverlay({
+			element: oElement,
+			designTimeMetadata: new ElementDesignTimeMetadata({
+				data: {
+					actions: {
+						settings: oSettingsAction
+					}
+				}
+			})
+		});
+	}
+
 	QUnit.module("Given a designTime and settings plugin are instantiated", {
-		beforeEach : function () {
+		beforeEach: function() {
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Button" : {
-					changeSettings : "sap/ui/fl/changeHandler/PropertyChange"
+				"sap.m.Button": {
+					changeSettings: "sap/ui/fl/changeHandler/PropertyChange"
 				}
 			})
 			.then(function() {
 				this.oCommandStack = new Stack();
 				this.oSettingsPlugin = new SettingsPlugin({
-					commandFactory : new CommandFactory(),
-					commandStack : this.oCommandStack
+					commandFactory: new CommandFactory(),
+					commandStack: this.oCommandStack
 				});
-				this.oButton = new Button("button", {text : "Button"});
+				this.oButton = new Button("button", {text: "Button"});
 				this.oVerticalLayout = new VerticalLayout({
-					content : [this.oButton]
+					content: [this.oButton]
 				}).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oVerticalLayout.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when an overlay has no settings action designTime metadata", function(assert) {
 			var fnDone = assert.async();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout],
-				plugins : [this.oSettingsPlugin],
-				designTimeMetadata : {
-					"sap.m.Button" : {
-						actions : {}
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oSettingsPlugin],
+				designTimeMetadata: {
+					"sap.m.Button": {
+						actions: {}
 					}
 				}
 			});
@@ -134,14 +149,14 @@ function (
 			var fnDone = assert.async();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout],
-				plugins : [this.oSettingsPlugin],
-				designTimeMetadata : {
-					"sap.m.Button" : {
-						actions : {
-							settings : function() {
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oSettingsPlugin],
+				designTimeMetadata: {
+					"sap.m.Button": {
+						actions: {
+							settings: function() {
 								return {
-									handler : function() {}
+									handler: function() {}
 								};
 							}
 						}
@@ -167,15 +182,15 @@ function (
 			var fnDone = assert.async();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout],
-				plugins : [this.oSettingsPlugin],
-				designTimeMetadata : {
-					"sap.m.Button" : {
-						actions : {
-							settings : function() {
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oSettingsPlugin],
+				designTimeMetadata: {
+					"sap.m.Button": {
+						actions: {
+							settings: function() {
 								return {
-									isEnabled : false,
-									handler : function() {}
+									isEnabled: false,
+									handler: function() {}
 								};
 							}
 						}
@@ -202,14 +217,14 @@ function (
 			var fnDone = assert.async();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout],
-				plugins : [this.oSettingsPlugin],
-				designTimeMetadata : {
-					"sap.m.Button" : {
-						actions : {
-							settings : function() {
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oSettingsPlugin],
+				designTimeMetadata: {
+					"sap.m.Button": {
+						actions: {
+							settings: function() {
 								return {
-									isEnabled : function(oElementInstance) {
+									isEnabled: function(oElementInstance) {
 										return oElementInstance.getMetadata().getName() !== "sap.m.Button";
 									}
 								};
@@ -238,16 +253,16 @@ function (
 			var sIcon = "sap-icon://myIcon";
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout],
-				plugins : [this.oSettingsPlugin],
-				designTimeMetadata : {
-					"sap.m.Button" : {
-						actions : {
-							settings : function() {
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oSettingsPlugin],
+				designTimeMetadata: {
+					"sap.m.Button": {
+						actions: {
+							settings: function() {
 								return {
-									isEnabled : true,
-									icon : sIcon,
-									handler : function() {}
+									isEnabled: true,
+									icon: sIcon,
+									handler: function() {}
 								};
 							}
 						}
@@ -273,38 +288,26 @@ function (
 		QUnit.test("when the handle settings function is called and the handler returns a change object,", function(assert) {
 			var done = assert.async();
 			var oSettingsChange = {
-				selectorElement : this.oButton,
-				changeSpecificData : {
-					changeType : "changeSettings",
-					content : "testchange"
+				selectorElement: this.oButton,
+				changeSpecificData: {
+					changeType: "changeSettings",
+					content: "testchange"
 				}
 			};
 
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return {
-									isEnabled : true,
-									handler : function() {
-										return new Promise(function(resolve) {
-											resolve([oSettingsChange]);
-										});
-									}
-								};
-							}
-						}
-					}
-				})
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				isEnabled: true,
+				handler: function() {
+					return new Promise(function(resolve) {
+						resolve([oSettingsChange]);
+					});
+				}
 			});
-
 			var aSelectedOverlays = [oButtonOverlay];
 
 			var fnAssertSpy = sandbox.spy(ManagedObject.prototype, "applySettings");
 
-			this.oSettingsPlugin.attachEventOnce("elementModified", function (oEvent) {
+			this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
 				var mPassedSettings = fnAssertSpy.getCall(1).args[0];
 				var bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
 					return sKey === "selector";
@@ -320,24 +323,13 @@ function (
 		});
 
 		QUnit.test("when the handle settings function is called and the handler returns a an empty change object,", function(assert) {
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return {
-									isEnabled : true,
-									handler : function() {
-										return new Promise(function(resolve) {
-											resolve([]);
-										});
-									}
-								};
-							}
-						}
-					}
-				})
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				isEnabled: true,
+				handler: function() {
+					return new Promise(function(resolve) {
+						resolve([]);
+					});
+				}
 			});
 
 			var oCommandFactory = this.oSettingsPlugin.getCommandFactory();
@@ -355,19 +347,8 @@ function (
 		});
 
 		QUnit.test("when the handle settings function is called and no handler is present in Designtime Metadata,", function(assert) {
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return {
-									isEnabled : true
-								};
-							}
-						}
-					}
-				})
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				isEnabled: true
 			});
 
 			var aSelectedOverlays = [oButtonOverlay];
@@ -382,26 +363,13 @@ function (
 		});
 
 		QUnit.test("when the handle settings function is called and the handler returns a rejected promise with error object,", function(assert) {
-			var that = this;
-
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return {
-									isEnabled : true,
-									handler : function() {
-										return new Promise(function(resolve, reject) {
-											reject(Error("Test"));
-										});
-									}
-								};
-							}
-						}
-					}
-				})
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				isEnabled: true,
+				handler: function() {
+					return new Promise(function(resolve, reject) {
+						reject(Error("Test"));
+					});
+				}
 			});
 
 			var aSelectedOverlays = [oButtonOverlay];
@@ -409,26 +377,26 @@ function (
 			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton })
 
 			.catch(function() {
-				assert.notOk(that.oSettingsCommand, "... command is not created");
-			});
+				assert.notOk(this.oSettingsCommand, "... command is not created");
+			}.bind(this));
 		});
 
 		QUnit.test("when two changes are on the command stack,", function(assert) {
 			return this.oSettingsPlugin.getCommandFactory().getCommandFor(
 				{
-					id : "stableNavPopoverId",
-					controlType : "sap.m.Button",
-					appComponent : oMockedAppComponent
+					id: "stableNavPopoverId",
+					controlType: "sap.m.Button",
+					appComponent: oMockedAppComponent
 				},
 				"settings",
 				{
-					changeType : "changeSettings",
-					content : "testchange1"
+					changeType: "changeSettings",
+					content: "testchange1"
 				},
 				new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {}
+					data: {
+						actions: {
+							settings: function() {}
 						}
 					}
 				})
@@ -444,19 +412,19 @@ function (
 			.then(function() {
 				return this.oSettingsPlugin.getCommandFactory().getCommandFor(
 					{
-						id : "stableNavPopoverId",
-						controlType : "sap.m.Button",
-						appComponent : oMockedAppComponent
+						id: "stableNavPopoverId",
+						controlType: "sap.m.Button",
+						appComponent: oMockedAppComponent
 					},
 					"settings",
 					{
-						changeType : "changeSettings",
-						content : "testchange2"
+						changeType: "changeSettings",
+						content: "testchange2"
 					},
 					new ElementDesignTimeMetadata({
-						data : {
-							actions : {
-								settings : function() {}
+						data: {
+							actions: {
+								settings: function() {}
 							}
 						}
 					})
@@ -475,7 +443,7 @@ function (
 				assert.equal(aUnsavedChanges.length, 2, "these commands are returned by _getUnsavedChanges");
 			}.bind(this))
 
-			.catch(function (oError) {
+			.catch(function(oError) {
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		});
@@ -483,38 +451,27 @@ function (
 		QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change,", function(assert) {
 			var done = assert.async();
 			var mAppDescriptorChange = {
-				appComponent : oMockedAppComponent,
-				changeSpecificData : {
-					appDescriptorChangeType : "appDescriptorChangeType",
-					content : {
-						parameters : {
-							param1 : "param1"
+				appComponent: oMockedAppComponent,
+				changeSpecificData: {
+					appDescriptorChangeType: "appDescriptorChangeType",
+					content: {
+						parameters: {
+							param1: "param1"
 						},
-						texts : {
-							text1 : "text1"
+						texts: {
+							text1: "text1"
 						}
 					}
 				}
 			};
 
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return {
-									isEnabled : true,
-									handler: function () {
-										return new Promise(function (resolve) {
-											resolve([mAppDescriptorChange]);
-										});
-									}
-								};
-							}
-						}
-					}
-				})
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				isEnabled: true,
+				handler: function() {
+					return new Promise(function(resolve) {
+						resolve([mAppDescriptorChange]);
+					});
+				}
 			});
 
 			this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
@@ -536,49 +493,38 @@ function (
 		QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change and a flex change,", function(assert) {
 			var done = assert.async();
 			var mAppDescriptorChange = {
-				appComponent : oMockedAppComponent,
-				changeSpecificData : {
-					appDescriptorChangeType : "appDescriptorChangeType",
-					content : {
-						parameters : {
-							param1 : "param1"
+				appComponent: oMockedAppComponent,
+				changeSpecificData: {
+					appDescriptorChangeType: "appDescriptorChangeType",
+					content: {
+						parameters: {
+							param1: "param1"
 						},
-						texts : {
-							text1 : "text1"
+						texts: {
+							text1: "text1"
 						}
 					}
 				}
 			};
 			var mSettingsChange = {
-				selectorElement : {
-					id : "stableNavPopoverId",
-					controlType : "sap.m.Button",
-					appComponent : oMockedAppComponent
+				selectorElement: {
+					id: "stableNavPopoverId",
+					controlType: "sap.m.Button",
+					appComponent: oMockedAppComponent
 				},
-				changeSpecificData : {
-					changeType : "changeSettings",
-					content : "testchange"
+				changeSpecificData: {
+					changeType: "changeSettings",
+					content: "testchange"
 				}
 			};
 
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return {
-									isEnabled: true,
-									handler: function() {
-										return new Promise(function(resolve) {
-											resolve([mAppDescriptorChange, mSettingsChange]);
-										});
-									}
-								};
-							}
-						}
-					}
-				})
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				isEnabled: true,
+				handler: function() {
+					return new Promise(function(resolve) {
+						resolve([mAppDescriptorChange, mSettingsChange]);
+					});
+				}
 			});
 
 			this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
@@ -602,30 +548,19 @@ function (
 		});
 
 		QUnit.test("when retrieving the context menu item for single 'settings' action", function(assert) {
-			var oButtonOverlay = new ElementOverlay({
-				element: this.oButton,
-				designTimeMetadata: new ElementDesignTimeMetadata({
-					data: {
-						actions: {
-							settings: function() {
-								return {
-									handler: function() {}
-								};
-							}
-						}
-					}
-				})
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				handler: function() {}
 			});
 
 			var bIsAvailable = true;
-			sandbox.stub(this.oSettingsPlugin, "isAvailable").callsFake(function (aElementOverlays) {
+			sandbox.stub(this.oSettingsPlugin, "isAvailable").callsFake(function(aElementOverlays) {
 				assert.equal(aElementOverlays[0].getId(), oButtonOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 				return bIsAvailable;
 			});
-			sandbox.stub(this.oSettingsPlugin, "handler").callsFake(function (aOverlays) {
+			sandbox.stub(this.oSettingsPlugin, "handler").callsFake(function(aOverlays) {
 				assert.deepEqual(aOverlays, [oButtonOverlay], "the 'handler' method is called with the right overlays");
 			});
-			sandbox.stub(this.oSettingsPlugin, "isEnabled").callsFake(function (aElementOverlays) {
+			sandbox.stub(this.oSettingsPlugin, "isEnabled").callsFake(function(aElementOverlays) {
 				assert.equal(aElementOverlays[0].getId(), oButtonOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
 			});
 
@@ -633,7 +568,6 @@ function (
 			assert.equal(aMenuItems[0].id, "CTX_SETTINGS", "'getMenuItems' returns the context menu item for the plugin");
 
 			aMenuItems[0].handler([oButtonOverlay]);
-			aMenuItems[0].enabled([oButtonOverlay]);
 
 			bIsAvailable = false;
 			assert.equal(this.oSettingsPlugin.getMenuItems([oButtonOverlay]).length,
@@ -641,57 +575,94 @@ function (
 				"and if plugin is not available for the overlay, no menu items are returned");
 		});
 
+		QUnit.test("when retrieving the context menu item for single 'settings' action with a submenu", function(assert) {
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				handler: function() {},
+				submenu: [
+					{
+						name: "subEntry0",
+						icon: "sap-icon://accept",
+						enabled: true,
+						key: "foo"
+					},
+					{
+						enabled: false
+					},
+					{
+						name: "subEntry2",
+						key: "bar"
+					}
+				]
+			});
+
+			var bIsAvailable = true;
+			sandbox.stub(this.oSettingsPlugin, "isAvailable").callsFake(function(aElementOverlays) {
+				assert.equal(aElementOverlays[0].getId(), oButtonOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
+				return bIsAvailable;
+			});
+
+			var oMenuItem = this.oSettingsPlugin.getMenuItems([oButtonOverlay])[0];
+			assert.equal(oMenuItem.id, "CTX_SETTINGS", "'getMenuItems' returns the context menu item for the plugin");
+			assert.deepEqual(oMenuItem.submenu[0], {
+				id: "foo",
+				text: "subEntry0",
+				icon: "sap-icon://accept",
+				enabled: true
+			}, "the submennu entry 0 is correct");
+			assert.deepEqual(oMenuItem.submenu[1], {
+				id: "CTX_SETTINGS_SUB_1",
+				text: "",
+				icon: "blank",
+				enabled: false
+			}, "the submennu entry 1 is correct");
+			assert.deepEqual(oMenuItem.submenu[2], {
+				id: "bar",
+				text: "subEntry2",
+				icon: "blank",
+				enabled: true
+			}, "the submennu entry 2 is correct");
+		});
+
 		QUnit.test("when retrieving the context menu items and executing two 'settings' actions", function(assert) {
 			var done1 = assert.async();
 			var done2 = assert.async();
 
 			var mAction1Change = {
-				selectorElement : this.oButton,
-				changeSpecificData : {
-					changeType : "changeSettings",
-					content : "testchange1"
+				selectorElement: this.oButton,
+				changeSpecificData: {
+					changeType: "changeSettings",
+					content: "testchange1"
 				}
 			};
 
 			var mAction2Change = {
-				selectorElement : this.oButton,
-				changeSpecificData : {
-					changeType : "changeSettings",
-					content : "testchange2"
+				selectorElement: this.oButton,
+				changeSpecificData: {
+					changeType: "changeSettings",
+					content: "testchange2"
 				}
 			};
 
-			var oButtonOverlay = new ElementOverlay({
-				element: this.oButton,
-				designTimeMetadata: new ElementDesignTimeMetadata({
-					data: {
-						actions: {
-							settings: function () {
-								return [
-									{
-										name: "CTX_ACTION1",
-										handler: function () {
-											return new Promise(function (resolve) {
-												resolve([mAction1Change]);
-											});
-										}
-									},
-									{
-										name: function () {
-											return "Action 2 Name";
-										},
-										handler: function () {
-											return new Promise(function (resolve) {
-												resolve([mAction2Change]);
-											});
-										}
-									}
-								];
-							}
-						}
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, [
+				{
+					name: "CTX_ACTION1",
+					handler: function() {
+						return new Promise(function(resolve) {
+							resolve([mAction1Change]);
+						});
 					}
-				})
-			});
+				},
+				{
+					name: function() {
+						return "Action 2 Name";
+					},
+					handler: function() {
+						return new Promise(function(resolve) {
+							resolve([mAction2Change]);
+						});
+					}
+				}
+			]);
 
 			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
 
@@ -732,36 +703,25 @@ function (
 			var done = assert.async();
 
 			var mAction1Change = {
-				selectorElement : this.oButton,
-				changeSpecificData : {
-					changeType : "changeSettings",
-					content : "testchange1"
+				selectorElement: this.oButton,
+				changeSpecificData: {
+					changeType: "changeSettings",
+					content: "testchange1"
 				}
 			};
 
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return {
-									CTX_ACTION1 : {
-										name : "CTX_ACTION1",
-										handler: function() {
-											return new Promise(function(resolve) {
-												resolve([mAction1Change]);
-											});
-										}
-									},
-									AnotherId : {
-										name : "CTX_ACTION2"
-									}
-								};
-							}
-						}
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				CTX_ACTION1: {
+					name: "CTX_ACTION1",
+					handler: function() {
+						return new Promise(function(resolve) {
+							resolve([mAction1Change]);
+						});
 					}
-				})
+				},
+				AnotherId: {
+					name: "CTX_ACTION2"
+				}
 			});
 
 			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
@@ -782,183 +742,139 @@ function (
 			assert.equal(spyLog.callCount, 1, "then there is a warning in the log saying the handler was not found for action 2");
 		});
 
-		QUnit.test(
-			"when retrieving the menu items for two 'settings', but one has changeOnRelevantContainer true and the relevant container doesn't have a stable id",
-			function(assert) {
-				var oButtonOverlay = new ElementOverlay({
-					element : this.oButton,
-					designTimeMetadata : new ElementDesignTimeMetadata({
-						data : {
-							actions : {
-								settings : function() {
-									return {
-										Action1 : {
-											name : "CTX_ACTION1",
-											handler: function() {}
-										},
-										Action2 : {
-											name : "CTX_ACTION2",
-											changeOnRelevantContainer: true,
-											handler: function() {}
-										}
-									};
-								}
-							}
-						}
-					})
-				});
-
-				var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-
-				sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay) {
-					if (oOverlay === oVerticalLayoutOverlay) {
-						return false;
-					}
-					return true;
-				});
-
-				sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
-
-				var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
-				assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
-				assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
-				assert.equal(aMenuItems.length, 1, "'getMenuItems' doesn't return the action where the relevant container has no stable id");
-				assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "and _isEditable() returns true because one action is valid");
+		QUnit.test("when retrieving the menu items for two 'settings', one has changeOnRelevantContainer true and the relevant container doesn't have a stable id", function(assert) {
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				Action1: {
+					name: "CTX_ACTION1",
+					handler: function() {}
+				},
+				Action2: {
+					name: "CTX_ACTION2",
+					changeOnRelevantContainer: true,
+					handler: function() {}
+				}
 			});
 
-		QUnit.test(
-			"when retrieving the menu items for two 'settings', but both have changeOnRelevantContainer true and the relevant container doesn't have a stable id",
-			function(assert) {
-				var oButtonOverlay = new ElementOverlay({
-					element : this.oButton,
-					designTimeMetadata : new ElementDesignTimeMetadata({
-						data : {
-							actions : {
-								settings : function() {
-									return {
-										Action1 : {
-											name : "CTX_ACTION1",
-											changeOnRelevantContainer: true,
-											handler: function() {}
-										},
-										Action2 : {
-											name : "CTX_ACTION2",
-											changeOnRelevantContainer: true,
-											handler: function() {}
-										}
-									};
-								}
-							}
-						}
-					})
-				});
+			var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
 
-				var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-
-				sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay) {
-					if (oOverlay === oVerticalLayoutOverlay) {
-						return false;
-					}
-					return true;
-				});
-
-				sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
-
-				var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
-				assert.equal(aMenuItems.length, 0, "then no menu items are returned");
-				assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "and _isEditable() returns false because no actions are valid");
+			sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay) {
+				if (oOverlay === oVerticalLayoutOverlay) {
+					return false;
+				}
+				return true;
 			});
 
-		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one is disabled", function (assert) {
+			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
+			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
+
+			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
+			assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
+			assert.equal(aMenuItems.length, 1, "'getMenuItems' doesn't return the action where the relevant container has no stable id");
+			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "and _isEditable() returns true because one action is valid");
+		});
+
+		QUnit.test("when retrieving the menu items for two 'settings', but both have changeOnRelevantContainer true and the relevant container doesn't have a stable id", function(assert) {
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				Action1: {
+					name: "CTX_ACTION1",
+					changeOnRelevantContainer: true,
+					handler: function() {}
+				},
+				Action2: {
+					name: "CTX_ACTION2",
+					changeOnRelevantContainer: true,
+					handler: function() {}
+				}
+			});
+
+			var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+
+			sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay) {
+				if (oOverlay === oVerticalLayoutOverlay) {
+					return false;
+				}
+				return true;
+			});
+
+			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
+			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
+
+			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			assert.equal(aMenuItems.length, 0, "then no menu items are returned");
+			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "and _isEditable() returns false because no actions are valid");
+		});
+
+		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one is disabled", function(assert) {
 			var oButton = this.oButton;
 
-			var oButtonOverlay = new ElementOverlay({
-				element: this.oButton,
-				designTimeMetadata: new ElementDesignTimeMetadata({
-					data: {
-						actions: {
-							settings: {
-								"Button Settings 1": {
-									name: function() { return "CTX_ACTION1"; },
-									handler: function () {
-										return new Promise(function (resolve) {
-											resolve([]);
-										});
-									}
-								},
-								"Another Button Settings Action" : {
-									name: function () { return "CTX_ACTION2"; },
-									handler: function () {
-										return new Promise(function(resolve) {
-											resolve([]);
-										});
-									},
-									isEnabled: function (oElement) {
-										assert.equal(oElement, oButton, "isEnabled is called with the correct element");
-										return false;
-									}
-								}
-							}
-						}
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+				"Button Settings 1": {
+					name: function() { return "CTX_ACTION1"; },
+					handler: function() {
+						return new Promise(function(resolve) {
+							resolve([]);
+						});
 					}
-				})
-			});
+				},
+				"Another Button Settings Action": {
+					name: function() { return "CTX_ACTION2"; },
+					handler: function() {
+						return new Promise(function(resolve) {
+							resolve([]);
+						});
+					},
+					isEnabled: function(oElement) {
+						assert.equal(oElement, oButton, "isEnabled is called with the correct element");
+						return false;
+					}
+				}
+			}, true);
 
 			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
 
 			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.equal(aMenuItems[0].text, "CTX_ACTION1", "'getMenuItems' returns the context menu item for action 1");
-			assert.equal(aMenuItems[0].enabled, undefined, "'getMenuItems' item for action 1 is undefined (hence default true will be used)");
+			assert.equal(aMenuItems[0].enabled, true, "and it is enabled");
 			assert.equal(aMenuItems[1].text, "CTX_ACTION2", "'getMenuItems' returns the context menu item for action 2");
-			assert.equal(aMenuItems[1].enabled([oButtonOverlay]), false, "'getMenuItems' item for action 2 will be disabled");
+			assert.equal(aMenuItems[1].enabled([oButtonOverlay]), false, "and it is disabled");
 		});
 
 		QUnit.test("when retrieving the context menu items and executing two 'settings' actions with diffrent icon settings", function(assert) {
 			var sIconAction1 = "sap-icon://myIconAction1";
 
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return [
-									{
-										name : "CTX_ACTION1",
-										icon : sIconAction1,
-										handler: function() {
-											return new Promise(function(resolve) {
-												resolve([]);
-											});
-										}
-									},
-									{
-										name : function() {
-											return "Action 2 Name";
-										},
-										handler: function() {
-											return new Promise(function(resolve) {
-												resolve([]);
-											});
-										}
-									},
-									{
-										name : function() {
-											return "Action 3 Name";
-										},
-										icon : { name: "icon should be a STRING not an Object" },
-										handler: function() {
-											return new Promise(function(resolve) {
-												resolve([]);
-											});
-										}
-									}
-								];
-							}
-						}
+			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, [
+				{
+					name: "CTX_ACTION1",
+					icon: sIconAction1,
+					handler: function() {
+						return new Promise(function(resolve) {
+							resolve([]);
+						});
 					}
-				})
-			});
+				},
+				{
+					name: function() {
+						return "Action 2 Name";
+					},
+					handler: function() {
+						return new Promise(function(resolve) {
+							resolve([]);
+						});
+					}
+				},
+				{
+					name: function() {
+						return "Action 3 Name";
+					},
+					icon: { name: "icon should be a STRING not an Object" },
+					handler: function() {
+						return new Promise(function(resolve) {
+							resolve([]);
+						});
+					}
+				}
+			]);
 
 			var oLogErrorStub = sandbox.stub(BaseLog, "error");
 			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
@@ -982,7 +898,7 @@ function (
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });
