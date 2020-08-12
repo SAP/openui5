@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/p13n/panels/BasePanel", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
-], function (BasePanel, FilterBarDelegate, Table, Chart, TableDelegate, TableSettings, ChartSettings, FilterBar, Button, Column, Dimension, Measure, FilterField) {
+	"sap/ui/mdc/p13n/AdaptationController", "sap/ui/mdc/p13n/panels/BasePanel", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
+], function (AdaptationController, BasePanel, FilterBarDelegate, Table, Chart, TableDelegate, TableSettings, ChartSettings, FilterBar, Button, Column, Dimension, Measure, FilterField) {
 	"use strict";
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
@@ -85,6 +85,7 @@ sap.ui.define([
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
+			assert.ok(oP13nControl.getVerticalScrolling(), "Vertical scrolling is active");
 			assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
 			assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("table.SETTINGS_COLUMN"), "Correct title has been set");
 			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
@@ -251,6 +252,7 @@ sap.ui.define([
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
+			assert.ok(oP13nControl.getVerticalScrolling(), "Vertical scrolling is active");
 			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
 			//check inner panel
@@ -606,6 +608,7 @@ sap.ui.define([
 				//check container
 				assert.ok(oP13nControl, "Container has been created");
 				assert.ok(oP13nControl.isA("sap.m.Dialog"));
+				assert.ok(!oP13nControl.getVerticalScrolling(), "Vertical scrolling is disabled for FilterBarBase 'filterConfig'");
 				assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
 				assert.ok(this.oNonStubAC.bIsDialogOpen,"dialog is open");
 
@@ -627,7 +630,9 @@ sap.ui.define([
 	QUnit.test("call _createPopover - check vertical scrolling", function(assert) {
 		var done = assert.async();
 
-		this.oAdaptationController._createPopover(new BasePanel(), "Test").then(function(oPopover){
+		this.oAdaptationController.sP13nType = "Item";
+
+		this.oAdaptationController._createPopover(new BasePanel()).then(function(oPopover){
 			var bVerticalScrolling = oPopover.getVerticalScrolling();
 
 			assert.ok(bVerticalScrolling, "Popover has been created with verticalScrolling set to true");
@@ -776,6 +781,82 @@ sap.ui.define([
 			done();
 		});
 
+	});
+
+	QUnit.module("AdaptationController p13n container creation", {
+		beforeEach: function() {
+			this.oAdaptationController = new AdaptationController();
+			this.oAdaptationController.sP13nType = "Item";
+			this.oAdaptationController.setItemConfig({
+				containerSettings: {
+					title: "Test"
+				}
+			});
+		},
+		afterEach: function() {
+			this.oAdaptationController.destroy();
+			this.oAdaptationController = null;
+		}
+	});
+
+	QUnit.test("check live vertical scrolling", function(assert){
+		var done = assert.async();
+		this.oAdaptationController.setLiveMode(true);
+
+		this.oAdaptationController._createP13nContainer(new BasePanel()).then(function(oContainer){
+			assert.ok(oContainer.isA("sap.m.ResponsivePopover"), "Popover in liveMode");
+			assert.ok(oContainer.getVerticalScrolling(), "Vertical Scrolling true by default");
+			oContainer.destroy();
+			done();
+		});
+	});
+
+	QUnit.test("check modal vertical scrolling", function(assert){
+		var done = assert.async();
+		this.oAdaptationController.setLiveMode(false);
+
+		this.oAdaptationController._createP13nContainer(new BasePanel()).then(function(oContainer){
+			assert.ok(oContainer.isA("sap.m.Dialog"), "Dialog in non-liveMode");
+			assert.ok(oContainer.getVerticalScrolling(), "Vertical Scrolling true by default");
+			oContainer.destroy();
+			done();
+		});
+	});
+
+	QUnit.test("check container settings derivation in liveMode", function(assert){
+		var done = assert.async();
+		this.oAdaptationController.setLiveMode(true);
+		this.oAdaptationController.setItemConfig({
+			containerSettings: {
+				verticalScrolling: false,
+				title: "Some Title"
+			}
+		});
+
+		this.oAdaptationController._createP13nContainer(new BasePanel()).then(function(oContainer){
+			assert.ok(!oContainer.getVerticalScrolling(), "Vertical Scrolling overwritten by config in liveMode");
+			assert.equal(oContainer.getTitle(), "Some Title", "Correct title provided");
+			oContainer.destroy();
+			done();
+		});
+	});
+
+	QUnit.test("check container settings derivation in non-liveMode", function(assert){
+		var done = assert.async();
+		this.oAdaptationController.setLiveMode(true);
+		this.oAdaptationController.setItemConfig({
+			containerSettings: {
+				verticalScrolling: false,
+				title: "Some Title"
+			}
+		});
+
+		this.oAdaptationController._createP13nContainer(new BasePanel()).then(function(oContainer){
+			assert.ok(!oContainer.getVerticalScrolling(), "Vertical Scrolling overwritten by config in liveMode");
+			assert.equal(oContainer.getTitle(), "Some Title", "Correct title provided");
+			oContainer.destroy();
+			done();
+		});
 	});
 
 });

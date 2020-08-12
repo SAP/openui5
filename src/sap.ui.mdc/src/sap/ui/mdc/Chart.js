@@ -344,7 +344,9 @@ sap.ui.define([
 						remove: "removeItem",
 						move: "moveItem"
 					},
-					title: oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE"),
+					containerSettings: {
+						title: oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE")
+					},
 					adaptationUI: "sap/ui/mdc/p13n/panels/ChartItemPanel",
 					additionalDeltaAttributes: ["role"]
 				}

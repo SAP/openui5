@@ -253,7 +253,9 @@ sap.ui.define([
 					move: "moveFilter"
 				},
 				adaptationUI: "sap/ui/mdc/p13n/panels/AdaptFiltersPanel",
-				title: this._oRb.getText("filterbar.ADAPT_TITLE")
+				containerSettings: {
+					title: this._oRb.getText("filterbar.ADAPT_TITLE")
+				}
 			},
 			filterConfig: {
 				changeOperations: {
@@ -264,7 +266,10 @@ sap.ui.define([
 				ignoreIndex: true,
 				adaptationUI: this.retrieveInbuiltFilter,
 				applyFilterChangeOn: this,
-				title: this._oRb.getText("filterbar.ADAPT_TITLE")
+				containerSettings: {
+					verticalScrolling: false,
+					title: this._oRb.getText("filterbar.ADAPT_TITLE")
+				}
 			}
 		});
 	};

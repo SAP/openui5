@@ -521,7 +521,9 @@ sap.ui.define([
 					move: "moveColumn"
 				},
 				adaptationUI: "sap/ui/mdc/p13n/panels/SelectionPanel",
-				title: oResourceBundle.getText("table.SETTINGS_COLUMN")
+				containerSettings: {
+					title: oResourceBundle.getText("table.SETTINGS_COLUMN")
+				}
 			}
 		});
 	};
