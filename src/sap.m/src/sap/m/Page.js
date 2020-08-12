@@ -395,7 +395,6 @@ function(
 			}
 
 			this._navBtn.setType(this.getNavButtonType());
-			this._navBtn.setText(this.getNavButtonText());
 			this._navBtn.setTooltip(sBackText);
 		};
 

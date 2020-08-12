@@ -448,7 +448,7 @@ sap.ui.define([
 
 		assert.strictEqual(oPage.getNavButtonType(), oPage._navBtn.getType(), "Type 'Up' should be set to the nav button");
 		assert.strictEqual(oPage._navBtn.getType(), "Up", "Up should be propagated to nav button of the page");
-		assert.strictEqual(oPage._navBtn.getText(), "Up", "Up text should be propagated to nav button of the page");
+		assert.strictEqual(oPage._navBtn.getText(), "", "Up text should not be propagated to nav button of the page because the property is deprecated since 1.20");
 
 		oPage.destroy();
 	});
