@@ -316,7 +316,7 @@ sap.ui.define([
 				rm.close("div");
 
 				rm.openStart("div").class("sapMListTblSubCntSpr").openEnd();
-				rm.text(":");
+				rm.text(Core.getLibraryResourceBundle("sap.m").getText("TABLE_POPIN_LABEL_COLON"));
 				rm.close("div");
 			}
 
