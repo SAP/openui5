@@ -334,10 +334,16 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			expect(takeScreenshot(oCal)).toLookAs("112_month_displayed_dec_jan");
 			_pressPrev(sCalId); // Month switch to Nov. - Dec.
 			expect(takeScreenshot(oCal)).toLookAs("113_november_december_displayed");
-			_pressNext(sCalId); // Month swich to Dec. - Jan next year
+			_pressNext(sCalId); // Month switch to Dec. - Jan next year
 			expect(takeScreenshot(oCal)).toLookAs("114_december_january_displayed");
-			_pressNext(sCalId); // Month switch to Jan - Dec
-			expect(takeScreenshot(oCal)).toLookAs("115_january_december_displayed");
+			_pressNext(sCalId); // Month switch to Jan - Feb
+			expect(takeScreenshot(oCal)).toLookAs("115_january_february_displayed");
+			_pressMonthPicker(sCalId);
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform(); // Month switch to Jul - Aug
+			element(by.css("[data-sap-day='20150827']")).click(); // Select a day after max date
+			expect(takeScreenshot(oCal)).toLookAs("116_24_august_focused"); // Max date is focused
 		});
 	}
 
