@@ -159,7 +159,6 @@ function(
 
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			ObjectIdentifier.OI_ARIA_ROLE = oLibraryResourceBundle.getText("OI_ARIA_ROLE");
-			this._createAriaInfoTextControl();
 		}
 	};
 
@@ -183,11 +182,6 @@ function(
 		if (this._notesIcon) {
 			this._notesIcon.destroy();
 			this._notesIcon = null;
-		}
-
-		if (this._oAriaCustomRole) {
-			this._oAriaCustomRole.destroy();
-			this._oAriaCustomRole = null;
 		}
 	};
 
@@ -264,28 +258,27 @@ function(
 	 */
 	ObjectIdentifier.prototype._getTitleControl = function() {
 		var oTitleControl = this.getAggregation("_titleControl"),
-			sId = this.getId();
+			sId = this.getId(),
+			sTitle = ManagedObject.escapeSettingsValue(this.getProperty("title"));
 
 		if (!oTitleControl) {
 			// Lazy initialization
 			if (this.getProperty("titleActive")) {
 				oTitleControl = new Link({
 					id : sId + "-link",
-					text: ManagedObject.escapeSettingsValue(this.getProperty("title")),
+					text: sTitle,
 					//Add a custom hidden role "ObjectIdentifier" with hidden text
-					ariaLabelledBy: this._oAriaCustomRole
+					ariaLabelledBy: InvisibleText.getStaticId("sap.m", "OI_ARIA_ROLE")
 				});
 				oTitleControl.addAssociation("ariaLabelledBy", sId + "-text", true);
 			} else {
 				oTitleControl = new Text({
 					id : sId + "-txt",
-					text: ManagedObject.escapeSettingsValue(this.getProperty("title"))
+					text: sTitle
 				});
 			}
 			this.setAggregation("_titleControl", oTitleControl, true);
 		}
-
-		oTitleControl.setVisible(!!this.getTitle());
 
 		return oTitleControl;
 	};
@@ -307,7 +300,6 @@ function(
 		}
 
 		oTextControl.setTextDirection(this.getTextDirection());
-		oTextControl.setVisible(!!this.getText());
 
 		return oTextControl;
 	};
@@ -321,10 +313,9 @@ function(
 	 * @returns {sap.m.ObjectIdentifier} this to allow method chaining
 	 */
 	ObjectIdentifier.prototype.setTitle = function (sTitle) {
-		var oTitleControl = this._getTitleControl();
-
-		oTitleControl.setProperty("text", sTitle);
-		oTitleControl.setVisible(!!oTitleControl.getText());
+		if (sTitle) {
+			this._getTitleControl().setProperty("text", sTitle);
+		}
 
 		return this.setProperty("title", sTitle);
 	};
@@ -336,8 +327,10 @@ function(
 	 * @param {string} sText New value for property text
 	 * @returns {sap.m.ObjectIdentifier} this to allow method chaining
 	 */
-	ObjectIdentifier.prototype.setText = function (sText) {
-		this._getTextControl().setProperty("text", sText);
+	ObjectIdentifier.prototype.setText = function(sText) {
+		if (sText) {
+			this._getTextControl().setProperty("text", sText);
+		}
 
 		return this.setProperty("text", sText);
 	};
@@ -436,21 +429,6 @@ function(
 		return Control.prototype.removeAssociation.apply(this, arguments);
 	};
 
-
-	/**
-	 * Creates additional aria hidden text with the role of the control.
-	 * @returns {sap.ui.core.InvisibleText} The additional aria hidden text with the role of the control
-	 * @private
-	 */
-	ObjectIdentifier.prototype._createAriaInfoTextControl = function () {
-
-		if (!this._oAriaCustomRole) {
-			this._oAriaCustomRole = new InvisibleText(this.getId() + "-oIHiddenText", { text: ObjectIdentifier.OI_ARIA_ROLE});
-		}
-
-		return this._oAriaCustomRole;
-	};
-
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @returns {Object} Current accessibility state of the control
@@ -458,7 +436,12 @@ function(
 	 */
 	ObjectIdentifier.prototype.getAccessibilityInfo = function() {
 		// first get accessibility info from the title control, which can be Text or Link
-		var oTitleInfo = this.getAggregation("_titleControl").getAccessibilityInfo(),
+		var oTitleInfo = this.getAggregation("_titleControl")
+			? this.getAggregation("_titleControl").getAccessibilityInfo()
+			: {
+				type: "",
+				description: ""
+			},
 			oType = (ObjectIdentifier.OI_ARIA_ROLE + " " + (oTitleInfo.type || "")).trim();
 
 		// add ObjectIdentifier type to the title type
