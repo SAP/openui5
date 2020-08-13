@@ -2588,6 +2588,71 @@ sap.ui.define([
 
 		assert.strictEqual(oModel.aPrerenderingTasks, null);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects", function (assert) {
+		var oBinding1 = {
+				isRoot : function () { return  true; },
+				requestAbsoluteSideEffects : function () {}
+			},
+			oBinding2 = {
+				isRoot : function () { return  false; },
+				requestAbsoluteSideEffects : function () {}
+			},
+			oBinding3 = {
+				isRoot : function () { return  true; },
+				requestAbsoluteSideEffects : function () {}
+			},
+			oBinding4 = {
+				isRoot : function () { return  true; }
+			},
+			oModel = createModel(),
+			oPromise;
+
+		oModel.aAllBindings = [oBinding1, oBinding2, oBinding3, oBinding4];
+		this.mock(oModel.getMetaModel()).expects("getObject").withExactArgs("/$EntityContainer")
+			.returns("~container~");
+		this.mock(oBinding1).expects("requestAbsoluteSideEffects")
+			.withExactArgs("group", ["/foo", "/bar/baz"]).resolves("~1");
+		this.mock(oBinding2).expects("requestAbsoluteSideEffects").never();
+		this.mock(oBinding3).expects("requestAbsoluteSideEffects")
+			.withExactArgs("group", ["/foo", "/bar/baz"]).resolves("~3");
+
+		// code under test
+		oPromise = oModel.requestSideEffects("group", ["/~container~/foo", "/~container~/bar/baz"]);
+
+		assert.notOk(oPromise.isFulfilled());
+		return oPromise.then(function (aResults) {
+			assert.deepEqual(aResults, ["~1", "~3"]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: nothing to do", function (assert) {
+		var oBinding = {
+				isRoot : function () { return  true; },
+				requestAbsoluteSideEffects : function () {}
+			},
+			oModel = createModel();
+
+		oModel.aAllBindings = [oBinding];
+		this.mock(oBinding).expects("requestAbsoluteSideEffects").never();
+
+		assert.strictEqual(oModel.requestSideEffects("group", []), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: wrong path", function (assert) {
+		var oModel = createModel();
+
+		this.mock(oModel.getMetaModel()).expects("getObject").withExactArgs("/$EntityContainer")
+			.returns("~container~");
+
+		// code under test
+		assert.throws(function () {
+			oModel.requestSideEffects("group", ["/wrong/path"]);
+		}, new Error("Path must start with '/~container~': /wrong/path"));
+	});
 });
 
 //TODO constructor: test that the service root URL is absolute?

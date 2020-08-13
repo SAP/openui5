@@ -1000,6 +1000,11 @@ sap.ui.define([
 	 *   may have changed, but no navigation properties (unless listed explicitly), for example
 	 *   <code>[{$PropertyPath : "*"}, {$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"}]</code> or
 	 *   <code>[{$PropertyPath : "EMPLOYEE_2_MANAGER/*"}]</code>.
+	 *
+	 *   Since 1.82.0 absolute paths are supported. Absolute paths must start with the entity
+	 *   container (example "/com.sap.gateway.default.iwbep.tea_busi.v0001.Container/TEAMS") of the
+	 *   service. All (navigation) properties in the complete model matching such an absolute path
+	 *   are updated.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used (since 1.69.0); if not specified, the update group ID for the
 	 *   context's binding is used, see {@link #getUpdateGroupId}. If a different group ID is
@@ -1042,7 +1047,8 @@ sap.ui.define([
 	 */
 	Context.prototype.requestSideEffects = function (aPathExpressions, sGroupId) {
 		var oMetaModel = this.oModel.getMetaModel(),
-			aPaths,
+			aPathsForBinding = [],
+			aPathsForModel = [],
 			oRootBinding,
 			sRootPath,
 			that = this;
@@ -1079,9 +1085,7 @@ sap.ui.define([
 			throw new Error("Cannot request side effects of unresolved binding's context: " + this);
 		}
 
-		oRootBinding = this.oBinding.getRootBinding();
-		sRootPath = this.oModel.resolve(oRootBinding.getPath(), oRootBinding.getContext());
-		aPaths = aPathExpressions.map(function (oPath) {
+		aPathExpressions.map(function (oPath) {
 			if (oPath && typeof oPath === "object") {
 				if (isPropertyPath(oPath.$PropertyPath)) {
 					return oPath.$PropertyPath;
@@ -1093,7 +1097,17 @@ sap.ui.define([
 			}
 			throw new Error("Not an edm:(Navigation)PropertyPath expression: "
 				+ JSON.stringify(oPath));
-		}).reduce(function (aPaths0, sPath) {
+		}).forEach(function (sPath) {
+			if (sPath[0] === "/") {
+				aPathsForModel.push(sPath);
+			} else {
+				aPathsForBinding.push(sPath);
+			}
+		});
+
+		oRootBinding = this.oBinding.getRootBinding();
+		sRootPath = this.oModel.resolve(oRootBinding.getPath(), oRootBinding.getContext());
+		aPathsForBinding = aPathsForBinding.reduce(function (aPaths0, sPath) {
 			return aPaths0.concat(oMetaModel.getAllPathReductions(
 				_Helper.buildPath(that.getPath(), sPath), sRootPath));
 		}, []);
@@ -1108,9 +1122,12 @@ sap.ui.define([
 							that.oModel.oRequestor.relocateAll("$parked." + sGroupId, sGroupId);
 						})
 			).then(function () {
-				// ensure that this is called synchronously when there are no running change
-				// requests (otherwise bubbling up might fail due to temporarily missing caches)
-				return that.requestSideEffectsInternal(aPaths, sGroupId);
+				return SyncPromise.all([
+					that.oModel.requestSideEffects(sGroupId, aPathsForModel),
+					// ensure that this is called synchronously when there are no running change
+					// requests (otherwise bubbling up might fail due to temporarily missing caches)
+					that.requestSideEffectsInternal(aPathsForBinding, sGroupId)
+				]);
 			})
 		).then(function () {
 			// return undefined;
@@ -1127,8 +1144,8 @@ sap.ui.define([
 	 * @param {string} sGroupId
 	 *   The effective group ID
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the side effects have been determined and
-	 *   rejecting with an error if loading of side effects fails
+	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
+	 *   effects fails
 	 *
 	 * @private
 	 */
