@@ -1031,7 +1031,8 @@ sap.ui.define([
 
 				// Assert Card Content
 				assert.equal(oContentDomRef.getAttribute("role"), "group", "Card content should have a role - group");
-				assert.equal(oContentDomRef.getAttribute("aria-label"), this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "Card container should have aria-label - Card Content");
+				assert.equal(oContentDomRef.getAttribute("aria-labelledby"), this.oCard.getId() + "-ariaContentText", "Card container should have aria-labelledby with the correct id");
+				assert.equal(document.getElementById(this.oCard.getId() + "-ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT") , "ARIA content hidden text should have the correct value");
 				done();
 			}.bind(this));
 
@@ -1787,7 +1788,7 @@ sap.ui.define([
 				this.oCard = new Card({
 					customData: [
 						new BadgeCustomData({
-							value: "10"
+							value: "New"
 						})
 					],
 					width: "400px",
@@ -1809,8 +1810,12 @@ sap.ui.define([
 
 				Core.applyChanges();
 
+				var $badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
+
 				// Assert
-				assert.strictEqual(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "10", "Badge indicator is correctly rendered");
+				assert.strictEqual(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "New", "Badge indicator is correctly rendered");
+				assert.strictEqual($badgeIndicator.attr("aria-label"), "New", "Badge aria-label correctly rendered");
+				assert.ok(this.oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) > -1, "aria-labelledby contains the badge indicator id");
 
 				done();
 
@@ -1831,6 +1836,8 @@ sap.ui.define([
 
 				this.clock = sinon.useFakeTimers();
 
+				var $badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
+
 				// Assert
 				assert.ok(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
 
@@ -1839,6 +1846,8 @@ sap.ui.define([
 				this.clock.tick(4000);
 
 				assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
+				assert.notOk($badgeIndicator.attr("aria-label"), "Badge aria-label is removed");
+				assert.ok(this.oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
 
 				this.clock.restore();
 				done();

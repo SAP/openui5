@@ -19,7 +19,6 @@ sap.ui.define([
 	var CardRenderer = {
 		apiVersion: 2
 	};
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -85,6 +84,7 @@ sap.ui.define([
 		}
 
 		oRm.renderControl(oCard._ariaText);
+		oRm.renderControl(oCard._ariaContentText);
 
 		oRm.close("div");
 	};
@@ -100,11 +100,11 @@ sap.ui.define([
 		var oContent = oCard.getCardContent();
 
 		if (oContent) {
-			oRm.openStart("div")
+			oRm.openStart("div", oCard.getId() + "-contentSection")
 				.class("sapFCardContent")
 				.accessibilityState(oCard, {
 					role: "group",
-					label: { value: oRb.getText("ARIA_LABEL_CARD_CONTENT"), append: true }
+					labelledby: { value: oCard.getId() + "-ariaContentText", append: true }
 				})
 				.openEnd();
 

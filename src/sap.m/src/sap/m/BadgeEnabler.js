@@ -99,6 +99,7 @@ sap.ui.define([
 				oBadgeElement.removeClass("sapMBadgeAnimationAdd");
 				oBadgeElement.width();
 				oBadgeElement.addClass("sapMBadgeAnimationRemove");
+				oBadgeElement.removeAttr("aria-label");
 
 				this._isBadgeAttached = false;
 				callHandler.call(this, "", IBADGE_STATE["Disappear"]);
