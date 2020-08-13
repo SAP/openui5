@@ -33,15 +33,14 @@ sap.ui.define(["sap/uxap/library"],
 			reveal : {
 				changeType : "unstashControl",
 				getLabel: function(oControl) {
+					var sTitle = oControl.getTitle();
 					var aSubSection = oControl.getSubSections();
-
 					// If there is only one SubSection, its title is shown in the AnchorBar,
 					// instead of the title of the Section (if it is available).
 					if (aSubSection.length === 1 && aSubSection[0].getTitle().trim() !== "") {
-						return aSubSection[0].getTitle();
+						sTitle = aSubSection[0].getTitle();
 					}
-
-					return oControl.getTitle();
+					return sTitle || oControl.getId();
 				}
 			},
 			rename: function () {
@@ -53,7 +52,7 @@ sap.ui.define(["sap/uxap/library"],
 					},
 					validators: [
 						"noEmptyText"
-					]
+				]
 				};
 			}
 		},

@@ -5,7 +5,10 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/StashControl",
 	"sap/ui/fl/Change",
 	"sap/ui/core/Control",
+	"sap/m/Panel",
+	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/StashedControlSupport",
@@ -16,7 +19,10 @@ sap.ui.define([
 	StashControlChangeHandler,
 	Change,
 	Control,
+	Panel,
+	Button,
 	VerticalLayout,
+	XMLView,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	StashedControlSupport,
@@ -26,20 +32,11 @@ sap.ui.define([
 	"use strict";
 
 	// mix-in stash functionality
-	StashedControlSupport.mixInto(Control, true);
+	StashedControlSupport.mixInto(Panel);
+	StashedControlSupport.mixInto(Control);
 	var sandbox = sinon.sandbox.create();
 	var oMockUIComponent = new UIComponent("mockComponent");
-	var fnCreateStashedControl = function(sId, sParentId) {
-		return StashedControlSupport.createStashedControl(sId, {
-			sParentId: sParentId,
-			sParentAggregationName: "content",
-			fnCreate: function () {
-				//use same id of stashed control
-				var oUnstashedControl = new Control(sId);
-				return [oUnstashedControl];
-			}
-		});
-	};
+
 	QUnit.module("sap.ui.fl.changeHandler.StashControl", {
 		beforeEach: function() {
 			this.oChangeHandler = StashControlChangeHandler;
@@ -53,32 +50,38 @@ sap.ui.define([
 
 			this.oChange = new Change(oChangeJson);
 
+			// the following aggregation describes the runtime state
+			// the "ToBeStashed" control will also be part of the aggregation after the XML-Tree modification
 			this.oControl1 = new Control();
 			this.oControl2 = new Control();
+			this.oToBeStashedPlaceholder = new Panel("ToBeStashed0");
 			this.oControlInvisible = new Control("invisibleControl", {
 				visible: false
 			});
 
 			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oControl1, this.oControl2, this.oControlInvisible]
+				content : [this.oControl1, this.oControl2, this.oToBeStashedPlaceholder, this.oControlInvisible]
 			});
 
-			var oXmlString =
-				'<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout"><layout:VerticalLayout id="' + this.oVerticalLayout.getId() + '" flexEnabled="true">' +
-					'<content>' +
-						'<core:Control id="' + this.oControl1.getId() + '"></core:Control>' +
-						'<core:Control id="' + this.oControl2.getId() + '"></core:Control>' +
-						'<core:Control stashed="true" id="' + this.oControlInvisible.getId() + '"></core:Control>' +
-						'<core:Control id="ToBeStashed"></core:Control>' +
-					'</content>' +
+			// XML representation of the above runtime state (before modification)
+			this.xmlString =
+				'<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout"><layout:VerticalLayout id="verticalLayout" flexEnabled="true">' +
+					'<layout:content>' +
+						'<core:Control id="control0"></core:Control>' +
+						'<core:Control id="control1"></core:Control>' +
+						'<m:Panel id="toBeStashed">' +
+							'<m:Button id="myButtonInsideStashedControl"></m:Button>' +
+						'</m:Panel>' +
+						'<core:Control id="invisibleControl" visible="false"></core:Control>' +
+					'</layout:content>' +
 				'</layout:VerticalLayout></mvc:View>';
 
 			var oDOMParser = new DOMParser();
-			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-			this.oXmlView = oXmlDocument.documentElement;
+			this.xmlDocument = oDOMParser.parseFromString(this.xmlString, "application/xml");
+			this.oXmlView = this.xmlDocument.documentElement;
 			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlNodeControl0 = this.oXmlLayout.childNodes[0].childNodes[0];
-			this.oXmlNodeToBeStashed = this.oXmlLayout.childNodes[0].childNodes[3];
+			this.oXmlNodeToBeStashed = this.oXmlLayout.childNodes[0].childNodes[2];
 
 			this.oChange = new Change(oChangeJson);
 		},
@@ -107,21 +110,34 @@ sap.ui.define([
 		});
 
 		QUnit.test('when a control is stashed during XML pre-processing and then revertChange is called using JsControlTreeModifier', function(assert) {
-			assert.strictEqual(this.oVerticalLayout.getContent().length, 3, "then the VerticalLayout has 3 controls initially");
+			assert.equal(this.oXmlNodeToBeStashed.getAttribute("stashed"), null, "ToBeStashed node is not yet stashed (before XML modification)");
 
 			// to simulate StashControl.applyChange() during XML pre-processing, where the XML node's control is not created
 			this.oChangeHandler.applyChange(this.oChange, this.oXmlNodeToBeStashed, {modifier: XmlTreeModifier, appComponent: oMockUIComponent});
 
-			// a StashedControl is created with the XML node's ID instead
-			var oStashedControl = fnCreateStashedControl(this.oXmlNodeToBeStashed.getAttribute("id"), this.oVerticalLayout.getId());
+			// check XML after modification
+			assert.equal(this.oXmlNodeToBeStashed.getAttribute("stashed"), "true", "ToBeStashed node is now stashed (after XML modification)");
 
-			// to simulate StashControl.revertChange() by the JSControlTreeModifier, where the StashedControl is replaced
-			this.oChangeHandler.revertChange(this.oChange, oStashedControl, {modifier: JsControlTreeModifier, appComponent: oMockUIComponent});
+			return XMLView.create({definition: new XMLSerializer().serializeToString(this.xmlDocument)}).then(function(oView) {
+				// a StashedControl is created with the XML node's ID instead
+				var oStashedControl = oView.byId("toBeStashed");
 
-			var aContentAfterRevert = this.oVerticalLayout.getContent();
-			assert.strictEqual(aContentAfterRevert.length, 4, "then the VerticalLayout has 4 controls after revert");
-			assert.strictEqual(aContentAfterRevert[2].getVisible(), true, 'then the unstashed control has visible property set to true');
-			assert.strictEqual(aContentAfterRevert[2].getId(), this.oXmlNodeToBeStashed.getAttribute("id"), "then the unstashed control was placed at the correct index");
+				// to simulate StashControl.revertChange() by the JSControlTreeModifier, where the StashedControl is replaced
+				this.oChangeHandler.revertChange(this.oChange, oStashedControl, {modifier: JsControlTreeModifier, appComponent: oMockUIComponent});
+
+				var aContentAfterRevert = oView.byId("verticalLayout").getContent();
+				assert.strictEqual(aContentAfterRevert.length, 4, "then the VerticalLayout has 4 controls after revert");
+
+				// check reverted control
+				var oStashRevertedPanel = aContentAfterRevert[2];
+				assert.strictEqual(oStashRevertedPanel.getVisible(), true, 'then the unstashed control has visible property set to true');
+				assert.strictEqual(oStashRevertedPanel.getId(), "__xmlview0--" + this.oXmlNodeToBeStashed.getAttribute("id"), "then the unstashed control was placed at the correct index");
+
+				var oButtonInUnstashedPanel = oStashRevertedPanel.getContent()[0];
+				assert.ok(oButtonInUnstashedPanel instanceof Button, "Nested Button in 'stash-reverted' Panel is present.");
+				assert.equal(oButtonInUnstashedPanel.getId(), "__xmlview0--myButtonInsideStashedControl", "Nested Button in 'stash-reverted' Panel has correct ID.");
+				oView.destroy();
+			}.bind(this));
 		});
 
 		QUnit.test('applyChange on an XMLTreeModifier', function(assert) {

@@ -31,13 +31,13 @@ function (controller, XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 
 	QUnit.test("ObjectPageSubSection stashing", function (assert) {
 		var oTestedSection = this.objectPageSampleView.byId("subsection10"),
-			oLazyLoaderSpy = sinon.spy(ObjectPageLazyLoader.prototype, "destroy"),
+			oDestroySpy = sinon.spy(ObjectPageLazyLoader.prototype, "destroy"),
 			oLazyLoaderRemoveAllContentSpy = sinon.spy(ObjectPageLazyLoader.prototype, "removeAllContent"),
-			aStashedControls = StashedSupport.getStashedControls(oTestedSection.getId()),
 			stashedObjects = 3;
 
-		assert.ok(oTestedSection.getBlocks(), "There are no blocks in the section");
-		assert.equal(aStashedControls.length, stashedObjects, "Blocks are stashed");
+		var aBlocks = oTestedSection.getBlocks();
+
+		assert.equal(aBlocks.length, 0, "There are no blocks in the section");
 
 		oTestedSection.connectToModels();
 
@@ -51,7 +51,9 @@ function (controller, XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 		assert.equal(oLazyLoaderRemoveAllContentSpy.callCount, stashedObjects,
 			"Remove all content from the LazyLoader so it can be properly destroyed.");
 
-		assert.equal(oLazyLoaderSpy.callCount, stashedObjects, "LazyLoaders are properly disposed of");
+		// destroy is called once from <code>sap.ui.core.StashedControlSupport</code> after unstashing,
+		// and then a second time from <code>sap.uxap.ObjectPageSubSection</code> after emptying the unstashed content
+		assert.equal(oDestroySpy.callCount, stashedObjects * 2, "LazyLoaders are properly disposed of");
 	});
 
 });
