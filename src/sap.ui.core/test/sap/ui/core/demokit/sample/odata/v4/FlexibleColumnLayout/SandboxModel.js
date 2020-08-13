@@ -45,6 +45,21 @@ sap.ui.define([
 				},
 				"SalesOrderList('0500000009')?$select=ChangedAt,CreatedAt,LifecycleStatusDesc" : {
 					source : "SalesOrderList('0500000009')-ChangedAt+CreatedAt+LifecycleStatusDesc.json"
+				},
+				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000000'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+					source : "SalesOrderList('0500000000')-Refresh_Existence.json"
+				},
+				"SalesOrderList?$filter=(GrossAmount%20gt%201000)%20and%20SalesOrderID%20eq%20'0500000000'&$count=true&$top=0" : {
+					source : "SalesOrderList('0500000000')-Refresh_Filter.json"
+				},
+				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000009'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+					source : "SalesOrderList('0500000009')-Refresh.json"
+				},
+				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
+					source : "SalesOrderList_GrossAmount_GT_1000.json"
+				},
+				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=4&$top=1" : {
+					source : "SalesOrderList_GrossAmount_GT_1000_skip4_top1.json"
 				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",

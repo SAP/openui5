@@ -32,6 +32,12 @@
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Title>
+							<SearchField id="filterGrossAmount" search="onFilterSalesOrders"
+									placeholder="Gross amount greater than" width="50%">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</SearchField>
 						</Toolbar>
 					</headerToolbar>
 					<columns>
@@ -72,6 +78,8 @@
 							<Title id="objectPageTitle" level="H2" text="Sales Order Details"/>
 							<Button enabled="true" icon="sap-icon://delete" id="deleteSalesOrder"
 								press="onDeleteSalesOrder" tooltip="Delete sales order"/>
+							<Button enabled="true" icon="sap-icon://refresh" id="refreshSalesOrder"
+									press="onRefreshSalesOrder" tooltip="Refresh Sales Order"/>
 						</Toolbar>
 					</form:toolbar>
 					<Toolbar design="Transparent" id="salesOrderDetailsToolbar">

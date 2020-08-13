@@ -968,13 +968,18 @@ sap.ui.define([
 
 	/**
 	 * Refreshes a single entity within a cache.
+	 * Since 1.84.0, for a kept-alive entity late properties are also taken into account.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
 	 * @param {string} sPath
 	 *   The entity collection's path within this cache, may be <code>""</code>
-	 * @param {number} iIndex
+	 * @param {number} [iIndex]
 	 *   The array index of the entity to be refreshed
+	 * @param {string} [sPredicate]
+	 *   The key predicate of the entity; only evaluated if <code>iIndex === undefined</code>
+	 * @param {boolean} [bKeepAlive]
+	 *   Whether the entity is kept-alive
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
@@ -984,16 +989,25 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.refreshSingle = function (oGroupLock, sPath, iIndex, fnDataRequested) {
+	Cache.prototype.refreshSingle = function (oGroupLock, sPath, iIndex, sPredicate, bKeepAlive,
+			fnDataRequested) {
 		var that = this;
 
 		this.checkSharedRequest();
 		return this.fetchValue(_GroupLock.$cached, sPath).then(function (aElements) {
-			var sPredicate = _Helper.getPrivateAnnotation(aElements[iIndex], "predicate"),
-				sReadUrl = _Helper.buildPath(that.sResourcePath, sPath, sPredicate),
-				mQueryOptions
-					= Object.assign({}, _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath));
+			var mQueryOptions
+					= Object.assign({}, _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath)),
+				sReadUrl;
 
+			if (iIndex !== undefined) {
+				sPredicate = _Helper.getPrivateAnnotation(aElements[iIndex], "predicate");
+			}
+			sReadUrl = _Helper.buildPath(that.sResourcePath, sPath, sPredicate);
+			if (bKeepAlive && that.mLateQueryOptions) {
+				// bKeepAlive === true -> own cache of the list binding -> sPath === ''
+				// -> no need to apply _Helper.getQueryOptionsForPath
+				_Helper.aggregateQueryOptions(mQueryOptions, that.mLateQueryOptions);
+			}
 			// drop collection related system query options
 			delete mQueryOptions.$apply;
 			delete mQueryOptions.$count;
@@ -1021,19 +1035,29 @@ sap.ui.define([
 	/**
 	 * Refreshes a single entity within a collection cache and removes it from the cache if the
 	 * filter does not match anymore.
+	 * Since 1.84.0, only removes entities that do not match the filter from the cache in case they
+	 * are not kept-alive. If the entity is kept-alive, checks also the existence and removes it
+	 * from the cache if it is no longer exists. For a kept-alive entity late properties are taken
+	 * into account.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
 	 * @param {string} sPath
 	 *   The entity collection's path within this cache, may be <code>""</code>
-	 * @param {number} iIndex
+	 * @param {number} [iIndex]
 	 *   The array index of the entity to be refreshed
+	 * @param {string} [sPredicate]
+	 *   The key predicate of the entity; only evaluated if the <code>iIndex === undefined</code>
+	 * @param {boolean} [bKeepAlive]
+	 *   Whether the entity is kept-alive
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @param {function} [fnOnRemove]
 	 *   A function which is called after the entity does not match the binding's filter anymore,
-	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}
+	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}. Since 1.84.0, if the entity is
+	 *   kept-alive and still exists, the function is called with <code>true</code>, otherwise with
+	 *   <code>false</code>
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
 	 *   the cache.
@@ -1041,8 +1065,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.refreshSingleWithRemove = function (oGroupLock, sPath, iIndex, fnDataRequested,
-			fnOnRemove) {
+	Cache.prototype.refreshSingleWithRemove = function (oGroupLock, sPath, iIndex, sPredicate,
+			bKeepAlive, fnDataRequested, fnOnRemove) {
 		var that = this;
 
 		this.checkSharedRequest();
@@ -1051,39 +1075,97 @@ sap.ui.define([
 			this.fetchTypes()
 		]).then(function (aResults) {
 			var aElements = aResults[0],
-				oEntity = aElements[iIndex],
-				sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
+				oEntity,
+				sInCollectionFilter,
+				mInCollectionQueryOptions = {},
+				sInCollectionUrl,
+				sKeyFilter,
 				mQueryOptions
 					= Object.assign({}, _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath)),
-				sFilterOptions = mQueryOptions.$filter,
-				sReadUrl = _Helper.buildPath(that.sResourcePath, sPath),
+				sReadUrl,
+				sReadUrlPrefix = _Helper.buildPath(that.sResourcePath, sPath),
+				aRequests = [],
 				mTypeForMetaPath = aResults[1];
 
+			if (iIndex !== undefined) {
+				oEntity = aElements[iIndex];
+				sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
+			} else {
+				oEntity = aElements.$byPredicate[sPredicate];
+			}
+			sKeyFilter = _Helper.getKeyFilter(oEntity, that.sMetaPath, mTypeForMetaPath);
+			sInCollectionFilter =
+				(mQueryOptions.$filter ? "(" + mQueryOptions.$filter + ") and " : "")
+				+ sKeyFilter;
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;
-			mQueryOptions.$filter = (sFilterOptions ? "(" + sFilterOptions + ") and " : "")
-				+ _Helper.getKeyFilter(oEntity, that.sMetaPath, mTypeForMetaPath);
-
-			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
-				that.bSortExpandSelect);
 
 			that.bSentRequest = true;
-			return that.oRequestor
-				.request("GET", sReadUrl, oGroupLock, undefined, undefined, fnDataRequested)
-				.then(function (oResult) {
-					if (oResult.value.length > 1) {
-						throw new Error(
-							"Unexpected server response, more than one entity returned.");
-					} else if (oResult.value.length === 0) {
-						that.removeElement(aElements, iIndex, sPredicate, sPath);
-						that.oRequestor.getModelInterface()
-							.reportBoundMessages(that.sResourcePath, [], [sPath + sPredicate]);
-						fnOnRemove();
-					} else {
-						that.replaceElement(aElements, iIndex, sPredicate, oResult.value[0],
-							mTypeForMetaPath, sPath);
-					}
-				});
+			if (bKeepAlive) {
+				if (that.mLateQueryOptions) {
+					// bKeepAlive === true -> own cache of the list binding -> sPath === ''
+					// -> no need to apply _Helper.getQueryOptionsForPath
+					_Helper.aggregateQueryOptions(mQueryOptions, that.mLateQueryOptions);
+				}
+				// clone query options for possible second request to check if entity is in
+				// the collection
+				mInCollectionQueryOptions = Object.assign({}, mQueryOptions);
+				mInCollectionQueryOptions.$filter = sInCollectionFilter;
+
+				mQueryOptions.$filter = sKeyFilter; // load data if the entity exists
+				delete mQueryOptions.$search;
+
+				sReadUrl = sReadUrlPrefix + that.oRequestor.buildQueryString(that.sMetaPath,
+					mQueryOptions, false, that.bSortExpandSelect);
+				aRequests.push(that.oRequestor.request("GET", sReadUrl, oGroupLock, undefined,
+					undefined, fnDataRequested));
+
+				if (iIndex !== undefined
+						&& (sKeyFilter !== sInCollectionFilter
+							|| mInCollectionQueryOptions.$search)) {
+					// request no data
+					delete mInCollectionQueryOptions.$select;
+					delete mInCollectionQueryOptions.$expand;
+					mInCollectionQueryOptions.$count = true;
+					mInCollectionQueryOptions.$top = 0;
+
+					sInCollectionUrl = sReadUrlPrefix + that.oRequestor.buildQueryString(
+						that.sMetaPath, mInCollectionQueryOptions);
+
+					aRequests.push(that.oRequestor.request("GET", sInCollectionUrl,
+						oGroupLock.getUnlockedCopy()));
+				}
+			} else {
+				mQueryOptions.$filter = sInCollectionFilter;
+				sReadUrl = sReadUrlPrefix + that.oRequestor.buildQueryString(that.sMetaPath,
+					mQueryOptions, false, that.bSortExpandSelect);
+				aRequests.push(that.oRequestor.request("GET", sReadUrl, oGroupLock, undefined,
+					undefined, fnDataRequested));
+			}
+
+			return SyncPromise.all(aRequests).then(function (aResults) {
+				var aReadResult = aResults[0].value,
+					bRemoveFromCollection = aResults[1] && aResults[1]["@odata.count"] === "0";
+
+				if (aReadResult.length > 1) {
+					throw new Error(
+						"Unexpected server response, more than one entity returned.");
+				} else if (aReadResult.length === 0) {
+					that.removeElement(aElements, iIndex, sPredicate, sPath);
+					that.oRequestor.getModelInterface()
+						.reportBoundMessages(that.sResourcePath, [], [sPath + sPredicate]);
+					fnOnRemove(false);
+				} else if (bRemoveFromCollection) {
+					that.removeElement(aElements, iIndex, sPredicate, sPath);
+					// element no longer in cache -> re-insert via replaceElement
+					that.replaceElement(aElements, undefined, sPredicate, aReadResult[0],
+						mTypeForMetaPath, sPath);
+					fnOnRemove(true);
+				} else {
+					that.replaceElement(aElements, iIndex, sPredicate, aReadResult[0],
+						mTypeForMetaPath, sPath);
+				}
+			});
 		});
 	};
 
@@ -1169,10 +1251,12 @@ sap.ui.define([
 	 * Replaces the old element at the given index by the given new element and calls
 	 * <code>visitResponse</code> for the new element. Updates also the reference in
 	 * <code>$byPredicate</code> for the transient predicate of the old element.
+	 * Since 1.84.0, if <code>iIndex === undefined</code> replaces the element in the
+	 * <code>aElements.$byPredicate</code> map of the cache's element list.
 	 *
 	 * @param {object[]} aElements
 	 *   The array of elements
-	 * @param {number} iIndex
+	 * @param {number} [iIndex]
 	 *   The array index of the old element to be replaced
 	 * @param {string} sPredicate
 	 *   The key predicate of the old element to be replaced
@@ -1189,16 +1273,20 @@ sap.ui.define([
 			mTypeForMetaPath, sPath) {
 		var oOldElement, sTransientPredicate;
 
-		// the element might have moved due to parallel insert/delete
-		iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
-		oOldElement = aElements[iIndex];
-		// _Helper.updateExisting cannot be used because navigation properties cannot be handled
-		aElements[iIndex] = aElements.$byPredicate[sPredicate] = oElement;
-		sTransientPredicate = _Helper.getPrivateAnnotation(oOldElement, "transientPredicate");
-		if (sTransientPredicate) {
-			oElement["@$ui5.context.isTransient"] = false;
-			aElements.$byPredicate[sTransientPredicate] = oElement;
-			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
+		if (iIndex === undefined) {// kept-alive element not in the list
+			aElements.$byPredicate[sPredicate] = oElement;
+		} else {
+			// the element might have moved due to parallel insert/delete
+			iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
+			oOldElement = aElements[iIndex];
+			// _Helper.updateExisting cannot be used because navigation properties cannot be handled
+			aElements[iIndex] = aElements.$byPredicate[sPredicate] = oElement;
+			sTransientPredicate = _Helper.getPrivateAnnotation(oOldElement, "transientPredicate");
+			if (sTransientPredicate) {
+				oElement["@$ui5.context.isTransient"] = false;
+				aElements.$byPredicate[sTransientPredicate] = oElement;
+				_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
+			}
 		}
 		// Note: iStart is not needed here because we know we have key predicates
 		this.visitResponse(oElement, mTypeForMetaPath,

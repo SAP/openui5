@@ -229,7 +229,7 @@ sap.ui.define([
 				var sContextPath, i, sPredicate, sResolvedPath, i$skipIndex;
 
 				if (oContext.isKeepAlive()) {
-					oContext.setKeepAlive(false); // ensure that it is destroyed later
+					oContext.resetKeepAlive(); // ensure that it is destroyed later
 				}
 				if (oContext.created()) {
 					// happens only for a created context that is not transient anymore
@@ -834,7 +834,7 @@ sap.ui.define([
 				this.aContexts[i] = oContext;
 			}
 		}
-		// destroy previous contexts which are not reused
+		// destroy previous contexts which are not reused or kept-alive
 		if (Object.keys(this.mPreviousContextsByPath).length) {
 			oModel.addPrerenderingTask(this.destroyPreviousContexts.bind(this));
 		}
@@ -1079,6 +1079,7 @@ sap.ui.define([
 	ODataListBinding.prototype.fetchCache = function () {
 		var oOldCache = this.oCache,
 			sBindingPath = this.oModel.resolve(this.sPath, this.oContext),
+			bKeptDataAdded,
 			that = this;
 
 		asODataParentBinding.prototype.fetchCache.apply(this, arguments);
@@ -1087,13 +1088,17 @@ sap.ui.define([
 			this.oCachePromise.then(function (oCache) {
 				Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
 					var oContext = that.mPreviousContextsByPath[sPath];
+
 					if (oContext.isKeepAlive()) {
+						// either absolute or $$ownRequest === true
+						// ->has own cache, see #checkKeepAlive
 						oCache.addKeptElement(
 							oOldCache.getValue(_Helper.getRelativePath(sPath, sBindingPath)));
 						oContext.checkUpdate(); // add change listeners
+						bKeptDataAdded = true;
 					}
 				});
-				if (oCache && oCache.hasChangeListeners()) {
+				if (bKeptDataAdded) {
 					oCache.setLateQueryOptions(oOldCache.getLateQueryOptions());
 				}
 			}); // no catch; if the new cache can't be created, data for kept-alive contexts is lost
@@ -1743,7 +1748,8 @@ sap.ui.define([
 		var that = this;
 
 		return this.oModel.getDependentBindings(this).filter(function (oDependentBinding) {
-			return !(oDependentBinding.oContext.getPath() in that.mPreviousContextsByPath);
+			return oDependentBinding.oContext.isKeepAlive()
+				|| !(oDependentBinding.oContext.getPath() in that.mPreviousContextsByPath);
 		});
 	};
 
@@ -2197,6 +2203,9 @@ sap.ui.define([
 	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}; a removed context is
 	 *   destroyed, see {@link sap.ui.model.Context#destroy}.
 	 *   Supported since 1.55.0
+	 *
+	 *   A removed context is destroyed unless it is kept alive
+	 *   (see {@link sap.ui.model.odata.v4.Context#isKeepAlive}) and still exists on the server.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with the entity when the entity is updated in the
 	 *   cache, or <code>undefined</code> if <code>bAllowRemoval</code> is set to true.
@@ -2206,7 +2215,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.refreshSingle = function (oContext, oGroupLock, bAllowRemoval) {
-		var sResourcePathPrefix = oContext.getPath().slice(1),
+		var sContextPath = oContext.getPath(),
+			sResourcePathPrefix = sContextPath.slice(1),
 			that = this;
 
 		if (oContext === this.oHeaderContext) {
@@ -2215,8 +2225,10 @@ sap.ui.define([
 
 		return this.withCache(function (oCache, sPath, oBinding) {
 			var bDataRequested = false,
-				aPromises = [],
-				bRemoved = false;
+				bDestroyed = false,
+				bKeepAlive = oContext.isKeepAlive(),
+				sPredicate = _Helper.getRelativePath(sContextPath, that.oHeaderContext.getPath()),
+				aPromises = [];
 
 			function fireDataReceived(oData) {
 				if (bDataRequested) {
@@ -2229,37 +2241,61 @@ sap.ui.define([
 				that.fireDataRequested();
 			}
 
-			function onRemove() {
-				var i, iIndex;
+			/**
+			 * Removes this context from the list bindings collection as it no longer matches the
+			 * filter criteria, see
+			 * {@link sap.ui.model.odata.v4.lib._Cache#refreshSingleWithRemove}.
+			 *
+			 * @param {boolean} bStillAlive
+			 *   If <code>false</code>, the context does not match the filter criteria and, if the
+			 *   context is kept-alive, the entity it points to no longer exists. If
+			 *   <code>true</code>, the context is kept-alive and the entity it points to still
+			 *   exists. In this case the context must not be destroyed.
+			 */
+			function onRemove(bStillAlive) {
+				var i,
+					iIndex = oContext.getModelIndex();
 
 				if (oContext.created()) {
 					that.destroyCreated(oContext);
+					bDestroyed = true;
 				} else {
-					iIndex = oContext.getModelIndex();
-					that.aContexts.splice(iIndex, 1);
-					for (i = iIndex; i < that.aContexts.length; i += 1) {
-						if (that.aContexts[i]) {
-							that.aContexts[i].iIndex -= 1;
+					if (iIndex === undefined) { // -> bStillAlive === false
+						delete that.mPreviousContextsByPath[sContextPath];
+					} else {
+						that.aContexts.splice(iIndex, 1);
+						that.iMaxLength -= 1; // this doesn't change Infinity
+						for (i = iIndex; i < that.aContexts.length; i += 1) {
+							if (that.aContexts[i]) {
+								that.aContexts[i].iIndex -= 1;
+							}
+						}
+						if (bStillAlive) {
+							that.mPreviousContextsByPath[sContextPath] = oContext;
 						}
 					}
-					oContext.destroy();
-					that.iMaxLength -= 1; // this doesn't change Infinity
+
+					if (!bStillAlive) {
+						bDestroyed = true;
+						oContext.destroy();
+					}
 				}
-				bRemoved = true;
-				that._fireChange({reason : ChangeReason.Remove});
+				if (iIndex !== undefined) {
+					that._fireChange({reason : ChangeReason.Remove});
+				}
 			}
 
 			aPromises.push(
 				(bAllowRemoval
 					? oCache.refreshSingleWithRemove(oGroupLock, sPath, oContext.getModelIndex(),
-						fireDataRequested, onRemove)
-					: oCache.refreshSingle(oGroupLock, sPath, oContext.getModelIndex(),
-						fireDataRequested))
+						sPredicate, bKeepAlive, fireDataRequested, onRemove)
+					: oCache.refreshSingle(oGroupLock, sPath, oContext.getModelIndex(), sPredicate,
+						bKeepAlive, fireDataRequested))
 				.then(function (oEntity) {
 					var aUpdatePromises = [];
 
 					fireDataReceived({data : {}});
-					if (!bRemoved) { // do not update removed context
+					if (!bDestroyed) { // do not update destroyed context
 						aUpdatePromises.push(oContext.checkUpdate());
 						if (bAllowRemoval) {
 							aUpdatePromises.push(
@@ -2500,7 +2536,7 @@ sap.ui.define([
 		function reset(oContext) {
 			// do not call it always, it throws an exception on a relative binding w/o $$ownRequest
 			if (oContext.isKeepAlive()) {
-				oContext.setKeepAlive(false);
+				oContext.resetKeepAlive();
 			}
 		}
 

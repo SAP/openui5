@@ -2,13 +2,16 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/f/library",
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties"
-], function (Helper, Opa5, Press, Properties) {
+], function (library, Helper, Opa5, EnterText, Press, Properties) {
 	"use strict";
-	var sViewName = "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main";
+	var LayoutType = library.LayoutType,
+		sViewName = "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main";
 
 	Opa5.createPageObjects({
 		onTheApplication : {
@@ -41,11 +44,33 @@ sap.ui.define([
 						},
 						viewName : sViewName
 					});
+				},
+				checkObjectPageNotVisible : function () {
+					return this.waitFor({
+						controlType : "sap.f.FlexibleColumnLayout",
+						id : "layout",
+						success : function (oLayout) {
+							Opa5.assert.strictEqual(oLayout.getLayout(), LayoutType.OneColumn,
+								"Object page not visible");
+						},
+						viewName : sViewName
+					});
 				}
 			}
 		},
 		onTheListReport : {
 			actions : {
+				filterByGrossAmount : function (sGrossAmount) {
+					return this.waitFor({
+						actions: new EnterText({clearTextFirst: true, text: sGrossAmount}),
+						controlType : "sap.m.SearchField",
+						id : "filterGrossAmount",
+						success : function (oSearchField) {
+							Opa5.assert.ok(true, "Filter by GrossAmount gt :" + sGrossAmount);
+						},
+						viewName : sViewName
+					});
+				},
 				selectSalesOrder : function (iRow) {
 					return this.waitFor({
 						actions : new Press(),
@@ -110,6 +135,9 @@ sap.ui.define([
 						},
 						viewName : sViewName
 					});
+				},
+				refresh : function () {
+					return Helper.pressButton(this, sViewName, "refreshSalesOrder");
 				},
 				selectSalesOrderItem : function (iRow) {
 					return this.waitFor({

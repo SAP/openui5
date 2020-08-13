@@ -5,7 +5,7 @@
 	"value" : [{
 		"@odata.etag" : "W/\"20200723170835.9682750 \"",
 		"SalesOrderID" : "0500000000",
-		"Note" : "Test (original)",
+		"Note" : "Test (BEFORE refresh)",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "29558.41",
 		"SO_2_BP" : {
@@ -47,15 +47,15 @@
 			"CompanyName" : "Asia High tech"
 		}
 	}, {
-		"@odata.etag" : "W/\"20200701220000.0000000 \"",
-		"SalesOrderID" : "0500000004",
-		"Note" : "EPM DG: SO ID 0500000004 Deliver as fast as possible",
+		"@odata.etag" : "W/\"20200708120434.6460980 \"",
+		"SalesOrderID" : "0500000005",
+		"Note" : "EPM DG: SO ID 0500000005 Deliver as fast as possible",
 		"CurrencyCode" : "EUR",
-		"GrossAmount" : "761.24",
+		"GrossAmount" : "1023.75",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20200702154409.0000000 \"",
-			"BusinessPartnerID" : "0100000006",
-			"CompanyName" : "Asia High tech"
+			"@odata.etag" : "W/\"20200722155503.1802100 \"",
+			"BusinessPartnerID" : "0100000000",
+			"CompanyName" : "SAP"
 		}
 	}]
 }

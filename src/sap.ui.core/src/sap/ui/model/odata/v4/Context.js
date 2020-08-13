@@ -113,6 +113,7 @@ sap.ui.define([
 				this.oSyncCreatePromise = oCreatePromise && SyncPromise.resolve(oCreatePromise);
 				this.iIndex = iIndex;
 				this.bKeepAlive = false;
+				this.fnOnBeforeDestroy = undefined;
 				this.iReturnValueContextId = iReturnValueContextId;
 			}
 		});
@@ -315,6 +316,13 @@ sap.ui.define([
 	 */
 	// @override
 	Context.prototype.destroy = function () {
+		var fnOnBeforeDestroy = this.fnOnBeforeDestroy;
+
+		if (fnOnBeforeDestroy) {
+			// avoid second call through a destroy inside the callback
+			this.fnOnBeforeDestroy = undefined;
+			fnOnBeforeDestroy();
+		}
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
 			oDependentBinding.setContext(undefined);
 		});
@@ -843,6 +851,10 @@ sap.ui.define([
 	 *   a removed context is destroyed, see {@link #destroy}. If the context belongs to a context
 	 *   binding, the parameter must not be used.
 	 *   Supported since 1.55.0
+	 *
+	 *   Since 1.84.0, if this context is kept alive (see {@link #isKeepAlive}), it is only
+	 *   destroyed if the corresponding entity does no longer exist in the back end. In this case,
+	 *   the <code>fnOnBeforeDestroy</code> callback passed with {@link #setKeepAlive}) is called.
 	 * @throws {Error}
 	 *   If the group ID is not valid, if this context has pending changes or does not represent a
 	 *   single entity (see {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext}), if the
@@ -1227,6 +1239,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the <code>bKeepAlive</code> flag of this content to <code>false</code> without
+	 * touching the callback function <code>fnOnBeforeDestroy</code>.
+	 *
+	 * @private
+	 */
+	Context.prototype.resetKeepAlive = function () {
+		this.bKeepAlive = false;
+	};
+
+	/**
 	 * Sets this context's <code>keepAlive</code> attribute. If <code>true</code> the context is
 	 * kept alive even when it is removed from its binding's collection, for example if a filter is
 	 * applied and the entity represented by this context does not match the filter criteria.
@@ -1237,6 +1259,9 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bKeepAlive
 	 *   Whether to keep the context alive
+	 * @param {function} [fnOnBeforeDestroy]
+	 *  Callback function that is executed once for a kept-alive context just before it is
+	 *  destroyed, see {@link #destroy}. Supported since 1.84.0
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> this context is not a list binding's context,
@@ -1252,17 +1277,16 @@ sap.ui.define([
 	 * @see #isKeepAlive
 	 * @since 1.81.0
 	 */
-	Context.prototype.setKeepAlive = function (bKeepAlive) {
-		if (!this.bKeepAlive) { // allow resetting it without precondition check
-			if (this.isTransient()) {
-				throw new Error("Unsupported transient context " + this);
-			}
-			if (!_Helper.getPrivateAnnotation(this.getValue(), "predicate")) {
-				throw new Error("No key predicate known at " + this);
-			}
-			this.oBinding.checkKeepAlive(this);
+	Context.prototype.setKeepAlive = function (bKeepAlive, fnOnBeforeDestroy) {
+		if (this.isTransient()) {
+			throw new Error("Unsupported transient context " + this);
 		}
+		if (!_Helper.getPrivateAnnotation(this.getValue(), "predicate")) {
+			throw new Error("No key predicate known at " + this);
+		}
+		this.oBinding.checkKeepAlive(this);
 		this.bKeepAlive = bKeepAlive;
+		this.fnOnBeforeDestroy = bKeepAlive ? fnOnBeforeDestroy : undefined;
 	};
 
 	/**

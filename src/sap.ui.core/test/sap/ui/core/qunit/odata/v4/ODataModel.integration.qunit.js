@@ -709,6 +709,113 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a view containing a list report and an object page. The list report contains a
+		 * list of sales orders and the object page the details of a sales order. The list report is
+		 * initially filtered to only show sales orders with a gross amount less than 150.
+		 *
+		 * Applies the following steps:
+		 *
+		 * 1. Select a sales order and see that late properties are requested. Keep its context
+		 *    alive.
+		 * 2. (optional) Filter the list, so that the context drops out of it. Check that the
+		 *    context is still alive and has its data.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {boolean} bDropFromCollection If <code>true</code> the context is not longer in
+		 *   the collection
+		 * @param {function} [fnOnBeforeDestroy]
+		 *  Call back function that is executed once the kept-alive context gets destroyed.
+		 * @returns {Promise} A promise that is resolved with the kept-alive context when the
+		 * view is created and ready
+		 */
+		createKeepAliveScenario : function (assert, bDropFromCollection, fnOnBeforeDestroy) {
+			var oContext,
+				oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+				oTable,
+				sView = '\
+<Table id="listReport" growing="true" growingThreshold="2" items="{path : \'/SalesOrderList\',\
+		parameters : {$count : true}, \
+		filters : {path : \'GrossAmount\', operator : \'LE\', value1 : 150}}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="grossAmount" text="{GrossAmount}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="objectPageGrossAmount" text="{GrossAmount}"/>\
+	<Text id="objectPageNote" text="{Note}"/>\
+	<Table items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+		<Text text="{ItemPosition}"/>\
+	</Table>\
+</FlexBox>',
+				that = this;
+
+			this.expectRequest("SalesOrderList?$count=true&$filter=GrossAmount le 150"
+					+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
+					"@odata.count" : "42",
+					value : [{
+						"@odata.etag" : "etag1",
+						GrossAmount : "123",
+						SalesOrderID : "1"
+					}, {
+						"@odata.etag" : "etag2",
+						GrossAmount : "149",
+						SalesOrderID : "2"
+					}]
+				})
+				.expectChange("id", ["1", "2"])
+				.expectChange("grossAmount", ["123.00", "149.00"])
+				.expectChange("objectPageGrossAmount")
+				.expectChange("objectPageNote");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				oTable = that.oView.byId("listReport");
+				oContext = oTable.getItems()[0].getBindingContext();
+
+				that.expectChange("objectPageGrossAmount", "123.00");
+				that.expectRequest("SalesOrderList('1')?$select=Note", {
+						"@odata.etag" : "etag1",
+						Note : "Before refresh"
+					})
+					.expectChange("objectPageNote", "Before refresh")
+					.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
+						value : [/*does not matter*/]
+					});
+
+				// code under test
+				that.oView.byId("objectPage").setBindingContext(oContext);
+				oContext.setKeepAlive(true, fnOnBeforeDestroy);
+
+				return that.waitForChanges(assert, "(1)");
+			}).then(function () {
+				if (bDropFromCollection) {
+					that.expectRequest("SalesOrderList?$count=true&$filter=GrossAmount gt 123"
+							+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
+							"@odata.count" : "27",
+							value : [{
+								"@odata.etag" : "etag2",
+								GrossAmount : "149",
+								SalesOrderID : "2"
+							}, {
+								"@odata.etag" : "etag3",
+								GrossAmount : "789",
+								SalesOrderID : "3"
+							}]
+						})
+						.expectChange("id", [, "3"])
+						.expectChange("grossAmount", [, "789.00"]);
+
+					// code under test
+					oTable.getBinding("items")
+						.filter(new Filter("GrossAmount", FilterOperator.GT, 123));
+
+					return that.waitForChanges(assert, "(2)");
+				}
+			}).then(function () {
+				return oContext;
+			});
+		},
+
+		/**
 		 * Creates a V4 OData model for V2 service <code>RMTSAMPLEFLIGHT</code>.
 		 *
 		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
@@ -28927,6 +29034,328 @@ sap.ui.define([
 				that.checkValueState(assert, "Composite4", "None", ""),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario:
+	// Refresh a kept-alive context that is not part of the collection (B1). After refresh this
+	// context is not in the collection and has new data (A1).
+	// JIRA: CPOUI5ODATAV4-366
+	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is not in the collection"
+			+ "; after refresh that context is not in the collection", function (assert) {
+		var that = this;
+
+		return this.createKeepAliveScenario(assert, true).then(function (oKeptContext) {
+			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '1'"
+					+ "&$select=GrossAmount,Note,SalesOrderID", {
+					value : [{GrossAmount : "199", Note : "After refresh", SalesOrderID : "1"}]
+				})
+				.expectChange("objectPageGrossAmount", "199.00")
+				.expectChange("objectPageNote", "After refresh")
+				.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
+					value : [/*does not matter*/]
+				});
+
+			// code under test
+			oKeptContext.refresh(undefined, true);
+
+			return that.waitForChanges(assert, "(3)");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario:
+	// Refresh a kept-alive context that is not part of the collection (B1). After refresh the
+	// entity is deleted (A3).
+	// JIRA: CPOUI5ODATAV4-366
+	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is not in the collection"
+			+ "; after refresh the entity is deleted", function (assert) {
+		var bCallbackCalled,
+			that = this;
+
+		return this.createKeepAliveScenario(assert, true, function () {
+			bCallbackCalled = true;
+		}).then(function (oKeptContext) {
+			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '1'"
+					+ "&$select=GrossAmount,Note,SalesOrderID", {
+					value : []
+				})
+				.expectChange("objectPageGrossAmount", null)
+				.expectChange("objectPageNote", null);
+
+			// code under test
+			oKeptContext.refresh(undefined, true);
+
+			return that.waitForChanges(assert, "(3)");
+		}).then(function () {
+			assert.ok(bCallbackCalled, "called back");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario:
+	// Refresh a kept-alive context that is part of the collection (B2). After refresh this context
+	// is not in the collection and has new data (A1).
+	// JIRA: CPOUI5ODATAV4-366
+	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is in the collection"
+			+ "; after refresh that context is not in the collection", function (assert) {
+		var that = this;
+
+		return this.createKeepAliveScenario(assert, false).then(function (oKeptContext) {
+			that.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,Note,SalesOrderID"
+				}, {
+					value : [{GrossAmount : "199", Note : "After refresh", SalesOrderID : "1"}]
+				})
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
+						+ "&$count=true&$top=0"
+				}, {
+					"@odata.count" : "0",
+					value : []
+				})
+				.expectChange("objectPageGrossAmount", "199.00")
+				.expectChange("objectPageNote", "After refresh")
+				.expectChange("grossAmount", ["199.00"]) // FIXME: JIRA: CPOUI5ODATAV4-524
+				// as context is no longer part of the collection the list requests a new context
+				.expectRequest({
+					batchNo : 4,
+					method : "GET",
+					url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
+						+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
+				}, {
+					"@odata.count" : "41",
+					value : [{GrossAmount : "120", SalesOrderID : "4"}]
+				})
+				.expectChange("id", [, "4"])
+				.expectChange("grossAmount", [, "120.00"])
+				.expectRequest({
+					batchNo : 4,
+					method : "GET",
+					url : "SalesOrderList('1')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
+				}, {
+					value : [/*does not matter*/]
+				});
+
+			// code under test
+			oKeptContext.refresh(undefined, true);
+
+			return that.waitForChanges(assert, "(2)");
+		}).then(function () {
+			assert.equal(
+				that.oView.byId("listReport").getItems()[0].getBindingContext().getPath(),
+				"/SalesOrderList('2')");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario:
+	// Refresh a kept-alive context that is part of the collection (B2). After refresh this context
+	// is in the collection (A2).
+	// JIRA: CPOUI5ODATAV4-366
+	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is in the collection"
+			+ "; after refresh that context is in the collection", function (assert) {
+		var that = this;
+
+		return this.createKeepAliveScenario(assert, false).then(function (oKeptContext) {
+			that.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,Note,SalesOrderID"
+				}, {
+					value : [{GrossAmount : "140", Note : "After refresh", SalesOrderID : "1"}]
+				})
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
+						+ "&$count=true&$top=0"
+				}, {
+					"@odata.count" : "1",
+					value : []
+				})
+				.expectChange("objectPageGrossAmount", "140.00")
+				.expectChange("objectPageNote", "After refresh")
+				.expectChange("grossAmount", ["140.00"])
+				.expectRequest({
+					batchNo : 4,
+					method : "GET",
+					url : "SalesOrderList('1')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
+				}, {
+					value : [/*does not matter*/]
+				});
+
+			// code under test
+			oKeptContext.refresh(undefined, true);
+
+			return that.waitForChanges(assert, "(2)");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario:
+	// Refresh a kept-alive context that is part of the collection (B2). After refresh the
+	// entity is deleted (A3).
+	// JIRA: CPOUI5ODATAV4-366
+	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is in the collection"
+		+ ", after refresh the entity is deleted", function (assert) {
+		var bCallbackCalled,
+			that = this;
+
+		return this.createKeepAliveScenario(assert, false, function () {
+			bCallbackCalled = true;
+		}).then(function (oKeptContext) {
+			that.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,Note,SalesOrderID"
+				}, {
+					value : []
+				})
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
+						+ "&$count=true&$top=0"
+				}, {
+					"@odata.count" : "0",
+					value : []
+				})
+				.expectChange("objectPageGrossAmount", null)
+				.expectChange("objectPageNote", null)
+				// expected as context is also destroyed in the list
+				.expectChange("id", null)
+				.expectChange("grossAmount", null)
+				// as context is no longer part of the collection the list requests a new context
+				.expectRequest({
+					batchNo : 4,
+					method : "GET",
+					url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
+						+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
+				}, {
+					"@odata.count" : "41",
+					value : [{GrossAmount : "120", SalesOrderID : "4"}]
+				})
+				.expectChange("id", [, "4"])
+				.expectChange("grossAmount", [, "120.00"]);
+
+			// code under test
+			oKeptContext.refresh(undefined, true);
+
+			return that.waitForChanges(assert, "(2)");
+		}).then(function () {
+			assert.ok(bCallbackCalled, "called back");
+			assert.equal(
+				that.oView.byId("listReport").getItems()[0].getBindingContext().getPath(),
+				"/SalesOrderList('2')");
+		});
+	});
+
+	//*********************************************************************************************
+	// Refresh a single context on a table w/o count that has loaded all data (bLengthFinal = true).
+	// After refresh the context is no longer part of the table. Expect the behavior is independent
+	// of keep-alive and there is no further data request after the context leaves the collection.
+[false, true].forEach(function (bKeepAlive) {
+	var sTitle = "CPOUI5ODATAV4-366: Context#refresh w/o $count & paging does not reload data"
+		+ ", bKeepAlive = " + bKeepAlive;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/SalesOrderList\',\
+		filters : {path : \'GrossAmount\', operator : \'LE\', value1 : 150}}">\
+	<Text id="grossAmount" text="{GrossAmount}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$filter=GrossAmount le 150"
+				+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{GrossAmount : "123", SalesOrderID : "1"},
+					// Note: the number of remaining contexts does not matter
+					{GrossAmount : "99", SalesOrderID : "2"},
+					{GrossAmount : "101", SalesOrderID : "3"}
+				]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+			if (bKeepAlive) {
+				oContext.setKeepAlive(true);
+
+				that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,SalesOrderID", {
+						value : [{GrossAmount : "190", SalesOrderID : "1"}]
+					})
+					.expectRequest("SalesOrderList"
+						+ "?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
+						+ "&$count=true&$top=0", {
+						"@odata.count" : "0",
+						value : []
+					});
+			} else {
+				that.expectRequest("SalesOrderList"
+						+ "?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,SalesOrderID", {
+						value : []
+					});
+			}
+
+			// code under test
+			oContext.refresh(undefined, true);
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Refresh a single kept context that is in the collection of a list binding w/o any $filter or
+	// $search. Only a query for the existence of the entity is sent. No additional query to check
+	// if the entity is still in the collection is sent.
+	QUnit.test("CPOUI5ODATAV4-366: kept-context in collection only one request", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="grossAmount" text="{GrossAmount}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
+			value : [
+				{GrossAmount : "123", SalesOrderID : "1"},
+				// Note: the number of remaining contexts does not matter
+				{GrossAmount : "99", SalesOrderID : "2"},
+				{GrossAmount : "101", SalesOrderID : "3"}
+			]
+		});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+			oContext.setKeepAlive(true);
+
+			that.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '1'", {
+					value : [{GrossAmount : "190", SalesOrderID : "1"}]
+				});
+
+			// code under test
+			oContext.refresh(undefined, true);
+
+			return that.waitForChanges(assert);
 		});
 	});
 });
