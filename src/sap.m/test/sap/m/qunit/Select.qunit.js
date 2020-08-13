@@ -9802,8 +9802,8 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assertion
-			assert.strictEqual(oEnabledSelect._getHiddenSelect().attr("aria-disabled"), "false", "Enabled Select isn't indicated as disabled");
-			assert.strictEqual(oDisabledSelect._getHiddenSelect().attr("aria-disabled"), "true", "Disabled Select is indicated as disabled appropriately");
+			assert.strictEqual(oEnabledSelect._getHiddenSelect().attr("disabled"), undefined, "Enabled Select isn't indicated as disabled");
+			assert.strictEqual(oDisabledSelect._getHiddenSelect().attr("disabled"), "disabled", "Disabled Select is indicated as disabled appropriately");
 
 			// Cleanup
 			oEnabledSelect.destroy();
@@ -10236,9 +10236,20 @@ sap.ui.define([
 			this.oSelect.open();
 		});
 
-		QUnit.module("Hidden input element", {
+		QUnit.module("Hidden select element", {
 			beforeEach: function () {
-				this.oSelect = new Select().placeAt("content");
+				this.oSelect = new Select({
+					items: [
+						new ListItem({
+							key: "1",
+							text: "Competitor"
+						}),
+						new ListItem({
+							key: "2",
+							text: "Paper Plane"
+						})
+					]
+				}).placeAt("content");
 				Core.applyChanges();
 
 				this.$oHiddenSelectRef = this.oSelect.$("hiddenSelect");
@@ -10248,13 +10259,19 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Hidden input rendering", function (assert) {
-			assert.ok(this.$oHiddenSelectRef.length > 0, "Hidden input is rendered in the DOM");
-			assert.ok(this.$oHiddenSelectRef.hasClass("sapUiPseudoInvisibleText"), "Hidden input isn't visible to the user");
+		QUnit.test("Hidden select rendering", function (assert) {
+			assert.ok(this.$oHiddenSelectRef.length > 0, "Hidden select is rendered in the DOM");
+			assert.ok(this.$oHiddenSelectRef.hasClass("sapUiPseudoInvisibleText"), "Hidden select isn't visible to the user");
 		});
 
-		QUnit.test("Hidden input referencing", function (assert) {
-			assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenSelectRef.attr("id"), "getIdForLabel() returns the hidden input ID");
+		QUnit.test("Hidden select referencing", function (assert) {
+			assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenSelectRef.attr("id"), "getIdForLabel() returns the hidden select ID");
+		});
+
+		QUnit.test("Hidden select options", function (assert) {
+			var aOptions = this.$oHiddenSelectRef.find('option[hidden]');
+
+			assert.strictEqual(aOptions.length, 2, "An exact number of options have been created");
 		});
 
 		QUnit.module("OverflowToolbar configuration");
