@@ -89,6 +89,15 @@ sap.ui.define([
 			},
 
 			_bindTreeModel : function (aTreeContent) {
+					var filterTreeContent = function (aNodes, aAllowedMembers) {
+						return aNodes.filter(function (oNode) {
+							if (oNode.hasOwnProperty('nodes')) {
+								oNode.nodes = filterTreeContent(oNode.nodes, aAllowedMembers);
+							}
+							return !oNode.hasOwnProperty('visibility') || aAllowedMembers.indexOf(oNode.visibility.toLowerCase()) >= 0;
+						});
+					};
+
 				// Inject Deprecated, Experimental and Since links
 				if (aTreeContent.length > 0) {
 					aTreeContent.push({
@@ -111,6 +120,8 @@ sap.ui.define([
 						visibility: "public"
 					});
 				}
+
+				aTreeContent = filterTreeContent(aTreeContent, this._aAllowedMembers);
 
 				this._oTreeModel.setData(aTreeContent, false);
 			},
@@ -203,14 +214,6 @@ sap.ui.define([
 			 */
 			buildAndApplyFilters: function () {
 				var aFilters = [];
-
-				// Visibility filter
-				aFilters.push(new Filter({
-					path: "visibility",
-					test: function (sValue) {
-						return this._aAllowedMembers.indexOf(sValue.toLowerCase()) >= 0;
-					}.bind(this)
-				}));
 
 				if (!this._bIncludeDeprecated) {
 					aFilters.push(new Filter({
