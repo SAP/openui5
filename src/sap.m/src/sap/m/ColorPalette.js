@@ -294,16 +294,6 @@ sap.ui.define([
 			}
 		};
 
-		ColorPalette.prototype.onsaphome = ColorPalette.prototype.onsapend = function(oEvent) {
-			// Home and End keys on ColorPalette buttons should do nothing. If event occurs on the swatch, see ItemNavigationHomeEnd).
-			var oElemInfo = this._getElementInfo(oEvent.target);
-
-			if (oElemInfo.bIsDefaultColorButton || oElemInfo.bIsMoreColorsButton) {
-				oEvent.preventDefault();
-				oEvent.stopImmediatePropagation(true); // does not allow the ItemNavigationHomeEnd delegate to receive it
-			}
-		};
-
 		ColorPalette.prototype.onAfterRendering = function () {
 			this._ensureItemNavigation();
 		};
@@ -726,6 +716,55 @@ sap.ui.define([
 			}
 
 			vNextElement.focus();
+		};
+
+		/**
+		 * Handles backward navigation when the user is either on Default Color or More Colors buttons.
+		 *
+		 * If the user is on Default Color, focus shouldn't chage.
+		 * If the user is on More Colors, focus should go on the Default Color button if such exists,
+		 * otherwise the focus shouldn't change.
+		 *
+		 * @param {jQuery.Event} oEvent the keyboard event
+		 */
+		ColorPalette.prototype.onsaphome = function(oEvent) {
+			// Home and End keys on ColorPalette buttons should do nothing. If event occurs on the swatch, see ItemNavigationHomeEnd).
+			var oElementInfo = this._getElementInfo(oEvent.target);
+
+			if (!oElementInfo.bIsMoreColorsButton) {
+				return;
+			}
+
+			if (this._getShowDefaultColorButton()) {
+				this._getDefaultColorButton().focus();
+			}
+
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation(true); // does not allow the ItemNavigationHomeEnd delegate to receive it
+		};
+
+		/**
+		 * Handles forward navigation when the user is either on Default Color or More Colors buttons.
+		 *
+		 * If the user is on More Colors, focus shouldn't chage.
+		 * If the user is on Default Color, focus should go on the More Colors button if such exists,
+		 * otherwise the focus shouldn't change.
+		 *
+		 * @param {jQuery.Event} oEvent the keyboard event
+		 */
+		ColorPalette.prototype.onsapend = function(oEvent) {
+			var oElementInfo = this._getElementInfo(oEvent.target);
+
+			if (!oElementInfo.bIsDefaultColorButton) {
+				return;
+			}
+
+			if (this._getShowMoreColorsButton()) {
+				this._getMoreColorsButton().focus();
+			}
+
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation(true); // does not allow the ItemNavigationHomeEnd delegate to receive it
 		};
 
 		// DOM related private helpers
