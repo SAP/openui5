@@ -340,19 +340,19 @@ License: MIT License
 <year> = 2008-2013
 <copyright holders> = Matteo Spinelli
 
-Component: jQuery 2.2.3
+Component: jQuery 3.5.1
 Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
 License: MIT License
-<year> = 2016
+<year> = 2020
 <copyright holders> = jQuery Foundation and other contributors
 
-Component: jQuery 3.1.1
-Licensor: jQuery Foundation and other contributors
-Website: http://jquery.com/
+Component: jQuery Migrate 3.3.1
+Licensor: OpenJS Foundation and other contributors
+Website: https://github.com/jquery/jquery-migrate
 License: MIT License
-<year> = 2016
-<copyright holders> = jQuery Foundation and other contributors
+<year> = 2020
+<copyright holders> = OpenJS Foundation and other contributors, https://openjsf.org/
 
 Component: jQuery-UI 1.10.4
 Licensor: Paul Bakaus

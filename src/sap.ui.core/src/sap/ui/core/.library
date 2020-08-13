@@ -42,7 +42,7 @@
         <raw-module name="sap/ui/thirdparty/IPv6.js" />
         <raw-module name="sap/ui/thirdparty/iscroll-lite.js" />
         <raw-module name="sap/ui/thirdparty/iscroll.js" />
-        <raw-module name="sap/ui/thirdparty/jquery.js" />
+        <raw-module name="sap/ui/thirdparty/jquery.js" depends="sap/ui/thirdparty/jquery-compat.js" />
         <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-bounce.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
@@ -252,6 +252,9 @@
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
         <lib name="jquery" displayName="jQuery, QUnit, jQueryUI" homepage="http://jquery.org">
         	<license url="http://jQuery.org/license" type="MIT License" file="../thirdparty/licenses/jQuery-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="jquery-migrate" displayName="jQuery-Migrate" homepage="https://github.com/jquery/jquery-migrate/">
+        	<license url="https://github.com/jquery/jquery-migrate/blob/3.3.1/LICENSE.txt" type="MIT License" file="../thirdparty/licenses/jQuery-Migrate-LICENSE.txt" />
         </lib>
         <lib name="jquery_mobile" displayName="jQuery Mobile" homepage="http://jquerymobile.com">
         	<license url="http://jQuery.org/license" type="MIT License" file="../thirdparty/licenses/jQuery-MIT-LICENSE.txt" />
