@@ -183,7 +183,7 @@ sap.ui.define([
 
 		ShortcutHintsMixin.addConfig(this, {
 				event: "press",
-				position: "0 4",
+				position: "0 0",
 				addAccessibilityLabel: true
 			}, this);
 	};
