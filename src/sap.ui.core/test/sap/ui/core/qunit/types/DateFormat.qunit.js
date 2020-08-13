@@ -126,6 +126,153 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oCustomDate.format(oDate, true), "2001-07-04T12:08:56.235Z", "yyyy-MM-dd'T'HH:mm:ss.SSSX");
 		});
 
+		QUnit.test("format custom date timezone UTC+0 (GMT)", function (assert) {
+			var oDate = new Date("Tue Oct 9 13:37:56 2018"),
+				oCustomDateFormat, oFormatted;
+
+			// Overwrite getTimezoneOffset to get reproducible results independent of the
+			// timezone where the test is run in, add additional information which
+			// is not provided by the standard JS Date object
+			oDate.getTimezoneOffset = function () { return 0; };
+			oDate.setMilliseconds(235);
+
+			[{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+				expected:"2018-10-09T13:37:56.235+0000"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZZ",
+				expected:"2018-10-09T13:37:56.235+0000"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZZZ",
+				expected:"2018-10-09T13:37:56.235+0000"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSX",
+				expected:"2018-10-09T13:37:56.235Z"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXX",
+				expected:"2018-10-09T13:37:56.235Z"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+				expected:"2018-10-09T13:37:56.235Z"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXXXX",
+				expected:"2018-10-09T13:37:56.235Z"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
+				expected:"2018-10-09T13:37:56.235Z"
+			}].forEach(function (oTestData) {
+				oCustomDateFormat = DateFormat.getDateTimeInstance({ pattern: oTestData.pattern });
+				oFormatted = oCustomDateFormat.format(oDate, false);
+				assert.equal(oFormatted, oTestData.expected, oTestData.pattern);
+				assert.ok(oCustomDateFormat.parse(oFormatted, false, true) instanceof Date, "is a Date");
+			});
+		});
+
+		QUnit.test("format custom date timezone UTC+2 (EET)", function (assert) {
+			var oDate = new Date("Tue Oct 9 13:37:56 2018"),
+				oCustomDateFormat, oFormatted;
+
+			// Overwrite getTimezoneOffset to get reproducible results independent of the
+			// timezone where the test is run in, add additional information which
+			// is not provided by the standard JS Date object
+			oDate.getTimezoneOffset = function () { return -120; };
+			oDate.setMilliseconds(235);
+
+			[{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+				expected:"2018-10-09T13:37:56.235+0200"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZZ",
+				expected:"2018-10-09T13:37:56.235+0200"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZZZ",
+				expected:"2018-10-09T13:37:56.235+0200"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSX",
+				expected:"2018-10-09T13:37:56.235+02"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXX",
+				expected:"2018-10-09T13:37:56.235+0200"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+				expected:"2018-10-09T13:37:56.235+02:00"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXXXX",
+				expected:"2018-10-09T13:37:56.235+0200"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
+				expected:"2018-10-09T13:37:56.235+02:00"
+			}].forEach(function (oTestData) {
+				oCustomDateFormat = DateFormat.getDateTimeInstance({ pattern: oTestData.pattern });
+				oFormatted = oCustomDateFormat.format(oDate, false);
+				assert.equal(oFormatted.toString(), oTestData.expected, oTestData.pattern);
+				assert.ok(oCustomDateFormat.parse(oFormatted, false, true) instanceof Date, "is a Date");
+			});
+		});
+
+		QUnit.test("format custom date timezone UTC+5:30 (IST)", function (assert) {
+			var oDate = new Date("Tue Oct 9 13:37:56 2018"),
+				oCustomDateFormat, oFormatted;
+
+			// Overwrite getTimezoneOffset to get reproducible results independent of the
+			// timezone where the test is run in, add additional information which
+			// is not provided by the standard JS Date object
+			oDate.getTimezoneOffset = function () { return -330; };
+			oDate.setMilliseconds(235);
+
+			[{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+				expected:"2018-10-09T13:37:56.235+0530"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZZ",
+				expected:"2018-10-09T13:37:56.235+0530"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZZZ",
+				expected:"2018-10-09T13:37:56.235+0530"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSX",
+				expected:"2018-10-09T13:37:56.235+0530"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXX",
+				expected:"2018-10-09T13:37:56.235+0530"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+				expected:"2018-10-09T13:37:56.235+05:30"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXXXX",
+				expected:"2018-10-09T13:37:56.235+0530"
+			},
+			{
+				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
+				expected:"2018-10-09T13:37:56.235+05:30"
+			}].forEach(function (oTestData) {
+				oCustomDateFormat = DateFormat.getDateTimeInstance({ pattern: oTestData.pattern });
+				oFormatted = oCustomDateFormat.format(oDate, false);
+				assert.equal(oFormatted.toString(), oTestData.expected, oTestData.pattern);
+				assert.ok(oCustomDateFormat.parse(oFormatted, false, true) instanceof Date, "is a Date");
+			});
+		});
+
 
 		function getExpectedRelativeDate(iDiff, iTarget, oFormatOptions, sLocale) {
 			oFormatOptions = jQuery.extend({}, oFormatOptions);
@@ -323,7 +470,9 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				"yyyy.MM.dd GGGG 'at' HH:mm:ss z": ["2001.07.04 Anno Domini at 12:08:56 GMT+02:00", 994241336000],
 				"EEE, MMM d, ''yy Z": ["Wed, Jul 4, '01 +0200", 994197600000],
 				"h:mm a z": ["12:08 PM Z", 43680000],
-				"hh 'o''clock' a, X": ["12 o'clock PM, +07:00", 18000000],
+				"hh 'o''clock' a, X": ["12 o'clock PM, +07", 18000000],
+				"hh 'o''clock' a, XX": ["12 o'clock PM, +0700", 18000000],
+				"hh 'o''clock' a, XXX": ["12 o'clock PM, +07:00", 18000000],
 				"K:mm a, z": ["0:08 PM, UTC+01:00", 40080000],
 
 				"yyyyy.MMMMM.dd hh:mm aaa": ["02001.July.04 12:08 PM", inclTimezoneOffset(994248480000)],
@@ -332,7 +481,9 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				"yyyy-MM-dd'T'HH:mm:ss.SSS": ["2001-07-04T12:08:56.235", inclTimezoneOffset(994248536235)],
 				//"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2001-07-04T12:08:56.235Z", 994248536235],
 				"yyyy-MM-dd GGG 'T'HH:mm:ss.SSSX": ["2001-07-04 AD T12:08:56.235Z", 994248536235],
-				"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2000-01-01T16:00:00.000-09:00", 946774800000]
+				"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2000-01-01T16:00:00.000-09", 946774800000],
+				"yyyy-MM-dd'T'HH:mm:ss.SSSXX": ["2000-01-01T16:00:00.000-0900", 946774800000],
+				"yyyy-MM-dd'T'HH:mm:ss.SSSXXX": ["2000-01-01T16:00:00.000-09:00", 946774800000]
 			};
 
 			for (var sCustomPattern in oCustomDatePatterns) {

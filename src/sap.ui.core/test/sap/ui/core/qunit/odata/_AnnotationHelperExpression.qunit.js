@@ -1691,7 +1691,7 @@ sap.ui.define([
 		oDateFormatMock.expects("getDateTimeInstance")
 			.withExactArgs({
 				calendarType : CalendarType.Gregorian,
-				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
 				strictParsing : true
 			})
 			.callThrough();

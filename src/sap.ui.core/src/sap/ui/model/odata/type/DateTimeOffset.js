@@ -89,7 +89,7 @@ sap.ui.define([
 			}
 			oType.oModelFormat = DateFormat.getDateInstance({
 				calendarType : CalendarType.Gregorian,
-				pattern : sPattern + "X",
+				pattern : sPattern + "XXX",
 				strictParsing : true,
 				UTC : oType.oFormatOptions && oType.oFormatOptions.UTC
 			});
