@@ -852,10 +852,8 @@ sap.ui.define([
 					// Safari, IE11 and Edge need a little delay to get the scroll position updated
 					setTimeout(restoreScrollPositions.bind(null, aScrollHierarchy), 0);
 				}
-			} else if (oFocusInfo.preventScroll === true) {
-				oFocusDomRef.focus(oFocusInfo);
 			} else {
-				oFocusDomRef.focus();
+				oFocusDomRef.focus(oFocusInfo);
 			}
 		}
 	};
