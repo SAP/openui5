@@ -1267,10 +1267,15 @@ function(
 				// apply the settings to the control
 				var vNewControlInstance;
 				var pProvider = SyncPromise.resolve();
+				var pInstanceCreated = SyncPromise.resolve();
 
 				if (bEnrichFullIds && node.hasAttribute("id")) {
 						setId(oView, node);
 				} else if (!bEnrichFullIds) {
+					// Pass processingMode to Fragments only
+					if (oClass.getMetadata().isA("sap.ui.core.Fragment") && node.getAttribute("type") !== "JS" && oView._sProcessingMode === "sequential") {
+						mSettings.processingMode = "sequential";
+					}
 
 					if (View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
 						var fnCreateViewInstance = function () {
@@ -1290,19 +1295,32 @@ function(
 							vNewControlInstance = fnCreateViewInstance();
 						}
 
+					} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync) {
+						var sFragmentPath = "sap/ui/core/Fragment";
+						var Fragment = sap.ui.require(sFragmentPath);
+
+						// call Fragment.load with mSettings.name
+						mSettings.name = mSettings.name || mSettings.fragmentName;
+
+						if (Fragment) {
+							pInstanceCreated = Fragment.load(mSettings);
+						} else {
+							pInstanceCreated = new Promise(function (resolve, reject) {
+								sap.ui.require([sFragmentPath], function (Fragment) {
+									Fragment.load(mSettings).then(function (oFragmentContent) {
+										resolve(oFragmentContent);
+									});
+								}, reject);
+							});
+						}
 					} else {
 						// call the control constructor with the according owner in scope
 						var fnCreateInstance = function() {
 							var oInstance;
 
-							// Pass processingMode to Fragments only
-							if (oClass.getMetadata().isA("sap.ui.core.Fragment") && node.getAttribute("type") !== "JS" && oView._sProcessingMode === "sequential") {
-								mSettings.processingMode = "sequential";
-							}
-
 							// the scoped runWithOwner function is only during ASYNC processing!
 							if (oView.fnScopedRunWithOwner) {
-								oInstance = oView.fnScopedRunWithOwner(function() {
+								oInstance = oView.fnScopedRunWithOwner(function () {
 									var oInstance = new oClass(mSettings);
 									return oInstance;
 								});
@@ -1321,54 +1339,57 @@ function(
 						} else {
 							vNewControlInstance = fnCreateInstance();
 						}
-
 					}
-
-					if (sStyleClasses && vNewControlInstance.addStyleClass) {
+				}
+				return pInstanceCreated.then(function (aFragmentContent) {
+					return aFragmentContent || vNewControlInstance;
+				}).then(function (vFinalInstance) {
+					if (sStyleClasses && vFinalInstance.addStyleClass) {
 						// Elements do not have a style class!
-						vNewControlInstance.addStyleClass(sStyleClasses);
+						vFinalInstance.addStyleClass(sStyleClasses);
 					}
-				}
 
-				if (!vNewControlInstance) {
-					vNewControlInstance = [];
-				} else if (!Array.isArray(vNewControlInstance)) {
-					vNewControlInstance = [vNewControlInstance];
-				}
-
-				//apply support info if needed
-				if (XMLTemplateProcessor._supportInfo && vNewControlInstance) {
-					for (var i = 0, iLength = vNewControlInstance.length; i < iLength; i++) {
-						var oInstance = vNewControlInstance[i];
-						if (oInstance && oInstance.getId()) {
-							//create a support info for id creation and add it to the support data
-							var iSupportIndex = XMLTemplateProcessor._supportInfo({context:node, env:{caller:"createRegularControls", nodeid: node.getAttribute("id"), controlid: oInstance.getId()}}),
-								sData = sSupportData ? sSupportData + "," : "";
-							sData += iSupportIndex;
-							//add the controls support data to the indexed map of support info control instance map
-							XMLTemplateProcessor._supportInfo.addSupportInfo(oInstance.getId(), sData);
-						}
+					if (!vFinalInstance) {
+						vFinalInstance = [];
+					} else if (!Array.isArray(vFinalInstance)) {
+						vFinalInstance = [vFinalInstance];
 					}
-				}
 
-				if (bDesignMode) {
-					vNewControlInstance.forEach(function (oInstance) {
-						if (oMetadata.getCompositeAggregationName) {
-							var aNodes = node.getElementsByTagName(oInstance.getMetadata().getCompositeAggregationName());
-							for (var i = 0; i < aNodes.length; i++) {
-								node.removeChild(aNodes[0]);
+					//apply support info if needed
+					if (XMLTemplateProcessor._supportInfo && vFinalInstance) {
+						for (var i = 0, iLength = vFinalInstance.length; i < iLength; i++) {
+							var oInstance = vFinalInstance[i];
+							if (oInstance && oInstance.getId()) {
+								//create a support info for id creation and add it to the support data
+								var iSupportIndex = XMLTemplateProcessor._supportInfo({ context: node, env: { caller: "createRegularControls", nodeid: node.getAttribute("id"), controlid: oInstance.getId() } }),
+									sData = sSupportData ? sSupportData + "," : "";
+								sData += iSupportIndex;
+								//add the controls support data to the indexed map of support info control instance map
+								XMLTemplateProcessor._supportInfo.addSupportInfo(oInstance.getId(), sData);
 							}
 						}
-						oInstance._sapui_declarativeSourceInfo = {
-							xmlNode: node,
-							xmlRootNode: oView._sapui_declarativeSourceInfo.xmlRootNode,
-							fragmentName: oMetadata.getName() === 'sap.ui.core.Fragment' ? mSettings['fragmentName'] : null
-						};
-					});
-				}
+					}
 
-				return pProvider.then(function() {
-					return vNewControlInstance;
+					if (bDesignMode) {
+						vFinalInstance.forEach(function (oInstance) {
+							if (oMetadata.getCompositeAggregationName) {
+								var aNodes = node.getElementsByTagName(oInstance.getMetadata().getCompositeAggregationName());
+								for (var i = 0; i < aNodes.length; i++) {
+									node.removeChild(aNodes[0]);
+								}
+							}
+							oInstance._sapui_declarativeSourceInfo = {
+								xmlNode: node,
+								xmlRootNode: oView._sapui_declarativeSourceInfo.xmlRootNode,
+								fragmentName: oMetadata.getName() === 'sap.ui.core.Fragment' ? mSettings['fragmentName'] : null
+							};
+						});
+					}
+
+					return pProvider.then(function () {
+						// either resolve with fragment or control instance
+						return vFinalInstance;
+					});
 				});
 			});
 

@@ -1,15 +1,17 @@
-/* global QUnit */
+/* global sinon QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/mvc/JSView",
+	"sap/ui/core/XMLTemplateProcessor",
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/mvc/XMLView",
+	'sap/base/util/LoaderExtensions',
 	"jquery.sap.dom"
-], function(qutils, Fragment, JSView, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv) {
+], function (qutils, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, LoaderExtensions) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -638,6 +640,8 @@ sap.ui.define([
 		var aContent = oFragment.getContent();
 		var btn1 = aContent[0];
 		assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+
+		oFragment.destroy();
 	});
 
 	QUnit.test("JS Fragment loaded from file", function(assert) {
@@ -652,6 +656,8 @@ sap.ui.define([
 		var aContent = oFragment.getContent();
 		var btn1 = aContent[0];
 		assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+
+		oFragment.destroy();
 	});
 
 	QUnit.test("HTML Fragment loaded from file", function(assert) {
@@ -666,10 +672,13 @@ sap.ui.define([
 		var aContent = oFragment.getContent();
 		var btn1 = aContent[0];
 		assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+
+		oFragment.destroy();
 	});
 
 	QUnit.module("DataBinding", {
-		beforeEach: function() {},
+		beforeEach: function() {
+		},
 
 		afterEach: function() {
 			jQuery("#binding").empty();
@@ -704,6 +713,16 @@ sap.ui.define([
 					assert.ok(true, "Dummy Controller method 'doSomething' called");
 				}
 			};
+			this.loadTemplatePromiseSpy = sinon.spy(XMLTemplateProcessor, "loadTemplatePromise");
+			this.parseTemplatePromiseSpy = sinon.spy(XMLTemplateProcessor, "parseTemplatePromise");
+			this.loadResourceSpy = sinon.spy(LoaderExtensions, "loadResource");
+			this.requireSpy = sinon.spy(sap.ui, "require");
+		},
+		afterEach: function(assert) {
+			this.loadTemplatePromiseSpy.restore();
+			this.parseTemplatePromiseSpy.restore();
+			this.loadResourceSpy.restore();
+			this.requireSpy.restore();
 		}
 	});
 
@@ -722,6 +741,8 @@ sap.ui.define([
 			var aContent = oFragment.getContent();
 			var btn1 = aContent[0];
 			assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+
+			oFragment.destroy();
 		});
 	});
 
@@ -755,6 +776,8 @@ sap.ui.define([
 			var btn = Fragment.byId("myJsFragLoadApi", "btnInJsFragment");
 			assert.ok(btn, "Button should be found by ID");
 			assert.ok(btn instanceof Button, "Button should be found by ID");
+
+			oFragment.destroy();
 		});
 	});
 
@@ -773,7 +796,97 @@ sap.ui.define([
 			assert.equal(id, "xmlfragbtn2", "Content should have given ID");
 
 			triggerClickEvent(id);
+
+			oFragment.destroy();
 		});
 	});
 
+	QUnit.test("Load XML Fragment from file", function (assert) {
+		assert.expect(3);
+		return Fragment.load({
+			name: "testdata.fragments.XMLTestFragmentNoController"
+		}).then(function (oFragment) {
+			assert.ok(oFragment, "Fragment should be loaded");
+			assert.equal(this.loadTemplatePromiseSpy.callCount, 1, "XMLTemplateProcessor.loadTemplatePromise should be called once");
+			assert.ok(this.parseTemplatePromiseSpy.getCall(0).args[2], "XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+
+			oFragment.destroy();
+		}.bind(this));
+	});
+
+	QUnit.test("Load XML Fragment from file with nested fragments and a nested view containing fragments of type 'JS', 'HTML' and 'XML'", function (assert) {
+		assert.expect(9);
+		return Fragment.load({
+			name: "testdata.fragments.nested.XMLFragment_Level0"
+		}).then(function (oFragment) {
+			assert.ok(oFragment, "Fragment should be loaded");
+			assert.equal(this.loadTemplatePromiseSpy.callCount, 3, "XMLTemplateProcessor.loadTemplatePromise should be called three times");
+			assert.equal(this.parseTemplatePromiseSpy.callCount, 6, "XMLTemplateProcessor.loadTemplatePromise should be called six times");
+			assert.ok(this.parseTemplatePromiseSpy.getCall(0).args[2], "First call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+			assert.ok(this.parseTemplatePromiseSpy.getCall(1).args[2], "Second call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+			assert.ok(this.parseTemplatePromiseSpy.getCall(2).args[2], "Third call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+			assert.notOk(this.parseTemplatePromiseSpy.getCall(3).args[2], "Fourth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=false");
+			assert.notOk(this.parseTemplatePromiseSpy.getCall(4).args[2], "Fifth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=false");
+			assert.notOk(this.parseTemplatePromiseSpy.getCall(5).args[2], "Sixth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=false");
+
+			oFragment.destroy();
+		}.bind(this));
+	});
+
+	QUnit.test("Load XML View from file with nested fragments of type 'JS', 'HTML' and 'XML'", function (assert) {
+		assert.expect(25);
+		return XMLView.create({
+			viewName: "testdata.fragments.nested.XMLViewWithFragments"
+		}).then(function (oView) {
+			return oView.loaded().then(function () {
+				assert.equal(this.loadTemplatePromiseSpy.callCount, 2, "XMLTemplateProcessor.loadTemplatePromise should be called two times (only for the nested XML fragments)");
+
+				assert.equal(this.parseTemplatePromiseSpy.callCount, 3, "XMLTemplateProcessor.loadTemplatePromise should be called three times (for the XML View and the nested XML Fragments)");
+				assert.ok(this.parseTemplatePromiseSpy.getCall(0).args[2], "First call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+				assert.ok(this.parseTemplatePromiseSpy.getCall(1).args[2], "Second call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+				assert.ok(this.parseTemplatePromiseSpy.getCall(2).args[2], "Third call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+
+				assert.equal(this.loadResourceSpy.callCount, 5, "LoaderExtension.loadResource should be called five times (for the XML View, the nested XML Fragments and the nested HTML fragments)");
+				assert.ok(this.loadResourceSpy.getCall(0).args[1].async, "First call of LoaderExtension.loadResource should be called with async=true");
+				assert.ok(this.loadResourceSpy.getCall(1).args[1].async, "Second call of LoaderExtension.loadResource should be called with async=true");
+				assert.ok(this.loadResourceSpy.getCall(2).args[1].async, "Third call of LoaderExtension.loadResource should be called with async=true");
+				assert.ok(this.loadResourceSpy.getCall(3).args[1].async, "Fourth call of LoaderExtension.loadResource should be called with async=true");
+				assert.ok(this.loadResourceSpy.getCall(4).args[1].async, "Fifth call of LoaderExtension.loadResource should be called with async=true");
+
+				var aCalls = this.requireSpy.getCalls().filter(function (oCall) {return oCall.args.length === 3 && oCall.args[0][0].endsWith("fragment");});
+				assert.equal(aCalls.length, 4, "sap.ui.require should be called two times with 3 arguments (for the JS fragment require)");
+				assert.equal(aCalls[0].args[0][0], "testdata/fragments/JSTestFragment.fragment", "First call of sap.ui.require should be called with fragment name 'testdata/fragments/JSTestFragment.fragment'");
+				assert.equal(aCalls[1].args[0][0], "testdata/fragments/JSTestFragment.fragment", "Second call of sap.ui.require should be called with fragment name 'testdata/fragments/JSTestFragment.fragment'");
+				assert.equal(aCalls[2].args[0][0], "testdata/fragments/nested/JSFragment_Level0.fragment", "Third call of sap.ui.require should be called with fragment name 'testdata/fragments/nested/JSFragment_Level0.fragment'");
+				assert.equal(aCalls[3].args[0][0], "testdata/fragments/nested/JSFragment_Level1.fragment", "Fourth call of sap.ui.require should be called with fragment name 'testdata/fragments/nested/JSFragment_Level1.fragment'");
+
+				// Spot check
+				assert.equal(oView.getContent().length, 8, "oView should contain 8 controls (6 layouts, 1 Button and 1 dialog)");
+				assert.ok(oView.getContent()[0].getContent()[0].getId().endsWith("btnInXmlFragment"), "oView contains a XML fragment without ID containing a button with ID");
+				assert.ok(oView.getContent()[1].getContent()[0].getId().endsWith("xmlInXml--btnInXmlFragment"), "oView contains a XML fragment with ID containing a button with ID");
+				assert.ok(oView.getContent()[2].getContent()[0].getId().endsWith("btnInHtmlFragment"), "oView contains a HTML fragment without ID containing a button with ID");
+				assert.ok(oView.getContent()[3].getContent()[0].getId().endsWith("htmlInXml--btnInHtmlFragment"), "oView contains a HTML fragment with ID containing a button with ID");
+				assert.ok(oView.getContent()[4].getContent()[0].getId().endsWith("btnInJsFragment"), "oView contains a JS fragment without ID containing a button with ID");
+				assert.ok(oView.getContent()[5].getContent()[0].getId().endsWith("jsInXml--btnInJsFragment"), "oView contains a JS fragment with ID containing a button with ID");
+
+				assert.ok(oView.getContent()[6] instanceof sap.m.Dialog, "oView contains a Dialog");
+				assert.ok(oView.getContent()[7] instanceof sap.m.Button, "oView contains a Button");
+
+				oView.destroy();
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("Load different JS fragments using Fragment.load function", function (assert) {
+		assert.expect(3);
+		return Fragment.load({
+			name: "testdata.fragments.nested.JSFragment_Level0",
+			type: "JS"
+		}).then(function () {
+			var aCalls = this.requireSpy.getCalls().filter(function (oCall) {return oCall.args.length === 3 && oCall.args[0][0].endsWith("fragment");});
+			assert.equal(aCalls.length, 2, "sap.ui.require should be called three two with 3 arguments (for the JS fragment require)");
+			assert.equal(aCalls[0].args[0][0], "testdata/fragments/nested/JSFragment_Level0.fragment", "First call of sap.ui.require should be called with fragment name 'testdata/fragments/nested/JSFragment_Level0.fragment'");
+			assert.equal(aCalls[1].args[0][0], "testdata/fragments/nested/JSFragment_Level1.fragment", "Second call of sap.ui.require should be called with fragment name 'testdata/fragments/nested/JSFragment_Level1.fragment'");
+		}.bind(this));
+	});
 });
