@@ -1,9 +1,10 @@
 /* global QUnit, sinon*/
 
 sap.ui.define([
-	"sap/ui/mdc/filterbar/FilterBarBase"
+	"sap/ui/mdc/filterbar/FilterBarBase",
+	"sap/ui/mdc/FilterField"
 ], function (
-	FilterBarBase
+	FilterBarBase, FilterField
 ) {
 	"use strict";
 
@@ -76,6 +77,53 @@ sap.ui.define([
             assert.ok(this.oFilterBarBase.getInternalConditions()["key1"][0].hasOwnProperty("isEmpty"), "Internal format");
             done();
 
+        }.bind(this));
+
+    });
+
+    QUnit.test("check reaction to the FilterField 'submit' event", function(assert){
+        var oFilterField = new FilterField();
+        sinon.stub(this.oFilterBarBase, "triggerSearch");
+        sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
+
+        assert.ok(!oFilterField.hasListeners("submit"));
+
+        this.oFilterBarBase.addFilterItem(oFilterField);
+
+        assert.ok(oFilterField.hasListeners("submit"));
+
+        assert.ok(!this.oFilterBarBase.triggerSearch.called);
+        oFilterField.fireSubmit({promise: Promise.resolve()});
+
+        return this.oFilterBarBase.waitForInitialization().then(function() {
+            assert.ok(this.oFilterBarBase.triggerSearch.calledOnce);
+
+            this.oFilterBarBase.removeFilterItem(oFilterField);
+            assert.ok(!oFilterField.hasListeners("submit"));
+
+            oFilterField.destroy();
+            this.oFilterBarBase.triggerSearch.restore();
+        }.bind(this));
+
+    });
+
+    QUnit.test("check reaction to the basic search 'submit' event", function(assert){
+        var oFilterField = new FilterField();
+        sinon.stub(this.oFilterBarBase, "triggerSearch");
+        sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
+
+        assert.ok(!oFilterField.hasListeners("submit"));
+
+        this.oFilterBarBase.setBasicSearchField(oFilterField);
+        assert.ok(oFilterField.hasListeners("submit"));
+
+		assert.ok(!this.oFilterBarBase.triggerSearch.called);
+        oFilterField.fireSubmit({promise: Promise.resolve()});
+
+        return this.oFilterBarBase.waitForInitialization().then(function() {
+            assert.ok(this.oFilterBarBase.triggerSearch.calledOnce);
+
+            this.oFilterBarBase.triggerSearch.restore();
         }.bind(this));
 
     });
