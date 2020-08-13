@@ -1387,7 +1387,7 @@ function(
 
 			var aChanges = [oVENDORChange1, oVENDORChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aChanges);
-			var aDeletedChangeContentIds = {response: [{name: "1"}, {name: "2"}]};
+			var aDeletedChangeContentIds = {response: [{fileName: "1"}, {fileName: "2"}]};
 
 			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
@@ -1445,7 +1445,7 @@ function(
 
 			var aChanges = [oVENDORChange1, oVENDORChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aChanges);
-			var aDeletedChangeContentIds = {response: [{name: "1"}, {name: "2"}]};
+			var aDeletedChangeContentIds = {response: [{fileName: "1"}, {fileName: "2"}]};
 
 			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");

@@ -244,6 +244,12 @@ sap.ui.define([
 						selectorIds : ["selector1"]
 					});
 				})
+				.then(function(oResponse) {
+					assert.ok(oResponse.response.some(function(oChange) {
+						return oChange.fileName === oTestData.oChange1.fileName;
+					}), "Change1 was found");
+					assert.equal(oResponse.response.length, 1, "1 Change was returned");
+				})
 				.then(
 					getNumberOfFlexObjects.bind(undefined, oConnector)
 				)
@@ -264,6 +270,15 @@ sap.ui.define([
 						changeTypes : ["type1"]
 					});
 				})
+				.then(function(oResponse) {
+					assert.ok(oResponse.response.some(function(oChange) {
+						return oChange.fileName === oTestData.oChange1.fileName;
+					}), "Change1 was found");
+					assert.ok(oResponse.response.some(function(oChange) {
+						return oChange.fileName === oTestData.oChange4.fileName;
+					}), "Change4 was found");
+					assert.equal(oResponse.response.length, 2, "2 Changes are returned");
+				})
 				.then(getNumberOfFlexObjects.bind(undefined, oConnector))
 				.then(function(iNewCount) {
 					assert.equal(iInitialCount - iNewCount, 2, "two change got reset");
@@ -283,9 +298,23 @@ sap.ui.define([
 						selectorIds: ["selector2"]
 					});
 				})
+				.then(function(oResponse) {
+					assert.equal(oResponse.response, 0, "no changes were returned");
+				})
 				.then(getNumberOfFlexObjects.bind(undefined, oConnector))
 				.then(function(iNewCount) {
 					assert.equal(iInitialCount - iNewCount, 0, "no change got reset");
+				});
+			});
+
+			QUnit.test("when reset is called with selectors and change types", function(assert) {
+				return oConnector.reset({
+					reference: "sap.ui.fl.test",
+					layer: Layer.CUSTOMER,
+					changeTypes: ["type2"],
+					selectorIds: ["selector2"]
+				}).then(function(oResponse) {
+					assert.equal(oResponse.response[0].fileName, "oChange2", "deleted Change was returned");
 				});
 			});
 

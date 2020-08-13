@@ -271,12 +271,18 @@ sap.ui.define([
 				isProductiveSystem: function() {return false;},
 				isAtoEnabled: function() {return false;}
 			};
+			var oAdjustedResponse = {
+				response: [
+					{fileName: "1"},
+					{fileName: "2"}
+				]
+			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 			sandbox.spy(BusyIndicator, "hide");
 			sandbox.spy(BusyIndicator, "show");
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&generator=Change.createInitialFileContent";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: [{name: "1"}, {name: "2"}]});
 			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
@@ -284,11 +290,11 @@ sap.ui.define([
 				generator: "Change.createInitialFileContent",
 				changes: [oVENDORChange1, oVENDORChange2],
 				reference: "flexReference"
-			}).then(function(aChanges) {
+			}).then(function(oResponse) {
 				assert.ok(BusyIndicator.show.calledTwice);
 				assert.ok(BusyIndicator.hide.calledOnce);
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
-				assert.deepEqual(aChanges, [], "empty array is returned");
+				assert.deepEqual(oResponse, oAdjustedResponse, "expected Response");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
@@ -351,7 +357,7 @@ sap.ui.define([
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&selector=abc123&changeType=labelChange";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 
 			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
@@ -440,7 +446,7 @@ sap.ui.define([
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves(oMockTransportInfo);
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&appVersion=1.0.0&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 
 			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
@@ -470,7 +476,7 @@ sap.ui.define([
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&appVersion=1.0.0&selector=view--control1,feview--control2";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 
 			var aControlIds = [
 				"view--control1",
@@ -504,7 +510,7 @@ sap.ui.define([
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=USER&appVersion=1.0.0&generator=Change.createInitialFileContent&selector=view--control1,feview--control2";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 			var aControlIds = [
 				"view--control1",
 				"feview--control2"
