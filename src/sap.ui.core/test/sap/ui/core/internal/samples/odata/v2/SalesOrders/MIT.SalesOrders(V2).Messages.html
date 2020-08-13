@@ -100,6 +100,10 @@
 				product (using the target <code>ToProduct/ProductID</code>) indicating that the
 				product is out of maintenance.
 			</li>
+			<li>If the <strong>product</strong> of the sales order item is <strong>HT-1501</strong>,
+				the service returns an information message for the currency of that sales order item
+				indicating that the currency 'JPY' should be avoided.
+			</li>
 		</ul>
 		<h3>Finding a Sales Order</h3>
 		To find a sales order that can be used for testing, you can either use the OData V4 Sales
@@ -470,6 +474,27 @@
 				<b>Check:</b> The number of messages has been decreased by 1.<br />
 				<b>Check:</b> The new message of the last step has been removed from the message
 					popover.
+			</li>
+		</ol>
+		<h3>(X) Suppress messages for the currency code if the code is not displayed by the control
+			</h3>
+		Search for a sales order with an item for the product <code>HT-1501</code>. In case of mock
+		data: Use sales order <code>110</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> In the message popover you see an information message
+					<code>Avoid currency 'JPY'</code>.<br />
+				<b>Check:</b> The border of the <code>Currency</code> field of the sales order item
+					with the product <code>HT-1501</code> indicates an information message.<br />
+				<b>Check:</b> When clicking into the sales order item's <code>Currency</code> field,
+					the message text <code>Avoid currency 'JPY'</code> is shown.<br />
+				<b>Check:</b> There is no border around the <code>Gross Amount</code> field of that
+					sales order item.<br />
+				<b>Check:</b> When clicking into the sales order item's <code>Gross Amount</code>
+					field, no info message is shown.
 			</li>
 		</ol>
 	</body>

@@ -152,9 +152,19 @@
 							<Label text="Gross Amount" />
 							<t:template>
 								<Input textAlign="Right" value="{
-										constraints : {precision : 16, scale : 3},
-										path : 'GrossAmount',
-										type : 'sap.ui.model.odata.type.Decimal'
+										formatOptions : {showMeasure : false},
+										mode : 'TwoWay',
+										parts : [{
+											constraints : {precision : 16, scale : 3},
+											path : 'GrossAmount',
+											type : 'sap.ui.model.odata.type.Decimal'
+										}, {
+											constraints : {maxLength : 5},
+											parameters : {ignoreMessages : true},
+											path : 'CurrencyCode',
+											type : 'sap.ui.model.odata.type.String'
+										}],
+										type : 'sap.ui.model.type.Currency'
 									}" />
 							</t:template>
 						</t:Column>

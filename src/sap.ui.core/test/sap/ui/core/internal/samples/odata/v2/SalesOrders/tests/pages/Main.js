@@ -12,6 +12,8 @@ sap.ui.define([
 			ItemPosition : 1,
 			ProductID : 2,
 			Quantity : 3,
+			GrossAmount : 5,
+			Currency : 6,
 			Note : 7,
 			Fix : 8
 		},
@@ -20,6 +22,7 @@ sap.ui.define([
 			empty : "",
 			error : "My error message",
 			info : "My info message",
+			infoCurrency : "Avoid currency 'JPY'",
 			maintenance : "System maintenance starts in 2 hours",
 			note : "Enter an Item Note",
 			order : "Order at least 2 EA of product 'HT-1000'",

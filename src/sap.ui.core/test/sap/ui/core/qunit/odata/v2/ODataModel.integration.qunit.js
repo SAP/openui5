@@ -5827,4 +5827,71 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: With the binding parameter <code>ignoreMessages</code> the application developer
+	// can control whether messages are displayed at the control. It works for
+	// <code>sap.ui.model.odata.ODataPropertyBinding</code>s and composite bindings containing such
+	// bindings.
+	// JIRA: CPOUI5MODELS-290
+	QUnit.test("ODataPropertyBindings and CompositeBindings: ignoreMessages", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			oNoteWarning = this.createResponseMessage("Note", "Foo", "warning"),
+			sView = '\
+<FlexBox id="objectPage" binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="Note0" value="{Note}" />\
+	<Input id="Note1" value="{path : \'Note\', parameters : {ignoreMessages : false}}" />\
+	<Input id="Note2" value="{path : \'Note\', parameters : {ignoreMessages : true}}" />\
+	<Input id="Composite0" value="{= ${SalesOrderID} + ${value : \' - \'} + ${Note}}" />\
+	<Input id="Composite1" value="{= ${SalesOrderID} + ${value : \' - \'} + ${\
+			path : \'Note\',\
+			parameters : {ignoreMessages : false}\
+		}}" />\
+	<Input id="Composite2" value="{= ${SalesOrderID} + ${value : \' - \'} + ${\
+			path : \'Note\',\
+			parameters : {ignoreMessages : true}\
+		}}" />\
+	<Input id="Composite3" value="{parts : [\'SalesOrderID\', {value : \'-\'}, {\
+			path : \'Note\',\
+			parameters : {ignoreMessages : false}\
+		}]}" />\
+	<Input id="Composite4" value="{parts : [\'SalesOrderID\', {value : \'-\'}, {\
+			path : \'Note\',\
+			parameters : {ignoreMessages : true}\
+		}]}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')", {
+				Note : "Note",
+				SalesOrderID : '1'
+			}, {"sap-message" : getMessageHeader(oNoteWarning)})
+			.expectChange("Note0", null)
+			.expectChange("Note0", "Note")
+			.expectChange("Note1", null)
+			.expectChange("Note1", "Note")
+			.expectChange("Note2", null)
+			.expectChange("Note2", "Note")
+			.expectMessage(oNoteWarning, "/SalesOrderSet('1')/");
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(that.oView.byId("Composite0").getValue(), "1 - Note");
+			assert.strictEqual(that.oView.byId("Composite1").getValue(), "1 - Note");
+			assert.strictEqual(that.oView.byId("Composite2").getValue(), "1 - Note");
+			assert.strictEqual(that.oView.byId("Composite3").getValue(), "1 - Note");
+			assert.strictEqual(that.oView.byId("Composite4").getValue(), "1 - Note");
+			return Promise.all([
+				that.checkValueState(assert, "Note0", "Warning", "Foo"),
+				that.checkValueState(assert, "Note1", "Warning", "Foo"),
+				that.checkValueState(assert, "Note2", "None", ""),
+				that.checkValueState(assert, "Composite0", "Warning", "Foo"),
+				that.checkValueState(assert, "Composite1", "Warning", "Foo"),
+				that.checkValueState(assert, "Composite2", "None", ""),
+				that.checkValueState(assert, "Composite3", "Warning", "Foo"),
+				that.checkValueState(assert, "Composite4", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });

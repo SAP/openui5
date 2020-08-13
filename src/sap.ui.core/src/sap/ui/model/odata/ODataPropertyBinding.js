@@ -15,7 +15,8 @@ sap.ui.define([
 
 
 	/**
-	 *
+	 * Do <strong>NOT</strong> call this private constructor, but rather use
+	 * {@link sap.ui.model.odata.v2.ODataModel#bindProperty} instead!
 	 * @class
 	 * Property binding implementation for OData format
 	 *
@@ -36,6 +37,7 @@ sap.ui.define([
 			this.oValue = this._getValue();
 			this.vOriginalValue;
 			this.getDataState().setValue(this.oValue);
+			this.setIgnoreMessages(mParameters && mParameters.ignoreMessages);
 		}
 
 	});
@@ -158,6 +160,19 @@ sap.ui.define([
 
 		this.getDataState().setLaundering(!!mPaths && !!(sCanonicalPath in mPaths));
 		PropertyBinding.prototype._checkDataState.call(this, sCanonicalPath, mPaths);
+	};
+
+	/**
+	 * Returns <code>true</code>, as this binding supports the feature of not propagating messages
+	 * to the control.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @see sap.ui.model.Binding#getIgnoreMessages
+	 * @see sap.ui.model.Binding#setIgnoreMessages
+	 */
+	ODataPropertyBinding.prototype.supportsIgnoreMessages = function () {
+		return true;
 	};
 
 	return ODataPropertyBinding;
