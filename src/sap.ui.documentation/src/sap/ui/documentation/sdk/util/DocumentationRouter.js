@@ -303,8 +303,8 @@ sap.ui.define([
 			sTargetHref = getHref(oAnchorElement);
 		}
 
-		// Do not change href if its already changed
-		if (!sTargetHref || /^https?:\/\//.test(sTargetHref)) {
+		// Do not change href if it's already changed or if it's a stand-alone HTML page
+		if (!sTargetHref || /^https?:\/\//.test(sTargetHref) || sTargetHref.endsWith(".html")) {
 			return;
 		}
 
