@@ -42,7 +42,7 @@
 		<ul>
 			<li><a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&realOData=true"
 				target="_blank">
-			http://localhost:8080/testsuite/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&realOData=true
+			http://localhost:8080/testsuite/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&amp;realOData=true
 			</a></li>
 		</ul>
 		<h3>Testing with mock data</h3>
@@ -157,7 +157,7 @@
 						<b>Check:</b> The number of messages has been increased by 1.<br />
 						<b>Check:</b> The border of the sales order item's note field has a border
 							indicating the corresponding severity of the message.<br />
-						<b>Check:</b> When clicking into the sales order items note field, the
+						<b>Check:</b> When clicking into the sales order item's note field, the
 							message text (i.e. the text as entered after the ":") is shown.<br />
 						<b>Check:</b> The table row is highlighted with the same color as the border
 							of the sales order item's note input field.
@@ -388,7 +388,7 @@
 				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
 					the <code>Sales Order Details</code> section.
 			</li>
-			<li>Open the message popopver.<br />
+			<li>Open the message popover.<br />
 				<b>Check:</b> There is a message <code>System maintenance starts in 2 hours</code>.
 			</li>
 			<li>Navigate to the message details and click on <code>Technical Details</code> link
@@ -396,7 +396,7 @@
 				<b>Check:</b> The values for <code>Target</code> and <code>Full Target</code> are
 					empty.
 			</li>
-			<li>Close the <code>Message Details</code> dialog and close the message popopver.<br />
+			<li>Close the <code>Message Details</code> dialog and close the message popover.<br />
 				<b>Check:</b> The number of messages has been decreased and the message is no longer
 					listed in the message popover.
 			</li>
@@ -423,7 +423,7 @@
 					the <code>Note</code> have borders indicating the warning <code>For a quantity
 					greater than 1 you need an approval reason</code>.
 			</li>
-			<li>Open the message popopver.<br />
+			<li>Open the message popover.<br />
 				<b>Check:</b> There is exactly one warning with the message <code>For a quantity
 					greater than 1 you need an approval reason</code> for that item.
 			</li>
@@ -432,7 +432,7 @@
 				<b>Check:</b> The values for <code>Target</code> and <code>Full Target</code>
 					contain each two different paths.
 			</li>
-			<li>Close the <code>Message Details</code> dialog and close the message popopver. Change
+			<li>Close the <code>Message Details</code> dialog and close the message popover. Change
 				the modified sales order item's <code>Note</code> value by adding the prefix
 				<code>"Reason:"</code> and save it.<br />
 				<b>Check:</b> The <code>Quantity</code> and the <code>Note</code> fields do not have
@@ -466,7 +466,7 @@
 				<b>Check:</b> There is a new message that the quantity has been successfully
 					updated.
 			</li>
-			<li>Close the message popopver.<br />
+			<li>Close the message popover.<br />
 				<b>Check:</b> The number of messages has been decreased by 1.<br />
 				<b>Check:</b> The new message of the last step has been removed from the message
 					popover.
