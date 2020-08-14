@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/Sorter",
+	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/Event",
 	"sap/ui/dom/containsOrEquals",
@@ -35,6 +36,7 @@ sap.ui.define([
 	Button,
 	ODataListBinding,
 	Sorter,
+	Filter,
 	JSONModel,
 	Event,
 	containsOrEquals,
@@ -2724,182 +2726,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("showDetailsButton property & button test", function(assert) {
-		var done = assert.async();
-
-		// Destroy the old/default table
-		this.oTable.destroy();
-		this.oTable = new Table({
-			type: new ResponsiveTableType({
-				showDetailsButton: true
-			})
-		});
-
-		var aColumns = [
-			new Column({
-				header: "Column A",
-				hAlign: "Begin",
-				importance: "High"
-			}),
-			new Column({
-				header: "Column B",
-				hAlign: "Begin",
-				importance: "High"
-			}),
-			new Column({
-				header: "Column C",
-				hAlign: "Begin",
-				importance: "Medium"
-			}),
-			new Column({
-				header: "Column D",
-				hAlign: "Begin",
-				importance: "Low"
-			}),
-			new Column({
-				header: "Column E",
-				hAlign: "Begin",
-				importance: "Low"
-			}),
-			new Column({
-				header: "Column F",
-				hAlign: "Begin",
-				importance: "High"
-			})
-		];
-
-		aColumns.forEach(function(oColumn) {
-			this.oTable.addColumn(oColumn);
-		}.bind(this));
-
-		this.oTable.placeAt("qunit-fixture");
-		this.oType = this.oTable.getType();
-		Core.applyChanges();
-
-		this.oTable.initialized().then(function() {
-			// attach event when ContextualWidth is set to 'Phone'
-			this.oTable._oTable.attachEventOnce("popinChanged", function() {
-				assert.ok(true, "ContextualWidth is set to Phone.");
-				assert.ok(this.oType._oShowDetailsButton.getVisible(), "Button 'Show / Hide Details' is visible");
-				assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "Button text='Show Details'");
-				assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "ResponsiveTable property hiddenInPopin=['Low']");
-
-				// attach event when show / hide button is pressed first time
-				this.oTable._oTable.attachEventOnce("popinChanged", function() {
-					assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Hide Details", "Button text='Hide Details'");
-					assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 0, "ResponsiveTable property hiddenInPopin=[]");
-
-					// attach event when show / hide button is pressed second time
-					this.oTable._oTable.attachEventOnce("popinChanged", function() {
-						assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "Button text='Show Details'");
-						assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "ResponsiveTable property hiddenInPopin=['Low']");
-
-						// attach event when showDetailsButton is set to false
-						this.oTable._oTable.attachEventOnce("popinChanged", function() {
-							assert.notOk(this.oType.getShowDetailsButton(), "showDetailsButton=false");
-							assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getEnd().find(function(oControl) {
-								return oControl.sId.match("-showHideDetails");
-							}), undefined, "Button 'Show / Hide Details' removed from tables toolbar");
-							assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 0, "ResponsiveTable property hiddenInPopin=[]");
-							assert.strictEqual(this.oTable._oTable._getHiddenInPopin().length, 0, "ResponsiveTable has no hidden columns");
-							assert.ok(this.oTable._oTable.hasPopin(), "ResponsiveTable has columns in the pop-in area.");
-							done();
-						}.bind(this));
-
-						this.oType.setShowDetailsButton(false);
-						Core.applyChanges();
-					}.bind(this));
-
-					this.oType._oShowDetailsButton.firePress(this);
-					Core.applyChanges();
-				}.bind(this));
-
-				this.oType._oShowDetailsButton.firePress(this);
-				Core.applyChanges();
-			}.bind(this));
-
-			assert.ok(this.oType.getShowDetailsButton(), "showDetailsButton=true");
-			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "All columns are visible. Button 'Show / Hide Details' is hidden");
-			this.oTable._oTable.setContextualWidth("Phone");
-			Core.applyChanges();
-		}.bind(this));
-	});
-
-	QUnit.test("showDetailsButton property on phone", function(assert) {
-		var done = assert.async();
-
-		// save original state
-		var bDesktop = Device.system.desktop;
-		var bTablet = Device.system.tablet;
-		var bPhone = Device.system.phone;
-
-		// overwrite for our test case
-		Device.system.desktop = false;
-		Device.system.tablet = false;
-		Device.system.phone = true;
-
-		// Destroy the old/default table
-		this.oTable.destroy();
-		this.oTable = new Table({
-			type: new ResponsiveTableType({
-				showDetailsButton: true
-			})
-		});
-
-		var aColumns = [
-			new Column({
-				header: "Column A",
-				hAlign: "Begin",
-				importance: "High"
-			}),
-			new Column({
-				header: "Column B",
-				hAlign: "Begin",
-				importance: "High"
-			}),
-			new Column({
-				header: "Column C",
-				hAlign: "Begin",
-				importance: "Medium"
-			}),
-			new Column({
-				header: "Column D",
-				hAlign: "Begin",
-				importance: "Low"
-			}),
-			new Column({
-				header: "Column E",
-				hAlign: "Begin",
-				importance: "Low"
-			}),
-			new Column({
-				header: "Column F",
-				hAlign: "Begin",
-				importance: "High"
-			})
-		];
-
-		aColumns.forEach(function(oColumn) {
-			this.oTable.addColumn(oColumn);
-		}.bind(this));
-
-		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		this.oTable.initialized().then(function() {
-			var aImportance = this.oTable._oTable.getHiddenInPopin();
-			assert.strictEqual(aImportance.length, 2, "ResponsiveTable property hiddenInPopin.length = 2");
-			assert.strictEqual(aImportance[0], "Low", "ResponsiveTable property hiddenInPopin[0] = 'Low'");
-			assert.strictEqual(aImportance[1], "Medium", "ResponsiveTable property hiddenInPopin[1] = 'Medium'");
-
-			// reset original state
-			Device.system.desktop = bDesktop;
-			Device.system.tablet = bTablet;
-			Device.system.phone = bPhone;
-			done();
-		}.bind(this));
-	});
-
 	QUnit.test("enableExport property & export button test", function(assert) {
 		var done = assert.async();
 
@@ -4292,5 +4118,194 @@ sap.ui.define([
 
 		this.oTable.setP13nMode();
 		assert.deepEqual(this.oTable.getCurrentState(), {}, "Deactivate 'Column' and 'Filter'");
+	});
+
+	QUnit.module("showDetailsButton", {
+		beforeEach: function() {
+			var oModel = new JSONModel();
+			oModel.setData({
+				testPath: [
+					{test: "Test1"}, {test: "Test2"}, {test: "Test3"}, {test: "Test4"}, {test: "Test5"}
+				]
+			});
+
+			this.oTable = new Table({
+				type: new ResponsiveTableType({
+					showDetailsButton: true
+				}),
+				columns: [
+					new Column({
+						header: "Column A",
+						hAlign: "Begin",
+						importance: "High",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column B",
+						hAlign: "Begin",
+						importance: "High",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column C",
+						hAlign: "Begin",
+						importance: "Medium",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column D",
+						hAlign: "Begin",
+						importance: "Low",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column E",
+						hAlign: "Begin",
+						importance: "Low",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column F",
+						hAlign: "Begin",
+						importance: "High",
+						template: new Text({
+							text: "{test}"
+						})
+					})
+				]
+			});
+
+			this.oTable.setModel(oModel);
+			this.oTable.placeAt("qunit-fixture");
+			this.oType = this.oTable.getType();
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Button creation", function(assert) {
+		var done = assert.async(),
+			clock = sinon.useFakeTimers();
+
+		assert.ok(this.oType.getShowDetailsButton(), "showDetailsButton = true");
+
+		this.oTable.initialized().then(function() {
+			this.oTable.bindRows({
+				path: "/testPath"
+			});
+			assert.ok(this.oType._oShowDetailsButton, "button is created");
+			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
+			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
+
+			this.oTable._oTable.setContextualWidth("Tablet");
+			clock.tick(1);
+			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
+
+			this.oType._oShowDetailsButton.firePress();
+			clock.tick(1);
+			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Hide Details", "correct text is set on the button");
+
+			this.oTable._oTable.setContextualWidth("4444px");
+			clock.tick(1);
+			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Button placement", function(assert) {
+		var done = assert.async(),
+			clock = sinon.useFakeTimers();
+
+		this.oTable.initialized().then(function() {
+			this.oTable._oTable.setContextualWidth("Tablet");
+			clock.tick(1);
+			var bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
+				return oControl.getId() === this.oType._oShowDetailsButton.getId();
+			}, this);
+			assert.ok(bButtonAddedToToolbar, "Button is correctly added to the table header toolbar");
+
+			this.oType.setShowDetailsButton(false);
+			clock.tick(1);
+			assert.notOk(this.oType.getShowDetailsButton(), "showDetailsButton = false");
+			bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
+				return oControl.getId() === this.oType._oShowDetailsButton.getId();
+			}, this);
+			assert.notOk(bButtonAddedToToolbar, "Button is removed from the table header toolbar");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Inner table hiddenInPopin property in Desktop mode", function(assert) {
+		var done = assert.async();
+
+		this.oTable.initialized().then(function() {
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 1, "getHiddenInPopin() contains only 1 value");
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "Low importance is added to the hiddenInPopin property");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Inner table hiddenInPopin property in Phone mode", function(assert) {
+		var done = assert.async();
+		// save original state
+		var bDesktop = Device.system.desktop;
+		var bTablet = Device.system.tablet;
+		var bPhone = Device.system.phone;
+
+		// overwrite for our test case
+		Device.system.desktop = false;
+		Device.system.tablet = false;
+		Device.system.phone = true;
+		Core.applyChanges();
+
+		this.oTable.initialized().then(function() {
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 2, "getHiddenInPopin() contains only 1 value");
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "Low importance is added to the hiddenInPopin property");
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[1], "Medium", "Medium importance is added to the hiddenInPopin property");
+
+			// reset original state
+			Device.system.desktop = bDesktop;
+			Device.system.tablet = bTablet;
+			Device.system.phone = bPhone;
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Button should be hidden with filtering leads to no data and viceversa", function(assert) {
+		var done = assert.async(),
+			clock = sinon.useFakeTimers();
+
+		this.oTable.initialized().then(function() {
+			this.oTable.bindRows({
+				path: "/testPath"
+			});
+
+			this.oTable._oTable.setContextualWidth("Tablet");
+			clock.tick(1);
+			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+
+			this.oTable._oTable.getBinding("items").filter(new Filter("test", "EQ", "foo"));
+			clock.tick(1);
+			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no visible items");
+
+			this.oTable._oTable.getBinding("items").filter();
+			clock.tick(1);
+			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
+
+			done();
+		}.bind(this));
 	});
 });

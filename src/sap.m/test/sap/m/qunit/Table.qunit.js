@@ -2163,4 +2163,42 @@ sap.ui.define([
 		assert.ok(oGHLI.getDomRef().classList.contains("sapMListTblRowHasDummyCell"), "GroupHeaderListItem contains DummyCell class added");
 	});
 
+	QUnit.module("popinChanged event", {
+		beforeEach: function() {
+			this.iPopinChangedEventCounter = 0;
+			this.sut = createSUT("idPopinChangedTest", true, false);
+			this.sut.attachPopinChanged(function() {
+				this.iPopinChangedEventCounter++;
+			}, this);
+			this.sut.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.sut.destroy();
+		}
+	});
+
+	QUnit.test("Fired after rendering", function(assert) {
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired once after rendering");
+	});
+
+	QUnit.test("Fired when filtering leads to no data and then filtering leads from no data to visible items", function(assert) {
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired once after rendering");
+
+		this.sut.getBinding("items").filter(new Filter("color", "EQ", "aaaa"));
+		assert.strictEqual(this.iPopinChangedEventCounter, 2, "popinChanged event fired since filtering led to no data");
+
+		this.sut.getBinding("items").filter(new Filter("color", "EQ", "blue"));
+		assert.strictEqual(this.iPopinChangedEventCounter, 3, "popinChanged event fired since filtering led to visible items from no data");
+	});
+
+	QUnit.test("Not fired when filter leads to visible items", function(assert) {
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired once after rendering");
+
+		this.sut.getBinding("items").filter(new Filter("color", "EQ", "blue"));
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event not fired");
+
+		this.sut.getBinding("items").filter();
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event not fired");
+	});
 });
