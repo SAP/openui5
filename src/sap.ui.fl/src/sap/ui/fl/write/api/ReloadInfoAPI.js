@@ -13,7 +13,7 @@ sap.ui.define([
 ], function(
 	LayerUtils,
 	Layer,
-	FlexUtils,
+	Utils,
 	VersionsAPI,
 	FeaturesAPI,
 	PersistenceWriteAPI
@@ -64,7 +64,7 @@ sap.ui.define([
 		 */
 		getReloadReasonsForStart: function(oReloadInfo) {
 			var bUrlHasMaxLayerParameter = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
-			var bUrlHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.layer});
+			var bUrlHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
 
 			return Promise.all([
 				(!bUrlHasMaxLayerParameter) ?
@@ -87,8 +87,7 @@ sap.ui.define([
 		 * @returns {boolean} True if the parameter with the given value is in the URL
 		 */
 		hasVersionParameterWithValue: function(oParameter) {
-			var sParameterName = LayerUtils.FL_VERSION_PARAM;
-			return FlexUtils.hasParameterAndValue(sParameterName, oParameter.value);
+			return Utils.hasParameterAndValue(sap.ui.fl.Versions.UrlParameter, oParameter.value);
 		},
 
 		/**
@@ -101,7 +100,7 @@ sap.ui.define([
 		 */
 		hasMaxLayerParameterWithValue: function(oParameter) {
 			var sParameterName = LayerUtils.FL_MAX_LAYER_PARAM;
-			return FlexUtils.hasParameterAndValue(sParameterName, oParameter.value);
+			return Utils.hasParameterAndValue(sParameterName, oParameter.value);
 		},
 
 		/**
@@ -116,15 +115,24 @@ sap.ui.define([
 		 * @returns {string} The modified URL
 		 */
 		handleUrlParametersForStandalone: function(oReloadInfo) {
-			var oUshellContainer = FlexUtils.getUshellContainer();
-			if (!oUshellContainer) {
-				if (oReloadInfo.hasHigherLayerChanges) {
-					oReloadInfo.parameters = FlexUtils.handleUrlParameters(oReloadInfo.parameters, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer);
-				}
-				if (oReloadInfo.hasDraftChanges) {
-					oReloadInfo.parameters = FlexUtils.handleUrlParameters(oReloadInfo.parameters, LayerUtils.FL_VERSION_PARAM, oReloadInfo.layer);
-				}
+			if (oReloadInfo.hasHigherLayerChanges) {
+				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer);
 			}
+
+			// removes any version number set (original, draft, inactive and active versions)
+			var oVersionRegExp = new RegExp(sap.ui.fl.Versions.UrlParameter + "=-?\\d*\&?", "g");
+			oReloadInfo.parameters = oReloadInfo.parameters.replace(oVersionRegExp, "");
+
+			// startup reload due to draft
+			if (oReloadInfo.hasDraftChanges) {
+				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, sap.ui.fl.Versions.UrlParameter, sap.ui.fl.Versions.Draft);
+			}
+
+			// clean up if the last parameter was removed
+			if (oReloadInfo.parameters === "?") {
+				oReloadInfo.parameters = "";
+			}
+
 			return oReloadInfo.parameters;
 		},
 
@@ -140,14 +148,14 @@ sap.ui.define([
 		 * @returns {object} oParsedHash Adjusted parsed hash
 		 */
 		handleParametersOnStart: function(oReloadInfo) {
-			var mParsedHash = FlexUtils.getParsedURLHash();
+			var mParsedHash = Utils.getParsedURLHash();
 			mParsedHash.params = mParsedHash.params || {};
 
 			if (oReloadInfo.hasHigherLayerChanges) {
 				mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] = [oReloadInfo.layer];
 			}
 			if (oReloadInfo.hasDraftChanges) {
-				mParsedHash.params[LayerUtils.FL_VERSION_PARAM] = [oReloadInfo.layer];
+				mParsedHash.params[sap.ui.fl.Versions.UrlParameter] = [sap.ui.fl.Versions.Draft];
 			}
 			return mParsedHash;
 		},
@@ -164,7 +172,7 @@ sap.ui.define([
 		 */
 		initialDraftGotActivated: function(oReloadInfo) {
 			if (oReloadInfo.versioningEnabled) {
-				var bUrlHasVersionParameter = this.hasVersionParameterWithValue({value: oReloadInfo.layer});
+				var bUrlHasVersionParameter = this.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
 				return !VersionsAPI.isDraftAvailable(oReloadInfo) && bUrlHasVersionParameter;
 			}
 			return false;
@@ -193,7 +201,8 @@ sap.ui.define([
 
 			// TODO fix app descriptor handling and reload behavior
 			// TODO move changesNeedReload near flexState; set flag when saving change that needs a reload
-			oReloadInfo.hasDraft = oReloadInfo.hasDirtyDraftChanges || ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.layer});
+			oReloadInfo.hasDraft = oReloadInfo.hasDirtyDraftChanges || ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
+
 			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
 			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			if (oReloadInfo.changesNeedReload
@@ -203,7 +212,7 @@ sap.ui.define([
 			) {
 				oReloadInfo.reloadMethod = oRELOAD.RELOAD_PAGE;
 				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes (changesNeedReload = true)
-				if (!oReloadInfo.changesNeedReload && FlexUtils.getUshellContainer()) {
+				if (!oReloadInfo.changesNeedReload && Utils.getUshellContainer()) {
 					oReloadInfo.reloadMethod = oRELOAD.VIA_HASH;
 				}
 			}

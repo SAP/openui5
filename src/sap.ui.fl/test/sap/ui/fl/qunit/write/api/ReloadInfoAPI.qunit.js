@@ -42,7 +42,7 @@ sap.ui.define([
 
 			var oExpectedHash = {
 				params: {
-					"sap-ui-fl-version": [Layer.CUSTOMER],
+					"sap-ui-fl-versionNumber": [0],
 					"sap-ui-fl-parameter": ["test"]
 				}
 			};
@@ -166,7 +166,7 @@ sap.ui.define([
 			};
 
 			var mParsedHash = {
-				params: LayerUtils.FL_VERSION_PARAM
+				params: sap.ui.fl.Versions.UrlParameter
 			};
 
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
@@ -450,7 +450,7 @@ sap.ui.define([
 						parseShellHash: function () {
 							return {
 								params: {
-									"sap-ui-fl-version": [Layer.CUSTOMER]
+									"sap-ui-fl-versionNumber": [sap.ui.fl.Versions.Draft.toString()]
 								}
 							};
 						}
@@ -461,13 +461,13 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("with value CUSTOMER", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: Layer.CUSTOMER});
+		QUnit.test("with value '0'", function(assert) {
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
 			assert.deepEqual(bHasVersionParameter, true, "hasVersionParameterWithValue returns true");
 		});
 
-		QUnit.test("with value USER", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: Layer.USER});
+		QUnit.test("with value '1'", function(assert) {
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: "1"});
 			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns false");
 		});
 	});
@@ -527,18 +527,18 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("with value CUSTOMER", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: Layer.CUSTOMER});
+		QUnit.test("with value '0'", function(assert) {
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
 			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns undefined");
 		});
 
-		QUnit.test("with value USER", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: Layer.USER});
+		QUnit.test("with value '1'", function(assert) {
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: "1"});
 			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns undefined");
 		});
 	});
 
-	QUnit.module("Given that a handleParametersForStandalone", {
+	QUnit.module("Given that a handleParametersForStandaloneiis called", {
 		beforeEach: function() {
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(undefined);
 			this.oHandleUrlParameterSpy = sandbox.spy(FlexUtils, "handleUrlParameters");
@@ -547,8 +547,44 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("and the version parameter is in the URL with value CUSTOMER", function(assert) {
-			var sParams = "?" + LayerUtils.FL_VERSION_PARAM + "=" + Layer.CUSTOMER;
+		QUnit.test("and the version parameter is in the URL with value '0'", function(assert) {
+			var sParams = "?" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Draft;
+			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
+
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				hasDraftChanges: true,
+				hasHigherLayerChanges: false,
+				parameters: sParams
+			};
+
+			var sExpectedParams = "";
+			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
+			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
+			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
+			assert.equal(sParameters, sExpectedParams, "then the parameter was removed");
+		});
+
+		QUnit.test("and the version parameter is in the URL with value '-1'", function(assert) {
+			var sParams = "?" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Original;
+			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
+
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				hasDraftChanges: true,
+				hasHigherLayerChanges: false,
+				parameters: sParams
+			};
+
+			var sExpectedParams = "";
+			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
+			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
+			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
+			assert.equal(sParameters, sExpectedParams, "then the parameter was removed");
+		});
+
+		QUnit.test("and the version parameter is in the URL with value '123'", function(assert) {
+			var sParams = "?" + sap.ui.fl.Versions.UrlParameter + "=123";
 			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
 
 			var oReloadInfo = {
@@ -594,7 +630,7 @@ sap.ui.define([
 				parameters: sParams
 			};
 
-			var sExpectedParams = "?" + LayerUtils.FL_VERSION_PARAM + "=" + Layer.CUSTOMER;
+			var sExpectedParams = "?" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Draft;
 			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
 			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
 			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
@@ -629,7 +665,7 @@ sap.ui.define([
 				hasHigherLayerChanges: true,
 				parameters: sParams
 			};
-			var sExpectedParams = "?" + LayerUtils.FL_MAX_LAYER_PARAM + "=" + Layer.CUSTOMER + "&" + LayerUtils.FL_VERSION_PARAM + "=" + Layer.CUSTOMER;
+			var sExpectedParams = "?" + LayerUtils.FL_MAX_LAYER_PARAM + "=" + Layer.CUSTOMER + "&" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Draft;
 			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
 			assert.equal(this.oHandleUrlParameterSpy.calledTwice, true, "handleUrlParameter was called twice");
 			assert.equal(oHasParameterAndValueStub.calledTwice, true, "handleUrlParameter was called twice");

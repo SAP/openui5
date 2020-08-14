@@ -46,7 +46,7 @@ sap.ui.define([
 				otherValue: "a",
 				reference: "reference",
 				componentData: {},
-				draftLayer: Layer.CUSTOMER
+				versionNumber: sap.ui.fl.Versions.Draft
 			};
 
 			var oExpectedProperties = {
@@ -56,7 +56,7 @@ sap.ui.define([
 				cacheKey: "cacheKey",
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
-				draftLayer: Layer.CUSTOMER
+				versionNumber: sap.ui.fl.Versions.Draft
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
@@ -68,7 +68,6 @@ sap.ui.define([
 				assert.equal(this.oGetBaseCompNameStub.callCount, 1, "the name was retrieved from the Utils");
 				assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");
 				var mPassedPropertyBag = this.oLoadFlexDataStub.firstCall.args[0];
-				assert.equal(Object.keys(mPassedPropertyBag).length, 7, "the first argument has the right amount of keys");
 				assert.deepEqual(mPassedPropertyBag, oExpectedProperties, "and is the property bag");
 			}.bind(this));
 		});
@@ -88,7 +87,7 @@ sap.ui.define([
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
 				componentName: "baseName",
-				draftLayer: undefined
+				versionNumber: undefined
 			};
 			this.oGetAppVersionStub.returns();
 
@@ -100,7 +99,7 @@ sap.ui.define([
 				assert.equal(this.oGetSiteIdStub.callCount, 1, "the siteId was retrieved from the Utils");
 				assert.equal(this.oGetBaseCompNameStub.callCount, 1, "the name was retrieved from the Utils");
 				assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");
-				assert.deepEqual(this.oLoadFlexDataStub.firstCall.args[0], oExpectedProperties, "the first argument is the component");
+				assert.deepEqual(this.oLoadFlexDataStub.firstCall.args[0], oExpectedProperties, "the first argument are the properties");
 			}.bind(this));
 		});
 	});

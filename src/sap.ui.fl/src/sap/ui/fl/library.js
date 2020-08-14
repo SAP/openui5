@@ -181,6 +181,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Specific Versions of key user adaptations
+	 *
+	 * @enum {string}
+	 */
+	sap.ui.fl.Versions = {
+		Original: -1,
+		Draft: 0,
+		UrlParameter: "sap-ui-fl-versionNumber"
+	};
+
+	/**
 	 * Available classification types for the condenser
 	 *
 	 * @enum {string}

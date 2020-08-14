@@ -28,14 +28,14 @@ sap.ui.define([
 				url: "/flexKeyuser",
 				reference: "reference",
 				appVersion: "1.0.0",
-				draftLayer: Layer.CUSTOMER
+				version: 0
 			};
 			var mParameter = {
 				appVersion: "1.0.0",
-				version: "0",
+				version: 0,
 				"sap-language": "en"
 			};
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0";
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0&version=0";
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response : {
@@ -65,6 +65,22 @@ sap.ui.define([
 				assert.equal(oFlexData.changes[0], 1, "the change entry is contained");
 				assert.equal(oFlexData.changes[1], 2, "the compVariant entry is contained");
 				assert.equal(oFlexData.cacheKey, "abc123", "the cacheKey value is returned");
+			});
+		});
+
+		QUnit.test("loadFlexData resolves immeadiatly in case of the 'Original App'", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				reference: "reference",
+				appVersion: "1.0.0",
+				version: -1
+			};
+			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl");
+			var oStubSendRequest = sandbox.stub(Utils, "sendRequest");
+			return KeyUserConnector.loadFlexData(mPropertyBag).then(function (oFlexData) {
+				assert.equal(oStubGetUrlWithQueryParameters.callCount, 0, "getUrl was not called");
+				assert.equal(oStubSendRequest.callCount, 0, "sendRequest was not called");
+				assert.equal(oFlexData, undefined, "the return value is 'undefined'");
 			});
 		});
 	});

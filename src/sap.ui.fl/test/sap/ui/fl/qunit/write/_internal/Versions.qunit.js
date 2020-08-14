@@ -270,6 +270,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("and a connector is configured which returns a list of versions with entries", function (assert) {
+			var nActiveVersion = 2;
+
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
@@ -284,7 +286,7 @@ sap.ui.define([
 			var oSecondVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a while ago",
-				versionNumber : 2
+				versionNumber : nActiveVersion
 			};
 
 			var aReturnedVersions = [
@@ -299,10 +301,13 @@ sap.ui.define([
 				assert.deepEqual(aVersions, aReturnedVersions, "then the versions list is returned");
 				assert.deepEqual(aVersions[0].type, "active", "the first version is the 'active' one");
 				assert.deepEqual(aVersions[1].type, "inactive", "the second version is the 'inactive' one");
+				assert.equal(oResponse.getProperty("/activeVersion"), nActiveVersion, "and the active version was determined correct");
 			});
 		});
 
 		QUnit.test("and a connector is configured which returns a list of versions with entries and a draft", function (assert) {
+			var nActiveVersion = 2;
+
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
@@ -317,7 +322,7 @@ sap.ui.define([
 			var oSecondVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a while ago",
-				versionNumber : 2
+				versionNumber : nActiveVersion
 			};
 
 			var aReturnedVersions = [
@@ -334,6 +339,7 @@ sap.ui.define([
 				assert.deepEqual(aVersions[0].type, "draft", "the first version is the 'draft' one");
 				assert.deepEqual(aVersions[1].type, "active", "the second version is the 'active' one");
 				assert.deepEqual(aVersions[2].type, "inactive", "the third version is the 'inactive' one");
+				assert.equal(oResponse.getProperty("/activeVersion"), nActiveVersion, "and the active version was determined correct");
 			});
 		});
 	});
@@ -361,6 +367,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("and a connector is configured which returns a list of versions while a draft exists", function (assert) {
+			var nActiveVersion = 2;
+
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
@@ -392,7 +400,7 @@ sap.ui.define([
 			var oActivatedVersion = {
 				activatedBy : "qunit",
 				activatedAt : "just now",
-				versionNumber : 2
+				versionNumber : nActiveVersion
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -409,6 +417,7 @@ sap.ui.define([
 					assert.equal(aVersions[1], oSecondVersion, "where the old version is the second");
 					assert.equal(aVersions[2], oFirstVersion, "where the older version is the third");
 					assert.equal(oResponse.getProperty("/backendDraft"), false, "backendDraft property was set to false");
+					assert.equal(oResponse.getProperty("/activeVersion"), nActiveVersion, "and the active version was determined correct");
 				});
 		});
 
@@ -463,7 +472,7 @@ sap.ui.define([
 			};
 
 			var oDraft = {
-				versionNumber: 0,
+				versionNumber: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			};
 
@@ -556,7 +565,7 @@ sap.ui.define([
 			};
 
 			var oDraft = {
-				versionNumber: 0,
+				versionNumber: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			};
 
@@ -619,7 +628,7 @@ sap.ui.define([
 			};
 
 			var aReturnedVersions = [
-				{versionNumber : 0},
+				{versionNumber : sap.ui.fl.Versions.Draft},
 				oFirstVersion
 			];
 
@@ -748,7 +757,7 @@ sap.ui.define([
 			var oDraft = {
 				activatedBy: "",
 				activatedAt: "",
-				versionNumber: 0
+				versionNumber: sap.ui.fl.Versions.Draft
 			};
 
 			var aReturnedVersions = [

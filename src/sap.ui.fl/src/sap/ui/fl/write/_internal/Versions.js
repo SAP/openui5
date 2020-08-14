@@ -30,13 +30,16 @@ sap.ui.define([
 	function createModel(mPropertyBag, bVersioningEnabled, aVersions) {
 		var bBackendDraft = _doesDraftExistInVersions(aVersions);
 
-		var bActiveVersionFlagged = false;
+		var nActiveVersion = sap.ui.fl.Versions.Original;
 		aVersions.forEach(function (oVersion) {
-			if (oVersion.versionNumber === 0) {
+			if (oVersion.versionNumber === sap.ui.fl.Versions.Draft) {
 				oVersion.type = "draft";
+			} else if (nActiveVersion === sap.ui.fl.Versions.Original) {
+				// no active version found yet; the first non-draft version is always the active version
+				oVersion.type = "active";
+				nActiveVersion = oVersion.versionNumber;
 			} else {
-				oVersion.type = bActiveVersionFlagged ? "inactive" : "active";
-				bActiveVersionFlagged = true;
+				oVersion.type = "inactive";
 			}
 		});
 
@@ -50,6 +53,7 @@ sap.ui.define([
 		var oModel = new JSONModel({
 			versioningEnabled: bVersioningEnabled,
 			versions: aVersions,
+			activeVersion: nActiveVersion,
 			backendDraft: bBackendDraft,
 			dirtyChanges: false,
 			draftAvailable: bBackendDraft,
@@ -258,6 +262,7 @@ sap.ui.define([
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
+			oModel.setProperty("/activeVersion", oVersion.versionNumber);
 			oModel.updateBindings(true);
 		});
 	};

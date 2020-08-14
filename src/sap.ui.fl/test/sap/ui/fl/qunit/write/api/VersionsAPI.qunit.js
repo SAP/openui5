@@ -213,7 +213,7 @@ sap.ui.define([
 					var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
 					assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
 					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
-					assert.equal(oInitializePropertyBag.draftLayer, sLayer, "and passing the draft layer accordingly");
+					assert.equal(oInitializePropertyBag.versionNumber, 0, "and passing the version number accordingly");
 				});
 		});
 	});

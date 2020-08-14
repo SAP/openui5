@@ -50,7 +50,8 @@ function(
 				appVariantOverview: {},
 				saveAs: {},
 				activateDraft: {},
-				discardDraft: {}
+				discardDraft: {},
+				switchVersion: {}
 			},
 			properties: {
 				/** Determines whether publish button is visible */
@@ -192,10 +193,25 @@ function(
 		return doesActiveVersionExists(aVersions) ? MessageType.None : MessageType.Success;
 	};
 
+	Adaptation.prototype.formatVersionListItemType = function (bSwitchVersionsActive) {
+		return bSwitchVersionsActive ? "Active" : "Inactive";
+	};
 
 	Adaptation.prototype.formatOriginalAppHighlightText = function (aVersions) {
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		return doesActiveVersionExists(aVersions) ? oTextResources.getText("LBL_INACTIVE") : oTextResources.getText("LBL_ACTIVE");
+	};
+
+	Adaptation.prototype.versionSelected = function (oEvent) {
+		var oVersionsBindingContext = oEvent.getSource().getBindingContext("versions");
+		var nVersionNumber = sap.ui.fl.Versions.Original;
+
+		if (oVersionsBindingContext) {
+			// the original Version does not have a version binding Context
+			nVersionNumber = oVersionsBindingContext.getProperty("versionNumber");
+		}
+
+		this.fireEvent("switchVersion", {versionNumber: nVersionNumber});
 	};
 
 	Adaptation.prototype.showVersionHistory = function (oEvent) {
@@ -211,7 +227,9 @@ function(
 					formatHighlight: this.formatHighlight.bind(this),
 					formatHighlightText: this.formatHighlightText.bind(this),
 					formatOriginalAppHighlight: this.formatOriginalAppHighlight.bind(this),
-					formatOriginalAppHighlightText: this.formatOriginalAppHighlightText.bind(this)
+					formatOriginalAppHighlightText: this.formatOriginalAppHighlightText.bind(this),
+					formatVersionListItemType: this.formatVersionListItemType.bind(this),
+					versionSelected: this.versionSelected.bind(this)
 				}
 			}).then(function (oVersionsDialog) {
 				oVersionButton.addDependent(oVersionsDialog);

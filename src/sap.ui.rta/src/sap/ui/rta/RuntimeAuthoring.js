@@ -1016,7 +1016,7 @@ function(
 
 		if (!FlexUtils.getUshellContainer()) {
 			var oReloadInfo = {
-				hasDraftChanges: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}),
+				hasDraftChanges: false, // draft was just discarded
 				layer: sLayer
 			};
 			this.getCommandStack().removeAllCommands();
@@ -1497,22 +1497,18 @@ function(
 			return mParsedHash;
 		}
 
-		if (ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer})) {
-			delete mParsedHash.params[LayerUtils.FL_VERSION_PARAM];
-		} else if (ReloadInfoAPI.hasVersionParameterWithValue({value: "false"})) {
-			/*
-			In case we discarded our draft we add the false flag there, thats why we need to
-			remove it on exit again to trigger the CrossAppNavigation
-			*/
-			delete mParsedHash.params[LayerUtils.FL_VERSION_PARAM];
+		var sVersionParameter = FlexUtils.getParameter(sap.ui.fl.Versions.UrlParameter);
+		if (sVersionParameter) {
+			delete mParsedHash.params[sap.ui.fl.Versions.UrlParameter];
 		} else if (this._isDraftAvailable() || bTriggerReload /* for discard of dirty changes */) {
 			/*
 			In case we entered RTA without a draft and created dirty changes,
-			we need to add sap-ui-fl-version=false, to trigger the CrossAppNavigation on
+			we need to add a parameter to trigger the CrossAppNavigation on
 			Reason 1: Exit
 			Reason 2: Discard
 			*/
-			mParsedHash.params[LayerUtils.FL_VERSION_PARAM] = ["false"];
+			var sActiveVersionString = this._oVersionsModel.getProperty("/activeVersion").toString();
+			mParsedHash.params[sap.ui.fl.Versions.UrlParameter] = [sActiveVersionString];
 		}
 		return mParsedHash;
 	};
@@ -1551,10 +1547,9 @@ function(
 
 		// In FLP scenario we need to remove all parameters and also trigger an hard reload on reset
 		if (oReloadInfo.triggerHardReload) {
-			this._triggerHardReload(oReloadInfo);
+			this._reloadPage();
 		}
 	};
-
 
 	/**
 	 * Returns the correct message - why a reload is needed.
@@ -1685,7 +1680,8 @@ function(
 	};
 
 	/**
-	 * Change URL parameters if necessary, which will trigger an reload.
+	 * Change URL parameters if necessary, which will trigger an reload;
+	 * This function must only be called outside of the ushell.
 	 *
 	 * @param  {Object} oReloadInfo - Information to determine reload is needed
 	 */
@@ -1696,7 +1692,6 @@ function(
 			document.location.search = sParameters;
 			return Promise.resolve();
 		}
-		return this._reloadPage();
 	};
 
 	/**
@@ -1718,7 +1713,8 @@ function(
 				selector: this.getRootControlInstance(),
 				changesNeedReload: bChangesNeedReload,
 				hasDirtyDraftChanges: this._oVersionsModel.getProperty("/draftAvailable") && this._oVersionsModel.getProperty("/dirtyChanges"),
-				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled")
+				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
+				activeVersion: this._oVersionsModel.getProperty("/activeVersion")
 			};
 			oReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			return this._handleReloadMessageBoxOnExit(oReloadInfo).then(function () {

@@ -29,16 +29,17 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Further properties
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} mPropertyBag.reference Flexibility reference
-		 * @param {string} [mPropertyBag.draftLayer] Layer for which a draft should be loaded
-		 * @param {string} [mPropertyBag.appVersion] Version of the application
+		 * @param {number} [mPropertyBag.version] Version number of the adaptation to be loaded
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function(mPropertyBag) {
-			var mParameters = _pick(mPropertyBag, ["appVersion"]);
-
-			if (mPropertyBag.draftLayer) {
-				mParameters.version = "0";
+			if (mPropertyBag.version === -1) {
+				// the "Original App" has no changes. A resolve is sufficient and the Storage will ensure an empty flex response
+				return Promise.resolve();
 			}
+
+			var mParameters = _pick(mPropertyBag, ["appVersion", "version"]);
+
 			if (this.isLanguageInfoRequired) {
 				InitialUtils.addLanguageInfo(mParameters);
 			}
