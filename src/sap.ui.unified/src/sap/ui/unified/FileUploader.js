@@ -779,6 +779,12 @@ sap.ui.define([
 			this.oIFrameRef = null;
 		}
 
+		if (this.oFileUpload) {
+			jQuery(this.oFileUpload).off();
+			this.oFileUpload.parentElement.removeChild(this.oFileUpload);
+			this.oFileUpload = null;
+		}
+
 	};
 
 	/**
