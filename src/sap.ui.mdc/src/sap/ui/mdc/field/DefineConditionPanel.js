@@ -2,10 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/model/Filter',
-	'sap/ui/model/type/String',
+	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/m/FlexItemData',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
 	'sap/ui/mdc/condition/Condition',
@@ -15,23 +13,22 @@ sap.ui.define([
 	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/model/base/ManagedObjectModel',
-	'sap/ui/core/Control',
 	'sap/ui/mdc/Field',
 	'sap/ui/mdc/field/ListFieldHelp',
+	'sap/ui/model/base/ManagedObjectModel',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/resource/ResourceModel',
+	'sap/ui/model/type/String',
+	'sap/ui/core/InvisibleText',
 	'sap/ui/core/ListItem',
-	'sap/m/ScrollContainer',
-	'sap/ui/layout/VerticalLayout',
 	'sap/ui/layout/Grid',
 	'sap/ui/layout/GridData',
-	'sap/m/Button',
-	'sap/m/HBox',
-	'sap/ui/core/InvisibleText'
+	'sap/m/library',
+	'sap/m/ScrollContainer',
+	'sap/m/Button'
 ], function(
-		Filter,
-		StringType,
+		Control,
 		ManagedObjectObserver,
-		FlexItemData,
 		merge,
 		deepEqual,
 		Condition,
@@ -41,18 +38,19 @@ sap.ui.define([
 		FieldDisplay,
 		BaseType,
 		ConditionValidated,
-		ManagedObjectModel,
-		Control,
 		Field,
 		ListFieldHelp,
+		ManagedObjectModel,
+		JSONModel,
+		ResourceModel,
+		StringType,
+		InvisibleText,
 		ListItem,
-		ScrollContainer,
-		VerticalLayout,
 		Grid,
 		GridData,
-		Button,
-		HBox,
-		InvisibleText
+		mLibrary,
+		ScrollContainer,
+		Button
 		) {
 	"use strict";
 
@@ -61,6 +59,8 @@ sap.ui.define([
 	sap.ui.getCore().attachLocalizationChanged(function() {
 		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	});
+
+	var ButtonType = mLibrary.ButtonType;
 
 	/**
 	 * Constructor for a new <code>DefineConditionPanel</code>.
@@ -142,10 +142,7 @@ sap.ui.define([
 				oRm.openStart("section", oControl);
 				oRm.class("sapUiMdcDefineConditionPanel");
 				oRm.openEnd();
-				oRm.openStart("div");
-				oRm.openEnd();
 				oRm.renderControl(oControl.getAggregation("_content"));
-				oRm.close("div");
 				oRm.close("section");
 			}
 		},
@@ -163,19 +160,20 @@ sap.ui.define([
 				properties: ["conditions", "formatOptions"]
 			});
 
-			this._createInnerControls.call(this);
+			_createInnerControls.call(this);
 			this.setModel(this._oManagedObjectModel, "$this");
-
-			var oVLayout = this.byId("defineCondition");
-			this._oObserver.observe(oVLayout, {
-				aggregations: ["content"]
-			});
+			this.setModel(this._oManagedObjectModel, "$condition"); // TODO: better solution to have 2 bindingContexts on one control
 		},
 
 		exit: function() {
 			sap.ui.getCore().getMessageManager().unregisterObject(this, true);
 			this._oObserver.disconnect();
 			this._oObserver = undefined;
+
+			if (this._sConditionsTimer) {
+				clearTimeout(this._sConditionsTimer);
+				this._sConditionsTimer = null;
+			}
 
 			if (this._oDefaultType) {
 				this._oDefaultType.destroy();
@@ -184,97 +182,6 @@ sap.ui.define([
 
 			this._oManagedObjectModel.destroy();
 			delete this._oManagedObjectModel;
-
-			// this.getAggregation("_content").destroy();
-		},
-
-		_createInnerControls: function() {
-			var oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
-
-			var oScrollContainer = new ScrollContainer({
-				height: "100%",
-				horizontal: false,
-				vertical: true
-			});
-
-			oScrollContainer.addDependent(
-				new ListFieldHelp(this.getId() + "--rowSelect-help", {
-					items: { path:'om>/', templateShareable:false, template: new ListItem({key: "{om>key}", text: "{om>additionalText}", additionalText: "{om>info}"})},
-					filterList: false,
-					useFirstMatch: true
-				})
-			);
-
-			var oGridTemplate = new Grid(this.getId() + "--conditionRow", {
-				width: "100%",
-				hSpacing: 0,
-				vSpacing: 0,
-				containerQuery: true}
-			).addStyleClass("sapUiMdcDefineConditionGrid");
-
-			oGridTemplate.addContent(new Field(this.getId() + "--rowSelect", {
-				dataType: "sap.ui.model.type.String",
-				value: "{$this>operator}",
-				width: "100%",
-				display: "Description",
-				fieldHelp: this.getId() + "--rowSelect-help",
-				change: this.onSelectChange.bind(this),
-				ariaLabelledBy: oInvisibleOperatorText
-			})
-				.addStyleClass("sapUiSmallPaddingBegin")
-				.setLayoutData(new GridData({span: "XL3 L3 M3 S10"}))
-			);
-
-
-			oGridTemplate.addContent(new Button(this.getId() + "--removeBtn2", {
-				press: this.removeCondition.bind(this),
-				type: "Transparent",
-				icon: "sap-icon://decline",
-				tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
-			})
-				.addStyleClass("sapUiSmallPaddingBegin")
-				.setLayoutData(new GridData({span: "XL1 L1 M1 S2", visibleXL: false, visibleL: false, visibleM: false, visibleS: true}))
-			);
-
-			oGridTemplate.addContent(new HBox(this.getId() + "--rowFields", {
-				items: { path: '$this>values', factory: this.valueCtrlFactory.bind(this)}
-			})
-				.setLayoutData(new GridData({span: "XL8 L8 M8 S10"}))
-			);
-
-			oGridTemplate.addContent(new Button(this.getId() + "--removeBtn", {
-				press: this.removeCondition.bind(this),
-				type: "Transparent",
-				icon: "sap-icon://decline",
-				tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
-			})
-				.addStyleClass("sapUiSmallPaddingBegin")
-				.setLayoutData(new GridData({span: "XL1 L1 M1 S1", visibleXL: true, visibleL: true, visibleM: true, visibleS: false}))
-			);
-
-
-			var oVerticalLayout = new VerticalLayout(this.getId() + "--defineCondition", {
-				width: "100%",
-				content: {
-					path: '$this>/conditions',
-					filters: new Filter({path: 'validated', operator:'NE', value1:'Validated'}),
-					template: oGridTemplate,
-					templateShareable:false}
-			});
-			oScrollContainer.addContent(oInvisibleOperatorText);
-			oScrollContainer.addContent(oVerticalLayout);
-
-
-			var oAddBtn = new Button(this.getId() + "--addBtn", {
-				press: this.addCondition.bind(this),
-				type: "Emphasized",
-				text: "{$i18n>valuehelp.DEFINECONDITIONS_ADDCONDITION}"}
-			).addStyleClass("sapUiSmallPaddingBegin");
-
-			oScrollContainer.addContent(oAddBtn);
-
-
-			this.setAggregation("_content", oScrollContainer);
 		},
 
 		byId: function(sId) {
@@ -283,11 +190,10 @@ sap.ui.define([
 
 		onBeforeRendering: function() {
 
-			if (!this.oOperatorModel) {
-				this.oOperatorModel = new sap.ui.model.json.JSONModel();
-				this.setModel(this.oOperatorModel, "om");
+			if (!this.getModel("$i18n")) {
+				// if ResourceModel not provided from outside create own one
+				this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
 			}
-			_updateOperatorModel.call(this);
 
 			if (this.getConditions().length === 0) {
 				// as observer must not be called in the initial case
@@ -298,18 +204,10 @@ sap.ui.define([
 		},
 
 		_updateButtonVisibility: function(oCondition) {
-
-			var oVLayout = this.byId("defineCondition");
-
-			if (!oVLayout) {
-				return;
-			}
-
-			var aRows = oVLayout.getContent();
 			var oFormatOptions = this.getFormatOptions();
 			var iMaxConditions = oFormatOptions.maxConditions;
 			var oButton = this.byId("addBtn");
-			oButton.setVisible( iMaxConditions == -1 || aRows.length < iMaxConditions);
+			oButton.setVisible( iMaxConditions == -1 || this._iRows < iMaxConditions);
 		},
 
 		removeCondition: function(oEvent) {
@@ -318,12 +216,8 @@ sap.ui.define([
 			var aConditions = this.getConditions();
 			var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 
-			this._bUpdateConditionsInternal = true;
 			aConditions.splice(iIndex, 1);
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
-			this.updateDefineConditions();
-			this._updateButtonVisibility();
-			this.invalidate(); // to remove row
 		},
 
 		addCondition: function(oEvent) {
@@ -333,7 +227,6 @@ sap.ui.define([
 
 			if (iMaxConditions == -1 || aConditions.length < iMaxConditions) {
 				// create a new dummy condition for a new condition on the UI - must be removed later if not used or filled correct
-				this._bUpdateConditionsInternal = true;
 				this.addDummyCondition(aConditions.length + 1);
 			}
 		},
@@ -351,7 +244,6 @@ sap.ui.define([
 				aConditions.push(oCondition);
 			}
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
-			this._updateButtonVisibility();
 		},
 
 		updateDefineConditions: function() {
@@ -362,42 +254,8 @@ sap.ui.define([
 			_addStaticText.call(this, aConditions, true, false);
 
 			if (aConditions.length === 0) {
-				this._bUpdateConditionsInternal = true;
 				this.addDummyCondition();
 			}
-		},
-
-		// called via the ManagedObjectModel binding and creates a value field for each condition
-		valueCtrlFactory: function(sId, oContext) {
-			var oModel = oContext.oModel;
-			var sPath = oContext.sPath;
-			var index = parseInt(sPath.split("/")[sPath.split("/").length - 1]);
-			sPath = sPath.slice(0, sPath.lastIndexOf("/"));
-			sPath = sPath.slice(0, sPath.lastIndexOf("/"));
-			var oCondition = oModel.getProperty(sPath);
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-			var oDataType = _getType.call(this);
-
-			if (!oOperator) {
-				return; // TODO: exception?
-			}
-
-			var oValueControl = _createControl.call(this, oDataType, oOperator, "$this>", index);
-			oValueControl.addStyleClass("sapUiSmallPaddingBegin"); //TODO styleclass for boolean select control does not work!
-			oValueControl.setLayoutData(new FlexItemData({
-				shrinkFactor: 0,
-				growFactor: 1
-			}));
-			if (oValueControl.attachChange) {
-				oValueControl.attachChange(this.onChange.bind(this));
-				oValueControl.onpaste = this.onPaste.bind(this);
-			}
-
-			// set static text after control created to have the right type in binding
-			var aConditions = this.getConditions();
-			_addStaticText.call(this, aConditions, true, false);
-
-			return oValueControl;
 		},
 
 		// called when the user has change the value of the condition field
@@ -417,22 +275,26 @@ sap.ui.define([
 			var oOperator = FilterOperatorUtil.getOperator(sKey); // operator must exist as List is created from valid operators
 			var oOperatorOld = sOldKey && FilterOperatorUtil.getOperator(sOldKey);
 
-			if (oOperatorOld && !deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
+			if (oOperator && oOperatorOld && !deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
 				// type changed -> remove entered value (only if changed by user in Select)
-				// As Static text is already updated on change from binding, don't delete it here.
+				// As Static text updated on condition change, don't delete it here.
 				var oCondition = oField.getBindingContext("$this").getObject();
 				var aConditions = this.getConditions();
 				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 				if (iIndex >= 0) {
+					var bUpdate = false;
 					oCondition = aConditions[iIndex]; // to get right instance
 					if (oCondition.values.length > 0 && oCondition.values[0] !== null) {
 						oCondition.values[0] = null;
+						bUpdate = true;
 					}
 					if (oCondition.values.length > 1 && oCondition.values[1] !== null) {
 						oCondition.values[1] = null;
+						bUpdate = true;
 					}
-					this._bUpdateConditionsInternal = true;
-					this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+					if (bUpdate) {
+						this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+					}
 				}
 			}
 
@@ -497,11 +359,6 @@ sap.ui.define([
 
 	function _observeChanges(oChanges) {
 
-		if (oChanges.name === "content" && oChanges.mutation === "insert") {
-			// suspend the listBinding of field HBoxes to avoid recreation of controls if not needed
-			_suspendListBinding.call(this, oChanges.child);
-		}
-
 		if (oChanges.name === "value") {
 			// operator changed -> update controls
 			_operatorChanged.call(this, oChanges.object, oChanges.current, oChanges.old);
@@ -510,13 +367,6 @@ sap.ui.define([
 		if (oChanges.name === "formatOptions") {
 			// type or maxConditions might changed -> resume ListBinding
 			var aConditions = this.getConditions();
-			if (aConditions.length > 0) {
-				_resumeListBinding.call(this);
-				// TODO: suspend afterwards. Workaround delete conditions and add new
-				this.setConditions([]);
-				this.setConditions(aConditions);
-			}
-
 			var oOperators = oChanges.current && oChanges.current.operators;
 			var oOperatorsOld = oChanges.old && oChanges.old.operators;
 			if (!deepEqual(oOperators, oOperatorsOld)) {
@@ -527,101 +377,129 @@ sap.ui.define([
 			var sType = oChanges.current && oChanges.current.valueType && oChanges.current.valueType.getMetadata().getName();
 			var sTypeOld = oChanges.old && oChanges.old.valueType && oChanges.old.valueType.getMetadata().getName();
 			if (sType !== sTypeOld && aConditions.length > 0) {
+				// operators might be changed if type changed
+				_updateOperatorModel.call(this);
+				this._bUpdateType = true;
+				_renderConditions.call(this);
+				this._bUpdateType = false;
 				_addStaticText.call(this, aConditions, true, true); // static text might changed if type changed
 			}
 		}
 
 		if (oChanges.name === "conditions") {
-			if (this._bUpdateConditionsInternal) {
-				// conditions updated from DefineConditionPanel itelf -> no new check for dummy needed
-				this._bUpdateConditionsInternal = false;
-				return;
-			}
-
 			if (this._sConditionsTimer) {
 				clearTimeout(this._sConditionsTimer);
 				this._sConditionsTimer = null;
 			}
 			this._sConditionsTimer = setTimeout(function () {
-				// update conditions after model/binding update has finished. Otherwise it might not update the binding.
+				// on multiple changes (dummy row, static text...) perform only one update
 				this._sConditionsTimer = null;
 				this.updateDefineConditions();
+				_renderConditions.call(this);
 				this._updateButtonVisibility();
 			}.bind(this), 0);
 		}
 
 	}
 
-	function _suspendListBinding(oGrid) {
-
-		// suspend the listBinding of field HBoxes to avoid recreation of controls if not needed
-		var aContent = oGrid.getContent();
-		var oField = aContent[0];
-		var oHBox = _getRowFieldHBox.call(this, oGrid);
-		var oListBinding = oHBox.getBinding("items");
-		oListBinding.suspend();
-
-		// as selected key can be changed by reopening dialog listen on property change not on change event
-		this._oObserver.observe(oField, {
-			properties: ["value"]
-		});
-
-	}
-
-	function _resumeListBinding() {
-
-		// resume the listBinding of field HBoxes to allow recreation of controls
-		var oVLayout = this.byId("defineCondition");
-		var aGrids = oVLayout.getContent();
-
-		for (var i = 0; i < aGrids.length; i++) {
-			var oGrid = aGrids[i];
-			var oHBox = _getRowFieldHBox.call(this, oGrid);
-			var oListBinding = oHBox.getBinding("items");
-			oListBinding.resume();
-		}
-
-	}
-
 	function _operatorChanged(oField, sKey, sOldKey) {
 
-		var oGrid = oField.getParent();
-		var oHBox = _getRowFieldHBox.call(this, oGrid);
-		var oListBinding = oHBox.getBinding("items");
-
 		oField._sOldKey = sOldKey; // to know in change event
+
+		var iIndex = 0;
+
+		// if type of operator changes -> remove binding and create it new later on
+		if (sKey && sOldKey) {
+			var oOperator = FilterOperatorUtil.getOperator(sKey);
+			var oOperatorOld = FilterOperatorUtil.getOperator(sOldKey);
+
+			if (oOperator.valueTypes[0] !== oOperatorOld.valueTypes[0]) { // TODO: same with second Field?
+				var oGrid = oField.getParent();
+				iIndex = oGrid.indexOfContent(oField);
+				var oValueField = oGrid.getContent()[iIndex + 2];
+				if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 0) {
+					oValueField.unbindProperty("value");
+				}
+			}
+		}
 
 		if (!sKey) {
 			// key must not be empty
 			var oCondition = oField.getBindingContext("$this").getObject();
-			var aConditions = this.getConditions();
-			var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
-			if (iIndex >= 0) {
-				oCondition = aConditions[iIndex]; // to get right instance
-				oCondition.operator = sOldKey;
-				this._bUpdateConditionsInternal = true;
-				this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+			if (oCondition) { // condition might be deleted before Field instance is deleted
+				var aConditions = this.getConditions();
+				iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+				if (iIndex >= 0) {
+					oCondition = aConditions[iIndex]; // to get right instance
+					oCondition.operator = sOldKey;
+					this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+				}
 			}
 		}
 
+		// as additinalValue is not updated automatically if operator is set from outside just take it from OperatorModel
+		var aOperatorsData = this.oOperatorModel.getData();
+		var sDescription;
+		for (var i = 0; i < aOperatorsData.length; i++) {
+			var oOperatorData = aOperatorsData[i];
+			if (oOperatorData === sKey) {
+				sDescription = oOperatorData.additionalText;
+			}
+		}
+		oField.setAdditionalValue(sDescription);
+
 		this.onChange();
-		oListBinding.checkUpdate(true); // force update
 
 	}
 
-	function _createControl(oDataType, oOperator, sPath, index) {
+	function _createControl(oCondition, iIndex, sId, oBindingContext) {
 
-		if (oOperator.valueTypes[index] && [Operator.ValueType.Self, Operator.ValueType.Static].indexOf(oOperator.valueTypes[index]) === -1) {
-			oDataType = oOperator._createLocalType(oOperator.valueTypes[index]);
+		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+		if (!oOperator) {
+			return null; // TODO: exception?
 		}
 
+		var oNullableType = _getFieldType.call(this, oOperator.name, iIndex);
+		var oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/" + iIndex + "/");
+
+		var oControl;
 		if (oOperator.createControl) {
-			return oOperator.createControl(oDataType, oOperator, sPath, index);
+			oControl = oOperator.createControl(oNullableType, oOperator, "$this>", iIndex);
+		} else {
+			oControl = new Field(sId, {
+				delegate: _getDelegate.call(this),
+				value: { path: "$this>", type: oNullableType, mode: 'TwoWay', targetType: 'raw' },
+				editMode: {path: "$condition>operator", formatter: _getEditModeFromOperator},
+				width: "100%"
+			});
+		}
+
+		oControl._iValueIndex = iIndex; // to find it for update
+		oControl.addStyleClass("sapUiSmallPaddingBegin");
+		if (oControl.attachChange) { // custom control might not have a change event
+			oControl.attachChange(this.onChange.bind(this));
+		}
+		oControl.onpaste = this.onPaste.bind(this);
+		oControl.setLayoutData(new GridData({span: {path: "$condition>operator", formatter: _getSpanForOperator}}));
+		oControl.setBindingContext(oValueBindingContext, "$this");
+		oControl.setBindingContext(oBindingContext, "$condition");
+
+		return oControl;
+
+	}
+
+	function _getFieldType(sOperator, iIndex) {
+
+		var oDataType = _getType.call(this);
+		var oOperator = FilterOperatorUtil.getOperator(sOperator);
+
+		if (oOperator.valueTypes[iIndex] && [Operator.ValueType.Self, Operator.ValueType.Static].indexOf(oOperator.valueTypes[iIndex]) === -1) {
+			oDataType = oOperator._createLocalType(oOperator.valueTypes[iIndex]);
 		}
 
 		var bStaticText = false;
 
-		if (oOperator.valueTypes[index] === Operator.ValueType.Static) {
+		if (oOperator.valueTypes[iIndex] === Operator.ValueType.Static) {
 			bStaticText = true;
 			oDataType = _getDefaultType.call(this);
 		}
@@ -673,14 +551,7 @@ sap.ui.define([
 				break;
 		}
 
-		var oControl = new Field({
-			delegate: _getDelegate.call(this),
-			value: { path: sPath, type: oNullableType, mode: 'TwoWay', targetType: 'raw' },
-			editMode: bStaticText ? EditMode.Display : EditMode.Editable,
-			width: "100%"
-		});
-
-		return oControl;
+		return oNullableType;
 
 	}
 
@@ -819,31 +690,279 @@ sap.ui.define([
 		}
 
 		if (aUpdate.length > 0) {
-			this._bUpdateConditionsInternal = true;
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
-
-			if (bUpdateBinding) {
-				var oVLayout = this.byId("defineCondition");
-				var aGrids = oVLayout.getContent();
-
-				for (i = 0; i < aUpdate.length; i++) {
-					var oGrid = aGrids[aUpdate[i]];
-					var oHBox = _getRowFieldHBox.call(this, oGrid);
-					var oListBinding = oHBox.getBinding("items");
-					oListBinding.checkUpdate(true); // force update
-				}
-			}
 		}
 
 	}
 
-	function _getRowFieldHBox(oGrid) {
-		var aContent = oGrid.getContent();
-		var oHBox = aContent[1];
-		if (oHBox.isA("sap.m.HBox")) {
-			return oHBox;
+	function _createInnerControls() {
+		var oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
+
+		var oScrollContainer = new ScrollContainer({
+			height: "100%",
+			horizontal: false,
+			vertical: true
+		});
+
+		oScrollContainer.addDependent(
+			new ListFieldHelp(this.getId() + "--rowSelect-help", {
+				items: { path:'om>/', templateShareable:false, template: new ListItem({key: "{om>key}", text: "{om>additionalText}", additionalText: "{om>info}"})},
+				filterList: false,
+				useFirstMatch: true
+			})
+		);
+
+		var oGrid = new Grid(this.getId() + "--conditions", {
+			width: "100%",
+			hSpacing: 0,
+			vSpacing: 0,
+			containerQuery: true}
+		).addStyleClass("sapUiMdcDefineConditionGrid");
+
+		oScrollContainer.addContent(oInvisibleOperatorText);
+		oScrollContainer.addContent(oGrid);
+
+		var oAddBtn = new Button(this.getId() + "--addBtn", {
+			press: this.addCondition.bind(this),
+			type: ButtonType.Default,
+			text: "{$i18n>valuehelp.DEFINECONDITIONS_ADDCONDITION}",
+			layoutData: new GridData({span: "XL2 L3 M3 S3", indent: "XL9 L8 M8 S7", linebreak: true})}
+		).addStyleClass("sapUiSmallPaddingBegin");
+
+		oGrid.addContent(oAddBtn);
+
+		this.setAggregation("_content", oScrollContainer);
+
+	}
+
+	function _renderConditions() {
+
+		var aConditions = this.getConditions();
+		var oGrid = this.byId("conditions");
+		var aGridContent;
+		var iRow = -1;
+		var iIndex = 0;
+
+		for (var i = 0; i < aConditions.length; i++) {
+			var oCondition = aConditions[i];
+			if (oCondition.validated !== ConditionValidated.Validated) {
+				// show only validated conditions
+				var oBindingContext = this._oManagedObjectModel.getContext("/conditions/" + i + "/");
+				iRow++;
+
+				if (!this.oOperatorModel) {
+					// init operatorModel if first row is created (needed to check operator)
+					this.oOperatorModel = new JSONModel();
+					this.setModel(this.oOperatorModel, "om");
+					_updateOperatorModel.call(this);
+				}
+
+				aGridContent = oGrid.getContent(); // to have current content
+				if (aGridContent[iIndex] && aGridContent[iIndex].isA("sap.ui.mdc.Field")) {
+					// row already exists -> update it
+					iIndex = _updateRow.call(this, oCondition, oGrid, iIndex, oBindingContext, iRow);
+				} else {
+					// reate new row
+					iIndex = _createRow.call(this, oCondition, oGrid, iIndex, oBindingContext, iRow);
+				}
+			}
 		}
-		return aContent[2];
+
+		// remove unused rows
+		aGridContent = oGrid.getContent();
+		while (aGridContent[iIndex] && aGridContent[iIndex] !== this.byId("addBtn")) {
+			aGridContent[iIndex].destroy();
+			iIndex++;
+		}
+
+		this._iRows = iRow + 1; // for AddButton visibility
+
+	}
+
+	function _createRow(oCondition, oGrid, iIndex, oBindingContext, iRow) {
+
+		var sIdPrefix = this.getId() + "--" + iRow;
+
+		if (!this._oOperatorFieldType) {
+			this._oOperatorFieldType = new StringType({}, {minLength: 1});
+		}
+
+		var oOperatorField = new Field(sIdPrefix + "-operator", {
+			value: {path: "$this>operator", type: this._oOperatorFieldType},
+			width: "100%",
+			display: "Description",
+			fieldHelp: this.getId() + "--rowSelect-help",
+			change: this.onSelectChange.bind(this),
+			ariaLabelledBy: this.getId() + "--ivtOperator"
+		})
+		.addStyleClass("sapUiSmallPaddingBegin")
+		.setLayoutData(new GridData({span: "XL3 L3 M3 S10", linebreak: true}))
+		.setBindingContext(oBindingContext, "$this");
+
+		// as selected key can be changed by reopening dialog listen on property change not on change event
+		this._oObserver.observe(oOperatorField, {
+			properties: ["value"]
+		});
+
+		oGrid.insertContent(oOperatorField, iIndex); // insert as add-Button is already at the end
+		iIndex++;
+
+		var oRemoveButton = new Button(sIdPrefix + "--removeBtnSmall", {
+			press: this.removeCondition.bind(this),
+			type: ButtonType.Transparent,
+			icon: "sap-icon://decline",
+			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
+		})
+		.addStyleClass("sapUiSmallPaddingBegin")
+		.setLayoutData(new GridData({span: "XL1 L1 M1 S2", indent: {path: "$this>operator", formatter: _getIndentForOperator}, visibleXL: false, visibleL: false, visibleM: false, visibleS: true}))
+		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
+
+		oGrid.insertContent(oRemoveButton, iIndex);
+		iIndex++;
+
+		for (var i = 0; i < oCondition.values.length; i++) {
+			var oControl = _createControl.call(this, oCondition, i, sIdPrefix + "-values" + i, oBindingContext);
+			if (oControl) {
+				oGrid.insertContent(oControl, iIndex);
+				iIndex++;
+			}
+		}
+
+		var oRemoveButton2 = new Button(sIdPrefix + "--removeBtnLarge", {
+			press: this.removeCondition.bind(this),
+			type: ButtonType.Transparent,
+			icon: "sap-icon://decline",
+			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
+		})
+		.addStyleClass("sapUiSmallPaddingBegin")
+		.setLayoutData(new GridData({span: "XL1 L1 M1 S1", indent: {path: "$this>operator", formatter: _getIndentForOperator}, visibleXL: true, visibleL: true, visibleM: true, visibleS: false}))
+		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
+
+		oGrid.insertContent(oRemoveButton2, iIndex);
+		iIndex++;
+
+		return iIndex;
+
+	}
+
+	function _getEditModeFromOperator(sOperator) {
+
+		if (!sOperator) {
+			return EditMode.Display;
+		}
+
+		var oOperator = FilterOperatorUtil.getOperator(sOperator);
+		var bStaticText = false;
+
+		if (oOperator && oOperator.valueTypes[0] === Operator.ValueType.Static) {
+			bStaticText = true;
+		}
+
+		return bStaticText ? EditMode.Display : EditMode.Editable;
+
+	}
+
+	function _getIndentForOperator(sOperator) {
+
+		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
+
+		if (oOperator && !oOperator.valueTypes[0]) {
+			return "XL8 L8 M8 S0";
+		} else {
+			return "";
+		}
+
+	}
+
+	function _getSpanForOperator(sOperator) {
+
+		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
+
+		if (oOperator && oOperator.valueTypes[1]) {
+			return "XL4 L4 M4 S10";
+		} else {
+			return "XL8 L8 M8 S10";
+		}
+
+	}
+
+	function _updateRow(oCondition, oGrid, iIndex, oBindingContext, iRow) {
+
+		var sIdPrefix = this.getId() + "--" + iRow;
+		var aGridContent = oGrid.getContent();
+		var oNullableType;
+
+		var oOperatorField = aGridContent[iIndex];
+		oOperatorField.setBindingContext(oBindingContext, "$this");
+		iIndex++;
+
+		var oRemoveButton = aGridContent[iIndex];
+		oRemoveButton.setBindingContext(oBindingContext, "$this");
+		iIndex++;
+
+		var oValueBindingContext;
+		var oValue0Field = aGridContent[iIndex];
+		var oValue1Field;
+		if (oValue0Field.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
+			var sEditMode = _getEditModeFromOperator(oCondition.operator);
+			if (oCondition.values.length > 0 || sEditMode === EditMode.Display) { // as static text for display contols is created after update
+				oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/0/");
+				oValue0Field.setBindingContext(oValueBindingContext, "$this");
+				oValue0Field.setBindingContext(oBindingContext, "$condition");
+				if (oValue0Field.getMetadata().hasProperty("value") && (this._bUpdateType || !oValue0Field.getBindingInfo("value"))) {
+					oNullableType = _getFieldType.call(this, oCondition.operator, 0);
+					// change type for binding
+					oValue0Field.bindProperty("value", {path: "$this>", type: oNullableType});
+				}
+				iIndex++;
+
+				// value[1] only possible if value[0] exist
+				oValue1Field = aGridContent[iIndex];
+				if (oValue1Field.hasOwnProperty("_iValueIndex") && oValue1Field._iValueIndex === 1) {
+					if (oCondition.values.length > 1) {
+						oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/1/");
+						oValue1Field.setBindingContext(oValueBindingContext, "$this");
+						if (oValue1Field.getMetadata().hasProperty("value") && (this._bUpdateType || !oValue1Field.getBindingInfo("value"))) {
+							oNullableType = _getFieldType.call(this, oCondition.operator, 1);
+							// change type for binding
+							oValue1Field.bindProperty("value", {path: "$this>", type: oNullableType});
+						}
+						iIndex++;
+					} else {
+						oValue1Field.destroy();
+					}
+				} else if (oCondition.values.length > 1) {
+					// insert new field
+					oValue1Field = _createControl.call(this, oCondition, 1, sIdPrefix + "-values1", oBindingContext);
+					if (oValue1Field) {
+						oGrid.insertContent(oValue1Field, iIndex);
+						iIndex++;
+					}
+				}
+			} else {
+				oValue0Field.destroy();
+				oValue1Field = aGridContent[iIndex + 1];
+				if (oValue1Field) {
+					oValue1Field.destroy();
+				}
+			}
+		} else if (oCondition.values.length > 0) {
+			for (var i = 0; i < oCondition.values.length; i++) {
+				var oControl = _createControl.call(this, oCondition, i, sIdPrefix + "-values" + i, oBindingContext);
+				if (oControl) {
+					oGrid.insertContent(oControl, iIndex);
+					iIndex++;
+				}
+			}
+		}
+
+		aGridContent = oGrid.getContent(); // as field might be added or removed
+		var oRemoveButton2 = aGridContent[iIndex];
+		oRemoveButton2.setBindingContext(oBindingContext, "$this");
+		iIndex++;
+
+		return iIndex;
+
 	}
 
 	return DefineConditionPanel;

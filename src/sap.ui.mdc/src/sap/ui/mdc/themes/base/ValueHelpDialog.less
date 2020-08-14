@@ -94,6 +94,39 @@
 	max-height: 10rem;
 }
 
+// allign static text
+.sapUiMdcDefineConditionPanel .sapUiRespGrid .sapMText {
+	min-height: 2.75rem;
+	padding-top: 0.6875rem;
+	padding-bottom: 0.6875rem;
+	line-height: 1.375rem;
+}
+.sapUiSizeCompact .sapUiMdcDefineConditionPanel .sapUiRespGrid .sapMText {
+	min-height: 2rem;
+	padding-top: 0.3125rem;
+	padding-bottom: 0.3125rem;
+}
+
+// spacing between rows
+.sapUiMdcDefineConditionPanel .sapUiRespGrid.sapUiRespGridMedia-Std-Phone > .sapUiRespGridBreak:not(:first-child),
+.sapUiMdcDefineConditionPanel .sapUiRespGrid.sapUiRespGridMedia-Std-Phone > .sapUiRespGridBreak:not(:first-child) + div {
+	padding-top: 0.5rem
+}
+
+// align add-button to the right
+.sapUiMdcDefineConditionPanel .sapUiRespGrid > div:last-child {
+	padding-top: 0.25rem;
+	position: relative;
+	height: 2.75rem;
+}
+.sapUiSizeCompact .sapUiMdcDefineConditionPanel .sapUiRespGrid > div:last-child {
+	height: 2rem;
+}
+.sapUiMdcDefineConditionPanel .sapUiRespGrid > div:last-child > button{
+	position: absolute;
+	right: 0;
+}
+
 // hide the toolbar border and give some more top margin
 .sapMdcValueHelpPanel .sapMTBStandard {
 	margin-top: 0.5rem;
@@ -103,4 +136,10 @@
 // hide the panel bottom border
 .sapMdcValueHelpPanel .sapMPanelContent:not(.sapMPanelBGTransparent) {
     border-bottom: none;
+}
+
+
+// show padding on top of the defineConditionPanel when used on popover
+.sapMPopoverCont .sapMPopoverScroll {
+	padding-top: 1rem;
 }

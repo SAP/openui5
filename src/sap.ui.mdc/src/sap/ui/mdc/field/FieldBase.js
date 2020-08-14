@@ -3354,6 +3354,18 @@ sap.ui.define([
 
 	}
 
+	/**
+	 * Updates the FormatOptions of the internal ConditionsType
+	 *
+	 * @private
+	 * @ui5-restricted only for controls inherit from FieldBase
+	 */
+	FieldBase.prototype._updateConditionType = function() {
+
+		_updateConditionType.call(this);
+
+	};
+
 	function _getConditionType() {
 
 		if (!this._oConditionType) {

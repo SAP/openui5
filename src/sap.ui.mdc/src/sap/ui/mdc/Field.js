@@ -155,6 +155,7 @@ sap.ui.define([
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
 			if (oBindingInfo.type && (!this._oDataType || this._oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName())) {
 				this._oDataType = oBindingInfo.type;
+				this._updateConditionType();
 				this.invalidate(); // as new inner control might be needed
 			}
 		}
