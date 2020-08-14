@@ -99,6 +99,33 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Destroy: cleans the file uploader input filed from static area", function(assert) {
+		// prepare
+		var oFileUploader = new FileUploader(),
+			oStaticArea = sap.ui.getCore().getStaticAreaRef();
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		// Trigger invalidation by using a setter,
+		// That way before rendering hook will be executed,
+		// control won't be rendered, after rendering
+		// hook won't be executed and file uploader input
+		// field will be left in static area
+		oFileUploader.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oStaticArea.querySelector("[type='file']"), "File uploader input field exits in the static area");
+
+		// act
+		oFileUploader.destroy();
+
+		// assert
+		assert.notOk(oStaticArea.querySelector("[type='file']"), "File uploader input field is removed from static area");
+	});
+
 	QUnit.test("Test buttonOnly property - setter/getter", function (assert) {
 		var oFileUploader = createFileUploader({
 				buttonOnly: true
