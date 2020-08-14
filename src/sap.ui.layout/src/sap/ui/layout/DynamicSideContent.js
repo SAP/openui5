@@ -148,12 +148,12 @@ sap.ui.define([
 				/**
 				 * Defiles the main content span size
 				 */
-				mcSpan: { type: "number", defaultValue: 0, visibility: "hidden" },
+				mcSpan: { type: "int", defaultValue: 0, visibility: "hidden" },
 
 				/**
 				 * Defines the side content span size
 				 */
-				scSpan: { type: "number", defaultValue: 0, visibility: "hidden" }
+				scSpan: { type: "int", defaultValue: 0, visibility: "hidden" }
 			},
 			defaultAggregation : "mainContent",
 			events : {
