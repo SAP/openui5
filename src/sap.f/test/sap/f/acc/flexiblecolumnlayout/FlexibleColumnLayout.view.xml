@@ -8,5 +8,6 @@
 		id="fcl"
 		stateChange="onStateChanged"
 		layout="{/layout}"
-		backgroundDesign="Solid" />
+		backgroundDesign="Solid"
+		restoreFocusOnBackNavigation="true" />
 </mvc:View>
