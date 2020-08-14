@@ -207,6 +207,8 @@ sap.ui.define([
 	 * @private
 	 */
 	CodeEditor.prototype.init = function() {
+		this._bIsRenderingPhase = false;
+
 		this._oEditorDomRef = document.createElement("div");
 		this._oEditorDomRef.style.height = "100%";
 		this._oEditorDomRef.style.width = "100%";
@@ -256,6 +258,11 @@ sap.ui.define([
 		}.bind(this));
 
 		this._oEditor.addEventListener("blur", function () {
+
+			if (this._bIsRenderingPhase) {
+				return;
+			}
+
 			var sValue = this.getCurrentValue(),
 				sCurrentValue = this.getValue();
 			this.setProperty("value", sValue, true);
@@ -299,6 +306,9 @@ sap.ui.define([
 	 * @private
 	 */
 	CodeEditor.prototype.onBeforeRendering = function() {
+
+		this._bIsRenderingPhase = true;
+
 		var oDomRef = this.getDomRef();
 		if (oDomRef && !RenderManager.isPreservedContent(oDomRef)) {
 			RenderManager.preserveContent(oDomRef);
@@ -311,6 +321,9 @@ sap.ui.define([
 	 * @private
 	 */
 	CodeEditor.prototype.onAfterRendering = function() {
+
+		this._bIsRenderingPhase = false;
+
 		var oDomRef = this.getDomRef(),
 			oPropertyDefaults = this.getMetadata().getPropertyDefaults();
 

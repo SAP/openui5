@@ -51,6 +51,17 @@ sap.ui.define([
 		assert.ok(this.oCodeEditor._oEditor.getSession().getUseWorker() === false, "should not use worker after blur.");
 	});
 
+	QUnit.test("change value when on focus", function (assert) {
+		this.oCodeEditor.setVisible(true);
+		Core.applyChanges();
+
+		this.oCodeEditor.focus();
+		this.oCodeEditor.setValue("text");
+		Core.applyChanges();
+
+		assert.strictEqual(this.oCodeEditor.getValue(), "text", "value is not reset");
+	});
+
 	QUnit.test("Focused elements in code editor editable:false", function (assert) {
 		var oBlurSpy = sinon.spy(document.activeElement, "blur");
 
