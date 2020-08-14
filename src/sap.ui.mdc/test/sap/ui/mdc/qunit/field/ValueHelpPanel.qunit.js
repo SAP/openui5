@@ -242,7 +242,10 @@ sap.ui.define([
 
 		var oSearchField = oValueHelpPanel.byId("SearchField");
 		oSearchField.fireChange();
-		assert.equal(iSearchCount, 1, "Search event fired");
+		assert.equal(iSearchCount, 0, "No Search event fired on change");
+
+		oSearchField.fireSubmit();
+		assert.equal(iSearchCount, 1, "Search event fired on search");
 
 	});
 

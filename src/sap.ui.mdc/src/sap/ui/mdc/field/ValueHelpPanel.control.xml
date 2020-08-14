@@ -24,7 +24,7 @@
 									placeholder="{$i18n>filterbar.SEARCH}"
 									width="50%"
 									visible="{$this>/searchEnabled}"
-									change="_handleSearch"/>
+									submit="_handleSearch"/>
 								<ToolbarSpacer/>
 								<Button id="AdvancedFilter" type="Transparent" press="_onToggleAdvancedFilter" visible="{$this>/showFilterbar}">
 									<layoutData>
