@@ -2306,7 +2306,7 @@ sap.ui.define([
 	AnimationEndListener.prototype.waitForAllColumnsResizeEnd = function () {
 		if (!this._oPendingPromiseAll) {
 			this._oPendingPromiseAll = new Promise(function (resolve, reject) {
-				setTimeout(function () { // set a timeout of 0 to execute the following *after*
+				this.iTimer = setTimeout(function () { // set a timeout of 0 to execute the following *after*
 					// all promises for resize of the individual columns were created
 					// so that <code>this._aPendingPromises</code> is completely filled
 					Promise.all(this._aPendingPromises).then(function () {
@@ -2315,6 +2315,7 @@ sap.ui.define([
 					}, 0).catch(function() {
 						reject();
 					});
+					this.iTimer = null;
 				}.bind(this));
 			}.bind(this));
 		}
@@ -2348,6 +2349,10 @@ sap.ui.define([
 		this._aPendingPromises = [];
 		this._oCancelPromises = {};
 		this._oPendingPromiseAll = null;
+		if (this.iTimer) {
+			clearTimeout(this.iTimer);
+			this.iTimer = null;
+		}
 		Log.debug("FlexibleColumnLayout", "detached all listeners for columns resize");
 	};
 
