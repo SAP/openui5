@@ -43,7 +43,11 @@ function getDimensions( elem ) {
 			offset: { top: 0, left: 0 }
 		};
 	}
-	if ( $.isWindow( raw ) ) {
+	// ##### BEGIN: MODIFIED BY SAP
+	// with jQuery 3.5.1, isWindow() became deprecated
+	// if ( $.isWindow( raw ) ) {
+	if ( raw.window === raw ) {
+	// ##### END: MODIFIED BY SAP
 		return {
 			width: elem.width(),
 			height: elem.height(),
@@ -115,13 +119,21 @@ $.position = {
 	},
 	getWithinInfo: function( element ) {
 		var withinElement = $( element || window ),
-			isWindow = $.isWindow( withinElement[0] ),
+			// ##### BEGIN: MODIFIED BY SAP
+			// with jQuery 3.5.1, isWindow() became deprecated
+			//isWindow = $.isWindow( withinElement[0] ),
+			isWindow = !!withinElement[0] && withinElement[0] === withinElement[0].window,
+			// ##### END: MODIFIED BY SAP
 			isDocument = !!withinElement[ 0 ] && withinElement[ 0 ].nodeType === 9;
 		return {
 			element: withinElement,
 			isWindow: isWindow,
 			isDocument: isDocument,
-			offset: withinElement.offset() || { left: 0, top: 0 },
+			// ##### BEGIN: MODIFIED BY SAP
+			// with jQuery 3.5.1, offset() must not be called on a window object, only on elements
+			//offset: withinElement.offset() || { left: 0, top: 0 },
+			offset: (isWindow ? null : withinElement.offset()) || { left: 0, top: 0 },
+			// ##### END: MODIFIED BY SAP
 			scrollLeft: withinElement.scrollLeft(),
 			scrollTop: withinElement.scrollTop(),
 			width: isWindow ? withinElement.width() : withinElement.outerWidth(),
