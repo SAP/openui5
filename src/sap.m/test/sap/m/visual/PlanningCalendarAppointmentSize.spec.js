@@ -6,7 +6,7 @@ describe("sap.m.PlanningCalendarAppointmentSize", function() {
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.PlanningCalendar';
 
 	it("should render the whole page", function() {
-		expect(takeScreenshot()).toLookAs("calendar_appointment_size");
+		expect(takeScreenshot()).toLookAs("calendar_appointment_size_regular_size");
 	});
 
 	it("should render the appointment with Half-Size", function() {
@@ -30,14 +30,9 @@ describe("sap.m.PlanningCalendarAppointmentSize", function() {
 		expect(takeScreenshot()).toLookAs("calendar_appointment_size_automatic_size");
 	});
 
-	it("should render the appointment with Regular", function() {
+	it("should render the appointment with ReducedHeight", function() {
 		element(by.id("select_height")).click();
 		element(by.cssContainingText(".sapMSelectListItem", "Regular")).click();
-
-		expect(takeScreenshot()).toLookAs("calendar_appointment_size_regular_size");
-	});
-
-	it("should render the appointment with ReducedHeight", function() {
 		element(by.id("reduced_height")).click();
 
 		expect(takeScreenshot()).toLookAs("calendar_appointment_reduced_height");
@@ -51,7 +46,7 @@ describe("sap.m.PlanningCalendarAppointmentSize", function() {
 
 	it("should change the month page", function() {
 		element(by.id("PC1-Header-NavToolbar-NextBtn")).click();
-		expect(takeScreenshot(element(by.id("page1-cont")))).toLookAs("months_page");
+		expect(takeScreenshot(element(by.id("page1-cont")))).toLookAs("months_page_nex_page");
 	});
 
 	it("should render the appointment with Half Size width", function() {
