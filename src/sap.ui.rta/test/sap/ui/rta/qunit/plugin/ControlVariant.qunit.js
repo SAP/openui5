@@ -1062,7 +1062,7 @@ sap.ui.define([
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-			assert.strictEqual($editableWrapper.css("width"), (iOverlayInnerWidth - iWidthDiff) + "px", "then correct width set for the editable field wrapper");
+			assert.strictEqual($editableWrapper.width(), iOverlayInnerWidth - iWidthDiff, "then correct width set for the editable field wrapper");
 		});
 
 		QUnit.test("when startEdit is called and renamed control's text container has no overflow", function(assert) {
@@ -1076,7 +1076,7 @@ sap.ui.define([
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-			assert.equal($editableWrapper.css("width"), (iOverlayInnerWidth - iWidthDiff) + "px", "then correct with set for the editable field wrapper");
+			assert.equal($editableWrapper.width(), iOverlayInnerWidth - iWidthDiff, "then correct with set for the editable field wrapper");
 		});
 
 		QUnit.test("when startEdit is called and renamed control's text container and parent container having overflow", function(assert) {
@@ -1100,7 +1100,7 @@ sap.ui.define([
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-			assert.equal($editableWrapper.css("width"), iOverlayInnerWidth + "px", "then correct width set for the editable field wrapper");
+			assert.equal($editableWrapper.width(), iOverlayInnerWidth, "then correct width set for the editable field wrapper");
 		});
 
 		QUnit.test("when startEdit is called and renamed control's editable dom has its own overlay", function(assert) {
