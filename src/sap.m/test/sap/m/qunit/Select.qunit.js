@@ -2631,7 +2631,8 @@ sap.ui.define([
 		QUnit.test("it should render an input field with the value of the selected key", function (assert) {
 
 			// system under test
-			var oSelect = new Select({
+			var oSelectDomRef,
+				oSelect = new Select({
 				name: "lorem ipsum",
 				items: [
 					new Item({
@@ -2649,9 +2650,11 @@ sap.ui.define([
 			oSelect.setName("select-name0");
 			Core.applyChanges();
 
+			oSelectDomRef = oSelect._getHiddenSelect();
+
 			// assert
-			assert.strictEqual(oSelect.$("input").attr("name"), "select-name0", 'The attribute name is "select-name0"');
-			assert.strictEqual(oSelect.$("input").attr("value"), "lorem");
+			assert.strictEqual(oSelectDomRef.attr("name"), "select-name0", 'The attribute name is "select-name0"');
+			assert.strictEqual(oSelectDomRef.attr("value"), "lorem");
 
 			// cleanup
 			oSelect.destroy();
@@ -4001,7 +4004,8 @@ sap.ui.define([
 		QUnit.test("it should add the value state CSS classes (initial rendering)", function (assert) {
 
 			// system under test
-			var oSelect = new Select({
+			var oSelectDomRef,
+				oSelect = new Select({
 				valueState: ValueState.Error
 			});
 
@@ -4010,8 +4014,10 @@ sap.ui.define([
 			Core.applyChanges();
 			var CSS_CLASS = oSelect.getRenderer().CSS_CLASS;
 
+			oSelectDomRef = oSelect._getHiddenSelect();
+
 			// assert
-			assert.strictEqual(oSelect.$().attr("aria-invalid"), "true");
+			assert.strictEqual(oSelectDomRef.attr("aria-invalid"), "true");
 			assert.ok(oSelect.$().hasClass(CSS_CLASS + "State"));
 			assert.ok(oSelect.$().hasClass(CSS_CLASS + "Error"));
 			assert.ok(oSelect.$("label").hasClass(CSS_CLASS + "LabelState"));
@@ -4079,7 +4085,12 @@ sap.ui.define([
 				oWarningSelect = new Select({ valueState: ValueState.Warning }),
 				oErrorSelect = new Select({ valueState: ValueState.Error }),
 				oInformationSelect = new Select({ valueState: ValueState.Information }),
-				sCoreLib = "sap.ui.core";
+				sCoreLib = "sap.ui.core",
+				fnGetSelectAriaLabelledBy = function (oSelect) {
+					var oHiddenSelect = oSelect._getHiddenSelect();
+
+					return oHiddenSelect.attr("aria-labelledby") || ""; // returns undefined if not set
+				};
 
 			// arrange
 			oSuccessSelect.placeAt("content");
@@ -4089,29 +4100,28 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// assert
-			assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "success select is labelled by invisible text");
-			assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING")) > -1, "warning select is labelled by invisible text");
-			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "error select should not be labelled by invisible text since it has aria-invalid set");
-			assert.ok(oInformationSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_INFORMATION")) > -1, "Information select is labelled by invisible text");
+			assert.ok(fnGetSelectAriaLabelledBy(oSuccessSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "success select is labelled by invisible text");
+			assert.ok(fnGetSelectAriaLabelledBy(oWarningSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING")) > -1, "warning select is labelled by invisible text");
+			assert.ok(fnGetSelectAriaLabelledBy(oErrorSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "error select should not be labelled by invisible text since it has aria-invalid set");
+			assert.ok(fnGetSelectAriaLabelledBy(oInformationSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_INFORMATION")) > -1, "Information select is labelled by invisible text");
 
 			// act
 			oSuccessSelect.setValueState("None");
 
 			// assert
-			assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) < 0, "success select is no longer labelled by success invisible text");
+			assert.ok(fnGetSelectAriaLabelledBy(oSuccessSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) < 0, "success select is no longer labelled by success invisible text");
 
 			// act
 			oErrorSelect.setValueState("Success");
 
 			// assert
-			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "error select is now labelled by success invisible text");
-			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(oErrorSelect.getId() + "-label") > -1, "error select is still labelled by its own label");
+			assert.ok(fnGetSelectAriaLabelledBy(oErrorSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "error select is now labelled by success invisible text");
 
 			// act
 			oWarningSelect.setValueState("Error");
 
 			// assert
-			assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "warning select is not labelled by the error invisible text");
+			assert.ok(fnGetSelectAriaLabelledBy(oWarningSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "warning select is not labelled by the error invisible text");
 
 			// cleanup
 			oSuccessSelect.destroy();
@@ -4786,12 +4796,12 @@ sap.ui.define([
 				]
 			});
 
-			var fnFocusSpy = this.spy(oSelect, "focus");
-
 			// arrange
 			oSelect.placeAt("content");
 			Core.applyChanges();
 			document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
+
+			var fnFocusSpy = this.spy(oSelect.getFocusDomRef(), "focus");
 
 			// act
 			qutils.triggerTouchEvent("tap", oSelect.getDomRef(), {
@@ -4809,7 +4819,7 @@ sap.ui.define([
 			this.clock.tick(1000);
 
 			// assert
-			assert.strictEqual(document.activeElement, oSelect.getDomRef(), "Focus was successfully restored to the Select");
+			assert.strictEqual(document.activeElement, oSelect.getFocusDomRef(), "Focus was successfully restored to the Select");
 
 			// cleanup
 			oSelect.destroy();
@@ -5847,17 +5857,16 @@ sap.ui.define([
 		QUnit.test("aria-labelledby content", function (assert) {
 
 			// system under test
-			var aActualAriaLabelledByIDs,
+			var oHiddenSelect,
+				aActualAriaLabelledByIDs,
 				oLabel = new Label({
 					id: "label"
 				}),
 				oSelect = new Select({
 					ariaLabelledBy: oLabel
 				}),
-				sSelectID = oSelect.getId(),
 				aExpectedAriaLabelledByIDs = [
-					"label",
-					sSelectID + "-label"
+					"label"
 				];
 
 			// arrange
@@ -5865,8 +5874,10 @@ sap.ui.define([
 			oSelect.placeAt("content");
 			Core.applyChanges();
 
+			oHiddenSelect = oSelect._getHiddenSelect();
+
 			// assert
-			aActualAriaLabelledByIDs = oSelect.$().attr("aria-labelledby").split(" ");
+			aActualAriaLabelledByIDs = oHiddenSelect.attr("aria-labelledby").split(" ");
 
 			// aria-labelledby should consist of (separated by space)
 			// - external label ID
@@ -6716,13 +6727,12 @@ sap.ui.define([
 				}
 
 				if (oSelect.getType() === SelectType.Default) {
-					assert.strictEqual(oSelect.getDomRef().getAttribute("role"), "combobox");
+					assert.strictEqual(oSelect.getFocusDomRef().getAttribute("role"), "combobox");
 				} else if (oSelect.getType() === SelectType.IconOnly) {
-					assert.strictEqual(oSelect.getDomRef().getAttribute("role"), "button");
+					assert.strictEqual(oSelect.getFocusDomRef().getAttribute("role"), "button");
 				}
 
-				assert.strictEqual(oSelect.getDomRef().getAttribute("aria-expanded"), "false");
-				assert.strictEqual(oSelect.$("label").attr("aria-live"), "polite");
+				assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "false");
 
 				// cleanup
 				oSelect.destroy();
@@ -9121,7 +9131,7 @@ sap.ui.define([
 
 			// assert
 			assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "true");
-			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-controls"), oSelect.getList().getId(), 'the attribute "aria-controls" is set after the list is rendered');
+			assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-controls"), oSelect.getList().getId(), 'the attribute "aria-controls" is set after the list is rendered');
 			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 			// cleanup
@@ -9386,7 +9396,6 @@ sap.ui.define([
 			assert.strictEqual(document.getElementById("iconOnlySelect-label").innerHTML, "", "No label text is rendered for IconOnly select");
 			assert.strictEqual(oIconOnlySelect.$().attr("aria-labelledby"), undefined, "IconOnly select should not have aria-labelledby attribute");
 			assert.notStrictEqual(document.getElementById("standardSelect-label").innerHTML, "", "Label text is rendered for standard select");
-			assert.strictEqual(oStandardSelect.$().attr("aria-labelledby"), "standardSelect-label", "Standard select should be labelled by its label");
 
 			oStandardSelect.setType("IconOnly");
 			Core.applyChanges();
@@ -9454,45 +9463,12 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assertion
-			assert.strictEqual(oEnabledSelect.$().attr("aria-disabled"), "false", "Enabled Select isn't indicated as disabled");
-			assert.strictEqual(oDisabledSelect.$().attr("aria-disabled"), "true", "Disabled Select is indicated as disabled appropriately");
+			assert.strictEqual(oEnabledSelect._getHiddenSelect().attr("disabled"), undefined, "Enabled Select isn't indicated as disabled");
+			assert.strictEqual(oDisabledSelect._getHiddenSelect().attr("disabled"), "disabled", "Disabled Select is indicated as disabled appropriately");
 
 			// Cleanup
 			oEnabledSelect.destroy();
 			oDisabledSelect.destroy();
-		});
-
-		QUnit.test("Hidden label's aria-live", function (assert) {
-			var $oLabel,
-				oSelect = new Select({
-				items: [
-					new Item({
-						key: "0",
-						text: "item 0"
-					}),
-
-					new Item({
-						key: "1",
-						text: "item 1"
-					})
-				]
-			});
-
-			oSelect.placeAt("content");
-			Core.applyChanges();
-
-			$oLabel = oSelect.$("label");
-			assert.strictEqual($oLabel.attr("aria-live"), "polite", "aria-live is correctly set before opening the popover");
-
-			oSelect.open();
-			this.clock.tick(1000);
-			assert.notOk($oLabel.attr("aria-live"), "aria-live is removed while the popover is opened");
-
-			oSelect.close();
-			this.clock.tick(1000);
-			assert.strictEqual($oLabel.attr("aria-live"), "polite", "aria-live is returned when popover closes");
-
-			oSelect.destroy();
 		});
 
 		QUnit.test("Picker aria-labelledby attribute", function (assert) {
@@ -9879,33 +9855,42 @@ sap.ui.define([
 			this.oSelect.open();
 		});
 
-		QUnit.module("Hidden input element", {
+		QUnit.module("Hidden select element", {
 			beforeEach: function () {
-				this.oSelect = new Select().placeAt("content");
+				this.oSelect = new Select({
+					items: [
+						new ListItem({
+							key: "1",
+							text: "Competitor"
+						}),
+						new ListItem({
+							key: "2",
+							text: "Paper Plane"
+						})
+					]
+				}).placeAt("content");
 				Core.applyChanges();
 
-				this.$oHiddenInputRef = this.oSelect.$("hiddenInput");
+				this.$oHiddenSelectRef = this.oSelect.$("hiddenSelect");
 			},
 			afterEach: function () {
 				this.oSelect.destroy();
 			}
 		});
 
-		QUnit.test("Hidden input rendering", function (assert) {
-			assert.ok(this.$oHiddenInputRef.length > 0, "Hidden input is rendered in the DOM");
+		QUnit.test("Hidden select rendering", function (assert) {
+			assert.ok(this.$oHiddenSelectRef.length > 0, "Hidden select is rendered in the DOM");
+			assert.ok(this.$oHiddenSelectRef.hasClass("sapUiPseudoInvisibleText"), "Hidden select isn't visible to the user");
 		});
 
-		QUnit.test("Hidden input attributes and classes", function (assert) {
-			// Attributes
-			assert.strictEqual(this.$oHiddenInputRef.attr("aria-readonly"), "true", "Hidden input is readonly");
-			assert.strictEqual(this.$oHiddenInputRef.attr("tabindex"), "-1", "Hidden input shouldn't be reachable via keyboard navigation");
-
-			// Classes
-			assert.ok(this.$oHiddenInputRef.hasClass("sapUiPseudoInvisibleText"), "Hidden input isn't visible to the user");
+		QUnit.test("Hidden select referencing", function (assert) {
+			assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenSelectRef.attr("id"), "getIdForLabel() returns the hidden select ID");
 		});
 
-		QUnit.test("Hidden input referencing", function (assert) {
-			assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenInputRef.attr("id"), "getIdForLabel() returns the hidden input ID");
+		QUnit.test("Hidden select options", function (assert) {
+			var aOptions = this.$oHiddenSelectRef.find('option[hidden]');
+
+			assert.strictEqual(aOptions.length, 2, "An exact number of options have been created");
 		});
 
 		QUnit.module("OverflowToolbar configuration");
