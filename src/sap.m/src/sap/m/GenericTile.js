@@ -93,7 +93,7 @@ sap.ui.define([
 				 */
 				size: {type: "sap.m.Size", group: "Misc", defaultValue: Size.Auto},
 				/**
-				 * The frame type: OneByOne or TwoByOne. Set to OneByOne as default if no property is defined or set to Auto by the app.
+				 * The frame type: OneByOne, TwoByOne, OneByHalf or TwoByHalf. Set to OneByOne as default if no property is defined or set to Auto by the app.
 				 */
 				frameType: {type: "sap.m.FrameType", group: "Misc", defaultValue: FrameType.OneByOne},
 				/**
@@ -969,12 +969,17 @@ sap.ui.define([
 	GenericTile.prototype._applyHeaderMode = function (bSubheader) {
 		// when subheader is available, the header can have maximal 4 lines and the subheader can have 1 line
 		// when subheader is unavailable, the header can have maximal 5 lines
-		if (bSubheader) {
-			this._oTitle.setProperty("maxLines", 4, true);
-		} else {
-			this._oTitle.setProperty("maxLines", 5, true);
-		}
 
+		var frameType = this.getFrameType();
+		if (frameType === FrameType.OneByHalf || frameType === FrameType.TwoByHalf) {
+			this._oTitle.setProperty("maxLines", 2, true);
+		} else {
+			if (bSubheader) {
+				this._oTitle.setProperty("maxLines", 4, true);
+			} else {
+				this._oTitle.setProperty("maxLines", 5, true);
+			}
+		}
 		this._changeTileContentContentVisibility(false);
 	};
 
@@ -984,9 +989,33 @@ sap.ui.define([
 	 * @param {boolean} bSubheader Indicates the existence of subheader
 	 */
 	GenericTile.prototype._applyContentMode = function (bSubheader) {
-		// when subheader is available, the header can have maximal 2 lines and the subheader can have 1 line
-		// when subheader is unavailable, the header can have maximal 3 lines
-		if (bSubheader) {
+		// if frametype is OneByOne or TwoByOne & subheader is available, the header can have maximal 2 lines and the subheader can have 1 line
+		// if frametype is OneByOne or TwoByOne & subheader is unavailable, the header can have maximal 3 lines
+		// if frametype is OneByHalf or TwoByHalf & content is available, the header can have maximal 1 lines
+		// if frametype is OneByHalf or TwoByHalf & content is unavailable, the header can have maximal 2 lines
+
+		var frameType = this.getFrameType();
+		var aTileContent = this.getTileContent();
+
+		if (frameType === FrameType.TwoByHalf || frameType === FrameType.OneByHalf) {
+			if (aTileContent.length) {
+				for (var i = 0; i < aTileContent.length; i++) {
+					var aTileCnt = aTileContent[i].getAggregation('content');
+					if (aTileCnt !== null) {
+						if ((frameType === FrameType.OneByHalf && aTileCnt.getMetadata()._sClassName === "sap.m.ImageContent")) {
+							this._oTitle.setProperty("maxLines", 2, true);
+							break;
+						} else {
+							this._oTitle.setProperty("maxLines", 1, true);
+							break;
+						}
+					}
+					this._oTitle.setProperty("maxLines", 2, true);
+				}
+			} else {
+				this._oTitle.setProperty("maxLines", 2, true);
+			}
+		} else if (bSubheader) {
 			this._oTitle.setProperty("maxLines", 2, true);
 		} else {
 			this._oTitle.setProperty("maxLines", 3, true);
@@ -1143,7 +1172,14 @@ sap.ui.define([
 	GenericTile.prototype._checkFooter = function (tileContent, control) {
 		var sState = control.getState();
 		var bActions = this._isInActionScope() || this._bShowActionsView === true;
+		var frameType = this.getFrameType();
+		var aTileCnt = tileContent.getAggregation('content');
+
 		if (sState === library.LoadState.Failed || bActions && sState !== library.LoadState.Disabled) {
+			tileContent.setRenderFooter(false);
+		} else if (frameType === FrameType.TwoByHalf && (aTileCnt !== null || this.getSubheader())) {
+			tileContent.setRenderFooter(false);
+		} else if (frameType === FrameType.OneByHalf && ((aTileCnt !== null && aTileCnt.getMetadata()._sClassName !== "sap.m.ImageContent") || this.getSubheader())) {
 			tileContent.setRenderFooter(false);
 		} else {
 			tileContent.setRenderFooter(true);
