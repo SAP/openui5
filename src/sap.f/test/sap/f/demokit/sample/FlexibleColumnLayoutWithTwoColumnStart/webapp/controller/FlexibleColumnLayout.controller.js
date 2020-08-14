@@ -9,6 +9,8 @@ sap.ui.define([
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteMatched, this);
 			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
+			// Navigating to a random product in order to display two columns initially
+			this.oRouter.navTo("detail", {layout: "TwoColumnsMidExpanded", product: "95"});
 		},
 
 		onBeforeRouteMatched: function(oEvent) {

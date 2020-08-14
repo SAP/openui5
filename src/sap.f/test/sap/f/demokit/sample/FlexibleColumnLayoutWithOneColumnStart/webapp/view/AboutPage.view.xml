@@ -6,6 +6,11 @@
 				<f:heading>
 					<Title text="About supplier"/>
 				</f:heading>
+
+				<!-- DynamicPage Actions -->
+				<f:navigationActions>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close page" />
+				</f:navigationActions>
 			</f:DynamicPageTitle>
 		</f:title>
 	</f:DynamicPage>
