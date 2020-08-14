@@ -27,6 +27,14 @@ sap.ui.define(function() {
 			datajs: {
 				title: "sap.ui.thirdparty.datajs - QUnit tests"
 			},
+			"datajs (AMD)": {
+				title: "sap.ui.thirdparty.datajs - QUnit tests",
+				module: "./datajs.qunit",
+				loader: {
+					amd: true
+				},
+				sinon: false // to avoid AMD issues with sinon
+			},
 			PendingChanges: {
 				title: "sap.ui.model.odata.v2.ODataModel - Get all pending changes",
 				sinon: 1 /* MockServer usage */

@@ -24,6 +24,9 @@
     if (typeof define === 'function' && define.amd) {
         define('datajs', datajs);
         define('OData', odata);
+        // ##### BEGIN: MODIFIED BY SAP
+        define('sap/ui/thirdparty/datajs', odata);
+        // ##### END: MODIFIED BY SAP
     } else {
         window.datajs = datajs;
         window.OData = odata;
