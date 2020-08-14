@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	'./Text',
-	'sap/m/SimpleFixFlex'
+	'sap/m/SimpleFixFlex',
+	'sap/base/Log'
 ],
 function(
 	Dialog,
@@ -50,7 +51,8 @@ function(
 	containsOrEquals,
 	KeyCodes,
 	Text,
-	SimpleFixFlex
+	SimpleFixFlex,
+	Log
 ) {
 		"use strict";
 
@@ -2284,7 +2286,15 @@ function(
 				oList && SelectList.prototype.setProperty.apply(oList, arguments);
 			}
 
-			return Control.prototype.setProperty.apply(this, arguments);
+			try {
+				Control.prototype.setProperty.apply(this, arguments);
+			} catch (e) {
+				Log.warning('Update failed due to exception. Loggable in support mode log', null, null, function () {
+					return { exception: e };
+				});
+			}
+
+			return this;
 		};
 
 		Select.prototype.removeAllAssociation = function(sAssociationName, bSuppressInvalidate) {
