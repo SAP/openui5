@@ -278,7 +278,7 @@ sap.ui.define([
 			if (fnBold && typeof fnBold === "function") {
 				fnBold(aItemsDomRefs, sValue);
 			} else {
-				this._oSuggestionPopover.highlightSuggestionItems(aItemsDomRefs, sValue, true);
+				this._getSuggestionsPopover().highlightSuggestionItems(aItemsDomRefs, sValue, true);
 			}
 		};
 
@@ -609,8 +609,8 @@ sap.ui.define([
 
 		ComboBoxBase.prototype.onBeforeRendering = function () {
 			var bSuggestionsPopoverIsOpen =  this.getOpen(),
-			sValueStateHeaderText = bSuggestionsPopoverIsOpen ?  this._oSuggestionPopover._getValueStateHeader().getText() : null,
-			sValueStateHeaderValueState = bSuggestionsPopoverIsOpen ?  this._oSuggestionPopover._getValueStateHeader().getValueState() : null;
+			sValueStateHeaderText = bSuggestionsPopoverIsOpen ?  this._getSuggestionsPopover()._getValueStateHeader().getText() : null,
+			sValueStateHeaderValueState = bSuggestionsPopoverIsOpen ?  this._getSuggestionsPopover()._getValueStateHeader().getValueState() : null;
 
 			ComboBoxTextField.prototype.onBeforeRendering.apply(this, arguments);
 
