@@ -375,7 +375,7 @@ sap.ui.define([
 
 		// 'offsetTop' measures the vertical space occupied by siblings before this one
 		// Earlier each previous sibling's height was calculated separately and then all height values were summed up
-		sAdjustedContentHeight =  'calc(' + this.getHeight() + ' - ' + oPanelContent.offsetTop + 'px)';
+		sAdjustedContentHeight =  'calc(' + "100%" + ' - ' + oPanelContent.offsetTop + 'px)';
 		oPanelContent.style.height = sAdjustedContentHeight;
 	};
 
