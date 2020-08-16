@@ -127,6 +127,26 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.test("destroyTokens() called upon the tokens aggregation must update the MultiInput CSS classes", function(assert) {
+		// Arrange
+		var oToken1 = new Token(),
+			oToken2 = new Token(),
+			oToken3 = new Token(),
+			oInvalidationSpy;
+
+		// Act
+		this.multiInput1.setTokens([oToken1, oToken2, oToken3]);
+		sap.ui.getCore().applyChanges();
+
+		oInvalidationSpy = this.spy(this.multiInput1, "onBeforeRendering");
+		this.multiInput1.destroyTokens();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInvalidationSpy.calledOnce, true, "MultiInput has been rerendered after the tokens has been destroyed");
+		assert.strictEqual(this.multiInput1.getDomRef().classList.contains("sapMMultiInputHasTokens"), false, "MultiInput does not have 'sapMMultiInputHasTokens' class");
+	});
+
 	QUnit.test("getAggregation tokens", function(assert) {
 		//arrange
 		var token1 = new Token();

@@ -10,6 +10,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/base/ManagedObjectMetadata',
+	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/Device',
 	'./Popover',
 	'./List',
@@ -36,6 +37,7 @@ function(
 	library,
 	EnabledPropagator,
 	ManagedObjectMetadata,
+	ManagedObjectObserver,
 	Device,
 	Popover,
 	List,
@@ -247,6 +249,12 @@ function(
 
 		oTokenizer.attachTokenChange(this._onTokenChange, this);
 		oTokenizer.attachTokenUpdate(this._onTokenUpdate, this);
+
+		// Observe Tokenizer for changes in cases when no events are fired - when the state change is not a result from user interaction.
+		this._oTokenizerObserver = new ManagedObjectObserver(this.invalidate.bind(this));
+		// When the "tokens" aggregation gets destroyed the MultiInput must be rerendered in order for the correct classes to be applied.
+		this._oTokenizerObserver.observe(oTokenizer, {aggregations: ["tokens"]});
+
 		oTokenizer.getTokensPopup()
 			.setInitialFocus(this)
 			.attachBeforeOpen(this._onBeforeOpenTokensPicker.bind(this));
@@ -283,13 +291,9 @@ function(
 			});
 
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
-
 		this.attachLiveChange(this._onLiveChange, this);
-
 		this.attachValueHelpRequest(this._onValueHelpRequested, this);
-
 		this._getValueHelpIcon().setProperty("visible", true, true);
-
 		this._onResize = this._onResize.bind(this);
 	};
 
@@ -301,6 +305,11 @@ function(
 	MultiInput.prototype.exit = function () {
 		this._deregisterResizeHandler();
 		this._deregisterTokenizerResizeHandler();
+
+		this._oTokenizerObserver.disconnect();
+		this._oTokenizerObserver.destroy();
+		this._oTokenizerObserver = null;
+
 		Input.prototype.exit.call(this);
 	};
 
