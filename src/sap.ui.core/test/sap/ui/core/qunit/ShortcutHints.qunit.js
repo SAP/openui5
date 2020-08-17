@@ -298,15 +298,18 @@ sap.ui.define([
 				event: "press"
 			}, oButton1);
 
+			oView.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
+			// assert
 			assert.ok(ShortcutHintsMixin.isDOMIDRegistered(oCtrl.getId()),
 				"The control is registered to show a shortcut");
 
-			//no way to test the hidden registry and its hints, so...
-			var mShortcutsByDomNodes = ShortcutHintsMixin.getHintAccessibility(oCtrl);
-			var mExpected = {};
-			mExpected[oCtrl.getId()] = { keyShortcuts: "Ctrl+S" };
-
-			assert.deepEqual(mShortcutsByDomNodes, mExpected, "The hint provider is ok");
+			assert.equal(
+				document.getElementById(oCtrl.getId()).getAttribute("aria-keyshortcuts"),
+				"Ctrl+S",
+				"The hint provider is OK"
+			);
 		});
 	});
 

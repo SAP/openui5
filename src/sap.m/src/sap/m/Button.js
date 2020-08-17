@@ -736,10 +736,6 @@ sap.ui.define([
 		return sAccType;
 	};
 
-	Button.prototype._getHintAccessibility = function() {
-			return ShortcutHintsMixin.getHintAccessibility(this);
-	};
-
 	//gets the title attribute for the given dom node id
 	Button.prototype._getTitleAttribute = function(sDOMID) {
 		return this.getTooltip();

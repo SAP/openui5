@@ -56,12 +56,6 @@ sap.ui.define([
 		// get icon from icon pool
 		var sBackURI = IconPool.getIconURI("nav-back");
 		var sMinWidth;
-		var oHintAccessibilityInfos = oButton._getHintAccessibility();
-		var sAriaKeyShortcuts;
-
-		if (oHintAccessibilityInfos && oHintAccessibilityInfos[sButtonId]) {
-			sAriaKeyShortcuts = oHintAccessibilityInfos[sButtonId].keyShortcuts;
-		}
 
 		// start button tag
 		oRm.openStart("button", oButton);
@@ -79,10 +73,6 @@ sap.ui.define([
 
 		//ARIA attributes
 		var mAccProps = ButtonRenderer.generateAccProps(oButton);
-
-		if (sAriaKeyShortcuts) {
-			mAccProps["keyshortcuts"] = sAriaKeyShortcuts;
-		}
 
 		//descendants (e.g. ToggleButton) callback
 		if (this.renderAccessibilityAttributes) {
