@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/dt/ElementUtil",
-	"sap/base/util/isPlainObject",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/util/isPlainObject"
 ],
 function(
 	ElementUtil,
-	isPlainObject,
-	jQuery
+	isPlainObject
 ) {
 	"use strict";
 
@@ -153,7 +151,7 @@ function(
 			)
 			&& oBinding.getModel() === oParentDefaultModel
 			&& oBinding.isRelative()
-			&& jQuery.isFunction(oBinding.getPath)
+			&& typeof oBinding.getPath === "function"
 			&& oBinding.getPath()
 		) {
 			aBindings.push(oBinding);

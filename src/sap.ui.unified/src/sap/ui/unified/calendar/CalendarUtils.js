@@ -330,25 +330,25 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._updateUTCDate = function(oDate, iYear, iMonth, iDate, iHours, iMinutes, iSeconds, iMilliseconds) {
-			if (jQuery.isNumeric(iYear)) {
+			if (iYear != null) {
 				oDate.setUTCFullYear(iYear);
 			}
-			if (jQuery.isNumeric(iMonth)) {
+			if (iMonth != null) {
 				oDate.setUTCMonth(iMonth);
 			}
-			if (jQuery.isNumeric(iDate)) {
+			if (iDate != null) {
 				oDate.setUTCDate(iDate);
 			}
-			if (jQuery.isNumeric(iHours)) {
+			if (iHours != null) {
 				oDate.setUTCHours(iHours);
 			}
-			if (jQuery.isNumeric(iMinutes)) {
+			if (iMinutes != null) {
 				oDate.setUTCMinutes(iMinutes);
 			}
-			if (jQuery.isNumeric(iSeconds)) {
+			if (iSeconds != null) {
 				oDate.setUTCSeconds(iSeconds);
 			}
-			if (jQuery.isNumeric(iMilliseconds)) {
+			if (iMilliseconds != null) {
 				oDate.setUTCMilliseconds(iMilliseconds);
 			}
 		};
@@ -372,7 +372,7 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._checkYearInValidRange = function(iYear) {
-			if (!jQuery.isNumeric(iYear) || (iYear < 1 || iYear > 9999)) {
+			if (typeof iYear !== "number" || iYear < 1 || iYear > 9999) {
 				throw new Error("Year must be in valid range (between year 0001 and year 9999).");
 			}
 		};

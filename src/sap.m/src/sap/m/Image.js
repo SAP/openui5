@@ -714,10 +714,8 @@ sap.ui.define([
 	 * @returns {boolean} the check result
 	 */
 	Image.prototype._isValidBackgroundSizeValue = function (sValue) {
-		var whitespaceRegEx = /\s+/g;
-
 		// compress whitespace
-		sValue = jQuery.trim(sValue).replace(whitespaceRegEx, " ");
+		sValue = normWS(sValue);
 
 		return isSubSet(sValue.split(" "), ["auto", "cover", "contain", "initial"])
 			|| DataType.getType("sap.ui.core.CSSSizeShortHand").isValid(sValue);
@@ -732,10 +730,8 @@ sap.ui.define([
 	 * @returns {boolean} the check result
 	 */
 	Image.prototype._isValidBackgroundPositionValue = function (sValue) {
-		var whitespaceRegEx = /\s+/g;
-
 		// compress whitespace
-		sValue = jQuery.trim(sValue).replace(whitespaceRegEx, " ");
+		sValue = normWS(sValue);
 
 		return isSubSet(sValue.split(" "), ["left", "right", "top", "center", "bottom", "initial"])
 			|| DataType.getType("sap.ui.core.CSSSizeShortHand").isValid(sValue);
@@ -789,6 +785,16 @@ sap.ui.define([
 		return aTestArray && aRefArray && !aTestArray.some(isOutsideSet);
 	}
 
+	/**
+	 * Utility function to normalize whitespace in a CSS value.
+	 * @param {string} sValue String value to normalize
+	 * @returns {string} Normalized value
+	 */
+	function normWS(sValue) {
+		var whitespaceRegEx = /\s+/g;
+		// compress whitespace
+		return sValue == null ? "" : String(sValue).trim().replace(whitespaceRegEx, " ");
+	}
 
 	return Image;
 

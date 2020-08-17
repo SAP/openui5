@@ -12,7 +12,7 @@ sap.ui.define([
 	createAndAppendDiv("target");
 
 	/**
-	 * This function check whether the given tooltip is a standard tooltip or
+	 * This function checks whether the given tooltip is a standard tooltip or
 	 * a RichTooltip
 	 * @param  {object | string} vTooltip either a string with text or an instanceof
 	 *                   of the RichTooltip
@@ -20,7 +20,7 @@ sap.ui.define([
 	 *                                     if the tooltip is a RichTooltip
 	 */
 	var isStandardTooltip = function(vTooltip, assert) {
-		return (typeof vTooltip === "string" && (jQuery.trim(vTooltip)) !== "");
+		return (typeof vTooltip === "string" && vTooltip.trim() !== "");
 	};
 
 	/**

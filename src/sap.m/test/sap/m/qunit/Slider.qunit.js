@@ -235,7 +235,7 @@ sap.ui.define([
 				assert.ok(oSlider.$().hasClass(CSS_CLASS + "Disabled"), 'The slider HTML DIV element container must have the CSS class "' + CSS_CLASS + 'Disabled"');
 			}
 
-			assert.strictEqual(jQuery.trim(oSlider.getDomRef().style.width), oSlider.getWidth(), 'Check if the style attribute has the correct value');
+			assert.strictEqual(oSlider.getDomRef().style.width.trim(), oSlider.getWidth(), 'Check if the style attribute has the correct value');
 			assert.ok(oSlider.getDomRef("progress"), 'The slider div element "must have" the css class "' + CSS_CLASS + 'Progress"');
 			assert.ok(oSlider.getDomRef("handle"), 'The slider span thumb element "must have" the css class "' + CSS_CLASS + 'Handle"');
 

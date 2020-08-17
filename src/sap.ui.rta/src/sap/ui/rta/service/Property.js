@@ -7,11 +7,13 @@
 sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/restricted/_omit"
 ], function(
 	OverlayRegistry,
 	DtUtil,
+	isEmptyObject,
 	merge,
 	_omit
 ) {
@@ -118,11 +120,11 @@ sap.ui.define([
 				.then(function (aPromiseResults) {
 					return Object.assign(
 						{},
-						aPromiseResults[0] && !jQuery.isEmptyObject(aPromiseResults[0]) && {annotations: aPromiseResults[0]},
+						aPromiseResults[0] && !isEmptyObject(aPromiseResults[0]) && {annotations: aPromiseResults[0]},
 						aPromiseResults[1] && {properties: aPromiseResults[1]},
 						aPromiseResults[2] && {label: validate(aPromiseResults[2])},
 						oDesignTimeMetadataData.name && {name: oDesignTimeMetadata.getName(oElement)},
-						!jQuery.isEmptyObject(aPromiseResults[3]) && {links: aPromiseResults[3]}
+						!isEmptyObject(aPromiseResults[3]) && {links: aPromiseResults[3]}
 					);
 				});
 		};
@@ -276,7 +278,7 @@ sap.ui.define([
 									mFiltered[sKey] = Object.assign({}, mDtObj[sKey]);
 									return oProperty._getResolvedLinks(mFiltered[sKey].links, oElement)
 									.then(function (mLinks) {
-										if (!jQuery.isEmptyObject(mLinks)) {
+										if (!isEmptyObject(mLinks)) {
 											mFiltered[sKey].links = mLinks;
 										}
 										return mFiltered;

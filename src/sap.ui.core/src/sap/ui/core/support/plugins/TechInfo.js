@@ -5,12 +5,13 @@
 // Provides class sap.ui.core.support.plugins.TechInfo (TechInfo support plugin)
 sap.ui.define([
 	'sap/base/Log',
+	'sap/base/util/isEmptyObject',
 	'../Plugin',
 	'../Support',
 	'../ToolsAPI',
-	"sap/base/security/encodeXML"
+	'sap/base/security/encodeXML'
 ],
-	function(Log, Plugin, Support, ToolsAPI, encodeXML) {
+	function(Log, isEmptyObject, Plugin, Support, ToolsAPI, encodeXML) {
 	"use strict";
 
 
@@ -107,7 +108,7 @@ sap.ui.define([
 			line(html, true, true, "Application", oData.appurl);
 			multiline(html, true, true, "Configuration (bootstrap)", oData.bootconfig);
 			multiline(html, true, true, "Configuration (computed)", oData.config);
-			if (!jQuery.isEmptyObject(oData.libraries)) {
+			if (!isEmptyObject(oData.libraries)) {
 				multiline(html, true, true, "Libraries", oData.libraries);
 			}
 			multiline(html, true, true, "Loaded Libraries", oData.loadedLibraries);

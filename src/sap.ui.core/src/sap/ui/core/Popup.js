@@ -1856,7 +1856,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._mirrorOffset = function(sOffset) {
-		var aOffset = jQuery.trim(sOffset).split(/\s/);
+		var aOffset = String(sOffset).trim().split(/\s/);
 		var posX = parseInt(aOffset[0]);
 		return (-posX) + " " + aOffset[aOffset.length - 1]; // array could be longer than 2 with multiple whitespace characters
 	};

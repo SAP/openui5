@@ -135,9 +135,9 @@ sap.ui.define([
 	TablePersoController.prototype.setPersoService = function(oService) {
 		oService = this.validateProperty("persoService", oService);
 		if (oService &&
-			(!jQuery.isFunction(oService.getPersData) ||
-			!jQuery.isFunction(oService.setPersData) ||
-			!jQuery.isFunction(oService.delPersData))) {
+			(typeof oService.getPersData !== "function" ||
+			typeof oService.setPersData !== "function" ||
+			typeof oService.delPersData !== "function")) {
 			throw new Error("Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
 					"\"getPersData\", \"setPersData\" and \"delPersData\".");
 		}

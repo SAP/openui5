@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/Object', 'sap/ui/thirdparty/jquery'
-], function(BaseObject, jQuery) {
+	'sap/ui/base/Object',
+	'sap/base/util/isEmptyObject'
+], function(BaseObject, isEmptyObject) {
 	"use strict";
 
 	/**
@@ -66,7 +67,7 @@ sap.ui.define([
 		return this;
 	};
 	Log.prototype.isEmpty = function() {
-		return !(!jQuery.isEmptyObject(this._oLog.semanticObjects) || this._oLog.intents.breakout.length || this._oLog.intents.api.length);
+		return !(!isEmptyObject(this._oLog.semanticObjects) || this._oLog.intents.breakout.length || this._oLog.intents.api.length);
 	};
 	Log.prototype.initialize = function(aSemanticObjects) {
 		this.reset();
@@ -177,7 +178,7 @@ sap.ui.define([
 
 		for ( var sSemanticObject in this._oLog.semanticObjects) {
 			sText = sText + "\n\u2b24" + " " + sSemanticObject + "\n";
-			if (jQuery.isEmptyObject(this._oLog.semanticObjects[sSemanticObject].attributes)) {
+			if (isEmptyObject(this._oLog.semanticObjects[sSemanticObject].attributes)) {
 				sText += "\u2026\u2026 \u0020\ud83d\udd34 No semantic attributes available for semantic object " + sSemanticObject + ". Please be aware " + "that without semantic attributes no URL parameters can be created.\n";
 			} else {
 				var aSemanticAttributes = Object.keys(this._oLog.semanticObjects[sSemanticObject].attributes);

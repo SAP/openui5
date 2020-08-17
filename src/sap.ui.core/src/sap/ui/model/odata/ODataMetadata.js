@@ -10,13 +10,14 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/each",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/uid",
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/thirdparty/datajs",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Utils, assert, Log, each, uid, EventProvider, CacheManager, OData, jQuery) {
+	function(Utils, assert, Log, each, isEmptyObject, uid, EventProvider, CacheManager, OData, jQuery) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0*/
 
@@ -650,7 +651,7 @@ sap.ui.define([
 	 * @returns {boolean} Returns true, if the metadata was loaded.
 	 */
 	ODataMetadata.prototype._checkMetadataLoaded = function(){
-		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
+		if (!this.oMetadata || isEmptyObject(this.oMetadata)) {
 			assert(undefined, "No metadata loaded!");
 			return false;
 		}

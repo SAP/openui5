@@ -435,7 +435,17 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollectionItem.prototype._getPressEnabled = function() {
-		return this.hasListeners("press") || !!jQuery.trim(this.getUrl());
+		return this.hasListeners("press") || this._hasUrl();
+	};
+
+	/**
+	 * Checks if item has a non-empty URL.
+	 * @returns {boolean} True if item has a non-empty URL.
+	 * @private
+	 */
+	UploadCollectionItem.prototype._hasUrl = function() {
+		var sUrl = this.getUrl();
+		return sUrl != null && !!sUrl.trim();
 	};
 
 	return UploadCollectionItem;

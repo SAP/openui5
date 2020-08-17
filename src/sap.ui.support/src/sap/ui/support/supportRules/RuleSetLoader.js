@@ -460,7 +460,7 @@ sap.ui.define([
 				var ruleset = oLibrarySupport.ruleset[i];
 
 				// If the ruleset contains arrays of rules make sure we add them.
-				if (jQuery.isArray(ruleset)) {
+				if (Array.isArray(ruleset)) {
 					for (var k = 0; k < ruleset.length; k++) {
 						oRuleSet.addRule(ruleset[k]);
 					}

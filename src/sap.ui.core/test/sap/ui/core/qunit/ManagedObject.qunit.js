@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/Sorter",
 	"sap/ui/base/ManagedObjectMetadata",
-	"sap/base/strings/escapeRegExp"
-], function(ManagedObject, Element, JSONModel, ManagedObjectModel, StringType, Control, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp) {
+	"sap/base/strings/escapeRegExp",
+	"sap/base/util/isEmptyObject"
+], function(ManagedObject, Element, JSONModel, ManagedObjectModel, StringType, Control, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
 	"use strict";
 	var mObjects = {};
 
@@ -2427,7 +2428,7 @@ sap.ui.define([
 
 		var oSpy = this.spy(ManagedObject.prototype, "_onContextualSettingsChanged");
 
-		assert.ok(jQuery.isEmptyObject(this.obj1._getContextualSettings()), "Initially the contextual settings object is empty");
+		assert.ok(isEmptyObject(this.obj1._getContextualSettings()), "Initially the contextual settings object is empty");
 
 		this.obj1._applyContextualSettings(oCustomSettings);
 		var oReadSettings = this.obj1._getContextualSettings();

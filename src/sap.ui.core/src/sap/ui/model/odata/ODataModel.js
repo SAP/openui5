@@ -26,6 +26,7 @@ sap.ui.define([
 	'sap/ui/model/odata/ODataMetaModel',
 	'sap/ui/thirdparty/URI',
 	'sap/ui/thirdparty/datajs',
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/uid",
 	"sap/base/util/merge",
 	"sap/base/Log",
@@ -49,6 +50,7 @@ sap.ui.define([
 		ODataMetaModel,
 		URI,
 		OData,
+		isEmptyObject,
 		uid,
 		merge,
 		Log,
@@ -2848,7 +2850,7 @@ sap.ui.define([
 			this.oRequestQueue[this.sChangeKey] = oRequest;
 		}
 
-		if (jQuery.isEmptyObject(this.oRequestQueue)) {
+		if (isEmptyObject(this.oRequestQueue)) {
 			return undefined;
 		}
 

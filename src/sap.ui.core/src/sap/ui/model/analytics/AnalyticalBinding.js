@@ -20,9 +20,10 @@ sap.ui.define([
 	'./odata4analytics',
 	'./BatchResponseCollector',
 	'./AnalyticalVersionInfo',
-	"sap/base/util/uid",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	'sap/base/util/isEmptyObject',
+	'sap/base/util/uid',
+	'sap/ui/thirdparty/jquery',
+	'sap/base/Log'
 ], function(
 	TreeBinding,
 	ChangeReason,
@@ -36,6 +37,7 @@ sap.ui.define([
 	odata4analytics,
 	BatchResponseCollector,
 	AnalyticalVersionInfo,
+	isEmptyObject,
 	uid,
 	jQuery,
 	Log
@@ -4004,7 +4006,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._deregisterHandleOfCompletedRequest = function(iRequestHandleId) {
-		if (jQuery.isEmptyObject(this.oPendingRequestHandle)) {
+		if (isEmptyObject(this.oPendingRequestHandle)) {
 			oLogger.warning("No request handles to be cleared. Previous abort/resetData?");
 			return;
 		}
@@ -4123,7 +4125,7 @@ sap.ui.define([
 	AnalyticalBinding.prototype._deregisterCompletedRequest = function(sRequestId) {
 		// in case there are no pending request, log a warning. This might happen during a refresh call
 		// helps to keep track of timing issues / race conditions with already returned requests
-		if (jQuery.isEmptyObject(this.oPendingRequests)) {
+		if (isEmptyObject(this.oPendingRequests)) {
 			oLogger.warning("There are no pending requests which could be set to 'completed'.");
 			return;
 		}

@@ -125,7 +125,7 @@ sap.ui.define([
 			var fnResolveDestination = this.getResolveDestination(),
 				vReturn;
 
-			if (!fnResolveDestination || !jQuery.isFunction(fnResolveDestination)) {
+			if (typeof fnResolveDestination !== "function") {
 				return Promise.reject("Could not resolve destination '" + sDestinationName + "'. There is no 'resolveDestination' callback function configured in the host.");
 			}
 

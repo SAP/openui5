@@ -44,9 +44,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/
 	 */
 	Plugin.prototype.init = function(oSupportStub){
 		for (var i = 0; i < this._aEventIds.length; i++) {
-			var fHandler = this["on" + this._aEventIds[i]];
-			if (fHandler && jQuery.isFunction(fHandler)) {
-				oSupportStub.attachEvent(this._aEventIds[i], fHandler, this);
+			var fnHandler = this["on" + this._aEventIds[i]];
+			if (typeof fnHandler === "function") {
+				oSupportStub.attachEvent(this._aEventIds[i], fnHandler, this);
 			}
 		}
 		this._bActive = true;
@@ -63,9 +63,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/
 	 */
 	Plugin.prototype.exit = function(oSupportStub){
 		for (var i = 0; i < this._aEventIds.length; i++) {
-			var fHandler = this["on" + this._aEventIds[i]];
-			if (fHandler && jQuery.isFunction(fHandler)) {
-				oSupportStub.detachEvent(this._aEventIds[i], fHandler, this);
+			var fnHandler = this["on" + this._aEventIds[i]];
+			if (typeof fnHandler === "function") {
+				oSupportStub.detachEvent(this._aEventIds[i], fnHandler, this);
 			}
 		}
 		this._bActive = false;

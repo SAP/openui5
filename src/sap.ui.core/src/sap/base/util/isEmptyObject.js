@@ -4,12 +4,17 @@
 sap.ui.define([], function() {
 	"use strict";
 	/**
-	 * Validates if the given object is empty.
+	 * Validates if the given object is empty, that is that it has no enumerable properties.
+	 *
+	 * Note that <code>null</code> and <code>undefined</code> comply with this definition of 'empty'.
+	 * The behavior for non-object values is undefined and might change in future.
 	 *
 	 * @example
 	 * sap.ui.require(["sap/base/util/isEmptyObject"], function(isEmptyObject){
 	 *      isEmptyObject({}); // true
 	 *      isEmptyObject({test: '123'}); // false
+	 *      isEmptyObject(null); // true
+	 *      isEmptyObject(undefined); // true
 	 * });
 	 *
 	 * @function

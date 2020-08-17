@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Manifest",
 	"sap/base/util/restricted/_omit",
@@ -30,6 +31,7 @@ function(
 	Component,
 	UIComponent,
 	Log,
+	isEmptyObject,
 	UriParameters,
 	Manifest,
 	_omit,
@@ -758,11 +760,11 @@ function(
 				}
 			});
 
-			assert.ok(jQuery.isEmptyObject(Utils.getParsedURLHash()), "then an empty object is received");
+			assert.ok(isEmptyObject(Utils.getParsedURLHash()), "then an empty object is received");
 		});
 
 		QUnit.test("when calling 'getParsedURLHash' without a ushell container", function(assert) {
-			assert.ok(jQuery.isEmptyObject(Utils.getParsedURLHash()), "then no url parameters are received");
+			assert.ok(isEmptyObject(Utils.getParsedURLHash()), "then no url parameters are received");
 		});
 
 		QUnit.test("when calling 'ifUShellContainerThen' without a ushell container", function(assert) {

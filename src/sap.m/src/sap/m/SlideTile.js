@@ -497,7 +497,7 @@ sap.ui.define([
 		oWrapperTo = this.$("wrapper-" + this._iCurrentTile);
 		sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
 
-		if (jQuery.isNumeric(this._iPreviousTile)) {
+		if (this._iPreviousTile != undefined) {
 			oWrapperFrom = this.$("wrapper-" + this._iPreviousTile);
 			sWidthFrom = oWrapperFrom.css("width");
 			fWidthTo = parseFloat(oWrapperTo.css("width"));

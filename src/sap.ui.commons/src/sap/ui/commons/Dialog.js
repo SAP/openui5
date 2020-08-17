@@ -349,7 +349,7 @@ sap.ui.define([
 			// if content has 100% width, but Dialog has no width, set content width to auto
 			if (!this._isSizeSet(this.getWidth()) && !this._isSizeSet(this.getMaxWidth())) {
 				$content.children().each(function (index, element) {
-					if (jQuery.trim(this.style.width) == "100%") {
+					if (this.style.width.trim() == "100%") {
 						this.style.width = "auto";
 					}
 				});

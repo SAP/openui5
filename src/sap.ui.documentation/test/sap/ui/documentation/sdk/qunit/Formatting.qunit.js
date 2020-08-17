@@ -1,11 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
 		"sap/ui/documentation/sdk/model/formatter",
-		"sap/ui/thirdparty/jquery"
+		"sap/base/util/isEmptyObject"
 ],
 function (
 	formatter,
-	jQuery
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -95,7 +95,7 @@ function (
 		var oParams = formatter.filePathToRouteParams(sFilePath);
 
 		// Check
-		assert.ok(jQuery.isEmptyObject(oParams), "correct parameters map");
+		assert.ok(isEmptyObject(oParams), "correct parameters map");
 	});
 
 	QUnit.test("filePathToRouteParams with single part path", function (assert) {

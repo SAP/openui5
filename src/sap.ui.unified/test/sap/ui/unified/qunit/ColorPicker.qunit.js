@@ -638,7 +638,7 @@ sap.ui.define([
 
 			// Assert - getWidth
 			iWidth = this.oCPBox.getWidth();
-			oAssert.ok(jQuery.isNumeric(iWidth), "Returned value is integer");
+			oAssert.ok(typeof iWidth === "number", "Returned value is integer");
 			oAssert.ok(iWidth > 0, "Returned value is greater than zero");
 
 			// Assert - getOffset
@@ -665,10 +665,10 @@ sap.ui.define([
 			this.oCPBox.attachSelect(function (oEvent) {
 				// Assert
 				oAssert.ok(true, "Select event is fired");
-				oAssert.ok(jQuery.isNumeric(oEvent.getParameter("value")),
+				oAssert.ok(typeof oEvent.getParameter("value") === "number",
 					"The returned event has a parameter 'value' and it's a number");
 
-				oAssert.ok(jQuery.isNumeric(oEvent.getParameter("saturation")),
+				oAssert.ok(typeof oEvent.getParameter("saturation") === "number",
 					"The returned event has a parameter 'saturation' and it's a number");
 			});
 
@@ -682,7 +682,7 @@ sap.ui.define([
 			this.oCPBox.attachResize(function (oEvent) {
 				// Assert
 				oAssert.ok(true, "Resize event is fired");
-				oAssert.ok(jQuery.isNumeric(oEvent.getParameter("size")),
+				oAssert.ok(typeof oEvent.getParameter("size") === "number",
 					"The returned event has a parameter 'size' and it's a number");
 				fnDone();
 			});

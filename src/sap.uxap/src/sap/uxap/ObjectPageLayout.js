@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/base/util/array/diff",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/base/assert",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/events/F6Navigation",
@@ -57,6 +58,7 @@ sap.ui.define([
 	diff,
 	getScrollbarSize,
 	assert,
+	isEmptyObject,
 	merge,
 	KeyCodes,
 	F6Navigation,
@@ -666,7 +668,7 @@ sap.ui.define([
 		this._applyUxRules();
 
 		// If we are on the first true rendering : first time we render the page with section and blocks
-		if (!jQuery.isEmptyObject(this._oSectionInfo) && this._bFirstRendering) {
+		if (!isEmptyObject(this._oSectionInfo) && this._bFirstRendering) {
 			this._preloadSectionsOnBeforeFirstRendering();
 			this._bFirstRendering = false;
 		}

@@ -438,7 +438,7 @@ sap.ui.define([
 		var iStart = 2;
 		var iEnd = 5;
 		var aList = TimePickerSliders.prototype._generatePickerListValues(iStart, iEnd, 1, false);
-		assert.strictEqual(jQuery.isArray(aList), true, "the method returns an array");
+		assert.strictEqual(Array.isArray(aList), true, "the method returns an array");
 		assert.strictEqual(aList.length, iEnd - iStart + 1, "the method returns an array with the correct number of objects");
 		assert.strictEqual(parseInt(aList[0].getKey()), iStart, "the key property of the first element of the array is correct");
 		assert.strictEqual(parseInt(aList[0].getText()), iStart, "the text property of the first element of the array is correct");

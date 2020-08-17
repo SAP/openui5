@@ -191,7 +191,7 @@ function(
 			oValue = oElement.getAggregation(sAggregationName);
 		}
 		// ATTENTION:
-		// under some unknown circumstances the return oValue looks like an Array but jQuery.isArray() returned
+		// under some unknown circumstances the return oValue looks like an Array but Array.isArray() returned
 		// undefined => false
 		// that is why we use array ducktyping with a null check!
 		// reproducible with Windows and Chrome (currently 35), when creating a project and opening WYSIWYG editor

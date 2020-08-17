@@ -456,7 +456,7 @@ sap.ui.define([
 				.then(
 					function (oService) {
 						assert.ok(jQuery.isPlainObject(oService));
-						assert.ok(jQuery.isFunction(oService.serviceMethod));
+						assert.ok(typeof oService.serviceMethod === "function");
 						return oService.serviceMethod().then(function (vResult) {
 							assert.strictEqual(vResult, 'value');
 						});

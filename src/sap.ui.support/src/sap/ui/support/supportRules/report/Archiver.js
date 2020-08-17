@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/jszip', 'sap/ui/core/util
 			this._mData[sName] = vData;
 			return true;
 		} else if (sType) {
-			if ((sType === "json" || sType === "har") && (jQuery.isPlainObject(vData) || jQuery.isArray(vData))) {
+			if ((sType === "json" || sType === "har") && (jQuery.isPlainObject(vData) || Array.isArray(vData))) {
 				try {
 					this._mData[sName] = JSON.stringify(vData);
 					return true;

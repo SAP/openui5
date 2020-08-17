@@ -13,11 +13,12 @@ sap.ui.define([
 	"sap/m/FlexBox",
 	"sap/m/GenericTileRenderer",
 	"sap/m/library",
+	"sap/base/util/isEmptyObject",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension",
 	"jquery.sap.keycodes"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, ResizeHandler, GenericTileLineModeRenderer,
-            Text, ScrollContainer, FlexBox, GenericTileRenderer, library) {
+            Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -222,7 +223,7 @@ sap.ui.define([
 			this.applyTheme = function(sTheme, fnCallback) {
 				this.sRequiredTheme = sTheme;
 				if (sap.ui.getCore().getConfiguration().getTheme() === this.sRequiredTheme && sap.ui.getCore().isThemeApplied()) {
-					if (jQuery.isFunction(fnCallback)) {
+					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
 					}
@@ -234,7 +235,7 @@ sap.ui.define([
 				function fnThemeApplied(oEvent) {
 					sap.ui.getCore().detachThemeChanged(fnThemeApplied);
 					if (sap.ui.getCore().getConfiguration().getTheme() === this.sRequiredTheme && sap.ui.getCore().isThemeApplied()) {
-						if (jQuery.isFunction(fnCallback)) {
+						if (typeof fnCallback === "function") {
 							fnCallback.bind(this)();
 							fnCallback = undefined;
 						}
@@ -1131,7 +1132,7 @@ sap.ui.define([
 		//Assert
 		assert.ok(bChanged, "The return value is 'true' on change.");
 		assert.equal(this.oGenericTile._oStyleData.field, "value", "The changed field has been set.");
-		assert.ok(!jQuery.isEmptyObject(this.oGenericTile._oStyleData), "The internal object has been updated.");
+		assert.ok(!isEmptyObject(this.oGenericTile._oStyleData), "The internal object has been updated.");
 	});
 
 	QUnit.test("Function _getStyleData does not update internal object", function(assert) {

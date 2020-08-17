@@ -2,6 +2,7 @@
 /*global OData, QUnit, sinon */
 sap.ui.define([
 		"sap/base/Log",
+		"sap/base/util/isEmptyObject",
 		"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
 		"sap/ui/model/odata/MessageScope",
 		"sap/ui/model/odata/ODataUtils",
@@ -27,6 +28,7 @@ sap.ui.define([
 	],
 	function(
 		Log,
+		isEmptyObject,
 		fakeService,
 		MessageScope,
 		ODataUtils,
@@ -5093,7 +5095,7 @@ sap.ui.define([
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function() {
 			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
-			assert.ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
+			assert.ok(!oModel.getServiceAnnotations() || isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
 			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl(sURI + "$metadata?sap-value-list=all").then(function(oParams) {
@@ -5115,7 +5117,7 @@ sap.ui.define([
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function() {
 			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
-			assert.ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
+			assert.ok(!oModel.getServiceAnnotations() || isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
 			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl([sURI + "$metadata?sap-value-list=Test", sURI + "$metadata?sap-value-list=Test2"]).then(function(oParams) {
@@ -5143,7 +5145,7 @@ sap.ui.define([
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function() {
 			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
-			assert.ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
+			assert.ok(!oModel.getServiceAnnotations() || isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
 			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl([sURI + "$metadata?sap-value-list=Test", sURI + "$metadata?sap-value-list=Test2"]).then(function(oParams) {
@@ -5186,7 +5188,7 @@ sap.ui.define([
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function() {
 			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
-			assert.ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
+			assert.ok(!oModel.getServiceAnnotations() || isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
 			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl("$metadata?sap-value-list=all").then(function() {

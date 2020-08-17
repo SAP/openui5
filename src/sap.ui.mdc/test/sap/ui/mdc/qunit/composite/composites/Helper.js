@@ -9,7 +9,7 @@ sap.ui.define([
 			if (typeof oBindingInfo === "string") {
 				oBindingInfo = ManagedObject.bindingParser(oBindingInfo);
 			}
-			// if (jQuery.isArray(oBindingInfo)) {
+			// if (Array.isArray(oBindingInfo)) {
 			//     var oBinding = oContext.getModel().getProperty(oContext.getPath() + "/@binding");
 			//     if (oBinding) {
 			//         return oBinding.getModel().getMetaModel().getMetaContext(oBinding.getPath());

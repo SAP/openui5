@@ -30,7 +30,7 @@
 						case "number":
 							sValue = Number(sValue);
 						case "object":
-							if (jQuery.isArray(oData[sName])) {
+							if (Array.isArray(oData[sName])) {
 								sValue = oUriParameters.get(sName, true);
 							}
 							break;
