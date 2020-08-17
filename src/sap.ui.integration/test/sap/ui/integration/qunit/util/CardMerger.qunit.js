@@ -181,51 +181,6 @@ sap.ui.define([
 			CardMerger.mergeCardDelta(this.oBaseJson, []);
 			assert.deepEqual(oCopy, this.oBaseJson, "the manifest was not changed");
 		});
-
-		QUnit.test("with two changes in sap.widget namespace", function (assert) {
-			this.oBaseJson = getBaseJson("sap.widget");
-			var oExpectedManifest = {
-				"sap.app": {
-					id: "sap-app-id"
-				},
-				"sap.widget": {
-					configuration: {
-						destinations: {
-							myDestination1: {
-								name: "myNewName11"
-							},
-							myDestination2: {
-								name: "myName2"
-							},
-							myDestination3: {
-								name: "myName3"
-							},
-							myDestination4: {
-								name: "myName4"
-							}
-						},
-						parameters: {
-							myParameter1: {
-								type: "string",
-								value: "myNewParameter1"
-							},
-							myParameter2: {
-								type: "int",
-								value: 5
-							},
-							myParameter3: {
-								type: "int",
-								value: 12
-							}
-						}
-					}
-				}
-			};
-			var oCopy = merge({}, this.oBaseJson);
-			var oNewManifest = CardMerger.mergeCardDelta(this.oBaseJson, [this.oChange1, this.oChange2]);
-			assert.deepEqual(oCopy, this.oBaseJson, "the original manifest was not mutated");
-			assert.deepEqual(oNewManifest, oExpectedManifest, "the delta was merged correctly");
-		});
 	});
 
 	function createDTChange(aChanges) {

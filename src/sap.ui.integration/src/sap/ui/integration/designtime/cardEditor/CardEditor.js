@@ -71,7 +71,7 @@ sap.ui.define([
 	}
 
 	function getCardConfigurationDeltaForChange(oJson, oInitialJson) {
-		var sNamespace = oJson.hasOwnProperty("sap.card") ? "sap.card" : "sap.widget";
+		var sNamespace = "sap.card";
 		var oConfiguration = ObjectPath.get([sNamespace, "configuration"], oJson);
 		var oInitialConfiguration = ObjectPath.get([sNamespace, "configuration"], oInitialJson);
 

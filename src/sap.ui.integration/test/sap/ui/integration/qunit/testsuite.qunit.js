@@ -28,16 +28,6 @@ sap.ui.define(function () {
 			page: "test-resources/sap/ui/integration/qunit/testsandbox.qunit.html?test={name}"
 		},
 		tests: {
-			"Widget": {
-				coverage: {
-					only: [
-						"sap/ui/integration/Widget"
-					]
-				},
-				module: [
-					'./Widget.qunit'
-				]
-			},
 			"Card": {
 				coverage: {
 					only: [

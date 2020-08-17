@@ -1,15 +1,16 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function(Controller, JSONModel) {
+	"sap/m/MessageToast"
+], function(Controller, MessageToast) {
 	"use strict";
+
 	return Controller.extend("sap.my.test.widget.component.controller.Widget", {
 		fireOK: function() {
-			sap.m.MessageToast.show("OK");
-			this.getOwnerComponent().fireAction({type: "OK"});
+			MessageToast.show("OK");
+			this.getOwnerComponent().card.fireAction({type: "OK"});
 		},
 		fireCancel: function() {
-			this.getOwnerComponent().fireAction({type: "Cancel"});
+			this.getOwnerComponent().card.fireAction({type: "Cancel"});
 		}
 	});
 
