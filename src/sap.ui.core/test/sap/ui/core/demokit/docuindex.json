@@ -681,8 +681,8 @@
 			},
 			{
 				"id" : "sap.ui.core.sample.RoutingNestedComponent",
-				"name" : "Routing with nested components consuming the NorthWind OData Service",
-				"description" : "An App that shows how nested component with routing enabled can be used. This app uses the NorthWind OData Service and shows the 'Products', 'Categories' and 'Suppliers' entity sets and the relationships between them."
+				"name" : "Routing with nested components consuming data from a mocked OData V2 service",
+				"description" : "An app that shows how nested components with enabled routing can be used. This app uses a mocked OData V2 service and shows the 'Products', 'Categories' and 'Suppliers' entity sets and the relationships between them."
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.BindingPath",

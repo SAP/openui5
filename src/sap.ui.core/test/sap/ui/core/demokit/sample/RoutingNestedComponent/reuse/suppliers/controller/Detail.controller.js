@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/sample/RoutingNestedComponent/base/BaseController",
 	"sap/base/Log"
 ], function(Controller, Log) {
 	"use strict";

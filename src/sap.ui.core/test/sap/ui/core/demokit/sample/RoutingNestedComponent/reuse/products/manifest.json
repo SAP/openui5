@@ -16,11 +16,12 @@
 			"version": "1.0.0"
 		},
 		"dataSources": {
-			"northwind": {
-				"uri": "https://cors-anywhere.herokuapp.com/https://services.odata.org/V2/Northwind/Northwind.svc",
+			"mainService": {
+				"uri": "/myservice/V2/Northwind.svc",
 				"type": "OData",
 				"settings": {
-					"odataVersion": "2.0"
+					"odataVersion": "2.0",
+					"localUri": "../../localService/metadata.xml"
 				}
 			}
 		}
@@ -34,6 +35,10 @@
 		}
 	},
 	"sap.ui5": {
+		"contentDensities": {
+			"cozy": true,
+			"compact": true
+		},
 		"rootView": {
 			"viewName": "sap.ui.core.sample.RoutingNestedComponent.reuse.products.view.App",
 			"type": "XML",
@@ -58,10 +63,10 @@
 				}
 			},
 			"": {
-				"dataSource": "northwind",
-				"defaultBindingMode": "TwoWay",
+				"dataSource": "mainService",
 				"preload": true,
 				"settings": {
+					"defaultBindingMode": "TwoWay",
 					"useBatch": false,
 					"defaultCountMode": "Inline"
 				}

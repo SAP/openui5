@@ -15,7 +15,16 @@
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
-		"dataSources": {}
+		"dataSources": {
+			"mainService": {
+				"uri": "/myservice/V2/Northwind.svc",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
+				}
+			}
+		}
 	},
 	"sap.ui": {
 		"technology": "UI5",
@@ -26,6 +35,10 @@
 		}
 	},
 	"sap.ui5": {
+		"contentDensities": {
+			"cozy": true,
+			"compact": true
+		},
 		"rootView": {
 			"viewName": "sap.ui.core.sample.RoutingNestedComponent.view.App",
 			"type": "XML",
@@ -53,9 +66,11 @@
 			}
 		},
 		"dependencies": {
-			"minUI5Version": "1.72",
+			"minUI5Version": "1.75.0",
 			"libs": {
-				"sap.m": {}
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.tnt": {}
 			}
 		},
 		"models": {
@@ -132,18 +147,20 @@
 				"suppliers": {
 					"type": "Component",
 					"usage": "suppliersComponent",
-					"title": "Supplier"
+					"title": "Supplier",
+					"id": "suppliersComponent"
 				},
 				"categories": {
 					"type": "Component",
 					"usage": "categoriesComponent",
-					"title": "Category"
+					"title": "Category",
+					"id": "categoriesComponent"
 				},
 				"products": {
 					"type": "Component",
 					"usage": "productsComponent",
 					"title": "Product",
-					"id": "productRoot"
+					"id": "productsComponent"
 				},
 				"notFound": {
 					"type": "View",

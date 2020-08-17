@@ -76,7 +76,7 @@
 						</f:FormElement>
 						<f:FormElement label="Image">
 							<f:fields>
-								<Image src="{path:'Category/Picture', formatter:'.northwindImageFormatter'}" />
+								<Image src="{path:'Category/Picture', formatter:'.base64StringToImage'}" />
 							</f:fields>
 						</f:FormElement>
 					</f:FormContainer>
