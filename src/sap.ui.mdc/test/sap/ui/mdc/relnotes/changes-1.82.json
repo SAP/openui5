@@ -23,6 +23,29 @@
             "reference": "2080233654"
           }
         ]
+      },
+      {
+        "id": "58375ed7b365f1ab9311f718f979edb0b506c106",
+        "type": "FEATURE",
+        "text": " Field/FilterField: new submit event",
+        "references": []
+      },
+      {
+        "id": "52f1c93aa1613bb51da644d3a5eb001a854d8ef1",
+        "type": "FEATURE",
+        "text": " FilterBar: ENTER triggers search",
+        "references": []
+      },
+      {
+        "id": "d9a53cbfa29b174d9477d0aaca5c39d30a5a3480",
+        "type": "FIX",
+        "text": " ValuHelpPanel: no search event on press on search icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080352672"
+          }
+        ]
       }
     ]
   }

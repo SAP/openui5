@@ -154,6 +154,94 @@
             "reference": "002075129500004799612020"
           }
         ]
+      },
+      {
+        "id": "5f5b9a8b12f2c6e272b63b114c716eabbec940f9",
+        "type": "FIX",
+        "text": " ShortcutHint: correct the font size and positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080281837"
+          }
+        ]
+      },
+      {
+        "id": "48a6ccfc8d532df8c3a0ec5709aa440675f61695",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: keyboard interactions are now compliant with the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080231474"
+          }
+        ]
+      },
+      {
+        "id": "b25eacef6f543ac889dfd4c40107491f24f02ae2",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: keyboard interaction now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080263565"
+          }
+        ]
+      },
+      {
+        "id": "6998cd723ae050a81f17d7e73717d4007d728c65",
+        "type": "FIX",
+        "text": " sap.m.P13nCoditionPanel: format condition text handle nullable values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080329899"
+          }
+        ]
+      },
+      {
+        "id": "a78a441e30b0e3d6f0fc370947b0e5afb318b695",
+        "type": "FIX",
+        "text": " sap.m.SemanticControl: messagebundle for Send Email is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080320551"
+          }
+        ]
+      },
+      {
+        "id": "0bf8b3c8a6262d94270a5f914b0cd5094406e57c",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Month view now starts with the first day of the month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080324231"
+          }
+        ]
+      },
+      {
+        "id": "c89d0c897676eb4cc5d6e73041e3ee80152d62fb",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: disabled state now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080353393"
+          }
+        ]
+      },
+      {
+        "id": "ea04df3eb42b8f01a5d5aec51015a7b42d4a5fdf",
+        "type": "FIX",
+        "text": " sap.m.upload.UploadSet : Drag and Drop functionality is not affected based on property UploadEnabled is true or false.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004886732020"
+          }
+        ]
       }
     ]
   }

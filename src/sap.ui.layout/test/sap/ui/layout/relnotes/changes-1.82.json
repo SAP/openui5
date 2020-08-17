@@ -34,6 +34,17 @@
             "reference": "2080296687"
           }
         ]
+      },
+      {
+        "id": "618fcec13de2dd9da27da2951892e8f4aefd30f9",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: correct internal property types set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080356220"
+          }
+        ]
       }
     ]
   }

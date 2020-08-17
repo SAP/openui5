@@ -1,0 +1,13 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "8d6964fb173fed7a9ddd8712a0b8e471d94e13fd",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.CustomElementCard: badge atrribute added",
+        "references": []
+      }
+    ]
+  }
+}

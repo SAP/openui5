@@ -12,6 +12,17 @@
             "reference": "2080318120"
           }
         ]
+      },
+      {
+        "id": "d6a863c51463999926ae424ea253b73054dad855",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: focuses the correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003137362020"
+          }
+        ]
       }
     ]
   }
