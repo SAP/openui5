@@ -141,8 +141,14 @@ sap.ui.define([
 		QUnit.test("Eventhandling", function(assert) {
 			assert.expect(4);
 			var done = assert.async();
-			qutils.triggerMouseEvent(jQuery.sap.byId(view.createId("Button1")), "click", 1, 1, 1, 1);
-			qutils.triggerMouseEvent(jQuery.sap.byId(view.createId("ButtonX")), "click", 1, 1, 1, 1);
+			var oButton1 = view.byId("Button1");
+			qutils.triggerMouseEvent(oButton1.getDomRef(), "mousedown", 1, 1, 1, 1);
+			qutils.triggerMouseEvent(oButton1.getDomRef(), "mouseup", 1, 1, 1, 1);
+			qutils.triggerMouseEvent(oButton1.getDomRef(), "click", 1, 1, 1, 1);
+			var oButtonX = view.byId("ButtonX");
+			qutils.triggerMouseEvent(oButtonX.getDomRef(), "mousedown", 1, 1, 1, 1);
+			qutils.triggerMouseEvent(oButtonX.getDomRef(), "mouseup", 1, 1, 1, 1);
+			qutils.triggerMouseEvent(oButtonX.getDomRef(), "click", 1, 1, 1, 1);
 			setTimeout(function() {
 				done();
 			}, 500);

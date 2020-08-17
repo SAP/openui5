@@ -8,8 +8,8 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/layout/VerticalLayout',
-	'sap/ui/commons/Button',
-	'sap/ui/commons/Panel',
+	'sap/m/Button',
+	'sap/m/Panel',
 	'./AnyView.qunit',
 	'jquery.sap.sjax'
 ], function(ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, Button, Panel, testsuite) {
@@ -29,11 +29,11 @@ sap.ui.define([
 	}
 
 	function dummyPlaceholder(oControl) {
-		return jQuery.sap.byId(RenderManager.RenderPrefixes.Dummy + oControl.getId())[0];
+		return document.getElementById(RenderManager.RenderPrefixes.Dummy + oControl.getId());
 	}
 
 	function invisiblePlaceholder(oControl) {
-		return jQuery.sap.byId(RenderManager.RenderPrefixes.Invisible + oControl.getId())[0];
+		return document.getElementById(RenderManager.RenderPrefixes.Invisible + oControl.getId());
 	}
 
 	var oConfig = {
@@ -121,7 +121,7 @@ sap.ui.define([
 		var oViewPromise = XMLView.create({definition: "" +
 				"<mvc:View resourceBundleName=\"testdata.mvc.text\"\n" +
 				"\t\t   resourceBundleAlias=\"i18n\"\n" +
-				"\t\t   xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.ui.commons\" xmlns:html=\"http://www.w3.org/1999/xhtml\">\n" +
+				"\t\t   xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\" xmlns:html=\"http://www.w3.org/1999/xhtml\">\n" +
 				"\t<Panel id=\"aPanel\">\n" +
 				"\t\t<Button id=\"Button1\" text=\"{i18n>TEXT_CLOSE}\" press=\"doIt\"></Button>\n" +
 				"\t</Panel>\n" +
@@ -149,7 +149,7 @@ sap.ui.define([
 
 		// check that DOM exists
 		var oElemPanel1 = oView.byId("myPanel").getDomRef();
-		var oElemTable1 = jQuery.sap.domById(oView.createId("localTableId"));
+		var oElemTable1 = document.getElementById(oView.createId("localTableId"));
 		assert.ok(oElemPanel1, "DOM for myPanel should exist");
 		assert.ok(oElemTable1, "DOM for localTableId should exist");
 
@@ -159,7 +159,7 @@ sap.ui.define([
 
 		// check that DOM has been preserved
 		var oElemPanel2 = oView.byId("myPanel").getDomRef();
-		var oElemTable2 = jQuery.sap.domById(oView.createId("localTableId"));
+		var oElemTable2 = document.getElementById(oView.createId("localTableId"));
 		assert.ok(oElemPanel2, "DOM for myPanel should exist after rerendering");
 		assert.ok(oElemTable2, "DOM for localTableId should exist after rerendering");
 		assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default
@@ -197,7 +197,7 @@ sap.ui.define([
 
 			// check DOM of controls
 			var oElemPanel1 = oView.byId("myPanel").getDomRef();
-			var oElemTable1 = jQuery.sap.domById(oView.createId("localTableId"));
+			var oElemTable1 = document.getElementById(oView.createId("localTableId"));
 			assert.ok(oElemPanel1, "DOM for myPanel should exist");
 			assert.ok(oElemTable1, "DOM for localTableId should exist");
 
@@ -207,7 +207,7 @@ sap.ui.define([
 
 			// check that DOM has been preserved
 			var oElemPanel2 = oView.byId("myPanel").getDomRef();
-			var oElemTable2 = jQuery.sap.domById(oView.createId("localTableId"));
+			var oElemTable2 = document.getElementById(oView.createId("localTableId"));
 			assert.ok(oElemPanel2, "DOM for myPanel should exist after rerendering");
 			assert.ok(oElemTable2, "DOM for localTableId should exist after rerendering");
 			assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default
@@ -237,7 +237,7 @@ sap.ui.define([
 		assert.ok(oElemViewBefore, "DOM for view should exist");
 
 		// simulate a rendering with a custom RenderManager
-		var oPanelContent = oPanel.getDomRef("cont");
+		var oPanelContent = oPanel.getDomRef("content");
 		var rm = sap.ui.getCore().createRenderManager();
 		rm.renderControl(oView);
 		rm.flush(oPanelContent);
@@ -256,11 +256,11 @@ sap.ui.define([
 		var xmlview;
 
 		function check(bVisible, sMsgSuffix) {
-			var vLayoutNode = jQuery.sap.domById('vLayout');
-			var btnBeforeNode = jQuery.sap.domById('btnBefore');
-			var xmlviewNode = jQuery.sap.domById('xmlview');
-			var xmlviewPlaceholderNode = jQuery.sap.domById('sap-ui-invisible-xmlview');
-			var btnAfterNode = jQuery.sap.domById('btnAfter');
+			var vLayoutNode = document.getElementById('vLayout');
+			var btnBeforeNode = document.getElementById('btnBefore');
+			var xmlviewNode = document.getElementById('xmlview');
+			var xmlviewPlaceholderNode = document.getElementById('sap-ui-invisible-xmlview');
+			var btnAfterNode = document.getElementById('btnAfter');
 
 			assert.ok(vLayoutNode, "vLayout be rendered");
 			assert.ok(btnBeforeNode, "btnBefore should be rendered");
@@ -285,8 +285,8 @@ sap.ui.define([
 			}
 
 			// check children of xmlview
-			var xmlviewChildHTMLNode = jQuery.sap.domById(xmlview.createId('localTableId'));
-			var xmlviewChildButton3Node = jQuery.sap.domById(xmlview.createId('Button3'));
+			var xmlviewChildHTMLNode = document.getElementById(xmlview.createId('localTableId'));
+			var xmlviewChildButton3Node = document.getElementById(xmlview.createId('Button3'));
 			assert.ok(xmlviewChildHTMLNode, "xmlview child DOM should be rendered");
 			assert.ok(xmlviewChildButton3Node, "xmlview child control should be rendered");
 			assert.ok(xmlviewNode.compareDocumentPosition(xmlviewChildHTMLNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview DOM should contain child DOM" + sMsgSuffix);

@@ -12,13 +12,13 @@
 		 * @returns {sap.ui.cre.Control}
 		 */
 		createContent: function(oController) {
-			var oPanel = new sap.ui.commons.Panel(this.createId("myPanel"));
-			var oButton1 = new sap.ui.commons.Button(this.createId("Button1"),{text:"Hello World!"});
+			var oPanel = new sap.m.Panel(this.createId("myPanel"));
+			var oButton1 = new sap.m.Button(this.createId("Button1"),{text:"Hello World!"});
 			oButton1.attachPress(oController.doIt,oController);
 			oPanel.addContent(oButton1);
-			var oButton2 = new sap.ui.commons.Button(this.createId("Button2"),{text:"Hello"});
+			var oButton2 = new sap.m.Button(this.createId("Button2"),{text:"Hello"});
 			oPanel.addContent(oButton2);
-			var oButtonX = new sap.ui.commons.Button(this.createId("ButtonX"),{text:"Hello"});
+			var oButtonX = new sap.m.Button(this.createId("ButtonX"),{text:"Hello"});
 			oButtonX.attachPress(oController.sap.doIt,oController);
 			oPanel.addContent(oButtonX);
 			var oView1 = sap.ui.jsonview(this.createId("MyJSONView"),"example.mvc.test2");

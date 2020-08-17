@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/commons/Button"
+	"sap/m/Button"
 ], function(HorizontalLayout, Button) {
 	"use strict";
 

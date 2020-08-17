@@ -17,7 +17,18 @@ sap.ui.define([
 	});
 
 	testsuite(oConfig, "HTMLView creation via HTML string", function() {
-		var sHtml = '<template data-controller-name="example.mvc.test"><div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Panel" id="myPanel">	<div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Button" id="Button1" data-text="Hello World" data-press="doIt"></div>	<div data-sap-ui-type="sap.ui.commons.Button" id="Button2" data-text="Hello"></div>	<div data-sap-ui-type="sap.ui.commons.Button" id="ButtonX" data-text="Another Hello" data-press=".sap.doIt"></div>	<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="example.mvc.test2"></div>	<div data-sap-ui-type="sap.ui.core.mvc.JSView" id="MyJSView" data-view-name="example.mvc.test2"></div>	<div data-sap-ui-type="sap.ui.core.mvc.JSONView" id="MyJSONView" data-view-name="example.mvc.test2"></div>	<div data-sap-ui-type="sap.ui.core.mvc.XMLView" id="MyXMLView" data-view-name="example.mvc.test2"></div></div></template>';
+		var sHtml =
+			'<template data-controller-name="example.mvc.test">' +
+			'<div class="test test2 test3" data-sap-ui-type="sap.m.Panel" id="myPanel">' +
+			'	<div class="test test2 test3" data-sap-ui-type="sap.m.Button" id="Button1" data-text="Hello World" data-press="doIt"></div>' +
+			'	<div data-sap-ui-type="sap.m.Button" id="Button2" data-text="Hello"></div>' +
+			'	<div data-sap-ui-type="sap.m.Button" id="ButtonX" data-text="Another Hello" data-press=".sap.doIt"></div>' +
+			'	<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="example.mvc.test2"></div>"' +
+			'	<div data-sap-ui-type="sap.ui.core.mvc.JSView" id="MyJSView" data-view-name="example.mvc.test2"></div>' +
+			'	<div data-sap-ui-type="sap.ui.core.mvc.JSONView" id="MyJSONView" data-view-name="example.mvc.test2"></div>' +
+			'	<div data-sap-ui-type="sap.ui.core.mvc.XMLView" id="MyXMLView" data-view-name="example.mvc.test2"></div>' +
+			'</div>' +
+			'</template>';
 		return sap.ui.htmlview({viewContent:sHtml});
 	});
 
@@ -45,9 +56,9 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var oLabel = oView.byId("MyLabel");
 		assert.equal(oLabel.getLabelFor(), oView.byId("message").getId(), "Assocation id is set right");
-		var oNavigationBar = oView.byId("MyNavigationBar");
-		assert.equal(oNavigationBar.getAssociatedItems().length, 3, "Number of associated controls is right");
-		assert.deepEqual(oNavigationBar.getAssociatedItems(), [oView.byId("navitem1").getId(), oView.byId("navitem2").getId(), oView.byId("navitem3").getId()],"Number of associated controls is right", "Assocation IDs are set right");
+		var oCombo = oView.byId("MyComboBox");
+		assert.equal(oCombo.getSelectedItems().length, 3, "Number of associated controls is right");
+		assert.deepEqual(oCombo.getAssociation("selectedItems"), [oView.byId("item1").getId(), oView.byId("item2").getId(), oView.byId("item3").getId()],"Number of associated controls is right", "Assocation IDs are set right");
 		oView.destroy();
 	});
 

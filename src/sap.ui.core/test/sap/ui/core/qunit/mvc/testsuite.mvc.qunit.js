@@ -10,36 +10,24 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					"example/mvc": "test-resources/sap/ui/core/qunit/mvc/testdata", // used by sync tests
 					"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/" // used by sync tests
 				}
+			},
+			ui5: {
+				libs: ["sap.ui.core", "sap.ui.layout", "sap.m"],
+				theme: "sap_fiori_3"
 			}
 		},
 		tests: {
 			AsyncHTMLView: {
-				title: "QUnit Page for async sap.ui.core.mvc.HTMLView",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				}
+				title: "QUnit Page for async sap.ui.core.mvc.HTMLView"
 			},
 			AsyncJSONView: {
-				title: "QUnit Page for async sap.ui.core.mvc.JSONView",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				}
+				title: "QUnit Page for async sap.ui.core.mvc.JSONView"
 			},
 			AsyncJSView: {
-				title: "QUnit Page for async sap.ui.core.mvc.JSView",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				}
+				title: "QUnit Page for async sap.ui.core.mvc.JSView"
 			},
 			AsyncXMLView: {
-				title: "QUnit Page for async sap.ui.core.mvc.XMLView",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				}
+				title: "QUnit Page for async sap.ui.core.mvc.XMLView"
 			},
 			Controller: {
 				sinon: true
@@ -49,26 +37,14 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			HTMLView: {
 				title: "QUnit Page for sap.ui.core.mvc.HTMLView + sap.ui.core.mvc.Controller",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				},
 				sinon: false
 			},
 			JSONView: {
 				title: "QUnit Page for sap.ui.core.mvc.JSONView + sap.ui.core.mvc.Controller",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				},
 				sinon: false
 			},
 			JSView: {
 				title: "QUnit Page for sap.ui.core.mvc.JSView + sap.ui.core.mvc.Controller",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				},
 				sinon: false
 			},
 			View: {
@@ -76,10 +52,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			XMLView: {
 				title: "QUnit Page for sap.ui.core.mvc.XMLView + sap.ui.core.mvc.Controller",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				},
 				qunit: {
 					reorder: false
 				}
@@ -97,9 +69,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			"viewprocessing/ViewProcessing": {
 				title: "QUnit Page for sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing",
-				ui5: {
-					libs: "sap.m"
-				},
 				loader: {
 					paths: {
 						"sap/ui/core/qunit/mvc/viewprocessing": "test-resources/sap/ui/core/qunit/mvc/viewprocessing/"
@@ -108,9 +77,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			XMLTemplateProcessor: {
 				title: "QUnit Page for XMLTemplateProcessor (sync)",
-				ui5: {
-					libs: "sap.m"
-				},
 				loader: {
 					paths: {
 						"my": "test-resources/sap/ui/core/qunit/fragment/"
@@ -119,9 +85,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			XMLTemplateProcessorAsync: {
 				title: "QUnit Page for XMLTemplateProcessor (async)",
-				ui5: {
-					libs: "sap.m"
-				},
 				loader: {
 					paths: {
 						"testdata": "test-resources/sap/ui/core/qunit/testdata",
@@ -131,9 +94,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			XMLTemplateProcessorRequireXML: {
 				title: "QUnit Page for XMLTemplateProcessor - Require in XML",
-				ui5: {
-					libs: "sap.m"
-				},
 				loader: {
 					paths: {
 						"testdata": "test-resources/sap/ui/core/qunit/testdata"
@@ -152,9 +112,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				title: "sap.ui.core.DeclarativeSupport",
 				// we keep the HTML page here, because of the complex test fixture
 				page: "test-resources/sap/ui/core/qunit/Declarative.qunit.html",
-				ui5: {
-					libs: "sap.ui.commons,sap.ui.ux3"
-				},
 				module: "test-resources/sap/ui/core/qunit/Declarative.qunit"
 			},
 			Fragment: {

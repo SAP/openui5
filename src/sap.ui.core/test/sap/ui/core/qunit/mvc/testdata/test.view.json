@@ -1,25 +1,25 @@
 {	"Type": "sap.ui.core.JSONView",
 	"controllerName":"example.mvc.test",
 	"content": [{
-		"Type":"sap.ui.commons.Panel",
+		"Type":"sap.m.Panel",
 		"id":"myPanel",
 		"content":[
 			{
-				"Type":"sap.ui.commons.Button",
+				"Type":"sap.m.Button",
 				"id":"Button1",
 				"text":"Hello World!",
 				"press": "doIt"
 			},
 			{
-				"Type": "sap.ui.commons.SearchField"
+				"Type": "sap.m.SearchField"
 			},
 			{
-				"Type":"sap.ui.commons.Button",
+				"Type":"sap.m.Button",
 				"id":"Button2",
 				"text":"Hello"
 			},
 			{
-				"Type":"sap.ui.commons.Button",
+				"Type":"sap.m.Button",
 				"id":"ButtonX",
 				"text":"Another Hello",
 				"press": ".sap.doIt"
@@ -46,7 +46,7 @@
 				"id":"MyHTMLView"
 			},
 			{
-				"Type":"sap.ui.commons.Button",
+				"Type":"sap.m.Button",
 				"id":"ButtonWithBinding",
 				"text": "{path:\"/test\", formatter: \".valueFormatter\"}"
 			}

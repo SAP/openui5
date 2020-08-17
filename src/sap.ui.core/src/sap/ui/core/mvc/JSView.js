@@ -140,7 +140,7 @@ sap.ui.define([
 	sap.ui.jsview = function(sId, vView, bAsync) {
 		var fnLogDeprecation = function(sMethod) {
 			Log[sMethod](
-				"Do not use deprecated view factory functions." +
+				"Do not use deprecated view factory functions. " +
 				"Use the static create function on the specific view module instead: [XML|JS|HTML|JSON]View.create().",
 				"sap.ui.view",
 				null,

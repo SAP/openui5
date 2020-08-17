@@ -1037,7 +1037,7 @@ sap.ui.define([
 			sName = sName || (vView && vView.name);
 
 			Log[sMethod](
-				"Do not use deprecated view factory functions (" + sName + ")." +
+				"Do not use deprecated view factory functions (" + sName + "). " +
 				"Use the static create function on the view module instead: [XML|JS|HTML|JSON|]View.create().",
 				"sap.ui.view",
 				null,
