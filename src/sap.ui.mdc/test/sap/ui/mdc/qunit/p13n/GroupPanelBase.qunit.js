@@ -162,7 +162,71 @@ sap.ui.define([
         assert.equal(oOuterList.getItems()[1].getVisible(), true, "Panel is visible since items are available");
     });
 
-    QUnit.test("Check Search implementation in combination with 'grou mode' Select", function(assert){
+    QUnit.test("Check Search implementation in combination with 'group mode' Select for 'active'", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        this.oPanel._sModeKey = "active";
+        var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
+        var oOuterList = this.oPanel._oListControl;
+
+        //filter only via select control --> only first group has an active item
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+        assert.equal(oOuterList.getItems()[0].getVisible(), true, "Panel is invisible since items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), false, "Panel is invisible since no items are available");
+
+        //filter with additional search --> active item does not have this tooltip
+        this.oPanel._getSearchField().setValue("Some Tooltip");
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+        assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), false, "Panel is invisible since no items are available");
+
+        //filter with a search filter and 'all' --> only affected item with the tooltip should be visible
+        this.oPanel._sModeKey = "all";
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+        assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), true, "Panel is visible since items are available");
+    });
+
+    QUnit.test("Check Search implementation in combination with 'group mode' Select for 'visibleactive'", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        this.oPanel._sModeKey = "visibleactive";
+        var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
+        var oOuterList = this.oPanel._oListControl;
+
+        //filter only via select control --> only first group has an active and visible item
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+        assert.equal(oOuterList.getItems()[0].getVisible(), true, "Panel is visible since items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), false, "Panel is invisible since no items are available");
+
+        //filter with additional search --> active item is still present as it fits the label
+        this.oPanel._getSearchField().setValue("Field 2");
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+        assert.equal(oOuterList.getItems()[0].getVisible(), true, "Panel is visible since items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), false, "Panel is invisible since no items are available");
+
+        this.oPanel._getSearchField().setValue("Field 1");
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+        assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), false, "Panel is invisible since no items are available");
+
+        //filter with additional search --> active item is still present as it fits the label
+        this.oPanel._getSearchField().setValue("Field 2");
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+        assert.equal(oOuterList.getItems()[0].getVisible(), true, "Panel is visible since items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), false, "Panel is invisible since no items are available");
+
+        //filter with a search filter and 'all' --> only affected item with the tooltip should be visible
+        this.oPanel._sModeKey = "all";
+        this.oPanel._getSearchField().setValue("");
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+        assert.equal(oOuterList.getItems()[0].getVisible(), true, "Panel is visible since items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), true, "Panel is visible since items are available");
+    });
+
+    QUnit.test("Check Search implementation in combination with 'group mode' Select", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
 
@@ -313,6 +377,48 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check view toggle", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        assert.equal(this.oPanel.getViewMode(), "Group", "Group view is the default");
+
+        this.oPanel.switchViewMode("Group");
+        assert.equal(this.oPanel.getViewMode(), "Group", "Group view is unchanged");
+
+        this.oPanel.switchViewMode("List");
+        assert.equal(this.oPanel.getViewMode(), "List", "List view should be selected");
+
+        this.oPanel.switchViewMode("Group");
+        assert.equal(this.oPanel.getViewMode(), "Group", "List view should be selected");
+
+    });
+
+    QUnit.test("Throw an error for invalid view types", function (assert) {
+        assert.throws(
+            function () {
+                this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+                this.oPanel.switchViewMode("Some invalid value");
+            }.bind(this),
+            function (oError) {
+                return oError instanceof Error;
+            },
+            "Error has been raised as the parameter is a false value"
+        );
+    });
+
+    QUnit.test("Check inner controls upon toggling the view", function (assert) {
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        this.oPanel.switchViewMode("List");
+        assert.ok(this.oPanel._oListControl.isA("sap.m.Table"));
+
+        this.oPanel.switchViewMode("Group");
+        assert.ok(this.oPanel._oListControl.isA("sap.m.List"));
+
+    });
+
     QUnit.module("'GroupPanelBase' instance with a custom model name",{
         beforeEach: function() {
             this.oPanel = new GroupPanelBase();
@@ -350,6 +456,7 @@ sap.ui.define([
 
     QUnit.test("Check item creation with a custom model", function(assert){
         fnCheckListCreation.call(this, assert);
+
     });
 
 });

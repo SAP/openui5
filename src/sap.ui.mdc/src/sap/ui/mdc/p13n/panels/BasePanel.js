@@ -75,7 +75,7 @@ sap.ui.define([
 		},
 		init: function() {
 			// list is necessary to set the template + model on
-			this._oListControl = this._createInnerListControl();
+			this._oListControl = this._createUI();
 
 			// disable 'select all'
 			this._oListControl.bPreventMassSelection = true;
@@ -104,9 +104,9 @@ sap.ui.define([
 		this.setAggregation("_content", this._oListControl);
 	};
 
-	BasePanel.prototype._createInnerListControl = function(){
+	BasePanel.prototype._createUI = function(){
 
-		this._moveTopButton = new OverflowToolbarButton("IDButtonMoveToTop",{
+		this._moveTopButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveToTop",{
 			type: "Transparent",
 			tooltip: this.getResourceText("p13nDialog.MOVE_TO_TOP"),
 			icon: "sap-icon://collapse-group",
@@ -118,7 +118,7 @@ sap.ui.define([
 				group: 2
 			})
 		});
-		this._moveUpButton = new OverflowToolbarButton("IDButtonMoveUp",{
+		this._moveUpButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveUp",{
 			type: "Transparent",
 			tooltip: this.getResourceText("p13nDialog.MOVE_UP"),
 			icon: "sap-icon://slim-arrow-up",
@@ -130,7 +130,7 @@ sap.ui.define([
 				group: 1
 			})
 		});
-		this._moveDownButton = new OverflowToolbarButton("IDButtonMoveDown",{
+		this._moveDownButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveDown",{
 			type: "Transparent",
 			tooltip: this.getResourceText("p13nDialog.MOVE_DOWN"),
 			icon: "sap-icon://slim-arrow-down",
@@ -142,7 +142,7 @@ sap.ui.define([
 				group: 1
 			})
 		});
-		this._moveBottomButton = new OverflowToolbarButton("IDButtonMoveToBottom",{
+		this._moveBottomButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveToBottom",{
 			type: "Transparent",
 			tooltip: this.getResourceText("p13nDialog.MOVE_TO_BOTTOM"),
 			icon: "sap-icon://expand-group",
@@ -163,7 +163,7 @@ sap.ui.define([
 			drop: [this._onRearrange, this]
 		});
 
-		var oReorderButton = new Button("IDshowSelectedBtn",{
+		this.oReorderButton = new Button(this.getId() + "IDshowSelectedBtn",{
 			text: {
 				path: this.P13N_MODEL + ">/reorderMode",
 				formatter: function (bReorderMode) {
@@ -173,12 +173,13 @@ sap.ui.define([
 			press: [this._onPressToggleMode, this]
 		});
 
-		var oBasePanelUI = new Table(this.getId() + "idBasePanelTable", {
-			mode:"MultiSelect",
-			rememberSelections: false,
-			itemPress: [this._onItemPressed, this],
-			selectionChange: [this._onSelectionChange, this],
-			sticky: ["HeaderToolbar", "ColumnHeaders"],
+		var oBasePanelUI = this._createInnerListControl();
+
+		return oBasePanelUI;
+	};
+
+	BasePanel.prototype._createInnerListControl = function() {
+		return new Table(this.getId() + "idBasePanelTable", Object.assign(this._getListControlConfig(), {
 			headerToolbar: new OverflowToolbar({
 				content: [
 					this._getSearchField(),
@@ -187,13 +188,21 @@ sap.ui.define([
 					this._moveUpButton,
 					this._moveDownButton,
 					this._moveBottomButton,
-					oReorderButton
+					this.oReorderButton
 				]
-			}),
-			dragDropConfig: this._oDragDropInfo
-		});
+			})
+		}));
+	};
 
-		return oBasePanelUI;
+	BasePanel.prototype._getListControlConfig = function() {
+		return {
+			mode:"MultiSelect",
+			rememberSelections: false,
+			itemPress: [this._onItemPressed, this],
+			selectionChange: [this._onSelectionChange, this],
+			sticky: ["HeaderToolbar", "ColumnHeaders"],
+			dragDropConfig: this._oDragDropInfo
+		};
 	};
 
 	BasePanel.prototype._getSearchField = function() {
@@ -227,16 +236,16 @@ sap.ui.define([
 		return this;
 	};
 
-	BasePanel.prototype.setPanelColumns = function(sTexts) {
-		var aTexts;
-		if (sTexts instanceof Array) {
-			aTexts = sTexts;
+	BasePanel.prototype.setPanelColumns = function(vColumns) {
+		var aColumns;
+		if (vColumns instanceof Array) {
+			aColumns = vColumns;
 		} else {
-			aTexts = [
-				sTexts
+			aColumns = [
+				vColumns
 			];
 		}
-		this._addTableColumns(aTexts);
+		this._addTableColumns(aColumns);
 	};
 
 	/**
@@ -257,14 +266,22 @@ sap.ui.define([
 		return sText ? this.oResourceBundle.getText(sText) : this.oResourceBundle;
 	};
 
-	BasePanel.prototype._addTableColumns = function(aTexts) {
+	BasePanel.prototype._addTableColumns = function(aColumns) {
 		this._oListControl.removeAllColumns();
-		aTexts.forEach(function(sText) {
-			this._oListControl.addColumn(new Column({
-				header: new Text({
-					text: sText
-				})
-			}));
+		aColumns.forEach(function(vColumn) {
+			var oColumn;
+
+			if (typeof vColumn == "string") {
+				oColumn = new Column({
+					header: new Text({
+						text: vColumn
+					})
+				});
+			} else {
+				oColumn = vColumn;
+			}
+
+			this._oListControl.addColumn(oColumn);
 		}, this);
 	};
 
@@ -347,7 +364,7 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype.getPanelMode = function() {
-		return this.getP13nModel().getProperty("/reorderMode");
+		return this.getP13nModel() ? this.getP13nModel().getProperty("/reorderMode") : false;
 	};
 
 	BasePanel.prototype.setPanelMode = function(bReorder) {

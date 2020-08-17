@@ -2,8 +2,12 @@
 * ! ${copyright}
 */
 sap.ui.define([
+    "sap/m/Toolbar",
+    "sap/m/MenuButton",
+    "sap/m/Menu",
+    "sap/m/MenuItem",
     "sap/base/util/merge"
-], function(merge) {
+], function(Toolbar, MenuButton, Menu, MenuItem, merge) {
     "use strict";
 
     var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -43,6 +47,11 @@ sap.ui.define([
                         content: oP13nUI,
                         afterClose: mDialogSettings.afterClose ? mDialogSettings.afterClose : function(){}
                     });
+
+                    //TODO: check if this needs to be a function
+                    if (mDialogSettings.customHeader) {
+                        oPopover.setCustomHeader(mDialogSettings.customHeader());
+                    }
                     resolve(oPopover);
                 },reject);
             });
@@ -94,6 +103,12 @@ sap.ui.define([
                             })
                         ]
                     });
+
+                    //TODO: check if this needs to be a function
+                    if (mDialogSettings.customHeader) {
+                        oContainer.setCustomHeader(mDialogSettings.customHeader());
+                    }
+
                     var aAdditionalButtons = mDialogSettings.additionalButtons;
                     if (aAdditionalButtons instanceof Array) {
                         aAdditionalButtons.forEach(function(oButton){
@@ -106,6 +121,43 @@ sap.ui.define([
                     resolve(oContainer);
                 }, reject);
             });
+
+        },
+
+        /**
+         *
+         * @param {object} mSettings Settings object to create a customized view switch control within a Toolbar
+         * @param {string} mSettings.defaultText Default text which should be displayed
+         * @param {array} mSettings.menuItems Array containint the settings it should contain objects defined as: [{text: "Item 1", handler:fnCustom}]
+         *
+         * @returns {sap.m.Toolbar} The created view switch control
+         */
+        createViewSwitch: function(mSettings) {
+
+            var aMenuItems = [];
+
+            mSettings.menuItems.forEach(function(oItem){
+                aMenuItems.push(new MenuItem({
+                    text: oItem.text,
+                    press: oItem.handler
+                }));
+            });
+
+            var oViewSwitch = new Toolbar({
+                content: [
+                    new MenuButton({
+                        text: mSettings.defaultText,
+                        buttonMode: "Split",
+                        menu: [
+                            new Menu({
+                                items: aMenuItems
+                            })
+                        ]
+                    })
+                ]
+            });
+
+            return oViewSwitch;
 
         },
 
@@ -216,6 +268,10 @@ sap.ui.define([
                     visible: "isSorted"
                 },
                 Filter: {
+                    position: "position",
+                    visible: "selected"
+                },
+                generic: {
                     position: undefined,
                     visible: undefined
                 }
@@ -225,7 +281,7 @@ sap.ui.define([
         _builtGroupStructure: function(mItemsGrouped) {
             var aGroupedItems = [];
             Object.keys(mItemsGrouped).forEach(function(sGroupKey){
-                this._sortP13nData("Filter", mItemsGrouped[sGroupKey]);
+                this._sortP13nData("generic", mItemsGrouped[sGroupKey]);
                 aGroupedItems.push({
                     group: sGroupKey,
                     groupLabel: mItemsGrouped[sGroupKey][0].groupLabel || oRB.getText("p13nDialog.FILTER_DEFAULT_GROUP"),//Grouplabel might not be necessarily be propagated to every item
@@ -249,11 +305,11 @@ sap.ui.define([
 
         _checkSettings: function(oP13nUI, mDialogSettings, fnOnError) {
             if (!mDialogSettings) {
-                fnOnError("Please provide a settings object for Popover creation");
+                fnOnError("Please provide a settings object for p13n creation");
             }
 
-            if (!mDialogSettings.title) {
-                fnOnError("Please provide a title in the settings object for Popover creation");
+            if (!mDialogSettings.title && !mDialogSettings.customHeader) {
+                fnOnError("Please provide a title or customHeader in the settings object for p13n creation");
             }
         },
 

@@ -371,7 +371,8 @@ sap.ui.define([
 			ignoreIndex: oP13nConfig ? oP13nConfig.ignoreIndex : false,
 			adaptationUI: oP13nConfig ? oP13nConfig.adaptationUI : undefined,
 			initializeControl: oP13nConfig && oP13nConfig.initializeControl ? oP13nConfig.initializeControl : function(){ return Promise.resolve();},
-			containerSettings: oP13nConfig && oP13nConfig.containerSettings ? oP13nConfig.containerSettings : {}
+			containerSettings: oP13nConfig && oP13nConfig.containerSettings ? oP13nConfig.containerSettings : {},
+			sortData: oP13nConfig && oP13nConfig.hasOwnProperty("sortData") ? oP13nConfig.sortData : true
 		};
 	};
 
@@ -421,8 +422,9 @@ sap.ui.define([
 		var oControlState = merge({}, this.getStateRetriever().call(oAdaptationControl, this.oAdaptationControlDelegate));
 
 		var aIgnoreValues = this._getTypeIgnoreValues(this.sP13nType);
+		var bSortData = this.getTypeConfig(this.sP13nType).sortData;
 
-		return P13nBuilder.prepareP13nData(oControlState, aPropertyInfo, aIgnoreValues, this.sP13nType);
+		return P13nBuilder.prepareP13nData(oControlState, aPropertyInfo, aIgnoreValues, bSortData ? this.sP13nType : "generic");
 
 	};
 
