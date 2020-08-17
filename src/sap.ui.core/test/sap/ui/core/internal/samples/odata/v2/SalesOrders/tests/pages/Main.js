@@ -832,7 +832,7 @@ sap.ui.define([
 							Opa5.assert.equal(oSelectedField.getValueStateText(),
 								mMessageShort2Message[sMessageShort],
 								"The " + sField + " in row " + iRow +
-									" has the correct value state");
+									" has the correct value state text");
 						},
 						viewName : sViewName
 					});
