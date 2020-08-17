@@ -10,7 +10,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	// String.prototype.normalize is not available in IE nor in Android webview
 	// As this functionality is used for filtering user input:
 	//  Special characters which require normalization are a rare case for a mobile device keyboard, hence the mobile check
-	if (!String.prototype.normalize && !Device.browser.mobile) {
+	if (!String.prototype.normalize && Device.system.desktop) {
 		var NormalizePolyfill = sap.ui.requireSync('sap/base/strings/NormalizePolyfill');
 		NormalizePolyfill.apply();
 	}

@@ -2,8 +2,9 @@
 sap.ui.define([
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator'
-], function(FilterProcessor, Filter, FilterOperator) {
+	'sap/ui/model/FilterOperator',
+	'sap/ui/Device'
+], function(FilterProcessor, Filter, FilterOperator, Device) {
 	"use strict";
 
 	QUnit.module("Operators");
@@ -405,42 +406,53 @@ sap.ui.define([
 		assert.notOk(oGroupedFilter.aFilters[1]._bMultiFilter, "Second Filter should not be a MultiFilter");
 	});
 
-	QUnit.module("Normalizer cache");
+	if (String.prototype.normalize) {
 
-	QUnit.test("Caching of normalized values", function(assert) {
-		var oSpy = sinon.spy(String.prototype, "normalize");
-		var a = ["Wakeboarding", "Skateboarding", "Tennis", "Marathon", "Cycling", "Snowboarding", "Surfing"];
-		var oFilter = new Filter({
-			filters: [
-				new Filter({
-					path: ".",
-					operator: FilterOperator.EQ,
-					value1: "Tennis"
-				}),
-				new Filter({
-					path: ".",
-					operator: FilterOperator.EQ,
-					value1: "Swimming"
-				}),
-				new Filter({
-					path: ".",
-					operator: FilterOperator.EQ,
-					value1: "Snowboarding"
-				}),
-				new Filter({
-					path: ".",
-					operator: FilterOperator.EQ,
-					value1: "Esports"
-				})
-			],
-			and: false
+		QUnit.module("Normalizer cache");
+
+		QUnit.test("Caching of normalized values", function(assert) {
+			var oSpy = sinon.spy(String.prototype, "normalize");
+			var a = ["Wakeboarding", "Skateboarding", "Tennis", "Marathon", "Cycling", "Snowboarding", "Surfing"];
+			var oFilter = new Filter({
+				filters: [
+					new Filter({
+						path: ".",
+						operator: FilterOperator.EQ,
+						value1: "Tennis"
+					}),
+					new Filter({
+						path: ".",
+						operator: FilterOperator.EQ,
+						value1: "Swimming"
+					}),
+					new Filter({
+						path: ".",
+						operator: FilterOperator.EQ,
+						value1: "Snowboarding"
+					}),
+					new Filter({
+						path: ".",
+						operator: FilterOperator.EQ,
+						value1: "Esports"
+					})
+				],
+				and: false
+			});
+
+			var aFiltered = FilterProcessor.apply(a, oFilter, function (s) {
+				return s;
+			}, {});
+			var iExpectedCalls = 9;
+			// Internet Explorer has two normalize calls per unique value, due to issues with
+			// toUpperCase on not normalized characters
+			if (Device.browser.msie || Device.browser.edge) {
+				iExpectedCalls = iExpectedCalls * 2;
+			}
+
+			assert.equal(aFiltered.length, 2, "Two results found");
+			assert.equal(oSpy.callCount, iExpectedCalls, "Normalize is only called once per unique data or filter value");
 		});
 
-		var aFiltered = FilterProcessor.apply(a, oFilter, function (s) {
-			return s;
-		}, {});
+	}
 
-		assert.equal(aFiltered.length, 2, "Two results found");
-		assert.equal(oSpy.callCount, 9, "Normalize is only called once per unique data or filter value");
-	});
 });
