@@ -170,12 +170,19 @@ sap.ui.define([
 
 		assert.ok(document.getElementById("myNC"), "NavContainer should be rendered");
 		assert.ok(!document.getElementById("nc2"), "NavContainer 2 should not be rendered");
+		assert.ok(document.getElementById("sap-ui-invisible-nc2"), "NavContainer 2 invisible container should be rendered");
+
 		assert.ok(document.getElementById("page1"), "Initially the first page should be rendered");
 		assert.equal(nc.getCurrentPage().getId(), "page1", "getCurrentPage should return Page1");
 		assert.equal(nc._pageStack.length, 1, "the page stack size should be 1");
 
 		assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 		assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
+
+		nc2.setVisible(true);
+		Core.applyChanges();
+
+		assert.ok(document.getElementById("nc2"), "NavContainer 2 should be rendered");
 	});
 
 	QUnit.module("AutoFocus tests", {

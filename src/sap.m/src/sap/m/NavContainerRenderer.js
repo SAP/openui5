@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/InvisibleRenderer"],
+	function(InvisibleRenderer) {
 	"use strict";
 
 
@@ -26,9 +26,10 @@ sap.ui.define([],
 
 		oControl._bRenderingInProgress = true;
 
-		// return immediately if control is invisible
+		// render invisible placeholder
 		if (!oControl.getVisible()) {
-			return;
+			InvisibleRenderer.render(oRm, oControl, "div");
+			return false;
 		}
 
 		var sHeight = oControl.getHeight(),
