@@ -111,7 +111,7 @@ sap.ui.define([
 			var oList = this.byId("productList");
 			var aListItems = oList.getItems();
 			aListItems.some(function(oItem) {
-				if (oItem.getBindingContext().sPath === "/Products('" + this._sProductId + "')") {
+				if (oItem.getBindingContext().getPath() === "/Products('" + this._sProductId + "')") {
 					oList.setSelectedItem(oItem);
 					return true;
 				}

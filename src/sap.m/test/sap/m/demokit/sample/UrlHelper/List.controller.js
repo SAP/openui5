@@ -1,8 +1,11 @@
 sap.ui.define([
+		'sap/m/library',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(Controller, JSONModel) {
+	], function(mobileLibrary, Controller, JSONModel) {
 	"use strict";
+
+	var URLHelper = mobileLibrary.URLHelper;
 
 	var ListController = Controller.extend("sap.m.sample.UrlHelper.List", {
 
@@ -13,23 +16,23 @@ sap.ui.define([
 		},
 
 		_getVal: function(evt) {
-			return sap.ui.getCore().byId(evt.getParameter('id')).getValue();
+			return evt.getSource().getValue();
 		},
 
 		handleTelPress: function (evt) {
-			sap.m.URLHelper.triggerTel(this._getVal(evt));
+			URLHelper.triggerTel(this._getVal(evt));
 		},
 
 		handleSmsPress: function (evt) {
-			sap.m.URLHelper.triggerSms(this._getVal(evt));
+			URLHelper.triggerSms(this._getVal(evt));
 		},
 
 		handleEmailPress: function (evt) {
-			sap.m.URLHelper.triggerEmail(this._getVal(evt), "Info Request");
+			URLHelper.triggerEmail(this._getVal(evt), "Info Request");
 		},
 
 		handleUrlPress: function (evt) {
-			sap.m.URLHelper.redirect(this._getVal(evt), true);
+			URLHelper.redirect(this._getVal(evt), true);
 		}
 	});
 

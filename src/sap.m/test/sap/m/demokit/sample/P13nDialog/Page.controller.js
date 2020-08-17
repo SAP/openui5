@@ -1,6 +1,10 @@
 sap.ui.define([
-	'sap/base/util/deepExtend', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'
-], function(deepExtend, Fragment, Controller, JSONModel) {
+	'sap/base/util/deepExtend',
+	'sap/ui/core/Fragment',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/BindingMode',
+	'sap/ui/model/json/JSONModel'
+], function(deepExtend, Fragment, Controller, BindingMode, JSONModel) {
 	"use strict";
 
 	/**
@@ -135,13 +139,13 @@ sap.ui.define([
 
 		onInit: function() {
 			this.oJSONModel = new JSONModel(deepExtend({}, this.oDataInitial));
-			this.oJSONModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+			this.oJSONModel.setDefaultBindingMode(BindingMode.TwoWay);
 		},
 
 		onOK: function(oEvent) {
 			this.oDataBeforeOpen = {};
 			oEvent.getSource().close();
-            oEvent.getSource().destroy();
+			oEvent.getSource().destroy();
 		},
 
 		onCancel: function(oEvent) {
@@ -149,7 +153,7 @@ sap.ui.define([
 
 			this.oDataBeforeOpen = {};
 			oEvent.getSource().close();
-            oEvent.getSource().destroy();
+			oEvent.getSource().destroy();
 		},
 
 		onReset: function() {

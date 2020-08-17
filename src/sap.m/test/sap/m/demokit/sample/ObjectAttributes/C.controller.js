@@ -51,7 +51,7 @@ sap.ui.define([
 				],
 				beginButton: new Button({
 					text: "Submit",
-					type: sap.m.ButtonType.Accept,
+					type: ButtonType.Accept,
 					press: function(oEvent) {
 						oDialog.setBusyIndicatorDelay(0);
 						oDialog.setBusy(true);

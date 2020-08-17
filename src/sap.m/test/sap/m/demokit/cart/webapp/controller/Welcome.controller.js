@@ -3,8 +3,9 @@ sap.ui.define([
 	"../model/cart",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"../model/formatter"
-], function (BaseController, cart, JSONModel, Filter, formatter) {
+], function (BaseController, cart, JSONModel, Filter, FilterOperator, formatter) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Welcome", {
@@ -15,9 +16,9 @@ sap.ui.define([
 		formatter: formatter,
 
 		_mFilters: {
-			Promoted: [new Filter("Type", "EQ", "Promoted")],
-			Viewed: [new Filter("Type", "EQ", "Viewed")],
-			Favorite: [new Filter("Type", "EQ", "Favorite")]
+			Promoted: [new Filter("Type", FilterOperator.EQ, "Promoted")],
+			Viewed: [new Filter("Type", FilterOperator.EQ, "Viewed")],
+			Favorite: [new Filter("Type", FilterOperator.EQ, "Favorite")]
 		},
 
 		onInit: function () {

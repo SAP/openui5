@@ -1,9 +1,12 @@
 sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
+		'sap/m/library',
 		'sap/m/MessageToast'
-	], function(Controller, JSONModel, MessageToast) {
+	], function(Controller, JSONModel, mobileLibrary, MessageToast) {
 	"use strict";
+
+	var StepModeType = mobileLibrary.StepInputStepModeType;
 
 	return Controller.extend("sap.m.sample.StepInput.StepInput", {
 
@@ -23,7 +26,7 @@ sap.ui.define([
 					{ label: "Step = 1 (default); value = 6, min = 5, max = 15, width = 240px, with added description and default fieldWidth 50%", value: 6, min:5, max:15, width:"240px", description:"EUR"},
 					{ label: "Step = 1 (default); value = 160, with added description and fieldWidth set to 70%", value: 160, fieldWidth:"70%", description:"EUR"},
 					{ label: "Step = 1 (default); value = 160, align:Center", value: 160, textAlign:"Center"},
-					{ label: "Step = 5, stepMode = Multiple, min = -40, max = 100, value = 10,", value: 10, step: 5, max: 100, min: -40, stepMode: sap.m.StepInputStepModeType.Multiple}
+					{ label: "Step = 5, stepMode = Multiple, min = -40, max = 100, value = 10,", value: 10, step: 5, max: 100, min: -40, stepMode: StepModeType.Multiple}
 				];
 			oModel = new JSONModel({
 				modelData: aData

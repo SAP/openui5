@@ -1,14 +1,14 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
+	"sap/ui/core/mvc/Controller"
 ], function(Controller) {
-    "use strict";
+	"use strict";
 
-    return Controller.extend("sap.ui.table.sample.TreeTable.BasicODataTreeBinding.Controller", {
+	return Controller.extend("sap.ui.table.sample.TreeTable.BasicODataTreeBinding.Controller", {
 
-        onInit : function() {
-            //nothing to do for us
-        }
+		onInit : function() {
+			//nothing to do for us
+		}
 
-    });
+	});
 
 });

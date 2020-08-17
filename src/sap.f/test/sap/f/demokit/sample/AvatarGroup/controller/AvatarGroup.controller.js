@@ -9,7 +9,7 @@ sap.ui.define([
 
 		onInit: function () {
 			this.oModel = new JSONModel();
-			this.oModel.loadData(sap.ui.require.toUrl("sap/f/sample/AvatarGroup/model") + "/avatargroup.json", null, false);
+			this.oModel.loadData(sap.ui.require.toUrl("sap/f/sample/AvatarGroup/model/avatargroup.json"), null, false);
 			this.getView().setModel(this.oModel, "items");
 			this.oSettingsModel = new JSONModel();
 			this.oSettingsModel.setData({
@@ -19,7 +19,7 @@ sap.ui.define([
 			this.oIndividualModel = new JSONModel();
 			this.getView().setModel(this.oIndividualModel, "personData");
 			this.oGroupModel = new JSONModel();
-			this.oGroupModel.loadData(sap.ui.require.toUrl("sap/f/sample/AvatarGroup/model") + "/avatargroup.json", null, false);
+			this.oGroupModel.loadData(sap.ui.require.toUrl("sap/f/sample/AvatarGroup/model/avatargroup.json"), null, false);
 			this.getView().setModel(this.oGroupModel, "groupedAvatars");
 		},
 

@@ -20,7 +20,7 @@ sap.ui.define([
 				oMessageManager = Core.getMessageManager();
 
 			this.oModel = new JSONModel();
-			this.oModel.loadData(sap.ui.require.toUrl("sap/f/sample/SemanticPage/model") + "/model.json", null, false);
+			this.oModel.loadData(sap.ui.require.toUrl("sap/f/sample/SemanticPage/model/model.json"), null, false);
 			this.oSemanticPage = this.byId("mySemanticPage");
 			this.oEditAction = this.byId("editAction");
 			this.oSemanticPage.setModel(this.oModel);

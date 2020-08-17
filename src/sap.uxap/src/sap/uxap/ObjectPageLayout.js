@@ -3822,7 +3822,7 @@ sap.ui.define([
 		aSections.forEach(function (oSection) {
 			$section = oSection.$();
 
-			if (sSectionId === oSection.sId) {
+			if (sSectionId === oSection.getId()) {
 				$section.attr(sTabIndex, sFocusable);
 				oSelectedElement = oSection;
 				oSection._setSubSectionsFocusValues();

@@ -53,7 +53,7 @@ sap.ui.define([
 				this.getView().setModel(this._oViewModel, "viewModel");
 
 				// fetch the initial content of the sample files
-				new JSONModel(sap.ui.require.toUrl('sap/ui/documentation/sdk/model') + '/LiveEditorData.json').attachRequestCompleted(function (oEvent) {
+				new JSONModel(sap.ui.require.toUrl('sap/ui/documentation/sdk/model/LiveEditorData.json')).attachRequestCompleted(function (oEvent) {
 					var oData = oEvent.getSource().getData(),
 						sCoreUrl = new URI(sap.ui.require.toUrl("sap-ui-core.js"), document.baseURI).href();
 					if (oData[SRC_FILE_NAMES.HTML]) {
@@ -120,7 +120,7 @@ sap.ui.define([
 				oFrameEl.id = "outputWindow";
 				oFrameEl.width = "100%";
 				oFrameEl.className = "editorOutputWindow";
-				oFrameEl.src = sap.ui.require.toUrl('sap/ui/documentation/sdk/util/') + 'liveEditorOutput.html';
+				oFrameEl.src = sap.ui.require.toUrl('sap/ui/documentation/sdk/util/liveEditorOutput.html');
 				oFrameEl.sandbox = "allow-forms allow-modals allow-pointer-lock allow-popups allow-scripts";
 				return oFrameEl;
 			},

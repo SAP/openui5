@@ -35,7 +35,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 			this.byId("Name").bindProperty("value",{path:"Name",type:oNameType});
 			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
 			this.byId("Name").getBinding("value").attachDataStateChange(function(oEvent) {
-				var oDataState = oEvent.mParameters['dataState'];
+				var oDataState = oEvent.getParameter('dataState');
 				that.applyDataStateChanged(oDataState); //visualize the data state changes on value
 			});
 		},

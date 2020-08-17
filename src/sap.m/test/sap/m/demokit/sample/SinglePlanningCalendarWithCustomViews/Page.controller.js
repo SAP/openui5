@@ -2,9 +2,16 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/library",
-	"sap/m/SinglePlanningCalendarView"
+	"sap/m/SinglePlanningCalendarView",
+	"sap/m/SinglePlanningCalendarDayView",
+	"sap/m/SinglePlanningCalendarWorkWeekView",
+	"sap/m/SinglePlanningCalendarWeekView",
+	"./CustomThreeDaysView",
+	"./CustomTenDaysView"
 ],
-function(Controller, JSONModel, unifiedLibrary, SinglePlanningCalendarView) {
+function(Controller, JSONModel, unifiedLibrary,
+		SinglePlanningCalendarView, SinglePlanningCalendarDayView, SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView,
+		CustomThreeDaysView, CustomTenDaysView) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -260,27 +267,24 @@ function(Controller, JSONModel, unifiedLibrary, SinglePlanningCalendarView) {
 			});
 			this.getView().setModel(oModel);
 
-			this._createThreeDaysCustomViewClass();
-			this._createTenDaysCustomViewClass();
-
 			var oSPC = this.getView().byId("SPC1"),
-				oDayView = new sap.m.SinglePlanningCalendarDayView({
+				oDayView = new SinglePlanningCalendarDayView({
 					title: "Day",
 					key: "Day"
 				}),
-				oMyCustomThreeDaysView = new sap.custom.CustomThreeDaysView({
+				oMyCustomThreeDaysView = new CustomThreeDaysView({
 					title: "3 Days",
 					key: "3Days"
 				}),
-				oWorkWeekView = new sap.m.SinglePlanningCalendarWorkWeekView({
+				oWorkWeekView = new SinglePlanningCalendarWorkWeekView({
 					key: "WorkWeek",
 					title: "Work Week"
 				}),
-				oWeekView = new sap.m.SinglePlanningCalendarWeekView({
+				oWeekView = new SinglePlanningCalendarWeekView({
 					key: "Week",
 					title: "Week"
 				}),
-				oMyCustomTenDaysView = new sap.custom.CustomTenDaysView({
+				oMyCustomTenDaysView = new CustomTenDaysView({
 					key: "10Days",
 					title: "10 Days"
 				});
@@ -291,38 +295,6 @@ function(Controller, JSONModel, unifiedLibrary, SinglePlanningCalendarView) {
 			oSPC.addView(oWeekView);
 			oSPC.addView(oMyCustomTenDaysView);
 
-		},
-
-		_createThreeDaysCustomViewClass: function () {
-			SinglePlanningCalendarView.extend("sap.custom.CustomThreeDaysView");
-
-			sap.custom.CustomThreeDaysView.prototype.getEntityCount = function () {
-				return 3;
-			};
-
-			sap.custom.CustomThreeDaysView.prototype.getScrollEntityCount = function () {
-				return 3;
-			};
-
-			sap.custom.CustomThreeDaysView.prototype.calculateStartDate = function (oStartDate) {
-				return oStartDate;
-			};
-		},
-
-		_createTenDaysCustomViewClass: function () {
-			SinglePlanningCalendarView.extend("sap.custom.CustomTenDaysView");
-
-			sap.custom.CustomTenDaysView.prototype.getEntityCount = function () {
-				return 10;
-			};
-
-			sap.custom.CustomTenDaysView.prototype.getScrollEntityCount = function () {
-				return 10;
-			};
-
-			sap.custom.CustomTenDaysView.prototype.calculateStartDate = function (oStartDate) {
-				return oStartDate;
-			};
 		}
 
 	});

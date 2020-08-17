@@ -1,11 +1,15 @@
 sap.ui.define([
+	"sap/m/GenericTile",
 	"sap/m/MessageToast",
+	"sap/m/NumericContent",
+	"sap/m/TileContent",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/dnd/DragInfo",
+	"sap/f/GridContainerItemLayoutData",
 	"sap/f/dnd/GridDropInfo",
 	"sap/ui/integration/widgets/Card"
-], function (MessageToast, Controller, JSONModel, DragInfo, GridDropInfo, Card) {
+], function (GenericTile, MessageToast, NumericContent, TileContent, Controller, JSONModel, DragInfo, GridContainerItemLayoutData, GridDropInfo, Card) {
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.Dnd3", {
@@ -200,18 +204,18 @@ sap.ui.define([
 
 			if (oItemData.type === "card") {
 				var oCard = new Card(sID, {
-					layoutData: new sap.f.GridContainerItemLayoutData({ rows: oItemData.rows, columns: oItemData.columns })
+					layoutData: new GridContainerItemLayoutData({ rows: oItemData.rows, columns: oItemData.columns })
 				});
 				oCard.bindProperty("manifest", oItemData.manifest);
 				return oCard;
 			} else {
-				return new sap.m.GenericTile(sID, {
-					layoutData: new sap.f.GridContainerItemLayoutData({ rows: 2, columns: 2 }),
+				return new GenericTile(sID, {
+					layoutData: new GridContainerItemLayoutData({ rows: 2, columns: 2 }),
 					header: oItemData.header,
 					subheader: oItemData.subheader,
-					tileContent: new sap.m.TileContent({
+					tileContent: new TileContent({
 						footer: oItemData.footer,
-						content: new sap.m.NumericContent({
+						content: new NumericContent({
 							animateTextChange: false,
 							value: oItemData.numberValue,
 							valueColor: oItemData.valueColor,

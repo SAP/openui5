@@ -336,8 +336,8 @@ sap.ui.define([
 			},
 
 			/*
-			sap.m.Label should be visible only for non-working days view.
-			sap.m.Select should be visible only for months view because only there is a grouping.
+			 * sap.m.Label should be visible only for non-working days view.
+			 * sap.m.Select should be visible only for months view because only there is a grouping.
 			 */
 			determineControlsVisibility: function () {
 				var bLabelVisible = this.byId("PC1").getViewKey() === "nonWorking",

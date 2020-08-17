@@ -652,7 +652,7 @@ sap.ui.define([
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function () {
-							sap.ui.getCore().byId(sViewName).oController.onSortByGrossAmount();
+							sap.ui.getCore().byId(sViewName).getController().onSortByGrossAmount();
 							Opa5.assert.ok(true, "controller.onSortByGrossAmount() called" );
 						},
 						viewName : sViewName
@@ -666,7 +666,7 @@ sap.ui.define([
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function () {
-							sap.ui.getCore().byId(sViewName).oController.onSortBySalesOrderID();
+							sap.ui.getCore().byId(sViewName).getController().onSortBySalesOrderID();
 							Opa5.assert.ok(true, "controller.onSortBySalesOrderID() called" );
 						},
 						viewName : sViewName

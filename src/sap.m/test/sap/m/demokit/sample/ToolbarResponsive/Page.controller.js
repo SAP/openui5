@@ -36,7 +36,7 @@ sap.ui.define([
 		},
 
 		onOpen: function (oEvent) {
-			var oButton = oEvent.oSource;
+			var oButton = oEvent.getSource();
 
 			if (!this._actionSheet) {
 				this._actionSheet = sap.ui.xmlfragment("sap.m.sample.ToolbarResponsive.ActionSheet", this);
@@ -50,7 +50,7 @@ sap.ui.define([
 		},
 
 		onPress: function (oEvent) {
-			MessageToast.show(oEvent.oSource.getText());
+			MessageToast.show(oEvent.getSource().getText());
 		}
 	});
 

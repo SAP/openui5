@@ -16,10 +16,7 @@ sap.ui.define([
 				oBundle.getText("mailBody"));
 		},
 		formatStockValue: function(fUnitPrice, iStockLevel, sCurrCode) {
-			var sBrowserLocale = sap.ui.getCore().getConfiguration().getLanguage();
-			var oLocale = new Locale(sBrowserLocale);
-			var oLocaleData = new LocaleData(oLocale);
-			var oCurrency = new Currency(oLocaleData.mData.currencyFormat);
+			var oCurrency = new Currency();
 			return oCurrency.formatValue([fUnitPrice * iStockLevel, sCurrCode], "string");
 		},
 		onItemSelected: function(oEvent) {

@@ -26,11 +26,11 @@ sap.ui.define([
 
 		togglePopover: function (oEvent) {
 			if (this._oPopover.isOpen()) {
-				oEvent.oSource.setText("Open the popover");
+				oEvent.getSource().setText("Open the popover");
 				this._oPopover.close();
 			} else {
-				oEvent.oSource.setText("Close the popover");
-				this._oPopover.openBy(oEvent.oSource);
+				oEvent.getSource().setText("Close the popover");
+				this._oPopover.openBy(oEvent.getSource());
 			}
 		}
 

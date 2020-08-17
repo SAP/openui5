@@ -1,15 +1,19 @@
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/library",
+	"sap/m/library",
 	"sap/m/MessageToast"
 ],
-function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToast) {
+function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, mobileLibrary, MessageToast) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
+	var ValueState = coreLibrary.ValueState;
+	var StickyMode = mobileLibrary.PlanningCalendarStickyMode;
 
 	return Controller.extend("sap.m.sample.SinglePlanningCalendar.Page", {
 
@@ -275,7 +279,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			this.getView().setModel(oModel, "allDay");
 
 			oModel = new JSONModel();
-			oModel.setData({ stickyMode: "None", enableAppointmentsDragAndDrop: true, enableAppointmentsResize: true, enableAppointmentsCreate: true });
+			oModel.setData({ stickyMode: StickyMode.None, enableAppointmentsDragAndDrop: true, enableAppointmentsResize: true, enableAppointmentsCreate: true });
 			this.getView().setModel(oModel, "settings");
 		},
 
@@ -356,7 +360,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			oModel.getData().appointments.push(oNewAppointment);
 			oModel.updateBindings();
 
-			sap.m.MessageToast.show("Appointment with title \n'"
+			MessageToast.show("Appointment with title \n'"
 				+ sAppointmentTitle
 				+ "'\n has been created"
 			);
@@ -548,8 +552,8 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 				oModel = this.getView().getModel(),
 				sAppointmentPath;
 
-			if (Fragment.byId("dialogFrag", sStartDate).getValueState() !== "Error"
-				&& Fragment.byId("dialogFrag", sEndDate).getValueState() !== "Error") {
+			if (Fragment.byId("dialogFrag", sStartDate).getValueState() !== ValueState.Error
+				&& Fragment.byId("dialogFrag", sEndDate).getValueState() !== ValueState.Error) {
 
 				if (this.sPath) {
 					sAppointmentPath = this.sPath;
@@ -654,10 +658,10 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 		},
 
 		updateButtonEnabledState: function (oDateTimePickerStart, oDateTimePickerEnd, oButton) {
-			var bEnabled = oDateTimePickerStart.getValueState() !== "Error"
+			var bEnabled = oDateTimePickerStart.getValueState() !== ValueState.Error
 				&& oDateTimePickerStart.getValue() !== ""
 				&& oDateTimePickerEnd.getValue() !== ""
-				&& oDateTimePickerEnd.getValueState() !== "Error";
+				&& oDateTimePickerEnd.getValueState() !== ValueState.Error;
 
 			oButton.setEnabled(bEnabled);
 		},
@@ -679,8 +683,8 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 				this._setDateValueState(oDateTimePickerEnd, oErrorState);
 			} else if (!oEvent.getParameter("valid")){
 				oErrorState.errorState = true;
-				oErrorState.errorMessage = "Ivalid date";
-				if (oEvent.oSource.sId === oDateTimePickerStart.sId){
+				oErrorState.errorMessage = "Invalid date";
+				if (oEvent.getSource() === oDateTimePickerStart){
 					this._setDateValueState(oDateTimePickerStart, oErrorState);
 				} else {
 					this._setDateValueState(oDateTimePickerEnd, oErrorState);
@@ -717,10 +721,10 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 
 		_setDateValueState: function(oPicker, oErrorState) {
 			if (oErrorState.errorState) {
-				oPicker.setValueState("Error");
+				oPicker.setValueState(ValueState.Error);
 				oPicker.setValueStateText(oErrorState.errorMessage);
 			} else {
-				oPicker.setValueState("None");
+				oPicker.setValueState(ValueState.None);
 			}
 		},
 

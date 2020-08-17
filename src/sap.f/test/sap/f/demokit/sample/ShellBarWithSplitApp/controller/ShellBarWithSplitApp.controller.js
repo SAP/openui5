@@ -11,7 +11,7 @@ sap.ui.define([
 	var CController = Controller.extend("sap.f.sample.ShellBarWithSplitApp.controller.ShellBarWithSplitApp", {
 		onInit : function() {
 			this.oModel = new JSONModel();
-			this.oModel.loadData(sap.ui.require.toUrl("sap/f/sample/ShellBarWithSplitApp/model") + "/model.json", null, false);
+			this.oModel.loadData(sap.ui.require.toUrl("sap/f/sample/ShellBarWithSplitApp/model/model.json"), null, false);
 			this.getView().setModel(this.oModel);
 		},
 

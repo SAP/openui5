@@ -28,7 +28,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 			onSelectDesign: function (oEvent) {
 				var oView = this.getView(),
 					sSelectedKey = oEvent.getParameter("selectedItem").getKey(),
-					bActionContext = sSelectedKey !== sap.m.ToolbarDesign.Info;
+					bActionContext = sSelectedKey !== ToolbarDesign.Info;
 				oView.byId("contentTb").setDesign(sSelectedKey);
 				oView.getModel().setProperty("/bActionContext", bActionContext);
 			},

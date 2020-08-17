@@ -28,7 +28,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 			MessageToast.show("Validation of field group '" + aFieldGroup[0] + "' triggered.",{duration:500});
 		},
 		onMsgStripClose : function (oEvt) {
-			oEvt.oSource.setVisible(false);
+			oEvt.getSource().setVisible(false);
 		},
 		onAccept : function() {
 			this.hideMessages();

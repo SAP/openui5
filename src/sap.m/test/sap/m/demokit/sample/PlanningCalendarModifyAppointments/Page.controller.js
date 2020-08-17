@@ -1,13 +1,16 @@
 sap.ui.define([
 		'sap/m/Label',
 		'sap/m/Popover',
-		"sap/ui/core/format/DateFormat",
+		'sap/ui/core/library',
+		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
 		'sap/base/Log'],
-	function(Label, Popover, DateFormat, Fragment, Controller, JSONModel, Log) {
+	function(Label, Popover, coreLibrary, DateFormat, Fragment, Controller, JSONModel, Log) {
 		"use strict";
+
+		var ValueState = coreLibrary.ValueState;
 
 		return Controller.extend("sap.m.sample.PlanningCalendarModifyAppointments.Page", {
 
@@ -515,23 +518,23 @@ sap.ui.define([
 					sValueStateText = "Start date should be before End date";
 
 				if (oStartDate && oEndDate && oEndDate.getTime() <= oStartDate.getTime()) {
-					oDateTimePickerStart.setValueState("Error");
-					oDateTimePickerEnd.setValueState("Error");
+					oDateTimePickerStart.setValueState(ValueState.Error);
+					oDateTimePickerEnd.setValueState(ValueState.Error);
 					oDateTimePickerStart.setValueStateText(sValueStateText);
 					oDateTimePickerEnd.setValueStateText(sValueStateText);
 				} else {
-					oDateTimePickerStart.setValueState("None");
-					oDateTimePickerEnd.setValueState("None");
+					oDateTimePickerStart.setValueState(ValueState.None);
+					oDateTimePickerEnd.setValueState(ValueState.None);
 				}
 			},
 
 			updateButtonEnabledState: function () {
 				var oStartDate = Fragment.byId("dialogFrag", "startDate"),
 					oEndDate = Fragment.byId("dialogFrag", "endDate"),
-					bEnabled = oStartDate.getValueState() !== "Error"
+					bEnabled = oStartDate.getValueState() !== ValueState.Error
 					&& oStartDate.getValue() !== ""
 					&& oEndDate.getValue() !== ""
-					&& oEndDate.getValueState() !== "Error";
+					&& oEndDate.getValueState() !== ValueState.Error;
 
 				this._oNewAppointmentDialog.getBeginButton().setEnabled(bEnabled);
 			},
@@ -543,7 +546,7 @@ sap.ui.define([
 				if (oEvent.getParameter("valid")) {
 					this._validateDateTimePicker(oDateTimePickerStart, oDateTimePickerEnd);
 				} else {
-					oEvent.getSource().setValueState("Error");
+					oEvent.getSource().setValueState(ValueState.Error);
 				}
 
 				this.updateButtonEnabledState();
@@ -672,8 +675,8 @@ sap.ui.define([
 					bIsIntervalAppointment = Fragment.byId("dialogFrag","isIntervalAppointment").getSelected(),
 					oNewAppointment;
 
-					if (oStartDate.getValueState() !== "Error"
-					&& oEndDate.getValueState() !== "Error"){
+					if (oStartDate.getValueState() !== ValueState.Error
+					&& oEndDate.getValueState() !== ValueState.Error){
 						if (this.sPath && this._oNewAppointmentDialog._sDialogType === "edit_appointment") {
 							this._editAppointment({
 								title: sInputTitle,
@@ -730,8 +733,8 @@ sap.ui.define([
 				oPersonSelected.setSelectedItem(Fragment.byId("dialogFrag", "selectPerson").getItems()[0]);
 				oDateTimePickerStart.setValue("");
 				oDateTimePickerEnd.setValue("");
-				oDateTimePickerStart.setValueState("None");
-				oDateTimePickerEnd.setValueState("None");
+				oDateTimePickerStart.setValueState(ValueState.None);
+				oDateTimePickerEnd.setValueState(ValueState.None);
 				oTitleInput.setValue("");
 				oMoreInfoInput.setValue("");
 				oAppointmentType.setSelected(false);
@@ -769,8 +772,8 @@ sap.ui.define([
 
 				oAppointmentType.setSelected(false);
 
-				oDateTimePickerStart.setValueState("None");
-				oDateTimePickerEnd.setValueState("None");
+				oDateTimePickerStart.setValueState(ValueState.None);
+				oDateTimePickerEnd.setValueState(ValueState.None);
 
 				delete this.oClickEventParameters;
 			},
@@ -801,8 +804,8 @@ sap.ui.define([
 
 				oTitleInput.setValue(sSelectedTitle);
 
-				oDateTimePickerStart.setValueState("None");
-				oDateTimePickerEnd.setValueState("None");
+				oDateTimePickerStart.setValueState(ValueState.None);
+				oDateTimePickerEnd.setValueState(ValueState.None);
 
 				oAppointmentType.setSelected(false);
 			},

@@ -55,8 +55,8 @@ sap.ui.define([
 			}
 		},
 
-		handleDelete: function (listItemBase) {
-			var listItem = listItemBase.mParameters.listItem;
+		handleDelete: function (oEvent) {
+			var listItem = oEvent.getParameter("listItem");
 			var data = this.model.getData().ProductCollection;
 			if (data.length <= 1) {
 				return;
