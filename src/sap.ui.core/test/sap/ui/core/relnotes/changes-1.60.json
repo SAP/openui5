@@ -1382,5 +1382,32 @@
         ]
       }
     ]
+  },
+  "1.60.29": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "60c8e5c2e897b8aca0e2fabddea3215fbc674122",
+        "type": "FIX",
+        "text": " Reverts \"[FIX] core/Element: preventScrolling Test failed in Firefox\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080335699"
+          }
+        ]
+      },
+      {
+        "id": "8f8f8822c470ead175e531b5a7d74d5b220cbb2c",
+        "type": "FIX",
+        "text": " core/Element: preventScrolling Test failed in Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
