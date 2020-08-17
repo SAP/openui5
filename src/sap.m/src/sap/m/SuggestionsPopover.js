@@ -26,9 +26,9 @@ sap.ui.define([
 	'sap/m/Table',
 	'sap/m/Title',
 	'sap/ui/core/IconPool',
-	"sap/base/security/encodeXML",
 	"sap/ui/events/KeyCodes",
-	"sap/m/ValueStateHeader"
+	"sap/m/ValueStateHeader",
+	"sap/m/inputUtils/highlightDOMElements"
 ], function (
 	Device,
 	EventProvider,
@@ -53,9 +53,9 @@ sap.ui.define([
 	Table,
 	Title,
 	IconPool,
-	encodeXML,
 	KeyCodes,
-	ValueStateHeader
+	ValueStateHeader,
+	highlightDOMElements
 ) {
 	"use strict";
 
@@ -190,55 +190,6 @@ sap.ui.define([
 	 */
 	SuggestionsPopover.M_EVENTS = {
 		SELECTION_CHANGE : "selectionChange"
-	};
-
-	/**
-	 * Returns true if some word from the text starts with specific value.
-	 *
-	 * @private
-	 * @param {string} sText The text of the word.
-	 * @param {string} sValue The value which must be compared to the word.
-	 * @returns {boolean} Indication if the word starts with the passed value.
-	 */
-	SuggestionsPopover._wordStartsWithValue = function (sText, sValue) {
-		var index;
-
-		if (!sText || !sValue ||
-			typeof sText !== "string" || typeof sValue !== "string") {
-			return false;
-		}
-
-		while (sText) {
-			if (typeof sValue === "string" && sValue !== "" && sText.toLowerCase().indexOf(sValue.toLowerCase()) === 0 /* startsWith */) {
-				return true;
-			}
-
-			index = sText.indexOf(' ');
-			if (index === -1) {
-				break;
-			}
-
-			sText = sText.substring(index + 1);
-		}
-
-		return false;
-	};
-
-	/**
-	 * The default filter function for one and two-value. It checks whether the item text begins with the typed value.
-	 *
-	 * @private
-	 * @param {string} sValue the current filter string.
-	 * @param {sap.ui.core.Item} oItem the filtered list item.
-	 * @returns {boolean} true for items that start with the parameter sValue, false for non matching items.
-	 */
-	SuggestionsPopover._DEFAULTFILTER = function(sValue, oItem) {
-
-		if (oItem instanceof ListItem && SuggestionsPopover._wordStartsWithValue(oItem.getAdditionalText(), sValue)) {
-			return true;
-		}
-
-		return SuggestionsPopover._wordStartsWithValue(oItem.getText(), sValue);
 	};
 
 	/**
@@ -482,7 +433,7 @@ sap.ui.define([
 					aListItemsDomRef = this._oList.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
 					sInputValue = (this._sTypedInValue || this._oInput.getValue()).toLowerCase();
 
-					this.highlightSuggestionItems(aListItemsDomRef, sInputValue);
+					highlightDOMElements(aListItemsDomRef, sInputValue);
 				}.bind(this)
 			});
 
@@ -993,95 +944,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Creates highlighted text.
-	 *
-	 * @private
-	 * @param {sap.m.Label} oItemDomRef Label within the input.
-	 * @param {string} sInputValue Text to highlight
-	 * @param {boolean} bWordMode Whether to highlight single string or to highlight each string that starts with space + sInputValue
-	 * @returns {string} newText Created text.
-	 */
-	SuggestionsPopover.prototype._createHighlightedText = function (oItemDomRef, sInputValue, bWordMode) {
-		var sDomRefLowerText, iStartHighlightingIndex, iInputLength, iNextSpaceIndex, sChunk,
-			sText = oItemDomRef ? oItemDomRef.textContent : "",
-			sFormattedText = "";
 
-		if (!SuggestionsPopover._wordStartsWithValue(sText, sInputValue)) {
-			return encodeXML(sText);
-		}
-
-		sInputValue = sInputValue.toLowerCase();
-		iInputLength = sInputValue.length;
-
-		while (SuggestionsPopover._wordStartsWithValue(sText, sInputValue)) {
-			sDomRefLowerText = sText.toLowerCase();
-			iStartHighlightingIndex = sDomRefLowerText.indexOf(sInputValue);
-			// search for the first word which starts with these characters
-			iStartHighlightingIndex = (iStartHighlightingIndex > 0) ?
-				sDomRefLowerText.indexOf(' ' + sInputValue) + 1 : iStartHighlightingIndex;
-
-
-			// Chunk before highlighting
-			sChunk = sText.substring(0, iStartHighlightingIndex);
-			sText = sText.substring(iStartHighlightingIndex);
-			sFormattedText += encodeXML(sChunk);
-
-			// Highlighting chunk
-			sChunk = sText.substring(0, iInputLength);
-			sText = sText.substring(iInputLength);
-			sFormattedText += '<span class="sapMInputHighlight">' + encodeXML(sChunk) + '</span>';
-
-
-			// Check for repetitive patterns. For example: "prodProdProd prod" should highlight only
-			// the starting of every word, but not the whole string when tested with "prod" input.
-			iNextSpaceIndex = sText.indexOf(" ");
-			iNextSpaceIndex = iNextSpaceIndex === -1 ? sText.length : iNextSpaceIndex;
-
-			// The rest
-			sChunk = sText.substring(0, iNextSpaceIndex);
-			sText = sText.substring(iNextSpaceIndex);
-			sFormattedText += encodeXML(sChunk);
-
-			// Run only for the first occurrence when highlighting for the Input for example
-			if (!bWordMode) {
-				break;
-			}
-		}
-
-		if (sText) {
-			sFormattedText += encodeXML(sText);
-		}
-
-		return sFormattedText;
-	};
-
-	/**
-	 * Highlights text in DOM items.
-	 *
-	 * @param {Array<HTMLElement>} aItemsDomRef DOM elements on which formatting would be applied
-	 * @param {string} sInputValue Text to highlight
-	 * @param {boolean} bWordMode Whether to highlight single string or to highlight each string that starts with space + sInputValue
-	 * @ui5-restricted
-	 * @protected
-	 */
-	SuggestionsPopover.prototype.highlightSuggestionItems = function (aItemsDomRef, sInputValue, bWordMode) {
-		var i;
-
-		if (!this._bEnableHighlighting || (!aItemsDomRef && !aItemsDomRef.length)) {
-			return;
-		}
-
-		var highlightedTexts = [];
-
-		for (i = 0; i < aItemsDomRef.length; i++) {
-			highlightedTexts.push(this._createHighlightedText(aItemsDomRef[i], sInputValue, bWordMode));
-		}
-
-		for (i = 0; i < aItemsDomRef.length; i++) {
-			aItemsDomRef[i].innerHTML = highlightedTexts[i];
-		}
-	};
 
 	/**
 	 * Registers event handlers required for

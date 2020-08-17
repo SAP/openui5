@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
-	"sap/base/strings/escapeRegExp"
+	"sap/base/strings/escapeRegExp",
+	"sap/m/inputUtils/highlightDOMElements"
 ],
 	function(
 		Dialog,
@@ -38,7 +39,8 @@ sap.ui.define([
 		KeyCodes,
 		jQuery,
 		encodeXML,
-		escapeRegExp
+		escapeRegExp,
+		highlightDOMElements
 	) {
 		"use strict";
 
@@ -278,7 +280,7 @@ sap.ui.define([
 			if (fnBold && typeof fnBold === "function") {
 				fnBold(aItemsDomRefs, sValue);
 			} else {
-				this._getSuggestionsPopover().highlightSuggestionItems(aItemsDomRefs, sValue, true);
+				highlightDOMElements(aItemsDomRefs, sValue, true);
 			}
 		};
 
