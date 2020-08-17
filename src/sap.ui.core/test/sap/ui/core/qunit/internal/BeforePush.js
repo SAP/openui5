@@ -2,8 +2,8 @@
  * ${copyright}
  */
 /*
-  Test page that runs all (QUnit and OPA) tests of the UI services team within a hidden inline
-  frame (well, not actually hidden, but out of sight).
+  Test page that runs all QUnit and OPA tests of a team within a hidden inline frame (well, not
+  actually hidden, but out of sight).
 
   The page has two modes. As a default ("full mode") it runs all tests. For 1Ring.qunit.html the
   test coverage is measured. A coverage of 100% is expected.
@@ -34,37 +34,13 @@
 */
 (function () {
 	"use strict";
+	/*global BeforePush*/
 
+	// Map of tests must be prepared in a separated config file (e.g. BeforePush.ODataV4.js). Modes:
 	// 'full': full mode only
 	// 'integration': integration test mode only
 	// everything else: full & integration test mode
-	var mTests = {
-		'qunit/internal/AnnotationParser.qunit.html?hidepassed&coverage' : 'full',
-		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
-		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true&module=sap.ui.model.odata.v4.ODataModel.integration' : 'integration',
-		'demokit/sample/odata/v4/DataAggregation/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/FlexibleColumnLayout/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/LateProperties/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/LateProperties/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/Products/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrdersRTATest/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/odata/v4/ServerDrivenPaging/Opa.qunit.html' : 'both',
-		'demokit/sample/odata/v4/ServerDrivenPaging/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/Sticky/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/ViewTemplate/scenario/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/ViewTemplate/types/Opa.qunit.html?supportAssistant=true' : 'both',
-		'demokit/sample/ViewTemplate/types/Opa.qunit.html?realOData=true' : 'both'
-	};
+	var mTests = BeforePush.tests;
 
 	// returns an array of tests according to the given flags
 	function filterTests(bIntegration, bRealOData) {
