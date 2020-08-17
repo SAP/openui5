@@ -2035,6 +2035,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkBindingParameters, $$ignoreMessages", function (assert) {
+		var aAllowedParams = ["$$ignoreMessages"],
+			oBinding = new ODataBinding({});
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$ignoreMessages : undefined}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$ignoreMessages': undefined"));
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$ignoreMessages : "foo"}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$ignoreMessages': foo"));
+
+		// code under test
+		oBinding.checkBindingParameters({$$ignoreMessages : true}, aAllowedParams);
+		oBinding.checkBindingParameters({$$ignoreMessages : false}, aAllowedParams);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("checkBindingParameters, $$inheritExpandSelect", function (assert) {
 		var aAllowedParams = ["$$inheritExpandSelect"],
 			oBinding = new ODataBinding({

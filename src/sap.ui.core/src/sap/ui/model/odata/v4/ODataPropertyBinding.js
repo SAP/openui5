@@ -75,9 +75,11 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 				if (mParameters) {
-					this.checkBindingParameters(mParameters, ["$$groupId", "$$noPatch"]);
+					this.checkBindingParameters(mParameters,
+						["$$groupId", "$$ignoreMessages", "$$noPatch"]);
 					this.sGroupId = mParameters.$$groupId;
 					this.bNoPatch = mParameters.$$noPatch;
+					this.setIgnoreMessages(mParameters.$$ignoreMessages);
 				} else {
 					this.sGroupId = undefined;
 				}
@@ -735,6 +737,20 @@ sap.ui.define([
 				reportError(oError);
 			});
 		}
+	};
+
+	/**
+	 * Returns <code>true</code>, as this binding supports the feature of not propagating messages
+	 * to the control.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @private
+	 * @see sap.ui.model.Binding#getIgnoreMessages
+	 * @see sap.ui.model.Binding#setIgnoreMessages
+	 */
+	ODataPropertyBinding.prototype.supportsIgnoreMessages = function () {
+		return true;
 	};
 
 	/**

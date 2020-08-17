@@ -717,6 +717,13 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
+	 * @param {boolean} [mParameters.$$ignoreMessages]
+	 *   Whether this binding does not propagate messages to the control; supported since 1.82.0.
+	 *
+	 *   For example, a binding for a currency code is used in a composite binding for rendering the
+	 *   proper number of decimals, but the currency code is not displayed in the attached control.
+	 *   In that case, messages for the currency code shall not be displayed at that control, only
+	 *   messages for the amount.
 	 * @param {boolean} [mParameters.$$noPatch]
 	 *   Whether changing the value of this property binding is not causing a PATCH request; only
 	 *   the value <code>true</code> is allowed.

@@ -27870,4 +27870,83 @@ sap.ui.define([
 	});
 });
 
+	//*********************************************************************************************
+	// Scenario: With the binding parameter <code>$$ignoreMessages</code> the application developer
+	// can control whether messages are displayed at the control. It works for
+	// <code>sap.ui.model.odata.v4.ODataPropertyBinding</code>s and composite bindings containing
+	// such bindings.
+	// JIRA: CPOUI5MODELS-290
+	QUnit.test("ODataPropertyBindings and CompositeBindings: $$ignoreMessages", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="objectPage" binding="{path : \'/EMPLOYEES(\\\'1\\\')\', \
+	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
+		<Input id="Name0" value="{Name}" />\
+		<Input id="Name1" value="{path : \'Name\', parameters : {$$ignoreMessages : false}}" />\
+		<Input id="Name2" value="{path : \'Name\', parameters : {$$ignoreMessages : true}}" />\
+		<Input id="Composite0" value="{= ${ID} + ${value : \' - \'} + ${path : \'Name\'}}" />\
+		<Input id="Composite1" value="{= ${ID} + ${value : \' - \'} + ${\
+			path : \'Name\',\
+			parameters : {$$ignoreMessages : false}\
+		}}" />\
+		<Input id="Composite2" value="{= ${ID} + ${value : \' - \'} + ${\
+			path : \'Name\',\
+			parameters : {$$ignoreMessages : true}\
+		}}" />\
+		<Input id="Composite3" value="{parts : [\'ID\', {value : \'-\'}, {\
+			path : \'Name\',\
+			parameters : {$$ignoreMessages : false}\
+		}]}" />\
+		<Input id="Composite4" value="{parts : [\'ID\', {value : \'-\'}, {\
+			path : \'Name\',\
+			parameters : {$$ignoreMessages : true}\
+		}]}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')"
+				+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
+				ID : "1",
+				Name : "Name",
+				__CT__FAKE__Message : {
+					__FAKE__Messages : [{
+						code : "1",
+						message : "Foo",
+						numericSeverity : 3,
+						target : "Name",
+						transition : false
+					}]
+				}
+			})
+			.expectChange("Name0", "Name")
+			.expectChange("Name1", "Name")
+			.expectChange("Name2", "Name")
+			.expectMessages([{
+				code : "1",
+				message : "Foo",
+				persistent : false,
+				target : "/EMPLOYEES('1')/Name",
+				type : "Warning"
+			}]);
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(that.oView.byId("Composite0").getValue(), "1 - Name");
+			assert.strictEqual(that.oView.byId("Composite1").getValue(), "1 - Name");
+			assert.strictEqual(that.oView.byId("Composite2").getValue(), "1 - Name");
+			assert.strictEqual(that.oView.byId("Composite3").getValue(), "1 - Name");
+			assert.strictEqual(that.oView.byId("Composite4").getValue(), "1 - Name");
+			return Promise.all([
+				that.checkValueState(assert, "Name0", "Warning", "Foo"),
+				that.checkValueState(assert, "Name1", "Warning", "Foo"),
+				that.checkValueState(assert, "Name2", "None", ""),
+				that.checkValueState(assert, "Composite0", "Warning", "Foo"),
+				that.checkValueState(assert, "Composite1", "Warning", "Foo"),
+				that.checkValueState(assert, "Composite2", "None", ""),
+				that.checkValueState(assert, "Composite3", "Warning", "Foo"),
+				that.checkValueState(assert, "Composite4", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });

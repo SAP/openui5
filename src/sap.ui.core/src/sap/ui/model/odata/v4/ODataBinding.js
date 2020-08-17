@@ -126,6 +126,12 @@ sap.ui.define([
 					that.oModel.checkGroupId(vValue, false,
 						"Unsupported value for binding parameter '" + sKey + "': ");
 					break;
+				case "$$ignoreMessages":
+					if (vValue !== true && vValue !== false) {
+						throw new Error("Unsupported value for binding parameter "
+							+ "'$$ignoreMessages': " + vValue);
+					}
+					break;
 				case "$$inheritExpandSelect":
 					if (vValue !== true && vValue !== false) {
 						throw new Error("Unsupported value for binding parameter "
