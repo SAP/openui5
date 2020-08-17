@@ -2879,7 +2879,30 @@ sap.ui.define([
 			assert.equal(oOutParameter.getValue(), "Test", "Out-parameter updated");
 			var oData = oModel.getData();
 			assert.equal(oData.contexts[0].outParameter, "Test", "Out-parameter updated in Model");
-			fnDone();
+
+			// test with different value
+			oBindingContext = oField.getBindingContext();
+			sinon.stub(oBindingContext, "getProperty");
+			oBindingContext.getProperty.withArgs("outParameter").onFirstCall().returns("X"); // simulate loading needed
+			oBindingContext.getProperty.withArgs("outParameter").onSecondCall().returns("X"); // simulate loading needed
+			oBindingContext.getProperty.callThrough();
+
+			oFieldHelp.addOutParameter(oOutParameter);
+			var oCondition = Condition.createItemCondition("Test1", "Test Text1", undefined, {"outParameter": "Test1"});
+			oFieldHelp.setConditions([oCondition]);
+
+			oFieldHelp.onFieldChange();
+			assert.equal(oOutParameter.getValue(), "Test", "Out-parameter not updated");
+
+			oBindingContext.getProperty.restore();
+			fnResolve();
+
+			setTimeout( function(){ // as promise is resolves async
+				assert.equal(oOutParameter.getValue(), "Test1", "Out-parameter updated");
+				var oData = oModel.getData();
+				assert.equal(oData.contexts[0].outParameter, "Test1", "Out-parameter updated in Model");
+				fnDone();
+			}, 0);
 		}, 0);
 
 	});

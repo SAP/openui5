@@ -922,8 +922,10 @@ sap.ui.define([
 					}
 				} else {
 					if (!oParameterBindingContext || oParameterBindingContext.getProperty(sPath) === undefined ||
-							oParameterBindingContext.getProperty(sPath) !== oParameter.getValue()) {
+							!deepEqual(oParameter.validateProperty("value", oParameterBindingContext.getProperty(sPath)), oParameter.getValue())) {
 						// Property not already known on BindingContext or not already updated in Parameter value
+						// use validateProperty as null might be converted to undefined, if invalid value don't run into a check
+						// use deepEqual as, depending on type, the value could be complex (same logic as in setProperty)
 						aBindings.push(oBinding);
 					}
 				}
