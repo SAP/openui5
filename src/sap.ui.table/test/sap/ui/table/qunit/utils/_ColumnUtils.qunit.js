@@ -893,36 +893,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getFixedColumnCount", function(assert) {
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 0, "Property: No fixed Columns");
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), 0, "Computed: No fixed Columns");
-
-		oTable.setFixedColumnCount(2);
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 2, "Property: 2 fixed Columns");
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), 2, "Computed: 2 fixed Columns");
-
-		this.aColumns[0].setVisible(false);
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 2, "Property: 2 fixed Columns");
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), 1, "Computed: 1 fixed Columns");
-
-		oTable.setFixedColumnCount(this.aColumns.length);
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), this.aColumns.length, "Property: " + this.aColumns.length + " fixed Columns");
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), this.aColumns.length - 1, "Computed: " + (this.aColumns.length - 1)
-																									+ " fixed Columns");
-
-		oTable.setWidth((this.aColumns.length * 100 - 200) + "px");
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 0, "Property: 0 fixed Columns");
-		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), 0, "Computed: 0 fixed Columns");
-	});
-
 	QUnit.test("getHeaderText", function(assert){
 		assert.strictEqual(ColumnUtils.getColumnWidth(), null, "Returned null: No parameters passed");
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable), null, "Returned null: No column index specified");

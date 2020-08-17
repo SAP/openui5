@@ -1310,6 +1310,42 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Add / Insert / Remove", function(assert) {
+		var aColumns = oTable.getColumns();
+		var oColA = aColumns[2];
+		var oColB = aColumns[3];
+
+		oTable.removeColumn(oColA);
+		assert.deepEqual(oTable.getColumns()[2], oColB, "The correct column was removed");
+
+		oTable.addColumn(oColA);
+		aColumns = oTable.getColumns();
+		assert.deepEqual(aColumns[aColumns.length - 1], oColA, "The column is always added at the end");
+
+		oColA = aColumns[4];
+		oColB = aColumns[5];
+		oTable.removeColumn(4);
+		aColumns = oTable.getColumns();
+		assert.deepEqual(aColumns[4], oColB, "The correct column was removed by index");
+
+		oTable.insertColumn(oColA, 1);
+		aColumns = oTable.getColumns();
+		assert.deepEqual(aColumns[1], oColA, "The column was inserted at the correct position by index");
+	});
+
+	QUnit.test("NoColumns handling", function (assert) {
+		var sNoDataClassOfTable = "sapUiTableEmpty";
+
+		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), false,
+			"Columns are visible - The table has the NoColumns class assigned: " + false);
+
+		oTable.removeAllColumns();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), true,
+			"No columns are visible - The table has the NoColumns class assigned: " + true);
+	});
+
 	QUnit.test("ColumnMenu", function(assert) {
 		var oColumn = oTable.getColumns()[1];
 		var oMenu = oColumn.getMenu();
@@ -1828,6 +1864,87 @@ sap.ui.define([
 			"Horizontal scrollbar has correct left margin");
 	});
 
+	QUnit.test("computedFixedColumnCount invalidation", function(assert) {
+		var invalidationSpy = sinon.spy(oTable, "_invalidateComputedFixedColumnCount");
+		var oCol = oTable.getColumns()[2];
+		oTable.setFixedColumnCount(1);
+		assert.equal(invalidationSpy.callCount, 1, "value is being invalidated");
+		oCol.setHeaderSpan([2,1]);
+		assert.equal(invalidationSpy.callCount, 2, "value is being invalidated");
+		oTable.removeColumn(oCol);
+		assert.equal(invalidationSpy.callCount, 3, "value is being invalidated");
+		oTable.insertColumn(oCol, 1);
+		assert.equal(invalidationSpy.callCount, 4, "value is being invalidated");
+		oTable.removeAllColumns();
+		assert.equal(invalidationSpy.callCount, 5, "value is being invalidated");
+		oTable.addColumn(oCol);
+		assert.equal(invalidationSpy.callCount, 6, "value is being invalidated");
+		oTable.destroyColumns();
+		assert.equal(invalidationSpy.callCount, 7, "value is being invalidated");
+	});
+
+	QUnit.test("Fixed column count and table / column width", function(assert) {
+		var aColumns = oTable.getColumns();
+		assert.equal(aColumns[0]._iFixWidth, undefined, "The _iFixWidth of the first column is undefined");
+		assert.equal(aColumns[1]._iFixWidth, undefined, "The _iFixWidth of the second column is undefined");
+		aColumns[0].setWidth("auto");
+		aColumns[1].setWidth("auto");
+		oTable.setFixedColumnCount(1);
+		assert.equal(aColumns[0]._iFixWidth, 200, "The _iFixWidth of the fixed column is set");
+
+		aColumns[0].setHeaderSpan([2,1]);
+		oTable.setFixedColumnCount(1);
+		assert.equal(oTable.getComputedFixedColumnCount(), 2,
+			"The computed fixed column count is 2 because of the header span");
+		assert.equal(aColumns[1]._iFixWidth, 100, "The _iFixWidth of the second fixed columns is set");
+
+		oTable.setWidth("400px");
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.getComputedFixedColumnCount(), 0,
+			"The table width is too small for using fixed columns, getComputedFixedColumnCount returns 0");
+		oTable.setWidth("500px");
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.getComputedFixedColumnCount(), 2,
+			"The table width allows displaying of the fixed columns again");
+	});
+
+	QUnit.test("Fixed column count and column spans", function(assert) {
+		oTable.removeAllColumns();
+		sap.ui.getCore().applyChanges();
+		oTable.setFixedColumnCount(1);
+
+		var oCol1 = new sap.ui.table.Column({
+			headerSpan: [3,1],
+			multiLabels: [new sap.m.Label({text: "A"}),new sap.m.Label({text: "AA"})],
+			template: new sap.m.Label()
+		});
+		oTable.addColumn(oCol1);
+		assert.equal(oTable.getComputedFixedColumnCount(), 1, "The computed fixedColumCount is correct");
+		assert.equal(oTable.getRenderer().getLastFixedColumnIndex(oTable), 0, "The lastFixedColumIndex is correct");
+
+		var oCol2 = new sap.ui.table.Column({
+			headerSpan: [2,1],
+			multiLabels: [new sap.m.Label({text: "A"}),new sap.m.Label({text: "AB"})],
+			template: new sap.m.Label()
+		});
+		oTable.addColumn(oCol2);
+		assert.equal(oTable.getComputedFixedColumnCount(), 2, "The computed fixedColumnCount is correct");
+		assert.equal(oTable.getRenderer().getLastFixedColumnIndex(oTable), 1, "The lastFixedColumIndex is correct");
+
+		var oCol3 = new sap.ui.table.Column({
+			headerSpan: [1,1],
+			multiLabels: [new sap.m.Label({text: "A"}),new sap.m.Label({text: "AC"})],
+			template: new sap.m.Label()
+		});
+		oTable.addColumn(oCol3);
+		assert.equal(oTable.getComputedFixedColumnCount(), 3, "The computed fixedColumnCount is correct");
+		assert.equal(oTable.getRenderer().getLastFixedColumnIndex(oTable), 2, "The lastFixedColumIndex is correct");
+
+		oTable.setFixedColumnCount(2);
+		assert.equal(oTable.getComputedFixedColumnCount(), 3, "The computed fixedColumnCount is correct");
+		assert.equal(oTable.getRenderer().getLastFixedColumnIndex(oTable), 2, "The lastFixedColumIndex is correct");
+	});
+
 	QUnit.test("Content is wider than column", function(assert) {
 		oTable.getColumns()[0].setWidth("60px");
 		sap.ui.getCore().applyChanges();
@@ -1858,6 +1975,11 @@ sap.ui.define([
 			"Horizontal scrollbar has correct left margin");
 
 		checkCellsFixedBorder(oTable, 0, "When the last fixed column is not visible, the fixed border is displayed on the last visible column in fixed area");
+
+		oTable.getColumns()[0].setVisible(false);
+		oTable.getColumns()[1].setVisible(true);
+		sap.ui.getCore().applyChanges();
+		checkCellsFixedBorder(oTable, 0, "When one of the fixed columns is not visible, the fixed border is displayed on the last visible column in fixed area");
 	});
 
 	QUnit.test("Hide one column in scroll area", function(assert) {
