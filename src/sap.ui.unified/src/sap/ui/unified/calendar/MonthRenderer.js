@@ -430,9 +430,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			if (oDayType.type !== CalendarDayType.None) {
 				if (oDayType.type === CalendarDayType.NonWorking) {
 					oRm.class("sapUiCalItemWeekEnd");
-					if (this._checkIfNonWorkingLegendItemExist(oLegend)) { // pronounce non working day only if there is a legend associated and a corresponding non-working legend item to it
-						sNonWorkingDayText = this._addNonWorkingDayText(mAccProps);
-					}
+					sNonWorkingDayText = this._addNonWorkingDayText(mAccProps);
 					return;
 				}
 				oRm.class("sapUiCalItem" + oDayType.type);
@@ -444,16 +442,14 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		}.bind(this));
 
 		if (!sNonWorkingDayText) { // if sNonWorkingDayText exists, it is already included above as specialDate of type NonWorking
-			if (this._checkIfNonWorkingLegendItemExist(oLegend)) { // pronounce non working day only if there is a legend associated and a corresponding non-working legend item to it
-				if (oHelper.aNonWorkingDays) { // check if there are nonWorkingDays passed and add text to them
-					oHelper.aNonWorkingDays.forEach(function (iNonWorkingDay) {
-						if (oDay.getDay() === iNonWorkingDay) {
-							this._addNonWorkingDayText(mAccProps);
-						}
-					}.bind(this));
-				} else if (oDay.getDay() === oHelper.iWeekendStart || oDay.getDay() === oHelper.iWeekendEnd) { // otherwise add the text to the NonWorkigDays from the locale
-					this._addNonWorkingDayText(mAccProps);
-				}
+			if (oHelper.aNonWorkingDays) { // check if there are nonWorkingDays passed and add text to them
+				oHelper.aNonWorkingDays.forEach(function (iNonWorkingDay) {
+					if (oDay.getDay() === iNonWorkingDay) {
+						this._addNonWorkingDayText(mAccProps);
+					}
+				}.bind(this));
+			} else if (oDay.getDay() === oHelper.iWeekendStart || oDay.getDay() === oHelper.iWeekendEnd) { // otherwise add the text to the NonWorkigDays from the locale
+				this._addNonWorkingDayText(mAccProps);
 			}
 		}
 
@@ -542,24 +538,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 		oRm.close("div");
 
-	};
-
-	/**
-	 * Checks if there is a legend associated to the month and if there is a non-working standard item in it.
-	 *
-	 * @param {sap.m.CalendarLegend} oLegend The legend to be checked
-	 */
-	MonthRenderer._checkIfNonWorkingLegendItemExist = function (oLegend) {
-		var bExists;
-		if (oLegend) {
-			oLegend.getStandardItems().forEach(function (oItem) {
-				if (oItem === library.StandardCalendarLegendItem.NonWorkingDay) {
-					bExists = true;
-					return;
-				}
-			});
-		}
-		return bExists;
 	};
 
 	/**
