@@ -491,6 +491,14 @@ sap.ui.define([
 			return this;
 		}
 
+		// inform the table when width changed, in case dummy column should be rendered or not
+		var bOldShouldRenderDummyCol = oTable.shouldRenderDummyColumn();
+		this.informTable("WidthChanged", sWidth);
+
+		if (bOldShouldRenderDummyCol !== oTable.shouldRenderDummyColumn()) {
+			return this.setProperty("width", sWidth);
+		}
+
 		var bAutoPopinMode = oTable.getAutoPopinMode();
 
 		// suppress invalidation if autoPopinMode is set to true

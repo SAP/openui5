@@ -2,19 +2,19 @@
 sap.ui.define([
 	"sap/ui/util/Mobile",
 	"sap/ui/Device",
+	"sap/ui/core/Core",
 	"sap/m/ColumnListItem",
 	"sap/m/Column",
 	"sap/m/Table",
 	"sap/m/Text",
 	"sap/m/Label",
 	"sap/m/MessageToast"
-], function(Mobile, Device, ColumnListItem, Column, Table, Text, Label, MessageToast) {
+], function(Mobile, Device, Core, ColumnListItem, Column, Table, Text, Label, MessageToast) {
 	"use strict";
 
 
 
 	Mobile.init();
-	var core = sap.ui.getCore();
 
 	QUnit.test("ShouldRemoveAPopin", function(assert) {
 		// SUT
@@ -31,7 +31,7 @@ sap.ui.define([
 			});
 
 		table.placeAt("qunit-fixture");
-		core.applyChanges();
+		Core.applyChanges();
 		hasPopin = sut.hasPopin();
 
 		// Act
@@ -63,7 +63,7 @@ sap.ui.define([
 				});
 
 			table.placeAt("qunit-fixture");
-			core.applyChanges();
+			Core.applyChanges();
 
 			//Act
 			sut[sFunctionName]();
@@ -102,7 +102,7 @@ sap.ui.define([
 			});
 
 		table.placeAt("qunit-fixture");
-		core.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(sut.hasPopin(), "Popin is generated");
@@ -112,7 +112,7 @@ sap.ui.define([
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
 
 		column.setPopinDisplay("WithoutHeader");
-		core.applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 0, "Popin header is not found in the dom");
@@ -120,7 +120,7 @@ sap.ui.define([
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
 
 		column.destroy();
-		core.applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
 		assert.strictEqual(sut.$Popin().length, 0, "No popin in the dom");
@@ -142,7 +142,7 @@ sap.ui.define([
 			});
 
 		table.placeAt("qunit-fixture");
-		core.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(sut.$().hasClass("sapMLIBFocusable"), "Outline class is added");
@@ -166,7 +166,7 @@ sap.ui.define([
 			items: [oCLI]
 		});
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var $cell = oCLI.getCells()[0].getDomRef();
 		var $td = $cell.parentElement;
@@ -199,7 +199,7 @@ sap.ui.define([
 			items: [oCLI]
 		});
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnPress = this.spy(oCLI, "firePress");
 		oCLI.focus();
@@ -226,5 +226,52 @@ sap.ui.define([
 
 		// clean up
 		oTable.destroy();
+	});
+
+	QUnit.module("Dummy Column", {
+		beforeEach: function() {
+			this.sut = new ColumnListItem({
+				cells : [new Text({
+					text: "Cell"
+				}), new Text({
+					text: "Cell"
+				})]
+			});
+			this.table = new Table({
+				columns : [
+					new Column({width: "15rem"}),
+					new Column({width: "150px"})
+				],
+				items : this.sut
+			});
+
+			// enable dummy column rendering
+			this.table.bRenderDummyColumn = true;
+
+			this.table.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.table.destroy();
+		}
+	});
+
+	QUnit.test("When there is a dummy col rendered, the dummy cells should also be created", function(assert) {
+		assert.ok(this.sut.$().find(".sapMListTblDummyCell").length > 0, "Dummy cell are rendered");
+	});
+
+	QUnit.test("Dummy column position when table does not have popins", function(assert) {
+		var aTdElements = this.sut.$().children();
+		assert.ok(aTdElements[aTdElements.length - 1].classList.contains("sapMListTblDummyCell"), "Dummy cell is rendered as the last td element");
+	});
+
+	QUnit.test("Dummy column position when table does has popins", function(assert) {
+		var oColumn = this.table.getColumns()[1];
+		oColumn.setMinScreenWidth("48000px");
+		oColumn.setDemandPopin(true);
+		Core.applyChanges();
+
+		var aTdElements = this.sut.$().children();
+		assert.notOk(aTdElements[aTdElements.length - 1].classList.contains("sapMListTblDummyCell"), "Dummy cell is rendered as the last td element");
 	});
 });

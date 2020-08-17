@@ -16,14 +16,54 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 * @namespace
 	 */
 	var GroupHeaderListItemRenderer = Renderer.extend(ListItemBaseRenderer);
+	GroupHeaderListItemRenderer.apiVersion = 2;
 
 	GroupHeaderListItemRenderer.renderType = function(rm, oLI) {
 		var oTable = oLI.getTable();
 
 		// for table render navigation column always
-		oTable && rm.write('<td class="sapMListTblNavCol">');
+		if (oTable) {
+			if (oTable.hasPopin()) {
+				this.renderDummyCell(rm, oTable);
+			}
+
+			this.renderCell(rm, "sapMListTblNavCol");
+		}
+
 		ListItemBaseRenderer.renderType.apply(this, arguments);
-		oTable && rm.write('</td>');
+
+		if (oTable) {
+			rm.close("td");
+		}
+	};
+
+	GroupHeaderListItemRenderer.renderNavigated = function(rm, oLI) {
+		var oTable = oLI.getTable();
+
+		if (oTable) {
+			this.renderCell(rm, "sapMListTblNavigatedCol");
+		}
+
+		ListItemBaseRenderer.renderNavigated.apply(this, arguments);
+
+		if (oTable) {
+			rm.close("td");
+		}
+	};
+
+	GroupHeaderListItemRenderer.renderDummyCell = function(rm, oTable) {
+		if (oTable.shouldRenderDummyColumn()) {
+			this.renderCell(rm, "sapMListTblDummyCell");
+			rm.close("td");
+		}
+	};
+
+	GroupHeaderListItemRenderer.renderCell = function(rm, sClassName) {
+		rm.openStart("td");
+		rm.class(sClassName);
+		rm.attr("role", "presentation");
+		rm.attr("aria-hidden", "true");
+		rm.openEnd();
 	};
 
 	// GroupHeaderListItem does not respect counter property of the LIB
@@ -42,9 +82,14 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 *          rendered
 	 */
 	GroupHeaderListItemRenderer.renderLIAttributes = function(rm, oLI) {
-		rm.addClass("sapMGHLI");
+		rm.class("sapMGHLI");
 		if (oLI.getUpperCase()) {
-			rm.addClass("sapMGHLIUpperCase");
+			rm.class("sapMGHLIUpperCase");
+		}
+
+		var oTable = oLI.getTable();
+		if (oTable && oTable.shouldRenderDummyColumn()) {
+			rm.class("sapMListTblRowHasDummyCell");
 		}
 	};
 
@@ -63,35 +108,41 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 		var oTable = oLI.getTable();
 
 		if (oTable) {
-			rm.write('<td class="sapMGHLICell"');
-			rm.writeAttribute("colspan", oTable.getColSpan());
-			rm.write(">");
+			rm.openStart("td");
+			rm.class("sapMGHLICell");
+
+			rm.attr("colspan", oTable.getColSpan());
+
+			rm.openEnd();
 		}
 
 		ListItemBaseRenderer.renderLIContentWrapper.apply(this, arguments);
 
 		if (oTable) {
-			rm.write("</td>");
+			rm.close("td");
 		}
 	};
 
 	GroupHeaderListItemRenderer.renderLIContent = function(rm, oLI) {
 		var sTextDir = oLI.getTitleTextDirection();
-		rm.write("<span class='sapMGHLITitle'");
+		rm.openStart("span");
+		rm.class("sapMGHLITitle");
 
 		if (sTextDir != TextDirection.Inherit) {
-			rm.writeAttribute("dir", sTextDir.toLowerCase());
+			rm.attr("dir", sTextDir.toLowerCase());
 		}
 
-		rm.write(">");
-		rm.writeEscaped(oLI.getTitle());
-		rm.write("</span>");
+		rm.openEnd();
+		rm.text(oLI.getTitle());
+		rm.close("span");
 
 		var iCount = oLI.getCount() || oLI.getCounter();
 		if (iCount) {
-			rm.write("<span class='sapMGHLICounter'>");
-			rm.writeEscaped(" (" + iCount + ")");
-			rm.write("</span>");
+			rm.openStart("span");
+			rm.class("sapMGHLICounter");
+			rm.openEnd();
+			rm.text(" (" + iCount + ")");
+			rm.close("span");
 		}
 	};
 
