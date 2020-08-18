@@ -5,6 +5,12 @@
 		<meta charset="utf-8">
 		<title>Test Page for SAPUI5 jQuery.sap.global functionality</title>
 		<script src="../shared-config.js"></script>
+		<script>
+			// Keep originals before Firefox syncXHR fix (jquery.sap.global) is executed, which overrides them
+			// See QUnit module "XHR (send error handling)"
+			__originalSetTimeout__ = window.setTimeout;
+			__originalXMLHttpRequest__ = window.XMLHttpRequest;
+		</script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.core"
@@ -746,6 +752,104 @@
 
 			});
 
+			QUnit.module("XHR (send error handling)", {
+				beforeEach: function() {
+					var fnOriginalSend = this.fnOriginalSend = __originalXMLHttpRequest__.prototype.send;
+					__originalXMLHttpRequest__.prototype.send = function() {
+						// Call original send to trigger an update of the real readyState
+						// which should also be reflected/updated by the proxy
+						fnOriginalSend.apply(this, arguments);
+
+						throw new Error("fake-error");
+					};
+				},
+				afterEach: function() {
+					__originalXMLHttpRequest__.prototype.send = this.fnOriginalSend;
+				}
+			})
+
+			QUnit.test("Failing XMLHttpRequest#send (sync)", function(assert) {
+				assert.expect(6);
+
+				var done = assert.async();
+				var testDone = false;
+
+				// Ensure that the test finishes as QUnit also uses the modified setTimeout
+				// so in case the callbacks are not fired, the test would never run into a timeout
+				__originalSetTimeout__(function() {
+					if (!testDone) {
+						assert.ok(false, "Test timed out");
+						done();
+					}
+				}, 10);
+
+				Promise.resolve().then(function() {
+					assert.ok(true, "Promise#then callback should be called");
+				});
+
+				setTimeout(function() {
+					assert.ok(true, "setTimeout callback should be called");
+					testDone = true;
+					done();
+				});
+
+				var xhr = new XMLHttpRequest();
+
+				assert.equal(xhr.readyState, 0, "Initial readyState");
+
+				xhr.open("GET", "", false);
+
+				assert.equal(xhr.readyState, 1, "readyState after open should be 1");
+
+				assert.throws(function () {
+					xhr.send();
+				}, /fake-error/, "xhr.send should throw the expected error");
+
+				assert.equal(xhr.readyState, 4, "readyState should be updated even when 'send' is failing");
+			});
+
+			QUnit.test("Failing XMLHttpRequest#send (async)", function(assert) {
+				assert.expect(6);
+
+				var done = assert.async();
+				var testDone = false;
+
+				// Ensure that the test finishes as QUnit also uses the modified setTimeout
+				// so in case the callbacks are not fired, the test would never run into a timeout
+				__originalSetTimeout__(function() {
+					if (!testDone) {
+						assert.ok(false, "Test timed out");
+						done();
+					}
+				}, 10);
+
+				Promise.resolve().then(function() {
+					assert.ok(true, "Promise#then callback should be called");
+				});
+
+				setTimeout(function() {
+					assert.ok(true, "setTimeout callback should be called");
+					testDone = true;
+					done();
+				});
+
+				var xhr = new XMLHttpRequest();
+
+				assert.equal(xhr.readyState, 0, "Initial readyState");
+
+				xhr.open("GET", "", true);
+
+				assert.equal(xhr.readyState, 1, "readyState after open should be 1");
+
+				assert.throws(function () {
+					xhr.send();
+				}, /fake-error/, "xhr.send should throw the expected error");
+
+				assert.equal(xhr.readyState, 1, "readyState should still be 1 even when 'send' is failing");
+
+			});
+
+			//
 
 </script>
 

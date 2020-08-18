@@ -573,9 +573,12 @@
 								case "send":
 									return function() {
 										bSyncRequestOngoing = bSync;
-										vProp.apply(oTarget, arguments);
-										iReadyState = oTarget.readyState;
-										bSyncRequestOngoing = false;
+										try {
+											vProp.apply(oTarget, arguments);
+										} finally {
+											iReadyState = oTarget.readyState;
+											bSyncRequestOngoing = false;
+										}
 									};
 							}
 							// All functions need to be wrapped, so they are called on the correct object
