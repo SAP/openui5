@@ -1575,4 +1575,34 @@ function (
 		qutils.triggerKeydown(oSecondContainerItem, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
 	});
 
+	QUnit.module("Focus handling");
+
+	QUnit.test("Pressing on clickable element inside an item doesn't move the focus to the item", function (assert) {
+		// Arrange
+		var oBtn = new Button(),
+			oGrid = new GridContainer({
+				items: [ oBtn ]
+			}),
+			oItemWrapper,
+			oItemWrapperFocusSpy;
+
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		oItemWrapper = oGrid.getDomRef().children[1];
+		oItemWrapperFocusSpy = sinon.spy(oItemWrapper, "focus");
+
+		// Act
+		qutils.triggerMouseEvent(oBtn.getFocusDomRef(), "mousedown");
+		qutils.triggerMouseEvent(oBtn.getFocusDomRef(), "mouseup");
+
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(oItemWrapperFocusSpy.notCalled, "The item wrapper didn't get focused.");
+
+		// Clean up
+		oGrid.destroy();
+		oItemWrapperFocusSpy.restore();
+	});
 });

@@ -489,6 +489,43 @@ sap.ui.define([
 				})
 				.setFocusedIndex(0);
 
+			// modified ItemNavigation.focusItem function.
+			that._oItemNavigation.focusItem = function (iIndex, oEvent) {
+				if (iIndex == this.iFocusedIndex && this.aItemDomRefs[this.iFocusedIndex] == document.activeElement) {
+					this.fireEvent(ItemNavigation.Events.FocusAgain, {
+						index: iIndex,
+						event: oEvent
+					});
+					return; // item already focused -> nothing to do
+				}
+
+				this.fireEvent(ItemNavigation.Events.BeforeFocus, {
+					index: iIndex,
+					event: oEvent
+				});
+
+				this.setFocusedIndex(iIndex);
+				this.bISetFocus = true;
+
+				if (oEvent && jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot")) {
+
+					// store event type for nested ItemNavigations
+					var oItemItemNavigation = jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot");
+					oItemItemNavigation._sFocusEvent = oEvent.type;
+				}
+
+				// this is what the GridContainer changes
+				if (!that._bIsMouseDown) {
+					this.aItemDomRefs[this.iFocusedIndex].focus();
+				}
+				/////////////////////////////////////////////
+
+				this.fireEvent(ItemNavigation.Events.AfterFocus, {
+					index: iIndex,
+					event: oEvent
+				});
+			};
+
 			that.addDelegate(this._oItemNavigation);
 		}
 
@@ -1308,6 +1345,14 @@ sap.ui.define([
 				aNavigationDomRefs[lastFocusedIndex].focus();
 			}
 		}
+	};
+
+	/**
+	 * Handles the <code>sapfocusleave</code> event.
+	 *
+	 */
+	GridContainer.prototype.onsapfocusleave = function(){
+		this._bIsMouseDown = false;
 	};
 
 	/**
