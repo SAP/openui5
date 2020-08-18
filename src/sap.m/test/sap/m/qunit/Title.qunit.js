@@ -1,14 +1,15 @@
 /*global QUnit */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Title",
 	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/m/Toolbar",
 	"sap/ui/core/Title"
-], function(QUnitUtils, createAndAppendDiv, Title, mobileLibrary, coreLibrary, Toolbar, coreTitle) {
+], function (createAndAppendDiv, Title, mobileLibrary, coreLibrary, Toolbar, coreTitle) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
@@ -111,10 +112,16 @@ sap.ui.define([
 		this.title.setText("Some very very very very long text");
 		this.title.setWidth("100px");
 		sap.ui.getCore().applyChanges();
+		this.title.$().css("line-height", "1.2rem");
+
 		var iHeight = this.title.$().outerHeight();
+
 		assert.ok(this.title.$().hasClass("sapMTitleNoWrap"), "Title has class sapMTitleNoWrap.");
 		this.title.setWrapping(true);
+
 		sap.ui.getCore().applyChanges();
+		this.title.$().css("line-height", "1.2rem");
+
 		assert.ok(this.title.$().hasClass("sapMTitleWrap"), "Title has class sapMTitleWrap.");
 		assert.ok(this.title.$().outerHeight() >= 3 * iHeight, "Title height increases when wrapping is active");
 	});
@@ -122,16 +129,35 @@ sap.ui.define([
 	QUnit.test("Title wrappingType (Hyphenation)", function(assert){
 		var done = assert.async();
 		this.title.setText("pneumonoultramicroscopicsilicovolcanoconiosis");
+		sap.ui.getCore().applyChanges();
+		this.title.$().css("line-height", "1.2rem");
 		var iHeight = this.title.$().outerHeight();
 		this.title.setWidth("200px");
 		this.title.setWrapping(true);
 		this.title.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
 		sap.ui.getCore().applyChanges();
+		this.title.$().css("line-height", "1.2rem");
+
+		var fnIsHyphenated = function () {
+			if (this.title.$().outerHeight() >= 2 * iHeight) {
+				assert.ok(true, "Tested title is hyphenated.");
+				done();
+				return true;
+			}
+			return false;
+		}.bind(this);
 
 		setTimeout(function() {
-			assert.ok(this.title.$().outerHeight() >= 2 * iHeight, "Tested title is hyphenated.");
-			done();
-		}.bind(this), 500);
+			if (!fnIsHyphenated()) {
+				// try again after a while if not yet hyphenatated
+				setTimeout(function() {
+					if (!fnIsHyphenated()) {
+						assert.ok(false);
+						done();
+					}
+				}, 1000);
+			}
+		}, 500);
 	});
 
 	QUnit.test("TitleStyle correct", function(assert){
