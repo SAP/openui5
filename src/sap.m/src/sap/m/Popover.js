@@ -1195,7 +1195,7 @@ sap.ui.define([
 		 */
 		Popover.prototype.onmousedown = function (oEvent) {
 			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
-			if (!oEvent.target.classList.contains("sapMPopoverResizeHandle")) {
+			if (!oEvent.target.classList || !oEvent.target.classList.contains("sapMPopoverResizeHandle")) {
 				return;
 			}
 
