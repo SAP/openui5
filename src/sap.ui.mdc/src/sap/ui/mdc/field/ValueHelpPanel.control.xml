@@ -74,7 +74,7 @@
 							<FlexItemData growFactor="1" maxWidth="calc(100% - 2rem)"/>
 						</layoutData>
 					</Tokenizer>
-					<Button id="removeAllBtn" press="_onRemoveAllConditions" type="Transparent" icon="sap-icon://sys-cancel" tooltip="{$i18n>valuehelp.REMOVEALLTOKEN}" class="sapUiTinyMarginBegin">
+					<Button id="removeAllBtn" press="_onRemoveAllConditions" type="Transparent" icon="sap-icon://decline" tooltip="{$i18n>valuehelp.REMOVEALLTOKEN}" class="sapUiTinyMarginBegin">
 						<layoutData>
 							<FlexItemData growFactor="0" baseSize="2rem"/>
 						</layoutData>

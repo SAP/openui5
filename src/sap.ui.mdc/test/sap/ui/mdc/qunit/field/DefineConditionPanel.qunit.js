@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/field/BoolFieldHelp", // don't want to test async loading in Field here
 	"sap/ui/mdc/field/FieldBaseDelegate", // bring back to default one
+	"sap/ui/mdc/field/FieldHelpBaseDelegate",
 	"sap/ui/mdc/field/FieldInput", // don't want to test async loading in Field here
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/enum/ConditionValidated",
@@ -34,6 +35,7 @@ sap.ui.define([
 		Operator,
 		BoolFieldHelp,
 		FieldBaseDelegate,
+		FieldHelpBaseDelegate,
 		FieldInput,
 		BaseType,
 		ConditionValidated,
@@ -178,7 +180,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			assert.equal(oModel.getConditions("Name").length, 4, "4 conditions should exist");
 
-			var oRemoveBtn = sap.ui.getCore().byId("DCP1--removeBtn-DCP1--defineCondition-2");
+			var oRemoveBtn = sap.ui.getCore().byId("DCP1--2--removeBtnLarge");
 			oRemoveBtn.firePress();
 			sap.ui.getCore().applyChanges();
 			assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
@@ -202,16 +204,17 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 
-		setTimeout(function () {
+		setTimeout(function () { // for model update
+			sap.ui.getCore().applyChanges();
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			var oField = aItems[0];
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
 
-			assert.equal(aItems.length, 1, "One field created");
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			assert.ok(oField && oField.isA("sap.ui.mdc.Field"), "Field is mdc Field");
-			var aContent = oField.getAggregation("_content");
+			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 			assert.equal(oField.getValue(), "Andreas", "Value of Field");
@@ -237,19 +240,28 @@ sap.ui.define([
 			}
 		});
 
-		var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-		var oSelectField = oRowGrid.getContent()[0];
-		oSelectField.setValue("BT");
-		oSelectField.fireChange({value: "BT"}); // fake item select
-
 		var fnDone = assert.async();
-		setTimeout(function () { // as model update is async
-			var aConditions = oDefineConditionPanelView.getConditions();
-			assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+		setTimeout(function () { // wait for rendering
+			sap.ui.getCore().applyChanges();
+			var oOperatorField = sap.ui.getCore().byId("DCP1--0-operator-inner");
+			oOperatorField.setValue("BT");
+			oOperatorField.fireChange({value: "BT"}); // fake item select
 
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			assert.equal(aItems.length, 2, "Two fields created");
-			fnDone();
+			setTimeout(function () { // as model update is async
+				sap.ui.getCore().applyChanges();
+				var aConditions = oDefineConditionPanelView.getConditions();
+				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+
+				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var aContent = oGrid.getContent();
+				var oField1 = aContent[2];
+				var oField2 = aContent[3];
+
+				assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
+				assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
+				assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
+				fnDone();
+			}, 0);
 		}, 0);
 
 	});
@@ -295,18 +307,18 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var fnDone = assert.async();
-		setTimeout(function () { // to wait for retemplating
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			var oField = aItems[0];
+		setTimeout(function () { // to wait for rendering
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
 
-			assert.equal(aItems.length, 1, "One field created");
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			assert.ok(oField && oField.isA("sap.m.Button"), "Field is sap.m.Button");
 			assert.equal(oField.getText(), "Test", "Value of FIeld");
 
-			var oSelectField = oRowGrid.getContent()[0];
-			var oFH = sap.ui.getCore().byId(oSelectField.getFieldHelp());
-			aItems = oFH.getItems();
+			var oOperatorField = aContent[0];
+			var oFH = sap.ui.getCore().byId(oOperatorField.getFieldHelp());
+			var aItems = oFH.getItems();
 
 			assert.equal(aItems.length, 1, "Only one Operator available");
 			assert.equal(aItems[0].getText(), "Longtext", "Text of operator");
@@ -350,13 +362,15 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			var oField = aItems[0];
-			var aContent = oField.getAggregation("_content");
+			sap.ui.getCore().applyChanges();
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
+
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
-			assert.equal(aItems.length, 1, "One field created");
 			assert.ok(oControl.isA("sap.m.DatePicker"), "Field uses DatePicker");
 			var oType = oField.getBindingInfo("value").type;
 			assert.ok(oType instanceof DateType, "Type of Field binding");
@@ -374,13 +388,15 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			var oField = aItems[0];
-			var aContent = oField.getAggregation("_content");
+			sap.ui.getCore().applyChanges();
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
+
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
-			assert.equal(aItems.length, 1, "One field created");
 			assert.ok(oControl.isA("sap.m.Text"), "Field uses Text");
 			var oType = oField.getBindingInfo("value").type;
 			assert.ok(oType instanceof StringType, "Type of Field binding");
@@ -398,13 +414,15 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			var oField = aItems[0];
-			var aContent = oField.getAggregation("_content");
+			sap.ui.getCore().applyChanges();
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
+
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
-			assert.equal(aItems.length, 1, "One field created");
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 			var oType = oField.getBindingInfo("value").type;
 			assert.ok(oType instanceof IntegerType, "Type of Field binding");
@@ -422,58 +440,59 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-
-			var oSelectField = oRowGrid.getContent()[0];
-			oSelectField.setValue("TODAY");
-			oSelectField.fireChange({value: "TODAY"}); // fake item select
+			sap.ui.getCore().applyChanges();
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oOperatorField = aContent[0];
+			oOperatorField.setValue("TODAY");
+			oOperatorField.fireChange({value: "TODAY"}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				sap.ui.getCore().applyChanges();
-				var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-				var oField = aItems[0];
-				var aContent = oField && oField.getAggregation("_content");
+				aContent = oGrid.getContent();
+				var oField = aContent[2];
+				assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+				aContent = oField && oField.getAggregation("_content");
 				var oControl = aContent && aContent.length > 0 && aContent[0];
 
-				assert.equal(aItems.length, 1, "One field created");
 				assert.ok(oControl.isA("sap.m.Text"), "Field uses Text");
 				var oType = oField.getBindingInfo("value").type;
 				assert.ok(oType instanceof StringType, "Type of Field binding");
 				assert.equal(typeof oField.getValue(), "string", "Value of Field is String");
 				assert.equal(oField.getValue(), oDateType.formatValue(new Date(), "string"), "Text");
 
-				oSelectField.setValue("NEXTDAYS");
-				oSelectField.fireChange({value: "NEXTDAYS"}); // fake item select
+				oOperatorField.setValue("NEXTDAYS");
+				oOperatorField.fireChange({value: "NEXTDAYS"}); // fake item select
 
 				setTimeout(function () { // as model update is async
 					sap.ui.getCore().applyChanges();
-					var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-					var oField = aItems[0];
-					var aContent = oField && oField.getAggregation("_content");
-					var oControl = aContent && aContent.length > 0 && aContent[0];
+					aContent = oGrid.getContent();
+					oField = aContent[2];
+					assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+					aContent = oField && oField.getAggregation("_content");
+					oControl = aContent && aContent.length > 0 && aContent[0];
 
-					assert.equal(aItems.length, 1, "One field created");
 					assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
-					var oType = oField.getBindingInfo("value").type;
+					oType = oField.getBindingInfo("value").type;
 					assert.ok(oType instanceof IntegerType, "Type of Field binding");
 					assert.notOk(oField.getValue(), "no Value");
 
 					oControl.setValue("5");
 					oControl.fireChange({value: "5"}); //fake input
 					setTimeout(function () { // as model update is async
-						oSelectField.setValue("EQ");
-						oSelectField.fireChange({value: "EQ"}); // fake item select
+						oOperatorField.setValue("EQ");
+						oOperatorField.fireChange({value: "EQ"}); // fake item select
 
 						setTimeout(function () { // as model update is async
 							sap.ui.getCore().applyChanges();
-							var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-							var oField = aItems[0];
-							var aContent = oField && oField.getAggregation("_content");
-							var oControl = aContent && aContent.length > 0 && aContent[0];
+							aContent = oGrid.getContent();
+							oField = aContent[2];
+							assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+							aContent = oField && oField.getAggregation("_content");
+							oControl = aContent && aContent.length > 0 && aContent[0];
 
-							assert.equal(aItems.length, 1, "One field created");
 							assert.ok(oControl.isA("sap.m.DatePicker"), "Field uses DatePicker");
-							var oType = oField.getBindingInfo("value").type;
+							oType = oField.getBindingInfo("value").type;
 							assert.ok(oType instanceof DateType, "Type of Field binding");
 							assert.notOk(oField.getValue(), "no Value");
 
@@ -493,14 +512,14 @@ sap.ui.define([
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for condition update
 			sap.ui.getCore().applyChanges();
-			setTimeout(function () { // to wait for retemplating
-				var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-				var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-				var oField = aItems[0];
-				var aContent = oField.getAggregation("_content");
+			setTimeout(function () { // to wait for renderng
+				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var aContent = oGrid.getContent();
+				var oField = aContent[2];
+				assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+				aContent = oField.getAggregation("_content");
 				var oControl = aContent && aContent.length > 0 && aContent[0];
 
-				assert.equal(aItems.length, 1, "One field created");
 				assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 				var oType = oField.getBindingInfo("value").type;
 				assert.ok(oType.isA("sap.ui.model.odata.type.Boolean"), "Type of Field binding");
@@ -519,13 +538,13 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			var oField = aItems[0];
-			var aContent = oField.getAggregation("_content");
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
-			assert.equal(aItems.length, 1, "One field created");
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 			var oType = oField.getBindingInfo("value").type;
 			assert.ok(oType.isA("sap.ui.model.type.Integer"), "Type of Field binding");
@@ -542,13 +561,13 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			var oField = aItems[0];
-			var aContent = oField.getAggregation("_content");
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
-			assert.equal(aItems.length, 1, "One field created");
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 			var oType = oField.getBindingInfo("value").type;
 			assert.ok(oType.isA("sap.ui.model.type.Float"), "Type of Field binding");
@@ -581,13 +600,13 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			var oField = aItems[0];
-			var aContent = oField.getAggregation("_content");
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
-			assert.equal(aItems.length, 1, "One field created");
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 			var oType = oField.getBindingInfo("value").type;
 			assert.ok(oType.isA("sap.ui.model.type.String"), "Type of Field binding");
@@ -608,11 +627,12 @@ sap.ui.define([
 		var fnDone = assert.async();
 		setTimeout(function () { // as model update is async
 			sap.ui.getCore().applyChanges();
-			var oRowGrid = sap.ui.getCore().byId("DCP1--conditionRow-DCP1--defineCondition-0");
-			assert.ok(oRowGrid, "Dummy line created");
-			var aItems = oRowGrid.getContent()[2].getItems(); // items of HBox
-			var oField = aItems[0];
-			var aContent = oField.getAggregation("_content");
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
+			assert.equal(aContent.length, 5, "Dummy line created");
+
+			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
 			var oFakeClipboardData = {
