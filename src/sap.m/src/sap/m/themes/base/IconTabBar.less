@@ -225,6 +225,7 @@
 			overflow: hidden;
 		}
 	}
+
 }
 
 .sapMITHShowSubItemsIcon {
@@ -875,7 +876,7 @@ html.sap-desktop {
 		}
 
 		&:first-child {
-			margin-left: 0.0625rem;
+			margin-left: 0.063rem;
 		}
 	}
 
@@ -1228,5 +1229,79 @@ html[dir=rtl] {
 				color: @_sap_m_IconTabBar_ShellSelectedTextColor;
 			}
 		}
+	}
+}
+
+/* ------------------------------------------------ */
+/* IconTabBar Badge									*/
+/* ------------------------------------------------ */
+
+.sapMITH, .sapMITBFilterPopover {
+	&.sapUiSizeCompact .sapMBadgeAttention,
+	.sapMITBText .sapMBadgeAttention {
+		width: 0.375rem;
+		height: 0.375rem;
+	}
+
+	.sapMITBText .sapMBadgeAttention {
+		top: 0;
+		right: -0.6rem;
+		border-width: 0.063rem;
+	}
+
+	.sapMITBFilterWithItems .sapMITBText .sapMBadge {
+		margin-right: 0.375rem;
+	}
+
+	.sapMITBSelectList .sapMITBText .sapMBadgeAttention {
+		right: 0.25rem;
+
+		.sapUiSizeCompact & {
+			right: -0.125rem;
+		}
+	}
+
+	.sapMITBFilterIcon .sapMBadgeAttention,
+	.sapMITBCount .sapMBadgeAttention {
+		top: 0;
+		right: 0;
+	}
+
+	.sapMITBAll {
+		.sapMITBCount .sapMBadgeAttention {
+			top: 0.2rem;
+
+			.sapUiMedia-Std-Phone & {
+				right: -0.25rem;
+			}
+		}
+	}
+
+	&.sapUiSizeCompact {
+		.sapMITBFilterIcon .sapMBadgeAttention {
+			top: -0.063rem;
+			right: -0.063rem;
+		}
+
+		.sapMITBCount .sapMBadgeAttention {
+			top: -0.125rem;
+    		right: -0.125rem;
+		}
+	}
+
+	.sapMITBFilterNeutral .sapMBadgeAttention {
+		background-color: @sapUiNeutralElement;
+	}
+
+	.sapMITBFilterPositive .sapMBadgeAttention {
+		background-color: @sapUiPositiveElement;
+	}
+
+	.sapMITBFilterCritical .sapMBadgeAttention {
+		background-color: @sapUiCriticalElement;
+	}
+
+	.sapMITBFilterNegative .sapMBadgeAttention {
+		background-color: @sapUiNegativeElement;
 	}
 }

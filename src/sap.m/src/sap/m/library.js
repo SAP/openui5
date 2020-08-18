@@ -579,37 +579,61 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Types of state of {@link sap.m.BadgeEnabler} to expose its current state.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.81
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.BadgeState = {
+
 		/**
-		 * Types of state of {@link sap.m.BadgeEnabler} to expose its current state.
-		 *
-		 * @enum {string}
+		 * Informing interested parties that the badge has been updated.
 		 * @public
-		 * @since 1.81
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		thisLib.BadgeState = {
-
-			/**
-			 * Informing interested parties that the badge has been updated.
-			 * @public
-			 */
-			Updated : "Updated",
-
-			/**
-			 * Informing interested parties that the badge has appeared.
-			 * @public
-			 */
-			Appear : "Appear",
-
-			/**
-			 * Informing interested parties that the badge has disappeared.
-			 * @public
-			 */
-			Disappear : "Disappear"
-
-		};
+		Updated : "Updated",
 
 		/**
+		 * Informing interested parties that the badge has appeared.
+		 * @public
+		 */
+		Appear : "Appear",
+
+		/**
+		 * Informing interested parties that the badge has disappeared.
+		 * @public
+		 */
+		Disappear : "Disappear"
+
+	};
+
+
+	/**
+	 * Types of badge rendering style.
+	 *
+	 * @enum {string}
+	 * @private
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.BadgeStyle = {
+		/**
+		 * Default style. Use for badges which contain text or numbers.
+		 *
+		 * @private
+		 */
+		Default: "Default",
+
+		/**
+		 * Attention style. This badge is rendered as a single dot meant to grab attention.
+		 *
+		 * @private
+		 */
+		Attention: "Attention"
+	};
+
+	/**
 	 * Types of the Bar design.
 	 *
 	 * @enum {string}

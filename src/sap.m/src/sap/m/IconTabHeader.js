@@ -269,6 +269,13 @@ sap.ui.define([
 
 		//listen to resize
 		this._sResizeListenerId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._fnResize, this));
+
+		// notify items that they are rendered
+		this.getItems().forEach(function (oItem) {
+			if (oItem._onAfterParentRendering) {
+				oItem._onAfterParentRendering();
+			}
+		});
 	};
 
 	/**
