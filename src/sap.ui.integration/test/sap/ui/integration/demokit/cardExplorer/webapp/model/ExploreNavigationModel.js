@@ -632,8 +632,19 @@ sap.ui.define([
 						target: 'exploreSamples',
 						title: 'Filters',
 						experimental: true,
-						mockServer: true,
-						manifestUrl: '/samples/filters/products.json'
+						subSamples: [
+							{
+								title: 'Dynamically Defined Filter',
+								key: 'dynamicFilter',
+								manifestUrl: '/samples/filters/dynamicFilter.json'
+							},
+							{
+								title: 'Using Static Items',
+								key: 'usingStaticItems',
+								mockServer: true,
+								manifestUrl: '/samples/filters/usingStaticItems.json'
+							}
+						]
 					},
 					{
 						key: 'parameters',

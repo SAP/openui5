@@ -44,6 +44,14 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		});
 	};
 
+	oExtension.getDataForFilter = function () {
+		return Promise.resolve([
+			{ key: "hi", value: "High" },
+			{ key: "mi", value: "Middle" },
+			{ key: "lo", value: "Low" }
+		]);
+	};
+
 	oExtension.getDataForHeader = function () {
 		return Promise.resolve({ title: "Berlin" });
 	};

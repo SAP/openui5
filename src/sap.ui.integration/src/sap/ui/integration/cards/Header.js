@@ -179,6 +179,7 @@ sap.ui.define([
 		if (oDataSettings && oDataSettings.path) {
 			sPath = oDataSettings.path;
 		}
+
 		this.bindObject(sPath);
 
 		if (this._oDataProvider) {
@@ -195,7 +196,7 @@ sap.ui.define([
 				this.onDataRequested();
 			}.bind(this));
 
-			//TODO Designers to decide if we have to keep loading status when an error occured during loading
+			//TODO Designers to decide if we have to keep loading status when an error occurs during loading
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this._updateModel(oEvent.getParameter("data"));
 				this.onDataRequestComplete();

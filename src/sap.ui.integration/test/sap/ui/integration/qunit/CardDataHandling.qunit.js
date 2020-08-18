@@ -723,6 +723,40 @@ function (
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.test("Data request on filter definition level", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oFilter = this.oCard.getAggregation("_filterBar").getItems()[0],
+				oRequestedURL = oFilter._oDataProvider.getSettings().request.url;
+
+			// Assert
+			assert.strictEqual(oRequestedURL, "someurl/?f=1", "Filter value in the 'url' should be resolved.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.card": {
+				"configuration": {
+					"filters": {
+						"f": {
+							"value": "1",
+							"data": {
+								"request": {
+									"url": "someurl/?f={{filters.f}}"
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.test("Data request on content level", function (assert) {
 		// Arrange
 		var done = assert.async();

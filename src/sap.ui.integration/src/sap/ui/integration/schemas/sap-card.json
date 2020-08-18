@@ -30,7 +30,7 @@
       "type": "string"
     },
     "configuration": {
-      "description": "Represents configuration with parameters and destinations, which can be used inside the card",
+      "description": "Represents configuration with parameters, destinations, and filters, which can be used inside the card",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -1833,6 +1833,9 @@
           "description": "The type of the value for the filter.",
           "$ref": "#/definitions/Configuration.BasicDataType"
         },
+        "data": {
+          "$ref": "#/definitions/data"
+        },
         "label": {
           "description": "Label for the filter for user-friendly visualization in the design-time editor.",
           "type": "string"
@@ -1845,6 +1848,23 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/Configuration.Filter.Item"
+          }
+        },
+        "item": {
+          "type": "object",
+          "required": [
+            "template"
+          ],
+          "properties": {
+            "template": {
+              "$ref": "#/definitions/Configuration.Filter.Item"
+            },
+            "path": {
+              "description": "Defines the path to the structure holding the data about the items.",
+              "type": "string",
+              "default": "/",
+              "pattern": "^[a-zA-Z0-9_\\.\\-/|\\@\\#]*$"
+            }
           }
         }
       }

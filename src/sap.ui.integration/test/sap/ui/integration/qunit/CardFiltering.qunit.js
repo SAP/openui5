@@ -3,8 +3,7 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core"
-],
-function (
+], function (
 	Card,
 	Core
 ) {
@@ -28,29 +27,26 @@ function (
 			aOptions = [
 				{
 					"title": "Flat Screen Monitors",
-					"value": "flat_screens"
+					"key": "flat_screens"
 				},
 				{
 					"title": "Notebooks",
-					"value": "notebooks"
+					"key": "notebooks"
 				}
 			];
 
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 
-			var oFilterBar = this.oCard.getAggregation("_filterBar"),
-				aFirstSelect;
-
 			// Assert
-			assert.strictEqual(oFilterBar.getItems().length, 1, "The filter has 1 select");
+			var oFilterBar = this.oCard.getAggregation("_filterBar");
+			assert.strictEqual(oFilterBar.getItems().length, 1, "The filter bar has 1 filter");
 
-			aFirstSelect = oFilterBar.getItems()[0];
+			var oFirstFilter = oFilterBar.getItems()[0];
+			assert.strictEqual(oFirstFilter._getSelect().getItems().length, 2, "The filter options are 2.");
 
-			assert.strictEqual(aFirstSelect.getItems().length, 2, "The select options are 2.");
-
-			aFirstSelect.getItems().forEach(function (oItem, iInd) {
-				assert.strictEqual(oItem.getKey(), aOptions[iInd].value, "Option at position " + iInd + " has a valid key.");
+			oFirstFilter._getSelect().getItems().forEach(function (oItem, iInd) {
+				assert.strictEqual(oItem.getKey(), aOptions[iInd].key, "Option at position " + iInd + " has a valid key.");
 				assert.strictEqual(oItem.getText(), aOptions[iInd].title, "Option at position " + iInd + " has a valid title.");
 			});
 
@@ -58,7 +54,7 @@ function (
 		}.bind(this));
 
 		// Act
-		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering.json");
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
@@ -71,14 +67,13 @@ function (
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 
-			var oHeader = this.oCard.getAggregation("_header"),
-				oListItems = this.oCard.getCardContent().getInnerList().getItems();
-
 			// Assert
+			var oHeader = this.oCard.getAggregation("_header");
 			assert.strictEqual(oHeader.getSubtitle(), "Category " + sCategory, "The initial value of 'category' is ok.");
-			assert.strictEqual(oListItems[0].getDescription(), sCategory, "The list items have correct category.");
-
 			assert.strictEqual(oHeader.getStatusText(), sStatus, "The number of list items is as expected.");
+
+			var oListItems = this.oCard.getCardContent().getInnerList().getItems();
+			assert.strictEqual(oListItems[0].getDescription(), sCategory, "The list items have correct category.");
 
 			if (sCategory === "flat_screens") {
 				done();
@@ -92,8 +87,40 @@ function (
 		}.bind(this));
 
 		// Act
-		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering.json");
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.module("Dynamic filters", {
+		beforeEach: function () {
+			this.oCard = new Card();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Loading a filter using a data request", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		setTimeout(function () {
+			Core.applyChanges();
+
+			// Assert
+			var oFilterBar = this.oCard.getAggregation("_filterBar");
+			assert.strictEqual(oFilterBar.getItems().length, 1, "The filter bar has 1 filter");
+
+			var oFilter = oFilterBar.getItems()[0];
+			assert.strictEqual(oFilter._getSelect().getSelectedKey(), "available", "property binding works");
+			assert.strictEqual(oFilter._getSelect().getItems()[1].getKey(), "out_of_stock", "option has the expected key");
+
+			done();
+		}.bind(this), 1000);
+
+		// Act
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_dynamic_filter.json");
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
 });

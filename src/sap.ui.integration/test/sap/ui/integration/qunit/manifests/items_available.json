@@ -1,0 +1,21 @@
+{
+	"count": 4,
+	"items": [
+		{
+			"Name": "Notebook Basic 17",
+			"ProductCategory": "flat_screens"
+		},
+		{
+			"Name": "Notebook Basic 18",
+			"ProductCategory": "flat_screens"
+		},
+		{
+			"Name": "Notebook Basic 19",
+			"ProductCategory": "flat_screens"
+		},
+		{
+			"Name": "Notebook Professional 26",
+			"ProductCategory": "flat_screens"
+		}
+	]
+}
