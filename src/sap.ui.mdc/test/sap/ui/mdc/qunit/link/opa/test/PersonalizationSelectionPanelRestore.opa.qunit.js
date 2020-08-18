@@ -40,7 +40,7 @@ sap.ui.define([
 	// ------------------------------------------------------
 	// Test: select an item and restore
 	// ------------------------------------------------------
-	opaTest("When I click on 'Gladiator MX' link in the 'Name' column, popover should open with main link", function(Given, When, Then) {
+	opaTest("When I click on 'Gladiator MX' link in the 'Name' column, popover should open with initiallyVisible link", function(Given, When, Then) {
 		When.iClickOnLink("Gladiator MX");
 
 		Then.iShouldSeeNavigationPopoverOpens();
@@ -66,16 +66,18 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
 		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
 
-
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
 
-	opaTest("When I deselect the 'Name Link2 (Superior)' item, the 'Restore' button should be enabled", function(Given, When, Then) {
+	opaTest("When I deselect the 'Name Link2 (Superior)' item and select the 'FactSheet of Name' item, the 'Restore' button should be enabled", function(Given, When, Then) {
 		When.iSelectLink("Name Link2 (Superior)");
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+
+		When.iSelectLink("FactSheet of Name");
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 
 		Then.iShouldSeeLinkItemOnPosition("FactSheet of Name", 0);
-		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", false);
+		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", true);
 		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Name", true);
 
 		Then.iShouldSeeLinkItemOnPosition("Name Link2 (Superior)", 1);
@@ -85,16 +87,15 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemOnPosition("Name Link3", 2);
 		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
 		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
-
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
 
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {
 		When.iPressOkButton();
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([]);
+		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+			"FactSheet of Name"
+		]);
 	});
 
 	opaTest("When I click on 'Flat Medium' link in the 'Name' column, popover should open", function(Given, When, Then) {
@@ -102,7 +103,9 @@ sap.ui.define([
 		When.iClickOnLink("Flat Medium");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([]);
+		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+			"FactSheet of Name"
+		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -111,7 +114,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		Then.iShouldSeeLinkItemOnPosition("FactSheet of Name", 0);
-		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", false);
+		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", true);
 		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Name", true);
 
 		Then.iShouldSeeLinkItemOnPosition("Name Link2 (Superior)", 1);
@@ -122,51 +125,21 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
 		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
 
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+	});
+
+	opaTest("When I press 'Restore' and then 'OK' button, popover should show previous link selection again", function(Given, When, Then) {
+		When.iPressRestoreButton();
+		When.iPressOkButton();
+
+		Then.thePersonalizationDialogShouldBeClosed();
+		Then.iShouldSeeNavigationPopoverOpens();
+		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+			"Name Link2 (Superior)"
+		]);
+		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 
 		Given.closeAllNavigationPopovers();
 		Then.iTeardownMyAppFrame();
 	});
-
-	// opaTest("When I press 'Restore' and then 'OK' button, popover should show previous link selection again", function(Given, When, Then) {
-	// 	When.iPressRestoreButton();
-	// 	When.iPressOkButton();
-	//
-	// 	Then.thePersonalizationDialogShouldBeClosed();
-	// 	Then.iShouldSeeNavigationPopoverOpens();
-	// 	Then.iShouldSeeOrderedLinksOnNavigationContainer([
-	// 		"Flat Medium"
-	// 	]);
-	// 	Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
-	// });
-	// opaTest("When I click on 'Gladiator MX' link in the 'Name' column, popover should open with main link", function(Given, When, Then) {
-	// 	Given.closeAllNavigationPopovers();
-	// 	When.iClickOnLink("Gladiator MX");
-	//
-	// 	Then.iShouldSeeNavigationPopoverOpens();
-	// Then.iShouldSeeOrderedLinksOnNavigationContainer([
-	// 	"Gladiator MX"
-	// ]);
-	// 	Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
-	// });
-	// opaTest("When I click on 'More Links' button, the selection dialog opens", function(Given, When, Then) {
-	// 	When.iPressOnLinkPersonalizationButton();
-	// 	Then.thePersonalizationDialogOpens();
-	// });
-	// opaTest("When I set all links as invisible, the links shown on popover before are not changed", function(Given, When, Then) {
-	// 	When.iSelectLink("Name Link2 (Superior)");
-	// 	When.iPressRestoreButton();
-	// 	When.iPressOkButton();
-	//
-	// 	Then.thePersonalizationDialogShouldBeClosed();
-	// 	Then.iShouldSeeNavigationPopoverOpens();
-	// 	Then.iShouldSeeOrderedLinksOnNavigationContainer([
-	// 		"Gladiator MX"
-	// 	]);
-	// 	Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
-	//
-	// 	Given.closeAllNavigationPopovers();
-	// 	Then.iTeardownMyAppFrame();
-	// });
 });

@@ -619,7 +619,8 @@ sap.ui.define([
 					});
 					Opa5.assert.equal(aRestoreButtons.length, 1);
 					Opa5.assert.ok(aRestoreButtons[0].getEnabled() === bEnabled, "The 'Restore' is " + (bEnabled ? "enabled" : "disabled"));
-				}
+				},
+				errorMessage: "The 'Restore' is not " + (bEnabled ? "enabled" : "disabled")
 			});
 		},
 		// iShouldSeeSelectedVariant: function(sVariantName) {

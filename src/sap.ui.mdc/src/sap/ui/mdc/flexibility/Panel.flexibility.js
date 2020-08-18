@@ -109,12 +109,14 @@ sap.ui.define([
 					});
 				},
 				revertChange: function(oChange, oPanel, mPropertyBag) {
-					var sId = oChange.getContent().id;
-					var oItem = mPropertyBag.modifier.bySelector(sId, mPropertyBag.appComponent, mPropertyBag.view);
-					if (!oItem) {
-						return Base.markAsNotApplicable("revertChange of createItem: the item with id " + sId + " is not existing and therefore can not be removed.", true);
+					if (oChange.getContent() && oChange.getContent().selector) {
+						var sId = oChange.getContent().selector.id;
+						var oItem = mPropertyBag.modifier.bySelector(sId, mPropertyBag.appComponent, mPropertyBag.view);
+						if (!oItem) {
+							return Base.markAsNotApplicable("revertChange of createItem: the item with id " + sId + " is not existing and therefore can not be removed.", true);
+						}
+						mPropertyBag.modifier.removeAggregation(oPanel, "items", oItem);
 					}
-					mPropertyBag.modifier.removeAggregation(oPanel, "items", oItem);
 				},
 				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
 					if (mSpecificChangeInfo.content) {

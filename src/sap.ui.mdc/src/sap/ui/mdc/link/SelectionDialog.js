@@ -98,10 +98,11 @@ sap.ui.define([
 		oDeviceModel.setSizeLimit(1000);
 		this.setModel(oDeviceModel, "device");
 		this._getManagedObjectModel().setSizeLimit(1000);
+		this._bUnconfirmedResetPressed = false;
 	};
 	SelectionDialog.prototype.open = function() {
 		this._getManagedObjectModel().setProperty("/@custom/countOfItems", this._getTable().getItems().length);
-		this._updateCountOfItems();
+		this._updateCountOfSelectedItems();
 		this._getCompositeAggregation().open();
 	};
 	SelectionDialog.prototype.close = function() {
@@ -125,13 +126,17 @@ sap.ui.define([
 		this._getTable().getBinding("items").filter(aFilters);
 	};
 	SelectionDialog.prototype.onPressOk = function() {
+		if (this._bUnconfirmedResetPressed) {
+			this.fireReset();
+		}
 		this.fireOk();
 	};
 	SelectionDialog.prototype.onPressCancel = function() {
 		this.fireCancel();
 	};
 	SelectionDialog.prototype.onPressReset = function() {
-		this.fireReset();
+		this._resetSelection();
+		this._bUnconfirmedResetPressed = true;
 	};
 	SelectionDialog.prototype.onAfterClose = function() {
 		this.fireCancel();
@@ -163,7 +168,7 @@ sap.ui.define([
 		}
 	};
 	SelectionDialog.prototype._selectTableItem = function(oTableItem) {
-		this._updateCountOfItems();
+		this._updateCountOfSelectedItems();
 
 		this.fireVisibilityChanged({
 			key: this._getKeyByTableItem(oTableItem),
@@ -186,8 +191,22 @@ sap.ui.define([
 		var iIndex = this._getTable().indexOfItem(oTableItem);
 		return iIndex < 0 ? null : this._getTable().getBinding("items").getContexts()[iIndex].getObject().getKey();
 	};
-	SelectionDialog.prototype._updateCountOfItems = function() {
+	SelectionDialog.prototype._updateCountOfSelectedItems = function() {
 		this._getManagedObjectModel().setProperty("/@custom/countOfSelectedItems", this._getSelectedTableContextPaths().length);
+	};
+
+	SelectionDialog.prototype._resetSelection = function() {
+		var oTable = this._getTable();
+		if (oTable) {
+			oTable.getItems().forEach(function(oTableItem) {
+				var iIndex = oTable.indexOfItem(oTableItem);
+				var bIsBaseline = oTable.getBinding("items").getContexts()[iIndex].getObject().getIsBaseline();
+				if (oTableItem.getSelected() !== bIsBaseline) {
+					oTableItem.setSelected(bIsBaseline);
+					this._selectTableItem(oTableItem);
+				}
+			}.bind(this));
+		}
 	};
 
 	return SelectionDialog;

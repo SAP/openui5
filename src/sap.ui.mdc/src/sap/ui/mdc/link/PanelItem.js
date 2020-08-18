@@ -64,14 +64,14 @@ sap.ui.define([
 				visible: {
 					type: "boolean",
 					defaultValue: true
+				},
+				/**
+				 * Describes whether the visibility is changed by end user or not.
+				 * @since 1.60.0
+				 */
+				visibleChangedByUser: {
+					type: "boolean"
 				}
-				// /**
-				//  * Describes whether the visibility is changed by end user or not.
-				//  * @since 1.60.0
-				//  */
-				// visibleChangedByUser: {
-				// 	type: "boolean"
-				// },
 				// /**
 				//  * TODO: workaround due to disabled 'Reset' button in SelectionDialog
 				//  * @since 1.60.0
@@ -107,8 +107,8 @@ sap.ui.define([
 			href: this.getHref(),
 			icon: this.getIcon(),
 			target: this.getTarget(),
-			visible: this.getVisible()
-			// visibleChangedByUser: this.getVisibleChangedByUser(),
+			visible: this.getVisible(),
+			visibleChangedByUser: this.getVisibleChangedByUser()
 			// visibleChangedChangeHandler: this.getVisibleChangedChangeHandler(),
 			// visibleInitial: this.getVisibleInitial()
 		};
