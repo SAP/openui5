@@ -557,7 +557,7 @@ function(
 
 			oIcon = aEndIcons[0],
 			oPopupInput,
-			bSuggestionsPopoverIsOpen = this._oSuggPopover && this._oSuggPopover.isOpen(),
+			bSuggestionsPopoverIsOpen = this._isSuggestionsPopoverOpen(),
 			sValueStateHeaderText = bSuggestionsPopoverIsOpen ?  this._oSuggPopover._getValueStateHeader().getText() : null,
 			sValueStateHeaderValueState = bSuggestionsPopoverIsOpen ?  this._oSuggPopover._getValueStateHeader().getValueState() : "";
 
@@ -888,7 +888,7 @@ function(
 	 * @since 1.78
 	 */
 	Input.prototype._getFormattedValueStateText = function() {
-		var bSuggestionsPopoverIsOpen = this._oSuggPopover && this._oSuggPopover.isOpen(),
+		var bSuggestionsPopoverIsOpen = this._isSuggestionsPopoverOpen(),
 			oValueStateHeaderFormattedText = bSuggestionsPopoverIsOpen ?  this._oSuggPopover._getValueStateHeader().getFormattedText() : null;
 
 		if (bSuggestionsPopoverIsOpen && oValueStateHeaderFormattedText) {
@@ -1318,9 +1318,7 @@ function(
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onmousedown = function(oEvent) {
-		var oPopup = this._oSuggPopover && this._oSuggPopover._oPopover;
-
-		if ((oPopup instanceof Popover) && oPopup.isOpen()) {
+		if (this._isSuggestionsPopoverOpen()) {
 			oEvent.stopPropagation();
 		}
 	};
@@ -1745,7 +1743,7 @@ function(
 
 			// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 			if (!this.isMobileDevice()) {
-				if (oPopup.isOpen()) {
+				if (this._isSuggestionsPopoverOpen()) {
 					this._sCloseTimer = setTimeout(function () {
 						if (this._oSuggPopover) {
 							this._oSuggPopover._iPopupListSelectedIndex = -1;
@@ -1773,14 +1771,12 @@ function(
 		 * @private
 		 */
 		Input.prototype._openSuggestionPopup = function (bOpenCondition) {
-			var oPopup = this._oSuggPopover._oPopover;
-
 			if (!this.isMobileDevice()) {
 				if (this._sCloseTimer) {
 					clearTimeout(this._sCloseTimer);
 					this._sCloseTimer = null;
 				}
-				if (!oPopup.isOpen() && !this._sOpenTimer && bOpenCondition !== false) {
+				if (!this._isSuggestionsPopoverOpen() && !this._sOpenTimer && bOpenCondition !== false) {
 					this._sOpenTimer = setTimeout(function () {
 						this._sOpenTimer = null;
 						this._oSuggPopover && this._openSuggestionsPopover();
@@ -2092,7 +2088,7 @@ function(
 		 */
 		Input.prototype._closeSuggestionPopup = function() {
 
-			if (this._oSuggPopover && this._oSuggPopover.isOpen()) {
+			if (this._isSuggestionsPopoverOpen()) {
 				this.cancelPendingSuggest();
 				this._oSuggPopover._oPopover.close();
 
@@ -2875,7 +2871,7 @@ function(
 		/*  If open and no new FormattedText or value state is set to the Input then this is called
 		onBeforeClose of the SuggestionsPopover. Switch the value state aggregation's
 		parent from the ValueStateHeader to the Input control */
-		if (oSuggPopover.isOpen() && !oNewFormattedValueStateText && !bNewValueState) {
+		if (this._isSuggestionsPopoverOpen() && !oNewFormattedValueStateText && !bNewValueState) {
 			this.setFormattedValueStateText(this._oSuggPopover._getValueStateHeader().getFormattedText());
 		}
 
