@@ -259,54 +259,14 @@ sap.ui.define([
 	};
 
 	ChartDelegate.addItem = function(sPropertyName, oChart, mPropertyBag, sRole) {
-		return this.beforeAddItem.apply(this, arguments);
-	};
-
-	ChartDelegate.removeItem = function(sPropertyName, oChart, mPropertyBag) {
-		return this.afterRemoveItem.apply(this, arguments);
-	};
-
-	/**
-	 *
-	 * @deprecated
-	 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
-	 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
-	 *
-	 * Hook method invoked before a chart item is added.
-	 *
-	 * <b>Note:</b> This method is invoked by the flex handler.
-	 *
-	 * @param {string} sPropertyInfoName The name of the property info
-	 * @param {sap.ui.mdc.Chart} oChart The chart instance
-	 * @param {object} mPropertyBag The flexibility property bag
-	 * @param {string} sRole The Role name
-	 * @returns {Promise|sap.ui.base.SyncPromise} A promise object instance
-	 */
-	ChartDelegate.beforeAddItem = function(sPropertyInfoName, oChart, mPropertyBag, sRole) {
-
 		if (typeof oChart.getModel === "function") {
-			return this.createChartItem(sPropertyInfoName, oChart, sRole);
+			return this.createChartItem(sPropertyName, oChart, sRole);
 		}
 
 		return SyncPromise.resolve(null);
 	};
 
-	/**
-	 *
-	 * @deprecated
-	 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
-	 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
-	 *
-	 * Hook method invoked after a chart item is removed.
-	 *
-	 * <b>Note:</b> This method is invoked by the flex handler.
-	 *
-	 * @param {sap.ui.mdc.chart.Item} oChartItem The chart item instance
-	 * @param {sap.ui.mdc.Chart} oChart The chart instance
-	 * @param {object} mPropertyBag The flexibility property bag
-	 * @returns {Promise|sap.ui.base.SyncPromise} A promise object instance
-	 */
-	ChartDelegate.afterRemoveItem = function(oChartItem, oChart, mPropertyBag) {
+	ChartDelegate.removeItem = function(sPropertyName, oChart, mPropertyBag) {
 		return SyncPromise.resolve(true);
 	};
 

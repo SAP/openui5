@@ -273,7 +273,7 @@ sap.ui.define([
 			var oDelegate = this.getAdaptationControl().getControlDelegate();
 
 			if (aExistingItems.indexOf(sKey) < 0) {
-				oDelegate.afterRemoveFilterFlex.call(oDelegate, sKey, this.getAdaptationControl());
+				oDelegate.removeItem.call(oDelegate, sKey, this.getAdaptationControl());
 			}
 
 			delete this.mOriginalsForClone[sKey];
