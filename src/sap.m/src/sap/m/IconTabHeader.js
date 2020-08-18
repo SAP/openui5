@@ -532,6 +532,8 @@ sap.ui.define([
 			}
 		}
 
+		this.oSelectedItem._startBadgeHiding();
+
 		this._setItemsForStrip();
 		return this;
 	};

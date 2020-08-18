@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/m/BadgeCustomData",
 	"sap/m/IconTabHeader",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabSeparator",
@@ -8,6 +9,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Panel"
 ], function(
+	BadgeCustomData,
 	IconTabHeader,
 	IconTabFilter,
 	IconTabSeparator,
@@ -218,5 +220,83 @@ sap.ui.define([
 
 		// Clean-up
 		oITH.destroy();
+	});
+
+	QUnit.module("Badges", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader({
+				items: [
+					new IconTabFilter({
+						text: "Tab1",
+						key: "tab1"
+					})
+				]
+			});
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Badge is shown", function (assert) {
+		// Arrange
+		var oTab = 	new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			customData: [
+				new BadgeCustomData()
+			]
+		});
+		this.oITH.addItem(oTab);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oITH.$().find(".sapMBadgeIndicator").length, "Badge indicator is rendered");
+	});
+
+	QUnit.test("Badge hiding after tab is selected", function (assert) {
+		// Arrange
+		var oTab = 	new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			customData: [
+				new BadgeCustomData()
+			]
+		});
+		this.oITH.addItem(oTab);
+		Core.applyChanges();
+
+		// Act
+		this.oITH.setSelectedKey("tab2");
+		this.clock.tick(4000);
+
+		// Assert
+		assert.notOk(oTab._isBadgeAttached, "Badge indicator is removed");
+	});
+
+	QUnit.test("Badge hiding timeout is properly handled", function (assert) {
+		// Arrange
+		var oTab = 	new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			customData: [
+				new BadgeCustomData()
+			]
+		});
+		this.oITH.addItem(oTab);
+		Core.applyChanges();
+
+		// Act
+		this.oITH.setSelectedKey("tab2");
+		var iTimeoutId = oTab._iHideBadgeTimeout;
+
+		// Assert
+		assert.ok(iTimeoutId, "There is timeout");
+
+		// Act
+		this.oITH.setSelectedKey("tab2");
+
+		assert.strictEqual(oTab._iHideBadgeTimeout, iTimeoutId, "The timeout is the same as before");
 	});
 });
