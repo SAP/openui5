@@ -27,6 +27,11 @@ sap.ui.define([
 				message : "Info: My info message",
 				severity : "info"
 			},
+			infoCurrency : {
+				code : "ZUI5TEST/009",
+				message : "Avoid currency 'JPY'",
+				severity : "info"
+			},
 			maintenance : {
 				code : "ZUI5TEST/004",
 				message : "Product HT-1110 is out of maintenance",
@@ -613,6 +618,16 @@ sap.ui.define([
 					}),
 					ifMatch : increaseSaveCount.bind(),
 					source : "Messages/TC9/SalesOrderSet-ToLineItems.json"
+				},
+				/* Test Case X */
+				"SalesOrderSet('110')" : {
+					headers : getMessageHeader(undefined, oCurrentMessages.reset()
+						.add("infoCurrency",
+							"ToLineItems(SalesOrderID='110',ItemPosition='010')/CurrencyCode")),
+					source : "Messages/TC10/SalesOrderSet.json"
+				},
+				"SalesOrderSet('110')/ToLineItems?$skip=0&$top=4" : {
+					source : "Messages/TC10/SalesOrderSet-ToLineItems.json"
 				}
 			},
 			aRegExpFixture : [{

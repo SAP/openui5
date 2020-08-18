@@ -48,6 +48,8 @@ sap.ui.define([
 			this.bInitial = false;
 			this.bSuspended = false;
 			this.oDataState = null;
+			// whether this binding does not propagate messages to the control
+			this.bIgnoreMessages = false;
 		},
 
 		metadata : {
@@ -211,6 +213,51 @@ sap.ui.define([
 	 */
 	Binding.prototype.getModel = function() {
 		return this.oModel;
+	};
+
+	/**
+	 * Whether this binding does not propagate messages to the control. By default, all bindings
+	 * propagate messages. If a binding wants to support this feature, it has to override
+	 * {@link #supportsIgnoreMessages}, which returns <code>true</code>.
+	 *
+	 * For example, a binding for a currency code is used in a composite binding for rendering the
+	 * proper number of decimals, but the currency code is not displayed in the attached control. In
+	 * that case, messages for the currency code shall not be displayed at that control, only
+	 * messages for the amount.
+	 *
+	 * @returns {boolean}
+	 *   Whether this binding does not propagate messages to the control
+	 */
+	Binding.prototype.getIgnoreMessages = function () {
+		return this.bIgnoreMessages && this.supportsIgnoreMessages();
+	};
+
+	/**
+	 * Sets the indicator whether this binding does not propagate messages to the control.
+	 *
+	 * @param {boolean} bIgnoreMessages
+	 *   Whether this binding does not propagate messages to the control
+	 *
+	 * @see #getIgnoreMessages
+	 * @see #supportsIgnoreMessages
+	 */
+	Binding.prototype.setIgnoreMessages = function (bIgnoreMessages) {
+		this.bIgnoreMessages = !!bIgnoreMessages;
+	};
+
+	/**
+	 * Whether this binding supports the feature of not propagating messages to the control. The
+	 * default implementation returns <code>false</code>.
+	 *
+	 * @returns {boolean}
+	 *   <code>false</code>; subclasses that support this feature need to override this function and
+	 *   need to return <code>true</code>
+	 *
+	 * @see #getIgnoreMessages
+	 * @see #setIgnoreMessages
+	 */
+	Binding.prototype.supportsIgnoreMessages = function () {
+		return false;
 	};
 
 	// Eventing and related
@@ -658,7 +705,9 @@ sap.ui.define([
 				that.bFiredAsync = false;
 			};
 
-			this._checkDataStateMessages(oDataState, sResolvedPath);
+			if (!this.getIgnoreMessages()) {
+				this._checkDataStateMessages(oDataState, sResolvedPath);
+			}
 
 			if (oDataState && oDataState.changed()) {
 				if (this.mEventRegistry["DataStateChange"]) {

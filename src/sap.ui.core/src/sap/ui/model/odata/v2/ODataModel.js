@@ -1867,7 +1867,14 @@ sap.ui.define([
 	 * @param {string} sPath Path pointing to the property that should be bound;
 	 *                 either an absolute path or a path relative to a given <code>oContext</code>
 	 * @param {object} [oContext] A context object for the new binding
-	 * @param {Object<string,any>} [mParameters] Map of optional parameters for the binding; the ODataModel (v2) currently supports no additional parameters
+	 * @param {Object<string,any>} [mParameters] Map of optional parameters for the binding
+	 * @param {boolean} [mParameters.ignoreMessages]
+	 *   Whether this binding does not propagate messages to the control; supported since 1.82.0.
+	 *
+	 *   For example, a binding for a currency code is used in a composite binding for rendering the
+	 *   proper number of decimals, but the currency code is not displayed in the attached control.
+	 *   In that case, messages for the currency code shall not be displayed at that control, only
+	 *   messages for the amount.
 	 * @returns {sap.ui.model.PropertyBinding} The new property binding
 	 * @public
 	 */

@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/model/Binding",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/ODataPropertyBinding",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Log, Context, ODataPropertyBinding, TestUtils) {
+], function (Log, Binding, Context, ODataPropertyBinding, ODataModel, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -22,6 +24,50 @@ sap.ui.define([
 		afterEach : function (assert) {
 			return TestUtils.awaitRendering();
 		}
+	});
+
+	//*********************************************************************************************
+[
+	{mParameters : undefined, bIgnoreMessages : undefined},
+	{mParameters : {}, bIgnoreMessages : undefined},
+	{mParameters : {ignoreMessages : "~ignoreMessages"}, bIgnoreMessages : "~ignoreMessages"}
+].forEach(function (oFixture, i) {
+	QUnit.test("basics: #" + i, function (assert) {
+		var oBinding,
+			oDataState = {
+				setValue : function () {}
+			};
+
+		this.mock(ODataPropertyBinding.prototype).expects("_getValue")
+			.withExactArgs()
+			.returns("~value");
+		this.mock(ODataPropertyBinding.prototype).expects("getDataState")
+			.withExactArgs()
+			.returns(oDataState);
+		this.mock(oDataState).expects("setValue").withExactArgs("~value");
+		this.mock(ODataPropertyBinding.prototype).expects("setIgnoreMessages")
+			.withExactArgs(oFixture.bIgnoreMessages);
+
+		// code under test
+		oBinding = ODataModel.prototype.bindProperty.call("~oModel", "~sPath", "~oContext",
+			oFixture.mParameters);
+
+		assert.strictEqual(oBinding.bInitial, true);
+		assert.strictEqual(oBinding.oValue, "~value");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("supportsIgnoreMessages", function (assert) {
+		assert.strictEqual(ODataPropertyBinding.prototype.getIgnoreMessages,
+			Binding.prototype.getIgnoreMessages, "unchanged");
+		assert.strictEqual(ODataPropertyBinding.prototype.setIgnoreMessages,
+			Binding.prototype.setIgnoreMessages, "unchanged");
+		assert.notStrictEqual(ODataPropertyBinding.prototype.supportsIgnoreMessages,
+			Binding.prototype.supportsIgnoreMessages, "overridden");
+
+		// code under test
+		assert.strictEqual(ODataPropertyBinding.prototype.supportsIgnoreMessages(), true);
 	});
 
 	//*********************************************************************************************
