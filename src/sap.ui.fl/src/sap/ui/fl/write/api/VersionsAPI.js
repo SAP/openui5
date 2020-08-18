@@ -100,7 +100,7 @@ sap.ui.define([
 			layer : mPropertyBag.layer
 		}).getProperty("/versions");
 		var oDraft = aVersions.find(function (oVersion) {
-			return oVersion.versionNumber === sap.ui.fl.Versions.Draft;
+			return oVersion.version === sap.ui.fl.Versions.Draft;
 		});
 
 		return !!oDraft;
@@ -132,7 +132,7 @@ sap.ui.define([
 		return FlexState.clearAndInitialize({
 			componentId: oAppComponent.getId(),
 			reference: oAppInfo.reference,
-			versionNumber: sap.ui.fl.Versions.Draft
+			version: sap.ui.fl.Versions.Draft
 		});
 	};
 

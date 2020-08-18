@@ -41,7 +41,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.reference - Flex Reference
 		 * @param {string} mPropertyBag.componentData - Component data of the current component
 		 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
-		 * @param {number} [mPropertyBag.versionNumber] - Number of the version in which the state should be initialized
+		 * @param {number} [mPropertyBag.version] - Number of the version in which the state should be initialized
 		 * @param {object} [mPropertyBag.partialFlexData] - Contains current flexstate for this reference, indictor to reload bundles from storage
 		 * @returns {Promise<object>} resolves with the change file for the given component from the Storage
 		 */
@@ -63,7 +63,7 @@ sap.ui.define([
 				cacheKey: ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.asyncHints),
 				siteId: Utils.getSiteIdByComponentData(mPropertyBag.componentData),
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
-				versionNumber: mPropertyBag.versionNumber
+				version: mPropertyBag.version
 			}).then(_formatFlexData);
 		}
 	};

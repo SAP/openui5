@@ -46,7 +46,7 @@ sap.ui.define([
 				otherValue: "a",
 				reference: "reference",
 				componentData: {},
-				versionNumber: sap.ui.fl.Versions.Draft
+				version: sap.ui.fl.Versions.Draft
 			};
 
 			var oExpectedProperties = {
@@ -56,7 +56,7 @@ sap.ui.define([
 				cacheKey: "cacheKey",
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
-				versionNumber: sap.ui.fl.Versions.Draft
+				version: sap.ui.fl.Versions.Draft
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
@@ -87,7 +87,7 @@ sap.ui.define([
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
 				componentName: "baseName",
-				versionNumber: undefined
+				version: undefined
 			};
 			this.oGetAppVersionStub.returns();
 

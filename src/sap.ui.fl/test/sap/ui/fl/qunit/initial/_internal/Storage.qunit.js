@@ -631,11 +631,11 @@ sap.ui.define([
 
 			return Storage.loadFlexData({
 				reference: "app.id",
-				versionNumber: 0
+				version: sap.ui.fl.Versions.Draft
 			}).then(function () {
 				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].version, undefined, "the StaticFileConnector has the version property NOT set");
 				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].version, undefined, "the connector NOT in charge for draft layer has the version property NOT set");
-				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, sap.ui.fl.Versions.Draft.toString(), "the connector for draft layer has the version property NOT set");
+				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, sap.ui.fl.Versions.Draft.toString(), "the connector for draft layer has the version property set");
 			});
 		});
 

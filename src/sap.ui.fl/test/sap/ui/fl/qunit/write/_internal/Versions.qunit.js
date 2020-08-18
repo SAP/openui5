@@ -280,13 +280,13 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a long while ago",
-				versionNumber : 1
+				version : 1
 			};
 
 			var oSecondVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a while ago",
-				versionNumber : nActiveVersion
+				version : nActiveVersion
 			};
 
 			var aReturnedVersions = [
@@ -316,17 +316,17 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a long while ago",
-				versionNumber : 1
+				version : 1
 			};
 
 			var oSecondVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a while ago",
-				versionNumber : nActiveVersion
+				version : nActiveVersion
 			};
 
 			var aReturnedVersions = [
-				{versionNumber : 0},
+				{version : 0},
 				oSecondVersion,
 				oFirstVersion
 			];
@@ -380,17 +380,17 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a long while ago",
-				versionNumber : 1
+				version : 1
 			};
 
 			var oSecondVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a while ago",
-				versionNumber : 2
+				version : 2
 			};
 
 			var aReturnedVersions = [
-				{versionNumber : 0},
+				{version : 0},
 				oSecondVersion,
 				oFirstVersion
 			];
@@ -400,7 +400,7 @@ sap.ui.define([
 			var oActivatedVersion = {
 				activatedBy : "qunit",
 				activatedAt : "just now",
-				versionNumber : nActiveVersion
+				version : nActiveVersion
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -433,7 +433,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				versionNumber: 1
+				version: 1
 			};
 
 			var aReturnedVersions = [
@@ -445,7 +445,7 @@ sap.ui.define([
 			var oActivatedVersion = {
 				activatedBy: "qunit",
 				activatedAt: "just now",
-				versionNumber: 2
+				version: 2
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -468,11 +468,11 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				versionNumber: 1
+				version: 1
 			};
 
 			var oDraft = {
-				versionNumber: sap.ui.fl.Versions.Draft,
+				version: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			};
 
@@ -485,7 +485,7 @@ sap.ui.define([
 			var oActivatedVersion = {
 				activatedBy: "qunit",
 				activatedAt: "just now",
-				versionNumber: 2
+				version: 2
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -561,11 +561,11 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a while ago",
-				versionNumber : 1
+				version : 1
 			};
 
 			var oDraft = {
-				versionNumber: sap.ui.fl.Versions.Draft,
+				version: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			};
 
@@ -624,11 +624,11 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy : "qunit",
 				activatedAt : "a while ago",
-				versionNumber : 1
+				version : 1
 			};
 
 			var aReturnedVersions = [
-				{versionNumber : sap.ui.fl.Versions.Draft},
+				{version : sap.ui.fl.Versions.Draft},
 				oFirstVersion
 			];
 
@@ -664,7 +664,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				versionNumber: 1
+				version: 1
 			};
 
 			var aReturnedVersions = [
@@ -693,7 +693,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				versionNumber: 1
+				version: 1
 			};
 
 			var aReturnedVersions = [
@@ -722,7 +722,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				versionNumber: 1
+				version: 1
 			};
 
 			var aReturnedVersions = [
@@ -751,13 +751,13 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				versionNumber: 1
+				version: 1
 			};
 
 			var oDraft = {
 				activatedBy: "",
 				activatedAt: "",
-				versionNumber: sap.ui.fl.Versions.Draft
+				version: sap.ui.fl.Versions.Draft
 			};
 
 			var aReturnedVersions = [

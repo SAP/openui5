@@ -32,12 +32,12 @@ sap.ui.define([
 
 		var nActiveVersion = sap.ui.fl.Versions.Original;
 		aVersions.forEach(function (oVersion) {
-			if (oVersion.versionNumber === sap.ui.fl.Versions.Draft) {
+			if (oVersion.version === sap.ui.fl.Versions.Draft) {
 				oVersion.type = "draft";
 			} else if (nActiveVersion === sap.ui.fl.Versions.Original) {
 				// no active version found yet; the first non-draft version is always the active version
 				oVersion.type = "active";
-				nActiveVersion = oVersion.versionNumber;
+				nActiveVersion = oVersion.version;
 			} else {
 				oVersion.type = "inactive";
 			}
@@ -80,7 +80,7 @@ sap.ui.define([
 
 			// add draft
 			if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
-				aVersions.splice(0, 0, {versionNumber: 0, type: "draft"});
+				aVersions.splice(0, 0, {version: sap.ui.fl.Versions.Draft, type: "draft"});
 				oModel.updateBindings(true);
 			}
 
@@ -133,7 +133,7 @@ sap.ui.define([
 
 	function _doesDraftExistInVersions(aVersions) {
 		return aVersions.some(function(oVersion) {
-			return oVersion.versionNumber === 0;
+			return oVersion.version === sap.ui.fl.Versions.Draft;
 		});
 	}
 
@@ -262,7 +262,7 @@ sap.ui.define([
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
-			oModel.setProperty("/activeVersion", oVersion.versionNumber);
+			oModel.setProperty("/activeVersion", oVersion.version);
 			oModel.updateBindings(true);
 		});
 	};

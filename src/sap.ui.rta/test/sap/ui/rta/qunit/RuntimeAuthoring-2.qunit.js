@@ -90,7 +90,7 @@ sap.ui.define([
 
 	function givenDraftParameterIsSet(fnFLPToExternalStub) {
 		givenAnFLP.call(this, fnFLPToExternalStub, {
-			"sap-ui-fl-versionNumber" : ["0"]
+			"sap-ui-fl-version" : [sap.ui.fl.Versions.Draft.toString()]
 		});
 	}
 
@@ -148,14 +148,14 @@ sap.ui.define([
 		return !!mFLPArgs.params["sap-ui-fl-version"];
 	}
 
-	function getReloadedWithVersionNumberParameter(fnFLPToExternalStub) {
+	function getReloadedWithVersionParameter(fnFLPToExternalStub) {
 		if (!fnFLPToExternalStub.lastCall) {
 			return false;
 		}
 		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
 		return mFLPArgs.params &&
-			mFLPArgs.params["sap-ui-fl-versionNumber"] &&
-			mFLPArgs.params["sap-ui-fl-versionNumber"][0];
+			mFLPArgs.params["sap-ui-fl-version"] &&
+			mFLPArgs.params["sap-ui-fl-version"][sap.ui.fl.Versions.Draft.toString()];
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
@@ -452,7 +452,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-			givenAnFLP(function() {return true;}, {"sap-ui-fl-versionNumber": ["0"]});
+			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]});
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
 			return this.oRta._handleReloadOnExit()
@@ -519,8 +519,8 @@ sap.ui.define([
 					"then handleParametersOnExit was called");
 				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
 					1, "then crossAppNavigation was triggered");
-				assert.equal(getReloadedWithVersionNumberParameter(this.fnFLPToExternalStub),
-					sap.ui.fl.Versions.Original, "then versionNumber parameter is set to 'Original App'");
+				assert.equal(getReloadedWithVersionParameter(this.fnFLPToExternalStub),
+					sap.ui.fl.Versions.Original, "then version parameter is set to 'Original App'");
 			}.bind(this));
 		});
 
@@ -959,7 +959,7 @@ sap.ui.define([
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl
 			});
-			givenAnFLP(function() {return true;}, {"sap-ui-fl-versionNumber": ["0"]});
+			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]});
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -1077,7 +1077,7 @@ sap.ui.define([
 			var oStopStub = sandbox.stub(this.oRta, "stop");
 			var mParsedHash = {
 				params: {
-					"sap-ui-fl-versionNumber": ["0"]
+					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
 				}
 			};
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
@@ -1243,7 +1243,7 @@ sap.ui.define([
 			});
 			this.mParsedHash = {
 				params: {
-					"sap-ui-fl-versionNumber": ["0"]
+					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
 				}
 			};
 			this.oReloadInfo = {
