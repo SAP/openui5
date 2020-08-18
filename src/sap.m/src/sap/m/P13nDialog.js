@@ -29,6 +29,22 @@ sap.ui.define([
 	var NavigationControl; // List in case of Device.system.phone and SegmentedButton else
 	var NavigationControlItem; // StandardListItem in case of Device.system.phone and SegmentedButtonItem else
 
+	var oP13nDialogRenderer = {
+		apiVersion: 2,
+		render: function(oRm, oControl) {
+			DialogRenderer.render.apply(this, arguments);
+
+			var sId = oControl._getVisiblePanelID();
+			var oPanel = oControl.getVisiblePanel();
+			if (sId && oPanel) {
+				oRm.openStart("div", sId);
+				oRm.openEnd();
+				oRm.renderControl(oPanel);
+				oRm.close("div");
+			}
+		}
+	};
+
 	/**
 	 * Constructor for a new P13nDialog.
 	 *
@@ -125,19 +141,7 @@ sap.ui.define([
 				reset: {}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			DialogRenderer.render.apply(this, arguments);
-
-			var sId = oControl._getVisiblePanelID();
-			var oPanel = oControl.getVisiblePanel();
-			if (sId && oPanel) {
-				oRm.write("<div");
-				oRm.writeAttribute("id", sId);
-				oRm.write(">");
-				oRm.renderControl(oPanel);
-				oRm.write("</div>");
-			}
-		}
+		renderer: oP13nDialogRenderer
 	});
 
 	EnabledPropagator.apply(P13nDialog.prototype, [
