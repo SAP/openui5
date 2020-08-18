@@ -557,6 +557,9 @@ sap.ui.define(function() {
 			},
 			"support/RuleEngineOpaExtension": {
 				title: "Rule Engine OPA Extension"
+			},
+			"ui/base/syncXHRFix-error-handling": {
+				title: "QUnit Page for syncXHRFix (error handling)"
 			}
 		}
 	};
