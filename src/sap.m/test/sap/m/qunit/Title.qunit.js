@@ -112,10 +112,16 @@ sap.ui.define([
 		this.title.setText("Some very very very very long text");
 		this.title.setWidth("100px");
 		sap.ui.getCore().applyChanges();
+		this.title.$().css("line-height", "1.2rem");
+
 		var iHeight = this.title.$().outerHeight();
+
 		assert.ok(this.title.$().hasClass("sapMTitleNoWrap"), "Title has class sapMTitleNoWrap.");
 		this.title.setWrapping(true);
+
 		sap.ui.getCore().applyChanges();
+		this.title.$().css("line-height", "1.2rem");
+
 		assert.ok(this.title.$().hasClass("sapMTitleWrap"), "Title has class sapMTitleWrap.");
 		assert.ok(this.title.$().outerHeight() >= 3 * iHeight, "Title height increases when wrapping is active");
 	});
@@ -123,11 +129,14 @@ sap.ui.define([
 	QUnit.test("Title wrappingType (Hyphenation)", function(assert){
 		var done = assert.async();
 		this.title.setText("pneumonoultramicroscopicsilicovolcanoconiosis");
+		sap.ui.getCore().applyChanges();
+		this.title.$().css("line-height", "1.2rem");
 		var iHeight = this.title.$().outerHeight();
 		this.title.setWidth("200px");
 		this.title.setWrapping(true);
 		this.title.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
 		sap.ui.getCore().applyChanges();
+		this.title.$().css("line-height", "1.2rem");
 
 		var fnIsHyphenated = function () {
 			if (this.title.$().outerHeight() >= 2 * iHeight) {
@@ -141,7 +150,12 @@ sap.ui.define([
 		setTimeout(function() {
 			if (!fnIsHyphenated()) {
 				// try again after a while if not yet hyphenatated
-				setTimeout(fnIsHyphenated, 1000);
+				setTimeout(function() {
+					if (!fnIsHyphenated()) {
+						assert.ok(false);
+						done();
+					}
+				}, 1000);
 			}
 		}, 500);
 	});
