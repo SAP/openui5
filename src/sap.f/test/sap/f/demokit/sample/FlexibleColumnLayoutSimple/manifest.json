@@ -26,6 +26,7 @@
 					"controller/Master.controller.js",
 					"view/Master.view.xml",
 					"controller/Detail.controller.js",
+					"controller/DetailDetail.controller.js",
 					"view/Detail.view.xml",
 					"view/DetailDetail.view.xml",
 					"manifest.json"
