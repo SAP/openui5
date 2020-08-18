@@ -44,6 +44,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var aTestedTypes = ["Table", "ResponsiveTable"];
+
 	function stubFetchProperties(aPropertyInfos, oTable) {
 		var oTarget = oTable || Table.prototype;
 		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
@@ -208,33 +210,6 @@ sap.ui.define([
 			assert.ok(!this.oTable._oTemplate);
 
 			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-			done();
-		}.bind(this));
-
-	});
-
-	QUnit.test("inner table is a GridTable with Navigation RowAction", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
-
-		this.oTable.setRowAction([
-			"Navigation"
-		]);
-
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(!this.oTable._oTemplate);
-
-			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-			assert.ok(this.oTable._oTable.getRowActionTemplate().isA("sap.ui.table.RowAction"));
-			assert.equal(this.oTable._oTable.getRowActionTemplate().getItems()[0].getType(), "Navigation");
-			assert.equal(this.oTable._oTable.getRowActionCount(), 1);
-
-			this.oTable.setRowAction();
-			assert.equal(this.oTable._oTable.getRowActionCount(), 0);
-			assert.ok(!this.oTable._oTable.getRowActionTemplate());
 			done();
 		}.bind(this));
 
@@ -529,39 +504,6 @@ sap.ui.define([
 
 			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
 			assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
-			done();
-		}.bind(this));
-	});
-
-	QUnit.test("inner table is a ResponsiveTable with ColumnListItem of type Navigation", function(assert) {
-		var done = assert.async();
-
-		// Destroy the old/default table
-		this.oTable.destroy();
-		this.oTable = new Table({
-			type: "ResponsiveTable",
-			rowAction: [
-				"Navigation"
-			]
-		});
-		// place the table at the dom
-		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
-
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(this.oTable._oTemplate);
-
-			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-			assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
-			assert.equal(this.oTable._oTemplate.getType(), "Navigation");
-
-			this.oTable.setRowAction();
-			assert.ok(this.oTable._oTemplate.getType() !== "Navigation");
 			done();
 		}.bind(this));
 	});
@@ -864,7 +806,7 @@ sap.ui.define([
 
 	// Switch table type and test APIs
 	QUnit.test("Switch table type and test APIs", function(assert) {
-		var done = assert.async(), fP13nModeSpy, fInnerTableDestroySpy, fInnerTemplateDestroySpy;
+		var done = assert.async(), fInnerTableDestroySpy, fInnerTemplateDestroySpy;
 		assert.ok(this.oTable);
 		assert.ok(!this.oTable._oTable);
 		assert.ok(!this.oTable._oTemplate);
@@ -875,19 +817,12 @@ sap.ui.define([
 
 			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
 
-			fP13nModeSpy = sinon.spy(this.oTable, "_updatep13nSettings");
 			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-			assert.deepEqual(this.oTable.getP13nMode(), []);
-			assert.ok(fP13nModeSpy.notCalled);
-			assert.equal(this.oTable._oToolbar.getEnd().length, 0);
 
 			// Switch table
 			assert.ok(fInnerTableDestroySpy.notCalled);
 			this.oTable.setSelectionMode("Single");
 			this.oTable.setThreshold(10);
-			this.oTable.setP13nMode([
-				"Column"
-			]);
 			this.oTable.setType("ResponsiveTable");
 
 			assert.ok(fInnerTableDestroySpy.calledOnce);
@@ -895,40 +830,17 @@ sap.ui.define([
 			this.oTable.initialized().then(function() {
 				assert.ok(this.oTable._oTable);
 				assert.ok(this.oTable._oTemplate);
-
-				assert.deepEqual(this.oTable.getP13nMode(), [
-					"Column"
-				]);
-				assert.ok(this.oTable.getCurrentState().items);
-				assert.ok(!this.oTable.getCurrentState().sorters);
-				assert.ok(!this.oTable.getCurrentState().filter);
-				assert.ok(fP13nModeSpy.calledOnce);
-				assert.equal(this.oTable._oToolbar.getEnd().length, 1, "Column has Add/Remove and Reorder");
 				assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
 				assert.equal(this.oTable._oTable.getGrowingThreshold(), this.oTable.getThreshold());
 				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
 				fInnerTemplateDestroySpy = sinon.spy(this.oTable._oTemplate, "destroy");
-				fP13nModeSpy.reset();
 
 				// Setting same table type does nothing
 				this.oTable.setType("ResponsiveTable");
 				this.oTable.setSelectionMode("Multi");
-				this.oTable.setP13nMode([
-					"Column", "Sort"
-				]);
 
-				assert.ok(this.oTable.getCurrentState().items);
-				assert.ok(this.oTable.getCurrentState().sorters);
-				assert.ok(!this.oTable.getCurrentState().filter);
 				assert.ok(fInnerTableDestroySpy.notCalled);
 				assert.ok(fInnerTemplateDestroySpy.notCalled);
-
-				assert.deepEqual(this.oTable.getP13nMode(), [
-					"Column", "Sort"
-				]);
-				assert.ok(fP13nModeSpy.calledOnce);
-				assert.equal(this.oTable._oToolbar.getEnd().length, 2, "Column has Add/Remove and Reorder + Sort");
-
 				assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), false);
 
 				// Setting same table type does nothing
@@ -965,35 +877,17 @@ sap.ui.define([
 
 
 				this.oTable.setType("Table");
-				this.oTable.setP13nMode([
-					"Sort"
-				]);
-				// changing type leads to a destroy call
 				assert.ok(fInnerTableDestroySpy.calledOnce);
 				assert.ok(fInnerTemplateDestroySpy.calledOnce);
 				this.oTable.initialized().then(function() {
 					assert.ok(this.oTable._oTable);
 					assert.ok(!this.oTable._oTemplate);
-
 					assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-
-					assert.deepEqual(this.oTable.getP13nMode(), [
-						"Sort"
-					]);
-					assert.ok(fP13nModeSpy.calledTwice);
-					assert.equal(this.oTable._oToolbar.getEnd().length, 1, "Only Sort");
-
 					assert.equal(this.oTable._oTable.getThreshold(), this.oTable.getThreshold());
-
-					this.oTable.setP13nMode();
-					assert.deepEqual(this.oTable.getP13nMode(), []);
-					assert.ok(fP13nModeSpy.calledThrice);
-					assert.equal(this.oTable._oToolbar.getEnd().length, 0, "Nothing is shown if p13nMode is not set");
 					done();
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
-
 	});
 
 	// Switch table type to V4AnalyticsTableType
@@ -2093,7 +1987,6 @@ sap.ui.define([
 				assert.ok(fColumnPressSpy.calledOnce);
 				assert.ok(!this.oTable._oPopover);
 
-				// Enable Sorting on Table
 				this.oTable.setP13nMode([
 					"Sort"
 				]);
@@ -2184,7 +2077,6 @@ sap.ui.define([
 				assert.ok(fColumnPressSpy.calledOnce);
 				assert.ok(!this.oTable._oPopover);
 
-				// Enable Sorting on Table
 				this.oTable.setP13nMode([
 					"Sort"
 				]);
@@ -2263,7 +2155,6 @@ sap.ui.define([
 			], function(TableSettings) {
 				var oInnerColumn = this.oTable._oTable.getColumns()[0];
 
-				// Enable Sorting on Table
 				this.oTable.setP13nMode([
 					"Sort"
 				]);
@@ -2306,7 +2197,6 @@ sap.ui.define([
 			], function(TableSettings) {
 				var oInnerColumn = this.oTable._oTable.getColumns()[0];
 
-				// Enable Sorting on Table
 				this.oTable.setP13nMode([
 					"Sort"
 				]);
@@ -3728,47 +3618,60 @@ sap.ui.define([
 		assert.strictEqual(oToolbar.bIsDestroyed, true);
 	});
 
-	function getFilterInfoBar(oTable) {
-		var oFilterInfoBar;
+	QUnit.module("Filter info bar", {
+		beforeEach: function() {
+			this.oTable = new Table();
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+			unstubFetchProperties();
+		},
+		getFilterInfoBar: function(oMDCTable) {
+			var oTable = this.oTable || oMDCTable;
+			var oFilterInfoBar;
 
-		if (oTable._bMobileTable) {
-			oFilterInfoBar = oTable._oTable.getInfoToolbar();
-		} else {
-			oFilterInfoBar = oTable._oTable.getExtension()[1];
-		}
-
-		if (oFilterInfoBar && oFilterInfoBar.isA("sap.m.OverflowToolbar")) {
-			return oFilterInfoBar;
-		} else {
-			return null;
-		}
-	}
-
-	function getFilterInfoText(oTable) {
-		var oFilterInfoBar = getFilterInfoBar(oTable);
-		return oFilterInfoBar ? oFilterInfoBar.getContent()[0] : null;
-	}
-
-	function hasFilterInfoBar(oTable) {
-		return getFilterInfoBar(oTable) !== null;
-	}
-
-	function waitForFilterInfoBarRendered(oTable) {
-		return new Promise(function(resolve) {
-			var oFilterInfoBar = getFilterInfoBar(oTable);
-
-			if (!oFilterInfoBar.getDomRef()) {
-				oFilterInfoBar.addEventDelegate({
-					onAfterRendering: function() {
-						oFilterInfoBar.removeEventDelegate(this);
-						resolve();
-					}
-				});
+			if (oTable._bMobileTable) {
+				oFilterInfoBar = oTable._oTable.getInfoToolbar();
 			} else {
-				resolve();
+				oFilterInfoBar = oTable._oTable.getExtension()[1];
 			}
-		});
-	}
+
+			if (oFilterInfoBar && oFilterInfoBar.isA("sap.m.OverflowToolbar")) {
+				return oFilterInfoBar;
+			} else {
+				return null;
+			}
+		},
+		getFilterInfoText: function(oMDCTable) {
+			var oTable = this.oTable || oMDCTable;
+			var oFilterInfoBar = this.getFilterInfoBar(oTable);
+			return oFilterInfoBar ? oFilterInfoBar.getContent()[0] : null;
+		},
+		hasFilterInfoBar: function(oMDCTable) {
+			var oTable = this.oTable || oMDCTable;
+			return this.getFilterInfoBar(oTable) !== null;
+		},
+		waitForFilterInfoBarRendered: function(oMDCTable) {
+			var oTable = this.oTable || oMDCTable;
+
+			return new Promise(function(resolve) {
+				var oFilterInfoBar = this.getFilterInfoBar(oTable);
+
+				if (!oFilterInfoBar.getDomRef()) {
+					oFilterInfoBar.addEventDelegate({
+						onAfterRendering: function() {
+							oFilterInfoBar.removeEventDelegate(this);
+							resolve();
+						}
+					});
+				} else {
+					resolve();
+				}
+			}.bind(this));
+		}
+	});
 
 	QUnit.test("Filter info bar (filter disabled)", function(assert) {
 		var that = this;
@@ -3781,7 +3684,7 @@ sap.ui.define([
 		]);
 
 		return this.oTable.initialized().then(function() {
-			assert.ok(!hasFilterInfoBar(that.oTable), "No initial filter conditions: Filter info bar does not exist");
+			assert.ok(!that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar does not exist");
 		}).then(function() {
 			that.oTable.destroy();
 			that.oTable = new Table({
@@ -3798,7 +3701,7 @@ sap.ui.define([
 			});
 			return that.oTable.initialized();
 		}).then(function() {
-			assert.ok(!hasFilterInfoBar(that.oTable), "Initial filter conditions: Filter info bar does not exist");
+			assert.ok(!that.hasFilterInfoBar(), "Initial filter conditions: Filter info bar does not exist");
 
 			that.oTable.setFilterConditions({
 				age: [
@@ -3813,15 +3716,15 @@ sap.ui.define([
 
 			return wait(50);
 		}).then(function() {
-			assert.ok(!hasFilterInfoBar(that.oTable), "Change filter conditions: Filter info bar does not exist");
+			assert.ok(!that.hasFilterInfoBar(), "Change filter conditions: Filter info bar does not exist");
 
 			that.oTable.setP13nMode(["Filter"]);
-			assert.ok(hasFilterInfoBar(that.oTable), "Filtering enabled: Filter info bar exists");
-			assert.ok(!getFilterInfoBar(that.oTable).getVisible(), "Filtering enabled: Filter info bar is invisible");
+			assert.ok(that.hasFilterInfoBar(), "Filtering enabled: Filter info bar exists");
+			assert.ok(!that.getFilterInfoBar().getVisible(), "Filtering enabled: Filter info bar is invisible");
 		});
 	});
 
-	["Table", "ResponsiveTable"].forEach(function(sTableType) {
+	aTestedTypes.forEach(function(sTableType) {
 		QUnit.test("Filter info bar with table type = " + sTableType + "(filter enabled)", function(assert) {
 			var that = this;
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
@@ -3845,8 +3748,8 @@ sap.ui.define([
 			]);
 
 			return this.oTable.initialized().then(function() {
-				assert.ok(hasFilterInfoBar(that.oTable), "No initial filter conditions: Filter info bar exists");
-				assert.ok(!getFilterInfoBar(that.oTable).getVisible(), "No initial filter conditions: Filter info bar is invisible");
+				assert.ok(that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar exists");
+				assert.ok(!that.getFilterInfoBar().getVisible(), "No initial filter conditions: Filter info bar is invisible");
 			}).then(function() {
 				that.oTable.destroy();
 				that.oTable = new Table({
@@ -3883,13 +3786,13 @@ sap.ui.define([
 				Core.applyChanges();
 				return that.oTable.initialized();
 			}).then(function() {
-				assert.ok(hasFilterInfoBar(that.oTable), "Initial filter conditions: Filter info bar exists");
-				assert.ok(getFilterInfoBar(that.oTable).getVisible(), "Initial filter conditions: Filter info bar is visible");
-				assert.strictEqual(getFilterInfoText(that.oTable).getText(),
+				assert.ok(that.hasFilterInfoBar(), "Initial filter conditions: Filter info bar exists");
+				assert.ok(that.getFilterInfoBar().getVisible(), "Initial filter conditions: Filter info bar is visible");
+				assert.strictEqual(that.getFilterInfoText().getText(),
 					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel"])),
 					"Initial filter conditions: The filter info bar text is correct (1 filter)");
 				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-					return sId === getFilterInfoText(that.oTable).getId();
+					return sId === that.getFilterInfoText().getId();
 				}).length, 1, "The filter info bar text is in the \"ariaLabelledBy\" association of the table");
 
 				return whenFetchPropertiesResolved(that.oTable, function() {
@@ -3913,11 +3816,11 @@ sap.ui.define([
 					});
 				});
 			}).then(function() {
-				return waitForFilterInfoBarRendered(that.oTable);
+				return that.waitForFilterInfoBarRendered();
 			}).then(function() {
-				var oFilterInfoBar = getFilterInfoBar(that.oTable);
+				var oFilterInfoBar = that.getFilterInfoBar();
 
-				assert.strictEqual(getFilterInfoText(that.oTable).getText(),
+				assert.strictEqual(that.getFilterInfoText().getText(),
 					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabelColumnHeader"])),
 					"Change filter conditions: The filter info bar text is correct (2 filters)");
 
@@ -3927,8 +3830,8 @@ sap.ui.define([
 				that.oTable.setFilterConditions({
 					name: []
 				});
-				assert.ok(hasFilterInfoBar(that.oTable), "Filter conditions removed: Filter info bar exists");
-				assert.ok(!getFilterInfoBar(that.oTable).getVisible(), "Filter conditions removed: Filter info bar is invisible");
+				assert.ok(that.hasFilterInfoBar(), "Filter conditions removed: Filter info bar exists");
+				assert.ok(!that.getFilterInfoBar().getVisible(), "Filter conditions removed: Filter info bar is invisible");
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
 				return whenFetchPropertiesResolved(that.oTable, function() {
@@ -3960,17 +3863,17 @@ sap.ui.define([
 					});
 				});
 			}).then(function() {
-				assert.ok(getFilterInfoBar(that.oTable).getVisible(), "Set filter conditions: Filter info bar is visible");
-				assert.strictEqual(getFilterInfoText(that.oTable).getText(),
+				assert.ok(that.getFilterInfoBar().getVisible(), "Set filter conditions: Filter info bar is visible");
+				assert.strictEqual(that.getFilterInfoText().getText(),
 					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabelColumnHeader", "gender"])),
 					"Set filter conditions: The filter info bar text is correct (3 filters)");
 				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-					return sId === getFilterInfoText(that.oTable).getId();
+					return sId === that.getFilterInfoText().getId();
 				}).length, 1, "The filter info bar text is in the \"ariaLabelledBy\" association of the table");
 			}).then(function() {
-				return waitForFilterInfoBarRendered(that.oTable);
+				return that.waitForFilterInfoBarRendered();
 			}).then(function() {
-				var oFilterInfoBar = getFilterInfoBar(that.oTable);
+				var oFilterInfoBar = that.getFilterInfoBar();
 
 				that.oTable.setP13nMode();
 
@@ -3978,7 +3881,7 @@ sap.ui.define([
 				assert.strictEqual(document.activeElement, oFilterInfoBar.getFocusDomRef(), "The filter info bar is focused");
 
 				that.oTable.setP13nMode(["Column", "Sort"]);
-				assert.ok(hasFilterInfoBar(that.oTable), "Filter disabled: Filter info bar exists");
+				assert.ok(that.hasFilterInfoBar(), "Filter disabled: Filter info bar exists");
 				assert.ok(!oFilterInfoBar.getVisible(), "Filter disabled: Filter info bar is invisible");
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
@@ -4000,18 +3903,18 @@ sap.ui.define([
 			that.oTable.setType("ResponsiveTable");
 			return that.oTable.initialized();
 		}).then(function() {
-			assert.ok(hasFilterInfoBar(that.oTable), "Changed from \"Table\" to \"ResponsiveTable\": Filter info bar exists");
+			assert.ok(that.hasFilterInfoBar(), "Changed from \"Table\" to \"ResponsiveTable\": Filter info bar exists");
 			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-				return sId === getFilterInfoText(that.oTable).getId();
+				return sId === that.getFilterInfoText().getId();
 			}).length, 1, "Changed from \"Table\" to \"ResponsiveTable\": The filter info bar text is in the \"ariaLabelledBy\" association of the"
 						  + " table");
 		}).then(function() {
 			that.oTable.setType("Table");
 			return that.oTable.initialized();
 		}).then(function() {
-			assert.ok(hasFilterInfoBar(that.oTable), "Changed from \"ResponsiveTable\" to \"Table\": Filter info bar exists");
+			assert.ok(that.hasFilterInfoBar(), "Changed from \"ResponsiveTable\" to \"Table\": Filter info bar exists");
 			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-				return sId === getFilterInfoText(that.oTable).getId();
+				return sId === that.getFilterInfoText().getId();
 			}).length, 1, "Changed from \"ResponsiveTable\" to \"Table\": The filter info bar text is in the \"ariaLabelledBy\" association of the"
 						  + " table");
 		});
@@ -4049,10 +3952,10 @@ sap.ui.define([
 				});
 			});
 		}).then(function() {
-			return waitForFilterInfoBarRendered(that.oTable);
+			return that.waitForFilterInfoBarRendered();
 		}).then(function() {
 			var oTableSettingsShowPanelSpy = sinon.stub(TableSettings, "showPanel");
-			var oFilterInfoBar = getFilterInfoBar(that.oTable);
+			var oFilterInfoBar = that.getFilterInfoBar();
 			var iIntervalId;
 
 			oFilterInfoBar.firePress();
@@ -4091,9 +3994,303 @@ sap.ui.define([
 
 			// # 2
 			document.body.focus();
-			getFilterInfoBar(that.oTable).focus();
+			that.getFilterInfoBar().focus();
 			assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 		});
 	});
 
+	aTestedTypes.forEach(function(sTableType) {
+		QUnit.module("Row actions - " + sTableType, {
+			beforeEach: function() {
+				this.oTable = new Table({
+					type: sTableType
+				});
+				this.oTable.placeAt("qunit-fixture");
+				Core.applyChanges();
+				return this.oTable.initialized();
+			},
+			afterEach: function() {
+				this.oTable.destroy();
+			},
+			assertInnerTableAction: function(assert, oMDCTable) {
+				var oTable = oMDCTable || this.oTable;
+
+				switch (sTableType) {
+					case "ResponsiveTable":
+						assert.equal(oTable._oTemplate.getType(), "Navigation", "Type of the list item template");
+						break;
+					default:
+						assert.ok(oTable._oTable.getRowActionTemplate(), "Row action template exists");
+						assert.equal(oTable._oTable.getRowActionTemplate().getItems().length, 1, "With one item");
+						assert.equal(oTable._oTable.getRowActionTemplate().getItems()[0].getType(), "Navigation", "Of type 'Navigation'");
+						assert.equal(oTable._oTable.getRowActionCount(), 1, "Row action count");
+				}
+			},
+			assertNoInnerTableAction: function(assert, oMDCTable) {
+				var oTable = oMDCTable || this.oTable;
+
+				switch (sTableType) {
+					case "ResponsiveTable":
+						assert.equal(oTable._oTemplate.getType(), "Inactive", "Type of the list item template");
+						break;
+					default:
+						assert.notOk(oTable._oTable.getRowActionTemplate(), "Row action template does not exist");
+						assert.equal(oTable._oTable.getRowActionCount(), 0, "Row action count");
+				}
+			}
+		});
+
+		QUnit.test("Initialize without actions", function(assert) {
+			this.assertNoInnerTableAction(assert);
+		});
+
+		QUnit.test("Initialize with actions", function(assert) {
+			var oTable = new Table({
+				type: sTableType,
+				rowAction: ["Navigation"]
+			});
+
+			return oTable.initialized().then(function() {
+				this.assertInnerTableAction(assert, oTable);
+			}.bind(this));
+		});
+
+		QUnit.test("Add and remove actions", function(assert) {
+			var oTableInvalidationSpy = sinon.spy(this.oTable, "invalidate");
+			var oRowActionTemplateDestroySpy;
+
+			this.oTable.setRowAction(["Navigation"]);
+			assert.equal(oTableInvalidationSpy.callCount, 0, "MDCTable was not invalidated");
+			this.assertInnerTableAction(assert);
+			oTableInvalidationSpy.reset();
+
+			if (sTableType === "GridTable") {
+				oRowActionTemplateDestroySpy = sinon.spy(this.oTable._oTable.getRowActionTemplate(), "destroy");
+			}
+
+			this.oTable.setRowAction();
+			assert.equal(oTableInvalidationSpy.callCount, 0, "MDCTable was not invalidated");
+			this.assertNoInnerTableAction(assert);
+
+			if (sTableType === "GridTable") {
+				assert.equal(oRowActionTemplateDestroySpy.callCount, 1, "Row action template was destroyed");
+			}
+		});
+
+		QUnit.test("Avoid unnecessary update", function(assert) {
+			var oTableInvalidationSpy = sinon.spy(this.oTable, "invalidate");
+			var oInnerTableInvalidationSpy = sinon.spy(this.oTable._oTable, "invalidate");
+
+			this.oTable.setRowAction();
+			assert.equal(oTableInvalidationSpy.callCount, 0, "Remove row actions if no actions exist: MDCTable was not invalidated");
+			assert.equal(oInnerTableInvalidationSpy.callCount, 0, "Remove row actions if no actions exist: The inner table was not invalidated");
+			oTableInvalidationSpy.reset();
+			oInnerTableInvalidationSpy.reset();
+
+			this.oTable.setProperty("rowAction", ["Navigation"], true);
+			this.oTable.setRowAction(["Navigation"]);
+			assert.equal(oTableInvalidationSpy.callCount, 0, "Set the same row action: MDCTable was not invalidated");
+			assert.equal(oInnerTableInvalidationSpy.callCount, 0, "Set the same row action: The inner table was not invalidated");
+			oTableInvalidationSpy.reset();
+			oInnerTableInvalidationSpy.reset();
+		});
+	});
+
+	QUnit.module("p13nMode", {
+		beforeEach: function() {
+			this.oTable = new Table();
+			return this.oTable.initialized();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		assertToolbarButtons: function(assert, oMDCTable, sTitle) {
+			if (typeof oMDCTable === "string") {
+				sTitle = oMDCTable;
+				oMDCTable = undefined;
+			}
+
+			var oTable = oMDCTable || this.oTable;
+			var aModes = oTable.getP13nMode();
+			var sTitlePrefix = sTitle ? sTitle + ": " : "";
+
+			if (aModes.length === 0) {
+				assert.equal(oTable._oToolbar.getEnd().length, 0, sTitlePrefix + "No toolbar buttons");
+				return;
+			}
+
+			function findButton(sIcon) {
+				return oTable._oToolbar.getEnd().filter(function(oButton) {
+					return oButton.getIcon && oButton.getIcon() === "sap-icon://" + sIcon;
+				});
+			}
+
+			aModes.forEach(function(sMode) {
+				switch (sMode) {
+					case "Filter":
+						assert.ok(findButton("filter"), sTitlePrefix + "Filter button exists");
+						break;
+					case "Sort":
+						assert.ok(findButton("sort"), sTitlePrefix + "Sort button exists");
+						break;
+					default:
+						assert.ok(findButton("action-settings"), sTitlePrefix + "Column settings button exists");
+				}
+			});
+		},
+		assertAPI: function(assert, oMDCTable) {
+			var oTable = oMDCTable || this.oTable;
+			var aModes = oTable.getP13nMode();
+
+			assert.strictEqual(oTable.isSortingEnabled(), aModes.indexOf("Sort") > -1, "#isSortingEnabled");
+			assert.strictEqual(oTable.isFilteringEnabled(), aModes.indexOf("Filter") > -1, "#isFilteringEnabled");
+		},
+		assertColumnDnD: function(assert, oMDCTable) {
+			var oTable = oMDCTable || this.oTable;
+			var bEnabled = oTable.getP13nMode().indexOf("Column") > -1;
+
+			assert.equal(oTable._oTable.getDragDropConfig()[0].getEnabled(), bEnabled, "DragDropConfig for column reordering");
+		}
+	});
+
+	QUnit.test("Initialize without active modes", function(assert) {
+		this.assertToolbarButtons(assert);
+		this.assertAPI(assert);
+		this.assertColumnDnD(assert);
+	});
+
+	QUnit.test("Initialize with active modes", function(assert) {
+		var oTable = new Table({
+			p13nMode: ["Sort", "Column"]
+		});
+
+		return oTable.initialized().then(function() {
+			this.assertToolbarButtons(assert, oTable);
+			this.assertAPI(assert, oTable);
+			this.assertColumnDnD(assert, oTable);
+		}.bind(this));
+	});
+
+	QUnit.test("Activate and deactivate", function(assert) {
+		this.oTable.setP13nMode(["Sort"]);
+		this.assertToolbarButtons(assert, "Activate 'Sort'");
+		this.assertAPI(assert);
+		this.assertColumnDnD(assert);
+
+		this.oTable.setP13nMode(["Sort", "Column"]);
+		this.assertToolbarButtons(assert, "Activate 'Column'");
+		this.assertAPI(assert);
+		this.assertColumnDnD(assert);
+
+		this.oTable.setP13nMode(["Sort", "Column", "Filter"]);
+		this.assertToolbarButtons(assert, "Activate 'Filter'");
+		this.assertAPI(assert);
+		this.assertColumnDnD(assert);
+
+		this.oTable.setP13nMode(["Sort", "Filter"]);
+		this.assertToolbarButtons(assert, "Deactivate 'Column'");
+		this.assertAPI(assert);
+		this.assertColumnDnD(assert);
+
+		this.oTable.setP13nMode();
+		this.assertToolbarButtons(assert, "Deactivate 'Sort' and 'Filter'");
+		this.assertAPI(assert);
+		this.assertColumnDnD(assert);
+	});
+
+	QUnit.test("Avoid unnecessary update", function(assert) {
+		var oTableInvalidationSpy = sinon.spy(this.oTable, "invalidate");
+		var oInnerTableInvalidationSpy = sinon.spy(this.oTable._oTable, "invalidate");
+
+		this.oTable.setP13nMode();
+		assert.equal(oTableInvalidationSpy.callCount, 0, "Deactivate modes if no modes are active: MDCTable was not invalidated");
+		assert.equal(oInnerTableInvalidationSpy.callCount, 0, "Deactivate modes if no modes are active: The inner table was not invalidated");
+
+		this.oTable.setP13nMode(["Sort", "Column", "Filter"]);
+		oTableInvalidationSpy.reset();
+		oInnerTableInvalidationSpy.reset();
+
+		var oToolbar = this.oTable._oToolbar;
+		var aP13nButtons = oToolbar.getEnd();
+
+		this.oTable.setP13nMode(["Column", "Sort", "Filter"]);
+		assert.equal(oTableInvalidationSpy.callCount, 0, "Activate modes that are already active: MDCTable was not invalidated");
+		assert.equal(oInnerTableInvalidationSpy.callCount, 0, "Activate modes that are already active: The inner table was not invalidated");
+
+		assert.ok(aP13nButtons.every(function(oButton) {
+			return oButton.bIsDestroyed !== true;
+		}), "The p13n buttons were not destroyed");
+
+		assert.ok(aP13nButtons.every(function(oButton) {
+			return oToolbar.indexOfEnd(oButton) > -1;
+		}), "The p13n buttons are still in the toolbar");
+	});
+
+	QUnit.test("Current state", function(assert) {
+		var aSortConditions = [{
+			name: "test",
+			descending: true
+		}];
+		var oFilterConditions = {
+			name: [{
+				isEmpty: null,
+				operator: "EQ",
+				validated: "NotValidated",
+				values: ["test"]
+			}]
+		};
+
+		assert.deepEqual(this.oTable.getCurrentState(), {}, "No modes active");
+
+		this.oTable.setP13nMode(["Column"]);
+		assert.deepEqual(this.oTable.getCurrentState(), {
+			items: []
+		}, "Activate 'Column'");
+
+		this.oTable.addColumn(new Column({
+			dataProperties: "test"
+		}));
+		assert.deepEqual(this.oTable.getCurrentState(), {
+			items: [{name: "test"}]
+		}, "Add a column");
+
+		this.oTable.setP13nMode(["Column", "Sort"]);
+		assert.deepEqual(this.oTable.getCurrentState(), {
+			items: [{name: "test"}],
+			sorters: []
+		}, "Activate 'Sort'");
+
+		this.oTable.setSortConditions({
+			sorters: aSortConditions
+		});
+		assert.deepEqual(this.oTable.getCurrentState(), {
+			items: [{name: "test"}],
+			sorters: aSortConditions
+		}, "Set sort conditions");
+
+		this.oTable.setP13nMode(["Column", "Sort", "Filter"]);
+		assert.deepEqual(this.oTable.getCurrentState(), {
+			items: [{name: "test"}],
+			sorters: aSortConditions,
+			filter:  {}
+		}, "Activate 'Filter'");
+
+		this.oTable.setFilterConditions(oFilterConditions);
+		assert.deepEqual(this.oTable.getCurrentState(), {
+			items: [{name: "test"}],
+			sorters: aSortConditions,
+			filter: oFilterConditions
+		}, "Set filter conditions");
+
+		this.oTable.setP13nMode(["Column", "Filter"]);
+		assert.deepEqual(this.oTable.getCurrentState(), {
+			items: [{
+				name: "test"
+			}],
+			filter: oFilterConditions
+		}, "Deactivate 'Sort'");
+
+		this.oTable.setP13nMode();
+		assert.deepEqual(this.oTable.getCurrentState(), {}, "Deactivate 'Column' and 'Filter'");
+	});
 });
