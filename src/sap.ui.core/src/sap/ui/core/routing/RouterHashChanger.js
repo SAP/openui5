@@ -79,18 +79,16 @@ sap.ui.define([
 	 *
 	 * @param {string} sHash the new hash of the browser
 	 * @param {object} oSubHashMap the prefixes and hashes for the child RouterHashChangers
-	 * @param {boolean} bUpdateHashOnly if this parameter is set to true, the given sHash is saved in the instance but
-	 * no "hashChanged" event is fired.
 	 * @protected
 	 */
-	RouterHashChanger.prototype.fireHashChanged = function(sHash, oSubHashMap, bUpdateHashOnly) {
+	RouterHashChanger.prototype.fireHashChanged = function(sHash, oSubHashMap) {
 		var aKeys,
 			sOldHash = this.hash;
 
 		this.hash = sHash;
 		this.subHashMap = oSubHashMap;
 
-		if (!bUpdateHashOnly && sHash !== sOldHash) {
+		if (sHash !== sOldHash) {
 			this.fireEvent("hashChanged", {
 				newHash : sHash,
 				oldHash : sOldHash
@@ -102,7 +100,7 @@ sap.ui.define([
 
 			aKeys.forEach(function(sChildKey) {
 				var sChildHash = (oSubHashMap[sChildKey] === undefined ? "" : oSubHashMap[sChildKey]);
-				this.children[sChildKey].fireHashChanged(sChildHash, oSubHashMap, bUpdateHashOnly);
+				this.children[sChildKey].fireHashChanged(sChildHash, oSubHashMap);
 			}.bind(this));
 		}
 	};
