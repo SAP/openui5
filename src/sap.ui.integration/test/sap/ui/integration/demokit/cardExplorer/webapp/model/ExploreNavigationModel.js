@@ -321,6 +321,32 @@ sap.ui.define([
 										key: 'data.json'
 									}
 								]
+							},
+							{
+								title: 'Friend Requests',
+								key: 'friendRequests',
+								files: [
+									{
+										url: '/samples/list/friendRequests/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/list/friendRequests/images/John_Miller.png',
+										name: 'images/John_Miller.png',
+										key: 'images/John_Miller.png'
+									},
+									{
+										url: '/samples/list/friendRequests/images/Donna_Moore.png',
+										name: 'images/Donna_Moore.png',
+										key: 'images/Donna_Moore.png'
+									},
+									{
+										url: '/samples/list/friendRequests/images/Elena_Petrova.jpg',
+										name: 'images/Elena_Petrova.jpg',
+										key: 'images/Elena_Petrova.jpg'
+									}
+								]
 							}
 						]
 					},
@@ -367,6 +393,35 @@ sap.ui.define([
 								settings: {
 									columns: 5
 								}
+							},
+							{
+								title: 'Employees',
+								key: 'employees',
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/table/employees/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/table/employees/images/John_Miller.png',
+										name: 'images/John_Miller.png',
+										key: 'images/John_Miller.png'
+									},
+									{
+										url: '/samples/table/employees/images/Donna_Moore.png',
+										name: 'images/Donna_Moore.png',
+										key: 'images/Donna_Moore.png'
+									},
+									{
+										url: '/samples/table/employees/images/Elena_Petrova.jpg',
+										name: 'images/Elena_Petrova.jpg',
+										key: 'images/Elena_Petrova.jpg'
+									}
+								]
 							}
 						]
 					},

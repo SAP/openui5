@@ -324,7 +324,7 @@
         },
         "icon": {
           "description": "Represents the icon of the card.",
-          "$ref": "#/definitions/icon"
+          "$ref": "#/definitions/iconWithoutSize"
         },
         "status": {
           "description": "Represents the status of the card.",
@@ -538,7 +538,7 @@
           ]
         },
         "icon": {
-          "$ref": "#/definitions/simpleIcon"
+          "$ref": "#/definitions/icon"
         },
         "actions": {
           "description": "Defines actions that can be applied on the item.",
@@ -973,7 +973,7 @@
         },
         "icon": {
           "description": "Represents column with icon.",
-          "$ref": "#/definitions/simpleIcon"
+          "$ref": "#/definitions/icon"
         },
         "state": {
           "description": "Defines the state of the column.",
@@ -1343,6 +1343,42 @@
         }
       }
     },
+    "iconWithoutSize": {
+      "description": "Represents icon attributes",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "src": {
+          "type": "string",
+          "description": "Represents icon name or source URL"
+        },
+        "alt": {
+          "type": "string",
+          "description": "Alternative text for the icon"
+        },
+        "shape": {
+          "type": "string",
+          "description": "Represents the shape of the icon",
+          "oneOf": [
+            {
+              "enum": [
+                "Square",
+                "Circle"
+              ],
+              "default": "Circle"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "text": {
+          "type": "string",
+          "description": "Initials for the avatar. Up to 2 symbols. If the image provided to the 'src' property fails to load, then the text will be shown.",
+          "maxLength": 2
+        }
+      }
+    },
     "icon": {
       "description": "Represents icon attributes",
       "type": "object",
@@ -1374,7 +1410,23 @@
         },
         "text": {
           "type": "string",
-          "description": "Initials for the avatar. Up to 2 symbols."
+          "description": "Initials for the avatar. Up to 2 symbols. If the image provided to the 'src' property fails to load, then the text will be shown.",
+          "maxLength": 2
+        },
+        "size": {
+          "description": "[Experimental] The size of the icon.",
+          "oneOf": [
+            {
+              "enum": [
+                "XS",
+                "S",
+                "M"
+              ]
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },

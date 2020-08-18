@@ -302,11 +302,14 @@ sap.ui.define([
 			var vSrc = BindingHelper.formattedProperty(oColumn.icon.src, function (sValue) {
 				return this._oIconFormatter.formatSrc(sValue, this._sAppId);
 			}.bind(this));
+
 			return new Avatar({
 				src: vSrc,
 				displayShape: oColumn.icon.shape,
-				displaySize: AvatarSize.XS
-			});
+				displaySize: oColumn.icon.size || AvatarSize.XS,
+				tooltip: oColumn.icon.alt,
+				initials: oColumn.icon.text
+			}).addStyleClass("sapFCardIcon");
 		}
 
 		if (oColumn.progressIndicator) {

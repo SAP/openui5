@@ -4,6 +4,7 @@
 sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/ui/integration/cards/BaseContent",
+		"sap/m/library",
 		"sap/m/HBox",
 		"sap/m/VBox",
 		"sap/m/Text",
@@ -15,10 +16,28 @@ sap.ui.define([
 		"sap/ui/layout/AlignedFlowLayout",
 		"sap/ui/dom/units/Rem",
 		"sap/ui/integration/util/BindingHelper"
-	], function (library, BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, BindingHelper) {
+	], function (
+		library,
+		BaseContent,
+		mLibrary,
+		HBox,
+		VBox,
+		Text,
+		Title,
+		Avatar,
+		Link ,
+		Label,
+		ResizeHandler,
+		AlignedFlowLayout,
+		Rem,
+		BindingHelper
+	) {
 		"use strict";
 
 		var AreaType = library.AreaType;
+
+		// shortcut for sap.m.AvatarSize
+		var AvatarSize = mLibrary.AvatarSize;
 
 		/**
 		 * Constructor for a new <code>ObjectContent</code>.
@@ -240,13 +259,12 @@ sap.ui.define([
 						}.bind(this));
 
 						var oAvatar = new Avatar({
-							customDisplaySize: "2.5rem",
-							displaySize: "Custom",
+							displaySize: oItem.icon.size || AvatarSize.XS,
 							src: vSrc,
 							initials: oItem.icon.text,
 							displayShape: oItem.icon.shape,
 							tooltip: oItem.icon.alt
-						}).addStyleClass("sapFCardObjectItemAvatar sapFCardObjectItemLabel");
+						}).addStyleClass("sapFCardObjectItemAvatar sapFCardObjectItemLabel sapFCardIcon");
 
 						var oVbox = new VBox({
 							items: [

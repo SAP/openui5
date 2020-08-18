@@ -93,8 +93,6 @@ sap.ui.define(function () {
 					'./CardHost.qunit',
 					'./formatters/IconFormatter.qunit',
 					'./CardFiltering.qunit',
-					'./cards/TableCard.qunit',
-					'./cards/ObjectCard.qunit',
 					'./cards/AnalyticsCloudContent.qunit'
 				]
 			},
