@@ -138,9 +138,9 @@ sap.ui.define([
 	 *   Whether all list bindings for the same resource path share their data, so that it is
 	 *   requested only once; only the value <code>true</code> is allowed; see parameter
 	 *   "$$sharedRequest" of {@link #bindList}. Additionally,
-	 *   {@link sap.ui.model.BindingMode.OneTime} becomes the only supported binding mode. Note:
-	 *   This makes all bindings read-only, so it may especially be useful for value list models.
-	 *   Supported since 1.80.0
+	 *   {@link sap.ui.model.BindingMode.OneWay} becomes the default binding mode and
+	 *   {@link sap.ui.model.BindingMode.TwoWay} is forbidden. Note: This makes all bindings
+	 *   read-only, so it may be especially useful for value list models. Supported since 1.80.0
 	 * @param {boolean} [mParameters.supportReferences=true]
 	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
 	 *   supported in order to load schemas on demand from other $metadata documents and include
@@ -317,15 +317,17 @@ sap.ui.define([
 					}
 
 					this.aAllBindings = [];
-					this.sDefaultBindingMode = mParameters.sharedRequests
-						? BindingMode.OneTime
-						: BindingMode.TwoWay;
-					this.aPrerenderingTasks = null; // @see #addPrerenderingTask
-					this.mSupportedBindingModes = {OneTime : true};
-					if (!mParameters.sharedRequests) {
-						this.mSupportedBindingModes.OneWay = true;
+					this.mSupportedBindingModes = {
+						OneTime : true,
+						OneWay : true
+					};
+					if (mParameters.sharedRequests) {
+						this.sDefaultBindingMode = BindingMode.OneWay;
+					} else {
+						this.sDefaultBindingMode = BindingMode.TwoWay;
 						this.mSupportedBindingModes.TwoWay = true;
 					}
+					this.aPrerenderingTasks = null; // @see #addPrerenderingTask
 				}
 			});
 
@@ -635,7 +637,7 @@ sap.ui.define([
 	 *   requested only once; only the value <code>true</code> is allowed. This parameter can be
 	 *   inherited from the model's parameter "sharedRequests", see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}. Supported since 1.80.0
-	 *   <b>Note:</b> These bindings are read-only, so they may especially be useful for value
+	 *   <b>Note:</b> These bindings are read-only, so they may be especially useful for value
 	 *   lists; the following APIs are <b>not</b> allowed
 	 *   <ul>
 	 *   <li> for the list binding itself:
