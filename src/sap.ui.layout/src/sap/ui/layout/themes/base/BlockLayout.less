@@ -146,18 +146,18 @@
 	}
 
 	&:not(.sapUiBlockLayoutSizeS) {
-		.sapUiBlockLayoutCell:first-child .sapUiBlockCellContent {
+		.sapUiBlockLayoutCell:first-of-type .sapUiBlockCellContent {
 			margin-left: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust first cell in a row with 0.5rem on the left
 		}
-		.sapUiBlockLayoutCell:last-child .sapUiBlockCellContent {
+		.sapUiBlockLayoutCell:last-of-type .sapUiBlockCellContent {
 			margin-right: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust last cell in a row with 0.5rem on the right
 		}
 
-		.sapUiBlockLayoutRow:first-child .sapUiBlockCellContent {
+		.sapUiBlockLayoutRow:first-of-type .sapUiBlockCellContent {
 			margin-top: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust spacing at the top for all cells in the first row
 		}
 
-		.sapUiBlockLayoutRow:last-child .sapUiBlockCellContent {
+		.sapUiBlockLayoutRow:last-of-type .sapUiBlockCellContent {
 			margin-bottom: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust spacing at the bottom for all cells in the last row
 		}
 	}
@@ -170,11 +170,11 @@
 			margin-right: 0.5rem;
 		}
 
-		.sapUiBlockLayoutRow:first-child .sapUiBlockLayoutCell:first-child .sapUiBlockCellContent {
+		.sapUiBlockLayoutRow:first-of-type .sapUiBlockLayoutCell:first-of-type .sapUiBlockCellContent {
 			margin-top: 0.5rem; // Add 0.5rem spacing for the first cell in the first row
 		}
 
-		.sapUiBlockLayoutRow:last-child .sapUiBlockLayoutCell:last-child .sapUiBlockCellContent {
+		.sapUiBlockLayoutRow:last-of-type .sapUiBlockLayoutCell:last-of-type .sapUiBlockCellContent {
 			margin-bottom: 0.5rem; // Add 0.5rem spacing for the last cell in the last row
 		}
 	}
