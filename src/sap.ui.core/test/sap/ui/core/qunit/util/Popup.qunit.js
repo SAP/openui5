@@ -2293,7 +2293,13 @@ sap.ui.define([
 			oText.setText("NewText");
 
 			setTimeout(function(){
-				assert.ok(jQuery(oText.getDomRef()).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oNonModalPopup.getId() + " should be marked explicitly as user selectable.");
+				if (Device.browser.msie || Device.browser.edge) {
+					assert.notOk(jQuery(oText.getDomRef()).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oNonModalPopup.getId() + " should not be marked explicitly as user selectable.");
+					assert.notOk(jQuery(oText.getDomRef()).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oNonModalPopup.getId() + " should not be marked explicitly as not user selectable.");
+				} else {
+					assert.ok(jQuery(oText.getDomRef()).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oNonModalPopup.getId() + " should be marked explicitly as user selectable.");
+					assert.notOk(jQuery(oText.getDomRef()).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oNonModalPopup.getId() + " should not be marked explicitly as not user selectable.");
+				}
 				assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
 
 				QUnitUtils.triggerSelectAll();
