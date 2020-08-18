@@ -14,7 +14,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				useFakeTimers: false
 			},
 			ui5: {
-				noConflict: true
+				noConflict: true,
+				"xx-waitForTheme" : "init"
 			},
 			loader: {
 				paths: {
