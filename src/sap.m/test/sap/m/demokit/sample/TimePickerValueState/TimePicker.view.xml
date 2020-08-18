@@ -1,0 +1,13 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.m.sample.TimePickerValueState.TimePicker"
+	xmlns="sap.m">
+	<FlexBox items="{path: '/modelData'}" direction="Column">
+		<VBox class="sapUiTinyMargin" >
+			<Label text="{label}" />
+			<TimePicker
+				width="100%"
+				valueState="{valueState}"/>
+		</VBox>
+	</FlexBox>
+</mvc:View>

@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.DatePicker",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.DatePickerValueState.DatePicker",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"DatePicker.view.xml",
+					"DatePicker.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
