@@ -169,3 +169,8 @@ html.sap-phone .content ul{
 html.sap-phone .cardHeadersImg {
 	width: 320px;
 }
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-size: 0.875rem;
+}
