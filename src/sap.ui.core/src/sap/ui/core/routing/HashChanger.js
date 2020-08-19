@@ -288,16 +288,37 @@ sap.ui.define([
 	};
 
 	/**
+	 * @typedef {object} sap.ui.core.routing.HashChangerEventInfo
+	 * @description The object containing the event info for the events that are forwarded to {@link sap.ui.core.routing.RouterHashChanger}.
+	 * @property {string} name The name of the event that is fired by the HashChanger and should be forwarded to the RouterHashChanger
+	 * @property {sap.ui.core.routing.HashChangerEventParameterMapping} [paramMapping] The optional defined parameter name mapping that is
+	 *  used for forwarding the event to the {@link sap.ui.core.routing.RouterHashChanger}.
+	 * @property {boolean} updateHashOnly Indicates whether the event is ignored by every RouterHashChanger
+	 *  instance and is only relevant for the other routing classes, for example {@link sap.ui.core.routing.History}.
+	 * @protected
+	 * @since 1.82.0
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.core.routing.HashChangerEventParameterMapping
+	 * @description The object containing the parameter mapping for forwarding the event to the {@link sap.ui.core.routing.RouterHashChanger}.
+	 * @property {string} [newHash] The name of the parameter whose value is used as the <code>newHash</code> parameter
+	 *  in the event that is forwarded to the {@link sap.ui.core.routing.RouterHashChanger}. If this isn't set, the
+	 *  value is taken from the property <code>newHash</code>.
+	 * @property {string} [oldHash] The name of the parameter whose value is used as the <code>oldHash</code> parameter
+	 *  in the event that is forwarded to the {@link sap.ui.core.routing.RouterHashChanger}. If this isn't set, the
+	 *  value is taken from the property <code>oldHash</code>.
+	 * @property {string} [fullHash] The name of the parameter whose value is used as the <code>fullHash</code> parameter
+	 *  in the event that is forwarded to the {@link sap.ui.core.routing.RouterHashChanger}. If this isn't set, the
+	 *  value is taken from the property <code>fullHash</code>.
+	 * @protected
+	 * @since 1.82.0
+	 */
+
+	/**
 	 * Defines the events and its parameters which should be used for tracking the hash changes
 	 *
-	 * @return {Object[]} the events info. Each event info object in the array should
-	 * contain a name property which describes the event name, and an optional paramMapping object where the parameter
-	 * names in the event are defined for the 'newHash', 'oldHash' and 'fullHash'. If any of them isn't defined in the
-	 * mapping, the same name is used to get the property value from the event object. Every object can also define a
-	 * "updateHashOnly" option with boolean value to indicate whether the event is only relevant for the
-	 * RouterHashChanger instances which are going to be created and the event shouldn't be forwarded to the existing
-	 * RouterHashChanger instances. If this option is set to true, the new hash is saved RouterHashChanger instances but
-	 * no "hashChanged" event is fired on any existing RouterHashChanger instance.
+	 * @return {sap.ui.core.routing.HashChangerEventInfo[]} The array containing the events info
 	 * @protected
 	 */
 	HashChanger.prototype.getRelevantEventsInfo = function() {
