@@ -3075,4 +3075,49 @@ sap.ui.define([
 					[]);
 			});
 	});
+
+	//*********************************************************************************************
+	// BCP: 2080317936
+[{
+	inputKey : [",,*,,A,,-multiple-units", ",,*,,B,,-multiple-units"],
+	keyIndex : ["ZERO", -2],
+	resultKeyIndex : [0, 1],
+	serviceKey : ["item('A_0')", "item('A_1')", "item('B_0')", "item('B_1')"],
+	title : "first multi-unit key, second multi-unit key"
+}, {
+	inputKey : [",,*,,A,,-multiple-units", "item('B')"],
+	keyIndex : ["ZERO", 2],
+	resultKeyIndex : [0, 1],
+	serviceKey : ["item('A_0')", "item('A_1')", "item('B')"],
+	title : "first multi-unit key, second normal key"
+}, {
+	inputKey : ["item('A')", ",,*,,B,,-multiple-units"],
+	keyIndex : [0, -1],
+	resultKeyIndex : [0, 1],
+	serviceKey : ["item('A')", "item('B_0')", "item('B_1')"],
+	title : "first normal key, second multi-unit key"
+}, {
+	inputKey : [",,*,,C,,-multiple-units", "item('C')"],
+	keyIndex : ["ZERO", -2],
+	resultKeyIndex : [-1, -1],
+	serviceKey : ["item('A_0')", "item('A_1')", "item('B_0')", "item('B_1')"],
+	title : "keys do not match"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_findKeyIndex: " + oFixture.title, function (assert) {
+		var oBinding = {
+				mKeyIndex : {"/" : oFixture.keyIndex},
+				mLength : {"/" : 2},
+				mMultiUnitKey : {"/" : [",,*,,A,,-multiple-units", ",,*,,B,,-multiple-units"]},
+				mServiceKey : {"/" : oFixture.serviceKey}
+			},
+			n;
+
+		// code under test
+		for (n = 0; n < oFixture.inputKey.length; n += 1) {
+			assert.strictEqual(
+				AnalyticalBinding.prototype._findKeyIndex.call(oBinding, "/", oFixture.inputKey[n]),
+				oFixture.resultKeyIndex[n]);
+		}
+	});
+});
 });
