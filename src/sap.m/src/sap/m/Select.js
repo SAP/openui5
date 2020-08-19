@@ -1362,7 +1362,9 @@ function(
 				}
 
 				if (Device.system.phone) {
-					this._getHiddenSelect().focus();
+					// focus has to be set to the native select DOM element in order to restore the focus back to it
+					// after the select dialog is closed
+					this.focus();
 				}
 
 				this.open();
@@ -1464,6 +1466,20 @@ function(
 		 * @function
 		 */
 		Select.prototype.onsaphide = Select.prototype.onsapshow;
+
+		/**
+		 * Handle when mousedown event is fired on the select.
+		 *
+		 * Call preventDefault function on oEvent object to suppress
+		 * the default browser behavior of opening a native dropdown
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 * @function
+		 */
+		Select.prototype.onmousedown = function (oEvent) {
+			oEvent.preventDefault();
+		};
 
 		/**
 		 * Handle when escape is pressed.
@@ -1775,7 +1791,7 @@ function(
 			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
 
 				// force the focus to leave the inner element and set it back to the control's root element
-				this._getHiddenSelect().focus();
+				this.focus();
 			}
 		};
 
@@ -1815,7 +1831,7 @@ function(
 			if (Device.system.desktop && containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
 
 				// force the focus to stay in the input field
-				this._getHiddenSelect().focus();
+				this.focus();
 			}
 		};
 
