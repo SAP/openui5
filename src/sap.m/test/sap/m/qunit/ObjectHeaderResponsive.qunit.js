@@ -473,7 +473,7 @@ sap.ui.define([
 		oObjectHeader.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		assert.equal(oObjectHeader.getFocusDomRef().attr("id"), oObjectHeader.$("txt").attr("id"), "Focus domRef is correct");
+		assert.equal(oObjectHeader.getFocusDomRef().getAttribute("id"), oObjectHeader.$("txt").attr("id"), "Focus domRef is correct");
 
 		// Clean up
 		oObjectHeader.destroy();

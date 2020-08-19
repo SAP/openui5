@@ -791,9 +791,9 @@ sap.ui.define([
 	 */
 	ObjectHeader.prototype.getFocusDomRef = function() {
 		if (this.getResponsive()) {
-			return this.$("txt");
+			return this.$("txt")[0];
 		} else {
-			return this.$("title");
+			return this.$("title")[0];
 		}
 	};
 
