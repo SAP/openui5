@@ -1651,7 +1651,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the session context. Starts a keep-alive timer in case there is a session context and
-	 * a timeout of 60 seconds or more is indicated. This timer runs for at most 15 minutes.
+	 * a timeout of 60 seconds or more is indicated. This timer runs for at most 30 minutes.
 	 *
 	 * @param {string} [sContextId] The value of the header 'SAP-ContextId'
 	 * @param {string} [sSAPHttpSessionTimeout] The value of the header 'SAP-Http-Session-Timeout',
@@ -1663,7 +1663,7 @@ sap.ui.define([
 		var iTimeoutSeconds = rTimeout.test(sSAPHttpSessionTimeout)
 				? parseInt(sSAPHttpSessionTimeout)
 				: 0,
-			iSessionTimeout = Date.now() + 15 * 60 * 1000, // 15 min
+			iSessionTimeout = Date.now() + 30 * 60 * 1000, // 30 min
 			that = this;
 
 		this.clearSessionContext(); // stop the current session and its timer
@@ -1673,7 +1673,7 @@ sap.ui.define([
 			that.mHeaders["SAP-ContextId"] = sContextId;
 			if (iTimeoutSeconds >= 60) {
 				this.iSessionTimer = setInterval(function () {
-					if (Date.now() >= iSessionTimeout) { // 15 min have passed
+					if (Date.now() >= iSessionTimeout) { // 30 min have passed
 						that.clearSessionContext(/*bTimeout*/true); // give up
 					} else {
 						jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
