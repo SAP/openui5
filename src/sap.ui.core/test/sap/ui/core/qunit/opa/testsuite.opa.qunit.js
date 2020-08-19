@@ -358,6 +358,22 @@ sap.ui.define([
 			},
 			module: "./opa5/actions.qunit"
 		},
+		"opa5/autoWait": {
+			title: "QUnit Page for sap.ui.test.Opa5 - autoWait",
+			sinon: {
+				version: 1,
+				qunitBridge: true
+			},
+			qunit: {
+				noglobals: false
+			},
+			loader: {
+				paths: {
+					"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
+				}
+			},
+			module: "./opa5/autoWait.qunit"
+		},
 		"opa5/basics": {
 			title: "QUnit Page for sap.ui.test.Opa5 - Basics",
 			sinon: {

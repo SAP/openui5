@@ -99,7 +99,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should have configurable max promise delay", function (assert) {
-		_promiseWaiter.extendConfig({timeoutWaiter: {maxDelay: 10}});
+		_promiseWaiter.extendConfig({maxDelay: 10});
 		var fnDone = assert.async();
 		var oPromise = new Promise(function (fnResolve) {
 			setTimeout(fnResolve, 20);

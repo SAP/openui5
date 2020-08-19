@@ -3,24 +3,34 @@
  */
 
 sap.ui.define([
-	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/_ParameterValidator",
 	"sap/ui/test/autowaiter/_utils",
-	"sap/ui/thirdparty/jquery"
-], function(_OpaLogger, _ParameterValidator, _utils, jQueryDOM) {
+	"sap/ui/thirdparty/jquery",
+	"./WaiterBase"
+], function(_utils, jQueryDOM, WaiterBase) {
 	"use strict";
 
-	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._promiseWaiter");
-	var oHasPendingLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._promiseWaiter#hasPending");
-	var oConfigValidator = new _ParameterValidator({
-		errorPrefix: "sap.ui.test.autowaiter._promiseCounter#extendConfig"
-	});
-	var iDefaultMaxDelay = 1000; // milliseconds; should be at least as big as _timeoutWaiter maxDelay
-	var config = {
-		maxDelay: iDefaultMaxDelay
-	};
-
 	var aPendingPromises = [];
+
+	var PromiseWaiter = WaiterBase.extend("sap.ui.test.autowaiter._promiseWaiter", {
+		hasPending: function () {
+			var bHasPendingPromises = aPendingPromises.length > 0;
+			if (bHasPendingPromises) {
+				logPendingPromises();
+			}
+			return bHasPendingPromises;
+		},
+		_getDefaultConfig: function () {
+			return jQueryDOM.extend({
+				maxDelay: 1000 // milliseconds; should be at least as big as _timeoutWaiter maxDelay
+			}, WaiterBase.prototype._getDefaultConfig.call(this));
+		},
+		_getValidationInfo: function () {
+			return jQueryDOM.extend({
+				maxDelay: "numeric"
+			}, WaiterBase.prototype._getValidationInfo.call(this));
+		}
+	});
+	var oPromiseWaiter = new PromiseWaiter();
 
 	function wrapPromiseFunction (sOriginalFunctionName) {
 		var fnOriginal = Promise[sOriginalFunctionName];
@@ -38,8 +48,8 @@ sap.ui.define([
 			var iTimeout = setTimeout(function () {
 				bTooLate = true;
 				aPendingPromises.splice(aPendingPromises.indexOf(mPendingPromise), 1);
-				oLogger.trace("Long-running promise is ignored:" + sPendingPromiseLog);
-			}, config.maxDelay,'TIMEOUT_WAITER_IGNORE');
+				oPromiseWaiter._oLogger.trace("Long-running promise is ignored:" + sPendingPromiseLog);
+			}, oPromiseWaiter._mConfig.maxDelay,'TIMEOUT_WAITER_IGNORE');
 
 			var fnCountDownPromises = function () {
 				if (bTooLate) {
@@ -48,13 +58,13 @@ sap.ui.define([
 				}
 				// count down and clear the timeout to make sure it is only counted down once
 				aPendingPromises.splice(aPendingPromises.indexOf(mPendingPromise), 1);
-				oLogger.trace("Promise complete:" + sPendingPromiseLog);
+				oPromiseWaiter._oLogger.trace("Promise complete:" + sPendingPromiseLog);
 				clearTimeout(iTimeout);
 			};
 
 			var oPromise = fnOriginal.apply(this, arguments);
 			aPendingPromises.push(mPendingPromise);
-			oLogger.trace("New pending promise:" + sPendingPromiseLog);
+			oPromiseWaiter._oLogger.trace("New pending promise:" + sPendingPromiseLog);
 			oPromise.then(fnCountDownPromises, fnCountDownPromises);
 			return oPromise;
 		};
@@ -75,29 +85,8 @@ sap.ui.define([
 			sLogMessage += createLogForPromise(mPromise);
 		});
 
-		oHasPendingLogger.debug(sLogMessage);
+		oPromiseWaiter._oHasPendingLogger.debug(sLogMessage);
 	}
 
-	return {
-		hasPending: function () {
-			var bHasPendingPromises = aPendingPromises.length > 0;
-			if (bHasPendingPromises) {
-				logPendingPromises();
-			}
-			return bHasPendingPromises;
-		},
-		extendConfig: function (oConfig) {
-			var iConfigMaxDelay = oConfig && oConfig.timeoutWaiter && oConfig.timeoutWaiter.maxDelay;
-			oConfig = {
-				maxDelay: iConfigMaxDelay || iDefaultMaxDelay
-			};
-			oConfigValidator.validate({
-				inputToValidate: oConfig,
-				validationInfo: {
-					maxDelay: "numeric"
-				}
-			});
-			jQueryDOM.extend(config, oConfig);
-		}
-	};
+	return oPromiseWaiter;
 }, true);

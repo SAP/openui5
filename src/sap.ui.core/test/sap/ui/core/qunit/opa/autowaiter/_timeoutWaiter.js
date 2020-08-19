@@ -58,7 +58,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Should have configurable max timeout delay", function (assert) {
-			timeoutWaiter.extendConfig({timeoutWaiter: {maxDelay: 3000}});
+			timeoutWaiter.extendConfig({maxDelay: 3000});
 			var iID = fnSetFunction(function () {}, 1001);
 			var iIDIgnored = fnSetFunction(function () {}, 3001);
 
@@ -66,7 +66,7 @@ sap.ui.define([
 			fnClearFunction(iID);
 			fnClearFunction(iIDIgnored);
 			// reset to default value
-			timeoutWaiter.extendConfig({timeoutWaiter: {maxDelay: 1000}});
+			timeoutWaiter.extendConfig({maxDelay: 1000});
 		});
 
 		QUnit.module("timeoutWaiter - single " + sFunctionUnderTest);
