@@ -1869,7 +1869,10 @@ sap.ui.define([
 	 * @param {object} [oContext] A context object for the new binding
 	 * @param {Object<string,any>} [mParameters] Map of optional parameters for the binding
 	 * @param {boolean} [mParameters.ignoreMessages]
-	 *   Whether this binding does not propagate messages to the control; supported since 1.82.0.
+	 *   Whether this binding does not propagate model messages to the control; supported since
+	 *   1.82.0. Some composite types like {@link sap.ui.model.type.Currency} automatically ignore
+	 *   model messages for some of their parts depending on their format options; setting this
+	 *   parameter to <code>true</code> or <code>false</code> overrules the automatism of the type.
 	 *
 	 *   For example, a binding for a currency code is used in a composite binding for rendering the
 	 *   proper number of decimals, but the currency code is not displayed in the attached control.

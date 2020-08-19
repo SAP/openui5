@@ -69,29 +69,18 @@ sap.ui.define([
 		var oBinding = new Binding(/*oModel*/null, "some/path");
 
 		// code under test
-		assert.strictEqual(oBinding.bIgnoreMessages, false);
+		assert.strictEqual(oBinding.bIgnoreMessages, undefined, "not yet set");
 
 		// code under test
-		oBinding.setIgnoreMessages(true);
+		oBinding.setIgnoreMessages("~boolean");
 
 		// code under test
-		assert.strictEqual(oBinding.bIgnoreMessages, true);
-
-		// code under test
-		oBinding.setIgnoreMessages(false);
-
-		// code under test
-		assert.strictEqual(oBinding.bIgnoreMessages, false);
-
-		// code under test
-		oBinding.setIgnoreMessages(null);
-
-		// code under test
-		assert.strictEqual(oBinding.bIgnoreMessages, false);
+		assert.strictEqual(oBinding.bIgnoreMessages, "~boolean");
 	});
 
 	//*********************************************************************************************
 [
+	{bIgnoreMessages : undefined, bResult : undefined},
 	{bIgnoreMessages : false, bResult : false},
 	{bIgnoreMessages : true, supportsIgnoreMessages : false, bResult : false},
 	{bIgnoreMessages : true, supportsIgnoreMessages : true, bResult : true}

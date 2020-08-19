@@ -5894,4 +5894,88 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: With the binding parameter <code>ignoreMessages</code> the application developer
+	// can control whether messages are displayed at the control. For
+	// <code>sap.ui.model.type.Currency</code> the parameter <code>ignoreMessages</code> is
+	// determined automatically based on the format option <code>showMeasure</code>. Manual setting
+	// of <code>ignoreMessages</code> wins over automatic determination.
+	// JIRA: CPOUI5MODELS-302
+	QUnit.test("ignoreMessages for sap.ui.model.type.Currency", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			oCurrencyCodeWarning = this.createResponseMessage("CurrencyCode", "Foo", "warning"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="Amount0" value="{\
+			formatOptions : {showMeasure : false},\
+			mode : \'TwoWay\',\
+			parts : [{\
+				constraints : {precision : 16, scale : 3},\
+				path : \'GrossAmount\',\
+				type : \'sap.ui.model.odata.type.Decimal\'\
+			}, {\
+				constraints : {maxLength : 5},\
+				path : \'CurrencyCode\',\
+				type : \'sap.ui.model.odata.type.String\'\
+			}],\
+			type : \'sap.ui.model.type.Currency\'\
+		}" />\
+	<Input id="Amount1" value="{\
+			formatOptions : {showMeasure : false},\
+			mode : \'TwoWay\',\
+			parts : [{\
+				constraints : {precision : 16, scale : 3},\
+				path : \'GrossAmount\',\
+				type : \'sap.ui.model.odata.type.Decimal\'\
+			}, {\
+				constraints : {maxLength : 5},\
+				parameters : {ignoreMessages : false},\
+				path : \'CurrencyCode\',\
+				type : \'sap.ui.model.odata.type.String\'\
+			}],\
+			type : \'sap.ui.model.type.Currency\'\
+		}" />\
+	<Input id="Amount2" value="{\
+			formatOptions : {showMeasure : false},\
+			mode : \'TwoWay\',\
+			parts : [{\
+				constraints : {precision : 16, scale : 3},\
+				path : \'GrossAmount\',\
+				type : \'sap.ui.model.odata.type.Decimal\'\
+			}, {\
+				constraints : {maxLength : 5},\
+				parameters : {ignoreMessages : true},\
+				path : \'CurrencyCode\',\
+				type : \'sap.ui.model.odata.type.String\'\
+			}],\
+			type : \'sap.ui.model.type.Currency\'\
+		}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')", {
+				CurrencyCode : "JPY",
+				GrossAmount : "12345",
+				SalesOrderID : "1"
+			}, {"sap-message" : getMessageHeader(oCurrencyCodeWarning)})
+			// change event for each part of the composite type
+			.expectChange("Amount0", "12,345.00")
+			.expectChange("Amount0", "12,345")
+			.expectChange("Amount1", "12,345.00")
+			.expectChange("Amount1", "12,345")
+			.expectChange("Amount2", "12,345.00")
+			.expectChange("Amount2", "12,345")
+			.expectMessage(oCurrencyCodeWarning, "/SalesOrderSet('1')/");
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			return Promise.all([
+				that.checkValueState(assert, "Amount0", "None", ""),
+				that.checkValueState(assert, "Amount1", "Warning", "Foo"),
+				that.checkValueState(assert, "Amount2", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });

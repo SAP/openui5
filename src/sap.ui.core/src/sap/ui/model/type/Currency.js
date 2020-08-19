@@ -45,7 +45,11 @@ sap.ui.define([
 	 * @public
 	 * @param {object} [oFormatOptions]
 	 *   Format options; for a list of all available options, see
-	 *   {@link sap.ui.core.format.NumberFormat.getCurrencyInstance}.
+	 *   {@link sap.ui.core.format.NumberFormat.getCurrencyInstance}. If the format option
+	 *   <code>showMeasure</code> is set to <code>false</code>, model messages for the currency
+	 *   code are not propagated to the control if the corresponding binding supports the feature
+	 *   of ignoring model messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and
+	 *   the corresponding binding parameter is not set manually.
 	 * @param {object} [oFormatOptions.source]
 	 *   A set of format options as defined for
 	 *   {@link sap.ui.core.format.NumberFormat.getCurrencyInstance} which describes the format of
@@ -216,6 +220,30 @@ sap.ui.define([
 			}
 			this.oInputFormat = NumberFormat.getCurrencyInstance(oSourceOptions);
 		}
+	};
+
+	/**
+	 * Gets an array of indices that determine which parts of this type shall not propagate their
+	 * model messages to the attached control. Prerequisite is that the corresponding binding
+	 * supports this feature, see {@link sap.ui.model.Binding#supportsIgnoreMessages}. If the format
+	 * option <code>showMeasure</code> is set to <code>false</code> and the currency value is not
+	 * shown in the control, the part for the currency code shall not propagate model messages to
+	 * the control.
+	 *
+	 * @return {number[]}
+	 *   An array of indices that determine which parts of this type shall not propagate their model
+	 *   messages to the attached control
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#supportsIgnoreMessages
+	 * @since 1.82.0
+	 */
+	// @override sap.ui.model.Binding#supportsIgnoreMessages
+	Currency.prototype.getPartsIgnoringMessages = function () {
+		if (this.oFormatOptions.showMeasure === false) {
+			return [1];
+		}
+		return [];
 	};
 
 	return Currency;

@@ -163,14 +163,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code>, as this binding supports the feature of not propagating messages
-	 * to the control.
+	 * Returns <code>true</code>, as this binding supports the feature of not propagating model
+	 * messages to the control.
 	 *
 	 * @returns {boolean} <code>true</code>
 	 *
+	 * @public
 	 * @see sap.ui.model.Binding#getIgnoreMessages
 	 * @see sap.ui.model.Binding#setIgnoreMessages
+	 * @since 1.82.0
 	 */
+	// @override sap.ui.model.Binding#supportsIgnoreMessages
 	ODataPropertyBinding.prototype.supportsIgnoreMessages = function () {
 		return true;
 	};

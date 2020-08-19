@@ -160,7 +160,6 @@
 											type : 'sap.ui.model.odata.type.Decimal'
 										}, {
 											constraints : {maxLength : 5},
-											parameters : {ignoreMessages : true},
 											path : 'CurrencyCode',
 											type : 'sap.ui.model.odata.type.String'
 										}],
