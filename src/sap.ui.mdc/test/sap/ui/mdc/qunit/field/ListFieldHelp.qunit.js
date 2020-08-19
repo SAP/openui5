@@ -2,7 +2,7 @@
 // The interaction with the Field is tested on the field test page.
 
 /* global QUnit, sinon */
-/*eslint max-nested-callbacks: [2, 5]*/
+/*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -156,8 +156,12 @@ sap.ui.define([
 			assert.ok(aItems[0] instanceof DisplayListItem, "Item is DisplayListItem");
 			assert.equal(aItems[0].getLabel(), "Item1", "Text assigned to item");
 			assert.equal(aItems[0].getValue(), "Text1", "AdditinalText assigned to item");
-			assert.equal(iDataUpdate, 0, "DataUpdate event not fired");
 			assert.equal(oPopover.getInitialFocus(), "I1", "Initial focus on Field");
+			var fnDone = assert.async();
+			setTimeout( function(){ // as dataUpdate event id fired async
+				assert.equal(iDataUpdate, 1, "DataUpdate event fired once");
+				fnDone();
+			}, 0);
 		}
 
 	}
@@ -419,18 +423,33 @@ sap.ui.define([
 
 		var oItem = new ListItem({text: "Item4", additionalText: "Text4", key: "I4"});
 		oFieldHelp.addItem(oItem);
-		assert.equal(iDataUpdate, 1, "DataUpdateEvent fired by adding item");
+		var fnDone = assert.async();
+		setTimeout( function(){ // as dataUpdate event id fired async
+			assert.equal(iDataUpdate, 1, "DataUpdateEvent fired by adding item");
 
-		oItem.setText("Test");
-		assert.equal(iDataUpdate, 2, "DataUpdateEvent fired by changing item");
+			oItem.setText("Test");
+			setTimeout( function(){ // as dataUpdate event id fired async
+				assert.equal(iDataUpdate, 2, "DataUpdateEvent fired by changing item");
 
-		oFieldHelp.removeItem(oItem);
-		assert.equal(iDataUpdate, 3, "DataUpdateEvent fired by removing item");
+				oFieldHelp.removeItem(oItem);
+				setTimeout( function(){ // as dataUpdate event id fired async
+					assert.equal(iDataUpdate, 3, "DataUpdateEvent fired by removing item");
 
-		oItem.setText("X");
-		assert.equal(iDataUpdate, 3, "DataUpdateEvent not fired by changing removed item");
+					oItem.setText("X");
+					setTimeout( function(){ // as dataUpdate event id fired async
+						assert.equal(iDataUpdate, 3, "DataUpdateEvent not fired by changing removed item");
 
-		oItem.destroy();
+						oItem.setText("Test 1");
+						oItem = new ListItem({text: "Item5", additionalText: "Text5", key: "I5"});
+						oFieldHelp.addItem(oItem);
+						setTimeout( function(){ // as dataUpdate event id fired async
+							assert.equal(iDataUpdate, 4, "DataUpdateEvent fired only once on multiple changes");
+							fnDone();
+						}, 0);
+					}, 0);
+				}, 0);
+			}, 0);
+		}, 0);
 
 	});
 

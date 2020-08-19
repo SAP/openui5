@@ -137,6 +137,11 @@ sap.ui.define([
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
 
+		if (this._iDataUpdateTimer) {
+			clearTimeout(this._iDataUpdateTimer);
+			this._iDataUpdateTimer = null;
+		}
+
 	};
 
 	ListFieldHelp.prototype._createPopover = function() {
@@ -238,7 +243,7 @@ sap.ui.define([
 				} else {
 					this._oObserver.unobserve(oChanges.child);
 				}
-				this.fireDataUpdate();
+				_fireDataUpdate.call(this);
 			}
 
 			if (oChanges.name === "conditions") {
@@ -258,7 +263,19 @@ sap.ui.define([
 			}
 		} else {
 			// must be an item
-			this.fireDataUpdate();
+			_fireDataUpdate.call(this);
+		}
+
+	}
+
+	function _fireDataUpdate() {
+
+		if (!this._iDataUpdateTimer) {
+			this._iDataUpdateTimer = setTimeout(function () {
+				// on multiple changes (dummy row, static text...) perform only one update
+				this._iDataUpdateTimer = null;
+				this.fireDataUpdate();
+			}.bind(this), 0);
 		}
 
 	}
