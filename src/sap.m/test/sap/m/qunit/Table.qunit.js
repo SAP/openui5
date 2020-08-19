@@ -294,6 +294,34 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Colspan and col count", function(assert) {
+		var sut = createSUT('idEmptyTable2', true, true);
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+		assert.strictEqual(sut.getColCount(), 6, "highlight, 3 visible columns, navigation & navigated columns");
+		assert.strictEqual(sut.getColSpan(), 4, "navigation & navigated colums are ignored from the col span since they are always rendered by the table");
+
+		sut.setMode("MultiSelect");
+		Core.applyChanges();
+		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation & navigated columns");
+		assert.strictEqual(sut.getColSpan(), 5, "navigation & navigated colums are ignored from the col span since they are always rendered by the table");
+
+		sut.getItems()[0].setType("Navigation");
+		Core.applyChanges();
+		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation & navigated columns");
+		assert.strictEqual(sut.getColSpan(), 5, "navigation & navigated colums are ignored from the col span since they are always rendered by the table");
+
+		sut.bRenderDummyColumn = true;
+		sut.getColumns().forEach(function(oColumn) {
+			oColumn.setWidth("10rem");
+		});
+		Core.applyChanges();
+		assert.strictEqual(sut.getColCount(), 8, "highlight, MultiSelect, 3 visible columns, navigation, navigated & dummy columns");
+		assert.strictEqual(sut.getColSpan(), 5, "navigation, navigated & dummy colums are ignored from the col span since they are always rendered by the table");
+
+		sut.destroy();
+	});
+
 	QUnit.test("Fixed Layout", function(assert) {
 		var sut = createSUT('FixedLayoutTestTable');
 		sut.placeAt("qunit-fixture");
