@@ -349,5 +349,26 @@ sap.ui.define([
 		}
 	};
 
+	AssociativeSplitter.prototype.containsControl = function (sControlId) {
+		var aContentAreas = this._getContentAreas(),
+			oContentArea,
+			i;
+
+		for (i = 0; i < aContentAreas.length; i++) {
+
+			oContentArea = aContentAreas[i];
+
+			if (oContentArea.isA("sap.ui.layout.AssociativeSplitter")) {
+				if (oContentArea.containsControl(sControlId)) {
+					return true;
+				}
+			} else {
+				if (oContentArea.getId() === sControlId) {
+					return true;
+				}
+			}
+		}
+	};
+
 	return AssociativeSplitter;
 });

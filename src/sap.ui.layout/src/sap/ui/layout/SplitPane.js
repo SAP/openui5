@@ -18,7 +18,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	 *
 	 * The behavior of the Split Panes is handled by the following properties:
 	 * <ul>
-	 * <li><code>requiredParentWidth</code> - determines the minimum width of the parent container (in pixels). When it is reached, the pane will be hidden from the screen. If this pane is set as <code>rootPaneContainer</code> it will still be hidden</li>
+	 * <li><code>requiredParentWidth</code> - determines the minimum width of the parent container (in pixels). When it is reached, the pane will be hidden from the screen.</li>
 	 * <li><code>demandPane</code> - determines if the pane is reachable via the pagination bar after it has been hidden from the screen.</li>
 	 * </ul
 	 * @extends sap.ui.core.Element
