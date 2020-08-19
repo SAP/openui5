@@ -1383,6 +1383,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("$$ignoreMessages", function (assert) {
+		var oPropertyBindingMock = this.mock(PropertyBinding.prototype),
+			oBinding;
+
+		oPropertyBindingMock.expects("setIgnoreMessages").never();
+
+		// code under test
+		oBinding = this.oModel.bindProperty("/foo");
+
+		assert.strictEqual(oBinding.getIgnoreMessages(), false);
+
+		oPropertyBindingMock.expects("setIgnoreMessages").withExactArgs(true).callThrough();
+
+		// code under test
+		oBinding = this.oModel.bindProperty("/foo", undefined, {$$ignoreMessages : true});
+
+		assert.strictEqual(oBinding.getIgnoreMessages(), true);
+
+		oPropertyBindingMock.expects("setIgnoreMessages").withExactArgs(false).callThrough();
+
+		// code under test
+		oBinding = this.oModel.bindProperty("/foo", undefined, {$$ignoreMessages : false});
+
+		assert.strictEqual(oBinding.getIgnoreMessages(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("supportsIgnoreMessages", function (assert) {
+		// code under test
+		assert.strictEqual(ODataPropertyBinding.prototype.supportsIgnoreMessages(), true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("$$noPatch", function (assert) {
 		var oBinding = this.oModel.bindProperty("/foo");
 
