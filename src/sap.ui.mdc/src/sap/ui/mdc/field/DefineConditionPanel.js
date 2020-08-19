@@ -369,8 +369,10 @@ sap.ui.define([
 			var aConditions = this.getConditions();
 			var oOperators = oChanges.current && oChanges.current.operators;
 			var oOperatorsOld = oChanges.old && oChanges.old.operators;
+			var bOperatorModelUpdated = false;
 			if (!deepEqual(oOperators, oOperatorsOld)) {
 				// operators changed
+				bOperatorModelUpdated = true;
 				_updateOperatorModel.call(this);
 			}
 
@@ -378,7 +380,9 @@ sap.ui.define([
 			var sTypeOld = oChanges.old && oChanges.old.valueType && oChanges.old.valueType.getMetadata().getName();
 			if (sType !== sTypeOld && aConditions.length > 0) {
 				// operators might be changed if type changed
-				_updateOperatorModel.call(this);
+				if (!bOperatorModelUpdated) { // don't do twice
+					_updateOperatorModel.call(this);
+				}
 				this._bUpdateType = true;
 				_renderConditions.call(this);
 				this._bUpdateType = false;
@@ -719,6 +723,8 @@ sap.ui.define([
 			containerQuery: true}
 		).addStyleClass("sapUiMdcDefineConditionGrid");
 
+		_createRow.call(this, undefined, oGrid, 0, null, 0); // create dummy row
+
 		oScrollContainer.addContent(oInvisibleOperatorText);
 		oScrollContainer.addContent(oGrid);
 
@@ -820,11 +826,13 @@ sap.ui.define([
 		oGrid.insertContent(oRemoveButton, iIndex);
 		iIndex++;
 
-		for (var i = 0; i < oCondition.values.length; i++) {
-			var oControl = _createControl.call(this, oCondition, i, sIdPrefix + "-values" + i, oBindingContext);
-			if (oControl) {
-				oGrid.insertContent(oControl, iIndex);
-				iIndex++;
+		if (oCondition) { // for initial dummy row don't create value fields (as we don't know the operator or type)
+			for (var i = 0; i < oCondition.values.length; i++) {
+				var oControl = _createControl.call(this, oCondition, i, sIdPrefix + "-values" + i, oBindingContext);
+				if (oControl) {
+					oGrid.insertContent(oControl, iIndex);
+					iIndex++;
+				}
 			}
 		}
 
@@ -866,7 +874,7 @@ sap.ui.define([
 
 		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
 
-		if (oOperator && !oOperator.valueTypes[0]) {
+		if (!oOperator || !oOperator.valueTypes[0]) {
 			return "XL8 L8 M8 S0";
 		} else {
 			return "";
