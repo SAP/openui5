@@ -11,7 +11,7 @@
 			{
 				"id": "sap.ui.table.Table",
 				"name": "Grid Table",
-				"category": "List",
+				"category": "Table",
 				"since": "1.0",
 				"samples": [
 					"sap.ui.table.sample.Basic",
@@ -34,7 +34,7 @@
 			{
 				"id": "sap.ui.table.TreeTable",
 				"name": "Tree Table",
-				"category": "List",
+				"category": "Table",
 				"since": "1.36",
 				"samples": [
 					"sap.ui.table.sample.TreeTable.JSONTreeBinding",
