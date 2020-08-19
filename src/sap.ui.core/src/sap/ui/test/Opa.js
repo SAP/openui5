@@ -682,14 +682,7 @@ sap.ui.define([
 	};
 
 	/* config values from opa.config that will be used in waitFor */
-	Opa._aConfigValuesForWaitFor = [
-		"errorMessage",
-		"timeout",
-		"debugTimeout",
-		"pollingInterval",
-		"_stackDropCount",
-		"asyncPolling"
-	];
+	Opa._aConfigValuesForWaitFor = Object.keys(_ValidationParameters.OPA_WAITFOR_CONFIG);
 
 
 	return Opa;
