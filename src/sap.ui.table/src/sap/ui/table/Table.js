@@ -2318,7 +2318,7 @@ sap.ui.define([
 		if (!bAutoMode || bAutoModeAndRendered) {
 			// the correct number of records to be requested can only be determined when the table row content height is known or if the
 			// visible row count mode is not Auto
-			if (this.bOutput) {
+			if (this.bOutput && this.getRows().length === 0) {
 				oBinding.attachEventOnce("dataRequested", function() {
 					// doing it in a timeout will allow the data request to be sent before the rows get created
 					if (that._mTimeouts.refreshRowsAdjustRows) {
