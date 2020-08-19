@@ -207,6 +207,16 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"InternalAndExternalFiltering": {
+				group: "FilterBar UI Test",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
 			"SortFlex": {
 				group: "SortFlex change handler tests",
 				module: "./SortFlex.qunit",

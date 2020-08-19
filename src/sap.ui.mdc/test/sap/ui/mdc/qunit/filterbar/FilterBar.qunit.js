@@ -1355,7 +1355,7 @@ sap.ui.define([
 
 		oFilterBar.attachSearch(fnSearch);
 
-		sinon.spy(oFilterBar, "_search");
+		sinon.spy(oFilterBar, "_validate");
 
 		sinon.stub(oFilterBar, "waitForInitialization").returns(Promise.resolve());
 
@@ -1366,25 +1366,25 @@ sap.ui.define([
 		oWaitPromise.then(function() {
 
 			assert.ok(!oFilterBar._bSearchTriggered);
-			assert.ok(oFilterBar._search.calledOnce);
+			assert.ok(oFilterBar._validate.calledOnce);
 
 			assert.ok(oFilterBar.setSuspendSelection(true));
 			assert.ok(oFilterBar.getSuspendSelection());
 
 			oFilterBar.triggerSearch();
 			assert.ok(oFilterBar._bSearchTriggered);
-			assert.ok(oFilterBar._search.calledOnce);
+			assert.ok(oFilterBar._validate.calledOnce);
 
 			oFilterBar.triggerSearch();
 			assert.ok(oFilterBar._bSearchTriggered);
-			assert.ok(oFilterBar._search.called);
+			assert.ok(oFilterBar._validate.called);
 
 
 			oFilterBar.setSuspendSelection(false);
 			oWaitPromise.then(function() {
 				assert.ok(!oFilterBar.getSuspendSelection());
 				assert.ok(!oFilterBar._bSearchTriggered);
-				assert.ok(oFilterBar._search.calledTwice);
+				assert.ok(oFilterBar._validate.calledTwice);
 
 				done();
 			});

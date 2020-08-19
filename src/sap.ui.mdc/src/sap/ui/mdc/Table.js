@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/strings/capitalize",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/ui/mdc/mixin/FilterIntegrationMixin"
 ], function(
 	Control,
 	ActionToolbar,
@@ -49,7 +50,8 @@ sap.ui.define([
 	Sorter,
 	containsOrEquals,
 	capitalize,
-	SAPUriParameters
+	SAPUriParameters,
+	FilterIntegrationMixin
 ) {
 	"use strict";
 
@@ -464,6 +466,8 @@ sap.ui.define([
 
 	var aToolBarBetweenAggregations = ["variant", "quickFilter"];
 
+	FilterIntegrationMixin.call(Table.prototype);
+
 	/**
 		* Create setter and getter for aggregation that are passed to ToolBar aggregation named "Between"
 		* Several different Table aggregations are passed to the same ToolBar aggregation (Between)
@@ -663,7 +667,7 @@ sap.ui.define([
 			// Apply the new setting to the existing table
 			if (sTableType === "ResponsiveTable") {
 				ResponsiveTableType.updateRowSettings(this._oTemplate, oRowSettings);
-				this.checkAndRebindTable();
+				this.checkAndRebind();
 			} else {
 				GridTableType.updateRowSettings(this._oTable, oRowSettings);
 			}
@@ -744,10 +748,6 @@ sap.ui.define([
 	};
 
 	Table.prototype.setP13nMode = function(aMode) {
-		if (this.getFilter() && Array.isArray(aMode) && aMode.indexOf("Filter") > -1) {
-			throw new Error("The p13nMode \"Filter\" and the \"filter\" association cannot be used together");
-		}
-
 		this.setProperty("p13nMode", aMode, true);
 		this._updatep13nSettings();
 		return this;
@@ -929,6 +929,11 @@ sap.ui.define([
 		return this;
 	};
 
+	//method provided via FilterIntegrationMixin
+	Table.prototype._onFilterProvided = function() {
+		this._updateInnerTableNoDataText();
+	};
+
 	Table.prototype.setNoDataText = function(sNoData) {
 		this.setProperty("noDataText", sNoData, true);
 		this._updateInnerTableNoDataText();
@@ -1043,7 +1048,7 @@ sap.ui.define([
 				oCreationRow.update();
 			}
 			if (this.getAutoBindOnInit()) {
-				this.checkAndRebindTable();
+				this.checkAndRebind();
 			}
 		}.bind(this));
 
@@ -1171,6 +1176,22 @@ sap.ui.define([
 	 */
 	Table.prototype.isFilteringEnabled = function() {
 		return this.getP13nMode().indexOf("Filter") > -1;
+	};
+
+	Table.prototype.retrieveInbuiltFilter = function() {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		return Control.prototype.retrieveInbuiltFilter.call(this, this._registerInnerFilter, false).then(function(oAdaptationFilterBar){
+			var oFilterConfig = {
+				adaptationUI: oAdaptationFilterBar,
+				applyFilterChangeOn: oAdaptationFilterBar,
+				initializeControl: oAdaptationFilterBar.createFilterFields,
+				containerSettings: {
+					title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
+				}
+			};
+			this.enhanceAdaptationConfig({filterConfig: oFilterConfig});
+			return oAdaptationFilterBar;
+		}.bind(this));
 	};
 
 	/**
@@ -2060,50 +2081,8 @@ sap.ui.define([
 		}
 	};
 
-	Table.prototype.setFilter = function(vFilter) {
-		if (this.isFilteringEnabled()) {
-			throw new Error("The p13nMode \"Filter\" and the \"filter\" association cannot be used together");
-		}
-
-		if (this._validateFilter(vFilter)) {
-			this._deregisterFilter();
-
-			this.setAssociation("filter", vFilter, true);
-
-			this._registerFilter();
-			this._updateInnerTableNoDataText();
-		}
-
-		return this;
-	};
-
-	Table.prototype._validateFilter = function(vFilter) {
-		var oFilter = typeof vFilter === "object" ? vFilter : Core.byId(vFilter);
-		if (!oFilter || oFilter.isA(sFilterInterface)) {
-			return true;
-		}
-		throw new Error("\"" + vFilter + "\" is not valid for association \"filter\" of mdc.Table. Please use an object that implements \"" + sFilterInterface + "\" interface");
-	};
-
-	Table.prototype._deregisterFilter = function() {
-		var oFilter = Core.byId(this.getFilter());
-		if (oFilter) {
-			oFilter.detachSearch(this.rebindTable, this);
-			oFilter.detachFiltersChanged(this._onFiltersChanged, this);
-		}
-	};
-
-	Table.prototype._registerFilter = function() {
-		var oFilter = Core.byId(this.getFilter());
-		if (oFilter) {
-			oFilter.attachSearch(this.rebindTable, this);
-			oFilter.attachFiltersChanged(this._onFiltersChanged, this);
-		}
-	};
-
 	Table.prototype._registerInnerFilter = function(oFilter) {
-		this._deregisterFilter();
-		oFilter.attachSearch(this.rebindTable, this);
+		oFilter.attachSearch(this.rebind, this);
 	};
 
 	Table.prototype._onFiltersChanged = function(oEvent) {
@@ -2288,30 +2267,13 @@ sap.ui.define([
 		}
 	};
 
-	Table.prototype.rebindTable = function() {
+	Table.prototype.rebind = function() {
 		// Bind the rows/items of the table, only once it is initialized.
 		// This also ensures bind happens after the table is initialized
 		if (this._bTableExists) {
 			this.bindRows(this.getRowsBindingInfo() || {});
 		} else {
-			this.initialized().then(this.rebindTable.bind(this));
-		}
-	};
-
-	Table.prototype.checkAndRebindTable = function() {
-		if (this.isFilteringEnabled()) {
-			TableSettings.retrieveConfiguredFilter(this).then(function(oFilter) {
-				oFilter.initialized().then(function(){
-					oFilter.triggerSearch();
-				});
-			});
-		} else {
-			var oFilter = Core.byId(this.getFilter());
-			if (oFilter) {
-				oFilter.triggerSearch();
-			} else {
-				this.rebindTable();
-			}
+			this.initialized().then(this.rebind.bind(this));
 		}
 	};
 

@@ -126,7 +126,7 @@ sap.ui.define([
 		var oBtn = new Button();
 
 		this.oTable.initialized().then(function(){
-			TableSettings.retrieveConfiguredFilter(this.oTable).then(function(oP13nFilter){
+			this.oTable.retrieveInbuiltFilter().then(function(oP13nFilter){
 				this.oAdaptationController.showP13n(oBtn, "Filter").then(function(oP13nControl){
 
 					//check container
@@ -155,7 +155,7 @@ sap.ui.define([
 		delete this.aPropertyInfo[0].filterable;
 
 		this.oTable.initialized().then(function(){
-			TableSettings.retrieveConfiguredFilter(this.oTable).then(function(oP13nFilter){
+			this.oTable.retrieveInbuiltFilter().then(function(oP13nFilter){
 				this.oAdaptationController.showP13n(oBtn, "Filter").then(function(oP13nControl){
 						var aFilterItems = oP13nControl.getContent()[0].getFilterItems();
 

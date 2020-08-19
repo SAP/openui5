@@ -4096,20 +4096,4 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Internal and external filtering", function(assert) {
-		this.oTable.setFilter("some_id");
-
-		assert.throws(function() {
-			this.oTable.setP13nMode(["Filter"]);
-		}.bind(this), "Enabling the \"Filter\" p13nMode throws an error if there is an external filter");
-		assert.ok(this.oTable.getP13nMode().indexOf("Filter") === -1, "The \"Filter\" p13nMode is not enabled");
-
-		this.oTable.setFilter();
-		this.oTable.setP13nMode(["Filter"]);
-
-		assert.throws(function() {
-			this.oTable.setFilter("some_id");
-		}.bind(this), "Setting an external filter throws an error if the p13nMode \"Filter\" is enabled");
-		assert.ok(!this.oTable.getFilter(), "The external filter is not set");
-	});
 });

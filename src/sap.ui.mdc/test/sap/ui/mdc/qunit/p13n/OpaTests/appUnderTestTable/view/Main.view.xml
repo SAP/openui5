@@ -35,6 +35,7 @@
 				<mdc:Table id="IDTableOfInternalSampleApp_01"
 						   delegate='\{ "name": "AppUnderTestTable/view/TestTableDelegate", "payload": \{ "collectionName": "Artists" \} \}'
 						   selectionMode="Multi"
+						   filter="IDFilterBar"
 						   type="ResponsiveTable"
 						   p13nMode="Column,Sort,Filter">
 					<mdc:columns>

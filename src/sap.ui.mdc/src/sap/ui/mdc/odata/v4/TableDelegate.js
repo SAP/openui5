@@ -98,23 +98,30 @@ sap.ui.define([
 			oBindingInfo = {};
 		}
 
-		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable.isFilteringEnabled(), mConditions, oFilterInfo;
+		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable.isFilteringEnabled(), mConditions;
+		var oInnerFilterInfo, oOuterFilterInfo;
+		var aFilters = [];
 
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
 		if (bFilterEnabled) {
 			mConditions = oMDCTable.getConditions();
 			var aTableProperties = oMDCTable.data("$tablePropertyInfo");
-			oFilterInfo = FilterUtil.getFilterInfo(oMDCTable, mConditions, aTableProperties);
-			oBindingInfo.filters = oFilterInfo.filters;
-		} else if (oFilter) {
+			oInnerFilterInfo = FilterUtil.getFilterInfo(oMDCTable, mConditions, aTableProperties);
+			if (oInnerFilterInfo.filters) {
+				aFilters.push(oInnerFilterInfo.filters);
+			}
+		}
+
+		if (oFilter) {
 			mConditions = oFilter.getConditions();
 			if (mConditions) {
 
 				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
 				var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-				oFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
-				if (oFilterInfo) {
-					oBindingInfo.filters = oFilterInfo.filters;
+				oOuterFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
+
+				if (oOuterFilterInfo.filters) {
+					aFilters.push(oOuterFilterInfo.filters);
 				}
 
 				var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
@@ -135,6 +142,8 @@ sap.ui.define([
 				oBindingInfo.parameters.$search = sSearchText;
 			}
 		}
+
+		oBindingInfo.filters = new sap.ui.model.Filter(aFilters, true);
 	};
 
 	/**

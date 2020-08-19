@@ -379,7 +379,7 @@ sap.ui.define([
 	 * @returns {object} object containing the current status of the FilterBarBase
 	 */
 	FilterBarBase.prototype.getCurrentState = function() {
-		//return this.waitForInitialization().then(function() {
+		//return this.initialized().then(function() {
 
 			var oState = {};
 
@@ -757,22 +757,36 @@ sap.ui.define([
 	 * @public
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
+		return this.valid(true);
+	};
 
-		if (this.getSuspendSelection()) {
+	/**
+	 * Used for IFilter interface consuming controls
+	 *
+	 * @param {boolean} bFireSearch Determines whether a search should be fired once the Promise has been resolved
+	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
+	 *
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	FilterBarBase.prototype.valid = function(bFireSearch) {
+
+		bFireSearch = typeof bFireSearch == "boolean" ? bFireSearch : true;
+
+		if (this.getSuspendSelection() && bFireSearch) {
 			this._bSearchTriggered = true;
-			return;
+			return Promise.resolve();
 		}
 
-		this.waitForInitialization().then(function() {
+		return this.initialized().then(function() {
 			if (!this._oSearchPromise) {
 
-				this._oSearchPromise = new Promise(function(resolve) {
+				this._oSearchPromise = new Promise(function(resolve, reject) {
 					this._fResolvedSearchPromise = resolve;
+					this._fRejectedSearchPromise = reject;
 				}.bind(this));
 
 				var fDelayedFunction = function() {
-					this._search();
-					this._fResolvedSearchPromise();
+					this._validate(bFireSearch);
 					this._oSearchPromise = null;
 				};
 				setTimeout(fDelayedFunction.bind(this), 0);
@@ -908,7 +922,7 @@ sap.ui.define([
 		});
 	};
 
-	FilterBarBase.prototype._handleAsyncValidation = function() {
+	FilterBarBase.prototype._handleAsyncValidation = function(bFireSearch) {
 		if (this._aFIChanges && (this._aFIChanges.length > 0)) {
 
 			var aNamePromisesArray = this._aFIChanges.slice();
@@ -927,9 +941,9 @@ sap.ui.define([
 						oFF.setValueState(ValueState.None); //valid existing value -> clear missing required error
 					}
 				}, this);
-				this._search();
+				this._validate(bFireSearch);
 			}.bind(this), function(aConditionsArray) {
-				this._search();
+				this._validate(bFireSearch);
 			}.bind(this));
 		}
 	};
@@ -938,20 +952,22 @@ sap.ui.define([
 	 * Executes the search.
 	 * @private
 	 */
-	 FilterBarBase.prototype._search = function() {
+	 FilterBarBase.prototype._validate = function(bFireSearch) {
 		var sErrorMessage, vRetErrorState;
 
 		// First check for validation errors or if search should be prevented
 		vRetErrorState = this._checkFilters();
 
 		if (vRetErrorState === ErrorState.AsyncValidation) {
-			this._handleAsyncValidation();
+			this._handleAsyncValidation(bFireSearch);
 			return;
 		}
 
 		if (vRetErrorState === ErrorState.NoError) {
-			this.fireSearch();
-
+			if (bFireSearch) {
+				this.fireSearch();
+			}
+			this._fResolvedSearchPromise();
 		} else {
 			if (vRetErrorState === ErrorState.RequiredHasNoValue) {
 				sErrorMessage = this._oRb.getText("filterbar.REQUIRED_CONDITION_MISSING");
@@ -971,6 +987,7 @@ sap.ui.define([
 			} else {
 				Log.warning("search was not triggered. " + sErrorMessage);
 			}
+			this._fRejectedSearchPromise();
 		}
 	};
 
@@ -1038,7 +1055,7 @@ sap.ui.define([
 
 	FilterBarBase.prototype.removeCondition = function(sFieldPath, oXCondition) {
 
-		return this.waitForInitialization().then(function() {
+		return this.initialized().then(function() {
 			var oCM = this._getConditionModel();
 			if (oCM) {
 				var oProperty = this._getPropertyByName(sFieldPath);
@@ -1055,7 +1072,7 @@ sap.ui.define([
 
 	FilterBarBase.prototype.addCondition = function(sFieldPath, oXCondition) {
 
-		return this.waitForInitialization().then(function() {
+		return this.initialized().then(function() {
 			var oCM = this._getConditionModel();
 			if (oCM) {
 				var oProperty = this._getPropertyByName(sFieldPath);
@@ -1578,7 +1595,7 @@ sap.ui.define([
 	 * @returns {map} Map containing the external conditions.
 	 */
 	FilterBarBase.prototype.getConditions = function() {
-		//return this.waitForInitialization().then(function() {
+		//return this.initialized().then(function() {
 			var mConditions = this._bPersistValues ? this.getCurrentState().filter : this._getXConditions();
 			if (mConditions && mConditions["$search"]) {
 				delete mConditions["$search"];
@@ -1650,7 +1667,8 @@ sap.ui.define([
 		this._fResolveInitialFiltersApplied = undefined;
 		this._oInitialFiltersAppliedPromise = null;
 
-		this._fResolveSearchPromis = undefined;
+		this._fResolvedSearchPromise = undefined;
+		this._fRejectedSearchPromise = undefined;
 		this._oSearchPromise = null;
 
 		this._aBindings = null;

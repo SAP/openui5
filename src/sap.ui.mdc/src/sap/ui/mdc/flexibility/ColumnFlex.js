@@ -17,7 +17,7 @@ sap.ui.define([
 				FlexRuntimeInfoAPI.waitForChanges({
 					element: oControl
 				}).then(function() {
-					oControl.checkAndRebindTable();
+					oControl.checkAndRebind();
 					delete oControl._bWaitForBindChanges;
 				});
 
