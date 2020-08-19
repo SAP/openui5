@@ -51,6 +51,7 @@ sap.ui.define([
 		) {
 	"use strict";
 
+	var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	var oDefineConditionPanelView;
 	var oModel;
 	var oDataType;
@@ -218,6 +219,7 @@ sap.ui.define([
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 			assert.equal(oField.getValue(), "Andreas", "Value of Field");
+			assert.equal(oField.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE"), "Placeholder of Field");
 
 			jQuery(oField.getFocusDomRef()).val("foo");
 			qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -260,6 +262,8 @@ sap.ui.define([
 				assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
 				assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
 				assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
+				assert.equal(oField1.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_FROM"), "Placeholder of Field1");
+				assert.equal(oField2.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_TO"), "Placeholder of Field2");
 				fnDone();
 			}, 0);
 		}, 0);
