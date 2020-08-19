@@ -106,6 +106,9 @@ sap.ui.define(function() {
 			"ui/base/syncXHRFix": {
 				title: "QUnit Page for syncXHRFix"
 			},
+			"ui/base/syncXHRFix-error-handling": {
+				title: "QUnit Page for syncXHRFix (error handling)"
+			},
 			"util/Storage": {
 				title: "QUnit Page for Storage"
 			},
