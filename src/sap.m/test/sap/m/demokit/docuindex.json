@@ -267,7 +267,7 @@
 		{
 		  "id": "sap.m.Column",
 		  "name": "Column",
-		  "category": "Table",
+		  "category": "List",
 		  "since": "1.12",
 		  "samples": ["sap.m.sample.Table"]
 		},
@@ -293,7 +293,7 @@
 		{
 		  "id": "sap.m.ColumnListItem",
 		  "name": "Column List Item",
-		  "category": "Table",
+		  "category": "List",
 		  "since": "1.12",
 		  "samples": [
 				"sap.m.sample.Table",
@@ -1231,7 +1231,7 @@
 		{
 		  "id": "sap.m.Table",
 		  "name": "Responsive Table",
-		  "category": "Table",
+		  "category": "List",
 		  "since": "1.12",
 		  "samples": [
 			"sap.m.sample.Table",
