@@ -140,7 +140,7 @@ sap.ui.define([
 	 *   "$$sharedRequest" of {@link #bindList}. Additionally,
 	 *   {@link sap.ui.model.BindingMode.OneWay} becomes the default binding mode and
 	 *   {@link sap.ui.model.BindingMode.TwoWay} is forbidden. Note: This makes all bindings
-	 *   read-only, so it may especially be useful for value list models. Supported since 1.80.0
+	 *   read-only, so it may be especially useful for value list models. Supported since 1.80.0
 	 * @param {boolean} [mParameters.supportReferences=true]
 	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
 	 *   supported in order to load schemas on demand from other $metadata documents and include
@@ -635,7 +635,7 @@ sap.ui.define([
 	 *   requested only once; only the value <code>true</code> is allowed. This parameter can be
 	 *   inherited from the model's parameter "sharedRequests", see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}. Supported since 1.80.0
-	 *   <b>Note:</b> These bindings are read-only, so they may especially be useful for value
+	 *   <b>Note:</b> These bindings are read-only, so they may be especially useful for value
 	 *   lists; the following APIs are <b>not</b> allowed
 	 *   <ul>
 	 *     <li> for the list binding itself:
