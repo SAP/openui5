@@ -3349,6 +3349,19 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			"Ridiculously long number is parsed as string");
 	});
 
+	QUnit.test("parse default format special cases", function (assert) {
+		var oFormat = NumberFormat.getFloatInstance({
+			parseAsString: true
+		});
+
+		assert.equal(oFormat.parse("000001"), "1", "000001");
+		assert.equal(oFormat.parse("000000"), "0", "000000");
+		assert.equal(oFormat.parse("0.00000"), "0.00000", "0.00000");
+		assert.equal(oFormat.parse("1e-1337"), "1e-1337", "1e-1337");
+		var sSmallNumber = "0." + "0".repeat(1337) + "1";
+		assert.equal(oFormat.parse(sSmallNumber), sSmallNumber, "1e-1337 as number");
+	});
+
 	QUnit.test("NumberFormat for 'he' locale with big number. Contains then RTL character u+200F", function (assert) {
 		//setup
 		var oLocale = new Locale("he");
