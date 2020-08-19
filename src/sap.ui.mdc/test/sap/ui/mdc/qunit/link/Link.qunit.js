@@ -532,7 +532,7 @@ sap.ui.define([
 							href: "#Action02"
 						})
 					],
-					fn: function() {
+					beforeNavigationCallback: function() {
 						return new Promise(function(resolve) {
 							MessageToast.show("test");
 							resolve(false);
@@ -553,5 +553,57 @@ sap.ui.define([
 			assert.ok(fnMessageToastSpy.calledOnce);
 			done();
 		});
+	});
+
+	QUnit.test("Updated isTriggerable", function(assert) {
+		var done = assert.async();
+		this.oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					fetchLinkType: function() {
+						var oNewLinkPromise = new Promise(function(resolve) {
+							setTimeout(function() {
+								resolve({
+									type: 1,
+									directLink: new LinkItem({
+										text: "Link2",
+										href: "#Action02"
+									})
+								});
+							}, 1000);
+						});
+
+						var oLinkTypeObject = {
+							initialType: {
+								type: 0,
+								directLink: null
+							},
+							runtimeType: oNewLinkPromise
+						};
+						return Promise.resolve(oLinkTypeObject);
+					}
+				}
+			}
+		});
+
+		var fnDataUpdateSpy = sinon.spy(this.oLink, "fireDataUpdate");
+
+		this.oLink.isTriggerable().then(function(bIsTriggerAble) {
+			assert.ok(bIsTriggerAble === false, "First isTriggerable call returns false");
+			assert.ok(fnDataUpdateSpy.notCalled, "dataUpdate event not fired yet");
+			setTimeout(function() {
+				assert.ok(fnDataUpdateSpy.calledOnce, "dataUpdate event fired after given timeout");
+				this.oLink.isTriggerable().then(function(bIsTriggerAble) {
+					assert.ok(bIsTriggerAble, "Second isTriggerable call returns true");
+					this.oLink.getDirectLinkHrefAndTarget().then(function(oDirectLinkItem) {
+						assert.ok(oDirectLinkItem.target === "_self", "Target value of directLink");
+						assert.ok(oDirectLinkItem.href === "#Action02", "Href value of directLink");
+						done();
+					});
+				}.bind(this));
+			}.bind(this), 1000);
+		}.bind(this));
+
 	});
 });

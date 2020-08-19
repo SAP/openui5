@@ -27,12 +27,24 @@ sap.ui.define([
 	};
 
 	SampleLinkDelegate.beforeNavigationCallback = function (oPayload, oEvent) {
-		if (oPayload.fn) {
-			return oPayload.fn();
+		if (oPayload.beforeNavigationCallback) {
+			return oPayload.beforeNavigationCallback();
 		}
 		return Promise.resolve(true);
 	};
 
+	SampleLinkDelegate.fetchLinkType = function(oPayload) {
+		if (oPayload.fetchLinkType) {
+			return oPayload.fetchLinkType();
+		}
+		return Promise.resolve({
+			linkType: {
+				type: 2,
+				directLink: undefined
+			},
+			newLinkTypePromise: null
+		});
+	};
 
 	return SampleLinkDelegate;
 }, /* bExport= */ true);
