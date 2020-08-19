@@ -121,6 +121,9 @@ function(
 		 * This limitation comes from JavaScript itself and it cannot be worked around in a
 		 * feasible way.
 		 *
+		 * <b>Note:</b> Formatting of decimal numbers is browser dependent, regardless of
+		 * framework number formatting.
+		 *
 		 * @extends sap.ui.core.Control
 		 * @implements sap.ui.core.IFormContent
 		 *
