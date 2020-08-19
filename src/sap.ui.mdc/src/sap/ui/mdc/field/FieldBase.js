@@ -3159,10 +3159,11 @@ sap.ui.define([
 
 //		// also in display mode to get right text
 //		_handleConditionsChange.call(this, this.getConditions());
-		if (!isEditing && this.getConditions().length > 0 &&
+		if (!isEditing && !this._bPendingConditionUpdate && this.getConditions().length > 0 &&
 				(this.getMaxConditions() !== 1 || (this.getDisplay() !== FieldDisplay.Value && !this._bParseError))) {
 			// update tokens in MultiValue
 			// update text/value only if no parse error, otherwise wrong value would be removed
+			// don't update if contidions are outdated (updated async in Field)
 			this._oManagedObjectModel.checkUpdate(true);
 		}
 
