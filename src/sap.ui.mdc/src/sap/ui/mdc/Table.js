@@ -2267,6 +2267,10 @@ sap.ui.define([
 		}
 	};
 
+	Table.prototype.rebindTable = function() {
+		this.rebind();
+	};
+
 	Table.prototype.rebind = function() {
 		// Bind the rows/items of the table, only once it is initialized.
 		// This also ensures bind happens after the table is initialized
