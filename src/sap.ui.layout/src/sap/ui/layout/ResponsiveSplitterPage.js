@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.ResponsiveSplitterPage
-sap.ui.define(["./library", "sap/ui/core/Control"],
-	function (library, Control) {
+sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/core/Control"],
+	function (library, Core, Control) {
 	"use strict";
 
 	/**
@@ -37,7 +37,7 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 			}
 		},
 		getContent: function () {
-			return sap.ui.getCore().byId(this.getAssociation("content"));
+			return Core.byId(this.getAssociation("content"));
 		},
 		renderer : function(oRm, oControl) {
 			oRm.write("<div");
@@ -55,6 +55,20 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 		}
 	});
 
-	return ResponsiveSplitterPage;
+	ResponsiveSplitterPage.prototype.containsControl = function (sControlId) {
 
+		var oContent = Core.byId(this.getAssociation("content"));
+
+		if (!oContent) {
+			return false;
+		}
+
+		if (oContent.isA("sap.ui.layout.AssociativeSplitter")) {
+			return oContent.containsControl(sControlId);
+		}
+
+		return oContent.getId() === sControlId;
+	};
+
+	return ResponsiveSplitterPage;
 });

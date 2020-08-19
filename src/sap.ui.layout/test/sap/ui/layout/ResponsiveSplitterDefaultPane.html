@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.ui.layout.ResponsiveSplitter</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="shared-config.js"></script>
+	<script id='sap-ui-bootstrap'
+			src='../../../../resources/sap-ui-core.js'
+			data-sap-ui-libs='sap.ui.layout, sap.m'>
+	</script>
+	<script id="myXml" type="text/xmldata">
+			<mvc:View xmlns:mvc="sap.ui.core.mvc"
+				displayBlock="true"
+				xmlns="sap.m"
+				xmlns:l="sap.ui.layout"
+				xmlns:core="sap.ui.core"
+				viewName="sap.ui.layout.ResponsiveSplitterDefaultPane">
+				<l:ResponsiveSplitter
+					id="responsiveSplitter"
+					defaultPane="default"
+					width="400px"
+					height="400px">
+					<l:PaneContainer>
+						<l:SplitPane requiredParentWidth="400">
+							<Panel headerText="Minimum parent width 400" height="100%">
+								<List headerText="Products" items="{ path: '/ProductCollection' }">
+									<StandardListItem title="{Name}" counter="{Quantity}"/>
+								</List>
+							</Panel>
+						</l:SplitPane>
+						<l:SplitPane requiredParentWidth="600" >
+							<Panel headerText="Minimum parent width 600">
+								<Select forceSelection="false" selectedKey="1239102" items="{ path: '/ProductCollection', sorter: { path: 'Name' } }">
+									<core:Item key="{ProductId}" text="{Name}"/>
+								</Select>
+							</Panel>
+						</l:SplitPane>
+						<l:PaneContainer>
+							<l:SplitPane requiredParentWidth="800" id="default">
+								<Page title="First">
+									<footer>
+										<OverflowToolbar>
+											<Label text="Buttons:"/>
+											<ToolbarSpacer/>
+											<Button text="New" type="Transparent"/>
+											<Button text="Open" type="Transparent"/>
+											<Button text="Save" type="Transparent"/>
+											<Button text="Save as" type="Transparent"/>
+											<Button text="Cut" type="Transparent"/>
+											<Button text="Copy" type="Transparent"/>
+											<Button text="Paste" type="Transparent"/>
+											<Button text="Undo" type="Transparent"/>
+										</OverflowToolbar>
+									</footer>
+								</Page>
+							</l:SplitPane>
+							<l:SplitPane requiredParentWidth="800" >
+								<Page title="Second">
+									<footer>
+										<OverflowToolbar>
+											<Label text="Buttons:"/>
+											<ToolbarSpacer/>
+											<Button text="New" type="Transparent"/>
+											<Button text="Open" type="Transparent"/>
+											<Button text="Save" type="Transparent"/>
+											<Button text="Save as" type="Transparent"/>
+											<Button text="Cut" type="Transparent"/>
+											<Button text="Copy" type="Transparent"/>
+											<Button text="Paste" type="Transparent"/>
+											<Button text="Undo" type="Transparent"/>
+										</OverflowToolbar>
+									</footer>
+								</Page>
+							</l:SplitPane>
+							<l:PaneContainer>
+								<l:SplitPane requiredParentWidth="800"  >
+									<Page title="3">
+										<footer>
+											<OverflowToolbar>
+												<Label text="Buttons:"/>
+												<ToolbarSpacer/>
+												<Button text="New" type="Transparent"/>
+												<Button text="Open" type="Transparent"/>
+												<Button text="Save" type="Transparent"/>
+												<Button text="Save as" type="Transparent"/>
+												<Button text="Cut" type="Transparent"/>
+												<Button text="Copy" type="Transparent"/>
+												<Button text="Paste" type="Transparent"/>
+												<Button text="Undo" type="Transparent"/>
+											</OverflowToolbar>
+										</footer>
+									</Page>
+								</l:SplitPane>
+								<l:SplitPane requiredParentWidth="800" >
+									<Page title="4">
+										<footer>
+											<OverflowToolbar>
+												<Label text="Buttons:"/>
+												<ToolbarSpacer/>
+												<Button text="New" type="Transparent"/>
+												<Button text="Open" type="Transparent"/>
+												<Button text="Save" type="Transparent"/>
+												<Button text="Save as" type="Transparent"/>
+												<Button text="Cut" type="Transparent"/>
+												<Button text="Copy" type="Transparent"/>
+												<Button text="Paste" type="Transparent"/>
+												<Button text="Undo" type="Transparent"/>
+											</OverflowToolbar>
+										</footer>
+									</Page>
+								</l:SplitPane>
+							</l:PaneContainer>
+						</l:PaneContainer>
+					</l:PaneContainer>
+				</l:ResponsiveSplitter>
+			</mvc:View>
+	</script>
+
+	<script>
+		sap.ui.controller("myController", {
+			onInit: function() {
+
+			}
+		});
+		sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
+</html>
