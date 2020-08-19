@@ -583,6 +583,28 @@ sap.ui.define([
 		assert.equal($content.outerHeight(), 100, "should be 100px");
 	});
 
+	QUnit.test("Content height should always be the panel's height ", function(assert) {
+		// Arrange
+		var oContentDom;
+
+		// Act
+		this.oPanel.setHeaderText("");
+		this.oPanel.setHeight("200px");
+
+		sap.ui.getCore().applyChanges();
+		oContentDom = this.oPanel.getDomRef("content");
+
+		// Assert
+		assert.equal(oContentDom.offsetHeight, 200, "Content height should be 200px");
+
+		// Act
+		this.oPanel.setHeight("50%");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oContentDom.offsetHeight, 500, "Content height should be 500px - the full panel's height (50% of the quinit-fixture container height");
+	});
+
 	QUnit.test("Line heigh should equal the height of the header when header toolbar is not present", function(assert) {
 		var $header = this.oPanel.$().find(".sapMPanelHdr");
 
