@@ -27396,6 +27396,50 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: A value list model is sorted and changes are reflected on the UI.
+	// BCP: 2080320093
+	QUnit.test("BCP: 2080320093: $$sharedRequest and sort", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, sharedRequests : true}),
+			sView = '\
+<FlexBox>\
+	<Table id="table" growing="true" growingThreshold="2" items="{path: \'/ProductList\'}">\
+		<Text id="name" text="{Name}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductList?$select=Name,ProductID&$skip=0&$top=2", {
+				value : [{
+						Name : "Notebook 15",
+						ProductID : "HT-1015"
+					}, {
+						Name : "Notebook 16",
+						ProductID : "HT-1016"
+				}]
+			})
+			.expectChange("name", ["Notebook 15", "Notebook 16"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("ProductList?$select=Name,ProductID&$orderby=Name desc"
+					+ "&$skip=0&$top=2", {
+					value : [{
+						Name : "Notebook 24",
+						ProductID : "HT-1024"
+					}, {
+						Name : "Notebook 23",
+						ProductID : "HT-1023"
+					}]
+				})
+				.expectChange("name", ["Notebook 24", "Notebook 23"]);
+
+			// code under test
+			that.oView.byId("table").getBinding("items").sort(new Sorter("Name", true));
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Executing an action is forbidden for models with shared requests.
 	// JIRA: CPOUI5ODATAV4-344
 	QUnit.test("sharedRequests forbids action execute", function (assert) {

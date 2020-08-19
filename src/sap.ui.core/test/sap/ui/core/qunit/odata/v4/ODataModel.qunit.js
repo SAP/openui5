@@ -197,9 +197,9 @@ sap.ui.define([
 		// code under test
 		oModel = createModel("", {sharedRequests : true});
 
-		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.OneTime);
+		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.OneWay);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
-		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), false);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), false);
 		assert.strictEqual(oModel.bSharedRequests, true);
 
