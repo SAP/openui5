@@ -474,6 +474,14 @@ sap.ui.define([
 			});
 		}
 
+		if (oControl.getMetadata().hasProperty("placeholder")) {
+			if (iIndex === 0) {
+				oControl.bindProperty("placeholder", {path: "$condition>operator", formatter: _getPlaceholderForOperator});
+			} else { // from Field cannot switch placeholder
+				oControl.bindProperty("placeholder", {path: "$i18n>valuehelp.DEFINECONDITIONS_TO"});
+			}
+		}
+
 		oControl._iValueIndex = iIndex; // to find it for update
 		oControl.addStyleClass("sapUiSmallPaddingBegin");
 		if (oControl.attachChange) { // custom control might not have a change event
@@ -882,6 +890,18 @@ sap.ui.define([
 			return "XL4 L4 M4 S10";
 		} else {
 			return "XL8 L8 M8 S10";
+		}
+
+	}
+
+	function _getPlaceholderForOperator(sOperator) {
+
+		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
+
+		if (oOperator && oOperator.valueTypes[1]) {
+			return oMessageBundle.getText("valuehelp.DEFINECONDITIONS_FROM");
+		} else {
+			return oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE");
 		}
 
 	}
