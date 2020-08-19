@@ -39,6 +39,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 					"Mini Chart",
 					"Layout",
 					"List",
+					"Table",
 					"Pattern",
 					"Popup",
 					"Tile",
