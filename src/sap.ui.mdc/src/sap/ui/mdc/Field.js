@@ -143,6 +143,7 @@ sap.ui.define([
 		if (this._iConditionUpdateTimer) {
 			clearTimeout(this._iConditionUpdateTimer);
 			delete this._iConditionUpdateTimer;
+			delete this._bPendingConditionUpdate;
 		}
 
 		this._oBindingContext = undefined;
@@ -282,7 +283,9 @@ sap.ui.define([
 			this._iConditionUpdateTimer = setTimeout(function() {
 				_updateCondition.call(this, _getValue.call(this), _getAdditionalValue.call(this));
 				this._iConditionUpdateTimer = undefined;
+				this._bPendingConditionUpdate = false;
 			}.bind(this), 0);
+			this._bPendingConditionUpdate = true;
 		}
 
 	}
