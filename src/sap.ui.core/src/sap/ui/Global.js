@@ -102,7 +102,7 @@ sap.ui.define([
 	 * @return {object|undefined|Promise} the full version info, the library specific one,
 	 *                                    undefined (if library is not listed or there was an error and "failOnError" is set to "false")
 	 *                                    or a Promise which resolves with one of them
-	 * @deprecated since 1.56: Use {@link sap.ui.VersionInfo.load} instead
+	 * @deprecated since 1.56: Use {@link module:sap/ui/VersionInfo.load} instead
 	 * @public
 	 * @static
 	 */
