@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	'sap/ui/Device',
 	"./AccButton",
+	"sap/m/BadgeCustomData",
 	"sap/m/Button",
 	"sap/m/ResponsivePopover",
 	"sap/m/IconTabBarSelectList",
@@ -29,6 +30,7 @@ sap.ui.define([
 	Control,
 	Device,
 	AccButton,
+	BadgeCustomData,
 	Button,
 	ResponsivePopover,
 	IconTabBarSelectList,
@@ -235,6 +237,8 @@ sap.ui.define([
 				selector: ".sapMITBBadgeHolder"
 			}
 		});
+
+		this._oCloneInList = null; // holds reference to the cloned item in the SelectList
 	};
 
 	/**
@@ -616,7 +620,9 @@ sap.ui.define([
 			oRM.renderControl(this._getExpandButton());
 		}
 
-
+		if (this.getItems().length) {
+			this._updateExpandButtonBadge();
+		}
 
 		oRM.close("div");
 	};
@@ -850,6 +856,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adds or hides badge from tabs with nested items.
+	 */
+	IconTabFilter.prototype._updateExpandButtonBadge = function () {
+		var bHasBadge = this.getBadgeCustomData() && this.getBadgeCustomData().getVisible(),
+			bAddBadge = this._hasChildWithBadge();
+
+		if (bAddBadge && !bHasBadge) {
+			this.addCustomData(new BadgeCustomData({ visible: true }));
+		} else if (!bAddBadge && bHasBadge) {
+			this.getBadgeCustomData().setVisible(false);
+		}
+	};
+
+	IconTabFilter.prototype._hasChildWithBadge = function () {
+		var aItems = this._bIsOverflow ? this._getIconTabHeader()._getItemsForOverflow() : this._getAllSubItems();
+
+		return aItems.some(function (oIT) {
+			return oIT.isA("sap.m.IBadge") && oIT.getBadgeCustomData() && oIT.getBadgeCustomData().getVisible();
+		});
+	};
+
+	/**
 	 * Handles the expand button's "press" event
 	 * @private
 	 */
@@ -1050,24 +1078,7 @@ sap.ui.define([
 			oItem;
 
 		if (this._bIsOverflow) {
-			var aHeaderItems = oIconTabHeader.getItems();
-			var aItemsInStrip = oIconTabHeader._getItemsInStrip();
-			aItemsForList = [];
-
-			aHeaderItems.forEach(function (oItem) {
-				// If tab is an overflow tab and oItem is already in Tab Strip, do not add it to list
-				// on a mobile device, this behaviour doesn't occur, and all items are shown
-				if (!Device.system.phone && aItemsInStrip.indexOf(oItem) > -1) {
-					return;
-				}
-
-				aItemsForList.push(oItem);
-				if (oItem.isA("sap.m.IconTabFilter")) {
-					oItem._getAllSubItems().forEach(function (oSubItem) {
-						aItemsForList.push(oSubItem);
-					});
-				}
-			});
+			aItemsForList = oIconTabHeader._getItemsForOverflow();
 		}
 
 		oSelectList.destroyItems();
@@ -1080,6 +1091,7 @@ sap.ui.define([
 			// clone the badge custom data
 			if (oItem instanceof IconTabFilter && oItem.getBadgeCustomData()) {
 				oListItem.addCustomData(oItem.getBadgeCustomData().clone());
+				oItem._oCloneInList = oListItem;
 			}
 
 			oListItem._oRealItem = oItem; // link list item to its underlying item from the items aggregation
@@ -1133,13 +1145,35 @@ sap.ui.define([
 	};
 
 	IconTabFilter.prototype._hideBadge = function () {
-
 		var oBadgeCustomData = this.getBadgeCustomData();
-		if (oBadgeCustomData) {
-			oBadgeCustomData.setVisible(false);
+
+		if (!oBadgeCustomData) {
+			return;
+		}
+
+		oBadgeCustomData.setVisible(false);
+		this._getRootTab()._updateExpandButtonBadge();
+
+		if (this._oCloneInList && !this._oCloneInList.bIsDestroyed && this._oCloneInList.getBadgeCustomData()) {
+			this._oCloneInList.getBadgeCustomData().setVisible(false);
+			this._oCloneInList = null;
+		}
+
+		if (this._isInOverflow()) {
+			this._getIconTabHeader()._getOverflow()._updateExpandButtonBadge();
 		}
 
 		this._iHideBadgeTimeout = null;
+	};
+
+	/**
+	 * Should be called only after rendering has completed.
+	 * @returns {boolean} Whether the IconTabFilter is in the overflow menu.
+	 */
+	IconTabFilter.prototype._isInOverflow = function () {
+		var oDomRef = this.getDomRef();
+
+		return oDomRef && oDomRef.classList.contains("sapMITBFilterHidden");
 	};
 
 	return IconTabFilter;

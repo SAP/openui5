@@ -276,11 +276,12 @@
 						<Text text="Info four content goes here..." />
 					</IconTabFilter>
 				</items>
-
-				<Text text="Info own content goes here..." />
 			</IconTabFilter>
 
 			<IconTabFilter key="attachments" text="Attachments">
+				<customData>
+					<BadgeCustomData visible="true"/>
+				</customData>
 				<items>
 					<IconTabFilter text="Attachment one">
 						<Text text="Attachment one goes here..." />
@@ -294,11 +295,17 @@
 			</IconTabFilter>
 
 			<IconTabFilter key="notes" text="Notes">
+				<customData>
+					<BadgeCustomData visible="true"/>
+				</customData>
 				<items>
 					<IconTabFilter text="Note one">
 						<Text text="Note one goes here..." />
 					</IconTabFilter>
 					<IconTabFilter text="Note two">
+						<customData>
+							<BadgeCustomData visible="true"/>
+						</customData>
 						<Text text="Note two goes here..." />
 					</IconTabFilter>
 				</items>

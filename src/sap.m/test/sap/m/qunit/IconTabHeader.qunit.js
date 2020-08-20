@@ -222,7 +222,7 @@ sap.ui.define([
 		oITH.destroy();
 	});
 
-	QUnit.module("Badges", {
+	QUnit.module("Badges - simple tabs", {
 		beforeEach: function () {
 			this.oITH = new IconTabHeader({
 				items: [
@@ -277,7 +277,7 @@ sap.ui.define([
 
 	QUnit.test("Badge hiding timeout is properly handled", function (assert) {
 		// Arrange
-		var oTab = 	new IconTabFilter({
+		var oTab = new IconTabFilter({
 			text: "Tab2",
 			key: "tab2",
 			customData: [
@@ -299,4 +299,190 @@ sap.ui.define([
 
 		assert.strictEqual(oTab._iHideBadgeTimeout, iTimeoutId, "The timeout is the same as before");
 	});
+
+	QUnit.module("Badges - single click area tabs", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader();
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Badge is shown on the root tab when a nested tab has badge", function (assert) {
+		// Arrange
+		var oRootTab = new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			items: [
+				new IconTabFilter({
+					text: "Nested",
+					key: "Nested",
+					customData: [
+						new BadgeCustomData()
+					]
+				})
+			]
+		});
+		this.oITH.addItem(oRootTab);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oRootTab.$().find(".sapMBadgeIndicator").length, "Badge is rendered on the root tab");
+	});
+
+	QUnit.test("Badge is removed from the root tab when it is removed from the nested tab", function (assert) {
+		// Arrange
+		var oRootTab = new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			items: [
+				new IconTabFilter({
+					text: "Nested",
+					key: "Nested",
+					customData: [
+						new BadgeCustomData()
+					]
+				})
+			]
+		});
+		this.oITH.addItem(oRootTab);
+		Core.applyChanges();
+		oRootTab._expandButtonPress();
+		var oFakeEvent = {
+			srcControl: oRootTab._getSelectList().getItems()[0],
+			preventDefault: function () {}
+		};
+
+		// Act
+		oRootTab._getSelectList().ontap(oFakeEvent);
+		this.clock.tick(4000);
+
+		// Assert
+		assert.notOk(oRootTab._isBadgeAttached, "Badge is removed from the root tab");
+	});
+
+	QUnit.test("Badge is NOT removed from the root tab when there are more tabs inside it with badges", function (assert) {
+		// Arrange
+		var oRootTab = new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			items: [
+				new IconTabFilter({
+					text: "Nested1",
+					key: "Nested2",
+					customData: [
+						new BadgeCustomData()
+					]
+				}),
+				new IconTabFilter({
+					text: "Nested2",
+					key: "Nested1",
+					customData: [
+						new BadgeCustomData()
+					]
+				})
+			]
+		});
+		this.oITH.addItem(oRootTab);
+		Core.applyChanges();
+		oRootTab._expandButtonPress();
+		var oFakeEvent = {
+			srcControl: oRootTab._getSelectList().getItems()[0],
+			preventDefault: function () {}
+		};
+
+		// Act
+		oRootTab._getSelectList().ontap(oFakeEvent);
+		this.clock.tick(4000);
+
+		// Assert
+		assert.ok(oRootTab._isBadgeAttached, "Badge is removed from the root tab");
+	});
+
+	QUnit.test("Badge is removed from the cloned item in the select list", function (assert) {
+		// Arrange
+		var oNestedItem  = new IconTabFilter({
+				text: "Nested",
+				key: "Nested",
+				customData: [
+					new BadgeCustomData()
+				]
+			}),
+			oRootTab = new IconTabFilter({
+				text: "Tab2",
+				key: "tab2",
+				items: [oNestedItem]
+			});
+
+		this.oITH.addItem(oRootTab);
+		Core.applyChanges();
+		oRootTab._expandButtonPress();
+
+		var oFakeEvent = {
+			srcControl: oNestedItem,
+			preventDefault: function () {}
+		};
+
+		// Act
+		oRootTab._getSelectList().ontap(oFakeEvent);
+		oRootTab._expandButtonPress(); // open the list again while the badge is still there
+
+		// Assert
+		assert.ok(oRootTab._isBadgeAttached, "Badge is shown on the root tab");
+		assert.ok(oNestedItem._oCloneInList._isBadgeAttached, "Badge is shown on the item in the SelectList");
+
+		// Act
+		var oItemCloneInList = oNestedItem._oCloneInList;
+		this.clock.tick(4000);
+
+		// Assert
+		assert.notOk(oRootTab._isBadgeAttached, "Badge is removed from the root tab");
+		assert.notOk(oItemCloneInList._isBadgeAttached, "Badge is removed from the item in the SelectList");
+	});
+
+	// QUnit.module("Badges - double click area tabs", {
+		// TO DO
+	// });
+
+	QUnit.module("Badges - overflow menu (More button)", {
+		beforeEach: function () {
+			this.iSize = 100;
+			this.oITH = createHeaderWithItems(this.iSize);
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Badge is shown on the overflow tab when there are tabs with badges in it", function (assert) {
+		// Arrange
+		this.oITH.getItems()[this.iSize - 1].addCustomData(new BadgeCustomData());
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oITH._getOverflow()._isBadgeAttached, "Badge is rendered on the overflow tab");
+	});
+
+	QUnit.test("Badge is removed from the overflow tab when there are no more tabs with badges in it", function (assert) {
+		// Arrange
+		this.oITH.getItems()[this.iSize - 1].addCustomData(new BadgeCustomData());
+
+		Core.applyChanges();
+
+		// Act
+		this.oITH._getOverflow()._expandButtonPress();
+		var oItems = this.oITH._getOverflow()._getSelectList().getItems();
+		var oFakeEvent = {
+			srcControl: oItems[oItems.length - 1],
+			preventDefault: function () {}
+		};
+		this.oITH._getOverflow()._getSelectList().ontap(oFakeEvent);
+
+		// Assert
+		assert.notOk(this.oITH._getOverflow()._isBadgeAttached, "Badge is removed from the root tab");
+	});
+
 });

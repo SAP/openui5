@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/delegate/ItemNavigation',
 	"sap/ui/core/InvisibleText",
 	'sap/ui/core/ResizeHandler',
+	'sap/ui/Device',
 	'sap/m/Button',
 	'sap/m/IconTabFilter',
 	'sap/m/IconTabSeparator',
@@ -29,6 +30,7 @@ sap.ui.define([
 	ItemNavigation,
 	InvisibleText,
 	ResizeHandler,
+	Device,
 	Button,
 	IconTabFilter,
 	IconTabSeparator,
@@ -904,6 +906,7 @@ sap.ui.define([
 			aItems[i].classList.add("sapMITBFilterHidden");
 		}
 
+		this._getOverflow()._updateExpandButtonBadge();
 		this._getOverflow().$().toggleClass("sapMITHOverflowVisible", iLastVisible + 1 !== aItems.length);
 		this.$().toggleClass("sapMITHOverflowList", iLastVisible + 1 !== aItems.length);
 	};
@@ -1219,6 +1222,28 @@ sap.ui.define([
 				.removeClass("sapMITBSelected")
 				.attr({ "aria-selected": false });
 		}
+	};
+
+	IconTabHeader.prototype._getItemsForOverflow = function () {
+		var aItemsInStrip = this._getItemsInStrip(),
+			aItemsForList = [];
+
+		this.getItems().forEach(function (oItem) {
+			// If tab is an overflow tab and oItem is already in Tab Strip, do not add it to list
+			// on a mobile device, this behaviour doesn't occur, and all items are shown
+			if (!Device.system.phone && aItemsInStrip.indexOf(oItem) > -1) {
+				return;
+			}
+
+			aItemsForList.push(oItem);
+			if (oItem.isA("sap.m.IconTabFilter")) {
+				oItem._getAllSubItems().forEach(function (oSubItem) {
+					aItemsForList.push(oSubItem);
+				});
+			}
+		});
+
+		return aItemsForList;
 	};
 
 	/* =========================================================== */
