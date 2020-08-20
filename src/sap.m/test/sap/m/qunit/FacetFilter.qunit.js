@@ -2466,6 +2466,37 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
+	QUnit.test("FacetFilterList.listOpen prevented", function(assert) {
+		var done = assert.async();
+		var oFF = new FacetFilter();
+		var oFFL = new FacetFilterList({
+			title: "List"
+		});
+		var oSearchSpy = sinon.spy(FacetFilterList.prototype, "_search");
+
+		oFFL.attachEventOnce("listOpen", function(oEvent) {
+			return false;
+		});
+		oFFL._setSearchValue("search_value");
+		oFF.addList(oFFL);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oPopover = oFF._getPopover();
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			// Assert
+			assert.equal(oSearchSpy.callCount, 0, "no additional search on popover open, when list open is prevented");
+
+			oSearchSpy.restore();
+			destroyFF(oFF);
+
+			done();
+		});
+
+		// Act
+		openPopover(oFF, 0);
+	});
+
 	QUnit.test("FacetFilterList.listClose - none selected", function(assert) {
 		var done = assert.async();
 

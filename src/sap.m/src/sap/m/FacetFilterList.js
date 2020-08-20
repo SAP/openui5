@@ -131,6 +131,10 @@ sap.ui.define([
 
 			/**
 			 * Fired before the filter list is opened.
+			 *
+			 * The default filtering behavior of the sap.m.FacetFilterList can be prevented by calling <code>sap.ui.base.Event.prototype.preventDefault</code> function
+			 * in the <code>listOpen</code> event handler function. If the default filtering behavior is prevented then filtering behavior has to be defined at application level
+			 * inside the <code>listOpen</code> event handler function.
 			 */
 			listOpen : {},
 
