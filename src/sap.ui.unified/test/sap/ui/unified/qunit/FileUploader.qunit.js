@@ -1137,5 +1137,42 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(oSpy.callCount, 1, "Clicking on browse button should focus the button in safari");
+
+		//Clean
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Content-Type request header is added once", function(assert) {
+		this.stub(Device, "browser", { "internet_explorer": true });
+
+		//Arrange
+		var oSetRequestHeaderSpy = this.spy(XMLHttpRequest.prototype, "setRequestHeader");
+		var oFileUploader = new sap.ui.unified.FileUploader("fu", {
+			sendXHR: true,
+			useMultipart: false,
+			headerParameters: [
+				new sap.ui.unified.FileUploaderParameter({ name: "Content-Type", value: "application/pdf" })
+			]
+		});
+		var oFiles = [
+			createFakeFile({
+				name: "fake.pdf",
+				type: "application/pdf",
+				size: 404450
+			}, false)
+		];
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oSetRequestHeaderSpy.reset();
+
+		//Act
+		oFileUploader._sendFilesWithXHR(oFiles);
+
+		//Assert
+		assert.equal(oSetRequestHeaderSpy.callCount, 1, "Content-Type is set only once");
+
+		//Clean
+		oFileUploader.destroy();
 	});
 });
