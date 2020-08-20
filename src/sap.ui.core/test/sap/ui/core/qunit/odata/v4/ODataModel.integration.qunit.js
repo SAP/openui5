@@ -27398,14 +27398,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: A value list model is sorted and changes are reflected on the UI.
 	// BCP: 2080320093
-	QUnit.test("BCP: 2080320093: $$sharedRequest and sort", function (assert) {
+	QUnit.test("BCP: 2080320093: sharedRequests and sort", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true, sharedRequests : true}),
 			sView = '\
-<FlexBox>\
-	<Table id="table" growing="true" growingThreshold="2" items="{path: \'/ProductList\'}">\
-		<Text id="name" text="{Name}"/>\
-	</Table>\
-</FlexBox>',
+<Table id="table" growing="true" growingThreshold="2" items="{path: \'/ProductList\'}">\
+	<Text id="name" text="{Name}"/>\
+</Table>',
 			that = this;
 
 		this.expectRequest("ProductList?$select=Name,ProductID&$skip=0&$top=2", {
