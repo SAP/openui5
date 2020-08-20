@@ -93,6 +93,14 @@ sap.ui.define([
 				this.oLogger.error("Please provide a text for this EnterText action");
 				return;
 			}
+			if (oActionDomRef.readOnly) {
+				this.oLogger.debug("Cannot enter text in control " + oControl + ": control is not editable!");
+				return;
+			}
+			if (oActionDomRef.disabled) {
+				this.oLogger.debug("Cannot enter text in control " + oControl + ": control is not enabled!");
+				return;
+			}
 
 			var oUtils = this.getUtils();
 
