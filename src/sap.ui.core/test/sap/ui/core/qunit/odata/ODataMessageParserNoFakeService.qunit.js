@@ -657,7 +657,16 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-["", undefined].forEach(function (sODataTarget, i) {
+[{
+	sODataTarget : "",
+	bODataTransition : false
+}, {
+	sODataTarget : undefined,
+	bODataTransition : false
+}, {
+	sODataTarget : "",
+	bODataTransition : true
+}].forEach(function (oFixture, i) {
 	var sTitle = "_createTarget: no or empty target for technical message; # " + i;
 
 	QUnit.test(sTitle, function (assert) {
@@ -700,7 +709,7 @@ sap.ui.define([
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
-			sODataTarget, mRequestInfo, true, /*bODataTransition*/ false);
+			oFixture.sODataTarget, mRequestInfo, true, oFixture.bODataTransition);
 
 		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");

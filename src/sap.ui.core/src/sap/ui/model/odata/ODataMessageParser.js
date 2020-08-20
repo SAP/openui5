@@ -424,9 +424,9 @@ ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInf
 		oRequest = mRequestInfo.request,
 		oResponse = mRequestInfo.response;
 
-	if (sODataTarget === undefined && !bIsTechnical
-			&& oRequest.headers["sap-message-scope"] === "BusinessObject"
-		|| bIsTechnical && bODataTransition) {
+	if (sODataTarget === undefined
+			&& (!bIsTechnical && oRequest.headers["sap-message-scope"] === "BusinessObject"
+			|| bIsTechnical && bODataTransition)) {
 		return {deepPath : "", target : ""};
 	}
 	sODataTarget = sODataTarget || "";
