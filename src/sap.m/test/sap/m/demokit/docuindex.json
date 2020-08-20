@@ -330,7 +330,7 @@
 		  "category": "User Input",
 		  "since": "1.22",
 		  "formFactors": "SML",
-		  "samples": ["sap.m.sample.DatePicker", "sap.m.sample.DatePickerMassEdit"]
+		  "samples": ["sap.m.sample.DatePicker", "sap.m.sample.DatePickerMassEdit", "sap.m.sample.DatePickerValueState"]
 		},
 		{
 		  "id": "sap.m.DateRangeSelection",
@@ -338,7 +338,7 @@
 		  "category": "User Input",
 		  "since": "1.22",
 		  "formFactors": "L",
-		  "samples": ["sap.m.sample.DateRangeSelection"]
+		  "samples": ["sap.m.sample.DateRangeSelection", "sap.m.sample.DateRangeSelectionValueState"]
 		},
 		{
 		  "id": "sap.m.DateTimeInput",
@@ -354,7 +354,7 @@
 		  "category": "User Input",
 		  "since": "1.38",
 		  "formFactors": "L",
-		  "samples": ["sap.m.sample.DateTimePicker"]
+		  "samples": ["sap.m.sample.DateTimePicker", "sap.m.sample.DateTimePickerValueState"]
 		},
 		{
 		  "id": "sap.m.TimePickerSliders",
@@ -1219,7 +1219,7 @@
 		  "name": "Step Input",
 		  "category": "User Input",
 		  "since": "1.40",
-		  "samples": ["sap.m.sample.StepInput"]
+		  "samples": ["sap.m.sample.StepInput", "sap.m.sample.StepInputValueState"]
 		},
 		{
 		  "id": "sap.m.Switch",
@@ -1311,7 +1311,7 @@
 		"name": "Time Picker",
 		"category": "User Input",
 		"since": "1.32",
-		"samples": ["sap.m.sample.TimePicker"]
+		"samples": ["sap.m.sample.TimePicker", "sap.m.sample.TimePickerValueState"]
 	  },
 		{
 		  "id": "sap.m.Title",
@@ -1643,6 +1643,11 @@
 		  "id": "sap.m.sample.DateRangeSelection",
 		  "name": "Date Range Selection",
 		  "description": "The Date Range Selection is an extension of the Date Picker Control and enables the user to select range of dates."
+		},
+		{
+		"id": "sap.m.sample.DateRangeSelectionValueState",
+		"name": "Date Range Selection - Value States",
+		"description": "This example shows different DateRangeSelection value states."
 		},
 		{
 		  "id": "sap.m.sample.ToolbarVsBar",
@@ -2165,6 +2170,11 @@
 		  "description": "Using calendar in a dialog for changing dates in mass editing scenario."
 		},
 		{
+		"id": "sap.m.sample.DatePickerValueState",
+		"name": "Date Picker - Value States",
+		"description": "This example shows different DatePicker value states."
+		},
+		{
 		  "id": "sap.m.sample.DateTimeInput",
 		  "name": "Date Time Input",
 		  "description": "The Date & Time Input control allows input of dates and times using date and time pickers. [Deprecated since 1.32.8]"
@@ -2173,6 +2183,11 @@
 		  "id": "sap.m.sample.DateTimePicker",
 		  "name": "Date Time Picker",
 		  "description": "With the DateTimePicker a Date can be entered or selected including the time part."
+		},
+		{
+		"id": "sap.m.sample.DateTimePickerValueState",
+		"name": "Date Time Picker - Value States",
+		"description": "This example shows different DateTimePicker value states."
 		},
 		{
 		  "id": "sap.m.sample.RadioButton",
@@ -3088,9 +3103,19 @@
 		  "description": "The StepInput allows the user to change stepwise a value by a predefined step and also to set additional description, such as units of measurement and currencies after the input field."
 		},
 		{
+		"id": "sap.m.sample.StepInputValueState",
+		"name": "Step Input - Value States",
+		"description": "This example shows different StepInput value states."
+		},
+		{
 		"id": "sap.m.sample.TimePicker",
 		"name": "Time Picker",
 		"description": "TimePicker examples displaying the four time formats: \nHH : mm, \nHH : mm : ss, \nHH : mm : pp, \nHH : mm : ss : pp"
+		},
+		{
+		"id": "sap.m.sample.TimePickerValueState",
+		"name": "Time Picker - Value States",
+		"description": "This example shows different TimePicker value states."
 		},
 		{
 		"id": "sap.m.sample.TimePickerSliders",
