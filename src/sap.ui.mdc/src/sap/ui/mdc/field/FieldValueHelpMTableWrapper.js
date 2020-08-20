@@ -408,6 +408,7 @@ sap.ui.define([
 				if (!sFieldPath) {
 					// without FieldPath filter will fail -> stop here
 					fReject(new Error("missing FieldPath"));
+					return;
 				}
 				if (sFieldPath !== sOldFieldPath) {
 					if (!this._oPromises[sFieldPath]) {
