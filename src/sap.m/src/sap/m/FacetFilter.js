@@ -1103,6 +1103,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * @private
 	 */
 	FacetFilter.prototype._openPopover = function(oPopover, oControl) {
+		var bIsListOpenDefaultPrevented;
 
 		// Don't open if already open, otherwise the popover will display empty.
 		if (!oPopover.isOpen()) {
@@ -1110,7 +1111,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			var oList = sap.ui.getCore().byId(oControl.getAssociation("list"));
 			jQuery.sap.assert(oList, "The facet filter button should be associated with a list.");
 
-			oList.fireListOpen({});
+			bIsListOpenDefaultPrevented = !oList.fireListOpen({});
 			this._moveListToDisplayContainer(oList, oPopover);
 			oPopover.openBy(oControl);
 			//Display remove facet icon only if ShowRemoveFacetIcon property is set to true
@@ -1121,7 +1122,9 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				oPopover.setContentWidth("30%");
 			}
 
-			oList._applySearch();
+			if (!bIsListOpenDefaultPrevented) {
+				oList._applySearch();
+			}
 		}
 		return this;
 	};
