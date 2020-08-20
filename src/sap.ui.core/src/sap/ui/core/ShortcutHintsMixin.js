@@ -112,28 +112,6 @@ sap.ui.define([
 		return !!oHintRegistry.mControls[sControlId];
 	};
 
-	/**
-	 * Returns a map with the aria attributes that are associated with the hints
-	 * for each dom node meant to show a hint.
-	 *
-	 * @param {sap.ui.core.Control} oControl The control that is registered to show the hints
-	 */
-	ShortcutHintsMixin.getHintAccessibility = function(oControl) {
-		var aInfos = oControl._shortcutHintsMixin
-			? oControl._shortcutHintsMixin.getRegisteredShortcutInfos()
-			: [];
-
-		return aInfos.reduce(function(mResult, oHintInfo) {
-			var sContent = _getShortcutHintText(oHintInfo.id);
-
-			mResult[oHintInfo.id] = {
-				keyShortcuts: sContent
-			};
-
-			return mResult;
-		}, {});
-	};
-
 	ShortcutHintsMixin.prototype._attachToEvents = function() {
 		var oControl;
 
@@ -440,6 +418,17 @@ sap.ui.define([
 				}
 
 				this.hideShortcutHint();
+			}
+		},
+		"onAfterRendering": function() {
+			var aInfos = this.getRegisteredShortcutInfos(),
+				oElement,
+				sDOMRefID;
+
+			for (var i = 0; i < aInfos.length; i++) {
+				sDOMRefID = aInfos[i].id;
+				oElement = document.getElementById(sDOMRefID);
+				oElement.setAttribute("aria-keyshortcuts", _getShortcutHintText(sDOMRefID));
 			}
 		}
 	};
