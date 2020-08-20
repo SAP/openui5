@@ -1211,10 +1211,6 @@ sap.ui.define([
 			}
 		};
 
-		if (oChanges.name === "editMode") {
-			fnUpdateInternalContent.call(this);
-		}
-
 		if (oChanges.name === "multipleLines") {
 			fnUpdateInternalContent.call(this);
 		}
