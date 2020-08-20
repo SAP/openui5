@@ -211,7 +211,7 @@ sap.ui.define([
 
 						this.fireBeforeSelectionDialogOpen();
 
-						var aResetPromises = [];
+						var bUnconfirmedResetPressed = false;
 
 						var oSelectionDialog = new SelectionDialog({
 							showItemAsLink: !bForbidNavigation,
@@ -245,9 +245,10 @@ sap.ui.define([
 								fnUpdateResetButton.call(this, oEvent.getSource());
 							}.bind(this),
 							ok: function() {
-								var aPanelChanges = PanelFlexibility.createChanges(this, aRuntimeChanges);
-								var aFlexChangesTotal = [];
+								var that = this;
 								var fnCreateChanges = function() {
+									var aPanelChanges = PanelFlexibility.createChanges(that, aRuntimeChanges);
+									var aFlexChangesTotal = [];
 									ControlPersonalizationWriteAPI.add({
 										changes: aPanelChanges,
 										ignoreVariantManagement: true
@@ -262,23 +263,21 @@ sap.ui.define([
 									}).then(function(aFlexChanges) {
 										aFlexChangesTotal = aFlexChangesTotal.concat(aFlexChanges);
 										return ControlPersonalizationWriteAPI.save({
-											selector: this,
+											selector: that,
 											changes: aFlexChangesTotal
 										});
-									}.bind(this)).then(function() {
+									}).then(function() {
+										fnCleanUp(oSelectionDialog);
 										return resolve(true);
 									});
 								};
 
-								fnCleanUp(oSelectionDialog);
-
-								// First create a new item instance
-								if (aResetPromises.length) {
-									Promise.all(aResetPromises).then(function() {
-										fnCreateChanges.call(this);
+								if (bUnconfirmedResetPressed) {
+									ControlPersonalizationWriteAPI.reset({selectors: this.getItems()}).then(function() {
+										fnCreateChanges();
 									});
 								} else {
-									fnCreateChanges.call(this);
+									fnCreateChanges();
 								}
 							}.bind(this),
 							cancel: function() {
@@ -286,9 +285,9 @@ sap.ui.define([
 								return resolve(true);
 							},
 							reset: function() {
-								aResetPromises.push(ControlPersonalizationWriteAPI.reset({selectors: this.getItems()}));
-								aResetPromises.push(ControlPersonalizationWriteAPI.reset({selectors: [this]}));
-							}.bind(this)
+								aRuntimeChanges = [];
+								bUnconfirmedResetPressed = true;
+							}
 						});
 						if (sStyleClass) {
 							oSelectionDialog.addStyleClass(sStyleClass);

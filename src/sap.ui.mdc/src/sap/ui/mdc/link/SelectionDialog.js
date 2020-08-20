@@ -126,9 +126,6 @@ sap.ui.define([
 		this._getTable().getBinding("items").filter(aFilters);
 	};
 	SelectionDialog.prototype.onPressOk = function() {
-		if (this._bUnconfirmedResetPressed) {
-			this.fireReset();
-		}
 		this.fireOk();
 	};
 	SelectionDialog.prototype.onPressCancel = function() {
@@ -136,7 +133,7 @@ sap.ui.define([
 	};
 	SelectionDialog.prototype.onPressReset = function() {
 		this._resetSelection();
-		this._bUnconfirmedResetPressed = true;
+		this.fireReset();
 	};
 	SelectionDialog.prototype.onAfterClose = function() {
 		this.fireCancel();
