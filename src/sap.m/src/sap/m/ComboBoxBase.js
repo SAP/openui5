@@ -1136,8 +1136,7 @@ sap.ui.define([
 		/**
 		 * Gets the control's suggestions popover.
 		 *
-		 * @returns {sap.m.SuggestionsPopover} The SuggestionsPopover instance, creating it if necessary by calling
-		 * the <code>createPicker()</code> method.
+		 * @returns {sap.m.SuggestionsPopover} The SuggestionsPopover instance.
 		 * @private
 		 */
 		ComboBoxBase.prototype._getSuggestionsPopover = function() {
