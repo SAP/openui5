@@ -124,7 +124,7 @@ sap.ui.define([
 	HelperPlugin.prototype.hooks = {};
 
 	HelperPlugin.prototype.onActivate = function(oTable) {
-		TableUtils.Hook.install(oTable, this);
+		TableUtils.Hook.install(oTable, this.hooks, this);
 
 		var wrapForRenderingDetection = function(oObject, sFunctionName) {
 			var fnOriginalFunction = oObject[sFunctionName];
@@ -146,42 +146,44 @@ sap.ui.define([
 		TableUtils.Hook.uninstall(oTable, this);
 	};
 
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Test.StartAsyncTableUpdate] = function() {
-		if (this.iTableUpdateProcesses === 0) {
-			this.pTableUpdateFinished = new Promise(function(resolve) {
-				this.fnResolveTableUpdateFinished = resolve;
-			}.bind(this));
-		}
-		this.iTableUpdateProcesses++;
-	};
-
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Test.EndAsyncTableUpdate] = function() {
-		this.iTableUpdateProcesses--;
-		if (this.iTableUpdateProcesses === 0) {
-			this.fnResolveTableUpdateFinished();
-			this.pTableUpdateFinished = Promise.resolve();
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Signal] = function(sSignal) {
+		switch (sSignal) {
+			case "StartTableUpdate":
+				if (this.iTableUpdateProcesses === 0) {
+					this.pTableUpdateFinished = new Promise(function(resolve) {
+						this.fnResolveTableUpdateFinished = resolve;
+					}.bind(this));
+				}
+				this.iTableUpdateProcesses++;
+				break;
+			case "EndTableUpdate":
+				this.iTableUpdateProcesses--;
+				if (this.iTableUpdateProcesses === 0) {
+					this.fnResolveTableUpdateFinished();
+					this.pTableUpdateFinished = Promise.resolve();
+				}
+				break;
+			case "StartFocusHandling":
+				if (this.iFocusHandlingProcesses === 0) {
+					this.pFocusHandlingFinished = new Promise(function(resolve) {
+						this.fnResolveFocusHandlingFinished = resolve;
+					}.bind(this));
+				}
+				this.iFocusHandlingProcesses++;
+				break;
+			case "EndFocusHandling":
+				this.iFocusHandlingProcesses--;
+				if (this.iFocusHandlingProcesses === 0) {
+					this.fnResolveFocusHandlingFinished();
+					this.pFocusHandlingFinished = Promise.resolve();
+				}
+				break;
+			default:
 		}
 	};
 
 	HelperPlugin.prototype.whenTableUpdateFinished = function() {
 		return this.pTableUpdateFinished;
-	};
-
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Test.StartAsyncFocusHandling] = function() {
-		if (this.iFocusHandlingProcesses === 0) {
-			this.pFocusHandlingFinished = new Promise(function(resolve) {
-				this.fnResolveFocusHandlingFinished = resolve;
-			}.bind(this));
-		}
-		this.iFocusHandlingProcesses++;
-	};
-
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Test.EndAsyncFocusHandling] = function() {
-		this.iFocusHandlingProcesses--;
-		if (this.iFocusHandlingProcesses === 0) {
-			this.fnResolveFocusHandlingFinished();
-			this.pFocusHandlingFinished = Promise.resolve();
-		}
 	};
 
 	HelperPlugin.prototype.whenFocusHandlingFinished = function() {

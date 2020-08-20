@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/type/Float",
 	"sap/m/Text",
 	"sap/m/Input",
@@ -42,7 +43,7 @@ sap.ui.define([
 	"sap/m/library"
 ], function(TableQUnitUtils, qutils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
 			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin,
-			CoreLibrary, Control, MockServer, PasteHelper, Device, JSONModel, ODataModel, Sorter, Filter, FloatType,
+			CoreLibrary, Control, MockServer, PasteHelper, Device, JSONModel, ODataModel, Sorter, Filter, ChangeReason, FloatType,
 			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, MLibrary) {
 	"use strict";
 
@@ -998,18 +999,18 @@ sap.ui.define([
 
 		oDomRef.style.width = "100px";
 		oDomRef.style.height = "100px";
-		oTable._updateTableSizes();
+		oTable._updateTableSizes(TableUtils.RowsUpdateReason.Unknown);
 		assert.ok(oResetRowHeights.called, "The table has a height and width -> _updateTableSizes was executed");
 		oResetRowHeights.reset();
 
 		oDomRef.style.height = "0px";
-		oTable._updateTableSizes();
+		oTable._updateTableSizes(TableUtils.RowsUpdateReason.Unknown);
 		assert.ok(oResetRowHeights.called, "The table has no height -> _updateTableSizes was executed");
 		oResetRowHeights.reset();
 
 		oDomRef.style.width = "0px";
 		oDomRef.style.height = "100px";
-		oTable._updateTableSizes();
+		oTable._updateTableSizes(TableUtils.RowsUpdateReason.Unknown);
 		assert.ok(oResetRowHeights.notCalled, "The table has no width -> _updateTableSizes was not executed");
 		oResetRowHeights.reset();
 	});
@@ -1665,7 +1666,7 @@ sap.ui.define([
 
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
+			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
@@ -1679,7 +1680,7 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
+			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
@@ -1693,7 +1694,7 @@ sap.ui.define([
 
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
+			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
@@ -1707,7 +1708,7 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
+			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
@@ -1721,7 +1722,7 @@ sap.ui.define([
 
 		// render, render, auto rerender, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
+			assert.equal(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
 				"The first call to Binding#getContexts considers the device height for the length");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
@@ -1743,7 +1744,7 @@ sap.ui.define([
 
 		// refreshRows, render, auto rerender, updateRows
 		return pReady.then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
+			assert.equal(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
 				"The first call to Binding#getContexts considers the device height for the length");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
@@ -1767,13 +1768,13 @@ sap.ui.define([
 						   });
 
 		return pReady.then(oTable.qunit.$resize({height: "756px"})).then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.equal(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"The call to Binding#getContexts considers the visible row count");
 			oGetContextsSpy.reset();
 
 		}).then(oTable.qunit.resetSize).then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.equal(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"The call to Binding#getContexts considers the visible row count");
 		});
@@ -1791,7 +1792,7 @@ sap.ui.define([
 		return pReady.then(function() {
 			oTable.getBinding("rows").refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oGetContextsSpy.calledTwice, "Binding#getContexts was called 2 times"); // refreshRows, updateRows
+			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times"); // refreshRows, updateRows
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
 				"The first call to Binding#getContexts considers the device height for the length");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
@@ -2947,6 +2948,25 @@ sap.ui.define([
 		assert.ok(oTable.indexOfAggregation("_hiddenDependents", oVirtualRow) === -1, "BindRows: Virtual row removed from hidden dependents");
 		assert.ok(oVirtualRow.bIsDestroyed, "BindRows: Virtual row is destroyed");
 		assert.notOk("_oVirtualRow" in oTable, "BindRows: Reference to virtual row removed from table");
+	});
+
+	QUnit.test("Filter", function(assert) {
+		oTable.setFirstVisibleRow(1);
+		oTable.getBinding("rows").filter(new Filter({
+			path: "modelData>money",
+			operator: "LT",
+			value: 5
+		}));
+		assert.equal(oTable.getFirstVisibleRow(), 0, "'firstVisibleRow' set to 0 when filtering");
+	});
+
+	QUnit.test("Sort", function(assert) {
+		oTable.setFirstVisibleRow(1);
+		oTable.getBinding("rows").sort(new Sorter({
+			path: "modelData>money",
+			descending: true
+		}));
+		assert.equal(oTable.getFirstVisibleRow(), 0, "'firstVisibleRow' set to 0 when sorting");
 	});
 
 	QUnit.module("Callbacks", {
@@ -4669,18 +4689,6 @@ sap.ui.define([
 		assert.ok(oTable.applyFocusInfo(oTable.getFocusInfo()), "Focus is applied on the table");
 	});
 
-	QUnit.test("Test for refreshRows with binding", function(assert) {
-		var oEvent = {
-			getParameter: function() {
-				return "filter";
-			}
-		};
-		oTable.bOutput = true;
-		oTable._mTimeouts.refreshRowsCreateRows = true;
-		oTable.refreshRows(oEvent);
-		assert.equal(oTable.getFirstVisibleRow(), 0, "#refreshRows called with ChangeReason.Filter");
-	});
-
 	QUnit.test("Test for function that cannot be used programmatically", function(assert) {
 		var fnError = sinon.spy(Log, "error");
 		assert.equal(oTable.getRows().length, 10, "Row count before row operations is 10");
@@ -5159,8 +5167,10 @@ sap.ui.define([
 		oTable.bindRows({path: "/modelData", length: 5});
 		assert.strictEqual(oTable._getTotalRowCount(), 5, "The \"length\" parameter in the binding info overrides Binding#getLength");
 
+		var oModel = oTable.getModel();
 		oTable.setModel(null);
 		assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding the total row count is 0, regardless of the binding info");
+		oTable.setModel(oModel);
 
 		oTable.unbindRows();
 		assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
@@ -5730,5 +5740,151 @@ sap.ui.define([
 		oText.destroy();
 		assert.ok(this.oTableInvalidate.notCalled,
 			"The table is not invalidated when destroying a hidden dependent");
+	});
+
+	QUnit.module("Hooks", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("BindRows", function(assert) {
+		var oBindRowsSpy = sinon.spy();
+		var oBindingInfo = {path: "/"};
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.BindRows, oBindRowsSpy);
+
+		this.oTable.bindRows(oBindingInfo);
+		assert.equal(oBindRowsSpy.callCount, 1, "Bind: 'BindRows' hook was called once");
+		assert.ok(oBindRowsSpy.calledWithExactly(oBindingInfo), "Bind: 'BindRows' hook was correctly called");
+	});
+
+	QUnit.test("RowsBound", function(assert) {
+		var oRowsBoundSpy = sinon.spy();
+		var oBindingInfo = {path: "/"};
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.RowsBound, oRowsBoundSpy);
+
+		this.oTable.bindRows(oBindingInfo);
+		assert.ok(oRowsBoundSpy.notCalled, "Bind without model: 'RowsBound' hook was not called");
+		oRowsBoundSpy.reset();
+
+		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(1));
+		assert.equal(oRowsBoundSpy.callCount, 1, "Set model: 'RowsBound' hook was called once");
+		assert.ok(oRowsBoundSpy.calledWithExactly(this.oTable.getBinding("rows")), "Set model: 'RowsBound' hook was correctly called");
+	});
+
+	QUnit.test("UnbindRows", function(assert) {
+		var oUnbindRowsSpy = sinon.spy();
+		var oBindingInfo = {path: "/"};
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.UnbindRows, oUnbindRowsSpy);
+		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(1));
+
+		this.oTable.bindRows(oBindingInfo);
+		this.oTable.unbindRows();
+		assert.equal(oUnbindRowsSpy.callCount, 1, "Unbind if bound: 'UnbindRows' hook was called once");
+		assert.ok(oUnbindRowsSpy.calledWithExactly(oBindingInfo), "Unbind if bound: 'UnbindRows' hook was correctly called");
+		oUnbindRowsSpy.reset();
+
+		this.oTable.unbindRows();
+		assert.ok(oUnbindRowsSpy.notCalled, "Unbind if not bound: 'UnbindRows' hook was not called");
+		oUnbindRowsSpy.reset();
+
+		this.oTable.bindRows(oBindingInfo);
+		this.oTable.bindRows({path: "/other"});
+		assert.equal(oUnbindRowsSpy.callCount, 1, "Bind rows if bound: 'UnbindRows' hook was called once");
+		assert.ok(oUnbindRowsSpy.calledWithExactly(oBindingInfo), "Bind rows if bound: 'UnbindRows' hook was correctly called");
+	});
+
+	QUnit.test("RowsUnbound", function(assert) {
+		var oRowsUnboundSpy = sinon.spy();
+		var oBindingInfo = {path: "/"};
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.RowsUnbound, oRowsUnboundSpy);
+		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(1));
+
+		this.oTable.bindRows(oBindingInfo);
+		this.oTable.unbindRows();
+		assert.equal(oRowsUnboundSpy.callCount, 1, "Unbind if bound: 'RowsUnbound' hook was called once");
+		assert.ok(oRowsUnboundSpy.calledWithExactly(), "Unbind if bound: 'RowsUnbound' hook was correctly called");
+		oRowsUnboundSpy.reset();
+
+		this.oTable.unbindRows();
+		assert.ok(oRowsUnboundSpy.notCalled, "Unbind if not bound: 'RowsUnbound' hook was not called");
+		oRowsUnboundSpy.reset();
+
+		this.oTable.bindRows(oBindingInfo);
+		this.oTable.bindRows({path: "/other"});
+		assert.ok(oRowsUnboundSpy.notCalled, "Bind rows if bound: 'RowsUnbound' hook was not called");
+		oRowsUnboundSpy.reset();
+
+		this.oTable.bindRows(oBindingInfo);
+		this.oTable.destroy();
+		assert.ok(oRowsUnboundSpy.notCalled, "Table destroyed: 'RowsUnbound' hook was not called");
+	});
+
+	QUnit.test("RefreshRows", function(assert) {
+		var oRefreshRowsSpy = sinon.spy();
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.RefreshRows, oRefreshRowsSpy);
+		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(1));
+		this.oTable.bindRows({path: "/"});
+
+		this.oTable.getBinding("rows").fireEvent("refresh", {reason: ChangeReason.Refresh});
+		assert.equal(oRefreshRowsSpy.callCount, 1, "Binding refresh with reason: 'RefreshRows' hook was called once");
+		assert.ok(oRefreshRowsSpy.calledWithExactly(ChangeReason.Refresh), "Binding refresh with reason: 'RefreshRows' hook was correctly called");
+		oRefreshRowsSpy.reset();
+
+		this.oTable.getBinding("rows").fireEvent("refresh");
+		assert.equal(oRefreshRowsSpy.callCount, 1, "Binding refresh without reason: 'RefreshRows' hook was called once");
+		assert.ok(oRefreshRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.Unknown),
+			"Binding refresh without reason: 'RefreshRows' hook was correctly called");
+	});
+
+	QUnit.test("UpdateRows", function(assert) {
+		var oUpdateRowsSpy = sinon.spy();
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.UpdateRows, oUpdateRowsSpy);
+		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(20));
+		this.oTable.bindRows({path: "/"});
+		oUpdateRowsSpy.reset();
+
+		this.oTable.getBinding("rows").fireEvent("change", {reason: ChangeReason.Change});
+		assert.equal(oUpdateRowsSpy.callCount, 1, "Binding change with reason: 'UpdateRows' hook was called once");
+		assert.ok(oUpdateRowsSpy.calledWithExactly(ChangeReason.Change), "Binding change with reason: 'UpdateRows' hook was correctly called");
+		oUpdateRowsSpy.reset();
+
+		this.oTable.getBinding("rows").fireEvent("change");
+		assert.equal(oUpdateRowsSpy.callCount, 1, "Binding change without reason: 'UpdateRows' hook was called once");
+		assert.ok(oUpdateRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.Unknown),
+			"Binding change without reason: 'UpdateRows' hook was correctly called");
+		oUpdateRowsSpy.reset();
+
+		this.oTable.setFirstVisibleRow(1);
+		assert.equal(oUpdateRowsSpy.callCount, 1, "Change 'firstVisibleRow': 'UpdateRows' hook was called once");
+		assert.ok(oUpdateRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.FirstVisibleRowChange),
+			"Change 'firstVisibleRow': 'UpdateRows' hook was correctly called");
+		oUpdateRowsSpy.reset();
+
+		this.oTable._setFirstVisibleRowIndex(2, {
+			onScroll: true
+		});
+		assert.equal(oUpdateRowsSpy.callCount, 1, "Change 'firstVisibleRow': 'UpdateRows' hook was called once");
+		assert.ok(oUpdateRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.VerticalScroll),
+			"Change 'firstVisibleRow': 'UpdateRows' hook was correctly called");
+	});
+
+	QUnit.test("UpdateSizes", function(assert) {
+		var oUpdateSizesSpy = sinon.spy();
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.UpdateSizes, oUpdateSizesSpy);
+
+		this.oTable._updateTableSizes(TableUtils.RowsUpdateReason.Resize);
+		assert.equal(oUpdateSizesSpy.callCount, 1, "'UpdateSizes' hook was called once");
+		assert.ok(oUpdateSizesSpy.calledWithExactly(TableUtils.RowsUpdateReason.Resize), "'UpdateSizes' hook was correctly called");
 	});
 });

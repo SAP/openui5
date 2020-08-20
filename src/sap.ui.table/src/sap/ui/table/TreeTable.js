@@ -163,11 +163,6 @@ sap.ui.define([
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
 	};
 
-	TreeTable.exit = function() {
-		Table.prototype.exit.apply(this, arguments);
-		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
-	};
-
 	TreeTable.prototype._bindRows = function(oBindingInfo) {
 		if (!oBindingInfo.parameters) {
 			oBindingInfo.parameters = {};

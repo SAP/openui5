@@ -590,10 +590,10 @@ sap.ui.define([
 			log("VerticalScrollingHelper.performUpdateFromFirstVisibleRow", oTable);
 
 			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromFirstVisibleRow, function(resolve, reject, oProcessInterface) {
-				TableUtils.Hook.call(oTable, Hook.Test.StartAsyncTableUpdate);
+				TableUtils.Hook.call(oTable, Hook.Signal, "StartTableUpdate");
 				oProcessInterface.onPromiseCreated = function(oPromise) {
 					oPromise.finally(function() {
-						TableUtils.Hook.call(oTable, Hook.Test.EndAsyncTableUpdate);
+						TableUtils.Hook.call(oTable, Hook.Signal, "EndTableUpdate");
 					});
 				};
 
@@ -641,10 +641,10 @@ sap.ui.define([
 			log("VerticalScrollingHelper.performUpdateFromScrollPosition", oTable);
 
 			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromScrollPosition, function(resolve, reject, oProcessInterface) {
-				TableUtils.Hook.call(oTable, Hook.Test.StartAsyncTableUpdate);
+				TableUtils.Hook.call(oTable, Hook.Signal, "StartTableUpdate");
 				oProcessInterface.onPromiseCreated = function(oPromise) {
 					oPromise.finally(function() {
-						TableUtils.Hook.call(oTable, Hook.Test.EndAsyncTableUpdate);
+						TableUtils.Hook.call(oTable, Hook.Signal, "EndTableUpdate");
 					});
 				};
 
@@ -689,11 +689,11 @@ sap.ui.define([
 			delete _internal.mTimeouts.largeDataScrolling;
 
 			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromScrollbar, function(resolve, reject, oProcessInterface) {
-				TableUtils.Hook.call(oTable, Hook.Test.StartAsyncTableUpdate);
+				TableUtils.Hook.call(oTable, Hook.Signal, "StartTableUpdate");
 
 				oProcessInterface.onPromiseCreated = function(oPromise) {
 					oPromise.finally(function() {
-						TableUtils.Hook.call(oTable, Hook.Test.EndAsyncTableUpdate);
+						TableUtils.Hook.call(oTable, Hook.Signal, "EndTableUpdate");
 					});
 				};
 
@@ -765,10 +765,10 @@ sap.ui.define([
 			log("VerticalScrollingHelper.performUpdateFromViewport", oTable);
 
 			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromViewport, function(resolve, reject, oProcessInterface) {
-				TableUtils.Hook.call(oTable, Hook.Test.StartAsyncTableUpdate);
+				TableUtils.Hook.call(oTable, Hook.Signal, "StartTableUpdate");
 				oProcessInterface.onPromiseCreated = function(oPromise) {
 					oPromise.finally(function() {
-						TableUtils.Hook.call(oTable, Hook.Test.EndAsyncTableUpdate);
+						TableUtils.Hook.call(oTable, Hook.Signal, "EndTableUpdate");
 					});
 				};
 
@@ -1538,10 +1538,10 @@ sap.ui.define([
 			var that = this;
 
 			VerticalScrollProcess.start(this, VerticalScrollProcess.OnRowsUpdated, function(resolve, reject, oProcessInterface) {
-				TableUtils.Hook.call(that, Hook.Test.StartAsyncTableUpdate);
+				TableUtils.Hook.call(that, Hook.Signal, "StartTableUpdate");
 				oProcessInterface.onPromiseCreated = function(oPromise) {
 					oPromise.finally(function() {
-						TableUtils.Hook.call(that, Hook.Test.EndAsyncTableUpdate);
+						TableUtils.Hook.call(that, Hook.Signal, "EndTableUpdate");
 					});
 				};
 
@@ -1565,7 +1565,7 @@ sap.ui.define([
 			log("VerticalScrollingHelper.restoreScrollPosition", oTable);
 
 			VerticalScrollProcess.start(oTable, VerticalScrollProcess.RestoreScrollPosition, function(resolve, reject, oProcessInterface) {
-				TableUtils.Hook.call(oTable, Hook.Test.StartAsyncTableUpdate);
+				TableUtils.Hook.call(oTable, Hook.Signal, "StartTableUpdate");
 
 				oProcessInterface.onPromiseCreated = function(oPromise) {
 					oPromise.then(function() {
@@ -1574,7 +1574,7 @@ sap.ui.define([
 							VerticalScrollingHelper._restoreScrollPosition(oTable);
 						}
 					}).finally(function() {
-						TableUtils.Hook.call(oTable, Hook.Test.EndAsyncTableUpdate);
+						TableUtils.Hook.call(oTable, Hook.Signal, "EndTableUpdate");
 					});
 				};
 
@@ -1622,7 +1622,7 @@ sap.ui.define([
 			oScrollExtension.updateVerticalScrollHeight();
 
 			VerticalScrollProcess.start(oTable, VerticalScrollProcess.AdjustToTotalRowCount, function(resolve, reject, oProcessInterface) {
-				TableUtils.Hook.call(oTable, Hook.Test.StartAsyncTableUpdate);
+				TableUtils.Hook.call(oTable, Hook.Signal, "StartTableUpdate");
 
 				oProcessInterface.onPromiseCreated = function(oPromise) {
 					oPromise.then(function() {
@@ -1635,7 +1635,7 @@ sap.ui.define([
 						// Starts a new process.
 						VerticalScrollingHelper.performUpdateFromScrollPosition(oTable);
 					}).finally(function() {
-						TableUtils.Hook.call(oTable, Hook.Test.EndAsyncTableUpdate);
+						TableUtils.Hook.call(oTable, Hook.Signal, "EndTableUpdate");
 					});
 				};
 
@@ -2126,12 +2126,12 @@ sap.ui.define([
 						$InnerCellElement[0].scrollTop = 0;
 					}
 
-					TableUtils.Hook.call(that, Hook.Test.EndAsyncFocusHandling);
-					TableUtils.Hook.call(that, Hook.Test.EndAsyncTableUpdate);
+					TableUtils.Hook.call(that, Hook.Signal, "EndFocusHandling");
+					TableUtils.Hook.call(that, Hook.Signal, "EndTableUpdate");
 				};
 
-				TableUtils.Hook.call(this, Hook.Test.StartAsyncTableUpdate);
-				TableUtils.Hook.call(this, Hook.Test.StartAsyncFocusHandling);
+				TableUtils.Hook.call(this, Hook.Signal, "StartTableUpdate");
+				TableUtils.Hook.call(this, Hook.Signal, "StartFocusHandling");
 				Promise.resolve().then(function() {
 					if (Device.browser.safari) {
 						window.setTimeout(fnScrollBack, 0);

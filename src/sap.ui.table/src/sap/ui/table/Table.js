@@ -61,7 +61,6 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	// shortcuts
 	var GroupEventType = library.GroupEventType,
 		NavigationMode = library.NavigationMode,
 		SelectionMode = library.SelectionMode,
@@ -1895,7 +1894,12 @@ sap.ui.define([
 	};
 
 	Table.prototype._unbindRows = function() {
-		TableUtils.Hook.call(this, Hook.UnbindRows, this.getBinding("rows"));
+		var oBindingInfo = this.getBindingInfo("rows");
+
+		if (oBindingInfo) {
+			TableUtils.Hook.call(this, Hook.UnbindRows, oBindingInfo);
+		}
+
 		Control.prototype.unbindAggregation.call(this, "rows", true);
 
 		// We don't further react to unbind operations that are part of rebind and destruction
@@ -1905,7 +1909,10 @@ sap.ui.define([
 		}
 
 		this._adjustToTotalRowCount();
-		TableUtils.Hook.call(this, Hook.RowsUnbound);
+
+		if (oBindingInfo) {
+			TableUtils.Hook.call(this, Hook.RowsUnbound);
+		}
 	};
 
 	function initBindingFlags(oTable) {
@@ -2353,7 +2360,7 @@ sap.ui.define([
 			this.setFirstVisibleRow(0);
 		}
 
-		TableUtils.Hook.call(this, Hook.RefreshRows, sReason);
+		TableUtils.Hook.call(this, Hook.RefreshRows, sReason || TableUtils.RowsUpdateReason.Unknown);
 	};
 
 	/**
@@ -2403,13 +2410,15 @@ sap.ui.define([
 	/**
 	 * Triggers an update of the rows.
 	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for the update.
+	 * @param {sap.ui.table.Table} oTable
+	 *     Instance of the table.
+	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} [sReason=sap.ui.table.utils.TableUtils.RowsUpdateReason.Unknown]
+	 *     The reason for the update.
 	 * @private
 	 */
 	function triggerRowsUpdate(oTable, sReason) {
 		if (oTable._bContextsAvailable) {
-			TableUtils.Hook.call(oTable, Hook.UpdateRows, sReason);
+			TableUtils.Hook.call(oTable, Hook.UpdateRows, sReason || TableUtils.RowsUpdateReason.Unknown);
 		}
 	}
 
@@ -4190,12 +4199,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._fireRowsUpdated = function(sReason) {
-		if (sReason == null) {
-			sReason = TableUtils.RowsUpdateReason.Unknown;
-		}
-
 		var mParameters = {
-			reason: sReason
+			reason: sReason || TableUtils.RowsUpdateReason.Unknown
 		};
 
 		this.onRowsUpdated(mParameters);
