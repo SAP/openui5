@@ -203,9 +203,10 @@ sap.ui.define(
          *
          * @private
      	 * @param {object} mPropertyBag The flexibility property bag
+         * @param {object} sP13nType The personalization type category
          * @returns {Promise} Returns a handler for the runtime adaptation settings action
          */
-        AdaptationMixin.getRTASettingsActionHandler = function (mPropertyBag) {
+        AdaptationMixin.getRTASettingsActionHandler = function (mPropertyBag, sP13nType) {
             return new Promise(function (resolve, reject) {
                 this.retrieveAdaptationController().then(function (oAdaptationController) {
                     var bCurrentLiveMode = oAdaptationController.getLiveMode();
@@ -221,10 +222,19 @@ sap.ui.define(
                         oContainer.addStyleClass(mPropertyBag.styleClass);
                     };
                     oAdaptationController.attachEvent("beforeP13nContainerOpens", fnEnhanceDialog);
+                    var aTempChanges = [];
 
-                    oAdaptationController.setAfterChangesCreated(function (oAC, aChanges) {
-                        //callback is only executed in "Ok" case
-                        resolve(aChanges);
+                    oAdaptationController.setAfterChangesCreated(function (oAC, aChanges, sChangesType) {
+                        if (oAC.sP13nType === "Filter") {
+                            if (sChangesType === "Item") {
+                                aTempChanges = aChanges;
+                            } else if (sChangesType === "Value") {
+                                resolve(aTempChanges.concat(aChanges));
+                                aTempChanges = [];
+                            }
+                        } else {
+                            resolve(aChanges);
+                        }
                     });
 
                     var fnResolveAndCleanup = function (oEvt) {
@@ -236,15 +246,23 @@ sap.ui.define(
                         }
 
                         //cleanup (detach events)
-                        oAdaptationController.setAfterChangesCreated(fnRuntimeHandling);
+
                         if (bCurrentLiveMode) {
                             oAdaptationController.setLiveMode(bCurrentLiveMode);
                         }
+
+                        // TODO: Better handling of timing issues related to possible late change creation
+                        oAdaptationController._executeAfterAsyncActions(function (params) {
+                            setTimeout(function () {
+                                oAdaptationController.setAfterChangesCreated(fnRuntimeHandling);
+                            }, 0);
+                        });
+
                         oAdaptationController.detachEvent("beforeP13nContainerOpens", fnEnhanceDialog);
                         oAdaptationController.detachEvent("afterP13nContainerCloses", fnResolveAndCleanup);
                     };
                     oAdaptationController.attachEvent("afterP13nContainerCloses", fnResolveAndCleanup);
-                    oAdaptationController.showP13n(this, "Item");
+                    oAdaptationController.showP13n(this, sP13nType);
                 });
             }.bind(this));
         };

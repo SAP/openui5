@@ -228,7 +228,7 @@ sap.ui.define([
 
 			var aSortChanges = FlexUtil.getArrayDeltaChanges(aPreviousSorters, aNewSortersPrepared, fnSymbol, this.getAdaptationControl(), oSortConfig.changeOperations);
 			if (this.getAfterChangesCreated()){
-				this.getAfterChangesCreated()(this, aSortChanges);
+				this.getAfterChangesCreated()(this, aSortChanges, "Sort");
 			}
 			return aSortChanges;
 		}.bind(this));
@@ -279,7 +279,7 @@ sap.ui.define([
 			var aNewItemsPrepared = this._getFilledArray(aPreviousItems, aNewItems, "visible").filter(fFilter);
 			var aItemChanges = FlexUtil.getArrayDeltaChanges(aPreviousItems, aNewItemsPrepared, fnSymbol, this.getAdaptationControl(), oItemConfig.changeOperations);
 			if (this.getAfterChangesCreated()) {
-				this.getAfterChangesCreated()(this, aItemChanges);
+				this.getAfterChangesCreated()(this, aItemChanges, "Item");
 			}
 			return aItemChanges;
 		}.bind(this));
@@ -319,7 +319,7 @@ sap.ui.define([
 				aConditionChanges = aConditionChanges.concat(FlexUtil.getConditionDeltaChanges(sFieldPath, mNewConditionState[sFieldPath], mPreviousConditionState[sFieldPath], oAdaptationControl));
 			}
 			if (this.getAfterChangesCreated()){
-				this.getAfterChangesCreated()(this, aConditionChanges);
+				this.getAfterChangesCreated()(this, aConditionChanges, "Value");
 			}
 			return aConditionChanges;
 		}.bind(this));
@@ -631,7 +631,7 @@ sap.ui.define([
 		this.oState = merge({}, this.oAdaptationModel.getData());
 
 		//execute callback
-		this.getAfterChangesCreated()(this, aChanges);
+		this.getAfterChangesCreated()(this, aChanges, "Item");
 	};
 
 	AdaptationController.prototype._hasProperty = function(sName) {

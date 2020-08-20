@@ -52,7 +52,7 @@ sap.ui.define([
 						controlType: "sap.m.Button",
 						matchers: new Ancestor(aPopover[0]),
 						success: function(aButtons){
-							Opa5.assert.equal(aButtons.length, iButtons, "Correcrt amount of actions");
+							Opa5.assert.equal(aButtons.length, iButtons, "Correct amount of actions");
 						}
 					});
 				}
@@ -486,6 +486,16 @@ sap.ui.define([
 					aFilterFields.forEach(function (oFilterField, iIndex) {
 						Opa5.assert.equal(oFilterField.getLabel(), aFilterFieldLabels[iIndex], "correct FilterField found in view");
 					});
+				}
+			});
+		},
+		iShouldSeeConditionValuesInFilterBar: function (aValues, sFilterKey) {
+			return this.waitFor({
+				controlType: "sap.ui.mdc.FilterBar",
+				success: function (aFilterBar) {
+					var aConditions = aFilterBar[0].getConditions();
+					var oFilterConfig = aConditions[sFilterKey] && aConditions[sFilterKey][0];
+					Opa5.assert.deepEqual(oFilterConfig && oFilterConfig.values, aValues, "correct filter configuration found in view");
 				}
 			});
 		}
