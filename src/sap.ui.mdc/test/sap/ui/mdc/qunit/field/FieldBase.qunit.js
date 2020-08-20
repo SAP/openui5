@@ -675,6 +675,7 @@ sap.ui.define([
 		// editable: again 2 Fields but currency readOnly
 		oContent1 = undefined; oContent2 = undefined;
 		oField.setEditMode(EditMode.EditableReadOnly);
+		sap.ui.getCore().applyChanges();
 		aContent = oField.getAggregation("_content");
 		assert.equal(aContent.length, 2, "2 content controls");
 		oContent1 = aContent && aContent.length > 0 && aContent[0];
