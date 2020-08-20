@@ -8555,6 +8555,36 @@ sap.ui.define([
 			assert.ok(oSpy.notCalled);
 		});
 
+		QUnit.module("onsapfocusleave");
+
+		QUnit.test("it should restore the focus to select if select list item gets the focus", function (assert) {
+			// system under test
+			var oItem1 = new Item({
+					text: "Bulgaria",
+					key: "BG"
+				}),
+				oItem2 = new Item({
+					text: "Germany",
+					key: "GER"
+				}),
+				oSelect = new Select({
+				items: [ oItem1, oItem2 ]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+			oSelect.focus();
+			oSelect.open();
+			this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+			// act
+			oItem1.focus();
+
+			// assert
+			assert.strictEqual(document.activeElement, oSelect.getFocusDomRef(), "Focus was successfully restored to the Select");
+		});
+
 		QUnit.module("onfocusout");
 
 		QUnit.test("it should not fire the change event if re-rendering occurs (test case 1)", function (assert) {
@@ -10257,6 +10287,35 @@ sap.ui.define([
 			afterEach: function () {
 				this.oSelect.destroy();
 			}
+		});
+
+		QUnit.test("Hidden select native dropdown is not showing", function (assert) {
+			// arrange
+			var fnMouseDownOrigin = Select.prototype.onmousedown,
+				fnKeydownDownOrigin = Select.prototype.onkeydown,
+				oSpy,
+				oSelect = this.oSelect,
+				thatSpy = this.spy,
+				fnOverride = function (fnOrigin) {
+					return function (oEvent) {
+						oSpy = thatSpy(oEvent, "preventDefault");
+						fnOrigin.call(oSelect, oEvent);
+
+						// assert
+						assert.ok(oSpy.called, "Default browser behavior is prevented");
+						oSpy.restore();
+					};
+				};
+
+			oSelect.onmousedown = fnOverride(fnMouseDownOrigin);
+			oSelect.onkeydown = fnOverride(fnKeydownDownOrigin);
+
+			// act
+			qutils.triggerEvent("mousedown", this.oSelect.getFocusDomRef());
+
+			[KeyCodes.ARROW_DOWN, KeyCodes.ARROW_UP, KeyCodes.SPACE].forEach(function(sKeyCode) {
+				qutils.triggerKeydown(oSelect.getFocusDomRef(), sKeyCode);
+			});
 		});
 
 		QUnit.test("Hidden select rendering", function (assert) {
