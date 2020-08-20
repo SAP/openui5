@@ -1239,7 +1239,7 @@ sap.ui.define([
 				var bUseConditions = oInParameter.getUseConditions();
 				bUpdate = _removeInFilter.call(this, sFilterPath); // if exist, remove old filter
 				bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions) || bUpdate;
-				_updateSelectedItems.call(this); // as mapping of in-parametrs could change
+				_updateSelectedItems.call(this); // as mapping of in-parameters could change
 			}
 		}
 
@@ -1353,6 +1353,7 @@ sap.ui.define([
 
 		bUpdate = _removeInFilter.call(this, sFilterPath); // if exist, remove old filter
 		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions) || bUpdate;
+		_updateSelectedItems.call(this); // as default in-parameters could change
 
 		// _applyFilters called from _handleFilterModelChange after all filters set
 
