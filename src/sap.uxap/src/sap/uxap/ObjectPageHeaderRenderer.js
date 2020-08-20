@@ -198,18 +198,20 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 
 		oRm.close("h2");
 
-		oRm.openStart("div", oControl.getId() + "-subtitle" + sIdSuffix)
-			.class('sapUxAPObjectPageHeaderIdentifierDescription');
+		if (oControl.getObjectSubtitle()) {
+			oRm.openStart("div", oControl.getId() + "-subtitle" + sIdSuffix)
+				.class('sapUxAPObjectPageHeaderIdentifierDescription');
 
-		if (oControl.getIsObjectSubtitleAlwaysVisible() && oControl.getObjectSubtitle()) {
-			oRm.class('sapUxAPObjectPageHeaderIdentifierDescriptionForce');
+			if (oControl.getIsObjectSubtitleAlwaysVisible()) {
+				oRm.class('sapUxAPObjectPageHeaderIdentifierDescriptionForce');
+			}
+			if (bTitleInContent) {
+				oRm.class('sapUxAPObjectPageHeaderIdentifierSubTitleInContent');
+			}
+			oRm.openEnd();
+			oRm.text(oControl.getObjectSubtitle());
+			oRm.close("div");
 		}
-		if (bTitleInContent) {
-			oRm.class('sapUxAPObjectPageHeaderIdentifierSubTitleInContent');
-		}
-		oRm.openEnd();
-		oRm.text(oControl.getObjectSubtitle());
-		oRm.close("div");
 	};
 	/**
 	 * Renders the SelectTitleArrow icon.

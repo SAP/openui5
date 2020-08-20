@@ -90,6 +90,21 @@ objectPageHeader Title
 	&.sapUxAPObjectPageHeaderIdentifierForce, .sapUxAPObjectPageHeaderStickied & {
 		display: block;
 	}
+	&.sapUxAPObjectPageHeaderIdentifierForce, .sapUxAPObjectPageHeaderStickied & {
+		display: flex;
+		.sapUxAPObjectPageHeaderIdentifierContainer {
+			flex: 1;
+			h2:only-child {
+				height: 100%;
+				&:before {
+					content: "";
+					display: inline-block;
+					vertical-align: middle;
+					height: 100%;
+				}
+			}
+		}
+	}
 
 	.sapUxAPObjectChildPage {
 		margin-top: -0.5rem;
