@@ -47,5 +47,21 @@
         ]
       }
     ]
+  },
+  "1.81.1": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "1f618225480b5c157a4ec62620bef6d15116327e",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: has correct initial rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080296687"
+          }
+        ]
+      }
+    ]
   }
 }

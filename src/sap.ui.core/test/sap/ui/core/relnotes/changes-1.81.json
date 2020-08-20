@@ -85,7 +85,7 @@
       {
         "id": "22a0a31a53288c9e030c0489cf096a79122b80af",
         "type": "FIX",
-        "text": " BindingParser: Log error when type can\u0027t be resolved",
+        "text": " BindingParser: Log error when type can't be resolved",
         "references": [
           {
             "type": "BCP",
@@ -107,6 +107,22 @@
           {
             "type": "BCP",
             "reference": "2080288896"
+          }
+        ]
+      }
+    ]
+  },
+  "1.81.1": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "6ae813874cf75937794e8c435503744ee67acb0f",
+        "type": "FIX",
+        "text": " core.IconFont: update icon name \"S/4HANA\" to \"s4hana\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
           }
         ]
       }
