@@ -1482,8 +1482,14 @@ sap.ui.define([
 	 * Updates the visibility of the <code>pinButton</code> and the header scroll state.
 	 * @private
 	 */
-	DynamicPage.prototype._updateHeaderVisualState = function (iPageControlHeight) {
+	DynamicPage.prototype._updateHeaderVisualState = function (bHeightChange, iPageControlHeight) {
 		var oDynamicPageHeader = this.getHeader();
+
+		// If there is a change in the height of the DynanmicPage, we need to update the
+		// "_preserveHeaderStateOnScroll" function status
+		if (bHeightChange && this.getPreserveHeaderStateOnScroll()) {
+			this._overridePreserveHeaderStateOnScroll();
+		}
 
 		if (!this._preserveHeaderStateOnScroll() && oDynamicPageHeader) {
 			if (this._headerBiggerThanAllowedToPin(iPageControlHeight) || Device.system.phone) {
@@ -1792,7 +1798,9 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._onChildControlsHeightChange = function (oEvent) {
 		var bNeedsVerticalScrollBar = this._needsVerticalScrollBar(),
-			oHeader = this.getHeader();
+			oHeader = this.getHeader(),
+			bCurrentHeight,
+			bOldHeight;
 
 		// FitContainer needs to be updated, when height is changed and scroll bar appear, to enable calc of original height
 		if (bNeedsVerticalScrollBar) {
@@ -1808,8 +1816,10 @@ sap.ui.define([
 		this._bExpandingWithAClick = false;
 
 		if (oHeader && oEvent.target.id === oHeader.getId()) {
-			this._updateHeaderVisualState();
-			this._adaptScrollPositionOnHeaderChange(oEvent.size.height, oEvent.oldSize.height);
+			bCurrentHeight = oEvent.size.height;
+			bOldHeight = oEvent.oldSize.height;
+			this._updateHeaderVisualState(bCurrentHeight !== bOldHeight);
+			this._adaptScrollPositionOnHeaderChange(bCurrentHeight, bOldHeight);
 		}
 	};
 
@@ -1823,9 +1833,11 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._onResize = function (oEvent) {
 		var oDynamicPageTitle = this.getTitle(),
-			iCurrentWidth = oEvent.size.width;
+			iCurrentWidth = oEvent.size.width,
+			iCurrentHeight = oEvent.size.height,
+			bHeightChange = iCurrentHeight !== oEvent.oldSize.height;
 
-		this._updateHeaderVisualState(oEvent.size.height);
+		this._updateHeaderVisualState(bHeightChange, iCurrentHeight);
 
 		if (exists(oDynamicPageTitle)) {
 			oDynamicPageTitle._onResize(iCurrentWidth);

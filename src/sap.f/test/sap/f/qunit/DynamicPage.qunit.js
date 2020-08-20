@@ -1227,7 +1227,7 @@ function (
 			oStubHeaderHeight = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeExpandedInTitleArea", function () {
 				return true;
 			}),
-			oMockResizeWidthEvent = {size:{width: 100}};
+			oMockResizeWidthEvent = {size:{width: 100, height: 100}, oldSize:{height: 100}};
 
 		// Final setup step: snap header => the expand button should become visible after rendering
 		oDynamicPage.setHeaderExpanded(false);
@@ -1255,6 +1255,34 @@ function (
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 		}
+	});
+
+	QUnit.test("DynamicPage _overridePreserveHeaderStateOnScroll() should be called, when a change of DynamicPage's height occurs and 'preserveHeaderStateOnScroll' is 'true'", function (assert) {
+		// Arrange
+		var oSpy,
+			oMockResizeWidthEvent = {size: {height: 500}, oldSize:{height: 100}},
+			done = assert.async(),
+			oDynamicPage = this.oDynamicPage;
+
+		// Act
+		oDynamicPage.addEventDelegate({
+			"onAfterRendering": function() {
+				setTimeout(function() {
+					// Act
+					oSpy = sinon.spy(oDynamicPage, "_overridePreserveHeaderStateOnScroll");
+					oDynamicPage._onResize(oMockResizeWidthEvent);
+
+					// Assert
+					assert.ok(oSpy.calledOnce, "_overridePreserveHeaderStateOnScroll called once");
+
+					// Clean Up
+					oSpy.reset();
+					done();
+				}, 200);
+			}
+		});
+
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 	});
 
 	QUnit.test("DynamicPage _shouldOverridePreserveHeaderStateOnScroll() should return 'true' for Desktop when needed", function (assert) {
