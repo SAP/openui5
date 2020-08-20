@@ -1,0 +1,80 @@
+{
+	"_version": "1.25.0",
+	"sap.app": {
+		"id": "card.explorer.sample.table.card.employees",
+		"title": "Employees",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"type": "card"
+	},
+	"sap.ui": {
+		"deviceTypes":{
+			"desktop": true,
+			"phone": true,
+			"tablet": true
+		},
+		"technology": "UI5"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Employees Info",
+			"subTitle": "Birthdates of Employees"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"FirstName": "Donna",
+						"LastName": "Moore",
+						"Birtdate": "1986-08-11",
+						"Icon": "./images/Donna_Moore.png"
+					},
+					{
+						"FirstName": "John",
+						"LastName": "Miller",
+						"Birtdate": "1984-05-13",
+						"Icon": "./images/John_Miller.png"
+					},
+					{
+						"FirstName": "Alain",
+						"LastName": "Chevalier",
+						"Birtdate": "1993-02-01",
+						"Icon": "./images/Alain_Chevalier.png"
+					},
+					{
+						"FirstName": "Elena",
+						"LastName": "Petrova",
+						"Birtdate": "1976-09-19",
+						"Icon": "./images/Elena_Petrova.jpg"
+					}
+				]
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "Avatar",
+						"icon": {
+							"src": "{Icon}",
+							"shape": "Circle",
+							"alt": "Human image"
+						}
+					},
+					{
+						"title": "First Name",
+						"value": "{FirstName}"
+					},
+					{
+						"title": "Last Name",
+						"value": "{LastName}"
+					},
+					{
+						"title": "Birtdate",
+						"value": "{Birtdate}"
+					}
+				]
+			}
+		}
+	}
+}

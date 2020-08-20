@@ -54,21 +54,14 @@
 		position: relative;
 	}
 
-	.sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials) {
-		background-color: transparent;
-		border: none;
-	}
-
 	.sapFCardIcon.sapFAvatar {
 		flex-shrink: 0;
-		margin-right: 0.75rem;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		.sapUiIcon {
 			align-self: center;
 			font-size: 2rem;
-			color: @_sap_f_Card_HeaderIconColor;
 		}
 	}
 
@@ -135,6 +128,19 @@
 
 	.sapFCardHeaderToolbar {
 		margin: -0.25rem 0 -0.25rem 0.5rem;
+	}
+}
+
+.sapFCard .sapFCardIcon.sapFAvatar {
+	margin-right: 0.75rem;
+
+	&:not(.sapFAvatarImage):not(.sapFAvatarInitials) {
+		background-color: transparent;
+		border: none;
+	}
+
+	.sapUiIcon {
+		color: @_sap_f_Card_HeaderIconColor;
 	}
 }
 

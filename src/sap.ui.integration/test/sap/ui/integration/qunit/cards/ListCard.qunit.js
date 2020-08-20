@@ -752,7 +752,8 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCard = new Card({
 				width: "400px",
-				height: "600px"
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/"
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
@@ -852,7 +853,6 @@ sap.ui.define([
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
-
 			Core.applyChanges();
 
 			var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
@@ -863,6 +863,159 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_maxItems_Parameters);
+	});
+
+	QUnit.test("Icon properties", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "list.card.test.icon"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": [{
+							"avatar": "./images/Image_1.png"
+						}]
+					},
+					"content": {
+						"item": {
+							"icon": {
+								"src": "{avatar}",
+								"shape": "Circle",
+								"alt": "human image",
+								"text": "IT"
+							}
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+			assert.strictEqual(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/images/Image_1.png", "Should have correct avatar src");
+			assert.strictEqual(oAvatar.getDisplayShape(), oManifest["sap.card"].content.item.icon.shape, "Should have 'Circle' shape");
+			assert.strictEqual(oAvatar.getTooltip_AsString(), oManifest["sap.card"].content.item.icon.alt, "Should have tooltip set");
+			assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.item.icon.text, "Should have initials set");
+			assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Default 'size' of icon when there is no description", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "list.card.test.icon"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": [{
+							"avatar": "sap-icon://error"
+						}]
+					},
+					"content": {
+						"item": {
+							"icon": {
+								"src": "{avatar}"
+							}
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+			assert.strictEqual(oAvatar.getDisplaySize(), "XS", "Should have 'XS' size");
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Default 'size' of icon when there are title and description", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "list.card.test.icon"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": [{
+							"avatar": "sap-icon://error"
+						}]
+					},
+					"content": {
+						"item": {
+							"title": "Title",
+							"description": "Description",
+							"icon": {
+								"src": "{avatar}"
+							}
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+			assert.strictEqual(oAvatar.getDisplaySize(), "S", "Should have 'S' size");
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Icon allows to set custom 'size'", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "list.card.test.icon"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": [{
+							"avatar": "sap-icon://error"
+						}]
+					},
+					"content": {
+						"item": {
+							"title": "Title",
+							"description": "Description",
+							"icon": {
+								"src": "{avatar}",
+								"size": "M"
+							}
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+			assert.strictEqual(oAvatar.getDisplaySize(), "M", "Should have 'M' size");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
 	});
 
 	QUnit.module("Overridden methods", {

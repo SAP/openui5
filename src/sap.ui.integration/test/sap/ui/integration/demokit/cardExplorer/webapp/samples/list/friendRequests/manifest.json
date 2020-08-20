@@ -1,0 +1,86 @@
+{
+	"_version": "1.25.0",
+	"sap.app": {
+		"id": "card.explorer.sample.list.card.friendRequests",
+		"type": "card",
+		"title": "Sample of a List card with Icon",
+		"subTitle": "Sample of a List card with Icon",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Icon",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"deviceTypes":{
+			"desktop": true,
+			"phone": true,
+			"tablet": true
+		},
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Pending Friend Requests",
+			"icon": {
+				"src": "sap-icon://pending"
+			},
+			"status": {
+				"text": "4 of 4"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Donna Moore",
+						"Description": "Oslo",
+						"Icon": "./images/Donna_Moore.png",
+						"Initials": "DM"
+					},
+					{
+						"Name": "John Miller",
+						"Description": "Madrid",
+						"Icon": "./images/John_Miller.png",
+						"Initials": "JM"
+					},
+					{
+						"Name": "Alain Chevalier",
+						"Description": "Valencia",
+						"Icon": "./images/Nonexistent.png",
+						"Initials": "AC"
+					},
+					{
+						"Name": "Elena Petrova",
+						"Description": "Bulgaria",
+						"Icon": "./images/Elena_Petrova.jpg",
+						"Initials": "EP"
+					}
+				]
+			},
+			"maxItems": 4,
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"icon": {
+					"src": "{Icon}",
+					"shape": "Circle",
+					"alt": "Human image"
+				}
+			}
+		}
+	}
+}

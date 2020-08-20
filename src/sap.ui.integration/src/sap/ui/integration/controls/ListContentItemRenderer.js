@@ -39,8 +39,9 @@ sap.ui.define([
 			bShouldRenderInfoWithoutTitle = !sTitle && sInfo;
 
 		// render image
-		if (oLI.getIcon()) {
-			rm.renderControl(oLI._getImage());
+		// ListContentItem specific
+		if (oLI.getIcon() || oLI.getIconInitials()) {
+			rm.renderControl(oLI._getAvatar());
 		}
 
 		rm.openStart("div").class("sapMSLIDiv");

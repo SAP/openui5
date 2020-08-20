@@ -4,6 +4,7 @@
 sap.ui.define([
 	"./BaseListContent",
 	"./ListContentRenderer",
+	"sap/m/library",
 	"sap/m/List",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingHelper",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function (
 	BaseListContent,
 	ListContentRenderer,
+	mLibrary,
 	List,
 	library,
 	BindingHelper,
@@ -23,6 +25,9 @@ sap.ui.define([
 	"use strict";
 
 	var AreaType = library.AreaType;
+
+	// shortcut for sap.m.AvatarSize
+	var AvatarSize = mLibrary.AvatarSize;
 
 	/**
 	 * Constructor for a new <code>ListContent</code>.
@@ -193,10 +198,21 @@ sap.ui.define([
 			infoState: mItem.info && mItem.info.state
 		};
 
-		if (mItem.icon && mItem.icon.src) {
+		if (mItem.icon) {
 			mSettings.icon = BindingHelper.formattedProperty(mItem.icon.src, function (sValue) {
 				return this._oIconFormatter.formatSrc(sValue, this._sAppId);
 			}.bind(this));
+			mSettings.iconAlt = mItem.icon.alt;
+			mSettings.iconDisplayShape = mItem.icon.shape;
+			mSettings.iconInitials = mItem.icon.text;
+
+			if (mSettings.title && mSettings.description) {
+				mSettings.iconSize = AvatarSize.S;
+			} else {
+				mSettings.iconSize = AvatarSize.XS;
+			}
+
+			mSettings.iconSize = mItem.icon.size || mSettings.iconSize;
 		}
 
 		if (mItem.chart) {
