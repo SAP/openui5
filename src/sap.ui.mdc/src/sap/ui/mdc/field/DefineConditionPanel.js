@@ -198,16 +198,8 @@ sap.ui.define([
 			if (this.getConditions().length === 0) {
 				// as observer must not be called in the initial case
 				this.updateDefineConditions();
-				this._updateButtonVisibility();
 			}
 
-		},
-
-		_updateButtonVisibility: function(oCondition) {
-			var oFormatOptions = this.getFormatOptions();
-			var iMaxConditions = oFormatOptions.maxConditions;
-			var oButton = this.byId("addBtn");
-			oButton.setVisible( iMaxConditions == -1 || this._iRows < iMaxConditions);
 		},
 
 		removeCondition: function(oEvent) {
@@ -228,6 +220,9 @@ sap.ui.define([
 			if (iMaxConditions == -1 || aConditions.length < iMaxConditions) {
 				// create a new dummy condition for a new condition on the UI - must be removed later if not used or filled correct
 				this.addDummyCondition(aConditions.length + 1);
+				if (this.getConditions().length === iMaxConditions) {
+					this._bFocusLastCondition = true; // as add-Button will disappear anf focus should stay in DefineConditionPanel
+				}
 			}
 		},
 
@@ -400,7 +395,6 @@ sap.ui.define([
 				this._sConditionsTimer = null;
 				this.updateDefineConditions();
 				_renderConditions.call(this);
-				this._updateButtonVisibility();
 			}.bind(this), 0);
 		}
 
@@ -740,12 +734,28 @@ sap.ui.define([
 			press: this.addCondition.bind(this),
 			type: ButtonType.Default,
 			text: "{$i18n>valuehelp.DEFINECONDITIONS_ADDCONDITION}",
-			layoutData: new GridData({span: "XL2 L3 M3 S3", indent: "XL9 L8 M8 S7", linebreak: true})}
+			layoutData: new GridData({
+				span: "XL2 L3 M3 S3",
+				indent: "XL9 L8 M8 S7",
+				linebreak: true,
+				visibleS: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
+				visibleM: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
+				visibleL: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
+				visibleXL: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)}})}
 		).addStyleClass("sapUiSmallPaddingBegin");
 
 		oGrid.addContent(oAddBtn);
 
 		this.setAggregation("_content", oScrollContainer);
+
+	}
+
+	function _getAddButtonVisible(aConditions) {
+
+		var oFormatOptions = this.getFormatOptions();
+		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+
+		return iMaxConditions === -1 || aConditions.length < iMaxConditions;
 
 	}
 
@@ -789,7 +799,12 @@ sap.ui.define([
 			iIndex++;
 		}
 
-		this._iRows = iRow + 1; // for AddButton visibility
+		if (this._bFocusLastCondition) {
+			// focus first condition, as we can be sure this is already rendered
+			// TODO: focus last condition after it is rendered
+			aGridContent[0].focus();
+			this._bFocusLastCondition = false;
+		}
 
 	}
 
