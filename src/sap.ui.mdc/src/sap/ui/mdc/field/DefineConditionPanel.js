@@ -270,26 +270,49 @@ sap.ui.define([
 			var oOperator = FilterOperatorUtil.getOperator(sKey); // operator must exist as List is created from valid operators
 			var oOperatorOld = sOldKey && FilterOperatorUtil.getOperator(sOldKey);
 
-			if (oOperator && oOperatorOld && !deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
-				// type changed -> remove entered value (only if changed by user in Select)
-				// As Static text updated on condition change, don't delete it here.
-				var oCondition = oField.getBindingContext("$this").getObject();
-				var aConditions = this.getConditions();
-				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
-				if (iIndex >= 0) {
-					var bUpdate = false;
-					oCondition = aConditions[iIndex]; // to get right instance
-					if (oCondition.values.length > 0 && oCondition.values[0] !== null) {
-						oCondition.values[0] = null;
-						bUpdate = true;
+			if (oOperator && oOperatorOld) {
+				var oCondition;
+				var aConditions;
+				var iIndex;
+				var bUpdate = false;
+
+				if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
+					// type changed -> remove entered value (only if changed by user in Select)
+					// As Static text updated on condition change, don't delete it here.
+					oCondition = oField.getBindingContext("$this").getObject();
+					aConditions = this.getConditions();
+					iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+					if (iIndex >= 0) {
+						oCondition = aConditions[iIndex]; // to get right instance
+						if (oCondition.values.length > 0 && oCondition.values[0] !== null) {
+							oCondition.values[0] = null;
+							bUpdate = true;
+						}
+						if (oCondition.values.length > 1 && oCondition.values[1] !== null) {
+							oCondition.values[1] = null;
+							bUpdate = true;
+						}
 					}
-					if (oCondition.values.length > 1 && oCondition.values[1] !== null) {
-						oCondition.values[1] = null;
-						bUpdate = true;
+				}
+
+				if (!oOperator.valueTypes[1] && oOperatorOld.valueTypes[1]) {
+					// switch from BT to EQ -> remove second value even if filled
+					if (!oCondition) { // if already read - use it
+						oCondition = oField.getBindingContext("$this").getObject();
+						aConditions = this.getConditions();
+						iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+						oCondition = aConditions[iIndex]; // to get right instance
 					}
-					if (bUpdate) {
-						this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+					if (iIndex >= 0) {
+							if (oCondition.values.length > 1 && oCondition.values[1]) {
+							oCondition.values = oCondition.values.slice(0, 1);
+							bUpdate = true;
+						}
 					}
+				}
+
+				if (bUpdate) {
+					this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
 				}
 			}
 
@@ -406,7 +429,7 @@ sap.ui.define([
 
 		var iIndex = 0;
 
-		// if type of operator changes -> remove binding and create it new later on
+		// if type of operator changed -> remove binding and create it new later on
 		if (sKey && sOldKey) {
 			var oOperator = FilterOperatorUtil.getOperator(sKey);
 			var oOperatorOld = FilterOperatorUtil.getOperator(sOldKey);
