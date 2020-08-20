@@ -1399,6 +1399,28 @@ function (
 		}.bind(this));
 	});
 
+	QUnit.test("cancel resize animations", function (assert) {
+		assert.expect(1);
+		// setup
+		var fnDone = assert.async(),
+			oFirstLayoutAnimationEnd = sinon.spy();
+
+		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+
+		// Setup: change to a layout that requires animation
+		this.oFCL.setLayout(LT.OneColumn);
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(oFirstLayoutAnimationEnd);
+
+		// Act: set a different layout that requires a different animation
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
+			assert.strictEqual(oFirstLayoutAnimationEnd.callCount, 0, "callback for cancelled resize is not called");
+			fnDone();
+		});
+	});
+
 	QUnit.test("Switching layout from OneColumn to ThreeColumnsEndExpanded", function (assert) {
 		assert.expect(1);
 		var fnDone = assert.async(),
