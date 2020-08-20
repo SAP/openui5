@@ -1,5 +1,7 @@
 sap.ui.define([
+	"sap/base/strings/formatMessage"
 ], function (
+	formatMessage
 ) {
 	"use strict";
 
@@ -62,7 +64,7 @@ sap.ui.define([
 				}).done(function (oData) {
 					resolve(oData);
 				}).fail(function (jqXHR, sTextStatus, sError) {
-					reject(sError);
+					reject(formatMessage("Error {0} {1} ({2})", [jqXHR.status, sUrl, sError]));
 				});
 			});
 		},
