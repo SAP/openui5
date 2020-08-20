@@ -4306,7 +4306,7 @@ sap.ui.define([
 		var aServiceKey = this.mServiceKey[sGroupId];
 		var aMultiUnitKey = this.mMultiUnitKey[sGroupId];
 		for (var i = 0; i < this.mLength[sGroupId]; i++) {
-			if (aKeyIndex[i] < 0) {
+			if (aKeyIndex[i] < 0 || aKeyIndex[i] === "ZERO") {
 				if (aMultiUnitKey[i] == sKey) {
 					return i;
 				}
