@@ -653,6 +653,7 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.setSelection = function(vItem) {
 			var oList = this._getList(),
+				oSuggestionPopover = this._getSuggestionsPopover(),
 				oListItem, sKey;
 
 			this.setAssociation("selectedItem", vItem);
@@ -675,8 +676,8 @@ sap.ui.define([
 			sKey = vItem ? vItem.getKey() : "";
 			this._setPropertyProtected("selectedKey", sKey);
 
-			if (this._oSuggestionPopover) {
-				this._oSuggestionPopover._iPopupListSelectedIndex = this.getItems().indexOf(vItem);
+			if (oSuggestionPopover) {
+				oSuggestionPopover._iPopupListSelectedIndex = this.getItems().indexOf(vItem);
 			}
 		};
 
@@ -2128,7 +2129,7 @@ sap.ui.define([
 				sugg. popover will get opened afterwards, so we don't want to switch it's
 				parent to ValueStateHeader yet, allowing the InputBase to still be able
 				to render it in a ValueStateMessage popup if needed. */
-				this._oSuggestionPopover.updateValueState(this.getValueState(), this.getValueStateText(), this.getShowValueStateMessage());
+				this._getSuggestionsPopover().updateValueState(this.getValueState(), this.getValueStateText(), this.getShowValueStateMessage());
 			}
 
 			this.synchronizeSelection();
