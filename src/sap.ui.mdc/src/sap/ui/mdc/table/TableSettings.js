@@ -33,9 +33,9 @@ sap.ui.define([
 			}
 			return this._createButton(sIdPrefix + "-sort", {
 				icon: "sap-icon://sort",
-				text: oRb.getText("table.SETTINGS_SORT", "Sort"),
+				text: oRb.getText("table.SETTINGS_SORT"),
 				press: aEventInfo,
-				tooltip: oRb.getText("table.SETTINGS_SORT", "Sort"),
+				tooltip: oRb.getText("table.SETTINGS_SORT"),
 				layoutData: new OverflowToolbarLayoutData({
 					closeOverflowOnInteraction: false
 				})
@@ -47,9 +47,9 @@ sap.ui.define([
 			}
 			return this._createButton(sIdPrefix + "-settings", {
 				icon: "sap-icon://action-settings",
-				text: oRb.getText("table.SETTINGS_COLUMN", "Add/Remove Columns"),
+				text: oRb.getText("table.SETTINGS_COLUMN"),
 				press: aEventInfo,
-				tooltip: oRb.getText("table.SETTINGS_COLUMN", "Add/Remove Columns"),
+				tooltip: oRb.getText("table.SETTINGS_COLUMN"),
 				layoutData: new OverflowToolbarLayoutData({
 					closeOverflowOnInteraction: false
 				})
@@ -61,8 +61,9 @@ sap.ui.define([
 			}
 			return this._createButton(sIdPrefix + "-filter", {
 				icon: "sap-icon://filter",
-				text: oRb.getText("filter.PERSONALIZATION_DIALOG_TITLE", "Filter"),
+				text: oRb.getText("filter.PERSONALIZATION_DIALOG_TITLE"),
 				press: aEventInfo,
+				tooltip: oRb.getText("filter.PERSONALIZATION_DIALOG_TITLE"),
 				layoutData: new OverflowToolbarLayoutData({
 					closeOverflowOnInteraction: false
 				})
@@ -88,11 +89,11 @@ sap.ui.define([
 					var oMenu = new Menu({
 						items: [
 							new MenuItem({
-								text: oRb.getText("table.QUICK_EXPORT", "Export"),
+								text: oRb.getText("table.QUICK_EXPORT"),
 								press: mEventInfo.default
 							}),
 							new MenuItem({
-								text: oRb.getText("table.EXPORT_WITH_SETTINGS", "Export As..."),
+								text: oRb.getText("table.EXPORT_WITH_SETTINGS"),
 								press: mEventInfo.exportAs
 							})
 						]

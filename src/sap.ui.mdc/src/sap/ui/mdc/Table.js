@@ -9,6 +9,7 @@ sap.ui.define([
 	"./table/GridTableType",
 	"./table/V4AnalyticsTableType",
 	"./table/ResponsiveTableType",
+	"./mixin/FilterIntegrationMixin",
 	"./library",
 	"sap/m/Text",
 	"sap/m/Title",
@@ -25,8 +26,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/strings/capitalize",
-	"sap/base/util/UriParameters",
-	"sap/ui/mdc/mixin/FilterIntegrationMixin"
+	"sap/base/util/deepEqual"
 ], function(
 	Control,
 	ActionToolbar,
@@ -34,6 +34,7 @@ sap.ui.define([
 	GridTableType,
 	V4AnalyticsTableType,
 	ResponsiveTableType,
+	FilterIntegrationMixin,
 	library,
 	Text,
 	Title,
@@ -50,8 +51,7 @@ sap.ui.define([
 	Sorter,
 	containsOrEquals,
 	capitalize,
-	SAPUriParameters,
-	FilterIntegrationMixin
+	deepEqual
 ) {
 	"use strict";
 
@@ -138,7 +138,8 @@ sap.ui.define([
 				 * @since 1.60
 				 */
 				rowAction: {
-					type: "sap.ui.mdc.RowAction[]"
+					type: "sap.ui.mdc.RowAction[]",
+					defaultValue: []
 				},
 				/**
 				 * Specifies the personalization options for the table.<br>
@@ -202,9 +203,6 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: true
-				},
-				initiallyVisibleFields: {
-					type: "string[]"
 				},
 				/**
 				 * Selection mode of the Table. This property controls whether single or multiple rows can be selected and how the selection can be
@@ -729,11 +727,13 @@ sap.ui.define([
 
 	Table.prototype.setRowAction = function(aActions) {
 		var aOldActions = this.getRowAction();
+
 		this.setProperty("rowAction", aActions, true);
-		// As there is only 1 possible action right now simply check for length and the 1st/only item
-		if (((aActions && aActions.length) != (aOldActions && aOldActions.length)) || aOldActions[0] != aActions[0]) {
+
+		if (!deepEqual(aOldActions.sort(), this.getRowAction().sort())) {
 			this._updateRowAction();
 		}
+
 		return this;
 	};
 
@@ -748,10 +748,38 @@ sap.ui.define([
 	};
 
 	Table.prototype.setP13nMode = function(aMode) {
+		var aOldP13nMode = this.getP13nMode();
+
 		this.setProperty("p13nMode", aMode, true);
-		this._updatep13nSettings();
+
+		if (!deepEqual(aOldP13nMode.sort(), this.getP13nMode().sort())) {
+			updateP13nSettings(this);
+		}
+
 		return this;
 	};
+
+	function updateP13nSettings(oTable) {
+		if (oTable._oToolbar) {
+			oTable._oToolbar.destroyEnd();
+			oTable._getP13nButtons().forEach(function(oButton) {
+				oTable._oToolbar.addEnd(oButton);
+			});
+		}
+
+		if (oTable._oTable) {
+			var oDnDColumns = oTable._oTable.getDragDropConfig()[0];
+			if (oDnDColumns) {
+				oDnDColumns.setEnabled(oTable.getP13nMode().indexOf("Column") > -1);
+			}
+		}
+
+		if (oTable.isFilteringEnabled()) {
+			insertFilterInfoBar(oTable);
+		}
+
+		updateFilterInfoBar(oTable);
+	}
 
 	/**
 	 * Overwrite public setter to rerout filterconditions to inner FilterBar
@@ -929,7 +957,7 @@ sap.ui.define([
 		return this;
 	};
 
-	//method provided via FilterIntegrationMixin
+	// FilterIntegrationMixin hook
 	Table.prototype._onFilterProvided = function() {
 		this._updateInnerTableNoDataText();
 	};
@@ -974,7 +1002,7 @@ sap.ui.define([
 		if (!this._oTable) {
 			return;
 		}
-		var bNavigation = (this.getRowAction() || []).indexOf(RowAction.Navigation) > -1;
+		var bNavigation = this.getRowAction().indexOf(RowAction.Navigation) > -1;
 		var oType = this._bMobileTable ? ResponsiveTableType : GridTableType;
 		// For ResponsiveTable itemPress event is registered during creation
 		oType.updateRowAction(this, bNavigation, this._bMobileTable ? undefined : this._onRowActionPress);
@@ -1574,30 +1602,6 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 		}
-	};
-
-	Table.prototype._updatep13nSettings = function() {
-		// TODO: consider avoiding destroy and some other optimization if nothing changed
-		if (this._oToolbar) {
-			this._oToolbar.destroyEnd();
-			var aButtons = this._getP13nButtons();
-			aButtons.forEach(function(oButton) {
-				this._oToolbar.addEnd(oButton);
-			}, this);
-		}
-
-		if (this._oTable) {
-			var oDnDColumns = this._oTable.getDragDropConfig()[0];
-			if (oDnDColumns) {
-				oDnDColumns.setEnabled(this.getP13nMode().indexOf("Column") > -1);
-			}
-		}
-
-		if (this.isFilteringEnabled()) {
-			insertFilterInfoBar(this);
-		}
-
-		updateFilterInfoBar(this);
 	};
 
 	Table.prototype._createTable = function() {
