@@ -740,6 +740,21 @@ sap.ui.define([
 					if (!Device.browser.msie && !Device.browser.edge) {
 						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
 					}
+
+					var oGrid = oEvent.getParameter("target"),
+						aIntervalPlaceholders = oGrid.getAggregation("_intervalPlaceholders"),
+						oFirstIntervalRectangle = aIntervalPlaceholders[0].getDomRef().getBoundingClientRect(),
+						iIntervalSize = oFirstIntervalRectangle.height,
+						iIntervalIndexOffset = Math.floor((oFirstIntervalRectangle.top - oGrid.getDomRef().getBoundingClientRect().top) / iIntervalSize),
+						iIntervalIndex = Math.floor(oEvent.getParameter("browserEvent").offsetY / iIntervalSize) - iIntervalIndexOffset,
+						oDragSession = oEvent.getParameter("dragSession");
+
+					if	(iIntervalIndex < 0) {
+						iIntervalIndex = 0;
+					}
+
+					oDragSession.setComplexData("startingRectsDropArea", { top: Math.ceil(iIntervalIndex * iIntervalSize), left: oFirstIntervalRectangle.left });
+					oDragSession.setComplexData("startingDropDate", aIntervalPlaceholders[iIntervalIndex].getDate());
 				}.bind(this),
 
 				dragEnter: function (oEvent) {
