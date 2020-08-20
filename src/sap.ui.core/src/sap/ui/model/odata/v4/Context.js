@@ -142,9 +142,6 @@ sap.ui.define([
 		}
 		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(oGroupLock, sCanonicalPath.slice(1), that, oETagEntity);
-		}).then(function () {
-			// enable destroying in ODLB#destroyPreviousContexts
-			that.bKeepAlive = false;
 		});
 	};
 
@@ -1227,13 +1224,15 @@ sap.ui.define([
 	 * @since 1.81.0
 	 */
 	Context.prototype.setKeepAlive = function (bKeepAlive) {
-		if (this.isTransient()) {
-			throw new Error("Unsupported transient context " + this);
+		if (!this.bKeepAlive) { // allow resetting it without precondition check
+			if (this.isTransient()) {
+				throw new Error("Unsupported transient context " + this);
+			}
+			if (!_Helper.getPrivateAnnotation(this.getValue(), "predicate")) {
+				throw new Error("No key predicate known at " + this);
+			}
+			this.oBinding.checkKeepAlive(this);
 		}
-		if (!_Helper.getPrivateAnnotation(this.getValue(), "predicate")) {
-			throw new Error("No key predicate known at " + this);
-		}
-		this.oBinding.checkKeepAlive(this);
 		this.bKeepAlive = bKeepAlive;
 	};
 

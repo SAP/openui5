@@ -13,7 +13,8 @@ sap.ui.define([
 ], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise) {
 	"use strict";
 
-	var // Matches if ending with a transient key predicate:
+	var sClassName = "sap.ui.model.odata.v4.lib._Cache",
+		// Matches if ending with a transient key predicate:
 		//   EMPLOYEE($uid=id-1550828854217-16) -> aMatches[0] === "($uid=id-1550828854217-16)"
 		//   @see sap.base.util.uid
 		rEndsWithTransientPredicate = /\(\$uid=[-\w]+\)$/,
@@ -145,6 +146,7 @@ sap.ui.define([
 	Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback) {
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
+			iIndex = rNumber.test(vDeleteProperty) ? Number(vDeleteProperty) : undefined,
 			sParentPath = aSegments.join("/"),
 			that = this;
 
@@ -176,34 +178,38 @@ sap.ui.define([
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oETagEntity || oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
-			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders, undefined,
-					undefined, undefined, undefined,
-					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath))
-				.catch(function (oError) {
-					if (oError.status !== 404) {
-						delete oEntity["$ui5.deleting"];
-						throw oError;
-					} // else: map 404 to 200
-				})
-				.then(function () {
-					if (Array.isArray(vCacheData)) {
-						fnCallback(
-							that.removeElement(vCacheData, Number(vDeleteProperty), sKeyPredicate,
-								sParentPath),
-							vCacheData);
-					} else {
-						if (vDeleteProperty) {
-							// set to null and notify listeners
-							_Helper.updateExisting(that.mChangeListeners, sParentPath, vCacheData,
-								Cache.makeUpdateData([vDeleteProperty], null));
-						} else { // deleting at root level
-							oEntity["$ui5.deleted"] = true;
+			return SyncPromise.all([
+				that.oRequestor.request("DELETE", sEditUrl, oGroupLock.getUnlockedCopy(), mHeaders,
+						undefined, undefined, undefined, undefined,
+						_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath))
+					.catch(function (oError) {
+						if (oError.status !== 404) {
+							delete oEntity["$ui5.deleting"];
+							throw oError;
+						} // else: map 404 to 200
+					})
+					.then(function () {
+						if (Array.isArray(vCacheData)) {
+							fnCallback(
+								that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath),
+								vCacheData);
+						} else {
+							if (vDeleteProperty) {
+								// set to null and notify listeners
+								_Helper.updateExisting(that.mChangeListeners, sParentPath,
+									vCacheData, Cache.makeUpdateData([vDeleteProperty], null));
+							} else { // deleting at root level
+								oEntity["$ui5.deleted"] = true;
+							}
+							fnCallback();
 						}
-						fnCallback();
-					}
-					that.oRequestor.getModelInterface().reportBoundMessages(that.sResourcePath, [],
-						[sEntityPath]);
-				});
+						that.oRequestor.getModelInterface().reportBoundMessages(that.sResourcePath,
+							[], [sEntityPath]);
+					}),
+				iIndex === undefined // single element or kept-alive not in list
+					&& that.requestCount(oGroupLock.getUnlockedCopy()),
+				oGroupLock.unlock() // unlock when all requests have been queued
+			]);
 		}).finally(function () {
 			that.removePendingRequest();
 		});
@@ -461,7 +467,7 @@ sap.ui.define([
 
 		function invalidSegment(sSegment) {
 			Log.error("Failed to drill-down into " + sPath + ", invalid segment: " + sSegment,
-				that.toString(), "sap.ui.model.odata.v4.lib._Cache");
+				that.toString(), sClassName);
 			return undefined;
 		}
 
@@ -1104,7 +1110,8 @@ sap.ui.define([
 	 * @param {object[]} aElements
 	 *   The array of elements
 	 * @param {number} iIndex
-	 *   The array index of the old element to be removed
+	 *   The array index of the old element to be removed or <code>undefined</code> in case the
+	 *   element is a kept-alive element without an index
 	 * @param {string} sPredicate
 	 *   The key predicate of the old element to be removed
 	 * @param {string} sPath
@@ -1116,15 +1123,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
-		var bIsKeptAlive = isNaN(iIndex),
-			oElement,
+		var oElement,
 			sTransientPredicate;
 
 		oElement = aElements.$byPredicate[sPredicate];
-		if (!bIsKeptAlive) {
+		if (iIndex !== undefined) {
 			// the element might have moved due to parallel insert/delete
 			iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
 			aElements.splice(iIndex, 1);
+			addToCount(this.mChangeListeners, sPath, aElements, -1);
 		}
 		delete aElements.$byPredicate[sPredicate];
 		sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
@@ -1134,12 +1141,11 @@ sap.ui.define([
 		} else if (!sPath) {
 			// Note: sPath is empty only in a CollectionCache, so we may use iLmit and
 			// adjustReadRequests
-			this.iLimit -= 1; // this doesn't change Infinity
-			if (!bIsKeptAlive) {
+			if (iIndex !== undefined) {
+				this.iLimit -= 1; // this doesn't change Infinity
 				this.adjustReadRequests(iIndex, -1);
 			}
 		}
-		addToCount(this.mChangeListeners, sPath, aElements, -1);
 		return iIndex;
 	};
 
@@ -1197,6 +1203,44 @@ sap.ui.define([
 		// Note: iStart is not needed here because we know we have key predicates
 		this.visitResponse(oElement, mTypeForMetaPath,
 			_Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, sPath)), sPath + sPredicate);
+	};
+
+	/**
+	 * Requests $count after deletion of a kept-alive element that was not in the collection.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
+	 * @returns {Promise}
+	 *   A promise that resolves if the count has been determined or undefined if no request needed
+	 *
+	 * @private
+	 */
+	Cache.prototype.requestCount = function (oGroupLock) {
+		var sExclusiveFilter, mQueryOptions, sReadUrl, that = this;
+
+		if (this.mQueryOptions && this.mQueryOptions.$count) {
+			// now we are definitely in a CollectionCache
+			mQueryOptions = Object.assign({}, this.mQueryOptions);
+			delete mQueryOptions.$expand;
+			delete mQueryOptions.$orderby;
+			delete mQueryOptions.$select;
+			sExclusiveFilter = this.getFilterExcludingCreated();
+			if (sExclusiveFilter) {
+				mQueryOptions.$filter = mQueryOptions.$filter
+					? "(" + mQueryOptions.$filter + ") and " + sExclusiveFilter
+					: sExclusiveFilter;
+			}
+			mQueryOptions.$top = 0;
+			sReadUrl = this.sResourcePath
+				+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions);
+
+			return this.oRequestor.request("GET", sReadUrl, oGroupLock).then(function (oResult) {
+				var iCount = parseInt(oResult["@odata.count"]) + that.aElements.$created;
+
+				setCount(that.mChangeListeners, "", that.aElements, iCount);
+				that.iLimit = iCount;
+			});
+		}
 	};
 
 	/**
@@ -1551,8 +1595,7 @@ sap.ui.define([
 				sUnitOrCurrencyValue = that.getValue(sUnitOrCurrencyPath);
 				if (sUnitOrCurrencyValue === undefined) {
 					Log.debug("Missing value for unit of measure " + sUnitOrCurrencyPath
-							+ " when updating " + sFullPath,
-						that.toString(), "sap.ui.model.odata.v4.lib._Cache");
+							+ " when updating " + sFullPath, that.toString(), sClassName);
 				} else {
 					// some servers need unit and currency information
 					_Helper.merge(sTransientGroup ? oPostBody : oUpdateData,
@@ -1921,24 +1964,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the query string with $filter adjusted as needed to exclude non-transient created
-	 * elements (which have all key properties available).
+	 * Returns a filter that excludes all created entities in this cache's collection.
 	 *
 	 * @returns {string}
-	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
+	 *   The filter or <code>undefined</code> if there is no created entity.
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.getQueryString = function () {
-		var mQueryOptions = Object.assign({}, this.mQueryOptions),
-			oElement,
-			sExclusiveFilter,
-			sFilterOptions = mQueryOptions.$filter,
-			i,
-			sKeyFilter,
-			aKeyFilters = [],
-			sQueryString = this.sQueryString,
-			mTypeForMetaPath;
+	CollectionCache.prototype.getFilterExcludingCreated = function () {
+		var oElement, i, sKeyFilter, aKeyFilters = [], mTypeForMetaPath;
 
 		for (i = 0; i < this.aElements.$created; i += 1) {
 			oElement = this.aElements[i];
@@ -1952,8 +1986,25 @@ sap.ui.define([
 			}
 		}
 
-		if (aKeyFilters.length) {
-			sExclusiveFilter = "not (" + aKeyFilters.join(" or ") + ")";
+		return aKeyFilters.length ? "not (" + aKeyFilters.join(" or ") + ")" : undefined;
+	};
+
+	/**
+	 * Returns the query string with $filter adjusted as needed to exclude non-transient created
+	 * elements (which have all key properties available).
+	 *
+	 * @returns {string}
+	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
+	 *
+	 * @private
+	 */
+	CollectionCache.prototype.getQueryString = function () {
+		var sExclusiveFilter = this.getFilterExcludingCreated(),
+			mQueryOptions = Object.assign({}, this.mQueryOptions),
+			sFilterOptions = mQueryOptions.$filter,
+			sQueryString = this.sQueryString;
+
+		if (sExclusiveFilter) {
 			if (sFilterOptions) {
 				mQueryOptions.$filter = "(" + sFilterOptions + ") and " + sExclusiveFilter;
 				sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
