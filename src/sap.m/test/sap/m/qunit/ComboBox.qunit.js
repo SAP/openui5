@@ -13539,4 +13539,283 @@ sap.ui.define([
 		assert.ok(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual focus is on the input field");
 		assert.strictEqual(jQuery(this.oErrorComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is removed when the input field is on focus');
 	});
+
+	QUnit.module("selectedKey vs. value behavior", {
+		beforeEach: function () {
+			this.oData = {
+				selectedKey: "2",
+				value: "zzzzzzz",
+				items: [
+					{status: "0", statusText: "Backups"},
+					{status: "1", statusText: "Equipment"},
+					{status: "2", statusText: "Locations"},
+					{status: "3", statusText: "Systems"}
+				]
+			};
+			this.oModel = new JSONModel(this.oData);
+		},
+		afterEach: function () {
+			this.oModel.destroy();
+		}
+	});
+
+	QUnit.test("Setters: selectedKey + matching item should overwrite the value", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+			value: "Zzzzzz",
+			selectedKey: "2",
+			items: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.skip("Setters: selectedKey + matching item should overwrite the value (changed setters order)", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+			selectedKey: "2",
+			value: "Zzzzzz",
+			items: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Bindings: selectedKey + matching item should overwrite the value", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+			value: "{/value}",
+			selectedKey: "{/selectedKey}",
+			items: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.skip("Bindings: selectedKey + matching item should overwrite the value (changed binding order)", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+			selectedKey: "{/selectedKey}",
+			value: "{/value}",
+			items: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Bindings: Value + No selectedKey: should leave the value as it is", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+			value: "{/value}",
+			items: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "zzzzzzz", "The value should come from the selected key");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Bindings: selectedKey + No Value: should set the value to the matching item", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+			selectedKey: "{/selectedKey}",
+			items: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Mixed: Binding: selectedKey, Setter: Value: should set the value of the matching item", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+			value: "Zzzzzz",
+			selectedKey: "{/selectedKey}",
+			items: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.skip("Mixed: Setter: selectedKey, Binding: Value: should set the value of the matching item", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+			value: "{/value}",
+			selectedKey: "2",
+			items: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("User Interaction: Sets value over selectedKey", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+			selectedKey: "2",
+			items: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.focus();
+		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
+		sap.ui.getCore().applyChanges();
+
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "This is a user input", "The value should come from the user input");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("User Interaction: Sets value over selectedKey (binding)", function (assert) {
+		// Setup
+		var oComboBox = new ComboBox({
+				selectedKey: "{/selectedKey}",
+				items: {
+					path: "/items",
+					template: new Item({key: "{status}", text: "{statusText}"})
+				}
+			})
+				.setModel(this.oModel)
+				.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.focus();
+		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
+		sap.ui.getCore().applyChanges();
+
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "This is a user input", "The value should come from the user input");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.skip("User Interaction: Sets value over selectedKey (binding: async)", function (assert) {
+		// Setup
+		var oModel = new JSONModel(),
+			oComboBox = new ComboBox({
+				selectedKey: "{/selectedKey}",
+				items: {
+					path: "/items",
+					template: new Item({key: "{status}", text: "{statusText}"})
+				}
+			})
+				.setModel(oModel)
+				.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.focus();
+		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oModel.setData(this.oData);
+		sap.ui.getCore().applyChanges();
+
+
+		// Assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oComboBox.getValue(), "This is a user input", "The value should come from the user input");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
 });
