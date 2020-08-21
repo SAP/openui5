@@ -2984,4 +2984,31 @@ sap.ui.define([
 		oPopup1.destroy();
 		oPopup2.destroy();
 	});
+
+	QUnit.test("Align the popup correctly in cases where position is more precisely than one pixel", function(assert){
+		var done = assert.async();
+		var oButton = new Button("buttonOpenPopup", {text: "Open Popup"});
+		var oText = new Text("myText", {text: "This is the text shown inside the Popup."});
+		var oPopup = new Popup(oText);
+		var fnOpened = function(oEvent){
+			var oTextDomRef = oEvent.getSource().getContent().getDomRef();
+			var sActualCSSRight = oTextDomRef.style.right;
+			var fpExpectedCSSRight = jQuery(window).width() - oTextDomRef.getBoundingClientRect().width - jQuery(oTextDomRef).offset().left;
+			if (sActualCSSRight.indexOf(".") > -1) {
+				var iNumberOfDecimals = sActualCSSRight.split(".")[1].split("px")[0].length;
+				fpExpectedCSSRight = fpExpectedCSSRight.toFixed(iNumberOfDecimals);
+			}
+			assert.strictEqual(sActualCSSRight, fpExpectedCSSRight + "px", "The 'right' style property is correctly calculated with value '" + sActualCSSRight + "'.");
+			oText.destroy();
+			oPopup.destroy();
+			oButton.destroy();
+			done();
+		};
+
+		oPopup.attachOpened(fnOpened);
+
+		oButton.placeAt(document.getElementById("uiarea"));
+		Core.applyChanges();
+		oPopup.open("end top", "end bottom", oButton);
+	});
 });

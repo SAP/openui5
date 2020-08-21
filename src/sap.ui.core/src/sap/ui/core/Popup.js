@@ -1723,7 +1723,7 @@ sap.ui.define([
 			} else if (typeof (oAt.left) === "number" && typeof (oAt.top) === "number") {
 				var domRef = $Ref[0];
 				if (domRef && domRef.style.right) { // in some RTL cases leave the Popup attached to the right side of the browser window
-					var width = $Ref.outerWidth();
+					var width = $Ref[0].getBoundingClientRect().width;
 					$Ref.css({
 						"right" : (document.documentElement.clientWidth - (oAt.left + width)) + "px",
 						"top" : oAt.top + "px"
@@ -1868,31 +1868,35 @@ sap.ui.define([
 	 * - LTR mode and horizontal alignment is right or end
 	 * - RTL mode and horizontal alignment is right, begin or center
 	 *
+	 * @param {object} oPosition The position
+	 * @param {boolean} bRtl Determines if RTL <code>true</code> or LFT <code>false</code> mode is active
 	 * @private
 	 */
-	Popup.prototype._fixPositioning = function(sPosition, bRtl) {
-		var my = sPosition.my;
-		var $Ref = this._$();
-		var right = 0;
-
-		if (typeof (my) === "string") {
-			if (bRtl && ((my.indexOf("right") > -1) || (my.indexOf("begin") > -1) || (my.indexOf("center") > -1))) {
-				$Ref = this._$();
-				right = jQuery(window).width() - $Ref.outerWidth() - $Ref.offset().left;
+	Popup.prototype._fixPositioning = function (oPosition, bRtl) {
+		var sMy = oPosition.my;
+		if (typeof (sMy) === "string") {
+			if (Popup._isPositionFixingNeeded(sMy, bRtl)) {
+				var $Ref = this._$();
+				var fpRight = jQuery(window).width() - $Ref[0].getBoundingClientRect().width - $Ref.offset().left;
 				$Ref.css({
-					"right" : right + "px",
-					"left" : ""
-				});
-			} else if ((my.indexOf("right") > -1) || (my.indexOf("end") > -1)) {
-				// LTR
-				$Ref = this._$();
-				right = jQuery(window).width() - $Ref.outerWidth() - $Ref.offset().left;
-				$Ref.css({
-					"right" : right + "px",
-					"left" : ""
+					"right": fpRight + "px",
+					"left": ""
 				});
 			}
 		}
+	};
+
+	/**
+	 * Determines if the position of the popup has to be fixed
+	 *
+	 * @param {sap.ui.core.Popup.Dock} sMy The "my" position value
+	 * @param {boolean} bRtl Determines if RTL <code>true</code> or LFT <code>false</code> mode is active
+	 * @returns {boolean} <code>true</code> if position fixing is needed, <code>false</code> if not
+	 * @private
+	 */
+	Popup._isPositionFixingNeeded = function (sMy, bRtl) {
+		return bRtl && ((sMy.indexOf("right") > -1) || (sMy.indexOf("begin") > -1) || (sMy.indexOf("center") > -1))
+			|| !bRtl && ((sMy.indexOf("right") > -1) || (sMy.indexOf("end") > -1));
 	};
 
 	/**
