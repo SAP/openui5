@@ -16,7 +16,11 @@ sap.ui.define([
 	 *   See parameter <code>oFormatOptions</code> of
 	 *   {@link sap.ui.model.type.Currency#constructor}. Format options are immutable, that is,
 	 *   they can only be set once on construction. Format options that are not supported or have a
-	 *   different default are listed below.
+	 *   different default are listed below. If the format option <code>showMeasure</code> is set to
+	 *   <code>false</code>, model messages for the currency code are not propagated to the control
+	 *   if the corresponding binding supports the feature of ignoring messages, see
+	 *   {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding binding
+	 *   parameter is not set manually.
 	 * @param {object} [oFormatOptions.customCurrencies]
 	 *   Not supported; the type derives this from its currency customizing part.
 	 * @param {boolean} [oFormatOptions.parseAsString=true]

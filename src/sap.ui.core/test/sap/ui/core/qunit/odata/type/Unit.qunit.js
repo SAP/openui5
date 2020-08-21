@@ -37,7 +37,8 @@ sap.ui.define([
 		applyUnitMixin(oMixin, BaseUnit);
 
 		Object.keys(oMixin).forEach(function (sKey) {
-			if (sKey !== "formatValue" && sKey !== "parseValue" && sKey !== "_applyUnitMixin") {
+			if (sKey !== "formatValue" && sKey !== "getPartsIgnoringMessages"
+					&& sKey !== "parseValue" && sKey !== "_applyUnitMixin") {
 				assert.strictEqual(oType[sKey], oMixin[sKey], sKey);
 			}
 		});

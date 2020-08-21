@@ -22835,6 +22835,14 @@ sap.ui.define([
 	// based on the "com.sap.vocabularies.CodeList.v1.UnitsOfMeasure" on the service's entity
 	// container.
 	// CPOUI5UISERVICESV3-1711
+	// Scenario 2: With the binding parameter <code>$$ignoreMessages</code> the application
+	// developer can control whether model messages are displayed at the control. For
+	// <code>sap.ui.model.odata.type.Currency</code> and <code>sap.ui.model.odata.type.Unit</code>
+	// the parameter <code>$$ignoreMessages</code> is determined automatically based on the format
+	// option <code>showMeasure</code>. Manual setting of <code>$$ignoreMessages</code> wins over
+	// automatic determination.
+	// No own test as unit value list is cached in a private cache
+	// JIRA: CPOUI5MODELS-302
 	QUnit.test("OData Unit type considering unit customizing", function (assert) {
 		var oControl,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
@@ -22846,6 +22854,22 @@ sap.ui.define([
 				mode : \'TwoWay\',\
 				type : \'sap.ui.model.odata.type.Unit\'}" />\
 	<Text id="weightMeasure" text="{WeightMeasure}"/>\
+	<!-- for CPOUI5MODELS-302 -->\
+	<Input id="weight0" value="{\
+		formatOptions : {showMeasure : false},\
+		mode : \'TwoWay\',\
+		parts: [\'WeightMeasure\', \'WeightUnit\',\
+			{mode : \'OneTime\', path : \'/##@@requestUnitsOfMeasure\', targetType : \'any\'}],\
+		type : \'sap.ui.model.odata.type.Unit\'}" />\
+	<Input id="weight1" value="{\
+		formatOptions : {showMeasure : false},\
+		mode : \'TwoWay\',\
+		parts: [\
+			\'WeightMeasure\',\
+			{parameters : {$$ignoreMessages : false}, path : \'WeightUnit\'},\
+			{mode : \'OneTime\', path : \'/##@@requestUnitsOfMeasure\', targetType : \'any\'}\
+		],\
+		type : \'sap.ui.model.odata.type.Unit\'}" />\
 </FlexBox>',
 			that = this;
 
@@ -22865,10 +22889,48 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("weightMeasure", "12.340")  // Scale=3 in property metadata => 3 decimals
-			.expectChange("weight", "12.34000 KG");
+			.expectChange("weight", "12.34000 KG")
+			.expectChange("weight0", "12.34000")
+			.expectChange("weight1", "12.34000");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			that.expectMessages([{
+				code : "42",
+				message : "Warning for WeightUnit",
+				persistent : false,
+				target : "/ProductList('HT-1000')/WeightUnit",
+				type : "Warning"
+			}]);
+
+			// simulate messages for unit of measure as sales order model does not declare a message
+			// property for products
+			oModel.reportBoundMessages("ProductList", {
+				"" : [{
+					code : "42",
+					message : "Warning for WeightUnit",
+					numericSeverity : 3,
+					target : "('HT-1000')/WeightUnit",
+					technical : false,
+					transition : false
+				}]
+			}, []);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return Promise.all([
+				that.checkValueState(assert, "weight", "Warning", "Warning for WeightUnit"),
+				that.checkValueState(assert, "weight0", "None", ""),
+				that.checkValueState(assert, "weight1", "Warning", "Warning for WeightUnit"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectMessages([]);
+			// remove model messages again
+			oModel.reportBoundMessages("ProductList", {});
+		}).then(function () {
 			that.expectChange("weight", "23.40000 KG")
+				.expectChange("weight0", "23.40000")
+				.expectChange("weight1", "23.40000")
 				.expectChange("weightMeasure", "23.400")
 				.expectRequest({
 					method : "PATCH",
@@ -22882,6 +22944,8 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("weightMeasure", "0.000")
+				.expectChange("weight0", "0.00000")
+				.expectChange("weight1", "0.00000")
 				.expectRequest({
 					method : "PATCH",
 					url : "ProductList('HT-1000')",
@@ -22926,6 +22990,14 @@ sap.ui.define([
 	// based on the "com.sap.vocabularies.CodeList.v1.CurrencyCodes" on the service's entity
 	// container.
 	// CPOUI5UISERVICESV3-1733
+	// Scenario 2: With the binding parameter <code>$$ignoreMessages</code> the application
+	// developer can control whether model messages are displayed at the control. For
+	// <code>sap.ui.model.odata.type.Currency</code> and <code>sap.ui.model.odata.type.Unit</code>
+	// the parameter <code>$$ignoreMessages</code> is determined automatically based on the format
+	// option <code>showMeasure</code>. Manual setting of <code>$$ignoreMessages</code> wins over
+	// automatic determination.
+	// No own test as currency value list is cached in a private cache
+	// JIRA: CPOUI5MODELS-302
 	QUnit.test("OData Currency type considering currency customizing", function (assert) {
 		var oControl,
 			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "$auto"}),
@@ -22937,6 +23009,21 @@ sap.ui.define([
 				mode : \'TwoWay\',\
 				type : \'sap.ui.model.odata.type.Currency\'}" />\
 	<Text id="amount" text="{Price}"/>\
+	<!-- for CPOUI5MODELS-302 -->\
+	<Input id="price0" value="{\
+		formatOptions : {showMeasure : false},\
+		mode : \'TwoWay\',\
+		parts: [\'Price\', \'CurrencyCode\',\
+			{mode : \'OneTime\', path : \'/##@@requestCurrencyCodes\', targetType : \'any\'}],\
+		type : \'sap.ui.model.odata.type.Currency\'}" />\
+	<Input id="price1" value="{\
+		formatOptions : {showMeasure : false},\
+		mode : \'TwoWay\',\
+		parts: [\
+			\'Price\',\
+			{parameters : {$$ignoreMessages : false}, path : \'CurrencyCode\'},\
+			{mode : \'OneTime\', path : \'/##@@requestCurrencyCodes\', targetType : \'any\'}],\
+		type : \'sap.ui.model.odata.type.Currency\'}" />\
 </FlexBox>',
 			that = this;
 
@@ -22960,15 +23047,55 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("amount", "12.3")
-			.expectChange("price", "12.30\u00a0EUR"); // "\u00a0" is a non-breaking space
+			.expectChange("price", "12.30\u00a0EUR") // "\u00a0" is a non-breaking space
+			.expectChange("price0", "12.30")
+			.expectChange("price1", "12.30");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			that.expectMessages([{
+				code : "43",
+				message : "Info for CurrencyCode",
+				persistent : false,
+				target : "/ProductList('HT-1000')/CurrencyCode",
+				type : "Information"
+			}]);
+
+			// simulate messages for currency code as sales order model does not declare a message
+			// property for products
+			oModel.reportBoundMessages("ProductList", {
+				"" : [{
+					code : "43",
+					message : "Info for CurrencyCode",
+					numericSeverity : 2,
+					target : "('HT-1000')/CurrencyCode",
+					technical : false,
+					transition : false
+				}]
+			}, []);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return Promise.all([
+				that.checkValueState(assert, "price", "Information", "Info for CurrencyCode"),
+				that.checkValueState(assert, "price0", "None", ""),
+				that.checkValueState(assert, "price1", "Information", "Info for CurrencyCode"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectMessages([]);
+			// remove model messages again
+			oModel.reportBoundMessages("ProductList", {});
+		}).then(function () {
 			//TODO get rid of first change event which is due to using setRawValue([...]) on the
 			//  composite binding. Solution idea: change integration test framework to not use
 			//  formatters but overwrite formatValue on the binding's type if ever possible. Without
 			//  formatters, one can then set the value on the control.
 			that.expectChange("price", "42.00\u00a0EUR")
 				.expectChange("price", "42\u00a0JPY")
+				.expectChange("price0", "42.00")
+				.expectChange("price0", "42")
+				.expectChange("price1", "42.00")
+				.expectChange("price1", "42")
 				.expectChange("amount", "42")
 				.expectRequest({
 					method : "PATCH",
@@ -22982,6 +23109,8 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("amount", "0")
+				.expectChange("price0", "0")
+				.expectChange("price1", "0")
 				.expectRequest({
 					method : "PATCH",
 					url : "ProductList('HT-1000')",
