@@ -3200,4 +3200,40 @@ sap.ui.define([
 	});
 });
 
+	//*********************************************************************************************
+	QUnit.test("extractMergeableQueryOptions", function (assert) {
+		var mQueryOptions;
+
+		// code under test
+		assert.deepEqual(_Helper.extractMergeableQueryOptions({}), {});
+
+		// code under test
+		assert.deepEqual(_Helper.extractMergeableQueryOptions({$count : true}), {});
+
+		mQueryOptions = {$expand : "expand"};
+		// code under test
+		assert.deepEqual(_Helper.extractMergeableQueryOptions(mQueryOptions), {$expand : "expand"});
+		assert.deepEqual(mQueryOptions, {$expand : "~"});
+
+		mQueryOptions = {$select : "select"};
+		// code under test
+		assert.deepEqual(_Helper.extractMergeableQueryOptions(mQueryOptions), {$select : "select"});
+		assert.deepEqual(mQueryOptions, {$select : "~"});
+
+		mQueryOptions = {
+			$count : true,
+			$expand : "expand",
+			$select : "select"
+		};
+		// code under test
+		assert.deepEqual(_Helper.extractMergeableQueryOptions(mQueryOptions), {
+			$expand : "expand",
+			$select : "select"
+		});
+		assert.deepEqual(mQueryOptions, {
+			$count : true,
+			$expand : "~",
+			$select : "~"
+		});
+	});
 });

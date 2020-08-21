@@ -2898,6 +2898,10 @@ sap.ui.define([
 		});
 
 		assert.strictEqual(oRequestor.convertQueryOptions("/Foo", undefined), undefined);
+
+		assert.deepEqual(
+			oRequestor.convertQueryOptions("/Foo", {$expand : "~"}),
+			{$expand : "~"});
 	});
 
 	//*********************************************************************************************
@@ -4168,11 +4172,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("addQueryString", function (assert) {
-		var mQueryOptions = {},
+		var mConvertedQueryOptions = {},
+			mQueryOptions = {},
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
-		this.mock(oRequestor).expects("buildQueryString").twice()
+		this.mock(oRequestor).expects("convertQueryOptions").twice()
 			.withExactArgs("/meta/path", sinon.match.same(mQueryOptions), false, true)
+			.returns(mConvertedQueryOptions);
+		this.mock(_Helper).expects("buildQuery").twice()
+			.withExactArgs(sinon.match.same(mConvertedQueryOptions))
 			.returns("?~");
 
 		// code under test
@@ -4182,6 +4190,40 @@ sap.ui.define([
 		assert.strictEqual(
 			oRequestor.addQueryString("EntitySet?foo=bar", "/meta/path", mQueryOptions),
 			"EntitySet?foo=bar&~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addQueryString with placeholders, partial", function (assert) {
+		var mConvertedQueryOptions = {$bar : "bar", $foo : "foo"},
+			mQueryOptions = {$bar : "bar", $foo : "foo"},
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(oRequestor).expects("convertQueryOptions")
+			.withExactArgs("/meta/path", sinon.match.same(mQueryOptions), false, true)
+			.returns(mConvertedQueryOptions);
+		this.mock(_Helper).expects("buildQuery").withExactArgs({$bar : "bar"}).returns("?$bar=bar");
+
+		// code under test
+		assert.strictEqual(
+			oRequestor.addQueryString("EntitySet?$foo=~", "/meta/path", mQueryOptions),
+			"EntitySet?$foo=foo&$bar=bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addQueryString with placeholders, complete", function (assert) {
+		var mConvertedQueryOptions = {$bar : "bar", $foo : "foo"},
+			mQueryOptions = {$bar : "bar", $foo : "foo"},
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(oRequestor).expects("convertQueryOptions")
+			.withExactArgs("/meta/path", sinon.match.same(mQueryOptions), false, true)
+			.returns(mConvertedQueryOptions);
+		this.mock(_Helper).expects("buildQuery").withExactArgs({}).returns("");
+
+		// code under test
+		assert.strictEqual(
+			oRequestor.addQueryString("EntitySet?$foo=~&$bar=~", "/meta/path", mQueryOptions),
+			"EntitySet?$foo=foo&$bar=bar");
 	});
 });
 // TODO: continue-on-error? -> flag on model

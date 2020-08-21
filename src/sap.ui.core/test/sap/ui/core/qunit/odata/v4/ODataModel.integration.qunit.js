@@ -2937,7 +2937,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-398
 	QUnit.test("requestSideEffects: absolute paths", function (assert) {
 		var oBusinessPartnerContext,
-			oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
+			oModel = createModel(sSalesOrderService + "?sap-client=123",
+				{autoExpandSelect : true, groupId : "$auto"}),
 			sEntityContainer = "/com.sap.gateway.default.zui5_epm_sample.v0002.Container",
 			sView = '\
 <Table id="contacts" items="{/ContactList}">\
@@ -3008,17 +3009,12 @@ sap.ui.define([
 			return that.waitForChanges(assert, "get business partner");
 		}).then(function () {
 			that.expectRequest("ContactList(guid)/CONTACT_2_BP?sap-client=123"
-					+ "&$select=BusinessPartnerID,CompanyName", {
+					+ "&$select=BusinessPartnerID,CompanyName,WebAddress", {
 					BusinessPartnerID : "BP1",
-					CompanyName : "TECUM*"
-				})
-				.expectChange("companyName", "TECUM*")
-				// TODO merge with request above
-				.expectRequest("ContactList(guid)/CONTACT_2_BP?sap-client=123"
-					+ "&$select=BusinessPartnerID,WebAddress", {
-					BusinessPartnerID : "BP1",
+					CompanyName : "TECUM*",
 					WebAddress : "www.tecum.com*"
 				})
+				.expectChange("companyName", "TECUM*")
 				.expectChange("webAddress", "www.tecum.com*")
 				.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
 					+ "&$select=ItemPosition,Note,SalesOrderID"
@@ -3097,7 +3093,7 @@ sap.ui.define([
 				})
 				.expectChange("grossAmount", ["42.2"])
 				.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
-					+ "&$select=ItemPosition,Quantity,SalesOrderID"
+					+ "&$select=ItemPosition,Note,Quantity,SalesOrderID"
 					+ "&$filter=SalesOrderID eq 'SO1' and ItemPosition eq '0010'"
 					+ " or SalesOrderID eq 'SO1' and ItemPosition eq '0020'", {
 					value : [{
@@ -3116,6 +3112,7 @@ sap.ui.define([
 				// code under test
 				that.oView.byId("items").getItems()[0].getBindingContext().requestSideEffects([
 					{$PropertyPath : "GrossAmount"},
+					{$PropertyPath : "SOITEM_2_SO/SO_2_SOITEM/Note"},
 					{$PropertyPath : sEntityContainer + "/SalesOrderList/SO_2_SOITEM/Quantity"}
 				]),
 				that.waitForChanges(assert, "(3)")
