@@ -3711,7 +3711,7 @@ sap.ui.define([
 
 			oRequestor.setSessionContext("context", "120");
 
-			oClock.tick(15 * 60 * 1000); // 15 min
+			oClock.tick(30 * 60 * 1000); // 30 min
 			this.mock(jQuery).expects("ajax").never();
 			this.mock(oRequestor).expects("clearSessionContext").withExactArgs(true);
 
@@ -3741,10 +3741,10 @@ sap.ui.define([
 				.returns(createMock(assert, {}, "OK", {
 					"OData-Version" : "4.0",
 					"SAP-ContextId" : "context",
-					"SAP-Http-Session-Timeout" : "600"
+					"SAP-Http-Session-Timeout" : "960"
 				}));
 
-			// send a request that starts a session with timeout=600 (10 min)
+			// send a request that starts a session with timeout=960 (16 min)
 			return oRequestor.sendRequest("POST", sResourcePath).then(function () {
 				oJQueryMock.expects("ajax").withExactArgs(sServiceUrl, {
 						headers : sinon.match({
@@ -3754,12 +3754,12 @@ sap.ui.define([
 					})
 					.returns(createMock(assert, undefined, "OK", {}));
 
-				// expect a "ping" request after 9 min 55 sec
-				oClock.tick(595000);
+				// expect a "ping" request after 15 min 55 sec
+				oClock.tick(955000);
 
-				// expect no "ping" request, but a terminated session after another 9 min 55 sec
-				// (more than 15 min have passed since the latest request)
-				oClock.tick(595000);
+				// expect no "ping" request, but a terminated session after another 15 min 55 sec
+				// (more than 30 min have passed since the latest request)
+				oClock.tick(955000);
 
 				assert.notOk("SAP-ContextId" in oRequestor.mHeaders);
 				resolve();
