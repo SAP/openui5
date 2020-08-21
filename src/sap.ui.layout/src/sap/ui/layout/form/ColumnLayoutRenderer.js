@@ -15,6 +15,8 @@ sap.ui.define([
 	 */
 	var ColumnLayoutRenderer = Renderer.extend(FormLayoutRenderer);
 
+	ColumnLayoutRenderer.apiVersion = 2;
+
 	ColumnLayoutRenderer.getMainClass = function(){
 
 		return "sapUiFormCL";
@@ -32,13 +34,12 @@ sap.ui.define([
 		if (iContainers > 0) {
 			// if more that one container render a DIV around containers
 			if (iContainers > 1 || oLayout.getLayoutDataForElement(aContainers[0], "sap.ui.layout.form.ColumnContainerData")) {
-				oRm.write("<div");
-				oRm.addClass("sapUiFormCLContent");
-				oRm.addClass("sapUiFormCLColumnsM" + iColumnsM);
-				oRm.addClass("sapUiFormCLColumnsL" + iColumnsL);
-				oRm.addClass("sapUiFormCLColumnsXL" + iColumnsXL);
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div");
+				oRm.class("sapUiFormCLContent");
+				oRm.class("sapUiFormCLColumnsM" + iColumnsM);
+				oRm.class("sapUiFormCLColumnsL" + iColumnsL);
+				oRm.class("sapUiFormCLColumnsXL" + iColumnsXL);
+				oRm.openEnd();
 			}
 
 			for (var i = 0; i < iContainers; i++) {
@@ -47,7 +48,7 @@ sap.ui.define([
 			}
 
 			if (iContainers > 1) {
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 		}
 
@@ -62,58 +63,58 @@ sap.ui.define([
 
 		oContainer._checkProperties();
 
-		oRm.write("<section");
-		oRm.writeElementData(oContainer);
-		oRm.addClass("sapUiFormCLContainer");
-		oRm.addClass("sapUiFormCLContainerS" + oOptions.S.Size);
-		oRm.addClass("sapUiFormCLContainerM" + oOptions.M.Size);
-		oRm.addClass("sapUiFormCLContainerL" + oOptions.L.Size);
-		oRm.addClass("sapUiFormCLContainerXL" + oOptions.XL.Size);
+		oRm.openStart("section", oContainer);
+		oRm.class("sapUiFormCLContainer");
+		oRm.class("sapUiFormCLContainerS" + oOptions.S.Size);
+		oRm.class("sapUiFormCLContainerM" + oOptions.M.Size);
+		oRm.class("sapUiFormCLContainerL" + oOptions.L.Size);
+		oRm.class("sapUiFormCLContainerXL" + oOptions.XL.Size);
 		// S-Break not needed as there is no float possible
 		if (oOptions.M.Break) {
-			oRm.addClass("sapUiFormCLContainerMBreak");
+			oRm.class("sapUiFormCLContainerMBreak");
 		}
 		if (oOptions.L.Break) {
-			oRm.addClass("sapUiFormCLContainerLBreak");
+			oRm.class("sapUiFormCLContainerLBreak");
 		}
 		if (oOptions.XL.Break) {
-			oRm.addClass("sapUiFormCLContainerXLBreak");
+			oRm.class("sapUiFormCLContainerXLBreak");
 		}
 		if (oOptions.S.FirstRow) {
-			oRm.addClass("sapUiFormCLContainerSFirstRow");
+			oRm.class("sapUiFormCLContainerSFirstRow");
 		}
 		if (oOptions.M.FirstRow) {
-			oRm.addClass("sapUiFormCLContainerMFirstRow");
+			oRm.class("sapUiFormCLContainerMFirstRow");
 		}
 		if (oOptions.L.FirstRow) {
-			oRm.addClass("sapUiFormCLContainerLFirstRow");
+			oRm.class("sapUiFormCLContainerLFirstRow");
 		}
 		if (oOptions.XL.FirstRow) {
-			oRm.addClass("sapUiFormCLContainerXLFirstRow");
+			oRm.class("sapUiFormCLContainerXLFirstRow");
 		}
 
 		if (oToolbar) {
-			oRm.addClass("sapUiFormContainerToolbar");
+			oRm.class("sapUiFormContainerToolbar");
 		} else if (oTitle) {
-			oRm.addClass("sapUiFormContainerTitle");
+			oRm.class("sapUiFormContainerTitle");
 		}
 
 		if (!oContainer.getExpanded()) {
-			oRm.addClass("sapUiFormCLContainerColl");
+			oRm.class("sapUiFormCLContainerColl");
 		}
 
 		if (oContainer.getTooltip_AsString()) {
-			oRm.writeAttributeEscaped('title', oContainer.getTooltip_AsString());
+			oRm.attr('title', oContainer.getTooltip_AsString());
 		}
-		oRm.writeClasses();
 
 		this.writeAccessibilityStateContainer(oRm, oContainer);
 
-		oRm.write(">");
+		oRm.openEnd();
 
 		this.renderHeader(oRm, oToolbar, oTitle, oContainer._oExpandButton, bExpandable, false, oContainer.getId());
 
-		oRm.write("<div id=\"" + oContainer.getId() + "-content\" class=\"sapUiFormCLContainerCont\">");
+		oRm.openStart("div", oContainer.getId() + "-content")
+			.class("sapUiFormCLContainerCont")
+			.openEnd();
 
 		var aElements = oContainer.getVisibleFormElements();
 		for (var i = 0; i < aElements.length; i++) {
@@ -124,12 +125,12 @@ sap.ui.define([
 				// in Chrome columns are not filled properly for less elements -> an invisible dummy DIV helps
 				// with this logic the result is near to the other browsers
 				// this "work around" don't work for other browsers
-				oRm.write("<div class=\"sapUiFormCLElementDummy\"></div>");
+				oRm.openStart("div").class("sapUiFormCLElementDummy").openEnd().close("div");
 			}
 		}
 
-		oRm.write("</div>");
-		oRm.write("</section>");
+		oRm.close("div");
+		oRm.close("section");
 
 	};
 
@@ -138,27 +139,24 @@ sap.ui.define([
 		var oLabel = oElement.getLabelControl();
 		var oOptions;
 
-		oRm.write("<div");
-		oRm.writeElementData(oElement);
-		oRm.addClass("sapUiFormCLElement");
+		oRm.openStart("div", oElement);
+		oRm.class("sapUiFormCLElement");
 		if (oElement.getTooltip_AsString()) {
-			oRm.writeAttributeEscaped('title', oElement.getTooltip_AsString());
+			oRm.attr('title', oElement.getTooltip_AsString());
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		if (oLabel) {
 			oOptions = oLayout._getFieldSize(oLabel);
-			oRm.write("<div");
-			oRm.addClass("sapUiFormElementLbl");
-			oRm.addClass("sapUiFormCLCellsS" + oOptions.S.Size);
-			oRm.addClass("sapUiFormCLCellsL" + oOptions.L.Size);
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div")
+				.class("sapUiFormElementLbl")
+				.class("sapUiFormCLCellsS" + oOptions.S.Size)
+				.class("sapUiFormCLCellsL" + oOptions.L.Size)
+				.openEnd();
 
 			oRm.renderControl(oLabel);
 
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 
 		var aFields = oElement.getFieldsForRendering();
@@ -169,30 +167,29 @@ sap.ui.define([
 					throw new Error(oField + " is not a valid Form content! Only use valid content in " + oLayout);
 				}
 				oOptions = oLayout._getFieldSize(oField);
-				oRm.write("<div");
-				oRm.addClass("sapUiFormCLCellsS" + oOptions.S.Size);
-				oRm.addClass("sapUiFormCLCellsL" + oOptions.L.Size);
+				oRm.openStart("div");
+				oRm.class("sapUiFormCLCellsS" + oOptions.S.Size);
+				oRm.class("sapUiFormCLCellsL" + oOptions.L.Size);
 				if (oOptions.S.Break) {
-					oRm.addClass("sapUiFormCLCellSBreak");
+					oRm.class("sapUiFormCLCellSBreak");
 				}
 				if (oOptions.L.Break) {
-					oRm.addClass("sapUiFormCLCellLBreak");
+					oRm.class("sapUiFormCLCellLBreak");
 				}
 				if (oOptions.S.Space) {
-					oRm.addClass("sapUiFormCLCellSSpace" + oOptions.S.Space);
+					oRm.class("sapUiFormCLCellSSpace" + oOptions.S.Space);
 				}
 				if (oOptions.L.Space) {
-					oRm.addClass("sapUiFormCLCellLSpace" + oOptions.L.Space);
+					oRm.class("sapUiFormCLCellLSpace" + oOptions.L.Space);
 				}
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openEnd();
 
 				oRm.renderControl(oField);
 
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 		}
-		oRm.write("</div>");
+		oRm.close("div");
 
 	};
 
