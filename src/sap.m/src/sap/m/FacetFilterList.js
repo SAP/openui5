@@ -136,7 +136,9 @@ sap.ui.define([
 			 * in the <code>listOpen</code> event handler function. If the default filtering behavior is prevented then filtering behavior has to be defined at application level
 			 * inside the <code>listOpen</code> event handler function.
 			 */
-			listOpen : {},
+			listOpen: {
+				allowPreventDefault: true
+			},
 
 			/**
 			 * Triggered after the list of items is closed.

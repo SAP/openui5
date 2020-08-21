@@ -2475,7 +2475,7 @@ sap.ui.define([
 		var oSearchSpy = sinon.spy(FacetFilterList.prototype, "_search");
 
 		oFFL.attachEventOnce("listOpen", function(oEvent) {
-			return false;
+			oEvent.preventDefault();
 		});
 		oFFL._setSearchValue("search_value");
 		oFF.addList(oFFL);
