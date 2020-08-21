@@ -11,6 +11,7 @@ sap.ui.define([
 	"./ResponsiveSplitterUtilities",
 	"./SplitPane",
 	"./Splitter",
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/ResizeHandler",
@@ -23,6 +24,7 @@ sap.ui.define([
 	RSUtil,
 	SplitPane,
 	Splitter,
+	Core,
 	Control,
 	ItemNavigation,
 	ResizeHandler,
@@ -101,9 +103,8 @@ sap.ui.define([
 			},
 			associations: {
 				/**
-				 * The default pane that will remain always visible
-				 * If no defaultPane is specified, the ResponsiveSplitter sets the first SplitPane that is added to a PaneContainer in it as a default.
-				 * If <code>requiredParentWidth</code> is reached, the pane will be hidden from the screen even if it is set as default.
+				 * Defines which pane is displayed initially.
+				 * If there is no defaultPane specified, the first pane is considered as default pane.
 				 */
 				defaultPane: { type: "sap.ui.layout.SplitPane", multiple: false }
 			},
@@ -121,12 +122,13 @@ sap.ui.define([
 	ResponsiveSplitter.prototype.init = function () {
 		this._aPaneContainers = [];
 		this._aPanes = [];
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
-		this.addEventDelegate({
-			onAfterRendering: function () {
-				this._initItemNavigation();
-			}
-		}, this);
+		this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.layout");
+
+		this._oItemNavigation = new ItemNavigation();
+		this._oItemNavigation.setCycling(false);
+		this.addDelegate(this._oItemNavigation);
+
+		this._iDefaultPageIndex = 0;
 	};
 
 	ResponsiveSplitter.prototype.onBeforeRendering = function () {
@@ -154,6 +156,8 @@ sap.ui.define([
 		if (oRootContainer) {
 			this._onParentResize();
 		}
+
+		this._setItemNavigation();
 	};
 
 	/**
@@ -161,6 +165,7 @@ sap.ui.define([
 	 */
 	ResponsiveSplitter.prototype.exit = function () {
 		this._detachResizeHandler();
+		this._clearItemNavigation();
 		this._oSplitterDelegate = null;
 	};
 
@@ -177,7 +182,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aContentAreas.length; i++) {
 			sContentId = aContentAreas[i].childNodes[0].id;
-			oAreaContent = sap.ui.getCore().byId(sContentId);
+			oAreaContent = Core.byId(sContentId);
 			iCurrentPaneIndex = i + 1;
 			iNextPaneIndex = i + 2;
 
@@ -244,26 +249,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates an ItemNavigation
-	 * @returns {void}
-	 * @private
-	 */
-	ResponsiveSplitter.prototype._initItemNavigation = function () {
-		if (this._oItemNavigation) {
-			this._bPrevItemNavigation = true;
-			this._clearItemNavigation();
-		}
-		this._oItemNavigation = new ItemNavigation();
-		this._oItemNavigation.setCycling(false);
-		this.addDelegate(this._oItemNavigation);
-		this._setItemNavigation();
-
-		if (this._bPrevItemNavigation) {
-			this._oItemNavigation.focusItem(0);
-		}
-	};
-
-	/**
 	 * Enables ItemNavigation for Paginator
 	 * @returns {void}
 	 * @private
@@ -279,6 +264,8 @@ sap.ui.define([
 			}
 		}
 		this._oItemNavigation.setItemDomRefs(aDomRefs);
+
+		this._oItemNavigation.setFocusedIndex(this._iDefaultPageIndex);
 	};
 
 	/**
@@ -453,12 +440,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the existing layout and activates the first page
+	 * Clears the existing layout and activates the default page
 	 * Invokes _fillPageContent to build a new layout
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._arrangeContent = function () {
-		var aPages = this.getAggregation("_pages") || [];
+		var aPages = this.getAggregation("_pages") || [],
+			iDefaultPageIndex = 0,
+			oDefaultPane = Core.byId(this.getDefaultPane()),
+			oDefaultPageContent,
+			sDefaultPageContentId,
+			i;
+
 		this._clearContent();
 		aPages.forEach(function (oPage) {
 			oPage.setVisible(false);
@@ -466,7 +459,23 @@ sap.ui.define([
 
 		this._fillPageContent(this.getRootPaneContainer());
 
-		this._activatePage(0);
+		if (oDefaultPane) {
+			oDefaultPageContent = oDefaultPane.getContent();
+
+			if (oDefaultPageContent) {
+				sDefaultPageContentId = oDefaultPageContent.getId();
+
+				for (i = 0; i < aPages.length; i++) {
+					if (aPages[i].containsControl(sDefaultPageContentId)) {
+						iDefaultPageIndex = i;
+						break;
+					}
+				}
+			}
+		}
+
+		this._iDefaultPageIndex = iDefaultPageIndex;
+		this._activatePage(iDefaultPageIndex);
 	};
 
 	/**
@@ -612,7 +621,7 @@ sap.ui.define([
 			iPageIndex;
 
 		if (aTargetClassList && aTargetClassList.contains("sapUiResponsiveSplitterPaginatorButton")) {
-			iPageIndex = oTarget.getAttribute("page-index");
+			iPageIndex = parseInt(oTarget.getAttribute("page-index"));
 			this._activatePage(iPageIndex);
 		} else if (aTargetClassList && aTargetClassList.contains("sapUiResponsiveSplitterPaginatorNavButton")) {
 			if (aTargetClassList.contains("sapUiResponsiveSplitterPaginatorButtonForward")) {
@@ -632,9 +641,12 @@ sap.ui.define([
 		var $VisibleButtons = this._getVisibleButtons(),
 			iHiddenPaneCount = this._getHiddenPanes().length,
 			$HiddenButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton.sapUiResponsiveSplitterHiddenElement"),
+			iPageIndex,
 			$HiddenRightButtons = $HiddenButtons.filter(function() {
-				return this.getAttribute("page-index") >= CONSTANTS.MAX_VISIBLE_BUTTONS &&
-				 this.getAttribute("page-index") <= iHiddenPaneCount;
+				iPageIndex = parseInt(this.getAttribute("page-index"));
+
+				return iPageIndex >= CONSTANTS.MAX_VISIBLE_BUTTONS &&
+					iPageIndex <= iHiddenPaneCount;
 			});
 
 		if ($HiddenRightButtons.length > 0) {
@@ -653,7 +665,7 @@ sap.ui.define([
 		var $VisibleButtons = this._getVisibleButtons(),
 			iMaxPageCount = this._getMaxPageCount() - CONSTANTS.MAX_VISIBLE_BUTTONS,
 			$HiddenButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton.sapUiResponsiveSplitterHiddenElement"),
-			$HiddenLeftButtons = $HiddenButtons.filter(function() { return this.getAttribute("page-index") < iMaxPageCount; });
+			$HiddenLeftButtons = $HiddenButtons.filter(function() { return parseInt(this.getAttribute("page-index")) < iMaxPageCount; });
 
 		if ($HiddenLeftButtons.length > 0) {
 			$VisibleButtons.last().addClass("sapUiResponsiveSplitterHiddenElement");

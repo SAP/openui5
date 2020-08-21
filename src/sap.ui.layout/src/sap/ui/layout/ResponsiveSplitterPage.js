@@ -57,5 +57,20 @@ sap.ui.define([
 		}
 	});
 
+	ResponsiveSplitterPage.prototype.containsControl = function (sControlId) {
+
+		var oContent = Core.byId(this.getAssociation("content"));
+
+		if (!oContent) {
+			return false;
+		}
+
+		if (oContent.isA("sap.ui.layout.AssociativeSplitter")) {
+			return oContent.containsControl(sControlId);
+		}
+
+		return oContent.getId() === sControlId;
+	};
+
 	return ResponsiveSplitterPage;
 });
