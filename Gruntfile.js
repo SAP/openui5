@@ -94,7 +94,7 @@ module.exports = function(grunt) {
 						// Third party libs which should NOT be part of the all-in-one file
 						'!sap/ui/thirdparty/blanket.js',
 						// '!sap/ui/thirdparty/crossroads.js'
-						// '!sap/ui/thirdparty/caja-htmlsanitizer.js'
+						// '!sap/ui/thirdparty/caja-html-sanitizer.js'
 						'!sap/ui/thirdparty/d3.js',
 						'!sap/ui/thirdparty/datajs.js',
 						'!sap/ui/thirdparty/es6-object-assign.js',
