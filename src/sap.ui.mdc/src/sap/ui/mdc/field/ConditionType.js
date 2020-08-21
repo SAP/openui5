@@ -387,6 +387,7 @@ sap.ui.define([
 
 		if (vValue === "") {
 			// check for empty key
+			aValues = [];
 			vKey = vValue;
 			vCheckValue = vValue;
 		} else {

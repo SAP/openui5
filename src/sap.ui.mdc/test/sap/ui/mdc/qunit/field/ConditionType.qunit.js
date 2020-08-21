@@ -1348,6 +1348,25 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Parsing: empty string -> key and description with not found", function(assert) {
+
+		oFieldHelp.getItemForValue.withArgs("").throws(new ParseException("not found"));
+
+		var oException;
+		var oCondition;
+
+		try {
+			oCondition = oConditionType.parseValue("");
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+		assert.equal(oException && oException.message, "not found", "Exception message");
+		assert.notOk(oCondition, "no condition returned");
+
+	});
+
 	QUnit.test("Parsing: empty string -> key only", function(assert) {
 
 		oConditionType.oFormatOptions.display = "Value"; // fake setting directly
