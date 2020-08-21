@@ -1195,7 +1195,7 @@ sap.ui.define([
 			var oList = sap.ui.getCore().byId(oControl.getAssociation("list"));
 			assert(oList, "The facet filter button should be associated with a list.");
 
-			bIsListOpenDefaultPrevented = oList.fireListOpen({});
+			bIsListOpenDefaultPrevented = !oList.fireListOpen({});
 
 			this._moveListToDisplayContainer(oList, oPopover);
 			oPopover.openBy(oControl);
