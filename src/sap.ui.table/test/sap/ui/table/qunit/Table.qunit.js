@@ -2328,6 +2328,30 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("#pushSortedColumn, #getSortedColumns", function(assert) {
+		function assertSortedColumns(aExpectedColumns) {
+			var aSortedColumns = oTable.getSortedColumns();
+
+			assert.equal(aSortedColumns.length, aExpectedColumns.length, "Number of sorted columns");
+
+			for (var i = 0; i < aSortedColumns.length; i++) {
+				assert.strictEqual(aSortedColumns[i], aExpectedColumns[i], "Sorted column #" + i);
+			}
+		}
+
+		oTable.pushSortedColumn(oTable.getColumns()[1]);
+		assertSortedColumns([oTable.getColumns()[1]]);
+
+		oTable.pushSortedColumn(oTable.getColumns()[0], true);
+		assertSortedColumns([oTable.getColumns()[1], oTable.getColumns()[0]]);
+
+		oTable.pushSortedColumn(oTable.getColumns()[0], true);
+		assertSortedColumns([oTable.getColumns()[1], oTable.getColumns()[0]]);
+
+		oTable.pushSortedColumn(oTable.getColumns()[0]);
+		assertSortedColumns([oTable.getColumns()[0]]);
+	});
+
 	QUnit.test("Multi-columns sorting", function(assert) {
 		var done = assert.async();
 		creatSortingTableData();
@@ -2335,13 +2359,23 @@ sap.ui.define([
 		var fnHandler = function() {
 			var aSortedColumns = oTable.getSortedColumns();
 
-			if (aSortedColumns.length === 2) {
-				assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "check column name.");
-				assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "check column name.");
+			assert.equal(aSortedColumns.length, 2, "2 columns are sorted");
+			assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "First column sort property");
+			assert.strictEqual(aSortedColumns[0].getSortOrder(), SortOrder.Ascending, "First column sort order");
+			assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "Second column sort property");
+			assert.strictEqual(aSortedColumns[1].getSortOrder(), SortOrder.Ascending, "Second column sort order");
 
-				assert.strictEqual(oTable.getRows()[3].getCells()[0].getText(), "Open", "second sorting column works.");
-				assert.strictEqual(oTable.getRows()[3].getCells()[1].getText(), "Doris", "first sorting column works.");
-			}
+			assert.strictEqual(oTable.getRows()[3].getCells()[0].getText(), "Open", "Second sorting column works.");
+			assert.strictEqual(oTable.getRows()[3].getCells()[1].getText(), "Doris", "First sorting column works.");
+
+			oTable.sort(aSortedColumns[0], SortOrder.Descending, true);
+
+			aSortedColumns = oTable.getSortedColumns();
+			assert.equal(aSortedColumns.length, 2, "2 columns are sorted");
+			assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "First column sort property");
+			assert.strictEqual(aSortedColumns[0].getSortOrder(), SortOrder.Descending, "First column sort order");
+			assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "Second column sort property");
+			assert.strictEqual(aSortedColumns[1].getSortOrder(), SortOrder.Ascending, "Second column sort order");
 
 			done();
 		};

@@ -2963,7 +2963,9 @@ sap.ui.define([
 		if (!bAdd) {
 			this._aSortedColumns = [];
 		}
-		this._aSortedColumns.push(oColumn);
+		if (this._aSortedColumns.indexOf(oColumn) === -1) {
+			this._aSortedColumns.push(oColumn);
+		}
 	};
 
 	/**
