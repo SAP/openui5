@@ -20,7 +20,9 @@ sap.ui.define([
 			'xmlns:dt="sap.ui.dt" displayBlock="true" unknownProperty="true">' +
 			'<Panel id="panel">' +
 				'<content>' +
-					'<Button text="Button" id="button" dt:test="testvalue"></Button>' +
+					'<Button text="Button" id="button"></Button>' +
+					'<Button text="Button With Designtime Data" id="buttonWithDTData" dt:test="testvalue"></Button>' +
+					'<Button text="Button using core:require" id="buttonRequire" core:require="{Link:\'sap/m/Link\'}"></Button>' +
 					'<Button text="StashedButton" id="stashedButton" stashed="true"></Button>' +
 					'<Button text="Wrong Type value" id="brokenButton" type="somethingInvalid"></Button>' +
 					'<core:ExtensionPoint name="extension">' +
@@ -117,6 +119,23 @@ sap.ui.define([
 			assert.equal(node.getAttribute("id"), "extensionButton", "id was not enriched");
 			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
 			assert.ok(this.oView.byId("extensionButton"), "extension button is created");
+		}.bind(this));
+	});
+
+	QUnit.test("do not collect known namespaces as custom settings", function(assert) {
+		return this.oView.loaded().then(function() {
+			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
+			// serialize and deserialize the XML to enforce the namespaced attributes
+			this.xml = jQuery.sap.parseXML(
+				this.xml.documentElement.outerHTML
+			);
+			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
+			assert.equal(
+				this.oView.byId("button").data("sap-ui-custom-settings"), null,
+					"no custom setting should have been collected");
+			assert.equal(
+				this.oView.byId("buttonRequire").data("sap-ui-custom-settings"), null,
+					"no custom setting should have been collected");
 		}.bind(this));
 	});
 
@@ -268,7 +287,7 @@ sap.ui.define([
 
 	QUnit.test("Adding and cloning of sap-ui-custom-settings from xml namespaced attributes", function (assert) {
 		return this.oView.loaded().then(function() {
-			var oButton = this.oView.byId("button"),
+			var oButton = this.oView.byId("buttonWithDTData"),
 				mCustomSettings = oButton.data("sap-ui-custom-settings");
 			assert.ok(mCustomSettings != null,"Custom Settings available for button with namespace sap.ui.dt");
 			assert.ok(mCustomSettings["sap.ui.dt"].test === "testvalue","Custom Settings test available for button in namespace sap.ui.dt");

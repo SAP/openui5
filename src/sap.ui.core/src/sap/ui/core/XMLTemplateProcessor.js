@@ -83,6 +83,77 @@ function(
 	}
 
 	/**
+	 * The official XHTML namespace. Can be used to embed XHTML in an XMLView.
+	 *
+	 * Note: Using this namespace prevents semantic rendering of an XMLView.
+	 * @const
+	 * @private
+	 */
+	var XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+
+	/**
+	 * The official SVG namespace. Can be used to embed SVG in an XMLView.
+	 *
+	 * Note: Using this namespace prevents semantic rendering of an XMLView.
+	 * @const
+	 * @private
+	 */
+	var SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+
+	/**
+	 * XML Namespace of the core library.
+	 *
+	 * This namespace is used to identify some sap.ui.core controls or entities with a special handling
+	 * and for the special require attribute that can be used to load modules.
+	 * @const
+	 * @private
+	 */
+	var CORE_NAMESPACE = "sap.ui.core";
+
+	/**
+	 * An XML namespace that apps can use to add custom data to a control's XML element.
+	 * The name of the attribute will be used as key, the value as value of a CustomData element.
+	 *
+	 * This namespace is allowed for public usage.
+	 * @const
+	 * @private
+	 */
+	var CUSTOM_DATA_NAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1";
+
+	/**
+	 * An XML namespace that can be used by tooling to add attributes with support information to an element.
+	 * @const
+	 * @private
+	 */
+	var SUPPORT_INFO_NAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.support.Support.info/1";
+
+	/**
+	 * An XML namespace that denotes the XML composite definition.
+	 * Processing of such nodes is skipped.
+	 * @const
+	 * @private
+	 */
+	var XML_COMPOSITE_NAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1";
+
+	/**
+	 * An XML namespace that is used for a marker attribute when a node's ID has been
+	 * prefixed with the view ID (enriched). The marker attribute helps to prevent multiple prefixing.
+	 *
+	 * This namespace is only used inside the XMLTemplateProcessor.
+	 * @const
+	 * @private
+	 */
+	var ID_MARKER_NAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1";
+
+	/**
+	 * A prefix for XML namespaces that are reserved for XMLPreprocessor extensions.
+	 * Attributes with a namespace starting with this prefix, are ignored by this class.
+	 * @const
+	 * @private
+	 */
+	var PREPROCESSOR_NAMESPACE_PREFIX = "http://schemas.sap.com/sapui5/preprocessorextension/";
+
+	/**
 	 * Creates a function based on the passed mode and callback which applies a callback to each child of a node.
 	 * @param {boolean} bAsync The strategy to choose
 	 * @param {function} fnCallback The callback to apply
@@ -322,7 +393,7 @@ function(
 	 *  doesn't have require context defined, undefined is returned.
 	 */
 	function parseAndLoadRequireContext(xmlNode, bAsync) {
-		var sCoreContext = xmlNode.getAttributeNS("sap.ui.core", "require"),
+		var sCoreContext = xmlNode.getAttributeNS(CORE_NAMESPACE, "require"),
 			oRequireContext,
 			oModules,
 			sErrorMessage;
@@ -537,7 +608,7 @@ function(
 			if ( xmlNode.nodeType === 1 /* ELEMENT_NODE */ ) {
 
 				var sLocalName = localName(xmlNode);
-				if (xmlNode.namespaceURI === "http://www.w3.org/1999/xhtml" || xmlNode.namespaceURI === "http://www.w3.org/2000/svg") {
+				if (xmlNode.namespaceURI === XHTML_NAMESPACE || xmlNode.namespaceURI === SVG_NAMESPACE) {
 					// write opening tag
 					aResult.push("<" + sLocalName + " ");
 					// write attributes
@@ -570,7 +641,7 @@ function(
 					aResult.push("</" + sLocalName + ">");
 
 
-				} else if (sLocalName === "FragmentDefinition" && xmlNode.namespaceURI === "sap.ui.core") {
+				} else if (sLocalName === "FragmentDefinition" && xmlNode.namespaceURI === CORE_NAMESPACE) {
 					// a Fragment element - which is not turned into a control itself. Only its content is parsed.
 					parseChildren(xmlNode, false, true, pRequireContext);
 					// TODO: check if this branch is required or can be handled by the below one
@@ -715,7 +786,7 @@ function(
 		 */
 		function createControls(node, pRequireContext) {
 			// differentiate between SAPUI5 and plain-HTML children
-			if (node.namespaceURI === "http://www.w3.org/1999/xhtml" || node.namespaceURI === "http://www.w3.org/2000/svg" ) {
+			if (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE ) {
 				var id = node.attributes['id'] ? node.attributes['id'].textContent || node.attributes['id'].text : null;
 
 				if (bEnrichFullIds) {
@@ -774,7 +845,7 @@ function(
 		 */
 		function createControlOrExtension(node, pRequireContext) { // this will also be extended for Fragments with multiple roots
 
-			if (localName(node) === "ExtensionPoint" && node.namespaceURI === "sap.ui.core" ) {
+			if (localName(node) === "ExtensionPoint" && node.namespaceURI === CORE_NAMESPACE) {
 
 				if (bEnrichFullIds) {
 					// Processing the different types of ExtensionPoints (XML, JS...) is not possible, hence
@@ -871,6 +942,7 @@ function(
 					for (var i = 0; i < node.attributes.length; i++) {
 						var attr = node.attributes[i],
 							sName = attr.name,
+							sNamespace,
 							oInfo = mKnownSettings[sName],
 							sValue = attr.value;
 
@@ -919,17 +991,23 @@ function(
 								}
 							}
 						} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
-							if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1") {  // CustomData attribute found
+							sNamespace = attr.namespaceURI;
+							if (sNamespace === CUSTOM_DATA_NAMESPACE) {  // CustomData attribute found
 								var sLocalName = localName(attr);
 								aCustomData.push(new CustomData({
 									key:sLocalName,
 									value:parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController)
 								}));
-							} else if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.support.Support.info/1") {
+							} else if (sNamespace === SUPPORT_INFO_NAMESPACE) {
 								sSupportData = sValue;
-							} else if (attr.namespaceURI && attr.namespaceURI.indexOf("http://schemas.sap.com/sapui5/preprocessorextension/") === 0) {
+							} else if (sNamespace && sNamespace.startsWith(PREPROCESSOR_NAMESPACE_PREFIX)) {
 								Log.debug(oView + ": XMLView parser ignored preprocessor attribute '" + sName + "' (value: '" + sValue + "')");
-							} else if (sName.indexOf("xmlns:") !== 0 ) { // other, unknown namespace and not an xml namespace alias definition
+							} else if (sNamespace === CORE_NAMESPACE
+									   || sNamespace === ID_MARKER_NAMESPACE
+									   || sNamespace && sNamespace.startsWith("xmlns:") ) {
+								// ignore namespaced attributes that are handled by the XMLTP itself
+							} else {
+								// all other namespaced attributes are kept as custom settings
 								if (!mCustomSettings) {
 									mCustomSettings = {};
 								}
@@ -1038,7 +1116,7 @@ function(
 				// inspect only element nodes
 				if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
 
-					if (childNode.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1") {
+					if (childNode.namespaceURI === XML_COMPOSITE_NAMESPACE) {
 						mSettings[localName(childNode)] = childNode.querySelector("*");
 						return;
 					}
@@ -1133,7 +1211,7 @@ function(
 							}
 							return aControls;
 						});
-					} else if (localName(node) !== "FragmentDefinition" || node.namespaceURI !== "sap.ui.core") { // children of FragmentDefinitions are ok, they need no aggregation
+					} else if (localName(node) !== "FragmentDefinition" || node.namespaceURI !== CORE_NAMESPACE) { // children of FragmentDefinitions are ok, they need no aggregation
 						throw new Error("Cannot add direct child without default aggregation defined for control " + oMetadata.getElementName());
 					}
 
@@ -1262,7 +1340,7 @@ function(
 		}
 
 		function getId(oView, xmlNode, sId) {
-			if (xmlNode.getAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id")) {
+			if (xmlNode.getAttributeNS(ID_MARKER_NAMESPACE, "id")) {
 				return xmlNode.getAttribute("id");
 			} else {
 				return createId(sId ? sId : xmlNode.getAttribute("id"));
@@ -1271,7 +1349,7 @@ function(
 
 		function setId(oView, xmlNode) {
 			xmlNode.setAttribute("id", createId(xmlNode.getAttribute("id")));
-			xmlNode.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
+			xmlNode.setAttributeNS(ID_MARKER_NAMESPACE, "id", true);
 		}
 
 	}
