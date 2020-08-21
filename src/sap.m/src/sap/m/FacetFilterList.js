@@ -132,7 +132,9 @@ sap.ui.define([
 			/**
 			 * Fired before the filter list is opened.
 			 */
-			listOpen : {},
+			listOpen: {
+				allowPreventDefault: true
+			},
 
 			/**
 			 * Triggered after the list of items is closed.
