@@ -1175,6 +1175,7 @@ sap.ui.define([
 		//Arrange
 		var oSetRequestHeaderSpy = this.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		var oFileUploader = new sap.ui.unified.FileUploader("fu", {
+			uploadUrl: "test",
 			sendXHR: true,
 			useMultipart: false,
 			headerParameters: [
