@@ -175,6 +175,24 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		}
 	});
 
+	QUnit.test("bindings are updated when we begin connecting to models with enabled lazyloading, if we are not already connected", function (assert) {
+
+		// Arrange
+		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
+		oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
+		oBlock = oTargetSubSection.getBlocks()[0],
+		fnUpdateBindingSpy = this.sandbox.spy(oBlock, "updateBindings");
+
+		// Act: explicitly connect the section models (lazy loading)
+		// _bConnect private boolean flag is mocked to "false" in order to target our test scenario
+		oBlock._bConnected = false;
+		oOPL._connectModelsForSections([oTargetSubSection]);
+
+		// Assert
+		assert.ok(fnUpdateBindingSpy.calledOnce, "updateBindings is called once only");
+		assert.ok(fnUpdateBindingSpy.calledWithExactly(true, null), "updateBindings is called with the correct arguments");
+	});
+
 	QUnit.test("initView event is fired", function (assert) {
 
 		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
