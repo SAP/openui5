@@ -575,6 +575,9 @@ sap.ui.define(function() {
 					version: 1,
 					qunitBridge: true
 				}
+			},
+			"ui/base/syncXHRFix-error-handling": {
+				title: "QUnit Page for syncXHRFix (error handling)"
 			}
 		}
 	};
