@@ -145,11 +145,9 @@ sap.ui.define([
 	}});
 
 	Token.prototype.init = function() {
-		var bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
-			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline",
-			oDeleteIcon = new Icon({
+		var oDeleteIcon = new Icon({
 				id : this.getId() + "-icon",
-				src : sSrcIcon,
+				src : "sap-icon://decline",
 				noTabStop: true,
 				press : this._fireDeleteToken.bind(this)
 			});
@@ -295,16 +293,6 @@ sap.ui.define([
 			//metaKey for MAC command
 			this.onsapspace(oEvent);
 			oEvent.preventDefault();
-		}
-	};
-
-	Token.prototype.onThemeChanged = function () {
-		var oDeleteIcon = this.getAggregation("deleteIcon"),
-			bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
-			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline";
-
-		if (oDeleteIcon && oDeleteIcon.getSrc() !== sSrcIcon) {
-			oDeleteIcon.setSrc(sSrcIcon);
 		}
 	};
 

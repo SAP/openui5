@@ -3,20 +3,18 @@
 /* Base theme                   */
 /* ============================ */
 
-// Forces the usage of "sap-icon://sys-cancel" if set to true else "sap-icon://decline" is used
-@_sap_m_Token_Sys_Cancel_Icon: true;
-
 @_sap_m_Token_TokenPadding: 0.5rem;
 @_sap_m_Token_TokenCompactPadding: 0.25rem;
-@_sap_m_Token_TokenSize: @sapMFontMediumSize + (2 * @_sap_m_Token_TokenPadding);
-@_sap_m_Token_TokenCompactSize: @sapMFontMediumSize  + @_sap_m_Token_TokenCompactPadding;
+@_sap_m_Token_LeftPadding: 0.375rem;
+@_sap_m_Token_TokenSize: @sapMFontMediumSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
+@_sap_m_Token_TokenCompactSize: @sapMFontSmallSize + @_sap_m_Token_TokenCompactPadding;
 
 .sapMToken {
 	display: inline-block;
 	overflow: hidden;
 	box-sizing: border-box;
 	font-size: @sapMFontMediumSize;
-	padding-left: 0.375rem;
+	padding-left: @_sap_m_Token_LeftPadding;
 	height: 1.625rem;
 	background: @sapUiButtonBackground;
 	border: 1px solid @sapUiButtonBorderColor;
@@ -95,6 +93,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	display: inline-block;
 	line-height: 1.5rem;
 	padding: 0 0.5rem;
+	color: @sapUiContentIconColor;
 	font-size: @sapMFontLargeSize;
 	box-sizing: border-box;
 	touch-action: none;
@@ -115,7 +114,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapUiSizeCondensed .sapMTokenIcon {
 
 .sapUiSizeCompact .sapMToken {
 	font-size: @sapMFontSmallSize;
-	padding-left: 0.25rem;
+	padding-left: @_sap_m_Token_TokenCompactPadding;
 	height: 1.25rem;
 }
 
@@ -154,10 +153,6 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover {
 
 .sapMTokenSelected .sapMTokenIcon {
 	color: @sapUiToggleButtonPressedTextColor;
-}
-
-.sapMTokenIcon {
-	color: @sapUiContentIconColor;
 }
 
 .sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
