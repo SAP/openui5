@@ -82,12 +82,12 @@ sap.ui.define([
 			oConditionChangeBinding.attachChange(this.handleConditionModelChange.bind(this));
 
 			oCM.addCondition("ProductId", Condition.createCondition("EQ", ["22134T"], undefined, undefined, ConditionValidated.Validated));
-			oCM.addCondition("Name", Condition.createCondition("StartsWith", ["Web"]));
-			oCM.addCondition("Date", Condition.createCondition("EQ", [new Date(1397520000000)]));
-			oCM.addCondition("Quantity", Condition.createCondition("EQ", [22]));
-			oCM.addCondition("Description", Condition.createCondition("Contains", ["USB"]));
+			oCM.addCondition("Name", Condition.createCondition("StartsWith", ["Web"], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("Date", Condition.createCondition("EQ", [new Date(1397520000000)], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("Quantity", Condition.createCondition("EQ", [22], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("Description", Condition.createCondition("Contains", ["USB"], undefined, undefined, ConditionValidated.NotValidated));
 			oCM.addCondition("Status", Condition.createCondition("EQ", ["S1"], undefined, undefined, ConditionValidated.Validated));
-			oCM.addCondition("WeightMeasure,WeightUnit", Condition.createCondition("EQ", [[700, "g"]]));
+			oCM.addCondition("WeightMeasure,WeightUnit", Condition.createCondition("EQ", [[700, "g"]], undefined, undefined, ConditionValidated.NotValidated));
 
 			//set the model on your view
 			oView.setModel(oCM, "cm");

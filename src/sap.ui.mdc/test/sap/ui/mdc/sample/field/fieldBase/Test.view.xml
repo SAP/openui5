@@ -102,7 +102,8 @@
 								maxConditions="1"
 								placeholder="{/#Product/Description/@sap:label}"
 								liveChange="handleLiveChange"
-								submit="handleSubmit">
+								submit="handleSubmit"
+								fieldHelp="CFH1">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -264,7 +265,8 @@
 								dataType="Edm.Decimal"
 								maxConditions="-1"
 								liveChange="handleLiveChange"
-								submit="handleSubmit">
+								submit="handleSubmit"
+								fieldHelp="CFH1">
 								<mdcField:contentDisplay>
 									<m:SegmentedButton items="{path: '$field>/conditions'}">
 										<m:items>
@@ -571,6 +573,9 @@
 							</m:Button>
 						</form:FormElement>
 					</form:FormContainer>
+					<form:dependents>
+						<mdcField:ConditionFieldHelp id="CFH1" />
+					</form:dependents>
 				</form:Form>
 			</m:ScrollContainer>
 			<m:ScrollContainer vertical="true" height="25%">

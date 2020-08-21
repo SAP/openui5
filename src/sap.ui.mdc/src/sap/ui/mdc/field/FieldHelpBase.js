@@ -889,8 +889,23 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._isTextOrKeyRequestSupported = function() {
-		// to be implements by the concrete FieldHelp
+		// to be implemented by the concrete FieldHelp
 		return false;
+	};
+
+	/**
+	 * Defines if the field help supports input validation to determine key or description
+	 *
+	 * @returns {boolean} Flag if validation is supported
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
+	 * @since 1.82.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype.isValidationSupported = function() {
+		// to be implemented by the concrete FieldHelp
+		return true;
 	};
 
 	/**
