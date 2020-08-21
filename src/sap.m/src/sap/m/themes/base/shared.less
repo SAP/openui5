@@ -210,26 +210,37 @@
 	content: attr(data-badge);
 }
 
-.sapMBadgeAttention.sapMBadgeAnimationAdd,
-.sapMBadgeDefault.sapMBadgeAnimationAdd:after {
-	animation: sapMBadgeAppearBounce .1s;
-}
-.sapMBadgeDefault.sapMBadgeAnimationAdd:before {
-	content: attr(data-badge);
-	animation: sapMBadgeAppearPulse .2s;
-}
-.sapMBadgeAttention.sapMBadgeAnimationRemove,
-.sapMBadgeDefault.sapMBadgeAnimationRemove:after {
-	animation: sapMBadgeDisappear .1s;
-	animation-fill-mode: forwards;
-	transform-origin: center;
+html[data-sap-ui-animation='on'] {
+	.sapMBadgeAttention.sapMBadgeAnimationAdd,
+	.sapMBadgeDefault.sapMBadgeAnimationAdd:after {
+		animation: sapMBadgeAppearBounce .1s;
+	}
+
+	.sapMBadgeDefault.sapMBadgeAnimationAdd:before {
+		content: attr(data-badge);
+		animation: sapMBadgeAppearPulse .2s;
+	}
+
+	.sapMBadgeAttention.sapMBadgeAnimationRemove,
+	.sapMBadgeDefault.sapMBadgeAnimationRemove:after {
+		animation: sapMBadgeDisappear .1s;
+		animation-fill-mode: forwards;
+		transform-origin: center;
+	}
+
+	.sapMBadgeDefault.sapMBadgeAnimationUpdate:after {
+		animation: sapMBadgeUpdate .1s;
+		animation-fill-mode: forwards;
+	}
 }
 
-.sapMBadgeDefault.sapMBadgeAnimationUpdate:after {
-	animation: sapMBadgeUpdate .1s;
-	animation-fill-mode: forwards;
+html[data-sap-ui-animation='off'] {
+	.sapMBadgeAttention.sapMBadgeAnimationRemove,
+	.sapMBadgeDefault.sapMBadgeAnimationRemove:after {
+		scale: 0;
+		opacity: 0;
+	}
 }
-
 
 .badgeAccentColorMixin(@n, @i: 1) when (@i =< @n) {
 	@value: 'sapAccentColor@{i}';
