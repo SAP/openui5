@@ -522,6 +522,15 @@ sap.ui.define([
 		return oContainerPromise.then(function(oContainer){
 			// Add custom style class in order to display marked items accordingly
 			oContainer.addStyleClass("sapUiMdcPersonalizationDialog");
+
+			//EscapeHandler is required for non-liveMode
+			if (!this.getLiveMode()){
+				oContainer.setEscapeHandler(function(oDialogClose){
+					this._closeDialog(oContainer, "Cancel");
+					oDialogClose.resolve();
+				}.bind(this));
+			}
+
 			// Set compact style class if the table is compact too
 			oContainer.toggleStyleClass("sapUiSizeCompact", !!jQuery(this.getAdaptationControl()).closest(".sapUiSizeCompact").length);
 			return oContainer;
@@ -556,25 +565,12 @@ sap.ui.define([
 			var oDialog = oEvt.getSource().getParent();
 			// Apply a diff to create changes for flex
 			this._handleChange();
-			oDialog.close();
-			this.bIsDialogOpen = false;
-			this.fireAfterP13nContainerCloses({
-				reason: "Ok",
-				container: oDialog
-			});
-			oDialog.destroy();
+			this._closeDialog(oDialog, "Ok");
 		}.bind(this);
 
 		var fnDialogCancel = function(oEvt) {
-			var oDialog = oEvt.getSource().getParent();
-			// Discard the collected changes
-			oDialog.close();
-			this.bIsDialogOpen = false;
-			this.fireAfterP13nContainerCloses({
-				reason: "Cancel",
-				container: oDialog
-			});
-			oDialog.destroy();
+			var oContainer = oEvt.getSource().getParent();
+			this._closeDialog(oContainer, "Cancel");
 		}.bind(this);
 
 		var mSettings = Object.assign({
@@ -586,6 +582,16 @@ sap.ui.define([
 		}, this.getTypeConfig(this.sP13nType).containerSettings);
 
 		return P13nBuilder.createP13nDialog(oPanel, mSettings);
+	};
+
+	AdaptationController.prototype._closeDialog = function(oContainer, sReason){
+		oContainer.close();
+		this.bIsDialogOpen = false;
+		this.fireAfterP13nContainerCloses({
+			reason: sReason,
+			container: oContainer
+		});
+		oContainer.destroy();
 	};
 
 	/************************************************ delta calculation *************************************************/

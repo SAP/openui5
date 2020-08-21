@@ -219,6 +219,36 @@ sap.ui.define([
 	});
 
 	// ----------------------------------------------------------------
+	// Select two columns and 'Escape' and reopen to check
+	// ----------------------------------------------------------------
+	opaTest("When I do some changes and press 'Escape', the changes should be discarded + Dialog should open again", function (Given, When, Then) {
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		Then.thePersonalizationDialogOpens();
+
+		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("Created By", Arrangement.P13nDialog.Titles.columns, aTableItems);
+
+		When.iPressButtonWithText("Reorder");
+		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
+		When.iClickOnTableItem("Created By").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
+
+		//Cancel selection
+		When.iPressEscapeInDialog();
+
+		//Reopen Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+
+		//check that Table is unchanged
+		Then.iShouldSeeP13nItem("Country", 0);
+		Then.iShouldSeeP13nItem("Name", 1);
+		Then.iShouldSeeP13nItem("Founding Year", 2);
+		Then.iShouldSeeP13nItem("Changed By", 3);
+		Then.iShouldSeeP13nItem("Created On", 4);
+
+	});
+
+	// ----------------------------------------------------------------
 	// Select two columns and 'Confirm'
 	// ----------------------------------------------------------------
 	opaTest("When I select two additional columns and move them one up, the table should be changed", function (Given, When, Then) {

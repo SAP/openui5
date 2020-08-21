@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/mdc/integration/testlibrary/p13n/Actions"
-], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, TestLibActions) {
+	"sap/ui/mdc/integration/testlibrary/p13n/Actions",
+	"./actions/PressKey"
+], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, TestLibActions, PressKey) {
 	"use strict";
 
 	/**
@@ -28,6 +29,16 @@ sap.ui.define([
 
 		iLookAtTheScreen: function () {
 			return this;
+		},
+
+		iPressEscapeInDialog: function() {
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.Dialog",
+				actions: new PressKey({
+					keyCode: 27
+				})
+			});
 		},
 
 		iTogglePanelInDialog: function(sGroupName) {
