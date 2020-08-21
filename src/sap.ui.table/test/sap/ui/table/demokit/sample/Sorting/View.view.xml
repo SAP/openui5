@@ -28,7 +28,7 @@
 							press="sortCategoriesAndName"/>
 						<m:Button
 							icon="sap-icon://sort"
-							tooltip="Sort Categories"
+							tooltip="Sort Categories in addition to current sorting"
 							press="sortCategories"/>
 						<m:Button
 							icon="sap-icon://decline"
