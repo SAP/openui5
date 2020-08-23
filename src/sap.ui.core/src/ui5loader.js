@@ -1082,14 +1082,14 @@
 	 * module name. It then resolves the pending modules in the queue. Only one entry can get the name of the module
 	 * if there are more entries, then this is an error
 	 */
-	var queue = new function ModuleDefinitionQueue() {
+	function ModuleDefinitionQueue() {
 		var aQueue = [],
 			iRun = 0,
 			vTimer;
 
 		this.push = function(name, deps, factory, _export) {
 			if ( log.isLoggable() ) {
-				log.debug("pushing define() call"
+				log.debug(sLogPrefix + "pushing define() call"
 					+ (document.currentScript ? " from " + document.currentScript.src : "")
 					+ " to define queue #" + iRun);
 			}
@@ -1232,7 +1232,9 @@
 				log.debug(sLogPrefix + "processing define queue #" + iCurrentRun + " done");
 			}
 		};
-	}();
+	}
+
+	var queue = new ModuleDefinitionQueue();
 
 	/**
 	 * Loads the source for the given module with a sync XHR.
@@ -1587,15 +1589,17 @@
 
 		var oModule = mModules[sModuleName],
 			bLoggable = log.isLoggable(),
-			sOldPrefix, sScript, oMatch, bOldForceSyncDefines;
+			sOldPrefix, sScript, oMatch, bOldForceSyncDefines, oOldQueue;
 
 		if ( oModule && oModule.state === LOADED && typeof oModule.data !== "undefined" ) {
 
 			bOldForceSyncDefines = bForceSyncDefines;
+			oOldQueue = queue;
 
 			try {
 
 				bForceSyncDefines = !bAsync;
+				queue = new ModuleDefinitionQueue();
 
 				if ( bLoggable ) {
 					if ( typeof oModule.data === "string" ) {
@@ -1662,22 +1666,21 @@
 						__global.eval(sScript);
 					}
 				}
-				_execStack.pop();
 				queue.process(oModule, "after eval");
+
+			} catch (err) {
+				oModule.data = undefined;
+				oModule.fail(err);
+			} finally {
+
+				_execStack.pop();
 
 				if ( bLoggable ) {
 					sLogPrefix = sOldPrefix;
 					log.debug(sLogPrefix + "finished executing '" + sModuleName + "'");
 				}
 
-			} catch (err) {
-				if ( bLoggable ) {
-					sLogPrefix = sOldPrefix;
-				}
-				oModule.data = undefined;
-				oModule.fail(err);
-			} finally {
-
+				queue = oOldQueue;
 				bForceSyncDefines = bOldForceSyncDefines;
 			}
 		}
