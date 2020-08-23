@@ -25,7 +25,7 @@
 			<formattedValueStateText>
 				<FormattedText htmlText="There is a conflict with the current value. Recommendation based on: %%0">
 					<controls>
-						<Link 
+						<Link
 							text="See more information"
 							href=""
 							press=".onFormattedTextLinkPress" />
