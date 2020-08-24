@@ -204,7 +204,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			var aMinusSymbols = sMinusSymbols.split("");
 			assert.ok(aMinusSymbols.length > 0, "There should be minus symbols present");
 			aMinusSymbols.forEach(function(sSymbol) {
-				assert.equal(oFormat.parse(sSymbol + "100"), -100, "-100 is parsed correctly for '" + sSymbol + "'");
+				assert.equal(oFormat.parse(sSymbol + "100"), -100, "-100 is parsed correctly for '" + sSymbol + "' from '" + sMinusSymbols + "' (" + aMinusSymbols.join(",") + ")");
 			});
 
 			// Parse plusSign
@@ -212,7 +212,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			var aPlusSymbols = sPlusSymbols.split("");
 			assert.ok(aPlusSymbols.length > 0, "There should be plus symbols present");
 			aPlusSymbols.forEach(function(sSymbol) {
-				assert.equal(oFormat.parse(sSymbol + "100"), 100, "100 is parsed correctly for '" + sSymbol + "'");
+				assert.equal(oFormat.parse(sSymbol + "100"), 100, "100 is parsed correctly for '" + sSymbol + "' from '" + sPlusSymbols + "' (" + aPlusSymbols.join(",") + ")");
 			});
 		});
 	});

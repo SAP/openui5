@@ -306,4 +306,17 @@ sap.ui.define([
 
 		assert.strictEqual(oCurrencySymbols["BTC"], "Ƀ", "Custom currency symbol map contains the Bitcoin icon");
 	});
+
+	QUnit.module("Special Cases");
+
+	QUnit.test("getLenientNumberSymbols", function(assert) {
+
+		var oLocaleData = LocaleData.getInstance(new Locale("xx-XX"));
+
+		var sMinusSymbols = oLocaleData.getLenientNumberSymbols("minusSign");
+		var sPlusSymbols = oLocaleData.getLenientNumberSymbols("plusSign");
+
+		assert.strictEqual(sMinusSymbols, "\x2d\u2010\u2012\u2013\u207b\u208b\u2212\u2796\ufe63", "Should match the minus symbols default");
+		assert.strictEqual(sPlusSymbols, "\x2b\u207a\u208a\u2795\ufb29\ufe62", "Should match the plus symbols default");
+	});
 });
