@@ -232,7 +232,10 @@
 		  "category": "Action",
 		  "since": "1.10",
 		  "formFactors": "SML",
-		  "samples": ["sap.m.sample.Button"]
+		  "samples": [
+			"sap.m.sample.Button",
+			"sap.m.sample.ButtonWithBadge"
+		]
 		},
 		{
 		  "id": "sap.m.Breadcrumbs",
@@ -1705,9 +1708,14 @@
 		  "description": "Action Sheet provides an easier way of showing a list of actions and allowing the user to select one. Title and Cancel button can be shown or hidden. Without an icon the entry will be left-aligned (see the last action in the list)."
 		},
 		{
-		  "id": "sap.m.sample.Button",
-		  "name": "Button",
-		  "description": "Buttons trigger user actions and come in a variety of shapes and colors. Placing a button on a page header or footer changes its appearance."
+			"id": "sap.m.sample.Button",
+			"name": "Button",
+			"description": "Buttons trigger user actions and come in a variety of shapes and colors. Placing a button on a page header or footer changes its appearance."
+		},
+		{
+			"id": "sap.m.sample.ButtonWithBadge",
+			"name": "Button with Badge",
+			"description": "Button with a Badge attached"
 		},
 		{
 		  "id": "sap.m.sample.ToggleButton",

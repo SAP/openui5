@@ -828,3 +828,48 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 		border-radius:    0;
 	}
 }
+
+/* ----------------------*/
+/* Badges                */
+/* ----------------------*/
+
+.sapMBtn {
+	overflow: visible;
+	.sapMBadge {
+		&.sapMBadgeTopRight .sapMBadgeIndicator {
+			z-index: 1;
+			top: -0.3125rem;
+			right: -0.4375rem;
+		}
+		.sapMBadgeIndicator:after {
+			text-overflow: clip;
+			height: 0.875rem;
+			line-height: 0.875rem;
+			padding: 0 0.1875rem;
+			background-color: @sapUiContentBadgeBackground;
+			border-color: @sapUiContentBadgeBackground;
+			color: @sapUiContentBadgeTextColor;
+		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMBtn {
+		.sapMBadgeTopRight.sapMBadge {
+			&.sapMBtnIconFirst:not(.sapMBtnText) {
+				padding: 0 0.4375rem;
+			}
+			.sapMBadgeIndicator {
+				line-height: 2rem;
+				display: inline-block;
+				position: relative;
+				top: 0.25rem;
+				right: -0.25rem;
+				padding-right: 0.0625rem;
+				&.sapMBadgeAnimationRemove {
+					display: none;
+				}
+			}
+		}
+	}
+}

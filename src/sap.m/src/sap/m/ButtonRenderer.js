@@ -23,6 +23,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	// shortcut for sap.m.BadgeState
+	var BadgeState = library.BadgeState;
+
 	/**
 	 * Button renderer.
 	 * @namespace
@@ -295,6 +298,10 @@ sap.ui.define([
 		return InvisibleText.getStaticId("sap.m", mARIATextKeys[sType]);
 	};
 
+	ButtonRenderer.getBadgeTextId = function(oButton) {
+		return oButton._oBadgeData.value !== "" && oButton._oBadgeData.state !== BadgeState.Disappear ? oButton._getBadgeInvisibleText().getId() : "";
+	};
+
 	ButtonRenderer.generateAccProps = function (oButton) {
 		var sText = oButton._getText(),
 			mAccProps;
@@ -314,6 +321,7 @@ sap.ui.define([
 
 	ButtonRenderer.generateIconOnlyButtonAccProps = function (oButton) {
 		var sTypeId = ButtonRenderer.getButtonTypeAriaLabelId(oButton.getType()),
+			sBadgeTextId = this.getBadgeTextId(oButton),
 			sTooltip = oButton._getTooltip(),
 			sTooltipId = oButton.getId() + "-tooltip", // Icon-only buttons will always have a tooltip
 			sAccessibilityType = oButton._determineAccessibilityType(),
@@ -325,13 +333,13 @@ sap.ui.define([
 				break;
 			case ButtonAccessibilityType.Described:
 				mAccProps["label"] = { value: sTooltip, append: true };
-				mAccProps["describedby"] = { value: (sTooltipId + " " + sTypeId).trim(), append: true };
+				mAccProps["describedby"] = { value: (sTooltipId + " " + sTypeId + " " + sBadgeTextId).trim(), append: true };
 				break;
 			case ButtonAccessibilityType.Labelled:
 				mAccProps["describedby"] = { value: sTooltipId, append: true };
 				break;
 			case ButtonAccessibilityType.Combined:
-				mAccProps["describedby"] = { value: (sTooltipId + " " + sTypeId).trim(), append: true };
+				mAccProps["describedby"] = { value: (sTooltipId + " " + sTypeId + " " + sBadgeTextId).trim(), append: true };
 				break;
 			default:
 				break;
@@ -343,6 +351,7 @@ sap.ui.define([
 	ButtonRenderer.generateTextButtonAccProps = function (oButton) {
 		var sButtonId = oButton.getId(),
 			sTypeId = ButtonRenderer.getButtonTypeAriaLabelId(oButton.getType()),
+			sBadgeTextId = this.getBadgeTextId(oButton),
 			sTooltipId = oButton._getTooltip() ? sButtonId + "-tooltip" : "", // Don't assign if empty (to ease conditions in the switch)
 			sInnerTextId = sButtonId + "-content",
 			sAccessibilityType = oButton._determineAccessibilityType(),
@@ -355,7 +364,7 @@ sap.ui.define([
 				sTooltipId && (mAccProps["describedby"] = { value: sTooltipId, append: true });
 				break;
 			case ButtonAccessibilityType.Described:
-				sDescription = (sTooltipId + " " + sTypeId).trim();
+				sDescription = (sTooltipId + " " + sTypeId + " " + sBadgeTextId).trim();
 				sDescription && (mAccProps["describedby"] = { value: sDescription, append: true });
 				break;
 			case ButtonAccessibilityType.Labelled:
@@ -363,7 +372,7 @@ sap.ui.define([
 				sTooltipId && (mAccProps["describedby"] = { value: sTooltipId, append: true });
 				break;
 			case ButtonAccessibilityType.Combined:
-				sDescription = (sTooltipId + " " + sTypeId).trim();
+				sDescription = (sTooltipId + " " + sTypeId + " " + sBadgeTextId).trim();
 				sDescription && (mAccProps["describedby"] = { value: sDescription, append: true });
 				bPlaceSelfReference && (mAccProps["labelledby"] = { value: sInnerTextId, append: true });
 				break;
