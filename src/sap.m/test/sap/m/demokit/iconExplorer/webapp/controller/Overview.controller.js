@@ -528,60 +528,62 @@ sap.ui.define([
 					this.byId("categorySelection").setVisible(bCategoriesVisible);
 				}
 
-				// icon
-				if (oQuery.icon && bIconChanged) {
-					this._previewIcon(oQuery.icon);
-					this.byId("preview").setVisible(true);
-					if (this.byId("preview").getLayoutData().getSize() === "0px") {
-						this.byId("preview").getLayoutData().setSize("350px");
-					}
-				} else if (!oQuery.icon) {
-					if (bInitial) {
-						this._previewIcon("sap-ui5");
-					}
-					this.byId("preview").setVisible(false);
-					this.byId("preview").getLayoutData().setSize("0px");
-				}
-
-				// category
-				this.byId("categorySelection").setSelectedKey(oQuery.cat || "all");
-				if ((oQuery.cat || bCategoryChanged || bFontChanged) && oQuery.tab !== "favorites") {
-					if (bInitial || bFontChanged || bTabChanged) {
-						this._selectCategory(oQuery);
-					} else {
-						clearTimeout(this._iCategorySelectionTimeout);
-						this._iCategorySelectionTimeout = setTimeout(function () {
-							this._selectCategory(oQuery);
-						}.bind(this), TYPING_DELAY);
-					}
-				}
-
-				// search & tags
-				this.byId("searchField").setValue(oQuery.search);
-				if (bInitial || bFontChanged || bSearchChanged || bTagChanged || bTabChanged) {
-					// search
-					if (bInitial || bFontChanged || bTabChanged) {
-						this._searchIcons(oQuery.search, oQuery.tag);
-					} else {
-						clearTimeout(this._iSearchTimeout);
-						this._iSearchTimeout = setTimeout(function () {
-							this._searchIcons(oQuery.search, oQuery.tag);
-						}.bind(this), TYPING_DELAY);
-					}
-
-					// tags
-					if (bInitial || bFontChanged || bTabChanged) {
-						if (oQuery.tab === "favorites") {
-							this._aCategoryTags = undefined;
+				this._resultsLoaded.then(function() {
+					// icon
+					if (oQuery.icon && bIconChanged) {
+						this._previewIcon(oQuery.icon);
+						this.byId("preview").setVisible(true);
+						if (this.byId("preview").getLayoutData().getSize() === "0px") {
+							this.byId("preview").getLayoutData().setSize("350px");
 						}
-						this._updateTags(oQuery);
-					} else {
-						clearTimeout(this._iTagTimeout);
-						this._iTagTimeout = setTimeout(function () {
-							this._updateTags(oQuery);
-						}.bind(this), TYPING_DELAY);
+					} else if (!oQuery.icon) {
+						if (bInitial) {
+							this._previewIcon("sap-ui5");
+						}
+						this.byId("preview").setVisible(false);
+						this.byId("preview").getLayoutData().setSize("0px");
 					}
-				}
+
+					// category
+					this.byId("categorySelection").setSelectedKey(oQuery.cat || "all");
+					if ((oQuery.cat || bCategoryChanged || bFontChanged) && oQuery.tab !== "favorites") {
+						if (bInitial || bFontChanged || bTabChanged) {
+							this._selectCategory(oQuery);
+						} else {
+							clearTimeout(this._iCategorySelectionTimeout);
+							this._iCategorySelectionTimeout = setTimeout(function () {
+								this._selectCategory(oQuery);
+							}.bind(this), TYPING_DELAY);
+						}
+					}
+
+					// search & tags
+					this.byId("searchField").setValue(oQuery.search);
+					if (bInitial || bFontChanged || bSearchChanged || bTagChanged || bTabChanged) {
+						// search
+						if (bInitial || bFontChanged || bTabChanged) {
+							this._searchIcons(oQuery.search, oQuery.tag);
+						} else {
+							clearTimeout(this._iSearchTimeout);
+							this._iSearchTimeout = setTimeout(function () {
+								this._searchIcons(oQuery.search, oQuery.tag);
+							}.bind(this), TYPING_DELAY);
+						}
+
+						// tags
+						if (bInitial || bFontChanged || bTabChanged) {
+							if (oQuery.tab === "favorites") {
+								this._aCategoryTags = undefined;
+							}
+							this._updateTags(oQuery);
+						} else {
+							clearTimeout(this._iTagTimeout);
+							this._iTagTimeout = setTimeout(function () {
+								this._updateTags(oQuery);
+							}.bind(this), TYPING_DELAY);
+						}
+					}
+				}.bind(this));
 
 			}.bind(this));
 		},
