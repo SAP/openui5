@@ -2065,5 +2065,21 @@
         ]
       }
     ]
+  },
+  "1.52.44": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "94680deae5ce584b0c938b38c3686333c37b2c43",
+        "type": "FIX",
+        "text": " sap/ui/base/syncXHRFix: Properly handle failing sync XHR",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002823642020"
+          }
+        ]
+      }
+    ]
   }
 }

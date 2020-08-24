@@ -4784,5 +4784,21 @@
         ]
       }
     ]
+  },
+  "1.52.44": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "9b02bbcfb0aac209ac50645a624d3b54564d3d8b",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: data request on listOpen event can be prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005112822020"
+          }
+        ]
+      }
+    ]
   }
 }
