@@ -527,6 +527,19 @@ var oMenu22 = new sap.m.Menu({
             }
         });
 
+		var oDensitySelect = new sap.m.Select("density_select", {
+			items: [
+				new sap.ui.core.Item("item_cozy", {text: "Cozy"}),
+				new sap.ui.core.Item("item_compact", {text: "Compact"})
+			],
+			change: function (oEvent) {
+				var bCompactMode = oEvent.getParameter("selectedItem").getText() === "Compact";
+
+				oPage.toggleStyleClass("sapUiSizeCompact", bCompactMode);
+				oPage.rerender();
+			}
+		});
+
         function getControls() {
             var keys = [
                 "buttonMode",
@@ -636,7 +649,8 @@ var oMenu22 = new sap.m.Menu({
                 oMenuButton15,
 
                 oButton,
-                oButtonShowTruncation
+				oButtonShowTruncation,
+				oDensitySelect
             ]
         });
 
