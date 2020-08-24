@@ -979,29 +979,25 @@ sap.ui.define([
 		_createAddViaDelegateCommand : function(oSelectedElement, mParents, oParentAggregationDTMetadata, oSiblingElement, mActions, iIndex) {
 			var mAddViaDelegateAction = mActions.addViaDelegate.action;
 			var oParent = mAddViaDelegateAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
-			return this.hasChangeHandler(mAddViaDelegateAction.changeType, mParents.parent)
-				.then(function (bHasChangeHandler) {
-					var sVariantManagementReference;
-					if (mParents.parentOverlay.getVariantManagement && bHasChangeHandler) {
-						sVariantManagementReference = mParents.parentOverlay.getVariantManagement();
-					}
-					var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
-					var sCommandName = "addDelegateProperty";
-					var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
-					var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
-					return this.getCommandFactory().getCommandFor(mParents.parent, sCommandName, {
-						newControlId: Utils.createFieldLabelId(oParent, oSelectedElement.entityType, oSelectedElement.bindingPath),
-						index: iIndex !== undefined ? iIndex : iAddTargetIndex,
-						bindingString: oSelectedElement.bindingPath,
-						entityType: oSelectedElement.entityType, // needed for custom field support tool
-						parentId: mParents.parent.getId(),
-						propertyName: oSelectedElement.name,
-						oDataServiceVersion: oSelectedElement.oDataServiceVersion,
-						oDataServiceUri: sServiceUri,
-						modelType: mAddViaDelegateAction.delegateInfo.modelType,
-						relevantContainerId: mParents.relevantContainer.getId()
-					}, oParentAggregationDTMetadata, sVariantManagementReference);
-				}.bind(this));
+			var oParentOverlay = mAddViaDelegateAction.changeOnRelevantContainer ? mParents.relevantContainerOverlay : mParents.parentOverlay;
+			var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
+			var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
+			var sCommandName = "addDelegateProperty";
+			var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
+			var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
+
+			return this.getCommandFactory().getCommandFor(mParents.parent, sCommandName, {
+				newControlId: Utils.createFieldLabelId(oParent, oSelectedElement.entityType, oSelectedElement.bindingPath),
+				index: iIndex !== undefined ? iIndex : iAddTargetIndex,
+				bindingString: oSelectedElement.bindingPath,
+				entityType: oSelectedElement.entityType, // needed for custom field support tool
+				parentId: mParents.parent.getId(),
+				propertyName: oSelectedElement.name,
+				oDataServiceVersion: oSelectedElement.oDataServiceVersion,
+				oDataServiceUri: sServiceUri,
+				modelType: mAddViaDelegateAction.delegateInfo.modelType,
+				relevantContainerId: mParents.relevantContainer.getId()
+			}, oParentAggregationDTMetadata, sVariantManagementReference);
 		},
 
 		/**
