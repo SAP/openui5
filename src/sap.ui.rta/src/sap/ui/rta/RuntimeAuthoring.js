@@ -1692,6 +1692,7 @@ function(
 			document.location.search = sParameters;
 			return Promise.resolve();
 		}
+		return this._reloadPage();
 	};
 
 	/**
