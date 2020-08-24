@@ -720,7 +720,11 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @param {boolean} [mParameters.$$ignoreMessages]
-	 *   Whether this binding does not propagate messages to the control; supported since 1.82.0.
+	 *   Whether this binding does not propagate model messages to the control; supported since
+	 *   1.82.0. Some composite types like {@link sap.ui.model.odata.type.Currency} or
+	 *   {@link sap.ui.model.odata.type.Unit} automatically ignore messages for some of their parts
+	 *   depending on their format options; setting this parameter to <code>true</code> or
+	 *   <code>false</code> overrules the automatism of the type.
 	 *
 	 *   For example, a binding for a currency code is used in a composite binding for rendering the
 	 *   proper number of decimals, but the currency code is not displayed in the attached control.
