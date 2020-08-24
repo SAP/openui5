@@ -764,8 +764,7 @@ sap.ui.define([
 			this.fnHandleParametersForStandalone = sandbox.stub(ReloadInfoAPI, "handleUrlParametersForStandalone");
 			this.fnHandleParametersOnExitStub =
 				sandbox.stub(this.oRta, "_handleUrlParameterOnExit");
-			this.fnTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
-			sandbox.stub(this.oRta, "_reloadPage");
+			this.fnReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
 
 			return this.oRta._initVersioning();
 		},
@@ -789,13 +788,14 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 			var oHasMaxLayerParameterSpy = sandbox.spy(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			var oHasVersionParameterSpy = sandbox.spy(ReloadInfoAPI, "hasVersionParameterWithValue");
+			var oTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
 
 			this.fnHandleParametersForStandalone.returns(document.location.search);
 			return this.oRta._determineReload().then(function() {
 				assert.equal(oHasMaxLayerParameterSpy.callCount, 1, "hasMaxLayerParameterWithValue is called");
 				assert.equal(oHasVersionParameterSpy.callCount, 1, "hasVersionParameterWithValue is called");
-				assert.equal(this.fnTriggerHardReloadStub.callCount, 1, "_triggerHardReload is called");
-			}.bind(this));
+				assert.equal(oTriggerHardReloadStub.callCount, 1, "_triggerHardReload is called");
+			});
 		});
 
 		QUnit.test("when the _determineReload() method is called with draft but parameter already set", function(assert) {
@@ -804,11 +804,13 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
 			var fnGetReloadMessageOnStartSpy = sandbox.spy(this.oRta, "_getReloadMessageOnStart");
+			var oTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
+
 			this.fnHandleParametersForStandalone.returns(document.location.search);
 			return this.oRta._determineReload().then(function() {
 				assert.equal(this.fnHandleParametersForStandalone.callCount, 0, "handleUrlParameterForStandalone is not called");
 				assert.equal(fnGetReloadMessageOnStartSpy.callCount, 0, "_getReloadMessageOnStart is not called");
-				assert.equal(this.fnTriggerHardReloadStub.callCount, 0, "_triggerHardReload is not called");
+				assert.equal(oTriggerHardReloadStub.callCount, 0, "_triggerHardReload is not called");
 			}.bind(this));
 		});
 
@@ -880,9 +882,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _handleDiscard() is called", function(assert) {
+			var oTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
+
 			this.oRta._handleDiscard();
-			assert.equal(this.fnTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
-			var oReloadInfo = this.fnTriggerHardReloadStub.getCall(0).args[0];
+			assert.equal(oTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
+			var oReloadInfo = oTriggerHardReloadStub.getCall(0).args[0];
 			assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
 			assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
 		});
@@ -894,6 +898,12 @@ sap.ui.define([
 				assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
 				assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
 			}.bind(this));
+		});
+
+		QUnit.test("when _triggerHardReload() is called and the url does not need adjustment", function(assert) {
+			this.fnHandleParametersForStandalone.returns(document.location.search);
+			this.oRta._triggerHardReload({});
+			assert.equal(this.fnReloadPageStub.calledOnce, true, "reload was triggered");
 		});
 	});
 
