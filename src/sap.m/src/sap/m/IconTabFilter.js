@@ -61,6 +61,12 @@ sap.ui.define([
 	var IconColor = coreLibrary.IconColor;
 
 	/**
+	 * The time between tab activation and the disappearance of the badge.
+	 * @constant {integer}
+	 */
+	var BADGE_AUTOHIDE_TIME = 3000;
+
+	/**
 	 * Constructor for a new IconTabFilter.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
@@ -263,6 +269,10 @@ sap.ui.define([
 
 		this.removeEventDelegate(this._oDragEventDelegate);
 		this._oDragEventDelegate = null;
+
+		if (this._iHideBadgeTimeout) {
+			clearTimeout(this._iHideBadgeTimeout);
+		}
 	};
 
 	IconTabFilter.prototype.invalidate = function() {
@@ -1112,6 +1122,24 @@ sap.ui.define([
 					oEvent.stopImmediatePropagation();
 					this._expandButtonPress();
 		}
+	};
+
+	IconTabFilter.prototype._startBadgeHiding = function () {
+		if (this._iHideBadgeTimeout) {
+			return;
+		}
+
+		this._iHideBadgeTimeout = setTimeout(this._hideBadge.bind(this), BADGE_AUTOHIDE_TIME);
+	};
+
+	IconTabFilter.prototype._hideBadge = function () {
+
+		var oBadgeCustomData = this.getBadgeCustomData();
+		if (oBadgeCustomData) {
+			oBadgeCustomData.setVisible(false);
+		}
+
+		this._iHideBadgeTimeout = null;
 	};
 
 	return IconTabFilter;
