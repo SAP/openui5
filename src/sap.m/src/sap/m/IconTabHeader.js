@@ -211,6 +211,7 @@ sap.ui.define([
 	IconTabHeader.prototype.init = function () {
 		this._aTabKeys = [];
 		this._oAriaHeadText = null;
+		this._bIsRendered = false;
 	};
 
 	IconTabHeader.prototype.exit = function () {
@@ -243,6 +244,9 @@ sap.ui.define([
 	};
 
 	IconTabHeader.prototype.onBeforeRendering = function () {
+
+		this._bIsRendered = false;
+
 		this._bRtl = Core.getConfiguration().getRTL();
 
 		if (this._sResizeListenerId) {
@@ -279,6 +283,16 @@ sap.ui.define([
 				oItem._onAfterParentRendering();
 			}
 		});
+
+		this._bIsRendered = true;
+	};
+
+	/**
+	 * Returns if the control is rendered
+	 * @private
+	 */
+	IconTabHeader.prototype._isRendered = function () {
+		return this._bIsRendered;
 	};
 
 	/**

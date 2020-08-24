@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>sap.m.IconTabBar Badges</title>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs="sap.ui.core, sap.m, sap.f">
+		</script>
+
+		<script id="myXml" type="text/xmldata">
+			<mvc:View xmlns:mvc="sap.ui.core.mvc"
+				xmlns="sap.m"
+				controllerName="myController"
+				displayBlock="true">
+				<App>
+					<Page title="Badges">
+						<Button text="Add Badge To Visible Item" press=".addToVisible" />
+						<Button text="Add Badge To Sub Item"  press=".addToSubItem" />
+						<Button text="Add Badge To 'More' Item" press=".addToMoreItem" />
+						<Button text="Add Badge To 'More' Sub Item" press=".addToMoreSubItem" />
+						<IconTabBar id="iconTabBar1">
+							<items>
+								<IconTabFilter key="item1" text="Item 1">
+									<Text text="Info" />
+									<customData>
+										<BadgeCustomData visible="true"/>
+									</customData>
+								</IconTabFilter>
+								<IconTabFilter text="Item 2">
+									<items>
+										<IconTabFilter text="Item 2 1">
+											<Text text="Info" />
+											<items>
+												<IconTabFilter id="item211" text="Item 2 1 1">
+													<Text text="Info" />
+												</IconTabFilter>
+											</items>
+										</IconTabFilter>
+									</items>
+								</IconTabFilter>
+								<IconTabFilter id="item3" text="Item 3">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 4">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 5">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 6">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 7">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 8">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 9">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 10">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 11">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 12">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter id="item13" text="Item 13">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 14">
+									<Text text="Info" />
+									<items>
+										<IconTabFilter text="Item 14 1">
+											<Text text="Info" />
+											<items>
+												<IconTabFilter id="item1411" text="Item 14 1 1">
+													<Text text="Info" />
+												</IconTabFilter>
+											</items>
+										</IconTabFilter>
+									</items>
+								</IconTabFilter>
+							</items>
+						</IconTabBar>
+					</Page>
+				</App>
+			</mvc:View>
+		</script>
+
+		<script>
+			sap.ui.controller("myController", {
+				onInit: function() {
+
+				},
+				addToVisible: function() {
+					var oFilter = this.getView().byId("item3");
+					oFilter.addCustomData(new sap.m.BadgeCustomData());
+				},
+				addToSubItem: function() {
+					var oFilter = this.getView().byId("item211");
+					oFilter.addCustomData(new sap.m.BadgeCustomData());
+				},
+				addToMoreItem: function() {
+					var oFilter = this.getView().byId("item13");
+					oFilter.addCustomData(new sap.m.BadgeCustomData());
+				},
+				addToMoreSubItem: function() {
+					var oFilter = this.getView().byId("item1411");
+					oFilter.addCustomData(new sap.m.BadgeCustomData());
+				}
+			});
+			sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
+		</script>
+
+	</head>
+	<body id='content' class='sapUiBody'>
+	</body>
+</html>
