@@ -293,6 +293,11 @@ sap.ui.define([
 				this._getHeader().setSelectedKey(this._aFiles[0].key);
 				this._createIconTabFilters();
 				this._update();
+			}.bind(this))
+			.catch(function (sErr) {
+				this._getErrorsStrip()
+					.setVisible(true)
+					.setText(sErr);
 			}.bind(this));
 	};
 

@@ -1040,7 +1040,7 @@ sap.ui.define([
 								key: 'Controller.controller.js'
 							},
 							{
-								url: '/samples/hostAndExtensionActions/myExtension.js',
+								url: '/samples/hostAndExtensionActions/cardBundle/myExtension.js',
 								name: 'myExtension.js',
 								key: 'myExtension.js'
 							},
