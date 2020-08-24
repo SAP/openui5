@@ -40,6 +40,27 @@
 	}
 }
 
+.sapMPopoverHeader, .sapMPopoverSubHeader  {
+	position: relative;
+	z-index: 2;
+
+	.sapMBar {
+		.sapMBarContainer {
+			padding-left: 0;
+			padding-right: 0;
+		}
+		.sapMBarLeft {
+			padding-left: 1rem;
+		}
+		.sapMBarMiddle .sapMBarContainer {
+			padding: 0 1rem;
+		}
+		.sapMBarRight {
+			padding-right: 1rem;
+		}
+	}
+}
+
 .sapMPopoverHeader, .sapMPopoverFooter, .sapMPopoverSubHeader {
 	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
 	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
@@ -66,11 +87,6 @@
 			}
 		}
 	}
-}
-
-.sapMPopoverHeader, .sapMPopoverSubHeader {
-	position: relative;
-	z-index: 2;
 }
 
 .sapMPopoverWithoutSubHeader .sapMPopoverHeader, .sapMPopoverSubHeader {
