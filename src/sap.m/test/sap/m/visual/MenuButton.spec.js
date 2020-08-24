@@ -17,4 +17,15 @@ describe("sap.m.MenuButton", function() {
 
 		expect(takeScreenshot(oPage)).toLookAs('menu_buttons_in_page');
 	});
+
+	it('Change to Compact Mode', function() {
+		var oSelect = element(by.id("density_select")),
+			oCompactItem = element(by.id("item_compact")),
+			oMenuButton3 = element(by.id("mb3"));
+
+		oSelect.click();
+		oCompactItem.click();
+		expect(takeScreenshot(oMenuButton3)).toLookAs('menubutton_compact_initial_width');
+	});
+
 });
