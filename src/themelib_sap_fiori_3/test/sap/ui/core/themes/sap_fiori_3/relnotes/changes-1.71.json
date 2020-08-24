@@ -221,5 +221,21 @@
         ]
       }
     ]
+  },
+  "1.71.21": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "3b90719c433bcdf2b7337184c77070d61388df68",
+        "type": "FIX",
+        "text": " sap.m.Link: has high contrast ratio when displayed in a selected row in a table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080202639"
+          }
+        ]
+      }
+    ]
   }
 }

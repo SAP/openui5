@@ -738,5 +738,65 @@
         ]
       }
     ]
+  },
+  "1.71.21": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "de0295ad9456c3598edeede73317b5907b44582b",
+        "type": "FIX",
+        "text": " sap/ui/base/syncXHRFix: Properly handle failing sync XHR",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002823642020"
+          }
+        ]
+      },
+      {
+        "id": "61d693a27e71324a2b4bac65cc5b7c11a6440f5b",
+        "type": "FIX",
+        "text": " format/NumberFormat: parse special values \"00000\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004699942020"
+          }
+        ]
+      },
+      {
+        "id": "8b0d9782d4b2fc235bdafe02e03184fc67e25482",
+        "type": "FIX",
+        "text": " core/Element: preventScrolling Test failed in Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080359779"
+          }
+        ]
+      },
+      {
+        "id": "3cba7a4d6904c8ec5823729dfe9f1af20be2b8c4",
+        "type": "FIX",
+        "text": " Revert \"[FIX] core/Element: preventScrolling Test failed in Firefox\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080335699"
+          }
+        ]
+      },
+      {
+        "id": "8593fba3ecad4abacd838d2121ca23bbc0eeeed6",
+        "type": "FIX",
+        "text": " core/Element: preventScrolling Test failed in Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

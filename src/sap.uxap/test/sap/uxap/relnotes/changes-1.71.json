@@ -245,5 +245,21 @@
         ]
       }
     ]
+  },
+  "1.71.21": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "a83bc4f0e32d0761b5b98664eafd14d20d2d1e1b",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Prevented duplicate view creation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003147082020"
+          }
+        ]
+      }
+    ]
   }
 }

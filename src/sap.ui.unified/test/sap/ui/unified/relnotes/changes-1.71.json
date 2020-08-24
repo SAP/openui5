@@ -194,5 +194,32 @@
         ]
       }
     ]
+  },
+  "1.71.21": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "a4ea77c8b55147345377b8b2e9c3a951d267e530",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: input field is now only one",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970467587"
+          }
+        ]
+      },
+      {
+        "id": "1aa9f92fe609fb88a3a74266e4b9290671904b20",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: focuses the correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003137362020"
+          }
+        ]
+      }
+    ]
   }
 }

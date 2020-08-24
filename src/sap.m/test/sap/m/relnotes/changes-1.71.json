@@ -1866,5 +1866,80 @@
         ]
       }
     ]
+  },
+  "1.71.21": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "ca7e80b8d11f05cfdb413388652e3732a0bda1f8",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: data request on listOpen event can be prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005112822020"
+          }
+        ]
+      },
+      {
+        "id": "a18d7f21e7b4cc371fa16327366824450598ed7a",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Label in RTL aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361705"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400005110092020"
+          }
+        ]
+      },
+      {
+        "id": "672dae4c41c5bf48cd5eece5ff4b62d6c56e6e05",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent exception when pressing arrows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980454206"
+          }
+        ]
+      },
+      {
+        "id": "6c15abe2d002b33e8ac078b3c1a6257daa13a442",
+        "type": "FIX",
+        "text": " sap.m.SematicPage: getCustomFooterContent return copy of array",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004713952020"
+          }
+        ]
+      },
+      {
+        "id": "2f2acbdf5306feb45f47d1398d2cabe8cef4f7aa",
+        "type": "FIX",
+        "text": " sap.m.InputBase: IE & Safari no longer fire change event on value selection in IME popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004949912020"
+          }
+        ]
+      },
+      {
+        "id": "6bbe49f41b17b2baf1d40272ded1dfe4bacf27ee",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Min and max dates work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004930162020"
+          }
+        ]
+      }
+    ]
   }
 }
