@@ -115,6 +115,23 @@ sap.ui.define(['./SimpleType'],
 	 */
 
 	/**
+	 * Gets an array of indices that determine which parts of this type shall not propagate their
+	 * model messages to the attached control. Prerequisite is that the corresponding binding
+	 * supports this feature, see {@link sap.ui.model.Binding#supportsIgnoreMessages}.
+	 *
+	 * @return {number[]}
+	 *   An array of indices that determine which parts of this type shall not propagate their model
+	 *   messages to the attached control
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#supportsIgnoreMessages
+	 * @since 1.82.0
+	 */
+	CompositeType.prototype.getPartsIgnoringMessages = function () {
+		return [];
+	};
+
+	/**
 	 * Returns whether the {@link #formatValue} and {@link #parseValue} methods operate on the raw
 	 * model values instead of formatted values.
 	 *

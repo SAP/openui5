@@ -28,6 +28,12 @@ sap.ui.define(function () {
 					libs: "sap.ui.testlib"
 				}
 			},
+			CompositeType: {
+				coverage : {
+					only : "sap/ui/model/CompositeType"
+				},
+				title: "QUnit Page for sap/ui/model/CompositeType"
+			},
 			DataType: {
 				coverage : {
 					only : "sap/ui/base/DataType"

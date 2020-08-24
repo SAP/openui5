@@ -293,6 +293,53 @@ sap.ui.define([
 		CompositeBinding.prototype.checkUpdate.call(oCompositeBinding);
 	});
 
+	QUnit.test("CompositeBinding: setType, no parts ignoring messages", function(assert) {
+		var oCompositeBinding = {},
+			oType = new MyCompositeType();
+
+		this.mock(oType).expects("getPartsIgnoringMessages").withExactArgs().returns([]);
+
+		// code under test
+		CompositeBinding.prototype.setType.call(oCompositeBinding, oType, "~internalType");
+	});
+
+	QUnit.test("CompositeBinding: setType, some parts ignoring messages", function(assert) {
+		var oSimpleBinding = {
+				getIgnoreMessages : function () {},
+				setIgnoreMessages : function () {},
+				supportsIgnoreMessages : function () {}
+			},
+			aBindings = [
+				Object.assign({}, oSimpleBinding),
+				Object.assign({}, oSimpleBinding),
+				Object.assign({}, oSimpleBinding),
+				Object.assign({}, oSimpleBinding)
+			],
+			oCompositeBinding = {aBindings : aBindings},
+			oType = new MyCompositeType();
+
+		this.mock(oType).expects("getPartsIgnoringMessages").withExactArgs().returns([1, 2, 3, 4]);
+		// propagates message, index not part of the result of getPartsIgnoringMessages
+		this.mock(aBindings[0]).expects("supportsIgnoreMessages").never();
+		this.mock(aBindings[0]).expects("getIgnoreMessages").never();
+		this.mock(aBindings[0]).expects("setIgnoreMessages").never();
+		// shall ignore messages, but does not support the feature
+		this.mock(aBindings[1]).expects("supportsIgnoreMessages").withExactArgs().returns(false);
+		this.mock(aBindings[1]).expects("getIgnoreMessages").never();
+		this.mock(aBindings[1]).expects("setIgnoreMessages").never();
+		// shall ignore messages, but the binding parameter is already set
+		this.mock(aBindings[2]).expects("supportsIgnoreMessages").withExactArgs().returns(true);
+		this.mock(aBindings[2]).expects("getIgnoreMessages").withExactArgs().returns("~anyValue");
+		this.mock(aBindings[2]).expects("setIgnoreMessages").never();
+		// shall ignore messages and the binding parameter is not set
+		this.mock(aBindings[3]).expects("supportsIgnoreMessages").withExactArgs().returns(true);
+		this.mock(aBindings[3]).expects("getIgnoreMessages").withExactArgs().returns(undefined);
+		this.mock(aBindings[3]).expects("setIgnoreMessages").withExactArgs(true);
+
+		// code under test
+		CompositeBinding.prototype.setType.call(oCompositeBinding, oType, "~internalType");
+	});
+
 	QUnit.module("sap.ui.model.CompositeBinding: With inner types/formatters", {
 		beforeEach: function() {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
@@ -711,5 +758,4 @@ sap.ui.define([
 		assert.equal(this.composite.getExternalValue(), "4 5 3", "Value is not updated for OneTime");
 		oSpy.reset();
 	});
-
 });

@@ -48,8 +48,8 @@ sap.ui.define([
 			this.bInitial = false;
 			this.bSuspended = false;
 			this.oDataState = null;
-			// whether this binding does not propagate messages to the control
-			this.bIgnoreMessages = false;
+			// whether this binding does not propagate model messages to the control
+			this.bIgnoreMessages = undefined;
 		},
 
 		metadata : {
@@ -216,8 +216,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Whether this binding does not propagate messages to the control. By default, all bindings
-	 * propagate messages. If a binding wants to support this feature, it has to override
+	 * Whether this binding does not propagate model messages to the control. By default, all
+	 * bindings propagate messages. If a binding wants to support this feature, it has to override
 	 * {@link #supportsIgnoreMessages}, which returns <code>true</code>.
 	 *
 	 * For example, a binding for a currency code is used in a composite binding for rendering the
@@ -225,36 +225,48 @@ sap.ui.define([
 	 * that case, messages for the currency code shall not be displayed at that control, only
 	 * messages for the amount.
 	 *
-	 * @returns {boolean}
-	 *   Whether this binding does not propagate messages to the control
+	 * @returns {boolean|undefined}
+	 *   Whether this binding does not propagate model messages to the control; returns
+	 *   <code>undefined</code> if the corresponding binding parameter is not set, which means that
+	 *   model messages are propagated to the control
+	 *
+	 * @public
+	 * @since 1.82.0
 	 */
 	Binding.prototype.getIgnoreMessages = function () {
+		if (this.bIgnoreMessages === undefined) {
+			return undefined;
+		}
 		return this.bIgnoreMessages && this.supportsIgnoreMessages();
 	};
 
 	/**
-	 * Sets the indicator whether this binding does not propagate messages to the control.
+	 * Sets the indicator whether this binding does not propagate model messages to the control.
 	 *
 	 * @param {boolean} bIgnoreMessages
-	 *   Whether this binding does not propagate messages to the control
+	 *   Whether this binding does not propagate model messages to the control
 	 *
+	 * @public
 	 * @see #getIgnoreMessages
 	 * @see #supportsIgnoreMessages
+	 * @since 1.82.0
 	 */
 	Binding.prototype.setIgnoreMessages = function (bIgnoreMessages) {
-		this.bIgnoreMessages = !!bIgnoreMessages;
+		this.bIgnoreMessages = bIgnoreMessages;
 	};
 
 	/**
-	 * Whether this binding supports the feature of not propagating messages to the control. The
-	 * default implementation returns <code>false</code>.
+	 * Whether this binding supports the feature of not propagating model messages to the control.
+	 * The default implementation returns <code>false</code>.
 	 *
 	 * @returns {boolean}
 	 *   <code>false</code>; subclasses that support this feature need to override this function and
 	 *   need to return <code>true</code>
 	 *
+	 * @public
 	 * @see #getIgnoreMessages
 	 * @see #setIgnoreMessages
+	 * @since 1.82.0
 	 */
 	Binding.prototype.supportsIgnoreMessages = function () {
 		return false;

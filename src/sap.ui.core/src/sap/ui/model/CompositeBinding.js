@@ -130,6 +130,8 @@ sap.ui.define([
 	 * @public
 	 */
 	CompositeBinding.prototype.setType = function(oType, sInternalType) {
+		var that = this;
+
 		if (oType && !(oType instanceof CompositeType)) {
 			throw new Error("Only CompositeType can be used as type for composite bindings!");
 		}
@@ -137,6 +139,15 @@ sap.ui.define([
 
 		// If a composite type is used, the type decides whether to use raw values or not
 		if (this.oType) {
+			oType.getPartsIgnoringMessages().forEach(function (i) {
+				var oBinding = that.aBindings[i];
+
+				if (oBinding && oBinding.supportsIgnoreMessages()
+						&& oBinding.getIgnoreMessages() === undefined) {
+					oBinding.setIgnoreMessages(true);
+				}
+			});
+
 			this.bRawValues = this.oType.getUseRawValues();
 			this.bInternalValues = this.oType.getUseInternalValues();
 

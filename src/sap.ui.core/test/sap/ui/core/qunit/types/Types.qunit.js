@@ -514,6 +514,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[
+	{oFormatOptions : undefined, aResult : []},
+	{oFormatOptions : {}, aResult : []},
+	{oFormatOptions : {showMeasure : true}, aResult : []},
+	{oFormatOptions : {showMeasure : false}, aResult : [1]}
+].forEach(function (oFixture, i) {
+	QUnit.test("Currency: getPartsIgnoringMessages, #" + i, function (assert) {
+		var oCurrencyType = new CurrencyType(oFixture.oFormatOptions);
+
+		// code under test
+		assert.deepEqual(oCurrencyType.getPartsIgnoringMessages(), oFixture.aResult);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Date", {
 		beforeEach : function() {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");

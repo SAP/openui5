@@ -1392,7 +1392,7 @@ sap.ui.define([
 		// code under test
 		oBinding = this.oModel.bindProperty("/foo");
 
-		assert.strictEqual(oBinding.getIgnoreMessages(), false);
+		assert.strictEqual(oBinding.getIgnoreMessages(), undefined);
 
 		oPropertyBindingMock.expects("setIgnoreMessages").withExactArgs(true).callThrough();
 
