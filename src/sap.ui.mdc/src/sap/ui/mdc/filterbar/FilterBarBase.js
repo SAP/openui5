@@ -787,6 +787,8 @@ sap.ui.define([
 
 				var fDelayedFunction = function() {
 					this._validate(bFireSearch);
+					this._fResolvedSearchPromise = null;
+					this._fRejectedSearchPromise = null;
 					this._oSearchPromise = null;
 				};
 				setTimeout(fDelayedFunction.bind(this), 0);
@@ -1331,22 +1333,27 @@ sap.ui.define([
 
 				this._aProperties = [];
 
+				var fnResolveMetadata = function() {
+					this._fResolveMetadataApplied();
+					this._fResolveMetadataApplied = null;
+				}.bind(this);
+
 				if (this.bDelegateInitialized && this.getControlDelegate().fetchProperties) {
 					try {
 						this.getControlDelegate().fetchProperties(this).then(function(aProperties) {
 							this._aProperties = aProperties;
-							this._fResolveMetadataApplied();
+							fnResolveMetadata();
 						}.bind(this), function(sMsg) {
 							Log.error(sMsg);
-							this._fResolveMetadataApplied();
-						}.bind(this));
+							fnResolveMetadata();
+						});
 					} catch (ex) {
 						Log.error("Exception during fetchProperties occured: " + ex.message);
-						this._fResolveMetadataApplied();
+						fnResolveMetadata();
 					}
 				} else {
 					Log.error("Provided delegate '" + this.getDelegate().path + "' not valid.");
-					this._fResolveMetadataApplied();
+					fnResolveMetadata();
 				}
 			}
 		}.bind(this));
@@ -1517,6 +1524,7 @@ sap.ui.define([
 
 		this._bInitialFiltersApplied = true;
 		this._fResolveInitialFiltersApplied();
+		this._fResolveInitialFiltersApplied = null;
 	};
 
 	FilterBarBase.prototype._applyFilterConditionsChanges = function() {
@@ -1664,11 +1672,8 @@ sap.ui.define([
 		this._fResolveMetadataApplied = undefined;
 		this._oMetadataAppliedPromise = null;
 
-		this._fResolveInitialFiltersApplied = undefined;
 		this._oInitialFiltersAppliedPromise = null;
 
-		this._fResolvedSearchPromise = undefined;
-		this._fRejectedSearchPromise = undefined;
 		this._oSearchPromise = null;
 
 		this._aBindings = null;

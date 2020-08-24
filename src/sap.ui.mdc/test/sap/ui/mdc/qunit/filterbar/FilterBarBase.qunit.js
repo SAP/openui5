@@ -170,4 +170,47 @@ sap.ui.define([
         });
     });
 
+    QUnit.test("Check cleanup for search promise", function(assert){
+
+        var done = assert.async();
+
+        var oValidPromise = this.oFilterBarBase.valid(false);
+
+        oValidPromise.then(function(){
+            assert.ok(!this.oFilterBarBase._fResolvedSearchPromise, "Search resolve has been cleaned up");
+            assert.ok(!this.oFilterBarBase._fRejectedSearchPromise, "Search reject has been cleaned up");
+
+            done();
+        }.bind(this));
+
+    });
+
+    QUnit.test("Check cleanup for metadata promise", function(assert){
+
+        var done = assert.async();
+
+        var oMetadataPromise = this.oFilterBarBase._oMetadataAppliedPromise;
+
+        oMetadataPromise.then(function(){
+            assert.ok(!this.oFilterBarBase._fResolveMetadataApplied, "Metadata resolve has been cleaned up");
+
+            done();
+        }.bind(this));
+
+    });
+
+    QUnit.test("Check cleanup for initial filters promise", function(assert){
+
+        var done = assert.async();
+
+        var oInitialFiltersPromise = this.oFilterBarBase._oInitialFiltersAppliedPromise;
+
+        oInitialFiltersPromise.then(function(){
+            assert.ok(!this.oFilterBarBase._fResolveInitialFiltersApplied, "Initial filter resolve has been cleaned up");
+
+            done();
+        }.bind(this));
+
+    });
+
 });
