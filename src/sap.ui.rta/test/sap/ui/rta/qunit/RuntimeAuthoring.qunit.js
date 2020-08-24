@@ -527,7 +527,6 @@ function(
 		beforeEach : function(assert) {
 			var fnDone = assert.async();
 
-			RtaQunitUtils.clear();
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
 
 			// Prepare elements an designtime

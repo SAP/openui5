@@ -208,7 +208,7 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
-				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
+				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
 			});
 		});
 
@@ -271,7 +271,7 @@ sap.ui.define([
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
 				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
 				assert.deepEqual(oResult.variants[0], oVariantContent, "then the variant change is correct");
-				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
+				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
 			});
 		});
 
@@ -314,7 +314,7 @@ sap.ui.define([
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
 				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
-				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
+				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
 			});
 		});
 
@@ -358,7 +358,7 @@ sap.ui.define([
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
 				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
-				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
+				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
 			});
 		});
 
@@ -402,7 +402,7 @@ sap.ui.define([
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
 				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
-				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
+				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
 			});
 		});
 
@@ -448,7 +448,7 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
-				assert.equal(Object.keys(oResult).length, 8, "seven entries are in the result");
+				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
 			});
 		});
 
@@ -678,6 +678,49 @@ sap.ui.define([
 				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].version, undefined, "the StaticFileConnector has the version property NOT set");
 				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].version, undefined, "the connector NOT in charge for draft layer has the version property NOT set");
 				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, sap.ui.fl.Versions.Draft.toString(), "the connector for draft layer has the version property set");
+			});
+		});
+	});
+
+
+	QUnit.module("Disassemble & merge the comp variants", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("Given the first connector provide a comp variant in the changes and the second provides a comp section with a variant", function (assert) {
+			var oResponse1 = StorageUtils.getEmptyFlexDataResponse();
+			delete oResponse1.comp; // simulate legacy response
+			var oVariant1 = {
+				fileName: "variant1",
+				fileType: "variant",
+				layer: Layer.CUSTOMER,
+				creation: "2019-07-22T10:33:19.7491090Z"
+			};
+			oResponse1.changes.push(oVariant1);
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oResponse1);
+			var oResponse2 = StorageUtils.getEmptyFlexDataResponse();
+			var oVariant2 = {
+				fileName: "variant2",
+				fileType: "variant",
+				layer: Layer.CUSTOMER,
+				creation:"2019-07-22T10:34:19.7491091Z"
+			};
+			oResponse2.comp = {
+				variants: [oVariant2]
+			};
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(oResponse2);
+
+			var oExpectedResponse = merge({}, StorageUtils.getEmptyFlexDataResponse(), {
+				comp: {
+					variants: [oVariant1, oVariant2]
+				}
+			});
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(oExpectedResponse, {cacheKey: null}), "then the expected result is returned");
 			});
 		});
 	});

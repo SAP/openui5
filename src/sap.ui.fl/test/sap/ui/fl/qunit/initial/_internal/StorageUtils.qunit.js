@@ -24,6 +24,12 @@ sap.ui.define([
 			appDescriptorChanges: [],
 			index: iIndex,
 			changes: [],
+			comp: {
+				changes: [],
+				variants: [],
+				defaultVariants: [],
+				standardVariants: []
+			},
 			variants: [],
 			variantChanges: [],
 			variantDependentControlChanges: [],
@@ -88,15 +94,13 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				variantReference: this.oVariantManagementRef
 			};
-			this.oVariantUserWithVMR = {
+			this.oVariantUser = {
 				fileType: "variant",
-				layer: Layer.USER,
-				variantReference: this.oVariantManagementRef
+				layer: Layer.USER
 			};
-			this.oVariantCustomerWithVMR = {
+			this.oVariantCustomer = {
 				fileType: "variant",
-				layer: Layer.CUSTOMER,
-				variantReference: this.oVariantManagementRef
+				layer: Layer.CUSTOMER
 			};
 			this.oCtrlVariantChangeUser = {
 				fileType: "ctrl_variant_change",
@@ -118,20 +122,22 @@ sap.ui.define([
 			var aTestData = [
 				this.oCtrlVariantUser, this.oCtrlVariantCustomer, this.oCtrlVariantUserWithVMR, this.oCtrlVariantCustomerWithVMR,
 				this.oCtrlVariantManagUser, this.oCtrlVariantManagCustomer, this.oChangeUser, this.oChangeCustomer,
-				this.oChangeUserWithVMR, this.oChangeCustomerWithVMR, this.oVariantUserWithVMR, this.oVariantCustomerWithVMR,
+				this.oChangeUserWithVMR, this.oChangeCustomerWithVMR, this.oVariantUser, this.oVariantCustomer,
 				this.oCtrlVariantChangeUser, this.oCtrlVariantChangeCustomer, this.oOtherType
 			];
 
 			this.oEmptyResponse.USER.changes = [this.oChangeUser];
+			this.oEmptyResponse.USER.comp.variants = [this.oVariantUser];
 			this.oEmptyResponse.USER.variants = [this.oCtrlVariantUserWithVMR];
 			this.oEmptyResponse.USER.variantChanges = [this.oCtrlVariantChangeUser];
-			this.oEmptyResponse.USER.variantDependentControlChanges = [this.oChangeUserWithVMR, this.oVariantUserWithVMR];
+			this.oEmptyResponse.USER.variantDependentControlChanges = [this.oChangeUserWithVMR];
 			this.oEmptyResponse.USER.variantManagementChanges = [this.oCtrlVariantManagUser];
 
 			this.oEmptyResponse.CUSTOMER.changes = [this.oChangeCustomer];
+			this.oEmptyResponse.CUSTOMER.comp.variants = [this.oVariantCustomer];
 			this.oEmptyResponse.CUSTOMER.variants = [this.oCtrlVariantCustomerWithVMR];
 			this.oEmptyResponse.CUSTOMER.variantChanges = [this.oCtrlVariantChangeCustomer];
-			this.oEmptyResponse.CUSTOMER.variantDependentControlChanges = [this.oChangeCustomerWithVMR, this.oVariantCustomerWithVMR];
+			this.oEmptyResponse.CUSTOMER.variantDependentControlChanges = [this.oChangeCustomerWithVMR];
 			this.oEmptyResponse.CUSTOMER.variantManagementChanges = [this.oCtrlVariantManagCustomer];
 
 			assert.deepEqual(Utils.getGroupedFlexObjects(aTestData), this.oEmptyResponse, "the return is correct");

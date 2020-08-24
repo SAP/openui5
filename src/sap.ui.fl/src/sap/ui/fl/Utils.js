@@ -280,7 +280,7 @@ function(
 		/**
 		 * Determines if the passed change is related to control variants.
 		 * @see sap.ui.fl.variants.VariantManagement
-		 * @params {sap.ui.fl.Change} oChange Change object
+		 * @param {sap.ui.fl.Change} oChange Change object
 		 * @returns {boolean} If the passed change is a variant management change
 		 * @public
 		 * @name sap.ui.fl.Utils.isChangeRelatedToVariants
@@ -290,6 +290,10 @@ function(
 				|| oChange.getFileType() === "ctrl_variant_management_change"
 				|| oChange.getFileType() === "ctrl_variant"
 				|| oChange.getVariantReference();
+		},
+
+		isChangeRelatedToCompVariant: function (vFlexObject) {
+			return vFlexObject.getFileType() === "variant" || !!vFlexObject.getSelector().persistencyKey;
 		},
 
 		/**

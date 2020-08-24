@@ -227,6 +227,7 @@ function(
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: {
 					changes: [{
+						fileName: "change_id_123",
 						fileType: "change",
 						selector: {
 							id: "controlId"
@@ -348,17 +349,10 @@ function(
 			});
 		});
 
-		QUnit.test("After run getChangesForComponent without includeVariants parameter", function(assert) {
+		QUnit.test("After run getChangesForComponent parameter", function(assert) {
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: {
 					changes: [
-						{
-							fileName: "file1",
-							fileType: "change",
-							changeType: "defaultVariant",
-							layer: Layer.CUSTOMER,
-							selector: {persistencyKey: "SmartFilter_Explored"}
-						},
 						{
 							fileName: "file2",
 							fileType: "change",
@@ -406,88 +400,6 @@ function(
 				assert.ok(changes[0].getChangeType() === "renameGroup", "and change type renameGroup");
 				assert.ok(changes[1]._oDefinition.fileType === "change", "second change has file type change");
 				assert.ok(changes[1].getChangeType() === "codeExt", "and change type codeExt");
-			});
-		});
-
-		QUnit.test("After run getChangesForComponent with includeVariants parameter", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
-				changes: {
-					changes: [
-						{
-							fileName: "file1",
-							fileType: "change",
-							changeType: "defaultVariant",
-							layer: Layer.CUSTOMER,
-							selector: {persistencyKey: "SmartFilter_Explored"}
-						},
-						{
-							fileName: "file2",
-							fileType: "change",
-							changeType: "defaultVariant",
-							layer: Layer.CUSTOMER,
-							selector: {}
-						},
-						{
-							fileName: "file3",
-							fileType: "change",
-							changeType: "renameGroup",
-							layer: Layer.CUSTOMER,
-							selector: {id: "controlId1"}
-						},
-						{
-							fileName: "file4",
-							fileType: "variant",
-							changeType: "filterBar",
-							layer: Layer.CUSTOMER,
-							selector: {persistencyKey: "SmartFilter_Explored"}
-						},
-						{
-							fileName: "file5",
-							fileType: "variant",
-							changeType: "filterBar",
-							layer: Layer.CUSTOMER
-						},
-						{
-							fileName: "file6",
-							fileType: "variant",
-							changeType: "filterBar",
-							layer: Layer.CUSTOMER
-						},
-						{
-							fileName: "file7",
-							fileType: "change",
-							changeType: "codeExt",
-							layer: Layer.CUSTOMER,
-							selector: {id: "controlId2"}
-						},
-						{
-							fileType: "somethingelse"
-						},
-						{
-							fileName: "file8",
-							fileType: "change",
-							changeType: "appdescr_changes",
-							layer: Layer.CUSTOMER
-						}
-					]
-				}
-			});
-
-			var fnWarningLogStub = sandbox.stub(Log, "warning");
-
-			return this.oChangePersistence.getChangesForComponent({includeVariants: true}).then(function(changes) {
-				assert.strictEqual(changes.length, 5, "both standard UI changes and smart variants were returned");
-				assert.ok(changes[0]._oDefinition.fileType === "change", "first change has file type change");
-				assert.ok(changes[0].getChangeType() === "defaultVariant", "and change type defaultVariant");
-				assert.ok(changes[1]._oDefinition.fileType === "change", "second change has file type change");
-				assert.ok(changes[1].getChangeType() === "renameGroup", "and change type renameGroup");
-				assert.ok(changes[2]._oDefinition.fileType === "variant", "third change has file type variant");
-				assert.ok(changes[2].getChangeType() === "filterBar", "and change type filterBar");
-				assert.ok(changes[3]._oDefinition.fileType === "change", "forth change has file type change");
-				assert.ok(changes[3].getChangeType() === "codeExt", "and change type codeExt");
-				assert.ok(changes[4]._oDefinition.fileType === "change", "fifth change has file type change");
-				assert.notOk(changes[4].getSelector(), "and does not have selector");
-				assert.ok(fnWarningLogStub.calledWith("A change without fileName is detected and excluded from component: MyComponent"), "with correct component name");
 			});
 		});
 
@@ -560,12 +472,12 @@ function(
 			return oVariant;
 		}
 
-		QUnit.test("when getChangesForComponent is called with a max layer parameter and includeCtrlVariants set to true", function(assert) {
+		QUnit.test("when getChangesForComponent is called with a currentLayer parameter and includeCtrlVariants set to true", function(assert) {
 			var oVariant = mockVariableChangesAndGetVariant.call(this);
 			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
 
 			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function(aChanges) {
-				assert.strictEqual(aChanges.length, 5, "only changes which are under max layer are returned");
+				assert.equal(aChanges.length, 5, "only changes which are under max layer are returned");
 				var aChangeFileNames = aChanges.map(function(oChangeOrChangeContent) {
 					return oChangeOrChangeContent.fileName || oChangeOrChangeContent.getId();
 				});
@@ -575,7 +487,7 @@ function(
 				assert.equal(bExpectedChangesExist, true, "then max layer filtered changes were returned");
 				assert.equal(oVariant.controlChanges[0].getVariantReference(), "variantManagementId",
 					"then variant dependent control change content was replaced with an instance");
-				assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
+				assert.equal(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 			}.bind(this));
 		});
 
@@ -718,91 +630,6 @@ function(
 
 			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter: true}).then(function(oChanges) {
 				assert.strictEqual(oChanges.length, 5, "filtering is ignored, all changes are returned");
-			});
-		});
-
-		QUnit.test("getControlChangesForVariant does nothing if entry in variant changes map is available", function(assert) {
-			var aStubChanges = [
-				{
-					fileName: "change1",
-					fileType: "change",
-					layer: Layer.USER,
-					selector: {id: "controlId"},
-					dependentSelector: []
-				}
-			];
-			var oStubGetChangesForComponent = sandbox.stub(this.oChangePersistence, "getChangesForComponent");
-			this.oChangePersistence._mVariantsChanges["SmartFilterBar"] = aStubChanges;
-			return this.oChangePersistence.getControlChangesForVariant("someProperty", "SmartFilterBar", {}).then(function(aChanges) {
-				assert.deepEqual(aChanges, aStubChanges);
-				sinon.assert.notCalled(oStubGetChangesForComponent);
-			});
-		});
-
-		QUnit.test("getControlChangesForVariant call getChangesForComponent and filter results after that if entry in variant changes map is not available", function(assert) {
-			var oPromise = new Promise(function(resolve) {
-				setTimeout(function() {
-					resolve({
-						changes: {
-							changes: [
-								{
-									fileName: "change1",
-									fileType: "change",
-									changeType: "defaultVariant",
-									layer: Layer.CUSTOMER,
-									selector: {persistencyKey: "SmartFilter_Explored"},
-									originalLanguage: "EN"
-								},
-								{
-									fileName: "change2",
-									fileType: "change",
-									changeType: "defaultVariant",
-									layer: Layer.CUSTOMER,
-									selector: {}
-								},
-								{
-									fileName: "change3",
-									fileType: "change",
-									changeType: "renameGroup",
-									layer: Layer.CUSTOMER,
-									selector: {id: "controlId1"}
-								},
-								{
-									fileName: "variant1",
-									fileType: "variant",
-									changeType: "filterBar",
-									layer: Layer.CUSTOMER,
-									selector: {persistencyKey: "SmartFilter_Explored"},
-									originalLanguage: "EN"
-								},
-								{
-									fileName: "variant2",
-									fileType: "variant",
-									changeType: "filterBar",
-									layer: Layer.CUSTOMER
-								},
-								{
-									fileName: "change4",
-									fileType: "change",
-									changeType: "codeExt",
-									layer: Layer.CUSTOMER,
-									selector: {id: "controlId2"}
-								},
-								{
-									fileType: "change",
-									changeType: "appdescr_changes",
-									layer: Layer.CUSTOMER
-								}
-							]
-						}
-					});
-				}, 100);
-			});
-			sandbox.stub(Cache, "getChangesFillingCache").returns(oPromise);
-			var oPromise1 = this.oChangePersistence.getControlChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
-			var oPromise2 = this.oChangePersistence.getControlChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
-			return Promise.all([oPromise1, oPromise2]).then(function(values) {
-				assert.ok(values[0] === values[1]);
 			});
 		});
 
@@ -1324,9 +1151,12 @@ function(
 
 			var fnPublishStub = sandbox.stub(WriteStorage, "publish").resolves();
 			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aMockLocalChanges);
+			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompEntitiesByIdMap").resolves([]);
+
 
 			return this.oChangePersistence.transportAllUIChanges(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors).then(function() {
 				assert.equal(fnGetChangesForComponentStub.callCount, 1, "then getChangesForComponent called once");
+				assert.equal(fnGetCompEntitiesByIdMapStub.callCount, 1, "then getCompEntitiesByIdMap called once");
 				assert.equal(fnPublishStub.callCount, 1, "then publish called once");
 				assert.ok(fnPublishStub.calledWith({
 					transportDialogSettings: {
@@ -2395,178 +2225,6 @@ function(
 				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0], oChangeContent3, "the second change was processed afterwards");
 				assert.equal(this.oWriteStub.getCall(1).args[0].draft, true, "the draft flag was passed");
 			}.bind(this));
-		});
-
-		QUnit.test("addChangeForVariant should add a new change object into variants changes mapp with pending action is NEW", function(assert) {
-			var mParameters = {
-				id: "changeId",
-				type: "filterBar",
-				ODataService: "LineItems",
-				texts: {variantName: "myVariantName"},
-				content: {
-					filterBarVariant: {},
-					filterbar: [
-						{
-							group: "CUSTOM_GROUP",
-							name: "MyOwnFilterField",
-							partOfVariant: true,
-							visibleInFilterBar: true
-						}
-					]
-				},
-				isVariant: true,
-				packageName: "",
-				isUserDependend: true
-			};
-			var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
-			assert.equal(sId, "changeId");
-			assert.deepEqual(Object.keys(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]), ["changeId"]);
-			assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
-		});
-
-		QUnit.test("saveAllChangesForVariant should use the Storage to create the change in the backend if pending action is NEW, update when pending action is UPDATE and delete the change if pending action is DELETE", function(assert) {
-			var mParameters = {
-				id: "changeId",
-				type: "filterBar",
-				ODataService: "LineItems",
-				texts: {variantName: "myVariantName"},
-				content: {
-					filterBarVariant: {},
-					filterbar: [
-						{
-							group: "CUSTOM_GROUP",
-							name: "MyOwnFilterField",
-							partOfVariant: true,
-							visibleInFilterBar: true
-						}
-					]
-				},
-				isVariant: true,
-				packageName: "",
-				isUserDependend: true
-			};
-			var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
-			assert.ok(sId);
-			var oChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
-			assert.equal(oChange.getPendingAction(), "NEW");
-			var oCreatedContent = merge(oChange.getDefinition(), {support: {user: "creator"}});
-			var oCreateResponse = {response: [oCreatedContent]};
-			var oUpdatedContent = merge(oCreatedContent, {texts: {variantName: "newName"}});
-			var oUpdateResponse = {response: oUpdatedContent};
-			var oDeleteResponse = {};
-
-			// this test requires a slightly different setup
-			this.oWriteStub.restore();
-			sandbox.stub(WriteStorage, "write").resolves(oCreateResponse);
-			sandbox.stub(WriteStorage, "update").resolves(oUpdateResponse);
-			this.oRemoveStub.restore();
-			this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves(oDeleteResponse);
-
-			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
-				assert.ok(Array.isArray(aResults));
-				assert.equal(aResults.length, 1);
-				assert.strictEqual(aResults[0], oCreateResponse);
-				assert.equal(oChange.getDefinition().support.user, "creator");
-				assert.equal(oChange.getState(), Change.states.PERSISTED);
-				oChange.setState(Change.states.DIRTY);
-				return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
-					assert.strictEqual(aResults[0], oUpdateResponse);
-					assert.equal(oChange.getDefinition().texts.variantName, "newName");
-					assert.equal(oChange.getState(), Change.states.PERSISTED);
-					oChange.markForDeletion();
-					return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
-						assert.ok(Array.isArray(aResults));
-						assert.equal(aResults.length, 1);
-						assert.strictEqual(aResults[0], oDeleteResponse);
-						assert.equal(this.oRemoveStub.getCall(0).args[0].flexObject, oChange.getDefinition(), "the change was passed for deletion");
-						assert.deepEqual(this.oChangePersistence._mVariantsChanges["SmartFilterbar"], {});
-					}.bind(this));
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("saveAllChangesForVariant should update state of variant when using with non-backend connectors", function(assert) {
-			var mParameters = {
-				id: "changeId",
-				type: "filterBar",
-				ODataService: "LineItems",
-				texts: {variantName: "myVariantName"},
-				content: {
-					filterBarVariant: {},
-					filterbar: [
-						{
-							group: "CUSTOM_GROUP",
-							name: "MyOwnFilterField",
-							partOfVariant: true,
-							visibleInFilterBar: true
-						}
-					]
-				},
-				isVariant: true,
-				packageName: "",
-				isUserDependend: true
-			};
-			var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
-			assert.ok(sId);
-			var oChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
-			assert.equal(oChange.getPendingAction(), "NEW");
-
-			// this test requires a slightly different setup
-			this.oWriteStub.restore();
-			sandbox.stub(WriteStorage, "write").resolves();
-			sandbox.stub(WriteStorage, "update").resolves();
-
-			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
-				assert.ok(Array.isArray(aResults));
-				assert.equal(aResults.length, 1);
-				assert.equal(aResults[0], undefined);
-				assert.equal(oChange.getState(), Change.states.PERSISTED);
-				oChange.setState(Change.states.DIRTY);
-				return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
-					assert.equal(aResults[0], undefined);
-					assert.equal(oChange.getState(), Change.states.PERSISTED);
-					oChange.markForDeletion();
-				});
-			}.bind(this));
-		});
-
-		QUnit.test("saveAllChangesForVariant shall reject if the backend raises an error", function(assert) {
-			var mParameters = {
-				id: "changeId",
-				type: "filterBar",
-				ODataService: "LineItems",
-				texts: {variantName: "myVariantName"},
-				content: {
-					filterBarVariant: {},
-					filterbar: [
-						{
-							group: "CUSTOM_GROUP",
-							name: "MyOwnFilterField",
-							partOfVariant: true,
-							visibleInFilterBar: true
-						}
-					]
-				},
-				isVariant: true,
-				packageName: "",
-				isUserDependend: true
-			};
-			var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
-			assert.ok(sId);
-			assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
-
-
-			// this test requires a slightly different setup
-			this.oWriteStub.restore();
-			sandbox.stub(WriteStorage, "write").rejects({
-				messages: [
-					{text: "Backend says: Boom"}
-				]
-			});
-
-			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar")['catch'](function(err) {
-				assert.equal(err.messages[0].text, "Backend says: Boom");
-			});
 		});
 	});
 

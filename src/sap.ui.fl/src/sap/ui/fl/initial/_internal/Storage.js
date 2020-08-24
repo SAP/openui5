@@ -72,6 +72,7 @@ sap.ui.define([
 				aFlattenedResponses.push(oResponse);
 			}
 		});
+
 		return aFlattenedResponses;
 	}
 

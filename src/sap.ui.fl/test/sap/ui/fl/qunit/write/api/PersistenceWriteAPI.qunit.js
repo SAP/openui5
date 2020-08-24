@@ -5,11 +5,17 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/Log"
@@ -18,11 +24,17 @@ sap.ui.define([
 	JsControlTreeModifier,
 	ChangesController,
 	DescriptorChangeTypes,
+	ManifestUtils,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	FlexCustomData,
 	Condenser,
+	ChangePersistenceFactory,
+	FlexState,
+	FlexObjectState,
+	Change,
 	Layer,
+	Utils,
 	jQuery,
 	sinon,
 	Log
@@ -38,6 +50,11 @@ sap.ui.define([
 			.throws("invalid parameters for flex persistence function")
 			.withArgs(oControl)
 			.returns(oReturn);
+	}
+
+	function mockChangePersistence(oReturn) {
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent("appComponent");
+		sandbox.stub(oChangePersistence, "getChangesForComponent").resolves(oReturn);
 	}
 
 	function mockDescriptorController(oControl, oReturn) {
@@ -92,26 +109,123 @@ sap.ui.define([
 					user: ""
 				}
 			};
+
+			this.oUIChange = new Change(this.oUIChangeSpecificData);
 		},
 		afterEach: function() {
 			sandbox.restore();
 			delete this.vSelector;
 		}
 	}, function() {
-		QUnit.test("when hasHigherLayerChanges is called", function(assert) {
-			var mPropertyBag = {
-				selector: "selector",
-				mockParam: "mockParam"
-			};
+		[{
+			testName: "when hasHigherLayerChanges is called and no changes are present",
+			persistencyChanges: [],
+			compEntities: {},
+			expectedResult: false
+		}, {
+			testName: "when hasHigherLayerChanges is called and the ChangePersistency has changes present, but not in a higher layer",
+			persistencyChanges: [{
+				getLayer: function () {
+					return Layer.CUSTOMER;
+				}
+			}],
+			compEntities: {},
+			expectedResult: false
+		}, {
+			testName: "when hasHigherLayerChanges is called and the CompVariantState has changes present, but not in a higher layer",
+			persistencyChanges: [],
+			compEntities: {
+				changeId: {
+					getLayer: function () {
+						return Layer.CUSTOMER;
+					}
+				}
+			},
+			expectedResult: false
+		}, {
+			testName: "when hasHigherLayerChanges is called and the ChangePersistence AND CompVariantState have changes present, but none in a higher layer",
+			persistencyChanges: [{
+				getLayer: function () {
+					return Layer.CUSTOMER;
+				}
+			}],
+			compEntities: {
+				changeId: {
+					getLayer: function () {
+						return Layer.CUSTOMER_BASE;
+					}
+				}
+			},
+			expectedResult: false
+		}, {
+			testName: "when hasHigherLayerChanges is called and the ChangePersistency has changes present in a higher layer",
+			persistencyChanges: [{
+				getLayer: function () {
+					return Layer.USER;
+				}
+			}],
+			compEntities: {},
+			expectedResult: true
+		}, {
+			testName: "when hasHigherLayerChanges is called and the CompVariantState has changes present in a higher layer",
+			persistencyChanges: [],
+			compEntities: {
+				changeId: {
+					getLayer: function () {
+						return Layer.USER;
+					}
+				}
+			},
+			expectedResult: true
+		}, {
+			testName: "when hasHigherLayerChanges is called and the ChangePersistence AND CompVariantState have changes present, one in higher layer",
+			persistencyChanges: [{
+				getLayer: function () {
+					return Layer.CUSTOMER;
+				}
+			}],
+			compEntities: {
+				changeId: {
+					getLayer: function () {
+						return Layer.USER;
+					}
+				}
+			},
+			expectedResult: true
+		}, {
+			testName: "when hasHigherLayerChanges is called and the ChangePersistence AND CompVariantState have changes present, all in higher layer",
+			persistencyChanges: [{
+				getLayer: function () {
+					return Layer.USER;
+				}
+			}],
+			compEntities: {
+				changeId: {
+					getLayer: function () {
+						return Layer.USER;
+					}
+				}
+			},
+			expectedResult: true
+		}].forEach(function (testSetup) {
+			QUnit.test(testSetup.testName, function(assert) {
+				var mPropertyBag = {
+					layer: Layer.CUSTOMER,
+					selector: this.oAppComponent,
+					mockParam: "mockParam"
+				};
 
-			var fnPersistenceStub = getMethodStub(mPropertyBag.parameters, Promise.resolve(sReturnValue));
+				sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 
-			mockFlexController(mPropertyBag.selector, { hasHigherLayerChanges : fnPersistenceStub });
+				mockChangePersistence(testSetup.persistencyChanges);
+				sandbox.stub(FlexState, "getCompEntitiesByIdMap").returns(testSetup.compEntities);
+				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
 
-			return PersistenceWriteAPI.hasHigherLayerChanges(mPropertyBag)
-				.then(function(sValue) {
-					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
-				});
+				return PersistenceWriteAPI.hasHigherLayerChanges(mPropertyBag)
+					.then(function(bHasHigherLayerChanges) {
+						assert.strictEqual(bHasHigherLayerChanges, testSetup.expectedResult, "it resolves with " + testSetup.expectedResult);
+					});
+			});
 		});
 
 		QUnit.test("when save is called", function(assert) {
@@ -246,13 +360,13 @@ sap.ui.define([
 				selector: this.vSelector,
 				invalidateCache: true
 			};
-			var fnPersistenceStub = getMethodStub([_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache], Promise.resolve(sReturnValue));
-
-			mockFlexController(mPropertyBag.selector, { _oChangePersistence: { getChangesForComponent : fnPersistenceStub } });
-
+			var aObjects = [];
+			var fnGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves(aObjects);
 			return PersistenceWriteAPI._getUIChanges(mPropertyBag)
-				.then(function(sValue) {
-					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called correctly");
+				.then(function(aGetResponse) {
+					assert.equal(fnGetFlexObjectsStub.callCount, 1, "the getFlexObjects was called once");
+					assert.equal(fnGetFlexObjectsStub.getCall(0).args[0], mPropertyBag, "with the passed propertyBag");
+					assert.strictEqual(aGetResponse, aObjects, "and the function resolves with the State response");
 				});
 		});
 
@@ -434,7 +548,7 @@ sap.ui.define([
 			var oBaseLogStub = sandbox.stub(Log, "error");
 
 			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{packageName: "transported"}]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{getPackage: function() {return "transported";}}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
@@ -486,7 +600,7 @@ sap.ui.define([
 			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
 
 			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([this.oUIChangeSpecificData]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([this.oUIChange]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
@@ -520,7 +634,7 @@ sap.ui.define([
 			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: true}));
 
 			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{packageName: "transported"}]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{getPackage: function() {return "transported";}}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
@@ -536,7 +650,7 @@ sap.ui.define([
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
 			mockFlexController(mPropertyBag.selector, { getResetAndPublishInfo: fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([this.oUIChangeSpecificData]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([this.oUIChange]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
@@ -570,7 +684,7 @@ sap.ui.define([
 			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
 
 			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([this.oUIChangeSpecificData]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([this.oUIChange]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
@@ -587,7 +701,7 @@ sap.ui.define([
 			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
 
 			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{packageName: "transported"}, {packageName: "transported"}]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{getPackage: function() {return "transported";}}, {getPackage: function() {return "transported";}}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
@@ -604,7 +718,10 @@ sap.ui.define([
 			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
 
 			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{packageName: ""}, {packageName: "transported"}]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([
+				{getPackage: function() {return "";}},
+				{getPackage: function() {return "transported";}}
+			]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {

@@ -42,6 +42,11 @@ sap.ui.define([
 			oReturn.changes = sMapName;
 		} else if (sMapName === "variantsMap") {
 			oReturn.variantsMap = sMapName;
+		} else if (sMapName === "compVariantsMap") {
+			oReturn = {
+				map: sMapName + ".map",
+				byId: sMapName + ".byId"
+			};
 		}
 		return oReturn;
 	}
@@ -183,7 +188,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when getAppDescriptorChanges / getUIChanges / getVariantsState is called with proper initialization", function(assert) {
+		QUnit.test("when getAppDescriptorChanges / getUIChanges / getVariantsState / getCompVariantsMap is called with proper initialization", function(assert) {
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
@@ -210,6 +215,13 @@ sap.ui.define([
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was called once");
 				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variantsMap"}, "the correct map is returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was not called again");
+
+				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariantsMap.map", "the correct map is returned");
+				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was called once");
+				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariantsMap.map", "the correct map is returned");
+				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was not called again");
+				assert.equal(FlexState.getCompEntitiesByIdMap(sReference), "compVariantsMap.byId", "the correct map is returned");
+				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was not called again");
 			}.bind(this));
 		});
 

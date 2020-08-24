@@ -33,8 +33,11 @@ sap.ui.define([
 	 */
 	return {
 		/**
-		 * Provides the flex data for a given application based on the configured connectors;
-		 * This function needs a manifest object, async hints and either an ID to an instantiated component or component data as parameter
+		 * Provides the flex data for a given application based on the configured connectors.
+		 * This function needs a manifest object, async hints and either an ID to an instantiated component or component data as parameter.
+		 *
+		 * The property <code>partialFlexData</code> contains the flexData except the data from flexibility-bundle.json or changes-bundle.json.
+		 * This is needed in case descriptor changes are required in a maniFirst scenario before the component and thus the bundle can be loaded.
 		 *
 		 * @param {object} mPropertyBag - Contains additional data needed for loading changes
 		 * @param {object} mPropertyBag.manifest - ManifestObject that belongs to current component
