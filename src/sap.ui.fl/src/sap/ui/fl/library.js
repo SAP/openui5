@@ -125,7 +125,7 @@ sap.ui.define([
 	 * Object containing information about a version.
 	 *
 	 * @typedef {object} sap.ui.fl.Version
-	 * @property {number} versionNumber - Number of the version. The highest version is the active while 0 is the draft
+	 * @property {number} version - Number of the version. The highest version is the active while 0 is the draft
 	 * @property {string} activatedBy - User ID who activated the version
 	 * @property {string} activatedAt - Stringified time stamp of the activation
 	 * @since 1.74
@@ -188,7 +188,7 @@ sap.ui.define([
 	sap.ui.fl.Versions = {
 		Original: -1,
 		Draft: 0,
-		UrlParameter: "sap-ui-fl-versionNumber"
+		UrlParameter: "sap-ui-fl-version"
 	};
 
 	/**

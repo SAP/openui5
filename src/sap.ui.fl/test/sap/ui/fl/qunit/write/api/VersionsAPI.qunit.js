@@ -102,9 +102,9 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
-				{versionNumber: 0},
-				{versionNumber: 2},
-				{versionNumber: 1}
+				{version: sap.ui.fl.Versions.Draft},
+				{version: 2},
+				{version: 1}
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 
@@ -122,8 +122,8 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
-				{versionNumber: 2},
-				{versionNumber: 1}
+				{version: 2},
+				{version: 1}
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 
@@ -213,7 +213,7 @@ sap.ui.define([
 					var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
 					assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
 					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
-					assert.equal(oInitializePropertyBag.versionNumber, 0, "and passing the version number accordingly");
+					assert.equal(oInitializePropertyBag.version, sap.ui.fl.Versions.Draft, "and passing the version number accordingly");
 				});
 		});
 	});

@@ -19,17 +19,16 @@ sap.ui.define([
 
 	function _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, mPropertyBag) {
 		if (oConnectorConfig.layers && (oConnectorConfig.layers[0] === "ALL" || oConnectorConfig.layers.indexOf("CUSTOMER") !== -1)) {
-			var sVersionNumber = FlUtils.getUrlParameter(sap.ui.fl.Versions.UrlParameter);
-			if (mPropertyBag.versionNumber !== undefined) {
-				oConnectorSpecificPropertyBag.version = mPropertyBag.versionNumber;
+			var sVersion = FlUtils.getUrlParameter(sap.ui.fl.Versions.UrlParameter);
+			if (mPropertyBag.version !== undefined) {
+				oConnectorSpecificPropertyBag.version = mPropertyBag.version;
 			} else {
-				oConnectorSpecificPropertyBag.version = sVersionNumber ? parseInt(sVersionNumber) : "";
+				oConnectorSpecificPropertyBag.version = sVersion ? parseInt(sVersion) : "";
 			}
+		} else {
+			// removes an existing version entry copied from the original mPropertyBag
+			delete oConnectorSpecificPropertyBag.version;
 		}
-
-		// removes an existing versionNumber entry copied from the original mPropertyBag
-		delete oConnectorSpecificPropertyBag.versionNumber;
-
 		return oConnectorSpecificPropertyBag;
 	}
 
@@ -122,7 +121,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
 	 * @param {string} [mPropertyBag.appVersion] version of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
-	 * @param {number} [mPropertyBag.versionNumber] - Number of the version for which the data should be loaded
+	 * @param {number} [mPropertyBag.version] - Number of the version for which the data should be loaded
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
 	 */
 	Storage.loadFlexData = function (mPropertyBag) {

@@ -42,7 +42,7 @@ sap.ui.define([
 
 			var oExpectedHash = {
 				params: {
-					"sap-ui-fl-versionNumber": [0],
+					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft],
 					"sap-ui-fl-parameter": ["test"]
 				}
 			};
@@ -450,7 +450,7 @@ sap.ui.define([
 						parseShellHash: function () {
 							return {
 								params: {
-									"sap-ui-fl-versionNumber": [sap.ui.fl.Versions.Draft.toString()]
+									"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
 								}
 							};
 						}
