@@ -403,6 +403,26 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test(" when the control's dt metadata has a outdated addODataProperty action", function (assert) {
+			var fnLogErrorSpy = sandbox.spy(Log, "error");
+
+			return createOverlayWithAggregationActions.call(this, {
+				addODataProperty: {
+					changeType: "addFields"
+				}
+			}, ON_SIBLING)
+				.then(function (oOverlay) {
+					this.oDesignTime.addPlugin(this.oPlugin);
+					this.oPlugin.registerElementOverlay(oOverlay);
+					return DtUtil.waitForSynced(this.oDesignTime, function () {
+						return oOverlay;
+					})();
+				}.bind(this))
+				.then(function () {
+					assert.equal(fnLogErrorSpy.args[0][0].indexOf("Outdated addODataProperty action in designtime metadata") > -1, true, "then the correct error is thrown");
+				});
+		});
+
 		[
 			{
 				dtMetadata: {},
@@ -1322,6 +1342,7 @@ sap.ui.define([
 				}
 			});
 			sandbox.stub(this.oPlugin, "_getCustomAddActions");
+			sandbox.stub(this.oPlugin, "_checkInvalidAddActions");
 
 			return this.oPlugin._getActions(true, {})
 				.then(function () {
@@ -2209,9 +2230,10 @@ sap.ui.define([
 			aggregations: {
 				contentLeft: {
 					childNames: mChildNames,
-					actions: (mActions.move || mActions.add) ? {
+					actions: (mActions.move || mActions.add || mActions.addODataProperty) ? {
 						add: mActions.add || null,
-						move: mActions.move || null
+						move: mActions.move || null,
+						addODataProperty: mActions.addODataProperty || null
 					} : null
 				}
 			}
