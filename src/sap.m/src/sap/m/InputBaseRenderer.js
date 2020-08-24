@@ -165,10 +165,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Label
 
 		this.writeInnerAttributes(oRm, oControl);
 
-		if (sValueState === ValueState.Error) {
-			oRm.attr("aria-invalid", "true");
-		}
-
 		// inner classes
 		oRm.class("sapMInputBaseInner");
 
