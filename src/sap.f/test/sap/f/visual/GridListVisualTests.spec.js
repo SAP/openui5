@@ -65,9 +65,6 @@ describe("sap.f.GridListVisualTests", function () {
 
 		element(by.css(".sapMSlider + .sapFGridList .sapMGrowingListTrigger")).click();
 		takePictureOfContent("4A_growing_second_grow");
-
-		element(by.css(".sapMSlider + .sapFGridList .sapMGrowingListTrigger")).click();
-		takePictureOfContent("4A_growing_third_grow");
 	});
 
 	it("should visualize growing GridList with GridBoxLayout after Resizing", function () {
