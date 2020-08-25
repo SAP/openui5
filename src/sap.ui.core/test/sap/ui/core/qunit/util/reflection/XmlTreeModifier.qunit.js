@@ -30,6 +30,7 @@ function(
 			this.ID_OF_CONTROL_WITH_PROP_BINDING = "controlWithPropertyBinding";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
 			this.ID_OF_CONTROL_WITH_CUSTOM_DATA = "controlWithCustomData";
+			this.ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA = "controlWithInlineCustomData";
 
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
@@ -100,6 +101,7 @@ function(
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 + '" crossAppNavCallback="{\'key\': \'value\'}" />' +
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_BINDING + '" crossAppNavCallback="{/foo}" />' +
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY + '" crossAppNavCallback="[\\{&quot;key&quot;:&quot;value&quot;\\}]" />' +
+					'<f:DynamicPageTitle id="' + this.ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA + '" app:someInlineAppCustomData="inlineValue" />' +
 				'</mvc:View>';
 			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 
@@ -237,9 +239,16 @@ function(
 			assert.equal(vAggregationElements, "barTooltip");
 		});
 
+		QUnit.test("attribute specified inline is returned in custom data aggregation", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA, this.oXmlView);
+			var aCustomData = XmlTreeModifier.getAggregation(oControl, 'customData');
+			assert.equal(aCustomData.length, 1, "the single custom data is returned");
+			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "key"), "someInlineAppCustomData", " inline specified custom data is available");
+			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "value"), "inlineValue", " inline specified custom data is available");
+		});
+
 		QUnit.test("all the namespaced attributes are returned in custom data aggregation", function (assert) {
 			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_CUSTOM_DATA, this.oXmlView);
-
 			var aCustomData = XmlTreeModifier.getAggregation(oControl, 'customData');
 			assert.equal(aCustomData.length, 3, "all 3 cases for custom data are returned");
 			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "key"), "fullCustomData", " fully specified custom data is available");

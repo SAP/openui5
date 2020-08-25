@@ -324,15 +324,11 @@ sap.ui.define([
 		getAggregation: function (oParent, sName) {
 			var oAggregationNode = XmlTreeModifier._findAggregationNode(oParent, sName);
 			var bSingleValueAggregation = XmlTreeModifier._isSingleValueAggregation(oParent, sName);
-			if (!oAggregationNode) {
-				if (bSingleValueAggregation && XmlTreeModifier._isAltTypeAggregation(oParent, sName)) {
-					return XmlTreeModifier.getProperty(oParent, sName);
-				}
-				return bSingleValueAggregation ? undefined : [];
-			}
-			var aChildren = XmlTreeModifier._getControlsInAggregation(oParent, oAggregationNode);
-			if (bSingleValueAggregation) {
-				return aChildren[0];
+			var aChildren = [];
+			if (oAggregationNode) {
+				aChildren = XmlTreeModifier._getControlsInAggregation(oParent, oAggregationNode);
+			} else if (XmlTreeModifier._isAltTypeAggregation(oParent, sName) && bSingleValueAggregation) {
+				aChildren.push(XmlTreeModifier.getProperty(oParent, sName));
 			}
 			if (sName === "customData") {
 				//check namespaced attributes:
@@ -365,7 +361,7 @@ sap.ui.define([
 					aChildren.push(oNewCustomData);
 				}
 			}
-			return aChildren;
+			return bSingleValueAggregation ? aChildren[0] : aChildren;
 		},
 
 		/**
