@@ -1,0 +1,101 @@
+/* ================================== */
+/* CSS for control sap.f/IllustratedMessage */
+/* Base theme                         */
+/* ================================== */
+
+.sapFIllustratedMessage {
+	width: 100%;
+	margin: 0 auto;
+	text-align: center;
+	padding: 1rem;
+	box-sizing: border-box;
+
+	figcaption {
+		margin: inherit;
+	}
+
+	.sapMTitle {
+		display: block;
+	}
+
+	&.sapFIllustratedMessage-Base {
+		figcaption {
+			max-width: 10rem;
+		}
+
+		.sapFIllustratedMessageAdditionalContent,
+		.sapFIllustration {
+			display: none;
+		}
+	}
+
+	&.sapFIllustratedMessage-Spot {
+		figcaption {
+			max-width: 16.25rem;
+		}
+
+		.sapFIllustration {
+			width: 8rem;
+			height: 8rem;
+			margin: 0.5rem 0;
+		}
+
+		.sapMTitle {
+			margin-bottom: 0.25rem;
+		}
+
+		.sapFIllustratedMessageDescription {
+			margin-bottom: 1rem;
+		}
+
+		.sapFIllustratedMessageAdditionalContent {
+			margin-top: 0.5rem;
+			margin-bottom: 1rem;
+		}
+	}
+
+	&.sapFIllustratedMessage-Dialog {
+		figcaption {
+			max-width: 20rem;
+		}
+
+		.sapFIllustration {
+			width: 10rem;
+			height: 10rem;
+			margin-top: 1rem;
+			margin-bottom: 2rem;
+		}
+
+		.sapMTitle {
+			margin-bottom: 0.25rem;
+		}
+
+		.sapFIllustratedMessageDescription {
+			margin-bottom: 2rem;
+		}
+	}
+
+	&.sapFIllustratedMessage-Scene {
+		figcaption {
+			max-width: 42.5625rem;
+		}
+
+		.sapFIllustration {
+			width: 20rem;
+			height: 15rem;
+		}
+
+		.sapMTitle {
+			margin-top: 2rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.sapFIllustratedMessageDescription {
+			margin-bottom: 2rem;
+		}
+
+		.sapFIllustratedMessageAdditionalContent {
+			margin-bottom: 2rem;
+		}
+	}
+}

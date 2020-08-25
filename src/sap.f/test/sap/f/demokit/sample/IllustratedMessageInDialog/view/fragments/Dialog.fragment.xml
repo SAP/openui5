@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:f="sap.f" xmlns:core="sap.ui.core">
+	<Dialog title="Sample Title" contentWidth="20rem">
+		<buttons>
+			<Button text="Save" type="Accept" />
+			<Button text="Close" type="Reject" press="onDialogClose"/>
+		</buttons>
+
+		<f:IllustratedMessage>
+
+			<f:additionalContent>
+				<Button text="Compose" />
+			</f:additionalContent>
+
+		</f:IllustratedMessage>
+	</Dialog>
+</core:FragmentDefinition>

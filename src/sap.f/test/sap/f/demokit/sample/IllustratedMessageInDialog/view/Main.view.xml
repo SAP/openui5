@@ -1,0 +1,7 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	controllerName="sap.f.sample.IllustratedMessageInDialog.controller.Main"
+	height="100%">
+	<Button press="handleOpenDialog" text="Open Dialog" class="sapUiSmallMarginBegin sapUiSmallMarginTop"/>
+</mvc:View>

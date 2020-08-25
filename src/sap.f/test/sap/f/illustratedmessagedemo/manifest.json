@@ -1,0 +1,26 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.f.illustratedmessagedemo",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.illustratedmessagedemo.view.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.87.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.f": {},
+				"sap.m": {}
+			}
+		}
+	}
+}
