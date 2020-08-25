@@ -58,7 +58,7 @@ describe("sap.m.PlanningCalendarAppointmentSize", function() {
 	it("should render the appointment with Half Size width 1024px", function() {
 		element(by.id("select_width")).click();
 		element(by.cssContainingText(".sapMSelectListItem", "1024px < x")).click();
-		expect(takeScreenshot()).toLookAs("calendar_appointment_half_size_width_1024px");
+		expect(takeScreenshot()).toLookAs("cal_app_half_size_width_1024px");
 	});
 
 });
