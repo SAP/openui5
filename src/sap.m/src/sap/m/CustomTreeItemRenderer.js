@@ -11,6 +11,7 @@ sap.ui.define([
 	 * @namespace
 	 */
 	var CustomTreeItemRenderer = Renderer.extend(TreeItemBaseRenderer);
+	CustomTreeItemRenderer.apiVersion = 2;
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -19,7 +20,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that will be rendered
 	 */
 	CustomTreeItemRenderer.renderLIAttributes = function(rm, oLI) {
-		rm.addClass("sapMCTI");
+		rm.class("sapMCTI");
 		TreeItemBaseRenderer.renderLIAttributes.apply(this, arguments);
 	};
 
