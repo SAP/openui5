@@ -229,9 +229,10 @@ sap.ui.define([
 			this._aTabKeys = null;
 		}
 
-		if (this.getAggregation("_overflow")) {
-			this._getOverflow().removeEventDelegate(this._oOverflowEventDelegate);
+		if (this._oOverflow) {
+			this._oOverflow.removeEventDelegate(this._oOverflowEventDelegate);
 			this._oOverflowEventDelegate = null;
+			this._oOverflow = null;
 		}
 
 		if (this._oAriaHeadText) {
@@ -289,8 +290,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns overflow tab
 	 * @private
+	 * @returns {sap.m.IconTabFilter} The overflow tab instance
 	 */
 	IconTabHeader.prototype._getOverflow = function () {
 		var oOverflow = this.getAggregation("_overflow");
@@ -301,11 +302,12 @@ sap.ui.define([
 				text: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE")
 			});
 			oOverflow._bIsOverflow = true;
-
-			oOverflow.addEventDelegate({ onsapnext: oOverflow.onsapdown }, oOverflow);
-			oOverflow.addEventDelegate({ onlongdragover: oOverflow._handleOnLongDragOver }, oOverflow);
-
+			this._oOverflowEventDelegate = {
+				onsapnext: oOverflow.onsapdown
+			};
+			oOverflow.addEventDelegate(this._oOverflowEventDelegate, oOverflow);
 			this.setAggregation("_overflow", oOverflow);
+			this._oOverflow = oOverflow;
 		}
 
 		return oOverflow;
