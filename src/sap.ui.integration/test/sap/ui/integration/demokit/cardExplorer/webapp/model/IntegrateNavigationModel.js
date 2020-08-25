@@ -39,7 +39,7 @@ sap.ui.define([
 				key: 'hostActions'
 			},
 			{
-				title: 'Text Badge (Experimental)',
+				title: 'Text Badge',
 				icon: 'sap-icon://badge',
 				target: 'integrate',
 				key: 'badge'
