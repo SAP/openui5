@@ -130,6 +130,7 @@ sap.ui.define([
         };
 
         RangeSlider.prototype.exit = function () {
+            Slider.prototype.exit.apply(this, arguments);
             this._oResourceBundle = null;
             this._aInitialFocusRange = null;
             this._liveChangeLastValue = null;
