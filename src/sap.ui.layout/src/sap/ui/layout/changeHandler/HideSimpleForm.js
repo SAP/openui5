@@ -191,6 +191,12 @@ sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"],
 		return true;
 	};
 
+	HideForm.getChangeVisualizationInfo = function(oChange) {
+		return {
+			affectedControls: [oChange.getDefinition().content.elementSelector]
+		};
+	};
+
 	return HideForm;
 },
 /* bExport= */true);

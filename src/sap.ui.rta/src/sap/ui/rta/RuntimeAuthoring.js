@@ -1141,6 +1141,8 @@ function(
 			return oToolbar.onFragmentLoaded().then(function() {
 				var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
 				var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
+				var oUriParams = UriParameters.fromQuery(window.location.search);
+				var bShowChangesVisible = oUriParams.get("sap-ui-rta-xx-changeVisualization") === "true";
 
 				this._oToolbarControlsModel = new JSONModel({
 					undoEnabled: false,
@@ -1154,6 +1156,8 @@ function(
 					saveAsEnabled: false,
 					manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
 					manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
+					showChangesVisible: bShowChangesVisible,
+					rtaRootControlId: this.getRootControl(),
 					modeSwitcher: this.getMode()
 				});
 

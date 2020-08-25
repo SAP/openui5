@@ -416,7 +416,7 @@ function(
 				if (bSuccessfullyConfigured) {
 					return Promise.resolve()
 						.then(function () {
-							return oCommand.prepare(mAllFlexSettings, sVariantManagementReference);
+							return oCommand.prepare(mAllFlexSettings, sVariantManagementReference, sCommand);
 						})
 						.then(function (bPrepareStatus) {
 							if (bPrepareStatus) {

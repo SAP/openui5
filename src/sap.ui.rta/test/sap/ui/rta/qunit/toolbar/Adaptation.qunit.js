@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/MessageType",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/rta/toolbar/ChangeVisualization"
 ],
 function(
 	Adaptation,
@@ -18,7 +19,8 @@ function(
 	JSONModel,
 	MessageType,
 	Core,
-	sinon
+	sinon,
+	ChangeVisualization
 ) {
 	'use strict';
 
@@ -697,6 +699,113 @@ function(
 					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
 					assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
 				}.bind(this));
+		});
+	});
+
+	QUnit.module("ChangeVisualization", {
+		beforeEach: function() {
+			this.oToolbar = new Adaptation({
+				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			});
+		},
+		afterEach: function() {
+			this.oToolbar.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("showChangesPopover when there are change indicators on the screen", function(assert) {
+			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(true);
+			var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover");
+			var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+			var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+
+			return this.oToolbar.showChangesPopover().then(function() {
+				assert.equal(oRemoveChangeIndicatorsStub.callCount, 1, "the blue circles are removed from the screen");
+				assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 1, "the toolbar button color changes dependent on the mode");
+				assert.equal(oOpenChangePopoverStub.callCount, 0, "the popover with the changes is not open");
+			});
+		});
+
+		QUnit.test("showChangesPopover when there are no change indicators", function(assert) {
+			assert.expect(6);
+			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(false);
+			var oPopoverButton = this.oToolbar.getControl("showChanges");
+			var oEvent = {
+				getSource: function () {
+					return oPopoverButton;
+				}
+			};
+			this.oToolbar.setModel(new JSONModel({
+				rtaRootControlId: "rootControlId",
+				modeSwitcher: "adaptation"
+			}), "controls");
+			var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover");
+			oOpenChangePopoverStub.resolves(new Control("testControl"));
+			var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+			var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+
+			return this.oToolbar.showChangesPopover(oEvent).then(function() {
+				assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
+				assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
+				assert.equal(oOpenChangePopoverStub.callCount, 1, "the changes popover is open");
+				oPopoverButton.getDependents().some(function(oDependentControl) {
+					if (oDependentControl.getId() === "testControl") {
+						assert.ok(true, "the control was added to the dependents list");
+						return true;
+					}
+				});
+				assert.equal(oOpenChangePopoverStub.lastCall.args[0], oPopoverButton, "the function was called with the correct button");
+				assert.equal(oOpenChangePopoverStub.lastCall.args[1], "rootControlId", "the function was called with the correct root control id");
+			});
+		});
+
+		QUnit.test("showChangesPopover when the popver already exists and there are no change indicators", function(assert) {
+			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(false);
+			var oPopoverButton = this.oToolbar.getControl("showChanges");
+			var oEvent = {
+				getSource: function () {
+					return oPopoverButton;
+				}
+			};
+			this.oToolbar.setModel(new JSONModel({
+				rtaRootControlId: "rootControlId",
+				modeSwitcher: "adaptation"
+			}), "controls");
+			var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover").resolves();
+			var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+			var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+			var iDependentControlLength = oPopoverButton.getDependents().length;
+
+			return this.oToolbar.showChangesPopover(oEvent).then(function() {
+				assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
+				assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
+				assert.equal(oOpenChangePopoverStub.callCount, 1, "the changes popover is open");
+				assert.equal(iDependentControlLength, oPopoverButton.getDependents().length, "the popover button does not have new dependents");
+				assert.equal(oOpenChangePopoverStub.lastCall.args[0], oPopoverButton, "the function was called with the correct button");
+				assert.equal(oOpenChangePopoverStub.lastCall.args[1], "rootControlId", "the function was called with the correct root control id");
+			});
+		});
+
+		QUnit.test("showChangesPopover", function(assert) {
+			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(false);
+			var oPopoverButton = this.oToolbar.getControl("showChanges");
+			var oEvent = {
+				getSource: function () {
+					return oPopoverButton;
+				}
+			};
+			this.oToolbar.setModel(new JSONModel({
+				rtaRootControlId: "rootControlId"
+			}), "controls");
+			var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover").resolves();
+			var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+			var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+
+			return this.oToolbar.showChangesPopover(oEvent).then(function() {
+				assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
+				assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
+				assert.equal(oOpenChangePopoverStub.callCount, 0, "the changes popover is not open");
+			});
 		});
 	});
 
