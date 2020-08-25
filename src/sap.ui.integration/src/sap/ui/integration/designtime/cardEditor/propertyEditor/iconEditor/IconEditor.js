@@ -163,6 +163,10 @@ sap.ui.define([
 		}, this);
 	};
 
+	IconEditor.prototype.getExpectedWrapperCount = function () {
+		return 2;
+	};
+
 	IconEditor.prototype.setValue = function(mValue) {
 		var vNextValue = isEmptyObject(mValue) ? undefined : mValue;
 		BasePropertyEditor.prototype.setValue.call(this, vNextValue);
@@ -184,7 +188,7 @@ sap.ui.define([
 					vValue.backgroundColor
 					|| vValue.color
 					|| (IconPool.isIconURI(vValue.src) && !!IconPool.getIconInfo(vValue.src))
-					|| isValidBindingString(vValue.src)
+					|| isValidBindingString(vValue.src, false)
 				) {
 					return "icon";
 				} else {

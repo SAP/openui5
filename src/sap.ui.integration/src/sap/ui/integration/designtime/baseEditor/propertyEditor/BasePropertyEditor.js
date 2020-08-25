@@ -661,12 +661,21 @@ sap.ui.define([
 
 	BasePropertyEditor.prototype._registerWrapper = function (oWrapper) {
 		this._aEditorWrappers.push(oWrapper);
-		oWrapper.attachReady(function () {
+		oWrapper.attachReady(function (oEvent) {
 			// If a nested editor got unready without a value change on the parent editor
 			// the ready state needs to be explicitly reevaluated to fire ready from the parent again
 			this._setReady(false);
 			this._checkReadyState();
 		}.bind(this));
+
+		if (oWrapper.isA("sap.ui.integration.designtime.baseEditor.PropertyEditor")) {
+			oWrapper.attachPropertyEditorChange(function (oEvent) {
+				var oPropertyEditor = oEvent.getParameter("propertyEditor");
+				if (!oPropertyEditor) {
+					this._setReady(false);
+				}
+			}, this);
+		}
 
 		this._oWrapperObserver.observe(oWrapper, {
 			destroy: true

@@ -8,6 +8,7 @@
 		<layout:VerticalLayout>
 			<PropertyEditor
 				renderLabel="false"
+				init="wrapperInit"
 				valueChange="_onTypeChange"
 				config="{path: 'configs>/selectConfig'}"
 				value="{path: 'icon>/type'}"
@@ -19,6 +20,7 @@
 		<layout:VerticalLayout width="calc(100% - 16px)" class="sapUiTinyMarginBeginEnd">
 			<PropertyEditor
 				renderLabel="false"
+				init="wrapperInit"
 				valueChange="_updateValue"
 				config="{path: 'configs>/valueConfig/config'}"
 				value="{parts: ['configs>/valueConfig/key', 'icon>/'], formatter: '._prepareValue'}"
