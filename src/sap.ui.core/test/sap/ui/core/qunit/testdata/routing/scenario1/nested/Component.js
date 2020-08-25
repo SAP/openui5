@@ -3,7 +3,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	"use strict";
 	return UIComponent.extend("routing.scenario1.nested.Component", {
 		metadata : {
-			manifest: "json"
+			manifest: "json",
+			properties: {
+				nickname: { type: "string" }
+			}
 		}
 	});
 });

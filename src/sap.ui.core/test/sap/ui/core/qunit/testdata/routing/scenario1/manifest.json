@@ -45,10 +45,7 @@
 					"controlAggregation": "content",
 					"options": {
 						"settings": {
-							"_manifestModels": {
-								"model1": {
-								}
-							}
+							"nickname": "Fancy Child Component"
 						},
 						"componentData": {
 							"foo": "bar"

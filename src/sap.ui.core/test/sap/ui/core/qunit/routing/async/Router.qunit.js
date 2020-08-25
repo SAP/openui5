@@ -4262,7 +4262,6 @@ sap.ui.define([
 			name: "routing.scenario1"
 		});
 
-
 		return pCreated.then(function(oComponent) {
 			assert.ok(oComponent, "Component instance is successfully created");
 
@@ -4284,7 +4283,8 @@ sap.ui.define([
 				var oArg = oCreateComponentSpy.getCall(0).args[0];
 				assert.equal(oArg.usage, "child", "usage is given");
 				assert.equal(oArg.id, oComponent.createId("childComponent"), "id option is given");
-				assert.ok(oArg.settings._manifestModels, "settings is given");
+				assert.ok(oArg.settings, "The settings are given");
+				assert.equal(oArg.settings.nickname, "Fancy Child Component", "The settings property 'nickname' is given");
 				assert.ok(oArg.settings._routerHashChanger, "RouterHashChanger is given");
 				assert.deepEqual(oArg.componentData, { foo: "bar" }, "componentData is given");
 
@@ -4299,6 +4299,8 @@ sap.ui.define([
 				assert.equal(oNestedRouter.isInitialized(), false, "The nested router isn't initialized yet");
 
 				assert.equal(oNestedRouter.getHashChanger().parent, oRouter.getHashChanger(), "The hash changer is chained with the parent router's");
+			}).finally(function(){
+				oComponent.destroy();
 			});
 
 		}.bind(this));
