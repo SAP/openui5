@@ -52,13 +52,6 @@ function(
 				activateDraft: {},
 				discardDraft: {},
 				switchVersion: {}
-			},
-			properties: {
-				/** Defines value of the switcher SegmentedButton */
-				modeSwitcher: {
-					type: "string",
-					defaultValue: "adaptation"
-				}
 			}
 		}
 	});
@@ -297,7 +290,7 @@ function(
 				showVersionHistory: this.showVersionHistory.bind(this)
 			}
 		}).then(function (aControls) {
-			this.getControl("modeSwitcher").setSelectedKey(this.getModeSwitcher());
+			this.getControl("modeSwitcher").setSelectedKey(this.getModel("controls").getProperty("/modeSwitcher"));
 			return aControls;
 		}.bind(this));
 	};

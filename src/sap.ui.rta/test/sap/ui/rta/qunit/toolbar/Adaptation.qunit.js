@@ -31,6 +31,20 @@ function(
 				versions: [],
 				draftAvailable: false
 			});
+			this.oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
 			this.oGetCurrentRangeStub = sandbox.stub(Device.media, "getCurrentRange");
 		},
 		afterEach: function() {
@@ -43,6 +57,7 @@ function(
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.DESKTOP});
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
@@ -71,6 +86,7 @@ function(
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.DESKTOP});
 			this.oToolbar.animation = false;
@@ -95,6 +111,7 @@ function(
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
@@ -111,6 +128,7 @@ function(
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
 			this.oVersionsModel.setProperty("/draftAvailable", true);
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
@@ -127,6 +145,7 @@ function(
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
@@ -143,6 +162,7 @@ function(
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
 			this.oVersionsModel.setProperty("/draftAvailable", true);
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
@@ -165,11 +185,26 @@ function(
 				versions: [],
 				draftAvailable: false
 			});
+			this.oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
 			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
 			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.sDraftVersionAccent = "sapUiRtaDraftVersionAccent";
 			this.sActiveVersionAccent = "sapUiRtaActiveVersionAccent";
 			this.oVersionButton = this.oToolbar.getControl("versionButton");
@@ -235,6 +270,21 @@ function(
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
+			this.oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 		},
 		after: function() {
 			this.oToolbar.destroy();
@@ -276,6 +326,21 @@ function(
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
+			this.oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 		},
 		after: function() {
 			this.oToolbar.destroy();
@@ -357,6 +422,21 @@ function(
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
+			this.oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();
@@ -379,9 +459,24 @@ function(
 	QUnit.module("Formatters", {
 		beforeEach: function () {
 			this.oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
 			this.oToolbar = new Adaptation({
 				textResources: this.oMessageBundle
 			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();
@@ -497,6 +592,7 @@ function(
 			this.oControlsModel = new JSONModel({
 				undoEnabled: false,
 				redoEnabled: false,
+				publishVisible: false,
 				publishEnabled: false,
 				restoreEnabled: false,
 				appVariantsOverviewVisible: false,
@@ -504,7 +600,8 @@ function(
 				saveAsVisible: false,
 				saveAsEnabled: false,
 				manageAppsVisible: false,
-				manageAppsEnabled: false
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
 			});
 			this.oToolbar.setModel(this.oControlsModel, "controls");
 		},

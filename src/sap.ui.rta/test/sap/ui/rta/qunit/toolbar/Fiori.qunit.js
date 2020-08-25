@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Fiori",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/m/Image",
@@ -10,6 +11,7 @@ sap.ui.define([
 ],
 function(
 	jQuery,
+	JSONModel,
 	Fiori,
 	Adaptation,
 	Image,
@@ -33,6 +35,21 @@ function(
 
 			this.oImage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			this.oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
 
 			sandbox.stub(sap.ui.rta.Utils, "getFiori2Renderer").returns({
 				getRootControl: function() {
@@ -80,6 +97,7 @@ function(
 			this.oToolbar = new Fiori({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
 			// settings a timeout to allow the async loading of the icon to finish; in the productive system this async does not matter
 			window.setTimeout(function () {

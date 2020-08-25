@@ -1100,7 +1100,8 @@ function(
 				saveAsVisible: bSaveAsAvailable,
 				saveAsEnabled: false,
 				manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
-				manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview
+				manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
+				modeSwitcher: "adaptation"
 			});
 
 			if (bSaveAsAvailable) {
@@ -1745,7 +1746,7 @@ function(
 	 * @param {string} sNewMode The new value for the 'mode' property
 	 */
 	RuntimeAuthoring.prototype.setMode = function (sNewMode) {
-		if (this.getProperty('mode') !== sNewMode) {
+		if (this._oToolbarControlsModel.getProperty("/modeSwitcher") !== sNewMode) {
 			var oModeSwitcher = this.getShowToolbars() && this.getToolbar().getControl('modeSwitcher');
 			var bOverlaysEnabled = sNewMode === 'adaptation';
 
@@ -1763,6 +1764,7 @@ function(
 			}
 			this._oDesignTime.setEnabled(bOverlaysEnabled);
 			this.getPlugins()['tabHandling'][bOverlaysEnabled ? 'removeTabIndex' : 'restoreTabIndex']();
+			this._oToolbarControlsModel.setProperty("/modeSwitcher", sNewMode);
 			this.setProperty('mode', sNewMode);
 			this.fireModeChanged({mode: sNewMode});
 		}
