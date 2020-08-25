@@ -19,6 +19,7 @@ sap.ui.define([
 		},
 		sClassName = "sap.ui.model.odata.v4.lib._Requestor",
 		_Requestor,
+		rSystemQueryOptionWithPlaceholder = /(\$\w+)=~/g,
 		rTimeout = /^\d+$/;
 
 	/**
@@ -176,10 +177,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds the given query options to the resource path, which itself may already have query
-	 * options.
+	 * Adds the given query options to the resource path.
 	 *
-	 * @param {string} sResourcePath The resource path with poss. query options
+	 * @param {string} sResourcePath The resource path with possible query options and placeholders
 	 * @param {string} sMetaPath The absolute meta path matching the resource path
 	 * @param {object} mQueryOptions Query options to add to the resource path
 	 * @returns {string} The resource path with the query options
@@ -187,7 +187,22 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.addQueryString = function (sResourcePath, sMetaPath, mQueryOptions) {
-		var sQueryString = this.buildQueryString(sMetaPath, mQueryOptions, false, true);
+		var sQueryString;
+
+		mQueryOptions = this.convertQueryOptions(sMetaPath, mQueryOptions, false, true);
+		sResourcePath = sResourcePath.replace(rSystemQueryOptionWithPlaceholder,
+			function (unused, sOption) {
+				var sValue = mQueryOptions[sOption];
+
+				delete mQueryOptions[sOption];
+
+				return sOption + "=" + sValue;
+			});
+
+		sQueryString = _Helper.buildQuery(mQueryOptions);
+		if (!sQueryString) {
+			return sResourcePath;
+		}
 
 		return sResourcePath +
 			(sResourcePath.includes("?") ? "&" + sQueryString.slice(1) : sQueryString);
@@ -693,7 +708,7 @@ sap.ui.define([
 
 	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
-	 * other parameters are simply passed through.
+	 * other parameters and placeholders are simply passed through.
 	 * May be overwritten for other OData service versions.
 	 *
 	 * @param {string} sMetaPath
@@ -721,7 +736,9 @@ sap.ui.define([
 
 			switch (sKey) {
 				case "$expand":
-					vValue = that.convertExpand(vValue, bSortExpandSelect);
+					if (vValue !== "~") {
+						vValue = that.convertExpand(vValue, bSortExpandSelect);
+					}
 					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
@@ -1429,7 +1446,7 @@ sap.ui.define([
 	 * @param {object} [mQueryOptions]
 	 *   Query options if it is allowed to merge this request with another request having the same
 	 *   sResourcePath (only allowed for GET requests); the resulting resource path is the path from
-	 *   sResourcePath plus the merged query options
+	 *   sResourcePath plus the merged query options; may only contain $expand and $select
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request; it will be rejected with an error having the
 	 *   property <code>canceled = true</code> instead of sending a request if

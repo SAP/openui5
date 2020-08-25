@@ -2923,6 +2923,204 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: requestSideEffects with absolute paths.
+	// Create a list binding on contacts with a dependent context binding on a business partner
+	// and a context binding on a sales order with a dependent list binding on the line items. The
+	// dependent bindings have their own caches, because this is the most interesting case.
+	// 1. Request side effects on the business partner for the company name with relative path and
+	//    the web address with absolute path (they should be merged to one request), and for the
+	//    note of sales order line items with absolute path.
+	// 2. Request side effects on the business partner for sales orders with absolute path and
+	//    expect refreshes for orders and items.
+	// 3. Request side effects on a sales order line item for the gross amount and the quantity for
+	//    all line items.
+	// JIRA: CPOUI5ODATAV4-398
+	QUnit.test("requestSideEffects: absolute paths", function (assert) {
+		var oBusinessPartnerContext,
+			oModel = createModel(sSalesOrderService + "?sap-client=123",
+				{autoExpandSelect : true, groupId : "$auto"}),
+			sEntityContainer = "/com.sap.gateway.default.zui5_epm_sample.v0002.Container",
+			sView = '\
+<Table id="contacts" items="{/ContactList}">\
+	<Text id="lastName" text="{LastName}"/>\
+</Table>\
+<FlexBox id="partner" binding="{path : \'CONTACT_2_BP\', parameters : {$$ownRequest : true}}">\
+	<Text id="companyName" text="{CompanyName}"/>\
+	<Text id="webAddress" text="{WebAddress}"/>\
+</FlexBox>\
+<FlexBox id="order" binding="{/SalesOrderList(\'SO1\')}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+		<Text id="grossAmount" text="{GrossAmount}"/>\
+		<Text id="note" text="{Note}"/>\
+		<Text id="quantity" text="{Quantity}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ContactList?sap-client=123&$select=ContactGUID,LastName"
+				+ "&$skip=0&$top=100", {
+				value : [{ContactGUID : "guid", LastName : "Doe"}]
+			})
+			.expectChange("lastName", "Doe")
+			.expectRequest("SalesOrderList('SO1')?sap-client=123&$select=SalesOrderID", {
+				SalesOrderID : "SO1"
+			})
+			.expectChange("id", "SO1")
+			.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
+				+ "&$select=GrossAmount,ItemPosition,Note,Quantity,SalesOrderID"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					GrossAmount : "42",
+					ItemPosition : "0010",
+					Note : "Note 0010",
+					Quantity : "3",
+					SalesOrderID : "SO1"
+				}, {
+					GrossAmount : "23",
+					ItemPosition : "0020",
+					Note : "Note 0020",
+					Quantity : "1",
+					SalesOrderID : "SO1"
+				}]
+			})
+			.expectChange("grossAmount", ["42", "23"])
+			.expectChange("note", ["Note 0010", "Note 0020"])
+			.expectChange("quantity", ["3.000", "1.000"])
+			.expectChange("companyName")
+			.expectChange("webAddress");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBusinessPartner = that.oView.byId("partner");
+
+			that.expectRequest("ContactList(guid)/CONTACT_2_BP?sap-client=123"
+					+ "&$select=BusinessPartnerID,CompanyName,WebAddress", {
+					BusinessPartnerID : "BP1",
+					CompanyName : "TECUM",
+					WebAddress : "www.tecum.com"
+				})
+				.expectChange("companyName", "TECUM")
+				.expectChange("webAddress", "www.tecum.com");
+
+			oBusinessPartner.setBindingContext(
+				that.oView.byId("contacts").getItems()[0].getBindingContext());
+			oBusinessPartnerContext = oBusinessPartner.getBindingContext();
+
+			return that.waitForChanges(assert, "get business partner");
+		}).then(function () {
+			that.expectRequest("ContactList(guid)/CONTACT_2_BP?sap-client=123"
+					+ "&$select=BusinessPartnerID,CompanyName,WebAddress", {
+					BusinessPartnerID : "BP1",
+					CompanyName : "TECUM*",
+					WebAddress : "www.tecum.com*"
+				})
+				.expectChange("companyName", "TECUM*")
+				.expectChange("webAddress", "www.tecum.com*")
+				.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
+					+ "&$select=ItemPosition,Note,SalesOrderID"
+					+ "&$filter=SalesOrderID eq 'SO1' and ItemPosition eq '0010'"
+					+ " or SalesOrderID eq 'SO1' and ItemPosition eq '0020'", {
+					value : [{
+						ItemPosition : "0010",
+						Note : "Note 0010*",
+						SalesOrderID : "SO1"
+					}, {
+						ItemPosition : "0020",
+						Note : "Note 0020*",
+						SalesOrderID : "SO1"
+					}]
+				})
+				.expectChange("note", ["Note 0010*", "Note 0020*"]);
+
+			return Promise.all([
+				// code under test
+				oBusinessPartnerContext.requestSideEffects([
+					{$PropertyPath : "CompanyName"},
+					{$PropertyPath : sEntityContainer + "/ContactList/CONTACT_2_BP/WebAddress"},
+					{$PropertyPath : sEntityContainer + "/SalesOrderList/SO_2_SOITEM/Note"}
+				]),
+				that.waitForChanges(assert, "(1)")
+			]);
+		}).then(function () {
+			that.expectRequest("ContactList(guid)/CONTACT_2_BP?sap-client=123"
+					+ "&$select=BusinessPartnerID,CompanyName", {
+					BusinessPartnerID : "BP1",
+					CompanyName : "TECUM*2"
+				})
+				.expectChange("companyName", "TECUM*2")
+				.expectRequest("SalesOrderList('SO1')?sap-client=123&$select=SalesOrderID", {
+					SalesOrderID : "SO1"
+				})
+				.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
+						+ "&$select=GrossAmount,ItemPosition,Note,Quantity,SalesOrderID"
+						+ "&$skip=0&$top=100", {
+					value : [{
+						GrossAmount : "42.1",
+						ItemPosition : "0010",
+						Note : "Note 0010*2",
+						Quantity : "4",
+						SalesOrderID : "SO1"
+					}, {
+						GrossAmount : "23.1",
+						ItemPosition : "0020",
+						Note : "Note 0020*2",
+						Quantity : "2",
+						SalesOrderID : "SO1"
+					}]
+				})
+				.expectChange("grossAmount", ["42.1", "23.1"])
+				.expectChange("note", ["Note 0010*2", "Note 0020*2"])
+				.expectChange("quantity", ["4.000", "2.000"]);
+
+			return Promise.all([
+				// code under test
+				oBusinessPartnerContext.requestSideEffects([
+					{$PropertyPath : "CompanyName"},
+					{$NavigationPropertyPath : sEntityContainer + "/SalesOrderList"},
+					{$NavigationPropertyPath : sEntityContainer + "/ProductList"}
+				]),
+				that.waitForChanges(assert, "(2)")
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
+					+ "&$select=GrossAmount,ItemPosition,SalesOrderID"
+					+ "&$filter=SalesOrderID eq 'SO1' and ItemPosition eq '0010'", {
+					value : [{
+						GrossAmount : "42.2",
+						ItemPosition : "0010",
+						SalesOrderID : "SO1"
+					}]
+				})
+				.expectChange("grossAmount", ["42.2"])
+				.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
+					+ "&$select=ItemPosition,Note,Quantity,SalesOrderID"
+					+ "&$filter=SalesOrderID eq 'SO1' and ItemPosition eq '0010'"
+					+ " or SalesOrderID eq 'SO1' and ItemPosition eq '0020'", {
+					value : [{
+						ItemPosition : "0010",
+						Quantity : "5",
+						SalesOrderID : "SO1"
+					}, {
+						ItemPosition : "0020",
+						Quantity : "3",
+						SalesOrderID : "SO1"
+					}]
+				})
+				.expectChange("quantity", ["5.000", "3.000"]);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("items").getItems()[0].getBindingContext().requestSideEffects([
+					{$PropertyPath : "GrossAmount"},
+					{$PropertyPath : "SOITEM_2_SO/SO_2_SOITEM/Note"},
+					{$PropertyPath : sEntityContainer + "/SalesOrderList/SO_2_SOITEM/Quantity"}
+				]),
+				that.waitForChanges(assert, "(3)")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB, late property at an entity within $expand.
 	// JIRA: CPOUI5ODATAV4-23
 	QUnit.test("ODLB: late property at nested entity", function (assert) {

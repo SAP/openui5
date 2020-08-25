@@ -2316,6 +2316,7 @@ sap.ui.define([
 			mNavigationPropertyPaths, iStart, iLength) {
 		var oElement,
 			aFilters = [],
+			mMergeableQueryOptions,
 			mQueryOptions,
 			sResourcePath,
 			mTypeForMetaPath = this.fetchTypes().getResult(),
@@ -2388,10 +2389,13 @@ sap.ui.define([
 		delete mQueryOptions.$count;
 		delete mQueryOptions.$orderby;
 		delete mQueryOptions.$search;
+		mMergeableQueryOptions = _Helper.extractMergeableQueryOptions(mQueryOptions);
 		sResourcePath = this.sResourcePath
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 
-		return this.oRequestor.request("GET", sResourcePath, oGroupLock).then(function (oResult) {
+		return this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
+				undefined, undefined, this.sMetaPath, undefined, false, mMergeableQueryOptions
+			).then(function (oResult) {
 				var oElement, sPredicate, i, n;
 
 				function preventKeyPredicateChange(sPath) {
@@ -2739,7 +2743,8 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
 			mNavigationPropertyPaths, sResourcePath) {
-		var oOldValuePromise = this.oPromise,
+		var mMergeableQueryOptions,
+			oOldValuePromise = this.oPromise,
 			mQueryOptions,
 			oResult,
 			that = this;
@@ -2754,10 +2759,12 @@ sap.ui.define([
 			return SyncPromise.resolve();
 		}
 
+		mMergeableQueryOptions = _Helper.extractMergeableQueryOptions(mQueryOptions);
 		sResourcePath = (sResourcePath || this.sResourcePath)
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 		oResult = SyncPromise.all([
-			this.oRequestor.request("GET", sResourcePath, oGroupLock),
+			this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
+				undefined, undefined, this.sMetaPath, undefined, false, mMergeableQueryOptions),
 			this.fetchTypes(),
 			this.fetchValue(_GroupLock.$cached, "") // Note: includes some additional checks
 		]).then(function (aResult) {

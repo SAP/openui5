@@ -1073,6 +1073,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests side effects for the given absolute paths.
+	 *
+	 * @param {string} sGroupId
+	 *   The effective group ID
+	 * @param {string[]} aAbsolutePaths
+	 *   The absolute paths to request side effects for
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
+	 *   effects fails, or <code>undefined</code> if there is nothing to do
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.requestAbsoluteSideEffects = function (sGroupId, aAbsolutePaths) {
+		var aPaths = [],
+			sMetaPath = _Helper.getMetaPath(this.oModel.resolve(this.sPath, this.oContext)),
+			bRefresh;
+
+		bRefresh = aAbsolutePaths.some(function (sAbsolutePath) {
+			var sRelativePath = _Helper.getRelativePath(sAbsolutePath, sMetaPath);
+
+			if (sRelativePath !== undefined) {
+				aPaths.push(sRelativePath);
+			}
+
+			return _Helper.hasPathPrefix(sMetaPath, sAbsolutePath);
+		});
+
+		if (bRefresh) {
+			return this.refreshInternal("", sGroupId);
+		} else if (aPaths.length) {
+			return this.requestSideEffects(sGroupId, aPaths);
+		}
+		// return undefined;
+	};
+
+	/**
 	 * Loads side effects for the given context of this binding.
 	 *
 	 * @param {string} sGroupId
