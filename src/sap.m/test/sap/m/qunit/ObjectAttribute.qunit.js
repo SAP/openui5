@@ -31,7 +31,8 @@ sap.ui.define([
 	coreLibrary
 ) {
 	// shortcut for sap.ui.core.TextDirection
-	var TextDirection = coreLibrary.TextDirection;
+	var TextDirection = coreLibrary.TextDirection,
+		oCore = sap.ui.getCore();
 
 	createAndAppendDiv("objectAttributes");
 	createAndAppendDiv("objectAttributesWrap");
@@ -132,13 +133,36 @@ sap.ui.define([
 
 		// System under Test
 		oObjectAttribute.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oObjectAttribute.$().attr("role"), "link", "Active ObjectAttribute has link role.");
 
 		// Clean up
 		oObjectAttribute.destroy();
 
+	});
+
+	QUnit.test("In french language there is an extra space before each colon", function(assert) {
+		var sOriginalLanguage = oCore.getConfiguration().getLanguage(),
+			oObjectAttribute;
+
+		// Arrange
+		oCore.getConfiguration().setLanguage("fr");
+
+		// Act
+		oObjectAttribute = new ObjectAttribute({
+			title: "Title",
+			text: "Contract #D1234567890"
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		assert.equal(oObjectAttribute.$().text(), "Title : Contract #D1234567890", "The output text of the control is correct.");
+
+		// Clean up
+		oObjectAttribute.destroy();
+
+		oCore.getConfiguration().setLanguage(sOriginalLanguage);
 	});
 
 	QUnit.module("Attributes Wrapping");
@@ -154,7 +178,7 @@ sap.ui.define([
 
 		oObjectHeader.placeAt("objectAttributesWrap");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(oAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
@@ -180,7 +204,7 @@ sap.ui.define([
 		});
 		oObjectHeader.placeAt("objectAttributesWrap");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span is rendered.");
@@ -201,7 +225,7 @@ sap.ui.define([
 		});
 		oObjectListItem.placeAt("objectAttributesWrap");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 
@@ -244,7 +268,7 @@ sap.ui.define([
 
 		oObjectListItem.placeAt("objectAttributesWrap");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(oAttr1.$().hasClass("sapMObjectAttributeTextOnly"), "sapMObjectAttributeTextOnly class is present in case of text-only ObjectAttribute.");
@@ -267,7 +291,7 @@ sap.ui.define([
 		});
 
 		oAttr.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oAttr.getAggregation("_textControl").getMaxLines(), "multiLine property is corretly set to undefined.");
@@ -308,7 +332,7 @@ sap.ui.define([
 
 		oAttr.placeAt("objectAttributesWrap");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLink = oAttr.$().children().children();
 
@@ -330,7 +354,7 @@ sap.ui.define([
 		});
 
 		oAttr.placeAt("objectAttributesWrap");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.equal(oAttr.$().attr("role"), "link", "ObjectAttribute with active=true has link role.");
@@ -356,11 +380,11 @@ sap.ui.define([
 		}),
 			sExpected = "LinkText";
 		oAttr.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// action
 		oAttr.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.equal(oAttr.getAggregation('customContent').getText(), sExpected, "Text of the ObjectAttribute should be " + sExpected);
@@ -443,7 +467,7 @@ sap.ui.define([
 
 		// System under Test
 		oObjectAttribute.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPressSpy = sinon.spy(ObjectAttribute.prototype, "firePress");
 		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), KeyCodes.ENTER);
@@ -466,7 +490,7 @@ sap.ui.define([
 
 		// System under Test
 		oObjectAttribute.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPressSpy = sinon.spy(ObjectAttribute.prototype, "firePress");
 		sap.ui.test.qunit.triggerKeyup(oObjectAttribute.getFocusDomRef(), KeyCodes.SPACE);
@@ -504,7 +528,7 @@ sap.ui.define([
 
 		// System under Test
 		oObjectAttribute.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oObjectAttribute.$().find('.sapMText').text(), "a: \u200f1 2\u200f", "Numbers are read backwards.");
 
@@ -528,7 +552,7 @@ sap.ui.define([
 
 	QUnit.test("Standalone active attribute is rendered in separate spans", function(assert) {
 		this.oActiveAttr.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
@@ -544,7 +568,7 @@ sap.ui.define([
 
 		oObjectListItem.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
@@ -562,7 +586,7 @@ sap.ui.define([
 		});
 		oObjectHeaderS.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
@@ -577,7 +601,7 @@ sap.ui.define([
 	QUnit.test("Standalone active attribute with no text set", function(assert) {
 		this.oActiveAttr.setText("");
 		this.oActiveAttr.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(!this.oActiveAttr.$().hasClass("sapMObjectAttributeActive"), "sapMObjectAttributeActive class is not presented.");
@@ -591,7 +615,7 @@ sap.ui.define([
 
 		// Act
 		oAttr.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oAttr.getDomRef(), "Object attribute should have its container element rendered");
 	});
@@ -619,7 +643,7 @@ sap.ui.define([
 
 		// Act
 		oAttr.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oAttr.$().find(".sapMText").text(), ".*+: text", "Title is correct");
