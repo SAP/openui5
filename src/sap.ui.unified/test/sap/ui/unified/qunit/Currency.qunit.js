@@ -132,6 +132,20 @@ sap.ui.define([
 		assert.strictEqual(this.fnGetRenderedValue(), "123.23\u2007", "Value is rendered when currency is other than *");
 	});
 
+	QUnit.test("formatting of the value and the currency", function (assert) {
+		// act
+		this.sut.setValue(37);
+
+		// assert
+		assert.strictEqual(this.fnGetRenderedValue(), "37.00 ", "The value is formatted correctly with the default currency.");
+
+		// act
+		this.sut.setCurrency("JPY");
+
+		// assert
+		assert.strictEqual(this.fnGetRenderedValue(), "37    ", "The value is formatted correctly after the currency is changed.");
+	});
+
 	QUnit.module("Control API - helper methods", {
 		beforeEach : function () {
 			this.oCurrency = new Currency();

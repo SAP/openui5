@@ -145,7 +145,7 @@ sap.ui.define([
 			}
 		};
 
-		/*
+		/**
 		 * Value property setter.
 		 *
 		 * @override
@@ -181,7 +181,7 @@ sap.ui.define([
 			}
 		};
 
-		/*
+		/**
 		 * Currency property setter.
 		 * @param {string} sValue The ISO 4217 currency code
 		 * @return {sap.ui.unified.Currency} <code>this</code> pointer for chaining
@@ -197,6 +197,8 @@ sap.ui.define([
 			// If we switch from a currency which differs we should update the value too.
 			iCurrencyDigits = this._oFormat.oLocaleData.getCurrencyDigits(sValue);
 			if (jQuery.isNumeric(this._iLastCurrencyDigits) && this._iLastCurrencyDigits !== iCurrencyDigits) {
+				bRenderValue = true;
+			} else if (this._oFormat.oLocaleData.getCurrencyDigits() !== iCurrencyDigits) {
 				bRenderValue = true;
 			}
 			this._iLastCurrencyDigits = iCurrencyDigits;
@@ -220,7 +222,7 @@ sap.ui.define([
 			return this;
 		};
 
-		/*
+		/**
 		 * UseSymbol property setter.
 		 * @param {boolean} bValue Whether the control must show the currency symbol instead of the ISO currency code
 		 * @return {sap.ui.unified.Currency} <code>this</code> pointer for chaining
@@ -231,7 +233,7 @@ sap.ui.define([
 			return this;
 		};
 
-		/*
+		/**
 		 * MaxPrecision property setter.
 		 * @param {int} iValue The maximum precision value
 		 * @return {sap.ui.unified.Currency} <code>this</code> pointer for chaining
