@@ -7361,18 +7361,32 @@ sap.ui.define([
 								sinon.match.same(oFixture.aValues[i]), sinon.match.func);
 					}
 					if (iReceivedLength > 0) { // expect a GET iff. there is s.th. to do
-						that.mock(that.oRequestor).expects("buildQueryString")
-							.withExactArgs("/TEAMS/Foo", {
+						that.mock(_Helper).expects("extractMergeableQueryOptions")
+							.withExactArgs({
 								$apply : "A.P.P.L.E.",
 								$expand : {expand : null},
 								$filter : oFixture.sFilter,
 								$select : ["Name"],
 								foo : "bar",
 								"sap-client" : "123"
+							}).callThrough();
+						that.mock(that.oRequestor).expects("buildQueryString")
+							.withExactArgs("/TEAMS/Foo", {
+								$apply : "A.P.P.L.E.",
+								$expand : "~",
+								$filter : oFixture.sFilter,
+								$select : "~",
+								foo : "bar",
+								"sap-client" : "123"
 							}, false, true)
 							.returns("?bar");
 						that.oRequestorMock.expects("request").withExactArgs("GET",
-								"TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock))
+								"TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock), undefined,
+								undefined, undefined, undefined, oCache.sMetaPath, undefined, false,
+								{
+									$expand : {expand : null},
+									$select : ["Name"]
+								})
 							.resolves(oResult);
 						that.mock(oCache).expects("visitResponse").withExactArgs(
 								sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
@@ -7564,6 +7578,7 @@ sap.ui.define([
 		var oError = new Error(),
 			oGroupLock = {},
 			oHelperMock = this.mock(_Helper),
+			mMergeableQueryOptions = {},
 			mMergedQueryOptions = {},
 			mNavigationPropertyPaths = {},
 			oNewValue = {
@@ -7597,11 +7612,15 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
 						sinon.match.same(mTypeForMetaPath))
 					.returns("~key_filter~");
+				that.mock(_Helper).expects("extractMergeableQueryOptions")
+					.withExactArgs({$filter : "~key_filter~"}).returns(mMergeableQueryOptions);
 				that.mock(that.oRequestor).expects("buildQueryString")
 					.withExactArgs("/TEAMS/Foo", {$filter : "~key_filter~"}, false, true)
 					.returns("?bar");
 				that.oRequestorMock.expects("request")
-					.withExactArgs("GET", "TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock))
+					.withExactArgs("GET", "TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock),
+						undefined, undefined, undefined, undefined, oCache.sMetaPath, undefined,
+						false, sinon.match.same(mMergeableQueryOptions))
 					.resolves({value : [oNewValue]});
 				oHelperMock.expects("updateAll")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('c')",
@@ -7632,6 +7651,7 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oGroupLock = {},
+				mMergeableQueryOptions = {},
 				mMergedQueryOptions = {},
 				mNavigationPropertyPaths = {},
 				aPaths = [],
@@ -7656,11 +7676,15 @@ sap.ui.define([
 						.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
 							sinon.match.same(mTypeForMetaPath))
 						.returns("~key_filter~");
+					that.mock(_Helper).expects("extractMergeableQueryOptions")
+						.withExactArgs({$filter : "~key_filter~"}).returns(mMergeableQueryOptions);
 					that.mock(that.oRequestor).expects("buildQueryString")
 						.withExactArgs("/TEAMS/Foo", {$filter : "~key_filter~"}, false, true)
 						.returns("?bar");
-					that.oRequestorMock.expects("request").withExactArgs("GET",
-							"TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock))
+					that.oRequestorMock.expects("request")
+						.withExactArgs("GET", "TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock),
+							undefined, undefined, undefined, undefined, oCache.sMetaPath, undefined,
+							false, sinon.match.same(mMergeableQueryOptions))
 						.resolves({value : aData});
 					that.mock(oCache).expects("visitResponse").never();
 
@@ -8270,13 +8294,14 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var sResourcePath = "Employees('42')",
-				oCache = this.createSingle(sResourcePath, {
-					"sap-client" : "123",
-					$select : ["ROOM_ID"]
-				}),
+				oCache = this.createSingle(sResourcePath, {}),
 				oCacheMock = this.mock(oCache),
 				oGroupLock = {},
-				mMergedQueryOptions = {},
+				mMergedQueryOptions = {
+					"sap-client" : "123",
+					$expand : {expand : null},
+					$select : ["ROOM_ID"]
+				},
 				mNavigationPropertyPaths = {},
 				oNewValue = {},
 				oOldValue = {},
@@ -8289,17 +8314,28 @@ sap.ui.define([
 			oCache.oPromise = SyncPromise.resolve(oOldValue); // from previous #fetchValue
 			oCache.mLateQueryOptions = mLateQueryOptions;
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(mLateQueryOptions || oCache.mQueryOptions),
-				sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/Employees", sinon.match.same(mNavigationPropertyPaths))
+					sinon.match.same(mLateQueryOptions || oCache.mQueryOptions),
+					sinon.match.same(aPaths),
+					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
+					"/Employees", sinon.match.same(mNavigationPropertyPaths))
 				.returns(mMergedQueryOptions);
+			this.mock(_Helper).expects("extractMergeableQueryOptions")
+				.withExactArgs(sinon.match.same(mMergedQueryOptions))
+				.callThrough();
 			this.oRequestorMock.expects("buildQueryString")
-				.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
+				.withExactArgs("/Employees", {
+						"sap-client" : "123",
+						$expand : "~",
+						$select : "~"
+					}, false, true)
 				.returns("?~");
 			this.oRequestorMock.expects("request")
 				.withExactArgs("GET", (sReadPath || sResourcePath) + "?~",
-					sinon.match.same(oGroupLock))
+					sinon.match.same(oGroupLock), undefined, undefined, undefined, undefined,
+					oCache.sMetaPath, undefined, false, {
+						$expand : {expand : null},
+						$select : ["ROOM_ID"]
+					})
 				.resolves(oNewValue);
 			oCacheMock.expects("fetchTypes").withExactArgs()
 				.returns(SyncPromise.resolve(mTypeForMetaPath));
@@ -8350,6 +8386,7 @@ sap.ui.define([
 			}),
 			oError = new Error(),
 			oGroupLock = {},
+			mMergeableQueryOptions = {},
 			mMergedQueryOptions = {},
 			mNavigationPropertyPaths = {},
 			oNewValue = {
@@ -8372,11 +8409,15 @@ sap.ui.define([
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/Employees", sinon.match.same(mNavigationPropertyPaths))
 			.returns(mMergedQueryOptions);
+		this.mock(_Helper).expects("extractMergeableQueryOptions")
+			.withExactArgs(sinon.match.same(mMergedQueryOptions)).returns(mMergeableQueryOptions);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
 			.returns("?~");
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "~path~?~", sinon.match.same(oGroupLock))
+			.withExactArgs("GET", "~path~?~", sinon.match.same(oGroupLock), undefined, undefined,
+				undefined, undefined, oCache.sMetaPath, undefined, false,
+				sinon.match.same(mMergeableQueryOptions))
 			.resolves(oNewValue);
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
@@ -8453,6 +8494,7 @@ sap.ui.define([
 			oCacheMock = this.mock(oCache),
 			oError = new Error(),
 			oGroupLock = {},
+			mMergeableQueryOptions = {},
 			mMergedQueryOptions = {},
 			mNavigationPropertyPaths = {},
 			oOldValue = {},
@@ -8465,11 +8507,15 @@ sap.ui.define([
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/Employees", sinon.match.same(mNavigationPropertyPaths))
 			.returns(mMergedQueryOptions);
+		this.mock(_Helper).expects("extractMergeableQueryOptions")
+			.withExactArgs(sinon.match.same(mMergedQueryOptions)).returns(mMergeableQueryOptions);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
 			.returns("?~");
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees('42')?~", sinon.match.same(oGroupLock))
+			.withExactArgs("GET", "Employees('42')?~", sinon.match.same(oGroupLock), undefined,
+				undefined, undefined, undefined, oCache.sMetaPath, undefined, false,
+				sinon.match.same(mMergeableQueryOptions))
 			.rejects(oError);
 		oCacheMock.expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(/*don't care*/));
