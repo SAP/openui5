@@ -534,6 +534,15 @@ sap.ui.define([
 				}.bind(this));
 		},
 
+		_checkInvalidAddActions: function (bSibling, oSourceElementOverlay) {
+			var mParents = _getParents(bSibling, oSourceElementOverlay, this);
+			var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
+			var aActions = oDesignTimeMetadata ? oDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", mParents.parent) : [];
+			if (aActions.length > 0) {
+				Log.error("Outdated addODataProperty action in designtime metadata in " + oDesignTimeMetadata.getData().designtimeModule + " or propagated or via instance specific designtime metadata.");
+			}
+		},
+
 		_getCustomAddActions: function (bSibling, oOverlay) {
 			var mParents = _getParents(bSibling, oOverlay, this);
 			var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
@@ -647,7 +656,8 @@ sap.ui.define([
 				return Promise.all([
 					oRevealActionsPromise,
 					oAddPropertyActionsPromise,
-					oCustomAddActionsPromise
+					oCustomAddActionsPromise,
+					this._checkInvalidAddActions(bSibling, oSourceElementOverlay)
 				])
 					.then(function(aAllActions) {
 						//join and condense all action data
