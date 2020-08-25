@@ -203,15 +203,5 @@ function(
 		this.setZIndex(ZIndexManager.getNextZIndex());
 	};
 
-	/**
-	 * Backwards compatibility
-	 */
-	Base.prototype.setUndoRedoEnabled = function () {};
-	Base.prototype.setPublishEnabled = function () {};
-	Base.prototype.setRestoreEnabled = function () {};
-	Base.prototype.setAppVariantsVisible = function () {};
-	Base.prototype.setAppVariantsEnabled = function () {};
-	Base.prototype.setExtendedManageAppVariants = function () {};
-
 	return Base;
 }, true);
