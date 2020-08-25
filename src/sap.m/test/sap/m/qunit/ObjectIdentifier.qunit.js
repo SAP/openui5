@@ -66,7 +66,6 @@ sap.ui.define([
 		var childrenTitle = $("#" + sut.getId() + "-title").children();
 		var childrenText = $("#" + sut.getId() + "-text").children();
 		assert.equal($(childrenTitle[0]).text(), sTitle, "Title is rendered.");
-		assert.equal($(childrenTitle[1]).text(), ObjectIdentifier.OI_ARIA_ROLE, "Aria is rendered.");
 		assert.equal($(childrenText[0]).text(), sText, "Text is rendered.");
 
 		assert.ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
@@ -238,75 +237,17 @@ sap.ui.define([
 		oObjectIdentifier.destroy();
 	});
 
-	QUnit.test("The title control should be invisible if the title is empty", function(assert) {
+	QUnit.test("The title control should not exist if the title is empty", function(assert) {
 
 		//Arrange
-		var sEmptyTitle = "",
-			sDummyTitle = "Dummy title",
-			oObjectIdentifier = new ObjectIdentifier();
+		var oObjectIdentifier = new ObjectIdentifier();
 
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
-		assert.equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty initially");
-
-		//Act
-		oObjectIdentifier.setTitle(sDummyTitle);
-		sap.ui.getCore().applyChanges();
-
-		//Assert
-		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sDummyTitle, "The title text is correctly set");
-		assert.notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should be visible if title is not empty");
-
-		//Act
-		oObjectIdentifier.setTitle(sEmptyTitle);
-		sap.ui.getCore().applyChanges();
-
-		//Assert
-		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
-		assert.equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty");
-
-		//Cleanup
-		oObjectIdentifier.destroy();
-	});
-
-	QUnit.test("The title control should be visible if the title is not empty", function(assert) {
-
-		//Arrange
-		var oObjectIdentifier = new ObjectIdentifier({
-			title : "Title"
-		});
-
-		//System under test
-		oObjectIdentifier.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//Assert
-		assert.notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The text control is visible");
-
-		//Cleanup
-		oObjectIdentifier.destroy();
-	});
-
-	// BCP: 1770511853
-	QUnit.test("The title control should be visible if the title is changed from non-empty value to 0", function(assert) {
-		//Arrange
-		var oObjectIdentifier = new ObjectIdentifier({
-			title: "not empty"
-		});
-
-		//System under test
-		oObjectIdentifier.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		oObjectIdentifier.setTitle(0);
-		sap.ui.getCore().applyChanges();
-
-		//Assert
-		assert.notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The text control is visible");
+		assert.strictEqual(oObjectIdentifier.$("title").children().length, 0, "The title does not exist");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -349,7 +290,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
+		assert.equal(oObjectIdentifier.$("text").children().length, 0, "The text control does not exist");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -390,11 +331,9 @@ sap.ui.define([
 		assert.strictEqual(oObjectIdentifier.getTitleActive(), false, 'Default value for titleActive is false');
 		assert.ok(oObjectIdentifierTitleControl === oObjectIdentifier.getAggregation("_titleControl"), 'The title control is present and properly assigned to its private aggregation');
 		assert.ok(oObjectIdentifierTitleControl instanceof sap.m.Text, 'The default type of title control is correct');
-		assert.strictEqual(oObjectIdentifierTitleControl.getVisible(), false, 'No title control is visible');
 		assert.strictEqual(oObjectIdentifierTitleText.length === 0, true, 'The title text is empty');
 		// assertions for text
 		assert.ok(oObjectIdentifierTextControl === oObjectIdentifier.getAggregation("_textControl"), 'The text control is present and properly assigned to its private aggregation');
-		assert.strictEqual(oObjectIdentifierTextControl.getVisible(), false, 'No text control is visible');
 		assert.ok(oObjectIdentifierTextControlText.length === 0, 'The text of ObjectIdentifier\'s text is empty');
 
 		// cleanup
@@ -927,7 +866,7 @@ sap.ui.define([
 
 	QUnit.module("ARIA");
 
-	QUnit.test("Seting ariaLabeldBy", function(assert) {
+	QUnit.test("Setting ariaLabelledBy", function(assert) {
 
 		//SUT
 		var sTitle = "My Title",

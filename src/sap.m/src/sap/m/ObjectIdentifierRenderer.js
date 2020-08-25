@@ -57,10 +57,10 @@ sap.ui.define([],
 		oRm.class("sapMObjectIdentifierTitle");
 
 		oRm.openEnd();
-		oRm.renderControl(oOI._getTitleControl());
+		if (oOI.getTitle()) {
+			oRm.renderControl(oOI._getTitleControl());
+		}
 
-		//Render WAI ARIA hidden label for title
-		oRm.renderControl(oOI._oAriaCustomRole);
 		oRm.close("div"); // Title ends
 
 		oRm.openStart("div"); // Icons begin
@@ -101,7 +101,9 @@ sap.ui.define([],
 			oRm.class("sapMObjectIdentifierTextBellow");
 		}
 		oRm.openEnd();
-		oRm.renderControl(oOI._getTextControl());
+		if (oOI.getText()) {
+			oRm.renderControl(oOI._getTextControl());
+		}
 		oRm.close("div"); // Text ends
 
 		oRm.close("div"); // Identifier ends
