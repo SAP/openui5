@@ -815,6 +815,10 @@ function(
 				this._oResourceBundle = null;
 			}
 
+			if (this.getAggregation("_defaultTooltips")) {
+				this.destroyAggregation("_defaultTooltips");
+			}
+
 			this._deregisterResizeHandler();
 		};
 
