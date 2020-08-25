@@ -1476,11 +1476,22 @@ sap.ui.define([
 	auto : false,
 	text : "no auto group"
 }, {
+	absolute : true,
+	auto : false,
+	text : "no auto group, absolute paths"
+}, {
 	async : true,
 	auto : true,
 	group : "group",
 	parked : "$parked.group",
 	text : "wait and unpark for auto group"
+}, {
+	absolute : true,
+	async : true,
+	auto : true,
+	group : "group",
+	parked : "$parked.group",
+	text : "wait and unpark for auto group, absolute paths"
 }, {
 	async : false,
 	auto : true,
@@ -1519,11 +1530,19 @@ sap.ui.define([
 					relocateAll : function () {},
 					waitForRunningChangeRequests : function () {}
 				},
+				requestSideEffects : function () {},
 				resolve : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
 			oExpectation,
 			sGroupId = oFixture.group || "any",
+			aPathExpressions = [
+				{$PropertyPath : "TEAM_ID"},
+				{$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"},
+				{$PropertyPath : "Address/*"},
+				{$NavigationPropertyPath : ""},
+				{$PropertyPath : "*"}
+			],
 			oPromise,
 			oWaitPromise = oFixture.async ? Promise.resolve() : SyncPromise.resolve(),
 			that = this;
@@ -1534,8 +1553,17 @@ sap.ui.define([
 				.withExactArgs(["/base/TEAM_ID", "/reduced/TEAM_ID", "/base/EMPLOYEE_2_MANAGER",
 					"/base/Address/*", "/base/", "/base/*"], sGroupId)
 				.returns(SyncPromise.resolve({}));
+			that.mock(oModel).expects("requestSideEffects")
+				.withExactArgs(sGroupId, oFixture.absolute ? ["/foo", "/bar"] : [])
+				.returns(SyncPromise.resolve({}));
 		}
 
+		if (oFixture.absolute) {
+			aPathExpressions = aPathExpressions.concat([
+				{$PropertyPath : "/foo"},
+				{$NavigationPropertyPath : "/bar"}
+			]);
+		}
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(oFixture.group);
 		this.mock(oModel).expects("resolve")
@@ -1571,17 +1599,7 @@ sap.ui.define([
 		}
 
 		// code under test
-		oPromise = oContext.requestSideEffects([{
-				$PropertyPath : "TEAM_ID"
-			}, {
-				$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"
-			}, {
-				$PropertyPath : "Address/*"
-			}, {
-				$NavigationPropertyPath : ""
-			}, {
-				$PropertyPath : "*"
-			}], oFixture.group)
+		oPromise = oContext.requestSideEffects(aPathExpressions, oFixture.group)
 			.then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 			});
@@ -1641,7 +1659,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bAuto) {
-	QUnit.test("requestSideEffects: promise rejected, bAuto = " + bAuto, function (assert) {
+	[false, true].forEach(function (bAbsolute) {
+		var sTitle = "requestSideEffects: promise rejected, bAuto = " + bAuto + ", bAbsolute = "
+				+ bAbsolute;
+
+	QUnit.test(sTitle, function (assert) {
 		var oRootContext = {},
 			oRootBinding = {
 				getContext : function () { return oRootContext; },
@@ -1664,6 +1686,7 @@ sap.ui.define([
 					relocateAll : function () {},
 					waitForRunningChangeRequests : function () {}
 				},
+				requestSideEffects : function () {},
 				resolve : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
@@ -1685,10 +1708,16 @@ sap.ui.define([
 		this.mock(oModel).expects("isAutoGroup").withExactArgs("update").returns(bAuto);
 		this.mock(oContext).expects("requestSideEffectsInternal")
 			.withExactArgs(["/base/TEAM_ID"], "update")
-			.returns(SyncPromise.reject(oError));
+			.returns(bAbsolute ? SyncPromise.resolve() : SyncPromise.reject(oError));
+		this.mock(oModel).expects("requestSideEffects")
+			.withExactArgs("update", ["/EMPLOYEES"])
+			.returns(bAbsolute ? SyncPromise.reject(oError) : SyncPromise.resolve());
 
 		// code under test
-		oResult = oContext.requestSideEffects([{$PropertyPath : "TEAM_ID"}]);
+		oResult = oContext.requestSideEffects([
+			{$PropertyPath : "TEAM_ID"},
+			{$NavigationPropertyPath : "/EMPLOYEES"}
+		]);
 
 		assert.ok(oResult instanceof Promise);
 
@@ -1697,6 +1726,8 @@ sap.ui.define([
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
 			});
+	});
+
 	});
 });
 
