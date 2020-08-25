@@ -399,6 +399,28 @@ sap.ui.define([
 		fnDeregisterResizeHandlerSpy.restore();
 	});
 
+	QUnit.test("Tooltips aggregation should be destroyed on exit", function(assert) {
+		// arrange
+		var oSlider = new Slider({
+			width: "300px",
+			showAdvancedTooltip: true
+		});
+		var fnDestroyAggregationSpy = this.spy(oSlider, "destroyAggregation");
+		oSlider.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oSlider.exit();
+
+		//assert
+		assert.ok(fnDestroyAggregationSpy.calledWith("_defaultTooltips"), "destroyAggregation should be called twice");
+		assert.ok(fnDestroyAggregationSpy.calledOnce, "destroyAggregation should be called once");
+
+		//clean
+		oSlider.destroy();
+		fnDestroyAggregationSpy.restore();
+	});
+
 	QUnit.test("_handleSliderResize is called after Slider is rendered", function(assert) {
 		var oSlider = new Slider({
 			width: "300px"
