@@ -671,7 +671,7 @@ function(
 				if (this.getShowToolbars()) {
 					// Create ToolsMenu
 					return this._getToolbarButtonsVisibility()
-					.then(this._createToolsMenu.bind(this));
+						.then(this._createToolsMenu.bind(this));
 				}
 			}.bind(this))
 			// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
@@ -1099,16 +1099,16 @@ function(
 			} else {
 				fnConstructor = StandaloneToolbar;
 			}
-
+			var oToolbar;
 			if (this.getLayer() === Layer.USER) {
-				this.addDependent(new fnConstructor({
+				oToolbar = new fnConstructor({
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, true),
 					restore: this._onRestore.bind(this)
-				}), 'toolbar');
+				});
 			} else {
-				this.addDependent(new fnConstructor({
+				oToolbar = new fnConstructor({
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, false),
@@ -1123,38 +1123,42 @@ function(
 					activateDraft: this._onActivateDraft.bind(this),
 					discardDraft: this._onDiscardDraft.bind(this),
 					switchVersion: this._onSwitchVersion.bind(this)
-				}), 'toolbar');
+				});
 			}
+			this.addDependent(oToolbar, 'toolbar');
 
-			var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
-			var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
+			return oToolbar.onFragmentLoaded().then(function() {
+				var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
+				var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
 
-			this._oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: aButtonsVisibility.publishAvailable,
-				publishEnabled: this.bInitialPublishEnabled,
-				restoreEnabled: this.bInitialResetEnabled,
-				appVariantsOverviewVisible: bSaveAsAvailable && bExtendedOverview,
-				appVariantsOverviewEnabled: bSaveAsAvailable && bExtendedOverview,
-				saveAsVisible: bSaveAsAvailable,
-				saveAsEnabled: false,
-				manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
-				manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
-				modeSwitcher: this.getMode()
-			});
+				this._oToolbarControlsModel = new JSONModel({
+					undoEnabled: false,
+					redoEnabled: false,
+					publishVisible: aButtonsVisibility.publishAvailable,
+					publishEnabled: this.bInitialPublishEnabled,
+					restoreEnabled: this.bInitialResetEnabled,
+					appVariantsOverviewVisible: bSaveAsAvailable && bExtendedOverview,
+					appVariantsOverviewEnabled: bSaveAsAvailable && bExtendedOverview,
+					saveAsVisible: bSaveAsAvailable,
+					saveAsEnabled: false,
+					manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
+					manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
+					modeSwitcher: this.getMode()
+				});
 
-			if (bSaveAsAvailable) {
-				RtaAppVariantFeature.isManifestSupported().then(function (bResult) {
-					this._oToolbarControlsModel.setProperty("/saveAsEnabled", bResult);
-					this._oToolbarControlsModel.setProperty("/appVariantsOverviewEnabled", bResult);
-					this._oToolbarControlsModel.setProperty("/manageAppsEnabled", bResult);
-				}.bind(this));
-			}
+				if (bSaveAsAvailable) {
+					RtaAppVariantFeature.isManifestSupported().then(function (bResult) {
+						this._oToolbarControlsModel.setProperty("/saveAsEnabled", bResult);
+						this._oToolbarControlsModel.setProperty("/appVariantsOverviewEnabled", bResult);
+						this._oToolbarControlsModel.setProperty("/manageAppsEnabled", bResult);
+					}.bind(this));
+				}
+
+				this.getToolbar().setModel(this._oVersionsModel, "versions");
+				this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
+			}.bind(this));
 		}
-
-		this.getToolbar().setModel(this._oVersionsModel, "versions");
-		this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
+		return Promise.resolve();
 	};
 
 	RuntimeAuthoring.prototype._onGetAppVariantOverview = function(oEvent) {
