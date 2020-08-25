@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions]
 	 *   See parameter <code>oFormatOptions</code> of {@link sap.ui.model.type.Unit#constructor}.
 	 *   Format options are immutable, that is, they can only be set once on construction. Format
-	 *   options that are not supported or have a different default are listed below.  If the format
+	 *   options that are not supported or have a different default are listed below. If the format
 	 *   option <code>showMeasure</code> is set to <code>false</code>, model messages for the unit
 	 *   of measure are not propagated to the control if the corresponding binding supports the
 	 *   feature of ignoring messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and
