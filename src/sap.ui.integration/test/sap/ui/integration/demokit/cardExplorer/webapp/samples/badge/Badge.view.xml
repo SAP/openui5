@@ -5,7 +5,6 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	class="badgeView">
-	<MessageStrip type="Warning" text="This feature is experimental. Added since version 1.81. The API may change." />
 	<Button text="Show Badges" press=".onButtonPress" />
 	<f:GridContainer>
 		<w:Card id="cardId1" manifest="./cardManifest.json">
