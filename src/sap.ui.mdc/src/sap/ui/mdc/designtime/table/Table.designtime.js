@@ -12,7 +12,7 @@ sap.ui.define([], function () {
 				//RTA expects the settings to be returned as function
 				return {
 					handler: function (oControl, mPropertyBag) {
-						return oControl.getRTASettingsActionHandler(mPropertyBag);
+						return oControl.getRTASettingsActionHandler(mPropertyBag, "Item");
 					}
 				};
 			}

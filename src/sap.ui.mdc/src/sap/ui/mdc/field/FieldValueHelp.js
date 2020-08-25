@@ -1913,6 +1913,10 @@ sap.ui.define([
 				buttons: [oButtonOK, oButtonCancel]
 			});
 
+			oDialog.isPopupAdaptationAllowed = function () {
+				return false;
+			};
+
 			this.setAggregation("_dialog", oDialog, true);
 			// TODO
 			oDialog.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");

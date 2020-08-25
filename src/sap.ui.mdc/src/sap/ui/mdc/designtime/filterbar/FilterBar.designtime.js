@@ -11,7 +11,7 @@ sap.ui.define([], function() {
 			settings: function () {
 				return {
 					handler: function (oControl, mPropertyBag) {
-						return oControl.getRTASettingsActionHandler(mPropertyBag);
+						return oControl.getRTASettingsActionHandler(mPropertyBag, "Filter");
 					}
 				};
 			}

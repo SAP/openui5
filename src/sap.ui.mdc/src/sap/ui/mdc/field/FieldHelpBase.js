@@ -623,6 +623,10 @@ sap.ui.define([
 				afterClose: this._handleAfterClose.bind(this)
 			});
 
+			oPopover.isPopupAdaptationAllowed = function () {
+				return false;
+			};
+
 			this.setAggregation("_popover", oPopover, true);
 
 			if (this._oContent) {
