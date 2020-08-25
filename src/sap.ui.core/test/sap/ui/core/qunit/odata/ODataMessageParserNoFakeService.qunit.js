@@ -1224,14 +1224,46 @@ sap.ui.define([
 		persistent : false,
 		type : "Error"
 	}
+}, {
+	oMessageObject : {
+		code : "~code",
+		message : {value : "~messageFromValue"},
+		severity : "Error"
+	},
+	oExpectedMessage : {
+		code : "~code",
+		descriptionUrl : "",
+		message : "~messageFromValue",
+		persistent : true,
+		type : "Error"
+	},
+	bIsTechnical : true,
+	bPersistTechnicalMessages : true
+}, {
+	oMessageObject : {
+		code : "~code",
+		message : {value : "~messageFromValue"},
+		severity : "Error"
+	},
+	oExpectedMessage : {
+		code : "~code",
+		descriptionUrl : "",
+		message : "~messageFromValue",
+		persistent : false,
+		type : "Error"
+	},
+	bIsTechnical : true,
+	bPersistTechnicalMessages : false
 }].forEach(function (oFixture, i) {
 	QUnit.test("_createMessage: " + i, function (assert) {
 		var aDeepPaths = ["~fullTargetFrom_createTarget0", "~fullTargetFrom_createTarget1"],
 			oExpectedMessage = oFixture.oExpectedMessage,
+			bIsTechnical = !!oFixture.bIsTechnical,
 			oMessage,
 			oMessageObject = oFixture.oMessageObject,
 			oODataMessageParser = {
 				_createTargets : function () {},
+				_persistTechnicalMessages : oFixture.bPersistTechnicalMessages,
 				_processor : "~_processor"
 			},
 			mRequestInfo = {
@@ -1242,7 +1274,7 @@ sap.ui.define([
 		this.mock(oODataMessageParser).expects("_createTargets")
 			.withExactArgs(sinon.match.same(oMessageObject)
 					.and(sinon.match.has("transition", oExpectedMessage.persistent)),
-				sinon.match.same(mRequestInfo), "~bIsTechnical")
+				sinon.match.same(mRequestInfo), oFixture.bIsTechnical)
 			.callsFake(function (oMessageObject) {
 				return {
 					aDeepPaths : aDeepPaths,
@@ -1252,7 +1284,7 @@ sap.ui.define([
 
 		// code under test
 		oMessage = ODataMessageParser.prototype._createMessage.call(oODataMessageParser,
-			oMessageObject, mRequestInfo, "~bIsTechnical");
+			oMessageObject, mRequestInfo, oFixture.bIsTechnical);
 
 		assert.ok(oMessage instanceof Message);
 		assert.strictEqual(oMessage.code, oExpectedMessage.code);
@@ -1265,7 +1297,7 @@ sap.ui.define([
 		assert.strictEqual(oMessage.processor, "~_processor");
 		assert.strictEqual(oMessage.target, "~targetFrom_createTarget0");
 		assert.deepEqual(oMessage.aTargets, aTargets);
-		assert.strictEqual(oMessage.technical, "~bIsTechnical");
+		assert.strictEqual(oMessage.technical, bIsTechnical);
 		assert.deepEqual(oMessage.technicalDetails,
 			{headers : "~headers", statusCode : "~statusCode"});
 		assert.strictEqual(oMessage.type, oExpectedMessage.type);
@@ -1485,4 +1517,20 @@ sap.ui.define([
 		assert.deepEqual(mAffectedTargets, oFixture.oResult);
 	});
 });
+
+	//**********************************************************************************************
+	QUnit.test("ODataMessageParser constructor", function (assert) {
+		this.mock(ODataMessageParser.prototype).expects("_parseUrl").withExactArgs("url")
+			.returns({url : "/service/"});
+
+		// code under test
+		var oMessageParser = new ODataMessageParser("url", "~oMetadata", "~persist");
+
+		assert.strictEqual(oMessageParser._serviceUrl, "/service/");
+		assert.strictEqual(oMessageParser._metadata, "~oMetadata");
+		assert.strictEqual(oMessageParser._processor, null);
+		assert.strictEqual(oMessageParser._headerField, "sap-message");
+		assert.deepEqual(oMessageParser._lastMessages, []);
+		assert.strictEqual(oMessageParser._persistTechnicalMessages, "~persist");
+	});
 });

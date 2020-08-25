@@ -5576,6 +5576,31 @@ sap.ui.define([
 		new ODataModel(sURI);
 	});
 
+[true, "foo"].forEach(function (bPersistTechnicalMessages) {
+	QUnit.test("Persist technical messages: " + bPersistTechnicalMessages, function (assert) {
+		// code under test
+		var oModel = new ODataModel(sURI, {persistTechnicalMessages : bPersistTechnicalMessages});
+
+		assert.strictEqual(oModel.bPersistTechnicalMessages, true);
+	});
+});
+
+[false, undefined, "", null, 0].forEach(function (bPersistTechnicalMessages) {
+	QUnit.test("Persist technical messages: " + bPersistTechnicalMessages, function (assert) {
+		// code under test
+		var oModel = new ODataModel(sURI, {persistTechnicalMessages : bPersistTechnicalMessages});
+
+		assert.strictEqual(oModel.bPersistTechnicalMessages, false);
+	});
+});
+
+	QUnit.test("Persist technical messages: no parameter", function (assert) {
+		// code under test
+		var oModel = new ODataModel(sURI);
+
+		assert.strictEqual(oModel.bPersistTechnicalMessages, false);
+	});
+
 	QUnit.module("Soft State Header Support");
 
 	QUnit.test("Soft State Support for CSRF-, Single- and Batchrequests", function(assert) {

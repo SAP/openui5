@@ -125,8 +125,10 @@ sap.ui.define([
 	 * @param {Object<string,string>} [mParameters.metadataUrlParams]
 	 *   Map of URL parameters for metadata requests - only attached to a <code>$metadata</code>
 	 *   request
+	 * @param {boolean} [mParameters.persistTechnicalMessages]
+	 *   Whether technical messages should always be treated as persistent, since 1.83.0
 	 * @param {boolean} [mParameters.preliminaryContext=false]
-	 *   Whether a preliminary Context will be created/used by a binding
+	 *   Whether a preliminary context will be created/used by a binding
 	 * @param {boolean} [mParameters.refreshAfterChange=true]
 	 *   Enable/disable automatic refresh after change operations
 	 * @param {boolean} [mParameters.sequentializeRequests=false]
@@ -207,6 +209,7 @@ sap.ui.define([
 				bCanonicalRequests,
 				bTokenHandlingForGet,
 				bEarlyTokenRequest,
+				bPersistTechnicalMessages,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -244,6 +247,7 @@ sap.ui.define([
 				bCanonicalRequests = mParameters.canonicalRequests;
 				bTokenHandlingForGet = mParameters.tokenHandlingForGet;
 				bEarlyTokenRequest = mParameters.earlyTokenRequest;
+				bPersistTechnicalMessages = mParameters.persistTechnicalMessages;
 			}
 
 			/* Path cache to avoid multiple expensive resolve operations
@@ -299,6 +303,7 @@ sap.ui.define([
 			this.bPreliminaryContext = bPreliminaryContext || false;
 			this.mMetadataUrlParams = mMetadataUrlParams || {};
 			this.mChangedEntities4checkUpdate = {};
+			this.bPersistTechnicalMessages = !!bPersistTechnicalMessages;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -6706,7 +6711,8 @@ sap.ui.define([
 	ODataModel.prototype._parseResponse = function(oResponse, oRequest, mGetEntities, mChangeEntities) {
 		try {
 			if (!this.oMessageParser) {
-				this.oMessageParser = new ODataMessageParser(this.sServiceUrl, this.oMetadata);
+				this.oMessageParser = new ODataMessageParser(this.sServiceUrl, this.oMetadata,
+					this.bPersistTechnicalMessages);
 				this.oMessageParser.setProcessor(this);
 			}
 			// Parse response and delegate messages to the set message parser

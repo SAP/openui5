@@ -5978,4 +5978,64 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//**********************************************************************************************
+	// Scenario: In a master-detail scenario there are two requests in one batch, one for the list
+	// (entity set) and one for the details (an entity of this set). If the first request responds
+	// with a technical error (e.g. incorrect $select leads to 404 'Not Found'), the second request
+	// should not clear the received messages, even though they are identified as the same entity.
+	// The linked BCP ticket differs from the described scenario but for message processing leads to
+	// the same issue.
+	// BCP: 2070217402
+	// JIRA: CPOUI5MODELS-250
+	QUnit.test("Messages: Handle technical messages as persistent", function (assert) {
+		var oErrorMessage = createErrorResponse({message : "Not Found", statusCode : 404}),
+			oModel = createSalesOrdersModel({
+				persistTechnicalMessages : true,
+				useBatch : true
+			}),
+			sView = '\
+<Table items="{path : \'/SalesOrderSet\', parameters : {select : \'foo\'}}">\
+	<ColumnListItem>\
+		<Text text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="idNote" value="{Note}" />\
+</FlexBox>';
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				deepPath : "/SalesOrderSet",
+				method : "GET",
+				requestUri : "SalesOrderSet?$skip=0&$top=100&$select=foo"
+			}, oErrorMessage)
+			.expectMessages([{
+				code : "UF0",
+				descriptionUrl : "",
+				fullTarget : "",
+				message : "Not Found",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}])
+			.expectRequest({
+				batchNo : 1,
+				deepPath : "/SalesOrderSet('1')",
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				Note : "bar"
+			})
+			.expectChange("idNote", null)
+			.expectChange("idNote", "bar");
+
+		this.oLogMock.expects("error")
+			.withExactArgs("HTTP request failed (404 FAILED): " + oErrorMessage.body, undefined,
+				sODataModelClassName);
+
+		return this.createView(assert, sView, oModel);
+	});
 });

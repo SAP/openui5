@@ -66,17 +66,24 @@ var sClassName = "sap.ui.model.odata.ODataMessageParser",
  */
 
 /**
- * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses
+ * from the back end.
+ *
+ * @param {string} sServiceUrl
+ *   Base URI of the service used for the calculation of message targets
+ * @param {sap.ui.model.odata.ODataMetadata} oMetadata
+ *   The ODataMetadata object
+ * @param {boolean} bPersistTechnicalMessages
+ *   Whether technical messages should always be treated as persistent, since 1.83.0
  *
  * @class
- * @classdesc
- *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses
+ *   from the back end.
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
  * @version ${version}
  * @public
- * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
  */
 var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessageParser", {
@@ -84,13 +91,13 @@ var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessagePa
 		publicMethods: [ "parse", "setProcessor", "getHeaderField", "setHeaderField" ]
 	},
 
-	constructor: function(sServiceUrl, oMetadata) {
+	constructor: function(sServiceUrl, oMetadata, bPersistTechnicalMessages) {
 		MessageParser.apply(this);
 		this._serviceUrl = getRelativeServerUrl(this._parseUrl(sServiceUrl).url);
 		this._metadata = oMetadata;
-		this._processor = null;
 		this._headerField = "sap-message"; // Default header field
 		this._lastMessages = [];
+		this._persistTechnicalMessages = bPersistTechnicalMessages;
 	}
 });
 
@@ -335,7 +342,8 @@ ODataMessageParser.prototype._createMessage = function (oMessageObject, mRequest
 		bIsTechnical) {
 	var bPersistent = oMessageObject.target && oMessageObject.target.indexOf("/#TRANSIENT#") === 0
 			|| oMessageObject.transient
-			|| oMessageObject.transition,
+			|| oMessageObject.transition
+			|| bIsTechnical && this._persistTechnicalMessages,
 		oTargetInfos,
 		sText = typeof oMessageObject.message === "object"
 			? oMessageObject.message.value

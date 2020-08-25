@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/MessageScope",
+	"sap/ui/model/odata/ODataMessageParser",
 	"sap/ui/model/odata/ODataPropertyBinding",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v2/ODataContextBinding",
@@ -15,8 +16,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, coreLibrary, Message, FilterProcessor, Model, MessageScope, ODataPropertyBinding,
-		ODataUtils, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
+], function (Log, coreLibrary, Message, FilterProcessor, Model, MessageScope,
+		ODataMessageParser, ODataPropertyBinding, ODataUtils, ODataContextBinding,
+		ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
 ) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -2971,4 +2973,69 @@ sap.ui.define([
 			});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_parseResponse, message parser exists", function (assert) {
+		var oModel = {
+				bIsMessageScopeSupported : "~bIsMessageScopeSupported",
+				oMessageParser : {
+					parse : function () {}
+				}
+			};
+
+		this.mock(oModel.oMessageParser).expects("parse")
+			.withExactArgs("~oResponse", "~oRequest", "~mGetEntities", "~mChangeEntities",
+				"~bIsMessageScopeSupported");
+
+		// code under test
+		ODataModel.prototype._parseResponse.call(oModel, "~oResponse", "~oRequest", "~mGetEntities",
+			"~mChangeEntities");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseResponse, message parser does not exist", function (assert) {
+		var oModel = {
+				bIsMessageScopeSupported : "~bIsMessageScopeSupported",
+				bPersistTechnicalMessages : "~bPersistTechnicalMessages",
+				oMetadata : "~oMetadata",
+				sServiceUrl : "/service/"
+			};
+
+		this.mock(ODataMessageParser.prototype).expects("parse")
+			.withExactArgs("~oResponse", "~oRequest", "~mGetEntities", "~mChangeEntities",
+				"~bIsMessageScopeSupported");
+		this.mock(ODataMessageParser.prototype).expects("setProcessor")
+			.withExactArgs(sinon.match.same(oModel));
+
+		// code under test
+		ODataModel.prototype._parseResponse.call(oModel, "~oResponse", "~oRequest", "~mGetEntities",
+			"~mChangeEntities");
+
+		assert.strictEqual(oModel.oMessageParser._serviceUrl, "/service/");
+		assert.strictEqual(oModel.oMessageParser._metadata, "~oMetadata");
+		assert.strictEqual(oModel.oMessageParser._persistTechnicalMessages,
+			"~bPersistTechnicalMessages");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseResponse, parse function throws error", function (assert) {
+		var sError = "error",
+			oModel = {
+				bIsMessageScopeSupported : "~bIsMessageScopeSupported",
+				oMessageParser : {
+					parse : function () {}
+				}
+			};
+
+		this.mock(oModel.oMessageParser).expects("parse")
+			.withExactArgs("~oResponse", "~oRequest", "~mGetEntities", "~mChangeEntities",
+				"~bIsMessageScopeSupported")
+			.throws(sError);
+
+		this.oLogMock.expects("error").withExactArgs("Error parsing OData messages: " + sError);
+
+		// code under test
+		ODataModel.prototype._parseResponse.call(oModel, "~oResponse", "~oRequest", "~mGetEntities",
+			"~mChangeEntities");
+	});
 });
