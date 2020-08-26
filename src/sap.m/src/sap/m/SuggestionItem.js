@@ -16,6 +16,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
 	 * @class
 	 * Display suggestion list items.
 	 *
+	 * <b>Note:</b> The inherited <code>enabled</code> property is not supported. If an item shouldn't be selected, remove it from the list instead.
 	 * @extends sap.ui.core.Item
 	 *
 	 * @author SAP SE
@@ -37,6 +38,12 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
 			 * This can be a URI to an image or an icon font URI.
 			 */
 			icon : {type : "string", group : "Appearance", defaultValue : ""},
+
+			/**
+			 * The property should not be used in sap.m.SearchField's items.
+			 * @private
+			 */
+			enabled : {type : "boolean", group : "Misc", defaultValue : true, visibility: "hidden" },
 
 			/**
 			 * Additional text of type string, optionally to be displayed along with this item.
