@@ -60,6 +60,7 @@
 		imageDescription : "",
 		backgroundImage : "images/NewsImage1.png",
         width:"174px",
+        additionalTooltip: "System U1Y",
 		newsTileContent : [{
 			footer : "August 21, 2013",
 			contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
@@ -156,6 +157,7 @@
 		imageDescription : "{/imageDescription}",
 		press : fnPress,
 		failedText : "{/failedText}",
+        additionalTooltip: "{/additionalTooltip}",
 		tileContent : [oNVConfS]
 	});
 	oGenericTile1.addStyleClass("sapUiSmallMargin");
@@ -190,6 +192,7 @@
 		wrappingType: "{/wrappingType}",
 		press : fnPress,
 		failedText : "{/failedText}",
+        additionalTooltip: "{/additionalTooltip}",
 		tileContent : [oTc2x1]
 	});
 	oGenericTile2.addStyleClass("sapUiSmallMargin");
@@ -207,6 +210,7 @@
 		wrappingType: "{/wrappingType}",
 		press : fnPress,
 		failedText : "{/failedText}",
+        additionalTooltip: "{/additionalTooltip}",
 		tileContent : {
 			template : new sap.m.TileContent("news-tile-cont-2x1",{
 				footer : "{footer}",
@@ -244,6 +248,7 @@
 		wrappingType: "{/wrappingType}",
 		press : fnPress,
 		failedText : "{/failedText}",
+        additionalTooltip: "{/additionalTooltip}",
 		tileContent : {
 			template : oFeedTileContent,
 			path : "/feedTileContent"
@@ -264,6 +269,7 @@
 		wrappingType: "{/wrappingType}",
 		press : fnPress,
 		failedText : "{/failedText}",
+        additionalTooltip: "{/additionalTooltip}",
 		tileContent : {
 			template : new sap.m.TileContent("news-tile-cont-1x1",{
 				footer : "{footer}",
@@ -304,6 +310,17 @@
 		placeholder : 'Enter header ...'
 	});
 	oTitleInput.bindValue("/header");
+
+    var oAdditionalTooltipLbl = new sap.m.Label({
+        text : "Tooltip to be added",
+        labelFor : "additionalTooltip-value"
+    });
+
+    var oAdditionalTooltipInput = new sap.m.Input("additionalTooltip-value", {
+        type : sap.m.InputType.Text,
+        placeholder : 'Enter additional tooltip ...'
+    });
+    oAdditionalTooltipInput.bindValue("/additionalTooltip");
 
 	var oImgSrc = new sap.m.Label({
 		text : "Background Image",
@@ -573,7 +590,7 @@
 		editable : true,
 		content : [new sap.ui.core.Title({ // this starts a new group
 			text : "Modify Tile"
-		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oImgSrc, oImgSrcInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUrlLbl,
+		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oAdditionalTooltipLbl, oAdditionalTooltipInput, oImgSrc, oImgSrcInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUrlLbl,
 			oUrlInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit, oUnitInput, oFailedLabel, oFailedInput, oFrameTypeLabel, oFrameTypeSelect, oPictureLbl, oPictureSlct,oImageDescLbl,
 			oImageDescInput, oStateLabel, oStateSelect, oScopeLabel, oScopeSelect, oPressLbl, oPressSwtch, oIndicatorLabel, oIndicatorSelect, oSizeLbl, oSizeBtn, oWrappingLabel, oWrappingSelect
 		]

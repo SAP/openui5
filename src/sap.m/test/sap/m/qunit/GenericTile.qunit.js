@@ -2097,16 +2097,33 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("GenericTile tooltip provided by the control", function(assert) {
+	QUnit.test("GenericTile tooltip provided by the control enhanced by additionalTooltip property", function(assert) {
 		//Arrange
+		this.oGenericTile.setAdditionalTooltip("System U1Y");
 		this.oGenericTile.$().trigger("mouseenter");
-		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y";
+		var sTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y";
+
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 		//Assert
-		assert.equal(sGenericTileTooltip, "Header text\nsubheader text", "ToolTip with Header+SubHeader no content data");
-		assert.equal(sGenericTileAriaLabel, sAriaLabel, "Tooltip of GenericTile is identical with ARIA-label");
+		assert.equal(sGenericTileTooltip, sAriaLabel, "ToolTip with Header+SubHeader and content data together with additionalTooltip property value");
+		assert.equal(sGenericTileAriaLabel, sTooltip, "Tooltip of GenericTile is identical with ARIA-label");
+	});
+
+	QUnit.test("GenericTile tooltip provided by the control", function(assert) {
+		//Arrange
+		this.oGenericTile.$().trigger("mouseenter");
+		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+        var sTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+
+		//Act
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
+		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
+		//Assert
+		assert.equal(sGenericTileTooltip, sAriaLabel, "ToolTip with Header+SubHeader and content data");
+		assert.equal(sGenericTileAriaLabel, sTooltip, "Tooltip of GenericTile is identical with ARIA-label");
 	});
 
 	QUnit.test("Explicit tooltip set by user with short header text, short subheader text", function(assert) {
@@ -2168,14 +2185,12 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		this.oGenericTile.setSubheader("A long long subheader text");
-		this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
-		this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.$().trigger("mouseenter");
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		//Assert
-		assert.equal(sGenericTileTooltip, "A long long long long long long long long long long header text\nA long long subheader text\nTile Unit\nTile Footer", "Generic Tile tooltip with Header SubHeader and TileContent");
+		assert.equal(sGenericTileTooltip, "A long long long long long long long long long long header text\nA long long subheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2", "Generic Tile tooltip with Header SubHeader and TileContent");
 	});
 
 	QUnit.test("Tooltip is removed when mouse leaves the GenericTile", function(assert) {
@@ -2239,7 +2254,7 @@ sap.ui.define([
 
 	QUnit.test("GenericTile tooltip provided by the control", function(assert) {
 		//Arrange
-		var sAriaLabel = "header\nsubheader\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sAriaLabel = "header\nsubheader\n";
 
 		//Act
 		this.oGenericTile.$().trigger("mouseenter");
@@ -2249,11 +2264,9 @@ sap.ui.define([
 		assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "GenericTile has correct ARIA-label");
 	});
 
-	QUnit.test("GenericTile tooltip provided by the control when TileContent is available", function(assert) {
+	QUnit.test("GenericTile tooltip provided by the control when TileContent is available but in line mode not shown", function(assert) {
 		//Arrange
-		var sAriaLabel = "header\nsubheader\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
-		this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
-		this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");
+		var sAriaLabel = "header\nsubheader\n";
 
 		//Act
 		this.oGenericTile.$().trigger("mouseenter");
@@ -2293,7 +2306,7 @@ sap.ui.define([
 
 	QUnit.test("Suppress tooltip with space tooltip set by user with short header text, short subheader text", function(assert) {
 		//Arrange
-		var sAriaLabel = "header\nsubheader\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sAriaLabel = "header\nsubheader\n";
 		this.oGenericTile.setTooltip(" ");
 		sap.ui.getCore().applyChanges();
 
@@ -2307,7 +2320,7 @@ sap.ui.define([
 
 	QUnit.test("Suppress tooltip with space tooltip set by user with long header text, long subheader text", function(assert) {
 		//Arrange
-		var sAriaLabel = "A long long long long long long long long long long header text\nA long long subheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sAriaLabel = "A long long long long long long long long long long header text\nA long long subheader text\n";
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		this.oGenericTile.setSubheader("A long long subheader text");
 		this.oGenericTile.setTooltip(" ");
