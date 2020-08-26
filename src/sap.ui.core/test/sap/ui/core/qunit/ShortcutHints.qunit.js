@@ -236,8 +236,12 @@ sap.ui.define([
 		return waitForViewReady().then(function(oView) {
 			var oCtrl2 = oView.byId("myControl2");
 
+			var oEl = document.createElement('div');
+			oEl.setAttribute('id', 'container');
+			document.querySelector('body').appendChild(oEl);
+
 			//render
-			oView.placeAt('qunit-fixture');
+			oView.placeAt('container');
 			sap.ui.getCore().applyChanges();
 
 			ShortcutHintsMixin.addConfig(oCtrl2, { event: "myEvent" }, oCtrl2);
