@@ -813,7 +813,7 @@ sap.ui.define([
 			bHasReferencingLabels = LabelEnablement.getReferencingLabels(this).length > 0,
 			bHasSemanticType = this.getType() !== ButtonType.Default,
 			bHasLabelling = bHasAriaLabelledBy || bHasReferencingLabels,
-			bHasDescription = bHasAriaDescribedBy || bHasSemanticType || (this._oBadgeData.value !== "" && this._oBadgeData.State !== BadgeState.Disappear),
+			bHasDescription = bHasAriaDescribedBy || bHasSemanticType || (this._oBadgeData && this._oBadgeData.value !== "" && this._oBadgeData.State !== BadgeState.Disappear),
 			sAccType;
 
 		// Conditions are separated instead of grouped to improve readability afterwards.
