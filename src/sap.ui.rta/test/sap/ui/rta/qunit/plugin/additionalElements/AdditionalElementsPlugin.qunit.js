@@ -147,7 +147,7 @@ sap.ui.define([
 		}
 	};
 
-
+	var sVariantManagementReference = "test-variant-management-reference";
 	var oMockedAppComponent = {
 		getLocalId: function () {
 			return undefined;
@@ -165,7 +165,12 @@ sap.ui.define([
 		getManifest: function () {
 			return DEFAULT_MANIFEST;
 		},
-		getModel: function () {
+		getModel: function (sModelName) {
+			if (sModelName === FlexUtils.VARIANT_MODEL_NAME) {
+				return { getCurrentVariantReference: function () {
+					return sVariantManagementReference;
+				}};
+			}
 		}
 	};
 	var sandbox = sinon.sandbox.create();
@@ -758,6 +763,7 @@ sap.ui.define([
 			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action", function (assert) {
 				var done = assert.async();
 				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
+				sandbox.stub(RTAPlugin.prototype, "getVariantManagementReference").returns(sVariantManagementReference);
 				sandbox.spy(oDummyChangeHandler, "completeChangeContent");
 				var sChangeType = "addFields";
 				var oElement;
@@ -798,6 +804,8 @@ sap.ui.define([
 					var oCommand = aCommands[0];
 					assert.deepEqual(oCommand.mProperties, oExpectedCommandProperties, "then the command was created correctly");
 
+					var oPreparedChangeDefiniton = oCommand.getPreparedChange().getDefinition();
+					assert.strictEqual(oPreparedChangeDefiniton.variantReference, sVariantManagementReference, "then variant management reference is provided to the change");
 					done();
 				});
 
