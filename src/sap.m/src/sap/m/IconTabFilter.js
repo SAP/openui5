@@ -1019,7 +1019,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/** Handles onDragOver.
 	* @private
 	* @param {jQuery.Event} oEvent The jQuery drag over event

@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/m/BadgeCustomData",
@@ -57,6 +57,39 @@ sap.ui.define([
 		assert.strictEqual(oITH._findItemByKey("nested"), oNestedItem, "Nested item should be found.");
 
 		oITH.destroy();
+	});
+
+	QUnit.module("Overflow tab");
+
+	QUnit.test("Adding event delegates", function (assert) {
+		// arrange
+		var oSpy = sinon.spy(IconTabFilter.prototype, "addEventDelegate"),
+			oITH = createHeaderWithItems(100);
+		oITH.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oSpy.calledWith(oITH._oOverflowEventDelegate, oITH._getOverflow()), "Event delegate is added to the overflow tab");
+
+		// clean up
+		oITH.destroy();
+	});
+
+	QUnit.test("Removing event delegates", function (assert) {
+		// arrange
+		var oITH = createHeaderWithItems(100);
+		oITH.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		var oOverflow = oITH._getOverflow(),
+			oSpy = sinon.spy(oOverflow, "removeEventDelegate"),
+			oOverflowEventDelegate = oITH._oOverflowEventDelegate;
+
+		// Act
+		oITH.destroy();
+
+		// assert
+		assert.ok(oSpy.calledWith(oOverflowEventDelegate), "Event delegate is removed from the overflow tab");
 	});
 
 	QUnit.module("Resize");
