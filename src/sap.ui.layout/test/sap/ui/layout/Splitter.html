@@ -76,7 +76,22 @@
 
 				var oSplitter = new Splitter("mySplitter", {
 					contentAreas: [
-						createExampleContent(), createExampleContent(),
+						new Text({
+							text: "Content! size=auto; minSize=200",
+							layoutData: new SplitterLayoutData({
+								resizable: true,
+								size: "auto",
+								minSize: 200
+							})
+						}),
+						new Text({
+							text: "Content! size=350px; minSize=50",
+							layoutData: new SplitterLayoutData({
+								resizable: true,
+								size: "350px",
+								minSize: 50
+							})
+						}),
 						new Splitter("nestedSplitter", {
 							contentAreas: [new Button(), new Button()],
 							orientation: "Vertical"
