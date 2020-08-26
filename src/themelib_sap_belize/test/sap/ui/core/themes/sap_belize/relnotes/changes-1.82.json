@@ -12,6 +12,12 @@
             "reference": "2080298219"
           }
         ]
+      },
+      {
+        "id": "056fc53e693bf9725dd93b47bbb331b416e73627",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Badge implemented",
+        "references": []
       }
     ]
   }

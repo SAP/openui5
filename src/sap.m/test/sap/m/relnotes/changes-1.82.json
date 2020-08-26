@@ -242,6 +242,157 @@
             "reference": "002075129400004886732020"
           }
         ]
+      },
+      {
+        "id": "056fc53e693bf9725dd93b47bbb331b416e73627",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Badge implemented",
+        "references": []
+      },
+      {
+        "id": "badcc86de673e3545f604b75ac518d268c498b59",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker/DateTimePicker/DateRangeSelection/TimePicker/StepInput: 5th semantic color",
+        "references": []
+      },
+      {
+        "id": "51b1ec17174aef255bf3b0cc1c46f084a5cd8696",
+        "type": "FEATURE",
+        "text": " sap.m.GenericTile: additionalTooltip Property added",
+        "references": []
+      },
+      {
+        "id": "b4c77db8b4ad716b208c4d2a148cf12e970b0b84",
+        "type": "FIX",
+        "text": " StepInput: Add a note on decimal formatting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080334190"
+          }
+        ]
+      },
+      {
+        "id": "84665b4a7d089883ea9365e3e6a82c3de086637f",
+        "type": "FIX",
+        "text": " sap.m.Badge: Animations restricted to data-sap-ui-animation\u003d\u0027on\u0027",
+        "references": []
+      },
+      {
+        "id": "b0714e9072e3e49d2ebd979be7e58620e9dc2ceb",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: data request on listOpen event can be prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005112822020"
+          }
+        ]
+      },
+      {
+        "id": "7243a997b736b7612fb323ee5984966564fdddd1",
+        "type": "FIX",
+        "text": " sap.m.Label: Fixed incorrect truncation in Mobile Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080330032"
+          }
+        ]
+      },
+      {
+        "id": "7f25fc55ca109603d506e9d92dcc2e9ee74953fe",
+        "type": "FIX",
+        "text": " sap.m.MenuButton - proper Menu Button icon paddings in Compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080330443"
+          }
+        ]
+      },
+      {
+        "id": "2a0954a6fedff6482674e9f83ef0fd4eced7c1fb",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Added \"since version\" for closeOnNavigation property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080360088"
+          }
+        ]
+      },
+      {
+        "id": "166b2c6e9384252381a9279bef1ce2caa0b9a849",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: DOM is now updated after tokens are destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080358002"
+          }
+        ]
+      },
+      {
+        "id": "b45ce5401914c1c4c570c4e8694a6bd20a89c5e0",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Renderer fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080357881"
+          }
+        ]
+      },
+      {
+        "id": "cd5f94712194d6d7978b502c223665b27c26d416",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sap.m.IconTabBar alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070043278"
+          }
+        ]
+      },
+      {
+        "id": "793a18422a060e7014896bcced30860856ec254d",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: Should not create an internal Text control and internal ACC role",
+        "references": []
+      },
+      {
+        "id": "2ff23e6f9ecb317b6e877d12032406891a39ad65",
+        "type": "FIX",
+        "text": " sap.m.Panel: Content is now always the same height as the Panel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080360221"
+          }
+        ]
+      },
+      {
+        "id": "f5ec7a4452c122776126c2e889b83311940818af",
+        "type": "FIX",
+        "text": " sap.m.Popover: Check for classList added in onmousedown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080128761"
+          }
+        ]
+      },
+      {
+        "id": "1eb4cf5ac1356360589a5013b4f84e5ab735e85c",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Create with drag and drop improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2030478492"
+          }
+        ]
       }
     ]
   }

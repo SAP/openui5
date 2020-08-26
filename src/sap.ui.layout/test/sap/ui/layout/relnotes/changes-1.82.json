@@ -45,6 +45,28 @@
             "reference": "2080356220"
           }
         ]
+      },
+      {
+        "id": "adcf893244de2cdd3b388e85a31c5aca97c79295",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Items are now correctly aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080339128"
+          }
+        ]
+      },
+      {
+        "id": "fdedaf7a3903730b5866c3618bc9f196e2e2fec8",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: DefaultPane is now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005373682020"
+          }
+        ]
       }
     ]
   }

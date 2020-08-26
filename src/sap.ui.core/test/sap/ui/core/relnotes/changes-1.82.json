@@ -138,6 +138,34 @@
             "reference": "2080356740"
           }
         ]
+      },
+      {
+        "id": "e5beb2eedbdaecb1fe703e84cd5cbffce9d6938a",
+        "type": "FIX",
+        "text": " handlebars: usage of latest version 4.7.6",
+        "references": []
+      },
+      {
+        "id": "5b4405b621c820471e477a1281a560d38804b6c7",
+        "type": "FIX",
+        "text": " sap/ui/base/syncXHRFix: Properly handle failing sync XHR",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000282364 2020"
+          }
+        ]
+      },
+      {
+        "id": "1d36bce41a9bca154d7864c836e859f4415c5a09",
+        "type": "FIX",
+        "text": " ui5loader: use a separate queue for each sync execution",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080197839"
+          }
+        ]
       }
     ]
   }

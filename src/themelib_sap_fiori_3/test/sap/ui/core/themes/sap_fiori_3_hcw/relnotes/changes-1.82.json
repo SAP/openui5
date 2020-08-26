@@ -3,13 +3,19 @@
     "date": "August 2020",
     "notes": [
       {
-        "id": "5b87deb148dbe65b427adc3656904927e05ffac3",
+        "id": "056fc53e693bf9725dd93b47bbb331b416e73627",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Badge implemented",
+        "references": []
+      },
+      {
+        "id": "102aa64dc8884d35e5da00b22d18a05973e55f33",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageSubSection: Removed unnecessary height of actions",
+        "text": " sap.m.PlanningCalendar: has no min row height in Quartz",
         "references": [
           {
             "type": "BCP",
-            "reference": "2080299059"
+            "reference": "002075129500005015552020"
           }
         ]
       },
