@@ -154,7 +154,7 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
 
 html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 	outline: 0.0625rem solid @sapUiContentFocusColor;
-	:after {
+	:not(.sapMBadgeIndicator):after {
 		content: "";
 		position: absolute;
 		box-sizing: border-box;
