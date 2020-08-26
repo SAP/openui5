@@ -1373,9 +1373,16 @@
           ]
         },
         "text": {
-          "type": "string",
           "description": "Initials for the avatar. Up to 2 symbols. If the image provided to the 'src' property fails to load, then the text will be shown.",
-          "maxLength": 2
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 2
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },
@@ -1409,9 +1416,16 @@
           ]
         },
         "text": {
-          "type": "string",
           "description": "Initials for the avatar. Up to 2 symbols. If the image provided to the 'src' property fails to load, then the text will be shown.",
-          "maxLength": 2
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 2
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         },
         "size": {
           "description": "[Experimental] The size of the icon.",
