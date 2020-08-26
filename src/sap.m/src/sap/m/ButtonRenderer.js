@@ -299,7 +299,7 @@ sap.ui.define([
 	};
 
 	ButtonRenderer.getBadgeTextId = function(oButton) {
-		return oButton._oBadgeData.value !== "" && oButton._oBadgeData.state !== BadgeState.Disappear ? oButton._getBadgeInvisibleText().getId() : "";
+		return oButton._oBadgeData && oButton._oBadgeData.value !== "" && oButton._oBadgeData.state !== BadgeState.Disappear ? oButton._getBadgeInvisibleText().getId() : "";
 	};
 
 	ButtonRenderer.generateAccProps = function (oButton) {
