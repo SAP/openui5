@@ -2773,7 +2773,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
-				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'", {
+				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
 					value : [
 						{AGE : 43, ID : "2", Name : "Frederic Fall *"},
 						{AGE : 29, ID : "3", Name : "Jonathan Smith *"},
@@ -2802,7 +2802,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
-				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'", {
+				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
 					value : [
 						{AGE : 44, ID : "2", Name : "Frederic Fall **"},
 						{AGE : 30, ID : "3", Name : "Jonathan Smith **"},
@@ -3019,7 +3019,7 @@ sap.ui.define([
 				.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
 					+ "&$select=ItemPosition,Note,SalesOrderID"
 					+ "&$filter=SalesOrderID eq 'SO1' and ItemPosition eq '0010'"
-					+ " or SalesOrderID eq 'SO1' and ItemPosition eq '0020'", {
+					+ " or SalesOrderID eq 'SO1' and ItemPosition eq '0020'&$top=2", {
 					value : [{
 						ItemPosition : "0010",
 						Note : "Note 0010*",
@@ -3095,7 +3095,7 @@ sap.ui.define([
 				.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
 					+ "&$select=ItemPosition,Note,Quantity,SalesOrderID"
 					+ "&$filter=SalesOrderID eq 'SO1' and ItemPosition eq '0010'"
-					+ " or SalesOrderID eq 'SO1' and ItemPosition eq '0020'", {
+					+ " or SalesOrderID eq 'SO1' and ItemPosition eq '0020'&$top=2", {
 					value : [{
 						ItemPosition : "0010",
 						Quantity : "5",
@@ -11168,7 +11168,7 @@ sap.ui.define([
 			// #requestSideEffects w/ multi-segment $expand path
 			// Note: this justifies the complicated handling inside _Helper.intersectQueryOptions
 			that.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)"
-					+ "&$select=ID&$filter=ID eq '1' or ID eq '2'", {value : [{
+					+ "&$select=ID&$filter=ID eq '1' or ID eq '2'&$top=2", {value : [{
 						ID : "1",
 						LOCATION : null
 					}, {
@@ -20882,7 +20882,7 @@ sap.ui.define([
 					+ "?sap-client=123"
 					+ "&$filter=PublicationID eq '42-1' or PublicationID eq '42-2'"
 					+ "&$select=Price,PublicationID"
-					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)&$top=2", {
 					value : [{
 						DraftAdministrativeData : {
 							DraftID : "42-1-A",
@@ -20969,7 +20969,7 @@ sap.ui.define([
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
 					+ "?sap-client=123"
 					+ "&$filter=PublicationID eq '42-7' or PublicationID eq '42-8'"
-					+ "&$select=Price,PublicationID", {
+					+ "&$select=Price,PublicationID&$top=2", {
 					value : [{ // Note: different order than before!
 						Price : "5.88", // side effect
 						PublicationID : "42-8"
@@ -21104,7 +21104,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
 					+ "?$select=Price,PublicationID"
-					+ "&$filter=PublicationID eq '42-0' or PublicationID eq '42-1'", {
+					+ "&$filter=PublicationID eq '42-0' or PublicationID eq '42-1'&$top=2", {
 					value : [{
 						Price : "7.11", // side effect
 						PublicationID : "42-1"
@@ -21160,7 +21160,7 @@ sap.ui.define([
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
 					+ "/_Publication('42-1')/_Artist/_Friend?$select=ArtistID,IsActiveEntity,Name"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true"
-					+ " or ArtistID eq '1' and IsActiveEntity eq false", {
+					+ " or ArtistID eq '1' and IsActiveEntity eq false&$top=2", {
 					value : [{
 						ArtistID : "0",
 						IsActiveEntity : true,
@@ -21316,7 +21316,7 @@ sap.ui.define([
 			that.expectRequest("Artists('42')/_Publication"
 					+ "?$select=Price,PublicationID"
 					+ "&$filter=PublicationID eq 'New 1' or "
-					+ "PublicationID eq '42-1' or PublicationID eq '42-2'", {
+					+ "PublicationID eq '42-1' or PublicationID eq '42-2'&$top=3", {
 						value : [{
 							Price : "3.35",
 							PublicationID : "New 1"
@@ -23631,7 +23631,7 @@ sap.ui.define([
 }, function () {
 	// Note: 4712 is discarded because it is currently not visible
 	this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID,CompanyName"
-			+ "&$filter=BusinessPartnerID eq '4710' or BusinessPartnerID eq '4711'", {
+			+ "&$filter=BusinessPartnerID eq '4710' or BusinessPartnerID eq '4711'&$top=2", {
 			value : [{
 				BusinessPartnerID : "4710",
 					CompanyName : "Baz*"

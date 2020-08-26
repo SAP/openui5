@@ -1,0 +1,28 @@
+{
+	"@odata.context" : "$metadata#BusinessPartnerList/$entity",
+	"@odata.metadataEtag" : "W/\"20200826092600\"",
+	"@odata.etag" : "W/\"20200827203846.6460540 \"",
+	"BusinessPartnerID" : "0100000000",
+	"BusinessPartnerRole" : "01",
+	"CompanyName" : "SAP - modified by OPA",
+	"WebAddress" : "http://www.sap.com",
+	"EmailAddress" : "do.not.repl1y@sap.com",
+	"PhoneNumber" : "0622734567",
+	"FaxNumber" : "0622734004",
+	"LegalForm" : "SE",
+	"CurrencyCode" : "EUR",
+	"CreatedAt" : "2020-05-20T05:19:21Z",
+	"ChangedAt" : "2020-08-27T20:38:46.646054Z",
+	"Address" : {
+		"City" : "Walldorf",
+		"PostalCode" : "69190",
+		"Street" : "Dietmar Hopp Allee",
+		"Building" : "14",
+		"Country" : "DE",
+		"AddressType" : "02",
+		"GeoLocation" : {
+			"Longitude" : "8.641701933686",
+			"Latitude" : "49.293673600000"
+		}
+	}
+}

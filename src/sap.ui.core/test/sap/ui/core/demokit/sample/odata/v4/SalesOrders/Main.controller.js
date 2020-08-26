@@ -71,6 +71,13 @@ sap.ui.define([
 			this.byId("SalesOrderList").getItems()[0].focus();
 		},
 
+		onCompanyNameChanged : function (oEvent) {
+			oEvent.getSource().getBindingContext().requestSideEffects([{
+					$PropertyPath : "/com.sap.gateway.default.zui5_epm_sample.v0002.Container"
+						+ "/SalesOrderList/SO_2_BP/CompanyName"}])
+				.catch(function () {/*may fail because of previous requests*/});
+		},
+
 		onCreateSalesOrder : function (oEvent) {
 			var oBPListBinding = this.byId("BuyerID::new").getBinding("suggestionItems"),
 				oContext = this.byId("SalesOrderList").getBinding("items").create({
@@ -309,14 +316,14 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			this.mItemSideEffects = {};
 			this.initMessagePopover("showMessages");
 		},
 
 		onProductIDChanged : function (oEvent) {
 			var oItemContext = oEvent.getParameter("context");
 			if (!oItemContext.isTransient()) {
-				this.mItemSideEffects[oItemContext.getPath()] = oItemContext;
+				oItemContext.requestSideEffects([{$NavigationPropertyPath : "SOITEM_2_PRODUCT"}])
+					.catch(function () {/*may fail because of previous requests*/});
 			}
 		},
 
@@ -391,15 +398,8 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			var sGroupId = "SalesOrderUpdateGroup",
-				that = this;
+			var sGroupId = "SalesOrderUpdateGroup";
 
-			Object.keys(this.mItemSideEffects).forEach(function (sPath) {
-				that.mItemSideEffects[sPath].requestSideEffects(
-						[{$NavigationPropertyPath : "SOITEM_2_PRODUCT"}])
-					.catch(function () {/*may fail because of previous requests*/});
-			});
-			this.mItemSideEffects = {};
 			this.requestSideEffects(sGroupId, "SO_2_SCHDL");
 			this.submitBatch(sGroupId);
 		},

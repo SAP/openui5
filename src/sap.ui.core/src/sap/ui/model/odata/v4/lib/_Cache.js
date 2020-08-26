@@ -2385,6 +2385,9 @@ sap.ui.define([
 		}
 
 		mQueryOptions.$filter = aFilters.join(" or ");
+		if (aFilters.length > 1) { // avoid small default page size for server-driven paging
+			mQueryOptions.$top = aFilters.length;
+		}
 		_Helper.selectKeyProperties(mQueryOptions, mTypeForMetaPath[this.sMetaPath]);
 		delete mQueryOptions.$count;
 		delete mQueryOptions.$orderby;

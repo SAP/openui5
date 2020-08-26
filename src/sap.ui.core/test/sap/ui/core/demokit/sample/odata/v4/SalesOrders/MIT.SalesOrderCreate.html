@@ -30,10 +30,28 @@
 		</ul>
 
 		<h2>REALIZE and CHECK</h2>
+		<h3>Modify Company Name in the Business Partner Details and check that Buyer Name in the
+			Sales Order List is updated accordingly after saving.</h3>
+		<ol>
+			<li><b>Check:</b> That you got the first <code>5</code> of <code>n</code> sales orders
+				in the <code>Sales Orders</code> table with title "<code>n</code> New Sales Orders",
+				whereas <code>n</code> is exactly <code>10</code> without back end.</li>
+			<li><b>Press</b> the <code>More</code> button in the <code>Sales Orders</code> table.
+				</li>
+			<li><b>Check:</b> That you got the next <code>5</code> sales orders in the <code>Sales
+				Orders</code> table. Without back end the <code>More</code> button now is gone.</li>
+			<li><b>Select</b> the first sales order and check that the <code>Sales Order Details
+				</code> becomes visible.</li>
+			<li>In the <code>Business Partner</code> details change the <code>Company Name</code> to
+				<code>SAP - modified by OPA</code> (without back end) or any other value (with back
+					end).</li>
+			<li><b>Press</b> the <code>Save Sales Order</code> button.</li>
+			<li><b>Check</b> That in the <code>Sales Orders</code> table the <code>Buyer Name</code>
+				is updated accordingly for all sales orders having the same business partner.</li>
+		</ol>
 		<h3>Create, modify and delete of an unsaved sales order</h3>
 		<ol>
-			<li><b>Check:</b> (without back end only) The sales orders count is 10.
-			<li>After the application is started, select the first sales order</li>
+			<li>Select the first sales order.</li>
 			<li>Click on the <code>ValueHelp</code> button for <code>Category</code>in the
 				<code>Sales Order Line Items</code> table.</li>
 			<li><b>Check:</b> The title of the <code>Value Help</code> is

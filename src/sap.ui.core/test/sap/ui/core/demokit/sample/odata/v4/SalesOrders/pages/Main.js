@@ -437,6 +437,17 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				modifyCompanyName : function () {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "CompanyName::detail",
+						success : function (oInput) {
+							Helper.changeInputValue(this, sViewName, "CompanyName::detail",
+								Opa.getContext().CompanyName + " - modified by OPA");
+						},
+						viewName : sViewName
+					});
+				},
 				pressCancelSalesOrderChangesButton : function () {
 					return pressButton(this, "cancelSalesOrderChanges");
 				},
@@ -474,6 +485,9 @@ sap.ui.define([
 				},
 				pressMessagesButton : function () {
 					return pressButton(this, "showMessages");
+				},
+				pressMoreButton : function () {
+					return Helper.pressMoreButton(this, sViewName);
 				},
 				pressOpenSimulateDiscountDialog : function () {
 					return pressButton(this, "openSimulateDiscountDialog");
@@ -547,6 +561,20 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				rememberCompanyName : function () {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "CompanyName::detail",
+						success : function (oInput) {
+							var oOpaContext = Opa.getContext();
+
+							oOpaContext.CompanyName = oInput.getValue();
+							Opa5.assert.ok(oOpaContext.CompanyName, "Remembered Company Name: "
+								+ oOpaContext.CompanyName);
+						},
+						viewName : sViewName
+					});
+				},
 				resetSalesOrderListChanges : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -554,6 +582,17 @@ sap.ui.define([
 						success : function (oTable) {
 							oTable.getBinding("items").resetChanges();
 							Opa5.assert.ok(true, "SalesOrderList reset by API");
+						},
+						viewName : sViewName
+					});
+				},
+				restoreCompanyName : function () {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "CompanyName::detail",
+						success : function (oInput) {
+							Helper.changeInputValue(this, sViewName, "CompanyName::detail",
+								Opa.getContext().CompanyName);
 						},
 						viewName : sViewName
 					});
@@ -650,6 +689,47 @@ sap.ui.define([
 								[COMPANY_NAME_COLUMN_INDEX].getText(), sExpectedCompanyName,
 								"CompanyName of row " + iRow + " as expected "
 									+ sExpectedCompanyName);
+						},
+						viewName : sViewName
+					});
+				},
+				checkCompanyNameModified : function () {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "CompanyName::detail",
+						success : function (oInput) {
+							var sBuyerID = oInput.getBindingContext()
+									.getProperty("SO_2_BP/BusinessPartnerID"),
+								sExpectedCompanyName = Opa.getContext().CompanyName
+									+ " - modified by OPA";
+
+							Opa5.assert.strictEqual(oInput.getValue(), sExpectedCompanyName,
+								"Company Name is: " + sExpectedCompanyName);
+
+							// check company names in sales order list
+							this.waitFor({
+								controlType : "sap.m.Table",
+								id : "SalesOrderList",
+								success : function (oSalesOrderTable) {
+									var iChecked = 0;
+									oSalesOrderTable.getItems().filter(function (oItem) {
+										return oItem.getBindingContext()
+											.getProperty("SO_2_BP/BusinessPartnerID") === sBuyerID;
+									}).every(function (oItem) {
+										iChecked += 1;
+										Opa5.assert.strictEqual(
+											oItem.getCells()[COMPANY_NAME_COLUMN_INDEX].getText(),
+											sExpectedCompanyName,
+											"SalesOrderID: "
+												+ oItem.getCells()[ID_COLUMN_INDEX].getText()
+												+ " company Name is: " + sExpectedCompanyName);
+										return true;
+									});
+									Opa5.assert.ok(iChecked, "Company Name checked in " + iChecked
+										+ " rows");
+								},
+								viewName : sViewName
+							});
 						},
 						viewName : sViewName
 					});

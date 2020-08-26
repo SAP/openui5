@@ -26,8 +26,20 @@ sap.ui.define([
 
 			Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
-			// Create, modify and delete of an unsaved sales order
 			When.onTheMainPage.firstSalesOrderIsVisible();
+
+			// Modify Company Name in Business Partner Details and check that Buyer Name
+			// in Sales Order List is updated accordingly after saving
+			When.onTheMainPage.pressMoreButton();
+			When.onTheMainPage.selectFirstSalesOrder(true);
+			When.onTheMainPage.rememberCompanyName();
+			When.onTheMainPage.modifyCompanyName();
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			Then.onTheMainPage.checkCompanyNameModified();
+			When.onTheMainPage.restoreCompanyName();
+			When.onTheMainPage.pressSaveSalesOrderButton();
+
+			// Create, modify and delete of an unsaved sales order
 			if (!bRealOData) {
 				Then.onTheMainPage.checkSalesOrdersCount(10);
 			}

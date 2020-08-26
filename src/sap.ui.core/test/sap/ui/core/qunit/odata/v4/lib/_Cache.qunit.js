@@ -7301,6 +7301,22 @@ sap.ui.define([
 						mNavigationPropertyPaths = {},
 						aPaths = ["ROOM_ID"],
 						sPredicate,
+						mQueryOptions0 = {
+							$apply : "A.P.P.L.E.",
+							$expand : {expand : null},
+							$filter : oFixture.sFilter,
+							$select : ["Name"],
+							foo : "bar",
+							"sap-client" : "123"
+						},
+						mQueryOptions1 = {
+							$apply : "A.P.P.L.E.",
+							$expand : "~",
+							$filter : oFixture.sFilter,
+							$select : "~",
+							foo : "bar",
+							"sap-client" : "123"
+						},
 						sTransientPredicate = "($uid=id-1-23)",
 						oPersisted = {
 							"@$ui5._" : { // persistent
@@ -7361,24 +7377,13 @@ sap.ui.define([
 								sinon.match.same(oFixture.aValues[i]), sinon.match.func);
 					}
 					if (iReceivedLength > 0) { // expect a GET iff. there is s.th. to do
+						if (oFixture.aValues.length > 1) {
+							mQueryOptions0.$top = mQueryOptions1.$top = oFixture.aValues.length;
+						}
 						that.mock(_Helper).expects("extractMergeableQueryOptions")
-							.withExactArgs({
-								$apply : "A.P.P.L.E.",
-								$expand : {expand : null},
-								$filter : oFixture.sFilter,
-								$select : ["Name"],
-								foo : "bar",
-								"sap-client" : "123"
-							}).callThrough();
+							.withExactArgs(mQueryOptions0).callThrough();
 						that.mock(that.oRequestor).expects("buildQueryString")
-							.withExactArgs("/TEAMS/Foo", {
-								$apply : "A.P.P.L.E.",
-								$expand : "~",
-								$filter : oFixture.sFilter,
-								$select : "~",
-								foo : "bar",
-								"sap-client" : "123"
-							}, false, true)
+							.withExactArgs("/TEAMS/Foo", mQueryOptions1, false, true)
 							.returns("?bar");
 						that.oRequestorMock.expects("request").withExactArgs("GET",
 								"TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock), undefined,
