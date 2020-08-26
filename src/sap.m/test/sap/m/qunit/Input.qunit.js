@@ -828,13 +828,10 @@ sap.ui.define([
 	QUnit.test("Suggestions deactivated and aggregations are not filled - list and popup should not be initialized", function(assert){
 		var oInput = new Input({
 				showSuggestion: false
-			}),
-			$Input,
-			i;
+			});
 
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		$Input = oInput.$();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
@@ -3079,6 +3076,45 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(true, "No exception should be thrown");
+	});
+
+	QUnit.test("Late binding on suggest event", function (assert) {
+		var oModel = new JSONModel({
+				"items": [
+					{key: "text1", value: "Text 1"},
+					{key: "text2", value: "Text 2"},
+					{key: "text3", value: "Text 3"},
+					{key: "text4", value: "Text 4"}
+				]
+			}),
+			fnOnSuggest = function () {
+				oInput.bindAggregation("suggestionItems", {
+					path: "/items",
+					template: new Item({key: "{key}", text: "{value}"}),
+					templateShareable: true
+				});
+			},
+			oInput = new Input({
+				showSuggestion: true,
+				suggest: fnOnSuggest
+			}).setModel(oModel);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.focus();
+		oInput._$input.val("Tex");
+		oInput._triggerSuggest("Tex");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(oInput._isSuggestionsPopoverOpen(), "SuggestionsPopup should be open.");
+
+		// Cleanup
+		oModel.destroy();
+		oInput.destroy();
 	});
 
 	QUnit.module("Key and Value");

@@ -2117,8 +2117,12 @@ function(
 		 * @private
 		 */
 		Input.prototype._synchronizeSuggestions = function() {
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			// Trigger the ListItems refresh only when the focus is on the input field.
+			// In all other cases this instantiates list population and it might not be needed at all.
+			if (document.activeElement === this.getFocusDomRef()) {
+				this._bShouldRefreshListItems = true;
+				this._refreshItemsDelayed();
+			}
 
 			if (!this.getDomRef() || this._isSuggestionsPopoverOpen()) {
 				return;
