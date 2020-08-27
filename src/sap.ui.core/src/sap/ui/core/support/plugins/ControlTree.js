@@ -1522,9 +1522,9 @@ sap.ui.define([
 									mData.unverifiedPath = true;
 									mData.invalidPath = false; // otherwise path is shown as invalid
 								} else {
-									if (oModel.getProperty(sAbsolutePath) !== undefined) {
+									if (oModel.getProperty(sAbsolutePath) !== undefined && oModel.getProperty(sAbsolutePath) !== null) {
 										mData.invalidPath = false;
-									} else if (oModel.getProperty(sPath) !== undefined) {
+									} else if (oModel.getProperty(sPath) !== undefined && oModel.getProperty(sPath) !== null) {
 										mData.invalidPath = false;
 										sAbsolutePath = sPath;
 									}
