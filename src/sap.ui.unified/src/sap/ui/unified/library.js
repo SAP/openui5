@@ -386,13 +386,13 @@ sap.ui.define([
 	thisLib.CalendarAppointmentRoundWidth = {
 
 		/**
-		 * HalfRow display mode.
+		 * Visually rounds the appointment to half a column.
 		 * @public
 		 */
 		HalfColumn : "HalfColumn",
 
 		/**
-		 * None display mode.
+		 * No rounding is used.
 		 * @public
 		 */
 		None : "None"
