@@ -310,7 +310,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		SelectRenderer.getAriaRole = function(oSelect) {
 			switch (oSelect.getType()) {
 				case SelectType.Default:
-					return "combobox";
+					return "listbox";
 
 				case SelectType.IconOnly:
 					return "button";
