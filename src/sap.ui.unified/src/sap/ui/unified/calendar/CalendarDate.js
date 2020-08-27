@@ -144,7 +144,7 @@ sap.ui.define([
 		 */
 		CalendarDate.prototype.setMonth = function (month, date) {
 			checkNumericLike(month, "Invalid month: " + month);
-			if (date) {
+			if (date || date === 0) {
 				checkNumericLike(date, "Invalid date: " + date);
 				this._oUDate.setUTCMonth(month, date);
 			} else {

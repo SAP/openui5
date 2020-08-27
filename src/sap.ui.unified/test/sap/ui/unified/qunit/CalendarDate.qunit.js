@@ -408,6 +408,21 @@ sap.ui.define([
 		oCD.destroy();
 	});
 
+	QUnit.test("'setMonth' with a date as a second passed parameter 0 goes to the last day of previous month", function(assert){
+		//prepare
+		var oCD = new CalendarDate(2017, 5, 5);
+
+		//act
+		oCD.setMonth(3, 0);
+
+		//assert
+		assert.equal(oCD.getMonth(), 2, "the first argument is the month and it's Month");
+		assert.equal(oCD.getDate(), 31, "there is an optional second argument - date and it's 31st");
+
+		//cleanup
+		oCD.destroy();
+	});
+
 	QUnit.module("isBefore");
 	QUnit.test("checks if a CalendarDate is before another one", function (assert) {
 		//Act
