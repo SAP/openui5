@@ -140,10 +140,11 @@
 		</f:midColumnPages>
 		<f:endColumnPages>
 			<VBox id="subObjectPage" visible="{=${ui>/bSalesOrderItemSelected}}">
-				<form:SimpleForm editable="true" layout="ColumnLayout">
+				<form:SimpleForm ariaLabelledBy="lineItemDetailsTitle" editable="true"
+						layout="ColumnLayout">
 					<form:toolbar>
 						<Toolbar design="Transparent">
-							<Title level="H2" text="Line Item Details"/>
+							<Title id="lineItemDetailsTitle" level="H2" text="Line Item Details"/>
 							<Button enabled="true" icon="sap-icon://delete"
 								id="deleteSalesOrderItem" press="onDeleteSalesOrderItem"
 								tooltip="Delete sales order item"/>
