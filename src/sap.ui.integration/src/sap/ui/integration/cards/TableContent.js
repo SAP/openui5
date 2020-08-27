@@ -181,7 +181,7 @@ sap.ui.define([
 			template: this._oItemTemplate
 		};
 		this._filterHiddenNavigationItems(oRow, oBindingInfo);
-		this._bindAggregation("items", oTable, oBindingInfo);
+		this._bindAggregationToControl("items", oTable, oBindingInfo);
 	};
 
 	TableContent.prototype._setStaticColumns = function (aRows, aColumns) {

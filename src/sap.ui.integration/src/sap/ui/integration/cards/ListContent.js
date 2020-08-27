@@ -231,7 +231,7 @@ sap.ui.define([
 			template: this._oItemTemplate
 		};
 		this._filterHiddenNavigationItems(mItem, oBindingInfo);
-		this._bindAggregation("items", this._getList(), oBindingInfo);
+		this._bindAggregationToControl("items", this._getList(), oBindingInfo);
 	};
 
 	ListContent.prototype._createChartAndAddLegend = function (oChartSettings) {

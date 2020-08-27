@@ -56,8 +56,7 @@ sap.ui.define([
 						title: 'Calendar',
 						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
-						key: 'calendar',
-						experimental: true
+						key: 'calendar'
 					},
 					{
 						title: 'Component',

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.f.PlanningCalendarInCardLegend.
-sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarAppointment', 'sap/m/Label', './PlanningCalendarInCardLegendRenderer'],
-	function(PlanningCalendarLegend, CalendarAppointment, Label, PlanningCalendarInCardLegendRenderer) {
+sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarLegendItem', './PlanningCalendarInCardLegendRenderer'],
+	function(PlanningCalendarLegend, CalendarLegendItem, PlanningCalendarInCardLegendRenderer) {
 		"use strict";
 
 
@@ -51,12 +51,12 @@ sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarAppointme
 		/**
 		 * Makes or returns the object, defining how many legend items are hidden.
 		 * @param {integer} iItemsLeft the number of hidden legend items
-		 * @returns {sap.m.Label} the object
+		 * @returns {sap.ui.unified.CalendarLegendItem} the object
 		 */
-		PlanningCalendarInCardLegend.prototype._getMoreLabel = function (iItemsLeft) {
+		PlanningCalendarInCardLegend.prototype._getMoreItemsText = function (iItemsLeft) {
 			if (!this._oItemsLink) {
-				this._oItemsLink = new Label({
-					text: iItemsLeft + " More"
+				this._oItemsLink = new sap.ui.unified.CalendarLegendItem({
+					text: "More (" + iItemsLeft + ")"
 				});
 			}
 			return this._oItemsLink;

@@ -39,6 +39,7 @@ sap.ui.define(function () {
 					only: ["sap/f/AvatarGroupItem"]
 				}
 			},
+			"CalendarInCard": {},
 			"Card": {
 				coverage: {
 					only: ["sap/f/Card"]
@@ -141,7 +142,6 @@ sap.ui.define(function () {
 					only: ["sap/f/GridListItem"]
 				}
 			},
-			"PlanningCalendarInCard": {},
 			"ProductSwitchItem": {
 				coverage: {
 					only: ["sap/f/ProductSwitchItem"]

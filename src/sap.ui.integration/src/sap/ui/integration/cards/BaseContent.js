@@ -307,7 +307,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl The control which aggregation is going to be bound.
 	 * @param {Object} oBindingInfo The binding info.
 	 */
-	BaseContent.prototype._bindAggregation = function (sAggregation, oControl, oBindingInfo) {
+	BaseContent.prototype._bindAggregationToControl = function (sAggregation, oControl, oBindingInfo) {
 		var bAggregation = sAggregation && typeof sAggregation === "string";
 		var bBindingInfo = oBindingInfo && typeof oBindingInfo === "object";
 		if (!bAggregation || !oControl || !bBindingInfo) {
