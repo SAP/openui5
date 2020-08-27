@@ -877,6 +877,10 @@ sap.ui.define([
 		var oStaticArea = sap.ui.getCore().getStaticAreaRef();
 		jQuery(this.oFileUpload).appendTo(oStaticArea);
 
+		if (!this.getName()) {
+			Log.warning("Name property is not set. Id would be used instead to identify the control on the server.", this);
+		}
+
 		// unbind the custom event handlers
 		jQuery(this.oFileUpload).off();
 
