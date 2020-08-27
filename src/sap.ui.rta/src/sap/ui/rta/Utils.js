@@ -475,7 +475,7 @@ function(
 	 * @param {string} sUrl - url string
 	 */
 	Utils.openNewWindow = function(sUrl) {
-		window.open(sUrl, "_blank");
+		window.open(sUrl, "_blank", "noopener noreferrer");
 	};
 
 	/**
