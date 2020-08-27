@@ -125,7 +125,9 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 			bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
 			iMaxLines,
 			bWrap = true,
-			oppositeDirectionMarker = '';
+			oppositeDirectionMarker = '',
+			oCore = sap.ui.getCore(),
+			sResult;
 
 		if (sTextDir === TextDirection.LTR && bPageRTL) {
 			oppositeDirectionMarker = '\u200e';
@@ -135,9 +137,13 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 		}
 		sText = oppositeDirectionMarker + sText + oppositeDirectionMarker;
 		if (sTitle) {
-			sText = sTitle + ": " + sText;
+			sResult = sTitle;
+			if (oCore.getConfiguration().getLocale().getLanguage().toLowerCase() === "fr") {
+				sResult += " ";
+			}
+			sResult += ": " + sText;
 		}
-		oAttrAggregation.setProperty('text', sText, true);
+		oAttrAggregation.setProperty('text', sResult, true);
 
 		//if attribute is used inside responsive ObjectHeader or in ObjectListItem - only 1 line
 		if (oParent instanceof sap.m.ObjectListItem) {

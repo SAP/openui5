@@ -79,10 +79,15 @@ sap.ui.define(["sap/ui/core/library"],
 			return;
 		}
 
+		var oCore = sap.ui.getCore();
+
 		oRm.openStart("span", oOA.getId() + "-title");
 		oRm.class("sapMObjectAttributeTitle");
 		oRm.openEnd();
 		oRm.text(oOA.getProperty("title"));
+		if (oCore.getConfiguration().getLocale().getLanguage().toLowerCase() === "fr") {
+			oRm.unsafeHtml("&nbsp;");
+		}
 		oRm.close("span");
 		oRm.openStart("span", oOA.getId() + "-colon");
 		oRm.class("sapMObjectAttributeColon");
