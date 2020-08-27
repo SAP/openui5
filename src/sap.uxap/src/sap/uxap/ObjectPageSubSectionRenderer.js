@@ -12,8 +12,10 @@ sap.ui.define(function () {
 	var ObjectPageSubSectionRenderer = {};
 
 	ObjectPageSubSectionRenderer.render = function (oRm, oControl) {
+
 		var aActions, bHasTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft, bHasVisibleActions,
-			bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility();
+			bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility(),
+			oLabelledBy = oControl.getAggregation("ariaLabelledBy");
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
 			return;
@@ -41,12 +43,8 @@ sap.ui.define(function () {
 		oRm.addClass("ui-helper-clearfix");
 		oRm.writeClasses();
 
-		if (bAccessibilityOn) {
-			if (bHasTitle) {
-				oRm.writeAttributeEscaped("aria-labelledby", oControl.getId() + "-headerTitle");
-			} else {
-				oRm.writeAttribute("aria-label", sap.uxap.ObjectPageSubSection._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME"));
-			}
+		if (bAccessibilityOn && oLabelledBy) {
+			oRm.attr("aria-labelledby", oLabelledBy.getId());
 		}
 
 		oRm.write(">");

@@ -4,6 +4,7 @@
 
 // Provides control sap.uxap.ObjectPageSectionBase.
 sap.ui.define([
+    "sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
-], function(jQuery, Control, coreLibrary, library, Log, KeyCodes) {
+], function(InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -75,7 +76,10 @@ sap.ui.define([
 				}
 			},
 			aggregations: {
-
+				/**
+				 * Screen Reader ariaLabelledBy
+				 */
+				ariaLabelledBy: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"},
 				/**
 				 * The custom button that will provide a link to the section in the ObjectPageLayout anchor bar.
 				 * This button will be used as a custom template to be into the ObjectPageLayout anchorBar area, therefore property changes happening on this button template after the first rendering won't affect the actual button copy used in the anchorBar.
@@ -119,6 +123,16 @@ sap.ui.define([
 		}
 	};
 
+	ObjectPageSectionBase.prototype.onBeforeRendering = function () {
+		var sAriaLabeledBy = "ariaLabelledBy";
+
+		this.setInvisibleTextLabelValue(this._getTitle());
+
+		if (!this.getAggregation(sAriaLabeledBy)) {
+			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
+		}
+	};
+
 	ObjectPageSectionBase.prototype.setCustomAnchorBarButton = function (oButton) {
 		var vResult = this.setAggregation("customAnchorBarButton", oButton, true);
 
@@ -127,6 +141,66 @@ sap.ui.define([
 		}
 
 		return vResult;
+	};
+
+	/**
+	 * Returns the control name text.
+	 *
+	 * To be overwritten by the specific control method.
+	 *
+	 * @return {string} control name text
+	 * @protected
+	 */
+	ObjectPageSectionBase.prototype.getSectionText = function () {
+		return "";
+	};
+
+	/**
+	 * Returns the DOM Element that should get the focus.
+	 *
+	 * To be overwritten by the specific control method.
+	 *
+	 * @return {sap.uxap.ObjectPageSectionBase} this for chaining
+	 * @protected
+	 */
+	ObjectPageSectionBase.prototype.setInvisibleTextLabelValue = function (sValue) {
+		var oAriaLabelledBy = this.getAggregation("ariaLabelledBy"),
+			sSectionText = this.getSectionText(),
+			sLabel = "";
+
+		if (sValue) {
+			sLabel = sValue + " ";
+		}
+
+		if (oAriaLabelledBy) {
+			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sLabel + sSectionText);
+		}
+
+		return this;
+	};
+
+	/**
+	 * provide a default aria-labeled by text
+	 * @private
+	 * @returns {*} sap.ui.core.InvisibleText
+	 */
+	ObjectPageSectionBase.prototype._getAriaLabelledBy = function () {
+		// Each section should be labelled as:
+		// 'titleName Section' - if the section has a title
+		// 'Section' - if it does not have a title
+
+		var sLabel = "",
+			sTitle = this._getTitle();
+
+		if (sTitle) {
+			sLabel += sTitle + " ";
+		}
+
+		sLabel += this.getSectionText();
+
+		return new InvisibleText({
+			text: sLabel
+		}).toStatic();
 	};
 
 	/**
@@ -305,6 +379,8 @@ sap.ui.define([
 
 		this.setProperty("title", sValue, bSuppressInvalidate);
 		this._notifyObjectPageLayout();
+
+		this.setInvisibleTextLabelValue(sValue);
 
 		return this;
 	};

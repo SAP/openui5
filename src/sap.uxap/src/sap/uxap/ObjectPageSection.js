@@ -4,7 +4,6 @@
 
 // Provides control sap.uxap.ObjectPageSection.
 sap.ui.define([
-    "sap/ui/core/InvisibleText",
     "./ObjectPageSectionBase",
     "sap/ui/Device",
     "sap/m/Button",
@@ -14,7 +13,6 @@ sap.ui.define([
     "sap/m/library",
     "./ObjectPageSectionRenderer"
 ], function(
-    InvisibleText,
 	ObjectPageSectionBase,
 	Device,
 	Button,
@@ -74,10 +72,6 @@ sap.ui.define([
 				 */
 				subSections: {type: "sap.uxap.ObjectPageSubSection", multiple: true, singularName: "subSection"},
 
-				/**
-				 * Screen Reader ariaLabelledBy
-				 */
-				ariaLabelledBy: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"},
 				_showHideAllButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 				_showHideButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
 			},
@@ -115,6 +109,17 @@ sap.ui.define([
 		return sap.ui.getCore().getLibraryResourceBundle("sap.uxap");
 	};
 
+	/**
+	 * Returns the control name text.
+	 *
+	 * @override
+	 * @return {string} control name text
+	 * @protected
+	 */
+	ObjectPageSection.prototype.getSectionText = function (sValue) {
+		return ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
+	};
+
 	ObjectPageSection.prototype._expandSection = function () {
 		ObjectPageSectionBase.prototype._expandSection.call(this)
 			._updateShowHideAllButton(!this._thereAreHiddenSubSections());
@@ -127,18 +132,6 @@ sap.ui.define([
 
 	ObjectPageSection.prototype.exit = function () {
 		this._detachMediaContainerWidthChange(this._updateImportance, this);
-	};
-
-	ObjectPageSection.prototype.setTitle = function (sValue) {
-		ObjectPageSectionBase.prototype.setTitle.call(this, sValue);
-
-		var oAriaLabelledBy = this.getAggregation("ariaLabelledBy"),
-			sSectionText = ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
-
-		if (oAriaLabelledBy) {
-			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sValue + " " + sSectionText);
-		}
-		return this;
 	};
 
 	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {
@@ -189,11 +182,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSection.prototype.onBeforeRendering = function () {
-		var sAriaLabeledBy = "ariaLabelledBy";
-
-		if (!this.getAggregation(sAriaLabeledBy)) {
-			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
-		}
+		ObjectPageSectionBase.prototype.onBeforeRendering.call(this);
 
 		this._detachMediaContainerWidthChange(this._updateImportance, this);
 
@@ -202,30 +191,6 @@ sap.ui.define([
 
 	ObjectPageSection.prototype.onAfterRendering = function () {
 		this._attachMediaContainerWidthChange(this._updateImportance, this);
-	};
-
-	/**
-	 * provide a default aria-labeled by text
-	 * @private
-	 * @returns {*} sap.ui.core.InvisibleText
-	 */
-	ObjectPageSection.prototype._getAriaLabelledBy = function () {
-		// Each section should be labelled as:
-		// 'titleName Section' - if the section has a title
-		// 'Section' - if it does not have a title
-
-		var sLabel = "",
-			sTitle = this._getTitle();
-
-		if (sTitle) {
-			sLabel += sTitle + " ";
-		}
-
-		sLabel += ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
-
-		return new InvisibleText({
-			text: sLabel
-		}).toStatic();
 	};
 
 	/**

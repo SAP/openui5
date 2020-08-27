@@ -231,6 +231,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the control name text.
+	 *
+	 * @override
+	 * @return {string} control name text
+	 * @protected
+	 */
+	ObjectPageSubSection.prototype.getSectionText = function (sValue) {
+		return ObjectPageSubSection._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
+	};
+
+	/**
 	 * Returns Title DOM ID of the Title of this SubSection
 	 * @returns {string|boolean} DOM ID
 	 * @private

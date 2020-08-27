@@ -1189,12 +1189,16 @@ function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPa
 
     QUnit.test("Test aria-labelledby attribute", function(assert) {
 		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
+			sSubSectionWithoutTitleAriaLabelledBy = oSubSectionWithoutTitle.$().attr("aria-labelledby"),
 			oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1"),
 			sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby"),
 			sSubSectionControlName = ObjectPageSubSectionClass._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
 
-		assert.strictEqual(oSubSectionWithoutTitle.$().attr("aria-label"), sSubSectionControlName, "Subsections without titles should have aria-label='Subsection'");
-		assert.strictEqual(oSubSectionWithTitle.getTitle(), document.getElementById(sSubSectionWithTitleAriaLabelledBy).innerText, "Subsection title is properly labelled");
+		assert.strictEqual(Core.byId(sSubSectionWithoutTitleAriaLabelledBy).getText(),
+			sSubSectionControlName, "Subsections without titles should have aria-label='Subsection'");
+
+		assert.strictEqual(Core.byId(sSubSectionWithTitleAriaLabelledBy).getText(),
+			oSubSectionWithTitle.getTitle() + " " + sSubSectionControlName, "Subsection title is properly labelled (ends with 'Subsection')");
 	});
 
 	QUnit.module("Title ID propagation");
