@@ -1576,7 +1576,7 @@ sap.ui.define([
 	 * @param {string} sReportingClassName
 	 *   The name of the class reporting the error
 	 * @param {Error} oError
-	 *   The error
+	 *   The error, for example created by {@link sap.ui.model.odata.v4.lib._Helper.createError}
 	 * @param {boolean|string} [oError.canceled]
 	 *   A boolean value indicates whether the error is not reported but just logged to the
 	 *   console with level DEBUG; example: errors caused by cancellation of backend requests.
@@ -1618,6 +1618,7 @@ sap.ui.define([
 					technical : bTechnical || oMessage.technical,
 					// use "@$ui5." prefix to overcome name collisions with instance annotations
 					// returned from back-end.
+					"@$ui5.error" : oError,
 					"@$ui5.originalMessage" : oMessage
 				};
 

@@ -1628,10 +1628,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for direct requests
 	QUnit.test("error response: $direct (framework test)", function (assert) {
-		var oError = createError({
+		var oOriginalMessage = {
 				code : "Code",
 				message : "Request intentionally failed"
-			}),
+			},
+			oError = createError(oOriginalMessage),
 			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}" />';
 
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
@@ -1644,6 +1645,10 @@ sap.ui.define([
 				persistent : true,
 				target : "",
 				technical : true,
+				technicalDetails : {
+					httpStatus : 500, // CPOUI5ODATAV4-428
+					originalMessage : oOriginalMessage
+				},
 				type : "Error"
 			}]);
 
@@ -1653,10 +1658,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for batch requests
 	QUnit.test("error response: $batch (framework test)", function (assert) {
-		var oError = createError({
+		var oOriginalMessage = {
 				code : "Code",
 				message : "Request intentionally failed"
-			}),
+			},
+			oError = createError(oOriginalMessage),
 			sView = '\
 <Text text="{/EMPLOYEES(\'1\')/ID}" />\
 <Text text="{/EMPLOYEES(\'2\')/Name}" />';
@@ -1673,6 +1679,10 @@ sap.ui.define([
 				persistent : true,
 				target : "",
 				technical : true,
+				technicalDetails : {
+					httpStatus : 500, // CPOUI5ODATAV4-428
+					originalMessage : oOriginalMessage
+				},
 				type : "Error"
 			}]);
 
@@ -3281,7 +3291,6 @@ sap.ui.define([
 					"persistent" : true,
 					"target" : "",
 					"technical" : true,
-					"technicalDetails" : {},
 					"type" : "Error"
 				}]);
 
@@ -3396,6 +3405,7 @@ sap.ui.define([
 				target : "/EMPLOYEES('42')/Name",
 				technical : true,
 				technicalDetails : {
+					httpStatus : 500, // CPOUI5ODATAV4-428
 					originalMessage : {
 						code : "CODE",
 						message : "Could not read",
@@ -8661,6 +8671,7 @@ sap.ui.define([
 						target : "",
 						technical : true,
 						technicalDetails : {
+							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
 								code : "top",
 								details : [{
@@ -8684,6 +8695,7 @@ sap.ui.define([
 						persistent : true,
 						target : "",
 						technicalDetails : {
+							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
 								"@Common.numericSeverity" : 3,
 								code : "unbound",
@@ -8699,6 +8711,7 @@ sap.ui.define([
 						target :
 							"/BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')/Quantity",
 						technicalDetails : {
+							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
 								"@Common.longtextUrl" : "../Messages(1)/LongText",
 								"@Common.numericSeverity" : 4,
@@ -9399,6 +9412,7 @@ sap.ui.define([
 						target : "",
 						technical : true,
 						technicalDetails : {
+							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
 								code : "CODE",
 								message : "Patch failed"
@@ -24995,6 +25009,9 @@ sap.ui.define([
 				persistent : true,
 				target : "",
 				technical : true,
+				technicalDetails : {
+					httpStatus : 500 // CPOUI5ODATAV4-428
+				},
 				type : "Error"
 			}, {
 				code : undefined,
@@ -25002,6 +25019,9 @@ sap.ui.define([
 				persistent : true,
 				target : "",
 				technical : true,
+				technicalDetails : {
+					httpStatus : 500 // CPOUI5ODATAV4-428
+				},
 				type : "Error"
 			}]);
 
@@ -26945,7 +26965,6 @@ sap.ui.define([
 					persistent : true,
 					target : "",
 					technical : true,
-					technicalDetails : {},
 					type : "Error"
 				}]);
 			that.oLogMock.expects("error").withArgs("Failed to request side effects");
@@ -27126,7 +27145,9 @@ sap.ui.define([
 					persistent : true,
 					target : "",
 					technical : true,
-					technicalDetails : {},
+					technicalDetails : {
+						httpStatus : 500 // CPOUI5ODATAV4-428
+					},
 					type : "Error"
 				}]);
 
