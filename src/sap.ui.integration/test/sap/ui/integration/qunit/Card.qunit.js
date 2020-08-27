@@ -1869,25 +1869,24 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Use getResourceBundle to get translated text", function (assert) {
+		QUnit.test("Use getTranslatedText", function (assert) {
 
-			var done = assert.async();
+			var done = assert.async(),
+				oCard = this.oCard;
 
 			// Arrange
-			this.oCard.attachEventOnce("_ready", function () {
+			oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
 
-				var oBundle = this.oCard.getResourceBundle();
-
 				// Assert
-				assert.ok(oBundle, "The resource bundle is returned");
-				assert.strictEqual(oBundle.getText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
+				assert.strictEqual(oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
+				assert.strictEqual(oCard.getTranslatedText("COUNT_X_OF_Y", [3, 5]), "3 of custom 5", "The translation for COUNT_X_OF_Y is correct.");
 
 				done();
-			}.bind(this));
+			});
 
-			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest.json");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest.json");
+			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 	}
 );

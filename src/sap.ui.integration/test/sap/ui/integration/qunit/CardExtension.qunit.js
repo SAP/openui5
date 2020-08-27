@@ -327,17 +327,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Call getResourceBundle in onCardReady", function (assert) {
+	QUnit.test("Call getTranslatedText in onCardReady", function (assert) {
 		// arrange
 		var done = assert.async();
 
 		this.fnOnCardReadyStub.callsFake(function (oCard) {
-			var oBundle = oCard.getResourceBundle();
-
-			// Assert
-			assert.ok(oBundle, "The resource bundle is returned");
-			assert.strictEqual(oBundle.getText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
-
+			assert.strictEqual(oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
 			done();
 		});
 
