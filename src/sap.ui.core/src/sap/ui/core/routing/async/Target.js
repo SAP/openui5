@@ -73,7 +73,7 @@ sap.ui.define([
 				var oObject = this._get(),
 					oRouter;
 
-				if (oObject.isA("sap.ui.core.UIComponent") && (oRouter = oObject.getRouter())) {
+				if (oObject.isA("sap.ui.core.UIComponent") && (oRouter = oObject.getRouter()) && oObject.hasNativeRouter()) {
 					oRouter.stop();
 				}
 			} else {
@@ -200,7 +200,7 @@ sap.ui.define([
 				pLoaded = this._load(oTargetCreateInfo).then(function (oObject) {
 					if (oObject.isA("sap.ui.core.UIComponent")) {
 						var oRouter = oObject.getRouter();
-						if (oRouter) {
+						if (oRouter && oObject.hasNativeRouter()) {
 							var sHash = oRouter.getHashChanger().getHash();
 							var oRoute = oRouter.getRouteByHash(sHash);
 

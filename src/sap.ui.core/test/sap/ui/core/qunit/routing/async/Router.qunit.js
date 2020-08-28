@@ -4673,6 +4673,152 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Routing Nested Components with shared router", {
+		beforeEach: function () {
+			hasher.setHash("");
+
+			// ===== RootView of Parent Component =====
+			sap.ui.jsview("parentRootView", {
+				createContent : function() {
+					return new Panel(this.createId("shell"));
+				}
+			});
+
+			// ===== View of home route of reuse router =====
+			sap.ui.jsview("reuseRooterView", {
+				createContent : function() {
+					return new Button(this.createId("button1"));
+				}
+			});
+
+			// ===== Root View of Child=====
+			sap.ui.jsview("childRootView", {
+				createContent : function() {
+					return new Panel(this.createId("childShell"));
+				}
+			});
+			var ParentComponent = UIComponent.extend("namespace.async.parent.ParentComponent", {
+				metadata: {
+					rootView: {
+						viewName: "parentRootView",
+						type: "JS",
+						async: true
+					},
+					routing: {
+						config: {
+							async: true,
+							propagateTitle: true
+						},
+						routes: [
+							{
+								pattern: "",
+								name: "home",
+								target: {
+									name: "home",
+									prefix: "child"
+								}
+							},
+							{
+								pattern: "second",
+								name: "second"
+							}
+						],
+						targets: {
+							home: {
+								name: "namespace.async.child.ChildComponent",
+								type: "Component",
+								id: "childComponent1",
+								title: "My Child Title",
+								controlId: "shell",
+								controlAggregation: "content",
+								options: {
+									manifest: false
+								}
+							}
+						}
+					}
+				}
+			});
+
+			sap.ui.predefine("namespace/async/child/ChildComponent/Component", ["sap/ui/core/UIComponent"], function (UIComponent) {
+				return UIComponent.extend("namespace.async.child.ChildComponent", {
+					metadata: {
+						rootView: {
+							viewName: "childRootView",
+							type: "JS",
+							async: true
+						}
+					}
+				});
+			});
+
+			this.oParentComponent = new ParentComponent("parent");
+		},
+		afterEach: function () {
+			this.oParentComponent.destroy();
+		}
+	});
+
+	QUnit.test("NestedComponent has no routing enabled", function(assert){
+		var oParentRouter = this.oParentComponent.getRouter(),
+		oRouterInitializeSpy = sinon.spy(Router.prototype, "initialize");
+
+		var oHomeRoute = oParentRouter.getRoute("home");
+		var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
+
+		oParentRouter.initialize();
+		assert.strictEqual(oHomeRouteMatchedSpy.callCount, 1, "The home route is matched once.");
+		return oHomeRouteMatchedSpy.getCall(0).returnValue.then(function(){
+			assert.equal(oRouterInitializeSpy.callCount, 1, "The initialize() method was called only once.");
+			assert.strictEqual(oRouterInitializeSpy.getCall(0).thisValue._oOwner.getId(), "parent", "The initialize() method was called by the parent component.");
+			oRouterInitializeSpy.resetHistory();
+			oRouterInitializeSpy.restore();
+		});
+	});
+
+	QUnit.test("NestedComponent is using router another router", function(assert){
+		var oParentRouter = this.oParentComponent.getRouter(),
+		oParentRouterInitializeSpy = sinon.spy(oParentRouter, "initialize"),
+		oParentRouterStopSpy = sinon.spy(oParentRouter, "stop"),
+		oGetRouterStub = sinon.stub(UIComponent.prototype, "getRouter").callsFake(function(){
+			return oParentRouter;
+		});
+
+		var oHomeRoute = oParentRouter.getRoute("home");
+		var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
+
+		var oSecondRoute = oParentRouter.getRoute("second");
+		var oSecondRouteMatchedSpy = sinon.spy(oSecondRoute, "_routeMatched");
+
+		oParentRouter.initialize();
+
+		return oHomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject){
+			var oRouter = oObject.view.getComponentInstance().getRouter();
+			assert.equal(oParentRouterInitializeSpy.callCount, 1, "The initialize() method was called only once.");
+			assert.strictEqual(oRouter, oParentRouter, "The router of the child component is correctly the parent router.");
+
+			oParentRouterInitializeSpy.resetHistory();
+
+			oRouter.navTo("second");
+
+			assert.equal(oSecondRouteMatchedSpy.callCount, 1, "The second route is matched.");
+
+			return oSecondRouteMatchedSpy.getCall(0).returnValue;
+		}).then(function(){
+			assert.equal(oParentRouterStopSpy.callCount, 0, "The router was not stopped.");
+			oParentRouter.navTo("home");
+
+			return oHomeRouteMatchedSpy.getCall(1).returnValue;
+
+		}).then(function(){
+			assert.equal(oParentRouterInitializeSpy.callCount, 0, "The initialize() method was not again.");
+
+			oGetRouterStub.restore();
+			oParentRouterInitializeSpy.restore();
+			oParentRouterStopSpy.restore();
+		});
+	});
+
 	QUnit.module("Configuration of title propagation", {
 		before: function() {
 			sap.ui.jsview("parentRootView", {
