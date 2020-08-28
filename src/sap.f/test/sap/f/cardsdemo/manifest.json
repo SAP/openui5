@@ -210,6 +210,11 @@
 					"pattern": "badges",
 					"name": "badges",
 					"target": "badges"
+				},
+				{
+					"pattern": "preview",
+					"name": "preview",
+					"target": "preview"
 				}
 			],
 			"targets": {
@@ -356,6 +361,11 @@
 				"badges": {
 					"viewId": "badges",
 					"viewName": "Badges",
+					"viewLevel": 1
+				},
+				"preview": {
+					"viewId": "preview",
+					"viewName": "Preview",
 					"viewLevel": 1
 				}
 			}

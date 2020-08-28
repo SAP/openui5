@@ -1120,6 +1120,11 @@ sap.ui.define([
 
 		this._setTemporaryContent(sCardType, oContentManifest);
 
+		if (this._bIsPreviewMode) {
+			this.fireEvent("_contentReady");
+			return;
+		}
+
 		this._createContentPromise = this.createContent({
 			cardType: sCardType,
 			contentManifest: oContentManifest,
@@ -1512,6 +1517,27 @@ sap.ui.define([
 
 	Card.prototype.getAriaLabelBadgeText = function () {
 		return this.getBadgeCustomData().getValue();
+	};
+
+	/**
+	 * Sets if the card should be in a preview only mode or not.
+	 *
+	 * To be used only inside the designtime.
+	 *
+	 * @private
+	 * @param {boolean} bIsPreviewMode True if the card should be in preview mode.
+	 */
+	Card.prototype._setPreviewMode = function (bIsPreviewMode) {
+		this._bIsPreviewMode = bIsPreviewMode;
+
+		if (bIsPreviewMode) {
+			this.addStyleClass("sapFCardPreview");
+		} else {
+			this.removeStyleClass("sapFCardPreview");
+		}
+
+		this._bApplyManifest = true;
+		this.invalidate();
 	};
 
 	return Card;
