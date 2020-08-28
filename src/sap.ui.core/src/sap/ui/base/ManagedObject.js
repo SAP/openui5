@@ -2994,9 +2994,11 @@ sap.ui.define([
 	 * method will be called to create a new {@link sap.ui.model.ContextBinding ContextBinding} with the configured
 	 * binding options.
 	 *
-	 * There is no difference between <code>bindObject</code> and {@link sap.ui.core.Element#bindElement bindElement}.
-	 * Method <code>bindElement</code> was deprecated and renamed to <code>bindObject</code> when this kind of binding
-	 * was no longer limited to <code>sap.ui.core.Element</code>s.
+	 * There's no difference between <code>bindObject</code> and {@link sap.ui.core.Element#bindElement bindElement}.
+	 * Method <code>bindObject</code> was introduced together with <code>ManagedObject</code> to make context bindings
+	 * also available on <code>ManagedObject</code>s. The new name was chosen to reflect that the binding is not
+	 * necessarily applied to an <code>Element</code>, it also could be applied to a component or some other
+	 * <code>ManagedObject</code>.
 	 *
 	 * Also see {@link topic:91f05e8b6f4d1014b6dd926db0e91070 Context Binding} in the documentation.
 	 *
