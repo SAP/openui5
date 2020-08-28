@@ -187,9 +187,15 @@ sap.ui.define([
 			},
 			/**
 			 * Fired when the creation of the component instance has failed.
+			 *
+			 * By default, the <code>ComponentContainer</code> also logs the error that occurred.
+			 * Since 1.83, this default behavior can be prevented by calling <code>preventDefault()</code>
+			 * on the event object.
+			 *
 			 * @since 1.60
 			 */
 			componentFailed : {
+				allowPreventDefault: true,
 				parameters : {
 					/**
 					 * The reason object as returned by the component promise
@@ -373,10 +379,10 @@ sap.ui.define([
 					});
 				}.bind(this), function(oReason) {
 					delete this._oComponentPromise;
-					this.fireComponentFailed({
-						reason: oReason
-					});
-					Log.error("Failed to load component for container " + this.getId() + ". Reason: " + oReason);
+					// listeners can prevent the default log entry
+					if ( this.fireComponentFailed({ reason: oReason }) ) {
+						Log.error("Failed to load component for container " + this.getId(), oReason);
+					}
 				}.bind(this));
 			} else if (oComponent) {
 				this.setComponent(oComponent, true);
