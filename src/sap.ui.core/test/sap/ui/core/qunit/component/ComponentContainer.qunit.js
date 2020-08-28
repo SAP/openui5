@@ -1,9 +1,9 @@
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/base/Log',
 	'sap/ui/core/library',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer'
-], function(jQuery, sapUiCore, Component, ComponentContainer) {
+], function(Log, sapUiCore, Component, ComponentContainer) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -88,8 +88,9 @@ sap.ui.define([
 		oComponentContainer.onBeforeRendering();
 	});
 
-	QUnit.test("Create component async - componentFailed", function (assert) {
+	QUnit.test("Create component async - componentFailed (default)", function (assert) {
 		var done = assert.async();
+		var oLogErrorSpy = this.spy(Log, "error");
 		var oComponentContainer = new ComponentContainer({
 			name: "samples.components.unkown",
 			async: true,
@@ -97,7 +98,30 @@ sap.ui.define([
 				var oReason = oEvent.getParameter("reason");
 				assert.ok(true, "Was not able to create component, componentFailed fired");
 				assert.ok(oReason.message.indexOf("failed to load") === 0, "Error object is passed as reason");
-				done();
+				Promise.resolve().then(function() {
+					assert.ok(oLogErrorSpy.calledWith(sinon.match(/^Failed to load component for container/)));
+					done();
+				});
+			}
+		});
+		oComponentContainer.onBeforeRendering();
+	});
+
+	QUnit.test("Create component async - componentFailed (prevent Default)", function (assert) {
+		var done = assert.async();
+		var oLogErrorSpy = this.spy(Log, "error");
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.unkown",
+			async: true,
+			componentFailed: function(oEvent) {
+				var oReason = oEvent.getParameter("reason");
+				assert.ok(true, "Was not able to create component, componentFailed fired");
+				assert.ok(oReason.message.indexOf("failed to load") === 0, "Error object is passed as reason");
+				Promise.resolve().then(function() {
+					assert.strictEqual(oLogErrorSpy.callCount, 0, "no error should have been logged");
+					done();
+				});
+				oEvent.preventDefault();
 			}
 		});
 		oComponentContainer.onBeforeRendering();
