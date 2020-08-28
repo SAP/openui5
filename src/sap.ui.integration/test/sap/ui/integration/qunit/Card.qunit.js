@@ -270,6 +270,21 @@ sap.ui.define([
 						},
 						"country": {
 							"value": "Bulgaria"
+						},
+						"testObject": {
+							"value": {
+								"text": "OBJECT_VALUE"
+							}
+						},
+						"testArray": {
+							"value": [
+								{
+									"text": "ARRAY_VALUE_0"
+								},
+								{
+									"text": "ARRAY_VALUE_1"
+								}
+							]
 						}
 					}
 				},
@@ -314,6 +329,7 @@ sap.ui.define([
 						},
 						"description": {
 							"value": "Stationed in: {{parameters.city}}, {{parameters.country}}. City again: {{parameters.city}}"
+									+ "Other test: {{parameters.testObject.text}} and {{parameters.testArray.0.text}} and {{parameters.testArray.1.text}}"
 						},
 						"highlight": "{state}"
 					}
@@ -1213,12 +1229,21 @@ sap.ui.define([
 
 				Core.applyChanges();
 				var oListItems = this.oCard.getCardContent()._getList().getItems(),
-				 oItem = oManifest_ListCard2["sap.card"]["content"]["data"]["json"][0];
+					oItem = oManifest_ListCard2["sap.card"]["content"]["data"]["json"][0],
+					sTitle = oListItems[0].getTitle(),
+					sDescription = oListItems[0].getDescription();
+
 				// Assert
-				assert.ok(oListItems[0].getDescription().indexOf("Vratza") > -1, "Card parameter 'city' should be replaced in rendered html  with 'Vratza'");
-				assert.strictEqual(oListItems[0].getDescription().match(/Vratza/g).length, 2, "Parameter can occur multiple times and is replaced in every occurrence");
-				assert.ok(oListItems[0].getDescription().indexOf("Bulgaria") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Bulgaria'");
-				assert.ok(oListItems[0].getTitle().indexOf(oItem.Name) > -1, "Card title should be rendered with its value");
+				assert.ok(sDescription.indexOf("Vratza") > -1, "Card parameter 'city' should be replaced in rendered html  with 'Vratza'");
+				assert.strictEqual(sDescription.match(/Vratza/g).length, 2, "Parameter can occur multiple times and is replaced in every occurrence");
+				assert.ok(sDescription.indexOf("Bulgaria") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Bulgaria'");
+
+				assert.ok(sDescription.indexOf("OBJECT_VALUE") > -1, "Object parameters work");
+				assert.ok(sDescription.indexOf("ARRAY_VALUE_0") > -1, "Array parameters work for index 0");
+				assert.ok(sDescription.indexOf("ARRAY_VALUE_1") > -1, "Array parameters work for index 1");
+
+
+				assert.ok(sTitle.indexOf(oItem.Name) > -1, "Card title should be rendered with its value");
 
 				done();
 			}.bind(this));

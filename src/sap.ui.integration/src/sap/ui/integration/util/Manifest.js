@@ -350,7 +350,7 @@ sap.ui.define([
 	 * @returns {string} The string with replaced placeholders.
 	 */
 	function replacePlaceholders(sPlaceholder, vValue, sPath) {
-		if (isPlainObject(vValue)) {
+		if (isPlainObject(vValue) || Array.isArray(vValue)) {
 			for (var sProperty in vValue) {
 				sPlaceholder = replacePlaceholders(sPlaceholder, vValue[sProperty], sPath + "." + sProperty);
 			}
