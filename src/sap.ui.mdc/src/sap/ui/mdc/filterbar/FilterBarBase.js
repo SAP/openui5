@@ -787,8 +787,6 @@ sap.ui.define([
 
 				var fDelayedFunction = function() {
 					this._validate(bFireSearch);
-					this._fResolvedSearchPromise = null;
-					this._fRejectedSearchPromise = null;
 					this._oSearchPromise = null;
 				};
 				setTimeout(fDelayedFunction.bind(this), 0);
@@ -965,11 +963,17 @@ sap.ui.define([
 			return;
 		}
 
+		var fnCleanup = function() {
+			this._fRejectedSearchPromise = null;
+			this._fResolvedSearchPromise = null;
+		}.bind(this);
+
 		if (vRetErrorState === ErrorState.NoError) {
 			if (bFireSearch) {
 				this.fireSearch();
 			}
 			this._fResolvedSearchPromise();
+			fnCleanup();
 		} else {
 			if (vRetErrorState === ErrorState.RequiredHasNoValue) {
 				sErrorMessage = this._oRb.getText("filterbar.REQUIRED_CONDITION_MISSING");
@@ -990,6 +994,7 @@ sap.ui.define([
 				Log.warning("search was not triggered. " + sErrorMessage);
 			}
 			this._fRejectedSearchPromise();
+			fnCleanup();
 		}
 	};
 
