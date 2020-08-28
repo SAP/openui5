@@ -1152,7 +1152,10 @@ sap.ui.define([
 		var oXhr = aXhr[iIndex];
 		var sFilename = oXhr.file.name ? oXhr.file.name : "MultipartFile";
 
-		if ((Device.browser.edge || Device.browser.internet_explorer) && oXhr.file.type && oXhr.xhr.readyState == 1) {
+		if ((Device.browser.edge || Device.browser.internet_explorer) && oXhr.file.type && oXhr.xhr.readyState == 1
+			&& !oXhr.requestHeaders.filter(function(oHeader) {
+				return oHeader.name.toLowerCase() == "content-type";
+			}).length) {
 			var sContentType = oXhr.file.type;
 			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
 			oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
