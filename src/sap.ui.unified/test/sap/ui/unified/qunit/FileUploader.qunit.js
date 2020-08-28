@@ -617,6 +617,40 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Content-Type request header is added once", function(assert) {
+		this.stub(sap.ui.Device, "browser", { "internet_explorer": true });
+
+		//Arrange
+		var oSetRequestHeaderSpy = this.spy(XMLHttpRequest.prototype, "setRequestHeader");
+		var oFileUploader = new sap.ui.unified.FileUploader("fu", {
+			sendXHR: true,
+			useMultipart: false,
+			headerParameters: [
+				new sap.ui.unified.FileUploaderParameter({ name: "Content-Type", value: "application/pdf" })
+			]
+		});
+		var oFiles = [
+			createFakeFile({
+				name: "fake.pdf",
+				type: "application/pdf",
+				size: 404450
+			}, false)
+		];
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oSetRequestHeaderSpy.reset();
+
+		//Act
+		oFileUploader._sendFilesWithXHR(oFiles);
+
+		//Assert
+		assert.equal(oSetRequestHeaderSpy.callCount, 1, "Content-Type is set only once");
+
+		//Clean
+		oFileUploader.destroy();
+	});
+
 	testInputRerender("setEnabled", false);
 	testInputRerender("setPlaceholder", "placeholder");
 
