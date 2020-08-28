@@ -634,13 +634,19 @@
 // [Tags "Base", "Shell", "URI", "Image"]
 @sapShell_Favicon: none;
 
-@sapShell_Navigation_Background: @sapPrimary3;
+@sapShell_Navigation_Background: @sapShellColor;
 
-@sapShell_Navigation_SelectedColor: @sapSelectedColor;
+@sapShell_Navigation_Hover_Background: @sapShell_Hover_Background;
 
-@sapShell_Navigation_Selected_TextColor: @sapSelectedColor;
+@sapShell_Navigation_SelectedColor: @sapShell_Navigation_Selected_TextColor;
 
-@sapShell_Navigation_TextColor: @sapShell_GroupTitleTextColor;
+@sapShell_Navigation_Selected_TextColor: @sapShell_InteractiveTextColor;
+
+@sapShell_Navigation_TextColor: contrast(@sapShell_Navigation_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+@sapShell_Navigation_Active_TextColor: contrast(@sapShell_Navigation_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+@sapShell_Navigation_Active_Background: @sapShell_Active_Background;
 
 @sapShell_Shadow: 0 0 0.5rem 0 fade(@sapContent_ShadowColor, 80), inset 0 -0.0625rem 0 0 fade(@sapContent_ShadowColor, 20);
 
@@ -1248,10 +1254,16 @@
 
 @sapInfobar_Active_Background: darken(@sapInfobar_Background, 11);
 
+@sapInfobar_NonInteractive_Background: darken(@sapList_Background, 10);
+
+@sapInfobar_TextColor: contrast(@sapInfobar_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
 // [Label "Object Header Background Color"]
 // [Description "The background color of object headers."]
 // [Tags "Base", "Page", "Color"]
 @sapObjectHeader_Background: @sapBaseColor;
+
+@sapObjectHeader_Hover_Background: contrast(@sapObjectHeader_Background, darken(@sapObjectHeader_Background, 4), lighten(@sapObjectHeader_Background, 3));
 
 @sapObjectHeader_BorderColor: lighten(@sapObjectHeader_Background, 8);
 
@@ -1290,6 +1302,8 @@
 @sapTile_IconColor: contrast(@sapTile_Background, lighten(@sapShellColor ,35), @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
 @sapTile_SeparatorColor: lighten(@sapTile_Background, 12);
+
+@sapTile_Interactive_BorderColor: lighten(@sapTile_Background, 30);
 
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]

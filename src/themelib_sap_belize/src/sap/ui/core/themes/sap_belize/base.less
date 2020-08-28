@@ -623,11 +623,17 @@
 
 @sapShell_Navigation_Background: transparent;
 
+@sapShell_Navigation_Hover_Background: @sapShell_Hover_Background;
+
 @sapShell_Navigation_SelectedColor: @sapShell_TextColor;
 
 @sapShell_Navigation_Selected_TextColor: @sapShell_TextColor;
 
 @sapShell_Navigation_TextColor: @sapShell_GroupTitleTextColor;
+
+@sapShell_Navigation_Active_TextColor: contrast(@sapShell_Navigation_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+@sapShell_Navigation_Active_Background: @sapShell_Active_Background;
 
 @sapShell_Shadow: 0 0.125rem 0 0 darken(@sapShell_Background, 5);
 
@@ -1235,10 +1241,16 @@
 
 @sapInfobar_Active_Background: @sapList_Active_Background;
 
+@sapInfobar_NonInteractive_Background: darken(@sapList_Background, 10);
+
+@sapInfobar_TextColor: contrast(@sapInfobar_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
 // [Label "Object Header Background Color"]
 // [Description "The background color of object headers."]
 // [Tags "Base", "Page", "Color"]
 @sapObjectHeader_Background: @sapBaseColor;
+
+@sapObjectHeader_Hover_Background: contrast(@sapObjectHeader_Background, darken(@sapObjectHeader_Background, 4), lighten(@sapObjectHeader_Background, 3));
 
 @sapObjectHeader_BorderColor: contrast(@sapObjectHeader_Background, darken(@sapObjectHeader_Background, 8), lighten(@sapObjectHeader_Background, 8), @sapContent_ContrastTextThreshold);
 
@@ -1277,6 +1289,8 @@
 @sapTile_IconColor: contrast(@sapTile_Background, lighten(@sapContent_IconColor, 34), @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
 @sapTile_SeparatorColor: darken(@sapTile_Background, 20);
+
+@sapTile_Interactive_BorderColor: darken(@sapTile_Background, 30);
 
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]

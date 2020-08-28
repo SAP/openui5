@@ -241,10 +241,13 @@
 @sapShell_Selected_TextColor: contrast(@sapShell_Selected_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapShell_Selected_Hover_Background: @sapShell_Selected_Background;
 @sapShell_Favicon: none;
-@sapShell_Navigation_Background: @sapBackgroundColor;
-@sapShell_Navigation_SelectedColor: @sapShell_TextColor;
-@sapShell_Navigation_Selected_TextColor: @sapShell_TextColor;
+@sapShell_Navigation_Background: @sapShellColor;
+@sapShell_Navigation_Hover_Background: @sapShell_Hover_Background;
+@sapShell_Navigation_SelectedColor: @sapShell_Navigation_Selected_TextColor;
+@sapShell_Navigation_Selected_TextColor: @sapShell_InteractiveTextColor;
 @sapShell_Navigation_TextColor: @sapShell_GroupTitleTextColor;
+@sapShell_Navigation_Active_TextColor: contrast(@sapShell_Navigation_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Navigation_Active_Background: @sapShell_Active_Background;
 @sapShell_Shadow: 0 0.125rem 0 0 @sapShell_BorderColor;
 
 @sapButton_BorderWidth: @sapElement_BorderWidth; //<=new
@@ -458,8 +461,11 @@
 @sapInfobar_Background: #fff;
 @sapInfobar_Hover_Background:  @sapHighlightColor;
 @sapInfobar_Active_Background: @sapActiveColor;
+@sapInfobar_NonInteractive_Background: #b3b3b3;
+@sapInfobar_TextColor: contrast(@sapInfobar_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapObjectHeader_Background: #fff;
+@sapObjectHeader_Hover_Background: @sapHighlightColor;
 @sapObjectHeader_BorderColor: #000;
 
 @sapBlockLayer_Background: #000;
@@ -472,6 +478,7 @@
 @sapTile_TextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapTile_IconColor: contrast(@sapTile_Background, @sapContent_IconColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 @sapTile_SeparatorColor: @sapTile_BorderColor;
+@sapTile_Interactive_BorderColor: @sapTile_BorderColor;
 
 @sapChart_OrderedColor_1: #286ac3;
 @sapChart_OrderedColor_2: #d74114;
