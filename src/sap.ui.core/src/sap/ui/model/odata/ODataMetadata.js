@@ -1606,7 +1606,9 @@ sap.ui.define([
 			mFunctionParameters) {
 		var sActionFor, mEntitySet, mEntityType, i, aKeys, sParameterName, aPropertyReferences,
 			aExtensions = mFunctionInfo.extensions,
-			sId = "";
+			sFunctionReturnType = mFunctionInfo.returnType,
+			sId = "",
+			bIsCollection = false;
 
 		if (aExtensions) {
 			for (i = 0; i < aExtensions.length; i += 1) {
@@ -1616,16 +1618,23 @@ sap.ui.define([
 				}
 			}
 		}
+		if (sFunctionReturnType && sFunctionReturnType.startsWith("Collection(")) {
+			bIsCollection = true;
+			sFunctionReturnType = sFunctionReturnType.slice(11/* "Collection(".length */, -1);
+		}
 		if (sActionFor) {
 			mEntityType = this._getEntityTypeByName(sActionFor);
 		} else if (mFunctionInfo.entitySet) {
 			mEntityType = this._getEntityTypeByPath(mFunctionInfo.entitySet);
-		} else if (mFunctionInfo.returnType) {
-			mEntityType = this._getEntityTypeByName(mFunctionInfo.returnType);
+		} else if (sFunctionReturnType) {
+			mEntityType = this._getEntityTypeByName(sFunctionReturnType);
 		}
 		if (mEntityType) {
 			mEntitySet = this._getEntitySetByType(mEntityType);
 			if (mEntitySet && mEntityType.key && mEntityType.key.propertyRef) {
+				if (bIsCollection) {
+					return "/" + mEntitySet.name;
+				}
 				aPropertyReferences = mEntityType.key.propertyRef;
 				// Only if the function import is annotated with the SAP OData V2 annotation
 				// <code>sap:action-for</code>, the  names of the function import parameters and the
@@ -1647,6 +1656,7 @@ sap.ui.define([
 					}
 					sId = aKeys.join(",");
 				}
+
 				return "/" + mEntitySet.name + "(" + sId + ")";
 			} else if (!mEntitySet) {
 				Log.error("Cannot determine path of the entity set for the function import '"
