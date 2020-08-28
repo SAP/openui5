@@ -31,5 +31,21 @@
         ]
       }
     ]
+  },
+  "1.81.2": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "4b87bb0b57f6304602f23f4fa2076fa7b5d739ea",
+        "type": "FIX",
+        "text": " sap.ui.rta: Add variant management reference to delegate changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080366984"
+          }
+        ]
+      }
+    ]
   }
 }

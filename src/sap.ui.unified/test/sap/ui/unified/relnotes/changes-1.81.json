@@ -25,5 +25,51 @@
         "references": []
       }
     ]
+  },
+  "1.81.2": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "f1cb0cf8015acfb5894116551790d807e950a383",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: updates its value if the currency code changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080352633"
+          }
+        ]
+      },
+      {
+        "id": "f7d6686a3c567f6f4d0c42e3f225e0c6e0655c90",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Fix the unit tests for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080379176"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080371007"
+          }
+        ]
+      },
+      {
+        "id": "c4b3e17d09abec62c01f1a7e595a51c51f883fd3",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: IE adds content-type only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003497602020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080371007"
+          }
+        ]
+      }
+    ]
   }
 }
