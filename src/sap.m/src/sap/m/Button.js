@@ -368,12 +368,12 @@ sap.ui.define([
 			if ((Device.browser.safari || Device.browser.firefox) && (oEvent.originalEvent && oEvent.originalEvent.type === "mousedown")) {
 				this._setButtonFocus();
 			}
-			if (!sap.ui.Device.browser.msie) {
+			if (!Device.browser.msie) {
 				// set the tag ID where the touch event started
 				this._sTouchStartTargetId = oEvent.target.id.replace(this.getId(), '');
 			}
 		} else {
-			if (!sap.ui.Device.browser.msie) {
+			if (!Device.browser.msie) {
 				// clear the starting tag ID in case the button is not enabled and visible
 				this._sTouchStartTargetId = '';
 			}
@@ -398,7 +398,7 @@ sap.ui.define([
 			this.ontap(oEvent, true);
 		}
 
-		if (!sap.ui.Device.browser.msie) {
+		if (!Device.browser.msie) {
 			// get the tag ID where the touch event ended
 			sEndingTagId = oEvent.target.id.replace(this.getId(), '');
 			// there are some cases when tap event won't come. Simulate it:

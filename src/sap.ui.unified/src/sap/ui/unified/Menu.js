@@ -758,7 +758,7 @@ sap.ui.define([
 		//The attribute _sapSelectOnKeyDown is used to avoid the problem the other way round (Space is pressed
 		//on Button which opens the menu and the space keyup immediately selects the first item)
 		//The device checks are made, because of the new functionality of iOS13, that brings desktop view on tablet
-		if (!this._sapSelectOnKeyDown && ( oEvent.key !== KeyCodes.Space || (!sap.ui.Device.os.macintosh && window.navigator.maxTouchPoints <= 1))) {
+		if (!this._sapSelectOnKeyDown && ( oEvent.key !== KeyCodes.Space || (!Device.os.macintosh && window.navigator.maxTouchPoints <= 1))) {
 			return;
 		} else {
 			this._sapSelectOnKeyDown = false;

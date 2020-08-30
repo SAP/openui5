@@ -43,8 +43,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 					if (v) {
 						if (typeof (v) === "string" || typeof (v) === "string" || typeof (v) === "boolean") {
 							val = v;
-						} else if ((Array.isArray(v) || jQuery.isPlainObject(v)) && window.JSON) {
-							val = window.JSON.stringify(v);
+						} else if (Array.isArray(v) || jQuery.isPlainObject(v)) {
+							val = JSON.stringify(v);
 						}
 					}
 					that.line(buffer, false, false, i, "" + val);

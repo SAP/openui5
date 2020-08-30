@@ -4,12 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI",
 	"sap/ui/base/Object",
 	"sap/base/util/restricted/_debounce",
 	"sap/ui/testrecorder/CommunicationBus",
 	"sap/ui/testrecorder/CommunicationChannels",
 	"sap/ui/testrecorder/Constants"
-], function (jQuery, BaseObject, _debounce, CommunicationBus, CommunicationChannels, constants) {
+], function (jQuery, URI, BaseObject, _debounce, CommunicationBus, CommunicationChannels, constants) {
 	"use strict";
 
 	var oUIContextInjector = null;
@@ -256,7 +257,7 @@ sap.ui.define([
 		this._sUrl = sap.ui.require.toUrl("sap/ui/testrecorder/ui/overlay.html") +
 			"?sap-ui-testrecorder-origin=" + window.location.protocol +
 			"//" + window.location.host + "&" + "sap-ui-testrecorder-frame-identifier=" + this._sIdentifier;
-		var frameURI = new window.URI(this._sUrl);
+		var frameURI = new URI(this._sUrl);
 		this._sOrigin = ( frameURI.protocol() || window.location.protocol.replace(':', '') ) +
 			'://' + ( frameURI.host() || window.location.host );
 	};

@@ -5,6 +5,7 @@
 // Provides control sap.m.Tokenizer.
 sap.ui.define([
 	'./library',
+	'sap/m/Button',
 	'sap/m/List',
 	'sap/m/StandardListItem',
 	'sap/m/ResponsivePopover',
@@ -24,6 +25,7 @@ sap.ui.define([
 ],
 	function(
 		library,
+		Button,
 		List,
 		StandardListItem,
 		ResponsivePopover,
@@ -380,7 +382,7 @@ sap.ui.define([
 		this.addDependent(this._oPopup);
 
 		if (Device.system.phone) {
-			this._oPopup.setEndButton(new sap.m.Button({
+			this._oPopup.setEndButton(new Button({
 				text: oRb.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON"),
 				press: function () {
 					this._oPopup.close();

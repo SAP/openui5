@@ -3,13 +3,20 @@
  */
 
 sap.ui.define([
+	'sap/ui/Device',
 	'sap/ui/mdc/Element',
+	'sap/m/library',
 	'sap/m/ResponsivePopover'
 ], function(
+		Device,
 		Element,
+		mobileLibrary,
 		ResponsivePopover
 	) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = mobileLibrary.PlacementType;
 
 	/**
 	 * Constructor for a new <code>FieldInfoBase</code>.
@@ -143,8 +150,8 @@ sap.ui.define([
 				ariaLabelledBy: this.getContentTitle(),
 				contentWidth: "380px",
 				horizontalScrolling: false,
-				showHeader: sap.ui.Device.system.phone,
-				placement: sap.m.PlacementType.Auto,
+				showHeader: Device.system.phone,
+				placement: PlacementType.Auto,
 				content: [
 					oPanel, this.getContentTitle()
 				],

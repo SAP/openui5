@@ -42,7 +42,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mv
 		resolution: "Use asynchronous XHR calls instead",
 		resolutionurls: [{
 			text: 'Documentation: Loading a Module',
-			href: 'https://sapui5.hana.ondemand.com/#docs/guide/d12024e38385472a89c1ad204e1edb48.html'
+			href: 'https://sapui5.hana.ondemand.com/#/topic/d12024e38385472a89c1ad204e1edb48'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			// get the controllers and the associated viewId

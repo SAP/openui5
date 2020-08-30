@@ -110,7 +110,9 @@ sap.ui.define([
 			if (oBinding.expand) {
 				oBinding.expand(oRow.getIndex());
 			} else {
-				sap.m.MessageToast.show("not yet ;)");
+				sap.ui.require(["sap/m/MessageToast"], function(MessageToast) {
+					MessageToast.show("not yet ;)");
+				});
 			}
 		}
 	};
@@ -122,7 +124,9 @@ sap.ui.define([
 			if (oBinding.collapse) {
 				oBinding.collapse(oRow.getIndex());
 			} else {
-				sap.m.MessageToast.show("not yet ;)");
+				sap.ui.require(["sap/m/MessageToast"], function(MessageToast) {
+					MessageToast.show("not yet ;)");
+				});
 			}
 		}
 	};

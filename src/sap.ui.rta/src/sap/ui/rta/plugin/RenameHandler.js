@@ -5,6 +5,7 @@
 // Provides class sap.ui.rta.plugin.RenameHandler.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/ElementUtil",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
+	Device,
 	Plugin,
 	Overlay,
 	ElementUtil,
@@ -154,7 +156,7 @@ sap.ui.define([
 
 			//only for renaming variants in edge browser [SPECIAL CASE]
 			if (
-				sap.ui.Device.browser.name === "ed"
+				Device.browser.name === "ed"
 				&& oElement.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement"
 			) {
 				this._$editableField.css({

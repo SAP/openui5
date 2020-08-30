@@ -6,12 +6,13 @@
 sap.ui.define([
 	'sap/base/Log',
 	'sap/base/util/isEmptyObject',
+	'sap/base/util/isPlainObject',
 	'../Plugin',
 	'../Support',
 	'../ToolsAPI',
 	'sap/base/security/encodeXML'
 ],
-	function(Log, isEmptyObject, Plugin, Support, ToolsAPI, encodeXML) {
+	function(Log, isEmptyObject, isPlainObject, Plugin, Support, ToolsAPI, encodeXML) {
 	"use strict";
 
 
@@ -315,8 +316,8 @@ sap.ui.define([
 					if (v) {
 						if (typeof (v) === "string" || typeof (v) === "string" || typeof (v) === "boolean") {
 							val = v;
-						} else if ((Array.isArray(v) || jQuery.isPlainObject(v)) && window.JSON) {
-							val = window.JSON.stringify(v);
+						} else if (Array.isArray(v) || isPlainObject(v)) {
+							val = JSON.stringify(v);
 						}
 					}
 					line(buffer, false, false, i, "" + val);

@@ -60,20 +60,20 @@ sap.ui.define([
 		resolution: "Check the binding path for typos",
 		resolutionurls: [
 			{
-				href: "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.model.Context.html",
+				href: "https://sapui5.hana.ondemand.com/#/api/sap.ui.model.Context",
 				text: "API Reference: Context"
 			},
 			{
-				href: "https://sapui5.hana.ondemand.com/#docs/guide/e5310932a71f42daa41f3a6143efca9c.html",
-				text: "Documentation: Data Binding"
+				href: "https://sapui5.hana.ondemand.com/#/topic/e5310932a71f42daa41f3a6143efca9c",
+				text: "Documentation: Data Binding Tutorial"
 			},
 			{
-				href: "https://sapui5.hana.ondemand.com/#docs/guide/97830de2d7314e93b5c1ee3878a17be9.html",
-				text: "Data Binding Tutorial - Step 12: Aggregation Binding Using Templates"
+				href: "https://sapui5.hana.ondemand.com/#/topic/97830de2d7314e93b5c1ee3878a17be9",
+				text: "Documentation: Data Binding Tutorial - Step 12: Aggregation Binding Using Templates"
 			},
 			{
-				href: "https://sapui5.hana.ondemand.com/#docs/guide/6c7c5c266b534e7ea9a28f861dc515f5.html",
-				text: "Data Binding Tutorial - Step 13: Element Binding"
+				href: "https://sapui5.hana.ondemand.com/#/topic/6c7c5c266b534e7ea9a28f861dc515f5",
+				text: "Documentation: Data Binding Tutorial - Step 13: Element Binding"
 			}
 		],
 		check: function(oIssueManager, oCoreFacade, oScope) {

@@ -849,11 +849,11 @@ sap.ui.define([
 		beforeEach: function () {
 			var that = this;
 
-			that.promiseDescription = new window.Promise(function(resolve) {
+			that.promiseDescription = new Promise(function(resolve) {
 				that.resolveDescription = resolve;
 			});
 
-			that.promiseURL = new window.Promise(function(resolve) {
+			that.promiseURL = new Promise(function(resolve) {
 				that.resolveURL = resolve;
 			});
 

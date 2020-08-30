@@ -827,7 +827,7 @@ sap.ui.define([
 		}
 		$Ref.css("z-index", this._iZIndex);
 
-		Log.debug("position popup content " + $Ref.attr("id") + " at " + (window.JSON ? JSON.stringify(_oPosition.at) : String(_oPosition.at)));
+		Log.debug("position popup content " + $Ref.attr("id") + " at " + JSON.stringify(_oPosition.at));
 		this._applyPosition(_oPosition);
 
 		if (followOf !== undefined) {
@@ -2925,7 +2925,7 @@ sap.ui.define([
 		var bottom = ref.style.bottom;
 
 		if (!(left && left != "auto" || right && right != "auto" || top && top != "auto" || bottom && bottom != "auto")) {
-			Log.debug("reposition popup content " + $Ref.attr("id") + " at " + (window.JSON ? JSON.stringify(this._oLastPosition.at) : String(this._oLastPosition.at)));
+			Log.debug("reposition popup content " + $Ref.attr("id") + " at " + JSON.stringify(this._oLastPosition.at));
 			this._applyPosition(this._oLastPosition);
 		}
 

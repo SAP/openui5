@@ -11,6 +11,7 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/documentation/sdk/model/formatter",
+		"sap/m/Image",
 		"sap/m/Label",
 		"sap/m/Link",
 		"sap/m/Text",
@@ -19,7 +20,7 @@ sap.ui.define([
 		"sap/m/Popover",
 		"sap/m/library"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo,
-			formatter, Label, Link, Text, HBox, ObjectAttribute, Popover, library) {
+			formatter, Image, Label, Link, Text, HBox, ObjectAttribute, Popover, library) {
 		"use strict";
 
 		// shortcut for sap.m.FlexWrap
@@ -390,7 +391,7 @@ sap.ui.define([
 										href: oControlData.uxGuidelinesLink,
 										target: "_blank"
 									}),
-									new sap.m.Image({
+									new Image({
 										src: "./resources/sap/ui/documentation/sdk/images/link-sap.png",
 										tooltip: "Information published on SAP site",
 										press: this.onDisclaimerLinkPress

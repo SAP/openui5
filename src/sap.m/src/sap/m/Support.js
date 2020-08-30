@@ -95,8 +95,8 @@ sap.ui.define([
 						if (v !== undefined && v !== null) {
 							if (typeof (v) == "string" || typeof (v) == "boolean" || (Array.isArray(v) && v.length == 1)) {
 								val = v;
-							} else if ((Array.isArray(v) || isPlainObject(v)) && window.JSON) {
-								val = window.JSON.stringify(v);
+							} else if (Array.isArray(v) || isPlainObject(v)) {
+								val = JSON.stringify(v);
 							}
 						}
 						line(buffer, false, false, i, "" + val);

@@ -65,7 +65,7 @@ sap.ui.define([
 		_getPromise: function () {
 
 			if (!this._oPromise) {
-				this._oPromise = new window.Promise(function (resolve, reject) {
+				this._oPromise = new Promise(function (resolve, reject) {
 					this._fnResolvePromise = resolve;
 					this._fnRejectPromise = reject;
 				}.bind(this));

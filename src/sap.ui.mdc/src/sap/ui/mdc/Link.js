@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldInfoBase",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/link/Log",
 	"sap/base/Log",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(FieldInfoBase,
 	jQuery,
 	InvisibleText,
+	BindingMode,
 	JSONModel,
 	Log,
 	SapBaseLog,
@@ -98,7 +100,7 @@ sap.ui.define([
 			bHasPotentialContent: undefined,
 			linkItems: []
 		});
-		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+		oModel.setDefaultBindingMode(BindingMode.TwoWay);
 		oModel.setSizeLimit(1000);
 		this.setModel(oModel, "$sapuimdcLink");
 		this.attachEvent("modelContextChange", this._handleModelContextChange, this);

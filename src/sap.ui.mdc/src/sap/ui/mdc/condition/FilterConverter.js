@@ -4,12 +4,14 @@
 sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/base/Log"
 ],
 
 function(
 	FilterOperatorUtil,
 	Filter,
+	FilterOperator,
 	Log
 ) {
 	"use strict";
@@ -68,7 +70,7 @@ function(
 					oOperator, oFilter, oNewFilter, oCondition,	oAnyOrAllFilterParam;
 
 				var convertAnyAllFilter = function(oFilter, sOperator, sPattern) {
-					// var sOperator = sap.ui.model.FilterOperator.Any;
+					// var sOperator = FilterOperator.Any;
 					// var sPattern = "*/";
 					var sVariable = "L1";
 					var aSections, sNavPath, sPropertyPath;
@@ -95,12 +97,12 @@ function(
 
 				var convertToAnyOrAllFilter = function(oFilter) {
 					// ANY condition handling e.g. fieldPath "navPath*/propertyPath"
-					var oFilterParam = convertAnyAllFilter(oFilter, sap.ui.model.FilterOperator.Any, "*/");
+					var oFilterParam = convertAnyAllFilter(oFilter, FilterOperator.Any, "*/");
 					if (oFilterParam) {
 						return oFilterParam;
 					} else {
 						// ALL condition handling e.g. fieldPath "navPath+/propertyPath"
-						return convertAnyAllFilter(oFilter, sap.ui.model.FilterOperator.All, "+/");
+						return convertAnyAllFilter(oFilter, FilterOperator.All, "+/");
 					}
 				};
 
@@ -257,11 +259,11 @@ function(
 					}, this);
 					return "(" + sRes + ")";
 				} else {
-					if ( oFilter.sOperator === sap.ui.model.FilterOperator.Any || oFilter.sOperator === sap.ui.model.FilterOperator.All ) {
+					if ( oFilter.sOperator === FilterOperator.Any || oFilter.sOperator === FilterOperator.All ) {
 						sRes = oFilter.sPath + " " + oFilter.sOperator + " " + FilterConverter.prettyPrintFilters(oFilter.oCondition);
 					} else {
 						sRes = oFilter.sPath + " " + oFilter.sOperator + " '" + oFilter.oValue1 + "'";
-						if (oFilter.sOperator === "BT") {
+						if (oFilter.sOperator === FilterOperator.BT) {
 							sRes += "...'" + oFilter.oValue2 + "'";
 						}
 					}

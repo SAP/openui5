@@ -5,12 +5,14 @@
 // Provides control sap.ui.rta.appVariant.AppVariantOverviewDialog.
 sap.ui.define([
 	"sap/ui/core/ComponentContainer",
+	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/m/DialogRenderer",
 	"sap/ui/rta/appVariant/manageApps/webapp/Component",
 	"sap/ui/rta/Utils"
 ], function(
 	ComponentContainer,
+	Button,
 	Dialog,
 	DialogRenderer,
 	ManageAppsComponent,
@@ -65,7 +67,7 @@ sap.ui.define([
 	});
 
 	AppVariantOverviewDialog.prototype._createButton = function() {
-		this.addButton(new sap.m.Button({
+		this.addButton(new Button({
 			text: this._oTextResources.getText("APP_VARIANT_DIALOG_CLOSE"),
 			press: function() {
 				this.close();

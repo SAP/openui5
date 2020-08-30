@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
-	"sap/base/util/restricted/_omit"
+	"sap/base/util/restricted/_omit",
+	"sap/ui/model/json/JSONModel"
 ],
 function(
 	jQuery,
@@ -28,7 +29,8 @@ function(
 	BindingsExtractor,
 	Log,
 	UriParameters,
-	_omit
+	_omit,
+	JSONModel
 ) {
 	"use strict";
 
@@ -228,7 +230,7 @@ function(
 					removeText : oTextResources.getText("BTN_FREP_REMOVE"),
 					cancelText : oTextResources.getText("BTN_FREP_CANCEL")
 				};
-				var oModel = new sap.ui.model.json.JSONModel();
+				var oModel = new JSONModel();
 				oModel.setData(data);
 
 				var oFragmentDialog;

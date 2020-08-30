@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/odata/v4/FilterBarDelegate', './ODataMetaModelUtil', 'sap/ui/mdc/odata/v4/TypeUtil'
-], function(TableDelegate, Core, FilterUtil, DelegateUtil, FilterBarDelegate, ODataMetaModelUtil, TypeUtil) {
+	"sap/ui/mdc/TableDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/odata/v4/FilterBarDelegate', './ODataMetaModelUtil', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/model/Filter'
+], function(TableDelegate, Core, FilterUtil, DelegateUtil, FilterBarDelegate, ODataMetaModelUtil, TypeUtil, Filter) {
 	"use strict";
 	/**
 	 * Helper class for sap.ui.mdc.Table.
@@ -143,7 +143,7 @@ sap.ui.define([
 			}
 		}
 
-		oBindingInfo.filters = new sap.ui.model.Filter(aFilters, true);
+		oBindingInfo.filters = new Filter(aFilters, true);
 	};
 
 	/**

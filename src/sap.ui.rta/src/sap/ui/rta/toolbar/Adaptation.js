@@ -6,15 +6,20 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/Device",
 	"./Base",
-	"sap/ui/core/MessageType"
+	"sap/ui/core/library",
+	"sap/ui/fl/library"
 ],
 function(
 	Fragment,
 	Device,
 	Base,
-	MessageType
+	coreLibrary,
+	flexLibrary
 ) {
 	"use strict";
+
+	var MessageType = coreLibrary.MessageType;
+	var Versions = flexLibrary.Versions;
 
 	/**
 	 * Constructor for a new sap.ui.rta.toolbar.Adaptation control
@@ -173,7 +178,7 @@ function(
 
 	Adaptation.prototype.versionSelected = function (oEvent) {
 		var oVersionsBindingContext = oEvent.getSource().getBindingContext("versions");
-		var nVersionNumber = sap.ui.fl.Versions.Original;
+		var nVersionNumber = Versions.Original;
 
 		if (oVersionsBindingContext) {
 			// the original Version does not have a version binding Context

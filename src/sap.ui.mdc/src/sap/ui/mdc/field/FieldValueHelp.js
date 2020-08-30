@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
 	'sap/ui/model/resource/ResourceModel',
-	'sap/ui/model/Context'
+	'sap/ui/model/Context',
+	'sap/m/library'
 ], function(
 		FieldHelpBase,
 		Condition,
@@ -29,7 +30,8 @@ sap.ui.define([
 		deepEqual,
 		merge,
 		ResourceModel,
-		Context
+		Context,
+		mobileLibrary
 	) {
 	"use strict";
 
@@ -39,6 +41,9 @@ sap.ui.define([
 	var DefineConditionPanel;
 	var ConditionModel;
 	var ManagedObjectModel;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
 	 * Constructor for a new <code>FieldValueHelp</code>.
@@ -1894,7 +1899,7 @@ sap.ui.define([
 
 			var oButtonOK = new Button(this.getId() + "-ok", {
 				text: this._oResourceBundle.getText("valuehelp.OK"),
-				type: sap.m.ButtonType.Emphasized,
+				type: ButtonType.Emphasized,
 				press: _dialogOk.bind(this)
 			});
 

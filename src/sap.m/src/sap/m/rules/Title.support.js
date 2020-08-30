@@ -4,14 +4,15 @@
 /**
  * Defines support rules of the Title control of sap.m library.
  */
-sap.ui.define(["sap/ui/support/library"],
-	function(SupportLib) {
+sap.ui.define(["sap/ui/support/library", "sap/ui/core/library"],
+	function(SupportLib, coreLibrary) {
 	"use strict";
 
 	// shortcuts
 	var Categories = SupportLib.Categories, // Accessibility, Performance, Memory, ...
 		Severity = SupportLib.Severity,	// Hint, Warning, Error
-		Audiences = SupportLib.Audiences; // Control, Internal, Application
+		Audiences = SupportLib.Audiences, // Control, Internal, Application
+		TitleLevel = coreLibrary.TitleLevel;
 
 	//**********************************************************
 	// Rule Definitions
@@ -38,7 +39,7 @@ sap.ui.define(["sap/ui/support/library"],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName("sap.m.Title")
 				.forEach(function(oElement) {
-					if (oElement.getProperty("level") === sap.ui.core.TitleLevel.Auto) {
+					if (oElement.getProperty("level") === TitleLevel.Auto) {
 
 						var sElementId = oElement.getId(),
 							sElementName = oElement.getMetadata().getElementName();

@@ -4,14 +4,15 @@
 /**
  * Defines support rules of the IconTabBar control of sap.m library.
  */
-sap.ui.define(["sap/ui/support/library"],
-	function(SupportLib) {
+sap.ui.define(["sap/ui/support/library", "sap/m/library"],
+	function(SupportLib, mobileLibrary) {
 	"use strict";
 
 	// shortcuts
 	var Categories = SupportLib.Categories, // Accessibility, Performance, Memory, ...
 		Severity = SupportLib.Severity,	// Hint, Warning, Error
-		Audiences = SupportLib.Audiences; // Control, Internal, Application
+		Audiences = SupportLib.Audiences, // Control, Internal, Application
+		IconTabFilterDesign = mobileLibrary.IconTabFilterDesign;
 
 	//**********************************************************
 	// Rule Definitions
@@ -33,7 +34,7 @@ sap.ui.define(["sap/ui/support/library"],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName("sap.m.IconTabFilter")
 				.forEach(function(oElement) {
-					if (oElement.getProperty("design") === sap.m.IconTabFilterDesign.Horizontal
+					if (oElement.getProperty("design") === IconTabFilterDesign.Horizontal
 						&& !oElement.getProperty("icon")
 						&& !oElement.getProperty("showAll")) {
 
@@ -122,7 +123,7 @@ sap.ui.define(["sap/ui/support/library"],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName("sap.m.IconTabFilter")
 				.forEach(function(oElement) {
-					if (oElement.getProperty("design") === sap.m.IconTabFilterDesign.Vertical
+					if (oElement.getProperty("design") === IconTabFilterDesign.Vertical
 						&& oElement.getProperty("icon")
 						&& oElement.getProperty("count").length > 4) {
 

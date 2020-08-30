@@ -956,7 +956,7 @@ sap.ui.define([
 
 	FileUploader.prototype._recalculateWidth = function() {
 		// calculation of the width of the overlay for the original file upload
-		// !sap.ui.Device.browser.internet_explorer check: only for non IE browsers since there we need
+		// !Device.browser.msie check: only for non IE browsers since there we need
 		// the button in front of the fileuploader
 		if (this.getWidth()) {
 			if (this.getButtonOnly() && this.oBrowse.getDomRef()) {

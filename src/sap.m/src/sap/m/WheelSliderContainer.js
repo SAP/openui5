@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	'sap/ui/Device',
+	'sap/ui/base/EventProvider',
 	'sap/ui/core/Control',
 	"sap/ui/thirdparty/jquery",
 	'./WheelSliderContainerRenderer'
 ],
 	function(
 		Device,
+		EventProvider,
 		Control,
 		jQuery,
 		WheelSliderContainerRenderer
@@ -261,7 +263,7 @@ sap.ui.define([
 		};
 
 		WheelSliderContainer.prototype.addSlider = function(oSlider) {
-			if (!Device.system.desktop && !sap.ui.base.EventProvider.hasListener(oSlider, "expanded", this._onSliderExpanded, this)) {
+			if (!Device.system.desktop && !EventProvider.hasListener(oSlider, "expanded", this._onSliderExpanded, this)) {
 				oSlider.attachExpanded(this._onSliderExpanded);
 			}
 
