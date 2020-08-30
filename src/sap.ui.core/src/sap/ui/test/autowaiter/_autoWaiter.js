@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/base/Object",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/autowaiter/_XHRWaiter",
@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_moduleWaiter",
 	"sap/ui/test/autowaiter/_resourceWaiter"
 ], function(
-	jQueryDOM,
+	isEmptyObject,
 	UI5Object,
 	_OpaLogger,
 	_XHRWaiter,
@@ -65,7 +65,7 @@ sap.ui.define([
 			return result;
 		},
 		extendConfig: function (oConfig) {
-			if (!jQueryDOM.isEmptyObject(oConfig)) {
+			if (!isEmptyObject(oConfig)) {
 				aWaiters.forEach(function (mWaiter) {
 					if (mWaiter.waiter.extendConfig) {
 						mWaiter.waiter.extendConfig(oConfig[mWaiter.name]);

@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/base/util/extend",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/base/Object",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_ParameterValidator",
 	"sap/ui/thirdparty/jquery"
-], function (UI5Object, _OpaLogger, _ParameterValidator, jQueryDOM) {
+], function (extend, isEmptyObject, UI5Object, _OpaLogger, _ParameterValidator) {
 	"use strict";
 
 	var WaiterBase = UI5Object.extend("sap.ui.test.autowaiter.WaiterBase", {
@@ -27,12 +29,12 @@ sap.ui.define([
 			return this._mConfig.enabled;
 		},
 		extendConfig: function (oConfig) {
-			if (!jQueryDOM.isEmptyObject(oConfig)) {
+			if (!isEmptyObject(oConfig)) {
 				this._oConfigValidator.validate({
 					inputToValidate: oConfig,
 					validationInfo: this._getValidationInfo()
 				});
-				jQueryDOM.extend(this._mConfig, oConfig);
+				extend(this._mConfig, oConfig);
 			}
 		},
 		_getDefaultConfig: function () {

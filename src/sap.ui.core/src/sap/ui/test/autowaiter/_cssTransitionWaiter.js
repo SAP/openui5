@@ -7,7 +7,7 @@ sap.ui.define([
 	"./_utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/isEmptyObject"
-], function(WaiterBase, _utils, jQueryDOM, isEmptyObject) {
+], function(WaiterBase, _utils, jQuery, isEmptyObject) {
 	"use strict";
 
 	var TIMEOUT = 1000;
@@ -18,7 +18,7 @@ sap.ui.define([
 			this._oTrackedTransitions = new Map();
 
 			_utils.onElementAvailable("body", function(oRootDomNode) {
-				jQueryDOM(oRootDomNode).on("webkitTransitionRun webkitTransitionStart transitionrun transitionstart",
+				jQuery(oRootDomNode).on("webkitTransitionRun webkitTransitionStart transitionrun transitionstart",
 					function(oEvent) {
 						this._register({
 							element: oEvent.target,
@@ -27,7 +27,7 @@ sap.ui.define([
 						});
 					}.bind(this));
 
-				jQueryDOM(oRootDomNode).on("webkitTransitionEnd webkitTransitionCancel transitionend transitioncancel",
+				jQuery(oRootDomNode).on("webkitTransitionEnd webkitTransitionCancel transitionend transitioncancel",
 					function(oEvent) {
 						this._deregister({
 							element: oEvent.target,

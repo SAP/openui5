@@ -69,7 +69,7 @@ sap.ui.define([
 			}
 
 			var bInAreaForRerendering = oVisitor.isMatching(oControl, function (oControl) {
-				return oControl.getMetadata().getName() === "sap.ui.core.UIArea" && oControl.bNeedsRerendering;
+				return oControl.isA("sap.ui.core.UIArea") && oControl.bNeedsRerendering;
 			});
 
 			if (bInAreaForRerendering) {
@@ -78,7 +78,7 @@ sap.ui.define([
 			}
 
 			var oAppWindowJQuery = this._getApplicationWindow().jQuery;
-			var oStaticArea = this._getApplicationWindow().sap.ui.getCore().getStaticAreaRef();
+			var oStaticArea = this._getApplicationWindow().sap.ui.require("sap/ui/core/Core").getStaticAreaRef();
 			var bControlIsInStaticArea = oAppWindowJQuery.contains(oStaticArea, oControl.getDomRef());
 			var bOpenStaticBlockingLayer = oAppWindowJQuery("#sap-ui-blocklayer-popup").is(":visible");
 

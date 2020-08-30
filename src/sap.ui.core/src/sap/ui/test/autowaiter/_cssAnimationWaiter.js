@@ -6,7 +6,7 @@ sap.ui.define([
 	"./WaiterBase",
 	"./_utils",
 	"sap/ui/thirdparty/jquery"
-], function(WaiterBase, _utils, jQueryDOM) {
+], function(WaiterBase, _utils, jQuery) {
 	"use strict";
 
 	var TIMEOUT = 600;
@@ -34,11 +34,11 @@ sap.ui.define([
 			}.bind(this));
 
 			_utils.onElementAvailable("body", function(oRootDomNode) {
-				jQueryDOM(oRootDomNode).on("webkitAnimationStart animationstart", function(oEvent) {
+				jQuery(oRootDomNode).on("webkitAnimationStart animationstart", function(oEvent) {
 					this._register(oEvent.target, oEvent.originalEvent.type);
 				}.bind(this));
 
-				jQueryDOM(oRootDomNode).on("webkitAnimationEnd webkitAnimationCancel animationend animationcancel", function(oEvent) {
+				jQuery(oRootDomNode).on("webkitAnimationEnd webkitAnimationCancel animationend animationcancel", function(oEvent) {
 					this._deregister(oEvent.target, oEvent.originalEvent.type);
 				}.bind(this));
 

@@ -4,15 +4,15 @@
 
 // private
 sap.ui.define([
+	"sap/base/util/isPlainObject",
 	"sap/ui/base/Object",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
 	"sap/ui/test/matchers/_Enabled",
 	"sap/ui/test/matchers/_Editable",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/_ValidationParameters",
 	"sap/ui/test/matchers/matchers"
-], function (UI5Object, Interactable, Visible, _Enabled, _Editable, jQueryDOM, _ValidationParameters) {
+], function (isPlainObject, UI5Object, Interactable, Visible, _Enabled, _Editable, _ValidationParameters, matchers) {
 	"use strict";
 
 	/**
@@ -69,13 +69,13 @@ sap.ui.define([
 
 			// extract all matchers in the "matchers" property
 			if (oOptions.matchers) {
-				if (jQueryDOM.isPlainObject(oOptions.matchers)) {
+				if (isPlainObject(oOptions.matchers)) {
 					 // oOptions = {matchers: {matcher1: {}, matcher2: {}}..} (as seen in declarative-style options)
 					aMatchers = aMatchers.concat(this._getPlainObjectMatchers(oOptions.matchers));
 				} else if (Array.isArray(oOptions.matchers)) {
 
 					oOptions.matchers.forEach(function (vMatcher) {
-						if (jQueryDOM.isPlainObject(vMatcher)) {
+						if (isPlainObject(vMatcher)) {
 							// oOptions = {matchers: [{matcher1: {}, matcher2: {}]..} (as seen in declarative-style options)
 							aMatchers = aMatchers.concat(this._getPlainObjectMatchers(vMatcher));
 						} else {
@@ -125,7 +125,7 @@ sap.ui.define([
 				var aMatcherParams = Array.isArray(mMatchers[sMatcher]) ? mMatchers[sMatcher] : [mMatchers[sMatcher]];
 
 				return aMatcherParams.map(function (mSingleMatcherParams) {
-					// there are two types of matcher contstructors depending on the expected arguments:
+					// there are two types of matcher constructors depending on the expected arguments:
 					// some expect an object (e.g. BindingPath) and others - an arguments list (e.g. Ancestor)
 					if (Array.isArray(mSingleMatcherParams)) {
 						return new function() {
@@ -144,17 +144,18 @@ sap.ui.define([
 		/**
 		 * Retrieve a list of the publicly supported matchers.
 		 *
-		 * @param {object} mMatchers all known matchers. defaults to sap.ui.test.matchers.
+		 * @param {object} mMatchers all known matchers. defaults to the export of sap/ui/test/matchers/matchers.js
 		 * It is expected that new matchers are manually added to the file sap/ui/test/matchers/matchers.js
-		 * @return {array} an array of the names of all matchers that are supported out-of-the-box
+		 * @returns {Object<string,function(new:sap.ui.test.matchers.Matcher)>}
+		 *    a map of all matchers that are supported out-of-the-box, keyed by their API name
 		 */
 		_getSupportedMatchers: function (mMatchers) {
-			mMatchers = mMatchers || sap.ui.test.matchers;
+			mMatchers = mMatchers || matchers;
 			var mFilteredMatchers = {};
 			Object.keys(mMatchers).forEach(function (sMatcher) {
 				// filter out private matchers and helpers
 				if (!sMatcher.match(/^(_|matcher)/i)) {
-					var sFilteredMatcher = sMatcher.charAt(0).toLowerCase() + sMatcher.substr(1);
+					var sFilteredMatcher = sMatcher.charAt(0).toLowerCase() + sMatcher.slice(1);
 					mFilteredMatchers[sFilteredMatcher] = mMatchers[sMatcher];
 				}
 			});

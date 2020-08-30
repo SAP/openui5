@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/strings/capitalize",
-	"sap/ui/thirdparty/jquery"
-], function (Log, capitalize, jQueryDOM) {
+	"sap/base/util/each",
+	"sap/base/util/isPlainObject"
+], function (Log, capitalize, each, isPlainObject) {
 	"use strict";
 	var oLogger = Log.getLogger("sap.ui.test.matchers.Properties");
 
@@ -54,7 +55,7 @@ sap.ui.define([
 		return function (oControl) {
 			var bIsMatching = true;
 
-			jQueryDOM.each(oProperties, function (sPropertyName, oPropertyValue) {
+			each(oProperties, function (sPropertyName, oPropertyValue) {
 				var fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 
 				if (!fnProperty) {
@@ -67,7 +68,7 @@ sap.ui.define([
 				// propertyValue is set in parent frame (on matcher instantiation), so match it against the parent's RegExp constructor
 				if (oPropertyValue instanceof RegExp) {
 					bIsMatching = oPropertyValue.test(vCurrentPropertyValue);
-				} else if (jQueryDOM.isPlainObject(oPropertyValue) && oPropertyValue.regex && oPropertyValue.regex.source) {
+				} else if (isPlainObject(oPropertyValue) && oPropertyValue.regex && oPropertyValue.regex.source) {
 					// declarative syntax
 					var oRegExp = new RegExp(oPropertyValue.regex.source, oPropertyValue.regex.flags);
 					bIsMatching = oRegExp.test(vCurrentPropertyValue);

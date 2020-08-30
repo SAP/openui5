@@ -22,6 +22,7 @@ sap.ui.define([
 		 */
 		var PageObjectFactory = Ui5Object.extend("sap.ui.test.PageObjectFactory");
 
+		var oPageObjects = {};
 		/**
 		 * Creates a set of page objects, each consisting of actions and assertions, and adds them to
 		 * the Opa configuration.
@@ -36,19 +37,32 @@ sap.ui.define([
 		 * @returns {Object<string,Object>} Map of created page objects
 		 */
 		PageObjectFactory.create = function(mPageDefinitions, Opa5) {
-			var mPageObjects = {};
+			var mPageObjects = {},
+				sNamespace;
 
 			for (var sPageObjectName in mPageDefinitions) {
 				if (mPageDefinitions.hasOwnProperty(sPageObjectName) && isEmptyObject(mPageObjects[sPageObjectName])) {
+					sNamespace = mPageDefinitions[sPageObjectName].namespace || "sap.ui.test.opa.pageObject";
+
+					if (oPageObjects[sNamespace] && !isEmptyObject(oPageObjects[sNamespace][sPageObjectName])) {
+						Log.error("Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name '" + sNamespace + "."
+							+ sPageObjectName + "'. " + "To prevent override, specify the namespace parameter.");
+					}
 
 					mPageObjects[sPageObjectName] =  PageObjectFactory._createPageObject({
 						name: sPageObjectName,
 						baseClass: mPageDefinitions[sPageObjectName].baseClass || Opa5,
-						namespace: mPageDefinitions[sPageObjectName].namespace || "sap.ui.test.opa.pageObject",
+						namespace: sNamespace,
 						view: _getViewData(mPageDefinitions[sPageObjectName]),
 						actions: mPageDefinitions[sPageObjectName].actions,
 						assertions: mPageDefinitions[sPageObjectName].assertions
 					});
+
+					if (!oPageObjects[sNamespace]) {
+						oPageObjects[sNamespace] = {};
+					}
+
+					oPageObjects[sNamespace][sPageObjectName] = mPageObjects[sPageObjectName];
 				}
 			}
 
@@ -97,11 +111,7 @@ sap.ui.define([
 		// create class name for an operation object
 		function _createClassName(sNamespace, sPageObjectName, sOperationType) {
 			var sClassName = sNamespace + "." + sPageObjectName + "." + sOperationType;
-			var oObj = ObjectPath.get(sClassName);
-			if (oObj){
-				Log.error("Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name '" + sClassName + "'. " +
-					"To prevent override, specify the namespace parameter.");
-			}
+
 			return sClassName;
 		}
 

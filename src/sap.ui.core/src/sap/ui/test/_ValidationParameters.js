@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/matchers/matchers"
-], function (jQueryDOM, matchers) {
+], function (matchers) {
 	"use strict";
 
 	// options that are merged from Opa config into Opa waitFor
@@ -18,14 +17,14 @@ sap.ui.define([
 	};
 
 	// all config options that can be used in a generic OPA waitFor statement
-	var OPA_WAITFOR = jQueryDOM.extend({
+	var OPA_WAITFOR = Object.assign({
 		error: "func",
 		check: "func",
 		success: "func"
 	}, OPA_WAITFOR_CONFIG);
 
 	// options that are merged from Opa5 config into Opa waitFor
-	var OPA5_WAITFOR_CONFIG = jQueryDOM.extend({
+	var OPA5_WAITFOR_CONFIG = Object.assign({
 		visible: "bool",
 		enabled: "bool",
 		editable: "bool",
@@ -37,7 +36,7 @@ sap.ui.define([
 	}, OPA_WAITFOR_CONFIG);
 
 	// the basic config options that can be used in an OPA5 waitFor statement - superset of OPA options + new options for control search
-	var OPA5_WAITFOR = jQueryDOM.extend({
+	var OPA5_WAITFOR = Object.assign({
 		_stack: "string",
 		matchers: "any",
 		actions: "any",
@@ -47,17 +46,16 @@ sap.ui.define([
 	}, OPA5_WAITFOR_CONFIG, OPA_WAITFOR);
 
 	// all config options that can be used in an OPA5 waitFor statement - superset of OPA_WAITFOR + all declarative matchers
-	var OPA5_WAITFOR_WITH_MATCHERS = jQueryDOM.extend({}, OPA5_WAITFOR, _getDeclarativeMatchers());
+	var OPA5_WAITFOR_WITH_MATCHERS = Object.assign({}, OPA5_WAITFOR, _getDeclarativeMatchers());
 
-	// all config options that can exist in a basic OPA5 waitFor, when control seach starts, including any options added during pre-processing
-	var OPA5_WAITFOR_DECORATED = jQueryDOM.extend({
+	// all config options that can exist in a basic OPA5 waitFor, when control search starts, including any options added during pre-processing
+	var OPA5_WAITFOR_DECORATED = Object.assign({
 		sOriginalControlType: "string",
 		interaction: "any"
 	}, OPA5_WAITFOR);
 
 	function _getDeclarativeMatchers () {
-		return Object.keys(sap.ui.test.matchers).reduce(function (mResult, sMatcher) {
-			sMatcher = sMatcher.charAt(0).toLowerCase() + sMatcher.substr(1);
+		return Object.keys(matchers).reduce(function (mResult, sMatcher) {
 			mResult[sMatcher] = "any";
 			return mResult;
 		}, {});

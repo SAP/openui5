@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_FocusListener"
 ],
-function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger, _FocusListener) {
+function (ManagedObject, QUnitUtils, Opa5, Device, jQuery, _OpaLogger, _FocusListener) {
 	"use strict";
 
 	/**
@@ -89,7 +89,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger, _Focus
 
 				if (!$ActionDomRef || !$ActionDomRef.length) {
 					// if no adapter is set or no element is found for it -- fallback to control focus dom ref
-					$ActionDomRef = jQueryDOM(oControl.getFocusDomRef());
+					$ActionDomRef = jQuery(oControl.getFocusDomRef());
 					if (!$ActionDomRef.length) {
 						$ActionDomRef = oControl.$();
 						if (!$ActionDomRef.length) {
@@ -323,7 +323,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger, _Focus
 		},
 
 		_getEventCoordinates: function (oDomRef, oOptions) {
-			var $domRef = jQueryDOM(oDomRef);
+			var $domRef = jQuery(oDomRef);
 			var offset = $domRef.offset();
 			var mCenterCoordinates = {
 				x: offset.left + $domRef.outerWidth() / 2,

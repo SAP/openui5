@@ -7,7 +7,7 @@ sap.ui.define([
     "sap/ui/base/Object",
     "sap/ui/test/_OpaLogger",
     "sap/ui/thirdparty/jquery"
-], function(Ui5Object, _OpaLogger, jQueryDOM) {
+], function(Ui5Object, _OpaLogger, jQuery) {
     "use strict";
 
     var DEFAULT_URL = "http://localhost:8090";
@@ -107,7 +107,7 @@ sap.ui.define([
         },
         _postSuiteJson: function (sUrlSuffix, oData) {
             // wait for begin suite request
-            var oPromise = this._beginSuitePromise || new jQueryDOM.Deferred().resolve().promise();
+            var oPromise = this._beginSuitePromise || new jQuery.Deferred().resolve().promise();
             return oPromise.done(function () {
                 return postJson.call(this, this.baseUrl + this._id + sUrlSuffix, oData);
             }.bind(this));
@@ -115,7 +115,7 @@ sap.ui.define([
     });
 
     function postJson(sUrl, oData) {
-        return jQueryDOM.ajax({
+        return jQuery.ajax({
             url: sUrl,
             type: "XHR_WAITER_IGNORE:POST",
             data: oData,

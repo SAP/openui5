@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/base/util/extend",
 	"sap/ui/test/autowaiter/_utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"./WaiterBase"
-], function (_utils, jQueryDOM, _timeoutWaiter, WaiterBase) {
+], function (extend, _utils, _timeoutWaiter, WaiterBase) {
 	"use strict";
 
 	var aPromises = [];
@@ -32,12 +32,12 @@ sap.ui.define([
 			return aPendingPromises.length > 0;
 		},
 		_getDefaultConfig: function () {
-			return jQueryDOM.extend({
+			return extend({
 				maxDelay: 1000 // milliseconds; should be at least as big as _timeoutWaiter maxDelay
 			}, WaiterBase.prototype._getDefaultConfig.call(this));
 		},
 		_getValidationInfo: function () {
-			return jQueryDOM.extend({
+			return extend({
 				maxDelay: "numeric"
 			}, WaiterBase.prototype._getValidationInfo.call(this));
 		}

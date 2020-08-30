@@ -152,8 +152,8 @@ sap.ui.define([
 				return false;
 			}
 
-			var fnLabelType = this._getApplicationWindow().jQuery.sap.getObject("sap.m.Label");
-			var aLabelsInPage = this._getApplicationWindow().sap.ui.core.Element.registry.filter(function (oElement) {
+			var fnLabelType = this._getApplicationWindow().sap.ui.require("sap/m/Label");
+			var aLabelsInPage = this._getApplicationWindow().sap.ui.require("sap/ui/core/Element").registry.filter(function (oElement) {
 				return oElement instanceof fnLabelType;
 			});
 

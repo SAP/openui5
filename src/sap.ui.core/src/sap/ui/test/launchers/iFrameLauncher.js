@@ -2,13 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/ui/thirdparty/URI',
+		"sap/base/Log",
+		"sap/base/util/ObjectPath",
 		'sap/ui/Device',
 		'sap/ui/test/_LogCollector',
-		"sap/base/Log",
-		"sap/ui/thirdparty/jquery",
-		'sap/base/util/ObjectPath'
-	], function (URI, Device, _LogCollector, Log, jQueryDOM, ObjectPath) {
+		"sap/ui/thirdparty/jquery"
+	], function (Log, ObjectPath, Device, _LogCollector, jQuery) {
 	"use strict";
 
 	/*global CollectGarbage */
@@ -134,10 +133,10 @@ sap.ui.define([
 		}
 	}
 
-	function afterModulesLoaded () {
+	function afterModulesLoaded (oFrameLog) {
 		// forward OPA log messages from the inner iframe to the Log listener of the outer frame
 		// the listener should already be created and started by OPA
-		oFrameJQuery.sap.log.addLogListener(_LogCollector.getInstance()._oListener);
+		oFrameLog.addLogListener(_LogCollector.getInstance()._oListener);
 
 		bUi5Loaded = true;
 	}
@@ -263,6 +262,7 @@ sap.ui.define([
 
 	function loadFrameModules() {
 		oFrameWindow.sap.ui.require([
+			"sap/base/Log",
 			"sap/ui/test/OpaPlugin",
 			"sap/ui/test/autowaiter/_autoWaiter",
 			"sap/ui/test/_OpaLogger",
@@ -271,6 +271,7 @@ sap.ui.define([
 			"sap/ui/core/routing/History",
 			"sap/ui/core/routing/HashChanger"
 		], function (
+			Log,
 			OpaPlugin,
 			_autoWaiter,
 			_OpaLogger,
@@ -287,25 +288,38 @@ sap.ui.define([
 				modifyIFrameNavigation(hasher, History, HashChanger);
 			}
 			FrameHashChanger = HashChanger;
-			afterModulesLoaded();
+			afterModulesLoaded(Log);
 		});
 	}
 
+	function getAbsolutePath(sResource) {
+		var sResourceURL = sap.ui.require.toUrl(sResource);
+		var oURL = new URL(sResourceURL, document.baseURI);
+		oURL.search = oURL.hash = "";
+		return oURL.href;
+	}
+
 	function registerAbsoluteResourcePathInIframe(sResource) {
-		var sOpaLocation = sap.ui.require.toUrl(sResource);
-		var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
-		var fnConfig = ObjectPath.get("sap.ui._ui5loader.config", oFrameWindow) || ObjectPath.get("sap.ui.loader.config", oFrameWindow);
+		var sAbsoluteOpaPath = getAbsolutePath(sResource);
+		var fnConfig = ObjectPath.get("sap.ui.loader.config", oFrameWindow);
 		if (fnConfig) {
 			var paths = {};
 			paths[sResource] = sAbsoluteOpaPath;
 			fnConfig({
 				paths: paths
 			});
-		} else if (oFrameJQuery && oFrameJQuery.sap && oFrameJQuery.sap.registerResourcePath) {
-			oFrameJQuery.sap.registerResourcePath(sResource, sAbsoluteOpaPath);
-		} else {
-			throw new Error("iFrameLauncher.js: UI5 module system not found.");
+			return;
 		}
+
+		/**
+		 * @deprecated since 1.58 as jQuery.sap.registerResourcePath has been deprecated.
+		 */
+		if (oFrameJQuery && oFrameJQuery.sap && oFrameJQuery.sap.registerResourcePath) {
+			oFrameJQuery.sap.registerResourcePath(sResource, sAbsoluteOpaPath);
+			return;
+		}
+
+		throw new Error("iFrameLauncher.js: UI5 module system not found.");
 	}
 
 	function destroyFrame () {
@@ -313,7 +327,7 @@ sap.ui.define([
 			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown was called before launch. No iFrame was loaded.");
 		}
 		// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
-		oFrameWindow.onerror = jQueryDOM.noop;
+		oFrameWindow.onerror = jQuery.noop;
 		for (var i = 0; i < $Frame.length; i++) {
 			$Frame[0].src = "about:blank";
 			$Frame[0].contentWindow.document.write('');
@@ -347,19 +361,19 @@ sap.ui.define([
 			}
 
 			//invalidate the cache
-			$Frame = jQueryDOM("#" + options.frameId);
+			$Frame = jQuery("#" + options.frameId);
 
 			if ($Frame.length) {
-				$FrameContainer = jQueryDOM(".opaFrameContainer");
+				$FrameContainer = jQuery(".opaFrameContainer");
 			} else {
 				if (!options.source) {
 					Log.error("No source was given to launch the IFrame", this);
 				}
 				//invalidate other caches
-				$FrameContainer = jQueryDOM("<div class='opaFrameContainer'></div>");
-				$Frame = jQueryDOM('<IFrame id="' + options.frameId + '" class="opaFrame" src="' + options.source + '"></IFrame>');
+				$FrameContainer = jQuery("<div class='opaFrameContainer'></div>");
+				$Frame = jQuery('<IFrame id="' + options.frameId + '" class="opaFrame" src="' + options.source + '"></IFrame>');
 				$FrameContainer.append($Frame);
-				jQueryDOM("body").append($FrameContainer);
+				jQuery("body").append($FrameContainer);
 				setFrameSize(options.width, options.height);
 			}
 
