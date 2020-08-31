@@ -25,6 +25,9 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/assert",
 	"sap/base/util/deepEqual",
+	"sap/m/inputUtils/wordStartsWithValue",
+	"sap/m/inputUtils/inputsDefaultFilter",
+	"sap/m/inputUtils/highlightDOMElements",
 	"./InputRenderer",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "selectText"
@@ -52,6 +55,9 @@ function(
 	containsOrEquals,
 	assert,
 	deepEqual,
+	wordStartsWithValue,
+	inputsDefaultFilter,
+	highlightDOMElements,
 	InputRenderer,
 	jQuery
 ) {
@@ -455,7 +461,7 @@ function(
 		for (; i < aCells.length; i++) {
 
 			if (aCells[i].getText) {
-				if (SuggestionsPopover._wordStartsWithValue(aCells[i].getText(), sValue)) {
+				if (wordStartsWithValue(aCells[i].getText(), sValue)) {
 					return true;
 				}
 			}
@@ -491,7 +497,7 @@ function(
 	 */
 	Input.prototype.init = function() {
 		InputBase.prototype.init.call(this);
-		this._fnFilter = SuggestionsPopover._DEFAULTFILTER;
+		this._fnFilter = inputsDefaultFilter;
 
 		// Show suggestions in a full screen dialog on phones:
 		this._bFullScreen = Device.system.phone;
@@ -1121,7 +1127,7 @@ function(
 	Input.prototype.setFilterFunction = function(fnFilter) {
 		// reset to default function when calling with null or undefined
 		if (fnFilter === null || fnFilter === undefined) {
-			this._fnFilter = SuggestionsPopover._DEFAULTFILTER;
+			this._fnFilter = inputsDefaultFilter;
 			return this;
 		}
 		// set custom function
@@ -2276,7 +2282,7 @@ function(
 					aTableCellsDomRef = this._oSuggestionTable.$().find('tbody .sapMLabel');
 					sInputValue = (this._sTypedInValue || this.getValue()).toLowerCase();
 
-					this._oSuggPopover.highlightSuggestionItems(aTableCellsDomRef, sInputValue);
+					highlightDOMElements(aTableCellsDomRef, sInputValue);
 				}.bind(this)
 			});
 
@@ -2577,7 +2583,7 @@ function(
 		} else {
 			// tabular suggestions
 			// if no custom filter is set we replace the default filter function here
-			if (this._fnFilter === SuggestionsPopover._DEFAULTFILTER) {
+			if (this._fnFilter === inputsDefaultFilter) {
 				this._fnFilter = Input._DEFAULTFILTER_TABULAR;
 			}
 
