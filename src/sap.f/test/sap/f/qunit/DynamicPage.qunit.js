@@ -1805,6 +1805,24 @@ function (
 		assert.equal(oNavActionsToolbar.getStyle(), sap.m.ToolbarStyle.Clear, "nav-actions toolbar has correct style");
 	});
 
+	QUnit.test("DynamicPage _applyContextualSettings changes media classes" , function (assert) {
+		// Act
+		this.oDynamicPage._applyContextualSettings({contextualWidth: 800});
+
+		// Assert
+		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Tablet"), "Tablet class is applied");
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop"), "Desktop class is removed");
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Phone"), "Phone class is removed");
+
+		// Act
+		this.oDynamicPage._applyContextualSettings({contextualWidth: 500});
+
+		// Assert
+		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Phone"), "Phone class is applied");
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Tablet"), "Tablet class is removed");
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop"), "Desktop class is removed");
+	});
+
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
 	QUnit.module("DynamicPage - Toggle Header On Scroll", {
 		beforeEach: function () {

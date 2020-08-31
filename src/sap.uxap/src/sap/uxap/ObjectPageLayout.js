@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/Device",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./ObjectPageSectionBase",
 	"./ObjectPageSection",
@@ -39,6 +40,7 @@ sap.ui.define([
 	Configuration,
 	Control,
 	Device,
+	ManagedObject,
 	ScrollEnablement,
 	ObjectPageSectionBase,
 	ObjectPageSection,
@@ -2999,6 +3001,18 @@ sap.ui.define([
 
 		this._adjustHeaderHeights();
 		this._requestAdjustLayout();
+	};
+
+	ObjectPageLayout.prototype._applyContextualSettings = function (oContextualSettings) {
+		var iCurrentWidth = oContextualSettings.contextualWidth;
+
+		if (this._hasDynamicTitle()) {
+			this._updateMedia(iCurrentWidth, ObjectPageLayout.DYNAMIC_HEADERS_MEDIA); // Update media classes when ObjectPageDynamicHeaderTitle is used.
+		}
+
+		this._updateMedia(iCurrentWidth, ObjectPageLayout.MEDIA);
+
+		return ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
 	};
 
 	/**

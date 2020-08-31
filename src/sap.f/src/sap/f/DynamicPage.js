@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
+	"sap/ui/base/ManagedObject",
 	"sap/f/DynamicPageTitle",
 	"sap/f/DynamicPageHeader",
 	"./DynamicPageRenderer",
@@ -33,6 +34,7 @@ sap.ui.define([
 	Configuration,
 	ScrollEnablement,
 	Device,
+	ManagedObject,
 	DynamicPageTitle,
 	DynamicPageHeader,
 	DynamicPageRenderer,
@@ -1350,6 +1352,14 @@ sap.ui.define([
 	DynamicPage.prototype._updateARIAStates = function (bExpanded) {
 		this._updateHeaderARIAState(bExpanded);
 		this._updateTitleARIAState(bExpanded);
+	};
+
+	DynamicPage.prototype._applyContextualSettings = function (oContextualSettings) {
+		var iCurrentWidth = oContextualSettings.contextualWidth;
+
+		this._updateMedia(iCurrentWidth);
+
+		return ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
 	};
 
 	/**
