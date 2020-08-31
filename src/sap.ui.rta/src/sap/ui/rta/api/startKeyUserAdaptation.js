@@ -1,25 +1,15 @@
 /*
  * ! ${copyright}
  */
-
 sap.ui.define([
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/core/Element",
-	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/UIComponent",
-	"sap/base/Log"
+	"sap/ui/rta/util/adaptationStarter",
+	"sap/ui/fl/Layer"
 ], function(
-	RuntimeAuthoring,
-	Element,
-	FeaturesAPI,
-	Layer,
-	FlexUtils,
-	UIComponent,
-	Log
+	adaptationStarter,
+	Layer
 ) {
 	"use strict";
+
 	/**
 	 * Starts key user adaptation, initiated for an application at the passed root control instance.
 	 * It subsequently extends to all valid child controls.
@@ -36,34 +26,16 @@ sap.ui.define([
 	 * @public
 	 */
 	function startKeyUserAdaptation(mPropertyBag) {
-		if (!(mPropertyBag.rootControl instanceof Element) && !(mPropertyBag.rootControl instanceof UIComponent)) {
-			return Promise.reject(new Error("An invalid root control was passed"));
-		}
-		return FeaturesAPI.isKeyUser()
-			.then(function (bIsKeyUser) {
-				if (!bIsKeyUser) {
-					throw new Error("Key user rights have not been granted to the current user");
-				}
-
-				var oRta = new RuntimeAuthoring({
-					rootControl: FlexUtils.getAppComponentForControl(mPropertyBag.rootControl),
-					flexSettings: {
-						developerMode: false,
-						layer: Layer.CUSTOMER
-					},
-					validateAppVersion: true
-				});
-
-				oRta.attachEvent("stop", function () {
-					oRta.destroy();
-				});
-
-				return oRta.start();
-			})
-			.catch(function(oError) {
-				Log.error("UI Adaptation could not be started", oError.message);
-				throw oError;
-			});
+		var mOptions = {
+			rootControl: mPropertyBag.rootControl,
+			flexSettings: {
+				developerMode: false,
+				layer: Layer.CUSTOMER
+			},
+			validateAppVersion: true
+		};
+		return adaptationStarter(mOptions);
 	}
+
 	return startKeyUserAdaptation;
 });

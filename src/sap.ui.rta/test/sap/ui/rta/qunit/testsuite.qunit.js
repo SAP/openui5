@@ -452,6 +452,12 @@ sap.ui.define([
 				coverage: {
 					only: ["sap/ui/rta/api/startKeyUserAdaptation"]
 				}
+			},
+			"api/startAdaptation": {
+				group: "API",
+				coverage: {
+					only: ["sap/ui/rta/api/startAdaptation"]
+				}
 			}
 		}
 
