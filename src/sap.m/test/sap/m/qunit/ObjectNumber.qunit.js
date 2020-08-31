@@ -275,4 +275,19 @@ sap.ui.define([
 		sAriaDescribedByReferences = this.oON.getDomRef().getAttribute("aria-describedby");
 		assert.strictEqual(sAriaDescribedByReferences, oDescription.getId(), "Description's ID is placed in aria-describedby");
 	});
+
+	QUnit.test("getAccessibilityInfo()", function (assert) {
+		var oAccInfo = this.oON.getAccessibilityInfo(),
+			sExpectedDescription = this.oON.getNumber() + " " + this.oON.getUnit(),
+			sErrorText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
+
+		assert.strictEqual(oAccInfo.description, sExpectedDescription, "Description contains just number and unit");
+
+		// Update ObjectNumber's state
+		this.oON.setState(ValueState.Error);
+		oAccInfo = this.oON.getAccessibilityInfo();
+		sExpectedDescription += " " + sErrorText;
+
+		assert.strictEqual(oAccInfo.description, sExpectedDescription, "Description is updated with state's text");
+	});
 });
