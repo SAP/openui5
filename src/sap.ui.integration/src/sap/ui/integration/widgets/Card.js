@@ -368,10 +368,10 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#request as request
 		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
 		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as getBaseUrl
-		 * @borrows sap.ui.integration.widgets.Card#getResourceBundle as getResourceBundle
+		 * @borrows sap.ui.integration.widgets.Card#getTranslatedText as getTranslatedText
 		 */
 		this._oLimitedInterface = new Interface(this, [
-			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getResourceBundle"
+			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getTranslatedText"
 		]);
 
 		this.initBadgeEnablement({
@@ -875,22 +875,32 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the i18n resource bundle for the card.
-	 * This is the bundle that includes the texts from the i18n properties file defined in the manifest.
+	 * Gets translated text from the i18n properties files configured for this card.
 	 *
+	 * For more details see {@link sap.base.i18n.ResourceBundle#getText}.
+	 *
+	 * @experimental Since 1.83. The API might change.
 	 * @public
-	 * @experimental As of version 1.82.
-	 * @return {sap.base.i18n.ResourceBundle} The card's resource bundle.
+	 * @param {string} sKey Key to retrieve the text for
+	 * @param {string[]} [aArgs] List of parameter values which should replace the placeholders "{<i>n</i>}"
+	 *     (<i>n</i> is the index) in the found locale-specific string value. Note that the replacement is done
+	 *     whenever <code>aArgs</code> is given, no matter whether the text contains placeholders or not
+	 *     and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
+	 * @param {boolean} [bIgnoreKeyFallback=false] If set, <code>undefined</code> is returned instead of the key string, when the key is not found in any bundle or fallback bundle.
+	 * @returns {string} The value belonging to the key, if found; otherwise the key itself or <code>undefined</code> depending on <code>bIgnoreKeyFallback</code>.
 	 */
-	Card.prototype.getResourceBundle = function () {
-		var oModel = this.getModel("i18n");
+	Card.prototype.getTranslatedText = function (sKey, aArgs, bIgnoreKeyFallback) {
+		var oModel = this.getModel("i18n"),
+			oBundle;
 
 		if (!oModel) {
 			Log.warning("There are no translations available. Either the i18n configuration is missing or the method is called too early.");
 			return null;
 		}
 
-		return oModel.getResourceBundle();
+		oBundle = oModel.getResourceBundle();
+
+		return oBundle.getText(sKey, aArgs, bIgnoreKeyFallback);
 	};
 
 	/**
