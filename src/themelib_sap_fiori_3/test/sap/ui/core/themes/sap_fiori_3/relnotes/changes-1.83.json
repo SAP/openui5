@@ -1,0 +1,45 @@
+{
+  "1.83.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "9344e20c56892386ee2e0905e8c823fb6600f213",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: Correct non-working day background color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080379091"
+          }
+        ]
+      },
+      {
+        "id": "102aa64dc8884d35e5da00b22d18a05973e55f33",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: has no min row height in Quartz",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005015552020"
+          }
+        ]
+      },
+      {
+        "id": "056fc53e693bf9725dd93b47bbb331b416e73627",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Badge implemented"
+      },
+      {
+        "id": "1547a4836fb3fe95fa0c576c8f95403c297b897d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Fixed visual misalignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070233100"
+          }
+        ]
+      }
+    ]
+  }
+}
