@@ -78,5 +78,25 @@
         ]
       }
     ]
+  },
+  "1.78.8": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "ca2192515aab81bf3e212d83cfa9d9d56f15a963",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: upload input element is now created only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070211785"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005695462020"
+          }
+        ]
+      }
+    ]
   }
 }

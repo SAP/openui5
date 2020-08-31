@@ -159,5 +159,21 @@
         ]
       }
     ]
+  },
+  "1.78.8": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "477bdf71bb75a6b36ebe03d88ca41351b228510e",
+        "type": "FIX",
+        "text": " sap.m.SematicPage: getCustomFooterContent return copy of array",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004713952020"
+          }
+        ]
+      }
+    ]
   }
 }

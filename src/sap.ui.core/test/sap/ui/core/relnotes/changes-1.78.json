@@ -160,5 +160,21 @@
         ]
       }
     ]
+  },
+  "1.78.8": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "248bba825254ae63013b8c4daac724afb25219af",
+        "type": "FIX",
+        "text": " handlebars: usage of latest version 4.7.6",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
