@@ -22,6 +22,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'./MultiInputRenderer',
 	"sap/ui/dom/containsOrEquals",
+	"sap/m/inputUtils/completeTextSelected",
 	"sap/ui/events/KeyCodes",
 	'sap/ui/core/InvisibleText',
 	"sap/ui/thirdparty/jquery",
@@ -49,6 +50,7 @@ function(
 	IconPool,
 	MultiInputRenderer,
 	containsOrEquals,
+	completeTextSelected,
 	KeyCodes,
 	InvisibleText,
 	jQuery
@@ -637,7 +639,7 @@ function(
 			return;
 		}
 
-		if (this.getValue() && !this._completeTextIsSelected()) { // do not return if everything is selected
+		if (this.getValue() && !completeTextSelected(this.getFocusDomRef())) { // do not return if everything is selected
 			return;
 		}
 
@@ -990,25 +992,6 @@ function(
 		}
 
 		Input.prototype.onsapescape.apply(this, arguments);
-	};
-
-	/**
-	 * Functions returns true if the input's text is completely selected
-	 *
-	 * @private
-	 * @return {boolean} true if text is selected, otherwise false,
-	 */
-	MultiInput.prototype._completeTextIsSelected = function () {
-		var input = this._$input[0];
-		if (input.selectionStart !== 0) {
-			return false;
-		}
-
-		if (input.selectionEnd !== this.getValue().length) {
-			return false;
-		}
-
-		return true;
 	};
 
 	/**

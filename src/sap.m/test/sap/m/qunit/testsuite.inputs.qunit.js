@@ -168,6 +168,15 @@ sap.ui.define([
 					version: 2
 				}
 			},
+			"inputUtils/completeTextSelected": {
+				title: "QUnit Page for sap.m.inputs.completeTextSelected",
+				ui5: {
+					compatVersion: "1.83"
+				},
+				qunit: {
+					version: 2
+				}
+			},
 			TextArea: {
 				title: "Test Page for sap.m.TextArea",
 				_alternativeTitle: "QUnit page for sap.m.TextArea",
