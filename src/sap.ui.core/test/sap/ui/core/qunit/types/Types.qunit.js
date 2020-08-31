@@ -1220,9 +1220,11 @@ sap.ui.define([
 
 	QUnit.test("float validateValue", function (assert) {
 		var floatType = new FloatType(null, {
-			minimum: 3,
-			maximum: 10
-		});
+				minimum: 3,
+				maximum: 10
+			}),
+			oFormatMock;
+
 		try {
 			assert.equal(floatType.validateValue(3.0), undefined, "validate test");
 			assert.equal(floatType.validateValue(3.01), undefined, "validate test");
@@ -1232,6 +1234,21 @@ sap.ui.define([
 		}
 		assert.throws(function () { floatType.validateValue(2.99999); }, checkValidateException, "validate test");
 		assert.throws(function () { floatType.validateValue(10.0000001); }, checkValidateException, "validate test");
+
+		floatType = new FloatType(null, {
+			minimum: 3.001,
+			maximum: 99.99
+		});
+		oFormatMock = this.mock(floatType.oOutputFormat);
+		oFormatMock.expects("format").withExactArgs(3.001).returns("~formatted3.001~");
+
+		// code under test
+		assert.throws(function () { floatType.validateValue(3.0); }, /~formatted3.001~/);
+
+		oFormatMock.expects("format").withExactArgs(99.99).returns("~formatted99.99~");
+
+		// code under test
+		assert.throws(function () { floatType.validateValue(100); }, /~formatted99.99~/);
 	});
 
 	QUnit.test("float formatOptions", function (assert) {
@@ -1343,18 +1360,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("integer validateValue", function (assert) {
-		var intType = new IntegerType(null, {
-			minimum: 3,
-			maximum: 10
-		});
+		var oFormatMock,
+			intType = new IntegerType(null, {
+				minimum: 3,
+				maximum: 9999
+			});
+
 		try {
 			assert.equal(intType.validateValue(4), undefined, "validate test");
-			assert.equal(intType.validateValue(10), undefined, "validate test");
+			assert.equal(intType.validateValue(9999), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
 		assert.throws(function () { intType.validateValue(-1); }, checkValidateException, "validate test");
-		assert.throws(function () { intType.validateValue(33); }, checkValidateException, "validate test");
+		assert.throws(function () { intType.validateValue(10000); }, checkValidateException, "validate test");
+
+		oFormatMock = this.mock(intType.oOutputFormat);
+		oFormatMock.expects("format").withExactArgs(3).returns("~formatted3~");
+
+		// code under test
+		assert.throws(function () { intType.validateValue(2); }, /~formatted3~/);
+
+		oFormatMock.expects("format").withExactArgs(9999).returns("~formatted9999~");
+
+		// code under test
+		assert.throws(function () { intType.validateValue(10000); }, /~formatted9999~/);
 	});
 
 	QUnit.test("integer formatOptions", function (assert) {

@@ -110,7 +110,9 @@ sap.ui.define([
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
 				aViolatedConstraints = [],
 				aMessages = [],
-				iValue = vValue;
+				iValue = vValue,
+				that = this;
+
 			if (this.oInputFormat) {
 				iValue = this.oInputFormat.parse(vValue);
 			}
@@ -119,13 +121,15 @@ sap.ui.define([
 					case "minimum":
 						if (iValue < oContent) {
 							aViolatedConstraints.push("minimum");
-							aMessages.push(oBundle.getText("Integer.Minimum", [oContent]));
+							aMessages.push(oBundle.getText("Integer.Minimum",
+								[that.oOutputFormat.format(oContent)]));
 						}
 						break;
 					case "maximum":
 						if (iValue > oContent) {
 							aViolatedConstraints.push("maximum");
-							aMessages.push(oBundle.getText("Integer.Maximum", [oContent]));
+							aMessages.push(oBundle.getText("Integer.Maximum",
+								[that.oOutputFormat.format(oContent)]));
 						}
 				}
 			});
