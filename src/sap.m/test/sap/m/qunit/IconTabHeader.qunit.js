@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/IconTabHeader",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabSeparator",
+	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -18,6 +19,7 @@ sap.ui.define([
 	IconTabHeader,
 	IconTabFilter,
 	IconTabSeparator,
+	Text,
 	Core,
 	InvisibleMessage,
 	createAndAppendDiv,
@@ -46,6 +48,15 @@ sap.ui.define([
 		return new IconTabHeader({
 			items: aItems
 		});
+	}
+
+	function fillWithItems(oITH, iCount) {
+		for (var i = 0; i < iCount; i++) {
+			oITH.addItem(new IconTabFilter({
+				text: "Tab " + i,
+				key: i
+			}));
+		}
 	}
 
 	QUnit.module("Methods");
@@ -342,7 +353,14 @@ sap.ui.define([
 
 	QUnit.module("Badges - single click area tabs", {
 		beforeEach: function () {
-			this.oITH = new IconTabHeader();
+			this.oITH = new IconTabHeader({
+				selectedKey: "initiallySelected",
+				items: [
+					new IconTabFilter({
+						key: "initiallySelected"
+					})
+				]
+			});
 			this.oITH.placeAt(DOM_RENDER_LOCATION);
 		},
 		afterEach: function () {
@@ -433,7 +451,7 @@ sap.ui.define([
 		this.clock.tick(4000);
 
 		// Assert
-		assert.notOk(oRootTab._isBadgeAttached, "Badge is removed from the root tab");
+		assert.notOk(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is removed from the root tab");
 		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === -1, "aria-labelledby doesn't contain the badge indicator id");
 	});
 
@@ -472,7 +490,7 @@ sap.ui.define([
 		this.clock.tick(4000);
 
 		// Assert
-		assert.ok(oRootTab._isBadgeAttached, "Badge is removed from the root tab");
+		assert.ok(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is NOT removed from the root tab");
 	});
 
 	QUnit.test("Badge is removed from the cloned item in the select list", function (assert) {
@@ -504,7 +522,7 @@ sap.ui.define([
 		oRootTab._expandButtonPress(); // open the list again while the badge is still there
 
 		// Assert
-		assert.ok(oRootTab._isBadgeAttached, "Badge is shown on the root tab");
+		assert.ok(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is shown on the root tab");
 		assert.ok(oNestedItem._oCloneInList._isBadgeAttached, "Badge is shown on the item in the SelectList");
 
 		// Act
@@ -512,8 +530,132 @@ sap.ui.define([
 		this.clock.tick(4000);
 
 		// Assert
-		assert.notOk(oRootTab._isBadgeAttached, "Badge is removed from the root tab");
+		assert.notOk(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is removed from the root tab");
 		assert.notOk(oItemCloneInList._isBadgeAttached, "Badge is removed from the item in the SelectList");
+	});
+
+	QUnit.module("Badges - double click area tabs", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader({
+				items: [
+					new IconTabFilter({
+						text: "Tab1",
+						key: "tab1"
+					})
+				],
+				content: [
+					new Text()
+				]
+			});
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Badge is shown on the root tab and the expand button", function (assert) {
+		// Arrange
+		var oRootTab = new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			customData: [
+				new BadgeCustomData()
+			],
+			items: [
+				new IconTabFilter({
+					text: "Nested",
+					key: "Nested",
+					customData: [
+						new BadgeCustomData()
+					]
+				})
+			],
+			content: [
+				new Text()
+			]
+		});
+		this.oITH.addItem(oRootTab);
+		Core.applyChanges();
+
+		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator");
+
+		// Assert
+		assert.strictEqual($badgeIndicator.length, 2, "There are 2 badges rendered");
+	});
+
+	QUnit.test("aria-label of the 2 badges", function (assert) {
+		// Arrange
+		var oRootTab = new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			customData: [
+				new BadgeCustomData()
+			],
+			items: [
+				new IconTabFilter({
+					text: "Nested",
+					key: "Nested",
+					customData: [
+						new BadgeCustomData()
+					]
+				})
+			],
+			content: [
+				new Text()
+			]
+		});
+		this.oITH.addItem(oRootTab);
+		Core.applyChanges();
+
+		var $badgeIndicator1 = oRootTab.$().find(".sapMBadgeIndicator").eq(0),
+			$badgeIndicator2 = oRootTab.$().find(".sapMBadgeIndicator").eq(1);
+
+		// Assert
+		assert.strictEqual($badgeIndicator1.attr("aria-label"), oRB.getText("ICONTABFILTER_BADGE"), "'aria-label' is correct");
+		assert.strictEqual($badgeIndicator2.attr("aria-label"), oRB.getText("ICONTABFILTER_SUB_ITEMS_BADGES"), "'aria-label' is correct");
+	});
+
+	QUnit.test("There is badge on the root when a nested tab with badge is selected from the overflow", function (assert) {
+		// Arrange
+		fillWithItems(this.oITH, 100);
+
+		var oNestedItem = new IconTabFilter({
+				text: "Nested11",
+				key: "Nested11"
+			}),
+			oRootTab = new IconTabFilter({
+				text: "Tab2",
+				key: "tab2",
+				content: [
+					new Text()
+				],
+				items: [
+					new IconTabFilter({
+						text: "Nested1",
+						key: "Nested1",
+						items: [
+							oNestedItem
+						]
+					})
+				]
+			});
+		this.oITH.addItem(oRootTab);
+		Core.applyChanges();
+
+		// Act
+		oNestedItem.addCustomData(new BadgeCustomData());
+		this.oITH._getOverflow()._expandButtonPress();
+		var oItems = this.oITH._getOverflow()._getSelectList().getItems();
+		var oFakeEvent = {
+			srcControl: oItems[oItems.length - 1],
+			preventDefault: function () {}
+		};
+		this.oITH._getOverflow()._getSelectList().ontap(oFakeEvent);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is added to the expand button");
 	});
 
 	QUnit.module("Badges - overflow menu (More button)", {
@@ -533,7 +675,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(this.oITH._getOverflow()._isBadgeAttached, "Badge is rendered on the overflow tab");
+		assert.ok(this.oITH._getOverflow().getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is rendered on the overflow tab");
 	});
 
 	QUnit.test("Badge is removed from the overflow tab when there are no more tabs with badges in it", function (assert) {
@@ -647,4 +789,32 @@ sap.ui.define([
 		assert.ok(oOverflowTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === 0, "aria-labelledby starts with the badge indicator id");
 		assert.strictEqual(oInvisibleMsgDomRef.textContent, oRB.getText("ICONTABFILTER_SUB_ITEM_BADGE", [oRootTab.getText(), oOverflowTab.getText()]), "badge is announced");
 	});
+
+	QUnit.module("Badges and selectedKey", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader();
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Badge is removed from initially selected tab", function (assert) {
+		// Arrange
+		var oSelectedTab = new IconTabFilter({
+			text: "Tab",
+			key: "tab",
+			customData: [
+				new BadgeCustomData()
+			]
+		});
+		this.oITH.addItem(oSelectedTab);
+		this.oITH.setSelectedKey("tab");
+		Core.applyChanges();
+
+		// Assert
+		assert.notOk(oSelectedTab._isBadgeAttached, "The badge is removed from initially selected tab");
+	});
+
 });
