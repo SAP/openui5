@@ -349,26 +349,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the item's visibility.
-		 *
-		 * @param {sap.ui.core.Item} oItem The item to be set visible or not
-		 * @param {Boolean} bVisible Should the item be visible or not
-		 * @private
-		 */
-		ComboBox.prototype._setItemVisibility = function(oItem, bVisible) {
-			var $OItem = oItem && this.getListItem(oItem).$(),
-				CSS_CLASS = "sapMSelectListItemBaseInvisible";
-
-			if (bVisible) {
-				oItem.bVisible = true;
-				$OItem.length && $OItem.removeClass(CSS_CLASS);
-			} else {
-				oItem.bVisible = false;
-				$OItem.length && $OItem.addClass(CSS_CLASS);
-			}
-		};
-
-		/**
 		 * Sets the selected item by its index.
 		 *
 		 * @param {int} iIndex The item index
@@ -692,32 +672,6 @@ sap.ui.define([
 		ComboBox.prototype.isSelectionSynchronized = function() {
 			var vItem = this.getSelectedItem();
 			return this.getSelectedKey() === (vItem && vItem.getKey());
-		};
-
-		/**
-		 * Indicates whether the list is filtered.
-		 *
-		 * @returns {boolean} True if the list is filtered
-		 * @private
-		 * @since 1.26.0
-		 */
-		ComboBox.prototype.isFiltered = function() {
-			var oList = this._getList();
-			return oList && (oList.getVisibleItems().length !== this.getItems().length);
-		};
-
-		/**
-		 * Indicates whether an item is visible or not.
-		 *
-		 * To be overwritten by subclasses.
-		 *
-		 * @param {sap.ui.core.Item} oItem The item to be checked
-		 * @returns {boolean} Whether the item is visible.
-		 * @private
-		 * @since 1.32.0
-		 */
-		ComboBox.prototype.isItemVisible = function(oItem) {
-			return oItem && (oItem.bVisible === undefined || oItem.bVisible);
 		};
 
 		/**
