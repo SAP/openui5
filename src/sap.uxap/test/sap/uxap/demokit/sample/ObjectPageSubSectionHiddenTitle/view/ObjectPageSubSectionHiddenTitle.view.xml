@@ -6,7 +6,7 @@
 		xmlns="sap.m"
 		controllerName="sap.uxap.sample.ObjectPageSubSectionHiddenTitle.controller.ObjectPageSubSectionHiddenTitle"
 		>
-	<uxap:ObjectPageLayout id="ObjectPageLayout">
+	<uxap:ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<uxap:headerTitle>
 			<uxap:ObjectPageHeader
 					objectTitle="ObjectPageSubSection with hidden title"

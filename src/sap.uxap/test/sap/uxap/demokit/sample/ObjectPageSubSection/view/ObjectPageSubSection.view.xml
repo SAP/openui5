@@ -1,7 +1,7 @@
 <mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc"
 		   xmlns="sap.uxap" xmlns:sample="sap.uxap.sample.ObjectPageSubSection.controller.blocks">
 
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="Expand/Collapse sample"/>
 		</headerTitle>

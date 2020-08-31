@@ -7,7 +7,7 @@
 	xmlns:blockcolor="sap.uxap.sample.ObjectPageFormLayout.controller.blocks"
 	controllerName="sap.uxap.sample.ObjectPageFormLayout.controller.ObjectPageFormLayout"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true">
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<breadcrumbs>

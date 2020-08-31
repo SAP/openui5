@@ -8,7 +8,7 @@
 		controllerName="sap.uxap.sample.ObjectPageHeaderWithAllControls.controller.ObjectPageHeaderWithAllControls"
 		height="100%">
 
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
 							  objectTitle="Long title that wraps and goes over more lines"

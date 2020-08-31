@@ -7,7 +7,10 @@
 	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
 	controllerName="sap.uxap.sample.ObjectPageTitleOnLeft.controller.ObjectPageTitleOnLeft"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" subSectionLayout="TitleOnLeft" showTitleInHeaderContent="true">
+	<ObjectPageLayout id="ObjectPageLayout"
+		subSectionLayout="TitleOnLeft"
+		showTitleInHeaderContent="true"
+		upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>
