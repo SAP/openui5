@@ -68,7 +68,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 	 *
 	 * Note: Prefer this method over calling <code>new UniversalDate</code> with an instance of <code>Date</code>
 	 *
-	 * @param {Date} [oDate] JavaScript date object, defaults to <code>new Date()</code>
+	 * @param {Date|UniversalDate} [oDate] JavaScript date object, defaults to <code>new Date()</code>
 	 * @param {sap.ui.core.CalendarType} [sCalendarType] The calendar type, defaults to <code>sap.ui.getCore().getConfiguration().getCalendarType()</code>
 	 * @returns {sap.ui.core.date.UniversalDate} The date instance
 	 * @public
