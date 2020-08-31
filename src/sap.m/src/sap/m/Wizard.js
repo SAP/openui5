@@ -667,7 +667,7 @@ sap.ui.define([
 			 * we can't properly detect the offset of the step, that's why
 			 * additionalOffset is added like this.
 			 */
-			if (!Device.system.phone &&
+			if (!Device.system.phone && progressStep && this._nextButton &&
 				!jQuery.sap.containsOrEquals(progressStep.getDomRef(), this._nextButton.getDomRef())) {
 				additionalOffset = this._nextButton.$().outerHeight();
 			}
