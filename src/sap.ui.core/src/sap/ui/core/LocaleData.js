@@ -2438,9 +2438,9 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 				_preferred: "H"
 			},
 			"lenient-scope-number": {
-				"minusSign": "-‐‒–⁻₋−➖﹣",
-				"commaSign": ",،٫、︐︑﹐﹑，",
-				"plusSign": "+⁺₊➕﬩﹢"
+				"minusSign": "\x2d\u2010\u2012\u2013\u207b\u208b\u2212\u2796\ufe63",
+				"commaSign": "\x2c\u060c\u066b\u3001\ufe10\ufe11\ufe50\ufe51\uff0c",
+				"plusSign": "\x2b\u207a\u208a\u2795\ufb29\ufe62"
 			},
 			"plurals": {},
 			"units": {
