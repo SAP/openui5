@@ -407,10 +407,8 @@ sap.ui.define([
 		}
 	};
 
-	V4Aggregation.prototype.notifyColumnAboutMenuItems = function(oColumn, fnNotify) {
-		if (getGroupableProperties(oColumn).length > 0 || getAggregationInfos(oColumn).length > 0) {
-			fnNotify();
-		}
+	V4Aggregation.prototype.notifyColumnAboutMenuItems = function(oColumn) {
+		return getGroupableProperties(oColumn).length > 0 || getAggregationInfos(oColumn).length > 0;
 	};
 
 	return V4Aggregation;
