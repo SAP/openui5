@@ -295,7 +295,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
 	 * @param {int} [oFormatOptions.minFractionDigits=0] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
@@ -350,7 +350,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
 	 * @param {int} [oFormatOptions.minFractionDigits=0] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits=0] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
@@ -448,7 +448,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
 	 * @param {int} [oFormatOptions.minFractionDigits] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
@@ -537,7 +537,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
 	 * @param {int} [oFormatOptions.minFractionDigits] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
@@ -602,7 +602,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
 	 * @param {int} [oFormatOptions.minFractionDigits=0] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
