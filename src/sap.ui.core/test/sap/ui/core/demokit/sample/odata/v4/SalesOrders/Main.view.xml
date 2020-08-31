@@ -330,9 +330,10 @@
 				</Toolbar>
 				<Label text="Business Partner ID" />
 				<Input value="{SO_2_BP/BusinessPartnerID}" editable="false" />
-				<Label text="CompanyName" />
-				<Input value="{SO_2_BP/CompanyName}" editable="false" />
-				<Label text="PhoneNumber" />
+				<Label text="Company Name" />
+				<Input id="CompanyName::detail" value="{SO_2_BP/CompanyName}"
+					change="onCompanyNameChanged"/>
+				<Label text="Phone Number" />
 				<Input id="PhoneNumber::detail" value="{SO_2_BP/PhoneNumber}" />
 				<Label text="City" />
 				<Input id="City::detail" value="{SO_2_BP/Address/City}"/>

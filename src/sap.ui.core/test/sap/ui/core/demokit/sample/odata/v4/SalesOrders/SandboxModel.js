@@ -332,6 +332,22 @@ sap.ui.define([
 				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=25)?custom-option=value" : {
 					source : "SalesOrderSimulateDiscount(Discount=25).json"
 				},
+				"PATCH BusinessPartnerList('0100000000')?custom-option=value" : [{
+					ifMatch : /{"CompanyName":"SAP - modified by OPA"}/g,
+					source : "PATCH-BusinessPartnerList('0100000000').json"
+				}],
+				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000000'%20or%20SalesOrderID%20eq%20'0500000001'%20or%20SalesOrderID%20eq%20'0500000002'%20or%20SalesOrderID%20eq%20'0500000003'%20or%20SalesOrderID%20eq%20'0500000004'%20or%20SalesOrderID%20eq%20'0500000005'%20or%20SalesOrderID%20eq%20'0500000006'%20or%20SalesOrderID%20eq%20'0500000007'%20or%20SalesOrderID%20eq%20'0500000008'%20or%20SalesOrderID%20eq%20'0500000009'&$select=SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$top=10" : {
+					source : "SalesOrderList_CompanyName_top10_sideEffects.json"
+				},
+				"SalesOrderList('0500000000')?custom-option=value&$select=SO_2_BP&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+					source : "SalesOrderList('0500000000')_CompanyName_sideEffects.json"
+				},
+				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000000'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+					source : "SalesOrderList('0500000000')_ChangeAt-GrossAmount-Note_sideEffects.json"
+				},
+				"SalesOrderList('0500000000')?custom-option=value&$select=ChangedAt,Note" : {
+					source : "SalesOrderList('0500000000')_ChangeAt-Note_sideEffects.json"
+				},
 				"POST SalesOrderList?custom-option=value" : [{
 					code : 400,
 					ifMatch : /,"Note":"RAISE_ERROR"/g,
