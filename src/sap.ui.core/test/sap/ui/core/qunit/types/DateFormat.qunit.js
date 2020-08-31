@@ -335,6 +335,19 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(sResult, "2000 years ago", "The date should be formatted correctly");
 		});
 
+		QUnit.test("format relative date without modifying the input date object", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				relative: true,
+				relativeScale: "auto"
+			});
+			var oDate = new Date("2020-08-17T21:59:00Z");
+			var beforeMs = oDate.getTime();
+
+			oDateFormat.format(oDate);
+
+			assert.equal(beforeMs, oDate.getTime(), "date instance should not be modified, after DateFormat#format call");
+		});
+
 		QUnit.module("DateFormat#parse (anno 1978)", {
 			beforeEach: function () {
 				// 2 digit years require the current year to be fixed
