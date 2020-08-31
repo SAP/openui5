@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dt/Util",
 	"sap/base/util/includes",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/model/json/JSONModel"
 ],
 function (
 	validateFlexEnabled,
@@ -24,7 +25,8 @@ function (
 	Log,
 	DtUtil,
 	includes,
-	sinon
+	sinon,
+	JSONModel
 ) {
 	"use strict";
 
@@ -109,6 +111,21 @@ function (
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent
+			});
+
+			this.oRta._oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
 			});
 
 			return this.oRta.start();
@@ -220,6 +237,21 @@ function (
 				rootControl: this.oComponent
 			});
 
+			this.oRta._oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
+
 			return this.oRta.start().then(function () {
 				Log.error.resetHistory();
 				MessageBox.show.resetHistory();
@@ -308,6 +340,21 @@ function (
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent
+			});
+
+			this.oRta._oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
 			});
 
 			return this.oRta.start().then(function () {
