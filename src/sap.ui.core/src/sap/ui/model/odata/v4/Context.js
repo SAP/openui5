@@ -1187,6 +1187,10 @@ sap.ui.define([
 	 * kept alive even when it is removed from its binding's collection, for example if a filter is
 	 * applied and the entity represented by this context does not match the filter criteria.
 	 *
+	 * Note that {@link #delete}, {@link #refresh}, {@link #requestSideEffects} and
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#refresh} are currently not supported for
+	 * kept-alive contexts.
+	 *
 	 * @param {boolean} bKeepAlive
 	 *   Whether to keep the context alive
 	 * @throws {Error} If
