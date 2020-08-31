@@ -72,6 +72,9 @@ sap.ui.define(function() {
 			},
 			"support/RuleEngineOpaExtension": {
 				title: "Rule Engine OPA Extension"
+			},
+			"support/plugins/ControlTree": {
+				title: "Control Tree Support Plugin"
 			}
 		}
 	};
