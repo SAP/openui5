@@ -1,25 +1,32 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
 	"sap/m/BadgeCustomData",
 	"sap/m/IconTabHeader",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabSeparator",
 	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleMessage",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Panel"
 ], function(
+	QUnitUtils,
+	KeyCodes,
 	BadgeCustomData,
 	IconTabHeader,
 	IconTabFilter,
 	IconTabSeparator,
 	Core,
+	InvisibleMessage,
 	createAndAppendDiv,
 	Panel
 ) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "content";
+	var oRB = Core.getLibraryResourceBundle("sap.m");
 
 	createAndAppendDiv(DOM_RENDER_LOCATION);
 
@@ -361,8 +368,36 @@ sap.ui.define([
 		this.oITH.addItem(oRootTab);
 		Core.applyChanges();
 
+		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator");
+
 		// Assert
-		assert.ok(oRootTab.$().find(".sapMBadgeIndicator").length, "Badge is rendered on the root tab");
+		assert.ok($badgeIndicator.length, "Badge is rendered on the root tab");
+		assert.strictEqual($badgeIndicator.attr("aria-label"), oRB.getText("ICONTABFILTER_SUB_ITEMS_BADGES"), "'aria-label' is correct");
+		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === 0, "aria-labelledby starts with the badge indicator id");
+	});
+
+	QUnit.test("Badge is removed from the root tab", function (assert) {
+		// Arrange
+		var oRootTab = new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			customData: [
+				new BadgeCustomData()
+			]
+		});
+		this.oITH.addItem(oRootTab);
+		Core.applyChanges();
+
+		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator");
+		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === 0, "aria-labelledby starts with the badge indicator id");
+
+		QUnitUtils.triggerKeydown(oRootTab.$(), KeyCodes.ENTER);
+
+		this.clock.tick(4000);
+
+		// Assert
+		assert.notOk(oRootTab._isBadgeAttached, "Badge is removed from the root tab");
+		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === -1, "aria-labelledby doesn't contain the badge indicator id");
 	});
 
 	QUnit.test("Badge is removed from the root tab when it is removed from the nested tab", function (assert) {
@@ -382,6 +417,11 @@ sap.ui.define([
 		});
 		this.oITH.addItem(oRootTab);
 		Core.applyChanges();
+
+		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator");
+
+		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === 0, "aria-labelledby starts with the badge indicator id");
+
 		oRootTab._expandButtonPress();
 		var oFakeEvent = {
 			srcControl: oRootTab._getSelectList().getItems()[0],
@@ -394,6 +434,7 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(oRootTab._isBadgeAttached, "Badge is removed from the root tab");
+		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === -1, "aria-labelledby doesn't contain the badge indicator id");
 	});
 
 	QUnit.test("Badge is NOT removed from the root tab when there are more tabs inside it with badges", function (assert) {
@@ -475,10 +516,6 @@ sap.ui.define([
 		assert.notOk(oItemCloneInList._isBadgeAttached, "Badge is removed from the item in the SelectList");
 	});
 
-	// QUnit.module("Badges - double click area tabs", {
-		// TO DO
-	// });
-
 	QUnit.module("Badges - overflow menu (More button)", {
 		beforeEach: function () {
 			this.iSize = 100;
@@ -518,4 +555,96 @@ sap.ui.define([
 		assert.notOk(this.oITH._getOverflow()._isBadgeAttached, "Badge is removed from the root tab");
 	});
 
+	QUnit.module("Badges - dynamically added", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader({
+				items: [
+					new IconTabFilter({
+						text: "Tab1",
+						id: "tab1",
+						items: [
+							new IconTabFilter({
+								text: "Tab11",
+								id: "tab11"
+							}),
+							new IconTabFilter({
+								text: "Tab12",
+								id: "tab12"
+							})
+						]
+					}),
+					new IconTabFilter({
+						text: "Tab2",
+						id: "tab2"
+					})
+				]
+			});
+
+			for (var i = 0; i < 100; i++) {
+				this.oITH.addItem(new IconTabFilter({text: 'additional tab ' + i}));
+			}
+
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Badge is added on a root tab", function (assert) {
+		// Arrange
+		var oRootTab = this.oITH.getItems()[0],
+			oInvisibleMessageInstance = InvisibleMessage.getInstance();
+
+		oRootTab.addCustomData(new BadgeCustomData());
+		Core.applyChanges();
+
+		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator"),
+			oInvisibleMsgDomRef = document.getElementById(oInvisibleMessageInstance.getId() + "-assertive");
+
+		// Assert
+		assert.ok($badgeIndicator.length, "Badge is rendered on the root tab");
+		assert.strictEqual($badgeIndicator.attr("aria-label"), oRB.getText("ICONTABFILTER_BADGE"),"'aria-label' is correct");
+		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === 0, "aria-labelledby starts with the badge indicator id");
+		assert.strictEqual(oInvisibleMsgDomRef.textContent, oRB.getText("ICONTABFILTER_BADGE_MSG", oRootTab.getText()), "badge is announced");
+	});
+
+	QUnit.test("Badge is added on a child tab", function (assert) {
+		// Arrange
+		var oRootTab = this.oITH.getItems()[0],
+			oChildTab = oRootTab.getItems()[0],
+			oInvisibleMessageInstance = InvisibleMessage.getInstance();
+
+		oChildTab.addCustomData(new BadgeCustomData());
+		Core.applyChanges();
+
+		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator"),
+			oInvisibleMsgDomRef = document.getElementById(oInvisibleMessageInstance.getId() + "-assertive");
+
+		// Assert
+		assert.ok($badgeIndicator.length, "Badge is rendered on the root tab");
+		assert.strictEqual($badgeIndicator.attr("aria-label"), oRB.getText("ICONTABFILTER_SUB_ITEMS_BADGES"),"'aria-label' is correct");
+		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === 0, "aria-labelledby starts with the badge indicator id");
+		assert.strictEqual(oInvisibleMsgDomRef.textContent, oRB.getText("ICONTABFILTER_SUB_ITEM_BADGE", [oChildTab.getText(), oRootTab.getText()]), "badge is announced");
+	});
+
+	QUnit.test("Badge is added on an overflow tab", function (assert) {
+		// Arrange
+		var oRootTab = this.oITH.getItems()[90],
+			oOverflowTab = this.oITH._getOverflow(),
+			oInvisibleMessageInstance = InvisibleMessage.getInstance();
+
+		oRootTab.addCustomData(new BadgeCustomData());
+		Core.applyChanges();
+
+		var $badgeIndicator = oOverflowTab.$().find(".sapMBadgeIndicator"),
+			oInvisibleMsgDomRef = document.getElementById(oInvisibleMessageInstance.getId() + "-assertive");
+
+		// Assert
+		assert.ok($badgeIndicator.length, "Badge is rendered on the root tab");
+		assert.strictEqual($badgeIndicator.attr("aria-label"), oRB.getText("ICONTABFILTER_SUB_ITEMS_BADGES"),"'aria-label' is correct");
+		assert.ok(oOverflowTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === 0, "aria-labelledby starts with the badge indicator id");
+		assert.strictEqual(oInvisibleMsgDomRef.textContent, oRB.getText("ICONTABFILTER_SUB_ITEM_BADGE", [oRootTab.getText(), oOverflowTab.getText()]), "badge is announced");
+	});
 });

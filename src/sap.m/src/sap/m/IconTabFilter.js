@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/core/Renderer",
 	"sap/ui/core/IconPool",
+	'sap/ui/core/InvisibleMessage',
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Control",
 	'sap/ui/Device',
@@ -26,6 +27,7 @@ sap.ui.define([
 	Item,
 	Renderer,
 	IconPool,
+	InvisibleMessage,
 	InvisibleText,
 	Control,
 	Device,
@@ -59,6 +61,9 @@ sap.ui.define([
 	// shortcut for sap.m.BadgeStyle
 	var BadgeStyle = library.BadgeStyle;
 
+	// shortcut for sap.m.BadgeState
+	var BadgeState = library.BadgeState;
+
 	// shortcut for sap.ui.core.IconColor
 	var IconColor = coreLibrary.IconColor;
 
@@ -67,6 +72,9 @@ sap.ui.define([
 	 * @constant {integer}
 	 */
 	var BADGE_AUTOHIDE_TIME = 3000;
+
+	// shortcut for sap.ui.core.InvisibleMessageMode
+	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 	/**
 	 * Constructor for a new IconTabFilter.
@@ -732,6 +740,10 @@ sap.ui.define([
 
 	IconTabFilter.prototype._onAfterParentRendering = function () {
 		this._renderBadge();
+
+		// force initializing the invisible message,
+		// as the live region should be rendered, when we announce the text
+		InvisibleMessage.getInstance();
 	};
 
 	/**
@@ -1173,6 +1185,81 @@ sap.ui.define([
 		var oDomRef = this.getDomRef();
 
 		return oDomRef && oDomRef.classList.contains("sapMITBFilterHidden");
+	};
+
+	IconTabFilter.prototype.onBadgeUpdate = function (sValue, sState, sBadgeId) {
+
+		var oDomRef = this.getDomRef(),
+			oIconTabHeader = this._getIconTabHeader(),
+			oRootTab,
+			oInvisibleMessage,
+			sAriaLabelledBy,
+			sText,
+			oOverflow,
+			sRbKey,
+			oRbArgs;
+
+		if (!oIconTabHeader) {
+			return;
+		}
+
+		if (oDomRef) {
+			sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby") || "";
+
+			switch (sState) {
+				case BadgeState.Appear:
+					sAriaLabelledBy = sBadgeId + " " + sAriaLabelledBy;
+					break;
+				case BadgeState.Disappear:
+					sAriaLabelledBy = sAriaLabelledBy.replace(sBadgeId, "").trim();
+					break;
+			}
+
+			oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
+		}
+
+		if (!oIconTabHeader._isRendered()) {
+			return;
+		}
+
+		oRootTab = this._getRootTab();
+
+		if (oRootTab._isInOverflow()) {
+			oOverflow = this._getIconTabHeader()._getOverflow();
+			oOverflow._updateExpandButtonBadge();
+		} else {
+			if (oRootTab !== this) {
+				oRootTab._updateExpandButtonBadge();
+			}
+		}
+
+		if (sState !== BadgeState.Appear) {
+			return;
+		}
+
+		oInvisibleMessage = InvisibleMessage.getInstance();
+		sText = this.getText();
+
+		if (oRootTab._isInOverflow()) {
+			sRbKey = "ICONTABFILTER_SUB_ITEM_BADGE";
+			oRbArgs = [sText, oOverflow.getText()];
+		} else {
+			if (oRootTab !== this) {
+				sRbKey = "ICONTABFILTER_SUB_ITEM_BADGE";
+				oRbArgs = [sText, oRootTab.getText()];
+			} else {
+				sRbKey = "ICONTABFILTER_BADGE_MSG";
+				oRbArgs = sText;
+			}
+		}
+
+		oInvisibleMessage.announce(oResourceBundle.getText(sRbKey, oRbArgs), InvisibleMessageMode.Assertive);
+	};
+
+	IconTabFilter.prototype.getAriaLabelBadgeText = function () {
+		var sRbKey = this._bIsOverflow || (!this._isInOverflow() && this._getNestedLevel() === 1 && this._hasChildWithBadge()) ? "ICONTABFILTER_SUB_ITEMS_BADGES" : "ICONTABFILTER_BADGE";
+
+		return oResourceBundle.getText(sRbKey);
 	};
 
 	return IconTabFilter;
