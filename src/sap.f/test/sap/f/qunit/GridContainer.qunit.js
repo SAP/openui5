@@ -1188,6 +1188,17 @@ function (
 		assert.strictEqual(oAttachPressSpy.callCount, 1, "Tile is pressed");
 	});
 
+	QUnit.test("FocusDomRef tab index", function (assert) {
+		var oCard = this.oGrid.getItems()[0];
+
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), "-1", "Focus DomRef should have tabindex='-1'");
+
+		oCard.getHeader().invalidate();
+		Core.applyChanges();
+
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), "-1", "Focus DomRef should have tabindex='-1'");
+	});
+
 	QUnit.module("Event - 'borderReached'", {
 		beforeEach: function () {
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
