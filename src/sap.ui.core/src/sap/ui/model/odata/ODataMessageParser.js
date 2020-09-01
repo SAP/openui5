@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/URI",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
+	function(ODataMetadata, ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
 	"use strict";
 
 var sClassName = "sap.ui.model.odata.ODataMessageParser",
@@ -248,24 +249,30 @@ ODataMessageParser.prototype._getAffectedTargets = function (aMessages, mRequest
  * "sap-messages" with the value <code>transientOnly</code> all existing messages are kept with the
  * expectation to only receive transition messages from the back end.
  *
- * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
+ * @param {sap.ui.core.message.Message[]} aMessages
+ *   All messaged returned from the back-end in this request
  * @param {ODataMessageParser~RequestInfo} mRequestInfo
  *   Info object about the request URL. If the "request" property of "mRequestInfo" is flagged with
  *   "updateAggregatedMessages=true", all aggregated messages for the entities in the response are
  *   updated. Aggregated messages are messages of child entities of these entities which belong to
  *   the same business object.
- * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
- * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
- * @param {boolean} bSimpleMessageLifecycle - This flag is set to false, if the used OData Model v2 supports message scopes
+ * @param {map} [mGetEntities] - A map containing the entities requested from the back-end as keys
+ * @param {map} [mChangeEntities] - A map containing the entities changed on the back-end as keys
+ * @param {boolean} bSimpleMessageLifecycle
+ *   This flag is set to false, if the used OData Model v2 supports message scopes
  */
-ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities, bSimpleMessageLifecycle) {
+ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities,
+		mChangeEntities, bSimpleMessageLifecycle) {
 	var mAffectedTargets,
 		sDeepPath = mRequestInfo.request.deepPath,
 		aKeptMessages = [],
+		aCanonicalPathsOfReturnedEntities,
 		bPrefixMatch = sDeepPath && mRequestInfo.request.updateAggregatedMessages,
 		bTransitionMessagesOnly = mRequestInfo.request.headers
 			&& mRequestInfo.request.headers["sap-messages"] === "transientOnly",
 		aRemovedMessages = [],
+		bReturnsCollection
+			= ODataMetadata._returnsCollection(mRequestInfo.request.functionMetadata),
 		bStateMessages,
 		iStatusCode,
 		bSuccess;
@@ -273,9 +280,18 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 	function isTargetMatching(oMessage, aTargets) {
 		return aTargets.some(function (sTarget) { return mAffectedTargets[sTarget]; })
 			|| bPrefixMatch && oMessage.aFullTargets.some(function (sFullTarget) {
-				return sFullTarget.startsWith(sDeepPath);
+				if (bReturnsCollection) {
+					return aCanonicalPathsOfReturnedEntities.some(function (sKey) {
+						var sKeyPredicate = sKey.slice(sKey.indexOf("("));
+						return sFullTarget.startsWith(sDeepPath + sKeyPredicate);
+					});
+				} else {
+					return sFullTarget.startsWith(sDeepPath);
+				}
 			});
 	}
+
+	mGetEntities = mGetEntities || {};
 
 	if (bTransitionMessagesOnly) {
 		aKeptMessages = this._lastMessages;
@@ -289,6 +305,9 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 	} else {
 		mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities,
 			mChangeEntities);
+		// only the mGetEntities are relevant for function imports; mChangeEntities are used for
+		// DELETE and MERGE requests
+		aCanonicalPathsOfReturnedEntities = Object.keys(mGetEntities);
 		iStatusCode = mRequestInfo.response.statusCode;
 		bSuccess = (iStatusCode >= 200 && iStatusCode < 300);
 		this._lastMessages.forEach(function (oCurrentMessage) {
