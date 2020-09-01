@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException',
 	'sap/ui/model/FilterType',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/base/strings/capitalize',
@@ -20,6 +21,7 @@ sap.ui.define([
 			Filter,
 			FormatException,
 			ParseException,
+			ValidateException,
 			FilterType,
 			ManagedObjectObserver,
 			capitalize,
@@ -468,7 +470,7 @@ sap.ui.define([
 							if (bUseFormatException) {
 								oException = new FormatException(sError);
 							} else {
-								oException = new ParseException(sError);
+								oException = new ValidateException(sError);
 							}
 							oException._bNotUnique = bNotUnique; // TODO: better solution?
 							fReject(oException);
