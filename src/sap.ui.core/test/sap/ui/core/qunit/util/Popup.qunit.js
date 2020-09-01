@@ -2275,6 +2275,7 @@ sap.ui.define([
 
 		var fnClosed3 = function(){
 			oText.destroy();
+			oNonModalPopup.destroy();
 			oPopup3.destroy();
 			oPopup4.destroy();
 			done();
@@ -2433,12 +2434,12 @@ sap.ui.define([
 		var fnOpened = function() {
 			this.oPopup.detachOpened(fnOpened, this);
 
-			assert.ok(oSpyShieldBorrowObject.calledOnce, "Calling the ShieldLayer factory");
+			assert.equal(oSpyShieldBorrowObject.callCount, 1, "Calling the ShieldLayer factory");
 			assert.ok(this.oPopup._oTopShieldLayer, "ShieldLayer was created");
 			assert.ok(this.oPopup._iTopShieldRemoveTimer, "Timeout was started");
 
 			setTimeout(function() {
-				assert.ok(oSpyShieldReturnObject.calledOnce, "ShieldLayer was returned");
+				assert.equal(oSpyShieldReturnObject.callCount, 1, "ShieldLayer was returned");
 				assert.ok(!this.oPopup._oTopShieldLayer, "ShieldLayer was removed");
 				assert.ok(!this.oPopup._iTopShieldRemoveTimer, "Timeout has passed");
 
@@ -2454,8 +2455,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destroy popup during open/close should also clear the close timer of ShieldLayer", function(assert) {
-		var oSpyShieldBorrowObject = this.spy(this.oPopup.oShieldLayerPool, "borrowObject"),
-			oSpyShieldReturnObject = this.spy(this.oPopup.oShieldLayerPool, "returnObject");
+		var oSpyShieldBorrowObject = sinon.spy(this.oPopup.oShieldLayerPool, "borrowObject"),
+			oSpyShieldReturnObject = sinon.spy(this.oPopup.oShieldLayerPool, "returnObject");
 
 		// act
 		this.oPopup.open();
@@ -2464,6 +2465,9 @@ sap.ui.define([
 
 		assert.equal(oSpyShieldBorrowObject.callCount, 2, "ShieldLayer is created twice");
 		assert.equal(oSpyShieldReturnObject.callCount, 2, "All ShieldLayers are returned");
+
+		oSpyShieldReturnObject.restore();
+		oSpyShieldBorrowObject.restore();
 	});
 
 	QUnit.module("Autoclose Area", {
