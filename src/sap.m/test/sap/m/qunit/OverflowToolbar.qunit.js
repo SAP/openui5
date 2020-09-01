@@ -2019,8 +2019,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("[_cacheControlsInfo] Control caching works properly", function (assert) {
-		var spyCache = this.spy(OverflowToolbar.prototype, "_cacheControlsInfo"),
-				aDefaultContent = [
+		var aDefaultContent = [
 					new Text({text: "Label1", width: "100px"}),
 					new Text({text: "Label2", width: "100px"}),
 					new Button({text: "1", width: "100px"}),
@@ -2031,8 +2030,10 @@ sap.ui.define([
 				],
 				oOverflowTB = createOverflowToolbar({
 					width: "550px"
-				}, aDefaultContent);
+				}, aDefaultContent, true),
+				spyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
+		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
 		assert.strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
@@ -2048,6 +2049,68 @@ sap.ui.define([
 
 		// Note: control sizes and total content size are not checked here because they depend on margins and calculations are not always predictable
 
+		oOverflowTB.destroy();
+	});
+
+	QUnit.test("[_cacheControlsInfo] when handleResize is called with Controls with size in %", function (assert) {
+		// Arrange
+		var aDefaultContent = [
+					new Text({text: "Label1", width: "20%"}),
+					new Text({text: "Label2", width: "100px"}),
+					new Button({text: "1", width: "100px"})
+				],
+				oOverflowTB = createOverflowToolbar({
+					width: "550px"
+				}, aDefaultContent, true),
+				oSpyCache;
+
+		sap.ui.getCore().applyChanges();
+		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
+
+		// Act
+		oOverflowTB._handleResize();
+		this.clock.tick(1000);
+
+		// Assert
+		assert.strictEqual(oSpyCache.callCount, 1,
+			"Width of Controls' is cached again as there is one with relative width, which is updated after resize");
+
+		// Clean up
+		oOverflowTB.destroy();
+	});
+
+	QUnit.test("[_cacheControlsInfo] when resizing OFT with Controls with size in %", function (assert) {
+		// Arrange
+		var aDefaultContent = [
+					new Text({text: "Label1", width: "20%"}),
+					new Text({text: "Label2", width: "100px"}),
+					new Button({text: "1", width: "100px"})
+				],
+				oOverflowTB = createOverflowToolbar({
+					width: "550px"
+				}, aDefaultContent, true),
+				oFirtItem = oOverflowTB.getContent()[0],
+				iInitialItemWidth = oFirtItem.$().outerWidth(true),
+				iNewItemWidth,
+				oSpyCache;
+
+		sap.ui.getCore().applyChanges();
+		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
+
+		// Act
+		oOverflowTB.setWidth("450px");
+		this.clock.tick(1000);
+
+		iNewItemWidth = oFirtItem.$().outerWidth(true);
+
+		// Assert
+		assert.strictEqual(oSpyCache.callCount, 1,
+			"Width of Controls' is cached again as there is one with relative width, which is updated after resize");
+		assert.notEqual(iInitialItemWidth, iNewItemWidth, "Control with relative width has new width");
+		assert.strictEqual(iNewItemWidth, oOverflowTB._aControlSizes[oFirtItem.getId()],
+			"The new width of the Control is cached correctly");
+
+		// Clean up
 		oOverflowTB.destroy();
 	});
 

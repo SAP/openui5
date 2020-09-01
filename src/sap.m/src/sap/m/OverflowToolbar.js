@@ -281,6 +281,13 @@ sap.ui.define([
 		this._resetChildControlFocusInfo();
 	};
 
+	OverflowToolbar.prototype.setWidth = function(sWidth) {
+		this.setProperty("width", sWidth);
+		this._bResized = true;
+
+		return this;
+	};
+
 	/*********************************************LAYOUT*******************************************************/
 
 
@@ -315,7 +322,7 @@ sap.ui.define([
 		if (iWidth > 0) {
 
 			// Cache controls widths and other info, if not done already
-			if (!this._isControlsInfoCached()) {
+			if (!this._isControlsInfoCached() || (this._bNeedUpdateOnControlsCachedSizes && this._bResized)) {
 				this._cacheControlsInfo();
 			}
 
@@ -325,7 +332,6 @@ sap.ui.define([
 				this._setControlsOverflowAndShrinking(iWidth);
 				this.fireEvent("_controlWidthChanged");
 			}
-
 		}
 
 		// Register the resize handler again after all calculations are done and it's safe to do so
@@ -337,6 +343,8 @@ sap.ui.define([
 
 		// Start listening for invalidation events once again
 		this._bListenForInvalidationEvents = true;
+
+		this._bResized = false;
 	};
 
 	/**
@@ -424,6 +432,8 @@ sap.ui.define([
 
 	// Resize Handler
 	OverflowToolbar.prototype._handleResize = function() {
+		this._bResized = true;
+
 		// fully executing _doLayout at this point poses risk of
 		// measuring the wrong DOM, since the control is invalidated
 		// but not yet rerendered
@@ -450,6 +460,7 @@ sap.ui.define([
 
 		this._iOldContentSize = this._iContentSize;
 		this._iContentSize = 0; // The total *optimal* size of all controls in the toolbar
+		this._bNeedUpdateOnControlsCachedSizes = false;
 
 		this.getContent().forEach(this._updateControlsCachedSizes, this);
 
@@ -489,11 +500,17 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._updateControlsCachedSizes = function (oControl) {
 		var sPriority,
-			iControlSize;
+			iControlSize,
+			sWidth;
 
 		sPriority = this._getControlPriority(oControl);
 		iControlSize = this._calculateControlSize(oControl);
 		this._aControlSizes[oControl.getId()] = iControlSize;
+
+		sWidth = Toolbar.getOrigWidth(oControl.getId());
+		if (Toolbar.isRelativeWidth(sWidth)) {
+			this._bNeedUpdateOnControlsCachedSizes = true;
+		}
 
 		// Only add up the size of controls that can be shown in the toolbar, hence this addition is here
 		if (sPriority !== OverflowToolbarPriority.AlwaysOverflow) {
