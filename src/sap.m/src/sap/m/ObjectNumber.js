@@ -114,6 +114,23 @@ sap.ui.define([
 			return oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_" + sState.toUpperCase(), [], true);
 	};
 
+	/**
+	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {Object} Current accessibility state of the control
+	 * @protected
+	 */
+	ObjectNumber.prototype.getAccessibilityInfo = function() {
+		var sStateText = "";
+
+		if (this.getState() !== ValueState.None) {
+			sStateText = this._getStateText();
+		}
+
+		return {
+			description: (this.getNumber() + " " + this.getUnit() + " " + sStateText).trim()
+		};
+	};
+
 	return ObjectNumber;
 
 });
