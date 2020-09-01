@@ -2839,15 +2839,46 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("expand: not expandable", function (assert) {
+	QUnit.test("expand/collapse: not expandable", function (assert) {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
 
-		this.mock(oContext).expects("isExpanded").withExactArgs().returns({/*anything*/});
+		this.mock(oContext).expects("isExpanded").twice().withExactArgs().returns({/*anything*/});
 
 		assert.throws(function () {
 			// code under test
 			oContext.expand();
 		}, new Error("Not expandable: " + oContext));
+
+		assert.throws(function () {
+			// code under test
+			oContext.collapse();
+		}, new Error("Not expandable: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("collapse", function () {
+		var oBinding = {
+				collapse : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns(true);
+		this.mock(oBinding).expects("collapse").withExactArgs(sinon.match.same(oContext));
+
+		// code under test
+		oContext.collapse();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("collapse: already collapsed", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.collapse();
+		}, new Error("Already collapsed: " + oContext));
 	});
 
 	//*********************************************************************************************

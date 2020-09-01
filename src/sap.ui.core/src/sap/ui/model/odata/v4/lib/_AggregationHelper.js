@@ -349,6 +349,25 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a placeholder.
+		 *
+		 * @param {number} iLevel - The level
+		 * @param {number} iIndex - The index within the parent cache
+		 * @param {object} oParentCache - The parent cache
+		 * @returns {object} A placeholder object
+		 *
+		 * @public
+		 */
+		createPlaceholder : function (iLevel, iIndex, oParentCache) {
+			var oPlaceholder = {"@$ui5.node.level" : iLevel};
+
+			_Helper.setPrivateAnnotation(oPlaceholder, "index", iIndex);
+			_Helper.setPrivateAnnotation(oPlaceholder, "parent", oParentCache);
+
+			return oPlaceholder;
+		},
+
+		/**
 		 * Tells whether grand total values are needed for at least one aggregatable property.
 		 *
 		 * @param {object} [mAggregate]

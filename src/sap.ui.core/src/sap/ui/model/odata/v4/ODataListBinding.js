@@ -573,6 +573,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Collapses the group node that the given context points to.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context corresponding to the group node
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended
+	 *
+	 * @private
+	 * @see #expand
+	 */
+	ODataListBinding.prototype.collapse = function (oContext) {
+		var aContexts = this.aContexts,
+			iCount = this.oCache.collapse(
+				_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())),
+			iModelIndex = oContext.getModelIndex(),
+			i,
+			that = this;
+
+		aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
+			that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+		});
+		for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
+			aContexts[i].iIndex = i;
+		}
+		this.iMaxLength -= iCount;
+		this._fireChange({reason : ChangeReason.Change});
+	};
+
+	/**
 	 * Creates a new entity and inserts it at the start or the end of the list.
 	 *
 	 * For creating the new entity, the binding's update group ID is used, see
@@ -983,6 +1012,7 @@ sap.ui.define([
 	 *   If the binding's root binding is suspended
 	 *
 	 * @private
+	 * @see #collapse
 	 */
 	ODataListBinding.prototype.expand = function (oContext) {
 		var bDataRequested = false,
