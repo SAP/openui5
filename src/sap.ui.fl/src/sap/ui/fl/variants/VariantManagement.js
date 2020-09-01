@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
+	"sap/m/ToggleButton",
 	"sap/m/CheckBox",
 	"sap/m/Dialog",
 	"sap/m/Input",
@@ -64,6 +65,7 @@ sap.ui.define([
 	Toolbar,
 	ToolbarSpacer,
 	Button,
+	ToggleButton,
 	CheckBox,
 	Dialog,
 	Input,
@@ -367,9 +369,11 @@ sap.ui.define([
 		oVariantModifiedText.addStyleClass("sapUiFlVarMngmtClickable");
 		oVariantModifiedText.addStyleClass("sapMTitleStyleH4");
 
-		this.oVariantPopoverTrigger = new Button(this.getId() + "-trigger", {
+		this.oVariantPopoverTrigger = new ToggleButton(this.getId() + "-trigger", {
 			icon: "sap-icon://slim-arrow-down",
-			type: ButtonType.Transparent
+			type: ButtonType.Transparent,
+			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT"),
+			press: function() { this._oCtrlRef = this.oVariantPopoverTrigger; }.bind(this)
 		});
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
@@ -897,7 +901,7 @@ sap.ui.define([
 					return bValue;
 				}
 			},
-			type: sap.m.ButtonType.Emphasized,
+			type: ButtonType.Emphasized,
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			})
@@ -990,8 +994,10 @@ sap.ui.define([
 			],
 			afterOpen: function() {
 				this.bPopoverOpen = true;
+				this.oVariantPopoverTrigger.setPressed(true);
 			}.bind(this),
 			afterClose: function() {
+				this.oVariantPopoverTrigger.setPressed(false);
 				if (this.bPopoverOpen) {
 					setTimeout(function() {
 						this.bPopoverOpen = false;
@@ -1012,15 +1018,15 @@ sap.ui.define([
 
 	/**
 	 * Hide or show <i>Save</i> button and emphasize "most positive action" - either <i>Save</i> button if it is visible, or <i>Save As</i> button if <i>Save</i> is hidden.
-	 * @param bShow - Indicator if <i>Save</i> button should be visible
+	 * @param {boolean} bShow - Indicator if <i>Save</i> button should be visible
 	 * @private
 	 */
 	VariantManagement.prototype.showSaveButton = function(bShow) {
 		if (bShow === false) {
-			this.oVariantSaveAsBtn.setType(sap.m.ButtonType.Emphasized);
+			this.oVariantSaveAsBtn.setType(ButtonType.Emphasized);
 			this.oVariantSaveBtn.setVisible(false);
 		} else {
-			this.oVariantSaveAsBtn.setType(sap.m.ButtonType.Default);
+			this.oVariantSaveAsBtn.setType(ButtonType.Default);
 			this.oVariantSaveBtn.setVisible(true);
 		}
 	};
@@ -1058,7 +1064,9 @@ sap.ui.define([
 			}
 		}
 
-		this.oVariantPopOver.openBy(this.oVariantLayout);
+		var oControlRef = this._oCtrlRef ? this._oCtrlRef : this.oVariantLayout;
+		this._oCtrlRef = null;
+		this.oVariantPopOver.openBy(oControlRef);
 	};
 
 	VariantManagement.prototype._triggerSearch = function(oEvent, oVariantList) {
@@ -1088,7 +1096,7 @@ sap.ui.define([
 		if (!this.oSaveAsDialog) {
 			this.oInputName = new Input(this.getId() + "-name", {
 				liveChange: function() {
-					this._checkVariantNameConstraints(this.oInputName, this.oSaveSave);
+					this._checkVariantNameConstraints(this.oInputName);
 				}.bind(this)
 			});
 
@@ -1130,8 +1138,15 @@ sap.ui.define([
 
 			this.oSaveSave = new Button(this.getId() + "-variantsave", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_SAVE"),
+				type: ButtonType.Emphasized,
 				press: function() {
 					if (!this._bSaveOngoing) {
+						this._checkVariantNameConstraints(this.oInputName);
+
+						if (this.oInputName.getValueState() === "Error") {
+							return;
+						}
+
 						this._bSaveOngoing = true;
 						this._bSaveCanceled = false;
 						this._handleVariantSaveAs(this.oInputName.getValue());
@@ -1185,13 +1200,13 @@ sap.ui.define([
 		this._createSaveAsDialog();
 
 		this.oInputName.setValue(this.getSelectedVariantText(this.getCurrentVariantKey()));
-		this.oSaveSave.setEnabled(false);
+		//this.oSaveSave.setEnabled(false);
 
 		this.oInputName.setEnabled(true);
 		this.oInputName.setValueState(ValueState.None);
 		this.oInputName.setValueStateText(null);
 
-		this._checkVariantNameConstraints(this.oInputName, this.oSaveSave);
+		//this._checkVariantNameConstraints(this.oInputName);
 
 		this.oDefault.setSelected(false);
 		this.oExecuteOnSelect.setSelected(false);
@@ -1281,6 +1296,7 @@ sap.ui.define([
 	 * Opens the <i>Manage Views</i> dialog.
 	 * @public
 	 * @param {boolean} bCreateAlways - Indicates that if this is set to <code>true</code>, the former dialog will be destroyed before a new one is created
+	 * @param {string} sClass - style-class to be used
 	 */
 	VariantManagement.prototype.openManagementDialog = function(bCreateAlways, sClass) {
 		if (bCreateAlways && this.oManagementDialog) {
@@ -1391,7 +1407,7 @@ sap.ui.define([
 			this.oManagementSave = new Button(this.getId() + "-managementsave", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_OK"),
 				enabled: true,
-				type: sap.m.ButtonType.Emphasized,
+				type: ButtonType.Emphasized,
 				press: function() {
 					this._handleManageSavePressed();
 				}.bind(this)
@@ -1477,7 +1493,7 @@ sap.ui.define([
 		}
 
 		var fLiveChange = function(oEvent) {
-			this._checkVariantNameConstraints(oEvent.oSource, this.oManagementSave, oEvent.oSource.getBindingContext(this._sModelName).getObject().key);
+			this._checkVariantNameConstraints(oEvent.oSource, oEvent.oSource.getBindingContext(this._sModelName).getObject().key);
 		}.bind(this);
 
 		var fChange = function(oEvent) {
@@ -1500,6 +1516,8 @@ sap.ui.define([
 			if (oListItem) {
 				oListItem.setVisible(false);
 			}
+
+			this._reCheckVariantNameConstraints();
 		}.bind(this);
 
 		var fSelectFav = function(oEvent) {
@@ -1595,12 +1613,12 @@ sap.ui.define([
 		this._suspendManagementTableBinding();
 
 		this._clearDeletedItems();
-		this.oManagementSave.setEnabled(false);
+//		this.oManagementSave.setEnabled(false);
 		this._oSearchFieldOnMgmtDialog.setValue("");
 
 		// Ideally, this should be done only once in <code>_createtManagementDialog</code>. However, the binding does not recognize a change if filtering is involved.
 		// After a deletion on the UI, the item is filtered out <code>.visible=false</code>. The real deletion will occur only when <i>OK</i> is pressed.
-		// Since the filterd items and the result after the real deletion are identical, no change is detected. Based on this, the context on the table is
+		// Since the filtered items and the result after the real deletion are identical, no change is detected. Based on this, the context on the table is
 		// not invalidated....
 		// WA: Always do the binding while opening the dialog.
 		if (this._bDeleteOccured) {
@@ -1635,9 +1653,9 @@ sap.ui.define([
 	VariantManagement.prototype._handleManageDefaultVariantChange = function(oRadioButton, oItem) {
 		var sKey = oItem.key;
 
-		if (!this._anyInErrorState(this.oManagementTable)) {
-			this.oManagementSave.setEnabled(true);
-		}
+//		if (!this._anyInErrorState(this.oManagementTable)) {
+//			this.oManagementSave.setEnabled(true);
+//		}
 
 		if (this.getShowFavorites() && !oItem.favorite && oRadioButton) {
 			oItem.favorite = true;
@@ -1672,9 +1690,9 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._handleManageFavoriteChanged = function(oIcon, oItem) {
-		if (!this._anyInErrorState(this.oManagementTable)) {
-			this.oManagementSave.setEnabled(true);
-		}
+//		if (!this._anyInErrorState(this.oManagementTable)) {
+//			this.oManagementSave.setEnabled(true);
+//		}
 
 		if ((this.getDefaultVariantKey() === oItem.key) && oItem.favorite) {
 			return;
@@ -1708,10 +1726,6 @@ sap.ui.define([
 			return;
 		}
 
-		if (!this._anyInErrorState(this.oManagementTable)) {
-			this.oManagementSave.setEnabled(true);
-		}
-
 		oItem.visible = false;
 		this._addDeletedItem(oItem);
 
@@ -1738,18 +1752,22 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._handleManageExecuteOnSelectionChanged = function() {
-		if (!this._anyInErrorState(this.oManagementTable)) {
-			this.oManagementSave.setEnabled(true);
-		}
+//		if (!this._anyInErrorState(this.oManagementTable)) {
+//			this.oManagementSave.setEnabled(true);
+//		}
 	};
 
 	VariantManagement.prototype._handleManageTitleChanged = function() {
-		if (!this._anyInErrorState(this.oManagementTable)) {
-			this.oManagementSave.setEnabled(true);
-		}
+//		if (!this._anyInErrorState(this.oManagementTable)) {
+//			this.oManagementSave.setEnabled(true);
+//		}
 	};
 
 	VariantManagement.prototype._handleManageSavePressed = function() {
+		if (this._anyInErrorState(this.oManagementTable)) {
+			return;
+		}
+
 		this._getDeletedItems().some(function(oItem) {
 			if (oItem.key === this.getCurrentVariantKey()) {
 				var sKey = this.getStandardVariantKey();
@@ -1802,7 +1820,6 @@ sap.ui.define([
 				if (oInput && oInput.getValueState && (oInput.getValueState() === ValueState.Error)) {
 					bInError = true;
 				}
-
 				return bInError;
 			});
 		}
@@ -1845,7 +1862,7 @@ sap.ui.define([
 	};
 
 
-	VariantManagement.prototype._checkVariantNameConstraints = function(oInputField, oSaveButton, sKey) {
+	VariantManagement.prototype._verifyVariantNameConstraints = function(oInputField, sKey) {
 		if (!oInputField) {
 			return;
 		}
@@ -1875,17 +1892,50 @@ sap.ui.define([
 			oInputField.setValueState(ValueState.Error);
 			oInputField.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE"));
 		}
+	};
 
-		if (oSaveButton) {
-			if (oInputField.getValueState() === ValueState.Error) {
-				oSaveButton.setEnabled(false);
-			} else {
-				oSaveButton.setEnabled(true);
-			}
+	VariantManagement.prototype._checkVariantNameConstraints = function(oInputField, sKey) {
+		this._verifyVariantNameConstraints(oInputField, sKey);
+
+		if (this.oManagementDialog && this.oManagementDialog.isOpen()) {
+			this._reCheckVariantNameConstraints();
 		}
 	};
 
+	VariantManagement.prototype._reCheckVariantNameConstraints = function() {
+		var aItems;
+		var bInError = false;
+
+		if (this.oManagementTable) {
+			aItems = this.oManagementTable.getItems();
+			aItems.some(function(oItem) {
+				var oObject = oItem.getBindingContext(this._sModelName).getObject();
+				if (oObject && oObject.visible) {
+					var oInput = oItem.getCells()[VariantManagement.COLUMN_NAME_IDX];
+					if (oInput && oInput.getValueState && (oInput.getValueState() === ValueState.Error)) {
+						this._verifyVariantNameConstraints(oInput, oObject.key);
+						if (oInput.getValueState() === ValueState.Error) {
+							bInError = true;
+						}
+					}
+				}
+
+				return bInError;
+			}.bind(this));
+		}
+
+		return bInError;
+	};
+
 	VariantManagement.prototype._checkIsDuplicate = function(sValue, sKey) {
+		if (this.oManagementDialog && this.oManagementDialog.isOpen()) {
+			return this._checkIsDuplicateInManageTable(sValue, sKey);
+		}
+
+		return this._checkIsDuplicateInModel(sValue, sKey);
+	};
+
+	VariantManagement.prototype._checkIsDuplicateInModel = function(sValue, sKey) {
 		var bDublicate = false;
 		var aItems = this._getItems();
 		var sLowerCaseValue = sValue.toLowerCase();
@@ -1901,6 +1951,38 @@ sap.ui.define([
 		});
 
 		return bDublicate;
+	};
+
+	VariantManagement.prototype._checkIsDuplicateInManageTable = function(sValue, sKey) {
+		var aItems;
+		var bInError = false;
+		var sLowerCaseValue = sValue.toLowerCase();
+
+		if (this.oManagementTable) {
+			aItems = this.oManagementTable.getItems();
+			aItems.some(function(oItem) {
+				var sTitleLowerCase;
+				var oObject = oItem.getBindingContext(this._sModelName).getObject();
+				if (oObject && oObject.visible) {
+					var oInput = oItem.getCells()[VariantManagement.COLUMN_NAME_IDX];
+
+					if (oInput && (oObject.key !== sKey)) {
+						if (oInput.isA("sap.m.Input")) {
+							sTitleLowerCase = oInput.getValue().toLowerCase();
+						} else {
+							sTitleLowerCase = oInput.getTitle().toLowerCase();
+						}
+						if (sTitleLowerCase === sLowerCaseValue) {
+							bInError = true;
+						}
+					}
+
+					return bInError;
+				}
+			}.bind(this));
+		}
+
+		return bInError;
 	};
 
 	// exit destroy all controls created in init
