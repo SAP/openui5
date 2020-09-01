@@ -350,11 +350,20 @@ sap.ui.define([
 		assert.ok(jQuery("#Cal2--Month0-20110126").hasClass("sapUiCalItemType04"),
 				"20110126 is date of type Type04 as part of a single date with property secondaryDate");
 
+
 		assert.equal(jQuery("#Cal3--Month0-20150126").attr("aria-label"), "Non-Working Day 26. Januar 2015", "20150126 is a date of type 'NonWorking' and is added without legend");
-		assert.equal(jQuery("#Cal1--Month0-20200809").attr("aria-label"), "Non-Working Day August 9, 2020", "20200809 is a day from the weekend and this is the reason why 'NonWorking' is added");
-		assert.equal(jQuery("#Cal1--Month0-20200815").attr("aria-label"), "Non-Working Day August 15, 2020", "20200815 is a day from the weekend and this is the reason why 'NonWorking' is added");
+
+		// act
+		oCal2.setLegend(null);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(jQuery("#Cal2--Month0-20110129").attr("aria-label"), "Non-Working Day 29. Januar 2011", "20110129 is a day from the weekend and this is the reason why 'NonWorking' is added");
+		assert.equal(jQuery("#Cal2--Month0-20110123").attr("aria-label"), "Non-Working Day 23. Januar 2011", "20110123 is a day from the weekend and this is the reason why 'NonWorking' is added");
 
 		//act
+		oCal2.setLegend(oLegend);
+		sap.ui.getCore().applyChanges();
 		oCal2.addSpecialDate(new DateTypeRange({
 			type: CalendarDayType.NonWorking,
 			startDate: new Date(2011, 0, 22)
@@ -2551,7 +2560,12 @@ sap.ui.define([
 		qutils.triggerEvent("click", "Cal--Head-B1");
 		sap.ui.getCore().applyChanges();
 
-		// act: select a month (February)
+		// act: select a month (August)
+		oMP.setMonth(7);
+		oCal._selectMonth(oMP.getMonth());
+		sap.ui.getCore().applyChanges();
+
+		// act: select a month (December)
 		oMP.setMonth(iStartMonth);
 		oCal._selectMonth(oMP.getMonth());
 		sap.ui.getCore().applyChanges();
