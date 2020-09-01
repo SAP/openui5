@@ -6840,7 +6840,7 @@ sap.ui.define([
 				}
 
 				if (oSelect.getType() === SelectType.Default) {
-					assert.strictEqual(oSelect.getFocusDomRef().getAttribute("role"), "combobox");
+					assert.strictEqual(oSelect.getFocusDomRef().getAttribute("role"), "listbox");
 				} else if (oSelect.getType() === SelectType.IconOnly) {
 					assert.strictEqual(oSelect.getFocusDomRef().getAttribute("role"), "button");
 				}
@@ -9805,14 +9805,14 @@ sap.ui.define([
 
 			oSelect.setType("Default");
 			oInfo = oSelect.getAccessibilityInfo();
-			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
+			assert.strictEqual(oInfo.role, "listbox", "AriaRole");
 			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
 			assert.strictEqual(oInfo.description, "Item1", "Description");
 			assert.strictEqual(oInfo.readonly, false, "Editable");
 
 			oSelect.setSelectedKey("Item2");
 			oInfo = oSelect.getAccessibilityInfo();
-			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
+			assert.strictEqual(oInfo.role, "listbox", "AriaRole");
 			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
 			assert.strictEqual(oInfo.description, "Item2", "Description");
 
