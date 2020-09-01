@@ -12,7 +12,7 @@
 		</headerContent>
 		<subHeader>
 			<Toolbar>
-				<Button type="Back" />
+				<Button type="Back" tooltip="Back"/>
 				<ToolbarSpacer/>
 				<Title text="Toolbar center" level="H3"/>
 				<ToolbarSpacer/>

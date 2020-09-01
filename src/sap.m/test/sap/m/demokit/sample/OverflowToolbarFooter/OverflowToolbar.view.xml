@@ -2,7 +2,10 @@
 	height="100%"
 	controllerName="sap.m.sample.OverflowToolbarFooter.OverflowToolbar"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
+
+	<core:InvisibleText id="text1" text="Label text"/>
 
 	<Page
 		showHeader="false"
@@ -29,12 +32,12 @@
 				<headerToolbar>
 					<OverflowToolbar id="otbSubheader">
 						<ToolbarSpacer/>
-						<SearchField id="maxPrice" liveChange="onFilter">
+						<SearchField ariaLabelledBy="text1" id="maxPrice" liveChange="onFilter">
 							<layoutData><OverflowToolbarLayoutData maxWidth="300px" shrinkable="true" priority="NeverOverflow"/></layoutData>
 						</SearchField>
 						<Button text="Reset" type="Transparent" press="onReset"/>
-						<OverflowToolbarButton type="Transparent" text="Sort" icon="sap-icon://sort" press="onSort"/>
-						<OverflowToolbarButton type="Transparent" text="Group" icon="sap-icon://group-2" press="onGroup"/>
+						<OverflowToolbarButton tooltip="Sort" type="Transparent" text="Sort" icon="sap-icon://sort" press="onSort"/>
+						<OverflowToolbarButton tooltip="Group" type="Transparent" text="Group" icon="sap-icon://group-2" press="onGroup"/>
 					</OverflowToolbar>
 				</headerToolbar>
 				<columns>
@@ -70,12 +73,12 @@
 				<Button type="Reject" text="Reject">
 					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" /></layoutData>
 				</Button>
-				<OverflowToolbarButton text="Delete" icon="sap-icon://delete"/>
-				<OverflowToolbarButton text="Edit" icon="sap-icon://edit"/>
-				<OverflowToolbarButton text="Add" icon="sap-icon://add"/>
-				<OverflowToolbarButton text="Favorite" icon="sap-icon://favorite"/>
-				<OverflowToolbarButton text="Flag" icon="sap-icon://flag"/>
-				<OverflowToolbarToggleButton text="Toggle" icon="sap-icon://action" press="onTogglePress"/>
+				<OverflowToolbarButton tooltip="Delete" text="Delete" icon="sap-icon://delete"/>
+				<OverflowToolbarButton tooltip="Edit" text="Edit" icon="sap-icon://edit"/>
+				<OverflowToolbarButton tooltip="Add" text="Add" icon="sap-icon://add"/>
+				<OverflowToolbarButton tooltip="Favorite" text="Favorite" icon="sap-icon://favorite"/>
+				<OverflowToolbarButton tooltip="Flag" text="Flag" icon="sap-icon://flag"/>
+				<OverflowToolbarToggleButton tooltip="Toggle" text="Toggle" icon="sap-icon://action" press="onTogglePress"/>
 
 			</OverflowToolbar>
 		</footer>
