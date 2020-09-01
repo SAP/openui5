@@ -248,6 +248,12 @@
 				</Annotation>
 			</Annotations>
 			<Annotations Target="special.cases.A/AID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList" Qualifier="in">
+					<Record/>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList" Qualifier="maybe">
+					<Record/>
+				</Annotation>
 				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers">
 					<Collection>
 						<String>in</String>

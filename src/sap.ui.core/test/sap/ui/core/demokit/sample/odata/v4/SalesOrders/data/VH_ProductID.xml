@@ -129,6 +129,30 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
+				<!-- BEWARE: manual change! -->
+				<Annotation Term="SAP__common.ValueListMapping" Qualifier="additional">
+					<Record>
+						<PropertyValue Property="Label" String="Product ID (Additional)" />
+						<PropertyValue Property="CollectionPath" String="H_EPM_PR_SH_Set" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="SAP__common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="ProductID" />
+									<PropertyValue Property="ValueListProperty"
+												   String="PRODUCT_ID" />
+								</Record>
+								<Record Type="SAP__common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="LANGU" />
+								</Record>
+								<Record Type="SAP__common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="TEXT" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<!-- until here -->
 			</Annotations>
 			<Annotations Target="SAP__self.Container/H_T002_SH_Set">
 				<Annotation Term="SAP__capabilities.SearchRestrictions">

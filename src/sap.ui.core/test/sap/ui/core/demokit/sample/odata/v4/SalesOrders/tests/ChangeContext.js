@@ -45,11 +45,20 @@ sap.ui.define([
 
 			// select the first Sales Order and delete Business Partner
 			When.onTheMainPage.selectFirstSalesOrder();
+			When.onTheMainPage.pressValueHelpOnProductID(0);
+			// next line requires modification in VH_ProductID.xml
+			Then.onTheValueHelpPopover.checkTitle("Value Help: Product ID (Additional)");
+			When.onTheValueHelpPopover.close();
 			When.onTheMainPage.pressDeleteBusinessPartnerButton();
 			When.onTheSuccessInfo.confirm();
 			Then.onTheMainPage.checkInputValue("PhoneNumber::detail", "");
 			Then.onTheMainPage.checkInputValue("City::detail", "");
 			Then.onTheMainPage.checkInputValue("PostalCode::detail", "");
+
+			When.onTheMainPage.selectSalesOrderWithId("0500000001");
+			When.onTheMainPage.pressValueHelpOnProductID(0);
+			Then.onTheValueHelpPopover.checkTitle("Value Help: H_EPM_PR_SH_Set");
+			When.onTheValueHelpPopover.close();
 
 			Then.onAnyPage.checkLog();
 			Then.iTeardownMyUIComponent();
