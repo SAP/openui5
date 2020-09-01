@@ -23,6 +23,7 @@ sap.ui.define([
 					'<Button text="Button" id="button"></Button>' +
 					'<Button text="Button With Designtime Data" id="buttonWithDTData" dt:test="testvalue"></Button>' +
 					'<Button text="Button using core:require" id="buttonRequire" core:require="{Link:\'sap/m/Link\'}"></Button>' +
+					'<Button text="Button using Designtime Data and core:require" id="buttonWithDTDataAndRequire" dt:test="testvalue2" core:require="{Link:\'sap/m/Link\'}"></Button>' +
 					'<Button text="StashedButton" id="stashedButton" stashed="true"></Button>' +
 					'<Button text="Wrong Type value" id="brokenButton" type="somethingInvalid"></Button>' +
 					'<core:ExtensionPoint name="extension">' +
@@ -123,19 +124,38 @@ sap.ui.define([
 	});
 
 	QUnit.test("do not collect known namespaces as custom settings", function(assert) {
+		var oXMLSerializer = new XMLSerializer();
 		return this.oView.loaded().then(function() {
 			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
 			// serialize and deserialize the XML to enforce the namespaced attributes
 			this.xml = jQuery.sap.parseXML(
-				this.xml.documentElement.outerHTML
+				oXMLSerializer.serializeToString(this.xml.documentElement)
 			);
 			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
+			// no custom settings for known namespaces at all
+			assert.equal(
+				this.oView.data("sap-ui-custom-settings"), null,
+					"no custom setting should have been collected (view)");
+			assert.equal(
+				this.oView.byId("panel").data("sap-ui-custom-settings"), null,
+					"no custom setting should have been collected (panel)");
 			assert.equal(
 				this.oView.byId("button").data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected");
+					"no custom setting should have been collected (button)");
 			assert.equal(
 				this.oView.byId("buttonRequire").data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected");
+					"no custom setting should have been collected (button with core:require)");
+			// only custom settings for unknown namespaces, e.g. dt
+			// but no additional settings for known namespaces
+			assert.deepEqual(
+				this.oView.byId("buttonWithDTDataAndRequire").data("sap-ui-custom-settings"),
+					{
+						"sap.ui.dt": {
+							"test": "testvalue2"
+						}
+					},
+					"custom setting should have been collected only for unknown namespaces (button with dt:test & core:require)");
+
 		}.bind(this));
 	});
 
