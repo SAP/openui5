@@ -53,6 +53,13 @@ sap.ui.define(function() {
 			QUnit2: {
 				title: "QUnit tests: General QUnit 2 checks"
 			},
+			QUnit2NestedModules: {
+				title: "sap.ui.core: QUnit 2 nested modules",
+				sinon: {
+					// FIXME: Doesn't work with nested modules
+					qunitBridge: false
+				}
+			},
 			SinonJS: {
 				title: "sap.ui.thirdparty.sinon: Support",
 				ui5: {
