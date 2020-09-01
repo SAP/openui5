@@ -1,0 +1,17 @@
+{
+	"sap.app": {
+		"id": "test.sample",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"stringParameter": {
+					"type": "string",
+					"label": "{{STRINGLABEL}}"
+				}
+			}
+		}
+	}
+}

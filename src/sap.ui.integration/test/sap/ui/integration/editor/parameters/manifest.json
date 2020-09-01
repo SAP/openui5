@@ -1,0 +1,168 @@
+{
+	"_version": "1.18.0",
+	"sap.app": {
+		"id": "sap.ui5.test.editor.listcard",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Test Card for Parameters",
+		"subTitle": "Test Card for Parameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://accept"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"string": {
+					"value": "StringValue",
+					"type": "string"
+				},
+				"stringLabel": {
+					"value": "StringValue",
+					"type": "string",
+					"label": "Direct String Label"
+				},
+				"stringLabelTrans": {
+					"value": "StringValue",
+					"type": "string",
+					"label": "{{TRANSLATED_STRING_LABEL}}"
+				},
+				"stringWithDescription": {
+					"type": "string",
+					"value": "StringValue",
+					"label": "String with description",
+					"description": "Description"
+				},
+				"stringWithLongDescription": {
+					"type": "string",
+					"value": "StringValue",
+					"label": "String with long description",
+					"description": "A very long description text that should wrap into the next line"
+				},
+				"stringWithTranslatedValue": {
+					"type": "string",
+					"value": "{{TRANSLATED_STRING_VALUE}}",
+					"label": "String with translated value"
+				},
+				"integer": {
+					"value": 1,
+					"type": "integer"
+				},
+				"integerLabel": {
+					"value": 1,
+					"type": "integer",
+					"label": "Direct Integer Label"
+				},
+				"integerLabelTrans": {
+					"value": 1,
+					"type": "integer",
+					"label": "{{TRANSLATED_INTEGER_LABEL}}"
+				},
+				"number": {
+					"value": 1.5,
+					"type": "number"
+				},
+				"numberLabel": {
+					"value": 1.5,
+					"type": "number",
+					"label": "Direct number Label"
+				},
+				"numberLabelTrans": {
+					"value": 1.5,
+					"type": "number",
+					"label": "{{TRANSLATED_NUMBER_LABEL}}"
+				},
+				"boolean": {
+					"value": false,
+					"type": "boolean"
+				},
+				"booleanLabel": {
+					"value": true,
+					"type": "boolean",
+					"label": "Direct Boolean Label"
+				},
+				"booleanLabelTrans": {
+					"value": false,
+					"type": "boolean",
+					"label": "{{TRANSLATED_BOOLEAN_LABEL}}"
+				},
+				"date": {
+					"value": "2020-09-02",
+					"type": "date"
+				},
+				"dateLabel": {
+					"value": "2020-09-02",
+					"type": "date",
+					"label": "Direct Date Label"
+				},
+				"dateLabelTrans": {
+					"value": "2020-09-02",
+					"type": "date",
+					"label": "{{TRANSLATED_DATE_LABEL}}"
+				},
+				"dateTime": {
+					"value": "2020-09-02T11:21:51.470Z",
+					"type": "datetime"
+				},
+				"dateTimeLabel": {
+					"value": "2020-09-02T11:21:51.470Z",
+					"type": "datetime",
+					"label": "Direct Date Time Label"
+				},
+				"dateTimeLabelTrans": {
+					"value": "2020-09-02T11:21:51.470Z",
+					"type": "datetime",
+					"label": "{{TRANSLATED_DATETIME_LABEL}}"
+				}
+			},
+			"destinations": {
+				"dest": {
+					"name": "JAM"
+				},
+				"destLabel": {
+					"name": "products",
+					"label": "Direct Destination Label"
+				},
+				"destLabelTrans": {
+					"name": "SF",
+					"label": "{{TRANSLATED_DESTINATION_LABEL}}"
+				}
+			}
+		},
+		"header": {
+			"title": "Card Title",
+			"subTitle": "Card Sub Title",
+			"icon": {
+				"src": "sap-icon://accept"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"title": "Title"
+					}
+				],
+				"path": "/"
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": "{title}",
+				"description": "{description}",
+				"info": {
+					"value": "{info}"
+				}
+			},
+			"maxItems": 3
+		}
+	}
+}

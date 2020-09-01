@@ -1,0 +1,49 @@
+.sapUiIntegrationDTPreview {
+	padding: 2rem;
+	overflow: hidden;
+	min-width: calc(190px + 5rem);
+	width: calc(190px + 5rem);
+	height: 350px;
+	box-sizing: border-box;
+	display: inline-block;
+	background-color: rgba(222, 222, 222, 0.3) !important;
+	border: 1px solid rgba(222, 222, 222, 0.5) !important;
+	border-radius: 2px;
+}
+
+.sapUiIntegrationDTPreview::before {
+	content: " ";
+	position: absolute;
+	min-width: calc(190px + 5rem);
+	height: calc(350px - 3rem);
+	background-color: #f0f0f0; /* background-color needed for blocking */
+	opacity: 0.001;
+	margin: -2rem;
+	z-index: 1999;
+}
+
+.sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewDark {
+	background-color: rgba(0, 0, 0, 0.2) !important;
+	border: 1px solid rgba(222, 222, 222, 0.15) !important;
+}
+
+.sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewDark .sapUiIntegrationDTPreviewImg {
+	opacity: 0.2;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewImg {
+	opacity: 1;
+}
+
+.sapUiIntegrationDTPreview .sapFCard.sapUiIntegrationDTPreviewScale {
+	transform: scale3d(0.4, 0.4, 1);
+	transform-origin: 0 0;
+	width: 500px !important;
+	height: 600px !important;
+	position: absolute
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewButton {
+	position: absolute !important;
+	margin: calc(260px + 0.3rem) 0 0 calc(95px - 1rem) !important;
+}
