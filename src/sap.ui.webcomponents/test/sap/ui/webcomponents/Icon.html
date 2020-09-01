@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Icon - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents">
+    </script>
+
+
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require([
+                "sap/ui/webcomponents/Icon",
+            ], function (
+                    Icon
+            ) {
+                var oIcon = new Icon({
+                    name: "accept"
+                }).placeAt("body");
+
+                var oIcon2 = new Icon({
+                    name: "accept",
+                    width: "50px",
+                    height: "50px",
+                    color: "green",
+                    backgroundColor: "yellow",
+                    interactive: true,
+                    click: function() {
+                        console.log("Clicked!")
+                    }
+                }).placeAt("body");
+            });
+        });
+    </script>
+</head>
+<body id="body" class="sapUiBody" style="padding: 4px">
+
+</body>
+</html>

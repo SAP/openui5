@@ -2168,6 +2168,10 @@ sap.ui.define([
 		var sId = oElement.getId();
 		oRm.attr("data-sap-ui", sId);
 
+		if (oElement.__slot) {
+			oRm.attr("slot", oElement.__slot);
+		}
+
 		// render custom data
 		oElement.getCustomData().forEach(function(oData) {
 			var oCheckResult = oData._checkWriteToDom(oElement);

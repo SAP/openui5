@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Small controls - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents">
+    </script>
+
+
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require([
+                "sap/ui/webcomponents/Title",
+                "sap/ui/webcomponents/Switch",
+            ], function (
+                    Title,
+                    Switch
+            ) {
+
+                function handleChange(e) {
+                    console.log("Change", e.getSource().getChecked())
+                }
+
+                var oTitle = new Title({
+                    text: "Hello world",
+                    level: "H3",
+                    wrap: true
+                }).placeAt("body");
+
+                var oSwitch1 = new Switch({
+                    graphical: true,
+                    change: handleChange
+                }).placeAt("body");
+
+                var oSwitch2 = new Switch({
+                    textOn: "ON",
+                    textOff: "OFF",
+                    change: handleChange
+                }).placeAt("body");
+            });
+        });
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>List - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents, sap.m">
+    </script>
+
+
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require([
+                "sap/ui/webcomponents/List",
+                "sap/ui/webcomponents/StandardListItem",
+                "sap/ui/webcomponents/CustomListItem",
+                "sap/ui/webcomponents/GroupHeaderListItem",
+                "sap/ui/webcomponents/Title",
+                "sap/ui/webcomponents/Button",
+                "sap/m/Toolbar",
+                "sap/m/ToolbarSpacer",
+                "sap/m/Button"
+            ], function (
+                    List,
+                    StandardListItem,
+                    CustomListItem,
+                    GroupHeaderListItem,
+                    Title,
+                    WCButton,
+                    Toolbar,
+                    ToolbarSpacer,
+                    Button
+            ) {
+                var oList = new List({
+                    width: "1000px",
+                    items: [
+                        new GroupHeaderListItem({text: "Main items"}),
+                        new StandardListItem({text: "Item 1"}),
+                        new StandardListItem({text: "Item 2"}),
+                        new StandardListItem({text: "Item 3"}),
+                        new GroupHeaderListItem({text: "Other items"}),
+                        new StandardListItem({text: "Other 1"}),
+                        new StandardListItem({text: "Other 2"}),
+                        new StandardListItem({text: "Other 3"})
+                    ],
+                    header: new Toolbar({
+                        content: [
+                            new Button({text: "Button 1"}),
+                            new ToolbarSpacer(),
+                            new Title({text: "List with inset"}),
+                            new ToolbarSpacer(),
+                            new Button({text: "Button 2"})
+                        ]
+                    }),
+                    footerText: "Footer text",
+                    inset: true,
+                    mode: "MultiSelect",
+                    separators: "Inner",
+                    itemClick: function(event) {
+                        console.log("itemClick", event.getParameters());
+                    },
+                    selectionChange: function(event) {
+                        console.log("selectionChange", event.getParameters());
+                    }
+                }).placeAt("body");
+
+                var oList2 = new List({
+                    width: "500px",
+                    items: [
+                        new CustomListItem({
+                            content: [
+                                    new Button({text: "Click me"}),
+                                    new WCButton({text: "WC Click me"})
+                            ]
+                        }),
+                        new CustomListItem({
+                            content: [
+                                new Button({text: "Click me"}),
+                                new WCButton({text: "WC Click me"})
+                            ]
+                        }),
+                        new CustomListItem({
+                            content: [
+                                new Button({text: "Click me"}),
+                                new WCButton({text: "WC Click me"})
+                            ]
+                        }),
+                    ],
+                    headerText: "Custom list items here",
+                    footerText: "Footer of the custom list items",
+                    mode: "Delete",
+                    itemClick: function(event) {
+                        console.log("itemClick", event.getParameters());
+                    },
+                    selectionChange: function(event) {
+                        console.log("selectionChange", event.getParameters());
+                    }
+                }).placeAt("body");
+            });
+        });
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Input - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents">
+    </script>
+
+
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require([
+                "sap/ui/webcomponents/Input",
+                "sap/ui/webcomponents/Icon",
+                "sap/ui/webcomponents/SuggestionItem",
+                "sap/ui/core/Icon"
+            ], function (
+                    Input,
+                    Icon,
+                    SuggestionItem,
+                    CoreIcon,
+            ) {
+                var oInput = new Input({
+                    showSuggestions: true,
+                    highlight: true,
+                    required: true,
+                    valueState: "Warning",
+                    valueStateMessage: "You must select a country!",
+                    placeholder: "Country...",
+                    suggestionItems: [
+                        new SuggestionItem({text: "America", group: true}),
+                        new SuggestionItem({text: "Argentina", description: "some description", icon: "accept"}),
+                        new SuggestionItem({text: "Brazil", description: "some description 2", icon: "accept"}),
+                        new SuggestionItem({text: "Chile", description: "some description 3", icon: "accept"}),
+                        new SuggestionItem({text: "Mexico", description: "some description 4", icon: "accept"}),
+                        new SuggestionItem({text: "Africa", group: true}),
+                        new SuggestionItem({text: "Morocco", description: "some description 5", icon: "accept"}),
+                        new SuggestionItem({text: "Europe", group: true}),
+                        new SuggestionItem({text: "Italy", description: "some description 6", icon: "accept"}),
+                        new SuggestionItem({text: "Spain", description: "some description 7", icon: "accept"}),
+                    ],
+                    icon: new Icon({name: "message-warning"}),
+                    change: function(event) {
+                        console.log("Change event", oInput.getValue());
+                    },
+                    input: function(event) {
+                        var p = event.getParameters();
+                        console.log("Input event: value - ", p.value);
+                    }
+                }).placeAt("body");
+
+                var oInput2 = new Input({
+                    icon: new CoreIcon({src: "sap-icon://add"})
+                }).placeAt("body");
+
+                var oInput3 = new Input({
+                    icon: new Icon({name: "add"})
+                }).placeAt("body");
+            });
+        });
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>

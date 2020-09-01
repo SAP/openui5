@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Button - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents, sap.m">
+    </script>
+
+    <!--
+
+    -->
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require([
+                "sap/m/Toolbar",
+                "sap/m/ToolbarSpacer",
+                "sap/m/Button",
+                "sap/ui/webcomponents/Button"
+            ], function (
+                    Toolbar,
+                    ToolbarSpacer,
+                    Button,
+                    WCButton
+            ) {
+
+                var handler = function(event) {
+                    console.log(event);
+                };
+
+                var oToolbar = new Toolbar({
+                    content: [
+                        new Button({text: "UI5 Button 1", press: handler}),
+                        new ToolbarSpacer(),
+                        new WCButton({text: "WC Button 1", design: "Positive", width: "200px", click: handler}),
+                        new WCButton({text: "WC Button 2", design: "Negative", textDirection: "RTL", click: handler}),
+                        new WCButton({text: "WC Button 3", icon: "add", click: handler}),
+                        new ToolbarSpacer(),
+                        new Button({text: "UI5 Button 2", icon: "sap-icon://add", press: handler})
+                    ]
+                }).placeAt("body");
+            });
+        });
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>

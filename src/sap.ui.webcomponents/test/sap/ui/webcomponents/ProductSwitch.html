@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>ProductSwitch - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents">
+    </script>
+
+
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require([
+                "sap/ui/webcomponents/ProductSwitch",
+                "sap/ui/webcomponents/ProductSwitchItem"
+            ], function (
+                    ProductSwitch,
+                    ProductSwitchItem
+            ) {
+                var oProductSwitch = new ProductSwitch({
+                    items: [
+                            new ProductSwitchItem({heading: "Item 1", subtitle: "Item 1 subtitle", icon: "add", targetSrc: "#1"}),
+                            new ProductSwitchItem({heading: "Item 2", subtitle: "Item 2 subtitle", icon: "employee", targetSrc: "#2"}),
+                            new ProductSwitchItem({heading: "Item 3", subtitle: "Item 3 subtitle", icon: "home", targetSrc: "#3"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"}),
+                            new ProductSwitchItem({heading: "Item 4", subtitle: "Item 4 subtitle", icon: "add", targetSrc: "#4"})
+                    ],
+                    change: function(event) {
+                        var p = event.getParameters();
+                        console.log("Change event: old", p.previouslySelectedItem && p.previouslySelectedItem.getId(), " new: ", p.selectedItem.getId());
+                    }
+                }).placeAt("body");
+            });
+        });
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>

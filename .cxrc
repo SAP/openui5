@@ -13,7 +13,8 @@
             "src/sap.ui.unified/**/*",
             "src/sap.ui.ux3/**/*",
             "src/sap.uxap/**/*",
-            "src/sap.ui.testrecorder/**/*"
+            "src/sap.ui.testrecorder/**/*",
+            "src/sap.ui.webcomponents/**/*"
         ],
         "core": [
             "/*",

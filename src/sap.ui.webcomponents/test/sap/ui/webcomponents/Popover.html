@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Popover - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents, sap.m">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require([
+                "sap/ui/webcomponents/Popover",
+                "sap/ui/webcomponents/Button",
+                "sap/ui/webcomponents/Title",
+                "sap/m/Toolbar",
+                "sap/m/ToolbarSpacer",
+                "sap/m/Text"
+            ], function (
+                    WCPopover,
+                    WCButton,
+                    WCTitle,
+                    Toolbar,
+                    ToolbarSpacer,
+                    Text
+            ) {
+                var handleEvent = function(event) {
+                    console.log(event);
+                };
+
+                var oPopover = new WCPopover({
+                    width: "200px",
+                    height: "200px",
+                    // modal: true,
+                    placementType: "Bottom",
+                    // noArrow: true,
+                    header: new Toolbar({
+                        width: "100%",
+                        content: [
+                            new ToolbarSpacer(),
+                            new WCTitle({text: "Popover"}),
+                            new ToolbarSpacer(),
+                        ]
+                    }),
+                    content: [
+                            new Text({text: "This popover is 200x200px"})
+                    ],
+                    footer: new Toolbar({
+                        width: "100%",
+                        content: [
+                            new ToolbarSpacer(),
+                            new WCButton({
+                                text: "Close", click: function () {
+                                    oPopover.close();
+                                }
+                            })
+                        ]
+                    }),
+                    beforeOpen: handleEvent,
+                    afterOpen: handleEvent,
+                    beforeClose: handleEvent,
+                    afterClose: handleEvent,
+                }).placeAt("body");
+
+                var oButton = new WCButton({
+                    text: "Open Popover",
+                    click: function () {
+                        oPopover.openBy(oButton);
+                    }
+                }).placeAt("body");
+            });
+        });
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>

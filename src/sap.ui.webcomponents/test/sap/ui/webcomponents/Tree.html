@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Tree - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents, sap.m">
+    </script>
+
+
+
+    <script id="mainView" type="sapui5/xmlview">
+        <mvc:View
+            controllerName="web.tree.controller"
+            xmlns:core="sap.ui.core"
+            xmlns:m="sap.m"
+            xmlns:mvc="sap.ui.core.mvc"
+            xmlns="sap.ui.webcomponents">
+
+            <BusyIndicator id="busy" width="100%">
+                <Tree id="myTree" noDataText="No data" mode="MultiSelect" itemClick="handleItemClick" itemToggle="handleItemToggle" selectionChange="handleSelectionChange">
+                        <header>
+                            <m:Toolbar>
+                                <m:Button text="Button 1"/>
+                                <m:ToolbarSpacer/>
+                                <m:Button text="Button 2"/>
+                            </m:Toolbar>
+                        </header>
+
+                        <items>
+                            <TreeItem expanded="true" text="Tree 1" icon="paste" selected="true">
+                                <TreeItem expanded="true" text="Tree 1.1" selected="true">
+                                    <TreeItem text="Tree 1.1.1"></TreeItem>
+                                    <TreeItem text="Tree 1.1.2"></TreeItem>
+                                </TreeItem>
+                            </TreeItem>
+
+                            <TreeItem text="Tree 2" icon="copy">
+                                <TreeItem text="Tree 2.1">
+                                    <TreeItem text="Tree 2.1.1"></TreeItem>
+                                    <TreeItem text="Tree 2.1.2">
+                                        <TreeItem text="Tree 2.1.2.1"></TreeItem>
+                                        <TreeItem text="Tree 2.1.2.2"></TreeItem>
+                                        <TreeItem text="Tree 2.1.2.3"></TreeItem>
+                                        <TreeItem text="Tree 2.1.2.5"></TreeItem>
+                                    </TreeItem>
+                                </TreeItem>
+                                <TreeItem text="Tree 2.2"></TreeItem>
+                            </TreeItem>
+
+                            <TreeItem expanded="true" text="Tree 3 (no icon)">
+                            </TreeItem>
+
+                            <TreeItem id="lazy" hasChildren="true" text="This will be lazily loaded">
+                            </TreeItem>
+
+                        </items>
+                    </Tree>
+                </BusyIndicator>
+        </mvc:View>
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+
+            sap.ui.require([
+                "sap/ui/core/mvc/Controller",
+                "sap/ui/core/mvc/XMLView",
+                "sap/ui/webcomponents/Tree",
+                "sap/ui/webcomponents/TreeItem",
+                "sap/ui/core/Core"
+            ], function (
+                    Controller,
+                    XMLView,
+                    Tree,
+                    TreeItem,
+                    Core
+            ) {
+                Controller.extend("web.tree.controller", {
+                    handleItemClick: function(oEvent) {
+                        console.log(oEvent.getId(), oEvent.getParameters());
+                    },
+                    handleItemToggle: function(oEvent) {
+                        console.log(oEvent.getId(), oEvent.getParameters());
+
+                        var oBusy = Core.byId("__xmlview0--busy");
+                        var oItem = oEvent.getParameter("item");
+                        if (oItem.getId() === "__xmlview0--lazy" && oItem.getItems().length === 0) {
+                            oEvent.preventDefault();
+                            oBusy.setActive(true);
+                            setTimeout(function() {
+                                var newItem = new TreeItem({
+                                    text: "Node fetched from DB after 2 sec"
+                                });
+                                oItem.addItem(newItem);
+                                oItem.toggle(); // now manually switch
+                                oBusy.setActive(false);
+                            }, 2000);
+                        }
+                    },
+                    handleSelectionChange: function(oEvent) {
+                        console.log(oEvent.getId(), oEvent.getParameters());
+                    }
+                });
+
+                XMLView.create({definition: jQuery('#mainView').html()}).then(function (oViewInstance) {
+                    oViewInstance.placeAt("body");
+                });
+            });
+
+        });
+
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>

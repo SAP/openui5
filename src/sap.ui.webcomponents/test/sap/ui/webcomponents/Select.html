@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Select - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents, sap.ui.layout">
+    </script>
+
+
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require([
+                "sap/ui/webcomponents/Select",
+                "sap/ui/webcomponents/Option",
+                "sap/ui/webcomponents/Button",
+                "sap/ui/layout/HorizontalLayout"
+            ], function (
+                    Select,
+                    Option,
+                    Button,
+                    HL
+            ) {
+                var oSelect = new Select({
+                    valueState: "Information",
+                    valueStateMessage: "Choose a country",
+                    options: [
+                            new Option({text: "Algeria", icon: "accept"}),
+                            new Option({text: "Brazil", selected: true, icon: "accept"}),
+                            new Option({text: "Nigeria", icon: "accept"})
+                    ],
+                    change: function(event) {
+                        console.log("Change event", oSelect.getSelectedOption().getText(), event);
+                    }
+                });
+
+                var oButton = new Button({
+                    text: "Set selected option to Nigeria",
+                    click: function() {
+                        oSelect.setSelectedOption(oSelect.getOptions()[2]);
+                    }
+                });
+
+                var oHL = new HL({
+                    content: [oSelect, oButton]
+                }).placeAt("body");
+            });
+        });
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>

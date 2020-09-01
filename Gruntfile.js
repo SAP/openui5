@@ -287,6 +287,10 @@ module.exports = function(grunt) {
 				name: 'themelib_sap_fiori_3',
 				path: 'src/themelib_sap_fiori_3',
 				type: 'theme'
+			},
+			{
+				name: 'sap.ui.webcomponents',
+				path: 'src/sap.ui.webcomponents'
 			}
 		]
 

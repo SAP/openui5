@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Table - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents, sap.m">
+    </script>
+
+
+
+    <script id="mainView" type="sapui5/xmlview">
+        <mvc:View
+            controllerName="web.table.controller"
+            xmlns:core="sap.ui.core"
+            xmlns:m="sap.m"
+            xmlns:mvc="sap.ui.core.mvc"
+            xmlns="sap.ui.webcomponents">
+
+            <Table id="myTable" rowClick="handleRowClick" popinChange="handlePopinChange">
+                    <columns>
+                        <TableColumn demandPopin="false">
+                            <m:Text text="Product"/>
+                        </TableColumn>
+                        <TableColumn demandPopin="true" minWidth="1280" popinText="Description">
+                            <m:Text text="Description"/>
+                        </TableColumn>
+                        <TableColumn demandPopin="true" minWidth="640" popinText="Price">
+                            <m:Text text="Price"/>
+                        </TableColumn>
+                    </columns>
+
+                    <rows>
+                        <TableRow>
+                            <TableCell><m:Text text="Monitor"/></TableCell>
+                            <TableCell><m:Text text="14 inch old monitor"/></TableCell>
+                            <TableCell><m:Text text="50Eur"/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><m:Text text="Another Monitor"/></TableCell>
+                            <TableCell><m:Text text="15 inch old monitor"/></TableCell>
+                            <TableCell><m:Text text="70Eur"/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><m:Text text="Modern Monitor"/></TableCell>
+                            <TableCell><m:Text text="40 inch monitor"/></TableCell>
+                            <TableCell><m:Text text="500Eur"/></TableCell>
+                        </TableRow>
+                    </rows>
+                </Table>
+        </mvc:View>
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+
+            sap.ui.require([
+                "sap/ui/core/mvc/Controller",
+                "sap/ui/core/mvc/XMLView"
+            ], function (
+                    Controller,
+                    XMLView
+            ) {
+                Controller.extend("web.table.controller", {
+                    handleRowClick: function(oEvent) {
+                        console.log(oEvent);
+                    },
+                    handlePopinChange: function(oEvent) {
+                        console.log(oEvent);
+                    }
+                });
+
+                XMLView.create({definition: jQuery('#mainView').html()}).then(function (oViewInstance) {
+                    oViewInstance.placeAt("body");
+                });
+            });
+
+        });
+
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>

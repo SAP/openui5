@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>DatePicker - sap.ui.webcomponents</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webcomponents">
+    </script>
+
+
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require([
+                "sap/ui/webcomponents/DatePicker",
+            ], function (
+                    DatePicker
+            ) {
+                var oDatePicker = new DatePicker({
+                    change: function(event) {
+                        console.log("Change event", oDatePicker.getValue());
+                    },
+                    input: function(event) {
+                        var p = event.getParameters();
+                        console.log("Input event: value - ", p.value, " valid - ", p.valid);
+                    }
+                }).placeAt("body");
+
+                var oDatePicker2 = new DatePicker({
+                    primaryCalendarType: "Buddhist"
+                }).placeAt("body");
+
+                var oDatePicker3 = new DatePicker({
+                    primaryCalendarType: "Japanese",
+                    valueState: "Error",
+                    valueStateMessage: "Error choosing date, sorry"
+                }).placeAt("body");
+            });
+        });
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+
+</body>
+</html>
