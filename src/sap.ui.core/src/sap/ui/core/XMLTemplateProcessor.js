@@ -1004,7 +1004,7 @@ function(
 								Log.debug(oView + ": XMLView parser ignored preprocessor attribute '" + sName + "' (value: '" + sValue + "')");
 							} else if (sNamespace === CORE_NAMESPACE
 									   || sNamespace === ID_MARKER_NAMESPACE
-									   || sNamespace && sNamespace.startsWith("xmlns:") ) {
+									   || sName.startsWith("xmlns:") ) {
 								// ignore namespaced attributes that are handled by the XMLTP itself
 							} else {
 								// all other namespaced attributes are kept as custom settings
