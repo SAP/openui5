@@ -2278,7 +2278,7 @@ function(
 		var oList = this._getList();
 		var bInputFocussed = document.activeElement === this.getFocusDomRef();
 
-		if (this.getEditable() && !bInputFocussed && (this._iFocusedIndex != null) && (oList.getItems().length > this._iFocusedIndex)) {
+		if (this.getEditable() && !bInputFocussed && oList && oList.getItems()[this._iFocusedIndex]) {
 			oList.getItems()[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
 		}

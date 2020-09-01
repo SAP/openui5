@@ -4899,6 +4899,48 @@ sap.ui.define([
 		oFocusinStub.restore();
 	});
 
+	QUnit.test("onAfterRenderingList should check properly the focused item", function(assert) {
+		// arrange
+		var oMultiComboBox = new MultiComboBox({
+				items: [new Item({text: "test1"})]
+			}).placeAt("MultiComboBox-content"),
+			iTestFocusIndex = 100,
+			oFocusSpy,
+			oGetFocusedDomStub = sinon.stub(oMultiComboBox, "getFocusDomRef");
+
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.open();
+		this.clock.tick(nPopoverAnimationTick);
+
+		oFocusSpy = sinon.spy(oMultiComboBox._getList().getItems()[0], "focus");
+
+		// act
+		oMultiComboBox._iFocusedIndex = iTestFocusIndex;
+		document.activeElement = false;
+		oMultiComboBox.onAfterRenderingList();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oFocusSpy.calledOnce, "The item should not be focused");
+		assert.strictEqual(oMultiComboBox._iFocusedIndex, iTestFocusIndex, "should not reset the focused index");
+
+		// arrange
+		oMultiComboBox._iFocusedIndex = 0;
+
+		// act
+		oMultiComboBox.onAfterRenderingList();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oFocusSpy.calledOnce, "The item should be focused");
+		assert.strictEqual(oMultiComboBox._iFocusedIndex, null, "should reset the focused index");
+
+		// clean up
+		oMultiComboBox.destroy();
+		oGetFocusedDomStub.restore();
+		oFocusSpy.restore();
+	});
+
 	QUnit.module("Focus handling");
 
 	QUnit.test("Focusing a token inside the MCB should not add css focus indication to the MCB itself", function(assert) {
