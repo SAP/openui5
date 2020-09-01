@@ -10,24 +10,28 @@
 		margin-right: 0 !important;
 	}
 
-	.sapMBtnInner {
-		text-align: left;
-		text-shadow: none;
-		display: block;
-	}
-	.sapMBtn {
-		padding-left: 0.0625rem; //1px
-		padding-right: 0.0625rem; //1px
-	}
+	button {
 
-	.sapMBtn:focus > .sapMFocusable,
-	&.sapMBtn:focus > .sapMFocusable {
-		border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_FocusColor; //1px
-		outline: none;
-	}
+		&.sapMBtn {
+			padding-left: 0.0625rem; //1px
+			padding-right: 0.0625rem; //1px
+		}
 
-	.sapMBtn.sapMBtnDisabled {
-		opacity: 0.5;
+		.sapMBtnInner {
+			text-align: left;
+			text-shadow: none;
+			display: block;
+		}
+
+		.sapMBtn:focus > .sapMFocusable,
+		&.sapMBtn:focus > .sapMFocusable {
+			border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_FocusColor; //1px
+			outline: none;
+		}
+
+		&.sapMBtn.sapMBtnDisabled {
+			opacity: 0.5;
+		}
 	}
 
 	&.sapMPopover, .sapMPopover {
@@ -72,7 +76,7 @@
 		&.sapMPopoverArr, .sapMPopoverArr {
 			left: 1.375rem !important; //16px
 		}
-		.sapMBtn {
+		button.sapMBtn {
 			margin-left: 0.125rem; //2px
 			margin-right: 0.125rem; //2px
 		}
@@ -87,11 +91,11 @@
 }
 
 // Special handling for IE and EDGE Browsers
-html[data-sap-ui-browser^="ie"] .sapUiDtContextMenu .sapMBtn:focus .sapMBtnFocusDiv,
-html[data-sap-ui-browser^="ed"] .sapUiDtContextMenu .sapMBtn:focus .sapMBtnFocusDiv {
+html[data-sap-ui-browser^="ie"] .sapUiDtContextMenu button.sapMBtn:focus .sapMBtnFocusDiv,
+html[data-sap-ui-browser^="ed"] .sapUiDtContextMenu button.sapMBtn:focus .sapMBtnFocusDiv {
 	border: none;
 }
 // because the Button-Control sets a specific rule for IE, we have to define the display here again
-html[data-sap-ui-browser*='ie'] .sapUiDtContextMenu .sapMBtnInner {
+html[data-sap-ui-browser*='ie'] .sapUiDtContextMenu button .sapMBtnInner {
 	display: block;
 }
