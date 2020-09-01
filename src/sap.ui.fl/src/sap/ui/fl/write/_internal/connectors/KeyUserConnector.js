@@ -32,6 +32,13 @@ sap.ui.define([
 		mPropertyBag.dataType = "json";
 		mPropertyBag.contentType = "application/json; charset=utf-8";
 	}
+
+	function renameVersionNumberProperty(oVersion) {
+		oVersion.version = oVersion.versionNumber;
+		delete oVersion.versionNumber;
+		return oVersion;
+	}
+
 	/**
 	 * Connector for saving and deleting data from SAPUI5 Flexibility KeyUser service.
 	 *
@@ -65,7 +72,9 @@ sap.ui.define([
 			mParameters.limit = mPropertyBag.limit;
 			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sVersionsUrl, "GET", mPropertyBag).then(function (oResult) {
-				return oResult.response;
+				return oResult.response.map(function (oVersion) {
+					return renameVersionNumberProperty(oVersion);
+				});
 			});
 		},
 		activate: function (mPropertyBag) {
@@ -75,7 +84,8 @@ sap.ui.define([
 			InitialUtils.addLanguageInfo(mParameters);
 			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
-				return oResult.response;
+				var oVersion = oResult.response;
+				return renameVersionNumberProperty(oVersion);
 			});
 		},
 		discardDraft: function (mPropertyBag) {
