@@ -246,10 +246,18 @@ sap.ui.define([
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN
 			}, mPropertyBag);
-			var aReturnedVersions = [];
+			var aReturnedVersions = [{
+				versionNumber: sap.ui.fl.Versions.Draft
+			}, {
+				versionNumber: 1
+			}];
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: aReturnedVersions});
 			return KeyUserConnector.versions.load(mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse, aReturnedVersions, "the versions list is returned correctly");
+				assert.deepEqual(oResponse, [{
+					version: sap.ui.fl.Versions.Draft
+				}, {
+					version: 1
+				}], "the versions list is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app?sap-language=en&limit=10", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
@@ -276,10 +284,14 @@ sap.ui.define([
 				dataType: "json",
 				payload: "{\"title\":\"new Title\"}"
 			}, mPropertyBag);
-			var oActivatedVersion = {};
+			var oActivatedVersion = {
+				versionNumber: 1
+			};
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: oActivatedVersion});
 			return KeyUserConnector.versions.activate(mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse, oActivatedVersion, "the activated version is returned correctly");
+				assert.deepEqual(oResponse, {
+					version: 1
+				}, "the activated version is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=0&sap-language=en", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
@@ -308,10 +320,14 @@ sap.ui.define([
 				dataType: "json",
 				payload: "{\"title\":\"new Title\"}"
 			}, mPropertyBag);
-			var oActivatedVersion = {};
+			var oActivatedVersion = {
+				versionNumber: 1
+			};
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: oActivatedVersion});
 			return KeyUserConnector.versions.activate(mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse, oActivatedVersion, "the activated version is returned correctly");
+				assert.deepEqual(oResponse, {
+					version: 1
+				}, "the activated version is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=&sap-language=en", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
@@ -334,8 +350,7 @@ sap.ui.define([
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN
 			}, mPropertyBag);
-			var oActivatedVersion = [];
-			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: oActivatedVersion});
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves();
 			return KeyUserConnector.versions.discardDraft(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/draft/com.sap.test.app", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "DELETE", "the method is correct");
