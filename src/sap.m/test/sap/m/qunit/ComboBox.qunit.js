@@ -1467,7 +1467,6 @@ sap.ui.define([
 		assert.ok(oComboBox.getFirstItem() === oItem);
 		assert.ok(fnAddItemSpy.returned(oComboBox));
 		assert.ok(oItem.hasListeners("_change"));
-		assert.ok(oComboBox.isItemVisible(oItem));
 
 		// cleanup
 		oComboBox.destroy();
@@ -1522,7 +1521,6 @@ sap.ui.define([
 		assert.ok(oComboBox.getFirstItem() === oItem);
 		assert.ok(fnInsertItem.returned(oComboBox), 'oComboBox.insertAggregation() method return the "this" reference');
 		assert.ok(oItem.hasListeners("_change"));
-		assert.ok(oComboBox.isItemVisible(oItem));
 
 		// act
 		oComboBox.syncPickerContent();
@@ -8397,7 +8395,6 @@ sap.ui.define([
 		assert.ok(oComboBox.getSelectedItem() === null);
 		assert.strictEqual(oComboBox.getSelectedItemId(), "");
 		assert.strictEqual(oComboBox.getSelectedKey(), "");
-		assert.strictEqual(oComboBox.isFiltered(), false);
 
 		// cleanup
 		oComboBox.destroy();
@@ -8444,7 +8441,6 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Denmark", "Selected value should be 'Denmark'");
 		assert.strictEqual(oComboBox.getSelectedKey(), "DK");
-		assert.strictEqual(oComboBox.isFiltered(), true);
 		assert.strictEqual(oComboBox.getValue(), "Denmark");
 
 		// cleanup
@@ -8492,7 +8488,6 @@ sap.ui.define([
 		// assert
 		assert.ok(oComboBox.getSelectedItem().getText() === "Denmark");
 		assert.strictEqual(oComboBox.getSelectedKey(), "DK");
-		assert.strictEqual(oComboBox.isFiltered(), true);
 		assert.strictEqual(oComboBox.getValue(), "DK");
 
 		// cleanup
@@ -8540,7 +8535,6 @@ sap.ui.define([
 		// assert
 		assert.ok(oComboBox.getSelectedItem().getText() === "Algeria");
 		assert.strictEqual(oComboBox.getSelectedKey(), "DZ");
-		assert.strictEqual(oComboBox.isFiltered(), true);
 		assert.strictEqual(oComboBox.getValue(), "DZ");
 
 		// cleanup
@@ -8712,7 +8706,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oPickerTextField.getValue(), sExpectedValue);
-		assert.ok(oComboBox.isFiltered());
 		this.clock.tick(300);
 		assert.strictEqual(oPickerTextField.getSelectedText(), "orem ipsum");
 
@@ -10666,7 +10659,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oComboBox.isItemVisible(oItem), false);
+		assert.strictEqual(oItem.bVisible, false);
 
 		// cleanup
 		oComboBox.destroy();
