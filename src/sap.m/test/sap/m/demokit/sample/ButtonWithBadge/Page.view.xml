@@ -18,7 +18,6 @@
 					class="sapUiTinyMarginBeginEnd"
 					icon="{= ${/buttonWithIcon} ? ${/buttonIcon} : '' }"
 					type="{/buttonType}"
-					tooltip="{= ${/buttonWithIcon} &amp;&amp; !${/buttonWithText} &amp;&amp; ${/buttonWithTooltip} ? ${/buttonTooltip} : '' }"
 					text="{= ${/buttonWithText} ? ${/buttonText} : '' }">
 					<customData>
 						<BadgeCustomData
@@ -43,7 +42,7 @@
 					<StepInput
 						id="CurrentValue"
 						value="{/badgeCurrent}"
-						width="120px"
+						width="130px"
 						change="currentChangeHandler"/>
 				</FlexBox>
 				<FlexBox
@@ -57,18 +56,18 @@
 					<Input
 						id="MinInput"
 						value="{/badgeMin}"
-						width="50px"
+						width="55px"
 						type="Number"
-						change="currentChangeHandler"/>
+						change="minChangeHandler"/>
 					<Text
 						renderWhitespace="true"
 						text=" to "/>
 					<Input
 						id="MaxInput"
 						value="{/badgeMax}"
-						width="50px"
+						width="55px"
 						type="Number"
-						change="currentChangeHandler"/>
+						change="maxChangeHandler"/>
 				</FlexBox>
 				<Text
 					class="sapUiTinyMarginBeginEnd"
@@ -119,11 +118,6 @@
 						id="TextCheckBox"
 						text="Text"
 						selected="{/buttonWithText}"/>
-					<CheckBox
-						id="TooltipCheckBox"
-						text="Tooltip"
-						visible="{= ${/buttonWithIcon} &amp;&amp; !${/buttonWithText} }"
-						selected="{/buttonWithTooltip}"/>
 				</FlexBox>
 				<Toolbar class="sapUiSmallMarginTop">
 					<content>

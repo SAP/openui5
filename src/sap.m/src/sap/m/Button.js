@@ -49,6 +49,10 @@ sap.ui.define([
 	// shortcut for sap.ui.core.aria.HasPopup
 	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
+	// constraints for the minimum and maximum Badge value
+	var BADGE_MIN_VALUE = 1,
+		BADGE_MAX_VALUE = 9999;
+
 	/**
 	 * Constructor for a new <code>Button</code>.
 	 *
@@ -216,6 +220,67 @@ sap.ui.define([
 			value: "",
 			state: ""
 		};
+
+		this._badgeMinValue = BADGE_MIN_VALUE;
+		this._badgeMaxValue = BADGE_MAX_VALUE;
+	};
+
+	//Formatter callback of the badge pre-set value, before it is visualized
+
+	Button.prototype.badgeValueFormatter = function(vValue) {
+		var iValue = parseInt(vValue),
+			oBadgeCustomData = this.getBadgeCustomData(),
+			bIsBadgeVisible = oBadgeCustomData.getVisible();
+
+		if (isNaN(iValue)) {return false;}
+
+		// limit value of the badge
+		if (iValue < this._badgeMinValue) {
+			bIsBadgeVisible && oBadgeCustomData.setVisible(false);
+		} else  {
+			!bIsBadgeVisible && oBadgeCustomData.setVisible(true);
+
+			if (iValue > this._badgeMaxValue && vValue.indexOf("+") === -1) {
+				vValue = this._badgeMaxValue < 1000 ? this._badgeMaxValue + "+" : "999+";
+			}
+		}
+
+		return vValue;
+	};
+
+	/**
+	 * Badge minimum value setter - called when someone wants to change the value
+	 * below which the badge is hidden.
+	 *
+	 * @param {number} iMin minimum visible value of the badge (not less than minimum Badge value - 1)
+	 * @return {sap.m.Button} this to allow method chaining
+	 * @public
+	 */
+	Button.prototype.setBadgeMinValue = function(iMin) {
+		var iValue = this.getBadgeCustomData().getValue();
+
+		if (iMin && !isNaN(iMin) && iMin >= BADGE_MIN_VALUE && iMin != this._badgeMinValue) {
+			this._badgeMinValue = iMin;
+			this.badgeValueFormatter(iValue);
+			this.invalidate();
+		}
+		return this;
+	};
+
+	/**
+	 * Badge minimum value setter - called when someone wants to change the value
+	 * above which the badge value is displayed with + after the value (ex. 999+)
+	 *
+	 * @param {number} iMax maximum visible value of the badge (not greater than maximum Badge value - 9999)
+	 * @return {sap.m.Button} this to allow method chaining
+	 * @public
+	 */
+	Button.prototype.setBadgeMaxValue = function(iMax) {
+		if (iMax && !isNaN(iMax) && iMax <= BADGE_MAX_VALUE && iMax != this._badgeMaxValue) {
+			this._badgeMaxValue = iMax;
+			this.invalidate();
+		}
+		return this;
 	};
 
 	/**
@@ -226,29 +291,16 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.onBadgeUpdate = function(vValue, sState) {
-		var iValue = parseInt(vValue);
-
-		if (!this.getDomRef()) {
-			return;
-		}
-
-		// limit value of the badge
-		if (iValue < 1 && sState !== BadgeState.Disappear) {
-			this.updateBadgeVisibility(false);
-			return;
-		} else if (iValue > 9999 && vValue.indexOf("+") === -1) {
-			vValue = "999+";
-			this.updateBadgeValue(vValue);
-			return;
-		}
 
 		if (this._oBadgeData.value !== vValue || this._oBadgeData.state !== sState) {
+			if (sState === BadgeState.Disappear) {
+				vValue = "";
+			}
 			this._updateBadgeInvisibleText(vValue);
 			this._oBadgeData = {
 				value: vValue,
 				state: sState
 			};
-			this.invalidate();
 		}
 	};
 
