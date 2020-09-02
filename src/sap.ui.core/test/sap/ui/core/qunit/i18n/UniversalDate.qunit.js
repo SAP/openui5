@@ -86,6 +86,11 @@ sap.ui.define([
 		check.call(this, assert, 2);
 	});
 
+	QUnit.test("with parameter Date", function (assert) {
+		var oUDate = new UniversalDate(new Date(year, month, date, hours, minutes, seconds, milliseconds));
+		assert.equal(oUDate.oDate.getMilliseconds(), milliseconds, "milliseconds match, IE11");
+	});
+
 	QUnit.test("getClass", function(assert) {
 		var oClass;
 
