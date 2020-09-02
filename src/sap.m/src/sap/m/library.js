@@ -1498,13 +1498,13 @@ sap.ui.define([
 	thisLib.FrameType = {
 
 		/**
-		 * The 1x1 frame type.
+		 * The 2x2 frame type.
 		 * @public
 		 */
 		OneByOne : "OneByOne",
 
 		/**
-		 * The 2x1 frame type.
+		 * The 4x2 frame type.
 		 * @public
 		 */
 		TwoByOne : "TwoByOne",
@@ -1521,7 +1521,21 @@ sap.ui.define([
 		 * Support for this type in sap.m.GenericTile is deprecated since 1.48.0.
 		 * @protected
 		 */
-		Auto : "Auto"
+		Auto : "Auto",
+
+		/**
+		 * The 4x1 frame type.
+		 * @public
+		 * @since 1.83
+		 */
+		TwoByHalf: "TwoByHalf",
+
+		/**
+		 * The 2x1 frame type.
+		 * @public
+		 * @since 1.83
+		 */
+		OneByHalf: "OneByHalf"
 
 	};
 

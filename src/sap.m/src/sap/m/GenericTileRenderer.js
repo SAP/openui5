@@ -12,6 +12,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	// shortcut for sap.m.LoadState
 	var LoadState = library.LoadState;
 
+	// shortcut for sap.m.FrameType
+	var frameTypes = library.FrameType;
+
 	/**
 	 * GenericTile renderer.
 	 * @namespace
@@ -33,6 +36,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		var sState = oControl.getState();
 		var sStateClass = encodeCSS("sapMGTState" + sState);
 		var sScopeClass;
+		var frameType = oControl.getFrameType();
 
 		// Render a link when URL is provided, not in action scope and the state is enabled
 		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
@@ -63,7 +67,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		if (!oControl._isInActionScope() && oControl._bShowActionsView) {
 			oRm.addClass("sapMGTScopeActions");
 		}
-		oRm.addClass(oControl.getFrameType());
+		oRm.addClass(frameType);
 		if (!bRenderLink) { // buttons only; <a> elements always have the default role
 			oRm.writeAttribute("role", bHasPress ? "button" : "presentation");
 		}
@@ -93,7 +97,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 
 		oRm.write("<div");
 		oRm.addClass("sapMGTHdrContent");
-		oRm.addClass(oControl.getFrameType());
+		oRm.addClass(frameType);
 		if (sTooltipText) {
 			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
@@ -104,18 +108,34 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		}
 
 		this._renderHeader(oRm, oControl);
-		if (oControl.getSubheader()) {
-			this._renderSubheader(oRm, oControl);
+		var aTileContent = oControl.getTileContent();
+		var iLength = aTileContent.length;
+		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
+		var isContentPresent = false;
+		for (var i = 0; i < iLength; i++) {
+			if (aTileContent[i].getAggregation("content") !== null){
+				if (frameType === frameTypes.OneByHalf && aTileContent[i].getAggregation("content").getMetadata()._sClassName === "sap.m.ImageContent") {
+					isContentPresent = false;
+				} else {
+					isContentPresent = true;
+					break;
+				}
+			}
 		}
+		if (!(isHalfFrame && isContentPresent)) {
+			if (oControl.getSubheader()) {
+				this._renderSubheader(oRm, oControl);
+			}
+		}
+
 		oRm.write("</div>");
 
 		oRm.write("<div");
 		oRm.addClass("sapMGTContent");
 		oRm.writeClasses();
+
 		oRm.writeAttribute("id", oControl.getId() + "-content");
 		oRm.write(">");
-		var aTileContent = oControl.getTileContent();
-		var iLength = aTileContent.length;
 		for (var i = 0; i < iLength; i++) {
 			oControl._checkFooter(aTileContent[i], oControl);
 			oRm.renderControl(aTileContent[i]);

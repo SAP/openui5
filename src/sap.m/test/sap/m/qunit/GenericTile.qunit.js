@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/GenericTile",
 	"sap/m/TileContent",
 	"sap/m/NumericContent",
+	"sap/m/ImageContent",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/m/GenericTileLineModeRenderer",
@@ -15,7 +16,7 @@ sap.ui.define([
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension",
 	"jquery.sap.keycodes"
-], function(jQuery, GenericTile, TileContent, NumericContent, Device, ResizeHandler, GenericTileLineModeRenderer,
+], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, ResizeHandler, GenericTileLineModeRenderer,
             Text, ScrollContainer, FlexBox, GenericTileRenderer, library) {
 	"use strict";
 
@@ -1312,7 +1313,7 @@ sap.ui.define([
 	QUnit.test("Function _queueAnimationEnd called with GenericTile as event target", function(assert) {
 		//Arrange
 		var oEvent = {
-			target: jQuery("<div class='sapMGT'></div>")
+			target: jQuery("<div class='sapMGT' />")
 		};
 
 		//Act
@@ -1324,8 +1325,8 @@ sap.ui.define([
 
 	QUnit.test("Function _queueAnimationEnd called with GenericTile child as event target", function(assert) {
 		//Arrange
-		var $Tile = jQuery("<div class='sapMGT'></div>");
-		var $Child = jQuery("<div class='sapMText'></div>");
+		var $Tile = jQuery("<div class='sapMGT' />");
+		var $Child = jQuery("<div class='sapMText' />");
 		$Tile.append($Child);
 		var oEvent = {
 			target: $Child
@@ -1341,7 +1342,7 @@ sap.ui.define([
 	QUnit.test("Function _queueAnimationEnd called with Page as event target", function(assert) {
 		//Arrange
 		var oEvent = {
-			target: jQuery("<div class='sapMPage'></div>")
+			target: jQuery("<div class='sapMPage' />")
 		};
 		sinon.stub(this.oGenericTile, "_handleAnimationEnd");
 		this.oGenericTile._oAnimationEndCallIds = {};
@@ -2951,5 +2952,235 @@ sap.ui.define([
 		//Default event is not cancelled when no tile is selected
 		assert.ok(!tabDown.isDefaultPrevented(), "Navigation using TAB enabled since no tile is in selected state");
 
+	});
+
+QUnit.test("Check the max line of header if footer exists", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	this.oGenericTile.setSubheader("");
+	var tileContent =  new TileContent("tile-cont-two-by-half", {
+		unit: "EUR",
+		footer: "Current Quarter"
+	});
+	this.oGenericTile.destroyTileContent();
+	this.oGenericTile.addTileContent(tileContent);
+	sap.ui.getCore().applyChanges();
+	var check = jQuery.sap.domById("tile-cont-two-by-half-footer-text");
+	if (check != null) {
+		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines when footer is available");
+	}
+});
+
+QUnit.test("Check for the visibilty of content in header mode in 4*1 tile", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	sap.ui.getCore().applyChanges();
+	//to check if the content area is visible.
+	var oVisibilityCheck = sinon.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+	this.oGenericTile.setMode(GenericTileMode.HeaderMode);
+	sap.ui.getCore().applyChanges();
+	assert.ok(oVisibilityCheck.calledWith(false), "The visibility is changed to not visible");
+});
+
+QUnit.test("Check the padding classes of the 4*1 tile", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	sap.ui.getCore().applyChanges();
+	var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
+	assert.ok(check,"true","all ok");
+	var height = getComputedStyle(this.oGenericTile.getDomRef().querySelector(".sapMGTHdrContent")).height;
+	assert.ok(height,20,"all ok");
+});
+
+QUnit.test("Content Proritisation - No Content rendered in OneByHalf in case of image", function(assert) {
+	this.oGenericTile.setFrameType("OneByHalf");
+	var tileContent =  new TileContent("tile-cont-two-by-half", {
+		unit: "EUR",
+		footer: "Current Quarter",
+		content: new ImageContent('image-cnt', {
+			src: IMAGE_PATH + "headerImg1.png",
+			description: "image descriptions ..."
+		})
+	});
+	this.oGenericTile.destroyTileContent();
+	this.oGenericTile.addTileContent(tileContent);
+	sap.ui.getCore().applyChanges();
+	var display = getComputedStyle(this.oGenericTile.getTileContent()[0].getDomRef().querySelector(".sapMImageContent")).display;
+	assert.equal(display, "none");
+	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+	assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
+});
+
+QUnit.test("Content Proritisation - Numeric content rendered in OneByHalf ", function(assert) {
+	this.oGenericTile.setFrameType("OneByHalf");
+	sap.ui.getCore().applyChanges();
+	assert.notEqual(this.oGenericTile.getTileContent()[0].getDomRef(), null);
+	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
+});
+
+QUnit.test("Content Proritisation - Header has max one line when Numeric Content is present ", function(assert) {
+	this.oGenericTile.setFrameType("OneByHalf");
+	this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
+	this.oGenericTile.setSubheader("this is a very long subheader which should exceed two lines so we can test it");
+	sap.ui.getCore().applyChanges();
+	assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 1, "The header has 1 lines");
+});
+
+
+QUnit.test("Content Proritisation - Header has max two lines no Numeric Content is present ", function(assert) {
+	this.oGenericTile.setFrameType("OneByHalf");
+	var tileContent =  new TileContent("tile-cont-two-by-half", {
+		unit: "EUR",
+		footer: "Current Quarter",
+		content: new ImageContent('image-cnt', {
+			src: IMAGE_PATH + "headerImg1.png",
+			description: "image descriptions ..."
+		})
+	});
+	this.oGenericTile.destroyTileContent();
+	this.oGenericTile.addTileContent(tileContent);
+	this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
+	this.oGenericTile.setSubheader("this is a very long subheader which should exceed two lines so we can test it");
+	sap.ui.getCore().applyChanges();
+	assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
+});
+
+QUnit.test("Content Proritisation -  Content rendered in TwoByHalf", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	sap.ui.getCore().applyChanges();
+	assert.notEqual(this.oGenericTile.getTileContent()[0].getDomRef(), null);
+	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
+});
+
+QUnit.test("Content Proritisation -  Header and subtitle rendered in TwoByHalf", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	var tileContent =  new TileContent("tile-cont-two-by-half", {
+		unit: "EUR",
+		footer: "Current Quarter"
+	});
+	this.oGenericTile.destroyTileContent();
+	this.oGenericTile.addTileContent(tileContent);
+	sap.ui.getCore().applyChanges();
+	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+	assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
+});
+
+QUnit.test("Content Proritisation -  Footer rendered in TwoByHalf", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	var tileContent =  new TileContent("tile-cont-two-by-half", {
+		unit: "EUR",
+		footer: "Current Quarter"
+	});
+	this.oGenericTile.destroyTileContent();
+	this.oGenericTile.addTileContent(tileContent);
+	this.oGenericTile.setSubheader(null);
+	sap.ui.getCore().applyChanges();
+	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, true);
+});
+
+QUnit.test("Content Proritisation -  Subheader rendered in OneByHalf", function(assert) {
+	this.oGenericTile.setFrameType("OneByHalf");
+	var tileContent =  new TileContent("tile-cont-one-by-half", {
+		footer: "Current Quarter"
+	});
+	this.oGenericTile.destroyTileContent();
+	this.oGenericTile.addTileContent(tileContent);
+	this.oGenericTile.setSubheader("Subtitle Launch Tile");
+	sap.ui.getCore().applyChanges();
+	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+	assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
+});
+
+QUnit.test("Content Proritisation -  Footer rendered in OneByHalf", function(assert) {
+	this.oGenericTile.setFrameType("OneByHalf");
+	var tileContent =  new TileContent("tile-cont-one-by-half", {
+		unit: "EUR",
+		footer: "Current Quarter"
+	});
+	this.oGenericTile.destroyTileContent();
+	this.oGenericTile.addTileContent(tileContent);
+	this.oGenericTile.setSubheader(null);
+	sap.ui.getCore().applyChanges();
+	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
+	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, true);
+});
+
+QUnit.test("Check the padding classes of the 2*1 small tile", function(assert) {
+	this.oGenericTile.setFrameType("OneByHalf");
+	sap.ui.getCore().applyChanges();
+	var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
+	assert.ok(check,"true","all ok");
+	var height = getComputedStyle(this.oGenericTile.getDomRef().querySelector(".sapMGTHdrContent")).height;
+	assert.ok(height,28,"all ok");
+});
+
+QUnit.test("Check the padding classes of the 4*1 small tile", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	sap.ui.getCore().applyChanges();
+	var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
+	assert.ok(check,"true","all ok");
+	var height = getComputedStyle(this.oGenericTile.getDomRef().querySelector(".sapMGTHdrContent")).height;
+	assert.ok(height,28,"all ok");
+});
+
+QUnit.test("Header has max two lines if subheader exists for 4*1 tile", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	var tileContent =  new TileContent("tile-cont-one-by-half", {
+		footer: "Current Quarter"
+	});
+	this.oGenericTile.destroyTileContent();
+	this.oGenericTile.addTileContent(tileContent);
+	this.oGenericTile.setSubheader("Subtitle Launch Tile");
+	this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
+	sap.ui.getCore().applyChanges();
+	assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
+});
+
+QUnit.test("Header has max one lines if content aggregation exists for 4*1 tile", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	var tileContent =  new TileContent("tile-cont-one-by-half", {
+		unit: "EUR",
+		footer: "Current Quarter",
+		content: new NumericContent("numeric-content", {
+			state: LoadState.Loaded,
+			scale: "M",
+			indicator: DeviationIndicator.Up,
+			truncateValueTo: 4,
+			value: 20,
+			nullifyValue: true,
+			formatterValue: false,
+			valueColor: ValueColor.Good,
+			icon: "sap-icon://customer-financial-fact-sheet"
+		})
+	});
+	this.oGenericTile.destroyTileContent();
+	this.oGenericTile.addTileContent(tileContent);
+	this.oGenericTile.setHeader("this is a very long header which should exceed one line so we can test it");
+	sap.ui.getCore().applyChanges();
+	assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 1, "The header has 1 line");
+});
+
+QUnit.test("Check the padding classes of the 2*1 tile", function(assert) {
+	this.oGenericTile.setFrameType("OneByHalf");
+	sap.ui.getCore().applyChanges();
+	var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
+	assert.ok(check,"true","all ok");
+});
+
+QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", function(assert) {
+	this.oGenericTile.setFrameType("OneByHalf");
+	sap.ui.getCore().applyChanges();
+	//to check if the content area is visible.
+	var oVisibilitySpy = sinon.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+	this.oGenericTile.setMode(GenericTileMode.HeaderMode);
+	sap.ui.getCore().applyChanges();
+	assert.ok(oVisibilitySpy.calledWith(false), "The visibility is changed to not visible");
 	});
 });

@@ -1,25 +1,26 @@
 <mvc:View controllerName="sap.m.sample.GenericTileAsKPITile.Page" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin" subheader="Expenses" press="onPress">
-		<TileContent unit="EUR" footer="Current Quarter">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin"
+				 frameType = "OneByHalf" subheader="Expenses" press="onPress">
+		<TileContent unit="EUR" footer="Current Quarter" >
 			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="US Profit Margin" press="onPress">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="US Profit Margin" press="onPress" frameType = "OneByHalf">
 		<TileContent unit="Unit">
 			<NumericContent scale="%" value="12" valueColor="Critical" indicator="Up" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Sales Fulfillment Application Title"
-				 subheader="Subtitle" press="onPress">
+				 subheader="Subtitle" press="onPress" frameType = "TwoByHalf">
 		<TileContent unit="EUR" footer="Current Quarter">
 			<ImageContent src="sap-icon://home-share" />
 		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Master Data Type"
-				 subheader="Subtitle" press="onPress">
+				 subheader="Subtitle" press="onPress" frameType = "OneByHalf">
 		<TileContent>
 			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png" />
 		</TileContent>
@@ -57,6 +58,13 @@
 		</TileContent>
 	</GenericTile>
 
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin"
+				 subheader="Expenses" press="onPress">
+		<TileContent unit="EUR" footer="Current Quarter" >
+			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="false" />
+		</TileContent>
+	</GenericTile>
+
 	<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop" transitionTime="250" displayTime="2500">
 		<GenericTile
 				backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
@@ -83,6 +91,52 @@
 		<TileContent footer="New Notifications">
 			<FeedContent contentText="@@notify Great outcome of the Presentation today. New functionality well received."
 						 subheader="About 1 minute ago in Computer Market" value="352" />
+		</TileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin"  press="onPress"
+				 frameType="TwoByHalf">
+		<TileContent unit="EUR" footer="Current Quarter">
+			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="false" />
+		</TileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="press" frameType="OneByHalf">
+		<TileContent unit="Unit" footer="Footer Text">
+			<NumericContent value="1762" icon="sap-icon://line-charts" withMargin="false" />
+		</TileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Right click to open in new tab"
+		 subheader="Link tile" press="press" url="https://www.sap.com/" frameType="TwoByHalf">
+		<TileContent>
+			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png" />
+		</TileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="US Profit Margin" press="onPress" >
+		<TileContent unit="Unit">
+			<NumericContent scale="%" value="12" valueColor="Critical" indicator="Up" withMargin="false" />
+		</TileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Sales Fulfillment Application Title"
+				 subheader="Subtitle" press="onPress" >
+		<TileContent unit="EUR" footer="Current Quarter">
+			<ImageContent src="sap-icon://home-share" />
+		</TileContent>
+	</GenericTile>
+	
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="press" >
+		<TileContent unit="Unit" footer="Footer Text">
+			<NumericContent value="1762" icon="sap-icon://line-charts" withMargin="false" />
+		</TileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Right click to open in new tab"
+		 subheader="Link tile" press="press" url="https://www.sap.com/" frameType="TwoByOne">
+		<TileContent>
+			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png" />
 		</TileContent>
 	</GenericTile>
 </mvc:View>
