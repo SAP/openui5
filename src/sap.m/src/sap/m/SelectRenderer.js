@@ -145,7 +145,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			for (i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
 				oRm.openStart("option");
 				oRm.attr("value", aItems[i].getText());
-				oRm.attr("hidden", true);
 				oRm.openEnd();
 				oRm.text(aItems[i].getText());
 				oRm.close("option");
@@ -169,6 +168,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
 			oRm.openStart("label", oSelect.getId() + "-label");
+			oRm.attr("aria-hidden", true);
 			oRm.class(CSS_CLASS + "Label");
 
 			if (oSelect.getValueState() !== ValueState.None) {
@@ -215,6 +215,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			var CSS_CLASS = SelectRenderer.CSS_CLASS;
 
 			oRm.openStart("span", oSelect.getId() + "-arrow");
+			oRm.attr("aria-hidden", true);
 			oRm.class(CSS_CLASS + "Arrow");
 
 			if (oSelect.getValueState() !== ValueState.None) {
