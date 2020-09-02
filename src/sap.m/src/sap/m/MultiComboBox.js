@@ -22,6 +22,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
+	"sap/m/inputUtils/completeTextSelected",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
@@ -54,6 +55,7 @@ function(
 	ResizeHandler,
 	MultiComboBoxRenderer,
 	containsOrEquals,
+	completeTextSelected,
 	KeyCodes,
 	deepEqual,
 	assert,
@@ -2382,7 +2384,7 @@ function(
 		}
 
 		// do not return if everything is selected
-		if (this.getValue() && !this._isCompleteTextSelected()) {
+		if (this.getValue() && !completeTextSelected(this.getFocusDomRef())) {
 			return;
 		}
 
@@ -2434,9 +2436,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapprevious = function(oEvent) {
-
-		if (this.getCursorPosition() === 0 && !this._isCompleteTextSelected()) {
-
+		if (this.getCursorPosition() === 0 && !completeTextSelected(this.getFocusDomRef())) {
 			if (oEvent.srcControl === this) {
 				Tokenizer.prototype.onsapprevious.apply(this.getAggregation("tokenizer"), arguments);
 			}
@@ -2572,27 +2572,6 @@ function(
 	 */
 	MultiComboBox.prototype.getCursorPosition = function() {
 		return this._$input.cursorPos();
-	};
-
-	/**
-	 * Functions returns true if the input's text is completely selected
-	 *
-	 * @private
-	 * @return {boolean} true if text is selected, otherwise false,
-	 */
-	MultiComboBox.prototype._isCompleteTextSelected = function() {
-
-		if (!this.getValue().length) {
-			return false;
-		}
-
-		var oInput = this._$input[0];
-
-		if (oInput.selectionStart !== 0 || oInput.selectionEnd !== this.getValue().length) {
-			return false;
-		}
-
-		return true;
 	};
 
 	/**
