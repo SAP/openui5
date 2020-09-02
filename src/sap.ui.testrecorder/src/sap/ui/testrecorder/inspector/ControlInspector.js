@@ -122,7 +122,9 @@ sap.ui.define([
 			if (DialectRegistry.getActiveDialect() === Dialects.RAW) {
 				return RawSnippetUtil.getJSON(aSnippets, mSelectorSettings);
 			} else {
-				return POMethodUtil.getPOMethod(aSnippets, mSelectorSettings);
+				return POMethodUtil.getPOMethod(aSnippets, $.extend({
+					action: mData.action
+				}, mSelectorSettings));
 			}
 		}).then(function (sSnippet) {
 			// here sSnippet contains the snippets for one or multiple controls
