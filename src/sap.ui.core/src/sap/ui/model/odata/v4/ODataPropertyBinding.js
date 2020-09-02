@@ -211,7 +211,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} [bForceUpdate=false]
 	 *   If <code>true</code> the change event is always fired except there is no context for a
-	 *   relative binding and the value is <code>undefined</code>.
+	 *   relative binding and the (old and new) value is <code>undefined</code>.
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason=ChangeReason.Change]
 	 *   The change reason for the change event
 	 * @param {string} [sGroupId=getGroupId()]
@@ -636,9 +636,10 @@ sap.ui.define([
 				this.deregisterChange();
 			}
 			this.oContext = oContext;
+			this.sResumeChangeReason = undefined;
 			if (this.bRelative) {
 				this.fetchCache(this.oContext);
-				this.checkUpdateInternal(false, ChangeReason.Context);
+				this.checkUpdateInternal(this.bInitial, ChangeReason.Context);
 			}
 		}
 	};

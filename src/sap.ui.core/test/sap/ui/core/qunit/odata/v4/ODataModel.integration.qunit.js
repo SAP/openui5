@@ -3284,6 +3284,7 @@ sap.ui.define([
 						CompanyName : "TECUM"
 					}
 				})
+				.expectChange("businessPartner", null) // initialization due to #setContext
 				.expectMessages([{
 					"code" : undefined,
 					"descriptionUrl" : undefined,
@@ -9975,7 +9976,8 @@ sap.ui.define([
 				})
 				.expectChange("parameterName", "Jonathan Smith")
 				.expectChange("parameterTeamId", "")
-				.expectChange("parameterAge", "23");
+				.expectChange("parameterAge", "23")
+				.expectChange("teamId", null); // initialization due to #setContext
 
 			that.oView.byId("action").setBindingContext(
 				that.oView.byId("form").getBindingContext());
@@ -15888,6 +15890,7 @@ sap.ui.define([
 					assert.strictEqual(oListBinding.isLengthFinal(), false, "length unknown");
 					assert.strictEqual(oListBinding.getLength(), 1 + 5 + 10, "estimated length");
 
+					that.expectChange("count", null); // initialization due to #setContext
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
@@ -15993,6 +15996,7 @@ sap.ui.define([
 					assert.strictEqual(oListBinding.isLengthFinal(), false, "length unknown");
 					assert.strictEqual(oListBinding.getLength(), 1 + 5 + 10, "estimated length");
 
+					that.expectChange("count", null); // initialization due to #setContext
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
@@ -18168,7 +18172,8 @@ sap.ui.define([
 				})
 				.expectChange("id", "42")
 				.expectChange("isActive", "Yes")
-				.expectChange("name", "Hour Frustrated");
+				.expectChange("name", "Hour Frustrated")
+				.expectChange("inProcessByUser", null); // initialization due to #setContext
 
 			that.oView.setBindingContext(
 				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)", null,
@@ -24488,6 +24493,7 @@ sap.ui.define([
 					LifecycleStatus : "C",
 					SalesOrderID : "1"
 				})
+				.expectChange("status", null) // initialization due to #setContext
 				.expectChange("status", "C");
 
 			oForm.setBindingContext(
@@ -28259,6 +28265,41 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A control property is initially not bound, but has a fixed value. Then it becomes
+	// bound with a relative path but no binding context. The fixed value should be replaced.
+	// JIRA: CPOUI5ODATAV4-363
+	QUnit.skip("ODataPropertyBinding#initialize while not resolved", function (assert) {
+		var sView = '<Text id="text" text="fixed value" />',
+			that = this;
+
+		// Note: this.expectChange("text") cannot handle a scenario w/o binding
+
+		return this.createView(assert, sView).then(function () {
+			var fnResolve,
+				oPromise = new Promise(function (resolve) {
+					fnResolve = resolve;
+				}),
+				oText = that.oView.byId("text");
+
+			assert.strictEqual(oText.getText(), "fixed value");
+
+			// code under test
+			oText.bindText("Name");
+
+			//TODO is this the right expectation?
+			// #checkUpdateInternal says "an unresolved binding only fires if it had a value before"
+			// --> no event :-(
+			oText.getBinding("text").attachEventOnce("change", function () {
+				assert.strictEqual(oText.getText(), undefined);
+
+				fnResolve();
+			});
+
+			return oPromise;
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: With the binding parameter <code>$$ignoreMessages</code> the application developer
