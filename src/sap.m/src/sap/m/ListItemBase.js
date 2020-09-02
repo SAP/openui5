@@ -431,7 +431,10 @@ function(
 			}
 		}
 
-		aOutput.push(this.getGroupAnnouncement() || "");
+		var sGroupAnnouncement = this.getGroupAnnouncement() || "";
+		if (sGroupAnnouncement) {
+			aOutput.push(sGroupAnnouncement);
+		}
 
 		if (this.getContentAnnouncement) {
 			aOutput.push((this.getContentAnnouncement(oBundle) || "").trim());
@@ -445,7 +448,8 @@ function(
 			aOutput.push(oBundle.getText("LIST_ITEM_NAVIGATED"));
 		}
 
-		return aOutput.join(" ");
+		//The dot is added  so the screenreader can pause
+		return aOutput.join(" . ");
 	};
 
 	ListItemBase.prototype.getAccessibilityInfo = function() {

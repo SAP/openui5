@@ -234,7 +234,7 @@ sap.ui.define([
 			return;
 		}
 
-		var sAnnouncement = "",
+		var aOutput = [],
 			aCells = this.getCells(),
 			aColumns = oTable.getColumns(true);
 
@@ -246,13 +246,13 @@ sap.ui.define([
 
 			var oHeader = oColumn.getHeader();
 			if (oHeader && oHeader.getVisible()) {
-				sAnnouncement += ListItemBase.getAccessibilityText(oHeader) + " ";
+				aOutput.push(ListItemBase.getAccessibilityText(oHeader) + " " + ListItemBase.getAccessibilityText(oCell, true));
+			} else {
+				aOutput.push(ListItemBase.getAccessibilityText(oCell, true));
 			}
-
-			sAnnouncement += ListItemBase.getAccessibilityText(oCell, true) + " ";
 		});
 
-		return sAnnouncement;
+		return aOutput.join(" . ").trim();
 	};
 
 	// update the aria-selected for the cells

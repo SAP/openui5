@@ -269,7 +269,7 @@ sap.ui.define([
 		var oTreeItem = oTree.getItems()[1];
 		var sSelected = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_SELECTED");
 		oTreeItem.focus();
-		assert.equal(oTreeItem.getAccessibilityInfo().description, sSelected + "  Node2", "Custom announcement is added with current state");
+		assert.equal(oTreeItem.getAccessibilityInfo().description, sSelected + " . " + "Node2", "Custom announcement is added with current state");
 	});
 
 	QUnit.module("Expand/Collapse");

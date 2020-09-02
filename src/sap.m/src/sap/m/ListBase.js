@@ -1909,15 +1909,15 @@ function(
 		}
 
 		if (sMode == mMode.MultiSelect) {
-			sStates += oBundle.getText("LIST_MULTISELECTABLE") + " ";
+			sStates += oBundle.getText("LIST_MULTISELECTABLE") + " . ";
 		} else if (sMode == mMode.Delete) {
-			sStates += oBundle.getText("LIST_DELETABLE") + " ";
+			sStates += oBundle.getText("LIST_DELETABLE") + " . ";
 		} else if (sMode != mMode.None) {
-			sStates += oBundle.getText("LIST_SELECTABLE") + " ";
+			sStates += oBundle.getText("LIST_SELECTABLE") + " . ";
 		}
 
 		if (this.isGrouped()) {
-			sStates += oBundle.getText("LIST_GROUPED") + " ";
+			sStates += oBundle.getText("LIST_GROUPED") + " . ";
 		}
 
 		return sStates;
@@ -1984,10 +1984,10 @@ function(
 			// prepare the announcement for the screen reader
 			var oAccInfo = oItem.getAccessibilityInfo(),
 				oBundle = Core.getLibraryResourceBundle("sap.m"),
-				sDescription = oAccInfo.type + " ";
+				sDescription = oAccInfo.type + " . ";
 
 			if (!Device.browser.chrome || this.isA("sap.m.Table")) {
-				sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posInset, mPosition.setSize]) + " ";
+				sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posInset, mPosition.setSize]) + " . ";
 			} else {
 				oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
 				oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);

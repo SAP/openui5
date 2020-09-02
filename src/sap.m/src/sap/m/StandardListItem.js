@@ -193,41 +193,47 @@ sap.ui.define([
 	};
 
 	StandardListItem.prototype.getContentAnnouncement = function(oBundle) {
-		var sAnnouncement = "",
-			sInfoState = this.getInfoState(),
-			sTitle,
-			sTitlButtonText = "",
-			sDescription,
-			sDescriptionButtonText = "",
+		var sInfoState = this.getInfoState(),
+			sTitle = this.getTitle(),
+			sTitleButtonText,
+			sDescription = this.getDescription(),
+			sDescriptionButtonText,
 			oTitleButton,
-			oDescriptionButton;
+			oDescriptionButton,
+			aOutput = [],
+			sInfo = this.getInfo();
 
 		if (this.getWrapping()) {
 			oTitleButton = this.getDomRef("titleButton");
 			oDescriptionButton = this.getDomRef("descriptionButton");
-			sTitle = this._bTitleTextExpanded ? this.getTitle() : this._getCollapsedText(this.getTitle());
-			sDescription = this._bDescriptionTextExpanded ? this.getDescription() : this._getCollapsedText(this.getDescription());
+			sTitle = this._bTitleTextExpanded ? sTitle : this._getCollapsedText(sTitle);
+			sDescription = this._bDescriptionTextExpanded ? sDescription : this._getCollapsedText(sDescription);
+
+			aOutput.push(sTitle);
 
 			if (oTitleButton) {
-				sTitlButtonText = oTitleButton.textContent + " " + oBundle.getText("ACC_CTR_TYPE_BUTTON");
+				sTitleButtonText = oTitleButton.textContent + " " + oBundle.getText("ACC_CTR_TYPE_BUTTON");
+				sTitleButtonText && aOutput.push(sTitleButtonText);
 			}
+
+			aOutput.push(sDescription);
 
 			if (oDescriptionButton) {
-				sDescriptionButtonText = oDescriptionButton.textContent + " " + oBundle.getText("ACC_CTR_TYPE_BUTTON");
+				sDescriptionButtonText = oDescriptionButton.textContent + " . " + oBundle.getText("ACC_CTR_TYPE_BUTTON");
+				sDescriptionButtonText && aOutput.push(sDescriptionButtonText);
 			}
-
-			sAnnouncement += sTitle + " " + sTitlButtonText + " " + sDescription + " " + sDescriptionButtonText + " ";
 		} else {
-			sAnnouncement += this.getTitle() + " " + this.getDescription() + " ";
+			sTitle && aOutput.push(sTitle);
+			sDescription && aOutput.push(sDescription);
 		}
 
-		sAnnouncement += this.getInfo() + " ";
+		sInfo && aOutput.push(sInfo);
 
 		if (sInfoState != "None" && sInfoState != this.getHighlight()) {
-			sAnnouncement += oBundle.getText("LIST_ITEM_STATE_" + sInfoState.toUpperCase());
+			aOutput.push(oBundle.getText("LIST_ITEM_STATE_" + sInfoState.toUpperCase()));
 		}
 
-		return sAnnouncement;
+		return aOutput.join(" . ").trim();
 	};
 
 	/**
