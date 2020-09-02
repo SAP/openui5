@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/Filter",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataListBinding",
@@ -58,6 +59,7 @@ sap.ui.define([
 		JSONModel,
 		FormatException,
 		ParseException,
+		ValidateException,
 		Filter,
 		ODataModel,
 		ODataListBinding,
@@ -840,7 +842,7 @@ sap.ui.define([
 			fnDone();
 		}).catch(function(oError) {
 			assert.ok(oError, "Error Fired");
-			assert.ok(oError instanceof ParseException, "Error is a ParseException");
+			assert.ok(oError instanceof ValidateException, "Error is a ValidateException");
 			var sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["X"]);
 			assert.equal(oError.message, sError, "Error message");
 
