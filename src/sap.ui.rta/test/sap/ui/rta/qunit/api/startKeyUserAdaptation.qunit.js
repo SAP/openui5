@@ -84,7 +84,6 @@ sap.ui.define([
 		return startKeyUserAdaptation({rootControl: oRootControl})
 			.catch(function(oError) {
 				assert.ok(this.fnRtaStartStub.notCalled, "then RuntimeAuthoring.start() was not called");
-				assert.ok(Log.error.calledOnce, "then an error was logged");
 				assert.ok(oError instanceof Error, "then an error was thrown");
 			}.bind(this));
 	});
@@ -96,7 +95,6 @@ sap.ui.define([
 		return startKeyUserAdaptation({rootControl: oRootControl})
 			.catch(function(oError) {
 				assert.ok(this.fnRtaStartStub.notCalled, "then RuntimeAuthoring.start() was not called");
-				assert.ok(Log.error.calledOnce, "then an error was logged");
 				assert.ok(oError instanceof Error, "then an error was thrown");
 			}.bind(this));
 	});
