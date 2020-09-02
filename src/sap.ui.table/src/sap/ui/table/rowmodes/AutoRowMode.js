@@ -109,9 +109,7 @@ sap.ui.define([
 		 * adjusting the row count.
 		 * @private
 		 */
-		this.adjustRowCountToAvailableSpaceAsync = TableUtils.debounce(this.adjustRowCountToAvailableSpace, {
-			requestAnimationFrame: true
-		});
+		this.adjustRowCountToAvailableSpaceAsync = TableUtils.throttleFrameWise(this.adjustRowCountToAvailableSpace);
 	};
 
 	/**
