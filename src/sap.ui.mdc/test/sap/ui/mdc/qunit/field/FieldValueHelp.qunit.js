@@ -6,6 +6,7 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/model/Context",
 	"sap/ui/mdc/field/FieldValueHelp",
 	"sap/ui/mdc/field/FieldValueHelpContentWrapperBase",
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
@@ -32,6 +33,7 @@ sap.ui.define([
 	"sap/m/Button"
 ], function (
 		qutils,
+		Context,
 		FieldValueHelp,
 		FieldValueHelpContentWrapperBase,
 		FieldValueHelpDelegate,
@@ -2905,6 +2907,24 @@ sap.ui.define([
 			}, 0);
 		}, 0);
 
+	});
+
+	// BCP: 2070284113
+	QUnit.test("calling _areBindingContextsAvailableAndHaveChanged() should return false if the binding contexts " +
+				"under test are null", function(assert) {
+
+		// system under test
+		var oBindingContext = new Context(oField.getModel(), oField.getBindingContext().getPath());
+		var oBindingContext2 = null;
+
+		// act
+		var bContextsAvailableAndHaveChanged = oFieldHelp._areBindingContextsAvailableAndHaveChanged(oBindingContext, oBindingContext2);
+
+		// assert
+		assert.strictEqual(bContextsAvailableAndHaveChanged, false);
+
+		// cleanup
+		oBindingContext.destroy();
 	});
 
 });
