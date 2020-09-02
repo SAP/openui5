@@ -31,6 +31,12 @@ sap.ui.define([
 		matcherValue: null,
 		expected: false,
 		logMessage: "Control 'Element sap.m.Button#myButton' property 'text' has value '' but should have value 'undefined'"
+	},
+	{
+		textValue: "{foo",
+		matcherValue: "{foo",
+		expected: true,
+		logMessage: ""
 	}].forEach(function (oTestCase) {
 		QUnit.test("Should strictmatch for " + JSON.stringify(oTestCase), function (assert) {
 			// Arrange

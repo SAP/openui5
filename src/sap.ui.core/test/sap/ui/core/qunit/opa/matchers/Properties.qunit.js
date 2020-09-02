@@ -50,6 +50,14 @@ sap.ui.define([
 		assert.strictEqual(bResult, true, "Should match regexp");
 	});
 
+	QUnit.test("Should match when value contains binding symbols", function(assert) {
+		this.oButton.setText("{foo");
+		var bResult = new Properties({
+			text: "{foo"
+		})(this.oButton);
+		assert.strictEqual(bResult, true);
+	});
+
 	QUnit.test("Should match in the pipeline", function (assert) {
 		var oMatcherPipeline = new MatcherPipeline();
 

@@ -179,6 +179,17 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Should enter binding symbols", function (assert) {
+		this.oControl = new Input();
+
+		this.oControl.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		new EnterText({ text: "{" }).executeOn(this.oControl);
+
+		assert.strictEqual(this.oControl.getValue(), "{");
+	});
+
 	QUnit.module("Logging", {
 		beforeEach: function () {
 			this.oEnterText = new EnterText({});

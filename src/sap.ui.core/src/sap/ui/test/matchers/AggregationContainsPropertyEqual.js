@@ -3,10 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/base/ManagedObject",
 	"sap/ui/test/matchers/Matcher",
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery"
-], function (Matcher, capitalize, jQueryDOM) {
+], function (ManagedObject, Matcher, capitalize, jQueryDOM) {
 	"use strict";
 
 	/**
@@ -54,6 +55,13 @@ sap.ui.define([
 					type: "any"
 				}
 			}
+		},
+
+		constructor: function (mSettings) {
+			if (mSettings && mSettings.propertyValue) {
+				mSettings.propertyValue = ManagedObject.escapeSettingsValue(mSettings.propertyValue);
+			}
+			Matcher.prototype.constructor.call(this, mSettings);
 		},
 
 		/**

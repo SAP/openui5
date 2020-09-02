@@ -3,10 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/base/ManagedObject",
 	"sap/ui/test/actions/Action",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
-], function(Action, KeyCodes, jQueryDOM) {
+], function (ManagedObject, Action, KeyCodes, jQueryDOM) {
 	"use strict";
 
 	/**
@@ -67,6 +68,13 @@ sap.ui.define([
 				}
 			},
 			publicMethods : [ "executeOn" ]
+		},
+
+		constructor: function (mSettings) {
+			if (mSettings && mSettings.text) {
+				mSettings.text = ManagedObject.escapeSettingsValue(mSettings.text);
+			}
+			Action.prototype.constructor.call(this, mSettings);
 		},
 
 		init: function () {
