@@ -4,19 +4,18 @@
 sap.ui.define([
 	"sap/ui/rta/util/adaptationStarter",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/base/util/merge"
 ], function(
 	adaptationStarter,
 	Layer,
+	LayerUtils,
 	merge
 ) {
 	"use strict";
 
 	function checkLayer(sLayer) {
-		var bValidLayer = Object.keys(Layer).some(function (sExistingLayer) {
-			return sExistingLayer === sLayer;
-		});
-		if (!bValidLayer) {
+		if (!LayerUtils.isValidLayer(sLayer)) {
 			throw new Error("An invalid layer is passed");
 		}
 	}
