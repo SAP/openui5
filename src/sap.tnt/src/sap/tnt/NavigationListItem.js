@@ -631,6 +631,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 				// ARIA
 				rm.accessibilityState(ariaProps);
+			} else {
+				rm.attr('aria-hidden', 'true');
 			}
 
 			rm.openEnd();
