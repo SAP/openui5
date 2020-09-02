@@ -5602,4 +5602,48 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Root entity returns a message for a *:0..1 navigation property which is
+	// <code>null</code>. The data for the navigation property is requested in an own request.
+	// The GET request for the navigation property returns a 204 No Content and does not have any
+	// messages. The message returned in the request for the root object must not be removed.
+	// BCP: 2080337477
+	// JIRA: CPOUI5MODELS-339
+	QUnit.test("Messages: GET returns 204 No Content", function (assert) {
+		var oBusinessPartnerError = this.createResponseMessage("ToBusinessPartner"),
+			oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<FlexBox binding="{ToBusinessPartner}">\
+		<Text id="id" text="{BusinessPartnerID}" />\
+	</FlexBox>\
+</FlexBox>';
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				SalesOrderID : "1"
+			}, {"sap-message" : getMessageHeader(oBusinessPartnerError)})
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToBusinessPartner"
+			}, NO_CONTENT
+			/* we expect a NO_CONTENT response to have no messages and explicitly ignore them! */)
+			.expectChange("id", null)
+			.expectMessage(oBusinessPartnerError, "/SalesOrderSet('1')/");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(oModel.getObject("/SalesOrderSet('1')/ToBusinessPartner"), null);
+		});
+	});
 });

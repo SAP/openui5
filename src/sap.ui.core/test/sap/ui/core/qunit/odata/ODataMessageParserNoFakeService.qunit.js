@@ -1479,4 +1479,102 @@ sap.ui.define([
 		assert.deepEqual(mAffectedTargets, oFixture.oResult);
 	});
 });
+
+	//*********************************************************************************************
+[{
+	method : "_parseHeader",
+	statusCode : 200
+}, {
+	method : "_parseHeader",
+	statusCode : 299
+}, {
+	method : "_parseBody",
+	statusCode : 400
+}, {
+	method : "_parseBody",
+	statusCode : 599
+}, {
+	method : "_parseHeader",
+	requestMethod : "MERGE",
+	statusCode : 204
+}].forEach(function (oFixture) {
+	[false, true].forEach(function (bMessageScopeSupported) {
+	QUnit.test("parse: " + oFixture.statusCode + "," + bMessageScopeSupported, function (assert) {
+		var oODataMessageParser = {
+				_parseBody : function () {},
+				_parseHeader : function () {},
+				_propagateMessages : function () {}
+			},
+			oRequest = {
+				method : oFixture.requestMethod || "GET",
+				requestUri : "~requestUri"
+			},
+			oResponse = {statusCode : oFixture.statusCode},
+			mRequestInfo = {
+				request : oRequest,
+				response : oResponse,
+				url : "~requestUri"
+			};
+
+		this.mock(oODataMessageParser).expects(oFixture.method)
+			.withExactArgs([], sinon.match.same(oResponse), mRequestInfo)
+			.callsFake(function (aMessages) { // check proper handling of "ref" parameter aMessages
+				aMessages.push("~message");
+			});
+		this.mock(oODataMessageParser).expects("_propagateMessages")
+			.withExactArgs(["~message"], mRequestInfo, "~mGetEntities", "~mChangeEntities",
+				!bMessageScopeSupported);
+
+		// code under test
+		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
+			"~mGetEntities", "~mChangeEntities", bMessageScopeSupported);
+	});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("parse: unsupported status code", function (assert) {
+		var oODataMessageParser = {
+				_parseBody : function () {},
+				_parseHeader : function () {},
+				_propagateMessages : function () {}
+			},
+			oRequest = {method : "GET", requestUri : "~requestUri"},
+			oResponse = {statusCode : 301},
+			mRequestInfo = {
+				request : oRequest,
+				response : oResponse,
+				url : "~requestUri"
+			};
+
+		this.mock(oODataMessageParser).expects("_parseBody").never();
+		this.mock(oODataMessageParser).expects("_parseHeader").never();
+		this.oLogMock.expects("warning")
+			.withExactArgs("No rule to parse OData response with status 301 for messages");
+		this.mock(oODataMessageParser).expects("_propagateMessages")
+			.withExactArgs([], mRequestInfo, "~mGetEntities", "~mChangeEntities", false);
+
+		// code under test
+		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
+			"~mGetEntities", "~mChangeEntities", true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parse: GET with 204 response is not considered", function (assert) {
+		var oODataMessageParser = {
+				_parseBody : function () {},
+				_parseHeader : function () {},
+				_propagateMessages : function () {}
+			},
+			oRequest = {method : "GET", requestUri : "~requestUri"},
+			oResponse = {statusCode : 204};
+
+		this.mock(oODataMessageParser).expects("_parseBody").never();
+		this.mock(oODataMessageParser).expects("_parseHeader").never();
+		this.mock(oODataMessageParser).expects("_propagateMessages").never();
+
+		// code under test
+		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
+			"~mGetEntities", "~mChangeEntities", true);
+	});
 });
