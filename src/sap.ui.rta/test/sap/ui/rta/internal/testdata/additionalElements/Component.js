@@ -87,7 +87,11 @@ sap.ui.define([
 							},
 							unregisterNavigationFilter : function() {
 								//dummy
+							},
+							getUser : function() {
+								//dummy
 							}
+
 						};
 					},
 					getLogonSystem : function() {
