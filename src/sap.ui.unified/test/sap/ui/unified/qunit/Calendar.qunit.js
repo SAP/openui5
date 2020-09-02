@@ -2154,7 +2154,12 @@ QUnit.module("Misc");
 		qutils.triggerEvent("click", "Cal--Head-B1");
 		sap.ui.getCore().applyChanges();
 
-		// act: select a month (February)
+		// act: select a month (August)
+		oMP.setMonth(7);
+		oCal._selectMonth(oMP.getMonth());
+		sap.ui.getCore().applyChanges();
+
+		// act: select a month (December)
 		oMP.setMonth(iStartMonth);
 		oCal._selectMonth(oMP.getMonth());
 		sap.ui.getCore().applyChanges();
