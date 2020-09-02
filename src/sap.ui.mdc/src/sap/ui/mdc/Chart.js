@@ -569,24 +569,28 @@ sap.ui.define([
 			addAdditionalColoringMeasures();
 
 			// We have to wait until all flex changes have been applied to the mdc.Chart
-			var oWaitForChangesPromise = new Promise(function (resolve) {
+			var oWaitForChangesPromise = new Promise(function(resolve, reject) {
+
 				sap.ui.require([
 					"sap/ui/fl/apply/api/FlexRuntimeInfoAPI"
-				], function (FlexRuntimeInfoAPI) {
+				], function(FlexRuntimeInfoAPI) {
 
 					// If the condition, that a control is assigned to a AppComponent is not fulfilled, we can go ahead
 					if (!FlexRuntimeInfoAPI.isFlexSupported({ element: this })) {
-						return Promise.resolve();
+						resolve();
+						return;
 					}
 
 					// Otherwise we wait until the changes are applied
 					FlexRuntimeInfoAPI.waitForChanges({ element: this }).then(function () {
-						return resolve();
+						resolve();
 					});
 				}.bind(this));
+
 			}.bind(this));
 
-			return Promise.all(aVizItems, oWaitForChangesPromise).then(function () {
+			var aPromises = aVizItems.concat(oWaitForChangesPromise);
+			return Promise.all(aPromises).then(function() {
 				var oChart = new ChartClass(mInitialChartSettings);
 				//initial setup
 				oChart.setVisibleDimensions([]);
