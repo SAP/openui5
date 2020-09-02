@@ -146,12 +146,18 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
  */
 ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities,
 		bMessageScopeSupported) {
-	var aMessages = [],
-		mRequestInfo = {
-			request: oRequest,
-			response: oResponse,
-			url: oRequest ? oRequest.requestUri : oResponse.requestUri
-		};
+	var aMessages, mRequestInfo;
+
+	if (oRequest.method === "GET" && oResponse.statusCode === 204) {
+		return;
+	}
+
+	aMessages = [];
+	mRequestInfo = {
+		request: oRequest,
+		response: oResponse,
+		url: oRequest ? oRequest.requestUri : oResponse.requestUri
+	};
 
 	if (oResponse.statusCode >= 200 && oResponse.statusCode < 300) {
 		// Status is 2XX - parse headers
