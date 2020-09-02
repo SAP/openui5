@@ -78,8 +78,6 @@ function(
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
 
-	var PlacementType = library.PlacementType;
-
 	// shortcut for sap.m.TokenizerRenderMode
 	var TokenizerRenderMode = library.TokenizerRenderMode;
 
@@ -1080,21 +1078,6 @@ function(
 	};
 
 	/**
-	 * Creates an instance type of <code>sap.m.Popover</code> used in read-only mode.
-	 *
-	 * @returns {sap.m.Popover} The Popover instance
-	 * @private
-	 */
-	MultiComboBox.prototype._createReadOnlyPopover = function() {
-		return new Popover({
-			showArrow: true,
-			placement: PlacementType.Auto,
-			showHeader: false,
-			contentMinWidth: "auto"
-		}).addStyleClass("sapMMultiComboBoxReadOnlyPopover");
-	};
-
-	/**
 	 * <code>MultiComboBox</code> picker configuration
 	 *
 	 * @param {sap.m.Popover | sap.m.Dialog} oPicker Picker instance
@@ -1737,21 +1720,6 @@ function(
 	};
 
 	/**
-	 * Get the selected items ordered
-	 * @returns {sap.ui.core.Item[]} The ordered list of selected items
-	 * @private
-	 */
-	MultiComboBox.prototype._getOrderedSelectedItems = function() {
-		var aItems = [];
-
-		for (var i = 0, aTokens = this.getAggregation("tokenizer").getTokens(), iLength = aTokens.length; i < iLength; i++) {
-			aItems[i] = this._getItemByToken(aTokens[i]);
-		}
-
-		return aItems;
-	};
-
-	/**
 	 * Get the focused item from list
 	 *
 	 * @returns {sap.ui.core.Item | null} The focused item in the list
@@ -1781,17 +1749,6 @@ function(
 	MultiComboBox.prototype._getFocusedItem = function() {
 		var oListItem = this._getFocusedListItem();
 		return this._getItemByListItem(oListItem);
-	};
-
-	/**
-	 * Tests if an item is in a selected range
-	 * @param {sap.ui.core.Item} oListItem The item
-	 * @returns {boolean} True if the item is in the selected range
-	 * @private
-	 */
-	MultiComboBox.prototype._isRangeSelectionSet = function(oListItem) {
-		var $ListItem = oListItem.getDomRef();
-		return $ListItem.indexOf(this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "ItemRangeSelection") > -1 ? true : false;
 	};
 
 	/**
