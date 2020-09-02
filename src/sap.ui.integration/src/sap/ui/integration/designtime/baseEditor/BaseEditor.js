@@ -357,10 +357,12 @@ sap.ui.define([
 	};
 
 	BaseEditor.prototype.addConfig = function (oConfig, bIsDefaultConfig) {
-		return this.setConfig(
-			mergeConfig(this.getConfig(), oConfig),
-			bIsDefaultConfig
-		);
+		return SET_CONFIG_PROMISE.then(function () {
+			return this.setConfig(
+				mergeConfig(this.getConfig(), oConfig),
+				bIsDefaultConfig
+			);
+		}.bind(this));
 	};
 
 	function mergeConfig(oTarget, oCurrentConfig) {
