@@ -317,7 +317,7 @@ sap.ui.define([
 		}
 
 		this._oInitialJson = oCurrentJson;
-		mParameters.changeType = oCurrentJson.hasOwnProperty("sap.card") ? "appdescr_card" : "appdescr_widget";
+		mParameters.changeType = "appdescr_card";
 		mParameters.generator = "CardEditor";
 		mParameters.selector = {};
 		mParameters.reference = ObjectPath.get(["sap.app", "id"], oCurrentJson);
