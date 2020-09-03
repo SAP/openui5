@@ -969,7 +969,8 @@ function (
 			$oDynamicPage,
 			isHeaderSnappedWithScroll = function () {
 				return this.oDynamicPage._getScrollPosition() >= this.oDynamicPage._getSnappingHeight();
-			}.bind(this);
+			}.bind(this),
+			oScrollPositionSpy;
 
 		oHeader.addContent(new sap.m.Panel({height: "100px"}));
 
@@ -983,11 +984,15 @@ function (
 		//Act
 		$oDynamicPage = this.oDynamicPage.$();
 		$oDynamicPage.find('.sapMPanel').get(0).style.height = "300px";
+
+		oScrollPositionSpy = this.spy(this.oDynamicPage, "_setScrollPosition");
 		// explicitly call to avoid waiting for resize handler to detect change
-		this.oDynamicPage._onChildControlsHeightChange({target: oHeader.getDomRef(), size: {}, oldSize: {}});
+		this.oDynamicPage._onChildControlsHeightChange({target: oHeader.getDomRef(),
+			size: { height: 100 }, oldSize: { height: 0 }});
 
 		// Check
 		assert.ok(isHeaderSnappedWithScroll(), "header is still snapped with scroll");
+		assert.ok(oScrollPositionSpy.calledOnce, "Called only once (from adjustSnap function)");
 	});
 
 	QUnit.test("DynamicPage header resize with invalidation", function (assert) {
