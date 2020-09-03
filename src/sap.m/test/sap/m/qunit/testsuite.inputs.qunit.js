@@ -189,6 +189,9 @@ sap.ui.define([
 				_alternativeTitle: "QUnit page for sap.m.TimePicker",
 				ui5: {
 					language: "en-US"
+				},
+				sinon: {
+					version: 4
 				}
 			},
 			Token: {
