@@ -22,14 +22,23 @@ html.sap-desktop .sapMTBActive:focus {
 
 /* Solid Toolbar Context */
 .sapMTB-Solid-CTX.sapMTB {
-	background: lighten(@sapUiListHeaderBackground, 2);
+	background: @sapUiBaseBG;
 }
 
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
-	height: 2rem;
-	background: @sapUiInfobarBackground;
-	border-bottom: none;
+	background: darken(@sapUiBaseColor, 10);
+
+	&.sapMTBActive {
+		background: @sapUiInfobarBackground;
+
+		&:hover {
+			background: @sapUiInfobarHoverBackground;
+		}
+		&:active {
+			background: @sapUiInfobarActiveBackground;
+		}
+	}
 }
 
 .sapMIBar.sapMTB {
