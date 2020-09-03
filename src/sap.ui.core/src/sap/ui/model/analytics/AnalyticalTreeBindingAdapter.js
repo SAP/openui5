@@ -56,7 +56,8 @@ sap.ui.define([
 
 		//set the default auto expand mode
 		this.setAutoExpandMode(this.mParameters.autoExpandMode || TreeAutoExpandMode.Bundled);
-	};
+	},
+	sClassName = "sap.ui.model.analytics.AnalyticalTreeBindingAdapter";
 
 	/*
 	 * Returns the Root context of our tree, which is actually the context for the Grand Total
@@ -808,10 +809,20 @@ sap.ui.define([
 	 */
 	// @see sap.ui.table.AnalyticalTable#_getGroupHeaderMenu
 	AnalyticalTreeBindingAdapter.prototype.setNumberOfExpandedLevels = function(iLevels, bSupressResetData) {
+		var iNumberOfAggregationLevels;
+
 		iLevels = iLevels || 0;
 		if (iLevels < 0) {
-			Log.warning("AnalyticalTreeBindingAdapter: numberOfExpanded levels was set to 0. Negative values are prohibited.");
+			Log.warning("Number of expanded levels was set to 0. Negative values are prohibited",
+				this, sClassName);
 			iLevels = 0;
+		}
+		iNumberOfAggregationLevels = this.aAggregationLevel.length;
+		if (iLevels > iNumberOfAggregationLevels) {
+			Log.warning("Number of expanded levels was reduced from " + iLevels + " to "
+					+ iNumberOfAggregationLevels + " which is the number of grouped dimensions",
+				this, sClassName);
+			iLevels = iNumberOfAggregationLevels;
 		}
 
 		if (!bSupressResetData) {
