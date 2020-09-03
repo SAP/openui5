@@ -1707,29 +1707,50 @@ sap.ui.define([
 	/**
 	 * Sets the first visible row property of the table, updates the rows, and fires the <code>firstVisibleRowChanged</code> event.
 	 *
-	 * @param {int} iRowIndex The new first visible row index.
-	 * @param {Object} [mConfig] Config object.
-	 * @param {boolean} [mConfig.onScroll=false] Whether the first visible row is changed by scrolling.
-	 * @param {boolean} [mConfig.suppressEvent=false] Whether to suppress the <code>firstVisibleRowChanged</code> event.
-	 * @param {boolean} [mConfig.forceEvent=false] Whether to force the <code>firstVisibleRowChanged</code> event. Ignored if suppressed.
-	 * @param {boolean} [mConfig.suppressRendering=false] Whether the first visible row should only be set, without re-rendering the rows.
-	 * @returns {boolean} Whether the <code>_rowsUpdated</code> event will be fired.
+	 * @param {int} iRowIndex
+	 *     The new first visible row index.
+	 * @param {Object} [mConfig]
+	 *     Config object.
+	 * @param {boolean} [mConfig.onScroll=false]
+	 *     Whether the first visible row is changed by scrolling. Any scroll-related updates are suppressed. The
+	 *     setting <code>suppressScrolling</code> is ignored.
+	 * @param {boolean} [mConfig.suppressScrolling=false]
+	 *     Whether to suppress any scroll-related updates.
+	 * @param {boolean} [mConfig.suppressEvent=false]
+	 *     Whether to suppress the <code>firstVisibleRowChanged</code> event.
+	 * @param {boolean} [mConfig.forceEvent=false]
+	 *     Whether to force the <code>firstVisibleRowChanged</code> event. Ignored if <code>suppressEvent=true</code>.
+	 * @param {boolean} [mConfig.suppressRendering=false]
+	 *     Whether the first visible row should only be set, without re-rendering the rows.
+	 * @param {boolean} [mConfig.suppressEverything=false]
+	 *     Shortcut for <code>suppressScrolling=true</code>, <code>suppressEvent=true</code>, and <code>suppressRendering=true</code>.
+	 *     Overrules other settings.
+	 * @returns {boolean}
+	 *     Whether the <code>_rowsUpdated</code> event will be fired.
 	 * @private
 	 */
 	Table.prototype._setFirstVisibleRowIndex = function(iRowIndex, mConfig) {
 		mConfig = Object.assign({
 			onScroll: false,
+			suppressScrolling: false,
 			suppressEvent: false,
 			forceEvent: false,
-			suppressRendering: false
+			suppressRendering: false,
+			suppressEverything: false
 		}, mConfig);
+
+		if (mConfig.suppressEverything) {
+			mConfig.suppressScrolling = true;
+			mConfig.suppressEvent = true;
+			mConfig.suppressRendering = true;
+		}
 
 		if (parseInt(iRowIndex) < 0) {
 			Log.error("The index of the first visible row must be greater than or equal to 0. The value has been set to 0.", this);
 			iRowIndex = 0;
 		}
 
-		if (this._getTotalRowCount() > 0) {
+		if (this._bContextsAvailable) {
 			var iMaxRowIndex = this._getMaxFirstVisibleRowIndex();
 
 			if (iMaxRowIndex < iRowIndex) {
@@ -1766,7 +1787,7 @@ sap.ui.define([
 
 				// If changing the first visible row was initiated by a scroll action, the scroll position is already accurate.
 				// If the first visible row is set to the maximum row index, the table is scrolled to the bottom including the overflow.
-				if (!mConfig.onScroll) {
+				if (!mConfig.onScroll && !mConfig.suppressScrolling) {
 					oScrollExtension.updateVerticalScrollPosition(bFirstRenderedRowChanged);
 				}
 			}
@@ -1783,7 +1804,7 @@ sap.ui.define([
 				});
 			}
 
-			if (!mConfig.onScroll) {
+			if (!mConfig.onScroll && !mConfig.suppressScrolling) {
 				// Even if the first visible row was not changed, this row may not be visible because of the inner scroll position. Therefore, the
 				// scroll position is adjusted to make it visible (by resetting the inner scroll position).
 				oScrollExtension.updateVerticalScrollPosition();
@@ -1817,7 +1838,8 @@ sap.ui.define([
 	};
 
 	Table.prototype._bindRows = function(oBindingInfo) {
-		initBindingFlags(this);
+		resetBindingFlags(this);
+		this._bRowsBeingBound = true;
 		destroyVirtualRow(this);
 
 		// Temporary fix for the Support Assistant hacks. Support Assistant should implement a selection plugin.
@@ -1852,7 +1874,8 @@ sap.ui.define([
 	Table.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
 			// If only the model has been changed, the ManagedObject only calls _bindAggregation while bindAggregation / bindRows is not called.
-			initBindingFlags(this);
+			resetBindingFlags(this);
+			this._bRowsBeingBound = true;
 		}
 
 		// Create the binding.
@@ -1913,10 +1936,12 @@ sap.ui.define([
 		if (oBindingInfo) {
 			TableUtils.Hook.call(this, Hook.RowsUnbound);
 		}
+
+		resetBindingFlags(this);
 	};
 
-	function initBindingFlags(oTable) {
-		oTable._bRowsBeingBound = true;
+	function resetBindingFlags(oTable) {
+		oTable._bRowsBeingBound = false;
 		oTable._bContextsAvailable = false;
 		oTable._iPendingRequests = 0;
 		oTable._bPendingRequest = false;
@@ -2128,7 +2153,7 @@ sap.ui.define([
 
 		iVisibleRowCount = this.validateProperty("visibleRowCount", iVisibleRowCount);
 		if (this.getBinding("rows") && this._getTotalRowCount() <= iVisibleRowCount) {
-			this.setProperty("firstVisibleRow", 0);
+			this.setFirstVisibleRow(0);
 		}
 		this.setProperty("visibleRowCount", iVisibleRowCount);
 
@@ -2312,7 +2337,9 @@ sap.ui.define([
 		var iMaxRowIndex = this._getMaxFirstRenderedRowIndex();
 		if (iMaxRowIndex < iFirstVisibleRow && this._bContextsAvailable && !bSecondCall) {
 			// Get the contexts again, this time with the maximum possible value for the first visible row.
-			this.setProperty("firstVisibleRow", iMaxRowIndex, true);
+			this._setFirstVisibleRowIndex(iMaxRowIndex, {
+				suppressEverything: true
+			});
 			aContexts = this._getRowContexts(iRequestLength, bSuppressAdjustToBindingLength, true);
 		}
 

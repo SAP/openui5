@@ -322,7 +322,7 @@ sap.ui.define([
 
 			// make sure to reset the first visible row (currently needed for the analytical binding)
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
-			this.setProperty("firstVisibleRow", 0, true);
+			this._setFirstVisibleRowIndex(0, {suppressEverything: true});
 		}
 
 		// Create the binding.
