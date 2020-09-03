@@ -209,6 +209,7 @@ sap.ui.define([
 			"sap.m.HeaderContainer",
 			"sap.m.IconTabBar",
 			"sap.m.IconTabBarSelectList",
+			"sap.m.IconTabFilterExpandButtonBadge",
 			"sap.m.IconTabHeader",
 			"sap.m.Image",
 			"sap.m.ImageContent",

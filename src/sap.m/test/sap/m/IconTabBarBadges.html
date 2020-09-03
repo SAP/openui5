@@ -18,6 +18,8 @@
 					<Page title="Badges">
 						<Button text="Add Badge To Visible Item" press=".addToVisible" />
 						<Button text="Add Badge To Sub Item"  press=".addToSubItem" />
+						<Button text="Add Badge To 'split-mode tab' Root Item" press=".addToSplitModeTabRootItem" />
+						<Button text="Add Badge To 'split-mode tab' Sub Item" press=".addToSplitModeTabSubItem" />
 						<Button text="Add Badge To 'More' Item" press=".addToMoreItem" />
 						<Button text="Add Badge To 'More' Sub Item" press=".addToMoreSubItem" />
 						<IconTabBar id="iconTabBar1">
@@ -43,8 +45,16 @@
 								<IconTabFilter id="item3" text="Item 3">
 									<Text text="Info" />
 								</IconTabFilter>
-								<IconTabFilter text="Item 4">
+								<IconTabFilter id="item4" text="Item 4">
 									<Text text="Info" />
+									<items>
+										<IconTabFilter text="Nested Info 1">
+											<Text text="Nested Info 1" />
+										</IconTabFilter>
+										<IconTabFilter id="item402" text="Nested Info 2">
+											<Text text="Nested Info 2" />
+										</IconTabFilter>
+									</items>
 								</IconTabFilter>
 								<IconTabFilter text="Item 5">
 									<Text text="Info" />
@@ -70,16 +80,25 @@
 								<IconTabFilter text="Item 12">
 									<Text text="Info" />
 								</IconTabFilter>
-								<IconTabFilter id="item13" text="Item 13">
+								<IconTabFilter text="Item 13">
 									<Text text="Info" />
 								</IconTabFilter>
 								<IconTabFilter text="Item 14">
 									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 15">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter id="item16" text="Item 16">
+									<Text text="Info" />
+								</IconTabFilter>
+								<IconTabFilter text="Item 17">
+									<Text text="Info" />
 									<items>
-										<IconTabFilter text="Item 14 1">
+										<IconTabFilter text="Item 17 1">
 											<Text text="Info" />
 											<items>
-												<IconTabFilter id="item1411" text="Item 14 1 1">
+												<IconTabFilter id="item1711" text="Item 17 1 1">
 													<Text text="Info" />
 												</IconTabFilter>
 											</items>
@@ -106,12 +125,20 @@
 					var oFilter = this.getView().byId("item211");
 					oFilter.addCustomData(new sap.m.BadgeCustomData());
 				},
+				addToSplitModeTabRootItem: function() {
+					var oFilter = this.getView().byId("item4");
+					oFilter.addCustomData(new sap.m.BadgeCustomData());
+				},
+				addToSplitModeTabSubItem: function() {
+					var oFilter = this.getView().byId("item402");
+					oFilter.addCustomData(new sap.m.BadgeCustomData());
+				},
 				addToMoreItem: function() {
-					var oFilter = this.getView().byId("item13");
+					var oFilter = this.getView().byId("item16");
 					oFilter.addCustomData(new sap.m.BadgeCustomData());
 				},
 				addToMoreSubItem: function() {
-					var oFilter = this.getView().byId("item1411");
+					var oFilter = this.getView().byId("item1711");
 					oFilter.addCustomData(new sap.m.BadgeCustomData());
 				}
 			});

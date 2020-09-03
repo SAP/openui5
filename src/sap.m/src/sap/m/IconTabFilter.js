@@ -5,6 +5,8 @@
 // Provides control sap.m.IconTabFilter.
 sap.ui.define([
 	"./library",
+	"./AccButton",
+	"./IconTabFilterExpandButtonBadge",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Item",
@@ -14,7 +16,6 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Control",
 	'sap/ui/Device',
-	"./AccButton",
 	"sap/m/BadgeCustomData",
 	"sap/m/Button",
 	"sap/m/ResponsivePopover",
@@ -22,6 +23,8 @@ sap.ui.define([
 	"sap/m/BadgeEnabler"
 ], function (
 	library,
+	AccButton,
+	IconTabFilterExpandButtonBadge,
 	coreLibrary,
 	Core,
 	Item,
@@ -31,7 +34,6 @@ sap.ui.define([
 	InvisibleText,
 	Control,
 	Device,
-	AccButton,
 	BadgeCustomData,
 	Button,
 	ResponsivePopover,
@@ -100,7 +102,7 @@ sap.ui.define([
 
 		interfaces : [
 			"sap.m.IconTab",
-			// The IconTabBar doesn't have renderer. The sap.ui.core.PopupInterface is used to indicate
+			// The IconTabFilter doesn't have renderer. The sap.ui.core.PopupInterface is used to indicate
 			// that the IconTabFilter content is not rendered by the IconTabFilter, it is rendered by IconTabBar.
 			"sap.ui.core.PopupInterface",
 			"sap.m.IBadge"
@@ -176,10 +178,15 @@ sap.ui.define([
 			items : {type : "sap.m.IconTab", multiple : true, singularName : "item"},
 
 			/**
-			 * The expand icon if there are sub filters
+			 * The expand button if there are sub filters
 			 * @since 1.77
 			 */
-			_expandButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"}
+			_expandButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
+
+			/** The badge of the expand button
+			 * @since 1.83
+			 */
+			_expandButtonBadge : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
 		}
 	}});
 
@@ -247,6 +254,7 @@ sap.ui.define([
 		});
 
 		this._oCloneInList = null; // holds reference to the cloned item in the SelectList
+		this.setAggregation("_expandButtonBadge", new IconTabFilterExpandButtonBadge());
 	};
 
 	/**
@@ -628,6 +636,8 @@ sap.ui.define([
 			oRM.renderControl(this._getExpandButton());
 		}
 
+		oRM.renderControl(this.getAggregation("_expandButtonBadge"));
+
 		if (this.getItems().length) {
 			this._updateExpandButtonBadge();
 		}
@@ -868,16 +878,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds or hides badge from tabs with nested items.
+	 * Adds or hides badge.
 	 */
 	IconTabFilter.prototype._updateExpandButtonBadge = function () {
-		var bHasBadge = this.getBadgeCustomData() && this.getBadgeCustomData().getVisible(),
+		var oExpandButtonBadge = this.getAggregation("_expandButtonBadge"),
+			bHasBadge = oExpandButtonBadge.getBadgeCustomData() && oExpandButtonBadge.getBadgeCustomData().getVisible(),
 			bAddBadge = this._hasChildWithBadge();
 
 		if (bAddBadge && !bHasBadge) {
-			this.addCustomData(new BadgeCustomData({ visible: true }));
+			oExpandButtonBadge.addCustomData(new BadgeCustomData({ visible: true }));
 		} else if (!bAddBadge && bHasBadge) {
-			this.getBadgeCustomData().setVisible(false);
+			oExpandButtonBadge.getBadgeCustomData().setVisible(false);
 		}
 	};
 
@@ -1153,6 +1164,10 @@ sap.ui.define([
 		}
 
 		this._iHideBadgeTimeout = setTimeout(this._hideBadge.bind(this), BADGE_AUTOHIDE_TIME);
+
+		if (this._getRootTab() !== this) {
+			this._getRootTab()._updateExpandButtonBadge();
+		}
 	};
 
 	IconTabFilter.prototype._hideBadge = function () {
@@ -1163,7 +1178,10 @@ sap.ui.define([
 		}
 
 		oBadgeCustomData.setVisible(false);
-		this._getRootTab()._updateExpandButtonBadge();
+
+		if (this._getRootTab() !== this) {
+			this._getRootTab()._updateExpandButtonBadge();
+		}
 
 		if (this._oCloneInList && !this._oCloneInList.bIsDestroyed && this._oCloneInList.getBadgeCustomData()) {
 			this._oCloneInList.getBadgeCustomData().setVisible(false);
@@ -1257,9 +1275,7 @@ sap.ui.define([
 	};
 
 	IconTabFilter.prototype.getAriaLabelBadgeText = function () {
-		var sRbKey = this._bIsOverflow || (!this._isInOverflow() && this._getNestedLevel() === 1 && this._hasChildWithBadge()) ? "ICONTABFILTER_SUB_ITEMS_BADGES" : "ICONTABFILTER_BADGE";
-
-		return oResourceBundle.getText(sRbKey);
+		return oResourceBundle.getText("ICONTABFILTER_BADGE");
 	};
 
 	return IconTabFilter;

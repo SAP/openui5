@@ -264,6 +264,7 @@ sap.ui.define([
 
 		if (this.oSelectedItem) {
 			this._applySelectionToFilters();
+			this.oSelectedItem._hideBadge();
 		}
 
 		if (Core.isThemeApplied()) {
