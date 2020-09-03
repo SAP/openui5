@@ -2,7 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/m/library"
+], function (library) {
 	"use strict";
 
 	var WizardRenderer = {
@@ -21,6 +23,7 @@ sap.ui.define([], function () {
 
 		oRm.openStart("div", oWizard)
 			.class("sapMWizard")
+			.class("sapMWizardMode" + oWizard.getRenderMode())
 			.class("sapMWizardBg" + oWizard.getBackgroundDesign())
 			.style("width", oWizard.getWidth())
 			.style("height", oWizard.getHeight())
@@ -39,8 +42,11 @@ sap.ui.define([], function () {
 			.class("sapMWizardStepContainer")
 			.openEnd();
 
-		var aRenderingOrder = this._getStepsRenderingOrder(oWizard);
-		aRenderingOrder.forEach(oRm.renderControl, oRm);
+		// Page rendering mode would be handled manually
+		if (oWizard.getRenderMode() === library.WizardRenderMode.Scroll) {
+			this._getStepsRenderingOrder(oWizard)
+				.forEach(oRm.renderControl, oRm);
+		}
 
 		oRm.close("section");
 	};

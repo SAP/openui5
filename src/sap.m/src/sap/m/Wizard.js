@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/Device",
 	"./WizardRenderer",
+	"sap/ui/core/CustomData",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
@@ -24,6 +25,7 @@ sap.ui.define([
 	ResponsivePaddingsEnablement,
 	Device,
 	WizardRenderer,
+	CustomData,
 	containsOrEquals,
 	Log,
 	jQuery
@@ -32,6 +34,7 @@ sap.ui.define([
 
 		// shortcut for sap.m.PageBackgroundDesign
 		var WizardBackgroundDesign = library.PageBackgroundDesign;
+		var WizardRenderMode = library.WizardRenderMode;
 
 		/**
 		 * Constructor for a new Wizard.
@@ -132,6 +135,15 @@ sap.ui.define([
 						type: "sap.m.PageBackgroundDesign",
 						group: "Appearance",
 						defaultValue: WizardBackgroundDesign.Standard
+					},
+					/**
+					 * Defines how the steps of the Wizard would be visualized.
+					 * @experimental since 1.83
+					 */
+					renderMode: {
+						type: "sap.m.WizardRenderMode",
+						group: "Appearance",
+						defaultValue: WizardRenderMode.Scroll
 					}
 				},
 				defaultAggregation: "steps",
@@ -233,6 +245,51 @@ sap.ui.define([
 			}
 
 			this._attachScrollHandler();
+			this._renderPageMode();
+		};
+
+		/**
+		 * Renders Wizard in Page mode. The rendering is manual.
+		 * @private
+		 */
+		Wizard.prototype._renderPageMode = function () {
+			var iCurrentStepIndex, oCurrentStep, oRenderManager;
+
+			if (this.getRenderMode() !== WizardRenderMode.Page) {
+				return;
+			}
+
+			iCurrentStepIndex = this._getProgressNavigator().getCurrentStep();
+			oCurrentStep = this._aStepPath[iCurrentStepIndex - 1];
+
+			oRenderManager = Core.createRenderManager();
+			oRenderManager.renderControl(
+				this._updateStepTitleNumber(oCurrentStep, iCurrentStepIndex));
+			oRenderManager.flush(this.getDomRef("step-container"));
+			oRenderManager.destroy();
+		};
+
+		/**
+		 * Adds custom data with the current order of the step.
+		 *
+		 * @param oStep
+		 * @param iStepIndex
+		 * @returns {*}
+		 * @private
+		 */
+		Wizard.prototype._updateStepTitleNumber = function (oStep, iStepIndex) {
+			var oData = oStep.getCustomData()
+				.filter(function (oCustomData) {
+					return oCustomData.getKey() === "stepIndex";
+				})[0];
+
+			if (oData) {
+				oData.setValue(iStepIndex);
+			} else {
+				oStep.addCustomData(new CustomData({key: "stepIndex", value: iStepIndex}));
+			}
+
+			return oStep;
 		};
 
 		/**
@@ -772,6 +829,8 @@ sap.ui.define([
 				bFocusFirstElement = Device.system.desktop ? true : false;
 
 			this.goToStep(oSubsequentStep, bFocusFirstElement);
+
+			this._renderPageMode();
 		};
 
 		/**
