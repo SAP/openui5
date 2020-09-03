@@ -325,9 +325,17 @@ sap.ui.define([
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
 
-		}).then(oTable.qunit.whenRenderingFinished).then(oTable.qunit.$scrollVSbTo(23)).then(oTable.qunit.whenViewportScrolled).then(function() {
-			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(23), "The inner vertical scroll position was correctly synced");
-			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1, "The inner vertical scroll position was synced once");
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(0),
+				"After rendering: The inner vertical scroll position was correctly synced");
+			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1,
+				"After rendering: The inner vertical scroll position was synced once");
+			oSyncInterface.innerVerticalScrollPosition.reset();
+		}).then(oTable.qunit.$scrollVSbTo(23)).then(oTable.qunit.whenViewportScrolled).then(function() {
+			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(23),
+				"After scrolling: The inner vertical scroll position was correctly synced");
+			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1,
+				"After scrolling: The inner vertical scroll position was synced once");
 		});
 	});
 

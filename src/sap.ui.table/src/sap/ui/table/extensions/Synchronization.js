@@ -119,6 +119,8 @@ sap.ui.define([
 			if (!bRenderedRows) {
 				var oSyncExtension = this._getSyncExtension();
 
+				oSyncExtension.syncInnerVerticalScrollPosition(oContentDomRef.scrollTop);
+
 				if (!oSyncExtension._onTableContainerScrollEventHandler) {
 					oSyncExtension._onTableContainerScrollEventHandler = function(oEvent) {
 						oSyncExtension.syncInnerVerticalScrollPosition(oEvent.target.scrollTop);
