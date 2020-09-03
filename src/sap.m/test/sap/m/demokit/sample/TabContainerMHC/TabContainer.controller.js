@@ -20,6 +20,8 @@ sap.ui.define([
 					this.oPageTabContainer.destroyContent();
 					this.oPageAddItem.destroyContent();
 					this.oNavCon.back();
+					var bButtonState = this.oPageTable.getSelectedItems().length > 0;
+					this.oView.byId("idOpenSelected").setVisible(bButtonState);
 				}.bind(this);
 
 			if (this._isInEditMode()) {
