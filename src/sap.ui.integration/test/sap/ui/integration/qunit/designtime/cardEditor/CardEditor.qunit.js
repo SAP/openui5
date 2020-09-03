@@ -348,6 +348,37 @@ sap.ui.define([
 				this.oCardEditor.setDesigntimeChanges({foo: "bar"});
 			}, /Designtime Changes can only be set initially/, "the function throws an error");
 		});
+
+		QUnit.test("when specific config is set and contains no i18n file", function (assert) {
+			return this.oCardEditor._addSpecificConfig({}).then(function() {
+				assert.deepEqual(
+					this.oCardEditor.getConfig(),
+					Object.assign({}, {
+						i18n: [
+							"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
+						]
+					}),
+					"then default i18n package is provided"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("when specific config is set and contains an i18n string", function (assert) {
+			return this.oCardEditor._addSpecificConfig({
+				i18n: "i18n_file"
+			}).then(function() {
+				assert.deepEqual(
+					this.oCardEditor.getConfig(),
+					Object.assign({}, {
+						i18n: [
+							"i18n_file",
+							"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
+						]
+					}),
+					"then default i18n package and the specified package are added"
+				);
+			}.bind(this));
+		});
 	});
 
 	QUnit.done(function () {

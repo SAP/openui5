@@ -605,6 +605,7 @@ sap.ui.define([
 				i18n: [
 					"i18n1",
 					"i18n2",
+					"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties",
 					"i18n3"
 				]
 			};

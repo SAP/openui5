@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_union",
 	"sap/base/util/restricted/_isNil",
+	"sap/base/util/restricted/_castArray",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
@@ -55,6 +56,7 @@ sap.ui.define([
 	_omit,
 	_union,
 	_isNil,
+	_castArray,
 	JSONModel,
 	ResourceBundle,
 	Log,
@@ -335,9 +337,6 @@ sap.ui.define([
 					propertyEditors: {},
 					properties: {}
 				};
-				if (!oConfig.i18n) {
-					oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
-				}
 
 				var oNewConfig = mergeConfig(oTarget, oConfig);
 
@@ -349,6 +348,11 @@ sap.ui.define([
 						: mergeSpecificConfig(oNewConfig, this._oSpecificConfig, mPropertyEditors);
 				}
 
+				// Always include the default i18n file
+				oNewConfig.i18n = _union(
+					oNewConfig.i18n && _castArray(oNewConfig.i18n),
+					this.getMetadata().getProperty("config").getDefaultValue().i18n
+				);
 
 				this.setProperty("config", oNewConfig, false);
 				this._initialize();
