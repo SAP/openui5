@@ -1069,7 +1069,6 @@ function(
 				}), 'toolbar');
 			} else {
 				this.addDependent(new fnConstructor({
-					modeSwitcher: this.getMode(),
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, false),
@@ -1101,7 +1100,7 @@ function(
 				saveAsEnabled: false,
 				manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
 				manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
-				modeSwitcher: "adaptation"
+				modeSwitcher: this.getMode()
 			});
 
 			if (bSaveAsAvailable) {
@@ -1746,22 +1745,8 @@ function(
 	 * @param {string} sNewMode The new value for the 'mode' property
 	 */
 	RuntimeAuthoring.prototype.setMode = function (sNewMode) {
-		if (this._oToolbarControlsModel.getProperty("/modeSwitcher") !== sNewMode) {
-			var oModeSwitcher = this.getShowToolbars() && this.getToolbar().getControl('modeSwitcher');
+		if (this.getMode() !== sNewMode) {
 			var bOverlaysEnabled = sNewMode === 'adaptation';
-
-			if (oModeSwitcher) {
-				// no event loop because setSelectedButton() doesn't trigger 'select' event on SegmentedButton
-				oModeSwitcher.setSelectedButton(
-					oModeSwitcher
-						.getItems()
-						.filter(function (oControl) {
-							return oControl.getKey() === sNewMode;
-						})
-						.pop()
-						.getId()
-				);
-			}
 			this._oDesignTime.setEnabled(bOverlaysEnabled);
 			this.getPlugins()['tabHandling'][bOverlaysEnabled ? 'removeTabIndex' : 'restoreTabIndex']();
 			this._oToolbarControlsModel.setProperty("/modeSwitcher", sNewMode);

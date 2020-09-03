@@ -289,10 +289,7 @@ function(
 				formatVersionButtonText: this.formatVersionButtonText.bind(this),
 				showVersionHistory: this.showVersionHistory.bind(this)
 			}
-		}).then(function (aControls) {
-			this.getControl("modeSwitcher").setSelectedKey(this.getModel("controls").getProperty("/modeSwitcher"));
-			return aControls;
-		}.bind(this));
+		});
 	};
 
 	function _resetDialog() {

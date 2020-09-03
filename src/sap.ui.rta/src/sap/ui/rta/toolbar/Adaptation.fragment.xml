@@ -53,6 +53,7 @@
                 <SegmentedButton
                         id="sapUiRta_modeSwitcher"
                         selectionChange=".modeChange"
+                        selectedKey="{controls>/modeSwitcher}"
                         width="auto" >
                     <items>
                         <SegmentedButtonItem
