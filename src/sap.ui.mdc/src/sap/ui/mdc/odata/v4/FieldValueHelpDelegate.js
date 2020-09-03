@@ -10,7 +10,6 @@ sap.ui.define([
 	'sap/ui/mdc/field/FieldValueHelpDelegate',
 	'sap/ui/model/FilterType',
 	'sap/ui/mdc/odata/v4/TypeUtil'
-
 ], function(
 		FieldValueHelpDelegate,
 		FilterType,
@@ -49,15 +48,23 @@ sap.ui.define([
 
 	ODataFieldValueHelpDelegate.executeFilter = function(oPayload, oListBinding, oFilter, fnCallback, iRequestedItems) {
 
-		var fnHandleChange = function(oParameters) {
-			if (oParameters.mParameters.detailedReason) {
-				return; // only use the final change event
+		var _bIsFilterExecutionComplete = false;
+
+		var fnHandleListBindingEvent = function (oParameters) {
+			if (oParameters.mParameters.detailedReason) { // do not consider virtualcontext events triggered during automatic determination of $expand and $select
+				return;
 			}
-			oListBinding.detachEvent("change", fnHandleChange);
-			fnCallback();
+
+			if (!_bIsFilterExecutionComplete) {
+				_bIsFilterExecutionComplete = true;
+				oListBinding.detachEvent("change", fnHandleListBindingEvent);
+				fnCallback();
+			}
 		};
 
-		oListBinding.attachEvent("change", fnHandleChange);
+		oListBinding.attachEvent("change", fnHandleListBindingEvent); // Note: The change event might not be fired in error scenarios
+		oListBinding.attachEventOnce("dataReceived", fnHandleListBindingEvent); // Note: According to an earlier change the dataReceived event may not always be fired in some caching scenarios
+
 		oListBinding.initialize();
 		oListBinding.filter(oFilter, FilterType.Application);
 		oListBinding.getContexts(0, iRequestedItems); // trigger request. not all entries needed, we only need to know if there is one, none or more
