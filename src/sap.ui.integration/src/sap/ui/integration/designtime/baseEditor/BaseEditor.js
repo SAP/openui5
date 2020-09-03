@@ -65,7 +65,6 @@ sap.ui.define([
 	"use strict";
 
 	var CUSTOM_PROPERTY_PREFIX = "customProperty--";
-	var SET_CONFIG_PROMISE = Promise.resolve();
 
 	/**
 	 * @class
@@ -212,6 +211,16 @@ sap.ui.define([
 					}
 				},
 				/**
+				 * Fired when config has been changed.
+				 */
+				configChange: {
+					parameters: {
+						config: {
+							type: "object"
+						}
+					}
+				},
+				/**
 				 * Fired when all property editors for the given JSON and configuration are created.
 				 * TODO: remove this public event.
 				 */
@@ -224,6 +233,7 @@ sap.ui.define([
 		},
 
 		constructor: function() {
+			this._oSetConfigPromise = Promise.resolve();
 			this._mObservableConfig = {};
 			this._mPropertyEditors = {};
 			this._aCancelHandlers = [];
@@ -323,10 +333,14 @@ sap.ui.define([
 		}
 	};
 
+	BaseEditor.prototype.setPreventInitialization = function (bPreventInitialization) {
+		this._bPreventInitialization = bPreventInitialization;
+	};
+
 	BaseEditor.prototype.setConfig = function (oConfig, bIsDefaultConfig) {
 		this._bIsDefaultConfig = bIsDefaultConfig;
 		oConfig = oConfig || {};
-		SET_CONFIG_PROMISE = SET_CONFIG_PROMISE.then(function() {
+		this._oSetConfigPromise = this._oSetConfigPromise.then(function() {
 			PropertyEditorFactory.deregisterAllTypes();
 			return PropertyEditorFactory.registerTypes(oConfig.propertyEditors || {});
 		})
@@ -356,13 +370,19 @@ sap.ui.define([
 				);
 
 				this.setProperty("config", oNewConfig, false);
-				this._initialize();
+				this.fireConfigChange({
+					config: deepClone(oNewConfig)
+				});
+
+				if (!this._bPreventInitialization) {
+					this._initialize();
+				}
 			}.bind(this));
-		return SET_CONFIG_PROMISE;
+		return this._oSetConfigPromise;
 	};
 
 	BaseEditor.prototype.addConfig = function (oConfig, bIsDefaultConfig) {
-		return SET_CONFIG_PROMISE.then(function () {
+		return this._oSetConfigPromise.then(function () {
 			return this.setConfig(
 				mergeConfig(this.getConfig(), oConfig),
 				bIsDefaultConfig
@@ -378,20 +398,30 @@ sap.ui.define([
 	}
 
 	BaseEditor.prototype._addSpecificConfig = function(oSpecificConfig) {
-		return SET_CONFIG_PROMISE.then(function() {
+		return this._oSetConfigPromise.then(function() {
 			this._oSpecificConfig = oSpecificConfig;
 
-			addMissingPropertyEditors(this.getConfig(), oSpecificConfig);
-			return this.setConfig(this.getConfig(), this._bIsDefaultConfig);
+			var oCurrentConfig = _merge({}, this.getConfig());
+			oCurrentConfig.propertyEditors = addMissingPropertyEditors(oCurrentConfig, oSpecificConfig);
+			return this.setConfig(oCurrentConfig, this._bIsDefaultConfig);
 		}.bind(this));
 	};
 
 	function addMissingPropertyEditors(oCurrentConfig, oSpecificConfig) {
-		each(oSpecificConfig.propertyEditors, function(sEditorName, sEditorPath) {
-			if (!oCurrentConfig.propertyEditors[sEditorName]) {
-				oCurrentConfig.propertyEditors[sEditorName] = sEditorPath;
-			}
-		});
+		var oPropertyEditors = {};
+		var oCurrentEditors = oCurrentConfig.propertyEditors || {};
+		var oSpecificEditors = oSpecificConfig.propertyEditors || {};
+
+		_union(
+			Object.keys(oCurrentEditors),
+			Object.keys(oSpecificEditors)
+		)
+			.forEach(function (sEditorName) {
+				oPropertyEditors[sEditorName] = oSpecificEditors[sEditorName]
+					|| oCurrentEditors[sEditorName];
+			});
+
+		return oPropertyEditors;
 	}
 
 	function mergeSpecificConfig(oCurrentConfig, oSpecificConfig, mPropertyEditors) {
