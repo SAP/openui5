@@ -236,7 +236,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			createBlankCell("DummyCol", type + "DummyCol", true);
 		}
 
-		createBlankCell("NavCol", type + "Nav", !oTable._iItemNeedsColumn);
+		createBlankCell("NavCol", type + "Nav", true);
 
 		if (iModeOrder == 1) {
 			createBlankCell("SelCol", "", true);
