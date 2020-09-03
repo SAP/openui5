@@ -45,6 +45,18 @@ function(
 		FL_MAX_LAYER_PARAM: "sap-ui-fl-max-layer",
 
 		/**
+		 * Indicates if the passed layer is valid.
+		 *
+		 * @returns {boolean} <code>true</code> if the layer is valid
+		 * @public
+		 */
+		isValidLayer: function (sLayer) {
+			return Object.keys(Layer).some(function (sExistingLayer) {
+				return sExistingLayer === sLayer;
+			});
+		},
+
+		/**
 		 * Indicates if the VENDOR is selected.
 		 *
 		 * @returns {boolean} true if it's an application variant

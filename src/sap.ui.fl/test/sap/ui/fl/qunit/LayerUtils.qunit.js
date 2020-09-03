@@ -96,6 +96,13 @@ function(
 		});
 	});
 
+	QUnit.module("LayerUtils.isValidLayer", function() {
+		QUnit.test("isValidLayer", function(assert) {
+			assert.ok(LayerUtils.isValidLayer(Layer.CUSTOMER), "with 'CUSTOMER' layer the function returns 'true'");
+			assert.notOk(LayerUtils.isValidLayer("INVALID"), "with 'INVALID' layer the function returns 'false'");
+		});
+	});
+
 	QUnit.module("LayerUtils.isCustomerDependentLayer", {
 		beforeEach: function () {},
 		afterEach: function () {}
