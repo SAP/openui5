@@ -1244,6 +1244,12 @@ html[dir=rtl] {
 /* IconTabBar Badge									*/
 /* ------------------------------------------------ */
 
+.sapMITH {
+	.sapMITBFilterWithItems .sapMITBFilterExpandBtn {
+		margin-left: 0.625rem; // extra margin to create space for badge
+	}
+}
+
 .sapMITH,
 .sapMITBFilterPopover {
 	&.sapUiSizeCompact .sapMBadgeAttention,
@@ -1257,11 +1263,6 @@ html[dir=rtl] {
 	.sapMITBText .sapMBadgeAttention {
 		top: 0;
 		right: -0.6rem;
-	}
-
-	.sapMITBFilterWithItems .sapMITBText .sapMITBBadgeHolder ,
-	.sapMITHOverflowVisible .sapMITBText .sapMITBBadgeHolder {
-		margin-right: 0.375rem;
 	}
 
 	.sapMITBSelectList .sapMITBText .sapMBadgeAttention {
