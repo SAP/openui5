@@ -188,6 +188,16 @@ sap.ui.define([
 			total: false,
 			visible: true
 		},
+		// a grouped text property of a dimension
+		oCostElementTextGrouped = {
+			name: "CostElementText",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
 		// Analytical information for properties of "TypeWithHierarchies"
 		oCostCenterDrillstate = {
 			name: "CostCenter_Drillstate",
@@ -3118,6 +3128,56 @@ sap.ui.define([
 				AnalyticalBinding.prototype._findKeyIndex.call(oBinding, "/", oFixture.inputKey[n]),
 				oFixture.resultKeyIndex[n]);
 		}
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bSuppressResetData) {
+	[
+		{iLevels : undefined, numberOfExpandedLevels : 0},
+		{
+			iLevels : -1,
+			log : "Number of expanded levels was set to 0. Negative values are prohibited",
+			numberOfExpandedLevels : 0
+		},
+		{iLevels : 0, numberOfExpandedLevels : 0},
+		{iLevels : 1, numberOfExpandedLevels : 1},
+		{iLevels : 2, numberOfExpandedLevels : 2},
+		// simulate expand all from analytical table
+		{
+			iLevels : 3,
+			log : "Number of expanded levels was reduced from 3 to 2 which is the number of grouped"
+				+ " dimensions",
+			numberOfExpandedLevels : 2
+		}
+	].forEach(function (oFixture) {
+	var sTitle = "setNumberOfExpandedLevels: iLevels = " + oFixture.iLevels
+			+ ", bSuppressResetData = " + bSuppressResetData;
+
+	QUnit.test(sTitle, function (assert) {
+		var done = assert.async(),
+			that = this;
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			// that.oLogMock cannot be used as it mocks AnalyticalBinding.Logger which is not used
+			// in sap.ui.model.analytics.AnalyticalTreeBindingAdapter
+			that.mock(Log).expects("warning")
+				.withExactArgs(oFixture.log, sinon.match.same(oBinding),
+					"sap.ui.model.analytics.AnalyticalTreeBindingAdapter")
+				.exactly(oFixture.log ? 1 : 0);
+			that.mock(oBinding).expects("resetData")
+				.withExactArgs()
+				.exactly(bSuppressResetData ? 0 : 1);
+
+			// code under test
+			oBinding.setNumberOfExpandedLevels(oFixture.iLevels, bSuppressResetData);
+
+			assert.strictEqual(oBinding.mParameters.numberOfExpandedLevels,
+				oFixture.numberOfExpandedLevels);
+
+			done();
+		}, [oCostCenterGrouped, oCostElementGrouped, oCostElementTextGrouped, oActualCostsTotal]);
+	});
 	});
 });
 });
