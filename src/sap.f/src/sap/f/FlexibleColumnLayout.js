@@ -103,7 +103,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Determines whether the initial focus of the <code>NavContainer</code> instances is set automatically on first rendering and after navigating to a new page.
+				 * Determines whether the initial focus is set automatically on first rendering and after navigating to a new page.
 				 *
 				 * For more information, see {@link sap.m.NavContainer#autoFocus}.
 				 * @since 1.76
