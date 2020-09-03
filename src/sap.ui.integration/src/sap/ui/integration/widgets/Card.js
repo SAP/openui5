@@ -72,7 +72,8 @@ sap.ui.define([
 		SERVICES: "/sap.ui5/services",
 		APP_TYPE: "/sap.app/type",
 		PARAMS: "/sap.card/configuration/parameters",
-		DESTINATIONS: "/sap.card/configuration/destinations"
+		DESTINATIONS: "/sap.card/configuration/destinations",
+		FILTERS: "/sap.card/configuration/filters"
 	};
 
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
@@ -388,6 +389,7 @@ sap.ui.define([
 		this._aReadyPromises = [];
 
 		this._awaitEvent("_headerReady");
+		this._awaitEvent("_filterBarReady");
 		this._awaitEvent("_contentReady");
 		this._awaitEvent("_cardReady");
 
@@ -938,8 +940,8 @@ sap.ui.define([
 		this._applyServiceManifestSettings();
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
-		this._applyFilterBarManifestSettings();
 		this._applyContentManifestSettings();
+		this._applyFilterBarManifestSettings();
 	};
 
 	Card.prototype._applyDataManifestSettings = function () {
@@ -1062,7 +1064,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._applyHeaderManifestSettings = function () {
-
 		var oHeader = this.createHeader();
 
 		if (!oHeader) {
@@ -1086,12 +1087,16 @@ sap.ui.define([
 	Card.prototype._applyFilterBarManifestSettings = function () {
 		var oFilterBar = this.createFilterBar();
 
-		this.destroyAggregation("_filterBar");
-
 		if (!oFilterBar) {
+			this.fireEvent("_filterBarReady");
 			return;
 		}
 
+		oFilterBar.attachEventOnce("_filterBarDataReady", function() {
+			this.fireEvent("_filterBarReady");
+		}.bind(this));
+
+		this.destroyAggregation("_filterBar");
 		this.setAggregation("_filterBar", oFilterBar);
 	};
 
@@ -1162,7 +1167,7 @@ sap.ui.define([
 	};
 
 	Card.prototype.createFilterBar = function () {
-		var mFiltersConfig = this.getManifestEntry("/sap.card/configuration/filters"),
+		var mFiltersConfig = this._oCardManifest.get(MANIFEST_PATHS.FILTERS),
 			mValues = this._mFilters,
 			oFactory = new FilterBarFactory(this);
 

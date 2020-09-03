@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/m/library",
 	"sap/m/HBox",
-	"sap/m/Select",
-	"sap/ui/core/ListItem"
+	"sap/ui/integration/cards/Filter"
 ], function (
 	BaseObject,
 	mLibrary,
 	HBox,
-	Select,
-	ListItem
+	Filter
 ) {
 	"use strict";
 
@@ -51,53 +49,64 @@ sap.ui.define([
 	 * @returns {sap.m.HBox} The Filter bar.
 	 */
 	FilterBarFactory.prototype.create = function (mFiltersConfig, mFiltersValues) {
-		var oFilterBar,
-			aSelects = [],
-			sKey,
+		var aFilters = [],
+			aReadyPromises = [],
 			mConfig,
-			sValue;
+			sKey,
+			oFilter,
+			oFilterBarStrip;
 
 		for (sKey in mFiltersConfig) {
 			mConfig = mFiltersConfig[sKey];
-			sValue = mFiltersValues.get(sKey) || mConfig.value;
 
-			aSelects.push(
-				this._createSelect(sKey, mConfig, sValue)
-			);
+			oFilter = new Filter({
+				card: this._oCard,
+				key: sKey,
+				config: mConfig,
+				value: mFiltersValues.get(sKey) || mConfig.value
+			});
+
+			this._awaitEvent(aReadyPromises, oFilter, "_ready");
+			oFilter._setDataConfiguration(mConfig.data);
+
+			aFilters.push(oFilter);
 		}
 
-		if (!aSelects.length) {
+		if (!aFilters.length) {
 			return null;
 		}
 
-		oFilterBar = new HBox({
+		for (var i = 0; i < aFilters.length - 1; i++) {
+			aFilters[i].addStyleClass("sapUiTinyMarginEnd");
+		}
+
+		oFilterBarStrip = new HBox({
 			wrap: FlexWrap.Wrap,
-			items: aSelects
+			items: aFilters
 		});
 
-		return oFilterBar;
+		Promise.all(aReadyPromises).then(function () {
+			oFilterBarStrip.fireEvent("_filterBarDataReady");
+		});
+
+		return oFilterBarStrip;
 	};
 
-	FilterBarFactory.prototype._createSelect = function(sKey, mConfig, sValue) {
-		var aItems = mConfig.items || [],
-			oSelect;
 
-		oSelect = new Select();
-
-		aItems.forEach(function (mItem) {
-			oSelect.addItem(new ListItem({
-				key: mItem.key,
-				text: mItem.title
-			}));
-		});
-
-		oSelect.setSelectedKey(sValue);
-
-		oSelect.attachChange(function () {
-			this._oCard._setFilterValue(sKey, oSelect.getSelectedKey());
-		}.bind(this));
-
-		return oSelect;
+	/**
+	 * Await for an event on a filter.
+	 *
+	 * @private
+	 * @param {Promise[]} aPromises Array of promises that receives a new Promise
+	 * @param {sap.ui.integration.cards.Filter} oFilter Filter instance that throws the event
+	 * @param {string} sEvent Name of the event
+	 */
+	FilterBarFactory.prototype._awaitEvent = function (aPromises, oFilter, sEvent) {
+		aPromises.push(new Promise(function (resolve) {
+			oFilter.attachEventOnce(sEvent, function () {
+				resolve();
+			});
+		}));
 	};
 
 	return FilterBarFactory;

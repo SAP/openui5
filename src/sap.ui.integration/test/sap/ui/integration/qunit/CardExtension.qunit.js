@@ -157,6 +157,63 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.test("Extension providing data for a Filter", function (assert) {
+		// arrange
+		var done = assert.async();
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test1"
+			},
+			"sap.card": {
+				"configuration": {
+					"filters": {
+						"populationDensity": {
+							"value": "hi",
+							"item": {
+								"template": {
+									"key": "{key}",
+									"title": "{title}"
+								}
+							},
+							"data": {
+								"extension": {
+									"method": "getDataForFilter"
+								}
+							}
+						}
+					}
+				},
+				"type": "List",
+				"extension": "./extensions/Extension1",
+				"data": {
+					"extension": {
+						"method": "getData"
+					}
+				},
+				"content": {
+					"item": {
+						"title": "{city}"
+					}
+				}
+			}
+		});
+
+		this.oCard.attachEvent("_ready", function () {
+			var oFilterBar = this.oCard.getAggregation("_filterBar");
+			assert.strictEqual(oFilterBar.getItems().length, 1, "The filter bar has 1 filter");
+
+			var oFilter = oFilterBar.getItems()[0];
+			assert.strictEqual(oFilter._getSelect().getSelectedKey(), "hi", "property binding works");
+
+			assert.strictEqual(oFilter._getSelect().getItems()[2].getKey(), "lo", "option has the expected key");
+
+			done();
+		}.bind(this));
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.test("Extension making request with custom dataType", function (assert) {
 		// arrange
 		var done = assert.async(),

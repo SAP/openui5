@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "card.explorer.dataSources.topProducts",
+		"id": "card.explorer.filters.usingStaticItems",
 		"type": "card",
 		"title": "Sample of a Card with filters",
 		"dataSources": {
@@ -26,7 +26,7 @@
 					"type": "string",
 					"label": "Category",
 					"description": "Filter the products by category.",
-					"items":  [
+					"items": [
 						{
 							"title": "All",
 							"key": "all"
