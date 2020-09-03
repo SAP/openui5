@@ -21,7 +21,9 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/mdc/table/TableSettings",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/m/VBox",
+	"sap/m/Link"
 ], function(
 	QUtils,
 	KeyCodes,
@@ -42,7 +44,9 @@ sap.ui.define([
 	containsOrEquals,
 	FlexUtil,
 	TableSettings,
-	Device
+	Device,
+	VBox,
+	Link
 ) {
 	"use strict";
 
@@ -4284,6 +4288,72 @@ sap.ui.define([
 			clock.tick(1);
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
 
+			done();
+		}.bind(this));
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function() {
+			this.oTable = new Table();
+		},
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		}
+	});
+
+	QUnit.test("Accessibility test for Responsive inner table", function (assert) {
+		var done = assert.async();
+		this.oTable.setType("ResponsiveTable");
+		assert.strictEqual(this.oTable.getType(), "ResponsiveTable", "Responsive table type");
+		this.oTable.addColumn(
+			new Column({
+				header: "Test0",
+				template: new VBox({
+					items: new Link({
+						text: "template1"
+					})
+				})
+			})
+		);
+
+		this.oTable.addColumn(
+			new Column({
+				header: "Test1",
+				template: new Text({
+					text: "template0"
+				})
+			})
+		);
+
+		var sId = this.oTable.getColumns()[1].getId();
+		this.oTable.removeColumn(this.oTable.getColumns()[1]);
+
+		this.oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		this.oTable.initialized().then(function() {
+			assert.notOk(Core.getStaticAreaRef().querySelector("#" + sId), "Static Area removed after initialized to column before initialized");
+			assert.strictEqual(Core.getStaticAreaRef().querySelector("#" + this.oTable.getColumns()[0].getId()).innerHTML, "Test0", "Static Area added to the first Column Before initialization");
+			sId = this.oTable.getColumns()[0].getId();
+			this.oTable.removeColumn(this.oTable.getColumns()[0]);
+			assert.notOk(Core.getStaticAreaRef().querySelector("#" + sId), "Static Area removed after initialization to column before initialized");
+
+			this.oTable.addColumn(
+				new Column({
+					header: "Test2",
+					template: new Text({
+						text: "template0"
+					})
+				})
+			);
+			// place the table at the dom
+			Core.applyChanges();
+			assert.strictEqual(Core.getStaticAreaRef().querySelector("#" + this.oTable.getColumns()[0].getId()).innerHTML, "Test2", "Static Area added to the second Column after the table is initialised");
+			sId = this.oTable.getColumns()[0].getId();
+			this.oTable.getColumns()[0].destroy();
+			assert.notOk(Core.getStaticAreaRef().querySelector("#" + sId), "Static Area removed after initialization to column after initialized");
 			done();
 		}.bind(this));
 	});

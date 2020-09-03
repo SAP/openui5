@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element", "sap/m/Label"
-], function(Element, Label) {
+	"sap/ui/core/Element", "sap/m/Label", "sap/ui/core/Core"
+], function(Element, Label, Core) {
 	"use strict";
 
 	/**
@@ -148,6 +148,27 @@ sap.ui.define([
 		}
 	};
 
+	Column.prototype.setParent = function(oParent) {
+		var oPrevParent = this.getParent();
+		Element.prototype.setParent.apply(this, arguments);
+		if (oParent && oParent.isA("sap.ui.mdc.Table")) {
+			if (oParent.getDomRef()) {
+				this._addAriaStaticDom();
+			} else {
+					this.oAfterRenderingDelegate = {
+					onAfterRendering: function () {
+						this._addAriaStaticDom();
+						this.getParent().removeDelegate(this.oAfterRenderingDelegate);
+					}
+				};
+				oParent.addDelegate(this.oAfterRenderingDelegate, this);
+			}
+		} else if (!oParent) {
+			oPrevParent.removeDelegate(this.oAfterRenderingDelegate);
+			this._removeAriaStaticDom();
+		}
+	};
+
 	/**
 	 * Creates and returns the column header control.
 	 * If <code>headerVisible=false</code> then, <code>width=0px</code> is applied to the sap.m.Label control for accessibility purpose.
@@ -171,6 +192,28 @@ sap.ui.define([
 		return this._oColumnHeaderLabel;
 	};
 
+	Column.prototype._removeAriaStaticDom = function() {
+		var oDomElement = document.getElementById(this.getId());
+
+		if (oDomElement) {
+			oDomElement.parentNode.removeChild(oDomElement);
+		}
+	};
+
+	Column.prototype._addAriaStaticDom = function() {
+		var oInvisibleDiv = document.createElement("div");
+		oInvisibleDiv.setAttribute("id", this.getId());
+		oInvisibleDiv.setAttribute("class", "sapUiInvisibleText");
+		oInvisibleDiv.setAttribute("aria-hidden", "true");
+		var oHeaderTextNode = document.createTextNode(this.getHeader());
+		oInvisibleDiv.appendChild(oHeaderTextNode);
+		var oStaticDiv = Core.getStaticAreaRef();
+
+		if (oInvisibleDiv && oStaticDiv) {
+			oStaticDiv.appendChild(oInvisibleDiv);
+		}
+	};
+
 	Column.prototype.exit = function() {
 		if (this._oTemplateClone) {
 			this._oTemplateClone.destroy();
@@ -186,6 +229,7 @@ sap.ui.define([
 			this._oColumnHeaderLabel.destroy();
 			this._oColumnHeaderLabel = null;
 		}
+		this._removeAriaStaticDom();
 	};
 
 	return Column;
