@@ -156,5 +156,11 @@
 		"description": "Example with cards with badge",
 		"route": "badges",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Preview",
+		"description": "To be used only inside the designtime",
+		"route": "preview",
+		"group": "Other Card Examples"
 	}
 ]

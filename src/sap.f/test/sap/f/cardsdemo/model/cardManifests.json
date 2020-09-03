@@ -2250,5 +2250,93 @@
 				}
 			}
 		}
+	},
+	"preview": {
+		"list": {
+			"sap.app": {
+				"id": "cardsdemo.preview.list",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "{title}",
+					"subTitle": "{subTitle}",
+					"status": "{subTitle}",
+					"icon": {
+						"src": "{subTitle}"
+					}
+				},
+				"content": {
+					"maxItems": 5,
+					"item": {
+						"title": {
+							"label": "{subTitle}",
+							"value": "{Name}"
+						},
+						"icon": {
+							"src": "{icon}"
+						},
+						"highlight": "{state}",
+						"description": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"general": {
+			"sap.app": {
+				"id": "cardsdemo.preview.general",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Component",
+				"header": {
+					"title": "{title}",
+					"subTitle": "{subTitle}",
+					"status": "{subTitle}",
+					"icon": {
+						"src": "{subTitle}"
+					}
+				}
+			}
+		},
+		"numeric": {
+			"sap.app": {
+				"id": "cardsdemo.preview.numeric",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Component",
+				"header": {
+					"type": "Numeric",
+					"title": "{title}",
+					"subTitle": "{subTitle}",
+					"unitOfMeasurement": "{unitOfMeasurement}",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}"
+					},
+					"details": "{details}",
+					"sideIndicators": [
+						{
+							"title": "{target/title}",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "{deviation/title}",
+							"number": "{deviation/number}",
+							"unit": "{deviation/unit}"
+						}
+					]
+				}
+			}
+		}
 	}
 }

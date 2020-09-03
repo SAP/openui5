@@ -398,4 +398,18 @@ describe("sap.f.Card", function () {
 		navigateBack();
 	});
 
+	it("Preview", function () {
+		navigateTo("Preview");
+
+		takePictureOfElement({
+			control: {
+				viewNamespace: "sap.f.cardsdemo.view.",
+				viewName: "Preview",
+				id: "previewPage"
+			}
+		}, "17_Preview");
+
+		navigateBack();
+	});
+
 });

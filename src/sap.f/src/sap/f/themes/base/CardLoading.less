@@ -7,7 +7,9 @@
 @sap_f_Card_Placeholder_Gradient: linear-gradient(to right, @sapContent_Placeholderloading_Background 0%, @sapContent_Placeholderloading_Background 35%, darken(@sapContent_Placeholderloading_Background, 5) 50%, @sapContent_Placeholderloading_Background 65%, @sapContent_Placeholderloading_Background 100%);
 
 .sapFCard {
-	.sapFCardHeader.sapFCardHeaderLoading {
+
+	.sapFCardHeader.sapFCardHeaderLoading,
+	&.sapFCardPreview .sapFCardHeader {
 
 		.sapFCardHeaderImage.sapFCardHeaderItemBinded {
 			height: 3rem;
@@ -54,7 +56,8 @@
 		}
 	}
 
-	.sapFCardNumericHeader.sapFCardHeaderLoading {
+	.sapFCardNumericHeader.sapFCardHeaderLoading,
+	&.sapFCardPreview .sapFCardNumericHeader {
 		.sapFCardHeaderMainIndicator .sapFCardHeaderItemBinded {
 			min-width: 5rem;
 		}
@@ -175,6 +178,14 @@
 
 		100% {
 			background-position: 468px 0;
+		}
+	}
+
+	&.sapFCardPreview {
+		.sapFCardHeaderItemBinded::after,
+		.sapFCardLoadingShimmer {
+			background-image: unset !important;
+			animation-name: unset !important;
 		}
 	}
 }
