@@ -22,14 +22,14 @@
 			<form:SimpleForm editable="true" width="40rem">
 				<core:Title text="Cards loading will take random time in the given interval." />
 				<Label text="Minimum loading time" />
-				<Input id="loadingMinSeconds" width="8rem" type="Number" description="seconds"/>
-				<Label text="Maximum loading time"/>
-				<Input id="loadingMaxSeconds" width="8rem" type="Number" description="seconds"/>
-				<Label text="Preload manifests"/>
-				<CheckBox id="preloadManifests" selected="true"/>
-				<Label text="Number of cards"/>
-				<Input id="numberOfCards" width="4rem" type="Number" value="11"/>
-				<Button text="Start loading" type="Emphasized" press="onFormSubmit"/>
+				<Input id="loadingMinSeconds" width="8rem" type="Number" description="seconds" />
+				<Label text="Maximum loading time" />
+				<Input id="loadingMaxSeconds" width="8rem" type="Number" description="seconds" />
+				<Label text="Preload manifests" />
+				<CheckBox id="preloadManifests" selected="true" />
+				<Label text="Number of cards" />
+				<Input id="numberOfCards" width="4rem" type="Number" value="12" />
+				<Button text="Start loading" type="Emphasized" press=".onFormSubmit" />
 			</form:SimpleForm>
 
 			<f:GridContainer id="cardsContainer" class="sapUiSmallMargin">

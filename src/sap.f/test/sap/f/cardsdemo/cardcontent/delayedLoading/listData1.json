@@ -6,6 +6,22 @@
 			"number": 55
 		}
 	},
+	"filter": {
+		"items": [
+			{
+				"key": "1",
+				"title": "OptionOption 1"
+			},
+			{
+				"key": "2",
+				"title": "Option 2"
+			},
+			{
+				"key": "3",
+				"title": "OptionOptionOption 3"
+			}
+		]
+	},
 	"content": [
 		{
 			"Name": "Notebook Basic 15",

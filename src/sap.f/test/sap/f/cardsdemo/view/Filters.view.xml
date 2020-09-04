@@ -1,0 +1,24 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page id="filtersPage" title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Filters" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<f:GridContainer id="grid1" class="sapUiSmallMargin">
+			<w:Card id="card" manifest="{manifests>/filters/filter}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

@@ -653,11 +653,39 @@ sap.ui.define([
 						}
 					}
 				}
+			},
+			oManifest_Filter = {
+				"sap.card": {
+					"type": "List",
+					"configuration": {
+						"filters": {
+							"f": {
+								"data": {
+									"request": {
+										"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			oManifest_Filter_Static_Items = {
+				"sap.card": {
+					"type": "List",
+					"configuration": {
+						"filters": {
+							"f": {
+								"items": []
+							}
+						}
+					}
+				}
 			};
 
 		function isLoadingIndicatorShowingHeader(oManifest, oCard, bLoading, bExpectedTitle, bExpectedSubtitle, bExpectedAvatar, assert)  {
 
-		// Arrange
+			// Arrange
 			var done = assert.async();
 			oCard.attachManifestReady(function () {
 				var oDelegate = {
@@ -762,6 +790,30 @@ sap.ui.define([
 			assert.ok(oPlaceholder.getMetadata().getName().indexOf(sPlaceholderType) > -1, sMessage);
 		}
 
+		function isLoadingIndicatorShowingFilter(oManifest, oCard, sMassage, bExpected, sCSSClass,  assert) {
+
+			// Arrange
+			var done = assert.async();
+			oCard.attachManifestReady(function () {
+				var oDelegate = {
+					onAfterRendering: function () {
+						oCard.removeEventDelegate(oDelegate);
+						var oContent = oCard.getAggregation("_filterBar");
+						if (oContent) {
+							assert.strictEqual(jQuery(sCSSClass).length > 0, bExpected, sMassage);
+							done();
+						}
+					}
+				};
+
+				oCard.addEventDelegate(oDelegate, this);
+			}.bind(this));
+
+			// Act
+			oCard.setManifest(oManifest);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		}
+
 		QUnit.module("Loading", {
 			beforeEach: function () {
 				var fnFake = function (oRequestConfig) {
@@ -848,6 +900,9 @@ sap.ui.define([
 			isLoadingIndicatorShowingContent(Manifest_TableCard_WithCardLevelData, this.oCard, "Table content has a loading placeholder", true, ".sapFCardContentGenericPlaceholder", assert);
 		});
 
+		QUnit.test("Filter - Loading indicator should be present", function (assert) {
+			isLoadingIndicatorShowingFilter(oManifest_Filter, this.oCard, "Filter has a loading placeholder", true, ".sapFCardFilterLoading", assert);
+		});
 
 		QUnit.module("Loading with loaded data", {
 			beforeEach: function () {
@@ -866,6 +921,10 @@ sap.ui.define([
 
 		QUnit.test("List - Loading indicator should not be present - card level request", function (assert) {
 			isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel, this.oCard, "List content does not have a loading placeholder", false, ".sapFCardContentPlaceholder", assert);
+		});
+
+		QUnit.test("Filter - Loading indicator should not be present when using static items", function (assert) {
+			isLoadingIndicatorShowingFilter(oManifest_Filter_Static_Items, this.oCard, "Filter does not have a loading placeholder", false, ".sapFCardFilterLoading", assert);
 		});
 
 		QUnit.test("List - Loading indicator should be present - content level request", function (assert) {

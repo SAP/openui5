@@ -215,6 +215,11 @@
 					"pattern": "preview",
 					"name": "preview",
 					"target": "preview"
+				},
+				{
+					"pattern": "filters",
+					"name": "filters",
+					"target": "filters"
 				}
 			],
 			"targets": {
@@ -366,6 +371,11 @@
 				"preview": {
 					"viewId": "preview",
 					"viewName": "Preview",
+					"viewLevel": 1
+				},
+				"filters": {
+					"viewId": "filters",
+					"viewName": "Filters",
 					"viewLevel": 1
 				}
 			}
