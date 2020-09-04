@@ -2504,4 +2504,52 @@ sap.ui.define([
 		// cleanup
 		oSlider.destroy();
 	});
+
+	QUnit.test("Invisible Messaging announcement and aria attributes", function(assert) {
+		// Arrange
+		var oSlider = new Slider({
+			step: 1,
+			min: 0,
+			max: 2,
+			showAdvancedTooltip: true,
+			inputsAsTooltips: true
+		}), oSliderTooltip, oInvisibleMessageDom;
+
+		// Act
+		oSlider.placeAt("content");
+		Core.applyChanges();
+
+		oSlider.onfocusin({});
+		oSliderTooltip = oSlider.getAggregation("_defaultTooltips")[0];
+
+		// Assert
+		assert.notEqual(oSliderTooltip.oInvisibleMessage, undefined, "InvisibleMessage service is instantiated");
+
+		// Act
+		oSliderTooltip.focus();
+		oSliderTooltip.sliderValueChanged(-1);
+		qutils.triggerKeydown(oSliderTooltip.getDomRef(), KeyCodes.ENTER);
+		oInvisibleMessageDom = document.getElementById(oSliderTooltip.oInvisibleMessage.getId() + "-assertive");
+
+		// Assert
+		assert.equal(oSliderTooltip.getFocusDomRef().getAttribute("aria-errormessage"), oSliderTooltip.getId() + "-message", "aria-errormessage attribute with the correct ID reference is added on error");
+		assert.equal(oSliderTooltip.getFocusDomRef().getAttribute("aria-invalid"), "true", "aria-invalid is added to the tooltip input");
+		assert.equal(oInvisibleMessageDom.textContent, "Value State Error Invalid entry", "The error value state and message is announced by the InvisibleMessage service");
+
+		// Act
+		oSliderTooltip.onfocusout({});
+
+		// Assert
+		assert.equal(oInvisibleMessageDom.textContent, "", "The error value state and message is cleaned from the InvisibleMessage live region");
+
+		// Act
+		oSlider.exit();
+
+		// Assert
+		assert.strictEqual(oSliderTooltip.oInvisibleMessage, null, "InvisibleMessage object is cleaned");
+
+		// Clean
+		oSlider.destroy();
+	});
+
 });

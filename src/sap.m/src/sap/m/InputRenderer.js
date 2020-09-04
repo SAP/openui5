@@ -135,10 +135,6 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 			}
 		}
 
-		if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
-			append(oControl.getId() + "-SuggDescr");
-		}
-
 		return sAriaDescribedBy;
 
 	};

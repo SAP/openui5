@@ -181,6 +181,14 @@ function(
 			formattedValueStateText: { type: "sap.m.FormattedText", multiple: false, defaultValue: null },
 
 			/**
+			 * Clone of the <code>formattedValueStateText</code> aggregaion created for the accessibility elements used
+			 * by screen readers.
+			 * @experimental Since 1.83. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
+			 * @since 1.83
+			 */
+			_invisibleFormattedValueStateText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden", defaultValue: null },
+
+			/**
 			 * Icons that will be placed after the input field
 			 * @since 1.58
 			*/
@@ -374,6 +382,11 @@ function(
 	};
 
 	InputBase.prototype.onBeforeRendering = function() {
+		var oFormattedVSText = this.getFormattedValueStateText();
+		var oFormattedVSTextContent = oFormattedVSText && oFormattedVSText.getHtmlText();
+		var oFormattedVSTextAcc = this.getAggregation("_invisibleFormattedValueStateText");
+		var oFormattedVSTextAccContent = oFormattedVSTextAcc && oFormattedVSTextAcc.getHtmlText();
+
 		// Ignore the input event which is raised by MS Internet Explorer when it has a non-ASCII character
 		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(this.getValue())){// TODO remove after the end of support for Internet Explorer
 			this._bIgnoreNextInputNonASCII = true;
@@ -385,6 +398,11 @@ function(
 			// remember dom value in case of invalidation during keystrokes
 			// so the following should only be used onAfterRendering
 			this._sDomValue = this._getInputValue();
+		}
+
+		if (oFormattedVSText && oFormattedVSTextContent !== oFormattedVSTextAccContent) {
+			oFormattedVSTextAcc && oFormattedVSTextAcc.destroy();
+			this.setAggregation("_invisibleFormattedValueStateText", oFormattedVSText.clone());
 		}
 
 		// mark the rendering phase

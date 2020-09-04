@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
-	function(Renderer, IconPool, library, Device, InvisibleText, coreLibrary) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
+	function(Renderer, Core, ValueStateSupport, IconPool, library, Device, InvisibleText, coreLibrary) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection
@@ -116,6 +116,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				this.renderShadowList(oRm, oList);
 			}
 
+			this.renderAccessibilityDomNodes(oRm, oSelect);
 			oRm.close("div");
 		};
 
@@ -356,6 +357,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				aLabels = [],
 				aAriaLabelledBy = [],
 				oAriaLabelledBy,
+				sAriaDescribedBy,
 				sActiveDescendant,
 				sDesc;
 
@@ -382,6 +384,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			if (sValueState) {
 				aAriaLabelledBy.push(sValueState);
+				sAriaDescribedBy = oSelect.getValueStateMessageId() + "-sr";
 			}
 
 			if (aLabels.length) {
@@ -400,9 +403,38 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: (bIconOnly || oAriaLabelledBy.value === "") ? undefined : oAriaLabelledBy,
+				describedby: sAriaDescribedBy,
 				activedescendant: sActiveDescendant,
 				haspopup: "listbox"
 			});
+		};
+
+		/**
+		 * Render value state accessibility DOM nodes for screen readers.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 */
+		SelectRenderer.renderAccessibilityDomNodes = function (oRm, oControl) {
+			var sValueState = oControl.getValueState();
+
+			if (sValueState === ValueState.None) {
+				return;
+			}
+
+			var sValueStateTypeText = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + sValueState.toUpperCase());
+
+			oRm.openStart("div", oControl.getValueStateMessageId() + "-sr")
+				.class("sapUiPseudoInvisibleText").attr("aria-live", "assertive")
+				// Tells screen readers to announce the live region as a whole even if only part of it is changed.
+				// This is needed because of the way semantic renderer works - it won't replace text content if it is the same -
+				// the so called in-place DOM patching - and the control will get rerendered when value state is not changed.
+				// For example if only the value state type is changed and not the text, if aria-atomic is not set to 'true'
+				// the value state text won't be announced.
+				.attr("aria-atomic", "true").openEnd()
+				.text(sValueStateTypeText + " ")
+				.text(oControl.getValueStateText() || ValueStateSupport.getAdditionalText(oControl))
+				.close("div");
 		};
 
 		return SelectRenderer;
