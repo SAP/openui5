@@ -1950,9 +1950,12 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._adaptScrollPositionOnHeaderChange = function (iNewHeight, iOldHeigh) {
-		var iHeightChange =  iNewHeight - iOldHeigh;
+		var iHeightChange =  iNewHeight - iOldHeigh,
+			oHeader = this.getHeader();
+
 		// check if the header is in the scroll overflow (i.e. is snapped by being scrolled out of view)
-		if (iHeightChange && !this.getHeaderExpanded() && !this._bHeaderInTitleArea && this._needsVerticalScrollBar()) {
+		if (iHeightChange && (!this.getHeaderExpanded() && (oHeader.$().css("visibility") !== "hidden"))
+			 && !this._bHeaderInTitleArea && this._needsVerticalScrollBar()) {
 			this._setScrollPosition(this._getScrollPosition() + iHeightChange);
 		}
 	};
