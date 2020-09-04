@@ -8,18 +8,19 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/Element',
 	'sap/ui/core/ElementMetadata',
+	'sap/base/util/isEmptyObject',
 	'sap/base/util/ObjectPath',
-	"sap/base/strings/capitalize",
-	"sap/base/security/encodeXML",
-	"sap/ui/thirdparty/jquery",
-	// jQuery Plugin "rect"
-	"sap/ui/dom/jquery/rect"
+	'sap/base/strings/capitalize',
+	'sap/base/security/encodeXML',
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
 ],
 	function(
 		DataType,
 		EventProvider,
 		Element,
 		ElementMetadata,
+		isEmptyObject,
 		ObjectPath,
 		capitalize,
 		encodeXML,
@@ -121,7 +122,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 		while ( oMetadata instanceof ElementMetadata ) {
 			var mProperties = oMetadata.getProperties();
 			var bHeaderCreated = false;
-			if ( !jQuery.isEmptyObject(mProperties) ) {
+			if ( !isEmptyObject(mProperties) ) {
 				if ( !bHeaderCreated && oMetadata !== oControl.getMetadata() ) {
 					aHTML.push("<tr><td colspan=\"2\">BaseType: ");
 					aHTML.push(oMetadata.getName());
@@ -131,7 +132,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 				this.printProperties(aHTML, oControl, mProperties);
 			}
 			var mProperties = this.getAggregationsAsProperties(oMetadata);
-			if ( !jQuery.isEmptyObject(mProperties) ) {
+			if ( !isEmptyObject(mProperties) ) {
 				if ( !bHeaderCreated && oMetadata !== oControl.getMetadata() ) {
 					aHTML.push("<tr><td colspan=\"2\">BaseType: ");
 					aHTML.push(oMetadata.getName());

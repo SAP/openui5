@@ -20,7 +20,7 @@ function(jQuery) {
 		if (!($element instanceof jQuery)) {
 			throw new Error('$element should be wrapped into jQuery object');
 		}
-		if (!jQuery.isFunction(fnCallback)) {
+		if (typeof fnCallback !== "function") {
 			throw new Error('fnCallback should be a function');
 		}
 

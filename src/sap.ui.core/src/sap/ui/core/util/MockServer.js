@@ -10,10 +10,11 @@ sap.ui
 			'sap/ui/Device',
 			'sap/ui/base/ManagedObject',
 			'sap/ui/thirdparty/sinon',
-			"sap/base/Log",
+			'sap/base/Log',
+			'sap/base/util/isEmptyObject',
 			'jquery.sap.sjax'
 		],
-		function(jQuery, Device, ManagedObject, sinon /* jQuerySapSjax*/, Log) {
+		function(jQuery, Device, ManagedObject, sinon, Log, isEmptyObject/*, jQuerySapSjax*/) {
 			"use strict";
 
 			if (Device.browser.msie) {
@@ -1513,7 +1514,7 @@ sap.ui
 						oEntry.__metadata.uri = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
 						// add the navigation properties
 						jQuery.each(oEntitySet.navprops, function(sKey, oNavProp) {
-							if (oEntry[sKey] && !jQuery.isEmptyObject(oEntry[sKey]) && !oEntry[sKey]["__deferred"] ) {
+							if (oEntry[sKey] && !isEmptyObject(oEntry[sKey]) && !oEntry[sKey]["__deferred"] ) {
 								that._oMockdata[oNavProp.to.entitySet] = that._oMockdata[oNavProp.to.entitySet]
 									.concat(oEntry[sKey]);
 							}
@@ -2682,7 +2683,7 @@ sap.ui
 										try {
 											var oEntry = jQuery
 												.extend(true, {}, fnGetEntitySetEntry(sEntitySetName, sKeys));
-											if (!jQuery.isEmptyObject(oEntry)) {
+											if (!isEmptyObject(oEntry)) {
 												if (sUrlParams) {
 													// sUrlParams should not contains ?, but only & in its stead
 													var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");

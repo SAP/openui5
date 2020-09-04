@@ -1,7 +1,10 @@
 /*global sinon, QUnit*/
 
-sap.ui.define(['sap/ui/support/supportRules/ui/external/ElementTree'],
-	function (ElementTree) {
+sap.ui.define([
+	'sap/base/util/isEmptyObject',
+	'sap/ui/support/supportRules/ui/external/ElementTree'
+],
+	function (isEmptyObject, ElementTree) {
 		'use strict';
 
 		var CONTAINER_LOCATION = 'qunit-fixture';
@@ -192,7 +195,7 @@ sap.ui.define(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			this.elementTree.setData(mockSettingsObject);
 
 			// assert
-			assert.strictEqual(jQuery.isEmptyObject(this.elementTree._data), false, 'The _data private property should not be empty');
+			assert.strictEqual(isEmptyObject(this.elementTree._data), false, 'The _data private property should not be empty');
 			assert.strictEqual(JSON.stringify(mockElementTree) === JSON.stringify(this.elementTree._data.controls), true, 'The _data property should be set correctly');
 		});
 
@@ -473,7 +476,7 @@ sap.ui.define(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			assert.strictEqual(this.elementTree._selectedElement.getAttribute('data-id'), '__label0', 'sap.m.Label control should be selected');
 			assert.strictEqual(document.getElementById('control-tree').querySelector("[data-id=__label0]"), this.elementTree._selectedElement, 'The correct element should be selected');
 
-			assert.strictEqual(jQuery.isEmptyObject(this.elementTree._selectedElement), false, 'The selected item should be set');
+			assert.strictEqual(isEmptyObject(this.elementTree._selectedElement), false, 'The selected item should be set');
 			assert.strictEqual(_selectTreeElementSpy.callCount, 1, 'Method _selectTreeElement() should be called');
 			assert.strictEqual(returnValue, this.elementTree, 'The element tree instance should be returned');
 			assert.strictEqual(warningSpy.notCalled, true, 'No warnings should be raised');
@@ -779,7 +782,7 @@ sap.ui.define(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			this.elementTree._toggleCollapse(this.target);
 
 			// assert
-			assert.strictEqual(jQuery.isEmptyObject(this.target.attributes), true, 'No attributes should be set');
+			assert.strictEqual(isEmptyObject(this.target.attributes), true, 'No attributes should be set');
 		});
 
 		QUnit.test('Calling _toggleCollapse on an object with "right" attribute set', function (assert) {

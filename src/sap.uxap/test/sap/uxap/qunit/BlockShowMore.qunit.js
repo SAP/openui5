@@ -1,9 +1,10 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView"],
-function($, Core, XMLView) {
+function($, isEmptyObject, Core, XMLView) {
 	"use strict";
 
 	QUnit.module("aat_UxAP-330");
@@ -97,7 +98,7 @@ function($, Core, XMLView) {
 	});
 	QUnit.test("ObjectPageBlockBase_5 getSupportedModes", function (assert) {
 		var objectPageBlockBase4 = this.objectPageSampleView.byId("ObjectPageBlockBase330_4");
-		assert.strictEqual(jQuery.isEmptyObject(objectPageBlockBase4.getSupportedModes()),  false, "Object Page Block Base 5: can get the supportedModes");
+		assert.strictEqual(isEmptyObject(objectPageBlockBase4.getSupportedModes()),  false, "Object Page Block Base 5: can get the supportedModes");
 	});
 	QUnit.test("ObjectPageSubSection330_0: showSubSectionMore set with default value", function (assert) {
 		var objectPageSubSectionSeeMore0 =  $("#UxAP-330_PropertyOnBlockToSayIfItHaveMoreInfoToDisplay--ObjectPageSubSection330_0--seeMore").is(":visible");

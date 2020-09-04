@@ -7,10 +7,11 @@ sap.ui.define([
 	"./AnnotationParser",
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/Device",
 	"sap/ui/base/EventProvider",
 	"sap/ui/thirdparty/jquery"
-], function (AnnotationParser, assert, Log, Device, EventProvider, jQuery) {
+], function (AnnotationParser, assert, Log, isEmptyObject, Device, EventProvider, jQuery) {
 	"use strict";
 
 	/*global ActiveXObject */
@@ -68,7 +69,7 @@ sap.ui.define([
 				if (!this.bAsync) {
 					// Synchronous loading, we can directly check for errors
 					assert(
-						!jQuery.isEmptyObject(this.oMetadata),
+						!isEmptyObject(this.oMetadata),
 						"Metadata must be available for synchronous annotation loading"
 					);
 					if (this.oError) {
@@ -408,7 +409,7 @@ sap.ui.define([
 			// Check if Metadata is loaded on the model. We need the Metadata to parse the annotations
 
 			var oMetadata = this.oMetadata.getServiceMetadata();
-			if (!oMetadata || jQuery.isEmptyObject(oMetadata)) {
+			if (!oMetadata || isEmptyObject(oMetadata)) {
 				// Metadata is not loaded, wait for it before trying to parse
 				this.oMetadata.attachLoaded(fnParseDocument);
 			} else {

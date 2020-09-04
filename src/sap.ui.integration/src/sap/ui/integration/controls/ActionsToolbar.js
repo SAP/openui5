@@ -30,7 +30,7 @@ sap.ui.define([
 
 			var oResolvedValue;
 
-			if (jQuery.isFunction(oValue)) {
+			if (typeof oValue === "function") {
 
 				oResolvedValue = oValue(oCard);
 

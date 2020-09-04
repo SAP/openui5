@@ -1016,7 +1016,7 @@ function(
 		var oFilterType = this.getFilterType();
 
 		if (oFilterType) {
-			if (jQuery.isFunction(oFilterType)) {
+			if (typeof oFilterType === "function") {
 				sValue = oFilterType(sValue);
 			} else {
 				sValue = oFilterType.parseValue(sValue, "string");

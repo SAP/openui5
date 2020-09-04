@@ -6,9 +6,8 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/format/NumberFormat',
-	"./CurrencyRenderer",
-	"sap/ui/thirdparty/jquery"
-], function(Control, NumberFormat, CurrencyRenderer, jQuery) {
+	"./CurrencyRenderer"
+], function(Control, NumberFormat, CurrencyRenderer) {
 		"use strict";
 
 		/**
@@ -196,7 +195,7 @@ sap.ui.define([
 			// Take into account currencies that do not have decimal values or the decimal value differs. Example: JPY.
 			// If we switch from a currency which differs we should update the value too.
 			iCurrencyDigits = this._oFormat.oLocaleData.getCurrencyDigits(sValue);
-			if (jQuery.isNumeric(this._iLastCurrencyDigits) && this._iLastCurrencyDigits !== iCurrencyDigits) {
+			if (this._iLastCurrencyDigits != null && this._iLastCurrencyDigits !== iCurrencyDigits) {
 				bRenderValue = true;
 			} else if (this._oFormat.oLocaleData.getCurrencyDigits() !== iCurrencyDigits) {
 				bRenderValue = true;

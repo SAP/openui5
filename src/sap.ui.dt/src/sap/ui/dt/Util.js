@@ -220,7 +220,7 @@ sap.ui.define([
 	 * @return {Function} - function which returns Promise object and call original function inside
 	 */
 	Util.wrapIntoPromise = function (fnHandler) {
-		if (!jQuery.isFunction(fnHandler)) {
+		if (typeof fnHandler !== "function") {
 			throw Util.createError(
 				"Util#wrapIntoPromise",
 				Util.printf("Invalid argument specified. Function is expected, but '{0}' is given", typeof fnHandler),

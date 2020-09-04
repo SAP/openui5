@@ -502,7 +502,7 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("domRef"));
 			assert.deepEqual(oEvent.getParameter("domRef"), oFeedListItem._oImageControl.getDomRef());
 			// New parameter
-			assert.ok(jQuery.isFunction(oEvent.getParameter("getDomRef")));
+			assert.ok(typeof oEvent.getParameter("getDomRef") === "function");
 			assert.deepEqual(oEvent.getParameter("getDomRef")(), oFeedListItem._oImageControl.getDomRef());
 		});
 		// Act
@@ -519,7 +519,7 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("domRef"));
 			assert.deepEqual(oEvent.getParameter("domRef"), oFeedListItem._oLinkControl.getDomRef());
 			// New parameter
-			assert.ok(jQuery.isFunction(oEvent.getParameter("getDomRef")));
+			assert.ok(typeof oEvent.getParameter("getDomRef") === "function");
 			assert.deepEqual(oEvent.getParameter("getDomRef")(), oFeedListItem._oLinkControl.getDomRef());
 		});
 		// Act

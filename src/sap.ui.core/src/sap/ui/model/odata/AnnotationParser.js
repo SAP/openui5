@@ -6,9 +6,10 @@
 sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function (assert, Log, Device, jQuery) {
+], function (assert, Log, isEmptyObject, Device, jQuery) {
 "use strict";
 
 /*
@@ -306,7 +307,7 @@ var AnnotationParser =  {
 					if (propertyAnnotationNode.hasChildNodes() === false) {
 						var o = {};
 						AnnotationParser.enrichFromPropertyValueAttributes(o, propertyAnnotationNode);
-						if (jQuery.isEmptyObject(o)) {
+						if (isEmptyObject(o)) {
 							// assume DefaultValue="true" for annotation term w/o reading vocabulary
 							o.Bool = "true";
 						}

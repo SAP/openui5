@@ -244,7 +244,7 @@ function(
 
 	QUnit.module('wrapIntoPromise()', function () {
 		QUnit.test("basic functionality", function (assert) {
-			assert.ok(jQuery.isFunction(Util.wrapIntoPromise(function () {})));
+			assert.ok(typeof Util.wrapIntoPromise(function () {}) === "function");
 			assert.ok(Util.wrapIntoPromise(function () {})() instanceof Promise);
 			assert.ok(Util.wrapIntoPromise(function () {})() instanceof Promise);
 		});

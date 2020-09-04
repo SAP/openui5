@@ -1,6 +1,6 @@
 /* global QUnit */
 
-sap.ui.define(["jquery.sap.script"], function(jQuery) {
+sap.ui.define(["jquery.sap.script", "sap/base/util/isEmptyObject"], function(jQuery, isEmptyObject) {
 	"use strict";
 
 	var DELAY = 200;
@@ -1317,7 +1317,7 @@ sap.ui.define(["jquery.sap.script"], function(jQuery) {
 	QUnit.test("extend first level", function(assert) {
 		var oClone = jQuery.sap.extend({}, myObject);
 		assert.ok(typeof (oClone) == "object", "object clone created");
-		assert.ok(!jQuery.isEmptyObject(oClone), "clone not plain object");
+		assert.ok(!isEmptyObject(oClone), "clone not plain object");
 		assert.ok(myObject !== oClone, "object cloned successfully");
 		assert.equal(myObject.prop6, oClone.prop6, "no deep clone");
 		assert.equal(myObject.prop1, oClone.prop1, "property cloned successfully");
@@ -1332,7 +1332,7 @@ sap.ui.define(["jquery.sap.script"], function(jQuery) {
 	QUnit.test("extend deep", function(assert) {
 		var oClone = jQuery.sap.extend(true, {}, myObject);
 		assert.ok(typeof (oClone) == "object", "object clone created");
-		assert.ok(!jQuery.isEmptyObject(oClone), "clone not plain object");
+		assert.ok(!isEmptyObject(oClone), "clone not plain object");
 		assert.ok(myObject !== oClone, "object cloned successfully");
 		assert.ok(myObject.prop6 !== oClone.prop6, "deep clone");
 		assert.equal(myObject.prop1, oClone.prop1, "property cloned successfully");

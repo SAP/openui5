@@ -3,7 +3,11 @@
  */
 
 // Provides class sap.uxap.BlockBaseMetadata
-sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/core/ElementMetadata", "sap/base/Log"], function (jQuery, ElementMetadata, Log) {
+sap.ui.define([
+	"sap/ui/core/ElementMetadata",
+	"sap/base/Log",
+	"sap/base/util/isEmptyObject"
+], function (ElementMetadata, Log, isEmptyObject) {
 	"use strict";
 
 
@@ -105,7 +109,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/core/ElementMetadata", "sap/b
 	 * @returns {*} has views
 	 */
 	BlockBaseMetadata.prototype.hasViews = function () {
-		return !jQuery.isEmptyObject(this._mViews);
+		return !isEmptyObject(this._mViews);
 	};
 
 	return BlockBaseMetadata;

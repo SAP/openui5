@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.Tree.
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', './library', 'sap/ui/core/Control', './TreeRenderer', './Button'],
-	function(jQuery, Log, library, Control, TreeRenderer, Button) {
+sap.ui.define([
+	'sap/ui/thirdparty/jquery',
+	'sap/base/Log',
+	'sap/base/util/isEmptyObject',
+	'./library',
+	'sap/ui/core/Control',
+	'./TreeRenderer',
+	'./Button'
+], function(jQuery, Log, isEmptyObject, library, Control, TreeRenderer, Button) {
 	"use strict";
 
 
@@ -852,13 +859,13 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', './library', 'sap/ui/
 						oNode.setIsSelected(false);
 						break;
 					case TreeSelectionMode.Legacy:
-						if (jQuery.isEmptyObject(that.mSelectedNodes)) {
+						if (isEmptyObject(that.mSelectedNodes)) {
 							that.mSelectedNodes[oNode.getId()] = oNode;
 							that._addSelectedNodeContext(that.getNodeContext(oNode));
 						}
 						break;
 					case TreeSelectionMode.Single:
-						if (jQuery.isEmptyObject(that.mSelectedNodes) == false) {
+						if (isEmptyObject(that.mSelectedNodes) == false) {
 							Log.warning("Added multiple selected nodes in single select tree");
 							oNode.setIsSelected(false);
 						} else {
@@ -1026,7 +1033,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', './library', 'sap/ui/
 		if (this.oSelectedNode) {
 			this.oSelectedNode._deselect();
 		}
-		if (jQuery.isEmptyObject(this.mSelectedNodes) == false) {
+		if (isEmptyObject(this.mSelectedNodes) == false) {
 			jQuery.each(this.mSelectedNodes, function(sId, oNode){
 				that._delMultiSelection(oNode);
 			});

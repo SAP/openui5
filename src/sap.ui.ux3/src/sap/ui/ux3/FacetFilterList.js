@@ -4,14 +4,13 @@
 
 // Provides control sap.ui.ux3.FacetFilterList.
 sap.ui.define([
-    'sap/ui/thirdparty/jquery',
     'sap/ui/commons/ListBox',
     'sap/ui/core/Control',
     './library',
     './FacetFilterListRenderer',
     'sap/ui/core/ListItem'
 ],
-	function(jQuery, ListBox, Control, library, FacetFilterListRenderer, ListItem) {
+	function(ListBox, Control, library, FacetFilterListRenderer, ListItem) {
 	"use strict";
 
 
@@ -160,7 +159,7 @@ sap.ui.define([
 
 	FacetFilterList.prototype.addItem = function(oItem) {
 		this._oListBox.addItem(oItem);
-		if (!oItem.getKey() || jQuery.trim(oItem.getKey()) == "" ) {
+		if (!oItem.getKey() || oItem.getKey().trim() == "" ) {
 			oItem.setKey("generatedkey" + this.indexOfItem(oItem));
 		}
 		this.updateText4All();
@@ -169,7 +168,7 @@ sap.ui.define([
 
 	FacetFilterList.prototype.insertItem = function(oItem, iIndex) {
 		this._oListBox.insertItem(oItem, iIndex + 1); // +1 because of entry "all" on the fist position.
-		if (!oItem.getKey() || jQuery.trim(oItem.getKey()) == "" ) {
+		if (!oItem.getKey() || oItem.getKey().trim() == "" ) {
 			oItem.setKey("generatedkey" + this.indexOfItem(oItem));
 		}
 		this.updateText4All();

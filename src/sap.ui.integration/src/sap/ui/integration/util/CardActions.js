@@ -422,7 +422,7 @@ sap.ui.define([
 					break;
 				case CardActionType.Custom:
 					fnAction = oAction.action;
-					if (fnAction && jQuery.isFunction(fnAction)) {
+					if (typeof fnAction === "function") {
 						fnAction(mConfig.card, mConfig.source);
 					}
 					break;

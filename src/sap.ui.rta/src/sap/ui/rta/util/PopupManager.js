@@ -177,7 +177,7 @@ function (
 	 */
 	PopupManager.prototype._isComponentInsidePopup = function(oPopup) {
 		//check if root RTA component is directly inside a popupElement
-		return jQuery.isArray(oPopup.getContent())
+		return Array.isArray(oPopup.getContent())
 			? oPopup.getContent().some(
 				function(oContent) {
 					if (oContent instanceof ComponentContainer) {

@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/core/library",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
 	"sap/ui/qunit/QUnitUtils"
 ], function (
 	AddIFrameDialog,
 	Log,
+	isEmptyObject,
 	coreLibrary,
 	AddIFrameDialogController,
 	QUnitUtils
@@ -324,7 +326,7 @@ sap.ui.define([
 				clickOnSave();
 			}, this);
 			return this.oAddIFrameDialog.open(mTestURLBuilderData).then(function (mSettings) {
-				assert.strictEqual(jQuery.isEmptyObject(mSettings), false, "Non empty settings returned");
+				assert.strictEqual(isEmptyObject(mSettings), false, "Non empty settings returned");
 			});
 		});
 

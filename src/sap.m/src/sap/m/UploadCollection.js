@@ -992,7 +992,7 @@ sap.ui.define([
 				if (iIndexOfFile !== -1) {
 					this._aFilesFromDragAndDropForPendingUpload.splice(iIndexOfFile, 1);
 				}
-			} else if (jQuery.isNumeric(vObject)) {
+			} else if (typeof vObject === "number") {
 				aItems = this.getItems();
 				this._aDeletedItemForPendingUpload.push(aItems[vObject]);
 			} else {
@@ -1799,7 +1799,7 @@ sap.ui.define([
 	UploadCollection.prototype._onItemPressed = function(event, item) {
 		if (item.hasListeners("press")) {
 			item.firePress();
-		} else if (this.sErrorState !== "Error" && jQuery.trim(item.getProperty("url"))) {
+		} else if (this.sErrorState !== "Error" && item._hasUrl()) {
 			this._triggerLink(event, item);
 		}
 	};
@@ -1851,13 +1851,13 @@ sap.ui.define([
 			});
 			oItemIcon.setAlt(this._getAriaLabelForPicture(item)); //Set the alt property directly to avoid some additional logic in the icon's constructor
 			//Sets the right style class depending on the icon/placeholder status (clickable or not)
-			if (this.sErrorState !== "Error" && jQuery.trim(item.getProperty("url"))) {
+			if (this.sErrorState !== "Error" && item._hasUrl()) {
 				sStyleClass = "sapMUCItemIcon";
 			} else {
 				sStyleClass = "sapMUCItemIconInactive";
 			}
 			if (sThumbnail === UploadCollection._placeholderCamera) {
-				if (this.sErrorState !== "Error" && jQuery.trim(item.getProperty("url"))) {
+				if (this.sErrorState !== "Error" && item._hasUrl()) {
 					sStyleClass = sStyleClass + " sapMUCItemPlaceholder";
 				} else {
 					sStyleClass = sStyleClass + " sapMUCItemPlaceholderInactive";

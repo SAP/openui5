@@ -391,7 +391,7 @@ sap.ui.define([
 	// attaches listener for changes in the adaptable content
 	Fiori20Adapter._attachAdaptableContentChange = function(oControl, oAdaptOptions) {
 
-		if (!oControl._getAdaptableContent || !jQuery.isFunction(oControl._getAdaptableContent)) {
+		if (typeof oControl._getAdaptableContent !== "function") {
 			return;
 		}
 
@@ -536,7 +536,7 @@ sap.ui.define([
 
 	Fiori20Adapter._getNodeChildren = function(oControl) {
 
-		if (oControl._getAdaptableContent && jQuery.isFunction(oControl._getAdaptableContent)) {
+		if (typeof oControl._getAdaptableContent === "function") {
 			var aChildren = [oControl._getAdaptableContent()];
 			if (isInstanceOf(oControl, "sap/m/Page")) {
 				aChildren = aChildren.concat(oControl.getContent()); //page content can contain other pages that are subject to adaptation

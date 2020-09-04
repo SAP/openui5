@@ -4466,11 +4466,11 @@ sap.ui.define([
 					encode = encodeURIComponent;
 
 				// Within mailto URLs, the characters "?", "=", "&" are reserved
-				isValidString(sEmail) && (sURL += encode(jQuery.trim(sEmail)));
+				isValidString(sEmail) && (sURL += encode(sEmail.trim()));
 				isValidString(sSubject) && aParams.push("subject=" + encode(sSubject));
 				isValidString(sBody) && aParams.push("body=" + formatMessage(sBody));
-				isValidString(sBCC) && aParams.push("bcc=" + encode(jQuery.trim(sBCC)));
-				isValidString(sCC) && aParams.push("cc=" + encode(jQuery.trim(sCC)));
+				isValidString(sBCC) && aParams.push("bcc=" + encode(sBCC.trim()));
+				isValidString(sCC) && aParams.push("cc=" + encode(sCC.trim()));
 
 				if (aParams.length) {
 					sURL += "?" + aParams.join("&");

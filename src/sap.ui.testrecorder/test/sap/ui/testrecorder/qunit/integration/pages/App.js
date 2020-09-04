@@ -13,7 +13,7 @@ sap.ui.define([
 				iActOnControl:  function (mSelector, sAction) {
 					this.waitFor(jQuery.extend({}, mSelector, {
 						success: function (aControl) {
-							var oControl = jQuery.isArray(aControl) ? aControl[0] : aControl;
+							var oControl = Array.isArray(aControl) ? aControl[0] : aControl;
 							var oDom = oControl.$();
 							return this.waitFor({
 								matchers: [function () {
@@ -50,7 +50,7 @@ sap.ui.define([
 				iShouldSeeTheSelectedControl: function (mSelector) {
 					this.waitFor(jQuery.extend({}, mSelector, {
 						success: function (aControl) {
-							var oControl = jQuery.isArray(aControl) ? aControl[0] : aControl;
+							var oControl = Array.isArray(aControl) ? aControl[0] : aControl;
 							var mControlRect = oControl.$()[0].getBoundingClientRect();
 							var mHighlightRect = Opa5.getJQuery()("#ui5-test-recorder-highlighter > div")[0].getBoundingClientRect();
 							var bMatch = true;

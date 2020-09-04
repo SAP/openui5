@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 	function getEscapedString(value) {
 		if (value) {
-			if (jQuery.isArray(value)) {
+			if (Array.isArray(value)) {
 				return jQuery.sap.escapeHTML(value.join(', '));
 			} else {
 				return jQuery.sap.escapeHTML(value);

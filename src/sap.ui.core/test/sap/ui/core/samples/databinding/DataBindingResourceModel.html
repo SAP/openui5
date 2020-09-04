@@ -83,7 +83,7 @@
 
 		function changeParam() {
 			// have some parameter for a text
-			if (!oTextField3 || jQuery.trim(oTextField3.getValue()).length === 0 ) {
+			if (!oTextField3 || !oTextField3.getValue() || !oTextField3.getValue().trim() ) {
 				return;
 			};
 	    	var aParams = [oTextField3.getValue()];

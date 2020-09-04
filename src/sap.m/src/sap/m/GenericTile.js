@@ -1078,7 +1078,7 @@ sap.ui.define([
 
 		if (!this._isInActionScope() && this.getMode() === library.GenericTileMode.ContentMode) {
 			for (var i = 0; i < aContent.length; i++) {
-				if (jQuery.isFunction(aContent[i]._getAriaAndTooltipText)) {
+				if (typeof aContent[i]._getAriaAndTooltipText === "function") {
 					sText += (bIsFirst ? "" : "\n") + aContent[i]._getAriaAndTooltipText();
 				} else if (aContent[i].getTooltip_AsString()) {
 					sText += (bIsFirst ? "" : "\n") + aContent[i].getTooltip_AsString();

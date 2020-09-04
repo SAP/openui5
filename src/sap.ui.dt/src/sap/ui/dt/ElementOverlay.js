@@ -480,7 +480,7 @@ function (
 		var oDesignTimeMetadata = this.getDesignTimeMetadata();
 		var mDesignTimeMetadata;
 
-		if (jQuery.isFunction(vDesignTimeMetadata)) {
+		if (typeof vDesignTimeMetadata === "function") {
 			if (!oDesignTimeMetadata) {
 				// add to stack
 				this._aMetadataEnhancers = this._aMetadataEnhancers.concat(vDesignTimeMetadata);

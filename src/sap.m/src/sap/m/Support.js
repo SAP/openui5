@@ -79,7 +79,7 @@ sap.ui.define([
 			function line(buffer, right, border, label, content) {
 				buffer.push("<tr class='sapUiSelectable'><td class='sapUiSupportTechInfoBorder sapUiSelectable'><label class='sapUiSupportLabel sapUiSelectable'>", encodeXML(label), "</label><br>");
 				var ctnt = content;
-				if (jQuery.isFunction(content)) {
+				if (typeof content === "function") {
 					ctnt = content(buffer) || "";
 				}
 				buffer.push(encodeXML(ctnt));

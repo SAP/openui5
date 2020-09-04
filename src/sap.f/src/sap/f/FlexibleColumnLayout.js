@@ -18,6 +18,7 @@ sap.ui.define([
 	"./FlexibleColumnLayoutRenderer",
 	"sap/base/Log",
 	"sap/base/assert",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge"
 ], function(
 	jQuery,
@@ -34,6 +35,7 @@ sap.ui.define([
 	FlexibleColumnLayoutRenderer,
 	Log,
 	assert,
+	isEmptyObject,
 	merge
 ) {
 	"use strict";
@@ -860,7 +862,7 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._restoreFocusToColumn = function (sCurrentColumn) {
 		var oElement = this._oColumnFocusInfo[sCurrentColumn];
 
-		if (!oElement || jQuery.isEmptyObject(oElement)) {
+		if (!oElement || isEmptyObject(oElement)) {
 			// if no element was stored, get first focusable
 			oElement = this._getFirstFocusableElement(sCurrentColumn);
 		}

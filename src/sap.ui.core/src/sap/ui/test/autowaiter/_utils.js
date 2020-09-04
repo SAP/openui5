@@ -4,8 +4,8 @@
 
 sap.ui.define([
 	'sap/ui/thirdparty/URI',
-	"sap/ui/thirdparty/jquery"
-], function(URI, jQueryDOM) {
+	'sap/base/util/isPlainObject'
+], function(URI, isPlainObject) {
 	"use strict";
 
 	function resolveStackTrace() {
@@ -41,14 +41,14 @@ sap.ui.define([
 			return "'" + oArgs + "'";
 		}
 		function argToString(arg) {
-			if (jQueryDOM.isFunction(arg)) {
+			if (typeof arg === "function") {
 				return "'" + functionToString(arg) + "'";
 			}
-			if (jQueryDOM.isArray(arg)) {
+			if (Array.isArray(arg)) {
 				var aValues = Array.prototype.map.call(arg, argToString);
 				return "[" + aValues.join(", ") + "]";
 			}
-			if (jQueryDOM.isPlainObject(arg)) {
+			if (isPlainObject(arg)) {
 				return JSON.stringify(arg);
 			}
 			return "'" + arg.toString() + "'";

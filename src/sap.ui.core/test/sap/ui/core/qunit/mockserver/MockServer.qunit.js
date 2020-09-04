@@ -8,7 +8,8 @@ sap.ui.define([
     "sap/ui/Device",
     "sap/ui/model/odata/v2/ODataModel",
     "sap/ui/commons/Label",
-	"sap/ui/qunit/utils/createAndAppendDiv"
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/base/util/isEmptyObject"
 ], function(
     MockServer,
 	Control,
@@ -18,7 +19,8 @@ sap.ui.define([
 	Device,
 	v2ODataModel,
 	Label,
-	createAndAppendDiv
+	createAndAppendDiv,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -2927,7 +2929,7 @@ sap.ui.define([
 			"Expand on carrier collection with deepDown, result of type carrier collection");
 		assert.equal(oResponse.data.d.results[0].carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
 			"Expand deepDown first level, entry of type Flight");
-		assert.ok(!jQuery.isEmptyObject(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings),
+		assert.ok(!isEmptyObject(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings),
 			"Expand deepDown second level, flightBookings not in expand, not empty");
 		assert.ok(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings.__deferred,
 			"Expand deepDown second level, flightBookings not in expand, not expanded");
@@ -2941,7 +2943,7 @@ sap.ui.define([
 			"Expand on carrier entry with deepDown, result of type carrier ");
 		assert.equal(oResponse.data.d.carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
 			"Expand deepDown first level, entry of type Flight");
-		assert.ok(!jQuery.isEmptyObject(oResponse.data.d.carrierFlights.results[0].flightBookings),
+		assert.ok(!isEmptyObject(oResponse.data.d.carrierFlights.results[0].flightBookings),
 			"Expand deepDown second level, flightBookings not in expand, not empty");
 		assert.ok(oResponse.data.d.carrierFlights.results[0].flightBookings.__deferred,
 			"Expand deepDown second level, flightBookings not in expand, not expanded");

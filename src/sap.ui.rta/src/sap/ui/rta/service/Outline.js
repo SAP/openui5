@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/base/util/deepEqual",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
-	"sap/base/util/restricted/_omit",
-	"sap/base/util/restricted/_pick",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/util/restricted/_omit"
 ], function(
 	OverlayRegistry,
 	ElementOverlay,
@@ -20,10 +19,9 @@ sap.ui.define([
 	DtUtil,
 	ExtensionPointRegistryAPI,
 	deepEqual,
+	isEmptyObject,
 	merge,
-	_omit,
-	_pick,
-	jQuery
+	_omit
 ) {
 	"use strict";
 
@@ -187,7 +185,7 @@ sap.ui.define([
 			//check if the tree should be traversed deeper and children overlays are present
 			if ((!bValidDepth || (bValidDepth && iDepth > 0))
 				&& aChildren.length > 0
-				&& !jQuery.isEmptyObject(oData)
+				&& !isEmptyObject(oData)
 			) {
 				//decrement depth for children nodes
 				iDepth = bValidDepth ? iDepth - 1 : iDepth;
@@ -197,7 +195,7 @@ sap.ui.define([
 						return this._getChildrenNodes(oChildOverlay, iDepth, oChildOverlay.getParent());
 					}, this)
 					.filter(function (oChildNode) {
-						return !jQuery.isEmptyObject(oChildNode);
+						return !isEmptyObject(oChildNode);
 					});
 
 				//get extension point information if available

@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function (jQuery, odata4analytics, ODataModelAdapter, ODataModel, o4aFakeService, Log, Filter, FilterOperator) {
+], function (jQuery, odata4analytics, ODataModelAdapter, ODataModel, o4aFakeService, Log, isEmptyObject, Filter, FilterOperator) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -361,10 +362,10 @@ sap.ui.define([
 		assert.strictEqual(sSetURI, sRefURI, "URI correctly constructed. ");
 
 		aDimNames = oQueryResultRequest.getAggregationLevel();
-		assert.ok(jQuery.isEmptyObject(aDimNames), "No aggregation level set.");
+		assert.ok(isEmptyObject(aDimNames), "No aggregation level set.");
 
 		aMeasNames = oQueryResultRequest.getMeasureNames();
-		assert.ok(jQuery.isEmptyObject(aMeasNames), "No measues selected.");
+		assert.ok(isEmptyObject(aMeasNames), "No measues selected.");
 	});
 
 	//*********************************************************************************************

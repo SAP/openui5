@@ -130,7 +130,7 @@ sap.ui.define([
 		var oDomRef = this.get(0);
 
 		if (oDomRef && oDomRef.outerHTML) {
-			return jQuery.trim(oDomRef.outerHTML);
+			return oDomRef.outerHTML.trim();
 		} else {
 			var doc = this[0] ? this[0].ownerDocument : document;
 

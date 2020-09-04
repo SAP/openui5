@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"./ObjectPageSubSection",
 	"./library",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/isEmptyObject"
 ],
-	function(jQuery, Device, BaseObject, ObjectPageSubSection, library, Log) {
+	function(jQuery, Device, BaseObject, ObjectPageSubSection, library, Log, isEmptyObject) {
 		"use strict";
 
 		var LazyLoading = BaseObject.extend("sap.uxap._helpers.LazyLoading", {
@@ -231,7 +232,7 @@ sap.ui.define([
 			//      - we have found one
 			//      - we have no visible subsections to load
 			if (iExtraSubSectionTop != -1 &&
-				jQuery.isEmptyObject(oSubSectionsToLoad)) {
+				isEmptyObject(oSubSectionsToLoad)) {
 				Log.debug("ObjectPageLayout :: lazyLoading", "extra section added : " + sExtraSubSectionId);
 				oSubSectionsToLoad[sExtraSubSectionId] = sExtraSubSectionId;
 			}

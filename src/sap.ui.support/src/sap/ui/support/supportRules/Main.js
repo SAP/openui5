@@ -406,7 +406,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 
 			if (oExecutionScope.parentId) {
 				aSelectors.push(oExecutionScope.parentId);
-			} else if (jQuery.isArray(oExecutionScope.selectors)) {
+			} else if (Array.isArray(oExecutionScope.selectors)) {
 				jQuery.merge(aSelectors, oExecutionScope.selectors);
 			} else if (oExecutionScope.selectors) {
 				aSelectors.push(oExecutionScope.selectors);
@@ -713,7 +713,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 	Main.prototype.getLastAnalysisHistory = function () {
 		var aHistory = this.getAnalysisHistory();
 
-		if (jQuery.isArray(aHistory) && aHistory.length > 0) {
+		if (Array.isArray(aHistory) && aHistory.length > 0) {
 			return aHistory[aHistory.length - 1];
 		} else {
 			return null;
