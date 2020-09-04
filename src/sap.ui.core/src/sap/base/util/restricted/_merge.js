@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.19#merge}
+ * See {@link https://lodash.com/docs/4.17.20#merge}
  *
  * @function
  * @alias module:sap/base/util/restricted/_merge
