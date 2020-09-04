@@ -425,6 +425,17 @@ sap.ui.define([
 			this.removeStyleClass("sapMObjectMarkerText");
 		}
 
+		oInnerControl.removeAllAssociation("ariaLabelledBy", bSuppressInvalidate);
+		oInnerControl.removeAllAssociation("ariaDescribedBy", bSuppressInvalidate);
+
+		this.getAriaLabelledBy().forEach(function(ariaLabelledBy) {
+			oInnerControl.addAssociation("ariaLabelledBy", ariaLabelledBy, bSuppressInvalidate);
+		});
+
+		this.getAriaDescribedBy().forEach(function(ariaDescribedBy){
+			oInnerControl.addAssociation("ariaDescribedBy", ariaDescribedBy, bSuppressInvalidate);
+		});
+
 		return true;
 	};
 
@@ -560,9 +571,7 @@ sap.ui.define([
 		});
 	};
 
-	["getAriaLabelledBy", "addAriaLabelledBy", "removeAriaLabelledBy", "removeAllAriaLabelledBy",
-		"getAriaDescribedBy", "addAriaDescribedBy", "removeAriaDescribedBy", "removeAllAriaDescribedBy",
-		"getAccessibilityInfo"].map(function(sFn) {
+	["getAccessibilityInfo"].map(function(sFn) {
 		var bChainable = /^add/.test(sFn);
 		ObjectMarker.prototype[sFn] = function() {
 			var oInnerControl = this._getInnerControl(),
