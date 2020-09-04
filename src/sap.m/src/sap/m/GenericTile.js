@@ -93,7 +93,7 @@ sap.ui.define([
 				 */
 				size: {type: "sap.m.Size", group: "Misc", defaultValue: Size.Auto},
 				/**
-				 * The frame type: OneByOne, TwoByOne, OneByHalf or TwoByHalf. Set to OneByOne as default if no property is defined or set to Auto by the app.
+				 * The FrameType: OneByOne, TwoByOne, OneByHalf, or TwoByHalf. Default set to OneByOne if property is not defined or set to Auto by the app.
 				 */
 				frameType: {type: "sap.m.FrameType", group: "Misc", defaultValue: FrameType.OneByOne},
 				/**
@@ -989,10 +989,10 @@ sap.ui.define([
 	 * @param {boolean} bSubheader Indicates the existence of subheader
 	 */
 	GenericTile.prototype._applyContentMode = function (bSubheader) {
-		// if frametype is OneByOne or TwoByOne & subheader is available, the header can have maximal 2 lines and the subheader can have 1 line
-		// if frametype is OneByOne or TwoByOne & subheader is unavailable, the header can have maximal 3 lines
-		// if frametype is OneByHalf or TwoByHalf & content is available, the header can have maximal 1 lines
-		// if frametype is OneByHalf or TwoByHalf & content is unavailable, the header can have maximal 2 lines
+		// If the FrameType is OneByOne or TwoByOne and the subheader is available, the header can have a maximum of 2 lines and the subheader can have only 1 line.
+		// If the FrameType is OneByOne or TwoByOne and the subheader is unavailable, the header can have a maximum of 3 lines.
+		// If the FrameType is OneByHalf or TwoByHalf and the content is available, the header can have a maximum of 1 line.
+		// If the FrameType is OneByHalf or TwoByHalf and the content is unavailable, the header can have a maximum of 2 lines.
 
 		var frameType = this.getFrameType();
 		var aTileContent = this.getTileContent();
