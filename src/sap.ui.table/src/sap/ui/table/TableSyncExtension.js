@@ -110,9 +110,13 @@ sap.ui.define([
 			// sync extension.
 			// BLI: CPOUIFTEAMB-667
 			if (!bRenderedRows) {
+				var oSyncExtension = this._getSyncExtension();
+
+				oSyncExtension.syncInnerVerticalScrollPosition(oContentDomRef.scrollTop);
+
 				oContentDomRef.addEventListener("scroll", function(oEvent) {
-					this._getSyncExtension().syncInnerVerticalScrollPosition(oEvent.target.scrollTop);
-				}.bind(this));
+					oSyncExtension.syncInnerVerticalScrollPosition(oEvent.target.scrollTop);
+				});
 			}
 		}
 	};
