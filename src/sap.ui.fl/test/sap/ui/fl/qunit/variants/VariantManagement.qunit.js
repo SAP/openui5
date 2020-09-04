@@ -280,18 +280,18 @@ sap.ui.define([
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
 			oInput.setValue("New");
-			this.oVariantManagement._checkVariantNameConstraints(oInput, null, "1");
+			this.oVariantManagement._checkVariantNameConstraints(oInput, "1");
 			assert.equal(oInput.getValueState(), "None");
 
 			oInput.setValue("");
-			this.oVariantManagement._checkVariantNameConstraints(oInput, null, "1");
+			this.oVariantManagement._checkVariantNameConstraints(oInput, "1");
 			assert.equal(oInput.getValueState(), "Error");
 
 			oInput.setValue("One");
-			this.oVariantManagement._checkVariantNameConstraints(oInput, null, "1");
+			this.oVariantManagement._checkVariantNameConstraints(oInput, "1");
 			assert.equal(oInput.getValueState(), "None");
 
-			this.oVariantManagement._checkVariantNameConstraints(oInput, null, "2");
+			this.oVariantManagement._checkVariantNameConstraints(oInput, "2");
 			assert.equal(oInput.getValueState(), "Error");
 			oInput.destroy();
 		});
@@ -495,7 +495,8 @@ sap.ui.define([
 			sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
 
 			this.oVariantManagement._openSaveAsDialog();
-			assert.equal(this.oVariantManagement.oInputName.getValueState(), "Error");
+			assert.equal(this.oVariantManagement.oInputName.getValueState(), "None");
+			assert.ok(this.oVariantManagement.oSaveSave.getEnabled());
 
 			var aItems = this.oVariantManagement._getItems();
 			assert.ok(aItems);
@@ -587,25 +588,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking _handleManageDefaultVariantChange", function(assert) {
-			var bEnabled = false;
-			sinon.stub(this.oVariantManagement, "_anyInErrorState").returns(false);
+			sinon.stub(this.oVariantManagement, "setDefaultVariantKey");
 
-			this.oVariantManagement.oManagementSave = {
-				setEnabled: function() {
-					bEnabled = true;
-				}
-			};
-
+			assert.ok(!this.oVariantManagement.setDefaultVariantKey.called);
 			this.oVariantManagement._handleManageDefaultVariantChange(null, "1");
-			assert.ok(bEnabled);
-
-			this.oVariantManagement._anyInErrorState.restore();
-			sinon.stub(this.oVariantManagement, "_anyInErrorState").returns(true);
-			bEnabled = false;
-			this.oVariantManagement._handleManageDefaultVariantChange(null, "1");
-			assert.ok(!bEnabled);
-
-			this.oVariantManagement.oManagementSave = undefined;
+			assert.ok(this.oVariantManagement.setDefaultVariantKey.called);
 		});
 
 		QUnit.test("Checking _handleManageDefaultVariantChange, ensure favorites are flagged for default variant", function(assert) {
@@ -1019,6 +1006,62 @@ sap.ui.define([
 
 			this.oVariantManagement.setExecuteOnSelectionForStandardDefault(true);
 			assert.ok(this.oVariantManagement.getExecuteOnSelectionForStandardDefault());
+		});
+
+		QUnit.test("Check save in manage dialog with renaming", function(assert) {
+			var bSavePressed = false;
+			var fmSavePressed = function() {
+				bSavePressed = true;
+			};
+
+			this.oVariantManagement.attachManage(fmSavePressed);
+
+			oModel.oData.One.variants[0].favorite = false;
+			oModel.oData.One.currentVariant = "1";
+			oModel.oData.One.defaultVariant = "1";
+
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement._createManagementDialog();
+			assert.ok(this.oVariantManagement.oManagementDialog);
+			sinon.stub(this.oVariantManagement.oManagementDialog, "open");
+
+			sinon.stub(this.oVariantManagement.oManagementDialog, "isOpen").returns(true);
+
+
+			this.oVariantManagement._openManagementDialog();
+
+			this.oVariantManagement._handleManageSavePressed();
+			assert.ok(bSavePressed);
+
+			assert.ok(this.oVariantManagement.oManagementTable);
+
+			var oInput = this.oVariantManagement.oManagementTable.getItems()[1].getCells()[1];
+			assert.ok(oInput);
+			assert.equal(oInput.getValue(), "One");
+			oInput.setValue("Two");
+
+			//setValue destroys the input while list binding is recreated....
+			oInput = this.oVariantManagement.oManagementTable.getItems()[1].getCells()[1];
+			assert.ok(oInput);
+			assert.equal(oInput.getValue(), "Two");
+			this.oVariantManagement._checkVariantNameConstraints(oInput, "2");
+
+			bSavePressed = false;
+			this.oVariantManagement._handleManageSavePressed();
+			assert.ok(!bSavePressed);
+
+			//setValue destroys the input while list binding is recreated....
+			oInput = this.oVariantManagement.oManagementTable.getItems()[1].getCells()[1];
+			assert.ok(oInput);
+			assert.equal(oInput.getValue(), "Two");
+
+			oInput.setValue("TEN");
+			oInput = this.oVariantManagement.oManagementTable.getItems()[1].getCells()[1];
+
+			this.oVariantManagement._checkVariantNameConstraints(oInput, "2");
+			this.oVariantManagement._handleManageSavePressed();
+			assert.ok(bSavePressed);
 		});
 	});
 
