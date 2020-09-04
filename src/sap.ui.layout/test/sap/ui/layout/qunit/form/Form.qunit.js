@@ -93,7 +93,9 @@ sap.ui.define([
 		assert.equal(jQuery("#F1").attr("title"), "Test", "tooltip rendered");
 	});
 
+	/* eslint-disable no-console */
 	QUnit.test("Title as string", function(assert) {
+		this.spy(console, "assert");
 		oForm.setTitle("Test");
 		sap.ui.getCore().applyChanges();
 		assert.equal(oForm.getTitle(), "Test", "Title set");
@@ -103,6 +105,7 @@ sap.ui.define([
 		assert.ok(!jQuery("#F1--title").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
 		assert.equal(jQuery("#F1--title").width(), parseInt(jQuery("#F1").children().first().innerWidth()), "Title rendered as large as the Layout");
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "F1--title", "aria-labelledby points to Title");
+		assert.ok(console.assert.neverCalledWith(sinon.match.falsy), "no assertion should have failed");
 
 		oForm.destroyTitle();
 		sap.ui.getCore().applyChanges();
@@ -112,6 +115,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Title as object", function(assert) {
+		this.spy(console, "assert"); // eslint-disable-line no-console
 		var oTitle = new Title("T1", {text: "Test"});
 		oForm.setTitle(oTitle);
 		sap.ui.getCore().applyChanges();
@@ -124,6 +128,7 @@ sap.ui.define([
 		assert.notOk(jQuery("#T1").attr("title"), "Title: no tooltip rendered per default");
 		assert.notOk(window.document.getElementById("T1-ico"), "Title no image is rendered");
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
+		assert.ok(console.assert.neverCalledWith(sinon.match.falsy), "no assertion should have failed");
 
 		oTitle.setIcon("../../images/controls/sap.ui.layout.form.Form.gif");
 		oTitle.setTooltip("Test");
@@ -143,6 +148,7 @@ sap.ui.define([
 		assert.notOk(window.document.getElementById("T1"), "no Title rendered");
 		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
 	});
+	/* eslint-enable no-console */
 
 	QUnit.test("Toolbar", function(assert) {
 		var oToolbar = new Toolbar("TB1");
