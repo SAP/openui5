@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/deepClone",
 	"sap/base/util/ObjectPath",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/integration/util/CardMerger",
 	"sap/ui/thirdparty/jquery",
@@ -25,6 +26,7 @@ sap.ui.define([
 	merge,
 	deepClone,
 	ObjectPath,
+	isEmptyObject,
 	BaseEditor,
 	CardMerger,
 	jQuery,
@@ -150,7 +152,7 @@ sap.ui.define([
 								[sEditorConfigPath],
 								fnResolveEditorConfig,
 								function () {
-									return {}; // if editor.config.js doesn't exist
+									fnResolveEditorConfig({}); // if editor.config.js doesn't exist
 								}
 							);
 						}),
@@ -165,18 +167,26 @@ sap.ui.define([
 				});
 
 				this._oDesigntimePromise.then(function (aDesigntimeFiles) {
-					// Editor config
-					var oConfig = merge({}, aDesigntimeFiles[0]);
-					oConfig.i18n = _toArray(oConfig.i18n);
-					oConfig.i18n.push(sDesigntimePrefix + "/i18n.properties");
-					this._addSpecificConfig(merge({}, oConfig));
-
 					// Metadata
 					var oDesigntimeMetadata = aDesigntimeFiles[1];
 					oDesigntimeMetadata = CardMerger.mergeCardDesigntimeMetadata(oDesigntimeMetadata, this.getDesigntimeChanges());
 
 					this._oInitialDesigntimeMetadata = oDesigntimeMetadata;
 					this.setDesigntimeMetadata(formatImportedDesigntimeMetadata(oDesigntimeMetadata), true);
+
+					// Editor config
+					var oConfig = aDesigntimeFiles[0];
+
+					if (isEmptyObject(oConfig)) {
+						this.addConfig({
+							"i18n": sDesigntimePrefix + "/i18n.properties"
+						});
+					} else {
+						oConfig = merge({}, oConfig);
+						oConfig.i18n = _toArray(oConfig.i18n);
+						oConfig.i18n.push(sDesigntimePrefix + "/i18n.properties");
+						this._addSpecificConfig(merge({}, oConfig));
+					}
 				}.bind(this));
 			}
 		}
