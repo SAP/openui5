@@ -1,0 +1,69 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:core="sap.ui.core">
+	<Dialog
+			title="Table Settings"
+			class="sapUiPopupWithPadding"
+			stretchOnPhone="true"
+			id="tableSettings"
+			horizontalScrolling="false"
+			draggable="true"
+			contentWidth="550px">
+		<content>
+			<form:Form editable="true">
+				<form:formContainers>
+					<form:FormContainer>
+						<form:FormElement label="SelectionMode">
+							<Select
+									selectedKey="Multi"
+									change="onSelectionModeChange">
+								<items>
+									<core:Item key="Multi" text="Multi"/>
+									<core:Item key="Single" text="Single"/>
+									<core:Item key="None" text="None"/>
+								</items>
+							</Select>
+						</form:FormElement>
+						<form:FormElement label="Highlights">
+							<Checkbox select="onToggleHighlight"/>
+						</form:FormElement>
+						<form:FormElement label="Navigation">
+							<Checkbox select="onToggleNavigation"/>
+						</form:FormElement>
+						<form:FormElement label="Navigation Indicator">
+							<Checkbox select="onToggleNavIndicator"/>
+						</form:FormElement>
+						<form:FormElement label="P13n">
+							<Checkbox select="onToggleP13n" selected="true"/>
+						</form:FormElement>
+						<form:FormElement label="Busy State">
+							<Checkbox select="onToggleBusyState"/>
+						</form:FormElement>
+						<form:FormElement label="Creation Row">
+							<Checkbox select="onToggleCreationRow"/>
+						</form:FormElement>
+						<form:FormElement label="Quick Filter">
+							<Checkbox select="onToggleQuickFilter"/>
+						</form:FormElement>
+					</form:FormContainer>
+				</form:formContainers>
+				<form:layout>
+					<form:ResponsiveGridLayout
+							labelSpanXL="4"
+							labelSpanL="4"
+							labelSpanM="4"
+							labelSpanS="4"
+							emptySpanXL="1"
+							emptySpanL="1"
+							emptySpanM="1"
+							emptySpanS="1"
+					/>
+				</form:layout>
+			</form:Form>
+		</content>
+		<endButton>
+			<Button text="Close" press="onGridTableDialogClose" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
