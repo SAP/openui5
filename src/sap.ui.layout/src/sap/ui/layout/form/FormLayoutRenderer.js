@@ -190,7 +190,7 @@ sap.ui.define([
 					rm.class("sapUiFormTitleEmph");
 				}
 			} else {
-				rm.openStart(sLevel, sContentId + "--title");
+				rm.openStart(sLevel.toLowerCase(), sContentId + "--title");
 			}
 			rm.class("sapUiFormTitle");
 			rm.class("sapUiFormTitle" + sLevel);
