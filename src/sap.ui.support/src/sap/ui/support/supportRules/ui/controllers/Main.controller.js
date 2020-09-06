@@ -12,9 +12,12 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/support/supportRules/ui/models/Documentation",
-	"sap/ui/VersionInfo"
-], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, Documentation, VersionInfo) {
+	"sap/ui/VersionInfo",
+	"sap/m/library"
+], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, Documentation, VersionInfo, mobileLibrary) {
 	"use strict";
+
+	var ButtonType = mobileLibrary.ButtonType;
 
 	return BaseController.extend("sap.ui.support.supportRules.ui.controllers.Main", {
 		onInit: function () {
@@ -225,11 +228,11 @@ sap.ui.define([
 		},
 
 		_setActiveView: function(sId) {
-			this.byId("issuesBtn").setType(sap.m.ButtonType.Default);
-			this.byId("analysisBtn").setType(sap.m.ButtonType.Default);
+			this.byId("issuesBtn").setType(ButtonType.Default);
+			this.byId("analysisBtn").setType(ButtonType.Default);
 
 			//The corresponding button must have id with the name of the view
-			this.byId(sId + "Btn").setType(sap.m.ButtonType.Emphasized);
+			this.byId(sId + "Btn").setType(ButtonType.Emphasized);
 			this.byId("navCon").to(this.byId(sId), "show");
 			this.ensureOpened();
 		}

@@ -41,11 +41,11 @@ sap.ui.define([
 			},
 			{
 				text: "Best Practices for Loading Modules Asynchronously",
-				href: "https://openui5.hana.ondemand.com/#/topic/00737d6c1b864dc3ab72ef56611491c4.html#loio00737d6c1b864dc3ab72ef56611491c4"
+				href: "https://openui5.hana.ondemand.com/#/topic/00737d6c1b864dc3ab72ef56611491c4#loio00737d6c1b864dc3ab72ef56611491c4"
 			},
 			{
 				text: "Is Your Application Ready for Asynchronous Loading?",
-				href: "https://sapui5.hana.ondemand.com/#/topic/493a15aa978d4fe9a67ea9407166eb01.html"
+				href: "https://sapui5.hana.ondemand.com/#/topic/493a15aa978d4fe9a67ea9407166eb01"
 			}
 		]
 	};
@@ -113,7 +113,7 @@ sap.ui.define([
 			"For more information, see the SAPUI5 developer guide.",
 		resolutionurls: [{
 			text: "Documentation: Cache Buster for SAPUI5 Application Resources",
-			href: "https://sapui5.hana.ondemand.com/#docs/guide/4cfe7eff3001447a9d4b0abeaba95166.html"
+			href: "https://sapui5.hana.ondemand.com/#/topic/4cfe7eff3001447a9d4b0abeaba95166"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var sUI5ICFNode = "/sap/bc/ui5_ui5/";
@@ -401,7 +401,7 @@ sap.ui.define([
 			href: "https://openui5.hana.ondemand.com/#/topic/68d0e58857a647d49470d9f92dd859bd"
 		}, {
 			text: "Documentation: UI Adaptation at Runtime: Enable Your App",
-			href: "https://sapui5.hana.ondemand.com/#docs/guide/f1430c0337534d469da3a56307ff76af.html"
+			href: "https://sapui5.hana.ondemand.com/#/topic/f1430c0337534d469da3a56307ff76af"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var mComponents = oCoreFacade.getComponents();

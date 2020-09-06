@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/documentation/sdk/controller/util/SearchUtil",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
@@ -26,6 +28,8 @@ sap.ui.define([
 	jQuery,
 	BaseController,
 	SearchUtil,
+	Filter,
+	FilterOperator,
 	JSONModel,
 	ResizeHandler,
 	Device,
@@ -635,7 +639,7 @@ sap.ui.define([
 
 			onChangeVersionDialogSearch: function (oEvent) {
 				var sSearchedValue = oEvent.getParameter("newValue"),
-					oFilter = new sap.ui.model.Filter("version", sap.ui.model.FilterOperator.Contains, sSearchedValue),
+					oFilter = new Filter("version", FilterOperator.Contains, sSearchedValue),
 					oBinding = Core.byId("versionList").getBinding("items");
 
 				oBinding.filter([oFilter]);

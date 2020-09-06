@@ -4,16 +4,20 @@
 
 sap.ui.define([
 //	'sap/ui/mdc/library',
+	'sap/m/library',
 	'sap/ui/mdc/field/FieldHelpBase',
 	'sap/ui/mdc/condition/Condition'//,
 //	'sap/ui/base/ManagedObjectObserver'
 ], function(
 //		library,
+		mobileLibrary,
 		FieldHelpBase,
 		Condition//,
 //		ManagedObjectObserver
 		) {
 	"use strict";
+
+	var ButtonType = mobileLibrary.ButtonType;
 
 	var DefineConditionPanel;
 	var Toolbar;
@@ -135,7 +139,7 @@ sap.ui.define([
 
 			var oButtonOK = new Button(this.getId() + "-ok", {
 				text: this._oResourceBundle.getText("valuehelp.OK"),
-				type: sap.m.ButtonType.Emphasized,
+				type: ButtonType.Emphasized,
 				press: _handleOk.bind(this)
 			});
 

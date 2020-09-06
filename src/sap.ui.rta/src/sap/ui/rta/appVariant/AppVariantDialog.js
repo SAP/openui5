@@ -16,9 +16,12 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/m/TileContent",
 	"sap/m/VBox",
+	"sap/ui/core/library",
+	"sap/ui/core/IconPool",
 	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
 	// needs to be preloaded for the test to work
@@ -37,13 +40,18 @@ function(
 	TextArea,
 	TileContent,
 	VBox,
+	coreLibrary,
+	IconPool,
 	Title,
 	SimpleForm,
 	Filter,
+	FilterOperator,
 	JSONModel,
 	RtaUtils
 ) {
 	"use strict";
+
+	var ValueState = coreLibrary.ValueState;
 
 	var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	var oDataSet;
@@ -79,7 +87,7 @@ function(
 
 	function _handleSearch(oEvent) {
 		var sValue = oEvent.getParameter("value");
-		var oFilter = new Filter("name", sap.ui.model.FilterOperator.Contains, sValue);
+		var oFilter = new Filter("name", FilterOperator.Contains, sValue);
 		var oBinding = oEvent.getSource().getBinding("items");
 		oBinding.filter([oFilter]);
 	}
@@ -129,12 +137,12 @@ function(
 			})
 		});
 
-		var aUI5Icons = sap.ui.core.IconPool.getIconNames();
+		var aUI5Icons = IconPool.getIconNames();
 		var aIcons = [];
 
 		aUI5Icons.forEach(function(sName) {
 			aIcons.push({
-				icon: sap.ui.core.IconPool.getIconInfo(sName).uri,
+				icon: IconPool.getIconInfo(sName).uri,
 				name : sName.toLowerCase()
 			});
 		});
@@ -161,10 +169,10 @@ function(
 			liveChange: function() {
 				var oSaveButton = sap.ui.getCore().byId("saveButton");
 				if (this.getValue() === "") {
-					this.setValueState(sap.ui.core.ValueState.Error);  // if the field is empty after change, it will go red
+					this.setValueState(ValueState.Error);  // if the field is empty after change, it will go red
 					oSaveButton.setEnabled(false);
 				} else {
-					this.setValueState(sap.ui.core.ValueState.None); // if the field is not empty after change, the value state (if any) is removed
+					this.setValueState(ValueState.None); // if the field is not empty after change, the value state (if any) is removed
 					oSaveButton.setEnabled(true);
 				}
 			}
@@ -308,7 +316,7 @@ function(
 			var sSubTitle = oSubTitleInput.getValue() || " ";
 			var sDescription = oDescriptionText.getValue() || " ";
 
-			var sIconValue = oIconInput.getValue() ? sap.ui.core.IconPool.getIconInfo(oIconInput.getValue()).uri : " ";
+			var sIconValue = oIconInput.getValue() ? IconPool.getIconInfo(oIconInput.getValue()).uri : " ";
 
 			this.fireCreate({
 				title: sTitle,

@@ -139,7 +139,7 @@ function(coreLibrary, library, Device) {
 		if (!sImage) {
 			//TODO: global jquery call found
 			jQuery.sap.require("sap.ui.core.theming.Parameters");
-			sImage = sap.ui.core.theming.Parameters._getThemeImage(); // theme logo
+			sImage = sap.ui.require("sap/ui/core/theming/Parameters")._getThemeImage(); // theme logo
 		}
 
 		if (sImage) {

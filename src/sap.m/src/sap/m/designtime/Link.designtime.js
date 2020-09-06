@@ -3,8 +3,8 @@
  */
 
 // Provides the Design Time Metadata for the sap.m.Link control
-sap.ui.define([],
-	function () {
+sap.ui.define(["sap/ui/model/json/JSONModel"],
+	function (JSONModel) {
 		"use strict";
 
 	var oSelectTargetDialog = function(oControl, mPropertyBag) {
@@ -17,7 +17,7 @@ sap.ui.define([],
 				cancelBtn : oTextResources.getText("LINK_DIALOG_CANCEL_BTN"),
 				okBtn : oTextResources.getText("LINK_DIALOG_OK_BTN")
 			};
-			var oModel = new sap.ui.model.json.JSONModel();
+			var oModel = new JSONModel();
 			oModel.setData(data);
 
 			var oDialog = sap.ui.xmlfragment("sap.m.designtime.LinkTargetSelectDialog", this);

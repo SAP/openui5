@@ -4,7 +4,7 @@
 /**
  * Defines support rules of the FacetFilter control of sap.m library.
  */
-sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
+sap.ui.define(["sap/ui/support/library", "sap/ui/model/BindingMode"], function(SupportLib, BindingMode) {
 	"use strict";
 
 	// shortcuts
@@ -37,7 +37,7 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 				.forEach(function(oElement) {
 					if (oElement.getGrowing()
 						&& oElement.getModel()
-						&& oElement.getModel().getDefaultBindingMode() === sap.ui.model.BindingMode.TwoWay) {
+						&& oElement.getModel().getDefaultBindingMode() === BindingMode.TwoWay) {
 						var sElementId = oElement.getId(),
 							sElementName = oElement.getMetadata().getElementName();
 

@@ -3,6 +3,8 @@
  */
 sap.ui.define([
 		'./library',
+		'./Button',
+		'./ScrollContainer',
 		'sap/ui/core/Core',
 		'sap/ui/core/Control',
 		'sap/ui/Device',
@@ -27,6 +29,8 @@ sap.ui.define([
 	],
 	function (
 		library,
+		Button,
+		ScrollContainer,
 		Core,
 		Control,
 		Device,
@@ -256,7 +260,7 @@ sap.ui.define([
 			this._aItemEnd = [];
 			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 			this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			this._oScrollCntr = new library.ScrollContainer(this.getId() + "-scrl-cntnr", {
+			this._oScrollCntr = new ScrollContainer(this.getId() + "-scrl-cntnr", {
 				width: "100%",
 				height: "100%",
 				horizontal: !Device.system.desktop
@@ -265,7 +269,7 @@ sap.ui.define([
 			this.setAggregation("_scrollContainer", this._oScrollCntr, true);
 
 			if (Device.system.desktop) {
-				this._oArrowPrev = new library.Button({
+				this._oArrowPrev = new Button({
 					id: this.getId() + "-scrl-prev-button",
 					type: library.ButtonType.Transparent,
 					tooltip: this._oRb.getText("HEADERCONTAINER_BUTTON_PREV_SECTION"),
@@ -277,7 +281,7 @@ sap.ui.define([
 				this._oArrowPrev._bExcludeFromTabChain = true;
 				this.setAggregation("_prevButton", this._oArrowPrev, true);
 
-				this._oArrowNext = new library.Button({
+				this._oArrowNext = new Button({
 					id: this.getId() + "-scrl-next-button",
 					type: library.ButtonType.Transparent,
 					tooltip: this._oRb.getText("HEADERCONTAINER_BUTTON_NEXT_SECTION"),

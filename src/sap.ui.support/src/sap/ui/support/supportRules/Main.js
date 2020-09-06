@@ -671,7 +671,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 			},
 			analysisDuration: this._oAnalyzer.getElapsedTimeString(),
 			analysisDurationTitle: oReportConstants.analysisDurationTitle,
-			abap: History.getFormattedHistory(sap.ui.support.HistoryFormats.Abap),
+			abap: History.getFormattedHistory(library.HistoryFormats.Abap),
 			name: constants.SUPPORT_ASSISTANT_NAME
 		};
 	};

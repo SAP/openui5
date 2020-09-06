@@ -1061,7 +1061,7 @@ sap.ui.define([
 			assert.equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
 
 			var oPromise = oModel.getResourceBundle();
-			assert.ok(oPromise instanceof window.Promise, "getResourceBundle returns Promise");
+			assert.ok(oPromise instanceof Promise, "getResourceBundle returns Promise");
 
 			oPromise.then(function(oBundle) {
 				assert.equal(oLabel.getText(), "A text en", "Texts available after async load");

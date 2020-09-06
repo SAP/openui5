@@ -492,8 +492,8 @@ sap.ui.define([
 		 * @private
 		 */
 		function preGenHash(sIdf, oStateData){
-			var sEncodedIdf = window.encodeURIComponent(sIdf);
-			var sEncodedData = window.encodeURIComponent(window.JSON.stringify(oStateData));
+			var sEncodedIdf = encodeURIComponent(sIdf);
+			var sEncodedData = encodeURIComponent(JSON.stringify(oStateData));
 			return sEncodedIdf + sIdSeperator + sEncodedData;
 		}
 
@@ -702,7 +702,7 @@ sap.ui.define([
 			var aParts = sHash.split(sIdSeperator), oReturn = {};
 			if (aParts.length === 4 || aParts.length === 3) {
 				oReturn.sIdentifier = window.decodeURIComponent(aParts[0]);
-				oReturn.oStateData = window.JSON.parse(window.decodeURIComponent(aParts[1]));
+				oReturn.oStateData = JSON.parse(window.decodeURIComponent(aParts[1]));
 				if (aParts.length === 4) {
 					oReturn.uid = aParts[2];
 				}

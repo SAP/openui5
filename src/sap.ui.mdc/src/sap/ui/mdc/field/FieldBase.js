@@ -70,6 +70,8 @@ sap.ui.define([
 
 	var ValueState = coreLibrary.ValueState;
 	var CalendarType = coreLibrary.CalendarType;
+	var TextAlign = coreLibrary.TextAlign;
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Constructor for a new <code>FieldBase</code>.
@@ -174,7 +176,7 @@ sap.ui.define([
 				textAlign: {
 					type: "sap.ui.core.TextAlign",
 					group: "Appearance",
-					defaultValue: sap.ui.core.TextAlign.Initial
+					defaultValue: TextAlign.Initial
 				},
 
 				/**
@@ -185,7 +187,7 @@ sap.ui.define([
 				textDirection: {
 					type: "sap.ui.core.TextDirection",
 					group: "Appearance",
-					defaultValue: sap.ui.core.TextDirection.Inherit
+					defaultValue: TextDirection.Inherit
 				},
 
 				/**
@@ -210,7 +212,7 @@ sap.ui.define([
 				valueState: {
 					type: "sap.ui.core.ValueState",
 					group: "Appearance",
-					defaultValue: sap.ui.core.ValueState.None
+					defaultValue: ValueState.None
 				},
 
 				/**
@@ -1014,7 +1016,7 @@ sap.ui.define([
 	}
 
 	/*
-	 * To avoid data loss for DatePicker (e.G. in short Year number foe 1918) use ISO format as ValueFormat in DatePickers
+	 * To avoid data loss for DatePicker (e.g. in short Year number foe 1918) use ISO format as ValueFormat in DatePickers
 	 */
 	function _getDatePattern(sType, oFormatOptions, oConstraints) {
 

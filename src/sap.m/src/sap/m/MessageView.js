@@ -1027,7 +1027,7 @@ sap.ui.define([
 		var iValidationTaskId = ++this._iNextValidationTaskId;
 		var oPromiseArgument = {};
 
-		var oPromise = new window.Promise(function (resolve, reject) {
+		var oPromise = new Promise(function (resolve, reject) {
 
 			oPromiseArgument.resolve = resolve;
 			oPromiseArgument.reject = reject;
@@ -1188,7 +1188,7 @@ sap.ui.define([
 
 			var oPromiseArgument = {};
 
-			var oPromise = new window.Promise(function (resolve, reject) {
+			var oPromise = new Promise(function (resolve, reject) {
 				oPromiseArgument.resolve = resolve;
 				oPromiseArgument.reject = reject;
 			});

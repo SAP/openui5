@@ -7,10 +7,11 @@
  */
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/support/library",
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/support/supportRules/Constants"
 ],
-function (jQuery, storage, constants) {
+function (jQuery, library, storage, constants) {
 	"use strict";
 
 	/**
@@ -145,14 +146,14 @@ function (jQuery, storage, constants) {
 
 		if (!oSettings.audiences || oSettings.audiences.length === 0) {
 			jQuery.sap.log.error("Support rule with the id " + oSettings.id + " should have an audience. Applying audience ['Control']");
-			oSettings.audiences = [sap.ui.support.Audiences.Control];
+			oSettings.audiences = [library.Audiences.Control];
 		}
 
 		if (oSettings.audiences && oSettings.audiences.forEach) {
 			var bIsWrongAudience = false,
 				sAudienceName = "";
 			oSettings.audiences.forEach(function (aud) {
-				if (!sap.ui.support.Audiences[aud]) {
+				if (!library.Audiences[aud]) {
 					bIsWrongAudience = true;
 					sAudienceName = aud;
 				}
@@ -173,7 +174,7 @@ function (jQuery, storage, constants) {
 			var bIsWrongCategory = false,
 				sCategoryName = "";
 			oSettings.categories.forEach(function (cat) {
-				if (!sap.ui.support.Categories[cat]) {
+				if (!library.Categories[cat]) {
 					bIsWrongCategory = true;
 					sCategoryName = cat;
 				}

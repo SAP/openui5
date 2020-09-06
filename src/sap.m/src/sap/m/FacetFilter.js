@@ -7,6 +7,7 @@ sap.ui.define([
 	'./NavContainer',
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/core/CustomData',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/InvisibleText',
@@ -15,6 +16,8 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/Icon',
 	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/model/json/JSONModel',
 	'./FacetFilterRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/assert",
@@ -45,6 +48,7 @@ sap.ui.define([
 		NavContainer,
 		library,
 		Control,
+		CustomData,
 		IconPool,
 		ItemNavigation,
 		InvisibleText,
@@ -53,6 +57,8 @@ sap.ui.define([
 		ManagedObject,
 		Icon,
 		Filter,
+		FilterOperator,
+		JSONModel,
 		FacetFilterRenderer,
 		KeyCodes,
 		assert,
@@ -1477,7 +1483,7 @@ sap.ui.define([
 
 				var binding = oFacetList.getBinding("items");
 				if (binding) {
-					var filter = new Filter("text", sap.ui.model.FilterOperator.Contains, oEvent.getParameters()["newValue"]);
+					var filter = new Filter("text", FilterOperator.Contains, oEvent.getParameters()["newValue"]);
 					binding.filter([ filter ]);
 				}
 			}
@@ -1688,7 +1694,7 @@ sap.ui.define([
 					title: "{text}",
 					counter: "{count}",
 					type: ListType.Navigation,
-					customData : [ new sap.ui.core.CustomData({
+					customData : [ new CustomData({
 						key : "index",
 						value : "{index}"
 					}) ]
@@ -1699,7 +1705,7 @@ sap.ui.define([
 		// Create the facet list from a model binding so that we can implement facet list search using a filter.
 		var aFacetFilterLists = this._getMapFacetLists();
 
-		var oModel = new sap.ui.model.json.JSONModel({
+		var oModel = new JSONModel({
 			items: aFacetFilterLists
 		});
 

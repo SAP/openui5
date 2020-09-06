@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library"],
-	function(library) {
+sap.ui.define(["sap/m/library", "sap/ui/Device"],
+	function(library, Device) {
 	"use strict";
 
 
@@ -149,7 +149,7 @@ sap.ui.define(["sap/m/library"],
 
 		// ensure that the content is not included in the tab chain in FF
 		// when a scroll is present, as it causes loss of the visual focus outline
-		if (sap.ui.Device.browser.firefox) {
+		if (Device.browser.firefox) {
 			oRm.attr("tabindex", "-1");
 		}
 

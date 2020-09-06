@@ -5,6 +5,7 @@
 /*global history */
 sap.ui.define([
 		"sap/ui/documentation/library",
+		"sap/ui/core/Fragment",
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/core/routing/History",
 		"sap/ui/model/resource/ResourceModel",
@@ -12,7 +13,7 @@ sap.ui.define([
 		"sap/m/library",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/base/strings/formatMessage"
-	], function (library, Controller, History, ResourceModel, Device, mobileLibrary, APIInfo, formatMessage) {
+	], function (library, Fragment, Controller, History, ResourceModel, Device, mobileLibrary, APIInfo, formatMessage) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
@@ -144,7 +145,7 @@ sap.ui.define([
 				var oSource = oEvent.getSource ? oEvent.getSource() : oEvent.target;
 
 				if (!this.oDisclaimerPopover) {
-					sap.ui.core.Fragment.load({
+					Fragment.load({
 						name: "sap.ui.documentation.sdk.view.LegalDisclaimerPopover"
 					}).then(function (oPopover) {
 						// connect dialog to the root view of this component (models, lifecycle)

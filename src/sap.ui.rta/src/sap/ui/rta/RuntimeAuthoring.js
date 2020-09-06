@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.Main.
+// Provides class sap.ui.rta.RuntimeAuthoring.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/Util",
 	"sap/ui/dt/ElementUtil",
+	"sap/ui/fl/library",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
@@ -95,6 +96,7 @@ function(
 	Utils,
 	DtUtil,
 	ElementUtil,
+	flexLibrary,
 	FlexUtils,
 	LayerUtils,
 	Layer,
@@ -1509,9 +1511,9 @@ function(
 			return mParsedHash;
 		}
 
-		var sVersionParameter = FlexUtils.getParameter(sap.ui.fl.Versions.UrlParameter);
+		var sVersionParameter = FlexUtils.getParameter(flexLibrary.Versions.UrlParameter);
 		if (sVersionParameter) {
-			delete mParsedHash.params[sap.ui.fl.Versions.UrlParameter];
+			delete mParsedHash.params[flexLibrary.Versions.UrlParameter];
 		} else if (this._isDraftAvailable() || bTriggerReload /* for discard of dirty changes */) {
 			/*
 			In case we entered RTA without a draft and created dirty changes,
@@ -1520,7 +1522,7 @@ function(
 			Reason 2: Discard
 			*/
 			var sActiveVersionString = this._oVersionsModel.getProperty("/activeVersion").toString();
-			mParsedHash.params[sap.ui.fl.Versions.UrlParameter] = [sActiveVersionString];
+			mParsedHash.params[flexLibrary.Versions.UrlParameter] = [sActiveVersionString];
 		}
 		return mParsedHash;
 	};
