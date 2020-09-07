@@ -546,6 +546,7 @@ function(
 		this._iItemNeedsHighlight = 0;
 		this._iItemNeedsNavigated = 0;
 		this._bItemsBeingBound = false;
+		this._bSkippedInvalidationOnRebind = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
@@ -606,15 +607,14 @@ function(
 			return;
 		}
 
-		if (this._bItemsBeingBound) {
-			this._bItemsBeingBound = false;
-			this.invalidate();
-		}
-
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
 			this._oGrowingDelegate.updateItems(sReason);
 		} else {
+			if (this._bSkippedInvalidationOnRebind && this.getBinding("items").getLength() === 0) {
+				this.invalidate();
+			}
+
 			if (this._bReceivingData) {
 				// if we are receiving the data this should be oDataModel
 				// updateStarted is already handled before on refreshItems
@@ -635,6 +635,8 @@ function(
 			// items binding are updated
 			this._updateFinished();
 		}
+
+		this._bSkippedInvalidationOnRebind = false;
 	};
 
 	function createVirtualItem(oList) {
@@ -667,6 +669,7 @@ function(
 		this._bItemsBeingBound = sName === "items";
 		destroyVirtualItem(this);
 		Control.prototype.bindAggregation.apply(this, arguments);
+		this._bItemsBeingBound = false;
 		return this;
 	};
 
@@ -733,8 +736,12 @@ function(
 		this.destroyAggregation("items", "KeepDom");
 
 		// invalidate to update the DOM on the next tick of the RenderManager
-		if (!bSuppressInvalidate && !this._bItemsBeingBound) {
-			this.invalidate();
+		if (!bSuppressInvalidate) {
+			if (this._bItemsBeingBound) {
+				this._bSkippedInvalidationOnRebind = true;
+			} else {
+				this.invalidate();
+			}
 		}
 
 		return this;
