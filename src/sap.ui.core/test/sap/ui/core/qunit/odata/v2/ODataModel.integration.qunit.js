@@ -5012,9 +5012,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox binding="{/BusinessPartnerSet(\'100\')}">\
 	<Table items="{ToSalesOrders}">\
-		<ColumnListItem>\
-			<Text id="soID" text="{SalesOrderID}" />\
-		</ColumnListItem>\
+		<Text id="soID" text="{SalesOrderID}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -5101,9 +5099,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox binding="{/BusinessPartnerSet(\'100\')}">\
 	<Table items="{ToSalesOrders}">\
-		<ColumnListItem>\
-			<Text id="soID" text="{SalesOrderID}" />\
-		</ColumnListItem>\
+		<Text id="soID" text="{SalesOrderID}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -5529,9 +5525,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox binding="{/BusinessPartnerSet(\'100\')}">\
 	<Table items="{ToSalesOrders}">\
-		<ColumnListItem>\
-			<Text id="soID" text="{SalesOrderID}" />\
-		</ColumnListItem>\
+		<Text id="soID" text="{SalesOrderID}" />\
 	</Table>\
 </FlexBox>\
 <FlexBox id="form">\
@@ -5741,9 +5735,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox binding="{/BusinessPartnerSet(\'100\')}">\
 	<Table items="{ToSalesOrders}">\
-		<ColumnListItem>\
-			<Text id="soID" text="{SalesOrderID}" />\
-		</ColumnListItem>\
+		<Text id="soID" text="{SalesOrderID}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -5996,9 +5988,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}),
 			sView = '\
 <Table items="{path : \'/SalesOrderSet\', parameters : {select : \'foo\'}}">\
-	<ColumnListItem>\
-		<Text text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text text="{SalesOrderID}" />\
 </Table>\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Input id="idNote" value="{Note}" />\
