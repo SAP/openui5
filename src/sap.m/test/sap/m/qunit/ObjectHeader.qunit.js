@@ -857,7 +857,7 @@ sap.ui.define([
 
 		//Act
 		var $oImageControlRef = ohResponsiveIcon._oImageControl.$();
-		$oImageControlRef.focus();
+		$oImageControlRef.trigger("focus");
 		sap.ui.test.qunit.triggerKeyup($oImageControlRef, jQuery.sap.KeyCodes.SPACE);
 
 		//Assert

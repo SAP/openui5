@@ -565,7 +565,7 @@ sap.ui.define([
 		// Enable auto resize after bar move if it was enabled before
 		this.enableAutoResize(/* temporarily: */ true);
 		if (this._move.$bar){
-			this._move.$bar.focus();
+			this._move.$bar.trigger("focus");
 		}
 	};
 

@@ -149,9 +149,9 @@ sap.ui.define([
 		[$highlight, $enterText, $press].forEach(function ($element) {
 			$element.css("padding", "16px");
 			$element.css("cursor", "pointer");
-			$element.hover(function () {
+			$element.on("mouseenter", function () {
 				$element.css("background-color", "#ebf5fe");
-			}, function () {
+			}).on("mouseleave", function () {
 				$element.css("background-color", "transparent");
 			});
 		});

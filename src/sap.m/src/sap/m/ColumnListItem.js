@@ -125,7 +125,7 @@ sap.ui.define([
 
 		var oPopin = this.hasPopin();
 		if (oPopin) {
-			this.$Popin().hover(oPopin._onMouseEnter, oPopin._onMouseLeave);
+			this.$Popin().on("mouseenter", oPopin._onMouseEnter).on("mouseleave", oPopin._onMouseLeave);
 		}
 	};
 

@@ -2,7 +2,6 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/Plugin",
 	"sap/ui/dt/ContextMenuControl",
 	"sap/ui/dt/Util",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/restricted/_debounce"
 ], function(
-	jQuery,
 	Plugin,
 	ContextMenuControl,
 	DtUtil,
@@ -428,7 +426,7 @@ sap.ui.define([
 			oEvent.stopPropagation();
 			if (this._shouldContextMenuOpen(oEvent, true)) {
 				if (this.iMenuHoverClosingDelay >= this.iMenuHoverOpeningDelay) {
-					jQuery.error("sap.ui.dt ContextMenu iMenuHoverClosingDelay is bigger or equal to iMenuHoverOpeningDelay!");
+					throw new Error("sap.ui.dt ContextMenu iMenuHoverClosingDelay is bigger or equal to iMenuHoverOpeningDelay!");
 				}
 
 				if (this.oContextMenuControl.getPopover().isOpen()) {

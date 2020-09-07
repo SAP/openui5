@@ -3950,7 +3950,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin();
-		oInput._$input.focus().val("New").trigger("input");
+		oInput._$input.trigger("focus").val("New").trigger("input");
 		this.clock.tick(400);
 
 		var oClonedInput = oInput.clone();
@@ -5184,7 +5184,7 @@ sap.ui.define([
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
 
-		this.oInput._$input.focus().val("on").trigger("input");
+		this.oInput._$input.trigger("focus").val("on").trigger("input");
 		this.clock.tick(300);
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
@@ -5225,7 +5225,7 @@ sap.ui.define([
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
 		sap.ui.getCore().applyChanges();
 
-		this.oInput._$input.focus().val("on").trigger("input");
+		this.oInput._$input.trigger("focus").val("on").trigger("input");
 		this.clock.tick(300);
 
 		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
@@ -5258,7 +5258,7 @@ sap.ui.define([
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
 		sap.ui.getCore().applyChanges();
 
-		this.oInput._$input.focus().val("on").trigger("input");
+		this.oInput._$input.trigger("focus").val("on").trigger("input");
 		this.clock.tick(300);
 
 		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
@@ -5288,14 +5288,14 @@ sap.ui.define([
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
 		sap.ui.getCore().applyChanges();
 
-		this.oInput._$input.focus().val("o").trigger("input");
+		this.oInput._$input.trigger("focus").val("o").trigger("input");
 		this.clock.tick(300);
 
 		// Select the value state header
 		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 
-		this.oInput._$input.focus().val("one").trigger("input");
+		this.oInput._$input.trigger("focus").val("one").trigger("input");
 		this.clock.tick();
 
 		oValueStateHeader = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader();
@@ -5562,7 +5562,7 @@ sap.ui.define([
 
 		// act
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		this.oInput._$input.focus().val("A").trigger("input");
+		this.oInput._$input.trigger("focus").val("A").trigger("input");
 		this.clock.tick(300);
 
 		aVisibleItems = this.oInput._oSuggPopover._oList.getItems().filter(function(oItem){

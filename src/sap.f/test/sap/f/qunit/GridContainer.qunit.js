@@ -1119,7 +1119,7 @@ function (
 	QUnit.test("'mouseup' on the control focus dom ref should focus the grid list item", function (assert) {
 		// Arrange
 		var done = assert.async(),
-			oJQueryFocusSpy = sinon.spy(jQuery.prototype, "focus");
+			oJQueryTriggerSpy = sinon.spy(jQuery.prototype, "trigger");
 
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
@@ -1132,16 +1132,16 @@ function (
 			oCardFocusDomRef.focus();
 			Core.applyChanges();
 
-			assert.notOk(oJQueryFocusSpy.called, "Focus should not be moved");
+			assert.notOk(oJQueryTriggerSpy.calledWith("focus"), "Focus should not be moved");
 
 			qutils.triggerMouseEvent(oCardFocusDomRef, "mouseup");
 			oCardFocusDomRef.focus();
 			Core.applyChanges();
 
 			// Assert
-			assert.ok(oJQueryFocusSpy.called, "Focus should be moved to the grid list item");
+			assert.ok(oJQueryTriggerSpy.calledWith("focus"), "Focus should be moved to the grid list item");
 
-			oJQueryFocusSpy.restore();
+			oJQueryTriggerSpy.restore();
 			done();
 		}.bind(this));
 	});

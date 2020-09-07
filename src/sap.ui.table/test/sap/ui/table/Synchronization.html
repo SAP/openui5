@@ -163,10 +163,10 @@
 				}
 
 				function attachEventListener(oRow) {
-					jQuery(oRow).hover(function(oEvent) {
+					jQuery(oRow).on("mouseenter", function(oEvent) {
 						var iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"), 10);
 						that.oSyncInterface.syncRowHover(iIndex, true);
-					}, function(oEvent) {
+					}).on("mouseleave", function(oEvent) {
 						var iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"), 10);
 						that.oSyncInterface.syncRowHover(iIndex, false);
 					});

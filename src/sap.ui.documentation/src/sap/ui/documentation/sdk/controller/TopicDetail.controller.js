@@ -178,7 +178,7 @@ sap.ui.define([
 				this.sSubTopicId = event.getParameter("arguments").subId || sSubTopicId;
 
 				jQuery.ajax(this.sTopicURL)
-					.success(this._onHtmlResourceLoaded.bind(this))
+					.done(this._onHtmlResourceLoaded.bind(this))
 					.fail(Log.err);
 			},
 

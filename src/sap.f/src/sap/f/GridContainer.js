@@ -1294,7 +1294,7 @@ sap.ui.define([
 			// move the focus to the list item
 			if (oControl && oControl.getFocusDomRef() === document.activeElement) {
 				this._lastFocusedElement = null;
-				$listItem.focus();
+				$listItem.trigger("focus");
 				doVirtualFocusin(oControl);
 			}
 		}
@@ -1323,7 +1323,7 @@ sap.ui.define([
 				// move the focus to the list item
 				if (!this._bIsMouseDown && oControl.getFocusDomRef() === oEvent.target) {
 					this._lastFocusedElement = null;
-					$listItem.focus();
+					$listItem.trigger("focus");
 					return;
 				}
 			}
