@@ -150,13 +150,13 @@ sap.ui.define([
 [{
 	entitySet : {name : "~entitySetName"},
 	entityType : {entityType : "namespace.entityType"},
-	expectedLog : "Cannot determine keys of the EntityType 'namespace.entityType' for the function"
+	expectedLog : "Cannot determine keys of the entity type 'namespace.entityType' for the function"
 		+ " import '~functionName'",
 	result : ""
 }, {
 	entitySet : {name : "~entitySetName"},
 	entityType : {key : {}, entityType : "namespace.entityType"},
-	expectedLog : "Cannot determine keys of the EntityType 'namespace.entityType' for the function"
+	expectedLog : "Cannot determine keys of the entity type 'namespace.entityType' for the function"
 		+ " import '~functionName'",
 	result : ""
 }, {
@@ -198,11 +198,12 @@ sap.ui.define([
 			propertyRef : [{name : "property0"}]
 		}
 	},
-	expectedLog : "Cannot determine path of the EntitySet for the function import '~functionName'",
+	expectedLog : "Cannot determine path of the entity set for the function import '~functionName'",
 	result : ""
 }, {
 	entitySet : undefined,
 	entityType : undefined,
+	expectedLog : "Cannot determine an entity type for the function import '~functionName'",
 	result : ""
 }].forEach(function (oFixture, i) {
 	[{ // action-for wins over entitySet and returnType

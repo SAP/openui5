@@ -1627,6 +1627,11 @@ sap.ui.define([
 			mEntitySet = this._getEntitySetByType(mEntityType);
 			if (mEntitySet && mEntityType.key && mEntityType.key.propertyRef) {
 				aPropertyReferences = mEntityType.key.propertyRef;
+				// Only if the function import is annotated with the SAP OData V2 annotation
+				// <code>sap:action-for</code>, the  names of the function import parameters and the
+				// names of the entity keys are the same. Otherwise it is not guaranteed that the
+				// function parameter name is equal to the corresponding key property of the
+				// resulting entity type.
 				if (aPropertyReferences.length === 1) {
 					sParameterName = aPropertyReferences[0].name;
 					if (mFunctionParameters[sParameterName]) {
@@ -1644,12 +1649,15 @@ sap.ui.define([
 				}
 				return "/" + mEntitySet.name + "(" + sId + ")";
 			} else if (!mEntitySet) {
-				Log.error("Cannot determine path of the EntitySet for the function import '"
+				Log.error("Cannot determine path of the entity set for the function import '"
 					+ mFunctionInfo.name + "'", this, sClassName);
 			} else {
-				Log.error("Cannot determine keys of the EntityType '" + mEntityType.entityType
+				Log.error("Cannot determine keys of the entity type '" + mEntityType.entityType
 					+ "' for the function import '" + mFunctionInfo.name + "'", this, sClassName);
 			}
+		} else {
+			Log.error("Cannot determine an entity type for the function import '"
+				+ mFunctionInfo.name + "'", this, sClassName);
 		}
 
 		return "";
