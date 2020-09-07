@@ -2036,6 +2036,19 @@ function(
 			return;
 		}
 
+		// focus on root element should be prevented by showNoData=false and there a no items & destroy ItemNavigation
+		var oDomRef = this.getDomRef();
+
+		if (!this.getShowNoData() && !this.getVisibleItems().length && oDomRef) {
+			oDomRef.classList.add("sapMListPreventFocus");
+			this._destroyItemNavigation();
+			return;
+		}
+
+		if (oDomRef) {
+			oDomRef.classList.remove("sapMListPreventFocus");
+		}
+
 		var sKeyboardMode = this.getKeyboardMode(),
 			mKeyboardMode = ListKeyboardMode;
 

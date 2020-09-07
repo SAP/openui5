@@ -601,9 +601,72 @@ sap.ui.define([
 			aVisibleItems = oList.getVisibleItems();
 			assert.strictEqual(aVisibleItems.length, 0, "List has no visible items.");
 			assert.ok(oList.$("nodata-text")[0], "NoDataText is visible");
+			assert.ok(oList.getDomRef("listUl").hasAttribute("tabindex"), "List is focusable");
+			assert.notOk(oList.getDomRef().classList.contains("sapMListPreventFocus"), "sapMListPreventFocus class not present");
 
 			// cleanup
 			oPage.removeAllContent();
+		});
+
+		QUnit.test("List DOM should not be focusable when showNoData=false & there are no items", function(assert) {
+			var oList = new List({
+				showNoData: false
+			});
+
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+			oList.focus();
+			assert.notOk(oList.getItemNavigation(), "ItemNavigation is not available");
+			assert.ok(oList.getDomRef().classList.contains("sapMListPreventFocus"), "sapMListPreventFocus class added");
+
+			oList.destroy();
+		});
+
+		QUnit.test("List should be focusable when it contains items", function(assert) {
+			var oList = new List({
+				showNoData: false
+			});
+
+			oList.placeAt("qunit-fixture");
+			var oListItem = new StandardListItem({
+				title: "Title"
+			});
+			oList.addItem(oListItem);
+			Core.applyChanges();
+
+			oList.focus();
+			assert.ok(oList.getItemNavigation(), "ItemNavigation is available");
+			assert.notOk(oList.getDomRef().classList.contains("sapMListPreventFocus"), "sapMListPreventFocus class not present");
+
+			oList.destroy();
+		});
+
+		QUnit.test("List focus handling behavior with growing and showNoData=false", function(assert) {
+			var clock = sinon.useFakeTimers();
+			bindListData(oList, data2, "/items", createTemplateListItem());
+			oList.setGrowing(true);
+			oList.setGrowingThreshold(1);
+			oList.setShowNoData(false);
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			oList.focus();
+			assert.ok(oList.getItemNavigation(), "ItemNavigation is available");
+			assert.notOk(oList.getDomRef().classList.contains("sapMListPreventFocus"), "sapMListPreventFocus class not present");
+
+			oList.getBinding("items").filter(new Filter("Title", "EQ", "FooBar"));
+			clock.tick(1);
+			oList.focus();
+			assert.notOk(oList.getItemNavigation(), "ItemNavigation is not available");
+			assert.ok(oList.getDomRef().classList.contains("sapMListPreventFocus"), "sapMListPreventFocus class added");
+
+			oList.getBinding("items").filter();
+			clock.tick(1);
+			oList.focus();
+			assert.ok(oList.getItemNavigation(), "ItemNavigation is available");
+			assert.notOk(oList.getDomRef().classList.contains("sapMListPreventFocus"), "sapMListPreventFocus class not present");
+
+			oList.destroy();
 		});
 
 		/********************************************************************************/
