@@ -1199,7 +1199,7 @@ sap.ui.define([
 			if (aPatternParts.length === 2) {
 				sPattern = bNegative ? aPatternParts[1] : aPatternParts[0];
 				if (bNegative) {
-					sResult = sResult.substring(1);
+					sResult = sResult.substring(oOptions.minusSign.length);
 				}
 			}
 
