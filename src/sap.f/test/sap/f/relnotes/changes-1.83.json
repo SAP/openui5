@@ -1,7 +1,23 @@
 {
   "1.83.0": {
-    "date": "August 2020",
+    "date": "September 2020",
     "notes": [
+      {
+        "id": "908bef4d117d89e6b8ff9c640cde2c97e5cc3909",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Pin button is positioned correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070287146"
+          }
+        ]
+      },
+      {
+        "id": "14f1014a903b4de1306fe4108bbf44e108329660",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Issue with wrong scroll position is fixed"
+      },
       {
         "id": "34e41ff634a02a283829424fe26359e0d88f7149",
         "type": "FIX",

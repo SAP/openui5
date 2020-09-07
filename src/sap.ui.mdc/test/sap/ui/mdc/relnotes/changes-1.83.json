@@ -1,7 +1,44 @@
 {
   "1.83.0": {
-    "date": "August 2020",
+    "date": "September 2020",
     "notes": [
+      {
+        "id": "8cf0b1897910b20769f9c1452cc517cad12e5cdd",
+        "type": "FIX",
+        "text": " mdc.odata.v4.FieldValueHelpDelegate: Handle ListBinding errors"
+      },
+      {
+        "id": "5a2bcebbb05fb7ad83c14d41674e8df5caf22680",
+        "type": "FIX",
+        "text": " mdc.FieldValueHelp: Value not displayed in edit mode fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "1a91bad63b542ba81c0dfb08eb4b38a0ce322dd5",
+        "type": "FIX",
+        "text": " mdc.Field: Validate exception raised when the value is not found (reverted)"
+      },
+      {
+        "id": "e326194ebc711c751982bdb9d5944ff1e1bf4663",
+        "type": "FIX",
+        "text": " mdc.Field: Validate exception raised when the value is not found",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080375489"
+          }
+        ]
+      },
+      {
+        "id": "b41f2d1934fdd1e02d20cc0fc060aeed4975fa6e",
+        "type": "FIX",
+        "text": " mdc.Chart: Create inner Chart after flex changes are applied"
+      },
       {
         "id": "3347e0d3a3a5d9bf79f283a0af65003ca754c9c9",
         "type": "FIX",

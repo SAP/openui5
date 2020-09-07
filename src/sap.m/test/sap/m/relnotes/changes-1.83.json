@@ -1,7 +1,56 @@
 {
   "1.83.0": {
-    "date": "August 2020",
+    "date": "September 2020",
     "notes": [
+      {
+        "id": "bac7c5286186f4530468423dfedb7437b293746f",
+        "type": "FIX",
+        "text": " sap.m.Button: In condensed size remove the surrounding click area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284597"
+          }
+        ]
+      },
+      {
+        "id": "2f95acfa0cdeff7d064819545cf30d71c7cf5b37",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Fixed footer button state in sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070291427"
+          }
+        ]
+      },
+      {
+        "id": "29fb6b100163c1bf6429d6334523c5f1e269e7fc",
+        "type": "FEATURE",
+        "text": " UI5 Controls for new tile sizes"
+      },
+      {
+        "id": "da68af174fe167721dbb64cc3b4a75e28aab92aa",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: getAccessibilityInfo method implemented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080323622"
+          }
+        ]
+      },
+      {
+        "id": "e90036dbc141fc93190e7416fd1e3f501d6e012c",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Expand button no longer stretches in Compact density",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070273410"
+          }
+        ]
+      },
       {
         "id": "f9535ee1bd8fd2c8ff9b842aa2a19c09560d4127",
         "type": "FIX",
@@ -25,6 +74,17 @@
           {
             "type": "BCP",
             "reference": "2080372352"
+          }
+        ]
+      },
+      {
+        "id": "bab113c1a667437b9e4f59b002e4212b20d6b2b9",
+        "type": "FIX",
+        "text": " sap.m.Input: Show Popover on late binding for suggestions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070267825"
           }
         ]
       },

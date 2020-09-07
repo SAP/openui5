@@ -1,7 +1,18 @@
 {
   "1.83.0": {
-    "date": "August 2020",
+    "date": "September 2020",
     "notes": [
+      {
+        "id": "0d021bda320c4daa7a0ddd0d138ca07e25e8beb5",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Focus is now visible on first element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080374174"
+          }
+        ]
+      },
       {
         "id": "9344e20c56892386ee2e0905e8c823fb6600f213",
         "type": "FIX",

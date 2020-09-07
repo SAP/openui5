@@ -1,7 +1,12 @@
 {
   "1.83.0": {
-    "date": "August 2020",
+    "date": "September 2020",
     "notes": [
+      {
+        "id": "99ecc1625078acda9e7563d6bb4e77d5fe0fc3a7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests"
+      },
       {
         "id": "8175a2ab1dbf68a2f92e952d0b84f6b0979309ee",
         "type": "FIX",
