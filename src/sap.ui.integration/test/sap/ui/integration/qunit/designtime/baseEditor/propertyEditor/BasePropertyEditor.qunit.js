@@ -270,6 +270,67 @@ function (
 		});
 	});
 
+	QUnit.module("Validation", {
+		beforeEach: function (assert) {
+			var mPropertyConfig = {
+				invalidFoo: {
+					path: "invalidFoo",
+					type: "string"
+				}
+			};
+			var mConfig = {
+				context: "/",
+				properties: mPropertyConfig,
+				propertyEditors: {
+					string: "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			};
+			var mJson = {
+				invalidFoo: "{bar"
+			};
+
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return this.oBaseEditor.ready();
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("when a validator is disabled via config change", function (assert) {
+			var oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("invalidFoo")[0];
+
+			assert.strictEqual(
+				oFooEditor.getContent().getValueState(),
+				"Error",
+				"then the invalid value initially leads to an error"
+			);
+
+			oFooEditor.setConfig(Object.assign(
+				{},
+				oFooEditor.getConfig(),
+				{
+					validators: {
+						isValidBinding: {
+							isEnabled: false
+						}
+					}
+				}
+			));
+
+			assert.strictEqual(
+				oFooEditor.getContent().getValueState(),
+				"None",
+				"then the error state is update after the validator was disabled"
+			);
+		});
+	});
+
 	QUnit.module("Dynamic fragment", {
 		before: function () {
 			this.sFragmentWithButton = [
