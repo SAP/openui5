@@ -30,7 +30,7 @@ sap.ui.define([
 			// Initialize the BasePanel
 			BasePanel.prototype.init.apply(this, arguments);
 			var oP13nCellTemplate = new ColumnListItem({
-				selected: "{selected}",
+				selected: "{" + this.P13N_MODEL + ">selected}",
 				//styleClass: "sapUiSmallMarginBegin", TODO: style class in js as property?
 				cells: [
 					new HBox({
@@ -42,26 +42,26 @@ sap.ui.define([
 								items: [
 									new Label({
 										design: {
-											path:"groupLabel",
+											path: this.P13N_MODEL + ">groupLabel",
 											formatter: function(sGroupLabel){
 												return sGroupLabel ? "Bold" : "Standard";
 											}
 										},
-										required: "{required}",
+										required: "{" + this.P13N_MODEL + ">required}",
 										wrapping: true,
-										tooltip: "{tooltip}",
-										text: "{label}"
+										tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+										text: "{" + this.P13N_MODEL + ">label}"
 									}),
 									new Label({
 										visible: {
-											path: "groupLabel",
+											path: this.P13N_MODEL + ">groupLabel",
 											formatter: function(sGroupLabel){
 												return sGroupLabel ? true : false;
 											}
 										},
 										wrapping: true,
-										tooltip: "{tooltip}",
-										text: "{groupLabel}"
+										tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+										text: "{" + this.P13N_MODEL + ">groupLabel}"
 									})
 								]
 							}),
@@ -69,7 +69,7 @@ sap.ui.define([
 								src:"sap-icon://filter",
 								size: "1.25rem",
 								visible: {
-									path: "isFiltered",
+									path: this.P13N_MODEL + ">isFiltered",
 									formatter: function(bIsFiltered) {
 										if (bIsFiltered){
 											return true;

@@ -24,6 +24,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.p13n.panels.BasePanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
+
 	var BasePanel = Control.extend("sap.ui.mdc.p13n.panels.BasePanel", {
 		library: "sap.ui.mdc",
 
@@ -94,6 +95,8 @@ sap.ui.define([
 
 	});
 
+	BasePanel.prototype.P13N_MODEL = "$p13n";
+
 	/**
 	 * Can be overwritten in case a different wrapping Control is required for the inner content
 	 */
@@ -162,7 +165,7 @@ sap.ui.define([
 
 		var oReorderButton = new Button("IDshowSelectedBtn",{
 			text: {
-				path: "/reorderMode",
+				path: this.P13N_MODEL + ">/reorderMode",
 				formatter: function (bReorderMode) {
 					return bReorderMode ? this.getResourceText("p13nDialog.SELECT") : this.getResourceText("p13nDialog.REORDER");
 				}.bind(this)
@@ -240,9 +243,13 @@ sap.ui.define([
 	 * @param {Object} oP13nModel Personalization model provided by sap.ui.mdc.p13n.P13nBuilder
 	 */
 	BasePanel.prototype.setP13nModel = function(oP13nModel) {
-		this.setModel(oP13nModel);
+		this.setModel(oP13nModel, this.P13N_MODEL);
 		//initial value for "Reorder"-mode is false
 		this.setPanelMode(false);
+	};
+
+	BasePanel.prototype.getP13nModel = function() {
+		return this.getModel(this.P13N_MODEL);
 	};
 
 	BasePanel.prototype.getResourceText = function(sText) {
@@ -271,13 +278,13 @@ sap.ui.define([
 			* buttons in the "Reorder"-mode via press event.
 			*/
 			oTemplate.bindProperty("type", {
-				path: "/reorderMode",
+				path: this.P13N_MODEL + ">/reorderMode",
 				formatter: function(bReorderMode) {
 					return bReorderMode ? "Active" : "Inactive";
 				}
 			});
 			this._oListControl.bindItems(Object.assign({
-				path: "/items",
+				path: this.P13N_MODEL + ">/items",
 				key: "name",
 				templateShareable: false,
 				template: this.getTemplate().clone()
@@ -340,11 +347,11 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype.getPanelMode = function() {
-		return this.getModel().getProperty("/reorderMode");
+		return this.getP13nModel().getProperty("/reorderMode");
 	};
 
 	BasePanel.prototype.setPanelMode = function(bReorder) {
-		return this.getModel().setProperty("/reorderMode", bReorder);
+		return this.getP13nModel().setProperty("/reorderMode", bReorder);
 	};
 
 	BasePanel.prototype._togglePanelMode = function() {
@@ -379,7 +386,7 @@ sap.ui.define([
 
 	BasePanel.prototype._updateModelItems = function() {
 		// Sort and update the model items to ensure selected ones, are at the top
-		var aFields = this.getModel().getProperty("/items");
+		var aFields = this.getP13nModel().getProperty("/items");
 		var aSelectedFields = [], aOtherFields = [];
 		aFields.forEach(function(oField) {
 			if (oField.selected) {
@@ -388,7 +395,7 @@ sap.ui.define([
 				aOtherFields.push(oField);
 			}
 		});
-		this.getModel().setProperty("/items", aSelectedFields.concat(aOtherFields));
+		this.getP13nModel().setProperty("/items", aSelectedFields.concat(aOtherFields));
 	};
 
 	BasePanel.prototype._filterBySelected = function(bShowSelected, oList) {
@@ -422,7 +429,7 @@ sap.ui.define([
 		this._updateEnableOfMoveButtons(oTableItem);
 		this._oSelectedItem = oTableItem;
 		if (!bSelectAll) {
-			var oItem = this.getModel().getProperty(this._oSelectedItem.getBindingContext().sPath);
+			var oItem = this.getP13nModel().getProperty(this._oSelectedItem.getBindingContext(this.P13N_MODEL).sPath);
 			// only fire this event if one item is being selected in a live scenario, else fire the change event in the _onSelectionChange method
 			this.fireChange({
 				reason: oItem.selected ? "Add" : "Remove",
@@ -446,23 +453,23 @@ sap.ui.define([
 
 	BasePanel.prototype._moveTableItem = function(oItem, iNewIndex) {
 		var aItems = this._oListControl.getItems();
-		var aFields = this._oListControl.getModel().getProperty("/items");
+		var aFields = this.getP13nModel().getProperty("/items");
 
 		// index of the item in the model not the index in the aggregation
-		var iOldIndex = aFields.indexOf(oItem.getBindingContext().getObject());
+		var iOldIndex = aFields.indexOf(oItem.getBindingContext(this.P13N_MODEL).getObject());
 
 		// limit the minumum and maximum index
 		iNewIndex = (iNewIndex <= 0) ? 0 : Math.min(iNewIndex, aItems.length - 1);
 
 		// new index of the item in the model
-		iNewIndex = aFields.indexOf(aItems[iNewIndex].getBindingContext().getObject());
+		iNewIndex = aFields.indexOf(aItems[iNewIndex].getBindingContext(this.P13N_MODEL).getObject());
 		if (iNewIndex == iOldIndex) {
 			return;
 		}
 
 		// remove data from old position and insert it into new position
 		aFields.splice(iNewIndex, 0, aFields.splice(iOldIndex, 1)[0]);
-		this._oListControl.getModel().setProperty("/items", aFields);
+		this.getP13nModel().setProperty("/items", aFields);
 
 		// store the moved item again due to binding
 		this._oSelectedItem = aItems[iNewIndex];
@@ -471,7 +478,7 @@ sap.ui.define([
 
 		this.fireChange({
 			reason: "Move",
-			item: this.getModel().getProperty(this._oSelectedItem.getBindingContext().sPath)
+			item: this.getP13nModel().getProperty(this._oSelectedItem.getBindingContext(this.P13N_MODEL).sPath)
 		});
 	};
 

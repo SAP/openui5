@@ -36,9 +36,10 @@ sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/La
 
 	FilterGroupLayout.prototype.getContent = function() {
 		var aContent = [];
+
 		var oLabel = new Label({
 			text: this._sLabel,
-			required: "{required}"
+			required: "{$p13n>required}"
 		});
 
 		oLabel.setParent(this);

@@ -30,29 +30,29 @@ sap.ui.define([
 			// Initialize the BasePanel
 			BasePanel.prototype.init.apply(this, arguments);
 			var oChartItemPanelTemplate = new ColumnListItem({
-				selected: "{selected}",
+				selected: "{" + this.P13N_MODEL + ">selected}",
 				cells: [
 					new Label({
 						wrapping: true,
-						text: "{label}",
-						tooltip: "{tooltip}"
+						text: "{" + this.P13N_MODEL + ">label}",
+						tooltip: "{" + this.P13N_MODEL + ">tooltip}"
 					}),
 					new Text({
 						wrapping: true,
-						text: "{kind}"
+						text: "{" + this.P13N_MODEL + ">kind}"
 					}),
 					new Select({
 						width: "100%",
-						selectedKey: "{role}",
+						selectedKey: "{" + this.P13N_MODEL + ">role}",
 						change: [this.onChangeOfRole, this],
 						forceSelection: false,
-						enabled: "{selected}",
+						enabled: "{" + this.P13N_MODEL + ">selected}",
 						items: {
-							path: "availableRoles",
+							path: this.P13N_MODEL + ">availableRoles",
 							templateShareable: false,
 							template: new Item({
-								key: "{key}",
-								text: "{text}"
+								key: "{" + this.P13N_MODEL + ">key}",
+								text: "{" + this.P13N_MODEL + ">text}"
 							})
 						}
 					})
@@ -72,12 +72,12 @@ sap.ui.define([
 
 		var aItems = [];
 
-		this.getModel().getProperty("/items").forEach(function(oItem){
+		this.getP13nModel().getProperty("/items").forEach(function(oItem){
 			oItem.availableRoles = this._getChartItemTextByKey(oItem.kind);
 			aItems.push(oItem);
 		}.bind(this));
 
-		this.getModel().setProperty("/items", aItems);
+		this.getP13nModel().setProperty("/items", aItems);
 
 	};
 

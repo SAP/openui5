@@ -32,30 +32,30 @@ sap.ui.define([
 			BasePanel.prototype.init.apply(this, arguments);
 
 			var oSelectionPanelTemplate = new ColumnListItem({
-				selected: "{selected}",
+				selected: "{" + this.P13N_MODEL + ">selected}",
 				cells: new VBox({
 					items: [
 						new Label({
 							design: {
-								path:"groupLabel",
+								path: this.P13N_MODEL + ">groupLabel",
 								formatter: function(sGroupLabel){
 									return sGroupLabel ? "Bold" : "Standard";
 								}
 							},
 							wrapping: true,
-							tooltip: "{tooltip}",
-							text: "{label}"
+							tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+							text: "{" + this.P13N_MODEL + ">label}"
 						}),
 						new Label({
 							visible: {
-								path: "groupLabel",
+								path: this.P13N_MODEL + ">groupLabel",
 								formatter: function(sGroupLabel){
 									return sGroupLabel ? true : false;
 								}
 							},
 							wrapping: true,
-							tooltip: "{tooltip}",
-							text: "{groupLabel}"
+							tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+							text: "{" + this.P13N_MODEL + ">groupLabel}"
 						})
 
 					]

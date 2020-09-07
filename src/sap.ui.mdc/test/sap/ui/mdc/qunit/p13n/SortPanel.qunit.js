@@ -27,7 +27,7 @@ sap.ui.define([
 			}
 		]
 	});
-	this.oSortPanel.setModel(oModel);
+	this.oSortPanel.setP13nModel(oModel);
 	this.oSortPanel.setPanelColumns(["Name", "Sort Order"]);
 	this.oSortPanel.placeAt("qunit-fixture");
 	sap.ui.getCore().applyChanges();
