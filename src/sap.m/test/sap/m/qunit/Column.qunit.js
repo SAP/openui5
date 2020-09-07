@@ -1,5 +1,6 @@
-/*global QUnit, jQuery */
+/*global QUnit, jQuery, sinon */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/m/Table",
 	"sap/ui/Device",
 	"sap/m/Column",
@@ -8,7 +9,7 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/m/Label"
-], function(Table, Device, Column, library, Page, ColumnListItem, Text, Label) {
+], function(Core, Table, Device, Column, library, Page, ColumnListItem, Text, Label) {
 	"use strict";
 
 
@@ -198,6 +199,44 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+	});
+
+	QUnit.test("Visible property should not make the column visible when hidden by minScreenWidth", function(assert) {
+		var clock = sinon.useFakeTimers(),
+			oTable = new Table({
+				contextualWidth: "Desktop",
+				columns: [
+					new Column()
+				]
+			}),
+			sut = new Column({
+				minScreenWidth: "Tablet"
+			});
+
+		oTable.addColumn(sut);
+		oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+		assert.ok(sut.getVisible(), "Column is visible");
+
+		oTable.setContextualWidth("Phone");
+		clock.tick(1);
+		assert.strictEqual(sut.getDomRef().style.display, "none", "Column is hidden due to minScreenWidth");
+
+		sut.setVisible(false);
+		clock.tick(1);
+		assert.strictEqual(sut.getDomRef().style.display, "none", "Column is hidden");
+
+		sut.setVisible(true);
+		clock.tick(1);
+		assert.ok(sut.isHidden(), "hidden via media query");
+		assert.strictEqual(sut.getDomRef().style.display, "none", "Column is hidden due to minScreenWidth");
+
+		oTable.setContextualWidth("Desktop");
+		clock.tick(1);
+		assert.notOk(sut.isHidden(), "visible via media query");
+		assert.strictEqual(sut.getDomRef().style.display, "table-cell", "Column is visible");
+
+		oTable.destroy();
 	});
 
 	QUnit.module("media");
