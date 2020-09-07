@@ -457,12 +457,17 @@
 			var oItem = oEvent.getParameter("listItem");
 
 			sap.m.MessageBox.confirm("Are you sure to delete this record?", {
-				onClose: function(sResult){
-					if (sResult == sap.m.MessageBox.Action.CANCEL) {
+				onClose: function(sResult) {
+					if (sResult === sap.m.MessageBox.Action.CANCEL) {
 						return;
 					}
 
-					oTable.removeItem(oItem);
+					var oData = oModel.getData();
+					var sPath = oItem.getBindingContextPath();
+					var iIndex = parseInt(sPath.charAt(sPath.lastIndexOf("/") + 1));
+					oData.modelData.splice(iIndex, 1);
+					oModel.setData(oData);
+
 					setTimeout(function() {
 						oTable.focus();
 					}, 0);
