@@ -136,7 +136,7 @@ sap.ui.define([
 				return false;
 			}
 			var oPayload = Object.assign({}, this.getPayload());
-			return this.getControlDelegate().fetchLinkType(oPayload).then(function(oLinkType) {
+			return this.getControlDelegate().fetchLinkType(oPayload, this).then(function(oLinkType) {
 				if (oLinkType.type > 0) {
 					return true;
 				}
@@ -331,8 +331,7 @@ sap.ui.define([
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
 				var oPayload = Object.assign({}, this.getPayload());
-				var oBindingContext = this._getControlBindingContext();
-				return this.getControlDelegate().fetchAdditionalContent(oPayload, oBindingContext, this).then(function(aAdditionalContent) {
+				return this.getControlDelegate().fetchAdditionalContent(oPayload, this).then(function(aAdditionalContent) {
 					return aAdditionalContent;
 				});
 			}.bind(this));
@@ -348,7 +347,7 @@ sap.ui.define([
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
 				var oPayload = Object.assign({}, this.getPayload());
-				return this.getControlDelegate().fetchLinkType(oPayload).then(function(oLinkType) {
+				return this.getControlDelegate().fetchLinkType(oPayload, this).then(function(oLinkType) {
 					if (oLinkType.type !== 1 || oLinkType.directLink === undefined) {
 						return null;
 					}
