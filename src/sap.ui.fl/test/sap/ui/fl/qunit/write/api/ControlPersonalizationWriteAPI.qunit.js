@@ -275,7 +275,8 @@ sap.ui.define([
 				};
 
 				this.fnLogErrorSpy = sandbox.spy(Log, "error");
-				this.fnCreateAndApplyChangeSpy = sandbox.spy(this.oFlexController, "createAndApplyChange");
+				this.fnCreateAndAddChangeSpy = sandbox.spy(this.oFlexController, "addChange");
+				this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
 
 				//registration is triggered by instantiation of XML View above
 				ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
@@ -293,7 +294,8 @@ sap.ui.define([
 			})
 			.then(function (aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorSpy.callCount, 0, "no errors occurred");
-				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange has been called twice");
+				assert.equal(this.fnCreateAndAddChangeSpy.callCount, 2, "FlexController.addChange has been called twice");
+				assert.equal(this.fnApplyChangeSpy.callCount, 2, "FlexController.applyChange has been called twice");
 				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {
 					id: "mockview--ObjectPageLayout",
 					idIsLocal: true
@@ -302,6 +304,7 @@ sap.ui.define([
 					id: "mockview--ObjectPageLayout",
 					idIsLocal: true
 				}, "then second successfully applied change was returned");
+				assert.ok(this.fnCreateAndAddChangeSpy.getCall(1).calledBefore(this.fnApplyChangeSpy.getCall(0)));
 			}.bind(this));
 		});
 
@@ -316,7 +319,7 @@ sap.ui.define([
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorSpy.callCount, 1, "one error occurred");
 				assert.equal(this.fnLogErrorSpy.args[0][0], "Error during execPromiseQueueSequentially processing occured: myError", "then the correct error was logged");
-				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 1, "FlexController.createAndApplyChange was called once");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "FlexController.applyChange was called once");
 				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {id: "mockview--ObjectPageLayout", idIsLocal: true}, "then only the successfully applied change was returned");
 			}.bind(this));
 		});
@@ -344,7 +347,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.fnLogErrorSpy.callCount, 1, "one error occurred");
-				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange has been called twice");
+				assert.equal(this.fnApplyChangeSpy.callCount, 2, "FlexController.applyChange has been called twice");
 			}.bind(this));
 		});
 
@@ -357,13 +360,14 @@ sap.ui.define([
 			})
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorSpy.callCount, 0, "no error occurred");
-				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 4, "FlexController.createAndApplyChange has been called four times");
+				assert.equal(this.fnApplyChangeSpy.callCount, 4, "FlexController.applyChange has been called four times");
+				assert.equal(this.fnCreateAndAddChangeSpy.callCount, 4, "FlexController.addChange has been called four times");
 				assert.strictEqual(aSuccessfulChanges.length, 4, "then all passed change contents were applied successfully");
 				assert.strictEqual(ControlPersonalizationAPI._getVariantManagement.callCount, 3, "then variant reference is not called for the change content where variantReference was preset");
-				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "mockVariantReference", "first change belongs to the preset variant reference");
-				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(1).args[0].variantReference, "mockview--VariantManagement1", "second change belongs to VariantManagement1");
-				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(2).args[0].variantReference, "mockview--VariantManagement1", "third change belongs to VariantManagement1");
-				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(3).args[0].variantReference, "mockview--VariantManagement2", "fourth change belongs to VariantManagement2");
+				assert.equal(this.fnCreateAndAddChangeSpy.getCall(0).args[0].variantReference, "mockVariantReference", "first change belongs to the preset variant reference");
+				assert.equal(this.fnCreateAndAddChangeSpy.getCall(1).args[0].variantReference, "mockview--VariantManagement1", "second change belongs to VariantManagement1");
+				assert.equal(this.fnCreateAndAddChangeSpy.getCall(2).args[0].variantReference, "mockview--VariantManagement1", "third change belongs to VariantManagement1");
+				assert.equal(this.fnCreateAndAddChangeSpy.getCall(3).args[0].variantReference, "mockview--VariantManagement2", "fourth change belongs to VariantManagement2");
 			}.bind(this));
 		});
 
@@ -385,12 +389,13 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.fnLogErrorSpy.callCount, 0, "no error occurred");
-				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 1, "FlexController.createAndApplyChange has been called once");
-				assert.deepEqual(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].renamedElement, oChangeData.changeSpecificData.renamedElement, "FlexController.createAndApplyChange was called with the correct renamed element");
-				assert.deepEqual(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].changeType, oChangeData.changeSpecificData.changeType, "FlexController.createAndApplyChange was called with the correct change type");
-				assert.deepEqual(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].value, oChangeData.changeSpecificData.value, "FlexController.createAndApplyChange was called with the correct value");
-				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "FlexController.createAndApplyChange was called for a change without variant management");
-				assert.deepEqual(this.fnCreateAndApplyChangeSpy.getCall(0).args[1], oButton, "FlexController.createAndApplyChange was called with the correct control");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "FlexController.applyChange has been called once");
+				assert.equal(this.fnCreateAndAddChangeSpy.callCount, 1, "FlexController.addChange has been called four times");
+				assert.deepEqual(this.fnCreateAndAddChangeSpy.getCall(0).args[0].renamedElement, oChangeData.changeSpecificData.renamedElement, "FlexController.addChange was called with the correct renamed element");
+				assert.deepEqual(this.fnCreateAndAddChangeSpy.getCall(0).args[0].changeType, oChangeData.changeSpecificData.changeType, "FlexController.addChange was called with the correct change type");
+				assert.deepEqual(this.fnCreateAndAddChangeSpy.getCall(0).args[0].value, oChangeData.changeSpecificData.value, "FlexController.addChange was called with the correct value");
+				assert.notOk(this.fnCreateAndAddChangeSpy.getCall(0).args[0].variantReference, "FlexController.addChange was called for a change without variant management");
+				assert.deepEqual(this.fnCreateAndAddChangeSpy.getCall(0).args[1], oButton, "FlexController.addChange was called with the correct control");
 			}.bind(this));
 		});
 
@@ -403,13 +408,13 @@ sap.ui.define([
 			})
 			.then(function (aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorSpy.callCount, 0, "no error occurred");
-				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 4, "FlexController.createAndApplyChange has been called four times");
+				assert.equal(this.fnApplyChangeSpy.callCount, 4, "FlexController.applyChange has been called four times");
 				assert.strictEqual(aSuccessfulChanges.length, 4, "then all passed change contents were applied successfully");
 				assert.notOk(aSuccessfulChanges[0].getVariantReference(), "then variantReference property is deleted for the change, where it was preset");
-				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "first change is without the preset variant reference");
-				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(1).args[0].variantReference, "second change is without VariantManagement1");
-				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(2).args[0].variantReference, "third change is without VariantManagement1");
-				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(3).args[0].variantReference, "fourth change is without VariantManagement2");
+				assert.notOk(this.fnApplyChangeSpy.getCall(0).args[0].variantReference, "first change is without the preset variant reference");
+				assert.notOk(this.fnApplyChangeSpy.getCall(1).args[0].variantReference, "second change is without VariantManagement1");
+				assert.notOk(this.fnApplyChangeSpy.getCall(2).args[0].variantReference, "third change is without VariantManagement1");
+				assert.notOk(this.fnApplyChangeSpy.getCall(3).args[0].variantReference, "fourth change is without VariantManagement2");
 			}.bind(this));
 		});
 
@@ -426,7 +431,7 @@ sap.ui.define([
 			})
 				.then(function (aSuccessfulChanges) {
 					assert.equal(this.fnLogErrorSpy.callCount, 0, "no error occurred");
-					assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange was called twice");
+					assert.equal(this.fnApplyChangeSpy.callCount, 2, "FlexController.applyChange was called twice");
 					assert.strictEqual(aSuccessfulChanges.length, 2, "then all passed change contents were applied successfully");
 					assert.notOk(aSuccessfulChanges[0].getVariantReference(), "then variantReference property is deleted for the change, where it was preset");
 				}.bind(this));
@@ -521,7 +526,7 @@ sap.ui.define([
 				};
 
 				this.fnLogErrorSpy = sandbox.spy(Log, "error");
-				this.fnCreateAndApplyChangeSpy = sandbox.spy(this.oFlexController, "createAndApplyChange");
+				this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
 
 				//registration is triggered by instantiation of XML View above
 				ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
@@ -539,7 +544,7 @@ sap.ui.define([
 			})
 			.then(function (aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorSpy.callCount, 0, "no errors occurred");
-				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange has been called twice");
+				assert.equal(this.fnApplyChangeSpy.callCount, 2, "FlexController.applyChange has been called twice");
 				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {
 					id: "mockview--ObjectPageLayout",
 					idIsLocal: true
@@ -560,7 +565,7 @@ sap.ui.define([
 			})
 			.then(function (aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorSpy.callCount, 0, "no errors occurred");
-				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange has been called twice");
+				assert.equal(this.fnApplyChangeSpy.callCount, 2, "FlexController.applyChange has been called twice");
 				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {
 					id: "mockview--ObjectPageLayout",
 					idIsLocal: true

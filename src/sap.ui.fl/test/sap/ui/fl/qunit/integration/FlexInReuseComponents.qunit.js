@@ -68,7 +68,10 @@ sap.ui.define([
 			// create a hide control change
 			var sAppVersion = Utils.getAppVersionFromManifest(this.oComponent.getManifest());
 			var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
-			return oFlexController.createAndApplyChange(oChangeContent, oInitialFieldInstance)
+			return oFlexController.addChange(oChangeContent, oInitialFieldInstance)
+			.then(function(oChange) {
+				return oFlexController.applyChange(oChange, oInitialFieldInstance);
+			})
 
 			.then(function(oChange) {
 				assert.deepEqual(oInitialFieldInstance.getVisible(), false, "the label is hidden");
