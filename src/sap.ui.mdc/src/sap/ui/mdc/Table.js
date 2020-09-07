@@ -1389,7 +1389,11 @@ sap.ui.define([
 					return oCurrentPropertyInfo.name === sPropertyName;
 				});
 
-				return oPropertyInfo.label || oPropertyInfo.name || null;
+				if (oPropertyInfo) {
+					return oPropertyInfo.label || oPropertyInfo.name || null;
+				}
+
+				return null;
 			};
 			var mExportSettings = {
 				workbook: {
