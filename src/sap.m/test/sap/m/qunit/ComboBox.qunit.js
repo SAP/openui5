@@ -13345,14 +13345,14 @@ sap.ui.define([
 		var	oValueStateHeader;
 
 		// Act
-		this.oErrorComboBox._$input.focus().val("A").trigger("input");
+		this.oErrorComboBox._$input.trigger("focus").val("A").trigger("input");
 		this.clock.tick();
 
 		// Select the value state header
 		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 
-		this.oErrorComboBox._$input.focus().val("Ger").trigger("input");
+		this.oErrorComboBox._$input.trigger("focus").val("Ger").trigger("input");
 		this.clock.tick();
 
 		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
@@ -13458,7 +13458,7 @@ sap.ui.define([
 		var	oValueStateFormattedText;
 
 		// Act
-		this.oErrorComboBox._$input.focus().val("@").trigger("input");
+		this.oErrorComboBox._$input.trigger("focus").val("@").trigger("input");
 		this.clock.tick();
 
 		oValueStateFormattedText = this.oErrorComboBox.getFormattedValueStateText().getHtmlText();
@@ -13480,7 +13480,7 @@ sap.ui.define([
 		oEventMock.target.value = "Gerz";
 
 		// Act
-		this.oErrorComboBox._$input.focus().val("Ger").trigger("input");
+		this.oErrorComboBox._$input.trigger("focus").val("Ger").trigger("input");
 		this.clock.tick();
 
 		// Assert

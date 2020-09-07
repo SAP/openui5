@@ -30,7 +30,7 @@ sap.ui.define([
 									return Opa5.getJQuery()("div:contains(" + sAction + "):last");
 								}],
 								actions: function ($item) {
-									$item.click();
+									$item.trigger("click");
 								},
 								errorMessage: "Cannot find context menu item"
 							});

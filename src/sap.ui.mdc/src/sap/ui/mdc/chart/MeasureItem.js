@@ -216,7 +216,7 @@ sap.ui.define([
 	 */
 	MeasureItem.prototype.setRole = function(vRole) {
 		if (!_SUPPORTED_ROLE[vRole]) {
-			jQuery.error("Invalide Measure role: " + vRole);
+			throw new TypeError("Invalide Measure role: " + vRole);
 		}
 
 		this.setProperty("role", vRole, true);

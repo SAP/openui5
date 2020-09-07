@@ -3185,7 +3185,7 @@ sap.ui.define([
 
 		// Act
 		oMultiInput.onfocusin({target: oMultiInput.getDomRef("inner")}); // for some reason this is not triggered when calling focus via API
-		oMultiInput._$input.focus().val("A").trigger("input");
+		oMultiInput._$input.trigger("focus").val("A").trigger("input");
 		this.clock.tick(300);
 
 		aVisibleItems = oMultiInput._getSuggestionsPopoverInstance()._oList.getItems().filter(function(oItem){

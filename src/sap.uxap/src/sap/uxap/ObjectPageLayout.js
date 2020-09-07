@@ -1076,11 +1076,11 @@ sap.ui.define([
 		this._cacheDomElements();
 
 		if (this._$sectionsContainer) {
-			this._$sectionsContainer.focusin(function () {
+			this._$sectionsContainer.on("focusin", function () {
 				this._skipToNextFastGroup = true;
 			}.bind(this));
 
-			this._$sectionsContainer.focusout(function () {
+			this._$sectionsContainer.on("focusout", function () {
 				this._skipToNextFastGroup = false;
 			}.bind(this));
 		}

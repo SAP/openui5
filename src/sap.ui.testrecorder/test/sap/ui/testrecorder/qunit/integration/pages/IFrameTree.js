@@ -14,7 +14,7 @@ sap.ui.define([
 							return Opa5.getContext().recorderWindow.jQuery("tag:contains(" + sText + ")");
 						},
 						actions: function ($item) {
-							$item.click();
+							$item.trigger("click");
 						},
 						errorMessage: "Cannot find tree item"
 					});
@@ -49,7 +49,7 @@ sap.ui.define([
 							}
 						],
 						actions: function ($item) {
-							$item.click();
+							$item.trigger("click");
 						},
 						errorMessage: "Cannot find context menu item"
 					});

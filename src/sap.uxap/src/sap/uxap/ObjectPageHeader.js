@@ -738,7 +738,7 @@ sap.ui.define([
 		this._adaptLayout();
 
 		this._clearImageNotFoundHandler();
-		$objectImage.error(this._handleImageNotFoundError.bind(this));
+		$objectImage.on("error", this._handleImageNotFoundError.bind(this));
 
 		if (!this.getObjectImageURI()){
 			this._handleImageNotFoundError();

@@ -1898,7 +1898,7 @@ sap.ui.define([
 				this._sFocusedAppointmentId = oAppointment.getId();
 				$OldAppointment.attr("tabindex", "-1");
 				$Appointment.attr("tabindex", "0");
-				$Appointment.focus();
+				$Appointment.trigger("focus");
 			}else {
 				// appointment not visible -> find it and show it
 				for (i = 0; i < aAppointments.length; i++) {
