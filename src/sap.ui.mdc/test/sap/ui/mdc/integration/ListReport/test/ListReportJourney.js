@@ -366,9 +366,12 @@ sap.ui.define([
 		});
 
 		// save variant
+		When.onTheBooksListReportPage.iPressOnTheVariantManagerButton(sVariantDefaultName);
+		When.onTheBooksListReportPage.iPressOnTheVariantManagerSaveAsButton();
 		When.onTheBooksListReportPage.iSaveVariantAs(sVariantDefaultName, sVariantNewName);
 
 		// change variant
+		When.onTheBooksListReportPage.iPressOnTheVariantManagerButton(sVariantNewName);
 		When.onTheBooksListReportPage.iSelectVariant(sVariantDefaultName);
 		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldWithValues(sFieldLabelName, [], []);
 
