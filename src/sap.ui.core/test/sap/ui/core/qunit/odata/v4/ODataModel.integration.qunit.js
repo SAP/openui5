@@ -29135,19 +29135,30 @@ sap.ui.define([
 	// Scenario:
 	// 1. Create a view with a list report containing sales orders.
 	// 2. Keep the first context of the table alive.
-	// 3. (optional) Sort the list descending, so that the context drops out of it.
+	// 3. (optional) Filter the list by gross amount, so that the context drops out of it. This
+	//    implies that the new count must be requested after deleting the context. This request can
+	//    result in a changed or unchanged count.
 	// 4. Create and save a new sales order.
 	// 5. Delete the kept-alive context. Check that the context is deleted and a request for $count
 	//    is sent (filtering out the new sales order) if the context was not in the list anymore.
 	// JIRA: CPOUI5ODATAV4-365
 	// JIRA: CPOUI5ODATAV4-473
-[false, true].forEach(function (bSort) {
-	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bSort = " + bSort;
+[
+	{bCountHasChanged : true, bFilter : false},
+	{bCountHasChanged : false, bFilter : true},
+	{bCountHasChanged : true, bFilter : true}
+].forEach(function (oFixture) {
+	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bFilter = "
+		+ oFixture.bFilter;
+	if (oFixture.bFilter) {
+		sTitle += " , bCountHasChanged = " + oFixture.bCountHasChanged;
+	}
 
 	QUnit.test(sTitle, function (assert) {
 		var oKeptContext,
 			oListBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			fnOnBeforeDestroy = sinon.stub(),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
@@ -29163,7 +29174,7 @@ sap.ui.define([
 		}
 
 		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=2", {
-				"@odata.count" : "42",
+				"@odata.count" : "102",
 				value : [{SalesOrderID : "1"}, {SalesOrderID : "2"}]
 			})
 			.expectChange("count")
@@ -29173,7 +29184,7 @@ sap.ui.define([
 			oTable = that.oView.byId("listReport");
 			oListBinding = that.oView.byId("listReport").getBinding("items");
 
-			that.expectChange("count", "42");
+			that.expectChange("count", "102");
 
 			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
 
@@ -29181,23 +29192,24 @@ sap.ui.define([
 		}).then(function () {
 			oKeptContext = oTable.getItems()[0].getBindingContext();
 
-			oKeptContext.setKeepAlive(true);
+			oKeptContext.setKeepAlive(true, fnOnBeforeDestroy);
 			assert.ok(oKeptContext.isKeepAlive(), "(2)");
 
-			if (bSort) {
+			if (oFixture.bFilter) {
 				that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
-						+ "&$orderby=SalesOrderID desc&$skip=0&$top=2", {
+						+ "&$filter=GrossAmount gt 1000&$skip=0&$top=2", {
 						"@odata.count" : "42",
-						value : [{SalesOrderID : "42"}, {SalesOrderID : "41"}]
+						value : [{SalesOrderID : "3"}, {SalesOrderID : "4"}]
 					})
-					.expectChange("id", ["42", "41"]);
+					.expectChange("id", ["3", "4"])
+					.expectChange("count", "42");
 
-				oListBinding.sort(new Sorter("SalesOrderID", true));
+				oListBinding.filter(new Filter("GrossAmount", FilterOperator.GT, 1000));
 			}
 
 			return that.waitForChanges(assert, "(3)");
 		}).then(function () {
-			checkMoreButton("[2/42]");
+			checkMoreButton(oFixture.bFilter ? "[2/42]" : "[2/102]");
 
 			that.expectChange("id", [""])
 				.expectRequest({
@@ -29205,16 +29217,16 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {}
 				}, {SalesOrderID : "new"})
-				.expectChange("count", "43")
+				.expectChange("count", oFixture.bFilter ? "43" : "103")
 				.expectChange("id", ["new"]);
 
 			oListBinding.create({}, true);
 
 			return that.waitForChanges(assert, "(4)");
 		}).then(function () {
-			var iBatch = bSort ? 4 : 3;
+			var iBatch = oFixture.bFilter ? 4 : 3;
 
-			checkMoreButton("[2/43]");
+			checkMoreButton(oFixture.bFilter ? "[2/43]" : "[2/103]");
 
 			that.expectRequest({
 					batchNo : iBatch,
@@ -29222,17 +29234,25 @@ sap.ui.define([
 					url : "SalesOrderList('1')"
 				});
 
-			if (bSort) { // determine $count
+			if (oFixture.bFilter) {
 				that.expectRequest({
 						batchNo : iBatch,
 						method : "GET",
 						url : "SalesOrderList?$count=true"
-							+ "&$filter=not (SalesOrderID eq 'new')&$top=0"
-					}, {"@odata.count" : "41", value : []});
+							+ "&$filter=(GrossAmount gt 1000) and not (SalesOrderID eq 'new')"
+							+ "&$top=0"
+					}, {
+						"@odata.count" : oFixture.bCountHasChanged ? "41" : "42",
+						value : []
+					});
 			} else {
 				that.expectChange("id", [/*"new"*/, "2"]);
 			}
-			that.expectChange("count", "42");
+
+
+			if (oFixture.bCountHasChanged) {
+				that.expectChange("count", oFixture.bFilter ? "42" : "102");
+			}
 
 			return Promise.all([
 				// code under test
@@ -29240,7 +29260,19 @@ sap.ui.define([
 				that.waitForChanges(assert, "(5)")
 			]);
 		}).then(function () {
-			checkMoreButton("[2/42]");
+			if (oFixture.bFilter) {
+				checkMoreButton(oFixture.bCountHasChanged ? "[2/42]" : "[2/43]");
+			} else {
+				checkMoreButton("[2/102]");
+			}
+
+			if (oFixture.bCountHasChanged) {
+				return that.waitForChanges(assert, "await rendering").then(function () {
+					sinon.assert.called(fnOnBeforeDestroy);
+				});
+			} else {
+				sinon.assert.called(fnOnBeforeDestroy);
+			}
 		});
 	});
 });
@@ -29465,26 +29497,25 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-366
 	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is not in the collection"
 			+ "; after refresh the entity is deleted", function (assert) {
-		var bCallbackCalled,
+		var fnOnBeforeDestroy = sinon.stub(),
 			that = this;
 
-		return this.createKeepAliveScenario(assert, true, function () {
-			bCallbackCalled = true;
-		}).then(function (oKeptContext) {
-			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '1'"
-					+ "&$select=GrossAmount,Note,SalesOrderID", {
-					value : []
-				})
-				.expectChange("objectPageGrossAmount", null)
-				.expectChange("objectPageNote", null);
+		return this.createKeepAliveScenario(assert, true, fnOnBeforeDestroy)
+			.then(function (oKeptContext) {
+				that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,Note,SalesOrderID", {
+						value : []
+					})
+					.expectChange("objectPageGrossAmount", null)
+					.expectChange("objectPageNote", null);
 
-			// code under test
-			oKeptContext.refresh(undefined, true);
+				// code under test
+				oKeptContext.refresh(undefined, true);
 
-			return that.waitForChanges(assert, "(3)");
-		}).then(function () {
-			assert.ok(bCallbackCalled, "called back");
-		});
+				return that.waitForChanges(assert, "(3)");
+			}).then(function () {
+				sinon.assert.called(fnOnBeforeDestroy);
+			});
 	});
 
 	//*********************************************************************************************
@@ -29602,57 +29633,56 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-366
 	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is in the collection"
 		+ ", after refresh the entity is deleted", function (assert) {
-		var bCallbackCalled,
+		var fnOnBeforeDestroy = sinon.stub(),
 			that = this;
 
-		return this.createKeepAliveScenario(assert, false, function () {
-			bCallbackCalled = true;
-		}).then(function (oKeptContext) {
-			that.expectRequest({
-					batchNo : 3,
-					method : "GET",
-					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
-						+ "&$select=GrossAmount,Note,SalesOrderID"
-				}, {
-					value : []
-				})
-				.expectRequest({
-					batchNo : 3,
-					method : "GET",
-					url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
-						+ "&$count=true&$top=0"
-				}, {
-					"@odata.count" : "0",
-					value : []
-				})
-				.expectChange("objectPageGrossAmount", null)
-				.expectChange("objectPageNote", null)
-				// expected as context is also destroyed in the list
-				.expectChange("id", null)
-				.expectChange("grossAmount", null)
-				// as context is no longer part of the collection the list requests a new context
-				.expectRequest({
-					batchNo : 4,
-					method : "GET",
-					url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
-						+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
-				}, {
-					"@odata.count" : "41",
-					value : [{GrossAmount : "120", SalesOrderID : "4"}]
-				})
-				.expectChange("id", [, "4"])
-				.expectChange("grossAmount", [, "120.00"]);
+		return this.createKeepAliveScenario(assert, false, fnOnBeforeDestroy)
+			.then(function (oKeptContext) {
+				that.expectRequest({
+						batchNo : 3,
+						method : "GET",
+						url : "SalesOrderList?$filter=SalesOrderID eq '1'"
+							+ "&$select=GrossAmount,Note,SalesOrderID"
+					}, {
+						value : []
+					})
+					.expectRequest({
+						batchNo : 3,
+						method : "GET",
+						url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
+							+ "&$count=true&$top=0"
+					}, {
+						"@odata.count" : "0",
+						value : []
+					})
+					.expectChange("objectPageGrossAmount", null)
+					.expectChange("objectPageNote", null)
+					// expected as context is also destroyed in the list
+					.expectChange("id", null)
+					.expectChange("grossAmount", null)
+					// as context is no longer part of aContexts the list requests a new context
+					.expectRequest({
+						batchNo : 4,
+						method : "GET",
+						url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
+							+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
+					}, {
+						"@odata.count" : "41",
+						value : [{GrossAmount : "120", SalesOrderID : "4"}]
+					})
+					.expectChange("id", [, "4"])
+					.expectChange("grossAmount", [, "120.00"]);
 
-			// code under test
-			oKeptContext.refresh(undefined, true);
+				// code under test
+				oKeptContext.refresh(undefined, true);
 
-			return that.waitForChanges(assert, "(2)");
-		}).then(function () {
-			assert.ok(bCallbackCalled, "called back");
-			assert.equal(
-				that.oView.byId("listReport").getItems()[0].getBindingContext().getPath(),
-				"/SalesOrderList('2')");
-		});
+				return that.waitForChanges(assert, "(2)");
+			}).then(function () {
+				sinon.assert.called(fnOnBeforeDestroy);
+				assert.equal(
+					that.oView.byId("listReport").getItems()[0].getBindingContext().getPath(),
+					"/SalesOrderList('2')");
+			});
 	});
 
 	//*********************************************************************************************

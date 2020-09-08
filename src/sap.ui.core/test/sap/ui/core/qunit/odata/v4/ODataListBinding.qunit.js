@@ -3457,9 +3457,11 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			aContexts = [{iIndex : -2}, {iIndex : -1}, {iIndex : 0}, {iIndex : 1}],
+			bFireChange = oFixture.newMaxLength === 41,
 			oKeptAliveContext = {
 				created : function () { return undefined; },
-				getPath : function () { return "~contextpath~"; },
+				destroy : function () {},
+				getPath : function () { return "~contextPath~"; },
 				isKeepAlive : function () {},
 				resetKeepAlive : function () {}
 			},
@@ -3471,11 +3473,12 @@ sap.ui.define([
 		oBinding.bLengthFinal = oFixture.lengthFinal;
 		oBinding.iMaxLength = oFixture.lengthFinal ? 42 : Infinity;
 		oBinding.mPreviousContextsByPath = {
-			"~contextpath~" : oKeptAliveContext
+			"~contextPath~" : oKeptAliveContext,
+			"~otherContext~" : {}
 		};
 
 		this.mock(_Helper).expects("getRelativePath")
-			.withExactArgs("~contextpath~", "/EMPLOYEES").returns("~predicate~");
+			.withExactArgs("~contextPath~", "/EMPLOYEES").returns("~predicate~");
 		oBindingMock.expects("deleteFromCache")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", "~predicate~", "oETagEntity",
 				sinon.match.func)
@@ -3489,14 +3492,22 @@ sap.ui.define([
 		this.mock(oKeptAliveContext).expects("isKeepAlive").returns(true);
 		this.mock(oKeptAliveContext).expects("resetKeepAlive").withExactArgs();
 		oBindingMock.expects("_fireChange")
-			.exactly(oFixture.newMaxLength === 41 ? 1 : 0)
+			.exactly(bFireChange ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Remove});
+		this.mock(oKeptAliveContext).expects("destroy").exactly(bFireChange ? 0 : 1)
+			.withExactArgs();
 
 		// code under test
 		return oBinding._delete("myGroup", "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity")
 			.then(function () {
-				assert.strictEqual(oBinding.mPreviousContextsByPath["~contextpath~"],
-					oKeptAliveContext);
+				assert.deepEqual(oBinding.mPreviousContextsByPath, bFireChange
+						? {
+							"~contextPath~" : oKeptAliveContext,// deleted in prerendering task
+							"~otherContext~" : {}
+						}
+						: {
+							"~otherContext~" : {}
+						});
 				assert.deepEqual(oBinding.aContexts, aContexts);
 				assert.strictEqual(oBinding.iMaxLength,
 					oFixture.lengthFinal ? oFixture.newMaxLength : Infinity);
