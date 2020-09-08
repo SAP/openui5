@@ -5,7 +5,7 @@
 	xmlns:f="sap.f"
 	displayBlock="true"
 	controllerName="sap.f.cardsdemo.controller.Preview">
-	<Page title="{i18n>appTitle}">
+	<Page id="previewPage" title="{i18n>appTitle}">
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer />
