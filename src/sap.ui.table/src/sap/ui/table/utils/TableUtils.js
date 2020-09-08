@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/restricted/_throttle"
 ], function(
 	GroupingUtils,
 	ColumnUtils,
@@ -28,7 +29,8 @@ sap.ui.define([
 	coreLibrary,
 	ThemeParameters,
 	ChangeReason,
-	jQuery
+	jQuery,
+	throttle
 ) {
 	"use strict";
 
@@ -1235,199 +1237,108 @@ sap.ui.define([
 		},
 
 		/**
-		 * Invokes a method in a certain interval, regardless of how many times it was called.
+		 * Wrapper for the lodash <code>throttle</code> function.
+		 * Adds the option for asynchronous leading invocations.
 		 *
-		 * @param {Function} fn The method to throttle.
-		 * @param {Object} [mOptions] The options that influence when the throttled method will be invoked.
-		 * @param {int} [mOptions.wait=0] The amount of milliseconds to wait until actually invoking the method.
+		 * @param {Function} fn The function to throttle.
+		 * @param {int} iWait The number of milliseconds to throttle invocations to.
+		 * @param {Object} [mOptions] Additional options that influence when the throttled method is invoked.
 		 * @param {boolean} [mOptions.leading=true] Whether the method should be invoked on the first call.
 		 * @param {boolean} [mOptions.asyncLeading=false] Whether the leading invocation should be asynchronous.
-		 * @returns {Function} Returns the throttled method.
+		 * @param {boolean} [mOptions.trailing=true] Whether the method should be invoked after a certain time has passed.
+		 * @returns {Function} A wrapper function around <code>fn</code>.
 		 */
-		throttle: function(fn, mOptions) {
-			// Functionality taken from lodash open source library and adapted as needed
-
+		throttle: function(fn, iWait, mOptions) {
 			mOptions = Object.assign({
-				wait: 0,
-				leading: true
+				leading: true,
+				asyncLeading: false,
+				trailing: true
 			}, mOptions);
-			mOptions.maxWait = mOptions.wait;
-			mOptions.trailing = true;
-			mOptions.requestAnimationFrame = false;
 
-			return TableUtils.debounce(fn, mOptions);
+			var oCancelablePromise;
+			var bIsCalling = false;
+			var mLastCallInfo = {};
+			var _fn;
+			var _fnThrottled;
+
+			if (mOptions.leading && mOptions.asyncLeading) {
+				_fn = function() {
+					if (bIsCalling) {
+
+						var oPromise = Promise.resolve().then(function() {
+							if (!oPromise.canceled) {
+								fn.apply(mLastCallInfo.context, mLastCallInfo.args);
+							}
+							oCancelablePromise = null;
+						});
+
+						oPromise.cancel = function() {
+							oPromise.canceled = true;
+						};
+						oCancelablePromise = oPromise;
+					} else {
+						fn.apply(this, arguments);
+					}
+				};
+			} else {
+				_fn = fn;
+			}
+
+			var fnThrottled = throttle(_fn, iWait, {
+				leading: mOptions.leading,
+				trailing: mOptions.trailing
+			});
+
+			if (mOptions.leading && mOptions.asyncLeading) {
+				var fnCancel = fnThrottled.cancel;
+
+				fnThrottled.cancel = function() {
+					if (oCancelablePromise) {
+						oCancelablePromise.cancel();
+					}
+					fnCancel();
+				};
+
+				_fnThrottled = Object.assign(function() {
+					mLastCallInfo = {
+						context: this,
+						args: arguments
+					};
+					bIsCalling = true;
+					fnThrottled.apply(this, arguments);
+					bIsCalling = false;
+				}, fnThrottled);
+			} else {
+				_fnThrottled = fnThrottled;
+			}
+
+			return _fnThrottled;
 		},
 
 		/**
-		 * Invokes a method if a certain time has passed since the last call, regardless of how many times it was called.
+		 * Creates a wrapper around a function. When calling the wrapper, the original function is called in the next frame (makes use of
+		 * <code>requestAnimationFrame</code>).
+		 * Multiple calls within the same frame are reduced to one call in the next frame, with the arguments of the last call.
+		 * Scheduled calls can be canceled.
 		 *
-		 * @param {Function} fn The method to debounce.
-		 * @param {Object} [mOptions] The options that influence when the debounced method will be invoked.
-		 * @param {int} [mOptions.wait=0] The amount of milliseconds since the last call to wait before actually invoking the method. Has no
-		 *                                effect, if <code>mOptions.requestAnimationFrame</code> is set to <code>true</code>.
-		 * @param {int | null} [mOptions.maxWait=null] The maximum amount of milliseconds to wait for an invocation. Has no effect, if
-		 *                                             <code>mOptions.requestAnimationFrame</code> is set to <code>true</code>.
-		 * @param {boolean} [mOptions.leading=false] Whether the method should be invoked on the first call.
-		 * @param {boolean} [mOptions.asyncLeading=false] Whether the leading invocation should be asynchronous.
-		 * @param {boolean} [mOptions.trailing=true] Whether the method should be invoked after a certain time has passed. If
-		 *                                           <code>mOptions.leading</code> is set to <code>true</code>, the method needs to be called more
-		 *                                           than once for an invocation at the end of the waiting time.
-		 * @param {boolean} [mOptions.requestAnimationFrame=false] Whether <code>requestAnimationFrame</code> should be used to debounce the
-		 *                                                         method. If set to <code>true</code>, <code>mOptions.wait</code> and
-		 *                                                         <code>mOptions.maxWait</code> have no effect.
-		 * @returns {Function} Returns the debounced method.
+		 * @param {Function} fn The function to call in the next frame.
+		 * @returns {Function} A wrapper function around <code>fn</code>.
 		 */
-		debounce: function(fn, mOptions) {
-			// Functionality taken from lodash open source library and adapted as needed
-
-			mOptions = Object.assign({
-				wait: 0,
-				maxWait: null,
-				leading: false,
-				asyncLeading: false,
-				trailing: true,
-				requestAnimationFrame: false
-			}, mOptions);
-
-			var iLastInvocationTime = null;
-			var iTimerId = null;
-			var oCancelablePromise = null;
-			var bMaxWait = mOptions.maxWait != null;
-
-			mOptions.wait = Math.max(0, mOptions.wait);
-			mOptions.maxWait = bMaxWait ? Math.max(mOptions.maxWait, mOptions.wait) : mOptions.maxWait;
-
-			/**
-			 * Calls the method. Only calls the method if an arguments object is provided.
-			 *
-			 * @param {any} [vContext] The context of the call.
-			 * @param {Object} [vArguments] The arguments object.
-			 * @param {boolean} [bAsync=false] Whether the method should be called in a promise.
-			 * @param {boolean} [bFinal=false] Whether this is the final invocation before cancellation.
-			 */
-			function invoke(vContext, vArguments, bAsync, bFinal) {
-				iLastInvocationTime = bFinal === true ? null : Date.now();
-
-				if (vArguments == null) {
-					return;
-				}
-
-				if (bAsync === true) {
-					var oPromise = Promise.resolve().then(function() {
-						if (!oPromise.canceled) {
-							fn.apply(vContext, vArguments);
-						}
-						oCancelablePromise = null;
-					});
-					oPromise.cancel = function() {
-						oPromise.canceled = true;
-					};
-					oCancelablePromise = oPromise;
-				} else {
-					fn.apply(vContext, vArguments);
-				}
-			}
-
-			/**
-			 * Calls the method debounced. Multiple calls within a certain time will be reduced to one call.
-			 *
-			 * @param {any} [vContext] The context of the call.
-			 * @param {Object} [vArguments] The arguments object.
-			 */
-			function invokeDebounced(vContext, vArguments) {
-				cancelTimer();
-
-				/**
-				 * Executes a trailing invocation if it is enabled in the options.
-				 *
-				 * @param {boolean} [bFinal=true] Whether this is the final invocation.
-				 */
-				function _invoke(bFinal) {
-					bFinal = bFinal !== false;
-					if (bFinal) {
-						cancel();
-					}
-					if (mOptions.trailing) {
-						invoke(vContext, vArguments, null, bFinal);
-					}
-				}
-
-				if (mOptions.requestAnimationFrame) {
-					iTimerId = window.requestAnimationFrame(function() {
-						_invoke();
-					});
-				} else {
-					var iNow = Date.now();
-					var iTimeSinceLastInvocation = iLastInvocationTime == null ? 0 : iNow - iLastInvocationTime;
-					var iRemainingWaitTime = Math.max(0, bMaxWait ?
-														 Math.min(mOptions.maxWait - iTimeSinceLastInvocation, mOptions.wait) :
-														 mOptions.wait);
-					var bMaxWaitInvocation = iRemainingWaitTime < mOptions.wait;
-
-					iTimerId = setTimeout(function() {
-						if (bMaxWaitInvocation) {
-							var iTimerOvertime = Math.max(0, (Date.now() - iNow) - iRemainingWaitTime);
-							var iCancelWaitTime = mOptions.wait - iRemainingWaitTime;
-							if (iTimerOvertime > iCancelWaitTime) {
-								// The timer took longer, maybe because of a long-running synchronous execution. No need to wait more.
-								_invoke();
-							} else {
-								// Because there is some time left, the timer is restarted for cleanup. This is necessary for correct scheduling if
-								// the debounced method is called again during this time.
-								iTimerId = setTimeout(cancel, iCancelWaitTime - iTimerOvertime);
-								_invoke(false);
-							}
-						} else {
-							_invoke();
-						}
-					}, iRemainingWaitTime);
-				}
-			}
-
-			function cancelTimer() {
-				if (mOptions.requestAnimationFrame) {
-					window.cancelAnimationFrame(iTimerId);
-				} else {
-					clearTimeout(iTimerId);
-				}
-				iTimerId = null;
-			}
-
-			function cancelPromise() {
-				if (oCancelablePromise) {
-					oCancelablePromise.cancel();
-					oCancelablePromise = null;
-				}
-			}
-
-			function cancel() {
-				cancelTimer();
-				cancelPromise();
-				iLastInvocationTime = null;
-			}
-
-			function pending() {
-				return iTimerId != null;
-			}
-
-			var debounced = function() {
-				if (!pending() && !mOptions.leading) {
-					invoke(); // Fake a leading invocation. Required for maxWait invocations.
-				}
-				if (pending() || !mOptions.leading) {
-					invokeDebounced(this, arguments);
-				} else if (mOptions.asyncLeading) {
-					invoke(this, arguments, true);
-					invokeDebounced();
-				} else { // mOptions.leading
-					invokeDebounced(); // Schedule delayed invocation before leading invocation. Function execution might take some time.
-					invoke(this, arguments);
-				}
+		throttleFrameWise: function(fn) {
+			var iAnimationFrameId = null;
+			var fnThrottled = function() {
+				fnThrottled.cancel();
+				iAnimationFrameId = window.requestAnimationFrame(function(args) {
+					fn.apply(this, args);
+				}.bind(this, arguments));
 			};
-			debounced.cancel = cancel;
-			debounced.pending = pending;
 
-			return debounced;
+			fnThrottled.cancel = function() {
+				window.cancelAnimationFrame(iAnimationFrameId);
+				iAnimationFrameId = null;
+			};
+
+			return fnThrottled;
 		},
 
 		/**

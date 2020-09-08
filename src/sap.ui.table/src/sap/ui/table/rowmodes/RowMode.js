@@ -81,8 +81,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		this.updateTableAsync = TableUtils.throttle(this.updateTable, {
-			wait: 50,
+		this.updateTableAsync = TableUtils.throttle(this.updateTable, 50, {
 			asyncLeading: true
 		});
 	};
