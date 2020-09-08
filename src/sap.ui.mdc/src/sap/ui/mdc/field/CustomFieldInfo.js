@@ -83,12 +83,6 @@ sap.ui.define([
 
 	};
 
-	CustomFieldInfo.prototype.getContentTitle = function() {
-
-		return "";
-
-	};
-
 	CustomFieldInfo.prototype.getContent = function() {
 
 		if (!CustomFieldInfo._oBox) {

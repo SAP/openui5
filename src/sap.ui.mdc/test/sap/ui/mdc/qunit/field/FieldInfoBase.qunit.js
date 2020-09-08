@@ -64,7 +64,6 @@ sap.ui.define([
 
 		_checkException(assert, oFieldInfoBase.isTriggerable, "isTriggerable");
 		_checkException(assert, oFieldInfoBase.getContent, "getContent");
-		_checkException(assert, oFieldInfoBase.getContentTitle, "getContentTitle");
 		_checkException(assert, oFieldInfoBase.getTriggerHref, "getTriggerHref");
 
 	});
@@ -77,7 +76,6 @@ sap.ui.define([
 			src: "sap-icon://sap-ui5"
 		});
 		sinon.stub(oFieldInfoBase, "getContent").returns(Promise.resolve(oContent));
-		sinon.stub(oFieldInfoBase, "getContentTitle").returns("");
 
 		var fnDone = assert.async();
 		oFieldInfoBase.createPopover().then(function(oPopover) {
@@ -98,7 +96,6 @@ sap.ui.define([
 			src: "sap-icon://sap-ui5"
 		});
 		sinon.stub(oFieldInfoBase, "getContent").returns(Promise.resolve(oContent));
-		sinon.stub(oFieldInfoBase, "getContentTitle").returns("");
 		sinon.stub(oFieldInfoBase, "isTriggerable").returns(Promise.resolve(true));
 
 		var oPromise = oFieldInfoBase.open();
@@ -128,7 +125,6 @@ sap.ui.define([
 			src: "sap-icon://sap-ui5"
 		});
 		sinon.stub(oFieldInfoBase, "getContent").returns(Promise.resolve(oContent));
-		sinon.stub(oFieldInfoBase, "getContentTitle").returns("");
 		sinon.stub(oFieldInfoBase, "isTriggerable").returns(Promise.resolve(true));
 
 		var bExceptionRaised = false;
