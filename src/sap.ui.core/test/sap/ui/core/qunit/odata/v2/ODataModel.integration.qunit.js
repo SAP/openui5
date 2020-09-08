@@ -6072,4 +6072,125 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oModel.getObject("/SalesOrderSet('1')/ToBusinessPartner"), null);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A function import returning a collection of entities may contain messages for the
+	// returned entities. Old messages for the entities returned by the function call are properly
+	// updated. Messages for other entities of the same entity set are kept untouched.
+	// JIRA: CPOUI5MODELS-287
+[
+	"/BusinessPartner_Alternatives",
+	"/BusinessPartner_Alternatives_ReturnType"
+].forEach(function (sFunctionName) {
+	var sTitle = "Messages: function import returning a collection for different entities;"
+		+ " messages are updated only for returned entities: " + sFunctionName;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCompanyNameError1 = this.createResponseMessage("CompanyName"),
+			oCompanyNameError2 = this.createResponseMessage("CompanyName"),
+			oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			oToProductADescriptionError1
+				= this.createResponseMessage("ToProducts('A')/Description"),
+			oProductADescriptionError1 = cloneODataMessage(oToProductADescriptionError1,
+				"('A')/Description"),
+			oToProductADescriptionError2
+				= this.createResponseMessage("ToProducts('B')/Description"),
+			oProductADescriptionError2 = cloneODataMessage(oToProductADescriptionError2,
+				"('B')/Description"),
+			sView = '\
+<FlexBox binding="{/BusinessPartnerSet(\'1\')}">\
+	<Input id="companyName1" value="{CompanyName}" />\
+</FlexBox>\
+<FlexBox binding="{/BusinessPartnerSet(\'2\')}">\
+	<Input id="companyName2" value="{CompanyName}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				deepPath : "/BusinessPartnerSet('1')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('1')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('1')"},
+				BusinessPartnerID : "1",
+				CompanyName : "company1"
+			}, {"sap-message" : getMessageHeader([
+					oCompanyNameError1,
+					oToProductADescriptionError1
+				])})
+			.expectRequest({
+				deepPath : "/BusinessPartnerSet('2')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('2')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('2')"},
+				BusinessPartnerID : "2",
+				CompanyName : "company2"
+			}, {"sap-message" : getMessageHeader([
+					oCompanyNameError2,
+					oToProductADescriptionError2
+				])})
+			.expectChange("companyName1", null)
+			.expectChange("companyName2", null)
+			.expectChange("companyName1", "company1")
+			.expectChange("companyName2", "company2")
+			.expectMessage(oCompanyNameError1, "/BusinessPartnerSet('1')/")
+			.expectMessage(oProductADescriptionError1, "/ProductSet",
+				"/BusinessPartnerSet('1')/ToProducts")
+			.expectMessage(oCompanyNameError2, "/BusinessPartnerSet('2')/")
+			.expectMessage(oProductADescriptionError2, "/ProductSet",
+				"/BusinessPartnerSet('2')/ToProducts");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oCompanyNameError2_Update = that.createResponseMessage("('2')/CompanyName"),
+				oToProductADescriptionError2
+					= that.createResponseMessage("('2')/ToProducts('B')/Description"),
+				oProductADescriptionError2 = cloneODataMessage(oToProductADescriptionError2,
+					"('B')/Description");
+
+			that.expectRequest({
+					deepPath : sFunctionName,
+					encodeRequestUri : false,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "POST",
+					requestUri : sFunctionName.slice(1) + "?BusinessPartnerID='1'"
+				}, {
+					results : [{
+						__metadata : {uri : "BusinessPartnerSet('2')"},
+						BusinessPartnerID : "2",
+						CompanyName : "companyName2New"
+					}]
+				}, {
+					"sap-message" : getMessageHeader([
+						oCompanyNameError2_Update,
+						oToProductADescriptionError2
+					])
+				})
+				.expectChange("companyName2", "companyName2New")
+				.expectMessage(oCompanyNameError2_Update, "/BusinessPartnerSet", undefined, true)
+				.expectMessage(oProductADescriptionError2, "/ProductSet",
+					"/BusinessPartnerSet('2')/ToProducts");
+				//TODO: why is the message for BusinessPartner 1 removed?
+				//.expectMessage(oCompanyNameError1, "/BusinessPartnerSet('1')/");
+				//.expectMessage(oProductADescriptionError1, "/ProductSet",
+				//	"/BusinessPartnerSet('1')/ToProducts")
+
+			return Promise.all([
+				oModel.callFunction(sFunctionName, {
+					method : "POST",
+					refreshAfterChange : false,
+					urlParameters : {
+						BusinessPartnerID : "1"
+					}
+				}).contextCreated(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
 });

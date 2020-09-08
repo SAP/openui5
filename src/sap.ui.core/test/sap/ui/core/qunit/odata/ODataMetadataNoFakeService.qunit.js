@@ -152,13 +152,15 @@ sap.ui.define([
 	entityType : {entityType : "namespace.entityType"},
 	expectedLog : "Cannot determine keys of the entity type 'namespace.entityType' for the function"
 		+ " import '~functionName'",
-	result : ""
+	result : "",
+	resultCollection : ""
 }, {
 	entitySet : {name : "~entitySetName"},
 	entityType : {key : {}, entityType : "namespace.entityType"},
 	expectedLog : "Cannot determine keys of the entity type 'namespace.entityType' for the function"
 		+ " import '~functionName'",
-	result : ""
+	result : "",
+	resultCollection : ""
 }, {
 	entitySet : {name : "~entitySetName"},
 	entityType : {
@@ -166,7 +168,8 @@ sap.ui.define([
 			propertyRef : [{name : "property0"}]
 		}
 	},
-	result : "/~entitySetName('1')"
+	result : "/~entitySetName('1')",
+	resultCollection : "/~entitySetName"
 }, {
 	entitySet : {name : "~entitySetName"},
 	entityType : {
@@ -174,7 +177,8 @@ sap.ui.define([
 			propertyRef : [{name : "property1"}]
 		}
 	},
-	result : "/~entitySetName()" //TODO: is this a real use case?
+	result : "/~entitySetName()", //TODO: is this a real use case?
+	resultCollection : "/~entitySetName"
 }, {
 	entitySet : {name : "~entitySetName"},
 	entityType : {
@@ -182,7 +186,8 @@ sap.ui.define([
 			propertyRef : [{name : "property0"}, {name : "property1"}]
 		}
 	},
-	result : "/~entitySetName(property0='1')"
+	result : "/~entitySetName(property0='1')",
+	resultCollection : "/~entitySetName"
 }, {
 	entitySet : {name : "~entitySetName"},
 	entityType : {
@@ -190,7 +195,8 @@ sap.ui.define([
 			propertyRef : [{name : "property0"}, {name : "property2"}]
 		}
 	},
-	result : "/~entitySetName(property0='1',property2=2)"
+	result : "/~entitySetName(property0='1',property2=2)",
+	resultCollection : "/~entitySetName"
 }, {
 	entitySet : undefined,
 	entityType : {
@@ -199,12 +205,14 @@ sap.ui.define([
 		}
 	},
 	expectedLog : "Cannot determine path of the entity set for the function import '~functionName'",
-	result : ""
+	result : "",
+	resultCollection : ""
 }, {
 	entitySet : undefined,
 	entityType : undefined,
 	expectedLog : "Cannot determine an entity type for the function import '~functionName'",
-	result : ""
+	result : "",
+	resultCollection : ""
 }].forEach(function (oFixture, i) {
 	[{ // action-for wins over entitySet and returnType
 		entityTypeByName : "~entityTypeName",
@@ -230,6 +238,13 @@ sap.ui.define([
 		functionInfo : {
 			name : "~functionName",
 			returnType : "~returnType"
+		}
+	}, { // use returnType with collection
+		collection : true,
+		entityTypeByName : "~returnType",
+		functionInfo : {
+			name : "~functionName",
+			returnType : "Collection(~returnType)"
 		}
 	}].forEach(function (oFunctionInfoFixture, j) {
 	QUnit.test("_getCanonicalPathOfFunctionImport: #" + i + "/" + j, function (assert) {
@@ -259,8 +274,22 @@ sap.ui.define([
 		assert.strictEqual(
 			this.oMetadata._getCanonicalPathOfFunctionImport(oFunctionInfoFixture.functionInfo,
 				mFunctionParameters),
-			oFixture.result);
+			oFunctionInfoFixture.collection ? oFixture.resultCollection : oFixture.result);
 	});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_getCanonicalPathOfFunctionImport: sFunctionReturnType = undefined",
+		function (assert) {
+			var mFunctionInfo = {name : "Foo"};
+
+			this.oLogMock.expects("error")
+				.withExactArgs("Cannot determine an entity type for the function import '"
+					+ mFunctionInfo.name + "'", sinon.match.same(this.oMetadata), sClassName);
+
+			// code under test
+			assert.strictEqual(
+				this.oMetadata._getCanonicalPathOfFunctionImport(mFunctionInfo, undefined), "");
+	});
 });
