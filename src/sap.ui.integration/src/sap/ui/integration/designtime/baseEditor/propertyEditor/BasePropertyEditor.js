@@ -383,8 +383,8 @@ sap.ui.define([
 		var oPropertyValidators = this.getConfig().validators || {};
 		return values(Object.assign(
 			{},
-			oPropertyValidators,
-			this.getDefaultValidators()
+			this.getDefaultValidators(),
+			oPropertyValidators
 		)).filter(function (oValidator) {
 			return oValidator.isEnabled !== false;
 		});
