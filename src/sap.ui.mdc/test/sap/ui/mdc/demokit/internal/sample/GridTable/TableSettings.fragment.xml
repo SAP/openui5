@@ -26,25 +26,25 @@
 							</Select>
 						</form:FormElement>
 						<form:FormElement label="Highlights">
-							<Checkbox select="onToggleHighlight"/>
+							<CheckBox select="onToggleHighlight"/>
 						</form:FormElement>
 						<form:FormElement label="Navigation">
-							<Checkbox select="onToggleNavigation"/>
+							<CheckBox select="onToggleNavigation"/>
 						</form:FormElement>
 						<form:FormElement label="Navigation Indicator">
-							<Checkbox select="onToggleNavIndicator"/>
+							<CheckBox select="onToggleNavIndicator"/>
 						</form:FormElement>
 						<form:FormElement label="P13n">
-							<Checkbox select="onToggleP13n" selected="true"/>
+							<CheckBox select="onToggleP13n" selected="true"/>
 						</form:FormElement>
 						<form:FormElement label="Busy State">
-							<Checkbox select="onToggleBusyState"/>
+							<CheckBox select="onToggleBusyState"/>
 						</form:FormElement>
 						<form:FormElement label="Creation Row">
-							<Checkbox select="onToggleCreationRow"/>
+							<CheckBox select="onToggleCreationRow"/>
 						</form:FormElement>
 						<form:FormElement label="Quick Filter">
-							<Checkbox select="onToggleQuickFilter"/>
+							<CheckBox select="onToggleQuickFilter"/>
 						</form:FormElement>
 					</form:FormContainer>
 				</form:formContainers>
