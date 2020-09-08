@@ -17,22 +17,6 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
-				pressExpandInRow : function (iRow, sComment) {
-					return this.waitFor({
-						controlType : "sap.m.Button",
-						errorMessage : "Could not press Expand Button in row " + iRow,
-						id : /expand/,
-						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
-						},
-						success : function (aControls) {
-							new Press().executeOn(aControls[0]);
-							Opa5.assert.ok(true, "Pressed Expand Button in row: " + iRow
-								+ ". " + sComment);
-						},
-						viewName : sViewName
-					});
-				},
 				scrollToRow : function (iRow, sComment) {
 					return this.waitFor({
 						actions : function (oTable) {
@@ -44,6 +28,22 @@ sap.ui.define([
 						success : function (oTable) {
 							Opa5.assert.strictEqual(oTable.getFirstVisibleRow(), iRow,
 								"Scrolled table to row: " + iRow + ". " + sComment);
+						},
+						viewName : sViewName
+					});
+				},
+				toggleExpandInRow : function (iRow, sComment) {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						errorMessage : "Could not toggle Expand Button in row " + iRow,
+						id : /expand/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function () {
+							Opa5.assert.ok(true, "Toggle Expand Button in row: " + iRow
+								+ ". " + sComment);
 						},
 						viewName : sViewName
 					});
@@ -85,6 +85,14 @@ sap.ui.define([
 									oExpected.accountResponsible,
 									"Row " + iRowIndex + ": Account Responsible is "
 										+ aCells[5].getText());
+								Opa5.assert.strictEqual(aCells[6].getText(),
+									oExpected.salesAmount,
+									"Row " + iRowIndex + ": Sales Amount is "
+										+ aCells[6].getText());
+								Opa5.assert.strictEqual(aCells[7].getText(),
+									oExpected.salesNumber,
+									"Row " + iRowIndex + ": Sales Number is "
+										+ aCells[7].getText());
 								Opa5.assert.strictEqual(aCells[8].getSelected(),
 									oExpected.subtotal,
 									"Row " + iRowIndex + ": Subtotal is "

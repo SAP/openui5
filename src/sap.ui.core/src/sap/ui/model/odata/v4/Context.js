@@ -142,9 +142,6 @@ sap.ui.define([
 		}
 		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(oGroupLock, sCanonicalPath.slice(1), that, oETagEntity);
-		}).then(function () {
-			// enable destroying in ODLB#destroyPreviousContexts
-			that.bKeepAlive = false;
 		});
 	};
 
@@ -193,6 +190,29 @@ sap.ui.define([
 				return oDependentBinding.checkUpdate();
 			})
 		);
+	};
+
+	/**
+	 * Collapses the group node that this context points to.
+	 *
+	 * @throws {Error}
+	 *   If the context points to a node that is not expandable or already collapsed
+	 *
+	 * @public
+	 * @see #expand
+	 * @see #isExpanded
+	 * @since 1.83.0
+	 */
+	Context.prototype.collapse = function () {
+		switch (this.isExpanded()) {
+			case true:
+				this.oBinding.collapse(this);
+				break;
+			case false:
+				throw new Error("Already collapsed: " + this);
+			default:
+				throw new Error("Not expandable: " + this);
+		}
 	};
 
 	/**
@@ -403,6 +423,7 @@ sap.ui.define([
 	 *   If the context points to a node that is not expandable or already expanded
 	 *
 	 * @public
+	 * @see #collapse
 	 * @see #isExpanded
 	 * @since 1.77.0
 	 */
@@ -753,6 +774,7 @@ sap.ui.define([
 	 *   if the node is not expandable
 	 *
 	 * @public
+	 * @see #collapse
 	 * @see #expand
 	 * @since 1.77.0
 	 */
@@ -1231,13 +1253,15 @@ sap.ui.define([
 	 * @since 1.81.0
 	 */
 	Context.prototype.setKeepAlive = function (bKeepAlive) {
-		if (this.isTransient()) {
-			throw new Error("Unsupported transient context " + this);
+		if (!this.bKeepAlive) { // allow resetting it without precondition check
+			if (this.isTransient()) {
+				throw new Error("Unsupported transient context " + this);
+			}
+			if (!_Helper.getPrivateAnnotation(this.getValue(), "predicate")) {
+				throw new Error("No key predicate known at " + this);
+			}
+			this.oBinding.checkKeepAlive(this);
 		}
-		if (!_Helper.getPrivateAnnotation(this.getValue(), "predicate")) {
-			throw new Error("No key predicate known at " + this);
-		}
-		this.oBinding.checkKeepAlive(this);
 		this.bKeepAlive = bKeepAlive;
 	};
 

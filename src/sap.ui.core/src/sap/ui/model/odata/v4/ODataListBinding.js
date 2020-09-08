@@ -221,12 +221,16 @@ sap.ui.define([
 				// not in the list -> use the predicate
 				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
 				: String(oContext.iIndex),
+			bReadCount = false,
 			that = this;
 
 		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity,
 			function (iIndex, aEntities) {
 				var sContextPath, i, sPredicate, sResolvedPath, i$skipIndex;
 
+				if (oContext.isKeepAlive()) {
+					oContext.setKeepAlive(false); // ensure that it is destroyed later
+				}
 				if (oContext.created()) {
 					// happens only for a created context that is not transient anymore
 					that.destroyCreated(oContext, true);
@@ -264,13 +268,21 @@ sap.ui.define([
 					}
 					that.iMaxLength -= 1; // this doesn't change Infinity
 					bFireChange = true;
-				} else {
-					that.iMaxLength -= 1; // this doesn't change Infinity
-					oContext.destroy();
-					delete that.mPreviousContextsByPath[oContext.getPath()];
+				} else if (that.bLengthFinal) {
+					// a kept-alive context not in the list -> read the count afterwards
+					bReadCount = true;
 				}
+				// Do not destroy the context immediately to avoid timing issues with dependent
+				// bindings, keep it in mPreviousContextsByPath to destroy it later
 			}
 		).then(function () {
+			var iOldMaxLength = that.iMaxLength;
+
+			if (bReadCount) {
+				that.iMaxLength = that.fetchValue("$count", undefined, true).getResult()
+					- that.iCreatedContexts;
+				bFireChange = iOldMaxLength !== that.iMaxLength;
+			}
 			// Fire the change asynchronously so that Cache#delete is finished and #getContexts can
 			// read the data synchronously. This is important for extended change detection.
 			if (bFireChange) {
@@ -570,6 +582,35 @@ sap.ui.define([
 		if (this.mParameters.$$aggregation) {
 			throw new Error("Unsupported $$aggregation at " + this);
 		}
+	};
+
+	/**
+	 * Collapses the group node that the given context points to.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context corresponding to the group node
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended
+	 *
+	 * @private
+	 * @see #expand
+	 */
+	ODataListBinding.prototype.collapse = function (oContext) {
+		var aContexts = this.aContexts,
+			iCount = this.oCache.collapse(
+				_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())),
+			iModelIndex = oContext.getModelIndex(),
+			i,
+			that = this;
+
+		aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
+			that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+		});
+		for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
+			aContexts[i].iIndex = i;
+		}
+		this.iMaxLength -= iCount;
+		this._fireChange({reason : ChangeReason.Change});
 	};
 
 	/**
@@ -983,6 +1024,7 @@ sap.ui.define([
 	 *   If the binding's root binding is suspended
 	 *
 	 * @private
+	 * @see #collapse
 	 */
 	ODataListBinding.prototype.expand = function (oContext) {
 		var bDataRequested = false,
@@ -1028,7 +1070,7 @@ sap.ui.define([
 
 	/**
 	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
-	 * Copies the data for kept alive contexts and the late query options from the old cache to the
+	 * Copies the data for kept-alive contexts and the late query options from the old cache to the
 	 * new one.
 	 *
 	 * @private
@@ -1054,7 +1096,7 @@ sap.ui.define([
 				if (oCache && oCache.hasChangeListeners()) {
 					oCache.setLateQueryOptions(oOldCache.getLateQueryOptions());
 				}
-			}); // no catch; if the new cache cannot be created, data for the kept contexts is lost
+			}); // no catch; if the new cache can't be created, data for kept-alive contexts is lost
 		}
 	};
 
@@ -2452,7 +2494,7 @@ sap.ui.define([
 	ODataListBinding.prototype.resetKeepAlive = function () {
 		var mPreviousContextsByPath = this.mPreviousContextsByPath;
 
-		// resets the keep alive flag for the given context
+		// resets the keep-alive flag for the given context
 		function reset(oContext) {
 			// do not call it always, it throws an exception on a relative binding w/o $$ownRequest
 			if (oContext.isKeepAlive()) {

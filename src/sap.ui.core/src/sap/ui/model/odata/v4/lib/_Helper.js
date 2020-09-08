@@ -350,7 +350,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a technical details object that contains a property <code>originalMessage</code>.
+		 * Creates a technical details object that contains a property <code>originalMessage</code>
+		 * and an optional property <code>httpStatus</code> with the original error's HTTP status.
 		 *
 		 * @param {object} oMessage
 		 *   The message for which to get technical details
@@ -362,9 +363,18 @@ sap.ui.define([
 		 */
 		createTechnicalDetails : function (oMessage) {
 			var oClonedMessage,
+				oError = oMessage["@$ui5.error"],
 				oOriginalMessage = oMessage["@$ui5.originalMessage"] || oMessage,
 				oTechnicalDetails = {};
 
+			if (oError && (oError.status || oError.cause)) {
+				// Note: cause always has a status; @see _Requestor#processBatch
+				oError = oError.cause || oError;
+				oTechnicalDetails.httpStatus = oError.status;
+				if (oError.isConcurrentModification) {
+					oTechnicalDetails.isConcurrentModification = true;
+				}
+			}
 			// We don't need the original message for internal errors (errors NOT returned from the
 			// back-end, but raised within our framework)
 			if (!(oOriginalMessage instanceof Error)) {

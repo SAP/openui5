@@ -184,7 +184,7 @@ sap.ui.define([
 		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", 5).getIndex(), 5);
 		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", -1).getIndex(), 6);
 		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", -4).getIndex(), 9);
-		// simulate a kept context not in the collection
+		// simulate a kept-alive context not in the collection
 		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", undefined).getIndex(),
 			undefined);
 	});
@@ -1043,8 +1043,6 @@ sap.ui.define([
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
-		oContext.bKeepAlive = {/*true or false*/};
-
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
@@ -1057,7 +1055,6 @@ sap.ui.define([
 			assert.strictEqual(oResult, undefined);
 			assert.strictEqual(oContext.oBinding, oBinding);
 			assert.strictEqual(oContext.oModel, oModel);
-			assert.strictEqual(oContext.bKeepAlive, false);
 		});
 	});
 
@@ -1090,13 +1087,10 @@ sap.ui.define([
 			},
 			oError = new Error(),
 			oGroupLock = {},
-			bKeepAlive = {/*true or false*/},
 			oModel = {
 				reportError : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
-
-		oContext.bKeepAlive = bKeepAlive;
 
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
@@ -1114,7 +1108,6 @@ sap.ui.define([
 			assert.strictEqual(oContext.getModelIndex(), 42);
 			assert.strictEqual(oContext.getModel(), oModel);
 			assert.strictEqual(oContext.getPath(), "/EMPLOYEES/42");
-			assert.strictEqual(oContext.bKeepAlive, bKeepAlive);
 		});
 	});
 
@@ -1122,13 +1115,11 @@ sap.ui.define([
 	QUnit.test("_delete: failure in fetchCanonicalPath", function (assert) {
 		var oBinding = {},
 			oError = new Error(),
-			bKeepAlive = {/*true or false*/},
 			oModel = {
 				reportError : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
-		oContext.bKeepAlive = bKeepAlive;
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.reject(oError));
 
@@ -1137,7 +1128,6 @@ sap.ui.define([
 			assert.ok(false);
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
-			assert.strictEqual(oContext.bKeepAlive, bKeepAlive);
 		});
 	});
 
@@ -2839,15 +2829,46 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("expand: not expandable", function (assert) {
+	QUnit.test("expand/collapse: not expandable", function (assert) {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
 
-		this.mock(oContext).expects("isExpanded").withExactArgs().returns({/*anything*/});
+		this.mock(oContext).expects("isExpanded").twice().withExactArgs().returns({/*anything*/});
 
 		assert.throws(function () {
 			// code under test
 			oContext.expand();
 		}, new Error("Not expandable: " + oContext));
+
+		assert.throws(function () {
+			// code under test
+			oContext.collapse();
+		}, new Error("Not expandable: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("collapse", function () {
+		var oBinding = {
+				collapse : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns(true);
+		this.mock(oBinding).expects("collapse").withExactArgs(sinon.match.same(oContext));
+
+		// code under test
+		oContext.collapse();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("collapse: already collapsed", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.collapse();
+		}, new Error("Already collapsed: " + oContext));
 	});
 
 	//*********************************************************************************************
@@ -2878,6 +2899,25 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext));
 
 		// code under test
+		oContext.setKeepAlive("bTrueOrFalse");
+
+		assert.strictEqual(oContext.isKeepAlive(), "bTrueOrFalse");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setKeepAlive: no check if kept-alive", function (assert) {
+		var oBinding = {
+				checkKeepAlive : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
+		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
+			.returns("('foo')");
+		oContext.setKeepAlive(true);
+
+		// code under test - no further precondition checks
 		oContext.setKeepAlive("bTrueOrFalse");
 
 		assert.strictEqual(oContext.isKeepAlive(), "bTrueOrFalse");

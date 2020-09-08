@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/odata/v4/lib/_AggregationHelper"
-], function (Log, Filter, FilterOperator, _AggregationHelper) {
+	"sap/ui/model/odata/v4/lib/_AggregationHelper",
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (Log, Filter, FilterOperator, _AggregationHelper, _Helper) {
 	/*global QUnit*/
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -643,5 +644,16 @@ sap.ui.define([
 				new Filter("bar", FilterOperator.EQ, "baz")
 			]})
 		], ["foo"]));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createPlaceholder", function (assert) {
+		var oParentCache = {},
+			// code under test
+			oPlaceholder = _AggregationHelper.createPlaceholder(3, 5, oParentCache);
+
+		assert.strictEqual(oPlaceholder["@$ui5.node.level"], 3);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "index"), 5);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "parent"), oParentCache);
 	});
 });

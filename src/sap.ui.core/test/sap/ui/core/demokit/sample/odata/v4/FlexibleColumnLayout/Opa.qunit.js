@@ -116,8 +116,7 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheApplication.checkMessagesButtonCount(0);
 				Then.iTeardownMyUIComponent();
 			});
-
-			QUnit.start();
 		}
+		QUnit.start();
 	});
 });

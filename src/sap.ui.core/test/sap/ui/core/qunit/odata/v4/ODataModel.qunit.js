@@ -958,6 +958,7 @@ sap.ui.define([
 					code : undefined,
 					message : oError.message,
 					technical : true,
+					"@$ui5.error" : sinon.match.same(oError),
 					"@$ui5.originalMessage" : sinon.match.same(oError),
 					numericSeverity : 4 // Error
 				}]);
@@ -1017,12 +1018,14 @@ sap.ui.define([
 				message : oError.error.message,
 				numericSeverity : 4, // Error
 				technical : true,
+				"@$ui5.error" : sinon.match.same(oError),
 				"@$ui5.originalMessage" : sinon.match.same(oError.error)
 			}, {
 				code : "unbound",
 				message : "some unbound message",
 				numericSeverity : 3,
 				technical : undefined,
+				"@$ui5.error" : sinon.match.same(oError),
 				"@$ui5.originalMessage" : sinon.match.same(oError.error.details[1])
 			}]);
 		this.mock(oModel).expects("reportBoundMessages")
@@ -1035,6 +1038,7 @@ sap.ui.define([
 					target : "Quantity",
 					technical : undefined,
 					transition : true,
+					"@$ui5.error" : sinon.match.same(oError),
 					"@$ui5.originalMessage" : sinon.match.same(oError.error.details[0])
 				}, {
 					code : "bound",
@@ -1043,6 +1047,7 @@ sap.ui.define([
 					target : "Quantity",
 					technical : undefined,
 					transition : true,
+					"@$ui5.error" : sinon.match.same(oError),
 					"@$ui5.originalMessage" : sinon.match.same(oError.error.details[2])
 				}]
 			}, []);
@@ -1111,11 +1116,14 @@ sap.ui.define([
 				sLogMessage = "Failed to read path /Product('1')/Unknown",
 				oModel = createModel();
 
+			oFixture.unboundMessages[0]["@$ui5.error"] = sinon.match.same(oError);
 			oFixture.unboundMessages[0]["@$ui5.originalMessage"] = sinon.match.same(oError.error);
 			if (i === 0) {
+				oFixture.unboundMessages[1]["@$ui5.error"] = sinon.match.same(oError);
 				oFixture.unboundMessages[1]["@$ui5.originalMessage"]
 					= sinon.match.same(oError.error.details[0]);
 			} else {
+				oFixture.boundMessages[0]["@$ui5.error"] = sinon.match.same(oError);
 				oFixture.boundMessages[0]["@$ui5.originalMessage"]
 					= sinon.match.same(oError.error.details[0]);
 			}
@@ -1173,7 +1181,9 @@ sap.ui.define([
 			sLogMessage = "Action could not be executed",
 			oModel = createModel();
 
+		aBoundMessages[0]["@$ui5.error"] = sinon.match.same(oError);
 		aBoundMessages[0]["@$ui5.originalMessage"] = Object.assign({}, oError.error.details[0]);
+		aBoundMessages[1]["@$ui5.error"] = sinon.match.same(oError);
 		aBoundMessages[1]["@$ui5.originalMessage"] = Object.assign({}, oError.error.details[1]);
 
 		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
@@ -1212,6 +1222,7 @@ sap.ui.define([
 				target : "Quantity",
 				technical : true,
 				transition : true,
+				"@$ui5.error" : sinon.match.same(oError),
 				"@$ui5.originalMessage" : sinon.match.same(oError.error)
 			}]}, []);
 
@@ -1245,6 +1256,7 @@ sap.ui.define([
 				longtextUrl : "/long/text",
 				numericSeverity : 4, // Error
 				technical : true,
+				"@$ui5.error" : sinon.match.same(oError),
 				"@$ui5.originalMessage" : sinon.match.same(oError.error)
 			}]);
 
