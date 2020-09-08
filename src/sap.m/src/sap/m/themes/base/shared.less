@@ -112,6 +112,52 @@
 	100% {transform: scale(1);}
 }
 
+@_sap_m_Badge_AttentionBackgroundColor: @sapUiContentBadgeBackground;
+@keyframes sapMBadgeAppearMotionSmall {
+	0% {
+		transform: scale(0.33); // 0.125rem / 0.375rem
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
+
+	20% {
+		transform: scale(1.66); // 0.625rem / 0.375rem
+	}
+
+	40% {
+		transform: scale(1.33); // 0.5rem / 0.375rem
+		box-shadow: 0 0 0 1px fade(@_sap_m_Badge_AttentionBackgroundColor, 20%); // 0.875rem pulse layer
+	}
+
+	60% {
+		transform: scale(1); // 0.375rem
+		box-shadow: 0 0 0 0.3125rem fade(@_sap_m_Badge_AttentionBackgroundColor, 15%); // 1rem pulse layer
+	}
+
+	100% {
+		box-shadow: 0 0 0 0.375rem fade(@_sap_m_Badge_AttentionBackgroundColor, 0%); // 1.125rem pulse layer
+	}
+}
+
+@keyframes sapMBadgeAppearMotion {
+	0% {
+		transform: scale(0.25); // 0.125rem / 0.5rem
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); // required for Internet Explorer
+	}
+
+	20% {
+		transform: scale(1.25); // 0.625rem / 0.5rem
+	}
+
+	40% {
+		transform: scale(1); // 0.5rem
+		box-shadow: 0 0 0 1px fade(@_sap_m_Badge_AttentionBackgroundColor, 20%); // 0.875rem pulse layer
+	}
+
+	100% {
+		box-shadow: 0 0 0 0.375rem fade(@_sap_m_Badge_AttentionBackgroundColor, 0%); // 1.125rem pulse layer
+	}
+}
+
 .sapMBadge {
 	overflow: visible;
 	position: relative;
@@ -201,7 +247,7 @@
 		height: 0.5rem;
 
 		border-radius: 1.125rem;
-		background-color: @sapUiContentBadgeBackground;
+		background-color: @_sap_m_Badge_AttentionBackgroundColor;
 		border: 0.125rem solid @sapUiObjectHeaderBackground;
 	}
 }
@@ -211,7 +257,6 @@
 }
 
 html[data-sap-ui-animation='on'] {
-	.sapMBadgeAttention.sapMBadgeAnimationAdd,
 	.sapMBadgeDefault.sapMBadgeAnimationAdd:after {
 		animation: sapMBadgeAppearBounce .1s;
 	}

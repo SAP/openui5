@@ -1109,11 +1109,11 @@ sap.ui.define([
 		for (var i = 0; i < aItemsForList.length; i++) {
 			oItem = aItemsForList[i];
 			var oListItem = oItem.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
+			oItem._oCloneInList = oListItem;
 
 			// clone the badge custom data
 			if (oItem instanceof IconTabFilter && oItem.getBadgeCustomData()) {
 				oListItem.addCustomData(oItem.getBadgeCustomData().clone());
-				oItem._oCloneInList = oListItem;
 			}
 
 			oListItem._oRealItem = oItem; // link list item to its underlying item from the items aggregation
@@ -1200,9 +1200,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether the IconTabFilter is in the overflow menu.
 	 */
 	IconTabFilter.prototype._isInOverflow = function () {
-		var oDomRef = this.getDomRef();
-
-		return oDomRef && oDomRef.classList.contains("sapMITBFilterHidden");
+		return !this._bIsOverflow && this._getIconTabHeader()._getItemsInStrip().indexOf(this._getRealTab()) === -1;
 	};
 
 	IconTabFilter.prototype.onBadgeUpdate = function (sValue, sState, sBadgeId) {
@@ -1245,14 +1243,18 @@ sap.ui.define([
 		if (oRootTab._isInOverflow()) {
 			oOverflow = this._getIconTabHeader()._getOverflow();
 			oOverflow._updateExpandButtonBadge();
-		} else {
-			if (oRootTab !== this) {
-				oRootTab._updateExpandButtonBadge();
-			}
+		} else if (oRootTab !== this) {
+			oRootTab._updateExpandButtonBadge();
 		}
 
 		if (sState !== BadgeState.Appear) {
 			return;
+		}
+
+		this._enableMotion();
+
+		if (this._isInOverflow() && this._oCloneInList) {
+			this._oCloneInList.addCustomData(new BadgeCustomData());
 		}
 
 		oInvisibleMessage = InvisibleMessage.getInstance();
@@ -1276,6 +1278,16 @@ sap.ui.define([
 
 	IconTabFilter.prototype.getAriaLabelBadgeText = function () {
 		return oResourceBundle.getText("ICONTABFILTER_BADGE");
+	};
+
+	IconTabFilter.prototype._enableMotion = function () {
+		if (this._getRealTab()._isInOverflow()) {
+			if (this._oCloneInList && this._oCloneInList.getDomRef()) {
+				this._oCloneInList.getDomRef().classList.add("sapMITBFilterBadgeMotion");
+			}
+		} else if (this.getDomRef()) {
+			this.getDomRef().classList.add("sapMITBFilterBadgeMotion");
+		}
 	};
 
 	return IconTabFilter;
