@@ -88,7 +88,7 @@ function(
 		});
 	}
 
-	QUnit.module("Given a designTime and rename plugin are instantiated", {
+	QUnit.module("Given a designTime and rename plugin are instantiated using a form", {
 		beforeEach: function(assert) {
 			var done = assert.async();
 
@@ -332,7 +332,7 @@ function(
 		});
 	});
 
-	QUnit.module("Given a designTime and rename plugin are instantiated", {
+	QUnit.module("Given a designTime and rename plugin are instantiated using a VerticalLayout", {
 		beforeEach: function(assert) {
 			var done = assert.async();
 
@@ -577,6 +577,20 @@ function(
 				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], "invalid", "the correct error text was passed");
 				assert.equal(this.oShowMessageBoxStub.lastCall.args[2].titleKey, "RENAME_ERROR_TITLE", "the correct error text was passed");
 				assert.ok(this.oLayoutOverlay.hasStyleClass(RenameHandler.errorStyleClass), "the error style class is set");
+			}.bind(this));
+		});
+
+		QUnit.test("when the Label gets renamed to the same text", function(assert) {
+			var oEmitLabelChangeSpy = sandbox.spy(this.oRenamePlugin, "_emitLabelChangeEvent");
+			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay).then(function() {
+				this.oRenamePlugin._$oEditableControlDomRef.text("Label");
+				this.oRenamePlugin._$editableField.text(this.oRenamePlugin._$oEditableControlDomRef.text());
+				return triggerAndWaitForStopEdit(this.oRenamePlugin);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oShowMessageBoxStub.callCount, 0, "no error was shown");
+				assert.notOk(this.oLayoutOverlay.hasStyleClass(RenameHandler.errorStyleClass), "the error style class is not set");
+				assert.equal(oEmitLabelChangeSpy.callCount, 0, "the label change was not processed");
 			}.bind(this));
 		});
 

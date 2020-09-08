@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/rta/command/CompositeCommand",
 	"sap/base/Log"
 ], function(
 	Plugin,
@@ -28,7 +27,6 @@ sap.ui.define([
 	Layer,
 	VariantManagement,
 	ManagedObject,
-	CompositeCommand,
 	Log
 ) {
 	"use strict";
@@ -65,11 +63,8 @@ sap.ui.define([
 	var ControlVariant = Plugin.extend("sap.ui.rta.plugin.ControlVariant", /** @lends sap.ui.rta.plugin.ControlVariant.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
-			properties : {
-				oldValue : "string",
-				variantManagementControlOverlay : {
-					type : "any"
-				}
+			properties: {
+				oldValue: "string"
 			},
 			associations: {},
 			events: {}
@@ -349,7 +344,7 @@ sap.ui.define([
 
 		.then(function(oSwitchCommand) {
 			this.fireElementModified({
-				command : oSwitchCommand
+				command: oSwitchCommand
 			});
 		}.bind(this))
 
@@ -364,20 +359,16 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.renameVariant = function (aElementOverlays) {
-		var oElementOverlay = aElementOverlays[0];
-		this.setVariantManagementControlOverlay(oElementOverlay);
-		this.startEdit(oElementOverlay);
+		this.startEdit(aElementOverlays[0]);
 	};
 
 	ControlVariant.prototype.startEdit = function(oVariantManagementOverlay) {
 		var vDomRef = oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-		var fnHandleStartEdit = RenameHandler.startEdit.bind(this, {
+		RenameHandler.startEdit.call(this, {
 			overlay: oVariantManagementOverlay,
 			domRef: vDomRef,
 			pluginMethodName: "plugin.ControlVariant.startEdit"
 		});
-
-		fnHandleStartEdit();
 	};
 
 	ControlVariant.prototype.stopEdit = function (bRestoreFocus) {
@@ -429,64 +420,20 @@ sap.ui.define([
 		var oOverlay = this._oEditedOverlay;
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var oRenamedElement = oOverlay.getElement();
-		var oModel = this._getVariantModel(oRenamedElement);
-		var sErrorText;
 		var sVariantManagementReference = oOverlay.getVariantManagement();
-		var bTextChanged = this.getOldValue() !== sText;
-		var bNewEntry = bTextChanged || oOverlay._triggerDuplicate;
-		var iDuplicateCount = bNewEntry ? oModel._getVariantTitleCount(sText, sVariantManagementReference) : 0;
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
-		oOverlay.removeStyleClass(RenameHandler.errorStyleClass);
+		return this._createSetTitleCommand({
+			text: sText,
+			element: oRenamedElement,
+			designTimeMetadata: oDesignTimeMetadata,
+			variantManagementReference: sVariantManagementReference
+		})
 
-		//Check for real change before creating a command and pass if warning text already set
-		if (sText === '\xa0') { //Empty string
-			sErrorText = "BLANK_ERROR_TEXT";
-		} else if (iDuplicateCount > 0) {
-			sErrorText = "DUPLICATE_ERROR_TEXT";
-		} else if (bNewEntry) {
-			return this._createSetTitleCommand({
-				text: sText,
-				element: oRenamedElement,
-				designTimeMetadata: oDesignTimeMetadata,
-				variantManagementReference: sVariantManagementReference
-			})
-
-			.then(function(oSetTitleCommand) {
-				this.fireElementModified({
-					command: oSetTitleCommand
-				});
-			}.bind(this))
-
-			.catch(function(oMessage) {
-				throw DtUtil.createError("ControlVariant#_emitLabelChangeEvent", oMessage, "sap.ui.rta");
+		.then(function(oSetTitleCommand) {
+			this.fireElementModified({
+				command: oSetTitleCommand
 			});
-		} else {
-			Log.info("Control Variant title unchanged");
-			return Promise.resolve();
-		}
-
-		if (sErrorText) {
-			// Order of calling:
-			// -> Open message box
-			// 		-> Close message box
-			// 			-> Stop edit on overlay
-			// 				-> Start edit on overlay
-			var sValueStateText = oResourceBundle.getText(sErrorText);
-			this._prepareOverlayForValueState(oOverlay, sValueStateText);
-
-			//Border
-			oOverlay.addStyleClass(RenameHandler.errorStyleClass);
-
-			return Utils.showMessageBox("error", sErrorText, {
-				titleKey: "BLANK_DUPLICATE_TITLE_TEXT"
-			})
-			.then(function () {
-				return function() {
-					this.startEdit(oOverlay);
-				}.bind(this);
-			}.bind(this));
-		}
+		}.bind(this));
 	};
 
 	/**
@@ -503,7 +450,7 @@ sap.ui.define([
 		}, mPropertyBag.designTimeMetadata, mPropertyBag.variantManagementReference)
 
 		.catch(function(oMessage) {
-			Log.error("Error during rename : ", oMessage);
+			Log.error("Error during rename: ", oMessage);
 		});
 	};
 
@@ -657,6 +604,10 @@ sap.ui.define([
 		}
 
 		return aMenuItems;
+	};
+
+	ControlVariant.prototype.getActionName = function() {
+		return "controlVariant";
 	};
 
 	return ControlVariant;
