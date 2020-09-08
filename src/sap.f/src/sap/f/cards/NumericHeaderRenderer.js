@@ -18,7 +18,8 @@ sap.ui.define([], function () {
 	 */
 	NumericHeaderRenderer.render = function (oRm, oNumericHeader) {
 		var bLoading = oNumericHeader.isLoading(),
-			oToolbar = oNumericHeader.getToolbar();
+			oToolbar = oNumericHeader.getToolbar(),
+			sTabIndex = oNumericHeader._isInsideGridContainer() ? "-1" : "0";
 
 		oRm.openStart("div", oNumericHeader)
 			.class("sapFCardHeader")
@@ -32,7 +33,7 @@ sap.ui.define([], function () {
 			oRm.class("sapFCardClickable");
 		}
 
-		oRm.attr("tabindex", "0");
+		oRm.attr("tabindex", sTabIndex);
 		//Accessibility state
 		oRm.accessibilityState(oNumericHeader, {
 			role: oNumericHeader._sAriaRole,
