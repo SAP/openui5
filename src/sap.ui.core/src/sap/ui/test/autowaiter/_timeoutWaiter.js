@@ -3,33 +3,45 @@
  */
 
 sap.ui.define([
-	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/_ParameterValidator",
 	"sap/ui/test/autowaiter/_utils",
-	"sap/ui/thirdparty/jquery"
-], function(_OpaLogger, _ParameterValidator, _utils, jQueryDOM) {
+	"sap/ui/thirdparty/jquery",
+	"./WaiterBase"
+], function(_utils, jQueryDOM, WaiterBase) {
 	"use strict";
 
-	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._timeoutWaiter");
-	var oHasPendingLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._timeoutWaiter#hasPending");
-	var oConfigValidator = new _ParameterValidator({
-		errorPrefix: "sap.ui.test.autowaiter._timeoutWaiter#extendConfig"
-	});
 	var mTimeouts = {};
-	var iDefaultMaxDepth = 1; 		// count
-	var iDefaultMaxDelay = 1000; 	// milliseconds
-	var iDefaultMinDelay = 10; 		// milliseconds
-	var config = {
-		maxDepth: iDefaultMaxDepth,
-		maxDelay: iDefaultMaxDelay,
-		minDelay: iDefaultMinDelay
-	};
 	var timeoutStatus = {
 		TRACKED: "TRACKED",
 		STARTER: "STARTED",
 		FINISHED: "FINISHED",
 		CLEARED: "CLEARED"
 	};
+
+	var TimeoutWaiter = WaiterBase.extend("sap.ui.test.autowaiter._timeoutWaiter", {
+		hasPending: function () {
+			var aBlockingTimeoutIds = Object.keys(mTimeouts).filter(function (iID) {
+				return isBlocking(iID);
+			});
+			var bHasBlockingTimeouts = aBlockingTimeoutIds.length > 0;
+			logTrackedTimeouts(aBlockingTimeoutIds);
+			return bHasBlockingTimeouts;
+		},
+		_getDefaultConfig: function () {
+			return jQueryDOM.extend({
+				maxDepth: 1, 		// count
+				maxDelay: 1000, 	// milliseconds
+				minDelay: 10 		// milliseconds
+			}, WaiterBase.prototype._getDefaultConfig.call(this));
+		},
+		_getValidationInfo: function () {
+			return jQueryDOM.extend({
+				maxDepth: "numeric",
+				maxDelay: "numeric",
+				minDelay: "numeric"
+			}, WaiterBase.prototype._getValidationInfo.call(this));
+		}
+	});
+	var oTimeoutWaiter = new TimeoutWaiter();
 
 	// initiatorId is the timeout id of the currently running timeout callback
 	// for opa poll frame, will have the ID of the poll timeout
@@ -61,7 +73,7 @@ sap.ui.define([
 			// some timeouts do not need to be tracked, like the timeout for long-running promises
 			if (tracking && tracking === 'TIMEOUT_WAITER_IGNORE') {
 				iID = fnOriginal.apply(null, [fnCallback, iDelay].concat(aCallbackArgs.slice(1)));
-				oLogger.trace("Timeout with ID " + iID + " should not be tracked. " +
+				oTimeoutWaiter._oLogger.trace("Timeout with ID " + iID + " should not be tracked. " +
 					" Delay: " + iDelay +
 					" Initiator: " + iInitiatorId);
 
@@ -72,24 +84,24 @@ sap.ui.define([
 				// workaround for FF: the mTimeouts[iID] is sometimes cleaned by GC before it is released
 				var oCurrentTimeout = mTimeouts[iID];
 				if (!oCurrentTimeout) {
-					oLogger.trace("Timeout data for timeout with ID " + iID + " disapered unexpectedly");
+					oTimeoutWaiter._oLogger.trace("Timeout data for timeout with ID " + iID + " disapered unexpectedly");
 					oCurrentTimeout = {};
 				}
 				iInitiatorId = iID;
 
-				oLogger.trace("Timeout with ID " + iID + " started");
+				oTimeoutWaiter._oLogger.trace("Timeout with ID " + iID + " started");
 				oCurrentTimeout.status = timeoutStatus.STARTED;
 				try {
 					fnCallback();
 				} finally {
 					iInitiatorId = undefined;
 				}
-				oLogger.trace("Timeout with ID " + iID + " finished");
+				oTimeoutWaiter._oLogger.trace("Timeout with ID " + iID + " finished");
 				oCurrentTimeout.status = timeoutStatus.FINISHED;
 			};
 
 			iID = fnOriginal.apply(null, [fnWrappedCallback, iDelay].concat(aCallbackArgs));
-			oLogger.trace("Timeout with ID " + iID + " is tracked. " +
+			oTimeoutWaiter._oLogger.trace("Timeout with ID " + iID + " is tracked. " +
 				" Delay: " + iDelay +
 				" Initiator: " + iInitiatorId);
 			mTimeouts[iID] = oNewTimeout;
@@ -99,18 +111,18 @@ sap.ui.define([
 
 		window[sClearName] = function wrappedClearTimeout(iID) {
 			if (!iID) {
-				oLogger.trace("Could not clean timeout with invalid ID: " + iID);
+				oTimeoutWaiter._oLogger.trace("Could not clean timeout with invalid ID: " + iID);
 				return;
 			}
 
 			var oCurrentTimeout = mTimeouts[iID];
 			if (!oCurrentTimeout) {
-				oLogger.trace("Timeout data for timeout with ID " + iID + " disapered unexpectedly or timeout was not tracked intentionally");
+				oTimeoutWaiter._oLogger.trace("Timeout data for timeout with ID " + iID + " disapered unexpectedly or timeout was not tracked intentionally");
 				oCurrentTimeout = {};
 			}
 
 			oCurrentTimeout.status = timeoutStatus.CLEARED;
-			oLogger.trace("Timeout with ID " + iID + " cleared");
+			oTimeoutWaiter._oLogger.trace("Timeout with ID " + iID + " cleared");
 			fnOriginalClear(iID);
 		};
 	}
@@ -138,7 +150,7 @@ sap.ui.define([
 			}),true);
 		});
 		// show the pending timeout details into the timeout message
-		oHasPendingLogger.debug(sLogMessage);
+		oTimeoutWaiter._oHasPendingLogger.debug(sLogMessage);
 
 		// log all tracked timeouts at trace
 		var sTraceLogMessage = "Tracked timeouts";
@@ -147,7 +159,7 @@ sap.ui.define([
 				return currentValue == iTimeoutID;
 			}),true);
 		});
-		oHasPendingLogger.trace(sTraceLogMessage);
+		oTimeoutWaiter._oHasPendingLogger.trace(sTraceLogMessage);
 	}
 
 	function isBlocking(iID) {
@@ -158,12 +170,12 @@ sap.ui.define([
 		}
 
 		// long runnes are some application level timeouts => we do not care for them
-		if (oCurrentTimeout.delay > config.maxDelay ) {
+		if (oCurrentTimeout.delay > oTimeoutWaiter._mConfig.maxDelay) {
 			return false;
 		}
 
 		// zero or up to some small delay timeouts are definitely execution flow so must be waited
-		if (oCurrentTimeout.delay > config.minDelay) {
+		if (oCurrentTimeout.delay > oTimeoutWaiter._mConfig.minDelay) {
 			return isExecutionFlow(iID);
 		}
 
@@ -181,7 +193,7 @@ sap.ui.define([
 			// if the initiator has the same timeout => check recursively for its parrent
 			if (oCurrentTimeout.delay == mTimeouts[oCurrentTimeout.initiator].delay) {
 				// if maxDepth chain has equal delays => this is a poll chain
-				if (depth >= config.maxDepth) {
+				if (depth >= oTimeoutWaiter._mConfig.maxDepth) {
 					return false;
 				}
 				return isExecutionFlow(oCurrentTimeout.initiator,depth + 1);
@@ -190,29 +202,5 @@ sap.ui.define([
 		return true;
 	}
 
-	return {
-		hasPending: function () {
-			var aBlockingTimeoutIds = Object.keys(mTimeouts).filter(function (iID) {
-				return isBlocking(iID);
-			});
-			var bHasBlockingTimeouts = aBlockingTimeoutIds.length > 0;
-			logTrackedTimeouts(aBlockingTimeoutIds);
-			return bHasBlockingTimeouts;
-		},
-		extendConfig: function (oConfig) {
-			oConfig = oConfig && oConfig.timeoutWaiter || {
-				maxDepth: iDefaultMaxDepth,
-				maxDelay: iDefaultMaxDelay
-			};
-			oConfigValidator.validate({
-				inputToValidate: oConfig,
-				validationInfo: {
-					maxDepth: "numeric",
-					maxDelay: "numeric",
-					minDelay: "numeric"
-				}
-			});
-			jQueryDOM.extend(config, oConfig);
-		}
-	};
+	return oTimeoutWaiter;
 }, true);

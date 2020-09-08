@@ -4,34 +4,31 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
-	"sap/ui/test/_OpaLogger"
-], function(Element, _OpaLogger) {
+	"./WaiterBase"
+], function(Element, WaiterBase) {
 	"use strict";
 
-	var oHasPendingLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._navigationContainerWaiter#hasPending");
-
-	function hasNavigatingNavContainers () {
-
-		var fnNavContainer = sap.ui.require("sap/m/NavContainer");
-		// no Nav container has been loaded - continue
-		if (!fnNavContainer) {
-			return false;
-		}
-		// instanceof filter
-		function isNavContainer(oControl) {
-			return oControl instanceof fnNavContainer;
-		}
-
-		return Element.registry.filter(isNavContainer).some(function (oNavContainer) {
-			if (oNavContainer._bNavigating) {
-				oHasPendingLogger.debug("The NavContainer " + oNavContainer + " is currently navigating");
+	var NavigationContainerWaiter = WaiterBase.extend("sap.ui.test.autowaiter._navigationContainerWaiter", {
+		hasPending: function () {
+			var fnNavContainer = sap.ui.require("sap/m/NavContainer");
+			// no Nav container has been loaded - continue
+			if (!fnNavContainer) {
+				return false;
+			}
+			// instanceof filter
+			function isNavContainer(oControl) {
+				return oControl instanceof fnNavContainer;
 			}
 
-			return oNavContainer._bNavigating;
-		});
-	}
+			return Element.registry.filter(isNavContainer).some(function (oNavContainer) {
+				if (oNavContainer._bNavigating) {
+					this._oHasPendingLogger.debug("The NavContainer " + oNavContainer + " is currently navigating");
+				}
 
-	return {
-		hasPending: hasNavigatingNavContainers
-	};
+				return oNavContainer._bNavigating;
+			}.bind(this));
+		}
+	});
+
+	return new NavigationContainerWaiter();
 });
