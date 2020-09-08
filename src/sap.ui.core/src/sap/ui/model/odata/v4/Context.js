@@ -193,6 +193,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Collapses the group node that this context points to.
+	 *
+	 * @throws {Error}
+	 *   If the context points to a node that is not expandable or already collapsed
+	 *
+	 * @public
+	 * @see #expand
+	 * @see #isExpanded
+	 * @since 1.83.0
+	 */
+	Context.prototype.collapse = function () {
+		switch (this.isExpanded()) {
+			case true:
+				this.oBinding.collapse(this);
+				break;
+			case false:
+				throw new Error("Already collapsed: " + this);
+			default:
+				throw new Error("Not expandable: " + this);
+		}
+	};
+
+	/**
 	 * Returns a promise that is resolved without data when the entity represented by this context
 	 * has been created in the backend and all selected properties of this entity are available.
 	 * Expanded navigation properties are only available if the context's binding is refreshable.
@@ -400,6 +423,7 @@ sap.ui.define([
 	 *   If the context points to a node that is not expandable or already expanded
 	 *
 	 * @public
+	 * @see #collapse
 	 * @see #isExpanded
 	 * @since 1.77.0
 	 */
@@ -750,6 +774,7 @@ sap.ui.define([
 	 *   if the node is not expandable
 	 *
 	 * @public
+	 * @see #collapse
 	 * @see #expand
 	 * @since 1.77.0
 	 */

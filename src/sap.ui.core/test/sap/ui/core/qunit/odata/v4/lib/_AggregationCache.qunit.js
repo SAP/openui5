@@ -1200,6 +1200,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
+			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
 			oGroupLock = {
 				unlock : function () {}
@@ -1208,7 +1209,8 @@ sap.ui.define([
 			iPrefetchLength = 100,
 			oReadResult = {
 				value : [{}, {}, {}]
-			};
+			},
+			i;
 
 		function checkResult(oResult) {
 			assert.strictEqual(oResult.value.length, 3);
@@ -1227,6 +1229,18 @@ sap.ui.define([
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult.value), iReadIndex)
 			.callThrough(); // so that oCache.aElements is actually filled
+		// expect placeholders before iReadIndex
+		for (i = 0; i < iReadIndex; i += 1) {
+			oAggregationHelperMock.expects("createPlaceholder")
+				.withExactArgs(0, i, sinon.match.same(oCache.oFirstLevel))
+				.returns("~placeholder~" + i);
+		}
+		// expect placeholders after iReadIndex + result length
+		for (i = iReadIndex + 3; i < oReadResult.value.$count; i += 1) {
+			oAggregationHelperMock.expects("createPlaceholder")
+				.withExactArgs(0, i, sinon.match.same(oCache.oFirstLevel))
+				.returns("~placeholder~" + i);
+		}
 
 		// code under test
 		return oCache.read(iReadIndex, iLength, iPrefetchLength, oGroupLock,
@@ -1239,23 +1253,13 @@ sap.ui.define([
 
 				checkResult(oResult1);
 
-				// check placeholder before iReadIndex
+				// check placeholders before iReadIndex
 				for (i = 0; i < iReadIndex; i += 1) {
-					assert.strictEqual(
-						_Helper.getPrivateAnnotation(oCache.aElements[i], "index"), i);
-					assert.strictEqual(
-						_Helper.getPrivateAnnotation(oCache.aElements[i], "parent"),
-						oCache.oFirstLevel
-					);
+					assert.strictEqual(oCache.aElements[i], "~placeholder~" + i);
 				}
-				// check placeholder after iReadIndex + result length
+				// check placeholders after iReadIndex + result length
 				for (i = iReadIndex + 3; i < oCache.aElements.length; i += 1) {
-					assert.strictEqual(
-						_Helper.getPrivateAnnotation(oCache.aElements[i], "index"), i);
-					assert.strictEqual(
-						_Helper.getPrivateAnnotation(oCache.aElements[i], "parent"),
-						oCache.oFirstLevel
-					);
+					assert.strictEqual(oCache.aElements[i], "~placeholder~" + i);
 				}
 
 				// code under test
@@ -1768,9 +1772,11 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
+			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
 			aElements = [{
-				"@$ui5.node.isExpanded" : false
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : 0
 			}, {}, {}],
 			oExpandResult = {
 				value : [{}, {}, {}, {}, {}]
@@ -1810,6 +1816,10 @@ sap.ui.define([
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oExpandResult.value), 1)
 			.callThrough(); // so that oCache.aElements is actually filled
+		oAggregationHelperMock.expects("createPlaceholder")
+			.withExactArgs(1, 5, sinon.match.same(oGroupLevelCache)).returns("~placeholder~1");
+		oAggregationHelperMock.expects("createPlaceholder")
+			.withExactArgs(1, 6, sinon.match.same(oGroupLevelCache)).returns("~placeholder~2");
 
 		// code under test
 		oPromise = oCache.expand(oGroupLock, "~path~").then(function (iResult) {
@@ -1825,13 +1835,9 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[4], oExpandResult.value[3]);
 			assert.strictEqual(oCache.aElements[5], oExpandResult.value[4]);
 
-			// check placeholder
-			assert.strictEqual(_Helper.getPrivateAnnotation(oCache.aElements[6], "index"), 5);
-			assert.strictEqual(
-				_Helper.getPrivateAnnotation(oCache.aElements[6], "parent"), oGroupLevelCache);
-			assert.strictEqual(_Helper.getPrivateAnnotation(oCache.aElements[7], "index"), 6);
-			assert.strictEqual(
-				_Helper.getPrivateAnnotation(oCache.aElements[7], "parent"), oGroupLevelCache);
+			// check placeholders
+			assert.strictEqual(oCache.aElements[6], "~placeholder~1");
+			assert.strictEqual(oCache.aElements[7], "~placeholder~2");
 
 			// check moved nodes
 			assert.strictEqual(oCache.aElements[8], aElements[1]);
@@ -1893,6 +1899,118 @@ sap.ui.define([
 		}, function (oResult) {
 			assert.strictEqual(oResult, oError);
 		});
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bUntilEnd) { // whether the collapsed children span until the end
+	QUnit.test("collapse: until end = " + bUntilEnd, function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			aElements = [{
+				// "@$ui5._": {predicate : "('0')"},
+				// "@$ui5.node.level" : ignored
+			}, {
+				"@$ui5._": {predicate : "('1')"},
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.level" : 5
+			}, {
+				"@$ui5._": {predicate : "('2')"},
+				"@$ui5.node.level" : 6 // child
+			}, {
+				"@$ui5._": {predicate : "('3')"},
+				"@$ui5.node.level" : 7 // grandchild
+			}, {
+				"@$ui5._": {predicate : "('4')"},
+				"@$ui5.node.level" : bUntilEnd ? 6 : 5 // child or sibling (or "uncle" etc.)
+			}],
+			aExpectedElements = [{
+				// "@$ui5._": {predicate : "('0')"},
+				// "@$ui5.node.level" : ignored
+			}, {
+				"@$ui5._": {predicate : "('1')"},
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : 5
+			}, {
+				"@$ui5._": {predicate : "('4')"},
+				"@$ui5.node.level" : 5 // sibling
+			}];
+
+		oCache.aElements = aElements.slice(); // simulate a read
+		oCache.aElements.$count = aElements.length;
+		oCache.aElements.$byPredicate = {
+			"('0')" : aElements[0],
+			"('1')" : aElements[1],
+			"('2')" : aElements[2],
+			"('3')" : aElements[3],
+			"('4')" : aElements[4]
+		};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
+			.returns(SyncPromise.resolve(aElements[1]));
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
+				sinon.match.same(aElements[1]), {"@$ui5.node.isExpanded" : false})
+			.callThrough();
+
+		// code under test
+		assert.strictEqual(oCache.collapse("~path~"), bUntilEnd ? 3 : 2,
+			"number of removed elements");
+
+		if (bUntilEnd) {
+			aExpectedElements.pop(); // last element was also a child, not a sibling
+		}
+		assert.deepEqual(oCache.aElements, aExpectedElements);
+		assert.strictEqual(oCache.aElements[0], aElements[0]);
+		assert.strictEqual(oCache.aElements[1], aElements[1]);
+		assert.strictEqual(oCache.aElements[2], bUntilEnd ? undefined : aElements[4]);
+		assert.strictEqual(oCache.aElements.$count, aExpectedElements.length);
+		assert.deepEqual(oCache.aElements.$byPredicate, bUntilEnd
+			? {
+				"('0')" : aElements[0],
+				"('1')" : aElements[1]
+			} : {
+				"('0')" : aElements[0],
+				"('1')" : aElements[1],
+				"('4')" : aElements[4]
+			});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("collapse: at end", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			aElements = [{
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.level" : 5
+			}],
+			aExpectedElements = [{
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : 5
+			}];
+
+		oCache.aElements = aElements.slice(); // simulate a read
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
+			.returns(SyncPromise.resolve(aElements[0]));
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
+				sinon.match.same(aElements[0]), {"@$ui5.node.isExpanded" : false})
+			.callThrough();
+
+		// code under test
+		assert.strictEqual(oCache.collapse("~path~"), 0, "number of removed elements");
+
+		assert.deepEqual(oCache.aElements, aExpectedElements);
+		assert.strictEqual(oCache.aElements[0], aElements[0]);
 	});
 
 	//*********************************************************************************************

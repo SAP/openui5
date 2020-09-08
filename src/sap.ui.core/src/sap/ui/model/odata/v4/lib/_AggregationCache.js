@@ -125,6 +125,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * Collapses the group node at the given path.
+	 *
+	 * @param {string} sGroupNodePath
+	 *   The group node path relative to the cache
+	 * @returns {number}
+	 *   The number of descendant nodes that were affected
+	 *
+	 * @public
+	 * @see #expand
+	 */
+	_AggregationCache.prototype.collapse = function (sGroupNodePath) {
+		var iCount = 0,
+			aElements = this.aElements,
+			oGroupNode = this.fetchValue(_GroupLock.$cached, sGroupNodePath).getResult(),
+			iGroupNodeLevel = oGroupNode["@$ui5.node.level"],
+			iIndex = aElements.indexOf(oGroupNode),
+			i = iIndex + 1;
+
+		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode,
+			{"@$ui5.node.isExpanded" : false});
+
+		while (i < aElements.length && aElements[i]["@$ui5.node.level"] > iGroupNodeLevel) {
+			delete aElements.$byPredicate[_Helper.getPrivateAnnotation(aElements[i], "predicate")];
+			iCount += 1;
+			i += 1;
+		}
+		aElements.splice(iIndex + 1, iCount);
+		aElements.$count -= iCount;
+
+		return iCount;
+	};
+
+	/**
 	 * Creates a cache for the children (next group level or leaves) of the given parent group node.
 	 * Creates the first level cache if there is no parent group node.
 	 *
@@ -186,6 +219,7 @@ sap.ui.define([
 	 *   A promise that is resolved with the number of nodes at the next level
 	 *
 	 * @public
+	 * @see #collapse
 	 */
 	_AggregationCache.prototype.expand = function (oGroupLock, sGroupNodePath) {
 		var oCache,
@@ -217,9 +251,8 @@ sap.ui.define([
 			that.aElements.$count += iCount;
 			// create placeholder
 			for (i = iIndex + oResult.value.length; i < iIndex + iCount; i += 1) {
-				that.aElements[i] = {};
-				_Helper.setPrivateAnnotation(that.aElements[i], "index", i - iIndex);
-				_Helper.setPrivateAnnotation(that.aElements[i], "parent", oCache);
+				that.aElements[i] = _AggregationHelper.createPlaceholder(
+					oGroupNode["@$ui5.node.level"] + 1, i - iIndex, oCache);
 			}
 
 			return iCount;
@@ -405,9 +438,8 @@ sap.ui.define([
 				// create placeholders
 				for (j = 0; j < that.aElements.$count; j += 1) {
 					if (!that.aElements[j]) {
-						that.aElements[j] = {};
-						_Helper.setPrivateAnnotation(that.aElements[j], "index", j);
-						_Helper.setPrivateAnnotation(that.aElements[j], "parent", that.oFirstLevel);
+						that.aElements[j]
+							= _AggregationHelper.createPlaceholder(0, j, that.oFirstLevel);
 					}
 				}
 				that.iReadLength = iLength + iPrefetchLength;

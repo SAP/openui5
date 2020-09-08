@@ -28,7 +28,7 @@ sap.ui.define([
 			var oRowContext = oEvent.getSource().getBindingContext();
 
 			if (oRowContext.isExpanded()) {
-				MessageToast.show("collapse not implemented yet");
+				oRowContext.collapse();
 			} else {
 				oRowContext.expand();
 			}

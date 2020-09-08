@@ -6587,6 +6587,70 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("collapse", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCollapseExpectation,
+			oContext = {
+				getModelIndex : function () {},
+				getPath : function () {}
+			},
+			aContextsBefore,
+			iCount = 3,
+			oFireChangeExpectation,
+			i;
+
+		// create a context dummy object with index i
+		function createContextDummy(i) {
+			return {
+				iIndex : i,
+				getPath : function () {
+					return "/EMPLOYEES/" + i;
+				}
+			};
+		}
+
+		oBinding.oCache = { // simulate an aggregation cache
+			collapse : function () {}
+		};
+		for (i = 0; i < 8; i += 1) {
+			oBinding.aContexts.push(createContextDummy(i));
+		}
+		oBinding.iMaxLength = 8;
+		aContextsBefore = oBinding.aContexts.slice();
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+		this.mock(oContext).expects("getModelIndex").withExactArgs().returns(1);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("~contextpath~");
+		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
+			.returns("~bindingpath~");
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
+		oCollapseExpectation = this.mock(oBinding.oCache).expects("collapse")
+			.withExactArgs("~cachepath~").returns(iCount);
+		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.collapse(oContext);
+
+		sinon.assert.callOrder(oCollapseExpectation, oFireChangeExpectation);
+		assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
+		assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
+		assert.strictEqual(oBinding.aContexts[2], aContextsBefore[5], "2");
+		assert.strictEqual(oBinding.aContexts[3], aContextsBefore[6], "3");
+		assert.strictEqual(oBinding.aContexts[4], aContextsBefore[7], "4");
+		assert.strictEqual(oBinding.aContexts.length, 5);
+		assert.strictEqual(oBinding.iMaxLength, 5);
+		oBinding.aContexts.forEach(function (oContext, iIndex) {
+			assert.strictEqual(oContext.iIndex, iIndex);
+		});
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {
+			"/EMPLOYEES/2" : aContextsBefore[2],
+			"/EMPLOYEES/3" : aContextsBefore[3],
+			"/EMPLOYEES/4" : aContextsBefore[4]
+		});
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bOldCache) {
 	[false, true].forEach(function (bNewCache) {
 		var sTitle = "fetchCache: no kept-alive contexts, old cache=" + bOldCache + ", new cache="
