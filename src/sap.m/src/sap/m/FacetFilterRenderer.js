@@ -134,6 +134,8 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 		var aLists = oControl._getSequencedLists(),
 			iLength = aLists.length,
 			bShowPersonalization = oControl.getShowPersonalization(),
+			bAddFilterButton = bShowPersonalization && (oControl.getType() === FacetFilterType.Simple),
+			iFacetFilterButtonsLength = bAddFilterButton ? iLength + 1 : iLength,
 			oButton,
 			i;
 
@@ -146,7 +148,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 			if (!oControl._bCheckForAddListBtn || bAddButton) {
 				oButton = oControl._getButtonForList(aLists[i]);
 
-				FacetFilterRenderer.addPositionInfoForButton(oControl, oButton, i + 1, iLength + 1);
+				FacetFilterRenderer.addPositionInfoForButton(oControl, oButton, i + 1, iFacetFilterButtonsLength);
 
 				if (bShowPersonalization) {
 					oButton.addAriaDescribedBy(FacetFilterRenderer.getAriaAnnouncement("ARIA_REMOVE"));
