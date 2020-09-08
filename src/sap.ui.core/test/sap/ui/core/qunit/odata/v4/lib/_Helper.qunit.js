@@ -338,6 +338,56 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("createTechnicalDetails with @$ui5.error, no status", function (assert) {
+		var oMessage = new Error();
+
+		oMessage["@$ui5.error"] = {};
+		this.mock(_Helper).expects("publicClone").never();
+
+		// code under test
+		assert.deepEqual(_Helper.createTechnicalDetails(oMessage), {});
+	});
+
+//*********************************************************************************************
+// Note: if error has a cause, that cause also has a status; @see _Requestor#processBatch
+[false, true].forEach(function (bCause) {
+	var sTitle = "createTechnicalDetails with @$ui5.error and status; cause = " + bCause;
+
+	QUnit.test(sTitle, function (assert) {
+		var oError = {status : 123},
+			oMessage = new Error();
+
+		oMessage["@$ui5.error"] = bCause ? {cause : oError} : oError;
+		this.mock(_Helper).expects("publicClone").never();
+
+		// code under test
+		assert.deepEqual(_Helper.createTechnicalDetails(oMessage), {httpStatus : 123});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bCause) {
+	var sTitle = "createTechnicalDetails: isConcurrentModification; cause = " + bCause;
+
+	QUnit.test(sTitle, function (assert) {
+		var oError = {
+				isConcurrentModification : true,
+				status : 412
+			},
+			oMessage = new Error();
+
+		oMessage["@$ui5.error"] = bCause ? {cause : oError} : oError;
+		this.mock(_Helper).expects("publicClone").never();
+
+		// code under test
+		assert.deepEqual(_Helper.createTechnicalDetails(oMessage), {
+			httpStatus : 412,
+			isConcurrentModification : true
+		});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("encode", function (assert) {
 		var sUnchanged = "foo$,/:?@();";
 

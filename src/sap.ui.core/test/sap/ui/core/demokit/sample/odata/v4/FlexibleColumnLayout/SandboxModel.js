@@ -19,6 +19,9 @@ sap.ui.define([
 				"SalesOrderList?$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
 					source : "SalesOrderList.json"
 				},
+				"SalesOrderList?$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'&$top=0" : {
+					source : "SalesOrderList_requestCount.json"
+				},
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$count=true&$orderby=ItemPosition&$select=CurrencyCode,GrossAmount,ItemPosition,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=5" : {
 					source : "SalesOrderList('0500000000')-SO_2_ITEM.json"
 				},

@@ -1628,10 +1628,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for direct requests
 	QUnit.test("error response: $direct (framework test)", function (assert) {
-		var oError = createError({
+		var oOriginalMessage = {
 				code : "Code",
 				message : "Request intentionally failed"
-			}),
+			},
+			oError = createError(oOriginalMessage),
 			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}" />';
 
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
@@ -1644,6 +1645,10 @@ sap.ui.define([
 				persistent : true,
 				target : "",
 				technical : true,
+				technicalDetails : {
+					httpStatus : 500, // CPOUI5ODATAV4-428
+					originalMessage : oOriginalMessage
+				},
 				type : "Error"
 			}]);
 
@@ -1653,10 +1658,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for batch requests
 	QUnit.test("error response: $batch (framework test)", function (assert) {
-		var oError = createError({
+		var oOriginalMessage = {
 				code : "Code",
 				message : "Request intentionally failed"
-			}),
+			},
+			oError = createError(oOriginalMessage),
 			sView = '\
 <Text text="{/EMPLOYEES(\'1\')/ID}" />\
 <Text text="{/EMPLOYEES(\'2\')/Name}" />';
@@ -1673,6 +1679,10 @@ sap.ui.define([
 				persistent : true,
 				target : "",
 				technical : true,
+				technicalDetails : {
+					httpStatus : 500, // CPOUI5ODATAV4-428
+					originalMessage : oOriginalMessage
+				},
 				type : "Error"
 			}]);
 
@@ -3281,7 +3291,6 @@ sap.ui.define([
 					"persistent" : true,
 					"target" : "",
 					"technical" : true,
-					"technicalDetails" : {},
 					"type" : "Error"
 				}]);
 
@@ -3396,6 +3405,7 @@ sap.ui.define([
 				target : "/EMPLOYEES('42')/Name",
 				technical : true,
 				technicalDetails : {
+					httpStatus : 500, // CPOUI5ODATAV4-428
 					originalMessage : {
 						code : "CODE",
 						message : "Could not read",
@@ -8661,6 +8671,7 @@ sap.ui.define([
 						target : "",
 						technical : true,
 						technicalDetails : {
+							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
 								code : "top",
 								details : [{
@@ -8684,6 +8695,7 @@ sap.ui.define([
 						persistent : true,
 						target : "",
 						technicalDetails : {
+							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
 								"@Common.numericSeverity" : 3,
 								code : "unbound",
@@ -8699,6 +8711,7 @@ sap.ui.define([
 						target :
 							"/BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')/Quantity",
 						technicalDetails : {
+							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
 								"@Common.longtextUrl" : "../Messages(1)/LongText",
 								"@Common.numericSeverity" : 4,
@@ -9399,6 +9412,7 @@ sap.ui.define([
 						target : "",
 						technical : true,
 						technicalDetails : {
+							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
 								code : "CODE",
 								message : "Patch failed"
@@ -24995,6 +25009,9 @@ sap.ui.define([
 				persistent : true,
 				target : "",
 				technical : true,
+				technicalDetails : {
+					httpStatus : 500 // CPOUI5ODATAV4-428
+				},
 				type : "Error"
 			}, {
 				code : undefined,
@@ -25002,6 +25019,9 @@ sap.ui.define([
 				persistent : true,
 				target : "",
 				technical : true,
+				technicalDetails : {
+					httpStatus : 500 // CPOUI5ODATAV4-428
+				},
 				type : "Error"
 			}]);
 
@@ -26945,7 +26965,6 @@ sap.ui.define([
 					persistent : true,
 					target : "",
 					technical : true,
-					technicalDetails : {},
 					type : "Error"
 				}]);
 			that.oLogMock.expects("error").withArgs("Failed to request side effects");
@@ -27126,7 +27145,9 @@ sap.ui.define([
 					persistent : true,
 					target : "",
 					technical : true,
-					technicalDetails : {},
+					technicalDetails : {
+						httpStatus : 500 // CPOUI5ODATAV4-428
+					},
 					type : "Error"
 				}]);
 
@@ -27978,7 +27999,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: A property of a kept context is modified while the context is not in the
+	// Scenario: A property of a kept-alive context is modified while the context is not in the
 	// collection. Via paging it becomes part of the collection, but the ETag was changed on the
 	// server.
 	// JIRA: CPOUI5ODATAV4-340
@@ -28148,93 +28169,115 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario:
-	// 1. Create a view with an object page showing a sales order. Ensure that the order shares
-	//    the list's cache.
-	// 2. Select a sales order. Keep its context alive.
-	// (3. Filter the list, so that the context drops out of it. Check that the context is still
-	//    alive and has its data.)
-	// 4. Delete the kept-alive context. Check the context is deleted.
+	// 1. Create a view with a list report containing sales orders.
+	// 2. Keep the first context of the table alive.
+	// 3. (optional) Sort the list descending, so that the context drops out of it.
+	// 4. Create and save a new sales order.
+	// 5. Delete the kept-alive context. Check that the context is deleted and a request for $count
+	//    is sent (filtering out the new sales order) if the context was not in the list anymore.
 	// JIRA: CPOUI5ODATAV4-365
-[false, true].forEach(function (bFilter) {
-	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bFilter = " + bFilter;
+	// JIRA: CPOUI5ODATAV4-473
+[false, true].forEach(function (bSort) {
+	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bSort = " + bSort;
 	QUnit.test(sTitle, function (assert) {
 		var oKeptContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oListBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
-<Table id="listReport" growing="true" growingThreshold="1"\
+<Table id="listReport" growing="true" growingThreshold="2"\
 		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
 	<Text id="id" text="{SalesOrderID}"/>\
-</Table>\
-<FlexBox id="objectPage">\
-	<Text id="salesOrderId" text="{SalesOrderID}"/>\
-</FlexBox>',
+</Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=1", {
-			"@odata.count" : "42",
-			value : [{SalesOrderID : "1"}]
-		})
-		.expectChange("count")
-		.expectChange("id", ["1"])
-		.expectChange("salesOrderId");
+		function checkMoreButton(sMoreText) {
+			var sText = that.oView.byId("listReport-trigger").getDomRef().innerText;
+
+			assert.strictEqual(sText.slice(sText.indexOf("[")), sMoreText, "check More: "
+				+ sMoreText);
+		}
+
+		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=2", {
+				"@odata.count" : "42",
+				value : [{SalesOrderID : "1"}, {SalesOrderID : "2"}]
+			})
+			.expectChange("count")
+			.expectChange("id", ["1", "2"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oBinding = that.oView.byId("listReport").getBinding("items");
+			oTable = that.oView.byId("listReport");
+			oListBinding = that.oView.byId("listReport").getBinding("items");
 
 			that.expectChange("count", "42");
 
-			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			oTable = that.oView.byId("listReport");
 			oKeptContext = oTable.getItems()[0].getBindingContext();
 
-			that.expectChange("salesOrderId", "1");
-
-			// code under test
 			oKeptContext.setKeepAlive(true);
-			that.oView.byId("objectPage").setBindingContext(oKeptContext);
+			assert.ok(oKeptContext.isKeepAlive(), "(2)");
 
-			return that.waitForChanges(assert, "(2)");
-		}).then(function () {
-			if (!bFilter) {
-				return;
+			if (bSort) {
+				that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+						+ "&$orderby=SalesOrderID desc&$skip=0&$top=2", {
+						"@odata.count" : "42",
+						value : [{SalesOrderID : "42"}, {SalesOrderID : "41"}]
+					})
+					.expectChange("id", ["42", "41"]);
+
+				oListBinding.sort(new Sorter("SalesOrderID", true));
 			}
-
-			that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
-				+ "&$filter=SalesOrderID ne '1'&$skip=0&$top=1", {
-				"@odata.count" : "42",
-				value : [{SalesOrderID : "2"}]
-			})
-			.expectChange("id", ["2"]);
-
-			oTable.getBinding("items").filter(new Filter("SalesOrderID", FilterOperator.NE, "1"));
 
 			return that.waitForChanges(assert, "(3)");
 		}).then(function () {
-			that.expectRequest({
-				method : "DELETE",
-				url : "SalesOrderList('1')"
-			})
-			.expectChange("salesOrderId", null)
-			.expectChange("count", "41");
+			checkMoreButton("[ 2 / 42 ]");
 
-			if (!bFilter) {// reload data
-				that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=1",
-					{
-						value : [{SalesOrderID : "2"}]
-					})
-				.expectChange("id", ["2"]);
+			that.expectChange("id", [""])
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {}
+				}, {SalesOrderID : "new"})
+				.expectChange("count", "43")
+				.expectChange("id", ["new"]);
+
+			oListBinding.create({}, true);
+
+			return that.waitForChanges(assert, "(4)");
+		}).then(function () {
+			var iBatch = bSort ? 4 : 3;
+
+			checkMoreButton("[ 2 / 43 ]");
+
+			that.expectRequest({
+					batchNo : iBatch,
+					method : "DELETE",
+					url : "SalesOrderList('1')"
+				});
+
+			if (bSort) { // determine $count
+				that.expectRequest({
+						batchNo : iBatch,
+						method : "GET",
+						url : "SalesOrderList?$count=true"
+							+ "&$filter=not (SalesOrderID eq 'new')&$top=0"
+					}, {"@odata.count" : "41", value : []});
+			} else {
+				that.expectChange("id", [/*"new"*/, "2"]);
 			}
+			that.expectChange("count", "42");
 
 			return Promise.all([
 				// code under test
 				oKeptContext.delete(),
-				that.waitForChanges(assert, "(4)")
+				that.waitForChanges(assert, "(5)")
 			]);
+		}).then(function () {
+			checkMoreButton("[ 2 / 42 ]");
 		});
 	});
 });

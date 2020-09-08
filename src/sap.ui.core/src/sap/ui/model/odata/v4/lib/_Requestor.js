@@ -1260,7 +1260,7 @@ sap.ui.define([
 					}
 					that.oSecurityTokenPromise = null;
 					fnResolve();
-				}, function (jqXHR, sTextStatus, sErrorMessage) {
+				}, function (jqXHR) {
 					that.oSecurityTokenPromise = null;
 					fnReject(_Helper.createError(jqXHR, "Could not refresh security token"));
 				});
@@ -1635,7 +1635,7 @@ sap.ui.define([
 						messages : jqXHR.getResponseHeader("sap-messages"),
 						resourcePath : sResourcePath
 					});
-				}, function (jqXHR, sTextStatus, sErrorMessage) {
+				}, function (jqXHR) {
 					var sContextId = jqXHR.getResponseHeader("SAP-ContextId"),
 						sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token"),
 						sMessage;
