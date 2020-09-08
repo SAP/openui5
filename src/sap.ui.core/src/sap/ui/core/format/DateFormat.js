@@ -2249,6 +2249,21 @@ sap.ui.define([
 		return sScale;
 	};
 
+	/**
+	 * Modifies the Date and sets the values with a higher index to <code>0</code>
+	 *
+	 * @param {Date} oDate input date
+	 * @param {number} iStartIndex index of the value to set to <code>0</code>. Higher indices will also be set to <code>0</code>.
+	 * 0: FullYear
+	 * 1: Month
+	 * 2: Date
+	 * 3: Hours
+	 * 4: Minutes
+	 * 5: Seconds
+	 * 6: Milliseconds
+	 * e.g. iStartIndex <code>4</code> will set Minutes, Seconds and Milliseconds to <code>0</code>
+	 * @returns {Date} copy of the date with the modified values
+	 */
 	function cutDateFields(oDate, iStartIndex) {
 		var aFields = [
 			"FullYear",
@@ -2259,11 +2274,13 @@ sap.ui.define([
 			"Seconds",
 			"Milliseconds"
 		], sMethodName;
+		var oDateCopy = new Date(oDate.getTime());
 
 		for (var i = iStartIndex; i < aFields.length; i++) {
 			sMethodName = "set" + aFields[iStartIndex];
-			oDate[sMethodName].apply(oDate, [0]);
+			oDateCopy[sMethodName].apply(oDateCopy, [0]);
 		}
+		return oDateCopy;
 	}
 
 	var mRelativeDiffs = {
@@ -2277,32 +2294,32 @@ sap.ui.define([
 			var iFromDay = oFormat._adaptDayOfWeek(oFromDate.getDay());
 			var iToDay = oFormat._adaptDayOfWeek(oToDate.getDay());
 
-			cutDateFields(oFromDate, 3);
-			cutDateFields(oToDate, 3);
+			oFromDate = cutDateFields(oFromDate, 3);
+			oToDate = cutDateFields(oToDate, 3);
 
 			return (oToDate.getTime() - oFromDate.getTime() - (iToDay - iFromDay) * oFormat._mScales.day * 1000) / (oFormat._mScales.week * 1000);
 		},
 		day: function(oFromDate, oToDate, oFormat) {
-			cutDateFields(oFromDate, 3);
-			cutDateFields(oToDate, 3);
+			oFromDate = cutDateFields(oFromDate, 3);
+			oToDate = cutDateFields(oToDate, 3);
 
 			return (oToDate.getTime() - oFromDate.getTime()) / (oFormat._mScales.day * 1000);
 		},
 		hour: function(oFromDate, oToDate, oFormat) {
-			cutDateFields(oFromDate, 4);
-			cutDateFields(oToDate, 4);
+			oFromDate = cutDateFields(oFromDate, 4);
+			oToDate = cutDateFields(oToDate, 4);
 
 			return (oToDate.getTime() - oFromDate.getTime()) / (oFormat._mScales.hour * 1000);
 		},
 		minute: function(oFromDate, oToDate, oFormat) {
-			cutDateFields(oFromDate, 5);
-			cutDateFields(oToDate, 5);
+			oFromDate = cutDateFields(oFromDate, 5);
+			oToDate = cutDateFields(oToDate, 5);
 
 			return (oToDate.getTime() - oFromDate.getTime()) / (oFormat._mScales.minute * 1000);
 		},
 		second: function(oFromDate, oToDate, oFormat) {
-			cutDateFields(oFromDate, 6);
-			cutDateFields(oToDate, 6);
+			oFromDate = cutDateFields(oFromDate, 6);
+			oToDate = cutDateFields(oToDate, 6);
 
 			return (oToDate.getTime() - oFromDate.getTime()) / (oFormat._mScales.second * 1000);
 		}
