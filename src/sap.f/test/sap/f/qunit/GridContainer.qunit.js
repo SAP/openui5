@@ -1070,7 +1070,7 @@ function (
 		assert.strictEqual(oItemWrapper1.getAttribute("tabindex"), "0",  "Focus should be on the first GridItem");
 	});
 
-	QUnit.test("Tabbing tough a tile - focus should leave the grid container", function (assert) {
+	QUnit.test("Tabbing through a tile - focus should leave the grid container", function (assert) {
 
 		// Arrange
 		var oItemWrapperTile = this.oGrid.getDomRef().children[4],

@@ -1348,14 +1348,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>sapfocusleave</code> event.
-	 *
-	 */
-	GridContainer.prototype.onsapfocusleave = function(){
-		this._bIsMouseDown = false;
-	};
-
-	/**
 	 * Fires when border is reached of the <code>sap.f.GridContainer</code>.
 	 * @param {sap.ui.base.Event|jQuery.Event} oEvent The event object
 	 */
@@ -1643,6 +1635,8 @@ sap.ui.define([
 		aItemDomRefs = oItemNavigation.getItemDomRefs();
 
 		if (aItemDomRefs[iIndex]) {
+			oItemNavigation.setFocusedIndex(iIndex);
+
 			// @todo fix the focus when adding a new item into an empty grid
 			aItemDomRefs[iIndex].focus();
 		}
