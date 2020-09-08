@@ -404,6 +404,16 @@ function(
 			this._deregisterEvents();
 		};
 
+		NumericInput.prototype.setValue = function(sValue) {
+			Input.prototype.setValue.apply(this, arguments);
+
+			if (this.getDomRef()) {
+				document.getElementById(this.getId() + "-inner").setAttribute("aria-valuenow", sValue);
+			}
+
+			return this;
+		};
+
 		MessageMixin.call(StepInput.prototype);
 
 		/**
@@ -572,7 +582,10 @@ function(
 					src: IconPool.getIconURI("add"),
 					id: this.getId() + "-incrementBtn",
 					noTabStop: true,
-					press: this._handleButtonPress.bind(this, true),
+					press: function() {
+						this._bJustFired = undefined;
+						this._handleButtonPress(true);
+					}.bind(this),
 					tooltip: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP
 				});
 
@@ -603,7 +616,10 @@ function(
 					src: IconPool.getIconURI("less"),
 					id: this.getId() + "-decrementBtn",
 					noTabStop: true,
-					press: this._handleButtonPress.bind(this, false),
+					press: function() {
+						this._bJustFired = undefined;
+						this._handleButtonPress(false);
+					}.bind(this),
 					tooltip: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP
 				});
 
@@ -655,15 +671,18 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._handleButtonPress = function (isPlusButton) {
-			var oNewValue = this._calculateNewValue(1, isPlusButton);
+			if (!this._bJustFired) {
+				var oNewValue = this._calculateNewValue(1, isPlusButton);
 
-			this._btndown = undefined;
-			this.setValue(oNewValue.value);
+				this._btndown = undefined;
+				this.setValue(oNewValue.value);
 
-			if (this._sOldValue !== this.getValue()) {
-				this._verifyValue();
-				this.fireChange({value: this.getValue()});
+				if (this._sOldValue !== this.getValue()) {
+					this._verifyValue();
+					this.fireChange({value: this.getValue()});
+				}
 			}
+			this._bJustFired = undefined;
 
 			// Return the focus on the main element
 			this.$().focus();
@@ -798,7 +817,7 @@ function(
 			this._getInput().setValue(this._getFormatedValue(oValue));
 			this._disableButtons(this._getInput().getValue(), this._getMax(), this._getMin());
 
-			oResult = this.setProperty("value", parseFloat(oValue));
+			oResult = this.setProperty("value", parseFloat(oValue), true);
 
 			this._iRealPrecision = this._getRealValuePrecision();
 
@@ -1378,6 +1397,7 @@ function(
 			if (this._btndown) {
 				this._spinTimeoutId = setTimeout(function () {
 					if (that._btndown) {
+						that._bSpinStarted = true;
 						////////////////// just the code for setting a value, not firing an event
 						var oNewValue = that._calculateNewValue(1, bIncrementButton);
 
@@ -1406,6 +1426,7 @@ function(
 			var that = this;
 			// Desktop events
 			var oEvents = {
+
 					onmousedown: function (oEvent) {
 						// check if the left mouse button is pressed
 						if (oEvent.button === 0 && !that._btndown) {
@@ -1415,24 +1436,42 @@ function(
 							that._spinValues(bIncrementButton);
 						}
 					},
+
 					onmouseup: function (oEvent) {
 						if (that._btndown) {
 							_resetSpinValues.call(that);
 						}
 					},
+
 					onmouseout: function (oEvent) {
 						if (that._btndown) {
 							_resetSpinValues.call(that);
+							that._bSpinStarted = undefined;
 							that.fireChange({value: that.getValue()});
 						}
 					},
+
+					ontouchend: function (oEvent) {
+						if (that._btndown) {
+							if (that._bSpinStarted) {
+								that._bSpinStarted = undefined;
+								that.fireChange({value: that.getValue()});
+								that._bJustFired = true;
+							}
+							_resetSpinValues.call(that);
+						}
+					},
+
 					oncontextmenu: function (oEvent) {
 						// Context menu is shown on "long-touch"
 						// so prevent of showing it while "long-touching" on the button
 						oEvent.stopImmediatePropagation(true);
-						oEvent.preventDefault();
+						if (oEvent.originalEvent && oEvent.originalEvent.cancelable) {
+							oEvent.preventDefault();
+						}
 						oEvent.stopPropagation();
 					}
+
 				};
 
 				oBtn.addDelegate(oEvents, true);
