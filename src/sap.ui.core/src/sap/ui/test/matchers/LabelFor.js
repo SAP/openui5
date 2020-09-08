@@ -2,9 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/base/ManagedObject",
 	'sap/ui/test/matchers/Matcher',
 	'sap/ui/test/matchers/I18NText'
-], function (Matcher, I18NText) {
+], function (ManagedObject, Matcher, I18NText) {
 	"use strict";
 
 	var oI18nMatcher = new I18NText();
@@ -113,6 +114,13 @@ sap.ui.define([
 					defaultValue: "text"
 				}
 			}
+		},
+
+		constructor: function (mSettings) {
+			if (mSettings && mSettings.text) {
+				mSettings.text = ManagedObject.escapeSettingsValue(mSettings.text);
+			}
+			Matcher.prototype.constructor.call(this, mSettings);
 		},
 
 		/**
