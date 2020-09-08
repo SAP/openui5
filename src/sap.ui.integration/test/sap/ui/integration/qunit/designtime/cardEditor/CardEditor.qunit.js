@@ -411,6 +411,7 @@ sap.ui.define([
 				);
 			}.bind(this));
 		});
+
 		QUnit.test("when the card-specific configuration is loaded after the editor received default config and manifest", function (assert) {
 			var fnDone = assert.async();
 
@@ -466,6 +467,30 @@ sap.ui.define([
 					"sampleString": "foo"
 				}
 			});
+		});
+
+		QUnit.test("when a CardEditor with a default config receives a specific config", function (assert) {
+			var oSpecificConfig = {
+				context: "context",
+				properties: {
+					"prop1": {
+						path: "prop1",
+						type: "string"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			};
+
+			return this.oCardEditor._addSpecificConfig(oSpecificConfig)
+				.then(function() {
+					assert.deepEqual(
+						this.oCardEditor.getConfig().properties,
+						oSpecificConfig.properties,
+						"then the properties from the specific config are taken"
+					);
+				}.bind(this));
 		});
 	});
 
