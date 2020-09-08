@@ -3320,14 +3320,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bKeyPredicates) {
-		QUnit.test("_delete: success, use key predicates: " + bKeyPredicates, function (assert) {
+	[{
+		keyPredicates : false
+	}, {
+		keyPredicates : true,
+		keepAlive : false
+	}, {
+		keyPredicates : true,
+		keepAlive : true
+	}].forEach(function (oFixture) {
+		QUnit.test("_delete: success, " + JSON.stringify(oFixture), function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES"),
 				oCreatedContext = {
 					destroy : function () {},
 					getModelIndex : function () { return 0; }
 				},
-				aData = createData(6, 0, true, undefined, bKeyPredicates),
+				aData = createData(6, 0, true, undefined, oFixture.keyPredicates),
 				aData2 = aData.slice(4, 6),
 				oETagEntity = {},
 				aPreviousContexts,
@@ -3355,10 +3363,14 @@ sap.ui.define([
 				// #destroy would only be called for created context
 				that.mock(oContext).expects("destroy").never();
 			});
-			if (!bKeyPredicates) {
+			if (!oFixture.keyPredicates) {
 				this.mock(oBinding.aContexts[2]).expects("checkUpdate").withExactArgs();
 				this.mock(oBinding.aContexts[5]).expects("checkUpdate").withExactArgs();
 			}
+			this.mock(oBinding.aContexts[3]).expects("isKeepAlive").withExactArgs()
+				.returns(oFixture.keepAlive);
+			this.mock(oBinding.aContexts[3]).expects("setKeepAlive")
+				.exactly(oFixture.keepAlive ? 1 : 0).withExactArgs(false);
 			this.mock(oBinding).expects("_fireChange")
 				.withExactArgs({reason : ChangeReason.Remove});
 
@@ -3375,7 +3387,7 @@ sap.ui.define([
 					oBinding.aContexts.forEach(function (oContext, i) {
 						assert.strictEqual(oContext.getModelIndex(), i);
 					});
-					if (bKeyPredicates) {
+					if (oFixture.keyPredicates) {
 						assert.strictEqual(
 							oBinding.mPreviousContextsByPath[aPreviousContexts[2].getPath()],
 							aPreviousContexts[2]);
@@ -3431,22 +3443,33 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_delete: kept-alive context not in the collection", function (assert) {
+[
+	{lengthFinal : false},
+	{lengthFinal : true, newMaxLength : 42},
+	{lengthFinal : true, newMaxLength : 41}
+].forEach(function (oFixture) {
+	var sTitle = "_delete: kept-alive context not in the collection: " + JSON.stringify(oFixture);
+
+	// we assume 42 entities matching the filter plus 2 created entities
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
-			aContexts = [{iIndex : 0}, {iIndex : 1}],
+			aContexts = [{iIndex : -2}, {iIndex : -1}, {iIndex : 0}, {iIndex : 1}],
 			oKeptAliveContext = {
-				created : function () { return false; },
-				destroy : function () {},
-				getPath : function () { return "~contextpath~"; }
-			};
+				created : function () { return undefined; },
+				getPath : function () { return "~contextpath~"; },
+				isKeepAlive : function () {},
+				setKeepAlive : function () {}
+			},
+			that = this;
 
 		// simulate created entities which are already persisted
 		oBinding.aContexts = aContexts;
-		oBinding.iMaxLength = 42;
+		oBinding.iCreatedContexts = 2;
+		oBinding.bLengthFinal = oFixture.lengthFinal;
+		oBinding.iMaxLength = oFixture.lengthFinal ? 42 : Infinity;
 		oBinding.mPreviousContextsByPath = {
-			"~contextpath~" : oKeptAliveContext,
-			doNotDelete : {bKeepAlive : true}
+			"~contextpath~" : oKeptAliveContext
 		};
 
 		this.mock(_Helper).expects("getRelativePath")
@@ -3455,19 +3478,29 @@ sap.ui.define([
 			.withExactArgs("myGroup", "EMPLOYEES('1')", "~predicate~", "oETagEntity",
 				sinon.match.func)
 			.callsArgWith(4, undefined, [/*unused*/])
-			.resolves();
-		this.mock(oKeptAliveContext).expects("destroy");
-		oBindingMock.expects("_fireChange").never();
+			.returns(Promise.resolve().then(function () {
+				that.mock(oBinding).expects("fetchValue")
+					.exactly(oFixture.lengthFinal ? 1 : 0)
+					.withExactArgs("$count", undefined, true)
+					.returns(SyncPromise.resolve(oFixture.newMaxLength + 2));
+			}));
+		this.mock(oKeptAliveContext).expects("isKeepAlive").returns(true);
+		this.mock(oKeptAliveContext).expects("setKeepAlive").withExactArgs(false);
+		oBindingMock.expects("_fireChange")
+			.exactly(oFixture.newMaxLength === 41 ? 1 : 0)
+			.withExactArgs({reason : ChangeReason.Remove});
 
 		// code under test
 		return oBinding._delete("myGroup", "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity")
 			.then(function () {
-				assert.deepEqual(oBinding.mPreviousContextsByPath,
-					{doNotDelete : {bKeepAlive : true}});
+				assert.strictEqual(oBinding.mPreviousContextsByPath["~contextpath~"],
+					oKeptAliveContext);
 				assert.deepEqual(oBinding.aContexts, aContexts);
-				assert.strictEqual(oBinding.iMaxLength, 41);
+				assert.strictEqual(oBinding.iMaxLength,
+					oFixture.lengthFinal ? oFixture.newMaxLength : Infinity);
 			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("create: callbacks and eventing", function (assert) {
@@ -6556,7 +6589,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bOldCache) {
 	[false, true].forEach(function (bNewCache) {
-		var sTitle = "fetchCache: no kept contexts, old cache=" + bOldCache + ", new cache="
+		var sTitle = "fetchCache: no kept-alive contexts, old cache=" + bOldCache + ", new cache="
 				+ bNewCache;
 
 	QUnit.test(sTitle, function (assert) {
@@ -6586,7 +6619,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("fetchCache: kept contexts", function (assert) {
+	QUnit.test("fetchCache: kept-alive contexts", function (assert) {
 		var oAddKeptElementCall,
 			oParentContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oParentContext),
