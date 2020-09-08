@@ -148,8 +148,11 @@ function(
 	});
 
 	QUnit.test("Setting the selection mode", function(assert) {
+		var done = assert.async();
+
+		// act
 		this.oChart.setSelectionMode("SINGLE");
-		var done1 = assert.async();
+
 		this.oChart.oChartPromise.then(function() {
 			var oChart = this.getAggregation("_chart");
 			assert.ok(oChart, "After loading the chart library there is an inner chart");
@@ -158,7 +161,7 @@ function(
 			this.setSelectionMode("NONE");
 			sSelectionMode = oChart.getSelectionMode();
 			assert.equal(sSelectionMode, "NONE", "If the inner chart is there then the width is directly feed");
-			done1();
+			done();
 		}.bind(this.oChart));
 	});
 
