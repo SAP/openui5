@@ -46,6 +46,12 @@ function(
 				modeSwitcher: "adaptation"
 			});
 			this.oGetCurrentRangeStub = sandbox.stub(Device.media, "getCurrentRange");
+
+			this.oToolbar = new Adaptation({
+				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			});
+
+			return this.oToolbar._pFragmentLoaded;
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();
@@ -53,9 +59,6 @@ function(
 		}
 	}, function() {
 		QUnit.test("when the toolbar gets initially shown in desktop mode (>= 900px) and then rerendered in the other 2 modes", function(assert) {
-			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
-			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.DESKTOP});
@@ -82,9 +85,6 @@ function(
 		});
 
 		QUnit.test("when a draft is visible and the toolbar gets initially shown in desktop mode (>= 1200px) and then rerendered in the other 2 modes and back", function(assert) {
-			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
-			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
@@ -107,9 +107,6 @@ function(
 		});
 
 		QUnit.test("when the toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
-			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
-			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
@@ -124,9 +121,6 @@ function(
 		});
 
 		QUnit.test("when the draft is set to visible and toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
-			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
-			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
@@ -141,9 +135,6 @@ function(
 		});
 
 		QUnit.test("when the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
-			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
-			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
@@ -158,9 +149,6 @@ function(
 		});
 
 		QUnit.test("when the draft is set to visible and the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
-			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
-			});
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
@@ -176,7 +164,6 @@ function(
 				}.bind(this));
 		});
 	});
-
 
 	QUnit.module("Versions Model binding & formatter for the versions text", {
 		before: function () {
@@ -204,11 +191,14 @@ function(
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
 			});
-			this.oToolbar.setModel(this.oVersionsModel, "versions");
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-			this.sDraftVersionAccent = "sapUiRtaDraftVersionAccent";
-			this.sActiveVersionAccent = "sapUiRtaActiveVersionAccent";
-			this.oVersionButton = this.oToolbar.getControl("versionButton");
+
+			return this.oToolbar._pFragmentLoaded.then(function() {
+				this.oToolbar.setModel(this.oVersionsModel, "versions");
+				this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+				this.sDraftVersionAccent = "sapUiRtaDraftVersionAccent";
+				this.sActiveVersionAccent = "sapUiRtaActiveVersionAccent";
+				this.oVersionButton = this.oToolbar.getControl("versionButton");
+			}.bind(this));
 		},
 		after: function() {
 			this.oToolbar.destroy();
@@ -331,6 +321,8 @@ function(
 				modeSwitcher: "adaptation"
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+
+			return this.oToolbar._pFragmentLoaded;
 		},
 		after: function() {
 			this.oToolbar.destroy();
@@ -387,6 +379,7 @@ function(
 				modeSwitcher: "adaptation"
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+			return this.oToolbar._pFragmentLoaded;
 		},
 		after: function() {
 			this.oToolbar.destroy();
@@ -483,6 +476,8 @@ function(
 				modeSwitcher: "adaptation"
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+
+			return this.oToolbar._pFragmentLoaded;
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();
@@ -523,6 +518,8 @@ function(
 				textResources: this.oMessageBundle
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+
+			return this.oToolbar._pFragmentLoaded;
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();
@@ -650,6 +647,7 @@ function(
 				modeSwitcher: "adaptation"
 			});
 			this.oToolbar.setModel(this.oControlsModel, "controls");
+			return this.oToolbar._pFragmentLoaded;
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();

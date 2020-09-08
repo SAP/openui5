@@ -119,6 +119,16 @@ function(
 				assert.ok(Array.isArray(aControls) && aControls.length === 0, 'returns an empty array');
 			});
 		});
+
+		QUnit.test('onFragmentLoaded() method', function(assert) {
+			var oPromise = this.oToolbar.onFragmentLoaded();
+
+			assert.ok(oPromise instanceof Promise, 'onFragmentLoaded() method returns Promise');
+
+			return oPromise.then(function() {
+				assert.ok(true, "Promise resolved");
+			});
+		});
 	});
 
 

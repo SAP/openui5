@@ -98,6 +98,10 @@ function(
 		});
 	};
 
+	Base.prototype.onFragmentLoaded = function() {
+		return Promise.resolve();
+	};
+
 	/**
 	 * Event handlers factory
 	 * @param {string} sEventName - Name of the event
