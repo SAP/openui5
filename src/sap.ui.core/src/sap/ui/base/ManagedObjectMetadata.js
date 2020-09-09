@@ -788,8 +788,8 @@ function(
 		return instance[this._sDetachMutator](fn,listener);
 	};
 
-	Event.prototype.fire = function(instance,params, allowPreventDefault, enableEventBubbling) {
-		return instance[this._sTrigger](params, allowPreventDefault, enableEventBubbling);
+	Event.prototype.fire = function(instance,params) {
+		return instance[this._sTrigger](params, this.allowPreventDefault, this.enableEventBubbling);
 	};
 
 	// ----------------------------------------------------------------------------------------
