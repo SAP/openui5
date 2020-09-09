@@ -70,6 +70,7 @@ sap.ui.define([
 				assert.equal(oData.backendDraft, false, ", a backendDraft flag set to false");
 				assert.equal(oData.dirtyChanges, false, ", a dirty changes flag set to false");
 				assert.equal(oData.draftAvailable, false, ", a draftAvailable flag set to false");
+				assert.equal(oData.activateEnabled, false, ", a activateEnabled flag set to false");
 				assert.equal(oData.activeVersion, sap.ui.fl.Versions.Original, ", a activeVersion property set to the original version");
 				assert.equal(oData.displayedVersion, sap.ui.fl.Versions.Original, ", a displayedVersion property set to the original version");
 				assert.equal(oData.switchVersionsActive, false, "and a switchVersionsActive flag set to false as data");
@@ -507,6 +508,7 @@ sap.ui.define([
 					assert.equal(oData.backendDraft, false, "the backendDraft flag is false");
 					assert.equal(oData.dirtyChanges, true, "the dirtyChanges flag is set to true");
 					assert.equal(oData.draftAvailable, true, "as well as draftAvailable true");
+					assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
 				})
 				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
 				.then(function () {
@@ -525,6 +527,7 @@ sap.ui.define([
 					assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
 					assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
 					assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+					assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
 				}.bind(this));
 		});
 	});
@@ -597,6 +600,7 @@ sap.ui.define([
 				assert.equal(oData.backendDraft, false, "the backendDraft flag is false");
 				assert.equal(oData.dirtyChanges, true, "the dirtyChanges flag is set to true");
 				assert.equal(oData.draftAvailable, true, "as well as draftAvailable true");
+				assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
 				assert.equal(oData.displayedVersion, sap.ui.fl.Versions.Draft, ", a displayedVersion property set to the draft version");
 			})
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
@@ -615,6 +619,7 @@ sap.ui.define([
 				assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
 				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
 				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+				assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
 				assert.equal(oData.displayedVersion, 1, ", a displayedVersion property set to the active version");
 			});
 		});
@@ -659,6 +664,7 @@ sap.ui.define([
 				assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
 				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
 				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+				assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), 1, ", a displayedVersion property set to the active version");
 			}.bind(this));
 		});
