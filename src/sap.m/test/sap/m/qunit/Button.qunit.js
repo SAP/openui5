@@ -1463,6 +1463,41 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
 	});
 
+	QUnit.module("Button ARIA-HASPOPUP");
+
+	QUnit.test("Appearance of the aria-haspopup attribute", function (assert) {
+		var oButton = new Button("btn", {
+				text: "I am a button"
+			}),
+			AriaHasPopup = coreLibrary.aria.HasPopup,
+			oButtonDomRef;
+
+		// setup
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oButtonDomRef = oButton.getDomRef();
+
+		// check initial aria-haspopup state
+		assert.notOk(oButtonDomRef.getAttribute("aria-haspopup"), "There is no aria-haspopup attribute initially.");
+
+		// act
+		oButton.setAriaHasPopup(AriaHasPopup.Menu);
+		sap.ui.getCore().applyChanges();
+
+		// check if aria-haspopup appears
+		assert.equal(oButtonDomRef.getAttribute("aria-haspopup"), AriaHasPopup.Menu.toLowerCase(), "There is aria-haspopup attribute with proper value after the button property is being set to something different than None.");
+
+		// act
+		oButton.setAriaHasPopup(AriaHasPopup.None);
+		sap.ui.getCore().applyChanges();
+
+		// check if aria-haspopup disappears
+		assert.notOk(oButtonDomRef.getAttribute("aria-haspopup"), "There is no aria-haspopup attribute after the button property is being set to None.");
+
+		// cleanup
+		oButton.destroy();
+	});
+
 	QUnit.module("Badge on Button", {
 		beforeEach: function () {
 			this.oButton = new Button("badgedButton", {
