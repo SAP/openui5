@@ -109,20 +109,6 @@ sap.ui.define([
 		);
 	};
 
-	ParametersEditor.prototype._onDesigntimeChange = function (sKey, oEvent) {
-		var oDesigntime = _merge({}, this.getConfig().designtime);
-		var newDesigntimeValue = { __value: {} };
-		newDesigntimeValue.__value[oEvent.getParameter("path")] = oEvent.getParameter("value");
-
-		oDesigntime[sKey] = _merge(
-			{},
-			oDesigntime[sKey],
-			newDesigntimeValue
-		);
-		this.setDesigntimeMetadata(oDesigntime);
-		this.setValue(this.getValue());
-	};
-
 	ParametersEditor.prototype.onBeforeConfigChange = function(oConfig) {
 		// Config scenario
 		if (!oConfig.allowTypeChange && !oConfig.allowKeyChange) {

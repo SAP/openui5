@@ -536,6 +536,113 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Nested designtime metadata", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor();
+			this.oBaseEditor.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("when designtime metadata exists for an item value", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleMap": {
+						"path": "/sampleMap",
+						"type": "map",
+						"allowedTypes": ["string"]
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
+				}
+			});
+
+			this.oBaseEditor.setDesigntimeMetadata({
+				sampleMap: {
+					foo: {
+						__value: {
+							label: "Foo Parameter",
+							// Nested value dt metadata
+							value: {
+								__value: {
+									customDesigntimeMetadata: "test"
+								}
+							}
+						}
+					}
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				sampleMap: {
+					foo: "bar"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
+				var oMapEditor = aPropertyEditor[0];
+				var oMapEditorContent = getMapEditorContent(oMapEditor);
+				var oValueEditor = oMapEditorContent.items[0].value.getAggregation("propertyEditor");
+
+				assert.deepEqual(
+					oValueEditor.getDesigntimeMetadataValue(),
+					{
+						customDesigntimeMetadata: "test"
+					},
+					"then nested designtime metadata is passed to the value editor"
+				);
+			});
+		});
+
+		QUnit.test("when designtime metadata of the value editor changes", function (assert) {
+			var fnDone = assert.async();
+
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleMap": {
+						"path": "/sampleMap",
+						"type": "map",
+						"allowedTypes": ["string"]
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				sampleMap: {
+					foo: "bar"
+				}
+			});
+
+			this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
+				var oMapEditor = aPropertyEditor[0];
+				var oMapEditorContent = getMapEditorContent(oMapEditor);
+				var oValueEditor = oMapEditorContent.items[0].value.getAggregation("propertyEditor");
+
+				this.oBaseEditor.attachDesigntimeMetadataChange(function (oEvent) {
+					assert.deepEqual(
+						oEvent.getParameter("designtimeMetadata")["sampleMap/foo"].value.__value,
+						{
+							customDesigntimeMetadata: "test"
+						},
+						"then the designtime metadata is properly updated"
+					);
+					fnDone();
+				});
+
+				oValueEditor.setDesigntimeMetadataValue({customDesigntimeMetadata: "test"});
+			}.bind(this));
+		});
+	});
+
 	QUnit.done(function () {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
