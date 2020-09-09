@@ -32,19 +32,24 @@
 		return;
 	}
 
+	//Introduce namespace if it does not yet exist
+	if (typeof window.sap !== "object" && typeof window.sap !== "function") {
+		window.sap = {};
+	}
+	if (typeof window.sap.ui !== "object") {
+		window.sap.ui = {};
+	}
+
+	// expose factory so the jQuery version delivered with UI5 can apply it later
+	sap.ui._jQuery3Compat = {
+		_factory: factory
+	};
+
+	// jQuery might be present already: apply factory directly
 	if (window.jQuery) {
 		factory( jQuery, window );
-	} else {
-		//Introduce namespace if it does not yet exist
-		if (typeof window.sap !== "object" && typeof window.sap !== "function") {
-			window.sap = {};
-		}
-		if (typeof window.sap.ui !== "object") {
-			window.sap.ui = {};
-		}
-
-		sap.ui._jQuery3Compat = factory;
 	}
+
 	// }
 	// ##### END: MODIFIED BY SAP
 } )( function( jQuery, window ) {
@@ -148,6 +153,9 @@ function migrateWarn( msg ) {
 		}
 	}
 }
+
+// expose warning function so we can use it from within jQuery to log UI5 migration warnings
+sap.ui._jQuery3Compat._migrateWarn = migrateWarn;
 /* eslint-enable no-console */
 // ##### END: MODIFIED BY SAP
 
