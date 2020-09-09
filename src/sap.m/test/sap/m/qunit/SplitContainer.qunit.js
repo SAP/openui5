@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	'sap/ui/core/Core',
 	"jquery.sap.global",
 	"sap/m/SplitContainer",
 	"sap/m/Page",
@@ -20,6 +21,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	createAndAppendDiv,
+	Core,
 	jQuery,
 	SplitContainer,
 	Page,
@@ -83,7 +85,6 @@ sap.ui.define([
 	QUnit.module("SplitContainer API and default values", {
 		beforeEach : function () {
 			this.sut = splitContainerSetup();
-//					sap.ui.getCore().applyChanges();
 		},
 		afterEach : function () {
 			this.sut.destroy();
@@ -175,7 +176,7 @@ sap.ui.define([
 		oSplitContainer.addDetailPage(oPage1).addDetailPage(oPage2);
 
 		oSplitContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oButton.firePress();
 	});
@@ -1284,6 +1285,60 @@ sap.ui.define([
 		// Act
 		oSplitContainer.setModel(oModel2);
 		assert.equal(oSplitContainer.getDetailPages().length, 1, "Detail pages should be properly set through the model.");
+	});
 
+	QUnit.module("Touch Swipe");
+
+	QUnit.test("Show/Hide master", function(assert) {
+
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: false,
+			tablet: true
+		});
+
+		this.stub(Device, "support", {
+			touch: true
+		});
+
+		var oDetailPage = new Page({
+			title : "detail"
+		});
+
+		var oSplitContainer = new SplitContainer({
+			mode: "HideMode",
+			detailPages : oDetailPage,
+			masterPages : [
+				new Page({ title : "master1"}),
+				new Page({ title : "master2"})
+			]
+		});
+		oSplitContainer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oSplitContainer.$("Master").hasClass("sapMSplitContainerMasterHidden"), "Master is initially hidden");
+
+		oSplitContainer.onswiperight();
+
+		assert.ok(oSplitContainer.$("Master").hasClass("sapMSplitContainerMasterVisible"), "Master is shown");
+
+		oSplitContainer.onswipeleft();
+
+		assert.ok(oSplitContainer.$("Master").hasClass("sapMSplitContainerMasterHidden"), "Master is hidden");
+
+		oSplitContainer._onWindowScroll({
+			srcElement: oDetailPage
+		});
+
+		oSplitContainer.ontouchend({
+			target: oDetailPage
+		});
+
+		oSplitContainer.onswiperight();
+
+		assert.ok(oSplitContainer.$("Master").hasClass("sapMSplitContainerMasterHidden"), "Master is hidden");
+
+		// clean up
+		oSplitContainer.destroy();
 	});
 });
