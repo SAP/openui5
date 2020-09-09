@@ -410,7 +410,7 @@ sap.ui.define([
 	 *     "currencyCode": false,
 	 *     "customCurrencies": {
 	 *         "BTC": {
-	 *             "symbol": "Ƀ",
+	 *             "symbol": "\u0243",
 	 *             "decimals": 3
 	 *         }
 	 *     }
@@ -1516,7 +1516,7 @@ sap.ui.define([
 		sValue = sValue.replace(oGroupingRegExp, "");
 
 		// Replace "minus/plus" sign with a parsable symbol
-		// e.g. "➖47" (cannot be parsed using parseInt) --> "-47" (can be parsed using parseInt)
+		// e.g. "➖47" ("➖" or "\u2796" cannot be parsed using parseInt) --> "-47" (can be parsed using parseInt)
 		var iValueLength = sValue.length;
 		for (var iValuePos = 0; iValuePos < iValueLength; iValuePos++) {
 			var sCurrentValueChar = sValue[iValuePos];
@@ -1929,56 +1929,56 @@ sap.ui.define([
 		var sFormat,
 			oCurrencyFormats = {
 				"short": {
-					"1000-one": "¤0000",
-					"1000-other": "¤0000",
-					"10000-one": "¤00000",
-					"10000-other": "¤00000",
-					"100000-one": "¤0 Lk",
-					"100000-other": "¤0 Lk",
-					"1000000-one": "¤00 Lk",
-					"1000000-other": "¤00 Lk",
-					"10000000-one": "¤0 Cr",
-					"10000000-other": "¤0 Cr",
-					"100000000-one": "¤00 Cr",
-					"100000000-other": "¤00 Cr",
-					"1000000000-one": "¤000 Cr",
-					"1000000000-other": "¤000 Cr",
-					"10000000000-one": "¤0000 Cr",
-					"10000000000-other": "¤0000 Cr",
-					"100000000000-one": "¤00000 Cr",
-					"100000000000-other": "¤00000 Cr",
-					"1000000000000-one": "¤0 Lk Cr",
-					"1000000000000-other": "¤0 Lk Cr",
-					"10000000000000-one": "¤00 Lk Cr",
-					"10000000000000-other": "¤00 Lk Cr",
-					"100000000000000-one": "¤0 Cr Cr",
-					"100000000000000-other": "¤0 Cr Cr"
+					"1000-one": "\xa40000",
+					"1000-other": "\xa40000",
+					"10000-one": "\xa400000",
+					"10000-other": "\xa400000",
+					"100000-one": "\xa40 Lk",
+					"100000-other": "\xa40 Lk",
+					"1000000-one": "\xa400 Lk",
+					"1000000-other": "\xa400 Lk",
+					"10000000-one": "\xa40 Cr",
+					"10000000-other": "\xa40 Cr",
+					"100000000-one": "\xa400 Cr",
+					"100000000-other": "\xa400 Cr",
+					"1000000000-one": "\xa4000 Cr",
+					"1000000000-other": "\xa4000 Cr",
+					"10000000000-one": "\xa40000 Cr",
+					"10000000000-other": "\xa40000 Cr",
+					"100000000000-one": "\xa400000 Cr",
+					"100000000000-other": "\xa400000 Cr",
+					"1000000000000-one": "\xa40 Lk Cr",
+					"1000000000000-other": "\xa40 Lk Cr",
+					"10000000000000-one": "\xa400 Lk Cr",
+					"10000000000000-other": "\xa400 Lk Cr",
+					"100000000000000-one": "\xa40 Cr Cr",
+					"100000000000000-other": "\xa40 Cr Cr"
 				},
 				"sap-short": {
-					"1000-one": "0000 ¤",
-					"1000-other": "0000 ¤",
-					"10000-one": "00000 ¤",
-					"10000-other": "00000 ¤",
-					"100000-one": "0 Lk ¤",
-					"100000-other": "0 Lk ¤",
-					"1000000-one": "00 Lk ¤",
-					"1000000-other": "00 Lk ¤",
-					"10000000-one": "0 Cr ¤",
-					"10000000-other": "0 Cr ¤",
-					"100000000-one": "00 Cr ¤",
-					"100000000-other": "00 Cr ¤",
-					"1000000000-one": "000 Cr ¤",
-					"1000000000-other": "000 Cr ¤",
-					"10000000000-one": "0000 Cr ¤",
-					"10000000000-other": "0000 Cr ¤",
-					"100000000000-one": "00000 Cr ¤",
-					"100000000000-other": "00000 Cr ¤",
-					"1000000000000-one": "0 Lk Cr ¤",
-					"1000000000000-other": "0 Lk Cr ¤",
-					"10000000000000-one": "00 Lk Cr ¤",
-					"10000000000000-other": "00 Lk Cr ¤",
-					"100000000000000-one": "0 Cr Cr ¤",
-					"100000000000000-other": "0 Cr Cr ¤"
+					"1000-one": "0000\xa0\xa4",
+					"1000-other": "0000\xa0\xa4",
+					"10000-one": "00000\xa0\xa4",
+					"10000-other": "00000\xa0\xa4",
+					"100000-one": "0 Lk\xa0\xa4",
+					"100000-other": "0 Lk\xa0\xa4",
+					"1000000-one": "00 Lk\xa0\xa4",
+					"1000000-other": "00 Lk\xa0\xa4",
+					"10000000-one": "0 Cr\xa0\xa4",
+					"10000000-other": "0 Cr\xa0\xa4",
+					"100000000-one": "00 Cr\xa0\xa4",
+					"100000000-other": "00 Cr\xa0\xa4",
+					"1000000000-one": "000 Cr\xa0\xa4",
+					"1000000000-other": "000 Cr\xa0\xa4",
+					"10000000000-one": "0000 Cr\xa0\xa4",
+					"10000000000-other": "0000 Cr\xa0\xa4",
+					"100000000000-one": "00000 Cr\xa0\xa4",
+					"100000000000-other": "00000 Cr\xa0\xa4",
+					"1000000000000-one": "0 Lk Cr\xa0\xa4",
+					"1000000000000-other": "0 Lk Cr\xa0\xa4",
+					"10000000000000-one": "00 Lk Cr\xa0\xa4",
+					"10000000000000-other": "00 Lk Cr\xa0\xa4",
+					"100000000000000-one": "0 Cr Cr\xa0\xa4",
+					"100000000000000-other": "0 Cr Cr\xa0\xa4"
 				}
 			},
 			oDecimalFormats = {
