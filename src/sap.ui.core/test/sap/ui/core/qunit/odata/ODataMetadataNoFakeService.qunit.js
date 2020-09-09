@@ -292,4 +292,36 @@ sap.ui.define([
 			assert.strictEqual(
 				this.oMetadata._getCanonicalPathOfFunctionImport(mFunctionInfo, undefined), "");
 	});
+
+	//*********************************************************************************************
+[
+	{
+		mFunctionInfo : undefined,
+		expectedResult : false
+	}, {
+		mFunctionInfo : {},
+		expectedResult : false
+	}, {
+		mFunctionInfo : {
+			returnType : "~returnType"
+		},
+		expectedResult : false
+	}, {
+		mFunctionInfo : {
+			returnType : "collection(~returnType)"
+		},
+		expectedResult : false
+	}, {
+		mFunctionInfo : {
+			returnType : "Collection(~returnType)"
+		},
+		expectedResult : true
+	}
+].forEach(function (oFixture, i) {
+	QUnit.test("_returnsCollection: #" + i, function (assert) {
+		// code under test
+		assert.strictEqual(ODataMetadata._returnsCollection(oFixture.mFunctionInfo),
+			oFixture.expectedResult);
+	});
+});
 });

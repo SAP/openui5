@@ -6174,11 +6174,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectChange("companyName2", "companyName2New")
 				.expectMessage(oCompanyNameError2_Update, "/BusinessPartnerSet", undefined, true)
 				.expectMessage(oProductADescriptionError2, "/ProductSet",
-					"/BusinessPartnerSet('2')/ToProducts");
-				//TODO: why is the message for BusinessPartner 1 removed?
-				//.expectMessage(oCompanyNameError1, "/BusinessPartnerSet('1')/");
-				//.expectMessage(oProductADescriptionError1, "/ProductSet",
-				//	"/BusinessPartnerSet('1')/ToProducts")
+					"/BusinessPartnerSet('2')/ToProducts")
+				.expectMessage(oCompanyNameError1, "/BusinessPartnerSet('1')/")
+				.expectMessage(oProductADescriptionError1, "/ProductSet",
+					"/BusinessPartnerSet('1')/ToProducts");
 
 			return Promise.all([
 				oModel.callFunction(sFunctionName, {

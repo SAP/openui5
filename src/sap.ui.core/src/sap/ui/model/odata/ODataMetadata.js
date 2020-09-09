@@ -125,6 +125,22 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * Returns whether the function returns a collection.
+	 *
+	 * @param {object} mFunctionInfo The function info map
+	 * @returns {boolean} Whether the function returns a collection
+	 * @private
+	 */
+	ODataMetadata._returnsCollection = function (mFunctionInfo) {
+		if (mFunctionInfo && mFunctionInfo.returnType
+				&& mFunctionInfo.returnType.startsWith("Collection(")) {
+			return true;
+		}
+
+		return false;
+	};
+
 	ODataMetadata.prototype._setNamespaces = function(mNamespaces) {
 		this.mNamespaces = mNamespaces;
 	};
@@ -1618,7 +1634,7 @@ sap.ui.define([
 				}
 			}
 		}
-		if (sFunctionReturnType && sFunctionReturnType.startsWith("Collection(")) {
+		if (ODataMetadata._returnsCollection(mFunctionInfo)) {
 			bIsCollection = true;
 			sFunctionReturnType = sFunctionReturnType.slice(11/* "Collection(".length */, -1);
 		}
