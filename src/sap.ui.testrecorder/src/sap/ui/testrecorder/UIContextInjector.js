@@ -130,9 +130,8 @@ sap.ui.define([
 			"width=1024,height=700,status=no,toolbar=no,menubar=no,resizable=yes,location=no,directories=no,scrollbars=yes"
 		);
 
-		window.communicationWindows.testRecorder.window.onload = function () {
-			window.communicationWindows.testRecorder.document.title = "Test Recorder";
-		};
+		window.communicationWindows.testRecorder.document.title = "Test Recorder";
+		_setLanguageFromParentWindow();
 
 		this._isInIframe = false;
 		this._dockStarted = false;
@@ -191,6 +190,7 @@ sap.ui.define([
 		document.body.appendChild(iFrame);
 
 		window.communicationWindows.testRecorder = iFrame.contentWindow;
+		_setLanguageFromParentWindow();
 
 		this._iframe = iFrame;
 		this._resizeOverlay = resizeOverlay;
@@ -254,9 +254,18 @@ sap.ui.define([
 	};
 
 	UIContextInjector.prototype._generateTestRecorderUrl = function () {
+		var mUriParams = new URI().search(true);
+		var aWhitelist = ["sap-language"];
+		var aBlacklist = ["sap-ui-testRecorder"];
+		var sSapUriParams = Object.keys(mUriParams).map(function (sUriParamName) {
+			if (aBlacklist.indexOf(sUriParamName) === -1 && sUriParamName.startsWith("sap-ui-") || aWhitelist.indexOf(sUriParamName) > -1) {
+				return "&" + sUriParamName + "=" + mUriParams[sUriParamName];
+			}
+		}).join("");
+
 		this._sUrl = sap.ui.require.toUrl("sap/ui/testrecorder/ui/overlay.html") +
 			"?sap-ui-testrecorder-origin=" + window.location.protocol +
-			"//" + window.location.host + "&" + "sap-ui-testrecorder-frame-identifier=" + this._sIdentifier;
+			"//" + window.location.host + "&" + "sap-ui-testrecorder-frame-identifier=" + this._sIdentifier + sSapUriParams;
 		var frameURI = new URI(this._sUrl);
 		this._sOrigin = ( frameURI.protocol() || window.location.protocol.replace(':', '') ) +
 			'://' + ( frameURI.host() || window.location.host );
@@ -330,6 +339,40 @@ sap.ui.define([
 
 	function generateIdentifier() {
 		return '' + Date.now();
+	}
+
+	function _setLanguageFromParentWindow() {
+		var appBootstrapScript = window.document.getElementById("sap-ui-bootstrap");
+		if (appBootstrapScript.dataset.sapUiLanguage) {
+			_pollForRecorderBootstrap(function (recorderBootstrapScript) {
+				recorderBootstrapScript.dataset.sapUiLanguage = appBootstrapScript.dataset.sapUiLanguage;
+			});
+		}
+		if (appBootstrapScript.dataset.sapUiConfig) {
+			appBootstrapScript.dataset.sapUiConfig.split(",").forEach(function (sConfig) {
+				if (sConfig.startsWith("language:")) {
+					_pollForRecorderBootstrap(function (recorderBootstrapScript) {
+						recorderBootstrapScript.dataset.sapUiConfig = recorderBootstrapScript.dataset.sapUiConfig ?
+						recorderBootstrapScript.dataset.sapUiConfig + "," + sConfig : sConfig;
+					});
+				}
+			});
+		}
+		if (window["sap-ui-config"].language) {
+			window.communicationWindows.testRecorder["sap-ui-config"] = window.communicationWindows.testRecorder["sap-ui-config"] || {};
+			window.communicationWindows.testRecorder["sap-ui-config"].language = window["sap-ui-config"].language;
+		}
+	}
+
+	function _pollForRecorderBootstrap(fnDone) {
+		var recorderBootstrapScript = window.communicationWindows.testRecorder.document.getElementById("sap-ui-bootstrap");
+		if (recorderBootstrapScript) {
+			fnDone(recorderBootstrapScript);
+		} else {
+			setTimeout(function () {
+				_pollForRecorderBootstrap(fnDone);
+			}, 10);
+		}
 	}
 
 	oUIContextInjector = new UIContextInjector();
