@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/mdc/Control",
@@ -308,21 +309,30 @@ sap.ui.define([
 		});
 
 		var _onSelectionMode = function(vValue) {
-			this.oChartPromise.then(function (oChart) {
+
+			if (!this.oChartPromise) {
+				return;
+			}
+
+			this.oChartPromise.then(function(oChart) {
+
 				if (this.bIsDestroyed) {
 					return;
 				}
+
 				vValue = vValue || this.getSelectionMode();
 				oChart.setSelectionMode(vValue);
+
 				if (vValue !== "NONE") {
 					this._prepareSelection();
 				}
+
 			}.bind(this));
 		};
 
 		FilterIntegrationMixin.call(Chart.prototype);
 
-		Chart.prototype.init = function () {
+		Chart.prototype.init = function() {
 			this._oObserver = new ManagedObjectObserver(this.update.bind(this));
 			this._oAdaptationController = null;
 
@@ -337,7 +347,6 @@ sap.ui.define([
 
 			this._oManagedObjectModel = new ManagedObjectModel(this);
 			this.setModel(this._oManagedObjectModel, "$mdcChart");
-
 			Control.prototype.init.apply(this, arguments);
 
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -406,7 +415,8 @@ sap.ui.define([
 
 				return this.getControlDelegate().fetchProperties(this);
 			}.bind(this))
-			.then(function (aProperties) {
+
+			.then(function retrieveAdaptationController(aProperties) {
 				return this.retrieveAdaptationController().then(function () {
 					return aProperties;
 				});
@@ -419,7 +429,6 @@ sap.ui.define([
 				}
 
 				ToolbarHandler.createToolbar(this, aActions);
-				this._createDrillBreadcrumbs();
 
 				var mItems = {};
 				aProperties.forEach(function(oProperty) {
@@ -427,6 +436,11 @@ sap.ui.define([
 				});
 
 				return this._createInnerChart(mSettings, mItems);
+			}.bind(this))
+
+			.then(function createDrillBreadcrumbs(oInnerChart) {
+				this._createDrillBreadcrumbs();
+				return oInnerChart;
 			}.bind(this))
 
 			.catch(function applySettingsHandleException(oError) {
@@ -627,8 +641,10 @@ sap.ui.define([
 		};
 
 		Chart.prototype.setSelectionMode = function (vValue) {
+			this.setProperty("selectionMode", vValue, true);
+			vValue = this.getSelectionMode();
 			_onSelectionMode.call(this, vValue);
-			return this.setProperty("selectionMode", vValue, true);
+			return this;
 		};
 
 		/**
@@ -793,8 +809,8 @@ sap.ui.define([
 					"sap/ui/mdc/chart/DrillStackHandler"
 				], function(DrillStackHandlerLoaded) {
 					DrillStackHandler = DrillStackHandlerLoaded;
-					DrillStackHandler.createDrillBreadcrumbs(this).then(function() {
-						resolve();
+					DrillStackHandler.createDrillBreadcrumbs(this).then(function(oDrillBreadcrumbs) {
+						resolve(oDrillBreadcrumbs);
 					});
 				}.bind(this));
 			}.bind(this));
@@ -966,7 +982,6 @@ sap.ui.define([
 			if (DrillStackHandler && this.getAggregation("_breadcrumbs")) {
 				DrillStackHandler._updateDrillBreadcrumbs(this, this.getAggregation("_breadcrumbs"));
 			}
-
 		};
 
 		Chart.prototype._updateSemanticalPattern = function (oChart, aVisibleMeasures, mDataPoints) {
