@@ -14,7 +14,7 @@
 			showSideContent="false"
 			breakpointChanged="updateToggleButtonState">
 			<l:mainContent>
-				<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true">
+				<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" upperCaseAnchorBar="false">
 					<headerTitle>
 						<ObjectPageHeader id="headerForTest"
 										  objectTitle="Denise Smith"

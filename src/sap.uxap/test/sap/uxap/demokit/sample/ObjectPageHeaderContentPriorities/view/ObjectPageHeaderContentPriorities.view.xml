@@ -4,7 +4,7 @@
 	xmlns:m="sap.m"
 	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" upperCaseAnchorBar="false">
 		<headerTitle>
 				<ObjectPageDynamicHeaderTitle>
 					<expandedHeading>

@@ -8,7 +8,8 @@
 					  enableLazyLoading="false"
 					  showTitleInHeaderContent="true"
 					  showEditHeaderButton="true"
-					  editHeaderButtonPress="handleEditBtnPress">
+					  editHeaderButtonPress="handleEditBtnPress"
+					  upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  objectTitle="Denise Smith"

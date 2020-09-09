@@ -3,7 +3,7 @@
 	xmlns:m="sap.m"
 	xmlns:blockcolor="sap.uxap.sample.SharedBlocks"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="Section sample">
 			</ObjectPageHeader>

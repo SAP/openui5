@@ -6,7 +6,7 @@
 	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 	controllerName="sap.uxap.sample.ProfileObjectPageHeader.controller.ProfileObjectPageHeader"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
 							  objectTitle="Rowan Atkinson"

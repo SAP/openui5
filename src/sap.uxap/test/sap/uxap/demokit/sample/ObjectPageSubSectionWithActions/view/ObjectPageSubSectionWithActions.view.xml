@@ -1,7 +1,7 @@
 <mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.uxap"
 		   xmlns:blockcolor="sap.uxap.sample.SharedBlocks">
 
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="Action buttons sample"/>
 		</headerTitle>

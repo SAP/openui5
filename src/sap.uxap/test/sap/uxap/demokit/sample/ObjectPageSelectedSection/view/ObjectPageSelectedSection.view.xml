@@ -12,7 +12,8 @@
 		enableLazyLoading="true"
 		useIconTabBar="true"
 		showTitleInHeaderContent="true"
-		selectedSection="personal">
+		selectedSection="personal"
+		upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>

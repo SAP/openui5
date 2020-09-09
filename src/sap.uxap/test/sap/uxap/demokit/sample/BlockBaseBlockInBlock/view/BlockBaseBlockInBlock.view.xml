@@ -3,7 +3,7 @@
 		   xmlns="sap.uxap"
 		>
 
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="Block in Block"/>
 		</headerTitle>

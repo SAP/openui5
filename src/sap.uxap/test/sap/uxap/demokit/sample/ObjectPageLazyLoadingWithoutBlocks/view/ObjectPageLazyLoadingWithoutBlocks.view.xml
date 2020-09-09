@@ -5,7 +5,7 @@
 		   controllerName="sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks.controller.ObjectPageLazyLoadingWithoutBlocks"
 		   height="100%"
 >
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true">
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<heading>

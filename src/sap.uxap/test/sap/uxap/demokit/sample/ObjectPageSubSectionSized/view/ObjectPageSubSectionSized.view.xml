@@ -6,7 +6,8 @@
 	controllerName="sap.uxap.sample.ObjectPageSubSectionSized.controller.ObjectPageSubSectionSize">
 	<ObjectPageLayout id="ObjectPageLayout"
 		useTwoColumnsForLargeScreen="{ConfigModel>/useTwoColumnsForLargeScreen}"
-		subSectionLayout="{ConfigModel>/subSectionLayout}">
+		subSectionLayout="{ConfigModel>/subSectionLayout}"
+		upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="Subsection with blocks using column layout">
 				<actions>

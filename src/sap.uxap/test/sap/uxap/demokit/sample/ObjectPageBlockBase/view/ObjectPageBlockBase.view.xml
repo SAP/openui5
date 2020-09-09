@@ -5,7 +5,7 @@
 		xmlns:blockcolor="sap.uxap.sample.SharedBlocks"
 		controllerName="sap.uxap.sample.ObjectPageBlockBase.controller.ObjectPageBlockBase"
 		>
-	<ObjectPageLayout id="ObjectPageLayout" subSectionLayout="{ConfigModel>/subSectionLayout}">
+	<ObjectPageLayout id="ObjectPageLayout" subSectionLayout="{ConfigModel>/subSectionLayout}" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="ObjectPage BlockBase">
 				<actions>

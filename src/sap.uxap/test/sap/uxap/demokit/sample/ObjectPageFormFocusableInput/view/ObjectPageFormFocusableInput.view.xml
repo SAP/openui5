@@ -7,7 +7,7 @@
 	xmlns:m="sap.m"
 	controllerName="sap.uxap.sample.ObjectPageFormFocusableInput.controller.ObjectPageFormFocusableInput"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<breadcrumbs>

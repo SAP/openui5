@@ -3,7 +3,7 @@
 	xmlns:m="sap.m"
 	xmlns:sample="sap.uxap.sample.AnchorBar.controller.blocks"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<heading>

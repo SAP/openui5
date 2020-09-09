@@ -11,7 +11,8 @@
 	<ObjectPageLayout id="ObjectPageLayout"
 		enableLazyLoading="true"
 		useIconTabBar="true"
-		showTitleInHeaderContent="true">
+		showTitleInHeaderContent="true"
+		upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>
