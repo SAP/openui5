@@ -1097,20 +1097,31 @@ sap.ui.define(
             },
 
             /**
-             * Creates a matcher that checks whether the bound context has the given properties.
-             * @param {string} sModelName the name of the model to get the binding context for
+             * Creates a matcher that checks whether the bound context or model has the given properties.
+             * @param {string} [sModelName] the name of the model to get the binding context for
              * @param {object} oProperties the property-path map with expected values
              * @returns {function} the matcher function checks all path in the properties object against the binding context
              * @public
              * @static
              */
             bindingProperties: function (sModelName, oProperties) {
+                if (!oProperties) {
+                    oProperties = sModelName;
+                    sModelName = undefined;
+                }
                 return function (oControl) {
-                    var oContext = oControl.getBindingContext(sModelName),
+                    var oContext = oControl.getBindingContext(sModelName) || oControl.getModel(sModelName),
                         sKey,
-                        vValue;
+                        vValue,
+                        bUseAbsolutePath = false;
+                    if (!oContext) {
+                        return false;
+                    }
+                    if (oContext.isA("sap.ui.model.Model")) {
+                        bUseAbsolutePath = true;
+                    }
                     for (sKey in oProperties) {
-                        vValue = oContext.getProperty(sKey);
+                        vValue = oContext.getProperty(bUseAbsolutePath ? "/" + sKey : sKey);
                         if (vValue !== oProperties[sKey]) {
                             return false;
                         }
