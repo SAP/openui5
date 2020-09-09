@@ -12,15 +12,21 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return function waitForP13nButtonWithParentAndIcon(oParent, sIcon, oSettings) {
+	return function waitForP13nButtonWithParentAndIcon(oSettings) {
+		var aMatchers = [];
+		if (oSettings.parent) {
+			aMatchers.push(new Ancestor(oSettings.parent, false));
+		}
+		if (oSettings.icon) {
+			aMatchers.push(
+				new Properties({
+					icon: oSettings.icon
+				})
+			);
+		}
 		return this.waitFor({
 			controlType: "sap.m.Button",
-			matchers: [
-				new Ancestor(oParent, false),
-				new Properties({
-					icon: sIcon
-				})
-			],
+			matchers: aMatchers,
 			actions: oSettings.actions,
 			errorMessage: oSettings.errorMessage,
 			success: function(aButtons) {

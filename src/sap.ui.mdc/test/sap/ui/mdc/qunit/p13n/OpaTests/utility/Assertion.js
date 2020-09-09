@@ -318,7 +318,8 @@ sap.ui.define([
 
 		iShouldSeeP13nFilterItemsInPanel: function(aP13nFilterItems, sGroupName){
 
-			return waitForPanelInP13n.call(this, sGroupName, {
+			return waitForPanelInP13n.call(this, {
+				groupName: sGroupName,
 				modal: true,
 				success: function(oPanel){
 					aP13nFilterItems.forEach(function(oP13nFilterItem, iIndex){

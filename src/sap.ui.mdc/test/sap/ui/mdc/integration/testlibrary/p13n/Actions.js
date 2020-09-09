@@ -34,7 +34,9 @@ sap.ui.define([
 			title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_GROUP"),
 			liveMode: bLiveMode,
 			success: function(oDialog) {
-				waitForListItemInDialogWithLabel.call(this, oDialog, sText, {
+				waitForListItemInDialogWithLabel.call(this, {
+					dialog: oDialog,
+					label: sText,
 					listItemType: "sap.ui.mdc.filterbar.p13n.FilterGroupLayout",
 					success: function(oColumnListItem) {
 						var bColumnListItemSelected = oColumnListItem.isSelected();
@@ -89,7 +91,9 @@ sap.ui.define([
 				title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_GROUP"),
 				liveMode: true,
 				success: function(oDialog) {
-					waitForListItemInDialogWithLabel.call(this, oDialog, sText, {
+					waitForListItemInDialogWithLabel.call(this, {
+						dialog: oDialog,
+						label: sText,
 						listItemType: "sap.ui.mdc.filterbar.p13n.FilterGroupLayout",
 						actions: new Press(),
 						success: function onColumnListItemPressed(oColumnListItem) {
@@ -101,7 +105,8 @@ sap.ui.define([
 		},
 
 		iToggleFilterPanel: function(sGroupName, bModal) {
-			return waitForPanelInP13n.call(this, sGroupName, {
+			return waitForPanelInP13n.call(this, {
+				groupName: sGroupName,
 				modal: !!bModal,
 				success: function(oPanel) {
 					Opa5.assert.ok(oPanel, "Groupable Panel found in p13n Dialog");
@@ -213,7 +218,9 @@ sap.ui.define([
 		},
 
 		iPressDialogOk: function(sTitle) {
-			return waitForButtonInDialog.call(this, sTitle, true, {
+			return waitForButtonInDialog.call(this, {
+				dialogTitle: sTitle,
+				buttonText: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.OK"),
 				actions: new Press(),
 				success: function(oButton){
 					Opa5.assert.ok(true, 'The Button "Ok" was pressed');
@@ -223,7 +230,9 @@ sap.ui.define([
 		},
 
 		iPressDialogCancel: function(sTitle) {
-			return waitForButtonInDialog.call(this, sTitle, false, {
+			return waitForButtonInDialog.call(this, {
+				dialogTitle: sTitle,
+				buttonText: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.Cancel"),
 				actions: new Press(),
 				success: function(oButton){
 					Opa5.assert.ok(true, 'The Button "Cancel" was pressed');

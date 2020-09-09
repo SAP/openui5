@@ -115,7 +115,8 @@ sap.ui.define([
 		},
 
 		iSelectVariant: function(sVariantName) {
-			waitForVariantManagerItem.call(this, sVariantName, {
+			waitForVariantManagerItem.call(this, {
+				itemText: sVariantName,
 				actions: new Press()
 			});
 		}

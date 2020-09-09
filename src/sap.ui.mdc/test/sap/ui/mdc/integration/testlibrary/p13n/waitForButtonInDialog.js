@@ -5,18 +5,19 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties",
-	"./waitForP13nDialog",
-	"sap/ui/mdc/integration/testlibrary/Util"
+	"./waitForP13nDialog"
 ], function(
 	Opa5,
 	Ancestor,
 	Properties,
-	waitForP13nDialog,
-	TestUtil
+	waitForP13nDialog
 ) {
 	"use strict";
 
-	return function waitForButtonInDialog(sTitle, bConfirm, oSettings) {
+	return function waitForButtonInDialog(oSettings) {
+
+		var sDialogTitle = oSettings.dialogTitle;
+		var sButtonText = oSettings.buttonText;
 
 		var oDefaultSettings = {
 			controlType: "sap.m.Button"
@@ -24,7 +25,8 @@ sap.ui.define([
 
 		oSettings = Object.assign(oDefaultSettings, oSettings);
 
-		return waitForP13nDialog.call(this, sTitle, {
+		return waitForP13nDialog.call(this, {
+			dialogTitle: sDialogTitle,
 			liveMode: false,
 			success: function(oP13nDialog) {
 				this.waitFor({
@@ -32,14 +34,12 @@ sap.ui.define([
 					matchers: [
 						new Ancestor(oP13nDialog),
 						new Properties({
-							text: bConfirm ?
-								TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.OK") :
-								TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.Cancel")
+							text: sButtonText
 						})
 					],
 					actions: oSettings.actions,
 					success: function(aButtons){
-						Opa5.assert.strictEqual(aButtons.length, 1, 'The Button "' + bConfirm ? TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.OK") : TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.Cancel") + '" was found');
+						Opa5.assert.strictEqual(aButtons.length, 1, 'The Button "' + sButtonText  + '" was found');
 						var oButton = aButtons[0];
 
 						if (typeof oSettings.success === "function") {
