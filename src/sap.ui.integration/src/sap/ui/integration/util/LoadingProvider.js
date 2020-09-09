@@ -3,10 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Core",
 	"sap/f/cards/loading/GenericPlaceholder",
 	"sap/f/cards/loading/ListPlaceholder"
-], function (ManagedObject, Core, GenericPlaceholder, ListPlaceholder) {
+], function (ManagedObject, GenericPlaceholder, ListPlaceholder) {
 	"use strict";
 
 	/**
@@ -51,16 +50,16 @@ sap.ui.define([
 	};
 
 	LoadingProvider.prototype.getDataProviderJSON = function () {
-	   return  this._bJSON;
+		return this._bJSON;
 	};
 
-	LoadingProvider.prototype.setLoading =   function (bLoading) {
+	LoadingProvider.prototype.setLoading = function (bLoading) {
 		this._bLoading = bLoading;
 
 		return this._bLoading;
 	};
 
-	LoadingProvider.prototype.getLoadingState =   function () {
+	LoadingProvider.prototype.getLoadingState = function () {
 
 		return this._bLoading;
 	};
@@ -85,16 +84,17 @@ sap.ui.define([
 	};
 
 	LoadingProvider.prototype.createContentPlaceholder = function (oConfiguration, sType) {
-			switch (sType) {
-				case "List":
-					this._oContentPlaceholder =  new ListPlaceholder({
-						maxItems: oConfiguration.maxItems ? parseInt(oConfiguration.maxItems) : 2,
-						item: oConfiguration.item
-					});
+		switch (sType) {
+			case "List":
+				this._oContentPlaceholder = new ListPlaceholder({
+					maxItems: oConfiguration.maxItems ? parseInt(oConfiguration.maxItems) : 2,
+					item: oConfiguration.item
+				});
 				break;
-				default:
-					this._oContentPlaceholder = new GenericPlaceholder();
-			}
+
+			default:
+				this._oContentPlaceholder = new GenericPlaceholder();
+		}
 
 		return this._oContentPlaceholder;
 	};

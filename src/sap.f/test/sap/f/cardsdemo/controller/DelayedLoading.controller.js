@@ -10,6 +10,11 @@ sap.ui.define([
 
 	var aSamples = [
 		{
+			"key": "filter",
+			"columns": 6,
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/filterManifest.json"
+		},
+		{
 			"key": "list1",
 			"columns": 6,
 			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifest1.json"

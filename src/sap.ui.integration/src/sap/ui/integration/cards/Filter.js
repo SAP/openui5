@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Select",
 	"sap/ui/core/ListItem",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/util/LoadingProvider"
 ], function (
 	Control,
 	Core,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Text,
 	Select,
 	ListItem,
-	JSONModel
+	JSONModel,
+	LoadingProvider
 ) {
 	"use strict";
 
@@ -64,7 +66,15 @@ sap.ui.define([
 		renderer: {
 			apiVersion: 2,
 			render: function (oRM, oFilter) {
-				oRM.openStart("div", oFilter).openEnd();
+				var bLoading = oFilter.isLoading();
+
+				oRM.openStart("div", oFilter).class("sapFCardFilter");
+
+				if (bLoading) {
+					oRM.class("sapFCardFilterLoading");
+				}
+
+				oRM.openEnd();
 
 				if (oFilter._hasError()) {
 					oRM.renderControl(oFilter._getErrorMessage());
@@ -78,6 +88,8 @@ sap.ui.define([
 	});
 
 	Filter.prototype.init = function () {
+		this._oLoadingProvider = new LoadingProvider();
+
 		this.attachEventOnce("_dataReady", function () {
 			this.fireEvent("_ready");
 		});
@@ -88,6 +100,15 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 			this._oDataProvider = null;
 		}
+
+		if (this._oLoadingProvider) {
+			this._oLoadingProvider.destroy();
+			this._oLoadingProvider = null;
+		}
+	};
+
+	Filter.prototype.isLoading = function () {
+		return !this._oLoadingProvider.getDataProviderJSON() && this._oLoadingProvider.getLoadingState();
 	};
 
 	Filter.prototype._getSelect = function () {
@@ -126,6 +147,12 @@ sap.ui.define([
 
 	Filter.prototype._onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
+		this._oLoadingProvider.setLoading(false);
+		this.invalidate();
+	};
+
+	Filter.prototype._onDataRequested = function () {
+		this._oLoadingProvider.createLoadingState(this._oDataProvider);
 	};
 
 	Filter.prototype._updateModel = function (oData) {
@@ -133,6 +160,11 @@ sap.ui.define([
 		this._getSelect().setSelectedKey(this.getValue());
 	};
 
+	/**
+	 * Uses the Card's own DataProvider and the provided oDataConfig object to populate the Filter's data.
+	 * @private
+	 * @param {object} oDataConfig Data configuration
+	 */
 	Filter.prototype._setDataConfiguration = function (oDataConfig) {
 		if (!oDataConfig) {
 			this.fireEvent("_dataReady");
@@ -149,6 +181,10 @@ sap.ui.define([
 		// If a data provider is created: use own model.
 		this.setModel(new JSONModel());
 
+		this._oDataProvider.attachDataRequested(function () {
+			this._onDataRequested();
+		}.bind(this));
+
 		this._oDataProvider.attachDataChanged(function (oEvent) {
 			this._updateModel(oEvent.getParameter("data"));
 			this._onDataRequestComplete();
@@ -162,6 +198,12 @@ sap.ui.define([
 		this._oDataProvider.triggerDataUpdate();
 	};
 
+	/**
+	 * Constructs a Select control configured with the Filter's properties.
+	 *
+	 * @private
+	 * @returns {sap.m.Select} configured instance
+	 */
 	Filter.prototype._createSelect = function () {
 		var oSelect = new Select(),
 			sItemTemplateKey,

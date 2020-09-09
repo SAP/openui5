@@ -412,4 +412,19 @@ describe("sap.f.Card", function () {
 		navigateBack();
 	});
 
+	it("Filters", function () {
+		navigateTo("Filters");
+
+		takePictureOfElement({
+			control: {
+				viewNamespace: "sap.f.cardsdemo.view.",
+				viewName: "Filters",
+				interaction: "root",
+				id: "card"
+			}
+		}, "18_Filters");
+
+		navigateBack();
+	});
+
 });

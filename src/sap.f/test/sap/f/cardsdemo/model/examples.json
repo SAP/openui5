@@ -147,7 +147,7 @@
 	},
 	{
 		"title": "Manifest Ready Event",
-		"description": "Example  showing the manifestReady event",
+		"description": "Example showing the manifestReady event",
 		"route": "manifestReady",
 		"group": "Other Card Examples"
 	},
@@ -161,6 +161,12 @@
 		"title": "Preview",
 		"description": "To be used only inside the designtime",
 		"route": "preview",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Filters",
+		"description": "Example with cards using Filters",
+		"route": "filters",
 		"group": "Other Card Examples"
 	}
 ]
