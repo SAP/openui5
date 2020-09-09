@@ -5,86 +5,92 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/m/CustomListItem",
     "sap/m/Toolbar",
-    "sap/ui/base/Event"
-], function(GroupPanelBase, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event) {
+    "sap/ui/base/Event",
+    "sap/m/Text",
+    "sap/m/List"
+], function(GroupPanelBase, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List) {
     "use strict";
+
+    var oMockExisting = {
+        items: [
+            {
+                name: "key1"
+            },
+            {
+                name: "key2"
+            },
+            {
+                name: "key3"
+            }
+        ],
+        sorters: [
+            {
+                name: "key1",
+                descending: true
+            }
+        ],
+        filter: {
+            key2: [
+                {
+                    operator: "EQ",
+                    values: [
+                        "Test"
+                    ]
+                }
+            ]
+
+        }
+    };
+
+    var aInfoData = [
+        {
+            name: "key1",
+            label: "Field 1",
+            group: "G1"
+        },
+        {
+            name: "key2",
+            label: "Field 2",
+            group: "G1"
+        },
+        {
+            name: "key3",
+            label: "Field 3",
+            group: "G1"
+        },
+        {
+            name: "key4",
+            label: "Field 4",
+            group: "G2"
+        },
+        {
+            name: "key5",
+            label: "Field 5",
+            group: "G2"
+        },
+        {
+            name: "key6",
+            label: "Field 6",
+            group: "G2",
+            tooltip: "Some Tooltip"
+        }
+    ];
 
     QUnit.module("API Tests", {
         beforeEach: function(){
             this.sDefaultGroup = "BASIC";
-            this.oExistingMock = {
-                items: [
-                    {
-                        name: "key1"
-                    },
-                    {
-                        name: "key2"
-                    },
-                    {
-                        name: "key3"
-                    }
-                ],
-                sorters: [
-                    {
-                        name: "key1",
-                        descending: true
-                    }
-                ],
-                filter: {
-                    key2: [
-                        {
-                            operator: "EQ",
-                            values: [
-                                "Test"
-                            ]
-                        }
-                    ]
-
-                }
-            };
-            this.aMockInfo = [
-                {
-                    name: "key1",
-                    label: "Field 1",
-                    group: "G1"
-                },
-                {
-                    name: "key2",
-                    label: "Field 2",
-                    group: "G1"
-                },
-                {
-                    name: "key3",
-                    label: "Field 3",
-                    group: "G1"
-                },
-                {
-                    name: "key4",
-                    label: "Field 4",
-                    group: "G2"
-                },
-                {
-                    name: "key5",
-                    label: "Field 5",
-                    group: "G2"
-                },
-                {
-                    name: "key6",
-                    label: "Field 6",
-                    group: "G2",
-                    tooltip: "Some Tooltip"
-                }
-            ];
+            this.oExistingMock = oMockExisting;
+            this.aMockInfo = aInfoData;
             this.oPanel = new GroupPanelBase({
                 footerToolbar: new Toolbar("ID_TB1",{})
             });
 
             this.oPanel.setItemFactory(function(){
                 return new CustomListItem({
-                    selected: "{selected}",
-                    visible: "{visibleInDialog}"
+                    selected: "{" + this.oPanel.P13N_MODEL + ">selected}",
+                    visible: "{" + this.oPanel.P13N_MODEL + ">visibleInDialog}"
                 });
-            });
+            }.bind(this));
 
             this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
 
@@ -103,11 +109,10 @@ sap.ui.define([
     QUnit.test("check instantiation", function(assert){
         assert.ok(this.oPanel, "Panel created");
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
-        assert.ok(this.oPanel.getModel().isA("sap.ui.model.json.JSONModel"), "Model has been set");
+        assert.ok(this.oPanel.getModel(this.oPanel.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Model has been set");
     });
 
-    QUnit.test("Check Outer and Inner List creation", function(assert){
-
+    var fnCheckListCreation = function(assert) {
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
 
         var oOuterList = this.oPanel._oListControl;
@@ -123,6 +128,10 @@ sap.ui.define([
         var oSecondInnerList = oOuterList.getItems()[1].getContent()[0].getContent()[0];
         assert.equal(oSecondInnerList.getItems().length, 3, "Second inner list contains 3 items");
         assert.ok(oSecondInnerList.getItems()[0].isA("sap.m.CustomListItem"), "Item matches provided factory function");
+    };
+
+    QUnit.test("Check Outer and Inner List creation", function(assert){
+        fnCheckListCreation.call(this, assert);
     });
 
     QUnit.test("Check Search implementation", function(assert){
@@ -250,6 +259,97 @@ sap.ui.define([
 			var oInnerList = oPanel.getContent()[0];
             assert.equal(oInnerList.getMode(), "MultiSelect", "List does allow selection");
 		});
+    });
+
+    QUnit.test("Check 'itemFactory' model propagation", function(assert){
+
+        var oSecondModel = new JSONModel({
+            data: [
+                {
+                    key: "k1",
+                    text: "Some Test Text"
+                }
+            ]
+        });
+
+        var oTestFactory = new List({
+            items: {
+                path: "/data",
+                name: "key",
+                template: new CustomListItem({
+                    content: new Text({
+                        text: "{text}"
+                    })
+                }),
+                templateShareable: false
+            }
+        });
+
+        oTestFactory.setModel(oSecondModel);
+
+        this.oPanel.setItemFactory(function(){
+
+            return new CustomListItem({
+                selected: "{" + this.oPanel.P13N_MODEL + ">selected}",
+                content: oTestFactory.clone()
+            });
+
+        }.bind(this));
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        var aGroups = this.oPanel._oListControl.getItems();
+        var oFirstGroup = aGroups[0].getContent()[0];
+        var oFirstList = oFirstGroup.getContent()[0];
+
+        //List created via template 'oTestFactory'
+        var oCustomList = oFirstList.getItems()[0].getContent()[0];
+
+        assert.equal(oCustomList.getItems().length, 1, "Custom template list has one item (oSecondModel, data)");
+        assert.deepEqual(oCustomList.getModel(), oSecondModel, "Manual model propagated");
+        assert.ok(oCustomList.getModel(this.oPanel.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Inner panel p13n model propagated");
+
+        assert.equal(oCustomList.getItems()[0].getContent()[0].getText(), "Some Test Text", "Custom binding from outside working in factory");
+
+    });
+
+    QUnit.module("'GroupPanelBase' instance with a custom model name",{
+        beforeEach: function() {
+            this.oPanel = new GroupPanelBase();
+
+            this.oPanel.P13N_MODEL = "$My_very_own_model";
+
+            this.oExistingMock = oMockExisting;
+            this.aMockInfo = aInfoData;
+            this.oPanel.setItemFactory(function(){
+                return new CustomListItem({
+                    //Check both ways, one time via P13N_MODEL, one time hard coded
+                    selected: "{" + this.oPanel.P13N_MODEL + ">selected}",
+                    visible: "{" + "$My_very_own_model" + ">visibleInDialog}"
+                });
+            }.bind(this));
+
+            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+
+            this.oPanel.placeAt("qunit-fixture");
+            sap.ui.getCore().applyChanges();
+
+        },
+        afterEach: function() {
+            this.oPanel.destroy();
+        }
+    });
+
+    QUnit.test("Instantiate panel and check model", function(assert){
+        assert.ok(this.oPanel, "Panel created");
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        assert.ok(this.oPanel.getP13nModel().isA("sap.ui.model.json.JSONModel"), "Model has been set");
+        assert.ok(!this.oPanel.getModel("$p13n"), "The default $p13n model has not been set");
+        assert.ok(this.oPanel.getModel("$My_very_own_model").isA("sap.ui.model.json.JSONModel"), "Model has been set");
+    });
+
+    QUnit.test("Check item creation with a custom model", function(assert){
+        fnCheckListCreation.call(this, assert);
     });
 
 });

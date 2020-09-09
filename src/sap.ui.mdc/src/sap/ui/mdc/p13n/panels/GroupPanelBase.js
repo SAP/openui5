@@ -159,8 +159,8 @@ sap.ui.define([
 
 		var oListTemplate = new List({
 			selectionChange: function(oBindingInfo) {
-				var sPath = oBindingInfo.getParameter("listItem").getBindingContext().sPath;
-				var oItem = this.getModel().getProperty(sPath);
+				var sPath = oBindingInfo.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
+				var oItem = this.getP13nModel().getProperty(sPath);
 				this.fireChange({
 					reason: oItem.selected ? "Add" : "Remove",
 					item: oItem
@@ -169,19 +169,21 @@ sap.ui.define([
 			showSeparators: "None",
 			mode: this.getAllowSelection() ? "MultiSelect" : "None",
 			items: {
-				path: "items",
+				path: this.P13N_MODEL + ">items",
 				key: "name",
 				factory: fnFactory
 			}
 		});
 
+		var P13N_MODEL = this.P13N_MODEL;
+
 		var oPanelTemplate = new Panel({
 			expandable: true,
 			expanded: {
-				path: "group",
+				path: this.P13N_MODEL + ">group",
 				formatter: function(){
-					if (this.getBindingContext()){
-						var bExpanded = bExpandFirstGroup && (this.getBindingContext().sPath.split("/")[2] === "0");
+					if (this.getBindingContext(P13N_MODEL)){
+						var bExpanded = bExpandFirstGroup && (this.getBindingContext(P13N_MODEL).sPath.split("/")[2] === "0");
 						return bExpanded;
 					} else {
 						return false;
@@ -193,7 +195,7 @@ sap.ui.define([
 				new Toolbar({
 					content: [
 						new Label({
-							text: "{groupLabel}",
+							text: "{" + this.P13N_MODEL + ">groupLabel}",
 							design: "Bold"
 						})
 					]
@@ -215,7 +217,7 @@ sap.ui.define([
 		var oInnerTemplate = bGroupingEnabled ? oPanelTemplate : oListTemplate;
 
 		var oP13nCellTemplate = new CustomListItem({
-			visible: "{groupVisible}",
+			visible: "{" + this.P13N_MODEL + ">groupVisible}",
 			content: [
 				oInnerTemplate
 			]
@@ -252,8 +254,8 @@ sap.ui.define([
 	GroupPanelBase.prototype.setGroupExpanded = function(sGroup, bExpand){
 		this._oListControl.getItems().forEach(function(oOuterItem){
 			var oPanel = oOuterItem.getContent()[0];
-			var sBindingPath = oPanel.getBindingContext().sPath;
-			var oItem = this.getModel().getProperty(sBindingPath);
+			var sBindingPath = oPanel.getBindingContext(this.P13N_MODEL).sPath;
+			var oItem = this.getP13nModel().getProperty(sBindingPath);
 			if (oItem.group === sGroup) {
 				oPanel.setExpanded(bExpand);
 			}
@@ -267,12 +269,12 @@ sap.ui.define([
 
 	GroupPanelBase.prototype._togglePanelVisibility = function(oPanel) {
 		var oInnerList = oPanel.getContent()[0];
-		var sPanelBindingContextPath = oPanel.getBindingContext().sPath;
+		var sPanelBindingContextPath = oPanel.getBindingContext(this.P13N_MODEL).sPath;
 
-		var oItem = this.getModel().getProperty(sPanelBindingContextPath);
+		var oItem = this.getP13nModel().getProperty(sPanelBindingContextPath);
 		oItem.groupVisible = oInnerList.getVisibleItems().length < 1 ? false : true;
 
-		this.getModel().setProperty(sPanelBindingContextPath, oItem);
+		this.getP13nModel().setProperty(sPanelBindingContextPath, oItem);
 	};
 
 	GroupPanelBase.prototype._onSearchFieldLiveChange = function (oEvent) {
@@ -331,7 +333,7 @@ sap.ui.define([
 
 				if (oInnerItem.getSelected()){
 					var sPath = oInnerItem.getBindingContextPath();
-					var sKey = this.getModel().getProperty(sPath).name;
+					var sKey = this.getP13nModel().getProperty(sPath).name;
 
 					aSelectedItems.push(sKey);
 				}
@@ -360,7 +362,7 @@ sap.ui.define([
     GroupPanelBase.prototype._bindListItems = function() {
 
 		var mBindingInfo = {
-			path: "/itemsGrouped",
+			path: this.P13N_MODEL + ">/itemsGrouped",
 			key: "name",
 			templateShareable: false,
 			template: this.getTemplate().clone()

@@ -6,7 +6,7 @@ sap.ui.define([
 
 	this.oBasePanel = new BasePanel();
 	var oTemplate = new StandardListItem({
-		title: "{label}"
+		title: "{" + this.oBasePanel.P13N_MODEL  + ">label}"
 	});
 
 	var oModel = new JSONModel({
@@ -50,6 +50,9 @@ sap.ui.define([
 	QUnit.test("instantiate", function(assert) {
 		assert.ok(this.oBasePanel, "Panel has been instantiated");
 		assert.ok(this.oBasePanel._oListControl, "Inner table has been instantiated");
+
+		assert.ok(!this.oBasePanel.getModel(), "BasePanel does not create an undefined model");
+		assert.ok(this.oBasePanel.getP13nModel().isA("sap.ui.model.json.JSONModel"), "BasePanel creates a named model '$p13n' ");
 
 		// Check if columns have been created with correct text in header
 		var aColumns = this.oBasePanel._oListControl.getColumns();

@@ -31,40 +31,40 @@ sap.ui.define([
 			BasePanel.prototype.init.apply(this, arguments);
 
 			var oSortPanelTemplate = new ColumnListItem({
-				selected: "{isSorted}",
+				selected: "{" + this.P13N_MODEL + ">isSorted}",
 				cells: [
 					new VBox({
 						items: [
 							new Label({
 								design: {
-									path:"groupLabel",
+									path: this.P13N_MODEL + ">groupLabel",
 									formatter: function(sGroupLabel){
 										return sGroupLabel ? "Bold" : "Standard";
 									}
 								},
 								wrapping: true,
-								tooltip: "{tooltip}",
-								text: "{label}"
+								tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+								text: "{" + this.P13N_MODEL + ">label}"
 							}),
 							new Label({
 								visible: {
-									path: "groupLabel",
+									path: this.P13N_MODEL + ">groupLabel",
 									formatter: function(sGroupLabel){
 										return sGroupLabel ? true : false;
 									}
 								},
 								wrapping: true,
-								tooltip: "{tooltip}",
-								text: "{groupLabel}"
+								tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+								text: "{" + this.P13N_MODEL + ">groupLabel}"
 							})
 
 						]
 					}),
 					new Select("IDsortOrderSelect", {
 						width: "100%",
-						selectedKey: "{descending}",
+						selectedKey: "{" + this.P13N_MODEL + ">descending}",
 						change: [this.onChangeOfSortOrder, this],
-						enabled: "{isSorted}",
+						enabled: "{" + this.P13N_MODEL + ">isSorted}",
 						items: [
 							new Item({
 								key: false,
@@ -93,7 +93,7 @@ sap.ui.define([
 
 	SortPanel.prototype._updateModelItems = function() {
 		// Sort and update the model items to ensure selected ones, are at the top
-		var aFields = this.getModel().getProperty("/items");
+		var aFields = this.getP13nModel().getProperty("/items");
 		var aSelectedFields = [], aOtherFields = [];
 		aFields.forEach(function(oField) {
 			if (oField.isSorted) {
@@ -102,7 +102,7 @@ sap.ui.define([
 				aOtherFields.push(oField);
 			}
 		});
-		this.getModel().setProperty("/items", aSelectedFields.concat(aOtherFields));
+		this.getP13nModel().setProperty("/items", aSelectedFields.concat(aOtherFields));
 	};
 
 	SortPanel.prototype.onChangeOfSortOrder = function(oEvent) {
