@@ -28390,11 +28390,9 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		function checkMoreButton(sMoreText) {
-			var sText = that.oView.byId("listReport-trigger").getDomRef().innerText;
-
-			assert.strictEqual(sText.slice(sText.indexOf("[")), sMoreText, "check More: "
-				+ sMoreText);
+		function checkMoreButton(sExpected) {
+			assert.strictEqual(that.oView.byId("listReport-trigger").getDomRef().innerText
+				.replace(/\s/g, ""), "More" + sExpected, "check More button: " + sExpected);
 		}
 
 		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=2", {
@@ -28432,7 +28430,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "(3)");
 		}).then(function () {
-			checkMoreButton("[ 2 / 42 ]");
+			checkMoreButton("[2/42]");
 
 			that.expectChange("id", [""])
 				.expectRequest({
@@ -28449,7 +28447,7 @@ sap.ui.define([
 		}).then(function () {
 			var iBatch = bSort ? 4 : 3;
 
-			checkMoreButton("[ 2 / 43 ]");
+			checkMoreButton("[2/43]");
 
 			that.expectRequest({
 					batchNo : iBatch,
@@ -28475,7 +28473,7 @@ sap.ui.define([
 				that.waitForChanges(assert, "(5)")
 			]);
 		}).then(function () {
-			checkMoreButton("[ 2 / 42 ]");
+			checkMoreButton("[2/42]");
 		});
 	});
 });
