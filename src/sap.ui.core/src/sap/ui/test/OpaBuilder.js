@@ -689,7 +689,7 @@ sap.ui.define(
             vActions = aArguments[1];
             bDirect = aArguments[2];
             if (!_isOfType(vChildBuilderOrMatcher, OpaBuilder)) {
-                vChildBuilderOrMatcher = new OpaBuilder(this._getOpaInstance()).has(aArguments[0]);
+                vChildBuilderOrMatcher = new OpaBuilder(this.getOpaInstance()).has(aArguments[0]);
             }
             if (vActions) {
                 vChildBuilderOrMatcher.do(vActions);
@@ -764,22 +764,36 @@ sap.ui.define(
          */
         OpaBuilder.prototype.execute = function (oOpaInstance) {
             if (_isOfType(oOpaInstance, Opa5)) {
-                this._setOpaInstance(oOpaInstance);
+                this.setOpaInstance(oOpaInstance);
             }
 
-            return this._getOpaInstance().waitFor(this.build());
+            return this.getOpaInstance().waitFor(this.build());
         };
 
-        OpaBuilder.prototype._setOpaInstance = function (oOpaInstance) {
-            if (!_isOfType(oOpaInstance, Opa5)) {
+        /**
+         * Set the Opa5 instance to be used for {@link sap.ui.test.OpaBuilder#execute}.
+         * Please note that this function does not return the OpaBuilder instance and can therefore not be chained.
+         * Use the <code>oOpaInstance</code> argument of {@link sap.ui.test.OpaBuilder#create}, {@link sap.ui.test.OpaBuilder#constructor}
+         * or {@link sap.ui.test.OpaBuilder#execute} to provide the Opa5 instance within the builder chain.
+         * @param {sap.ui.test.Opa5} [oOpaInstance] the Opa5 instance to operate on
+         * @public
+         */
+        OpaBuilder.prototype.setOpaInstance = function (oOpaInstance) {
+            if (!_isOfType(oOpaInstance, Opa5, true)) {
                 throw new Error("Opa5 instance expected");
             }
             this._oOpaInstance = oOpaInstance;
         };
 
-        OpaBuilder.prototype._getOpaInstance = function () {
+        /**
+         * Get the Opa5 instance that will be used for {@link sap.ui.test.OpaBuilder#execute}.
+         * If no {sap.ui.test.Opa5} instance was set before, this function creates a new one lazily.
+         * @returns {sap.ui.test.Opa5} the Opa5 instance
+         * @public
+         */
+        OpaBuilder.prototype.getOpaInstance = function () {
             if (!_isOfType(this._oOpaInstance, Opa5)) {
-                this._setOpaInstance(new Opa5());
+                this.setOpaInstance(new Opa5());
             }
             return this._oOpaInstance;
         };
