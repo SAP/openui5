@@ -526,5 +526,7 @@ sap.ui.define([
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
 		Then.theVariantManagementIsDirty(false);
+
+		Then.iTeardownMyAppFrame();
 	});
 });
