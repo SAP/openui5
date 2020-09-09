@@ -58,6 +58,12 @@ sap.ui.define([
 				severity : "success",
 				transition : true
 			},
+			successFixAll : {
+				code : "ZUI5TEST/010",
+				message : "Fixed quantity to 2 EA",
+				severity : "success",
+				transition : true
+			},
 			system : {
 				code : "ZUI5TEST/006",
 				message : "System maintenance starts in 2 hours",
@@ -415,35 +421,36 @@ sap.ui.define([
 				/* Test Case III */
 				/* More responses in the aRegExpFixture! */
 				"SalesOrderSet('103')" : {
-					headers : getMessageHeader(undefined, oCurrentMessages.reset().add("order",
-						"ToLineItems(SalesOrderID='103',ItemPosition='050')/Quantity")),
+					headers : getMessageHeader(undefined, oCurrentMessages.reset()
+						.add("order", "ToLineItems(SalesOrderID='103',ItemPosition='010')/Quantity")
+						.add("order", "ToLineItems(SalesOrderID='103',ItemPosition='030')/Quantity")
+						.add("order", "ToLineItems(SalesOrderID='103',ItemPosition='050')/Quantity")
+					),
 					ifMatch : function (request) {
 						iTimesSaved = 0;
 						return true;
 					},
-					source : "Messages/TC3/SalesOrderSet.json"
+					source : "Messages/TC3/SalesOrderSet-0.json"
 				},
-				"POST SalesOrderItem_FixQuantity?ItemPosition='050'&SalesOrderID='103'" : {
+				"SalesOrder_FixQuantities?SalesOrderID='103'" : {
+					headers : getMessageHeader(undefined, oCurrentMessages.reset()
+						.add("successFixAll", "(SalesOrderID='103',ItemPosition='010')/Quantity")
+						.add("successFixAll", "(SalesOrderID='103',ItemPosition='030')/Quantity")
+						.add("successFixAll", "(SalesOrderID='103',ItemPosition='050')/Quantity")
+					),
 					ifMatch : increaseSaveCount.bind(),
 					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
 						function (aItems) {
-							aItems[4].Quantity = "2";
-						}, 4, 1)
-				},
-				"POST SalesOrderItem_FixAllQuantities?SalesOrderID='103'" : {
-					ifMatch : increaseSaveCount.bind(),
-					message :
-						{"d" : {
-							"SalesOrderItem_FixAllQuantities" : {
-								"__metadata" : {
-									"type" : "GWSAMPLE_BASIC.CT_String"
-								},
-							"String" : "OK"
-							}
-						}}
+							aItems.splice(3, 1);
+							aItems.splice(1, 1);
+							aItems.forEach(function (oItem) {
+								oItem.GrossAmount = "2261.00";
+								oItem.Quantity = "2";
+							});
+						})
 				},
 				"SalesOrderSet('103')?$select=ChangedAt,GrossAmount,SalesOrderID" : {
-					source : "Messages/TC3/SalesOrderSet.json"
+					source : "Messages/TC3/SalesOrderSet-1.json"
 				},
 
 				/* Test Case IV */

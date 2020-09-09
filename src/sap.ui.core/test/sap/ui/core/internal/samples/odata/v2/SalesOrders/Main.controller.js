@@ -172,26 +172,26 @@ sap.ui.define([
 		onFixAllQuantities : function (oEvent) {
 			var oView = this.getView(),
 				oModel = oView.getModel(),
-				sSalesOrderID = oEvent.getSource().getBindingContext().getProperty("SalesOrderID");
+				sSalesOrderID = oEvent.getSource().getBindingContext().getProperty("SalesOrderID"),
+				that = this;
 
-			oModel.callFunction("/SalesOrderItem_FixAllQuantities", {
+			oModel.callFunction("/SalesOrder_FixQuantities", {
+				adjustDeepPath : function () {
+					return "/SalesOrderSet('" + sSalesOrderID + "')/ToLineItems";
+				},
 				error : this.defaultErrorHandler.bind(null, "Failed to fix all quantities"),
-				groupId : "FixQuantity",
-				method : "POST",
+				method : "GET",
 				success : function () {
 					MessageToast.show("Successfully fixed all quantities for sales order "
 						+ sSalesOrderID);
+					// Server may process GET requests in different order, so we have to ensure that
+					// the function import is proccesed first
+					that.readSalesOrder();
 				},
 				urlParameters : {
 					SalesOrderID : encodeURL(sSalesOrderID)
 				}
 			});
-			// read requests for side-effects
-			// use refresh instead of ODataModel#read to read only items needed by the table
-			oView.byId("ToLineItems").getBinding("rows").refresh(undefined, "FixQuantity");
-			this.readSalesOrder("FixQuantity");
-
-			oModel.submitChanges({groupId : "FixQuantity"});
 		},
 
 		onFixQuantity : function (oEvent) {
