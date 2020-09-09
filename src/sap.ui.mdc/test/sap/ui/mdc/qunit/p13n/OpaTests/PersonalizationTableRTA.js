@@ -278,6 +278,8 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Changed On", 8, false);
 		Then.iShouldSeeP13nItem("cityOfOrigin_city", 9, false);
 		Then.iShouldSeeP13nItem("Created By", 10, false);
+
+		Then.iTeardownMyAppFrame();
 	});
 
 });

@@ -166,6 +166,8 @@ sap.ui.define([
 		oFilterItems["Artists"][3].selected = false;
 		oFilterItems["Artists"][2].selected = false;
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
+
+		Then.iTeardownMyAppFrame();
 	});
 
 });
