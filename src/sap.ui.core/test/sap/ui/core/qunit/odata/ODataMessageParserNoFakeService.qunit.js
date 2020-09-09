@@ -1689,9 +1689,10 @@ sap.ui.define([
 	method : "_parseHeader",
 	requestMethod : "MERGE",
 	statusCode : 204
-}].forEach(function (oFixture) {
-	[false, true].forEach(function (bMessageScopeSupported) {
-	QUnit.test("parse: " + oFixture.statusCode + "," + bMessageScopeSupported, function (assert) {
+}].forEach(function (oFixture, i) {
+	[false, true].forEach(function (bMessageScopeSupported, j) {
+		[false, true].forEach(function (bStatusCodeAsString, k) {
+	QUnit.test("parse: " + i + "," + j + "," + k, function (assert) {
 		var oODataMessageParser = {
 				_parseBody : function () {},
 				_parseHeader : function () {},
@@ -1701,7 +1702,9 @@ sap.ui.define([
 				method : oFixture.requestMethod || "GET",
 				requestUri : "~requestUri"
 			},
-			oResponse = {statusCode : oFixture.statusCode},
+			oResponse = {
+				statusCode : bStatusCodeAsString ? String(oFixture.statusCode) : oFixture.statusCode
+			},
 			mRequestInfo = {
 				request : oRequest,
 				response : oResponse,
@@ -1721,18 +1724,20 @@ sap.ui.define([
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
 			"~mGetEntities", "~mChangeEntities", bMessageScopeSupported);
 	});
+		});
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("parse: unsupported status code", function (assert) {
+[false, true].forEach(function (bStatusCodeAsString) {
+	QUnit.test("parse: unsupported status code, " + bStatusCodeAsString, function (assert) {
 		var oODataMessageParser = {
 				_parseBody : function () {},
 				_parseHeader : function () {},
 				_propagateMessages : function () {}
 			},
 			oRequest = {method : "GET", requestUri : "~requestUri"},
-			oResponse = {statusCode : 301},
+			oResponse = {statusCode : bStatusCodeAsString ? "301" : 301},
 			mRequestInfo = {
 				request : oRequest,
 				response : oResponse,
@@ -1750,16 +1755,18 @@ sap.ui.define([
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
 			"~mGetEntities", "~mChangeEntities", true);
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("parse: GET with 204 response is not considered", function (assert) {
+[false, true].forEach(function (bStatusCodeAsString) {
+	QUnit.test("parse: ignore GET with 204 response, " + bStatusCodeAsString, function (assert) {
 		var oODataMessageParser = {
 				_parseBody : function () {},
 				_parseHeader : function () {},
 				_propagateMessages : function () {}
 			},
 			oRequest = {method : "GET", requestUri : "~requestUri"},
-			oResponse = {statusCode : 204};
+			oResponse = {statusCode : bStatusCodeAsString ? "204" : 204};
 
 		this.mock(oODataMessageParser).expects("_parseBody").never();
 		this.mock(oODataMessageParser).expects("_parseHeader").never();
@@ -1769,4 +1776,5 @@ sap.ui.define([
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
 			"~mGetEntities", "~mChangeEntities", true);
 	});
+});
 });

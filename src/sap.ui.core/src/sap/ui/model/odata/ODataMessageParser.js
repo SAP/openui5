@@ -149,7 +149,7 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		bMessageScopeSupported) {
 	var aMessages, mRequestInfo;
 
-	if (oRequest.method === "GET" && oResponse.statusCode === 204) {
+	if (oRequest.method === "GET" && String(oResponse.statusCode) === "204") {
 		return;
 	}
 
