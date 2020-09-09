@@ -196,10 +196,13 @@ sap.ui.define([
 	 * @param {string[]} aDependencies Array of all dependencies for the current class.
 	 */
 	CustomElementBase.define = function (sCustomElementName, CustomElementClass, aDependencies) {
+
+		aDependencies = aDependencies || [];
+
 		CustomElementBase.awaitDependencies(aDependencies)
-			.then(function () {
-				window.customElements.define(sCustomElementName, CustomElementClass);
-			});
+		.then(function () {
+			window.customElements.define(sCustomElementName, CustomElementClass);
+		});
 	};
 
 	/**

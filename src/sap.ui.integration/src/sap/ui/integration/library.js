@@ -29,16 +29,14 @@ sap.ui.define([
 				"sap.ui.integration.widgets.Card",
 				"sap.ui.integration.cards.Header",
 				"sap.ui.integration.cards.NumericHeader",
-				"sap.ui.integration.controls.ListContentItem",
-				"sap.ui.integration.host.HostConfiguration"
+				"sap.ui.integration.controls.ListContentItem"
 			],
 			elements: [
 				"sap.ui.integration.Host"
 			],
 			// define the custom elements that can be used in this library
 			customElements: {
-				"card": "sap/ui/integration/customElements/CustomElementCard",
-				"host-configuration": "sap/ui/integration/customElements/CustomElementHostConfiguration"
+				"card": "sap/ui/integration/customElements/CustomElementCard"
 			}
 		});
 
