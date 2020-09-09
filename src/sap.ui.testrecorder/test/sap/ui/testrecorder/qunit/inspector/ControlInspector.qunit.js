@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	function asPOMethod(sSnippet) {
-		return "<iDoAction>: function () {\n" + sSnippet + "\n}";
+		return "iAssertTheControlState: function () {\n" + sSnippet + "\n}";
 	}
 
 	QUnit.module("ControlInspector", {
@@ -94,9 +94,9 @@ sap.ui.define([
 			domElementId: "searchField"
 		}).then(function () {
 			var sResult = this.fnPublish.getCalls()[3].args[1].codeSnippet; // skip calls made by updateSettings
-			assert.equal(sResult, asPOMethod("    element(by.control({\n" +
+			assert.equal(sResult, "iAssertTheUIState: function () {\n    element(by.control({\n" +
 			"        id: \"previous-snippet\"\n" +
-			"    }));\n\n" + this.sTestSnippetPO));
+			"    }));\n\n" + this.sTestSnippetPO + "\n}");
 			assert.ok(this.fnFindSelector.calledOnce, "Should use cached selector");
 			assert.ok(this.fnGenerateSelector.notCalled, "Should not generate selector");
 			assert.ok(this.fnGetSnippets.calledOnce, "Should collect previous snippets");
