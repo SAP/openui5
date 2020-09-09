@@ -315,7 +315,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
+	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -370,7 +370,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
+	 *  back to the standard notation. For example "5e+3" is parsed to "5000".
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=TOWARDS_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -467,7 +467,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
+	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -566,7 +566,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
+	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -623,7 +623,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {string} [oFormatOptions.percentSign] defines the used percent symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
+	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -1339,7 +1339,14 @@ sap.ui.define([
 	 * Parse a string which is formatted according to the given format options.
 	 *
 	 * @param {string} sValue the string containing a formatted numeric value
-	 * @return {number|array} the parsed value or an array which contains the parsed value and the currency code (symbol) when the NumberFormat is a currency instance
+	 * @return {number|array|string} the parsed value as:
+	 * <ul>
+	 *  <li>number</li>
+	 *  <li>array which contains the parsed value and the currency code (symbol) or unit for currency and unit instances</li>
+	 *  <li>string when option "parseAsString" is <code>true</code></li>
+	 *  <li><code>NaN</code> if value cannot be parsed</li>
+	 *  <li><code>null</code> if value is invalid</li>
+	 * </ul>
 	 * @public
 	 */
 	NumberFormat.prototype.parse = function(sValue) {
@@ -1490,9 +1497,12 @@ sap.ui.define([
 		if (oShort) {
 			sValue = oShort.number;
 		}
+		var bScientificNotation = isScientificNotation(sValue);
 
 		// Check for valid syntax
-		if (oOptions.isInteger && !oShort) {
+		// integer might be expressed in scientific format, e.g. 1.23e+5
+		// for this case it must be parsed as float
+		if (oOptions.isInteger && !oShort && !bScientificNotation) {
 			oRegExp = new RegExp(sRegExpInt);
 		} else {
 			oRegExp = new RegExp(sRegExpFloat);
@@ -1531,8 +1541,23 @@ sap.ui.define([
 			sValue = NumberFormat._shiftDecimalPoint(sValue, Math.round(Math.log(oShort.factor) / Math.LN10));
 		}
 
+
+
 		if (oOptions.isInteger) {
-			vResult = oOptions.parseAsString ? sValue : parseInt(sValue);
+			var iInt;
+			// check if it is a valid integer
+			// 1.234567e+5 is 123456.7 is not an integer
+			// 1.234567e+6 is 1234567 is an integer
+			if (bScientificNotation) {
+				sValue = sValue.replace(oDecimalRegExp, ".");
+				iInt = getInteger(sValue);
+				if (iInt === undefined) {
+					return NaN;
+				}
+			} else {
+				iInt = parseInt(sValue);
+			}
+			vResult = oOptions.parseAsString ? sValue : iInt;
 		} else {
 			sValue = sValue.replace(oDecimalRegExp, ".");
 			if (sValue.indexOf(sPercentSign) !== -1) {
@@ -1998,6 +2023,51 @@ sap.ui.define([
 		}
 		sFormat = oStyledFormat[sKey + "-" + sPlural];
 		return sFormat;
+	}
+
+	/**
+	 * Whether or not the given value is in scientific notation
+	 *
+	 * @param {string} sValue string value, e.g. "9e+4"
+	 * @returns {boolean} <code>true</code> if it is in scientific notation
+	 */
+	function isScientificNotation(sValue) {
+		return sValue.indexOf("e") > 0 || sValue.indexOf("E") > 0;
+	}
+
+	/**
+	 * Evaluates if the given number is an integer and returns it.
+	 * Otherwise returns <code>undefined</code>
+	 *
+	 * @param {string} sValue string value, e.g. "9e+4" or "1.2345e+25"
+	 * @returns {Number} if value can be parsed to integer e.g. 90000, <code>undefined</code> otherwise
+	 */
+	function getInteger(sValue) {
+		// when resolving the e-notation check if there is still a dot character present and after the dot character there are no zeros
+		var sResolvedENotation = NumberFormat._shiftDecimalPoint(sValue, 0);
+		if (sResolvedENotation.indexOf(".") > 0 && !rOnlyZeros.test(sResolvedENotation.split(".")[1])) {
+			return undefined;
+		}
+
+		var fFloat = parseFloat(sResolvedENotation);
+		var sFloat = "" + fFloat;
+
+		// parseFloat() still produces the scientific notation output for bigger values such
+		// as "1.2345e+25".
+		// This conversion is required because parseInt() cannot handle scientific notation with
+		// the mantissa being a floating point number, e.g. "1.2345e+25"
+		if (isScientificNotation(sFloat)) {
+			// retrieve the string value from the given float number
+			// "1.2345e+25" becomes "12345000000000000000000000"
+			sFloat = NumberFormat._shiftDecimalPoint(sFloat, 0);
+		}
+
+		var iInt = parseInt(sFloat);
+
+		if (iInt !== fFloat) {
+			return undefined;
+		}
+		return iInt;
 	}
 
 	function rounding(fValue, iMaxFractionDigits, sRoundingMode) {
