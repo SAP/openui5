@@ -603,6 +603,11 @@ sap.ui.define([
 		oAfterRenderingEvent.setMarked("renderRows");
 		oAfterRenderingEvent.srcControl = oTable;
 		oTable._handleEvent(oAfterRenderingEvent);
+
+		var bHasRows = oTable.getRows().length > 0;
+		var oDomRef = oTable.getDomRef();
+		oDomRef.querySelector(".sapUiTableCtrlBefore").setAttribute("tabindex", bHasRows ? "0" : "-1");
+		oDomRef.querySelector(".sapUiTableCtrlAfter").setAttribute("tabindex", bHasRows ? "0" : "-1");
 	};
 
 	/**

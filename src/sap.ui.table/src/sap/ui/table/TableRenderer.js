@@ -248,16 +248,19 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderTable = function(rm, oTable) {
-		this.renderTabElement(rm, "sapUiTableCtrlBefore");
+		var bHasRows = oTable.getRows().length > 0;
+
+		this.renderTabElement(rm, "sapUiTableCtrlBefore", bHasRows ? "0" : "-1");
+
 		rm.openStart("div", oTable.getId() + "-tableCCnt");
 		oTable._getRowMode().applyRowContainerStyles(rm);
-
 		rm.class("sapUiTableCCnt");
 		rm.openEnd();
 
 		this.renderTableCCnt(rm, oTable);
 		rm.close("div");
-		this.renderTabElement(rm, "sapUiTableCtrlAfter");
+
+		this.renderTabElement(rm, "sapUiTableCtrlAfter", bHasRows ? "0" : "-1");
 
 		if (!oTable._getScrollExtension().isVerticalScrollbarExternal()) {
 			this.renderVSbBackground(rm, oTable);
@@ -1280,12 +1283,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	 * Renders an empty area with tabindex=0 and the given class and id.
 	 * @private
 	 */
-	TableRenderer.renderTabElement = function(rm, sClass) {
+	TableRenderer.renderTabElement = function(rm, sClass, sTabIndex) {
 		rm.openStart("div");
 		if (sClass) {
 			rm.class(sClass);
 		}
-		rm.attr("tabindex", "0");
+		rm.attr("tabindex", sTabIndex == null ? "0" : sTabIndex);
 		rm.openEnd().close("div");
 	};
 
