@@ -834,6 +834,11 @@
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
 						MaxLength="10" />
 				</FunctionImport>
+				<FunctionImport Name="SalesOrder_Confirm_GET" ReturnType="gwsample_basic.SalesOrder"
+					EntitySet="SalesOrderSet" m:HttpMethod="GET" sap:action-for="gwsample_basic.SalesOrder">
+					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
+						MaxLength="10" />
+				</FunctionImport>
 				<FunctionImport Name="SalesOrder_Cancel" ReturnType="gwsample_basic.SalesOrder"
 					EntitySet="SalesOrderSet" m:HttpMethod="POST" sap:action-for="gwsample_basic.SalesOrder">
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"

@@ -813,7 +813,7 @@ sap.ui.define([
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.responseHeaders;
 
-					if (oActualRequest.key && sMethod === "POST"
+					if (oActualRequest.key && sMethod !== "MERGE"
 							&& oActualRequest.headers["x-http-method"] !== "MERGE") {
 						that.sTemporaryKey = sWithContentID
 							|| oActualRequest.key.match(rTemporaryKey)[0];
@@ -5515,8 +5515,16 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: Parameters of a function import are changed after calling ODataModel#callFunction
 	// before submitting the changes (#submitChanges). The request URL contains the latest parameter
 	// change and the messages get the correct target/fullTarget.
+	// BCP: 2070289685
 	// JIRA: CPOUI5MODELS-230
-	QUnit.test("Messages: function import with lazy parameter determination", function (assert) {
+[
+	{method: "GET", functionName : "/SalesOrder_Confirm_GET"},
+	{method: "POST", functionName : "/SalesOrder_Confirm"}
+].forEach(function (oFixture) {
+	var sTitle = "Messages: function import with lazy parameter determination, method="
+			+ oFixture.method;
+
+	QUnit.test(sTitle, function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({
 				defaultBindingMode : "TwoWay",
 				tokenHandling : false,
@@ -5557,9 +5565,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
 		return Promise.all([
-			oModel.callFunction("/SalesOrder_Confirm", {
+			oModel.callFunction(oFixture.functionName, {
 				groupId : "changes",
-				method : "POST",
+				method : oFixture.method,
 				refreshAfterChange : false,
 				urlParameters : {
 					SalesOrderID : "1"
@@ -5567,16 +5575,20 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}).contextCreated(),
 			this.createView(assert, sView, oModel)
 		]).then(function (aResults) {
-			var oWebAddressError = that.createResponseMessage("WebAddress");
-
-			that.expectRequest({
-					data : undefined,
-					deepPath : "/SalesOrder_Confirm",
+			var oRequest = {
+					deepPath : oFixture.functionName,
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
-					method : "POST",
-					requestUri : "SalesOrder_Confirm?SalesOrderID='42'"
-				}, {
+					method : oFixture.method,
+					requestUri : oFixture.functionName.slice(1) + "?SalesOrderID='42'"
+				},
+				oWebAddressError = that.createResponseMessage("WebAddress");
+
+			if (oFixture.method === "POST") {
+				oRequest.data = undefined;
+			}
+
+			that.expectRequest(oRequest, {
 					results : [{
 						__metadata : {uri : "SalesOrderSet('42')"},
 						SalesOrderID : "42"
@@ -5597,6 +5609,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Messages returned by a function import get the correct full target by using the
