@@ -176,7 +176,10 @@ sap.ui.define([
 
 			// check column properties
 			if (oColumn) {
-				rm.class(oColumn.getStyleClass(true));
+				var aStyleClass = oColumn.getStyleClass(true).split(" ");
+				aStyleClass && aStyleClass.forEach(function(sClassName) {
+					rm.class(sClassName);
+				});
 
 				// aria for virtual keyboard mode
 				oHeader = oColumn.getHeader();
@@ -310,13 +313,16 @@ sap.ui.define([
 				return;
 			}
 
-			var sStyleClass = oColumn.getStyleClass(),
+			var aStyleClass = oColumn.getStyleClass().split(" "),
 				sPopinDisplay = oColumn.getPopinDisplay();
 
 			/* row start */
 			rm.openStart("div");
 			rm.class("sapMListTblSubCntRow");
-			sStyleClass && rm.class(sStyleClass);
+
+			aStyleClass && aStyleClass.forEach(function(sClassName) {
+				rm.class(sClassName);
+			});
 			rm.openEnd();
 
 			/* header cell */
