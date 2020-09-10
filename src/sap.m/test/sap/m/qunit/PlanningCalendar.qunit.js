@@ -1012,7 +1012,7 @@ sap.ui.define([
 			var oInfoToolbarContent = this.oPC._oInfoToolbar.getContent();
 
 			assert.strictEqual(oInfoToolbarContent.length, 2, "Internal _oInfoToolbar has correct amount of controls in it's content.");
-			assert.ok(oInfoToolbarContent[0].isA("CalendarHeader"), "First child of _oInfoToolbar is a CalendarHeader");
+			assert.ok(oInfoToolbarContent[0].isA("sap.m._PlanningCalendarInternalHeader"), "First child of _oInfoToolbar is a CalendarHeader");
 			assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
 			assert.notOk(jQuery("#SelectionMode-All").get(0), "Select All CheckBox not rendered");
 		},
@@ -1020,7 +1020,7 @@ sap.ui.define([
 			var oInfoToolbarContent = this.oPC._oInfoToolbar.getContent();
 
 			assert.strictEqual(oInfoToolbarContent.length, iInfoToolbarContentLength, "Internal _oInfoToolbar has correct amount of controls in it's content.");
-			assert.ok(oInfoToolbarContent[0].isA("CalendarHeader"), "First child of _oInfoToolbar is a CalendarHeader");
+			assert.ok(oInfoToolbarContent[0].isA("sap.m._PlanningCalendarInternalHeader"), "First child of _oInfoToolbar is a CalendarHeader");
 			assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
 			if (iInfoToolbarContentLength > 2) {
 				assert.notOk(this.oPC._oCalendarHeader.getAllCheckBox(), "Select All CheckBox does not exist in the _oCalendarHeader");
@@ -1033,7 +1033,7 @@ sap.ui.define([
 			var oInfoToolbarContent = this.oPC._oInfoToolbar.getContent();
 
 			assert.strictEqual(oInfoToolbarContent.length, 3, "Internal _oInfoToolbar has correct amount of controls in it's content.");
-			assert.ok(oInfoToolbarContent[0].isA("CalendarHeader"), "First child of _oInfoToolbar is a CalendarHeader");
+			assert.ok(oInfoToolbarContent[0].isA("sap.m._PlanningCalendarInternalHeader"), "First child of _oInfoToolbar is a CalendarHeader");
 			if (bDesktop) {
 				assert.ok(oInfoToolbarContent[1].isA("sap.m.CheckBox"), "Second child of _oInfoToolbar is a checkBox");
 				assert.ok(oInfoToolbarContent[2].isA(this.aIntervalRepresentatives), "Third child of _oInfoToolbar is an interval");
