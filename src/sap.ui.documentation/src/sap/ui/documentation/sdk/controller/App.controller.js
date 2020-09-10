@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/ui/core/syncStyleClass",
 	"sap/ui/documentation/WebPageTitleUtil",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/documentation/sdk/model/formatter"
 ], function(
 	jQuery,
 	BaseController,
@@ -41,7 +42,8 @@ sap.ui.define([
 	Version,
 	syncStyleClass,
 	WebPageTitleUtil,
-	Core
+	Core,
+	globalFormatter
 ) {
 		"use strict";
 
@@ -111,6 +113,8 @@ sap.ui.define([
 		}
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
+			formatter: globalFormatter,
+
 			onInit : function () {
 				BaseController.prototype.onInit.call(this);
 
@@ -166,6 +170,14 @@ sap.ui.define([
 				this._oView = this.getView();
 
 				this.setModel(oViewModel, "appView");
+
+				this.setModel(new JSONModel({
+					inspectorHomeLink: "topic/b24e72443eb34d0fb7bf6940f2d697eb",
+					supportAssistantHomeLink: "topic/57ccd7d7103640e3a187ed55e1d2c163",
+					demoAppsHomeLink: "topic/a3ab54ecf7ac493b91904beb2095d208",
+					iconExplorerHomeLink: "topic/21ea0ea94614480d9a910b2e93431291"
+					// etc
+				}), "newWindowLinks");
 
 				this.oHeader = this._oView.byId("headerToolbar");
 

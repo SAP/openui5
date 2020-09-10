@@ -236,6 +236,19 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 			if (aFileName.length) {
 				return aFileName.join("/");
 			}
+		},
+		/**
+		 * Formats a documentation link, intended to be open in a new window
+		 *
+		 * @public
+		 * @param {string} sHref the link to be formatter
+		 * @returns {string} the formatted link
+		 */
+		formatHttpHrefForNewWindow: function(sHref) {
+			if (window['sap-ui-documentation-static'] && !/^https?:\/\//.test(sHref)) {
+				sHref = "#/" + sHref;
+			}
+			return sHref;
 		}
 	};
 });
