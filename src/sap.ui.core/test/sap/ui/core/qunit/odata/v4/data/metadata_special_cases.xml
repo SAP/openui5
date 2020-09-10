@@ -247,6 +247,20 @@
 					</Record>
 				</Annotation>
 			</Annotations>
+			<Annotations Target="special.cases.A/AID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers">
+					<Collection>
+						<String>in</String>
+						<If>
+							<Gt>
+								<Path>AValue</Path>
+								<Int>10</Int>
+							</Gt>
+							<String>maybe</String>
+						</If>
+					</Collection>
+				</Annotation>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
