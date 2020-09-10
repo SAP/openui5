@@ -15640,7 +15640,7 @@ sap.ui.define([
 						{Region : "W", SalesAmount : "40"}
 					]
 				})
-				.expectChange("isExpanded", [, true])
+				.expectChange("isExpanded", [, true, undefined, undefined])
 				.expectChange("isTotal", [,, false, false])
 				.expectChange("level", [,, 2, 2])
 				.expectChange("country", [,, "UK", "UK"])
