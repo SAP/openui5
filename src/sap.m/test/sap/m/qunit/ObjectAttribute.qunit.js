@@ -165,6 +165,20 @@ sap.ui.define([
 		oCore.getConfiguration().setLanguage(sOriginalLanguage);
 	});
 
+	QUnit.test("Text-only ObjectAttribute renders correctly", function(assert) {
+		// arrange, act
+		var oAttr = new ObjectAttribute({
+			text: "dummy"
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oAttr.getDomRef().innerText, "dummy", "has the text rendered");
+
+		// clean
+		oAttr.destroy();
+	});
+
 	QUnit.module("Attributes Wrapping");
 
 	QUnit.test("Attributes Wrapping in ObjectHeader", function(assert) {
