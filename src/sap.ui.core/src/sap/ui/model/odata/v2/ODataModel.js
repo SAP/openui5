@@ -1268,7 +1268,12 @@ sap.ui.define([
 				oEventInfo.response.statusCode = oResponse.statusCode;
 				oEventInfo.response.statusText = oResponse.statusText;
 				oEventInfo.response.responseText = oResponse.body !== undefined ? oResponse.body : oResponse.responseText;
-				oEventInfo.response.expandAfterCreateFailed = oResponse.expandAfterCreateFailed;
+				if (oResponse.expandAfterCreateFailed) {
+					oEventInfo.response.expandAfterCreateFailed = true;
+				}
+				if (oResponse.expandAfterFunctionCallFailed) {
+					oEventInfo.response.expandAfterFunctionCallFailed = true;
+				}
 			}
 		}
 		oEventInfo.ID = oRequest.requestID;
@@ -3268,7 +3273,7 @@ sap.ui.define([
 				} else {
 					if (oRequest.request.withContentID) {
 						sContentID = oRequest.request.withContentID;
-						if (oRequest.request.created) {
+						if (oRequest.request.created || oRequest.request.functionMetadata) {
 							sEntityKey = that._getKey(oResponse.data);
 
 							mContentID2KeyAndDeepPath[sContentID] = {
@@ -3289,7 +3294,8 @@ sap.ui.define([
 					}
 
 					that._processSuccess(oRequest.parts[i].request, oResponse,
-						oRequest.parts[i].fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+						oRequest.parts[i].fnSuccess, mGetEntities, mChangeEntities, mEntityTypes,
+						/*bBatch*/false, /*aRequests*/undefined, mContentID2KeyAndDeepPath);
 				}
 			}
 		}
@@ -3870,10 +3876,15 @@ sap.ui.define([
 	 * @param {map} mEntityTypes Map of changed entityTypes
 	 * @param {boolean} bBatch Process success for single/batch request
 	 * @param {array} aRequests Array of request; represents the order of requests in the batch
+	 * @param {Object<string,object>} [mContentID2KeyAndDeepPath]
+	 *   Maps a content ID to an object containing the properties <code>key</code> representing the
+	 *   entity key in the OData cache, and <code>deepPath</code> representing the deep path for
+	 *   that entity
 	 * @returns {boolean} bSuccess Processed successfully
 	 * @private
 	 */
-	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes, bBatch, aRequests) {
+	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities,
+			mChangeEntities, mEntityTypes, bBatch, aRequests, mContentID2KeyAndDeepPath) {
 		var sCanonicalPath, bContent, sDeepPath, oEntity, oEntityMetadata, sHeadersLocation,
 			oImportData, aParts, sPath, iPos, sUri,
 			mLocalChangeEntities = {},
@@ -3926,6 +3937,9 @@ sap.ui.define([
 					});
 				} else if (!sDeepPath) {
 					oRequest.deepPath = oRequest.functionTarget;
+				}
+				if (mContentID2KeyAndDeepPath && oRequest.withContentID) {
+					mContentID2KeyAndDeepPath[oRequest.withContentID].deepPath = oRequest.deepPath;
 				}
 			}
 
@@ -4888,6 +4902,35 @@ sap.ui.define([
 	 * @param {string} [mParameters.eTag]
 	 *   If the function import changes an entity, the ETag for this entity can be passed with this
 	 *   parameter
+	 * @param {string} [mParameters.expand]
+	 *   A comma-separated list of navigation properties to be expanded for the entity returned by
+	 *   the function import; since 1.83.0.<br />
+	 *   The navigation properties are requested with an additional GET request in the same
+	 *   <code>$batch</code> request as the POST request for the function import. The given
+	 *   <code>mParameters.headers</code> are not considered in the GET request.<br />
+	 *   <strong>Note:</strong> The following prerequisites must be fulfilled:
+	 *   <ul>
+	 *     <li>batch mode must be enabled; see constructor parameter <code>useBatch</code>,</li>
+	 *     <li>the HTTP method used for the function import is "POST",</li>
+	 *     <li>the function import returns a single entity,</li>
+	 *     <li>the back-end service must support the "Content-ID" header,</li>
+	 *     <li>the back end must allow GET requests relative to this content ID outside the
+	 *       changeset within the <code>$batch</code> request.</li>
+	 *   </ul>
+	 *   The success and error callback functions are called only once, even if there are two
+	 *   requests in the <code>$batch</code> related to a single call of {@link #callFunction}.
+	 *   <ul>
+	 *     <li>If both requests succeed, the success callback is called with the merged data of the
+	 *       POST and the GET request and with the response of the POST request.</li>
+	 *     <li>If the POST request fails, the GET request also fails. In that case the error
+	 *       callback is called with the error response of the POST request.</li>
+	 *     <li>If the POST request succeeds but the GET request for the navigation properties fails,
+	 *       the success callback is called with the data and the response of the POST request. The
+	 *       response object of the success callback call and the response parameter of the
+	 *       corresponding <code>requestFailed</code> and <code>requestCompleted</code> events have
+	 *       an additional property <code>expandAfterFunctionCallFailed</code> set to
+	 *       <code>true</code>.</li>
+	 *   </ul>
 	 * @param {string} [mParameters.groupId]
 	 *   ID of a request group; requests belonging to the same group are bundled in one batch
 	 *   request
@@ -4912,12 +4955,19 @@ sap.ui.define([
 	 * @return {object}
 	 *   An object which has a <code>contextCreated</code> function that returns a
 	 *   <code>Promise</code>. This resolves with the created {@link sap.ui.model.Context}. In
-	 *   addition it has an <code>abort</code> function to abort the current request.
+	 *   addition it has an <code>abort</code> function to abort the current request. The Promise
+	 *   returned by <code>contextCreated</code> is rejected if the function name cannot be found
+	 *   in the metadata or if the parameter <code>expand</code> is used and the function does not
+	 *   return a single entity.
+	 *
+	 * @throws {Error}
+	 *   If the <code>expand</code> parameter is used and either the batch mode is disabled, or the
+	 *   HTTP method is not "POST"
 	 *
 	 * @public
 	 */
 	ODataModel.prototype.callFunction = function (sFunctionName, mParameters) {
-		var sChangeSetId, pContextCreated, fnError, sETag, sGroupId, mHeaders, sMethod,
+		var sChangeSetId, pContextCreated, fnError, sETag, sExpand, sGroupId, mHeaders, sMethod,
 			bRefreshAfterChange, fnReject, oRequestHandle, fnResolve, fnSuccess, mUrlParams,
 			that = this;
 
@@ -4931,6 +4981,7 @@ sap.ui.define([
 		sChangeSetId = mParameters.changeSetId;
 		fnError = mParameters.error;
 		sETag = mParameters.eTag;
+		sExpand = mParameters.expand;
 		sGroupId = mParameters.groupId || mParameters.batchGroupId;
 		mHeaders = mParameters.headers;
 		sMethod = mParameters.method || "GET";
@@ -4938,14 +4989,27 @@ sap.ui.define([
 		fnSuccess = mParameters.success;
 		mUrlParams = Object.assign({}, mParameters.urlParameters);
 
+		if (sExpand) {
+			if (!this.bUseBatch) {
+				throw new Error("Use 'expand' parameter only with 'useBatch' set to 'true'");
+			}
+			if (sMethod !== "POST") {
+				throw new Error("Use 'expand' parameter only with HTTP method 'POST'");
+			}
+		}
+
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 		pContextCreated = new Promise(function(resolve, reject) {
 			fnResolve = resolve;
 			fnReject = reject;
 		});
 		oRequestHandle = this._processRequest(function (requestHandle) {
-			var oContext, oFunctionMetadata, sKey, oRequest, mRequests, sUrl, aUrlParams,
-				oData = {};
+			var oContext, oExpandRequest, oFunctionMetadata, oFunctionResponse, oFunctionResult,
+				sKey, oRequest, mRequests, sUID, sUrl, aUrlParams,
+				oData = {},
+				fnErrorFromParameters = fnError,
+				bFunctionFailed = false,
+				fnSuccessFromParameters = fnSuccess;
 
 			oFunctionMetadata = that.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
 			if (!oFunctionMetadata) {
@@ -4961,6 +5025,11 @@ sap.ui.define([
 					oData.$result = {__ref : {}};
 				}
 			}
+			if (sExpand && (!oData.$result || !oData.$result.__ref)) {
+				fnReject(new Error("Use 'expand' parameter only for functions returning a single"
+					+ " entity"));
+				return undefined;
+			}
 			if (oFunctionMetadata.parameter != null) {
 				oFunctionMetadata.parameter.forEach(function (oParam) {
 					oData[oParam.name] = that._createPropertyValue(oParam.type);
@@ -4974,8 +5043,60 @@ sap.ui.define([
 					}
 				});
 			}
+			sUID = uid();
+			if (sExpand) {
+				mHeaders = Object.assign({}, mHeaders, {
+					"Content-ID" : sUID,
+					// skip state messages for the POST, they are requested by the following GET
+					"sap-messages" : "transientOnly"
+				});
+				fnSuccess = function (oData, oFunctionResponse0) {
+					if (!oFunctionResult) {
+						// successful function call, wait for GET
+						oFunctionResult = oData;
+						oFunctionResponse = oFunctionResponse0;
+						return;
+					}
+					// successful GET after successful function call -> call success handler with
+					// merged data; successful GET after a failed function call cannot occur
+					if (fnSuccessFromParameters) {
+						oData = Object.assign({}, oFunctionResult, oData);
+						fnSuccessFromParameters(oData, oFunctionResponse);
+					}
+				};
+				fnError = function (oError) {
+					if (oFunctionResult) {
+						// failed GET after successful function call -> call success handler with
+						// the data of the function call request and mark the response with
+						// expandAfterFunctionCallFailed=true
+						oFunctionResponse.expandAfterFunctionCallFailed = true;
+						oError.expandAfterFunctionCallFailed = true;
+						Log.error("Function '" + sFunctionName + "' was called successfully, but"
+							+ " expansion of navigation properties (" + sExpand + ") failed",
+							oError, sClassName);
+						if (fnSuccessFromParameters) {
+							fnSuccessFromParameters(oFunctionResult, oFunctionResponse);
+						}
+						return;
+					}
+					if (!bFunctionFailed) {
+						// failed function call -> remember to skip the following failed GET and
+						// call the error handler
+						bFunctionFailed = true;
+						if (fnErrorFromParameters) {
+							fnErrorFromParameters(oError);
+						}
+					} else {
+						// failed GET after a failed function call -> mark the error response with
+						// expandAfterFunctionCallFailed=true that it can be passed to requestFailed
+						// and requestCompleted event handlers
+						oError.expandAfterFunctionCallFailed = true;
+						//bFunctionFailed = false; // not needed as function calls are not retried
+					}
+				};
+			}
 			oData.__metadata = {
-				uri : that.sServiceUrl + sFunctionName + "('" + uid() + "')",
+				uri : that.sServiceUrl + sFunctionName + "('" + sUID + "')",
 				created : {
 					changeSetId : sChangeSetId,
 					error : fnError,
@@ -5004,6 +5125,18 @@ sap.ui.define([
 			oRequest.functionTarget = that.oMetadata._getCanonicalPathOfFunctionImport(
 				oFunctionMetadata, mUrlParams);
 			oRequest.key = sKey;
+			if (sExpand) {
+				oExpandRequest = that._createRequest("$" + sUID + "?"
+						+ ODataUtils._encodeURLParameters({$expand : sExpand, $select : sExpand}),
+					"/$" + sUID, "GET", that._getHeaders(undefined, true), undefined, undefined,
+					undefined, true);
+				oExpandRequest.withContentID = sUID;
+				oRequest.expandRequest = oExpandRequest;
+				oRequest.withContentID = sUID;
+				// expandRequest and withContentID do not need to be added to
+				// oData.__metadata.created as function calls are not retried
+			}
+
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
@@ -6033,7 +6166,7 @@ sap.ui.define([
 	 * The parameter <code>expand</code> is supported since 1.78.0. If this parameter is set, the
 	 * given navigation properties are expanded automatically with the same $batch request in which
 	 * the POST request for the creation is contained. Ensure that the batch mode is used and the
-	 * back-end service supports GET requests relative to a Content ID outside the changeset.
+	 * back-end service supports GET requests relative to a content ID outside the changeset.
 	 * The success and error callback functions are called only once, even if there are two requests
 	 * in the <code>$batch</code> related to a single call of {@link #createEntry}:
 	 * <ul>
@@ -6076,8 +6209,8 @@ sap.ui.define([
 	 *   <strong>Note:</strong> The following prerequisites must be fulfilled:
 	 *   <ul>
 	 *     <li>batch mode must be enabled; see constructor parameter <code>useBatch</code>,</li>
-	 *     <li>the back-end service must support the "Content ID" header,</li>
-	 *     <li>the back end must allow GET requests relative to this Content ID outside the
+	 *     <li>the back-end service must support the "Content-ID" header,</li>
+	 *     <li>the back end must allow GET requests relative to this content ID outside the
 	 *       changeset within the <code>$batch</code> request.</li>
 	 *   </ul>
 	 * @param {string} [mParameters.groupId]

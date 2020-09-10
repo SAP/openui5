@@ -1,0 +1,31 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='111',ItemPosition='020')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='111',ItemPosition='020')",
+			"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+		},
+		"CurrencyCode" : "EUR",
+		"DeliveryDate" : "\/Date(1601457612700)\/",
+		"GrossAmount" : "1137.64",
+		"ItemPosition" : "020",
+		"NetAmount" : "956.00",
+		"Note" : "Cloned - Item 010 of TC 11",
+		"NoteLanguage" : "",
+		"ProductID" : "HT-1000",
+		"Quantity" : "1",
+		"QuantityUnit" : "EA",
+		"SalesOrderID" : "111",
+		"TaxAmount" : "181.64",
+		"ToHeader" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='111',ItemPosition='020')/ToHeader"
+			}
+		},
+		"ToProduct" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='111',ItemPosition='020')/ToProduct"
+			}
+		}
+	}
+}

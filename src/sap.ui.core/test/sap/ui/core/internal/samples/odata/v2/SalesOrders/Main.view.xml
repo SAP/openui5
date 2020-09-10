@@ -94,6 +94,8 @@
 							</Select>
 							<Button id="fixAllQuantities::ToLineItems" press="onFixAllQuantities"
 								text="Fix Quantities" />
+							<Button enabled="{ui>/itemSelected}" id="cloneItem::ToLineItems"
+								press="onCloneItem" text="Clone Item" />
 							<ToggleButton id="transitionMessagesOnly"
 								press="onTransitionMessagesOnly" pressed="true"
 								text="Transition Messages Only"

@@ -374,13 +374,15 @@
 					quantity which has to be at least 2 and one for the missing note of the new
 					sales order item.
 			</li>
-			<li><span class="backendOnly">Only with back end:</span> Open the developer tools, navigate to the network tab, clear the requests and filter
-				for <code>$batch</code> requests.</li>
+			<li><span class="backendOnly">Only with back end:</span> Open the developer tools,
+				navigate to the network tab, clear the requests and filter for <code>$batch</code>
+				requests.</li>
 			<li>In the <code>Sales Order Items</code> table click on the <code>&gt;</code> at the
 				end of the row for the newly created entity to open the product details.<br />
 				<b>Check:</b> A <code>Product Details</code> dialog is opened showing the
 					<code>Product ID</code> and the corresponding product <code>Name</code>.<br />
-				<span class="backendOnly">Only with back end:</span> <b>Check:</b> There is no <code>$batch</code> request.
+				<span class="backendOnly">Only with back end:</span> <b>Check:</b> There is no
+					<code>$batch</code> request.
 			</li>
 			<li>Close the <code>Product Details</code> dialog.</li>
 			<li>In the <code>Sales Order Items</code> table select the newly created item and press
@@ -513,6 +515,42 @@
 				<b>Check:</b> When clicking into the sales order item's <code>Gross Amount</code>
 					field, no info message is shown.
 			</li>
+		</ol>
+		<h3>(XI) Clone a sales order item and expand product information</h3>
+		Search for a sales order with an item that has exactly one message for its
+		<code>Quantity</code>. In case of mock data: Use sales order <code>111</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Remember the number of messages.</li>
+			<li>Remember the <code>Gross Amount</code> and the <code>Changed At</code> data from the
+				<code>Sales Order</code> section.</li>
+			<li>In the <code>Sales Order Items</code> table select the item with a message for its
+				<code>Quantity</code>.</li>
+			<li>Click on the <code>Clone Item</code> button of the <code>Sales Order Items</code>
+				table.<br />
+				<b>Check:</b> The item is cloned, that means an additional item is added to the
+					<code>Sales Order Items</code> table with the same data as the selected item,
+					except the <code>Item Position</code> and the <code>Note</code>.<br />
+				<b>Check:</b> The number of massages has been increased by 1.<br />
+				<b>Check:</b> The cloned item has the same message as the selected item.<br />
+				<b>Check:</b> The <code>Gross Amount</code> and the <code>Changed At</code> values
+					are updated.
+			</li>
+			<li><span class="backendOnly">Only with back end:</span> Open the developer tools,
+				navigate to the network tab, clear the requests and filter for <code>$batch</code>
+				requests.</li>
+			<li>In the <code>Sales Order Items</code> table click on the <code>&gt;</code> at the
+				end of the row for the cloned item to open the product details.<br />
+				<b>Check:</b> A <code>Product Details</code> dialog is opened showing the
+					<code>Product ID</code> and the corresponding product <code>Name</code>.<br />
+				<span class="backendOnly">Only with back end:</span> <b>Check:</b> There is no
+					<code>$batch</code> request.
+			</li>
+			<li>Close the <code>Product Details</code> dialog.</li>
 		</ol>
 	</body>
 </html>
