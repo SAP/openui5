@@ -5256,13 +5256,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: A relative list binding's context is changed. Additionally a refresh (via
 	// requestSideEffects) is triggered after the binding has recreated its cache, but before the
-	// dependent property bindings have been destroyed. In the incident, the master table contains
+	// dependent property bindings have been destroyed. In the incident, the list table contains
 	// the items and the detail table the schedules (with 1:n, which we don't have here).
 	// BCP: 2080123400
 	QUnit.test("BCP: 2080123400", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
-<Table id="master" items="{/SalesOrderList}">\
+<Table id="list" items="{/SalesOrderList}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 </Table>\
 <Table id="detail" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}" \
@@ -5290,12 +5290,12 @@ sap.ui.define([
 				.expectChange("note", ["Note 1"]);
 
 			that.oView.byId("detail").setBindingContext(
-				that.oView.byId("master").getItems()[0].getBindingContext()
+				that.oView.byId("list").getItems()[0].getBindingContext()
 			);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oRowContext = that.oView.byId("master").getItems()[1].getBindingContext();
+			var oRowContext = that.oView.byId("list").getItems()[1].getBindingContext();
 
 			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20",
@@ -10650,12 +10650,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: master/detail where the detail does not need additional $expand/$select and thus
+	// Scenario: list/detail where the detail does not need additional $expand/$select and thus
 	// should reuse its parent's cache
-	QUnit.test("Auto-$expand/$select: simple master/detail", function (assert) {
+	QUnit.test("Auto-$expand/$select: simple list/detail", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<Table id="master" items="{/TEAMS}">\
+<Table id="list" items="{/TEAMS}">\
 	<Text id="text0" text="{Team_Id}" />\
 </Table>\
 <FlexBox id="detail" binding="{}">\
@@ -10670,7 +10670,7 @@ sap.ui.define([
 			.expectChange("text1"); // expect a later change
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
+			var oContext = that.oView.byId("list").getItems()[0].getBindingContext();
 
 			that.expectChange("text1", "TEAM_01");
 
@@ -10681,14 +10681,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: master/detail where the detail needs additional $expand/$select and thus causes
+	// Scenario: list/detail where the detail needs additional $expand/$select and thus causes
 	// late property requests
 	// JIRA: CPOUI5ODATAV4-27 see that two late property requests are merged (group ID "$auto"
 	// is required for this)
-	QUnit.test("Auto-$expand/$select: master/detail with separate requests", function (assert) {
+	QUnit.test("Auto-$expand/$select: list/detail with separate requests", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$auto"}),
 			sView = '\
-<Table id="master" items="{/TEAMS}">\
+<Table id="list" items="{/TEAMS}">\
 	<Text id="text0" text="{Team_Id}" />\
 </Table>\
 <FlexBox id="detail" binding="{}">\
@@ -10705,7 +10705,7 @@ sap.ui.define([
 			.expectChange("text2");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
+			var oContext = that.oView.byId("list").getItems()[0].getBindingContext();
 
 			// 'Budget' and 'Name' are added to the table row
 			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,Name",
@@ -12352,12 +12352,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: master/detail with V2 adapter where the detail URI must be adjusted for V2
+	// Scenario: list/detail with V2 adapter where the detail URI must be adjusted for V2
 	// Additionally properties of a contained complex type are used with auto-$expand/$select
-	QUnit.test("V2 adapter: master/detail", function (assert) {
+	QUnit.test("V2 adapter: list/detail", function (assert) {
 		var oModel = this.createModelForV2FlightService({autoExpandSelect : true}),
 			sView = '\
-<Table id="master" items="{/FlightCollection}">\
+<Table id="list" items="{/FlightCollection}">\
 	<Text id="carrid" text="{carrid}" />\
 </Table>\
 <FlexBox id="detail" binding="{}">\
@@ -12381,7 +12381,7 @@ sap.ui.define([
 			.expectChange("cityTo"); // expect a later change
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
+			var oContext = that.oView.byId("list").getItems()[0].getBindingContext();
 
 			// 'flightDetails' is added to the table row
 			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate=datetime"
@@ -13830,15 +13830,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Master table with list binding is suspended after initialization. Detail form for
+	// Scenario: List table with list binding is suspended after initialization. Detail form for
 	//   "selected" context from table is then changed by adding and removing a form field; table
 	//   remains unchanged.
-	//   After resume, *separate* new requests for the master table and the details form are sent;
+	//   After resume, *separate* new requests for the list table and the details form are sent;
 	//   the request for the form reflects the changes. The field added to the form is updated.
 	// JIRA bug 1169
-	// Ensure separate requests for master-detail scenarios with auto-$expand/$select and
+	// Ensure separate requests for list-detail scenarios with auto-$expand/$select and
 	// suspend/resume
-	QUnit.test("suspend/resume: master list binding with details context binding, only context"
+	QUnit.test("suspend/resume: list binding with details context binding, only context"
 			+ " binding is adapted", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -14383,10 +14383,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: BCP 1870017061
-	// Master/Detail, object page with a table.Table: When changing the entity for the object page
+	// List/Detail, object page with a table.Table: When changing the entity for the object page
 	// the property bindings below the table's list binding complained about an invalid path in
-	// deregisterChange. This scenario only simulates the object page, the contexts from the master
-	// list are hardcoded to keep the test small.
+	// deregisterChange. This scenario only simulates the object page, the contexts from the list
+	// are hardcoded to keep the test small.
 	QUnit.test("deregisterChange", function (assert) {
 		var oModel = createSalesOrdersModel(),
 			sView = '\
@@ -18241,10 +18241,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Master list and details containing a dependent table with an own request. Use
-	// cached values in dependent table if user switches between entries in the master list.
+	// Scenario: List and details containing a dependent table with an own request. Use
+	// cached values in dependent table if user switches between entries in the list.
 	// See CPOUI5UISERVICESV3-1686.
-	QUnit.test("Reuse caches in dependent tables w/ own request while switching master list entry",
+	QUnit.test("Reuse caches in dependent tables w/ own request while switching list entry",
 			function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -19068,11 +19068,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Master/detail. Select the first row in the master table, the detail list returns
-	// an item with a message. Select the second row in the master table, the message remains
+	// Scenario: List/detail. Select the first row in the list table, the detail list returns
+	// an item with a message. Select the second row in the list table, the message remains
 	// although the item is no longer displayed. Now sort the detail table (which refreshes it) and
 	// the message is gone.
-	QUnit.test("Master/Detail & messages", function (assert) {
+	QUnit.test("List/Detail & messages", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/TEAMS\', templateShareable : false}">\
@@ -19159,7 +19159,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario:
-	// Two Master/Detail binding hierarchies for sales orders and sales order line items. When
+	// Two List/Detail binding hierarchies for sales orders and sales order line items. When
 	// refreshing a single sales order, line items requests are triggered and messages are updated
 	// only for this single sales order and its dependent sales order line items. For other sales
 	// orders and their dependent sales order line items cached data is not discarded and messages
@@ -19884,7 +19884,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Navigate to a detail page (e.g. by passing an entity key via URL parameter),
-	// delete the root element and navigate back to the master page. When navigating again to the
+	// delete the root element and navigate back to the list page. When navigating again to the
 	// detail page with the same entity key (e.g. via browser forward/back) no obsolte caches must
 	// be used and all bindings shall fail while trying to read the data.
 	// BCP: 1970282109
@@ -21242,7 +21242,7 @@ sap.ui.define([
 	// Additionally, there are detail "views" (form and table) which send their own requests and are
 	// affected by the side effect.
 	// Finally, read a side effect that affects a single row, refreshing it completely.
-	QUnit.test("requestSideEffects: collection & master/detail", function (assert) {
+	QUnit.test("requestSideEffects: collection & list/detail", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
@@ -21406,7 +21406,7 @@ sap.ui.define([
 				.expectChange("currency", [, "JPY"]);
 
 			//TODO @see CPOUI5UISERVICESV3-1832: open issue with autoExpandSelect, detailTable
-			// would not send own request anymore because master table's oCachePromise becomes
+			// would not send own request anymore because list table's oCachePromise becomes
 			// pending again (see PS1 of POC #4122940); workaround by removing binding context
 			that.oView.byId("detailTable").setBindingContext(null);
 
@@ -21849,7 +21849,7 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<Table id="master" items="{/SalesOrderList}">\
+<Table id="list" items="{/SalesOrderList}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
 </Table>',
 			that = this;
@@ -21874,7 +21874,7 @@ sap.ui.define([
 					type : "Error"
 				}]);
 
-			oTable = that.oView.byId("master");
+			oTable = that.oView.byId("list");
 			return Promise.all([
 				oTable.getBinding("items").getHeaderContext()
 					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
@@ -21904,7 +21904,7 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<Table id="master" items="{/SalesOrderList}">\
+<Table id="list" items="{/SalesOrderList}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
 </Table>\
 <FlexBox id="detail" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
@@ -21925,7 +21925,7 @@ sap.ui.define([
 				})
 				.expectChange("note", "Note 42");
 
-			oTable = that.oView.byId("master");
+			oTable = that.oView.byId("list");
 			oContext = oTable.getItems()[0].getBindingContext();
 
 			that.oView.byId("detail").setBindingContext(oContext);
