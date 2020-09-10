@@ -5989,10 +5989,26 @@ var
 function manipulationTarget( elem, content ) {
 	if ( nodeName( elem, "table" ) &&
 		nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ) {
-
-		return jQuery( elem ).children( "tbody" )[ 0 ] || elem;
+		// ##### BEGIN: MODIFIED BY SAP
+		// jQuery has removed the automatic creation of a <tbody> element with version 3.
+		// Some UI5 applications have been dependent on this behavior.
+		var tbody = jQuery( elem ).children( "tbody" )[ 0 ];
+		if (tbody) {
+			return tbody;
+		} else {
+			// We log a warning via the UI5 migration logging mechanism to report these issues.
+			if (window.sap && window.sap.ui && window.sap.ui._jQuery3Compat && window.sap.ui._jQuery3Compat._migrateWarn) {
+				window.sap.ui._jQuery3Compat._migrateWarn(
+					"Trying to add a <tr> element to a <table> without a <tbody>. " +
+					"At this point, jQuery version 2 would have inserted a <tbody> element for you. " +
+					"Since jQuery version 3, jQuery does not automatically create a <tbody> element anymore. " +
+					"Please add the <tbody> on your own, if your code or CSS expects it."
+				);
+			}
+			return elem;
+		}
+		// ##### END: MODIFIED BY SAP
 	}
-
 	return elem;
 }
 
@@ -10983,7 +10999,9 @@ if ( typeof noGlobal === "undefined" ) {
 return jQuery;
 } );
 
+// ##### BEGIN: MODIFIED BY SAP
+// call compat-layer factory in case the compat-layer was registered globally before jQuery was loaded
 if (window.sap && window.sap.ui && window.sap.ui._jQuery3Compat) {
-	sap.ui._jQuery3Compat(jQuery, window);
-	delete sap.ui._jQuery3Compat;
+	sap.ui._jQuery3Compat._factory(jQuery, window);
 }
+// ##### END: MODIFIED BY SAP
