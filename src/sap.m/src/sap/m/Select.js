@@ -1540,6 +1540,8 @@ function(
 		 * @private
 		 */
 		Select.prototype.onsapenter = function(oEvent) {
+			// Prevent the opening of the native select with options
+			oEvent.preventDefault();
 
 			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
