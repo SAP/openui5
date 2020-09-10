@@ -146,8 +146,8 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<Text id="id" text="{ID}" />\
-		<Text id="text" text="{Name}" />\
+		<Text id="id" text="{ID}"/>\
+		<Text id="text" text="{Name}"/>\
 	</Table>\
 </FlexBox>';
 
@@ -604,7 +604,7 @@ sap.ui.define([
 			var oModel = createTeaBusiModel({updateGroupId : "update"}),
 				sView = '\
 <FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
-	<Text id="age" text="{AGE}" />\
+	<Text id="age" text="{AGE}"/>\
 </FlexBox>',
 				that = this;
 
@@ -792,8 +792,8 @@ sap.ui.define([
 				sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{/SalesOrderList}">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </Table>',
 				that = this;
 
@@ -1156,7 +1156,7 @@ sap.ui.define([
 		 *                               // control is a template within a table.
 		 * this.expectChange("foo", ["a", "b"]); // expect values for two rows of the control with
 		 *                                       // ID "foo"
-		 * this.expectChange("foo", ["a",,"b"]); // expect values for the rows 0 and 2 of the
+		 * this.expectChange("foo", ["a",, "b"]); // expect values for the rows 0 and 2 of the
 		 *                                       // control with the ID "foo", because this is a
 		 *                                       // sparse array in which index 1 is unset
 		 * this.expectChange("foo", "d", "/MyEntitySet/ID");
@@ -1464,11 +1464,12 @@ sap.ui.define([
 			}).then(function () {
 				var sControlId, aExpectedValuesPerRow, i, j;
 
-				// Report missing requests
+				// Report (and forget about) missing requests
 				that.aRequests.forEach(function (oRequest) {
 					assert.ok(false, oRequest.method + " " + oRequest.url + " (not requested)");
 				});
-				// Report missing changes
+				that.aRequests = [];
+				// Report (and forget about) missing changes
 				for (sControlId in that.mChanges) {
 					if (that.hasOnlyOptionalChanges(sControlId)) {
 						delete that.mChanges[sControlId];
@@ -1479,6 +1480,7 @@ sap.ui.define([
 							+ JSON.stringify(that.mChanges[sControlId][i]) + " (not set)");
 					}
 				}
+				that.mChanges =  {};
 				for (sControlId in that.mListChanges) {
 					// Note: This may be a sparse array
 					aExpectedValuesPerRow = that.mListChanges[sControlId];
@@ -1489,6 +1491,7 @@ sap.ui.define([
 						}
 					}
 				}
+				that.mListChanges = {};
 				assert.strictEqual(that.aExpectedEvents.length, 0, "no missing events");
 				that.checkMessages(assert);
 				if (sTitle) {
@@ -1633,7 +1636,7 @@ sap.ui.define([
 				message : "Request intentionally failed"
 			},
 			oError = createError(oOriginalMessage),
-			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}" />';
+			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
 
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
 
@@ -1664,8 +1667,8 @@ sap.ui.define([
 			},
 			oError = createError(oOriginalMessage),
 			sView = '\
-<Text text="{/EMPLOYEES(\'1\')/ID}" />\
-<Text text="{/EMPLOYEES(\'2\')/Name}" />';
+<Text text="{/EMPLOYEES(\'1\')/ID}"/>\
+<Text text="{/EMPLOYEES(\'2\')/Name}"/>';
 
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('2')/Name");
@@ -1694,11 +1697,11 @@ sap.ui.define([
 	QUnit.test("error response: $batch w/ change set (framework test)", function (assert) {
 		var oModel = createSalesOrdersModel({groupId : "$auto"}),
 			sView = '\
-<Table id="table" items="{/SalesOrderList}" >\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Input id="note" value="{Note}" />\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Input id="note" value="{Note}"/>\
 </Table>\
-<Text id="name" text="{/BusinessPartnerList(\'1\')/CompanyName}" />',
+<Text id="name" text="{/BusinessPartnerList(\'1\')/CompanyName}"/>',
 			that = this;
 
 		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
@@ -1761,7 +1764,7 @@ sap.ui.define([
 	// Scenario: Minimal test for an absolute ODataPropertyBinding. This scenario is comparable with
 	// "FavoriteProduct" in the SalesOrders application.
 	testViewStart("Absolute ODPB",
-		'<Text id="text" text="{/EMPLOYEES(\'2\')/Name}" />',
+		'<Text id="text" text="{/EMPLOYEES(\'2\')/Name}"/>',
 		{"EMPLOYEES('2')/Name" : {value : "Frederic Fall"}},
 		{text : "Frederic Fall"}
 	);
@@ -1771,7 +1774,7 @@ sap.ui.define([
 	// a relative ODataPropertyBinding. The SalesOrders application does not have such a scenario.
 	testViewStart("Absolute ODCB w/o parameters with relative ODPB", '\
 <FlexBox binding="{/EMPLOYEES(\'2\')}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </FlexBox>',
 		{"EMPLOYEES('2')" : {Name : "Frederic Fall"}},
 		{text : "Frederic Fall"}
@@ -1782,7 +1785,7 @@ sap.ui.define([
 	// a relative ODataPropertyBinding. The SalesOrders application does not have such a scenario.
 	testViewStart("Absolute ODCB with parameters and relative ODPB", '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </FlexBox>',
 		{"EMPLOYEES('2')?$select=Name" : {Name : "Frederic Fall"}},
 		{text : "Frederic Fall"}
@@ -1796,7 +1799,7 @@ sap.ui.define([
 	// * Open the suggestion list for the "Buyer ID"
 	testViewStart("Absolute ODLB w/o parameters and relative ODPB", '\
 <Table items="{/EMPLOYEES}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </Table>',
 		{"EMPLOYEES?$skip=0&$top=100" :
 			{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}},
@@ -1809,7 +1812,7 @@ sap.ui.define([
 	// the SalesOrders application.
 	testViewStart("Absolute ODLB with parameters and relative ODPB", '\
 <Table items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </Table>',
 		{"EMPLOYEES?$select=Name&$skip=0&$top=100" :
 			{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}},
@@ -1833,7 +1836,7 @@ sap.ui.define([
 		filters : {path : \'AGE\', operator : \'GT\', value1 : 21},\
 		sorter : {path : \'AGE\'}\
 	}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </Table>',
 		{"EMPLOYEES?$select=Name&$filter=AGE gt 21 and (TEAM_ID eq 42)&$orderby=AGE,Name desc&$skip=0&$top=100" :
 			{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}},
@@ -1845,9 +1848,9 @@ sap.ui.define([
 	// This scenario is similar to the "Sales Order Line Items" in the SalesOrders application.
 	testViewStart("Absolute ODCB with parameters and relative ODLB with parameters", '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$select : \'Category\'}}">\
-		<Text id="category" text="{Category}" />\
+		<Text id="category" text="{Category}"/>\
 	</Table>\
 </FlexBox>',
 		{
@@ -1946,7 +1949,7 @@ sap.ui.define([
 	// triggers the function import.
 	testViewStart("FunctionImport", '\
 <FlexBox binding="{/GetEmployeeByID(EmployeeID=\'2\')}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </FlexBox>',
 		{"GetEmployeeByID(EmployeeID='2')" : {Name : "Frederic Fall"}},
 		{text : "Frederic Fall"}
@@ -2043,7 +2046,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" growing="' + bGrowing + '" growingThreshold="3" items="{/SalesOrderList}">\
-	<Text id="note" text="{Note}" />\
+	<Text id="note" text="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -2099,9 +2102,10 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1396
 	QUnit.test("OLDB#requestContexts w/ sap.ui.table.Table", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="3">\
-	<Text id="note" text="{Note}" />\
+	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
 
@@ -2123,7 +2127,10 @@ sap.ui.define([
 			.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oBinding = that.oView.byId("table").getBinding("rows");
+			var oBinding;
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
 
 			that.expectEvents(assert, oBinding, [
 					[, "change", {reason : "change"}]
@@ -2151,7 +2158,7 @@ sap.ui.define([
 			that.expectChange("note", [,, "Note 3", "Note 4", "Note 5"]);
 
 			// scroll down
-			that.oView.byId("table").setFirstVisibleRow(2);
+			oTable.setFirstVisibleRow(2);
 
 			return that.waitForChanges(assert);
 		});
@@ -2165,7 +2172,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{}" threshold="0" visibleRowCount="3">\
-	<Text id="note" text="{Note}" />\
+	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
 
@@ -2208,7 +2215,7 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_BP}">\
-	<Text id="city" text="{Address/City}" />\
+	<Text id="city" text="{Address/City}"/>\
 </FlexBox>\
 <Text id="longitude1" text="{Address/GeoLocation/Longitude}"/>\
 <Text id="longitude2" text="{Address/GeoLocation/Longitude}"/>\
@@ -2425,7 +2432,7 @@ sap.ui.define([
 		<Text id="companyName" text="{CompanyName}"/>\
 	</FlexBox>\
 </FlexBox>\
-<Text id="legalForm" text="{LegalForm}" />',
+<Text id="legalForm" text="{LegalForm}"/>',
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
@@ -2483,13 +2490,14 @@ sap.ui.define([
 	// BCP: 2080093480
 	QUnit.test("ODLB w/o cache: late property", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
 		<Text id="position" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>\
-<Text id="quantity" text="{Quantity}" />',
+<Text id="quantity" text="{Quantity}"/>',
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
@@ -2502,6 +2510,8 @@ sap.ui.define([
 			.expectChange("quantity");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectRequest(
 				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
 				+ "?$select=Quantity", {
@@ -2511,15 +2521,12 @@ sap.ui.define([
 
 			// select an item
 			that.oView.byId("quantity").setBindingContext(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+				oTable.getBinding("items").getCurrentContexts()[0]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]
-					.getProperty("Quantity"),
-				"5"
-			);
+				oTable.getBinding("items").getCurrentContexts()[0].getProperty("Quantity"), "5");
 		});
 	});
 
@@ -2546,7 +2553,7 @@ sap.ui.define([
 </FlexBox>\
 <FlexBox id="returnValue">\
 	<Text id="id2" text="{SalesOrderID}"/>\
-	<Text id="note" text="{Note}" />\
+	<Text id="note" text="{Note}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
 		<Text text="{ItemPosition}"/>\
 	</Table>\
@@ -2644,16 +2651,17 @@ sap.ui.define([
 	QUnit.test("ODLB: late property", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$auto"}),
 			oRowContext,
+			oTable,
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'1\')}">\
 	<Table id="table" growing="true" growingThreshold="2"\
 			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true,\
 				$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-		<Text id="name" text="{Name}" />\
+		<Text id="name" text="{Name}"/>\
 	</Table>\
 </FlexBox>\
-<Input id="age1" value="{AGE}" />\
-<Text id="age2" text="{AGE}" />\
+<Input id="age1" value="{AGE}"/>\
+<Text id="age2" text="{AGE}"/>\
 <Input id="team" value="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}"/>\
 <Input id="budget" value="{EMPLOYEE_2_TEAM/Budget}"/>',
 			that = this;
@@ -2672,6 +2680,8 @@ sap.ui.define([
 			.expectChange("budget");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			// two late property requests (one had only a $expand, so EMPLOYEE_2_TEAM is selected)
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE,EMPLOYEE_2_TEAM"
 					+ "&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
@@ -2692,7 +2702,7 @@ sap.ui.define([
 				.expectChange("team", "1");
 
 			// code under test - AGE and Team_Id are requested
-			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			oRowContext = oTable.getItems()[0].getBindingContext();
 			that.oView.byId("age1").setBindingContext(oRowContext);
 			that.oView.byId("team").setBindingContext(oRowContext);
 
@@ -2796,7 +2806,7 @@ sap.ui.define([
 
 			// see that requestSideEffects updates AGE, too
 			return Promise.all([
-				that.oView.byId("table").getBinding("items").getHeaderContext().requestSideEffects([
+				oTable.getBinding("items").getHeaderContext().requestSideEffects([
 					{$PropertyPath : "AGE"},
 					{$PropertyPath : "Name"}
 				]),
@@ -2806,7 +2816,7 @@ sap.ui.define([
 			that.expectChange("age2", "29");
 
 			// change one Text to the second row - must be cached from requestSideEffects
-			oRowContext = that.oView.byId("table").getItems()[1].getBindingContext();
+			oRowContext = oTable.getItems()[1].getBindingContext();
 			that.oView.byId("age2").setBindingContext(oRowContext);
 
 			return that.waitForChanges(assert);
@@ -2843,9 +2853,9 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/EMPLOYEES(\'1\')}">\
-	<Text id="employee_id" text="{ID}" />\
-	<Text id="team_id" text="{EMPLOYEE_2_TEAM/Team_Id}" />\
-	<Text id="manager_id" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}" />\
+	<Text id="employee_id" text="{ID}"/>\
+	<Text id="team_id" text="{EMPLOYEE_2_TEAM/Team_Id}"/>\
+	<Text id="manager_id" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}"/>\
 </FlexBox>',
 			that = this;
 
@@ -2889,9 +2899,9 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<Text id="employee_id" text="{ID}" />\
-	<Text id="team_id" text="{EMPLOYEE_2_TEAM/Team_Id}" />\
-	<Text id="manager_id" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}" />\
+	<Text id="employee_id" text="{ID}"/>\
+	<Text id="team_id" text="{EMPLOYEE_2_TEAM/Team_Id}"/>\
+	<Text id="manager_id" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}"/>\
 </Table>',
 			that = this;
 
@@ -3388,7 +3398,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'42\')}">\
-	<Input id="text" value="{Name}" />\
+	<Input id="text" value="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -3429,7 +3439,7 @@ sap.ui.define([
 				message : "Could not read",
 				target : ""
 			}),
-			sView = '<Input id="text" value="{/EMPLOYEES(\'42\')/Name}" />',
+			sView = '<Input id="text" value="{/EMPLOYEES(\'42\')/Name}"/>',
 			that = this;
 
 		this.oLogMock.expects("error")
@@ -3469,7 +3479,7 @@ sap.ui.define([
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'42\\\')\',\
 	parameters : {$expand : {EMPLOYEE_2_EQUIPMENTS : {$orderby : \'ID\', $select : \'Name\'}}}}">\
 	<Table id="table" items="{EMPLOYEE_2_EQUIPMENTS}">\
-		<Text id="text" text="{Name}" />\
+		<Text id="text" text="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -3526,7 +3536,9 @@ sap.ui.define([
 	// Refresh single row after it has been updated with a value which doesn't match the table's
 	// filter anymore. In this case we expect the single row to disappear.
 	QUnit.test("Context#refresh(undefined, true)", function (assert) {
-		var sView = '\
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
 <Table id="table"\
 		items="{\
 			path : \'/EMPLOYEES\',\
@@ -3534,8 +3546,8 @@ sap.ui.define([
 			sorter : {path : \'AGE\'},\
 			parameters : {foo : \'bar\'}\
 		}">\
-	<Text id="text" text="{Name}" />\
-	<Input id="age" value="{AGE}" />\
+	<Text id="text" text="{Name}"/>\
+	<Input id="age" value="{AGE}"/>\
 </Table>',
 			that = this;
 
@@ -3550,66 +3562,55 @@ sap.ui.define([
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
 			.expectChange("age", ["70", "50", "77"]);
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
-			.then(function () {
-				that.expectRequest({
-						method : "PATCH",
-						url : "EMPLOYEES('0')?foo=bar",
-						headers : {"If-Match" : "ETag0"},
-						payload : {AGE : 10}
-					}) // 204 No Content
-					.expectChange("age", ["10"]); // caused by setValue
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
 
-				that.oView.byId("table").getItems()[0].getCells()[1].getBinding("value")
-					.setValue(10);
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('0')?foo=bar",
+					headers : {"If-Match" : "ETag0"},
+					payload : {AGE : 10}
+				}) // 204 No Content
+				.expectChange("age", ["10"]); // caused by setValue
 
-				return that.waitForChanges(assert);
-			}).then(function () {
-				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			oTable.getItems()[0].getCells()[1].getBinding("value").setValue(10);
 
-				that.expectRequest("EMPLOYEES?foo=bar"
-						+ "&$filter=(AGE gt 42) and ID eq '0'"
-						+ "&$select=AGE,ID,Name", {value : []})
-					.expectChange("text", ["Jonathan Smith", "Peter Burke"])
-					.expectChange("age", ["50", "77"]);
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES?foo=bar"
+					+ "&$filter=(AGE gt 42) and ID eq '0'"
+					+ "&$select=AGE,ID,Name", {value : []})
+				.expectChange("text", ["Jonathan Smith", "Peter Burke"])
+				.expectChange("age", ["50", "77"]);
 
-				// code under test
-				oContext.refresh(undefined, true);
+			// code under test
+			oTable.getItems()[0].getBindingContext().refresh(undefined, true);
 
-				return that.waitForChanges(assert);
-			}).then(function () {
-				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES?foo=bar"
+					+ "&$filter=(AGE gt 42) and ID eq '1'"
+					+ "&$select=AGE,ID,Name", {
+					value : [{
+						ID : "1",
+						Name : "Jonathan Smith",
+						AGE : 51
+					}]
+				})
+				.expectChange("age", ["51"]);
 
-				that.expectRequest("EMPLOYEES?foo=bar"
-						+ "&$filter=(AGE gt 42) and ID eq '1'"
-						+ "&$select=AGE,ID,Name", {
-						value : [{
-							ID : "1",
-							Name : "Jonathan Smith",
-							AGE : 51
-						}]
-					})
-					.expectChange("age", ["51"]);
+			// code under test
+			oTable.getItems()[0].getBindingContext().refresh(undefined, true);
 
-				// code under test
-				oContext.refresh(undefined, true);
-
-				return that.waitForChanges(assert);
-			});
+			return that.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************
 	// Refresh a single row with a bound message and check that the message is not duplicated.
 	// Refreshing a single line in a collection must not remove messages for other lines.
 	QUnit.test("Context#refresh() with messages", function (assert) {
-		var sView = '\
-<Table id="table"\
-		items="{\
-			path : \'/EMPLOYEES\',\
-			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}\
-		}">\
-	<Input id="id" value="{ID}" />\
-</Table>',
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oMessage1 = {
 				code : "2",
 				message : "Another Text",
@@ -3639,6 +3640,14 @@ sap.ui.define([
 				transition : false
 			},
 			oTable,
+			sView = '\
+<Table id="table"\
+		items="{\
+			path : \'/EMPLOYEES\',\
+			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}\
+		}">\
+	<Input id="id" value="{ID}"/>\
+</Table>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$select=ID,__CT__FAKE__Message/__FAKE__Messages"
@@ -3667,26 +3676,25 @@ sap.ui.define([
 				type : "Warning"
 			}, oMessage1]);
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
-			.then(function () {
-				oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
 
-				return Promise.all([
-					that.checkValueState(assert, oTable.getItems()[0].getCells()[0],
-						"Warning", "Text"),
-					that.checkValueState(assert, oTable.getItems()[1].getCells()[0],
-						"Warning", "Another Text")
-				]);
-			}).then(function () {
-				var oContext = oTable.getItems()[0].getBindingContext();
+			return Promise.all([
+				that.checkValueState(assert, oTable.getItems()[0].getCells()[0],
+					"Warning", "Text"),
+				that.checkValueState(assert, oTable.getItems()[1].getCells()[0],
+					"Warning", "Another Text")
+			]);
+		}).then(function () {
+			var oContext = oTable.getItems()[0].getBindingContext();
 
-				that.expectRequest("EMPLOYEES('0')"
-							+ "?$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
-						ID : "0",
-						__CT__FAKE__Message : {
-							__FAKE__Messages : [oResponseMessage0AfterRefresh]
-						}
-					})
+			that.expectRequest("EMPLOYEES('0')"
+						+ "?$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
+					ID : "0",
+					__CT__FAKE__Message : {
+						__FAKE__Messages : [oResponseMessage0AfterRefresh]
+					}
+				})
 				.expectMessages([{
 					code : "1",
 					message : "Text after refresh",
@@ -3695,17 +3703,17 @@ sap.ui.define([
 					type : "Warning"
 				}, oMessage1]);
 
-				// code under test
-				oContext.refresh();
+			// code under test
+			oContext.refresh();
 
-				return that.waitForChanges(assert);
-			}).then(function () {
-				return that.checkValueState(assert, oTable.getItems()[0].getCells()[0],
-					"Warning", "Text after refresh");
-			}).then(function () {
-				return that.checkValueState(assert, oTable.getItems()[1].getCells()[0],
-					"Warning", "Another Text");
-			});
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, oTable.getItems()[0].getCells()[0],
+				"Warning", "Text after refresh");
+		}).then(function () {
+			return that.checkValueState(assert, oTable.getItems()[1].getCells()[0],
+				"Warning", "Another Text");
+		});
 	});
 
 	//*********************************************************************************************
@@ -3718,9 +3726,10 @@ sap.ui.define([
 				target : "ID"
 			}, 404),
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<Input value="{ID}" />\
+	<Input value="{ID}"/>\
 </Table>',
 			that = this;
 
@@ -3729,6 +3738,8 @@ sap.ui.define([
 			});
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to refresh entity: /EMPLOYEES('0')[0]",
 					sinon.match(oError.message), "sap.ui.model.odata.v4.ODataListBinding");
@@ -3743,12 +3754,12 @@ sap.ui.define([
 				}]);
 
 			// code under test
-			that.oView.byId("table").getItems()[0].getBindingContext().refresh();
+			oTable.getItems()[0].getBindingContext().refresh();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			return that.checkValueState(assert,
-				that.oView.byId("table").getItems()[0].getCells()[0], "Error", "Not found");
+				oTable.getItems()[0].getCells()[0], "Error", "Not found");
 		});
 	});
 
@@ -3758,7 +3769,8 @@ sap.ui.define([
 	// is possible.
 	// BCP: 2070137560
 	QUnit.test("Context.refresh() in a list relative to a return value context", function (assert) {
-		var sView = '\
+		var oTable,
+			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<FlexBox id="action" binding="{\
@@ -3807,6 +3819,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',"
 					+ "ItemPosition='0010')?$expand=SOITEM_2_PRODUCT", {
 					ItemPosition : "0010",
@@ -3818,7 +3832,7 @@ sap.ui.define([
 				})
 				.expectChange("name", ["Notebook Basic 15.1"]);
 
-			that.oView.byId("table").getItems()[0].getBindingContext().refresh();
+			oTable.getItems()[0].getBindingContext().refresh();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3829,8 +3843,7 @@ sap.ui.define([
 					payload : {Name : "Notebook Basic 15.2"}
 				});
 
-			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
-				.setValue("Notebook Basic 15.2");
+			oTable.getItems()[0].getCells()[0].getBinding("value").setValue("Notebook Basic 15.2");
 
 			return that.waitForChanges(assert);
 		});
@@ -3871,14 +3884,16 @@ sap.ui.define([
 		oTable.getBinding("items").refresh();
 	}].forEach(function (fnRefresh, i) {
 		QUnit.test("refresh: No drill-down error for deleted data #" + i, function (assert) {
-			var sView = '\
+			var oModel = createTeaBusiModel({autoExpandSelect : true}),
+				oTable,
+				sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', templateShareable : false}">\
-	<Text id="text" text="{Name}" />\
-	<Text id="age" text="{AGE}" />\
+	<Text id="text" text="{Name}"/>\
+	<Text id="age" text="{AGE}"/>\
 </Table>\
 <Table id="detailTable" items="{path : \'EMPLOYEE_2_EQUIPMENTS\',\
 		parameters : {$$ownRequest : true}}">\
-	<Text id="equipmentName" text="{Name}" />\
+	<Text id="equipmentName" text="{Name}"/>\
 </Table>',
 				that = this;
 
@@ -3893,30 +3908,31 @@ sap.ui.define([
 				.expectChange("age", ["70"])
 				.expectChange("equipmentName", []);
 
-			return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
-				.then(function () {
-					that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS"
-							+ "?$select=Category,ID,Name&$skip=0&$top=100", {
-							value : [{
-								Category : "Electronics",
-								ID : "1",
-								Name : "Office PC"
-							}, {
-								Category : "Electronics",
-								ID : "2",
-								Name : "Tablet X"
-							}]
-						})
-						.expectChange("equipmentName", ["Office PC", "Tablet X"]);
-					that.oView.byId("detailTable").setBindingContext(
-						that.oView.byId("table").getItems()[0].getBindingContext());
+			return this.createView(assert, sView, oModel).then(function () {
+				oTable = that.oView.byId("table");
 
-					return that.waitForChanges(assert);
-				}).then(function () {
-					fnRefresh.call(that, that.oView.byId("table"));
+				that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS"
+						+ "?$select=Category,ID,Name&$skip=0&$top=100", {
+						value : [{
+							Category : "Electronics",
+							ID : "1",
+							Name : "Office PC"
+						}, {
+							Category : "Electronics",
+							ID : "2",
+							Name : "Tablet X"
+						}]
+					})
+					.expectChange("equipmentName", ["Office PC", "Tablet X"]);
+				that.oView.byId("detailTable").setBindingContext(
+					oTable.getItems()[0].getBindingContext());
 
-					return that.waitForChanges(assert);
-				});
+				return that.waitForChanges(assert);
+			}).then(function () {
+				fnRefresh.call(that, oTable);
+
+				return that.waitForChanges(assert);
+			});
 		});
 	});
 
@@ -3929,12 +3945,15 @@ sap.ui.define([
 	//   order
 	// This test is a simplification of that scenario with a different service.
 	QUnit.test("Absolute ODLB with sort, relative ODCB resolved on selection", function (assert) {
-		var sView = '\
+		var oForm,
+			oTable,
+			oTableBinding,
+			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$expand : \'EMPLOYEE_2_MANAGER\'}}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </Table>\
 <FlexBox id="form" binding="{EMPLOYEE_2_MANAGER}">\
-	<Text id="id" text="{ID}" />\
+	<Text id="id" text="{ID}"/>\
 </FlexBox>',
 			that = this;
 
@@ -3948,6 +3967,9 @@ sap.ui.define([
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
 
 		return this.createView(assert, sView).then(function () {
+			oTable = that.oView.byId("table");
+			oTableBinding = oTable.getBinding("items");
+
 			that.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$orderby=Name"
 					+ "&$skip=0&$top=100", {
 					value : [
@@ -3958,23 +3980,23 @@ sap.ui.define([
 				.expectChange("name", ["Frederic Fall", "Jonathan Smith"]);
 
 			// code under test
-			that.oView.byId("table").getBinding("items").sort(new Sorter("Name"));
+			oTableBinding.sort(new Sorter("Name"));
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			oForm = that.oView.byId("form");
+
 			that.expectChange("id", "2");
 
 			// code under test
-			that.oView.byId("form").setBindingContext(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[1]);
+			oForm.setBindingContext(oTableBinding.getCurrentContexts()[1]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("id", "1");
 
 			// code under test
-			that.oView.byId("form").setBindingContext(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+			oForm.setBindingContext(oTableBinding.getCurrentContexts()[0]);
 
 			return that.waitForChanges(assert);
 		});
@@ -3988,10 +4010,11 @@ sap.ui.define([
 	// This test is a simplification of that scenario with a different service.
 	QUnit.test("Absolute ODLB refresh", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-	<Input id="name" value="{Name}" />\
+	<Input id="name" value="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -4025,9 +4048,10 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			return that.checkValueState(assert,
-				that.oView.byId("table").getItems()[0].getCells()[0],
-				"Warning", "Text");
+			oTable = that.oView.byId("table");
+
+			return that.checkValueState(assert, oTable.getItems()[0].getCells()[0], "Warning",
+				"Text");
 		}).then(function () {
 			that.expectRequest(
 				"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
@@ -4043,13 +4067,11 @@ sap.ui.define([
 				.expectMessages([]);
 
 			// code under test
-			that.oView.byId("table").getBinding("items").refresh();
+			oTable.getBinding("items").refresh();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			return that.checkValueState(assert,
-				that.oView.byId("table").getItems()[0].getCells()[0],
-				"None", "");
+			return that.checkValueState(assert, oTable.getItems()[0].getCells()[0], "None", "");
 		});
 	});
 
@@ -4076,7 +4098,7 @@ sap.ui.define([
 			path : \'/EMPLOYEES\',\
 			parameters : {$select : \'Name,__CT__FAKE__Message/__FAKE__Messages\'}\
 		}"\ threshold="0" visibleRowCount="2">\
-	<Input id="name" value="{Name}" />\
+	<Input id="name" value="{Name}"/>\
 </t:Table>',
 			that = this;
 
@@ -4147,7 +4169,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
 	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-	<Input id="text" value="{Name}" />\
+	<Input id="text" value="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -4208,7 +4230,7 @@ sap.ui.define([
 		QUnit.test("Absolute ODCB refresh, via bound context " + bViaContext, function (assert) {
 			var sView = '\
 <FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </FlexBox>',
 				that = this;
 
@@ -4239,7 +4261,7 @@ sap.ui.define([
 	// * Click on "Refresh favorite product" button
 	// This test is a simplification of that scenario with a different service.
 	QUnit.test("Absolute ODPB refresh", function (assert) {
-		var sView = '<Text id="name" text="{/EMPLOYEES(\'2\')/Name}" />',
+		var sView = '<Text id="name" text="{/EMPLOYEES(\'2\')/Name}"/>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES('2')/Name", {value : "Jonathan Smith"})
@@ -4265,7 +4287,7 @@ sap.ui.define([
 	QUnit.test("ActionImport", function (assert) {
 		var sView = '\
 <FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
-	<Input id="name" value="{Name}" />\
+	<Input id="name" value="{Name}"/>\
 </FlexBox>',
 			oModelMessage = {
 				code : "1",
@@ -4322,8 +4344,8 @@ sap.ui.define([
 	QUnit.test("Allow binding of operation parameters: type determination", function (assert) {
 		var sView = '\
 <FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
-	<Input id="budget" value="{$Parameter/Budget}" />\
-	<Input id="teamId" value="{$Parameter/TeamID}" />\
+	<Input id="budget" value="{$Parameter/Budget}"/>\
+	<Input id="teamId" value="{$Parameter/TeamID}"/>\
 </FlexBox>',
 			that = this;
 
@@ -4355,9 +4377,9 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-2010
 	QUnit.test("Allow binding of operation parameters: OneTime", function (assert) {
 		var sView = '\
-<FlexBox id="form" >\
-	<Input id="budget" value="{Budget}" />\
-	<Input id="teamId" value="{TeamID}" />\
+<FlexBox id="form">\
+	<Input id="budget" value="{Budget}"/>\
+	<Input id="teamId" value="{TeamID}"/>\
 </FlexBox>',
 			that = this;
 
@@ -4388,8 +4410,8 @@ sap.ui.define([
 		var oOperationBinding,
 			sView = '\
 <FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
-	<Input id="budget" value="{$Parameter/Budget}" />\
-	<Input id="teamId" value="{$Parameter/TeamID}" />\
+	<Input id="budget" value="{$Parameter/Budget}"/>\
+	<Input id="teamId" value="{$Parameter/TeamID}"/>\
 </FlexBox>',
 			that = this;
 
@@ -4470,8 +4492,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="operation" binding="{/ChangeTeamBudgetByID(...)}">\
 	<FlexBox id="parameter" binding="{$Parameter}">\
-		<Input id="budget" value="{Budget}" />\
-		<Input id="teamId" value="{TeamID}" />\
+		<Input id="budget" value="{Budget}"/>\
+		<Input id="teamId" value="{TeamID}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -4640,7 +4662,7 @@ sap.ui.define([
 						var="vh">\
 							<FlexBox id="valueHelp">\
 								<SearchField \
-									value="{vh>Parameters/0/LocalDataProperty@@format}" />\
+									value="{vh>Parameters/0/LocalDataProperty@@format}"/>\
 							</FlexBox>\
 					</template:with>\
 			</template:with>\
@@ -4656,7 +4678,7 @@ sap.ui.define([
 		<FlexBox id="valueHelp">\
 			<SearchField value="{path:\'_it/lastUsedChannel\'\
 				,type:\'sap.ui.model.odata.type.String\'\
-				,formatOptions:{\'parseKeepsEmptyString\':true}}" />\
+				,formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
 		</FlexBox>\
 	</FlexBox>\
 </FlexBox>');
@@ -4672,7 +4694,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="operation" binding="{/HirePerson(...)}">\
 	<FlexBox id="parameter" binding="{$Parameter}">\
-		<FlexBox binding="{Person}" >\
+		<FlexBox binding="{Person}">\
 			<Input id="name" value="{Name}"/>\
 			<Input id="salary" value="{Salary}"/>\
 			<FlexBox binding="{Address}">\
@@ -4833,7 +4855,7 @@ sap.ui.define([
 		foo : \'bar\',\
 		\'sap-valid-at\' : \'now\'\
 	}}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -4873,7 +4895,7 @@ sap.ui.define([
 	QUnit.test("Absolute ODCB changing parameters", function (assert) {
 		var sView = '\
 <FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -4901,7 +4923,7 @@ sap.ui.define([
 		// Note: The key property of the EMPLOYEES set is 'ID'
 		var sView = '\
 <Table growing="true" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </Table>';
 
 		this.expectRequest("EMPLOYEES?$select=Name&$skip=0&$top=20", {
@@ -4922,10 +4944,12 @@ sap.ui.define([
 	// * See that the count decreases
 	// The test simplifies it: It filters in the sales orders list directly
 	QUnit.test("ODLB: $count and filter()", function (assert) {
-		var sView = '\
+		var oTable,
+			oTableBinding,
+			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 			that = this;
 
@@ -4939,11 +4963,13 @@ sap.ui.define([
 			.expectChange("id", ["0500000001", "0500000002"]);
 
 		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			oTable = that.oView.byId("table");
+			oTableBinding = oTable.getBinding("items");
+
 			that.expectChange("count", "2");
 
 			// code under test
-			that.oView.byId("count").setBindingContext(
-				that.oView.byId("table").getBinding("items").getHeaderContext());
+			that.oView.byId("count").setBindingContext(oTableBinding.getHeaderContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -4955,8 +4981,7 @@ sap.ui.define([
 				.expectChange("id", ["0500000002"]);
 
 			// code under test
-			that.oView.byId("table").getBinding("items")
-				.filter(new Filter("SalesOrderID", FilterOperator.GT, "0500000001"));
+			oTableBinding.filter(new Filter("SalesOrderID", FilterOperator.GT, "0500000001"));
 
 			return that.waitForChanges(assert);
 		});
@@ -4970,7 +4995,7 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/ProductList\'}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -5020,10 +5045,12 @@ sap.ui.define([
 	// * See that the count decreases
 	// The delete is used to change the count (to see that it is still updated)
 	QUnit.test("ODLB: $count and sort()", function (assert) {
-		var sView = '\
+		var oTable,
+			oTableBinding,
+			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 		that = this;
 
@@ -5037,11 +5064,13 @@ sap.ui.define([
 			.expectChange("id", ["0500000001", "0500000002"]);
 
 		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			oTable = that.oView.byId("table");
+			oTableBinding = oTable.getBinding("items");
+
 			that.expectChange("count", "2");
 
 			// code under test
-			that.oView.byId("count").setBindingContext(
-				that.oView.byId("table").getBinding("items").getHeaderContext());
+			that.oView.byId("count").setBindingContext(oTableBinding.getHeaderContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -5055,7 +5084,7 @@ sap.ui.define([
 				.expectChange("id", ["0500000002", "0500000001"]);
 
 			// code under test
-			that.oView.byId("table").getBinding("items").sort(new Sorter("SalesOrderID", true));
+			oTableBinding.sort(new Sorter("SalesOrderID", true));
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -5068,7 +5097,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oView.byId("table").getItems()[0].getBindingContext().delete(),
+				oTable.getItems()[0].getBindingContext().delete(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -5079,10 +5108,12 @@ sap.ui.define([
 	// * Add a filter to the sales orders list using changeParameters(), so that there are less
 	// * See that the count decreases
 	QUnit.test("ODLB: $count and changeParameters()", function (assert) {
-		var sView = '\
+		var oTable,
+			oTableBinding,
+			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 			that = this;
 
@@ -5096,11 +5127,13 @@ sap.ui.define([
 			.expectChange("id", ["0500000001", "0500000002"]);
 
 		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			oTable = that.oView.byId("table");
+			oTableBinding = oTable.getBinding("items");
+
 			that.expectChange("count", "2");
 
 			// code under test
-			that.oView.byId("count").setBindingContext(
-				that.oView.byId("table").getBinding("items").getHeaderContext());
+			that.oView.byId("count").setBindingContext(oTableBinding.getHeaderContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -5112,8 +5145,7 @@ sap.ui.define([
 				.expectChange("id", ["0500000002"]);
 
 			// code under test
-			that.oView.byId("table").getBinding("items")
-				.changeParameters({$filter : "SalesOrderID gt '0500000001'"});
+			oTableBinding.changeParameters({$filter : "SalesOrderID gt '0500000001'"});
 
 			return that.waitForChanges(assert);
 		});
@@ -5128,7 +5160,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 			that = this;
 
@@ -5176,7 +5208,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 			that = this;
 
@@ -5233,7 +5265,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 			that = this;
 
@@ -5350,7 +5382,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 			that = this;
 
@@ -5404,7 +5436,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<Text id="position" text="{ItemPosition}" />\
+		<Text id="position" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -5455,7 +5487,7 @@ sap.ui.define([
 		parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<Text id="item" text="{ItemPosition}" />\
+		<Text id="item" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -5472,8 +5504,7 @@ sap.ui.define([
 			.expectChange("count")
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
-		return this.createView(assert, sView, createSalesOrdersModel()
-		).then(function () {
+		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
 			that.expectChange("count", "3");
 
 			// code under test
@@ -5516,7 +5547,7 @@ sap.ui.define([
 	<Text id="note" text="{Note}"/>\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
-		<Text id="item" text="{ItemPosition}" />\
+		<Text id="item" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -5600,7 +5631,7 @@ sap.ui.define([
 	QUnit.test("Modify a foreign property", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<Input id="item" value="{SO_2_BP/CompanyName}" />\
+	<Input id="item" value="{SO_2_BP/CompanyName}"/>\
 </Table>',
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
@@ -5639,7 +5670,7 @@ sap.ui.define([
 	// Sample for this behavior: OData V4 TripPin service from odata.org
 	QUnit.test("Modify a property, server responds with 204 (No Content)", function (assert) {
 		var sView = '<FlexBox binding="{/EMPLOYEES(\'2\')}">\
-						<Input id="text" value="{Name}" />\
+						<Input id="text" value="{Name}"/>\
 					</FlexBox>',
 			that = this;
 
@@ -5666,7 +5697,7 @@ sap.ui.define([
 	QUnit.test("Entity with key aliases", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EntitiesWithComplexKey}">\
-	<Input id="item" value="{Value}" />\
+	<Input id="item" value="{Value}"/>\
 </Table>',
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			that = this;
@@ -5764,8 +5795,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<Text id="salesOrderID" text="{SalesOrderID}" />\
-	<Input id="note" value="{Note}" />\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+	<Input id="note" value="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -5918,7 +5949,7 @@ sap.ui.define([
 				}),
 				sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<Input id="note" value="{Note}" />\
+	<Input id="note" value="{Note}"/>\
 	<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
 </Table>',
 				that = this;
@@ -5998,8 +6029,8 @@ sap.ui.define([
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -6221,8 +6252,8 @@ sap.ui.define([
 <Text id="count" text="{$count}"/>\
 <Table id="table" growing="true" growingThreshold="2"\
 		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -6343,8 +6374,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true" items="{BP_2_SO}">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -6445,8 +6476,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Input id="note" value="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
 </t:Table>',
 			that = this;
 
@@ -6585,8 +6616,8 @@ sap.ui.define([
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}"\
 			threshold="0" visibleRowCount="2">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -6719,16 +6750,16 @@ sap.ui.define([
 			oCreatedContext1,
 			oCreatedContext2,
 			oModel = createSalesOrdersModel({
-				autoExpandSelect: true,
-				updateGroupId: "update"
+				autoExpandSelect : true,
+				updateGroupId : "update"
 			}),
 			oTable,
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true"\
 			items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -6831,8 +6862,8 @@ sap.ui.define([
 <Table id="table" growing="true" growingThreshold="2"\
 		items="{parameters : {$filter : \'contains(Note,\\\'SalesOrder\\\')\'},\
 			path : \'/SalesOrderList\'}">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Input id="note" value="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Input id="note" value="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -6988,8 +7019,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
 
@@ -7102,15 +7133,15 @@ sap.ui.define([
 			oCreatedContext1,
 			oCreatedContext2,
 			oModel = createSalesOrdersModel({
-				autoExpandSelect: true,
-				updateGroupId: "update"
+				autoExpandSelect : true,
+				updateGroupId : "update"
 			}),
 			oTable,
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -7122,7 +7153,7 @@ sap.ui.define([
 					Note : "First SalesOrder",
 					SalesOrderID : "42"
 				}, { // Second sales order to avoid an empty row in table after resetChanges();
-					 // an empty row results in not deterministic change event, e.g. id[null] = null
+					// an empty row results in not deterministic change event, e.g. id[null] = null
 					Note : "Second SalesOrder",
 					SalesOrderID : "43"
 				}]
@@ -7187,8 +7218,8 @@ sap.ui.define([
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true"\
 			items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -7286,8 +7317,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true" items="{BP_2_SO}">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -7356,8 +7387,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
 
@@ -7432,8 +7463,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true" items="{BP_2_SO}">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -7456,7 +7487,7 @@ sap.ui.define([
 			that.expectChange("id", [""])
 				.expectChange("note", ["New 1"]);
 
-			oCreatedContext0 = oTable.getBinding("items").create({Note : "New 1"}, true);
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -7522,8 +7553,8 @@ sap.ui.define([
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true"\
 			items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -7597,8 +7628,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
 
@@ -7692,8 +7723,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -7826,8 +7857,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" growing="true" items="{/SalesOrderList}">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -7922,8 +7953,7 @@ sap.ui.define([
 	//  Create at: end
 	// CPOUI5UISERVICESV3-1818
 	QUnit.test("All pairs test for multi create (16)", function (assert) {
-		var oBinding,
-			oCreatedContext0,
+		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
 			oModel = createSalesOrdersModel({
@@ -7934,8 +7964,8 @@ sap.ui.define([
 			sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}"\
 		visibleRowCount="3">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
 
@@ -7951,6 +7981,8 @@ sap.ui.define([
 			.expectChange("note", ["First SalesOrder"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding;
+
 			oTable = that.oView.byId("table");
 			oBinding = oTable.getBinding("rows");
 
@@ -8002,8 +8034,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true" items="{path : \'BP_2_SO\', parameters : {$count : true}}">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -8092,8 +8124,8 @@ sap.ui.define([
 			sView = '\
 <Table id="table" growing="true" items="{path : \'/SalesOrderList\',\
 		parameters : {$count : true}}">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -8203,8 +8235,8 @@ sap.ui.define([
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true"\
 		items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true, $count : true}}">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -8304,8 +8336,8 @@ sap.ui.define([
 			sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}"\
 		visibleRowCount="2">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
 
@@ -8325,7 +8357,7 @@ sap.ui.define([
 			oBinding = oTable.getBinding("rows");
 
 			that.expectChange("id", [, ""])
-				.expectChange("note", [, "New 1"]); // "New 2" is  invisible as visibleRowCount is 2
+				.expectChange("note", [, "New 1"]); // "New 2" is invisible as visibleRowCount is 2
 
 			oCreatedContext0 = oBinding.create({Note : "New 1"}, true, true);
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true, true);
@@ -8411,8 +8443,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{/BusinessPartnerList}">\
-	<Input id="city" value="{Address/City}" />\
-	<Input id="longitude" value="{Address/GeoLocation/Longitude}" />\
+	<Input id="city" value="{Address/City}"/>\
+	<Input id="longitude" value="{Address/GeoLocation/Longitude}"/>\
 </Table>',
 
 			that = this;
@@ -8487,8 +8519,8 @@ sap.ui.define([
 	QUnit.test("Create with default value in a currency/unit", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
-	<Input id="quantity" value="{Quantity}" />\
-	<Text id="unit" text="{QuantityUnit}" />\
+	<Input id="quantity" value="{Quantity}"/>\
+	<Text id="unit" text="{QuantityUnit}"/>\
 </Table>',
 			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
@@ -8558,11 +8590,12 @@ sap.ui.define([
 	// Scenario: Failure when creating a sales order line item. Observe the message.
 	QUnit.test("Create error", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<Text text="{ItemPosition}" />\
-		<Input value="{ProductID}" />\
+		<Text text="{ItemPosition}"/>\
+		<Input value="{ProductID}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -8580,6 +8613,7 @@ sap.ui.define([
 					target : "ProductID"
 				});
 
+			oTable = that.oView.byId("table");
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList('42')/SO_2_SOITEM' failed; "
 					+ "will be repeated automatically", sinon.match(oError.message),
@@ -8599,12 +8633,11 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				that.oView.byId("table").getBinding("items").create(),
+				oTable.getBinding("items").create(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			return that.checkValueState(assert,
-				that.oView.byId("table").getItems()[0].getCells()[1] , "Error",
+			return that.checkValueState(assert, oTable.getItems()[0].getCells()[1] , "Error",
 				"Enter a product ID");
 		});
 	});
@@ -9045,11 +9078,11 @@ sap.ui.define([
 			oSubmitBatchPromise,
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
-	<Input id="name" value="{Name}" />\
+	<Input id="name" value="{Name}"/>\
 	<FlexBox id="action" \
 			binding="{' + sAction + '(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="teamId" text="{TEAM_ID}" />\
+		<Text id="teamId" text="{TEAM_ID}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -9497,8 +9530,8 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
 		parameters : {$select : \'AGE,ROOM_ID,EMPLOYEE_2_TEAM/Name\
 ,com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee\'}}">\
-	<Text id="name" text="{Name}" />\
-	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
+	<Text id="name" text="{Name}"/>\
+	<Text id="city" text="{LOCATION/City/CITYNAME}"/>\
 </FlexBox>',
 			that = this;
 
@@ -9533,7 +9566,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'C\\\',ID=1)\',\
 		parameters : {$select : \'EQUIPMENT_2_PRODUCT/SupplierIdentifier\'}}">\
-	<Text id="id" text="{ID}" />\
+	<Text id="id" text="{ID}"/>\
 </FlexBox>',
 			that = this;
 
@@ -9566,7 +9599,7 @@ sap.ui.define([
 <Table id="table" items="{path : \'/EMPLOYEES\',\
 		parameters : {$select : \'EMPLOYEE_2_TEAM/Name\'},\
 		filters : {path : \'AGE\', operator : \'GT\', value1 : 42}}">\
-	<Text text="{ID}" />\
+	<Text text="{ID}"/>\
 </Table>',
 			that = this;
 
@@ -9596,7 +9629,7 @@ sap.ui.define([
 	QUnit.test("Auto-$expand/$select: Absolute ODCB, refresh", function (assert) {
 		var sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -9654,7 +9687,7 @@ sap.ui.define([
 	QUnit.test("Metadata access to MANAGERS which is not loaded yet", function (assert) {
 		var sView = '\
 <Table id="table" items="{/MANAGERS}">\
-	<Text id="item" text="{@sapui.name}" />\
+	<Text id="item" text="{@sapui.name}"/>\
 </Table>',
 			oModel = createTeaBusiModel().getMetaModel();
 
@@ -9668,8 +9701,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Metadata property access to product name. It should be updated via one change
 	// event.
+	// JIRA: CPOUI5UISERVICESV3-582
 	QUnit.test("Metadata: Product name", function (assert) {
-		var sView = '<Text id="product" text="{/Equipments/EQUIPMENT_2_PRODUCT/@sapui.name}" />',
+		var sView = '<Text id="product" text="{/Equipments/EQUIPMENT_2_PRODUCT/@sapui.name}"/>',
 			oModel = createTeaBusiModel().getMetaModel();
 
 		this.expectChange("product",
@@ -9681,10 +9715,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Metadata property access to product name. It should be updated via one change
 	// event.
+	// JIRA: CPOUI5UISERVICESV3-582
 	QUnit.test("Metadata: Product name via form", function (assert) {
 		var sView = '\
 <FlexBox binding="{/Equipments/EQUIPMENT_2_PRODUCT/}">\
-	<Text id="product" text="{@sapui.name}" />\
+	<Text id="product" text="{@sapui.name}"/>\
 </FlexBox>',
 			oModel = createTeaBusiModel().getMetaModel();
 
@@ -9698,9 +9733,10 @@ sap.ui.define([
 	// Scenario: Metadata access to Managers which is not loaded yet. The binding is unresolved
 	// initially and gets a context later. Then switch to Products (becoming asynchronous again).
 	QUnit.test("Metadata: Manager -> Product", function (assert) {
-		var sView = '\
+		var oTable,
+			sView = '\
 <Table id="table" items="{}">\
-	<Text id="item" text="{@sapui.name}" />\
+	<Text id="item" text="{@sapui.name}"/>\
 </Table>',
 			oModel = createTeaBusiModel().getMetaModel(),
 			that = this;
@@ -9708,11 +9744,13 @@ sap.ui.define([
 		this.expectChange("item", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectChange("item", "ID", "/MANAGERS/ID")
 				.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
 				.expectChange("item", "Manager_to_Team", "/MANAGERS/Manager_to_Team");
 
-			that.oView.byId("table").setBindingContext(oModel.getContext("/MANAGERS"));
+			oTable.setBindingContext(oModel.getContext("/MANAGERS"));
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -9727,8 +9765,7 @@ sap.ui.define([
 				.expectChange("item", "PRODUCT_2_SUPPLIER",
 					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER");
 
-			that.oView.byId("table")
-				.setBindingContext(oModel.getContext("/Equipments/EQUIPMENT_2_PRODUCT"));
+			oTable.setBindingContext(oModel.getContext("/Equipments/EQUIPMENT_2_PRODUCT"));
 
 			return that.waitForChanges(assert);
 		});
@@ -9763,8 +9800,8 @@ sap.ui.define([
 				$select : \'AGE\'\
 			}\
 		}">\
-	<Text id="name" text="{EMPLOYEE_2_TEAM/Name}" />\
-	<Text id="TEAM_ID" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}" />\
+	<Text id="name" text="{EMPLOYEE_2_TEAM/Name}"/>\
+	<Text id="TEAM_ID" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}"/>\
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id"
@@ -9798,7 +9835,7 @@ sap.ui.define([
 		}">\
 	<FlexBox binding="{EMPLOYEE_2_TEAM}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="name" text="{Name}" />\
+		<Text id="name" text="{Name}"/>\
 	</FlexBox>\
 </FlexBox>';
 
@@ -9959,15 +9996,15 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/EMPLOYEES(\'1\')}">\
-	<Text id="name" text="{Name}" />\
-	<Input id="status" value="{STATUS}" />\
+	<Text id="name" text="{Name}"/>\
+	<Input id="status" value="{STATUS}"/>\
 </FlexBox>\
 <FlexBox id="action" \
 		binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
 	<Text id="parameterName" text="{$Parameter/EMPLOYEE/Name}"/>\
 	<Text id="parameterAge" text="{$Parameter/EMPLOYEE/AGE}"/>\
-	<Input id="parameterTeamId" value="{$Parameter/TeamID}" />\
-	<Text id="teamId" text="{TEAM_ID}" />\
+	<Input id="parameterTeamId" value="{$Parameter/TeamID}"/>\
+	<Text id="teamId" text="{TEAM_ID}"/>\
 </FlexBox>',
 			sUrl = "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 				+ ".AcChangeTeamOfEmployee",
@@ -10110,9 +10147,9 @@ sap.ui.define([
 			oReturnValueContext,
 			sView = '\
 <Table id="table" items="{path : \'/Artists\', parameters : {$select : \'Messages\'}}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </Table>\
-<Input id="nameCreated" value="{Name}" />',
+<Input id="nameCreated" value="{Name}"/>',
 			that = this;
 
 		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,Name&$skip=0&$top=100",
@@ -10272,7 +10309,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<Text id="id" text="{ID}" />\
+		<Text id="id" text="{ID}"/>\
 	</Table>\
 </FlexBox>';
 
@@ -10320,8 +10357,8 @@ sap.ui.define([
 			filters : {path : \'TEAM_ID\', operator : \'EQ\', value1 : \'77\'},\
 			parameters : {$count : true}\
 		}">\
-	<Text id="text" text="{Name}" />\
-	<Text id="teamId" text="{TEAM_ID}" />\
+	<Text id="text" text="{Name}"/>\
+	<Text id="teamId" text="{TEAM_ID}"/>\
 </Table>',
 			that = this;
 
@@ -10369,11 +10406,11 @@ sap.ui.define([
 	QUnit.test("Bound action w/ overloading", function (assert) {
 		var sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 	<FlexBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcOverload(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="isManager" text="{Is_Manager}" />\
+		<Text id="isManager" text="{Is_Manager}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -10411,7 +10448,7 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -10440,7 +10477,7 @@ sap.ui.define([
 <FlexBox binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="ETag" text="{\
 		path : \'@odata.etag\',\
-		type : \'sap.ui.model.odata.type.String\'}" />\
+		type : \'sap.ui.model.odata.type.String\'}"/>\
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')", {"@odata.etag" : "ETagValue"})
@@ -10479,9 +10516,9 @@ sap.ui.define([
 				}\
 			}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="name" text="{Name}" />\
+		<Text id="name" text="{Name}"/>\
 	</FlexBox>\
-	<Text id="age" text="{AGE}" />\
+	<Text id="age" text="{AGE}"/>\
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
@@ -10514,14 +10551,16 @@ sap.ui.define([
 	// i.e. it changes the initially aggregated query options. Note: It is also possible to remove
 	// a filter which must lead to removal of the $filter option.
 	QUnit.test("Absolute ODLB with auto-$expand/$select: filter via API", function (assert) {
-		var sView = '\
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oListBinding,
+			sView = '\
 <Table id="table"\
 		items="{\
 			path : \'/EMPLOYEES\',\
 			filters : {path : \'AGE\', operator : \'LT\', value1 : \'77\'},\
 			parameters : {$orderby : \'Name\', $select : \'AGE\'}\
 		}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -10535,38 +10574,37 @@ sap.ui.define([
 			})
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
-			.then(function () {
-				that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name"
-						+ "&$filter=AGE gt 42&$skip=0&$top=100", {
-						value : [
-							{Name : "Frederic Fall"},
-							{Name : "Peter Burke"}
-						]
-					})
-					.expectChange("text", [, "Peter Burke"]);
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("items");
 
-				// code under test
-				that.oView.byId("table").getBinding("items")
-					.filter(new Filter("AGE", FilterOperator.GT, 42));
+			that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name"
+					+ "&$filter=AGE gt 42&$skip=0&$top=100", {
+					value : [
+						{Name : "Frederic Fall"},
+						{Name : "Peter Burke"}
+					]
+				})
+				.expectChange("text", [, "Peter Burke"]);
 
-				return that.waitForChanges(assert);
-			})
-			.then(function () {
-				that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name&$skip=0&$top=100", {
-						value : [
-							{Name : "Frederic Fall"},
-							{Name : "Jonathan Smith"},
-							{Name : "Peter Burke"}
-						]
-					})
-					.expectChange("text", [, "Jonathan Smith", "Peter Burke"]);
+			// code under test
+			oListBinding.filter(new Filter("AGE", FilterOperator.GT, 42));
 
-				// code under test
-				that.oView.byId("table").getBinding("items").filter(/*no filter*/);
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name&$skip=0&$top=100", {
+					value : [
+						{Name : "Frederic Fall"},
+						{Name : "Jonathan Smith"},
+						{Name : "Peter Burke"}
+					]
+				})
+				.expectChange("text", [, "Jonathan Smith", "Peter Burke"]);
 
-				return that.waitForChanges(assert);
-			});
+			// code under test
+			oListBinding.filter(/*no filter*/);
+
+			return that.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************
@@ -10576,12 +10614,13 @@ sap.ui.define([
 	// P.S.: Sync data access is possible although oCachePromise becomes pending again.
 	// JIRA: CPOUI5ODATAV4-204
 	QUnit.test("ODLB with auto-$expand/$select below ODCB: filter via API", function (assert) {
-		var sView = '\
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
 <FlexBox binding="{/TEAMS(\'2\')}">\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
-		<Text id="text" text="{Name}" />\
+		<Text id="text" text="{Name}"/>\
 	</Table>\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -10598,27 +10637,26 @@ sap.ui.define([
 			.expectChange("name", "Team 2")
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
-			.then(function () {
-				var oListBinding = that.oView.byId("table").getBinding("items");
+		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding = that.oView.byId("table").getBinding("items");
 
-				that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID,Name"
-						+ "&$filter=AGE gt 42&$skip=0&$top=100", {
-						value : [
-							{Name : "Frederic Fall"},
-							{Name : "Peter Burke"}
-						]
-					})
-					.expectChange("text", [, "Peter Burke"]);
+			that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID,Name"
+					+ "&$filter=AGE gt 42&$skip=0&$top=100", {
+					value : [
+						{Name : "Frederic Fall"},
+						{Name : "Peter Burke"}
+					]
+				})
+				.expectChange("text", [, "Peter Burke"]);
 
-				// code under test
-				oListBinding.filter(new Filter("AGE", FilterOperator.GT, 42));
+			// code under test
+			oListBinding.filter(new Filter("AGE", FilterOperator.GT, 42));
 
-				// code under test: sync data access...
-				assert.strictEqual(oListBinding.getContext().getProperty("Team_Id"), "2");
+			// code under test: sync data access...
+			assert.strictEqual(oListBinding.getContext().getProperty("Team_Id"), "2");
 
-				return that.waitForChanges(assert);
-			});
+			return that.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************
@@ -10627,7 +10665,7 @@ sap.ui.define([
 	testViewStart("Auto-$expand/$select: no $apply inside $expand", '\
 <FlexBox binding="{/TEAMS(\'42\')}">\
 	<Table items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$apply : \'filter(AGE lt 42)\'}}">\
-		<Text id="text" text="{Name}" />\
+		<Text id="text" text="{Name}"/>\
 	</Table>\
 </FlexBox>', {
 		"TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE lt 42)&$select=ID,Name&$skip=0&$top=100" : {
@@ -10648,7 +10686,7 @@ sap.ui.define([
 	<List items="{path : \'TEAM_2_EMPLOYEES\',\
 		parameters : {$apply : \'filter(AGE lt 42)\'}, templateShareable : false}">\
 		<CustomListItem>\
-			<Text id="text" text="{Name}" />\
+			<Text id="text" text="{Name}"/>\
 		</CustomListItem>\
 	</List>\
 </Table>';
@@ -10675,10 +10713,10 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="list" items="{/TEAMS}">\
-	<Text id="text0" text="{Team_Id}" />\
+	<Text id="text0" text="{Team_Id}"/>\
 </Table>\
 <FlexBox id="detail" binding="{}">\
-	<Text id="text1" text="{Team_Id}" />\
+	<Text id="text1" text="{Team_Id}"/>\
 </FlexBox>',
 			that = this;
 
@@ -10708,11 +10746,11 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$auto"}),
 			sView = '\
 <Table id="list" items="{/TEAMS}">\
-	<Text id="text0" text="{Team_Id}" />\
+	<Text id="text0" text="{Team_Id}"/>\
 </Table>\
 <FlexBox id="detail" binding="{}">\
-	<Text id="text1" text="{Name}" />\
-	<Text id="text2" text="{Budget}" />\
+	<Text id="text1" text="{Name}"/>\
+	<Text id="text2" text="{Budget}"/>\
 </FlexBox>',
 			that = this;
 
@@ -10786,7 +10824,7 @@ sap.ui.define([
 	QUnit.test("submitBatch() after delete()", function (assert) {
 		var sView = '\
 <FlexBox binding="{/TEAMS(\'42\')}" id="form">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -10840,7 +10878,7 @@ sap.ui.define([
 					: "EMPLOYEES?",
 				sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </Table>',
 				that = this;
 
@@ -10883,7 +10921,7 @@ sap.ui.define([
 			sView = '\
 <Table id="table"\
 		items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}, suspended : true}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -10928,10 +10966,10 @@ sap.ui.define([
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="teamSet" items="{/TEAMS}">\
-	<Text id="teamId" text="{Team_Id}" />\
+	<Text id="teamId" text="{Team_Id}"/>\
 </Table>\
 <Table id="employeeSet" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
-	<Text id="employeeId" text="{ID}" />\
+	<Text id="employeeId" text="{ID}"/>\
 </Table>\
 <FlexBox id="objectPage" binding="{path : \'\', parameters : {$$updateGroupId : \'update\'}}">\
 	<Input id="employeeName" value="{Name}"/>\
@@ -11122,7 +11160,7 @@ sap.ui.define([
 		QUnit.test("filter all/any on list binding " + oFixture.request, function (assert) {
 			var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<Text id="text" text="{SalesOrderID}" />\
+	<Text id="text" text="{SalesOrderID}"/>\
 </Table>',
 				that = this;
 
@@ -11157,11 +11195,12 @@ sap.ui.define([
 	// Scenario: Check that the context paths use key predicates if the key properties are delivered
 	// in the response. Check that an expand spanning a complex type does not lead to failures.
 	QUnit.test("Context Paths Using Key Predicates", function (assert) {
-		var sView = '\
+		var oTable,
+			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\',\
 		parameters : {$expand : {\'LOCATION/City/EmployeesInCity\' : {$select : [\'Name\']}}, \
 		$select : [\'ID\', \'Name\']}}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -11194,7 +11233,9 @@ sap.ui.define([
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
 		return this.createView(assert, sView).then(function () {
-			assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
+			oTable = that.oView.byId("table");
+
+			assert.deepEqual(oTable.getItems().map(function (oItem) {
 				return oItem.getBindingContext().getPath();
 			}), ["/EMPLOYEES('1')", "/EMPLOYEES('2')"]);
 
@@ -11211,7 +11252,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oView.byId("table").getBinding("items").getHeaderContext()
+				oTable.getBinding("items").getHeaderContext()
 					.requestSideEffects([{$PropertyPath : "LOCATION"}]),
 				that.waitForChanges(assert)
 			]);
@@ -11334,10 +11375,10 @@ sap.ui.define([
 			$expand : {ToLineItems : {$select : \'ItemPosition\'}}, \
 			$select : \'SalesOrderID\'\
 		}}">\
-	<Text id="id" text="{path : \'SalesOrderID\', type : \'sap.ui.model.odata.type.String\'}" />\
+	<Text id="id" text="{path : \'SalesOrderID\', type : \'sap.ui.model.odata.type.String\'}"/>\
 	<Table id="table" items="{ToLineItems}">\
 		<Text id="item" text="{path : \'ItemPosition\',\
-			type : \'sap.ui.model.odata.type.String\'}" />\
+			type : \'sap.ui.model.odata.type.String\'}"/>\
 	</Table>\
 </FlexBox>',
 			oModel = this.createModelForV2SalesOrderService({
@@ -11385,7 +11426,7 @@ sap.ui.define([
 			$select : \'SalesOrderID\',\
 			$orderby : \'SalesOrderID\'\
 		}}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 			oModel = this.createModelForV2SalesOrderService({
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
@@ -11441,7 +11482,7 @@ sap.ui.define([
 			$select : \'SalesOrderID\',\
 			$filter : \'' + oFixture.binding + '\'\
 		}}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>';
 
 			this.expectRequest("SalesOrderSet?$filter=" + oFixture.request + "&$select=SalesOrderID"
@@ -11472,7 +11513,7 @@ sap.ui.define([
 		var sView = '\
 <Text id="text1" text="{\
 	path : \'/EMPLOYEES(\\\'2\\\')/Name\',\
-	parameters : {$$groupId : \'group1\'}}" />\
+	parameters : {$$groupId : \'group1\'}}"/>\
 <Text id="text2" text="{\
 	path : \'/EMPLOYEES(\\\'3\\\')/Name\',\
 	parameters : {$$groupId : \'group2\'}}"\
@@ -11506,7 +11547,7 @@ sap.ui.define([
 		var sView = '\
 <Text id="text1" text="{\
 	path : \'/EMPLOYEES(\\\'2\\\')/Name\',\
-	parameters : {$$groupId : \'$auto.1\'}}" />\
+	parameters : {$$groupId : \'$auto.1\'}}"/>\
 <Text id="text2" text="{\
 	path : \'/EMPLOYEES(\\\'3\\\')/Name\',\
 	parameters : {$$groupId : \'$auto.2\'}}"\
@@ -11544,7 +11585,7 @@ sap.ui.define([
 			<Label text="Name"/>\
 		</t:label>\
 		<t:template>\
-			<Text id="text" text="{Name}" />\
+			<Text id="text" text="{Name}"/>\
 		</t:template>\
 	</t:Column>\
 </t:Table>',
@@ -11572,7 +11613,7 @@ sap.ui.define([
 <FlexBox binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
 	<FlexBox binding="{EQUIPMENT_2_PRODUCT}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="text" text="{SupplierIdentifier}" />\
+		<Text id="text" text="{SupplierIdentifier}"/>\
 	</FlexBox>\
 </FlexBox>';
 
@@ -11597,7 +11638,7 @@ sap.ui.define([
 			oText = new Text(),
 			sView = '\
 <FlexBox binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
-	<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}" />\
+	<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}"/>\
 </FlexBox>';
 
 		this.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID"
@@ -11625,7 +11666,7 @@ sap.ui.define([
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
-	<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}" />\
+	<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}"/>\
 </Table>';
 
 		this.expectRequest("Equipments?$select=Category,ID"
@@ -11655,7 +11696,7 @@ sap.ui.define([
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
-	<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
+	<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}"/>\
 </Table>';
 
 		this.expectRequest("Equipments?$select=Category,ID"
@@ -11684,7 +11725,7 @@ sap.ui.define([
 		var oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
-	<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
+	<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}"/>\
 </Table>';
 
 		this.expectRequest("Equipments?$skip=0&$top=100", {
@@ -11711,7 +11752,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
 		path : \'/TEAMS(\\\'42\\\')\'}">\
 	<Table items="{TEAM_2_EMPLOYEES}">\
-		<Text id="id" text="{ID}" />\
+		<Text id="id" text="{ID}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -11747,7 +11788,7 @@ sap.ui.define([
 	<FlexBox id="function" \
 		binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeSalaryForecast(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="status" text="{STATUS}" />\
+		<Text id="status" text="{STATUS}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -11776,7 +11817,7 @@ sap.ui.define([
 		var oFunctionBinding,
 			sView = '\
 <FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -11828,7 +11869,7 @@ sap.ui.define([
 		var oFunctionBinding,
 			sView = '\
 <FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -11837,7 +11878,7 @@ sap.ui.define([
 		return this.createView(assert, sView).then(function () {
 			oFunctionBinding = that.oView.byId("function").getObjectBinding();
 
-			oFunctionBinding.changeParameters({$select: "Name"}); // MUST NOT trigger a request!
+			oFunctionBinding.changeParameters({$select : "Name"}); // MUST NOT trigger a request!
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
 					Name : "Jonathan Smith"
@@ -11853,14 +11894,14 @@ sap.ui.define([
 					Name : "Frederic Fall"
 				})
 				.expectChange("name", "Frederic Fall");
-			oFunctionBinding.changeParameters({$select: "ID,Name"});
+			oFunctionBinding.changeParameters({$select : "ID,Name"});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			oFunctionBinding.setParameter("EmployeeID", "2");
 
 			// MUST NOT trigger a request!
-			oFunctionBinding.changeParameters({$select: "Name"});
+			oFunctionBinding.changeParameters({$select : "Name"});
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=Name", {
 					Name : "Peter Burke"
@@ -11892,7 +11933,7 @@ sap.ui.define([
 <FlexBox binding="{/TEAMS(\'42\')}">\
 	<FlexBox binding="{TEAM_2_MANAGER}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="id" text="{ID}" />\
+		<Text id="id" text="{ID}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -11922,7 +11963,7 @@ sap.ui.define([
 		var fnGetContexts = ODataListBinding.prototype.getContexts,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
-	<Text id="id" text="{Team_Id}" />\
+	<Text id="id" text="{Team_Id}"/>\
 </Table>';
 
 		this.mock(ODataListBinding.prototype).expects("getContexts").atLeast(1).callsFake(
@@ -12070,7 +12111,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Support expression binding in ODataModel.integration.qunit
 	testViewStart("Expression binding",
-		'<Text id="text" text="{= \'Hello, \' + ${/EMPLOYEES(\'2\')/Name} }" />',
+		'<Text id="text" text="{= \'Hello, \' + ${/EMPLOYEES(\'2\')/Name} }"/>',
 		{"EMPLOYEES('2')/Name" : {value : "Frederic Fall"}},
 		{text : "Hello, Frederic Fall"}
 	);
@@ -12080,7 +12121,7 @@ sap.ui.define([
 	// Note: Use "$\{Name}" to avoid that Maven replaces "${Name}"
 	testViewStart("Expression binding in a list", '\
 <Table items="{/EMPLOYEES}">\
-	<Text id="text" text="{= \'Hello, \' + $\{Name} }" />\
+	<Text id="text" text="{= \'Hello, \' + $\{Name} }"/>\
 </Table>',
 		{"EMPLOYEES?$skip=0&$top=100" :
 			{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}},
@@ -12092,13 +12133,13 @@ sap.ui.define([
 	// ODataPropertyBindings to a advertised action
 	testViewStart("Auto-$expand/$select: relative ODPB to advertised action",'\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 	<Text id="adAction1"\
 		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsOccupied}\
-			? \'set to occupied\' : \'\'}" />\
+			? \'set to occupied\' : \'\'}"/>\
 	<Text id="adAction2"\
 		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable}\
-			? \'set to available\' : \'\'}" />\
+			? \'set to available\' : \'\'}"/>\
 </FlexBox>', {
 			"EMPLOYEES('2')?$select=AGE,ID,Name,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsOccupied" : {
 				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {},
@@ -12151,10 +12192,10 @@ sap.ui.define([
 		var oModel = createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
-	<Input id="name" value="{Name}" />\
+	<Input id="name" value="{Name}"/>\
 	<Text id="title" text="{\
 		path : \'#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable/title\',\
-		type : \'sap.ui.model.odata.type.String\'}" />\
+		type : \'sap.ui.model.odata.type.String\'}"/>\
 </FlexBox>',
 			that = this;
 
@@ -12238,8 +12279,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
 	<Text id="enabled"\
-		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable} ? 1 : 0 }" />\
-	<Input id="name" value="{Name}" />\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable} ? 1 : 0 }"/>\
+	<Input id="name" value="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -12317,10 +12358,10 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
 	<Text id="enabled"\
-		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable} ? 1 : 0 }" />\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable} ? 1 : 0 }"/>\
 	<Text id="title" text="{\
 		path : \'#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable/title\',\
-		type : \'sap.ui.model.odata.type.String\'}" />\
+		type : \'sap.ui.model.odata.type.String\'}"/>\
 </FlexBox>',
 			that = this;
 
@@ -12377,11 +12418,11 @@ sap.ui.define([
 		var oModel = this.createModelForV2FlightService({autoExpandSelect : true}),
 			sView = '\
 <Table id="list" items="{/FlightCollection}">\
-	<Text id="carrid" text="{carrid}" />\
+	<Text id="carrid" text="{carrid}"/>\
 </Table>\
 <FlexBox id="detail" binding="{}">\
-	<Text id="cityFrom" text="{flightDetails/cityFrom}" />\
-	<Text id="cityTo" text="{flightDetails/cityTo}" />\
+	<Text id="cityFrom" text="{flightDetails/cityFrom}"/>\
+	<Text id="cityTo" text="{flightDetails/cityTo}"/>\
 </FlexBox>',
 			that = this;
 
@@ -12485,10 +12526,10 @@ sap.ui.define([
 		var oModel = this.createModelForV2FlightService(),
 			sView = '\
 <FlexBox binding="{/NotificationCollection(\'foo\')}">\
-	<Text id="updated" text="{= %{updated} }" />\
+	<Text id="updated" text="{= %{updated} }"/>\
 	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.__FAKE__FunctionImport(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="value" text="{= %{value} }" />\
+		<Text id="value" text="{= %{value} }"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -12620,10 +12661,10 @@ sap.ui.define([
 		var oModel = this.createModelForV2FlightService(),
 			sView = '\
 <FlexBox binding="{/FlightCollection(carrid=\'AA\',connid=\'0017\',fldate=2017-08-10T00:00:00Z)}">\
-	<Text id="carrid" text="{carrid}" />\
+	<Text id="carrid" text="{carrid}"/>\
 	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.GetFlightDetails(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="distance" text="{distance}" />\
+		<Text id="distance" text="{distance}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -12729,10 +12770,10 @@ sap.ui.define([
 		var oModel = this.createModelForV2SalesOrderService(),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'0815\')}">\
-	<Text id="id0" text="{SalesOrderID}" />\
+	<Text id="id0" text="{SalesOrderID}"/>\
 	<FlexBox id="action" binding="{GWSAMPLE_BASIC.SalesOrder_Confirm(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="id1" text="{SalesOrderID}" />\
+		<Text id="id1" text="{SalesOrderID}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -12822,10 +12863,10 @@ sap.ui.define([
 		var oModel = this.createModelForV2FlightService(),
 			sView = '\
 <FlexBox binding="{/TravelAgencies(\'00000061\')}">\
-	<Text id="oldPhone" text="{TELEPHONE}" />\
+	<Text id="oldPhone" text="{TELEPHONE}"/>\
 	<FlexBox id="action" binding="{RMTSAMPLEFLIGHT.UpdateAgencyPhoneNo(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="newPhone" text="{TELEPHONE}" />\
+		<Text id="newPhone" text="{TELEPHONE}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -12873,7 +12914,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
 		suspended : true}">\
-	<Text id="text" text="{Category}" />\
+	<Text id="text" text="{Category}"/>\
 </FlexBox>',
 			that = this;
 
@@ -12908,8 +12949,8 @@ sap.ui.define([
 				sView = '\
 <FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
 		suspended : true}">\
-	<Text id="idCategory" text="{Category}" />\
-	<Text id="idEmployeeId" text="{EmployeeId}" />\
+	<Text id="idCategory" text="{Category}"/>\
+	<Text id="idEmployeeId" text="{EmployeeId}"/>\
 </FlexBox>',
 				that = this;
 
@@ -12944,7 +12985,7 @@ sap.ui.define([
 	// Scenario: Minimal test for an absolute ODataPropertyBinding. This scenario is comparable with
 	// "FavoriteProduct" in the SalesOrders application.
 	testViewStart("V2 Adapter: Absolute ODataPropertyBinding",
-		'<Text id="text" text="{= %{/ProductSet(\'HT-1000\')/CreatedAt} }" />',
+		'<Text id="text" text="{= %{/ProductSet(\'HT-1000\')/CreatedAt} }"/>',
 		{"ProductSet('HT-1000')/CreatedAt" : {d : {CreatedAt : "/Date(1502323200000)/"}}},
 		{text : "2017-08-10T00:00:00.0000000Z"},
 		"createModelForV2SalesOrderService"
@@ -12953,7 +12994,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Absolute ODataPropertyBinding with custom query options. CPOUI5UISERVICESV3-1590.
 	testViewStart("Absolute ODataPropertyBinding with custom query options",
-		'<Text id="text" text="{path: \'/TEAMS(\\\'42\\\')/Name\',\
+		'<Text id="text" text="{path : \'/TEAMS(\\\'42\\\')/Name\',\
 			parameters : {custom : \'foo\', c2 : \'x\'}}"/>',
 		{"TEAMS('42')/Name?c1=a&c2=x&custom=foo" : {value : "Business Suite"}},
 		{text : "Business Suite"},
@@ -12965,8 +13006,8 @@ sap.ui.define([
 	// $$groupId never sends own request. CPOUI5UISERVICESV3-1590.
 	testViewStart("Relative ODataPropertyBinding with parameters",
 		'<FlexBox binding="{/TEAMS(\'42\')}">\
-			<Text id="text" text="{path: \'Name\',\
-				parameters : {custom : \'foo\', $$groupId : \'binding\'}}" />\
+			<Text id="text" text="{path : \'Name\',\
+				parameters : {custom : \'foo\', $$groupId : \'binding\'}}"/>\
 		</FlexBox>',
 		{"TEAMS('42')" : {Name : "Business Suite"}},
 		{text : "Business Suite"},
@@ -12983,8 +13024,8 @@ sap.ui.define([
 			var oModel = createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <Table id="table" items="{path : \'/Equipments\', suspended : true, templateShareable : false}">\
-	<Text id="idCategory" text="{Category}" />\
-	<Text id="idEmployeeId" text="{EmployeeId}" />\
+	<Text id="idCategory" text="{Category}"/>\
+	<Text id="idEmployeeId" text="{EmployeeId}"/>\
 </Table>',
 				that = this;
 
@@ -12994,7 +13035,8 @@ sap.ui.define([
 			return this.createView(assert, sView, oModel).then(function () {
 				var sId0,
 					sId1,
-					oTable = that.oView.byId("table");
+					oTable = that.oView.byId("table"),
+					oTableBinding;
 
 				sId0 = that.addToTable(oTable, "Name", assert);
 				sId1 = that.addToTable(oTable, "EQUIPMENT_2_EMPLOYEE/Name", assert);
@@ -13024,10 +13066,11 @@ sap.ui.define([
 					.expectChange(sId0, ["Office PC", "VW Golf 2.0"])
 					.expectChange(sId1, ["Frederic Fall", "Jonathan Smith"]);
 
+				oTableBinding = oTable.getBinding("items");
 				if (bRefresh) {
-					oTable.getBinding("items").refresh();
+					oTableBinding.refresh();
 				}
-				oTable.getBinding("items").resume();
+				oTableBinding.resume();
 
 				return that.waitForChanges(assert);
 			});
@@ -13045,8 +13088,8 @@ sap.ui.define([
 			var oModel = createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <FlexBox id="form" binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
-	<Text id="idCategory" text="{Category}" />\
-	<Text id="idEmployeeId" text="{EmployeeId}" />\
+	<Text id="idCategory" text="{Category}"/>\
+	<Text id="idEmployeeId" text="{EmployeeId}"/>\
 </FlexBox>',
 				that = this;
 
@@ -13096,8 +13139,8 @@ sap.ui.define([
 			var oModel = createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
-	<Text id="idCategory" text="{Category}" />\
-	<Text id="idEmployeeId" text="{EmployeeId}" />\
+	<Text id="idCategory" text="{Category}"/>\
+	<Text id="idEmployeeId" text="{EmployeeId}"/>\
 </Table>',
 				that = this;
 
@@ -13118,7 +13161,8 @@ sap.ui.define([
 			return this.createView(assert, sView, oModel).then(function () {
 				var sId0,
 					sId1,
-					oTable = that.oView.byId("table");
+					oTable = that.oView.byId("table"),
+					oTableBinding;
 
 				sId0 = that.addToTable(oTable, "Name", assert);
 				sId1 = that.addToTable(oTable, "EQUIPMENT_2_EMPLOYEE/Name", assert);
@@ -13148,10 +13192,11 @@ sap.ui.define([
 					.expectChange(sId0, ["Office PC", "VW Golf 2.0"])
 					.expectChange(sId1, ["Frederic Fall", "Jonathan Smith"]);
 
+				oTableBinding = oTable.getBinding("items");
 				if (bRefresh) {
-					oTable.getBinding("items").refresh();
+					oTableBinding.refresh();
 				}
-				oTable.getBinding("items").resume();
+				oTableBinding.resume();
 
 				return that.waitForChanges(assert);
 			});
@@ -13167,11 +13212,11 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="outerForm" binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
-	<Text id="idEquipmentName" text="{Name}" />\
+	<Text id="idEquipmentName" text="{Name}"/>\
 	<FlexBox id="innerForm" binding="{EQUIPMENT_2_EMPLOYEE}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="idEmployeeName" text="{Name}" />\
-		<Text id="idManagerId" text="{MANAGER_ID}" />\
+		<Text id="idEmployeeName" text="{Name}"/>\
+		<Text id="idManagerId" text="{MANAGER_ID}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -13237,11 +13282,11 @@ sap.ui.define([
 			oOuterForm,
 			sView = '\
 <FlexBox id="outerForm" binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
-	<Text id="idEquipmentName" text="{Name}" />\
+	<Text id="idEquipmentName" text="{Name}"/>\
 	<FlexBox id="innerForm" binding="{EQUIPMENT_2_EMPLOYEE}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="idEmployeeName" text="{Name}" />\
-		<Text id="idManagerId" text="{MANAGER_ID}" />\
+		<Text id="idEmployeeName" text="{Name}"/>\
+		<Text id="idManagerId" text="{MANAGER_ID}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -13311,13 +13356,13 @@ sap.ui.define([
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', suspended : true}">\
-	<Text id="memberCount" text="{MEMBER_COUNT}" />\
+	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
 	<FlexBox id="manager" binding="{TEAM_2_MANAGER}">\
 		<Text id="managerID" text="{ID}"/>\
 	</FlexBox>\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<Text id="age" text="{AGE}" />\
-		<Text id="name" text="{Name}" />\
+		<Text id="age" text="{AGE}"/>\
+		<Text id="name" text="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13596,10 +13641,10 @@ sap.ui.define([
 			$expand : {\'TEAM_2_EMPLOYEES\' : {$select : \'AGE,Name\'}},\
 			$select : \'MEMBER_COUNT\'}\
 		}">\
-	<Text id="memberCount" text="{MEMBER_COUNT}" />\
+	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<Text id="age" text="{AGE}" />\
-		<Text id="name" text="{Name}" />\
+		<Text id="age" text="{AGE}"/>\
+		<Text id="name" text="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13669,10 +13714,10 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
-	<Text id="memberCount" text="{MEMBER_COUNT}" />\
+	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<Text id="age" text="{AGE}" />\
-		<Text id="name" text="{Name}" />\
+		<Text id="age" text="{AGE}"/>\
+		<Text id="name" text="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13741,11 +13786,11 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
-	<Text id="memberCount" text="{MEMBER_COUNT}" />\
+	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : false,\
 			parameters : {$$ownRequest : true}}">\
-		<Text id="age" text="{AGE}" />\
-		<Text id="name" text="{Name}" />\
+		<Text id="age" text="{AGE}"/>\
+		<Text id="name" text="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13806,10 +13851,10 @@ sap.ui.define([
 				+ ".FuGetEmployeeSalaryForecast",
 			sView = '\
 <FlexBox id="employee" binding="{/EMPLOYEES(\'2\')}">\
-	<Text id="salary" text="{SALARY/YEARLY_BONUS_AMOUNT}" />\
+	<Text id="salary" text="{SALARY/YEARLY_BONUS_AMOUNT}"/>\
 	<FlexBox id="function" binding="{' + sFunctionName + '(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="forecastSalary" text="{SALARY/YEARLY_BONUS_AMOUNT}" />\
+		<Text id="forecastSalary" text="{SALARY/YEARLY_BONUS_AMOUNT}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -13859,14 +13904,15 @@ sap.ui.define([
 	// suspend/resume
 	QUnit.test("suspend/resume: list binding with details context binding, only context"
 			+ " binding is adapted", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oForm,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
-	<Text id="idEquipmentName" text="{Name}" />\
+	<Text id="idEquipmentName" text="{Name}"/>\
 </Table>\
 <FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$ownRequest : true}}">\
-	<Text id="name" text="{Name}" />\
-	<Text id="age" text="{AGE}" />\
+	<Text id="name" text="{Name}"/>\
+	<Text id="age" text="{AGE}"/>\
 </FlexBox>',
 			that = this;
 
@@ -13886,7 +13932,7 @@ sap.ui.define([
 			.expectChange("age");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oForm = that.oView.byId("form");
+			oForm = that.oView.byId("form");
 
 			oForm.setBindingContext(that.oView.byId("table").getBinding("items")
 				.getCurrentContexts()[0]);
@@ -13900,26 +13946,26 @@ sap.ui.define([
 				.expectChange("name", "Frederic Fall")
 				.expectChange("age", "52");
 
-			return that.waitForChanges(assert).then(function () {
-				var sIdManagerId;
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var sIdManagerId;
 
-				// no change in table, only in contained form
-				oForm.getObjectBinding().getRootBinding().suspend();
-				sIdManagerId = that.addToForm(oForm, "MANAGER_ID", assert);
-				that.removeFromForm(oForm, "age");
+			// no change in table, only in contained form
+			oForm.getObjectBinding().getRootBinding().suspend();
+			sIdManagerId = that.addToForm(oForm, "MANAGER_ID", assert);
+			that.removeFromForm(oForm, "age");
 
-				that.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
-						+ "?$select=ID,MANAGER_ID", {
-						ID : "2",
-						MANAGER_ID : "1"
-					})
-					.expectChange(sIdManagerId, "1");
+			that.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
+					+ "?$select=ID,MANAGER_ID", {
+					ID : "2",
+					MANAGER_ID : "1"
+				})
+				.expectChange(sIdManagerId, "1");
 
-				return Promise.all([
-					oForm.getObjectBinding().getRootBinding().resumeAsync(),
-					that.waitForChanges(assert)
-				]);
-			});
+			return Promise.all([
+				oForm.getObjectBinding().getRootBinding().resumeAsync(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -13933,7 +13979,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
-	<Text id="id" text="{BusinessPartnerID}" />\
+	<Text id="id" text="{BusinessPartnerID}"/>\
 </Table>',
 			that = this;
 
@@ -13988,7 +14034,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
-	<Text id="id" text="{BusinessPartnerID}" />\
+	<Text id="id" text="{BusinessPartnerID}"/>\
 </Table>',
 			that = this;
 
@@ -14012,7 +14058,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
-	<Text id="role" text="{BusinessPartnerRole}" />\
+	<Text id="role" text="{BusinessPartnerRole}"/>\
 </Table>',
 			that = this;
 
@@ -14056,7 +14102,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<Text id="pos" text="{ItemPosition}" />\
+		<Text id="pos" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -14103,7 +14149,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/GetSOContactList(...)}" id="function">\
 	<Table items="{value}">\
-		<Text id="nickname" text="{Nickname}" />\
+		<Text id="nickname" text="{Nickname}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -14137,7 +14183,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table items="{/GetSOContactList(SalesOrderID=\'0500000001\')}">\
-	<Text id="nickname" text="{Nickname}" />\
+	<Text id="nickname" text="{Nickname}"/>\
 </Table>';
 
 		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')"
@@ -14162,7 +14208,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/GetSOContactList(SalesOrderID=\'0500000001\')}" id="function">\
 	<Table items="{value}">\
-		<Text id="nickname" text="{Nickname}" />\
+		<Text id="nickname" text="{Nickname}"/>\
 	</Table>\
 </FlexBox>';
 
@@ -14191,11 +14237,11 @@ sap.ui.define([
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/MANAGERS(\'1\')}" id="manager">\
-	<Text id="TEAM_ID" text="{TEAM_ID}" />\
+	<Text id="TEAM_ID" text="{TEAM_ID}"/>\
 	<FlexBox binding="{' + sFunctionName + '()}" id="function">\
 		<Table items="{value}">\
-			<Text id="id" text="{ID}" />\
-			<Text id="name" text="{Name}" />\
+			<Text id="id" text="{ID}"/>\
+			<Text id="name" text="{Name}"/>\
 		</Table>\
 	</FlexBox>\
 </FlexBox>';
@@ -14281,9 +14327,9 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">' +
-	(bParentHasData ? '<Text id="netAmount" text="{NetAmount}" />' : '') +
-'	<FlexBox binding="{path : \'\', parameters: {$$ownRequest : true}}" id="blackBinding">\
-		<Text id="note" text="{Note}" />\
+	(bParentHasData ? '<Text id="netAmount" text="{NetAmount}"/>' : '') +
+'	<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="blackBinding">\
+		<Text id="note" text="{Note}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -14336,12 +14382,12 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}">\
-	<Text id="note" text="{Note}" />\
+	<Text id="note" text="{Note}"/>\
 </t:Table>\
-<FlexBox binding="{path : \'\', parameters: {$$ownRequest : true}}" id="form">\
-	<Text id="netAmount" text="{NetAmount}" />\
-	<FlexBox binding="{path : \'\', parameters: {$$ownRequest : true}}" id="form2">\
-		<Text id="salesOrderID" text="{SalesOrderID}" />\
+<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="form">\
+	<Text id="netAmount" text="{NetAmount}"/>\
+	<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="form2">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -14411,7 +14457,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form">\
 	<t:Table rows="{path : \'SO_2_SOITEM\', parameters : {$$updateGroupId : \'update\'}}">\
-		<Text id="position" text="{ItemPosition}" />\
+		<Text id="position" text="{ItemPosition}"/>\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -14588,7 +14634,8 @@ sap.ui.define([
 	// In a second step call filter on a list binding w/o control. Verify that the queue does not
 	// remain blocked, although there is no getContexts and no GET request.
 	QUnit.test("ODLB: delayed filter", function (assert) {
-		var sView = '\
+		var oTableBinding,
+			sView = '\
 <Table id="table" items="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}}">\
 	<Text id="name" text="{Name}"/>\
 </Table>',
@@ -14612,14 +14659,15 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			oTableBinding = that.oView.byId("table").getBinding("items");
+
 			that.expectRequest("Equipments"
 					+ "?$filter=EQUIPMENT_2_PRODUCT/ID eq 42&$skip=0&$top=100", {
 					value : [{Name : "Bar"}]
 				})
 				.expectChange("name", ["Bar"]);
 
-			that.oView.byId("table").getBinding("items")
-				.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
+			oTableBinding.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
 
 			return Promise.all([
 				that.oModel.submitBatch("api"),
@@ -14639,7 +14687,7 @@ sap.ui.define([
 
 			// This binding has no control -> no request, but timeout of group lock expected
 			oListBinding.filter(new Filter("Name", "GT", "M"));
-			that.oView.byId("table").getBinding("items").filter(null);
+			oTableBinding.filter(null);
 
 			return Promise.all([
 				that.oModel.submitBatch("api"),
@@ -14676,7 +14724,7 @@ sap.ui.define([
 			<Label text="Name"/>\
 		</t:label>\
 		<t:template>\
-			<Text id="name" text="{Name}" />\
+			<Text id="name" text="{Name}"/>\
 		</t:template>\
 	</t:Column>\
 </t:Table>',
@@ -14728,7 +14776,9 @@ sap.ui.define([
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
 	//TODO support $filter : \'GrossAmount gt 0\',\
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oListBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -14745,11 +14795,11 @@ sap.ui.define([
 			},\
 			$orderby : \'LifecycleStatus desc,ItemPosition asc\'\
 		}}" threshold="0" visibleRowCount="3">\
-	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
-	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
-	<Text id="level" text="{= %{@$ui5.node.level} }" />\
-	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
+	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 </t:Table>',
 			that = this;
 
@@ -14769,9 +14819,10 @@ sap.ui.define([
 			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var i,
-				oTable = that.oView.byId("table"),
-				oListBinding = oTable.getBinding("rows");
+			var i;
+
+			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("rows");
 
 			oListBinding.getCurrentContexts().forEach(function (oContext, i) {
 				assert.strictEqual(oContext.getPath(),
@@ -14803,39 +14854,39 @@ sap.ui.define([
 
 			oTable.setFirstVisibleRow(7);
 
-			return that.waitForChanges(assert).then(function () {
-				that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
-						+ "/orderby(LifecycleStatus desc)&$count=true&$skip=0&$top=3", {
-						"@odata.count" : "26",
-						value : [
-							{LifecycleStatus : "Z"},
-							{LifecycleStatus : "Y"},
-							{LifecycleStatus : "X"}
-						]
-					})
-					.expectChange("isExpanded", [false, false, false])
-					.expectChange("isTotal", [false, false, false])
-					.expectChange("level", [1, 1, 1])
-					.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
+					+ "/orderby(LifecycleStatus desc)&$count=true&$skip=0&$top=3", {
+					"@odata.count" : "26",
+					value : [
+						{LifecycleStatus : "Z"},
+						{LifecycleStatus : "Y"},
+						{LifecycleStatus : "X"}
+					]
+				})
+				.expectChange("isExpanded", [false, false, false])
+				.expectChange("isTotal", [false, false, false])
+				.expectChange("level", [1, 1, 1])
+				.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
-				oTable.removeColumn(4).destroy(); // GrossAmount
-				oListBinding.setAggregation({groupLevels : ["LifecycleStatus"]});
+			oTable.removeColumn(4).destroy(); // GrossAmount
+			oListBinding.setAggregation({groupLevels : ["LifecycleStatus"]});
 
-				return that.waitForChanges(assert).then(function () {
-					assert.throws(function () {
-						oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
-					}, new Error("Cannot combine $$aggregation and $apply"));
-					assert.throws(function () {
-						oListBinding.setAggregation({
-							aggregate : {
-								GrossAmount : {grandTotal : true}
-							},
-							groupLevels : ["LifecycleStatus"]
-						});
-					}, new Error("Cannot combine visual grouping with grand total"));
-					// Note: oListBinding is now in an undefined state, do not use anymore!
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.throws(function () {
+				oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
+			}, new Error("Cannot combine $$aggregation and $apply"));
+			assert.throws(function () {
+				oListBinding.setAggregation({
+					aggregate : {
+						GrossAmount : {grandTotal : true}
+					},
+					groupLevels : ["LifecycleStatus"]
 				});
-			});
+			}, new Error("Cannot combine visual grouping with grand total"));
+			// Note: oListBinding is now in an undefined state, do not use anymore!
 		});
 	});
 
@@ -14856,11 +14907,11 @@ sap.ui.define([
 				}\
 			}\
 		}}">\
-	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
-	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
-	<Text id="level" text="{= %{@$ui5.node.level} }" />\
-	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
+	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 </Table>';
 
 		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
@@ -14909,16 +14960,16 @@ sap.ui.define([
 			$count : false,\
 			$orderby : \'Region desc,AccountResponsible\'\
 		}}">\
-	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
-	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
-	<Text id="level" text="{= %{@$ui5.node.level} }" />\
-	<Text id="region" text="{Region}" />\
-	<Text id="accountResponsible" text="{AccountResponsible}" />\
-	<Text id="salesAmount" text="{= %{SalesAmount} }" />\
-	<Text id="salesNumber" text="{SalesNumber}" />\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </Table>\
 <FlexBox id="detail">\
-	<Text id="regionDetail" text="{Region}" />\
+	<Text id="regionDetail" text="{Region}"/>\
 </FlexBox>',
 			oTable,
 			that = this;
@@ -14988,7 +15039,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			 oListBinding = oTable.getBinding("items");
+			oListBinding = oTable.getBinding("items");
 
 			assert.deepEqual(
 				oListBinding.getCurrentContexts()
@@ -15059,6 +15110,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-177
 	QUnit.test("Data Aggregation: expand and paging on sap.ui.table.Table", function (assert) {
 		var oModel = createAggregationModel(),
+			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
 	parameters : {\
@@ -15114,6 +15166,8 @@ sap.ui.define([
 			.expectChange("salesNumber", [null, null, null]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
 					+ "&$count=true&$skip=0&$top=3", {
@@ -15133,7 +15187,7 @@ sap.ui.define([
 				.expectChange("salesNumber", [/*null*/, "1", "2"]);
 
 			// code under test
-			that.oView.byId("table").getRows()[0].getBindingContext().expand();
+			oTable.getRows()[0].getBindingContext().expand();
 
 			return that.waitForChanges(assert, "expand node 'Z'");
 		}).then(function () {
@@ -15158,7 +15212,7 @@ sap.ui.define([
 				.expectChange("salesNumber", [,,, "3", "4", null]);
 
 			// code under test
-			that.oView.byId("table").setFirstVisibleRow(3);
+			oTable.setFirstVisibleRow(3);
 
 			return that.waitForChanges(assert, "scroll so that 'Z-c' is in first row");
 		}).then(function () {
@@ -15176,7 +15230,7 @@ sap.ui.define([
 				.expectChange("isExpanded", [,,,,, true]);
 
 			// code under test
-			that.oView.byId("table").getRows()[2].getBindingContext().expand();
+			oTable.getRows()[2].getBindingContext().expand();
 
 			return that.waitForChanges(assert, "expand node 'Y'");
 		}).then(function () {
@@ -15207,7 +15261,7 @@ sap.ui.define([
 
 			// code under test
 			// creates a gap to show that we are not requesting unnecessary data
-			that.oView.byId("table").setFirstVisibleRow(13);
+			oTable.setFirstVisibleRow(13);
 
 			return that.waitForChanges(assert, "scroll to 'Y-h': 'Y-h', 'X' and 'W' visible");
 		}).then(function () {
@@ -15233,7 +15287,7 @@ sap.ui.define([
 				.expectChange("salesNumber", [,,,,,,,,, "4", "5", "6"]);
 
 			// code under test
-			that.oView.byId("table").setFirstVisibleRow(9);
+			oTable.setFirstVisibleRow(9);
 
 			return that.waitForChanges(assert, "scroll to the middle of 'Y': "
 				+ "'Y-d', 'Y-e', 'Y-f' visible");
@@ -15247,15 +15301,13 @@ sap.ui.define([
 				.expectChange("salesNumber", [null, "1", "2"]);
 
 			// code under test
-			that.oView.byId("table").setFirstVisibleRow(0);
+			oTable.setFirstVisibleRow(0);
 
 			return that.waitForChanges(assert, "scroll back to the first row: "
 				+ "'Z', 'Z-a' and 'Z-b' visible");
 		}).then(function () {
-			var oListBinding = that.oView.byId("table").getBinding("rows");
-
 			assert.deepEqual(
-				oListBinding.getCurrentContexts()
+				oTable.getBinding("rows").getCurrentContexts()
 					.map(function (oContext) {
 						return oContext.getPath();
 					}),
@@ -15336,24 +15388,24 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
-			if (!bWithExpand) {
-				return;
-			}
-			that.expectChange("isExpanded", [, true]) // "client side expand"
-				.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
-					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=0&$top=3", new Promise(function (resolve) {
-						fnRespondExpand = resolve.bind(null, {
-							"@odata.count" : "1",
-							value : [
-								{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1}
-							]
-						});
-					})
-				);
 
-			// code under test
-			oTable.getRows()[1].getBindingContext().expand();
+			if (bWithExpand) {
+				that.expectChange("isExpanded", [, true]) // "client side expand"
+					.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
+						+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
+						+ "&$count=true&$skip=0&$top=3", new Promise(function (resolve) {
+							fnRespondExpand = resolve.bind(null, {
+								"@odata.count" : "1",
+								value : [
+									{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1}
+								]
+							});
+						})
+					);
+
+				// code under test
+				oTable.getRows()[1].getBindingContext().expand();
+			}
 
 			return that.waitForChanges(assert, "expand 'Y' before scroll");
 		}).then(function () {
@@ -15420,10 +15472,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "result");
 		}).then(function () {
-			var oListBinding = oTable.getBinding("rows");
 			// Check oCache.aElements because only there the error case is observable.
 			assert.deepEqual(
-				oListBinding.oCache.aElements.slice(0, 7)
+				oTable.getBinding("rows").oCache.aElements.slice(0, 7)
 					.map(function (oElement) {
 						return oElement["@$ui5._"]["predicate"];
 					}),
@@ -15455,6 +15506,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-255
 	QUnit.test("Data Aggregation: expand and paging to the last loaded leaf", function (assert) {
 		var oModel = createAggregationModel(),
+			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
 	parameters : {\
@@ -15510,6 +15562,7 @@ sap.ui.define([
 			.expectChange("salesNumber", [null, null, null]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
 
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'X')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -15524,11 +15577,10 @@ sap.ui.define([
 				.expectChange("isExpanded", [,, true]);
 
 			// code under test
-			that.oView.byId("table").getRows()[2].getBindingContext().expand();
+			oTable.getRows()[2].getBindingContext().expand();
 
 			return that.waitForChanges(assert, "expand node 'X'");
 		}).then(function () {
-
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
 					+ "&$count=true&$skip=3&$top=1", {
 					"@odata.count" : "26",
@@ -15559,7 +15611,7 @@ sap.ui.define([
 				.expectChange("salesNumber", [,,,,, "3", "4", null]);
 
 			// code under test
-			that.oView.byId("table").setFirstVisibleRow(5);
+			oTable.setFirstVisibleRow(5);
 
 			return that.waitForChanges(assert, "scroll to 'X-c'");
 		});
@@ -15572,6 +15624,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-179
 	QUnit.test("Data Aggregation: collapse with placeholders", function (assert) {
 		var oModel = createAggregationModel(),
+			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
 	parameters : {\
@@ -15646,6 +15699,8 @@ sap.ui.define([
 			.expectChange("salesAmount", ["100", "200"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'UK')"
 				+ "/groupby((Region),aggregate(SalesAmount))"
 				+ "&$count=true&$skip=0&$top=4", {
@@ -15665,12 +15720,11 @@ sap.ui.define([
 				.expectChange("salesAmount", [,, "10", "20"]);
 
 			// code under test
-			that.oView.byId("table").getRows()[1].getBindingContext().expand();
+			oTable.getRows()[1].getBindingContext().expand();
 
 			return that.waitForChanges(assert, "expand 'UK'");
 		}).then(function () {
-			var oTable = that.oView.byId("table"),
-				oThirdRow = oTable.getRows()[2].getBindingContext();
+			var oThirdRow = oTable.getRows()[2].getBindingContext();
 
 			expectResets(2);
 			that.expectChange("isExpanded", [, false]);
@@ -15766,7 +15820,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
-			+ "&$count=true&$skip=0&$top=4", {
+				+ "&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "26",
 				value : [
 					{Country : "US", SalesAmount : "100"},
@@ -15787,6 +15841,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
+
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
 				+ "/groupby((Region),aggregate(SalesAmount))"
 				+ "&$count=true&$skip=0&$top=4", {
@@ -15817,8 +15872,8 @@ sap.ui.define([
 				+ "&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "2",
 					value : [
-						{Region: "Z", Segment: "z", SalesAmount : "10"},
-						{Region: "Z", Segment: "y", SalesAmount : "20"}
+						{Region : "Z", Segment : "z", SalesAmount : "10"},
+						{Region : "Z", Segment : "y", SalesAmount : "20"}
 					]
 				})
 				.expectChange("isExpanded", [, true])
@@ -15842,7 +15897,7 @@ sap.ui.define([
 				+ "&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "1",
 					value : [
-						{AccountResponsible : "a", SalesNumber: 1, SalesAmount : "10"}
+						{AccountResponsible : "a", SalesNumber : 1, SalesAmount : "10"}
 					]
 				})
 				.expectChange("isExpanded", [,, true, undefined])
@@ -15903,7 +15958,7 @@ sap.ui.define([
 		}\
 	}}" threshold="0" visibleRowCount="3">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
-	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
 	<Text id="region" text="{Region}"/>\
 	<Text id="accountResponsible" text="{AccountResponsible}"/>\
@@ -15975,8 +16030,8 @@ sap.ui.define([
 					+ "&$count=true&$skip=3&$top=" + (bSecondScroll ? "3" : "2"), {
 						"@odata.count" : "26",
 						value : [
-							{Region: "W"},
-							{Region: "V"}
+							{Region : "W"},
+							{Region : "V"}
 						]
 				});
 
@@ -16004,10 +16059,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand and paging in parallel");
 		}).then(function () {
-			var oListBinding = oTable.getBinding("rows");
-
 			assert.deepEqual(
-				oListBinding.getContexts(0, 6)
+				oTable.getBinding("rows").getContexts(0, 6)
 					.map(function (oContext) {
 						return oContext.getPath();
 					}),
@@ -16043,7 +16096,6 @@ sap.ui.define([
 					SalesNumber : 351,
 					"SalesNumber@odata.type" : "#Decimal"
 				},
-				oListBinding,
 				oModel = createAggregationModel({autoExpandSelect : bAutoExpandSelect}),
 				oTable,
 				sView = '\
@@ -16063,14 +16115,14 @@ sap.ui.define([
 			$filter : \'SalesNumber gt 0\',\
 			$orderby : \'Region desc\'\
 		}}" threshold="0" visibleRowCount="5">\
-	<Text id="country" text="{Country}" />\
-	<Text id="region" text="{Region}" />\
-	<Text id="salesNumber" text="{SalesNumber}" />\
+	<Text id="country" text="{Country}"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 				that = this;
 
 			if (bCount) {
-				oGrandTotalRow["UI5__count"] =  "26";
+				oGrandTotalRow["UI5__count"] = "26";
 				oGrandTotalRow["UI5__count@odata.type"] = "#Decimal";
 			}
 			this.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber"
@@ -16091,6 +16143,8 @@ sap.ui.define([
 				.expectChange("salesNumber", ["351",, "2", "3", "4", "5"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
+				var oListBinding;
+
 				oTable = that.oView.byId("table");
 				oListBinding = oTable.getBinding("rows");
 
@@ -16150,7 +16204,6 @@ sap.ui.define([
 			var sBasicPath
 					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
 					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
-				oListBinding,
 				oModel = createAggregationModel({autoExpandSelect : true}),
 				oTable,
 				aValues = [
@@ -16177,9 +16230,9 @@ sap.ui.define([
 			$filter : \'SalesNumber gt 0\',\
 			$orderby : \'Region desc\'\
 		}}" threshold="0" visibleRowCount="5">\
-	<Text id="country" text="{Country}" />\
-	<Text id="region" text="{Region}" />\
-	<Text id="salesNumber" text="{SalesNumber}" />\
+	<Text id="country" text="{Country}"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 				that = this;
 
@@ -16197,6 +16250,8 @@ sap.ui.define([
 				.expectChange("salesNumber", [, "1", "2", "3", "4", "5"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
+				var oListBinding;
+
 				oTable = that.oView.byId("table");
 				oListBinding = oTable.getBinding("rows");
 
@@ -16269,11 +16324,11 @@ sap.ui.define([
 			$filter : \'SalesAmountSum gt 0\',\
 			$orderby : \'SalesAmountSum asc\'\
 		}}" threshold="0" visibleRowCount="5">\
-	<Text id="region" text="{Region}" />\
-	<Text id="salesNumber" text="{SalesNumber}" />\
-	<Text id="salesAmountSum" text="{= %{SalesAmountSum} }" />\
+	<Text id="region" text="{Region}"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
+	<Text id="salesAmountSum" text="{= %{SalesAmountSum} }"/>\
 	<Text id="salesAmountCurrency"\
-		text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }" />\
+		text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }"/>\
 </t:Table>';
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
@@ -16446,6 +16501,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
+	// JIRA: CPOUI5UISERVICESV3-1479
 	[false, true].forEach(function (bCount) {
 		var sTitle = "Data Aggregation: $$aggregation, aggregate but no group; $count : "
 				+ bCount;
@@ -16469,7 +16525,7 @@ sap.ui.define([
 			},\
 			$count : ' + bCount + '\
 		}}" threshold="0" visibleRowCount="1">\
-	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 </t:Table>',
 				that = this;
 
@@ -16486,9 +16542,6 @@ sap.ui.define([
 				.expectChange("grossAmount", [1]);
 
 			return this.createView(assert, sView, oModel).then(function () {
-				var oTable = that.oView.byId("table"),
-					oListBinding = oTable.getBinding("rows");
-
 				// w/o min/max: no _AggregationCache, system query options are used
 				that.expectRequest("SalesOrderList?" + (bCount ? "$count=true&" : "")
 					+ "$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
@@ -16497,7 +16550,7 @@ sap.ui.define([
 					})
 					.expectChange("grossAmount", [2]);
 
-				oListBinding.setAggregation({
+				that.oView.byId("table").getBinding("rows").setAggregation({
 					aggregate : {GrossAmount : {}}
 				});
 			});
@@ -16513,7 +16566,7 @@ sap.ui.define([
 			oModel = createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 </Table>',
 			that = this;
 
@@ -16605,14 +16658,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: check that 'subtotals' can be changed and that $$aggregation can be removed again,
 	// each time refreshing the UI.
-	// BPC: 2070044134
+	// BCP: 2070044134
 	QUnit.test("BCP: 2070044134", function (assert) {
 		var oListBinding,
 			oModel = createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
+	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 </Table>',
 			that = this;
 
@@ -16685,8 +16738,8 @@ sap.ui.define([
 				groupLevels : [\'Region\']\
 			}\
 		}}">\
-	<Text id="region" text="{Region}" />\
-	<Text id="salesAmount" text="{= %{SalesAmount}}" />\
+	<Text id="region" text="{Region}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount}}"/>\
 </Table>',
 			that = this;
 
@@ -16763,12 +16816,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Application tries to overwrite client-side instance annotations.
+	// JIRA: CPOUI5UISERVICESV3-1220
 	QUnit.test("@$ui5.* is write-protected", function (assert) {
 		var oModel = createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{/MANAGERS(\'1\')}" id="form">\
-	<Input id="foo" value="{= %{@$ui5.foo} }" />\
-	<Text id="id" text="{ID}" />\
+	<Input id="foo" value="{= %{@$ui5.foo} }"/>\
+	<Text id="id" text="{ID}"/>\
 </FlexBox>',
 			that = this;
 
@@ -16780,8 +16834,7 @@ sap.ui.define([
 			.expectChange("id", "1");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("form").getBindingContext(),
-				oMatcher = sinon.match(
+			var oMatcher = sinon.match(
 					"/MANAGERS('1')/@$ui5.foo: Not a (navigation) property: @$ui5.foo"),
 				oPropertyBinding = that.oView.byId("foo").getBinding("value");
 
@@ -16807,17 +16860,20 @@ sap.ui.define([
 			// code under test
 			oPropertyBinding.setValue(0);
 
-			return that.waitForChanges(assert).then(function () {
-				// code under test
-				oContext.getObject()["@$ui5.foo"] = 1; // just changing a clone
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext();
 
-				assert.strictEqual(oContext.getProperty("@$ui5.foo"), 42);
-			});
+			// code under test
+			oContext.getObject()["@$ui5.foo"] = 1; // just changing a clone
+
+			assert.strictEqual(oContext.getProperty("@$ui5.foo"), 42);
 		});
 	});
 
 	//*********************************************************************************************
 	// Scenario: Application tries to create client-side instance annotations via ODLB#create.
+	// JIRA: CPOUI5UISERVICESV3-1237
 	QUnit.test("@$ui5.* is write-protected for ODLB#create", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/Equipments\', parameters : {$$updateGroupId : \'never\'}}">\
@@ -16860,13 +16916,13 @@ sap.ui.define([
 	QUnit.test("@$ui5._ is read-protected", function (assert) {
 		var oModel = createTeaBusiModel(),
 			sView = '\
-<FlexBox binding="{path: \'/MANAGERS(\\\'1\\\')\', \
-		parameters: {$expand : {Manager_to_Team : true}}}" id="form">\
-	<Text id="predicate" text="{= %{@$ui5._/predicate} }" />\
-	<Text id="id" text="{ID}" />\
-	<FlexBox binding="{Manager_to_Team}" >\
-		<Text id="teamPredicate" text="{= %{@$ui5._/predicate} }" />\
-		<Text id="teamId" text="{Team_Id}" />\
+<FlexBox binding="{path : \'/MANAGERS(\\\'1\\\')\', \
+		parameters : {$expand : {Manager_to_Team : true}}}" id="form">\
+	<Text id="predicate" text="{= %{@$ui5._/predicate} }"/>\
+	<Text id="id" text="{ID}"/>\
+	<FlexBox binding="{Manager_to_Team}">\
+		<Text id="teamPredicate" text="{= %{@$ui5._/predicate} }"/>\
+		<Text id="teamId" text="{Team_Id}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -16957,6 +17013,7 @@ sap.ui.define([
 				sBasicPath = "SalesOrderList?$count=true&$filter=GrossAmount lt 42"
 					+ "&$orderby=LifecycleStatus desc"
 					+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))",
+				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
 <t:Table firstVisibleRow="1" id="table" rows="{path : \'/SalesOrderList\',\
@@ -16966,8 +17023,8 @@ sap.ui.define([
 			$orderby : \'LifecycleStatus desc\'\
 ' + (i === 0 ? ",$apply : 'groupby((LifecycleStatus),aggregate(GrossAmount))'" : "") + '\
 		}}" threshold="0" visibleRowCount="4">\
-	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-	<Text id="grossAmount" text="{GrossAmount}" />\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
+	<Text id="grossAmount" text="{GrossAmount}"/>\
 </t:Table>',
 				that = this;
 
@@ -16997,16 +17054,18 @@ sap.ui.define([
 				.expectChange("lifecycleStatus", [, "Y", "X", "W", "V"]);
 
 			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+				oTable = that.oView.byId("table");
+
 				that.expectChange("count", "26");
 
 				that.oView.byId("count").setBindingContext(
-					that.oView.byId("table").getBinding("rows").getHeaderContext());
+					oTable.getBinding("rows").getHeaderContext());
 
 				return that.waitForChanges(assert);
 			}).then(function () {
 				if (i > 0) {
 					// no additional request for same aggregation data
-					that.oView.byId("table").getBinding("rows").updateAnalyticalInfo(aAggregation);
+					oTable.getBinding("rows").updateAnalyticalInfo(aAggregation);
 				}
 
 				return that.waitForChanges(assert);
@@ -17023,7 +17082,7 @@ sap.ui.define([
 				that.expectChange("grossAmount", ["1.00", "2.00", "3.00", "4.00"])
 					.expectChange("lifecycleStatus", ["Z", "Y", "X", "W"]);
 
-				that.oView.byId("table").setFirstVisibleRow(0);
+				oTable.setFirstVisibleRow(0);
 
 				return that.waitForChanges(assert);
 			});
@@ -17033,6 +17092,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Simulate a chart that requests minimum and maximum values for a measure via
 	// #updateAnalyticalInfo; initial $skip > 0!
+	// JIRA: CPOUI5UISERVICESV3-1151
 	//
 	//TODO this should work the same for an initially suspended binding where #updateAnalyticalInfo
 	// is called before #resume, see CPOUI5UISERVICESV3-1754 (PS2 of the change contains that test);
@@ -17050,6 +17110,7 @@ sap.ui.define([
 				total : false
 			}],
 			oMeasureRangePromise,
+			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <t:Table firstVisibleRow="1" id="table" rows="{\
@@ -17058,8 +17119,8 @@ sap.ui.define([
 			filters : {path : \'AGE\', operator : \'GE\', value1 : 30},\
 			sorter : {path : \'AGE\'}\
 		}" threshold="0" visibleRowCount="3">\
-	<Text id="text" text="{Name}" />\
-	<Text id="age" text="{AGE}" />\
+	<Text id="text" text="{Name}"/>\
+	<Text id="age" text="{AGE}"/>\
 </t:Table>',
 			that = this;
 
@@ -17106,15 +17167,17 @@ sap.ui.define([
 			.expectChange("age", [, "50", "70", "77"]);
 
 		return this.createView(assert, sView).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectChange("count", "4");
 
 			that.oView.byId("count").setBindingContext(
-				that.oView.byId("table").getBinding("rows").getHeaderContext());
+				oTable.getBinding("rows").getHeaderContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// no additional request for same aggregation data
-			that.oView.byId("table").getBinding("rows").updateAnalyticalInfo(aAggregation);
+			oTable.getBinding("rows").updateAnalyticalInfo(aAggregation);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -17133,7 +17196,7 @@ sap.ui.define([
 				.expectChange("text", ["John Field", "Jonathan Smith", "Frederic Fall"])
 				.expectChange("age", ["42", "50", "70"]);
 
-			that.oView.byId("table").setFirstVisibleRow(0);
+			oTable.setFirstVisibleRow(0);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -17158,8 +17221,8 @@ sap.ui.define([
 			}],
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', suspended : true}">\
-	<Text id="text" text="{Name}" />\
-	<Text id="age" text="{AGE}" />\
+	<Text id="text" text="{Name}"/>\
+	<Text id="age" text="{AGE}"/>\
 </Table>',
 			that = this;
 
@@ -17222,7 +17285,7 @@ sap.ui.define([
 			// Note: table must be "growing" otherwise it does not use ECD
 			sView = '\
 <Table id="table" items="{TEAM_2_EMPLOYEES}" growing="true">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -17279,8 +17342,8 @@ sap.ui.define([
 		var oModel = createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'1\')}" id="form">\
-	<Text id="Team_Id" text="{Team_Id}" />\
-	<Text id="Name" text="{Name}" />\
+	<Text id="Team_Id" text="{Team_Id}"/>\
+	<Text id="Name" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -17316,6 +17379,7 @@ sap.ui.define([
 	// the return value context is destroyed by e.g. resetting the context of the operation binding.
 	// The second test uses a bound function instead of an action to check that the different
 	// access to the cache also works.
+	// JIRA: CPOUI5UISERVICESV3-1193
 	[{
 		operation : "EditAction",
 		method : "POST"
@@ -17330,10 +17394,10 @@ sap.ui.define([
 					+ oFixture.operation + (oFixture.method === "GET" ? "()" : ""),
 				sView = '\
 <FlexBox id="objectPage">\
-	<Text id="city" text="{Address/City}" />\
-	<Text id="id" text="{ArtistID}" />\
-	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Input id="name" value="{Name}" />\
+	<Text id="city" text="{Address/City}"/>\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="isActive" text="{IsActiveEntity}"/>\
+	<Input id="name" value="{Name}"/>\
 </FlexBox>',
 				that = this;
 
@@ -17477,11 +17541,11 @@ sap.ui.define([
 	<Text id="listId" text="{ArtistID}"/>\
 </Table>\
 <FlexBox id="objectPage" binding="{}">\
-	<Text id="id" text="{ArtistID}" />\
-	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Input id="name" value="{Name}" />\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="isActive" text="{IsActiveEntity}"/>\
+	<Input id="name" value="{Name}"/>\
 	<Table items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-		<Input id="price" value="{Price}" />\
+		<Input id="price" value="{Price}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -17666,28 +17730,28 @@ sap.ui.define([
 	// Test the following scenario twice with:
 	// a) a row context (sap.ui.model.odata.v4.Context) of an OData V4 list binding and
 	// b) a base context (sap.ui.model.Context):
-	//	1. Show the active version of an entity by using the given context
-	//	2. Within the binding hierarchy of the object page use a hidden binding with its own binding
-	//		parameters $$patchWithoutSideEffects=true and $select=Messages to request messages.
-	// 		The hidden binding is a binding that is independent of the object page. Before calling
-	// 		the edit action, its cache stores the Artist data and the $select query option is
-	// 		determined for this binding. The first call of the edit action is relative to the hidden
-	// 		binding's bound context. Hence the operation can request the necessary selection of the
-	// 		Artist data using $$inheritExpandSelect. This data is then available within the return
-	// 		value context which serves as a binding context of the object page and as the parent
-	// 		context for the following activate action.
-	//	3. Create an edit action with $$inheritExpandSelect=true to select all properties used in
-	//		the object page. Call the action and bind the object page to the return value context.
-	//	4a. Patch the inactive entity to see that $$patchWithoutSideEffects works.
-	//  4b. Patch a property reachable via a navigation property (BCP: 2070137560)
-	//  4c. Try to patch a property via the wrong context (not the return value context)
+	// 1. Show the active version of an entity by using the given context
+	// 2. Within the binding hierarchy of the object page use a hidden binding with its own binding
+	//   parameters $$patchWithoutSideEffects=true and $select=Messages to request messages.
+	//   The hidden binding is a binding that is independent of the object page. Before calling
+	//   the edit action, its cache stores the Artist data and the $select query option is
+	//   determined for this binding. The first call of the edit action is relative to the hidden
+	//   binding's bound context. Hence the operation can request the necessary selection of the
+	//   Artist data using $$inheritExpandSelect. This data is then available within the return
+	//   value context which serves as a binding context of the object page and as the parent
+	//   context for the following activate action.
+	// 3. Create an edit action with $$inheritExpandSelect=true to select all properties used in
+	//   the object page. Call the action and bind the object page to the return value context.
+	// 4a. Patch the inactive entity to see that $$patchWithoutSideEffects works.
+	//   4b. Patch a property reachable via a navigation property (BCP: 2070137560)
+	//   4c. Try to patch a property via the wrong context (not the return value context)
 	//      (BCP: 2070137560)
-	//	5. Show the creation row of a creation row binding (a binding that does not request data,
-	//		must not be refreshed) which is relative to the return value context of the inactive
-	//		version.
-	//	6. Request side effects for the return value context of the inactive version to see that the
-	//		creation row is untouched.
-	//	7. Switch back to the active version.
+	// 5. Show the creation row of a creation row binding (a binding that does not request data,
+	//   must not be refreshed) which is relative to the return value context of the inactive
+	//   version.
+	// 6. Request side effects for the return value context of the inactive version to see that the
+	//   creation row is untouched.
+	// 7. Switch back to the active version.
 	// CPOUI5ODATAV4-189
 [function () {
 	return this.oView.byId("table").getItems()[0].getBindingContext();
@@ -17708,14 +17772,14 @@ sap.ui.define([
 	<Text id="listId" text="{ArtistID}"/>\
 </Table>',
 			sView = '\
-<FlexBox id="objectPage" >\
-	<Text id="id" text="{ArtistID}" />\
-	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Input id="name" value="{Name}" />\
-	<Input id="bestFriend" value="{BestFriend/Name}" />\
+<FlexBox id="objectPage">\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="isActive" text="{IsActiveEntity}"/>\
+	<Input id="name" value="{Name}"/>\
+	<Input id="bestFriend" value="{BestFriend/Name}"/>\
 	<FlexBox id="creationRow">\
-		<Text id="price" text="{Price}" />\
-		<Text id="artistName" text="{_Artist/Name}" />\
+		<Text id="price" text="{Price}"/>\
+		<Text id="artistName" text="{_Artist/Name}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -17941,16 +18005,16 @@ sap.ui.define([
 			oModel = createSpecialCasesModel({autoExpandSelect : true, groupId : "$auto"}),
 			oReturnValueContext,
 			sView = '\
-<FlexBox id="objectPage" >\
-	<Text id="id" text="{ArtistID}" />\
-	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Text id="name" text="{Name}" />\
-	<FlexBox id="bestFriend" binding="{BestFriend}" >\
-		<Text id="bestFriendName" text="{Name}" />\
+<FlexBox id="objectPage">\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="isActive" text="{IsActiveEntity}"/>\
+	<Text id="name" text="{Name}"/>\
+	<FlexBox id="bestFriend" binding="{BestFriend}">\
+		<Text id="bestFriendName" text="{Name}"/>\
 	</FlexBox>\
 	<FlexBox id="creationRow">\
-		<Text id="price" text="{Price}" />\
-		<Text id="artistName" text="{_Artist/Name}" />\
+		<Text id="price" text="{Price}"/>\
+		<Text id="artistName" text="{_Artist/Name}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -18113,14 +18177,14 @@ sap.ui.define([
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
-	<Text id="id" text="{ArtistID}" />\
-	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Input id="name" value="{Name}" />\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="isActive" text="{IsActiveEntity}"/>\
+	<Input id="name" value="{Name}"/>\
 	<Table id="table" items="{\
 				path : \'_Publication\',\
 				parameters : {$$ownRequest : true}\
 			}">\
-		<Input id="price" value="{Price}" />\
+		<Input id="price" value="{Price}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -18268,14 +18332,16 @@ sap.ui.define([
 	QUnit.test("Reuse caches in dependent tables w/ own request while switching list entry",
 			function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
+			oTableBinding,
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </Table>\
 <FlexBox id="form" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
-	<Text id="managerId" text="{EMPLOYEE_2_MANAGER/ID}" />\
+	<Text id="managerId" text="{EMPLOYEE_2_MANAGER/ID}"/>\
 	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$$ownRequest : true}}">\
-		<Text id="equipmentId" text="{ID}" />\
+		<Text id="equipmentId" text="{ID}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -18291,6 +18357,9 @@ sap.ui.define([
 			.expectChange("equipmentId", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oTableBinding = oTable.getBinding("items");
+
 			that.expectRequest("EMPLOYEES('42')?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)",
 				{
 					ID : "42",
@@ -18307,8 +18376,7 @@ sap.ui.define([
 				.expectChange("equipmentId", ["99", "98"]);
 
 			// code under test
-			that.oView.byId("form").setBindingContext(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+			that.oView.byId("form").setBindingContext(oTableBinding.getCurrentContexts()[0]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -18328,8 +18396,7 @@ sap.ui.define([
 				.expectChange("equipmentId", ["97", "96"]);
 
 			// code under test
-			that.oView.byId("form").setBindingContext(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[1]);
+			that.oView.byId("form").setBindingContext(oTableBinding.getCurrentContexts()[1]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -18337,8 +18404,7 @@ sap.ui.define([
 				.expectChange("equipmentId", ["99", "98"]);
 
 			// code under test - no request!
-			that.oView.byId("form").setBindingContext(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+			that.oView.byId("form").setBindingContext(oTableBinding.getCurrentContexts()[0]);
 
 			return that.waitForChanges(assert);
 		});
@@ -18351,6 +18417,7 @@ sap.ui.define([
 	// $select parameters used for loading the active entity. This way, all fields in the object
 	// page can be populated from the bound action response.
 	// Read side effects which include navigation properties while there are pending changes.
+	// JIRA: CPOUI5UISERVICESV3-1193
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
 		var fnDataReceived = this.spy(),
 			fnDataRequested = this.spy(),
@@ -18364,10 +18431,10 @@ sap.ui.define([
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
-	<Text id="id" text="{ArtistID}" />\
-	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Input id="name" value="{Name}" />\
-	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="isActive" text="{IsActiveEntity}"/>\
+	<Input id="name" value="{Name}"/>\
+	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}"/>\
 </FlexBox>',
 			that = this;
 
@@ -18533,13 +18600,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Call an action which returns the binding parameter as return value. Expect that
 	// the result is copied back to the binding parameter.
+	// JIRA: CPOUI5UISERVICESV3-523
 	QUnit.test("bound operation: copy result into context", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="LifecycleStatusDesc" text="{LifecycleStatusDesc}" />\
-	<Text id="CompanyName" text="{SO_2_BP/CompanyName}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="LifecycleStatusDesc" text="{LifecycleStatusDesc}"/>\
+	<Text id="CompanyName" text="{SO_2_BP/CompanyName}"/>\
 	<FlexBox id="action"\
 		binding="{path : \'com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)\'\
 			, parameters : {$$inheritExpandSelect : true}}">\
@@ -18592,13 +18660,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Delete return value context obtained from bound action execute.
+	// JIRA: CPOUI5UISERVICESV3-1193
 	QUnit.test("bound operation: delete return value context", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
-	<Text id="id" text="{ArtistID}" />\
-	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Text id="name" text="{Name}" />\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="isActive" text="{IsActiveEntity}"/>\
+	<Text id="name" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -18674,9 +18743,9 @@ sap.ui.define([
 
 		return this.createView(assert, "", oModel).then(function () {
 			that.expectRequest({
-					method: "POST",
-					url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
-					payload: {}
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
+					payload : {}
 				}, {
 					ArtistID : "42",
 					IsActiveEntity : false
@@ -18703,10 +18772,10 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'Messages\'}}">\
-	<Text id="listId" text="{SalesOrderID}" />\
+	<Text id="listId" text="{SalesOrderID}"/>\
 </Table>\
 <FlexBox id="objectPage" binding="{}">\
-	<Text id="objectId" text="{SalesOrderID}" />\
+	<Text id="objectId" text="{SalesOrderID}"/>\
 	<FlexBox id="action" binding="{path : \'' + sAction + '(...)\', \
 		parameters : {$$inheritExpandSelect : true}}"/>\
 </FlexBox>',
@@ -18753,11 +18822,11 @@ sap.ui.define([
 			sView = '\
 <Table id="table" items="{path : \'/Artists\',\
 		parameters : {$select : \'BestFriend/Messages\'}}">\
-	<Text id="artists" text="{ArtistID}" />\
-	<Text id="bestFriends" text="{BestFriend/ArtistID}" />\
+	<Text id="artists" text="{ArtistID}"/>\
+	<Text id="bestFriends" text="{BestFriend/ArtistID}"/>\
 </Table>\
 <FlexBox id="objectPage" binding="{BestFriend}">\
-	<Text id="bestFriend" text="{ArtistID}" />\
+	<Text id="bestFriend" text="{ArtistID}"/>\
 	<FlexBox id="action" binding="{path : \'' + sAction + '(...)\', \
 		parameters : {$$inheritExpandSelect : true}}"/>\
 </FlexBox>',
@@ -18812,13 +18881,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Create entity for an absolute ListBinding, save the new entity and call a bound
 	// action for the new non-transient entity
+	// JIRA: CPOUI5UISERVICESV3-1233
 	QUnit.test("Create absolute, save and call action", function (assert) {
 		var oCreatedContext,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			that = this,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
-	<Text id="Team_Id" text="{Team_Id}" />\
+	<Text id="Team_Id" text="{Team_Id}"/>\
 </Table>';
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
@@ -18836,7 +18906,7 @@ sap.ui.define([
 				.expectChange("Team_Id", ["newer", "42"])
 				.expectRequest("TEAMS('newer')?$select=Team_Id", {Team_Id : "newer"});
 
-			oCreatedContext =  that.oView.byId("table").getBinding("items").create({
+			oCreatedContext = that.oView.byId("table").getBinding("items").create({
 				Team_Id : "new"
 			});
 
@@ -18867,6 +18937,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Create entity for a relative ListBinding, save the new entity and call action
 	// import for the new non-transient entity
+	// JIRA: CPOUI5UISERVICESV3-1233
 	QUnit.test("Create relative, save and call action", function (assert) {
 		var oCreatedContext,
 			oModel = createTeaBusiModel(),
@@ -18876,7 +18947,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<Text id="id" text="{ID}" />\
+		<Text id="id" text="{ID}"/>\
 	</Table>\
 </FlexBox>';
 
@@ -18927,6 +18998,7 @@ sap.ui.define([
 	// action for the new non-transient entity
 	// Afterwards create a new entity on a containment relative to the just saved absolute entity,
 	// save the containment and call a bound function on the new non-transient contained entity
+	// JIRA: CPOUI5UISERVICESV3-1233
 	QUnit.test("Create absolute and contained entity, save and call bound action/function",
 			function (assert) {
 		var oCreatedItemContext,
@@ -18936,11 +19008,11 @@ sap.ui.define([
 			that = this,
 			sView = '\
 <Table id="SalesOrders" items="{/SalesOrderList}">\
-	<Text id="SalesOrderID" text="{SalesOrderID}" />\
+	<Text id="SalesOrderID" text="{SalesOrderID}"/>\
 </Table>\
 <Table id="LineItems" items="{SO_2_SOITEM}">\
-	<Text id="ItemSalesOrderID" text="{SalesOrderID}" />\
-	<Text id="ItemPosition" text="{ItemPosition}" />\
+	<Text id="ItemSalesOrderID" text="{SalesOrderID}"/>\
+	<Text id="ItemPosition" text="{ItemPosition}"/>\
 </Table>';
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
@@ -18996,7 +19068,7 @@ sap.ui.define([
 				.expectChange("ItemPosition", ["newPos"])
 				.expectChange("ItemPosition", ["10"]);
 
-			oCreatedItemContext =  oItemBinding.create({
+			oCreatedItemContext = oItemBinding.create({
 				SalesOrderID : "43",
 				ItemPosition : "newPos"
 			});
@@ -19041,6 +19113,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// JIRA: CPOUI5UISERVICESV3-1153
 	["$direct", "$auto"].forEach(function (sGroupId) {
 		QUnit.test("Unbound messages in response: " + sGroupId, function (assert) {
 			var aMessages = [{
@@ -19057,7 +19130,7 @@ sap.ui.define([
 				sView = '\
 <FlexBox binding="{path : \'/TEAMS(\\\'42\\\')/TEAM_2_MANAGER\',\
 	parameters : {custom : \'foo\'}}">\
-	<Text id="id" text="{ID}" />\
+	<Text id="id" text="{ID}"/>\
 </FlexBox>';
 
 			this.expectRequest("TEAMS('42')/TEAM_2_MANAGER?custom=foo", {ID : "23"}, {
@@ -19094,11 +19167,13 @@ sap.ui.define([
 	// an item with a message. Select the second row in the list table, the message remains
 	// although the item is no longer displayed. Now sort the detail table (which refreshes it) and
 	// the message is gone.
+	// JIRA: CPOUI5UISERVICESV3-135
 	QUnit.test("List/Detail & messages", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <Table id="table" items="{path : \'/TEAMS\', templateShareable : false}">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </Table>\
 <Table id="detailTable" items="{\
 			path : \'TEAM_2_EMPLOYEES\',\
@@ -19106,7 +19181,7 @@ sap.ui.define([
 				$select : \'__CT__FAKE__Message/__FAKE__Messages\'\
 			}\
 		}">\
-	<Input id="Name" value="{Name}" />\
+	<Input id="Name" value="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -19120,6 +19195,8 @@ sap.ui.define([
 			.expectChange("Name", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectRequest("TEAMS('Team_01')/TEAM_2_EMPLOYEES"
 					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
 					value : [{
@@ -19146,7 +19223,7 @@ sap.ui.define([
 				}]);
 
 			that.oView.byId("detailTable").setBindingContext(
-				that.oView.byId("table").getItems()[0].getBindingContext());
+				oTable.getItems()[0].getBindingContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -19162,7 +19239,7 @@ sap.ui.define([
 				// no change in messages
 
 			that.oView.byId("detailTable").setBindingContext(
-				that.oView.byId("table").getItems()[1].getBindingContext());
+				oTable.getItems()[1].getBindingContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -19191,7 +19268,7 @@ sap.ui.define([
 	QUnit.test("sap.ui.model.odata.v4.Context#refresh: caches and messages", function (assert) {
 		var sView = '\
 <Table id="tableSalesOrder" items="{/SalesOrderList}">\
-	<Text id="salesOrder" text="{SalesOrderID}" />\
+	<Text id="salesOrder" text="{SalesOrderID}"/>\
 </Table>\
 <Table id="tableSOItems" items="{\
 			path : \'SO_2_SOITEM\',\
@@ -19199,15 +19276,15 @@ sap.ui.define([
 				$$ownRequest : true,\
 				$select : \'Messages\'\
 			}}">\
-	<Input id="note" value="{Note}" />\
+	<Input id="note" value="{Note}"/>\
 </Table>\
 <!-- same paths in different control hierarchies -->\
 <Table id="tableSalesOrder2" items="{/SalesOrderList}">\
-	<Text id="salesOrder2" text="{SalesOrderID}" />\
+	<Text id="salesOrder2" text="{SalesOrderID}"/>\
 </Table>\
 <!-- to determine which request is fired the second table requests only 5 entries -->\
 <Table id="tableSOItems2" growing="true" growingThreshold="5" items="{SO_2_SOITEM}">\
-	<Input id="note2" value="{Note}" />\
+	<Input id="note2" value="{Note}"/>\
 </Table>',
 			oExpectedMessage0 = {
 				code : "1",
@@ -19536,7 +19613,7 @@ sap.ui.define([
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="equipments" items="{/Equipments}">\
-	<Text id="id" text="{ID}" />\
+	<Text id="id" text="{ID}"/>\
 </Table>\
 <FlexBox id="employeeDetails"\
 		binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$updateGroupId : \'foo\'\}}">\
@@ -19637,6 +19714,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Delete an entity with messages from an ODataListBinding
+	// JIRA: CPOUI5UISERVICESV3-1361
 	QUnit.test("Delete an entity with messages from an ODataListBinding", function (assert) {
 		var oDeleteMessage = {
 				code : "occupied",
@@ -19654,11 +19732,12 @@ sap.ui.define([
 				target : "/EMPLOYEES('1')/Name",
 				type : "Warning"
 			},
+			oTable,
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-	<Input id="name" value="{Name}" />\
-	<Input id="status" value="{STATUS}" />\
+	<Input id="name" value="{Name}"/>\
+	<Input id="status" value="{STATUS}"/>\
 </Table>',
 			that = this;
 
@@ -19689,11 +19768,13 @@ sap.ui.define([
 			.expectMessages([oReadMessage]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			return that.checkValueState(assert,
-				that.oView.byId("table").getItems()[0].getCells()[0],
+				oTable.getItems()[0].getCells()[0],
 				"Warning", "Text");
 		}).then(function () {
-			var oContext = that.oView.byId("table").getItems()[0].getBindingContext(),
+			var oContext = oTable.getItems()[0].getBindingContext(),
 				oError = createError({
 					code : "occupied",
 					message : "Cannot delete occupied worker",
@@ -19713,10 +19794,10 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			return that.checkValueState(assert,
-				that.oView.byId("table").getItems()[0].getCells()[1],
+				oTable.getItems()[0].getCells()[1],
 				"Error", "Cannot delete occupied worker");
 		}).then(function () {
-			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			var oContext = oTable.getItems()[0].getBindingContext();
 
 			that.expectRequest({
 					method : "DELETE",
@@ -19736,12 +19817,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Delete an entity with messages from an ODataContextBinding
+	// JIRA: CPOUI5UISERVICESV3-1361
 	QUnit.test("Delete an entity with messages from an ODataContextBinding", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
 	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-	<Input id="text" value="{Name}" />\
+	<Input id="text" value="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -19789,14 +19871,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Delete an entity with messages from an relative ODLB w/o cache
+	// JIRA: CPOUI5UISERVICESV3-1361
 	QUnit.test("Delete an entity with messages from an relative ODLB w/o cache", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
-	<Text id="Team_Id" text="{Team_Id}" />\
+	<Text id="Team_Id" text="{Team_Id}"/>\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', \
 			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-		<Input id="name" value="{Name}" />\
+		<Input id="name" value="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -19834,11 +19918,12 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			return that.checkValueState(assert,
-				that.oView.byId("table").getItems()[0].getCells()[0],
-				"Warning", "Text");
+			oTable = that.oView.byId("table");
+
+			return that.checkValueState(assert, oTable.getItems()[0].getCells()[0], "Warning",
+				"Text");
 		}).then(function () {
-			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			var oContext = oTable.getItems()[0].getBindingContext();
 
 			that.expectRequest({
 					method : "DELETE",
@@ -19860,6 +19945,7 @@ sap.ui.define([
 	// CPOUI5UISERVICESV3-1799
 	QUnit.test("Delete entity from rel. ODLB with pending changes in siblings", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oTable,
 			sView = '\
 <FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="Team_Id" text="{Team_Id}"/>\
@@ -19884,9 +19970,11 @@ sap.ui.define([
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectChange("name", ["John Doe", "Jonathan Smith", "Frederic Fall"]);
 
-			that.oView.byId("table").getBinding("items").create({Name : "John Doe"});
+			oTable.getBinding("items").create({Name : "John Doe"});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -19898,7 +19986,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oView.byId("table").getItems()[1].getBindingContext().delete("$auto"),
+				oTable.getItems()[1].getBindingContext().delete("$auto"),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -20013,7 +20101,7 @@ sap.ui.define([
 	<FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Input id="text" value="{Name}" />\
+		<Input id="text" value="{Name}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -20078,8 +20166,8 @@ sap.ui.define([
 			$select : \'__CT__FAKE__Message/__FAKE__Messages\',\
 			$$updateGroupId : \'foo\'\
 		}}" id="form">\
-	<Text id="id" text="{ID}" />\
-	<Input id="name" value="{Name}" />\
+	<Text id="id" text="{ID}"/>\
+	<Input id="name" value="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -20174,9 +20262,9 @@ sap.ui.define([
 			},\
 			$$updateGroupId : \'foo\'\
 		}}" id="form">\
-	<Text id="teamId" text="{Team_Id}" />\
+	<Text id="teamId" text="{Team_Id}"/>\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<Input id="name" value="{Name}" />\
+		<Input id="name" value="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -20263,7 +20351,7 @@ sap.ui.define([
 			$select : \'__CT__FAKE__Message/__FAKE__Messages\',\
 			$$updateGroupId : \'foo\'\
 		}}">\
-	<Input id="name" value="{Name}" />\
+	<Input id="name" value="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -20514,10 +20602,11 @@ sap.ui.define([
 	// CPOUI5UISERVICESV3-1684
 	QUnit.test("$$patchWithoutSideEffects in list binding and inherited", function (assert) {
 		var oModel = createModel(sSalesOrderService, {autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <Table id="table" items="{path : \'/SalesOrderList\',\
 		parameters : {$$patchWithoutSideEffects : true}}">\
-	<Input id="listNote" value="{Note}" />\
+	<Input id="listNote" value="{Note}"/>\
 </Table>\
 <FlexBox id="form" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
 	<Input id="formNote" value="{Note}"/>\
@@ -20535,6 +20624,8 @@ sap.ui.define([
 			.expectChange("formNote");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectChange("listNote", ["Note (entered)"])
 				.expectRequest({
 					method : "PATCH",
@@ -20547,8 +20638,7 @@ sap.ui.define([
 					SalesOrderID : "42"
 				});
 
-			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
-				.setValue("Note (entered)");
+			oTable.getItems()[0].getCells()[0].getBinding("value").setValue("Note (entered)");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -20560,7 +20650,7 @@ sap.ui.define([
 				.expectChange("formNote", "Note (from server)");
 
 			that.oView.byId("form").setBindingContext(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]
+				oTable.getBinding("items").getCurrentContexts()[0]
 			);
 
 			return that.waitForChanges(assert);
@@ -20594,9 +20684,9 @@ sap.ui.define([
 			}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Input id="name" value="{Name}" />\
-	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
-	<Text binding="{DraftAdministrativeData}" id="inProcessByUser2" text="{InProcessByUser}" />\
+	<Input id="name" value="{Name}"/>\
+	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}"/>\
+	<Text binding="{DraftAdministrativeData}" id="inProcessByUser2" text="{InProcessByUser}"/>\
 </FlexBox>',
 			that = this;
 
@@ -20661,10 +20751,10 @@ sap.ui.define([
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<FlexBox binding="{}" id="section">\
 		<Text binding="{path : \'DraftAdministrativeData\', parameters : {$$ownRequest : true}}"\
-			id="inProcessByUser" text="{InProcessByUser}" />\
+			id="inProcessByUser" text="{InProcessByUser}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -20832,12 +20922,12 @@ sap.ui.define([
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<FlexBox binding="{}" id="section">\
 		<Text binding="{\
 				path : \'DraftAdministrativeData\',\
 				parameters : {$$ownRequest : true}\
-			}" id="inProcessByUser" text="{InProcessByUser}" />\
+			}" id="inProcessByUser" text="{InProcessByUser}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -20882,13 +20972,13 @@ sap.ui.define([
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<FlexBox binding="{BestFriend}" id="section">\
 		<FlexBox binding="{BestFriend}" id="section2">\
 			<Text binding="{\
 					path : \'DraftAdministrativeData\',\
 					parameters : {$$ownRequest : true}\
-				}" id="inProcessByUser" text="{InProcessByUser}" />\
+				}" id="inProcessByUser" text="{InProcessByUser}"/>\
 		</FlexBox>\
 	</FlexBox>\
 </FlexBox>',
@@ -20936,13 +21026,13 @@ sap.ui.define([
 			oModel = createSpecialCasesModel({autoExpandSelect : false}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<FlexBox binding="{BestFriend}" id="section">\
 		<FlexBox binding="{_Friend(ArtistID=\'42\',IsActiveEntity=true)}" id="section2">\
 			<Text binding="{\
 					path : \'DraftAdministrativeData\',\
 					parameters : {$$ownRequest : true}\
-				}" id="inProcessByUser" text="{InProcessByUser}" />\
+				}" id="inProcessByUser" text="{InProcessByUser}"/>\
 		</FlexBox>\
 	</FlexBox>\
 </FlexBox>',
@@ -20990,10 +21080,10 @@ sap.ui.define([
 			var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 				sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<FlexBox binding="{BestFriend}" id="section">\
 		<Table growing="' + bGrowing + '" id="table" items="{_Publication}">\
-			<Text id="price" text="{Price}" />\
+			<Text id="price" text="{Price}"/>\
 		</Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -21047,21 +21137,23 @@ sap.ui.define([
 	// Scenario: Read side effects for a collection-valued navigation property where only a single
 	// property is affected. There is a child binding with own cache for the collection affected
 	// by the side effect; instead of refreshing the whole collection, an efficient request is sent.
+	// JIRA: CPOUI5UISERVICESV3-1690
 	QUnit.test("requestSideEffects for a single property of a collection", function (assert) {
 		var oModel = createModel("/special/cases/?sap-client=123", {autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<FlexBox binding="{BestFriend}" id="section">\
 		<t:Table firstVisibleRow="1" id="table"\
 				rows="{path : \'_Publication\', parameters : {$count : true,\
 					$filter : \'CurrencyCode eq \\\'EUR\\\'\', $orderby : \'PublicationID\',\
 					$$ownRequest : true}}"\
 				threshold="0" visibleRowCount="2">\
-			<Input id="price" value="{Price}" />\
-			<Text id="currency" text="{CurrencyCode}" />\
-			<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
+			<Input id="price" value="{Price}"/>\
+			<Text id="currency" text="{CurrencyCode}"/>\
+			<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}"/>\
 		</t:Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -21105,10 +21197,12 @@ sap.ui.define([
 			.expectChange("inProcessByUser", [, "Charlie Brown", "Schroeder"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectChange("count", "10"); // must not be affected by side effects below!
 
 			that.oView.byId("count").setBindingContext(
-				that.oView.byId("table").getBinding("rows").getHeaderContext());
+				oTable.getBinding("rows").getHeaderContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -21162,9 +21256,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			return that.checkValueState(assert,
-				that.oView.byId("table").getRows()[1].getCells()[0],
-				"Information", "This looks pretty cheap now");
+			return that.checkValueState(assert, oTable.getRows()[1].getCells()[0], "Information",
+				"This looks pretty cheap now");
 		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
 					+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
@@ -21196,7 +21289,7 @@ sap.ui.define([
 				.expectChange("price", [,,,,,,, "7.77", "7.88"])
 				.expectChange("currency", [,,,,,,, "EUR", "EUR"]);
 
-			that.oView.byId("table").setFirstVisibleRow(7);
+			oTable.setFirstVisibleRow(7);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -21212,7 +21305,7 @@ sap.ui.define([
 						PublicationID : "42-7"
 					}]
 				})
-				.expectChange("price", [,,,,,,, "5.77",  "5.88"]);
+				.expectChange("price", [,,,,,,, "5.77", "5.88"]);
 
 			return Promise.all([
 				// code under test
@@ -21251,7 +21344,7 @@ sap.ui.define([
 				// Note: "currency" cells do not change
 
 			// Note: invisible, cached data was not updated and thus must be read again
-			that.oView.byId("table").setFirstVisibleRow(1);
+			oTable.setFirstVisibleRow(1);
 
 			return that.waitForChanges(assert);
 		});
@@ -21264,26 +21357,29 @@ sap.ui.define([
 	// Additionally, there are detail "views" (form and table) which send their own requests and are
 	// affected by the side effect.
 	// Finally, read a side effect that affects a single row, refreshing it completely.
+	// JIRA: CPOUI5UISERVICESV3-1867
 	QUnit.test("requestSideEffects: collection & list/detail", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oTable,
+			oTableBinding,
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<FlexBox binding="{BestFriend}" id="section">\
 		<Table id="table" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-			<Text id="price" text="{Price}" />\
-			<Text id="currency" text="{CurrencyCode}" />\
+			<Text id="price" text="{Price}"/>\
+			<Text id="currency" text="{CurrencyCode}"/>\
 		</Table>\
 	</FlexBox>\
 </FlexBox>\
 <FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="detail">\
-	<Text id="priceDetail" text="{Price}" />\
-	<Text id="currencyDetail" text="{CurrencyCode}" />\
-	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
+	<Text id="priceDetail" text="{Price}"/>\
+	<Text id="currencyDetail" text="{CurrencyCode}"/>\
+	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}"/>\
 </FlexBox>\
 <Table id="detailTable" items="{_Artist/_Friend}">\
-	<Text id="idDetail" text="{ArtistID}" />\
-	<Text id="nameDetail" text="{Name}" />\
+	<Text id="idDetail" text="{ArtistID}"/>\
+	<Text id="nameDetail" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -21316,6 +21412,9 @@ sap.ui.define([
 			.expectChange("nameDetail", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oTableBinding = oTable.getBinding("items");
+
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
 					+ "/_Publication('42-0')?$select=CurrencyCode,Price,PublicationID"
 					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
@@ -21331,8 +21430,7 @@ sap.ui.define([
 				.expectChange("currencyDetail", "EUR")
 				.expectChange("inProcessByUser", "JOHNDOE");
 
-			that.oView.byId("detail").setBindingContext(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+			that.oView.byId("detail").setBindingContext(oTableBinding.getCurrentContexts()[0]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -21386,8 +21484,7 @@ sap.ui.define([
 				.expectChange("idDetail", ["0", "1"])
 				.expectChange("nameDetail", ["TAFKAP", "John & Jane"]);
 
-			that.oView.byId("detailTable").setBindingContext(
-				that.oView.byId("table").getBinding("items").getCurrentContexts()[1]);
+			that.oView.byId("detailTable").setBindingContext(oTableBinding.getCurrentContexts()[1]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -21415,8 +21512,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			var o2ndRowContext
-					= that.oView.byId("table").getBinding("items").getCurrentContexts()[1];
+			var o2ndRowContext = oTableBinding.getCurrentContexts()[1];
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
 				+ "/_Publication('42-1')?$select=CurrencyCode,Price,PublicationID", {
@@ -21453,14 +21549,13 @@ sap.ui.define([
 	// Load side effects for the complete table using the header context.
 	// CPOUI5UISERVICESV3-1765
 	QUnit.test("requestSideEffects on context of a list binding", function (assert) {
-		var oBinding,
-			oCreatedContext0,
+		var oCreatedContext0,
 			oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : "update"}),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/Artists(\'42\')/_Publication}" threshold="0" visibleRowCount="2">\
-	<Text id="id" text="{PublicationID}" />\
-	<Text id="price" text="{Price}" />\
+	<Text id="id" text="{PublicationID}"/>\
+	<Text id="price" text="{Price}"/>\
 </t:Table>',
 			that = this;
 
@@ -21479,12 +21574,11 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
-			oBinding = oTable.getBinding("rows");
 
 			that.expectChange("id", ["New 1", "42-1"])
 				.expectChange("price", [null, "1.11"]);
 
-			oCreatedContext0 = oBinding.create({PublicationID : "New 1"}, true);
+			oCreatedContext0 = oTable.getBinding("rows").create({PublicationID : "New 1"}, true);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -21584,13 +21678,13 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<FlexBox binding="{BestFriend}" id="bestFriend">\
-		<Text id="name" text="{Name}" />\
+		<Text id="name" text="{Name}"/>\
 		<FlexBox binding="{BestPublication}" id="bestPublication">\
-			<Text id="bestPublication::currency" text="{CurrencyCode}" />\
+			<Text id="bestPublication::currency" text="{CurrencyCode}"/>\
 		</FlexBox>\
 		<Table id="publication" \
 				items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-			<Text id="currency" text="{CurrencyCode}" />\
+			<Text id="currency" text="{CurrencyCode}"/>\
 		</Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -21622,7 +21716,7 @@ sap.ui.define([
 					PublicationID : "2"
 				}]
 			})
-			.expectChange("currency", ["EUR",  "USD"])
+			.expectChange("currency", ["EUR", "USD"])
 			.expectChange("bestPublication::currency", "JPY")
 			.expectChange("name", "Best Friend");
 
@@ -21650,7 +21744,7 @@ sap.ui.define([
 						PublicationID : "2*" // key property has changed
 					}]
 				})
-				.expectChange("currency", ["EUR2",  "USD2"])
+				.expectChange("currency", ["EUR2", "USD2"])
 				.expectChange("bestPublication::currency", "JPY2")
 				.expectChange("name", "Best Friend2");
 
@@ -21700,9 +21794,9 @@ sap.ui.define([
 			sView = '\
 <Table id="table" items="{/Artists}">\
 	<FlexBox binding="{BestFriend}"> \
-		<Text id="name" text="{Name}" />\
+		<Text id="name" text="{Name}"/>\
 		<FlexBox binding="{BestPublication}" id="bestPublication">\
-			<Text id="currency" text="{CurrencyCode}" />\
+			<Text id="currency" text="{CurrencyCode}"/>\
 		</FlexBox>\
 	</FlexBox>\
 </Table>',
@@ -21818,9 +21912,9 @@ sap.ui.define([
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="outer">\
-	<Text id="outerName" text="{Name}" />\
+	<Text id="outerName" text="{Name}"/>\
 	<FlexBox id="inner" binding="{path : \'\', parameters : {$$ownRequest : true}}"> \
-		<Text id="innerName" text="{Name}" />\
+		<Text id="innerName" text="{Name}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -21870,9 +21964,10 @@ sap.ui.define([
 				updateGroupId : "update"
 			}),
 			oTable,
+			oTableBinding,
 			sView = '\
 <Table id="list" items="{/SalesOrderList}">\
-	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
 </Table>',
 			that = this;
 
@@ -21897,8 +21992,10 @@ sap.ui.define([
 				}]);
 
 			oTable = that.oView.byId("list");
+			oTableBinding = oTable.getBinding("items");
+
 			return Promise.all([
-				oTable.getBinding("items").getHeaderContext()
+				oTableBinding.getHeaderContext()
 					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
 						function () {
 							assert.ok(false, "unexpected success");
@@ -21909,7 +22006,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.strictEqual(oTable.getBinding("items").getCurrentContexts()[0].getPath(),
+			assert.strictEqual(oTableBinding.getCurrentContexts()[0].getPath(),
 				"/SalesOrderList('42')");
 		});
 	});
@@ -21925,12 +22022,13 @@ sap.ui.define([
 				updateGroupId : "update"
 			}),
 			oTable,
+			oTableBinding,
 			sView = '\
 <Table id="list" items="{/SalesOrderList}">\
-	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
 </Table>\
 <FlexBox id="detail" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
-	<Text id="note" text="{Note}" />\
+	<Text id="note" text="{Note}"/>\
 </FlexBox>',
 			that = this;
 
@@ -21948,6 +22046,7 @@ sap.ui.define([
 				.expectChange("note", "Note 42");
 
 			oTable = that.oView.byId("list");
+			oTableBinding = oTable.getBinding("items");
 			oContext = oTable.getItems()[0].getBindingContext();
 
 			that.oView.byId("detail").setBindingContext(oContext);
@@ -21968,7 +22067,7 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				oTable.getBinding("items").getHeaderContext()
+				oTableBinding.getHeaderContext()
 					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
 						function () {
 							assert.ok(false, "unexpected success");
@@ -21981,7 +22080,7 @@ sap.ui.define([
 		}).then(function () {
 			var oDetailContext = that.oView.byId("detail").getElementBinding().getBoundContext();
 
-			assert.strictEqual(oTable.getBinding("items").getCurrentContexts()[0].getPath(),
+			assert.strictEqual(oTableBinding.getCurrentContexts()[0].getPath(),
 				"/SalesOrderList('42')");
 			assert.strictEqual(oDetailContext.getPath(), "/SalesOrderList('42')");
 		});
@@ -21998,10 +22097,10 @@ sap.ui.define([
 			}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
-	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
 	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}, \
 			templateShareable : false}">\
-		<Text id="position" text="{ItemPosition}" />\
+		<Text id="position" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -22069,7 +22168,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
-	<Text id="note" text="{Note}" />\
+	<Text id="note" text="{Note}"/>\
 </FlexBox>',
 			that = this;
 
@@ -22113,7 +22212,7 @@ sap.ui.define([
 			oPromise,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
-	<Input id="note" value="{Note}" />\
+	<Input id="note" value="{Note}"/>\
 </FlexBox>',
 			that = this;
 
@@ -22366,8 +22465,8 @@ sap.ui.define([
 			var oModel = createTeaBusiModel({updateGroupId : "$auto"}),
 				sView = '\
 <FlexBox binding="{/EMPLOYEES(\'3\')}" id="form">\
-	<Input id="roomId" value="{ROOM_ID}" />\
-	<Input id="status" value="{STATUS}" />\
+	<Input id="roomId" value="{ROOM_ID}"/>\
+	<Input id="status" value="{STATUS}"/>\
 </FlexBox>',
 				that = this;
 
@@ -22423,9 +22522,9 @@ sap.ui.define([
 				oRoomIdBinding,
 				sView = '\
 <FlexBox binding="{/EMPLOYEES(\'3\')}">\
-	<Input id="age" value="{AGE}" />\
-	<Input id="roomId" value="{ROOM_ID}" />\
-	<Input id="status" value="{STATUS}" />\
+	<Input id="age" value="{AGE}"/>\
+	<Input id="roomId" value="{ROOM_ID}"/>\
+	<Input id="status" value="{STATUS}"/>\
 </FlexBox>',
 				that = this;
 
@@ -22529,8 +22628,8 @@ sap.ui.define([
 			oRoomIdBinding,
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'3\')}">\
-	<Input id="age" value="{AGE}" />\
-	<Input id="roomId" value="{ROOM_ID}" />\
+	<Input id="age" value="{AGE}"/>\
+	<Input id="roomId" value="{ROOM_ID}"/>\
 </FlexBox>',
 			that = this;
 
@@ -22623,6 +22722,7 @@ sap.ui.define([
 			var oEmployeeCreatedContext,
 				oModel = createTeaBusiModel(),
 				sNestedTransientPath,
+				oTable,
 				oTeamCreatedContext,
 				sTransientPath,
 				sView = '\
@@ -22635,7 +22735,7 @@ sap.ui.define([
 			}\
 		}}" id="form">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<Input id="id" value="{ID}" />\
+		<Input id="id" value="{ID}"/>\
 	</Table>\
 </FlexBox>',
 				that = this;
@@ -22712,7 +22812,8 @@ sap.ui.define([
 						type : "Warning"
 					}]);
 
-				oEmployeeCreatedContext = that.oView.byId("table").getBinding("items").create({
+				oTable = that.oView.byId("table");
+				oEmployeeCreatedContext = oTable.getBinding("items").create({
 						// private annotation, not to be used unless explicitly adviced to do so
 						"@$ui5.keepTransientPath" : bKeepTransientPath,
 						ID : null
@@ -22725,7 +22826,7 @@ sap.ui.define([
 				]);
 			}).then(function () {
 				// the new one is at the top
-				var oInput = that.oView.byId("table").getItems()[0].getCells()[0];
+				var oInput = oTable.getItems()[0].getCells()[0];
 
 				assert.strictEqual(oEmployeeCreatedContext.getPath(),
 					bKeepTransientPath
@@ -22755,18 +22856,19 @@ sap.ui.define([
 				sParameters = bUseCanonicalPath
 					? "parameters : {$$canonicalPath : true}"
 					: "parameters : {$$ownRequest : true}",
+				oTable,
 				sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')/SO_2_BP}">\
-	<Text text="{BusinessPartnerID}" />\
+	<Text text="{BusinessPartnerID}"/>\
 	<FlexBox binding="{path : \'\',\
 		' + sParameters + '\
 		}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="street" text="{Address/Street}" />\
+		<Text id="street" text="{Address/Street}"/>\
 	</FlexBox>\
 	<Table id="table" items="{path : \'BP_2_PRODUCT\', ' + sParameters + '\ }">\
-		<Text text="{ProductID}" />\
-		<Input value="{Name}" />\
+		<Text text="{ProductID}"/>\
+		<Input value="{Name}"/>\
 	</Table>\
 </FlexBox>',
 				that = this;
@@ -22800,6 +22902,8 @@ sap.ui.define([
 						}]
 					});
 
+				oTable = that.oView.byId("table");
+
 				that.oLogMock.expects("error").twice() // Note: twice, w/ different class name :-(
 					.withArgs("Failed to update path /SalesOrderList('0500000000')/SO_2_BP/"
 						+ "BP_2_PRODUCT('1')/Name", sinon.match(oError.message));
@@ -22828,12 +22932,12 @@ sap.ui.define([
 					}]);
 
 				// code under test
-				that.oView.byId("table").getItems("items")[0].getCells()[1].getBinding("value")
+				oTable.getItems("items")[0].getCells()[1].getBinding("value")
 					.setValue("A product with no name");
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				var oInput = that.oView.byId("table").getItems("items")[0].getCells()[1];
+				var oInput = oTable.getItems("items")[0].getCells()[1];
 
 				return that.checkValueState(assert, oInput, "Error", "Must not change mock data");
 			}).then(function () {
@@ -22880,7 +22984,7 @@ sap.ui.define([
 
 				return Promise.all([
 					// code under test
-					that.oView.byId("table").getBinding("items").getCurrentContexts()[0].delete()
+					oTable.getBinding("items").getCurrentContexts()[0].delete()
 						.catch(function (oError0) {
 							assert.strictEqual(oError0, oError);
 						}),
@@ -22915,7 +23019,7 @@ sap.ui.define([
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 
 				// code under test
-				that.oView.byId("table").getItems("items")[0].getCells()[1].getBinding("value")
+				oTable.getItems("items")[0].getCells()[1].getBinding("value")
 					.setValue("A product name leads to PATCH success with a message");
 
 				return that.waitForChanges(assert);
@@ -22932,19 +23036,20 @@ sap.ui.define([
 			oBusinessPartnerList,
 			oForm,
 			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oTable,
 			sView = '\
 <Table id="businessPartnerList" items="{/BusinessPartnerList}">\
-	<Text id="businessPartnerID" text="{BusinessPartnerID}" />\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
 </Table>\
 <FlexBox id="form" binding="{BP_2_SO(\'42\')}">\
-	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
 	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$canonicalPath : true}}">\
-		<Text id="productID" text="{ProductID}" />\
-		<Input id="note" value="{Note}" />\
+		<Text id="productID" text="{ProductID}"/>\
+		<Input id="note" value="{Note}"/>\
 	</Table>\
 	<FlexBox binding="{path : \'SO_2_BP/BP_2_SO(\\\'23\\\')\',\
 			parameters : {$$canonicalPath : true}}">\
-		<Input id="billingStatus" value="{BillingStatus}" />\
+		<Input id="billingStatus" value="{BillingStatus}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -23047,7 +23152,10 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oInput = that.oView.byId("table").getItems()[1].getCells()[1];
+			var oInput;
+
+			oTable = that.oView.byId("table");
+			oInput = oTable.getItems()[1].getCells()[1];
 
 			return that.checkValueState(assert, oInput, "Warning", "Just a test");
 		}).then(function () {
@@ -23087,8 +23195,7 @@ sap.ui.define([
 			that.expectChange("note", ["Foo"]);
 
 			// Note: cannot call Input#setValue because of that.setFormatter
-			that.oView.byId("table").getItems()[0].getCells()[1].getBinding("value")
-				.setValue("Foo");
+			oTable.getItems()[0].getCells()[1].getBinding("value").setValue("Foo");
 
 			checkPendingChanges();
 
@@ -23108,7 +23215,7 @@ sap.ui.define([
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<FlexBox binding="{BestFriend}">\
 		<FlexBox binding="{_Friend(ArtistID=\'42\',IsActiveEntity=true)}">\
 		</FlexBox>\
@@ -23134,9 +23241,9 @@ sap.ui.define([
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<FlexBox binding="{_Friend(ArtistID=\'23\',IsActiveEntity=true)}">\
-		<Text id="friend" text="{ArtistID}" />\
+		<Text id="friend" text="{ArtistID}"/>\
 	</FlexBox>\
 </FlexBox>';
 
@@ -23162,9 +23269,9 @@ sap.ui.define([
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
-	<Text id="id" text="{ArtistID}" />\
+	<Text id="id" text="{ArtistID}"/>\
 	<t:Table rows="{_Publication}">\
-		<Text id="price" text="{Price}" />\
+		<Text id="price" text="{Price}"/>\
 	</t:Table>\
 </FlexBox>';
 
@@ -23189,12 +23296,12 @@ sap.ui.define([
 	// CPOUI5UISERVICESV3-1676
 	testViewStart("Property binding with metapath", '\
 <FlexBox binding="{/Artists(\'42\')}">\
-	<Text id="label0" text="{Name##@com.sap.vocabularies.Common.v1.Label}" />\
-	<Text id="name" text="{Name}" />\
+	<Text id="label0" text="{Name##@com.sap.vocabularies.Common.v1.Label}"/>\
+	<Text id="name" text="{Name}"/>\
 </FlexBox>\
 <Text id="insertable"\
-	text="{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions/Insertable}" />\
-<Text id="label1" text="{/Artists##/@com.sap.vocabularies.Common.v1.Label}" />',
+	text="{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions/Insertable}"/>\
+<Text id="label1" text="{/Artists##/@com.sap.vocabularies.Common.v1.Label}"/>',
 		{"Artists('42')?$select=ArtistID,IsActiveEntity,Name" : {
 			//ArtistID : ..., IsActiveEntity : ...
 			Name : "Foo"}},
@@ -23208,7 +23315,7 @@ sap.ui.define([
 	// CPOUI5UISERVICESV3-1676
 	testViewStart("Metadata property binding with object value", '\
 <Text id="insertable"\
-	text="{:= %{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions}.Insertable }" />',
+	text="{:= %{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions}.Insertable }"/>',
 		/* no data request*/ undefined,
 		{insertable : true},
 		createSpecialCasesModel({autoExpandSelect : true})
@@ -23221,7 +23328,7 @@ sap.ui.define([
 	// CPOUI5UISERVICESV3-1676
 	testViewStart("Relative data property binding with object value", '\
 <FlexBox binding="{/Artists(\'42\')}">\
-	<Text id="publicationCount" text="{:= %{_Publication}.length }" />\
+	<Text id="publicationCount" text="{:= %{_Publication}.length }"/>\
 </FlexBox>',
 		{"Artists('42')?$select=ArtistID,IsActiveEntity&$expand=_Publication($select=PublicationID)" : {
 			//ArtistID : ..., IsActiveEntity : ...
@@ -23284,7 +23391,7 @@ sap.ui.define([
 					{path : \'/##@@requestUnitsOfMeasure\',\
 						mode : \'OneTime\', targetType : \'any\'}],\
 				mode : \'TwoWay\',\
-				type : \'sap.ui.model.odata.type.Unit\'}" />\
+				type : \'sap.ui.model.odata.type.Unit\'}"/>\
 	<Text id="weightMeasure" text="{WeightMeasure}"/>\
 	<!-- for CPOUI5MODELS-302 -->\
 	<Input id="weight0" value="{\
@@ -23292,7 +23399,7 @@ sap.ui.define([
 		mode : \'TwoWay\',\
 		parts: [\'WeightMeasure\', \'WeightUnit\',\
 			{mode : \'OneTime\', path : \'/##@@requestUnitsOfMeasure\', targetType : \'any\'}],\
-		type : \'sap.ui.model.odata.type.Unit\'}" />\
+		type : \'sap.ui.model.odata.type.Unit\'}"/>\
 	<Input id="weight1" value="{\
 		formatOptions : {showMeasure : false},\
 		mode : \'TwoWay\',\
@@ -23301,7 +23408,7 @@ sap.ui.define([
 			{parameters : {$$ignoreMessages : false}, path : \'WeightUnit\'},\
 			{mode : \'OneTime\', path : \'/##@@requestUnitsOfMeasure\', targetType : \'any\'}\
 		],\
-		type : \'sap.ui.model.odata.type.Unit\'}" />\
+		type : \'sap.ui.model.odata.type.Unit\'}"/>\
 </FlexBox>',
 			that = this;
 
@@ -23320,7 +23427,7 @@ sap.ui.define([
 					UnitCode : "KG"
 				}]
 			})
-			.expectChange("weightMeasure", "12.340")  // Scale=3 in property metadata => 3 decimals
+			.expectChange("weightMeasure", "12.340") // Scale=3 in property metadata => 3 decimals
 			.expectChange("weight", "12.34000 KG")
 			.expectChange("weight0", "12.34000")
 			.expectChange("weight1", "12.34000");
@@ -23439,7 +23546,7 @@ sap.ui.define([
 					{path : \'/##@@requestCurrencyCodes\',\
 						mode : \'OneTime\', targetType : \'any\'}],\
 				mode : \'TwoWay\',\
-				type : \'sap.ui.model.odata.type.Currency\'}" />\
+				type : \'sap.ui.model.odata.type.Currency\'}"/>\
 	<Text id="amount" text="{Price}"/>\
 	<!-- for CPOUI5MODELS-302 -->\
 	<Input id="price0" value="{\
@@ -23447,7 +23554,7 @@ sap.ui.define([
 		mode : \'TwoWay\',\
 		parts: [\'Price\', \'CurrencyCode\',\
 			{mode : \'OneTime\', path : \'/##@@requestCurrencyCodes\', targetType : \'any\'}],\
-		type : \'sap.ui.model.odata.type.Currency\'}" />\
+		type : \'sap.ui.model.odata.type.Currency\'}"/>\
 	<Input id="price1" value="{\
 		formatOptions : {showMeasure : false},\
 		mode : \'TwoWay\',\
@@ -23455,7 +23562,7 @@ sap.ui.define([
 			\'Price\',\
 			{parameters : {$$ignoreMessages : false}, path : \'CurrencyCode\'},\
 			{mode : \'OneTime\', path : \'/##@@requestCurrencyCodes\', targetType : \'any\'}],\
-		type : \'sap.ui.model.odata.type.Currency\'}" />\
+		type : \'sap.ui.model.odata.type.Currency\'}"/>\
 </FlexBox>',
 			that = this;
 
@@ -23702,7 +23809,7 @@ sap.ui.define([
 		path : \'/Artists(ArtistID=\\\'42\\\',IsActiveEntity=true)/BestPublication\',\
 		parameters : {$select : \'Messages\'}\
 	}" id="form">\
-	<Input id="price" value="{Price}" />\
+	<Input id="price" value="{Price}"/>\
 </FlexBox>',
 			that = this;
 
@@ -23766,8 +23873,8 @@ sap.ui.define([
 			oReturnValueContext,
 			sView = '\
 <FlexBox id="objectPage" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
-	<Text id="id" text="{ArtistID}" />\
-	<Text id="name" text="{Name}" />\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="name" text="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -23778,7 +23885,7 @@ sap.ui.define([
 			var oListBinding = that.oModel.bindList("/Artists"),
 				oHeaderContext = oListBinding.getHeaderContext(),
 				oOperationBinding = that.oModel.bindContext("special.cases.Create(...)",
-					oHeaderContext, {$$patchWithoutSideEffects: true});
+					oHeaderContext, {$$patchWithoutSideEffects : true});
 
 			that.expectRequest({
 				method : "POST",
@@ -23828,7 +23935,7 @@ sap.ui.define([
 		var fnRespond,
 			sView = '\
 <Table items="{/EMPLOYEES}">\
-	<Text text="{ID}" />\
+	<Text text="{ID}"/>\
 </Table>',
 			that = this;
 
@@ -23892,8 +23999,8 @@ sap.ui.define([
 			oSubmitBatchPromise,
 			sView = '\
 <Table growing="true" growingThreshold="2" id="table" items="{/BusinessPartnerList}">\
-	<Text id="id" text="{BusinessPartnerID}" />\
-	<Text id="name" text="{CompanyName}" />\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+	<Text id="name" text="{CompanyName}"/>\
 </Table>',
 			that = this;
 
@@ -23956,7 +24063,7 @@ sap.ui.define([
 <Text id="count" text="{$count}"/>\
 <Table growing="true" growingThreshold="2" id="table"\
 		items="{path : \'/BusinessPartnerList\', parameters : {$count : true}}">\
-	<Text id="id" text="{BusinessPartnerID}" />\
+	<Text id="id" text="{BusinessPartnerID}"/>\
 </Table>',
 			that = this;
 
@@ -24051,6 +24158,8 @@ sap.ui.define([
 				groupId : "$auto",
 				updateGroupId : "$auto"
 			}),
+			oTable,
+			oTableBinding,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Text id="count" text="{headerContext>$count}"/>\
@@ -24084,18 +24193,17 @@ sap.ui.define([
 			.expectChange("product", ["2"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oBinding = that.oView.byId("table").getBinding("items");
+			oTable = that.oView.byId("table");
+			oTableBinding = oTable.getBinding("items");
 
 			that.expectChange("count", "1");
 
 			that.oView.setModel(that.oView.getModel(), "headerContext");
 			that.oView.byId("count")
-				.setBindingContext(oBinding.getHeaderContext(), "headerContext");
+				.setBindingContext(oTableBinding.getHeaderContext(), "headerContext");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oBinding = that.oView.byId("table").getBinding("items");
-
 			that.expectRequest({
 					batchNo : 2,
 					method : "POST",
@@ -24144,14 +24252,14 @@ sap.ui.define([
 				}]);
 
 			// code under test
-			oCreatedContext = oBinding.create();
+			oCreatedContext = oTableBinding.create();
 
 			return Promise.all([
 				oCreatedContext.created(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			var oQuantityField = that.oView.byId("table").getItems()[0].getCells()[1];
+			var oQuantityField = oTable.getItems()[0].getCells()[1];
 
 			return that.checkValueState(assert, oQuantityField, "Warning",
 				"Enter a minimum quantity of 2");
@@ -24189,7 +24297,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			var oProductField = that.oView.byId("table").getItems()[0].getCells()[2];
+			var oProductField = oTable.getItems()[0].getCells()[2];
 
 			return that.checkValueState(assert, oProductField, "Information", "Best Product Ever");
 		}).then(function () {
@@ -24228,7 +24336,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			var oProductField = that.oView.byId("table").getItems()[0].getCells()[2];
+			var oProductField = oTable.getItems()[0].getCells()[2];
 
 			return that.checkValueState(assert, oProductField, "Success", "Keep on buying!");
 		}).then(function () {
@@ -24264,8 +24372,8 @@ sap.ui.define([
 			oPromise,
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
-	<Text id="id" text="{Team_Id}" />\
-	<Input id="name" value="{Name}" />\
+	<Text id="id" text="{Team_Id}"/>\
+	<Input id="name" value="{Name}"/>\
 </FlexBox>',
 			that = this;
 
@@ -24373,7 +24481,7 @@ sap.ui.define([
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Button id="button" press=".onPress(${path : \'NetAmount\', targetType : \'string\'})"\
-		text="{NetAmount}" />\
+		text="{NetAmount}"/>\
 </Table>',
 			that = this;
 
@@ -24488,10 +24596,11 @@ sap.ui.define([
 	QUnit.test("Reduce path: property in parent cache", function (assert) {
 		var oCreationRowContext,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="soCurrencyCode" text="{CurrencyCode}"/>\
-	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
 		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>\
@@ -24520,11 +24629,13 @@ sap.ui.define([
 			.expectChange("valueHelp::currencyCode");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectChange("valueHelp::currencyCode", "EUR");
 
 			// start value help
 			that.oView.byId("valueHelp").setBindingContext(
-				that.oView.byId("table").getItems()[0].getBindingContext());
+				oTable.getItems()[0].getBindingContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -24540,7 +24651,7 @@ sap.ui.define([
 			that.expectChange("valueHelp::currencyCode", "EUR");
 
 			// create and initialize creation row
-			oTableBinding = that.oView.byId("table").getBinding("items");
+			oTableBinding = oTable.getBinding("items");
 			oCreationRowListBinding = that.oModel.bindList(oTableBinding.getPath(),
 				oTableBinding.getContext(), undefined, undefined,
 				{$$updateGroupId : "doNotSubmit"});
@@ -24876,7 +24987,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Input id="soCurrencyCode" value="{CurrencyCode}"/>\
-	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
 		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>\
@@ -24974,7 +25085,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Input id="soCurrencyCode" value="{CurrencyCode}"/>\
-	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
 		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>\
@@ -25223,7 +25334,7 @@ sap.ui.define([
 				method : "GET",
 				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
 					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
-			})  // no response required
+			}) // no response required
 			.expectMessages([{
 				code : undefined,
 				message : "Communication error: 500 ",
@@ -25256,8 +25367,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" items="{BP_2_SO}">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -25340,11 +25451,12 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1764
 	QUnit.skip("requestSideEffects keeps invisible transient contexts", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oTable,
 			oTableBinding,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="2">\
-	<Text id="id" text="{SalesOrderID}" />\
-	<Text id="note" text="{Note}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
 
@@ -25385,7 +25497,8 @@ sap.ui.define([
 				.expectChange("id", ["", "0500000001"])
 				.expectChange("note", ["Created", "Test 1"]);
 
-			oTableBinding = that.oView.byId("table").getBinding("rows");
+			oTable = that.oView.byId("table");
+			oTableBinding = oTable.getBinding("rows");
 			oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
 
 			return that.waitForChanges(assert);
@@ -25394,7 +25507,7 @@ sap.ui.define([
 				.expectChange("note", [, "Test 1", "Test 2"]);
 
 			// scroll down
-			that.oView.byId("table").setFirstVisibleRow(1);
+			oTable.setFirstVisibleRow(1);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -25423,7 +25536,7 @@ sap.ui.define([
 					// Because of the transient row in the first context the skip has to be adapted
 					// to 0 => CPOUI5UISERVICESV3-1764
 					url : "SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2"
-				})  // no response required
+				}) // no response required
 				.expectMessages([{
 					code : undefined,
 					message : "Communication error: 500 ",
@@ -25467,8 +25580,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" items="{BP_2_SO}">\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -25583,7 +25696,7 @@ sap.ui.define([
 			fnRespond,
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
-	<Input id="name" value="{CompanyName}" />\
+	<Input id="name" value="{CompanyName}"/>\
 </FlexBox>',
 			that = this;
 
@@ -25683,13 +25796,13 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{path : \'/SalesOrderList(\\\'42\\\')\', parameters : {$select : \'Messages\'}}">\
 	<FlexBox binding="{}">\
-		<Text id="note" text="{Note}" />\
+		<Text id="note" text="{Note}"/>\
 		<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
-			<Text id="position" text="{ItemPosition}" />\
-			<Text id="amount" text="{GrossAmount}" />\
+			<Text id="position" text="{ItemPosition}"/>\
+			<Text id="amount" text="{GrossAmount}"/>\
 		</Table>\
 		<Table id="schedules" items="{path : \'SO_2_SCHDL\', parameters : {$$ownRequest : true}}">\
-			<Text id="key" text="{ScheduleKey}" />\
+			<Text id="key" text="{ScheduleKey}"/>\
 		</Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -25883,7 +25996,7 @@ sap.ui.define([
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/As(1)}">\
-	<Text id="aValue" text="{AValue}" />\
+	<Text id="aValue" text="{AValue}"/>\
 	<FlexBox id="bInstance" binding="{AtoB}">\
 		<Text id="bValue" text="{BValue}"/>\
 	</FlexBox>\
@@ -25935,7 +26048,7 @@ sap.ui.define([
 				updateGroupId : "$auto"
 			}),
 			sView = '\
-<Table id="orders" items="{path: \'/SalesOrderList\', parameters: {\
+<Table id="orders" items="{path : \'/SalesOrderList\', parameters : {\
 		$expand : {\
 			SO_2_SOITEM : {\
 				$select : [\'ItemPosition\',\'Note\',\'SalesOrderID\']\
@@ -26188,7 +26301,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'4711\')}">\
-	<Input id="note" value="{Note}" />\
+	<Input id="note" value="{Note}"/>\
 </FlexBox>',
 			that = this;
 
@@ -26252,27 +26365,26 @@ sap.ui.define([
 	QUnit.test("ODataModel#changeHttpHeaders", function (assert) {
 		var mHeaders = {Authorization : "Bearer xyz"},
 			oModel = createTeaBusiModel({groupId : "$auto", autoExpandSelect : true}),
-			sView = '<Text id="name" text="{/EMPLOYEES(0)/Name}" />',
+			sView = '<Text id="name" text="{/EMPLOYEES(0)/Name}"/>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES(0)/Name", {value : "Frederic Fall"})
 			.expectChange("name", "Frederic Fall");
 
-		return this.createView(assert, sView, oModel)
-			.then(function () {
-				that.expectRequest({
-						headers : mHeaders,
-						method : "GET",
-						url : "EMPLOYEES(0)/Name"
-					}, {value : "Frederic Fall"});
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					headers : mHeaders,
+					method : "GET",
+					url : "EMPLOYEES(0)/Name"
+				}, {value : "Frederic Fall"});
 
-				// code under test
-				oModel.changeHttpHeaders(mHeaders);
+			// code under test
+			oModel.changeHttpHeaders(mHeaders);
 
-				that.oView.byId("name").getBinding("text").refresh();
+			that.oView.byId("name").getBinding("text").refresh();
 
-				return that.waitForChanges(assert);
-			});
+			return that.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************
@@ -26285,7 +26397,7 @@ sap.ui.define([
 	QUnit.test("Server-driven paging with sap.m.Table", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EMPLOYEES}" growing="true" growingThreshold="10">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -26319,9 +26431,10 @@ sap.ui.define([
 	// Read with server-driven paging in "gaps" does not remove elements behind the gap
 	// JIRA: CPOUI5UISERVICESV3-1908
 	QUnit.test("Server-driven paging with table.Table: no remove behind gap", function (assert) {
-		var sView = '\
+		var oTable,
+			sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </t:Table>',
 			that = this;
 
@@ -26340,6 +26453,8 @@ sap.ui.define([
 			.expectChange("text", ["Peter Burke", "Frederic Fall", "Carla Blue"]);
 
 		return this.createView(assert, sView).then(function () {
+			oTable = that.oView.byId("table");
+
 			that.expectRequest("EMPLOYEES?$skip=7&$top=3", {
 					value : [
 						{ID : "8", Name : "John Field"},
@@ -26357,7 +26472,7 @@ sap.ui.define([
 				.expectChange("text", null, null)
 				.expectChange("text", [,,,,,,, "John Field", "Susan Bay", "Daniel Red"]);
 
-			that.oView.byId("table").setFirstVisibleRow(7);
+			oTable.setFirstVisibleRow(7);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -26378,13 +26493,13 @@ sap.ui.define([
 				.expectChange("text", null, null)
 				.expectChange("text", [,,, "Alice Grey", "Bob Green", "Erica Brown"]);
 
-			that.oView.byId("table").setFirstVisibleRow(3);
+			oTable.setFirstVisibleRow(3);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("text", [,,,,,,, "John Field", "Susan Bay", "Daniel Red"]);
 
-			that.oView.byId("table").setFirstVisibleRow(7);
+			oTable.setFirstVisibleRow(7);
 
 			return that.waitForChanges(assert);
 		});
@@ -26398,7 +26513,7 @@ sap.ui.define([
 	QUnit.test("Server-driven paging with table.Table: do not read prefetch", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
-	<Text id="text" text="{Name}" />\
+	<Text id="text" text="{Name}"/>\
 </t:Table>';
 
 		this.expectRequest("EMPLOYEES?$skip=0&$top=103", {
@@ -26508,7 +26623,7 @@ sap.ui.define([
 	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
 		<Text id="name" text="{Name}"/>\
 	</Table>\
-	<Text id="managerId" text="{MANAGER_ID}" />\
+	<Text id="managerId" text="{MANAGER_ID}"/>\
 </FlexBox>',
 			that = this;
 
@@ -26587,7 +26702,7 @@ sap.ui.define([
 	// PATCH request.
 	// JIRA: CPOUI5ODATAV4-14
 	// Additionally we show that it is possible to prevent a PATCH request by a binding parameter
-	// $$noPatch: true
+	// $$noPatch : true
 	// JIRA: CPOUI5ODATAV4-53
 	// BCP: 2070052679 - allow to set a value for a property beneath a null :1 navigation property
 	QUnit.test("CPOUI5ODATAV4-14", function (assert) {
@@ -26596,9 +26711,9 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/TEAMS(\'42\')}" id="form">\
 	<Input id="name" value="{Name}"/>\
-	<Input id="budget" value="{path : \'Budget\', parameters : {$$noPatch : true}}" />\
+	<Input id="budget" value="{path : \'Budget\', parameters : {$$noPatch : true}}"/>\
 	<Input id="teamId"\
-		value="{path : \'TEAM_2_MANAGER/TEAM_ID\', parameters : {$$noPatch : true}}" />\
+		value="{path : \'TEAM_2_MANAGER/TEAM_ID\', parameters : {$$noPatch : true}}"/>\
 </FlexBox>',
 			that = this;
 
@@ -27079,19 +27194,19 @@ sap.ui.define([
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Text id="city" text="{Address/City}" />\
-	<Text id="name" text="{Name}" />\
-	<Text binding="{BestPublication}" id="price0" text="{Price}" />\
+	<Text id="city" text="{Address/City}"/>\
+	<Text id="name" text="{Name}"/>\
+	<Text binding="{BestPublication}" id="price0" text="{Price}"/>\
 	<FlexBox binding="{BestFriend/BestFriend}">\
-		<Text id="friend" text="{Name}" />\
-		<Text binding="{BestPublication}" id="price1" text="{Price}" />\
+		<Text id="friend" text="{Name}"/>\
+		<Text binding="{BestPublication}" id="price1" text="{Price}"/>\
 	</FlexBox>\
 	<FlexBox binding="{}" id="section">\
 		<Text binding="{path : \'DraftAdministrativeData\', parameters : {$$ownRequest : true}}"\
-			id="inProcessByUser" text="{InProcessByUser}" />\
+			id="inProcessByUser" text="{InProcessByUser}"/>\
 	</FlexBox>\
 	<Table id="table" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-		<Text id="price2" text="{Price}" />\
+		<Text id="price2" text="{Price}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -27285,7 +27400,7 @@ sap.ui.define([
 		sView = '\
 <Table id="table" growing="true" growingThreshold="1"\
 		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
-	<Text id="note" text="{Note}" />\
+	<Text id="note" text="{Note}"/>\
 </Table>';
 
 	QUnit.test(sTitle, function (assert) {
@@ -27438,12 +27553,12 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 	<List growing="true" growingThreshold="3" \
-			items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
-			templateShareable: false}">\
+			items="{parameters : {$$sharedRequest : true}, path : \'/MANAGERS\',\
+			templateShareable : false}">\
 		<CustomListItem>\
-			<Text id="id" text="{ID}" />\
+			<Text id="id" text="{ID}"/>\
 		</CustomListItem>\
 	</List>\
 </Table>';
@@ -27455,7 +27570,7 @@ sap.ui.define([
 			})
 			.expectChange("name", ["Frederic Fall"])
 			.expectRequest("MANAGERS?$select=ID&$skip=0&$top=3", {
-				value : [{ID: "M1"}, {ID: "M2"}, {ID: "M3"}]
+				value : [{ID : "M1"}, {ID : "M2"}, {ID : "M3"}]
 			})
 			.expectChange("id", ["M1", "M2", "M3"]);
 
@@ -27470,22 +27585,22 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
-	<Text id="name1" text="{Name}" />\
+	<Text id="name1" text="{Name}"/>\
 	<List id="list1" growing="true" growingThreshold="3" \
-			items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
-			templateShareable: false}">\
+			items="{parameters : {$$sharedRequest : true}, path : \'/MANAGERS\',\
+			templateShareable : false}">\
 		<CustomListItem>\
-			<Text id="id1" text="{ID}" />\
+			<Text id="id1" text="{ID}"/>\
 		</CustomListItem>\
 	</List>\
 </FlexBox>\
 <FlexBox binding="{/EMPLOYEES(\'2\')}">\
-	<Text id="name2" text="{Name}" />\
+	<Text id="name2" text="{Name}"/>\
 	<List id="list2" growing="true" growingThreshold="3" \
-			items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
-			templateShareable: false}">\
+			items="{parameters : {$$sharedRequest : true}, path : \'/MANAGERS\',\
+			templateShareable : false}">\
 		<CustomListItem>\
-			<Text id="id2" text="{ID}" />\
+			<Text id="id2" text="{ID}"/>\
 		</CustomListItem>\
 	</List>\
 </FlexBox>',
@@ -27496,14 +27611,14 @@ sap.ui.define([
 			.expectRequest("EMPLOYEES('2')?$select=ID,Name", {ID : "2", Name : "Jonathan Smith"})
 			.expectChange("name2", "Jonathan Smith")
 			.expectRequest("MANAGERS?$select=ID&$skip=0&$top=3", {
-				value : [{ID: "M1"}, {ID: "M2"}, {ID: "M3"}]
+				value : [{ID : "M1"}, {ID : "M2"}, {ID : "M3"}]
 			})
 			.expectChange("id1", ["M1", "M2", "M3"])
 			.expectChange("id2", ["M1", "M2", "M3"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("MANAGERS?$select=ID&$orderby=ID desc&$skip=0&$top=3", {
-					value : [{ID: "M9"}, {ID: "M8"}, {ID: "M7"}]
+					value : [{ID : "M9"}, {ID : "M8"}, {ID : "M7"}]
 				})
 				.expectChange("id1", ["M9", "M8" , "M7"]);
 
@@ -27513,7 +27628,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("MANAGERS?$select=ID&$skip=3&$top=3", {
-					value : [{ID: "M4"}, {ID: "M5"}, {ID: "M6"}]
+					value : [{ID : "M4"}, {ID : "M5"}, {ID : "M6"}]
 				})
 				.expectChange("id2", [,,, "M4", "M5" , "M6"]);
 
@@ -27536,7 +27651,7 @@ sap.ui.define([
 			fnRespond,
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {' + sParameters + '}}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -27678,10 +27793,10 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table rows="{/EMPLOYEES}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 	<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
 		<CustomListItem>\
-			<Text id="category" text="{Category}" />\
+			<Text id="category" text="{Category}"/>\
 		</CustomListItem>\
 	</List>\
 </t:Table>';
@@ -27689,11 +27804,13 @@ sap.ui.define([
 		this.expectRequest("EMPLOYEES?$select=ID,Name"
 				+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID)&$skip=0&$top=110", {
 				value : [{
-					EMPLOYEE_2_EQUIPMENTS : [{Category: "F1"}, {Category: "F2"}, {Category: "F3"}],
+					EMPLOYEE_2_EQUIPMENTS
+						: [{Category : "F1"}, {Category : "F2"}, {Category : "F3"}],
 					ID : "2",
 					Name : "Frederic Fall"
 				}, {
-					EMPLOYEE_2_EQUIPMENTS : [{Category: "J1"}, {Category: "J2"}, {Category: "J3"}],
+					EMPLOYEE_2_EQUIPMENTS
+						: [{Category : "J1"}, {Category : "J2"}, {Category : "J3"}],
 					ID : "3",
 					Name : "Jonathan Smith"
 				}]
@@ -27713,8 +27830,8 @@ sap.ui.define([
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/Artists}">\
-	<Text id="friend" text="{BestFriend/Name}" />\
-	<Text id="name" text="{Name}" />\
+	<Text id="friend" text="{BestFriend/Name}"/>\
+	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -27806,11 +27923,11 @@ sap.ui.define([
 		sorter : {group : true, path : \'AGE\'}\
 	}">\
 	<ColumnListItem>\
-		<Text id="age" text="{AGE}" />\
-		<Text id="name" text="{Name}" />\
+		<Text id="age" text="{AGE}"/>\
+		<Text id="name" text="{Name}"/>\
 	</ColumnListItem>\
 </Table>';
-		//TODO <Text id="age" text="{AGE}" /> should not be needed for auto-$expand/$select here!
+		//TODO <Text id="age" text="{AGE}"/> should not be needed for auto-$expand/$select here!
 
 		function checkItems(aItems, aExpectedMetadataNames, aExpectedContent) {
 			assert.deepEqual(aItems.map(function (oItem) {
@@ -27910,20 +28027,20 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel(),
 			sView = '\
 <FlexBox binding="{/ProductList(\'1\')}">\
-	<Text id="typeCode1" text="{TypeCode}" />\
+	<Text id="typeCode1" text="{TypeCode}"/>\
 	<List id="list1"\
-		items="{path: \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable: false}">\
+		items="{path : \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable : false}">\
 		<CustomListItem>\
-			<Text id="description1" text="{DESCRIPTION}" />\
+			<Text id="description1" text="{DESCRIPTION}"/>\
 		</CustomListItem>\
 	</List>\
 </FlexBox>\
 <FlexBox binding="{/ProductList(\'2\')}">\
-	<Text id="typeCode2" text="{TypeCode}" />\
+	<Text id="typeCode2" text="{TypeCode}"/>\
 	<List id="list2"\
-		items="{path: \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable: false}">\
+		items="{path : \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable : false}">\
 		<CustomListItem>\
-			<Text id="description2" text="{DESCRIPTION}" />\
+			<Text id="description2" text="{DESCRIPTION}"/>\
 		</CustomListItem>\
 	</List>\
 </FlexBox>',
@@ -27970,7 +28087,7 @@ sap.ui.define([
 	QUnit.test("BCP: 2080320093: sharedRequests and sort", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true, sharedRequests : true}),
 			sView = '\
-<Table id="table" growing="true" growingThreshold="2" items="{path: \'/ProductList\'}">\
+<Table id="table" growing="true" growingThreshold="2" items="{path : \'/ProductList\'}">\
 	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
@@ -28062,7 +28179,7 @@ sap.ui.define([
 	QUnit.test("ODLB: create at end w/o $count", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<Text id="name" text="{Name}" />\
+	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -28132,7 +28249,7 @@ sap.ui.define([
 			oTableBinding,
 			sView = '\
 <Table id="listReport" items="{/SalesOrderList}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>\
 <FlexBox id="objectPage">\
 	<Input id="buyerId" value="{BuyerID}"/>\
@@ -28231,7 +28348,7 @@ sap.ui.define([
 			oTableBinding,
 			sView = '\
 <Table id="listReport" growing="true" growingThreshold="1" items="{/SalesOrderList}">\
-	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>\
 <FlexBox id="objectPage">\
 	<Input id="buyerId" value="{BuyerID}"/>\
@@ -28506,7 +28623,7 @@ sap.ui.define([
 	// bound with a relative path but no binding context. The fixed value should be replaced.
 	// JIRA: CPOUI5ODATAV4-363
 	QUnit.skip("ODataPropertyBinding#initialize while not resolved", function (assert) {
-		var sView = '<Text id="text" text="fixed value" />',
+		var sView = '<Text id="text" text="fixed value"/>',
 			that = this;
 
 		// Note: this.expectChange("text") cannot handle a scenario w/o binding
@@ -28547,26 +28664,26 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="objectPage" binding="{path : \'/EMPLOYEES(\\\'1\\\')\', \
 	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-		<Input id="Name0" value="{Name}" />\
-		<Input id="Name1" value="{path : \'Name\', parameters : {$$ignoreMessages : false}}" />\
-		<Input id="Name2" value="{path : \'Name\', parameters : {$$ignoreMessages : true}}" />\
-		<Input id="Composite0" value="{= ${ID} + ${value : \' - \'} + ${path : \'Name\'}}" />\
+		<Input id="Name0" value="{Name}"/>\
+		<Input id="Name1" value="{path : \'Name\', parameters : {$$ignoreMessages : false}}"/>\
+		<Input id="Name2" value="{path : \'Name\', parameters : {$$ignoreMessages : true}}"/>\
+		<Input id="Composite0" value="{= ${ID} + ${value : \' - \'} + ${path : \'Name\'}}"/>\
 		<Input id="Composite1" value="{= ${ID} + ${value : \' - \'} + ${\
 			path : \'Name\',\
 			parameters : {$$ignoreMessages : false}\
-		}}" />\
+		}}"/>\
 		<Input id="Composite2" value="{= ${ID} + ${value : \' - \'} + ${\
 			path : \'Name\',\
 			parameters : {$$ignoreMessages : true}\
-		}}" />\
+		}}"/>\
 		<Input id="Composite3" value="{parts : [\'ID\', {value : \'-\'}, {\
 			path : \'Name\',\
 			parameters : {$$ignoreMessages : false}\
-		}]}" />\
+		}]}"/>\
 		<Input id="Composite4" value="{parts : [\'ID\', {value : \'-\'}, {\
 			path : \'Name\',\
 			parameters : {$$ignoreMessages : true}\
-		}]}" />\
+		}]}"/>\
 </FlexBox>',
 			that = this;
 
