@@ -5,20 +5,34 @@
 
 @_sap_ui_integration_controls_ListContentItem_ChartHeight: 1rem;
 
-.sapUiIntegrationListContentItem {
-	&.sapUiIntegrationListContentItemWithChart .sapMLIBContent > .sapMSLIDiv {
+.sapUiIntegrationLCI {
+	&.sapUiIntegrationLCIWithChart .sapMLIBContent > .sapMSLIDiv {
 		flex-direction: column;
 	}
 
-	&.sapUiIntegrationListContentItemWithChart {
+	&.sapUiIntegrationLCIWithChart {
 		height: 5rem;
 	}
 
-	&.sapUiIntegrationListContentItemWithChart.sapMSLIWithDescription {
+	&.sapUiIntegrationLCIWithChart.sapMSLIWithDescription {
 		height: 5rem + @_sap_ui_integration_controls_ListContentItem_ChartHeight;
 	}
 
 	.sapFCardIcon {
 		flex-shrink: 0;
+	}
+}
+
+.sapUiIntegrationLCI:not(.sapMSLIThumbnail):not(.sapMSLIWithDescription).sapUiIntegrationLCIIconSize {
+	&XS {
+		height: 2.5625rem;
+	}
+
+	&S {
+		height: 3.5625rem;
+	}
+
+	&M {
+		height: 4.5625rem;
 	}
 }
