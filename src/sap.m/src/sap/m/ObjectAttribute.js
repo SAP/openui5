@@ -136,13 +136,17 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 			oppositeDirectionMarker = '\u200f';
 		}
 		sText = oppositeDirectionMarker + sText + oppositeDirectionMarker;
+
 		if (sTitle) {
 			sResult = sTitle;
 			if (oCore.getConfiguration().getLocale().getLanguage().toLowerCase() === "fr") {
 				sResult += " ";
 			}
 			sResult += ": " + sText;
+		} else {
+			sResult = sText;
 		}
+
 		oAttrAggregation.setProperty('text', sResult, true);
 
 		//if attribute is used inside responsive ObjectHeader or in ObjectListItem - only 1 line
