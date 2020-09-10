@@ -24,6 +24,8 @@ sap.ui.define([
 
 	GroupContainer.prototype.init = function() {
 
+		IFilterContainer.prototype.init.apply(this, arguments);
+
 		this.mFilterItems = {
 		};
 		this.mFilterFields = {
@@ -78,6 +80,7 @@ sap.ui.define([
 	GroupContainer.prototype.exit = function() {
 		this.mFilterItems = null;
 		this.mFilterFields = null;
+		IFilterContainer.prototype.exit.apply(this, arguments);
 	};
 
 	return GroupContainer;

@@ -21,6 +21,7 @@ sap.ui.define([
 	var FilterContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.aligned.FilterContainer");
 
 	FilterContainer.prototype.init = function() {
+		IFilterContainer.prototype.init.apply(this, arguments);
 		this.oLayout = new AlignedFlowLayout();
 	};
 

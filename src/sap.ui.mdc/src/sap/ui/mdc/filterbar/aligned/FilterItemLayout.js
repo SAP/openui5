@@ -69,6 +69,7 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 			this._oLabel.destroy();
 			this._oLabel = undefined;
 		}
+		VerticalLayout.prototype.exit.apply(this, arguments);
 	};
 
 	return FilterItemLayout;

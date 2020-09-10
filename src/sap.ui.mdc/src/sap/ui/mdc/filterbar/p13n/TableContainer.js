@@ -23,6 +23,7 @@ sap.ui.define([
 	var TableContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.TableContainer");
 
 	TableContainer.prototype.init = function() {
+		IFilterContainer.prototype.init.apply(this, arguments);
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		this.oLayout = new Table({
 			sticky: ["ColumnHeaders"],

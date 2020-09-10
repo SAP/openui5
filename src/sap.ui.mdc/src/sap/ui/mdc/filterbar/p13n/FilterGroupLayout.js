@@ -52,6 +52,7 @@ sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/La
 	};
 
 	FilterGroupLayout.prototype.exit = function () {
+		CustomListItem.prototype.exit.apply(this, arguments);
 		this._oFilterField = null;
 		this._sFieldPath = null;
 	};
