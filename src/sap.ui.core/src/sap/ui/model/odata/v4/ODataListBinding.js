@@ -2630,7 +2630,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
 	 * @throws {Error}
-	 *   For relative bindings containing transient entities
+	 *   If the binding's root binding is suspended, or for relative bindings containing transient
+	 *   entities
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#setContext
