@@ -10,7 +10,7 @@ sap.ui.define([
 	"./waitForAdaptFiltersButton",
 	"sap/base/assert",
 	"sap/ui/mdc/integration/testlibrary/Util",
-	"./waitForP13nDialog",
+	"./waitForAdaptFiltersDialog",
 	"./waitForPanelInP13n",
 	"./waitForListItemInDialogWithLabel",
 	"./waitForButtonInDialog"
@@ -22,7 +22,7 @@ sap.ui.define([
 	waitForAdaptFiltersButton,
 	assert,
 	TestUtil,
-	waitForP13nDialog,
+	waitForAdaptFiltersDialog,
 	waitForPanelInP13n,
 	waitForListItemInDialogWithLabel,
 	waitForButtonInDialog
@@ -30,7 +30,8 @@ sap.ui.define([
 	"use strict";
 
 	function toggleSelect(sText, bSelectionAction, bLiveMode) {
-		return waitForP13nDialog.call(this, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
+		return waitForAdaptFiltersDialog.call(this, {
+			title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_GROUP"),
 			liveMode: bLiveMode,
 			success: function(oDialog) {
 				waitForListItemInDialogWithLabel.call(this, oDialog, sText, {
@@ -84,7 +85,8 @@ sap.ui.define([
 		},
 
 		iPressOnTheAdaptFiltersP13nItem: function(sText) {
-			return waitForP13nDialog.call(this, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
+			return waitForAdaptFiltersDialog.call(this, {
+				title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_GROUP"),
 				liveMode: true,
 				success: function(oDialog) {
 					waitForListItemInDialogWithLabel.call(this, oDialog, sText, {

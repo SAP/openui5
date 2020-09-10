@@ -82,8 +82,8 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens(false);
 
 		//add 2 new FilterFields
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.adaptFilter, oFilterItems["Artists"], true, true);
-		When.iSelectColumn("cityOfOrigin_city", Arrangement.P13nDialog.Titles.adaptFilter, oFilterItems["Artists"], true, true);
+		When.iSelectColumn("Country", null, oFilterItems["Artists"], true, true);
+		When.iSelectColumn("cityOfOrigin_city", null, oFilterItems["Artists"], true, true);
 		oFilterItems["Artists"][3].selected = true;
 		oFilterItems["Artists"][2].selected = true;
 

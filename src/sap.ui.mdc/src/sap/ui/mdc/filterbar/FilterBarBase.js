@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/library', 'sap/ui/mdc/p13n/AdaptationController', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil", "sap/m/Button", "sap/m/library"
-], function(coreLibrary, AdaptationController, FlexUtil, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil, Button, mLibrary) {
+	'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/core/library', 'sap/ui/mdc/p13n/AdaptationController', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil", "sap/m/Button", "sap/m/library"
+], function(P13nBuilder, coreLibrary, AdaptationController, FlexUtil, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil, Button, mLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -263,12 +263,28 @@ sap.ui.define([
 					remove: "removeFilter",
 					move: "moveFilter"
 				},
-				ignoreIndex: true,
 				adaptationUI: this.retrieveInbuiltFilter,
 				applyFilterChangeOn: this,
 				containerSettings: {
 					verticalScrolling: false,
-					title: this._oRb.getText("filterbar.ADAPT_TITLE")
+					customHeader: function() {
+						return P13nBuilder.createViewSwitch({
+							defaultText: this._oP13nFilter && this._oP13nFilter.getViewMode() == "List" ?
+								this._oRb.getText("filterbar.ADAPT_LIST") : this._oRb.getText("filterbar.ADAPT_GROUP"),
+							menuItems: [
+								{
+									text: this._oRb.getText("filterbar.ADAPT_GROUP"),
+									handler: function(){
+										this._oP13nFilter.switchViewMode("Group");
+									}.bind(this)},
+								{
+									text: this._oRb.getText("filterbar.ADAPT_LIST"), handler: function(){
+										this._oP13nFilter.switchViewMode("List");
+									}.bind(this)
+								}
+							]
+						});
+					}.bind(this)
 				}
 			}
 		});

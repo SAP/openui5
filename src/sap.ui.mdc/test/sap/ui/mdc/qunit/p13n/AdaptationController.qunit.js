@@ -609,7 +609,7 @@ sap.ui.define([
 				assert.ok(oP13nControl, "Container has been created");
 				assert.ok(oP13nControl.isA("sap.m.Dialog"));
 				assert.ok(!oP13nControl.getVerticalScrolling(), "Vertical scrolling is disabled for FilterBarBase 'filterConfig'");
-				assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
+				assert.equal(oP13nControl.getCustomHeader().getContent()[0].getText(), oResourceBundle.getText("filterbar.ADAPT_GROUP"), "Correct title has been set");
 				assert.ok(this.oNonStubAC.bIsDialogOpen,"dialog is open");
 
 				//check inner panel

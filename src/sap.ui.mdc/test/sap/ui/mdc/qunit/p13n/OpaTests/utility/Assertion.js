@@ -162,6 +162,25 @@ sap.ui.define([
 				errorMessage: "sap.m.Title not found"
 			});
 		},
+
+		iShouldSeeAdaptFiltersTitle: function (sTitle) {
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.MenuButton",
+				matchers: {
+					ancestor: {
+						controlType: "sap.m.Dialog"
+					},
+					properties: {
+						text: sTitle
+					}
+				},
+				success: function(aMenuBtn) {
+					Opa5.assert.equal(aMenuBtn[0].getText(), sTitle, "Correct title provided");
+				}
+			});
+		},
+
 		/**
 		 * This method will check the text, selected status and index of a given array in a p13n dialog, which contains p13n items in a defined structure.
 		 * Note: the index of the p13n item in the array will also be checked, according to the index of the item in the dialog.

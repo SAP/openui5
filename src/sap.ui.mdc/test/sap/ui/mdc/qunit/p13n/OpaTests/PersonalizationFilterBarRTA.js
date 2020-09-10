@@ -68,8 +68,8 @@ sap.ui.define([
 	// open Personalization dialog
 	// ----------------------------------------------------------------
 	opaTest("When I select rows and change values in the personalization dialog, the changes are reflected after confirmation", function (Given, When, Then) {
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.adaptFilter, undefined, true, true);
-		When.iSelectColumn("cityOfOrigin_city", Arrangement.P13nDialog.Titles.adaptFilter, undefined, true, true);
+		When.iSelectColumn("Country", null, undefined, true, true);
+		When.iSelectColumn("cityOfOrigin_city",null, undefined, true, true);
 		When.iEnterTextInFilterDialog("Founding Year", "1989");
 		When.iPressButtonWithText("OK");
 		Then.thePersonalizationDialogShouldBeClosed();

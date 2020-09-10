@@ -77,7 +77,7 @@ sap.ui.define([
 		When.iPressButtonWithText("Adapt Filters");//TODO
 
 		Then.thePersonalizationDialogOpens(false);
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.adaptFilter);
+		Then.iShouldSeeAdaptFiltersTitle(Arrangement.P13nDialog.Titles.adaptFilter);
 
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 
@@ -128,8 +128,8 @@ sap.ui.define([
 
 		When.iTogglePanelInDialog("Artists");
 
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.adaptFilter, oFilterItems["Artists"], true, true);
-		When.iSelectColumn("cityOfOrigin_city", Arrangement.P13nDialog.Titles.adaptFilter, oFilterItems["Artists"], true, true);
+		When.iSelectColumn("Country", null, oFilterItems["Artists"], true, true);
+		When.iSelectColumn("cityOfOrigin_city", null, oFilterItems["Artists"], true, true);
 
 		oFilterItems["Artists"][2].selected = true;
 		oFilterItems["Artists"][3].selected = true;
@@ -144,29 +144,99 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(true);
 	});
 
-	/*
-	*
-	* ----- Temporary disabled as there is no reordering available -----
-	*
 	// ----------------------------------------------------------------
 	// Move a FilterField to the top
 	// ----------------------------------------------------------------
 	opaTest("When I select the 'Country' column and move it to the top, the FilterBar should be changed", function (Given, When, Then) {
-		When.iPressButtonWithText("Reorder");
+		When.iPressButtonWithText("Adapt Filters");
+		When.iChangeAdaptFiltersView("List");
 		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
 		var aCurrentFilterItems = [
-			{p13nItem: "Country", selected: false},
-			{p13nItem: "Name", selected: false},
-			{p13nItem: "Founding Year", selected: false},
-			{p13nItem: "artistUUID", selected: false},
-			{p13nItem: "Breakout Year", selected: false},
-			{p13nItem: "cityOfOrigin_city", selected: false}
+			{p13nItem: "Country", selected: true},
+			{p13nItem: "Name", selected: true},
+			{p13nItem: "Founding Year", selected: true},
+			{p13nItem: "artistUUID", selected: true},
+			{p13nItem: "Breakout Year", selected: true},
+			{p13nItem: "cityOfOrigin_city", selected: true}
 		];
 
 		Then.iShouldSeeP13nItems(aCurrentFilterItems);
+
+		When.iPressDialogOk();
 	});
-	*/
+
+	opaTest("The List view order should not affect the group view", function (Given, When, Then) {
+		When.iPressButtonWithText("Adapt Filters");
+		When.iChangeAdaptFiltersView("Group");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
+
+		When.iTogglePanelInDialog("Artists");
+		When.iTogglePanelInDialog("Countries");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Countries"], "Countries");
+
+		When.iTogglePanelInDialog("Countries");
+		When.iTogglePanelInDialog("Countries_texts");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Countries_texts"], "Countries_texts");
+
+		When.iTogglePanelInDialog("Countries_texts");
+		When.iTogglePanelInDialog("Regions");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Regions"], "Regions");
+
+		When.iTogglePanelInDialog("Regions");
+		When.iTogglePanelInDialog("Cities");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Cities"], "Cities");
+
+		When.iTogglePanelInDialog("Cities");
+
+		When.iPressDialogOk();
+	});
+
+	// ----------------------------------------------------------------
+	// Check view toggle
+	// ----------------------------------------------------------------
+	opaTest("When toggling to list view to select filters and switch back the filters should be selected in both view modes", function(Given, When, Then){
+		When.iPressButtonWithText("Adapt Filters");
+		When.iChangeAdaptFiltersView("List");
+
+		When.iSelectColumn("Localized Country Code", null, null, true);
+
+		oFilterItems["Countries_texts"][0].selected = true;
+
+		When.iChangeAdaptFiltersView("Group");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
+
+		When.iTogglePanelInDialog("Artists");
+		When.iTogglePanelInDialog("Countries");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Countries"], "Countries");
+
+		When.iTogglePanelInDialog("Countries");
+		When.iTogglePanelInDialog("Countries_texts");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Countries_texts"], "Countries_texts");
+
+		When.iTogglePanelInDialog("Countries_texts");
+		When.iTogglePanelInDialog("Regions");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Regions"], "Regions");
+
+		When.iTogglePanelInDialog("Regions");
+		When.iTogglePanelInDialog("Cities");
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Cities"], "Cities");
+
+		When.iTogglePanelInDialog("Cities");
+		When.iTogglePanelInDialog("Artists");
+
+		When.iPressDialogOk();
+	});
 
 	// ----------------------------------------------------------------
 	// Define new FilterFields
@@ -180,23 +250,23 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens(false);
 
 		//deselect a FilterField
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.adaptFilter, oFilterItems["Artists"], true, true);
+		When.iSelectColumn("Country", null, oFilterItems["Artists"], true, true);
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 
 		When.iPressDialogOk();
 
-		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city"]);
+		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Localized Country Code"]);
 
 		When.iPressButtonWithText("Adapt Filters");//TODO
 
 		//Select FilterField from different group
 		When.iTogglePanelInDialog("Artists");
 		When.iTogglePanelInDialog("Countries");
-		When.iSelectColumn("Country Name", Arrangement.P13nDialog.Titles.adaptFilter, oFilterItems["Artists"], true, true);
+		When.iSelectColumn("Country Name", null, oFilterItems["Artists"], true, true);
 		oFilterItems["Countries"][2].selected = true;
 
 		When.iPressDialogOk();
-		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Country Name"]);
+		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Localized Country Code", "Country Name"]);
 	});
 
 
@@ -228,7 +298,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogShouldBeClosed();
 
 		//check initially visible FilterFields
-		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Country Name"]);
+		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Localized Country Code", "Country Name"]);
 
 		//check dirty flag
 		Then.theVariantManagementIsDirty(true);

@@ -11,14 +11,19 @@ sap.ui.define([
 	"use strict";
 
 	return function waitForP13nDialog(sTitle, oSettings) {
+
+		var aMatchers = [];
+
+		if (sTitle) {
+			aMatchers.push(new Properties({
+				title: sTitle
+			}));
+		}
+
 		return this.waitFor({
 			//FilterBar p13n uses live mode which is why we need to distinguish in some cases
 			controlType: oSettings && oSettings.liveMode ? "sap.m.Popover" : "sap.m.Dialog",
-			matchers: [
-				new Properties({
-					title: sTitle
-				})
-			],
+			matchers: aMatchers,
 			actions: oSettings.actions,
 			success: function(aP13nDialogs) {
 				//Opa5.assert.strictEqual(aP13nDialogs.length, 1, 'The "' + sTitle + '" P13n Dialog was found');

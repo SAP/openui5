@@ -1213,6 +1213,7 @@ sap.ui.define([
 				adaptationUI: oAdaptationFilterBar,
 				applyFilterChangeOn: oAdaptationFilterBar,
 				initializeControl: oAdaptationFilterBar.createFilterFields,
+				sortData: false,
 				containerSettings: {
 					title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
 				}
