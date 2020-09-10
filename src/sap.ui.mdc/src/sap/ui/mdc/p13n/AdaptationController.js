@@ -142,10 +142,14 @@ sap.ui.define([
 		}
 
 		if (!this.bIsDialogOpen){
+			this.bIsDialogOpen = true;
 			return this._retrievePropertyInfo().then(function(aPropertyInfo){
 				return this.createP13n(sP13nType, aPropertyInfo).then(function(oP13nDialog){
 					this._openP13nControl(oP13nDialog, oSource);
 					return oP13nDialog;
+				}.bind(this), function(){
+					this.bIsDialogOpen = false;
+					Log.warning("P13n container creation failed");
 				}.bind(this));
 			}.bind(this));
 		}
@@ -385,7 +389,6 @@ sap.ui.define([
 		} else {
 			oP13nControl.open();
 		}
-		this.bIsDialogOpen = true;
 	};
 
 	AdaptationController.prototype._getFilledArray = function(aPreviousItems, aNewItems, sRemoveProperty) {
