@@ -100,6 +100,15 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype.exit = function () {
+		this._iWaitingEventsCount = 0;
+
+		if (this._mObservers) {
+			Object.keys(this._mObservers).forEach(function (sKey) {
+				this._mObservers[sKey].disconnect();
+				delete this._mObservers[sKey];
+			}, this);
+		}
+
 		this._oServiceManager = null;
 		this._oDataProviderFactory = null;
 		this._oIconFormatter = null;
@@ -160,18 +169,6 @@ sap.ui.define([
 		});
 	};
 
-	BaseContent.prototype.destroy = function () {
-		this.setAggregation("_content", null);
-		this.setModel(null);
-		this._iWaitingEventsCount = 0;
-		if (this._mObservers) {
-			Object.keys(this._mObservers).forEach(function (sKey) {
-				this._mObservers[sKey].disconnect();
-				delete this._mObservers[sKey];
-			}, this);
-		}
-		return Control.prototype.destroy.apply(this, arguments);
-	};
 
 	BaseContent.prototype.setConfiguration = function (oConfiguration, sType) {
 
