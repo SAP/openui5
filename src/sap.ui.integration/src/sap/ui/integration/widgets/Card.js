@@ -322,11 +322,6 @@ sap.ui.define([
 			associations: {
 
 				/**
-				 * The ID of the host configuration.
-				 */
-				hostConfigurationId: {},
-
-				/**
 				 * The host.
 				 */
 				host: {}
@@ -414,14 +409,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.onBeforeRendering = function () {
-		var sConfig = this.getHostConfigurationId();
 
 		if (this.getDataMode() !== CardDataMode.Active) {
 			return;
-		}
-
-		if (sConfig) {
-			this.addStyleClass(sConfig.replace(/-/g, "_"));
 		}
 
 		if (this._bApplyManifest || this._bApplyParameters || this._bApplyFilters) {
