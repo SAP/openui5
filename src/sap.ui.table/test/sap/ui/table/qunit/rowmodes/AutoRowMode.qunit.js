@@ -6,15 +6,21 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
+	"sap/ui/table/CreationRow",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
-], function(TableQUnitUtils, AutoRowMode, Table, Column, RowAction, TableUtils, library, JSONModel, Device) {
+], function(TableQUnitUtils, AutoRowMode, Table, Column, RowAction, CreationRow, TableUtils, library, JSONModel, Device) {
 	"use strict";
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var HeightTestControl = TableQUnitUtils.HeightTestControl;
+
+	function waitForResizeHandler() {
+		// Default of IntervalTrigger singleton used by ResizeHandler is 200ms. Wait for 2 more frames to give the table time to react.
+		return TableQUnitUtils.wait(201).then(TableQUnitUtils.$wait()).then(TableQUnitUtils.$wait());
+	}
 
 	QUnit.module("Legacy support", {
 		beforeEach: function() {
@@ -23,7 +29,9 @@ sap.ui.define([
 				fixedRowCount: 1,
 				fixedBottomRowCount: 2,
 				minAutoRowCount: 8,
-				rowHeight: 9
+				rowHeight: 9,
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			});
 			this.oTable.setProperty("visibleRowCount", 5);
 			this.oMode = this.oTable._getRowMode();
@@ -65,6 +73,14 @@ sap.ui.define([
 		assert.strictEqual(oMode.getFixedBottomRowCount(), 3, "The fixed bottom row count is taken from the table");
 		assert.strictEqual(oMode.getMinRowCount(), 13, "The minimum row count is taken from the table");
 		assert.strictEqual(oMode.getRowContentHeight(), 14, "The row content height is taken from the table");
+	});
+
+	QUnit.test("After rendering", function(assert) {
+		this.oTable.setRowHeight();
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(this.oTable.getRows().length, 19, "Row count");
+			assert.equal(this.oTable.getVisibleRowCount(), 19, "'visibleRowCount' property value");
+		}.bind(this));
 	});
 
 	QUnit.module("Rendering");
@@ -278,6 +294,86 @@ sap.ui.define([
 			if (Device.browser.msie || Device.browser.edge) {
 				document.getElementById("qunit-fixture").classList.add("visible");
 			}
+		});
+	});
+
+	QUnit.module("Automatic row count adjustment", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				extension: [
+					new HeightTestControl({height: "100px"})
+				],
+				footer: new HeightTestControl({height: "100px"}),
+				columns: [
+					TableQUnitUtils.createTextColumn()
+				],
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
+			}, function(oTable) {
+				oTable.setRowMode(new AutoRowMode());
+				oTable.setCreationRow(new CreationRow());
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("After rendering", function(assert) {
+		assert.equal(this.oTable.getRows().length, 13, "Row count");
+	});
+
+	QUnit.test("Resize", function(assert) {
+		var that = this;
+
+		return this.oTable.qunit.resize({height: "765px"}).then(function() {
+			assert.equal(that.oTable.getRows().length, 9, "Row count after decreasing height");
+		}).then(this.oTable.qunit.resetSize).then(function() {
+			assert.equal(that.oTable.getRows().length, 13, "Row count after increasing height");
+		});
+	});
+
+	QUnit.test("Changing visibility of an extension", function(assert) {
+		var that = this;
+
+		this.oTable.getExtension()[0].setVisible(false);
+
+		return waitForResizeHandler().then(function() {
+			assert.equal(that.oTable.getRows().length, 15, "Row count after hiding an extension");
+			that.oTable.getExtension()[0].setVisible(true);
+			return waitForResizeHandler();
+		}).then(function() {
+			assert.equal(that.oTable.getRows().length, 13, "Row count after showing an extension");
+		});
+	});
+
+	QUnit.test("Changing visibility of the footer", function(assert) {
+		var that = this;
+
+		this.oTable.getFooter().setVisible(false);
+
+		return waitForResizeHandler().then(function() {
+			assert.equal(that.oTable.getRows().length, 14, "Row count after hiding the footer");
+			that.oTable.getFooter().setVisible(true);
+			return waitForResizeHandler();
+		}).then(function() {
+			assert.equal(that.oTable.getRows().length, 13, "Row count after showing the footer");
+		});
+	});
+
+	QUnit.test("Changing visibility of the creation row", function(assert) {
+		var that = this;
+
+		this.oTable.getCreationRow().setVisible(false);
+
+		return waitForResizeHandler().then(function() {
+			assert.equal(that.oTable.getRows().length, 14, "Row count after hiding the creation row");
+			that.oTable.getCreationRow().setVisible(true);
+			return waitForResizeHandler();
+		}).then(function() {
+			assert.equal(that.oTable.getRows().length, 13, "Row count after showing the creation row");
 		});
 	});
 });
