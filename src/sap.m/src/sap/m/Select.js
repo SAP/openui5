@@ -2111,6 +2111,11 @@ function(
 		Select.prototype.open = function() {
 			var oPicker = this.getPicker();
 
+			//We need to force focus on the select before opening the popup,
+			//because it doesn`t receive it automatically.
+			//Also popup will point the focus on the last focused element.
+			this.focus();
+
 			if (oPicker) {
 				oPicker.open();
 			}
