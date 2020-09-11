@@ -25,7 +25,11 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.f.cards.LoadingProvider
 	 */
-	var LoadingProvider = ManagedObject.extend("sap.ui.integration.util.LoadingProvider", {});
+	var LoadingProvider = ManagedObject.extend("sap.ui.integration.util.LoadingProvider", {
+		metadata: {
+			library: "sap.ui.integration"
+		}
+	});
 
 	/**
 	 * Creates initial loading state.

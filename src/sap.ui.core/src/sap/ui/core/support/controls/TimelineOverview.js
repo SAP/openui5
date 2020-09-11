@@ -5,7 +5,11 @@
 sap.ui.define(['sap/ui/base/ManagedObject'],
 	function (ManagedObject) {
 		'use strict';
-		var TimelineOverview = ManagedObject.extend("sap.ui.core.support.controls.TimelineOverview", {});
+		var TimelineOverview = ManagedObject.extend("sap.ui.core.support.controls.TimelineOverview", {
+			metadata: {
+				library: "sap.ui.core"
+			}
+		});
 
 		TimelineOverview.prototype.setInteractions = function (interactions) {
 

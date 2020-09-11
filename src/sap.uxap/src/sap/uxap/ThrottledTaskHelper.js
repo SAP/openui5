@@ -15,7 +15,7 @@ sap.ui.define([
 	 * and returns a promise object whenever execution requested
 	 * @private
 	 * */
-	var ThrottledTask = BaseObject.extend("ThrottledTask", {
+	var ThrottledTask = BaseObject.extend("sap.uxap.ThrottledTask", {
 
 		/**
 		 * @param {function} fnTask - the function to throttle

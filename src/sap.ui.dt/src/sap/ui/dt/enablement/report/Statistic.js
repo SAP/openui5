@@ -41,6 +41,7 @@ sap.ui.define([
 	 */
 	var oStatistic = Control.extend("sap.ui.dt.enablement.report.Statistic", /** @lends sap.ui.dt.enablement.report.Statistic.prototype */ {
 		metadata : {
+			library: "sap.ui.dt",
 			properties : {
 				data : {
 					type : "object"

@@ -49,6 +49,9 @@ sap.ui.define([
 		 * @alias sap.ui.integration.cards.CalendarContent
 		 */
 		var CalendarContent = BaseContent.extend("sap.ui.integration.cards.CalendarContent", {
+			metadata: {
+				library: "sap.ui.integration"
+			},
 			renderer: {}
 		});
 

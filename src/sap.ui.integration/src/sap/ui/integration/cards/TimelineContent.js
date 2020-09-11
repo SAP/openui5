@@ -40,6 +40,9 @@ sap.ui.define([
 	 *
 	 */
 	var TimelineContent = BaseListContent.extend("sap.ui.integration.cards.TimelineContent", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: TimelineContentRenderer
 	});
 

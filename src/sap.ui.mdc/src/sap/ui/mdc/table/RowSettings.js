@@ -26,6 +26,7 @@ sap.ui.define([
 
 	var RowSettings = Element.extend("sap.ui.mdc.table.RowSettings", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				/**
 				 * The highlight state of the rows.

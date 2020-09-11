@@ -27,6 +27,9 @@ function(
 	 * @experimental Since 1.48. This class is experimental. API might be changed in future.
 	 */
 	var Standalone = Adaptation.extend("sap.ui.rta.toolbar.Standalone", {
+		metadata: {
+			library: "sap.ui.rta"
+		},
 		renderer: 'sap.ui.rta.toolbar.AdaptationRenderer',
 		type: 'standalone'
 	});

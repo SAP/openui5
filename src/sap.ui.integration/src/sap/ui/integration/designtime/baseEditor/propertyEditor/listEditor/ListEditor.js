@@ -28,6 +28,9 @@ sap.ui.define([
 	 */
 	var ListEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.listEditor.ListEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.listEditor.ListEditor",
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 

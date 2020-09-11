@@ -56,6 +56,7 @@ sap.ui.define([
 	 */
 	var BasePropertyEditor = Control.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor", {
 		metadata: {
+			library: "sap.ui.integration",
 			interfaces : ["sap.ui.core.IFormContent"],
 			properties: {
 				"renderLabel" : {

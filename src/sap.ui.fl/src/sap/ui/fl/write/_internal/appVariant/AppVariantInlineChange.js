@@ -31,6 +31,9 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	var AppVariantInlineChange = ManagedObject.extend("sap.ui.fl.write._internal.appVariant.AppVariantInlineChange", /** @lends sap.ui.fl.write._internal.appVariant.AppVariantInlineChange */ {
+		metadata: {
+			library: "sap.ui.fl"
+		},
 		constructor : function(mPropertyBag) {
 			ManagedObject.apply(this);
 			if (!jQuery.isPlainObject(mPropertyBag)) {

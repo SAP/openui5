@@ -31,6 +31,7 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	 */
 	var DataProvider = ManagedObject.extend("sap.ui.integration.util.DataProvider", {
 		metadata: {
+			library: "sap.ui.integration",
 			events: {
 
 				/**

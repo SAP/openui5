@@ -49,6 +49,7 @@ sap.ui.define([
 	 */
 	var ValueHelpPanel = XMLComposite.extend("sap.ui.mdc.field.ValueHelpPanel", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				/**
 				 * If set to <code>true</code>, a tokenizer is shown.

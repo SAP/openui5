@@ -31,6 +31,7 @@ sap.ui.define([
 
 	var ResponsiveTableType = TableTypeBase.extend("sap.ui.mdc.table.ResponsiveTableType", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				/**
 				 * See sap.ui.mdc.GrowingMode<br>

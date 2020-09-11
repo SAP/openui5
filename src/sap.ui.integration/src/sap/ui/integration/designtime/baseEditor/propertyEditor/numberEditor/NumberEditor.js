@@ -34,6 +34,9 @@ sap.ui.define([
 	 */
 	var NumberEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.numberEditor.NumberEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.numberEditor.NumberEditor",
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		invalidInputError: "BASE_EDITOR.NUMBER.INVALID_BINDING_OR_NUMBER",
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});

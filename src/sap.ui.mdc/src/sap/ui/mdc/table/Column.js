@@ -27,6 +27,7 @@ sap.ui.define([
 
 	var Column = Element.extend("sap.ui.mdc.table.Column", {
 		metadata: {
+			library: "sap.ui.mdc",
 			defaultAggregation: "template",
 			properties: {
 				width: {

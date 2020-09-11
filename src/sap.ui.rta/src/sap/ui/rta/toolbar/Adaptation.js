@@ -41,6 +41,7 @@ function(
 		renderer: "sap.ui.rta.toolbar.AdaptationRenderer",
 		animation: true,
 		metadata: {
+			library: "sap.ui.rta",
 			events: {
 				/**
 				 * Events are fired when the Toolbar Buttons are pressed

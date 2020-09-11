@@ -30,6 +30,9 @@ sap.ui.define([
 	 */
 	var BooleanEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.booleanEditor.BooleanEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.booleanEditor.BooleanEditor",
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 

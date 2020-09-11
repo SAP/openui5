@@ -13,6 +13,7 @@ sap.ui.define([
 		 */
 		var SimpleControl = ManagedObject.extend("sap.ui.integration.util.SimpleControl", {
 			metadata: {
+				library: "sap.ui.integration",
 				properties: {
 					resolved: {
 						type: "any"

@@ -10,6 +10,7 @@ sap.ui.define([
 	var SelectionDetailsActions = Element.extend("sap.ui.mdc.chart.SelectionDetailsActions", {
 
 		metadata: {
+			library: "sap.ui.mdc",
 			aggregations: {
 				detailsItemActions: {
 					type: "sap.ui.core.Item",
