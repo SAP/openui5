@@ -90,7 +90,11 @@
 	});
 	barSearchField
 		.setModel(createSuggestionModel())
-		.bindAggregation("suggestionItems", "/", oSuggestionListItemTemplate);
+		.bindAggregation("suggestionItems", {
+			path: "/",
+			template: oSuggestionListItemTemplate,
+			templateShareable: true
+		});
 
 	var dialogBarSearchField = barSearchField.clone("dialogBar", {cloneBindings:true});
 	var dialogSearchField = new sap.m.SearchField("SFDialog", {
@@ -100,7 +104,11 @@
 			suggest: doSuggest
 		})
 		.setModel(createSuggestionModel())
-		.bindAggregation("suggestionItems", "/", oSuggestionListItemTemplate);
+		.bindAggregation("suggestionItems", {
+			path: "/",
+			template: oSuggestionListItemTemplate,
+			templateShareable: true
+		});
 
 	var oDialog = new sap.m.Dialog("Dialog", {
 		title: "SearchField in a Dialog",
@@ -136,7 +144,11 @@
 		});
 
 	searchField.setModel(createSuggestionModel())
-		.bindAggregation("suggestionItems", "/", oSuggestionListItemTemplate);
+		.bindAggregation("suggestionItems", {
+			path: "/",
+			template: oSuggestionListItemTemplate,
+			templateShareable: true
+		});
 
 
 	var page = new sap.m.Page("searchPage", {
