@@ -27,10 +27,11 @@
 }
 
 /* Improved behaviour for TileContent in GenericTile */
-.sapMGT .sapMTileCnt.sapMFrameTypeAuto:only-child {
+div.sapMGT .sapMTileCnt.sapMFrameTypeAuto:only-of-type {
 	width: 100%;
 }
-.sapMGT .sapMTileCnt.sapMFrameTypeAuto:not(:only-child) {
+
+div.sapMGT .sapMTileCnt.sapMFrameTypeAuto:not(:only-of-type) {
 	width: ~"calc(50% - 0.25rem)"; //0.5rem margin between the contents
 }
 
