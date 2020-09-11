@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_CancelablePromise",
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/restricted/_omit",
-	"sap/base/util/restricted/_toArray",
+	"sap/base/util/restricted/_castArray",
 	"sap/base/util/deepEqual",
 	"sap/base/util/each",
 	"sap/base/util/merge",
@@ -20,7 +20,7 @@ sap.ui.define([
 	CancelablePromise,
 	_isEqual,
 	_omit,
-	_toArray,
+	_castArray,
 	deepEqual,
 	each,
 	merge,
@@ -56,6 +56,7 @@ sap.ui.define([
 		constructor: function (mParameters) {
 			mParameters = mParameters || {};
 			BaseEditor.prototype.constructor.apply(this, arguments);
+
 			if (!mParameters["config"]) {
 				this.addConfig(oDefaultCardConfig, true);
 			}
@@ -115,6 +116,8 @@ sap.ui.define([
 	};
 
 	CardEditor.prototype.setJson = function () {
+		this.setPreventInitialization(true);
+
 		BaseEditor.prototype.setJson.apply(this, arguments);
 
 		var oJson = this.getJson();
@@ -168,6 +171,8 @@ sap.ui.define([
 				});
 
 				this._oDesigntimePromise.then(function (aDesigntimeFiles) {
+					this.setPreventInitialization(false);
+
 					// Metadata
 					var oDesigntimeMetadata = aDesigntimeFiles[1];
 					oDesigntimeMetadata = CardMerger.mergeCardDesigntimeMetadata(oDesigntimeMetadata, this.getDesigntimeChanges());
@@ -184,11 +189,14 @@ sap.ui.define([
 						});
 					} else {
 						oConfig = merge({}, oConfig);
-						oConfig.i18n = _toArray(oConfig.i18n);
+						oConfig.i18n = oConfig.i18n ? _castArray(oConfig.i18n) : [];
 						oConfig.i18n.push(sDesigntimePrefix + "/i18n.properties");
-						this._addSpecificConfig(merge({}, oConfig));
+						this._addSpecificConfig(oConfig);
 					}
 				}.bind(this));
+			} else {
+				this.setPreventInitialization(false);
+				this.addConfig({});
 			}
 		}
 	};

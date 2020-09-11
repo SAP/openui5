@@ -363,6 +363,38 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when specific config is set and contains i18n file as string", function (assert) {
+			var oRequireStub = sandbox.stub(sap.ui, "require").callThrough();
+			var sEditorConfigPath = "sample.card/designtime/editor.config";
+			oRequireStub.withArgs([sEditorConfigPath]).callsArgWith(1, {
+				i18n: "test_i18n.properties"
+			});
+
+			this.oCardEditor.setJson({
+				"baseURL": "/card",
+				"sap.app": {
+					"id": "sample.card"
+				},
+				"sap.card": {
+					"designtime": "designtime"
+				}
+			});
+
+			return this.oCardEditor.ready().then(function () {
+				assert.strictEqual(
+					this.oCardEditor.getConfig().i18n.length,
+					3,
+					"Then the card-specific i18n, designtime i18n and the default i18n are merged"
+				);
+
+				assert.notStrictEqual(
+					this.oCardEditor.getConfig().i18n.indexOf("test_i18n.properties"),
+					-1,
+					"Then the card-specific i18n is contained in the list"
+				);
+			}.bind(this));
+		});
+
 		QUnit.test("when specific config is set and contains an i18n string", function (assert) {
 			return this.oCardEditor._addSpecificConfig({
 				i18n: "i18n_file"
@@ -378,6 +410,62 @@ sap.ui.define([
 					"then default i18n package and the specified package are added"
 				);
 			}.bind(this));
+		});
+		QUnit.test("when the card-specific configuration is loaded after the editor received default config and manifest", function (assert) {
+			var fnDone = assert.async();
+
+			var oInitializationSpy = sandbox.spy(this.oCardEditor, "_initialize");
+
+			var fnResolveSetConfig;
+			var oSetConfigPromise = new Promise(function (fnResolve) {
+				fnResolveSetConfig = fnResolve;
+			});
+
+			this.oCardEditor.attachConfigChange(function () {
+				// Default config was set
+				fnResolveSetConfig();
+			});
+
+			// Fake a card-specifc editor config
+			var oRequireStub = sandbox.stub(sap.ui, "require").callThrough();
+			var sEditorConfigPath = "sample.card/designtime/editor.config";
+			oRequireStub.withArgs([sEditorConfigPath]).callsFake(function (path, fnSuccess) {
+				oSetConfigPromise.then(function () {
+					fnSuccess({
+						context: "sap.card",
+						properties: {
+							sampleString: {
+								type: "string",
+								path: "sampleString"
+							}
+						},
+						propertyEditors: {
+							"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+						}
+					});
+				});
+			});
+
+			this.oCardEditor.attachPropertyEditorsReady(function (oEvent) {
+				assert.strictEqual(
+					oEvent.getParameter("propertyEditors").length,
+					1,
+					"then only the editors specified in the card are created"
+				);
+				assert.strictEqual(oInitializationSpy.callCount, 1, "then the editor is only initialized once");
+				fnDone();
+			});
+
+			this.oCardEditor.setJson({
+				"baseURL": "/card",
+				"sap.app": {
+					"id": "sample.card"
+				},
+				"sap.card": {
+					"designtime": "designtime",
+					"sampleString": "foo"
+				}
+			});
 		});
 	});
 
