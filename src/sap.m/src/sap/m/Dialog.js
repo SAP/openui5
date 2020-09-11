@@ -480,10 +480,6 @@ function(
 			this._initTitlePropagationSupport();
 
 			this._initResponsivePaddingsEnablement();
-
-			this._sAriaRoleDescription = Core
-			.getLibraryResourceBundle("sap.m")
-			.getText("DIALOG_ROLE_DESCRIPTION");
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
