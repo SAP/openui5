@@ -346,7 +346,7 @@ sap.ui.define([
 
 		this._ariaText = new InvisibleText({ id: this.getId() + "-ariaText" });
 
-		this._ariaContentText = new InvisibleText({id: this.getId() + "-ariaContentText"});
+		this._ariaContentText = new InvisibleText({ id: this.getId() + "-ariaContentText" });
 		this._ariaContentText.setText(this._oRb.getText("ARIA_LABEL_CARD_CONTENT"));
 
 		/**
@@ -1082,7 +1082,7 @@ sap.ui.define([
 			return;
 		}
 
-		oFilterBar.attachEventOnce("_filterBarDataReady", function() {
+		oFilterBar.attachEventOnce("_filterBarDataReady", function () {
 			this.fireEvent("_filterBarReady");
 		}.bind(this));
 
@@ -1401,6 +1401,7 @@ sap.ui.define([
 			if (sFullDesigntimePath) {
 				sap.ui.require([sFullDesigntimePath], function (oDesigntime) {
 					//successfully loaded
+					oDesigntime = new oDesigntime();
 					oDesigntime._readyPromise(this._oLimitedInterface, this).then(function () {
 						this._oDesigntime = oDesigntime;
 						resolve(oDesigntime);
@@ -1514,7 +1515,7 @@ sap.ui.define([
 				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
 				break;
 			case BadgeState.Disappear:
-				sAriaLabelledBy =  sAriaLabelledBy.replace(sBadgeId, "").trim();
+				sAriaLabelledBy = sAriaLabelledBy.replace(sBadgeId, "").trim();
 				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
 				break;
 		}

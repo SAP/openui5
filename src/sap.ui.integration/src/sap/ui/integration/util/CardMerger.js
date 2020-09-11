@@ -1,27 +1,45 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/util/merge"], function(merge) {
+sap.ui.define(["sap/base/util/merge", "sap/ui/model/json/JSONModel"], function (merge, JSONModel) {
 	"use strict";
 
 	var CardMerger = {
-		mergeCardDelta: function(oManifest, aChanges) {
+		layers: { "admin": 0, "content": 5, "translation": 10, "all": 20 },
+		mergeManifestPathChanges: function (oModel, oChange) {
+			Object.keys(oChange).forEach(function (s) {
+				if (s.charAt(0) === "/") {
+					oModel.setProperty(s, oChange[s]);
+				}
+			});
+		},
+		mergeCardDelta: function (oManifest, aChanges) {
 			var oInitialManifest = merge({}, oManifest),
 				sSection = "sap.card";
+			if (Array.isArray(aChanges) && aChanges.length > 0) {
+				var oModel;
+				aChanges.forEach(function (oChange) {
+					if (oChange.content) {
+						//merge old changes
+						merge(oInitialManifest[sSection], oChange.content);
+					} else {
+						//merge path based changes via model
+						oModel = oModel || new JSONModel(oInitialManifest);
+						CardMerger.mergeManifestPathChanges(oModel, oChange);
+					}
+				});
 
-			aChanges.forEach(function(oChange) {
-				merge(oInitialManifest[sSection], oChange.content);
-			});
+			}
 			return oInitialManifest;
 		},
 
-		mergeCardDesigntimeMetadata: function(oDesigntimeMetadata, aChanges) {
+		mergeCardDesigntimeMetadata: function (oDesigntimeMetadata, aChanges) {
 			var oInitialDTMedatada = merge({}, oDesigntimeMetadata);
 
-			aChanges.forEach(function(oChange) {
+			aChanges.forEach(function (oChange) {
 				var aInlineChanges = oChange.content.entityPropertyChange || [];
 
-				aInlineChanges.forEach(function(oInlineChange) {
+				aInlineChanges.forEach(function (oInlineChange) {
 					var sPropertyPath = oInlineChange.propertyPath;
 					switch (oInlineChange.operation) {
 						case "UPDATE":

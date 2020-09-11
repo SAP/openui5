@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"./ParameterMap",
 	"sap/ui/integration/util/CardMerger"
-	], function (
+], function (
 	BaseObject,
 	CoreManifest,
 	deepClone,
@@ -64,7 +64,7 @@ sap.ui.define([
 	 * @alias sap.ui.integration.util.Manifest
 	 */
 	var Manifest = BaseObject.extend("sap.ui.integration.util.Manifest", {
-		constructor: function(sSection, oManifestJson, sBaseUrl, aChanges) {
+		constructor: function (sSection, oManifestJson, sBaseUrl, aChanges) {
 			BaseObject.call(this);
 
 			this._aChanges = aChanges;
@@ -221,7 +221,7 @@ sap.ui.define([
 		// the manifest which should be processed
 		var bHasTranslatable = false;
 
-		CoreManifest.processObject(this._oManifest.getJson(), function(oObject, sKey, vValue) {
+		CoreManifest.processObject(this._oManifest.getJson(), function (oObject, sKey, vValue) {
 			if (!bHasTranslatable && vValue.match(REGEXP_TRANSLATABLE)) {
 				bHasTranslatable = true;
 			}
@@ -287,7 +287,7 @@ sap.ui.define([
 	 * @param {*} vValue The value to be checked.
 	 * @returns {boolean} If the string is translatable.
 	 */
-	function isTranslatable (vValue) {
+	function isTranslatable(vValue) {
 		return (typeof vValue === "string")
 			&& vValue.indexOf("{{") === 0
 			&& vValue.indexOf("}}") === vValue.length - 2;
@@ -300,7 +300,7 @@ sap.ui.define([
 	 * @param {*} vValue The value to check.
 	 * @returns {boolean} true if the value contains placeholders.
 	 */
-	function isProcessable (vValue) {
+	function isProcessable(vValue) {
 		return (typeof vValue === "string")
 			&& (vValue.indexOf("{{parameters.") > -1 || vValue.indexOf("{{dataSources") > -1 || vValue.indexOf("{{filters.") > -1);
 	}
@@ -372,7 +372,7 @@ sap.ui.define([
 	 * @param {Object} oParams The parameters to be replaced in the manifest.
 	 * @param {Object} oDataSources The dataSources to be replaced in the manifest.
 	 */
-	function process (oObject, oResourceBundle, iCurrentLevel, iMaxLevel, oParams, oDataSources, oFilters) {
+	function process(oObject, oResourceBundle, iCurrentLevel, iMaxLevel, oParams, oDataSources, oFilters) {
 		if (iCurrentLevel === iMaxLevel) {
 			return;
 		}
