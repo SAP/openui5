@@ -1492,6 +1492,10 @@ sap.ui.define([
 				break;
 			case KeyCodes.ARROW_UP:
 				oInsertAround = this._getClosestItemAbove(oItem);
+				if (!oInsertAround) {
+					break;
+				}
+
 				var oDropContainer = oInsertAround.getParent();
 
 				if (this !== oDropContainer) {
@@ -1500,6 +1504,10 @@ sap.ui.define([
 				break;
 			case KeyCodes.ARROW_DOWN:
 				oInsertAround = this._getClosestItemBelow(oItem);
+				if (!oInsertAround) {
+					break;
+				}
+
 				if (this !== oInsertAround.getParent()) {
 					sDropPosition = "Before";
 				}
