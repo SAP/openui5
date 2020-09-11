@@ -30,7 +30,7 @@ sap.ui.define([
 	}
 
 	function functionToString(fn) {
-		return fn.toString().replace(/\"/g, '\'');
+		return "'" + fn.toString().replace(/\"/g, '\'') + "'";
 	}
 
 	function argumentsToString(oArgs) {
@@ -42,7 +42,7 @@ sap.ui.define([
 		}
 		function argToString(arg) {
 			if (typeof arg === "function") {
-				return "'" + functionToString(arg) + "'";
+				return functionToString(arg);
 			}
 			if (Array.isArray(arg)) {
 				var aValues = Array.prototype.map.call(arg, argToString);

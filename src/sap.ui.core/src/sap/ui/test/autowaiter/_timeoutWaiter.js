@@ -16,6 +16,12 @@ sap.ui.define([
 		FINISHED: "FINISHED",
 		CLEARED: "CLEARED"
 	};
+	var fnInitiatorResolver;
+
+	// initiatorId is the timeout id of the currently running timeout callback
+	// for opa poll frame, will have the ID of the poll timeout
+	// undefined means this is native event frame
+	var iInitiatorId;
 
 	var TimeoutWaiter = WaiterBase.extend("sap.ui.test.autowaiter._timeoutWaiter", {
 		hasPending: function () {
@@ -39,14 +45,31 @@ sap.ui.define([
 				maxDelay: "numeric",
 				minDelay: "numeric"
 			}, WaiterBase.prototype._getValidationInfo.call(this));
+		},
+
+		// private API used by the proimiseWaiter for detecting polling promises
+
+		// return the current execution timeoutId or undefined if not currently in tracked timeout callback
+		_getInitiatorId: function() {
+			return iInitiatorId;
+		},
+		_isPolling: function(timeoutId) {
+			return !isExecutionFlow(timeoutId);
+		},
+		_registerInitiatorResolverId: function(fnInitiatorResolverCallback) {
+			fnInitiatorResolver = fnInitiatorResolverCallback;
 		}
 	});
 	var oTimeoutWaiter = new TimeoutWaiter();
 
-	// initiatorId is the timeout id of the currently running timeout callback
-	// for opa poll frame, will have the ID of the poll timeout
-	// undefined means this is native event frame
-	var iInitiatorId;
+	function _resolveInitiatorId() {
+		if (iInitiatorId) {
+			return iInitiatorId;
+		}
+		if (fnInitiatorResolver) {
+			return fnInitiatorResolver();
+		}
+	}
 
 	function createTimeoutWrapper (sName) {
 		var sSetName = "set" + sName;
@@ -63,7 +86,7 @@ sap.ui.define([
 			var aCallbackArgs = Array.prototype.slice.call(arguments, 2);
 			var oNewTimeout = {
 				delay: iDelay,
-				initiator: iInitiatorId,
+				initiator: _resolveInitiatorId(),
 				func: _utils.functionToString(fnCallback),
 				stack: _utils.resolveStackTrace(),
 				status: timeoutStatus.TRACKED
