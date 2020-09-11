@@ -2964,14 +2964,23 @@ sap.ui.define([
 	Table.prototype.getFocusDomRef = function() {
 		this._getKeyboardExtension().initItemNavigation();
 
-		// Focus is handled by the item navigation. It's not the root element of the table which may get the focus but
-		// the last focused column header or cell.
-		var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
-		if (oFocusedItemInfo) {
-			return oFocusedItemInfo.domRef || Control.prototype.getFocusDomRef.apply(this, arguments);
+		// The element that should get the focus is not the root element of the table, but the last focused column header or cell, the overlay, or
+		// the NoData element.
+
+		if (this.getShowOverlay()) {
+			return this.getDomRef("overlay");
 		}
 
-		return null;
+		if (TableUtils.isNoDataVisible(this)) {
+			return this.getDomRef("noDataCnt");
+		}
+
+		var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
+		if (oFocusedItemInfo && oFocusedItemInfo.domRef) {
+			return oFocusedItemInfo.domRef;
+		}
+
+		return Control.prototype.getFocusDomRef.apply(this, arguments);
 	};
 
 	// =============================================================================

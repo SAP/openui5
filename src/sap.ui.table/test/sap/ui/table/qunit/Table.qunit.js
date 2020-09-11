@@ -63,6 +63,7 @@ sap.ui.define([
 	var getRowHeader = window.getRowHeader;
 	var getRowAction = window.getRowAction;
 	var getSelectAll = window.getSelectAll;
+	var checkFocus = window.checkFocus;
 
 	var sServiceURI = "/service/";
 
@@ -1931,6 +1932,48 @@ sap.ui.define([
 			assert.equal(oHSb.scrollLeft, 5, "ScrollLeft can be set and read.");
 			done();
 		}, 500);
+	});
+
+	QUnit.test("#focus", function(assert) {
+		oTable.focus();
+		checkFocus(getColumnHeader(0, null, null, oTable), assert);
+
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+		oTable.focus();
+		checkFocus(getCell(0, 0, null, null, oTable), assert);
+
+		oTable.unbindRows();
+		oTable.focus();
+		checkFocus(oTable.getDomRef("noDataCnt"), assert);
+
+		oTable.setShowOverlay(true);
+		oTable.focus();
+		checkFocus(oTable.getDomRef("overlay"), assert);
+	});
+
+	QUnit.test("#getFocusDomRef", function(assert) {
+		assert.strictEqual(oTable.getFocusDomRef(), getColumnHeader(0, null, null, oTable)[0], "Column header visible");
+
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getFocusDomRef(), getCell(0, 0, null, null, oTable)[0], "Column header not visible");
+
+		getCell(0, 1, true, null, oTable);
+		assert.strictEqual(oTable.getFocusDomRef(), getCell(0, 1, null, null, oTable)[0], "Last focused cell");
+
+		oTable.unbindRows();
+		assert.strictEqual(oTable.getFocusDomRef(), oTable.getDomRef("noDataCnt"), "NoData visible");
+
+		oTable.setShowOverlay(true);
+		assert.strictEqual(oTable.getFocusDomRef(), oTable.getDomRef("overlay"), "Overlay visible");
+
+		oTable.setShowOverlay(false);
+		oTable.setShowNoData(false);
+		assert.strictEqual(oTable.getFocusDomRef(), oTable.getDomRef(), "No focusable elements");
+
+		oTable.destroy();
+		assert.strictEqual(oTable.getFocusDomRef(), null, "Not rendered");
 	});
 
 	QUnit.module("Fixed rows and columns", {
