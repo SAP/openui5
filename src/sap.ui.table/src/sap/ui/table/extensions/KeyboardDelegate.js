@@ -854,10 +854,7 @@ sap.ui.define([
 			if (!TableUtils.isNoDataVisible(this)) {
 				KeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
 			}
-		}/* else {
-			// If needed and NoData visible, then set the focus to NoData area.
-			this.$("noDataCnt").trigger("focus");
-		}*/
+		}
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 		var bIsRowHeaderCellInGroupHeaderRow = oCellInfo.isOfType(CellType.ROWHEADER)
@@ -1126,11 +1123,11 @@ sap.ui.define([
 		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
 			if (TableUtils.isNoDataVisible(this)) {
 				this.$("noDataCnt").trigger("focus");
-			} else {
+				oEvent.preventDefault();
+			} else if (this.getRows().length > 0) {
 				KeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
+				oEvent.preventDefault();
 			}
-
-			oEvent.preventDefault();
 
 		} else if (oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
 			KeyboardDelegate._forwardFocusToTabDummy(this, "sapUiTableCtrlAfter");

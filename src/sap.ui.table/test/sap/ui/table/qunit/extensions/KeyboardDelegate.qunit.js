@@ -829,6 +829,35 @@ sap.ui.define([
 		checkFocus(getCell(0, 1), assert);
 	});
 
+	QUnit.test("No cells", function(assert) {
+		var oElem;
+
+		oTable.setColumnHeaderVisible(false);
+		oTable.setVisibleRowCount(0);
+		sap.ui.getCore().applyChanges();
+
+		oElem = setFocusOutsideOfTable(assert, "Focus1");
+		simulateTabEvent(oElem);
+		oElem = checkFocus(document.getElementById("Focus2"), assert);
+
+		simulateTabEvent(oElem, true);
+		checkFocus(document.getElementById("Focus1"), assert);
+	});
+
+	QUnit.test("No content cells", function(assert) {
+		var oElem;
+
+		oTable.setVisibleRowCount(0);
+		sap.ui.getCore().applyChanges();
+
+		oElem = checkFocus(getColumnHeader(0, true), assert);
+		simulateTabEvent(oElem);
+		oElem = checkFocus(document.getElementById("Focus2"), assert);
+
+		simulateTabEvent(oElem, true);
+		checkFocus(getColumnHeader(0), assert);
+	});
+
 	QUnit.module("Navigation > Arrow Keys", {
 		beforeEach: function() {
 			setupTest();
