@@ -76,9 +76,9 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/adaptive/extensionSample/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/adaptive/extensionSample/SampleExtension.js',
+										name: 'SampleExtension.js',
+										key: 'SampleExtension.js'
 									},
 									{
 										url: '/samples/adaptive/extensionSample/i18n/i18n.properties',
@@ -571,9 +571,9 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/gettingData/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/extension/gettingData/DataExtension.js',
+										name: 'DataExtension.js',
+										key: 'DataExtension.js'
 									}
 								]
 							},
@@ -587,9 +587,9 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/customFormatters/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/extension/customFormatters/CustomFormattersExtension.js',
+										name: 'CustomFormattersExtension.js',
+										key: 'CustomFormattersExtension.js'
 									}
 								]
 							},
@@ -603,9 +603,9 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/customActions/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/extension/customActions/CustomActionsExtension.js',
+										name: 'CustomActionsExtension.js',
+										key: 'CustomActionsExtension.js'
 									}
 								]
 							},
@@ -614,14 +614,14 @@ sap.ui.define([
 								key: 'northwindImage',
 								files: [
 									{
-										url: '/samples/extension/northwindImage/manifest.json',
+										url: '/samples/extensioan/northwindImage/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/northwindImage/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/extension/northwindImage/NorthwindImageExtension.js',
+										name: 'NorthwindImageExtension.js',
+										key: 'NorthwindImageExtension.js'
 									}
 								]
 							}
@@ -761,9 +761,9 @@ sap.ui.define([
 								key: 'Component.js'
 							},
 							{
-								url: '/samples/adaptiveCustomizedActions/myExtension.js',
-								name: 'myExtension.js',
-								key: 'myExtension.js'
+								url: '/samples/adaptiveCustomizedActions/CustomizedActionsExtension.js',
+								name: 'CustomizedActionsExtension.js',
+								key: 'CustomizedActionsExtension.js'
 							}
 						]
 					},
@@ -945,9 +945,9 @@ sap.ui.define([
 										key: 'cardBundle/cardManifest.json'
 									},
 									{
-										url: '/samples/destinations/extensionUsingDestinations/cardBundle/myExtension.js',
-										name: 'cardBundle/myExtension.js',
-										key: 'cardBundle/myExtension.js'
+										url: '/samples/destinations/extensionUsingDestinations/cardBundle/DataExtension.js',
+										name: 'cardBundle/DataExtension.js',
+										key: 'cardBundle/DataExtension.js'
 									},
 									{
 										url: '/samples/destinations/extensionUsingDestinations/View.view.xml',
@@ -1036,9 +1036,9 @@ sap.ui.define([
 								key: 'cardBundle/cardManifest.json'
 							},
 							{
-								url: '/samples/hostAndExtensionActions/cardBundle/myExtension.js',
-								name: 'cardBundle/myExtension.js',
-								key: 'cardBundle/myExtension.js'
+								url: '/samples/hostAndExtensionActions/cardBundle/ActionsExtension.js',
+								name: 'ActionsExtension.js',
+								key: 'ActionsExtension.js'
 							},
 							{
 								url: '/samples/hostAndExtensionActions/View.view.xml',
@@ -1049,11 +1049,6 @@ sap.ui.define([
 								url: '/samples/hostAndExtensionActions/Controller.controller.js',
 								name: 'Controller.controller.js',
 								key: 'Controller.controller.js'
-							},
-							{
-								url: '/samples/hostAndExtensionActions/cardBundle/myExtension.js',
-								name: 'myExtension.js',
-								key: 'myExtension.js'
 							},
 							{
 								url: '/samples/hostAndExtensionActions/manifest.json',

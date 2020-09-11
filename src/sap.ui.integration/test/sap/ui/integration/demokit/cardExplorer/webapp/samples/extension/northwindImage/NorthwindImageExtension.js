@@ -8,18 +8,21 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	 */
 	var NORTHWIND_OLE_HEADER_LENGTH = 104;
 
-	var oExtension = new Extension({
-		formatters: {
+	var NorthwindImageExtension = Extension.extend("card.explorer.extension.northwindImage.NorthwindImageExtension");
+
+	NorthwindImageExtension.prototype.init = function () {
+		Extension.prototype.init.apply(this, arguments);
+
+		this.setFormatters({
 			convertNorthwindImage: function (sImage) {
 				// Northwind has a heritage of an old bitmap format
 				// and contains an extra OLE header in their base64 pictures.
-
 				var sTrimmedData = sImage.substring(NORTHWIND_OLE_HEADER_LENGTH); // removes the OLE header
 
 				return "data:image/bmp;base64," + sTrimmedData;
 			}
-		}
-	});
+		});
+	};
 
-	return oExtension;
+	return NorthwindImageExtension;
 });

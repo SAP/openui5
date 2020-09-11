@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @experimental Since 1.75
 	 * @since 1.75
 	 * @alias sap.ui.integration.Extension
+	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Extension = ManagedObject.extend("sap.ui.integration.Extension", {
 		metadata: {

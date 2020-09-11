@@ -1,9 +1,12 @@
 sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	"use strict";
 
-	var oExtension = new Extension({
-		// Actions defined here will appear in the header of the card.
-		actions: [
+	var CustomActionsExtension = Extension.extend("card.explorer.extension.customActions.CustomActionsExtension");
+
+	CustomActionsExtension.prototype.init = function () {
+		Extension.prototype.init.apply(this, arguments);
+
+		this.setActions([
 			{
 				type: "Navigation",
 				parameters: {
@@ -13,8 +16,8 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 				target: "_blank",
 				text: "Book 3rd party training"
 			}
-		]
-	});
+		]);
+	};
 
-	return oExtension;
+	return CustomActionsExtension;
 });

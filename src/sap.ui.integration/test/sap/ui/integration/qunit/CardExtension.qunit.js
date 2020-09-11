@@ -28,7 +28,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
-				"id": "test1"
+				"id": "sap.ui.integration.test"
 			},
 			"sap.card": {
 				"type": "List",
@@ -61,7 +61,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
-				"id": "test1"
+				"id": "sap.ui.integration.test"
 			},
 			"sap.card": {
 				"type": "List",
@@ -96,7 +96,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
-				"id": "test1"
+				"id": "sap.ui.integration.test"
 			},
 			"sap.card": {
 				"type": "List",
@@ -127,7 +127,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
-				"id": "test1"
+				"id": "sap.ui.integration.test"
 			},
 			"sap.card": {
 				"type": "List",
@@ -162,7 +162,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
-				"id": "test1"
+				"id": "sap.ui.integration.test"
 			},
 			"sap.card": {
 				"configuration": {
@@ -225,7 +225,7 @@ sap.ui.define([
 
 		this.oCard.setManifest({
 			"sap.app": {
-				"id": "test1"
+				"id": "sap.ui.integration.test"
 			},
 			"sap.card": {
 				"type": "List",
@@ -277,7 +277,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
-				"id": "test1"
+				"id": "sap.ui.integration.test"
 			},
 			"sap.card": {
 				"type": "List",

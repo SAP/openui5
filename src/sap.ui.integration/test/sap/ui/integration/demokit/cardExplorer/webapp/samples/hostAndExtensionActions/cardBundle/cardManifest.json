@@ -28,7 +28,7 @@
 		}
 	},
 	"sap.card": {
-		"extension": "./myExtension",
+		"extension": "./ActionsExtension",
 		"type": "List",
 		"header": {
 			"title": "Available Trainings",

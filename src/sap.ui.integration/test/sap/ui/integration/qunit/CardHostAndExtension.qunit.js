@@ -18,7 +18,7 @@ function (
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 	var oManifest = {
 		"sap.app": {
-			"id": "test1"
+			"id": "sap.ui.integration.test"
 		},
 		"sap.card": {
 			"extension": "./extensions/ExtensionSample",

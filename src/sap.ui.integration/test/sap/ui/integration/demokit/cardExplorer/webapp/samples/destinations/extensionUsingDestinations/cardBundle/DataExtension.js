@@ -1,9 +1,9 @@
 sap.ui.define(["sap/ui/integration/Extension", "sap/base/Log"], function (Extension, Log) {
 	"use strict";
 
-	var oExtension = new Extension();
+	var DataExtension = Extension.extend("card.explorer.sample.extensionUsingDestinations.trainings.DataExtension");
 
-	oExtension.getDataFromDestination = function () {
+	DataExtension.prototype.getDataFromDestination = function () {
 		var oCard = this.getCard();
 
 		// Make request to a destination.
@@ -22,5 +22,5 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/base/Log"], function (Extens
 			});
 	};
 
-	return oExtension;
+	return DataExtension;
 });

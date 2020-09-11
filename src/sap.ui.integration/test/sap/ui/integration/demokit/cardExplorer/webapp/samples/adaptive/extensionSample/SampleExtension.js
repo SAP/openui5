@@ -1,11 +1,16 @@
 sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	"use strict";
 
-	var oExtension = new Extension();
+	var SampleExtension = Extension.extend("card.explorer.adaptive.extensionSample.SampleExtension");
+
+	SampleExtension.prototype.init = function () {
+		Extension.prototype.init.apply(this, arguments);
+		this.attachAction(this._handleAction.bind(this));
+	};
 
 	/* Custom event handler for the submit event.
 	Intercepts submit action, performs validation and/or data modifications. */
-	oExtension.attachAction(function (oEvent) {
+	SampleExtension.prototype._handleAction = function (oEvent) {
 		var oCard = this.getCard(),
 			sActionType = oEvent.getParameter("type"),
 			mParams = oEvent.getParameter("parameters"),
@@ -32,10 +37,10 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		}).catch(function(sErrorMessage) {
 			oCard.showMessage(sErrorMessage, "Error");
 		});
-	});
+	};
 
 	// Gets all data for the card.
-	oExtension.getData = function () {
+	SampleExtension.prototype.getData = function () {
 		var mParameters = this.getCard().getCombinedParameters(),
 			iProductId = mParameters.productId,
 			pProduct = this._getProduct(iProductId),
@@ -51,7 +56,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	};
 
 	// Fetches a product using destinations property from manifest.json.
-	oExtension._getProduct = function (iProductId) {
+	SampleExtension.prototype._getProduct = function (iProductId) {
 		return this.getCard().request({
 			"url": "{{destinations.northwind}}/Products",
 			"parameters": {
@@ -71,7 +76,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	};
 
 	// Fetches a supplier via the card API from the destionation defined in the manifest file.
-	oExtension._getSupplier = function (iSupplierId) {
+	SampleExtension.prototype._getSupplier = function (iSupplierId) {
 		return this.getCard().request({
 			"url": "{{destinations.northwind}}/Suppliers",
 			"parameters": {
@@ -84,7 +89,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	};
 
 	// Fetches a list of all product categories in Northwind.
-	oExtension._getCategories = function () {
+	SampleExtension.prototype._getCategories = function () {
 		return this.getCard().request({
 			"url": "{{destinations.northwind}}/Categories",
 			"parameters": {
@@ -101,5 +106,5 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		});
 	};
 
-	return oExtension;
+	return SampleExtension;
 });
