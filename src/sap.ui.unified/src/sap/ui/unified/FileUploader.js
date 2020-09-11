@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/*global Promise, FileReader*/
+
 // Provides control sap.ui.unified.FileUploader.
 sap.ui.define([
 	'sap/ui/core/Control',
@@ -1333,6 +1335,28 @@ sap.ui.define([
 		if (!this.getEnabled()) {
 			return;
 		}
+
+		// If the file has been edited after it has been chosen,
+		// Chrome 85 fails silently on submit, so we could
+		// check if it is readable first.
+		// https://stackoverflow.com/questions/61916331
+		// BCP: 2070313680
+		if (window.File && this.FUEl && this.FUEl.files.length) {
+			_checkFileReadable(this.FUEl.files[0]).then(
+				function() {
+					this._upload(bPreProcessFiles);
+				}.bind(this),
+				function(error) {
+					Log.error(error + " It is possible that the file has been changed.");
+					this.clear();
+				}.bind(this)
+			);
+		} else {
+			this._upload(bPreProcessFiles);
+		}
+	};
+
+	FileUploader.prototype._upload = function(bPreProcessFiles) {
 		var uploadForm = this.getDomRef("fu_form"),
 			sActionAttr;
 
@@ -2035,6 +2059,23 @@ sap.ui.define([
 		});
 	};
 
+	/*
+	 * Returns a promise that resolves successfully if the file can be read.
+	 */
+	function _checkFileReadable(oFile) {
+		return new Promise(function(resolve, reject) {
+			var reader = new FileReader();
+			reader.readAsArrayBuffer(oFile.slice(0, 1));
+
+			reader.onload = function() {
+				resolve();
+			};
+
+			reader.onerror = function() {
+				reject(reader.error);
+			};
+		});
+	}
 
 	return FileUploader;
 
