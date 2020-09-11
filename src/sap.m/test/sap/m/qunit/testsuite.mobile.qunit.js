@@ -227,6 +227,8 @@ sap.ui.define([
 					language: "en-US"
 				},
 				sinon: {
+					version: 4,
+					qunitBridge: true,
 					useFakeTimers: true
 				}
 			},
