@@ -25,7 +25,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.ok(oLCI.$().hasClass("sapUiIntegrationListContentItem"), "'sapUiIntegrationListContentItem' class should be present.");
+		assert.ok(oLCI.$().hasClass("sapUiIntegrationLCI"), "'sapUiIntegrationLCI' class should be present.");
 
 		// clean up
 		oLCI.destroy();
@@ -41,7 +41,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.ok(oLCI.$().hasClass("sapUiIntegrationListContentItemWithChart"), "'sapUiIntegrationListContentItemWithChart' class should be present.");
+		assert.ok(oLCI.$().hasClass("sapUiIntegrationLCIWithChart"), "'sapUiIntegrationLCIWithChart' class should be present.");
 
 		// clean up
 		oLCI.destroy();

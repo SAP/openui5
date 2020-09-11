@@ -75,7 +75,6 @@
 					"src": "{icon}"
 				},
 				"title": "{Name}",
-				"description": "{Description}",
 				"actions": [
 					{
 						"type": "Navigation",
