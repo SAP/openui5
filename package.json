@@ -87,7 +87,7 @@
     "json2json": "^0.2.4",
     "karma": "^5.2.2",
     "karma-chrome-launcher": "^3.1.0",
-    "karma-coverage": "2.0.1",
+    "karma-coverage": "^2.0.3",
     "karma-junit-reporter": "^2.0.1",
     "karma-ui5": "^2.3.0",
     "load-grunt-config": "^3.0.1",
