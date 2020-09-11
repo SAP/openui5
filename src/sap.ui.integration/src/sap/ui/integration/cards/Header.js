@@ -4,15 +4,22 @@
 sap.ui.define([
 	"sap/f/cards/Header",
 	"sap/f/cards/HeaderRenderer",
+	"sap/m/library",
 	"sap/ui/integration/util/BindingHelper",
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/integration/util/LoadingProvider"
-], function (FHeader,
-			 FHeaderRenderer,
-			 BindingHelper,
-			 JSONModel,
-			 LoadingProvider) {
+], function (
+	FHeader,
+	FHeaderRenderer,
+	mLibrary,
+	BindingHelper,
+	JSONModel,
+	LoadingProvider
+) {
 	"use strict";
+
+	// shortcut for sap.m.AvatarColor
+	var AvatarColor = mLibrary.AvatarColor;
 
 	/**
 	 * Constructor for a new <code>Header</code>.
@@ -54,6 +61,7 @@ sap.ui.define([
 				mSettings.iconDisplayShape = mConfiguration.icon.shape;
 				mSettings.iconInitials = mConfiguration.icon.text;
 				mSettings.iconAlt = mConfiguration.icon.alt;
+				mSettings.iconBackgroundColor = mConfiguration.icon.backgroundColor || (mConfiguration.icon.text ? undefined : AvatarColor.Transparent);
 			}
 
 			mSettings = BindingHelper.createBindingInfos(mSettings);

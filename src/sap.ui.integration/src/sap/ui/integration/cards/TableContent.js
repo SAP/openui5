@@ -42,6 +42,9 @@ sap.ui.define([
 	// shortcut for sap.f.AvatarSize
 	var AvatarSize = mobileLibrary.AvatarSize;
 
+	// shortcut for sap.m.AvatarColor
+	var AvatarColor = mobileLibrary.AvatarColor;
+
 	// shortcut for sap.ui.core.VerticalAlign
 	var VerticalAlign = coreLibrary.VerticalAlign;
 
@@ -311,7 +314,8 @@ sap.ui.define([
 				displayShape: oColumn.icon.shape,
 				displaySize: oColumn.icon.size || AvatarSize.XS,
 				tooltip: oColumn.icon.alt,
-				initials: oColumn.icon.text
+				initials: oColumn.icon.text,
+				backgroundColor: oColumn.icon.backgroundColor || (oColumn.icon.text ? undefined : AvatarColor.Transparent)
 			}).addStyleClass("sapFCardIcon");
 		}
 

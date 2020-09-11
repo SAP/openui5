@@ -13,6 +13,7 @@ sap.ui.define([
 
 	// shortcut for sap.m.AvatarSize
 	var AvatarSize = mLibrary.AvatarSize;
+	var AvatarColor = mLibrary.AvatarColor;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -459,6 +460,77 @@ sap.ui.define([
 							"icon": {
 								"src": "sap-icon://error",
 								"size": "M"
+							}
+						}]
+					}]
+				}
+			}
+		});
+	});
+
+	QUnit.test("'backgroundColor' of icon with src", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oContent = this.oCard.getAggregation("_content"),
+				oAvatar = oContent.getAggregation("_content").getContent()[0].getItems()[1].getItems()[0];
+
+			// Assert
+			assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.icon"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [{
+						"title": "Company Details",
+						"items": [{
+							"icon": {
+								"src": "sap-icon://error"
+							}
+						}]
+					}]
+				}
+			}
+		});
+	});
+
+	QUnit.test("'backgroundColor' of icon with initials", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oContent = this.oCard.getAggregation("_content"),
+				oAvatar = oContent.getAggregation("_content").getContent()[0].getItems()[1].getItems()[0],
+				sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
+
+			// Assert
+			assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.icon"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [{
+						"title": "Company Details",
+						"items": [{
+							"icon": {
+								"text": "AC"
 							}
 						}]
 					}]

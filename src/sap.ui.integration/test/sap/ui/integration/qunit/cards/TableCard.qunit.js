@@ -14,6 +14,7 @@ sap.ui.define([
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	var AvatarSize = mLibrary.AvatarSize;
+	var AvatarColor = mLibrary.AvatarColor;
 
 	var oManifest_TableCard = {
 		"sap.card": {
@@ -846,6 +847,81 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("'backgroundColor' of icon with src", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+
+			// Assert
+			assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "testTableCard"
+			},
+			"sap.card": {
+				"type": "Table",
+				"content": {
+					"data": {
+						"json": [{
+							"src": "sap-icon://error"
+						}]
+					},
+					"row": {
+						"columns": [{
+							"icon": {
+								"src": "{src}"
+							}
+						}]
+					}
+				}
+			}
+		});
+	});
+
+	QUnit.test("'backgroundColor' of icon with initials", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0],
+				sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
+
+			// Assert
+			assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "testTableCard"
+			},
+			"sap.card": {
+				"type": "Table",
+				"content": {
+					"data": {
+						"json": [{
+							"initials": "AC"
+						}]
+					},
+					"row": {
+						"columns": [{
+							"icon": {
+								"text": "{initials}"
+							}
+						}]
+					}
+				}
+			}
+		});
 	});
 
 });

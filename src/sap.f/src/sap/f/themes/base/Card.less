@@ -58,10 +58,13 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		.sapUiIcon {
-			align-self: center;
-			font-size: 2rem;
-			color: @sapUiTileIconColor;
+
+		&.sapFAvatarColorTransparent {
+			.sapUiIcon {
+				color: @sapUiTileIconColor;
+				font-size: 2rem;
+				align-self: center;
+			}
 		}
 	}
 
@@ -135,7 +138,6 @@
 	margin-right: 0.75rem;
 
 	&:not(.sapFAvatarImage):not(.sapFAvatarInitials) {
-		background-color: transparent;
 		border: none;
 	}
 }
@@ -239,8 +241,6 @@
 	}
 }
 
-
-
 .sapFCard .sapFCardContent {
 	flex: 1 0 auto;
 	overflow: hidden;
@@ -282,7 +282,7 @@
 		display: block; // Fix for unwanted space under the only image inside Component Card content
 	}
 
-	.sapFCardIcon.sapFAvatar {
+	.sapFCardIcon.sapFAvatarColorTransparent {
 		.sapUiIcon {
 			color: @sapUiContentNonInteractiveIconColor;
 		}
