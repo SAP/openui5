@@ -139,7 +139,7 @@ sap.ui.define([
 			this._fileEditor.getManifestContent().then(this._updateSample.bind(this));
 		},
 
-		onChangeEditorClick: function() {
+		onChangeEditorClick: function () {
 			var sEditorType = exploreSettingsModel.getProperty("/editorType");
 			if (sEditorType === "text") {
 				exploreSettingsModel.setProperty("/editorType", "card");
@@ -400,10 +400,10 @@ sap.ui.define([
 			}
 		},
 
-		_initIFrameCreation : function () {
+		_initIFrameCreation: function () {
 			var oFrameWrapperEl = this.byId("iframeWrapper"),
 				oDelegate = {
-						onAfterRendering: function () {
+					onAfterRendering: function () {
 						var oFrameWrapperElDomRef = oFrameWrapperEl.getDomRef(),
 							oFrame;
 
@@ -421,7 +421,7 @@ sap.ui.define([
 			oFrameWrapperEl.addEventDelegate(oDelegate, this);
 		},
 
-		createFrame: function(sSample) {
+		createFrame: function (sSample) {
 			var oFrameEl = document.createElement("iframe");
 			// index.html will load separate scripts to enable editing the manifest.
 			// in the file editor indexTemplate.html will be shown
@@ -480,11 +480,11 @@ sap.ui.define([
 				content: [
 					new FormattedText({
 						htmlText: "<p class='sapUiNoMargin'><span class='sapMText'>You are about to open </span></p>"
-									+ "<cite class='sapMText'>" + mParameters.url + "</cite>"
-									+ "<p class='sapUiNoMargin'>"
-									+ "<span class='sapMText'>This is the Manage Products Fiori Reference App. If you don't have registration for it, follow the instructions "
-									+ "<a target='_blank' href='https://developers.sap.com/tutorials/gateway-demo-signup.html'>here</a>. "
-									+ "Do you want to continue?" + "</span></p>",
+							+ "<cite class='sapMText'>" + mParameters.url + "</cite>"
+							+ "<p class='sapUiNoMargin'>"
+							+ "<span class='sapMText'>This is the Manage Products Fiori Reference App. If you don't have registration for it, follow the instructions "
+							+ "<a target='_blank' href='https://developers.sap.com/tutorials/gateway-demo-signup.html'>here</a>. "
+							+ "Do you want to continue?" + "</span></p>",
 						width: "100%"
 					})
 				],

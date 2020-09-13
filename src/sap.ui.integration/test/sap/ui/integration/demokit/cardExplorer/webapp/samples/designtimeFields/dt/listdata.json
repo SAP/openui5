@@ -1,0 +1,16 @@
+{
+	"values": [
+		{
+			"text": "From Request 1",
+			"key": "key1"
+		},
+		{
+			"text": "From Request 2",
+			"key": "key2"
+		},
+		{
+			"text": "From Request 3",
+			"key": "key3"
+		}
+	]
+}

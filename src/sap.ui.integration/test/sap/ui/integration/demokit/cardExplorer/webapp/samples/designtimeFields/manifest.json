@@ -1,0 +1,138 @@
+{
+	"_version": "1.18.0",
+	"sap.app": {
+		"id": "sap.ui5.test.editor.listcard.fields",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Test Card for Parameters",
+		"subTitle": "Test Card for Parameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://accept"
+		}
+	},
+	"sap.card": {
+		"designtime": "./dt/designtime",
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"string": {
+					"value": "StringValue"
+				},
+				"stringLabel": {
+					"value": "StringValue"
+				},
+				"stringLabelTrans": {
+					"value": "StringValue"
+				},
+				"stringWithDescription": {
+					"value": "StringValue"
+				},
+				"stringWithLongDescription": {
+					"value": "StringValue"
+				},
+				"stringWithTranslatedValue": {
+					"value": "{{TRANSLATED_STRING_VALUE}}"
+				},
+				"integer": {
+					"value": 1
+				},
+				"integerLabel": {
+					"value": 1
+				},
+				"integerLabelTrans": {
+					"value": 1
+				},
+				"number": {
+					"value": 1.5
+				},
+				"numberLabel": {
+					"value": 1.5
+				},
+				"numberLabelTrans": {
+					"value": 1.5
+				},
+				"boolean": {
+					"value": false
+				},
+				"booleanLabel": {
+					"value": true
+				},
+				"booleanLabelTrans": {
+					"value": false
+				},
+				"date": {
+					"value": "2020-09-02"
+				},
+				"dateLabel": {
+					"value": "2020-09-02"
+				},
+				"dateLabelTrans": {
+					"value": "2020-09-02"
+				},
+				"dateTime": {
+					"value": "2020-09-02T11:21:51.470Z"
+				},
+				"dateTimeLabel": {
+					"value": "2020-09-02T11:21:51.470Z"
+				},
+				"dateTimeLabelTrans": {
+					"value": "2020-09-02T11:21:51.470Z"
+				},
+				"stringWithStaticList": {
+					"value": "key1"
+				},
+				"stringWithRequestList": {
+					"value": "key1"
+				}
+			},
+			"destinations": {
+				"dest": {
+					"name": "JAM"
+				},
+				"destLabel": {
+					"name": "products",
+					"label": "Direct Destination Label"
+				},
+				"destLabelTrans": {
+					"name": "SF",
+					"label": "{{TRANSLATED_DESTINATION_LABEL}}"
+				}
+			}
+		},
+		"header": {
+			"title": "Card Title",
+			"subTitle": "Card Sub Title",
+			"icon": {
+				"src": "sap-icon://accept"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"title": "Various fields with different settings in the Editor",
+						"description": "Explore the dt/designtime.js file for details"
+					}
+				],
+				"path": "/"
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": "{title}",
+				"description": "{description}",
+				"info": {
+					"value": "{info}"
+				}
+			},
+			"maxItems": 3
+		}
+	}
+}

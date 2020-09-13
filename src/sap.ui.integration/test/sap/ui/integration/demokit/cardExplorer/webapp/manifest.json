@@ -117,6 +117,11 @@
 					"pattern": "integrate/:key:",
 					"name": "integrate",
 					"target": "integrate"
+				},
+				{
+					"pattern": "designtime/:key:",
+					"name": "designtime",
+					"target": "designtime"
 				}
 			],
 			"targets": {
@@ -143,6 +148,11 @@
 				"integrate": {
 					"viewName": "Integrate",
 					"viewId": "Integrate",
+					"viewLevel": 2
+				},
+				"designtime": {
+					"viewName": "Designtime",
+					"viewId": "Designtime",
 					"viewLevel": 2
 				},
 				"notFound": {

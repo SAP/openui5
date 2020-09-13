@@ -1104,6 +1104,161 @@ sap.ui.define([
 						]
 					}
 				]
+			},
+			{
+				title: 'Card Editor Design-time',
+				icon: 'sap-icon://create-form',
+				key: 'designtime',
+				target: 'exploreOverview',
+				hasExpander: false,
+				hidden: !window._isinternal,
+				items: [
+					{
+						key: 'designtimeAdmin',
+						target: 'exploreSamples',
+						title: 'Administrator Editor',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimeAdmin/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimeAdmin/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimeAdmin/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeAdmin/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
+					},
+					{
+						key: 'designtimeContent',
+						target: 'exploreSamples',
+						title: 'Page/Content Administrator Editor',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimeContent/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimeContent/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimeContent/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeAdmin/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
+					},
+					{
+						key: 'designtimeTranslation',
+						target: 'exploreSamples',
+						title: 'Translator Editor',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimeTranslation/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimeTranslation/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimeTranslation/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeTranslation/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
+					},
+					{
+						key: 'designtimeFields',
+						target: 'exploreSamples',
+						title: 'Field Playground',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimeFields/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimeFields/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimeFields/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeFields/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
+					},
+					{
+						key: 'designtimePreview',
+						target: 'exploreSamples',
+						title: 'Editor Preview Settings ',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimePreview/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimePreview/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimePreview/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimePreview/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
+					}
+				]
 			}
 		]
 	});

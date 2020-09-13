@@ -1,6 +1,5 @@
 sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 	"use strict";
-
 	var oHost = new Host("host", {
 		resolveDestination: function (name) {
 			return Promise.resolve("https://" + name);

@@ -221,7 +221,12 @@ sap.ui.define([
 				var oHBox = new HBox();
 				oHBox.addStyleClass("sapFCard");
 				oHBox.setWidth("500px");
-				var src = this.getCard().getBaseUrl() + "/" + mSettings.preview.src;
+				var baseUrl = this.getCard().getBaseUrl();
+				if (!baseUrl && typeof this.getCard().getManifest() === "string") {
+					baseUrl = this.getCard().getManifest();
+					baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/") + 1);
+				}
+				var src = baseUrl + "/" + mSettings.preview.src;
 				var oImg = new Image({ src: src });
 				oImg.addStyleClass("sapUiIntegrationDTPreviewImg");
 				oImg.setWidth("500px");

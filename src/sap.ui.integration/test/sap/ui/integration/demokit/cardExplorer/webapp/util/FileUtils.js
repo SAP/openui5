@@ -24,7 +24,7 @@ sap.ui.define([
 
 				aFiles.forEach(function (oFile) {
 					if (oFileUtils.isBlob(oFile.name)) {
-						var sContent =  oFile.content.split(",")[1]; // erase the base64 prefix
+						var sContent = oFile.content.split(",")[1]; // erase the base64 prefix
 						oFolder.file(oFile.name, sContent, { base64: true });
 					} else {
 						oFolder.file(oFile.name, oFile.content);
@@ -58,7 +58,7 @@ sap.ui.define([
 				return oFileUtils._fetchBlob(sUrl);
 			}
 
-			return new Promise(function (resolve, reject ) {
+			return new Promise(function (resolve, reject) {
 				jQuery.ajax(sUrl, {
 					dataType: "text"
 				}).done(function (oData) {
