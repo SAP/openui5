@@ -139,6 +139,30 @@ sap.ui.define([
 					}
 				},
 				/**
+				 * This event is fired after the item is removed on click of ok button in confirmation dialog.
+				 * @since 1.83
+				 */
+				afterItemRemoved: {
+					parameters: {
+						/**
+						 * The item removed from the set of items to be uploaded.
+						 */
+						item: {type: "sap.m.upload.UploadSetItem"}
+					}
+				},
+				/**
+				 * This event is fired after item edit is confirmed.
+				 * @since 1.83
+				 */
+				afterItemEdited: {
+					parameters: {
+						/**
+						 * The item edited.
+						 */
+						item: {type: "sap.m.upload.UploadSetItem"}
+					}
+				},
+				/**
 				 * This event is fired just before a new file is added to the set of items to be uploaded.
 				 */
 				beforeItemAdded: {
@@ -745,6 +769,7 @@ sap.ui.define([
 		}
 		oItem._setContainsError(false);
 		oItem._setInEditMode(false);
+		this.fireAfterItemEdited({item: oItem});
 		this._oEditedItem = null;
 	};
 
@@ -802,6 +827,7 @@ sap.ui.define([
 		}
 		this.removeItem(this._oItemToBeDeleted);
 		this.removeIncompleteItem(this._oItemToBeDeleted);
+		this.fireAfterItemRemoved({item: this._oItemToBeDeleted});
 		this._oItemToBeDeleted = null;
 	};
 
