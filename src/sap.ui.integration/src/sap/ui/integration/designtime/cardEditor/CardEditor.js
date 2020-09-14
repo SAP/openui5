@@ -47,9 +47,32 @@ sap.ui.define([
 					type: "string",
 					defaultValue: "form"
 				},
+
 				designtimeChanges: {
 					type: "array",
 					defaultValue: []
+				},
+
+				/**
+				 * Defines the base URL of the Card Manifest.
+				 * @since 1.83
+				 */
+				baseUrl: {
+					type: "sap.ui.core.URI",
+					defaultValue: null
+				},
+
+				/**
+				 * @inheritDoc
+				 */
+				"config": {
+					type: "object",
+					defaultValue: {
+						"i18n": [].concat(
+							BaseEditor.getMetadata().getProperty("config").getDefaultValue().i18n,
+							"sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
+						)
+					}
 				}
 			}
 		},
@@ -135,25 +158,27 @@ sap.ui.define([
 			this._bDesigntimeInit = true;
 			this._bCardId = sCardId;
 			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
-			var sBaseUrl = sanitizePath(ObjectPath.get(["baseURL"], oJson) || "");
+			var sBaseUrl = sanitizePath(this.getBaseUrl() || "");
 
 			if (sBaseUrl && sDesigntimePath) {
 				var mPaths = {};
 				var sSanitizedBaseUrl = sanitizePath(sBaseUrl);
-				mPaths[sCardId] = sSanitizedBaseUrl;
+				var sDesigntimeRelativePath = trimCurrentFolderPrefix(sDesigntimePath);
+				var sDesigntimeAbsolutePath = sSanitizedBaseUrl + "/" + sDesigntimeRelativePath;
+				var sNamespace = sCardId.replace(/\./g, "/") + "/" + sDesigntimeRelativePath;
+				mPaths[sNamespace] = sDesigntimeAbsolutePath;
 				sap.ui.loader.config({
 					paths: mPaths
 				});
-				var sDesigntimeFolderPath = trimCurrentFolderPrefix(sDesigntimePath);
-				var sDesigntimePrefix = sCardId + "/" + sDesigntimeFolderPath;
-				var sEditorConfigPath = sDesigntimePrefix + "/editor.config";
-				var sDesigntimeMetadataPath = sSanitizedBaseUrl + "/" + sDesigntimeFolderPath + "/metadata.json";
+				var sEditorConfigModule = sNamespace + "/editor.config";
+				var sI18nModule = sNamespace + "/i18n/i18n.properties";
+				var sDesigntimeMetadataPath = sDesigntimeAbsolutePath + "/metadata.json";
 
 				this._oDesigntimePromise = new CancelablePromise(function (fnResolve) {
 					Promise.all([
 						new Promise(function (fnResolveEditorConfig) {
 							sap.ui.require(
-								[sEditorConfigPath],
+								[sEditorConfigModule],
 								fnResolveEditorConfig,
 								function () {
 									fnResolveEditorConfig({}); // if editor.config.js doesn't exist
@@ -185,12 +210,12 @@ sap.ui.define([
 
 					if (isEmptyObject(oConfig)) {
 						this.addConfig({
-							"i18n": sDesigntimePrefix + "/i18n.properties"
+							"i18n": sI18nModule
 						});
 					} else {
 						oConfig = merge({}, oConfig);
 						oConfig.i18n = oConfig.i18n ? _castArray(oConfig.i18n) : [];
-						oConfig.i18n.push(sDesigntimePrefix + "/i18n.properties");
+						oConfig.i18n.push(sI18nModule);
 						this._addSpecificConfig(oConfig);
 					}
 				}.bind(this));

@@ -355,7 +355,8 @@ sap.ui.define([
 					this.oCardEditor.getConfig(),
 					Object.assign({}, {
 						i18n: [
-							"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
+							"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties",
+							"sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
 						]
 					}),
 					"then default i18n package is provided"
@@ -365,13 +366,13 @@ sap.ui.define([
 
 		QUnit.test("when specific config is set and contains i18n file as string", function (assert) {
 			var oRequireStub = sandbox.stub(sap.ui, "require").callThrough();
-			var sEditorConfigPath = "sample.card/designtime/editor.config";
+			var sEditorConfigPath = "sample/card/designtime/editor.config";
 			oRequireStub.withArgs([sEditorConfigPath]).callsArgWith(1, {
 				i18n: "test_i18n.properties"
 			});
 
+			this.oCardEditor.setBaseUrl("/card");
 			this.oCardEditor.setJson({
-				"baseURL": "/card",
 				"sap.app": {
 					"id": "sample.card"
 				},
@@ -383,7 +384,7 @@ sap.ui.define([
 			return this.oCardEditor.ready().then(function () {
 				assert.strictEqual(
 					this.oCardEditor.getConfig().i18n.length,
-					3,
+					4,
 					"Then the card-specific i18n, designtime i18n and the default i18n are merged"
 				);
 
@@ -404,7 +405,8 @@ sap.ui.define([
 					Object.assign({}, {
 						i18n: [
 							"i18n_file",
-							"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
+							"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties",
+							"sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
 						]
 					}),
 					"then default i18n package and the specified package are added"
@@ -429,7 +431,7 @@ sap.ui.define([
 
 			// Fake a card-specifc editor config
 			var oRequireStub = sandbox.stub(sap.ui, "require").callThrough();
-			var sEditorConfigPath = "sample.card/designtime/editor.config";
+			var sEditorConfigPath = "sample/card/designtime/editor.config";
 			oRequireStub.withArgs([sEditorConfigPath]).callsFake(function (path, fnSuccess) {
 				oSetConfigPromise.then(function () {
 					fnSuccess({
@@ -456,9 +458,8 @@ sap.ui.define([
 				assert.strictEqual(oInitializationSpy.callCount, 1, "then the editor is only initialized once");
 				fnDone();
 			});
-
+			this.oCardEditor.setBaseUrl("/card");
 			this.oCardEditor.setJson({
-				"baseURL": "/card",
 				"sap.app": {
 					"id": "sample.card"
 				},
