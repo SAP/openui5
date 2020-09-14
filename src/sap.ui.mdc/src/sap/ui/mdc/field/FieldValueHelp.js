@@ -856,6 +856,11 @@ sap.ui.define([
 				this.fireDataRequested();
 			}
 
+			if (oBindingContext && !oBindingContext.getModel()) {
+				// BindingContext without model cannot bring any data and might be destroyed -> ignore as request is probably outdated
+				return null;
+			}
+
 			/*
 			 * If the description should be displayed inside a Field this description will be determined using this function.
 			 * If InParameters are used, they are needed to find the right description.
