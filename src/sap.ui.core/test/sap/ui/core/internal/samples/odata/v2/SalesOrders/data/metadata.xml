@@ -939,6 +939,12 @@
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
 						MaxLength="10" />
 				</FunctionImport>
+				<FunctionImport Name="SalesOrder_FixQuantities"
+					ReturnType="Collection(GWSAMPLE_BASIC.SalesOrderLineItem)"
+					EntitySet="SalesOrderLineItemSet" m:HttpMethod="GET">
+					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
+						MaxLength="10"/>
+				</FunctionImport>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>

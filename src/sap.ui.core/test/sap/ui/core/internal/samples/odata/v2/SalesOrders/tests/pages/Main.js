@@ -28,6 +28,7 @@ sap.ui.define([
 			order : "Order at least 2 EA of product 'HT-1000'",
 			success : "My success message",
 			updateSuccess : "Successfully updated the quantity",
+			updateSuccessAll : "Fixed quantity to 2 EA",
 			warning : "My warning message"
 		},
 		mNoteShort2Note = {

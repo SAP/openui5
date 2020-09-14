@@ -11,7 +11,7 @@
 		"CustomerID" : "0100000003",
 		"CustomerName" : "Talpa",
 		"CurrencyCode" : "EUR",
-		"GrossAmount" : "14789.32",
+		"GrossAmount" : "17664.36",
 		"NetAmount" : "12428.00",
 		"TaxAmount" : "2361.32",
 		"LifecycleStatus" : "P",
