@@ -1490,6 +1490,21 @@ sap.ui.require([
 		assert.ok(this.oAlignedFlowLayout.getLastItemDomRef() === null);
 	});
 
+	// BCP: 2070317759
+	QUnit.test("it should not raise an exception when the unobserveSizeChanges() method " +
+				"is invoked with null/undefined as an argument", function(assert) {
+
+		// act
+		try {
+			this.oAlignedFlowLayout.unobserveSizeChanges(null);
+			this.oAlignedFlowLayout.unobserveSizeChanges();
+		} catch (oException) {
+			assert.notOk(true);
+		}
+
+		assert.ok(true);
+	});
+
 	QUnit.module("suspend", {
 		beforeEach: function(assert) {
 
