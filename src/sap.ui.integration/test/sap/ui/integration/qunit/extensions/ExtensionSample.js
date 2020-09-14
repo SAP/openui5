@@ -1,12 +1,13 @@
 sap.ui.define(["sap/ui/integration/Extension", "sap/base/Log"], function (Extension, Log) {
 	"use strict";
 
-	var oExtension = new Extension({
+	var ExtensionSample = Extension.extend("sap.ui.integration.qunit.extensions.ExtensionSample");
 
-		action: function () {
+	ExtensionSample.prototype.init = function () {
+		this.attachAction(function () {
 			Log.error("Extension");
-		}
-	});
+		});
+	};
 
-	return oExtension;
+	return ExtensionSample;
 });

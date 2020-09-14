@@ -4,7 +4,7 @@
 		"id": "card.explorer.extension.customFormatters"
 	},
 	"sap.card": {
-		"extension": "./myExtension",
+		"extension": "./CustomFormattersExtension",
 		"configuration": {
 			"parameters": {
 				"suffix": {

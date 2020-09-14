@@ -1,10 +1,10 @@
 sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	"use strict";
 
-	var oExtension = new Extension();
+	var DataExtension = Extension.extend("card.explorer.extension.getData.DataExtension");
 
 	// should return a promise
-	oExtension.getData = function () {
+	DataExtension.prototype.getData = function () {
 		// Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
 		return Promise.all([
 			this.getAvailableTrainings(),
@@ -29,7 +29,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	};
 
 	// Returns static info for trainings. In real scenario this would be a request to a backend service.
-	oExtension.getAvailableTrainings = function () {
+	DataExtension.prototype.getAvailableTrainings = function () {
 		return new Promise(function (resolve, reject) {
 			setTimeout(function () {
 				resolve([
@@ -43,7 +43,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	};
 
 	// Gets the trainers names.
-	oExtension.getTrainers = function () {
+	DataExtension.prototype.getTrainers = function () {
 		var oCard = this.getCard(),
 			oParameters = oCard.getCombinedParameters();
 
@@ -63,7 +63,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	};
 
 	// Requests XML data, then serializes it to an Object
-	oExtension.getTrainingLocations = function () {
+	DataExtension.prototype.getTrainingLocations = function () {
 		return this.getCard().request({
 			"url": "samples/extension/gettingData/locations.xml",
 			"dataType": "xml"
@@ -76,5 +76,5 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		});
 	};
 
-	return oExtension;
+	return DataExtension;
 });

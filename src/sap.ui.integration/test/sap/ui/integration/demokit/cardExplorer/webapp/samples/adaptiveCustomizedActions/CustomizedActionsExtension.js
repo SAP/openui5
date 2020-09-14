@@ -2,11 +2,16 @@ sap.ui.define(["sap/ui/integration/Extension", 'sap/m/MessageToast'
 ], function (Extension, MessageToast) {
 	"use strict";
 
-	var oExtension = new Extension();
+	var CustomizedActionsExtension = Extension.extend("adativecard.embedded.CustomizedActionsExtension");
+
+	CustomizedActionsExtension.prototype.init = function () {
+		Extension.prototype.init.apply(this, arguments);
+		this.attachAction(this._handleAction.bind(this));
+	};
 
 	/* Custom event handler for the submit event.
 	Intercepts submit action, performs validation and data modifications. */
-	oExtension.attachAction(function (oEvent) {
+	CustomizedActionsExtension.prototype._handleAction = function (oEvent) {
 		var oCard = this.getCard(),
 			sActionType = oEvent.getParameter("type"),
 			mParams = oEvent.getParameter("parameters"),
@@ -40,7 +45,7 @@ sap.ui.define(["sap/ui/integration/Extension", 'sap/m/MessageToast'
 			at: "center center",
 			width: "25rem"
 		});
-	});
+	};
 
-	return oExtension;
+	return CustomizedActionsExtension;
 });

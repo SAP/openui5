@@ -20,7 +20,7 @@
 		}
 	},
 	"sap.card": {
-		"extension": "./myExtension",
+		"extension": "./DataExtension",
 		"type": "List",
 		"data": {
 			"extension": {

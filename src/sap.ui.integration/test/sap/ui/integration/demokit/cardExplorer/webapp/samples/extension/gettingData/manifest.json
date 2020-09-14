@@ -4,7 +4,7 @@
 		"id": "card.explorer.extension.getData"
 	},
 	"sap.card": {
-		"extension": "./myExtension",
+		"extension": "./DataExtension",
 		"configuration": {
 			"destinations": {
 				"NorthwindDestination": {

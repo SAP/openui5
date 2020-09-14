@@ -266,6 +266,15 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: false,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Defines the Extension of the card.
+				 */
+				_extension: {
+					type: "sap.ui.integration.Extension",
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
 			events: {
@@ -528,9 +537,7 @@ sap.ui.define([
 
 				return this._loadExtension();
 			}.bind(this))
-			.then(function () {
-				this._applyManifest();
-			}.bind(this))
+			.then(this._applyManifest.bind(this))
 			.catch(this._applyManifest.bind(this));
 	};
 
@@ -548,11 +555,18 @@ sap.ui.define([
 		var sFullExtensionPath = this._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + sExtensionPath;
 
 		return new Promise(function (resolve, reject) {
-			sap.ui.require([sFullExtensionPath], function (oExtension) {
-				this._oExtension = oExtension;
+			sap.ui.require([sFullExtensionPath], function (vExtension) {
+				if (typeof vExtension === "function") {
+					this._oExtension = new vExtension();
+					this.setAggregation("_extension", this._oExtension); // let the framework validate and take care of the instance
+				} else {
+					this._oExtension = vExtension;
+					Log.error("Expected module '" + sExtensionPath + "' to export a class, which extends sap.ui.integration.Extension, but it exports an Extension instance instead. "
+								+ "In the future this will not work." );
+				}
 
 				BindingHelper.addNamespace("extension", {
-					formatters: oExtension.getFormatters()
+					formatters: this._oExtension.getFormatters()
 				});
 				resolve();
 			}.bind(this), function (vErr) {
