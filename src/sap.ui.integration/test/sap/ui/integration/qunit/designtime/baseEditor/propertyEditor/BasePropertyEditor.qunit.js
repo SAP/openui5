@@ -472,6 +472,34 @@ function (
 			}.bind(this));
 		});
 
+		QUnit.test("when setFragment() is called twice in a row", function (assert) {
+			this.oCustomEditor = new BasePropertyEditor();
+
+			var oCreationStub = sandbox.stub(this.oCustomEditor, "_loadFragment").callThrough();
+
+			var oOriginalFragment;
+			oCreationStub.onFirstCall().callsFake(function () {
+				return this.oCustomEditor._loadFragment.wrappedMethod.apply(this, arguments)
+					.then(function (oFragment) {
+						oOriginalFragment = oFragment;
+						return oFragment;
+					});
+			}.bind(this));
+
+			this.oMockServer.setRequests([
+				this.createResponse("CustomEditor", this.sFragmentWithButton),
+				this.createResponse("AnotherFragment", this.sFragmentWithLabel)
+			]);
+			this.oMockServer.start();
+
+			this.oCustomEditor.setFragment("CustomEditor");
+			this.oCustomEditor.setFragment("AnotherFragment");
+
+			return this.oCustomEditor.ready().then(function () {
+				assert.strictEqual(oOriginalFragment.bIsDestroyed, true, "then the canceled fragment is cleaned up");
+			});
+		});
+
 		QUnit.test("when BasePropertyEditor is destroyed before fragment is loaded", function (assert) {
 			var fnDone = assert.async();
 			var oFragmentReadySpy = sandbox.spy();
