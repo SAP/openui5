@@ -1405,6 +1405,28 @@ function (
 		assert.strictEqual(this.sInsertPosition, "Before", "The insert position is 'Before'");
 	});
 
+	QUnit.test("Keyboard Drag&Drop: No errors when moving items out of bounds", function (assert) {
+		// Arrange
+		var oItem = this.oGrid.getItems()[0],
+			oItemDomRef = oItem.getDomRef().parentElement;
+
+		// Act - moving first item upwards
+		qutils.triggerKeydown(oItemDomRef, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
+
+		// Assert
+		assert.strictEqual(this.oGrid.getItems()[0].getId(), oItem.getId(), "Item hasn't moved");
+
+		// Arrange
+		oItem = this.oGrid.getItems()[3];
+		oItemDomRef = oItem.getDomRef().parentElement;
+
+		// Act - moving last item downwards
+		qutils.triggerKeydown(oItemDomRef, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
+
+		// Assert
+		assert.strictEqual(this.oGrid.getItems()[3].getId(), oItem.getId(), "Item hasn't moved");
+	});
+
 	QUnit.module("Keyboard Drag&Drop in RTL mode - suggested positions in different directions", {
 		beforeEach: function () {
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
