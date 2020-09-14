@@ -1146,6 +1146,14 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		});
 	});
 
+	QUnit.test("Currency format for locale HE", function (assert) {
+		var oLocale = new Locale("he_IL");
+		var oFormat = NumberFormat.getCurrencyInstance({ currencyCode: true }, oLocale);
+
+		assert.equal(oFormat.format(-123456.789, "EUR").toString(), "\u200f\u200e-123,456.79\xa0EUR\u200e");
+		assert.equal(oFormat.format(-123456.789, "JPY").toString(), "\u200f\u200e-123,457\xa0JPY\u200e");
+	});
+
 	QUnit.test("Currency format with different parameters undefined", function (assert) {
 		var oFormat = NumberFormat.getCurrencyInstance({
 			currencyCode: false,
