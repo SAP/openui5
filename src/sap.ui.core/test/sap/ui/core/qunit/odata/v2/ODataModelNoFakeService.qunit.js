@@ -2938,12 +2938,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[undefined, "~functionTarget"].forEach(function (sFunctionTarget, i) {
-	QUnit.test("_pushToRequestQueue: restore functionTarget; " + i, function (assert) {
+	// BCP: 2070289685
+[{
+	functionTarget : undefined,
+	method : "GET",
+	expectedRequest : {}
+}, {
+	functionTarget : "~functionTarget",
+	method : "GET",
+	expectedRequest : {
+		functionTarget : "~functionTarget",
+		requestUri : "~requestUri"
+	}
+}, {
+	functionTarget : undefined,
+	method : "POST",
+	expectedRequest : {
+		data : "~data",
+		headers : "~headers",
+		method : "POST"
+	}
+}, {
+	functionTarget : "~functionTarget",
+	method : "POST",
+	expectedRequest : {
+		data : "~data",
+		functionTarget : "~functionTarget",
+		headers : "~headers",
+		method : "POST",
+		requestUri : "~requestUri"
+	}
+}].forEach(function (oFixture, i) {
+	var sTitle = "_pushToRequestQueue: restore functionTarget and requestUri for function imports; "
+			+ i;
+
+	QUnit.test(sTitle, function (assert) {
 		var oModel = {},
 			oRequest = {
-				functionTarget : sFunctionTarget,
-				key : "~key"
+				data : "~data",
+				functionTarget : oFixture.functionTarget,
+				headers : "~headers",
+				key : "~key",
+				method : oFixture.method,
+				requestUri : "~requestUri"
 			},
 			mRequests = {
 				"~sGroupId" : {
@@ -2957,20 +2994,7 @@ sap.ui.define([
 		ODataModel.prototype._pushToRequestQueue.call(oModel, mRequests, "~sGroupId", undefined,
 			oRequest);
 
-		assert.deepEqual(mRequests["~sGroupId"].map["~key"].request, sFunctionTarget
-			? {
-				data : undefined,
-				functionTarget : "~functionTarget",
-				headers : undefined,
-				method : undefined,
-				requestUri : undefined
-			}
-			: {
-				data : undefined,
-				headers : undefined,
-				method : undefined,
-				requestUri : undefined
-			});
+		assert.deepEqual(mRequests["~sGroupId"].map["~key"].request, oFixture.expectedRequest);
 	});
 });
 
