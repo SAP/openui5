@@ -358,6 +358,9 @@ sap.ui.define([
 
 		aFilters = aFilters ? aFilters : [];
 
+		//Update value - necessary due to view switch
+		this._getSearchField().setValue(this._sSearchString);
+
 		if (!this.getPanelMode()) {
 			if (this.getGrouping()) {
 				this._oListControl.getItems().forEach(function(oOuterItem){
@@ -523,6 +526,12 @@ sap.ui.define([
 		oP13nCellTemplate.attachBrowserEvent("mouseleave", function(oEvt){
 			var bVisible = !!that.getP13nModel().getProperty(this.getBindingContextPath()).isFiltered;
 			var oIcon = this.getCells()[1].getItems()[0];
+			if (that._oSelectedItem) {
+				that._oSelectedItem.getCells()[1].removeItem(that._moveTopButton);
+				that._oSelectedItem.getCells()[1].removeItem(that._moveUpButton);
+				that._oSelectedItem.getCells()[1].removeItem(that._moveDownButton);
+				that._oSelectedItem.getCells()[1].removeItem(that._moveBottomButton);
+			}
 			oIcon.setVisible(bVisible);
 		});
 

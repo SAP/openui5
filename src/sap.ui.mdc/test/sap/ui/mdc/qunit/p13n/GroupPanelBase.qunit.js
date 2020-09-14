@@ -394,6 +394,22 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check view toggle + search Field", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        assert.equal(this.oPanel.getViewMode(), "Group", "Group view is the default");
+
+        this.oPanel._sSearchString = "Some test";
+
+        this.oPanel.switchViewMode("List");
+        assert.equal(this.oPanel._getSearchField().getValue(), "Some test", "Search value remains");
+
+        this.oPanel.switchViewMode("Group");
+        assert.equal(this.oPanel._getSearchField().getValue(), "Some test", "Search value remains");
+
+    });
+
     QUnit.test("Throw an error for invalid view types", function (assert) {
         assert.throws(
             function () {

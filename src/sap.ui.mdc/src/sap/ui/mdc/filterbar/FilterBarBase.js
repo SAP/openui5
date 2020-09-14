@@ -243,7 +243,7 @@ sap.ui.define([
 		this._bSearchTriggered = false;
 
 		this.setProperty("adaptationConfig", {
-			liveMode: true,
+			liveMode: false,
 			retrievePropertyInfo: this._getNonHiddenPropertyInfoSet,
 			//TODO: itemConfig can be deleted once the url param sap-ui-xx-complexP13n has been removed
 			itemConfig: {
@@ -251,10 +251,6 @@ sap.ui.define([
 					add: "addFilter",
 					remove: "removeFilter",
 					move: "moveFilter"
-				},
-				adaptationUI: "sap/ui/mdc/p13n/panels/AdaptFiltersPanel",
-				containerSettings: {
-					title: this._oRb.getText("filterbar.ADAPT_TITLE")
 				}
 			},
 			filterConfig: {
