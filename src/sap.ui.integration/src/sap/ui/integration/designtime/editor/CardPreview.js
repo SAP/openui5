@@ -16,7 +16,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new <code>Preview</code> that show a imgage, abstract live preview
+	 * Constructor for a new <code>Preview</code> that show a image, abstract live preview
 	 *
 	 * @class
 	 * @extends sap.ui.core.Control
@@ -240,7 +240,7 @@ sap.ui.define([
 		var mSettings = this.getSettings();
 		//default setting - live preview
 		mSettings.preview = mSettings.preview || {};
-		mSettings.preview.modes = mSettings.preview.modes || "AbstractLive";
+		mSettings.preview.modes = mSettings.preview.modes || "Abstract";
 		return mSettings.preview.modes;
 	};
 

@@ -86,6 +86,9 @@
 				},
 				"stringWithStaticList": {
 					"value": "key1"
+				},
+				"stringWithRequestList": {
+					"value": "key1"
 				}
 			},
 			"destinations": {
