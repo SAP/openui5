@@ -178,7 +178,7 @@ sap.ui.define([
 		var fnDone = assert.async();
 		var initWaitersCount = _autoWaiter.getWaiters().length;
 
-		return _autoWaiter.registerWaiter("moduleWaiter", "fixture.ModuleWaiter").then(function (oNewWaiter) {
+		return _autoWaiter.registerWaiter("moduleNameWaiter", "fixture.ModuleWaiter").then(function (oNewWaiter) {
 			var newWaiters = _autoWaiter.getWaiters();
 			assert.strictEqual(newWaiters.length, initWaitersCount + 1);
 			assert.strictEqual(newWaiters[newWaiters.length - 1].waiter, oNewWaiter, "New waiter is loaded");
