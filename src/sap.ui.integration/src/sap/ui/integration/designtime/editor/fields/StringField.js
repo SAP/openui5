@@ -4,9 +4,12 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/editor/fields/BaseField",
 	"sap/m/Input",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/m/Select",
+	"sap/m/ComboBox",
+	"sap/ui/core/ListItem"
 ], function (
-	BaseField, Input, Text
+	BaseField, Input, Text, Select, ComboBox, ListItem
 ) {
 	"use strict";
 
@@ -29,16 +32,35 @@ sap.ui.define([
 		var oVisualization = oConfig.visualization;
 		if (!oVisualization) {
 			if (oConfig.editable) {
-				oVisualization = {
-					type: Input,
-					settings: {
-						value: {
-							path: 'currentSettings>value'
-						},
-						editable: oConfig.editable,
-						placeholder: oConfig.placeholder
-					}
-				};
+				if (oConfig.values) {
+					var oItem = new ListItem(oConfig.values.item);
+					oVisualization = {
+						type: Select,
+						settings: {
+							selectedKey: {
+								path: 'currentSettings>value'
+							},
+							editable: oConfig.editable,
+							showSecondaryValues: true,
+							width: "100%",
+							items: {
+								path: "", //empty, because the bindingContext for the undefined model already points to the path
+								template: oItem
+							}
+						}
+					};
+				} else {
+					oVisualization = {
+						type: Input,
+						settings: {
+							value: {
+								path: 'currentSettings>value'
+							},
+							editable: oConfig.editable,
+							placeholder: oConfig.placeholder
+						}
+					};
+				}
 			} else {
 				oVisualization = {
 					type: Text,

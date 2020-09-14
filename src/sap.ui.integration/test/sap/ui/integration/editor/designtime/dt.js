@@ -138,18 +138,36 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"type": "string",
 						"values": {
 							"data": {  //this is the same handling as for a card DataProviderFactory
-								"json": {
-									"values": [
-										{ "text": "text1", "key": "key1" },
-										{ "text": "text2", "key": "key2" },
-										{ "text": "text3", "key": "key3" }
-									]
-								},
-								"path": "/values"
+								"json": [
+									{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+									{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+									{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
+								],
+								"path": "/"
 							},
 							"item": { //this is the same handling as for a card item, how to reuse this part regarding formatters?
 								"text": "{text}",
-								"key": "{key}"
+								"key": "{key}",
+								"additionalText": "{additionalText}",
+								"icon": "{icon}"
+							}
+						}
+					},
+					"stringWithRequestList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestList/value",
+						"type": "string",
+						"values": {
+							"data": {  //this is the same handling as for a card DataProviderFactory
+								"request": {
+									"url": "./stringWithRequestList.json"
+								},
+								"path": "/"
+							},
+							"item": { //this is the same handling as for a card item, how to reuse this part regarding formatters?
+								"text": "{text}",
+								"key": "{key}",
+								"additionalText": "{additionalText}",
+								"icon": "{icon}"
 							}
 						}
 					}

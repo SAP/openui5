@@ -348,15 +348,22 @@ sap.ui.define([
 					//already created
 					return;
 				}
+
 				this._appliedLayerManifestChanges = vCardIdOrSettings.manifestChanges;
 				var oManifestData = this._oEditorCard.getManifestEntry("/");
-				this._manifestModel = new JSONModel(oManifestData);
+
 				if (iCurrentModeIndex < CardMerger.layers["translation"] && this._currentLayerManifestChanges) {
 					//merge if not translation
-					CardMerger.mergeCardDelta(oManifestData, [this._currentLayerManifestChanges]);
+					oManifestData = CardMerger.mergeCardDelta(oManifestData, [this._currentLayerManifestChanges]);
 				}
+				//create a manifest model after the changes are merged
+				this._manifestModel = new JSONModel(oManifestData);
+
+				//create a manifest model for the original "raw" manifest that was initially loaded
 				this._originalManifestModel = new JSONModel(this._getOriginalManifestJson());
+
 				this._initInternal();
+
 				//use the translations from the card
 				if (!this._oEditorCard.getModel("i18n")) {
 					this._oEditorCard._loadDefaultTranslations();
@@ -631,8 +638,34 @@ sap.ui.define([
 			oConfig._changed = true;
 		});
 
+		this._addValueListModel(oConfig, oField);
+
 		oField._cols = oConfig.cols || 2; //by default 2 cols
 		return oField;
+	};
+
+	/**
+	 * Creates a unnamed model if a values.data section exists in the configuration
+	 * @param {object} oConfig
+	 * @param {BaseField} oField
+	 */
+	CardEditor.prototype._addValueListModel = function (oConfig, oField) {
+		if (oConfig.values && oConfig.values.data) {
+			var oValueModel = new JSONModel({});
+			var oPromise = this._oEditorCard._oDataProviderFactory.create(oConfig.values.data).getData();
+			oPromise.then(function (oJson) {
+				oConfig._values = oJson;
+				oValueModel.setData(oConfig._values);
+				oValueModel.checkUpdate();
+			});
+			//in the designtime the item bindings will not use a named model, therefore we add a unnamed model for the field
+			//to carry the values, also we use the binding context to connect the given path from oConfig.values.data.path
+			//with that the result of the data request can be have also other structures.
+			oField.setModel(oValueModel, undefined);
+			oField.bindObject({
+				path: oConfig.values.data.path || "/"
+			});
+		}
 	};
 
 	/**
