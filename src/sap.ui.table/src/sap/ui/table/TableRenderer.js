@@ -120,6 +120,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		this.renderTabElement(rm, "sapUiTableOuterBefore");
 
+		rm.openStart("div", oTable.getId() + "-before");
+		rm.openEnd();
+
 		rm.renderControl(oTable.getAggregation("_messageStrip"));
 
 		if (oTable.getTitle()) {
@@ -133,6 +136,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (oTable.getExtension() && oTable.getExtension().length > 0) {
 			this.renderExtensions(rm, oTable, oTable.getExtension());
 		}
+
+		rm.close("div");
 
 		rm.openStart("div", oTable.getId() + "-sapUiTableCnt");
 		rm.class("sapUiTableCnt");
@@ -153,12 +158,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.close("div");
 
 		var oCreationRow = oTable.getCreationRow();
+
 		if (oCreationRow) {
+			rm.openStart("div", oTable.getId() + "-gridExtension");
+			rm.openEnd();
+
 			rm.renderControl(oCreationRow);
 
 			// If the table has a creation row, the horizontal scrollbar needs to be rendered outside the element covered by the busy indicator.
 			this.renderHSbBackground(rm, oTable);
 			this.renderHSb(rm, oTable);
+
+			rm.close("div");
 		}
 
 		oTable._getAccRenderExtension().writeHiddenAccTexts(rm, oTable);
@@ -172,6 +183,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.close("div");
 
+		rm.openStart("div", oTable.getId() + "-after");
+		rm.openEnd();
+
 		if (oTable.getFooter()) {
 			this.renderFooter(rm, oTable, oTable.getFooter());
 		}
@@ -183,6 +197,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		// TODO: Move to "renderTableChildAtBottom" hook in row modes
 		this.renderBottomPlaceholder(rm, oTable);
+
+		rm.close("div");
 
 		//oTable._getRowMode().renderTableChildAtBottom(rm);
 		this.renderTabElement(rm, "sapUiTableOuterAfter");

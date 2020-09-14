@@ -919,16 +919,20 @@ sap.ui.define([
 		},
 
 		/**
-		 * Registers a ResizeHandler for a DOM reference identified by its ID suffix. The ResizeHandler ID is tracked
-		 * in _mResizeHandlerIds of the table instance. The sIdSuffix is used as key.
-		 * Existing ResizeHandlers will be de-registered before the new one is registered.
+		 * Registers a resize handler for a DOM element identified by its ID suffix. If a resize handler with this ID already exists, it is
+		 * deregistered before registering the new one.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {string} sHandlerId, ID of the handler. Required to deregister the handler.
-		 * @param {Function} fnHandler Function to handle the resize event.
-		 * @param {string} [sDOMIdSuffix=""] ID suffix to identify the DOM element for which to register the ResizeHandler.
-		 * @param {boolean} [bRegisterParent=false] Flag to register the ResizeHandler for the parent DOM element of the one identified by sIdSuffix.
-		 * @returns {int | undefined} ResizeHandler ID or undefined if the DOM element could not be found.
+		 * @param {sap.ui.table.Table} oTable
+		 *     Instance of the table.
+		 * @param {string} sHandlerId
+		 *     ID of the resize handler. Required to deregister the resize handler.
+		 * @param {Function} fnHandler
+		 *     Function to handle the resize event.
+		 * @param {string} [sDOMIdSuffix=""]
+		 *     ID suffix to identify the DOM element for which to register the resize handler.
+		 * @param {boolean} [bRegisterParent=false]
+		 *     Whether to register the resize handler for the parent DOM element of the one identified by <code>sDOMIdSuffix</code>.
+		 * @returns {int | undefined} Resize handler ID, or <code>undefined</code> if the DOM element could not be found.
 		 */
 		registerResizeHandler: function(oTable, sHandlerId, fnHandler, sDOMIdSuffix, bRegisterParent) {
 			sDOMIdSuffix = sDOMIdSuffix == null ? "" : sDOMIdSuffix;
@@ -958,11 +962,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * De-register ResizeHandler identified by sIdSuffix. If sIdSuffix is undefined, all know ResizeHandlers will be de-registered.
+		 * Deregister resize handlers. If no resize handler id is given, all known resize handlers are deregistered.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {string | Array.<string> | undefined} [vHandlerId] ID to identify the ResizeHandler to de-register. If undefined, all will be
-		 * de-registered.
+		 * @param {sap.ui.table.Table} oTable
+		 *     Instance of the table.
+		 * @param {string | Array.<string> | undefined} [vHandlerId]
+		 *     ID of the resize handler to deregister. If not specified, all resize handlers are deregistered.
 		 */
 		deregisterResizeHandler: function(oTable, vHandlerId) {
 			var aHandlerIds = [];
@@ -975,7 +980,7 @@ sap.ui.define([
 			if (typeof vHandlerId === "string") {
 				aHandlerIds.push(vHandlerId);
 			} else if (vHandlerId === undefined) {
-				// de-register all resize handlers if no specific is named
+				// deregister all resize handlers if no specific is named
 				for (var sKey in oTable._mResizeHandlerIds) {
 					if (typeof sKey == "string" && oTable._mResizeHandlerIds.hasOwnProperty(sKey)) {
 						aHandlerIds.push(sKey);
