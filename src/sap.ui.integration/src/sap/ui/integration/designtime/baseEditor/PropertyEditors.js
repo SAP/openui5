@@ -543,7 +543,7 @@ sap.ui.define([
 			};
 		}
 
-		var mDefaultConfig = mLayouts[this.getLayout()].defaultConfig;
+		var mDefaultConfig = mLayouts[this.getLayout()] && mLayouts[this.getLayout()].defaultConfig || {};
 
 		// Prioritization (bottom wins):
 		// - default config
