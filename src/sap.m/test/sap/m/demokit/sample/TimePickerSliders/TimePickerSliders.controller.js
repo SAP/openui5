@@ -37,6 +37,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/Fragment'],
 					oTP = Fragment.byId("fragment", "TPS2");
 
 				this._oDialog.close();
+				oTP.collapseAll();
 
 				oText.setText("TimePickerSliders " + oTP.getId() + ": " + oTP.getValue());
 			},
