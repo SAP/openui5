@@ -2450,6 +2450,35 @@ sap.ui.define([
 		//[new Sorter("HierarchyNode", true)]
 	});
 
+	QUnit.test("Reset followed by Request - Should fire a single pair of data* events", function(assert){
+		var done = assert.async();
+		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+			rootLevel: 1,
+			numberOfExpandedLevels: 0
+		});
+		var fireDataRequestedSpy = sinon.spy(oBinding, "fireDataRequested");
+		var fireDataReceivedSpy = sinon.spy(oBinding, "fireDataReceived");
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+			var aContexts = oBinding.getContexts(0, 9);
+			assert.equal(aContexts.length, 1, "Correct context is loaded");
+
+			window.setTimeout(function() {
+				// Timeout to ensure all eventual data* events have been fired
+				//	(there must be no more than one)
+				assert.equal(fireDataRequestedSpy.callCount, 1, "fireDataRequested fired once");
+				assert.equal(fireDataReceivedSpy.callCount, 1, "fireDataReceivedSpy fired once");
+				done();
+			}, 100);
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 9);
+		oBinding.resetData();
+		oBinding.getContexts(0, 9);
+	});
+
 	// Test if MockServer supports filtering on properties of type Edm.Guid!
 	// Was broken previously.
 	QUnit.module("ODataTreeBinding with annotations - Edm Type support", {
