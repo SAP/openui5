@@ -101,15 +101,12 @@ sap.ui.define([
 
 			// get all relevant events which should be forwarded to the _oRouterHashChanger
 			this.getRelevantEventsInfo().forEach(function(oEventInfo) {
-				// ignore event that is marked with "updateHashOnly" because those events are only relevant for History.js
-				if (!oEventInfo.updateHashOnly) {
-					var sEventName = oEventInfo.name,
-						fnListener = this._onHashChangedForRouterHashChanger.bind(this, oEventInfo);
+				var sEventName = oEventInfo.name,
+					fnListener = this._onHashChangedForRouterHashChanger.bind(this, oEventInfo);
 
-					this._mEventListeners[sEventName] = fnListener;
+				this._mEventListeners[sEventName] = fnListener;
 
-					this.attachEvent(sEventName, fnListener, this);
-				}
+				this.attachEvent(sEventName, fnListener, this);
 			}.bind(this));
 		}
 	};
@@ -133,7 +130,7 @@ sap.ui.define([
 				sNewHash = oEvent.getParameter(sParamName) || "",
 				oParsedHash = this._parseHash(sNewHash);
 
-			this._oRouterHashChanger.fireHashChanged(oParsedHash.hash, oParsedHash.subHashMap);
+			this._oRouterHashChanger.fireHashChanged(oParsedHash.hash, oParsedHash.subHashMap, !!oEventInfo.updateHashOnly);
 		}
 	};
 

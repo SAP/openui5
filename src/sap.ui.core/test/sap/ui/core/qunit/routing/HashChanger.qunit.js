@@ -610,7 +610,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should attach event listener to every event which is returned from getRelevantEventsInfo except the ones that are marked with 'updateHashOnly'", function(assert) {
+	QUnit.test("Should attach event listener to every event which is returned from getRelevantEventsInfo", function(assert) {
 		var aEventsInfo = this.oHashChanger.getRelevantEventsInfo();
 
 		aEventsInfo.forEach(function(oEventInfo) {
@@ -621,7 +621,7 @@ sap.ui.define([
 		this.oHashChanger.createRouterHashChanger();
 
 		aEventsInfo.forEach(function(oEventInfo) {
-			assert.equal(!oEventInfo.updateHashOnly, this.oHashChanger.hasListeners(oEventInfo.name), "There's " + (oEventInfo.updateHashOnly ? "no" : "") + " listener attached to the event " + oEventInfo.name);
+			assert.ok(this.oHashChanger.hasListeners(oEventInfo.name), "There's listener attached to the event " + oEventInfo.name);
 		}.bind(this));
 	});
 
@@ -651,7 +651,6 @@ sap.ui.define([
 	QUnit.test("Should respect the 'updateHashOnly' option", function(assert) {
 		// Act
 		var oRouterHashChanger = this.oHashChanger.createRouterHashChanger(),
-			sHash = oRouterHashChanger.getHash(),
 			oHashChangedSpy = sinon.spy();
 
 		oRouterHashChanger.attachEvent("hashChanged", oHashChangedSpy);
@@ -661,7 +660,7 @@ sap.ui.define([
 		});
 
 		assert.equal(oHashChangedSpy.callCount, 0, "The hashChanged event isn't fired on the RouterHashChanger");
-		assert.equal(oRouterHashChanger.getHash(), sHash, "The new hash isn't saved in the RouterHashChanger");
+		assert.equal(oRouterHashChanger.getHash(), "updateHashOnly", "The new hash is saved in the RouterHashChanger");
 	});
 
 	QUnit.module("Integration: RouterHashChanger and HashChanger", {
