@@ -1409,5 +1409,58 @@
         ]
       }
     ]
+  },
+  "1.60.30": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "22e26afc85fd5403de702737344272a2698ba9bf",
+        "type": "FIX",
+        "text": " core/Element: preventScrolling Test failed in Firefox 79",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080359779"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070306400"
+          }
+        ]
+      },
+      {
+        "id": "fbe59f7ab3f02d3a975d0d3bda1eba34e7a5f456",
+        "type": "FIX",
+        "text": " format/NumberFormat: consider control characters in minus sign",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005462222020"
+          }
+        ]
+      },
+      {
+        "id": "d86b5e20623f79b3ec3d1c5f9a46574ac2ed53c3",
+        "type": "FIX",
+        "text": " handlebars: usage of latest version 4.7.6",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "9435666cf5535edf0e7792b5c27d878e78658b8a",
+        "type": "FIX",
+        "text": " sap/ui/base/syncXHRFix: Properly handle failing sync XHR",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002823642020"
+          }
+        ]
+      }
+    ]
   }
 }

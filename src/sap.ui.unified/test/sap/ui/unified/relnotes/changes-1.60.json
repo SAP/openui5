@@ -60,7 +60,7 @@
       {
         "id": "3a20f688956e350dfd83b74a00856d724a8842ab",
         "type": "FIX",
-        "text": "sap.ui.unified.ColorPicker: Now the dialog\u0027s style is not broken",
+        "text": "sap.ui.unified.ColorPicker: Now the dialog's style is not broken",
         "references": [
           {
             "type": "BCP",
@@ -311,6 +311,33 @@
           {
             "type": "BCP",
             "reference": "002075129400007710282019"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.30": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "eaa026e6acad43bd45ee404ed4dd4326f20ded51",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Fix the unit tests for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070297084"
+          }
+        ]
+      },
+      {
+        "id": "ac143a4658dfc712a90a02c0e97db4d908d4cb93",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: IE adds content-type only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003497602020"
           }
         ]
       }
