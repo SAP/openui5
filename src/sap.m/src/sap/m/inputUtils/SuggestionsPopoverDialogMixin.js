@@ -18,6 +18,9 @@ sap.ui.define([
 ], function (library, Core, IconPool, Dialog, Button, Bar, Title, Toolbar, ToggleButton) {
 	"use strict";
 
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = library.TitleAlignment;
+
 	return function () {
 		/**
 		 * Returns a reference to the title inside the dialog.
@@ -131,7 +134,9 @@ sap.ui.define([
 					text: oMessageBundle.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON")
 				}),
 				stretch: true,
+				titleAlignment: TitleAlignment.Auto,
 				customHeader: new Bar(oInput.getId() + "-popup-header", {
+					titleAlignment: TitleAlignment.Auto,
 					contentMiddle: new Title(),
 					contentRight: new Button({
 						icon: IconPool.getIconURI("decline")
