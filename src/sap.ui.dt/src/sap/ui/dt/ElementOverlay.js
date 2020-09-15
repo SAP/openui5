@@ -215,10 +215,8 @@ function (
 		if (this._sObservableNodeId) {
 			oMutationObserver.registerHandler(this._sObservableNodeId, this._domChangedCallback.bind(this), bIsRoot);
 		} else if (bIsRoot) {
-			throw Util.createError(
-				'ElementOverlay#_subscribeToMutationObserver',
-				'Please provide a root control with proper domRef and id to ensure that DesignTime is working properly'
-			);
+			//Needs to be a logged error, otherwise the LayoutEditor isn't working anymore.
+			Log.error('sap.ui.dt.ElementOverlay#_subscribeToMutationObserver: please provide a root control with proper domRef and id to ensure that RTA is working properly');
 		}
 	};
 
