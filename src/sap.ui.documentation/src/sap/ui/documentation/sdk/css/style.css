@@ -1377,6 +1377,10 @@ html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a
 	height: 25rem;
 }
 
+.sapUiDemokit .toolspageCardInfo {
+	display: block;
+}
+
 @media (min-width: 1440px) {
 	.sapUiDemokit .toolpageResponsiveMargins {
 		margin: 1rem 2rem 0 2rem;
