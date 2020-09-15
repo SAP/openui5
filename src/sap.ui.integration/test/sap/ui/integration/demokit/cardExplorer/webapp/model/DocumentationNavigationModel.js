@@ -145,6 +145,12 @@ sap.ui.define([
 						experimental: true
 					},
 					{
+						title: 'Sizing',
+						target: 'learnDetail',
+						key: 'sizing',
+						topicTitle: 'Sizing'
+					},
+					{
 						title: 'Translation',
 						target: 'learnDetail',
 						key: 'translation'

@@ -25,6 +25,12 @@ sap.ui.define([
 				key: 'api'
 			},
 			{
+				title: 'Layouts',
+				icon: 'sap-icon://SAP-icons-TNT/auto-layout',
+				target: 'integrate',
+				key: 'layouts'
+			},
+			{
 				title: 'Destinations',
 				icon: 'sap-icon://connected',
 				target: 'integrate',
