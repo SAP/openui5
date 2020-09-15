@@ -1524,22 +1524,6 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.test("Dialog should have aria-roledescription", function (assert) {
-		// arrange
-		var oDialog = new Dialog(),
-			sExpectedAriaRoleDescription = Core
-				.getLibraryResourceBundle("sap.m")
-				.getText("DIALOG_ROLE_DESCRIPTION");
-		// act
-		oDialog.open();
-
-		// assert
-		assert.strictEqual(oDialog.$().attr("aria-roledescription"), sExpectedAriaRoleDescription,  "aria-roledescription value is as expected");
-
-		// clean
-		oDialog.destroy();
-	});
-
 	QUnit.module("Dragging");
 
 	QUnit.test("Check if dialog size remain unchanged after dragging it", function(assert) {
