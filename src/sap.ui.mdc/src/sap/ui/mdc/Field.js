@@ -171,7 +171,7 @@ sap.ui.define([
 
 		var oBinding = this.getBinding("value");
 		if (oBinding) {
-			var oBindingContext = oBinding.getContext();
+			var oBindingContext = oBinding.isA("sap.ui.model.CompositeBinding") ? null : oBinding.getContext();
 
 			if (Context.hasChanged(this._oBindingContext, oBindingContext)) {
 				// BindingContextChanged -> if parsing error trigger update to remove valueState and wrong input
