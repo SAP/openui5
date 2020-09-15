@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Fiori",
 	"sap/ui/rta/toolbar/Standalone",
 	"sap/ui/rta/toolbar/Personalization",
+	"sap/ui/rta/toolbar/FioriLike",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/Overlay",
 	"sap/ui/rta/command/Stack",
@@ -69,6 +70,7 @@ function(
 	FioriToolbar,
 	StandaloneToolbar,
 	PersonalizationToolbar,
+	FioriLikeToolbar,
 	DesignTime,
 	Overlay,
 	CommandStack,
@@ -478,7 +480,7 @@ function(
 		var oOpenedPopup = oEvent.getParameters().getSource();
 		if (
 			oOpenedPopup.isA("sap.m.Dialog")
-			&& this.getToolbar().isA("sap.ui.rta.toolbar.Fiori")
+			&& this.getToolbar().type === "fiori"
 		) {
 			this.getToolbar().setColor("contrast");
 		}
@@ -1097,25 +1099,27 @@ function(
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
 		if (!this.getDependent('toolbar')) {
-			var fnConstructor;
+			var ToolbarConstructor;
 
 			if (this.getLayer() === Layer.USER) {
-				fnConstructor = PersonalizationToolbar;
+				ToolbarConstructor = PersonalizationToolbar;
+			} else if (Utils.isOriginalFioriToolbarAccessible()) {
+				ToolbarConstructor = FioriToolbar;
 			} else if (Utils.getFiori2Renderer()) {
-				fnConstructor = FioriToolbar;
+				ToolbarConstructor = FioriLikeToolbar;
 			} else {
-				fnConstructor = StandaloneToolbar;
+				ToolbarConstructor = StandaloneToolbar;
 			}
 			var oToolbar;
 			if (this.getLayer() === Layer.USER) {
-				oToolbar = new fnConstructor({
+				oToolbar = new ToolbarConstructor({
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, true),
 					restore: this._onRestore.bind(this)
 				});
 			} else {
-				oToolbar = new fnConstructor({
+				oToolbar = new ToolbarConstructor({
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, false),
@@ -1360,7 +1364,7 @@ function(
 	 * the restoring to the default app state
 	 *
 	 * @private
-	 * @returns {Promise}
+	 * @returns {Promise} Resolves when Message Box is closed.
 	 */
 	RuntimeAuthoring.prototype._onRestore = function() {
 		var sLayer = this.getLayer();

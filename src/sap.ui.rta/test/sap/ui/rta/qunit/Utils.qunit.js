@@ -11,6 +11,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/fieldExt/Access",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/m/Label",
 	"sap/m/Button",
 	"sap/uxap/ObjectPageSection",
@@ -32,6 +33,7 @@ function(
 	RtaQunitUtils,
 	Access,
 	Layer,
+	FlexUtils,
 	Label,
 	Button,
 	ObjectPageSection,
@@ -648,6 +650,73 @@ function(
 				assert.ok(false, "should not go here");
 			});
 			assert.equal(vResult, undefined, "the function returns undefined");
+		});
+	});
+
+	QUnit.module("Given stubbed fiori renderer available", {
+		beforeEach: function () {
+			this.oRenderer = {
+				getRootControl: function() {
+					return {
+						getOUnifiedShell: function() {
+							return {
+								getHeader: function() {
+									return { id: "mockedRenderer" };
+								}
+							};
+						}
+					};
+				}
+			};
+			sandbox.stub(FlexUtils, "getUshellContainer").returns({
+				getRenderer: function () {
+					return this.oRenderer;
+				}.bind(this)
+			});
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when 'getFiori2Renderer' is called", function(assert) {
+			assert.deepEqual(Utils.getFiori2Renderer(), this.oRenderer, "then the renderer is returned");
+		});
+		QUnit.test("when 'isOriginalFioriToolbarAccessible' is called", function(assert) {
+			assert.ok(Utils.isOriginalFioriToolbarAccessible(), "then the function returns 'true'");
+		});
+	});
+
+	QUnit.module("Given stubbed but invalid fiori renderer available", {
+		beforeEach: function () {
+			this.oRenderer = { id: "mockedInvalidRenderer" };
+			sandbox.stub(FlexUtils, "getUshellContainer").returns({
+				getRenderer: function () {
+					return this.oRenderer;
+				}.bind(this)
+			});
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when 'getFiori2Renderer' is called", function(assert) {
+			assert.deepEqual(Utils.getFiori2Renderer(), this.oRenderer, "then invalid renderer is returned");
+		});
+		QUnit.test("when 'isOriginalFioriToolbarAccessible' is called", function(assert) {
+			assert.notOk(Utils.isOriginalFioriToolbarAccessible(), "then the function returns 'false'");
+		});
+	});
+
+	QUnit.module("Given fiori renderer is not available", {
+		beforeEach: function () {
+			sandbox.stub(FlexUtils, "getUshellContainer").returns({ id: "mockedContainer" });
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when 'getFiori2Renderer' is called", function(assert) {
+			assert.strictEqual(Utils.getFiori2Renderer(), undefined, "then 'undefined' is returned");
 		});
 	});
 

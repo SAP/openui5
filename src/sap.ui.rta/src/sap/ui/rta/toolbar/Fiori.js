@@ -54,7 +54,6 @@ function(
 
 	Fiori.prototype.show = function () {
 		this._oFioriHeader.addStyleClass(FIORI_HIDDEN_CLASS);
-
 		return Adaptation.prototype.show.apply(this, arguments);
 	};
 
