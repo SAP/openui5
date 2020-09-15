@@ -582,49 +582,29 @@ sap.ui.define([
 			//After collecting all additional measure names for coloring we need to add them
 			addAdditionalColoringMeasures();
 
-			// We have to wait until all flex changes have been applied to the mdc.Chart
-			var oWaitForChangesPromise = new Promise(function(resolve, reject) {
 
-				sap.ui.require([
-					"sap/ui/fl/apply/api/FlexRuntimeInfoAPI"
-				], function(FlexRuntimeInfoAPI) {
+			//attach dataPointsSelected event to inner charts selection/deselection events
+			var fireDataPointsSelectedEvent = function(oEvent){
+				this.fireDataPointsSelected({
+					dataContext: oEvent.getParameters()
+				});
+			};
 
-					// If the condition, that a control is assigned to a AppComponent is not fulfilled, we can go ahead
-					if (!FlexRuntimeInfoAPI.isFlexSupported({ element: this })) {
-						resolve();
-						return;
-					}
-
-					// Otherwise we wait until the changes are applied
-					FlexRuntimeInfoAPI.waitForChanges({ element: this }).then(function () {
-						resolve();
-					});
-				}.bind(this));
-
-			}.bind(this));
-
-			var aPromises = aVizItems.concat(oWaitForChangesPromise);
-			return Promise.all(aPromises).then(function() {
+			return Promise.all(aVizItems).then(function() {
 				var oChart = new ChartClass(mInitialChartSettings);
+
 				//initial setup
 				oChart.setVisibleDimensions([]);
 				oChart.setVisibleMeasures([]);
 				oChart.setInResultDimensions([]);
 
-                //attach dataPointsSelected event to inner charts selection/deselection events
-                var fireDataPointsSelectedEvent = function(oEvent){
-                    this.fireDataPointsSelected({
-                        dataContext: oEvent.getParameters()
-                    });
-                };
+				oChart.attachSelectData(function(oEvent){
+					fireDataPointsSelectedEvent.call(this, oEvent);
+				}.bind(this));
 
-                oChart.attachSelectData(function(oEvent){
-                    fireDataPointsSelectedEvent.call(this, oEvent);
-                }.bind(this));
-
-                oChart.attachDeselectData(function(oEvent){
-                    fireDataPointsSelectedEvent.call(this, oEvent);
-                }.bind(this));
+				oChart.attachDeselectData(function(oEvent){
+					fireDataPointsSelectedEvent.call(this, oEvent);
+				}.bind(this));
 
 				this._oObserver.observe(oChart, {
 					bindings: [

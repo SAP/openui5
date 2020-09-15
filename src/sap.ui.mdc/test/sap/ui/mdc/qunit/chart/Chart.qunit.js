@@ -89,7 +89,7 @@ function(
 		var done = assert.async();
 		assert.ok(this.oChart, "The chart is created");
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			assert.ok(oChart, "After loading the chart library there is an inner chart");
 			assert.ok(this.getAggregation("_toolbar"), "The chart has a toolbar");
@@ -101,7 +101,7 @@ function(
 		var done = assert.async();
 
 		this.oChart.setChartType("bullet");
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			assert.ok(oChart, "After loading the chart library there is an inner chart");
 			var sChartType = oChart.getChartType();
@@ -121,7 +121,7 @@ function(
 			"Item", "Sort", "Type"
 		]);
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var aToolbarButtons = this.oChart.getAggregation("_toolbar").getEnd();
 			assert.equal(aToolbarButtons[aToolbarButtons.length - 1].getIcon(), "sap-icon://vertical-bar-chart", "correct button has been added to the chart toolbar");
 			assert.equal(aToolbarButtons[aToolbarButtons.length - 2].getIcon(), "sap-icon://sort", "correct button has been added to the chart toolbar");
@@ -135,7 +135,7 @@ function(
 		var done = assert.async();
 
 		this.oChart.setHeight("1300px");
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			assert.ok(oChart, "After loading the chart library there is an inner chart");
 			var iHeight = oChart.getHeight();
@@ -153,7 +153,7 @@ function(
 		// act
 		this.oChart.setSelectionMode("SINGLE");
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			assert.ok(oChart, "After loading the chart library there is an inner chart");
 			var sSelectionMode = oChart.getSelectionMode();
@@ -168,7 +168,7 @@ function(
 	QUnit.test("Set a custom NoData text", function(assert) {
 		var done = assert.async();
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			var sNoData = "This is a test of custom NoData texts";
 			this.setNoDataText(sNoData);
@@ -182,7 +182,7 @@ function(
 	QUnit.test("Test NoData text handling", function(assert) {
 		var done = assert.async();
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			var sTestFilter = "testFilter";
@@ -212,7 +212,7 @@ function(
 	QUnit.test("Test rebinding of MDC Chart", function(assert) {
 		var done = assert.async();
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			//Test in case inner chart is not bound yet.
 			var fIsChartInnerBoundStub = sinon.stub(this, "isInnerChartBound").returns(false);
 			var fBindAggregationStub = sinon.stub(this, "bindAggregation");
@@ -323,7 +323,7 @@ function(
 		});
 
 		// assert
-		oChart.oChartPromise.finally(function() {
+		oChart.initialized().finally(function() {
 			assert.ok(oChart.getActions()[0] === oButtonAction);
 			assert.ok(oChart.getAggregation("_toolbar").getActions()[0] === oButtonAction);
 			done();
@@ -402,7 +402,7 @@ function(
 	QUnit.test("Items after instantiation", function(assert) {
 		var done = assert.async();
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			var aDimension = oChart.getDimensions();
 			var aMeasures = oChart.getMeasures();
@@ -421,7 +421,7 @@ function(
 			role: "axis2"
 		}));
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			var aDimension = oChart.getDimensions();
 			var aMeasures = oChart.getMeasures();
@@ -435,7 +435,7 @@ function(
 	QUnit.test("Adding Items with knowledge of existence of the inner chart", function(assert) {
 		var done = assert.async();
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			//add a new measure
 			this.addItem(new MeasureItem({
@@ -460,7 +460,7 @@ function(
 		this.oChart.removeItem(oItem);
 		assert.equal(1, this.oChart.getItems().length, "The item is removed");
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			var aDimension = oChart.getDimensions();
 			var aMeasures = oChart.getMeasures();
@@ -529,7 +529,7 @@ function(
 	QUnit.test("Visibility after instantiation", function(assert) {
 		var done = assert.async();
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			var aVisibleDimension = oChart.getVisibleDimensions();
 			var aVisibleMeasures = oChart.getVisibleMeasures();
@@ -548,7 +548,7 @@ function(
 			role: "axis2"
 		}));
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			var aVisibleDimension = oChart.getVisibleDimensions();
 			var aVisibleMeasures = oChart.getVisibleMeasures();
@@ -620,7 +620,7 @@ function(
 	QUnit.test("Only visible items are visible in the chart", function(assert) {
 		var done = assert.async();
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oChart = this.getAggregation("_chart");
 			var aDimension = oChart.getDimensions();
 			var aMeasures = oChart.getMeasures();
@@ -646,7 +646,7 @@ function(
 	QUnit.test("Toggle InResult property of dimensionsional Item", function(assert) {
 		var done = assert.async();
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oInnerChart = this.getAggregation("_chart");
 			var oDimension = this.getItems()[0];
 
@@ -708,7 +708,7 @@ function(
 			done();
 		}.bind(this);
 
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			// the SelectionHandler dependency may not be ready at this time, so we use an internal helper promise
 			if (this.oChart._oSelectionHandlerPromise) {
 				this.oChart._oSelectionHandlerPromise.then(fnTest);
@@ -773,7 +773,7 @@ function(
 	QUnit.test("dataPointsSelected event is fired on data selection", function(assert) {
 		var done = assert.async();
 		var oDataPointsSelectedSpy = sinon.spy(this.oChart, "fireDataPointsSelected");
-		this.oChart.oChartPromise.then(function() {
+		this.oChart.initialized().then(function() {
 			var oInnerChart = this.oChart.getAggregation("_chart");
 			oInnerChart.fireSelectData();
 			oInnerChart.fireDeselectData();
