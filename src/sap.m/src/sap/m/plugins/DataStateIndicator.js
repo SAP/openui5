@@ -190,11 +190,9 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			var oControl = this.getControl();
 			this._oMessageStrip = new MessageStrip({
 				showCloseButton: true,
-				showIcon: true,
-				close: function() {
-					oControl.focus();
-				}
+				showIcon: true
 			}).addStyleClass("sapUiTinyMargin");
+
 			// update the link aggregation of the message strip
 			this._updateMessageLinkControl();
 
