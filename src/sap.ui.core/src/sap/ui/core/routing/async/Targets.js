@@ -65,6 +65,33 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		},
 
 		/**
+		 * Adds a target to the route's config
+		 * @param {object} oTargetInfo the object containing information about the single target
+		 * @private
+		 */
+		_addDynamicTargetToRoute : function(oTargetInfo) {
+			if (this._oRouter) {
+				var sRouteToConnect = this._oRouter._getLastMatchedRouteName();
+				var oRoute, bSameTargetFound;
+
+				if (sRouteToConnect) {
+					oRoute = this._oRouter.getRoute(sRouteToConnect);
+
+					if (oRoute && oRoute._oConfig && oRoute._oConfig.target) {
+						bSameTargetFound = this._alignTargetsInfo(oRoute._oConfig.target).some(function(oCompareTargetInfo) {
+							return oCompareTargetInfo.name === oTargetInfo.name;
+						});
+
+						if (!bSameTargetFound) {
+							oRoute._oConfig.dynamicTarget = oRoute._oConfig.dynamicTarget || [];
+							oRoute._oConfig.dynamicTarget.push(oTargetInfo);
+						}
+					}
+				}
+			}
+		},
+
+		/**
 		 * Displays a single target
 		 *
 		 * @param {object} oTargetInfo the object containing information (e.g. name) about the single target
@@ -81,6 +108,10 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 				oTarget = this.getTarget(sName);
 
 			if (oTarget !== undefined) {
+				oTarget._routeRelevant = oTargetInfo.routeRelevant || false;
+				if (oTargetInfo.routeRelevant) {
+					this._addDynamicTargetToRoute(oTargetInfo);
+				}
 				return oTarget._display(vData, oSequencePromise, oTargetCreateInfo);
 			} else {
 				var sErrorMessage = "The target with the name \"" + sName + "\" does not exist!";

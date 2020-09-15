@@ -3,11 +3,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/routing/Targets",
+	"sap/ui/core/routing/Router",
 	"sap/ui/core/routing/Views",
 	"sap/m/App",
 	"sap/m/Panel",
 	"sap/ui/model/json/JSONModel"
-], function (Log, View, Targets, Views, App, Panel, JSONModel) {
+], function (Log, View, Targets, Router, Views, App, Panel, JSONModel) {
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
@@ -18,6 +19,51 @@ sap.ui.define([
 			this.clock = this._oSandbox.useFakeTimers();
 		}
 	}
+
+	QUnit.module("Connect Targets with a router", {
+		beforeEach: function() {
+			// System under test + Arrange
+			this.oViews = new Views({async: false});
+			this.oTargets = new Targets({
+				targets: {
+					myTarget: {
+						viewName: "myView"
+					},
+					myParent : {
+						viewName: "myParentView"
+					},
+					myChild : {
+						parent: "myParent",
+						viewName: "myChildView"
+					}
+				},
+				config: {
+					async: false
+				},
+				views: this.oViews
+			});
+		},
+		afterEach: function() {
+			this.oTargets.destroy();
+		}
+	});
+
+	QUnit.test("First call of setting router is accepted", function(assert) {
+		var oRouter = new Router({}, {async: false}, null, {});
+		this.oTargets._setRouter(oRouter);
+
+		assert.strictEqual(this.oTargets._oRouter, oRouter, "The router is set into the Targets");
+	});
+
+	QUnit.test("Further call of setting router is ignored", function(assert) {
+		var oRouter = new Router({}, {async: false}, null, {}),
+			oRouter1 = new Router({}, {async: false}, null, {});
+
+		this.oTargets._setRouter(oRouter);
+		this.oTargets._setRouter(oRouter1);
+
+		assert.strictEqual(this.oTargets._oRouter, oRouter, "The router is still the same one as before the second call");
+	});
 
 	QUnit.module("getTarget and target names", {
 		beforeEach: function () {
