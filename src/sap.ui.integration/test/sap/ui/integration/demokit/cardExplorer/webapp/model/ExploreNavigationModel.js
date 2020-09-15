@@ -970,6 +970,46 @@ sap.ui.define([
 										key: 'Component.js'
 									}
 								]
+							},
+							{
+								title: 'SAP Cloud Platform',
+								key: 'scp',
+								useIFrame: true,
+								isApplication: true,
+								mockServer: true,
+								files: [
+									{
+										url: '/samples/destinations/scp/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/destinations/scp/cardBundle/cardManifest.json',
+										name: 'cardBundle/cardManifest.json',
+										key: 'cardBundle/cardManifest.json'
+									},
+									{
+										url: '/samples/destinations/scp/neo-app.json',
+										name: 'neo-app.json',
+										key: 'neo-app.json'
+									},
+									{
+										url: '/samples/destinations/scp/View.view.xml',
+										name: 'Destinations.view.xml',
+										key: 'Destinations.view.xml'
+									},
+									{
+										url: '/samples/destinations/scp/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										isApplicationManifest: true
+									},
+									{
+										url: '/samples/destinations/scp/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									}
+								]
 							}
 						]
 					},

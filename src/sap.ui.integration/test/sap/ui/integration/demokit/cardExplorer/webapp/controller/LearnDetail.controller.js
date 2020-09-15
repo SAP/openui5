@@ -1,25 +1,25 @@
 sap.ui.define([
-	"sap/ui/demo/cardExplorer/controller/BaseController",
-	"sap/ui/model/json/JSONModel",
+	"./Topic.controller",
 	"../model/DocumentationNavigationModel",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
 ], function(
-	BaseController,
-	JSONModel,
+	TopicController,
 	DocumentationNavigationModel,
+	JSONModel,
 	Device
 ) {
 	"use strict";
 
-	return BaseController.extend("sap.ui.demo.cardExplorer.controller.LearnDetail", {
+	return TopicController.extend("sap.ui.demo.cardExplorer.controller.LearnDetail", {
 
 		/**
 		 * Called when the controller is instantiated.
 		 */
 		onInit : function () {
 			this.getRouter().getRoute("learnDetail").attachPatternMatched(this._onTopicMatched, this);
-			this.jsonDefModel = new JSONModel();
-			this.getView().setModel(this.jsonDefModel);
+			this.oDefaultModel = new JSONModel();
+			this.getView().setModel(this.oDefaultModel);
 		},
 
 		/**
@@ -30,19 +30,29 @@ sap.ui.define([
 		 */
 		_onTopicMatched: function (event) {
 			var oArgs = event.getParameter("arguments"),
-				sGroup = oArgs.group || "gettingStarted", // group is mandatory (described in the manifest)
-				sTopicId = oArgs.key ? "/" + oArgs.key : "",
-				oNavEntry = this._findNavEntry(sGroup),
-				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/learn/" + sGroup + sTopicId + '.html'),
-				sPageTitle = oNavEntry.topicTitle || oNavEntry.title;
+				sTopic = oArgs.topic,
+				sSubTopic = oArgs.subTopic || "",
+				sId = oArgs.id;
+
+			// Note: oArgs.id shouldn't equal any subTopic, else it won't work.
+			if (sSubTopic && this._isSubTopic(sSubTopic)) {
+				sSubTopic = "/" + sSubTopic;
+			} else if (oArgs.key) {
+				sId = oArgs.sSubTopic; // right shift subTopic to id
+			}
+
+			var oNavEntry = this._findNavEntry(sTopic),
+				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/learn/" + sTopic + sSubTopic + '.html');
+
 			var jsonObj = {
-				pageTitle: sPageTitle,
+				pageTitle: oNavEntry.title,
 				topicURL : sTopicURL,
 				bIsPhone : Device.system.phone
 			};
 
-			this.jsonDefModel.setData(jsonObj);
+			this.oDefaultModel.setData(jsonObj);
 			this.onFrameSourceChange();
+			this.scrollTo(sId);
 		},
 
 		_findNavEntry: function (key) {
@@ -69,6 +79,21 @@ sap.ui.define([
 					}
 				}
 			}
+		},
+
+		/**
+		 * Checks if the given key is subtopic key
+		 * "/learn/{topic}/:subTopic:/:id:",
+		 */
+		_isSubTopic: function (sKey) {
+			var aNavEntries = DocumentationNavigationModel.getProperty('/navigation');
+
+			return aNavEntries.some(function (oNavEntry) {
+				return oNavEntry.items && oNavEntry.items.some(function (oSubEntry) {
+					return oSubEntry.key === sKey;
+				});
+			});
 		}
 	});
+
 });

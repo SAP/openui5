@@ -8,14 +8,12 @@ sap.ui.define([
 		navigation: [
 			{
 				title: 'Overview',
-				topicTitle: 'Integration Card Overview',
 				icon: 'sap-icon://home',
 				target: 'integrate',
 				key: 'overview'
 			},
 			{
 				title: 'Use Cards in Apps',
-				topicTitle: 'Integration Card Getting Started',
 				icon: 'sap-icon://initiative',
 				target: 'integrate',
 				key: 'usage'
@@ -43,6 +41,12 @@ sap.ui.define([
 				icon: 'sap-icon://badge',
 				target: 'integrate',
 				key: 'badge'
+			},
+			{
+				title: 'Troubleshooting',
+				icon: 'sap-icon://wrench',
+				target: 'integrate',
+				key: 'troubleshooting'
 			}
 		]
 	});

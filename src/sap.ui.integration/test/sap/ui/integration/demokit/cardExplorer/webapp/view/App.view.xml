@@ -35,11 +35,11 @@
 						<tnt:NavigationListItem text="{title}" icon="{icon}" enabled="{enabled}" expanded="{expanded}" items="{path: 'items', templateShareable: false}" key="{key}" hasExpander="{hasExpander}" visible="{= !${hidden}}">
 							<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" key="{key}" enabled="{enabled}" visible="{= !${hidden}}">
 								<tnt:customData>
-									<core:CustomData key="subItem"/>
+									<core:CustomData key="type" value="child"/>
 								</tnt:customData>
-							</tnt:NavigationListItem>
+						</tnt:NavigationListItem>
 							<tnt:customData>
-								<core:CustomData key="groupItem"/>
+								<core:CustomData key="type" value="root"/>
 							</tnt:customData>
 						</tnt:NavigationListItem>
 					</tnt:NavigationList>
