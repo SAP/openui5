@@ -408,8 +408,14 @@ sap.ui.define([
 
 			if (!oException._bNotUnique) { // TODO: better solution?
 				// not unique -> don't try to use default operator or search again
-				// key and description entered -> check now description
+				if (vValue === "") {
+					// empty string might be parsed to something else for check (e.g. 0000) -> if nothing found this is not an error
+					// no empty key -> no condition
+					return null;
+				}
+
 				if (bFirstCheck && aValues[0] && aValues[1]) {
+					// key and description entered -> check now description
 					return _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, false);
 				}
 
@@ -493,7 +499,11 @@ sap.ui.define([
 		}
 
 		var oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true); // use display format Value as entered string should used as it is
-		oCondition.validated = ConditionValidated.NotValidated;
+
+		if (oCondition) {
+			oCondition.validated = ConditionValidated.NotValidated;
+		}
+
 		return oCondition;
 
 	}
