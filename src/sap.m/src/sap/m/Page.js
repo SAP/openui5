@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Button",
 	"sap/m/Bar",
-	'sap/m/TitleAlignmentMixin',
 	"sap/ui/core/ContextMenuSupport",
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/core/library",
@@ -27,7 +26,6 @@ function(
 	Title,
 	Button,
 	Bar,
-	TitleAlignmentMixin,
 	ContextMenuSupport,
 	ResponsivePaddingsEnablement,
 	coreLibrary,
@@ -303,6 +301,8 @@ function(
 		};
 
 		Page.prototype.onBeforeRendering = function () {
+			var oHeader = this.getCustomHeader() || this.getAggregation("_internalHeader");
+
 			if (this._oScroller && !this._hasScrolling()) {
 				this._oScroller.destroy();
 				this._oScroller = null;
@@ -319,6 +319,12 @@ function(
 			}
 
 			this._ensureNavButton(); // creates this._navBtn, if required
+
+			// title alignment
+			if (oHeader && oHeader.setTitleAlignment) {
+				oHeader.setProperty("titleAlignment", this.getTitleAlignment(), true);
+			}
+
 		};
 
 		Page.prototype.onAfterRendering = function () {
@@ -517,11 +523,10 @@ function(
 		Page.prototype._getInternalHeader = function () {
 			var oInternalHeader = this.getAggregation("_internalHeader");
 			if (!oInternalHeader) {
-				this.setAggregation("_internalHeader", new Bar(this.getId() + "-intHeader"), true); // don"t invalidate - this is only called before/during rendering, where invalidation would lead to double rendering,  or when invalidation anyway happens
+				this.setAggregation("_internalHeader", new Bar(this.getId() + "-intHeader", {
+					titleAlignment: this.getTitleAlignment()
+				}), true); // don"t invalidate - this is only called before/during rendering, where invalidation would lead to double rendering,  or when invalidation anyway happens
 				oInternalHeader = this.getAggregation("_internalHeader");
-
-				// call the method that registers this Bar for alignment
-				this._setupBarTitleAlignment(oInternalHeader, this.getId() + "_internalHeader");
 
 				if (this.getShowNavButton() && this._navBtn) {
 					this._updateHeaderContent(this._navBtn, "left", 0);
@@ -694,9 +699,6 @@ function(
 		Page.prototype._getAdaptableContent = function () {
 			return this._getAnyHeader();
 		};
-
-		// enrich the control functionality with TitleAlignmentMixin
-		TitleAlignmentMixin.mixInto(Page.prototype);
 
 		return Page;
 	});

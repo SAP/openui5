@@ -1167,9 +1167,6 @@ function(
 						that.updatePickerHeaderTitle();
 					}
 				});
-
-				oDialog._setupBarTitleAlignment(oHeader, this.getId() + "_pickerHeader");
-
 			return oDialog;
 		};
 
@@ -1205,6 +1202,7 @@ function(
 			if (!this.getAggregation("_pickerHeader")) {
 				oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 				this.setAggregation("_pickerHeader", new Bar({
+					titleAlignment: library.TitleAlignment.Auto,
 					contentMiddle: new Title({
 						text: oResourceBundle.getText("SELECT_PICKER_TITLE_TEXT")
 					}),

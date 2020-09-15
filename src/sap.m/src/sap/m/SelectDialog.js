@@ -9,7 +9,6 @@ sap.ui.define([
 	'./List',
 	'./SearchField',
 	'./library',
-	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
@@ -26,7 +25,6 @@ function(
 	List,
 	SearchField,
 	library,
-	TitleAlignmentMixin,
 	Control,
 	Device,
 	Toolbar,
@@ -396,6 +394,7 @@ function(
 
 		//store a reference to the dialog header
 		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
+			titleAlignment: this.getTitleAlignment(),
 			contentMiddle: [
 				new Title(this.getId()  + "-dialog-title", {
 					level: "H2"
@@ -403,12 +402,10 @@ function(
 			]
 		});
 
-		// call the method that registers this Bar for alignment
-		this._setupBarTitleAlignment(oCustomHeader, this.getId() + "_customHeader");
-
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
 			customHeader: oCustomHeader,
+			titleAlignment: this.getTitleAlignment(),
 			stretch: Device.system.phone,
 			contentHeight: "2000px",
 			subHeader: this._oSubHeader,
@@ -697,6 +694,14 @@ function(
 		this.setProperty("title", sTitle, true);
 		this._oDialog.getCustomHeader().getAggregation("contentMiddle")[0].setText(sTitle);
 
+		return this;
+	};
+
+	SelectDialog.prototype.setTitleAlignment = function (sAlignment) {
+		this.setProperty("titleAlignment", sAlignment, true);
+		if (this._oDialog) {
+			this._oDialog.setTitleAlignment(sAlignment);
+		}
 		return this;
 	};
 
@@ -1347,9 +1352,6 @@ function(
 	/* =========================================================== */
 	/*           end: internal methods                             */
 	/* =========================================================== */
-
-	// enrich the control functionality with TitleAlignmentMixin
-	TitleAlignmentMixin.mixInto(SelectDialog.prototype);
 
 	return SelectDialog;
 

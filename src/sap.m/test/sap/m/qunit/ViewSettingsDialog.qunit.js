@@ -3949,5 +3949,40 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Title Alignment");
+
+	QUnit.test("setTitleAlignment test", function (assert) {
+
+		var oCore = sap.ui.getCore(),
+			oVSD = new ViewSettingsDialog(),
+			sAlignmentClass = "sapMBarTitleAlign",
+			setTitleAlignmentSpy = this.spy(oVSD, "setTitleAlignment"),
+			sInitialAlignment,
+			sAlignment;
+
+		oVSD.open();
+		oCore.applyChanges();
+		sInitialAlignment = oVSD.getTitleAlignment();
+
+
+		// initial titleAlignment test
+		assert.ok(oVSD._getHeader().hasStyleClass(sAlignmentClass + sInitialAlignment),
+					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
+
+		// check if all types of alignment lead to apply the proper CSS class
+		for (sAlignment in sap.m.TitleAlignment) {
+			oVSD.setTitleAlignment(sAlignment);
+			oCore.applyChanges();
+			assert.ok(oVSD._getHeader().hasStyleClass(sAlignmentClass + sAlignment),
+						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
+		}
+
+		// check how many times setTitleAlignment method is called
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
+
+		oVSD.destroy();
+	});
+
 	return waitForThemeApplied();
 });

@@ -7,7 +7,6 @@ sap.ui.define([
 	'./Dialog',
 	'./Popover',
 	'./library',
-	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
@@ -21,7 +20,6 @@ sap.ui.define([
 		Dialog,
 		Popover,
 		library,
-		TitleAlignmentMixin,
 		Control,
 		IconPool,
 		Device,
@@ -330,6 +328,7 @@ sap.ui.define([
 			this._aNotSupportedProperties = ["placement", "modal", "offsetX", "offsetY", "showCloseButton"];
 			settings.stretch = true;
 			settings.type = DialogType.Standard;
+			settings.titleAlignment = this.getTitleAlignment();
 			this._oControl = new Dialog(this.getId() + "-dialog", settings);
 		} else {
 			this._aNotSupportedProperties = ["icon", "showCloseButton"];
@@ -373,6 +372,11 @@ sap.ui.define([
 
 					//register to the navigation inside navcontainer to insert the closebutton to the page which is being navigated to
 					oNavContent.attachEvent("navigate", this._fnOnNavigate , this);
+				}
+
+				// title alignment
+				if (this._oControl && this._oControl.setTitleAlignment) {
+					this._oControl.setTitleAlignment(this.getTitleAlignment());
 				}
 			}
 		};

@@ -594,4 +594,42 @@ sap.ui.define([
 		assert.strictEqual(this.oBusyDialog.getTooltip(), sTooltip, "Return value should be the one passed on #setTooltip.");
 		assert.strictEqual(this.oBusyDialog.getTooltip_AsString(), sTooltip, "Return value should be the one passed on #setTooltip.");
 	});
+
+	QUnit.module("Title Alignment");
+
+	QUnit.test("setTitleAlignment test", function (assert) {
+
+		var oDialog = new BusyDialog({
+				title: "Header"
+			}),
+			oCore = sap.ui.getCore(),
+			sAlignmentClass = "sapMBarTitleAlign",
+			setTitleAlignmentSpy = this.spy(oDialog, "setTitleAlignment"),
+			sInitialAlignment,
+			sAlignment;
+
+		oDialog.open();
+		oCore.applyChanges();
+		sInitialAlignment = oDialog.getTitleAlignment();
+
+		// initial titleAlignment test depending on theme
+		assert.ok(oDialog._oDialog._header.hasStyleClass(sAlignmentClass + sInitialAlignment),
+					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
+
+		// check if all types of alignment lead to apply the proper CSS class
+		for (sAlignment in sap.m.TitleAlignment) {
+			oDialog.setTitleAlignment(sAlignment);
+			oCore.applyChanges();
+			assert.ok(oDialog._oDialog._header.hasStyleClass(sAlignmentClass + sAlignment),
+						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
+		}
+
+		// check how many times setTitleAlignment method is called
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
+
+		// cleanup
+		oDialog.destroy();
+	});
+
 });

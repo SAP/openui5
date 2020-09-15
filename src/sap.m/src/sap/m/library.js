@@ -4093,6 +4093,13 @@ sap.ui.define([
 	thisLib.TitleAlignment = {
 
 		/**
+		 * Disables an automatic title alignment depending on theme
+		 * Mostly used in sap.m.Bar
+		 * @public
+		 */
+		None : "None",
+
+		/**
 		 * The default type (if specified in the theme)
 		 * @public
 		 */
