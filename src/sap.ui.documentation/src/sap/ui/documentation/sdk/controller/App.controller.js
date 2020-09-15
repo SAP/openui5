@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/documentation/sdk/controller/util/SearchUtil",
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
@@ -29,6 +30,7 @@ sap.ui.define([
 	jQuery,
 	BaseController,
 	SearchUtil,
+	Controller,
 	Filter,
 	FilterOperator,
 	JSONModel,
@@ -72,8 +74,8 @@ sap.ui.define([
 			FEEDBACK_TEXT = "feedback",
 			CHANGE_VERSION_TEXT = "change_version",
 			CHANGE_SETTINGS_TEXT = "settings",
+			CHANGE_COOKIE_PREFERENCES_TEXT = "cookie_preferences",
 			DEMOKIT_DEFAULT_LANGUAGE = "en",
-			DEMOKIT_COOKIE_NAME = "dkc",
 			DEMOKIT_CONFIGURATION_LANGUAGE = "language";
 
 		// We need to hardcode theme depending height of Toolbar to calculate ScrollContainer
@@ -89,32 +91,6 @@ sap.ui.define([
 			}
 		};
 
-		function setCookie(sCookieName, sValue) {
-			var sExpiresDate,
-				oDate = new Date();
-
-			oDate.setTime(oDate.getTime() + (356 * 24 * 60 * 60 * 1000)); // one year
-			sExpiresDate = "expires=" + oDate.toUTCString();
-
-			document.cookie = sCookieName + "=" + sValue + ";" + sExpiresDate + ";path=/";
-		}
-
-		function getCookieValue(sCookieName) {
-			var aCookies = document.cookie.split(';'),
-				sCookie;
-
-			sCookieName = sCookieName + "=";
-
-			for (var i = 0; i < aCookies.length; i++) {
-				sCookie = aCookies[i].trim();
-
-				if (sCookie.indexOf(sCookieName) === 0) {
-					return sCookie.substring(sCookieName.length, sCookie.length);
-				}
-			}
-
-			return "";
-		}
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			formatter: globalFormatter,
@@ -185,14 +161,14 @@ sap.ui.define([
 
 				this.oHeader = this._oView.byId("headerToolbar");
 
-				this._oMessageStrip = this._oView.byId("cookieMessageStrip");
-
 				this.oRouter = this.getRouter();
 
 				this._selectHeader = this._oView.byId("selectHeader");
 				this._tabHeader = this._oView.byId("tabHeader");
 
 				this._oWebPageTitleUtil = new WebPageTitleUtil();
+				this._oConfigUtil = this.getOwnerComponent().getConfigUtil();
+				this._oCookieNames = this._oConfigUtil.COOKIE_NAMES;
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
@@ -213,7 +189,7 @@ sap.ui.define([
 
 				this._createConfigurationBasedOnURIInput();
 
-				if (getCookieValue(DEMOKIT_COOKIE_NAME) === "1" && this._aConfiguration.length > 0) {
+				if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1" && this._aConfiguration.length > 0) {
 					this._applyCookiesConfiguration(this._aConfiguration);
 				} else {
 					this._applyDefaultConfiguration(this._aConfiguration);
@@ -222,8 +198,6 @@ sap.ui.define([
 
 			onBeforeRendering: function() {
 				Device.orientation.detachHandler(this._onOrientationChange, this);
-
-				this._oMessageStrip.setVisible(getCookieValue(DEMOKIT_COOKIE_NAME) !== "1");
 			},
 
 			onAfterRendering: function() {
@@ -233,12 +207,10 @@ sap.ui.define([
 				jQuery(document.body).addClass(this.getOwnerComponent().getContentDensityClass());
 
 				Device.orientation.attachHandler(this._onOrientationChange, this);
-			},
 
-			onCookieDialogAccept: function () {
-				setCookie(DEMOKIT_COOKIE_NAME, "1");
-
-				this._oMessageStrip.close();
+				if (this._oConfigUtil.getCookieValue(this._oCookieNames.APPROVAL_REQUESTED) !== "1") {
+					this.cookieSettingsDialogOpen();
+				}
 			},
 
 			onExit: function() {
@@ -342,6 +314,8 @@ sap.ui.define([
 					this.feedbackDialogOpen();
 				} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 					this.settingsDialogOpen();
+				} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
+					this.cookieSettingsDialogOpen(true);
 				} else if (sTargetText === CHANGE_VERSION_TEXT) {
 					this.onChangeVersionButtonPress();
 				} else if (sTarget) {
@@ -385,7 +359,7 @@ sap.ui.define([
 
 				for (i = 0; i < this._aConfiguration.length; i++) {
 					sConf = this._aConfiguration[i];
-					sCookieValue = getCookieValue(sConf);
+					sCookieValue = this._oConfigUtil.getCookieValue(sConf);
 
 					if (sCookieValue !== "") {
 						if (sConf === DEMOKIT_CONFIGURATION_LANGUAGE) {
@@ -449,8 +423,8 @@ sap.ui.define([
 			_setSelectedLanguage: function(sLanguage) {
 				this._oSupportedLangModel.setProperty("/selectedLang", sLanguage);
 				Core.getConfiguration().setLanguage(sLanguage);
-				if (getCookieValue(DEMOKIT_COOKIE_NAME) === "1") {
-					setCookie(DEMOKIT_CONFIGURATION_LANGUAGE, sLanguage);
+				if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1") {
+					this._oConfigUtil.setCookie(DEMOKIT_CONFIGURATION_LANGUAGE, sLanguage);
 				}
 			},
 
@@ -482,6 +456,22 @@ sap.ui.define([
 				} else {
 					this._oSettingsDialog.open();
 				}
+			},
+
+			/**
+			 * Opens the cookie settings dialog
+			 * @public
+			 */
+			cookieSettingsDialogOpen: function () {
+				if (this._oCookieSettingsController) {
+					this._oCookieSettingsController.openCookieSettingsDialog(this._oConfigUtil, this.getView());
+					return;
+				}
+
+				Controller.create({name: "sap.ui.documentation.sdk.controller.CookieSettingsDialog"}).then(function(oController) {
+					this._oCookieSettingsController = oController;
+					oController.openCookieSettingsDialog(this._oConfigUtil, this.getView());
+				}.bind(this));
 			},
 
 			/**

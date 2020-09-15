@@ -14,13 +14,6 @@
 		showNavButton="false"
 		class="sapUiDemokit">
 		<content>
-			<MessageStrip id="cookieMessageStrip"
-				class="sapUiSmallMargin sapUiDemoKitFixedStrip"
-				text="{i18n>APP_COOKIES_TEXT}"
-				showIcon="true"
-				showCloseButton="true">
-				<Link text="{i18n>APP_COOKIES_BTN}" press="onCookieDialogAccept" />
-			</MessageStrip>
 			<tnt:ToolHeader id="headerToolbar">
 				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; !${appView>/bPhoneSize} &amp;&amp; !${appView>/bLandscape} &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
 					<layoutData>
@@ -118,6 +111,7 @@
 								<MenuItem text="{i18n>APP_INFORMATION_BTN_LICENSE}" key="license" visible="{versionData>/isOpenUI5}"/>
 								<MenuItem text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" key="terms_of_use" visible="{versionData>/isOpenUI5}"/>
 								<MenuItem text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" key="settings"/>
+								<MenuItem text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}" key="cookie_preferences"/>
 							</items>
 						</Menu>
 					</menu>
