@@ -1,5 +1,5 @@
 <mvc:View xmlns="sap.m"
-	controllerName="sap.ui.table.mvc.TreeTableOData"
+	controllerName="sap.ui.table.mvc.TreeTableODataV2"
 	height="100%"
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
