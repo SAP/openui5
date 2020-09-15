@@ -4821,14 +4821,23 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Changing the binding parameters causes a refresh of the table
 	// The SalesOrders application does not have such a scenario.
-	QUnit.test("Absolute ODLB changing parameters", function (assert) {
+	//
+	// Additionally, show that "sap-valid-*" query options are allowed.
+	// JIRA: CPOUI5ODATAV4-461
+	QUnit.test("Absolute ODLB changing parameters; sap-valid-*", function (assert) {
 		var sView = '\
-<Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
+<Table id="table" items="{\
+	path : \'/EMPLOYEES\',\
+	parameters : {\
+		$select : \'Name\',\
+		foo : \'bar\',\
+		\'sap-valid-at\' : \'now\'\
+	}}">\
 	<Text id="name" text="{Name}" />\
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$select=Name&$skip=0&$top=100", {
+		this.expectRequest("EMPLOYEES?$select=Name&foo=bar&sap-valid-at=now&$skip=0&$top=100", {
 				value : [
 					{Name : "Jonathan Smith"},
 					{Name : "Frederic Fall"}
@@ -4837,14 +4846,22 @@ sap.ui.define([
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
 
 		return this.createView(assert, sView).then(function () {
-			that.expectRequest("EMPLOYEES?$select=ID,Name&$search=Fall&$skip=0&$top=100", {
+			that.expectRequest("EMPLOYEES?$select=ID,Name&foo=bar&$search=Fall"
+					+ "&sap-valid-from=2016-01-01&sap-valid-to=2016-12-31T23:59:59.9Z"
+					+ "&$skip=0&$top=100", {
 					value : [{ID : "2", Name : "Frederic Fall"}]
 				})
 				.expectChange("name", ["Frederic Fall"]);
 
 			// code under test
 			that.oView.byId("table").getBinding("items").changeParameters({
-				$search : "Fall", $select : "ID,Name"});
+				$search : "Fall",
+				$select : "ID,Name",
+				// foo : "bar",
+				"sap-valid-at" : undefined,
+				"sap-valid-from" : "2016-01-01",
+				"sap-valid-to" : "2016-12-31T23:59:59.9Z"
+			});
 
 			return that.waitForChanges(assert);
 		});
