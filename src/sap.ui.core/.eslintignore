@@ -1,5 +1,6 @@
 # Note: Changes to this file also must be applied to the top level .eslintignore file.
+dist
+target
+
 src/sap/ui/thirdparty
 src/sap/base/util/restricted/_
-
-target

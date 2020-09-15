@@ -1,2 +1,5 @@
-src/sap/ui/support/js
+# Note: Changes to this file also must be applied to the top level .eslintignore file.
+dist
 target
+
+src/sap/ui/support/js
