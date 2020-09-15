@@ -484,11 +484,20 @@ sap.ui.define([
 	 * @param {string} sErrorMessage - Error message
 	 */
 	BasePropertyEditor.prototype.setInputState = function (bHasError, sErrorMessage) {
+		this._sErrorMessage = sErrorMessage;
+		if (this.isReady()) {
+			this._setInputState();
+		}
+	};
+
+	BasePropertyEditor.prototype._setInputState = function () {
 		var oInput = this.getContent();
 		if (!oInput || !oInput.setValueState) {
 			return;
 		}
-		if (bHasError) {
+
+		var sErrorMessage = this._sErrorMessage;
+		if (sErrorMessage) {
 			oInput.setValueState("Error");
 			oInput.setValueStateText(sErrorMessage);
 		} else {
@@ -605,6 +614,8 @@ sap.ui.define([
 						findNestedWrappers(oObservedWrapper).forEach(function (oWrapper) {
 							if (!isTemplate(oWrapper, this)) {
 								this._registerWrapper(oWrapper);
+							} else {
+								observeRootParent(this._oWrapperObserver, oWrapper);
 							}
 						}.bind(this));
 						this._oWrapperObserver.unobserve(oObservedWrapper);
@@ -626,21 +637,25 @@ sap.ui.define([
 			// the wrapper is properly registered when the fragment content is added to the
 			// content aggregation of the parent BasePropertyEditor
 
-			var oRootElement = getRootParent(oWrapper);
-			if (
-				!this._oWrapperObserver.isObserved(oRootElement, {
-					parent: true
-				})
-			) {
-				this._oWrapperObserver.observe(oRootElement, {
-					parent: true
-				});
-			}
+			observeRootParent(this._oWrapperObserver, oWrapper);
 			return;
 		}
 
 		this._registerWrapper(oWrapper);
 	};
+
+	function observeRootParent(oWrapperObserver, oWrapper) {
+		var oRootElement = getRootParent(oWrapper);
+		if (
+			!oWrapperObserver.isObserved(oRootElement, {
+				parent: true
+			})
+		) {
+			oWrapperObserver.observe(oRootElement, {
+				parent: true
+			});
+		}
+	}
 
 	function getRootParent(oElement) {
 		var oParent = oElement.getParent();
@@ -751,6 +766,7 @@ sap.ui.define([
 				this._bFragmentReady = true;
 				this.setContent(oFragment);
 				this.onFragmentReady();
+				this._setInputState();
 				// When the expected wrapper count was already set, initialization finished after the editor
 				// value was set and the ready check might already have been executed and failed
 				// Therefore execute the check again

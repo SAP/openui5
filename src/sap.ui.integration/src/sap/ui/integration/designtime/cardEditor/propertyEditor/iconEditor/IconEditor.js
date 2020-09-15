@@ -392,11 +392,19 @@ sap.ui.define([
 	};
 
 	IconEditor.prototype.getFocusDomRef = function() {
-		return this.getContent().getItems()[0].getContent()[0].getFocusDomRef();
+		var oContent = this.getContent();
+
+		if (oContent) {
+			return this.getContent().getItems()[0].getContent()[0].getFocusDomRef();
+		}
 	};
 
 	IconEditor.prototype.getIdForLabel = function() {
-		return this.getContent().getItems()[0].getContent()[0].getIdForLabel();
+		var oContent = this.getContent();
+
+		if (oContent) {
+			return this.getContent().getItems()[0].getContent()[0].getIdForLabel();
+		}
 	};
 
 	return IconEditor;

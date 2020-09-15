@@ -665,6 +665,11 @@ sap.ui.define([
 			this._setReady(false);
 			return;
 		}
+		if (!this._bLayoutReady) {
+			// Layout is not ready, therefore expected wrapper count is unknown
+			this._setReady(false);
+			return;
+		}
 		if (this._iExpectedWrapperCount === 0) {
 			// If no nested editors are expected the ready check resolves immediately
 			this._setReady(true);

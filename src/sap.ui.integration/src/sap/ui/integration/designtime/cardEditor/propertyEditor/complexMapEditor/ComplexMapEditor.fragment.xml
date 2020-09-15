@@ -2,5 +2,10 @@
 	xmlns="sap.ui.integration.designtime.baseEditor"
 	xmlns:core="sap.ui.core"
 >
-	<PropertyEditor renderLabel="false"/>
+	<PropertyEditor
+		renderLabel="false"
+		init="wrapperInit"
+		config="{nestedConfig}"
+		value="{nestedValue}"
+	/>
 </core:FragmentDefinition>
