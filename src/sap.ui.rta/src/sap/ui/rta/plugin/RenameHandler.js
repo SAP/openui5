@@ -4,6 +4,7 @@
 
 // Provides class sap.ui.rta.plugin.RenameHandler.
 sap.ui.define([
+	"sap/ui/base/BindingParser",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/rta/plugin/Plugin",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/events/KeyCodes"
 ], function(
+	BindingParser,
 	jQuery,
 	Device,
 	Plugin,
@@ -28,6 +30,20 @@ sap.ui.define([
 
 	// this key is used as replacement for an empty string to not break anything. It's the same as &nbsp (no-break space)
 	var sEmptyTextKey = "\xa0";
+
+	function checkPreconditionsAndThrowError(sNewText) {
+		var oBindingParserResult;
+		var bError;
+		try {
+			oBindingParserResult = BindingParser.complexParser(sNewText, undefined, true);
+		} catch (error) {
+			bError = true;
+		}
+
+		if (oBindingParserResult && typeof oBindingParserResult === "object" || bError) {
+			throw Error(sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("RENAME_BINDING_ERROR_TEXT"));
+		}
+	}
 
 	/**
 	 * Provides Rename handling functionality
@@ -342,6 +358,9 @@ sap.ui.define([
 		_validateNewText: function() {
 			var sErrorText;
 			var sNewText = RenameHandler._getCurrentEditableFieldText.call(this);
+
+			checkPreconditionsAndThrowError(sNewText);
+
 			var oResponsibleOverlay = this.getResponsibleElementOverlay(this._oEditedOverlay);
 			var oRenameAction = this.getAction(oResponsibleOverlay);
 			var aValidators = oRenameAction && oRenameAction.validators || [];
