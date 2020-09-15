@@ -557,7 +557,7 @@ sap.ui.define([
 		};
 
 		AlignedFlowLayout.prototype.unobserveSizeChanges = function(oDomRef) {
-			if (this.oResizeObserver) {
+			if (this.oResizeObserver && oDomRef) {
 				this.oResizeObserver.unobserve(oDomRef);
 			}
 		};
