@@ -1,12 +1,14 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function (
+	mLibrary,
 	Core,
 	BaseListContent,
 	ContentFactory,
@@ -16,6 +18,8 @@ sap.ui.define([
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
+
+	var AvatarColor = mLibrary.AvatarColor;
 
 	var pIfMicrochartsAvailable = new Promise(function (resolve, reject) {
 		var oContentFactory = new ContentFactory();
@@ -1046,6 +1050,93 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_ExternalData);
+	});
+
+	QUnit.module("Icons", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("'backgroundColor' when there is icon src", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+			// Assert
+			assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "testListCard"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [{
+							"src": "sap-icon://error"
+						}]
+					},
+					"item": {
+						"icon": {
+							"src": "{src}"
+						}
+					}
+				}
+			}
+		});
+	});
+
+	QUnit.test("'backgroundColor' when there are initials", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar(),
+				sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
+
+			// Assert
+			assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "testListCard"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [{
+							"initials": "AC"
+						}]
+					},
+					"item": {
+						"icon": {
+							"text": "{initials}"
+						}
+					}
+				}
+			}
+		});
 	});
 
 	QUnit.module("Loading of the Microchart library", {

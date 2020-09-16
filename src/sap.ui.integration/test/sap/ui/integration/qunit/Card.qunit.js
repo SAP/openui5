@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/Event",
 	"sap/ui/core/UIComponent",
-	"sap/m/BadgeCustomData"
+	"sap/m/BadgeCustomData",
+	"sap/m/library"
 ],
 	function (
 		Card,
@@ -18,11 +19,14 @@ sap.ui.define([
 		ComponentContainer,
 		Event,
 		UIComponent,
-		BadgeCustomData
+		BadgeCustomData,
+		mLibrary
 	) {
 		"use strict";
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
+
+		var AvatarColor = mLibrary.AvatarColor;
 
 		var oManifest_Header = {
 			"sap.card": {
@@ -521,7 +525,6 @@ sap.ui.define([
 						"text": "AJ",
 						"shape": "Circle",
 						"alt": "Some alternative text", // Will be ignored as its not present in the Avatar control atm.
-						"backgroundColor": "#000000", // Will be ignored as its not present in the Avatar control atm.
 						"color": "#FF0000" // Will be ignored as its not present in the Avatar control atm.
 					},
 					"status": {
@@ -855,8 +858,75 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_AvatarHeader);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+		});
+
+		QUnit.module("Default Header", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("'backgroundColor' when there is icon src", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar");
+
+				// Assert
+				assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"icon": {
+							"src": "sap-icon://accept"
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("'backgroundColor' when there are initials", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar"),
+					sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
+
+				// Assert
+				assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should be default value when there are initials.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"icon": {
+							"text": "SI"
+						}
+					}
+				}
+			});
 		});
 
 		QUnit.test("Numeric Header generic", function (assert) {
