@@ -6089,7 +6089,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("User Interaction: Sets value over selectedKey (binding: async)", function (assert) {
+	QUnit.test("User Interaction: Binding update should overwrite user value (binding: async)", function (assert) {
 		// Setup
 		var oModel = new JSONModel(),
 			oInput = new Input({
@@ -6116,7 +6116,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
-		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the user input");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
 
 		// Cleanup
 		oInput.destroy();

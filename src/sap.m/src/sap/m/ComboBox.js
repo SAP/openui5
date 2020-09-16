@@ -1866,15 +1866,11 @@ sap.ui.define([
 			// if there is an item that match with the "selectedKey" property and
 			// the "selectedKey" property does not have the default value
 			if (vItem && (sKey !== "")) {
-
 				this.setAssociation("selectedItem", vItem, true);
 				this._setPropertyProtected("selectedItemId", vItem.getId(), true);
 
-				// sets the value if it has not changed
-				if (this._sValue === this.getValue()) {
-					this.setValue(vItem.getText());
-					this._sValue = this.getValue();
-				}
+				this.setValue(vItem.getText());
+				this._sValue = this.getValue();
 			}
 		};
 
