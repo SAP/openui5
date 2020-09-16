@@ -41,6 +41,7 @@ sap.ui.define([], function () {
 				fY1 = oItem.getDomRef().getBoundingClientRect().top;
 
 			aElements.forEach(function (oElement) {
+
 				var fX2 = oElement.getBoundingClientRect().left,
 					fY2 = oElement.getBoundingClientRect().top;
 

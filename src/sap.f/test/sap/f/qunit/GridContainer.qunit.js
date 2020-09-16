@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/f/dnd/GridKeyboardDragAndDrop"
 ],
 function (
 	jQuery,
@@ -38,7 +39,8 @@ function (
 	Button,
 	Header,
 	IntegrationCard,
-	JSONModel
+	JSONModel,
+	GridKeyboardDragAndDrop
 ) {
 	"use strict";
 
@@ -46,6 +48,13 @@ function (
 		EDGE_VERSION_WITH_GRID_SUPPORT = 16,
 		bIsGridSupported = !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
 
+	function createFakeKeydownEvent (sType) {
+		var oEvent = new jQuery.Event("sapincreasemodifiers");
+
+		oEvent.originalEvent = new jQuery.Event("keydown");
+
+		return oEvent;
+	}
 	var oIntegrationCardManifest = {
 		"sap.card": {
 			"type": "List",
@@ -1637,5 +1646,63 @@ function (
 		// Clean up
 		oGrid.destroy();
 		oItemWrapperFocusSpy.restore();
+	});
+
+	QUnit.module("Keyboard Drag&Drop into an empty GridContainer");
+
+	QUnit.test("Simulate Keyboard Drag&Drop into an empty container", function (assert) {
+
+		// Arrange
+		var oDropSpy1 = sinon.spy(),
+			oDropSpy2 = sinon.spy(),
+			oDraggedControl = new GenericTile({
+				header: "Tile 1",
+				layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+			}),
+			oDragContainer = new GridContainer({
+				items: [
+					oDraggedControl
+				],
+				dragDropConfig: [
+					new DragInfo({
+						sourceAggregation: "items"
+					}),
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						drop: oDropSpy1
+					})
+				]
+			}),
+
+			oDropContainer = new GridContainer({
+				items: [
+				],
+				dragDropConfig: [
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						drop: oDropSpy2
+					})
+				]
+			});
+
+		oDragContainer.placeAt(DOM_RENDER_LOCATION);
+		oDropContainer.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		GridKeyboardDragAndDrop.fireDnDByKeyboard(oDraggedControl, oDropContainer, "Before", createFakeKeydownEvent());
+
+		// Assert
+		assert.ok(oDropSpy1.notCalled, "Drop event is NOT fired on the wrong container");
+		assert.ok(oDropSpy2.called, "Drop event is fired on the correct container");
+
+		// Clean up
+		oDragContainer.destroy();
+		oDropContainer.destroy();
+
 	});
 });

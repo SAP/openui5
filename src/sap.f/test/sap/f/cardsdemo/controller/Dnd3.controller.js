@@ -23,7 +23,8 @@ sap.ui.define([
 				this.byId("grid4"),
 				this.byId("grid5"),
 				this.byId("links1"),
-				this.byId("gridList1")
+				this.byId("gridList1"),
+				this.byId("gridEmpty")
 			].forEach(function (oGrid) {
 				oGrid.addDragDropConfig(new DragInfo({
 					sourceAggregation: "items",
@@ -97,6 +98,7 @@ sap.ui.define([
 		},
 
 		initData: function () {
+			this.byId("gridEmpty").setModel(new JSONModel([]));
 			this.byId("grid1").setModel(new JSONModel([
 				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
 				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
