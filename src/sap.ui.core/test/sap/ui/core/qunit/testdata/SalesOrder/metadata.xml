@@ -880,6 +880,11 @@
 					m:HttpMethod="POST">
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In" MaxLength="10" />
 				</FunctionImport>
+				<FunctionImport Name="SalesOrder_FixQuantities"
+					ReturnType="Collection(gwsample_basic.SalesOrderLineItem)"
+					EntitySet="SalesOrderLineItemSet" m:HttpMethod="POST">
+					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In" MaxLength="10"/>
+				</FunctionImport>
 			</EntityContainer>
 			<EntityContainer Name="gwsample_basic_Entities_2" sap:message-scope-supported="false">
 			</EntityContainer>
