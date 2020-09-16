@@ -8,22 +8,17 @@
 		width="100%" >
 		<l:content>
 
-			<FlexBox
-				width="95%"
-				class="columns"
-				alignItems="Stretch">
-				<items>
-					<Text class="column1" text="Although they have different amounts of text, both columns are of equal height.">
+			<FlexBox class="columns">
+					<Text  text="Although they have different amounts of text, both columns are of equal height.">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="1" baseSize="0" backgroundDesign="Solid" styleClass="sapUiTinyMargin"/>
 						</layoutData>
 					</Text>
-					<Text class="column2" text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo hey nonny no duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo hey nonny no duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="1" baseSize="0" backgroundDesign="Solid" styleClass="sapUiTinyMargin"/>
 						</layoutData>
 					</Text>
-				</items>
 			</FlexBox>
 
 		</l:content>
