@@ -379,7 +379,7 @@ function(
 		return sap.ui.getCore().byId(this.getId() + "_fragment--sapUiRta_" + sName);
 	};
 
-	Adaptation.prototype._openVersionTitleDialog = function () {
+	Adaptation.prototype._openVersionTitleDialog = function (nDisplayedVersion) {
 		var oDialogPromise;
 
 		if (this._oDialog) {
@@ -389,6 +389,12 @@ function(
 		}
 
 		return oDialogPromise.then(function () {
+			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var sTitle = oTextResources.getText("TIT_VERSION_TITLE_DIALOG");
+			if (nDisplayedVersion !== Versions.Draft) {
+				sTitle = oTextResources.getText("TIT_REACTIVATE_VERSION_TITLE_DIALOG");
+			}
+			this._oDialog.setTitle(sTitle);
 			return this._oDialog.open();
 		}.bind(this));
 	};

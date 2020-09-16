@@ -28,7 +28,7 @@
 				<Button
 						id="sapUiRta_activateDraft"
 						icon="sap-icon://activate"
-						press=".activateDraft"
+						press=".activateDraft(${versions>/displayedVersion})"
 						visible="{versions>/versioningEnabled}"
 						enabled="{versions>/activateEnabled}"
 						type="Transparent"

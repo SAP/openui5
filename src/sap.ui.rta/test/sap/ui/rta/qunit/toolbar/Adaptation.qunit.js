@@ -331,11 +331,12 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given no dialog is created, when the activate version button is pressed and afterwards pressed a second time", function(assert) {
+		QUnit.test("Given no dialog is created, when the activate version button is pressed with a draft and afterwards pressed a second time", function(assert) {
 			var oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 			var oSetInputSpy;
 			var oConfirmButtonEnabledSpy;
-			return this.oToolbar._openVersionTitleDialog()
+			var sExpectedTitle = this.oToolbar.getTextResources().getText("TIT_VERSION_TITLE_DIALOG");
+			return this.oToolbar._openVersionTitleDialog(sap.ui.fl.Versions.Draft)
 				.then(function () {
 					assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 					// checking for the dialog instance wrapped into a promise
@@ -349,6 +350,7 @@ function(
 				}.bind(this))
 				.then(function (oDialog) {
 					assert.equal(this.oToolbar._oDialog, oDialog, "and the dialog was assigned");
+					assert.equal(oDialog.getTitle(), sExpectedTitle, "and the title is 'Activate New Version'");
 				}.bind(this))
 				.then(this.oToolbar._openVersionTitleDialog.bind(this.oToolbar))
 				.then(function () {
@@ -358,6 +360,14 @@ function(
 					assert.equal(oConfirmButtonEnabledSpy.callCount, 1, "and the confirm button was set");
 					assert.equal(oSetInputSpy.getCall(0).args[0], false, "to be disabled");
 				});
+		});
+
+		QUnit.test("Given display version is original, when the activate version button is pressed", function(assert) {
+			var sExpectedTitle = this.oToolbar.getTextResources().getText("TIT_REACTIVATE_VERSION_TITLE_DIALOG");
+			return this.oToolbar._openVersionTitleDialog(sap.ui.fl.Versions.Original)
+				.then(function () {
+					assert.equal(this.oToolbar._oDialog.getTitle(), sExpectedTitle, "the title is 'Reactivate Version'");
+				}.bind(this));
 		});
 	});
 
