@@ -830,7 +830,7 @@ sap.ui.define([
 			var oItem = mItems[n];
 			if (oItem.manifestpath) {
 				oItem.value = this._manifestModel.getProperty(oItem.manifestpath);
-				if (typeof oItem !== "boolean") {
+				if (typeof oItem.visible !== "boolean") {
 					oItem.visible = true;
 				}
 				if (typeof oItem.translatable !== "boolean") {
@@ -852,6 +852,10 @@ sap.ui.define([
 						case "number": oItem.value = 0; break;
 						default: oItem.value = "";
 					}
+				}
+			} else if (oItem.type === "group") {
+				if (typeof oItem.visible !== "boolean") {
+					oItem.visible = true;
 				}
 			}
 			oItem._settingspath = "/form/items/" + n;
