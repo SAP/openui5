@@ -39,6 +39,20 @@ function(
 	 * @private
 	 */
 	var ManifestUtils = {
+		/** Determines the flex reference for a given control by
+		 * identifying the application component and analyzing the manifest of this component.
+		 *
+		 * @param {sap.ui.core.Control} oControl - Control for the application determination
+		 * @return {string} Reference of the application
+		 */
+		getFlexReferenceForControl: function (oControl) {
+			var oAppComponent = Utils.getAppComponentForControl(oControl);
+			return ManifestUtils.getFlexReference({
+				manifest: oAppComponent.getManifest(),
+				componentData: oAppComponent.getComponentData()
+			});
+		},
+
 		getFlexReference: function(mPropertyBag) {
 			var oManifest = mPropertyBag.manifest;
 			var oComponentData = mPropertyBag.componentData || {};

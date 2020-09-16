@@ -98,7 +98,7 @@ sap.ui.define([
 		}
 
 		FlexState.initialize({
-			componentData: oConfig.componentData,
+			componentData: oConfig.componentData || (oConfig.settings && oConfig.settings.componentData),
 			asyncHints: oConfig.asyncHints,
 			manifest: oManifest,
 			componentId: oConfig.id

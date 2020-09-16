@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/Variant",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/apply/_internal/changes/Applier",
@@ -22,7 +21,6 @@ sap.ui.define([
 	Utils,
 	LayerUtils,
 	Change,
-	Variant,
 	ChangePersistenceFactory,
 	Versions,
 	Applier,
@@ -526,34 +524,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if an active personalization - user specific changes or variants - for the flexibility reference
-	 * of the controller instance (<code>this._sComponentName</code>) is in place.
-	 *
-	 * @param {map} [mPropertyBag] - Contains additional data needed for checking personalization, will be passed to FlexController.getComponentChanges
-	 * @param {string} [mPropertyBag.upToLayer=currentLayer] - layer to compare to which it is checked if changes exist
-	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization shall be checked without layer filtering
-	 * @returns {Promise} Resolves with a boolean; true if a personalization change made using SAPUI5 flexibility services is active in the application
-	 * @public
-	 */
-	FlexController.prototype.hasHigherLayerChanges = function(mPropertyBag) {
-		mPropertyBag = mPropertyBag || {};
-		var sCurrentLayer = mPropertyBag.upToLayer || LayerUtils.getCurrentLayer(false);
-		//Always include smart variants when checking personalization
-		mPropertyBag.includeVariants = true;
-		//Also control variant changes are important
-		mPropertyBag.includeCtrlVariants = true;
-		return this.getComponentChanges(mPropertyBag).then(function(vChanges) {
-			var bHasHigherLayerChanges = vChanges === this._oChangePersistence.HIGHER_LAYER_CHANGES_EXIST
-				|| vChanges.some(function(oChange) {
-					//check layer (needs inverse layer filtering compared to max-layer)
-					return LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sCurrentLayer) > 0;
-				});
-
-			return !!bHasHigherLayerChanges;
-		}.bind(this));
-	};
-
-	/**
 	 * Creates a new instance of sap.ui.fl.Persistence based on the current component and caches the instance in a private member
 	 *
 	 * @returns {sap.ui.fl.Persistence} persistence instance
@@ -579,28 +549,28 @@ sap.ui.define([
 	 */
 	FlexController.prototype.resetChanges = function(sLayer, sGenerator, oComponent, aSelectorIds, aChangeTypes) {
 		return this._oChangePersistence.resetChanges(sLayer, sGenerator, aSelectorIds, aChangeTypes)
-			.then(function(aChanges) {
-				if (aChanges.length !== 0) {
-					return Reverter.revertMultipleChanges(aChanges, {
-						appComponent: oComponent,
-						modifier: JsControlTreeModifier,
-						flexController: this
+		.then(function(aChanges) {
+			if (aChanges.length !== 0) {
+				return Reverter.revertMultipleChanges(aChanges, {
+					appComponent: oComponent,
+					modifier: JsControlTreeModifier,
+					flexController: this
+				});
+			}
+		}.bind(this))
+		.then(function() {
+			if (oComponent) {
+				var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
+				if (oModel) {
+					URLHandler.update({
+						parameters: [],
+						updateURL: true,
+						updateHashEntry: true,
+						model: oModel
 					});
 				}
-			}.bind(this))
-			.then(function() {
-				if (oComponent) {
-					var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
-					if (oModel) {
-						URLHandler.update({
-							parameters: [],
-							updateURL: true,
-							updateHashEntry: true,
-							model: oModel
-						});
-					}
-				}
-			});
+			}
+		});
 	};
 
 	/**

@@ -18,6 +18,40 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 	var sReference = "fl.reference";
 
+	function createAppComponent(bFlexExtensionPointEnabled) {
+		return {
+			getManifestEntry: function () {
+				return {
+					flexExtensionPointEnabled: bFlexExtensionPointEnabled
+				};
+			},
+			getComponentData: function () {},
+			getManifest: function () {
+				return {
+					getEntry: function () {
+						return {
+							appVariantId: "appId"
+						};
+					},
+					"sap.ui5": {
+						id: "appId"
+					}
+				};
+			}
+		};
+	}
+
+	QUnit.module("ManifestUtils.getFlexReferenceForControl", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("with a control", function (assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(createAppComponent(false));
+			assert.equal(ManifestUtils.getFlexReferenceForControl({}), "appId", "the app id is returned");
+		});
+	});
+
 	QUnit.module("ManifestUtils.getFlexReference", {
 		afterEach: function () {
 			sandbox.restore();
@@ -188,16 +222,6 @@ sap.ui.define([
 			assert.equal(this.oGetAppIdStub.callCount, 1, "the function was called once");
 		});
 	});
-
-	function createAppComponent(bFlexExtensionPointEnabled) {
-		return {
-			getManifestEntry: function () {
-				return {
-					flexExtensionPointEnabled: bFlexExtensionPointEnabled
-				};
-			}
-		};
-	}
 
 	QUnit.module("ManifestUtils.isFlexExtensionPointHandlingEnabled", {
 		afterEach: function() {

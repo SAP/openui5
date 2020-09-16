@@ -12,7 +12,9 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/base/Log",
-	"sap/ui/fl/Layer"
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectState"
 ], function(
 	includes,
 	_omit,
@@ -23,7 +25,9 @@ sap.ui.define([
 	Condenser,
 	FeaturesAPI,
 	Log,
-	Layer
+	Layer,
+	LayerUtils,
+	FlexObjectState
 ) {
 	"use strict";
 
@@ -69,11 +73,11 @@ sap.ui.define([
 		return PersistenceWriteAPI._getUIChanges(mPropertyBag)
 			.then(function(aChanges) {
 				return aChanges.some(function(oChange) {
-					return oChange.packageName === "$TMP" || oChange.packageName === "";
+					var sPackageName = oChange.getPackage();
+					return sPackageName === "$TMP" || sPackageName === "";
 				});
 			});
 	}
-
 
 	/**
 	 * Provides an API for tools to query, provide, save or reset {@link sap.ui.fl.Change}s.
@@ -90,7 +94,7 @@ sap.ui.define([
 		 * Determines if user-specific changes or variants are present in the flex persistence.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
+		 * @param {sap.ui.core.Control} mPropertyBag.selector - Control to retrieve the associated flex persistence
 		 * @param {string} [mPropertyBag.upToLayer] - Layer to compare with
 		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization is to be checked without max layer filtering
 		 * @returns {Promise<boolean>} Promise that resolves to a boolean, indicating if a personalization change that was created during runtime is active in the application
@@ -99,8 +103,17 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		hasHigherLayerChanges: function (mPropertyBag) {
-			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
-				.hasHigherLayerChanges(_omit(mPropertyBag, "selector"));
+			mPropertyBag.upToLayer = mPropertyBag.upToLayer || LayerUtils.getCurrentLayer(false);
+
+			return FlexObjectState.getFlexObjects(mPropertyBag)
+				.then(function (aFlexObjects) {
+					return aFlexObjects.filter(function (oFlexObject) {
+						return LayerUtils.isOverLayer(oFlexObject.getLayer(), mPropertyBag.upToLayer);
+					});
+				})
+				.then(function (aFilteredFlexObjects) {
+					return aFilteredFlexObjects.length > 0;
+				});
 		},
 
 		/**
@@ -313,15 +326,17 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.invalidateCache] - Indicates whether the cache is to be invalidated
 		 *
 		 * @returns {Promise} Promise resolves with an array of all change instances {@see sap.ui.fl.Change}
+		 *
+		 * @private
 		 */
 		_getUIChanges: function(mPropertyBag) {
 			if (mPropertyBag.layer) {
 				//TODO: sync the layer parameter name with new persistence and remove this line
 				mPropertyBag.currentLayer = mPropertyBag.layer;
 			}
-			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
-				._oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache);
+
+			return FlexObjectState.getFlexObjects(mPropertyBag);
 		}
 	};
 	return PersistenceWriteAPI;
-}, true);
+});

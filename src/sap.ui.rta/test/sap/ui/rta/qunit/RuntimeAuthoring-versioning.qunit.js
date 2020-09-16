@@ -166,7 +166,9 @@ sap.ui.define([
 				assert.equal(oHasHigherLayerChangesSpy.callCount, 1, "then hasHigherLayerChanges is called once");
 				assert.deepEqual(oHasHigherLayerChangesSpy.lastCall.args[0], {
 					selector : this.oReloadInfo.selector,
-					ignoreMaxLayerParameter : this.oReloadInfo.ignoreMaxLayerParameter
+					reference: "sap.ui.rta.qunitrta.Component",
+					ignoreMaxLayerParameter : this.oReloadInfo.ignoreMaxLayerParameter,
+					upToLayer: "CUSTOMER"
 				}, "then hasHigherLayerChanges is called with the correct parameters");
 
 				assert.equal(oGetReloadMessageOnStart.callCount, 1, "then _getReloadMessageOnStart is called once");
@@ -295,7 +297,9 @@ sap.ui.define([
 				assert.equal(oHasHigherLayerChangesSpy.callCount, 1, "then hasHigherLayerChanges is called once");
 				assert.deepEqual(oHasHigherLayerChangesSpy.lastCall.args[0], {
 					selector : this.oReloadInfo.selector,
-					ignoreMaxLayerParameter : this.oReloadInfo.ignoreMaxLayerParameter
+					reference: "sap.ui.rta.qunitrta.Component",
+					ignoreMaxLayerParameter : this.oReloadInfo.ignoreMaxLayerParameter,
+					upToLayer: "CUSTOMER"
 				}, "then hasHigherLayerChanges is called with the correct parameters");
 
 				assert.equal(oGetReloadMessageOnStart.callCount, 1, "then _getReloadMessageOnStart is called once");
