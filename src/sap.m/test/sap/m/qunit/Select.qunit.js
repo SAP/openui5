@@ -8309,6 +8309,42 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("onsapenter when enter key is pressed the default Browser behavior is prevented", function (assert) {
+
+			// System under test
+			var oSelect = new Select({
+				items: [
+					new Item({
+						key: "GER",
+						text: "Germany"
+					}),
+
+					new Item({
+						key: "CU",
+						text: "Cuba"
+					})
+				]
+			}),
+			oEvent = {
+				preventDefault: function() {},
+				setMarked: function() {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+			// Arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// Act
+			oSelect.onsapenter(oEvent);
+
+			// Assert
+			assert.ok(oSpy.called, "Default event is prevented for Enter press");
+
+			// Cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.module("onsapdown");
 
 		QUnit.test("onsapdown", function (assert) {
