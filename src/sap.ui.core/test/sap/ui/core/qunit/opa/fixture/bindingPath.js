@@ -40,9 +40,9 @@ sap.ui.define([
             sap.ui.getCore().setModel(oNamedModel, "myModel");
 
             this.oPropertyText = new Text({text: "{/propertyText}"});
-            this.oNamedModelPropertyText = new Text({text: "{myModel>propertyText}"});
+            this.oNamedModelPropertyText = new Text({text: "{myModel>/propertyText}"});
             this.oCompositePropertyText = new Text({text: "{/compositeProperty/partOne}+{/compositeProperty/partTwo}"});
-            this.oNamedCompositePropertyText = new Text({text: "{myModel>compositeProperty/partOne}+{myModel>compositeProperty/partTwo}"});
+            this.oNamedCompositePropertyText = new Text({text: "{myModel>/compositeProperty/partOne}+{myModel>/compositeProperty/partTwo}"});
 
             this.oPropertyText.placeAt("qunit-fixture");
             this.oNamedModelPropertyText.placeAt("qunit-fixture");
@@ -76,7 +76,7 @@ sap.ui.define([
             this.oInput.bindProperty("description", {path: "partTwo"});
 
             this.oNamedInput = new Input();
-            this.oNamedInput.bindObject({path: "myModel>compositeProperty"});
+            this.oNamedInput.bindObject({path: "myModel>/compositeProperty"});
             this.oNamedInput.bindProperty("value", {path: "partOne"});
 
             this.oTexts = [new Text({text: "{partOne}"}), new Text({text: "{partTwo}"})];
@@ -119,7 +119,7 @@ sap.ui.define([
                 mAggregationPaths.forEach(function (sPath) {
                     var oList = new List();
                     oList.bindItems({
-                        path: (mData.model ? mData.model + ">" : "/") + sPath,
+                        path: (mData.model ? mData.model + ">" : "") + "/" + sPath,
                         template: new StandardListItem({
                             title: "{name}"
                         })

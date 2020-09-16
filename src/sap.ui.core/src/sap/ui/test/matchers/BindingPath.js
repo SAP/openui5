@@ -88,7 +88,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 
 			if (sContextPath) {
 				if (oObjectBindingInfo) {
-					var sContextPathToMatch = _getFormattedPath(sContextPath, sModelName);
+					var sContextPathToMatch = _getFormattedPath(sContextPath);
 					bContextMatches = oObjectBindingInfo.path === sContextPathToMatch;
 
 					this._oLogger.debug("Control '" + oControl + "'" + (bContextMatches ? " has" : " does not have ") +
@@ -102,8 +102,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 			}
 
 			if (sPropertyPath) {
-				var sPropertyPathToMatch = _getFormattedPath(sPropertyPath, sModelName, oBindingContext);
-
+				var sPropertyPathToMatch = _getFormattedPath(sPropertyPath, oBindingContext);
 				var aMatchingBindingInfos = Object.keys(oControl.mBindingInfos).filter(function (sBinding) {
 					var mBindingInfo = oControl.mBindingInfos[sBinding];
 					var aBindingParts = mBindingInfo.parts ? mBindingInfo.parts : [mBindingInfo];
@@ -126,11 +125,11 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 		}
 	});
 
-	function _getFormattedPath(sPath, bWithNamedModel, bWithContext) {
+	function _getFormattedPath(sPath, bWithContext) {
 		var sPropertyPathDelimiter = "/";
 		var sFormattedPath = sPath;
 
-		if (bWithNamedModel || bWithContext) {
+		if (bWithContext) {
 			if (sPath.charAt(0) === sPropertyPathDelimiter) {
 				sFormattedPath = sPath.substring(1);
 			}

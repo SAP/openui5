@@ -20,13 +20,13 @@ sap.ui.define([
     QUnit.test("Should generate selector for bound property", function (assert) {
         var fnDone = assert.async();
         var aData = [
-            {type: "named", modelName: "myModel", prefix: "", control: this.oNamedModelPropertyText},
-            {type: "nameless", prefix: "/", control: this.oPropertyText}
+            {type: "named", modelName: "myModel", control: this.oNamedModelPropertyText},
+            {type: "nameless", control: this.oPropertyText}
         ];
         Promise.all(aData.map(function (mData) {
             return _ControlSelectorGenerator._generate({control: mData.control})
                 .then(function (mSelector) {
-                    assert.strictEqual(mSelector.bindingPath.propertyPath, mData.prefix + "propertyText", "Should generate selector with correct binding path");
+                    assert.strictEqual(mSelector.bindingPath.propertyPath, "/propertyText", "Should generate selector with correct binding path");
                     assert.strictEqual(mSelector.bindingPath.modelName, mData.modelName, "Should generate selector with model name");
                 });
         })).finally(fnDone);
@@ -35,16 +35,15 @@ sap.ui.define([
     QUnit.test("Should generate selector for composite property", function (assert) {
         var fnDone = assert.async();
         var aData = [
-            {type: "named", modelName: "myModel", prefix: "", control: this.oNamedCompositePropertyText},
-            {type: "nameless", prefix: "/", control: this.oCompositePropertyText}
+            {type: "named", modelName: "myModel", control: this.oNamedCompositePropertyText},
+            {type: "nameless",  control: this.oCompositePropertyText}
         ];
         Promise.all(aData.map(function (mData) {
             return _ControlSelectorGenerator._generate({control: mData.control, includeAll: true})
                 .then(function (aSelectors) {
                     var aBingingPathSelectors = aSelectors[0];
-                    assert.strictEqual(aSelectors.length, 2, "Should generate two selectors for " + mData.type + " model");
-                    assert.strictEqual(aBingingPathSelectors[0].bindingPath.propertyPath, mData.prefix + "compositeProperty/partOne", "Should generate first selector with correct binding path");
-                    assert.strictEqual(aBingingPathSelectors[1].bindingPath.propertyPath, mData.prefix + "compositeProperty/partTwo", "Should generate second selector with correct binding path");
+                    assert.strictEqual(aBingingPathSelectors[0].bindingPath.propertyPath, "/compositeProperty/partOne", "Should generate first selector with correct binding path");
+                    assert.strictEqual(aBingingPathSelectors[1].bindingPath.propertyPath, "/compositeProperty/partTwo", "Should generate second selector with correct binding path");
                     assert.strictEqual(aBingingPathSelectors[0].bindingPath.modelName, mData.modelName, "Should generate first selector with model name");
                     assert.strictEqual(aBingingPathSelectors[1].bindingPath.modelName, mData.modelName, "Should generate second selector with model name");
                 });
