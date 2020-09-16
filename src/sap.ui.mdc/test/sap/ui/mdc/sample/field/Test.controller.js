@@ -5,9 +5,12 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/EditMode",
+	"sap/m/library",
 	"sap/m/MessageToast"
-], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, MessageToast) {
+], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, mobileLibrary, MessageToast) {
 	"use strict";
+
+	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.ui.mdc.sample.field.Test", {
 
@@ -209,9 +212,9 @@ sap.ui.define([
 			for (var i = 0; i < aButtons.length; i++) {
 				var oButton = aButtons[i];
 				if (oButton.getIcon().substr(11) == vKey) {
-					oButton.setType(sap.m.ButtonType.Emphasized);
+					oButton.setType(ButtonType.Emphasized);
 				} else {
-					oButton.setType(sap.m.ButtonType.Default);
+					oButton.setType(ButtonType.Default);
 				}
 			}
 		},

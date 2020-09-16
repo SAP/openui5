@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
+	"sap/m/UploadCollectionItem",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, Controller, MessageToast, MessageBox, JSONModel) {
+], function(jQuery, Controller, MessageToast, MessageBox, UploadCollectionItem, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionFolderHierarchy.Page", {
@@ -88,7 +89,7 @@ sap.ui.define([
 				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 				onClose: function(oAction) {
 					if (oAction === MessageBox.Action.OK) {
-						this.deleteItemByPath(oItem.getBindingContext().sPath);
+						this.deleteItemByPath(oItem.getBindingContext().getPath());
 					}
 				}.bind(this),
 				dialogId: "messageBoxDeleteFolder"
@@ -121,7 +122,7 @@ sap.ui.define([
 		},
 
 		uploadCollectionItemFactory: function(id, context) {
-			var oItem = new sap.m.UploadCollectionItem(id, {
+			var oItem = new UploadCollectionItem(id, {
 				documentId: "{documentId}",
 				fileName: "{fileName}",
 				mimeType: "{mimeType}",

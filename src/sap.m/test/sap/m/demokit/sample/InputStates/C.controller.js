@@ -16,8 +16,8 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		handleValueHelp : function (oController) {
-			this.inputId = oController.oSource.sId;
+		handleValueHelp : function (oEvent) {
+			this.inputId = oEvent.getSource().getId();
 			// create value help dialog
 			if (!this._valueHelpDialog) {
 				this._valueHelpDialog = sap.ui.xmlfragment(

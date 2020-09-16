@@ -1,9 +1,12 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
+	'sap/ui/mdc/table/ResponsiveTableType',
 	'sap/ui/mdc/table/RowSettings',
+	'sap/ui/mdc/table/V4AnalyticsTableType',
 	'sap/ui/mdc/p13n/StateUtil',
-	'sap/m/MessageBox'
-], function(Controller, RowSettings, StateUtil, MessageBox) {
+	'sap/m/MessageBox',
+	'sap/m/MessageToast'
+], function(Controller, ResponsiveTableType, RowSettings, V4AnalyticsTableType, StateUtil, MessageBox, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.table.controller.Test", {
@@ -70,32 +73,32 @@ sap.ui.define([
 			var bPressed = oEvent.getParameters().pressed;
 
 			if (vType === "ResponsiveTable") {
-				oTable.setType(new sap.ui.mdc.table.ResponsiveTableType({
+				oTable.setType(new ResponsiveTableType({
 					showDetailsButton: bPressed
 				}));
-			} else if (vType.constructor === sap.ui.mdc.table.ResponsiveTableType) {
+			} else if (vType.constructor === ResponsiveTableType) {
 				vType.setShowDetailsButton(bPressed);
 			} else {
-				sap.m.MessageToast.show("Please switch to a ResponsiveTable first");
+				MessageToast.show("Please switch to a ResponsiveTable first");
 				oEvent.getSource().setPressed(false);
 			}
 
 		},
 
 		switchToScrollableResponsiveTable: function() {
-			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new sap.ui.mdc.table.ResponsiveTableType({
+			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new ResponsiveTableType({
 				growingMode: 'Scroll'
 			}));
 		},
 
 		switchToNonGrowingResponsiveTable: function() {
-			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new sap.ui.mdc.table.ResponsiveTableType({
+			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new ResponsiveTableType({
 				growingMode: 'None'
 			}));
 		},
 
 		setV4AnalyticsTable: function() {
-			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new sap.ui.mdc.table.V4AnalyticsTableType({
+			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new V4AnalyticsTableType({
 			}));
 		},
 

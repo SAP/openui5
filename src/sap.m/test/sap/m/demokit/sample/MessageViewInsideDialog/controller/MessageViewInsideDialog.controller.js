@@ -1,5 +1,6 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/IconPool',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/Link',
 	'sap/m/MessageItem',
@@ -8,7 +9,7 @@ sap.ui.define([
 	'sap/m/Dialog',
 	'sap/m/Bar',
 	'sap/m/Text'
-], function(Controller, JSONModel, Link, MessageItem, MessageView, Button, Dialog, Bar, Text) {
+], function(Controller, IconPool, JSONModel, Link, MessageItem, MessageView, Button, Dialog, Bar, Text) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.MessageViewInsideDialog.controller.MessageViewInsideDialog", {
@@ -79,7 +80,7 @@ sap.ui.define([
 			});
 
 			var oBackButton = new Button({
-					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
+					icon: IconPool.getIconURI("nav-back"),
 					visible: false,
 					press: function () {
 						that.oMessageView.navigateBack();

@@ -1,15 +1,18 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
+	'sap/m/library',
 	'sap/m/MessageToast',
-	'sap/ui/model/json/JSONModel'],
-	function (Controller, MessageToast, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/BindingMode'],
+	function (Controller, mobileLibrary, MessageToast, JSONModel, BindingMode) {
 	'use strict';
+
+	var BreadcrumbsSeparatorStyle = mobileLibrary.BreadcrumbsSeparatorStyle;
 
 	return Controller.extend('sap.m.sample.Breadcrumbs.controller.Breadcrumbs', {
 		onInit: function() {
 			var oMData = [],
-				oModel =  new JSONModel().setDefaultBindingMode("TwoWay"),
-				BreadcrumbsSeparatorStyle = sap.m.BreadcrumbsSeparatorStyle;
+				oModel =  new JSONModel().setDefaultBindingMode(BindingMode.TwoWay);
 			Object.keys(BreadcrumbsSeparatorStyle).forEach(function(item) {
 				oMData.push({
 					'key' : item,

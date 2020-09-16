@@ -8,7 +8,9 @@ sap.ui.define([
 	"use strict";
 
 	var ColorPickerMode = unifiedLibrary.ColorPickerMode,
-		ColorPickerDisplayMode = unifiedLibrary.ColorPickerDisplayMode;
+		ColorPickerDisplayMode = unifiedLibrary.ColorPickerDisplayMode,
+		CSSColor = coreLibrary.CSSColor,
+		ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.ui.unified.sample.ColorPickerPopover.ColorPickerPopover", {
 
@@ -76,15 +78,15 @@ sap.ui.define([
 				oInput = oView.byId(this.inputId);
 
 			oInput.setValue(oEvent.getParameter("colorString"));
-			oInput.setValueState("None");
+			oInput.setValueState(ValueState.None);
 			this.inputId = "";
 			MessageToast.show("Chosen color string: " + oEvent.getParameter("colorString"));
 		},
 
 		handleInputChange: function (oEvent) {
 			var oInput = oEvent.getSource(),
-				bValid = coreLibrary.CSSColor.isValid(oEvent.getParameter("value")),
-				sState = bValid ? "None" : "Error";
+				bValid = CSSColor.isValid(oEvent.getParameter("value")),
+				sState = bValid ? ValueState.None : ValueState.Error;
 
 			oInput.setValueState(sState);
 		}

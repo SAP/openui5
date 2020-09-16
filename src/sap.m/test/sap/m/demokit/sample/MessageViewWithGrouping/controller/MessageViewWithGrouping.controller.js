@@ -4,11 +4,12 @@ sap.ui.define([
 	'sap/m/Link',
 	'sap/m/Dialog',
 	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/IconPool',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/Button',
 	'sap/m/Bar',
 	'sap/m/Text'
-], function(MessageView, MessagePopoverItem, Link, Dialog, Controller, JSONModel, Button, Bar, Text) {
+], function(MessageView, MessagePopoverItem, Link, Dialog, Controller, IconPool, JSONModel, Button, Bar, Text) {
 	"use strict";
 
 	var oLink = new Link({
@@ -105,7 +106,7 @@ sap.ui.define([
 			oModel.setData(aMockMessages);
 
 			var oBackButton = new Button({
-				icon: sap.ui.core.IconPool.getIconURI("nav-back"),
+				icon: IconPool.getIconURI("nav-back"),
 				visible: false,
 				press: function () {
 					that.oMessageView.navigateBack();

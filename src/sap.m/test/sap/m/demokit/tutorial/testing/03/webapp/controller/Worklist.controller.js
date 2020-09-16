@@ -1,10 +1,10 @@
 sap.ui.define([
-    './BaseController',
-    'sap/ui/model/json/JSONModel',
-    '../model/formatter',
-    'sap/m/library'
+	'./BaseController',
+	'sap/ui/model/json/JSONModel',
+	'../model/formatter',
+	'sap/m/library'
 ], function(BaseController, JSONModel, formatter, mobileLibrary) {
-    "use strict";
+	"use strict";
 
 	return BaseController.extend("sap.ui.demo.bulletinboard.controller.Worklist", {
 

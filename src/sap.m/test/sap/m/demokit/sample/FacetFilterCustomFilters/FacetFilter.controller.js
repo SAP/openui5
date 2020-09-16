@@ -2,12 +2,14 @@ sap.ui.define([
 	'sap/m/ObjectIdentifier',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
 	'sap/ui/model/FilterType',
 	'sap/ui/model/json/JSONModel',
+	'sap/m/FacetFilterItem',
 	'sap/m/MessageToast',
 	"sap/ui/core/Component",
 	"sap/ui/core/Element"
-], function(ObjectIdentifier, Controller, Filter, FilterType, JSONModel, MessageToast, Component, Element) {
+], function(ObjectIdentifier, Controller, Filter, FilterOperator, FilterType, JSONModel, FacetFilterItem, MessageToast, Component, Element) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.FacetFilterCustomFilters.FacetFilter", {
@@ -51,7 +53,7 @@ sap.ui.define([
 		handleFacetFilterReset: function(oEvent) {
 			var oFacetFilter = Element.registry.get(oEvent.getParameter("id")),
 				aFacetFilterLists = oFacetFilter.getLists(),
-				oFilter = new Filter("text", 'Contains', "");
+				oFilter = new Filter("text", FilterOperator.Contains, "");
 
 			for (var i = 0; i < aFacetFilterLists.length; i++) {
 				aFacetFilterLists[i].setSelectedKeys();
@@ -76,7 +78,7 @@ sap.ui.define([
 				sSearchString = oEvent.getParameter("term"),
 				bClearButtonPressed = oEvent.getParameter("clearButtonPressed"),
 				// Define filter to be used for resetting the current list state or another one for searching through the list items
-				oFilter = bClearButtonPressed ? new Filter("text", 'Contains', "") : new Filter("text", 'Contains', sSearchString.toLowerCase()),
+				oFilter = bClearButtonPressed ? new Filter("text", FilterOperator.Contains, "") : new Filter("text", FilterOperator.Contains, sSearchString.toLowerCase()),
 				oItemTemplate, oBindingInfo;
 
 			// Preventing the internal filtering behavior FacetFilter control
@@ -86,7 +88,7 @@ sap.ui.define([
 				// Items are already bound and we apply the filtering
 				oFacetFilterList.getBinding("items").filter(oFilter, FilterType.Application);
 			} else {
-				oItemTemplate = new sap.m.FacetFilterItem({
+				oItemTemplate = new FacetFilterItem({
 					text: "{text}",
 					key: "{key}",
 					count: "{data}"
@@ -113,7 +115,7 @@ sap.ui.define([
 				// ANDs between each group
 				var oFilter = new Filter(mFacetFilterLists.map(function(oList) {
 					return new Filter(oList.getSelectedItems().map(function(oItem) {
-						return new Filter(oList.getTitle(), "EQ", oItem.getText());
+						return new Filter(oList.getTitle(), FilterOperator.EQ, oItem.getText());
 					}), false);
 				}), true);
 				this._applyFilter(oFilter);

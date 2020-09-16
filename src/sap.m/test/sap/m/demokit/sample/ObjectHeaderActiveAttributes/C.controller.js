@@ -14,6 +14,7 @@ sap.ui.define([
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
+	var URLHelper = mobileLibrary.URLHelper;
 
 	return Controller.extend("sap.m.sample.ObjectHeaderActiveAttributes.C", {
 
@@ -24,7 +25,7 @@ sap.ui.define([
 		},
 
 		handleSAPLinkPressed: function() {
-			sap.m.URLHelper.redirect("http://www.sap.com", true);
+			URLHelper.redirect("http://www.sap.com", true);
 		},
 
 		handleFeedbacklinkPressed: function() {

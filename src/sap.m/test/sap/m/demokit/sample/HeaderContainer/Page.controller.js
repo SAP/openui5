@@ -7,7 +7,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller'],
 				MessageToast.show("Fire press");
 			},
 			scrollChanged: function (oEvent) {
-				var sKey = oEvent.mParameters.selectedItem.getProperty("key");
+				var sKey = oEvent.getParameter("selectedItem").getKey();
 				if (sKey === "px") {
 					this.getView().byId("container1").setScrollStepByItem(0);
 					this.getView().byId("container2").setScrollStepByItem(0);

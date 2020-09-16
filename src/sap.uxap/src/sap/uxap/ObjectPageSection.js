@@ -222,7 +222,7 @@ sap.ui.define([
 		}
 
 		aSubSections.forEach(function (oSubsection) {
-			if (sLastSelectedSubSectionId === oSubsection.sId) {
+			if (sLastSelectedSubSectionId === oSubsection.getId()) {
 				oSubsection._setToFocusable(true);
 				bPreselectedSection = true;
 			} else {

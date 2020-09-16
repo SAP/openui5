@@ -88,7 +88,7 @@ sap.ui.define([
 
 		onPaste: function(oEvent) {
 			var aData = oEvent.getParameter("data");
-			sap.m.MessageToast.show("Pasted Data: " + aData);
+			MessageToast.show("Pasted Data: " + aData);
 		}
 
 	});

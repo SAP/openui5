@@ -1,6 +1,10 @@
 sap.ui.define([
-	'sap/base/util/deepExtend', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'
-], function(deepExtend, Fragment, Controller, JSONModel) {
+	'sap/base/util/deepExtend',
+	'sap/ui/core/Fragment',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/BindingMode',
+	'sap/ui/model/json/JSONModel'
+], function(deepExtend, Fragment, Controller, BindingMode, JSONModel) {
 	"use strict";
 
 	/**
@@ -13,7 +17,7 @@ sap.ui.define([
 		// Define initial data in oDataInitial structure which is used only in this  example.
 		// In productive code, probably any chart will be used in order to get the initial dimension / measure information.
 		oDataInitial: {
-		    // Static data
+			// Static data
 			Items: [
 				{
 					columnKey: "productId",
@@ -85,7 +89,7 @@ sap.ui.define([
 					aggregationRole: "Dimension"
 				}
 			],
-            // Runtime data
+			// Runtime data
 			DimMeasureItems: [
 				{
 					columnKey: "name",
@@ -189,7 +193,7 @@ sap.ui.define([
 
 		onInit: function() {
 			this.oJSONModel = new JSONModel(deepExtend({}, this.oDataInitial));
-            this.oJSONModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+			this.oJSONModel.setDefaultBindingMode(BindingMode.TwoWay);
 		},
 
 		onOK: function(oEvent) {
@@ -272,13 +276,13 @@ sap.ui.define([
 					return false;
 				}
 				var fnSort = function(a, b) {
-                    if (a.columnKey < b.columnKey) {
-                        return -1;
-                    } else if (a.columnKey > b.columnKey) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+					if (a.columnKey < b.columnKey) {
+						return -1;
+					} else if (a.columnKey > b.columnKey) {
+						return 1;
+					} else {
+						return 0;
+					}
 				};
 				aDataBase.sort(fnSort);
 				aData.sort(fnSort);

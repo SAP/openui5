@@ -136,7 +136,7 @@ sap.ui.define([
 		 */
 		onOpenViewSettings : function (oEvent) {
 			var sDialogTab = "filter";
-			if (oEvent.getSource() instanceof sap.m.Button) {
+			if (oEvent.getSource().isA("sap.m.Button")) {
 				var sButtonId = oEvent.getSource().getId();
 				if (sButtonId.match("sort")) {
 					sDialogTab = "sort";

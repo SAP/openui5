@@ -40,7 +40,7 @@ sap.ui.define([
 					title: "example glossary"
 				}
 			};
-			sap.m.MessageBox.error("Error message", {
+			MessageBox.error("Error message", {
 				title: "Error",
 				id: "messageBoxId1",
 				details: JSON,

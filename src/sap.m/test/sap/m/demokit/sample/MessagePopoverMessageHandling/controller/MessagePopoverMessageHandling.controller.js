@@ -44,7 +44,7 @@ sap.ui.define([
 			this.oMP = new MessagePopover({
 				activeTitlePress: function (oEvent) {
 					var oItem = oEvent.getParameter("item"),
-						oPage = that.oView.byId("messageHandlingPage"),
+						oPage = that.getView().byId("messageHandlingPage"),
 						oMessage = oItem.getBindingContext("message").getObject(),
 						oControl = Element.registry.get(oMessage.getControlId());
 

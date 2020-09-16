@@ -1893,9 +1893,9 @@ sap.ui.define([
 			var oIFrameRef = document.createElement("iframe");
 			oIFrameRef.style.display = "none";
 			/*eslint-enable no-script-url */
-			oIFrameRef.id = this.sId + "-frame";
+			oIFrameRef.id = this.getId() + "-frame";
 			sap.ui.getCore().getStaticAreaRef().appendChild(oIFrameRef);
-			oIFrameRef.contentWindow.name = this.sId + "-frame";
+			oIFrameRef.contentWindow.name = this.getId() + "-frame";
 
 			// sink the load event of the upload iframe
 			var that = this;

@@ -8,7 +8,7 @@ sap.ui.define([
 	"./Common",
 	"./shareOptions"
 ], function(
-    Opa5,
+	Opa5,
 	Press,
 	EnterText,
 	AggregationLengthEquals,

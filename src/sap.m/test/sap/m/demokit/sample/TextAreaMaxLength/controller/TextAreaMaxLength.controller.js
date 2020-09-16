@@ -1,8 +1,11 @@
 sap.ui.define([
+	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel'
-], function (Controller, JSONModel) {
+], function (coreLibrary, Controller, JSONModel) {
 	"use strict";
+
+	var ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.m.sample.TextAreaMaxLength.controller.TextAreaMaxLength", {
 		onInit: function () {
@@ -17,14 +20,14 @@ sap.ui.define([
 			var oTextArea = oEvent.getSource(),
 				iValueLength = oTextArea.getValue().length,
 				iMaxLength = oTextArea.getMaxLength(),
-				sState = iValueLength > iMaxLength ? "Warning" : "None";
+				sState = iValueLength > iMaxLength ? ValueState.Warning : ValueState.None;
 
 			oTextArea.setValueState(sState);
 		},
 
 		handleSimpleExceeding: function (oEvent) {
 			var oTA = oEvent.getSource();
-			oEvent.getParameter("exceeded") ? oTA.setValueState("Error") : oTA.setValueState("Success");
+			oEvent.getParameter("exceeded") ? oTA.setValueState(ValueState.Error) : oTA.setValueState(ValueState.Success);
 		},
 
 		buttonSetShortValuePress: function () {
