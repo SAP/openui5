@@ -5939,6 +5939,165 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Table creating new entities and rejected requestSideEffects for the complete table
+	// within the same $batch.
+	// Steps:
+	// 1. Successfully create 2 new entities.
+	// 2. Create 3 further entities, request side effects afterwards for the complete list; one POST
+	//    request fails hence the GET request for side effects also fails and the binding is
+	//    restored.
+	// 3. Check that the list binding has properly restored the created contexts (already saved +
+	//    still transient ones).
+	// 4. A deletion of a still transient context afterwards must NOT result in a DELETE request,
+	//    -> BCP 2070287827.
+	QUnit.test("BCP: 2070287827: restore created entities after failed refresh", function (assert) {
+		var oBinding,
+			aCreatedContexts = [],
+			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					Note : "#42",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectChange("note", ["#42"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("note", ["new2", "new1", "#42"])
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {Note : "new1"}
+				}, {
+					Note : "new1",
+					SalesOrderID : "43"
+				})
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {Note : "new2"}
+				}, {
+					Note : "new2",
+					SalesOrderID : "44"
+				});
+
+			aCreatedContexts.push(oBinding.create({Note : "new1"}, /*bSkipRefresh*/true));
+			aCreatedContexts.push(oBinding.create({Note : "new2"}, /*bSkipRefresh*/true));
+
+			return Promise.all([
+				aCreatedContexts[0].created(),
+				aCreatedContexts[1].created(),
+				that.waitForChanges(assert, "1. creating and saving new entities")
+			]);
+		}).then(function () {
+			var sCreateError = "Entity can not be created",
+				oError = createError({
+					code : "CODE",
+					message : sCreateError
+				});
+
+			// Note: changes have to be expected with the current iIndex of the contexts because
+			// ODLB#refreshInternal is called before changes are checked but at this point in time
+			// oBinding.iCreated is not yet restored
+			that.expectChange("note", "new5", -5)
+				.expectChange("note", "new4", -4)
+				.expectChange("note", "new3", -3)
+				.expectChange("note", "new2", -2)
+				.expectChange("note", "new1", -1)
+				.expectChange("note", "#42", 0)
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {Note : "new3"}
+				}, oError)
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {Note : "new4"}
+				}/* response does not matter here */)
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {Note : "new5"}
+				}/* response does not matter here */)
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100"
+					/* response does not matter here */)
+				.expectMessages([{
+					code : "CODE",
+					message : sCreateError,
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
+					sinon.match(oError.error.message), "sap.ui.model.odata.v4.ODataListBinding")
+				.exactly(3);
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to get contexts for " + sSalesOrderService + "SalesOrderList"
+					+ " with start index 0 and length 100",
+					sinon.match("request was not processed because the previous request failed"),
+					"sap.ui.model.odata.v4.ODataListBinding");
+
+			aCreatedContexts.push(oBinding.create({Note : "new3"}, /*bSkipRefresh*/true));
+			aCreatedContexts.push(oBinding.create({Note : "new4"}, /*bSkipRefresh*/true));
+			aCreatedContexts.push(oBinding.create({Note : "new5"}, /*bSkipRefresh*/true));
+
+			oBinding.getHeaderContext().requestSideEffects([{$NavigationPropertyPath : ""}])
+				.catch(function (oError0) {
+					assert.strictEqual(oError0.message,
+						"HTTP request was not processed because the previous request failed");
+					assert.strictEqual(oError0.cause.message,
+						sCreateError);
+			});
+
+			return that.waitForChanges(assert,
+				"2. creation of further entities fails and requested side effects rejected");
+		}).then(function () {
+			var aCurrentContexts = oBinding.getCurrentContexts();
+
+			// 3. the list binding is properly restored
+			// still 3x transient
+			assert.ok(aCurrentContexts[0].isTransient());
+			assert.ok(aCurrentContexts[1].isTransient());
+			assert.ok(aCurrentContexts[2].isTransient());
+			// still 2x created but already saved
+			//TODO: have to be still created after rejection
+			//assert.ok(aCurrentContexts[3].created());
+			assert.notOk(aCurrentContexts[3].isTransient());
+			//TODO: have to be still created after rejection
+			//assert.ok(aCurrentContexts[4].created());
+			assert.notOk(aCurrentContexts[4].isTransient());
+			// still 1x NOT created
+			assert.notOk(aCurrentContexts[5].created());
+
+			that.expectChange("note", [, "new3", "new2", "new1", "#42"]);
+
+			return Promise.all([
+				// delete 2nd transient one
+				aCreatedContexts[3].delete(),
+				// handle rejection of created promise
+				aCreatedContexts[3].created().catch(function (oError) {
+					assert.strictEqual(oError.message,
+						"Request canceled: POST SalesOrderList; group: $parked.$auto"
+					);
+					assert.ok(oError.canceled);
+				}),
+				that.waitForChanges(assert, "4. deletion of second transient context")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create a sales order w/o key properties, enter a note, then submit the batch
 	[false, true].forEach(function (bSkipRefresh) {
 		QUnit.test("Create with user input - bSkipRefresh: " + bSkipRefresh, function (assert) {
