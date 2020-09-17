@@ -88,6 +88,37 @@ sap.ui.define([
 		assert.ok(this.fnCallbackSpy.calledWithMatch(/timeout/), "Should invoke the callback with an error message containing the correct timeout value");
 	});
 
+	QUnit.test("Should validate the polling times", function (assert) {
+		assert.throws(function () {
+			_autoWaiterAsync.extendConfig({
+				interval: "random"
+			});
+		}, /needs to be a positive numeric/);
+
+		assert.throws(function () {
+			_autoWaiterAsync.extendConfig({
+				timeout: 0
+			});
+		}, /needs to be a positive numeric/);
+	});
+
+	QUnit.test("Should accept unknown config", function (assert) {
+		var fnConfigSpy = sinon.spy(_autoWaiter, "extendConfig");
+		_autoWaiterAsync.extendConfig({
+			interval: 200,
+			timeoutWaiter: {
+				maxDelay: 3000
+			}
+		});
+		assert.ok(fnConfigSpy.calledOnce);
+		assert.ok(fnConfigSpy.calledWithMatch({
+			timeoutWaiter: {
+				maxDelay: 3000
+			}
+		}));
+		fnConfigSpy.restore();
+	});
+
 	QUnit.test("Should not start a second wait", function (assert) {
 		this.fnHasToWaitStub.returns(true).onCall(1).returns(false);
 		var fnCallbackSpy = sinon.spy();
