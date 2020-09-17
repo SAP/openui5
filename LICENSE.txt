@@ -354,6 +354,13 @@ License: MIT License
 <year> = 2016
 <copyright holders> = jQuery Foundation and other contributors
 
+Component: jQuery.rtl-scroll-type
+Licensor: Wei-Ko Kao
+Website: https://github.com/othree/jquery.rtl-scroll-type
+License: MIT License
+<year> = 2012
+<copyright holders> = Wei-Ko Kao
+
 Component: jQuery-UI 1.10.4
 Licensor: Paul Bakaus
 Website: http://github.com/jquery/jquery-ui/
