@@ -207,8 +207,9 @@ sap.ui.define([
 	ResponsiveTableType.prototype._onPopinChanged = function(oEvent) {
 		var bHasPopin = oEvent.getParameter("hasPopin");
 		var aHiddenInPopin = oEvent.getParameter("hiddenInPopin");
+		var aVisibleItemsLength = oEvent.getSource().getVisibleItems().length;
 
-		if (aHiddenInPopin.length || (bHasPopin && !this.bHideDetails)) {
+		if (aVisibleItemsLength && (aHiddenInPopin.length || (bHasPopin && !this.bHideDetails))) {
 			this._oShowDetailsButton.setVisible(true);
 		} else {
 			this._oShowDetailsButton.setVisible(false);

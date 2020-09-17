@@ -254,7 +254,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		rm.close(groupTag);
 
 		if (type === "Head") {
-			oTable._bPopinChanged = oTable._hasPopin !== hasPopin || oTable._iHiddenPopinColumns !== oTable._getHiddenInPopin().length || hasPopin;
+			oTable._bPopinChanged = oTable._hasPopin !== hasPopin || oTable._iHiddenPopinColumns !== oTable._getHiddenInPopin().length;
 			oTable._hasPopin = hasPopin;
 			oTable._colCount = index - hiddens;
 			oTable._hasFooter = hasFooter;
