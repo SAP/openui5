@@ -432,6 +432,18 @@ function (
 		assert.ok(iButtonOffsetTop >= iScrollTop, "snap button is not in the overflow");
 	});
 
+	QUnit.test("_getSnappingHeight does not return negative values", function (assert) {
+		// Аrrange
+		var oDynamicPage = oFactory.getDynamicPageHeaderSnappedNoContent();
+
+		// Аssert
+		assert.strictEqual(oDynamicPage._canSnapHeaderOnScroll(), false, "Not enough content to snap with scroll");
+		assert.ok(oDynamicPage._getSnappingHeight() >= 0, "Snapping height cannot be less than 0");
+
+		// Clean-up
+		oDynamicPage.destroy();
+	});
+
 	QUnit.module("DynamicPage - Rendering - Header State Preserved On Scroll", {
 		beforeEach: function () {
 			this.oDynamicPageWithPreserveHeaderStateOnScroll = oFactory.getDynamicPageWithPreserveHeaderOnScroll();
