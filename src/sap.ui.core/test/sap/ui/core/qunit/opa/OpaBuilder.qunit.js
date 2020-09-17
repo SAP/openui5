@@ -5,14 +5,16 @@ sap.ui.define(
         "sap/ui/test/OpaBuilder",
         "sap/ui/test/actions/Press",
         "sap/ui/test/actions/EnterText",
-        "sap/base/strings/formatMessage"
+        "sap/base/strings/formatMessage",
+        "sap/ui/model/json/JSONModel"
     ],
     function(
         Opa5,
         OpaBuilder,
         Press,
         EnterText,
-        formatMessage
+        formatMessage,
+        JSONModel
     ) {
         "use strict";
 
@@ -880,32 +882,83 @@ sap.ui.define(
             }
         );
 
-        QUnit.test("'bindingProperties' should return a matcher that checks whether bound item has given properties", function(assert) {
-            var fnBindingProperties = OpaBuilder.Matchers.bindingProperties("myModelName", { text: "fitting text", number: 42 }),
+        QUnit.test("'bindingProperties' should have its model argument optional", function(assert) {
+            var fnBindingProperties = OpaBuilder.Matchers.bindingProperties( {
+                    text: "fitting text",
+                    number: 42
+                }),
+                bCalledBindingContextWOModel = false,
+                bCalleModelWOModel = false,
                 oMockControl = {
-                    getBindingContext: function() {
-                        return {
-                            getProperty: function(sName) {
-                                return mDummyContextData[sName];
-                            }
-                        };
+                    getBindingContext: function (sName) {
+                        bCalledBindingContextWOModel = sName === undefined;
+                        return undefined;
+                    },
+                    getModel: function (sName) {
+                        bCalleModelWOModel = sName === undefined;
+                        return undefined;
                     }
-                },
-                mDummyContextData = {
-                    text: "not fitting text"
                 };
             assert.strictEqual(fnBindingProperties(oMockControl), false);
+            assert.strictEqual(bCalledBindingContextWOModel, true);
+            assert.strictEqual(bCalleModelWOModel, true);
+        });
 
-            mDummyContextData = {
-                text: "fitting text"
-            };
+        QUnit.test("'bindingProperties' should return a matcher that checks whether bound item has given properties", function(assert) {
+            var sModelName = "myModelName",
+                fnBindingProperties = OpaBuilder.Matchers.bindingProperties(sModelName, { text: "fitting text", number: 42 }),
+                oMockControl = {
+                    getBindingContext: function(sName) {
+                       if (sName === sModelName) {
+                            return oContext;
+                       }
+                       return undefined;
+                    },
+                    getModel: function(sName) {
+                        if (sName === sModelName) {
+                            return oModel;
+                        }
+                        return undefined;
+                    }
+                },
+                oModel = new JSONModel({
+                    text: "not fitting text"
+                }),
+                oContext = oModel.createBindingContext("/");
+
             assert.strictEqual(fnBindingProperties(oMockControl), false);
 
-            mDummyContextData = {
+            oModel.setData({
+                text: "fitting text"
+            });
+            assert.strictEqual(fnBindingProperties(oMockControl), false);
+
+            oModel.setData({
                 text: "fitting text",
                 number: 42
-            };
+            });
             assert.strictEqual(fnBindingProperties(oMockControl), true);
+
+            // check unbound properties (no context, only model available)
+            oContext.destroy();
+            oContext = undefined;
+
+            oModel.setData({
+                text: "fitting text"
+            });
+            assert.strictEqual(fnBindingProperties(oMockControl), false);
+
+            oModel.setData({
+                text: "fitting text",
+                number: 42
+            });
+            assert.strictEqual(fnBindingProperties(oMockControl), true);
+
+            // check without context & model => result should be always false
+            oModel.destroy();
+            oModel = undefined;
+
+            assert.strictEqual(fnBindingProperties(oMockControl), false);
         });
 
         QUnit.test("'resourceBundle' should return a matcher that validates the given property against a token text of a library message bundle", function(assert) {
