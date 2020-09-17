@@ -10,20 +10,20 @@
 				data-sap-ui-libs="sap.tnt, sap.m">
 		</script>
 		<script>
+			var oToggleBtnCompact = new sap.m.ToggleButton("toggleCompact", {
+					text: "Compact Mode",
+					pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
+					press: function () {
+					jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
+					jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
+					}
+				});
 			var model = new sap.ui.model.json.JSONModel();
 			var data = {
 				navigation: [{
 					title: 'Root Item',
 					icon: 'sap-icon://employee',
-					expanded: true,
-					items: [{
-						title: 'Child Item 1'
-					}, {
-						title: 'Child Item 2',
-						enabled: false
-					}, {
-						title: 'Child Item 3'
-					}]
+					expanded: true
 				}, {
 					title: 'Root Item',
 					icon: 'sap-icon://building',
@@ -305,6 +305,42 @@
 				})
 			}).setModel(model).placeAt('col-2-content');
 
+			var sideNavigationNoIcons = new sap.tnt.SideNavigation({
+				expanded: true,
+				item: new sap.tnt.NavigationList({
+					items: new sap.tnt.NavigationListItem({
+						text: 'Root Item',
+						items: [
+							new sap.tnt.NavigationListItem({
+								text: 'Child Item 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child Item 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child Item 3'
+							})
+						]
+					})
+				}),
+				fixedItem: new sap.tnt.NavigationList({
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Root Item'
+						})
+					]
+				})
+			}).setModel(model).placeAt('col-3-content');
+
+			new sap.m.ToggleButton({
+				text: "Compact Mode",
+				pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
+				press: function () {
+				jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
+				jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
+				}
+			}).placeAt('col-1-header')
+
 			new sap.m.Button({
 				text: 'toggle expanded property',
 				press: function () {
@@ -319,6 +355,12 @@
 				}
 			}).placeAt('col-2-header');
 
+			new sap.m.Button({
+				text: 'toggle expanded property',
+				press: function () {
+					sideNavigationNoIcons.setExpanded(!sideNavigationNoIcons.getExpanded());
+				}
+			}).placeAt('col-3-header');
 
 		</script>
 	</head>
@@ -330,6 +372,10 @@
 		<div>
 			<div id="col-2-header"></div>
 			<div id="col-2-content" class="col-2-content"></div>
+		</div>
+		<div>
+			<div id="col-3-header"></div>
+			<div id="col-3-content" class="col-2-content"></div>
 		</div>
 	</body>
 </html>
