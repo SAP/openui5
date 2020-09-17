@@ -847,10 +847,10 @@ sap.ui.define([
 				}
 				if (!oItem.value) {
 					switch (oItem.type) {
-						case "boolean": oItem.value = false; break;
+						case "boolean": oItem.value = oItem.defaultValue || false; break;
 						case "integer":
-						case "number": oItem.value = 0; break;
-						default: oItem.value = "";
+						case "number": oItem.value = oItem.defaultValue || 0; break;
+						default: oItem.value = oItem.defaultValue || "";
 					}
 				}
 			} else if (oItem.type === "group") {
@@ -896,13 +896,16 @@ sap.ui.define([
 			Object.keys(oConfiguration.parameters).forEach(function (n) {
 				oItems[n] = merge({
 					manifestpath: sBasePath + n + "/value",
-					visible: true,
 					editable: (sMode !== "translation"),
 					_settingspath: "/form/items/" + n
 				}, oConfiguration.parameters[n]);
+
 				var oItem = oItems[n];
 				if (!oItem.type) {
 					oItem.type === "string";
+				}
+				if (!oItem.hasOwnProperty("visible")) {
+					oItem.visible = true;
 				}
 			});
 		}
