@@ -696,6 +696,12 @@ sap.ui.define([
 
 		// prevent disabling of internal controls by the sap.ui.core.EnabledPropagator
 		this._selectAllCheckBox.getEnabled = function() {
+			var oTable = this.getParent();
+
+			if (!oTable.getVisibleItems().length) {
+				return false;
+			}
+
 			return true;
 		};
 
