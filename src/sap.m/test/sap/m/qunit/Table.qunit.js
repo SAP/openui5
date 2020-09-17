@@ -395,6 +395,21 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("MultiSelect - selectAll checkbox should be disabled for no data", function(assert) {
+		var sut = createSUT('idMultiSelectTable2', true, true, "MultiSelect"),
+			clock = sinon.useFakeTimers();
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled since there are visible items");
+
+		sut.getBinding("items").filter(new Filter("color", "EQ", "foo"));
+		clock.tick(1);
+		assert.notOk(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is disabled since there are no visible items");
+
+		sut.destroy();
+	});
+
 	QUnit.test("Range Selection - rangeSelection object should be cleared if the shift key is released on the table header row or footer row", function(assert) {
 		var sut = createSUT('idRangeSelection', true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
