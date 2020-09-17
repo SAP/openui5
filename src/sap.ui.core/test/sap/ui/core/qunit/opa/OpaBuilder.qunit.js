@@ -108,7 +108,7 @@ sap.ui.define(
                 oMyOptions = { errorMessage: "my error" },
                 oOpaBuilder = OpaBuilder.create(oOpaInstance, "my.Id", "my.Type", true, fnMyMatcher, fnMyAction, oMyOptions);
             assert.ok(oOpaBuilder instanceof OpaBuilder);
-            assert.strictEqual(oOpaBuilder._getOpaInstance(), oOpaInstance);
+            assert.strictEqual(oOpaBuilder.getOpaInstance(), oOpaInstance);
             assert.ok(mSpies.hasId.calledWith("my.Id"));
             assert.ok(mSpies.hasType.calledWith("my.Type"));
             assert.ok(mSpies.isDialogElement.calledWith(true));
@@ -643,6 +643,20 @@ sap.ui.define(
             assert.ok(oHasSpy.calledWith(oMatcherSpy.returnValues[0]));
             oMatcherSpy.restore();
             oHasSpy.restore();
+        });
+
+        QUnit.test("Should set/get the Opa5 instance on 'setOpaInstance' and 'getOpaInstance'", function(assert) {
+            var oOpaBuilder = new OpaBuilder(),
+                oOpa5Instance = new Opa5();
+
+            assert.ok(!!oOpaBuilder.getOpaInstance(), "getOpaInstance creates an instance lazily if none was set first");
+
+            oOpaBuilder.setOpaInstance(oOpa5Instance);
+            assert.strictEqual(oOpaBuilder.getOpaInstance(), oOpa5Instance, "the set Opa5 instance is returned");
+
+            oOpaBuilder.setOpaInstance(null);
+            assert.notStrictEqual(oOpaBuilder.getOpaInstance(), oOpa5Instance, "the previous set Opa5 instance was cleared");
+            assert.notStrictEqual(oOpaBuilder.getOpaInstance(), null, "a new Opa5 instance was lazily created");
         });
 
         QUnit.module("Matchers");
