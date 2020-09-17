@@ -508,7 +508,7 @@ sap.ui.define([
 		this._aControlSizes[oControl.getId()] = iControlSize;
 
 		sWidth = Toolbar.getOrigWidth(oControl.getId());
-		if (Toolbar.isRelativeWidth(sWidth)) {
+		if (sWidth && Toolbar.isRelativeWidth(sWidth)) {
 			this._bNeedUpdateOnControlsCachedSizes = true;
 		}
 
