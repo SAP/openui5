@@ -13,15 +13,23 @@ sap.ui.define([
 	Properties
 ) {
 	"use strict";
-	return function waitForListItemInDialogWithLabel(oDialog, sLabel, oSettings) {
-		this.waitFor({
-			controlType: "sap.m.Label",
-			matchers: [
+	return function waitForListItemInDialogWithLabel(oSettings) {
+		var aMatchers = [];
+		var oDialog = oSettings.dialog;
+		var sLabel = oSettings.label;
+		if (oDialog) {
+			aMatchers.push(new Ancestor(oDialog, false));
+		}
+		if (sLabel) {
+			aMatchers.push(
 				new Properties({
 					text: sLabel
-				}),
-				new Ancestor(oDialog, false)
-			],
+				})
+			);
+		}
+		this.waitFor({
+			controlType: "sap.m.Label",
+			matchers: aMatchers,
 			success: function(aLabels) {
 				//Opa5.assert.strictEqual(aLabels.length, 1, 'The Label was found');
 				var oLabel = aLabels[0];

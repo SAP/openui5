@@ -28,8 +28,8 @@ sap.ui.define([
 	"use strict";
 
 	var clickOnTheReorderButtonOfDialog = function(sDialogTitle) {
-
-		waitForP13nDialog.call(this, sDialogTitle, {
+		waitForP13nDialog.call(this, {
+			dialogTitle: sDialogTitle,
 			liveMode: false,
 			success: function(oDialog) {
 				this.waitFor({
@@ -44,15 +44,16 @@ sap.ui.define([
 				});
 			}
 		});
-
 	};
 
 	var moveColumnListItemInDialogToTop = function(sColumnName, sDialogTitle) {
-
-		waitForP13nDialog.call(this, sDialogTitle, {
+		waitForP13nDialog.call(this, {
+			dialogTitle: sDialogTitle,
 			liveMode: false,
 			success: function(oColumnDialog) {
-				waitForListItemInDialogWithLabel.call(this, oColumnDialog, sColumnName, {
+				waitForListItemInDialogWithLabel.call(this, {
+					dialog: oColumnDialog,
+					label: sColumnName,
 					success: function(oColumnListItem) {
 						oColumnListItem.$().trigger("tap");
 						this.waitFor({
@@ -69,15 +70,16 @@ sap.ui.define([
 				});
 			}
 		});
-
 	};
 
 	var changeColumnListItemSelectedState = function(sColumnName, bSelected, sDialogTitle) {
-
-		waitForP13nDialog.call(this, sDialogTitle, {
+		waitForP13nDialog.call(this, {
+			dialogTitle: sDialogTitle,
 			liveMode: false,
 			success: function(oSortDialog) {
-				waitForListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
+				waitForListItemInDialogWithLabel.call(this, {
+					dialog: oSortDialog,
+					label: sColumnName,
 					success: function(oColumnListItem) {
 						var oCheckBox = oColumnListItem.getMultiSelectControl();
 						if (oCheckBox.getSelected() !== bSelected) {
@@ -87,7 +89,6 @@ sap.ui.define([
 				});
 			}
 		});
-
 	};
 
 	return {
@@ -95,7 +96,9 @@ sap.ui.define([
 		iClickOnTheSortButton: function() {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForP13nButtonWithParentAndIcon.call(this, oTable, TableUtil.SortButtonIcon, {
+					waitForP13nButtonWithParentAndIcon.call(this, {
+						parent: oTable,
+						icon: TableUtil.SortButtonIcon,
 						actions: new Press(),
 						errorMessage: "The Table has no P13n sort button"
 					});
@@ -106,11 +109,13 @@ sap.ui.define([
 			return changeColumnListItemSelectedState.call(this, sColumnName, bSelected, TableUtil.SortDialogTitle);
 		},
 		iChangeASelectedColumnSortDirection: function(sColumnName, bDescending) {
-
-			waitForP13nDialog.call(this, TableUtil.SortDialogTitle, {
+			waitForP13nDialog.call(this, {
+				dialogTitle: TableUtil.SortDialogTitle,
 				liveMode: false,
 				success: function(oSortDialog) {
-					waitForListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
+					waitForListItemInDialogWithLabel.call(this, {
+						dialog: oSortDialog,
+						label: sColumnName,
 						success: function(oColumnListItem) {
 							this.waitFor({
 								controlType: "sap.m.Select",
@@ -128,7 +133,6 @@ sap.ui.define([
 					});
 				}
 			});
-
 		},
 		iClickOnTheSortReorderButton: function() {
 			return clickOnTheReorderButtonOfDialog.call(this, TableUtil.SortDialogTitle);
@@ -140,7 +144,9 @@ sap.ui.define([
 		iClickOnTheColumnSettingsButton: function() {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForP13nButtonWithParentAndIcon.call(this, oTable, TableUtil.ColumnButtonIcon, {
+					waitForP13nButtonWithParentAndIcon.call(this, {
+						parent: oTable,
+						icon: TableUtil.ColumnButtonIcon,
 						actions: new Press(),
 						errorMessage: "The Table has no P13n settings button"
 					});
@@ -160,7 +166,9 @@ sap.ui.define([
 		iClickOnColumnHeader: function(sColumn) {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForColumnHeader.call(this, oTable, sColumn, {
+					waitForColumnHeader.call(this, {
+						table: oTable,
+						columnName: sColumn,
 						actions: new Press(),
 						errorMessage: "The column " + sColumn + "is not available"
 					});
@@ -170,7 +178,9 @@ sap.ui.define([
 		iClickOnAColumnHeaderMenuButtonWithIcon: function(sColumn, sIcon) {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForColumnHeader.call(this, oTable, sColumn, {
+					waitForColumnHeader.call(this, {
+						table: oTable,
+						columnName: sColumn,
 						success: function(oColumn) {
 							this.waitFor({
 								controlType: "sap.m.Popover",
@@ -178,7 +188,9 @@ sap.ui.define([
 									new Ancestor(oColumn, false)
 								],
 								success: function(aPopovers) {
-									waitForP13nButtonWithParentAndIcon.call(this, aPopovers[0], sIcon, {
+									waitForP13nButtonWithParentAndIcon.call(this, {
+										parent: aPopovers[0],
+										icon: sIcon,
 										actions: new Press(),
 										errorMessage: "The column header menu button " + sIcon + " is not available"
 									});

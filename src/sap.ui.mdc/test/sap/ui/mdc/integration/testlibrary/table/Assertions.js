@@ -49,7 +49,9 @@ sap.ui.define([
 		iShouldSeeASortButtonForTheTable: function() {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForP13nButtonWithParentAndIcon.call(this, oTable, TableUtil.SortButtonIcon, {
+					waitForP13nButtonWithParentAndIcon.call(this, {
+						parent: oTable,
+						icon: TableUtil.SortButtonIcon,
 						success: function(oButton) {
 							QUnit.assert.ok(oButton, "The Table has a sort button.");
 						},
@@ -61,7 +63,9 @@ sap.ui.define([
 		iShouldSeeAP13nButtonForTheTable: function() {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForP13nButtonWithParentAndIcon.call(this, oTable, TableUtil.ColumnButtonIcon, {
+					waitForP13nButtonWithParentAndIcon.call(this, {
+						parent: oTable,
+						icon: TableUtil.ColumnButtonIcon,
 						success: function(oButton) {
 							QUnit.assert.ok(oButton, "The Table has a P13n button.");
 						},
@@ -147,16 +151,17 @@ sap.ui.define([
 		},
 		// Sort Dialog Assertions
 		iShouldSeeTheSortDialog: function() {
-
-			waitForP13nDialog.call(this, TableUtil.SortDialogTitle, {
+			waitForP13nDialog.call(this, {
+				dialoTitle: TableUtil.SortDialogTitle,
 				liveMode: false
 			});
-
 		},
 		iShouldSeeASortedColumn: function(sColumn, sSortDirection) {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForColumnHeader.call(this, oTable, sColumn, {
+					waitForColumnHeader.call(this, {
+						table: oTable,
+						columnName: sColumn,
 						success: function(oColumn) {
 							QUnit.assert.equal(oColumn.$()[0].attributes["aria-sort"].value, sSortDirection, "The column " + sColumn + " has the correct sort direction.");
 						},
@@ -169,7 +174,9 @@ sap.ui.define([
 		iShouldSeeAColumnHeaderMenu: function(sColumn) {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForColumnHeader.call(this, oTable, sColumn, {
+					waitForColumnHeader.call(this, {
+						table: oTable,
+						columnName: sColumn,
 						success: function(oColumn) {
 							this.waitFor({
 								controlType: "sap.m.Popover",
@@ -191,7 +198,9 @@ sap.ui.define([
 		iShouldSeeTheColumnSettingsDialog: function() {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForP13nDialog.call(this, oTable, TableUtil.ColumnDialogTitle, {
+					waitForP13nDialog.call(this, {
+						dialogParent: oTable,
+						dialoTitle: TableUtil.ColumnDialogTitle,
 						liveMode: false
 					});
 				}

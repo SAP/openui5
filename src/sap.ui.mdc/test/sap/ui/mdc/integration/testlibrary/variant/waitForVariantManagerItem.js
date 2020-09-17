@@ -15,8 +15,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return function waitForVariantManagerItem(sItemText, oSettings) {
+	return function waitForVariantManagerItem(oSettings) {
 		oSettings = oSettings || {};
+
+		var sItemText = oSettings.itemText;
 
 		function onVariantManagerPopoverFound(oVariantManagerPopover) {
 			this.waitFor({

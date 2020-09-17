@@ -12,17 +12,23 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return function waitForColumnHeader(oTable, sColumnName, oSettings) {
-		return this.waitFor({
-			controlType: "sap.m.Column",
-			matchers: [
-				new Ancestor(oTable, false),
+	return function waitForColumnHeader(oSettings) {
+		var aMatchers = [];
+		if (oSettings.table) {
+			aMatchers.push(new Ancestor(oSettings.table, false));
+		}
+		if (oSettings.columnName) {
+			aMatchers.push(
 				new AggregationContainsPropertyEqual({
 					aggregationName: "header",
 					propertyName: "text",
-					propertyValue: sColumnName
+					propertyValue: oSettings.columnName
 				})
-			],
+			);
+		}
+		return this.waitFor({
+			controlType: "sap.m.Column",
+			matchers: aMatchers,
 			actions: oSettings.actions,
 			errorMessage: oSettings.errorMessage,
 			success: function(aColumns) {

@@ -18,7 +18,8 @@ sap.ui.define([
     return {
 
 		iSelectTheValueHelpCondition: function(aValues) {
-			return waitForValueHelpConditionsColumnListItem.call(this, aValues, {
+			return waitForValueHelpConditionsColumnListItem.call(this, {
+				values: aValues,
 				actions: new Press(),
 				success: function(oConditionColumnListItem) {
 					Opa5.assert.ok(true, "The column list item condition inside the value help dialog was pressed");

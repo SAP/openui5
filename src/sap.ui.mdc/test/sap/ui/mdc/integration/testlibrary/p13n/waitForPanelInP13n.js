@@ -14,20 +14,24 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return function waitForPanelInP13n(sGroupName, oSettings) {
+	return function waitForPanelInP13n(oSettings) {
+        var aMatchers = [];
+        if (oSettings.groupName) {
+            aMatchers.push(
+                new Properties({
+                    text: oSettings.groupName
+                })
+            );
+        }
 		return this.waitFor({
             controlType: oSettings.modal ? "sap.m.Dialog" : "sap.m.ResponsivePopover",
             success: function(aPopovers) {
                 var oPopover = aPopovers[0];
                 Opa5.assert.ok(oPopover,"P13n Container found");
+                aMatchers.push(new Ancestor(oPopover));
                 this.waitFor({
                     controlType: "sap.m.Label",
-                    matchers: [
-                            new Properties({
-                            text: sGroupName
-                        }),
-                        new Ancestor(oPopover)
-                    ],
+                    matchers: aMatchers,
                     success: function(aLabels){
                         this.waitFor({
                             controlType: "sap.m.Panel",
