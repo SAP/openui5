@@ -89,6 +89,12 @@
 				},
 				"stringWithRequestList": {
 					"value": "key1"
+				},
+				"stringArray": {
+					"value": [
+						"key1",
+						"key2"
+					]
 				}
 			},
 			"destinations": {

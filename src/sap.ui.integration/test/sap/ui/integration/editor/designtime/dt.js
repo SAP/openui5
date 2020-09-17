@@ -170,6 +170,28 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								"icon": "{icon}"
 							}
 						}
+					},
+					"stringArray": {
+						"manifestpath": "/sap.card/configuration/parameters/stringArray/value",
+						"label": "String Array",
+						"defaultValue": ["key1", "key2"],
+						"type": "string[]",
+						"values": {
+							"data": {  //this is the same handling as for a card DataProviderFactory
+								"json": [
+									{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+									{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+									{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
+								],
+								"path": "/"
+							},
+							"item": { //this is the same handling as for a card item, how to reuse this part regarding formatters?
+								"text": "{text}",
+								"key": "{key}",
+								"additionalText": "{additionalText}",
+								"icon": "{icon}"
+							}
+						}
 					}
 				}
 			},
