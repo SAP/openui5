@@ -271,11 +271,15 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("activate draft", function (assert) {
+			var sActivateVersion = sap.ui.fl.Versions.Draft.toString();
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "com.sap.test.app",
-				title: "new Title"
+				title: "new Title",
+				version: sActivateVersion
 			};
+
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
 			var mExpectedPropertyBag = Object.assign({
 				xsrfToken: undefined,
 				initialConnector: InitialConnector,
@@ -292,26 +296,54 @@ sap.ui.define([
 				assert.deepEqual(oResponse, {
 					version: 1
 				}, "the activated version is returned correctly");
-				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=0&sap-language=en", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+
+		QUnit.test("reactivate old version", function (assert) {
+			var sActivateVersion = "1";
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				reference: "com.sap.test.app",
+				title: "new reactivate Title",
+				version: sActivateVersion
+			};
+
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var mExpectedPropertyBag = Object.assign({
+				xsrfToken: undefined,
+				initialConnector: InitialConnector,
+				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				payload: "{\"title\":\"new reactivate Title\"}"
+			}, mPropertyBag);
+			var oActivatedVersion = {
+				versionNumber: 1
+			};
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: oActivatedVersion});
+			return KeyUserConnector.versions.activate(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, {
+					version: 1
+				}, "the reactivated version is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
 			});
 		});
 
 		QUnit.test("reactivate original app", function (assert) {
-			// TODO: enhance this test as soon as the reactivation is implemented; This test only ensures the passing of an empty query parameter
+			var sActivateVersion = sap.ui.fl.Versions.Original.toString();
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "com.sap.test.app",
-				title: "new Title"
+				title: "new Title",
+				version: sActivateVersion
 			};
 
-			var fnGetUrl = InitialUtils.getUrl;
-			sandbox.stub(InitialUtils, "getUrl").callsFake(function (sRoute, mPropertyBag, mParameters) {
-				mParameters.version = "";
-				return fnGetUrl(sRoute, mPropertyBag, mParameters);
-			});
-
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
 			var mExpectedPropertyBag = Object.assign({
 				xsrfToken: undefined,
 				initialConnector: InitialConnector,
@@ -328,7 +360,7 @@ sap.ui.define([
 				assert.deepEqual(oResponse, {
 					version: 1
 				}, "the activated version is returned correctly");
-				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=&sap-language=en", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
 			});

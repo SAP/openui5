@@ -248,9 +248,12 @@ sap.ui.define([
 		var oModel = Versions.getVersionsModel(mPropertyBag);
 		var aVersions = oModel.getProperty("/versions");
 		var bDraftExists = _doesDraftExistInVersions(aVersions);
-		if (!bDraftExists) {
-			return Promise.reject("No draft exists");
+		var sDisplayedVersion = oModel.getProperty("/displayedVersion");
+		var sActiveVersion = oModel.getProperty("/activeVersion");
+		if (sDisplayedVersion === sActiveVersion) {
+			return Promise.reject("Version is already active");
 		}
+		mPropertyBag.version = sDisplayedVersion;
 
 		var aSaveDirtyChangesPromise = [];
 		if (oModel.getProperty("/dirtyChanges")) {
@@ -268,7 +271,9 @@ sap.ui.define([
 				oVersionEntry.type = "inactive";
 			});
 			oVersion.type = "active";
-			aVersions.shift();
+			if (bDraftExists) {
+				aVersions.shift();
+			}
 			aVersions.splice(0, 0, oVersion);
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
