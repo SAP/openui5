@@ -28654,6 +28654,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: An annotation with $If comparing a number is evaluated.
+	// JIRA: CPOUI5ODATAV4-408
+	QUnit.skip("CPOUI5ODATAV4-408: $If comparing a number", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/As(\'1\')}">\
+	<Text id="avalue" text="{AValue}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("As('1')?$select=AID,AValue", {
+				AID : "1",
+				AValue : 1000 // Edm.Int16
+			})
+			.expectChange("avalue", "1,000");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oMetaModel = oModel.getMetaModel(),
+				oContext = oMetaModel.createBindingContext(
+					"/As/AID@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers"),
+				vRawValue = oContext.getObject(),
+				// "{=odata.collection(['in',(${AValue}>10)?'maybe':undefined])}"
+				sBinding = AnnotationHelper.value(vRawValue, {context : oContext}),
+				//TODO we should rather use % instead of $, as below:
+				// sBinding = "{=odata.collection(['in',(%{AValue}>10)?'maybe':undefined])}",
+				oText = new Text({text : sBinding, models : oModel});
+
+			oText.setBindingContext(that.oView.byId("form").getBindingContext());
+
+			return Promise.all(oText.getBinding("text").getBindings().map(function (oBinding) {
+				return oBinding.requestValue();
+			})).then(function () {
+				assert.strictEqual(oText.getText(), "in,maybe");
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: With the binding parameter <code>$$ignoreMessages</code> the application developer
 	// can control whether messages are displayed at the control. It works for
 	// <code>sap.ui.model.odata.v4.ODataPropertyBinding</code>s and composite bindings containing

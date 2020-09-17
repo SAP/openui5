@@ -39,6 +39,11 @@ sap.ui.define([
 			"Number": Number,
 			"Object": Object,
 			"odata": {
+				"collection": function (aElements) {
+					return aElements.filter(function (vElement) {
+						return vElement !== undefined;
+					});
+				},
 				"compare": function () {
 					var ODataUtils;
 

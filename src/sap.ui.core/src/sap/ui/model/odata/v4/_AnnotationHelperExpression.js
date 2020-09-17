@@ -183,6 +183,37 @@ sap.ui.define([
 		},
 
 		/**
+		 * Handling of "14.5.5 Expression Collection".
+		 *
+		 * @param {object} oPathValue
+		 *   path and value information pointing to the array (see Expression object)
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
+		 */
+		collection : function (oPathValue) {
+			var aPromises;
+
+			// needed so that we can safely call Array#map
+			Basics.expectType(oPathValue, "array");
+			aPromises = oPathValue.value.map(function (oUnused, i) {
+				return Expression.expression(
+					Basics.descend(oPathValue, i, true/*"as expression"*/),
+					/*bInCollection*/true);
+			});
+
+			return SyncPromise.all(aPromises).then(function (aElements) {
+				aElements = aElements.map(function (oElement) {
+					return Basics.resultToString(oElement, true);
+				});
+
+				return {
+					result : "expression",
+					value : "odata.collection([" + aElements.join(",") + "])"
+				};
+			});
+		},
+
+		/**
 		 * Handling of "14.5.3.1.1 Function odata.concat".
 		 *
 		 * @param {object} oPathValue
@@ -193,7 +224,7 @@ sap.ui.define([
 		concat : function (oPathValue) {
 			var aPromises;
 
-			// needed so that we can safely call the forEach
+			// needed so that we can safely call Array#map
 			Basics.expectType(oPathValue, "array");
 			aPromises = oPathValue.value.map(function (oUnused, i) {
 				// an embedded concat must use expression binding
@@ -239,10 +270,13 @@ sap.ui.define([
 		 *   The first parameter element is the conditional expression and must evaluate to an
 		 *   Edm.Boolean. The second and third child elements are the expressions, which are
 		 *   evaluated conditionally.
+		 * @param {boolean} [bInCollection]
+		 *   Whether "14.5.6 Expression edm:If" appears as a direct child of
+		 *   "14.5.5 Expression edm:Collection" and thus needs no third child element ("else")
 		 * @returns {sap.ui.base.SyncPromise}
 		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
-		conditional : function (oPathValue) {
+		conditional : function (oPathValue, bInCollection) {
 			var bComplexBinding = oPathValue.complexBinding,
 				oPathValueForCondition = bComplexBinding
 					? Object.assign({}, oPathValue, {complexBinding : false})
@@ -261,7 +295,9 @@ sap.ui.define([
 			return SyncPromise.all([
 				Expression.parameter(oPathValueForCondition, 0, "Edm.Boolean"),
 				Expression.parameter(oPathValue, 1),
-				Expression.parameter(oPathValue, 2)
+				bInCollection && oPathValue.value.length === 2
+					? {result : "constant", type : "edm:Null", value : undefined}
+					: Expression.parameter(oPathValue, 2)
 			]).then(function (aResults) {
 				var oCondition = aResults[0],
 					oThen = aResults[1],
@@ -332,10 +368,13 @@ sap.ui.define([
 		 *
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the expression (see Expression object)
+		 * @param {boolean} [bInCollection]
+		 *   Whether the current expression appears as a direct child of
+		 *  "14.5.5 Expression edm:Collection"
 		 * @returns {sap.ui.base.SyncPromise}
 		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
-		expression : function (oPathValue) {
+		expression : function (oPathValue, bInCollection) {
 			var oRawValue = oPathValue.value,
 				oSubPathValue = oPathValue,
 				sType;
@@ -350,6 +389,8 @@ sap.ui.define([
 					: "Float";
 			} else if (typeof oRawValue === "string") {
 				sType = "String";
+			} else if (Array.isArray(oRawValue)) { // 14.5.5 Expression edm:Collection
+				return Expression.collection(oPathValue);
 			} else {
 				Basics.expectType(oPathValue, "object");
 
@@ -374,7 +415,7 @@ sap.ui.define([
 					return Expression.apply(oPathValue, oSubPathValue);
 
 				case "If": // 14.5.6 Expression edm:If
-					return Expression.conditional(oSubPathValue);
+					return Expression.conditional(oSubPathValue, bInCollection);
 
 				case "Name": // 12.4.1 Attribute Name
 				case "Path": // 14.5.12 Expression edm:Path

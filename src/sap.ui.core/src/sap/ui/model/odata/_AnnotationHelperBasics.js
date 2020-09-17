@@ -393,6 +393,9 @@ sap.ui.define([
 
 			case "constant":
 				if (oResult.type === "edm:Null") {
+					if (oResult.value === undefined) {
+						return bExpression ? "undefined" : undefined;
+					}
 					return bExpression ? "null" : null;
 				}
 				if (bExpression) {
