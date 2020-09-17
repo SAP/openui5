@@ -19,7 +19,7 @@
 		"resources": {
 			"css": [
 				{
-					"uri": "FixFlexHorizontal/style.css"
+					"uri": "style.css"
 				}
 			]
 		},
