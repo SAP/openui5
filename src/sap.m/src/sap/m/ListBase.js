@@ -607,14 +607,14 @@ function(
 			return;
 		}
 
+		if (this._bSkippedInvalidationOnRebind && this.getBinding("items").getLength() === 0) {
+			this.invalidate();
+		}
+
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
 			this._oGrowingDelegate.updateItems(sReason);
 		} else {
-			if (this._bSkippedInvalidationOnRebind && this.getBinding("items").getLength() === 0) {
-				this.invalidate();
-			}
-
 			if (this._bReceivingData) {
 				// if we are receiving the data this should be oDataModel
 				// updateStarted is already handled before on refreshItems
