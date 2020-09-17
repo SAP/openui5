@@ -248,6 +248,9 @@
         <lib name="jquery_mobile" displayName="jQuery Mobile" homepage="http://jquerymobile.com">
         	<license url="http://jQuery.org/license" type="MIT License" file="../thirdparty/licenses/jQuery-MIT-LICENSE.txt" />
         </lib>
+        <lib name="jquery.rtl-scroll-type" displayName="jQuery.rtl-scroll-type" homepage="https://github.com/othree/jquery.rtl-scroll-type">
+        	<license url="https://github.com/othree/jquery.rtl-scroll-type/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/jQuery.rtl-scroll-type-MIT-LICENSE.txt" />
+        </lib>
         <lib name="qunit-composite" displayName="Qunit Composite" homepage="https://github.com/jquery/qunit-composite">
         	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-composite-MIT-LICENSE.txt" />
         </lib>
