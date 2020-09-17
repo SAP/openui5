@@ -3,11 +3,15 @@
 sap.ui.define([
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	SmartVariantManagementWriteAPI,
 	CompVariantState,
+	Storage,
+	Settings,
 	ManifestUtils,
 	sinon
 ) {
@@ -17,6 +21,8 @@ sap.ui.define([
 
 	QUnit.module("SmartVariantManagementWriteAPI", {
 		afterEach: function() {
+			delete Settings._instance;
+			delete Settings._oLoadSettingsPromise;
 			sandbox.restore();
 		}
 	}, function() {
@@ -56,6 +62,38 @@ sap.ui.define([
 					assert.equal(oCompVariantStateFunctionArguments.reference, sReference, "the reference was added,");
 					assert.equal(oCompVariantStateFunctionArguments.persistencyKey, sPersistencyKey, "and the reference was added");
 				});
+			});
+		});
+
+		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns true", function (assert) {
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: true,
+				isVariantSharingEnabled: true
+			};
+
+			sandbox.stub(Storage, "loadFeatures").resolves(oSetting);
+
+			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantSharingEnabled");
+			return SmartVariantManagementWriteAPI.isVariantSharingEnabled().then(function (bFlag) {
+				assert.equal(bFlag, true, "the true flag is returned");
+				assert.equal(isVariantSharingEnabledSpy.callCount, 1, "called once");
+			});
+		});
+
+		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns false", function (assert) {
+			var oSetting = {
+				isKeyUser: false,
+				isAtoAvailable: true,
+				isVariantSharingEnabled: false
+			};
+
+			sandbox.stub(Storage, "loadFeatures").resolves(oSetting);
+
+			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantSharingEnabled");
+			return SmartVariantManagementWriteAPI.isVariantSharingEnabled().then(function (bFlag) {
+				assert.equal(bFlag, false, "the false flag is returned");
+				assert.equal(isVariantSharingEnabledSpy.callCount, 1, "called once");
 			});
 		});
 	});
