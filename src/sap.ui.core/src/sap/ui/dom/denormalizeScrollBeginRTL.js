@@ -1,8 +1,29 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define(["sap/ui/Device", "sap/ui/util/_FeatureDetection"], function(Device, _FeatureDetection) {
 	"use strict";
+
+	var fnDenormalize;
+
+	if (_FeatureDetection.initialScrollPositionIsZero()) {
+		if (_FeatureDetection.canScrollToNegative()) {
+			//actual chrome/safari
+			fnDenormalize = function(iNormalizedScrollBegin, oDomRef) {
+				return -iNormalizedScrollBegin;
+			};
+		} else {
+			//IE
+			fnDenormalize = function(iNormalizedScrollBegin, oDomRef) {
+				return iNormalizedScrollBegin;
+			};
+		}
+	} else {
+		//legacy chrome
+		fnDenormalize = function(iNormalizedScrollBegin, oDomRef) {
+			return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
+		};
+	}
 
 	/**
 	 * For the given scroll position measured from the "beginning" of a container (the right edge in RTL mode)
@@ -27,21 +48,8 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * @alias module:sap/ui/dom/denormalizeScrollBeginRTL
 	 */
 	var fnDenormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {
-
 		if (oDomRef) {
-			if (Device.browser.msie) {
-				return iNormalizedScrollBegin;
-
-			} else if (Device.browser.webkit) {
-				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
-
-			} else if (Device.browser.firefox) {
-				return -iNormalizedScrollBegin;
-
-			} else {
-				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
-				return iNormalizedScrollBegin;
-			}
+			return fnDenormalize(iNormalizedScrollBegin, oDomRef);
 		}
 	};
 
