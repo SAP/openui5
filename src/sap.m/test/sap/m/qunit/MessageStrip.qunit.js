@@ -360,11 +360,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Role alert should be present", function (assert) {
+	QUnit.test("Role note should be present", function (assert) {
 		var msgStripDom = this.oMessageStrip.getDomRef(),
 			role = msgStripDom.getAttribute("role");
 
-		assert.strictEqual(role, "alert", "role=alert is present");
+		assert.strictEqual(role, "note", "role=note is present");
 	});
 
 	QUnit.test("Live region with aria-live should be present", function (assert) {
@@ -375,11 +375,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("Labelledby attribute", function (assert) {
-		var msgStripDom = this.oMessageStrip.getDomRef(),
-			labelledBy = msgStripDom.getAttribute("aria-labelledby");
+		//Arrange
+		var oMessageStrip = new MessageStrip({
+			text: "Some text",
+			showCloseButton: true
+		});
 
-		assert.strictEqual(labelledBy, this.oMessageStrip.getId(),
+		oMessageStrip.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		var oMessageStripDomRef = oMessageStrip.getDomRef(),
+			oMessageStripWithLinkDomRef = this.oMessageStrip.getDomRef(),
+			sLabelledBy = oMessageStripDomRef.getAttribute("aria-labelledby");
+
+		//Assert
+		assert.strictEqual(sLabelledBy, oMessageStrip.getId(),
 			"should point to the element's id");
+		assert.notOk(oMessageStripWithLinkDomRef.hasAttribute("aria-labelledby"),
+			"When link is available, the Messagestrip has no aria-lablledby attribute set");
+
+		//Clean up
+		oMessageStrip.destroy();
 	});
 
 	QUnit.test("Invisible aria type text should be present in the root element", function (assert) {
