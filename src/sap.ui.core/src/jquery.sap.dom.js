@@ -3,9 +3,93 @@
  */
 
 // Provides functionality related to DOM analysis and manipulation which is not provided by jQuery itself.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
-	function(jQuery, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/ui/util/_FeatureDetection"],
+	function(jQuery, Device, _FeatureDetection) {
 	"use strict";
+
+	var fnScrollLeftRTL;
+
+	if (_FeatureDetection.initialScrollPositionIsZero()) {
+		// actual chrome/safari
+		if (_FeatureDetection.canScrollToNegative()) {
+			fnScrollLeftRTL = function(oDomRef) {
+				return oDomRef.scrollWidth + oDomRef.scrollLeft - oDomRef.clientWidth;
+			};
+		} else {
+			//IE
+			fnScrollLeftRTL = function(oDomRef) {
+				return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
+			};
+		}
+	} else {
+		//legacy chromium
+		fnScrollLeftRTL = function(oDomRef) {
+			return oDomRef.scrollLeft;
+		};
+	}
+
+	var fnScrollRightRTL;
+
+	if (_FeatureDetection.initialScrollPositionIsZero()) {
+		// actual chrome/safari
+		if (_FeatureDetection.canScrollToNegative()) {
+			fnScrollRightRTL = function(oDomRef) {
+				return (-oDomRef.scrollLeft);
+			};
+		} else {
+			//IE
+			fnScrollRightRTL = function(oDomRef) {
+				return oDomRef.scrollLeft;
+			};
+		}
+	} else {
+		//legacy chromium
+		fnScrollRightRTL = function(oDomRef) {
+			return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
+		};
+	}
+
+	var fnDenormalizeScrollLeftRTL;
+
+	if (_FeatureDetection.initialScrollPositionIsZero()) {
+		if (_FeatureDetection.canScrollToNegative()) {
+			//actual chrome/safari
+			fnDenormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
+				return oDomRef.clientWidth + iNormalizedScrollLeft - oDomRef.scrollWidth;
+			};
+		} else {
+			//IE
+			fnDenormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
+				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollLeft;
+			};
+		}
+	} else {
+		//legacy chrome
+		fnDenormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
+			return iNormalizedScrollLeft;
+		};
+	}
+
+	var fnDenormalizeScrollBeginRTL;
+
+	if (_FeatureDetection.initialScrollPositionIsZero()) {
+		if (_FeatureDetection.canScrollToNegative()) {
+			//actual chrome/safari
+			fnDenormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {
+				return -iNormalizedScrollBegin;
+			};
+		} else {
+			//IE
+			fnDenormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {
+				return iNormalizedScrollBegin;
+			};
+		}
+	} else {
+		//legacy chrome
+		fnDenormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {
+			return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
+		};
+	}
 
 	/**
 	 * Shortcut for document.getElementById(), including a bug fix for older IE versions.
@@ -468,21 +552,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		if (oDomRef) {
 
 			if (iPos === undefined) { // GETTER code
-				if (Device.browser.msie || Device.browser.edge) {
-					return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
-
-				} else if (Device.browser.firefox || (Device.browser.safari && Device.browser.version >= 10)) {
-					// Firefox and Safari 10+ behave the same although Safari is a WebKit browser
-					return oDomRef.scrollWidth + oDomRef.scrollLeft - oDomRef.clientWidth;
-
-				} else if (Device.browser.webkit) {
-					// WebKit browsers (except Safari 10+, as it's handled above)
-					return oDomRef.scrollLeft;
-
-				} else {
-					// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
-					return oDomRef.scrollLeft;
-				}
+				return fnScrollLeftRTL(oDomRef);
 
 			} else { // SETTER code
 				oDomRef.scrollLeft = jQuery.sap.denormalizeScrollLeftRTL(iPos, oDomRef);
@@ -511,22 +581,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.scrollRightRTL = function scrollRightRTL() {
 		var oDomRef = this.get(0);
 		if (oDomRef) {
-
-			if (Device.browser.msie) {
-				return oDomRef.scrollLeft;
-
-			} else if (Device.browser.firefox || (Device.browser.safari && Device.browser.version >= 10)) {
-				// Firefox and Safari 10+ behave the same although Safari is a WebKit browser
-				return (-oDomRef.scrollLeft);
-
-			} else if (Device.browser.webkit) {
-				// WebKit browsers (except Safari 10+, as it's handled above)
-				return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
-
-			} else {
-				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
-				return oDomRef.scrollLeft;
-			}
+			return fnScrollRightRTL(oDomRef);
 		}
 	};
 
@@ -551,21 +606,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.denormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
 
 		if (oDomRef) {
-			if (Device.browser.msie || Device.browser.edge) {
-				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollLeft;
-
-			} else if (Device.browser.firefox || (Device.browser.safari && Device.browser.version >= 10)) {
-				// Firefox and Safari 10+ behave the same although Safari is a WebKit browser
-				return oDomRef.clientWidth + iNormalizedScrollLeft - oDomRef.scrollWidth;
-
-			} else if (Device.browser.webkit) {
-				// WebKit browsers (except Safari 10+, as it's handled above)
-				return iNormalizedScrollLeft;
-
-			} else {
-				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
-				return iNormalizedScrollLeft;
-			}
+			return fnDenormalizeScrollLeftRTL(iNormalizedScrollLeft, oDomRef);
 		}
 	};
 
@@ -594,19 +635,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.denormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {
 
 		if (oDomRef) {
-			if (Device.browser.msie) {
-				return iNormalizedScrollBegin;
-
-			} else if (Device.browser.webkit) {
-				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
-
-			} else if (Device.browser.firefox) {
-				return -iNormalizedScrollBegin;
-
-			} else {
-				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
-				return iNormalizedScrollBegin;
-			}
+			return fnDenormalizeScrollBeginRTL(iNormalizedScrollBegin, oDomRef);
 		}
 	};
 
