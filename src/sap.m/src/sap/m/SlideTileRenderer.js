@@ -13,7 +13,9 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 	 * SlideTile renderer.
 	 * @namespace
 	 */
-	var SlideTileRenderer = {};
+	var SlideTileRenderer = {
+		apiVersion : 2  // enable in-place DOM patching
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -27,20 +29,18 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 			sScopeClass = encodeCSS("sapMSTScope" + sScope),
 			iLength;
 
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMST");
-		oRm.addClass(sScopeClass);
+		oRm.openStart("div", oControl);
+		oRm.class("sapMST");
+		oRm.class(sScopeClass);
 		if (!this._bAnimationPause) {
-			oRm.addClass("sapMSTPauseIcon");
+			oRm.class("sapMSTPauseIcon");
 		}
-		oRm.writeClasses();
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
-		oRm.writeAttribute("tabindex", "0");
-		oRm.writeAttribute("role", "presentation");
-		oRm.write(">");
+		oRm.attr("tabindex", "0");
+		oRm.attr("role", "presentation");
+		oRm.openEnd();
 		iLength = oControl.getTiles().length;
 		if (iLength > 1 && sScope === GenericTileScope.Display) {
 			this._renderPausePlayIcon(oRm, oControl);
@@ -50,67 +50,56 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 		if (sScope === GenericTileScope.Actions) {
 			this._renderActionsScope(oRm, oControl);
 		}
-		oRm.write("<div");
-		oRm.addClass("sapMSTFocusDiv");
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-focus");
-		oRm.write(">");
-		oRm.write("</div>");
-		oRm.write("</div>");
+		oRm.openStart("div",oControl.getId() + "-focus");
+		oRm.class("sapMSTFocusDiv");
+		oRm.openEnd();
+		oRm.close("div");
+		oRm.close("div");
 	};
 
 	SlideTileRenderer._renderTiles = function(oRm, oControl, iLength) {
-		oRm.write("<div");
-		oRm.addClass("sapMSTOverflowHidden");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div");
+		oRm.class("sapMSTOverflowHidden");
+		oRm.openEnd();
 		for (var i = 0; i < iLength; i++) {
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-wrapper-" + i);
-			oRm.addClass("sapMSTWrapper");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div", oControl.getId() + "-wrapper-" + i );
+			oRm.class("sapMSTWrapper");
+			oRm.openEnd();
 			oRm.renderControl(oControl.getTiles()[i]);
-			oRm.write("</div>");
+			oRm.close("div");
 		}
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	SlideTileRenderer._renderTilesIndicator = function(oRm, oControl) {
 		var iPageCount = oControl.getTiles().length;
 
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-tilesIndicator");
-		oRm.addClass("sapMSTBulleted");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div",  oControl.getId() + "-tilesIndicator");
+		oRm.class("sapMSTBulleted");
+		oRm.openEnd();
 		for ( var i = 0; i < iPageCount; i++) {
-			oRm.write("<span");
-			oRm.writeAttribute("id", oControl.getId() + "-tileIndicator-" + i);
-			oRm.write(">");
-			oRm.write("</span>");
+			oRm.openStart("span", oControl.getId() + "-tileIndicator-" + i );
+			oRm.openEnd();
+			oRm.close("span");
 		}
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	SlideTileRenderer._renderPausePlayIcon = function(oRm, oControl) {
 		if (oControl.getTiles().length > 1) {
-			oRm.write("<div");
-			oRm.addClass("sapMSTIconClickTapArea");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write("</div>");
-			oRm.write("<div");
-			oRm.addClass("sapMSTIconDisplayArea");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write("</div>");
-			oRm.write("<div");
-			oRm.addClass("sapMSTIconNestedArea");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div");
+			oRm.class("sapMSTIconClickTapArea");
+			oRm.openEnd();
+			oRm.close("div");
+			oRm.openStart("div");
+			oRm.class("sapMSTIconDisplayArea");
+			oRm.openEnd();
+			oRm.close("div");
+			oRm.openStart("div");
+			oRm.class("sapMSTIconNestedArea");
+			oRm.openEnd();
 			oRm.renderControl(oControl.getAggregation("_pausePlayIcon"));
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
