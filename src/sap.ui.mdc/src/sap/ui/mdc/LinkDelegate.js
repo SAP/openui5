@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 		 * @param {Object} oBindingContext Binding context of the <code>Link</code> control
 		 * @param {Object} oInfoLog InfoLog of the <code>Link</code> control
 		 * @returns {Promise} Once resolved, <code>null</code> or an array of {@link sap.ui.mdc.link.LinkItem} is returned
-		 * Once resolved, <code>null</code> or an array of {@link sap.ui.mdc.link.LinkItem} is returned. If <code>null</code> is returned, the link won't cache <code>LinkItem</code>.
+		 * If <code>null</code> is returned, the link won't cache <code>LinkItem</code>.
 		 */
 		fetchLinkItems: function(oPayload, oBindingContext, oInfoLog) {
 			return Promise.resolve(null);
@@ -37,13 +37,17 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 		/**
 		 * Calculates and returns the type of link that is displayed.
 		 * @param {Object} oPayload Payload of the <code>Link</code> given by the application
-		 * @param {Object} oLink Instance of the <code>Link</code> control
-		 * @returns {Promise} Once resolved, a {@link sap.ui.mdc.LinkDelegate.LinkType} is returned
+		 * @returns {Promise} Once resolved, an object containing an initial {@link sap.ui.mdc.LinkDelegate.LinkType} and an optional <code>Promise</code> are returned
+		 * The optional <code>Promise</code> also returns a {@link sap.ui.mdc.LinkDelegate.LinkType} object.
+		 * Once the optional <code>Promise</code> has been resolved, the returned {@link sap.ui.mdc.LinkDelegate.LinkType} overwrites the <code>initialType</code>.
 		 */
 		fetchLinkType: function(oPayload, oLink) {
 			return Promise.resolve({
-				type: 2,
-				directLink: undefined
+				initialType: {
+					type: 2,
+					directLink: undefined
+				},
+				runtimeType: null
 			});
 		},
 		/**
