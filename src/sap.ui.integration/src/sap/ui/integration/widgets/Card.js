@@ -374,9 +374,10 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
 		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as getBaseUrl
 		 * @borrows sap.ui.integration.widgets.Card#getTranslatedText as getTranslatedText
+		 * @borrows sap.ui.integration.widgets.Card#getModel as getModel
 		 */
 		this._oLimitedInterface = new Interface(this, [
-			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getTranslatedText"
+			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getTranslatedText", "getModel"
 		]);
 
 		this.initBadgeEnablement({
