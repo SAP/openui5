@@ -121,7 +121,7 @@ sap.ui.define([
 			var oElement = aElements[i];
 			this.renderElement(oRm, oLayout, oElement);
 
-			if (Device.browser.chrome && i < oOptions.XL.Size && aElements.length > 1 && aElements.length <= oOptions.XL.Size) {
+			if (Device.browser.chrome && i < oOptions.XL.Size - 1 && aElements.length > 1 && aElements.length <= oOptions.XL.Size) {
 				// in Chrome columns are not filled properly for less elements -> an invisible dummy DIV helps
 				// with this logic the result is near to the other browsers
 				// this "work around" don't work for other browsers
