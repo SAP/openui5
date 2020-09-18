@@ -156,8 +156,13 @@ sap.ui.define([
 	};
 
 	Filter.prototype._updateModel = function (oData) {
-		this.getModel().setData(oData);
-		this._getSelect().setSelectedKey(this.getValue());
+		var oSelect = this._getSelect(),
+			oModel = this.getModel();
+
+		oModel.setData(oData);
+
+		oSelect.setSelectedKey(this.getValue());
+		this._updateSelected(oSelect.getSelectedItem());
 	};
 
 	/**
@@ -176,7 +181,7 @@ sap.ui.define([
 		}
 
 		var oCard = Core.byId(this.getCard());
-		this._oDataProvider = oCard._oDataProviderFactory.create(oDataConfig);
+		this._oDataProvider = oCard._oDataProviderFactory.create(oDataConfig, null, true);
 
 		// If a data provider is created: use own model.
 		this.setModel(new JSONModel());
@@ -198,6 +203,19 @@ sap.ui.define([
 		this._oDataProvider.triggerDataUpdate();
 	};
 
+	Filter.prototype._updateSelected = function (oSelectedItem) {
+		var oFiltersModel = this.getModel("filters"),
+			sFilterKey = this.getKey();
+
+		oFiltersModel.setProperty("/" + sFilterKey, {
+			"value": oSelectedItem.getKey(),
+			"selectedItem": {
+				"title": oSelectedItem.getText(),
+				"key": oSelectedItem.getKey()
+			}
+		});
+	};
+
 	/**
 	 * Constructs a Select control configured with the Filter's properties.
 	 *
@@ -214,9 +232,7 @@ sap.ui.define([
 		oSelect.attachChange(function (oEvent) {
 			var sValue = oEvent.getParameter("selectedItem").getKey();
 			this.setValue(sValue);
-
-			var oCard = Core.byId(this.getCard());
-			oCard._setFilterValue(this.getKey(), sValue);
+			this._updateSelected(oEvent.getParameter("selectedItem"));
 		}.bind(this));
 
 		if (oConfig && oConfig.item) {

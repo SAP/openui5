@@ -4,12 +4,14 @@
 sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/base/util/extend",
+	"sap/base/util/merge",
 	"sap/ui/integration/formatters/DateTimeFormatter",
 	"sap/ui/integration/formatters/NumberFormatter",
 	"sap/ui/integration/bindingFeatures/DateRange"
 ], function (
 	BindingParser,
 	extend,
+	merge,
 	DateTimeFormatter,
 	NumberFormatter,
 	DateRange
@@ -53,6 +55,11 @@ sap.ui.define([
 		percent: NumberFormatter.percent,
 		unit: NumberFormatter.unit
 	};
+
+	/**
+	 * @const {Array} The default models used in a card.
+	 */
+	BindingHelper.DEFAULT_CARD_MODELS = ["i18n", "parameters", "filters", "context"];
 
 	BindingHelper.mLocals = {
 		"format": mFormatters,
@@ -210,6 +217,29 @@ sap.ui.define([
 		}
 
 		return oBindingInfoClone;
+	};
+
+	/**
+	 * Copy the models from one managed object into another.
+	 * @param {sap.ui.base.ManagedObject} oSource Copy from this managed object.
+	 * @param {sap.ui.base.ManagedObject} oTarget The object which will receive the models.
+	 * @param {Array} [aModelsToCopy] List of model names to copy. Default is <code>["i18n", "parameters", "filters", "context"]</code>
+	 */
+	BindingHelper.copyModels = function (oSource, oTarget, aModelsToCopy) {
+		var aModelsNames = aModelsToCopy || BindingHelper.DEFAULT_CARD_MODELS, // @todo find a way to get list of all models
+			oDefaultModel = oSource.getModel();
+
+		if (oDefaultModel) {
+			oTarget.setModel(oDefaultModel);
+		}
+
+		aModelsNames.forEach(function (sModelName) {
+			var oModel = oSource.getModel(sModelName);
+
+			if (oModel) {
+				oTarget.setModel(oModel, sModelName);
+			}
+		});
 	};
 
 	return BindingHelper;

@@ -127,7 +127,7 @@ sap.ui.define([
 
 		oHeader.setServiceManager(oCard._oServiceManager);
 		oHeader.setDataProviderFactory(oCard._oDataProviderFactory);
-		oHeader._setDataConfiguration(BindingHelper.createBindingInfos(mConfiguration.data));
+		oHeader._setDataConfiguration(mConfiguration.data);
 
 		oActions.attach(mConfiguration, oHeader);
 		oHeader._oActions = oActions;

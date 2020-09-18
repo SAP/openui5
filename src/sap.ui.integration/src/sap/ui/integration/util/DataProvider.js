@@ -28,10 +28,19 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	 * @private
 	 * @since 1.65
 	 * @alias sap.ui.integration.util.DataProvider
+	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataProvider = ManagedObject.extend("sap.ui.integration.util.DataProvider", {
 		metadata: {
 			library: "sap.ui.integration",
+			properties: {
+				/**
+				 * Data settings in json format. Will override any other settings.
+				 */
+				settingsJson: {
+					type: "string"
+				}
+			},
 			events: {
 
 				/**
@@ -82,6 +91,29 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	};
 
 	/**
+	 * Sets a list of <code>sap.ui.integration.util.DataProvider</code> which will be considered dependencies of the current one.
+	 * @param {sap.ui.integration.util.DataProvider[]} aDependencies The list of dependencies.
+	 */
+	DataProvider.prototype.setDependencies = function (aDependencies) {
+		this._aDependencies = aDependencies;
+	};
+
+	/**
+	 * Sets the data settings for the <code>DataProvider</code> in json format.
+	 *
+	 * @param {string} sSettingsJson The data settings in json format.
+	 */
+	DataProvider.prototype.setSettingsJson = function (sSettingsJson) {
+		this.setProperty("settingsJson", sSettingsJson);
+
+		this.setSettings(JSON.parse(sSettingsJson));
+
+		if (this._bActive) {
+			this._scheduleDataUpdate();
+		}
+	};
+
+	/**
 	 * Sets the data settings for the <code>DataProvider</code>
 	 *
 	 * @param {Object} oSettings The data settings.
@@ -105,8 +137,25 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	 * @returns {Promise} A promise resolved when the update has finished.
 	 */
 	DataProvider.prototype.triggerDataUpdate = function () {
+		var pDependencies,
+			pDataUpdate;
 
 		this.fireDataRequested();
+
+		// wait for any dependencies before the first initial data request
+		pDependencies = this._waitDependencies();
+
+		pDataUpdate = pDependencies.then(this._triggerDataUpdate.bind(this));
+
+		if (!this._pInitialRequestPromise) {
+			this._pInitialRequestPromise = pDataUpdate;
+		}
+
+		return pDataUpdate;
+	};
+
+	DataProvider.prototype._triggerDataUpdate = function () {
+		this._bActive = true;
 
 		return this.getData()
 			.then(function (oData) {
@@ -142,6 +191,10 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
 
+	DataProvider.prototype.getInitialRequestPromise = function () {
+		return this._pInitialRequestPromise;
+	};
+
 	DataProvider.prototype.onDataRequestComplete = function () {
 
 		var iInterval;
@@ -159,6 +212,35 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 		setTimeout(function () {
 			this.triggerDataUpdate();
 		}.bind(this), iInterval * 1000);
+	};
+
+
+	/**
+	 * Schedules the call to triggerDataUpdate.
+	 * @private
+	 */
+	DataProvider.prototype._scheduleDataUpdate = function () {
+		if (this._iDataUpdateCallId) {
+			clearTimeout(this._iDataUpdateCallId);
+		}
+
+		this._iDataUpdateCallId = setTimeout(this.triggerDataUpdate.bind(this), 0);
+	};
+
+	/**
+	 * Wait for other data providers which are marked as dependencies.
+	 * @private
+	 * @return {Promise} Promise which fulfills when all dependencies are ready.
+	 */
+	DataProvider.prototype._waitDependencies = function () {
+		var aDependencies = this._aDependencies || [],
+			aPromises = [];
+
+		aDependencies.forEach(function (oDataProvider) {
+			aPromises.push(oDataProvider.getInitialRequestPromise());
+		});
+
+		return Promise.all(aPromises);
 	};
 
 	return DataProvider;

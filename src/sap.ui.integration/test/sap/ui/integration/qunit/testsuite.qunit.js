@@ -63,6 +63,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/cards/AdaptiveCard",
 						"sap/ui/integration/cards/AnalyticalContent",
 						"sap/ui/integration/util/BindingHelper",
+						"sap/ui/integration/util/JSONBindingHelper",
 						"sap/ui/integration/util/BindingResolver",
 						"sap/ui/integration/cards/ComponentContent",
 						"sap/ui/integration/util/DataProvider",
@@ -83,6 +84,7 @@ sap.ui.define(function () {
 					'./util/ServiceManager.qunit',
 					'./customElements/CustomElements.qunit',
 					'./util/BindingHelper.qunit',
+					'./util/JSONBindingHelper.qunit',
 					'./util/BindingResolver.qunit',
 					'./util/DataProvider.qunit',
 					'./util/CardActions.qunit',
@@ -236,6 +238,11 @@ sap.ui.define(function () {
 			"util/BindingHelper": {
 				coverage: {
 					only: ["sap/ui/integration/util/BindingHelper"]
+				}
+			},
+			"util/JSONBindingHelper": {
+				coverage: {
+					only: ["sap/ui/integration/util/JSONBindingHelper"]
 				}
 			},
 			"util/BindingResolver": {

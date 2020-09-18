@@ -35,13 +35,13 @@
 		},
 		"data": {
 			"request": {
-				"url": "test-resources/sap/ui/integration/qunit/manifests/items_{{filters.availability}}.json"
+				"url": "test-resources/sap/ui/integration/qunit/manifests/items_{filters>/availability/value}.json"
 			}
 		},
 		"type": "List",
 		"header": {
 			"title": "Products by availability",
-			"subTitle": "{{filters.availability}}",
+			"subTitle": "{filters>/availability/selectedItem/title}",
 			"icon": {
 				"src": "sap-icon://product"
 			},

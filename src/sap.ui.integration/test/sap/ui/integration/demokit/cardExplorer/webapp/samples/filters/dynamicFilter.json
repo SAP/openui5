@@ -51,14 +51,14 @@
 				"url": "{{destinations.northwind}}/Orders",
 				"parameters": {
 					"$top": "{{parameters.maxOrdersShown}}",
-					"$filter": "Shipper/ShipperID eq {{filters.shipper}}"
+					"$filter": "Shipper/ShipperID eq {filters>/shipper/value}"
 				}
 			},
 			"path": "/value/"
 		},
 		"type": "List",
 		"header": {
-			"title": "Orders by shipper",
+			"title": "Orders by shipper {filters>/shipper/selectedItem/title}",
 			"icon": {
 				"src": "sap-icon://product"
 			}
@@ -69,7 +69,15 @@
 				"description": "{ShipAddress}",
 				"info": {
 					"value": "{ShipCountry}"
-				}
+				},
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "./?OrderID={OrderID}&ShipperID={filters>/shipper/value}"
+						}
+					}
+				]
 			},
 			"maxItems": "{{parameters.maxOrdersShown}}"
 		}

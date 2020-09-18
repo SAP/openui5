@@ -202,7 +202,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oResolvedChartObject = BindingResolver.resolveValue(oChartObject, this.getModel(), "/");
+		var oResolvedChartObject = BindingResolver.resolveValue(oChartObject, this, "/");
 
 		var aDimensionNames = [];
 		if (oChartObject.dimensions) {

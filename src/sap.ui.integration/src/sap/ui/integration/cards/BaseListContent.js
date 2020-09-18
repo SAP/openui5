@@ -125,7 +125,7 @@ sap.ui.define([
 		aItems.forEach(function (oItem, iIndex) {
 			var mParameters = BindingResolver.resolveValue(
 				oAction.parameters,
-				this.getModel(),
+				this,
 				sBasePath + "/" + iIndex
 			);
 			if (oItem._card_item_hidden !== undefined) {

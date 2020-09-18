@@ -270,7 +270,6 @@ sap.ui.define([
 
 					var oSource = oEvent.getSource(),
 						oBindingContext = oSource.getBindingContext(),
-						oModel = oSource.getModel(),
 						sPath,
 						sUrl,
 						sTarget;
@@ -279,8 +278,8 @@ sap.ui.define([
 						sPath = oBindingContext.getPath();
 					}
 
-					sUrl = BindingResolver.resolveValue(oColumn.identifier.url, oModel, sPath);
-					sTarget = BindingResolver.resolveValue(oColumn.identifier.target, oModel, sPath);
+					sUrl = BindingResolver.resolveValue(oColumn.identifier.url, oSource, sPath);
+					sTarget = BindingResolver.resolveValue(oColumn.identifier.target, oSource, sPath);
 
 					if (sUrl) {
 						window.open(sUrl, sTarget || "_blank");
