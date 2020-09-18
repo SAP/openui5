@@ -1451,7 +1451,7 @@ sap.ui.define([
 					}
 
 					// init tooltip of select control
-					if (oControl.getSelectedItem && oControl.getSelectedItem()) {
+					if (oControl.getSelectedItem && oControl.getSelectedItem() && oControl.getMetadata()._sUIDToken !== "box") {
 						oControl.setTooltip(oControl.getSelectedItem().getTooltip() || oControl.getSelectedItem().getText());
 					}
 
