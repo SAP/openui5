@@ -563,7 +563,8 @@
 			"sap.m.sample.IconTabBarDragDrop",
 			"sap.m.sample.IconTabBarTabDensityMode",
 			"sap.m.sample.IconTabBarResponsivePadding",
-			"sap.m.sample.IconTabBarSubTabs"
+			"sap.m.sample.IconTabBarSubTabs",
+			"sap.m.sample.IconTabBarBadges"
 		  ]
 		},
 		{
@@ -1987,11 +1988,6 @@
 		  "name": "Icon Tab Bar - Badges",
 		  "description": "This sample illustrates the possibility to add badges to the icon tab filters."
 		},
-		{
-			"id": "sap.m.sample.IconTabBarBadges",
-			"name": "Icon Tab Bar - Badges",
-			"description": "This sample illustrates the possibility to add badges to the icon tab filters."
-		  },
 		{
 		  "id": "sap.m.sample.BusyIndicator",
 		  "name": "Busy Indicator",
