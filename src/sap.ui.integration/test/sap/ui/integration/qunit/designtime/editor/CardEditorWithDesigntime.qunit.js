@@ -157,15 +157,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 string parameter and no label (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1string", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1string", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
 					var oField = this.oCardEditor.getAggregation("_formContent")[1];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has static label text");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().getValue() === "stringParameterDefaultValue", "Field: Default Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -181,12 +182,13 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().getValue() === "StaticLabelDefaultValue", "Field: Default Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
 
-		QUnit.test("1 string parameter and label (as file)", function (assert) {
+		QUnit.test("1 string parameter and no label (as file)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "1stringparameter.json" });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
@@ -194,12 +196,30 @@ sap.ui.define([
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
 					var oField = this.oCardEditor.getAggregation("_formContent")[1];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has static label text");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().getValue() === "stringParameterDefaultValue", "Field: Default Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
+
+		QUnit.test("1 string parameter and label (as file)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "1stringparameterlabel.json" });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().getValue() === "StaticLabelDefaultValue", "Field: Default Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("1 string parameter and label trans (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
@@ -210,6 +230,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().getValue() === "StringLabelTransDefaultValue", "Field: Default Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -224,13 +245,14 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().getValue() === "StringLabelTransDefaultValue", "Field: Default Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
 
 
-		QUnit.test("1 integer parameter and label (as json)", function (assert) {
+		QUnit.test("1 integer parameter and no label no default value (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1integer", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
@@ -240,13 +262,62 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "integerParameter", "Label: Has integerParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
+					assert.ok(oField.getEditor().getValue() === "0", "Field: Value 0 since No Value and Default Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
 
-		QUnit.test("1 number parameter and label (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1number", "type": "List", "configuration": { "parameters": { "numberParameter": { "type": "number" } } } } } });
+		QUnit.test("1 integer parameter and no label with default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1integerWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "integerParameter", "Label: Has integerParameter label from parameter name");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
+					assert.ok(oField.getEditor().getValue() === "1", "Field: Value 1 from Default Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 integer parameter and label with default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1integerlabel", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "integerParameterLabel", "Label: Has integerParameter label from label");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
+					assert.ok(oField.getEditor().getValue() === "0", "Field: Value 0 since No Value and Default Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 integer parameter and label with default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1integerlabelWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "integerParameterLabel", "Label: Has integerParameter label from label");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
+					assert.ok(oField.getEditor().getValue() === "1", "Field: Value 1 from Default Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 number parameter and label with no default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1number", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -255,13 +326,30 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "numberParameter", "Label: Has numberParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.NumberField"), "Field: Number Field");
+					assert.ok(oField.getEditor().getValue() === "0", "Field: Value 0 since No Value and Default Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
 
-		QUnit.test("1 date parameter and label (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": { "type": "date" } } } } } });
+		QUnit.test("1 number parameter and label with default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1numberWithDefaultValue", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "numberParameter", "Label: Has numberParameter label from parameter name");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.NumberField"), "Field: Number Field");
+					assert.ok(oField.getEditor().getValue() === "2", "Field: Value 2 from Default Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 date parameter and label with no default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -270,13 +358,30 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "dateParameter", "Label: Has dateParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DateField"), "Field: Date Field");
+					assert.ok(oField.getEditor().getValue() === "", "Field: No Default Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
 
-		QUnit.test("1 datetime parameter and label (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": { "type": "datetime" } } } } } });
+		QUnit.test("1 date parameter and label with default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1dateWithDefaultValue", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "dateParameter", "Label: Has dateParameter label from parameter name");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DateField"), "Field: Date Field");
+					assert.ok(oField.getEditor().getValue() === "2020-09-02", "Field: Default Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 datetime parameter and label with no default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -285,13 +390,31 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DateTimeField"), "Field: DateTime Field");
+					assert.ok(oField.getEditor().getValue() === "", "Field: No Default Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
 
-		QUnit.test("1 boolean parameter and label (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": { "type": "boolean" } } } } } });
+		QUnit.test("1 datetime parameter and label with default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1datetimeWithDefaultValue", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DateTimeField"), "Field: DateTime Field");
+					var sDatetimeValueUTC = new Date(oField.getEditor().getValue()).toISOString();
+					assert.ok(sDatetimeValueUTC === "2020-09-02T11:21:51.000Z", "Field: Default Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 boolean parameter and label with no default value (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -300,6 +423,39 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "booleanParameter", "Label: Has booleanParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField.getEditor().getSelected() === false, "Field: No default value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 boolean parameter and label with default value true (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1booleanWithDefaultValueTrue", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "booleanParameter", "Label: Has booleanParameter label from parameter name");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField.getEditor().getSelected() === true, "Field: default value TRUE");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 boolean parameter and label with default value false (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1booleanWithDefaultValueFalse", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "booleanParameter", "Label: Has booleanParameter label from parameter name");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField.getEditor().getSelected() === false, "Field: default value FALSE");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -323,7 +479,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Preview with live and abstract (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveAbstract", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveAbstract", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -333,7 +489,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 		QUnit.test("Preview with abstract and live (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewAbstractLive", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewAbstractLive", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -343,7 +499,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 		QUnit.test("Preview with none(as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewNone", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewNone", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -354,7 +510,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Preview with live and own image (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -364,7 +520,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Preview with own image and live (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewOwnImageLive", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewOwnImageLive", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -374,7 +530,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Preview with live (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLive", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLive", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -383,7 +539,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 		QUnit.test("Preview not scaled (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewNoScale", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewNoScale", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -394,7 +550,7 @@ sap.ui.define([
 
 		// QUnit.test("Switch the theme light to dark and back", function (assert) {
 		// 	sap.ui.getCore().applyTheme("sap_fiori_3");
-		// 	this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+		// 	this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 		// 	return new Promise(function (resolve, reject) {
 		// 		this.oCardEditor.attachReady(function () {
 		// 			assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -411,7 +567,7 @@ sap.ui.define([
 
 		// QUnit.test("Switch the theme dark to light and back", function (assert) {
 		// 	sap.ui.getCore().applyTheme("sap_fiori_3_dark");
-		// 	this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string" } } } } } });
+		// 	this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 		// 	return new Promise(function (resolve, reject) {
 		// 		this.oCardEditor.attachReady(function () {
 		// 			assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");

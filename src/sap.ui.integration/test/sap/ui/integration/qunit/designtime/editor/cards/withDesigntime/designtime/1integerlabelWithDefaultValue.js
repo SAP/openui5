@@ -7,7 +7,9 @@ sap.ui.define(["sap/ui/integration/Designtime"
 				items: {
 					integerParameter: {
 						"manifestpath": "/sap.card/configuration/parameters/integerParameter/value",
-						"type": "integer"
+						"type": "integer",
+						"label": "integerParameterLabel",
+						"defaultValue": 1
 					}
 				}
 			}

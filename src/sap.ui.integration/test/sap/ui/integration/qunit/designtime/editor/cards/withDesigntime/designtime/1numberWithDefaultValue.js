@@ -5,14 +5,12 @@ sap.ui.define(["sap/ui/integration/Designtime"
 		return new Designtime({
 			form: {
 				items: {
-					stringParameter: {
-						"manifestpath": "/sap.card/configuration/parameters/stringParameter/value",
-						"type": "string"
+					numberParameter: {
+						"manifestpath": "/sap.card/configuration/parameters/numberParameter/value",
+						"type": "number",
+						"defaultValue": 2
 					}
 				}
-			},
-			preview: {
-				modes: "Live"
 			}
 		});
 	};

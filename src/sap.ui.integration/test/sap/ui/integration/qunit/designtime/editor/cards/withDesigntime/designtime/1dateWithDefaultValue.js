@@ -5,15 +5,14 @@ sap.ui.define(["sap/ui/integration/Designtime"
 		return new Designtime({
 			form: {
 				items: {
-					stringParameter: {
-						"manifestpath": "/sap.card/configuration/parameters/stringParameter/value",
-						"type": "string"
+					dateParameter: {
+						"manifestpath": "/sap.card/configuration/parameters/dateParameter/value",
+						"type": "date",
+						"defaultValue": "2020-09-02"
 					}
 				}
-			},
-			preview: {
-				modes: "Live"
 			}
 		});
 	};
+
 });
