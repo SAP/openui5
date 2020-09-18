@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/ui/mdc/field/FieldInfoBase",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/InvisibleText",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/link/Log",
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/ui/layout/library"
 ], function(FieldInfoBase,
 	jQuery,
-	InvisibleText,
 	BindingMode,
 	JSONModel,
 	Log,
@@ -222,12 +220,6 @@ sap.ui.define([
 
 	// ----------------------- Implementation of 'ICreatePopover' interface --------------------------------------------
 
-	Link.prototype.getContentTitle = function() {
-		return new InvisibleText({
-			text: this._getContentTitle()
-		});
-	};
-
 	/**
 	 * Function that is called in the <code>createPopover</code> function of {@link sap.ui.mdc.field.FieldInfoBase}.
 	 * @param {Function} fnGetAutoClosedControl Function returning the <code>Popover</code> control that is created in <code>createPopover</code>
@@ -248,6 +240,8 @@ sap.ui.define([
 					var aMLinkItems = this._getInternalModel().getProperty("/linkItems");
 					var aMBaselineLinkItems = this._getInternalModel().getProperty("/baselineLinkItems");
 
+					var oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? Link._getNoContent() : aAdditionalContent;
+
 					var oPanel = new Panel(this._createPanelId(Utils, FlexRuntimeInfoAPI), {
 						enablePersonalization: this.getEnablePersonalization(), // brake the binding chain
 						items: aMBaselineLinkItems.map(function(oMLinkItem) {
@@ -260,7 +254,7 @@ sap.ui.define([
 								visible: true
 							});
 						}),
-						additionalContent: !aAdditionalContent.length && !aMLinkItems.length ? Link._getNoContent() : aAdditionalContent,
+						additionalContent: oPanelAdditionalContent,
 						beforeSelectionDialogOpen: function() {
 							if (fnGetAutoClosedControl && fnGetAutoClosedControl()) {
 								fnGetAutoClosedControl().setModal(true);
@@ -381,14 +375,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private
-	 * @returns {String} Content title saved in the internal model
-	 */
-	Link.prototype._getContentTitle = function() {
-		return this._getInternalModel().getProperty("/contentTitle");
-	};
-
-	/**
 	 * Returns the binding context of the source control or of the link itself.
 	 * @private
 	 * @returns {Object} The binding context of the SourceControl / link
@@ -476,15 +462,6 @@ sap.ui.define([
 			this.setSourceControl(oField);
 		}
 		return Utils.getViewForControl(oControl) || Utils.getViewForControl(oField);
-	};
-
-	/**
-	 * @private
-	 * @param {String} sTitle The given title
-	 * @return {undefined}
-	 */
-	Link.prototype._setContentTitle = function(sTitle) {
-		return this._getInternalModel().setProperty("/contentTitle", sTitle);
 	};
 
 	/**

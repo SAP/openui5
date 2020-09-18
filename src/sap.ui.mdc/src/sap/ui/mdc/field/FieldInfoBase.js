@@ -114,14 +114,6 @@ sap.ui.define([
 	FieldInfoBase.prototype.getContent = function(fnGetAutoClosedControl) {
 		throw new Error("sap.ui.mdc.field.FieldInfoBase: method getContent must be redefined");
 	};
-	/**
-	 * Returns the title of the popover.
-	 * @returns {string} Popover title
-	 * @protected
-	 */
-	FieldInfoBase.prototype.getContentTitle = function() {
-		throw new Error("sap.ui.mdc.field.FieldInfoBase: method getContentTitle must be redefined");
-	};
 
 	// ----------------------- Protected methods --------------------------------------------
 
@@ -147,19 +139,25 @@ sap.ui.define([
 		}).then(function(oPanel) {
 
 			oPopover = new ResponsivePopover(this.getId() + "-popover", {
-				ariaLabelledBy: this.getContentTitle(),
 				contentWidth: "380px",
 				horizontalScrolling: false,
 				showHeader: Device.system.phone,
 				placement: PlacementType.Auto,
 				content: [
-					oPanel, this.getContentTitle()
+					oPanel
 				],
 				afterClose: function() {
 					if (this._oPopover) {
 						this._oPopover.destroy();
 					}
 				}.bind(this)
+			});
+			sap.ui.require([
+				'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
+			], function(FlexRuntimeInfoAPI) {
+				return FlexRuntimeInfoAPI.waitForChanges({element: oPanel}).then(function () {
+					oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
+				});
 			});
 			return oPopover;
 		}.bind(this));
