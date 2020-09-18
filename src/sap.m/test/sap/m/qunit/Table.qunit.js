@@ -367,7 +367,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("MultiSelect - selectAll checkbox should be disabled for no data", function(assert) {
+	QUnit.test("MultiSelect - selectAll checkbox enabled behavior", function(assert) {
 		var sut = createSUT('idMultiSelectTable2', true, true, "MultiSelect"),
 			clock = sinon.useFakeTimers();
 		sut.placeAt("qunit-fixture");
@@ -377,7 +377,15 @@ sap.ui.define([
 
 		sut.getBinding("items").filter(new Filter("color", "EQ", "foo"));
 		clock.tick(1);
-		assert.notOk(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is disabled since there are no visible items");
+		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled");
+
+		sut.getBinding("items").filter();
+		clock.tick(1);
+		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled");
+
+		sut._selectAllCheckBox.setEnabled(false);
+		Core.applyChanges();
+		assert.notOk(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is disabled, only when explicitly enabled=false is set");
 
 		sut.destroy();
 	});
