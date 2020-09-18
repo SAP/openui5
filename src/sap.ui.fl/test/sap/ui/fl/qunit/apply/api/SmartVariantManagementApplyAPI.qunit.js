@@ -510,6 +510,115 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("SmartVariantManagementApplyAPI._getChangeMap", {
+		beforeEach : function() {
+			this.oAppComponent = new UIComponent("AppComponent21");
+			this.oControl = new Control("controlId1");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+		},
+		afterEach: function() {
+			FlexState.clearState("sap.ui.core.Component");
+			this.oControl.destroy();
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("collects the changes for a smartVariantManagement", function (assert) {
+			var sPersistencyKey = "smartVariantManagement1";
+
+			this.oControl.getPersistencyKey = function () {
+				return sPersistencyKey;
+			};
+
+			var oChange1 = {
+				fileName: "defaultVariant1",
+				fileType: "change",
+				changeType: "defaultVariant",
+				selector: {
+					persistencyKey: sPersistencyKey
+				},
+				content: {
+					defaultVariantName: "anotherVariant"
+				}
+			};
+
+			var oChange2 = {
+				fileName: "defaultVariant2",
+				fileType: "change",
+				changeType: "defaultVariant",
+				selector: {
+					persistencyKey: sPersistencyKey
+				},
+				content: {
+					defaultVariantName: "theDefaultVariant"
+				}
+			};
+
+			var oChange3 = {
+				fileName: "addFavorite1",
+				fileType: "change",
+				changeType: "addFavorite",
+				selector: {
+					persistencyKey: sPersistencyKey
+				},
+				content: {}
+			};
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves({
+				changes: [
+					oChange1,
+					oChange2,
+					{
+						fileName: "addFavorite2",
+						fileType: "change",
+						changeType: "addFavorite",
+						selector: {
+							persistencyKey: "variantManagement2"
+						},
+						content: {}
+					}, {
+						fileName: sPersistencyKey,
+						fileType: "variant",
+						selector: {
+							persistencyKey: sPersistencyKey
+						},
+						content: {}
+					},
+					oChange3,
+					{
+						fileName: "variant2",
+						fileType: "variant",
+						selector: {
+							persistencyKey: "variantManagement2"
+						},
+						content: {}
+					}
+				]
+			});
+
+			this.oControl.getPersistencyKey = function () {
+				return sPersistencyKey;
+			};
+
+			// clear state created in the beforeEach
+			FlexState.clearState("sap.ui.core.Component");
+			// simulate FlexState initialization
+			return FlexState.initialize({
+				reference: "sap.ui.core.Component",
+				componentData: {},
+				manifest: {},
+				componentId: "sap.ui.core"
+			})
+			.then(SmartVariantManagementApplyAPI._getChangeMap.bind(undefined, this.oControl))
+			.then(function (mChanges) {
+				assert.equal(Object.keys(mChanges).length, 3, "3 changes are returned");
+				assert.ok(mChanges[oChange1.fileName], "the first change of the variantManagement is included");
+				assert.ok(mChanges[oChange2.fileName], "the second change of the variantManagement is included");
+				assert.ok(mChanges[oChange3.fileName], "the third change of the variantManagement is included");
+			});
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});
