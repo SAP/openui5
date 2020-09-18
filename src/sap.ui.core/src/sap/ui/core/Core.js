@@ -90,15 +90,6 @@ sap.ui.define([
 
 	/*global Map, Promise */
 
-	/**
-	 * Executes an 'eval' for its arguments in the global context (without closure variables).
-	 */
-	function globalEval() {
-		/*eslint-disable no-eval */
-		eval(arguments[0]);
-		/*eslint-enable no-eval */
-	}
-
 	// when the Core module has been executed before, don't execute it again
 	if (sap.ui.getCore && sap.ui.getCore()) {
 		return sap.ui.getCore();
@@ -1298,9 +1289,14 @@ sap.ui.define([
 					if (typeof fn === "function") {
 						fn();
 					} else {
-						// DO NOT USE jQuery.globalEval as it executes async in FF!
-						//Remove this eval call
-						globalEval(vOnInit);
+						Log.warning("[Deprecated] Do not use inline JavaScript code with the oninit attribute."
+							+ " Use the module:... syntax or the name of a global function");
+						/*
+						 * In contrast to eval(), window.eval() executes the given string
+						 * in the global context, without closure variables.
+						 * See http://www.ecma-international.org/ecma-262/5.1/#sec-10.4.2
+						 */
+						window.eval(vOnInit);  // csp-ignore-legacy-api
 					}
 				}
 			}
