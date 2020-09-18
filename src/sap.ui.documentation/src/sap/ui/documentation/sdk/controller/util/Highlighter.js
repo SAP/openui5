@@ -16,6 +16,29 @@ function() {
 	HighlighterUtil.MUTATION_OBSERVER = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver; //Available MutationObserver
 
 	var Highlighter = function Highlighter (oDomRef, oConfig) {
+		// TODO Consider Chrome configuration where the highlight treats multiple queries as a single string
+		this._bIsCaseSensitive = !!oConfig.isCaseSensitive; // default is false
+		this._aPreviouslyHighlightedNodes = [];
+		this._aPreviouslyOriginalNodes = [];
+		this._aOldTerms = [];
+		this._aRegExTerms = [];
+		this._bUseExternalStyles = !!oConfig.useExternalStyles; // default is false
+		this._oObserver = null;
+
+		if (Array.isArray(oDomRef)) {
+			this._oDomRef = oDomRef;
+		} else {
+			this._oDomRef = [oDomRef];
+		}
+
+		this._oDomRef.forEach(this.validate, this);
+
+		if (oConfig.shouldBeObserved) {
+			this._addMutationObserver();
+		}
+	};
+
+	Highlighter.prototype.validate = function (oDomRef) {
 		// If we try to instantiate Highlighter instance for DOM ref, for which we already
 		// have an instance - we throw an error
 		if (HighlighterUtil.CURRENTLY_HIGHLIGHTED_DOM_REFS.indexOf(oDomRef) === -1) {
@@ -30,20 +53,6 @@ function() {
 		} else {
 			throw new Error("Highlighter instance is already created for this DOM Reference");
 		}
-
-		// TODO Consider Chrome configuration where the highlight treats multiple queries as a single string
-		this._bIsCaseSensitive = !!oConfig.isCaseSensitive; // default is false
-		this._aPreviouslyHighlightedNodes = [];
-		this._aPreviouslyOriginalNodes = [];
-		this._aOldTerms = [];
-		this._aRegExTerms = [];
-		this._bUseExternalStyles = !!oConfig.useExternalStyles; // default is false
-		this._oDomRef = oDomRef;
-		this._oObserver = null;
-
-		if (oConfig.shouldBeObserved) {
-			this._addMutationObserver();
-		}
 	};
 
 	Highlighter.prototype.highlight = function (sTerms) {
@@ -52,6 +61,7 @@ function() {
 		if (!sTerms) {
 			this._restorePreviouslyHighlightedNodes();
 			this._aRegExTerms = [];
+			this._aOldTerms = [];
 			return;
 		}
 
@@ -68,7 +78,9 @@ function() {
 		}
 
 		this._toggleMutationObserver(false);
-		this._highlightSubTree(this._oDomRef);
+		this._oDomRef.forEach(function (oDomRef) {
+			this._highlightSubTree(oDomRef);
+		}, this);
 		this._toggleMutationObserver(true);
 	};
 
@@ -161,9 +173,10 @@ function() {
 	};
 
 	Highlighter.prototype._formatTerms = function (sTerms) {
-		// we remove white spaces in the beginning and the end, then
-		// we split the initial terms string by white space symbol into aTerms array
-		var aTerms = sTerms && sTerms.trim().split(" "),
+		// we remove white spaces in the beginning and the end and the extra whitespace
+		// in between if so, then we split the initial terms string by white
+		// space symbol into aTerms array
+		var aTerms = sTerms && sTerms.replace(/\s+/g,' ').trim().split(" "),
 			aUniqueTerms;
 
 		// we push the unique strings of aTerms in the aUniqueTerms array
@@ -247,12 +260,15 @@ function() {
 	Highlighter.prototype._removeMutationObserver = function () {
 		this._toggleMutationObserver(false);
 		this._oObserver = null;
-		this._oDomRef = null;
+		this._oDomRef = [];
 	};
 
 	Highlighter.prototype._toggleMutationObserver = function (bConnect) {
 		if (bConnect) {
-			this._oObserver.observe(this._oDomRef, this.oObserverConfig);
+			this._oDomRef.forEach(function (oDomRef) {
+				this._oObserver.observe(oDomRef, this.oObserverConfig);
+			}, this);
+
 		} else {
 			this._oObserver.disconnect();
 		}
