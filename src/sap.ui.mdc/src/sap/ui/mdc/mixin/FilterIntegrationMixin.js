@@ -146,6 +146,10 @@ sap.ui.define([
 	 */
 	FilterIntegrationMixin.checkAndRebind = function() {
 
+		if (this.bIsDestroyed) {
+			return;
+		}
+
 		//check for internal and external filtering before triggering a rebind
 		var pOuterFilterSearch;
 		var pInnerFilterSearch;

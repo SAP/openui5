@@ -32,6 +32,10 @@ sap.ui.define(
                             type: "object",
                             group: "Data",
                             visiblity: "hidden"
+                        },
+                        filterConditions: {
+                            type: "object",
+                            defaultValue: {}
                         }
                     }
                 }
@@ -137,6 +141,42 @@ sap.ui.define(
                     done();
                 });
         });
+
+        QUnit.test("retrieveInbuiltFilter", function (assert) {
+            var done = assert.async();
+
+            oSomeInstance
+                .retrieveAdaptationController()
+                    .then(function (oAdaptationController) {
+                        oSomeInstance.retrieveInbuiltFilter()
+                            .then(function (oFilterControl) {
+                                assert.ok(oFilterControl.isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"),
+                                    "An filter control should be provided."
+                                );
+                                assert.ok(
+                                    oSomeInstance._oP13nFilter,
+                                    "A member field is added."
+                                );
+                                done();
+                            });
+                    });
+        });
+
+        QUnit.test("retrieveInbuiltFilter after destruction", function (assert) {
+            var done = assert.async();
+
+            oSomeInstance
+                .retrieveAdaptationController()
+                    .then(function (oAdaptationController) {
+                        oSomeInstance.destroy();
+                        oSomeInstance.retrieveInbuiltFilter()
+                            .catch(function (sMessage) {
+                                assert.ok(sMessage === "exit", "retrieveInbuiltFilter promise fails");
+                                done();
+                            });
+                    });
+        });
+
 
         QUnit.module("AdaptationMixin after controller retrieval", {
             beforeEach: function () {

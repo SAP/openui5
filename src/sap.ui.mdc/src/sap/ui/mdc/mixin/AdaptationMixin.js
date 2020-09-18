@@ -168,33 +168,42 @@ sap.ui.define(
          * @returns {object} Returns the enhanced control instance
          */
         AdaptationMixin.retrieveInbuiltFilter = function (fnRegister, bAdvancedMode) {
-            return new Promise(function(resolve, reject) {
-                sap.ui.require(["sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"], function(AdaptationFilterBar) {
-                    if (!this._oP13nFilter) {
-                        //create instance of 'AdaptationFilterBar'
-                        this._oP13nFilter = new AdaptationFilterBar(this.getId() + "-p13nFilter",{
-                            adaptationControl: this,
-                            advancedMode: bAdvancedMode,
-                            filterConditions: this.getFilterConditions()
-                        });
+            if (!this._oInbuiltFilterPromise) {
+                this._oInbuiltFilterPromise = new Promise(function(resolve, reject) {
+                    sap.ui.require(["sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"], function(AdaptationFilterBar) {
 
-                        if (fnRegister instanceof Function){
-                            fnRegister.call(this, this._oP13nFilter);
+                        if (this.bIsDestroyed) {
+                            reject("exit");
+                            return;
                         }
 
-                        this.enhanceAdaptationConfig({
-                            filterConfig: {
-                                initializeControl: this._oP13nFilter.createFilterFields
-                            }
-                        });
+                        if (!this._oP13nFilter) {
+                            //create instance of 'AdaptationFilterBar'
+                            this._oP13nFilter = new AdaptationFilterBar(this.getId() + "-p13nFilter",{
+                                adaptationControl: this,
+                                advancedMode: bAdvancedMode,
+                                filterConditions: this.getFilterConditions()
+                            });
 
-                        this.addDependent(this._oP13nFilter);
-                        resolve(this._oP13nFilter);
-                    } else {
-                        resolve(this._oP13nFilter);
-                    }
+                            if (fnRegister instanceof Function){
+                                fnRegister.call(this, this._oP13nFilter);
+                            }
+
+                            this.enhanceAdaptationConfig({
+                                filterConfig: {
+                                    initializeControl: this._oP13nFilter.createFilterFields
+                                }
+                            });
+
+                            this.addDependent(this._oP13nFilter);
+                            resolve(this._oP13nFilter);
+                        } else {
+                            resolve(this._oP13nFilter);
+                        }
+                    }.bind(this));
                 }.bind(this));
-            }.bind(this));
+            }
+            return this._oInbuiltFilterPromise;
         };
 
 
@@ -280,6 +289,10 @@ sap.ui.define(
                 if (this._oAdaptationController) {
                     this._oAdaptationController.destroy();
                     this._oAdaptationController = null;
+                }
+
+                if (this._oInbuiltFilterPromise) {
+                    this._oInbuiltFilterPromise = null;
                 }
 
                 if (fnExit) {
