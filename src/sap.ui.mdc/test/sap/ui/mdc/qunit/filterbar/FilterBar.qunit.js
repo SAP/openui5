@@ -49,6 +49,16 @@ sap.ui.define([
 		assert.ok(oFilterBar);
 	});
 
+	QUnit.test("inner layout exists on initialization", function(assert) {
+		var done = assert.async();
+		assert.ok(oFilterBar);
+
+		oFilterBar.initialized().then(function() {
+			assert.ok(!!oFilterBar.getAggregation("layout"));
+			done();
+		});
+	});
+
 	QUnit.test("getConditionModelName ", function (assert) {
 		assert.equal(oFilterBar.getConditionModelName(), FilterBarBase.CONDITION_MODEL_NAME);
 	});
