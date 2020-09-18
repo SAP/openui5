@@ -66,7 +66,7 @@ sap.ui.define(['sap/base/util/deepClone', 'sap/ui/core/Control'], function(deepC
 		assert.deepEqual(deepClone({a:1, b:2}), {a:1, b:2}, "object");
 		assert.equal(deepClone(null), null, "null");
 		assert.equal(deepClone(undefined), undefined, "undefined");
-		assert.deepEqual(deepClone(new Date('1995-12-17T03:24:00')), new Date('1995-12-17T03:24:00'), "Date");
+		assert.deepEqual(deepClone(new Date('1995-12-17T03:24:00.123')), new Date('1995-12-17T03:24:00.123'), "Date");
 	});
 
 	QUnit.test("string test", function(assert) {
