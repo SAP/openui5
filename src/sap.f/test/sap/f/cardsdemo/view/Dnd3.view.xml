@@ -30,6 +30,14 @@
 				</f:GridContainer>
 			</Panel>
 
+			<Panel headerText="Empty Group">
+				<f:GridContainer id="gridEmpty" items="{
+					path: '/',
+					factory: '.createItem'
+				}">
+				</f:GridContainer>
+			</Panel>
+
 			<HBox>
 				<Panel headerText="Tiles Group 2">
 					<f:GridContainer id="grid2" items="{
