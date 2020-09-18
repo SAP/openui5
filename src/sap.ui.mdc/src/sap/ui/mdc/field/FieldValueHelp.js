@@ -931,8 +931,10 @@ sap.ui.define([
 						aBindings.push(oModel.bindProperty(sPath, oBindingContext));
 					}
 				} else {
-					if (!oParameterBindingContext || oParameterBindingContext.getProperty(sPath) === undefined ||
-							!deepEqual(oParameter.validateProperty("value", oParameterBindingContext.getProperty(sPath)), oParameter.getValue())) {
+					if (!oParameterBindingContext // we don't havve a BindingContext -> need to wait for one
+							|| oParameterBindingContext.getProperty(sPath) === undefined // the BindingContext has no data right now -> need to wait for update
+							|| oBinding.getValue() === undefined // the Binding has no data right now, need to wait for update
+							|| !deepEqual(oParameter.validateProperty("value", oParameterBindingContext.getProperty(sPath)), oParameter.getValue())) { // value not alreday set
 						// Property not already known on BindingContext or not already updated in Parameter value
 						// use validateProperty as null might be converted to undefined, if invalid value don't run into a check
 						// use deepEqual as, depending on type, the value could be complex (same logic as in setProperty)
