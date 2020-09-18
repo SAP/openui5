@@ -9,13 +9,14 @@ sap.ui.define([
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
+	"sap/base/util/merge",
 	"sap/ui/integration/util/DataProviderFactory",
-	"sap/ui/integration/cards/BaseContent",
 	"sap/m/HBox",
 	"sap/ui/core/Icon",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/integration/util/ContextModel",
 	"sap/base/util/LoaderExtensions",
 	"sap/f/CardRenderer",
 	"sap/f/library",
@@ -27,6 +28,7 @@ sap.ui.define([
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/util/FilterBarFactory",
 	"sap/m/BadgeEnabler"
@@ -38,13 +40,14 @@ sap.ui.define([
 	CardManifest,
 	ServiceManager,
 	Log,
+	merge,
 	DataProviderFactory,
-	BaseContent,
 	HBox,
 	Icon,
 	Text,
 	JSONModel,
 	ResourceModel,
+	ContextModel,
 	LoaderExtensions,
 	FCardRenderer,
 	fLibrary,
@@ -56,6 +59,7 @@ sap.ui.define([
 	HeaderFactory,
 	ContentFactory,
 	BindingHelper,
+	BindingResolver,
 	IconFormatter,
 	FilterBarFactory,
 	BadgeEnabler
@@ -349,6 +353,7 @@ sap.ui.define([
 		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.setModel(new JSONModel(), "parameters");
 		this.setModel(new JSONModel(), "filters");
+		this.setModel(new ContextModel(), "context");
 		this._busyStates = new Map();
 		this._oExtension = null;
 		this._oContentFactory = new ContentFactory(this);
@@ -440,7 +445,7 @@ sap.ui.define([
 		}
 
 		if (!this._bApplyManifest && this._bApplyParameters) {
-			this._oCardManifest.processParameters(this.getParameters());
+			this._oCardManifest.processParameters(this._getContextAndRuntimeParams());
 
 			this._applyManifestSettings();
 		}
@@ -484,8 +489,12 @@ sap.ui.define([
 	Card.prototype.setHost = function (vHost) {
 		this.setAssociation("host", vHost);
 
+		var oHostInstance = this.getHostInstance();
+
+		this.getModel("context").setHost(oHostInstance);
+
 		if (this._oDestinations) {
-			this._oDestinations.setHost(this.getHostInstance());
+			this._oDestinations.setHost(oHostInstance);
 		}
 
 		return this;
@@ -566,12 +575,30 @@ sap.ui.define([
 	 * Prepares the manifest and applies all settings.
 	 */
 	Card.prototype._applyManifest = function () {
-		var oParameters = this.getParameters(),
-			oCardManifest = this._oCardManifest;
+		var oCardManifest = this._oCardManifest;
 
 		if (oCardManifest && oCardManifest.getResourceBundle()) {
 			this._enhanceI18nModel(oCardManifest.getResourceBundle());
 		}
+
+		if (this._hasContextParams()) {
+			this._resolveContextParams().then(function (oContextParameters) {
+				this._oContextParameters = oContextParameters;
+				this._applyManifestWithParams();
+			}.bind(this));
+			return;
+		}
+
+		this._applyManifestWithParams();
+	};
+
+	/**
+	 * Applies all settings with the given parameters.
+	 * @private
+	 */
+	Card.prototype._applyManifestWithParams = function () {
+		var oCardManifest = this._oCardManifest,
+			oParameters = this._getContextAndRuntimeParams();
 
 		oCardManifest.processParameters(oParameters);
 
@@ -617,6 +644,67 @@ sap.ui.define([
 		});
 
 		this.setModel(oResourceModel, "i18n");
+	};
+
+	/**
+	 * Checks if there are context params in the card.
+	 * @private
+	 * @return {boolean} True if the are context params in the card.
+	 */
+	Card.prototype._hasContextParams = function () {
+		var oManifestParams = this._oCardManifest.get(MANIFEST_PATHS.PARAMS),
+			sKey,
+			vValue;
+
+		for (sKey in oManifestParams) {
+			vValue = oManifestParams[sKey].value;
+			if (typeof vValue === "string" && vValue.indexOf("{context>") !== -1) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
+	/**
+	 * Resolves any context params in the card.
+	 * Calls the host for each of them and waits for the response.
+	 * @private
+	 * @return {Promise} A promise which resolves when all params are resolved.
+	 */
+	Card.prototype._resolveContextParams = function () {
+		var oContextModel = this.getModel("context"),
+			oManifestParams = this._oCardManifest.get(MANIFEST_PATHS.PARAMS),
+			oContextParams = {},
+			sKey,
+			vValue;
+
+		for (sKey in oManifestParams) {
+			vValue = oManifestParams[sKey].value;
+			if (typeof vValue === "string" && vValue.indexOf("{context>") !== -1) {
+				oContextParams[sKey] = vValue;
+			}
+		}
+
+		// trigger getProperty for the model
+		BindingResolver.resolveValue(oContextParams, this, "/");
+
+		return oContextModel.waitForPendingProperties().then(function () {
+			// properties are ready, no resolve again
+			return BindingResolver.resolveValue(oContextParams, this, "/");
+		});
+	};
+
+	/**
+	 * Merge runtime params on top of context params and returns the result.
+	 * @private
+	 * @return {Object} The merged params.
+	 */
+	Card.prototype._getContextAndRuntimeParams = function () {
+		var oContextParameters = this._oContextParameters || {},
+			oRuntimeParameters = this.getParameters() || {};
+
+		return merge(oContextParameters, oRuntimeParameters);
 	};
 
 	/**
@@ -724,6 +812,8 @@ sap.ui.define([
 		this._busyStates.clear();
 
 		this.getModel("filters").setData({});
+
+		this._oContextParameters = null;
 	};
 
 	/**
@@ -786,7 +876,7 @@ sap.ui.define([
 			return null;
 		}
 
-		var oParams = this._oCardManifest.getProcessedParameters(this.getProperty("parameters")),
+		var oParams = this._oCardManifest.getProcessedParameters(this._getContextAndRuntimeParams()),
 			oResultParams = {},
 			sKey;
 

@@ -1062,6 +1062,46 @@ sap.ui.define([
 								key: 'Component.js'
 							}
 						]
+					},
+					{
+						key: 'hostContext',
+						target: 'exploreSamples',
+						title: 'Host Context',
+						useIFrame: true,
+						isApplication: true,
+						experimental: true,
+						files: [
+							{
+								url: '/samples/hostContext/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/hostContext/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/hostContext/HostContext.view.xml',
+								name: 'HostContext.view.xml',
+								key: 'HostContext.view.xml'
+							},
+							{
+								url: '/samples/hostContext/HostContext.controller.js',
+								name: 'HostContext.controller.js',
+								key: 'HostContext.controller.js'
+							},
+							{
+								url: '/samples/hostContext/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/hostContext/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
 					}
 				]
 			}

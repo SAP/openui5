@@ -56,6 +56,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/widgets/Card",
 						"sap/ui/integration/formatters/IconFormatter",
 						"sap/ui/integration/util/CardActions",
+						"sap/ui/integration/util/ContextModel",
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
 						"sap/ui/integration/customElements/",
@@ -88,6 +89,7 @@ sap.ui.define(function () {
 					'./util/BindingResolver.qunit',
 					'./util/DataProvider.qunit',
 					'./util/CardActions.qunit',
+					'./util/ContextModel.qunit',
 					'./cardbundle/CardStaticResources.qunit',
 					'./util/CardFormatters.qunit',
 					'./cards/BaseContent.qunit',
@@ -266,6 +268,13 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"util/ContentFactory": {},
+			"util/ContextModel": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/ContextModel"
+					]
+				}
+			},
 			"util/DataProvider": {
 				coverage: {
 					only: [

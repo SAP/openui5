@@ -1820,10 +1820,6 @@
         "description": {
           "description": "Description of the parameter for user-friendly visualization in the design-time editor.",
           "type": "string"
-        },
-        "contextType": {
-          "description": "[Experimental] Represents the context type of the parameter. For example WorkZoneUserId or SuccessFactorsUserId.",
-          "type": "string"
         }
       }
     },
