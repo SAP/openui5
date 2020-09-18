@@ -212,6 +212,33 @@ sap.ui.define([
 		 */
 		getChangeById: function (mPropertyBag) {
 			return SmartVariantManagementApplyAPI.getEntityById(mPropertyBag);
+		},
+
+		/**
+		 * Collects all changes related to a smartVariantManagement.
+		 *
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
+		 * @returns {object} A map with all changes related to the SmartVariantManagement by their ID
+		 * @private
+		 *
+		 * @deprecated only being used on a deletion of a variant to also delete changes; this should be handled within the delete call
+		 */
+		_getChangeMap: function(oControl) {
+			var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+			var sPersistencyKey = getPersistencyKey(oControl);
+			var mCompVariantsMap = FlexState.getCompEntitiesByIdMap(sReference);
+			var mChangesForVariantManagement = {};
+			Object.keys(mCompVariantsMap).forEach(function (sId) {
+				if (
+					mCompVariantsMap[sId].getSelector &&
+					mCompVariantsMap[sId].getSelector().persistencyKey === sPersistencyKey &&
+					mCompVariantsMap[sId].getFileType() === "change"
+				) {
+					mChangesForVariantManagement[sId] = mCompVariantsMap[sId];
+				}
+			});
+
+			return mChangesForVariantManagement;
 		}
 	};
 
