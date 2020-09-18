@@ -1009,7 +1009,7 @@ sap.ui.define([
 			} else {
 				oValue0Field.destroy();
 				oValue1Field = aGridContent[iIndex + 1];
-				if (oValue1Field) {
+				if (oValue1Field && oValue1Field.hasOwnProperty("_iValueIndex") && oValue1Field._iValueIndex === 1) {
 					oValue1Field.destroy();
 				}
 			}
