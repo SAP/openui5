@@ -9,10 +9,9 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	'sap/ui/core/UIArea',
 	'./Highlighter',
 	"sap/ui/dom/getOwnerWindow",
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/Log"
 ],
-	function(EventProvider, Element, UIArea, Highlighter, getOwnerWindow, Log, jQuery) {
+	function(EventProvider, Element, UIArea, Highlighter, getOwnerWindow, Log) {
 	"use strict";
 
 
@@ -46,16 +45,13 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 			this.oParentDomRef = oParentDomRef;
 			this.oSelectionHighlighter = new Highlighter("sap-ui-testsuite-SelectionHighlighter");
 			this.oHoverHighlighter = new Highlighter("sap-ui-testsuite-HoverHighlighter", true, '#c8f', 1);
-			var that = this;
-			jQuery(oParentDomRef).on("click",function(evt) {
-				that.onclick(evt);
-			})
-			.on("mouseover",function(evt) {
-				that.onmouseover(evt);
-			})
-			.on("mouseout",function(evt) {
-				that.onmouseout(evt);
-			});
+			// create bound variants of the generic methods
+			this.onclick = ControlTree.prototype.onclick.bind(this);
+			this.onmouseover = ControlTree.prototype.onmouseover.bind(this);
+			this.onmouseout = ControlTree.prototype.onmouseout.bind(this);
+			this.oParentDomRef.addEventListener("click", this.onclick);
+			this.oParentDomRef.addEventListener("mouseover", this.onmouseover);
+			this.oParentDomRef.addEventListener("mouseout", this.onmouseout);
 			this.enableInplaceControlSelection();// see below...
 			this.oCore.attachUIUpdated(this.renderDelayed, this);
 			this.sSelectedNodeId = "";
@@ -78,8 +74,10 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	 * @private
 	 */
 	ControlTree.prototype.exit = function() {
-		jQuery(document).off();
-		jQuery(this.oParentDomRef).off();
+		document.removeEventListener("mouseover", this.selectControlInTree);
+		this.oParentDomRef.removeEventListener("click", this.onclick);
+		this.oParentDomRef.removeEventListener("mouseover", this.onmouseover);
+		this.oParentDomRef.removeEventListener("mouseout", this.onmouseout);
 	};
 
 	/**
@@ -88,9 +86,9 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	 */
 	ControlTree.prototype.renderDelayed = function() {
 		if (this.oTimer) {
-			this.oWindow.jQuery.sap.clearDelayedCall(this.oTimer);
+			this.oWindow.clearTimeout(this.oTimer);
 		}
-		this.oTimer = this.oWindow.jQuery.sap.delayedCall(0,this,"render");
+		this.oTimer = this.oWindow.setTimeout(this.render.bind(this), 0);
 	};
 
 	/**
@@ -375,20 +373,18 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	 * @private
 	 */
 	ControlTree.prototype.enableInplaceControlSelection = function() {
-		var that = this;
-		jQuery(document).on("mouseover", function (oEvt) {
-			that.selectControlInTree(oEvt);
-		});
+		this.selectControlInTree = ControlTree.prototype.selectControlInTree.bind(this);
+		document.addEventListener("mouseover", this.selectControlInTree);
 	};
 
 	ControlTree.prototype.selectControlInTree = function( oEvt ) {
 		if ( oEvt ) {
 		  if ( oEvt.ctrlKey && oEvt.shiftKey && !oEvt.altKey ) {
 			  var oControl = oEvt.srcElement || oEvt.target;
-			  while (oControl && (!oControl.id || !this.oCore.getControl(oControl.id )) ) {
+			  while (oControl && (!oControl.id || !this.oCore.byId(oControl.id)) ) {
 				oControl = oControl.parentNode;
 			}
-			 if ( oControl && oControl.id && this.oCore.getControl(oControl.id ) ) {
+			 if ( oControl && oControl.id && this.oCore.byId(oControl.id) ) {
 				this.oHoverHighlighter.highlight(oControl);
 			 } else {
 			// this.selectControlInTreeByCtrlId(sId);

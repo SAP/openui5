@@ -58,27 +58,21 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 			this.oCore = oCore;
 			this.bEmbedded = top.window == oWindow; // check only with ==, not === as the test otherwise fails on IE8
 			this.mProperties = {};
-			var that = this;
-			jQuery(oParentDomRef).on("click",function(evt) {
-				that.onclick(evt);
-			})
-			.on("focusin",function(evt) {
-				that.onfocus(evt);
-			})
-			.on("keydown",function(evt) {
-				that.onkeydown(evt);
-			});
+			this.onclick = PropertyList.prototype.onclick.bind(this);
+			oParentDomRef.addEventListener("click", this.onclick);
+			this.onfocus = PropertyList.prototype.onfocus.bind(this);
+			oParentDomRef.addEventListener("focusin", this.onfocus);
+			this.onkeydown = PropertyList.prototype.onkeydown.bind(this);
+			oParentDomRef.addEventListener("keydown", this.onkeydown);
 			if ( !this.bEmbedded ) {
-				jQuery(oParentDomRef).on("mouseover",function(evt) {
-					that.onmouseover(evt);
-				})
-				.on("mouseout",function(evt) {
-					that.onmouseout(evt);
-				});
+				this.onmouseover = PropertyList.prototype.onmouseover.bind(this);
+				oParentDomRef.addEventListener("mouseover", this.onmouseover);
+				this.onmouseout = PropertyList.prototype.onmouseout.bind(this);
+				oParentDomRef.addEventListener("mouseout", this.onmouseout);
 			}
 			//this.oParentDomRef.style.backgroundColor = "#e0e0e0";
-			this.oParentDomRef.style.border = "solid 1px gray";
-			this.oParentDomRef.style.padding = "2px";
+			//this.oParentDomRef.style.border = "solid 1px gray";
+			//this.oParentDomRef.style.padding = "2px";
 
 		}
 	});
@@ -88,7 +82,13 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	 * @private
 	 */
 	PropertyList.prototype.exit = function() {
-		jQuery(this.oParentDomRef).off();
+		this.oParentDomRef.removeEventListener("click", this.onclick);
+		this.oParentDomRef.removeEventListener("focusin", this.onfocus);
+		this.oParentDomRef.removeEventListener("keydown", this.onkeydown);
+		if ( !this.bEmbedded ) {
+			this.oParentDomRef.removeEventListener("mouseover", this.onmouseover);
+			this.oParentDomRef.removeEventListener("mouseout", this.onmouseout);
+		}
 	};
 
 	/**
@@ -113,7 +113,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 			aHTML = [];
 		aHTML.push("<span data-sap-ui-quickhelp='" + this._calcHelpId(oMetadata) + "'>Type : " + oMetadata.getName() + "</span><br >");
 		aHTML.push("Id : " + oControl.getId() + "<br >");
-		aHTML.push("<button id='sap-debug-propertylist-apply' sap-id='" + sControlId + "' style='border:solid 1px gray;background-color:#d0d0d0;font-size:8pt;'>Apply Changes</button>");
+		aHTML.push("<button id='sap-debug-propertylist-apply' data-id='" + sControlId + "' style='border:solid 1px gray;background-color:#d0d0d0;font-size:8pt;'>Apply Changes</button>");
 		if ( !this.bEmbedded ) {
 			aHTML.push("<div id='sap-ui-quickhelp' style='position:fixed;display:none;padding:5px;background-color:rgb(200,220,231);border:1px solid gray;overflow:hidden'>Help</div>");
 		}
@@ -156,8 +156,8 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 				return false;
 			}
 
-			if ( sType.indexOf("[]") > 0 ) {
-				sType = sType.substring(sType.indexOf("[]"));
+			while ( sType.endsWith("[]") ) {
+				sType = sType.slice(0, -"[]".length);
 			}
 
 			if ( sType === "boolean" || sType === "string" || sType === "int" || sType === "float" ) {
@@ -207,7 +207,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 				if ( oValue === null ) {
 					sColor = 'color:#a5a5a5;';
 					oValue = '(null)';
-				} else if ( oValue  instanceof Element ) {
+				} else if ( oValue instanceof Element ) {
 					sColor = 'color:#a5a5a5;';
 					if (Array.isArray(oValue)) {
 						// array type (copied from primitive values above and modified the value to string / comma separated)
@@ -217,9 +217,9 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 					}
 					sTitle = ' title="This aggregation currently references an Element. You can set a ' + sType +  ' value instead"';
 				}
-				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + encodeXML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'>");
+				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + encodeXML("" + oValue) + "'" + sTitle + " data-name='" + sName + "'>");
 			} else if (sType == "boolean") {
-				aHTML.push("<input type='checkbox' sap-name='" + sName + "' ");
+				aHTML.push("<input type='checkbox' data-name='" + sName + "' ");
 				if (oValue == true) {
 					aHTML.push("checked='checked'");
 				}
@@ -228,9 +228,9 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 				//Enum or Custom Type
 				var oEnum = ObjectPath.get(sType || "");
 				if (!oEnum || oEnum instanceof DataType) {
-					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + encodeXML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'>");
+					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + encodeXML("" + oValue) + "'" + sTitle + " data-name='" + sName + "'>");
 				} else {
-					aHTML.push("<select style='width:100%;font-size:8pt;background-color:#f5f5f5;' sap-name='" + sName + "'>");
+					aHTML.push("<select style='width:100%;font-size:8pt;background-color:#f5f5f5;' data-name='" + sName + "'>");
 					sType = sType.replace("/",".");
 					for (var n in oEnum) {
 						aHTML.push("<option ");
@@ -277,7 +277,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	 */
 	PropertyList.prototype.onfocus = function(oEvent) {
 		var oSource = oEvent.target;
-		if (oSource.tagName === "INPUT" && oSource.getAttribute("sap-name") ) {
+		if (oSource.tagName === "INPUT" && oSource.dataset.name ) {
 			if ( oSource.style.color === '#a5a5a5' /* && oSource.value === '(null)' */ ) {
 				oSource.style.color = '';
 				oSource.value = '';
@@ -291,7 +291,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	 */
 	PropertyList.prototype.applyChanges = function(sId) {
 		var oSource = this.oParentDomRef.ownerDocument.getElementById(sId),
-			sControlId = oSource.getAttribute("sap-id"),
+			sControlId = oSource.dataset.id,
 			oControl = this.oCore.byId(sControlId),
 			aInput = oSource.parentNode.getElementsByTagName("INPUT"),
 			aSelect = oSource.parentNode.getElementsByTagName("SELECT"),
@@ -299,7 +299,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 
 		for (var i = 0; i < aInput.length; i++) {
 			var oInput = aInput[i],
-				sName = oInput.getAttribute("sap-name");
+				sName = oInput.dataset.name;
 				oMethod = oControl["set" + sName];
 			if (!oMethod) {
 				sName = capitalize(sName,0);
@@ -314,7 +314,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 		}
 		for (var i = 0; i < aSelect.length; i++) {
 			var oSelect = aSelect[i],
-				sName = oSelect.getAttribute("sap-name");
+				sName = oSelect.dataset.name;
 			oMethod = oControl["set" + sName];
 			if (!oMethod) {
 				sName = capitalize(sName,0);

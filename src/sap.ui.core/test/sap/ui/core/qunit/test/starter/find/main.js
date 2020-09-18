@@ -278,7 +278,7 @@ sap.ui.define([
 		}
 	}
 
-	const SCHEMA_VERSION = "0.0.2";
+	const SCHEMA_VERSION = "0.0.3";
 	const store = new Storage(Storage.Type.local, "sap-ui-find-tests");
 
 	function restoreData(entryPage) {
@@ -336,6 +336,7 @@ sap.ui.define([
 			oModel.setData({
 				_$schemaVersion: SCHEMA_VERSION,
 				entryPage,
+				timeOfLastUpdate: Date.now(),
 				tests: aTests,
 				testCount: aTests.length,
 				filteredTestCount: aTests.length

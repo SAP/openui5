@@ -4,9 +4,64 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>Welcome</title>
-		<link rel="stylesheet" href="styles/main.css" type="text/css">
+		<style>
+			html {
+				font-size: 1rem;
+				font-family: Arial,Helvetica,sans-serif;
+				border-style: none;
+				margin: 0px;
+				padding: 0px;
+				width: 100%;
+				height: 100%;
+			}
+
+			body {
+				background-color: #fcfcfc;
+				background-image: none;
+				margin: 5px;
+				padding: 0px 0px 20px 0px;
+				text-align: left;
+				color: black;
+			}
+
+			h1 {
+				font-size: 1.6em;
+				padding: 5px 5px 5px 0;
+				line-height: 125%;
+				color: rgb(100, 110, 120);
+			}
+
+			.footer-wrapper {
+				clear: both;
+				margin: 0;
+				height: 29px;
+				width: 100%;
+				border-top: 3px solid #009de0;
+			}
+
+			#footer-left,#footer-right {
+				margin: 0;
+				font-size: 0.85rem;
+				padding: 1rem;
+				height: 1rem;
+			}
+
+			#footer-left {
+				text-align: left;
+				position: relative;
+				left: 0;
+				float: left;
+			}
+
+			#footer-right {
+				text-align: right;
+				position: relative;
+				right: 0;
+				float: right;
+			}
+		</style>
 	</head>
-	<body class="welcome">
+	<body>
 
 		<h1>Welcome</h1>
         <p>
@@ -43,9 +98,9 @@
           UI5 version: ${version}
         </p>
 
-	    <div id="footer-wrapper">
-    	  <div id="footer-left"><a href="http://www.sap.com" title="SAP SE" target="_blank">&copy; Copyright 2009-2020 SAP SE All Rights Reserved.</a></div>
-      	  <div id="footer-right"></div>
+	    <div class="footer">
+    	  <div class="footer-left"><a href="http://www.sap.com" title="SAP SE" target="_blank">&copy; Copyright 2009-2020 SAP SE All Rights Reserved.</a></div>
+      	  <div class="footer-right"></div>
         </div>
 	</body>
 </html>
