@@ -146,7 +146,7 @@ sap.ui.define([
 			sPath = oBindingContext.getPath();
 		}
 
-		oChartOptions = BindingResolver.resolveValue(oConfiguration.options, this.getModel(), sPath);
+		oChartOptions = BindingResolver.resolveValue(oConfiguration.options, this, sPath);
 
 		this._oHighchart = new window.Highcharts.Chart(this._oHighchartContainer.getId(), oChartOptions);
 	};

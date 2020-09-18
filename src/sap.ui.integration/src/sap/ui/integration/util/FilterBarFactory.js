@@ -65,7 +65,7 @@ sap.ui.define([
 				card: this._oCard,
 				key: sKey,
 				config: mConfig,
-				value: mFiltersValues.get(sKey) || mConfig.value
+				value: mFiltersValues[sKey] ? mFiltersValues[sKey].value : mConfig.value
 			});
 
 			this._awaitEvent(aReadyPromises, oFilter, "_ready");

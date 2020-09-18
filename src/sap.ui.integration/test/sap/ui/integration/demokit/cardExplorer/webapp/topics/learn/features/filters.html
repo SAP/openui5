@@ -31,7 +31,7 @@
 		</h2>
 
 		<p>
-			The card developer can define filters in the manifest. These filters appear as a dropdown under the header. The value of each filter can be used inside a data request definition by using the <code>{{filters.myFilter}}</code> placeholder. When the end user selects different value from the dropdown - a new data request will be made with the updated value.
+			The card developer can define filters in the manifest. These filters appear as a dropdown under the header. The value of each filter can be used inside a data request definition by using the <code>{filters>/myFilter/value}</code> placeholder. When the end user selects different value from the dropdown - a new data request will be made with the updated value.
 		</p>
 
 		<h2 id="filterProperties">
@@ -233,7 +233,7 @@
 			"request": {
 				"url": "./SEPMRA_PROD_MAN/SEPMRA_C_PD_Product",
 				"parameters": {
-					"$filter": "{= '{{filters.productCategory}}' !== 'all' ? 'ProductCategory eq \\'{{filters.productCategory}}\\' and ' : ''}AverageRatingValue gt 3",
+					"$filter": "{= ${filters>/productCategory/value} !== 'all' ? 'ProductCategory eq ' + ${filters>/productCategory/value} + ' and ' : ''}AverageRatingValue gt 3",
 					"$orderby": "AverageRatingValue desc",
 					"$inlinecount": "allpages"
 				}
@@ -241,7 +241,7 @@
 		},
 		"header": {
 			"title": "Products by category",
-			"subTitle": "Category {{filters.productCategory}}"
+			"subTitle": "Category {filters>/productCategory/selectedItem/title}"
 		},
 		"content": {
 			...

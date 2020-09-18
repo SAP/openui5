@@ -45,13 +45,13 @@
 		},
 		"data": {
 			"request": {
-				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product?$filter={= '{{filters.productCategory}}' !== 'all' ? 'ProductCategory eq \\'{{filters.productCategory}}\\' and ' : ''}AverageRatingValue gt 3&$orderby=AverageRatingValue desc&$inlinecount=allpages"
+				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product?$filter={= ${filters>/productCategory/value} !== 'all' ? 'ProductCategory eq ' + ${filters>/productCategory/value} + ' and ' : ''}AverageRatingValue gt 3&$orderby=AverageRatingValue desc&$inlinecount=allpages"
 			}
 		},
 		"type": "List",
 		"header": {
 			"title": "Products by category",
-			"subTitle": "Category {{filters.productCategory}}",
+			"subTitle": "Category {filters>/productCategory/selectedItem/title}",
 			"icon": {
 				"src": "sap-icon://product"
 			},

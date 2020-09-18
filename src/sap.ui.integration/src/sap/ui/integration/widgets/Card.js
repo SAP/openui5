@@ -348,10 +348,10 @@ sap.ui.define([
 	Card.prototype.init = function () {
 		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.setModel(new JSONModel(), "parameters");
+		this.setModel(new JSONModel(), "filters");
 		this._busyStates = new Map();
 		this._oExtension = null;
 		this._oContentFactory = new ContentFactory(this);
-		this._mFilters = new Map();
 
 		this._ariaText = new InvisibleText({ id: this.getId() + "-ariaText" });
 
@@ -423,7 +423,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._bApplyManifest || this._bApplyParameters || this._bApplyFilters) {
+		if (this._bApplyManifest || this._bApplyParameters) {
 			this._clearReadyState();
 			this._initReadyState();
 		}
@@ -445,15 +445,8 @@ sap.ui.define([
 			this._applyManifestSettings();
 		}
 
-		if (!this._bApplyManifest && this._bApplyFilters) {
-			this._oCardManifest.processFilters(this._mFilters);
-
-			this._applyManifestSettings();
-		}
-
 		this._bApplyManifest = false;
 		this._bApplyParameters = false;
-		this._bApplyFilters = false;
 	};
 
 	Card.prototype.setManifest = function (vValue) {
@@ -495,13 +488,6 @@ sap.ui.define([
 			this._oDestinations.setHost(this.getHostInstance());
 		}
 
-		return this;
-	};
-
-	Card.prototype._setFilterValue = function (sKey, vValue) {
-		this._mFilters.set(sKey, vValue);
-		this._bApplyFilters = true;
-		this.invalidate();
 		return this;
 	};
 
@@ -581,7 +567,6 @@ sap.ui.define([
 	 */
 	Card.prototype._applyManifest = function () {
 		var oParameters = this.getParameters(),
-			oFilters = this._mFilters,
 			oCardManifest = this._oCardManifest;
 
 		if (oCardManifest && oCardManifest.getResourceBundle()) {
@@ -589,8 +574,6 @@ sap.ui.define([
 		}
 
 		oCardManifest.processParameters(oParameters);
-
-		oCardManifest.processFilters(oFilters);
 
 		this._prepareToApplyManifestSettings();
 
@@ -740,7 +723,7 @@ sap.ui.define([
 
 		this._busyStates.clear();
 
-		this._mFilters.clear();
+		this.getModel("filters").setData({});
 	};
 
 	/**
@@ -926,11 +909,31 @@ sap.ui.define([
 
 		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS));
 		this._oIconFormatter = new IconFormatter(this._oDestinations);
-		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, this._oExtension);
+
+		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, this._oExtension, this);
+
 		this._oLoadingProvider = new LoadingProvider();
 
 		if (this._oExtension) {
 			this._oExtension.onCardReady(this._oLimitedInterface);
+		}
+
+		this._fillFiltersModel();
+	};
+
+	/**
+	 * Fills the filters model with its initial values.
+	 *
+	 * @private
+	 */
+	Card.prototype._fillFiltersModel = function () {
+		var oModel = this.getModel("filters"),
+			mFiltersConfig = this._oCardManifest.get(MANIFEST_PATHS.FILTERS);
+
+		for (var sKey in mFiltersConfig) {
+			oModel.setProperty("/" + sKey, {
+				"value": mFiltersConfig[sKey].value
+			});
 		}
 	};
 
@@ -942,14 +945,14 @@ sap.ui.define([
 	 */
 	Card.prototype._applyManifestSettings = function () {
 		this._applyServiceManifestSettings();
+		this._applyFilterBarManifestSettings();
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
 		this._applyContentManifestSettings();
-		this._applyFilterBarManifestSettings();
 	};
 
 	Card.prototype._applyDataManifestSettings = function () {
-		var oDataSettings = BindingHelper.createBindingInfos(this._oCardManifest.get(MANIFEST_PATHS.DATA));
+		var oDataSettings = this._oCardManifest.get(MANIFEST_PATHS.DATA);
 
 		if (!oDataSettings) {
 			this.fireEvent("_cardReady");
@@ -1172,10 +1175,11 @@ sap.ui.define([
 
 	Card.prototype.createFilterBar = function () {
 		var mFiltersConfig = this._oCardManifest.get(MANIFEST_PATHS.FILTERS),
-			mValues = this._mFilters,
+			oFilterModel = this.getModel("filters"),
+			oFilters = oFilterModel.getProperty("/"),
 			oFactory = new FilterBarFactory(this);
 
-		return oFactory.create(mFiltersConfig, mValues);
+		return oFactory.create(mFiltersConfig, oFilters);
 	};
 
 	Card.prototype.getContentManifest = function () {

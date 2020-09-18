@@ -94,7 +94,6 @@ sap.ui.define([
 			oBindingInfo.formatter = function (vValue) {
 
 				var oBindingContext = this.getBindingContext(),
-					oModel = this.getModel(),
 					sPath,
 					mParameters;
 
@@ -102,7 +101,7 @@ sap.ui.define([
 					sPath = oBindingContext.getPath();
 				}
 
-				mParameters = BindingResolver.resolveValue(oAction.parameters, oModel, sPath);
+				mParameters = BindingResolver.resolveValue(oAction.parameters, oAreaControl, sPath);
 
 				if (vValue.__resolved) {
 					if (!vValue.__enabled || vValue.__enabled === "false") {
@@ -148,14 +147,13 @@ sap.ui.define([
 			var oAreaControl = this._oAreaControl,
 				oBindingContext = oAreaControl.getBindingContext(),
 				mParameters,
-				oModel = oAreaControl.getModel(),
 				sPath;
 
 			if (oBindingContext) {
 				sPath = oBindingContext.getPath();
 			}
 
-			mParameters = BindingResolver.resolveValue(oAction.parameters, oModel, sPath);
+			mParameters = BindingResolver.resolveValue(oAction.parameters, oAreaControl, sPath);
 
 			return new Promise(function (resolve) {
 				oAreaControl._oServiceManager.getService(_getServiceName(oAction.service))
@@ -219,7 +217,6 @@ sap.ui.define([
 
 		CardActions.prototype._handleServiceAction = function (oSource, oAction) {
 			var oBindingContext = oSource.getBindingContext(),
-				oModel = oSource.getModel(),
 				sPath;
 
 			if (oBindingContext) {
@@ -230,27 +227,26 @@ sap.ui.define([
 				.then(function (oService) {
 					if (oService) {
 						oService.navigate({ // only for navigation?
-							parameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath)
+							parameters: BindingResolver.resolveValue(oAction.parameters, oSource, sPath)
 						});
 					}
 				})
 				.catch(function (e) {
 					Log.error("Navigation service unavailable", e);
 				}).finally(function () {
-				this._processAction(oSource, oAction, oModel, sPath);
+				this._processAction(oSource, oAction, sPath);
 			}.bind(this));
 		};
 
 		CardActions.prototype._handleAction = function (oSource, oAction) {
 			var oBindingContext = oSource.getBindingContext(),
-				oModel = oSource.getModel(),
 				sPath;
 
 			if (oBindingContext) {
 				sPath = oBindingContext.getPath();
 			}
 
-			this._processAction(oSource, oAction, oModel, sPath);
+			this._processAction(oSource, oAction, sPath);
 		};
 
 		CardActions.prototype._attachPressEvent = function (oActionControl, oAction, bSingleAction) {
@@ -312,21 +308,21 @@ sap.ui.define([
 			}
 		};
 
-		CardActions.prototype._processAction = function (oSource, oAction, oModel, sPath) {
+		CardActions.prototype._processAction = function (oSource, oAction, sPath) {
 
 			var oHost = this._getHostInstance(),
 				oCard = this.getCard(),
 				sUrl = oAction.url;
 
 			if (sUrl) {
-				sUrl = BindingResolver.resolveValue(sUrl, oModel, sPath);
+				sUrl = BindingResolver.resolveValue(sUrl, oSource, sPath);
 			}
 
 			CardActions.fireAction({
 				card: oCard,
 				host: oHost,
 				action: oAction,
-				parameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath),
+				parameters: BindingResolver.resolveValue(oAction.parameters, oSource, sPath),
 				source: oSource,
 				url: sUrl
 			});

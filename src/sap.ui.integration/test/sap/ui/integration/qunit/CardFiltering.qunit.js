@@ -67,23 +67,29 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 
+			var oHeader = this.oCard.getAggregation("_header"),
+				oContentList = this.oCard.getCardContent().getInnerList(),
+				oListItems = oContentList.getItems();
+
 			// Assert
-			var oHeader = this.oCard.getAggregation("_header");
 			assert.strictEqual(oHeader.getSubtitle(), "Category " + sCategory, "The initial value of 'category' is ok.");
 			assert.strictEqual(oHeader.getStatusText(), sStatus, "The number of list items is as expected.");
-
-			var oListItems = this.oCard.getCardContent().getInnerList().getItems();
 			assert.strictEqual(oListItems[0].getDescription(), sCategory, "The list items have correct category.");
-
-			if (sCategory === "flat_screens") {
-				done();
-				return;
-			}
 
 			// Act - change the category to flat_screens
 			sCategory = "flat_screens";
 			sStatus = "2 of 4";
-			this.oCard._setFilterValue("category", "flat_screens");
+
+			this.oCard.getModel("filters").setProperty("/category/value", "flat_screens");
+			Core.applyChanges();
+
+			setTimeout(function () {
+				assert.strictEqual(oHeader.getSubtitle(), "Category " + sCategory, "The initial value of 'category' is ok.");
+				assert.strictEqual(oHeader.getStatusText(), sStatus, "The number of list items is as expected.");
+				assert.strictEqual(oListItems[0].getDescription(), sCategory, "The list items have correct category.");
+				done();
+			}, 500);
+
 		}.bind(this));
 
 		// Act

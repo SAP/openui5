@@ -6,9 +6,11 @@ sap.ui.define([
 	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/util/DataProvider",
-	"sap/ui/integration/util/ExtensionDataProvider"
+	"sap/ui/integration/util/ExtensionDataProvider",
+	"sap/ui/integration/util/JSONBindingHelper",
+	"sap/ui/integration/util/BindingHelper"
 ],
-function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, ExtensionDataProvider) {
+function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, ExtensionDataProvider, JSONBindingHelper, BindingHelper) {
 "use strict";
 
 	/**
@@ -24,11 +26,14 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, Ex
 	 * @alias sap.ui.integration.util.DataProviderFactory
 	 */
 	var DataProviderFactory = BaseObject.extend("sap.ui.integration.util.DataProviderFactory", {
-		constructor: function (oDestinations, oExtension) {
+		constructor: function (oDestinations, oExtension, oCard) {
 			BaseObject.call(this);
 			this._oDestinations = oDestinations;
 			this._oExtension = oExtension;
+			this._oCard = oCard;
+
 			this._aDataProviders = [];
+			this._aFiltersProviders = [];
 		}
 	});
 
@@ -43,8 +48,10 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, Ex
 			});
 
 			this._aDataProviders = null;
+			this._aFiltersProviders = null;
 		}
 
+		this._oCard = null;
 		this._oExtension = null;
 		this._bIsDestroyed = true;
 	};
@@ -65,33 +72,49 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, Ex
 	 * @param {sap.ui.integration.util.ServiceManager} oServiceManager A reference to the service manager.
 	 * @returns {sap.ui.integration.util.DataProvider|null} A data provider instance used for data retrieval.
 	 */
-	DataProviderFactory.prototype.create = function (oDataSettings, oServiceManager) {
-		var oDataProvider;
+	DataProviderFactory.prototype.create = function (oDataSettings, oServiceManager, bIsFilter) {
+		var oCard = this._oCard,
+			oConfig,
+			oDataProvider;
 
 		if (!oDataSettings) {
 			return null;
 		}
 
+		oConfig = {
+			"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings)
+		};
+
 		if (oDataSettings.request) {
-			oDataProvider = new RequestDataProvider();
+			oDataProvider = new RequestDataProvider(oConfig);
 		} else if (oDataSettings.service) {
-			oDataProvider = new ServiceDataProvider();
+			oDataProvider = new ServiceDataProvider(oConfig);
 		} else if (oDataSettings.json) {
-			oDataProvider = new DataProvider();
+			oDataProvider = new DataProvider(oConfig);
 		} else if (oDataSettings.extension) {
-			oDataProvider = new ExtensionDataProvider(this._oExtension);
+			oDataProvider = new ExtensionDataProvider(oConfig, this._oExtension);
 		} else {
 			return null;
 		}
 
+		if (oCard) {
+			BindingHelper.copyModels(this._oCard, oDataProvider);
+			oDataProvider.bindObject("/");
+		}
+
 		oDataProvider.setDestinations(this._oDestinations);
-		oDataProvider.setSettings(oDataSettings);
 
 		if (oDataProvider.isA("sap.ui.integration.util.IServiceDataProvider")) {
 			oDataProvider.createServiceInstances(oServiceManager);
 		}
 
 		this._aDataProviders.push(oDataProvider);
+
+		if (bIsFilter) {
+			this._aFiltersProviders.push(oDataProvider);
+		} else {
+			oDataProvider.setDependencies(this._aFiltersProviders);
+		}
 
 		return oDataProvider;
 	};

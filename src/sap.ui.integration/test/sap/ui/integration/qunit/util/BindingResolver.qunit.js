@@ -2,10 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/BindingHelper"
 ],
-function (JSONModel, BindingResolver, BindingHelper) {
+function (JSONModel, ManagedObject, BindingResolver, BindingHelper) {
 	"use strict";
 
 	QUnit.module("BindingResolver resolveValue");
@@ -262,5 +263,31 @@ function (JSONModel, BindingResolver, BindingHelper) {
 		// Assert
 		assert.notStrictEqual(vResolved, oBindingInfoToResolve, "Should NOT change the passed object.");
 		assert.strictEqual(vResolved, "this free text will bring 'parts' item1", "Should have properly resolve binding info.");
+	});
+
+	QUnit.module("Get all models from a managed object");
+
+	QUnit.test("Resolve based on models from a manged object", function (assert) {
+		// Arrange
+		var oObject = new ManagedObject(),
+			oModel1 = new JSONModel({
+				"test": "value1"
+			}),
+			oModelFilters = new JSONModel({
+				"test": "value2"
+			}),
+			sText = "{/test} {filters>/test}";
+
+		oObject.setModel(oModel1);
+		oObject.setModel(oModelFilters, "filters");
+
+		//  parse
+		var oBindingInfoToResolve = BindingHelper.createBindingInfos(sText);
+
+		// Act
+		var vResolved = BindingResolver.resolveValue(oBindingInfoToResolve, oObject);
+
+		// Assert
+		assert.strictEqual(vResolved, "value1 value2", "Text is resolved correctly based on 2 models.");
 	});
 });
