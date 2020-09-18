@@ -1595,7 +1595,7 @@ sap.ui.define([
 					}
 
 					if (this._shouldApplySectionTitleLevel(oSubSection)) {
-						oSubSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSubSection));
+						oSubSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSubSection), bInvalidate);
 					}
 				}
 
@@ -1631,7 +1631,7 @@ sap.ui.define([
 				}
 
 				if (this._shouldApplySectionTitleLevel(oSection)) {
-					oSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSection));
+					oSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSection), bInvalidate);
 				}
 
 				iVisibleSection++;
