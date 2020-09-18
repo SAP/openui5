@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-
 sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/merge",
@@ -17,7 +16,8 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/core/Icon",
 	"sap/m/ResponsivePopover",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/base/Log"
 ], function (
 	deepClone,
 	merge,
@@ -33,7 +33,8 @@ sap.ui.define([
 	Title,
 	Icon,
 	RPopover,
-	Text
+	Text,
+	Log
 ) {
 	"use strict";
 
@@ -296,6 +297,16 @@ sap.ui.define([
 		return this;
 	};
 
+	CardEditor.prototype.setLanguage = function (vValue, bSuppress) {
+		//unify the language-region to language_region
+		this._language = vValue.replace("-", "_");
+		this.setProperty("language", vValue, bSuppress);
+		if (!CardEditor._languages[this._language]) {
+			Log.warning("The language: " + vValue + " is currently unknown, some UI controls might show " + vValue + " instead of the language name.");
+		}
+	};
+
+
 	CardEditor.prototype._getOriginalManifestJson = function () {
 		try {
 			return this._oEditorCard._oCardManifest._oManifest.getRawJson();
@@ -310,14 +321,21 @@ sap.ui.define([
 	 */
 	CardEditor.prototype._initCard = function (vCardIdOrSettings) {
 		if (typeof vCardIdOrSettings === "string") {
-			var val = vCardIdOrSettings;
 			try {
 				vCardIdOrSettings = JSON.parse(vCardIdOrSettings);
 			} catch (ex) {
-				vCardIdOrSettings = val;
+				//not json
+				//could be a card instance id
+				var instance = Core.byId(vCardIdOrSettings);
+				if (!instance) { //not a card instance, but a string
+					//could be a card dom element id
+					var element = document.getElementById(vCardIdOrSettings);
+					if (element && element.tagName && element.tagName === "ui-integration-card") {
+						instance = element._getControl();
+					}
+				}
+				vCardIdOrSettings = instance;
 			}
-			//the id of an existing card
-			vCardIdOrSettings = Core.byId(vCardIdOrSettings);
 		}
 		if (vCardIdOrSettings && vCardIdOrSettings.isA && vCardIdOrSettings.isA("sap.ui.integration.widgets.Card")) {
 			//a card instance
@@ -689,7 +707,6 @@ sap.ui.define([
 
 		if (sMode === "translation") {
 			//adding an internal _language object to save the original value for the UI
-			var language = this.getLanguage();
 			oConfig._language = {
 				value: oConfig.value
 			};
@@ -722,7 +739,7 @@ sap.ui.define([
 				this._createField(origLangField)
 			);
 			//change the label for the translation field
-			oConfig.label += " - " + CardEditor._languages[language] || "unknown";
+			oConfig.label += " - " + CardEditor._languages[this._language] || this.getLanguage();
 			oConfig.required = false; //translation is never required
 			//now continue with the default...
 		}
