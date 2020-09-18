@@ -26,6 +26,9 @@ sap.ui.define([
 	// shortcut for sap.m.BadgeState
 	var BadgeState = library.BadgeState;
 
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
+
 	/**
 	 * Button renderer.
 	 * @namespace
@@ -304,6 +307,7 @@ sap.ui.define([
 
 	ButtonRenderer.generateAccProps = function (oButton) {
 		var sText = oButton._getText(),
+			sHasPopupType = oButton.getAriaHasPopup(),
 			mAccProps;
 
 		if (sText) {
@@ -315,6 +319,8 @@ sap.ui.define([
 		// prevent rendering of aria-disabled attribute to avoid having
 		// both aria-disabled and disabled at the same time
 		mAccProps["disabled"] = null;
+
+		mAccProps["haspopup"] = (sHasPopupType === AriaHasPopup.None) ? null : sHasPopupType.toLowerCase();
 
 		return mAccProps;
 	};

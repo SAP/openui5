@@ -29,6 +29,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 			"sap.ui.core.AbsoluteCSSSize",
 			"sap.ui.core.AccessibleRole",
 			"sap.ui.core.AccessibleLandmarkRole",
+			"sap.ui.core.aria.HasPopup",
 			"sap.ui.core.BarColor",
 			"sap.ui.core.BusyIndicatorSize",
 			"sap.ui.core.CalendarType",
@@ -691,6 +692,58 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 		 * @public
 		 */
 		ContentInfo : "ContentInfo"
+
+	};
+
+	thisLib.aria = thisLib.aria || {};
+
+	/**
+	 * Types of popups to set as aria-haspopup attribute.
+	 * Most of the values (except "None") of the enumeration are taken from the ARIA specification:
+	 * https://www.w3.org/TR/wai-aria/#aria-haspopup
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.83
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.aria.HasPopup = {
+
+		/**
+		 * None - the aria-haspopup attribute will not be rendered.
+		 * @public
+		 */
+		None : "None",
+
+		/**
+		 * Menu popup type.
+		 * @public
+		 */
+		Menu : "Menu",
+
+		/**
+		 * ListBox popup type.
+		 * @public
+		 */
+		ListBox : "ListBox",
+
+		/**
+		 * Tree popup type.
+		 * @public
+		 */
+		Tree : "Tree",
+
+		/**
+		 * Grid popup type.
+		 * @public
+		 */
+		Grid : "Grid",
+
+		/**
+		 * Dialog popup type.
+		 * @public
+		 */
+		Dialog : "Dialog"
 
 	};
 

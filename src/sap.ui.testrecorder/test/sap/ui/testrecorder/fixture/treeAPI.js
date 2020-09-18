@@ -207,7 +207,7 @@ sap.ui.define([
 								value: "",
 								type: "sap.ui.core.URI"
 							}],
-							ownTotalCount: 9
+							ownTotalCount: 10
 						}
 					};
 				case "Button With ID -- viewId":
