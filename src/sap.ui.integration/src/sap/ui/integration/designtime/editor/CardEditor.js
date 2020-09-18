@@ -556,6 +556,7 @@ sap.ui.define([
 		"boolean": "sap/ui/integration/designtime/editor/fields/BooleanField",
 		"date": "sap/ui/integration/designtime/editor/fields/DateField",
 		"datetime": "sap/ui/integration/designtime/editor/fields/DateTimeField",
+		"string[]": "sap/ui/integration/designtime/editor/fields/ListField",
 		"destination": "sap/ui/integration/designtime/editor/fields/DestinationField"
 	};
 	CardEditor.Fields = null;
@@ -867,6 +868,7 @@ sap.ui.define([
 						case "boolean": oItem.value = oItem.defaultValue || false; break;
 						case "integer":
 						case "number": oItem.value = oItem.defaultValue || 0; break;
+						case "string[]": oItem.value = oItem.defaultValue || []; break;
 						default: oItem.value = oItem.defaultValue || "";
 					}
 				}
