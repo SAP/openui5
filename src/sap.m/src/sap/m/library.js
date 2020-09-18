@@ -2866,6 +2866,18 @@ sap.ui.define([
 		GE: "GE",
 		Initial: "Initial",
 		Empty: "Empty",
+
+		// filter exclude operations
+		NotBT: "NotBT",
+		NotEQ: "NotEQ",
+		NotContains: "NotContains",
+		NotStartsWith: "NotStartsWith",
+		NotEndsWith: "NotEndsWith",
+		NotLT: "NotLT",
+		NotLE: "NotLE",
+		NotGT: "NotGT",
+		NotGE: "NotGE",
+		NotInitial: "NotInitial",
 		NotEmpty: "NotEmpty",
 
 		// sort operations
@@ -2881,6 +2893,11 @@ sap.ui.define([
 		Average: "Average",
 		Minimum: "Minimum",
 		Maximum: "Maximum"
+	};
+
+	thisLib.P13nConditionOperationType = {
+		Include: "Incl",
+		Exclude: "Excl"
 	};
 
 	/**
