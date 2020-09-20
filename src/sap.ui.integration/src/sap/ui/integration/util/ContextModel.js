@@ -47,6 +47,9 @@ sap.ui.define([
 	 * @inheritdoc
 	 */
 	ContextModel.prototype.getProperty = function (sPath, oContext) {
+		if (sPath && !sPath.startsWith("/") && !oContext) {
+			sPath = "/" + sPath;
+		}
 		var oHost = this._oHost,
 			sAbsolutePath = this.resolve(sPath, oContext),
 			pGetProperty,

@@ -1006,6 +1006,7 @@ sap.ui.define([
 		//TODO: This should be replaced with a themable .less file
 		var sCssURL = sap.ui.require.toUrl("sap.ui.integration.designtime.editor.css.CardEditor".replace(/\./g, "/") + ".css");
 		includeStylesheet(sCssURL);
+
 		LoaderExtension.loadResource("sap/ui/integration/designtime/editor/languages.json", {
 			dataType: "json",
 			failOnError: false,
