@@ -229,7 +229,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 				propvider.</p>
 			<pre class="prettyprint lang-js">
 "stringWithStaticList": {
-  "manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
+  "manifestpath": "/sap.card/configuration/parameters/stringWithRequestList/value",
   "type": "string",
   "values": {
      "data": {
@@ -253,6 +253,63 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 	]
 
 </pre>
+			</p>
+			<h3 id="lists">Providing Lists for string arrays</h3>
+			<p>
+				To allow a selection of values for fields of type "string", you can add a values section.
+				Similar to the Card data section, the list can be filled with a static json or a request.
+				The item section in the values definition links the data. The "key" property of the item is used as
+				the value for the setting referred by the "manifestPath".
+				<strong>Static Data List</strong>
+			<pre class="prettyprint lang-js">
+"stringArrayWithStaticList": {
+	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithStaticList/value",
+	"type": "string[]",
+	"values": {
+		"data": {
+		"json": {
+			"values": [
+				{ "text": "From JSON 1", "key": "key1" },
+				{ "text": "From JSON 2", "key": "key2" },
+				{ "text": "From JSON 3", "key": "key3" }
+			]
+		},
+		"path": "/values"
+		},
+		"item": {
+		"text": "{text}",
+		"key": "{key}"
+		}
+	}
+}</pre>
+			<strong>Request Data List</strong>
+			<p>There referred url will deliver the data asynchronous. Also an extension could be used as a data
+				propvider.</p>
+			<pre class="prettyprint lang-js">
+"stringWithStaticList": {
+	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithRequestList/value",
+	"type": "string[]",
+	"values": {
+		"data": {
+		"request": {
+			"url": "./dt/listdata.json"
+		},
+		"path": "/values"
+		},
+		"item": {
+		"text": "{text}",
+		"key": "{key}"
+		}
+	}
+}</pre>
+			<strong>Data of dt/listdata.json</strong>
+			<pre class="prettyprint lang-js">
+	"values": [
+		{ "text": "From JSON 1", "key": "key1" },
+		{ "text": "From JSON 2", "key": "key2" },
+		{ "text": "From JSON 3", "key": "key3" }
+	]
+			</pre>
 			</p>
 			<h3 id="preview">Configure the editor's preview</h3>
 			<p>An additional section in the configuration allows to influence the preview shown in the Card editor
