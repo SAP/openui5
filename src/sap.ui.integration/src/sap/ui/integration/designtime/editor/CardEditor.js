@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/ResponsivePopover",
 	"sap/m/Text",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Popup"
 ], function (
 	deepClone,
 	merge,
@@ -34,38 +35,26 @@ sap.ui.define([
 	Icon,
 	RPopover,
 	Text,
-	Log
+	Log,
+	Popup
 ) {
 	"use strict";
 
-	/**
-	 * Sets the zIndex of target 100 above source zIndex
-	 * @param {Element} target
-	 * @param {Element} source
-	 */
-	function setHigherZIndex(target, source) {
-		if (target && target.nodeType !== 1) {
-			return;
-		}
+	function getHigherZIndex(source) {
 		if (source && source.nodeType !== 1) {
-			target.style.zIndex = 100;
 			return;
 		}
 		var z = parseInt(window.getComputedStyle(source).getPropertyValue('z-index'));
 		if (isNaN(z)) {
 			if (source.parentNode && source.parentNode.nodeType === 1) {
-				setHigherZIndex(target, source.parentNode);
-			} else {
-				target.style.zIndex = 100;
+				return getHigherZIndex(source.parentNode);
 			}
-		} else {
-			target.style.zIndex = z + 100;
+			return null;
 		}
+		return z + 1;
 	}
 
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}|\{i18n>([^\}]+)\}/g;
-
-
 
 	/**
 	 * Constructor for a new <code>Card Editor</code>.
@@ -306,6 +295,11 @@ sap.ui.define([
 		}
 	};
 
+	CardEditor.prototype.onAfterRendering = function () {
+		if (this.getDomRef()) {
+			Popup.setInitialZIndex(getHigherZIndex(this.getDomRef()));
+		}
+	};
 
 	CardEditor.prototype._getOriginalManifestJson = function () {
 		try {
@@ -625,11 +619,7 @@ sap.ui.define([
 
 		this._oPopover = new RPopover({
 			showHeader: false,
-			content: [oText],
-			afterOpen: function (oEvent) {
-				//do this after open, because dom ref or popover is not available in before event.
-				setHigherZIndex(oEvent.getSource().getDomRef(), oEvent.getParameter("openBy").getDomRef());
-			}
+			content: [oText]
 		});
 		this._oPopover.addStyleClass("sapUiIntegrationCardEditorPopover");
 
