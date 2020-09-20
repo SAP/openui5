@@ -53,7 +53,14 @@ sap.ui.define([
 						type: Input,
 						settings: {
 							value: {
-								path: 'currentSettings>value'
+								path: 'currentSettings>value',
+								formatter: function (a) {
+									return a.join(",");
+								}
+							},
+							change: function (oEvent) {
+								var oSource = oEvent.getSource();
+								oSource.getBinding("value").setRawValue(oSource.getValue().split(","));
 							},
 							editable: oConfig.editable,
 							placeholder: oConfig.placeholder

@@ -94,36 +94,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Adds a style class to the real editor that is used for this field.
-	 * @param {string} sStyleClass
-	 */
-	BaseField.prototype.addStyleClass = function (sStyleClass) {
-		if (this.getEditor()) {
-			this.getEditor().addStyleClass(sStyleClass);
-		}
-	};
-
 	BaseField.prototype.initVisualization = function () {
-	};
-
-	BaseField.prototype.getSpecialButton = function () {
-		return null;
-		/** if (this.getMode() !== "admin") {
-			return null;
-		}
-		if (!this._oButton) {
-			this._oButton = new Button({
-				icon: "sap-icon://settings"
-			});
-			this._oButton.addStyleClass("sapUiIntegrationCardEditorSpecialButton");
-		}
-		return this._oButton; **/
-	};
-
-
-	BaseField.prototype.showMessage = function (sText, sIcon, sState) {
-
 	};
 
 	return BaseField;

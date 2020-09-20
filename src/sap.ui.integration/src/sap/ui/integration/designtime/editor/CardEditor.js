@@ -42,14 +42,11 @@ sap.ui.define([
 
 	function getHigherZIndex(source) {
 		if (source && source.nodeType !== 1) {
-			return;
+			return 0;
 		}
 		var z = parseInt(window.getComputedStyle(source).getPropertyValue('z-index'));
 		if (isNaN(z)) {
-			if (source.parentNode && source.parentNode.nodeType === 1) {
-				return getHigherZIndex(source.parentNode);
-			}
-			return null;
+			return getHigherZIndex(source.parentNode);
 		}
 		return z + 1;
 	}
@@ -157,12 +154,9 @@ sap.ui.define([
 							oLabel = oItem; //store the label and render it together with the next field
 							continue;
 						}
-						var oSpecial = oItem.getSpecialButton && oItem.getSpecialButton();
 						oRm.openStart("div");
 						oRm.addClass("sapUiIntegrationCardEditorItem");
-						if (oSpecial) {
-							oRm.addClass("special");
-						}
+
 						if (oControl.getMode() === "translation") {
 							oRm.addClass("language");
 						}
@@ -184,7 +178,7 @@ sap.ui.define([
 								var oDependent = oLabel.getDependents() && oLabel.getDependents()[0];
 								oRm.openStart("div");
 								oRm.addClass("sapUiIntegrationCardEditorItemLabel");
-								if (oDependent && !oControl.getMode() === "translation") {
+								if (oDependent && oControl.getMode() !== "translation") {
 									oRm.addClass("description");
 								}
 								oRm.openEnd();
@@ -195,9 +189,7 @@ sap.ui.define([
 								oRm.close("div");
 							}
 							oRm.renderControl(oItem);
-							if (oSpecial) {
-								oRm.renderControl(oItem.getSpecialButton());
-							}
+
 						}
 						oRm.close("div");
 						oLabel = null; //reset the label
@@ -286,21 +278,33 @@ sap.ui.define([
 		return this;
 	};
 
-	CardEditor.prototype.setLanguage = function (vValue, bSuppress) {
+	/**
+	 * Sets the language of the editor
+	 *
+	 * @param {string} sValue the language in the format language_region or language-region
+	 * @param {*} bSuppress suppress rerendering of the editor
+	 */
+	CardEditor.prototype.setLanguage = function (sValue, bSuppress) {
 		//unify the language-region to language_region
-		this._language = vValue.replace("-", "_");
-		this.setProperty("language", vValue, bSuppress);
+		this._language = sValue.replace("-", "_");
+		this.setProperty("language", sValue, bSuppress);
 		if (!CardEditor._languages[this._language]) {
-			Log.warning("The language: " + vValue + " is currently unknown, some UI controls might show " + vValue + " instead of the language name.");
+			Log.warning("The language: " + sValue + " is currently unknown, some UI controls might show " + sValue + " instead of the language name.");
 		}
 	};
 
+	/**
+	 * Increases the zIndex to a higher value for all popups
+	 */
 	CardEditor.prototype.onAfterRendering = function () {
 		if (this.getDomRef()) {
 			Popup.setInitialZIndex(getHigherZIndex(this.getDomRef()));
 		}
 	};
 
+	/**
+	 * Returns the original manifest json without processed parameters, handlebar translation
+	 */
 	CardEditor.prototype._getOriginalManifestJson = function () {
 		try {
 			return this._oEditorCard._oCardManifest._oManifest.getRawJson();
@@ -645,7 +649,8 @@ sap.ui.define([
 		var oBinding = this._settingsModel.bindProperty(oConfig._settingspath + "/value");
 		oBinding.attachChange(function () {
 			oConfig._changed = true;
-		});
+			this._updatePreview();
+		}.bind(this));
 
 		this._addValueListModel(oConfig, oField);
 
@@ -659,7 +664,7 @@ sap.ui.define([
 	 * @param {BaseField} oField
 	 */
 	CardEditor.prototype._addValueListModel = function (oConfig, oField) {
-		if (oConfig.values && oConfig.values.data) {
+		if (oConfig.values && oConfig.values.data && this._oEditorCard && this._oEditorCard._oDataProviderFactory) {
 			var oValueModel = new JSONModel({});
 			var oPromise = this._oEditorCard._oDataProviderFactory.create(oConfig.values.data).getData();
 			oPromise.then(function (oJson) {
@@ -674,6 +679,7 @@ sap.ui.define([
 			oField.bindObject({
 				path: oConfig.values.data.path || "/"
 			});
+			oField._oDataPromise = oPromise;
 		}
 	};
 
@@ -685,14 +691,16 @@ sap.ui.define([
 
 		var sMode = this.getMode();
 		//if the item is not visible or translation mode, continue immediately
-		if (!oConfig.visible || (!oConfig.translatable && sMode === "translation")) {
+		if (oConfig.visible === false || (!oConfig.translatable && sMode === "translation")) {
 			return;
 		}
 
 		if (oConfig.type === "group") {
-			this.addAggregation("_formContent", new Title({
+			var oTitle = new Title({
 				text: oConfig.label
-			}));
+			});
+			this.addAggregation("_formContent", oTitle);
+			oTitle._cols = oConfig.cols || 2; //by default 2 cols
 			return;
 		}
 
@@ -719,7 +727,6 @@ sap.ui.define([
 			var origLangField = deepClone(oConfig, 10);
 			origLangField._settingspath += "/_language";
 			origLangField.editable = false;
-			origLangField.label += " - Original";
 			origLangField.required = false;
 
 			this.addAggregation("_formContent",
@@ -730,7 +737,7 @@ sap.ui.define([
 				this._createField(origLangField)
 			);
 			//change the label for the translation field
-			oConfig.label += " - " + CardEditor._languages[this._language] || this.getLanguage();
+
 			oConfig.required = false; //translation is never required
 			//now continue with the default...
 		}
@@ -752,6 +759,21 @@ sap.ui.define([
 		this.destroyAggregation("_formContent");
 		var oSettings = this._oDesigntimeInstance.getSettings();
 		if (oSettings.form && oSettings.form.items) {
+			if (this.getMode() === "translation") {
+				//add 2 group items to show over the columns to avoid laguage repetition in the labels
+				this._addItem({
+					type: "group",
+					cols: 1,
+					translatable: true,
+					label: this._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG")
+				});
+				this._addItem({
+					type: "group",
+					cols: 1,
+					translatable: true,
+					label: CardEditor._languages[this._language] || this.getLanguage()
+				});
+			}
 			for (var n in oSettings.form.items) {
 				var oItem = oSettings.form.items[n];
 				if (oItem) {

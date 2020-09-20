@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/m/ToggleButton",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
-	"sap/ui/dom/includeStylesheet"
+	"sap/ui/dom/includeStylesheet",
+	"sap/ui/integration/util/CardMerger"
 ], function (
-	Control, HBox, Image, ToggleButton, Card, Core, includeStylesheet
+	Control, HBox, Image, ToggleButton, Card, Core, includeStylesheet, CardMerger
 ) {
 	"use strict";
 
@@ -164,6 +165,7 @@ sap.ui.define([
 				};
 			}
 		}
+		var oCurrent = this.getParent().getCurrentSettings();
 		placeholder = {
 			"sap.app": {
 				"type": "card",
@@ -173,7 +175,7 @@ sap.ui.define([
 				"type": oCard.getManifestEntry("/sap.card/type") === "List" ? "List" : "Component",
 				"header": header,
 				"content": {
-					"maxItems": 6,
+					"maxItems": Math.min(oCurrent["/sap.card/content/maxItems"] || 6, 6),
 					"item": {
 						"title": {
 							"value": _map("/sap.card/content/item/value")
@@ -189,6 +191,7 @@ sap.ui.define([
 				}
 			}
 		};
+
 		if (!this._oCardPlaceholder) {
 			this._oCardPlaceholder = new Card();
 			this._oCardPlaceholder._setPreviewMode(true);
@@ -206,6 +209,9 @@ sap.ui.define([
 			this._oCardPreview = new Card();
 			this._oCardPreview.setBaseUrl(this.getCard().getBaseUrl());
 		}
+		this._initalChanges = this._initalChanges || this._oCardPreview.getManifestChanges() || [];
+		var aChanges = this._initalChanges.concat([this.getParent().getCurrentSettings()]);
+		this._oCardPreview.setManifestChanges(aChanges);
 		this._oCardPreview.setManifest(this.getCard().getManifestEntry("/"));
 		this._oCardPreview.refresh();
 		return this._oCardPreview;
