@@ -161,6 +161,42 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								"key": "{key}"
 							}
 						}
+					},
+					"stringArrayWithStaticList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringArrayWithStaticList/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"json": {
+									"values": [
+										{ "text": "From JSON 1", "key": "key1" },
+										{ "text": "From JSON 2", "key": "key2" },
+										{ "text": "From JSON 3", "key": "key3" }
+									]
+								},
+								"path": "/values"
+							},
+							"item": {
+								"text": "{text}",
+								"key": "{key}"
+							}
+						}
+					},
+					"stringArrayWithRequestList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringArrayWithRequestList/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "./dt/listdata.json"
+								},
+								"path": "/values"
+							},
+							"item": {
+								"text": "{text}",
+								"key": "{key}"
+							}
+						}
 					}
 				}
 			},
