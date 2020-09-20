@@ -10,16 +10,16 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 	oHost.getDestinations = function () {
 		return Promise.resolve([
 			{
-				"name": "Products"
+				"name": "products"
 			},
 			{
-				"name": "Orders"
+				"name": "JAM"
 			},
 			{
-				"name": "Portal"
+				"name": "portal"
 			},
 			{
-				"name": "Northwind"
+				"name": "SF"
 			}
 		]);
 	};
