@@ -459,7 +459,7 @@ sap.ui.define([
 		// go with native we need speed
 		var i = this._index + 1,
 			parent =  this.getParent(),
-			display = bDisplay ? "table-cell" : "none",
+			display = bDisplay && !this.isHidden() ? "table-cell" : "none",
 			header = oTableDomRef.querySelector("tr > th:nth-child(" + i + ")"),
 			cells = oTableDomRef.querySelectorAll("tr > td:nth-child(" + i + ")"),
 			length = cells.length;

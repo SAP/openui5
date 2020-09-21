@@ -21,6 +21,9 @@ sap.ui.define(['sap/m/ColumnListItem', 'sap/m/ColumnListItemRenderer', 'sap/m/La
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FilterColumnLayout = ColumnListItem.extend("sap.ui.mdc.filterbar.p13n.FilterColumnLayout", {
+		metadata: {
+			library: "sap.ui.mdc"
+		},
 		renderer: ColumnListItemRenderer
 	});
 
@@ -51,6 +54,7 @@ sap.ui.define(['sap/m/ColumnListItem', 'sap/m/ColumnListItemRenderer', 'sap/m/La
 	};
 
 	FilterColumnLayout.prototype.exit = function () {
+		ColumnListItem.prototype.exit.apply(this, arguments);
 		this._oFilterField = null;
 		this._sFieldPath = null;
 	};

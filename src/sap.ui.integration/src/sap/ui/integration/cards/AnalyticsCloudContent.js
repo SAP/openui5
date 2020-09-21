@@ -40,6 +40,9 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.AnalyticsCloudContent
 	 */
 	var AnalyticsCloudContent = BaseContent.extend("sap.ui.integration.cards.AnalyticsCloudContent", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: AnalyticsCloudContentRenderer
 	});
 
@@ -143,7 +146,7 @@ sap.ui.define([
 			sPath = oBindingContext.getPath();
 		}
 
-		oChartOptions = BindingResolver.resolveValue(oConfiguration.options, this.getModel(), sPath);
+		oChartOptions = BindingResolver.resolveValue(oConfiguration.options, this, sPath);
 
 		this._oHighchart = new window.Highcharts.Chart(this._oHighchartContainer.getId(), oChartOptions);
 	};

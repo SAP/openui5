@@ -42,6 +42,9 @@ sap.ui.define([
 	// shortcut for sap.f.AvatarSize
 	var AvatarSize = mobileLibrary.AvatarSize;
 
+	// shortcut for sap.m.AvatarColor
+	var AvatarColor = mobileLibrary.AvatarColor;
+
 	// shortcut for sap.ui.core.VerticalAlign
 	var VerticalAlign = coreLibrary.VerticalAlign;
 
@@ -77,6 +80,9 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.TableContent
 	 */
 	var TableContent = BaseListContent.extend("sap.ui.integration.cards.TableContent", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: TableContentRenderer
 	});
 
@@ -264,7 +270,6 @@ sap.ui.define([
 
 					var oSource = oEvent.getSource(),
 						oBindingContext = oSource.getBindingContext(),
-						oModel = oSource.getModel(),
 						sPath,
 						sUrl,
 						sTarget;
@@ -273,8 +278,8 @@ sap.ui.define([
 						sPath = oBindingContext.getPath();
 					}
 
-					sUrl = BindingResolver.resolveValue(oColumn.identifier.url, oModel, sPath);
-					sTarget = BindingResolver.resolveValue(oColumn.identifier.target, oModel, sPath);
+					sUrl = BindingResolver.resolveValue(oColumn.identifier.url, oSource, sPath);
+					sTarget = BindingResolver.resolveValue(oColumn.identifier.target, oSource, sPath);
 
 					if (sUrl) {
 						window.open(sUrl, sTarget || "_blank");
@@ -308,7 +313,8 @@ sap.ui.define([
 				displayShape: oColumn.icon.shape,
 				displaySize: oColumn.icon.size || AvatarSize.XS,
 				tooltip: oColumn.icon.alt,
-				initials: oColumn.icon.text
+				initials: oColumn.icon.text,
+				backgroundColor: oColumn.icon.backgroundColor || (oColumn.icon.text ? undefined : AvatarColor.Transparent)
 			}).addStyleClass("sapFCardIcon");
 		}
 

@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/Sorter",
+	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/Event",
 	"sap/ui/dom/containsOrEquals",
@@ -35,6 +36,7 @@ sap.ui.define([
 	Button,
 	ODataListBinding,
 	Sorter,
+	Filter,
 	JSONModel,
 	Event,
 	containsOrEquals,
@@ -49,49 +51,44 @@ sap.ui.define([
 	function stubFetchProperties(aPropertyInfos, oTable) {
 		var oTarget = oTable || Table.prototype;
 		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
-		var oOriginalDelegate;
+		var oDelegate;
 		var fnOriginalFetchProperties;
 
 		unstubFetchProperties();
 
-		sinon.stub(oTarget, "getControlDelegate").callsFake(function() {
-			var oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
-
-			if (oDelegate.fetchProperties.__whenResolved) {
+		function getDelegate() {
+			if (oDelegate) {
 				return oDelegate;
 			}
 
-			var fnResolveFetchProperties;
-			var pFetchPropertiesResolved = new Promise(function(resolve) {
-				fnResolveFetchProperties = resolve;
-			});
-
-			oOriginalDelegate = oDelegate;
+			oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
 			fnOriginalFetchProperties = oDelegate.fetchProperties;
 
 			oDelegate.fetchProperties = function() {
 				fnOriginalFetchProperties.apply(this, arguments);
-				var pReturn = Promise.resolve(aPropertyInfos);
-				pReturn.then(function() {
-					fnResolveFetchProperties();
-					pFetchPropertiesResolved = new Promise(function(resolve) {
-						fnResolveFetchProperties = resolve;
-					});
-				});
-				return pReturn;
-			};
-
-			oDelegate.fetchProperties.__whenResolved = function() {
-				return pFetchPropertiesResolved;
+				return Promise.resolve(aPropertyInfos);
 			};
 
 			return oDelegate;
+		}
+
+		sinon.stub(oTarget, "getControlDelegate").callsFake(function() {
+			return getDelegate.call(this);
+		});
+
+		sinon.stub(oTarget, "awaitControlDelegate").callsFake(function() {
+			return Promise.resolve(getDelegate.call(this));
 		});
 
 		oTarget.__unstubFetchProperties = function() {
 			delete oTarget.__unstubFetchProperties;
-			oTarget.getControlDelegate.restore();
-			oOriginalDelegate.fetchProperties = fnOriginalFetchProperties;
+			if (oTarget.awaitControlDelegate.restore) {
+				oTarget.awaitControlDelegate.restore();
+			}
+			if (oTarget.getControlDelegate.restore) {
+				oTarget.getControlDelegate.restore();
+			}
+			oDelegate.fetchProperties = fnOriginalFetchProperties;
 		};
 	}
 
@@ -101,29 +98,6 @@ sap.ui.define([
 		if (oTarget.__unstubFetchProperties) {
 			oTarget.__unstubFetchProperties();
 		}
-	}
-
-	function whenFetchPropertiesResolved(oTable, fnFetchPropertiesTrigger) {
-		return new Promise(function(resolve) {
-			oTable.awaitControlDelegate().then(function() {
-				var oDelegate = oTable.getControlDelegate();
-
-				if (oDelegate.fetchProperties.__whenResolved) {
-					oDelegate.fetchProperties.__whenResolved().then(resolve);
-				} else {
-					var fnFetchProperties = oDelegate.fetchProperties;
-
-					oDelegate.fetchProperties = function() {
-						var pFetchProperties = fnFetchProperties.apply(this, arguments);
-						pFetchProperties.then(resolve);
-						oDelegate.fetchProperties = fnFetchProperties;
-						return pFetchProperties;
-					};
-				}
-
-				fnFetchPropertiesTrigger(oTable);
-			});
-		});
 	}
 
 	function wait(iMilliseconds) {
@@ -1998,14 +1972,14 @@ sap.ui.define([
 					}
 				]);
 
-				whenFetchPropertiesResolved(this.oTable, function(oTable) {
-					oTable._oTable.fireEvent("columnPress", {
-						column: oInnerColumn
-					});
+				this.oTable._oTable.fireEvent("columnPress", {
+					column: oInnerColumn
+				});
 
-					// Event triggered and the ColumnHeaderPopover is created
-					assert.ok(fColumnPressSpy.calledTwice);
-				}).then(function() {
+				// Event triggered and the ColumnHeaderPopover is created
+				assert.ok(fColumnPressSpy.calledTwice);
+
+				this.oTable.awaitPropertyHelper().then(function() {
 					assert.ok(this.oTable._oPopover);
 					assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
 
@@ -2088,14 +2062,14 @@ sap.ui.define([
 					}
 				]);
 
-				whenFetchPropertiesResolved(this.oTable, function(oTable) {
-					// Simulate click on sortable column
-					oTable._oTable.fireEvent("columnSelect", {
-						column: oInnerColumn
-					});
-					// Event triggered and the ColumnHeaderPopover is created
-					assert.ok(fColumnPressSpy.calledTwice);
-				}).then(function() {
+				// Simulate click on sortable column
+				this.oTable._oTable.fireEvent("columnSelect", {
+					column: oInnerColumn
+				});
+				// Event triggered and the ColumnHeaderPopover is created
+				assert.ok(fColumnPressSpy.calledTwice);
+
+				this.oTable.awaitPropertyHelper().then(function() {
 					assert.ok(this.oTable._oPopover);
 					assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
 
@@ -2166,12 +2140,12 @@ sap.ui.define([
 					}
 				]);
 
-				whenFetchPropertiesResolved(this.oTable, function(oTable) {
-					// Simulate click on sortable column
-					oTable._oTable.fireEvent("columnSelect", {
-						column: oInnerColumn
-					});
-				}).then(function() {
+				// Simulate click on sortable column
+				this.oTable._oTable.fireEvent("columnSelect", {
+					column: oInnerColumn
+				});
+
+				this.oTable.awaitPropertyHelper().then(function() {
 					assert.ok(!this.oTable._oPopover, "No ColumnHeaderPopover as for NonSortable Property");
 					fColumnPressSpy.restore();
 					done();
@@ -2211,12 +2185,12 @@ sap.ui.define([
 					}
 				]);
 
-				whenFetchPropertiesResolved(this.oTable, function(oTable) {
-					// Simulate click on sortable column
-					oTable._oTable.fireEvent("columnSelect", {
-						column: oInnerColumn
-					});
-				}).then(function() {
+				// Simulate click on sortable column
+				this.oTable._oTable.fireEvent("columnSelect", {
+					column: oInnerColumn
+				});
+
+				this.oTable.awaitPropertyHelper().then(function() {
 					assert.ok(this.oTable._oPopover);
 					assert.strictEqual(this.oTable._oPopover.getItems().length, 1, "Sort item button created");
 					var aSortItem = this.oTable._oPopover.getItems()[0].getItems();
@@ -2724,182 +2698,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("showDetailsButton property & button test", function(assert) {
-		var done = assert.async();
-
-		// Destroy the old/default table
-		this.oTable.destroy();
-		this.oTable = new Table({
-			type: new ResponsiveTableType({
-				showDetailsButton: true
-			})
-		});
-
-		var aColumns = [
-			new Column({
-				header: "Column A",
-				hAlign: "Begin",
-				importance: "High"
-			}),
-			new Column({
-				header: "Column B",
-				hAlign: "Begin",
-				importance: "High"
-			}),
-			new Column({
-				header: "Column C",
-				hAlign: "Begin",
-				importance: "Medium"
-			}),
-			new Column({
-				header: "Column D",
-				hAlign: "Begin",
-				importance: "Low"
-			}),
-			new Column({
-				header: "Column E",
-				hAlign: "Begin",
-				importance: "Low"
-			}),
-			new Column({
-				header: "Column F",
-				hAlign: "Begin",
-				importance: "High"
-			})
-		];
-
-		aColumns.forEach(function(oColumn) {
-			this.oTable.addColumn(oColumn);
-		}.bind(this));
-
-		this.oTable.placeAt("qunit-fixture");
-		this.oType = this.oTable.getType();
-		Core.applyChanges();
-
-		this.oTable.initialized().then(function() {
-			// attach event when ContextualWidth is set to 'Phone'
-			this.oTable._oTable.attachEventOnce("popinChanged", function() {
-				assert.ok(true, "ContextualWidth is set to Phone.");
-				assert.ok(this.oType._oShowDetailsButton.getVisible(), "Button 'Show / Hide Details' is visible");
-				assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "Button text='Show Details'");
-				assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "ResponsiveTable property hiddenInPopin=['Low']");
-
-				// attach event when show / hide button is pressed first time
-				this.oTable._oTable.attachEventOnce("popinChanged", function() {
-					assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Hide Details", "Button text='Hide Details'");
-					assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 0, "ResponsiveTable property hiddenInPopin=[]");
-
-					// attach event when show / hide button is pressed second time
-					this.oTable._oTable.attachEventOnce("popinChanged", function() {
-						assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "Button text='Show Details'");
-						assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "ResponsiveTable property hiddenInPopin=['Low']");
-
-						// attach event when showDetailsButton is set to false
-						this.oTable._oTable.attachEventOnce("popinChanged", function() {
-							assert.notOk(this.oType.getShowDetailsButton(), "showDetailsButton=false");
-							assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getEnd().find(function(oControl) {
-								return oControl.sId.match("-showHideDetails");
-							}), undefined, "Button 'Show / Hide Details' removed from tables toolbar");
-							assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 0, "ResponsiveTable property hiddenInPopin=[]");
-							assert.strictEqual(this.oTable._oTable._getHiddenInPopin().length, 0, "ResponsiveTable has no hidden columns");
-							assert.ok(this.oTable._oTable.hasPopin(), "ResponsiveTable has columns in the pop-in area.");
-							done();
-						}.bind(this));
-
-						this.oType.setShowDetailsButton(false);
-						Core.applyChanges();
-					}.bind(this));
-
-					this.oType._oShowDetailsButton.firePress(this);
-					Core.applyChanges();
-				}.bind(this));
-
-				this.oType._oShowDetailsButton.firePress(this);
-				Core.applyChanges();
-			}.bind(this));
-
-			assert.ok(this.oType.getShowDetailsButton(), "showDetailsButton=true");
-			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "All columns are visible. Button 'Show / Hide Details' is hidden");
-			this.oTable._oTable.setContextualWidth("Phone");
-			Core.applyChanges();
-		}.bind(this));
-	});
-
-	QUnit.test("showDetailsButton property on phone", function(assert) {
-		var done = assert.async();
-
-		// save original state
-		var bDesktop = Device.system.desktop;
-		var bTablet = Device.system.tablet;
-		var bPhone = Device.system.phone;
-
-		// overwrite for our test case
-		Device.system.desktop = false;
-		Device.system.tablet = false;
-		Device.system.phone = true;
-
-		// Destroy the old/default table
-		this.oTable.destroy();
-		this.oTable = new Table({
-			type: new ResponsiveTableType({
-				showDetailsButton: true
-			})
-		});
-
-		var aColumns = [
-			new Column({
-				header: "Column A",
-				hAlign: "Begin",
-				importance: "High"
-			}),
-			new Column({
-				header: "Column B",
-				hAlign: "Begin",
-				importance: "High"
-			}),
-			new Column({
-				header: "Column C",
-				hAlign: "Begin",
-				importance: "Medium"
-			}),
-			new Column({
-				header: "Column D",
-				hAlign: "Begin",
-				importance: "Low"
-			}),
-			new Column({
-				header: "Column E",
-				hAlign: "Begin",
-				importance: "Low"
-			}),
-			new Column({
-				header: "Column F",
-				hAlign: "Begin",
-				importance: "High"
-			})
-		];
-
-		aColumns.forEach(function(oColumn) {
-			this.oTable.addColumn(oColumn);
-		}.bind(this));
-
-		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		this.oTable.initialized().then(function() {
-			var aImportance = this.oTable._oTable.getHiddenInPopin();
-			assert.strictEqual(aImportance.length, 2, "ResponsiveTable property hiddenInPopin.length = 2");
-			assert.strictEqual(aImportance[0], "Low", "ResponsiveTable property hiddenInPopin[0] = 'Low'");
-			assert.strictEqual(aImportance[1], "Medium", "ResponsiveTable property hiddenInPopin[1] = 'Medium'");
-
-			// reset original state
-			Device.system.desktop = bDesktop;
-			Device.system.tablet = bTablet;
-			Device.system.phone = bPhone;
-			done();
-		}.bind(this));
-	});
-
 	QUnit.test("enableExport property & export button test", function(assert) {
 		var done = assert.async();
 
@@ -3124,7 +2922,7 @@ sap.ui.define([
 				width: 19
 			},
 			{
-				columnId: "fullName",
+				columnId: "fullName-additionalProperty1",
 				label: "Last name",
 				property: "lastName",
 				textAlign: "Begin",
@@ -3133,7 +2931,7 @@ sap.ui.define([
 			},
 			{
 				columnId: "fullNameExportSettings",
-				label: "Full name 2",
+				label: "Name",
 				property: ["firstName", "lastName"],
 				template: "{0}, {1}",
 				textAlign: "Begin",
@@ -3190,9 +2988,11 @@ sap.ui.define([
 					label: "Last name"
 				}, {
 					name: "fullName", // complex PropertyInfo without exportSettings => 2 spreadsheet column configs will be created
+					label: "Full name",
 					propertyInfos: ["firstName", "lastName"]
 				}, {
 					name: "fullName2", // complex PropertyInfo withexportSettings => 1 spreadsheet column config will be created
+					label: "Name",
 					propertyInfos: ["firstName", "lastName"],
 					exportSettings: {
 						template: "{0}, {1}"
@@ -3316,7 +3116,7 @@ sap.ui.define([
 			},
 			{
 				columnId: "price-additionalProperty",
-				label: "Price (2)",
+				label: "Currency Code",
 				property: "currencyCode",
 				type: "String",
 				width: 4,
@@ -3331,7 +3131,7 @@ sap.ui.define([
 				width: 15
 			},
 			{
-				columnId: "company",
+				columnId: "company-additionalProperty1",
 				label: "Company Code",
 				property: "companyCode",
 				textAlign: "Begin",
@@ -3351,6 +3151,7 @@ sap.ui.define([
 				}, {
 					name: "price",
 					path: "price",
+					label: "Price",
 					exportSettings: {
 						label: "Price",
 						displayUnit: true,
@@ -3360,12 +3161,14 @@ sap.ui.define([
 				}, {
 					name: "currencyCode",
 					path: "currencyCode",
+					label: "Currency Code",
 					exportSettings: {
 						width: 4,
 						textAlign: "Left"
 					}
 				}, {
 					name: "company",
+					label: "Company Name",
 					propertyInfos: ["companyName", "companyCode"]
 				}, {
 					name: "companyName",
@@ -3741,9 +3544,11 @@ sap.ui.define([
 					name: "name",
 					label: "NameLabel"
 				}, {
-					name: "age"
+					name: "age",
+					label: "AgeLabel"
 				}, {
-					name: "gender"
+					name: "gender",
+					label: "GenderLabel"
 				}
 			]);
 
@@ -3784,7 +3589,7 @@ sap.ui.define([
 				});
 				that.oTable.placeAt("qunit-fixture");
 				Core.applyChanges();
-				return that.oTable.initialized();
+				return Promise.all([that.oTable.initialized(), that.oTable.awaitPropertyHelper()]);
 			}).then(function() {
 				assert.ok(that.hasFilterInfoBar(), "Initial filter conditions: Filter info bar exists");
 				assert.ok(that.getFilterInfoBar().getVisible(), "Initial filter conditions: Filter info bar is visible");
@@ -3795,33 +3600,33 @@ sap.ui.define([
 					return sId === that.getFilterInfoText().getId();
 				}).length, 1, "The filter info bar text is in the \"ariaLabelledBy\" association of the table");
 
-				return whenFetchPropertiesResolved(that.oTable, function() {
-					that.oTable.setFilterConditions({
-						name: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						],
-						age: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						]
-					});
+				that.oTable.setFilterConditions({
+					name: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					],
+					age: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					]
 				});
+
+				return that.oTable.awaitPropertyHelper();
 			}).then(function() {
 				return that.waitForFilterInfoBarRendered();
 			}).then(function() {
 				var oFilterInfoBar = that.getFilterInfoBar();
 
 				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabelColumnHeader"])),
+					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabel"])),
 					"Change filter conditions: The filter info bar text is correct (2 filters)");
 
 				oFilterInfoBar.focus();
@@ -3834,38 +3639,38 @@ sap.ui.define([
 				assert.ok(!that.getFilterInfoBar().getVisible(), "Filter conditions removed: Filter info bar is invisible");
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
-				return whenFetchPropertiesResolved(that.oTable, function() {
-					that.oTable.setFilterConditions({
-						name: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						],
-						age: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						],
-						gender: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						]
-					});
+				that.oTable.setFilterConditions({
+					name: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					],
+					age: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					],
+					gender: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					]
 				});
+
+				return that.oTable.awaitPropertyHelper();
 			}).then(function() {
 				assert.ok(that.getFilterInfoBar().getVisible(), "Set filter conditions: Filter info bar is visible");
 				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabelColumnHeader", "gender"])),
+					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])),
 					"Set filter conditions: The filter info bar text is correct (3 filters)");
 				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
 					return sId === that.getFilterInfoText().getId();
@@ -3939,18 +3744,18 @@ sap.ui.define([
 				}
 			]);
 
-			return whenFetchPropertiesResolved(that.oTable, function() {
-				that.oTable.setFilterConditions({
-					age: [
-						{
-							isEmpty: null,
-							operator: "EQ",
-							validated: "NotValidated",
-							values: ["test"]
-						}
-					]
-				});
+			that.oTable.setFilterConditions({
+				age: [
+					{
+						isEmpty: null,
+						operator: "EQ",
+						validated: "NotValidated",
+						values: ["test"]
+					}
+				]
 			});
+
+			return that.oTable.awaitPropertyHelper();
 		}).then(function() {
 			return that.waitForFilterInfoBarRendered();
 		}).then(function() {
@@ -4292,5 +4097,194 @@ sap.ui.define([
 
 		this.oTable.setP13nMode();
 		assert.deepEqual(this.oTable.getCurrentState(), {}, "Deactivate 'Column' and 'Filter'");
+	});
+
+	QUnit.module("showDetailsButton", {
+		beforeEach: function() {
+			var oModel = new JSONModel();
+			oModel.setData({
+				testPath: [
+					{test: "Test1"}, {test: "Test2"}, {test: "Test3"}, {test: "Test4"}, {test: "Test5"}
+				]
+			});
+
+			this.oTable = new Table({
+				type: new ResponsiveTableType({
+					showDetailsButton: true
+				}),
+				columns: [
+					new Column({
+						header: "Column A",
+						hAlign: "Begin",
+						importance: "High",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column B",
+						hAlign: "Begin",
+						importance: "High",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column C",
+						hAlign: "Begin",
+						importance: "Medium",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column D",
+						hAlign: "Begin",
+						importance: "Low",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column E",
+						hAlign: "Begin",
+						importance: "Low",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column F",
+						hAlign: "Begin",
+						importance: "High",
+						template: new Text({
+							text: "{test}"
+						})
+					})
+				]
+			});
+
+			this.oTable.setModel(oModel);
+			this.oTable.placeAt("qunit-fixture");
+			this.oType = this.oTable.getType();
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Button creation", function(assert) {
+		var done = assert.async(),
+			clock = sinon.useFakeTimers();
+
+		assert.ok(this.oType.getShowDetailsButton(), "showDetailsButton = true");
+
+		this.oTable.initialized().then(function() {
+			this.oTable.bindRows({
+				path: "/testPath"
+			});
+			assert.ok(this.oType._oShowDetailsButton, "button is created");
+			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
+			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
+
+			this.oTable._oTable.setContextualWidth("Tablet");
+			clock.tick(1);
+			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
+
+			this.oType._oShowDetailsButton.firePress();
+			clock.tick(1);
+			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Hide Details", "correct text is set on the button");
+
+			this.oTable._oTable.setContextualWidth("4444px");
+			clock.tick(1);
+			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Button placement", function(assert) {
+		var done = assert.async(),
+			clock = sinon.useFakeTimers();
+
+		this.oTable.initialized().then(function() {
+			this.oTable._oTable.setContextualWidth("Tablet");
+			clock.tick(1);
+			var bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
+				return oControl.getId() === this.oType._oShowDetailsButton.getId();
+			}, this);
+			assert.ok(bButtonAddedToToolbar, "Button is correctly added to the table header toolbar");
+
+			this.oType.setShowDetailsButton(false);
+			clock.tick(1);
+			assert.notOk(this.oType.getShowDetailsButton(), "showDetailsButton = false");
+			bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
+				return oControl.getId() === this.oType._oShowDetailsButton.getId();
+			}, this);
+			assert.notOk(bButtonAddedToToolbar, "Button is removed from the table header toolbar");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Inner table hiddenInPopin property in Desktop mode", function(assert) {
+		var done = assert.async();
+
+		this.oTable.initialized().then(function() {
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 1, "getHiddenInPopin() contains only 1 value");
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "Low importance is added to the hiddenInPopin property");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Inner table hiddenInPopin property in Phone mode", function(assert) {
+		var done = assert.async();
+		// save original state
+		var bDesktop = Device.system.desktop;
+		var bTablet = Device.system.tablet;
+		var bPhone = Device.system.phone;
+
+		// overwrite for our test case
+		Device.system.desktop = false;
+		Device.system.tablet = false;
+		Device.system.phone = true;
+		Core.applyChanges();
+
+		this.oTable.initialized().then(function() {
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 2, "getHiddenInPopin() contains only 1 value");
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "Low importance is added to the hiddenInPopin property");
+			assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[1], "Medium", "Medium importance is added to the hiddenInPopin property");
+
+			// reset original state
+			Device.system.desktop = bDesktop;
+			Device.system.tablet = bTablet;
+			Device.system.phone = bPhone;
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Button should be hidden with filtering leads to no data and viceversa", function(assert) {
+		var done = assert.async(),
+			clock = sinon.useFakeTimers();
+
+		this.oTable.initialized().then(function() {
+			this.oTable.bindRows({
+				path: "/testPath"
+			});
+
+			this.oTable._oTable.setContextualWidth("Tablet");
+			clock.tick(1);
+			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+
+			this.oTable._oTable.getBinding("items").filter(new Filter("test", "EQ", "foo"));
+			clock.tick(1);
+			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no visible items");
+
+			this.oTable._oTable.getBinding("items").filter();
+			clock.tick(1);
+			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
+
+			done();
+		}.bind(this));
 	});
 });

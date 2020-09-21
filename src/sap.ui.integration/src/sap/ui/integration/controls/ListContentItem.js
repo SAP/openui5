@@ -60,7 +60,13 @@ sap.ui.define([
 				 * Defines the size of the icon.
 				 * @since 1.82
 				 */
-				iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.XS }
+				iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.XS },
+
+				/**
+				 * Defines the background color of the icon.
+				 * @since 1.83
+				 */
+				iconBackgroundColor: { type: "sap.m.AvatarColor" }
 			},
 			aggregations: {
 				microchart: { type: "sap.ui.integration.controls.Microchart", multiple: false },
@@ -82,11 +88,13 @@ sap.ui.define([
 			this.setAggregation("_avatar", oAvatar);
 		}
 
-		oAvatar.setSrc(this.getIcon());
-		oAvatar.setDisplayShape(this.getIconDisplayShape());
-		oAvatar.setTooltip(this.getIconAlt());
-		oAvatar.setInitials(this.getIconInitials());
-		oAvatar.setDisplaySize(this.getIconSize());
+		oAvatar
+			.setSrc(this.getIcon())
+			.setDisplayShape(this.getIconDisplayShape())
+			.setTooltip(this.getIconAlt())
+			.setInitials(this.getIconInitials())
+			.setDisplaySize(this.getIconSize())
+			.setBackgroundColor(this.getIconBackgroundColor());
 
 		return oAvatar;
 	};

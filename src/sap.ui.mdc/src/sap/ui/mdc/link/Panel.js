@@ -115,7 +115,8 @@ sap.ui.define([
 			showResetEnabled: false,
 
 			// Additionally the property 'icon' can be modified in 'runtimeItems'.
-			runtimeItems: []
+			runtimeItems: [],
+			contentTitle: ""
 		});
 		oModel.setDefaultBindingMode(BindingMode.TwoWay);
 		oModel.setSizeLimit(1000);
@@ -459,7 +460,30 @@ sap.ui.define([
 					Log.error("The '" + oChanges.name + "' of PanelItem is not supported yet.");
 			}
 		}
+		this._updateContentTitle();
 	}
+
+	Panel.prototype.getContentTitle = function() {
+		var oModel = this._getInternalModel();
+		return oModel.getProperty("/contentTitle");
+	};
+
+	Panel.prototype._updateContentTitle = function() {
+		var oModel = this._getInternalModel();
+		var aAdditionalContent = this.getAdditionalContent();
+		var oContentTitle = "idSectionPersonalizationButton";
+
+		if (aAdditionalContent.length > 0) {
+			oContentTitle = aAdditionalContent[0];
+		} else {
+			var aItems = this.getItems();
+			if (aItems.length > 0) {
+				oContentTitle = aItems[0];
+			}
+		}
+
+		oModel.setProperty("/contentTitle", oContentTitle);
+	};
 
 	return Panel;
 

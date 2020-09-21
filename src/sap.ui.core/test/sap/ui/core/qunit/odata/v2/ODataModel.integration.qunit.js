@@ -813,7 +813,7 @@ sap.ui.define([
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.responseHeaders;
 
-					if (oActualRequest.key && sMethod === "POST"
+					if (oActualRequest.key && sMethod !== "MERGE"
 							&& oActualRequest.headers["x-http-method"] !== "MERGE") {
 						that.sTemporaryKey = sWithContentID
 							|| oActualRequest.key.match(rTemporaryKey)[0];
@@ -5515,8 +5515,16 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: Parameters of a function import are changed after calling ODataModel#callFunction
 	// before submitting the changes (#submitChanges). The request URL contains the latest parameter
 	// change and the messages get the correct target/fullTarget.
+	// BCP: 2070289685
 	// JIRA: CPOUI5MODELS-230
-	QUnit.test("Messages: function import with lazy parameter determination", function (assert) {
+[
+	{method: "GET", functionName : "/SalesOrder_Confirm_GET"},
+	{method: "POST", functionName : "/SalesOrder_Confirm"}
+].forEach(function (oFixture) {
+	var sTitle = "Messages: function import with lazy parameter determination, method="
+			+ oFixture.method;
+
+	QUnit.test(sTitle, function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({
 				defaultBindingMode : "TwoWay",
 				tokenHandling : false,
@@ -5557,9 +5565,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
 		return Promise.all([
-			oModel.callFunction("/SalesOrder_Confirm", {
+			oModel.callFunction(oFixture.functionName, {
 				groupId : "changes",
-				method : "POST",
+				method : oFixture.method,
 				refreshAfterChange : false,
 				urlParameters : {
 					SalesOrderID : "1"
@@ -5567,16 +5575,20 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}).contextCreated(),
 			this.createView(assert, sView, oModel)
 		]).then(function (aResults) {
-			var oWebAddressError = that.createResponseMessage("WebAddress");
-
-			that.expectRequest({
-					data : undefined,
-					deepPath : "/SalesOrder_Confirm",
+			var oRequest = {
+					deepPath : oFixture.functionName,
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
-					method : "POST",
-					requestUri : "SalesOrder_Confirm?SalesOrderID='42'"
-				}, {
+					method : oFixture.method,
+					requestUri : oFixture.functionName.slice(1) + "?SalesOrderID='42'"
+				},
+				oWebAddressError = that.createResponseMessage("WebAddress");
+
+			if (oFixture.method === "POST") {
+				oRequest.data = undefined;
+			}
+
+			that.expectRequest(oRequest, {
 					results : [{
 						__metadata : {uri : "SalesOrderSet('42')"},
 						SalesOrderID : "42"
@@ -5597,6 +5609,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Messages returned by a function import get the correct full target by using the
@@ -6070,6 +6083,229 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			assert.strictEqual(oModel.getObject("/SalesOrderSet('1')/ToBusinessPartner"), null);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A function import returning a collection of entities may contain messages for the
+	// returned entities. Old messages for the entities returned by the function call are properly
+	// updated. Messages for other entities of the same entity set are kept untouched.
+	// JIRA: CPOUI5MODELS-287
+[
+	"/BusinessPartner_Alternatives",
+	"/BusinessPartner_Alternatives_ReturnType"
+].forEach(function (sFunctionName) {
+	var sTitle = "Messages: function import returning a collection for different entities;"
+		+ " messages are updated only for returned entities: " + sFunctionName;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCompanyNameError1 = this.createResponseMessage("CompanyName"),
+			oCompanyNameError2 = this.createResponseMessage("CompanyName"),
+			oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			oToProductADescriptionError1
+				= this.createResponseMessage("ToProducts('A')/Description"),
+			oProductADescriptionError1 = cloneODataMessage(oToProductADescriptionError1,
+				"('A')/Description"),
+			oToProductADescriptionError2
+				= this.createResponseMessage("ToProducts('B')/Description"),
+			oProductADescriptionError2 = cloneODataMessage(oToProductADescriptionError2,
+				"('B')/Description"),
+			sView = '\
+<FlexBox binding="{/BusinessPartnerSet(\'1\')}">\
+	<Input id="companyName1" value="{CompanyName}" />\
+</FlexBox>\
+<FlexBox binding="{/BusinessPartnerSet(\'2\')}">\
+	<Input id="companyName2" value="{CompanyName}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				deepPath : "/BusinessPartnerSet('1')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('1')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('1')"},
+				BusinessPartnerID : "1",
+				CompanyName : "company1"
+			}, {"sap-message" : getMessageHeader([
+					oCompanyNameError1,
+					oToProductADescriptionError1
+				])})
+			.expectRequest({
+				deepPath : "/BusinessPartnerSet('2')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('2')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('2')"},
+				BusinessPartnerID : "2",
+				CompanyName : "company2"
+			}, {"sap-message" : getMessageHeader([
+					oCompanyNameError2,
+					oToProductADescriptionError2
+				])})
+			.expectChange("companyName1", null)
+			.expectChange("companyName2", null)
+			.expectChange("companyName1", "company1")
+			.expectChange("companyName2", "company2")
+			.expectMessage(oCompanyNameError1, "/BusinessPartnerSet('1')/")
+			.expectMessage(oProductADescriptionError1, "/ProductSet",
+				"/BusinessPartnerSet('1')/ToProducts")
+			.expectMessage(oCompanyNameError2, "/BusinessPartnerSet('2')/")
+			.expectMessage(oProductADescriptionError2, "/ProductSet",
+				"/BusinessPartnerSet('2')/ToProducts");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oCompanyNameError2_Update = that.createResponseMessage("('2')/CompanyName"),
+				oToProductADescriptionError2
+					= that.createResponseMessage("('2')/ToProducts('B')/Description"),
+				oProductADescriptionError2 = cloneODataMessage(oToProductADescriptionError2,
+					"('B')/Description");
+
+			that.expectRequest({
+					deepPath : sFunctionName,
+					encodeRequestUri : false,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "POST",
+					requestUri : sFunctionName.slice(1) + "?BusinessPartnerID='1'"
+				}, {
+					results : [{
+						__metadata : {uri : "BusinessPartnerSet('2')"},
+						BusinessPartnerID : "2",
+						CompanyName : "companyName2New"
+					}]
+				}, {
+					"sap-message" : getMessageHeader([
+						oCompanyNameError2_Update,
+						oToProductADescriptionError2
+					])
+				})
+				.expectChange("companyName2", "companyName2New")
+				.expectMessage(oCompanyNameError2_Update, "/BusinessPartnerSet", undefined, true)
+				.expectMessage(oProductADescriptionError2, "/ProductSet",
+					"/BusinessPartnerSet('2')/ToProducts")
+				.expectMessage(oCompanyNameError1, "/BusinessPartnerSet('1')/")
+				.expectMessage(oProductADescriptionError1, "/ProductSet",
+					"/BusinessPartnerSet('1')/ToProducts");
+
+			return Promise.all([
+				oModel.callFunction(sFunctionName, {
+					method : "POST",
+					refreshAfterChange : false,
+					urlParameters : {
+						BusinessPartnerID : "1"
+					}
+				}).contextCreated(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: A function import returning a collection of entities with the same parent may
+	// contain messages for the returned entities. Old messages for the entities returned by the
+	// function call are properly updated. <code>adjustDeepPath</code> is used to overwrite the
+	// messages' deep path.
+	// JIRA: CPOUI5MODELS-287
+	QUnit.test("Messages: function import returning a collection (adjustDeepPath)",
+			function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			oQuantityError = this.createResponseMessage(
+				"(SalesOrderID='1',ItemPosition='20~1~')/Quantity"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Table items="{ToLineItems}">\
+		<Text id="quantity" text="{Quantity}" />\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				SalesOrderID : "1"
+			})
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					ItemPosition : "10~0~",
+					Quantity : "2",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					ItemPosition : "20~1~",
+					Quantity : "0",
+					SalesOrderID : "1"
+				}]
+			}, {
+				"sap-message" : getMessageHeader(oQuantityError)
+			})
+			.expectChange("quantity", ["2", "0"])
+			.expectMessage(oQuantityError, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oQuantitySuccess = that.createResponseMessage(
+					"(SalesOrderID='1',ItemPosition='20~1~')/Quantity", undefined, "success");
+
+			that.expectRequest({
+					deepPath : "/SalesOrder_FixQuantities",
+					encodeRequestUri : false,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "POST",
+					requestUri : "SalesOrder_FixQuantities?SalesOrderID='1'"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						},
+						ItemPosition : "20~1~",
+						Quantity : "2",
+						SalesOrderID : "1"
+					}]
+				}, {
+					"sap-message" : getMessageHeader(oQuantitySuccess)
+				})
+				.expectChange("quantity", "2", 1)
+				.expectMessage(oQuantitySuccess, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems", true);
+
+			return Promise.all([
+				// code under test
+				oModel.callFunction("/SalesOrder_FixQuantities", {
+					adjustDeepPath : function (mParameters) {
+						assert.strictEqual(mParameters.deepPath, "/SalesOrderLineItemSet");
+						return "/SalesOrderSet('1')/ToLineItems";
+					},
+					method : "POST",
+					refreshAfterChange : false,
+					urlParameters : {
+						SalesOrderID : "1"
+					}
+				}).contextCreated(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });

@@ -4,9 +4,12 @@
 
 sap.ui.define([
 	"sap/m/MessageBox",
+	"sap/ui/core/library",
 	"sap/ui/core/sample/common/Controller"
-], function (MessageBox, Controller) {
+], function (MessageBox, coreLibrary, Controller) {
 	"use strict";
+
+	var ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Products.Main", {
 		/* The number of POST requests which are not yet completed */
@@ -61,7 +64,7 @@ sap.ui.define([
 			aContents.forEach(function (oContent) {
 				if (oContent.getValueState) {
 					oContent.setValue("");
-					oContent.setValueState("None");
+					oContent.setValueState(ValueState.None);
 					sap.ui.getCore().getMessageManager().removeMessages(
 						oContent.getBinding("value").getDataState().getMessages());
 				}

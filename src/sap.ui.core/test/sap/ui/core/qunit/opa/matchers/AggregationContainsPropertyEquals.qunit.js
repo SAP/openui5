@@ -150,4 +150,17 @@ sap.ui.define([
 				"does not have an aggregation called 'anAggregationThatWillNeverBeAddedToTheCombobox'");
 	});
 
+	QUnit.test("Should match when value contains binding symbols", function (assert) {
+		this.oComboBox.getItems()[2].setText("{foo");
+		var oMatcher = new AggregationContainsPropertyEqual({
+			aggregationName : "items",
+			propertyName : "text",
+			propertyValue : "{foo"
+		});
+
+		var bResult = oMatcher.isMatching(this.oComboBox);
+
+		assert.ok(bResult, "Did match because there was a matching item");
+	});
+
 });

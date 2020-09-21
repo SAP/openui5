@@ -22,3 +22,7 @@
 	padding: 1rem;
 	background-color: #FF8598;
 }
+
+.nestedFlexboxes h2 {
+	color: #32363a;
+}

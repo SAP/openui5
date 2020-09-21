@@ -6,7 +6,7 @@
 	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 	controllerName="sap.uxap.sample.ObjectPageHeaderExpanded.controller.ObjectPageHeaderExpanded"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" preserveHeaderStateOnScroll="true">
+	<ObjectPageLayout id="ObjectPageLayout" preserveHeaderStateOnScroll="true" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<heading>

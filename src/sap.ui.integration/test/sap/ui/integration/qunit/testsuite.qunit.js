@@ -56,6 +56,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/widgets/Card",
 						"sap/ui/integration/formatters/IconFormatter",
 						"sap/ui/integration/util/CardActions",
+						"sap/ui/integration/util/ContextModel",
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
 						"sap/ui/integration/customElements/",
@@ -63,6 +64,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/cards/AdaptiveCard",
 						"sap/ui/integration/cards/AnalyticalContent",
 						"sap/ui/integration/util/BindingHelper",
+						"sap/ui/integration/util/JSONBindingHelper",
 						"sap/ui/integration/util/BindingResolver",
 						"sap/ui/integration/cards/ComponentContent",
 						"sap/ui/integration/util/DataProvider",
@@ -83,9 +85,11 @@ sap.ui.define(function () {
 					'./util/ServiceManager.qunit',
 					'./customElements/CustomElements.qunit',
 					'./util/BindingHelper.qunit',
+					'./util/JSONBindingHelper.qunit',
 					'./util/BindingResolver.qunit',
 					'./util/DataProvider.qunit',
 					'./util/CardActions.qunit',
+					'./util/ContextModel.qunit',
 					'./cardbundle/CardStaticResources.qunit',
 					'./util/CardFormatters.qunit',
 					'./cards/BaseContent.qunit',
@@ -194,12 +198,12 @@ sap.ui.define(function () {
 				}
 			},
 			"cardbundle/CardStaticResources": {},
-			"cards/AdaptiveCard": { },
-			"cards/AnalyticalCard": { },
-			"cards/CalendarCard": { },
-			"cards/ListCard": { },
-			"cards/TableCard": { },
-			"cards/ObjectCard": { },
+			"cards/AdaptiveCard": {},
+			"cards/AnalyticalCard": {},
+			"cards/CalendarCard": {},
+			"cards/ListCard": {},
+			"cards/TableCard": {},
+			"cards/ObjectCard": {},
 			"CardFiltering": {
 				coverage: {
 					only: [
@@ -238,6 +242,11 @@ sap.ui.define(function () {
 					only: ["sap/ui/integration/util/BindingHelper"]
 				}
 			},
+			"util/JSONBindingHelper": {
+				coverage: {
+					only: ["sap/ui/integration/util/JSONBindingHelper"]
+				}
+			},
 			"util/BindingResolver": {
 				coverage: {
 					only: ["sap/ui/integration/util/BindingResolver"]
@@ -259,6 +268,13 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"util/ContentFactory": {},
+			"util/ContextModel": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/ContextModel"
+					]
+				}
+			},
 			"util/DataProvider": {
 				coverage: {
 					only: [
@@ -534,8 +550,8 @@ sap.ui.define(function () {
 						"sap/ui/integration/designtime/baseEditor/util/StylesheetManager"
 					]
 				},
-				loader:{
-					paths:{
+				loader: {
+					paths: {
 						"mockdata": "test-resources/sap/ui/integration/qunit/designtime/baseEditor/util"
 					}
 				},
@@ -609,6 +625,24 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/cardEditor/propertyEditor/iconEditor/IconEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/CardEditorWithParameters": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/CardEditorWithDesigntime": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
 					]
 				},
 				sinon: false

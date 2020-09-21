@@ -2,157 +2,150 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library"], function (library) {
-	'use strict';
-
-	// shortcut for sap.m.LightBoxLoadingStates
-	var LightBoxLoadingStates = library.LightBoxLoadingStates;
+sap.ui.define([
+	"sap/m/LightBoxLoadingStates"
+], function (LightBoxLoadingStates) {
+	"use strict";
 
 	/**
 	 * LightBox renderer.
 	 * @namespace
 	 */
-	var LightBoxRenderer = {};
-
-	var className = 'sapMLightBox';
-	var classNameTwoLines = 'sapMLightBoxTwoLines';
-	var classNameImageContainer = 'sapMLightBoxImageContainer';
-	var classNameImageContainerTwoLines = 'sapMLightBoxImageContainerTwoHeaders';
-	var classNameError = 'sapMLightBoxError';
-	var classNameErrorContainer = 'sapMLightBoxErrorContainer';
-	var classNameErrorContainerTwoLines = 'sapMLightBoxErrorContainerTwoHeaders';
-	var classNameFooter = 'sapMLightBoxFooter';
-	var classNameContrastBelize = 'sapContrast';
-	var classNameContrastBelizePlus = 'sapContrastPlus';
-	var classNameFooterTitleSection = 'sapMLightBoxTitleSection';
-	var classNameFooterTitle = 'sapMLightBoxTitle';
-	var classNameFooterSubtitle = 'sapMLightBoxSubtitle';
-	var classNameFooterTwoLines = 'sapMLightBoxFooterTwoLines';
-	var classNameTopCornersRadius = 'sapMLightBoxTopCornersRadius';
+	var LightBoxRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
-	LightBoxRenderer.render = function (oRm, oControl) {
+	LightBoxRenderer.render = function (oRM, oControl) {
 		/** @type {sap.m.LightBoxItem} */
-		var lightBoxItem = oControl._getImageContent();
+		var oLightBoxItem = oControl._getImageContent();
+
 		/** @type {sap.m.LightBoxLoadingStates} */
-		var imageState = lightBoxItem._getImageState();
+		var oImageState = oLightBoxItem._getImageState();
 
-		var invisiblePopupText = oControl.getAggregation('_invisiblePopupText');
+		var oInvisiblePopupText = oControl.getAggregation("_invisiblePopupText");
 
-		oRm.write('<div');
-		oRm.writeControlData(oControl);
-		oRm.writeAttribute("tabindex", "-1");
-		oRm.addClass(className);
+		oRM.openStart("div", oControl)
+			.class("sapMLightBox")
+			.attr("tabindex", "-1")
+			.accessibilityState({
+				role: "dialog",
+				modal: true,
+				labelledby: oInvisiblePopupText && oInvisiblePopupText.getId()
+			});
 
-		if (lightBoxItem.getSubtitle()) {
-			oRm.addClass(classNameTwoLines);
+		if (oLightBoxItem.getSubtitle()) {
+			oRM.class("sapMLightBoxTwoLines");
 		}
 
-		if (oControl._isLightBoxBiggerThanMinDimensions) {
-			oRm.addClass(classNameTopCornersRadius);
+		if (oControl._bIsLightBoxBiggerThanMinDimensions) {
+			oRM.class("sapMLightBoxTopCornersRadius");
 		}
 
-		if (imageState !== LightBoxLoadingStates.Error) {
-			oRm.addStyle('width', oControl._width + 'px');
-			oRm.addStyle('height', oControl._height + 'px');
+		if (oImageState !== LightBoxLoadingStates.Error) {
+			oRM.style("width", oControl._iWidth + "px");
+			oRM.style("height", oControl._iHeight + "px");
 		} else {
-			oRm.addClass(classNameError);
+			oRM.class("sapMLightBoxError");
 		}
 
-		oRm.writeAccessibilityState({
-			role: 'dialog',
-			modal: true,
-			labelledby: invisiblePopupText && invisiblePopupText.getId()
-		});
+		oRM.openEnd();
 
-		oRm.writeClasses();
-		oRm.writeStyles();
-		oRm.write('>');
+		oRM.renderControl(oInvisiblePopupText);
 
-		oRm.renderControl(invisiblePopupText);
-
-		//if control is busy render busyIndicator instead
-		if (imageState === LightBoxLoadingStates.Loading) {
-			this.renderBusyState(oRm, oControl);
-		} else if (imageState === LightBoxLoadingStates.TimeOutError ||
-			imageState === LightBoxLoadingStates.Error) {
-			this.renderError(oRm, oControl);
+		if (oImageState === LightBoxLoadingStates.Loading) {
+			this.renderBusyState(oRM, oControl);
+		} else if (oImageState === LightBoxLoadingStates.TimeOutError || oImageState === LightBoxLoadingStates.Error) {
+			this.renderError(oRM, oControl);
 		} else {
-			this.renderImage(oRm, oControl);
+			this.renderImage(oRM, oControl);
 		}
 
-		this.renderFooter(oRm, oControl, lightBoxItem);
+		this.renderFooter(oRM, oControl, oLightBoxItem);
 
-		oRm.write('</div>');
+		oRM.close("div");
 
 		oControl._isRendering = false;
 	};
 
-	LightBoxRenderer.renderImage = function(oRm, oControl) {
+	LightBoxRenderer.renderImage = function (oRM, oControl) {
 		var oLightBoxItem = oControl._getImageContent();
 
-		if (oLightBoxItem.getSubtitle()) {
-			oRm.write('<div class="' + classNameImageContainerTwoLines + '">');
-		} else {
-			oRm.write('<div class="' + classNameImageContainer + '">');
-		}
-
-		oRm.renderControl(oLightBoxItem.getAggregation('_image'));
-		oRm.write('</div>');
-	};
-
-	LightBoxRenderer.renderError = function(oRm, oControl) {
-		var oLightBoxItem = oControl._getImageContent(),
-			oVerticalLayout = oControl.getAggregation('_verticalLayout');
+		oRM.openStart("div", oLightBoxItem);
 
 		if (oLightBoxItem.getSubtitle()) {
-			oRm.write('<div class="' + classNameErrorContainerTwoLines + '">');
+			oRM.class("sapMLightBoxImageContainerTwoLines");
 		} else {
-			oRm.write('<div class="' + classNameErrorContainer + '">');
+			oRM.class("sapMLightBoxImageContainer");
 		}
 
-		oRm.renderControl(oVerticalLayout);
+		oRM.openEnd();
 
-		oRm.write('</div>');
+		oRM.renderControl(oLightBoxItem.getAggregation("_image"));
+
+		oRM.close("div");
 	};
 
-	LightBoxRenderer.renderBusyState = function (oRm, oControl) {
-		oRm.renderControl(oControl._getBusyIndicator());
+	LightBoxRenderer.renderError = function (oRM, oControl) {
+		var oLightBoxItem = oControl._getImageContent();
+
+		oRM.openStart("div");
+
+		if (oLightBoxItem && oLightBoxItem.getSubtitle()) {
+			oRM.class("sapMLightBoxErrorContainerTwoLines");
+		} else {
+			oRM.class("sapMLightBoxErrorContainer");
+		}
+
+		oRM.openEnd();
+
+		oRM.renderControl(oControl.getAggregation("_verticalLayout"));
+
+		oRM.close("div");
 	};
 
-	LightBoxRenderer.renderFooter = function(oRm, oControl, oImageContent) {
-		var title = oImageContent.getAggregation("_title"),
-			subtitle = oImageContent.getAggregation("_subtitle");
-		oRm.write('<div');
-		oRm.addClass(classNameFooter);
-		oRm.addClass(classNameContrastBelize);
-		oRm.addClass(classNameContrastBelizePlus);
+	LightBoxRenderer.renderBusyState = function (oRM, oControl) {
+		oRM.renderControl(oControl._getBusyIndicator());
+	};
+
+	LightBoxRenderer.renderFooter = function (oRM, oControl, oImageContent) {
+		var oTitle = oImageContent.getAggregation("_title"),
+			oSubtitle = oImageContent.getAggregation("_subtitle");
+
+		oRM.openStart("div")
+			.class("sapMLightBoxFooter")
+			.class("sapContrast")
+			.class("sapContrastPlus");
 
 		if (oImageContent.getSubtitle()) {
-			oRm.addClass(classNameFooterTwoLines);
+			oRM.class("sapMLightBoxFooterTwoLines");
 		}
 
-		oRm.writeClasses();
-		oRm.write( '>');
-		oRm.write('<div class="' + classNameFooterTitleSection + '">');
-		if (title) {
-			oRm.renderControl(title.addStyleClass(classNameFooterTitle));
+		oRM.openEnd();
+
+		oRM.openStart("div")
+			.class("sapMLightBoxTitleSection")
+			.openEnd();
+
+		if (oTitle) {
+			oRM.renderControl(oTitle.addStyleClass("sapMLightBoxTitle"));
 		}
 
-		if (subtitle && subtitle.getText()) {
-			oRm.renderControl(subtitle.addStyleClass(classNameFooterSubtitle));
+		if (oSubtitle && oSubtitle.getText()) {
+			oRM.renderControl(oSubtitle.addStyleClass("sapMLightBoxSubtitle"));
 		}
 
-		oRm.write('</div>');
-		oRm.renderControl(oControl._getCloseButton());
-		oRm.write('</div>');
+		oRM.close("div");
+
+		oRM.renderControl(oControl._getCloseButton());
+
+		oRM.close("div");
 	};
-
 
 	return LightBoxRenderer;
 }, /* bExport= */ true);

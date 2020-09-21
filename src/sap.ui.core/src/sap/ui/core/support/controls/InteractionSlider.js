@@ -6,6 +6,9 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/ui/events/KeyCodes", "sap/ui/th
     function(ManagedObject, KeyCodes, jQuery) {
         'use strict';
         var InteractionSlider = ManagedObject.extend("sap.ui.core.support.controls.InteractionSlider", {
+            metadata: {
+                library: "sap.ui.core"
+            },
             constructor: function () {
                 //this.SIDE_LIST_WIDTH = 250;
                 this.SIDE_LIST_WIDTH = 0;

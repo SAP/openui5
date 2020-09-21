@@ -3599,22 +3599,23 @@ sap.ui.define([
 				oStoredRequest.headers = oRequest.headers;
 				oStoredRequest.data = oRequest.data;
 
-				// for POST function imports we also need to replace the URI
-				oStoredRequest.requestUri = oRequest.requestUri;
 				if (oRequest.method === "PUT") {
 					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
 					// (by submitChanges) the merge header must be removed
 					delete oStoredRequest.headers["x-http-method"];
 				}
-				// function imports need to update the functionTarget in case the function
-				// parameters are changed before submitting
-				if (oRequest.functionTarget) {
-					oStoredRequest.functionTarget = oRequest.functionTarget;
-				}
 				// if request is already aborted we should delete the aborted flag
 				if (oStoredRequest._aborted) {
 					delete oStoredRequest._aborted;
 				}
+			}
+
+			if (oRequest.functionTarget) {
+				// function imports need to replace the requestUri
+				oStoredRequest.requestUri = oRequest.requestUri;
+				// function imports need to update the functionTarget in case the function
+				// parameters are changed before submitting
+				oStoredRequest.functionTarget = oRequest.functionTarget;
 			}
 		} else {
 			var oGroupEntry = {

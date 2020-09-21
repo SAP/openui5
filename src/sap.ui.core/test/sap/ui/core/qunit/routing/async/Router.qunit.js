@@ -2113,7 +2113,7 @@ sap.ui.define([
 
 		var oComponent = new Component();
 		var done = assert.async();
-		var oTitleChangedStub = sinon.stub();
+		var oTitleChangedSpy = sinon.spy();
 
 		this.oRouter = oComponent.getRouter();
 
@@ -2123,21 +2123,21 @@ sap.ui.define([
 		this.oRouter.initialize();
 
 		oHomeRouteMatchedSpy.getCall(0).returnValue.then(function(){
-			this.oRouter.attachTitleChanged(oTitleChangedStub);
+			this.oRouter.attachTitleChanged(oTitleChangedSpy);
 			this.oRouter.navTo("second");
 
 			oSecondRouteMatchedSpy.getCall(0).returnValue.then(function () {
-				assert.strictEqual(oTitleChangedStub.callCount, 0, "The title change event shouldn't fired, as title isn't resolved");
+				assert.strictEqual(oTitleChangedSpy.callCount, 0, "The title change event shouldn't fired, as title isn't resolved");
 
 				oComponent.getModel().setProperty("/secondViewTitle", "Foo");
-				assert.strictEqual(oTitleChangedStub.callCount, 1, "The title change event should be fired the first time");
-				assert.strictEqual(oTitleChangedStub.getCall(0).args[0].getParameter("title"), "Foo", "The title 'Foo' should be correct");
+				assert.strictEqual(oTitleChangedSpy.callCount, 1, "The title change event should be fired the first time");
+				assert.strictEqual(oTitleChangedSpy.getCall(0).args[0].getParameter("title"), "Foo", "The title 'Foo' should be correct");
 
 				var oThirdRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("third"), "_routeMatched");
 				this.oRouter.navTo("third");
 				oThirdRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-					assert.strictEqual(oTitleChangedStub.callCount, 2, "The title change event should be fired the second time");
-					assert.strictEqual(oTitleChangedStub.getCall(1).args[0].getParameter("title"), "TitleView1", "The title 'TitleView1' should be correct");
+					assert.strictEqual(oTitleChangedSpy.callCount, 2, "The title change event should be fired the second time");
+					assert.strictEqual(oTitleChangedSpy.getCall(1).args[0].getParameter("title"), "TitleView1", "The title 'TitleView1' should be correct");
 
 					var oChildComponent = oObject.view.getComponentInstance();
 					var oChildRouter = oChildComponent.getRouter();
@@ -2145,7 +2145,7 @@ sap.ui.define([
 
 					oChildRouter.navTo("view2");
 					oView1RouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-						assert.strictEqual(oTitleChangedStub.callCount, 2, "The title change event shouldn't fired, as title isn't resolved");
+						assert.strictEqual(oTitleChangedSpy.callCount, 2, "The title change event shouldn't fired, as title isn't resolved");
 
 						var oGrandChildComponent = oObject.view.getComponentInstance();
 
@@ -2154,17 +2154,15 @@ sap.ui.define([
 
 						oGrandChildRouter.navTo("view2");
 						oGrandChildView2RouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-							assert.strictEqual(oTitleChangedStub.callCount, 3, "The title change event should be the third time");
-							assert.strictEqual(oTitleChangedStub.getCall(2).args[0].getParameter("title"), "MyGrandChildView2Title", "The title 'MyGrandChildView2Title' should be correct");
+							assert.strictEqual(oTitleChangedSpy.callCount, 3, "The title change event should be the third time");
+							assert.strictEqual(oTitleChangedSpy.getCall(2).args[0].getParameter("title"), "MyGrandChildView2Title", "The title 'MyGrandChildView2Title' should be correct");
 
 							oGrandChildComponent.getModel().setProperty("/GrandChildComponentViewTitle", "Bar");
 							setTimeout(function() {
-								assert.strictEqual(oTitleChangedStub.callCount, 3, "The title change event shouldn't be fired as Router has navigated to a different route");
+								assert.strictEqual(oTitleChangedSpy.callCount, 3, "The title change event shouldn't be fired as Router has navigated to a different route");
 
-								oTitleChangedStub.reset();
 								oSecondRouteMatchedSpy.restore();
 								oComponent.destroy();
-
 								done();
 							}, 0);
 						});
@@ -4309,7 +4307,7 @@ sap.ui.define([
 	QUnit.module("Routing Nested Components", {
 		beforeEach: function() {
 			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
-			this.oTitleChangedStub = sinon.stub();
+			this.oTitleChangedSpy = sinon.spy();
 			hasher.setHash("");
 			// ===== parentComponent =====
 			sap.ui.jsview("parentRootView", {
@@ -4527,7 +4525,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oParentComponent.destroy();
 			this.oEventProviderStub.restore();
-			this.oTitleChangedStub.resetHistory();
+			this.oTitleChangedSpy.resetHistory();
 		}
 	});
 
@@ -4539,11 +4537,13 @@ sap.ui.define([
 		var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
 		oParentRouter.initialize();
 
-		var oRouterRouteMatchedSpy = sinon.spy(sap.ui.core.routing.Router.prototype, "fireRouteMatched");
+		var oRouterRouteMatchedSpy = sinon.spy(Router.prototype, "fireRouteMatched");
 
 		oHomeRouteMatchedSpy.getCall(0).returnValue.then(function() {
 			assert.equal(oRouterRouteMatchedSpy.callCount, 2, "fireRouteMatched should be called twice");
 			assert.strictEqual(oRouterRouteMatchedSpy.getCall(1).thisValue, oParentRouter, "Should be the correct ");
+			oRouterRouteMatchedSpy.restore();
+			oRouterRouteMatchedSpy.reset();
 			done();
 		});
 	});
@@ -4631,7 +4631,7 @@ sap.ui.define([
 			"title": "TitleNestedView3"
 		};
 
-		oParentRouter.attachTitleChanged(this.oTitleChangedStub);
+		oParentRouter.attachTitleChanged(this.oTitleChangedSpy);
 
 		var oHomeRoute = oParentRouter.getRoute("home");
 		var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
@@ -4639,8 +4639,8 @@ sap.ui.define([
 		oParentRouter.initialize();
 
 		oHomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-			assert.equal(that.oTitleChangedStub.callCount, 1, "initialize(): fireTitleChange should be called the first time");
-			assert.deepEqual(that.oTitleChangedStub.getCall(0).args[0].getParameters(), oExpected1, "initialize(): titleChange event object should be correct");
+			assert.equal(that.oTitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time");
+			assert.deepEqual(that.oTitleChangedSpy.getCall(0).args[0].getParameters(), oExpected1, "initialize(): titleChange event object should be correct");
 
 			var oNestedComponent1 = oObject.view.getComponentInstance(),
 				oNestedComponent1Router = oNestedComponent1.getRouter();
@@ -4648,17 +4648,17 @@ sap.ui.define([
 			oNestedComponent1Router.navTo("nestedView2");
 		}).then(function() {
 			setTimeout(function() {
-				assert.equal(that.oTitleChangedStub.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called the two times");
-				assert.ok(that.oTitleChangedStub.getCall(1).args[0].getParameters().propagated, "Navigation triggered by nested component, marked as propagated");
-				assert.deepEqual(that.oTitleChangedStub.getCall(1).args[0].getParameters(), oExpected2, "navTo('nestedView2'): titleChange event object should be correct");
+				assert.equal(that.oTitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called the two times");
+				assert.ok(that.oTitleChangedSpy.getCall(1).args[0].getParameters().propagated, "Navigation triggered by nested component, marked as propagated");
+				assert.deepEqual(that.oTitleChangedSpy.getCall(1).args[0].getParameters(), oExpected2, "navTo('nestedView2'): titleChange event object should be correct");
 
 				var oSecondRoute = oParentRouter.getRoute("second");
 				var oSecondRouteMatchedSpy = sinon.spy(oSecondRoute, "_routeMatched");
 
 				oParentRouter.navTo("second");
 				oSecondRouteMatchedSpy.getCall(0).returnValue.then(function() {
-					assert.equal(that.oTitleChangedStub.callCount, 3, "navTo('second'): fireTitleChange should be called the three times");
-					assert.deepEqual(that.oTitleChangedStub.getCall(2).args[0].getParameters(), oExpected3, "navTo('second'): titleChange event object should be correct");
+					assert.equal(that.oTitleChangedSpy.callCount, 3, "navTo('second'): fireTitleChange should be called the three times");
+					assert.deepEqual(that.oTitleChangedSpy.getCall(2).args[0].getParameters(), oExpected3, "navTo('second'): titleChange event object should be correct");
 
 					var oParentView1Route = oParentRouter.getRoute("parentView1");
 					var oParentView1RouteMatchedSpy = sinon.spy(oParentView1Route, "_routeMatched");
@@ -4786,8 +4786,8 @@ sap.ui.define([
 								{ pattern: "view1", name: "parentView1", target: "parentView1" }
 							],
 							targets: {
-								home: { name: "namespace." + iIndexNamespaceChild1 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild1, title: iTargetTitleChild1 ? iTargetTitleChild1 : "TitleComponent" + iIndexNamespaceChild1, options: { manifest: false } },
-								second: { name: "namespace." + iIndexNamespaceChild2 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild2, title: iTargetTitleChild2 ? iTargetTitleChild2 : "TitleComponent" + iIndexNamespaceChild2, options: { manifest: false } },
+								home: { name: "namespace." + iIndexNamespaceChild1 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild1, title: iTargetTitleChild1 !== undefined ? iTargetTitleChild1 : "TitleComponent" + iIndexNamespaceChild1, options: { manifest: false } },
+								second: { name: "namespace." + iIndexNamespaceChild2 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild2, title: iTargetTitleChild2 !== undefined ? iTargetTitleChild2 : "TitleComponent" + iIndexNamespaceChild2, options: { manifest: false } },
 								parentView1: { name: "parentView1", title: "TitleParentView1", type: "View", viewType: "JS" }
 							}
 						}
@@ -4870,7 +4870,7 @@ sap.ui.define([
 
 	QUnit.test("Configuration of title propagation - Scenario 1", function(assert) {
 		var done = assert.async(),
-			oLevel0TitleChangedStub = sinon.stub(),
+			oLevel0TitleChangedSpy = sinon.spy(),
 			ParentComponent = this._createParentComponent(
 				/*iIndexNamespace=*/4,
 				/*bGlobal=*/undefined,
@@ -4885,14 +4885,14 @@ sap.ui.define([
 		var oLevel0Component = new ParentComponent("parent");
 		var oLevel0Router = oLevel0Component.getRouter();
 
-		oLevel0Router.attachTitleChanged(oLevel0TitleChangedStub);
+		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
 
 		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
 		oLevel0Router.initialize();
 
 		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function () {
-			var oTitleChangedEvent = oLevel0TitleChangedStub.getCall(0).args[0];
-			assert.equal(oLevel0TitleChangedStub.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
+			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
 			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleComponent1", "initialize(): title 'TitleComponent1' should be correct");
 			assert.equal(oTitleChangedEvent.getParameter("propagated"), false, "initialize(): titleChanged event isn't propagated from nested router");
 			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
@@ -4908,8 +4908,8 @@ sap.ui.define([
 			var oLevel0SecondRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("second"), "_routeMatched");
 			oLevel0Router.navTo("second");
 			oLevel0SecondRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-				oTitleChangedEvent = oLevel0TitleChangedStub.getCall(1).args[0];
-				assert.equal(oLevel0TitleChangedStub.callCount, 2, "navTo('second'): fireTitleChange should be called the three times");
+				oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
+				assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('second'): fireTitleChange should be called the three times");
 				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('second'): title 'TitleNestedView1' should be correct");
 				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('second'): titleChanged event isn't propagated from nested router");
 				assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('second'): The history should have one entry");
@@ -4938,8 +4938,8 @@ sap.ui.define([
 
 				oLevel1Component.getRouter().navTo("nestedView2");
 				oLevel1ViewRouteMatchedSpy.getCall(0).returnValue.then(function () {
-					oTitleChangedEvent = oLevel0TitleChangedStub.getCall(2).args[0];
-					assert.equal(oLevel0TitleChangedStub.callCount, 3, "navTo('nestedView2'): fireTitleChange should be called the two times");
+					oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(2).args[0];
+					assert.equal(oLevel0TitleChangedSpy.callCount, 3, "navTo('nestedView2'): fireTitleChange should be called the two times");
 					assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): title 'TitleNestedView2' should be correct");
 					assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'): titleChanged event is propagated from nested router");
 					assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
@@ -4969,7 +4969,6 @@ sap.ui.define([
 					oLevel0Component.destroy();
 					oLevel0HomeRouteMatchedSpy.restore();
 					oLevel1ViewRouteMatchedSpy.restore();
-					oLevel0TitleChangedStub.reset();
 					done();
 				});
 			});
@@ -4978,7 +4977,7 @@ sap.ui.define([
 
 	QUnit.test("Configuration of title propagation - Scenario 2", function(assert) {
 		var done = assert.async(),
-			oLevel0TitleChangedStub = sinon.stub(),
+			oLevel0TitleChangedSpy = sinon.spy(),
 			ParentComponent = this._createParentComponent(
 				/*iIndexNamespace=*/2,
 				/*bPropagateTitleGlobal=*/undefined,
@@ -4995,13 +4994,13 @@ sap.ui.define([
 		var oLevel0Router = oLevel0Component.getRouter();
 		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
 
-		oLevel0Router.attachTitleChanged(oLevel0TitleChangedStub);
+		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
 		oLevel0Router.initialize();
 
 		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-			assert.equal(oLevel0TitleChangedStub.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
 
-			var oTitleChangedEvent = oLevel0TitleChangedStub.getCall(0).args[0];
+			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
 			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): The title information should be correct");
 			assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event isn't propagated");
 			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
@@ -5024,14 +5023,14 @@ sap.ui.define([
 			var oLevel1Router = oLevel1Component.getRouter();
 			var oLevel1ViewRouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedView2"), "_routeMatched");
 			var oLevel1ComponentRouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedComponent"), "_routeMatched");
-			var oLevel1ComponentTitleChangedStub = sinon.stub();
-			oLevel1Router.attachTitleChanged(oLevel1ComponentTitleChangedStub);
+			var oLevel1ComponentTitleChangedSpy = sinon.spy();
+			oLevel1Router.attachTitleChanged(oLevel1ComponentTitleChangedSpy);
 
 			oLevel1Router.navTo("nestedView2");
 			oLevel1ViewRouteMatchedSpy.getCall(0).returnValue.then(function () {
-				assert.equal(oLevel0TitleChangedStub.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called once");
+				assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called once");
 
-				oTitleChangedEvent = oLevel0TitleChangedStub.getCall(1).args[0];
+				oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
 				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): The title information should be correct");
 				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'):titleChanged event should be propagated");
 				assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
@@ -5057,11 +5056,11 @@ sap.ui.define([
 				oLevel1Router.navTo("nestedComponent");
 				oLevel1ComponentRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
 					// router of component at level 0 should not be triggered
-					assert.equal(oLevel0TitleChangedStub.callCount, 3, "navTo('nestedComponent'): fireTitleChange should still be called once");
+					assert.equal(oLevel0TitleChangedSpy.callCount, 3, "navTo('nestedComponent'): fireTitleChange should still be called once");
 
 					// router of component at level 1 should be triggered
-					assert.equal(oLevel1ComponentTitleChangedStub.callCount, 2, "navTo('nestedComponent'): fireTitleChange should be called once");
-					var oLevel1TitleChangedEvent = oLevel1ComponentTitleChangedStub.getCall(1).args[0];
+					assert.equal(oLevel1ComponentTitleChangedSpy.callCount, 2, "navTo('nestedComponent'): fireTitleChange should be called once");
+					var oLevel1TitleChangedEvent = oLevel1ComponentTitleChangedSpy.getCall(1).args[0];
 
 					assert.equal(oLevel1TitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('nestedComponent'): The title information should be correct");
 					assert.equal(oLevel1TitleChangedEvent.getParameter("propagated"), true, "navTo('nestedComponent'): titleChanged event isn't propagated from nested router");
@@ -5097,11 +5096,11 @@ sap.ui.define([
 					oLevel2RouteMatchedSpy.getCall(0).returnValue.then(function () {
 
 						// router of component at level 0 should not be triggered
-						assert.equal(oLevel0TitleChangedStub.callCount, 4, "fireTitleChange should still be called four times");
+						assert.equal(oLevel0TitleChangedSpy.callCount, 4, "fireTitleChange should still be called four times");
 
 						// router of component at level 1 should be triggered
-						var oLevel1TitleChangedEvent = oLevel1ComponentTitleChangedStub.getCall(2).args[0];
-						assert.equal(oLevel1ComponentTitleChangedStub.callCount, 3, "navTo('nestedView2'): fireTitleChange should be called once");
+						var oLevel1TitleChangedEvent = oLevel1ComponentTitleChangedSpy.getCall(2).args[0];
+						assert.equal(oLevel1ComponentTitleChangedSpy.callCount, 3, "navTo('nestedView2'): fireTitleChange should be called once");
 						assert.equal(oLevel1TitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'): titleChanged event is propagated from nested router");
 						assert.equal(oLevel1TitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): titleChanged event is propagated from nested router");
 						assert.equal(oLevel1TitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
@@ -5136,8 +5135,6 @@ sap.ui.define([
 						oLevel0HomeRouteMatchedSpy.restore();
 						oLevel1ViewRouteMatchedSpy.restore();
 						oLevel2RouteMatchedSpy.restore();
-						oLevel0TitleChangedStub.reset();
-						oLevel1ComponentTitleChangedStub.reset();
 						done();
 					});
 				});
@@ -5151,14 +5148,14 @@ sap.ui.define([
 			1,
 			/*bGlobal=*/undefined,
 			/*bRoute1=*/true,
-			/*bRoute2=*/undefined, 5), oLevel0TitleChangedStub = sinon.stub();
+			/*bRoute2=*/undefined, 5), oLevel0TitleChangedSpy = sinon.spy();
 
 		this._createChildWithGlobalTitlePropagation(5);
 
 		var oLevel0Component = new ParentComponent("parent");
 		var oLevel0Router = oLevel0Component.getRouter();
 
-		oLevel0Router.attachTitleChanged(oLevel0TitleChangedStub);
+		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
 
 		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
 		var oLevel0ThirdRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("third"), "_routeMatched");
@@ -5166,8 +5163,8 @@ sap.ui.define([
 		oLevel0Router.initialize();
 
 		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-			var oTitleChangedEvent = oLevel0TitleChangedStub.getCall(0).args[0];
-			assert.equal(oLevel0TitleChangedStub.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
+			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
 			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
 			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
 			assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event isn't propagated from nested router");
@@ -5193,8 +5190,8 @@ sap.ui.define([
 			oLevel1Router.navTo("nestedView2");
 
 			oLevel1View2RouteMatchedSpy.getCall(0).returnValue.then(function(){
-				oTitleChangedEvent = oLevel0TitleChangedStub.getCall(1).args[0];
-				assert.equal(oLevel0TitleChangedStub.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called the first time - Component title");
+				oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
+				assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called the first time - Component title");
 				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): title 'TitleNestedView2' should be correct");
 				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'): titleChanged event isn't propagated from nested router");
 				assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
@@ -5219,7 +5216,7 @@ sap.ui.define([
 
 				oLevel0Router.navTo("third");
 				oLevel0ThirdRouteMatchedSpy.getCall(0).returnValue.then(function(){
-					assert.equal(oLevel0TitleChangedStub.callCount, 2, "navTo('third'): fireTitleChange shouldn't be called again");
+					assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('third'): fireTitleChange shouldn't be called again");
 
 					var oRouterHashChanger = oLevel0Router.getHashChanger();
 					var oSetHashSpy = sinon.spy(oRouterHashChanger, "setHash");
@@ -5233,9 +5230,9 @@ sap.ui.define([
 						oLevel0HomeRouteMatchedSpy.getCall(1).returnValue.then(function(){
 
 							setTimeout(function(){
-								assert.equal(oLevel0TitleChangedStub.callCount, 3, "navTo('home') and route 'nestedView1' on level 1: fireTitleChange should be called again");
+								assert.equal(oLevel0TitleChangedSpy.callCount, 3, "navTo('home') and route 'nestedView1' on level 1: fireTitleChange should be called again");
 
-								oTitleChangedEvent = oLevel0TitleChangedStub.getCall(2).args[0];
+								oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(2).args[0];
 								assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('home'): titleChanged event is propagated from nested router");
 								assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('home'): title property should be set correctly");
 								assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "navTo('home'): The history should have two entries");
@@ -5256,7 +5253,6 @@ sap.ui.define([
 
 								oLevel0Component.destroy();
 								oLevel0HomeRouteMatchedSpy.restore();
-								oLevel0TitleChangedStub.reset();
 								done();
 							}, 0);
 						});
@@ -5269,7 +5265,7 @@ sap.ui.define([
 
 	QUnit.test("Configuration of title propagation - Scenario 4: multiple targets with the same title", function(assert) {
 		var done = assert.async(),
-		oLevel0TitleChangedStub = sinon.stub(),
+		oLevel0TitleChangedSpy = sinon.spy(),
 		ParentComponent = this._createParentComponent(
 			/*iIndexNamespace=*/4,
 			/*bGlobal=*/true,
@@ -5286,7 +5282,7 @@ sap.ui.define([
 		var oLevel0Component = new ParentComponent("parent");
 		var oLevel0Router = oLevel0Component.getRouter();
 
-		oLevel0Router.attachTitleChanged(oLevel0TitleChangedStub);
+		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
 
 		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
 		var oLevel0SecondRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("second"), "_routeMatched");
@@ -5294,8 +5290,8 @@ sap.ui.define([
 		oLevel0Router.initialize();
 
 		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-			assert.equal(oLevel0TitleChangedStub.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
-			var oTitleChangedEvent = oLevel0TitleChangedStub.getCall(0).args[0];
+			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
 			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
 			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
 			assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event is propagated from nested router");
@@ -5316,9 +5312,9 @@ sap.ui.define([
 
 			oLevel0Router.navTo("second");
 			oLevel0SecondRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-				assert.equal(oLevel0TitleChangedStub.callCount, 2, "navTo('second'): fireTitleChange should be called the second time - Component title");
+				assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('second'): fireTitleChange should be called the second time - Component title");
 				try {
-					oTitleChangedEvent = oLevel0TitleChangedStub.getCall(1).args[0];
+					oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
 					assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('second'): title 'TitleNestedView1' should be correct");
 					assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('second'): The history should have one entry");
 					assert.strictEqual(oTitleChangedEvent.getParameter("history")[0].title, "MyTargetTitle", "navTo('second'): The title of the first history entry should be 'MyTargetTitle'");
@@ -5335,11 +5331,65 @@ sap.ui.define([
 				} finally {
 					oLevel0Component.destroy();
 					oLevel0HomeRouteMatchedSpy.restore();
-					oLevel0TitleChangedStub.reset();
 					done();
 				}
 			});
 
 		});
 	});
+
+	QUnit.test("Configuration of title propagation - Scenario 5: parent target has no title but nested component target - attach to event after initialize of the router", function(assert) {
+		var done = assert.async(),
+		oLevel0TitleChangedSpy = sinon.spy(),
+		ParentComponent = this._createParentComponent(
+			/*iIndexNamespace=*/5,
+			/*bGlobal=*/true,
+			/*bPropagateTitleOfRoute1=*/undefined,
+			/*bPropagateTitleOfRoute2=*/undefined,
+			/*iIndexNamespaceChild1=*/8,
+			/*iIndexNamespaceChild2=*/9,
+			/*iTargetTitleChild1*/null,
+			/*iTargetTitleChild2*/"MyTargetTitle");
+
+		this._createChildWithGlobalTitlePropagation(8);
+		this._createChildWithGlobalTitlePropagation(9);
+
+		var oLevel0Component = new ParentComponent("parent");
+		var oLevel0Router = oLevel0Component.getRouter();
+
+		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
+		var oFireTitleChangedSpy = sinon.spy(Router.prototype, "fireTitleChanged");
+		var oFireRouteMatchedSpy = sinon.spy(Router.prototype, "fireRouteMatched");
+		oLevel0Router.initialize();
+
+		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
+
+		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+			assert.equal(oFireRouteMatchedSpy.callCount, 2, "The method 'fireRouteMatched' is called twice");
+			assert.equal(oFireTitleChangedSpy.callCount, 2, "The method 'fireTitleChanged' is called twice");
+			assert.ok(oFireRouteMatchedSpy.getCall(1).calledBefore(oLevel0TitleChangedSpy.getCall(0)), "The route matched event is called before the title changed event");
+			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
+			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
+			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
+			assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event is propagated from nested router");
+			assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should have two entries");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 0, "The history of the first nested history entry should have no entries");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component8", "initialize(): The second nested history entry should be correct");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the second nested history entry should have one entry");
+			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
+				title: "TitleNestedView1",
+				hash: ""
+			}, "initialize(): The nested history entries should be correct");
+
+			oLevel0Component.destroy();
+			oLevel0HomeRouteMatchedSpy.restore();
+			oFireTitleChangedSpy.restore();
+			oFireRouteMatchedSpy.restore();
+			done();
+		});
+	});
+
 });

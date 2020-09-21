@@ -1441,7 +1441,13 @@ sap.ui.define([
 				}
 
 				if (bImmediateFire) {
-					this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);
+					if (this._bMatchingProcessStarted && this._isAsync()) {
+						this.attachEventOnce("routeMatched", function(){
+							this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);
+						}, this);
+					} else {
+						this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);
+					}
 				}
 
 				return this;

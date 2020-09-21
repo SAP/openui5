@@ -5,7 +5,7 @@
 		xmlns:sample="sap.uxap.sample.ObjectPageSubSectionMultiView.controller.blocks"
 		controllerName="sap.uxap.sample.ObjectPageSubSectionMultiView.controller.ObjectPageSubSectionMultiView"
 		>
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader
 					objectTitle="Automatic layout of blocks"

@@ -43,9 +43,11 @@ sap.ui.define([
 		"sap.ui.comp.odata.FieldSelector", // has a known leak
 		"sap.ui.comp.valuehelpdialog.ValueHelpDialog",  // has a known leak
 		"sap.ui.core.util.Export", // cannot render
+		"sap.ui.mdc.chart.ChartTypeButton", // cannot be instantiated without further configuration
 		"sap.ui.mdc.field.FieldBase", // will not work as pars are loaded async. -> separate test in mdc
 		"sap.ui.mdc.Field", // will not work as pars are loaded async. -> separate test in mdc
-		"sap.ui.mdc.FilterField" // will not work as pars are loaded async. -> separate test in mdc
+		"sap.ui.mdc.FilterField", // will not work as pars are loaded async. -> separate test in mdc
+		"sap.ui.mdc.filterbar.p13n.AdaptationFilterBar" // has a leak that needs to be fixed
 	];
 
 	function createControlTests(aControls) {

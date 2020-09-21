@@ -193,6 +193,7 @@ sap.ui.define([
 			this.oKeys = {};
 			this.bNeedsUpdate = false;
 			this._bRootMissing = false;
+			this.bSkipDataEvents = false;
 
 			this.aSorters = aSorters || [];
 			this.sFilterParams = "";
@@ -345,7 +346,6 @@ sap.ui.define([
 						that.bNeedsUpdate = true;
 						that._bRootMissing = true;
 						delete that.mRequestHandles[sRequestKey];
-
 						that.fireDataReceived();
 					}
 				}
@@ -1092,22 +1092,24 @@ sap.ui.define([
 			}.bind(this);
 
 			var fnError = function (oError) {
-				// Always fire data received event
-				this.fireDataReceived();
+				delete this.mRequestHandles[sRequestKey];
 
 				//Only perform error handling if the request was not aborted intentionally
 				if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
 					return;
 				}
 
-				delete this.mRequestHandles[sRequestKey];
+				this.fireDataReceived();
 
 				reject(); // Application should retrieve error details via ODataModel events
 			}.bind(this);
 
 
 			// execute the request and use the metadata if available
-			this.fireDataRequested();
+			if (!this.bSkipDataEvents) {
+				this.fireDataRequested();
+			}
+			this.bSkipDataEvents = false;
 
 			sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
 			if (sAbsolutePath) {
@@ -1224,14 +1226,12 @@ sap.ui.define([
 		}
 
 		function fnError(oError) {
-			// Always fire data received event
-			that.fireDataReceived();
-
 			//Only perform error handling if the request was not aborted intentionally
 			if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
 				return;
 			}
 
+			that.fireDataReceived();
 			delete that.mRequestHandles[sRequestKey];
 
 			if (oRequestedSection) {
@@ -1258,7 +1258,11 @@ sap.ui.define([
 		// !== because we use "null" as sNodeId in case the user only provided a root level
 		if (sNodeId !== undefined) {
 			// execute the request and use the metadata if available
-			this.fireDataRequested();
+			if (!this.bSkipDataEvents) {
+				this.fireDataRequested();
+			}
+			this.bSkipDataEvents = false;
+
 			var sAbsolutePath;
 			if (this.bHasTreeAnnotations) {
 				sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
@@ -1384,13 +1388,16 @@ sap.ui.define([
 				that.oAllLengths = {};
 				that.oAllFinalLengths = {};
 				that._fireChange({reason: ChangeReason.Change});
+				that.fireDataReceived();
 			}
-
-			that.fireDataReceived();
 		};
 
 		// request the tree collection
-		this.fireDataRequested();
+		if (!this.bSkipDataEvents) {
+			this.fireDataRequested();
+		}
+		this.bSkipDataEvents = false;
+
 		if (this.mRequestHandles[sRequestKey]) {
 			this.mRequestHandles[sRequestKey].abort();
 		}
@@ -1536,7 +1543,6 @@ sap.ui.define([
 		}
 		if (bForceUpdate || bChangeDetected) {
 			this.resetData();
-			// TODO: Abort pending requests --> like ODataListBinding
 			this.bNeedsUpdate = false;
 			this.bRefresh = true;
 			this._fireRefresh({reason: ChangeReason.Refresh});
@@ -2421,13 +2427,17 @@ sap.ui.define([
 	* Abort all pending requests
 	*/
 	ODataTreeBinding.prototype._abortPendingRequest = function() {
-		// abort running request and clear the map afterwards
-		jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
-			if (oRequestHandle) {
-				oRequestHandle.abort();
-			}
-		});
-		this.mRequestHandles = {};
+		if (!isEmptyObject(this.mRequestHandles)) {
+			this.bSkipDataEvents = true;
+
+			// abort running request and clear the map afterwards
+			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
+				if (oRequestHandle) {
+					oRequestHandle.abort();
+				}
+			});
+			this.mRequestHandles = {};
+		}
 	};
 
 	/**

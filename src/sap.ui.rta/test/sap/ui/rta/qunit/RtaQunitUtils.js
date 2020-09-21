@@ -45,7 +45,9 @@ sap.ui.define([
 	};
 
 	RtaQunitUtils.renderTestAppAt = function(sDomId) {
-		FakeLrepConnectorSessionStorage.enableFakeConnector();
+		sap.ui.getCore().getConfiguration().setFlexibilityServices([{
+			connector: "SessionStorageConnector"
+		}]);
 
 		var oComp = sap.ui.getCore().createComponent({
 			name : "sap.ui.rta.qunitrta",
@@ -67,14 +69,16 @@ sap.ui.define([
 
 	RtaQunitUtils.clear = function (oElement, bRevert) {
 		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || sap.ui.getCore().getComponent("Comp1");
+		var aCustomerChanges;
 
-		return Promise.all([
-			PersistenceWriteAPI.save({selector: oComponent, layer: Layer.CUSTOMER}),
-			PersistenceWriteAPI.save({selector: oComponent, layer: Layer.USER})
-		])
-			.then(function (aSavedChanges) {
+		return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.CUSTOMER})
+			.then(function (aChanges) {
+				aCustomerChanges = aChanges;
+				return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.USER});
+			})
+			.then(function (aUserChangesChanges) {
 				if (bRevert) {
-					return aSavedChanges[0].concat(aSavedChanges[1]).reverse()
+					return aCustomerChanges.concat(aUserChangesChanges).reverse()
 						.filter(function (oChange) {
 							//skip descriptor changes
 							return !oChange.getDefinition().appDescriptorChange;
@@ -88,20 +92,16 @@ sap.ui.define([
 						}, new flUtils.FakePromise());
 				}
 			})
-			.then(function () {
-				return Promise.all([
-					PersistenceWriteAPI.reset({
-						selector: oComponent,
-						layer: Layer.CUSTOMER,
-						generator: "Change.createInitialFileContent"
-					}),
-					PersistenceWriteAPI.reset({
-						selector: oComponent,
-						layer: Layer.USER,
-						generator: "Change.createInitialFileContent"
-					})
-				]);
-			});
+			.then(PersistenceWriteAPI.reset.bind(undefined, {
+				selector: oComponent,
+				layer: Layer.CUSTOMER,
+				generator: "Change.createInitialFileContent"
+			}))
+			.then(PersistenceWriteAPI.reset.bind(undefined, {
+				selector: oComponent,
+				layer: Layer.USER,
+				generator: "Change.createInitialFileContent"
+			}));
 	};
 
 	RtaQunitUtils.getNumberOfChangesForTestApp = function () {
@@ -113,7 +113,9 @@ sap.ui.define([
 	};
 
 	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
-		FakeLrepConnectorSessionStorage.enableFakeConnector();
+		sap.ui.getCore().getConfiguration().setFlexibilityServices([{
+			connector: "SessionStorageConnector"
+		}]);
 
 		return Component.create({
 			name : "sap.ui.rta.qunitrta",
@@ -124,18 +126,18 @@ sap.ui.define([
 				}
 			}
 		})
-		.then(function(oComponent) {
-			return new ComponentContainer({
-				component : oComponent,
-				async: true
-			});
-		})
-		.then(function(oComponentContainer) {
-			oComponentContainer.placeAt(sDomId);
-			sap.ui.getCore().applyChanges();
+			.then(function(oComponent) {
+				return new ComponentContainer({
+					component : oComponent,
+					async: true
+				});
+			})
+			.then(function(oComponentContainer) {
+				oComponentContainer.placeAt(sDomId);
+				sap.ui.getCore().applyChanges();
 
-			return oComponentContainer;
-		});
+				return oComponentContainer;
+			});
 	};
 
 	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId) {

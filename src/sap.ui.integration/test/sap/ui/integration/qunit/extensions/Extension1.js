@@ -1,37 +1,42 @@
 sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	"use strict";
 
-	var oExtension = new Extension({
-		actions: [
+	var Extension1 = Extension.extend("sap.ui.integration.qunit.extensions.Extension1");
+
+	Extension1.prototype.init = function () {
+		Extension.prototype.init.apply(this, arguments);
+
+		this.setActions([
 			{
 				type: 'Navigation',
 				url: "http://www.sap.com",
 				target: "_blank",
 				text: 'AutoOpen - SAP website - Extension'
 			}
-		],
-		formatters: {
+		]);
+
+		this.setFormatters({
 			toUpperCase: function (sValue) {
 				return sValue.toUpperCase();
 			}
-		}
-	});
+		});
+	};
 
-	oExtension.getData = function () {
+	Extension1.prototype.getData = function () {
 		return Promise.resolve([
 			{ city: "Berlin", description: "Germany" },
 			{ city: "Tokyo", description: "Japan" }
 		]);
 	};
 
-	oExtension.getDataForContent = function () {
+	Extension1.prototype.getDataForContent = function () {
 		return Promise.resolve([
 			{ city: "Berlin", description: "Germany" },
 			{ city: "Tokyo", description: "Japan" }
 		]);
 	};
 
-	oExtension.requestWithCustomDataType = function () {
+	Extension1.prototype.requestWithCustomDataType = function () {
 		return this.getCard().request({
 			url: "some/url",
 			dataType: "xml"
@@ -44,7 +49,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		});
 	};
 
-	oExtension.getDataForFilter = function () {
+	Extension1.prototype.getDataForFilter = function () {
 		return Promise.resolve([
 			{ key: "hi", value: "High" },
 			{ key: "mi", value: "Middle" },
@@ -52,9 +57,9 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		]);
 	};
 
-	oExtension.getDataForHeader = function () {
+	Extension1.prototype.getDataForHeader = function () {
 		return Promise.resolve({ title: "Berlin" });
 	};
 
-	return oExtension;
+	return Extension1;
 });

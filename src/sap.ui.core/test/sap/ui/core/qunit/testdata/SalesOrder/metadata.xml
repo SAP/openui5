@@ -834,6 +834,11 @@
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
 						MaxLength="10" />
 				</FunctionImport>
+				<FunctionImport Name="SalesOrder_Confirm_GET" ReturnType="gwsample_basic.SalesOrder"
+					EntitySet="SalesOrderSet" m:HttpMethod="GET" sap:action-for="gwsample_basic.SalesOrder">
+					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
+						MaxLength="10" />
+				</FunctionImport>
 				<FunctionImport Name="SalesOrder_Cancel" ReturnType="gwsample_basic.SalesOrder"
 					EntitySet="SalesOrderSet" m:HttpMethod="POST" sap:action-for="gwsample_basic.SalesOrder">
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
@@ -864,10 +869,21 @@
 					<Parameter Name="BusinessPartnerID" Type="Edm.String" Mode="In"
 						MaxLength="10" />
 				</FunctionImport>
+				<!-- needed to call ODataMetadata#_getEntityTypeByName with ReturnType -->
+				<FunctionImport Name="BusinessPartner_Alternatives_ReturnType"
+					ReturnType="Collection(gwsample_basic.BusinessPartner)" m:HttpMethod="POST">
+					<Parameter Name="BusinessPartnerID" Type="Edm.String" Mode="In"
+						MaxLength="10" />
+				</FunctionImport>
 				<FunctionImport Name="LineItem_Create"
 					ReturnType="gwsample_basic.SalesOrderLineItem" EntitySet="SalesOrderLineItemSet"
 					m:HttpMethod="POST">
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In" MaxLength="10" />
+				</FunctionImport>
+				<FunctionImport Name="SalesOrder_FixQuantities"
+					ReturnType="Collection(gwsample_basic.SalesOrderLineItem)"
+					EntitySet="SalesOrderLineItemSet" m:HttpMethod="POST">
+					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In" MaxLength="10"/>
 				</FunctionImport>
 			</EntityContainer>
 			<EntityContainer Name="gwsample_basic_Entities_2" sap:message-scope-supported="false">

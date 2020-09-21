@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/ui/mdc/field/FieldInfoBase",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/InvisibleText",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/link/Log",
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/ui/layout/library"
 ], function(FieldInfoBase,
 	jQuery,
-	InvisibleText,
 	BindingMode,
 	JSONModel,
 	Log,
@@ -106,6 +104,7 @@ sap.ui.define([
 		this.attachEvent("modelContextChange", this._handleModelContextChange, this);
 		this._bLinkItemsFetched = false;
 		this._aLinkItems = [];
+		this._oLinkType = null;
 
 		FieldInfoBase.prototype.init.apply(this, arguments);
 	};
@@ -136,12 +135,20 @@ sap.ui.define([
 				return false;
 			}
 			var oPayload = Object.assign({}, this.getPayload());
-			return this.getControlDelegate().fetchLinkType(oPayload, this).then(function(oLinkType) {
-				if (oLinkType.type > 0) {
-					return true;
+			return this.getControlDelegate().fetchLinkType(oPayload).then(function(oLinkTypeObject) {
+				var oRuntimeLinkTypePromise = oLinkTypeObject.runtimeType;
+				var oInitialLinkType = oLinkTypeObject.initialType ? oLinkTypeObject.initialType : oLinkTypeObject;
+
+				if (oRuntimeLinkTypePromise && oRuntimeLinkTypePromise instanceof Promise) {
+					oRuntimeLinkTypePromise.then(function(oRuntimeLinkType) {
+						if (!this._oLinkType || oRuntimeLinkType.linkType !== this._oLinkType.linkType) {
+							this._oLinkType = oRuntimeLinkType;
+							this.fireDataUpdate();
+						}
+					}.bind(this));
 				}
-				return false;
-			});
+				return this._oLinkType ? this._oLinkType.type > 0 : oInitialLinkType.type > 0;
+			}.bind(this));
 		}.bind(this));
 	};
 	/**
@@ -222,12 +229,6 @@ sap.ui.define([
 
 	// ----------------------- Implementation of 'ICreatePopover' interface --------------------------------------------
 
-	Link.prototype.getContentTitle = function() {
-		return new InvisibleText({
-			text: this._getContentTitle()
-		});
-	};
-
 	/**
 	 * Function that is called in the <code>createPopover</code> function of {@link sap.ui.mdc.field.FieldInfoBase}.
 	 * @param {Function} fnGetAutoClosedControl Function returning the <code>Popover</code> control that is created in <code>createPopover</code>
@@ -248,6 +249,8 @@ sap.ui.define([
 					var aMLinkItems = this._getInternalModel().getProperty("/linkItems");
 					var aMBaselineLinkItems = this._getInternalModel().getProperty("/baselineLinkItems");
 
+					var oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? Link._getNoContent() : aAdditionalContent;
+
 					var oPanel = new Panel(this._createPanelId(Utils, FlexRuntimeInfoAPI), {
 						enablePersonalization: this.getEnablePersonalization(), // brake the binding chain
 						items: aMBaselineLinkItems.map(function(oMLinkItem) {
@@ -260,7 +263,7 @@ sap.ui.define([
 								visible: true
 							});
 						}),
-						additionalContent: !aAdditionalContent.length && !aMLinkItems.length ? Link._getNoContent() : aAdditionalContent,
+						additionalContent: oPanelAdditionalContent,
 						beforeSelectionDialogOpen: function() {
 							if (fnGetAutoClosedControl && fnGetAutoClosedControl()) {
 								fnGetAutoClosedControl().setModal(true);
@@ -347,16 +350,31 @@ sap.ui.define([
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
 				var oPayload = Object.assign({}, this.getPayload());
-				return this.getControlDelegate().fetchLinkType(oPayload, this).then(function(oLinkType) {
-					if (oLinkType.type !== 1 || oLinkType.directLink === undefined) {
-						return null;
+				return this.getControlDelegate().fetchLinkType(oPayload).then(function(oLinkTypeObject) {
+					if (this._linkTypeHasDirectLink(this._oLinkType)) {
+						return this._oLinkType.directLink;
 					}
-					return oLinkType.directLink;
-				});
+
+					var oLinkType = oLinkTypeObject.linkType ? oLinkTypeObject.linkType : oLinkTypeObject;
+
+					if (this._linkTypeHasDirectLink(oLinkType)) {
+						return oLinkType.directLink;
+					}
+					return null;
+				}.bind(this));
 			}.bind(this));
 		}
 		SapBaseLog.error("mdc.Link retrieveDirectLinkItem: control delegate is not set - could not load LinkItems from delegate.");
 		return Promise.resolve(null);
+	};
+
+	/***
+	 * Checks if a given {@link sap.ui.mdc.LinkDelegate.LinkType} contains a directLink value
+	 * @param oLinkType {@link sap.ui.mdc.LinkDelegate.LinkType} the <code>LinkType</code> which should be checked
+	 * @returns {Boolean}
+	 */
+	Link.prototype._linkTypeHasDirectLink = function(oLinkType) {
+		return oLinkType && oLinkType.type === 1 && oLinkType.directLink;
 	};
 
 	/**
@@ -378,14 +396,6 @@ sap.ui.define([
 			this._setLinkItems([]);
 			this._determineContent();
 		}.bind(this));
-	};
-
-	/**
-	 * @private
-	 * @returns {String} Content title saved in the internal model
-	 */
-	Link.prototype._getContentTitle = function() {
-		return this._getInternalModel().getProperty("/contentTitle");
 	};
 
 	/**
@@ -476,15 +486,6 @@ sap.ui.define([
 			this.setSourceControl(oField);
 		}
 		return Utils.getViewForControl(oControl) || Utils.getViewForControl(oField);
-	};
-
-	/**
-	 * @private
-	 * @param {String} sTitle The given title
-	 * @return {undefined}
-	 */
-	Link.prototype._setContentTitle = function(sTitle) {
-		return this._getInternalModel().setProperty("/contentTitle", sTitle);
 	};
 
 	/**

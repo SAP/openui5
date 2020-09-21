@@ -60,12 +60,12 @@ sap.ui.define([
 		},
 
 		onMsgStripClose : function (oEvt) {
-			oEvt.oSource.setVisible(false);
+			oEvt.getSource().setVisible(false);
 		},
 
 
 		onDelay : function (oEvt) {
-			var oButton = oEvt.oSource;
+			var oButton = oEvt.getSource();
 			if (this.oSampleDataModel.getDelay()) {
 				this.oSampleDataModel.setDelay(0);
 				oButton.setType("Default");
@@ -82,7 +82,7 @@ sap.ui.define([
 		},
 		onValidate : function (oEvt) {
 			this.oSampleDataModel.setMessages({});
-			var oButton = oEvt.oSource;
+			var oButton = oEvt.getSource();
 			oButton.setType("Accept");
 			var that = this;
 			function applyMessage() {
@@ -110,7 +110,7 @@ sap.ui.define([
 			});
 		},
 		onSubmit : function (oEvt) {
-			var oButton = oEvt.oSource;
+			var oButton = oEvt.getSource();
 			oButton.setType("Accept");
 			this.oSampleDataModel.setMessages({"/Email":[]});
 			this.oSampleDataModel.submit("/Email");
@@ -123,12 +123,11 @@ sap.ui.define([
 			}
 		},
 		onRequest : function (oEvt) {
-			var oButton = oEvt.oSource,
+			var oButton = oEvt.getSource(),
 				that = this;
 			oButton.setType("Accept");
 			this.oSampleDataModel.setMessages({});
 			if (this.oSampleDataModel.getDelay()) {
-				var that = this;
 				this.applyStateMessage("(data send....)");
 				this.oSampleDataModel.setLaundering("/Email",true);
 				this.oSampleDataModel.refresh();

@@ -853,7 +853,7 @@ sap.ui.define([
 				};
 			});
 		}).then(function() {
-			assert.ok(oInvalidateSpy.calledOnce, "The list is invalidated");
+			assert.ok(oInvalidateSpy.called, "The list is invalidated");
 			oList.destroy();
 			oMockServer.stop();
 		});
@@ -878,13 +878,13 @@ sap.ui.define([
 				};
 			});
 		}).then(function() {
-			assert.ok(oInvalidateSpy.calledOnce, "The list is invalidated");
+			assert.ok(oInvalidateSpy.called, "The list is invalidated");
 			oList.destroy();
 			oMockServer.stop();
 		});
 	});
 
-	QUnit.test("Growing list should not invalidate on update if all items are removed after rebind", function(assert) {
+	QUnit.test("Growing list should invalidate on update if all items are removed after rebind", function(assert) {
 		var oMockServer = startMockServer(0),
 			oList = createList({
 				growing: true
@@ -905,7 +905,7 @@ sap.ui.define([
 				};
 			});
 		}).then(function() {
-			assert.ok(oInvalidateSpy.notCalled, "The list is not invalidated");
+			assert.ok(oInvalidateSpy.called, "The list is invalidated");
 			oList.destroy();
 			oMockServer.stop();
 		});

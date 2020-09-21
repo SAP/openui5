@@ -2,7 +2,7 @@
 		   xmlns="sap.uxap" xmlns:sample="sap.uxap.sample.BlockBaseEventing.controller.blocks"
 		   xmlns:html="http://www.w3.org/1999/xhtml" controllerName="sap.uxap.sample.BlockBaseEventing.controller.BlockBaseEventing">
 
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="Eventing Blocks"/>
 		</headerTitle>

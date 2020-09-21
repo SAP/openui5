@@ -611,14 +611,25 @@ sap.ui.define([
 	QUnit.test("ariaLabelledBy, ariaDescribedBy are propagated to the internal control that has them defined", function(assert) {
 		var sLabelId,
 			aLabels;
+		// act
+		this.marker.addAriaLabelledBy("id");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(this.marker._getInnerControl(), "internal control's is not created");
+		assert.equal(this.marker.getAriaLabelledBy().length, 1, "ObjectMarker save arialabelled");
+
+		//act
+		this.marker.removeAllAriaLabelledBy();
 
 		// arrange
 		this.marker.setType(ObjectMarkerType.Locked);
 		this.marker.attachPress(function(e) {});
+		sap.ui.getCore().applyChanges();
 
 		// act
 		this.marker.addAriaLabelledBy("id1");
-
+		sap.ui.getCore().applyChanges();
 		// assert
 		assert.strictEqual(this.marker.getAriaLabelledBy().length, 1, "ariaLabelledBy has one id");
 		assert.strictEqual(this.marker.getAriaLabelledBy()[0], "id1", "ariaLabelledBy has the right id");
@@ -627,6 +638,8 @@ sap.ui.define([
 
 		// act
 		this.marker.addAriaDescribedBy("id2");
+		sap.ui.getCore().applyChanges();
+
 
 		// assert
 		assert.strictEqual(this.marker.getAriaDescribedBy().length, 1, "ariaDescribedBy has one id");
@@ -636,6 +649,7 @@ sap.ui.define([
 
 		// act
 		sLabelId = this.marker.removeAriaLabelledBy("id1");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(sLabelId, "id1", "removeAriaLabelledBy returns the right id");
@@ -645,7 +659,9 @@ sap.ui.define([
 		// act
 		this.marker.addAriaLabelledBy("id3");
 		this.marker.addAriaLabelledBy("id4");
+		sap.ui.getCore().applyChanges();
 		aLabels = this.marker.removeAllAriaLabelledBy();
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(aLabels.length, 2, "removeAllAriaLabelledBy returns a list of ids");
@@ -660,16 +676,18 @@ sap.ui.define([
 
 		// act
 		this.marker.addAriaLabelledBy("id1");
+		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(!this.marker.getAriaLabelledBy(), "there is no ariaLabelledBy");
+		assert.ok(this.marker.getAriaLabelledBy(), "ariaLabelledBy is save in ObjectMarker");
 		assert.ok(!this.marker._getInnerControl(), "there is no innerControl");
 
 		// act
 		this.marker.addAriaDescribedBy("id2");
+		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(!this.marker.getAriaDescribedBy(), "there is no ariaDescribedBy");
+		assert.ok(this.marker.getAriaDescribedBy(), "ariaDescribedBy is save in ObjectMarker");
 	});
 
 	QUnit.test("ariaLabelledBy, ariaDescribedBy are not set when the internal control has not defined them", function(assert) {
@@ -678,16 +696,17 @@ sap.ui.define([
 
 		// act
 		this.marker.addAriaLabelledBy("id1");
+		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(!this.marker.getAriaLabelledBy(), "there is no ariaLabelledBy");
+		assert.ok(this.marker.getAriaLabelledBy(), "AriaLabelledBy is save");
 		assert.ok(!this.marker._getInnerControl().getAriaLabelledBy, "there is no getAriaLabelledBy in the internal Control");
 
 		// act
 		this.marker.addAriaDescribedBy("id2");
 
 		// assert
-		assert.ok(!this.marker.getAriaDescribedBy(), "there is no ariaDescribedBy");
+		assert.ok(this.marker.getAriaDescribedBy(), "AriaDescribedBy is save in ObjectMarker");
 	});
 
 	QUnit.test("getAccessibilityInfo is propagated to the internal control", function(assert) {

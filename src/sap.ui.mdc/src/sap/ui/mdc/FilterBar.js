@@ -199,19 +199,13 @@ sap.ui.define([
 	};
 
 	FilterBar.prototype.onAdaptFilters = function(oEvent) {
-		return new Promise(function(resolve, reject){
-			return this._oMetadataAppliedPromise.then(function() {
-				//TODO: remove experimental URL param
-				sap.ui.require(["sap/base/util/UriParameters"], function(SAPUriParameters){
-					var oURLParams = new SAPUriParameters(window.location.search);
-					var bComplexP13nEnabled = oURLParams.getAll("sap-ui-xx-complexP13n")[0] === "true";
-						this.retrieveAdaptationController().then(function (oAdaptationController) {
-							oAdaptationController.setLiveMode(!bComplexP13nEnabled);
-							resolve(oAdaptationController.showP13n(this._btnAdapt, bComplexP13nEnabled ? "Filter" : "Item"));
-						}.bind(this));
-				}.bind(this), reject);
-			}.bind(this), reject);
+
+		return this._oMetadataAppliedPromise.then(function() {
+			return this.retrieveAdaptationController().then(function (oAdaptationController) {
+				return oAdaptationController.showP13n(this._btnAdapt, "Filter");
+			}.bind(this));
 		}.bind(this));
+
 	};
 
 	FilterBar.prototype.getCurrentState = function() {

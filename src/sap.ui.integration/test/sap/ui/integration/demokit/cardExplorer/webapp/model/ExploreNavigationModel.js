@@ -76,9 +76,9 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/adaptive/extensionSample/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/adaptive/extensionSample/SampleExtension.js',
+										name: 'SampleExtension.js',
+										key: 'SampleExtension.js'
 									},
 									{
 										url: '/samples/adaptive/extensionSample/i18n/i18n.properties',
@@ -571,9 +571,9 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/gettingData/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/extension/gettingData/DataExtension.js',
+										name: 'DataExtension.js',
+										key: 'DataExtension.js'
 									}
 								]
 							},
@@ -587,9 +587,9 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/customFormatters/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/extension/customFormatters/CustomFormattersExtension.js',
+										name: 'CustomFormattersExtension.js',
+										key: 'CustomFormattersExtension.js'
 									}
 								]
 							},
@@ -603,9 +603,9 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/customActions/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/extension/customActions/CustomActionsExtension.js',
+										name: 'CustomActionsExtension.js',
+										key: 'CustomActionsExtension.js'
 									}
 								]
 							},
@@ -614,14 +614,14 @@ sap.ui.define([
 								key: 'northwindImage',
 								files: [
 									{
-										url: '/samples/extension/northwindImage/manifest.json',
+										url: '/samples/extensioan/northwindImage/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/northwindImage/myExtension.js',
-										name: 'myExtension.js',
-										key: 'myExtension.js'
+										url: '/samples/extension/northwindImage/NorthwindImageExtension.js',
+										name: 'NorthwindImageExtension.js',
+										key: 'NorthwindImageExtension.js'
 									}
 								]
 							}
@@ -761,9 +761,9 @@ sap.ui.define([
 								key: 'Component.js'
 							},
 							{
-								url: '/samples/adaptiveCustomizedActions/myExtension.js',
-								name: 'myExtension.js',
-								key: 'myExtension.js'
+								url: '/samples/adaptiveCustomizedActions/CustomizedActionsExtension.js',
+								name: 'CustomizedActionsExtension.js',
+								key: 'CustomizedActionsExtension.js'
 							}
 						]
 					},
@@ -945,9 +945,9 @@ sap.ui.define([
 										key: 'cardBundle/cardManifest.json'
 									},
 									{
-										url: '/samples/destinations/extensionUsingDestinations/cardBundle/myExtension.js',
-										name: 'cardBundle/myExtension.js',
-										key: 'cardBundle/myExtension.js'
+										url: '/samples/destinations/extensionUsingDestinations/cardBundle/DataExtension.js',
+										name: 'cardBundle/DataExtension.js',
+										key: 'cardBundle/DataExtension.js'
 									},
 									{
 										url: '/samples/destinations/extensionUsingDestinations/View.view.xml',
@@ -1036,9 +1036,9 @@ sap.ui.define([
 								key: 'cardBundle/cardManifest.json'
 							},
 							{
-								url: '/samples/hostAndExtensionActions/cardBundle/myExtension.js',
-								name: 'cardBundle/myExtension.js',
-								key: 'cardBundle/myExtension.js'
+								url: '/samples/hostAndExtensionActions/cardBundle/ActionsExtension.js',
+								name: 'ActionsExtension.js',
+								key: 'ActionsExtension.js'
 							},
 							{
 								url: '/samples/hostAndExtensionActions/View.view.xml',
@@ -1051,11 +1051,6 @@ sap.ui.define([
 								key: 'Controller.controller.js'
 							},
 							{
-								url: '/samples/hostAndExtensionActions/cardBundle/myExtension.js',
-								name: 'myExtension.js',
-								key: 'myExtension.js'
-							},
-							{
 								url: '/samples/hostAndExtensionActions/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json',
@@ -1065,6 +1060,201 @@ sap.ui.define([
 								url: '/samples/hostAndExtensionActions/Component.js',
 								name: 'Component.js',
 								key: 'Component.js'
+							}
+						]
+					},
+					{
+						key: 'hostContext',
+						target: 'exploreSamples',
+						title: 'Host Context',
+						useIFrame: true,
+						isApplication: true,
+						experimental: true,
+						files: [
+							{
+								url: '/samples/hostContext/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/hostContext/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/hostContext/HostContext.view.xml',
+								name: 'HostContext.view.xml',
+								key: 'HostContext.view.xml'
+							},
+							{
+								url: '/samples/hostContext/HostContext.controller.js',
+								name: 'HostContext.controller.js',
+								key: 'HostContext.controller.js'
+							},
+							{
+								url: '/samples/hostContext/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/hostContext/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					}
+				]
+			},
+			{
+				title: 'Card Editor Design-time',
+				icon: 'sap-icon://create-form',
+				key: 'designtime',
+				target: 'exploreOverview',
+				hasExpander: false,
+				hidden: !window._isinternal,
+				items: [
+					{
+						key: 'designtimeAdmin',
+						target: 'exploreSamples',
+						title: 'Administrator Editor',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimeAdmin/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimeAdmin/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimeAdmin/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeAdmin/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
+					},
+					{
+						key: 'designtimeContent',
+						target: 'exploreSamples',
+						title: 'Page/Content Administrator Editor',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimeContent/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimeContent/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimeContent/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeAdmin/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
+					},
+					{
+						key: 'designtimeTranslation',
+						target: 'exploreSamples',
+						title: 'Translator Editor',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimeTranslation/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimeTranslation/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimeTranslation/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeTranslation/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
+					},
+					{
+						key: 'designtimeFields',
+						target: 'exploreSamples',
+						title: 'Field Playground',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimeFields/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimeFields/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimeFields/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeFields/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
+					},
+					{
+						key: 'designtimePreview',
+						target: 'exploreSamples',
+						title: 'Editor Preview Settings ',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimePreview/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimePreview/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimePreview/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimePreview/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
 							}
 						]
 					}

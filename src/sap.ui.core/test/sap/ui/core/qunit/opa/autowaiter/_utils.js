@@ -39,7 +39,7 @@ sap.ui.define([
 			console.log("foo", bar);
 		});
 		/* eslint-enable no-console */
-		assert.ok(sFunc.match(/^function ?foo ?\(bar\) ?{\n\t\t\tconsole.log\('foo', bar\);\n\t\t}$/));
+		assert.ok(sFunc.match(/^'function ?foo ?\(bar\) ?{\n\t\t\tconsole.log\('foo', bar\);\n\t\t}'$/));
 	});
 
 	QUnit.test("Should get array-like object string representation", function (assert) {
@@ -53,9 +53,10 @@ sap.ui.define([
 		assert.strictEqual(argumentsToString("fooBar"), "'fooBar'", "Should handle string in args");
 		assert.strictEqual(argumentsToString(5.3), "'5.3'", "Should handle number in args");
 		assert.strictEqual(argumentsToString(new Foo()), "'[object Object]'", "Should handle object in args");
-		assert.ok(argumentsToString(fnTestFunc).match(/^'function ?foo ?\(bar\) ?{\n\t\t\tconsole.log\('foo', bar\);\n\t\t}'$/), "Should use function string representation");
+		var sTestFunc = argumentsToString(fnTestFunc);
+		assert.ok(sTestFunc.match(/^'function ?foo ?\(bar\) ?{\n\t\t\tconsole.log\('foo', bar\);\n\t\t}'$/), "Should use function string representation, string is: " + sTestFunc);
 		assert.strictEqual(argumentsToString({foo: "bar", foo1: {a: 5}, foo2: [1]}), "{\"foo\":\"bar\",\"foo1\":{\"a\":5},\"foo2\":[1]}", "Should handle plain objects");
 		var sArgWithArray = argumentsToString(["foo", fnTestFunc, new Foo(), {a: 2, b: "foo"}]);
-		assert.ok(sArgWithArray.match(/^\['foo', 'function ?foo ?\(bar\) ?{\n\t\t\tconsole.log\('foo', bar\);\n\t\t}', '\[object Object\]', {\"a\":2,\"b\":\"foo\"}\]$/), "Should handle arrays");
+		assert.ok(sArgWithArray.match(/^\['foo', 'function ?foo ?\(bar\) ?{\n\t\t\tconsole.log\('foo', bar\);\n\t\t}', '\[object Object\]', {\"a\":2,\"b\":\"foo\"}\]$/), "Should handle arrays, string is: " + sArgWithArray);
 	});
 });

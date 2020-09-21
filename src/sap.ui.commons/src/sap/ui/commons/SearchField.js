@@ -666,6 +666,7 @@ sap.ui.define([
 	TextField.extend("sap.ui.commons.SearchField.TF", {
 
 		metadata : {
+			library: "sap.ui.commons",
 			visibility : "hidden"
 		},
 
@@ -765,6 +766,7 @@ sap.ui.define([
 	ComboBox.extend("sap.ui.commons.SearchField.CB", {
 
 		metadata : {
+			library: "sap.ui.commons",
 			visibility : "hidden"
 		},
 

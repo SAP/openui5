@@ -8,7 +8,7 @@
 		controllerName="sap.uxap.sample.ChildObjectPage.controller.ChildObjectPage"
 		height="100%">
 
-	<ObjectPageLayout id="ObjectPageLayout" isChildPage="true">
+	<ObjectPageLayout id="ObjectPageLayout" isChildPage="true" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
 							  objectTitle="Denise Smith"

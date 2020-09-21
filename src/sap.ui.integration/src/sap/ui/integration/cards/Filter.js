@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Select",
 	"sap/ui/core/ListItem",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/util/LoadingProvider"
 ], function (
 	Control,
 	Core,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Text,
 	Select,
 	ListItem,
-	JSONModel
+	JSONModel,
+	LoadingProvider
 ) {
 	"use strict";
 
@@ -64,7 +66,15 @@ sap.ui.define([
 		renderer: {
 			apiVersion: 2,
 			render: function (oRM, oFilter) {
-				oRM.openStart("div", oFilter).openEnd();
+				var bLoading = oFilter.isLoading();
+
+				oRM.openStart("div", oFilter).class("sapFCardFilter");
+
+				if (bLoading) {
+					oRM.class("sapFCardFilterLoading");
+				}
+
+				oRM.openEnd();
 
 				if (oFilter._hasError()) {
 					oRM.renderControl(oFilter._getErrorMessage());
@@ -78,6 +88,8 @@ sap.ui.define([
 	});
 
 	Filter.prototype.init = function () {
+		this._oLoadingProvider = new LoadingProvider();
+
 		this.attachEventOnce("_dataReady", function () {
 			this.fireEvent("_ready");
 		});
@@ -88,6 +100,15 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 			this._oDataProvider = null;
 		}
+
+		if (this._oLoadingProvider) {
+			this._oLoadingProvider.destroy();
+			this._oLoadingProvider = null;
+		}
+	};
+
+	Filter.prototype.isLoading = function () {
+		return !this._oLoadingProvider.getDataProviderJSON() && this._oLoadingProvider.getLoadingState();
 	};
 
 	Filter.prototype._getSelect = function () {
@@ -126,13 +147,29 @@ sap.ui.define([
 
 	Filter.prototype._onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
+		this._oLoadingProvider.setLoading(false);
+		this.invalidate();
+	};
+
+	Filter.prototype._onDataRequested = function () {
+		this._oLoadingProvider.createLoadingState(this._oDataProvider);
 	};
 
 	Filter.prototype._updateModel = function (oData) {
-		this.getModel().setData(oData);
-		this._getSelect().setSelectedKey(this.getValue());
+		var oSelect = this._getSelect(),
+			oModel = this.getModel();
+
+		oModel.setData(oData);
+
+		oSelect.setSelectedKey(this.getValue());
+		this._updateSelected(oSelect.getSelectedItem());
 	};
 
+	/**
+	 * Uses the Card's own DataProvider and the provided oDataConfig object to populate the Filter's data.
+	 * @private
+	 * @param {object} oDataConfig Data configuration
+	 */
 	Filter.prototype._setDataConfiguration = function (oDataConfig) {
 		if (!oDataConfig) {
 			this.fireEvent("_dataReady");
@@ -144,10 +181,14 @@ sap.ui.define([
 		}
 
 		var oCard = Core.byId(this.getCard());
-		this._oDataProvider = oCard._oDataProviderFactory.create(oDataConfig);
+		this._oDataProvider = oCard._oDataProviderFactory.create(oDataConfig, null, true);
 
 		// If a data provider is created: use own model.
 		this.setModel(new JSONModel());
+
+		this._oDataProvider.attachDataRequested(function () {
+			this._onDataRequested();
+		}.bind(this));
 
 		this._oDataProvider.attachDataChanged(function (oEvent) {
 			this._updateModel(oEvent.getParameter("data"));
@@ -162,6 +203,25 @@ sap.ui.define([
 		this._oDataProvider.triggerDataUpdate();
 	};
 
+	Filter.prototype._updateSelected = function (oSelectedItem) {
+		var oFiltersModel = this.getModel("filters"),
+			sFilterKey = this.getKey();
+
+		oFiltersModel.setProperty("/" + sFilterKey, {
+			"value": oSelectedItem.getKey(),
+			"selectedItem": {
+				"title": oSelectedItem.getText(),
+				"key": oSelectedItem.getKey()
+			}
+		});
+	};
+
+	/**
+	 * Constructs a Select control configured with the Filter's properties.
+	 *
+	 * @private
+	 * @returns {sap.m.Select} configured instance
+	 */
 	Filter.prototype._createSelect = function () {
 		var oSelect = new Select(),
 			sItemTemplateKey,
@@ -172,9 +232,7 @@ sap.ui.define([
 		oSelect.attachChange(function (oEvent) {
 			var sValue = oEvent.getParameter("selectedItem").getKey();
 			this.setValue(sValue);
-
-			var oCard = Core.byId(this.getCard());
-			oCard._setFilterValue(this.getKey(), sValue);
+			this._updateSelected(oEvent.getParameter("selectedItem"));
 		}.bind(this));
 
 		if (oConfig && oConfig.item) {

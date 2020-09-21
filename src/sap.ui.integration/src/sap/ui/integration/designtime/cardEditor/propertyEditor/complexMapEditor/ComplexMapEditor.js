@@ -59,6 +59,9 @@ sap.ui.define([
 	 */
 	var ComplexMapEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.cardEditor.propertyEditor.complexMapEditor.ComplexMapEditor", {
 		xmlFragment: "sap.ui.integration.designtime.cardEditor.propertyEditor.complexMapEditor.ComplexMapEditor",
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 

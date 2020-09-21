@@ -21,5 +21,4 @@ sap.ui.define([
 			resolve();
 		}, reject);
 	});
-
 });

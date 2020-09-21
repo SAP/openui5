@@ -35,6 +35,7 @@ sap.ui.define([
 	 */
 	var ObjectBinding = ManagedObject.extend("sap.ui.integration.designtime.baseEditor.util.ObjectBinding", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				object: {
 					type: "object"

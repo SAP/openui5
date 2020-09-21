@@ -24,6 +24,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					paths: {
 						"routing": "../testdata/routing"
 					}
+				},
+				qunit: {
+					reorder: false
 				}
 			},
 			"async/Target": {

@@ -59,9 +59,6 @@ sap.ui.define([
 		},
 
 		iSaveVariantAs: function(sVariantCurrentName, sVariantNewName) {
-			this.iPressOnTheVariantManagerButton(sVariantCurrentName);
-			this.iPressOnTheVariantManagerSaveAsButton();
-
 			var SAVE_VARIANT_TITLE = TestUtil.getTextFromResourceBundle("sap.ui.fl", "VARIANT_MANAGEMENT_SAVEDIALOG");
 
 			return waitForVariantManagerOverlay.call(this, {
@@ -118,8 +115,8 @@ sap.ui.define([
 		},
 
 		iSelectVariant: function(sVariantName) {
-			this.iPressOnTheVariantManagerButton();
-			waitForVariantManagerItem.call(this, sVariantName, {
+			waitForVariantManagerItem.call(this, {
+				itemText: sVariantName,
 				actions: new Press()
 			});
 		}

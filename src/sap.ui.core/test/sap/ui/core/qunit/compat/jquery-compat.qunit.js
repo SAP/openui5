@@ -317,4 +317,16 @@ sap.ui.define(["sap/ui/qunit/utils/createAndAppendDiv", "sap/ui/Device"], functi
 		$Div.css("fake-property", 200);
 		this.checkWarnMessage("Number-typed values are deprecated for jQuery.fn.css");
 	});
+
+	QUnit.test("jQuery - automatic <tbody> creation when adding <tr> elements to a <table> element", function(assert) {
+		var $table = jQuery("<table></table>");
+		$table.append("<tr><td>lorem ipsum</td></tr>");
+
+		this.checkWarnMessage(
+			"Trying to add a <tr> element to a <table> without a <tbody>. " +
+			"At this point, jQuery version 2 would have inserted a <tbody> element for you. " +
+			"Since jQuery version 3, jQuery does not automatically create a <tbody> element anymore. " +
+			"Please add the <tbody> on your own, if your code or CSS expects it."
+		);
+	});
 });

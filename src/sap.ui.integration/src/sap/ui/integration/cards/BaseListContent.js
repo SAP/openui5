@@ -36,6 +36,9 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.BaseContent
 	 */
 	var BaseListContent = BaseContent.extend("sap.ui.integration.cards.BaseListContent", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: {}
 	});
 
@@ -122,7 +125,7 @@ sap.ui.define([
 		aItems.forEach(function (oItem, iIndex) {
 			var mParameters = BindingResolver.resolveValue(
 				oAction.parameters,
-				this.getModel(),
+				this,
 				sBasePath + "/" + iIndex
 			);
 			if (oItem._card_item_hidden !== undefined) {

@@ -1540,6 +1540,8 @@ function(
 		 * @private
 		 */
 		Select.prototype.onsapenter = function(oEvent) {
+			// Prevent the opening of the native select with options
+			oEvent.preventDefault();
 
 			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
@@ -2110,6 +2112,11 @@ function(
 		 */
 		Select.prototype.open = function() {
 			var oPicker = this.getPicker();
+
+			//We need to force focus on the select before opening the popup,
+			//because it doesn`t receive it automatically.
+			//Also popup will point the focus on the last focused element.
+			this.focus();
 
 			if (oPicker) {
 				oPicker.open();

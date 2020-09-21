@@ -22,10 +22,11 @@ sap.ui.define([], function () {
 			oAvatar = oHeader.getAggregation("_avatar"),
 			bLoading = oHeader.isLoading(),
 			oBindingInfos = oHeader.mBindingInfos,
-			oToolbar = oHeader.getToolbar();
+			oToolbar = oHeader.getToolbar(),
+			sTabIndex = oHeader._isInsideGridContainer() ? "-1" : "0";
 
 		oRm.openStart("div", oHeader)
-			.attr("tabindex", "0")
+			.attr("tabindex", sTabIndex)
 			.class("sapFCardHeader");
 
 		if (bLoading) {

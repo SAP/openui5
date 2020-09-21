@@ -15,6 +15,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	IFilterContainer.prototype.init = function() {
+		Element.prototype.init.apply(this, arguments);
 		this.oLayout = null;
 	};
 

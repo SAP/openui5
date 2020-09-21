@@ -15,20 +15,23 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return function waitForValueHelpConditionsColumnListItem(aValues, oSettings) {
-
-		return waitForValueHelpConditionsTable.call(this, {
-			success: onValueHelpDialogConditionsTableFound
-		});
-
-		function onValueHelpDialogConditionsTableFound(oValueHelpDialogConditionsTable) {
-			var aMatchers = aValues.map(function(oValue) {
+	return function waitForValueHelpConditionsColumnListItem(oSettings) {
+		var aMatchers = [];
+		if (oSettings.values) {
+			aMatchers = oSettings.values.map(function(oValue) {
 				return new AggregationContainsPropertyEqual({
 					aggregationName: "cells",
 					propertyName: "text",
 					propertyValue: oValue
 				});
 			});
+		}
+
+		return waitForValueHelpConditionsTable.call(this, {
+			success: onValueHelpDialogConditionsTableFound
+		});
+
+		function onValueHelpDialogConditionsTableFound(oValueHelpDialogConditionsTable) {
 			aMatchers.push(new Ancestor(oValueHelpDialogConditionsTable, false));
 			this.waitFor({
 				controlType: "sap.m.ColumnListItem",

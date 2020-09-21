@@ -291,7 +291,7 @@ function(Controller, JSONModel, unifiedLibrary, MessageToast) {
 			oModel.getData().appointments.push(oNewAppointment);
 			oModel.updateBindings();
 
-			sap.m.MessageToast.show("Appointment with title \n'"
+			MessageToast.show("Appointment with title \n'"
 				+ sAppointmentTitle
 				+ "'\n has been created"
 			);

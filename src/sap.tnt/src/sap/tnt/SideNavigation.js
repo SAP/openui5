@@ -450,7 +450,7 @@ sap.ui.define([
 		SideNavigation.prototype._arrowPress = function (event) {
 			event.preventDefault();
 
-			var source = document.getElementById(event.oSource.sId);
+			var source = event.getSource().getDomRef();
 			var isDirectionForward = source.classList.contains('sapTntSideNavigationScrollIconDown') ? true : false;
 
 			var $container = this.$('Flexible');

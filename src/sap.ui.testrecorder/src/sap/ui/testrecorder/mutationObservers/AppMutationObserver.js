@@ -8,6 +8,9 @@ sap.ui.define([
 	"use strict";
 
 	var AppMutationObserver = MutationObserver.extend("sap.ui.testrecorder.mutationObservers.AppMutationObserver", {
+		metadata: {
+			library: "sap.ui.testrecorder"
+		},
 		_getOptions: function () {
 			return {
 				subtree: true,

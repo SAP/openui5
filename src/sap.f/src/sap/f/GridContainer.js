@@ -515,7 +515,7 @@ sap.ui.define([
 				}
 
 				// this is what the GridContainer changes
-				if (!that._bIsMouseDown) {
+				if (!that._bIsMouseDown && this.aItemDomRefs.length) {
 					this.aItemDomRefs[this.iFocusedIndex].focus();
 				}
 				/////////////////////////////////////////////
@@ -733,6 +733,10 @@ sap.ui.define([
 
 		this._setItemNavigationItems();
 		this._applyLayout(true);
+
+		if (this.getItems().length === 1) {
+			this.focusItem(0);
+		}
 	};
 
 	/**
@@ -1348,14 +1352,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>sapfocusleave</code> event.
-	 *
-	 */
-	GridContainer.prototype.onsapfocusleave = function(){
-		this._bIsMouseDown = false;
-	};
-
-	/**
 	 * Fires when border is reached of the <code>sap.f.GridContainer</code>.
 	 * @param {sap.ui.base.Event|jQuery.Event} oEvent The event object
 	 */
@@ -1492,14 +1488,21 @@ sap.ui.define([
 				break;
 			case KeyCodes.ARROW_UP:
 				oInsertAround = this._getClosestItemAbove(oItem);
-				var oDropContainer = oInsertAround.getParent();
 
-				if (this !== oDropContainer) {
+				if (!oInsertAround || (oInsertAround.isA("sap.f.GridContainer") && !oInsertAround.getItems().length)) {
+					break;
+				}
+
+				if (this !== oInsertAround.getParent()) {
 					sDropPosition = "Before";
 				}
 				break;
 			case KeyCodes.ARROW_DOWN:
 				oInsertAround = this._getClosestItemBelow(oItem);
+				if (!oInsertAround || (oInsertAround.isA("sap.f.GridContainer") && !oInsertAround.getItems().length)) {
+					break;
+				}
+
 				if (this !== oInsertAround.getParent()) {
 					sDropPosition = "Before";
 				}
@@ -1516,7 +1519,7 @@ sap.ui.define([
 		// sap.m.ScrollEnablement scrolls every time Ctrl + arrow are pressed, so stop propagation here.
 		oEvent.stopPropagation();
 
-		if (this === oInsertAround.getParent() &&  iInsertAt < iItemIndex) {
+		if (!oInsertAround.isA("sap.f.GridContainer") && this === oInsertAround.getParent() &&  iInsertAt < iItemIndex) {
 			sDropPosition = "Before";
 		}
 
@@ -1567,18 +1570,28 @@ sap.ui.define([
 		if (oClosestItem) {
 			return oClosestItem;
 		}
-
-		var aItemsBelow = Array.from(document.querySelectorAll(".sapFGridContainerItemWrapper")).filter(function (oItemWrapperElement) {
-			return GridContainerUtils.isBelow(oItem, oItemWrapperElement);
+		var aGridContainersBelow = Array.from(document.querySelectorAll(".sapFGridContainer")).filter(function (oGridContainerElement) {
+			return GridContainerUtils.isBelow(oItem, oGridContainerElement);
 		});
 
-		oClosestItem = GridContainerUtils.findClosest(oItem, aItemsBelow);
+		var oClosestGridContainer = GridContainerUtils.findClosest(oItem, aGridContainersBelow);
 
-		if (oClosestItem) {
-			return jQuery(oClosestItem.firstElementChild).control(0);
+		if (!oClosestGridContainer) {
+			return null;
 		}
 
-		return null;
+		var aItemsInClosestContainer = [];
+
+		jQuery(oClosestGridContainer).control(0).getItems().forEach(function(oItem) {
+			aItemsInClosestContainer.push(oItem.getDomRef());
+		});
+
+		if (aItemsInClosestContainer.length) {
+			oClosestItem = GridContainerUtils.findClosest(oItem, aItemsInClosestContainer);
+			return jQuery(oClosestItem).control(0);
+		}
+
+		return jQuery(oClosestGridContainer).control(0);
 	};
 
 	GridContainer.prototype._getClosestItemAboveInThisContainer = function (oItem) {
@@ -1612,17 +1625,28 @@ sap.ui.define([
 			return oClosestItem;
 		}
 
-		var aItemsAbove = Array.from(document.querySelectorAll(".sapFGridContainerItemWrapper")).filter(function (oItemWrapperElement) {
-			return GridContainerUtils.isAbove(oItem, oItemWrapperElement);
+		var aGridContainersAbove = Array.from(document.querySelectorAll(".sapFGridContainer")).filter(function (oGridContainerElement) {
+			return GridContainerUtils.isAbove(oItem, oGridContainerElement);
 		});
 
-		oClosestItem = GridContainerUtils.findClosest(oItem, aItemsAbove);
+		var oClosestGridContainer = GridContainerUtils.findClosest(oItem, aGridContainersAbove);
 
-		if (oClosestItem) {
-			return jQuery(oClosestItem.firstElementChild).control(0);
+		if (!oClosestGridContainer) {
+			return null;
 		}
 
-		return null;
+		var aItemsInClosestContainer = [];
+
+		jQuery(oClosestGridContainer).control(0).getItems().forEach(function(oItem) {
+			aItemsInClosestContainer.push(oItem.getDomRef());
+		});
+
+		if (aItemsInClosestContainer.length) {
+			oClosestItem = GridContainerUtils.findClosest(oItem, aItemsInClosestContainer);
+			return jQuery(oClosestItem).control(0);
+		}
+
+		return jQuery(oClosestGridContainer).control(0);
 	};
 
 	/**
@@ -1643,7 +1667,8 @@ sap.ui.define([
 		aItemDomRefs = oItemNavigation.getItemDomRefs();
 
 		if (aItemDomRefs[iIndex]) {
-			// @todo fix the focus when adding a new item into an empty grid
+			oItemNavigation.setFocusedIndex(iIndex);
+
 			aItemDomRefs[iIndex].focus();
 		}
 	};

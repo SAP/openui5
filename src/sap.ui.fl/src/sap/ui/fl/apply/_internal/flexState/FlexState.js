@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap",
 	"sap/ui/fl/apply/_internal/flexState/prepareChangesMap",
 	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap",
+	"sap/ui/fl/apply/_internal/flexState/prepareCompVariantsMap",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/base/Log"
@@ -25,6 +26,7 @@ sap.ui.define([
 	prepareAppDescriptorMap,
 	prepareChangesMap,
 	prepareVariantsMap,
+	prepareCompVariantsMap,
 	LayerUtils,
 	Utils,
 	Log
@@ -39,6 +41,7 @@ sap.ui.define([
 	 * 		appDescriptorMap: {},
 	 * 		changesMap: {},
 	 * 		variantsMap: {},
+	 * 		compVariantsMap: {},
 	 * 		storageResponse: {
 	 * 			changes: {
 	 * 				changes: [...],
@@ -46,7 +49,7 @@ sap.ui.define([
 	 * 				variantChanges: [...],
 	 * 				variantDependentControlChanges: [...],
 	 * 				variantManagementChanges: [...],
-	 * 				ui2personalization: {...},
+	 * 				ui2personalization: {...}
 	 * 			},
 	 * 			loadModules: <boolean>
 	 * 		},
@@ -69,22 +72,23 @@ sap.ui.define([
 	var _mPrepareFunctions = {
 		appDescriptorMap: prepareAppDescriptorMap,
 		changesMap: prepareChangesMap,
-		variantsMap: prepareVariantsMap
+		variantsMap: prepareVariantsMap,
+		compVariantsMap: prepareCompVariantsMap
 	};
 
-	function _updateComponentData(mPropertyBag) {
+	function updateComponentData(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
 		_mInstances[mPropertyBag.reference].componentData = oComponent ? oComponent.getComponentData() : mPropertyBag.componentData;
 	}
 
-	function _enhancePropertyBag(mPropertyBag) {
+	function enhancePropertyBag(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
 		mPropertyBag.componentData = mPropertyBag.componentData || oComponent.getComponentData() || {};
 		mPropertyBag.manifest = mPropertyBag.manifest || mPropertyBag.rawManifest || oComponent.getManifestObject();
 		mPropertyBag.reference = mPropertyBag.reference || ManifestUtils.getFlexReference(mPropertyBag);
 	}
 
-	function _getInstanceEntryOrThrowError(sReference, sMapName) {
+	function getInstanceEntryOrThrowError(sReference, sMapName) {
 		if (!_mInstances[sReference]) {
 			throw new Error("State is not yet initialized");
 		}
@@ -103,15 +107,19 @@ sap.ui.define([
 	}
 
 	function getAppDescriptorMap(sReference) {
-		return _getInstanceEntryOrThrowError(sReference, "appDescriptorMap");
+		return getInstanceEntryOrThrowError(sReference, "appDescriptorMap");
 	}
 
 	function getChangesMap(sReference) {
-		return _getInstanceEntryOrThrowError(sReference, "changesMap");
+		return getInstanceEntryOrThrowError(sReference, "changesMap");
 	}
 
 	function getVariantsMap(sReference) {
-		return _getInstanceEntryOrThrowError(sReference, "variantsMap");
+		return getInstanceEntryOrThrowError(sReference, "variantsMap");
+	}
+
+	function getCompVariantsMap(sReference) {
+		return getInstanceEntryOrThrowError(sReference, "compVariantsMap");
 	}
 
 	function createSecondInstanceIfNecessary(mPropertyBag) {
@@ -242,7 +250,7 @@ sap.ui.define([
 	FlexState.initialize = function(mPropertyBag) {
 		return Promise.resolve(mPropertyBag)
 			.then(function(mInitProperties) {
-				_enhancePropertyBag(mInitProperties);
+				enhancePropertyBag(mInitProperties);
 				var sFlexReference = mInitProperties.reference;
 
 				if (_mInitPromises[sFlexReference]) {
@@ -262,7 +270,7 @@ sap.ui.define([
 				// filtering should only be done once; can be reset via function
 				if (!_mInstances[mPropertyBag.reference].storageResponse) {
 					_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
-					_updateComponentData(mPropertyBag);
+					updateComponentData(mPropertyBag);
 					// for the time being ensure variants map is prepared until getChangesForComponent() is removed
 					FlexState.getVariantsState(mPropertyBag.reference);
 				}
@@ -281,7 +289,7 @@ sap.ui.define([
 	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized again
 	 */
 	FlexState.clearAndInitialize = function(mPropertyBag) {
-		_enhancePropertyBag(mPropertyBag);
+		enhancePropertyBag(mPropertyBag);
 		var bVariantsMapExists = !!ObjectPath.get(["preparedMaps", "variantsMap"], _mInstances[mPropertyBag.reference]);
 
 		FlexState.clearState(mPropertyBag.reference);
@@ -336,6 +344,15 @@ sap.ui.define([
 
 	FlexState.getUI2Personalization = function(sReference) {
 		return _mInstances[sReference].unfilteredStorageResponse.changes.ui2personalization;
+	};
+
+	FlexState.getCompVariantsMap = function(sReference) {
+		return getCompVariantsMap(sReference).map;
+	};
+
+
+	FlexState.getCompEntitiesByIdMap = function(sReference) {
+		return getCompVariantsMap(sReference).byId;
 	};
 
 	FlexState._callPrepareFunction = function(sMapName, mPropertyBag) {

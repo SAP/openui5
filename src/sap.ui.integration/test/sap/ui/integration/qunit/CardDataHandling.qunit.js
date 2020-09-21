@@ -746,7 +746,7 @@ function (
 							"value": "1",
 							"data": {
 								"request": {
-									"url": "someurl/?f={{filters.f}}"
+									"url": "someurl/?f={filters>/f/value}"
 								}
 							}
 						}

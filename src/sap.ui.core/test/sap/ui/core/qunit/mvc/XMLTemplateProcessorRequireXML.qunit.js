@@ -419,7 +419,7 @@ sap.ui.define([
 				create: function () {
 					return sap.ui.component({
 						name: TESTDATA_PREFIX + ".extension-points.Child",
-						manifestUrl: sap.ui.require.toUrl("testdata/xml-require/extension-points/Parent/") + "manifest-sync-rootview.json",
+						manifestUrl: sap.ui.require.toUrl("testdata/xml-require/extension-points/Parent/manifest-sync-rootview.json"),
 						async: false
 					}).getRootControl().loaded();
 				},

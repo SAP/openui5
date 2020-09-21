@@ -20,6 +20,9 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FilterItemLayout = VerticalLayout.extend("sap.ui.mdc.filterbar.aligned.FilterItemLayout", /** @lends sap.ui.mdc.filterbar.aligned.FilterItemLayout.prototype */ {
+		metadata: {
+			library: "sap.ui.mdc"
+		},
 		renderer: {
 			apiVersion: 2,
 			render: VerticalLayoutRenderer.render
@@ -69,6 +72,7 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 			this._oLabel.destroy();
 			this._oLabel = undefined;
 		}
+		VerticalLayout.prototype.exit.apply(this, arguments);
 	};
 
 	return FilterItemLayout;

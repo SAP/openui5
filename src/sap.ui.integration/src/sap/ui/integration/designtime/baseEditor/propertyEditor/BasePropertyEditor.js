@@ -56,6 +56,7 @@ sap.ui.define([
 	 */
 	var BasePropertyEditor = Control.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor", {
 		metadata: {
+			library: "sap.ui.integration",
 			interfaces : ["sap.ui.core.IFormContent"],
 			properties: {
 				"renderLabel" : {
@@ -383,8 +384,8 @@ sap.ui.define([
 		var oPropertyValidators = this.getConfig().validators || {};
 		return values(Object.assign(
 			{},
-			oPropertyValidators,
-			this.getDefaultValidators()
+			this.getDefaultValidators(),
+			oPropertyValidators
 		)).filter(function (oValidator) {
 			return oValidator.isEnabled !== false;
 		});

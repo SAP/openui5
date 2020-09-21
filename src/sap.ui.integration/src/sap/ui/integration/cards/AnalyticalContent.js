@@ -75,6 +75,9 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.AnalyticalContent
 	 */
 	var AnalyticalContent = BaseContent.extend("sap.ui.integration.cards.AnalyticalContent", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: AnalyticalContentRenderer
 	});
 
@@ -199,7 +202,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oResolvedChartObject = BindingResolver.resolveValue(oChartObject, this.getModel(), "/");
+		var oResolvedChartObject = BindingResolver.resolveValue(oChartObject, this, "/");
 
 		var aDimensionNames = [];
 		if (oChartObject.dimensions) {
@@ -273,27 +276,6 @@ sap.ui.define([
 		this.setAggregation("_content", oChart);
 	};
 
-	AnalyticalContent.prototype.onBeforeRendering = function () {
-		if (this._handleHostConfiguration) {
-			//implementation is added with sap.ui.integration.host.HostConfiguration
-			this._handleHostConfiguration();
-		}
-	};
-
-	//add host configuration handler for analytical content
-	AnalyticalContent.prototype._handleHostConfiguration = function () {
-		var oParent = this.getParent(),
-			oContent = this.getAggregation("_content");
-		if (oParent && oParent.getHostConfigurationId && oContent) {
-			var oHostConfiguration = Core.byId(oParent.getHostConfigurationId());
-			if (oHostConfiguration) {
-				var oSettings = oHostConfiguration.generateJSONSettings("vizProperties"),
-					oVizProperties = oContent.getVizProperties();
-				oVizProperties = jQuery.extend(true, oVizProperties, oSettings);
-				oContent.setVizProperties(oVizProperties);
-			}
-		}
-	};
 
 	return AnalyticalContent;
 });

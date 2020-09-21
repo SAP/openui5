@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/Event",
 	"sap/ui/core/UIComponent",
-	"sap/m/BadgeCustomData"
+	"sap/m/BadgeCustomData",
+	"sap/m/library"
 ],
 	function (
 		Card,
@@ -18,11 +19,14 @@ sap.ui.define([
 		ComponentContainer,
 		Event,
 		UIComponent,
-		BadgeCustomData
+		BadgeCustomData,
+		mLibrary
 	) {
 		"use strict";
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
+
+		var AvatarColor = mLibrary.AvatarColor;
 
 		var oManifest_Header = {
 			"sap.card": {
@@ -329,7 +333,7 @@ sap.ui.define([
 						},
 						"description": {
 							"value": "Stationed in: {{parameters.city}}, {{parameters.country}}. City again: {{parameters.city}}"
-									+ "Other test: {{parameters.testObject.text}} and {{parameters.testArray.0.text}} and {{parameters.testArray.1.text}}"
+								+ "Other test: {{parameters.testObject.text}} and {{parameters.testArray.0.text}} and {{parameters.testArray.1.text}}"
 						},
 						"highlight": "{state}"
 					}
@@ -521,7 +525,6 @@ sap.ui.define([
 						"text": "AJ",
 						"shape": "Circle",
 						"alt": "Some alternative text", // Will be ignored as its not present in the Avatar control atm.
-						"backgroundColor": "#000000", // Will be ignored as its not present in the Avatar control atm.
 						"color": "#FF0000" // Will be ignored as its not present in the Avatar control atm.
 					},
 					"status": {
@@ -608,7 +611,8 @@ sap.ui.define([
 					"type": "Numeric",
 					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
 					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"unitOfMeasurement": "EUR"}
+					"unitOfMeasurement": "EUR"
+				}
 			}
 		};
 
@@ -854,8 +858,75 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_AvatarHeader);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+		});
+
+		QUnit.module("Default Header", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("'backgroundColor' when there is icon src", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar");
+
+				// Assert
+				assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"icon": {
+							"src": "sap-icon://accept"
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("'backgroundColor' when there are initials", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar"),
+					sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
+
+				// Assert
+				assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should be default value when there are initials.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"icon": {
+							"text": "SI"
+						}
+					}
+				}
+			});
 		});
 
 		QUnit.test("Numeric Header generic", function (assert) {
@@ -1036,7 +1107,7 @@ sap.ui.define([
 
 				// Assert Card Container
 				assert.equal(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
-				assert.equal(document.getElementById(this.oCard.getId() + "-ariaText").innerText, "List" + " " + this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD") , "Card container should have aria-roledescription - List Card");
+				assert.equal(document.getElementById(this.oCard.getId() + "-ariaText").innerText, "List" + " " + this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), "Card container should have aria-roledescription - List Card");
 
 				// Assert Card Header
 				assert.equal(oHeaderDomRef.getAttribute("role"), "heading", "Card header should have a role - heading");
@@ -1048,7 +1119,7 @@ sap.ui.define([
 				// Assert Card Content
 				assert.equal(oContentDomRef.getAttribute("role"), "group", "Card content should have a role - group");
 				assert.equal(oContentDomRef.getAttribute("aria-labelledby"), this.oCard.getId() + "-ariaContentText", "Card container should have aria-labelledby with the correct id");
-				assert.equal(document.getElementById(this.oCard.getId() + "-ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT") , "ARIA content hidden text should have the correct value");
+				assert.equal(document.getElementById(this.oCard.getId() + "-ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "ARIA content hidden text should have the correct value");
 				done();
 			}.bind(this));
 
@@ -1073,7 +1144,7 @@ sap.ui.define([
 
 				// Assert Card Header
 				assert.equal(oHeaderDomRef.getAttribute("role"), "button", "Card header should have a role - button");
-				assert.notOk(oHeaderDomRef.getAttribute("aria-level"),  "Card header should not have aria-level");
+				assert.notOk(oHeaderDomRef.getAttribute("aria-level"), "Card header should not have aria-level");
 				assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
 				assert.equal(oHeaderDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card container should have aria-lebelledby - pointing to the title, subtitle, status text and avatar ids if there is one");
 				assert.equal(oHeaderDomRef.getAttribute("tabindex"), 0, "Card header should have tabindex=0");
@@ -1429,8 +1500,8 @@ sap.ui.define([
 
 				// Act
 				var sSubtitle = this.oCard.getCardHeader()._getSubtitle().getText();
-				assert.ok(sSubtitle.indexOf(new Date().toISOString().slice(0, 10)) > -1 , "Card should have a subtitle with the now Date");
-				assert.ok(sSubtitle.indexOf(Core.getConfiguration().getLocale().toString()) > -1 , "Card should have a subtitle with the locale");
+				assert.ok(sSubtitle.indexOf(new Date().toISOString().slice(0, 10)) > -1, "Card should have a subtitle with the now Date");
+				assert.ok(sSubtitle.indexOf(Core.getConfiguration().getLocale().toString()) > -1, "Card should have a subtitle with the locale");
 				done();
 			}.bind(this));
 
@@ -1727,8 +1798,70 @@ sap.ui.define([
 			// Act
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.setManifestChanges([
-				{content: {header: {title: "My new title 1"}}},
-				{content: {header: {title: "My new title 2"}}}
+				{ content: { header: { title: "My new title 1" } } },
+				{ content: { header: { title: "My new title 2" } } }
+			]);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Change title with manifestChanges with path syntax", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Assert
+				assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 2", "The title is changed");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.setManifestChanges([
+				{ "/sap.card/header/title": "My new title 1" },
+				{ "/sap.card/header/title": "My new title 2" }
+
+			]);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Change title with manifestChanges with mixed syntax, last path syntax", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Assert
+				assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 4", "The title is changed");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.setManifestChanges([
+				{ "/sap.card/header/title": "My new title 1" },
+				{ content: { header: { title: "My new title 2" } } },
+				{ content: { header: { title: "My new title 3" } } },
+				{ "/sap.card/header/title": "My new title 4" }
+			]);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Change title with manifestChanges with mixed syntax, last content syntax", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Assert
+				assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 4", "The title is changed");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.setManifestChanges([
+				{ "/sap.card/header/title": "My new title 1" },
+				{ content: { header: { title: "My new title 2" } } },
+				{ "/sap.card/header/title": "My new title 3" },
+				{ content: { header: { title: "My new title 4" } } }
 			]);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
@@ -1747,7 +1880,26 @@ sap.ui.define([
 			// Act
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.setManifestChanges([
-				{content: {header: {title: "Test title"}}}
+				{ content: { header: { title: "Test title" } } }
+			]);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Check getManifestWithMergedChanges with path syntax", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Assert
+				var oMergedManifest = this.oCard.getManifestWithMergedChanges();
+				assert.strictEqual(oMergedManifest["sap.card"]["header"]["title"], "Test title", "The manifest contains the given changes.");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.setManifestChanges([
+				{ "/sap.card/header/title": "Test title" }
 			]);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});

@@ -27,7 +27,7 @@ sap.ui.define([
 			}
 		]
 	});
-	this.oChartItemPanel.setModel(oModel);
+	this.oChartItemPanel.setP13nModel(oModel);
 	this.oChartItemPanel.setPanelColumns(["Item", "Type", "Role"]);
 	this.oChartItemPanel.placeAt("qunit-fixture");
 	sap.ui.getCore().applyChanges();

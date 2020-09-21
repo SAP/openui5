@@ -100,12 +100,14 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 			return;
 		}
 
-		var aValidDropInfos = getValidDropInfos(oDroppedControl.getParent(), aValidDragInfos, oEvent);
+		var oDroppedContainerControl = oDroppedControl.isA("sap.f.GridContainer") ? oDroppedControl : oDroppedControl.getParent();
+		var aValidDropInfos = getValidDropInfos(oDroppedContainerControl, aValidDragInfos, oEvent);
 
 		// fire dragenter event of valid DropInfos and filter if preventDefault is called
 		aValidDropInfos = aValidDropInfos.filter(function(oDropInfo) {
 			return oDropInfo.fireDragEnter(oEvent);
 		});
+
 
 		aValidDropInfos.forEach(function (oDropConfig) {
 			oDropConfig.fireDropEvent(

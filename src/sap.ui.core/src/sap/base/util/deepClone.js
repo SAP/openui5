@@ -66,7 +66,9 @@ sap.ui.define(["./isPlainObject"], function(isPlainObject) {
 		if (src == null) {
 			return src;
 		} else if (src instanceof Date) {
-			return new Date(src);
+			// clone date object using #getTime(). Officially the date constructor does not support parameter Date.
+			// IE 11 loses milliseconds when using new Date(new Date())
+			return new Date(src.getTime());
 		} else if (Array.isArray(src)) {
 			return cloneArray(src, depth, maxDepth);
 		} else if (typeof src === "object") {

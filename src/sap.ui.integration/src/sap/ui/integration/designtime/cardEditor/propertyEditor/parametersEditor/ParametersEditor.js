@@ -48,6 +48,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var ParametersEditor = MapEditor.extend("sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersEditor", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
@@ -107,20 +110,6 @@ sap.ui.define([
 				label: this._onDesigntimeChange
 			}
 		);
-	};
-
-	ParametersEditor.prototype._onDesigntimeChange = function (sKey, oEvent) {
-		var oDesigntime = _merge({}, this.getConfig().designtime);
-		var newDesigntimeValue = { __value: {} };
-		newDesigntimeValue.__value[oEvent.getParameter("path")] = oEvent.getParameter("value");
-
-		oDesigntime[sKey] = _merge(
-			{},
-			oDesigntime[sKey],
-			newDesigntimeValue
-		);
-		this.setDesigntimeMetadata(oDesigntime);
-		this.setValue(this.getValue());
 	};
 
 	ParametersEditor.prototype.onBeforeConfigChange = function(oConfig) {

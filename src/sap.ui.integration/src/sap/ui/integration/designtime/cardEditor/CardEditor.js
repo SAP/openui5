@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_CancelablePromise",
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/restricted/_omit",
-	"sap/base/util/restricted/_toArray",
+	"sap/base/util/restricted/_castArray",
 	"sap/base/util/deepEqual",
 	"sap/base/util/each",
 	"sap/base/util/merge",
@@ -20,7 +20,7 @@ sap.ui.define([
 	CancelablePromise,
 	_isEqual,
 	_omit,
-	_toArray,
+	_castArray,
 	deepEqual,
 	each,
 	merge,
@@ -41,20 +41,45 @@ sap.ui.define([
 	 */
 	var CardEditor = BaseEditor.extend("sap.ui.integration.designtime.cardEditor.CardEditor", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				layout: {
 					type: "string",
 					defaultValue: "form"
 				},
+
 				designtimeChanges: {
 					type: "array",
 					defaultValue: []
+				},
+
+				/**
+				 * Defines the base URL of the Card Manifest.
+				 * @since 1.83
+				 */
+				baseUrl: {
+					type: "sap.ui.core.URI",
+					defaultValue: null
+				},
+
+				/**
+				 * @inheritDoc
+				 */
+				"config": {
+					type: "object",
+					defaultValue: {
+						"i18n": [].concat(
+							BaseEditor.getMetadata().getProperty("config").getDefaultValue().i18n,
+							"sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
+						)
+					}
 				}
 			}
 		},
 		constructor: function (mParameters) {
 			mParameters = mParameters || {};
 			BaseEditor.prototype.constructor.apply(this, arguments);
+
 			if (!mParameters["config"]) {
 				this.addConfig(oDefaultCardConfig, true);
 			}
@@ -114,6 +139,8 @@ sap.ui.define([
 	};
 
 	CardEditor.prototype.setJson = function () {
+		this.setPreventInitialization(true);
+
 		BaseEditor.prototype.setJson.apply(this, arguments);
 
 		var oJson = this.getJson();
@@ -131,25 +158,27 @@ sap.ui.define([
 			this._bDesigntimeInit = true;
 			this._bCardId = sCardId;
 			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
-			var sBaseUrl = sanitizePath(ObjectPath.get(["baseURL"], oJson) || "");
+			var sBaseUrl = sanitizePath(this.getBaseUrl() || "");
 
 			if (sBaseUrl && sDesigntimePath) {
 				var mPaths = {};
 				var sSanitizedBaseUrl = sanitizePath(sBaseUrl);
-				mPaths[sCardId] = sSanitizedBaseUrl;
+				var sDesigntimeRelativePath = trimCurrentFolderPrefix(sDesigntimePath);
+				var sDesigntimeAbsolutePath = sSanitizedBaseUrl + "/" + sDesigntimeRelativePath;
+				var sNamespace = sCardId.replace(/\./g, "/") + "/" + sDesigntimeRelativePath;
+				mPaths[sNamespace] = sDesigntimeAbsolutePath;
 				sap.ui.loader.config({
 					paths: mPaths
 				});
-				var sDesigntimeFolderPath = trimCurrentFolderPrefix(sDesigntimePath);
-				var sDesigntimePrefix = sCardId + "/" + sDesigntimeFolderPath;
-				var sEditorConfigPath = sDesigntimePrefix + "/editor.config";
-				var sDesigntimeMetadataPath = sSanitizedBaseUrl + "/" + sDesigntimeFolderPath + "/metadata.json";
+				var sEditorConfigModule = sNamespace + "/editor.config";
+				var sI18nModule = sNamespace + "/i18n/i18n.properties";
+				var sDesigntimeMetadataPath = sDesigntimeAbsolutePath + "/metadata.json";
 
 				this._oDesigntimePromise = new CancelablePromise(function (fnResolve) {
 					Promise.all([
 						new Promise(function (fnResolveEditorConfig) {
 							sap.ui.require(
-								[sEditorConfigPath],
+								[sEditorConfigModule],
 								fnResolveEditorConfig,
 								function () {
 									fnResolveEditorConfig({}); // if editor.config.js doesn't exist
@@ -167,6 +196,8 @@ sap.ui.define([
 				});
 
 				this._oDesigntimePromise.then(function (aDesigntimeFiles) {
+					this.setPreventInitialization(false);
+
 					// Metadata
 					var oDesigntimeMetadata = aDesigntimeFiles[1];
 					oDesigntimeMetadata = CardMerger.mergeCardDesigntimeMetadata(oDesigntimeMetadata, this.getDesigntimeChanges());
@@ -179,15 +210,18 @@ sap.ui.define([
 
 					if (isEmptyObject(oConfig)) {
 						this.addConfig({
-							"i18n": sDesigntimePrefix + "/i18n.properties"
+							"i18n": sI18nModule
 						});
 					} else {
 						oConfig = merge({}, oConfig);
-						oConfig.i18n = _toArray(oConfig.i18n);
-						oConfig.i18n.push(sDesigntimePrefix + "/i18n.properties");
-						this._addSpecificConfig(merge({}, oConfig));
+						oConfig.i18n = oConfig.i18n ? _castArray(oConfig.i18n) : [];
+						oConfig.i18n.push(sI18nModule);
+						this._addSpecificConfig(oConfig);
 					}
 				}.bind(this));
+			} else {
+				this.setPreventInitialization(false);
+				this.addConfig({});
 			}
 		}
 	};

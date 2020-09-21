@@ -7,9 +7,11 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
+	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/test/TestUtils"
-], function (Log, coreLibrary, Message, MessageScope, ODataMessageParser, ODataUtils, TestUtils) {
+], function (Log, coreLibrary, Message, MessageScope, ODataMessageParser, ODataMetadata, ODataUtils,
+		 TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, no-warning-comments: 0*/
 	"use strict";
@@ -1173,6 +1175,142 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_propagateMessages: Messages belong to collections", function (assert) {
+		var mGetEntities = {"Foo('1')" : true},
+			oLastMessage1 = new Message({message : "delete", fullTarget : "/Foo('1')"}),
+			oLastMessage2 = new Message({message : "keep", fullTarget : "/Foo('2')"}),
+			oMessageProcessor = {fireMessageChange : function () {}},
+			oNewMessage = new Message({message : "new", fullTarget : "/Foo('1')"}),
+			aMessages = [oNewMessage],
+			aNewLastMessages = [oLastMessage2, oNewMessage],
+			oODataMessageParser = {
+				_getAffectedTargets : function () {},
+				_lastMessages : [oLastMessage1, oLastMessage2],
+				getProcessor : function () {}
+			},
+			mRequestInfo = {
+				request : {
+					deepPath : "/Foo",
+					functionMetadata : {},
+					updateAggregatedMessages : true
+				},
+				response : {
+					statusCode : 200
+				}
+			};
+
+		this.mock(ODataMetadata).expects("_returnsCollection")
+			.withExactArgs(mRequestInfo.request.functionMetadata).returns(true);
+		this.mock(oODataMessageParser).expects("_getAffectedTargets")
+			.withExactArgs(aMessages, mRequestInfo, mGetEntities, "~mChangeEntities");
+		this.mock(oODataMessageParser).expects("getProcessor").withExactArgs()
+			.returns(oMessageProcessor);
+		this.mock(oMessageProcessor).expects("fireMessageChange")
+			.withExactArgs(sinon.match({
+				oldMessages : sinon.match([oLastMessage1]),
+				newMessages : sinon.match.same(aMessages)
+			}))
+			.returns(oMessageProcessor);
+
+		// code under test
+		ODataMessageParser.prototype._propagateMessages.call(oODataMessageParser,
+			aMessages, mRequestInfo , mGetEntities, "~mChangeEntities", "~bSimpleMessageLifeCycle");
+
+		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
+	});
+
+	//*********************************************************************************************
+[undefined, {}].forEach(function (mGetEntities) {
+	QUnit.test("_propagateMessages: mGetEntities: " + mGetEntities, function (assert) {
+		var oLastMessage1 = new Message({message : "keep", fullTarget : "/Foo('1')"}),
+			oLastMessage2 = new Message({message : "keep", fullTarget : "/Foo('2')"}),
+			oMessageProcessor = {fireMessageChange : function () {}},
+			aMessages = [],
+			aNewLastMessages = [oLastMessage1, oLastMessage2],
+			oODataMessageParser = {
+				_getAffectedTargets : function () {},
+				_lastMessages : [oLastMessage1, oLastMessage2],
+				getProcessor : function () {}
+			},
+			mRequestInfo = {
+				request : {
+					deepPath : "/Foo",
+					functionMetadata : {},
+					updateAggregatedMessages : true
+				},
+				response : {
+					statusCode : 200
+				}
+			};
+
+		this.mock(ODataMetadata).expects("_returnsCollection")
+			.withExactArgs(sinon.match.same(mRequestInfo.request.functionMetadata)).returns(true);
+		this.mock(oODataMessageParser).expects("_getAffectedTargets")
+			.withExactArgs(sinon.match.same(aMessages), sinon.match.same(mRequestInfo),
+				{}, "~mChangeEntities");
+		this.mock(oODataMessageParser).expects("getProcessor").withExactArgs()
+			.returns(oMessageProcessor);
+		this.mock(oMessageProcessor).expects("fireMessageChange")
+			.withExactArgs(sinon.match({
+				oldMessages : [],
+				newMessages : []
+			}))
+			.returns(oMessageProcessor);
+
+		// code under test
+		ODataMessageParser.prototype._propagateMessages.call(oODataMessageParser,
+			aMessages, mRequestInfo , mGetEntities, "~mChangeEntities", "~bSimpleMessageLifeCycle");
+
+		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_propagateMessages: return type is no collection", function (assert) {
+		var mGetEntities = {"Foo('1')" : true},
+			oLastMessage1 = new Message({message : "delete", fullTarget : "/Foo('1')"}),
+			oMessageProcessor = {fireMessageChange : function () {}},
+			oNewMessage = new Message({message : "new", fullTarget : "/Foo('1')"}),
+			aMessage = [oNewMessage],
+			aNewLastMessages = [oNewMessage],
+			oODataMessageParser = {
+				_getAffectedTargets : function () {},
+				_lastMessages : [oLastMessage1],
+				getProcessor : function () {}
+			},
+			mRequestInfo = {
+				request : {
+					deepPath : "/Foo('1')",
+					functionMetadata : {},
+					updateAggregatedMessages : true
+				},
+				response : {
+					statusCode : 200
+				}
+			};
+
+		this.mock(ODataMetadata).expects("_returnsCollection")
+			.withExactArgs(mRequestInfo.request.functionMetadata).returns(false);
+		this.mock(oODataMessageParser).expects("_getAffectedTargets")
+			.withExactArgs(sinon.match.same(aMessage), sinon.match.same(mRequestInfo),
+				sinon.match.same(mGetEntities), "~mChangeEntities");
+		this.mock(oODataMessageParser).expects("getProcessor").withExactArgs()
+			.returns(oMessageProcessor);
+		this.mock(oMessageProcessor).expects("fireMessageChange")
+			.withExactArgs(sinon.match({
+				oldMessages : sinon.match([oLastMessage1]),
+				newMessages : sinon.match.same(aMessage)
+			}))
+			.returns(oMessageProcessor);
+
+		// code under test
+		ODataMessageParser.prototype._propagateMessages.call(oODataMessageParser,
+			aMessage, mRequestInfo , mGetEntities, "~mChangeEntities", "~bSimpleMessageLifeCycle");
+
+		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
+	});
+
+	//*********************************************************************************************
 [{
 	oMessageObject : {
 		"@sap.severity" : "warning",
@@ -1551,9 +1689,10 @@ sap.ui.define([
 	method : "_parseHeader",
 	requestMethod : "MERGE",
 	statusCode : 204
-}].forEach(function (oFixture) {
-	[false, true].forEach(function (bMessageScopeSupported) {
-	QUnit.test("parse: " + oFixture.statusCode + "," + bMessageScopeSupported, function (assert) {
+}].forEach(function (oFixture, i) {
+	[false, true].forEach(function (bMessageScopeSupported, j) {
+		[false, true].forEach(function (bStatusCodeAsString, k) {
+	QUnit.test("parse: " + i + "," + j + "," + k, function (assert) {
 		var oODataMessageParser = {
 				_parseBody : function () {},
 				_parseHeader : function () {},
@@ -1563,7 +1702,9 @@ sap.ui.define([
 				method : oFixture.requestMethod || "GET",
 				requestUri : "~requestUri"
 			},
-			oResponse = {statusCode : oFixture.statusCode},
+			oResponse = {
+				statusCode : bStatusCodeAsString ? String(oFixture.statusCode) : oFixture.statusCode
+			},
 			mRequestInfo = {
 				request : oRequest,
 				response : oResponse,
@@ -1583,18 +1724,20 @@ sap.ui.define([
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
 			"~mGetEntities", "~mChangeEntities", bMessageScopeSupported);
 	});
+		});
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("parse: unsupported status code", function (assert) {
+[false, true].forEach(function (bStatusCodeAsString) {
+	QUnit.test("parse: unsupported status code, " + bStatusCodeAsString, function (assert) {
 		var oODataMessageParser = {
 				_parseBody : function () {},
 				_parseHeader : function () {},
 				_propagateMessages : function () {}
 			},
 			oRequest = {method : "GET", requestUri : "~requestUri"},
-			oResponse = {statusCode : 301},
+			oResponse = {statusCode : bStatusCodeAsString ? "301" : 301},
 			mRequestInfo = {
 				request : oRequest,
 				response : oResponse,
@@ -1612,16 +1755,18 @@ sap.ui.define([
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
 			"~mGetEntities", "~mChangeEntities", true);
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("parse: GET with 204 response is not considered", function (assert) {
+[false, true].forEach(function (bStatusCodeAsString) {
+	QUnit.test("parse: ignore GET with 204 response, " + bStatusCodeAsString, function (assert) {
 		var oODataMessageParser = {
 				_parseBody : function () {},
 				_parseHeader : function () {},
 				_propagateMessages : function () {}
 			},
 			oRequest = {method : "GET", requestUri : "~requestUri"},
-			oResponse = {statusCode : 204};
+			oResponse = {statusCode : bStatusCodeAsString ? "204" : 204};
 
 		this.mock(oODataMessageParser).expects("_parseBody").never();
 		this.mock(oODataMessageParser).expects("_parseHeader").never();
@@ -1631,4 +1776,5 @@ sap.ui.define([
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
 			"~mGetEntities", "~mChangeEntities", true);
 	});
+});
 });

@@ -32,21 +32,11 @@ function(
 		});
 	}
 
-	var aControls = [];
-
 	QUnit.module("sap.ui.fl.LayerUtils", {
 		afterEach: function () {
-			aControls.forEach(function (oControl) {
-				oControl.destroy();
-			});
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("sap.ui.fl.LayerUtils", function (assert) {
-			var oInstance = LayerUtils;
-			assert.ok(oInstance);
-		});
-
 		QUnit.test("getCurrentLayer shall return sap-ui-layer parameter", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 			var sLayer = LayerUtils.getCurrentLayer();
@@ -159,6 +149,26 @@ function(
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
 			assert.equal(LayerUtils.isOverMaxLayer(Layer.USER), true, "true");
+		});
+	});
+
+	QUnit.module("LayerUtils.isOverLayer", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("compare CUSTOMER with layer BASE", function (assert) {
+			assert.equal(LayerUtils.isOverLayer(Layer.BASE, Layer.CUSTOMER), false, "false");
+		});
+
+		QUnit.test("compare CUSTOMER with layer CUSTOMER", function (assert) {
+			assert.equal(LayerUtils.isOverLayer(Layer.CUSTOMER, Layer.CUSTOMER), false, "false");
+		});
+
+		QUnit.test("compare CUSTOMER with layer USER", function (assert) {
+			assert.equal(LayerUtils.isOverLayer(Layer.USER, Layer.CUSTOMER), true, "true");
 		});
 	});
 

@@ -5,12 +5,10 @@
 sap.ui.require([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/customElements/CustomElementBase",
-	"sap/ui/integration/customElements/CustomElementHostConfiguration",
 	"sap/m/BadgeCustomData"
 ], function (
 	Card,
 	CustomElementBase,
-	CustomElementHostConfiguration,
 	BadgeCustomData
 ) {
 	"use strict";
@@ -69,6 +67,5 @@ sap.ui.require([
 		return this._getControl().loadDesigntime();
 	};
 
-	var aDependencies = ["ui-integration-host-configuration"];
-	CustomElementBase.define("ui-integration-card", CustomElementCard, aDependencies);
+	CustomElementBase.define("ui-integration-card", CustomElementCard);
 });

@@ -94,9 +94,7 @@
 	<profiles>
 
 		<profile>
-
 			<id>eslint.build</id>
-
 			<build>
 				<plugins>
 					<plugin>
@@ -114,6 +112,14 @@
 				</plugins>
 			</build>
 
+		</profile>
+
+		<profile>
+			<id>eslintnode.build</id>
+			<properties>
+				<!-- linting could use a newer ESLint version for this project only! -->
+				<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
+			</properties>
 		</profile>
 
 	</profiles>

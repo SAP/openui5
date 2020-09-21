@@ -323,6 +323,7 @@ sap.ui.define([
 		// aria-level
 		this.navigationList.$().find('li:not(.sapTntNavLIGroupItem)').each(function (index, item) {
 			assert.ok(item.getAttribute('aria-level') === null, 'first level "li" element does not have ARIA attributes.');
+			assert.strictEqual(item.getAttribute('aria-hidden'), 'true', 'first level "li" element has aria-hidden="true"');
 		});
 
 		this.navigationList.$().find('div.sapTntNavLIGroup').each(function (index, item) {

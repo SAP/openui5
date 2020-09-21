@@ -31,6 +31,9 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.ComponentContent
 	 */
 	var ComponentContent = BaseContent.extend("sap.ui.integration.cards.ComponentContent", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: {}
 	});
 

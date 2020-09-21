@@ -24,6 +24,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.p13n.panels.BasePanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
+
 	var BasePanel = Control.extend("sap.ui.mdc.p13n.panels.BasePanel", {
 		library: "sap.ui.mdc",
 
@@ -74,7 +75,7 @@ sap.ui.define([
 		},
 		init: function() {
 			// list is necessary to set the template + model on
-			this._oListControl = this._createInnerListControl();
+			this._oListControl = this._createUI();
 
 			// disable 'select all'
 			this._oListControl.bPreventMassSelection = true;
@@ -94,6 +95,8 @@ sap.ui.define([
 
 	});
 
+	BasePanel.prototype.P13N_MODEL = "$p13n";
+
 	/**
 	 * Can be overwritten in case a different wrapping Control is required for the inner content
 	 */
@@ -101,9 +104,9 @@ sap.ui.define([
 		this.setAggregation("_content", this._oListControl);
 	};
 
-	BasePanel.prototype._createInnerListControl = function(){
+	BasePanel.prototype._createUI = function(){
 
-		this._moveTopButton = new OverflowToolbarButton("IDButtonMoveToTop",{
+		this._moveTopButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveToTop",{
 			type: "Transparent",
 			tooltip: this.getResourceText("p13nDialog.MOVE_TO_TOP"),
 			icon: "sap-icon://collapse-group",
@@ -115,7 +118,7 @@ sap.ui.define([
 				group: 2
 			})
 		});
-		this._moveUpButton = new OverflowToolbarButton("IDButtonMoveUp",{
+		this._moveUpButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveUp",{
 			type: "Transparent",
 			tooltip: this.getResourceText("p13nDialog.MOVE_UP"),
 			icon: "sap-icon://slim-arrow-up",
@@ -127,7 +130,7 @@ sap.ui.define([
 				group: 1
 			})
 		});
-		this._moveDownButton = new OverflowToolbarButton("IDButtonMoveDown",{
+		this._moveDownButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveDown",{
 			type: "Transparent",
 			tooltip: this.getResourceText("p13nDialog.MOVE_DOWN"),
 			icon: "sap-icon://slim-arrow-down",
@@ -139,7 +142,7 @@ sap.ui.define([
 				group: 1
 			})
 		});
-		this._moveBottomButton = new OverflowToolbarButton("IDButtonMoveToBottom",{
+		this._moveBottomButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveToBottom",{
 			type: "Transparent",
 			tooltip: this.getResourceText("p13nDialog.MOVE_TO_BOTTOM"),
 			icon: "sap-icon://expand-group",
@@ -160,9 +163,9 @@ sap.ui.define([
 			drop: [this._onRearrange, this]
 		});
 
-		var oReorderButton = new Button("IDshowSelectedBtn",{
+		this.oReorderButton = new Button(this.getId() + "IDshowSelectedBtn",{
 			text: {
-				path: "/reorderMode",
+				path: this.P13N_MODEL + ">/reorderMode",
 				formatter: function (bReorderMode) {
 					return bReorderMode ? this.getResourceText("p13nDialog.SELECT") : this.getResourceText("p13nDialog.REORDER");
 				}.bind(this)
@@ -170,12 +173,13 @@ sap.ui.define([
 			press: [this._onPressToggleMode, this]
 		});
 
-		var oBasePanelUI = new Table(this.getId() + "idBasePanelTable", {
-			mode:"MultiSelect",
-			rememberSelections: false,
-			itemPress: [this._onItemPressed, this],
-			selectionChange: [this._onSelectionChange, this],
-			sticky: ["HeaderToolbar", "ColumnHeaders"],
+		var oBasePanelUI = this._createInnerListControl();
+
+		return oBasePanelUI;
+	};
+
+	BasePanel.prototype._createInnerListControl = function() {
+		return new Table(this.getId() + "idBasePanelTable", Object.assign(this._getListControlConfig(), {
 			headerToolbar: new OverflowToolbar({
 				content: [
 					this._getSearchField(),
@@ -184,13 +188,21 @@ sap.ui.define([
 					this._moveUpButton,
 					this._moveDownButton,
 					this._moveBottomButton,
-					oReorderButton
+					this.oReorderButton
 				]
-			}),
-			dragDropConfig: this._oDragDropInfo
-		});
+			})
+		}));
+	};
 
-		return oBasePanelUI;
+	BasePanel.prototype._getListControlConfig = function() {
+		return {
+			mode:"MultiSelect",
+			rememberSelections: false,
+			itemPress: [this._onItemPressed, this],
+			selectionChange: [this._onSelectionChange, this],
+			sticky: ["HeaderToolbar", "ColumnHeaders"],
+			dragDropConfig: this._oDragDropInfo
+		};
 	};
 
 	BasePanel.prototype._getSearchField = function() {
@@ -224,25 +236,29 @@ sap.ui.define([
 		return this;
 	};
 
-	BasePanel.prototype.setPanelColumns = function(sTexts) {
-		var aTexts;
-		if (sTexts instanceof Array) {
-			aTexts = sTexts;
+	BasePanel.prototype.setPanelColumns = function(vColumns) {
+		var aColumns;
+		if (vColumns instanceof Array) {
+			aColumns = vColumns;
 		} else {
-			aTexts = [
-				sTexts
+			aColumns = [
+				vColumns
 			];
 		}
-		this._addTableColumns(aTexts);
+		this._addTableColumns(aColumns);
 	};
 
 	/**
 	 * @param {Object} oP13nModel Personalization model provided by sap.ui.mdc.p13n.P13nBuilder
 	 */
 	BasePanel.prototype.setP13nModel = function(oP13nModel) {
-		this.setModel(oP13nModel);
+		this.setModel(oP13nModel, this.P13N_MODEL);
 		//initial value for "Reorder"-mode is false
 		this.setPanelMode(false);
+	};
+
+	BasePanel.prototype.getP13nModel = function() {
+		return this.getModel(this.P13N_MODEL);
 	};
 
 	BasePanel.prototype.getResourceText = function(sText) {
@@ -250,14 +266,22 @@ sap.ui.define([
 		return sText ? this.oResourceBundle.getText(sText) : this.oResourceBundle;
 	};
 
-	BasePanel.prototype._addTableColumns = function(aTexts) {
+	BasePanel.prototype._addTableColumns = function(aColumns) {
 		this._oListControl.removeAllColumns();
-		aTexts.forEach(function(sText) {
-			this._oListControl.addColumn(new Column({
-				header: new Text({
-					text: sText
-				})
-			}));
+		aColumns.forEach(function(vColumn) {
+			var oColumn;
+
+			if (typeof vColumn == "string") {
+				oColumn = new Column({
+					header: new Text({
+						text: vColumn
+					})
+				});
+			} else {
+				oColumn = vColumn;
+			}
+
+			this._oListControl.addColumn(oColumn);
 		}, this);
 	};
 
@@ -271,13 +295,13 @@ sap.ui.define([
 			* buttons in the "Reorder"-mode via press event.
 			*/
 			oTemplate.bindProperty("type", {
-				path: "/reorderMode",
+				path: this.P13N_MODEL + ">/reorderMode",
 				formatter: function(bReorderMode) {
 					return bReorderMode ? "Active" : "Inactive";
 				}
 			});
 			this._oListControl.bindItems(Object.assign({
-				path: "/items",
+				path: this.P13N_MODEL + ">/items",
 				key: "name",
 				templateShareable: false,
 				template: this.getTemplate().clone()
@@ -340,11 +364,11 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype.getPanelMode = function() {
-		return this.getModel().getProperty("/reorderMode");
+		return this.getP13nModel() ? this.getP13nModel().getProperty("/reorderMode") : false;
 	};
 
 	BasePanel.prototype.setPanelMode = function(bReorder) {
-		return this.getModel().setProperty("/reorderMode", bReorder);
+		return this.getP13nModel().setProperty("/reorderMode", bReorder);
 	};
 
 	BasePanel.prototype._togglePanelMode = function() {
@@ -379,7 +403,7 @@ sap.ui.define([
 
 	BasePanel.prototype._updateModelItems = function() {
 		// Sort and update the model items to ensure selected ones, are at the top
-		var aFields = this.getModel().getProperty("/items");
+		var aFields = this.getP13nModel().getProperty("/items");
 		var aSelectedFields = [], aOtherFields = [];
 		aFields.forEach(function(oField) {
 			if (oField.selected) {
@@ -388,7 +412,7 @@ sap.ui.define([
 				aOtherFields.push(oField);
 			}
 		});
-		this.getModel().setProperty("/items", aSelectedFields.concat(aOtherFields));
+		this.getP13nModel().setProperty("/items", aSelectedFields.concat(aOtherFields));
 	};
 
 	BasePanel.prototype._filterBySelected = function(bShowSelected, oList) {
@@ -422,7 +446,7 @@ sap.ui.define([
 		this._updateEnableOfMoveButtons(oTableItem);
 		this._oSelectedItem = oTableItem;
 		if (!bSelectAll) {
-			var oItem = this.getModel().getProperty(this._oSelectedItem.getBindingContext().sPath);
+			var oItem = this.getP13nModel().getProperty(this._oSelectedItem.getBindingContext(this.P13N_MODEL).sPath);
 			// only fire this event if one item is being selected in a live scenario, else fire the change event in the _onSelectionChange method
 			this.fireChange({
 				reason: oItem.selected ? "Add" : "Remove",
@@ -446,23 +470,23 @@ sap.ui.define([
 
 	BasePanel.prototype._moveTableItem = function(oItem, iNewIndex) {
 		var aItems = this._oListControl.getItems();
-		var aFields = this._oListControl.getModel().getProperty("/items");
+		var aFields = this.getP13nModel().getProperty("/items");
 
 		// index of the item in the model not the index in the aggregation
-		var iOldIndex = aFields.indexOf(oItem.getBindingContext().getObject());
+		var iOldIndex = aFields.indexOf(oItem.getBindingContext(this.P13N_MODEL).getObject());
 
 		// limit the minumum and maximum index
 		iNewIndex = (iNewIndex <= 0) ? 0 : Math.min(iNewIndex, aItems.length - 1);
 
 		// new index of the item in the model
-		iNewIndex = aFields.indexOf(aItems[iNewIndex].getBindingContext().getObject());
+		iNewIndex = aFields.indexOf(aItems[iNewIndex].getBindingContext(this.P13N_MODEL).getObject());
 		if (iNewIndex == iOldIndex) {
 			return;
 		}
 
 		// remove data from old position and insert it into new position
 		aFields.splice(iNewIndex, 0, aFields.splice(iOldIndex, 1)[0]);
-		this._oListControl.getModel().setProperty("/items", aFields);
+		this.getP13nModel().setProperty("/items", aFields);
 
 		// store the moved item again due to binding
 		this._oSelectedItem = aItems[iNewIndex];
@@ -471,7 +495,7 @@ sap.ui.define([
 
 		this.fireChange({
 			reason: "Move",
-			item: this.getModel().getProperty(this._oSelectedItem.getBindingContext().sPath)
+			item: this.getP13nModel().getProperty(this._oSelectedItem.getBindingContext(this.P13N_MODEL).sPath)
 		});
 	};
 

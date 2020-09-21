@@ -98,7 +98,7 @@ sap.ui.define([
 					this.oMockServer = new sap.ui.core.util.MockServer({
 						rootUri: sServiceUrl
 					});
-					this.oMockServer.simulate("../../core/qunit/model/metadata_orgHierarchy.xml", "../../core/qunit/model/orgHierarchy/");
+					this.oMockServer.simulate("../core/qunit/model/metadata_orgHierarchy.xml", "../core/qunit/model/orgHierarchy/");
 					this.oMockServer.start();
 				}
 			}
@@ -112,7 +112,7 @@ sap.ui.define([
 					this.oMockServer = new sap.ui.core.util.MockServer({
 						rootUri: sServiceUrl
 					});
-					this.oMockServer.simulate("../../core/qunit/model/metadata_odtbmd.xml", "../../core/qunit/model/odtbmd/");
+					this.oMockServer.simulate("../core/qunit/model/metadata_odtbmd.xml", "../core/qunit/model/odtbmd/");
 
 					/**
 					 * Clean-Up Hierarchy Annotation Mockdata/Metadata

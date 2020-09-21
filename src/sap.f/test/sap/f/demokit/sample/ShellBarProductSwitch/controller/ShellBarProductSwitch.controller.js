@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/mvc/Controller",
 	'sap/ui/model/json/JSONModel',
-	"sap/m/Button"
-], function (Device, Controller, JSONModel, Button) {
+	"sap/m/Button",
+	"sap/m/MessageToast"
+], function (Device, Controller, JSONModel, Button, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.ShellBarProductSwitch.controller.ShellBarProductSwitch", {
@@ -21,7 +22,7 @@ sap.ui.define([
 			}
 		},
 		fnChange: function (oEvent) {
-			sap.m.MessageToast.show("Change event was fired from " + oEvent.getParameter("itemPressed").getId()
+			MessageToast.show("Change event was fired from " + oEvent.getParameter("itemPressed").getId()
 				+ ". It has targetSrc: "
 				+ oEvent.getParameter("itemPressed").getTargetSrc()
 				+ " and target: "

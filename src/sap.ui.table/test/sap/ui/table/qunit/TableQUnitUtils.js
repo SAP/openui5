@@ -635,19 +635,11 @@ sap.ui.define([
 			}
 
 			if ((mSizes.height != null && mSizes.height != sOldHeight) || (mSizes.width != null && mSizes.width != sOldWidth)) {
-				return new Promise(function(resolve) {
-					var iVisibleRowCountBefore = oTable.getVisibleRowCount();
-
-					TableQUnitUtils.wrapOnce(oTable, "_updateTableSizes", null, function() {
-						var iVisibleRowCountAfter = oTable.getVisibleRowCount();
-
-						if (iVisibleRowCountBefore !== iVisibleRowCountAfter) {
-							oTable.qunit.whenNextRenderingFinished().then(resolve);
-						} else {
-							oTable.qunit.whenRenderingFinished().then(resolve);
-						}
-					});
-				});
+				return Promise.race([
+					// Default of IntervalTrigger singleton used by ResizeHandler is 200ms. Wait for 2 more frames to give the table time to react.
+					TableQUnitUtils.wait(201).then(TableQUnitUtils.$wait()).then(TableQUnitUtils.$wait()),
+					oTable.qunit.whenNextRenderingFinished()
+				]);
 			} else {
 				return Promise.resolve();
 			}

@@ -47,6 +47,7 @@ sap.ui.define([
 			return this;
 		},
 		metadata : {
+			library: "sap.ui.fl",
 			properties : {
 				mode : {
 					type: "string"

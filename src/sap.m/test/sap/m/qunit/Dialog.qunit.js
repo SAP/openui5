@@ -1524,22 +1524,6 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.test("Dialog should have aria-roledescription", function (assert) {
-		// arrange
-		var oDialog = new Dialog(),
-			sExpectedAriaRoleDescription = Core
-				.getLibraryResourceBundle("sap.m")
-				.getText("DIALOG_ROLE_DESCRIPTION");
-		// act
-		oDialog.open();
-
-		// assert
-		assert.strictEqual(oDialog.$().attr("aria-roledescription"), sExpectedAriaRoleDescription,  "aria-roledescription value is as expected");
-
-		// clean
-		oDialog.destroy();
-	});
-
 	QUnit.module("Dragging");
 
 	QUnit.test("Check if dialog size remain unchanged after dragging it", function(assert) {
@@ -1729,6 +1713,56 @@ sap.ui.define([
 		jQuery(document).off("mousemove", spy);
 		oDialog.destroy();
 
+	});
+
+	QUnit.test("Check if the dialog doesn't go outside the view window", function(assert) {
+		// arrange
+		var oDialog = new Dialog({
+			draggable: true,
+			title: "Some title",
+			content: [
+				new Text({
+					text: "Some text"
+				})
+			]
+		});
+
+		oDialog.open();
+		this.clock.tick(500);
+
+		var $document = jQuery(document),
+			oMouseDownMockEvent = {
+				pageX: 608,
+				pageY: 646,
+				offsetX: 177,
+				offsetY: 35,
+				preventDefault: function () {
+				},
+				stopPropagation: function () {
+				},
+				target: oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
+			},
+			oMouseMoveMockEvent = {
+				pageX: -2000,
+				pageY: -2000
+			};
+
+		// Act
+		oDialog.onmousedown(oMouseDownMockEvent);
+
+		$document.trigger(new jQuery.Event("mousemove", oMouseMoveMockEvent));
+		this.clock.tick(500);
+
+		assert.ok(oDialog._oManuallySetPosition.x >= 0, "_oManuallySetPosition.x is correct");
+		assert.ok(oDialog._oManuallySetPosition.y >= 0, "_oManuallySetPosition.y is correct");
+
+		$document.trigger(new jQuery.Event("mouseup", oMouseMoveMockEvent));
+
+		oDialog.close();
+		this.clock.tick(500);
+
+		// clean up
+		oDialog.destroy();
 	});
 
 	QUnit.module("PopUp Position",{

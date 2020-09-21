@@ -240,6 +240,15 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 				},
 				module: "./table/TableSettings.qunit"
 			},
+			"TablePropertyHelper": {
+				group: "Table",
+				coverage: {
+					only: "[sap/ui/mdc]",
+					never: "[sap/ui/mdc/qunit]",
+					branchTracking: true
+				},
+				module: "./table/PropertyHelper.qunit"
+			},
 			"Chart": {
 				skip: EnvHelper.isOpenUI5,
 				group: "Chart",
@@ -303,6 +312,10 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 					only: "[sap/ui/mdc/util]"
 				},
 				sinon: false
+			},
+			"PropertyHelper": {
+				group: "Util",
+				module: "./util/{name}.qunit"
 			},
 			"DrillStackHandler": {
 				group: "Chart",

@@ -841,7 +841,7 @@ sap.ui.define([
 
 		aAnchorBarContent.forEach(function (oAnchorBarItem) {
 			$anchorBarItem = oAnchorBarItem.getAggregation("_button") ? oAnchorBarItem.getAggregation("_button").$() : oAnchorBarItem.$();
-			if (oAnchorBarItem.sId === (oSelectedButton && oSelectedButton.sId)) {
+			if (oAnchorBarItem === oSelectedButton) {
 				$anchorBarItem.attr(sTabIndex, sFocusable);
 			} else {
 				$anchorBarItem.attr(sTabIndex, sNotFocusable);

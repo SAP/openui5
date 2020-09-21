@@ -52,6 +52,7 @@ function(
 	 */
 	var oTable = Control.extend("sap.ui.dt.enablement.report.Table", /** @lends sap.ui.dt.enablement.report.Table.prototype */ {
 		metadata : {
+			library: "sap.ui.dt",
 			properties : {
 				data : {
 					type : "object"

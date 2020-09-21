@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Column",
 	"sap/ui/unified/Currency",
+	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/model/type/String"
-], function(Controller, MockServer, ODataModel, JSONModel, Column, Currency, Text, String) {
+], function(Controller, MockServer, ODataModel, JSONModel, Column, Currency, Label, Text, String) {
 	"use strict";
 
 	var sServiceUrl = "http://my.test.service.com/";
@@ -21,8 +22,8 @@ sap.ui.define([
 
 			MockServer.config({autoRespondAfter: 2000});
 
-			this.oMockServer.simulate(sap.ui.require.toUrl("sap/ui/table/sample/") + "OData2" + "/metadata.xml", {
-				sMockdataBaseUrl : sap.ui.require.toUrl("sap/ui/table/sample/") + "OData",
+			this.oMockServer.simulate(sap.ui.require.toUrl("sap/ui/table/sample/OData2/metadata.xml"), {
+				sMockdataBaseUrl : sap.ui.require.toUrl("sap/ui/table/sample/OData"),
 				bGenerateMissingMockData : true
 			});
 
@@ -86,7 +87,7 @@ sap.ui.define([
 				sortProperty: oContext.getProperty("sap:sortable") == "true" ? sName : null,
 				filterProperty: oContext.getProperty("sap:filterable") == "true" ? sName : null,
 				width: sColumnWidth,
-				label: new sap.m.Label({text: "{/#Product/" + sName + "/@sap:label}"}),
+				label: new Label({text: "{/#Product/" + sName + "/@sap:label}"}),
 				hAlign: sType && sType.indexOf("Decimal") >= 0 ? "End" : "Begin",
 				template: specialTemplate() || new Text({text: {path: sName}, wrapping: false})
 			});

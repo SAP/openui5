@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/format/DateFormat",
@@ -6,10 +7,11 @@ sap.ui.define([
 	"sap/ui/unified/library",
 	"sap/m/MessageToast"
 ],
-function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToast) {
+function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToast) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
+	var ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.m.sample.SinglePlanningCalendarCreateApp.Page", {
 
@@ -537,10 +539,10 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			var sValueStateText = "Start date should be before End date";
 
 			if (bErrorState) {
-				oPicker.setValueState("Error");
+				oPicker.setValueState(ValueState.Error);
 				oPicker.setValueStateText(sValueStateText);
 			} else {
-				oPicker.setValueState("None");
+				oPicker.setValueState(ValueState.None);
 			}
 		}
 

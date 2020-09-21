@@ -16,7 +16,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 			this.getView().setModel(oMediaModel, "media");
 
 			// set mock feed model
-			var sPath = sap.ui.require.toUrl("sap/ui/layout/sample/DynamicSideContentProduct") + "/feed.json";
+			var sPath = sap.ui.require.toUrl("sap/ui/layout/sample/DynamicSideContentProduct/feed.json");
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		},

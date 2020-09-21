@@ -211,7 +211,11 @@ sap.ui.define([
 					|| oResponse.variants.length > 0
 					|| oResponse.variantChanges.length > 0
 					|| oResponse.variantManagementChanges.length > 0
-					|| oResponse.variantDependentControlChanges.length > 0;
+					|| oResponse.variantDependentControlChanges.length > 0
+					|| oResponse.comp.variants.length > 0
+					|| oResponse.comp.changes.length > 0
+					|| oResponse.comp.defaultVariants.length > 0
+					|| oResponse.comp.standardVariants.length > 0;
 			});
 
 			aResponses.sort(function (a, b) {
@@ -246,11 +250,26 @@ sap.ui.define([
 					mGroupedFlexObjects[sLayer].variantChanges.push(oFlexObject);
 				} else if (oFlexObject.fileType === "ctrl_variant_management_change") {
 					mGroupedFlexObjects[sLayer].variantManagementChanges.push(oFlexObject);
-				} else if (oFlexObject.fileType === "change" || oFlexObject.fileType === "variant") {
+				} else if (oFlexObject.fileType === "variant") {
+					mGroupedFlexObjects[sLayer].comp.variants.push(oFlexObject);
+				} else if (oFlexObject.fileType === "change") {
 					if (oFlexObject.variantReference) {
 						mGroupedFlexObjects[sLayer].variantDependentControlChanges.push(oFlexObject);
 					} else {
-						mGroupedFlexObjects[sLayer].changes.push(oFlexObject);
+						switch (oFlexObject.changeType) {
+							case "addFavorite":
+							case "removeFavorite":
+								mGroupedFlexObjects[sLayer].comp.changes.push(oFlexObject);
+								break;
+							case "defaultVariant":
+								mGroupedFlexObjects[sLayer].comp.defaultVariants.push(oFlexObject);
+								break;
+							case "standardVariant":
+								mGroupedFlexObjects[sLayer].comp.standardVariants.push(oFlexObject);
+								break;
+							default:
+								mGroupedFlexObjects[sLayer].changes.push(oFlexObject);
+						}
 					}
 				}
 			});
@@ -275,6 +294,12 @@ sap.ui.define([
 			return Object.assign({}, {
 				appDescriptorChanges: [],
 				changes: [],
+				comp: {
+					variants: [],
+					changes: [],
+					defaultVariants: [],
+					standardVariants: []
+				},
 				variants: [],
 				variantChanges: [],
 				variantDependentControlChanges: [],

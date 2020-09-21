@@ -30,7 +30,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var iframe = document.createElement("iframe");
-		iframe.src = sap.ui.require.toUrl("testdata/routing/") + "HistoryIFrame.html";
+		iframe.src = sap.ui.require.toUrl("testdata/routing/HistoryIFrame.html");
 
 		document.addEventListener("historyReady", function(oEvent) {
 			assert.strictEqual(oEvent._bUsePushStateInFrame, false, "Should not use push state when runs in iframe");

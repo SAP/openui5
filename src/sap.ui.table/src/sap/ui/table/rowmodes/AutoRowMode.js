@@ -109,9 +109,7 @@ sap.ui.define([
 		 * adjusting the row count.
 		 * @private
 		 */
-		this.adjustRowCountToAvailableSpaceAsync = TableUtils.debounce(this.adjustRowCountToAvailableSpace, {
-			requestAnimationFrame: true
-		});
+		this.adjustRowCountToAvailableSpaceAsync = TableUtils.throttleFrameWise(this.adjustRowCountToAvailableSpace);
 	};
 
 	/**
@@ -436,6 +434,9 @@ sap.ui.define([
 
 		if (oTable) {
 			TableUtils.registerResizeHandler(oTable, "AutoRowMode", this.onResize.bind(this), null, bOnTableParent === true);
+			TableUtils.registerResizeHandler(oTable, "AutoRowMode-BeforeTable", this.onResize.bind(this), "before");
+			TableUtils.registerResizeHandler(oTable, "AutoRowMode-AfterTable", this.onResize.bind(this), "after");
+			TableUtils.registerResizeHandler(oTable, "AutoRowMode-GridExtension", this.onResize.bind(this), "gridExtension");
 		}
 	};
 
@@ -448,7 +449,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 
 		if (oTable) {
-			TableUtils.deregisterResizeHandler(oTable, "AutoRowMode");
+			TableUtils.deregisterResizeHandler(oTable, ["AutoRowMode, AutoRowMode-BeforeTable, AutoRowMode-AfterTable, AutoRowMode-GridExtension"]);
 		}
 	};
 

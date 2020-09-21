@@ -95,7 +95,7 @@
 				Extension Requirements
 			</h2>
 			<ul>
-				<li>The extension should be defined in a UI5 Module and be an instance of the <a id="linkToExtension2" target="_blank">sap.ui.integration.Extension</a> class.</li>
+				<li>The extension should be defined in a UI5 Module and extend the <a id="linkToExtension2" target="_blank">sap.ui.integration.Extension</a> class.</li>
 				<li>For optimal loading performance it is recommended to avoid any dependencies to non-ui5 modules.</li>
 			</ul>
 			<b>Note</b>: The relation between the extension and the card is one-to-one, which means that one card can have only one extension.
@@ -113,7 +113,7 @@
 		}
 	},
 	"sap.card": {
-		"extension": "./myExtension",
+		"extension": "./SampleExtension",
 		"data": {
 			"extension": {
 				"method": "myGetDataMethod"
@@ -131,17 +131,18 @@
 			<p>Extension</p>
 <pre class="prettyprint lang-js">
 sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
-	var oMyExtension = new Extension();
+	
+	var SampleExtension = Extension.extend("card.explorer.cardWithExtension.SampleExtension");
 
-	oMyExtension.myGetDataMethod = function () {
+	SampleExtension.prototype.myGetDataMethod = function () {
 		var oData1 = { user: "John" }; // this data can be fetched from data service
 		var oData2 = { user: "Peter" }; // this data can be fetched from another data service
 
 		// in the end data from both data services is combined into a single array
 		return Promise.resolve([oData1, oData2]);
-	}
+	};
 
-	return oMyExtension;
+	return SampleExtension;
 });
 </pre>
 			<a class="try-button sapUiSmallMarginTop" href="../../../index.html#/explore/extension" target="_parent">Try it Out</a>

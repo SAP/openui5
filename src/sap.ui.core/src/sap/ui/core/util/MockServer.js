@@ -55,6 +55,7 @@ sap.ui
 				},
 
 				metadata: {
+					library: "sap.ui.core",
 					properties: {
 
 						/**

@@ -228,25 +228,42 @@
 			</li>
 		</ol>
 		<h3>(III) Message Lifecycle - Side-Effects</h3>
-		Search for a sales order with more than 4 items and with an item for the product
-		<code>HT-1000</code> with a quantity less than 2 at the 5th (or later) position in the sales
-		order and note down the sales order ID. In case of mock data: Use sales order
-		<code>103</code>.
+		Search for a sales order with more than 4 items and with three items for the product
+		<code>HT-1000</code> with a quantity less than 2. Two of these items are in the visible area
+		an the third is at the 5th (or later) position in the sales order. Note down the sales order
+		ID. In case of mock data: Use sales order <code>103</code>.
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
 				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
 					the <code>Sales Order Details</code> section.<br />
-				<b>Check:</b> Even if the item for product <code>HT-1000</code> is not visible there
-					is a warning that at least <code>2 EA</code> of that product has to be ordered.
+				<b>Check:</b> For all three items for product <code>HT-1000</code> with a quantity
+					less than 2, there are warnings that at least <code>2 EA</code> of that product
+					has to be ordered.<br />
+				<b>Check:</b> The visible table rows with product <code>HT-1000</code> are marked
+					with a warning because the quantity is less than 2.<br />
+				<b>Check:</b> Remember the number of messages.
 			</li>
 			<li>Press the <code>Fix Quantities</code> button.<br />
-				<b>Check:</b> The warning message has been removed from then message popover.
+				<b>Check:</b> The number of messages has not changed.<br />
+				<b>Check:</b> The <code>Quantity</code> value of the table rows with product
+					<code>HT-1000</code> has been changed to the value <code>2</code>.<br />
+				<b>Check:</b> The visible table rows with product <code>HT-1000</code> are marked
+					with a success because the quantity is updated to 2.
 			</li>
 			<li>Scroll to the end of the sales order line items table.<br />
 				<b>Check:</b> All items for <code>HT-1000</code> have at least a quantity of 2.
 					<br />
-				<b>Check:</b> No item has a quantity of 0.
+				<b>Check:</b> The visible table rows with product <code>HT-1000</code> are marked
+					with a success because the quantity is updated to 2.
+			</li>
+			<li>Open the message popover.<br />
+				<b>Check:</b> The previous warning messages are disappeared.<br />
+				<b>Check:</b> There are three messages that the quantity has been successfully
+				updated.
+			</li>
+			<li>Close the message popover.<br />
+				<b>Check:</b> The number of messages has been decreased by 3.
 			</li>
 		</ol>
 		<h3>(IV) Transition Messages Only</h3>

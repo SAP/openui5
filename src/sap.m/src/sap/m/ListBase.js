@@ -607,14 +607,14 @@ function(
 			return;
 		}
 
+		if (this._bSkippedInvalidationOnRebind && this.getBinding("items").getLength() === 0) {
+			this.invalidate();
+		}
+
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
 			this._oGrowingDelegate.updateItems(sReason);
 		} else {
-			if (this._bSkippedInvalidationOnRebind && this.getBinding("items").getLength() === 0) {
-				this.invalidate();
-			}
-
 			if (this._bReceivingData) {
 				// if we are receiving the data this should be oDataModel
 				// updateStarted is already handled before on refreshItems
@@ -2034,6 +2034,19 @@ function(
 		// item navigation only for desktop
 		if (!Device.system.desktop) {
 			return;
+		}
+
+		// focus on root element should be prevented by showNoData=false and there a no items & destroy ItemNavigation
+		var oDomRef = this.getDomRef();
+
+		if (!this.getShowNoData() && !this.getVisibleItems().length && oDomRef) {
+			oDomRef.classList.add("sapMListPreventFocus");
+			this._destroyItemNavigation();
+			return;
+		}
+
+		if (oDomRef) {
+			oDomRef.classList.remove("sapMListPreventFocus");
 		}
 
 		var sKeyboardMode = this.getKeyboardMode(),

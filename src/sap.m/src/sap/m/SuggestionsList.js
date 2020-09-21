@@ -3,15 +3,17 @@
  */
 
 // Provides control sap.m.SuggestionsList.
-sap.ui.define(['./library', 'sap/ui/core/Control'],
-	function(library, Control) {
+sap.ui.define([
+		'./library',
+		'./SuggestionsListRenderer',
+		'sap/ui/core/Control'
+	], function(library, SuggestionsListRenderer, Control) {
 		"use strict";
 
 		//
 		// SuggestionsList has to be used exclusively by Suggest.js
 		//
 		var SuggestionsList = Control.extend("sap.m.SuggestionsList", {
-
 			metadata: {
 
 				library: "sap.m",
@@ -24,41 +26,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 					ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 				}
 			},
-
-			renderer: {
-				render: function(oRm, oList) {
-					oRm.write("<ul");
-					oRm.writeControlData(oList);
-					oRm.addClass("sapMSuL");
-					oRm.addClass("sapMSelectList");
-					oRm.writeClasses();
-					oRm.writeAccessibilityState({
-						role: "listbox",
-						"multiselectable": "false"
-					});
-					oRm.addStyle("width", oList.getWidth());
-					oRm.addStyle("max-width", oList.getMaxWidth());
-					oRm.writeStyles();
-					oRm.write(">");
-
-					this.renderItems(oRm, oList);
-
-					oRm.write("</ul>");
-				},
-
-				renderItems: function(oRm, oList) {
-					var searchValue;
-					var selectedIndex = oList.getSelectedItemIndex();
-					try {
-						searchValue = sap.ui.getCore().byId(oList.getParentInput()).getValue();
-					} catch (e) {
-						searchValue = "";
-					}
-					oList.getItems().forEach(function(item, index) {
-						item.render(oRm, item, searchValue, index === selectedIndex);
-					});
-				}
-			}
+			renderer: SuggestionsListRenderer
 		});
 
 		SuggestionsList.prototype.init = function() {

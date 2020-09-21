@@ -21,7 +21,7 @@
 		}
 	},
 	"sap.card": {
-		"extension": "./myExtension",
+		"extension": "./SampleExtension",
 		"configuration": {
 			"parameters": {
 				"productId": {

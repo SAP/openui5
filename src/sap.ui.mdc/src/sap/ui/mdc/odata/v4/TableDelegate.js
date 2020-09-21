@@ -53,7 +53,7 @@ sap.ui.define([
 					oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 					oPropertyInfo = {
 						name: sKey,
-						label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"],
+						label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 						description: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] && oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path,
 						maxLength: oObj.$MaxLength,
 						precision: oObj.$Precision,

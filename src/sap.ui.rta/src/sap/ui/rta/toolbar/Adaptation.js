@@ -41,6 +41,7 @@ function(
 		renderer: "sap.ui.rta.toolbar.AdaptationRenderer",
 		animation: true,
 		metadata: {
+			library: "sap.ui.rta",
 			events: {
 				/**
 				 * Events are fired when the Toolbar Buttons are pressed
@@ -74,7 +75,7 @@ function(
 
 	Adaptation.prototype.init = function() {
 		Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
-		Base.prototype.init.apply(this, arguments);
+		this._pFragmentLoaded = Base.prototype.init.apply(this, arguments);
 	};
 
 	Adaptation.prototype.onBeforeRendering = function () {
@@ -84,6 +85,10 @@ function(
 		this._onSizeChanged(Device.media.getCurrentRange(DEVICE_SET));
 
 		Base.prototype.onBeforeRendering.apply(this, arguments);
+	};
+
+	Adaptation.prototype.onFragmentLoaded = function() {
+		return this._pFragmentLoaded;
 	};
 
 	Adaptation.prototype.exit = function() {
@@ -235,22 +240,36 @@ function(
 	};
 
 	Adaptation.prototype._switchToIcons = function() {
-		this.getControl("iconBox").setVisible(false);
-		this.getControl("iconSpacer").setVisible(false);
-		this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
-		this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
-		this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
+		var oIconBox = this.getControl("iconBox");
+		var oIconSpacer = this.getControl("iconSpacer");
+
+		if (oIconBox && oIconSpacer) {
+			oIconBox.setVisible(false);
+			oIconSpacer.setVisible(false);
+			this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
+			this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
+			this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
+		}
 	};
 
 	Adaptation.prototype._switchToTexts = function () {
-		this.getControl("iconBox").setVisible(true);
-		this.getControl("iconSpacer").setVisible(true);
-		this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
-		this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
-		this._showButtonText("exit", "BTN_EXIT");
+		var oIconBox = this.getControl("iconBox");
+		var oIconSpacer = this.getControl("iconSpacer");
+
+		if (oIconBox && oIconSpacer) {
+			oIconBox.setVisible(true);
+			oIconSpacer.setVisible(true);
+			this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
+			this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
+			this._showButtonText("exit", "BTN_EXIT");
+		}
 	};
 
 	Adaptation.prototype._onSizeChanged = function(mParams) {
+		if (!mParams) {
+			return;
+		}
+
 		var sMode = mParams.name;
 		this.sMode = sMode;
 

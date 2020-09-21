@@ -165,7 +165,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 
 			var control = oColumn["get" + type + "er"](),
 				width = (iHeaderLength == 1) ? "" : oColumn.getWidth(),
-				cls = oColumn.getStyleClass(true),
+				aStyleClass = oColumn.getStyleClass(true).split(" "),
 				align = oColumn.getCssAlign();
 
 			if (type == "Head") {
@@ -179,7 +179,9 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 				rm.openStart(cellTag);
 			}
 
-			cls && rm.class(cls);
+			aStyleClass && aStyleClass.forEach(function (sClsName) {
+				rm.class(sClsName);
+			});
 			rm.class(clsPrefix + "Cell");
 			rm.class(clsPrefix + type + "erCell");
 			rm.attr("data-sap-width", oColumn.getWidth());
@@ -252,7 +254,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		rm.close(groupTag);
 
 		if (type === "Head") {
-			oTable._bPopinChanged = oTable._hasPopin !== hasPopin || oTable._iHiddenPopinColumns !== oTable._getHiddenInPopin().length || hasPopin;
+			oTable._bPopinChanged = oTable._hasPopin !== hasPopin || oTable._iHiddenPopinColumns !== oTable._getHiddenInPopin().length;
 			oTable._hasPopin = hasPopin;
 			oTable._colCount = index - hiddens;
 			oTable._hasFooter = hasFooter;

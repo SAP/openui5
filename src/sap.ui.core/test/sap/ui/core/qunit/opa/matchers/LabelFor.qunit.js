@@ -175,4 +175,11 @@ sap.ui.define([
 		var bResult = oMatcher.isMatching(this.oLink);
 		assert.ok(!bResult, "Did not match non-labelable Link");
 	});
+
+	QUnit.test("Should match when text contains binding symbols", function(assert) {
+		this.oLabel.setText("{foo");
+		var oMatcher = new LabelFor({text: "{foo"});
+		var bResult = oMatcher.isMatching(this.oInput);
+		assert.ok(bResult, "Matches with the given text");
+	});
 });

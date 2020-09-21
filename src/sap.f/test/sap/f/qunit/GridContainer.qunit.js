@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/f/dnd/GridKeyboardDragAndDrop"
 ],
 function (
 	jQuery,
@@ -38,7 +39,8 @@ function (
 	Button,
 	Header,
 	IntegrationCard,
-	JSONModel
+	JSONModel,
+	GridKeyboardDragAndDrop
 ) {
 	"use strict";
 
@@ -46,6 +48,13 @@ function (
 		EDGE_VERSION_WITH_GRID_SUPPORT = 16,
 		bIsGridSupported = !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
 
+	function createFakeKeydownEvent (sType) {
+		var oEvent = new jQuery.Event("sapincreasemodifiers");
+
+		oEvent.originalEvent = new jQuery.Event("keydown");
+
+		return oEvent;
+	}
 	var oIntegrationCardManifest = {
 		"sap.card": {
 			"type": "List",
@@ -1070,7 +1079,7 @@ function (
 		assert.strictEqual(oItemWrapper1.getAttribute("tabindex"), "0",  "Focus should be on the first GridItem");
 	});
 
-	QUnit.test("Tabbing tough a tile - focus should leave the grid container", function (assert) {
+	QUnit.test("Tabbing through a tile - focus should leave the grid container", function (assert) {
 
 		// Arrange
 		var oItemWrapperTile = this.oGrid.getDomRef().children[4],
@@ -1186,6 +1195,17 @@ function (
 
 		// Assert
 		assert.strictEqual(oAttachPressSpy.callCount, 1, "Tile is pressed");
+	});
+
+	QUnit.test("FocusDomRef tab index", function (assert) {
+		var oCard = this.oGrid.getItems()[0];
+
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), "-1", "Focus DomRef should have tabindex='-1'");
+
+		oCard.getHeader().invalidate();
+		Core.applyChanges();
+
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), "-1", "Focus DomRef should have tabindex='-1'");
 	});
 
 	QUnit.module("Event - 'borderReached'", {
@@ -1392,6 +1412,28 @@ function (
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), 2, "The dragged item is the third one");
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 0, "The dropped item is the first one");
 		assert.strictEqual(this.sInsertPosition, "Before", "The insert position is 'Before'");
+	});
+
+	QUnit.test("Keyboard Drag&Drop: No errors when moving items out of bounds", function (assert) {
+		// Arrange
+		var oItem = this.oGrid.getItems()[0],
+			oItemDomRef = oItem.getDomRef().parentElement;
+
+		// Act - moving first item upwards
+		qutils.triggerKeydown(oItemDomRef, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
+
+		// Assert
+		assert.strictEqual(this.oGrid.getItems()[0].getId(), oItem.getId(), "Item hasn't moved");
+
+		// Arrange
+		oItem = this.oGrid.getItems()[3];
+		oItemDomRef = oItem.getDomRef().parentElement;
+
+		// Act - moving last item downwards
+		qutils.triggerKeydown(oItemDomRef, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
+
+		// Assert
+		assert.strictEqual(this.oGrid.getItems()[3].getId(), oItem.getId(), "Item hasn't moved");
 	});
 
 	QUnit.module("Keyboard Drag&Drop in RTL mode - suggested positions in different directions", {
@@ -1604,5 +1646,63 @@ function (
 		// Clean up
 		oGrid.destroy();
 		oItemWrapperFocusSpy.restore();
+	});
+
+	QUnit.module("Keyboard Drag&Drop into an empty GridContainer");
+
+	QUnit.test("Simulate Keyboard Drag&Drop into an empty container", function (assert) {
+
+		// Arrange
+		var oDropSpy1 = sinon.spy(),
+			oDropSpy2 = sinon.spy(),
+			oDraggedControl = new GenericTile({
+				header: "Tile 1",
+				layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+			}),
+			oDragContainer = new GridContainer({
+				items: [
+					oDraggedControl
+				],
+				dragDropConfig: [
+					new DragInfo({
+						sourceAggregation: "items"
+					}),
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						drop: oDropSpy1
+					})
+				]
+			}),
+
+			oDropContainer = new GridContainer({
+				items: [
+				],
+				dragDropConfig: [
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						drop: oDropSpy2
+					})
+				]
+			});
+
+		oDragContainer.placeAt(DOM_RENDER_LOCATION);
+		oDropContainer.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		GridKeyboardDragAndDrop.fireDnDByKeyboard(oDraggedControl, oDropContainer, "Before", createFakeKeydownEvent());
+
+		// Assert
+		assert.ok(oDropSpy1.notCalled, "Drop event is NOT fired on the wrong container");
+		assert.ok(oDropSpy2.called, "Drop event is fired on the correct container");
+
+		// Clean up
+		oDragContainer.destroy();
+		oDropContainer.destroy();
+
 	});
 });

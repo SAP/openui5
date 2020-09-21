@@ -54,7 +54,7 @@
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										level="H1"
@@ -103,7 +103,7 @@
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										level="H1"
@@ -142,7 +142,7 @@
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										level="H1"
@@ -188,7 +188,7 @@
 			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										level="H1"
@@ -228,7 +228,7 @@
 			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<custom:TitleLink
 								level="H1"
 								titleStyle="H1"
@@ -258,7 +258,7 @@
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<custom:TitleLink
 									level="H1"
 									titleStyle="H1"
@@ -284,7 +284,7 @@
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<custom:TitleLink
 								level="H1"
 								titleStyle="H1"
@@ -318,7 +318,7 @@
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										level="H1"
@@ -367,7 +367,7 @@
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<custom:TitleLink
 									level="H1"
 									titleStyle="H1"
@@ -388,7 +388,7 @@
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										level="H1"

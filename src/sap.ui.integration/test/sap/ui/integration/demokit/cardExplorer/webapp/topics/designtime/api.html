@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/topic.css">
+	<link rel="stylesheet" href="../../css/tomorrow.css">
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+	<script
+		src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script
+		src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<style>
+		.tableWrapper td {
+			vertical-align: top;
+		}
+
+		.tableWrapper caption {
+			text-align: left;
+			padding: 0.5rem 1rem;
+			font-weight: bold;
+		}
+	</style>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Design-time Configurations and APIs</h1>
+			<p>
+				The Card Editor will use the design-time module to create the user interface for administartor,
+				page/content administrator and translator.
+				Build in configuration settings allow to easily create an appealing UI for the user.
+			</p>
+			<h2 id="createfile">Create a Design-time module and register it in the Cards manifest</h2>
+			<p>
+				Advanced design-time configuration and implementation should happen outside the manifest of the Card.
+				With that design-time code will not harm or influence the runtime or the Card instance for the end-user.
+
+				<br>
+				Create a folder "dt" besides the manifest.json to store all designt-time related artifacts.
+				Create a designtime.js file in this new folder.<br>
+				Add the following inital module setup into the js file.
+			</p>
+			<pre class="prettyprint lang-js">
+sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
+"use strict";
+	var Designtime = BaseDesigntime.extend();
+	Designtime.prototype.create = function () {
+		return {
+			//here goes the configuration
+		}
+	}
+	return Designtime
+});</pre>
+			<p>
+				Similar to a Card Extension, the design-time module is registered in the manifest. As soon as the Card
+				Editor is launched.
+			</p>
+
+
+			<pre class="prettyprint lang-js">
+"sap.card": {
+	"designtime": "dt/designtime"
+}</pre>
+
+
+
+			<h3 id="form">Configure the editor's form</h3>
+			<p>
+				Within the configuration the form section will contain the items that are shown in the Editor
+			</p>
+			<pre class="prettyprint lang-js">
+sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
+"use strict";
+	var Designtime = BaseDesigntime.extend();
+	Designtime.prototype.create = function () {
+		return {
+			form: {
+				items: {
+
+				}
+			}
+		}
+	}
+	return Designtime
+});</pre>
+			<h3>Form Items</h3>
+			<p>
+				The items section is a map of item configuration.
+				<br><br>
+				<a class="try-button" href="../../index.html#/explore/designtimeFields" target="_parent">Try it Out</a>
+				<br>
+			</p>
+			<div class="tableWrapper">
+				<table>
+					<caption>Field Type items</caption>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Default</th>
+						<th>Description</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>manifestpath</td>
+						<td>string</td>
+						<td><strong>Yes</strong></td>
+						<td></td>
+						<td>Path to the manifest value that should be edited.
+							In case a the type of the item is "group" the path can be omited.
+							<pre
+								class="prettyprint lang-js">manifestpath : "sap.card/configuration/parameters/title"</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>string</td>
+						<td><strong>Yes</strong></td>
+						<td>"string"</td>
+						<td>Type of the value in the manifest that is edited. Currently "string", "integer", "number",
+							"date", "datetime", "boolean" are supported.<br>
+							type="group" in an item will allow to set a group title within the form to cluster elements.
+							For a group typed item the manifestpath setting can be omitted. A label should be provided.
+							<pre class="prettyprint lang-js">type : "string"</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+
+						<td>label</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Name of the item in the form/items collection</td>
+						<td>Defines the label string. This value can be bound to values in the i18n file used in the
+							connected Card.
+							<pre
+								class="prettyprint lang-js">label : "fixedString"<br>label : "{i18n>translatedStringKey}"</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>defaultValue</td>
+						<td>any</td>
+						<td>No</td>
+						<td>Depending on type property</td>
+						<td>Defines the default value that is used if the current value in the manifest for this
+							property is empty.
+							<pre class="prettyprint
+								lang-js">defaultValue : "stringValue" //string type<br>defaultValue : true //boolean type</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>required</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>false</td>
+						<td>Defines whether the value is required or not. The editors label for the field will get a "*"
+							to indicate this state.
+							<pre class="prettyprint lang-js">required : true</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>translatable</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>false</td>
+						<td>Defines whether the value is potentially translatable and should be shown in the Card Editor
+							in translation mode.
+							This setting should be used for fields of type string only.
+							to indicate this state.
+							<pre class="prettyprint lang-js">translatable : true</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>cols</td>
+						<td>1 or 2</td>
+						<td>No</td>
+						<td>2</td>
+						<td>By default, the form in the editor spans field to its two columns. Setting cols=1 in two
+							sibling items,
+							will allow to align two fields next to each other
+							<pre class="prettyprint lang-js">cols : 1</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+				</table>
+			</div>
+			<h3 id="lists">Providing Lists for string</h3>
+			<p>
+				To allow a selection of values for fields of type "string", you can add a values section.
+				Similar to the Card data section, the list can be filled with a static json or a request.
+				The item section in the values definition links the data. The "key" property of the item is used as
+				the value for the setting referred by the "manifestPath".
+				<strong>Static Data List</strong>
+			<pre class="prettyprint lang-js">
+"stringWithStaticList": {
+  "manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
+  "type": "string",
+  "values": {
+     "data": {
+        "json": {
+           "values": [
+              { "text": "From JSON 1", "key": "key1" },
+              { "text": "From JSON 2", "key": "key2" },
+              { "text": "From JSON 3", "key": "key3" }
+           ]
+        },
+        "path": "/values"
+     },
+     "item": {
+        "text": "{text}",
+        "key": "{key}"
+     }
+}
+}</pre>
+			<strong>Request Data List</strong>
+			<p>There referred url will deliver the data asynchronous. Also an extension could be used as a data
+				propvider.</p>
+			<pre class="prettyprint lang-js">
+"stringWithStaticList": {
+  "manifestpath": "/sap.card/configuration/parameters/stringWithRequestList/value",
+  "type": "string",
+  "values": {
+     "data": {
+        "request": {
+            "url": "./dt/listdata.json"
+        },
+        "path": "/values"
+     },
+     "item": {
+        "text": "{text}",
+        "key": "{key}"
+     }
+}
+}</pre>
+			<strong>Data of dt/listdata.json</strong>
+			<pre class="prettyprint lang-js">
+	"values": [
+		{ "text": "From JSON 1", "key": "key1" },
+		{ "text": "From JSON 2", "key": "key2" },
+		{ "text": "From JSON 3", "key": "key3" }
+	]
+
+</pre>
+			</p>
+			<h3 id="lists">Providing Lists for string arrays</h3>
+			<p>
+				To allow a selection of values for fields of type "string", you can add a values section.
+				Similar to the Card data section, the list can be filled with a static json or a request.
+				The item section in the values definition links the data. The "key" property of the item is used as
+				the value for the setting referred by the "manifestPath".
+				<strong>Static Data List</strong>
+			<pre class="prettyprint lang-js">
+"stringArrayWithStaticList": {
+	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithStaticList/value",
+	"type": "string[]",
+	"values": {
+		"data": {
+		"json": {
+			"values": [
+				{ "text": "From JSON 1", "key": "key1" },
+				{ "text": "From JSON 2", "key": "key2" },
+				{ "text": "From JSON 3", "key": "key3" }
+			]
+		},
+		"path": "/values"
+		},
+		"item": {
+		"text": "{text}",
+		"key": "{key}"
+		}
+	}
+}</pre>
+			<strong>Request Data List</strong>
+			<p>There referred url will deliver the data asynchronous. Also an extension could be used as a data
+				propvider.</p>
+			<pre class="prettyprint lang-js">
+"stringWithStaticList": {
+	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithRequestList/value",
+	"type": "string[]",
+	"values": {
+		"data": {
+		"request": {
+			"url": "./dt/listdata.json"
+		},
+		"path": "/values"
+		},
+		"item": {
+		"text": "{text}",
+		"key": "{key}"
+		}
+	}
+}</pre>
+			<strong>Data of dt/listdata.json</strong>
+			<pre class="prettyprint lang-js">
+	"values": [
+		{ "text": "From JSON 1", "key": "key1" },
+		{ "text": "From JSON 2", "key": "key2" },
+		{ "text": "From JSON 3", "key": "key3" }
+	]
+			</pre>
+			</p>
+			<h3 id="preview">Configure the editor's preview</h3>
+			<p>An additional section in the configuration allows to influence the preview shown in the Card editor
+				<br><br>
+				<a class="try-button" href="../../index.html#/explore/designtimePreview" target="_parent">Try it Out</a>
+				<br>
+			</p>
+			<pre class="prettyprint lang-js">
+sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
+"use strict";
+	var Designtime = BaseDesigntime.extend();
+	Designtime.prototype.create = function () {
+		return {
+			form: {
+				items: {
+
+				}
+			},
+			preview: {
+
+			}
+		}
+	}
+	return Designtime
+});</pre>
+			<div class="tableWrapper">
+				<table>
+					<caption>Field Type items</caption>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Default</th>
+						<th>Description</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>modes</td>
+						<td>string</td>
+						<td>No</td>
+						<td>"Abstract"</td>
+						<td>Possible values are <br>
+							"None" : No preview is shown<br>
+							"Abstract" : An abstract preview is shown with placeholders for the possible result<br>
+							"Live" : A small scaled preview of the real Card is shown.<br>
+							"AbstractLive" : The user will be able to toggle between abstract and live preview,
+							starting with the abstract preview<br>
+							"LiveAbstract" : The user will be able to toggle between live and abstract preview,
+							starting with the live
+							preview<br>
+							<pre class="prettyprint lang-js">modes : "AbstractLive"</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>src</td>
+						<td>string</td>
+						<td>No</td>
+						<td>""</td>
+						<td>Points to a image that should be used as the abstract view. If omited the abstract
+							preview is created based on the Card type and settings in the card manifest. The path to
+							the image is relative to the baseUrl of the Card. To support theming options on the
+							customer side, the image should use transparency settings and gray shades explained
+							<a href="#previewimage">here</a>.<br>
+							<pre class="prettyprint lang-js">src : "dt/preview.png"</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+				</table>
+
+			</div>
+
+			<h2 id="preview">Preview of the Card in Card Editor</h2>
+			<h3>Preview Modes</h3>
+			<ul>
+				<li>
+					None: No preview
+				</li>
+				<li>Abstract: (default) Only an abstract preview is available. If an own image is provided in the src
+					property, it
+					will be used for
+					the abstract preview.
+					<br>
+					<img src="../images/CardDTAbstractPreview.png">
+					<img src="../images/CardDTAbstractOwnPreview.png"></li>
+				<li>AbstractLive: The user is able to switch from an abstract preview to a live preview and back. If an
+					own image is provided in the src
+					property, it will be used for the abstract preview..
+					<img src="../images/CardDTAbstractPreview.png"> <img src="../images/CardDTLivePreview.png"></li>
+				<li>LiveAbstract: The user is able to switch from an abstract preview to a live preview and back. If an
+					own image is provided in the src
+					property, it will be used for the abstract preview..
+					<img src="../images/CardDTLivePreview.png"> <img src="../images/CardDTAbstractPreview.png"></li>
+				<li>Live: The user is able to switch from an abstract preview to a live preview and back. If an
+					own image is provided in the src
+					property, it will be used for the abstract preview..
+					<img src="../images/CardDTLivePreview.png"></li>
+			</ul>
+
+			</p>
+			<h3>Create a themeable preview for a Card</h3>
+			<p>
+				Preview images for Card should an abstract preview to give the user an impression of look of the final
+				Card.
+				As a Card developer, you should create the picture for such abstract in case you want to override the
+				default
+				representation that is created based on the Card type you chose.
+				To avoid additional overhead the preview image should be created in a themable fashion.
+				Working with gray shades and transparency this is easily possible.
+				The image should work with these sizes and colors.
+			<ul>
+				<li>Width: 250px</li>
+				<li>Height: 300px</li>
+				<li>Background: transparent</li>
+				<li>Foreground: rgb(225,225,225) opacity 50%, rgba(225,225,225,0.5)</li>
+			</ul>
+			<p>
+				<img src="../images/CardDTOwnPreviewTransparency.png"> <img src="../images/CardDTOwnPreviewLight.png">
+				<img src="../images/CardDTOwnPreviewDark.png">
+
+			</p>
+
+			After creation of the image save it with the Card sources, ideally in the design-time folder, and refer to
+			the image
+			in the preview section's src property.
+			<pre class="prettyprint lang-js">
+sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
+"use strict";
+	var Designtime = BaseDesigntime.extend();
+	Designtime.prototype.create = function () {
+		return {
+			form: {
+				items: {
+
+				}
+			},
+			preview: {
+				src: "dt/preview.png"
+			}
+		}
+	}
+	return Designtime
+});</pre>
+
+			</p>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Design-time Configurations and APIs</a></div>
+			<div><a href="#form">Configure the editor's form</a></div>
+			<div><a href="#preview">Configure the editor's preview</a></div>
+		</div>
+	</div>
+
+	<script src="../../scripts/topic.js"></script>
+</body>
+
+</html>

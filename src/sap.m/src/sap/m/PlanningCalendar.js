@@ -615,7 +615,7 @@ sap.ui.define([
 		"sap.ui.unified.calendar.OneMonthDatesRow"
 	];
 
-	var CalendarHeader = Control.extend("CalendarHeader", {
+	var CalendarHeader = Control.extend("sap.m._PlanningCalendarInternalHeader", {
 
 		metadata : {
 			aggregations: {
@@ -3309,9 +3309,15 @@ sap.ui.define([
 	/**
 	 * Represents a header inside PlanningCalendarRowListItem.
 	 */
-	var PlanningCalendarRowHeader = StandardListItem.extend("PlanningCalendarRowHeader", {
+	var PlanningCalendarRowHeader = StandardListItem.extend("sap.m._PlanningCalendarRowHeader", {
 
-		renderer: Renderer.extend(StandardListItemRenderer),
+		renderer: {
+			apiVersion: 2,
+			renderTabIndex: function(oRm, oLI) {
+			},
+			getAriaRole: function (oRm, oLI) {
+			}
+		},
 		TagName: "div"
 
 	});
@@ -3320,13 +3326,6 @@ sap.ui.define([
 	PlanningCalendarRowHeader.prototype.isSelectable = function () {
 		// The header itself isn't selectable - the row is.
 		return false;
-	};
-
-	/*global PlanningCalendarRowHeaderRenderer:true*/
-	PlanningCalendarRowHeaderRenderer.renderTabIndex = function(oRm, oLI) {
-	};
-
-	PlanningCalendarRowHeaderRenderer.getAriaRole = function (oRm, oLI) {
 	};
 
 	var PlanningCalendarRowTimelineRenderer = Renderer.extend(CalendarRowRenderer);
@@ -3446,11 +3445,11 @@ sap.ui.define([
 	/**
 	 * Represents timeline that holds the appointments and intervals indide the PlanningCalendarRowListItem
 	 */
-	var PlanningCalendarRowTimeline = CalendarRow.extend("PlanningCalendarRowTimeline", {
+	var PlanningCalendarRowTimeline = CalendarRow.extend("sap.m._PlanningCalendarRowTimeline", {
 		metadata: {
 			aggregations : {
 				intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true},
-				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}}
+				_intervalPlaceholders : {type : "sap.m._PlanningCalendarIntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}}
 			},
 			associations: {
 				row: { type: "sap.m.PlanningCalendarRow", multiple: false }
@@ -3499,7 +3498,7 @@ sap.ui.define([
 	/**
 	 * Renders invisible interval placeholders that are used for drop targets.
 	 */
-	var IntervalPlaceholder = Control.extend("IntervalPlaceholder", {
+	var IntervalPlaceholder = Control.extend("sap.m._PlanningCalendarIntervalPlaceholder", {
 		metadata: {
 			properties: {
 				width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
@@ -3567,12 +3566,14 @@ sap.ui.define([
 			oRow.getDragDropConfig().forEach(function (oDragDropInfo) {
 				if (oDragDropInfo.getGroupName() === DRAG_DROP_CONFIG_NAME) {
 					oRow.removeDragDropConfig(oDragDropInfo);
+					oDragDropInfo.destroy();
 				}
 			});
 
 			oTimeline.getDragDropConfig().forEach(function (oDragDropInfo) {
 				if (oDragDropInfo.getGroupName() === DRAG_DROP_CONFIG_NAME) {
 					oTimeline.removeDragDropConfig(oDragDropInfo);
+					oDragDropInfo.destroy();
 				}
 			});
 		}
@@ -3581,14 +3582,16 @@ sap.ui.define([
 	PlanningCalendar.prototype._enableAppointmentsResize = function (oRow) {
 		var enableAppointmentsResize = oRow.getEnableAppointmentsResize(),
 			oOldConfig = this._getConfigFromDragDropConfigAggregation(oRow.getAggregation("dragDropConfig"), RESIZE_CONFIG_NAME),
-			oNewConfig = this._getResizeConfig(oRow);
+			oNewConfig;
 
 		if (enableAppointmentsResize && !oOldConfig) {
+			oNewConfig = this._createResizeConfig(oRow);
 			oRow.addAggregation("dragDropConfig", oNewConfig, true); // do not invalidate
 		}
 
-		if (!enableAppointmentsResize) {
+		if (!enableAppointmentsResize && oOldConfig) {
 			oRow.removeAggregation("dragDropConfig", oOldConfig, true); // do not invalidate
+			oOldConfig.destroy();
 		}
 	};
 
@@ -3596,14 +3599,16 @@ sap.ui.define([
 		var enableAppointmentsCreate = oRow.getEnableAppointmentsCreate(),
 			oTimeline = getRowTimeline(oRow),
 			oOldConfig = this._getConfigFromDragDropConfigAggregation(oTimeline.getAggregation("dragDropConfig"), CREATE_CONFIG_NAME),
-			oNewConfig = this._getAppointmentsCreateConfig(oRow);
+			oNewConfig;
 
 		if (enableAppointmentsCreate && !oOldConfig) {
+			oNewConfig = this._createAppointmentsCreateConfig(oRow);
 			oTimeline.addAggregation("dragDropConfig", oNewConfig, true); // do not invalidate
 		}
 
-		if (!enableAppointmentsCreate) {
+		if (!enableAppointmentsCreate && oOldConfig) {
 			oTimeline.removeAggregation("dragDropConfig", oOldConfig, true); // do not invalidate
+			oOldConfig.destroy();
 		}
 	};
 
@@ -3794,7 +3799,7 @@ sap.ui.define([
 		};
 	};
 
-	PlanningCalendar.prototype._getResizeConfig = function (oRow) {
+	PlanningCalendar.prototype._createResizeConfig = function (oRow) {
 		var oTimeline = getRowTimeline(oRow),
 			oResizeConfig = new DragDropInfo({
 				sourceAggregation: "appointments",
@@ -4034,7 +4039,7 @@ sap.ui.define([
 		return null;
 	};
 
-	PlanningCalendar.prototype._getAppointmentsCreateConfig = function (oRow) {
+	PlanningCalendar.prototype._createAppointmentsCreateConfig = function (oRow) {
 		var oTimeline = getRowTimeline(oRow),
 			oCreateConfig = new DragDropInfo({
 				targetAggregation: "_intervalPlaceholders",

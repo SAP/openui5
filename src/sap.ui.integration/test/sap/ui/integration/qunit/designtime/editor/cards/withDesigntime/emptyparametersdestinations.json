@@ -1,0 +1,13 @@
+{
+	"sap.app": {
+		"id": "test.sample"
+	},
+	"sap.card": {
+		"designtime": "designtime/noconfig",
+		"type": "List",
+		"configuration": {
+			"destination": {},
+			"parameters": {}
+		}
+	}
+}

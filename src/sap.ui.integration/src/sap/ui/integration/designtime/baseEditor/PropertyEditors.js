@@ -72,6 +72,7 @@ sap.ui.define([
 	 */
 	var PropertyEditors = Control.extend("sap.ui.integration.designtime.baseEditor.PropertyEditors", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				/**
 				 * List of tags to render, e.g. <code>"header,content"</code>. Only the properties that contain both tags will be rendered.
@@ -542,7 +543,7 @@ sap.ui.define([
 			};
 		}
 
-		var mDefaultConfig = mLayouts[this.getLayout()].defaultConfig;
+		var mDefaultConfig = mLayouts[this.getLayout()] && mLayouts[this.getLayout()].defaultConfig || {};
 
 		// Prioritization (bottom wins):
 		// - default config

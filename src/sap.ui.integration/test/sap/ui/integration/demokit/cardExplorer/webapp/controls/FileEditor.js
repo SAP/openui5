@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/ui/codeeditor/CodeEditor",
 	"sap/ui/core/Control"
-], function(
+], function (
 	FileUtils,
 	SchemaValidator,
 	formatter,
@@ -89,34 +89,35 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function (oRm, oFileEditor) {
 
-			oRm.openStart("div", oFileEditor)
-				.class("sapUiCardExplorerFileEditor")
-				.style("height", "100%")
-				.openEnd();
+				oRm.openStart("div", oFileEditor)
+					.class("sapUiCardExplorerFileEditor")
+					.style("height", "100%")
+					.openEnd();
 
-			oRm.openStart("div")
-				.class("sapUiCardExplorerFileEditorHeader")
-				.openEnd();
-			oRm.renderControl(oFileEditor._getErrorsStrip());
-			oRm.renderControl(oFileEditor._getSchemaErrorsStrip());
-			oRm.renderControl(oFileEditor._getReadOnlyWarningStrip());
+				oRm.openStart("div")
+					.class("sapUiCardExplorerFileEditorHeader")
+					.openEnd();
+				oRm.renderControl(oFileEditor._getErrorsStrip());
+				oRm.renderControl(oFileEditor._getSchemaErrorsStrip());
+				oRm.renderControl(oFileEditor._getReadOnlyWarningStrip());
 
-			if (oFileEditor.getFiles().length > 1) {
-				oRm.renderControl(oFileEditor._getHeader());
+				if (oFileEditor.getFiles().length > 1) {
+					oRm.renderControl(oFileEditor._getHeader());
+				}
+
+				oRm.close("div");
+
+				oRm.openStart("div")
+					.class("sapUiCardExplorerFileEditorContent")
+					.openEnd();
+				oRm.renderControl(oFileEditor._getImage());
+				oRm.renderControl(oFileEditor._getEditor());
+				oRm.close("div");
+
+				oRm.close("div");
 			}
-
-			oRm.close("div");
-
-			oRm.openStart("div")
-				.class("sapUiCardExplorerFileEditorContent")
-				.openEnd();
-			oRm.renderControl(oFileEditor._getImage());
-			oRm.renderControl(oFileEditor._getEditor());
-			oRm.close("div");
-
-			oRm.close("div");
 		}
-	}});
+	});
 
 	FileEditor.prototype.init = function () {
 		this._bFetch = false;
@@ -273,9 +274,17 @@ sap.ui.define([
 			}));
 		}.bind(this));
 	};
+	FileEditor.mimetypes = {
+		"js": "text/javascript",
+		"json": "application/json",
+		"html": "text/html",
+		"properties": "text/plain"
+	};
 
 	FileEditor.prototype._fetchContents = function () {
 		var aFetchPromises = this._aFiles.map(function (oFile) {
+			var sType = oFile.url.substring(oFile.url.lastIndexOf(".") + 1);
+			oFile._type = FileEditor.mimetypes[sType] || "text/plain";
 			oFile.promise = FileUtils.fetch(sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + oFile.url));
 			return oFile.promise;
 		});
@@ -283,6 +292,7 @@ sap.ui.define([
 		Promise.all(aFetchPromises)
 			.then(function (aData) {
 				aData.map(function (sData, i) {
+					this._aFiles[i]._url = URL.createObjectURL(new Blob([sData], { type: this._aFiles[i]._type }));
 					this._aFiles[i].content = sData;
 				}.bind(this));
 
@@ -331,11 +341,11 @@ sap.ui.define([
 	 */
 	FileEditor.prototype._isFileEditable = function (oFile) {
 		return !oFile.isApplicationManifest
-				&& (oFile.name.endsWith("manifest.json") || oFile.name.endsWith("cardManifest.json"));
+			&& (oFile.name.endsWith("manifest.json") || oFile.name.endsWith("cardManifest.json"));
 	};
 
 	FileEditor.prototype._findIndex = function (sName) {
-		return this._aFiles.findIndex(function (oFile) { return oFile.key === sName;});
+		return this._aFiles.findIndex(function (oFile) { return oFile.key === sName; });
 	};
 
 	FileEditor.prototype._onSyntaxError = function () {

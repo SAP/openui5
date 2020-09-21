@@ -36,7 +36,8 @@ sap.ui.define([
 		if (!bUserLayer) {
 			return PersistenceWriteAPI.hasHigherLayerChanges({
 				selector: oReloadInfo.selector,
-				ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter
+				ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
+				upToLayer: oReloadInfo.layer
 			});
 		}
 	}
@@ -56,7 +57,7 @@ sap.ui.define([
 		 *
 		 * @param  {object} oReloadInfo - Contains the information needed to find a reason to reload
 		 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
-		 * @param  {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
+		 * @param  {sap.ui.core.Control} oReloadInfo.selector - Root control instance
 		 * @param  {boolean} [oReloadInfo.ignoreMaxLayerParameter] - Indicates that personalization is to be checked without max layer filtering
 		 * @param  {object} oReloadInfo.parsedHash - The parsed URL hash
 		 *

@@ -50,8 +50,6 @@ function(
 	// shortcut for sap.m.SplitAppMode
 	var SplitAppMode = library.SplitAppMode;
 
-
-
 	/**
 	 * Constructor for a new SplitContainer.
 	 *
@@ -586,6 +584,11 @@ function(
 			var fnDetailNavRemoveChild = this._oDetailNav._removeChild;
 			this._oDetailNav._removeChild = fnPatchRemoveChild(fnDetailNavRemoveChild, "_oDetailNav", "_aDetailPages");
 		}
+
+		if (Device.support.touch) {
+			this._fnWindowScroll = this._onWindowScroll.bind(this);
+			window.addEventListener('scroll', this._fnWindowScroll, true);
+		}
 	};
 
 	SplitContainer.prototype.onBeforeRendering = function() {
@@ -621,6 +624,10 @@ function(
 		if (this._oShowMasterBtn) {
 			this._oShowMasterBtn.destroy();
 			this._oShowMasterBtn = null;
+		}
+
+		if (Device.support.touch) {
+			window.removeEventListener('scroll', this._fnWindowScroll);
 		}
 	};
 
@@ -661,6 +668,17 @@ function(
 		if (!Device.system.phone) {
 				this._bIgnoreSwipe = (oEvent.originalEvent && oEvent.originalEvent._sapui_handledByControl);
 		}
+	};
+
+	SplitContainer.prototype.ontouchend = function(oEvent) {
+		if (!this._bIgnoreSwipe) {
+			this._bIgnoreSwipe = this._oScrolledElement && containsOrEquals(this._oScrolledElement, oEvent.target);
+		}
+		this._oScrolledElement = null;
+	};
+
+	SplitContainer.prototype._onWindowScroll = function (oEvent) {
+		this._oScrolledElement = oEvent.srcElement;
 	};
 
 	SplitContainer.prototype.onswiperight = function(oEvent) {

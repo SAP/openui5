@@ -4,11 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/_ParameterValidator",
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"sap/ui/test/_LogCollector",
 	"sap/ui/thirdparty/jquery"
-], function(_OpaLogger, _ParameterValidator, _autoWaiter, _LogCollector, $) {
+], function(_OpaLogger, _autoWaiter, _LogCollector, $) {
 	"use strict";
 
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._autoWaiterAsync");
@@ -17,9 +16,6 @@ sap.ui.define([
 	// final result logs are recognized by a component name suffix "#hasPending"
 	var oLogCollector = _LogCollector.getInstance("^sap.ui.test.autowaiter.*#hasPending$");
 
-	var oConfigValidator = new _ParameterValidator({
-		errorPrefix: "sap.ui.test.autowaiter._autoWaiterAsync#extendConfig"
-	});
 	var bWaitStarted;
 	var sLastAutoWaiterLog;
 	var config = {
@@ -27,9 +23,10 @@ sap.ui.define([
 		timeout: 15000 // milliseconds
 	};
 
-	function extendConfig(oConfig) {
-		validateConfig(oConfig);
-		$.extend(config, oConfig);
+	function extendConfig(oNewConfig) {
+		_validateTime(oNewConfig, "timeout");
+		_validateTime(oNewConfig, "interval");
+		$.extend(config, oNewConfig);
 		_autoWaiter.extendConfig(config);
 	}
 
@@ -75,17 +72,9 @@ sap.ui.define([
 		}
 	}
 
-	function validateConfig(oConfig) {
-		oConfigValidator.validate({
-			inputToValidate: oConfig,
-			validationInfo: {
-				interval: "numeric",
-				timeout: "numeric"
-			}
-		});
-
-		if (oConfig.timeout <= 0 || oConfig.interval <= 0) {
-			throw new Error("Invalid polling config: Timeout and interval should be greater than 0");
+	function _validateTime(oConfig, sKey) {
+		if (oConfig[sKey] && (!$.isNumeric(oConfig[sKey]) || oConfig[sKey] <= 0)) {
+			throw new Error("Invalid autoWaiterAsync config: " + sKey + " should be a number greater than 0");
 		}
 	}
 

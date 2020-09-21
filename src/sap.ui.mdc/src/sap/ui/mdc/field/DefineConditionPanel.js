@@ -89,6 +89,7 @@ sap.ui.define([
 	 */
 	var DefineConditionPanel = Control.extend("sap.ui.mdc.field.DefineConditionPanel", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				/**
 				 * Sets the conditions that represent the selected values of the help.

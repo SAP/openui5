@@ -22,8 +22,9 @@ sap.ui.define([
 		renderer: "sap.uxap.ObjectPageSubSectionRenderer"
 	});
 
-	var Container = new Control.extend("Container", {
+	var Container = Control.extend("sap.ui.documentation.Container", {
 		metadata: {
+			library: "sap.ui.documentation",
 			aggregations: {
 				content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
 			}

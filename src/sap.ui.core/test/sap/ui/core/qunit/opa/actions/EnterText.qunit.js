@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/m/library",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/strings/capitalize"
 ], function (
 	EnterText,
 	Input,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Opa5,
 	opaTest,
 	mobileLibrary,
-	$) {
+	$,
+	capitalize) {
 	"use strict";
 
 	var InputType = mobileLibrary.InputType;
@@ -65,7 +67,7 @@ sap.ui.define([
 		changeEventParameter: "query"
 	}].forEach(function (testInfo) {
 
-		function testBody(bClearText, assert) {
+		function testBobyForValidAction(bClearText, assert) {
 			var fnDone = assert.async();
 			var sTextToEnter = testInfo.textToEnter || "foo";
 			var sTextBeforeAction = testInfo.textInControl || "A";
@@ -127,13 +129,63 @@ sap.ui.define([
 		}
 
 		QUnit.test("Should enter a text and preserve the value in a " + testInfo.Control.getMetadata().getName(), function (assert) {
-			testBody.call(this, false, assert);
+			testBobyForValidAction.call(this, false, assert);
 		});
 
 		QUnit.test("Should enter a text and clear the value in a " + testInfo.Control.getMetadata().getName(), function (assert) {
-			testBody.call(this, true, assert);
+			testBobyForValidAction.call(this, true, assert);
 		});
 
+		function testBodyForInvalidAction(fnModifyControl, assert) {
+			var fnDone = assert.async();
+			fnModifyControl();
+			var fnOnLiveChange = testInfo.liveChangeEventParameter ? sinon.spy(this.oControl, "fireLiveChange") : sinon.spy();
+			var fnOnChange = sinon.spy(this.oControl, "on" + capitalize(testInfo.changeEvent));
+
+			this.oControl.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oEnterText = new EnterText({
+				text: testInfo.textToEnter || "foo"
+			});
+			oEnterText.executeOn(this.oControl);
+
+			setTimeout(function () {
+				sinon.assert.notCalled(fnOnLiveChange);
+				sinon.assert.notCalled(fnOnChange);
+				assert.strictEqual(this.oControl.getValue(), this.sTextBeforeAction);
+				fnDone();
+			}.bind(this), 50);
+		}
+
+		QUnit.test("Should not enter text when " + testInfo.Control.getMetadata().getName() + " is not editable", function (assert) {
+			this.sTextBeforeAction = testInfo.textInControl || "A";
+			var oControl = new testInfo.Control({
+				value: this.sTextBeforeAction
+			});
+			this.oControl = oControl; // should be destroyed at end of test
+
+			if (oControl.getMetadata()._mAllProperties.editable) {
+				testBodyForInvalidAction.call(this, function () {
+					oControl.setEditable(false);
+				}, assert);
+			} else {
+				assert.ok(true, "Control doesn't have editable property");
+			}
+		});
+
+		QUnit.test("Should not enter text when " + testInfo.Control.getMetadata().getName() + " is not enabled", function (assert) {
+			this.sTextBeforeAction = testInfo.textInControl || "A";
+			var oControl = new testInfo.Control({
+				value: this.sTextBeforeAction
+			});
+			this.oControl = oControl; // should be destroyed at end of test
+
+			testBodyForInvalidAction.call(this, function () {
+				oControl.setEnabled(false);
+			}, assert);
+			oControl.setEnabled(false);
+		});
 	});
 
 	QUnit.test("Should not fire enter on a control", function (assert) {
@@ -179,6 +231,17 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Should enter binding symbols", function (assert) {
+		this.oControl = new Input();
+
+		this.oControl.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		new EnterText({ text: "{" }).executeOn(this.oControl);
+
+		assert.strictEqual(this.oControl.getValue(), "{");
+	});
+
 	QUnit.module("Logging", {
 		beforeEach: function () {
 			this.oEnterText = new EnterText({});
@@ -208,16 +271,6 @@ sap.ui.define([
 		}, "Exception has been thrown");
 
 		sinon.assert.calledWith(this.oErrorLog, sinon.match(/has no focus DOM reference/));
-	});
-
-	QUnit.test("Should log a message if a control cannot be focused", function () {
-		this.oControl.setEnabled(false);
-		sap.ui.getCore().applyChanges();
-
-		this.oEnterText.setText("foo");
-		this.oEnterText.executeOn(this.oControl);
-
-		sinon.assert.calledWith(this.oDebugLog, sinon.match(/could not be focused/));
 	});
 
 	QUnit.test("Should log an error if no text is passed to EnterText", function () {

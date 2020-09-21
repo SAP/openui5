@@ -23,6 +23,9 @@ sap.ui.define([
 	CustomYearPickerRenderer.apiVersion = 2;
 
 	var CustomYearPicker = Calendar.extend("sap.ui.unified.internal.CustomYearPicker", {
+		metadata: {
+			library: "sap.ui.unified"
+		},
 		renderer: CustomYearPickerRenderer
 	});
 

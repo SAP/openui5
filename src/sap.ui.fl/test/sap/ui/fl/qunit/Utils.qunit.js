@@ -55,11 +55,6 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("sap.ui.fl.Utils", function(assert) {
-			var oInstance = Utils;
-			assert.ok(oInstance);
-		});
-
 		QUnit.test("getComponentClassName shall return an empty string if the control does not belong to a SAPUI5 component", function(assert) {
 			var sComponent = Utils.getComponentClassName({});
 			assert.strictEqual(sComponent, "");
@@ -815,19 +810,65 @@ function(
 						fileName: "variant0",
 						content: {}
 					}
-				}), new Change({
+				}),
+				new Change({
 					fileType: "ctrl_variant_change",
 					fileName: "change0"
-				}), new Change({
+				}),
+				new Change({
 					fileType: "ctrl_variant_management_change",
 					fileName: "change1"
-				}), new Change({
+				}),
+				new Change({
 					fileType: "change",
 					fileName: "change2",
 					variantReference: "variant0"
 				})
 			].forEach(function(oChange) {
 				assert.ok(Utils.isChangeRelatedToVariants(oChange), "then for change type " + oChange.getFileType() + " true was returned");
+			});
+		});
+
+		QUnit.test("when isChangeRelatedToCompVariants is called with objects containing a persistencyKey", function(assert) {
+			[
+				new Variant({
+					content: {
+						fileType: "variant",
+						fileName: "variant0",
+						selector: {
+							persistencyKey: "someId"
+						}
+					}
+				}),
+				new Change({
+					fileType: "change",
+					fileName: "change0",
+					selector: {
+						persistencyKey: "someId"
+					}
+				})
+			].forEach(function(oChange) {
+				assert.equal(Utils.isChangeRelatedToCompVariant(oChange), true, "then true was returned");
+			});
+		});
+
+		QUnit.test("when isChangeRelatedToCompVariants is called with objects containing NO persistencyKey", function(assert) {
+			[
+				new Change({
+					fileType: "change",
+					fileName: "change1",
+					selector: {
+						id: "some.id",
+						idIsLocal: true
+					}
+				}),
+				new Change({
+					fileType: "change",
+					fileName: "change2",
+					selector: "some.id" // old selector format
+				})
+			].forEach(function(oChange) {
+				assert.equal(Utils.isChangeRelatedToCompVariant(oChange), false, "then true was returned");
 			});
 		});
 	});
@@ -1566,14 +1607,14 @@ function(
 		QUnit.test("when complex scenario with nested FakePromises and an exception", function(assert) {
 			new Utils.FakePromise()
 			.then(function() {
-				return new Utils.FakePromise()
-				.then(function() {
-					// provoke exception
-					"should be an array".some(function() {});
-				})
-				.then(function() {
-					assert.notOk(true, "then the 'then' method shouldn't be called");
-				});
+				return new Utils.FakePromise();
+			})
+			.then(function() {
+				// provoke exception
+				"should be an array".some(function() {});
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method shouldn't be called");
 			})
 			.then(function() {
 				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
@@ -1617,14 +1658,14 @@ function(
 		QUnit.test("when complex scenario with FakePromise into a Promise", function(assert) {
 			return Promise.resolve()
 				.then(function(oValue, sPromiseIdentifier) {
-					return new Utils.FakePromise(oValue, undefined, sPromiseIdentifier)
-						.then(function() {
-							// provoke exception
-							"should be an array".some(function() {});
-						})
-						.then(function() {
-							assert.notOk(true, "then the 'then' method shouldn't be called");
-						});
+					return new Utils.FakePromise(oValue, undefined, sPromiseIdentifier);
+				})
+				.then(function() {
+					// provoke exception
+					"should be an array".some(function() {});
+				})
+				.then(function() {
+					assert.notOk(true, "then the 'then' method shouldn't be called");
 				})
 				.then(function() {
 					assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");

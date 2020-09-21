@@ -37,6 +37,7 @@ sap.ui.define([
 		 */
 		With = ManagedObject.extend("sap.ui.core.util._with", {
 			metadata : {
+				library: "sap.ui.core",
 				properties : {
 					any : "any"
 				},
@@ -55,6 +56,7 @@ sap.ui.define([
 		 */
 		Repeat = With.extend("sap.ui.core.util._repeat", {
 			metadata : {
+				library: "sap.ui.core",
 				aggregations : {
 					list : {multiple : true, type : "n/a", _doesNotRequireFactory : true}
 				}

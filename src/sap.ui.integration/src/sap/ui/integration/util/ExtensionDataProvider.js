@@ -23,8 +23,11 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 	 * @alias sap.ui.integration.util.ExtensionDataProvider
 	 */
 	var ExtensionDataProvider = DataProvider.extend("sap.ui.integration.util.ExtensionDataProvider", {
-		constructor: function (oExtension) {
-			DataProvider.call(this);
+		metadata: {
+			library: "sap.ui.integration"
+		},
+		constructor: function (oConfig, oExtension) {
+			DataProvider.call(this, oConfig);
 			this._oExtension = oExtension;
 		}
 	});

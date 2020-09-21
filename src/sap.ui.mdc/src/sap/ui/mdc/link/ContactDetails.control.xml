@@ -1,9 +1,9 @@
 <core:FragmentDefinition xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
 
-	<m:VBox items="{path:'$this>/items', templateShareable:false}">
+	<m:VBox items="{path:'$this>/items', templateShareable:false}" aria-labelledby="IDContactDetailsTitle">
 		<f:SimpleForm id="IDSimpleForm" editable="false" layout="ResponsiveGridLayout">
 
-			<core:Title text="{$this>sectionTitle}"/>
+			<core:Title id="IDContactDetailsTitle" text="{$this>sectionTitle}"/>
 
 			<m:Label text="" labelFor="IDImage" visible="{= !!${$this>photo}}"/>
 			<m:Image id="IDImage" src="{$this>photo}" decorative="false" width="5rem" height="5rem"

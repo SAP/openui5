@@ -31,6 +31,7 @@ sap.ui.define([
 
 	var GridTableType = TableTypeBase.extend("sap.ui.mdc.table.GridTableType", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				/**
 				 * See sap.ui.mdc.RowCountMode for the options.<br>

@@ -46,6 +46,9 @@ sap.ui.define([
 	// shortcut for sap.m.BadgeState
 	var BadgeState = library.BadgeState;
 
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
+
 	/**
 	 * Constructor for a new <code>Button</code>.
 	 *
@@ -139,10 +142,19 @@ sap.ui.define([
 			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+
+			/**
+			 * Specifies the value of the <code>aria-haspopup</code> attribute
+			 *
+			 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered with the selected value.
+			 * @since 1.83.0
+			 */
+			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
+
 		},
 		associations : {
 
@@ -155,6 +167,7 @@ sap.ui.define([
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+
 		},
 		events : {
 

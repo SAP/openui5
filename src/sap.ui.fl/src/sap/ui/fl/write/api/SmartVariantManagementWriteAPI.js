@@ -3,19 +3,27 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/DefaultVariant",
-	"sap/ui/fl/StandardVariant",
-	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/write/_internal/transport/TransportSelection"
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/transport/TransportSelection",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
-	DefaultVariant,
-	StandardVariant,
-	SmartVariantManagementApplyAPI,
-	ChangePersistenceFactory,
-	TransportSelection
+	CompVariantState,
+	TransportSelection,
+	ManifestUtils
 ) {
 	"use strict";
+
+	function getPersistencyKey(oControl) {
+		return oControl && oControl.getPersistencyKey && oControl.getPersistencyKey();
+	}
+
+	function setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, fnFunction) {
+		mPropertyBag.persistencyKey = getPersistencyKey(mPropertyBag.control);
+		if (!mPropertyBag.reference) {
+			mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
+		}
+		return fnFunction(mPropertyBag);
+	}
 
 	/**
 	 * Provides an API to handle specific functionalities for {@link sap.ui.comp.smartvariants.SmartVariantManagement}.
@@ -47,12 +55,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		add: function(mPropertyBag) {
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control);
-
-			return oChangePersistence.addChangeForVariant(
-				SmartVariantManagementApplyAPI._PERSISTENCY_KEY, sStableId, mPropertyBag.changeSpecificData
-			);
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.add);
 		},
 
 		/**
@@ -65,10 +68,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		save: function(mPropertyBag) {
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control);
-
-			return oChangePersistence.saveAllChangesForVariant(sStableId);
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.persist);
 		},
 
 		/**
@@ -79,41 +79,14 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @param {string} mPropertyBag.defaultVariantId - ID of the new default variant
+		 * @param {string} [mPropertyBag.generator] - ID for the creating class / use case of the setDefault
+		 * @param {string} [mPropertyBag.compositeCommand] - Name of the composite command triggering the setting of the default
 		 * @returns {object} Default variant change
 		 * @private
 		 * @ui5-restricted
 		 */
 		setDefaultVariantId: function(mPropertyBag) {
-			var mParameters;
-			var oChange;
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control);
-			var mSelector = {};
-
-			mSelector[SmartVariantManagementApplyAPI._PERSISTENCY_KEY] = sStableId;
-
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control);
-
-			mParameters = {
-				defaultVariantId: mPropertyBag.defaultVariantId,
-				reference: oChangePersistence.getComponentName(),
-				selector: mSelector,
-				validAppVersions: {
-					creation: oChangePersistence._mComponent.appVersion,
-					from: oChangePersistence._mComponent.appVersion
-				}
-			};
-
-			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(mPropertyBag.control);
-			oChange = DefaultVariant.updateDefaultVariantId(oChanges, mPropertyBag.defaultVariantId);
-
-			if (oChange) {
-				return oChange;
-			}
-
-			oChange = DefaultVariant.createChangeObject(mParameters);
-			var sChangeId = oChange.getId();
-			oChanges[sChangeId] = oChange;
-			return oChange;
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.setDefault);
 		},
 
 		/**
@@ -128,32 +101,7 @@ sap.ui.define([
 		 * @returns {object} Default variant change
 		 */
 		setExecuteOnSelect: function(mPropertyBag) {
-			var mParameters;
-			var oChange;
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control);
-
-			var mSelector = {};
-			mSelector[SmartVariantManagementApplyAPI._PERSISTENCY_KEY] = sStableId;
-
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control);
-
-			mParameters = {
-				executeOnSelect: mPropertyBag.executeOnSelect,
-				reference: oChangePersistence.getComponentName(),
-				selector: mSelector
-			};
-
-			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(mPropertyBag.control);
-			oChange = StandardVariant.updateExecuteOnSelect(oChanges, mPropertyBag.executeOnSelect);
-
-			if (oChange) {
-				return oChange;
-			}
-
-			oChange = StandardVariant.createChangeObject(mParameters);
-			var sChangeId = oChange.getId();
-			oChanges[sChangeId] = oChange;
-			return oChange;
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.setExecuteOnSelect);
 		},
 
 		/**

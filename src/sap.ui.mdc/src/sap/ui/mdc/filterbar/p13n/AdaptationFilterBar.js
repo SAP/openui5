@@ -22,6 +22,7 @@ sap.ui.define([
 	 */
 	var AdaptationFilterBar = FilterBarBase.extend("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				/**
 				 * Determines the parent on which the condition changes should be applied on.
@@ -82,7 +83,26 @@ sap.ui.define([
 		//Cleanup after dialog close
 		this.getAdaptationControl()._oAdaptationController.attachEvent("afterP13nContainerCloses", fnOnContainerClose);
 
+		//update adaptationModel while dialog is open
+		this._oConditionModel.attachPropertyChange(function(oEvt){
+			var sKey = oEvt.getParameter("path").substring(12);
+			if (this.oAdaptationModel){
+				var oItem = this.oAdaptationModel.getProperty("/items").find(function(o){
+					return o.name == sKey;
+				});
+				oItem.isFiltered = this._getConditionModel().getConditions(sKey).length > 0 ? true : false;
+			}
+		}.bind(this));
+
 		return this;
+	};
+
+	AdaptationFilterBar.prototype.switchViewMode = function(sView) {
+		this._oFilterBarLayout.getInner().switchViewMode(sView);
+	};
+
+	AdaptationFilterBar.prototype.getViewMode = function(sView) {
+		return this._oFilterBarLayout.getInner().getViewMode();
 	};
 
 	AdaptationFilterBar.prototype._handleModal = function(sCloseReason) {

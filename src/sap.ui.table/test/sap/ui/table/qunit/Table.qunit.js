@@ -63,6 +63,7 @@ sap.ui.define([
 	var getRowHeader = window.getRowHeader;
 	var getRowAction = window.getRowAction;
 	var getSelectAll = window.getSelectAll;
+	var checkFocus = window.checkFocus;
 
 	var sServiceURI = "/service/";
 
@@ -1309,19 +1310,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("NoColumns handling", function (assert) {
-		var sNoDataClassOfTable = "sapUiTableEmpty";
-
-		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), false,
-			"Columns are visible - The table has the NoColumns class assigned: " + false);
-
-		oTable.removeAllColumns();
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), true,
-			"No columns are visible - The table has the NoColumns class assigned: " + true);
-	});
-
 	QUnit.test("ColumnMenu", function(assert) {
 		var oColumn = oTable.getColumns()[1];
 		var oMenu = oColumn.getMenu();
@@ -1931,6 +1919,48 @@ sap.ui.define([
 			assert.equal(oHSb.scrollLeft, 5, "ScrollLeft can be set and read.");
 			done();
 		}, 500);
+	});
+
+	QUnit.test("#focus", function(assert) {
+		oTable.focus();
+		checkFocus(getColumnHeader(0, null, null, oTable), assert);
+
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+		oTable.focus();
+		checkFocus(getCell(0, 0, null, null, oTable), assert);
+
+		oTable.unbindRows();
+		oTable.focus();
+		checkFocus(oTable.getDomRef("noDataCnt"), assert);
+
+		oTable.setShowOverlay(true);
+		oTable.focus();
+		checkFocus(oTable.getDomRef("overlay"), assert);
+	});
+
+	QUnit.test("#getFocusDomRef", function(assert) {
+		assert.strictEqual(oTable.getFocusDomRef(), getColumnHeader(0, null, null, oTable)[0], "Column header visible");
+
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getFocusDomRef(), getCell(0, 0, null, null, oTable)[0], "Column header not visible");
+
+		getCell(0, 1, true, null, oTable);
+		assert.strictEqual(oTable.getFocusDomRef(), getCell(0, 1, null, null, oTable)[0], "Last focused cell");
+
+		oTable.unbindRows();
+		assert.strictEqual(oTable.getFocusDomRef(), oTable.getDomRef("noDataCnt"), "NoData visible");
+
+		oTable.setShowOverlay(true);
+		assert.strictEqual(oTable.getFocusDomRef(), oTable.getDomRef("overlay"), "Overlay visible");
+
+		oTable.setShowOverlay(false);
+		oTable.setShowNoData(false);
+		assert.strictEqual(oTable.getFocusDomRef(), oTable.getDomRef(), "No focusable elements");
+
+		oTable.destroy();
+		assert.strictEqual(oTable.getFocusDomRef(), null, "Not rendered");
 	});
 
 	QUnit.module("Fixed rows and columns", {
@@ -4783,13 +4813,6 @@ sap.ui.define([
 		assert.equal(oTable._getItemNavigation().getFocusedDomRef(), oTable.getColumns()[0].getDomRef());
 	});
 
-	QUnit.test("Show no data test", function(assert) {
-		oTable.setShowNoData(true);
-		assert.ok(oTable.getShowNoData());
-		oTable.setShowNoData(false);
-		assert.ok(!oTable.getShowNoData());
-	});
-
 	QUnit.test("#_onPersoApplied", function(assert) {
 		var oColumn = oTable.getColumns()[0];
 		var oBinding = oTable.getBinding("rows");
@@ -4947,128 +4970,6 @@ sap.ui.define([
 		oTable.detachEvent("busyStateChanged", onBusyStateChangedEventHandler);
 		clock.restore();
 		TableUtils.canUsePendingRequestsCounter.restore();
-	});
-
-	QUnit.test("NoData handling", function(assert) {
-		var sNoDataClassOfTable = "sapUiTableEmpty";
-		var oBinding = oTable.getBinding("rows");
-		var oGetBindingLength = sinon.stub(oBinding, "getLength");
-		var oBindingIsA = sinon.stub(oBinding, "isA");
-		var oClock = sinon.useFakeTimers();
-
-		function testNoData(bVisible, sTestTitle) {
-			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bVisible,
-				sTestTitle + " - The table has the NoData class assigned: " + bVisible);
-
-			assert.strictEqual(TableUtils.isNoDataVisible(oTable), bVisible,
-				sTestTitle + " - NoData is visible: " + bVisible);
-		}
-
-		function testDataReceivedListener(bNoDataVisible, sTestTitle) {
-			var oEvent = {
-				getSource: function() {
-					return oBinding;
-				},
-				getParameter: function() {
-					return false;
-				}
-			};
-
-			oTable._onBindingDataReceived.call(oTable, oEvent);
-			oClock.tick(1);
-			sap.ui.getCore().applyChanges();
-
-			testNoData(bNoDataVisible, sTestTitle);
-		}
-
-		function testUpdateTotalRowCount(bNoDataVisible, sTestTitle) {
-			oTable._adjustToTotalRowCount();
-			sap.ui.getCore().applyChanges();
-
-			testNoData(bNoDataVisible, sTestTitle);
-		}
-
-		oGetBindingLength.returns(1);
-		oTable.setShowNoData(true);
-
-		// Data available: NoData area is not visible.
-		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), false,
-			"Data available - The table has the NoData class assigned: false");
-		assert.strictEqual(TableUtils.isNoDataVisible(oTable), false, "Data available - NoData is visible: false");
-
-		// No data received: NoData area becomes visible.
-		oGetBindingLength.returns(0);
-		testDataReceivedListener(true, "No data received");
-
-		// Data received: NoData area will be hidden.
-		oGetBindingLength.returns(1);
-		testDataReceivedListener(false, "Data received");
-
-		// Client binding without data: NoData area becomes visible.
-		oBindingIsA.withArgs("sap.ui.model.ClientListBinding").returns(true);
-		oGetBindingLength.returns(0);
-		testUpdateTotalRowCount(true, "Client binding without data");
-
-		// Client binding with data: NoData area will be hidden.
-		oBindingIsA.restore();
-		oBindingIsA.withArgs("sap.ui.model.ClientTreeBinding").returns(true);
-		oGetBindingLength.returns(1);
-		testUpdateTotalRowCount(false, "Client binding with data");
-
-		// Binding removed: NoData area becomes visible.
-		oBindingIsA.restore();
-		oTable.unbindRows();
-		testUpdateTotalRowCount(true, "Binding removed");
-
-		// Cleanup
-		oClock.restore();
-		oGetBindingLength.restore();
-	});
-
-	QUnit.test("NoData Rerendering", function(assert) {
-		oTable.setShowNoData(true);
-		sap.ui.getCore().applyChanges();
-		var bRendered = false;
-		oTable.addEventDelegate({
-			onAfterRendering: function() {
-				bRendered = true;
-			}
-		});
-
-		oTable.setNoData("Hello");
-		sap.ui.getCore().applyChanges();
-		assert.ok(!bRendered, "Table not rendered when changing NoData from default text to custom text");
-		bRendered = false;
-
-		oTable.setNoData("Hello2");
-		sap.ui.getCore().applyChanges();
-		assert.ok(!bRendered, "Table not rendered when changing NoData from text to a different text");
-		bRendered = false;
-
-		oTable.setNoData("Hello2");
-		sap.ui.getCore().applyChanges();
-		assert.ok(!bRendered, "Table not rendered when changing NoData from text to the same text");
-		bRendered = false;
-
-		var oText1 = new Text();
-		oTable.setNoData(oText1);
-		sap.ui.getCore().applyChanges();
-		assert.ok(bRendered, "Table rendered when changing NoData from text to control");
-		bRendered = false;
-
-		var oText2 = new Text();
-		oTable.setNoData(oText2);
-		sap.ui.getCore().applyChanges();
-		assert.ok(bRendered, "Table rendered when changing NoData from control to control");
-		bRendered = false;
-
-		oTable.setNoData("Hello2");
-		sap.ui.getCore().applyChanges();
-		assert.ok(bRendered, "Table rendered when changing NoData from control to text");
-		bRendered = false;
-
-		oText1.destroy();
-		oText2.destroy();
 	});
 
 	QUnit.test("test setGroupBy function", function(assert) {
@@ -5932,5 +5833,261 @@ sap.ui.define([
 		this.oTable._updateTableSizes(TableUtils.RowsUpdateReason.Resize);
 		assert.equal(oUpdateSizesSpy.callCount, 1, "'UpdateSizes' hook was called once");
 		assert.ok(oUpdateSizesSpy.calledWithExactly(TableUtils.RowsUpdateReason.Resize), "'UpdateSizes' hook was correctly called");
+	});
+
+	QUnit.module("NoData", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
+				columns: [
+					new Column({
+						label: new Label({text: "Last Name"}),
+						template: new Text({text: "{lastName}"}),
+						sortProperty: "lastName",
+						filterProperty: "lastName"
+					})
+				]
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		assertNoDataVisible: function(assert, bVisible, sTitle) {
+			var sTestTitle = sTitle == null ? "" : sTitle + ": ";
+
+			assert.equal(this.oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible,
+				sTestTitle + "NoData class is " + (bVisible ? "" : "not ") + "set");
+
+			if (!bVisible) {
+				// If the NoData element is not visible, the table must have focusable elements (cells).
+				assert.ok(this.oTable.qunit.getDataCell(0, 0), sTestTitle + "Rows are rendered");
+			}
+		}
+	});
+
+	QUnit.test("After rendering with data and showNoData=true", function(assert) {
+		this.assertNoDataVisible(assert, false);
+	});
+
+	QUnit.test("After rendering without data and showNoData=true", function(assert) {
+		this.oTable.destroy();
+		this.oTable = TableQUnitUtils.createTable({
+			rows: "{/}",
+			models: TableQUnitUtils.createJSONModelWithEmptyRows(0),
+			columns: [
+				new Column({
+					label: new Label({text: "Last Name"}),
+					template: new Text({text: "{lastName}"}),
+					sortProperty: "lastName",
+					filterProperty: "lastName"
+				})
+			]
+		});
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.assertNoDataVisible(assert, true);
+		}.bind(this));
+	});
+
+	QUnit.test("After rendering without data and showNoData=false", function(assert) {
+		this.oTable.destroy();
+		this.oTable = TableQUnitUtils.createTable({
+			showNoData: false,
+			rows: "{/}",
+			models: TableQUnitUtils.createJSONModelWithEmptyRows(0),
+			columns: [
+				new Column({
+					label: new Label({text: "Last Name"}),
+					template: new Text({text: "{lastName}"}),
+					sortProperty: "lastName",
+					filterProperty: "lastName"
+				})
+			]
+		});
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.assertNoDataVisible(assert, false);
+		}.bind(this));
+	});
+
+	QUnit.test("Change 'showNoData' property with data", function(assert) {
+		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+
+		this.oTable.setShowNoData(true);
+		assert.ok(this.oTable.getShowNoData(), "Change from true to true: Property value");
+		assert.ok(oInvalidateSpy.notCalled, "Change from true to true: Table not invalidated");
+		this.assertNoDataVisible(assert, false, "Change from true to true");
+
+		oInvalidateSpy.reset();
+		this.oTable.setShowNoData(false);
+		assert.ok(!this.oTable.getShowNoData(), "Change from true to false: Property value");
+		assert.ok(oInvalidateSpy.notCalled, "Change from true to false: Table not invalidated");
+		this.assertNoDataVisible(assert, false, "Change from true to false");
+
+		oInvalidateSpy.reset();
+		this.oTable.setShowNoData(false);
+		assert.ok(!this.oTable.getShowNoData(), "Change from false to false: Property value");
+		assert.ok(oInvalidateSpy.notCalled, "Change from false to false: Table not invalidated");
+		this.assertNoDataVisible(assert, false, "Change from false to false");
+
+		oInvalidateSpy.reset();
+		this.oTable.setShowNoData(true);
+		assert.ok(this.oTable.getShowNoData(), "Change from false to true: Property value");
+		assert.ok(oInvalidateSpy.notCalled, "Change from false to true: Table not invalidated");
+		this.assertNoDataVisible(assert, false, "Change from false to true");
+	});
+
+	QUnit.test("Change 'showNoData' property without data", function(assert) {
+		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		var that = this;
+
+		this.oTable.unbindRows();
+
+		oInvalidateSpy.reset();
+		this.oTable.setShowNoData(true);
+		assert.ok(this.oTable.getShowNoData(), "Change from true to true: Property value");
+		assert.ok(oInvalidateSpy.notCalled, "Change from true to true: Table not invalidated");
+		this.assertNoDataVisible(assert, true, "Change from true to true");
+
+		oInvalidateSpy.reset();
+		this.oTable.setShowNoData(false);
+		assert.ok(!this.oTable.getShowNoData(), "Change from true to false without rows: Property value");
+		assert.equal(oInvalidateSpy.callCount, 1, "Change from true to false without rows: Table invalidated");
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			that.assertNoDataVisible(assert, false, "Change from true to false without rows");
+
+			oInvalidateSpy.reset();
+			that.oTable.setShowNoData(false);
+			assert.ok(!that.oTable.getShowNoData(), "Change from false to false: Property value");
+			assert.ok(oInvalidateSpy.notCalled, "Change from false to false: Table not invalidated");
+			that.assertNoDataVisible(assert, false, "Change from false to false");
+
+			oInvalidateSpy.reset();
+			that.oTable.setShowNoData(true);
+			assert.ok(that.oTable.getShowNoData(), "Change from false to true: Property value");
+			assert.ok(oInvalidateSpy.notCalled, "Change from false to true: Table not invalidated");
+			that.assertNoDataVisible(assert, true, "Change from false to true");
+
+			oInvalidateSpy.reset();
+			that.oTable.setShowNoData(false);
+			assert.ok(!that.oTable.getShowNoData(), "Change from true to false with rows: Property value");
+			assert.ok(oInvalidateSpy.notCalled, "Change from true to false with rows: Table not invalidated");
+			that.assertNoDataVisible(assert, false, "Change from true to false with rows");
+		});
+	});
+
+	QUnit.test("Change 'noData' aggregation", function(assert) {
+		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		var oText1 = new Text();
+		var oText2 = new Text();
+
+		this.oTable.setNoData("Hello");
+		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated when changing NoData from default text to custom text");
+
+		oInvalidateSpy.reset();
+		this.oTable.setNoData("Hello2");
+		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated when changing NoData from text to a different text");
+
+		oInvalidateSpy.reset();
+		this.oTable.setNoData("Hello2");
+		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated when changing NoData from text to the same text");
+
+		oInvalidateSpy.reset();
+		this.oTable.setNoData(oText1);
+		assert.equal(oInvalidateSpy.callCount, 1, "Table invalidated when changing NoData from text to control");
+
+		oInvalidateSpy.reset();
+		this.oTable.setNoData(oText2);
+		assert.equal(oInvalidateSpy.callCount, 1, "Table invalidated when changing NoData from control to control");
+
+		oInvalidateSpy.reset();
+		this.oTable.setNoData("Hello2");
+		assert.equal(oInvalidateSpy.callCount, 1, "Table invalidated when changing NoData from control to text");
+
+		oText1.destroy();
+		oText2.destroy();
+	});
+
+	QUnit.test("No columns", function (assert) {
+		this.oTable.removeAllColumns();
+		this.oTable.setShowNoData(false);
+		sap.ui.getCore().applyChanges();
+		this.assertNoDataVisible(assert, true);
+	});
+
+	QUnit.test("Update visibility", function(assert) {
+		var oBinding = this.oTable.getBinding("rows");
+		var oGetBindingLength = sinon.stub(oBinding, "getLength");
+		var oBindingIsA = sinon.stub(oBinding, "isA");
+		var oClock = sinon.useFakeTimers();
+		var that = this;
+
+		function testNoData(bVisible, sTestTitle) {
+			that.assertNoDataVisible(assert, bVisible, sTestTitle);
+			assert.strictEqual(TableUtils.isNoDataVisible(that.oTable), bVisible, sTestTitle + " - NoData is visible: " + bVisible);
+		}
+
+		function testDataReceivedListener(bNoDataVisible, sTestTitle) {
+			var oEvent = {
+				getSource: function() {
+					return oBinding;
+				},
+				getParameter: function() {
+					return false;
+				}
+			};
+
+			that.oTable._onBindingDataReceived.call(that.oTable, oEvent);
+			oClock.tick(1);
+			sap.ui.getCore().applyChanges();
+
+			testNoData(bNoDataVisible, sTestTitle);
+		}
+
+		function testUpdateTotalRowCount(bNoDataVisible, sTestTitle) {
+			that.oTable._adjustToTotalRowCount();
+			sap.ui.getCore().applyChanges();
+
+			testNoData(bNoDataVisible, sTestTitle);
+		}
+
+		oGetBindingLength.returns(1);
+		this.oTable.setShowNoData(true);
+
+		// Data available: NoData area is not visible.
+		this.assertNoDataVisible(assert, false, "Data available");
+		assert.strictEqual(TableUtils.isNoDataVisible(this.oTable), false, "Data available - NoData is visible: false");
+
+		// No data received: NoData area becomes visible.
+		oGetBindingLength.returns(0);
+		testDataReceivedListener(true, "No data received");
+
+		// Data received: NoData area will be hidden.
+		oGetBindingLength.returns(1);
+		testDataReceivedListener(false, "Data received");
+
+		// Client binding without data: NoData area becomes visible.
+		oBindingIsA.withArgs("sap.ui.model.ClientListBinding").returns(true);
+		oGetBindingLength.returns(0);
+		testUpdateTotalRowCount(true, "Client binding without data");
+
+		// Client binding with data: NoData area will be hidden.
+		oBindingIsA.restore();
+		oBindingIsA.withArgs("sap.ui.model.ClientTreeBinding").returns(true);
+		oGetBindingLength.returns(1);
+		testUpdateTotalRowCount(false, "Client binding with data");
+
+		// Binding removed: NoData area becomes visible.
+		oBindingIsA.restore();
+		this.oTable.unbindRows();
+		testUpdateTotalRowCount(true, "Binding removed");
+
+		// Cleanup
+		oClock.restore();
+		oGetBindingLength.restore();
 	});
 });

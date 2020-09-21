@@ -122,7 +122,7 @@ sap.ui.define([
 				manifest: this.oManifest,
 				reference: "test.app",
 				componentData: {},
-				partialFlexData: {changes: {partial: "something"}}
+				partialFlexData: {changes: [{partial: "something"}]}
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function (oResult) {

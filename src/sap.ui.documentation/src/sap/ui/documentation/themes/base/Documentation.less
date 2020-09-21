@@ -426,7 +426,7 @@
 
     a,
     a:visited {
-        color: #008fd3;
+        color: #4076b4;
         cursor: pointer;
         text-decoration: none;
     }
@@ -528,36 +528,40 @@
         margin-left: .125rem;
     }
 
-    th {
-        background-color: rgba(0, 0, 0, 0.15);
-        font-weight: bold;
-        border-collapse: collapse;
-        padding: 0.6em;
+    table:not(.datatable) {
+        th {
+            background-color: rgba(0, 0, 0, 0.15);
+            font-weight: bold;
+            border-collapse: collapse;
+            padding: 0.6em;
+        }
+
+        td {
+            border-collapse: collapse;
+            padding: .5rem;
+            vertical-align: top;
+            text-align: left;
+            line-height: 1.75rem;
+
+            p:first-child {
+              margin-top: 0;
+            }
+
+            p:last-child {
+              margin-bottom: 0;
+            }
+
+            p {
+              margin: 0;
+            }
+
+            .p {
+              font-size: .8125rem;
+            }
+        }
     }
 
-    td {
-        border-collapse: collapse;
-        padding: .5rem;
-        vertical-align: top;
-        text-align: left;
-        line-height: 1.75rem;
 
-        p:first-child {
-            margin-top: 0;
-        }
-
-        p:last-child {
-            margin-bottom: 0;
-        }
-
-        p {
-            margin: 0;
-        }
-
-        .p {
-            font-size: .8125rem;
-        }
-    }
 
     span.figcap {
         font-size: .857rem;
@@ -647,6 +651,62 @@
         color: rgba(13, 35, 113, 0.8);
     }
 
+    .dataTables_wrapper {
+        .sapUiDocumentationDatatableFilterWrapper {
+            padding: 0.3rem;
+        }
+        // datatables style override
+        .dt-button-background {
+            // col visibility button depends on this overlay background 
+            // to be rendered so when it receives a click the colvis menu is clicked
+            position: absolute;
+            background: transparent;
+        }
+        .dt-buttons {
+            height: 30px;
+            .dt-button {
+                height: 100%;
+            }
+        };
+        .pagingWrapper {
+            display: inline-block;
+            text-align: center;
+            margin-left: 1rem;
+            
+            .dataTables_paginate {
+                float: unset;
+                padding-top: 0;
+            }
+        }
+
+        .dataTables_filter {
+            margin-top: 0.35rem;
+        }
+
+        .dataTables_length {
+            margin-left: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .datatable {
+            width: 100% !important;
+            .selectWrapper {
+                ul > li {
+                    margin: 0;
+                }
+            }
+
+            ul {
+                padding: 0;
+            }
+            .compactList,
+            .compactList li {
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+    }
 }
 
 .sapUiTheme-sap_fiori_3_hcb #d4h5-main-container .note,

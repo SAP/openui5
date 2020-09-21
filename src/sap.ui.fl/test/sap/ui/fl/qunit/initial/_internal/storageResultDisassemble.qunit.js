@@ -18,10 +18,17 @@ sap.ui.define([
 		QUnit.test("Given storageResultDisassemble is called for an empty response", function(assert) {
 			var oResponse = {
 				changes: [],
+				comp: {
+					variants: [],
+					changes: [],
+					defaultVariant: [],
+					standardVariant: []
+				},
 				variantSection: {}
 			};
 			assert.deepEqual(storageResultDisassemble(oResponse), [oResponse], "then the array is returned which is expected");
 		});
+
 		QUnit.test("Given storageResultDisassemble is called for a response with an empty changes array and a variant section with VENDOR and CUSTOMER variants and a standard variant", function(assert) {
 			var oResponse = {
 				changes: [],
@@ -299,6 +306,106 @@ sap.ui.define([
 			assert.equal(2, oFlexDataResponse.changes.length, "then the response object contains the duplicate changes in its changes array");
 			assert.equal("change1", oFlexDataResponse.changes[0].fileName);
 			assert.equal("change1", oFlexDataResponse.changes[1].fileName);
+		});
+	});
+
+	QUnit.module("storageResultDisassemble - comp variants", {
+		beforeEach: function() {
+		},
+		afterEach: function() {
+		}
+	}, function() {
+		QUnit.test("Given storageResultDisassemble is called with a response containing a comp section", function (assert) {
+			var oResponse = {
+				changes: [],
+				comp: {},
+				variantSection: {}
+			};
+			assert.deepEqual(storageResultDisassemble(oResponse), [oResponse], "response was not changed");
+		});
+
+		QUnit.test("Given storageResultDisassemble is called with a response containing NO comp section", function (assert) {
+			var oResponse = {
+				changes:[{
+					fileName:"change1",
+					fileType:"change",
+					changeType: "addField",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491090Z"
+				}, {
+					fileName:"defaultVariant1",
+					fileType:"change",
+					changeType: "defaultVariant",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491092Z"
+				}, {
+					fileName:"addFavorite1",
+					fileType:"change",
+					changeType: "addFavorite",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491092Z"
+				}, {
+					fileName:"standardVariant1",
+					fileType:"change",
+					changeType: "standardVariant",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491091Z"
+				}, {
+					fileName:"defaultVariant2",
+					fileType:"change",
+					changeType: "defaultVariant",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491093Z"
+				}, {
+					fileName:"variant1",
+					fileType:"variant",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491094Z"
+				}, {
+					fileName:"removeFavorite1",
+					fileType:"change",
+					changeType: "removeFavorite",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491091Z"
+				}, {
+					fileName:"addFavorite2",
+					fileType:"change",
+					changeType: "addFavorite",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491091Z"
+				}, {
+					fileName:"variant2",
+					fileType:"variant",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491095Z"
+				}, {
+					fileName:"variant3",
+					fileType:"variant",
+					layer:Layer.VENDOR,
+					creation:"2019-07-22T10:32:19.7491096Z"
+				}],
+				variantSection: {}
+			};
+			// test
+			var aResponses = storageResultDisassemble(oResponse);
+			assert.equal(1, aResponses.length);
+			// VENDOR response object
+			var oFlexDataResponse = aResponses[0];
+			assert.equal(oFlexDataResponse.changes.length, 1, "then the response object contains one object in its changes array");
+			assert.equal("change1", oFlexDataResponse.changes[0].fileName, "which is the UI change");
+			assert.equal(oFlexDataResponse.comp.defaultVariants.length, 2, "and the response object contains two objects in its comp.defaultVariant array");
+			assert.equal("defaultVariant1", oFlexDataResponse.comp.defaultVariants[0].fileName, "which are the first defaultVariant change");
+			assert.equal("defaultVariant2", oFlexDataResponse.comp.defaultVariants[1].fileName, "and the second defaultVariant change");
+			assert.equal(oFlexDataResponse.comp.standardVariants.length, 1, "and the response object contains one object in its comp.standardVariants array");
+			assert.equal("standardVariant1", oFlexDataResponse.comp.standardVariants[0].fileName, "which is the standardVariant change");
+			assert.equal(oFlexDataResponse.comp.variants.length, 3, "then the response object contains three objects in its com.variants array");
+			assert.equal("variant1", oFlexDataResponse.comp.variants[0].fileName, "which are the first comp variants");
+			assert.equal("variant2", oFlexDataResponse.comp.variants[1].fileName, "and the second comp variant");
+			assert.equal("variant3", oFlexDataResponse.comp.variants[2].fileName, "and the third comp variant");
+			assert.equal(oFlexDataResponse.comp.changes.length, 3, "then the response object contains three objects in its com.changes array");
+			assert.equal("addFavorite1", oFlexDataResponse.comp.changes[0].fileName, "which are the first addFavorite change");
+			assert.equal("removeFavorite1", oFlexDataResponse.comp.changes[1].fileName, "and the first removeFavorite change");
+			assert.equal("addFavorite2", oFlexDataResponse.comp.changes[2].fileName, "and the second addFavorite change");
 		});
 	});
 

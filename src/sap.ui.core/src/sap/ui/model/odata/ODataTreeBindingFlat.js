@@ -477,7 +477,10 @@ sap.ui.define([
 	ODataTreeBindingFlat.prototype._loadData = function (iSkip, iTop, iThreshold) {
 		var that = this;
 
-		this.fireDataRequested();
+		if (!this.bSkipDataEvents) {
+			this.fireDataRequested();
+		}
+		this.bSkipDataEvents = false;
 
 		return this._requestServerIndexNodes(iSkip, iTop, iThreshold).then(function(oResponseData) {
 			that._addServerIndexNodes(oResponseData.oData, oResponseData.iSkip);
@@ -491,8 +494,8 @@ sap.ui.define([
 				that._aNodes = [];
 				that._bLengthFinal = true;
 				that._fireChange({reason: ChangeReason.Change});
+				that.fireDataReceived();
 			}
-			that.fireDataReceived();
 		});
 	};
 
@@ -738,7 +741,10 @@ sap.ui.define([
 	ODataTreeBindingFlat.prototype._loadChildren = function(oParentNode, iSkip, iTop) {
 		var that = this;
 
-		this.fireDataRequested();
+		if (!this.bSkipDataEvents) {
+			this.fireDataRequested();
+		}
+		this.bSkipDataEvents = false;
 
 		this._requestChildren(oParentNode, iSkip, iTop).then(function(oResponseData) {
 			that._addChildNodes(oResponseData.oData, oParentNode, oResponseData.iSkip);
@@ -754,8 +760,8 @@ sap.ui.define([
 					oParentNode.childCount = 0;
 					that._fireChange({reason: ChangeReason.Change});
 				}
+				that.fireDataReceived();
 			}
-			that.fireDataReceived();
 		});
 	};
 
@@ -1032,13 +1038,20 @@ sap.ui.define([
 		}
 
 		return missingSectionsLoaded.then(function () {
-			that.fireDataRequested();
+			if (!that.bSkipDataEvents) {
+				that.fireDataRequested();
+			}
+			that.bSkipDataEvents = false;
 			return that._requestSubTree(oParentNode, iLevel).then(function(oResponseData) {
 				that._addSubTree(oResponseData.oData, oParentNode);
 				that.fireDataReceived({data: oResponseData.oData});
 			}, function(oError) {
 				Log.warning("ODataTreeBindingFlat: Error during subtree request", oError.message);
-				that.fireDataReceived();
+
+				var bAborted = oError.statusCode === 0;
+				if (!bAborted) {
+					that.fireDataReceived();
+				}
 			});
 		});
 	};
@@ -3169,7 +3182,10 @@ sap.ui.define([
 			moved: []
 		};
 
-		this.fireDataRequested();
+		if (!this.bSkipDataEvents) {
+			this.fireDataRequested();
+		}
+		this.bSkipDataEvents = false;
 
 		// Restore tree state is done in the following steps:
 		// 1. Request preorder position for added nodes (if there's added node) _requestExtraInfoForAddedNodes
@@ -4209,19 +4225,20 @@ sap.ui.define([
 	* Abort all pending requests
 	*/
 	ODataTreeBindingFlat.prototype._abortPendingRequest = function() {
-		ODataTreeBinding.prototype._abortPendingRequest.apply(this, arguments);
+		if (this._aPendingRequests.length || this._aPendingChildrenRequests.length) {
+			this.bSkipDataEvents = true;
 
-		var i, j;
+			var i, j;
+			for (i = this._aPendingRequests.length - 1; i >= 0; i--) {
+				this._aPendingRequests[i].oRequestHandle.abort();
+			}
+			this._aPendingRequests = [];
 
-		for (i = this._aPendingRequests.length - 1; i >= 0; i--) {
-			this._aPendingRequests[i].oRequestHandle.abort();
+			for (j = this._aPendingChildrenRequests.length - 1; j >= 0; j--) {
+				this._aPendingChildrenRequests[j].oRequestHandle.abort();
+			}
+			this._aPendingChildrenRequests = [];
 		}
-		this._aPendingRequests = [];
-
-		for (j = this._aPendingChildrenRequests.length - 1; j >= 0; j--) {
-			this._aPendingChildrenRequests[j].oRequestHandle.abort();
-		}
-		this._aPendingChildrenRequests = [];
 	};
 
 	//*********************************************

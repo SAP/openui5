@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+
+	<link rel="stylesheet" href="../../css/tomorrow.css">
+	<script
+		src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script
+		src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Overview of Integration Card Design-time</h1>
+
+			<p>After you finsished creating a Integration Card as a developer, you should think about the possible
+				configuration options needed by the integrator personas.<br>
+			</p>
+			<ol>
+				<li>Which settings does an Administrator on the customer side need to edit to get the Card connected to
+					a datasource?</li>
+				<li>Are the other mandatory settings that are needed before the Card will show a valuable result?</li>
+				<li>Which settings would you like to offer to the administrator or page/content administrator?</li>
+				<li>Would any translation be needed for your settings?</li>
+			</ol>
+
+			<h2 id="personas">Understanding Responsibilities and Personas for Card Integration</h2>
+			<p>
+				Integration Cards are used to define reusable UI blocks that can be embedded into various Host
+				environments.
+				While developing and integrating a Card, various personas can be involved to bring a Card to "live" for
+				an end-user.
+				Each persona has a certain responisbility during the integration process.
+				Tooling offered to those personas need to specialize for their knowledge and needs.
+				Today the following personas are targeted.
+			</p>
+
+			<ol>
+				<li><strong>Card Developer</strong><br>Responsible for to create a card template that can be integrated
+					into various Host environments</li>
+				<li><strong>Administrator</strong><br>Responsible to connect the Card to
+					the right data and
+					pre-configure the Card for usage on pages or dashboards.</li>
+				<li><strong>Page/Content Administrator</strong><br>Responsible to embed and configure Card
+					instances in pages and
+					dashboards.</li>
+				<li><strong>Translator</strong><br>Responsible to translate texts on the Card to different
+					languages if needed.
+				</li>
+			</ol>
+			<p>
+				<img src="../images/CardProcess.png" style="width:800px" />
+			</p>
+			<h3 id="carddeveloper">Integration Card Developer</h3>
+			<p>
+				This is the technical guy in the group. Usually he works as a developer and builds a Card from scratch.
+				He will define the later purpose of the Card, defines default configuration, appearance and interaction
+				of the Card.
+				Usually this persona might not even work in the same company as the other personas.
+				He acts as a provider of an Integration Card template that can be used later by the others to integrate
+				into a real host environment.
+				Also other responsibilities are attached to the developer. He has to take care of versioning,
+				compatibility, initial translations. <br>
+				Lastly he is also responsible to define the configuration options that should be offered to the "next"
+				persona, the Administrator.
+			</p>
+			<h3 id="cardadmin">Administrator</h3>
+			<p>
+				Less technical, the Administrator, does the first step of Card integration on the consumer side for a
+				particular Host environment.
+				He will configure the destination/connectivity to data sources needed by the card. Those configuration
+				vary depending from consumer to
+				consumer and normally cannot be pre-configured by a developer.<br>
+				Additionally he will set default values that make sense for Page/Content Administrators to cover the 80%
+				case of the usages by Page/Content Administrators.
+				If needed, he can also hide certain configuration to avoid misuse or confusion.
+				<br><br>
+				<a class="try-button" href="../../index.html#/explore/designtimeAdmin" target="_parent">Try it Out</a>
+				<br>
+			</p>
+			<h3 id="cardcontentadmin">Page/Content Administrator</h3>
+			<p>
+				This person knows the business context where to integrate the ready to use card provided by the
+				Administrator.<br>
+				He knows the needs of the end-user and their expectation of the presented Card content.
+				<br><br>
+				<a class="try-button" href="../../index.html#/explore/designtimeContent" target="_parent">Try it Out</a>
+				<br>
+			</p>
+			<h3 id="cardtranslator">Translator</h3>
+			<p>
+				A translator is responsible for text translations. While, most often a Page/Content Administrator will
+				maintain certain settings
+				only in one language, a translator can be involved for internationalization. He is familiar with the
+				context terminology for the end-users that use the Card.
+				<br><br>
+				<a class="try-button" href="../../index.html#/explore/designtimeTranslation" target="_parent">Try it
+					Out</a>
+				<br>
+			</p>
+
+			<h2 id="cardeditor">Card Editor</h2>
+			<p>
+				The Card Editor supports the personas that need to configure cards on the customer side.
+			<ul>
+				<li>Administrator</li>
+				<li>Page/Content Administator</li>
+				<li>Translator</li>
+			</ul>
+			The developer normally works within Business Application Studio and uses a specialized editor in this
+			environment to create a Card from scratch.
+			</p>
+
+
+		</div>
+
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#personas">Personas</a></div>
+			<div><a href="#cardeditor">Card Editor</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

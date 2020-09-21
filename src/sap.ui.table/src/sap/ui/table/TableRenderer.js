@@ -120,6 +120,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		this.renderTabElement(rm, "sapUiTableOuterBefore");
 
+		rm.openStart("div", oTable.getId() + "-before");
+		rm.openEnd();
+
 		rm.renderControl(oTable.getAggregation("_messageStrip"));
 
 		if (oTable.getTitle()) {
@@ -133,6 +136,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (oTable.getExtension() && oTable.getExtension().length > 0) {
 			this.renderExtensions(rm, oTable, oTable.getExtension());
 		}
+
+		rm.close("div");
 
 		rm.openStart("div", oTable.getId() + "-sapUiTableCnt");
 		rm.class("sapUiTableCnt");
@@ -153,12 +158,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.close("div");
 
 		var oCreationRow = oTable.getCreationRow();
+
 		if (oCreationRow) {
+			rm.openStart("div", oTable.getId() + "-gridExtension");
+			rm.openEnd();
+
 			rm.renderControl(oCreationRow);
 
 			// If the table has a creation row, the horizontal scrollbar needs to be rendered outside the element covered by the busy indicator.
 			this.renderHSbBackground(rm, oTable);
 			this.renderHSb(rm, oTable);
+
+			rm.close("div");
 		}
 
 		oTable._getAccRenderExtension().writeHiddenAccTexts(rm, oTable);
@@ -172,6 +183,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.close("div");
 
+		rm.openStart("div", oTable.getId() + "-after");
+		rm.openEnd();
+
 		if (oTable.getFooter()) {
 			this.renderFooter(rm, oTable, oTable.getFooter());
 		}
@@ -183,6 +197,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		// TODO: Move to "renderTableChildAtBottom" hook in row modes
 		this.renderBottomPlaceholder(rm, oTable);
+
+		rm.close("div");
 
 		//oTable._getRowMode().renderTableChildAtBottom(rm);
 		this.renderTabElement(rm, "sapUiTableOuterAfter");
@@ -248,16 +264,19 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderTable = function(rm, oTable) {
-		this.renderTabElement(rm, "sapUiTableCtrlBefore");
+		var bHasRows = oTable.getRows().length > 0;
+
+		this.renderTabElement(rm, "sapUiTableCtrlBefore", bHasRows ? "0" : "-1");
+
 		rm.openStart("div", oTable.getId() + "-tableCCnt");
 		oTable._getRowMode().applyRowContainerStyles(rm);
-
 		rm.class("sapUiTableCCnt");
 		rm.openEnd();
 
 		this.renderTableCCnt(rm, oTable);
 		rm.close("div");
-		this.renderTabElement(rm, "sapUiTableCtrlAfter");
+
+		this.renderTabElement(rm, "sapUiTableCtrlAfter", bHasRows ? "0" : "-1");
 
 		if (!oTable._getScrollExtension().isVerticalScrollbarExternal()) {
 			this.renderVSbBackground(rm, oTable);
@@ -1280,12 +1299,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	 * Renders an empty area with tabindex=0 and the given class and id.
 	 * @private
 	 */
-	TableRenderer.renderTabElement = function(rm, sClass) {
+	TableRenderer.renderTabElement = function(rm, sClass, sTabIndex) {
 		rm.openStart("div");
 		if (sClass) {
 			rm.class(sClass);
 		}
-		rm.attr("tabindex", "0");
+		rm.attr("tabindex", sTabIndex == null ? "0" : sTabIndex);
 		rm.openEnd().close("div");
 	};
 

@@ -480,10 +480,6 @@ function(
 			this._initTitlePropagationSupport();
 
 			this._initResponsivePaddingsEnablement();
-
-			this._sAriaRoleDescription = Core
-			.getLibraryResourceBundle("sap.m")
-			.getText("DIALOG_ROLE_DESCRIPTION");
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
@@ -1876,14 +1872,14 @@ function(
 							that._bDisableRepositioning = true;
 
 							that._oManuallySetPosition = {
-								x: event.pageX - e.pageX + initial.position.x, // deltaX + initial dialog position
-								y: event.pageY - e.pageY + initial.position.y // deltaY + initial dialog position
+								x: Math.max(0, Math.min(event.pageX - e.pageX + initial.position.x, windowWidth - initial.width)), // deltaX + initial dialog position
+								y: Math.max(0, Math.min(event.pageY - e.pageY + initial.position.y, windowHeight - initial.outerHeight)) // deltaY + initial dialog position
 							};
 
 							//move the dialog
 							that._$dialog.css({
-								left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - initial.width),
-								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - initial.outerHeight)
+								left: that._oManuallySetPosition.x,
+								top: that._oManuallySetPosition.y
 							});
 						});
 					};

@@ -109,7 +109,7 @@ sap.ui.define([
 			When.onTheSuccessInfo.confirm();
 			Then.onTheMainPage.checkSalesOrdersSelectionMode("SingleSelectMaster");
 
-            if (TestUtils.isRealOData()) {
+			if (TestUtils.isRealOData()) {
 				// For each line item the server implicitely creates a schedule. Check that
 				// 1. these schedules becomes visible via requestSideEffects
 				// 2. they can be deleted from within the sales order schedules dialog
@@ -123,7 +123,7 @@ sap.ui.define([
 				When.onTheSalesOrderSchedulesDialog.close();
 				Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 			}
-            // delete created sales orders
+			// delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog([oExpectedLog, oExpectedLog]);
 			Then.iTeardownMyUIComponent();

@@ -9,6 +9,7 @@ sap.ui.define([
 	"./table/GridTableType",
 	"./table/V4AnalyticsTableType",
 	"./table/ResponsiveTableType",
+	"./table/PropertyHelper",
 	"./mixin/FilterIntegrationMixin",
 	"./library",
 	"sap/m/Text",
@@ -34,6 +35,7 @@ sap.ui.define([
 	GridTableType,
 	V4AnalyticsTableType,
 	ResponsiveTableType,
+	PropertyHelper,
 	FilterIntegrationMixin,
 	library,
 	Text,
@@ -818,9 +820,9 @@ sap.ui.define([
 			return;
 		}
 
-		getPropertyInfoMap(oTable, true).then(function(mPropertyInfoMap) {
-			var aPropertyLabels = aFilteredProperties.map(function(sFilteredPropertyKey) {
-				return getLabelForProperty(oTable, mPropertyInfoMap[sFilteredPropertyKey]);
+		oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
+			var aPropertyLabels = aFilteredProperties.map(function(sPropertyName) {
+				return oPropertyHelper.getLabel(sPropertyName);
 			});
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			var oListFormat = ListFormat.getInstance();
@@ -829,40 +831,6 @@ sap.ui.define([
 			oFilterInfoBar.setVisible(true);
 			oFilterInfoBarText.setText(sFilterText);
 		});
-	}
-
-	function getPropertyInfoMap(oTable, bOnlySimple) {
-		return oTable.getControlDelegate().fetchProperties(oTable).then(function(aPropertyInfos) {
-			var mProperties = {};
-
-			aPropertyInfos.forEach(function(oPropertyInfo) {
-				if (!bOnlySimple || !Array.isArray(oPropertyInfo.propertyInfos)) {
-					mProperties[oPropertyInfo.name] = oPropertyInfo;
-				}
-			});
-
-			return mProperties;
-		});
-	}
-
-	function getLabelForProperty(oTable, oProperty) {
-		if ("label" in oProperty) {
-			return oProperty.label;
-		}
-
-		var aColumns = [];
-
-		oTable.getColumns().forEach(function(oColumn) {
-			if (oColumn.getDataProperties().indexOf(oProperty.name) > -1) {
-				aColumns.push(oColumn);
-			}
-		});
-
-		if (aColumns.length === 1) {
-			return aColumns[0].getHeader();
-		} else {
-			return oProperty.name;
-		}
 	}
 
 	function insertFilterInfoBar(oTable) {
@@ -1070,6 +1038,8 @@ sap.ui.define([
 		this._onAfterTableCreated(true);
 
 		this.initialized().then(function() {
+			this.initPropertyHelper(PropertyHelper);
+
 			// add this to the micro task execution queue to enable consumers to handle this correctly
 			var oCreationRow = this.getCreationRow();
 			if (oCreationRow) {
@@ -1213,6 +1183,7 @@ sap.ui.define([
 				adaptationUI: oAdaptationFilterBar,
 				applyFilterChangeOn: oAdaptationFilterBar,
 				initializeControl: oAdaptationFilterBar.createFilterFields,
+				sortData: false,
 				containerSettings: {
 					title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
 				}
@@ -1313,23 +1284,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the export settings configuration object for the column.
-	 * @param {sap.ui.mdc.table.Column} oColumn Column instance
-	 * @param {object} oExportSettings Export settings object from the property info
-	 * @returns {object} Export settings configuration object for the column
-	 * @private
-	 */
-	Table.prototype._createExportSettingsObject = function(oColumn, oExportSettings) {
-		return Object.assign({
-			columnId: oColumn.getId(),
-			label: oColumn.getHeader(),
-			width: this._getColumnWidthNumber(oColumn.getWidth()),
-			textAlign: oColumn.getHAlign(),
-			type: "String"
-		}, oExportSettings);
-	};
-
-	/**
 	 * Creates the export column configuration.
 	 *
 	 * @param {object} mCustomConfig Custom settings for export
@@ -1340,136 +1294,15 @@ sap.ui.define([
 		var bSplitCells = mCustomConfig && mCustomConfig.splitCells;
 		var aColumns = this.getColumns();
 
-		return this.getControlDelegate().fetchProperties(this).then(function(aProperties) {
-			var mProperties = {}, aSheetColumns = [], aDataProperties, oPropertyInfo, aComplexPropertyInfoNames, aPropertyInfos,
-				oExportSettings, aPaths, sAdditionalPath, oAdditionalPropertyInfo;
-
-			// a map that contains the all the propertyInfo where "name" is mapped to its propertyInfo
-			aProperties.forEach(function(oCurrentPropertyInfo) {
-				mProperties[oCurrentPropertyInfo.name] = oCurrentPropertyInfo;
-			});
+		return this.awaitPropertyHelper().then(function(oPropertyHelper) {
+			var aSheetColumns = [];
 
 			aColumns.forEach(function(oColumn) {
-				oPropertyInfo = null;
-				aComplexPropertyInfoNames = null;
-				aPropertyInfos = [];
-				aDataProperties = oColumn.getDataProperties();
-				oExportSettings = null;
-				aPaths = [];
-				sAdditionalPath = null;
-				oAdditionalPropertyInfo = null;
-				oPropertyInfo = mProperties[aDataProperties[0]];
-
-				if (oPropertyInfo) {
-					// check if complex propertyInfo
-					// oPropertyInfo.propertyInfos indicates that its a complex propertyInfo
-					if (oPropertyInfo.hasOwnProperty("propertyInfos") && oPropertyInfo.propertyInfos.length) {
-						aComplexPropertyInfoNames = oPropertyInfo.propertyInfos;
-						aComplexPropertyInfoNames.forEach(function(sPropertyName) {
-							// collect all the propertyInfos from the complex propertyInfo
-							aPropertyInfos.push(mProperties[sPropertyName]);
-						});
-
-						// check if the complex proeprtyInfo contains exportSettings
-						// use the exportSettings and add it to the aSheetColumns array
-						if (!bSplitCells && oPropertyInfo.hasOwnProperty("exportSettings")) {
-							oExportSettings = this._createExportSettingsObject(oColumn, oPropertyInfo.exportSettings);
-
-							aPropertyInfos.forEach(function(oCurrentPropertyInfo) {
-								aPaths.push(oCurrentPropertyInfo.path || oCurrentPropertyInfo.name);
-							});
-
-							oExportSettings.property = aPaths;
-							aSheetColumns.push(oExportSettings);
-						} else {
-							// when there are no exportSettings given for a Complex PropertyInfo or when the export is configured by the enduser to use the "split mode",
-							// the export falls back to the exportSettings of the related Basic PropertyInfos, so each property in seperate column in the spreadsheet
-							aPropertyInfos.forEach(function(oCurrentPropertyInfo, iIndex) {
-								var oCurrentExportSettings = this._createExportSettingsObject(oColumn, oCurrentPropertyInfo.exportSettings);
-								oCurrentExportSettings.property = oCurrentPropertyInfo.path || oCurrentPropertyInfo.name;
-
-								if (!oCurrentPropertyInfo.exportSettings || !oCurrentPropertyInfo.exportSettings.label) {
-									oCurrentExportSettings.label = oCurrentPropertyInfo.label || oColumn.getHeader() + (iIndex > 0 ? " (" + (iIndex + 1) + ")" : "");
-								}
-
-								aSheetColumns.push(oCurrentExportSettings);
-							}, this);
-						}
-					} else if (!bSplitCells && oPropertyInfo.hasOwnProperty("exportSettings")) {
-						// called for basic propertyInfo having exportSettings
-						oExportSettings = this._createExportSettingsObject(oColumn, oPropertyInfo.exportSettings);
-						oExportSettings.property = oPropertyInfo.path || oPropertyInfo.name;
-						aSheetColumns.push(oExportSettings);
-					} else {
-						oExportSettings = this._createExportSettingsObject(oColumn, oPropertyInfo.exportSettings);
-						oExportSettings.property = oPropertyInfo.path || oPropertyInfo.name;
-						oExportSettings.displayUnit = !bSplitCells ? true : false;
-						aSheetColumns.push(oExportSettings);
-
-						// get Additional path in case of split cells
-						sAdditionalPath = bSplitCells && oExportSettings && oExportSettings.unitProperty ? oExportSettings.unitProperty : null;
-						if (sAdditionalPath) {
-							// get the additional propertyInfo
-							oAdditionalPropertyInfo = mProperties[sAdditionalPath];
-
-							// if "name" is not found then the path should be matched with the properties, since unitProperty contains the dataSource path
-							if (!oAdditionalPropertyInfo) {
-								oAdditionalPropertyInfo = aProperties.find(function(oCurrentPropertyInfo) {
-									return sAdditionalPath === oCurrentPropertyInfo.path;
-								});
-							}
-
-							oExportSettings = this._createExportSettingsObject(oColumn, oAdditionalPropertyInfo.exportSettings);
-							oExportSettings.property = oAdditionalPropertyInfo.path || oAdditionalPropertyInfo.name;
-							oExportSettings.columnId = oColumn.getId() + "-additionalProperty";
-
-							if (!oAdditionalPropertyInfo.exportSettings || !oAdditionalPropertyInfo.exportSettings.label) {
-								oExportSettings.label = oAdditionalPropertyInfo.label || oColumn.getHeader() + " (2)";
-							}
-
-							aSheetColumns.push(oExportSettings);
-						}
-					}
-				}
+				var aColumnExportSettings = oPropertyHelper.getColumnExportSettings(oColumn, bSplitCells);
+				aSheetColumns = aSheetColumns.concat(aColumnExportSettings);
 			}, this);
-			return [aSheetColumns, aProperties];
+			return [aSheetColumns, oPropertyHelper];
 		}.bind(this));
-	};
-
-	/**
-	 * Returns the column width as a number.
-	 *
-	 * @param {String} sWidth Column width as a string
-	 * @returns {Number} Column width as a number
-	 * @private
-	 */
-	Table.prototype._getColumnWidthNumber = function(sWidth) {
-		if (sWidth.indexOf("em") > 0) {
-			return Math.round(parseFloat(sWidth));
-		}
-		if (sWidth.indexOf("px") > 0) {
-			return Math.round(parseInt(sWidth) / 16);
-		}
-		return "";
-	};
-
-	/**
-	 * Returns the column header text.
-	 *
-	 * @param {string} sPropertyName Property name for the column
-	 * @returns {string|null} Column header text or null if no column header text is available
-	 * @private
-	 */
-	Table.prototype._getColumnHeader = function(sPropertyName) {
-		if (!sPropertyName) {
-			return null;
-		}
-
-		var oColumn = this.getColumns().find(function(oCol) {
-			return oCol.getDataProperties()[0] === sPropertyName;
-		});
-
-		return oColumn ? oColumn.getHeader() : null;
 	};
 
 	/**
@@ -1482,6 +1315,8 @@ sap.ui.define([
 	Table.prototype._onExport = function(mCustomConfig) {
 		return this._createExportColumnConfiguration(mCustomConfig).then(function(aResult) {
 			var aSheetColumns = aResult[0];
+			var oPropertyHelper = aResult[1];
+
 			// If no columns exist, show message and return without exporting
 			if (!aSheetColumns || !aSheetColumns.length) {
 				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
@@ -1493,19 +1328,6 @@ sap.ui.define([
 			}
 
 			var oRowBinding = this._getRowBinding();
-			// fetches the filter label for the propertyName
-			var fnGetColumnHeader = function(sPropertyName) {
-				var aProperties = aResult[1];
-				var oPropertyInfo = aProperties.find(function(oCurrentPropertyInfo) {
-					return oCurrentPropertyInfo.name === sPropertyName;
-				});
-
-				if (oPropertyInfo) {
-					return oPropertyInfo.label || oPropertyInfo.name || null;
-				}
-
-				return null;
-			};
 			var mExportSettings = {
 				workbook: {
 					columns: aSheetColumns
@@ -1519,7 +1341,7 @@ sap.ui.define([
 					var oProcessor = Promise.resolve();
 
 					if (mCustomConfig.includeFilterSettings) {
-						oProcessor = ExportUtils.parseFilterConfiguration(oRowBinding, fnGetColumnHeader).then(function(oFilterConfig) {
+						oProcessor = ExportUtils.parseFilterConfiguration(oRowBinding, oPropertyHelper.getLabel).then(function(oFilterConfig) {
 							if (oFilterConfig) {
 								mExportSettings.workbook.context = {
 									metaSheetName: oFilterConfig.name,
@@ -1716,6 +1538,8 @@ sap.ui.define([
 		if (!this.isSortingEnabled()) {
 			return;
 		}
+
+		// TODO: Add utils in mdc.table.PropertyHelper to get sortable, filterable(, and visible) properties that are associated with a column.
 
 		var iIndex;
 		if (oColumn.getParent()) {

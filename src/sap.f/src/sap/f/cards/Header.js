@@ -92,9 +92,16 @@ sap.ui.define([
 				/**
 				 * Defines an alt text for the avatar or icon.
 				 *
-				 * @experimental Since 1.81 this feature is experimental and the api may change.
+				 * @experimental Since 1.81 this feature is experimental and the API may change.
 				 */
-				iconAlt: { type: "string", defaultValue: "" }
+				iconAlt: { type: "string", defaultValue: "" },
+
+				/**
+				 * Defines a background color for the avatar or icon.
+				 *
+				 * @experimental Since 1.83 this feature is experimental and the API may change.
+				 */
+				iconBackgroundColor: { type: "sap.m.AvatarColor" }
 			},
 			aggregations: {
 
@@ -204,6 +211,7 @@ sap.ui.define([
 		oAvatar.setSrc(this.getIconSrc());
 		oAvatar.setInitials(this.getIconInitials());
 		oAvatar.setTooltip(this.getIconAlt());
+		oAvatar.setBackgroundColor(this.getIconBackgroundColor());
 
 		this._setAccessibilityAttributes();
 	};
@@ -298,6 +306,25 @@ sap.ui.define([
 		this.invalidate();
 
 		return this;
+	};
+
+	/**
+	 * Returns if the control is inside a sap.f.GridContainer
+	 *
+	 * @private
+	 */
+	Header.prototype._isInsideGridContainer = function() {
+		var oParent = this.getParent();
+		if (!oParent) {
+			return false;
+		}
+
+		oParent = oParent.getParent();
+		if (!oParent) {
+			return false;
+		}
+
+		return oParent.isA("sap.f.GridContainer");
 	};
 
 	return Header;

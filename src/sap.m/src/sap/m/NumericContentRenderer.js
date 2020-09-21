@@ -11,7 +11,9 @@ sap.ui.define([
 	 * NumericContent renderer.
 	 * @namespace
 	 */
-	var NumericContentRenderer = {};
+	var NumericContentRenderer = {
+		apiVersion : 2  // enable in-place DOM patching
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -23,44 +25,41 @@ sap.ui.define([
 		var sState = oControl.getState();
 		var bWithMargin = oControl.getWithMargin();
 		var sWithoutMargin = bWithMargin ? "" : "WithoutMargin";
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
+		oRm.openStart("div" , oControl);
 		var sTooltip = oControl.getTooltip_AsString();
 		if (typeof sTooltip !== "string") {
 			sTooltip = "";
 		}
 
-		oRm.writeAttributeEscaped("aria-label", sTooltip);
-		oRm.writeAttribute("role", "img");
+		oRm.attr("aria-label", sTooltip);
+		oRm.attr("role", "img");
 
 		if (sState === library.LoadState.Failed || sState === library.LoadState.Loading) {
-			oRm.writeAttribute("aria-disabled", "true");
+			oRm.attr("aria-disabled", "true");
 		}
 		if (oControl.getAnimateTextChange()) {
-			oRm.addClass("sapMNCAnimation");
+			oRm.class("sapMNCAnimation");
 		}
 		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
+			oRm.style("width", oControl.getSize());
+
 		}
-		oRm.writeStyles();
-		oRm.addClass("sapMNC");
-		oRm.addClass(sWithoutMargin);
+		oRm.class("sapMNC");
+		oRm.class(sWithoutMargin);
 		if (oControl.hasListeners("press")) {
-			oRm.writeAttribute("tabindex", "0");
-			oRm.addClass("sapMPointer");
+			oRm.attr("tabindex", 0);
+			oRm.class("sapMPointer");
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
-		oRm.write("<div");
-		oRm.addClass("sapMNCInner");
-		oRm.addClass(sWithoutMargin);
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div");
+		oRm.class("sapMNCInner");
+		oRm.class(sWithoutMargin);
+		oRm.openEnd();
 		this._renderValue(oRm, oControl, sWithoutMargin);
-		oRm.write("</div>");
+		oRm.close("div");
+		oRm.close("div");
 
-		oRm.write("</div>");
 	};
 
 	/**
@@ -121,34 +120,31 @@ sap.ui.define([
 		if (bIndicator || bScale) {
 			var sState = oControl.getState();
 			var sColor = oControl.getValueColor();
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-indicator");
-			oRm.addClass("sapMNCIndScale");
-			oRm.addClass(sWithoutMargin);
-			oRm.addClass(sColor);
-			oRm.addClass(sState);
+			oRm.openStart("div", oControl.getId() + "-indicator");
+			oRm.class("sapMNCIndScale");
+			oRm.class(sWithoutMargin);
+			oRm.class(sState);
+			oRm.class(sState);
+
 			if (sNumericContentFontClass) {
-				oRm.addClass(sNumericContentFontClass);
+				oRm.class(sNumericContentFontClass);
 			}
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
 			oRm.renderControl(oControl._oIndicatorIcon);
 
 			if (bScale) {
-				oRm.write("<div");
-				oRm.writeAttribute("id", oControl.getId() + "-scale");
-				oRm.addClass("sapMNCScale");
-				oRm.addClass(sState);
-				oRm.addClass(sColor);
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.writeEscaped(sScale);
+				oRm.openStart("div", oControl.getId() + "-scale");
+				oRm.class("sapMNCScale");
+				oRm.class(sState);
+				oRm.class(sColor);
+				oRm.openEnd();
+				oRm.text(sScale);
 
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
@@ -169,38 +165,35 @@ sap.ui.define([
 			sValue = oFormattedValue.value;
 		}
 		var sEmptyValue = oControl.getNullifyValue() ? "0" : "";
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-value");
-		oRm.addClass("sapMNCValue");
-		oRm.addClass(sWithoutMargin);
-		oRm.addClass(oControl.getValueColor());
-		oRm.addClass(oControl.getState());
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div", oControl.getId() + "-value");
+		oRm.class("sapMNCValue");
+		oRm.class(sWithoutMargin);
+		oRm.class(oControl.getValueColor());
+		oRm.class(oControl.getState());
+		oRm.openEnd();
 
 		var oMaxDigitsData = oControl._getMaxDigitsData();
 		this._prepareAndRenderIcon(oRm, oControl, oControl._oIcon, oMaxDigitsData.fontClass);
 
 		var iChar = oControl.getTruncateValueTo() || oMaxDigitsData.maxLength;
-		oRm.write("<span id=\"" + oControl.getId() + "-value-inner\"");
+	    oRm.openStart("span" , oControl.getId() + "-value-inner");
 		if (oMaxDigitsData.fontClass) {
-			oRm.addClass(oMaxDigitsData.fontClass);
+			oRm.class(oMaxDigitsData.fontClass);
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		//Control shows only iChar characters. If the last shown character is decimal separator - show only first N-1 characters. So "144.5" is shown like "144" and not like "144.".
 		if (sValue.length >= iChar && (sValue[iChar - 1] === "." || sValue[iChar - 1] === ",")) {
-			oRm.writeEscaped(sValue.substring(0, iChar - 1));
+			oRm.text(sValue.substring(0, iChar - 1));
 		} else {
-			oRm.writeEscaped(sValue ? sValue.substring(0, iChar) : sEmptyValue);
+			oRm.text(sValue ? sValue.substring(0, iChar) : sEmptyValue);
 		}
 
-		oRm.write("</span>");
+		oRm.close("span");
 
 		this._renderScaleAndIndicator(oRm, oControl, sWithoutMargin, sValue, sScale, oMaxDigitsData.fontClass);
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return NumericContentRenderer;

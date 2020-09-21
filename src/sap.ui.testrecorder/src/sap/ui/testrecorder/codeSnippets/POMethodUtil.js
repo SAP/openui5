@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/Object"
-], function (BaseObject) {
+	"sap/ui/base/Object",
+	"sap/ui/testrecorder/interaction/Commands"
+], function (BaseObject, Commands) {
 	"use strict";
 
 	var oPOMethodUtil = null;
@@ -28,6 +29,8 @@ sap.ui.define([
 	 * @param {array} aSnippets an array of snippets - each for a single control
 	 * @param {object} mSettings preferences for the snippet e.g. formatting
 	 * @param {boolean} mSettings.formatAsPOMethod true if selectors should be wrapped in a page object method. Default value is true.
+	 * @param {boolean} mSettings.multipleSnippets true if the snippets for multiple controls should be combined
+	 * @param {string} mSettings.action name of the current (latest) action
 	 * @returns {string} a code snippet with the expected formatting
 	 */
 	POMethodUtil.prototype.getPOMethod = function (aSnippets, mSettings) {
@@ -35,9 +38,25 @@ sap.ui.define([
 			var sSnippet = aSnippets.map(function (sSnippet) {
 				return sSnippet.replace(/^/gm, "    ");
 			}).join("\n\n");
-			return "<iDoAction>: function () {\n" + sSnippet + "\n}";
+			return this._getMethodName(mSettings) + ": function () {\n" + sSnippet + "\n}";
 		} else {
 			return aSnippets.join("\n\n");
+		}
+	};
+
+	POMethodUtil.prototype._getMethodName = function (mSettings) {
+		if (mSettings.multipleSnippets) {
+			switch (mSettings.action) {
+				case Commands.PRESS:
+				case Commands.ENTER_TEXT: return "iInteractWithTheControls";
+				default: return "iAssertTheUIState";
+			}
+		} else {
+			switch (mSettings.action) {
+				case Commands.PRESS: return "iPressTheControl";
+				case Commands.ENTER_TEXT: return "iEnterTextInTheControl";
+				default: return "iAssertTheControlState";
+			}
 		}
 	};
 

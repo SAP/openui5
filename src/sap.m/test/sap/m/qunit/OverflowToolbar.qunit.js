@@ -2114,6 +2114,32 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("[_cacheControlsInfo] when resizing OFT with Controls without specified width", function (assert) {
+		// Arrange
+		var aDefaultContent = [
+					new Text({text: "Label1" }),
+					new Text({text: "Label2" })
+				],
+				oOverflowTB = createOverflowToolbar({
+					width: "550px"
+				}, aDefaultContent, true),
+				oSpyCache;
+
+		sap.ui.getCore().applyChanges();
+		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
+
+		// Act
+		oOverflowTB.setWidth("450px");
+		this.clock.tick(1000);
+
+		// Assert
+		assert.ok(oSpyCache.notCalled,
+			"New caching of controls width is not called, as they are already cached and do not have relative width set");
+
+		// Clean up
+		oOverflowTB.destroy();
+	});
+
 	QUnit.test("no Popover when Popover content is not visible", function (assert) {
 		var oToolbarOnlyControl = new Text({
 				maxLines: 1, wrapping: true, text: "Sales and Total sales by Product and Quarter",

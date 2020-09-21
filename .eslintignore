@@ -1,3 +1,4 @@
+src/*/dist
 src/*/target
 
 # library specific excludes - need to be consistent with the library-local .eslintignore files

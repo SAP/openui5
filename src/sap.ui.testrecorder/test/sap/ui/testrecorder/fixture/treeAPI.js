@@ -66,11 +66,28 @@ sap.ui.define([
 		}
 	};
 
-	function _asPOMethod (sSnippet) {
+	function _asPOMethod (sSnippet, sAction, bMulti) {
 		sSnippet = sSnippet.split("\n\n").map(function (sPart) {
 			return sPart.replace(/^/gm, "    ");
 		}).join("\n\n");
-		return "<iDoAction>: function () {\n" + sSnippet + "\n}";
+		var sMethodName;
+		if (bMulti) {
+			switch (sAction) {
+				case "press":
+				case "enterText": sMethodName = "iInteractWithTheControls"; break;
+				case "assert": sMethodName = "iAssertTheUIState"; break;
+				default: sMethodName = "";
+			}
+		} else {
+			switch (sAction) {
+				case "press": sMethodName = "iPressTheControl"; break;
+				case "enterText": sMethodName = "iEnterTextInTheControl"; break;
+				case "assert": sMethodName = "iAssertTheControlState"; break;
+				default: sMethodName = "";
+			}
+		}
+
+		return sMethodName + ": function () {\n" + sSnippet + "\n}";
 	}
 
 	return {
@@ -97,9 +114,9 @@ sap.ui.define([
 					return {
 						snippet: {
 							UIVERI5: {
-								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));"),
-								Press: _asPOMethod("element(by.control(" + sRaw + "\n})).click();"),
-								"Enter Text": _asPOMethod('element(by.control(" + sRaw + "\n})).sendKeys("test");')
+								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));", "assert"),
+								Press: _asPOMethod("element(by.control(" + sRaw + "\n})).click();", "press"),
+								"Enter Text": _asPOMethod('element(by.control(" + sRaw + "\n})).sendKeys("test");', "enterText")
 							},
 							RAW: {
 								Highlight: sRawJson + "\n}",
@@ -107,13 +124,13 @@ sap.ui.define([
 								"Enter Text": sRawJson + "\n}"
 							},
 							OPA5: {
-								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});"),
+								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert"),
 								Press: _asPOMethod("this.waitFor(" + sRaw + ",\n" +
-								"	actions: new Press()" + "\n});"),
+								"	actions: new Press()" + "\n});", "press", "press"),
 								"Enter Text": _asPOMethod("this.waitFor(" + sRaw + ",\n" +
 								"	actions: new EnterText({\n" +
 								'		text: "test"\n' +
-								"	})\n" + "\n});")
+								"	})\n" + "\n});", "enterText", "enterText")
 							}
 						},
 						properties: {
@@ -154,9 +171,9 @@ sap.ui.define([
 					return {
 						snippet: {
 							UIVERI5: {
-								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));"),
-								Press: _asPOMethod("element(by.control(" + sRaw + "\n})).click();"),
-								"Enter Text": _asPOMethod('element(by.control(' + sRaw + '\n})).sendKeys("test");')
+								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));", "assert"),
+								Press: _asPOMethod("element(by.control(" + sRaw + "\n})).click();", "press"),
+								"Enter Text": _asPOMethod('element(by.control(' + sRaw + '\n})).sendKeys("test");', "enterText")
 							},
 							RAW: {
 								Highlight: sRawJson + "\n}",
@@ -164,13 +181,13 @@ sap.ui.define([
 								"Enter Text": sRawJson + "\n}"
 							},
 							OPA5: {
-								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});"),
+								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert"),
 								Press: _asPOMethod("this.waitFor(" + sRaw + ",\n" +
-								"    actions: new Press()" + "\n});"),
+								"    actions: new Press()" + "\n});", "press"),
 								"Enter Text": _asPOMethod("this.waitFor(" + sRaw + ",\n" +
 								"    actions: new EnterText({\n" +
 								'        text: "test"\n' +
-								"    })" + "\n});")
+								"    })" + "\n});", "enterText")
 							}
 						},
 						properties: {
@@ -190,7 +207,7 @@ sap.ui.define([
 								value: "",
 								type: "sap.ui.core.URI"
 							}],
-							ownTotalCount: 9
+							ownTotalCount: 10
 						}
 					};
 				case "Button With ID -- viewId":
@@ -200,7 +217,7 @@ sap.ui.define([
 					return {
 						snippet: {
 							UIVERI5: {
-								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));")
+								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));", "assert")
 							}
 						}
 					};
@@ -210,7 +227,7 @@ sap.ui.define([
 						return {
 							snippet: {
 								UIVERI5: {
-									Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));")
+									Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));", "assert")
 								}
 							}
 						};
@@ -238,7 +255,7 @@ sap.ui.define([
 									'}));\n\n' +
 									'element(by.control({\n' +
 									'    id: "container-myComponent---main--stableId"\n' +
-									'}));')
+									'}));', "assert", true)
 							}
 						}
 					};

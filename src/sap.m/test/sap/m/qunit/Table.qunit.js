@@ -395,6 +395,29 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("MultiSelect - selectAll checkbox enabled behavior", function(assert) {
+		var sut = createSUT('idMultiSelectTable2', true, true, "MultiSelect"),
+			clock = sinon.useFakeTimers();
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled since there are visible items");
+
+		sut.getBinding("items").filter(new Filter("color", "EQ", "foo"));
+		clock.tick(1);
+		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled");
+
+		sut.getBinding("items").filter();
+		clock.tick(1);
+		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled");
+
+		sut._selectAllCheckBox.setEnabled(false);
+		Core.applyChanges();
+		assert.notOk(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is disabled, only when explicitly enabled=false is set");
+
+		sut.destroy();
+	});
+
 	QUnit.test("Range Selection - rangeSelection object should be cleared if the shift key is released on the table header row or footer row", function(assert) {
 		var sut = createSUT('idRangeSelection', true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
@@ -2163,4 +2186,42 @@ sap.ui.define([
 		assert.ok(oGHLI.getDomRef().classList.contains("sapMListTblRowHasDummyCell"), "GroupHeaderListItem contains DummyCell class added");
 	});
 
+	QUnit.module("popinChanged event", {
+		beforeEach: function() {
+			this.iPopinChangedEventCounter = 0;
+			this.sut = createSUT("idPopinChangedTest", true, false);
+			this.sut.attachPopinChanged(function() {
+				this.iPopinChangedEventCounter++;
+			}, this);
+			this.sut.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.sut.destroy();
+		}
+	});
+
+	QUnit.test("Fired after rendering", function(assert) {
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired once after rendering");
+	});
+
+	QUnit.test("Fired when filtering leads to no data and then filtering leads from no data to visible items", function(assert) {
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired once after rendering");
+
+		this.sut.getBinding("items").filter(new Filter("color", "EQ", "aaaa"));
+		assert.strictEqual(this.iPopinChangedEventCounter, 2, "popinChanged event fired since filtering led to no data");
+
+		this.sut.getBinding("items").filter(new Filter("color", "EQ", "blue"));
+		assert.strictEqual(this.iPopinChangedEventCounter, 3, "popinChanged event fired since filtering led to visible items from no data");
+	});
+
+	QUnit.test("Not fired when filter leads to visible items", function(assert) {
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired once after rendering");
+
+		this.sut.getBinding("items").filter(new Filter("color", "EQ", "blue"));
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event not fired");
+
+		this.sut.getBinding("items").filter();
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event not fired");
+	});
 });

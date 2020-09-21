@@ -609,7 +609,7 @@ sap.ui.define([
 				assert.ok(oP13nControl, "Container has been created");
 				assert.ok(oP13nControl.isA("sap.m.Dialog"));
 				assert.ok(!oP13nControl.getVerticalScrolling(), "Vertical scrolling is disabled for FilterBarBase 'filterConfig'");
-				assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
+				assert.equal(oP13nControl.getCustomHeader().getContent()[0].getText(), oResourceBundle.getText("filterbar.ADAPT_GROUP"), "Correct title has been set");
 				assert.ok(this.oNonStubAC.bIsDialogOpen,"dialog is open");
 
 				//check inner panel
@@ -627,40 +627,32 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("call _createPopover - check vertical scrolling", function(assert) {
-		var done = assert.async();
-
-		this.oAdaptationController.sP13nType = "Item";
-
-		this.oAdaptationController._createPopover(new BasePanel()).then(function(oPopover){
-			var bVerticalScrolling = oPopover.getVerticalScrolling();
-
-			assert.ok(bVerticalScrolling, "Popover has been created with verticalScrolling set to true");
-			assert.ok(oPopover.isA("sap.m.ResponsivePopover"));
-
-			oPopover.destroy();
-			done();
-		});
-	});
-
-	QUnit.test("use AdaptFiltersPanel", function (assert) {
+	QUnit.test("use AdaptationFilterBar", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-		this.oAdaptationController.showP13n(oBtn, "Item").then(function(oP13nControl){
+		this.oAdaptationController.showP13n(oBtn, "Filter").then(function(oP13nControl){
 
-			//check container
-			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
-			assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
-			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
+			assert.ok(oP13nControl.isA("sap.m.Dialog"), "Dialog as container created");
 
-			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.AdaptFiltersPanel"), "Correct panel created");
-			assert.ok(oInnerTable, "Inner Table has been created");
-			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
+			var oP13nFilter = oP13nControl.getContent()[0];
+			assert.ok(oP13nFilter.isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "P13n FilterBar created for filter UI adaptation");
+
+			var oGroupPanel = oP13nFilter._oFilterBarLayout.getInner();
+			assert.ok(oGroupPanel.isA("sap.ui.mdc.p13n.panels.GroupPanelBase"), "GroupPanelBase as inner layout");
+
+			var oList = oGroupPanel._oListControl;
+			assert.ok(oList.isA("sap.m.ListBase"), "ListBase control as inner representation");
+
+			var oFirstGroup = oList.getItems()[0];
+			assert.ok(oFirstGroup.isA("sap.m.ListItemBase"), "ListItem for grup presentation");
+
+			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
+			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
+			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
+
 			done();
-		}.bind(this));
+
+		});
 	});
 
 	QUnit.test("create condition changes via 'createConditionChanges'", function(assert){
@@ -785,18 +777,41 @@ sap.ui.define([
 
 	QUnit.module("AdaptationController p13n container creation", {
 		beforeEach: function() {
-			this.oAdaptationController = new AdaptationController();
+			this.oAdaptationController = new AdaptationController(
+				{
+					stateRetriever: function() {
+						return {};
+					}
+				}
+			);
 			this.oAdaptationController.sP13nType = "Item";
 			this.oAdaptationController.setItemConfig({
 				containerSettings: {
 					title: "Test"
-				}
+				},
+				adaptationUI: new BasePanel()
 			});
 		},
 		afterEach: function() {
 			this.oAdaptationController.destroy();
 			this.oAdaptationController = null;
 		}
+	});
+
+	QUnit.test("call _createPopover - check vertical scrolling", function(assert) {
+		var done = assert.async();
+
+		this.oAdaptationController.sP13nType = "Item";
+
+		this.oAdaptationController._createPopover(new BasePanel()).then(function(oPopover){
+			var bVerticalScrolling = oPopover.getVerticalScrolling();
+
+			assert.ok(bVerticalScrolling, "Popover has been created with verticalScrolling set to true");
+			assert.ok(oPopover.isA("sap.m.ResponsivePopover"));
+
+			oPopover.destroy();
+			done();
+		});
 	});
 
 	QUnit.test("check live vertical scrolling", function(assert){
@@ -857,6 +872,21 @@ sap.ui.define([
 			oContainer.destroy();
 			done();
 		});
+	});
+
+	QUnit.test("check bIsDialogOpen - should be set to true from start", function(assert){
+		var done = assert.async();
+
+		this.oAdaptationController.setAdaptationControl(new Table());
+
+		this.oAdaptationController.showP13n(this, "Item").then(function(oP13nControl){
+			oP13nControl.getButtons()[1].firePress();
+			oP13nControl.fireAfterClose();
+			assert.ok(!this.oAdaptationController.bIsDialogOpen, "bIsDialogOpen has ben reset");
+			done();
+		}.bind(this));
+
+		assert.ok(this.oAdaptationController.bIsDialogOpen, "Prevent duplicate issues");
 	});
 
 });

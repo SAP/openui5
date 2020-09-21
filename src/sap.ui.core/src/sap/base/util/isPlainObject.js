@@ -48,6 +48,10 @@ sap.ui.define([], function() {
 
 		// Objects with a prototype are considered plain only if they were constructed by a global Object function
 		Ctor = hasOwn.call( proto, "constructor" ) && proto.constructor;
+
+		// Known Issue in IE:
+		// TypeError: Function.prototype.toString: 'this' is not a Function object
+		// https://github.com/jquery/jquery/issues/3841
 		return typeof Ctor === "function" && fnToString.call( Ctor ) === ObjectFunctionString;
 	};
 	return fnIsPlainObject;

@@ -17,6 +17,9 @@ sap.ui.define([
 
 	// Define managed object "S4HanaCloudBackend"
 	var S4HanaCloudBackend = ManagedObject.extend("sap.ui.rta.appVariant.S4HanaCloudBackend", {
+		metadata: {
+			library: "sap.ui.rta"
+		},
 		constructor: function() {
 			ManagedObject.apply(this, arguments);
 		}

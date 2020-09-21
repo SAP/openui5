@@ -4210,7 +4210,6 @@ sap.ui.define([
 			sinon.stub(oFieldInfo, "getTriggerHref").returns(Promise.resolve("test.test"));
 			sinon.stub(oFieldInfo, "getDirectLinkHrefAndTarget").returns(null);
 			sinon.stub(oFieldInfo, "getContent").returns(Promise.resolve(sap.ui.getCore().byId("L1")));
-			sinon.stub(oFieldInfo, "getContentTitle").returns("");
 			sinon.spy(oFieldInfo, "open");
 
 			oField = new FieldBase("F1", {
@@ -4272,7 +4271,6 @@ sap.ui.define([
 			sinon.stub(oFieldInfo, "getTriggerHref").returns(Promise.resolve(undefined));
 			sinon.stub(oFieldInfo, "getDirectLinkHrefAndTarget").returns(Promise.resolve(null));
 			sinon.stub(oFieldInfo, "getContent").returns(Promise.resolve(sap.ui.getCore().byId("L1")));
-			sinon.stub(oFieldInfo, "getContentTitle").returns("");
 			sinon.spy(oFieldInfo, "open");
 
 			oField = new FieldBase("F1", {
@@ -4407,7 +4405,6 @@ sap.ui.define([
 				sinon.stub(oCloneFieldInfo, "getTriggerHref").returns(Promise.resolve(undefined));
 				sinon.stub(oCloneFieldInfo, "getDirectLinkHrefAndTarget").returns(Promise.resolve(null));
 				sinon.stub(oCloneFieldInfo, "getContent").returns(Promise.resolve(sap.ui.getCore().byId("L1")));
-				sinon.stub(oCloneFieldInfo, "getContentTitle").returns("");
 				return oCloneFieldInfo;
 			};
 

@@ -8,7 +8,11 @@
 	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
 	controllerName="sap.uxap.sample.ObjectPageState.controller.ObjectPageState"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" selectedSection="paymentSubSection" useIconTabBar="true">
+	<ObjectPageLayout id="ObjectPageLayout"
+		showTitleInHeaderContent="true"
+		selectedSection="paymentSubSection"
+		useIconTabBar="true"
+		upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>

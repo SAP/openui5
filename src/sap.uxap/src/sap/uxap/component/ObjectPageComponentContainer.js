@@ -12,6 +12,7 @@ sap.ui.define(['sap/ui/core/ComponentContainer', "sap/base/Log", 'sap/ui/core/Co
 		 */
 		var ObjectPageComponentContainer = ComponentContainer.extend("sap.uxap.component.ObjectPageComponentContainer", /** @lends sap.uxap.component.ObjectPageComponentContainer.prototype */ {
 			metadata: {
+				library: "sap.uxap",
 				properties: {
 					"jsonConfigurationURL": {type: "string", group: "Behavior"},
 					"mode": {type: "sap.uxap.ObjectPageConfigurationMode", group: "Behavior"}

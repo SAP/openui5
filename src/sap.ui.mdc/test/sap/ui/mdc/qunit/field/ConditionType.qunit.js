@@ -1348,6 +1348,25 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Parsing: empty digsequence-string -> key and description", function(assert) {
+
+		var oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
+		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
+
+		oFieldHelp.getItemForValue.withArgs("", "000000").returns({key: "000000", description: "Empty"});
+
+		var oCondition = oConditionType.parseValue("");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 2, "Values length");
+		assert.equal(oCondition.values[0], "000000", "Values entry0");
+		assert.equal(oCondition.values[1], "Empty", "Values entry1");
+		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+
+	});
+
 	QUnit.test("Parsing: empty string -> key and description with not found", function(assert) {
 
 		oFieldHelp.getItemForValue.withArgs("").throws(new ParseException("not found"));
@@ -1361,8 +1380,28 @@ sap.ui.define([
 			oException = e;
 		}
 
-		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "not found", "Exception message");
+		assert.notOk(oException, "no exception fired");
+		assert.notOk(oCondition, "no condition returned");
+
+	});
+
+	QUnit.test("Parsing: empty digsequence-string -> key and description with not found", function(assert) {
+
+		var oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
+		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
+
+		oFieldHelp.getItemForValue.withArgs("", "000000").throws(new ParseException("not found"));
+
+		var oException;
+		var oCondition;
+
+		try {
+			oCondition = oConditionType.parseValue("");
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.notOk(oException, "no exception fired");
 		assert.notOk(oCondition, "no condition returned");
 
 	});

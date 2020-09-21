@@ -4881,6 +4881,27 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("open() function should focus the select, before opening the picker", function (assert) {
+			//Arrange
+			var oSelect = new Select(),
+			fnOpenPicker = oSelect.getPicker().open;
+
+			oSelect.getPicker().open = function() {
+				//Assert
+				assert.equal(Core.getCurrentFocusedControlId(), oSelect.getId(), "Select is focused, before the popup is open");
+				fnOpenPicker.call(this, arguments);
+			};
+			oSelect.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			//Act
+			oSelect.open();
+
+			//Clean
+			oSelect.destroy();
+
+		});
+
 		QUnit.module("close()");
 
 		QUnit.test("close() on phone restores focus to the select", function (assert) {
@@ -6812,6 +6833,10 @@ sap.ui.define([
 					assert.ok(oSelect.$().length, "The HTML div container html element exists");
 					assert.ok(oSelect.$("label").length, "The HTML label first-child element exists");
 					assert.ok(oSelect.$("arrow").length, "The HTML span element for the arrow exists");
+
+					assert.strictEqual(oSelect.$("label").attr('aria-hidden'), "true", "The HTML label element has an aria-hidden set to true");
+					assert.strictEqual(oSelect.$("arrow").attr('aria-hidden'), "true", "The HTML arrow element has an aria-hidden set to true");
+
 					assert.strictEqual(getComputedStyle(
 						oSelect.$("arrow")[0]).pointerEvents,
 						"auto",
@@ -8285,6 +8310,42 @@ sap.ui.define([
 			assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
 
 			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("onsapenter when enter key is pressed the default Browser behavior is prevented", function (assert) {
+
+			// System under test
+			var oSelect = new Select({
+				items: [
+					new Item({
+						key: "GER",
+						text: "Germany"
+					}),
+
+					new Item({
+						key: "CU",
+						text: "Cuba"
+					})
+				]
+			}),
+			oEvent = {
+				preventDefault: function() {},
+				setMarked: function() {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+			// Arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// Act
+			oSelect.onsapenter(oEvent);
+
+			// Assert
+			assert.ok(oSpy.called, "Default event is prevented for Enter press");
+
+			// Cleanup
 			oSelect.destroy();
 		});
 
@@ -10328,7 +10389,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Hidden select options", function (assert) {
-			var aOptions = this.$oHiddenSelectRef.find('option[hidden]');
+			var aOptions = this.$oHiddenSelectRef.find('option');
 
 			assert.strictEqual(aOptions.length, 2, "An exact number of options have been created");
 		});

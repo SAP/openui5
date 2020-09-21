@@ -5,6 +5,7 @@ sap.ui.define([
 	"./BindingHelper",
 	"./CardActions",
 	"sap/ui/base/Object",
+	"sap/base/util/merge",
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/AnalyticalContent",
 	"sap/ui/integration/cards/AnalyticsCloudContent",
@@ -18,6 +19,7 @@ sap.ui.define([
 	BindingHelper,
 	CardActions,
 	BaseObject,
+	merge,
 	AdaptiveContent,
 	AnalyticalContent,
 	AnalyticsCloudContent,
@@ -45,9 +47,6 @@ sap.ui.define([
 	 * @alias sap.ui.integration.util.ContentFactory
 	 */
 	var ContentFactory = BaseObject.extend("sap.ui.integration.util.ContentFactory", {
-		metadata: {
-			library: "sap.ui.integration"
-		},
 		constructor: function (oCard) {
 			BaseObject.call(this);
 
@@ -96,12 +95,12 @@ sap.ui.define([
 					oContent.setActions(oActions);
 
 					if (sType.toLowerCase() !== "adaptivecard") {
-						oContent.setConfiguration(BindingHelper.createBindingInfos(mConfig.contentManifest), sType);
+						oContent.setConfiguration(this._createBindingInfos(mConfig.contentManifest), sType);
 					} else {
 						oContent.setConfiguration(mConfig.contentManifest);
 					}
 					resolve(oContent);
-				})
+				}.bind(this))
 				.catch(function (sError) {
 					reject(sError);
 				});
@@ -136,6 +135,20 @@ sap.ui.define([
 			default:
 				return null;
 		}
+	};
+
+	ContentFactory.prototype._createBindingInfos = function (oContentManifest) {
+		var oResult = merge({}, oContentManifest),
+			oDataSettings = oResult.data;
+
+		// do not create binding info for data at this point, it will be done later
+		delete oResult.data;
+		oResult = BindingHelper.createBindingInfos(oResult);
+		if (oDataSettings) {
+			oResult.data = oDataSettings;
+		}
+
+		return oResult;
 	};
 
 	return ContentFactory;

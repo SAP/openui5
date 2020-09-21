@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent','sap/ui/core/mvc/XMLView'],
 	var Component = UIComponent.extend("sap.m.sample.TableTest.applicationUnderTest.Component", {
 
 		metadata : {
-		    publicMethods : [
+			publicMethods : [
 				"getTable"
 			],
 

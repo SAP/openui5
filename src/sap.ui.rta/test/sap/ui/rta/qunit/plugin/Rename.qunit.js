@@ -483,6 +483,34 @@ function(
 			});
 		});
 
+		QUnit.test("when the Label gets renamed and the new value is interpreted as a binding", function(assert) {
+			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay).then(function() {
+				this.oRenamePlugin._$oEditableControlDomRef.text("{testText}");
+				this.oRenamePlugin._$editableField.text(this.oRenamePlugin._$oEditableControlDomRef.text());
+				return triggerAndWaitForStopEdit(this.oRenamePlugin);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oShowMessageBoxStub.callCount, 1, "the error was shown");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], oResourceBundle.getText("RENAME_BINDING_ERROR_TEXT"), "the correct error text was passed");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[2].titleKey, "RENAME_ERROR_TITLE", "the correct error text was passed");
+				assert.ok(this.oLayoutOverlay.hasStyleClass(RenameHandler.errorStyleClass), "the error style class is set");
+			}.bind(this));
+		});
+
+		QUnit.test("when the Label gets renamed to }{", function(assert) {
+			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay).then(function() {
+				this.oRenamePlugin._$oEditableControlDomRef.text("}{");
+				this.oRenamePlugin._$editableField.text(this.oRenamePlugin._$oEditableControlDomRef.text());
+				return triggerAndWaitForStopEdit(this.oRenamePlugin);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oShowMessageBoxStub.callCount, 1, "the error was shown");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], oResourceBundle.getText("RENAME_BINDING_ERROR_TEXT"), "the correct error text was passed");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[2].titleKey, "RENAME_ERROR_TITLE", "the correct error text was passed");
+				assert.ok(this.oLayoutOverlay.hasStyleClass(RenameHandler.errorStyleClass), "the error style class is set");
+			}.bind(this));
+		});
+
 		QUnit.test("when the Label gets renamed and the new value is empty and invalid", function(assert) {
 			addValidators(this.oLayoutOverlay.getDesignTimeMetadata(), [
 				"noEmptyText"

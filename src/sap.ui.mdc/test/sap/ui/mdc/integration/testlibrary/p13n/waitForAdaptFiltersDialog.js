@@ -14,30 +14,34 @@ sap.ui.define([
 	// TODO: unify this with waitForP13nDialog
 	return function waitForAdaptFiltersDialog(oSettings) {
 		oSettings = oSettings || {};
+		var sTitle = oSettings.title;
 
 		return this.waitFor({
 			searchOpenDialogs: true, // search only visible controls inside the static area
 			controlType: "sap.m.Dialog",
-			properties: {
-
-				// title: "Adapt Filters"
-				title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE")
-			},
-			success: function(aAdaptFiltersPopovers) {
-				Opa5.assert.ok(true, 'The adapt filters personalization popover was found');
-
-				if (typeof oSettings.success === "function") {
-					var oAdaptFiltersPopover = aAdaptFiltersPopovers[0];
-
-					// FIXME: increase the `followOf` threshold/tolerance of the sap.m.Popover
-					// control to prevent it from closing when the position of the “Adapt Filters”
-					// button changes when a filter field is re-ordered, removed or added
-					oAdaptFiltersPopover._followOfTolerance = 96;
-
-					oSettings.success.call(this, oAdaptFiltersPopover);
+			matchers: {
+				descendant: {
+					controlType: "sap.m.MenuButton",
+					properties: {
+						text: sTitle
+					}
 				}
 			},
-			errorMessage: 'The adapt filters personalization popover was not found'
+			success: function(AdaptFiltersDialog) {
+				Opa5.assert.ok(true, 'The adapt filters personalization dialog was found');
+
+				if (typeof oSettings.success === "function") {
+					var oAdaptFiltersDialog = AdaptFiltersDialog[0];
+
+					// FIXME: increase the `followOf` threshold/tolerance of the sap.m.Dialog
+					// control to prevent it from closing when the position of the “Adapt Filters”
+					// button changes when a filter field is re-ordered, removed or added
+					oAdaptFiltersDialog._followOfTolerance = 96;
+
+					oSettings.success.call(this, oAdaptFiltersDialog);
+				}
+			},
+			errorMessage: 'The adapt filters personalization dialog was not found'
 		});
 	};
 });

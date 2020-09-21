@@ -1,8 +1,11 @@
 sap.ui.define([
+	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel'
-], function(Controller, JSONModel) {
+], function(coreLibrary, Controller, JSONModel) {
 	"use strict";
+
+	var ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.m.sample.ComboBoxValidation.controller.ComboBoxValidation", {
 
@@ -19,10 +22,10 @@ sap.ui.define([
 				sValue = oValidatedComboBox.getValue();
 
 			if (!sSelectedKey && sValue) {
-				oValidatedComboBox.setValueState("Error");
+				oValidatedComboBox.setValueState(ValueState.Error);
 				oValidatedComboBox.setValueStateText("Please enter a valid country!");
 			} else {
-				oValidatedComboBox.setValueState("None");
+				oValidatedComboBox.setValueState(ValueState.None);
 			}
 		}
 	});

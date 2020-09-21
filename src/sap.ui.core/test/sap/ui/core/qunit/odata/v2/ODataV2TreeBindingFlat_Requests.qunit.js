@@ -1,4 +1,4 @@
-/*global QUnit, OData */
+/*global QUnit, OData, sinon */
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel"
@@ -739,14 +739,42 @@ sap.ui.define([
 		};
 		oBinding._aPendingRequests = [oFakeRequest, oFakeRequest];
 		oBinding._aPendingChildrenRequests = [oFakeRequest, oFakeRequest];
-		oBinding.mRequestHandles = {
-			request1: oFakeRequest.oRequestHandle,
-			request2: oFakeRequest.oRequestHandle
-		};
+
 		oBinding._abortPendingRequest();
-		assert.equal(iAbortCalled, 6, "All four fake requests got aborted");
+		assert.equal(iAbortCalled, 4, "All four fake requests got aborted");
 		assert.equal(oBinding._aPendingRequests.length, 0, "There are no more pending requests");
 		assert.equal(oBinding._aPendingChildrenRequests.length, 0, "There are no more pending children requests");
-		assert.equal(Object.keys(oBinding.mRequestHandles).length, 0, "There are no more pending OTB requests");
+	});
+
+	QUnit.test("Reset followed by Request - Should fire a single pair of data* events", function(assert){
+		var done = assert.async();
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var fireDataRequestedSpy = sinon.spy(oBinding, "fireDataRequested");
+		var fireDataReceivedSpy = sinon.spy(oBinding, "fireDataReceived");
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+			var aContexts = oBinding.getContexts(0, 10, 20);
+			assert.equal(aContexts.length, 10, "Correct context is loaded");
+
+			window.setTimeout(function() {
+				// Timeout to ensure all eventual data* events have been fired
+				//	(there must be no more than one)
+				assert.equal(fireDataRequestedSpy.callCount, 1, "fireDataRequested fired once");
+				assert.equal(fireDataReceivedSpy.callCount, 1, "fireDataReceivedSpy fired once");
+				done();
+			}, 100);
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 10, 20);
+		oBinding.resetData();
+		oBinding.getContexts(0, 10, 20);
 	});
 });

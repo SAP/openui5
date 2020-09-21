@@ -27,6 +27,7 @@ sap.ui.define([
 	 */
 	var TableTypeBase = Element.extend("sap.ui.mdc.table.TableTypeBase", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {}
 		}
 	});

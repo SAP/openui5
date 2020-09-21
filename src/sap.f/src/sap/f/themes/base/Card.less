@@ -6,7 +6,6 @@
 @_sap_f_Card_BoxShadow: @sapUiShadowLevel0;
 @_sap_f_Card_HeaderBorder: 0.0625rem solid @sapUiTileSeparatorColor; // used as top or bottom border
 @_sap_f_Card_ContentPadding: 1rem;
-@_sap_f_Card_HeaderIconColor: #6a6d70;
 @_sap_f_Card_HeaderFocusBorderBottomOffset: 1px;
 
 .sapFCard {
@@ -59,9 +58,13 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		.sapUiIcon {
-			align-self: center;
-			font-size: 2rem;
+
+		&.sapFAvatarColorTransparent {
+			.sapUiIcon {
+				color: @sapUiTileIconColor;
+				font-size: 2rem;
+				align-self: center;
+			}
 		}
 	}
 
@@ -135,12 +138,7 @@
 	margin-right: 0.75rem;
 
 	&:not(.sapFAvatarImage):not(.sapFAvatarInitials) {
-		background-color: transparent;
 		border: none;
-	}
-
-	.sapUiIcon {
-		color: @_sap_f_Card_HeaderIconColor;
 	}
 }
 
@@ -243,8 +241,6 @@
 	}
 }
 
-
-
 .sapFCard .sapFCardContent {
 	flex: 1 0 auto;
 	overflow: hidden;
@@ -284,6 +280,12 @@
 
 	.sapUiView.sapUiXMLView > .sapMImg {
 		display: block; // Fix for unwanted space under the only image inside Component Card content
+	}
+
+	.sapFCardIcon.sapFAvatarColorTransparent {
+		.sapUiIcon {
+			color: @sapUiContentNonInteractiveIconColor;
+		}
 	}
 }
 

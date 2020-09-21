@@ -19,7 +19,7 @@ sap.ui.define([
 				autoRespondAfter: 500
 			});
 
-			sLocalServicePath = sap.ui.require.toUrl("sap/ui/table/sample/TreeTable/ODataAnnotationsTreeBinding/") + "localService";
+			sLocalServicePath = sap.ui.require.toUrl("sap/ui/table/sample/TreeTable/ODataAnnotationsTreeBinding/localService");
 
 			// simulate
 			oMockServer.simulate(sLocalServicePath + "/metadata.xml", {

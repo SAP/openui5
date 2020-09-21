@@ -119,7 +119,19 @@ function(
 		 * @public
 		 */
 		isOverMaxLayer: function(sLayer) {
-			return (this.getLayerIndex(sLayer) > this.getLayerIndex(this.getMaxLayer()));
+			return this.isOverLayer(sLayer, this.getMaxLayer());
+		},
+
+		/**
+		 * Determines if the first passed layer passed is higher than the second passed layer.
+		 *
+		 * @param {string} sObjectsLayer Layer name to be evaluated
+		 * @param {string} sComparedLayer Layer name to be compared against the first one
+		 * @returns {boolean} <code>true</code> if the first input layer is higher than the second input layer, otherwise <code>false</code>
+		 * @public
+		 */
+		isOverLayer: function (sObjectsLayer, sComparedLayer) {
+			return this.getLayerIndex(sObjectsLayer) > this.getLayerIndex(sComparedLayer);
 		},
 
 		/**
@@ -170,7 +182,7 @@ function(
 		},
 
 		/**
-		 * The function loops over the array and filteres the object if the layer property is over the current max layer
+		 * The function loops over the array and filters the object if the layer property is higher than the current max layer.
 		 *
 		 * @param {object[]} aChangeDefinitions - Array of change definitions
 		 * @returns {object[]} Array of filtered change definitions

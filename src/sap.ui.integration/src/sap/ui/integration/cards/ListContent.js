@@ -29,6 +29,9 @@ sap.ui.define([
 	// shortcut for sap.m.AvatarSize
 	var AvatarSize = mLibrary.AvatarSize;
 
+	// shortcut for sap.m.AvatarColor
+	var AvatarColor = mLibrary.AvatarColor;
+
 	/**
 	 * Constructor for a new <code>ListContent</code>.
 	 *
@@ -213,6 +216,7 @@ sap.ui.define([
 			}
 
 			mSettings.iconSize = mItem.icon.size || mSettings.iconSize;
+			mSettings.iconBackgroundColor = mItem.icon.backgroundColor || (mItem.icon.text ? undefined : AvatarColor.Transparent);
 		}
 
 		if (mItem.chart) {

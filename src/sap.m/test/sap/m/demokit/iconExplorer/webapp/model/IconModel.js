@@ -191,7 +191,7 @@ sap.ui.define([
 			["groups.json", "tags.json"].forEach(function (sName) {
 				aPromises.push(new Promise(function (fnResolve, fnReject) {
 					// load font metadata asynchronously
-					var oJSONModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/model/" + sFontName + "/" + sName);
+					var oJSONModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/iconexplorer/model/" + sFontName + "/" + sName));
 					oJSONModel.attachRequestCompleted(function ()  {
 						fnResolve(this.getData());
 					});

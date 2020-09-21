@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], function (Matcher, capitalize) {
+sap.ui.define([
+	"sap/ui/base/ManagedObject",
+	'sap/ui/test/matchers/Matcher',
+	"sap/base/strings/capitalize"
+], function (ManagedObject, Matcher, capitalize) {
 	"use strict";
 
 	/**
@@ -43,6 +47,13 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 					type: "any"
 				}
 			}
+		},
+
+		constructor: function (mSettings) {
+			if (mSettings && mSettings.value) {
+				mSettings.value = ManagedObject.escapeSettingsValue(mSettings.value);
+			}
+			Matcher.prototype.constructor.call(this, mSettings);
 		},
 
 		/**

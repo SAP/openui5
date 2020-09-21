@@ -321,4 +321,21 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this));
 	});
+
+	QUnit.test("Focus after messagestrip close", function(assert) {
+		var done = assert.async();
+		this.oPlugin.showMessage("New Message", "Error");
+		var oControl = this.oPlugin.getControl();
+
+		this.oPromise.then(function() {
+			var oMsgStrip = this.oPlugin._oMessageStrip;
+			oMsgStrip.attachClose(function() {
+				assert.strictEqual(document.activeElement, oControl.getItems()[0].getDomRef(), "Focus is on the parent of the message Strip");
+				done();
+			});
+			setTimeout(function() {
+				oMsgStrip.close();
+			}, 300);
+		 }.bind(this));
+	});
 });

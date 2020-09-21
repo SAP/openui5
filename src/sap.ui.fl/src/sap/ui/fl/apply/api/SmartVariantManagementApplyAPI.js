@@ -4,24 +4,53 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/DefaultVariant",
-	"sap/ui/fl/StandardVariant",
-	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils",
-	"sap/base/Log"
+	"sap/ui/fl/LayerUtils"
 ], function(
 	FlexState,
-	DefaultVariant,
-	StandardVariant,
-	ChangePersistenceFactory,
+	ManifestUtils,
+	ChangesController,
+	Change,
 	Settings,
 	Utils,
-	LayerUtils,
-	Log
+	LayerUtils
 ) {
 	"use strict";
+
+	function getPersistencyKey(oControl) {
+		return oControl && oControl.getPersistencyKey && oControl.getPersistencyKey();
+	}
+
+	/**
+	 * Returns the SmartVariant <code>ChangeMap</code> from the Change Persistence.
+	 *
+	 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
+	 * @returns {object} <code>persistencyKey</code> map and corresponding changes, or an empty object
+	 * @private
+	 */
+	function getChangeMap(oControl) {
+		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+		var sPersistencyKey = getPersistencyKey(oControl);
+		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+		return mCompVariantsMap._getOrCreate(sPersistencyKey);
+	}
+
+	/**
+	 * Object containing data for a SmartVariantManagement control.
+	 *
+	 * @typedef {object} sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.Response
+	 * @property {sap.ui.fl.Change[]} variants - Variants for the control
+	 * @property {sap.ui.fl.Change[]} changes - Changes on variants for the control
+	 * @property {sap.ui.fl.Change | undefined} defaultVariant - DefaultVariant change to be applied
+	 * @property {sap.ui.fl.Change | undefined} standardVariant - StandardVariant change to be applied
+	 * @since 1.83
+	 * @private
+	 * @ui5-restricted
+	 */
 
 	/**
 	 * Provides an API to handle specific functionalities for the <code>sap.ui.comp</code> library.
@@ -34,60 +63,51 @@ sap.ui.define([
 	 */
 	var SmartVariantManagementApplyAPI = /** @lends sap.ui.fl.apply.api.SmartVariantManagementApplyAPI */{
 
-		_PERSISTENCY_KEY: "persistencyKey",
+		/**
+		 * Calls the back-end system asynchronously and fetches all {@link sap.ui.fl.Change}s and variants pointing to this control.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
+		 * @returns {Promise<sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.Response>} Data for the passed
+		 * <code>sap.ui.comp.smartvariants.SmartVariantManagement</code> control
+		 * @since 1.83
+		 * @private
+		 * @ui5-restricted
+		 */
+		getCompEntities: function (mPropertyBag) {
+			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
+
+			// TODO clarify why in a test we come here without an initialized FlexState (1980546095)
+			return FlexState.initialize({
+				reference: sReference,
+				componentData: {},
+				manifest: {},
+				componentId: sReference.replace(".Component", "")
+			})
+			.then(getChangeMap.bind(undefined, mPropertyBag.control));
+		},
 
 		/**
 		 * Calls the back end asynchronously and fetches all {@link sap.ui.fl.Change}s and variants pointing to this control.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @returns {Promise<Object<string,sap.ui.fl.Change>>} Map with key <code>changeId</code> and value instance of <code>sap.ui.fl.Change</code>
+		 * @returns {Promise<sap.ui.fl.Change[]>} Array with instances of <code>sap.ui.fl.Change</code>
 		 * @private
 		 * @ui5-restricted
+		 *
+		 * @deprecated
 		 */
 		loadChanges: function(mPropertyBag) {
-			var oControl = mPropertyBag.control;
-			var oAppDescriptor = Utils.getAppDescriptor(oControl);
-			var sSiteId = Utils.getSiteId(oControl);
-			var sStableId = this._getStableId(oControl);
-
-			var mParameters = {
-				appDescriptor: oAppDescriptor,
-				siteId: sSiteId,
-				includeVariants: true
-			};
-
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
-
-			// TODO clarify why in a test we come here without an initialized FlexState (1980546095)
-			return FlexState.initialize({
-				componentId: Utils.getAppComponentForControl(oControl).getId()
-			})
-			.then(function() {
-				return oChangePersistence.getControlChangesForVariant(this._PERSISTENCY_KEY, sStableId, mParameters);
-			}.bind(this));
+			return SmartVariantManagementApplyAPI.getCompEntities(mPropertyBag)
+				.then(function(oCompEntities) {
+					return oCompEntities.variants.concat(oCompEntities.changes);
+				});
 		},
 
-		/**
-		 * Returns the {@link sap.ui.fl.Change} for the provided ID.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @param {string} mPropertyBag.id - ID of the change or variant
-		 * @returns {sap.ui.fl.Change} Change or variant object
-		 * @private
-		 * @ui5-restricted
-		 */
-		getChangeById: function (mPropertyBag) {
-			var oControl = mPropertyBag.control;
-			var sId = mPropertyBag.id;
-			if (!sId || !oControl) {
-				Log.error("sId or oControl is not defined");
-				return undefined;
-			}
-			var oChanges = this._getChangeMap(oControl);
-
-			return oChanges[sId];
+		getEntityById: function (mPropertyBag) {
+			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
+			return FlexState.getCompEntitiesByIdMap(sReference)[mPropertyBag.id];
 		},
 
 		/**
@@ -167,9 +187,8 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		getDefaultVariantId: function(mPropertyBag) {
-			var oChanges = this._getChangeMap(mPropertyBag.control);
-
-			return DefaultVariant.getDefaultVariantId(oChanges);
+			var oChange = getChangeMap(mPropertyBag.control).defaultVariant;
+			return oChange ? oChange.getContent().defaultVariantName : "";
 		},
 
 		/**
@@ -184,44 +203,42 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		getExecuteOnSelect: function(mPropertyBag) {
-			var oChanges = this._getChangeMap(mPropertyBag.control);
-
-			return StandardVariant.getExecuteOnSelect(oChanges);
+			var oChange = getChangeMap(mPropertyBag.control).standardVariant;
+			return oChange ? oChange.getContent().executeOnSelect : null;
 		},
 
 		/**
-		 * Determines the value of the stable ID property of the control.
-		 *
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
-		 * @returns {String | undefined} Stable ID, or empty string if stable ID determination failed
-		 * @private
+		 * @deprecated
 		 */
-		_getStableId: function(oControl) {
-			if (!oControl) {
-				return undefined;
-			}
-
-			var sStableId;
-			try {
-				sStableId = oControl.getPersistencyKey();
-			} catch (exception) {
-				sStableId = "";
-			}
-			return sStableId;
+		getChangeById: function (mPropertyBag) {
+			return SmartVariantManagementApplyAPI.getEntityById(mPropertyBag);
 		},
 
 		/**
-		 * Returns the SmartVariant <code>ChangeMap</code> from the Change Persistence.
+		 * Collects all changes related to a smartVariantManagement.
 		 *
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
-		 * @returns {object} <code>persistencyKey</code> map and corresponding changes, or an empty object
+		 * @returns {object} A map with all changes related to the SmartVariantManagement by their ID
 		 * @private
+		 *
+		 * @deprecated only being used on a deletion of a variant to also delete changes; this should be handled within the delete call
 		 */
 		_getChangeMap: function(oControl) {
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
+			var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+			var sPersistencyKey = getPersistencyKey(oControl);
+			var mCompVariantsMap = FlexState.getCompEntitiesByIdMap(sReference);
+			var mChangesForVariantManagement = {};
+			Object.keys(mCompVariantsMap).forEach(function (sId) {
+				if (
+					mCompVariantsMap[sId].getSelector &&
+					mCompVariantsMap[sId].getSelector().persistencyKey === sPersistencyKey &&
+					mCompVariantsMap[sId].getFileType() === "change"
+				) {
+					mChangesForVariantManagement[sId] = mCompVariantsMap[sId];
+				}
+			});
 
-			return oChangePersistence.getSmartVariantManagementChangeMap()[sStableId] || {};
+			return mChangesForVariantManagement;
 		}
 	};
 

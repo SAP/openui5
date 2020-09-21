@@ -10,7 +10,9 @@ sap.ui.define(["sap/base/security/encodeCSS"],
 	 * TileContent renderer.
 	 * @namespace
 	 */
-	var TileContentRenderer = {};
+	var TileContentRenderer = {
+		apiVersion: 2    // enable in-place DOM patching
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -27,20 +29,18 @@ sap.ui.define(["sap/base/security/encodeCSS"],
 		}
 		var sFrameTypeClass = encodeCSS("sapMFrameType" + oControl.getFrameType());
 
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMTileCnt");
-		oRm.addClass(sContentTypeClass);
-		oRm.addClass(sFrameTypeClass);
+		oRm.openStart("div", oControl);
+		oRm.class("sapMTileCnt");
+		oRm.class(sContentTypeClass);
+		oRm.class(sFrameTypeClass);
 		if (sTooltip.trim()) { // trim check needed since IE11 renders white spaces
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 		this._renderContent(oRm, oControl);
 		this._renderFooter(oRm, oControl);
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
@@ -57,16 +57,14 @@ sap.ui.define(["sap/base/security/encodeCSS"],
 
 		var oContent = oControl.getContent();
 		if (oContent) {
-			oRm.write("<div");
-			oRm.addClass("sapMTileCntContent");
-			oRm.writeClasses();
-			oRm.writeAttribute("id", oControl.getId() + "-content");
-			oRm.write(">");
+			oRm.openStart("div", oControl.getId() + "-content");
+			oRm.class("sapMTileCntContent");
+			oRm.openEnd();
 			if (!oContent.hasStyleClass("sapMTcInnerMarker")) {
 				oContent.addStyleClass("sapMTcInnerMarker");
 			}
 			oRm.renderControl(oContent);
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
@@ -87,17 +85,15 @@ sap.ui.define(["sap/base/security/encodeCSS"],
 		var sTooltip = oControl.getTooltip_AsString();
 		var sFooterTxt = oControl._getFooterText(oRm, oControl);
 		// footer text div
-		oRm.write("<div");
-		oRm.addClass("sapMTileCntFtrTxt");
-		oRm.addClass(encodeCSS(sColorClass));
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-footer-text");
+		oRm.openStart("div", oControl.getId() + "-footer-text");
+		oRm.class("sapMTileCntFtrTxt");
+		oRm.class(encodeCSS(sColorClass));
 		if (sTooltip.trim()) { // check for white space(s) needed since the IE11 renders it
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
-		oRm.write(">");
-		oRm.writeEscaped(sFooterTxt);
-		oRm.write("</div>");
+		oRm.openEnd();
+		oRm.text(sFooterTxt);
+		oRm.close("div");
 	};
 
 	return TileContentRenderer;

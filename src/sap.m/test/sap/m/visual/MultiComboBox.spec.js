@@ -28,7 +28,7 @@ describe('sap.m.MultiComboBox', function() {
 		defaultArrow.click();
 		browser.actions().sendKeys("B").perform();
 		expect(takeScreenshot()).toLookAs("multicombobox-filtering");
-
+		defaultArrow.click();
 	});
 
 	//MultiComboBox - 50% width
@@ -40,9 +40,13 @@ describe('sap.m.MultiComboBox', function() {
 
 	//MultiComboBox with cropped tokens
 	it("should visualize a MultiComboBox with cropped tokens", function(){
-		var croppedTokensMultiComboBox = element(by.id("MultiComboBox1-inner"));
-		croppedTokensMultiComboBox.click();
-		expect(takeScreenshot( element(by.id("MultiComboBox1")))).toLookAs("cropped_tokens");
+		browser.executeScript('sap.ui.getCore().byId("MultiComboBox1").getAggregation("tokenizer").setRenderMode("Loose");')
+			.then(function () {
+				expect(takeScreenshot( element(by.id("MultiComboBox1")))).toLookAs("cropped_tokens");
+			})
+			.then(function () {
+				browser.executeScript('sap.ui.getCore().byId("MultiComboBox1").getAggregation("tokenizer").setRenderMode("Narrow");');
+			});
 	});
 
 	//MultiComboBox with selectable disabled list item

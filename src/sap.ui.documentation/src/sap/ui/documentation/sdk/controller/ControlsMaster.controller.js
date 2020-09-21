@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/base/util/Version",
 	"sap/ui/thirdparty/jquery",
@@ -25,6 +26,7 @@ sap.ui.define([
 	ControlsInfo,
 	GroupHeaderListItem,
 	Filter,
+	FilterOperator,
 	Sorter,
 	Version,
 	jQueryDOM,
@@ -593,14 +595,14 @@ sap.ui.define([
 					oBinding = oList.getBinding("items");
 
 				bFilterChanged = true;
-				aFilters.push(new Filter("searchTags", "Contains", this._sFilterValue));
+				aFilters.push(new Filter("searchTags", FilterOperator.Contains, this._sFilterValue));
 
 				// add filters for view settings
 				jQueryDOM.each(this._oListSettings.filter, function (sProperty, oValues) {
 					var aPropertyFilters = [];
 
 					jQueryDOM.each(oValues, function (sKey, bValue) {
-						var sOperator = (sProperty === "formFactors") ? "Contains" : "EQ";
+						var sOperator = (sProperty === "formFactors") ? FilterOperator.Contains : FilterOperator.EQ;
 						aPropertyFilters.push(new Filter(sProperty, sOperator, sKey));
 					});
 

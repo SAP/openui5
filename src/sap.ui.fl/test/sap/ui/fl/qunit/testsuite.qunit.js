@@ -247,6 +247,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState"]
 				}
 			},
+			"apply/_internal/flexState/compVariants/CompVariantState": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantState"]
+				}
+			},
 			"apply/_internal/flexState/controlVariants/VariantManagementState": {
 				group: "Apply Internal",
 				coverage: {
@@ -293,6 +299,12 @@ sap.ui.define([
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/prepareChangesMap"]
+				}
+			},
+			"apply/_internal/flexState/prepareCompVariantsMap": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/prepareCompVariantsMap"]
 				}
 			},
 			"apply/_internal/flexState/prepareVariantsMap": {
@@ -403,6 +415,15 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/Versions"]
+				}
+			},
+			"write/_internal/flexState/FlexObjectState": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/flexState/FlexObjectState"]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				}
 			},
 			"write/_internal/connectors/ObjectPathConnector": {
@@ -750,18 +771,6 @@ sap.ui.define([
 				},
 				coverage: {
 					only: ["sap/ui/fl/variants/VariantModel"]
-				}
-			},
-			StandardVariant: {
-				group: "Variants",
-				coverage: {
-					only: ["sap/ui/fl/StandardVariant"]
-				}
-			},
-			DefaultVariant: {
-				group: "Variants",
-				coverage: {
-					only: ["sap/ui/fl/DefaultVariant"]
 				}
 			},
 

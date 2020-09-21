@@ -121,7 +121,7 @@ sap.ui.define([
 				},
 
 				iPressAdaptFiltersOk: function(){
-					return this.mdcTestLibrary.iPressDialogOk("Adapt Filters");
+					return this.mdcTestLibrary.iPressDialogOk();
 				},
 
 				// variant

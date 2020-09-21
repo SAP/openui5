@@ -33,7 +33,7 @@ sap.ui.require([
 			controlType : "sap.m.Page",
 			matchers : new Properties({
 				title : "Hello from Server"
-		    }),
+			}),
 			success : function () {
 				Opa5.assert.ok(true, "Did update the app title correctly");
 			}

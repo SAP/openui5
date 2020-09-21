@@ -117,6 +117,15 @@
 	}
 }
 
+.sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem:focus::before {
+	border-width: 0.125 * @sapContent_GridSize;
+	top: 0.125rem;
+}
+
+.sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem.sapMTabStripItemSelected:focus::before {
+	top: 0.25rem;
+}
+
 .sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem.sapMTabStripItemSelected {
 	box-shadow: inset 0 0.1875rem 0 @sapUiListTextColor;
 	border-bottom: 0;

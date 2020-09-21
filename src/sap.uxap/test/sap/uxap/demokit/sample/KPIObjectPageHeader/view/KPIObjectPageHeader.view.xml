@@ -6,7 +6,7 @@
 	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 	controllerName="sap.uxap.sample.KPIObjectPageHeader.controller.KPIObjectPageHeader"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
 							  objectTitle="Generic T-Shirt Fa, SIZE AS, Colour blau"

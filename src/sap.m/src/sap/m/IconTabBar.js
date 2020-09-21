@@ -74,6 +74,9 @@ sap.ui.define([
 	 *<li>Use an arrow (e.g. triple-chevron) as a separator to connect the steps.</li>
 	 *<li>Use counters to show the number of items in each filter.</li>
 	 *</ul>
+	 *<h3>Hierarchies</h3>
+	 * Multiple sub tabs could be placed underneath one main tab. Nesting allows deeper hierarchies with indentations to indicate the level of each nested tab.
+	 * When a tab has both sub tabs and own content its click area is split to allow the user to display the content or alternatively to expand/collapse the list of sub tabs.
 	 *<h3>Responsive Behavior</h3>
 	 *<ul>
 	 *<li>Text-only tabs are never truncated.</li>

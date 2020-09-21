@@ -659,7 +659,7 @@ sap.ui.define([
 
 		this._oObserver.observe(this, {
 			properties: ["display", "editMode", "dataType", "dataTypeFormatOptions", "dataTypeConstraints",
-						 "multipleLines", "maxConditions", "conditions", "delegate"],
+						"multipleLines", "maxConditions", "conditions", "delegate"],
 			aggregations: ["fieldInfo", "content", "contentEdit", "contentDisplay"],
 			associations: ["fieldHelp", "ariaLabelledBy"]
 		});
@@ -739,7 +739,8 @@ sap.ui.define([
 	FieldBase.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 
 		// most properties are rendered from content controls. Only invalidate whole Field if needed
-		if (sPropertyName !== "width" && sPropertyName !== "editMode") {
+		// (multipleLines mostly changed together with editMode -> update once om rendering)
+		if (sPropertyName !== "width" && sPropertyName !== "editMode" && sPropertyName !== "multipleLines") {
 			bSuppressInvalidate = true;
 		}
 
@@ -1212,10 +1213,6 @@ sap.ui.define([
 				}
 			}
 		};
-
-		if (oChanges.name === "multipleLines") {
-			fnUpdateInternalContent.call(this);
-		}
 
 		if (oChanges.name === "dataType") {
 			// check only if different type (in Field type might be already taken from biding)

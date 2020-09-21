@@ -12,8 +12,7 @@ sap.ui.define([
 
 		onInputChanged: function (oEvent) {
 			var sValue = oEvent.getParameter("value");
-			var sViewId = this.getView().sId;
-			var sInputId = oEvent.getSource().sId.slice(sViewId.length + 2);
+			var sInputId = this.getView().getLocalId(oEvent.getSource().getId());
 			if (sInputId === "rTem") {
 				this.byId("grid1").setGridTemplateRows(sValue);
 			} else if (sInputId === "cTem") {

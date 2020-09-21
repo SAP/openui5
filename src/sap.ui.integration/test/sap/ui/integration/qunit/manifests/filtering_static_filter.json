@@ -32,13 +32,13 @@
 		},
 		"data": {
 			"request": {
-				"url": "test-resources/sap/ui/integration/qunit/manifests/items_{{filters.category}}.json"
+				"url": "test-resources/sap/ui/integration/qunit/manifests/items_{filters>/category/value}.json"
 			}
 		},
 		"type": "List",
 		"header": {
 			"title": "Products by category",
-			"subTitle": "Category {{filters.category}}",
+			"subTitle": "Category {filters>/category/value}",
 			"icon": {
 				"src": "sap-icon://product"
 			},

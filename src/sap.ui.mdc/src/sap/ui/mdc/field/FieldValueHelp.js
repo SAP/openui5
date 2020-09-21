@@ -861,6 +861,11 @@ sap.ui.define([
 				this.fireDataRequested();
 			}
 
+			if (oBindingContext && !oBindingContext.getModel()) {
+				// BindingContext without model cannot bring any data and might be destroyed -> ignore as request is probably outdated
+				return null;
+			}
+
 			/*
 			 * If the description should be displayed inside a Field this description will be determined using this function.
 			 * If InParameters are used, they are needed to find the right description.
@@ -876,7 +881,11 @@ sap.ui.define([
 			 */
 			var oMyBindingContext = this.oBindingContexts[undefined]; // as getBindingContext returns propagated Context if own context don't fit to model
 			var aInParameters = this.getInParameters();
-			var bBindingChanged = this._areBindingContextsAvailableAndHaveChanged(oBindingContext, oMyBindingContext);
+			var bBindingChanged = false;
+
+			if (oBindingContext && Context.hasChanged(oMyBindingContext, oBindingContext)) {
+				bBindingChanged = true;
+			}
 
 			var aInBindings = _getParameterBinding.call(this, aInParameters, bBindingChanged, oBindingContext, oMyBindingContext);
 			// Out Parameter binding not used, only given outParameter value
@@ -902,10 +911,6 @@ sap.ui.define([
 
 	};
 
-	FieldValueHelp.prototype._areBindingContextsAvailableAndHaveChanged = function(oBindingContext, oMyBindingContext) {
-		return !!(oBindingContext && oMyBindingContext && Context.hasChanged(oBindingContext, oMyBindingContext));
-	};
-
 	function _getParameterBinding(aParameters, bNewBinding, oBindingContext, oMyBindingContext) {
 
 		var aBindings = [];
@@ -917,30 +922,24 @@ sap.ui.define([
 				var sPath = oBinding.getPath();
 				var oParameterBindingContext = oBinding.getContext();
 
-				if (
-					bNewBinding &&
-					((oParameterBindingContext === oMyBindingContext) || (!oParameterBindingContext && oMyBindingContext))
-				) {
-
+				if (bNewBinding && (oParameterBindingContext === oMyBindingContext || (!oParameterBindingContext && oMyBindingContext))) {
 					// InParameter is bound and uses the same BindingContext like the FieldHelp or has no BindingContext right now.
 					// If InParameter is bound to a different BindingContext just use this one.
 					if (oBindingContext.getProperty(sPath) === undefined) {
-
 						// if value is already known in BindingContext from other existing Binding, don't request again.
 						var oModel = oBinding.getModel();
 						aBindings.push(oModel.bindProperty(sPath, oBindingContext));
 					}
-
-				} else if (
-					!oParameterBindingContext ||
-					(oParameterBindingContext.getProperty(sPath) === undefined) ||
-					!deepEqual(oParameter.validateProperty("value", oParameterBindingContext.getProperty(sPath)), oParameter.getValue())
-				) {
-
+				} else {
+					if (!oParameterBindingContext // we don't havve a BindingContext -> need to wait for one
+							|| oParameterBindingContext.getProperty(sPath) === undefined // the BindingContext has no data right now -> need to wait for update
+							|| oBinding.getValue() === undefined // the Binding has no data right now, need to wait for update
+							|| !deepEqual(oParameter.validateProperty("value", oParameterBindingContext.getProperty(sPath)), oParameter.getValue())) { // value not alreday set
 						// Property not already known on BindingContext or not already updated in Parameter value
 						// use validateProperty as null might be converted to undefined, if invalid value don't run into a check
 						// use deepEqual as, depending on type, the value could be complex (same logic as in setProperty)
 						aBindings.push(oBinding);
+					}
 				}
 			}
 		}

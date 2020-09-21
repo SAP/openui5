@@ -749,10 +749,10 @@ var oData = [
 			drop:onDrop
 		})
 	});
-	oTree.setMode("MultiSelect");
 
 	//JSON
 	var oModel = new sap.ui.model.json.JSONModel();
+	var sType = "Inactive";
 	oTree.setModel(oModel);
 	oModel.setSizeLimit(200);
 	// set the data to the model
@@ -760,8 +760,9 @@ var oData = [
 	var oStandardTreeItem = new sap.m.StandardTreeItem({
 		title: "{text}",
 		highlight: "{state}",
-		press : handleControlEvent,
-		detailPress : handleControlEvent
+		type: sType,
+		press: handleControlEvent,
+		detailPress: handleControlEvent
 	});
 	oTree.bindItems("/", oStandardTreeItem);
 	var oBinding = oTree.getBinding("items");
@@ -891,8 +892,9 @@ var oData = [
 				new sap.ui.core.Item({ key: "4", text: sap.m.ListType.DetailAndActive })
 			],
 			selectedItem: "0",
-			change: function(oControlEvent){
-				var sType = oControlEvent.getParameter("selectedItem").getText();
+			change: function(oControlEvent) {
+				sType = oControlEvent.getParameter("selectedItem").getText();
+				oStandardTreeItem.setType(sType);
 				for (var i = 0; i < oTree.getItems().length; i++) {
 					oTree.getItems()[i].setType(sType);
 
@@ -910,7 +912,7 @@ var oData = [
 			],
 			selectedItem: "0",
 			change: function(oControlEvent){
-				var sVisibility = (oControlEvent.getParameter("selectedItem").getText() === "Visible") ? true : false;
+				var sVisibility = (oControlEvent.getParameter("selectedItem").getText() === "Visible");
 				oTree.setVisible(sVisibility);
 			}
 		});
@@ -924,13 +926,12 @@ var oData = [
 				new sap.ui.core.Item({ key: "1", text: "ShowNoData" })
 			],
 			selectedItem: "0",
-			change: function(oControlEvent){
+			change: function(oControlEvent) {
 				var bShowNoData = oControlEvent.getParameter("selectedItem").getText() === "ShowNoData";
 				if (bShowNoData) {
-					oTree.bindItems("/dd", null);
+					oTree.bindItems("/dd", oStandardTreeItem);
 				} else {
 					oTree.bindItems("/", oStandardTreeItem);
-					oTree.rerender();
 				}
 			}
 		});
@@ -979,21 +980,15 @@ var oData = [
 				new sap.ui.core.Item({ key: "1", text: "withIcon" })
 			],
 			selectedItem: "0",
-			change: function(oControlEvent){
-				var sType = oTree.getItems()[0].getType();
+			change: function(oControlEvent) {
 				var sItem = oControlEvent.getParameter("selectedItem").getText();
 				if (sItem === "withIcon") {
-					var oStandardTreeItem = new sap.m.StandardTreeItem({
-						title: "{text}",
-						icon: "{ref}",
-						type: sType
+					oStandardTreeItem.bindProperty("icon", {
+						path: "ref"
 					});
 					oTree.bindItems("/", oStandardTreeItem);
 				} else {
-					var oStandardTreeItem = new sap.m.StandardTreeItem({
-						title: "{text}",
-						type: sType
-					});
+					oStandardTreeItem.unbindProperty("icon", false);
 					oTree.bindItems("/", oStandardTreeItem);
 				}
 			}

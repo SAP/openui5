@@ -8,7 +8,7 @@ sap.ui.define([
 
 		onInit : function () {
 			// set mock model
-			var sPath = sap.ui.require.toUrl("sap/m/sample/TileContainer") + "/data.json",
+			var sPath = sap.ui.require.toUrl("sap/m/sample/TileContainer/data.json"),
 				oModel = new JSONModel(sPath);
 
 			this.getView().setModel(oModel);

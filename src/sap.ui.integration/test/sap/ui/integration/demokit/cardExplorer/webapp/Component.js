@@ -1,17 +1,20 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device"
-], function(
+], function (
 	UIComponent,
 	Device
 ) {
 	"use strict";
 
+	//add a window global variable for the internal flag to hide certain sections
+	window._isinternal = (sap.ui.version.includes('SNAPSHOT') && !window.location.host.includes("openui5nightly"));
+
 	return UIComponent.extend("sap.ui.demo.cardExplorer.Component", {
 
 		metadata: {
 			manifest: "json",
-			includes : [
+			includes: [
 				"css/style.css"
 			]
 		},

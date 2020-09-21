@@ -95,6 +95,9 @@ sap.ui.define([
 	 */
 	var MapEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor",
+		metadata: {
+			library: "sap.ui.integration"
+		},
 
 		init: function() {
 			BasePropertyEditor.prototype.init.apply(this, arguments);
@@ -229,6 +232,7 @@ sap.ui.define([
 		 * Formatter function which is called for every item config
 		 * @param {object} oConfigValue - Original map item config
 		 * @param {string} oConfigValue.key - Item key
+		 * @param {object} oConfigValue.designtime - Item designtime metadata
 		 * @param {object} oConfigValue.value - Formatted item value
 		 * @param {string} oConfigValue.value.type - Property type
 		 * @param {any} oConfigValue.value.value - Property value
@@ -238,6 +242,7 @@ sap.ui.define([
 			var sKey = oConfigValue.key;
 			var sType = oConfigValue.value.type;
 			var vValue = oConfigValue.value.value;
+			var oDesigntime = (oConfigValue.designtime || {}).__value;
 			var oConfig = this.getConfig();
 
 			return [
@@ -283,7 +288,8 @@ sap.ui.define([
 					path: "value",
 					value: vValue,
 					type: sType,
-					itemKey: sKey
+					itemKey: sKey,
+					designtime: (oDesigntime || {}).value
 				}
 			];
 		},
@@ -393,11 +399,13 @@ sap.ui.define([
 			if (Array.isArray(aPreviousPropertyEditors)) {
 				aPreviousPropertyEditors.forEach(function (oPreviousPropertyEditor) {
 					oPreviousPropertyEditor.detachValueChange(this._onItemChange, this);
+					oPreviousPropertyEditor.detachDesigntimeMetadataChange(this._onDesigntimeValueChange, this);
 				}, this);
 			}
 			if (Array.isArray(aPropertyEditors)) {
 				aPropertyEditors.forEach(function (oPropertyEditor) {
 					oPropertyEditor.attachValueChange(this._onItemChange, this);
+					oPropertyEditor.attachDesigntimeMetadataChange(this._onDesigntimeValueChange, this);
 				}, this);
 			}
 		},
@@ -413,6 +421,35 @@ sap.ui.define([
 			}
 
 			fnHandler.call(this, sKey, oEvent);
+		},
+
+		_onDesigntimeValueChange: function (oEvent) {
+			var sKey = oEvent.getSource().getConfig().itemKey;
+			var sChangeType = oEvent.getParameter("path");
+
+			// Only consider designtime metadata changes of the value field
+			// to avoid conflicts with designtime metadata coming from value
+			// changes directly, e.g. label change
+			if (sChangeType !== "value") {
+				return;
+			}
+
+			this._onDesigntimeChange(sKey, oEvent);
+		},
+
+		_onDesigntimeChange: function (sKey, oEvent) {
+			var oDesigntime = _merge({}, this.getConfig().designtime);
+			var newDesigntimeValue = { __value: {} };
+
+			newDesigntimeValue.__value[oEvent.getParameter("path")] = oEvent.getParameter("value");
+
+			oDesigntime[sKey] = _merge(
+				{},
+				oDesigntime[sKey],
+				newDesigntimeValue
+			);
+			this.setDesigntimeMetadata(oDesigntime);
+			this.setValue(this.getValue());
 		},
 
 		getItemChangeHandlers: function () {

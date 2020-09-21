@@ -6,7 +6,9 @@ sap.ui.define([
 	"../model/DocumentationNavigationModel",
 	"../model/ExploreNavigationModel",
 	"../model/IntegrateNavigationModel",
-	"../model/OverviewNavigationModel"
+	"../model/OverviewNavigationModel",
+	"../model/DesigntimeNavigationModel",
+	"../model/ExploreSettingsModel"
 ], function (
 	BaseController,
 	Device,
@@ -15,7 +17,9 @@ sap.ui.define([
 	DocumentationNavigationModel,
 	ExploreNavigationModel,
 	IntegrateNavigationModel,
-	OverviewNavigationModel
+	OverviewNavigationModel,
+	DesigntimeNavigationModel,
+	ExploreSettingsModel
 ) {
 	"use strict";
 
@@ -24,13 +28,15 @@ sap.ui.define([
 		/**
 		 * Called when the app is started.
 		 */
-		onInit : function () {
+		onInit: function () {
 			this._setToggleButtonTooltip(!sap.ui.Device.system.desktop);
 
 			// apply content density mode to root view
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
 			this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
+
+			this.getView().setModel(ExploreSettingsModel, "settings");
 
 			Device.media.attachHandler(this.onDeviceSizeChange, this);
 			this.onDeviceSizeChange();
@@ -89,6 +95,9 @@ sap.ui.define([
 				case "integrate":
 					sRouteHash = this._findPreviousRouteHash("integrate") || "integrate/overview";
 					break;
+				case "designtime":
+					sRouteHash = this._findPreviousRouteHash("designtime") || "designtime/overview";
+					break;
 				default:
 					sRouteHash = null;
 					Log.error("Tab was not recognized.");
@@ -115,7 +124,7 @@ sap.ui.define([
 				case "learn":
 					this.getRouter().navTo("learnDetail", {
 						group: aParts[1] || "gettingStarted",
-						key:  aParts[2]
+						key: aParts[2]
 					});
 					break;
 				case "explore":
@@ -134,6 +143,11 @@ sap.ui.define([
 						key: aParts[1]
 					});
 					break;
+				case "designtime":
+					this.getRouter().navTo("designtime", {
+						key: aParts[1]
+					});
+					break;
 				default:
 					this.getRouter().navTo(aParts[0]);
 			}
@@ -145,8 +159,10 @@ sap.ui.define([
 				sTopicKey;
 			if (oItem.getCustomData()[0].getKey() === "groupItem") {
 				sGroupKey = oItemConfig.key;
-				if (oItemConfig.target === "exploreOverview" || oItemConfig.target === "integrate"){
-						sTopicKey = oItemConfig.key;
+				if (oItemConfig.target === "exploreOverview" ||
+					oItemConfig.target === "integrate" ||
+					oItemConfig.target === "designtime") {
+					sTopicKey = oItemConfig.key;
 				}
 			} else {
 				sGroupKey = oItem.getParent().getKey();
@@ -165,7 +181,7 @@ sap.ui.define([
 			}
 		},
 
-		onSideNavButtonPress : function() {
+		onSideNavButtonPress: function () {
 			var toolPage = this.byId('toolPage');
 			var sideExpanded = toolPage.getSideExpanded();
 
@@ -204,7 +220,7 @@ sap.ui.define([
 			}
 		},
 
-		_setToggleButtonTooltip : function(bLarge) {
+		_setToggleButtonTooltip: function (bLarge) {
 			var toggleButton = this.byId('sideNavigationToggleButton');
 			if (bLarge) {
 				toggleButton.setTooltip('Large Size Navigation');
@@ -221,7 +237,7 @@ sap.ui.define([
 			var oIconTabHeader = this.getView().byId("iconTabHeader");
 			var oModel;
 
-			if (sRouteName.startsWith("learn")){
+			if (sRouteName.startsWith("learn")) {
 				oModel = DocumentationNavigationModel;
 				oIconTabHeader.setSelectedKey("learnDetail");
 			} else if (sRouteName.startsWith("explore")) {
@@ -230,6 +246,9 @@ sap.ui.define([
 			} else if (sRouteName.startsWith("integrate")) {
 				oModel = IntegrateNavigationModel;
 				oIconTabHeader.setSelectedKey("integrate");
+			} else if (sRouteName.startsWith("designtime")) {
+				oModel = DesigntimeNavigationModel;
+				oIconTabHeader.setSelectedKey("designtime");
 			} else { // default
 				oModel = OverviewNavigationModel;
 				oIconTabHeader.setSelectedKey("overview");

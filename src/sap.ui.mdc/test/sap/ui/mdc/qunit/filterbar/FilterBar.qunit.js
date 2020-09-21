@@ -49,6 +49,16 @@ sap.ui.define([
 		assert.ok(oFilterBar);
 	});
 
+	QUnit.test("inner layout exists on initialization", function(assert) {
+		var done = assert.async();
+		assert.ok(oFilterBar);
+
+		oFilterBar.initialized().then(function() {
+			assert.ok(!!oFilterBar.getAggregation("layout"));
+			done();
+		});
+	});
+
 	QUnit.test("getConditionModelName ", function (assert) {
 		assert.equal(oFilterBar.getConditionModelName(), FilterBarBase.CONDITION_MODEL_NAME);
 	});
@@ -1114,7 +1124,7 @@ sap.ui.define([
 			oFilterBar.onAdaptFilters().then(function (oP13nContainer) {
 				assert.ok(oP13nContainer, "panel has been created");
 				var oAdaptFiltersPanel = oP13nContainer.getContent()[0];
-				var aPanelItems = oAdaptFiltersPanel.getModel().getProperty("/items");
+				var aPanelItems = oAdaptFiltersPanel.oAdaptationModel.getProperty("/items");
 				assert.equal(aPanelItems.length, 3, "correct amount of p13n items has been created by FilterBar");
 				assert.equal(aPanelItems[0].name, "field1", "correct field created in panel");
 				assert.equal(aPanelItems[0].label, "A", "correct label for field created in panel");

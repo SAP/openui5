@@ -53,6 +53,9 @@ sap.ui.define([
 	 */
 	var SelectEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.selectEditor.SelectEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.selectEditor.SelectEditor",
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
