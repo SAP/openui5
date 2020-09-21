@@ -483,6 +483,7 @@ function(
 			var oDate,
 				sThatValue,
 				bThatValue2400,
+				bEnabled2400,
 				sFormat = this.getValueFormat(),
 				iIndexOfHH = sFormat.indexOf("HH"),
 				iIndexOfH = sFormat.indexOf("H");
@@ -490,10 +491,15 @@ function(
 			sValue = sValue || this._$input.val();
 			sThatValue = sValue;
 			bThatValue2400 = TimePickerSliders._isHoursValue24(sThatValue, iIndexOfHH, iIndexOfH);
+			bEnabled2400 = this.getSupport2400() && bThatValue2400;
 			this._bValid = true;
 			if (sValue !== "") {
 				//keep the oDate not changed by the 24 hrs
 				oDate = this._parseValue(bThatValue2400 ? TimePickerSliders._replace24HoursWithZero(sValue, iIndexOfHH, iIndexOfH) : sValue, true);
+				if (bEnabled2400) {
+					// ih the hour is 24, the control "zeroes" the minutes and seconds, but not in this date object
+					oDate.setMinutes(0, 0);
+				}
 				if (!oDate) {
 					this._bValid = false;
 				} else {
@@ -501,18 +507,22 @@ function(
 					sValue = this._formatValue(oDate);
 					// reset the mask as the value might be changed without firing focus out event,
 					// which is unexpected behavior in regards to the MaskEnabler temporary value storage
-					if (this.getMask()) {
+					if (this.getMaskMode() && this.getMask()) {
 						this._setupMaskVariables();
 					}
 				}
 			}
-			sThatValue = this.getSupport2400() && bThatValue2400 ? "24:" + sValue.replace(/[0-9]/g, "0").slice(0, -3) : sValue;
+			sThatValue = bEnabled2400 ? "24:" + sValue.replace(/[0-9]/g, "0").slice(0, -3) : sValue;
 			//instead on key stroke zeroes could be added after entering '24'
 			this.updateDomValue(sThatValue);
 
 			if (oDate) {
 				// get the value in valueFormat
 				sThatValue = sValue = this._formatValue(oDate, true);
+				if (bEnabled2400 && oDate && oDate.getHours() === 0) {
+					// put back 24 as hour if needed
+					sThatValue = sValue = TimePickerSliders._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH);
+				}
 			}
 
 			this.setProperty("value", sThatValue, true); // no rerendering
@@ -1237,7 +1247,7 @@ function(
 
 			//2400 scenario - be sure that the correct value will be set in all cases - when binding,
 			//setting the value by sliders or only via setValue
-			if (this.getSupport2400() && this._getSliders() && this._getSliders()._getHoursSlider().getSelectedValue() === "24") {
+			if (oDate && oDate.getHours() === 0 && this.getSupport2400() && this._getSliders() && this._getSliders()._getHoursSlider().getSelectedValue() === "24") {
 				sValue = TimePickerSliders._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH);
 			}
 

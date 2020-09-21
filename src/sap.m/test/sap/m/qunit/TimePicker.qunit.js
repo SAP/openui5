@@ -1977,6 +1977,46 @@ sap.ui.define([
 	 tp.destroy();
 	 });*/
 
+
+	QUnit.module("support2400");
+
+	QUnit.test("support2400 - value is set to 24:00:00 instead of 00:00:00 when entered manually", function(assert) {
+		//prepare
+		var oTP = new TimePicker({
+			displayFormat: "HH:mm:ss",
+			valueFormat: "HH:mm:ss",
+			dateValue: new Date(2000, 1, 2, 23, 35, 54),
+			support2400: true
+		});
+
+		oTP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//act
+		oTP._handleInputChange("24:00:00");
+
+		//assert
+		assert.equal(oTP.getValue(), "24:00:00", "Value is set to 24:00:00");
+
+		//act
+		oTP._handleInputChange("24:15:33");
+
+		//assert
+		assert.equal(oTP.getValue(), "24:00:00", "Value is set to 24:00:00 if the entry is 24:15:33");
+
+		oTP.setValueFormat("HH:mm");
+		oTP.setValue("23:11");
+
+		//act
+		oTP._handleInputChange("24:00:00");
+
+		//assert
+		assert.equal(oTP.getValue(), "24:00", "Value is set to 24:00 when format is HH:mm");
+
+		//cleanup
+		oTP.destroy();
+	});
+
 	QUnit.module("properties in constructor options", {
 		beforeEach: function() {
 			this._defaultFormatter = DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
