@@ -123,6 +123,7 @@
     }
 
     .lightbox-img-wrapper {
+        max-width: 100%;
         cursor: pointer;
         position: relative;
         display: inline-block;
@@ -148,6 +149,7 @@
         }
 
         img {
+            width: 100%;
             position: relative;
             z-index: 1;
             &:hover {
@@ -657,7 +659,7 @@
         }
         // datatables style override
         .dt-button-background {
-            // col visibility button depends on this overlay background 
+            // col visibility button depends on this overlay background
             // to be rendered so when it receives a click the colvis menu is clicked
             position: absolute;
             background: transparent;
@@ -672,7 +674,7 @@
             display: inline-block;
             text-align: center;
             margin-left: 1rem;
-            
+
             .dataTables_paginate {
                 float: unset;
                 padding-top: 0;

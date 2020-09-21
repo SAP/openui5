@@ -137,12 +137,8 @@ sap.ui.define([
 			this.onColumnVisibilityChange(iColumnIndex, bVisibleState);
 		}.bind(this));
 
-		oConfig.columns.forEach(function (oParams, iIndex) {
-			var oVisible = oParams.visible;
-
-			if (oVisible) {
-				this.onColumnVisibilityChange(iIndex, oVisible.value !== "false");
-			}
+		this.oConfig.columns.forEach(function (oParams, iIndex) {
+			this.onColumnVisibilityChange(iIndex, oParams.visible);
 		}, this);
 
 		return this;
@@ -164,29 +160,18 @@ sap.ui.define([
 	DataTable.prototype.onColumnVisibilityChange = function (iIndex, bVisible) {
 		var oFilterHeader = this.oColumns[iIndex] && this.oColumns[iIndex].filterHeader,
 			oColGroup = this.oDomTable.querySelector("colgroup"), // colgroup contains cols which can configure the whole column (ex. width, color, etc.)
-			oNewCol,
-			iSingleColPercent;
+			oColGroupChild;
 
 		if (oColGroup) {
-			if (bVisible) {
-				oNewCol = document.createElement("col");
-				oColGroup.appendChild(oNewCol);
-			} else {
-				oColGroup.removeChild(oColGroup.lastChild);
+			oColGroupChild = oColGroup.children[iIndex];
+
+			if (oColGroupChild) {
+				oColGroupChild.classList.toggle("hidden", !bVisible);
 			}
-			// after removing or adding a new col to the colgroup
-			// recalculate the available width to be equal for all columns
-
-			iSingleColPercent = 100 / oColGroup.children.length;
-
-			Array.prototype.forEach.call(oColGroup.children, function (oChild) {
-				oChild.setAttribute("width", iSingleColPercent);
-			});
 		}
 
 		if (oFilterHeader) {
 			oFilterHeader.toggle(bVisible);
-			// this.API.fnAdjustColumnSizing();
 		}
 	};
 
