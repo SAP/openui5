@@ -62,7 +62,7 @@ sap.ui.define(['sap/m/PlanningCalendarLegendRenderer', 'sap/ui/core/Renderer'],
 			}
 
 			if (oLeg.getItems().length + oLeg.getAppointmentItems().length > iVisibleLegendItems){
-				oRm.renderControl(oLeg._getMoreLabel(oLeg.getItems().length + oLeg.getAppointmentItems().length - iVisibleLegendItems));
+				this.renderLegendItem(oRm, "sapUiCalLegMoreText", oLeg._getMoreItemsText(oLeg.getItems().length + oLeg.getAppointmentItems().length - iVisibleLegendItems), []);
 			}
 		};
 

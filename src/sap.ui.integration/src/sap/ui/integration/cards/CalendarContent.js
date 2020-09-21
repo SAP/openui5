@@ -2,27 +2,47 @@
  * ${copyright}
  */
 sap.ui.define([
+		"./CalendarContentRenderer",
+		'sap/ui/core/ResizeHandler',
 		"sap/ui/integration/library",
 		"sap/ui/integration/cards/BaseContent",
 		"sap/ui/integration/util/BindingHelper",
 		"sap/ui/integration/util/BindingResolver",
-		"sap/f/PlanningCalendarInCard",
-		"sap/f/PlanningCalendarInCardRow",
+		"sap/f/CalendarInCard",
 		"sap/f/PlanningCalendarInCardLegend",
 		"sap/m/library",
-		"sap/m/PlanningCalendar",
+		"sap/m/Button",
+		"sap/m/FlexBox",
 		'sap/ui/core/format/DateFormat',
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
 		"sap/ui/unified/CalendarAppointment",
 		"sap/ui/unified/DateTypeRange",
+		"sap/ui/core/date/UniversalDate",
 		"sap/ui/unified/CalendarLegendItem"
 	],
-	function (library, BaseContent, BindingHelper, BindingResolver, PlanningCalendarInCard, PlanningCalendarInCardRow, PlanningCalendarInCardLegend, mLibrary, PlanningCalendar, DateFormat, Filter, FilterOperator, CalendarAppointment, DateTypeRange, CalendarLegendItem) {
+	function (CalendarContentRenderer,
+		ResizeHandler,
+		library,
+		BaseContent,
+		BindingHelper,
+		BindingResolver,
+		CalendarInCard,
+		PlanningCalendarInCardLegend,
+		mLibrary,
+		Button,
+		FlexBox,
+		DateFormat,
+		Filter,
+		FilterOperator,
+		CalendarAppointment,
+		DateTypeRange,
+		UniversalDate,
+		CalendarLegendItem) {
 		"use strict";
 
-		var AreaType = library.AreaType,
-			PlanningCalendarBuiltInView = mLibrary.PlanningCalendarBuiltInView;
+		var AreaType = library.AreaType;
+
 		/**
 		 * Constructor for a new <code>CalendarContent</code>.
 		 *
@@ -30,8 +50,6 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * A control that is a wrapper of a <code>sap.f.PlanningCalendar</code> and allows its creation based on a
-		 * configuration.
 		 *
 		 * <b>Note:</b> It is recommended to use the <code>CalendarContent</code> with a min-width set to 18rem. This
 		 * setting will make sure that the calendar is displayed properly and that the user has enough space to interact
@@ -43,56 +61,83 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @private
+		 * @public
 		 * @since 1.74
-		 * @experimental Since 1.74.
 		 * @alias sap.ui.integration.cards.CalendarContent
 		 */
 		var CalendarContent = BaseContent.extend("sap.ui.integration.cards.CalendarContent", {
+			renderer: CalendarContentRenderer,
 			metadata: {
-				library: "sap.ui.integration"
-			},
-			renderer: {}
+				library: "sap.ui.integration",
+				properties: {
+					/**
+					 * Defines the number of visible appointments.
+					 */
+					visibleAppointmentsCount : { type : "int", group : "Data", defaultValue: 2 },
+
+					/**
+					 * Defines the text that is displayed when no {@link sap.ui.unified.CalendarAppointment CalendarAppointments} are assigned.
+					 */
+					noAppointmentsText : {type : "string", group : "Misc", defaultValue : null}
+				},
+				aggregations: {
+					/**
+					 * Defines the appointments in the control.
+					 */
+					appointments: { type: "sap.ui.unified.CalendarAppointment", multiple: true, singularName: "appointment" }
+				}
+			}
 		});
 
 		/**
-		 * Creates <code>sap.f.PlanningCalendarInCard</code>.
+		 * Creates the internal structure of the card.
 		 * @private
 		 */
-		CalendarContent.prototype._createCalendar = function () {
-			this._oCalendar = new PlanningCalendarInCard(this.getId() + "-PC", {
-				showWeekNumbers: true,
-				builtInViews: [PlanningCalendarBuiltInView.OneMonth],
-				rows: [
-					new PlanningCalendarInCardRow(this.getId() + "-Row", {})
-				],
-				intervalSelect: function (oEvent) {
+		CalendarContent.prototype._createCardContent = function () {
+			this._oCalendar = new CalendarInCard(this.getId() + "-navigation", {
+				select: function (oEvent) {
+					var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate();
+
 					this._setParameters(oEvent, oEvent.getParameter("startDate"));
+					this._refreshVisibleAppointments(oSelectedDate);
+					this.invalidate();
 				}.bind(this)
 			});
-			this.setAggregation("_content", this._oCalendar);
-			this._oCalendar.attachEvent("_todayPressed", new Date(), this._setParameters);
+			this._oLegend = new PlanningCalendarInCardLegend(this.getId() + "-legend", {
+				columnWidth: "7.5rem",
+				standardItems: []
+			});
+			this._oContent = new FlexBox(this.getId() + "-wrapper", {
+				items: [this._oCalendar, this._oLegend]
+			});
+
+			this.setAggregation("_content", this._oContent);
+
+			this._oFormatAria = DateFormat.getDateTimeInstance({
+				pattern: "EEEE dd/MM/YYYY 'at' " + _getLocaleData.call(this).getTimePattern("medium")
+			});
 		};
 
 		CalendarContent.prototype.init = function () {
+			this._aVisibleAppointments = [];
+
 			BaseContent.prototype.init.apply(this, arguments);
-			this._createCalendar();
+			this._createCardContent();
 
 			//workaround until actions refactor
 			this.fireEvent("_actionContentReady"); // todo
 		};
 
 		CalendarContent.prototype.exit = function () {
+			if (this._sTwoColumnsResizeListener) {
+				ResizeHandler.deregister(this._sTwoColumnsResizeListener);
+				this._sTwoColumnsResizeListener = undefined;
+			}
 			BaseContent.prototype.exit.apply(this, arguments);
 
 			if (this._oAppointmentTemplate) {
 				this._oAppointmentTemplate.destroy();
 				this._oAppointmentTemplate = null;
-			}
-
-			if (this._oHeaderTemplate) {
-				this._oHeaderTemplate.destroy();
-				this._oHeaderTemplate = null;
 			}
 
 			if (this._oSpecialDateTemplate) {
@@ -121,8 +166,27 @@ sap.ui.define([
 		};
 
 		CalendarContent.prototype.onBeforeRendering = function () {
+			var oInitiallySelectedDate = this._oCalendar.getSelectedDates().length ? this._oCalendar.getSelectedDates()[0].getStartDate() : this._oCalendar.getStartDate();
+
+			this._refreshVisibleAppointments(oInitiallySelectedDate);
+
 			this.getModel("parameters").setProperty("/visibleItems", this._iVisibleItems);
 			this.getModel("parameters").setProperty("/allItems", this._iAllItems);
+		};
+
+		CalendarContent.prototype.onAfterRendering = function () {
+			BaseContent.prototype.onAfterRendering.call(this, arguments);
+			if (!this._sTwoColumnsResizeListener) {
+				this._sTwoColumnsResizeListener = ResizeHandler.register(this, this.resizeHandler);
+				this.resizeHandler({
+					control: this,
+					target: this.getDomRef()
+				});
+			}
+		};
+
+		CalendarContent.prototype.resizeHandler = function (oEvent) {
+			oEvent.control.toggleStyleClass("sapMPCInCardTwoColumns", oEvent.target.getBoundingClientRect().width > 576);
 		};
 
 		/**
@@ -169,7 +233,7 @@ sap.ui.define([
 
 			if (oConfiguration.moreItems && oConfiguration.moreItems.actions) {
 				this._oActions.setAreaType(AreaType.Content);
-				this._oActions.attach(oConfiguration.moreItems, this._oCalendar.getRows()[0]._getMoreButton());
+				this._oActions.attach(oConfiguration.moreItems, this._getMoreButton());
 			}
 
 			return this;
@@ -183,16 +247,24 @@ sap.ui.define([
 		 * @param {Object} oDate a date, against which the parameters are set.
 		 */
 		CalendarContent.prototype._setParameters = function (oEvent, oDate) {
-			var oCurrentDate = oDate ? oDate : this._oCalendar.getStartDate(),
-				oStartOfDay = new Date(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate()),
-				oEndOfDay = new Date(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate()),
-				oConfiguration = this.getConfiguration && this.getConfiguration(),
+			var oConfiguration = this.getConfiguration && this.getConfiguration(),
 				sItemPath = oConfiguration && oConfiguration.item && oConfiguration.item.path,
+				oCurrentDate,
+				oStartOfDay,
+				oEndOfDay,
 				sMaxItemsPath,
-				iMaxItems,
-				aAppointmentsCurrentDay,
-				iVisibleAppointmentsAndBlockersForTheDay,
-				iTotalAppointmentsAndBlockersForTheDay;
+				aAppointmentsCurrentDay;
+
+			if (oDate) {
+				oCurrentDate = oDate;
+			} else if (this._oCalendar.getSelectedDates().length) {
+				oCurrentDate = this._oCalendar.getSelectedDates()[0].getStartDate();
+			} else {
+				oCurrentDate = this._oCalendar.getStartDate();
+			}
+
+			oStartOfDay = new Date(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate());
+			oEndOfDay = new Date(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate());
 
 			oEndOfDay.setDate(oEndOfDay.getDate() + 1);
 			aAppointmentsCurrentDay = sItemPath ? this.getModel().getProperty(sItemPath).filter(function (oApp) {
@@ -204,28 +276,118 @@ sap.ui.define([
 					return oApp;
 				}
 			}) : [];
+			this._iAllItems = aAppointmentsCurrentDay.length;
 
 			if (oConfiguration && typeof oConfiguration.maxItems === "object") {
 				sMaxItemsPath = oConfiguration && this.getConfiguration().maxItems && "/" + this.getConfiguration().maxItems.binding.getPath();
-				iMaxItems = this.getModel().getProperty(sMaxItemsPath);
+				this._iMaxItems = this.getModel().getProperty(sMaxItemsPath);
 			} else {
-				iMaxItems = oConfiguration && this.getConfiguration().maxItems;
+				this._iMaxItems = oConfiguration && this.getConfiguration().maxItems;
 			}
 
-			iTotalAppointmentsAndBlockersForTheDay =  aAppointmentsCurrentDay.length;
-			if (iTotalAppointmentsAndBlockersForTheDay < iMaxItems) {
-				iVisibleAppointmentsAndBlockersForTheDay = iTotalAppointmentsAndBlockersForTheDay;
-			} else {
-				iVisibleAppointmentsAndBlockersForTheDay = iMaxItems;
-			}
-
-			this._iVisibleItems = iVisibleAppointmentsAndBlockersForTheDay;
-			this._iAllItems = iTotalAppointmentsAndBlockersForTheDay;
+			this._iVisibleItems = Math.min(this._iMaxItems, this._iAllItems);
 
 			if (this.getModel("parameters")) {
 				this.getModel("parameters").setProperty("/visibleItems", this._iVisibleItems);
 				this.getModel("parameters").setProperty("/allItems", this._iAllItems);
 			}
+		};
+
+		/**
+		 * Calculates which appointments to be shown.
+		 *
+		 * @private
+		 * @param {object} oSelectedDate The date, for which the appointments are shown.
+		 */
+		CalendarContent.prototype._refreshVisibleAppointments = function(oSelectedDate) {
+			this._aVisibleAppointments = this._calculateVisibleAppointments(this.getAppointments(), oSelectedDate);
+		};
+
+		/**
+		 * Calculates which appointments to be shown.
+		 *
+		 * @private
+		 * @param {array} aItems The appointments structure, which will be filtered.
+		 * @param {array} oSelectedDate The date, for which the appointments are shown.
+		 * @returns {array} the filtered items
+		 */
+		CalendarContent.prototype._calculateVisibleAppointments = function (aItems, oSelectedDate) {
+			var fnIsVisiblePredicate = this._isAppointmentInSelectedDate(oSelectedDate);
+			var fnTodayFilter = function(oApp, iIndex) {
+				var oEndDate = oApp.getEndDate(),
+					oNow = new Date();
+
+				// today
+				if (oSelectedDate.getDate() === oNow.getDate()
+					&& oSelectedDate.getMonth() === oNow.getMonth()
+					&& oSelectedDate.getFullYear() === oNow.getFullYear()) {
+					return this._iAllItems - iIndex < this._iVisibleItems
+						|| oEndDate.getTime() > oNow.getTime();
+				}
+
+				// not today
+				return true;
+			};
+
+			var aResult = aItems
+				.filter(fnIsVisiblePredicate, this)
+				.sort(this._sortByStartHourCB)
+				.filter(fnTodayFilter, this)
+				.slice(0, this._iVisibleItems);
+
+			return aResult;
+		};
+
+		/**
+		 * Sorts the shown appointments.
+		 *
+		 * @private
+		 * @param {sap.ui.unified.CalendarAppointment} oApp1 The first item to be compared.
+		 * @param {sap.ui.unified.CalendarAppointment} oApp2 The second item to be compared.
+		 * @returns {boolean} if the first item is before the second one
+		 */
+		CalendarContent.prototype._sortByStartHourCB = function (oApp1, oApp2) {
+			return oApp1.getStartDate().getTime() - oApp2.getStartDate().getTime() ||
+				oApp2.getEndDate().getTime() - oApp1.getEndDate().getTime();
+		};
+
+		/**
+		 * Calculates if the appointment is in the selected date from the calendar.
+		 *
+		 * @private
+		 * @param {object} oSelectedDate The selected date, for which the appointments are shown.
+		 * @returns {function} which does the calculation
+		 */
+		CalendarContent.prototype._isAppointmentInSelectedDate = function (oSelectedDate) {
+			return function (oAppointment) {
+				var iAppStartTime = oAppointment.getStartDate().getTime(),
+					iAppEndTime = oAppointment.getEndDate().getTime(),
+					iSelectedStartTime = oSelectedDate.getTime(),
+					oSelectedEnd = UniversalDate.getInstance(new Date(oSelectedDate.getTime())),
+					iSelectedEndTime,
+					bBiggerThanVisibleHours,
+					bStartHourBetweenStartAndEnd,
+					bEndHourBetweenStartAndEnd;
+
+				oSelectedEnd.setDate(oSelectedEnd.getDate() + 1);
+				iSelectedEndTime = oSelectedEnd.getTime();
+
+				bBiggerThanVisibleHours = iAppStartTime < iSelectedStartTime && iAppEndTime > iSelectedEndTime;
+				bStartHourBetweenStartAndEnd = iAppStartTime >= iSelectedStartTime && iAppStartTime < iSelectedEndTime;
+				bEndHourBetweenStartAndEnd = iAppEndTime > iSelectedStartTime && iAppEndTime <= iSelectedEndTime;
+
+				return bBiggerThanVisibleHours || bStartHourBetweenStartAndEnd || bEndHourBetweenStartAndEnd;
+			};
+		};
+
+		/**
+		 * Holds the structure with the visible appointments
+		 *
+		 * @private
+		 * @returns {array} with the visible appointments
+		 */
+		CalendarContent.prototype._getVisibleAppointments = function() {
+			return this._aVisibleAppointments;
 		};
 
 		/**
@@ -244,7 +406,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Binds/Sets properties to the inner appointments and blockers templates based on the configuration object item
+		 * Binds/Sets properties to the inner appointments templates based on the configuration object item
 		 * template which is already parsed.
 		 *
 		 * @private
@@ -256,13 +418,7 @@ sap.ui.define([
 					text: mItem.template.text,
 					type: mItem.template.type
 				},
-				oAppointmentBindingInfo,
-				mBlockerSettings = {
-					title: mItem.template.title,
-					text: mItem.template.text,
-					type: mItem.template.type
-				},
-				oBlockerBindingInfo;
+				oAppointmentBindingInfo;
 			if (mItem.template.startDate) {
 				mAppointmentSettings.startDate = BindingHelper.formattedProperty(mItem.template.startDate, this.formatDate);
 			}
@@ -277,37 +433,9 @@ sap.ui.define([
 			this._oAppointmentTemplate = new CalendarAppointment(mAppointmentSettings);
 			oAppointmentBindingInfo = {
 				path: mItem.path,
-				template: this._oAppointmentTemplate,
-				filters: new Filter({
-					path: "visualization",
-					operator: FilterOperator.Contains,
-					value1: "appointment"
-				})
+				template: this._oAppointmentTemplate
 			};
-			this._bindAggregation("appointments", this._oCalendar.getRows()[0], oAppointmentBindingInfo);
-
-			if (mItem.template.startDate) {
-				mBlockerSettings.startDate = BindingHelper.formattedProperty(mItem.template.startDate, this.formatDate);
-			}
-			if (mItem.template.endDate) {
-				mBlockerSettings.endDate = BindingHelper.formattedProperty(mItem.template.endDate, this.formatDate);
-			}
-			if (mItem.template.icon && mItem.template.icon.src) {
-				mBlockerSettings.icon = BindingHelper.formattedProperty(mItem.template.icon.src, function (sValue) {
-					return this._oIconFormatter.formatSrc(sValue, this._sAppId);
-				}.bind(this));
-			}
-			this._oHeaderTemplate = new CalendarAppointment(mBlockerSettings);
-			oBlockerBindingInfo = {
-				path: mItem.path,
-				template: this._oHeaderTemplate,
-				filters: new Filter({
-					path: "visualization",
-					operator: FilterOperator.Contains,
-					value1: "blocker"
-				})
-			};
-			this._bindAggregation("intervalHeaders", this._oCalendar.getRows()[0], oBlockerBindingInfo);
+			this._bindAggregationToControl("appointments", this, oAppointmentBindingInfo);
 		};
 
 		/**
@@ -331,7 +459,7 @@ sap.ui.define([
 				path: mSpecialDate.path,
 				template: this._oSpecialDateTemplate
 			};
-			this._bindAggregation("specialDates", this._oCalendar, oBindingInfo);
+			this._bindAggregationToControl("specialDates", this._oCalendar, oBindingInfo);
 		};
 
 
@@ -364,7 +492,7 @@ sap.ui.define([
 					value1: "calendar"
 				})
 			};
-			this._bindAggregation("items", this._oCalendar._getLegend(), oCalendarBindingInfo);
+			this._bindAggregationToControl("items", this._oLegend, oCalendarBindingInfo);
 
 			this._oAppointmentLegendItemTemplate = new CalendarLegendItem(mAppointmentSettings);
 			oAppointmentBindingInfo = {
@@ -376,7 +504,7 @@ sap.ui.define([
 					value1: "appointment"
 				})
 			};
-			this._bindAggregation("appointmentItems", this._oCalendar._getLegend(), oAppointmentBindingInfo);
+			this._bindAggregationToControl("appointmentItems", this._oLegend, oAppointmentBindingInfo);
 		};
 
 		/**
@@ -387,9 +515,14 @@ sap.ui.define([
 		 */
 		CalendarContent.prototype._addDate = function (sTime) {
 			if (BindingResolver.isBindingInfo(sTime)) {
-				sTime && this._oCalendar.bindProperty("startDate", BindingHelper.formattedProperty(sTime, this.formatDate));
+				if (!sTime) {
+					return;
+				}
+				var oDR = new DateTypeRange();
+				oDR.bindProperty("startDate", BindingHelper.formattedProperty(sTime, this.formatDate));
+				this._oCalendar.addSelectedDate(oDR);
 			} else {
-				this._oCalendar.setStartDate(this.formatDate(sTime));
+				this._oCalendar.addSelectedDate(new DateTypeRange({startDate: this.formatDate(sTime)}));
 			}
 		};
 
@@ -401,9 +534,9 @@ sap.ui.define([
 		 */
 		CalendarContent.prototype._addMaxItems = function (mMaxItems) {
 			if (BindingResolver.isBindingInfo(mMaxItems)) {
-				mMaxItems && this._oCalendar.getRows()[0].bindProperty("visibleAppointmentsCount", mMaxItems);
+				mMaxItems && this.bindProperty("visibleAppointmentsCount", mMaxItems);
 			} else {
-				this._oCalendar.getRows()[0].setVisibleAppointmentsCount(mMaxItems);
+				this.setVisibleAppointmentsCount(mMaxItems);
 			}
 		};
 
@@ -415,9 +548,9 @@ sap.ui.define([
 		 */
 		CalendarContent.prototype._addMaxLegendItems = function (mMaxLegendItems) {
 			if (BindingResolver.isBindingInfo(mMaxLegendItems)) {
-				mMaxLegendItems && this._oCalendar._getLegend().bindProperty("visibleLegendItemsCount", mMaxLegendItems);
+				mMaxLegendItems && this._oLegend.bindProperty("visibleLegendItemsCount", mMaxLegendItems);
 			} else {
-				this._oCalendar._getLegend().setVisibleLegendItemsCount(mMaxLegendItems);
+				this._oLegend.setVisibleLegendItemsCount(mMaxLegendItems);
 			}
 		};
 
@@ -429,11 +562,81 @@ sap.ui.define([
 		 */
 		CalendarContent.prototype._addNoItemsText = function (mNoItemsText) {
 			if (BindingResolver.isBindingInfo(mNoItemsText)) {
-				mNoItemsText && this._oCalendar.getRows()[0].bindProperty("noAppointmentsText", mNoItemsText);
+				mNoItemsText && this.bindProperty("noAppointmentsText", mNoItemsText);
 			} else {
-				this._oCalendar.getRows()[0].setNoAppointmentsText(mNoItemsText);
+				this.setNoAppointmentsText(mNoItemsText);
 			}
 		};
+
+		/**
+		 * Makes or returns the object, showing that some appointments are hidden.
+		 * @returns {sap.m.Button} the object
+		 */
+		CalendarContent.prototype._getMoreButton = function () {
+			if (!this._oMoreAppsButton) {
+				this._oMoreAppsButton = new Button({ text: "More" });
+			}
+			return this._oMoreAppsButton;
+		};
+
+		/**
+		 * Calculates whether the More button is needed.
+		 * @returns {boolean} <code>true</code> if so
+		 */
+		CalendarContent.prototype._bNeedForMoreButton = function () {
+			return this._iAllItems > this.getVisibleAppointmentsCount();
+		};
+
+		// When today is the selected date, it returns the current appointment,
+		// if there is one, otherwise returns undefined.
+		// priority for the later started.
+		CalendarContent.prototype._getCurrentAppointment = function() {
+			var aAppointments = this._getVisibleAppointments(),
+				oNow = new Date(),
+				oApp,
+				iStart,
+				iEnd,
+				i,
+				oSelectedDate = this._oCalendar.getSelectedDates().length
+					? this._oCalendar.getSelectedDates()[0].getStartDate()
+					: this._oCalendar.getStartDate();
+
+			if (oSelectedDate.getDate() === oNow.getDate()
+				&& oSelectedDate.getMonth() === oNow.getMonth()
+				&& oSelectedDate.getFullYear() === oNow.getFullYear()) {
+				for (i = aAppointments.length - 1; i >= 0; i--) {
+					oApp = aAppointments[i];
+					iStart = oApp.getStartDate().getTime();
+					iEnd = oApp.getEndDate().getTime();
+
+					if (oNow.getTime() > iStart && oNow.getTime() < iEnd) {
+						return oApp;
+					}
+				}
+			}
+		};
+
+		function _getLocaleData() {
+
+			if (!this._oLocaleData) {
+				var sLocale = _getLocale.call(this);
+				var oLocale = new sap.ui.core.Locale(sLocale);
+				this._oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+			}
+
+			return this._oLocaleData;
+
+		}
+
+		function _getLocale() {
+
+			if (!this._sLocale) {
+				this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			}
+
+			return this._sLocale;
+
+		}
 
 		return CalendarContent;
 	}

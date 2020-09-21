@@ -1117,17 +1117,6 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "visualization": {
-          "description": "Defines the visualization of the item in the card. Available visualizations: \"appointment\" and \"blocker\".",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/field"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
         "startDate": {
           "description": "The start date of the item. The accepted date format is ISO 8601.",
           "type": "string"
@@ -1141,7 +1130,7 @@
           "type": "string"
         },
         "text": {
-          "description": "The additional information of the item. Note: It is available only for items of visualization type \"appointment\".",
+          "description": "The additional information of the item.",
           "type": "string"
         },
         "icon": {

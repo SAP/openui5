@@ -222,7 +222,7 @@ sap.ui.define([
 			/**
 			 * Hidden, for internal use only.
 			 */
-			header : {type : "sap.ui.unified.calendar.Header", multiple : false, visibility : "hidden"},
+			header : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 			secondMonthHeader : {type : "sap.ui.unified.calendar.Header", multiple : false, visibility : "hidden"},
 			month : {type : "sap.ui.unified.calendar.Month", multiple : true, visibility : "hidden"},
 			monthPicker : {type : "sap.ui.unified.calendar.MonthPicker", multiple : false, visibility : "hidden"},

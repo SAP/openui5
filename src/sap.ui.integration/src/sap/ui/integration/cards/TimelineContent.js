@@ -172,7 +172,7 @@ sap.ui.define([
 		};
 
 		this._filterHiddenNavigationItems(mItem, oBindingInfo);
-		this._bindAggregation("content", this._getTimeline(), oBindingInfo);
+		this._bindAggregationToControl("content", this._getTimeline(), oBindingInfo);
 
 		return this;
 	};
