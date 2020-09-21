@@ -1946,6 +1946,14 @@ sap.ui.define([
 			template: new Text()
 		}));
 
+		stubFetchProperties([
+			{
+				name: "test",
+				label: "Test",
+				path: "test"
+			}
+		]);
+
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
 				"sap/ui/mdc/table/TableSettings"
@@ -1967,13 +1975,6 @@ sap.ui.define([
 
 				this.oTable.setP13nMode([
 					"Sort"
-				]);
-
-				stubFetchProperties([
-					{
-						name: "test",
-						sortable: true
-					}
 				]);
 
 				this.oTable._oTable.fireEvent("columnPress", {
@@ -2037,6 +2038,13 @@ sap.ui.define([
 			template: new Text()
 		}));
 
+		stubFetchProperties([
+			{
+				name: "test",
+				sortable: true
+			}
+		]);
+
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
 				"sap/ui/mdc/table/TableSettings"
@@ -2059,12 +2067,6 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				stubFetchProperties([
-					{
-						name: "test",
-						sortable: true
-					}
-				]);
 
 				// Simulate click on sortable column
 				this.oTable._oTable.fireEvent("columnSelect", {
@@ -2127,6 +2129,13 @@ sap.ui.define([
 			template: new Text()
 		}));
 
+		stubFetchProperties([
+			{
+				name: "test",
+				sortable: false
+			}
+		]);
+
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
 				"sap/ui/mdc/table/TableSettings"
@@ -2137,12 +2146,6 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				stubFetchProperties([
-					{
-						name: "test",
-						sortable: false
-					}
-				]);
 
 				// Simulate click on sortable column
 				this.oTable._oTable.fireEvent("columnSelect", {
@@ -2169,6 +2172,16 @@ sap.ui.define([
 			template: new Text()
 		}));
 
+		stubFetchProperties([
+			{
+				name: "test",
+				sortable: false
+			}, {
+				name: "test2",
+				sortable: true
+			}
+		]);
+
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
 				"sap/ui/mdc/table/TableSettings"
@@ -2179,15 +2192,6 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				stubFetchProperties([
-					{
-						name: "test",
-						sortable: false
-					}, {
-						name: "test2",
-						sortable: true
-					}
-				]);
 
 				// Simulate click on sortable column
 				this.oTable._oTable.fireEvent("columnSelect", {
