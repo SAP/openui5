@@ -90,7 +90,9 @@ sap.ui.define([
 				var oItem = this.oAdaptationModel.getProperty("/items").find(function(o){
 					return o.name == sKey;
 				});
-				oItem.isFiltered = this._getConditionModel().getConditions(sKey).length > 0 ? true : false;
+				if (oItem) {
+					oItem.isFiltered = this._getConditionModel().getConditions(sKey).length > 0 ? true : false;
+				}
 			}
 		}.bind(this));
 
