@@ -3,13 +3,13 @@
     "date": "September 2020",
     "notes": [
       {
-        "id": "3d7e614dd7872c56ddde89b8eb4783c3a6f0566e",
+        "id": "792a6c0024a0b9d510586bc91a4691907cd33af2",
         "type": "FIX",
-        "text": ": RTA Context Menu button layouting",
+        "text": " sap.tnt.NavigationList: Item count is read only once",
         "references": [
           {
             "type": "BCP",
-            "reference": "2080331570"
+            "reference": "2080337425"
           }
         ]
       }
