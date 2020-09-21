@@ -974,7 +974,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Active title has aria attributes", function(assert){
-		assert.ok(jQuery("#" + oheId + "-title").attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
 		assert.equal(jQuery("#" + oheId + "-title").attr("role"), "link", "ActiveTitle has role=link");
 	});
 
