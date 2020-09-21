@@ -290,6 +290,36 @@ sap.ui.define([
 		oFileUploader.setMimeType(["audio"]);
 	});
 
+	QUnit.test("Test multiple property - setter used on after rendering", function (assert) {
+		//prepare
+		var done = assert.async(),
+			oFileUploader = new FileUploader({
+				multiple: false
+			}),
+			sInputName;
+
+		oFileUploader.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		sInputName = document.querySelector("[type='file']").getAttribute("name");
+
+		oFileUploader.oAfterRenderingDelegate = {
+			onAfterRendering: function() {
+				//assert
+				assert.strictEqual(document.querySelector("[type='file']").getAttribute("name"), sInputName + "[]", "multiple files can be uploaded");
+
+				//clean
+				oFileUploader.removeDelegate(oFileUploader.oAfterRenderingDelegate);
+				oFileUploader.destroy();
+				done();
+			}
+		};
+
+		oFileUploader.addDelegate(oFileUploader.oAfterRenderingDelegate);
+
+		//act
+		oFileUploader.setMultiple(true);
+	});
+
 	QUnit.test("Test httpRequestMethod property with native form submit", function (assert) {
 		//Setup
 		var oFileUploader = new FileUploader();
