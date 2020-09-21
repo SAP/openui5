@@ -398,13 +398,14 @@ sap.ui.define([
 	 * so per default no description is needed.
 	 * But in some cases, such as the multi-select mode, an additional description is needed.
 	 *
+	 * @param {int} iMaxConditions maximal conditions allowed (as FieldHelp might not be connected to a field)
 	 * @returns {string|null} rode description
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.81.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FieldHelpBase.prototype.getRoleDescription = function() {
+	FieldHelpBase.prototype.getRoleDescription = function(iMaxConditions) {
 
 		return null;
 

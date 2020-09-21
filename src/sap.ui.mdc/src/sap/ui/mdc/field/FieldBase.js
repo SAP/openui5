@@ -1456,7 +1456,7 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 
 		if (oFieldHelp) {
-			var sRoleDescription = oFieldHelp.getRoleDescription();
+			var sRoleDescription = oFieldHelp.getRoleDescription(this.getMaxConditionsForHelp());
 			oAttributes["role"] = "combobox";
 			if (sRoleDescription) {
 				oAttributes.aria["roledescription"] = sRoleDescription;
