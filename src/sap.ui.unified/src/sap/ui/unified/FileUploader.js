@@ -689,10 +689,7 @@ sap.ui.define([
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
 		this.setProperty("fileType", aTypes, false);
-		if (this.oFileUpload) {
-			this.oFileUpload = undefined;
-			this._prepareFileUpload();
-		}
+		this._rerenderInnerInput();
 		return this;
 	};
 
@@ -700,11 +697,21 @@ sap.ui.define([
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
 		this.setProperty("mimeType", aTypes, false);
+		this._rerenderInnerInput();
+		return this;
+	};
+
+	FileUploader.prototype.setMultiple = function(bMultiple) {
+		this.setProperty("multiple", bMultiple, false);
+		this._rerenderInnerInput();
+		return this;
+	};
+
+	FileUploader.prototype._rerenderInnerInput = function() {
 		if (this.oFileUpload) {
 			this.oFileUpload = undefined;
 			this._prepareFileUpload();
 		}
-		return this;
 	};
 
 	FileUploader.prototype.setTooltip = function(oTooltip) {
