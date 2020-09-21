@@ -243,6 +243,10 @@ sap.ui.define([
 			sShortcut = _getShortcutHintText(oHintInfos[0].id),
 			mTooltips;
 
+		if (!_isElementVisible($ShortcutHintRef) || !_isElementInViewport($ShortcutHintRef)) {
+			return;
+		}
+
 		// concatenate with the tooltip
 		mTooltips = this._getControlTooltips();
 		if (mTooltips[oHintInfos[0].id]) {
@@ -262,6 +266,9 @@ sap.ui.define([
 					clearTimeout(sTimeoutID);
 				}
 				sTimeoutID = setTimeout(function() {
+					if (!_isElementVisible($ShortcutHintRef) || !_isElementInViewport($ShortcutHintRef)) {
+						return;
+					}
 
 					oPopup.oContent.style.visibility = "visible";
 				}, 1000);
@@ -392,13 +399,20 @@ sap.ui.define([
 			this.hideShortcutHint();
 		},
 		"onmouseover": function(oEvent) {
-			var oShortcutHintRefs = this._findShortcutOptionsForRef(oEvent.target);
+			var oShortcutHintRefs = this._findShortcutOptionsForRef(oEvent.target),
+				oDOMRef;
 
 			if (!oShortcutHintRefs.length) {
 				return;
 			}
 
-			if (checkMouseEnterOrLeave(oEvent, oShortcutHintRefs[0].ref)) {
+			oDOMRef = oShortcutHintRefs[0].ref;
+
+			if (!_isElementFocusable(oDOMRef)) {
+				return;
+			}
+
+			if (checkMouseEnterOrLeave(oEvent, oDOMRef)) {
 				ShortcutHintsMixin.hideAll();
 
 				this.showShortcutHint(oShortcutHintRefs);
@@ -505,6 +519,51 @@ sap.ui.define([
 		ShortcutHintsMixin._popup = oPopup;
 
 		return oPopup;
+	}
+
+	/**
+	 * Determines if a DOM element is inside the viewport.
+	 */
+	function _isElementInViewport(oDomElement) {
+		var mRect;
+		if (!oDomElement) {
+			return false;
+		}
+		mRect = oDomElement.getBoundingClientRect();
+		return (
+			mRect.top >= 0 &&
+			mRect.left >= 0 &&
+			mRect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+			mRect.right <= (window.innerWidth || document.documentElement.clientWidth)
+		);
+	}
+
+	/**
+	 * Determines if a DOM element is visible.
+	 */
+	function _isElementVisible(elem) {
+		return elem.offsetWidth > 0 || elem.offsetHeight > 0 || elem.getClientRects().length > 0;
+	}
+
+	/**
+	 * Determines if a DOM element has a tabindex.
+	 */
+	function _elementHasTabIndex(elem) {
+		var iTabIndex = elem.tabIndex;
+
+		return iTabIndex != null
+			&& iTabIndex >= 0
+			&& (elem.getAttribute("disabled") == null
+				|| elem.getAttribute("tabindex"));
+	}
+
+	/**
+	 * Determines if a DOM element is focusable.
+	 */
+	function _isElementFocusable(elem) {
+		return elem.nodeType == 1
+			&& _isElementVisible(elem)
+			&& _elementHasTabIndex(elem);
 	}
 
 	return ShortcutHintsMixin;
