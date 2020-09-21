@@ -63,6 +63,10 @@ sap.ui.define([
 			}
 		},
 
+		resetGroupDialog: function(oEvent) {
+			this.groupReset =  true;
+		},
+
 		createViewSettingsDialog: function (sDialogFragmentName) {
 			var oDialog = this._mViewSettingsDialogs[sDialogFragmentName];
 
@@ -145,6 +149,9 @@ sap.ui.define([
 				aGroups.push(new Sorter(sPath, bDescending, vGroup));
 				// apply the selected group settings
 				oBinding.sort(aGroups);
+			} else if (this.groupReset) {
+				oBinding.sort();
+				this.groupReset = false;
 			}
 		},
 
