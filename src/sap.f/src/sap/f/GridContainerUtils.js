@@ -54,6 +54,31 @@ sap.ui.define([], function () {
 			});
 
 			return oClosestItem;
+		},
+
+		/**
+		 * @param {sap.ui.core.Control} oItem The closest Grid Container will be searched
+		 * @param {*} aElements Elements, which will be searched
+		 * @returns {HTMLElement} The closest element to oItem
+		 */
+		findClosestGridContainer: function  (oItem, aElements) {
+			var oClosestGridContainer = null,
+				fClosestDistance = Number.POSITIVE_INFINITY,
+				fY1 = oItem.getDomRef().getBoundingClientRect().top;
+
+			aElements.forEach(function (oElement) {
+
+				var fY2 = oElement.getBoundingClientRect().top;
+
+				var fDistSquared = (fY2 - fY1) * (fY2 - fY1);
+
+				if (fDistSquared < fClosestDistance) {
+					oClosestGridContainer = oElement;
+					fClosestDistance = fDistSquared;
+				}
+			});
+
+			return oClosestGridContainer;
 		}
 	};
 });

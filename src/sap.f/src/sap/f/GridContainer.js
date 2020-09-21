@@ -1574,7 +1574,7 @@ sap.ui.define([
 			return GridContainerUtils.isBelow(oItem, oGridContainerElement);
 		});
 
-		var oClosestGridContainer = GridContainerUtils.findClosest(oItem, aGridContainersBelow);
+		var oClosestGridContainer = GridContainerUtils.findClosestGridContainer(oItem, aGridContainersBelow);
 
 		if (!oClosestGridContainer) {
 			return null;
@@ -1629,7 +1629,7 @@ sap.ui.define([
 			return GridContainerUtils.isAbove(oItem, oGridContainerElement);
 		});
 
-		var oClosestGridContainer = GridContainerUtils.findClosest(oItem, aGridContainersAbove);
+		var oClosestGridContainer = GridContainerUtils.findClosestGridContainer(oItem, aGridContainersAbove);
 
 		if (!oClosestGridContainer) {
 			return null;
