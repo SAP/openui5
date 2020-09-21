@@ -1,9 +1,8 @@
 /*!
  * ${copyright}
  */
-
-sap.ui.define(['sap/ui/Device', "sap/ui/performance/trace/Passport", "sap/base/Log"],
-	function(Device, Passport, Log) {
+sap.ui.define(['sap/ui/Device', 'sap/ui/performance/trace/Passport', 'sap/base/Log', 'sap/ui/thirdparty/URI'],
+	function(Device, Passport, Log, URI) {
 		"use strict";
 
 		/*global alert, confirm, performance */
@@ -43,7 +42,10 @@ sap.ui.define(['sap/ui/Device', "sap/ui/performance/trace/Passport", "sap/base/L
 				this.firstByteReceived = xmlHttpReq.xfirstByteReceived ? xmlHttpReq.xfirstByteReceived : xmlHttpReq.xlastByteReceived;
 				this.lastByteReceived = xmlHttpReq.xlastByteReceived;
 				this.sentBytes = 0; //cannot be captured
-				this.receivedBytes = xmlHttpReq.responseText.length; //uncompressed
+				this.receivedBytes = ((xmlHttpReq.responseType == "text") || (xmlHttpReq.responseType == "")) ? xmlHttpReq.responseText.length : 0; //uncompressed length
+				if (Log.isLoggable()) {
+					Log.debug("E2eTraceLib.Message: Response Type is \"" + xmlHttpReq.responseType + "\"");
+				}
 
 				//public methods
 				this.getDuration = function() {
@@ -362,7 +364,15 @@ sap.ui.define(['sap/ui/Device', "sap/ui/performance/trace/Passport", "sap/base/L
 
 						//do not set passport as this is done already in jquery.sap.trace
 						//this.setRequestHeader("SAP-PASSPORT", EppLib.passportHeader(busTrx.getCurrentTransactionStep().trcLvl, busTrx.id, this.xDsrGuid));
-						this.setRequestHeader("X-CorrelationID", busTrx.getCurrentTransactionStep().getId() + "-" + idx);
+
+						//matching function isCORSRequest from FESR.js
+						var sHOST = (new URI(this.xurl)).host();
+						if (!(sHOST && (sHOST != window.location.host))) {
+						//if ((this.xRequestHeaders != undefined) && (this.xRequestHeaders[0][0] == "SAP-PASSPORT")) {
+							this.setRequestHeader("X-CorrelationID", busTrx.getCurrentTransactionStep().getId() + "-" + idx);
+						} else if (Log.isLoggable()) {
+							Log.debug("E2ETraceLib.Message: No SAP Passport - trace header suppressed.");
+						}
 
 						//attach event listeners
 						this.addEventListener("loadstart", onLoadstart, false);
