@@ -132,7 +132,7 @@ sap.ui.define([
 			oPopover.setShowHeader(true);
 			oPopover.setTitleAlignment("Center");
 			oPopover.setContentWidth("500px"); // TODO: use CSS?
-			oPopover.setResizable(true); // TODO: really? No, currently only for testing! The resize handler on the popover is on the right top corner! Why?
+			oPopover.setResizable(false);
 			_createDefineConditionPanel.call(this);
 		}
 
