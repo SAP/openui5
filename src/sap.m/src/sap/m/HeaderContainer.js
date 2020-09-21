@@ -985,11 +985,20 @@ sap.ui.define([
 					var aContent = this._oScrollCntr.getContent();
 					var aAriaLabelledBy = this.getAriaLabelledBy();
 
+					//Set the Position, Size based on visible containers
+					var iPosition = 1;
+					var iVisibleSize = aContent.filter(function (oContainer) {
+						return oContainer.getItem().getVisible();
+					}).length;
+
 					for (var i = 0; i < aContent.length; i++) {
 						var oItem = aContent[i];
-						oItem.setPosition(i + 1);
-						oItem.setSetSize(aContent.length);
-						oItem.setAriaLabelledBy(aAriaLabelledBy[i]);
+						if (oItem.getItem().getVisible()) {
+							oItem.setPosition(iPosition);
+							oItem.setSetSize(iVisibleSize);
+							oItem.setAriaLabelledBy(aAriaLabelledBy[i]);
+							iPosition++;
+						}
 					}
 				}
 
