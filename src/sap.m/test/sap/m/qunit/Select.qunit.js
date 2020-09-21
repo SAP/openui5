@@ -10272,6 +10272,43 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.module("Value State accessibility");
+
+		QUnit.test("Aria-describedby reference element should have a separate persistent DOM node other than the visible value state popup", function(assert) {
+			//Arrange
+			var oSelect = new Select({
+					valueState: ValueState.Warning
+				});
+			var oAccDomRef;
+
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oAccDomRef = document.getElementById(oSelect.getValueStateMessageId() + "-sr");
+
+			//Assert
+			assert.strictEqual(oSelect.getDomRef().contains(oAccDomRef), true, "Accessibility DOM is created");
+
+			//Clean up
+			oSelect.destroy();
+		});
+
+		QUnit.test("Aria-describedby attribute should persists even if the message popup is not opened", function(assert) {
+			//Arrange
+			var oSelect = new Select({
+				valueState: "Warning",
+				valueStateText: "This is a value state with warning message"
+			});
+
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-describedby"), oSelect.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");
+
+			//Clean up
+			oSelect.destroy();
+		});
+
 		QUnit.module("Picker's header", {
 			beforeEach: function () {
 				fnToMobileMode(); // Enter mobile mode

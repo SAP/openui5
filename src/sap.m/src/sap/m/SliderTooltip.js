@@ -8,7 +8,10 @@ sap.ui.define([
 	'./SliderTooltipBase',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
+	'sap/ui/core/Core',
 	'./delegate/ValueStateMessage',
+	'sap/ui/core/ValueStateSupport',
+	"sap/ui/core/InvisibleMessage",
 	'./SliderTooltipRenderer'
 ],
 function(
@@ -17,13 +20,16 @@ function(
 	SliderTooltipBase,
 	Control,
 	coreLibrary,
+	Core,
 	ValueStateMessage,
+	ValueStateSupport,
+	InvisibleMessage,
 	SliderTooltipRenderer
 ) {
 		"use strict";
 
 		var ValueState = coreLibrary.ValueState;
-
+		var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 		/**
 		 * Constructor for a new SliderTooltip.
 		 *
@@ -108,13 +114,26 @@ function(
 			this._fLastValidValue = 0;
 		};
 
+		SliderTooltip.prototype.exit = function () {
+			if (this.oInvisibleMessage) {
+				this.oInvisibleMessage.destroy();
+				this.oInvisibleMessage = null;
+			}
+		};
+
 		SliderTooltip.prototype.onBeforeRendering = function () {
 			SliderTooltipBase.prototype.setValue.call(this, this.getValue());
+
+			if (!this.oInvisibleMessage) {
+				this.oInvisibleMessage = InvisibleMessage.getInstance();
+			}
 		};
 
 		SliderTooltip.prototype.onAfterRendering = function () {
+			var sAddRemoveClass = !this.getEditable() ? "add" : "remove";
+
 			if (this.getDomRef()) {
-				this.getFocusDomRef().toggleClass(SliderUtilities.CONSTANTS.TOOLTIP_CLASS + "NotEditable", !this.getEditable());
+				this.getFocusDomRef().classList[sAddRemoveClass](SliderUtilities.CONSTANTS.TOOLTIP_CLASS + "NotEditable");
 			}
 		};
 
@@ -123,7 +142,7 @@ function(
 		};
 
 		SliderTooltip.prototype.getFocusDomRef = function () {
-			return this.$("input");
+			return this.getDomRef("input");
 		};
 
 		SliderTooltip.prototype.getDomRefForValueStateMessage = function () {
@@ -141,7 +160,7 @@ function(
 		SliderTooltip.prototype.sliderValueChanged = function (fValue) {
 
 			if (this.getDomRef()) {
-				this.getFocusDomRef().val(fValue);
+				this.getFocusDomRef().value = fValue;
 			}
 
 			// remember last valid value of the input
@@ -160,28 +179,63 @@ function(
 		 * @public
 		 */
 		SliderTooltip.prototype.setValueState = function (sValueState) {
-			var bErrorState, bOpenValueStateMessage;
-			// validate given value
+			var oDomRef = this.getDomRef(),
+				oInputDomRef = this.getFocusDomRef(),
+				bErrorState, bOpenValueStateMessage;
+
 			sValueState = this.validateProperty("valueState", sValueState);
+			bErrorState = oDomRef && (sValueState === ValueState.Error);
+			bOpenValueStateMessage = oDomRef && bErrorState;
 
 			this.setProperty("valueState", sValueState, true);
-
-			bErrorState = (sValueState === ValueState.Error);
-			bOpenValueStateMessage = this.getDomRef() && bErrorState;
-
 			this._oValueStateMessage[bOpenValueStateMessage ? "open" : "close"]();
-			this.$().toggleClass(SliderUtilities.CONSTANTS.TOOLTIP_CLASS + "ErrorState", bErrorState);
+
+			if (oInputDomRef) {
+				oDomRef.classList[bErrorState ? "add" : "remove"](SliderUtilities.CONSTANTS.TOOLTIP_CLASS + "ErrorState");
+				oInputDomRef[bErrorState ? "setAttribute" : "removeAttribute"]("aria-invalid", bErrorState);
+				oInputDomRef[bOpenValueStateMessage ? "setAttribute" : "removeAttribute"]("aria-errormessage", this.getId() + "-message");
+				this._invisibleMessageAnnouncement(sValueState);
+			}
 
 			return this;
 		};
 
+		/**
+		 * Adds the generated value state message to the <code>sap.ui.core.InvisibleMessage</code>
+		 * instance to be announced by screen readers because the value state
+		 * popup and the aria-errormessage attribute is added on the fly and not announced otherwise
+		 *
+		 * @param {string} sStateType The value state type to be announced by screen readers
+		 *
+		 * @private
+		 */
+		SliderTooltip.prototype._invisibleMessageAnnouncement = function (sValueStateType, bOpenValueStateMessage) {
+			if (sValueStateType !== ValueState.Error) {
+				return;
+			}
+
+			var oRB = Core.getLibraryResourceBundle("sap.m"),
+			sValueStateTypeText, sInvisibleMessageAnnounce;
+
+			sValueStateTypeText = oRB.getText("INPUTBASE_VALUE_STATE_" + sValueStateType.toUpperCase());
+			sInvisibleMessageAnnounce = sValueStateTypeText + " " +  ValueStateSupport.getAdditionalText(this);
+			this.oInvisibleMessage.announce(sInvisibleMessageAnnounce, InvisibleMessageMode.Assertive);
+			this._bInvisibleMessageUpdated = true;
+		};
+
 		SliderTooltip.prototype.onfocusout = function (oEvent) {
-			var fValue = parseFloat(this.getFocusDomRef().val());
+			var fValue = parseFloat(this.getFocusDomRef().value);
 			this._validateValue(fValue);
+
+			// Clean live region on close if used
+			if (this._bInvisibleMessageUpdated) {
+				document.getElementById(this.oInvisibleMessage.getId() + "-assertive").textContent = "";
+				this._bInvisibleMessageUpdated = false;
+			}
 		};
 
 		SliderTooltip.prototype.onsapenter = function (oEvent) {
-			var fValue = parseFloat(this.getFocusDomRef().val());
+			var fValue = parseFloat(this.getFocusDomRef().value);
 			this._validateValue(fValue);
 		};
 

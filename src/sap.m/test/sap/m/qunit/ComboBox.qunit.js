@@ -13316,8 +13316,8 @@ sap.ui.define([
 
 	QUnit.test("Change to the formatted text InputBase aggregation should should also be reflected in the value state header while it is open", function (assert) {
 		// Arrange
-		var	oSuggPopoverHeaderValueState;
-		var oPopup;
+		var oSuggPopoverHeaderValueState;
+		var oRenderedValueStateMessage;
 
 		// Act
 		this.oErrorComboBox.focus();
@@ -13335,9 +13335,11 @@ sap.ui.define([
 		this.oErrorComboBox.close();
 		this.clock.tick();
 
-		oPopup = this.oErrorComboBox._oValueStateMessage._oPopup;
+		// Get the actual rendered value state text from the popup content DOM
+		oRenderedValueStateMessage = document.getElementById(this.oErrorComboBox.getValueStateMessageId()).textContent;
+
 		// Assert
-		assert.strictEqual(oPopup.getContent().childNodes[1].textContent, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the ComboBox value state popup after the suggestion popover is closed");
+		assert.strictEqual(oRenderedValueStateMessage, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the ComboBox value state popup after the suggestion popover is closed");
 	});
 
 	QUnit.test("Should move the visual focus from value state header to the ComboBox input when the user starts typing", function (assert) {

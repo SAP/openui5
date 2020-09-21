@@ -999,6 +999,39 @@
 							console.log("Zzz: " + oEvent.getParameter("userInputValue"));
 							sap.m.MessageBox.alert("Value help requested with valueForSearch: '" + oEvent.getParameter("_userInputValue") + "'");
 						}
+					}),
+					new sap.m.Input("vsinput-sugg", {
+						placeholder: "Input Search With Suggestions and value state changing while you are typing - type 'text'",
+						valueState: "Information",
+						valueStateText: "Keep typing to change the value states",
+						showSuggestion: true,
+						suggestionItems: [
+							new sap.ui.core.Item({text: "text 1"}),
+							new sap.ui.core.Item({text: "text 2"}),
+							new sap.ui.core.Item({text: "text 3"}),
+							new sap.ui.core.Item({text: "text 4"}),
+							new sap.ui.core.Item({text: "text 15"})
+						],
+						liveChange: function (oEvent) {
+							var i = this.getValue().length;
+							switch(i % 5){
+								case 0:
+									this.setValueState("Warning");
+									break;
+								case 1:
+									this.setValueState("Error");
+									break;
+								case 2:
+									this.setValueState("Success");
+									break;
+								case 3:
+									this.setValueState("Information");
+									break;
+								case 4:
+									this.setValueState("None");
+									break;
+							}
+						}
 					})
 			],
 			footer: createFooter()

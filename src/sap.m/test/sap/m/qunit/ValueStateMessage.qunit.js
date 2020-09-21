@@ -218,10 +218,9 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(oDomRef.className, "sapMValueStateMessage sapMValueStateMessageWarning");
 		assert.strictEqual(oDomRef.getAttribute("role"), "tooltip");
-		assert.strictEqual(oDomRef.getAttribute("aria-live"), "assertive");
-		assert.strictEqual(oDomRef.firstElementChild.className, Device.browser.msie ? "sapUiHidden" : "sapUiPseudoInvisibleText");
+		assert.strictEqual(oDomRef.getAttribute("aria-live"), "off");
+		assert.strictEqual(oDomRef.getAttribute("aria-hidden"), "true");
 		assert.strictEqual(oDomRef.firstElementChild.getAttribute("aria-hidden"), Device.browser.msie ? "true" : null);
-		assert.strictEqual(oDomRef.firstElementChild.textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + oInputBase.getValueState().toUpperCase()));
 
 		// cleanup
 		oInputBase.destroy();

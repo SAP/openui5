@@ -1251,7 +1251,7 @@ sap.ui.define([
 		assert.strictEqual(oValueStateInput.getValueState(), "Warning");
 		assert.ok(jQuery.sap.domById("vsinput-message"), "warning message popup is open");
 		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_WARNING"));
-		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_WARNING") + oCoreRB.getText("VALUE_STATE_WARNING"));
+		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oCoreRB.getText("VALUE_STATE_WARNING"));
 
 		// success state
 		oValueStateInput.updateDomValue("12");
@@ -1270,7 +1270,7 @@ sap.ui.define([
 		assert.strictEqual(oValueStateInput.getValueState(), "Error");
 		assert.ok(jQuery.sap.domById("vsinput-message"), "error message popup is open");
 		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
-		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_ERROR") + oCoreRB.getText("VALUE_STATE_ERROR"));
+		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
 
 		// information state
 		oValueStateInput.updateDomValue("1234");
@@ -1280,7 +1280,7 @@ sap.ui.define([
 		assert.strictEqual(oValueStateInput.getValueState(), "Information");
 		assert.ok(jQuery.sap.domById("vsinput-message"), "Information message popup is open");
 		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_INFORMATION"));
-		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_INFORMATION") + oCoreRB.getText("VALUE_STATE_INFORMATION"));
+		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oCoreRB.getText("VALUE_STATE_INFORMATION"));
 
 		// none state
 		oValueStateInput.updateDomValue("12345");
