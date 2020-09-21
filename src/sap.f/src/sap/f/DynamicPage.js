@@ -1133,7 +1133,9 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getSnappingHeight = function () {
-			return Math.ceil(this._getHeaderHeight() || this._getTitleHeight()) - this._iHeaderContentPaddingBottom;
+		var iSnappingHeight = Math.ceil(this._getHeaderHeight() || this._getTitleHeight()) - this._iHeaderContentPaddingBottom;
+
+		return iSnappingHeight > 0 ? iSnappingHeight : 0;
 	};
 
 	/**
