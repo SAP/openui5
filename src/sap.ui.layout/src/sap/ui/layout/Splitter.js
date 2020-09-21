@@ -1069,13 +1069,23 @@ sap.ui.define([
 		var oBar = oTarget,
 			sId = this.getId();
 
-		if (oBar.classList.contains("sapUiLoSplitterBarGripIcon")) {
+		/* TODO remove after the end of support for Internet Explorer */
+		// Fix for IE not supporting classList for svg-s
+		function hasClass(oElement, sClass) {
+
+			if (oElement.getAttribute('class')){
+				return oElement.getAttribute('class').indexOf(sClass) > -1;
+			}
+			return null;
+		}
+
+		if (hasClass(oBar, "sapUiLoSplitterBarGripIcon")) {
 			oBar = oTarget.parentElement;
 		}
 
-		if (oBar.classList.contains("sapUiLoSplitterBarDecorationBefore")
-			|| oBar.classList.contains("sapUiLoSplitterBarDecorationAfter")
-			|| oBar.classList.contains("sapUiLoSplitterBarGrip")) {
+		if (hasClass(oBar, "sapUiLoSplitterBarDecorationBefore")
+			|| hasClass(oBar, "sapUiLoSplitterBarDecorationAfter")
+			|| hasClass(oBar, "sapUiLoSplitterBarGrip")) {
 				oBar = oBar.parentElement;
 		}
 
@@ -1083,7 +1093,6 @@ sap.ui.define([
 			// The clicked element was not one of my splitter bars
 			return null;
 		}
-
 		return oBar;
 	};
 
