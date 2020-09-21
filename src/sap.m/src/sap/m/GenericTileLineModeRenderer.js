@@ -12,6 +12,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 	// shortcut for sap.m.LoadState
 	var LoadState = library.LoadState;
 
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 	/**
 	 * GenericTileLineMode renderer.
 	 * @namespace
@@ -34,7 +36,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			sScopeClass,
 			bIsSingleAction = false,
 			bHasPress = oControl.hasListeners("press"),
-			sState = oControl.getState();
+			sState = oControl.getState(),
+			sAriaRoleDescription = oControl.getAriaRoleDescription(),
+			sAriaRole = oControl.getAriaRole();
 
 		// Render a link when URL is provided, not in action scope and the state is enabled
 		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
@@ -58,8 +62,17 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.openStart("span", oControl);
 		}
 		oRm.attr("aria-label", sAriaText);
-		if (!bRenderLink) { // buttons only; <a> elements always have the default role
+		if (sAriaRoleDescription) {
+			oRm.attr("aria-roledescription", sAriaRoleDescription );
+		} else {
+			oRm.attr("aria-roledescription", oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"));
+		}
+		if (sAriaRole) {
+			oRm.attr("role", sAriaRole);
+		} else if (!bRenderLink) { // buttons only; <a> elements always have the default role
 			oRm.attr("role", bHasPress ? "button" : "presentation");
+		} else {
+			oRm.attr("role", "link");
 		}
 		oRm.class("sapMGT");
 		oRm.class(sScopeClass);

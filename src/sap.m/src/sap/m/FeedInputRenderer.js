@@ -6,6 +6,8 @@ sap.ui.define([],
 	function() {
 	"use strict";
 
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 var FeedInputRenderer = {
 	};
 
@@ -21,6 +23,8 @@ var FeedInputRenderer = {
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMFeedInBase");
+		oRm.writeAttribute("role", "group");
+		oRm.writeAttributeEscaped("aria-label", oRb.getText("FEED_INPUT_ARIA_LABEL"));
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.write('<div id="' + sMyId + '-outerContainer"');
