@@ -783,6 +783,16 @@ sap.ui.define([
 
 	}
 
+	function _getRemoveButtonVisible(aConditions) {
+
+		var oFormatOptions = this.getFormatOptions();
+		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+
+		// only on case of maxCondition==1 the Remove icons should be invisible
+		return iMaxConditions !== 1;
+
+	}
+
 	function _renderConditions() {
 
 		var aConditions = this.getConditions();
@@ -867,7 +877,13 @@ sap.ui.define([
 			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
 		})
 		.addStyleClass("sapUiSmallPaddingBegin")
-		.setLayoutData(new GridData({span: "XL1 L1 M1 S2", indent: {path: "$this>operator", formatter: _getIndentForOperator}, visibleXL: false, visibleL: false, visibleM: false, visibleS: true}))
+		.setLayoutData(new GridData({span: "XL1 L1 M1 S2",
+			indent: {path: "$this>operator", formatter: _getIndentForOperator},
+			visibleS: {path: "$this>/conditions", formatter: _getRemoveButtonVisible.bind(this)},
+			visibleM: false,
+			visibleL: false,
+			visibleXL: false
+		}))
 		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
 
 		oGrid.insertContent(oRemoveButton, iIndex);
@@ -890,7 +906,13 @@ sap.ui.define([
 			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
 		})
 		.addStyleClass("sapUiSmallPaddingBegin")
-		.setLayoutData(new GridData({span: "XL1 L1 M1 S1", indent: {path: "$this>operator", formatter: _getIndentForOperator}, visibleXL: true, visibleL: true, visibleM: true, visibleS: false}))
+		.setLayoutData(new GridData({span: "XL1 L1 M1 S1",
+			indent: {path: "$this>operator", formatter: _getIndentForOperator},
+			visibleS: false,
+			visibleM: {path: "$this>/conditions", formatter: _getRemoveButtonVisible.bind(this)},
+			visibleL: {path: "$this>/conditions", formatter: _getRemoveButtonVisible.bind(this)},
+			visibleXL: {path: "$this>/conditions", formatter: _getRemoveButtonVisible.bind(this)}
+		}))
 		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
 
 		oGrid.insertContent(oRemoveButton2, iIndex);

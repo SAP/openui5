@@ -1051,40 +1051,41 @@ function(
 				BaseType.Date,
 				[
 				 FilterOperatorUtil._mOperators.equal,
-				 FilterOperatorUtil._mOperators.between,
-				 FilterOperatorUtil._mOperators.lessEqual,
-				 FilterOperatorUtil._mOperators.lowerThan,
 				 FilterOperatorUtil._mOperators.greaterEqual,
-				 FilterOperatorUtil._mOperators.greaterThan,
+				 FilterOperatorUtil._mOperators.lessEqual,
+				//  FilterOperatorUtil._mOperators.lowerThan,
+				//  FilterOperatorUtil._mOperators.greaterThan,
+				 FilterOperatorUtil._mOperators.between,
 
-				 FilterOperatorUtil._mOperators.notEqual,
-				 FilterOperatorUtil._mOperators.notBetween,
-				 FilterOperatorUtil._mOperators.notLessEqual,
-				 FilterOperatorUtil._mOperators.notLowerThan,
-				 FilterOperatorUtil._mOperators.notGreaterEqual,
-				 FilterOperatorUtil._mOperators.notGreaterThan,
+				//  FilterOperatorUtil._mOperators.notEqual,
+				//  FilterOperatorUtil._mOperators.notBetween,
+				//  FilterOperatorUtil._mOperators.notLessEqual,
+				//  FilterOperatorUtil._mOperators.notLowerThan,
+				//  FilterOperatorUtil._mOperators.notGreaterEqual,
+				//  FilterOperatorUtil._mOperators.notGreaterThan,
 
-				 FilterOperatorUtil._mOperators.lastDays,
-				 FilterOperatorUtil._mOperators.yesterday,
 				 FilterOperatorUtil._mOperators.today,
+				 FilterOperatorUtil._mOperators.yesterday,
 				 FilterOperatorUtil._mOperators.tomorrow,
+				//  FilterOperatorUtil._mOperators.todayXY,  missing will be added later
+				 FilterOperatorUtil._mOperators.lastDays,
 				 FilterOperatorUtil._mOperators.nextDays,
 
-				 FilterOperatorUtil._mOperators.lastWeeks,
-				 FilterOperatorUtil._mOperators.lastWeek,
 				 FilterOperatorUtil._mOperators.currentWeek,
+				 FilterOperatorUtil._mOperators.lastWeek,
+				 FilterOperatorUtil._mOperators.lastWeeks,
 				 FilterOperatorUtil._mOperators.nextWeek,
 				 FilterOperatorUtil._mOperators.nextWeeks,
 
-				 FilterOperatorUtil._mOperators.lastMonths,
-				 FilterOperatorUtil._mOperators.lastMonth,
 				 FilterOperatorUtil._mOperators.currentMonth,
+				 FilterOperatorUtil._mOperators.lastMonth,
+				 FilterOperatorUtil._mOperators.lastMonths,
 				 FilterOperatorUtil._mOperators.nextMonth,
 				 FilterOperatorUtil._mOperators.nextMonths,
 
-				 FilterOperatorUtil._mOperators.lastQuarters,
-				 FilterOperatorUtil._mOperators.lastQuarter,
 				 FilterOperatorUtil._mOperators.currentQuarter,
+				 FilterOperatorUtil._mOperators.lastQuarter,
+				 FilterOperatorUtil._mOperators.lastQuarters,
 				 FilterOperatorUtil._mOperators.nextQuarter,
 				 FilterOperatorUtil._mOperators.nextQuarters,
 
@@ -1093,14 +1094,14 @@ function(
 				 FilterOperatorUtil._mOperators.thirdQuarter,
 				 FilterOperatorUtil._mOperators.fourthQuarter,
 
-				 FilterOperatorUtil._mOperators.lastYears,
-				 FilterOperatorUtil._mOperators.lastYear,
 				 FilterOperatorUtil._mOperators.currentYear,
+				 FilterOperatorUtil._mOperators.lastYear,
+				 FilterOperatorUtil._mOperators.lastYears,
 				 FilterOperatorUtil._mOperators.nextYear,
 				 FilterOperatorUtil._mOperators.nextYears,
 
 				 FilterOperatorUtil._mOperators.yearToDate
-				 // FilterOperatorUtil._mOperators.month
+				 // FilterOperatorUtil._mOperators.month  - currently not supported
 				 ]
 		);
 		FilterOperatorUtil.setOperatorsForType(
