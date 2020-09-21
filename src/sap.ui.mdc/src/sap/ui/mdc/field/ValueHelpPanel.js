@@ -516,10 +516,14 @@ sap.ui.define([
 			var oVBox = this.byId("rootVBox");
 			var oListBinding = this._oTokenizer.getBinding("tokens");
 			if (oChanges.current) {
-				oListBinding.resume();
+				if (oListBinding) {
+					oListBinding.resume();
+				}
 				oVBox.insertItem(this._oTokenizerPanel, 1);
 			} else {
-				oListBinding.suspend(); // don't create Tokens
+				if (oListBinding) {
+					oListBinding.suspend(); // don't create Tokens
+				}
 				oVBox.removeItem(this._oTokenizerPanel);
 			}
 		}
