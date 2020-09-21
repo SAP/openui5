@@ -36,7 +36,8 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				var dataTablesConfigURL;
+				var dataTablesConfigURL,
+					oConfig;
 
 				this.oPage = this.byId("topicDetailPage");
 				this.oPage.addStyleClass('docuPage');
@@ -46,6 +47,9 @@ sap.ui.define([
 				this.oLayout = this.byId("staticContentLayout");
 
 				this.oHtml.attachEvent("afterRendering", this._onHtmlRendered.bind(this));
+
+				this._oConfig = oConfig = this.getConfig();
+				this.oMatchedTopicDataTablesConfig = {};
 
 				if ( !window.prettyPrint ) {
 					//TODO: global jquery call found
@@ -73,11 +77,17 @@ sap.ui.define([
 					.then(function () {
 						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/js/buttons.colVis.js" });
 					})
-					.then(function() {
+					.then(function () {
+						dataTablesConfigURL = ResourcesUtil.getResourceOriginPath(oConfig.docuPath + 'dataTablesConfig.json');
+						return jQuery.ajax({ url: dataTablesConfigURL });
+					})
+					.then(function (dataTablesConfig) {
+						this.oDataTablesConfig = dataTablesConfig;
+
 						this.bDataTablesPluginLoaded = true;
 						this._getDataTableHelper().addMiddlewares();
 
-						// to prevent dom from being not rendered while loading plugin, after fetch is successful
+						// to prevent dom from not being rendered while loading plugin, after fetch is successful
 						// check if we have rendered tables to be transformed to datatable
 						if (this.aWaitingDatatables.length > 0) {
 							this.aWaitingDatatables.forEach(function (oTable) {
@@ -89,16 +99,6 @@ sap.ui.define([
 
 				this.getRouter().getRoute("topicId").attachPatternMatched(this._onTopicMatched, this);
 				this.getRouter().getRoute("subTopicId").attachPatternMatched(this._onTopicMatched, this);
-				this._oConfig = this.getConfig();
-				this.oMatchedTopicDataTablesConfig = {};
-
-				dataTablesConfigURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + 'dataTablesConfig.json');
-
-				jQuery.ajax(dataTablesConfigURL)
-					.success(function(result) {
-						this.dataTablesConfigs = result;
-					}.bind(this))
-					.fail(Log.err);
 
 				this.jsonDefModel = new JSONModel();
 				this.getView().setModel(this.jsonDefModel);
@@ -233,10 +233,6 @@ sap.ui.define([
 				this.sTopicId = sTopicId;
 				this.sSubTopicId = sSubTopicId;
 
-				if (this.dataTablesConfigs) {
-					this.oMatchedTopicDataTablesConfig = this.dataTablesConfigs[this.sSubTopicId] || this.dataTablesConfigs[this.sTopicId];
-				}
-
 				this.sTopicURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + sTopicId + (sTopicId.match(/\.html/) ? "" : ".html"));
 				this.sSubTopicId = event.getParameter("arguments").subId || sSubTopicId;
 
@@ -268,12 +264,10 @@ sap.ui.define([
 
 				if (aDataTables.length) {
 					aDataTables.each(function (index, table) {
-						if (this.oMatchedTopicDataTablesConfig) {
-							if (this.bDataTablesPluginLoaded) {
-								this._enableDataTable(table);
-							} else {
-								this.aWaitingDatatables.push(table);
-							}
+						if (this.bDataTablesPluginLoaded) {
+							this._enableDataTable(table);
+						} else {
+							this.aWaitingDatatables.push(table);
 						}
 					}.bind(this));
 				}
@@ -284,7 +278,7 @@ sap.ui.define([
 
 			},
 
-			_enableImageMap: function(image) {
+			_enableImageMap: function (image) {
 				var newImage,
 					aSrcResult,
 					rex = /<img[^>]+src="([^">]+)/g;
@@ -310,16 +304,22 @@ sap.ui.define([
 				}
 			},
 
-			_enableDataTable: function(oTable) {
-				var sId = oTable.id,
-					oConfig = this.oMatchedTopicDataTablesConfig[sId],
+			_enableDataTable: function (oTable) {
+				var sTableId = oTable.id,
+					oConfig = this._getDataTableConfig(sTableId),
 					oDataTable;
 
 				if (oConfig) {
-					oDataTable = new DataTable().init(sId, oTable, oConfig);
+					oDataTable = new DataTable().init(sTableId, oTable, oConfig);
 					this._getDataTableHelper().addDatatable(oDataTable);
 				}
 
+			},
+
+			_getDataTableConfig: function (sTableId) {
+				var oTopicTablesConfig = this.oDataTablesConfig[this.sSubTopicId] || this.oDataTablesConfig[this.sTopicId] || {};
+
+				return oTopicTablesConfig[sTableId];
 			},
 
 			_addResponsiveImageMap: function (data) {
