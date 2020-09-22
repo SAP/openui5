@@ -19,7 +19,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/UnboundMessages",
 		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/MessagesWithMultipleTargets",
 		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/MessagesReturnedFromAFunctionImport",
-		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/IgnoredMessages"
+		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/IgnoredMessages",
+		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/CloneSalesOrderItem"
 	], function () {
 		QUnit.start();
 	});

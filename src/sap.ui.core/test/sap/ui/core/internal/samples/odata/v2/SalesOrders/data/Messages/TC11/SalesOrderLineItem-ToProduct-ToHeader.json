@@ -1,0 +1,81 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='111',ItemPosition='020')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='111',ItemPosition='020')",
+			"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+		},
+		"ToHeader" : {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"BillingStatus" : "",
+			"BillingStatusDescription" : "Initial",
+			"ChangedAt" : "\/Date(1600249523662)\/",
+			"CreatedAt" : "\/Date(1600247986474)\/",
+			"CurrencyCode" : "EUR",
+			"CustomerID" : "0100000000",
+			"CustomerName" : "SAP",
+			"DeliveryStatus" : "",
+			"DeliveryStatusDescription" : "Initial",
+			"GrossAmount" : "2275.28",
+			"LifecycleStatus" : "N",
+			"LifecycleStatusDescription" : "New",
+			"NetAmount" : "1912.00",
+			"Note" : "Test Case XI",
+			"NoteLanguage" : "EN",
+			"SalesOrderID" : "111",
+			"TaxAmount" : "363.28",
+			"ToBusinessPartner" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')/ToBusinessPartner"
+				}
+			},
+			"ToLineItems" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')/ToLineItems"
+				}
+			}
+		},
+		"ToProduct" : {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1000')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1000')",
+				"type" : "GWSAMPLE_BASIC.Product"
+			},
+			"Category" : "Notebooks",
+			"ChangedAt" : "\/Date(1593704649000)\/",
+			"CreatedAt" : "\/Date(1593704649000)\/",
+			"CurrencyCode" : "EUR",
+			"Depth" : "18.000",
+			"Description" : "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+			"DescriptionLanguage" : "EN",
+			"DimUnit" : "CM",
+			"Height" : "3.000",
+			"MeasureUnit" : "EA",
+			"Name" : "Notebook Basic 15",
+			"NameLanguage" : "EN",
+			"Price" : "956.00",
+			"ProductID" : "HT-1000",
+			"SupplierID" : "0100000046",
+			"SupplierName" : "SAP",
+			"TaxTarifCode" : 1,
+			"TypeCode" : "PR",
+			"WeightMeasure" : "4.200",
+			"WeightUnit" : "KG",
+			"Width" : "30.000",
+			"ToSalesOrderLineItems" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSalesOrderLineItems"
+				}
+			},
+			"ToSupplier" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSupplier"
+				}
+			}
+		}
+	}
+}

@@ -25,7 +25,7 @@ sap.ui.define([
 ], function (Log, uid, Device, SyncPromise, coreLibrary, Message, Controller, View, BindingMode,
 		Filter, FilterOperator, Sorter, CountMode, MessageScope, ODataModel, TestUtils, datajs,
 		XMLHelper) {
-	/*global QUnit*/
+	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
 
@@ -4145,7 +4145,7 @@ usePreliminaryContext : false}}">\
 	//*********************************************************************************************
 	// Scenario: Create two new entities and reload the collection in the same $batch. Test the
 	// successfully creation and the creation of the first entity fails which leads to single error
-	// response for the changeset. Ensure that test framwork processes the requests as expected.
+	// response for the changeset. Ensure that test framework processes the requests as expected.
 	// JIRA: CPOUI5MODELS-198
 [{
 	aExpectedMessages : [],
@@ -5589,13 +5589,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}
 
 			that.expectRequest(oRequest, {
-					results : [{
-						__metadata : {uri : "SalesOrderSet('42')"},
-						SalesOrderID : "42"
-					}]
+					__metadata : {uri : "SalesOrderSet('42')"},
+					SalesOrderID : "42"
 				}, {
 					location : "/SalesOrderSrv/SalesOrderSet('42')",
-					"sap-message" : getMessageHeader([oWebAddressError])
+					"sap-message" : getMessageHeader(oWebAddressError)
 				})
 				.expectMessage(oWebAddressError, "/SalesOrderSet('42')/",
 					"/BusinessPartnerSet('100')/ToSalesOrders('42')/");
@@ -5610,6 +5608,91 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Parameters of a function import are changed after calling ODataModel#callFunction
+	// before submitting the changes (#submitChanges). The request URL contains the latest parameter
+	// change and the messages get the correct target/fullTarget. Navigation properties are expanded
+	// in the same $batch.
+	// JIRA: CPOUI5MODELS-221
+	QUnit.test("Messages: function import with expand and lazy parameters", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({
+				defaultBindingMode : "TwoWay",
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox id="form">\
+	<Input id="soIDParameter" value="{SalesOrderID}" />\
+</FlexBox>',
+			that = this;
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return Promise.all([
+			oModel.callFunction("/SalesOrder_Confirm", {
+				expand : "ToLineItems",
+				groupId : "changes",
+				method : "POST",
+				refreshAfterChange : false,
+				urlParameters : {
+					SalesOrderID : "1"
+				}
+			}).contextCreated(),
+			this.createView(assert, sView, oModel)
+		]).then(function (aResults) {
+			var oWebAddressError = that.createResponseMessage("WebAddress");
+
+			that.expectRequest({
+					batchNo : 1,
+					data : undefined,
+					deepPath : "/SalesOrder_Confirm",
+					encodeRequestUri : false,
+					headers : {
+						"Content-ID": "~key~",
+						"sap-message-scope" : "BusinessObject",
+						"sap-messages": "transientOnly"
+					},
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='42'"
+				}, {
+					__metadata : {uri : "SalesOrderSet('42')"},
+					SalesOrderID : "42"
+				}, {
+					location : "/SalesOrderSrv/SalesOrderSet('42')"
+				})
+				.expectRequest({
+					batchNo : 1,
+					deepPath : "/$~key~",
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "GET",
+					requestUri : "$~key~?$expand=ToLineItems&$select=ToLineItems"
+				}, {
+					__metadata : {uri : "SalesOrderSet('42')"},
+					ToLineItems : {
+						results : [{
+							__metadata : {
+								uri : "SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')"
+							},
+							ItemPosition : "10",
+							Note : "ItemNote",
+							SalesOrderID : "42"
+						}]
+					}
+				}, {
+					"sap-message" : getMessageHeader(oWebAddressError)
+				})
+				.expectMessage(oWebAddressError, "/SalesOrderSet('42')/");
+
+			that.oView.byId("form").setBindingContext(aResults[0]);
+			that.oView.byId("soIDParameter").setValue("42");
+
+			// code under test
+			oModel.submitChanges({groupId : "changes"});
+
+			return that.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Messages returned by a function import get the correct full target by using the
@@ -6306,6 +6389,289 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}).contextCreated(),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Expand navigation properties of the entity returned by a function import call
+	// within the same $batch.
+	// JIRA: CPOUI5MODELS-221
+	QUnit.test("callFunction: expand navigation properties in the same $batch", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({
+				canonicalRequests : true,
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox id="productDetails">\
+	<Text id="productName" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		this.expectChange("productName", null);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oEventHandlers = {
+					error : function () {},
+					success : function () {}
+				},
+				oNoteError = that.createResponseMessage("Note"),
+				oResponse = {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					ItemPosition : "20",
+					SalesOrderID : "1"
+				};
+
+			that.mock(oEventHandlers).expects("error").never();
+			that.mock(oEventHandlers).expects("success")
+				.withExactArgs({
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					ItemPosition : "20",
+					SalesOrderID : "1",
+					ToProduct : {
+						__metadata : {uri : "ProductSet(ProductID='P1')"},
+						Name : "Product 1",
+						ProductID : "P1"
+					}
+				}, sinon.match.has("data", oResponse));
+
+			that.expectRequest({
+					batchNo : 1,
+					deepPath : "/SalesOrderItem_Clone",
+					encodeRequestUri : false,
+					headers : {
+						"Content-ID" : "~key~",
+						"sap-message-scope" : "BusinessObject",
+						"sap-messages" : "transientOnly"
+					},
+					method : "POST",
+					requestUri : "SalesOrderItem_Clone?ItemPosition='10'&SalesOrderID='1'"
+				}, oResponse, {
+					location :
+						"/SalesOrderSrv/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+				})
+				.expectRequest({
+					batchNo : 1,
+					deepPath : "/$~key~",
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "GET",
+					requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					ToProduct : {
+						__metadata : {uri : "ProductSet(ProductID='P1')"},
+						Name : "Product 1",
+						ProductID : "P1"
+					}
+				}, {
+					"sap-message" : getMessageHeader(oNoteError)
+				})
+				.expectMessage(oNoteError,
+					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')/",
+					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='20')/");
+
+			return Promise.all([
+				// code under test
+				oModel.callFunction("/SalesOrderItem_Clone", {
+					adjustDeepPath : function (mParameters) {
+						assert.strictEqual(mParameters.deepPath,
+							"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')",
+							"Deep path adjusted");
+
+						return "/SalesOrderSet('1')"
+							+ "/ToLineItems(SalesOrderID='1',ItemPosition='20')";
+					},
+					error : oEventHandlers.error,
+					expand : "ToProduct",
+					method : "POST",
+					success : oEventHandlers.success,
+					urlParameters : {
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					}
+				}).contextCreated(),
+				that.waitForChanges(assert)
+			]).then(function () {
+				that.expectChange("productName", "Product 1");
+
+				// code under test
+				that.oView.byId("productDetails")
+					.bindObject({
+						parameters : {select : "Name"},
+						path : "/SalesOrderSet('1')"
+							+ "/ToLineItems(SalesOrderID='1',ItemPosition='20')/ToProduct"
+					});
+
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Abort a function call with given expand parameter.
+	// JIRA: CPOUI5MODELS-221
+[true, false].forEach(function (bDeferred) {
+	var sTitle = "callFunction: abort function call with given expand parameter; deferred: "
+			+ bDeferred;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCallFunctionResult,
+			oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			that = this;
+
+		oModel.setDeferredGroups(["change", "callFunction"]);
+
+		return this.createView(assert, /*sView*/"", oModel).then(function () {
+			oCallFunctionResult = oModel.callFunction("/SalesOrderItem_Clone", {
+					adjustDeepPath : function (mParameters) {
+						assert.strictEqual(mParameters.deepPath,
+							"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')",
+							"Deep path adjusted");
+
+						return "/SalesOrderSet('1')"
+							+ "/ToLineItems(SalesOrderID='1',ItemPosition='20')";
+					},
+					expand : "ToProduct",
+					groupId : bDeferred ? "callFunction" : undefined,
+					method : "POST",
+					urlParameters : {
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					}
+				});
+
+			if (!bDeferred) {
+				// code under test
+				oCallFunctionResult.abort();
+				oModel.submitChanges();
+
+				return that.waitForChanges(assert);
+			}
+			// deferred case
+			return Promise.all([
+				Promise.resolve(), // request object is created async; wait for it
+				that.waitForChanges(assert)
+			]).then(function () {
+				// code under test
+				oCallFunctionResult.abort();
+				oModel.submitChanges("callFunction");
+
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Function call with given expand parameter fails.
+	// JIRA: CPOUI5MODELS-221
+	QUnit.test("callFunction: with given expand parameter fails", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({
+				canonicalRequests : true,
+				tokenHandling : false,
+				useBatch : true
+			}),
+			that = this;
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, /*sView*/"", oModel).then(function () {
+			var oErrorGET = createErrorResponse({message : "GET failed", statusCode : 400}),
+				oErrorPOST = createErrorResponse({message : "POST failed", statusCode : 400}),
+				oEventHandlers = {
+					error : function () {},
+					success : function () {}
+				};
+
+			that.mock(oEventHandlers).expects("error")
+				.withExactArgs(sinon.match({
+					message: "HTTP request failed",
+					responseText: oErrorPOST.body,
+					statusCode: 400,
+					statusText: "FAILED"
+				}));
+			that.mock(oEventHandlers).expects("success").never();
+			that.oLogMock.expects("error")
+				.withExactArgs("HTTP request failed (400 FAILED): " + oErrorPOST.body, undefined,
+					sODataModelClassName);
+			that.oLogMock.expects("error")
+				.withExactArgs("HTTP request failed (400 FAILED): " + oErrorGET.body, undefined,
+					sODataModelClassName);
+
+			that.expectRequest({
+					batchNo : 1,
+					deepPath : "/SalesOrderItem_Clone",
+					encodeRequestUri : false,
+					headers : {
+						"Content-ID" : "~key~",
+						"sap-message-scope" : "BusinessObject",
+						"sap-messages" : "transientOnly"
+					},
+					method : "POST",
+					requestUri : "SalesOrderItem_Clone?ItemPosition='10'&SalesOrderID='1'"
+				}, oErrorPOST)
+				.expectRequest({
+					batchNo : 1,
+					deepPath : "/$~key~",
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "GET",
+					requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
+				}, oErrorGET)
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderItem_Clone",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
+					technical : true,
+					type : "Error"
+				}, {
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/$~key~",
+					message : "GET failed",
+					persistent : false,
+					target : "/$~key~",
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oModel.callFunction("/SalesOrderItem_Clone", {
+					adjustDeepPath : function (mParameters) {
+						assert.strictEqual(mParameters.deepPath,
+							"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')",
+							"Deep path adjusted");
+
+						return "/SalesOrderSet('1')"
+							+ "/ToLineItems(SalesOrderID='1',ItemPosition='20')";
+					},
+					error : oEventHandlers.error,
+					expand : "ToProduct",
+					method : "POST",
+					success : oEventHandlers.success,
+					urlParameters : {
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					}
+				}).contextCreated(),
+				that.waitForChanges(assert)
+			]).then(function () {
+				// code under test - function call is not retried
+				oModel.submitChanges();
+
+				return that.waitForChanges(assert);
+			});
 		});
 	});
 });
