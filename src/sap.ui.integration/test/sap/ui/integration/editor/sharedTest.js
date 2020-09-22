@@ -42,6 +42,7 @@ function deleteCurrentValues(id) {
 	updateAllLayerCard();
 }
 function createCardEditorTag(id, changes, mode, language) {
+	language = language || "";
 	var card = {
 		"manifest": "manifest.json",
 		"host": "host",
@@ -55,7 +56,7 @@ function loadCurrentValues(id) {
 		settings = getItem(id),
 		div = document.createElement("div");
 	if (!dom) return;
-	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), dom.getAttribute("language"));
+	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), dom.getAttribute("language") || "");
 	dom.parentNode.replaceChild(div.firstChild, dom);
 }
 
@@ -87,7 +88,7 @@ function updateAdminContentLayerCard() {
 		admin = getItem("cardEditorAdmin"),
 		content = getItem("cardEditorContent");
 	settings.push(admin, content);
-	target.innerHTML = createCardEditorTag("cardEditorAdminContentTranslation", settings, "all");
+	target.innerHTML = createCardEditorTag("cardEditorAdminContentTranslation", settings, "all", "");
 }
 function updateAdminContentTranslationLayerCard() {
 	var target = document.getElementById("admincontenttranslation");
