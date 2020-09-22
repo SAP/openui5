@@ -262,9 +262,53 @@ sap.ui.define([
 		 * @public
 		 */
 		addPersonalizationChanges: function(mPropertyBag) {
+			var aAddedChanges = [];
 			var aSuccessfulChanges = [];
 			var sLayer = LayerUtils.getCurrentLayer(true);
 			var aPromises = [];
+
+			function fnCheckAndCreateChange(oChange, mChangeSpecificData) {
+				return ControlPersonalizationAPI._checkChangeSpecificData(oChange, sLayer).then(function() {
+					mPropertyBag.params = ControlPersonalizationAPI._determineParameters(oChange.selectorControl, mPropertyBag.ignoreVariantManagement, mPropertyBag.useStaticArea);
+					if (!mPropertyBag.ignoreVariantManagement) {
+						// check for preset variantReference
+						if (!oChange.changeSpecificData.variantReference) {
+							var sVariantManagementReference = ControlPersonalizationAPI._getVariantManagement(oChange.selectorControl, mPropertyBag.params);
+							if (sVariantManagementReference) {
+								var sCurrentVariantReference = mPropertyBag.params.variantModel.oData[sVariantManagementReference].currentVariant;
+								oChange.changeSpecificData.variantReference = sCurrentVariantReference;
+							}
+						}
+					} else {
+						// delete preset variantReference
+						delete oChange.changeSpecificData.variantReference;
+					}
+					return mPropertyBag.params.flexController.addChange(
+						Object.assign(mChangeSpecificData, oChange.changeSpecificData),
+						oChange.selectorControl);
+				})
+				.then(function (oAddedChange) {
+					oChange.changeInstance = oAddedChange;
+					aAddedChanges.push(oChange);
+				})
+				.catch(function(oError) {
+					return Promise.reject({
+						change: oChange,
+						message: oError.message
+					});
+				});
+			}
+			function fnApplyChange(oChange) {
+				return mPropertyBag.params.flexController.applyChange(oChange.changeInstance, oChange.selectorControl).then(function() {
+					aSuccessfulChanges.push(oChange.changeInstance);
+				})
+				.catch(function(oError) {
+					return Promise.reject({
+						change: oChange,
+						message: oError.message
+					});
+				});
+			}
 
 			mPropertyBag.controlChanges.forEach(function(oChange) {
 				var mChangeSpecificData = {};
@@ -273,46 +317,19 @@ sap.ui.define([
 					layer: sLayer
 				});
 
-				function fnCheckCreateApplyChange() {
-					return this._checkChangeSpecificData(oChange, sLayer)
-						.then(function() {
-							var mParams = this._determineParameters(oChange.selectorControl, mPropertyBag.ignoreVariantManagement, mPropertyBag.useStaticArea);
-							if (!mPropertyBag.ignoreVariantManagement) {
-								// check for preset variantReference
-								if (!oChange.changeSpecificData.variantReference) {
-									var sVariantManagementReference = this._getVariantManagement(oChange.selectorControl, mParams);
-									if (sVariantManagementReference) {
-										var sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
-										oChange.changeSpecificData.variantReference = sCurrentVariantReference;
-									}
-								}
-							} else {
-								// delete preset variantReference
-								delete oChange.changeSpecificData.variantReference;
-							}
-							return mParams.flexController.createAndApplyChange(
-								Object.assign(mChangeSpecificData, oChange.changeSpecificData),
-								oChange.selectorControl);
-						}.bind(this))
-						.then(function (oAppliedChange) {
-							// FlexController.createAndApplyChanges will only resolve for successfully applied changes
-							aSuccessfulChanges.push(oAppliedChange);
-						})
-						.catch(function(oError) {
-							return Promise.reject({
-								change: oChange,
-								message: oError.message
-							});
-						});
-				}
-				aPromises.push(fnCheckCreateApplyChange.bind(this));
-			}.bind(this));
+				aPromises.push(fnCheckAndCreateChange.bind(undefined, oChange, mChangeSpecificData));
+			});
 
-			// For any Promise.reject, an error is logged in console inside Utils.execPromiseQueueSequentially
-			return Utils.execPromiseQueueSequentially(aPromises)
-				.then(function() {
-					return aSuccessfulChanges;
+			return Utils.execPromiseQueueSequentially(aPromises).then(function() {
+				aPromises = [];
+				aAddedChanges.forEach(function(oChange) {
+					aPromises.push(fnApplyChange.bind(undefined, oChange));
 				});
+
+				return Utils.execPromiseQueueSequentially(aPromises);
+			}).then(function() {
+				return aSuccessfulChanges;
+			});
 		},
 
 		/**

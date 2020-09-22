@@ -245,6 +245,10 @@ sap.ui.define([
 				// so the propagation listener should ignore this change once
 				oChange._ignoreOnce = true;
 				this.addPreparedChange(oChange, oAppComponent);
+
+				// TODO this should go into an API that applied multiple changes, that does not yet exist
+				// all changes should be queued to apply before the first change gets applied
+				oChange.setQueuedForApply();
 				return oChange;
 			}.bind(this));
 	};
@@ -293,34 +297,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a new change and applies it immediately.
+	 * Must ONLY be used together with FlexController.prototype.addChange.
+	 * Applies a change that was previously created, added to the map and queued.
 	 *
-	 * @param {object} oChangeSpecificData The data specific to the change, e.g. the new label for a RenameField change
+	 * @param {object} oChange Change Instance
 	 * @param {sap.ui.core.Control} oControl The control where the change will be applied to
 	 * @returns {Promise} Returns Promise resolving to the change that was created and applied successfully or a Promise reject with the error object
 	 * @public
 	 */
-	FlexController.prototype.createAndApplyChange = function(oChangeSpecificData, oControl) {
-		var oChange;
-		return this.addChange(oChangeSpecificData, oControl)
-			.then(function(oAddedChange) {
-				oChange = oAddedChange;
-				var mPropertyBag = {
-					modifier: JsControlTreeModifier,
-					appComponent: Utils.getAppComponentForControl(oControl),
-					view: Utils.getViewForControl(oControl)
-				};
-				oChange.setQueuedForApply();
-				return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
-			})
-			.then(function(oReturn) {
-				if (!oReturn.success) {
-					var oException = oReturn.error || new Error("The change could not be applied.");
-					this._oChangePersistence.deleteChange(oChange, true);
-					throw oException;
-				}
-				return oChange;
-			}.bind(this));
+	FlexController.prototype.applyChange = function(oChange, oControl) {
+		var mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: Utils.getAppComponentForControl(oControl),
+			view: Utils.getViewForControl(oControl)
+		};
+
+		return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag)
+		.then(function(oReturn) {
+			if (!oReturn.success) {
+				var oException = oReturn.error || new Error("The change could not be applied.");
+				this._oChangePersistence.deleteChange(oChange, true);
+				throw oException;
+			}
+			return oChange;
+		}.bind(this));
 	};
 
 	function checkDependencies(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
