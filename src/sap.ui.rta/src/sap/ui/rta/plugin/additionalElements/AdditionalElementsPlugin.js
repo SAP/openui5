@@ -100,8 +100,7 @@ sap.ui.define([
 			return oOverlay.getElementVisibility() === false;
 		}, this);
 
-		var aStashedControls = StashedControlSupport.getStashedControls(oParentElement.getId());
-		return aInvisibleElements.concat(aStashedControls);
+		return aInvisibleElements;
 	}
 
 	/**

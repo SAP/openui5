@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
+	"sap/ui/core/Core",
 	"./ObjectPageSectionBase",
 	"./ObjectPageLazyLoader",
 	"./BlockBase",
@@ -27,6 +28,7 @@ sap.ui.define([
 	jQuery,
 	Grid,
 	GridData,
+	Core,
 	ObjectPageSectionBase,
 	ObjectPageLazyLoader,
 	BlockBase,
@@ -187,7 +189,7 @@ sap.ui.define([
 	 * @returns {Object} the resource bundle object
 	 */
 	ObjectPageSubSection._getLibraryResourceBundle = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.uxap");
+		return Core.getLibraryResourceBundle("sap.uxap");
 	};
 
 	/**
@@ -195,7 +197,7 @@ sap.ui.define([
 	 */
 	ObjectPageSubSection.prototype.init = function () {
 		ObjectPageSectionBase.prototype.init.call(this);
-
+		this._aStashedControls = [];
 		//proxy public aggregations
 		this._bRenderedFirstTime = false;
 		this._aAggregationProxy = {blocks: [], moreBlocks: []};
@@ -381,9 +383,13 @@ sap.ui.define([
 	});
 
 	ObjectPageSubSection.prototype._unStashControls = function () {
-		StashedControlSupport.getStashedControls(this.getId()).forEach(function (oControl) {
-			oControl.setStashed(false);
-		});
+		var oUnstashedControl;
+		this._aStashedControls.forEach(function (oControlHandle) {
+			oControlHandle.control.unstash();
+			oUnstashedControl = Core.byId(oControlHandle.control.getId());
+			this.addAggregation(oControlHandle.aggregationName, oUnstashedControl, true);
+		}.bind(this));
+		this._aStashedControls = [];
 	};
 
 	ObjectPageSubSection.prototype.connectToModels = function () {
@@ -615,7 +621,7 @@ sap.ui.define([
 		// Filter F7 key down
 		if (oEvent.keyCode === KeyCodes.F7) {
 			oEvent.stopPropagation();
-			var oTarget = sap.ui.getCore().byId(oEvent.target.id);
+			var oTarget = Core.byId(oEvent.target.id);
 
 			//define if F7 is pressed from SubSection itself or active element inside SubSection
 			if (oTarget instanceof ObjectPageSubSection) {
@@ -794,17 +800,22 @@ sap.ui.define([
 		var aAggregation;
 
 		if (oObject instanceof ObjectPageLazyLoader) {
-			oObject.getContent().forEach(function (oControl) {
-				this.addAggregation(sAggregationName, oControl, true);
-			}, this);
+			if (oObject.isStashed()) {
+				this._aStashedControls.push({
+					aggregationName: sAggregationName,
+					control: oObject
+				});
+			} else {
+				oObject.getContent().forEach(function (oControl) {
+					this.addAggregation(sAggregationName, oControl, true);
+				}, this);
 
-			oObject.removeAllContent();
-			oObject.destroy();
-			this.invalidate();
-			return this;
-		}
+				oObject.removeAllContent();
+				oObject.destroy();
+				this.invalidate();
+			}
 
-		if (this.hasProxy(sAggregationName)) {
+		} else if (this.hasProxy(sAggregationName)) {
 			aAggregation = this._getAggregation(sAggregationName);
 			aAggregation.push(oObject);
 			this._setAggregation(sAggregationName, aAggregation, bSuppressInvalidate);
@@ -813,10 +824,11 @@ sap.ui.define([
 				oObject.setParent(this); //let the block know of its parent subsection
 			}
 
-			return this;
+		} else {
+			ObjectPageSectionBase.prototype.addAggregation.apply(this, arguments);
 		}
 
-		return ObjectPageSectionBase.prototype.addAggregation.apply(this, arguments);
+		return this;
 	};
 
 	/**
@@ -920,6 +932,14 @@ sap.ui.define([
 		}
 
 		return ObjectPageSectionBase.prototype.destroyAggregation.apply(this, arguments);
+	};
+
+	ObjectPageSubSection.prototype.destroy = function() {
+		// destroy all stashed controls which have not been unstashed
+		this._aStashedControls.forEach(function(oControlHandle) {
+			oControlHandle.control.destroy();
+		});
+		ObjectPageSectionBase.prototype.destroy.apply(this, arguments);
 	};
 
 	/*************************************************************************************
@@ -1066,7 +1086,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.getVisibleBlocksCount = function () {
-		var iVisibleBlocks = StashedControlSupport.getStashedControls(this.getId()).length;
+		var iVisibleBlocks = this._aStashedControls.length;
 
 		(this.getBlocks() || []).forEach(function (oBlock) {
 			if (oBlock.getVisible && !oBlock.getVisible()) {

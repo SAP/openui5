@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/StashedControlSupport",
@@ -16,6 +17,7 @@ sap.ui.define([
 	Change,
 	ObjectPageLayout,
 	ObjectPageSection,
+	XMLView,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	StashedControlSupport,
@@ -52,24 +54,30 @@ sap.ui.define([
 
 			this.oObjectPageSection1 = new ObjectPageSection();
 			this.oObjectPageSection2 = new ObjectPageSection();
+			this.oPlaceholderSection = new ObjectPageSection({
+				id: "stashedSection"
+			});
 			this.oObjectPageSectionInvisible = new ObjectPageSection("invisible"); // for XML modifier
 
 			this.oObjectPageLayout = new ObjectPageLayout({
-				sections : [this.oObjectPageSection1, this.oObjectPageSection2, this.oObjectPageSectionInvisible]
+				sections : [this.oObjectPageSection1, this.oObjectPageSection2, this.oPlaceholderSection, this.oObjectPageSectionInvisible]
 			});
 
 			var oDOMParser = new DOMParser();
-			var oXmlString =
-				'<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:uxap="sap.uxap"><uxap:ObjectPageLayout id="' + this.oObjectPageLayout.getId() + '" flexEnabled="true">' +
-					'<sections>' +
-						'<uxap:ObjectPageSection id="' + this.oObjectPageSection1.getId() + '"></uxap:ObjectPageSection>' +
-						'<uxap:ObjectPageSection id="' + this.oObjectPageSection2.getId() + '"></uxap:ObjectPageSection>' +
-						'<uxap:ObjectPageSection id="stashedSection" stashed="true"></uxap:ObjectPageSection>' +
-						'<uxap:ObjectPageSection id="' + this.oObjectPageSectionInvisible.getId() + '" visible = "false"></uxap:ObjectPageSection>' +
-					'</sections>' +
-				'</uxap:ObjectPageLayout></mvc:View>';
-			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-			this.oXmlView = oXmlDocument.documentElement;
+			this.xmlString =
+				'<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:uxap="sap.uxap">' +
+					'<uxap:ObjectPageLayout id="OPL" flexEnabled="true">' +
+						'<uxap:sections>' +
+							'<uxap:ObjectPageSection id="section0"></uxap:ObjectPageSection>' +
+							'<uxap:ObjectPageSection id="section1"></uxap:ObjectPageSection>' +
+							'<uxap:ObjectPageSection id="stashedSection" stashed="true"></uxap:ObjectPageSection>' +
+							'<uxap:ObjectPageSection id="section3" visible = "false"></uxap:ObjectPageSection>' +
+						'</uxap:sections>' +
+					'</uxap:ObjectPageLayout>' +
+				'</mvc:View>';
+
+			this.xmlDocument = oDOMParser.parseFromString(this.xmlString, "application/xml");
+			this.oXmlView = this.xmlDocument.documentElement;
 
 			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlObjectPageSection1 = this.oXmlLayout.childNodes[0].childNodes[0];
@@ -77,15 +85,16 @@ sap.ui.define([
 			this.oXmlObjectPageSection3 = this.oXmlLayout.childNodes[0].childNodes[2];
 			this.oXmlObjectPageSection4 = this.oXmlLayout.childNodes[0].childNodes[3];
 
-			this.oObjectPageSection3 = StashedControlSupport.createStashedControl(this.oXmlObjectPageSection3.getAttribute("id"), {
+			/*this.oObjectPageSection3 = StashedControlSupport.createStashedControl("sap-ui-stashed-" + this.oXmlObjectPageSection3.getAttribute("id"), {
 				sParentId: this.oObjectPageLayout.getId(),
+				sWrapperId: "stashedSection",
 				sParentAggregationName: "sections",
 				fnCreate: function () {
 					//use same id of stashed control
 					this.oObjectPageSection3 = new ObjectPageSection(this.oXmlObjectPageSection3.getAttribute("id"));
 					return [this.oObjectPageSection3];
 				}.bind(this)
-			});
+			});*/
 
 			sap.ui.getCore().applyChanges();
 		},
@@ -100,27 +109,34 @@ sap.ui.define([
 		});
 
 		QUnit.test('applyChange is called with a stashed ObjectPageSection on a js control tree', function(assert) {
-			assert.equal(this.oObjectPageSection3.getStashed(), true, "getStashed() before unstashing is true");
-			var oControl = this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier, appComponent: oMockUIComponent});
-			assert.ok(oControl instanceof ObjectPageSection, "then the initialized control during unstashing is returned");
-			assert.equal(this.oObjectPageSection3.getVisible(), true, "unstashed ObjectPageSection is visible");
-			assert.equal(this.oObjectPageSection3.getStashed(), undefined, "getStashed() after unstashing is undefined");
-			assert.deepEqual(this.oObjectPageLayout.getAggregation("sections")[0], this.oObjectPageSection3, "unstashed ObjectPageSection is at the first position");
+			return XMLView.create({definition: this.xmlString}).then(function(oView) {
+				var oStashedSection = oView.byId("stashedSection");
+				assert.equal(oStashedSection.isStashed(), true, "isStashed() before unstashing is true");
+				var oControl = this.oChangeHandler.applyChange(this.oChange, oStashedSection, {modifier: JsControlTreeModifier, appComponent: oMockUIComponent});
+				assert.ok(oControl instanceof ObjectPageSection, "then the initialized control during unstashing is returned");
+				assert.equal(oControl.getVisible(), true, "unstashed ObjectPageSection is visible");
+				assert.equal(oControl.isStashed(), false, "isStashed() after unstashing is false");
+				assert.deepEqual(oView.byId("OPL").getAggregation("sections")[0], oControl, "unstashed ObjectPageSection is unstashed and moved to index 0");
+			}.bind(this));
 		});
 
 		QUnit.test('revertChange is called with a stashed ObjectPageSection on a js control tree', function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier});
-			this.oChangeHandler.revertChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier});
-			assert.equal(this.oObjectPageSection3.getStashed(), undefined, "getStashed() is still undefined");
-			assert.equal(this.oObjectPageSection3.getVisible(), false, "the control is not visible");
+			return XMLView.create({definition: this.xmlString}).then(function(oView) {
+				var oStashedSection = oView.byId("stashedSection");
+				var oUnstashedSection = this.oChangeHandler.applyChange(this.oChange, oStashedSection, {modifier: JsControlTreeModifier});
+				this.oChangeHandler.revertChange(this.oChange, oUnstashedSection, {modifier: JsControlTreeModifier});
+				var oRevertedSection = oView.byId("stashedSection");
+				assert.equal(oRevertedSection.isStashed(), false, "isStashed() is still false");
+				assert.equal(oRevertedSection.getVisible(), false, "the control is not visible");
+			}.bind(this));
 		});
 
 		QUnit.test('applyChange is called with an invisible ObjectPageSection on a js control tree', function(assert) {
 			this.oObjectPageSectionInvisible.setVisible(false);
-			assert.equal(this.oObjectPageSectionInvisible.getStashed(), undefined, "getStashed() before unstashing is undefined");
+			assert.equal(this.oObjectPageSectionInvisible.isStashed(), false, "isStashed() before unstashing is false");
 			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSectionInvisible, {modifier: JsControlTreeModifier});
 			assert.equal(this.oObjectPageSectionInvisible.getVisible(), true, "ObjectPageSection is now visible");
-			assert.equal(this.oObjectPageSectionInvisible.getStashed(), undefined, "getStashed() after unstashing is still undefined");
+			assert.equal(this.oObjectPageSectionInvisible.isStashed(), false, "isStashed() after unstashing is still false");
 			assert.deepEqual(this.oObjectPageLayout.getAggregation("sections")[0], this.oObjectPageSectionInvisible, "ObjectPageSection is at the first position");
 		});
 
@@ -129,7 +145,7 @@ sap.ui.define([
 			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSectionInvisible, {modifier: JsControlTreeModifier});
 			this.oChangeHandler.revertChange(this.oChange, this.oObjectPageSectionInvisible, {modifier: JsControlTreeModifier});
 			assert.equal(this.oObjectPageSectionInvisible.getVisible(), false, "ObjectPageSection is now invisible again");
-			assert.equal(this.oObjectPageSectionInvisible.getStashed(), undefined, "getStashed() after unstashing is still undefined");
+			assert.equal(this.oObjectPageSectionInvisible.isStashed(), false, "isStashed() after unstashing is still false");
 		});
 
 		QUnit.test('applyChange is called with a stashed ObjectPageSection on an xml tree', function(assert) {
@@ -156,10 +172,13 @@ sap.ui.define([
 		});
 
 		QUnit.test('no move - applyChange on a js control tree', function(assert) {
-			this.oChangeHandler.applyChange(this.oNonMoveChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier});
-			assert.equal(this.oObjectPageSection3.getVisible(), true, "unstashed ObjectPageSection is visible");
-			assert.equal(this.oObjectPageSection3.getStashed(), undefined, "getStashed() for unstashed ObjectPageSection is undefined");
-			assert.deepEqual(this.oObjectPageLayout.getAggregation("sections")[3], this.oObjectPageSection3, "unstashed ObjectPageSection is still at 3. position");
+			return XMLView.create({definition: this.xmlString}).then(function(oView) {
+				var oStashedSection = oView.byId("stashedSection");
+				var oUnstashedSection = this.oChangeHandler.applyChange(this.oNonMoveChange, oStashedSection, {modifier: JsControlTreeModifier});
+				assert.equal(oUnstashedSection.getVisible(), true, "unstashed ObjectPageSection is visible");
+				assert.equal(oUnstashedSection.isStashed(), false, "isStashed() for unstashed ObjectPageSection is false");
+				assert.deepEqual(oView.byId("OPL").getAggregation("sections")[2], oUnstashedSection, "unstashed ObjectPageSection is still at 3. position");
+			}.bind(this));
 		});
 
 		QUnit.test('no move - applyChange on an xml tree', function(assert) {

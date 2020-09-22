@@ -143,9 +143,13 @@ sap.ui.define(function() {
 				}
 			},
 			StashedControlSupport: {
+				sinon: {
+					version: 4
+				},
 				title: "sap.ui.core.StashedControlSupport",
 				loader: {
 					paths: {
+						"testdata/mvc": "test-resources/sap/ui/core/qunit/mvc/testdata", // used by async tests
 						test: "test-resources/sap/ui/core/qunit/"
 					}
 				}
