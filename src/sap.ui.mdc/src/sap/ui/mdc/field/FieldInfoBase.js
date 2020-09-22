@@ -152,13 +152,19 @@ sap.ui.define([
 					}
 				}.bind(this)
 			});
+
 			sap.ui.require([
 				'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
 			], function(FlexRuntimeInfoAPI) {
-				return FlexRuntimeInfoAPI.waitForChanges({element: oPanel}).then(function () {
+				if (FlexRuntimeInfoAPI.isFlexSupported({element: oPanel})) {
+					FlexRuntimeInfoAPI.waitForChanges({element: oPanel}).then(function () {
+						oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
+					});
+				} else {
 					oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
-				});
+				}
 			});
+
 			return oPopover;
 		}.bind(this));
 	};
