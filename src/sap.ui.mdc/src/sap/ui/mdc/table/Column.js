@@ -131,19 +131,32 @@ sap.ui.define([
 		}
 
 		this.setProperty("headerVisible", bHeaderVisible, true);
-		this._updateColumnHeaderControl(bHeaderVisible);
+		this._updateColumnHeaderControl();
+		return this;
+	};
+
+	Column.prototype.setHeader = function(sHeader) {
+		this.setProperty("header", sHeader, true);
+		this._updateColumnHeaderControl();
+		return this;
+	};
+
+	Column.prototype.setHAlign = function(sHAlign) {
+		this.setProperty("hAlign", sHAlign, true);
+		this._updateColumnHeaderControl();
 		return this;
 	};
 
 	/**
-	 * Updates the column header control based on the <code>headerVisible</code> property.
-	 * @param {boolean} bHeaderVisible -  column header visibility
+	 * Updates the column header control based on the current column property seetings.
 	 * @private
 	 */
-	Column.prototype._updateColumnHeaderControl = function(bHeaderVisible) {
+	Column.prototype._updateColumnHeaderControl = function() {
 		if (this._oColumnHeaderLabel) {
-			this._oColumnHeaderLabel.setWidth(bHeaderVisible ? null : "0px");
-			this._oColumnHeaderLabel.setWrapping(false);
+			this._oColumnHeaderLabel.setWidth(this.getHeaderVisible() ? null : "0px");
+			this._oColumnHeaderLabel.setWrapping(this._bMobileTable && this.getHeaderVisible());
+			this._oColumnHeaderLabel.setText(this.getHeader());
+			this._oColumnHeaderLabel.setTextAlign(this.getHAlign());
 		}
 	};
 
@@ -160,12 +173,11 @@ sap.ui.define([
 		}
 
 		this._oColumnHeaderLabel = new Label(this.getId() + "-innerColumnHeader", {
-			textAlign: this.getHAlign(),
-			text: this.getHeader(),
-			wrapping: bMobileTable && this.getHeaderVisible(),
-			wrappingType: bMobileTable ? "Hyphenated" : null,
-			width: this.getHeaderVisible() ? null : "0px"
+			wrappingType: bMobileTable ? "Hyphenated" : null
 		});
+		this._bMobileTable = bMobileTable;
+
+		this._updateColumnHeaderControl();
 
 		return this._oColumnHeaderLabel;
 	};

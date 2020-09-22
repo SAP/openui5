@@ -72,47 +72,60 @@ sap.ui.define([
 		assert.ok(!this.oColumn._oCreationTemplateClone, "Reference to the creationTemplate clone is removed");
 	});
 
-	QUnit.test("test headerVisible property with GridTable", function(assert) {
-		var done = assert.async(),
-			oTable = new Table(),
-			fGetColumnHeaderControl = sinon.spy(this.oColumn, "getColumnHeaderControl"),
-			fUpdateColumnHeaderControl = sinon.spy(this.oColumn, "_updateColumnHeaderControl");
-		oTable.placeAt("qunit-fixture");
-		oTable.addColumn(this.oColumn);
-		this.oColumn.setHeader("Test");
-		Core.applyChanges();
-		assert.ok(this.oColumn.getHeaderVisible(), "headerVisible=true by default");
+	QUnit.test("Column Header Settings - ResponsiveTable", function(assert) {
+		assert.ok(!this.oColumn._oColumnHeaderLabel, "No Column Header Label defined so far.");
+		assert.ok(!this.oColumn.getHeader(), "Default header property");
+		assert.ok(this.oColumn.getHeaderVisible(), "Default headerVisible property");
+		assert.strictEqual(this.oColumn.getHAlign(), "Begin", "Default hAlign property");
 
-		oTable.initialized().then(function() {
-			assert.ok(fGetColumnHeaderControl.calledWith(false), "called with false since table type is Grid table");
-			assert.ok(this.oColumn._oColumnHeaderLabel.getWidth() !== "0px", "Column header label is visible");
-			this.oColumn.setHeaderVisible(false);
-			Core.applyChanges();
-			assert.ok(fUpdateColumnHeaderControl.calledWith(false));
-			assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWidth() , "0px", "Column header label is visible");
-			done();
-		}.bind(this));
+		this.oColumn.setHeader("Text1");
+
+		assert.ok(!this.oColumn._oColumnHeaderLabel, "Still no Column Header Label defined so far.");
+		this.oColumn.getColumnHeaderControl(true);
+		assert.ok(!!this.oColumn._oColumnHeaderLabel, "Column Header Label is initialized");
+
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrappingType(), "Hyphenated", "wrapping type of label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), this.oColumn.getHeaderVisible(), "wrapping set on label control according to according to headerVisible");
+		assert.ok(!this.oColumn._oColumnHeaderLabel.getWidth(), "width set on label control according to according to headerVisible");
+
+		this.oColumn.setHeader("Text2");
+		this.oColumn.setHeaderVisible(false);
+		this.oColumn.setHAlign("End");
+
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), this.oColumn.getHeaderVisible(), "wrapping set on label control according to according to headerVisible");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to according to headerVisible");
 	});
 
-	QUnit.test("test headerVisible property ResponsiveTable", function(assert) {
-		var done = assert.async(),
-			oTable = new Table({
-				type: "ResponsiveTable"
-			}),
-			fGetColumnHeaderControl = sinon.spy(this.oColumn, "getColumnHeaderControl"),
-			fUpdateColumnHeaderControl = sinon.spy(this.oColumn, "_updateColumnHeaderControl");
-		oTable.placeAt("qunit-fixture");
-		oTable.addColumn(this.oColumn);
-		this.oColumn.setHeader("Test");
-		Core.applyChanges();
-		assert.ok(this.oColumn.getHeaderVisible(), "headerVisible=true by default");
+	QUnit.test("Column Header Settings - GridTable", function(assert) {
+		assert.ok(!this.oColumn._oColumnHeaderLabel, "No Column Header Label defined so far.");
+		assert.ok(!this.oColumn.getHeader(), "Default header property");
+		assert.ok(this.oColumn.getHeaderVisible(), "Default headerVisible property");
+		assert.strictEqual(this.oColumn.getHAlign(), "Begin", "Default hAlign property");
 
-		oTable.initialized().then(function() {
-			assert.ok(fGetColumnHeaderControl.calledWith(true), "called with false since table type is Responsive table");
-			this.oColumn.setHeaderVisible(false);
-			Core.applyChanges();
-			assert.ok(fUpdateColumnHeaderControl.calledWith(false));
-			done();
-		}.bind(this));
+		this.oColumn.setHeader("Text1");
+
+		assert.ok(!this.oColumn._oColumnHeaderLabel, "Still no Column Header Label defined so far.");
+		this.oColumn.getColumnHeaderControl(false);
+		assert.ok(!!this.oColumn._oColumnHeaderLabel, "Column Header Label is initialized");
+
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrappingType(), "Normal" /*Default*/, "wrapping type of label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
+		assert.ok(!this.oColumn._oColumnHeaderLabel.getWidth(), "width set on label control according to according to headerVisible");
+
+		this.oColumn.setHeader("Text2");
+		this.oColumn.setHeaderVisible(false);
+		this.oColumn.setHAlign("End");
+
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to according to headerVisible");
 	});
+
 });
