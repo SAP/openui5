@@ -982,6 +982,10 @@ sap.ui.define([
 
 //		Log.info("TableEvent " + oEvent.type + ": " + oEvent.target.id);
 
+		if (!this._bSuggestion) {
+			return; // only in suggestion popover
+		}
+
 		var oTable = this.getTable();
 		var oItem = jQuery(oEvent.target).control(0);
 
