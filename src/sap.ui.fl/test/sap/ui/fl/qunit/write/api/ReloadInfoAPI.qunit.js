@@ -372,6 +372,24 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			assert.equal(oExpectedReloadInfo.hasDraft, false, "then there is no draft");
+		});
+
+		QUnit.test("and an initial draft got activated and in the url version parameter exists", function(assert) {
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				selector: {},
+				changesNeedReload: false,
+				hasDirtyDraftChanges: false,
+				versioningEnabled: true
+			};
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
+
+			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
+			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			assert.equal(oExpectedReloadInfo.hasDraft, false, "then there is no draft");
 		});
 
 		QUnit.test("and appDescriptor changes exist", function(assert) {
