@@ -18,7 +18,9 @@ sap.ui.define([
 	"sap/m/ResponsivePopover",
 	"sap/m/Text",
 	"sap/base/Log",
-	"sap/ui/core/Popup"
+	"sap/ui/core/Popup",
+	"sap/base/i18n/ResourceBundle",
+	"sap/ui/thirdparty/URI"
 ], function (
 	deepClone,
 	merge,
@@ -36,7 +38,9 @@ sap.ui.define([
 	RPopover,
 	Text,
 	Log,
-	Popup
+	Popup,
+	ResourceBundle,
+	URI
 ) {
 	"use strict";
 
@@ -104,7 +108,7 @@ sap.ui.define([
 
 				language: {
 					type: "string",
-					defaultValue: "en_US"
+					defaultValue: ""
 				}
 			},
 			aggregations: {
@@ -286,11 +290,17 @@ sap.ui.define([
 	 */
 	CardEditor.prototype.setLanguage = function (sValue, bSuppress) {
 		//unify the language-region to language_region
+		if (!sValue || typeof sValue !== "string") {
+			return this;
+		}
 		this._language = sValue.replace("-", "_");
+
 		this.setProperty("language", sValue, bSuppress);
+
 		if (!CardEditor._languages[this._language]) {
 			Log.warning("The language: " + sValue + " is currently unknown, some UI controls might show " + sValue + " instead of the language name.");
 		}
+		return this;
 	};
 
 	/**
@@ -440,7 +450,7 @@ sap.ui.define([
 		for (var n in oSettings.form.items) {
 			var oItem = oSettings.form.items[n];
 			if (oItem.editable && oItem.visible) {
-				if ((this.getMode() === "translation" && oItem.translatable) || this.getMode() !== "translation") {
+				if (this.getMode() !== "translation") {
 					if (oItem.translatable && !oItem._changed && oItem._translatedDefaultPlaceholder) {
 						//do not save a value that was not changed and comes from a translated default value
 						//mResult[oItem.manifestpath] = oItem._translatedDefaultPlaceholder;
@@ -449,6 +459,9 @@ sap.ui.define([
 					} else {
 						mResult[oItem.manifestpath] = oItem.value;
 					}
+				} else if (oItem.translatable && oItem.value) {
+					//in translation mode create an entry if there is a value
+					mResult[oItem.manifestpath] = oItem.value;
 				}
 			}
 		}
@@ -709,7 +722,7 @@ sap.ui.define([
 			oConfig._language = {
 				value: oConfig.value
 			};
-			oConfig.value = "";
+			oConfig.value = oConfig._translatedDefaultValue || "";
 
 			//even if a item is not visible or not editable by another layer for translations it should always be editable and visible
 			oConfig.editable = oConfig.visible = oConfig.translatable;
@@ -718,7 +731,7 @@ sap.ui.define([
 			//if there are changes for the current layer, read the already translated value from there
 			//now merge these changes for translation into the item configs
 			if (this._currentLayerManifestChanges) {
-				oConfig.value = this._currentLayerManifestChanges[oConfig.manifestpath] || "";
+				oConfig.value = this._currentLayerManifestChanges[oConfig.manifestpath] || oConfig.value;
 			}
 			//force a 2 column layout in the form
 			oConfig.cols = 1;
@@ -753,6 +766,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the current language specific text for a given key or "" if no translation for the key exists
+	 */
+	CardEditor.prototype._getCurrentLanguageSpecificText = function (sKey) {
+		var sLanguage = this._language;
+		if (this._oTranslationBundle) {
+			var sText = this._oTranslationBundle.getText(sKey);
+			if (sText === sKey) {
+				return "";
+			}
+			return sText;
+		}
+		if (!sLanguage) {
+			return "";
+		}
+		var vI18n = this._oEditorCard.getManifestEntry("/sap.app/i18n");
+		if (!vI18n) {
+			return "";
+		}
+		if (typeof vI18n === "string") {
+			var oI18nURI = new URI(vI18n);
+			// load the ResourceBundle relative to the manifest
+			this._oTranslationBundle = new ResourceBundle(oI18nURI, sLanguage, false, false, [sLanguage], "", true);
+			return this._getCurrentLanguageSpecificText(sKey);
+		}
+	};
+
+	/**
 	 * Starts the editor, creates the fields and preview
 	 */
 	CardEditor.prototype._startEditor = function () {
@@ -779,13 +819,21 @@ sap.ui.define([
 				if (oItem) {
 					//force a label setting, set it to the name of the item
 					oItem.label = oItem.label || n;
-					//check if the provided value from the parameter is a translated value
+					//check if the provided value from the parameter or designtime default value is a translated value
 					//restrict this to string types for now
 					if (oItem.type === "string") {
-						var sDefaultValue = this._getManifestDefaultValue(oItem.manifestpath);
-						if (this._isValueWithHandlebarsTranslation(sDefaultValue)) {
+						var sDefaultParameterValue = this._getManifestDefaultValue(oItem.manifestpath),
+							sDefaultDTValue = oItem.defaultValue;
+						//parameter translated value wins over designtime defaultValue
+						if (this._isValueWithHandlebarsTranslation(sDefaultParameterValue)) {
 							oItem.translatable = true;
-							oItem._translatedDefaultPlaceholder = sDefaultValue;
+							oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sDefaultParameterValue.substring(2, sDefaultParameterValue.length - 2));
+							oItem._translatedDefaultPlaceholder = sDefaultParameterValue;
+						} else if (sDefaultDTValue && sDefaultDTValue.startsWith("{i18n>")) {
+							oItem.translatable = true;
+							oItem._translatedDefaultPlaceholder = sDefaultDTValue;
+							oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
+
 						}
 					}
 					oItem._changed = false;

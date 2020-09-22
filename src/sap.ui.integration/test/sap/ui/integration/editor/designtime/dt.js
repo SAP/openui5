@@ -23,7 +23,6 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					},
 					"stringLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
-						"defaultValue": "{i18n>TRANSLATED_STRING_VALUE}",
 						"type": "string",
 						"label": "{i18n>TRANSLATED_STRING_LABEL}",
 						"translatable": true
@@ -46,6 +45,13 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValue/value",
 						"type": "string",
 						"label": "String with translated value",
+						"translatable": true
+					},
+					"stringWithTranslatedDTDefaultValue": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedDTDefaultValue/value",
+						"type": "string",
+						"label": "String with translated value",
+						"defaultValue": "{i18n>TRANSLATED_STRING_VALUE}",
 						"translatable": true
 					},
 					"integer": {
