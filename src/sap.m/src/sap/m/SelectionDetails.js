@@ -165,6 +165,10 @@ function(
 		this._updateButton();
 	};
 
+	SelectionDetails.prototype.onAfterRendering = function() {
+		document.getElementById(this.getAggregation("_button").getId()).setAttribute("aria-haspopup", "dialog");
+	};
+
 	SelectionDetails.prototype.exit = function() {
 		this.detachSelectionHandler();
 		this._oItemFactory = null;

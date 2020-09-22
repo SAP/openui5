@@ -7,6 +7,8 @@ sap.ui.define([
 ], function (library) {
 	"use strict";
 
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 	/**
 	 * NumericContent renderer.
 	 * @namespace
@@ -33,6 +35,7 @@ sap.ui.define([
 
 		oRm.attr("aria-label", sTooltip);
 		oRm.attr("role", "img");
+		oRm.attr("aria-roledescription", oResourceBundle.getText("NUMERIC_CONTENT_ROLE_DESCRIPTION"));
 
 		if (sState === library.LoadState.Failed || sState === library.LoadState.Loading) {
 			oRm.attr("aria-disabled", "true");

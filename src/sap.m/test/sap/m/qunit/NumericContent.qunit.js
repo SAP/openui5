@@ -10,6 +10,8 @@ sap.ui.define([
 ], function (jQuery, GenericTile, NumericContent, TileContent, TooltipBase, ResizeHandler, library) {
 	"use strict";
 
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 	// shortcut for sap.m.ValueColor
 	var ValueColor = library.ValueColor;
 
@@ -39,6 +41,12 @@ sap.ui.define([
 		this.oNumericContent.setValue("12");
 		sap.ui.getCore().applyChanges();
 		fnAssertNumericContentHasRendered(assert);
+	});
+
+	QUnit.test("Numeric Content has ARIA properties", function (assert) {
+		assert.strictEqual(this.oNumericContent.$().attr("role"), "img", "The role is set to 'img'");
+		assert.strictEqual(this.oNumericContent.$().attr("aria-label"), this.oNumericContent.getTooltip_AsString(), "The aria-label is set to numeric content's tooltip");
+		assert.strictEqual(this.oNumericContent.$().attr("aria-roledescription"),  oResourceBundle.getText("NUMERIC_CONTENT_ROLE_DESCRIPTION"), "The roledescription is set to 'Numeric Content'");
 	});
 
 	QUnit.test("The Icon's cursor is pointer if press event is attached", function (assert) {

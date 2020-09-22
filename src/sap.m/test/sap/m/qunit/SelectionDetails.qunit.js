@@ -104,6 +104,11 @@ sap.ui.define([
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getAggregation("tooltip"), "Details", "The button tooltip text is 'Details'");
 	});
 
+	QUnit.test("Button has aria-haspopup defined", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").$().attr("aria-haspopup"), "dialog", "The button aria-haspop is set to dialog");
+	});
+
 	QUnit.module("API methods", {
 		beforeEach : function() {
 			this.oResponsivePopover = new ResponsivePopover();

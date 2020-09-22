@@ -338,6 +338,9 @@ function(
 	};
 
 	FeedListItem.prototype.onAfterRendering = function() {
+		if (document.getElementById(this.getAggregation("_actionButton"))) {
+			document.getElementById(this.getAggregation("_actionButton").getId()).setAttribute("aria-haspopup", "menu");
+		}
 		if (this._checkTextIsExpandable() && !this._bTextExpanded) {
 			this._clearEmptyTagsInCollapsedText();
 		}

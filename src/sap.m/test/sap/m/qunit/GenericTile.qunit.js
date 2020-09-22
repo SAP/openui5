@@ -336,7 +336,7 @@ sap.ui.define([
 		this.fnWithRenderAsserts(assert);
 		assert.strictEqual(oTileElement.tagName, "A", "The node is a link.");
 		assert.strictEqual(sDraggableAttr && sDraggableAttr.value, "false", "The draggable attribute is set to false.");
-		assert.strictEqual(oTileElement.attributes["role"], undefined, "The role attribute for the link element is not set.");
+		assert.strictEqual(oTileElement.getAttribute("role"), "link", "The role attribute for the link element is set to link.");
 		assert.strictEqual(oTileElement.href, sLink, "The link is correctly set.");
 		assert.strictEqual(document.getElementById("generic-tile-content").parentNode, oTileElement, "The tile content is a child of the link.");
 		assert.strictEqual(document.getElementById("generic-tile-hover-overlay").parentNode, oTileElement, "The tile overlay is a child of the link.");

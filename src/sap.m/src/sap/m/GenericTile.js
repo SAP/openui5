@@ -129,6 +129,16 @@ sap.ui.define([
 				 */
 				ariaLabel: {type: "string", group: "Accessibility", defaultValue: null},
 				/**
+				 * Additional description for aria-role.
+				 * @since 1.83
+				 */
+				ariaRole: {type: "string", group: "Accessibility", defaultValue: null},
+				/**
+				 * Additional description for aria-roledescription.
+				 * @since 1.83
+				 */
+				ariaRoleDescription: {type: "string", group: "Accessibility", defaultValue: null},
+				/**
 				 * Renders the given link as root element and therefore enables the open in new tab / window functionality
 				 * @since 1.76
 				 */
