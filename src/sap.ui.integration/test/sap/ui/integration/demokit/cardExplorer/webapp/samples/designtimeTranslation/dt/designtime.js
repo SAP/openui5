@@ -15,7 +15,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"manifestpath": "/sap.card/header/title",
 						"type": "string",
 						"translatable": true,
-						"label": "Card Title",
+						"defaultValue": "{i18n>CARDTITLE}",
+						"label": "{i18n>CARDTITLELABEL}",
 						"cols": 1
 
 					},

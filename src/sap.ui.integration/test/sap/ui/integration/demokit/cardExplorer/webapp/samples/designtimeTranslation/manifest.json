@@ -26,12 +26,10 @@
 					"name": "Northwind"
 				},
 				"destLabel": {
-					"name": "Products",
-					"label": "Direct Destination Label"
+					"name": "Products"
 				},
 				"destLabelTrans": {
-					"name": "Orders",
-					"label": "{{TRANSLATED_DESTINATION_LABEL}}"
+					"name": "Orders"
 				}
 			}
 		},

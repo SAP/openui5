@@ -93,7 +93,7 @@ function updateAdminContentLayerCard() {
 		admin = getItem("cardEditorAdmin"),
 		content = getItem("cardEditorContent");
 	settings.push(admin, content);
-	target.innerHTML = createCardEditorTag("cardEditorAdminContentTranslation", settings, "all", "");
+	target.innerHTML = createCardEditorTag("cardEditorAdminContent", settings, "content", "");
 }
 function updateAdminContentTranslationLayerCard() {
 	var target = document.getElementById("admincontenttranslation");

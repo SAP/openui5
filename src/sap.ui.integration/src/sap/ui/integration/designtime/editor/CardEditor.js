@@ -55,7 +55,7 @@ sap.ui.define([
 		return z + 1;
 	}
 
-	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}|\{i18n>([^\}]+)\}/g;
+	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g;
 
 	/**
 	 * Constructor for a new <code>Card Editor</code>.
@@ -750,6 +750,7 @@ sap.ui.define([
 				this._createField(origLangField)
 			);
 			//change the label for the translation field
+			oConfig.label = oConfig._translatedLabel || "";
 
 			oConfig.required = false; //translation is never required
 			//now continue with the default...
@@ -832,8 +833,20 @@ sap.ui.define([
 						} else if (sDefaultDTValue && sDefaultDTValue.startsWith("{i18n>")) {
 							oItem.translatable = true;
 							oItem._translatedDefaultPlaceholder = sDefaultDTValue;
-							oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
-
+							//resolve value to default i18n binding otherwise the binding string will be in the field
+							oItem.value = this.getModel("i18n").getResourceBundle().getText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
+							if (this.getMode() === "translation") {
+								//resolve to _translatedDefaultValue language specific i18n binding
+								oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
+							}
+						}
+						if (this.getMode() === "translation") {
+							if (this._isValueWithHandlebarsTranslation(oItem.label)) {
+								oItem._translatedLabel = this._getCurrentLanguageSpecificText(oItem.label.substring(2, oItem.label.length - 2), true);
+							} else if (oItem.label && oItem.label.startsWith("{i18n>")) {
+								//resolve to _translatedDefaultValue language specific i18n binding
+								oItem._translatedLabel = this._getCurrentLanguageSpecificText(oItem.label.substring(6, oItem.label.length - 1), true);
+							}
 						}
 					}
 					oItem._changed = false;

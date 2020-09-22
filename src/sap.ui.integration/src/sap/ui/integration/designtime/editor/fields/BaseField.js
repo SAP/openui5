@@ -2,17 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
-	"sap/m/Button",
-	"sap/m/HBox",
-	"sap/m/MultiInput",
-	"sap/m/Token"
+	"sap/ui/core/Control"
 ], function (
-	Control,
-	Button,
-	HBox,
-	MultiInput,
-	Token
+	Control
 ) {
 	"use strict";
 	/**

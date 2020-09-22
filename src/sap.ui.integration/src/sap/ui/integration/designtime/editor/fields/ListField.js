@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/MultiComboBox",
 	"sap/ui/core/ListItem"
 ], function (
-	BaseField, Input, Text, MComboBox, ListItem
+	BaseField, Input, Text, MultiComboBox, ListItem
 ) {
 	"use strict";
 
@@ -34,7 +34,7 @@ sap.ui.define([
 				if (oConfig.values) {
 					var oItem = new ListItem(oConfig.values.item);
 					oVisualization = {
-						type: MComboBox,
+						type: MultiComboBox,
 						settings: {
 							selectedKeys: {
 								path: 'currentSettings>value'
@@ -81,6 +81,5 @@ sap.ui.define([
 		}
 		this._visualization = oVisualization;
 	};
-
 	return ListField;
 });

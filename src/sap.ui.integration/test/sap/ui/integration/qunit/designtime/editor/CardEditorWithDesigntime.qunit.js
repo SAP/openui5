@@ -562,7 +562,7 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has no label text");
+					assert.ok(oLabel.getText() === "", "Label: Has no label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));

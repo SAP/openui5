@@ -11,7 +11,39 @@
 	<script>
 		function init() {
 			sap.ui.require(["testjs/genericHost"]);
-			sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/ui/integration/designtime/editor/CardEditor"], function (Button, Dialog, CardEditor) {
+
+			sap.ui.require(["sap/base/util/LoaderExtensions", "sap/m/Button", "sap/m/Dialog", "sap/m/Select", "sap/ui/core/ListItem", "sap/ui/model/json/JSONModel", "sap/ui/integration/designtime/editor/CardEditor"], function (LoaderExtension, Button, Dialog, Select, ListItem, JSONModel, CardEditor) {
+				var aLanguages = [],
+					oLanguageModel = new JSONModel();
+
+				LoaderExtension.loadResource("sap/ui/integration/designtime/editor/languages.json", {
+					dataType: "json",
+					failOnError: false,
+					async: true
+				}).then(function (o) {
+					for (var n in o) {
+						aLanguages.push({
+							key: n,
+							text: o[n]
+						});
+					}
+					oLanguageModel.setData(aLanguages);
+				});
+
+				var oSelect = new Select({
+					selectedKey: "fr",
+					items: {
+						path: "languages>/",
+						template: new ListItem({
+							key: "{languages>key}",
+							text: "{languages>text}"
+
+						})
+					}
+				});
+				oSelect.setModel(oLanguageModel, "languages");
+				oSelect.placeAt("buttons");
+
 				var oButton = new Button({
 					text: "Show Card Editor for Translation", press: function () {
 						var oDialog = new Dialog({
@@ -36,14 +68,13 @@
 						var oEditor = new CardEditor({
 							card: document.getElementById("card")._getControl(),
 							mode: "translation",
-							language: "fr"
+							language: oSelect.getSelectedKey()
 						});
 						oDialog.addContent(oEditor);
 						oDialog.open();
 					}
 				});
 				oButton.placeAt("buttons");
-
 			});
 		}
 
@@ -55,6 +86,10 @@
 		<ui-integration-card id="card" manifest="./manifest.json">
 		</ui-integration-card>
 
+	</div>
+
+	<div style="margin: 1rem; font-size: 0.875rem">Choose a language (Français and Deutsch have translated default value
+		for the CARDTITLE)
 	</div>
 	<div id="buttons" style="margin:1rem">
 
