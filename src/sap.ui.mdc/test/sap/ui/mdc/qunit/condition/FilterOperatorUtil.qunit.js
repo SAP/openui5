@@ -133,7 +133,7 @@ sap.ui.define([
 	QUnit.test("getOperatorsForType", function(assert) {
 
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.String).length, 20, "Default operators for String");
-		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 34, "Default operators for date");
+		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 42, "Default operators for date");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.DateTime).length, 12, "Default operators for datetime");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Time).length, 12, "Default operators for time");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Numeric).length, 12, "Default operators for numeric");
