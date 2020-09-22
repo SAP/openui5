@@ -385,6 +385,7 @@ sap.ui.define([
 				+ (oFixture.requestBody || "")
 				+ "\r\n"
 				+ "--batch_id-0123456789012-345--\r\n"
+				+ "epilogue"
 			).then(function (oXHR) {
 				assert.strictEqual(oXHR.status, 200, "status");
 				assert.strictEqual(oXHR.responseText,
@@ -521,6 +522,7 @@ sap.ui.define([
 		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
 			"--batch_id-1538663822135-19",
 			"Content-Type: multipart/mixed;boundary=changeset_id-1538663822135-20",
+			"",
 			"--changeset_id-1538663822135-20",
 			"Content-Type:application/http",
 			"Content-Transfer-Encoding:binary",

@@ -968,7 +968,7 @@ sap.ui.define([
 			|| this.aLockedGroupLocks.some(function (oGroupLock) {
 				return (sGroupId === undefined || oGroupLock.getGroupId() === sGroupId)
 					// aLockedGroupLocks may contain modifying group locks that have been unlocked
-					// already; cleanup of aLockedGroupLocks is done only in #submitBacth. An
+					// already; cleanup of aLockedGroupLocks is done only in #submitBatch. An
 					// unlocked group lock is not relevant because either the corresponding change
 					// has been reset or it has been added to the batch queue.
 					&& oGroupLock.isModifying() && oGroupLock.isLocked();
@@ -1158,7 +1158,7 @@ sap.ui.define([
 
 		this.batchRequestSent(sGroupId, bHasChanges);
 		aRequests = this.mergeGetRequests(aRequests);
-		return this.sendBatch(_Requestor.cleanBatch(aRequests))
+		return this.sendBatch(_Requestor.cleanBatch(aRequests), sGroupId)
 			.then(function (aResponses) {
 				visit(aRequests, aResponses);
 			}).catch(function (oError) {
@@ -1544,12 +1544,17 @@ sap.ui.define([
 	 * Sends a batch request.
 	 *
 	 * @param {object[]} aRequests The requests
+	 * @param {string} sGroupId The group ID
 	 * @returns {Promise} A promise on the responses
 	 *
 	 * @private
 	 */
-	Requestor.prototype.sendBatch = function (aRequests) {
-		var oBatchRequest = _Batch.serializeBatchRequest(aRequests);
+	Requestor.prototype.sendBatch = function (aRequests, sGroupId) {
+		var oBatchRequest = _Batch.serializeBatchRequest(aRequests,
+				this.getGroupSubmitMode(sGroupId) === "Auto"
+					? "Group ID: " + sGroupId
+					: "Group ID (API): " + sGroupId
+			);
 
 		return this.sendRequest("POST", "$batch" + this.sQueryParams,
 			Object.assign(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
