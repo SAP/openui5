@@ -242,3 +242,54 @@
 .sapUiIntegrationFieldSettings .resetbutton {
 	margin: 0 0.3rem;
 }
+
+/* Icon Select */
+
+
+.sapUiIntegrationIconSelectList li[aria-posinset] IMG.sapMSelectListItemIcon {
+	width: 1.1rem;
+	height: 1.1rem;
+	border:none;
+	vertical-align: middle;
+}
+
+.sapUiIntegrationIconSelectList li[aria-posinset].sapMSelectListItem {
+	display:inline-block;
+	overflow: hidden;
+	font-size: 1.3rem;
+	text-overflow: unset;
+	width: 3rem;
+	padding-left: 0.8rem;
+}
+.sapUiIntegrationIconSelectList li[aria-posinset='2'].sapMSelectListItem {
+	border-bottom: 1px solid #f0f0f0;
+	margin-bottom: 0.5rem;
+}
+
+.sapUiIntegrationIconSelectList li[aria-posinset='2'].sapMSelectListItem,
+.sapUiIntegrationIconSelectList li[aria-posinset='1'].sapMSelectListItem {
+	display:inherit;
+	overflow: inherit;
+	font-size:0.875rem;
+	text-overflow: inherit;
+	width: inherit;
+	padding-left: inherit;
+}
+.sapUiIntegrationIconSelectList li[aria-posinset].sapMSelectListItem .sapUiIcon::before {
+	margin-right: 2rem;
+	padding-top: 5px;
+	display: inline-block;
+}
+
+.sapUiIntegrationIconSelectList li[aria-posinset].sapMSelectListItemBaseSelected {
+	background: #e5f0fa;
+	border: 0.0625rem solid #0854a0;
+	border-radius: 3px;
+}
+
+.sapUiIntegrationIconSelectList li[aria-posinset='2'] IMG.sapMSelectListItemIcon {
+	width: 1rem;
+	height: 1rem;
+	border:none;
+	vertical-align: middle;
+}

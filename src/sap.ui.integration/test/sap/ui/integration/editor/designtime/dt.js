@@ -1,5 +1,5 @@
-sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch"
-], function (Designtime, Slider, Switch) {
+sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", "sap/ui/integration/designtime/editor/fields/viz/IconSelect"
+], function (Designtime, Slider, Switch, IconSelect) {
 	"use strict";
 
 	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
@@ -225,6 +225,14 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch"
 						"label": "String Array With No Values",
 						"defaultValue": ["key1", "key2"],
 						"type": "string[]"
+					},
+					"icon": {
+						"manifestpath": "/sap.card/header/icon/src",
+						"defaultValue": "sap-icon://account",
+						"type": "string",
+						"visualization": {
+							"type": IconSelect
+						}
 					}
 				}
 			},
