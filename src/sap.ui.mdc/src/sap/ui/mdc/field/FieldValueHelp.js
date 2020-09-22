@@ -2297,9 +2297,9 @@ sap.ui.define([
 
 	};
 
-	FieldValueHelp.prototype.getRoleDescription = function() {
+	FieldValueHelp.prototype.getRoleDescription = function(iMaxConditions) {
 
-		if (this.getMaxConditions() === 1) {
+		if (!iMaxConditions || iMaxConditions === 1) {
 			return null;
 		} else {
 			if (!this._oResourceBundleM) {
