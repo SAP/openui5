@@ -1,5 +1,5 @@
-sap.ui.define(["sap/ui/integration/Designtime"
-], function (Designtime) {
+sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch"
+], function (Designtime, Slider, Switch) {
 	"use strict";
 
 	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
@@ -57,7 +57,19 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"defaultValue": 1,
-						"type": "integer"
+						"type": "integer",
+						"visualization": {
+							"type": Slider,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"min": 0,
+								"max": 10,
+								"width": "100%",
+								"showAdvancedTooltip": true,
+								"showHandleTooltip": false,
+								"inputsAsTooltips": true
+							}
+						}
 					},
 					"integerLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/integerLabel/value",
@@ -91,7 +103,15 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"boolean": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 						"defaultValue": false,
-						"type": "boolean"
+						"type": "boolean",
+						"visualization": {
+							"type": Switch,
+							"settings": {
+								"state": "{currentSettings>value}",
+								"customTextOn": "Yes",
+								"customTextOff": "No"
+							}
+						}
 					},
 					"booleanLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",
