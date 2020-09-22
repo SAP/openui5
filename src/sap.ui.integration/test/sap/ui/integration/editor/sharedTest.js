@@ -1,7 +1,8 @@
 /* eslint-disable */
 
 var baseUrl = document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/")),
-	localStorageKey = document.querySelector("script[localstoragekey]").getAttribute("localstoragekey");
+	localStorageKey = document.querySelector("script[localstoragekey]").getAttribute("localstoragekey"),
+	manifest = "manifest.json";
 
 function switchTheme(oSelect) {
 	sap.ui.getCore().applyTheme(oSelect.options[oSelect.selectedIndex].value);
@@ -12,6 +13,10 @@ function init() {
 	loadAllChanges();
 	//load common implementation for host testing
 	sap.ui.require(["testjs/HostImpl"]);
+}
+
+function setManifest(manifest) {
+	this.manifest = manifest;
 }
 
 function getItem(id) {
@@ -43,7 +48,7 @@ function deleteCurrentValues(id) {
 }
 function createCardEditorTag(id, changes, mode, language) {
 	var card = {
-		"manifest": "manifest.json",
+		"manifest": manifest,
 		"host": "host",
 		"manifestChanges": changes,
 		"baseUrl": baseUrl
