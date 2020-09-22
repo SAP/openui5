@@ -85,7 +85,8 @@ sap.ui.define([
 	 *
 	 * @returns {string} Path
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	InParameter.prototype.getFieldPath = function() {
@@ -133,7 +134,8 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} <code>true</code> if conditions are used
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	InParameter.prototype.getUseConditions = function() {

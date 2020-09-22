@@ -1105,7 +1105,8 @@ sap.ui.define([
 	 * @returns {string} Name of the icon
 	 *
 	 * @since 1.60.0
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getIcon = function() {

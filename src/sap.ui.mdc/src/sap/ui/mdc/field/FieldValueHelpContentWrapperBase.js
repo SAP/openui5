@@ -140,7 +140,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bSuggestion Flag if field help is opened as suggestion or dialog
 	 * @returns {sap.ui.mdc.field.FieldValueHelpContentWrapperBase} Reference to <code>this</code> in order to allow method chaining
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.initialize = function(bSuggestion) {
@@ -163,7 +164,8 @@ sap.ui.define([
 	 * Returns the content shown in the value help dialog.
 	 *
 	 * @returns {sap.ui.core.Control} Content to be shown in the value help
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getDialogContent = function() {
@@ -176,7 +178,8 @@ sap.ui.define([
 	 * Returns the content shown in the value help suggestion popup.
 	 *
 	 * @returns {sap.ui.core.Control} Content to be shown in the value help
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getSuggestionContent = function() {
@@ -191,7 +194,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bSuggestion Flag if field help is opened as suggestion or dialog
 	 * @returns {sap.ui.mdc.field.FieldValueHelpContentWrapperBase} Reference to <code>this</code> in order to allow method chaining
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.fieldHelpOpen = function(bSuggestion) {
@@ -205,7 +209,8 @@ sap.ui.define([
 	 * This function is called if the field help is closed.
 	 *
 	 * @returns {sap.ui.mdc.field.FieldValueHelpContentWrapperBase} Reference to <code>this</code> in order to allow method chaining
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.fieldHelpClose = function() {
@@ -219,7 +224,8 @@ sap.ui.define([
 	 * Returns <code>true</code> if filtering of the content is supported.
 	 *
 	 * @returns {boolean} true if filtering on the content is supported
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getFilterEnabled = function() {
@@ -232,7 +238,8 @@ sap.ui.define([
 	 * Triggers navigation of the content.
 	 *
 	 * @param {int} iStep Number of steps for navigation (for example, 1 means next item, -1 means previous item)
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.navigate = function(iStep) {
@@ -250,7 +257,8 @@ sap.ui.define([
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, bNoRequest) {
@@ -269,7 +277,8 @@ sap.ui.define([
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
 	 * @returns {any|sap.ui.mdc.field.FieldHelpItem|Promise} Key for description or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getKeyForText = function(sText, oInParameters, bNoRequest) {
@@ -282,7 +291,8 @@ sap.ui.define([
 	 * Returns the <code>ListBinding</code> used for the field help.
 	 *
 	 * @returns {sap.ui.model.ListBinding} ListBinding
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getListBinding = function() {
@@ -299,7 +309,8 @@ sap.ui.define([
 	 * table or filtering. So in this case no <code>dataUpdate</code> event for the field is needed.
 	 *
 	 * @returns {boolean} Indicator if asynchronous loading is supported
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @since 1.67.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -320,7 +331,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Filter[]} aFilters Filter objects
 	 * @param {string} sSearch Search string (for $search request)
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @since 1.73.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -332,7 +344,8 @@ sap.ui.define([
 	 * Checks if the <code>ListBinding</code> of the wrapper has been suspended.
 	 *
 	 * @returns {boolean} true if the <code>ListBinding</code> of the wrapper has been suspended
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @since 1.73.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

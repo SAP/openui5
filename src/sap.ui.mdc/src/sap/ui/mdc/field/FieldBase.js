@@ -1487,7 +1487,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Label} oLabel Label control
 	 * @returns {sap.ui.mdc.field.FieldBase} Reference to <code>this</code> to allow method chaining
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 * @experimental
 	 * @since 1.62.0 Disclaimer: this function is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

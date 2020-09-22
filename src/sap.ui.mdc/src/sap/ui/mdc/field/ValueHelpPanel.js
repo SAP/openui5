@@ -224,7 +224,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.mdc.FilterBar} oFilterbar <code>FilterBar</code> control
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		setFilterbar: function(oFilterbar) {
@@ -274,7 +275,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Control} oTable Content control
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		setTable: function(oTable) {
@@ -308,7 +310,8 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Control} Content control
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		getTable: function() {
@@ -324,7 +327,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.mdc.field.DefineConditionPanel} oDefineConditionPanel <code>DefineConditionPanel</code> control
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		setDefineConditions: function(oDefineConditionPanel) {
