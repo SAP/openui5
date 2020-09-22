@@ -314,7 +314,7 @@ sap.ui.define([
 			}
 			if (oFixture.sTarget) {
 				this.mock(oBinding).expects("checkUpdateInternal")
-					.withExactArgs(false, "context");
+					.withExactArgs(/*bInitial*/true, "context");
 			}
 			this.mock(oBinding).expects("deregisterChange").withExactArgs();
 
@@ -944,17 +944,19 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("setContext on binding with absolute path", function (assert) {
-		var oContext = Context.create(this.oModel, null, "/EntitySet('bar')"),
-			oBinding = this.oModel.bindProperty("/EntitySet('foo')/property");
+		var oBinding = this.oModel.bindProperty("/EntitySet('foo')/property"),
+			oContext = {};
 
-		this.mock(oContext).expects("fetchValue").never(); // due to absolute path
+		oBinding.sResumeChangeReason = ChangeReason.Change; // simulate initially suspended binding
+		this.mock(oBinding).expects("deregisterChange").never();
+		this.mock(oBinding).expects("fetchCache").never();
+		this.mock(oBinding).expects("checkUpdateInternal").never();
 
+		// code under test
 		oBinding.setContext(oContext);
 
 		assert.strictEqual(oBinding.getContext(), oContext, "stored nevertheless");
-
-		this.mock(oBinding).expects("deregisterChange").never();
-		oBinding.setContext(null);
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1873,7 +1875,8 @@ sap.ui.define([
 		oBindingMock.expects("isRootBindingSuspended").twice().withExactArgs().returns(false);
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").thrice()
 			.withExactArgs(oContext);
-		oBindingMock.expects("checkUpdateInternal").withExactArgs(false, ChangeReason.Context)
+		oBindingMock.expects("checkUpdateInternal")
+			.withExactArgs(/*bInitial*/true, ChangeReason.Context)
 			.resolves();
 		oBinding.setContext(oContext);
 

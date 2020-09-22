@@ -2167,6 +2167,7 @@ sap.ui.define([
 			oReadPromise = Promise.reject(oError),
 			that = this;
 
+		oBinding.iCreatedContexts = 42;
 		this.mock(oBinding).expects("isRootBindingSuspended").exactly(iNoOfCalls).returns(false);
 		this.mock(oBinding).expects("refreshSuspended").never();
 		oReadPromise.catch(function () {
@@ -2188,14 +2189,17 @@ sap.ui.define([
 					.callsFake(function () {
 						if (bKeepCacheOnError) {
 							assert.strictEqual(oBinding.oCache, oCache);
+							assert.strictEqual(oBinding.iCreatedContexts, 42);
 							assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 						} else {
+							assert.strictEqual(oBinding.iCreatedContexts, 0);
 							assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
 						}
 					});
 			});
 		});
 		this.mock(oBinding).expects("reset").exactly(iNoOfCalls).callsFake(function () {
+			oBinding.iCreatedContexts = 0;
 			if (!bAsync) {
 				// simulate #getContexts call sync to "Refresh" event
 				oBinding.resolveRefreshPromise(oReadPromise);
@@ -2209,8 +2213,7 @@ sap.ui.define([
 
 		aPromises.push(
 			// code under test
-			oBinding.refreshInternal("", "myGroup", false, bKeepCacheOnError)
-			.then(function () {
+			oBinding.refreshInternal("", "myGroup", false, bKeepCacheOnError).then(function () {
 				assert.ok(false);
 			}, function (oReturnedError) {
 				assert.strictEqual(oReturnedError, oError);
@@ -2218,8 +2221,7 @@ sap.ui.define([
 		if (bAsync) { //TODO in the sync case, the wrong cache would be restored :-(
 			aPromises.push(
 				// code under test
-				oBinding.refreshInternal("", "myGroup", false, bKeepCacheOnError)
-				.then(function () {
+				oBinding.refreshInternal("", "myGroup", false, bKeepCacheOnError).then(function () {
 					assert.ok(false);
 				}, function (oReturnedError) {
 					assert.strictEqual(oReturnedError, oError);

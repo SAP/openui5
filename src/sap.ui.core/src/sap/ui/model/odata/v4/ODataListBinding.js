@@ -2153,7 +2153,8 @@ sap.ui.define([
 
 		this.createReadGroupLock(sGroupId, this.isRoot());
 		return this.oCachePromise.then(function (oCache) {
-			var aDependentBindings,
+			var iCreatedContexts = that.iCreatedContexts,
+				aDependentBindings,
 				oPromise = that.oRefreshPromise;
 
 			if (oCache && !oPromise) { // do not refresh twice
@@ -2166,6 +2167,7 @@ sap.ui.define([
 							if (!that.bRelative || oCache.$resourcePath === sResourcePath) {
 								that.oCache = oCache;
 								that.oCachePromise = SyncPromise.resolve(oCache);
+								that.iCreatedContexts = iCreatedContexts;
 								oCache.setActive(true);
 								that._fireChange({reason : ChangeReason.Change});
 							}
@@ -2630,7 +2632,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
 	 * @throws {Error}
-	 *   For relative bindings containing transient entities
+	 *   If the binding's root binding is suspended, or for relative bindings containing transient
+	 *   entities
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#setContext

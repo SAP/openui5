@@ -581,6 +581,18 @@ sap.ui.define([
 	]);
 
 	//*********************************************************************************************
+	checkFixtures("odata.collection", [{
+		expression: "{= odata.collection([0, 1, 2]) }",
+		result: "0,1,2"
+	}, {
+		expression: "{= odata.collection([0, 1, undefined, 3, undefined, 5, undefined]) }",
+		result: "0,1,3,5"
+	}, {
+		expression: "{= odata.collection([0, '', NaN, undefined, ' ', [], false]) }",
+		result: "0,,NaN, ,,false"
+	}]);
+
+	//*********************************************************************************************
 	QUnit.test("odata.compare", function (assert) {
 		this.mock(sap.ui).expects("requireSync")
 			.withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(ODataUtils);

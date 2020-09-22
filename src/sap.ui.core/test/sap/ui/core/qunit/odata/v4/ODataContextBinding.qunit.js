@@ -350,6 +350,7 @@ sap.ui.define([
 
 		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 		oBinding = this.bindContext("relative");
+		this.mock(oBinding).expects("checkSuspended").withExactArgs().twice();
 		oModelMock.expects("resolve").twice()
 			.withExactArgs("relative", sinon.match.same(oContext))
 			.returns("/contextPath/relative");
@@ -426,6 +427,7 @@ sap.ui.define([
 				return undefined;
 			}
 
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			if (oFixture.sTarget === "base") {
 				this.mock(oBinding).expects("fetchCache")
 					.withExactArgs(sinon.match.same(oTargetContext))
@@ -468,6 +470,7 @@ sap.ui.define([
 			oCache = {},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 
+		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext))
 			.callsFake(function () {
 				this.oCache = oContext ? oCache : null;
@@ -483,6 +486,7 @@ sap.ui.define([
 		oCache = null;
 		oContext = undefined;
 
+		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("fetchCache").withExactArgs(undefined).callsFake(function () {
 			this.oCache = null;
 			this.oCachePromise = SyncPromise.resolve(null);
@@ -496,15 +500,36 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setContext on resolved binding", function (assert) {
+	QUnit.test("setContext on absolute binding", function (assert) {
 		var oBinding = this.bindContext("/EntitySet('foo')/child");
 
+		this.mock(oBinding).expects("checkSuspended").never();
 		this.mock(oBinding).expects("_fireChange").never();
 
 		oBinding.setContext(Context.create(this.oModel, null, "/EntitySet('bar')"));
 
 		assert.strictEqual(oBinding.getContext().getPath(), "/EntitySet('bar')",
 			"stored nevertheless");
+		});
+
+	//*********************************************************************************************
+	QUnit.test("setContext: checkSuspended fails", function (assert) {
+		var oContext = this.oModel.createBindingContext("/TEAMS"),
+			oBinding = this.bindContext("TEAM_2_MANAGER", oContext),
+			oError = new Error("This call intentionally failed");
+
+		this.mock(oBinding).expects("checkSuspended").throws(oError);
+		this.mock(oBinding.oElementContext).expects("destroy").never();
+		this.mock(oBinding).expects("fetchCache").never();
+		this.mock(Binding.prototype).expects("setContext").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.setContext(null);
+		}, oError);
+
+		assert.notStrictEqual(oBinding.oElementContext, null);
+		assert.strictEqual(oBinding.oContext, oContext);
 	});
 
 	//*********************************************************************************************
@@ -3511,7 +3536,9 @@ sap.ui.define([
 
 		this.mock(oBinding.oParameterContext).expects("destroy").withExactArgs();
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		oBinding.setContext(null);
+
 		// code under test
 		assert.strictEqual(oBinding.oParameterContext, null);
 	});
