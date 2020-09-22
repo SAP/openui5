@@ -80,6 +80,7 @@ sap.ui.define([
 			mParameters = mParameters || {};
 			BaseEditor.prototype.constructor.apply(this, arguments);
 
+			this.setPreventInitialization(true);
 			if (!mParameters["config"]) {
 				this.addConfig(oDefaultCardConfig, true);
 			}
@@ -139,8 +140,6 @@ sap.ui.define([
 	};
 
 	CardEditor.prototype.setJson = function () {
-		this.setPreventInitialization(true);
-
 		BaseEditor.prototype.setJson.apply(this, arguments);
 
 		var oJson = this.getJson();
@@ -155,6 +154,7 @@ sap.ui.define([
 		}
 
 		if (!this._bDesigntimeInit) {
+			this.setPreventInitialization(true);
 			this._bDesigntimeInit = true;
 			this._bCardId = sCardId;
 			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
