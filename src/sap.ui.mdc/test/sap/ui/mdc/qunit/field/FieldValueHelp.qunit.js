@@ -1213,8 +1213,15 @@ sap.ui.define([
 		oWrapper.fireNavigate();
 		assert.equal(iNavigate, 0, "Navigate event not fired");
 		assert.ok(oFieldHelp.isFocusInHelp.returnValues[0], "isFocusInHelp returns true");
-
 		assert.ok(oPopover.isOpen(), "Field help opened");
+
+		sinon.spy(oField, "focus");
+		oWrapper.fireNavigate({leave: true});
+		oClock.tick(iPopoverDuration); // fake closing time
+		assert.equal(iNavigate, 0, "Navigate event not fired");
+		assert.ok(oPopover.isOpen(), "Field help opened");
+		assert.ok(oField.focus.called, "focus set on Field");
+
 		oFieldHelp.close();
 		oClock.tick(iPopoverDuration); // fake closing time
 		assert.ok(oWrapper.fieldHelpClose.called, "fieldHelpClose of Wrapper called");
