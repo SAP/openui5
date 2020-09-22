@@ -909,8 +909,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 				return oDragDropInfo.getMetadata().isInstanceOf("sap.ui.core.dnd.IDragInfo") && oDragDropInfo.getSourceAggregation() === "rows";
 			});
 
+			var iLastFixedColumnIndex = this.getLastFixedColumnIndex(oTable);
+
 			for (row = iStartRow, count = iEndRow; row < count; row++) {
-				this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bRenderDummyColumn, mTooltipTexts, bSelectOnCellsAllowed, bRowsDraggable);
+				this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, iLastFixedColumnIndex, bRenderDummyColumn, mTooltipTexts, bSelectOnCellsAllowed, bRowsDraggable);
 			}
 		}
 		rm.close("tbody");
@@ -997,14 +999,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		//
 		// Render header cells
 		//
-		var aColumns,
+		var aColumns = this.getColumnsToRender(oTable, iStartColumn, iEndColumn),
 			nSpan = 0,
 			iLastVisibleCol = -1;
-
-		// get columns to render
-		aColumns = oTable.getColumns().slice(iStartColumn, iEndColumn).filter(function(oColumn) {
-			return oColumn && oColumn.shouldRender();
-		});
 
 		// collect header spans and find the last visible column header
 		function collectHeaderSpans(oColumn, index, aCols) {
@@ -1054,7 +1051,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.close("tr");
 	};
 
-	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed, bDraggable) {
+	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, iLastFixedColumnIndex, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed, bDraggable) {
 		if (!oRow) {
 			return;
 		}
@@ -1101,7 +1098,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		var aCells = oRow.getCells();
 
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {
-			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns, bSelected);
+			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns, iLastFixedColumnIndex, bSelected);
 		}
 		if (!bFixedTable && bHasOnlyFixedColumns && aCells.length > 0) {
 			rm.openStart("td").class("sapUiTableCellDummy");
@@ -1112,10 +1109,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.close("tr");
 	};
 
-	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns, bSelected) {
+	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns, iLastFixedColumnIndex, bSelected) {
 		var oColumn = Column.ofCell(oCell);
 		var iColIndex = oColumn.getIndex();
-		var oLastFixedColumn = oTable.getColumns()[ColumnUtils.getFixedColumnCount(oTable, true) - 1];
 
 		if (oColumn.shouldRender() && iStartColumn <= iColIndex && iEndColumn > iColIndex) {
 			var sId = oRow.getId() + "-col" + iCellIndex;
@@ -1126,7 +1122,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			var nColumns = aVisibleColumns.length;
 			var bIsFirstColumn = nColumns > 0 && aVisibleColumns[0] === oColumn;
 			var bIsLastColumn = nColumns > 0 && aVisibleColumns[nColumns - 1] === oColumn;
-			var bIsLastFixedColumn = bFixedTable & oLastFixedColumn === oColumn;
+			var bIsLastFixedColumn = bFixedTable && iLastFixedColumnIndex === iColIndex;
 
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "DATACELL", {
 				index: iColIndex,
@@ -1306,6 +1302,35 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		}
 		rm.attr("tabindex", sTabIndex == null ? "0" : sTabIndex);
 		rm.openEnd().close("div");
+	};
+
+	/**
+	* Returns the columns with indices in the range between iStartIndex and iEndIndex that should be rendered.
+	 * @private
+	 */
+	TableRenderer.getColumnsToRender = function(oTable, iStartIndex, iEndIndex) {
+		return oTable.getColumns().slice(iStartIndex, iEndIndex).filter(function(oColumn) {
+			return oColumn && oColumn.shouldRender();
+		});
+	};
+
+	/**
+	 * Returns the index of the last fixed column
+	 * @private
+	 */
+	TableRenderer.getLastFixedColumnIndex = function(oTable) {
+		var iFixedColumnCount = oTable.getComputedFixedColumnCount();
+		var aCols = oTable.getColumns();
+		var oColumn, iLastFixedColumnIndex;
+
+		for (var i = iFixedColumnCount - 1; i >= 0; i--) {
+			oColumn = aCols[i];
+			if (oColumn.shouldRender()) {
+				iLastFixedColumnIndex = i;
+				break;
+			}
+		}
+		return iLastFixedColumnIndex;
 	};
 
 	return TableRenderer;

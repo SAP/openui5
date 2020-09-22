@@ -182,13 +182,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Fixed column count with multiheaders", function(assert) {
-		assert.strictEqual(oTable.getFixedColumnCount(), 3, "Multi headers influence fixed column count");
+		assert.strictEqual(oTable.getComputedFixedColumnCount(), 3, "Multi headers influence fixed column count");
 	});
 
 	QUnit.test("Fixed column count with multiheaders and hidden columns", function(assert) {
 		oTable.getColumns()[1].setVisible(false);
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oTable.getFixedColumnCount(), 3, "Hidden columns do not influence fixed column count");
+		assert.strictEqual(oTable.getComputedFixedColumnCount(), 3, "Hidden columns do not influence fixed column count");
 	});
 
 	QUnit.test("Unfreeze menu with multiheaders", function(assert) {

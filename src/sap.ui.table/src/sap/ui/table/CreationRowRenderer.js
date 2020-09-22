@@ -179,7 +179,7 @@ sap.ui.define([
 		oRm.openEnd();
 
 		var aCells = oCreationRow.getCells();
-		var aVisibleColumns = oTable._getVisibleColumns();
+		var aVisibleColumns = TableRenderer.getColumnsToRender(oTable, iStartColumnIndex, iEndColumnIndex);
 
 		for (iColumnIndex = iStartColumnIndex; iColumnIndex < iEndColumnIndex; iColumnIndex++) {
 			oColumn = aColumns[iColumnIndex];
@@ -193,8 +193,8 @@ sap.ui.define([
 				var nColumns = aVisibleColumns.length;
 				var bIsFirstColumn = nColumns > 0 && aVisibleColumns[0] === oColumn;
 				var bIsLastColumn = nColumns > 0 && aVisibleColumns[nColumns - 1] === oColumn;
-				var oLastFixedColumn = aColumns[oTable.getFixedColumnCount() - 1];
-				var bIsLastFixedColumn = bFixedTable & oLastFixedColumn === oColumn;
+				var iLastFixedColumnIndex = TableRenderer.getLastFixedColumnIndex(oTable);
+				var bIsLastFixedColumn = bFixedTable & iLastFixedColumnIndex === iColumnIndex;
 				var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
 
 				oRm.style("text-align", sHAlign);

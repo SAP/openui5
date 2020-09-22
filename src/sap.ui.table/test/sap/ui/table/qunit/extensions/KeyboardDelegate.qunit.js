@@ -3353,7 +3353,7 @@ sap.ui.define([
 
 	QUnit.test("Column Spans", function(assert) {
 		oTable.getColumns()[0].setHeaderSpan([3]);
-		oTable.getColumns()[1].setHeaderSpan([8]);
+		oTable.getColumns()[3].setHeaderSpan([8]);
 		oTable.getColumns()[11].setHeaderSpan([2]);
 		oTable.getColumns()[25].setHeaderSpan([2]);
 		sap.ui.getCore().applyChanges();
@@ -3363,29 +3363,29 @@ sap.ui.define([
 		// First cell (3-span column)
 		var oElem = checkFocus(getColumnHeader(0, true), assert);
 
-		// *PAGE_DOWN* -> Second cell (8-span column)
+		// *PAGE_DOWN* -> 4th cell (8-span column)
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
-		oElem = checkFocus(getColumnHeader(1), assert);
+		oElem = checkFocus(getColumnHeader(3), assert);
 
-		// *PAGE_DOWN* -> 3rd cell
+		// *PAGE_DOWN* -> 12th cell
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
-		oElem = checkFocus(getColumnHeader(9), assert);
+		oElem = checkFocus(getColumnHeader(11), assert);
 
 		// *PAGE_DOWN* -> Scroll right to the last cell
-		for (i = 9; i < oTable.columnCount - 2; i += 5) {
+		for (i = 11; i < oTable.columnCount - 2; i += 5) {
 			qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
 			oElem = checkFocus(getColumnHeader(Math.min(i + 5, oTable.columnCount - 2), 0), assert);
 		}
 
-		// *PAGE_UP* -> Scroll left to the 3rd cell
-		for (i = oTable.columnCount - 2; i > 10; i -= 5) {
+		// *PAGE_UP* -> Scroll left to the 15th cell
+		for (i = oTable.columnCount - 2; i > 15; i -= 5) {
 			qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
 			oElem = checkFocus(getColumnHeader(i - 5), assert);
 		}
 
-		// *PAGE_UP* -> Second cell (8-span column)
+		// *PAGE_UP* -> 12th cell (8-span column)
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
-		oElem = checkFocus(getColumnHeader(1), assert);
+		oElem = checkFocus(getColumnHeader(3), assert);
 
 		// *PAGE_UP* -> First cell (3-span column)
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
