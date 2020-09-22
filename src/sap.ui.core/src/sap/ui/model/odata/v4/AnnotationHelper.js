@@ -62,6 +62,9 @@ sap.ui.define([
 			 *         binding to encode the parameter at runtime.
 			 *       <li> Apply functions may be nested arbitrarily.
 			 *     </ul>
+			 *   <li> dynamic "14.5.5 Expression edm:Collection": This is turned into an expression
+			 *     binding to be evaluated at runtime. Elements can be conditionally added to the
+			 *     collection when using dynamic "14.5.6 Expression edm:If" as a direct child.
 			 *   <li> dynamic "14.5.6 Expression edm:If": This is turned into an expression
 			 *     binding to be evaluated at runtime. The expression is a conditional expression
 			 *     like <code>"{=condition ? expression1 : expression2}"</code>.
@@ -671,6 +674,9 @@ sap.ui.define([
 			 *         binding to encode the parameter at runtime.
 			 *       <li> Apply functions may be nested arbitrarily.
 			 *     </ul>
+			 *   <li> dynamic "14.5.5 Expression edm:Collection": This is turned into an expression
+			 *     binding to be evaluated at runtime. Elements can be conditionally added to the
+			 *     collection when using dynamic "14.5.6 Expression edm:If" as a direct child.
 			 *   <li> dynamic "14.5.6 Expression edm:If": This is turned into an expression
 			 *     binding to be evaluated at runtime. The expression is a conditional expression
 			 *     like <code>"{=condition ? expression1 : expression2}"</code>.

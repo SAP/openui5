@@ -486,6 +486,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *     <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *       (unless starting with "sap-valid-")
 	 *     <li> The $count, $expand, $filter, $levels, $orderby, $search and $select
 	 *       "5.1 System Query Options"; OData V4 only allows $count, $filter, $levels, $orderby and
 	 *       $search inside resource paths that identify a collection. In our case here, this means
@@ -597,6 +598,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *     <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *       (unless starting with "sap-valid-")
 	 *     <li> The $apply, $count, $expand, $filter, $levels, $orderby, $search, and $select
 	 *       "5.1 System Query Options"
 	 *   </ul>
@@ -707,7 +709,7 @@ sap.ui.define([
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
 	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
-	 *   "sap-". All other query options lead to an error.
+	 *   "sap-" (unless starting with "sap-valid-"). All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: The binding only creates its own data service request if it is absolute or if it is
 	 *   relative to a context created via {@link #createBindingContext}. The binding parameters are
@@ -771,7 +773,8 @@ sap.ui.define([
 	 *   <li> System query options (key starts with "$"), unless
 	 *     <code>bSystemQueryOptionsAllowed</code> is set
 	 *   <li> Parameter aliases (key starts with "@")
-	 *   <li> Custom query options starting with "sap-", unless <code>bSapAllowed</code> is set
+	 *   <li> Custom query options starting with "sap-" (unless starting with "sap-valid-"), unless
+	 *     <code>bSapAllowed</code> is set
 	 * </ul>
 	 *
 	 * @param {object} [mParameters={}]
@@ -779,7 +782,8 @@ sap.ui.define([
 	 * @param {boolean} [bSystemQueryOptionsAllowed=false]
 	 *   Whether system query options are allowed
 	 * @param {boolean} [bSapAllowed=false]
-	 *   Whether custom query options starting with "sap-" are allowed
+	 *   Whether custom query options starting with "sap-" are allowed (Note: "sap-valid-" is always
+	 *   allowed)
 	 * @throws {Error}
 	 *   If disallowed OData query options are provided
 	 * @returns {object}
@@ -857,8 +861,9 @@ sap.ui.define([
 				} else if (sParameterName[0] === "$") { // OData system query option
 					parseAndValidateSystemQueryOption(mTransformedOptions, sParameterName,
 						aSystemQueryOptions);
-				// OData custom query option
-				} else if (!bSapAllowed && sParameterName.startsWith("sap-")) {
+				// else: OData custom query option
+				} else if (!bSapAllowed && sParameterName.startsWith("sap-")
+						&& !sParameterName.startsWith("sap-valid-")) {
 					throw new Error("Custom query option " + sParameterName + " is not supported");
 				}
 			}

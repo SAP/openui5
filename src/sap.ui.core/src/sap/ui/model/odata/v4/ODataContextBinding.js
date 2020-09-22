@@ -1328,6 +1328,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#setContext
@@ -1336,6 +1338,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
 			if (this.bRelative && (this.oContext || oContext)) {
+				this.checkSuspended();
 				if (this.oElementContext) {
 					this.oElementContext.destroy();
 					this.oElementContext = null;

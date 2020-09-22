@@ -61,6 +61,10 @@ sap.ui.define(function () {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/DataAggregation/Opa.qunit"]
 			},
+			"OPA.FlexibleColumnLayout" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/FlexibleColumnLayout/Opa.qunit"]
+			},
 			"OPA.LateProperties" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/LateProperties/Opa.qunit"]

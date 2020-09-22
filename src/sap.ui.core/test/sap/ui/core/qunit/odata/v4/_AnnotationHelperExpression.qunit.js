@@ -630,6 +630,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("expression: []", function (assert) {
+		var oPathValue = {value : []},
+			oResult = {/*SyncPromise*/};
+
+		this.mock(Expression).expects("collection").withExactArgs(sinon.match.same(oPathValue))
+			.returns(oResult);
+
+		assert.strictEqual(Expression.expression(oPathValue), oResult);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("expression: {$If : []}", function (assert) {
 		var oPathValue = {value : {$If : []}},
 			oSubPathValue = {},
@@ -639,10 +650,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oPathValue), "$If")
 			.returns(oSubPathValue);
 		this.mock(Expression).expects("conditional")
-			.withExactArgs(sinon.match.same(oSubPathValue))
+			.withExactArgs(sinon.match.same(oSubPathValue), "bInCollection")
 			.returns(oResult);
 
-		assert.strictEqual(Expression.expression(oPathValue), oResult);
+		assert.strictEqual(Expression.expression(oPathValue, "bInCollection"), oResult);
 	});
 
 	//*********************************************************************************************
@@ -854,15 +865,77 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("collection: empty", function (assert) {
+		var oPathValue = {value : []};
+
+		this.mock(Basics).expects("expectType")
+			.withExactArgs(sinon.match.same(oPathValue), "array");
+
+		// code under test
+		assert.deepEqual(Expression.collection(oPathValue).unwrap(), {
+			result : "expression",
+			value : "odata.collection([])"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("collection: non-empty", function (assert) {
+		var oBasicsMock = this.mock(Basics),
+			oExpressionMock = this.mock(Expression),
+			oPathValue = {
+				// Note: we use strings instead of dummy objects to avoid sinon.match.same
+				value : ["{A}", "{B}", "{C}"]
+			},
+			oPromise;
+
+		oBasicsMock.expects("expectType").withExactArgs(sinon.match.same(oPathValue), "array");
+		oBasicsMock.expects("descend").withExactArgs(sinon.match.same(oPathValue), 0, true)
+			.returns("{0}");
+		oExpressionMock.expects("expression").withExactArgs("{0}", true)
+			.returns(SyncPromise.resolve(Promise.resolve("{a}")));
+		oBasicsMock.expects("descend").withExactArgs(sinon.match.same(oPathValue), 1, true)
+			.returns("{1}");
+		oExpressionMock.expects("expression").withExactArgs("{1}", true)
+			.returns(SyncPromise.resolve(Promise.resolve("{b}")));
+		oBasicsMock.expects("descend").withExactArgs(sinon.match.same(oPathValue), 2, true)
+			.returns("{2}");
+		oExpressionMock.expects("expression").withExactArgs("{2}", true)
+			.returns(SyncPromise.resolve(Promise.resolve("{c}")));
+
+		// code under test
+		oPromise = Expression.collection(oPathValue);
+
+		assert.strictEqual(oPromise.isPending(), true);
+		oBasicsMock.expects("resultToString").withExactArgs("{a}", true).returns("a");
+		oBasicsMock.expects("resultToString").withExactArgs("{b}", true).returns("b");
+		oBasicsMock.expects("resultToString").withExactArgs("{c}", true).returns("c");
+
+		return oPromise.then(function (oResult) {
+			assert.deepEqual(oResult, {
+				result : "expression",
+				value : "odata.collection([a,b,c])"
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	function conditional(bP1isNull, bP2isNull, bComplexBinding, sType) {
 		var sTitle = "conditional: " + bP1isNull + ", " + bP2isNull + ", bComplexBinding = "
 				+ bComplexBinding;
 
 		QUnit.test(sTitle, function (assert) {
 			var oBasics = this.mock(Basics),
-				oExpectedPathValue = {complexBinding : false, foo : "bar"},
+				oExpectedPathValue = {
+					complexBinding : false,
+					foo : "bar",
+					value : [0, 1/*, 2*/]
+				},
 				oExpression = this.mock(Expression),
-				oPathValue = {complexBinding : bComplexBinding, foo : "bar"},
+				oPathValue = {
+					complexBinding : bComplexBinding,
+					foo : "bar",
+					value : [0, 1/*, 2*/] // length 2 is unrealistic, but must not matter here!
+				},
 				oNullParameter = {result : "constant", type : "edm:Null", value : "null"},
 				oParameter0 = {result : "expression", value : "A"},
 				oParameter1 = bP1isNull ? oNullParameter
@@ -930,7 +1003,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("conditional: w/ incorrect types", function (assert) {
 		var oExpression = this.mock(Expression),
-			oPathValue = {},
+			oPathValue = {value : [0, 1, 2]},
 			oParameter0 = {},
 			oParameter1 = {type : "foo"},
 			oParameter2 = {type : "bar"};
@@ -954,6 +1027,50 @@ sap.ui.define([
 		assert.throws(function () {
 			Expression.conditional(oPathValue).unwrap();
 		}, SyntaxError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("conditional: w/o else as direct child of collection", function (assert) {
+		var oBasicsMock = this.mock(Basics),
+			oCondition = {},
+			oExpressionMock = this.mock(Expression),
+			oPathValue = {
+				value : ["condition", "then"/*, no "else"*/]
+			},
+			oThen = {type : "then's type"},
+			oWrappedCondition = {},
+			oWrappedElse = {},
+			oWrappedThen = {};
+
+		oExpressionMock.expects("parameter")
+			.withExactArgs(sinon.match.same(oPathValue), 0, "Edm.Boolean")
+			.returns(SyncPromise.resolve(oCondition));
+		oExpressionMock.expects("parameter")
+			.withExactArgs(sinon.match.same(oPathValue), 1)
+			.returns(SyncPromise.resolve(oThen));
+		oExpressionMock.expects("wrapExpression")
+			.withExactArgs(sinon.match.same(oCondition)).returns(oWrappedCondition);
+		oBasicsMock.expects("resultToString")
+			.withExactArgs(sinon.match.same(oWrappedCondition), true, false)
+			.returns("(condition)");
+		oExpressionMock.expects("wrapExpression")
+			.withExactArgs(sinon.match.same(oThen)).returns(oWrappedThen);
+		oBasicsMock.expects("resultToString")
+			.withExactArgs(sinon.match.same(oWrappedThen), true, undefined)
+			.returns("(then)");
+		oExpressionMock.expects("wrapExpression")
+			.withExactArgs({result : "constant", type : "edm:Null", value : undefined})
+			.returns(oWrappedElse);
+		oBasicsMock.expects("resultToString")
+			.withExactArgs(sinon.match.same(oWrappedElse), true, undefined)
+			.returns("(undefined)");
+
+		// code under test
+		assert.deepEqual(Expression.conditional(oPathValue, /*bInCollection*/true).unwrap(), {
+			result : "expression",
+			type : "then's type",
+			value : "(condition)?(then):(undefined)"
+		});
 	});
 
 	//*********************************************************************************************
@@ -1182,7 +1299,7 @@ sap.ui.define([
 		assert.deepEqual(Expression.fillUriTemplate(oPathValue).unwrap(), {
 			result : "expression",
 			type : "Edm.String",
-			value: "odata.fillUriTemplate('template({p0},{p1})',{'p0':${parameter},'p1':'foo'})"
+			value : "odata.fillUriTemplate('template({p0},{p1})',{'p0':${parameter},'p1':'foo'})"
 		});
 	});
 

@@ -1671,6 +1671,13 @@ sap.ui.define([
 	}, {
 		mParameters : {"sap-client" : "111"},
 		bSapAllowed : true
+	}, {
+		mParameters : {
+			"sap-valid-" : "now",
+			"sap-valid-foo" : "bar",
+			"sap-valid-*" : "n/a"
+		},
+		bSapAllowed : false // always allowed
 	},{
 		mParameters : {
 			$expand : { "TEAM_2_MANAGER" : {} },

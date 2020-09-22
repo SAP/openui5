@@ -259,6 +259,8 @@ sap.ui.define([
 	[
 		{type : "edm:Null", value : "null", binding : null, expression : "null"},
 		{type : "edm:Null", value : null, binding : null, expression : "null"},
+		// Note: undefined is only used internally, no need for value : "undefined"
+		{type : "edm:Null", value : undefined, binding : undefined, expression : "undefined"},
 		{type : "Edm.Boolean", value : "false", expression : "false"},
 		{type : "Edm.Boolean", value : false, expression : "false"},
 // TODO		{type : "Edm.Date", value : "2000-01-01", expression : ""},

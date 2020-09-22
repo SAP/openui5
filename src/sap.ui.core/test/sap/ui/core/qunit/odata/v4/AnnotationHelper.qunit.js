@@ -1129,6 +1129,90 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("value: $If w/o else as direct child of $Collection", function (assert) {
+		var oMetaModel = {
+				fetchObject : function (sPath) {}
+			},
+			sPath
+				= "/EMPLOYEES/ROOM_ID/@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
+			oContext = {
+				getModel : function () {
+					return oMetaModel;
+				},
+				getPath : function () {
+					return sPath;
+				}
+			},
+			oMetaModelMock = this.mock(oMetaModel),
+			oModel = new JSONModel({
+				EMPLOYEE_2_TEAM : {
+					MEMBER_COUNT : 11
+				}
+			}),
+			vRawValue = ["in", {
+				$If : [{
+					$Gt : [{$Path : "EMPLOYEE_2_TEAM/MEMBER_COUNT"}, 10]
+				}, "maybe"/*, no else is OK here*/]
+			}];
+
+		oMetaModelMock.expects("fetchObject").withExactArgs(sPath + "/1/$If/0/$Gt/0/$Path/$")
+			.returns(SyncPromise.resolve({$Type : "Edm.Int32"})); // MEMBER_COUNT
+
+		assert.strictEqual(
+			// code under test
+			AnnotationHelper.value(vRawValue, {context : oContext}),
+			"{=odata.collection(['in',(${EMPLOYEE_2_TEAM/MEMBER_COUNT}>10)?'maybe':undefined])}"
+		);
+
+		oMetaModelMock.expects("fetchObject").twice().withExactArgs("/1/$If/0/$Gt/0/$Path/$")
+			.returns(SyncPromise.resolve({$Type : "Edm.Int32"})); // MEMBER_COUNT
+
+		// "code under test"
+		check(assert, vRawValue, "in,maybe", oMetaModel, oModel);
+
+		oModel.setProperty("/EMPLOYEE_2_TEAM/MEMBER_COUNT", 10);
+
+		// "code under test"
+		check(assert, vRawValue, "in", oMetaModel, oModel);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("value: $If w/o else, but no direct child of $Collection", function (assert) {
+		var oMetaModel = {
+				fetchObject : function (sPath) {}
+			},
+			sPath
+				= "/EMPLOYEES/ROOM_ID/@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
+			oContext = {
+				getModel : function () {
+					return oMetaModel;
+				},
+				getPath : function () {
+					return sPath;
+				}
+			},
+			sMessage = sPath + "/0/$If/0/$If/2: Expected object",
+			vRawValue = [{
+				$If : [{
+					$If : [{
+						$Gt : [{$Path : "EMPLOYEE_2_TEAM/MEMBER_COUNT"}, 10]
+					}, true/*, false*/] // else cannot be omitted here!
+				}, "then", "else"]
+			}];
+
+		this.mock(oMetaModel).expects("fetchObject")
+			.withExactArgs(sPath + "/0/$If/0/$If/0/$Gt/0/$Path/$")
+			.returns(SyncPromise.resolve({$Type : "Edm.Int32"})); // MEMBER_COUNT
+		this.oLogMock.expects("error").withExactArgs(sMessage, "undefined",
+			"sap.ui.model.odata.AnnotationHelper");
+
+		assert.throws(function () {
+			// code under test
+			AnnotationHelper.value(vRawValue, {context : oContext});
+		}, new SyntaxError(sMessage));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("resolve$Path: no $Path, just $P...", function (assert) {
 		var sPath = "/Equipments@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Precision",
 			oContext = {
