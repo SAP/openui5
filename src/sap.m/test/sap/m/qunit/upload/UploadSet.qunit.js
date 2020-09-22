@@ -131,6 +131,27 @@ sap.ui.define([
 		assert.notOk(oDialog, "Remove dialog should not exist at this time.");
 	});
 
+	QUnit.test("Event afterItemRemoved is called at proper time and with correct parameters.", function (assert) {
+		assert.expect(3);
+		var oItem = this.oUploadSet.getItems()[0];
+
+		this.oUploadSet.attachEventOnce("afterItemRemoved", function (oEvent) {
+			assert.ok(true, "afterItemRemoved event should have been called.");
+		});
+		oItem._getDeleteButton().firePress();
+
+		// Close the dialog
+		var oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
+		assert.ok(oDialog, "Remove dialog should now be presented.");
+		oDialog.getButtons()[0].firePress();
+		oDialog.getButtons()[0].getParent().fireAfterClose();
+		oDialog.destroy();
+
+		// There should be no dialog
+		oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
+		assert.notOk(oDialog, "Remove dialog should not exist at this time.");
+	});
+
 	QUnit.test("Event beforeItemEdited is called at proper time and with correct parameters, prevent default applies.", function (assert) {
 		assert.expect(9);
 		var oItem = this.oUploadSet.getItems()[0];
@@ -160,6 +181,24 @@ sap.ui.define([
 		assert.ok(oItem._bInEditMode, "Item should know it is being edited.");
 		assert.equal(oItem._getFileNameEdit().$().length, 1, "File name edit should be rendered.");
 		assert.equal(oItem._getFileNameLink().$().length, 0, "File name link should be ignored.");
+	});
+
+	QUnit.test("Event afterItemEdited is called at proper time and with correct parameters.", function (assert) {
+		assert.expect(1);
+		var oItem = this.oUploadSet.getItems()[0];
+
+		// DOM inspection is needed
+		this.oUploadSet.placeAt("qunit-fixture");
+
+		this.oUploadSet.attachEventOnce("afterItemEdited", function (oEvent) {
+			assert.ok(true, "afterItemEdited event should have been called.");
+		});
+		oItem._getEditButton().firePress();
+		sap.ui.getCore().applyChanges();
+
+		oItem._getConfirmRenameButton().firePress();
+		sap.ui.getCore().applyChanges();
+
 	});
 
 	QUnit.test("Allow Curly bracees in the fileName property", function (assert) {
