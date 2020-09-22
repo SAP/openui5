@@ -82,8 +82,11 @@ sap.ui.define([
 	 */
 	HashChanger.prototype.createRouterHashChanger = function() {
 		if (!this._oRouterHashChanger) {
+			var oParsedHash = this._parseHash(this.getHash());
 			this._oRouterHashChanger = new RouterHashChanger({
-				parent: this
+				parent: this,
+				hash: oParsedHash.hash,
+				subHashMap: oParsedHash.subHashMap
 			});
 
 			this._registerListenerToRelevantEvents();
