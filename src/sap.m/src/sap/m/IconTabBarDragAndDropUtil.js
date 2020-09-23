@@ -90,7 +90,8 @@ sap.ui.define([
 					bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 					bIsDropPositionBefore = sDropPosition === INSERT_POSITION_BEFORE,
 					//_getNestedLevel returns 1 there is no nesting
-					currentNestedLevel = oDroppedControl._getNestedLevel()  - 1;
+					currentNestedLevel = oDroppedControl._getNestedLevel() - 1;
+
 				// Prevent cycle
 				if (oDraggedControl._isParentOf(oDroppedControl)) {
 					return;
@@ -163,13 +164,17 @@ sap.ui.define([
 			 */
 			_handleConfigurationAfterDragAndDrop: function (oDraggedControl, iDropIndex) {
 
-				var aDraggedControlSubItems = [];
+				var aDraggedControlSubItems = [],
+					oIconTabHeader = this.isA("sap.m.IconTabHeader") ? this : this._getIconTabHeader();
 
 				if (this.isA("sap.m.IconTabBarSelectList")) {
 					aDraggedControlSubItems = this.getItems().filter(function (oItem) {
 						return oDraggedControl._getRealTab()._isParentOf(oItem._getRealTab());
 					});
 				}
+
+				oIconTabHeader._setPreserveSelection(true);
+
 				this.removeAggregation('items', oDraggedControl, true);
 				this.insertAggregation('items', oDraggedControl, iDropIndex, true);
 
@@ -182,6 +187,8 @@ sap.ui.define([
 				aDraggedControlSubItems.reverse().forEach(function (oItem) {
 					this.insertAggregation('items', oItem, iNewDragIndex, true);
 				}.bind(this));
+
+				oIconTabHeader._setPreserveSelection(false);
 
 				IconTabBarDragAndDropUtil._updateAccessibilityInfo.call(this);
 			},

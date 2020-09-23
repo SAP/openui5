@@ -727,7 +727,7 @@ sap.ui.define([
 			return oItem;
 		}
 
-		if (oItem && oItem == this.oSelectedItem && sAggregationName == 'items') {
+		if (!this._getPreserveSelection() && oItem && oItem == this.oSelectedItem && sAggregationName == 'items') {
 
 			var iIndexOf = (aItems ? Array.prototype.indexOf.call(aItems, oItem) : -1);
 			aItems = this.getTabFilters();
@@ -759,6 +759,23 @@ sap.ui.define([
 		}
 
 		return Control.prototype.removeAllAggregation.apply(this, arguments);
+	};
+
+	/**
+	 * Returns whether the currently selected item is preserved.
+	 * @private
+	 */
+	IconTabHeader.prototype._getPreserveSelection = function () {
+		return this._bPreserveSelection;
+	};
+
+	/**
+	 * Sets whether the currently selected item is preserved.
+	 * @param {Boolean} bPreserveSelection The new value
+	 * @private
+	 */
+	IconTabHeader.prototype._setPreserveSelection = function (bPreserveSelection) {
+		this._bPreserveSelection = bPreserveSelection;
 	};
 
 	/**

@@ -3196,12 +3196,42 @@ sap.ui.define([
 
 	QUnit.test("Overflow button", function(assert) {
 		var oOverflow = this.oIconTabHeader._getOverflow();
+		var aItems = this.oIconTabHeader.getItems();
 		var oOverflowDomRef = oOverflow.getDomRef();
 		assert.ok(!oOverflowDomRef.classList.contains("sapMITHDragOver"), "Overflow button has default state");
 
-		oOverflow._handleOnDragOver({preventDefault: function () {}});
+		oOverflow._handleOnDragOver({
+			preventDefault: function () {},
+			dragSession: {
+				getDragControl: function () {
+					return aItems[1];
+				}
+			}
+		});
 
 		assert.ok(oOverflowDomRef.classList.contains("sapMITHDragOver"), "Overflow button is in 'drag over' state ");
+
+		oOverflow._handleOnDragLeave();
+
+		assert.ok(!oOverflowDomRef.classList.contains("sapMITHDragOver"), "Overflow button has default state");
+	});
+
+	QUnit.test("Overflow button - selected tab", function(assert) {
+		var oOverflow = this.oIconTabHeader._getOverflow();
+		var aItems = this.oIconTabHeader.getItems();
+		var oOverflowDomRef = oOverflow.getDomRef();
+		assert.ok(!oOverflowDomRef.classList.contains("sapMITHDragOver"), "Overflow button has default state");
+
+		oOverflow._handleOnDragOver({
+			preventDefault: function () {},
+			dragSession: {
+				getDragControl: function () {
+					return aItems[0];
+				}
+			}
+		});
+
+		assert.notOk(oOverflowDomRef.classList.contains("sapMITHDragOver"), "Overflow button is not in 'drag over' state ");
 
 		oOverflow._handleOnDragLeave();
 
@@ -3602,11 +3632,21 @@ sap.ui.define([
 });
 
 	QUnit.test("Drag&Drop on Tab with own content and sub items", function(assert) {
-		var oIconTabFilterWithChildren = this.oIconTabHeader.getItems()[0];
+
+		var aItems = this.oIconTabHeader.getItems(),
+			oIconTabFilterWithChildren = aItems[0],
+			oMockEvent = {
+				preventDefault: function () {},
+				dragSession: {
+					getDragControl: function () {
+						return aItems[1];
+					}
+				}
+			};
 
 		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "The filter has default state");
 
-		oIconTabFilterWithChildren._handleOnDragOver({preventDefault: function () {}});
+		oIconTabFilterWithChildren._handleOnDragOver(oMockEvent);
 
 		assert.ok(oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "The filter is in 'drag over' state ");
 
@@ -3615,19 +3655,57 @@ sap.ui.define([
 		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "The filter has default state");
 		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
 
-		oIconTabFilterWithChildren._handleOnLongDragOver();
+		oIconTabFilterWithChildren._handleOnLongDragOver(oMockEvent);
 
 		assert.ok(oIconTabFilterWithChildren._oPopover, "There is a popover on long drag over");
+	});
 
+	QUnit.test("Drag&Drop on Tab with own content and sub items over itself", function(assert) {
+
+		var aItems = this.oIconTabHeader.getItems(),
+			oIconTabFilterWithChildren = aItems[0],
+			oMockEvent = {
+				preventDefault: function () {},
+				dragSession: {
+					getDragControl: function () {
+						return oIconTabFilterWithChildren;
+					}
+				}
+			};
+
+		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "The filter has default state");
+
+		oIconTabFilterWithChildren._handleOnDragOver(oMockEvent);
+
+		assert.notOk(oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "The filter is not in 'drag over' state ");
+
+		oIconTabFilterWithChildren._handleOnDragLeave();
+
+		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "The filter has default state");
+		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
+
+		oIconTabFilterWithChildren._handleOnLongDragOver(oMockEvent);
+
+		assert.notOk(oIconTabFilterWithChildren._oPopover, "There is no popover on long drag over");
 	});
 
 	QUnit.test("Drag&Drop on Tab with no own content and sub items", function(assert) {
-		var oIconTabFilterWithChildren = this.oIconTabHeader.getItems()[0];
+		var aItems = this.oIconTabHeader.getItems(),
+			oIconTabFilterWithChildren = aItems[0],
+			oMockEvent = {
+				preventDefault: function () {},
+				dragSession: {
+					getDragControl: function () {
+						return aItems[1];
+					}
+				}
+			};
+
 		oIconTabFilterWithChildren.destroyContent();
 
 		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "Expand button has default state");
 
-		oIconTabFilterWithChildren._handleOnDragOver({preventDefault: function () {}});
+		oIconTabFilterWithChildren._handleOnDragOver(oMockEvent);
 
 		assert.ok(oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "Expand button is in 'drag over' state ");
 
@@ -3636,7 +3714,7 @@ sap.ui.define([
 		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "Expand button has default state");
 		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
 
-		oIconTabFilterWithChildren._handleOnLongDragOver();
+		oIconTabFilterWithChildren._handleOnLongDragOver(oMockEvent);
 
 		assert.ok(oIconTabFilterWithChildren._oPopover, "There is a popover on long drag over");
 
