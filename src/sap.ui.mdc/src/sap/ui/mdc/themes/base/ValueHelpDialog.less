@@ -1,13 +1,13 @@
 // give all panels on the valueHelpPanel a left/right padding
 .sapMdcValueHelpPanel .sapMPanel {
 	padding-top: 0.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .sapMdcTokenizerPanel > .sapMPanelContent {
-	padding-left: 0.5rem;
-	padding-right: 0.5rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 	padding-bottom: 1rem;
 	overflow: hidden;
 }
@@ -63,13 +63,16 @@
 }
 
 // padding between the Define Condition value fields
-.sapUiMdcDefineConditionPanel .sapUiSmallPaddingBegin {
-    padding-left: 1rem;
+.sapUiMdcDefineConditionPanel .sapUiRespGrid > div {
+	padding-left: 0.25rem;
+	padding-right: 0.25rem;
+	box-sizing: border-box;
 }
 
 // remove 1rem left padding around all define conditions content
 .sapMdcDefineconditionPanel .sapMPanelContent {
-    padding-left: 0rem;
+	padding-left: 0.75rem;
+	padding-right: 0.75rem;
 }
 
 // makes the IconTab Header hidden when only one tabs exist
@@ -124,7 +127,7 @@
 }
 .sapUiMdcDefineConditionPanel .sapUiRespGrid > div:last-child > button{
 	position: absolute;
-	right: 0;
+	right: 0.25rem;
 }
 
 // hide the toolbar border and give some more top margin
@@ -142,4 +145,6 @@
 // show padding on top of the defineConditionPanel when used on popover
 .sapMPopoverCont .sapMPopoverScroll > .sapUiMdcDefineConditionPanel {
 	padding-top: 1rem;
+	padding-left: 0.75rem;
+	padding-right: 0.75rem;
 }

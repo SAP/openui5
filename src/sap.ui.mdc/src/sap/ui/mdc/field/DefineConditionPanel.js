@@ -505,7 +505,6 @@ sap.ui.define([
 		}
 
 		oControl._iValueIndex = iIndex; // to find it for update
-		oControl.addStyleClass("sapUiSmallPaddingBegin");
 		if (oControl.attachChange) { // custom control might not have a change event
 			oControl.attachChange(this.onChange.bind(this));
 		}
@@ -766,7 +765,7 @@ sap.ui.define([
 				visibleM: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
 				visibleL: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
 				visibleXL: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)}})}
-		).addStyleClass("sapUiSmallPaddingBegin");
+		);
 
 		oGrid.addContent(oAddBtn);
 
@@ -858,7 +857,6 @@ sap.ui.define([
 			change: this.onSelectChange.bind(this),
 			ariaLabelledBy: this.getId() + "--ivtOperator"
 		})
-		.addStyleClass("sapUiSmallPaddingBegin")
 		.setLayoutData(new GridData({span: "XL3 L3 M3 S10", linebreak: true}))
 		.setBindingContext(oBindingContext, "$this");
 
@@ -876,7 +874,6 @@ sap.ui.define([
 			icon: "sap-icon://decline",
 			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
 		})
-		.addStyleClass("sapUiSmallPaddingBegin")
 		.setLayoutData(new GridData({span: "XL1 L1 M1 S2",
 			indent: {path: "$this>operator", formatter: _getIndentForOperator},
 			visibleS: {path: "$this>/conditions", formatter: _getRemoveButtonVisible.bind(this)},
@@ -905,7 +902,6 @@ sap.ui.define([
 			icon: "sap-icon://decline",
 			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
 		})
-		.addStyleClass("sapUiSmallPaddingBegin")
 		.setLayoutData(new GridData({span: "XL1 L1 M1 S1",
 			indent: {path: "$this>operator", formatter: _getIndentForOperator},
 			visibleS: false,
