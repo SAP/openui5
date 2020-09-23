@@ -115,7 +115,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 				oEvent.originalEvent,
 				sDropPosition,
 				oDraggedControl,
-				oDroppedControl
+				oDroppedControl.isA("sap.f.GridContainer") ? null : oDroppedControl
 			);
 		});
 	};
