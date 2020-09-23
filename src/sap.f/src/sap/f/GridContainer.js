@@ -734,8 +734,10 @@ sap.ui.define([
 		this._setItemNavigationItems();
 		this._applyLayout(true);
 
-		if (this.getItems().length === 1) {
+		//force the focus when one item is available in grid via dnd(keyboard or mouse)
+		if (this.getItems().length === 1 && this._forceFocus) {
 			this.focusItem(0);
+			this._forceFocus = false;
 		}
 	};
 
@@ -761,6 +763,8 @@ sap.ui.define([
 		if (!isGridSupportedByBrowser()) {
 			this._detachDndPolyfill();
 		}
+
+		this._forceFocus = null;
 	};
 
 	/**
@@ -1661,6 +1665,8 @@ sap.ui.define([
 	GridContainer.prototype.focusItem = function (iIndex) {
 		var aItemDomRefs,
 			oItemNavigation = this._oItemNavigation;
+
+		this._forceFocus = true;
 
 		this._setItemNavigationItems();
 
