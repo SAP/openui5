@@ -1361,7 +1361,7 @@ sap.ui.define([
 
 		this._updateMedia(iCurrentWidth);
 
-		return ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+		return ManagedObject.prototype._applyContextualSettings.call(this, oContextualSettings);
 	};
 
 	/**
