@@ -917,7 +917,7 @@ sap.ui.define([
 			},
 
 			onSearch : function (oEvent) {
-				var sQuery = oEvent.getParameter("query");
+				var sQuery = encodeURIComponent( oEvent.getParameter("query") );
 				if (!sQuery) {
 					return;
 				}
