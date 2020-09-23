@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/library",
 	"./thirdparty/ui5-wc-bundles/DatePicker"
-], function(WebComponent, CalendarType, coreLibrary, WCDatePicker) {
+], function(WebComponent, CalendarType, coreLibraryDatePicker) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;

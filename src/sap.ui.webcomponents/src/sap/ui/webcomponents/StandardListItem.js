@@ -7,7 +7,7 @@ sap.ui.define([
 	"./ListItem",
 	"sap/ui/core/library",
 	"./thirdparty/ui5-wc-bundles/StandardListItem"
-], function(ListItem, coreLibrary, WC) {
+], function(ListItem, coreLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;

@@ -6,7 +6,7 @@
 sap.ui.define([
 	"./ListItem",
 	"./thirdparty/ui5-wc-bundles/CustomListItem"
-], function(ListItem, WC) {
+], function(ListItem) {
 	"use strict";
 
 	/**

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"./library",
 	"./thirdparty/ui5-wc-bundles/Input"
-], function(WebComponent, coreLibrary, library, WC) {
+], function(WebComponent, coreLibrary, library) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;

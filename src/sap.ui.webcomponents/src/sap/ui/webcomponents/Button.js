@@ -8,7 +8,7 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/library",
 	"./thirdparty/ui5-wc-bundles/Button"
-], function(WebComponent, library, coreLibrary, WCButton) {
+], function(WebComponent, library, coreLibrary) {
 	"use strict";
 
 	var ButtonDesign = library.ButtonDesign;

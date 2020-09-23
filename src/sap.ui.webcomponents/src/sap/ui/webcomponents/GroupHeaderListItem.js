@@ -6,7 +6,7 @@
 sap.ui.define([
 	"./ListItemBase",
 	"./thirdparty/ui5-wc-bundles/GroupHeaderListItem"
-], function(ListItemBase, WC) {
+], function(ListItemBase) {
 	"use strict";
 
 	/**

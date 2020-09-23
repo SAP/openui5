@@ -7,7 +7,7 @@ sap.ui.define([
 	"./Popup",
 	"./library",
 	"./thirdparty/ui5-wc-bundles/Popover"
-], function(Popup, library, WC) {
+], function(Popup, library) {
 	"use strict";
 
 	var PopoverPlacementType = library.PopoverPlacementType;

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/webcomp/WebComponent",
 	"./library",
 	"./thirdparty/ui5-wc-bundles/BusyIndicator"
-], function(WebComponent, library, WC) {
+], function(WebComponent, library) {
 	"use strict";
 
 	var BusyIndicatorSize = library.BusyIndicatorSize;

@@ -6,7 +6,7 @@
 sap.ui.define([
 	"./Popup",
 	"./thirdparty/ui5-wc-bundles/Dialog"
-], function(Popup, WC) {
+], function(Popup) {
 	"use strict";
 
 	/**

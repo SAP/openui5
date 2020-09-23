@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/webcomp/WebComponent",
 	"sap/ui/core/library",
 	"./thirdparty/ui5-wc-bundles/Title"
-], function(WebComponent, coreLibrary, Title) {
+], function(WebComponent, coreLibrary) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;

@@ -6,7 +6,7 @@
 sap.ui.define([
 	"sap/ui/core/webcomp/WebComponent",
 	"./thirdparty/ui5-wc-bundles/Table"
-], function(WebComponent, WC) {
+], function(WebComponent) {
 	"use strict";
 
 	/**

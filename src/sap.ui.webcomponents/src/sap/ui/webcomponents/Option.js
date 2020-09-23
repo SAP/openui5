@@ -6,7 +6,7 @@
 sap.ui.define([
 	"sap/ui/core/webcomp/WebComponent",
 	"./thirdparty/ui5-wc-bundles/Option"
-], function(WebComponent, OptionWC) {
+], function(WebComponent) {
 	"use strict";
 
 	/**

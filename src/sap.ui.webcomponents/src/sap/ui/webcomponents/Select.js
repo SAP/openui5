@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/webcomp/WebComponent",
 	"sap/ui/core/library",
 	"./thirdparty/ui5-wc-bundles/Select"
-], function(WebComponent, coreLibrary, WC) {
+], function(WebComponent, coreLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
