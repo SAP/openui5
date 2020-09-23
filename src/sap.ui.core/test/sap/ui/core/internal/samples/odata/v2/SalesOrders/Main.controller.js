@@ -55,11 +55,13 @@ sap.ui.define([
 			if (sMessageFullTarget) {
 				i = sMessageFullTarget.lastIndexOf("ItemPosition=");
 				if (i >= 0) {
-					return sResult + "Sales Order Item " + sMessageFullTarget.slice(i + 13, i + 25);
+					return sResult + "Sales Order Item "
+						+ sMessageFullTarget.slice(i + 13, sMessageFullTarget.indexOf(")", i));
 				} else {
 					i = sMessageFullTarget.lastIndexOf("SalesOrderSet(");
 					if (i >= 0) {
-						return sResult + "Sales Order " + sMessageFullTarget.slice(i + 14, i + 26);
+						return sResult + "Sales Order "
+							+ sMessageFullTarget.slice(i + 14, sMessageFullTarget.indexOf(")", i));
 					}
 				}
 			}
