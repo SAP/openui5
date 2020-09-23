@@ -3,6 +3,28 @@
     "date": "September 2020",
     "notes": [
       {
+        "id": "ba7851d0c7f152ff973134058f5d310e07153674",
+        "type": "FIX",
+        "text": " mdc.AdaptationFilterBar: check for existence",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070336983"
+          }
+        ]
+      },
+      {
+        "id": "bba1b5a3213018a40a78873a14a2a0c6a9da0f54",
+        "type": "FIX",
+        "text": " FilterField: wrong role description for multi-help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070313054"
+          }
+        ]
+      },
+      {
         "id": "35e8bfb5abc288592336e5e57ee3ca14cd309589",
         "type": "FIX",
         "text": " DefineConditionPanel: new row added after add-button",

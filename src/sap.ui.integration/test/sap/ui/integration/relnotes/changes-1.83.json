@@ -3,6 +3,11 @@
     "date": "September 2020",
     "notes": [
       {
+        "id": "3756bbc6d233e79d4029530b78260fae2403a994",
+        "type": "FEATURE",
+        "text": " Calendar Card: Experimental tag removed"
+      },
+      {
         "id": "c6ce9d4ca81738c55f08de8d9c1cd674f197bcad",
         "type": "FEATURE",
         "text": " Card Design-time Documentation"

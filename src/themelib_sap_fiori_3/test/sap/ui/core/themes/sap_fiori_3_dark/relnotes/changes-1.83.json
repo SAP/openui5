@@ -3,6 +3,33 @@
     "date": "September 2020",
     "notes": [
       {
+        "id": "b45370e8f3237ff3fe47c9ec48167dcbf083bf9f",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Focus is now with same size on both states"
+      },
+      {
+        "id": "afaef0fee950d0424a7c05fd7560c6f0dc465bde",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Focus is now aligned with visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070280597"
+          }
+        ]
+      },
+      {
+        "id": "f78834efa88eadc92431c52847cc0b2ab7947595",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus is showing  in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070285771"
+          }
+        ]
+      },
+      {
         "id": "0d021bda320c4daa7a0ddd0d138ca07e25e8beb5",
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog: Focus is now visible on first element",
@@ -21,33 +48,6 @@
           {
             "type": "BCP",
             "reference": "2080379091"
-          }
-        ]
-      },
-      {
-        "id": "102aa64dc8884d35e5da00b22d18a05973e55f33",
-        "type": "FIX",
-        "text": " sap.m.PlanningCalendar: has no min row height in Quartz",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500005015552020"
-          }
-        ]
-      },
-      {
-        "id": "056fc53e693bf9725dd93b47bbb331b416e73627",
-        "type": "FEATURE",
-        "text": " sap.m.Button: Badge implemented"
-      },
-      {
-        "id": "1547a4836fb3fe95fa0c576c8f95403c297b897d",
-        "type": "FIX",
-        "text": " sap.uxap.ObjectPageHeader: Fixed visual misalignment",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070233100"
           }
         ]
       }

@@ -3,6 +3,49 @@
     "date": "September 2020",
     "notes": [
       {
+        "id": "ad0aea88acaa6610ab4d38204ad5a444d331cd7c",
+        "type": "FEATURE",
+        "text": " ARIA 1.1: Use new roles and attributes - GenericTile NumericContent FeedInput SelectionDetails FeedListItem"
+      },
+      {
+        "id": "7563e8a6a5d41b21de9b241b16d6c3982169a5b2",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: now returns 24:00:00 when support2400 is on and 24:00:00 is entered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040645554"
+          }
+        ]
+      },
+      {
+        "id": "1d4d35b3e4ce2263772a9a235dad0c66685c0131",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: has correct row height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070305770"
+          }
+        ]
+      },
+      {
+        "id": "e914b9c2e5b69669d0b265b9923add2d3b08f70d",
+        "type": "FEATURE",
+        "text": " UploadSet control events afterItemEdited and afterItemRemoved"
+      },
+      {
+        "id": "a8e2892a3e77c7031a292816f9623501b01ef3a8",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Redundant attribute removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070290825"
+          }
+        ]
+      },
+      {
         "id": "23cbce4e2297b50b2dd6a9ac147809344e712c58",
         "type": "FIX",
         "text": " sap.m.Button: proper parameter is set for hover color",
@@ -10,6 +53,17 @@
           {
             "type": "BCP",
             "reference": "2070300677"
+          }
+        ]
+      },
+      {
+        "id": "adaadfae45eaaf49e21e5052351f10d9c1d8e25a",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Tooltip shouldn't exists",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080274790"
           }
         ]
       },
