@@ -145,7 +145,7 @@ sap.ui.define([
 		assert.ok(this.sf2.$().hasClass("sapMSFDisabled"),"CSS class name for \"disabled\" is set");
 		// Button icons
 		assert.ok(/\uE00D/.test(getIconId(this.sf1, "search")), "First button icon is magnifier");
-		assert.ok(/\uE00A/.test(getIconId(this.sf3, "search")), "Third button icon is synchronize");
+		assert.ok(/\uE010/.test(getIconId(this.sf3, "search")), "Third button icon is refresh");
 		// showSearchButton:false :
 		assert.ok(jQuery("#sf4-search").length == 0, "Search button is not rendered if showSearchButton == false");
 		var rightOffset = window.getComputedStyle(jQuery("#sf4-reset")[0]).getPropertyValue("right");
@@ -218,7 +218,7 @@ sap.ui.define([
 
 			document.activeElement.blur();
 			setTimeout( function(){
-				assert.ok(/\uE00A/.test(getIconId(this.sf3, "search")), "Defocused search field icon is synchronize");
+				assert.ok(/\uE010/.test(getIconId(this.sf3, "search")), "Defocused search field icon is refresh");
 				done();
 			}.bind(this), 350);
 		}.bind(this), 200);
