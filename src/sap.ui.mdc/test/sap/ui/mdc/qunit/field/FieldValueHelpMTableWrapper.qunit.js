@@ -1245,7 +1245,7 @@ sap.ui.define([
 
 	QUnit.test("navigate in suggestion for multi-value", function(assert) {
 
-		sinon.stub(oFieldHelp, "getMaxConditions").returns(-1);
+		oField.getMaxConditions = function() {return -1;};
 		oFieldHelp.navigate(1);
 		oClock.tick(iPopoverDuration); // fake opening time
 
@@ -1282,7 +1282,7 @@ sap.ui.define([
 			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 0, "Navigate event not fired");
-			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 2 is focused");
+			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
 
 			sinon.spy(oField, "focus");
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
@@ -1300,7 +1300,6 @@ sap.ui.define([
 		}
 
 	});
-
 
 	QUnit.test("select item in suggestion", function(assert) {
 
@@ -1428,7 +1427,7 @@ sap.ui.define([
 			oClock.tick(iDialogDuration); // fake closing time
 
 			assert.equal(iFVHSelect, 1, "Select event fired after OK");
-			assert.equal(aFVHSelectConditions.length, 2, "one condition returned");
+			assert.equal(aFVHSelectConditions.length, 2, "two conditions returned");
 			assert.equal(aFVHSelectConditions[0].operator, "EQ", "Condition operator");
 			assert.equal(aFVHSelectConditions[0].values[0], "I1", "Condition values[0}");
 			assert.equal(aFVHSelectConditions[0].values[1], "Item 1", "Condition values[1}");
@@ -1440,5 +1439,47 @@ sap.ui.define([
 		}
 
 	});
+
+	QUnit.test("navigate in table for multi-value", function(assert) {
+
+		oField.getMaxConditions = function() {return -1;};
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+
+		var oDialog = oFieldHelp.getAggregation("_dialog");
+		if (oDialog) {
+			assert.ok(oDialog.isOpen(), "Field help opened");
+			assert.equal(oTable.getMode(), "MultiSelect", "Table mode in dialog");
+
+			var oFocusedElement = document.activeElement;
+			var aItems = oTable.getItems();
+			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
+
+			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
+			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			oFocusedElement = document.activeElement;
+			assert.equal(iNavigate, 0, "Navigate event not fired");
+			assert.equal(aItems[1].getId(), oFocusedElement.id, "Item 2 is focused");
+
+			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
+			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+			oFocusedElement = document.activeElement;
+			assert.equal(iNavigate, 0, "Navigate event not fired");
+			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
+
+			sinon.spy(oField, "focus");
+			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
+			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+			oFocusedElement = document.activeElement;
+			assert.equal(iNavigate, 0, "Navigate event not fired");
+			assert.notOk(oField.focus.called, "focus not set on Field");
+			assert.ok(jQuery(oFocusedElement).hasClass("sapMListTblHeader"), "Focus is set on table-header");
+
+			oFieldHelp.close();
+			oClock.tick(iDialogDuration); // fake closing time
+		}
+
+	});
+
 
 });
