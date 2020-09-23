@@ -233,6 +233,10 @@ sap.ui.define([
 	};
 
 	AvatarGroup.prototype.onThemeChanged = function () {
+		if (!this.getDomRef()) {
+			return;
+		}
+
 		this._onResize();
 	};
 
