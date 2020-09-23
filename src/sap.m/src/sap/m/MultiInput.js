@@ -244,22 +244,68 @@ function(
 		Input.prototype.init.call(this);
 
 		this._bIsValidating = false;
+
 		var oTokenizer = new Tokenizer({
-			renderMode: TokenizerRenderMode.Narrow
+			renderMode: TokenizerRenderMode.Narrow,
+			tokenChange: this._onTokenChange.bind(this),
+			tokenUpdate: this._onTokenUpdate.bind(this),
+			tokenDelete: this._tokenDelete.bind(this)
 		});
+
+		/* Backward compatibility */
+		oTokenizer.updateTokens = function () {
+			this.destroyTokens();
+			this.updateAggregation("tokens");
+		};
+
 		this.setAggregation("tokenizer", oTokenizer);
-
-		oTokenizer.attachTokenChange(this._onTokenChange, this);
-		oTokenizer.attachTokenUpdate(this._onTokenUpdate, this);
-
-		// Observe Tokenizer for changes in cases when no events are fired - when the state change is not a result from user interaction.
-		this._oTokenizerObserver = new ManagedObjectObserver(this.invalidate.bind(this));
-		// When the "tokens" aggregation gets destroyed the MultiInput must be rerendered in order for the correct classes to be applied.
-		this._oTokenizerObserver.observe(oTokenizer, {aggregations: ["tokens"]});
 
 		oTokenizer.getTokensPopup()
 			.setInitialFocus(this)
 			.attachBeforeOpen(this._onBeforeOpenTokensPicker.bind(this));
+
+		this.setAggregation("tokenizer", oTokenizer);
+
+		/* Aggregation forwarding does not invalidate outer control, but we need to have that invalidation */
+		this._oTokenizerObserver = new ManagedObjectObserver(function(oChange) {
+			var sMutation = oChange.mutation;
+			var oToken = oChange.child;
+
+			switch (sMutation) {
+				case "insert":
+					this.fireTokenChange({
+						type: sap.m.Tokenizer.TokenChangeType.Added,
+						token: oToken,
+						tokens: [oToken],
+						addedTokens: [],
+						removedTokens: [oToken]
+					});
+					break;
+				case "remove":
+					var sType = oChange.object.getTokens().length ? sap.m.Tokenizer.TokenChangeType.Removed : sap.m.Tokenizer.TokenChangeType.RemovedAll;
+
+					this.fireTokenChange({
+						type: sType,
+						token: oToken,
+						tokens: [oToken],
+						addedTokens: [],
+						removedTokens: [oToken]
+					});
+					break;
+
+				default:
+					break;
+			}
+
+			this.invalidate();
+		}.bind(this));
+
+		this._oTokenizerObserver.observe(oTokenizer, {
+			aggregations: ["tokens"]
+		});
+
+		this._bShowListWithTokens = false;
+		this._bIsValidating = false;
 
 		oTokenizer.addEventDelegate({
 			onThemeChanged: this._handleInnerVisibility.bind(this),
@@ -331,6 +377,51 @@ function(
 		this._registerResizeHandler();
 
 		Input.prototype.onAfterRendering.apply(this, arguments);
+	};
+
+	/**
+	 * Handles token delete coming from Tokenizer.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	MultiInput.prototype._tokenDelete = function (oEvent) {
+		this._deleteTokens(oEvent.getParameter("tokens"), oEvent.getParameters(), true);
+	};
+
+
+	/**
+	 * Destroys deleted tokens and applies focus to input field if no tokens are left.
+	 *
+	 * @param {sap.m.Token[]} aDeletingTokens Tokens to be deleted and destroyed.
+	 * @param {object} oOptions Object containing information how the tokens are deleted (backspace or delete button).
+	 * @param {boolean} bPreventTokenUpdateEvent Flag to skip or not tokenUpdate event.
+	 * @private
+	 */
+	MultiInput.prototype._deleteTokens = function (aDeletingTokens, oOptions, bPreventTokenUpdateEvent) {
+		var oTokenizer = this.getAggregation("tokenizer");
+		var iIndex = 0;
+		var bBackspace = oOptions.keyCode === KeyCodes.BACKSPACE;
+		var oLastRemovedToken = aDeletingTokens[aDeletingTokens.length - 1];
+		var oFirstRemovedToken = aDeletingTokens[0];
+
+		iIndex = this.getTokens().indexOf(bBackspace ? oFirstRemovedToken : oLastRemovedToken);
+
+		oTokenizer.focusToken(iIndex, oOptions, function () {
+			this.focus();
+		}.bind(this));
+
+		aDeletingTokens.forEach(function(oToken) {
+			oToken.destroy();
+		}, this);
+
+		if (!bPreventTokenUpdateEvent) {
+			this.fireTokenUpdate({
+				type: Tokenizer.TokenUpdateType.Removed,
+				addedTokens: [],
+				removedTokens: aDeletingTokens
+			});
+		}
 	};
 
 	MultiInput.prototype._handleInnerVisibility = function () {
@@ -418,32 +509,12 @@ function(
 		this.getAggregation("tokenizer").setMaxWidth(this._calculateSpaceForTokenizer());
 	};
 
-	MultiInput.prototype._onTokenChange = function (args) {
-		this.fireTokenChange(args.getParameters());
-		this.invalidate();
-
-		if (args.getParameter("type") === "removed") {
-			this.getAggregation("tokenizer").setRenderMode(TokenizerRenderMode.Loose);
-		}
-
-		// on mobile the list with the tokens should be updated and shown
-		if (this.isMobileDevice()) {
-			this._manageListsVisibility(true/*show list with tokens*/);
-		}
+	MultiInput.prototype._onTokenChange = function (oEvent) {
+		this.fireTokenChange(oEvent.getParameters());
 	};
 
-	MultiInput.prototype._onTokenUpdate = function (args) {
-		var eventResult = this.fireTokenUpdate(args.getParameters());
-
-		if (!this.getTokens().length) {
-			this.$().find("input").trigger("focus");
-		}
-
-		if (!eventResult) {
-			args.preventDefault();
-		} else {
-			this.invalidate();
-		}
+	MultiInput.prototype._onTokenUpdate = function (oEvent) {
+		this.fireTokenUpdate(oEvent.getParameters());
 	};
 
 	MultiInput.prototype._onSuggestionItemSelected = function (eventArgs) {
@@ -510,7 +581,15 @@ function(
 	};
 
 	MultiInput.prototype._onLiveChange = function (eventArgs) {
-		this.getAggregation("tokenizer")._removeSelectedTokens();
+		var bClearTokens = this.getAggregation("tokenizer").getTokens().every(function(oToken) {
+			return oToken.getSelected();
+		});
+
+		if (!bClearTokens) {
+			return;
+		}
+
+		this.removeAllTokens();
 	};
 
 	/**
@@ -569,8 +648,27 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onBeforeRendering = function () {
+		var oTokenizer = this.getAggregation("tokenizer");
+		var oTokensList = oTokenizer._getTokensList();
 		Input.prototype.onBeforeRendering.apply(this, arguments);
-		this.getAggregation("tokenizer").setEnabled(this.getEnabled());
+
+		this._hideTokensOverLimit();
+		oTokenizer.setEnabled(this.getEnabled());
+		oTokenizer._fillTokensList(oTokensList);
+	};
+
+	MultiInput.prototype._hideTokensOverLimit = function () {
+		if (!this.getMaxTokens()) {
+			return;
+		}
+
+		this.getTokens().forEach(function(oToken, iIndex) {
+			if (iIndex >= this.getMaxTokens()) {
+				return oToken.setVisible(false);
+			}
+
+			return oToken.setVisible(true);
+		}, this);
 	};
 
 	/**
@@ -608,24 +706,26 @@ function(
 	 * Function is called on keyboard backspace, if cursor is in front of a token, token gets selected and deleted
 	 *
 	 * @private
-	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onsapbackspace = function (oEvent) {
-		if (this._$input.cursorPos() > 0 || !this.getEditable() || this.getValue().length > 0) {
-			// deleting characters, not
-			return;
-		}
+		var sValue = this.getValue();
+		var isFocused = this.getFocusDomRef() === document.activeElement;
+		var aTokens = this.getTokens();
+		var oTokenToFocus = aTokens[aTokens.length - 1];
 
-		if (!oEvent.isMarked()) {
-			Tokenizer.prototype.onsapbackspace.apply(this.getAggregation("tokenizer"), arguments);
-		}
+		if (sValue === "" && isFocused && oTokenToFocus && oEvent.srcControl === this) {
+			var bAllTokensSelected = aTokens.filter(function(oToken) {
+				return oToken.getSelected();
+			}).length === aTokens.length;
 
-		if (oEvent.isMarked("forwardFocusToParent")) {
-			this.focus();
-		}
+			if (bAllTokensSelected) {
+				return this._deleteTokens(aTokens, {
+					keyCode: KeyCodes.BACKSPACE
+				});
+			}
 
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
+			oTokenToFocus.focus();
+		}
 	};
 
 	/**
@@ -1153,25 +1253,25 @@ function(
 	 * @returns {sap.m.MultiInput} Pointer to the control instance for chaining
 	 */
 	MultiInput.prototype.setTokens = function (aTokens) {
-		var oValidatedToken,
-			aValidatedTokens = [],
-			i;
+		 if (!Array.isArray(aTokens)) {
+			return;
+		 }
 
-		if (Array.isArray(aTokens)) {
-			for (i = 0; i < aTokens.length; i++) {
-				oValidatedToken = this.validateAggregation("tokens", aTokens[i], true);
-				ManagedObjectMetadata.addAPIParentInfoBegin(aTokens[i], this, "tokens");
-				aValidatedTokens.push(oValidatedToken);
-			}
+		 this.removeAllTokens();
 
-			this.getAggregation("tokenizer").setTokens(aValidatedTokens);
+		aTokens.forEach(function(oToken) {
+			ManagedObjectMetadata.addAPIParentInfoBegin(oToken, this, "tokens");
+		}, this);
 
-			for (i = 0; i < aTokens.length; i++) {
-				ManagedObjectMetadata.addAPIParentInfoEnd(aTokens[i]);
-			}
-		} else {
-			throw new Error("\"" + aTokens + "\" is of type " + typeof aTokens + ", expected array for aggregation tokens of " + this);
-		}
+
+		aTokens.forEach(function(oToken) {
+			this.addToken(oToken);
+		}, this);
+
+		aTokens.forEach(function(oToken) {
+			ManagedObjectMetadata.addAPIParentInfoEnd(oToken);
+		}, this);
+
 
 		return this;
 	};

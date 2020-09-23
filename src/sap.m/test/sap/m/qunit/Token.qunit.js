@@ -198,28 +198,6 @@ sap.ui.define([
 		assert.equal(this.token1.getSelected(), false, "Token is deselected");
 	});
 
-	QUnit.test("Backspace", function(assert) {
-		// arrange
-		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete");
-
-		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.BACKSPACE);
-
-		// assert
-		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
-	});
-
-	QUnit.test("Delete", function(assert) {
-		// arrange
-		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete");
-
-		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.DELETE);
-
-		// assert
-		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
-	});
-
 	QUnit.module("Token in Tokenizer", {
 		beforeEach : function() {
 			this.tokenizer = new Tokenizer("t");
@@ -252,8 +230,7 @@ sap.ui.define([
 
 	QUnit.test("Pressing delete icon", function (assert) {
 		// arrange
-		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete"),
-			oDeleteTokenSpy = this.spy(this.tokenizer, "handleTokenDeletion");
+		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete");
 
 		// act
 		this.token1.getAggregation("deleteIcon").firePress();
@@ -261,9 +238,6 @@ sap.ui.define([
 
 		// assert
 		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
-		assert.ok(this.token1.bIsDestroyed, "Token1 is destroyed");
-		assert.strictEqual(oDeleteTokenSpy.calledOnce, true, "The tokenizer's '_deleteToken' was called");
-		assert.deepEqual(oDeleteTokenSpy.firstCall.args[0], this.token1, "The deleted token was passed to the tokenizer.");
 	});
 
 	QUnit.module("ARIA attributes", {
