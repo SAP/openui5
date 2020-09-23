@@ -2,7 +2,31 @@
 
 var baseUrl = document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/")),
 	localStorageKey = document.querySelector("script[localstoragekey]").getAttribute("localstoragekey"),
-	manifest = "manifest.json";
+	manifest = {
+		"sap.app": {
+			"id": "test.sample",
+			"type": "card",
+			"i18n": "designtime/i18n/i18n.properties",
+			"title": "Test Card for Parameters",
+			"subTitle": "Test Card for Parameters"
+		},
+		"sap.card": {
+			"designtime": "designtime/withPreview/",
+			"type": "List",
+			"configuration": {
+				"parameters": {
+					"stringParameter": {}
+				}
+			},
+			"header": {
+				"title": "Card Title",
+				"subTitle": "Card Sub Title",
+				"icon": {
+					"src": "sap-icon://accept"
+				}
+			},
+		}
+	};
 
 function switchTheme(oSelect) {
 	sap.ui.getCore().applyTheme(oSelect.options[oSelect.selectedIndex].value);
@@ -13,10 +37,6 @@ function init() {
 	loadAllChanges();
 	//load common implementation for host testing
 	sap.ui.require(["testjs/HostImpl"]);
-}
-
-function setManifest(manifest) {
-	this.manifest = manifest;
 }
 
 function getItem(id) {
@@ -46,22 +66,26 @@ function deleteCurrentValues(id) {
 	loadCurrentValues(id);
 	updateAllLayerCard();
 }
-function createCardEditorTag(id, changes, mode, language) {
+function createCardEditorTag(id, changes, mode, language, designtime) {
 	language = language || "";
 	var card = {
-		"manifest": manifest,
+		"manifest": "manifest.json",
 		"host": "host",
 		"manifestChanges": changes,
 		"baseUrl": baseUrl
 	};
+	if(designtime && designtime !== "") {
+		manifest["sap.card"].designtime = "designtime/withPreview/" + designtime;
+		card.manifest = manifest;
+	}
 	return '<ui-integration-card-editor id="' + id + '" card=\'' + JSON.stringify(card) + '\' mode="' + mode + '" language="' + language + '"></ui-integration-card-editor>';
 }
 function loadCurrentValues(id) {
-	var dom = document.getElementById(id),
-		settings = getItem(id),
-		div = document.createElement("div");
+	var dom = document.getElementById(id);
 	if (!dom) return;
-	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), dom.getAttribute("language") || "");
+	var settings = getItem(id),
+		div = document.createElement("div");
+	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), dom.getAttribute("language") || "", dom.getAttribute("designtime") || "");
 	dom.parentNode.replaceChild(div.firstChild, dom);
 }
 
@@ -69,6 +93,13 @@ function loadAllChanges() {
 	loadCurrentValues("cardEditorAdmin");
 	loadCurrentValues("cardEditorContent")
 	loadCurrentValues("cardEditorTranslation");
+	loadCurrentValues("previewAbstractLive");
+	loadCurrentValues("previewLive")
+	loadCurrentValues("previewLiveAbstract");
+	loadCurrentValues("previewLiveOwnImage");
+	loadCurrentValues("previewOwnImageLive")
+	loadCurrentValues("previewNone");
+	loadCurrentValues("previewNoScale");
 }
 
 function updateAllLayerCard() {
