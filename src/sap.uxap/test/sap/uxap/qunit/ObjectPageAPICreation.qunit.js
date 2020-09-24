@@ -3375,17 +3375,22 @@ function (
 
 	QUnit.test("ObjectPage _applyContextualSettings: changes media classes", function (assert) {
         // Arrange
-        var oObjectPage = new ObjectPageLayout({});
+		var oObjectPage = new ObjectPageLayout({}),
+			oContextualSettings = {contextualWidth: 800},
+			oSpy;
+
 		oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
 
 		// Act
-		oObjectPage._applyContextualSettings({contextualWidth: 800});
+		oSpy = this.spy(ManagedObject.prototype, "_applyContextualSettings");
+		oObjectPage._applyContextualSettings(oContextualSettings);
 
 		// Assert
 		assert.ok(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Tablet"), "Tablet class is applied");
 		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop"), "Desktop class is removed");
 		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Phone"), "Phone class is removed");
+		assert.deepEqual(oSpy.getCall(0).args[0], oContextualSettings, "Contextual settings object is passed");
 
 		// Act
 		oObjectPage._applyContextualSettings({contextualWidth: 500});

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/f/DynamicPageTitle",
 	"sap/f/DynamicPageHeader",
 	"sap/ui/Device",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Core",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
@@ -26,6 +27,7 @@ function (
 	DynamicPageTitle,
 	DynamicPageHeader,
 	Device,
+	ManagedObject,
 	Core,
 	ComponentContainer,
 	UIComponent,
@@ -1851,13 +1853,18 @@ function (
 	});
 
 	QUnit.test("DynamicPage _applyContextualSettings changes media classes" , function (assert) {
+		// Arrange
+		var oSpy = this.spy(ManagedObject.prototype, "_applyContextualSettings"),
+			oContextualSettings = {contextualWidth: 800};
+
 		// Act
-		this.oDynamicPage._applyContextualSettings({contextualWidth: 800});
+		this.oDynamicPage._applyContextualSettings(oContextualSettings);
 
 		// Assert
 		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Tablet"), "Tablet class is applied");
 		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop"), "Desktop class is removed");
 		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Phone"), "Phone class is removed");
+		assert.deepEqual(oSpy.getCall(0).args[0], oContextualSettings, "Contextual settings object is passed");
 
 		// Act
 		this.oDynamicPage._applyContextualSettings({contextualWidth: 500});
