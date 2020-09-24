@@ -503,6 +503,13 @@ function(
 		return aPaths;
 	};
 
+	Utils.isOriginalFioriToolbarAccessible = function () {
+		var oRenderer = Utils.getFiori2Renderer();
+		return oRenderer
+			&& oRenderer.getRootControl
+			&& oRenderer.getRootControl().getOUnifiedShell().getHeader();
+	};
+
 	/**
 	 * Function to get the Fiori2 Renderer
 	 *
