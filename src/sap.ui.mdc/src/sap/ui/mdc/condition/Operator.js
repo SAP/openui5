@@ -107,13 +107,14 @@ sap.ui.define([
 				this.longText = oConfiguration.longText || _getText(sLongTextKey) || "";
 				this.tokenText = oConfiguration.tokenText || _getText(sTokenTextKey) || "";
 				if (this.longText === sLongTextKey) {
-					//use the tokenText as longText and replace the {0} placeholder
+					//use the tokenText as longText and replace the {0} and {1} placeholder
 					//Example:
 					//#XTIT: token text for "last x days" operator
 					//operators.LASTDAYS.tokenText=Last {0} days
 					//#XTIT: token long text for "last x days" operator
 					//__operators.LASTDAYS.longText=Last x days
-					this.longText = this.tokenText.replace(/\{0\}/g, "x");
+					this.longText = this.tokenText.replace(/\{0\}/g, "x")
+						.replace(/\{1\}/g, "y");
 				}
 				if (this.tokenText === sTokenTextKey) {
 					this.tokenText = this.longText;

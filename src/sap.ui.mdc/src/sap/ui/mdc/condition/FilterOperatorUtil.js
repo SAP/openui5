@@ -466,6 +466,26 @@ function(
 							return UniversalDateUtils.ranges.lastDays(iDuration);
 						}
 					}),
+					todayXYDays: new RangeOperator({
+						name: "TODAYXYDAYS",
+						valueTypes: [
+							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }}, //, constraints: { minimum: 0 }},
+							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }} //, constraints: { minimum: 0 }}
+						],
+						paramTypes: ["(\\d+)", "(\\d+)"],
+						//label:["x", "y"],
+						additionalInfo: "",
+						calcRange: function (xDays, yDays) {
+							var oStart = xDays >= 0 ?  UniversalDateUtils.ranges.lastDays(xDays)[0] : UniversalDateUtils.ranges.nextDays(-xDays)[1];
+							var oEnd = yDays >= 0 ? UniversalDateUtils.ranges.nextDays(yDays)[1] : UniversalDateUtils.ranges.lastDays(-yDays)[0];
+
+							if (oStart.oDate.getTime() > oEnd.oDate.getTime()) {
+								oEnd = [oStart, oStart = oEnd][0];
+							}
+
+							return [UniversalDateUtils.resetStartTime(oStart), UniversalDateUtils.resetEndTime(oEnd)];
+						}
+					}),
 					nextDays: new RangeOperator({
 						name: "NEXTDAYS",
 						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
@@ -1067,6 +1087,7 @@ function(
 				 FilterOperatorUtil._mOperators.today,
 				 FilterOperatorUtil._mOperators.yesterday,
 				 FilterOperatorUtil._mOperators.tomorrow,
+				 FilterOperatorUtil._mOperators.todayXYDays,
 				 FilterOperatorUtil._mOperators.lastDays,
 				 FilterOperatorUtil._mOperators.nextDays,
 

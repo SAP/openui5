@@ -498,9 +498,9 @@ sap.ui.define([
 
 		if (oControl.getMetadata().hasProperty("placeholder")) {
 			if (iIndex === 0) {
-				oControl.bindProperty("placeholder", {path: "$condition>operator", formatter: _getPlaceholderForOperator});
+				oControl.bindProperty("placeholder", {path: "$condition>operator", formatter: _getPlaceholder1ForOperator});
 			} else { // from Field cannot switch placeholder
-				oControl.bindProperty("placeholder", {path: "$i18n>valuehelp.DEFINECONDITIONS_TO"});
+				oControl.bindProperty("placeholder", {path: "$condition>operator", formatter: _getPlaceholder2ForOperator});
 			}
 		}
 
@@ -959,16 +959,29 @@ sap.ui.define([
 
 	}
 
-	function _getPlaceholderForOperator(sOperator) {
+	function _getPlaceholder1ForOperator(sOperator) {
 
 		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
 
-		if (oOperator && oOperator.valueTypes[1]) {
+		if (oOperator && oOperator.aLabels) {
+			return oOperator.aLabels[0];
+		} else if (oOperator && oOperator.valueTypes[1]) {
 			return oMessageBundle.getText("valuehelp.DEFINECONDITIONS_FROM");
 		} else {
 			return oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE");
 		}
 
+	}
+
+	function _getPlaceholder2ForOperator(sOperator) {
+
+		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
+
+		if (oOperator && oOperator.aLabels) {
+			return oOperator.aLabels[1];
+		} else if (oOperator && oOperator.valueTypes[1]) {
+			return oMessageBundle.getText("valuehelp.DEFINECONDITIONS_TO");
+		}
 	}
 
 	function _updateRow(oCondition, oGrid, iIndex, oBindingContext, iRow) {
