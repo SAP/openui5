@@ -248,6 +248,7 @@ sap.ui.define([
 
 		// cell
 		rm.openStart("td", oLI.getId() + "-subcell");
+		rm.class("sapMListTblSubRowCell");
 		rm.attr("colspan", oTable.getColSpan());
 
 		var sPopinLayout = oTable.getPopinLayout();

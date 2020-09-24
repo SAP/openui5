@@ -553,6 +553,10 @@ sap.ui.define([
 		this.$("tblBody").find(".sapMGHLICell").attr("colspan", this.getColSpan());
 		this.$("nodata-text").attr("colspan", this.getColCount());
 
+		if (this.hasPopin()) {
+			this.$("tblBody").find(".sapMListTblSubRowCell").attr("colspan", this.getColSpan());
+		}
+
 		// force IE to repaint in fixed layout mode
 		if (this.getFixedLayout()) {
 			this._forceStyleChange();
