@@ -31,6 +31,9 @@ sap.ui.define(function() {
 			"link/Link": {
 				title: "Link"
 			},
+			"link/LinkDelegate": {
+				title: "LinkDelegate"
+			},
 			"link/Panel": {
 				title: "Panel"
 			},
