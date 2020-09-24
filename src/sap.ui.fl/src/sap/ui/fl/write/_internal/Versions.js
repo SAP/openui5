@@ -59,6 +59,7 @@ sap.ui.define([
 			backendDraft: bBackendDraft,
 			dirtyChanges: false,
 			draftAvailable: bBackendDraft,
+			activateEnabled: bBackendDraft,
 			switchVersionsActive: bSwitchVersionsActive,
 			persistedVersion: nPersistedBasisForDisplayedVersion,
 			displayedVersion: nPersistedBasisForDisplayedVersion
@@ -94,6 +95,10 @@ sap.ui.define([
 				aVersions.shift();
 				oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
 				oModel.updateBindings(true);
+			}
+
+			if (oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion")) {
+				oModel.setProperty("/activateEnabled", true);
 			}
 		};
 
@@ -268,6 +273,7 @@ sap.ui.define([
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
+			oModel.setProperty("/activateEnabled", false);
 			oModel.setProperty("/activeVersion", oVersion.version);
 			oModel.setProperty("/displayedVersion", oVersion.version);
 			oModel.updateBindings(true);
@@ -297,6 +303,7 @@ sap.ui.define([
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
+			oModel.setProperty("/activateEnabled", false);
 			oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
 			oModel.updateBindings(true);
 			// in case of a existing draft known by the backend;

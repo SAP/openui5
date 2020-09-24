@@ -30,7 +30,7 @@
                         icon="sap-icon://activate"
                         press=".activateDraft"
                         visible="{versions>/versioningEnabled}"
-                        enabled="{versions>/draftAvailable}"
+                        enabled="{versions>/activateEnabled}"
                         type="Transparent"
                         tooltip="{i18n>TOL_ACTIVATE_DRAFT}" />
                 <Button
