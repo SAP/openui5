@@ -119,12 +119,6 @@ function(
 	function configureMoveCommand(oElement, mSettings, oDesignTimeMetadata) {
 		var oMovedElement = mSettings.movedElements[0].element || sap.ui.getCore().byId(mSettings.movedElements[0].id);
 		var oAction = oDesignTimeMetadata.getAction("move", oMovedElement);
-		// needed for Stashed Controls
-		if (!oAction && oDesignTimeMetadata.getMetadata().getName() === "sap.ui.dt.ElementDesignTimeMetadata") {
-			oAction = oDesignTimeMetadata.getActionDataFromAggregations("move", oElement).filter(function(oAggAction) {
-				return oAggAction.aggregation === mSettings.source.aggregation;
-			})[0];
-		}
 		return oAction;
 	}
 

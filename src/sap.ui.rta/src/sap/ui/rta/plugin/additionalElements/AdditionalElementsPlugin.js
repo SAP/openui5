@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/Util",
-	"sap/ui/core/StashedControlSupport",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/base/Log",
 	"sap/base/util/merge",
@@ -22,7 +21,6 @@ sap.ui.define([
 	Utils,
 	FlUtils,
 	DtUtils,
-	StashedControlSupport,
 	ElementDesignTimeMetadata,
 	Log,
 	merge,
@@ -152,35 +150,6 @@ sap.ui.define([
 			sControlType = oTextResources.getText("MULTIPLE_CONTROL_NAME");
 		}
 		return oTextResources.getText(sRtaTextKey, [sControlType]);
-	}
-
-	function _fakeStashedControlInfos() {
-		return {
-			designTimeMetadata : new ElementDesignTimeMetadata(
-				{
-					data : {
-						name : {
-							singular : function() {
-								return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
-							},
-							plural : function() {
-								return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
-							}
-						},
-						actions : {
-							reveal : {
-								changeType : "unstashControl",
-								getAggregationName : _defaultGetAggregationName
-							}
-						}
-					}
-				}
-			),
-			action : {
-				changeType : "unstashControl",
-				getAggregationName : _defaultGetAggregationName
-			}
-		};
 	}
 
 	function _getRevealDataFromActions(mActions, oRevealedElement) {
@@ -435,46 +404,37 @@ sap.ui.define([
 
 		_invisibleToReveal: function(mReveal, oInvisibleElement) {
 			return Promise.resolve().then(function() {
-				var sType = oInvisibleElement.getMetadata().getName();
 				var oDesignTimeMetadata;
 				var mRevealAction;
 				var bRevealEnabled = false;
 				var oHasChangeHandlerPromise = Promise.resolve();
 
-				if (sType === "sap.ui.core._StashedControl") {
-					//TODO Fix if we have the stashed type info
-					var mStashedInfos = _fakeStashedControlInfos();
-					oDesignTimeMetadata = mStashedInfos.designTimeMetadata;
-					mRevealAction = mStashedInfos.action;
-					bRevealEnabled = true;
-				} else {
-					var oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
-					if (oOverlay) {
-						oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+				var oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
+				if (oOverlay) {
+					oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 
-						mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oInvisibleElement);
-						if (mRevealAction && mRevealAction.changeType) {
-							var oRevealSelector = oInvisibleElement;
-							if (mRevealAction.changeOnRelevantContainer) {
-								oRevealSelector = oOverlay.getRelevantContainer();
-							}
-
-							oHasChangeHandlerPromise = this.hasChangeHandler(mRevealAction.changeType, oRevealSelector).then(function(bHasChangeHandler) {
-								if (bHasChangeHandler) {
-									if (mRevealAction.changeOnRelevantContainer) {
-										//we have the child overlay, so we need the parents
-										var mParents = _getParents(true, oOverlay);
-										bRevealEnabled = this.hasStableId(mParents.relevantContainerOverlay)
-											&& this.hasStableId(mParents.parentOverlay);
-									} else {
-										bRevealEnabled = true;
-									}
-									if (!mRevealAction.getAggregationName) {
-										mRevealAction.getAggregationName = _defaultGetAggregationName;
-									}
-								}
-							}.bind(this));
+					mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oInvisibleElement);
+					if (mRevealAction && mRevealAction.changeType) {
+						var oRevealSelector = oInvisibleElement;
+						if (mRevealAction.changeOnRelevantContainer) {
+							oRevealSelector = oOverlay.getRelevantContainer();
 						}
+
+						oHasChangeHandlerPromise = this.hasChangeHandler(mRevealAction.changeType, oRevealSelector).then(function(bHasChangeHandler) {
+							if (bHasChangeHandler) {
+								if (mRevealAction.changeOnRelevantContainer) {
+									//we have the child overlay, so we need the parents
+									var mParents = _getParents(true, oOverlay);
+									bRevealEnabled = this.hasStableId(mParents.relevantContainerOverlay)
+										&& this.hasStableId(mParents.parentOverlay);
+								} else {
+									bRevealEnabled = true;
+								}
+								if (!mRevealAction.getAggregationName) {
+									mRevealAction.getAggregationName = _defaultGetAggregationName;
+								}
+							}
+						}.bind(this));
 					}
 				}
 
@@ -842,7 +802,7 @@ sap.ui.define([
 
 				.then(function(oRevealCommandForInvisible) {
 					oCompositeCommand.addCommand(oRevealCommandForInvisible);
-					return this._createMoveCommandForInvisible(oSelectedElement, mActions, mParents, oSiblingElement, iIndex);
+					return this._createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex);
 				}.bind(this))
 
 				.then(function(oMoveCommandForInvisible) {
@@ -880,12 +840,6 @@ sap.ui.define([
 			var oDesignTimeMetadata = mRevealData.designTimeMetadata;
 			var oRevealAction = mRevealData.action;
 
-			//Parent Overlay passed as argument as no overlay is yet available for stashed control
-			if (!oRevealedElementOverlay) {
-				var oSourceParent = _getSourceParent(oRevealedElement, mParents, oRevealedElementOverlay);
-				oRevealedElementOverlay = OverlayRegistry.getOverlay(oSourceParent);
-			}
-
 			var sVariantManagementReference;
 			if (oRevealedElementOverlay) {
 				sVariantManagementReference = this.getVariantManagementReference(oRevealedElementOverlay);
@@ -900,18 +854,11 @@ sap.ui.define([
 			return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", { }, oDesignTimeMetadata, sVariantManagementReference);
 		},
 
-		_createMoveCommandForInvisible: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
+		_createMoveCommandForInvisible: function(oSelectedElement, mParents, oSiblingElement, iIndex) {
 			var oRevealedElement = ElementUtil.getElementInstance(oSelectedElement.elementId);
 			var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
-			var sParentAggregationName;
-			if (oRevealedElementOverlay) {
-				sParentAggregationName = oRevealedElementOverlay.getParentAggregationOverlay().getAggregationName();
-			} else {
-				// stashed control is not in DOM tree and therefore has no overlay
-				var mRevealData = _getRevealDataFromActions(mActions, oRevealedElement);
-				sParentAggregationName = mRevealData.action.getAggregationName(mParents.parent, oRevealedElement);
-			}
-			var oSourceParent = _getSourceParent(oRevealedElement, mParents, oRevealedElementOverlay);
+			var sParentAggregationName = oRevealedElementOverlay.getParentAggregationOverlay().getAggregationName();
+			var oSourceParent = oRevealedElementOverlay.getParentElementOverlay().getElement() || mParents.parent;
 			var oTargetParent = mParents.parent;
 			var iRevealTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, sParentAggregationName);
 			var iRevealedSourceIndex = Utils.getIndex(oSourceParent, oRevealedElement, sParentAggregationName) - 1;
@@ -921,7 +868,7 @@ sap.ui.define([
 			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()) {
 				var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ? OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
 				var SourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
-				var sVariantManagementReference = this.getVariantManagementReference(oSourceParentOverlay);
+				var sVariantManagementReference = this.getVariantManagementReference(oRevealedElementOverlay);
 
 				return this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
 					movedElements : [{
@@ -1210,21 +1157,6 @@ sap.ui.define([
 			return this._aCachedElements[bOverlayIsSibling ? "asSibling" : "asChild"];
 		}
 	});
-
-	function _getSourceParent(oRevealedElement, mParents, oRevealedElementOverlay) {
-		var oParent;
-		if (oRevealedElementOverlay) {
-			oParent = oRevealedElementOverlay.getParentElementOverlay().getElement();
-		}
-		if (!oParent && oRevealedElement.sParentId) {
-			//stashed control has no parent, but remembers its parent id
-			oParent = sap.ui.getCore().byId(oRevealedElement.sParentId);
-		} else if (!oParent) {
-			// fallback to target parent
-			oParent = mParents.parent;
-		}
-		return oParent;
-	}
 
 	return AdditionalElementsPlugin;
 });
