@@ -630,7 +630,7 @@
 					<m:TextArea id="Cond" editable="false" rows="10"></m:TextArea>
 
 					<form:dependents>
-						<mdcField:ConditionFieldHelp id="CFH1" />
+						<mdcField:ConditionFieldHelp id="CFH1" title="Conditions"/>
 					</form:dependents>
 				</form:SimpleForm>
 			</m:ScrollContainer>
