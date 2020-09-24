@@ -727,10 +727,13 @@ sap.ui.define([
 	function _createInnerControls() {
 		var oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
 
+		// TODO This scrollcontainer is currently not used.
+		// A new is added intothe ValueHelpPanel.
+		// Other option is to move the Panel from the ValueHelPanel into the DefineConditionPAnel and use this local Scrollcontainer.
 		var oScrollContainer = new ScrollContainer({
 			height: "100%",
 			horizontal: false,
-			vertical: true
+			vertical: false
 		});
 
 		oScrollContainer.addDependent(
