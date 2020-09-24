@@ -135,7 +135,6 @@ sap.ui.define([
 	}
 
 	function mergeWithDefaults(oSuiteConfig, sTestSuite) {
-		window.console.log("[DEBUG] mergeWithDefaults for testsuite: " + sTestSuite);
 		function resolvePlaceholders(str, name) {
 			return str == null ? str : str.replace(/\{suite\}/g, sTestSuite).replace(/\{name\}/g, name);
 		}
@@ -165,7 +164,6 @@ sap.ui.define([
 			}
 			oTestConfig.beforeBootstrap = resolvePackage(resolvePlaceholders(oTestConfig.beforeBootstrap, name));
 			oTestConfig.page = resolvePlaceholders(oTestConfig.page, name);
-			window.console.log("[DEBUG] mergeWithDefaults test page: " + oTestConfig.page);
 			oTestConfig.title = resolvePlaceholders(oTestConfig.title, name);
 			oSuiteConfig.tests[name] = oTestConfig;
 		});

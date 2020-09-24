@@ -108,13 +108,9 @@
 	window.sap.ui.qunit.TestRunner = {
 
 		checkTestPage: function(sTestPage, bSequential) {
-			var t0 = Date.now();
 			var oPromise =
 				this._checkTestPage(sTestPage, bSequential)
 				.then(function(aTestPages) {
-					var t1 = Date.now();
-					window.console.log("[DEBUG] checkTestPage(\"" + sTestPage + "\") found " + aTestPages.length + " pages in " + (t1 - t0) + "msec.");
-					window.console.log("[DEBUG] checkTestPage(\"" + sTestPage + "\") currently running IFrames: " + window.frames.length);
 					return aTestPages;
 				});
 			oPromise.done = oPromise.then; // compat for Deferred
@@ -140,7 +136,6 @@
 				oXHRQueue.ajax(sTestPage).then(function(sData) {
 					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
 							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/runTest/.test(sData)) ) {
-						// window.console.log("[DEBUG] _checkTestPage checking testsuite page: " + sTestPage);
 						var $frame = jQuery("<iframe>");
 						var that = this;
 
@@ -194,11 +189,7 @@
 		findTestPages: function(oIFrame, bSequential) {
 
 			return Promise.resolve(oIFrame.contentWindow.suite()).then(function(oSuite) {
-				window.console.log("[DEBUG] findTestPages oIFrame source: " + oIFrame.src);
 				var aPages = oSuite && oSuite.getTestPages() || [];
-				for (var i = 0; i < aPages.length; i++) {
-					window.console.log("[DEBUG] findTestPages oIFrame source " + oIFrame.src + ": " + aPages[i]);
-				}
 				return new Promise(function(resolve, reject) {
 
 					try {
