@@ -113,12 +113,25 @@ function (
 	});
 
 	QUnit.test("Avatar theme changing logic", function (assert) {
+		// Arrange
 		var oSpy = sinon.spy(this.oAvatarGroup, "_onResize");
 
+		// Act
 		this.oAvatarGroup.onThemeChanged({ theme: "mock" });
 
-		assert.strictEqual(oSpy.callCount, 1, "_onResize method was called");
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "_onResize method not called when AvatarGroup is not rendered");
 
+		// Act
+		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		oSpy.reset();
+		this.oAvatarGroup.onThemeChanged({ theme: "mock" });
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "_onResize is called when theme is changed");
+
+		// Clean up
 		oSpy.restore();
 	});
 
