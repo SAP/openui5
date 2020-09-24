@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/documentation/sdk/controller/BaseController",
-	"sap/base/Log"
-], function (Device, BaseController, Log) {
+	"sap/base/Log",
+	"sap/ui/documentation/sdk/model/formatter"
+], function (Device, BaseController, Log, formatter) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.documentation.sdk.controller.Tools", {
@@ -20,6 +21,9 @@ sap.ui.define([
 		 * Called when the controller is instantiated.
 		 * @public
 		 */
+
+		formatter: formatter,
+
 		onInit: function () {
 			BaseController.prototype.onInit.call(this);
 
