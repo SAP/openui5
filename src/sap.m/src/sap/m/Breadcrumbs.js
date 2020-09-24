@@ -404,7 +404,7 @@ sap.ui.define([
 		return {
 			id: oControl.getId(),
 			control: oControl,
-			width: oControl.$().parent().outerWidth(true),
+			width: getElementWidth(oControl.$().parent()),
 			bCanOverflow: oControl instanceof Link
 		};
 	};
@@ -465,9 +465,9 @@ sap.ui.define([
 	 */
 	Breadcrumbs.prototype._getControlsInfo = function () {
 		if (!this._bControlsInfoCached) {
-			this._iSelectWidth = this._getSelect().$().parent().outerWidth(true) || 0;
+			this._iSelectWidth = getElementWidth(this._getSelect().$().parent()) || 0;
 			this._aControlInfo = this._getControlsForBreadcrumbTrail().map(this._getControlInfo);
-			this._iContainerSize = this.$().outerWidth(true);
+			this._iContainerSize = getElementWidth(this.$());
 			this._bControlsInfoCached = true;
 		}
 
@@ -642,6 +642,16 @@ sap.ui.define([
 		this.invalidate(this);
 		return this;
 	};
+
+	// helper functions
+	function getElementWidth($element) {
+		var iMargins;
+		if ($element.length) {
+			iMargins = $element.outerWidth(true) - $element.outerWidth();
+
+			return $element.get(0).getBoundingClientRect().width + iMargins;
+		}
+	}
 
 	return Breadcrumbs;
 

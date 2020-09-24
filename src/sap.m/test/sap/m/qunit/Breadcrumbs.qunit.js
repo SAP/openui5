@@ -388,6 +388,54 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		assert.ok(invalidateSpy.notCalled, "breadcrumb is not invalidated during rendering");
 	});
 
+	QUnit.test("Prevent width rounding issues", function (assert) {
+
+		var oLink1 = new Link({text: "Sales Organization"}),
+			oLink2 = new Link({text: "Order Type"}),
+			iSumOfContentWidths,
+			iContainerWidth;
+		this.oStandardBreadCrumbsControl = new Breadcrumbs({
+			links: [oLink1, oLink2]
+		});
+
+		helpers.renderObject(this.oStandardBreadCrumbsControl);
+
+		this.stub(this.oStandardBreadCrumbsControl, "$", function() {
+			return {
+				"outerWidth": function(){ return 208;}
+			};
+		});
+		this.stub(oLink1, "$", function() {
+			return {
+				"parent": function() {
+					return {
+						"outerWidth": function(){ return 128;}
+					};
+				}
+			};
+		});
+		this.stub(oLink2, "$", function() {
+			return {
+				"parent": function() {
+					return {
+						"outerWidth": function(){ return 81;}
+					};
+				}
+			};
+		});
+
+		iSumOfContentWidths = oLink1.$().parent().outerWidth() + oLink2.$().parent().outerWidth();
+		iContainerWidth = this.oStandardBreadCrumbsControl.$().outerWidth();
+
+		// assert mocked setup (when we have a rounding issue)
+		assert.strictEqual(iSumOfContentWidths, iContainerWidth + 1, "sum of the widths of the children exceeds the container width by 1");
+
+		this.oStandardBreadCrumbsControl._resetControl();
+		this.oStandardBreadCrumbsControl.rerender();
+
+		assert.equal(this.oStandardBreadCrumbsControl._getSelect().getVisible(), false, "select is not shown");
+	});
+
 	QUnit.module("Breadcrumbs - private functions", {
 		afterEach: function () {
 			this.oStandardBreadCrumbsControl.destroy();
