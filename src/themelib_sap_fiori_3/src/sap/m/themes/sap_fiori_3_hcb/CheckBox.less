@@ -3,6 +3,10 @@
 /* Quartz High Contrast Black theme  */
 /* ================================= */
 
+.sapMCbBg {
+	border-width: 0.0625rem;
+}
+
 .sapMCb.sapMCbWarn .sapMCbBg {
 	background-color: @sapUiFieldWarningBackground;
 	border: 0.125rem dashed @sapUiFieldWarningColor;
@@ -16,6 +20,9 @@
 .sapMCb.sapMCbInfo .sapMCbBg {
 	background-color: @sapUiFieldBackground;
 	border: @sapUiFieldBorderWidth dashed @sapUiFieldWarningColor;
+	height: 1.25rem;
+	width: 1.25rem;
+	line-height: 1.25rem;
 }
 
 .sapMCb.sapMCbBgDis.sapMCbWarn .sapMCbBg.sapMCbMarkChecked:before {
@@ -114,6 +121,16 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 .sapUiSizeCompact {
 	.sapUiForm .sapMCbBg { /* In forms, align left with '0.125rem' ( the focus width) */
 		left: 0.125rem;
+	}
+
+	.sapMCbBg {
+		border-radius: @sapUiFieldBorderCornerRadius;
+	}
+
+	.sapMCb.sapMCbInfo .sapMCbBg {
+		height: 0.875rem;
+		width: 0.875rem;
+		line-height: 0.875rem;
 	}
 }
 
