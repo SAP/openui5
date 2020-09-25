@@ -173,6 +173,15 @@ sap.ui.define([
 	 *               This feature is not supported in <code>OperationMode.Server</code> and <code>OperationMode.Auto</code>.
 	 *               Please see also the {@link sap.ui.model.odata.ODataTreeBindingAdapter#getCurrentTreeState getCurrentTreeState}
 	 *               method in class <code>ODataTreeBindingAdapter</code>.
+	 *  @param {sap.ui.model.odata.CountMode} [mParameters.countMode]
+	 *    Defines the count mode of this binding; if not specified, the default count mode of the
+	 *    binding's model is applied. The resulting count mode must not be
+	 *    {@link sap.ui.model.odata.CountMode.None}.
+	 *  @param {boolean} [mParameters.usePreliminaryContext]
+	 *    Whether a preliminary context is used; defaults to the value of the parameter
+	 *    <code>preliminaryContext</code> given on construction of the binding's model, see
+	 *    {@link sap.ui.model.odata.v2.ODataModel}
+	 *
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataTreeBinding
 	 * @extends sap.ui.model.TreeBinding
@@ -259,6 +268,8 @@ sap.ui.define([
 
 			// a flag to decide if the OperationMode.Auto should "useServersideApplicationFilters", by default the filters are omitted.
 			this.bUseServersideApplicationFilters = (mParameters && mParameters.useServersideApplicationFilters) || false;
+			this.bUsePreliminaryContext = this.mParameters.usePreliminaryContext
+				|| oModel.bPreliminaryContext;
 
 			this.oAllKeys = null;
 			this.oAllLengths = null;
@@ -2046,22 +2057,29 @@ sap.ui.define([
 
 	/**
 	 * Sets the binding context.
-	 * @param oContext
+	 *
+	 * @param {sap.ui.model.Context} [oContext] The new binding context
 	 * @private
 	 */
 	ODataTreeBinding.prototype.setContext = function(oContext) {
+		if (oContext && oContext.isPreliminary() && !this.bUsePreliminaryContext) {
+			return;
+		}
+
+		if (oContext && oContext.isUpdated() && this.bUsePreliminaryContext
+				&& this.oContext === oContext) {
+			this._fireChange({reason : ChangeReason.Context});
+			return;
+		}
+
 		if (Context.hasChanged(this.oContext, oContext)) {
 			this.oContext = oContext;
 
-			// If binding is not a relative binding, nothing to do here
 			if (!this.isRelative()) {
 				return;
 			}
 
-			// resolving the path makes sure that we can safely analyze the metadata
-			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-
-			if (sResolvedPath) {
+			if (this.oModel.resolve(this.sPath, this.oContext)) {
 				this.resetData();
 				this._initialize(); // triggers metadata/annotation check
 				this._fireChange({ reason: ChangeReason.Context });

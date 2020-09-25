@@ -59,6 +59,10 @@ sap.ui.define(function() {
 			"ODataModel.integration": {
 				title: "sap.ui.model.odata.v2.ODataModel.integration"
 			},
+			ODataTreeBindingNoFakeService: {
+				title: "sap.ui.model.odata.v2.ODataTreeBinding"
+					+ " (ODataTreeBindingNoFakeService.qunit)"
+			},
 			ODataV2ListBinding: {
 				title: "sap.ui.model.odata.v2.ODataListBinding - QUnit tests"
 			},

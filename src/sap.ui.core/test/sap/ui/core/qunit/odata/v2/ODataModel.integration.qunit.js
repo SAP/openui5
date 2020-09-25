@@ -180,6 +180,20 @@ sap.ui.define([
 	}
 
 	/**
+	 * Creates a V2 OData model for <code>UI_C_DFS_ALLWNCREQ</code> service to test hierarchies with
+	 * <code>ODataTreeBinding</code>.
+	 *
+	 * @param {object} [mModelParameters]
+	 *   Map of parameters for model construction. The default parameters are set in the createModel
+	 *   function.
+	 * @returns {sap.ui.model.odata.v2.ODataModel}
+	 *   The model
+	 */
+	function createAllowanceModel(mModelParameters) {
+		return createModel("/sap/opu/odata/sap/UI_C_DFS_ALLWNCREQ/", mModelParameters);
+	}
+
+	/**
 	 * Gets a string representation of the given messages to be used in "sap-message" response
 	 * header. In case of multiple messages, the first message is the outer message and the other
 	 * messages are stored as inner messages in the "details" property.
@@ -238,8 +252,43 @@ sap.ui.define([
 			"application/xml"
 		);
 		xmlConvertMTables(oDocument);
+		xmlConvertGridTables(oDocument);
 
 		return oDocument;
+	}
+
+	/**
+	 * Converts the sap.ui.table.(Table|TreeTable) controls within the document. Embeds all inner
+	 * controls into a <t:Column> with <t:template> each. <t:Column> may still be used however.
+	 * Do not use <rows>, it breaks this automatic conversion (and is unnecessary anyway).
+	 *
+	 * @param {Document} oDocument The view as XML document
+	 */
+	function xmlConvertGridTables(oDocument) {
+		function convertElements(aElements) {
+			var oChildNode, aChildNodes, oColumn, oElement, i, j, oTemplate;
+
+			for (i = aElements.length - 1; i >= 0; i -= 1) {
+				oElement = aElements[i];
+
+				aChildNodes = oElement.childNodes;
+				for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
+					oChildNode = aChildNodes[j];
+					if (oChildNode.nodeType === Node.ELEMENT_NODE
+							&& oChildNode.localName !== "Column") {
+						oColumn = document.createElementNS("sap.ui.table", "Column");
+						oElement.insertBefore(oColumn, oChildNode);
+						oElement.removeChild(oChildNode);
+						oTemplate = document.createElementNS("sap.ui.table", "template");
+						oColumn.appendChild(oTemplate);
+						oTemplate.appendChild(oChildNode);
+					}
+				}
+			}
+		}
+
+		convertElements(oDocument.getElementsByTagNameNS("sap.ui.table", "Table"));
+		convertElements(oDocument.getElementsByTagNameNS("sap.ui.table", "TreeTable"));
 	}
 
 	/**
@@ -332,7 +381,9 @@ sap.ui.define([
 				"/sap/opu/odata/sap/PP_WORKCENTER_GROUP_SRV/$metadata"
 					: {source : "model/PP_WORKCENTER_GROUP_SRV.metadata.xml"},
 				"/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT/$metadata"
-					: {source : "model/RMTSAMPLEFLIGHT.withMessageScope.metadata.xml"}
+					: {source : "model/RMTSAMPLEFLIGHT.withMessageScope.metadata.xml"},
+				"/sap/opu/odata/sap/UI_C_DFS_ALLWNCREQ/$metadata"
+					: {source : "odata/v2/data/UI_C_DFS_ALLWNCREQ.metadata.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -6676,5 +6727,61 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				return that.waitForChanges(assert);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: TreeTable on an ObjectPage bound to a preliminary context.
+	// BCP: 2080201638
+	QUnit.test("TreeTable with preliminary context", function (assert) {
+		var oModel = createAllowanceModel({useBatch : true}),
+			sObjectUri = "C_DFS_AllwncReq(guid'fa163e35-93d9-1eda-b19c-c26490674ab4')",
+			//use row count 1, as there are 10 null change events otherwise
+			sView = '\
+<FlexBox binding="{path : \'/C_DFS_AllwncReq(guid\\\'fa163e35-93d9-1eda-b19c-c26490674ab4\\\')\', \
+		parameters : {createPreliminaryContext : true, groupId : \'myGroup\'}}">\
+	<Text id="reqID" text="{DfsAllwncReqID}" />\
+	<t:TreeTable id="table"\
+			rows="{path : \'to_AllwncReqToFe\', parameters : \
+				{countMode : \'Inline\', groupId : \'myGroup\', usePreliminaryContext : true}}"\
+			visibleRowCount="1"\
+			visibleRowCountMode="Fixed" \>\
+		<Text id="orgID" text="{ForceElementOrgID}" />\
+	</t:TreeTable>\
+</FlexBox>';
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				deepPath : "/" + sObjectUri,
+				method : "GET",
+				requestUri : sObjectUri
+			}, {
+				DfsAllwncReqUUID : "fa163e35-93d9-1eda-b19c-c26490674ab4",
+				DfsAllwncReqID : "Request ID"
+			})
+			.expectRequest({
+				// TreeTable becomes async so that its GET is not in the same $batch as the 1st GET
+				batchNo : 2,
+				deepPath : "/" + sObjectUri + "/to_AllwncReqToFe",
+				method : "GET",
+				requestUri : sObjectUri + "/to_AllwncReqToFe"
+					+ "?$skip=0&$top=101&$inlinecount=allpages&$filter=HierarchyLevel%20le%200"
+			}, {
+				__count : "1",
+				results : [{
+					"ForceElementOrgID" : "4711"
+					// "HierarchyNode" : "32,FA163E2C58541EDA8E9C92E909255DAF",
+					// "HierarchyParentNode" : "",
+					// "HierarchyLevel" : 0,
+					// "HierarchyDescendantCount" : 0,
+					// "DrillDownState" : "collapsed"
+				}]
+			})
+			.expectChange("reqID", null)
+			.expectChange("reqID", "Request ID")
+			.expectChange("orgID", null, null) //TODO why does this happen?
+			.expectChange("orgID", ["4711"]);
+
+		return this.createView(assert, sView, oModel);
 	});
 });

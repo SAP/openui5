@@ -24,7 +24,11 @@ sap.ui.require([
 		// ***************************************************************************************
 		// sap.ui.core.rules.Model.support - tests are contained in testsuite.rule.qunit.js
 		// ***************************************************************************************
-		"sap/ui/core/qunit/rule/model/bindingPathSyntaxValidation.qunit",
+		//TODO: get test running in 1RingModels.qunit; breaks ODataModel.integration.qunit when
+		//  sap.ui.table.* controls are used due to a support rule for this library leading to error
+		//  log
+		//  "Support rule with the id gridTableAccessibleLabel should have an audience."
+		// "sap/ui/core/qunit/rule/model/bindingPathSyntaxValidation.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.* - tests are contained in testsuite.databinding.qunit.js
@@ -146,6 +150,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModelNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataPropertyBindingNoFakeService.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataTreeBindingNoFakeService.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
 		// "sap/ui/core/qunit/odata/v2/ODataPropertyBinding.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
