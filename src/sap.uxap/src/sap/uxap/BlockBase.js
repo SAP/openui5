@@ -760,6 +760,7 @@ sap.ui.define([
 					//so create it now
 					var sMode = this.getMode();
 					sMode && this._selectView(sMode);
+					this.updateBindings(true, null);
 				}
 
 				this.invalidate();
