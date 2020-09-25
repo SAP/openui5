@@ -469,7 +469,7 @@ sap.ui.define([
 			var sControlDescription = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER");
 
 			// Assert
-			assert.strictEqual(this.oMP.$().attr("aria-label"), sControlDescription , "Control description is added");
+			assert.strictEqual(this.oMP.$().attr("aria-roledescription"), sControlDescription , "Control description is added in aria-roledescription");
 		});
 
 		QUnit.module("Interaction", {
