@@ -128,6 +128,18 @@ sap.ui.define([
 	ShortcutHintsMixin.prototype.register = function(sDOMRefID, oConfig, oHintProviderControl) {
 		this._attachToEvents();
 
+		if (!ShortcutHintsMixin.isControlRegistered(this.sControlId)) {
+			var oControl = Element.registry.get(this.sControlId);
+
+			oControl._originalExit = oControl.exit;
+			oControl.exit = function() {
+				if (oControl._originalExit) {
+					oControl._originalExit.apply(oControl, arguments);
+				}
+				this.deregister();
+			}.bind(this);
+		}
+
 		oHintRegistry.mControls[this.sControlId] = true;
 
 		if (!oHintRegistry.mDOMNodes[sDOMRefID]) {
@@ -135,6 +147,17 @@ sap.ui.define([
 		}
 
 		oHintRegistry.mDOMNodes[sDOMRefID].push(new ShortcutHint(oHintProviderControl, oConfig));
+	};
+
+	ShortcutHintsMixin.prototype.deregister = function() {
+		var aInfos = this.getRegisteredShortcutInfos(),
+			i;
+
+		delete oHintRegistry.mControls[this.sControlId];
+
+		for (i = 0; i < aInfos.length; i++) {
+			delete oHintRegistry.mDOMNodes[aInfos[i].id];
+		}
 	};
 
 	ShortcutHintsMixin.prototype.initHint = function(oConfig, oHintProviderControl) {

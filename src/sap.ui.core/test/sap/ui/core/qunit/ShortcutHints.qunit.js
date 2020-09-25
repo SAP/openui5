@@ -1,10 +1,12 @@
 /*global sinon, QUnit, lib */
 sap.ui.define([
 	"sap/ui/core/Component",
-	"sap/ui/core/ShortcutHintsMixin"
+	"sap/ui/core/ShortcutHintsMixin",
+	"sap/ui/core/Fragment"
 ], function(
 	Component,
-	ShortcutHintsMixin
+	ShortcutHintsMixin,
+	Fragment
 ) {
 	"use strict";
 
@@ -204,6 +206,31 @@ sap.ui.define([
 			assert.ok(oCtrl.aDelegates[0].oDelegate["onfocusout"], "has onfocusout handler");
 			assert.ok(oCtrl.aDelegates[0].oDelegate["onmouseover"], "has onmouseover handler");
 			assert.ok(oCtrl.aDelegates[0].oDelegate["onmouseout"], "has onmouseout handler");
+		});
+	});
+
+	QUnit.test("DOM events when control is destroyed and re-created", function(assert) {
+		return waitForViewReady().then(function(oView) {
+			var oCtrl = oView.byId("myControl");
+			ShortcutHintsMixin.addConfig(oCtrl, { event: "myEvent" }, oCtrl);
+
+			oCtrl.destroy();
+
+			assert.notOk(ShortcutHintsMixin.isControlRegistered(oCtrl.getId()),
+				"the control id is removed from the hints registry");
+
+			assert.notOk(ShortcutHintsMixin.isDOMIDRegistered(oCtrl.getId()),
+				"the dom node id is removed from the hints dom registry");
+
+			Fragment.load({
+				type: "XML",
+				definition: '<my:MyControl xmlns:my="lib.my" id="' + oView.getId() + '--myControl" myEvent="cmd:MyCommand" />'
+			}).then(function(oCtrl) {
+				oView.byId("myPanel").addContent(oCtrl);
+				ShortcutHintsMixin.addConfig(oCtrl, { event: "myEvent" }, oCtrl);
+
+				assert.equal(oCtrl.aDelegates.length, 1, "a delegate is attached");
+			});
 		});
 	});
 
