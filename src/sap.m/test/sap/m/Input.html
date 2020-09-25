@@ -897,6 +897,14 @@
 							sap.m.MessageBox.alert("Value help requested");
 						}
 					}),
+					new sap.m.Input({
+						value: "Custom value help icon",
+						showValueHelp: true,
+						valueHelpIconSrc: "sap-icon://arrow-left",
+						valueHelpRequest: function(evt) {
+							sap.m.MessageBox.alert("Value help requested via custom defined value help icon with URI 'sap-icon://arrow-left'");
+						}
+					}),
 					oSuggestInput1,
 					oSuggestInput5, // same as 1 but two value
 					oSuggestInput2,

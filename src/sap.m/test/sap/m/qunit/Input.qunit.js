@@ -341,6 +341,28 @@ sap.ui.define([
 		var oInput = new Input({
 			showSuggestion: true,
 			showValueHelp: true
+		}), oValueHelpIcon;
+
+		// Act
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oValueHelpIcon = document.getElementById(oInput._getValueHelpIcon().sId);
+
+		// Assert
+		assert.strictEqual(oValueHelpIcon.getAttribute("role"), "button", "The value help icon role attribute is correctly set to 'button'");
+		assert.strictEqual(oValueHelpIcon.getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON"), "The value help icon aria-label attribute is correctly set");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("Custom value help icon should be set", function(assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			showValueHelp: true,
+			valueHelpIconSrc: "sap-icon://arrow-down"
 		});
 
 		// Act
@@ -348,8 +370,13 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(document.getElementById(oInput._getValueHelpIcon().sId).getAttribute("role"), "button", "The value help icon role attribute is correctly set to 'button'");
-		assert.strictEqual(document.getElementById(oInput._getValueHelpIcon().sId).getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON"), "The value help icon aria-label attribute is correctly set");
+		assert.strictEqual(oInput._getValueHelpIcon().getSrc(), "sap-icon://arrow-down", "The value help icon is a custom one");
+
+		//Act
+		oInput.setValueHelpIconSrc("sap-icon://value-help");
+
+		// Assert
+		assert.strictEqual(oInput._getValueHelpIcon().getSrc(), "sap-icon://value-help", "The value help icon is changed");
 
 		// Clean
 		oInput.destroy();

@@ -1958,6 +1958,7 @@ sap.ui.define([
 			enabled: { path: "$field>/editMode", formatter: _getEnabled },
 			valueState: "{$field>/valueState}",
 			valueStateText: "{$field>/valueStateText}",
+			valueHelpIconSrc: _getFieldHelpIcon.call(this),
 			showValueHelp: "{$field>/_fieldHelpEnabled}",
 			ariaAttributes: "{$field>/_ariaAttributes}",
 			width: "100%",
@@ -1968,7 +1969,6 @@ sap.ui.define([
 		});
 
 		oInput._setPreferUserInteraction(true);
-		_addFieldHelpIcon.call(this, oInput);
 		_setAriaLabelledBy.call(this, oInput);
 		this._sBoundProperty = "value";
 
@@ -2019,6 +2019,7 @@ sap.ui.define([
 			valueState: "{$field>/valueState}",
 			valueStateText: "{$field>/valueStateText}",
 			showValueHelp: "{$field>/_fieldHelpEnabled}",
+			valueHelpIconSrc: _getFieldHelpIcon.call(this),
 			ariaAttributes: "{$field>/_ariaAttributes}",
 			width: "100%",
 			tooltip: "{$field>/tooltip}",
@@ -2031,7 +2032,6 @@ sap.ui.define([
 		});
 
 		oMultiInput._setPreferUserInteraction(true);
-		_addFieldHelpIcon.call(this, oMultiInput);
 		_setAriaLabelledBy.call(this, oMultiInput);
 
 		return [oMultiInput];
@@ -2190,6 +2190,7 @@ sap.ui.define([
 			placeholder: "{$field>/placeholder}",
 			textAlign: "{$field>/textAlign}",
 			textDirection: "{$field>/textDirection}",
+			valueHelpIconSrc: "sap-icon://slim-arrow-down",
 			required: "{$field>/required}",
 			editable: { path: "$field>/editMode", formatter: _getEditable },
 			enabled: { path: "$field>/editMode", formatter: _getEnabled },
@@ -2288,6 +2289,7 @@ sap.ui.define([
 				editable: { path: "$field>/editMode", formatter: _getEditableUnit },
 				enabled: { path: "$field>/editMode", formatter: _getEnabled },
 				valueState: "{$field>/valueState}",
+				valueHelpIconSrc: _getFieldHelpIcon.call(this),
 				valueStateText: "{$field>/valueStateText}",
 				showValueHelp: "{$field>/_fieldHelpEnabled}",
 				ariaAttributes: "{$field>/_ariaAttributes}",
@@ -2300,7 +2302,6 @@ sap.ui.define([
 			});
 
 			oInput._setPreferUserInteraction(true);
-			_addFieldHelpIcon.call(this, oInput);
 			_setAriaLabelledBy.call(this, oInput);
 			aControls.push(oInput);
 		}
@@ -2430,7 +2431,10 @@ sap.ui.define([
 	function _defaultFieldHelpUpdate() {
 
 		_fieldHelpChanged.call(this, "BoolDefaultHelp", "insert");
-		_addFieldHelpIcon.call(this, this.getAggregation("_content", [])[0]);
+		var oControl = this.getAggregation("_content", [])[0];
+		if (oControl) {
+			oControl.setValueHelpIconSrc(_getFieldHelpIcon.call(this));
+		}
 
 	}
 
@@ -3274,44 +3278,12 @@ sap.ui.define([
 
 	}
 
-	// TODO: need API on Input
-	function _addFieldHelpIcon(oControl) {
+	function _getFieldHelpIcon() {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 
-		if (oFieldHelp && oControl && oControl.addEndIcon) {
-			var sIconName = oFieldHelp.getIcon();
-			var oIcon = oControl.getAggregation("_endIcon", [])[0];
-
-			if (oIcon) {
-				oIcon.setSrc(sIconName);
-			} else {
-				oControl.addEndIcon({
-					id: oControl.getId() + "-vhi",
-					src: sIconName,
-					useIconTooltip: false,
-					noTabStop: true,
-					press: function (oEvent) {
-						// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
-						if (!this.getValueHelpOnly()) {
-							var $input;
-
-							if (Device.support.touch) {
-								// prevent opening the soft keyboard
-								$input = this.$('inner');
-								$input.attr('readonly', 'readonly');
-								this.focus();
-								$input.removeAttr('readonly');
-							} else {
-								this.focus();
-							}
-
-							this.bValueHelpRequested = true;
-							this.fireValueHelpRequest({ fromSuggestions: false });
-						}
-					}.bind(oControl)
-				});
-			}
+		if (oFieldHelp) {
+			return oFieldHelp.getIcon();
 		}
 
 	}
