@@ -11,16 +11,14 @@ function(JSONModel, Controller) {
 			// create model with settings
 			this.oModel = new JSONModel();
 			this.oModel.setData({
-				badgeMin:			"",
-				badgeMax:			"",
+				badgeMin:			"1",
+				badgeMax:			"9999",
 				badgeCurrent:		1,
 				buttonText: 		"Button with Badge",
-				buttonTooltip: 		"Badged Button",
 				buttonIcon: 		"sap-icon://cart",
 				buttonType: 		"Default",
 				buttonWithIcon:		true,
-				buttonWithText:		true,
-				buttonWithTooltip:	false
+				buttonWithText:		true
 			});
 			this.getView().setModel(this.oModel);
 
@@ -40,71 +38,21 @@ function(JSONModel, Controller) {
 		currentChangeHandler: function() {
 			var iCurrent = this.oCurrent.getValue(),
 				oButtonBadgeCustomData = this.oButton.getBadgeCustomData(),
-				sValue = iCurrent.toString(),
-				bVisible = true,
-				iMin,
-				iMax;
+				sValue = iCurrent.toString();
 
 			if (!oButtonBadgeCustomData) {
 				return;
 			}
 
-			// sanitize min and max values
-			this._sanitizeMinMax();
-			iMin = parseInt(this.oMin.getValue());
-			iMax = parseInt(this.oMax.getValue());
-
-			// update badge value and visibility
-			// if there are min or max values entered
-			if (!isNaN(iMin) && iCurrent < iMin) {
-				bVisible = false;
-			} else if (!isNaN(iMax) && iCurrent > iMax) {
-				sValue = iMax.toString() + "+";
-			}
 			oButtonBadgeCustomData.setValue(sValue);
-			oButtonBadgeCustomData.setVisible(bVisible);
 		},
 
-		// sanitize min and max values if necessary
-		_sanitizeMinMax: function() {
-			var iMin = parseInt(this.oMin.getValue()),
-				iMax = parseInt(this.oMax.getValue()),
-				bSetValuesAgain = false;
+		minChangeHandler: function() {
+			this.oButton.setBadgeMinValue(this.oModel.getProperty("/badgeMin"));
+		},
 
-			// limit min value to fit inside a spec (1-9999)
-			if (!isNaN(iMin)) {
-				if (iMin > 9999) {
-					iMin = 9999;
-					bSetValuesAgain = true;
-				} else if (iMin < 1) {
-					iMin = 1;
-					bSetValuesAgain = true;
-				}
-			}
-
-			// limit max value to fit inside a spec (1-9999)
-			if (!isNaN(iMax)) {
-				if (iMax > 9999) {
-					iMax = 9999;
-					bSetValuesAgain = true;
-				} else if (iMax < 1) {
-					iMax = 1;
-					bSetValuesAgain = true;
-				}
-			}
-
-			// check if min > max and swap them if necessary
-			if (!isNaN(iMin) && !isNaN(iMax) && iMin > iMax) {
-				// swap min and max
-				iMax = [iMin, iMin = iMax][0];
-				bSetValuesAgain = true;
-			}
-
-			// update new values if necessary
-			if (bSetValuesAgain) {
-				this.oMin.setValue(iMin);
-				this.oMax.setValue(iMax);
-			}
+		maxChangeHandler: function() {
+			this.oButton.setBadgeMaxValue(this.oModel.getProperty("/badgeMax"));
 		}
 
 	});
