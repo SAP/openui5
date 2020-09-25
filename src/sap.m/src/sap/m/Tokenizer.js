@@ -967,7 +967,8 @@ sap.ui.define([
 			targetToken.focus();
 		} else  {
 			targetToken = aTokens[aTokens.length - 1];
-			targetToken.focus();
+			// Prevent default scrolling in IE when last token is focused
+			targetToken.focus({ preventScroll: true });
 		}
 
 		if (oEvent.shiftKey) {
@@ -1671,6 +1672,18 @@ sap.ui.define([
 
 		if (bFireIndicatorHandler) {
 			this._fnOnNMorePress && this._fnOnNMorePress(oEvent);
+		}
+	};
+
+	Tokenizer.prototype.ontap = function (oEvent) {
+		var	oTargetToken = oEvent.target,
+			aTokens = this._getVisibleTokens(),
+			oLastToken = aTokens[aTokens.length - 1];
+
+		if (Device.browser.msie && oTargetToken === oLastToken.getDomRef()) {
+			setTimeout(function () {
+				this.scrollToEnd();
+			}.bind(this), 0);
 		}
 	};
 

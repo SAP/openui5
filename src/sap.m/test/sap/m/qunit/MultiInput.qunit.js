@@ -2517,4 +2517,55 @@ sap.ui.define([
 		//Clean up
 		oMultiInput.destroy();
 	});
+
+	QUnit.module("One extra long token", {
+		beforeEach : function() {
+			this.oMultiInput = new MultiInput({
+				width: "100px",
+				tokens: [new Token({text: "Extra long token, Extra long token, Extra long token, Extra long token"})]
+			});
+			this.oMultiInput.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oMultiInput.destroy();
+		}
+	});
+
+	QUnit.test("Prevent IE default scrolling on focus when one extra long token is clicked", function(assert) {
+		// Arrange
+		var oTokenizer = this.oMultiInput.getAggregation("tokenizer"),
+			oSpy = sinon.spy(oTokenizer, "scrollToEnd"),
+			aTokens = oTokenizer._getVisibleTokens(),
+			oLastToken = aTokens[aTokens.length - 1];
+
+		// Stub the browser to be only IE
+		this.stub(Device, "browser", {
+			msie: true
+		});
+
+		// Act
+		qutils.triggerEvent("tap", oLastToken.getDomRef());
+		this.clock.tick();
+
+		// Assert
+		assert.ok(oSpy.called, "scrollToEnd has been called.");
+	});
+
+	QUnit.test("Prevent IE default scrolling when one extra long token is focused", function(assert) {
+		// Arrange
+		var oTokenizer = this.oMultiInput.getAggregation("tokenizer"),
+			aTokens = oTokenizer._getVisibleTokens(),
+			oLastToken = aTokens[aTokens.length - 1],
+			oSpy = sinon.spy(oLastToken, "focus");
+
+		// Act
+		this.oMultiInput.focus();
+		qutils.triggerKeydown(this.oMultiInput.getFocusDomRef(), KeyCodes.ARROW_LEFT);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oSpy.calledWith({preventScroll: true}), "Focus has been called with preventScroll argument.");
+	});
 });
