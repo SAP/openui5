@@ -701,7 +701,7 @@ sap.ui.define([
 		showAvailableElements: function(bOverlayIsSibling, aResponsibleElementOverlays, iIndex, sControlName) {
 			var oResponsibleElementOverlay = aResponsibleElementOverlays[0];
 			var mParents = _getParents(bOverlayIsSibling, oResponsibleElementOverlay);
-			var oSiblingElement = bOverlayIsSibling && oResponsibleElementOverlay.getElement();
+			var vSiblingElement = bOverlayIsSibling && oResponsibleElementOverlay.getElement();
 			var mActions;
 
 			return this._getActions(bOverlayIsSibling, oResponsibleElementOverlay)
@@ -719,8 +719,13 @@ sap.ui.define([
 					return this.getDialog().open()
 
 						.then(function() {
-							return this._createCommands(mParents, oSiblingElement, mActions, iIndex);
+							return this._createCommands(mParents, vSiblingElement, mActions, iIndex);
 						}.bind(this))
+
+						.then(function() {
+							var oOverlayToFocus = OverlayRegistry.getOverlay(vSiblingElement) || oResponsibleElementOverlay;
+							oOverlayToFocus.focus();
+						})
 
 						.catch(function(oError) {
 							//no error means canceled dialog
