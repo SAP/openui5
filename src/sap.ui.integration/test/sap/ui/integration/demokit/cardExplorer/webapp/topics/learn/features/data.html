@@ -55,7 +55,7 @@
 				</tr>
 				<tr>
 					<td>request</td>
-					<td>Request</td>
+					<td><a href="#request">Request</a></td>
 					<td>No</td>
 					<td>An object defining a request.</td>
 					<td>1.14.0</td>
@@ -71,7 +71,7 @@
 				</tr>
 				<tr>
 					<td>extension</td>
-					<td>Extension</td>
+					<td><a href="#extension">Extension</a></td>
 					<td>No</td>
 					<td>An object defining which method of an Extension to be called for fetching the data.
 					</td>
@@ -98,7 +98,7 @@
 			</table>
 		</div>
 
-		<p>Request:</p>
+		<p id="request">Request:</p>
 
 		<div class="tableWrapper">
 			<table>
@@ -140,8 +140,12 @@
 					<td>parameters</td>
 					<td>Object</td>
 					<td>No</td>
-					<td>The request parameters. If the method is "POST" the parameters will be put as key/value
-						pairs into the body of the request.
+					<td>
+						The request parameters to be sent to the server.
+						If the HTTP method is "POST" the parameters will be put as key/value pairs into the body of the request.
+						If the method doesn't have an entity body, such as the "GET" method, the data is appended to the URL.<br><br>
+						Default encoding is <code>application/x-www-form-urlencoded</code>.
+						Also JSON is supported for the body encoding (see <a target="_parent" href="../../../index.html#/explore/data/graphql">sample with GraphQL</a>). If you need it add a header <code>Content-Type: application/json</code>"
 					</td>
 					<td>1.14.0</td>
 					<td>1.65</td>
@@ -165,8 +169,8 @@
 			</table>
 		</div>
 
-		
-		<p>Extension:</p>
+
+		<p id="extension">Extension:</p>
 
 		<div class="tableWrapper">
 			<table>
