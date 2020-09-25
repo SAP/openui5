@@ -32,7 +32,6 @@ sap.ui.define([
 	encodeXML,
 	jQuery
 ) {
-	"use strict";
 
 
 
@@ -689,7 +688,7 @@ sap.ui.define([
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
 		this.setProperty("fileType", aTypes, false);
-		this._rerenderInnerInput();
+		this._rerenderInputField();
 		return this;
 	};
 
@@ -697,20 +696,24 @@ sap.ui.define([
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
 		this.setProperty("mimeType", aTypes, false);
-		this._rerenderInnerInput();
+		this._rerenderInputField();
 		return this;
 	};
 
 	FileUploader.prototype.setMultiple = function(bMultiple) {
 		this.setProperty("multiple", bMultiple, false);
-		this._rerenderInnerInput();
+		this._rerenderInputField();
 		return this;
 	};
 
-	FileUploader.prototype._rerenderInnerInput = function() {
+	FileUploader.prototype._rerenderInputField = function() {
 		if (this.oFileUpload) {
-			this.oFileUpload = undefined;
+			var aFiles = this.oFileUpload.files;
+			this._clearInputField();
 			this._prepareFileUpload();
+			// Reattach files to the input field if already selected
+			/*eslint strict: [2, "never"]*/
+			this.oFileUpload.files = aFiles;
 		}
 	};
 
@@ -867,13 +870,15 @@ sap.ui.define([
 			sap.ui.getCore().getStaticAreaRef().removeChild(this.oIFrameRef);
 			this.oIFrameRef = null;
 		}
-
 		if (this.oFileUpload) {
-			jQuery(this.oFileUpload).off();
-			this.oFileUpload.parentElement.removeChild(this.oFileUpload);
-			this.oFileUpload = null;
+			this._clearInputField();
 		}
+	};
 
+	FileUploader.prototype._clearInputField = function() {
+		jQuery(this.oFileUpload).off();
+		this.oFileUpload.parentElement.removeChild(this.oFileUpload);
+		this.oFileUpload = null;
 	};
 
 	/**
