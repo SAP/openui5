@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core" >
+	<Dialog
+			title="{i18n>TIT_SWITCH_VERSION_DIALOG}"
+			state="Warning" >
+		<content>
+			<Text
+					text="{i18n>TXT_SWITCH_VERSION_DIALOG}"
+					class="sapUiSmallMargin" />
+		</content>
+		<buttons>
+			<Button
+					id="sapUiRta_confirmSaveChangesOnVersionSwitchButton"
+					text="{i18n>BUT_SWITCH_VERSION_DIALOG_SAVE}"
+					type="Emphasized"
+					press="._saveAndSwitchVersion" />
+			<Button
+					id="sapUiRta_declineSaveChangesOnVersionSwitchButton"
+					text="{i18n>BUT_SWITCH_VERSION_DIALOG_DISCARD}"
+					press="._discardAndSwitchVersion" />
+			<Button
+					id="sapUiRta_cancelSaveChangesOnVersionSwitchButton"
+					text="{i18n>BUT_SWITCH_VERSION_DIALOG_CANCEL}"
+					press="._closeVersionSwitchDialog" />
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
