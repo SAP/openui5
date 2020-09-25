@@ -32,7 +32,7 @@ sap.ui.define([
 			role: "grid",
 			readonly: "true",
 			multiselectable: false,
-			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_RANGE_PICKER")
+			roledescription: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_RANGE_PICKER")
 		};
 	};
 
