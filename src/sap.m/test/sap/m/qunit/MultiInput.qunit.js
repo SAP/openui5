@@ -3256,6 +3256,42 @@ sap.ui.define([
 		assert.ok(!this.oMultiInput.getAggregation("tokenizer").hasOneTruncatedToken(), "Truncation was removed from the token.");
 	});
 
+	QUnit.test("Prevent IE default scrolling on focus when one extra long token is clicked", function(assert) {
+		// Arrange
+		var oTokenizer = this.oMultiInput.getAggregation("tokenizer"),
+			oSpy = sinon.spy(oTokenizer, "scrollToEnd"),
+			aTokens = oTokenizer._getVisibleTokens(),
+			oLastToken = aTokens[aTokens.length - 1];
+
+		// Stub the browser to be only IE
+		this.stub(Device, "browser", {
+			msie: true
+		});
+
+		// Act
+		qutils.triggerEvent("tap", oLastToken.getDomRef());
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oSpy.called, "scrollToEnd has been called.");
+	});
+
+	QUnit.test("Prevent IE default scrolling when one extra long token is focused", function(assert) {
+		// Arrange
+		var oTokenizer = this.oMultiInput.getAggregation("tokenizer"),
+			aTokens = oTokenizer._getVisibleTokens(),
+			oLastToken = aTokens[aTokens.length - 1],
+			oSpy = sinon.spy(oLastToken, "focus");
+
+		// Act
+		this.oMultiInput.focus();
+		qutils.triggerKeydown(this.oMultiInput.getFocusDomRef(), KeyCodes.ARROW_LEFT);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oSpy.calledWith({preventScroll: true}), "Focus has been called with preventScroll argument.");
+	});
+
 	QUnit.test("Should add truncation when focus leaves the MultiInput", function (assert) {
 		var oTokenizer = this.oMultiInput.getAggregation("tokenizer");
 

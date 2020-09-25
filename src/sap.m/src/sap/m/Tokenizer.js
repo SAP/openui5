@@ -1100,11 +1100,16 @@ sap.ui.define([
 			oTargetToken = oEvent.getMark("tokenTap"),
 			bDeleteToken = oEvent.getMark("tokenDeletePress"),
 			aTokens = this._getVisibleTokens(),
+			oLastToken = aTokens[aTokens.length - 1],
 			oFocusedToken, iFocusIndex, iIndex, iMinIndex, iMaxIndex;
 
 		if (bDeleteToken || !oTargetToken || (!bShiftKey && bCtrlKey)) { // Ctrl
 			this._oSelectionOrigin = null;
 			return;
+		}
+
+		if (Device.browser.msie && oTargetToken === oLastToken) {
+			this.scrollToEnd();
 		}
 
 		if (!bShiftKey) { // Simple click/tap
@@ -1166,7 +1171,8 @@ sap.ui.define([
 			targetToken.focus();
 		} else  {
 			targetToken = aTokens[aTokens.length - 1];
-			targetToken.focus();
+			// Prevent default scrolling in IE when last token is focused
+			targetToken.focus({ preventScroll: true });
 		}
 
 		if (oEvent.shiftKey) {
