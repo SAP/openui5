@@ -6,6 +6,7 @@ sap.ui.define([
 	"./_navigationContainerWaiter",
 	"./_timeoutWaiter",
 	"./_promiseWaiter",
+	"./_moduleWaiter",
 	"./_autoWaiterAsync",
 	"./_utils"
 ], function (require) {

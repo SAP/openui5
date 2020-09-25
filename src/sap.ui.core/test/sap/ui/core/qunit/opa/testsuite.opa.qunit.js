@@ -75,6 +75,11 @@ sap.ui.define([
 				version: 1,
 				qunitBridge: true
 			},
+			loader: {
+				paths: {
+					"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
+				}
+			},
 			module: "./autowaiter/autoWaiter.qunit"
 		},
 		"demokit/sample/matcher/BindingPath/Opa": {
