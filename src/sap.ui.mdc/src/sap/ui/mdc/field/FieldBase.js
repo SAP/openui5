@@ -2839,7 +2839,7 @@ sap.ui.define([
 
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole field
 			_triggerChange.call(this, aConditions, true );
-			oEvent.preventDefault();
+			oEvent.preventDefault(true);
 		}
 
 	}
