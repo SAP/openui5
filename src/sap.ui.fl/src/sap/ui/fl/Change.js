@@ -1101,7 +1101,8 @@ sap.ui.define([
 				user: "",
 				sapui5Version: sap.ui.version,
 				sourceChangeFileName: oPropertyBag.support && oPropertyBag.support.sourceChangeFileName || "",
-				compositeCommand: oPropertyBag.support && oPropertyBag.support.compositeCommand || ""
+				compositeCommand: oPropertyBag.support && oPropertyBag.support.compositeCommand || "",
+				command: oPropertyBag.command || ""
 			},
 			oDataInformation: oPropertyBag.oDataInformation || {},
 			dependentSelector: oPropertyBag.dependentSelector || {},

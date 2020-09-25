@@ -88,7 +88,7 @@ sap.ui.define([
 	 * (in some cases element of a command is unstable, so change needs to be created and stored upfront)
 	 * @override
 	 */
-	FlexCommand.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
+	FlexCommand.prototype.prepare = function(mFlexSettings, sVariantManagementReference, sCommand) {
 		var oSelector;
 		if (!this.getSelector() && mFlexSettings && mFlexSettings.templateSelector) {
 			oSelector = {
@@ -106,7 +106,7 @@ sap.ui.define([
 			this.setSelector(oSelector);
 		}
 
-		return this._createChange(mFlexSettings, sVariantManagementReference)
+		return this._createChange(mFlexSettings, sVariantManagementReference, sCommand)
 			.then(function(oChange) {
 				this._oPreparedChange = oChange;
 				return true;
@@ -162,8 +162,8 @@ sap.ui.define([
 	 * @returns {object} Returns the change object
 	 * @private
 	 */
-	FlexCommand.prototype._createChange = function(mFlexSettings, sVariantManagementReference) {
-		return this._createChangeFromData(this._getChangeSpecificData(), mFlexSettings, sVariantManagementReference);
+	FlexCommand.prototype._createChange = function(mFlexSettings, sVariantManagementReference, sCommand) {
+		return this._createChangeFromData(this._getChangeSpecificData(), mFlexSettings, sVariantManagementReference, sCommand);
 	};
 
 	/**
@@ -176,7 +176,7 @@ sap.ui.define([
 	 * @returns {Promise.<object>} Change object wrapped in a promise.
 	 * @private
 	 */
-	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference) {
+	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference, sCommand) {
 		if (mFlexSettings) {
 			mChangeSpecificData = merge({}, mChangeSpecificData, mFlexSettings);
 		}
@@ -193,6 +193,7 @@ sap.ui.define([
 		if (sVariantReference) {
 			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
+		mChangeSpecificData.command = sCommand;
 		return ChangesWriteAPI.create({changeSpecificData: mChangeSpecificData, selector: this._validateControlForChange(mFlexSettings)})
 			.then(function(oChange) {
 				if (mFlexSettings && mFlexSettings.originalSelector) {

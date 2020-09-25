@@ -1,0 +1,18 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Popover
+		title="{i18n>TIT_CHANGEVISUALIZATION_CHANGES}"
+		placement="Bottom"
+		class="sapUiRtaPopover">
+		<List
+			id="sapUiRta_changesList"
+			items="{commandModel>/commands}">
+			<StandardListItem
+				title="{commandModel>text}"
+				type="{commandModel>type}"
+				counter="{commandModel>count}"
+				press=".showSpecificChanges"/>
+	</List>
+	</Popover>
+</core:FragmentDefinition>

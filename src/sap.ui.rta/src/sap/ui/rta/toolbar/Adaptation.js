@@ -7,14 +7,16 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./Base",
 	"sap/ui/core/library",
-	"sap/ui/fl/library"
+	"sap/ui/fl/library",
+	"sap/ui/rta/toolbar/ChangeVisualization"
 ],
 function(
 	Fragment,
 	Device,
 	Base,
 	coreLibrary,
-	flexLibrary
+	flexLibrary,
+	ChangeVisualization
 ) {
 	"use strict";
 
@@ -76,6 +78,7 @@ function(
 	Adaptation.prototype.init = function() {
 		Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
 		this._pFragmentLoaded = Base.prototype.init.apply(this, arguments);
+		ChangeVisualization.changesPopover = undefined;
 	};
 
 	Adaptation.prototype.onBeforeRendering = function () {
@@ -92,6 +95,7 @@ function(
 	};
 
 	Adaptation.prototype.exit = function() {
+		ChangeVisualization.removeChangeIndicators();
 		Device.media.detachHandler(this._onSizeChanged, this, DEVICE_SET);
 		Base.prototype.exit.apply(this, arguments);
 	};
@@ -197,6 +201,24 @@ function(
 		}
 
 		this.fireEvent("switchVersion", {version: nVersion});
+	};
+
+	Adaptation.prototype.showChangesPopover = function(oEvent) {
+		if (ChangeVisualization.changeIndicatorsExist()) {
+			ChangeVisualization.removeChangeIndicators();
+			ChangeVisualization.switchChangeVisualizationActive();
+			return Promise.resolve();
+		}
+		if (this.getModel("controls").getProperty("/modeSwitcher") === "adaptation") {
+			var oButton = oEvent.getSource();
+			var sRootControlId = this.getModel("controls").getProperty("/rtaRootControlId");
+			return ChangeVisualization.openChangePopover(oButton, sRootControlId).then(function(oPopover) {
+				if (oPopover) {
+					oButton.addDependent(oPopover);
+				}
+			});
+		}
+		return Promise.resolve();
 	};
 
 	Adaptation.prototype.showVersionHistory = function (oEvent) {
@@ -310,6 +332,7 @@ function(
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
+				showChangesPopover: this.showChangesPopover.bind(this),
 				manageApps: this.eventHandler.bind(this, "ManageApps"),
 				appVariantOverview: this.eventHandler.bind(this, "AppVariantOverview"),
 				restore: this.eventHandler.bind(this, "Restore"),

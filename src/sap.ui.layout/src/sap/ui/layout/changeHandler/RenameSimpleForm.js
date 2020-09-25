@@ -135,5 +135,11 @@ sap.ui.define([
 		return typeof (sString) === "string";
 	};
 
+	RenameForm.getChangeVisualizationInfo = function(oChange) {
+		return {
+			affectedControls: [oChange.getDefinition().content.elementSelector]
+		};
+	};
+
 	return RenameForm;
 }, /* bExport= */true);

@@ -111,6 +111,18 @@ sap.ui.define([
 					only: ["sap/ui/rta/toolbar/FioriLike"]
 				}
 			},
+			"toolbar/ChangeVisualization": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/ChangeVisualization"]
+				}
+			},
+			"toolbar/ChangeIndicator": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/ChangeIndicator"]
+				}
+			},
 
 			// Plugins
 			"plugin/additionalElements/AddElementsDialog": {
