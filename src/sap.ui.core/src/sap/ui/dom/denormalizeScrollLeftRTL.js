@@ -1,8 +1,29 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define(["sap/ui/Device", "sap/ui/util/_FeatureDetection"], function(Device, _FeatureDetection) {
 	"use strict";
+
+	var fnDenormalize;
+
+	if (_FeatureDetection.initialScrollPositionIsZero()) {
+		if (_FeatureDetection.canScrollToNegative()) {
+			//actual chrome/safari
+			fnDenormalize = function(iNormalizedScrollLeft, oDomRef) {
+				return oDomRef.clientWidth + iNormalizedScrollLeft - oDomRef.scrollWidth;
+			};
+		} else {
+			//IE
+			fnDenormalize = function(iNormalizedScrollLeft, oDomRef) {
+				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollLeft;
+			};
+		}
+	} else {
+		//legacy chrome
+		fnDenormalize = function(iNormalizedScrollLeft, oDomRef) {
+			return iNormalizedScrollLeft;
+		};
+	}
 
 	/**
 	 * For the given scrollLeft value this method returns the scrollLeft value as understood by the current browser in RTL mode.
@@ -23,27 +44,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * @alias module:sap/ui/dom/denormalizeScrollLeftRTL
 	 */
 	var fnDenormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
-
 		if (oDomRef) {
-			if (Device.browser.msie || Device.browser.edge) {
-				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollLeft;
-
-			} else if (Device.browser.firefox || (Device.browser.safari && Device.browser.version >= 10)) {
-				// Firefox and Safari 10+ behave the same although Safari is a WebKit browser
-				return oDomRef.clientWidth + iNormalizedScrollLeft - oDomRef.scrollWidth;
-
-			} else if (Device.browser.webkit) {
-				// WebKit browsers (except Safari 10+, as it's handled above)
-				return iNormalizedScrollLeft;
-
-			} else {
-				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
-				return iNormalizedScrollLeft;
-			}
+			return fnDenormalize(iNormalizedScrollLeft, oDomRef);
 		}
 	};
 
 	return fnDenormalizeScrollLeftRTL;
 
 });
-
