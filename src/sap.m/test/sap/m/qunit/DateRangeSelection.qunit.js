@@ -881,6 +881,18 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
+	QUnit.test("aria-roledescription", function (assert) {
+		var oDRS = new DateRangeSelection(),
+			sRoledescription = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
+
+		oDRS.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oDRS._$input.attr("aria-roledescription"), sRoledescription, "Input's DateRange type is indicated in aria-roledescription");
+
+		oDRS.destroy();
+	});
+
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oInput = new DateRangeSelection({
 			value: "Value",
@@ -888,20 +900,20 @@ sap.ui.define([
 			placeholder: "Placeholder",
 			delimiter: "@"
 		});
-		var sDatePickerAriaType = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE");
+
 		assert.ok(!!oInput.getAccessibilityInfo, "DateRangeSelection has a getAccessibilityInfo function");
 		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value  " + sDatePickerAriaType, "Description");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT"), "Type");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, sDatePickerAriaType, "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -914,7 +926,7 @@ sap.ui.define([
 		oInput.setDisplayFormat("yyyy-MM-dd");
 		oInput.setValue("2014-03-26@2014-03-27");
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "2014-03-26 @ 2014-03-27  " + sDatePickerAriaType, "Description");
+		assert.strictEqual(oInfo.description, "2014-03-26 @ 2014-03-27", "Description");
 		oInput.destroy();
 	});
 

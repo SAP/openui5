@@ -30,6 +30,14 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer'],
 
 	};
 
+	DateRangeSelectionRenderer.getAccessibilityState = function(oDP) {
+		var mAccessibilityState = DatePickerRenderer.getAccessibilityState.apply(this, arguments);
+
+		mAccessibilityState["roledescription"] = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
+
+		return mAccessibilityState;
+	};
+
 	return DateRangeSelectionRenderer;
 
 }, /* bExport= */ true);
