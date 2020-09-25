@@ -10,27 +10,26 @@
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Unknown"
-			icon="sap-icon://status-inactive"
 			state="None" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Currently closed"
-			icon="sap-icon://hint"
+			icon="sap-icon://message-information"
 			state="Information" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Product Shipped"
-			icon="sap-icon://status-positive"
+			icon="sap-icon://message-success"
 			state="Success" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Product Missing"
-			icon="sap-icon://status-critical"
+			icon="sap-icon://message-warning"
 			state="Warning" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Product Damaged"
-			icon="sap-icon://status-negative"
+			icon="sap-icon://message-error"
 			state="Error" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
@@ -43,13 +42,13 @@
 			active="true"
 			state="Error"
 			press="handleStatusPressed"
-			icon="sap-icon://alert" />
+			icon="sap-icon://message-error" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			title="Test"
 			active="true"
 			state="Error"
-			icon="sap-icon://alert" />
+			icon="sap-icon://message-error" />
 	</l:VerticalLayout>
 	<l:VerticalLayout
 		class="sapUiContentPadding"
@@ -113,21 +112,22 @@
 			class="sapUiSmallMarginBottom"
 			text="Product Shipped"
 			inverted="true"
-			icon="sap-icon://status-positive"
+			icon="sap-icon://message-success"
 			state="Success" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Currently closed (click)"
 			inverted="true"
 			active="true"
-			icon="sap-icon://hint"
+			icon="sap-icon://message-information"
 			state="Information" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
+			text="Product Damaged"
 			active="true"
 			inverted="true"
 			state="Error"
-			icon="sap-icon://alert" />
+			icon="sap-icon://message-error" />
 
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
@@ -157,6 +157,6 @@
 			title="Product status"
 			text="Shipped"
 			state="Success"
-			icon="sap-icon://status-positive" />
+			icon="sap-icon://message-success" />
 	</l:VerticalLayout>
 </mvc:View>
