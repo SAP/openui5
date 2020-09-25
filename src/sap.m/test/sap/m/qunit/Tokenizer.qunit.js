@@ -100,7 +100,6 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.removeAllTokens();
-		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
@@ -127,7 +126,6 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.destroyTokens();
-		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
@@ -145,12 +143,32 @@ sap.ui.define([
 		this.tokenizer.updateAggregation = sinon.stub().returns(true);
 
 		// Act
-		this.tokenizer.updateAggregation("tokens");
-		sap.ui.getCore().applyChanges();
+		this.tokenizer.updateTokens();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
 		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
+	});
+
+	QUnit.test("tokens change event", function(assert) {
+		var eventType,
+			token1 = new Token();
+
+		this.tokenizer.attachTokenChange(function(args) {
+			eventType = args.getParameter("type");
+		});
+
+		this.tokenizer.addToken(token1);
+		assert.equal(eventType, Tokenizer.TokenChangeType.Added, "added event raised");
+
+		this.tokenizer.removeToken(token1);
+		assert.equal(eventType, Tokenizer.TokenChangeType.Removed, "removed event raised");
+
+		this.tokenizer.removeAllTokens();
+		assert.equal(eventType, Tokenizer.TokenChangeType.RemovedAll, "removedAll event raised");
+
+		// clean-up
+		token1.destroy();
 	});
 
 	QUnit.test("getSelectedTokens", function(assert) {
@@ -183,9 +201,7 @@ sap.ui.define([
 			token2 = new Token(),
 			token3 = new Token();
 
-		[token1, token2, token3].forEach(function(oToken) {
-			this.tokenizer.addToken(oToken);
-		}, this);
+		this.tokenizer.setTokens([token1, token2, token3]);
 
 		// act
 		this.tokenizer.onkeydown({ctrlKey: true, which: KeyCodes.A, preventDefault: function(){}, stopPropagation: function(){}});
@@ -214,9 +230,7 @@ sap.ui.define([
 			oToken2 = new Token({text:"Friese", editable: false}),
 			oToken3 = new Token({text:"Mann", editable: true});
 
-		[oToken1, oToken2, oToken3].forEach(function(oToken) {
-			this.tokenizer.addToken(oToken);
-		}, this);
+		this.tokenizer.setTokens([oToken1, oToken2, oToken3]);
 
 		sap.ui.getCore().applyChanges();
 
@@ -298,9 +312,7 @@ sap.ui.define([
 			iPaddingLeft;
 
 		// Act
-		[oToken1, oToken2].forEach(function(oToken) {
-			this.tokenizer.addToken(oToken);
-		}, this);
+		this.tokenizer.setTokens([oToken1, oToken2]);
 		sap.ui.getCore().applyChanges();
 		iPaddingLeft = parseInt(this.tokenizer.$().css("padding-left"));
 		sTokenizerWidth = this.tokenizer._getPixelWidth();
@@ -410,7 +422,6 @@ sap.ui.define([
 		assert.ok(oToken.getProperty("editableParent"), "Token's parent is editable");
 
 		this.tokenizer.setEditable(false);
-		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.tokenizer.getEditable(), false, "The property of the Tokenizer was set.");
 		assert.strictEqual(oToken.getProperty("editableParent"), false, "The editableParent property of the Token was correctly set");
@@ -519,14 +530,13 @@ sap.ui.define([
 		oUpdateTokensSpy = this.spy(this.tokenizer, "fireTokenUpdate");
 		this.tokenizer.addToken(oToken);
 		this.tokenizer.setEnabled(false);
-		sap.ui.getCore().applyChanges();
 
 		// act
 		oToken.getAggregation("deleteIcon").firePress();
 
 		// assert
 		assert.equal(oUpdateTokensSpy.callCount, 0, "TokenUpdate was NOT fired");
-		assert.equal(oFireDeleteSpy.callCount, 0, "delete event was NOT BE fired");
+		assert.equal(oFireDeleteSpy.callCount, 1, "delete event was fired");
 		assert.ok(!oToken.bIsDestroyed, "Token1 is NOT destroyed");
 
 		oFireDeleteSpy.restore();
@@ -581,15 +591,98 @@ sap.ui.define([
 	});
 
 	QUnit.test("delete with editable=true", function(assert) {
-		var oSpy = this.spy(this.tokenizer, "fireTokenDelete");
-
 		// act
 		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE);
 
-		var oCall = oSpy.getCalls()[0];
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 1, "Two tokens were removed");
+		assert.equal(document.activeElement, this.tokenizer.$()[0], "tokenizer is focused");
+	});
+
+	QUnit.test("backspace with no selected tokens", function(assert) {
+		// arrange
+		this.tokenizer._changeAllTokensSelection(false);
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.BACKSPACE);
 
 		// assert
-		assert.equal(oCall.args[0].tokens.length, 2, "Two tokens were removed");
+		assert.equal(this.tokenizer.getSelectedTokens().length, 0, "There aren't any selected tokens");
+		assert.strictEqual(this.tokenizer.getTokens()[2].getDomRef().id, document.activeElement.id,
+			"The last token is selected");
+	});
+
+	QUnit.test("backspace with editable=false", function(assert) {
+		// arrange
+		var oFakeEvent = {
+			preventDefault: function () {},
+			setMarked: function () {},
+			keyCode: KeyCodes.BACKSPACE,
+			which: KeyCodes.BACKSPACE
+		};
+
+		this.tokenizer.setEditable(false);
+
+		// act
+		this.tokenizer.onsapbackspace(oFakeEvent);
+
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
+	});
+
+	QUnit.test("backspace with enabled=false", function(assert) {
+		// arrange
+		var oFakeEvent = {
+			preventDefault: function () {},
+			setMarked: function () {},
+			keyCode: KeyCodes.BACKSPACE,
+			which: KeyCodes.BACKSPACE
+		};
+
+		this.tokenizer.setEnabled(false);
+
+		// act
+		this.tokenizer.onsapbackspace(oFakeEvent);
+
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
+	});
+
+	QUnit.test("backspace with editable=true", function(assert) {
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.BACKSPACE);
+
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 1, "Two tokens were removed");
+	});
+
+	QUnit.test("backspace on tokenizer with one token", function(assert) {
+		var oToken = new Token("token", { text : "Token 1", selected : true}),
+			oTokenizer = new Tokenizer("tokenizer", {
+				tokens: [
+					oToken
+				]
+			});
+		oTokenizer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+
+		var preventDefaultSpy = this.spy(),
+			oFakeEvent = {
+				preventDefault: preventDefaultSpy,
+				target: oToken,
+				setMarked: function () {},
+				keyCode: KeyCodes.BACKSPACE,
+				which: KeyCodes.BACKSPACE
+			};
+
+		// Act
+		oTokenizer.onsapbackspace(oFakeEvent);
+
+		//Assert
+		assert.strictEqual(preventDefaultSpy.callCount, 2, "The default action of onsapbackspace and onsapprevious is prevented.");
+
+		oTokenizer.destroy();
 	});
 
 	QUnit.test("tab", function(assert) {
@@ -769,13 +862,11 @@ sap.ui.define([
 			aSelectedTokens,
 			oSecondToken = new Token("tok1");
 
-		[
+		oTokenizer.setTokens([
 			new Token("tok0"),
 			oSecondToken,
 			new Token("tok2")
-		].forEach(function(oToken) {
-			oTokenizer.addToken(oToken);
-		}, this);
+		]);
 
 		sap.ui.getCore().applyChanges();
 
@@ -838,13 +929,11 @@ sap.ui.define([
 			aSelectedTokens,
 			oSecondToken = new Token("tok1");
 
-		[
+		oTokenizer.setTokens([
 			new Token("tok0"),
 			oSecondToken,
 			new Token("tok2")
-		].forEach(function(oToken) {
-			oTokenizer.addToken(oToken);
-		}, this);
+		]);
 
 		sap.ui.getCore().applyChanges();
 
@@ -1323,7 +1412,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		this.tokenizer.removeToken(token1);
-		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(token2.$().attr("aria-setsize"), "1", "Token 2 has correct aria-setsize attribute");
 		assert.strictEqual(token2.$().attr("aria-posinset"), "1", "Token 2 has correct aria-posinset attribute");
@@ -1406,9 +1494,8 @@ sap.ui.define([
 			oSpy = this.spy(this.tokenizer, "_togglePopup");
 
 		this.tokenizer._adjustTokensVisibility();
-		qutils.triggerEvent("click", this.tokenizer.getDomRef());
 		// await to set the truncation
-		sap.ui.getCore().applyChanges();
+		this.clock.tick();
 
 		// Assert
 		assert.ok(oToken.getTruncated(), "Token should be truncated");
@@ -1465,6 +1552,21 @@ sap.ui.define([
 		assert.ok(this.tokenizer.$().hasClass("sapMTokenizerOneLongToken"), "Should have class for one long token.");
 		assert.ok(oIndicator, true, "An indicator label is added.");
 		assert.strictEqual(oIndicator.innerHTML, "", "N-items label's text is not added for one token.");
+	});
+
+	QUnit.test("Truncation should be removed after removing the token", function(assert) {
+		// Arrange
+		var oStub = sinon.stub(this.tokenizer, "setFirstTokenTruncated").returns(function(){});
+
+		// Act
+		this.tokenizer.removeToken(this.tokenizer.getTokens()[0]);
+
+		// Assert
+		assert.ok(oStub.calledOnce, "Truncation function should be called once.");
+		assert.ok(oStub.calledWith(false), "Truncation should be removed.");
+
+		// Clear
+		oStub.restore();
 	});
 
 	QUnit.test("hasOneTruncatedToken returns correct value", function(assert) {

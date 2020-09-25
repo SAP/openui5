@@ -157,12 +157,7 @@ function(
 			/**
 			 * Keys of the selected items. If the key has no corresponding item, no changes will apply. If duplicate keys exists the first item matching the key is used.
 			 */
-			selectedKeys: { type: "string[]", group: "Data", defaultValue: [] },
-
-			/**
-			 * Defines if there are selected items or not.
-			 */
-			hasSelection: { type: "boolean", visibility: "hidden", defaultValue: false }
+			selectedKeys: { type: "string[]", group: "Data", defaultValue: [] }
 		},
 		associations: {
 
@@ -1177,7 +1172,6 @@ function(
 		}
 		this._deregisterResizeHandler();
 		this._synchronizeSelectedItemAndKey();
-		this.setProperty("hasSelection", !!this.getSelectedItems().length, true);
 
 		if (!this._bAlreadySelected) {
 			this._sInitialValueStateText = this.getValueStateText();
@@ -2128,7 +2122,7 @@ function(
 	MultiComboBox.prototype._createTokenizer = function() {
 		var oTokenizer = new Tokenizer({
 			renderMode: TokenizerRenderMode.Narrow
-		}).attachTokenDelete(this._handleTokenDelete, this);
+		}).attachTokenChange(this._handleTokenChange, this);
 
 		oTokenizer.getTokensPopup()
 			.attachAfterOpen(function () {
@@ -2173,30 +2167,18 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
-	MultiComboBox.prototype._handleTokenDelete = function(oEvent) {
-		var aTokens = oEvent.getParameter("tokens");
-		var aItemsBeforeRemoval = this.getSelectedItems();
+	MultiComboBox.prototype._handleTokenChange = function(oEvent) {
+		var sType = oEvent.getParameter("type");
+		var oToken = oEvent.getParameter("token");
+		var oItem = null;
 
-		this._removeSelection(aTokens);
-
-		if (aItemsBeforeRemoval.length !== this.getSelectableItems()) {
-			!this.isPickerDialog() && !this.isFocusInTokenizer() && this.focus();
-			this.fireChangeEvent("");
-			this.setProperty("hasSelection", !!this.getSelectedItems().length);
+		if (sType !== Tokenizer.TokenChangeType.Removed && sType !== Tokenizer.TokenChangeType.Added) {
+			return;
 		}
-	};
 
-	/**
-	 * Destroys an array of tokens and removes selection of the mapped items.
-	 *
-	 * @param {sap.m.Token[]} aTokens Array of deleting tokens
-	 * @private
-	 */
-	MultiComboBox.prototype._removeSelection = function (aTokens) {
-		var oTokenizer = this.getAggregation("tokenizer");
+		if (sType === Tokenizer.TokenChangeType.Removed) {
 
-		aTokens.forEach(function(oToken) {
-			var oItem = (oToken && this._getItemByToken(oToken));
+			oItem = (oToken && this._getItemByToken(oToken));
 
 			if (oItem && this.isItemSelected(oItem)) {
 
@@ -2210,16 +2192,10 @@ function(
 					suppressInvalidate: true
 				});
 
-				oToken.destroy();
-
-				if (this.getSelectedItems().length > 0) {
-					var aTokens = oTokenizer.getTokens();
-					aTokens[aTokens.length - 1].focus();
-				} else {
-					this.focus();
-				}
+				!this.isPickerDialog() && !this.isFocusInTokenizer() && this.focus();
+				this.fireChangeEvent("");
 			}
-		}, this);
+		}
 	};
 
 	/**
@@ -2255,14 +2231,9 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterRendering = function() {
-		var oTokenizer = this.getAggregation("tokenizer");
-
 		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
+		this.getAggregation("tokenizer").setMaxWidth(this._calculateSpaceForTokenizer());
 		this._registerResizeHandler();
-
-		setTimeout(function() {
-			oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
-		}.bind(this), 0);
 	};
 
 	/**
@@ -2334,12 +2305,6 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapbackspace = function(oEvent) {
-		var oTokenizer = this.getAggregation("tokenizer");
-		var aTokens = oTokenizer.getTokens();
-		var aSelectedTokens = aTokens.filter(function(oToken) {
-			return oToken.getSelected();
-		});
-
 		if (!this.getEnabled() || !this.getEditable()) {
 
 			// Prevent the backspace key from navigating back
@@ -2347,33 +2312,21 @@ function(
 			return;
 		}
 
-		if (aSelectedTokens.length > 0) {
-			this._removeAllTokens();
+		// Deleting characters, not tokens
+		if (this.getCursorPosition() > 0 || this.getValue().length > 0) {
 			return;
 		}
 
-		if (document.activeElement === this.getFocusDomRef()) {
-			aTokens[aTokens.length - 1] && aTokens[aTokens.length - 1].focus();
+		if (!oEvent.isMarked()) {
+			Tokenizer.prototype.onsapbackspace.apply(this.getAggregation("tokenizer"), arguments);
+		}
+
+		if (oEvent.isMarked("forwardFocusToParent")) {
+			this.focus();
 		}
 
 		// Prevent the backspace key from navigating back
 		oEvent.preventDefault();
-	};
-
-	MultiComboBox.prototype._removeAllTokens = function () {
-		var oTokenizer = this.getAggregation("tokenizer");
-		var aSelectedTokens = oTokenizer.getTokens().filter(function(oToken) {
-			return oToken.getSelected();
-		});
-
-		if (!aSelectedTokens.length) {
-			return;
-		}
-
-		this._removeSelection(aSelectedTokens);
-		this.fireChangeEvent("");
-
-		this.invalidate();
 	};
 
 	/**
@@ -2382,7 +2335,24 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
-	MultiComboBox.prototype.onsapdelete = MultiComboBox.prototype.onsapbackspace;
+	MultiComboBox.prototype.onsapdelete = function(oEvent) {
+		if (!this.getEnabled() || !this.getEditable()) {
+			return;
+		}
+
+		// do not return if everything is selected
+		if (this.getValue() && !completeTextSelected(this.getFocusDomRef())) {
+			return;
+		}
+
+		if (!oEvent.isMarked()) {
+			Tokenizer.prototype.onsapbackspace.apply(this.getAggregation("tokenizer"), arguments);
+		}
+
+		if (oEvent.isMarked("forwardFocusToParent")) {
+			this.focus();
+		}
+	};
 
 	/**
 	 * Handles the <code>sapnext</code> event when the 'Arrow down' or 'Arrow right' key is pressed.
@@ -2440,14 +2410,12 @@ function(
 		var bEditable = this.getEditable(),
 			bEnabled = this.getEnabled(),
 			bNMoreLableClick = oEvent.target.className.indexOf("sapMTokenizerIndicator") > -1,
-			oTokenizer = this.getAggregation("tokenizer"),
 			bTruncatedTokenClick = oEvent.target.className.indexOf("sapMToken") > -1 && this.getAggregation("tokenizer").hasOneTruncatedToken();
 
 		if (bEditable && bEnabled && (bNMoreLableClick || bTruncatedTokenClick)) {
 
 			oEvent.preventDefault();
 			this._handleIndicatorPress();
-			oTokenizer.setFirstTokenTruncated(false);
 		}
 	};
 
