@@ -168,6 +168,16 @@ sap.ui.define([
 					}
 				},
 				/**
+				 * Defines the semantic level of the title.
+				 * For more information, see {@link sap.m.Title#setLevel}.
+				 * @since 1.84
+				 */
+				titleLevel: {
+					type: "sap.ui.core.TitleLevel",
+					group: "Appearance",
+					defaultValue: sap.ui.core.TitleLevel.Auto
+				},
+				/**
 				 * Contains the information required for binding the rows/items of the table. Changes to this property are only reflected once the
 				 * next complete rebind on the table occurs.<br>
 				 * <b>Note:</b> Do not add filters and sorters here as they will not be shown on the <code>p13n</code> panels of the table.
@@ -676,6 +686,19 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Sets the value for the <code>titleLevel</code> property.
+	 * @param {string} sLevel - The level that is set to the title
+	 */
+	Table.prototype.setTitleLevel = function(sLevel) {
+		if (this.getTitleLevel() === sLevel) {
+			return this;
+		}
+		this.setProperty("titleLevel", sLevel, true);
+		this._oTitle && this._oTitle.setLevel(sLevel);
+		return this;
+	};
+
 	Table.prototype.focus = function(oFocusInfo) {
 		//see Element.prototype.focus, MDCTable does not have any own focusable DOM, therefor forward to inner control
 		var oDomRef = this.getDomRef();
@@ -1085,7 +1108,8 @@ sap.ui.define([
 			// Create Title
 			this._oTitle = new Title(this.getId() + "-title", {
 				text: this.getHeader(),
-				width: this.getHeaderVisible() ? undefined : "0px"
+				width: this.getHeaderVisible() ? undefined : "0px",
+				level: this.getTitleLevel()
 			});
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
