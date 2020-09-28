@@ -1,0 +1,29 @@
+{
+  "1.84.0": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "3c97e97e528da45222afca65d087ded7c59da807",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Fixed update of bindings on initial rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080349614"
+          }
+        ]
+      },
+      {
+        "id": "ed353c1d213a876ddeaf4b170b5827ffa1221ddf",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Contextual settings is passed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070331833"
+          }
+        ]
+      }
+    ]
+  }
+}
