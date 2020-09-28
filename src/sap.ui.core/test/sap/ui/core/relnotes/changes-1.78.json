@@ -176,5 +176,32 @@
         ]
       }
     ]
+  },
+  "1.78.9": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "5a0cd709fbde4903e0e6d9d7725908653626f524",
+        "type": "FIX",
+        "text": " scrollLeftRTL: adapt to chrome behavior change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070328364"
+          }
+        ]
+      },
+      {
+        "id": "86e1c28b0c4a1210d68c0905334f5222eccd9999",
+        "type": "FIX",
+        "text": " Opa: fix binding path selector for named models",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080258112"
+          }
+        ]
+      }
+    ]
   }
 }

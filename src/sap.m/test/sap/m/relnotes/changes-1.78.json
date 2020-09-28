@@ -175,5 +175,21 @@
         ]
       }
     ]
+  },
+  "1.78.9": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "d7948d291eb849a3e16138ef8bd0ffd5eaff7be2",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Adopt NumericInput to semantic rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005467692020"
+          }
+        ]
+      }
+    ]
   }
 }
