@@ -107,6 +107,7 @@ sap.ui.define([
 		// Assert
 		assert.ok(sut.hasPopin(), "Popin is generated");
 		assert.strictEqual(sut._aClonedHeaders.length, 1, "Popin has cloned header");
+		assert.strictEqual(sut.$Popin().find(".sapMListTblSubRowCell").length, 1, "sapMListTblSubRowCell added to popin cell");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 1, "Popin header is found in the dom");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 1, "Popin separator is found in the dom");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");

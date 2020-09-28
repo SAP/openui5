@@ -282,6 +282,7 @@ sap.ui.define([
 
 		// cell
 		rm.openStart("td", oLI.getId() + "-subcell");
+		rm.class("sapMListTblSubRowCell");
 		rm.attr("colspan", oTable.shouldRenderDummyColumn() ? oTable.getColSpan() + 1 : oTable.getColSpan());
 
 		var sPopinLayout = oTable.getPopinLayout();
