@@ -39,8 +39,10 @@
 				</snappedTitleOnMobile>
 
 				<actions>
-					<m:OverflowToolbarButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
-					<m:OverflowToolbarButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
+					<ObjectPageHeaderActionButton text="Edit" type="Emphasized" hideText="false"/>
+					<ObjectPageHeaderActionButton type="Transparent" text="Delete" hideText="false" hideIcon="true"/>
+					<ObjectPageHeaderActionButton type="Transparent" text="Copy" hideText="false" hideIcon="true"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
 				</actions>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
