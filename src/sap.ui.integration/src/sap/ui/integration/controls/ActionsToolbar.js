@@ -86,6 +86,21 @@ sap.ui.define([
 					multiple: false,
 					visibility: "hidden"
 				}
+			},
+			events: {
+				/**
+				 * Fired when the actions toolbar changes its visibility.
+				 */
+				visibilityChange: {
+					parameters: {
+						/**
+						 * True if the actions toolbar is now visible. False otherwise.
+						 */
+						visible: {
+							type: "boolean"
+						}
+					}
+				}
 			}
 		},
 		renderer: ActionsToolbarRenderer
@@ -179,9 +194,14 @@ sap.ui.define([
 			var aButtons = this._oActionSheet.getButtons(),
 				aVisibleButtons = aButtons.filter(function (oButton) {
 					return oButton.getVisible();
-				});
+				}),
+				bVisible = !!aVisibleButtons.length;
 
-			this._getToolbar().setVisible(!!aVisibleButtons.length);
+			this.fireVisibilityChange({
+				visible: bVisible
+			});
+
+			this._getToolbar().setVisible(bVisible);
 		}.bind(this));
 
 		return true;

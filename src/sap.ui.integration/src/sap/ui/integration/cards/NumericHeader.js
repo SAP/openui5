@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	'sap/base/util/extend',
+	"sap/base/util/isEmptyObject",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/ui/integration/util/BindingHelper",
@@ -10,6 +11,7 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/integration/util/LoadingProvider"
 ], function (extend,
+			 isEmptyObject,
 			 FNumericHeader,
 			 FNumericHeaderRenderer,
 			 BindingHelper,
@@ -45,6 +47,8 @@ sap.ui.define([
 			mConfiguration = mConfiguration || {};
 			this._sAppId = sAppId;
 
+			this._bIsEmpty = isEmptyObject(mConfiguration);
+
 			var mSettings = {
 				title: mConfiguration.title,
 				subtitle: mConfiguration.subTitle
@@ -77,6 +81,10 @@ sap.ui.define([
 			mSettings.toolbar = oActionsToolbar;
 
 			FNumericHeader.call(this, mSettings);
+
+			if (oActionsToolbar) {
+				oActionsToolbar.attachVisibilityChange(this._handleToolbarVisibilityChange.bind(this));
+			}
 		},
 		metadata: {
 			library: "sap.ui.integration",
@@ -226,6 +234,14 @@ sap.ui.define([
 
 	NumericHeader.prototype._handleError = function (sLogMessage) {
 		this.fireEvent("_error", { logMessage: sLogMessage });
+	};
+
+	NumericHeader.prototype._handleToolbarVisibilityChange = function (oEvent) {
+		var bToolbarVisible = oEvent.getParameter("visible");
+
+		if (this._bIsEmpty) {
+			this.setVisible(bToolbarVisible);
+		}
 	};
 
 	NumericHeader.prototype.onDataRequested = function () {
