@@ -95,6 +95,15 @@ describe("sap.m.Carousel", function() {
 		expect(takeScreenshot(myCarousel)).toLookAs("7_page_indicator_visibility");
 	});
 
+	it("should show focus border all around the carousel", function() {
+		myCarousel.click();
+		browser.executeScript(function () {
+			var oCarousel = sap.ui.getCore().byId("myCarousel");
+			oCarousel.focus();
+		});
+		expect(takeScreenshot(myCarousel)).toLookAs("7_1_focus");
+	});
+
 	// toggle page indicator visibility
 	it("should change page indicator placement", function() {
 		element(by.id("RB-No")).click();
