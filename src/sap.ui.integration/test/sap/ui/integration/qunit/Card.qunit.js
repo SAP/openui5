@@ -343,9 +343,6 @@ sap.ui.define([
 
 		var oManifest_WithoutParameters = {
 			"sap.card": {
-				"configuration": {
-					"parameters": {}
-				},
 				"type": "List",
 				"header": {
 					"title": "Default manifest parameters",
@@ -1413,6 +1410,29 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setParameters(oData.location);
+			this.oCard.setManifest(oManifest_WithoutParameters);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("No parameters property set and no manifest parameters", function (assert) {
+
+			// Arrange
+			var done = assert.async(),
+				fnErrorSpy = sinon.spy(Log, "error");
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var sMessage = "If parameters property is set, parameters should be described in the manifest";
+				// Assert
+				assert.ok(fnErrorSpy.neverCalledWith(sMessage), "There is no error logged if parameters are not set.");
+
+				fnErrorSpy.restore();
+
+				done();
+			});
+
+			// Act
 			this.oCard.setManifest(oManifest_WithoutParameters);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
