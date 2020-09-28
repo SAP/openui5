@@ -509,7 +509,7 @@ sap.ui.define([
 			oControl.attachChange(this.onChange.bind(this));
 		}
 		oControl.onpaste = this.onPaste.bind(this);
-		oControl.setLayoutData(new GridData({span: {path: "$condition>operator", formatter: _getSpanForOperator}}));
+		oControl.setLayoutData(new GridData({span: {path: "$condition>", formatter: _getSpanForValue.bind(this)}}));
 		oControl.setBindingContext(oValueBindingContext, "$this");
 		oControl.setBindingContext(oBindingContext, "$condition");
 
@@ -857,7 +857,7 @@ sap.ui.define([
 			change: this.onSelectChange.bind(this),
 			ariaLabelledBy: this.getId() + "--ivtOperator"
 		})
-		.setLayoutData(new GridData({span: "XL3 L3 M3 S10", linebreak: true}))
+		.setLayoutData(new GridData({span: {path: "$this>/conditions", formatter: _getSpanForOperator.bind(this)}, linebreak: true}))
 		.setBindingContext(oBindingContext, "$this");
 
 		// as selected key can be changed by reopening dialog listen on property change not on change event
@@ -947,16 +947,38 @@ sap.ui.define([
 
 	}
 
-	function _getSpanForOperator(sOperator) {
+	function _getSpanForOperator(aConditions) {
+		var oFormatOptions = this.getFormatOptions();
+		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+		var sSpan = "XL3 L3 M3 ";
 
-		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
+		if (iMaxConditions === 1) {
+			sSpan += "S12";
+		} else {
+			sSpan += "S10";
+		}
+		return sSpan;
+	}
+
+	function _getSpanForValue(oCondition) {
+		var oFormatOptions = this.getFormatOptions();
+		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+
+		var oOperator = oCondition && FilterOperatorUtil.getOperator(oCondition.operator);
+		var sSpan = "";
 
 		if (oOperator && oOperator.valueTypes[1]) {
-			return "XL4 L4 M4 S10";
+			sSpan = "XL4 L4 M4 ";
 		} else {
-			return "XL8 L8 M8 S10";
+			sSpan = "XL8 L8 M8 ";
 		}
 
+		if (iMaxConditions === 1) {
+			sSpan += "S12";
+		} else {
+			sSpan += "S10";
+		}
+		return sSpan;
 	}
 
 	function _getPlaceholder1ForOperator(sOperator) {
