@@ -93,6 +93,7 @@ function loadAllChanges() {
 	loadCurrentValues("cardEditorAdmin");
 	loadCurrentValues("cardEditorContent")
 	loadCurrentValues("cardEditorTranslation");
+	loadCurrentValues("previewAbstract");
 	loadCurrentValues("previewAbstractLive");
 	loadCurrentValues("previewLive")
 	loadCurrentValues("previewLiveAbstract");

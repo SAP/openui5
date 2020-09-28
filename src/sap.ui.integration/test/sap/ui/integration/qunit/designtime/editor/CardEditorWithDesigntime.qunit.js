@@ -593,70 +593,288 @@ sap.ui.define([
 		});
 
 		QUnit.test("Preview with live and abstract (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveAbstract", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"type": "card",
+						"title": "Test Card for Parameters",
+						"subTitle": "Test Card for Parameters"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewLiveAbstract",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					resolve();
+					var cardPreview =  this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var modeToggleButton = cardPreview._getModeToggleButton();
+							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
+							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-pause", "Preview mode button: Icon is OK");
+							assert.ok(modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
+							assert.ok(modeToggleButton.getTooltip() === "Sample Preview", "Preview mode button: Tooltip is OK");
+							resolve();
+						}
+					});
 				}.bind(this));
 			}.bind(this));
 		});
+
 		QUnit.test("Preview with abstract and live (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewAbstractLive", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewAbstractLive",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-
-					resolve();
+					var cardPreview =  this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var modeToggleButton = cardPreview._getModeToggleButton();
+							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
+							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-play", "Preview mode button: Icon is OK");
+							assert.ok(!modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
+							assert.ok(modeToggleButton.getTooltip() === "Live Preview", "Preview mode button: Tooltip is OK");
+							resolve();
+						}
+					});
 				}.bind(this));
 			}.bind(this));
 		});
+
 		QUnit.test("Preview with none(as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewNone", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewNone",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-
-					resolve();
+					setTimeout(function () {
+						var cardPreview =  this.oCardEditor.getAggregation("_preview");
+						var card = cardPreview._getCardPreview();
+						assert.ok(card === null, "Preview mode card is OK");
+						resolve();
+					}.bind(this), 500);
 				}.bind(this));
 			}.bind(this));
 		});
 
 		QUnit.test("Preview with live and own image (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewLiveOwnImage",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					resolve();
+					var cardPreview =  this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var modeToggleButton = cardPreview._getModeToggleButton();
+							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
+							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-pause", "Preview mode button: Icon is OK");
+							assert.ok(modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
+							assert.ok(modeToggleButton.getTooltip() === "Sample Preview", "Preview mode button: Tooltip is OK");
+							resolve();
+						}
+					});
 				}.bind(this));
 			}.bind(this));
 		});
 
 		QUnit.test("Preview with own image and live (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewOwnImageLive", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewOwnImageLive",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					resolve();
+					var cardPreview =  this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var image = card.getAggregation("items")[0];
+							assert.ok(image.getSrc().endsWith("./img/preview.png"), "Preview mode image: OK");
+							var modeToggleButton = cardPreview._getModeToggleButton();
+							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
+							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-play", "Preview mode button: Icon is OK");
+							assert.ok(!modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
+							assert.ok(modeToggleButton.getTooltip() === "Live Preview", "Preview mode button: Tooltip is OK");
+							resolve();
+						}
+					});
 				}.bind(this));
 			}.bind(this));
 		});
 
 		QUnit.test("Preview with live (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLive", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewLive",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					resolve();
+					var cardPreview =  this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var modeToggleButton = cardPreview._getModeToggleButton();
+							assert.ok(modeToggleButton.getDomRef() === null, "Preview mode button: Button is OK");
+							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-pause", "Preview mode button: Icon is OK");
+							assert.ok(modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
+							assert.ok(modeToggleButton.getTooltip() === "Sample Preview", "Preview mode button: Tooltip is OK");
+							resolve();
+						}
+					});
 				}.bind(this));
 			}.bind(this));
 		});
+
+		QUnit.test("Preview with abstract (as json)", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewAbstract",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var cardPreview =  this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var modeToggleButton = cardPreview._getModeToggleButton();
+							assert.ok(modeToggleButton.getDomRef() === null, "Preview mode button: Button is OK");
+							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-play", "Preview mode button: Icon is OK");
+							assert.ok(!modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
+							assert.ok(modeToggleButton.getTooltip() === "Live Preview", "Preview mode button: Tooltip is OK");
+							resolve();
+						}
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("Preview not scaled (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewNoScale", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					resolve();
+					var cardPreview =  this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							assert.ok(card.mCustomStyleClassMap.sapUiIntegrationDTPreviewNoScale, "Preview mode no scale: OK");
+							var modeToggleButton = cardPreview._getModeToggleButton();
+							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
+							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-play", "Preview mode button: Icon is OK");
+							assert.ok(!modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
+							assert.ok(modeToggleButton.getTooltip() === "Live Preview", "Preview mode button: Tooltip is OK");
+							resolve();
+						}
+					});
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1399,6 +1617,97 @@ sap.ui.define([
 							"parameters": {
 								"stringParameter": {
 									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check translate: translate the nomal value", function (assert) {
+			this.oCardEditor.setMode("all");
+			var adminchanges = {
+			};
+			var pagechanges = {
+			};
+			var translationchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Translate",
+				":layer": 10,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check translate: translate the translated value", function (assert) {
+			this.oCardEditor.setMode("all");
+			var adminchanges = {
+			};
+			var pagechanges = {
+			};
+			var translationchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Translate",
+				":layer": 10,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
 								}
 							}
 						}
