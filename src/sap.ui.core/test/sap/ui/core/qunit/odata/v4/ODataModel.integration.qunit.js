@@ -27957,13 +27957,19 @@ sap.ui.define([
 		this.expectRequest("EMPLOYEES?$select=ID,Name"
 				+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID)&$skip=0&$top=110", {
 				value : [{
-					EMPLOYEE_2_EQUIPMENTS
-						: [{Category : "F1"}, {Category : "F2"}, {Category : "F3"}],
+					EMPLOYEE_2_EQUIPMENTS : [
+						{Category : "F1"},
+						{Category : "F2"},
+						{Category : "F3"}
+					],
 					ID : "2",
 					Name : "Frederic Fall"
 				}, {
-					EMPLOYEE_2_EQUIPMENTS
-						: [{Category : "J1"}, {Category : "J2"}, {Category : "J3"}],
+					EMPLOYEE_2_EQUIPMENTS : [
+						{Category : "J1"},
+						{Category : "J2"},
+						{Category : "J3"}
+					],
 					ID : "3",
 					Name : "Jonathan Smith"
 				}]
