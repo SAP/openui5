@@ -242,7 +242,10 @@ sap.ui.define([
 		if (oChanges.name === "conditions") {
 			// keep value/additionalValue and conditions in sync
 			// (value must be updated if conditions are changed in async parsing too, so not in change event)
-			_updateValue.call(this, oChanges.current);
+			if (this._getContent().length <= 1) {
+				// in unit/currency field update value with change event to prevent update by navigating from number to unit
+				_updateValue.call(this, oChanges.current);
+			}
 		}
 
 	};
@@ -386,6 +389,19 @@ sap.ui.define([
 				vValue = this._getResultForPromise(aConditions);
 			} else {
 				vValue = vWrongValue;
+			}
+		}
+
+		if (this._getContent().length > 1) {
+			// in unit/currency field update value with change event to prevent update by navigating from number to unit
+			if (aConditions) {
+				_updateValue.call(this, this.getConditions());
+			} else if (oPromise) {
+				// update value after Promise resolved
+				oPromise = oPromise.then(function(vResult) {
+					_updateValue.call(this, this.getConditions());
+					return vResult;
+				}.bind(this));
 			}
 		}
 

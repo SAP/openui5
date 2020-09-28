@@ -1891,7 +1891,7 @@ sap.ui.define([
 		oContent2.focus();
 		jQuery(oContent2.getFocusDomRef()).val("EUR");
 		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
-		assert.equal(iCount, 2, "change event fired twice"); // TODO: once fired on focusout of number
+		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(Array.isArray(sValue), "change event value is array");
 		assert.equal(sValue[0], 1.11, "change event value0");
@@ -1919,7 +1919,7 @@ sap.ui.define([
 		oContent2.focus();
 		jQuery(oContent2.getFocusDomRef()).val("EUR");
 		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
-		assert.equal(iCount, 2, "change event fired twice"); // TODO: once fired on focusout of number
+		assert.equal(iCount, 1, "change event fired twice");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(Array.isArray(sValue), "change event value is array");
 		assert.equal(sValue[0], 1.11, "change event value0");
@@ -3861,6 +3861,9 @@ sap.ui.define([
 
 	QUnit.test("Select currency", function(assert) {
 
+		var oIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
 		var fnDone = assert.async();
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
 
@@ -3874,7 +3877,7 @@ sap.ui.define([
 		// simulate select event to see if field is updated
 		var oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"});
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
-		assert.equal(iCount, 1, "Change Event fired once");
+		assert.equal(iCount, 0, "Change Event not fired");
 		var aConditions = oCM.getConditions("Price");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
@@ -3887,21 +3890,27 @@ sap.ui.define([
 		assert.equal(oContent2.getDOMValue(), "EUR", "value in inner control");
 
 		setTimeout(function() { // wait for Model update
-			oCM.removeAllConditions();
-			setTimeout(function() { // wait for Model update
-				oCondition = Condition.createCondition("EQ", ["USD", "USD"], {inTest: "X"}, {outTest: "Y"});
-				oFieldHelp.fireSelect({ conditions: [oCondition] });
-				aConditions = oCM.getConditions("Price");
-				assert.equal(aConditions.length, 1, "one condition in Codition model");
-				assert.equal(aConditions[0].values[0][0], undefined, "condition value0");
-				assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
-				assert.equal(aConditions[0].operator, "EQ", "condition operator");
-				assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
-				assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
-				assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
-				assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+			oIcon.focus();
+			setTimeout(function() { // for fieldGroup delay
+				assert.equal(iCount, 1, "Change Event fired");
+				oContent2.focus(); // as FieldHelp is connected with focus
 
-				fnDone();
+				oCM.removeAllConditions();
+				setTimeout(function() { // wait for Model update
+					oCondition = Condition.createCondition("EQ", ["USD", "USD"], {inTest: "X"}, {outTest: "Y"});
+					oFieldHelp.fireSelect({ conditions: [oCondition] });
+					aConditions = oCM.getConditions("Price");
+					assert.equal(aConditions.length, 1, "one condition in Codition model");
+					assert.equal(aConditions[0].values[0][0], undefined, "condition value0");
+					assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
+					assert.equal(aConditions[0].operator, "EQ", "condition operator");
+					assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
+					assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
+					assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
+					assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+
+					fnDone();
+				}, 0);
 			}, 0);
 		}, 0);
 
@@ -4010,7 +4019,7 @@ sap.ui.define([
 		// simulate select event to see if field is updated
 		var oCondition = Condition.createCondition("EQ", ["EUR", "EUR"]);
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
-		assert.equal(iCount, 1, "Change Event fired once");
+		assert.equal(iCount, 0, "Change Event not fired");
 		var aConditions = oCM.getConditions("Price");
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
 		assert.equal(aConditions[0].values[0][0], 123.45, "condition value0-number");
@@ -4022,6 +4031,9 @@ sap.ui.define([
 		assert.equal(aConditions[1].values[1][1], "EUR", "condition value1-unit");
 		assert.equal(aConditions[1].operator, "BT", "condition operator");
 		assert.equal(oContent2.getDOMValue(), "EUR", "value in inner control");
+
+		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		assert.equal(iCount, 1, "Change Event fired");
 
 		setTimeout(function() { // wait for Model update
 			oCM.removeAllConditions();
