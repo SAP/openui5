@@ -108,6 +108,7 @@ sap.ui.define([
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 1, "Popin header is found in the dom");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 1, "Popin separator is found in the dom");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
+		assert.strictEqual(sut.$Popin().find(".sapMListTblSubRowCell").length, 1, "sapMListTblSubRowCell added to popin cell");
 
 		column.setPopinDisplay("WithoutHeader");
 		core.applyChanges();

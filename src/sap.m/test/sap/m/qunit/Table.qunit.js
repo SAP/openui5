@@ -161,6 +161,34 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("colspan should update for popins when column visibility changes", function(assert) {
+		var sut = createSUT("popinColspan", true, true);
+		var oColumn = sut.getColumns()[1];
+		var clock = sinon.useFakeTimers();
+		oColumn.setDemandPopin(true);
+		oColumn.setMinScreenWidth("4444px");
+		sut.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+		assert.ok(sut.hasPopin(), "Table has popins");
+
+		var aVisibleColumns = sut.getColumns().filter(function(oCol) {
+			return oCol.getVisible();
+		});
+		assert.strictEqual(aVisibleColumns.length, 3, "There are 3 visible columns");
+		assert.strictEqual(parseInt(sut.getVisibleItems()[0].$Popin().find(".sapMListTblSubRowCell").attr("colspan")), 3, "Correct colspan=3 attribute set on the popin, since there are 3 visible columns");
+
+		// hide a column
+		sut.getColumns()[2].setVisible(false);
+		clock.tick(1);
+		aVisibleColumns = sut.getColumns().filter(function(oCol) {
+			return oCol.getVisible();
+		});
+		assert.strictEqual(aVisibleColumns.length, 2, "There are 2 visible columns");
+		assert.strictEqual(parseInt(sut.getVisibleItems()[0].$Popin().find(".sapMListTblSubRowCell").attr("colspan")), 2, "colspan=2, attribute updated correctly");
+
+		sut.destroy();
+	});
 
 	QUnit.test("Empty Table", function(assert) {
 		var sut = createSUT('idEmptyTable', true, true);
