@@ -226,9 +226,14 @@ sap.ui.define([
 		var token3 = new Token();
 
 		this.multiInput1.setMaxTokens(2);
-
 		this.multiInput1.setTokens([token1, token2, token3]);
-		assert.equal(this.multiInput1.getTokens().length, 2, "no more than 2 tokens can be added");
+		sap.ui.getCore().applyChanges();
+
+		var aVisibleTokens = this.multiInput1.getTokens().filter(function (oToken) {
+			return oToken.getVisible();
+		});
+
+		assert.equal(aVisibleTokens.length, 2, "no more than 2 tokens can be added");
 	});
 
 	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
@@ -386,14 +391,15 @@ sap.ui.define([
 		var firstToken = this.multiInput1.getTokens()[0];
 		firstToken.setSelected(true);
 
-		// act
+		sap.ui.getCore().applyChanges();
+
 		qutils.triggerKeydown(firstToken.$(), KeyCodes.BACKSPACE);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput has only 3 tokens");
 
 		// act
-
 		model.setData(newData);
 
 		sap.ui.getCore().applyChanges();
@@ -806,16 +812,19 @@ sap.ui.define([
 
 		var token1 = new Token();
 		this.multiInput1.addToken(token1);
-
 		sap.ui.getCore().applyChanges();
 
-		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){},
-			isMarked: function(){}, setMarked:function(){}});
+		this.multiInput1.focus();
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.BACKSPACE);
+		sap.ui.getCore().applyChanges();
+
 		assert.notOk(token1.getSelected(), "Token got selected");
 		assert.strictEqual(token1.getId(), document.activeElement.id ,"Token got focused");
 
-		this.multiInput1.onsapbackspace({target: token1.getDomRef(), preventDefault:function(){},
-			isMarked: function(){}, stopPropagation:function(){}, setMarked:function(){}});
+		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+
 		assert.equal(this.multiInput1.getTokens().length, 0, "Token got deleted");
 	});
 
@@ -832,8 +841,10 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){},
-			isMarked: function(){}, setMarked:function(){}});
+		this.multiInput1.focus();
+		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.BACKSPACE);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual(token1.getId(), document.activeElement.id ,"Token got focused");
 
 		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){},
@@ -845,26 +856,18 @@ sap.ui.define([
 		var token = new Token({selected: true}),
 			that = this;
 		this.multiInput1.addToken(token);
+
+		sap.ui.getCore().applyChanges();
 		assert.equal(this.multiInput1.getTokens().length, 1, "MultiInput contains 1 token");
 
 		this.multiInput1.focus();
-		this.multiInput1.onsapprevious({
-			srcControl: this.multiInput1,
-			isMarked: function(){return false;},
-			setMarked: function(){},
-			preventDefault: function(){}
-		});
+
+		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ARROW_LEFT);
 		sap.ui.getCore().applyChanges();
 
-		this.multiInput1.getAggregation("tokenizer").onsapdelete(
-			{
-				shiftKey: false,
-				setMarked: function(){},
-				stopPropagation: function(){},
-				target: token.getDomRef(),
-				preventDefault: function(){}
-			}
-		);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.DELETE);
+		sap.ui.getCore().applyChanges();
+
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
 
@@ -888,6 +891,8 @@ sap.ui.define([
 		var token2 = new Token({selected:true});
 		var token3 = new Token({selected:true});
 		this.multiInput1.setTokens([token1, token2, token3]);
+		sap.ui.getCore().applyChanges();
+
 		this.multiInput1.fireLiveChange();
 
 		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
@@ -1093,6 +1098,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.DELETE);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(document.activeElement, token3.getDomRef(),
@@ -1108,6 +1114,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.DELETE);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(document.activeElement, this.multiInput1.getFocusDomRef(),
@@ -1138,6 +1145,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.BACKSPACE);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(document.activeElement, this.multiInput1.getFocusDomRef(),
@@ -1578,12 +1586,16 @@ sap.ui.define([
 
 		var token1 = new Token();
 		this.multiInput1.addToken(token1);
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(eventType, MultiInput.TokenChangeType.Added, "added event raised");
 
 		this.multiInput1.removeToken(token1);
-		assert.equal(eventType, MultiInput.TokenChangeType.Removed, "removed event raised");
+		sap.ui.getCore().applyChanges();
 
 		this.multiInput1.removeAllTokens();
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(eventType, MultiInput.TokenChangeType.RemovedAll, "removedAll event raised");
 	});
 
@@ -1604,10 +1616,6 @@ sap.ui.define([
 		});
 		assert.strictEqual(eventType, Tokenizer.TokenUpdateType.Added, "tokenUpdate event raised when token added");
 		assert.strictEqual(count, 1, "tokenUpdate event fired once upon adding unique token");
-
-		oTokenizer._removeSelectedTokens();
-		assert.strictEqual(eventType, Tokenizer.TokenUpdateType.Removed, "tokenUpdate event raised when token removed");
-		assert.strictEqual(count, 2, "tokenUpdate event fired once upon removing selected token");
 
 		// clean-up
 		token1.destroy();
@@ -2109,7 +2117,6 @@ sap.ui.define([
 
 		// act
 		this.multiInput1.addToken(new Token({text: "Token2"}));
-
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -2484,7 +2491,6 @@ sap.ui.define([
 			oToken = new Token("token", {text: "text123", key: "key123"}),
 			oSpy = this.spy(this.multiInput.getAggregation("tokenizer"), "removeAggregation"),
 			oTokenUpdateSpy = this.spy(this.multiInput, "fireTokenUpdate"),
-			oTokenDestroySpy = this.spy(Token.prototype, "destroy"),
 			oFakeEvent = new Event(),
 			oSetSelectionStub = sinon.stub(Event.prototype, "getParameter");
 
@@ -2501,7 +2507,6 @@ sap.ui.define([
 
 		// act
 		this.multiInput.getAggregation("tokenizer")._handleListItemDelete(oFakeEvent);
-		assert.ok(oTokenDestroySpy.called, "The token is destroyed on deselection.");
 		assert.ok(oTokenUpdateSpy.calledOnce, "tokenUpdate event is fired once upond token removal.");
 
 		aTokens = this.multiInput.getTokens();
@@ -2639,6 +2644,7 @@ sap.ui.define([
 		oTokenizer = this.multiInput.getAggregation("tokenizer");
 		this.multiInput.addToken(oToken);
 		oTokenizer._togglePopup(oTokenizer.getTokensPopup());
+		sap.ui.getCore().applyChanges();
 
 		// act
 		oTokenizer._fillTokensList(oTokenizer._getTokensList());

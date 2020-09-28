@@ -142,10 +142,6 @@ sap.ui.define([
 
 			if (!this._oTokenizer) {
 				this._oTokenizer = this.byId("VHPTokenizer");
-				this._oTokenizer.updateTokens = function() {
-					Tokenizer.prototype.updateTokens.apply(this, arguments);
-					this.invalidate(); // as VHP could be supressed but Tokenizer needs to be updated
-				};
 				this._oTokenizer._oScroller.setHorizontal(true);
 			}
 			this._oTokenizerPanel = this.byId("VHPTokenizerPanel");

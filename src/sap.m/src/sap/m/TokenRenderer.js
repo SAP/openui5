@@ -28,18 +28,28 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenRenderer.render = function(oRm, oControl){
-		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable() && oControl.getProperty("editableParent")),
-			oDeleteIcon = oControl.getAggregation("deleteIcon"),
-			aAccDescribebyValues = [], // additional accessibility attributes
-			oAccAttributes = {
-				role: "option"
-			};
+		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable() && oControl.getProperty("editableParent"));
+		var oDeleteIcon = oControl.getAggregation("deleteIcon");
+		var aAccDescribebyValues = []; // additional accessibility attributes
+		var oAccAttributes = {
+			role: "option"
+		};
+		var vPosinset = oControl.getProperty("posinset");
+		var vSetSize = oControl.getProperty("setsize");
 
 		// write the HTML into the render manager
 		oRm.openStart("div", oControl).attr("tabindex", "-1").class("sapMToken");
 
 		if (oControl.getSelected()) {
 			oRm.class("sapMTokenSelected");
+		}
+
+		if (vPosinset !== undefined) {
+			oRm.attr("aria-posinset", oControl.getProperty("posinset"));
+		}
+
+		if (vSetSize !== undefined) {
+			oRm.attr("aria-setsize", oControl.getProperty("setsize"));
 		}
 
 		if (!oControl.getEditable()) {
