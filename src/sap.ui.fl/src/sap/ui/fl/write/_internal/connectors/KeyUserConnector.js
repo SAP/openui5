@@ -80,7 +80,7 @@ sap.ui.define([
 		activate: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			_enhancePropertyBagForDraftActivation(mPropertyBag);
-			var mParameters = {version: 0};
+			var mParameters = {version: mPropertyBag.version};
 			InitialUtils.addLanguageInfo(mParameters);
 			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
