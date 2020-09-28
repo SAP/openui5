@@ -294,8 +294,7 @@ sap.ui.define([
 		// the last digit
 		[
 			{ v : sValue, r : "12345" }, { v : "0103040", r : "103040" },
-			{ v : "0000000", r : "0" }, { v : "A003400", r : "A003400" },
-			{ v : "00A3400", r : "00A3400" }, { v : "", r : "" },
+			{ v : "A003400", r : "A003400" }, { v : "00A3400", r : "00A3400" }, { v : "", r : "" },
 			{ v : "7654321", r : "7654321" }, { v : null, r : "" }, { v : undefined, r : null }
 		].forEach(function (oFixture) {
 			assert.strictEqual(oType.formatValue(oFixture.v, "string"), oFixture.r,
@@ -309,6 +308,10 @@ sap.ui.define([
 		}, new FormatException("0 is not a valid boolean value"));
 		assert.strictEqual(oType.formatValue(sValue, "float"), 12345.0, "as float");
 		assert.strictEqual(oType.formatValue(sValue, "int"), 12345, "as int");
+		assert.strictEqual(oType.formatValue("0000000", "string"), "", "as string");
+		assert.strictEqual(oTypeNoLength.formatValue("0000000", "string"), "0", "as string");
+		assert.strictEqual(oType.formatValue("0000000", "int"), 0, "as int");
+		assert.strictEqual(oTypeNoLength.formatValue("0000000", "int"), 0,"as int");
 	});
 
 	//*********************************************************************************************
@@ -360,7 +363,7 @@ sap.ui.define([
 
 		assert.strictEqual(oType.parseValue("", "string"), bNullable === false ? "0000000" : null);
 		assert.strictEqual(oType.formatValue(null, "string"), "");
-		assert.strictEqual(oType.formatValue("0000000", "string"), "0");
+		assert.strictEqual(oType.formatValue("0000000", "string"), "");
 	});
 });
 
