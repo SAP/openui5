@@ -230,11 +230,13 @@ sap.ui.define([
 
 	QUnit.module("Screen reader support", {
 		beforeEach: function () {
-			this.oON = new ObjectNumber({
+			this.oON = new ObjectNumber("ON", {
 				number: 256,
-				unit: "EUR"
+				unit: "EUR",
+				emphasized: false
 			});
-			this.oONStateId = this.oON.getId() + "-state";
+			this.oONStateId = "ON-state";
+			this.oONEmphasizedInfoId = "ON-emphasized";
 
 			this.oON.placeAt("content");
 			sap.ui.getCore().applyChanges();
@@ -246,7 +248,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Default ObjectNumber", function (assert) {
-		var oStateElement = document.getElementById(this.oONStateId);
+		var oStateElement = document.getElementById(this.oONStateId),
+			oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId);
+
+		assert.notOk(oEmphasizedInfoElement, "Additional SPAN for emphasized information isn't created");
 		assert.notOk(oStateElement, "Additional SPAN for the state isn't created");
 	});
 
@@ -263,6 +268,20 @@ sap.ui.define([
 		assert.ok(oStateElement.classList.contains("sapUiPseudoInvisibleText"), "SPAN is pseudo invisible instead of invisible");
 		assert.notOk(oStateElement.getAttribute("aria-hidden"), "There's no aria-hidden attribute on the SPAN");
 		assert.strictEqual(oStateElement.innerHTML, sErrorText, "Control has mapped the correct state text");
+	});
+
+	QUnit.test("ObjectNumber's Emphasized information", function (assert) {
+		var oCore = sap.ui.getCore(),
+			sEmphasizedText = oCore.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_EMPHASIZED"),
+			oEmphasizedInfoElement;
+
+		this.oON.setEmphasized(true);
+		oCore.applyChanges();
+
+		oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId);
+		assert.ok(oEmphasizedInfoElement, "A SPAN with the emphasized information is created");
+		assert.ok(oEmphasizedInfoElement.classList.contains("sapUiPseudoInvisibleText"), "SPAN is pseudo invisible instead of invisible");
+		assert.strictEqual(oEmphasizedInfoElement.innerHTML, sEmphasizedText, "Control has mapped the correct text for emphasizing");
 	});
 
 	QUnit.test("ObjectNumber with ariaDescribedBy association", function (assert) {
