@@ -5514,8 +5514,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	//*********************************************************************************************
 	// Scenario: Parameters of a function import are changed after calling ODataModel#callFunction
 	// before submitting the changes (#submitChanges). The request URL contains the latest parameter
-	// change and the messages get the correct target/fullTarget.
-	// BCP: 2070289685
+	// change and the messages get the correct target/fullTarget. Object for parameters does not
+	// cause pending changes after the execution of the function import.
+	// BCP: 2070289685, 2070333970
 	// JIRA: CPOUI5MODELS-230
 [
 	{method: "GET", functionName : "/SalesOrder_Confirm_GET"},
@@ -5605,6 +5606,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel.submitChanges({groupId : "changes"});
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oModel.hasPendingChanges(true), false);
 		});
 	});
 });

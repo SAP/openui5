@@ -3885,8 +3885,8 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities,
 			mChangeEntities, mEntityTypes, bBatch, aRequests, mContentID2KeyAndDeepPath) {
-		var sCanonicalPath, bContent, sDeepPath, oEntity, oEntityMetadata, sHeadersLocation,
-			oImportData, aParts, sPath, iPos, sUri,
+		var sCanonicalPath, bContent, sDeepPath, oEntity, oEntityType, sHeadersLocation,
+			oImportData, bIsFunction, sNormalizedPath, aParts, sPath, iPos, sUri,
 			mLocalChangeEntities = {},
 			mLocalGetEntities = {},
 			oResultData = oResponse.data,
@@ -3903,12 +3903,12 @@ sap.ui.define([
 			}
 
 			// In order to retrieve the EntityType, the path should be normalized (URL parameters should be removed)
-			var sNormalizedPath = this._normalizePath(sPath);
-			var oEntityType = this.oMetadata._getEntityTypeByPath(sNormalizedPath);
+			sNormalizedPath = this._normalizePath(sPath);
+			oEntityType = this.oMetadata._getEntityTypeByPath(sNormalizedPath);
 
 			// FunctionImports shouldn't be resolved canonical
-			var bCanonical = oEntityType ? !oEntityType.isFunction : true;
-			sPath = this._normalizePath(sPath, undefined, bCanonical);
+			bIsFunction = oEntityType && oEntityType.isFunction;
+			sPath = this._normalizePath(sPath, undefined, !bIsFunction);
 
 			// decrease laundering
 			this.decreaseLaundering(sPath, oRequest.data);
@@ -3965,10 +3965,10 @@ sap.ui.define([
 				oImportData = merge({}, oResultData);
 				if (oRequest.key || oRequest.created) {
 					that._importData(oImportData, mLocalGetEntities, oResponse, undefined,
-						undefined, undefined, oEntityType && oEntityType.isFunction);
+						undefined, undefined, bIsFunction);
 				} else {
 					that._importData(oImportData, mLocalGetEntities, oResponse, sPath,
-						oRequest.deepPath, undefined, oEntityType && oEntityType.isFunction);
+						oRequest.deepPath, undefined, bIsFunction);
 				}
 				oResponse._imported = true;
 			}
@@ -4005,11 +4005,10 @@ sap.ui.define([
 					this._removeEntity(aParts[1]);
 				}
 			}
-			//get entityType for creates
-			if (bContent && oRequest.method === "POST") {
-				oEntityMetadata = this.oMetadata._getEntityTypeByPath(sPath);
-				if (oEntityMetadata) {
-					mEntityTypes[oEntityMetadata.entityType] = true;
+			// remove temporary entity for entity creation and function import
+			if (bContent && oRequest.method === "POST" || oRequest.functionMetadata) {
+				if (oEntityType) {
+					mEntityTypes[oEntityType.entityType] = true;
 				}
 				if (oRequest.key) { // e.g. /myEntity
 					// for createEntry entities change context path to new one
@@ -4035,7 +4034,6 @@ sap.ui.define([
 							delete oEntity.__metadata.created;
 						}
 					}
-					// remove old entity/context for created and function imports
 					this._removeEntity(oRequest.key);
 				}
 			}
