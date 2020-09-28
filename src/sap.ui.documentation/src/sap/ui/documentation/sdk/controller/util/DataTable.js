@@ -88,7 +88,7 @@ sap.ui.define([
 				)
 			);
 
-			API.on('draw', function () {
+		API.on('draw', function () {
 
 			if (this.get("highlight")) {
                 var sTerms = API.search();
@@ -128,7 +128,7 @@ sap.ui.define([
 
 			}
 
-			}.bind(this));
+		}.bind(this));
 
 		API.buttons().container()
 			.insertBefore('#' + sId + '_length');
@@ -349,14 +349,36 @@ sap.ui.define([
 			.unique()
 			.sort()[0]
 			.forEach(function (sOption) {
-				var oOption = $(sOption);
-				if (oOption.length > 0) {
+				var oOption;
+
+				if (aOptions.indexOf(sOption) > -1) {
+					// if options is already in array return as we don't want duplicates
+					return;
+				}
+
+				try {
+					// some options are lists with list items (ul > li),
+					// so we wrap them to jQuery objects and push their
+					// values to the array of options if they are not already pushed
+
+					// some options may contain special characters ( "(", ")", ";" ...)
+					// this throws exception when we wrap them with jQuery and stops
+					// javascript execution
+					oOption = $(sOption);
+				} catch (error) {
+					oOption = null;
+				}
+
+				if (oOption && oOption.length > 0) {
 					oOption.find('li').each(function (i, sOption) {
-						aOptions.push(sOption.textContent);
+						if (aOptions.indexOf(sOption.textContent) < 0) {
+							aOptions.push(sOption.textContent);
+						}
 					});
 				} else {
 					aOptions.push(sOption);
 				}
+
 			});
 
 		return aOptions;
