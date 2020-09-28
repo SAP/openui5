@@ -42,6 +42,14 @@ sap.ui.define([
 		return sandbox.stub(oChangePersistence, sFunctionName).resolves();
 	}
 
+	function _prepareUriParametersFromQuery(sValue) {
+		sandbox.stub(UriParameters, "fromQuery").returns({
+			get : function () {
+				return sValue;
+			}
+		});
+	}
+
 	QUnit.module("Internal Caching", {
 		beforeEach: function () {
 			this.aReturnedVersions = [];
@@ -84,11 +92,7 @@ sap.ui.define([
 				reference : "com.sap.app"
 			};
 
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get : function () {
-					return "true";
-				}
-			});
+			_prepareUriParametersFromQuery("true");
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				var oData = oResponse.getData();
@@ -103,11 +107,7 @@ sap.ui.define([
 				reference : "com.sap.app"
 			};
 
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get : function () {
-					return "something";
-				}
-			});
+			_prepareUriParametersFromQuery("something");
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				var oData = oResponse.getData();
@@ -122,11 +122,7 @@ sap.ui.define([
 				reference : "com.sap.app"
 			};
 
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get : function () {
-					return "false";
-				}
-			});
+			_prepareUriParametersFromQuery("false");
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				var oData = oResponse.getData();
@@ -308,6 +304,53 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("with setDirtyChange(false) and a connector is configured which returns a list of versions with entries while an older version is displayed", function (assert) {
+			var nActiveVersion = 2;
+			//set displayedVersion to 1
+			_prepareUriParametersFromQuery("1");
+			var mPropertyBag = {
+				layer : Layer.CUSTOMER,
+				reference : "com.sap.app"
+			};
+
+			var oFirstVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a long while ago",
+				version : 1
+			};
+
+			var oSecondVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a while ago",
+				version : nActiveVersion
+			};
+
+			var aReturnedVersions = [
+				oSecondVersion,
+				oFirstVersion
+			];
+
+			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
+
+			return Versions.initialize(mPropertyBag)
+			.then(function (oVersionsModel) {
+				oVersionsModel.setDirtyChanges(false);
+			})
+			.then(function () {
+				var oData = Versions.getVersionsModel(mPropertyBag).getData();
+				var aVersions = oData.versions;
+				assert.equal(aVersions.length, 2, "then versions has two entries");
+				assert.deepEqual(aVersions[0], oSecondVersion, "with the second");
+				assert.equal(aVersions[1], oFirstVersion, "and the first version");
+				assert.equal(oData.backendDraft, false, "the backendDraft flag is false");
+				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
+				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+				assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
+				assert.equal(oData.displayedVersion, "1", "the displayedVersion set 1");
+				assert.equal(oData.activeVersion, nActiveVersion, "and the activeVersion set to 2");
+			});
+		});
+
 		QUnit.test("and a connector is configured which returns a list of versions with entries and a draft", function (assert) {
 			var nActiveVersion = 2;
 
@@ -373,11 +416,7 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a draft exists", function (assert) {
 			var nActiveVersion = 2;
 			//set displayedVersion to draft
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get : function () {
-					return "0";
-				}
-			});
+			_prepareUriParametersFromQuery(sap.ui.fl.Versions.Draft.toString());
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
@@ -435,11 +474,7 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			var nActiveVersion = 3;
 			//set displayedVersion to 1
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get : function () {
-					return "1";
-				}
-			});
+			_prepareUriParametersFromQuery("1");
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
 				reference : sReference,
