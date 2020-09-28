@@ -199,6 +199,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the IconTabHeader instance which holds all the TabFilters.
+	 */
+	IconTabBarSelectList.prototype._getIconTabHeader = function () {
+		return this._oIconTabHeader;
+	};
+
+	/**
 	 * Handles tap event.
 	 * @private
 	 */
