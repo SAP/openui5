@@ -317,6 +317,9 @@ sap.ui.define([
 		content: { suffix: "content" }
 	});
 
+	// List of classes to copy from IconTabBar to IconTabHeader when used as a sticky header inside a DynamicPage.
+	IconTabBar._CLASSES_TO_COPY = ["sapUiResponsiveContentPadding", "sapUiNoContentPadding", "sapUiContentPadding"];
+
 	/**
 	 * Initialization lifecycle method.
 	 *
@@ -423,6 +426,26 @@ sap.ui.define([
 		this._getIconTabHeader().setAriaTexts(oAriaTexts);
 
 		return this;
+	};
+
+	IconTabBar.prototype.addStyleClass = function (sClass, bSuppressRerendering) {
+		var oIconTabHeader = this._getIconTabHeader();
+
+		if (IconTabBar._CLASSES_TO_COPY.indexOf(sClass) !== -1) {
+			oIconTabHeader.addStyleClass(sClass, true);
+		}
+
+		return Control.prototype.addStyleClass.apply(this, arguments);
+	};
+
+	IconTabBar.prototype.removeStyleClass = function (sClass, bSuppressRerendering) {
+		var oIconTabHeader = this._getIconTabHeader();
+
+		if (IconTabBar._CLASSES_TO_COPY.indexOf(sClass) !== -1) {
+			oIconTabHeader.removeStyleClass(sClass, true);
+		}
+
+		return Control.prototype.removeStyleClass.apply(this, arguments);
 	};
 
 	/**
@@ -560,15 +583,7 @@ sap.ui.define([
 	};
 
 	IconTabBar.prototype._getStickyContent = function () {
-		var oIconTabHeader = this._getIconTabHeader();
-
-		IconTabBar._CLASSES_TO_COPY.forEach(function (sClassName) {
-			if (this.hasStyleClass(sClassName)) {
-				oIconTabHeader.addStyleClass(sClassName);
-			}
-		}.bind(this));
-
-		return oIconTabHeader;
+		return this._getIconTabHeader();
 	};
 
 	IconTabBar.prototype._returnStickyContent = function () {
@@ -661,9 +676,6 @@ sap.ui.define([
 	/* =========================================================== */
 	/*           end: reflectors for header properties             */
 	/* =========================================================== */
-
-	// List of classes to copy from IconTabBar to IconTabHeader when used as a sticky header inside a DynamicPage.
-	IconTabBar._CLASSES_TO_COPY = ["sapUiResponsiveContentPadding", "sapUiNoContentPadding", "sapUiContentPadding"];
 
 	return IconTabBar;
 });
