@@ -25,5 +25,21 @@
         ]
       }
     ]
+  },
+  "1.81.3": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "e7ac72f316612d2525cd7541cde2f7d988c7f8b6",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Issue with wrong scroll position is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070010871"
+          }
+        ]
+      }
+    ]
   }
 }

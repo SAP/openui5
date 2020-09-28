@@ -127,5 +127,54 @@
         ]
       }
     ]
+  },
+  "1.81.3": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "9112b1b44d1916f747c6d756c74d3e334d910af2",
+        "type": "FIX",
+        "text": " scrollLeftRTL: adapt to chrome behavior change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070328364"
+          }
+        ]
+      },
+      {
+        "id": "4b4dab37f86afe4f6ef8a8eca4d81e5877562ed4",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser#parse: (part2) do not consider 204 response for a GET request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080337477"
+          }
+        ]
+      },
+      {
+        "id": "97b78cd04bd583c43145a61a4e6194cb3335bfcb",
+        "type": "FIX",
+        "text": " handlebars: usage of latest version 4.7.6",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c63ec57f6fc7b3b4588a50a48905bf007b6d36a9",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser#parse: do not consider 204 response for a GET request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080337477"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -151,5 +151,98 @@
         ]
       }
     ]
+  },
+  "1.81.3": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "d2757f41301fe191df6ebb10a776accae098dcbb",
+        "type": "FIX",
+        "text": " Field: update editMode and multipleLines only on new rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "f1585132582575d4b77396e0cfe121b06bbf94d3",
+        "type": "FIX",
+        "text": " FieldValueHelp: no request if BindingContext destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "126a678d940aa6eebaa4ac80fcb9bcdb62ba0a3f",
+        "type": "FIX",
+        "text": " Revert: mdc.FieldValueHelp: Value not displayed in edit mode fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "77bae45e2d37c85fa30540ab6fb946b903860b16",
+        "type": "FIX",
+        "text": " mdc.FieldValueHelp: Value not displayed in edit mode fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "cc7922ce61ed737d1970b0a00a8e06feb2cb005a",
+        "type": "FIX",
+        "text": " mdc.odata.v4.FieldValueHelpDelegate: Handle ListBinding errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070280125"
+          }
+        ]
+      },
+      {
+        "id": "95292bc1e6e9b1043b48686635a0725a4b2e0c5d",
+        "type": "FIX",
+        "text": " mdc.Field: Validate exception raised when the value is not found (reverted)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080375489"
+          }
+        ]
+      },
+      {
+        "id": "37635d96a05ea4e24a2470a9e350055693cbf770",
+        "type": "FIX",
+        "text": " mdc.Field: Validate exception raised when the value is not found",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080375489"
+          }
+        ]
+      },
+      {
+        "id": "a851c51711024e31ef7866da3b972a8d5dc829f6",
+        "type": "FIX",
+        "text": " sap.ui.mdc.Table: Fix filter info in export with Draft Service",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070288249"
+          }
+        ]
+      }
+    ]
   }
 }
