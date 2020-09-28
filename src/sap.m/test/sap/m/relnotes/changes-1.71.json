@@ -1941,5 +1941,54 @@
         ]
       }
     ]
+  },
+  "1.71.22": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "b28d2c3407c5669176a4bc3441f72d2c3a81c64a",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Accessibility enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005091222020"
+          }
+        ]
+      },
+      {
+        "id": "24bdab5c2c27fa13c7c481bd0806fc6eb5f50f9f",
+        "type": "FIX",
+        "text": " sap.m.upload.UploadSet : UploadSet control issue while renaming file delete button does not remove selected filename.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004799612020"
+          }
+        ]
+      },
+      {
+        "id": "571e7ed58e5e618c895593050bb86a54219a0c5e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: increasing/decreasing of the value now stops when touch ended",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080375307"
+          }
+        ]
+      },
+      {
+        "id": "246f8f1b955195368bc2a3dc966c727678a9143b",
+        "type": "FIX",
+        "text": " sap.m.StepInput: No JS error when there is OData binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080370008"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -237,5 +237,32 @@
         ]
       }
     ]
+  },
+  "1.71.22": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "c46ca5a6ad0cb317d506647a40bd600cc059d07c",
+        "type": "FIX",
+        "text": " sap.m.Popover: SAP Quartz themes adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070299909"
+          }
+        ]
+      },
+      {
+        "id": "594b4bd6c360eb9a386c61a6b791dee501907008",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: has no min row height in Quartz",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005015552020"
+          }
+        ]
+      }
+    ]
   }
 }

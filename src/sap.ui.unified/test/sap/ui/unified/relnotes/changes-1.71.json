@@ -221,5 +221,43 @@
         ]
       }
     ]
+  },
+  "1.71.22": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "2c72d95ac7e678c4e93f48327a06b5e6dcd5745f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Fix the unit tests for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070297084"
+          }
+        ]
+      },
+      {
+        "id": "0c73038d82651f846d904a6dce8020f06e1fa2db",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070287455"
+          }
+        ]
+      },
+      {
+        "id": "7a9cf858476318bd6c14835cbb51c6755b886556",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: IE adds content-type only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003497602020"
+          }
+        ]
+      }
+    ]
   }
 }
