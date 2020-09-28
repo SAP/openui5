@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.uxap.sample.HeaderFacetSample2",
+		"id": "sap.uxap.sample.Sample1",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.HeaderFacetSample2.view.HeaderFacetSample2",
+			"viewName": "sap.uxap.sample.Sample1.view.Sample1",
 			"type": "XML",
 			"async": true
 		},
@@ -20,7 +20,7 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"view/HeaderFacetSample2.view.xml",
+					"view/Sample1.view.xml",
 					"../SharedBlocks/employment/EmploymentBlockJob.js",
 					"../SharedBlocks/employment/EmploymentBlockJobCollapsed.view.xml",
 					"../SharedBlocks/employment/EmploymentBlockJobExpanded.view.xml",

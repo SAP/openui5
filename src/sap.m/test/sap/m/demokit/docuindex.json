@@ -598,7 +598,7 @@
 		},
 		{
 		  "id": "sap.m.InitialPagePattern",
-		  "name": "Initial Page Pattern",
+		  "name": "Initial Page Floorplan",
 		  "category": "Pattern",
 		  "since": "1.75",
 		  "formFactors": "-",
