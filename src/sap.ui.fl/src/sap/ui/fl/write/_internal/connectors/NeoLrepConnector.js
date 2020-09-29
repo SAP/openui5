@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/fl/write/_internal/connectors/NeoLrepConnector"
+	"sap/ui/fl/initial/_internal/connectors/NeoLrepConnector"
 ], function(
 	merge,
 	LrepConnector,

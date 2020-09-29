@@ -495,6 +495,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/connectors/KeyUserConnector"]
 				}
 			},
+			"write/_internal/connectors/NeoLrepConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/connectors/NeoLrepConnector"]
+				}
+			},
 			"write/_internal/extensionPoint/Registry": {
 				group: "Write Internal",
 				coverage: {
