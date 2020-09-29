@@ -33,6 +33,25 @@ sap.ui.define([
 		};
 	}
 
+	function getVersionsModel(mPropertyBag) {
+		if (!mPropertyBag.selector) {
+			throw Error("No selector was provided");
+		}
+		if (!mPropertyBag.layer) {
+			throw Error("No layer was provided");
+		}
+
+		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
+		if (!oAppInfo.reference) {
+			throw Error("The application ID could not be determined");
+		}
+		return Versions.getVersionsModel({
+			reference : Utils.normalizeReference(oAppInfo.reference),
+			layer : mPropertyBag.layer
+		});
+	}
+
 	/**
 	 * Provides an API for tools like {@link sap.ui.rta} to activate, discard and retrieve versions.
 	 *
@@ -47,7 +66,7 @@ sap.ui.define([
 	/**
 	 * Initializes the versions for a given selector and layer.
 	 *
-	 * @param {object} mPropertyBag - Property Bag
+	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
@@ -77,7 +96,7 @@ sap.ui.define([
 	/**
 	 * Returns a flag if a draft exists for the current application and layer.
 	 *
-	 * @param {object} mPropertyBag - Property Bag
+	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
@@ -85,22 +104,9 @@ sap.ui.define([
 	 * Throws an error in case no initialization took place upfront
 	 */
 	VersionsAPI.isDraftAvailable = function (mPropertyBag) {
-		if (!mPropertyBag.selector) {
-			throw Error("No selector was provided");
-		}
-		if (!mPropertyBag.layer) {
-			throw Error("No layer was provided");
-		}
+		var oModel = getVersionsModel(mPropertyBag);
 
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
-		if (!oAppInfo.reference) {
-			throw Error("The application ID could not be determined");
-		}
-		var aVersions = Versions.getVersionsModel({
-			reference : Utils.normalizeReference(oAppInfo.reference),
-			layer : mPropertyBag.layer
-		}).getProperty("/versions");
+		var aVersions = oModel.getProperty("/versions");
 		var oDraft = aVersions.find(function (oVersion) {
 			return oVersion.version === sap.ui.fl.Versions.Draft;
 		});
@@ -109,10 +115,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a flag if the displayed version is not the active version for the current application and layer.
+	 *
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 *
+	 * @return {boolean} Flag if the displayed version is not the active version
+	 * Throws an error in case no initialization took place upfront
+	 */
+	VersionsAPI.isOldVersionDisplayed = function (mPropertyBag) {
+		var oModel = getVersionsModel(mPropertyBag);
+
+		var displayedVersion = oModel.getProperty("/displayedVersion");
+		var activeVersion = oModel.getProperty("/activeVersion");
+
+		return displayedVersion !== sap.ui.fl.Versions.Draft && displayedVersion !== activeVersion;
+	};
+
+	/**
 	 * Removes the internal stored state of a given application and refreshes the state including a draft for the given layer;
 	 * an actual reload of the application has to be triggered by the caller.
 	 *
-	 * @param {object} mPropertyBag - Property Bag
+	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
@@ -127,7 +152,7 @@ sap.ui.define([
 	 * Removes the internal stored state of a given application and refreshes the state including a draft for the given layer;
 	 * an actual reload of the application has to be triggered by the caller.
 	 *
-	 * @param {object} mPropertyBag - Property Bag
+	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {number} mPropertyBag.version - Version number to be loaded
@@ -160,7 +185,7 @@ sap.ui.define([
 	/**
 	 * Activates a draft version.
 	 *
-	 * @param {object} mPropertyBag - Property Bag
+	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.title - Title of the to be activated version
@@ -202,7 +227,7 @@ sap.ui.define([
 	 * update the FlexState accordingly in case the <code>updateState</code> flag is set; This API does not revert the changes
 	 * and the consumer must take care of making a reload of the application itself.
 	 *
-	 * @param {object} mPropertyBag - Property Bag
+	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;

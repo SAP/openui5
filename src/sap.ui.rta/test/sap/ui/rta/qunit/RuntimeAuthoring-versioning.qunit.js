@@ -556,7 +556,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when _onActivateDraft is called ", function (assert) {
+		QUnit.test("when _onActivateDraft is called on draft", function (assert) {
 			var oActivateDraftStub;
 			var oShowMessageToastStub;
 			var oRta = this.oRta;
@@ -567,6 +567,8 @@ sap.ui.define([
 				}
 			};
 
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+
 			return oRta.start().then(function () {
 				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").resolves(true);
 				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
@@ -574,6 +576,48 @@ sap.ui.define([
 				.then(oRta._onActivateDraft.bind(oRta, oEvent))
 				.then(function () {
 					assert.equal(oActivateDraftStub.callCount, 1, "then the activateDraft() method is called once");
+					var oActivationCallPropertyBag = oActivateDraftStub.getCall(0).args[0];
+					assert.equal(oActivationCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
+					assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
+					assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
+					assert.equal(oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
+					assert.equal(oRta.getToolbar().getModel("controls").getProperty("/restoreEnabled"), true, "RestoreEnabled is correctly set in Model");
+					assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
+				}.bind(this));
+		});
+
+		QUnit.test("when _onActivateDraft is called on an older version with backend draft", function (assert) {
+			var oActivateDraftStub;
+			var oShowMessageToastStub;
+			var oRta = this.oRta;
+			var sVersionTitle = "aVersionTitle";
+			var oEvent = {
+				getParameter : function () {
+					return sVersionTitle;
+				}
+			};
+
+			sandbox.stub(this.oRta, "_isOldVersionDisplayed").returns(true);
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves("MessageBox.Action.CANCEL");
+
+			return oRta.start().then(function () {
+				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").resolves(true);
+				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
+			})
+				.then(oRta._onActivateDraft.bind(oRta, oEvent))
+				.then(function () {
+					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown and click on CANCEL");
+					assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_ON_REACTIVATE_DIALOG", "the message text is correct");
+					assert.equal(oActivateDraftStub.callCount, 0, "activateDraft() method was not called");
+
+					oShowMessageBoxStub.reset();
+					oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+					return this.oRta._onActivateDraft(oEvent);
+				}.bind(this))
+				.then(function () {
+					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown and click on OK");
+					assert.equal(oActivateDraftStub.callCount, 1, "activateDraft() method is called once");
 					var oActivationCallPropertyBag = oActivateDraftStub.getCall(0).args[0];
 					assert.equal(oActivationCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 					assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");

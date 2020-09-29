@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/base/util/UriParameters",
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -20,6 +21,7 @@ sap.ui.define([
 	Layer,
 	Utils,
 	ManifestUtils,
+	UriParameters,
 	Control,
 	sinon
 ) {
@@ -133,6 +135,133 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given VersionsAPI.isOldVersionDisplayed is called", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest : function () {
+					return {};
+				},
+				getId : function () {
+					return "sComponentId";
+				},
+				getComponentData : function () {
+					return {
+						startupParameters : ["sap-app-id"]
+					};
+				}
+			};
+		},
+		beforeEach: function () {
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVersioningEnabled: function () {
+					return true;
+				}
+			});
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when no selector is provided", function (assert) {
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER
+			};
+
+			assert.throws(
+				VersionsAPI.isOldVersionDisplayed.bind(undefined, mPropertyBag),
+				new Error("No selector was provided"),
+				"then an Error is thrown"
+			);
+		});
+
+		QUnit.test("when no layer is provided", function (assert) {
+			var mPropertyBag = {
+				selector: new Control()
+			};
+
+			assert.throws(
+				VersionsAPI.isOldVersionDisplayed.bind(undefined, mPropertyBag),
+				new Error("No layer was provided"),
+				"then an Error is thrown"
+			);
+		});
+
+		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				selector: new Control()
+			};
+
+			assert.throws(
+				VersionsAPI.isOldVersionDisplayed.bind(undefined, mPropertyBag),
+				new Error("The application ID could not be determined"),
+				"then an Error is thrown"
+			);
+		});
+
+		QUnit.test("when a selector and a layer were provided and a draft exists", function(assert) {
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				selector: new Control()
+			};
+
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			var aReturnedVersions = [
+				{version: sap.ui.fl.Versions.Draft},
+				{version: 2},
+				{version: 1}
+			];
+			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
+
+			return VersionsAPI.initialize(mPropertyBag).then(function () {
+				assert.equal(VersionsAPI.isOldVersionDisplayed(mPropertyBag), false, "then a 'false' is returned");
+			});
+		});
+
+		QUnit.test("when a selector and a layer were provided and display version is equal to active version", function(assert) {
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				selector: new Control()
+			};
+
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			var aReturnedVersions = [
+				{version: 2},
+				{version: 1}
+			];
+			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
+
+			return VersionsAPI.initialize(mPropertyBag).then(function () {
+				assert.equal(VersionsAPI.isOldVersionDisplayed(mPropertyBag), false, "then a 'false' is returned");
+			});
+		});
+
+		QUnit.test("when a selector and a layer were provided and display version is not equal to active version", function(assert) {
+			sandbox.stub(UriParameters, "fromQuery").returns({
+				get : function () {
+					return "1";
+				}
+			});
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				selector: new Control()
+			};
+
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			var aReturnedVersions = [
+				{version: 2},
+				{version: 1}
+			];
+			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
+
+			return VersionsAPI.initialize(mPropertyBag).then(function () {
+				assert.equal(VersionsAPI.isOldVersionDisplayed(mPropertyBag), true, "then a 'true' is returned");
+			});
+		});
+	});
 
 	QUnit.module("Given VersionsAPI.loadDraftForApplication is called", {
 		before: function() {
