@@ -1057,8 +1057,8 @@ sap.ui.define([
 	 *       property that was changed on the server and now targets a different entity
 	 *       (since 1.79.0)
 	 *     <li> the binding of this context has "$$aggregation" (see
-	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}) and the context is not the
-	 *       header context
+	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}) and the context is not the header
+	 *       context
 	 *   </ul>
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute

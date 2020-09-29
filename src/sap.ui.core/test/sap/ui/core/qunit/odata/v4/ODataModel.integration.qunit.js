@@ -27700,7 +27700,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: A list binding with $$sharedRequests below another list binding.
+	// Scenario: A list binding with $$sharedRequest below another list binding.
 	// JIRA: CPOUI5ODATAV4-269
 	QUnit.test("CPOUI5ODATAV4-269: Nested lists and $$sharedRequest", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
