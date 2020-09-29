@@ -561,7 +561,8 @@ sap.ui.define([
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
-					fetchLinkType: function() {
+					fetchLinkType: function(oPayload, oLink) {
+						assert.deepEqual(this.oLink, oLink, "fetchLinkType received the correct Link object");
 						var oNewLinkPromise = new Promise(function(resolve) {
 							setTimeout(function() {
 								resolve({
@@ -582,7 +583,7 @@ sap.ui.define([
 							runtimeType: oNewLinkPromise
 						};
 						return Promise.resolve(oLinkTypeObject);
-					}
+					}.bind(this)
 				}
 			}
 		});

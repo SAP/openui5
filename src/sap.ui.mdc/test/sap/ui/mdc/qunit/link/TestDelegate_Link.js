@@ -33,9 +33,9 @@ sap.ui.define([
 		return Promise.resolve(true);
 	};
 
-	SampleLinkDelegate.fetchLinkType = function(oPayload) {
+	SampleLinkDelegate.fetchLinkType = function(oPayload, oLink) {
 		if (oPayload.fetchLinkType) {
-			return oPayload.fetchLinkType();
+			return oPayload.fetchLinkType(oPayload, oLink);
 		}
 		return Promise.resolve({
 			linkType: {
