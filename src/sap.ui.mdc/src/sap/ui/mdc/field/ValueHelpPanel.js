@@ -447,14 +447,6 @@ sap.ui.define([
 
 		},
 
-		_formatDefineConditionTitle: function() {
-
-			//TODO Workaround to get the dialog Title as header for the defineConditionPanel
-			var sText = this.getParent().getTitle && this.getParent().getTitle();
-			return sText;
-
-		},
-
 		_formatTableTitle: function(sText) {
 
 			var iItems = 0;
