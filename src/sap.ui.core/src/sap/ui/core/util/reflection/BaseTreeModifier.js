@@ -531,6 +531,17 @@ sap.ui.define([
 		 */
 		getPropertyBinding: function (vControl, sPropertyName) {},
 
+
+		/**
+		 * Creates and add a Custom Data object to the control.
+		 *
+		 * @param {sap.ui.base.ManagedObject} oControl - Control representation
+		 * @param {string} sCustomDataKey - Key for the Custom Data
+		 * @param {string} sValue - Value for the Custom Data
+		 * @param {sap.ui.core.Component} oAppComponent - App Component Instance
+		 */
+		createAndAddCustomData: function(oControl, sCustomDataKey, sValue, oAppComponent) {},
+
 		/**
 		 * Creates the control in the corresponding representation.
 		 *

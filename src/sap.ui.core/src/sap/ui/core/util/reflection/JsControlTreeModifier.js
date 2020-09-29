@@ -6,10 +6,9 @@
 
 sap.ui.define([
 	"./BaseTreeModifier",
-	"./XmlTreeModifier", // needed to get extension point info from oView._xContent
+	"./XmlTreeModifier",
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
-	"sap/ui/core/Component",
 	"sap/base/util/merge",
 	"sap/ui/core/Fragment" // also needed to have sap.ui.xmlfragment
 ], function (
@@ -17,7 +16,6 @@ sap.ui.define([
 	XmlTreeModifier,
 	ObjectPath,
 	XMLHelper,
-	Component,
 	merge,
 	Fragment
 ) {
@@ -160,6 +158,16 @@ sap.ui.define([
 		 */
 		getPropertyBinding: function (oControl, sPropertyName) {
 			return oControl.getBindingInfo(sPropertyName);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		createAndAddCustomData: function(oControl, sCustomDataKey, sValue, oAppComponent) {
+			var oCustomData = this.createControl("sap.ui.core.CustomData", oAppComponent);
+			this.setProperty(oCustomData, "key", sCustomDataKey);
+			this.setProperty(oCustomData, "value", sValue);
+			this.insertAggregation(oControl, "customData", oCustomData, 0);
 		},
 
 		/**

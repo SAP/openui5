@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/initial/_internal/StorageResultMerger",
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
@@ -20,7 +19,6 @@ function(
 	XmlTreeModifier,
 	Component,
 	Storage,
-	StorageResultMerger,
 	XmlPreprocessorImpl,
 	CacheManager,
 	AddSimpleFormGroup,
@@ -144,7 +142,7 @@ function(
 
 				CacheManager.reset();
 
-				var oXmlPrepossessSpy = sinon.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
 
 				// first create the application
 				return sap.ui.component({
@@ -194,7 +192,7 @@ function(
 
 				CacheManager.reset();
 
-				var oXmlPrepossessSpy = sinon.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
 
 				// first create the application
 				return sap.ui.component({
@@ -240,12 +238,19 @@ function(
 			});
 
 			QUnit.test("a group is added and passed to the core/CacheManager", function(assert) {
-				var that = this;
+				var oCacheManagerSpy;
 
 				CacheManager.reset();
 
-				var oCacheManagerSpy = sinon.spy(CacheManager, "set");
-				var oAddGroupChangeHandlerSpy = sinon.spy(AddSimpleFormGroup, "applyChange");
+				var oSetCachePromise = new Promise(function(resolve) {
+					var fCacheManagerSet = CacheManager.set;
+					oCacheManagerSpy = sandbox.stub(CacheManager, "set").callsFake(function() {
+						fCacheManagerSet.call(CacheManager, arguments[0], arguments[1]).then(function() {
+							resolve();
+						});
+					});
+				});
+				var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 
 				return sap.ui.component({
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
@@ -260,24 +265,22 @@ function(
 						cacheKey: "X"
 					}
 				}).then(function(oComponent) {
-					that.oComponent = oComponent;
-					return oComponent.getRootControl().loaded();
-				}).then(function() {
+					this.oComponent = oComponent;
+					return Promise.all([oComponent.getRootControl().loaded(), oSetCachePromise]);
+				}.bind(this)).then(function() {
 					var oCacheManagerCall = oCacheManagerSpy.getCall(0);
 					var sCachedXml = oCacheManagerCall.args[1].xml;
 					//as cached xml string will vary in different browsers (especially namespace handling), we will parse the xml again (without tabs and newlines to reduce unwanted text nodes)
 					var oCachedXmlDocument = jQuery.sap.parseXML(sCachedXml.replace(/[\n\t]/g, '')).documentElement;
 					assert.equal(oCachedXmlDocument.localName, "View", "the view is included in the cache");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].localName, "SimpleForm", "the simple form is included in the cache");
-					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes.length, 5, "the simple form content includes the new nodes from the change");
+					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes.length, 4, "the simple form content includes the new nodes from the change");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[3].getAttribute("id"),
 					"sap.ui.fl.qunit.integration.async.testComponentWithView---rootView--id-1504610195259-77",
 					"the new title with the right id is cached");
-					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].localName, "CustomData",
+					assert.ok(oCachedXmlDocument.childNodes[0].childNodes[0].attributes["custom.data.via.modifier:sap.ui.fl.appliedChanges.id_1504610195273_78_addSimpleFormGroup"],
 					"the custom data marker that the change is applied is cached");
-					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("key"), "sap.ui.fl.appliedChanges.id_1504610195273_78_addSimpleFormGroup",
-					"the custom data marker that the change is applied is cached");
-					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("value"), "\\{\"groupId\":\"sap.ui.fl.qunit.integration.async.testComponentWithView---rootView--id-1504610195259-77\"\\}",
+					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].getAttribute("custom.data.via.modifier:sap.ui.fl.appliedChanges.id_1504610195273_78_addSimpleFormGroup"), "\\{\"groupId\":\"sap.ui.fl.qunit.integration.async.testComponentWithView---rootView--id-1504610195259-77\"\\}",
 					"the custom data marker that the change is applied is cached");
 					assert.ok(oAddGroupChangeHandlerSpy.calledOnce, "the change handler was called only once");
 					var oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;
