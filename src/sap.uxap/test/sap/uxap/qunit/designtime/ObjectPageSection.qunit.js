@@ -115,6 +115,19 @@ sap.ui.define([
 				};
 			}
 		},
+		previousActions: [ // OPTIONAL
+            {
+                name: "rename",
+                controlId: "section",
+                parameter: function (oView) {
+                    return {
+                        newValue: 'Intermediate Value',
+                        renamedElement: oView.byId("section")
+                    };
+                }
+            }
+        ],
+        changesAfterCondensing: 1, // OPTIONAL
 		afterAction: fnConfirmSectionRenamedWithNewValue,
 		afterUndo: fnConfirmSectionIsRenamedWithOldValue,
 		afterRedo: fnConfirmSectionRenamedWithNewValue
