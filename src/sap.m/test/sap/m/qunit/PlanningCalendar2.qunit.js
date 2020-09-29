@@ -943,21 +943,20 @@ sap.ui.define([
 	QUnit.test("'_handleCalendarSelect()' event handler adjust the startDate to the 1st day of month", function (assert) {
 		//arrange
 		var oHandleCalendarSelectSpy = this.spy(PlanningCalendar.prototype, "_handleCalendarSelect"),
-			oPCInterval;
+			oPCInterval,
+			oEventTarget;
 
 		this._createCalendar();
 		oPCInterval = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
-		var oEventTarget = oPCInterval.getDomRef().querySelectorAll(".sapUiCalItem")[0],
-			oEventDetails = { clientX: 100, clientY: 100 },
-			oMouseDownEvent = jQuery.Event("mousedown", oEventDetails),
-			oMouseUpEvent = jQuery.Event("mouseup", oEventDetails);
+		oEventTarget = oPCInterval.getDomRef().querySelectorAll(".sapUiCalItem")[0];
 
-		//Calendar selection is implemented on 'mouseup' event so to test this you have to simulate 'mousedown' + 'mouseup' event sequence
-		jQuery(oEventTarget).trigger(oMouseDownEvent);
-		jQuery(oEventTarget).trigger(oMouseUpEvent);
+		//force Calendar selection by triggering ENTER keypress on a first calendar cell
+		qutils.triggerKeydown(jQuery(oEventTarget).attr("id"), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
+
 		//assert
 		assert.strictEqual(oHandleCalendarSelectSpy.callCount, 1, "'_handleStartDateChange()' event handler is called once");
+
 		//clean
 		oHandleCalendarSelectSpy.restore();
 	});
