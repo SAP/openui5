@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'./library',
 	'sap/ui/core/LabelEnablement',
+	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'./FileUploaderRenderer',
@@ -23,6 +24,7 @@ sap.ui.define([
 	Control,
 	library,
 	LabelEnablement,
+	InvisibleText,
 	coreLibrary,
 	Device,
 	FileUploaderRenderer,
@@ -600,6 +602,10 @@ sap.ui.define([
 			}
 			if (this.oBrowse.addAriaDescribedBy) {
 				this.oBrowse.addAriaDescribedBy(this.getId() + "-AccDescr");
+			}
+
+			if (this.oFilePath) {
+				this.oFilePath.addAriaLabelledBy(InvisibleText.getStaticId("sap.ui.unified", "FILEUPLOAD_FILENAME"));
 			}
 		}
 		this._submitAfterRendering = false;
