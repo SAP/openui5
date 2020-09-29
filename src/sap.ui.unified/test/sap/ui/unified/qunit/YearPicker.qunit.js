@@ -117,6 +117,7 @@ sap.ui.define([
 
 			// act
 			this.YP._selectYear(12);
+			sap.ui.getCore().applyChanges();
 
 			// assert
 			assert.strictEqual(oSelectedDates[0].getStartDate().getFullYear(), 2000, "2000 is selected start year");

@@ -101,7 +101,7 @@ sap.ui.define([
 		var iYear = oStartDate.getFullYear();
 		CalendarUtils._checkYearInValidRange(iYear);
 
-		this.setProperty("startDate", oStartDate, true);
+		this.setProperty("startDate", oStartDate);
 		this._oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this.getPrimaryCalendarType());
 
 		if (this.getDomRef()) {

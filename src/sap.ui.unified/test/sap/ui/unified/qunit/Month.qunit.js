@@ -79,6 +79,7 @@ sap.ui.define([
 		QUnit.test("Corner case for January 0001", function (assert) {
 			// Act
 			this.oM.setDate(createDate(1, 0, 1));
+			sap.ui.getCore().applyChanges();
 
 			var aItems = this.oM.$().find(".sapUiCalItem"),
 				$FirstDay = jQuery(aItems[0]);
@@ -91,6 +92,7 @@ sap.ui.define([
 		QUnit.test("Corner case for December 9999", function (assert) {
 			// Act
 			this.oM.setDate(createDate(9999, 11, 1));
+			sap.ui.getCore().applyChanges();
 
 			var aItems = this.oM.$().find(".sapUiCalItem"),
 				$LastDay = jQuery(aItems[aItems.length - 1]);

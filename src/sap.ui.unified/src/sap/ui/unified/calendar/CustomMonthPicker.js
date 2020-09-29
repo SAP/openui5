@@ -32,6 +32,10 @@ sap.ui.define([
 		renderer: CustomMonthPickerRenderer
 	});
 
+	/*
+	 * Possible values for the "_currentPicker" aggregation: monthPicker and yearPicker.
+	 */
+
 	CustomMonthPicker.prototype._initializeHeader = function() {
 		var oHeader = new Header(this.getId() + "--Head", {
 			visibleButton1: false
@@ -48,15 +52,33 @@ sap.ui.define([
 		this.setAggregation("header",oHeader);
 	};
 
-	CustomMonthPicker.prototype.onBeforeRendering = function () {
-		var oHeader = this.getAggregation("header");
-		Calendar.prototype.onBeforeRendering.call(this, arguments);
-		oHeader.setVisibleButton1(false);
-		oHeader.setVisibleButton2(true);
+	CustomMonthPicker.prototype.init = function(){
+		Calendar.prototype.init.apply(this, arguments);
+		this.setProperty("_currentPicker", "monthPicker");
+		this._bNamesLengthChecked = true;
 	};
 
-	CustomMonthPicker.prototype.onAfterRendering = function () {
-		this._showMonthPicker(undefined, true);
+	CustomMonthPicker.prototype.onBeforeRendering = function () {
+		var oSelectedDates = this.getSelectedDates(),
+			oYearPickerDate = this._getYearPicker().getDate(),
+			oMonthPicker, oSelectedStartDate;
+
+		Calendar.prototype.onBeforeRendering.apply(this, arguments);
+
+		if (this._iMode === 1) {
+			if (oSelectedDates.length && oSelectedDates[0].getStartDate() && (!oYearPickerDate || (oSelectedDates[0].getStartDate().getFullYear() === oYearPickerDate.getFullYear()))) {
+				oMonthPicker = this._getMonthPicker();
+				oSelectedStartDate = oSelectedDates[0].getStartDate();
+				oMonthPicker.setMonth(oSelectedStartDate.getMonth());
+				oMonthPicker._iYear = oSelectedStartDate.getFullYear();
+			}
+		}
+	};
+
+	CustomMonthPicker.prototype._closePickers = function(){
+		this.setProperty("_currentPicker", "monthPicker");
+
+		this._togglePrevNext(this._getFocusedDate(), true);
 	};
 
 	CustomMonthPicker.prototype._selectYear = function () {
@@ -93,6 +115,12 @@ sap.ui.define([
 
 	CustomMonthPicker.prototype.onsapescape = function(oEvent) {
 		this.fireCancel();
+	};
+
+	CustomMonthPicker.prototype._hideMonthPicker = function(){
+		this._hideOverlay();
+		this._togglePrevNext(this._getFocusedDate(), true);
+		this._bActionTriggeredFromSecondHeader = false;
 	};
 
 	return CustomMonthPicker;

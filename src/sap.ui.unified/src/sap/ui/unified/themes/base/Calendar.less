@@ -184,7 +184,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 
 .sapUiCalInt > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalInt > .sapUiCalContent > .sapUiCalYearPicker {
-	width: auto;
+	width: 100%;
 }
 
 .sapUiCalHeadText {
@@ -313,9 +313,14 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	background-color: @sapUiSelected;
 }
 
-.sapUiCalContent{
+.sapUiCalContent {
 	position: relative;
 	text-align: center;
+	min-height: 17rem;
+}
+
+.sapUiCalInt .sapUiCalContent {
+	min-height: 8.875rem;
 }
 
 .sapUiCalContentOver{
@@ -509,8 +514,6 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	top: 0;
 	padding: 2rem 0.5rem 1rem 0.5rem;
 	background-color: @sapUiListBackground;
-	left: 50%;
-	margin-left: -9.5rem; /* to position in the middle (for multi-month) */
 }
 
 .sapUiCalInt > .sapUiCalContent > .sapUiCalMonthPicker,
@@ -552,14 +555,6 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	bottom: auto;
 	padding: 1rem;
 	margin-left: -10rem;
-}
-
-.sapUiCalContent > .sapUiCalYearPicker.sapUiCalYearNoTop{
-	padding-top: 0;
-}
-
-.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker.sapUiCalYearNoTop{
-	top: 0;
 }
 
 /* Day names inside day */
@@ -766,7 +761,6 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 .sapUiSizeCompact .sapUiCalContent > .sapUiCalYearPicker{
 	top: 0;
 	padding: 2rem 0.25rem 0.5rem 0.25rem;
-	margin-left: -8.25rem; /* to position in the middle (for multi-month) */
 }
 
 .sapUiSizeCompact .sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow{
@@ -853,6 +847,14 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	height: 2rem;
 }
 
+.sapUiSizeCompact .sapUiCal:not(.sapUiCalInt) .sapUiCalContent {
+	min-height: 13rem;
+}
+
+.sapUiSizeCompact .sapUiCalInt .sapUiCalContent {
+	min-height: 6.5rem;
+}
+
 /*** Phone ***/
 /* make calendar full-screen if on popup (DatePicker), but not if stand alone */
 html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalMonthPicker,
@@ -889,6 +891,10 @@ html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalYearP
 	.sapUiCalHeadB.sapUiCalHeadB4.sapUiCalSingleYearButton {
 		width: 12rem;
 		margin-left: calc(~"25% - 6rem");
+	}
+
+	.sapUiCalContent > .sapUiCalMonthPicker, .sapUiCalContent > .sapUiCalYearPicker {
+		left: 50%;
 	}
 }
 

@@ -382,6 +382,9 @@ sap.ui.define([
 		}
 
 		if (this._getCalendar()) {
+			if (this._oCalendarAfterRenderDelegate) {
+				this._getCalendar().removeDelegate(this._oCalendarAfterRenderDelegate);
+			}
 			this._getCalendar().destroy();
 			delete this._getCalendar();
 		}
@@ -1202,6 +1205,12 @@ sap.ui.define([
 					this._oPopup.getBeginButton().setEnabled(false);
 				}
 			}
+			this._oCalendarAfterRenderDelegate = {
+				onAfterRendering: function() {
+					this._oCalendar.focus();
+				}.bind(this)
+			};
+			this._oCalendar.addDelegate(this._oCalendarAfterRenderDelegate);
 		}
 	};
 
@@ -1487,7 +1496,6 @@ sap.ui.define([
 		this.$("inner").attr("aria-expanded", true);
 
 		InstanceManager.addPopoverInstance(this._oPopup);
-		this._getCalendar().focus();
 	}
 
 	function _handleClose() {
@@ -1498,7 +1506,7 @@ sap.ui.define([
 		this.$("inner").attr("aria-expanded", false);
 
 		this._restoreInputSelection(this._$input.get(0));
-		this._getCalendar()._closedPickers();
+		this._getCalendar()._closePickers();
 
 		InstanceManager.removePopoverInstance(this._oPopup);
 	}

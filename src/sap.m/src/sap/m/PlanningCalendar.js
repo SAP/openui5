@@ -1455,6 +1455,7 @@ sap.ui.define([
 		var oMinDate = this.getMinDate();
 		var oMaxDate = this.getMaxDate();
 		var oView = this._getView(sKey, !this._bBeforeRendering);
+		var oAssociation;
 
 		if (!oView) {
 			this._bCheckView = true;
@@ -1493,7 +1494,8 @@ sap.ui.define([
 						this._dateNav.setStep(iIntervals);
 					}
 					this._insertInterval(this._oTimesRow);
-					oHeader.setAssociation("currentPicker", oHeader.getAggregation("_calendarPicker"));
+					oAssociation = oHeader.getAggregation("_calendarPicker") ? oHeader.getAggregation("_calendarPicker") : oHeader._oPopup.getContent()[0];
+					oHeader.setAssociation("currentPicker", oAssociation);
 					break;
 
 				case CalendarIntervalType.Day:
@@ -1534,9 +1536,11 @@ sap.ui.define([
 					this._insertInterval(oInterval);
 					this[oIntervalMetadata.sInstanceName] = oInterval;
 					if (sIntervalType === CalendarIntervalType.OneMonth) {
-						oHeader.setAssociation("currentPicker", oHeader.getAggregation("_monthPicker"));
+						oAssociation = oHeader.getAggregation("_monthPicker") ? oHeader.getAggregation("_monthPicker") : oHeader._oPopup.getContent()[0];
+						oHeader.setAssociation("currentPicker", oAssociation);
 					} else {
-						oHeader.setAssociation("currentPicker", oHeader.getAggregation("_calendarPicker"));
+						oAssociation = oHeader.getAggregation("_calendarPicker") ? oHeader.getAggregation("_calendarPicker") : oHeader._oPopup.getContent()[0];
+						oHeader.setAssociation("currentPicker", oAssociation);
 					}
 					break;
 
@@ -1564,7 +1568,8 @@ sap.ui.define([
 						this._dateNav.setStep(iIntervals);
 					}
 					this._insertInterval(this._oMonthsRow);
-					oHeader.setAssociation("currentPicker", oHeader.getAggregation("_yearPicker"));
+					oAssociation = oHeader.getAggregation("_yearPicker") ? oHeader.getAggregation("_yearPicker") : oHeader._oPopup.getContent()[0];
+					oHeader.setAssociation("currentPicker", oAssociation);
 					break;
 
 				default:
@@ -1642,6 +1647,7 @@ sap.ui.define([
 		}
 
 		this.shiftToDate(oDate, oEvent.getParameter("otherMonth"));
+		this._addMonthFocusDelegate(this._getRowInstanceByViewKey(this.getViewKey()));
 	};
 
 	/**
@@ -1678,7 +1684,18 @@ sap.ui.define([
 			this.setStartDate(oStart);
 			oRowInstance.setStartDate(oStart);
 			oRowInstance.setDate(oCurrent);
+			this._addMonthFocusDelegate(oRowInstance);
 		}
+	};
+
+	PlanningCalendar.prototype._addMonthFocusDelegate = function(oRowInstance) {
+		var oFocusMonthDelegate = {
+				onAfterRendering: function() {
+					this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex());
+					this.removeDelegate(oFocusMonthDelegate);
+				}
+			};
+		oRowInstance.addDelegate(oFocusMonthDelegate, oRowInstance);
 	};
 
 	/**
@@ -2650,6 +2667,7 @@ sap.ui.define([
 					this._oOneMonthsRow._focusDate(CalendarDate.fromLocalJSDate(oFocusedDate), true);
 				} else if (CalendarUtils._isNextMonth(oEvtSelectedStartDate, this.getStartDate())) {
 					this.shiftToDate(oEvtSelectedStartDate);
+					this._addMonthFocusDelegate(this._getRowInstanceByViewKey(this.getViewKey()));
 					return;
 				}
 				oEndDate.setUTCDate(oEndDate.getUTCDate() + 1);
@@ -2681,6 +2699,7 @@ sap.ui.define([
 		if (sIntervalType === CalendarIntervalType.OneMonth
 			&& CalendarUtils._isNextMonth(oStartDate, this.getStartDate())) {
 			this.shiftToDate(oStartDate);
+			this._addMonthFocusDelegate(this._getRowInstanceByViewKey(this.getViewKey()));
 			return;
 		}
 

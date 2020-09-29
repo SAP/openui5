@@ -101,8 +101,9 @@ sap.ui.define([
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar3: Calendar picker not initial rendered");
 		qutils.triggerEvent("click", "CalP--Head-B1");
+		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker rendered");
-		assert.equal(jQuery("#CalP--Cal").parent().attr("id"), "sap-ui-static", "Calendar picker rendered in static area");
+		assert.ok(oCalP._oPopup.getContent()[0].isA("sap.ui.unified.Calendar"), "Calendar picker rendered in static area");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
 		// select 14.08.2015
@@ -119,7 +120,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("If choosed date from the Calendar picker is NOT in the 'selected' week the startDate should be changed to the start date of the week in which is the selected date", function(assert) {
+	QUnit.test("If chosen date from the Calendar picker is NOT in the 'selected' week the startDate should be changed to the start date of the week in which is the selected date", function(assert) {
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
@@ -131,14 +132,16 @@ sap.ui.define([
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar3: Calendar picker not initial rendered");
 		qutils.triggerEvent("click", "CalP--Head-B1");
+		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker rendered");
-		assert.equal(jQuery("#CalP--Cal").parent().attr("id"), "sap-ui-static", "Calendar picker rendered in static area");
+		assert.ok(oCalP._oPopup.getContent()[0].isA("sap.ui.unified.Calendar"), "Calendar picker rendered in static area");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
 		// select 14.08.2015
 		$Date = jQuery("#CalP--Cal--Month0-20150805");
 		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
 
 		assert.equal(sap.ui.getCore().byId("CalP").getStartDate().getDate(), 2, "start date is set correctly");
 
@@ -162,25 +165,31 @@ sap.ui.define([
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar picker not initial rendered");
 		qutils.triggerEvent("click", "CalP--Head-B1");
+		sap.ui.getCore().applyChanges();
 
 		// click on Month button inside calendar picker
 		qutils.triggerEvent("click", "CalP--Cal--Head-B1");
+		sap.ui.getCore().applyChanges();
 		// click on September
 		$Date = jQuery("#CalP--Cal--MP-m8");
 		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
 
 		// click on Year button inside calendar picker
 		qutils.triggerEvent("click", "CalP--Cal--Head-B2");
+		sap.ui.getCore().applyChanges();
 		// click on 2016
 		$Date = jQuery("#CalP--Cal--YP-y20160101");
 		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
 
 		// click on 17 of September 2016
 		$Date = jQuery("#CalP--Cal--Month0-20160917");
 		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
 
 		oCalStartDate = sap.ui.getCore().byId("CalP").getStartDate();
 
@@ -225,9 +234,10 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
+		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
-		oCalPicker = oCalP.getAggregation("calendarPicker");
+		oCalPicker = oCalP._getCalendar();
 
 		// check for selected date range
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getStartDate().getDate(), 6, "start date is 6");
@@ -240,6 +250,7 @@ sap.ui.define([
 
 		// open again the CalendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
+		sap.ui.getCore().applyChanges();
 
 		// check for the selected date range
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getStartDate().getDate(), 13, "start date is 13");
@@ -314,7 +325,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker aggregation", function(assert) {
+	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker", function(assert) {
 		// arrange
 		var oCalPicker,
 			oCalP = new CalendarWeekInterval("CalP",{
@@ -326,7 +337,7 @@ sap.ui.define([
 		// open calendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
 
-		oCalPicker = oCalP.getAggregation("calendarPicker");
+		oCalPicker = oCalP._getCalendar();
 
 		// initialy the yearPicker has default values for min and max year
 		assert.strictEqual(oCalPicker._oMinDate.getYear(), 1, "min year is set to 1");
@@ -342,13 +353,13 @@ sap.ui.define([
 		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
 		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
 
-		// return pickerPopup property to true, this will create the calendarPicker aggregation
+		// return pickerPopup property to true, this will create the calendarPicker
 		oCalP.setPickerPopup(true);
 
 		// open calendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
 
-		oCalPicker = oCalP.getAggregation("calendarPicker");
+		oCalPicker = oCalP._getCalendar();
 
 		// check if the yearPicker has the newly setted min and max date of the Interval control
 		assert.strictEqual(oCalPicker._oMinDate.getYear(), 2015, "min year is set to 2015");

@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/InvisibleTex
 	 */
 	MonthPickerRenderer.render = function(oRm, oMP){
 
-		var iMonth = oMP.getMonth(),
+		var iMonth = (oMP.getProperty("_firstMonth") !== undefined) ? oMP.getProperty("_firstMonth") : oMP.getMonth(),
 			iMonths = oMP.getMonths(),
 			iStartMonth = 0,
 			iColumns = oMP.getColumns(),
@@ -93,7 +93,7 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/InvisibleTex
 				mAccProps["label"] = aMonthNamesWide[iCurrentMonth];
 			}
 
-			if (iColumns > 0 && i % iColumns == 0) {
+			if (iColumns > 0 && i % iColumns === 0) {
 				// begin of row
 				oRm.openStart("div");
 				oRm.accessibilityState(null, {role: "row"});
@@ -132,7 +132,7 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/InvisibleTex
 			oRm.text(aMonthNames[iCurrentMonth]);
 			oRm.close("div");
 
-			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {
+			if (iColumns > 0 && ((i + 1) % iColumns === 0)) {
 				// end of row
 				oRm.close("div");
 			}

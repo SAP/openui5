@@ -21,11 +21,9 @@ sap.ui.define([],
 	 * @param {sap.ui.unified.CalendarMonthInterval} oCal An object representation of the control that should be rendered
 	 */
 	CalendarMonthIntervalRenderer.render = function(oRm, oCal){
-		oCal._iMode = 0; // it's rendered always as MonthsRow
 
 		var sId = oCal.getId();
 		var sTooltip = oCal.getTooltip_AsString();
-		var oMonthsRow = oCal.getAggregation("monthsRow");
 
 		oRm.openStart("div", oCal);
 		oRm.class("sapUiCal");
@@ -60,7 +58,7 @@ sap.ui.define([],
 		oRm.openStart("div", sId + "-content");
 		oRm.class("sapUiCalContent");
 		oRm.openEnd();
-		oRm.renderControl(oMonthsRow);
+		oRm.renderControl(oCal.getAggregation(oCal.getProperty("_currentPicker")));
 		oRm.close("div");
 		oRm.openStart("button", sId + "-cancel");
 		oRm.class("sapUiCalCancel");
