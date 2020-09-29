@@ -903,6 +903,21 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			return visibleItems;
 		};
 
+		NavigationListItem.prototype.onclick = function(event) {
+			// prevent click event on <a> element, in order to avoid unnecessary href changing
+			// this will be handled by _openUrl
+			if (this.getHref()) {
+				event.preventDefault();
+			}
+		};
+
+		NavigationListItem.prototype.onmousedown = function(event) {
+			// prevent focusin event to be fired on <a> element
+			// ItemNavigation will take care for focusing the <li> element
+			if (this.getHref()) {
+				event.preventDefault();
+			}
+		};
 
 		NavigationListItem.prototype.onfocusin = function(event) {
 

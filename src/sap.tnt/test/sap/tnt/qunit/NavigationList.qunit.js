@@ -1,12 +1,11 @@
 /*global QUnit sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/base/Log',
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	'sap/ui/model/json/JSONModel',
+	"sap/ui/thirdparty/jquery",
 	'sap/m/Text',
 	'sap/m/App',
 	'sap/m/Page',
@@ -14,22 +13,19 @@ sap.ui.define([
 	'sap/tnt/NavigationListItem',
 	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
-	jQuery,
 	Log,
 	Core,
 	QUnitUtils,
 	KeyCodes,
-	JSONModel,
+	jQuery,
 	Text,
 	App,
 	Page,
 	NavigationList,
 	NavigationListItem,
-	waitForThemeApplied) {
+	waitForThemeApplied
+) {
 	'use strict';
-
-	// create JSON model instance
-	var oModel = new JSONModel();
 
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "navigationListPage"});
@@ -64,7 +60,7 @@ sap.ui.define([
 						new NavigationListItem({
 							text: 'Child 3',
 							key: 'child3',
-							href: '#/child1'
+							href: '#/child3'
 						})
 					]
 				}),
@@ -88,7 +84,7 @@ sap.ui.define([
 				new NavigationListItem("groupItem3", {
 					text: 'Root 2',
 					key: 'root1',
-					href: '#/root1',
+					href: window.location.pathname + window.location.search + '#/root1', // same url, just different hash
 					icon: 'sap-icon://employee',
 					items: [
 						new NavigationListItem({
@@ -372,7 +368,7 @@ sap.ui.define([
 		assert.equal(currentItem.getAttribute('aria-roledescription'), sExpectedAriaRoleDescription, jQuery(currentItem).text() + ' has ARIA attribute roledescription.');
 	});
 
-	QUnit.module("ARIA - Accessibility Text", {
+	QUnit.module("ARIA", {
 		beforeEach: function () {
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
@@ -407,6 +403,22 @@ sap.ui.define([
 		});
 
 		assert.equal(invisibleText.getText(), 'Tree Item 3 of 3 Selected Child 3', "accessibility text is correct");
+	});
+
+	QUnit.test("Focus is prevented when clicking on <a> element", function (assert) {
+		// Arrange
+		var groupItem = this.navigationList.getItems()[0],
+			anchor = groupItem.getDomRef().querySelector("a"),
+			spy = sinon.spy(jQuery.Event.prototype, "preventDefault");
+
+		// Act
+		QUnitUtils.triggerMouseEvent(anchor, "mousedown");
+
+		// Assert
+		assert.ok(spy.called);
+
+		// Clean up
+		spy.restore();
 	});
 
 	QUnit.module('SelectedItem association', {
@@ -745,6 +757,18 @@ sap.ui.define([
 		assert.ok(oStub.calledTwice, '2 urls are open');
 
 		oStub.restore();
+	});
+
+	QUnit.test("Click on item with 'href' set", function (assert) {
+		// Arrange
+		var anchor = Core.byId("groupItem3").getDomRef().querySelector("a"),
+			sCurrHref = window.location.href;
+
+		// Act
+		anchor.click();
+
+		// Assert
+		assert.strictEqual(window.location.href, sCurrHref, "Default action when clicking on anchor tag is prevented.");
 	});
 
 	return waitForThemeApplied();
