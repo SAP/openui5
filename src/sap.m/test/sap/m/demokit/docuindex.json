@@ -1167,7 +1167,8 @@
 			"sap.m.sample.MultiInputTokenUpdate",
 			"sap.m.sample.MultiInputGrouping",
 			"sap.m.sample.MultiInputValueHelp",
-			"sap.m.sample.MultiInputValueStates"
+			"sap.m.sample.MultiInputValueStates",
+			"sap.m.sample.MultiInputModelUpdate"
 		  ]
 		},
 		{
@@ -2380,6 +2381,11 @@
 		  "id": "sap.m.sample.MultiInputValueStates",
 		  "name": "MultiInput - Value States",
 		  "description": "This sample illustrates the different value states of the sap.m.MultiInput control."
+		},
+		{
+			"id": "sap.m.sample.MultiInputModelUpdate",
+			"name": "MultiInput - Model update",
+			"description": "This sample illustrates how the model bound to the MultiInput can be updated upon token creation or deletion."
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifColors",

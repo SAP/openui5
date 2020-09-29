@@ -1,0 +1,39 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.MultiInputModelUpdate.controller.MultiInputModelUpdate"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<Label text="Adding and removeing tokens in the MultiInput below will update the model." labelFor="multiInput"/>
+		<MultiInput width="50%"
+			id="multiInput"
+			suggestionItems="{
+				path: '/items',
+				sorter: { path: 'Name' }
+			}"
+			showValueHelp="false">
+			<core:Item key="{key}" text="{text}" />
+		</MultiInput>
+		<Label text="Items in the model:" labelFor="multiInput1"/>
+		<List
+			width="50%"
+			items="{
+				path: '/items'
+			}" >
+			<StandardListItem
+				title="{
+					path: 'text',
+					formatter: '._textFormatter'
+				}"
+				info="{
+					path: 'key'	,
+					formatter: '._keyFormatter'
+				}"/>
+		</List>
+
+	</l:VerticalLayout>
+</mvc:View>
