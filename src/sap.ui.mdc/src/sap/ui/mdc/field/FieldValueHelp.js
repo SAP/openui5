@@ -2117,7 +2117,7 @@ sap.ui.define([
 			var oValueHelpPanel = oDialog.getContent()[0];
 			if (bActive) { // sow DefineConditions too if only EQ is allowes to suppoer free input. If not wanted, showConditionPanel should be set to false
 				if (!oValueHelpPanel._oDefineConditionPanel) { //TODO: use API?
-					var oDefineConditionPanel = new DefineConditionPanel(this.getId() + "-DCP");
+					var oDefineConditionPanel = new DefineConditionPanel(this.getId() + "-DCP", {label: "{$help>/title}"});
 					oValueHelpPanel.setDefineConditions(oDefineConditionPanel);
 				}
 			} else {

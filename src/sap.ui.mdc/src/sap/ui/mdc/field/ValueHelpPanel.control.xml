@@ -53,10 +53,8 @@
 				</IconTabFilter>
 
 				<IconTabFilter id="defineCondition" text="{parts: ['$i18n>valuehelp.DEFINECONDITIONS', '$this>/conditions'], formatter: '._formatDefineTabTitle'}" key="defineCondition" visible="false">
-				 	<ScrollContainer height="100%" horizontal="false" vertical="true">
-						<Panel id="defineConditionPanel" headerText="{parts: ['$i18n>valuehelp.DEFINECONDITIONS', '$this>/conditions'], formatter: '._formatDefineConditionTitle'}" class="sapMdcDefineconditionPanel" expanded="true" height="100%"  backgroundDesign="Transparent">
-							<!-- container for the DefineConditionPanel -->
-						</Panel>
+				 	<ScrollContainer id="defineConditionPanel" height="100%" horizontal="false" vertical="true">
+						<!-- container for the DefineConditionPanel -->
 					</ScrollContainer>
 				</IconTabFilter>
 			</items>

@@ -53,7 +53,19 @@ sap.ui.define([
 					type: "string",
 					group: "Appearance",
 					defaultValue: ""
+				},
+
+				/**
+				 * Label text that appears as label for the conditions.
+				 *
+				 * @since 1.84.0
+				 */
+				label: {
+					type: "string",
+					group: "Appearance",
+					defaultValue: ""
 				}
+
 
 			}
 		}
@@ -146,7 +158,8 @@ sap.ui.define([
 			this._oManagedObjectModel = new ManagedObjectModel(this);
 			this._oDefineConditionPanel = new DefineConditionPanel(this.getId() + "-DCP", {
 				conditions: {path: "$help>/conditions"},
-				formatOptions: _getFormatOptions.call(this)
+				formatOptions: _getFormatOptions.call(this),
+				label: "{$help>/label}"
 			}).setModel(this._oManagedObjectModel, "$help");
 			this._setContent(this._oDefineConditionPanel);
 
@@ -218,6 +231,7 @@ sap.ui.define([
 				oPopover.setTitle(this.getTitel());
 			}
 		}
+
 	}
 
 	ConditionFieldHelp.prototype.isValidationSupported = function() {

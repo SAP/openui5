@@ -25,7 +25,8 @@ sap.ui.define([
 	'sap/ui/layout/GridData',
 	'sap/m/library',
 	'sap/m/ScrollContainer',
-	'sap/m/Button'
+	'sap/m/Button',
+	'sap/m/Panel'
 ], function(
 		Control,
 		ManagedObjectObserver,
@@ -50,7 +51,8 @@ sap.ui.define([
 		GridData,
 		mLibrary,
 		ScrollContainer,
-		Button
+		Button,
+		Panel
 		) {
 	"use strict";
 
@@ -112,7 +114,18 @@ sap.ui.define([
 				formatOptions: {
 					type: "object",
 					defaultValue: {}
+				},
+
+				/**
+				 * The <code>label</code> for the <code>DefineConditionPanel</code> used as panel headerText.
+				 *
+				 * @since 1.84.0
+				 */
+				label: {
+					type: "string",
+					defaultValue: ""
 				}
+
 			},
 			aggregations: {
 				/**
@@ -727,16 +740,13 @@ sap.ui.define([
 	function _createInnerControls() {
 		var oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
 
-		// TODO This scrollcontainer is currently not used.
-		// A new is added intothe ValueHelpPanel.
-		// Other option is to move the Panel from the ValueHelPanel into the DefineConditionPAnel and use this local Scrollcontainer.
-		var oScrollContainer = new ScrollContainer({
+		var oPanel = new Panel({headerText: "{$this>/label}",
+			expanded: true,
 			height: "100%",
-			horizontal: false,
-			vertical: false
-		});
+			backgroundDesign: "Transparent"}
+		).addStyleClass("sapMdcDefineconditionPanel");
 
-		oScrollContainer.addDependent(
+		oPanel.addDependent(
 			new ListFieldHelp(this.getId() + "--rowSelect-help", {
 				items: { path:'om>/', templateShareable:false, template: new ListItem({key: "{om>key}", text: "{om>additionalText}", additionalText: "{om>info}"})},
 				filterList: false,
@@ -753,8 +763,8 @@ sap.ui.define([
 
 		_createRow.call(this, undefined, oGrid, 0, null, 0); // create dummy row
 
-		oScrollContainer.addContent(oInvisibleOperatorText);
-		oScrollContainer.addContent(oGrid);
+		oPanel.addContent(oInvisibleOperatorText);
+		oPanel.addContent(oGrid);
 
 		var oAddBtn = new Button(this.getId() + "--addBtn", {
 			press: this.addCondition.bind(this),
@@ -772,7 +782,7 @@ sap.ui.define([
 
 		oGrid.addContent(oAddBtn);
 
-		this.setAggregation("_content", oScrollContainer);
+		this.setAggregation("_content", oPanel);
 
 	}
 
