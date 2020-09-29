@@ -41,5 +41,21 @@
         ]
       }
     ]
+  },
+  "1.81.3": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "7ef4b0fefd744770865a12981454fa7de717d422",
+        "type": "FIX",
+        "text": " sap.m.Input: Show Popover on late binding for suggestions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070267825"
+          }
+        ]
+      }
+    ]
   }
 }

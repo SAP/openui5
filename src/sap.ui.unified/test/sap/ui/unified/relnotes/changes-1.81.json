@@ -71,5 +71,25 @@
         ]
       }
     ]
+  },
+  "1.81.3": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "43c456260bcd84cf888719c510e32c9b63e1bcdb",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: input field is now only one",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970467587"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005695462020"
+          }
+        ]
+      }
+    ]
   }
 }
