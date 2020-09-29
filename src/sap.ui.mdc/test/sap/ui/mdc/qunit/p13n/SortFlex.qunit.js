@@ -68,8 +68,13 @@ sap.ui.define([
 			this.oView = this.oUiComponent.getRootControl();
 			this.oTable = this.oView.byId('myTable');
 
+			//addSort
 			this.fAddSort = SortFlex.addSort.changeHandler.applyChange;
+			this.fRevertAddSort = SortFlex.addSort.changeHandler.revertChange;
+
+			//removeSort
 			this.fRemoveSort = SortFlex.removeSort.changeHandler.applyChange;
+			this.fRevertRemoveSort = SortFlex.removeSort.changeHandler.revertChange;
 		},
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();
@@ -146,6 +151,95 @@ sap.ui.define([
 						done();
 					}.bind(this));
 				}.bind(this));
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("apply and revert 'removeSort' with exisiting sortConditions", function(assert) {
+		var done = assert.async();
+
+		this.oTable.setSortConditions({
+			sorters: [
+				{
+					"name": "Category",
+					"descending": false
+				}
+			]
+		});
+
+		var oInitialSortConditions = this.oTable.getSortConditions();
+
+		//create removeSort
+		var oRemoveContent = fCreateRemoveSortDefintion();
+		return ChangesWriteAPI.create({
+			changeSpecificData: oRemoveContent,
+			selector: this.oTable
+		}).then(function(oChange) {
+
+			//apply 'removeSort'
+			this.fRemoveSort(oChange, this.oTable, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			}).then(function(){
+
+				//existing sort condition removed
+				var oSortConditions = this.oTable.getSortConditions();
+				assert.equal(oSortConditions.sorters.length, 0, "no sorters - sort has been removed");
+
+				//revert 'removeSort'
+				this.fRevertRemoveSort(oChange, this.oTable, {
+					modifier: JsControlTreeModifier,
+					appComponent: this.oUiComponent,
+					view: this.oView
+				}).then(function(){
+
+					//sortConditions should be similar to the initial state
+					var oCurrentSortConditions = this.oTable.getSortConditions();
+					assert.deepEqual(oCurrentSortConditions, oInitialSortConditions, "sorter has been reverted and is available again");
+
+				}.bind(this));
+
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("apply and revert 'addSort'", function(assert) {
+		var done = assert.async();
+
+		//create removeSort
+		var oRemoveContent = fCreateAddSortDefinition();
+		return ChangesWriteAPI.create({
+			changeSpecificData: oRemoveContent,
+			selector: this.oTable
+		}).then(function(oChange) {
+
+			//apply 'removeSort'
+			this.fAddSort(oChange, this.oTable, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			}).then(function(){
+
+				//existing sort condition removed
+				var oSortConditions = this.oTable.getSortConditions();
+				assert.equal(oSortConditions.sorters.length, 1, "sorter added");
+
+				//revert 'removeSort'
+				this.fRevertAddSort(oChange, this.oTable, {
+					modifier: JsControlTreeModifier,
+					appComponent: this.oUiComponent,
+					view: this.oView
+				}).then(function(){
+
+					//'addSort' reverted --> no sorters
+					var oSortConditions = this.oTable.getSortConditions();
+					assert.equal(oSortConditions.sorters.length, 0, "no sorter available - addSort successfully reverted");
+
+				}.bind(this));
+
+				done();
 			}.bind(this));
 		}.bind(this));
 	});
