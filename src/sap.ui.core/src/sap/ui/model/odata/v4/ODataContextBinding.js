@@ -367,6 +367,10 @@ sap.ui.define([
 					if (oMessage.target) {
 						aSegments = oMessage.target.split("/");
 						sParameterName = aSegments.shift();
+						if (sParameterName === "$Parameter") {
+							oMessage.target = aSegments.join("/");
+							sParameterName = aSegments.shift();
+						}
 
 						if (oOperationMetadata.$IsBound
 							&& sParameterName === oOperationMetadata.$Parameter[0].$Name) {
