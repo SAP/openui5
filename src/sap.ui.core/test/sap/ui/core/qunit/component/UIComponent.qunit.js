@@ -218,7 +218,9 @@ sap.ui.define([
 
 		// scenario 1 - "_routerHashChanger"-property is being defined - via component load
 		// the "_routerHashChanger"-property is being removed from the component settings
-		var oRouterHashChanger = {};
+		var oRouterHashChanger = {
+			destroy: jQuery.noop
+		};
 		var oComponent1 = sap.ui.component({
 			manifestUrl : "/anylocation/manifest.json",
 			settings: {

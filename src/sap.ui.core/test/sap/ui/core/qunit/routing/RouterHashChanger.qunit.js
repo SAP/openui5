@@ -301,6 +301,7 @@ sap.ui.define([
 
 	QUnit.module("RouterHashChanger SubHashChanger", {
 		beforeEach: function(assert) {
+			HashChanger.getInstance().setHash("");
 			// overwrite the returnObject function of the eventPool in EventProvider
 			// to make the trace of event parameter easier
 			this.oReturnObjectStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");

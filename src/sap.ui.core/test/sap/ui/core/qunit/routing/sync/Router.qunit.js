@@ -745,7 +745,8 @@ sap.ui.define([
 				}
 			});
 			this.oRouter.oHashChanger = {
-				setHash: jQuery.noop
+				setHash: jQuery.noop,
+				destroy: jQuery.noop
 			};
 		},
 		afterEach: function () {

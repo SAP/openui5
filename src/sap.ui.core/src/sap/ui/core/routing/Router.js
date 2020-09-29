@@ -563,14 +563,6 @@ sap.ui.define([
 					Log.info("Router is not initialized, but got destroyed.", this);
 				}
 
-				if (this.fnHashChanged) {
-					this.oHashChanger.detachEvent("hashChanged", this.fnHashChanged);
-				}
-
-				if (this.fnHashReplaced) {
-					this.oHashChanger.detachEvent("hashReplaced", this.fnHashReplaced);
-				}
-
 				//will remove all the signals attached to the routes - all the routes will not be useable anymore
 				this._oRouter.removeAllRoutes();
 				this._oRouter = null;
@@ -584,6 +576,11 @@ sap.ui.define([
 				if (this._oTargets) {
 					this._oTargets.destroy();
 					this._oTargets = null;
+				}
+
+				if (this.oHashChanger) {
+					this.oHashChanger.destroy();
+					this.oHashChanger = null;
 				}
 
 				delete this._bIsInitialized;
