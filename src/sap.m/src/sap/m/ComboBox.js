@@ -447,6 +447,8 @@ sap.ui.define([
 			}.bind(this));
 
 			aItems.forEach(function (oItem) {
+				var oListItem;
+
 				if (oItem.isA("sap.ui.core.SeparatorItem")) {
 					return;
 				}
@@ -458,7 +460,8 @@ sap.ui.define([
 					this._oFirstItemTextMatched = oItem;
 				}
 
-				this.getListItem(oItem).setVisible(bItemMached);
+				oListItem = this.getListItem(oItem);
+				oListItem && oListItem.setVisible(bItemMached);
 			}, this);
 
 			aGroups.forEach(function (oGroupItem) {
@@ -2339,6 +2342,28 @@ sap.ui.define([
 			// Attaching to that event here, ensures that showItems filtering would happen
 			// after SuggestionsPopover's reset, but before the picker is opened.
 			oPicker.attachBeforeOpen(fnPickerOpenListener, this);
+		};
+
+		/**
+		 * Opens the <code>SuggestionsPopover</code> with the available items.
+		 *
+		 * @param {function} fnFilter Function to filter the items shown in the SuggestionsPopover
+		 * @returns {void}
+		 *
+		 * @override
+		 */
+		ComboBox.prototype.showItems = function (fnFilter) {
+			var aFilteredItems,
+				fnFilterRestore = this.fnFilter;
+
+			// Get filtered items and open the popover only when the items array is not empty.
+			this.setFilterFunction(fnFilter || function () { return true; });
+			aFilteredItems = this.filterItems({value: this.getValue() || "_", properties: this._getFilters()});
+			this.setFilterFunction(fnFilterRestore);
+
+			if (aFilteredItems && aFilteredItems.length) {
+				ComboBoxBase.prototype.showItems.apply(this, arguments);
+			}
 		};
 
 		/**

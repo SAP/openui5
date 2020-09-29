@@ -3603,6 +3603,31 @@ function(
 		this.filterItems({value: this.getValue() || "_", items: this.getItems()});
 	};
 
+	/**
+	 * Opens the <code>SuggestionsPopover</code> with the available items.
+	 *
+	 * @param {function} fnFilter Function to filter the items shown in the SuggestionsPopover
+	 * @returns {void}
+	 *
+	 * @override
+	 */
+	MultiComboBox.prototype.showItems = function (fnFilter) {
+		var bHasItemsAfterFiltering = true,
+			fnFilterRestore = this.fnFilter;
+
+		if (typeof fnFilter === "function") {
+			this.syncPickerContent();
+			// Get filtered items and open the popover only when the items array is not empty.
+			this.setFilterFunction(fnFilter || function () { return true; });
+			bHasItemsAfterFiltering = this.filterItems({value: this.getValue() || "_", items: this.getItems()}).length > 0;
+			this.setFilterFunction(fnFilterRestore);
+		}
+
+		if (bHasItemsAfterFiltering) {
+			ComboBoxBase.prototype.showItems.apply(this, arguments);
+		}
+	};
+
 	return MultiComboBox;
 
 	});

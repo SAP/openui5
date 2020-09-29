@@ -13022,6 +13022,17 @@ sap.ui.define([
 		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 5, "All items are visible");
 	});
 
+	QUnit.test("Should not open the Popover in case of 0 items.", function (assert) {
+		// Act
+		this.oCombobox.showItems(function () {
+			return false;
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCombobox.isOpen(), false, "The Popover should not be displayed.");
+	});
+
 	QUnit.module("List configuration");
 
 	QUnit.test("List css classes", function (assert) {
