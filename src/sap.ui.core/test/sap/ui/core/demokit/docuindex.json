@@ -315,24 +315,6 @@
 				]
 			},
 			{
-				"id" : "sap.ui.model.DataState",
-				"name" : "Data State",
-				"category" : "Data Binding",
-				"since" : "1.32",
-				"samples" : [
-					"sap.ui.core.sample.DataState"
-				]
-			},
-			{
-				"id" : "sap.ui.model.DataStateOData",
-				"name" : "OData Data State",
-				"category" : "Data Binding",
-				"since" : "1.32",
-				"samples" : [
-					"sap.ui.core.sample.DataStateOData"
-				]
-			},
-			{
 				"id": "sap.ui.core.tutorial.navigation",
 				"name": "Navigation and Routing",
 				"category": "Tutorial",
@@ -463,16 +445,6 @@
 				"id": "sap.ui.core.sample.TypeFileSize",
 				"name": "FileSize Type",
 				"description": "This sample explains the formatting options of the filesize type."
-			},
-			{
-				"id": "sap.ui.core.sample.DataState",
-				"name": "Data State",
-				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
-			},
-			{
-				"id": "sap.ui.core.sample.DataStateOData",
-				"name": "OData Data State",
-				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
 			},
 			{
 				"id": "sap.ui.core.sample.BusyIndicator",
