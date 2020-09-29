@@ -468,6 +468,11 @@ function(
 			oSelect.on("focusout", this._removeFocusClass.bind(this));
 		};
 
+		Select.prototype.focus = function() {
+			this._getHiddenSelect().focusin();
+			Control.prototype.focus.call(this, arguments);
+		};
+
 		Select.prototype._addFocusClass = function () {
 			this.$().addClass("sapMSltFocused");
 		};
