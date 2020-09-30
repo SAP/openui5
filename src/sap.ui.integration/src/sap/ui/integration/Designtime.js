@@ -31,7 +31,7 @@ sap.ui.define([
 			library: "sap.ui.integration"
 		},
 		constructor: function (mSettings) {
-			ManagedObject.apply(this, arguments);
+			ManagedObject.apply(this);
 			this.settings = mSettings || (this.create && this.create()) || {};
 		}
 	});
