@@ -595,10 +595,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["requestKey", undefined].forEach(function (sRequestKey, i) {
-	[{isFunction : "isFunction" }, undefined].forEach(function (oEntityType, j) {
-	QUnit.test("_processSuccess for function import:" + i + ", " + j, function (assert) {
-		var aRequests = [],
+["requestKey", undefined].forEach(function (sRequestKey) {
+	[
+		{entityType : "entityType", isFunction : "isFunction"},
+		undefined
+	].forEach(function (oEntityType) {
+		["POST", "GET"].forEach(function (sMethod) {
+	var sTitle = "_processSuccess for function import: method=" + sMethod + ", key=" + sRequestKey
+			+ ", " + (oEntityType ? "with" : "without") + " entity type";
+
+	QUnit.test(sTitle, function (assert) {
+		var mEntityTypes = {},
+			aRequests = [],
 			oModel = {
 				_createEventInfo : function () {},
 				_decreaseDeferredRequestCount : function () {},
@@ -611,6 +619,7 @@ sap.ui.define([
 				},
 				_normalizePath : function () {},
 				_parseResponse : function () {},
+				_removeEntity : function () {},
 				sServiceUrl : "/service/",
 				_updateETag : function () {}
 			},
@@ -618,7 +627,10 @@ sap.ui.define([
 			oRequest = {
 				data : "requestData",
 				deepPath : "deepPath",
+				functionTarget : "functionTarget",
+				functionMetadata : "functionMetadata",
 				key : sRequestKey,
+				method : sMethod,
 				requestUri : "/service/path"
 			},
 			oResponse = {
@@ -635,8 +647,9 @@ sap.ui.define([
 			.returns(oEntityType);
 		oModelMock.expects("_normalizePath")
 			.withExactArgs("/path", undefined, /*bCanonical*/ !oEntityType)
-			.returns("normalizedPath");
-		oModelMock.expects("decreaseLaundering").withExactArgs("normalizedPath","requestData");
+			.returns("normalizedCannonicalPath");
+		oModelMock.expects("decreaseLaundering")
+			.withExactArgs("normalizedCannonicalPath","requestData");
 		oModelMock.expects("_decreaseDeferredRequestCount")
 			.withExactArgs(sinon.match.same(oRequest));
 		// test that bFunctionImport is propagated to _importData
@@ -646,10 +659,11 @@ sap.ui.define([
 			/*sKey*/ undefined, oEntityType && "isFunction");
 		} else {
 			oModelMock.expects("_importData").withExactArgs(oResponse.data,
-			/*mLocalGetEntities*/ {}, oResponse, "normalizedPath", "deepPath",
-			/*sKey*/ undefined, oEntityType && "isFunction");
+			/*mLocalGetEntities*/ {}, oResponse, "normalizedCannonicalPath",
+			/*sDeepPath*/"functionTarget", /*sKey*/ undefined, oEntityType && "isFunction");
 		}
 		oModelMock.expects("_getEntity").withExactArgs(sRequestKey). returns({__metadata : {}});
+		oModelMock.expects("_removeEntity").withExactArgs(sRequestKey).exactly(sRequestKey ? 1 : 0);
 		oModelMock.expects("_parseResponse").withExactArgs(oResponse, oRequest,
 			/*mLocalGetEntities*/ {}, /*mLocalChangeEntities*/ {});
 		oModelMock.expects("_updateETag").withExactArgs(oRequest, oResponse);
@@ -659,11 +673,13 @@ sap.ui.define([
 
 		// code under test
 		bSuccess = ODataModel.prototype._processSuccess.call(oModel, oRequest, oResponse,
-			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {},
-			/*mEntityTypes*/ {}, /*bBatch*/ false, aRequests);
+			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {}, mEntityTypes,
+			/*bBatch*/ false, aRequests);
 
 		assert.strictEqual(bSuccess, true);
+		assert.deepEqual(mEntityTypes, oEntityType ? {entityType : true} : {});
 	});
+		});
 	});
 });
 	//TODO refactor ODataModel#mPathCache to a simple map path -> canonical path instead of map
@@ -971,8 +987,6 @@ sap.ui.define([
 		oModelMock.expects("_decreaseDeferredRequestCount")
 			.withExactArgs(sinon.match.same(oRequest));
 		oModelMock.expects("_getEntity").withExactArgs("key('id-0-0')").returns({__metadata : {}});
-		oMetadataMock.expects("_getEntityTypeByPath").withExactArgs("~sPath")
-			.returns("~oEntityMetadata");
 		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oResponse.data))
 			.returns(oFixture.responseEntityKey);
 		oModelMock.expects("getContext").withExactArgs("/key('id-0-0')").returns(oContext);
