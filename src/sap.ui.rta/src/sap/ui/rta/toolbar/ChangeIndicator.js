@@ -105,7 +105,9 @@ function(
 			if (!document.getElementById(this.sId)) {
 				sPrefix = "sap-ui-invisible-";
 			}
-			document.getElementById(sPrefix + this.sId).remove();
+			var oNode = document.getElementById(sPrefix + this.sId);
+			// IE11 does not support the remove function for nodes
+			oNode.parentNode.removeChild(oNode);
 		},
 
 		hide: function() {
