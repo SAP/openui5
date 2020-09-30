@@ -1,7 +1,7 @@
 sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.uxap.sample.HeaderFacetSample2.Component", {
+	var Component = UIComponent.extend("sap.uxap.sample.Sample1.Component", {
 		metadata: {
 			manifest: "json"
 		}

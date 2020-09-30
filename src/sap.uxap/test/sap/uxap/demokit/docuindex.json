@@ -56,19 +56,19 @@
 		  "sap.uxap.sample.ObjectPageHeaderContentPriorities",
 		  "sap.uxap.sample.ObjectPageFormLayout",
 		  "sap.uxap.sample.ObjectPageFormFocusableInput",
-		  "sap.uxap.sample.HeaderFacetSample1",
-		  "sap.uxap.sample.HeaderFacetSample2"
+		  "sap.uxap.sample.Sample1",
+		  "sap.uxap.sample.Sample2"
 		]
 	  },
 	  {
 		"id": "sap.uxap.HeaderFacetPattern",
-		"name": "Header Facet Pattern",
+		"name": "Object Page Floorplan",
 		"category": "Pattern",
 		"formFactors": "-",
 		"since": "1.77",
 		"samples": [
-		  "sap.uxap.sample.HeaderFacetSample1",
-		  "sap.uxap.sample.HeaderFacetSample2"
+		  "sap.uxap.sample.Sample1",
+		  "sap.uxap.sample.Sample2"
 		]
 	  },
 	  {
@@ -308,13 +308,13 @@
 		"description": "ObjectPage sample with blocks that use different view types"
 	  },
 	  {
-		"id": "sap.uxap.sample.HeaderFacetSample1",
-		"name": "Header Facet Sample 1",
+		"id": "sap.uxap.sample.Sample1",
+		"name": "Sample 1",
 		"description": "ObjectPage sample with header content arranged using containers, called facets, ProgressIndicator and RatingIndicator."
 	  },
 	  {
-		"id": "sap.uxap.sample.HeaderFacetSample2",
-		"name": "Header Facet Sample 2",
+		"id": "sap.uxap.sample.Sample2",
+		"name": "Sample 2",
 		"description": "ObjectPage sample with header content arranged using containers, called facets, Links, RatingIndicator and ObjectStatus."
 	  }
 	]

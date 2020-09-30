@@ -11,7 +11,7 @@
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>
-					<m:Title text="Header Facet Sample 1" wrapping="true" />
+					<m:Title text="Sample 1" wrapping="true" />
 				</expandedHeading>
 
 				<snappedHeading>
@@ -21,7 +21,7 @@
 						</m:VBox>
 
 						<m:VBox>
-							<m:Title text="Header Facet Sample 1" wrapping="true"/>
+							<m:Title text="Sample 1" wrapping="true"/>
 							<m:Text text="Example of an ObjectPage with header facet."/>
 						</m:VBox>
 					</m:HBox>
