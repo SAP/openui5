@@ -482,7 +482,7 @@ function (
 					return {
 						movedElements : [{
 							element : oView.byId("action1"),
-							sourceIndex : 0,
+							sourceIndex : 1,
 							targetIndex : 2
 						}],
 						source : {
@@ -496,6 +496,30 @@ function (
 					};
 				}
 			},
+			previousActions: [ // OPTIONAL
+				{
+					name : "move",
+					controlId : "title",
+					parameter : function(oView) {
+						return {
+							movedElements : [{
+								element : oView.byId("action1"),
+								sourceIndex : 0,
+								targetIndex : 1
+							}],
+							source : {
+								aggregation: "actions",
+								parent: oView.byId("title")
+							},
+							target : {
+								aggregation: "actions",
+								parent: oView.byId("title")
+							}
+						};
+					}
+				}
+			],
+			changesAfterCondensing: 1, // OPTIONAL
 			afterAction : fnConfirmActionsElement1IsOn3rdPosition,
 			afterUndo : fnConfirmActionsElement1IsOn1stPosition,
 			afterRedo : fnConfirmActionsElement1IsOn3rdPosition
