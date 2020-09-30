@@ -1540,40 +1540,31 @@ sap.ui.define([
 		}
 
 		// TODO: Add utils in mdc.table.PropertyHelper to get sortable, filterable(, and visible) properties that are associated with a column.
+		var iIndex,
+			oParent = oColumn.getParent(),
+			oMDCColumn;
 
-		var iIndex;
-		if (oColumn.getParent()) {
-			iIndex = oColumn.getParent().indexOfColumn(oColumn);
-		}
+		iIndex = oParent.indexOfColumn(oColumn);
 
-		var aDataProperties = this.getColumns()[iIndex].getDataProperties(),
-			aSortProperties;
+		oMDCColumn = this.getColumns()[iIndex];
 
-		if (!aDataProperties.length) {
-			return;
-		}
+		this.awaitPropertyHelper().then(function(oPropertyHelper) {
+			var aSortProperties = oPropertyHelper.getColumnSortProperties(oMDCColumn);
 
-		// provide sort action on columnHeadePopover if the property is sortable
-		this.getControlDelegate().fetchProperties(this).then(function(aProperties) {
-			aSortProperties = aProperties.filter(function(oPropertyInfo) {
-				return aDataProperties.indexOf(oPropertyInfo.name) >= 0 && oPropertyInfo.sortable;
-			});
-
-			if (aSortProperties.length === 0) {
+			if (!aSortProperties.length) {
 				return;
 			}
 
 			var oSortChild, aSortChildren = [];
 
-			// create sort items
-			for (var i = 0; i < aSortProperties.length; i++) {
+			aSortProperties.forEach(function(oSortProperty) {
 				oSortChild = new Item({
-					text: aSortProperties[i].name,
-					key: aSortProperties[i].name
+					text: oPropertyHelper.getName(oSortProperty),
+					key: oPropertyHelper.getName(oSortProperty)
 				});
 
 				aSortChildren.push(oSortChild);
-			}
+			});
 
 			// create ColumnHeaderPopover
 			if (aSortChildren.length > 0) {

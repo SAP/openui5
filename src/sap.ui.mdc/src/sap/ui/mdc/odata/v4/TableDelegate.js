@@ -30,10 +30,34 @@ sap.ui.define([
 	 * @returns {Array} array of property info
 	 */
 	ODataTableDelegate.fetchProperties = function(oTable) {
-		var oMetadataInfo = oTable.getDelegate().payload, aProperties = [], oPropertyInfo, oObj, sEntitySetPath, oModel, oMetaModel, oPropertyAnnotations;
-		sEntitySetPath = "/" + oMetadataInfo.collectionName;
+		var oMetadataInfo = oTable.getDelegate().payload, oModel;
 		oModel = oTable.getModel(oMetadataInfo.model);
-		oMetaModel = oModel.getMetaModel();
+
+		return new Promise(function(resolve) {
+			if (!oModel) {
+				oTable.attachModelContextChange({
+					resolver: resolve
+				}, onModelContextChange);
+			} else {
+				createPropertyInfos(oTable, oModel).then(resolve);
+			}
+		});
+	};
+
+	function onModelContextChange(oEvent, oData) {
+		var oTable = oEvent.getSource();
+		var oMetadataInfo = oTable.getDelegate().payload;
+		var oModel = oTable.getModel(oMetadataInfo.model);
+		if (oModel) {
+			createPropertyInfos(oTable, oModel).then(oData.resolver);
+			oTable.detachModelContextChange(onModelContextChange);
+		}
+	}
+
+	function createPropertyInfos(oTable, oModel) {
+		var oMetadataInfo = oTable.getDelegate().payload, aProperties = [], oPropertyInfo, oObj, oPropertyAnnotations;
+		var sEntitySetPath = "/" + oMetadataInfo.collectionName;
+		var oMetaModel = oModel.getMetaModel();
 		return Promise.all([
 			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
 		]).then(function(aResults) {
@@ -74,7 +98,7 @@ sap.ui.define([
 			oTable.data("$tablePropertyInfo",aProperties);
 			return aProperties;
 		});
-	};
+	}
 
 	/**
 	 * Updates the binding info with the relevant path and model from the metadata.
