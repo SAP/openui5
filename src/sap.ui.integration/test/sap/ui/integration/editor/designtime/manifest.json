@@ -105,6 +105,9 @@
 				}
 			},
 			"destinations": {
+				"string": {
+					"name": "JAM"
+				},
 				"dest": {
 					"name": "JAM"
 				},

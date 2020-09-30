@@ -91,6 +91,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * destroy the preview
+	 */
+	CardPreview.prototype.destroy = function () {
+		if (this._oModeToggleButton) {
+			this._oModeToggleButton.destroy();
+		}
+		if (this._oCardPreview) {
+			this._oCardPreview.destroy();
+		}
+		if (this._oImagePlaceholder) {
+			this._oImagePlaceholder.destroy();
+		}
+		if (this._oCardPlaceholder) {
+			this._oCardPlaceholder.destroy();
+		}
+		Control.prototype.destroy.apply(this, arguments);
+	};
+
+	/**
 	 * returns the a preview based on the current settings
 	 */
 	CardPreview.prototype._getCardPreview = function () {
@@ -106,11 +125,11 @@ sap.ui.define([
 		}
 		if (oPreview) {
 			this.setAggregation("cardPreview", oPreview);
-		}
-		if (!this.getSettings().preview || this.getSettings().preview.scaled !== false) {
-			oPreview.addStyleClass("sapUiIntegrationDTPreviewScale");
-		} else {
-			oPreview.addStyleClass("sapUiIntegrationDTPreviewNoScale");
+			if (!this.getSettings().preview || this.getSettings().preview.scaled !== false) {
+				oPreview.addStyleClass("sapUiIntegrationDTPreviewScale");
+			} else {
+				oPreview.addStyleClass("sapUiIntegrationDTPreviewNoScale");
+			}
 		}
 		return oPreview;
 	};

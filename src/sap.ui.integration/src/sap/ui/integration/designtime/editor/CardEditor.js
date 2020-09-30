@@ -856,11 +856,14 @@ sap.ui.define([
 		}
 		//add preview
 		if (this.getMode() !== "translation") {
-			this._initPreview();
+			this._initPreview().then(function () {
+				this._ready = true;
+				this.fireReady();
+			}.bind(this));
+		} else {
+			this._ready = true;
+			this.fireReady();
 		}
-
-		this._ready = true;
-		this.fireReady();
 	};
 
 	/**
@@ -887,12 +890,15 @@ sap.ui.define([
 	 * Initializes the preview
 	 */
 	CardEditor.prototype._initPreview = function () {
-		sap.ui.require(["sap/ui/integration/designtime/editor/CardPreview"], function (Preview) {
-			var oPreview = new Preview({
-				settings: this._oDesigntimeInstance.getSettings(),
-				card: this._oEditorCard
-			});
-			this.setAggregation("_preview", oPreview);
+		return new Promise(function (resolve, reject) {
+			sap.ui.require(["sap/ui/integration/designtime/editor/CardPreview"], function (Preview) {
+				var oPreview = new Preview({
+					settings: this._oDesigntimeInstance.getSettings(),
+					card: this._oEditorCard
+				});
+				this.setAggregation("_preview", oPreview);
+				resolve();
+			}.bind(this));
 		}.bind(this));
 	};
 
@@ -1026,19 +1032,22 @@ sap.ui.define([
 			Object.keys(oConfiguration.destinations).forEach(function (n) {
 				var _values = [{}], //empty entry
 					oHost = this._oEditorCard.getHostInstance();
-				oItems[n] = merge({
+				oItems[n + ".destinaton"] = merge({
 					manifestpath: sBasePath + n + "/name", //destination points to name not value
 					visible: true,
 					type: "destination",
 					editable: true,
 					value: oConfiguration.destinations[n].name,
 					defaultValue: oConfiguration.destinations[n].defaultUrl,
-					_settingspath: "/form/items/" + n,
+					_settingspath: "/form/items/" + [n + ".destinaton"],
 					_values: _values
 				}, oConfiguration.destinations[n]);
+				if (typeof oItems[n + ".destinaton"].label === "undefined") {
+					oItems[n + ".destinaton"].label = n;
+				}
 				if (oHost) {
 					this._oEditorCard.getHostInstance().getDestinations().then(function (n, a) {
-						oItems[n]._values = _values.concat(a);
+						oItems[n + ".destinaton"]._values = _values.concat(a);
 					}.bind(this, n)); //pass in n as first parameter
 				}
 			}.bind(this));
