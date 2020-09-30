@@ -14026,7 +14026,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("EMPLOYEES('2')", {
-				SALARY : {YEARLY_BONUS_AMOUNT : 100}
+				SALARY : {YEARLY_BONUS_AMOUNT : "100"}
 			})
 			.expectChange("salary", "100")
 			.expectChange("forecastSalary", null);
@@ -14041,7 +14041,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
-					SALARY : {YEARLY_BONUS_AMOUNT : 142}
+					SALARY : {YEARLY_BONUS_AMOUNT : "142"}
 				})
 				.expectChange("forecastSalary", "142");
 
@@ -14973,15 +14973,15 @@ sap.ui.define([
 				+ "/orderby(LifecycleStatus desc)&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
 				value : [
-					{GrossAmount : 1, LifecycleStatus : "Z"},
-					{GrossAmount : 2, LifecycleStatus : "Y"},
-					{GrossAmount : 3, LifecycleStatus : "X"}
+					{GrossAmount : "1", LifecycleStatus : "Z"},
+					{GrossAmount : "2", LifecycleStatus : "Y"},
+					{GrossAmount : "3", LifecycleStatus : "X"}
 				]
 			})
 			.expectChange("isExpanded", [false, false, false])
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [1, 1, 1])
-			.expectChange("grossAmount", [1, 2, 3])
+			.expectChange("grossAmount", ["1", "2", "3"])
 			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -15000,9 +15000,9 @@ sap.ui.define([
 					+ "/orderby(LifecycleStatus desc)&$count=true&$skip=7&$top=3", {
 					"@odata.count" : "26",
 					value : [
-						{GrossAmount : 7, LifecycleStatus : "T"},
-						{GrossAmount : 8, LifecycleStatus : "S"},
-						{GrossAmount : 9, LifecycleStatus : "R"}
+						{GrossAmount : "7", LifecycleStatus : "T"},
+						{GrossAmount : "8", LifecycleStatus : "S"},
+						{GrossAmount : "9", LifecycleStatus : "R"}
 					]
 				});
 			for (i = 0; i < 3; i += 1) {
@@ -15015,7 +15015,7 @@ sap.ui.define([
 			that.expectChange("isExpanded", [,,,,,,, false, false, false])
 				.expectChange("isTotal", [,,,,,,, true, true, true])
 				.expectChange("level", [,,,,,,, 1, 1, 1])
-				.expectChange("grossAmount", [,,,,,,, 7, 8, 9])
+				.expectChange("grossAmount", [,,,,,,, "7", "8", "9"])
 				.expectChange("lifecycleStatus", [,,,,,,, "T", "S", "R"]);
 
 			oTable.setFirstVisibleRow(7);
@@ -15084,15 +15084,15 @@ sap.ui.define([
 				+ "/concat(aggregate(GrossAmount),top(99))", {
 				"@odata.count" : "26",
 				value : [
-					{GrossAmount : 12345},
-					{GrossAmount : 1, LifecycleStatus : "Z"},
-					{GrossAmount : 2, LifecycleStatus : "Y"}
+					{GrossAmount : "12345"},
+					{GrossAmount : "1", LifecycleStatus : "Z"},
+					{GrossAmount : "2", LifecycleStatus : "Y"}
 				]
 			})
 			.expectChange("isExpanded", [true, undefined, undefined])
 			.expectChange("isTotal", [true, false, false])
 			.expectChange("level", [0 /* root node */, 1, 1])
-			.expectChange("grossAmount", [12345, 1, 2])
+			.expectChange("grossAmount", ["12345", "1", "2"])
 			.expectChange("lifecycleStatus", ["", "Z", "Y"]);
 
 		return this.createView(assert, sView, oModel);
@@ -16703,18 +16703,18 @@ sap.ui.define([
 					+ "/concat(aggregate(GrossAmount with min as UI5min__GrossAmount,"
 					+ "GrossAmount with max as UI5max__GrossAmount"
 					+ (bCount ? ",$count as UI5__count" : "") + "),top(1))", {
-					value : [oMinMaxElement, {GrossAmount : 1}]
+					value : [oMinMaxElement, {GrossAmount : "1"}]
 				})
-				.expectChange("grossAmount", [1]);
+				.expectChange("grossAmount", ["1"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				// w/o min/max: no _AggregationCache, system query options are used
 				that.expectRequest("SalesOrderList?" + (bCount ? "$count=true&" : "")
 					+ "$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
 						"@odata.count" : "1",
-						value : [{GrossAmount : 2}]
+						value : [{GrossAmount : "2"}]
 					})
-					.expectChange("grossAmount", [2]);
+					.expectChange("grossAmount", ["2"]);
 
 				that.oView.byId("table").getBinding("rows").setAggregation({
 					aggregate : {GrossAmount : {}}
@@ -16737,17 +16737,17 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
-				value : [{GrossAmount : 1}]
+				value : [{GrossAmount : "1"}]
 			})
-			.expectChange("grossAmount", [1]);
+			.expectChange("grossAmount", ["1"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oListBinding = that.oView.byId("table").getBinding("items");
 
 			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=100", {
-					value : [{GrossAmount : 2}]
+					value : [{GrossAmount : "2"}]
 				})
-				.expectChange("grossAmount", [2]);
+				.expectChange("grossAmount", ["2"]);
 
 			// code under test
 			oListBinding.setAggregation({
@@ -16764,9 +16764,9 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$skip=0&$top=100", {
-					value : [{GrossAmount : 3}]
+					value : [{GrossAmount : "3"}]
 				})
-				.expectChange("grossAmount", [3]);
+				.expectChange("grossAmount", ["3"]);
 
 			assert.throws(function () {
 				// code under test
@@ -16790,9 +16790,9 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList"
 				+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))&$skip=0&$top=100", {
-					value : [{GrossAmount : 4}]
+					value : [{GrossAmount : "4"}]
 				})
-				.expectChange("grossAmount", [4]);
+				.expectChange("grossAmount", ["4"]);
 
 			// code under test
 			oListBinding.changeParameters({
@@ -16807,9 +16807,9 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$skip=0&$top=100", {
-					value : [{GrossAmount : 5}]
+					value : [{GrossAmount : "5"}]
 				})
-				.expectChange("grossAmount", [5]);
+				.expectChange("grossAmount", ["5"]);
 
 			// code under test
 			oListBinding.changeParameters({$apply : undefined});
@@ -16836,9 +16836,9 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
-				value : [{GrossAmount : 1, LifecycleStatus : "Z"}]
+				value : [{GrossAmount : "1", LifecycleStatus : "Z"}]
 			})
-			.expectChange("grossAmount", [1])
+			.expectChange("grossAmount", ["1"])
 			.expectChange("lifecycleStatus", ["Z"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -16862,9 +16862,9 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList"
 					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
 					+ "&$count=true&$skip=0&$top=100", {
-					value : [{GrossAmount : 3, LifecycleStatus : "X"}]
+					value : [{GrossAmount : "3", LifecycleStatus : "X"}]
 				})
-				.expectChange("grossAmount", [3])
+				.expectChange("grossAmount", ["3"])
 				.expectChange("lifecycleStatus", ["X"]);
 
 			// code under test
@@ -16876,9 +16876,9 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$skip=0&$top=100", {
-					value : [{GrossAmount : 4, LifecycleStatus : "W"}]
+					value : [{GrossAmount : "4", LifecycleStatus : "W"}]
 				})
-				.expectChange("grossAmount", [4])
+				.expectChange("grossAmount", ["4"])
 				.expectChange("lifecycleStatus", ["W"]);
 
 			// code under test
@@ -17209,10 +17209,10 @@ sap.ui.define([
 			this.expectRequest(sBasicPath + "&$skip=1&$top=4", {
 					"@odata.count" : "26",
 					value : [
-						{GrossAmount : 2, LifecycleStatus : "Y"},
-						{GrossAmount : 3, LifecycleStatus : "X"},
-						{GrossAmount : 4, LifecycleStatus : "W"},
-						{GrossAmount : 5, LifecycleStatus : "V"}
+						{GrossAmount : "2", LifecycleStatus : "Y"},
+						{GrossAmount : "3", LifecycleStatus : "X"},
+						{GrossAmount : "4", LifecycleStatus : "W"},
+						{GrossAmount : "5", LifecycleStatus : "V"}
 					]
 				})
 				.expectChange("count")
@@ -17239,7 +17239,7 @@ sap.ui.define([
 				that.expectRequest(sBasicPath + "&$skip=0&$top=1", {
 						"@odata.count" : "26",
 						value : [{
-							GrossAmount : 1,
+							GrossAmount : "1",
 							LifecycleStatus : "Z"
 						}]
 					});
@@ -25115,9 +25115,9 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel(),
 			oContextBinding = oModel.bindContext("/SalesOrderList('1')"),
 			oSalesOrder = {
-				NetAmount : 42,
+				NetAmount : "42",
 				SalesOrderID : "1",
-				TaxAmount : 117
+				TaxAmount : "117"
 			},
 			oSalesOrderResponse = Object.assign({}, oSalesOrder),
 			that = this;
@@ -25131,7 +25131,7 @@ sap.ui.define([
 				assert.notStrictEqual(oResponse, oSalesOrderResponse);
 
 				return oContextBinding.requestObject("TaxAmount").then(function (vValue) {
-					assert.strictEqual(vValue, 117);
+					assert.strictEqual(vValue, "117");
 				});
 
 			});
