@@ -135,7 +135,7 @@ sap.ui.define([
 				return false;
 			}
 			var oPayload = Object.assign({}, this.getPayload());
-			return this.getControlDelegate().fetchLinkType(oPayload).then(function(oLinkTypeObject) {
+			return this.getControlDelegate().fetchLinkType(oPayload, this).then(function(oLinkTypeObject) {
 				var oRuntimeLinkTypePromise = oLinkTypeObject.runtimeType;
 				var oInitialLinkType = oLinkTypeObject.initialType ? oLinkTypeObject.initialType : oLinkTypeObject;
 
@@ -350,7 +350,7 @@ sap.ui.define([
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
 				var oPayload = Object.assign({}, this.getPayload());
-				return this.getControlDelegate().fetchLinkType(oPayload).then(function(oLinkTypeObject) {
+				return this.getControlDelegate().fetchLinkType(oPayload, this).then(function(oLinkTypeObject) {
 					if (this._linkTypeHasDirectLink(this._oLinkType)) {
 						return this._oLinkType.directLink;
 					}
