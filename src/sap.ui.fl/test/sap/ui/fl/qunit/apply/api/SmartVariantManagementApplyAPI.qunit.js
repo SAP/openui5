@@ -187,8 +187,11 @@ sap.ui.define([
 				]
 			});
 
+			var oInitializeSpy = sandbox.spy(FlexState, "initialize");
+
 			return SmartVariantManagementApplyAPI.getCompEntities({control: this.oControl})
 				.then(function (oCompEntities) {
+					assert.equal(oInitializeSpy.getCall(0).args[0].componentId, "AppComponent21", "the component ID was passed correct to the FlexState");
 					assert.equal(oCompEntities.variants.length, 2, "then two variants are in the variants array");
 					assert.deepEqual(oCompEntities.variants[0].getDefinition(), oVariant1, "");
 					assert.deepEqual(oCompEntities.variants[1].getDefinition(), oVariant2, "");
