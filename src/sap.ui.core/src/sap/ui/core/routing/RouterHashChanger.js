@@ -316,9 +316,7 @@ sap.ui.define([
 	};
 
 	RouterHashChanger.prototype.destroy = function() {
-		if (this.parent) {
-			this.parent.deregisterRouterHashChanger(this);
-		}
+		this.parent.deregisterRouterHashChanger(this);
 
 		if (this.children) {
 			Object.keys(this.children).forEach(function(sKey) {
