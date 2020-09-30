@@ -823,6 +823,38 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when _handleReloadOnExit() is called and personalized changes and user exits reloading the personalization with draft", function(assert) {
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
+
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
+					"then the page is reloaded");
+			}.bind(this));
+		});
+
+		QUnit.test("when _handleReloadOnExit() is called and personalized changes and user exits reloading the personalization with avtivated version", function(assert) {
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
+
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
+					"then the page is reloaded");
+			}.bind(this));
+		});
+
 		QUnit.test("when _handleReloadOnExit() is called, draft url parameter is set and draft changes are available", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);

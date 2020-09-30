@@ -215,6 +215,9 @@ sap.ui.define([
 			}
 			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
 			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
+			if (oReloadInfo.initialDraftGotActivated) {
+				oReloadInfo.hasDraft = false;
+			}
 			if (oReloadInfo.changesNeedReload
 				|| oReloadInfo.hasDraft
 				|| oReloadInfo.hasHigherLayerChanges
