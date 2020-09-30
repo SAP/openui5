@@ -712,6 +712,11 @@ function(
 
 			this._initMask();
 
+			// set last change value only if the new value is different than current one
+			if (this.getValue() !== sValue) {
+				this._sLastChangeValue = sValue;
+			}
+
 			MaskEnabler.setValue.call(this, sValue);
 
 			// We need to reset the mask temporary value when using a setter
@@ -720,7 +725,6 @@ function(
 				this._setupMaskVariables();
 			}
 
-			this._sLastChangeValue = sValue;
 			this._bValid = true;
 
 			// convert to date object
