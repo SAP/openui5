@@ -234,6 +234,7 @@
     pre.codeblock,
     blockquote,
     div.syntax {
+        border: unset; // remove prettyprint border
         border-left: .6rem solid #2fa0e0;
         background-color: #EEE;
         padding: .6em .75em .6em .75em;
@@ -320,21 +321,19 @@
         content: '\e05c';
     }
 
+    .tip .title:before,
+    .remember .title:before,
     .recommendation .title:before {
         content: '\e04c';
     }
 
+    .limitations .title:before,
     .restriction .title:before {
         content: '\e094';
     }
 
     .caution .title:before {
         content: '\e201';
-    }
-
-    .remember .title:before,
-    .tip .title:before {
-        content: '\e0e3';
     }
 
     .example .title:before {
@@ -422,6 +421,7 @@
     .codesyntax .title:before,
     .syntaxtitle .title:before,
     .outputcodeblock .title:before,
+    .syntax .title:before,
     .sourcecodeblock .title:before {
         content: '\e139';
     }
@@ -482,7 +482,6 @@
         line-height: 1.125rem;
         color: #333;
         word-break: break-all;
-        border: 1px solid #525252;
 
         .emphasis {
             background-color: #fffcb5;
