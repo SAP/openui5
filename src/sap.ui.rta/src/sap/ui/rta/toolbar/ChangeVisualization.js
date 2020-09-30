@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/m/ButtonType",
 	"sap/ui/fl/Layer",
-	"sap/base/util/each"
+	"sap/base/util/each",
+	"sap/base/util/includes"
 ], function(
 	Fragment,
 	jQuery,
@@ -29,7 +30,8 @@ sap.ui.define([
 	ChangesUtils,
 	ButtonType,
 	Layer,
-	each
+	each,
+	includes
 ) {
 	"use strict";
 
@@ -161,7 +163,7 @@ sap.ui.define([
 
 		ChangeVisualization.changes.forEach(function(oChange) {
 			var sChangeCommand = oChange.getDefinition().support.command;
-			if (aCommands.includes(sChangeCommand)) {
+			if (includes(aCommands, sChangeCommand)) {
 				ChangeVisualization.getChangedElements(oChange, false).then(function(aControls) {
 					aControls.forEach(function(oControl) {
 						var oChangeIndicator = ChangeVisualization.createChangeIndicator(oChange, oControl, "change");
