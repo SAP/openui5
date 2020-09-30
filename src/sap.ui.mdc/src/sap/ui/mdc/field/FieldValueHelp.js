@@ -575,6 +575,20 @@ sap.ui.define([
 
 	};
 
+	FieldValueHelp.prototype.getDomRef = function() {
+
+		if (!this._bDialogOpen) {
+			return FieldHelpBase.prototype.getDomRef.apply(this, arguments);
+		} else {
+			this._bUseFilterBar = false;
+			var oDialog = this.getAggregation("_dialog");
+
+			if (oDialog) {
+				return oDialog.getDomRef();
+			}
+		}
+
+	};
 
 	function _cleanupFilters() {
 
