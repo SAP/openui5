@@ -31,7 +31,7 @@ sap.ui.define([
 
 	function toggleSelect(sText, bSelectionAction, bLiveMode) {
 		return waitForAdaptFiltersDialog.call(this, {
-			title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_GROUP"),
+			title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"),
 			liveMode: bLiveMode,
 			success: function(oDialog) {
 				waitForListItemInDialogWithLabel.call(this, {
@@ -88,7 +88,7 @@ sap.ui.define([
 
 		iPressOnTheAdaptFiltersP13nItem: function(sText) {
 			return waitForAdaptFiltersDialog.call(this, {
-				title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_GROUP"),
+				title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"),
 				liveMode: true,
 				success: function(oDialog) {
 					waitForListItemInDialogWithLabel.call(this, {

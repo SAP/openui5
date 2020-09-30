@@ -59,7 +59,7 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the FilterBar should appear", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-complexP13n=true');
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
 		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
@@ -75,6 +75,7 @@ sap.ui.define([
 
 	opaTest("When I press on 'Adapt Filters' button, the 'Adapt Filters' Dialog opens", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iChangeAdaptFiltersView("group");
 
 		Then.thePersonalizationDialogOpens(false);
 		Then.iShouldSeeAdaptFiltersTitle(Arrangement.P13nDialog.Titles.adaptFilter);
@@ -149,7 +150,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I select the 'Country' column and move it to the top, the FilterBar should be changed", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");
-		When.iChangeAdaptFiltersView("List");
+		When.iChangeAdaptFiltersView("list");
 		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
 		var aCurrentFilterItems = [
@@ -168,7 +169,7 @@ sap.ui.define([
 
 	opaTest("The List view order should not affect the group view", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");
-		When.iChangeAdaptFiltersView("Group");
+		When.iChangeAdaptFiltersView("group");
 
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 
@@ -202,13 +203,13 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When toggling to list view to select filters and switch back the filters should be selected in both view modes", function(Given, When, Then){
 		When.iPressButtonWithText("Adapt Filters");
-		When.iChangeAdaptFiltersView("List");
+		When.iChangeAdaptFiltersView("list");
 
 		When.iSelectColumn("Localized Country Code", null, null, true);
 
 		oFilterItems["Countries_texts"][0].selected = true;
 
-		When.iChangeAdaptFiltersView("Group");
+		When.iChangeAdaptFiltersView("group");
 
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 
@@ -319,13 +320,14 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the FilterBar should be toggled to not persist values (modify p13nMode)", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-complexP13n=true');
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
 		When.iLookAtTheScreen();
 
 		When.iSetP13nMode("sap.ui.mdc.FilterBar", ["Item"]);
 
 		//open dialig
 		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iChangeAdaptFiltersView("group");
 		Then.thePersonalizationDialogOpens(false);
 
 		//Go to "Artists" and enter a value
@@ -336,6 +338,66 @@ sap.ui.define([
 
 		//check dirty flag
 		Then.theVariantManagementIsDirty(false);
+
+		Then.iTeardownMyAppFrame();
+	});
+
+	// ----------------------------------------------------------------
+	// Prepare dirty changes for reset tests
+	// ----------------------------------------------------------------
+	opaTest("When I start the 'appUnderTestTable' app and create new p13n changes - create some changes", function (Given, When, Then) {
+		//insert application
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		When.iLookAtTheScreen();
+
+		When.iSetP13nMode("sap.ui.mdc.FilterBar", ["Item","Value"]);
+
+		//open dialig
+		When.iPressButtonWithText("Adapt Filters");
+		When.iChangeAdaptFiltersView("group");
+		Then.thePersonalizationDialogOpens(false);
+
+		//Go to "Artists" and enter a value
+		When.iEnterTextInFilterDialog("Founding Year", "1989");
+		When.iSelectColumn("Country", null, oFilterItems["Artists"], true, true);
+		oFilterItems["Artists"][4].value = ["1989"];
+		oFilterItems["Artists"][2].selected = false;//needs to be reset due to prior test
+
+		When.iPressDialogOk();
+
+		//check dirty flag
+		Then.theVariantManagementIsDirty(true);
+
+	});
+
+	// ----------------------------------------------------------------
+	// Cancel Reset (Standard variant) --> no changes reverted
+	// ----------------------------------------------------------------
+	opaTest("Press reset and cancel - no changes expected", function(Given, When, Then){
+
+		When.iPressButtonWithText("Adapt Filters (1)");
+		When.iPressResetInDialog();
+		When.iCancelResetWarning();
+
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
+
+		When.iPressDialogOk();
+	});
+
+	// ----------------------------------------------------------------
+	// Confirm Reset (Standard variant) --> dirty changes reverted
+	// ----------------------------------------------------------------
+	opaTest("Press reset and confirm - reset should revert the changes based on the current variant", function(Given, When, Then){
+
+		When.iPressButtonWithText("Adapt Filters (1)");
+		When.iPressResetInDialog();
+		When.iConfirmResetWarning();
+
+		oFilterItems["Artists"][4].value = undefined;
+		oFilterItems["Artists"][3].selected = false;
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
+
+		When.iPressDialogOk();
 
 		Then.iTeardownMyAppFrame();
 	});

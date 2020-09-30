@@ -162,4 +162,34 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Test createP13nDialog with reset included", function(assert){
+
+        var done = assert.async();
+
+        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oModel = new JSONModel(oP13nData);
+        var oPanel = new BasePanel(oPanel);
+
+        oPanel.setP13nModel(oModel);
+
+        P13nBuilder.createP13nDialog(oPanel, {
+            title: "Test",
+            reset: {
+                onExecute: function() {
+                    //Control specific reset handling
+                }
+            },
+            id: "myTestDialog"
+        }).then(function(oDialog){
+            assert.ok(oDialog.getCustomHeader(), "Custom Header provided");
+            assert.equal(oDialog.getCustomHeader().getContentLeft()[0].getText(), "Test", "Title provided");
+            assert.ok(oDialog.getCustomHeader().getContentRight()[0].isA("sap.m.Button"), "Reset Button provided");
+
+            oDialog.destroy();
+
+            done();
+        });
+
+    });
+
 });

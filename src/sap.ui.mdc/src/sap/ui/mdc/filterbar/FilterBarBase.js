@@ -253,6 +253,11 @@ sap.ui.define([
 					move: "moveFilter"
 				}
 			},
+			onReset: function() {
+				this.getAdaptationController().resetP13n().then(function(){
+					this._oP13nFilter._setXConditions(this.getFilterConditions(), true);
+				}.bind(this));
+			},
 			filterConfig: {
 				changeOperations: {
 					add: "addFilter",
@@ -263,24 +268,7 @@ sap.ui.define([
 				applyFilterChangeOn: this,
 				containerSettings: {
 					verticalScrolling: false,
-					customHeader: function() {
-						return P13nBuilder.createViewSwitch({
-							defaultText: this._oP13nFilter && this._oP13nFilter.getViewMode() == "List" ?
-								this._oRb.getText("filterbar.ADAPT_LIST") : this._oRb.getText("filterbar.ADAPT_GROUP"),
-							menuItems: [
-								{
-									text: this._oRb.getText("filterbar.ADAPT_GROUP"),
-									handler: function(){
-										this._oP13nFilter.switchViewMode("Group");
-									}.bind(this)},
-								{
-									text: this._oRb.getText("filterbar.ADAPT_LIST"), handler: function(){
-										this._oP13nFilter.switchViewMode("List");
-									}.bind(this)
-								}
-							]
-						});
-					}.bind(this)
+					title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_TITLE")
 				}
 			}
 		});

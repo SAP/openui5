@@ -2,23 +2,28 @@
 
 }
 
+//Remove border for panels
 .sapUiMDCGroupPanelBase .sapMPanelWrappingDivTb{
 	border: none;
 }
 
+//padding between lists in group view
 .sapUiMDCGroupPanelBase .sapMLIBContent {
 	padding-bottom: 1.15rem
 }
 
+//remove highlighting in group view
 .sapUiMDCGroupPanelBase .sapMLIB .sapMLIBSelected {
 	border: none;
 	background: @sapUiListBackground;
 }
 
+//Change background color for the container control
 .sapUiMDCGroupPanelBase .sapMPageBgStandard {
     background: @sapUiListBackground;
 }
 
+//Adapt padding for the fixed controls
 .sapUiMDCGroupPanelBase .sapUiFixFlexFixed {
     padding: 0.5rem 1rem 0.5rem 1rem;
 }
@@ -27,10 +32,7 @@
 	border-bottom: none;
 }
 
-.sapUiMDCGroupPanelBase .sapUiGroupPanelFloatRight {
-    float: right;
-}
-
+//Adapt standard padding to use the whole content
 .sapUiMDCGroupPanelBase .sapMPanelContent{
     overflow: visible;
     border-bottom: none;
@@ -42,11 +44,18 @@
     padding-right: 0.75rem;
 }
 
+//Remove padding for items in list view
 .sapUiMDCGroupPanelBase .sapMListTblCell{
     padding-top: 0;
     padding-bottom: 0;
 }
 
+//Checkbox alignment
 .sapUiMDCGroupPanelBase .sapMPanelContent .sapMCbBg {
     margin-top: -1.75rem;
+}
+
+//Display ':' for Labels in the 'group' view
+.sapUiMDCGroupPanelBase .sapMPanelContent .sapMLabel::after {
+	content: ":";
 }

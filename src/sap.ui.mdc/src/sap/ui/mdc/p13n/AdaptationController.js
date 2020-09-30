@@ -89,6 +89,13 @@ sap.ui.define([
 				 */
 				afterChangesCreated: {
 					type: "function"
+				},
+				/**
+				 * Callback executed when a reset has been triggered.
+				 * <b>Note:</b> One this property is being used, the reset will be shown on the UI.
+				 */
+				onReset: {
+					type: "function"
 				}
 			},
 			events: {
@@ -145,6 +152,18 @@ sap.ui.define([
 			this.bIsDialogOpen = true;
 			return this._retrievePropertyInfo().then(function(aPropertyInfo){
 				return this.createP13n(sP13nType, aPropertyInfo).then(function(oP13nDialog){
+					//-------------- TODO: remove hack for FE transition -----------------------
+					var sView = oURLParams.getAll("sap-ui-xx-filterView")[0];
+					if (
+						sView === "list" &&
+						oP13nDialog &&
+						oP13nDialog.getContent()[0] &&
+						oP13nDialog.getContent()[0]._oFilterBarLayout &&
+						oP13nDialog.getContent()[0]._oFilterBarLayout.getInner().isA("sap.ui.mdc.p13n.panels.GroupPanelBase")
+						){
+							oP13nDialog.getContent()[0]._oFilterBarLayout.getInner().switchViewMode("list");
+					}
+					//--------------------------------------------------------------------------
 					this._openP13nControl(oP13nDialog, oSource);
 					return oP13nDialog;
 				}.bind(this), function(){
@@ -458,6 +477,17 @@ sap.ui.define([
 		this.oState = merge({}, oP13nData);
 	};
 
+	AdaptationController.prototype.resetP13n = function() {
+		return FlexUtil.discardChanges({
+			selector: this.getAdaptationControl()
+		}).then(function(){
+			var oP13nData = this._prepareAdaptationData(this.aPropertyInfo);
+			this.oState = merge({}, oP13nData);
+			this.oAdaptationModel.setProperty("/items", oP13nData.items);
+			this.oAdaptationModel.setProperty("/itemsGrouped", oP13nData.itemsGrouped);
+		}.bind(this));
+	};
+
 	AdaptationController.prototype._retrieveP13nContainer = function () {
 		return new Promise(function (resolve, reject) {
 
@@ -543,6 +573,15 @@ sap.ui.define([
 
 	};
 
+	AdaptationController.prototype._addResetInfo = function(mSettings) {
+		if (this.getOnReset()){
+			mSettings.reset = {
+				title: mSettings.title,
+				onExecute: this.getOnReset().bind(this.getAdaptationControl())
+			};
+		}
+	};
+
 	AdaptationController.prototype._createPopover = function(oPanel){
 
 		var fnAfterDialogClose = function (oEvt) {
@@ -559,6 +598,8 @@ sap.ui.define([
 			verticalScrolling: true,
 			afterClose: fnAfterDialogClose
 		}, this.getTypeConfig(this.sP13nType).containerSettings);
+
+		this._addResetInfo(mSettings);
 
 		return P13nBuilder.createP13nPopover(oPanel, mSettings);
 
@@ -585,6 +626,8 @@ sap.ui.define([
 			},
 			cancel: fnDialogCancel
 		}, this.getTypeConfig(this.sP13nType).containerSettings);
+
+		this._addResetInfo(mSettings);
 
 		return P13nBuilder.createP13nDialog(oPanel, mSettings);
 	};

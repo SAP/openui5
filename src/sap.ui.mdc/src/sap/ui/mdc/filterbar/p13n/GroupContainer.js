@@ -32,7 +32,10 @@ sap.ui.define([
 		};
 
 		this.oLayout = new GroupPanelBase({
-			expandFirstGroup: true
+			enableListView: true,
+			expandFirstGroup: true,
+			enableReorder: true,
+			defaultView: "group"
 		});
 
 		this.oLayout.setItemFactory(function(sId, oBindingContext){

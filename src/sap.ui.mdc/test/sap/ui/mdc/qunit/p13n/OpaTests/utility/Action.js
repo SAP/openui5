@@ -12,8 +12,9 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/mdc/integration/testlibrary/p13n/Actions",
-	"./actions/PressKey"
-], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, TestLibActions, PressKey) {
+	"./actions/PressKey",
+	"sap/m/MessageBox"
+], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, TestLibActions, PressKey, MessageBox) {
 	"use strict";
 
 	/**
@@ -29,6 +30,69 @@ sap.ui.define([
 
 		iLookAtTheScreen: function () {
 			return this;
+		},
+
+		iPressResetInDialog: function() {
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.Button",
+				matchers: {
+					properties: {
+						text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET")
+					},
+					ancestor: {
+						controlType: "sap.m.Dialog"
+					}
+				},
+				success:function(aBtn) {
+					Opa5.assert.equal(aBtn.length, 1, "Dialog with 'Reset' Button found");
+				},
+				actions: new Press()
+			});
+		},
+
+		iConfirmResetWarning: function() {
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.Button",
+				matchers: {
+					properties: {
+						text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MSGBOX_OK")
+					},
+					ancestor: {
+						controlType: "sap.m.Dialog",
+						properties: {
+							icon: "sap-icon://message-warning"
+						}
+					}
+				},
+				success: function(aBtn) {
+					Opa5.assert.equal(aBtn.length, 1, "Warning with one confirmation button found");
+				},
+				actions: new Press()
+			});
+		},
+
+		iCancelResetWarning: function() {
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.Button",
+				matchers: {
+					properties: {
+						text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MSGBOX_CANCEL")
+					},
+					ancestor: {
+						controlType: "sap.m.Dialog",
+						properties: {
+							icon: "sap-icon://message-warning"
+						}
+					}
+				},
+				success: function(aBtn) {
+					Opa5.assert.equal(aBtn.length, 1, "Warning with one cancel button found");
+				},
+				actions: new Press()
+			});
 		},
 
 		iPressEscapeInDialog: function() {

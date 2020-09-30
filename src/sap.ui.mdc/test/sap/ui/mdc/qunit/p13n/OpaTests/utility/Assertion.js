@@ -166,7 +166,7 @@ sap.ui.define([
 		iShouldSeeAdaptFiltersTitle: function (sTitle) {
 			return this.waitFor({
 				searchOpenDialogs: true,
-				controlType: "sap.m.MenuButton",
+				controlType: "sap.m.Title",
 				matchers: {
 					ancestor: {
 						controlType: "sap.m.Dialog"

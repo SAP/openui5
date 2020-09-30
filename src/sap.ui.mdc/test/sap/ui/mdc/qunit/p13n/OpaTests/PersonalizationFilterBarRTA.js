@@ -60,6 +60,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I press on RTA settings icon the personalization dialog appears", function (Given, When, Then) {
 		When.iClickOnRtaSetting("sap-icon://key-user-settings");
+		When.iChangeAdaptFiltersView("group");
 		Then.iShouldSeeP13nFilterItem("cityOfOrigin_city", 2);
 		Then.iShouldSeeP13nFilterItem("Country", 3);
 	});
