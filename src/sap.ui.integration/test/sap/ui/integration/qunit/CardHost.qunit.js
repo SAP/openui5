@@ -97,16 +97,16 @@ sap.ui.define([
 					"onAfterRendering": function () {
 						var oButton = oToolbar.getDomRef("overflowButton");
 
-						// Act
-						QUnitUtils.triggerEvent("tap", oButton);
-						Core.applyChanges();
-
 						oToolbar._oActionSheet.attachEvent("afterOpen", function () {
 							// Assert
 							assert.ok(oToolbar._oActionSheet.isOpen(), "Action sheet is opened after overflow button is pressed.");
 							assert.ok(fnHeaderPressStub.notCalled, "Header press is not triggered.");
 							done();
 						});
+
+						// Act
+						QUnitUtils.triggerEvent("tap", oButton);
+						Core.applyChanges();
 					}
 				});
 			}.bind(this));

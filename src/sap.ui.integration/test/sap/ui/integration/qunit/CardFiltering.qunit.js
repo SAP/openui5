@@ -111,7 +111,7 @@ sap.ui.define([
 		// Arrange
 		var done = assert.async();
 
-		setTimeout(function () {
+		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 
 			// Assert
@@ -123,7 +123,7 @@ sap.ui.define([
 			assert.strictEqual(oFilter._getSelect().getItems()[1].getKey(), "out_of_stock", "option has the expected key");
 
 			done();
-		}.bind(this), 1000);
+		}, this);
 
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_dynamic_filter.json");

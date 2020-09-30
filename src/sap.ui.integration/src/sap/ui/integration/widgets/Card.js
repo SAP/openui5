@@ -693,7 +693,7 @@ sap.ui.define([
 		return oContextModel.waitForPendingProperties().then(function () {
 			// properties are ready, no resolve again
 			return BindingResolver.resolveValue(oContextParams, this, "/");
-		});
+		}.bind(this));
 	};
 
 	/**
