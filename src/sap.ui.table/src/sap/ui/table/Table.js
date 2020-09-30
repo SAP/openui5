@@ -2518,17 +2518,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Destroys the creation row.
-	 *
-	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 */
-	Table.prototype.destroyCreationRow = function() {
-		return this.destroyAggregation("creationRow");
-	};
-
-	/**
 	 * Triggers automatic resizing of a column to the widest content.
 	 *
 	 * @experimental Experimental! Presently implemented to only work with a very limited set of controls (e.g. sap.m.Text).
