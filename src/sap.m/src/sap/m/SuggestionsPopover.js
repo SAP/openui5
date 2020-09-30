@@ -28,7 +28,8 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	"sap/ui/events/KeyCodes",
 	"sap/m/ValueStateHeader",
-	"sap/m/inputUtils/highlightDOMElements"
+	"sap/m/inputUtils/highlightDOMElements",
+	"sap/m/inputUtils/scrollToItem"
 ], function (
 	Device,
 	EventProvider,
@@ -55,7 +56,8 @@ sap.ui.define([
 	IconPool,
 	KeyCodes,
 	ValueStateHeader,
-	highlightDOMElements
+	highlightDOMElements,
+	scrollToItem
 ) {
 	"use strict";
 
@@ -219,16 +221,6 @@ sap.ui.define([
 	 */
 	SuggestionsPopover.prototype._getInputLabels = function () {
 		return this._fnInputLabels();
-	};
-
-	/**
-	 * Gets the scrollable content of the SimpleFixFlex
-	 *
-	 * @return {Element} The DOM element of the scrollable content
-	 * @private
-	 */
-	SuggestionsPopover.prototype._getScrollableContent = function () {
-		return this._oPopover && this._oPopover.getDomRef("scroll");
 	};
 
 	/**
@@ -774,7 +766,7 @@ sap.ui.define([
 			oInnerRef.attr("aria-activedescendant", oFormattedText.getId());
 			this.bMessageValueStateActive = true;
 			this._iPopupListSelectedIndex = -1;
-			this._scrollToItem(0);
+			scrollToItem(aListItems[0], this._oPopover);
 			return;
 		}
 
@@ -802,7 +794,7 @@ sap.ui.define([
 		}
 
 		if (Device.system.desktop) {
-			this._scrollToItem(iSelectedIndex);
+			scrollToItem(aListItems[iSelectedIndex], this._oPopover);
 		}
 
 		// make sure the value doesn't exceed the maxLength
@@ -882,47 +874,6 @@ sap.ui.define([
 
 		return oFilterSelectedButton;
 	};
-
-	/**
-	 * Scrolls to item.
-	 *
-	 * @private
-	 * @param {int} iIndex Index of the item to scroll to.
-	 */
-	SuggestionsPopover.prototype._scrollToItem = function(iIndex) {
-		var oPopup = this._oPopover,
-			oList = this._oList,
-			oScrollDelegate,
-			oPopupRect,
-			oItemRect,
-			iTop,
-			iBottom;
-
-		if (!(oPopup instanceof Popover) || !oList) {
-			return;
-		}
-		oScrollDelegate = oPopup.getScrollDelegate();
-		if (!oScrollDelegate) {
-			return;
-		}
-		var oListItem = oList.getItems()[iIndex],
-			oListItemDom = oListItem && oListItem.getDomRef();
-		if (!oListItemDom) {
-			return;
-		}
-		oPopupRect = oPopup.getDomRef("cont").getBoundingClientRect();
-		oItemRect = oListItemDom.getBoundingClientRect();
-
-		iTop = oPopupRect.top - oItemRect.top;
-		iBottom = oItemRect.bottom - oPopupRect.bottom;
-		if (iTop > 0) {
-			oScrollDelegate.scrollTo(oScrollDelegate._scrollX, Math.max(oScrollDelegate._scrollY - iTop, 0));
-		} else if (iBottom > 0) {
-			oScrollDelegate.scrollTo(oScrollDelegate._scrollX, oScrollDelegate._scrollY + iBottom);
-		}
-	};
-
-
 
 	/**
 	 * Registers event handlers required for

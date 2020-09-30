@@ -9103,7 +9103,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onAfterOpen test case 3 - selected item position", function (assert) {
+	QUnit.test("onAfterOpen test case 3 - selected item position (sap.m.inputsUtils.scrollToItem)", function (assert) {
 
 		var oComboBox = new ComboBox({
 			items: [
