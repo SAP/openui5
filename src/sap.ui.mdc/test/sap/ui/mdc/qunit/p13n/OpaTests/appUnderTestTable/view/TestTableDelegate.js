@@ -15,7 +15,7 @@ sap.ui.define([
 				text: "{" + sPropertyInfoName + "}"
 			}, true).then(function(oTemplate){
 				var oColumn = oModifier.createControl("sap.ui.mdc.table.Column", mPropertyBag.appComponent, mPropertyBag.view, sId, {
-					dataProperties: sPropertyInfoName,
+					dataProperty: sPropertyInfoName,
 					width:"150px",
 					header: sPropertyInfoName
 				});

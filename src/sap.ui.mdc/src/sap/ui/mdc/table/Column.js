@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element", "sap/m/Label", "sap/ui/core/Core"
-], function(Element, Label, Core) {
+	"sap/ui/core/Element", "sap/m/Label", "sap/ui/core/Core", "sap/base/Log"
+], function(Element, Label, Core, Log) {
 	"use strict";
 
 	/**
@@ -71,6 +71,9 @@ sap.ui.define([
 				dataProperties: {
 					type: "string[]",
 					defaultValue: []
+				},
+				dataProperty: {
+					type: "string"
 				}
 			},
 			events: {},
@@ -93,6 +96,17 @@ sap.ui.define([
 			template: true,
 			creationTemplate: true
 		};
+	};
+
+	Column.prototype.setDataProperties = function(aDataProperties) {
+		this.setProperty("dataProperties", aDataProperties);
+
+		if (!this.getDataProperty()) {
+			this.setProperty("dataProperty", aDataProperties[0]);
+		}
+
+		Log.error("The property 'dataProperties' is deprecated, please use the property 'dataProperty' instead", this);
+		return this;
 	};
 
 	// Return the clone of the template set by the app on the column

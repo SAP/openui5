@@ -39,7 +39,7 @@ sap.ui.define([
 		}
 
 		return XMLView.create({
-			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table id="myTable" delegate="\{\'name\': \'sap/ui/mdc/TableDelegate\', \'payload\': \{ \'collectionName\': \'items\' \} \}"><type><mdcTable:' + sType + '/></type>' + sSettings + '<columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperties="column0"><m:Text text="{description}" id="myTable--text0" /></mdcTable:Column></columns></Table></mvc:View>'
+			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table id="myTable" delegate="\{\'name\': \'sap/ui/mdc/TableDelegate\', \'payload\': \{ \'collectionName\': \'items\' \} \}"><type><mdcTable:' + sType + '/></type>' + sSettings + '<columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="column0"><m:Text text="{description}" id="myTable--text0" /></mdcTable:Column></columns></Table></mvc:View>'
 		}).then(function(oView) {
 			oView.setModel(oModel);
 			oView.placeAt("qunit-fixture");

@@ -280,7 +280,7 @@ sap.ui.define(["sap/ui/mdc/util/TypeUtil"], function(TypeUtil) {
 		if (oSortRestrictions) {
 			oSortRestrictionsInfo.sortable = (oSortRestrictions.Sortable != null) ? oSortRestrictions.Sortable : true;
 			if (oSortRestrictions.NonSortableProperties) {
-				for (i = 0; i < oSortRestrictions.NonSortableProperties; i++) {
+				for (i = 0; i < oSortRestrictions.NonSortableProperties.length; i++) {
 					sPropertyName = oSortRestrictions.NonSortableProperties[i].$PropertyPath;
 					oSortRestrictionsInfo[sPropertyName] = {
 						sortable: false
@@ -351,7 +351,7 @@ sap.ui.define(["sap/ui/mdc/util/TypeUtil"], function(TypeUtil) {
 			}
 
 			if (oFilterRestrictions.NonFilterableProperties) {
-				for (i = 0; i < oFilterRestrictions.NonFilterableProperties; i++) {
+				for (i = 0; i < oFilterRestrictions.NonFilterableProperties.length; i++) {
 					sPropertyName = oFilterRestrictions.NonFilterableProperties[i].$PropertyPath;
 					oFilterRestrictionsInfo[sPropertyName] = {
 						filterable: false

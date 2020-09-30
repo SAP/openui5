@@ -1127,13 +1127,13 @@ sap.ui.define([
 	};
 
 	Table.prototype._getVisibleProperties = function() {
-		var aProperties = [], sLeadingProperty;
+		var aProperties = [], sDataProperty;
 
 		this.getColumns().forEach(function(oMDCColumn, iIndex) {
-			sLeadingProperty = oMDCColumn && oMDCColumn.getDataProperties()[0]; // get the leading (1st property always)
-			if (sLeadingProperty) {
+			sDataProperty = oMDCColumn && oMDCColumn.getDataProperty();
+			if (sDataProperty) {
 				aProperties.push({
-					name: sLeadingProperty
+					name: sDataProperty
 				});
 			}
 		});
@@ -1573,7 +1573,7 @@ sap.ui.define([
 		oMDCColumn = this.getColumns()[iIndex];
 
 		this.awaitPropertyHelper().then(function(oPropertyHelper) {
-			var aSortProperties = oPropertyHelper.getColumnSortProperties(oMDCColumn);
+			var aSortProperties = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty());
 
 			if (!aSortProperties.length) {
 				return;
@@ -1701,11 +1701,7 @@ sap.ui.define([
 			width: oMDCColumn.getWidth(),
 			minWidth: Math.round(oMDCColumn.getMinWidth() * parseFloat(MLibrary.BaseFontSize)),
 			hAlign: oMDCColumn.getHAlign(),
-			label: oMDCColumn.getColumnHeaderControl(this._bMobileTable),
-			showSortMenuEntry: false,
-			showFilterMenuEntry: false,
-			sortProperty: oMDCColumn.getDataProperties()[0],
-			filterProperty: oMDCColumn.getDataProperties()[0]
+			label: oMDCColumn.getColumnHeaderControl(this._bMobileTable)
 		});
 	};
 
@@ -2009,26 +2005,22 @@ sap.ui.define([
 		var aMDCColumns = this.getColumns();
 		var bMobileTable = this._bMobileTable;
 
-		aMDCColumns.forEach(function(oMDCColumn) {
-			var oInnerColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
-			if (bMobileTable) {
-				oInnerColumn.setSortIndicator("None");
-			} else {
-				oInnerColumn.setSorted(false);
-			}
-		});
-
-		aSorters.forEach(function(oSorter) {
-			var sSortOrder = (oSorter.bDescending) ? "Descending" : "Ascending";
-			aMDCColumns.some(function(oMDCColumn) {
+		this.awaitPropertyHelper().then(function(oPropertyHelper) {
+			aMDCColumns.forEach(function(oMDCColumn) {
 				var oInnerColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
-				if (oMDCColumn.getDataProperties().indexOf(oSorter.sPath) > -1) {
-					if (bMobileTable) {
-						oInnerColumn.setSortIndicator(sSortOrder);
-					} else {
-						oInnerColumn.setSorted(true).setSortOrder(sSortOrder);
-					}
-					return true;
+				var aSortableProperties = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty());
+				var aSortablePaths = aSortableProperties.map(function(sPropertyName) {
+					return oPropertyHelper.getPath(sPropertyName);
+				});
+				var oSorter = aSorters.find(function(oSorter) {
+					return aSortablePaths.indexOf(oSorter.sPath) > -1;
+				});
+				var sSortOrder = oSorter && oSorter.bDescending ? "Descending" : "Ascending";
+
+				if (bMobileTable) {
+					oInnerColumn.setSortIndicator(oSorter ? sSortOrder : "None");
+				} else {
+					oInnerColumn.setSorted(!!oSorter).setSortOrder(sSortOrder);
 				}
 			});
 		});

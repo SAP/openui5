@@ -88,7 +88,7 @@ sap.ui.define([
 	BooksTableDelegate._createColumn = function (sPropertyInfoName, oTable) {
 		return ODataTableDelegate._createColumn.apply(this, arguments).then(function (oColumn) {
 
-			var sProp = oColumn.getDataProperties()[0],
+			var sProp = oColumn.getDataProperty(),
 				aSmallCols = ["actions", "stock", "ID"];
 
 			if (sProp === "title") {

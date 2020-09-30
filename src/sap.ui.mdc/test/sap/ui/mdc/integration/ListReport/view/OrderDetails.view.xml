@@ -69,16 +69,16 @@
 									<Button type="Emphasized" text="Add Order Item" press="onAddButtonPress" visible="{=!${view>/addMode}}" />
 								</mdc:actions>
 								<mdc:columns>
-									<mdc:table.Column id="cID" header="ID" dataProperties="ID" width="15rem">
+									<mdc:table.Column id="cID" header="ID" dataProperty="ID" width="15rem">
 										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" />
 									</mdc:table.Column>
-									<mdc:table.Column id="cAmount" header="amount" dataProperties="amount" width="15rem">
+									<mdc:table.Column id="cAmount" header="amount" dataProperty="amount" width="15rem">
 										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{amount}" editMode="Display" />
 									</mdc:table.Column>
-									<mdc:table.Column id="cNetAmount" header="netAmount" dataProperties="netAmount" width="15rem">
+									<mdc:table.Column id="cNetAmount" header="netAmount" dataProperty="netAmount" width="15rem">
 										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{netAmount}" editMode="Display" />
 									</mdc:table.Column>
-									<mdc:table.Column id="cBook" header="Book" dataProperties="book_title" width="15rem">
+									<mdc:table.Column id="cBook" header="Book" dataProperty="book_title" width="15rem">
 										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{book/title}" display="Description" editMode="Display" />
 									</mdc:table.Column>
 								</mdc:columns>
