@@ -55,23 +55,28 @@ function(
 					changeIndicator: oChangeIndicator
 				}
 			];
-			ChangeVisualization.button = this.oToolbar.getControl("showChanges");
-			oChangeIndicator.onAfterRendering = function() {
-				oChangeIndicator.onAfterRendering = function() { return; };
-				ChangeVisualization.switchChangeVisualizationActive();
-				assert.equal(ChangeVisualization.button.getType(), sap.m.ButtonType.Emphasized, "toolbar button type has changed to emphasized");
-				assert.equal(ChangeVisualization.button.getTooltip(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("BUT_CHANGEVISUALIZATION_HIDECHANGES"), "toolbar button tooltip has changed");
-				done();
-			};
-			oChangeIndicator.placeAt("qunit-fixture");
+
+			this.oToolbar.onFragmentLoaded().then(function() {
+				ChangeVisualization.button = this.oToolbar.getControl("showChanges");
+				oChangeIndicator.onAfterRendering = function() {
+					oChangeIndicator.onAfterRendering = function() { return; };
+					ChangeVisualization.switchChangeVisualizationActive();
+					assert.equal(ChangeVisualization.button.getType(), sap.m.ButtonType.Emphasized, "toolbar button type has changed to emphasized");
+					assert.equal(ChangeVisualization.button.getTooltip(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("BUT_CHANGEVISUALIZATION_HIDECHANGES"), "toolbar button tooltip has changed");
+					done();
+				};
+				oChangeIndicator.placeAt("qunit-fixture");
+			}.bind(this));
 		});
 
 		QUnit.test("when there are no change indicators and the function switchChangeVisualizationActive is called", function(assert) {
-			ChangeVisualization.changeIndicators = [];
-			ChangeVisualization.button = this.oToolbar.getControl("showChanges");
-			ChangeVisualization.switchChangeVisualizationActive();
-			assert.equal(ChangeVisualization.button.getType(), sap.m.ButtonType.Transparent, "toolbar button type has changed to transparent");
-			assert.equal(ChangeVisualization.button.getTooltip(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("BUT_CHANGEVISUALIZATION_SHOWCHANGES"), "toolbar button tooltip has changed");
+			return this.oToolbar.onFragmentLoaded().then(function() {
+				ChangeVisualization.changeIndicators = [];
+				ChangeVisualization.button = this.oToolbar.getControl("showChanges");
+				ChangeVisualization.switchChangeVisualizationActive();
+				assert.equal(ChangeVisualization.button.getType(), sap.m.ButtonType.Transparent, "toolbar button type has changed to transparent");
+				assert.equal(ChangeVisualization.button.getTooltip(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("BUT_CHANGEVISUALIZATION_SHOWCHANGES"), "toolbar button tooltip has changed");
+			}.bind(this));
 		});
 
 		QUnit.test("when a specifc change type is selected in the popover", function(assert) {

@@ -739,61 +739,68 @@ function(
 		QUnit.test("showChangesPopover when there are no change indicators", function(assert) {
 			assert.expect(6);
 			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(false);
-			var oPopoverButton = this.oToolbar.getControl("showChanges");
-			var oEvent = {
-				getSource: function () {
-					return oPopoverButton;
-				}
-			};
-			this.oToolbar.setModel(new JSONModel({
-				rtaRootControlId: "rootControlId",
-				modeSwitcher: "adaptation"
-			}), "controls");
-			var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover");
-			oOpenChangePopoverStub.resolves(new Control("testControl"));
-			var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
-			var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
 
-			return this.oToolbar.showChangesPopover(oEvent).then(function() {
-				assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
-				assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
-				assert.equal(oOpenChangePopoverStub.callCount, 1, "the changes popover is open");
-				oPopoverButton.getDependents().some(function(oDependentControl) {
-					if (oDependentControl.getId() === "testControl") {
-						assert.ok(true, "the control was added to the dependents list");
-						return true;
+			return this.oToolbar.onFragmentLoaded().then(function() {
+				var oPopoverButton = this.oToolbar.getControl("showChanges");
+
+				var oEvent = {
+					getSource: function () {
+						return oPopoverButton;
 					}
+				};
+				this.oToolbar.setModel(new JSONModel({
+					rtaRootControlId: "rootControlId",
+					modeSwitcher: "adaptation"
+				}), "controls");
+				var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover");
+				oOpenChangePopoverStub.resolves(new Control("testControl"));
+				var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+				var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+
+				return this.oToolbar.showChangesPopover(oEvent).then(function() {
+					assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
+					assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
+					assert.equal(oOpenChangePopoverStub.callCount, 1, "the changes popover is open");
+					oPopoverButton.getDependents().some(function(oDependentControl) {
+						if (oDependentControl.getId() === "testControl") {
+							assert.ok(true, "the control was added to the dependents list");
+							return true;
+						}
+					});
+					assert.equal(oOpenChangePopoverStub.lastCall.args[0], oPopoverButton, "the function was called with the correct button");
+					assert.equal(oOpenChangePopoverStub.lastCall.args[1], "rootControlId", "the function was called with the correct root control id");
 				});
-				assert.equal(oOpenChangePopoverStub.lastCall.args[0], oPopoverButton, "the function was called with the correct button");
-				assert.equal(oOpenChangePopoverStub.lastCall.args[1], "rootControlId", "the function was called with the correct root control id");
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("showChangesPopover when the popver already exists and there are no change indicators", function(assert) {
 			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(false);
-			var oPopoverButton = this.oToolbar.getControl("showChanges");
-			var oEvent = {
-				getSource: function () {
-					return oPopoverButton;
-				}
-			};
-			this.oToolbar.setModel(new JSONModel({
-				rtaRootControlId: "rootControlId",
-				modeSwitcher: "adaptation"
-			}), "controls");
-			var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover").resolves();
-			var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
-			var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
-			var iDependentControlLength = oPopoverButton.getDependents().length;
 
-			return this.oToolbar.showChangesPopover(oEvent).then(function() {
-				assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
-				assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
-				assert.equal(oOpenChangePopoverStub.callCount, 1, "the changes popover is open");
-				assert.equal(iDependentControlLength, oPopoverButton.getDependents().length, "the popover button does not have new dependents");
-				assert.equal(oOpenChangePopoverStub.lastCall.args[0], oPopoverButton, "the function was called with the correct button");
-				assert.equal(oOpenChangePopoverStub.lastCall.args[1], "rootControlId", "the function was called with the correct root control id");
-			});
+			return this.oToolbar.onFragmentLoaded().then(function() {
+				var oPopoverButton = this.oToolbar.getControl("showChanges");
+				var oEvent = {
+					getSource: function () {
+						return oPopoverButton;
+					}
+				};
+				this.oToolbar.setModel(new JSONModel({
+					rtaRootControlId: "rootControlId",
+					modeSwitcher: "adaptation"
+				}), "controls");
+				var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover").resolves();
+				var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+				var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+				var iDependentControlLength = oPopoverButton.getDependents().length;
+
+				return this.oToolbar.showChangesPopover(oEvent).then(function() {
+					assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
+					assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
+					assert.equal(oOpenChangePopoverStub.callCount, 1, "the changes popover is open");
+					assert.equal(iDependentControlLength, oPopoverButton.getDependents().length, "the popover button does not have new dependents");
+					assert.equal(oOpenChangePopoverStub.lastCall.args[0], oPopoverButton, "the function was called with the correct button");
+					assert.equal(oOpenChangePopoverStub.lastCall.args[1], "rootControlId", "the function was called with the correct root control id");
+				});
+			}.bind(this));
 		});
 
 		QUnit.test("showChangesPopover", function(assert) {
