@@ -1399,4 +1399,36 @@ sap.ui.define([
 		// clean up
 		oScrollContainer.destroy();
 	});
+
+	QUnit.test("Master button text", function(assert) {
+		// arrange
+		var oSplitContainer = new SplitContainer({
+			mode: "ShowHideMode",
+			detailPages: [
+				new Page({
+					title : "detail"
+				})
+			],
+			masterPages: [
+				new Page({ title : "master1"})
+			]
+		});
+		oSplitContainer.placeAt("content");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oSplitContainer._oShowMasterBtn.getText(), "Navigation", "Master button text is 'Navigation'");
+
+		// act
+		oSplitContainer._removeMasterButton(oSplitContainer._getRealPage(oSplitContainer._oDetailNav.getCurrentPage()));
+		oSplitContainer._afterShowMasterAnimation();
+		oSplitContainer._afterHideMasterAnimation();
+
+		// assert
+		assert.strictEqual(oSplitContainer._oShowMasterBtn.getText(), "Navigation", "Master button text is still 'Navigation'");
+
+		// clean up
+		oSplitContainer.destroy();
+	});
+
 });
