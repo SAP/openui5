@@ -185,7 +185,7 @@ sap.ui.define([
 			 * @deprecated As of version 1.69, replaced by {@link sap.ui.table.Table#getSelectedIndices} and
 			 * {@link sap.ui.table.Table#setSelectedIndex}
 			 */
-			selectedIndex : {type : "int", group : "Appearance", defaultValue : -1},
+			selectedIndex : {type : "int", group : "Appearance", defaultValue : -1, deprecated: true},
 
 			/**
 			 * Flag whether the controls of the Table are editable or not (currently this only controls the background color in certain themes!)
@@ -365,7 +365,7 @@ sap.ui.define([
 			 *
 			 * @deprecated As of 1.72. Use the <code>extension</code> aggregation instead.
 			 */
-			title : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
+			title : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false, deprecated: true},
 
 			/**
 			 * Control or text of footer section of the Table (if not set it will be hidden)
