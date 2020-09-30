@@ -1110,8 +1110,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oRouter = fnCreateRouter();
 			this.oRouter.oHashChanger = {
-				setHash: jQuery.noop,
-				destroy: jQuery.noop
+				setHash: jQuery.noop
 			};
 		},
 		afterEach: function () {
