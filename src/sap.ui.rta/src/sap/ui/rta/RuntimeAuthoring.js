@@ -62,6 +62,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment",
 	"sap/ui/rta/util/validateFlexEnabled"
 ],
 function(
@@ -123,6 +124,7 @@ function(
 	Log,
 	KeyCodes,
 	JSONModel,
+	Fragment,
 	validateFlexEnabled
 ) {
 	"use strict";
@@ -1060,11 +1062,6 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onSwitchVersion = function (oEvent) {
-		if (this.canUndo()) {
-			// TODO: give the user an option to save changes and continue
-			return;
-		}
-		// handle FLP and stand alone case to change the URL-parameter
 		var nVersion = oEvent.getParameter("version");
 		var sVersion = nVersion.toString();
 		var sUrlVersionValue = FlexUtils.getParameter(sap.ui.fl.Versions.UrlParameter);
@@ -1073,6 +1070,52 @@ function(
 			// already selected version
 			return;
 		}
+
+		if (this.canUndo()) {
+			if (!this._oVersionSwitchDialogPromise) {
+				this._oVersionSwitchDialogPromise = Fragment.load({
+					name: "sap.ui.rta.VersionSwitchDataLossDialog",
+					id: this.getId() + "_VersionSwitchDataLossDialog",
+					controller: this
+				}).then(function (oDialog) {
+					// adding a controlDependency for model propagation
+					this.getToolbar().addDependent(oDialog);
+					return oDialog;
+				}.bind(this));
+			}
+
+			this._nSwitchToVersion = nVersion;
+			return this._oVersionSwitchDialogPromise.then(function (oDialog) {
+				oDialog.open();
+			});
+		}
+
+		this._switchVersion(nVersion);
+	};
+
+	RuntimeAuthoring.prototype._saveAndSwitchVersion = function () {
+		return this._serializeToLrep(this)
+			.then(this._closeVersionSwitchDialog.bind(this))
+			.then(this._switchVersion.bind(this, this._nSwitchToVersion));
+	};
+
+	RuntimeAuthoring.prototype._discardAndSwitchVersion = function () {
+		return this._closeVersionSwitchDialog()
+			.then(function () {
+				// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
+				this.getCommandStack().removeAllCommands(true);
+			}.bind(this))
+			.then(this._switchVersion.bind(this, this._nSwitchToVersion));
+	};
+
+	RuntimeAuthoring.prototype._closeVersionSwitchDialog = function () {
+		return this._oVersionSwitchDialogPromise.then(function (oDialog) {
+			oDialog.close();
+		});
+	};
+
+	RuntimeAuthoring.prototype._switchVersion = function (nVersion) {
+		var sVersion = nVersion.toString();
 
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 
@@ -1574,14 +1617,7 @@ function(
 		if (sVersionParameter) {
 			delete mParsedHash.params[flexLibrary.Versions.UrlParameter];
 		} else if (this._isDraftAvailable() || bTriggerReload /* for discard of dirty changes */) {
-			/*
-			In case we entered RTA without a draft and created dirty changes,
-			we need to add a parameter to trigger the CrossAppNavigation on
-			Reason 1: Exit
-			Reason 2: Discard
-			*/
-			var sActiveVersionString = this._oVersionsModel.getProperty("/activeVersion").toString();
-			mParsedHash.params[flexLibrary.Versions.UrlParameter] = [sActiveVersionString];
+			FlexUtils.getUshellContainer().getService("ShellNavigation").hashChanger.treatHashChanged(window.hasher.getHash());
 		}
 		return mParsedHash;
 	};

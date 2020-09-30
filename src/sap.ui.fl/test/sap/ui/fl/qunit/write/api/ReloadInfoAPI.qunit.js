@@ -140,16 +140,10 @@ sap.ui.define([
 				selector: {}
 			};
 
-			var mParsedHash = {
-				params: {
-				}
-			};
-
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
-			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges");
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
@@ -169,11 +163,13 @@ sap.ui.define([
 				params: sap.ui.fl.Versions.UrlParameter
 			};
 
+			var oUriWithVersionUrlParameter = UriParameters.fromQuery("?" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Draft);
+			sandbox.stub(UriParameters, "fromQuery").returns(oUriWithVersionUrlParameter);
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
-			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges");
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
