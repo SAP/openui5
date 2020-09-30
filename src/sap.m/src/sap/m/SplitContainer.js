@@ -708,8 +708,10 @@ function(
 		}
 
 		var bIsMasterNav = true,
-			$targetContainer = jQuery(oEvent.target).closest(".sapMSplitContainerDetail, .sapMSplitContainerMaster"), // find the closest master or detail DOM element because SplitContainers may be nested
-			metaData = oEvent.srcControl.getMetadata();
+			$targetContainer = jQuery(oEvent.target).closest(".sapMSplitContainerDetail, .sapMSplitContainerMaster"), // find the closest master or detail DOM element because SplitContainers may be nested,
+			oEventControl = oEvent.srcControl,
+			oParentControl = oEventControl.getParent(),
+			oMetaData = oParentControl && oParentControl.isA("sap.m.Button") ? oParentControl.getMetadata() : oEventControl.getMetadata(); // button with an icon
 
 		if ($targetContainer.length > 0 && $targetContainer.hasClass("sapMSplitContainerDetail")) {
 			bIsMasterNav = false;
@@ -724,7 +726,7 @@ function(
 				&& !bIsMasterNav
 				// press isn't triggered by the showMasterButton
 				&& !containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
-				&& (!metaData.getEvent("tap") || !metaData.getEvent("press"))) {
+				&& (!oMetaData.getEvent("tap") || !oMetaData.getEvent("press"))) {
 			this.hideMaster();
 		}
 	};
