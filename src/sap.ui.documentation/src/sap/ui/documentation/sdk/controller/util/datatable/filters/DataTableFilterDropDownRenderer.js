@@ -25,12 +25,12 @@ sap.ui.define([],
             oRm.openStart("div", oControl);
             oRm.class("selectWrapper");
             oRm.openEnd();
-            oRm.openStart("span", oControl.getId() + "-filterBtn");
+            oRm.openStart("a", oControl.getId() + "-filterBtn");
             oRm.class("filterBtn");
             oRm.attr("tabindex", 0);
             oRm.openEnd();
             oRm.text('Filter');
-            oRm.close('span');
+            oRm.close('a');
             oRm.openStart("ul", oControl.getId() + "-optionsList");
             if (!oControl.getProperty("expanded")){
                 oRm.style("display", "none");
