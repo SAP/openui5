@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/Component",
+	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -29,6 +30,7 @@ function(
 	UriParameters,
 	Log,
 	Component,
+	Control,
 	DependencyHandler,
 	VariantManagementState,
 	FlexState,
@@ -50,7 +52,7 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 	sinon.stub(FlexState, "getVariantsState").returns({});
-	var controls = [];
+	var aControls = [];
 
 	function getInitialChangesMap(mPropertyBag) {
 		return merge(DependencyHandler.createEmptyDependencyMap(), mPropertyBag);
@@ -71,11 +73,15 @@ function(
 				manifest: false
 			}).then(function(oComponent) {
 				this._oComponentInstance = oComponent;
+				this.oControl = new Control("abc123");
+				aControls.push(this.oControl);
+				this.oControlWithComponentId = new Control(oComponent.createId("abc123"));
+				aControls.push(this.oControlWithComponentId);
 			}.bind(this));
 		},
 		afterEach: function() {
 			sandbox.restore();
-			controls.forEach(function(control) {
+			aControls.forEach(function(control) {
 				control.destroy();
 			});
 		}
@@ -636,6 +642,7 @@ function(
 		QUnit.test("loadChangesMapForComponent shall return a map of changes for the component", function(assert) {
 			var oAppComponent = {
 				id: "mockAppComponent"
+
 			};
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([new Change("a"), new Change("b"), new Change("c")]);
 
@@ -1170,6 +1177,226 @@ function(
 					appVariantDescriptors: aAppVariantDescriptors
 				}), "then publish called with the transport info and changes array");
 			}.bind(this));
+		});
+
+		QUnit.test("when calling removeDirtyChanges without generator, selector IDs and change types specified", function(assert) {
+			sandbox.stub(Log, "error");
+			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR);
+			assert.ok(Log.error.calledWith("The selectorId must be provided"), "then Log.error() is called with an error");
+		});
+
+		QUnit.test("when calling removeDirtyChanges with a generator and a change is in a different layer", function(assert) {
+			var sGenerator = "some generator";
+
+			var oVendorChange = new Change({
+				fileType: "change",
+				layer: Layer.VENDOR,
+				fileName: "1",
+				namespace: "b",
+				packageName: "$TMP",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				},
+				support: {
+					generator: sGenerator
+				}
+			});
+
+			var oCustomerChange = new Change({
+				fileType: "change",
+				layer: Layer.CUSTOMER,
+				fileName: "2",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				},
+				support: {
+					generator: sGenerator
+				}
+			});
+			this.oChangePersistence._aDirtyChanges = [oVendorChange, oCustomerChange];
+
+			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR, this._oComponentInstance, this.oControl, sGenerator);
+			assert.equal(this.oChangePersistence._aDirtyChanges.length, 1, "only one change is present");
+			assert.equal(this.oChangePersistence._aDirtyChanges[0], oCustomerChange, "which is the change with a different Layer");
+		});
+
+		QUnit.test("when calling removeDirtyChanges with a generator and a change is in a different layer and localIDs", function(assert) {
+			var sGenerator = "some generator";
+
+			var oVendorChange1 = new Change({
+				fileType: "change",
+				layer: Layer.VENDOR,
+				fileName: "1",
+				namespace: "b",
+				packageName: "$TMP",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123",
+					idIsLocal: true
+				},
+				content: {
+					something: "createNewVariant"
+				},
+				support: {
+					generator: sGenerator
+				}
+			});
+
+			var oVendorChange2 = new Change({
+				fileType: "change",
+				layer: Layer.VENDOR,
+				fileName: "2",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				},
+				support: {
+					generator: sGenerator
+				}
+			});
+			this.oChangePersistence._aDirtyChanges = [oVendorChange1, oVendorChange2];
+			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR, this._oComponentInstance, this.oControlWithComponentId, sGenerator);
+			assert.equal(this.oChangePersistence._aDirtyChanges.length, 1, "only one change is present");
+			assert.equal(this.oChangePersistence._aDirtyChanges[0], oVendorChange2, "which is the change with a different id (non-local)");
+		});
+
+		QUnit.test("when calling removeDirtyChanges with a generator", function(assert) {
+			var sGenerator = "some generator";
+
+			var oVENDORChange1 = new Change({
+				fileType: "change",
+				layer: Layer.VENDOR,
+				fileName: "1",
+				namespace: "b",
+				packageName: "$TMP",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				},
+				support: {}
+			});
+
+			var oVENDORChange2 = new Change({
+				fileType: "change",
+				layer: Layer.VENDOR,
+				fileName: "2",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				},
+				support: {
+					generator: sGenerator
+				}
+			});
+			this.oChangePersistence._aDirtyChanges = [oVENDORChange1, oVENDORChange2];
+
+			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR, this._oComponentInstance, this.oControl, sGenerator);
+			assert.equal(this.oChangePersistence._aDirtyChanges.length, 1, "only one change is present");
+			assert.equal(this.oChangePersistence._aDirtyChanges[0], oVENDORChange1, "which is the change with a different generator");
+		});
+
+		QUnit.test("when calling removeDirtyChanges with a controlId", function(assert) {
+			var sGenerator = "some generator";
+
+			var oVENDORChange1 = new Change({
+				fileType: "change",
+				layer: Layer.VENDOR,
+				fileName: "1",
+				namespace: "b",
+				packageName: "$TMP",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: this.oControl.getId()
+				},
+				content: {
+					something: "createNewVariant"
+				},
+				support: {}
+			});
+
+			var oVENDORChange2 = new Change({
+				fileType: "change",
+				layer: Layer.VENDOR,
+				fileName: "2",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "def456"
+				},
+				content: {
+					something: "createNewVariant"
+				},
+				support: {
+					generator: sGenerator
+				}
+			});
+
+			var sSelectorOfVendorChange3 = "ghi789";
+			var oVENDORChange3 = new Change({
+				fileType: "change",
+				layer: Layer.VENDOR,
+				fileName: "2",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: sSelectorOfVendorChange3
+				},
+				content: {
+					something: "createNewVariant"
+				},
+				support: {
+					generator: sGenerator
+				}
+			});
+			this.oChangePersistence._aDirtyChanges = [oVENDORChange1, oVENDORChange2, oVENDORChange3];
+
+			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR, this.oControl, this.oControl);
+			assert.equal(this.oChangePersistence._aDirtyChanges.length, 2, "only two changes are present");
+			assert.equal(this.oChangePersistence._aDirtyChanges[0], oVENDORChange2, "which is the second change");
+			assert.equal(this.oChangePersistence._aDirtyChanges[1], oVENDORChange3, "which is the third change");
 		});
 
 		QUnit.test("when calling resetChanges without generator, selector IDs and change types specified", function(assert) {
