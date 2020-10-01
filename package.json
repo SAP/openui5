@@ -4,7 +4,8 @@
   "description": "OpenUI5 Core & Runtime",
   "private": true,
   "scripts": {
-    "start": "node lib/server/testsuiteServer.js",
+    "start": "run-p start-ui5-tooling check-install-up-to-date",
+    "start-ui5-tooling": "node lib/server/testsuiteServer.js",
     "start-grunt": "grunt serve",
     "testsuite": "cross-env OPENUI5_SRV_OPEN=/test-resources/testsuite/testframe.html node lib/server/testsuiteServer.js",
     "sdk": "npm run build-sdk && npm run serve-sdk",
@@ -39,7 +40,8 @@
     "karma:sap.ui.unified": "npm run karma -- --lib=sap.ui.unified",
     "karma:sap.ui.ux3": "npm run karma -- --lib=sap.ui.ux3",
     "karma:sap.uxap": "npm run karma -- --lib=sap.uxap",
-    "generate-cldr": "grunt cldr-download cldr-generate"
+    "generate-cldr": "grunt cldr-download cldr-generate",
+    "check-install-up-to-date": "node lib/npm/check-install-up-to-date.js"
   },
   "keywords": [
     "openui5",
@@ -62,6 +64,7 @@
     "@ui5/project": "^2.2.1",
     "@ui5/server": "^2.2.4",
     "async": "^0.9.0",
+    "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.2",
     "coffee-script": "^1.9.1",
     "cross-env": "^5.2.0",
