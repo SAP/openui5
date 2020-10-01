@@ -7,13 +7,37 @@
 	font-size: @sapMFontMediumSize;
 	color: @sapUiNeutralText;
 	display: inline-block;
+	.sapMObjStatusIcon {
+		width: 1rem;
+		text-align: center;
+		line-height: 0.875rem;
+		display: inline-block;
+		height: 1rem;
+		vertical-align: middle;
+	}
+	.sapMObjStatusTitle,
+	.sapMObjStatusText {
+		line-height: 1rem;
+		display: inline-block;
+		height: 1rem;
+		vertical-align: middle;
+	}
+
 }
 
 .sapMObjectStatusLarge {
 	.sapMObjStatusTitle,
 	.sapMObjStatusText,
 	.sapMObjStatusIcon {
-		font-size: 1.125rem;
+		font-size: 1.5rem;
+		font-family: @sapUiFontLightFamily;
+		height: 2rem;
+		line-height: 2rem;
+		display: inline-block;
+		vertical-align: middle;
+	}
+	.sapMObjStatusIcon {
+		width: 2rem;
 	}
 	.sapMObjStatusIcon > .sapUiIcon {
 		vertical-align: baseline;
@@ -113,24 +137,35 @@
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontSmallSize;
 	font-weight: bold;
-	color: @sapUiContentContrastTextColor;
 }
 
 .sapMListTbl .sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon),
 .sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon {
-	height: 1rem;
-	vertical-align: middle;
 	font-size: @sapMFontSmallSize;
+}
+
+.sapMObjStatusInverted {
+	&.sapMObjectStatusLarge .sapMObjStatusText,
+	&.sapMObjectStatusLarge .sapMObjStatusIcon {
+		font-family: @sapUiFontLightFamily;
+		font-size: 1.25rem;
+		font-weight: normal;
+		color: @sapUiContentContrastTextColor;
+		& > .sapUiIcon {
+			font-size: 1.25rem;
+			line-height: 2rem;
+		}
+	}
 }
 
 .sapMObjStatusInverted .sapMObjStatusText,
 .sapMObjStatusInverted .sapMObjStatusIcon .sapMObjStatusIconOnly {
-	padding: 0.0625rem 0.25rem;
+	padding: 0 0.25rem;
 	border-radius: 0.25rem;
 }
 
 .sapMObjStatusInverted .sapMObjStatusIcon {
-	padding: 0.0625rem 0.25rem;
+	padding: 0 0 0 0.25rem;
 }
 
 .sapMObjStatusInverted .sapMObjStatusIcon + .sapMObjStatusText {
@@ -215,8 +250,13 @@
 	line-height: inherit;
 }
 
+.sapMObjectStatusLarge .sapMObjStatusIcon > .sapUiIcon {
+	font-size: 1.5rem;
+	line-height: 2rem;
+}
+
 .sapMObjStatusIcon {
-	padding-right: .5rem;
+	padding-right: .25rem;
 }
 
 .sapMObjStatus > .sapMObjStatusTitle {
@@ -336,7 +376,7 @@ html.sap-desktop .sapMObjStatusActive:focus {
 
 .sapMObjStatusInverted .sapMObjStatusIcon.sapMObjStatusIconOnly,
 .sapMObjStatusInverted .sapMObjStatusLink .sapMObjStatusIcon.sapMObjStatusIconOnly {
-	padding: 0.0625rem 0.25rem;
+	padding: 0 0.25rem;
 	border-radius: 0.25rem 0.25rem;
 }
 
