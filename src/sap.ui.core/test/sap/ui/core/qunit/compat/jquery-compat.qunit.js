@@ -329,4 +329,54 @@ sap.ui.define(["sap/ui/qunit/utils/createAndAppendDiv", "sap/ui/Device"], functi
 			"Please add the <tbody> on your own, if your code or CSS expects it."
 		);
 	});
+
+	QUnit.test("jQuery fluent interfaces", function(assert) {
+		// existing element width/height
+		var w = jQuery("<div></div>").width("100px").width();
+		assert.strictEqual(w, 100, "No error occured. jQuery width() function can correctly be chained.");
+		var h = jQuery("<div></div>").height("200px").height();
+		assert.strictEqual(h, 200, "No error occured. jQuery height() function can correctly be chained.");
+
+		// existing element outerWidth/outerHeight
+		var ow = jQuery("<div></div>").outerWidth("100px").outerWidth();
+		assert.strictEqual(ow, 100, "No error occured. jQuery outerWidth() function can correctly be chained.");
+		var oh = jQuery("<div></div>").outerHeight("200px").outerHeight();
+		assert.strictEqual(oh, 200, "No error occured. jQuery outerHeight() function can correctly be chained.");
+
+		// existing element outerWidth/outerHeight (getter argument: 'true')
+		var owTrue = jQuery("<div></div>").outerWidth("100px").outerWidth(true);
+		assert.strictEqual(owTrue, 100, "No error occured. jQuery outerWidth() function can correctly be chained.");
+		var ohTrue = jQuery("<div></div>").outerHeight("200px").outerHeight(true);
+		assert.strictEqual(ohTrue, 200, "No error occured. jQuery outerHeight() function can correctly be chained.");
+
+		// existing element innerWidth/innerHeight
+		var iw = jQuery("<div></div>").innerWidth("100px").innerWidth();
+		assert.strictEqual(iw, 100, "No error occured. jQuery innerWidth() function can correctly be chained.");
+		var ih = jQuery("<div></div>").innerHeight("200px").innerHeight();
+		assert.strictEqual(ih, 200, "No error occured. jQuery innerHeight() function can correctly be chained.");
+
+		// missing element width/height
+		var mw = jQuery("#missing").width("100px").width();
+		assert.strictEqual(mw, null, "Missing Element: No error occured. jQuery width() function can correctly be chained and returns null for empty jQuery element sets.");
+		var mh = jQuery("#missing").height("200px").height();
+		assert.strictEqual(mh, null, "Missing Element: No error occured. jQuery height() function can correctly be chained and returns null for empty jQuery element sets.");
+
+		// missing element outerWidth/outerHeight
+		var mow = jQuery("#missing").outerWidth("100px").outerWidth();
+		assert.strictEqual(mow, null, "Missing Element: No error occured. jQuery outerWidth() function can correctly be chained and returns null for empty jQuery element sets.");
+		var moh = jQuery("#missing").outerHeight("200px").outerHeight();
+		assert.strictEqual(moh, null, "Missing Element: No error occured. jQuery outerHeight() function can correctly be chained and returns null for empty jQuery element sets.");
+
+		// missing element outerWidth/outerHeight (getter argument: 'true')
+		var mowTrue = jQuery("#missing").outerWidth("100px").outerWidth(true);
+		assert.strictEqual(mowTrue, null, "Missing Element: No error occured. jQuery outerWidth() function can correctly be chained and returns null for empty jQuery element sets.");
+		var mohTrue = jQuery("#missing").outerHeight("200px").outerHeight(true);
+		assert.strictEqual(mohTrue, null, "Missing Element: No error occured. jQuery outerHeight() function can correctly be chained and returns null for empty jQuery element sets.");
+
+		// missing element innerWidth/innerHeight
+		var miw = jQuery("#missing").innerWidth("100px").innerWidth();
+		assert.strictEqual(miw, null, "Missing Element: No error occured. jQuery innerWidth() function can correctly be chained and returns null for empty jQuery element sets.");
+		var mih = jQuery("#missing").innerHeight("200px").innerHeight();
+		assert.strictEqual(mih, null, "Missing Element: No error occured. jQuery innerHeight() function can correctly be chained and returns null for empty jQuery element sets.");
+	});
 });
