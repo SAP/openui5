@@ -341,7 +341,7 @@ sap.ui.define([
 				iShouldSeeRulesTreeTable: function () {
 					return this.waitFor({
 						id: sTreeTableId,
-						matchers: new AggregationFilled({ name: "columns" }),
+						matchers: new AggregationFilled({ name: "rows" }),
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
 						success: function () {
