@@ -2608,6 +2608,25 @@ sap.ui.define([
 			assert.notOk(document.getElementById(oControl1.getId()).getAttribute("aria-labelledby"), "aria-lablledBy is not added to the control" );
 		});
 
+		QUnit.test("CustomListItem - custom accessibility annoucement", function(assert) {
+			var oCLI = new CustomListItem({
+				content: new Text({
+					text: "Hello world"
+				})
+			});
+
+			oList.addItem(oCLI);
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			assert.notOk(oCLI.getAccDescription(), "accDescription is not defined by default");
+			assert.strictEqual(oCLI.getContentAnnouncement(), "Hello world", "Default accessibility annoucement returned");
+
+			oCLI.setAccDescription("Foo Bar");
+			assert.strictEqual(oCLI.getAccDescription(), "Foo Bar", "accDescription property updated");
+			assert.strictEqual(oCLI.getContentAnnouncement(), "Foo Bar", "custom accessilbility announcement returned");
+		});
+
 		QUnit.module("Context Menu", {
 			beforeEach: function() {
 				oList = new List();
