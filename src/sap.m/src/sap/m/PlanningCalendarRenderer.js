@@ -2,10 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/ui/core/InvisibleText",
 		'sap/ui/unified/library'
 	],
-	function(InvisibleText, library) {
+	function(library) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.CalendarAppointmentRoundWidth
@@ -35,7 +34,7 @@ sap.ui.define([
 		oRm.class("sapMPlanCal");
 		oRm.accessibilityState({
 			role: "region",
-			labelledby: InvisibleText.getStaticId("sap.m", "PLANNINGCALENDAR")
+			roledescription: oPC._oRB.getText("PLANNINGCALENDAR")
 		});
 		this.addAdditionalClasses(oRm, oPC);
 		if (oPC._iSize !== undefined && oPC._iSize !== null) {
