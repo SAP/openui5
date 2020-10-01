@@ -53,12 +53,12 @@
                 <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
                     <m:Title text="Order Details" class="sapUiTinyMarginBottom"/>
 
-                    <m:HBox class="sapUiTinyMarginBottom">
+                    <m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
                         <m:Label text="Manufacturer:" class="sapUiTinyMarginEnd"/>
                         <m:Text text=" Robotech"/>
                     </m:HBox>
 
-                    <m:HBox class="sapUiTinyMarginBottom" >
+                    <m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
                         <m:Label text="Factory:" class="sapUiTinyMarginEnd"/>
                         <m:Text text=" Florida, OL"/>
                     </m:HBox>
@@ -94,7 +94,7 @@
                         <m:Link text="Julie Armstrong"/>
                     </m:HBox>
 
-                    <m:HBox class="sapUiTinyMarginBottom">
+                    <m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
                         <m:Label text="Created On:" class="sapUiSmallMarginEnd"/>
                         <m:Text text=" February 20, 2020"/>
                     </m:HBox>
@@ -104,7 +104,7 @@
                         <m:Link text="John Miller"/>
                     </m:HBox>
 
-                    <m:HBox>
+                    <m:HBox renderType="Bare">
                         <m:Label text="Changed By:" class="sapUiSmallMarginEnd"/>
                         <m:Text text=" February 20, 2020"/>
                     </m:HBox>
