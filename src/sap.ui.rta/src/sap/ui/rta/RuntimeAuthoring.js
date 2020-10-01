@@ -301,14 +301,14 @@ function(
 
 	RuntimeAuthoring.prototype._shouldValidateFlexEnabled = function () {
 		var sHostname = document.location.hostname;
-		var bShouldEnable = sHostname.endsWith(".sap" + ".corp") || sHostname === "localhost";
+		var bShouldValidateFlexEnabled = sHostname.endsWith(".sap" + ".corp") || sHostname === "localhost";
 
-		if (bShouldEnable) {
+		if (bShouldValidateFlexEnabled) {
 			var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-rta-skip-flex-validation");
-			bShouldEnable = sUriParam !== "true";
+			bShouldValidateFlexEnabled = sUriParam !== "true";
 		}
 
-		return bShouldEnable;
+		return bShouldValidateFlexEnabled;
 	};
 
 	/**
