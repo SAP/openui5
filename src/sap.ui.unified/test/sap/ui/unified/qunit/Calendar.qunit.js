@@ -2500,7 +2500,13 @@ sap.ui.define([
 		assert.equal(jQuery("#Cal_1--Head-B1").text(), sSelectedMonth, "One month calendar, " + sSelectedMonth + " selected, '" + sSelectedMonth + "' shown as label");
 
 		// setup #2 (This case will fail without the Gerrit change #4435753)
-		iSelectedMonth = new Date().getMonth() - 1;
+		iSelectedMonth = new Date().getMonth();
+		if (iSelectedMonth === 0){
+			iSelectedMonth += 1;
+		} else {
+			iSelectedMonth -= 1;
+		}
+
 		oStartDate = new Date();
 		oStartDate.setMonth(iSelectedMonth);
 		oCal1.addAggregation("selectedDates", new DateRange({ startDate: oStartDate }));
