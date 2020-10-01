@@ -188,7 +188,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		};
 
 		SliderRenderer.renderTickmarks = function (oRm, oSlider) {
-			var i, iTickmarksToRender, fTickmarksDistance, iLabelsCount, fStep, fSliderSize, fSliderStep, bTickHasLabel,
+			var i, iTickmarksToRender, fTickmarksDistance, iLabelsCount, fStep, fSliderSize, fSliderStep,
 				oScale = oSlider._getUsedScale();
 
 			if (!oSlider.getEnableTickmarks() || !oScale) {
@@ -216,15 +216,13 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 				.close("li");
 
 			for (i = 1; i < iTickmarksToRender - 1; i++) {
-				bTickHasLabel = false;
 				if (iLabelsCount && (i % iLabelsCount === 0)) {
-					bTickHasLabel = true;
 					fStep = i * fTickmarksDistance;
 					this.renderTickmarksLabel(oRm, oSlider, oSlider._getValueOfPercent(fStep));
 				}
 
 				oRm.openStart("li").class(SliderRenderer.CSS_CLASS + "Tick")
-					.style("width", fTickmarksDistance + "%" + (bTickHasLabel ? " opacity: 0;" : ""))
+					.style("width", fTickmarksDistance + "%;")
 					.openEnd()
 					.close("li");
 			}
