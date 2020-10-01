@@ -10,7 +10,6 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/InvisibleText',
-	'sap/ui/base/ManagedObject',
 	'sap/ui/Device',
 	'./ActionSheetRenderer',
 	'./Button',
@@ -23,7 +22,6 @@ sap.ui.define([
 		Control,
 		ItemNavigation,
 		InvisibleText,
-		ManagedObject,
 		Device,
 		ActionSheetRenderer,
 		Button,
@@ -619,7 +617,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ActionSheet.prototype._applyContextualSettings = function () {
-		ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+		Control.prototype._applyContextualSettings.call(this);
 	};
 
 	/**
