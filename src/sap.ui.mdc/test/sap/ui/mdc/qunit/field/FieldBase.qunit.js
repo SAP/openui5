@@ -3909,8 +3909,97 @@ sap.ui.define([
 					assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
 					assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
 
+					oIcon.destroy();
 					fnDone();
 				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("Enter currency with async parsing", function(assert) {
+
+		var oIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var fnDone = assert.async();
+		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
+
+		var aContent = oField.getAggregation("_content");
+		var oContent2 = aContent && aContent.length > 1 && aContent[1];
+
+		oContent2.focus(); // as FieldHelp is connected with focus
+
+		// simulate select event to see if field is updated
+		var fnResolve;
+		var oFHPromise = new Promise(function(fResolve, fReject) {
+			fnResolve = fResolve;
+		});
+		sinon.stub(oFieldHelp, "getItemForValue");
+		oFieldHelp.getItemForValue.withArgs("X").returns(oFHPromise);
+
+		oContent2._$input.val("X");
+
+		setTimeout(function() { // for fieldGroup delay
+			oIcon.focus();
+			setTimeout(function() { // for fieldGroup delay
+				assert.equal(iCount, 1, "Change Event fired");
+				assert.ok(oPromise, "Promise returned");
+				fnResolve({key: "EUR", description: "Euro", inParameters: {inTest: "X"}, outParameters: {outTest: "Y"}});
+
+				oPromise.then(function(vResult) {
+					assert.ok(vResult, "Promise resolved");
+					var aConditions = oCM.getConditions("Price");
+					assert.equal(aConditions.length, 1, "one condition in Codition model");
+					assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
+					assert.equal(aConditions[0].values[0][1], "EUR", "condition value1");
+					assert.equal(aConditions[0].operator, "EQ", "condition operator");
+					assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
+					assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
+					assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
+					assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+					setTimeout(function() { // update of Input
+						assert.equal(oContent2.getDOMValue(), "EUR", "value in inner control");
+
+						oContent2.focus(); // as FieldHelp is connected with focus
+						oIcon.destroy();
+						iCount = 0; oPromise = undefined;
+
+						oFHPromise = new Promise(function(fResolve, fReject) {
+							fnResolve = fResolve;
+						});
+						oFieldHelp.getItemForValue.withArgs("USD").returns(oFHPromise);
+						oContent2._$input.val("USD");
+						qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+						assert.equal(iCount, 1, "Change Event fired");
+						assert.ok(oPromise, "Promise returned");
+						fnResolve({key: "USD", description: "$", inParameters: {inTest: "X"}, outParameters: {outTest: "Y"}});
+
+						oPromise.then(function(vResult) {
+							assert.ok(vResult, "Promise resolved");
+							aConditions = oCM.getConditions("Price");
+							assert.equal(aConditions.length, 1, "one condition in Codition model");
+							assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
+							assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
+							assert.equal(aConditions[0].operator, "EQ", "condition operator");
+							assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
+							assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
+							assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
+							setTimeout(function() { // update of Input
+								assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+
+								fnDone();
+							}, 0);
+						}).catch(function(oException) {
+							assert.notOk(true, "Promise must not be rejected");
+							fnDone();
+						});
+					}, 0);
+				}).catch(function(oException) {
+					assert.notOk(true, "Promise must not be rejected");
+					oIcon.destroy();
+					fnDone();
+				});
 			}, 0);
 		}, 0);
 
