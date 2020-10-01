@@ -1101,6 +1101,37 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("empty digsequence-string not nullable", function(assert) {
+
+		oField.setDataTypeConstraints({maxLength: 3, isDigitSequence: true, nullable: false});
+		oField.setValue("000");
+		oField.setAdditionalValue("Empty");
+		var aConditions = oField.getConditions();
+		assert.equal(aConditions.length, 1, "One condition");
+		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].values[0], "000", "condition value");
+		assert.equal(aConditions[0].values[1], "Empty", "condition description");
+
+		oField.setValue("000");
+		oField.setAdditionalValue(null);
+		aConditions = oField.getConditions();
+		assert.equal(aConditions.length, 0, "no condition");
+
+		oField.setValue(null);
+		oField.setAdditionalValue(null);
+		aConditions = oField.getConditions();
+		assert.equal(aConditions.length, 0, "no condition");
+
+		oField.setValue(null);
+		oField.setAdditionalValue("Null");
+		aConditions = oField.getConditions();
+		assert.equal(aConditions.length, 1, "One condition"); // as value could be set later from binding
+		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].values[0], null, "condition value");
+		assert.equal(aConditions[0].values[1], "Null", "condition description");
+
+	});
+
 	var oCurrencyCodeList = {
 		"EUR" : {Text : "Euro", UnitSpecificScale : 2},
 		"USD" : {Text : "US-Dollar", UnitSpecificScale : 2}

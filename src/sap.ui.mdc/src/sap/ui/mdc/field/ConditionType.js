@@ -522,9 +522,9 @@ sap.ui.define([
 			if (FilterOperatorUtil.onlyEQ(aOperators)) {
 				// TODO: also for FilterField case?
 				try {
-					if (oType._sParsedEmptyString === "") { //TODO: find solution for all types
-						// empty string is parsed as empty string, so validate for this
-						oType.validateValue("");
+					if (oType.hasOwnProperty("_sParsedEmptyString") && oType._sParsedEmptyString !== null) { //TODO: find solution for all types
+						// empty string is parsed as empty string or "0", so validate for this
+						oType.validateValue(oType._sParsedEmptyString);
 					} else {
 						oType.validateValue(null);
 					}

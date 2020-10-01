@@ -1857,4 +1857,21 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Validating: null digsequence-string", function(assert) {
+
+		var oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
+		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
+
+		var oException;
+
+		try {
+			oConditionType.validateValue(null);
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.notOk(oException, "no exception fired");
+
+	});
+
 });

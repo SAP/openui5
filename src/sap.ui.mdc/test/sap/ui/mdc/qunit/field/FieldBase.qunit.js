@@ -3590,6 +3590,9 @@ sap.ui.define([
 		oFieldHelp.getItemForValue.withArgs("Item9").returns(
 				Promise.reject(new ParseException("InvalidValue"))
 		);
+		oFieldHelp.getItemForValue.withArgs("").returns( // "" is parsed to empty condition if not found on FieldHelp -> null don't meet Type constraints
+				Promise.reject(new ParseException("NoEmptyItem"))
+		);
 		sinon.stub(oFieldHelp, "isOpen").returns(true); // to simulate open suggestion
 
 		var fnDone = assert.async();
@@ -3673,7 +3676,37 @@ sap.ui.define([
 											assert.equal(aConditions.length, 1, "Condition set on FieldHelp");
 											assert.equal(aConditions[0] && aConditions[0].values[0], "Unknown", "condition value");
 											assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
-											fnDone();
+
+											// empty key is invalid value
+											iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
+											oFieldHelp.onFieldChange.resetHistory();
+											oContent._$input.val("");
+											qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+											assert.equal(iCount, 1, "change event fired once");
+											assert.equal(sId, "F1", "change event fired on Field");
+											assert.ok(oPromise, "Promise returned");
+											oPromise.then(function(vResult) {
+												assert.notOk(true, "Promise must not be resolved");
+												fnDone();
+											}).catch(function(oException) {
+												assert.ok(true, "Promise must be rejected");
+												assert.equal(oException.message, "Enter a valid value");
+												assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
+												setTimeout(function() { // for model update
+													setTimeout(function() { // for ManagedObjectModel update
+														assert.equal(oContent.getValueState(), "Error", "ValueState set");
+														assert.equal(oContent.getValueStateText(), "Enter a valid value", "ValueStateText");
+														aConditions = oCM.getConditions("Name");
+														assert.equal(aConditions.length, 1, "one condition in Codition model");
+														assert.equal(aConditions[0] && aConditions[0].values[0], "Unknown", "condition value");
+														aConditions = oFieldHelp.getConditions();
+														assert.equal(aConditions.length, 1, "Condition set on FieldHelp");
+														assert.equal(aConditions[0] && aConditions[0].values[0], "Unknown", "condition value");
+														assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
+														fnDone();
+													}, 0);
+												}, 0);
+											});
 										}, 0);
 									}, 0);
 								});
