@@ -3,8 +3,9 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/rowmodes/RowMode",
-	"sap/ui/table/Table"
-], function(TableQUnitUtils, RowMode, Table) {
+	"sap/ui/table/Table",
+	"sap/ui/table/utils/TableUtils"
+], function(TableQUnitUtils, RowMode, Table, TableUtils) {
 	"use strict";
 
 	var RowModeSubclass = RowMode.extend("sap.ui.table.test.RowModeSubClass", {
@@ -13,8 +14,8 @@ sap.ui.define([
 		},
 		getComputedRowCounts: function() {
 			return {
-				count: 0,
-				scrollable: 0,
+				count: 1,
+				scrollable: 1,
 				fixedTop: 0,
 				fixedBottom: 0
 			};
@@ -27,6 +28,17 @@ sap.ui.define([
 		},
 		getTableBottomPlaceholderStyles: function() {
 			return {};
+		},
+		attachEvents: function() {
+			this.delegate = {
+				onBeforeRendering: function() {
+					this.updateTable();
+				}
+			};
+			TableUtils.addDelegate(this.getTable(), this.delegate, this);
+		},
+		detachEvents: function() {
+			TableUtils.removeDelegate(this.getTable(), this.delegate);
 		}
 	});
 
@@ -93,5 +105,106 @@ sap.ui.define([
 		sinon.stub(this.oTable, "_getTotalRowCount").returns(11);
 		this.oTable.setRowMode(this.oRowMode);
 		assert.strictEqual(this.oRowMode.getTotalRowCountOfTable(), 11, "Returns the total row count of the table");
+	});
+
+	QUnit.module("NoData", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
+				columns: [
+					TableQUnitUtils.createTextColumn()
+				]
+			}, function(oTable) {
+				oTable.setRowMode(new RowModeSubclass());
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("After rendering, when NoData would be shown but is disabled", function(assert) {
+		this.oTable.destroy();
+		this.oTable = TableQUnitUtils.createTable({
+			rows: "{/}",
+			models: TableQUnitUtils.createJSONModelWithEmptyRows(0),
+			columns: [
+				TableQUnitUtils.createTextColumn()
+			]
+		}, function(oTable) {
+			oTable.setRowMode(new RowModeSubclass());
+			oTable.getRowMode().disableNoData();
+		});
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
+	});
+
+	QUnit.test("Enable NoData when it is disabled in the table", function(assert) {
+		this.oTable.setShowNoData(false);
+		this.oTable.unbindRows();
+		sap.ui.getCore().applyChanges();
+
+		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		this.oTable.getRowMode().enableNoData();
+		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
+	});
+
+	QUnit.test("Disable/Enable with data", function(assert) {
+		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+
+		this.oTable.getRowMode().disableNoData();
+		assert.ok(oInvalidateSpy.notCalled, "Disable: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable");
+
+		oInvalidateSpy.reset();
+		this.oTable.getRowMode().enableNoData();
+		assert.ok(oInvalidateSpy.notCalled, "Enable: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Enable");
+	});
+
+	QUnit.test("Disable/Enable without data", function(assert) {
+		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+
+		this.oTable.unbindRows();
+
+		oInvalidateSpy.reset();
+		this.oTable.getRowMode().disableNoData();
+		assert.equal(oInvalidateSpy.callCount, 1, "Disable without rows: Table invalidated");
+		sap.ui.getCore().applyChanges();
+
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable without rows");
+
+		oInvalidateSpy.reset();
+		this.oTable.getRowMode().disableNoData();
+		assert.ok(oInvalidateSpy.notCalled, "Disable again: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable again");
+
+		oInvalidateSpy.reset();
+		this.oTable.getRowMode().enableNoData();
+		assert.ok(oInvalidateSpy.notCalled, "Enable: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Enable");
+
+		oInvalidateSpy.reset();
+		this.oTable.getRowMode().enableNoData();
+		assert.ok(oInvalidateSpy.notCalled, "Enable again: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Enable again");
+
+		oInvalidateSpy.reset();
+		this.oTable.getRowMode().disableNoData();
+		assert.ok(oInvalidateSpy.notCalled, "Disable with rows: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable with rows");
+	});
+
+	QUnit.test("No columns", function(assert) {
+		this.oTable.removeAllColumns();
+		this.oTable.setShowNoData(false);
+		sap.ui.getCore().applyChanges();
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
+
+		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		this.oTable.getRowMode().disableNoData();
+		assert.ok(oInvalidateSpy.notCalled, "Disable: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Disable");
 	});
 });

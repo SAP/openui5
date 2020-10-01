@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -39,6 +39,11 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable.destroy();
 		}
+	});
+
+	QUnit.test("Instance", function(assert) {
+		assert.ok(TableUtils.isA(this.oMode, "sap.ui.table.rowmodes.AutoRowMode"),
+			"The table creates an instance of sap.ui.table.rowmodes.AutoRowMode");
 	});
 
 	QUnit.test("Property getters", function(assert) {
@@ -83,25 +88,32 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("Rendering");
+	QUnit.module("Row heights", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				columns: [
+					new Column({template: new HeightTestControl({height: "1px"})}),
+					new Column({template: new HeightTestControl({height: "1px"})})
+				],
+				fixedColumnCount: 1,
+				rowActionCount: 1,
+				rowActionTemplate: new RowAction(),
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
+			}, function(oTable) {
+				oTable.setRowMode(new AutoRowMode());
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
 
-	QUnit.test("Row Height", function(assert) {
+	QUnit.test("Content row height", function(assert) {
+		var oTable = this.oTable;
 		var oBody = document.body;
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
-		var oTable = TableQUnitUtils.createTable({
-			columns: [
-				new Column({template: new HeightTestControl({height: "1px"})}),
-				new Column({template: new HeightTestControl({height: "1px"})})
-			],
-			fixedColumnCount: 1,
-			rowActionCount: 1,
-			rowActionTemplate: new RowAction(),
-			rows: {path: "/"},
-			models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-		}, function(oTable) {
-			oTable.setRowMode(new AutoRowMode());
-		});
-		var sequence = oTable.qunit.whenRenderingFinished();
+		var pSequence = Promise.resolve();
 
 		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
 		if (Device.browser.msie || Device.browser.edge) {
@@ -109,7 +121,7 @@ sap.ui.define([
 		}
 
 		function test(mTestSettings) {
-			sequence = sequence.then(function() {
+			pSequence = pSequence.then(function() {
 				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
 				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
 				oBody.classList.remove("sapUiSizeCozy");
@@ -189,7 +201,7 @@ sap.ui.define([
 			});
 		});
 
-		return sequence.then(function() {
+		return pSequence.then(function() {
 			oTable.destroy();
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
@@ -201,23 +213,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Column Header Height", function(assert) {
+	QUnit.test("Header row height", function(assert) {
+		var oTable = this.oTable;
 		var oBody = document.body;
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
-		var oTable = TableQUnitUtils.createTable({
-			columns: [
-				new Column({template: new HeightTestControl({height: "1px"})}),
-				new Column({template: new HeightTestControl({height: "1px"})})
-			],
-			fixedColumnCount: 1,
-			rowActionCount: 1,
-			rowActionTemplate: new RowAction(),
-			rows: {path: "/"},
-			models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-		}, function(oTable) {
-			oTable.setRowMode(new AutoRowMode());
-		});
-		var sequence = oTable.qunit.whenRenderingFinished();
+		var pSequence = Promise.resolve();
 		var iPadding = 14;
 
 		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
@@ -226,7 +226,7 @@ sap.ui.define([
 		}
 
 		function test(mTestSettings) {
-			sequence = sequence.then(function() {
+			pSequence = pSequence.then(function() {
 				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
 				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
 				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
@@ -285,7 +285,7 @@ sap.ui.define([
 			});
 		});
 
-		return sequence.then(function() {
+		return pSequence.then(function() {
 			oTable.destroy();
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
@@ -375,5 +375,51 @@ sap.ui.define([
 		}).then(function() {
 			assert.equal(that.oTable.getRows().length, 13, "Row count after showing the creation row");
 		});
+	});
+
+	QUnit.module("Hide empty rows");
+
+	QUnit.test("Initialize with hideEmptyRows=false", function(assert) {
+		var oDisableNoData = sinon.spy(AutoRowMode.prototype, "disableNoData");
+		var oEnableNoData = sinon.spy(AutoRowMode.prototype, "enableNoData");
+		var oRowMode = new AutoRowMode();
+
+		assert.ok(oDisableNoData.notCalled, "#disableNoData was not called");
+		assert.ok(oEnableNoData.notCalled, "#enableNoData was not called");
+
+		oDisableNoData.restore();
+		oEnableNoData.restore();
+		oRowMode.destroy();
+	});
+
+	QUnit.test("Initialize with hideEmptyRows=true", function(assert) {
+		var oDisableNoData = sinon.spy(AutoRowMode.prototype, "disableNoData");
+		var oEnableNoData = sinon.spy(AutoRowMode.prototype, "enableNoData");
+		var oRowMode = new AutoRowMode({
+			hideEmptyRows: true
+		});
+
+		assert.equal(oDisableNoData.callCount, 1, "#disableNoData was called once");
+		assert.ok(oEnableNoData.notCalled, "#enableNoData was not called");
+
+		oDisableNoData.restore();
+		oEnableNoData.restore();
+		oRowMode.destroy();
+	});
+
+	QUnit.test("Change 'hideEmptyRows' property", function(assert) {
+		var oRowMode = new AutoRowMode();
+		var oDisableNoData = sinon.spy(oRowMode, "disableNoData");
+		var oEnableNoData = sinon.spy(oRowMode, "enableNoData");
+
+		oRowMode.setHideEmptyRows(false);
+		assert.ok(oDisableNoData.notCalled, "Change from true to false: #disableNoData was not called");
+		assert.equal(oEnableNoData.callCount, 1, "Change from true to false: #enableNoData was called once");
+
+		oDisableNoData.reset();
+		oEnableNoData.reset();
+		oRowMode.setHideEmptyRows(true);
+		assert.equal(oDisableNoData.callCount, 1, "Change from false to true: #disableNoData was called once");
+		assert.ok(oEnableNoData.notCalled, "Change from false to true: #enableNoData was not called");
 	});
 });

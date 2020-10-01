@@ -76,6 +76,13 @@ sap.ui.define([
 		 */
 		this._bListeningForFirstRowsUpdatedAfterRendering = false;
 
+		/*
+		 * Flag indicating whether the NoData text of the table is disabled.
+		 *
+		 * @type {boolean}
+		 */
+		this._bNoDataDisabled = false;
+
 		/**
 		 * Updates the table asynchronously according to the current computed row count.
 		 *
@@ -684,6 +691,56 @@ sap.ui.define([
 
 		this.setProperty("fixedBottomRowCount", 0, true);
 		this.setFixedBottomRowCount = logError;
+	};
+
+	/**
+	 * Disables the "NoData" text of the table. The table will no longer show this text, even if its property
+	 * {@link sap.ui.table.Table#getShowNoData showNoData} is set to <code>true</code>. The text is hidden if it is currently shown. Has no effect for
+	 * the text that is shown when the table has no visible columns.
+	 *
+	 * @protected
+	 */
+	RowMode.prototype.disableNoData = function() {
+		var oTable = this.getTable();
+		var bNoDataVisible;
+
+		if (this._bNoDataDisabled) {
+			return;
+		}
+
+		bNoDataVisible = oTable ? TableUtils.isNoDataVisible(oTable) : false;
+		this._bNoDataDisabled = true;
+
+		if (!oTable) {
+			return;
+		}
+
+		if (bNoDataVisible && oTable.getRows().length === 0) {
+			// If the NoData text is disabled, but there is no data, the table needs to be invalidated to make sure that empty rows are rendered.
+			oTable.invalidate();
+		} else if (!oTable._bInvalid) {
+			oTable._updateNoData();
+		}
+	};
+
+	/**
+	 * Enables the "NoData" text of the table. Whether the text is shown depends on the state of the table and its
+	 * {@link sap.ui.table.Table#getShowNoData showNoData} property.
+	 *
+	 * @protected
+	 */
+	RowMode.prototype.enableNoData = function() {
+		var oTable = this.getTable();
+
+		if (!this._bNoDataDisabled) {
+			return;
+		}
+
+		this._bNoDataDisabled = false;
+
+		if (oTable && !oTable._bInvalid) {
+			oTable._updateNoData();
+		}
 	};
 
 	/**
