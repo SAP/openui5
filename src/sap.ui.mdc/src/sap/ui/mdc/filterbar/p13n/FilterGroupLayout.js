@@ -41,6 +41,7 @@ sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/La
 			text: this._sLabel,
 			required: "{$p13n>required}"
 		});
+		oLabel.addStyleClass("sapUiMdcFilterBarBaseLabel");
 
 		oLabel.setParent(this);
 
@@ -53,6 +54,7 @@ sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/La
 
 	FilterGroupLayout.prototype.exit = function () {
 		CustomListItem.prototype.exit.apply(this, arguments);
+		this._sLabel = null;
 		this._oFilterField = null;
 		this._sFieldPath = null;
 	};
