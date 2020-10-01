@@ -169,62 +169,6 @@ sap.ui.define([
 
 	QUnit.module("setValue()");
 
-	// CSN 0120031469 0000547938 2014
-	// do not override the binding for the value property
-	QUnit.test("it should not override the value", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			selectedKey: {
-				path: "/selected",
-				template: "{selected}"
-			},
-
-			items: {
-				path: "/items",
-				template: new Item({
-					key: "{value}",
-					text: "{text}"
-				})
-			},
-
-			value: {
-				path: "/value"
-			}
-		});
-
-		// arrange
-		var oModel = new JSONModel();
-		var mData = {
-			"items": [
-				{
-					"value": "GER",
-					"text": "Germany"
-				},
-
-				{
-					"value": "CU",
-					"text": "Cuba"
-				}
-			],
-
-			"selected": "GER",
-			"value": "other value"
-		};
-
-		oModel.setData(mData);
-		sap.ui.getCore().setModel(oModel);
-		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assert
-		assert.strictEqual(oComboBox.getValue(), "other value");
-
-		// cleanup
-		oComboBox.destroy();
-		oModel.destroy();
-	});
-
 	// BCP 0020751295 0000447582 2016
 	QUnit.test("it should update the value after a new binding context is set", function (assert) {
 
@@ -13576,7 +13520,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.skip("Setters: selectedKey + matching item should overwrite the value (changed setters order)", function (assert) {
+	QUnit.test("Setters: selectedKey + matching item should overwrite the value (changed setters order)", function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			selectedKey: "2",
@@ -13620,7 +13564,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.skip("Bindings: selectedKey + matching item should overwrite the value (changed binding order)", function (assert) {
+	QUnit.test("Bindings: selectedKey + matching item should overwrite the value (changed binding order)", function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			selectedKey: "{/selectedKey}",
@@ -13706,7 +13650,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.skip("Mixed: Setter: selectedKey, Binding: Value: should set the value of the matching item", function (assert) {
+	QUnit.test("Mixed: Setter: selectedKey, Binding: Value: should set the value of the matching item", function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			value: "{/value}",
@@ -13782,7 +13726,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.skip("User Interaction: Sets value over selectedKey (binding: async)", function (assert) {
+	QUnit.test("User Interaction: Binding update should overwrite user value (binding: async)", function (assert) {
 		// Setup
 		var oModel = new JSONModel(),
 			oComboBox = new ComboBox({
@@ -13808,7 +13752,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
-		assert.strictEqual(oComboBox.getValue(), "This is a user input", "The value should come from the user input");
+		assert.strictEqual(oComboBox.getValue(), "Locations", "The value should come from the selected key");
 
 		// Cleanup
 		oComboBox.destroy();
