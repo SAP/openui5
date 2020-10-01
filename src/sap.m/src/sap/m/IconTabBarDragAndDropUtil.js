@@ -9,10 +9,13 @@ sap.ui.define([
 	'sap/ui/core/dnd/DragInfo',
 	'sap/ui/core/dnd/DropInfo',
 	"sap/ui/events/KeyCodes",
-	'sap/ui/core/dnd/DropPosition'
+	'sap/ui/core/library'
 ],
-	function(DragInfo, DropInfo, KeyCodes, DropPosition) {
+	function(DragInfo, DropInfo, KeyCodes, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.ui.core.dnd.DropPosition
+		var DropPosition = coreLibrary.dnd.DropPosition;
 
 		var INSERT_POSITION_BEFORE = "Before",
 			INSERT_BEFORE = "insertBefore",

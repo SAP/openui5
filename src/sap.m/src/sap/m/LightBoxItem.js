@@ -5,24 +5,29 @@
 // Provides control sap.m.LightBoxItem
 sap.ui.define([
 	"./library",
-	"sap/ui/core/OpenState",
-	"sap/ui/core/TitleLevel",
+	"sap/ui/core/library",
 	"sap/ui/core/Element",
-	"sap/m/LightBoxLoadingStates",
 	"sap/m/Image",
 	"sap/m/Title",
 	"sap/m/Label"
 ], function (
 	library,
-	OpenState,
-	TitleLevel,
+	coreLibrary,
 	Element,
-	LightBoxLoadingStates,
 	Image,
 	Title,
 	Label
 ) {
 	"use strict";
+
+	// shortcut for sap.m.LightBoxLoadingStates
+	var LightBoxLoadingStates = library.LightBoxLoadingStates;
+
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = coreLibrary.OpenState;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new LightBoxItem.

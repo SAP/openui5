@@ -9,16 +9,19 @@ sap.ui.define([
 	"sap/m/OverflowToolbarAssociativePopover",
 	"./ToolHeaderRenderer",
 	"sap/ui/Device",
-	"sap/m/PlacementType"
+	"sap/m/library"
 ], function (
 	library,
 	OverflowToolbar,
 	OverflowToolbarAssociativePopover,
 	ToolHeaderRenderer,
 	Device,
-	PlacementType
+    mobileLibrary
 ) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = mobileLibrary.PlacementType;
 
 	/**
 	 * Constructor for a new ToolHeader.

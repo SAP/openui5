@@ -5,7 +5,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/Input",
-	"sap/m/InputType",
+	"sap/m/library",
 	"../config/datatable",
 	"./datatable/filters/DataTableFilterDropDown",
 	"./datatable/filters/DataTableFilterRange",
@@ -13,13 +13,16 @@ sap.ui.define([
 ], function (
 	$,
 	Input,
-	InputType,
+	mobileLibrary,
 	datatableConfig,
 	DataTableFilterDropDown,
 	DataTableFilterRange,
 	Highlighter
 ) {
 	"use strict";
+
+	// shortcut for sap.m.InputType
+	var InputType = mobileLibrary.InputType;
 
 	/**
 	 *
