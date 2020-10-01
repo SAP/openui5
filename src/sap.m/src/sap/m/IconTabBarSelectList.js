@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	'sap/ui/core/delegate/ItemNavigation',
 	'./IconTabBarDragAndDropUtil',
-	'sap/ui/core/dnd/DropPosition',
+	'sap/ui/core/library',
 	'./IconTabBarSelectListRenderer',
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -18,11 +18,14 @@ sap.ui.define([
 	Core,
 	ItemNavigation,
 	IconTabBarDragAndDropUtil,
-	DropPosition,
+	coreLibrary,
 	IconTabBarSelectListRenderer,
 	jQuery
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.dnd.DropPosition
+	var DropPosition = coreLibrary.dnd.DropPosition;
 
 	/**
 	 * Constructor for a new <code>sap.m.IconTabBarSelectList</code>.

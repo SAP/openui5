@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	"sap/ui/fl/Layer",
 	"sap/base/util/each",
 	"sap/base/util/includes"
@@ -28,12 +28,15 @@ sap.ui.define([
 	Component,
 	JsControlTreeModifier,
 	ChangesUtils,
-	ButtonType,
+	mobileLibrary,
 	Layer,
 	each,
 	includes
 ) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	var ChangeVisualization = {
 		changes: [],

@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/m/IconTabFilter',
 	'sap/m/IconTabSeparator',
 	'sap/m/IconTabBarDragAndDropUtil',
-	'sap/ui/core/dnd/DropPosition',
+	'sap/ui/core/library',
 	'sap/m/IconTabHeaderRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
@@ -35,13 +35,16 @@ sap.ui.define([
 	IconTabFilter,
 	IconTabSeparator,
 	IconTabBarDragAndDropUtil,
-	DropPosition,
+	coreLibrary,
 	IconTabHeaderRenderer,
 	jQuery,
 	Log,
 	KeyCodes
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.dnd.DropPosition
+	var DropPosition = coreLibrary.dnd.DropPosition;
 
 	// shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = library.BackgroundDesign;

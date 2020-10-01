@@ -3,9 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/m/LightBoxLoadingStates"
-], function (LightBoxLoadingStates) {
+	"sap/m/library"
+], function (library) {
 	"use strict";
+
+	// shortcut for sap.m.LightBoxLoadingStates
+	var LightBoxLoadingStates = library.LightBoxLoadingStates;
 
 	/**
 	 * LightBox renderer.
