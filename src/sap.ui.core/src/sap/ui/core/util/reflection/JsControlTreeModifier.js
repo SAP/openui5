@@ -5,6 +5,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/base/BindingParser",
 	"./BaseTreeModifier",
 	"./XmlTreeModifier", // needed to get extension point info from oView._xContent
 	"sap/base/util/ObjectPath",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/Fragment" // also needed to have sap.ui.xmlfragment
 ], function (
+	BindingParser,
 	BaseTreeModifier,
 	XmlTreeModifier,
 	ObjectPath,
@@ -113,12 +115,23 @@ sap.ui.define([
 		 */
 		setProperty: function (oControl, sPropertyName, vPropertyValue) {
 			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
+			var oBindingParserResult;
+			var bError;
+
 			this.unbindProperty(oControl, sPropertyName);
+
+			try {
+				oBindingParserResult = BindingParser.complexParser(vPropertyValue, undefined, true);
+			} catch (error) {
+				bError = true;
+			}
 
 			//For compatibility with XMLTreeModifier the value should be serializable
 			if (oMetadata) {
 				if (this._isSerializable(vPropertyValue)) {
-					vPropertyValue = this._escapeCurlyBracketsInString(vPropertyValue);
+					if (oBindingParserResult && typeof oBindingParserResult === "object" || bError) {
+						vPropertyValue = this._escapeCurlyBracketsInString(vPropertyValue);
+					}
 					var sPropertySetter = oMetadata._sMutator;
 					oControl[sPropertySetter](vPropertyValue);
 				} else {
