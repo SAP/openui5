@@ -1220,7 +1220,6 @@ sap.ui.define([
 			tableCtrlScrollWidth: 0,
 			tableRowHdrScrWidth: 0,
 			tableCtrlScrWidth: 0,
-			tableHSbScrollLeft: 0,
 			tableCtrlFixedWidth: 0,
 			tableCntHeight: 0,
 			tableCntWidth: 0
@@ -1250,11 +1249,6 @@ sap.ui.define([
 		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
 		if (oCtrlScrDomRef) {
 			oSizes.tableCtrlScrWidth = oCtrlScrDomRef.clientWidth;
-		}
-
-		var oHsb = this._getScrollExtension().getHorizontalScrollbar();
-		if (oHsb) {
-			oSizes.tableHSbScrollLeft = oHsb.scrollLeft;
 		}
 
 		var oCtrlFixed = oDomRef.querySelector(".sapUiTableCtrlScrFixed:not(.sapUiTableCHA) > .sapUiTableCtrlFixed");
