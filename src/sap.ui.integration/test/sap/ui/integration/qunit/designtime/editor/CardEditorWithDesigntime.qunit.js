@@ -979,10 +979,10 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					oLabel.getDependents()[0].onmouseover();
-					this.oCardEditor._getPopover().getContent()[0].isA("sap.m.Text");
+					var oDescriptionText = this.oCardEditor._getPopover().getContent()[0];
+					assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
+					assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
 					oLabel.getDependents()[0].onmouseout();
-
-
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1297,7 +1297,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Check changes in Translate Mode: change from Admin", function (assert) {
+		QUnit.test("Check changes in Translation Mode: change from Admin", function (assert) {
 			this.oCardEditor.setMode("translation");
 			var adminchanges = {
 				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
@@ -1360,7 +1360,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Check changes in Translate Mode: change from Admin and Content", function (assert) {
+		QUnit.test("Check changes in Translation Mode: change from Admin and Content", function (assert) {
 			this.oCardEditor.setMode("translation");
 			var adminchanges = {
 				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
@@ -1426,7 +1426,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Check changes in Translate Mode: change from Admin, Content and Translate", function (assert) {
+		QUnit.test("Check changes in Translation Mode: change from Admin, Content and Translate", function (assert) {
 			this.oCardEditor.setMode("translation");
 			var adminchanges = {
 				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
@@ -1724,6 +1724,376 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getEditor().getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible changes in Admin Mode: change visible from Admin", function (assert) {
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/visible": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().getVisible(), "Field: Visible not changed from admin change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible changes in Content Mode: change visible from Admin", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/visible": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oFormContent = this.oCardEditor.getAggregation("_formContent");
+					assert.ok(oFormContent === null, "Visible: visible change from Admin");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible changes in Translation Mode: change visible from Admin", function (assert) {
+			this.oCardEditor.setMode("translation");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/visible": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			//TODO: check the log for the warning
+			this.oCardEditor.setLanguage("badlanguage");
+			this.oCardEditor.setLanguage("fr");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app":{
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
+					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
+					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
+					assert.ok(this.oCardEditor.getAggregation("_formContent").length === 2, "Field: No field since change from Admin");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible changes in All Mode: change visible from Admin", function (assert) {
+			this.oCardEditor.setMode("all");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/visible": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oFormContent = this.oCardEditor.getAggregation("_formContent");
+					assert.ok(oFormContent === null, "Visible: visible change from Admin");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+
+
+
+
+		QUnit.test("Check editable changes in Admin Mode: change editable from Admin", function (assert) {
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/editable": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().isA("sap.m.Input"), "Field: Editable not changed from admin change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check editable changes in Content Mode: change editable from Admin", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/editable": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().isA("sap.m.Text"), "Field: Editable changed from admin change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check editable changes in Translation Mode: change editable from Admin", function (assert) {
+			this.oCardEditor.setMode("translation");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/editable": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			//TODO: check the log for the warning
+			this.oCardEditor.setLanguage("badlanguage");
+			this.oCardEditor.setLanguage("fr");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app":{
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
+					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
+					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
+
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
+					oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+					oField = this.oCardEditor.getAggregation("_formContent")[5];
+
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					assert.ok(oField.getEditor().isA("sap.m.Input"), "Field: Input not changed by the Admin change for editable");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check editable changes in All Mode: change editable from Admin", function (assert) {
+			this.oCardEditor.setMode("all");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/editable": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getEditor().isA("sap.m.Text"), "Field: Editable changed from admin change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
