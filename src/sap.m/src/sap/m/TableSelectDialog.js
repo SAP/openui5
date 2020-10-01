@@ -560,11 +560,9 @@ sap.ui.define([
 		// reset internal variables
 		this._bFirstRequest = true;
 
-		this._sSearchFieldValue = "";
-
 		// set search field value
 		this._oSearchField.setValue(sSearchValue);
-
+		this._sSearchFieldValue = sSearchValue || "";
 
 		// open the dialog
 		this._oDialog.open();
@@ -1099,6 +1097,9 @@ sap.ui.define([
 			fnOKAfterClose = null;
 
 		fnOKAfterClose = function () {
+				// reset internal selection values
+				that._sSearchFieldValue = null;
+
 				that._oSelectedItem = that._oTable.getSelectedItem();
 				that._aSelectedItems = that._oTable.getSelectedItems();
 

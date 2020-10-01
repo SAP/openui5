@@ -1041,6 +1041,9 @@ sap.ui.define([
 		oTableSelectDialog1._fireConfirmAndUpdateSelection();
 		oTableSelectDialog1._oDialog.close();
 
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
 		oTableSelectDialog1.open();
 		searchField.fireLiveChange({newValue: ""});
 		searchField.fireLiveChange({newValue: "m"});
@@ -1267,6 +1270,29 @@ sap.ui.define([
 
 		assert.equal(oCustomHeader.getContentRight()[0].getVisible(), true, 'Clear button is not visible');
 		assert.ok(oCustomHeader.getContentRight()[0].getDomRef(), 'Clear button is in dom');
+	});
+
+	QUnit.test("liveChange event fired when 'clear' is pressed on a TSD that has initial value set", function (assert) {
+		var done = assert.async(),
+			oTableSelectDialog = new TableSelectDialog({
+				liveChange: function () {
+					// assert
+					assert.ok(1, "fired liveChange event");
+					done();
+				}
+			});
+
+		// act
+		oTableSelectDialog.open("somevalue");
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerKeydown(oTableSelectDialog._oSearchField.getDomRef().id, KeyCodes.ESCAPE);
+
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+		oTableSelectDialog._oDialog.close();
+		this.clock.tick(500);
+		oTableSelectDialog.destroy();
 	});
 
 	QUnit.module("Handling cancel", {
