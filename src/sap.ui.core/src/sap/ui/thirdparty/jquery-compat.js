@@ -794,9 +794,12 @@ jQuery.Deferred.exceptionHook = oldDeferred.exceptionHook;
  *
  *  to
  *
- *  - return null instead of undefined when the jQuery element set is empty
- *  - When the function is called as a getter (without parameter given), return integer instead of float
- *  - When the function is called as a setter, the return value isn't adapted
+ *  - Valid jQuery element set:
+ *     - When the function is called as a getter (without parameter given): return integer instead of float
+ *     - When the function is called as a setter: the return value isn't adapted
+ *  - Empty jQuery element set:
+ *     - When the function is called as a getter (without parameter given): return null instead of undefined
+ *     - When the function is called as a setter: return 'this' (the empty jQuery object)
  *
  */
 var mOrigMethods = {},
@@ -804,11 +807,12 @@ var mOrigMethods = {},
 aMethods.forEach(function(sName) {
 	mOrigMethods[sName] = jQuery.fn[sName];
 	jQuery.fn[sName] = function() {
-		var vRes;
-		if (this.length === 0) {
+		var vRes = mOrigMethods[sName].apply(this, arguments);
+
+		// return null instead of undefined for empty element sets
+		if (vRes === undefined && this.length === 0) {
 			return null;
 		} else {
-			vRes = mOrigMethods[sName].apply(this, arguments);
 			// Round the pixel value
 			if (typeof vRes === "number") {
 				vRes = Math.round(vRes);
