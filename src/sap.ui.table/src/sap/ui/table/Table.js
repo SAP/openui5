@@ -2355,6 +2355,7 @@ sap.ui.define([
 		if (this._iBindingLength !== iTotalRowCount) {
 			this._iBindingLength = iTotalRowCount;
 			this._updateFixedBottomRows();
+			this._getAccExtension()._updateAriaRowCount();
 			oScrollExtension.adjustToTotalRowCount();
 
 			if (!oBinding || !TableUtils.hasPendingRequests(this)) {
@@ -4286,6 +4287,7 @@ sap.ui.define([
 	Table.prototype.onRowsUpdated = function(mParameters) {
 		this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
 		TableUtils.Grouping.updateGroups(this);
+		this._getAccExtension()._updateAriaRowIndices();
 		this._updateSelection();
 	};
 

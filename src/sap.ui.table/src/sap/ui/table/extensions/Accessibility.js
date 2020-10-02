@@ -505,7 +505,7 @@ sap.ui.define([
 			}
 
 			if (Device.browser.msie) {
-				if (iSpan <= 1 && $Cell.attr("aria-haspopup") === "true") {
+				if (iSpan <= 1 && $Cell.attr("aria-haspopup") === "menu") {
 					aLabels.push(oTable.getId() + "-ariacolmenu");
 				}
 			}
@@ -651,6 +651,7 @@ sap.ui.define([
 
 				case AccExtension.ELEMENTTYPES.ROWACTION:
 					mAttributes["role"] = "gridcell";
+					mAttributes["aria-colindex"] = oTable._getVisibleColumns().length + 1;
 					mAttributes["aria-labelledby"] = [sTableId + "-rowacthdr"];
 					break;
 
@@ -659,6 +660,7 @@ sap.ui.define([
 					var bHasColSpan = mParams && mParams.colspan;
 
 					mAttributes["role"] = "columnheader";
+					mAttributes["aria-colindex"] = mParams.index + 1;
 					var aLabels = [];
 
 					if (mParams && mParams.headerId) {
@@ -680,12 +682,13 @@ sap.ui.define([
 					}
 
 					if (!bHasColSpan && oColumn && oColumn._menuHasItems()) {
-						mAttributes["aria-haspopup"] = "true";
+						mAttributes["aria-haspopup"] = "menu";
 					}
 					break;
 
 				case AccExtension.ELEMENTTYPES.DATACELL:
 					mAttributes["role"] = "gridcell";
+					mAttributes["aria-colindex"] = mParams.index + 1;
 
 					var aLabels = [],
 						oColumn = mParams && mParams.column ? mParams.column : null;
@@ -760,6 +763,9 @@ sap.ui.define([
 						mAttributes["aria-owns"].push(sTableId + "-sapUiTableRowActionScr");
 					}
 
+					mAttributes["aria-rowcount"] = oTable._getTotalRowCount();
+					mAttributes["aria-colcount"] = oTable._getVisibleColumns().length + (bHasRowActions ? 1 : 0);
+
 					break;
 
 				case AccExtension.ELEMENTTYPES.TABLEHEADER: //The table header area
@@ -799,6 +805,9 @@ sap.ui.define([
 
 				case AccExtension.ELEMENTTYPES.TR: //The rows
 					mAttributes["role"] = "row";
+					if (mParams.rowNavigated) {
+						mAttributes["aria-current"] = true;
+					}
 					break;
 
 				case AccExtension.ELEMENTTYPES.TREEICON: //The expand/collapse icon in the TreeTable
@@ -1019,6 +1028,38 @@ sap.ui.define([
 	};
 
 	/**
+	 * Updates the aria-rowindex for each row in the table
+	 * @private
+	 */
+	AccExtension.prototype._updateAriaRowIndices = function() {
+		if (!this._accMode) {
+			return;
+		}
+
+		var oTable = this.getTable();
+		var aRows = oTable.getRows();
+		var oRow, i;
+
+		for (i = 0; i < aRows.length; i++) {
+			oRow = aRows[i];
+			oRow.getDomRefs(true).row.attr("aria-rowindex", oRow.getIndex() + 1);
+		}
+	};
+
+	/**
+	 * Updates the aria-rowcount for the content area of the table
+	 * @private
+	 */
+	AccExtension.prototype._updateAriaRowCount = function() {
+		var oTable = this.getTable();
+		var $Table = oTable.$("sapUiTableGridCnt");
+
+		if ($Table) {
+			$Table.attr("aria-rowcount", oTable._getTotalRowCount());
+		}
+	};
+
+	/**
 	 * Determines the current focused cell and modifies the labels and descriptions if needed.
 	 *
 	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason Why the accessibility information of the cell needs to be updated. Additionally
@@ -1216,7 +1257,7 @@ sap.ui.define([
 
 		if (oDomRefs.rowHeaderPart) {
 			oDomRefs.rowHeaderPart.attr({
-				"aria-haspopup": oRow.isGroupHeader() ? "true" : null
+				"aria-haspopup": oRow.isGroupHeader() ? "menu" : null
 			});
 		}
 
@@ -1247,6 +1288,23 @@ sap.ui.define([
 		if (oHighlightTextElement) {
 			oHighlightTextElement.innerText = oRowSettings._getHighlightText();
 		}
+	};
+
+	/**
+	 * Updates the aria state of the navigated row.
+	 *
+	 * @param {sap.ui.table.RowSettings} oRowSettings The row settings.
+	 * @private
+	 */
+	AccExtension.prototype._updateAriaStateOfNavigatedRow = function(oRowSettings) {
+		if (!this._accMode || !oRowSettings) {
+			return;
+		}
+
+		var oRow = oRowSettings._getRow();
+		var bNavigated = oRowSettings.getNavigated();
+
+		oRow.getDomRefs(true).row.attr("aria-current", bNavigated ? true : null);
 	};
 
 	/**

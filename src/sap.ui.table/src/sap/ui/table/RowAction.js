@@ -93,7 +93,7 @@ sap.ui.define([
 					var oIconDomRef = this.getAggregation("_icons")[0].getDomRef();
 
 					if (this._aActions[0] === "menu") {
-						oIconDomRef.setAttribute("aria-haspopup", true);
+						oIconDomRef.setAttribute("aria-haspopup", "menu");
 					} else {
 						oIconDomRef.removeAttribute("aria-haspopup");
 					}
@@ -110,7 +110,7 @@ sap.ui.define([
 					var oIconDomRef = this.getAggregation("_icons")[1].getDomRef();
 
 					if (this._aActions[1] === "menu") {
-						oIconDomRef.setAttribute("aria-haspopup", true);
+						oIconDomRef.setAttribute("aria-haspopup", "menu");
 					} else {
 						oIconDomRef.removeAttribute("aria-haspopup");
 					}

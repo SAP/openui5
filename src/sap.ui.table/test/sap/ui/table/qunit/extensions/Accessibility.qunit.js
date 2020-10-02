@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
-	"sap/ui/core/library"
-], function(TableQUnitUtils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function(TableQUnitUtils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary, Filter, FilterOperator) {
 	"use strict";
 
 	var SelectionMode = Library.SelectionMode;
@@ -671,7 +673,7 @@ sap.ui.define([
 		assert.ok(!$Elem.attr("aria-sort"), "aria-sort");
 		$Elem = oTable.getColumns()[1].$();
 		assert.strictEqual($Elem.attr("role"), "columnheader", "role");
-		assert.strictEqual($Elem.attr("aria-haspopup"), "true", "aria-haspopup");
+		assert.strictEqual($Elem.attr("aria-haspopup"), "menu", "aria-haspopup");
 		assert.strictEqual($Elem.attr("aria-sort"), "ascending", "aria-sort");
 	});
 
@@ -794,7 +796,7 @@ sap.ui.define([
 
 		assert.strictEqual(oRefs.hdr.attr("aria-expanded"), "true", "aria-expanded set on group row header");
 		assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on group row header");
-		assert.strictEqual(oRefs.hdr.attr("aria-haspopup"), "true", "aria-haspopup set on group row header");
+		assert.strictEqual(oRefs.hdr.attr("aria-haspopup"), "menu", "aria-haspopup set on group row header");
 
 		$Cell = getRowHeader(1, false, assert);
 		this.testAriaLabels($Cell, 1, assert, {group: true});
@@ -870,10 +872,12 @@ sap.ui.define([
 		var $Elem;
 
 		$Elem = oTable.$("rowsel0");
+		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		assert.strictEqual($Elem.attr("role"), "rowheader", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 
 		$Elem = oTable.$("rowsel1");
+		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 		oTable.rerender();
 
@@ -1164,10 +1168,12 @@ sap.ui.define([
 		var $Elem;
 
 		$Elem = oTable.$("rowact0");
+		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 
 		$Elem = oTable.$("rowact1");
+		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
@@ -1353,17 +1359,60 @@ sap.ui.define([
 
 	QUnit.test("ARIA Attributes of Content Element", function(assert) {
 		var $Elem = oTable.$("sapUiTableGridCnt");
+		var done = assert.async();
+
 		assert.strictEqual($Elem.attr("role"), "grid", "role");
+		assert.strictEqual($Elem.attr("aria-rowcount"), "8", "aria-rowcount");
+		assert.strictEqual($Elem.attr("aria-colcount"), "5", "aria-colcount");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
-		$Elem = oTreeTable.$("sapUiTableGridCnt");
-		assert.strictEqual($Elem.attr("role"), "treegrid", "role");
-		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
 
-		oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
-		sap.ui.getCore().applyChanges();
-		$Elem = oTable.$("sapUiTableGridCnt");
-		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
+		oTable.attachEventOnce("_rowsUpdated", function() {
+			assert.strictEqual($Elem.attr("aria-rowcount"), "1", "aria-rowcount after filter is applied");
+
+			oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+			oTable.setRowActionCount(1);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
+			oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
+			done();
+		});
+
+		var oBinding = oTable.getBinding("rows");
+		var oFilter = new Filter("A", FilterOperator.EQ, "A1");
+		oBinding.filter(oFilter);
+	});
+
+	QUnit.test("ARIA Attributes of Content Element (TreeTable)", function(assert) {
+		var $Elem = oTreeTable.$("sapUiTableGridCnt");
+		var done = assert.async();
+
+		assert.strictEqual($Elem.attr("role"), "treegrid", "role");
+		assert.strictEqual($Elem.attr("aria-rowcount"), "8", "aria-rowcount");
+		assert.strictEqual($Elem.attr("aria-colcount"), "5", "aria-colcount");
+		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
+		assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getAriaLabelledBy() + " " + oTreeTable.getTitle().getId(), "aria-labelledby");
+
+		oTable.attachEventOnce("_rowsUpdated", function() {
+			assert.strictEqual($Elem.attr("aria-rowcount"), "1", "aria-rowcount after filter is applied");
+
+			oTreeTable.setRowActionTemplate(new sap.ui.table.RowAction());
+			oTreeTable.setRowActionCount(1);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
+			oTreeTable.removeAriaLabelledBy(oTreeTable.getAriaLabelledBy()[0]);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
+			done();
+		});
+
+		var oBinding = oTreeTable.getBinding("rows");
+		var oFilter = new Filter("A", FilterOperator.EQ, "A1");
+		oBinding.filter(oFilter);
 	});
 
 	QUnit.test("ARIA Attributes of TH Elements", function(assert) {
@@ -1393,6 +1442,97 @@ sap.ui.define([
 		$Elem = getCell(1, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
+	});
+
+	QUnit.test("ARIA rowindices", function(assert) {
+		var done = assert.async();
+		var iNumberOfRows = oTable.getRows().length;
+		var $Elem, i;
+
+		function onAfterRowsUpdated() {
+			for (i = 0; i < iNumberOfRows; i++) {
+				$Elem = getCell(i, 0, false, assert).parent();
+				assert.strictEqual($Elem.attr("aria-rowindex"),
+					"" + (oTable.getFirstVisibleRow() + i + 1), "row " + i + ": aria-rowindex of the tr element");
+				$Elem = oTable.$("rowsel" + i).parent();
+				assert.strictEqual($Elem.attr("aria-rowindex"),
+					"" + (oTable.getFirstVisibleRow() + i + 1), "row " + i + ": aria-rowindex of the row header");
+				$Elem = oTable.$("rowact" + i).parent();
+				assert.strictEqual($Elem.attr("aria-rowindex"),
+					"" + (oTable.getFirstVisibleRow() + i + 1), "row " + i + ": aria-rowindex of the row action");
+			}
+			done();
+		}
+		oTable.attachEventOnce("_rowsUpdated", onAfterRowsUpdated);
+		oTable.setFirstVisibleRow(3);
+	});
+
+	QUnit.test("ARIA colindices", function(assert) {
+		var iNumberOfColumns = oTable._getVisibleColumns().length;
+		var $Elem, i;
+
+		oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+		oTable.setRowActionCount(1);
+		sap.ui.getCore().applyChanges();
+
+		for (i = 0; i < iNumberOfColumns; i++) {
+			$Elem = getColumnHeader(i, false);
+			assert.strictEqual($Elem.attr("aria-colindex"),
+				"" + (i + 1), "column " + i + ": aria-colindex of the column header");
+			$Elem = getCell(0, i, false);
+			assert.strictEqual($Elem.attr("aria-colindex"),
+				"" + (i + 1), "column " + i + ": aria-colindex of the cell");
+		}
+		$Elem = oTable.$("rowact0");
+		assert.strictEqual($Elem.attr("aria-colindex"),
+			"" + (iNumberOfColumns + 1), "column " + i + ": aria-colindex of the row action");
+	});
+
+	QUnit.test("ARIA current", function(assert) {
+		var done = assert.async();
+		var iNumberOfRows = oTable.getRows().length;
+		var $Elem, i;
+
+		oTable.setRowSettingsTemplate(new RowSettings({
+			navigated: {
+				path: "",
+				formatter: function() {
+					var oRow = this._getRow();
+
+					if (oRow != null) {
+						var iIndex = oRow.getIndex();
+
+						if (iIndex === 1) {
+							return true;
+						}
+					}
+				}
+			}
+		}));
+		sap.ui.getCore().applyChanges();
+
+		function checkAriaCurrent(iCurrentRow) {
+			for (i = 0; i < iNumberOfRows; i++) {
+				$Elem = getCell(i, 0, false, assert).parent();
+				assert.strictEqual($Elem.attr("aria-current"), (i === iCurrentRow ? "true" : undefined),
+					"row " + i + ": aria-current of the tr element");
+				$Elem = oTable.$("rowsel" + i).parent();
+				assert.strictEqual($Elem.attr("aria-current"), (i === iCurrentRow ? "true" : undefined),
+					"row " + i + ": aria-current of the row header");
+				$Elem = oTable.$("rowact" + i).parent();
+				assert.strictEqual($Elem.attr("aria-current"), (i === iCurrentRow ? "true" : undefined),
+					"row " + i + ": aria-current of the row action");
+			}
+		}
+
+		checkAriaCurrent(1);
+
+		function onAfterRowsUpdated() {
+			checkAriaCurrent(0);
+			done();
+		}
+		oTable.attachEventOnce("_rowsUpdated", onAfterRowsUpdated);
+		oTable.setFirstVisibleRow(1);
 	});
 
 	QUnit.test("ARIA for Overlay", function(assert) {
