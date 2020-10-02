@@ -10,7 +10,7 @@ describe("sap.f.GridListVisualTests", function () {
 	function goToIconTabFilter (sId) {
 		return browser.executeScript(function (sId) {
 			var Core = sap.ui.getCore();
-			Core.byId('gridplayground---app--itb').setSelectedKey(sId);
+			Core.byId('__component0---app--itb').setSelectedKey(sId);
 			Core.applyChanges();
 		}, sId);
 	}
@@ -121,5 +121,29 @@ describe("sap.f.GridListVisualTests", function () {
 		browser.executeScript('document.getElementById("__xmlview10--GridListMultiSelect").scrollIntoView()').then(function () {
 			takePictureOfContent("10_properties_MultiSelect");
 		});
+	});
+
+	it("should show correct focus border of Table as content", function () {
+		goToIconTabFilter("GridList13");
+
+		var oTableItem = element(by.control({
+			id: "tableItem1",
+			viewName: "sap.f.gridlist.view.Main",
+			controlType: "sap.m.ColumnListItem"
+		}));
+
+		oTableItem.click();
+		expect(takeScreenshot(oTableItem)).toLookAs("11_table_focus");
+	});
+
+	it("should show correct focus border of List as content", function () {
+		var oListItem = element(by.control({
+			id: "listItem1",
+			viewName: "sap.f.gridlist.view.Main",
+			controlType: "sap.m.StandardListItem"
+		}));
+
+		oListItem.click();
+		expect(takeScreenshot(oListItem)).toLookAs("12_list_focus");
 	});
 });
