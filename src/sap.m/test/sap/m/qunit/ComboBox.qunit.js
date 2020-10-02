@@ -3768,28 +3768,6 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("in 'None' valueState don't showValueState message ", function (assert) {
-		var oComboBox = new ComboBox("errorcombobox", {
-			valueState: "Error",
-			showValueStateMessage: true,
-			valueStateText: "Error Message"
-		});
-
-		// Arrange
-		oComboBox.placeAt("content");
-		oComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
-
-		var fnShowValueStateTextSpy = this.spy(oComboBox._oSuggestionPopover, "_showValueStateHeader");
-		oComboBox.setValueState("None");
-		oComboBox.open();
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(fnShowValueStateTextSpy.calledWith(false));
-
-		// cleanup
-		oComboBox.destroy();
-	});
 
 	// BCP 1570763824
 	QUnit.test("it should add the corresponding CSS classes", function (assert) {
