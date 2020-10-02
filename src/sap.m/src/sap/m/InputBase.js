@@ -441,6 +441,12 @@ function(
 		if (bIsFocused) {
 			this[bClosedValueState ? "closeValueStateMessage" : "openValueStateMessage"]();
 		}
+
+		if (this.getAggregation("_invisibleFormattedValueStateText")) {
+			this.getAggregation("_invisibleFormattedValueStateText").getControls().forEach(function(oControl){
+				oControl.getDomRef().setAttribute("tabindex", -1);
+			});
+		}
 	};
 
 	InputBase.prototype.exit = function() {

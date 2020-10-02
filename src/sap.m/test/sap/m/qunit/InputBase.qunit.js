@@ -13,6 +13,8 @@ sap.ui.define([
 	"sap/ui/model/type/String",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Text",
+	"sap/m/FormattedText",
+	"sap/m/Link",
 	"sap/m/InputBaseRenderer",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
@@ -30,6 +32,8 @@ sap.ui.define([
 	TypeString,
 	JSONModel,
 	Text,
+	FormattedText,
+	Link,
 	InputBaseRenderer,
 	Device,
 	ManagedObject,
@@ -2150,6 +2154,23 @@ sap.ui.define([
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
+		oInput.destroy();
+	});
+
+	QUnit.test("_invisibleFormattedValueStateText", function(assert) {
+		var oInput = new InputBase({
+			valueState: "Error",
+			formattedValueStateText: new FormattedText({
+				htmlText: "Value state message containing a %%0",
+				controls: new Link({
+					text: "link",
+					href: "#"
+				})
+			})
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oInput.getAggregation("_invisibleFormattedValueStateText").getControls()[0].getDomRef().getAttribute("tabindex"), "-1", "The link shouldn't be tabbable");
 		oInput.destroy();
 	});
 
