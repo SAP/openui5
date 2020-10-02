@@ -467,7 +467,9 @@ sap.ui.define([
 		if (!this._bControlsInfoCached) {
 			this._iSelectWidth = getElementWidth(this._getSelect().$().parent()) || 0;
 			this._aControlInfo = this._getControlsForBreadcrumbTrail().map(this._getControlInfo);
-			this._iContainerSize = getElementWidth(this.$());
+			// ceil the container width to prevent unnecessary overflow of a link due to rounding issues
+			// (when the available space appears insufficient with less than a pixel
+			this._iContainerSize = Math.ceil(getElementWidth(this.$()));
 			this._bControlsInfoCached = true;
 		}
 
@@ -486,9 +488,19 @@ sap.ui.define([
 	 * @private
 	 */
 	Breadcrumbs.prototype._handleScreenResize = function (oEvent) {
-		var iCachedControlsForBreadcrumbTrailCount = this._oDistributedControls.aControlsForBreadcrumbTrail.length,
-			oControlsDistribution = this._getControlDistribution(oEvent.size.width),
-			iCalculatedControlsForBreadcrumbTrailCount = oControlsDistribution.aControlsForBreadcrumbTrail.length;
+		var iCachedControlsForBreadcrumbTrailCount,
+			oControlsDistribution,
+			iCalculatedControlsForBreadcrumbTrailCount;
+
+		if (oEvent.size.width === oEvent.oldSize.width) {
+			return this;
+		}
+
+		iCachedControlsForBreadcrumbTrailCount = this._oDistributedControls.aControlsForBreadcrumbTrail.length;
+		// ceil the container width to prevent unnecessary overflow of a link due to rounding issues
+		// (when the available space appears insufficient with less than a pixel
+		oControlsDistribution = this._getControlDistribution(Math.ceil(getElementWidth(this.$())));
+		iCalculatedControlsForBreadcrumbTrailCount = oControlsDistribution.aControlsForBreadcrumbTrail.length;
 
 		if (iCachedControlsForBreadcrumbTrailCount !== iCalculatedControlsForBreadcrumbTrailCount) {
 			this._updateSelect(true);
