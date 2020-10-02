@@ -38,7 +38,6 @@ sap.ui.define([
 				document.body.style.zIndex = 1000;
 			}
 			this.oCardEditor.placeAt(oContent);
-
 		},
 		afterEach: function () {
 			this.oCardEditor.destroy();
@@ -178,6 +177,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
+
 		QUnit.test("1 string parameter with values and no label (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringwithvalues", "type": "List", "configuration": { "parameters": { "stringParameterWithValues": { "type": "string" } } } } } });
 			return new Promise(function (resolve, reject) {
@@ -189,11 +189,157 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getEditor().isA("sap.m.Select"), "Field: Editor is Select");
+					assert.ok(oField.getEditor().getItems().length === 3, "Field: Select items lenght is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
 
+		QUnit.test("1 string parameter with request values from json file", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithRequestValues",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"1stringWithRequestValues": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					setTimeout(function () {
+                        assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+						var oField = this.oCardEditor.getAggregation("_formContent")[1];
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+						assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						assert.ok(oField.getEditor().isA("sap.m.Select"), "Field: Editor is Select");
+						assert.ok(oField.getEditor().getItems().length === 4, "Field: Select items lenght is OK");
+						resolve();
+                    }.bind(this), 500);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 string array parameter with values (as json)", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringarray",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringArrayParameter": {}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+					assert.ok(oField.getEditor().isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
+					assert.ok(oField.getEditor().getItems().length === 3, "Field: MultiComboBox items lenght is OK");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 string array parameter with no values (as json)", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringarraynovalues",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringArrayParameterNoValues": {},
+								"stringArrayParameterNoValuesNotEditable": {}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringArrayParameterNoValues", "Label: Has static label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+					assert.ok(oField.getEditor().isA("sap.m.Input"), "Field: Editor is Input");
+					assert.ok(oField.getEditor().getValue() === "key1", "Field: Select items lenght is OK");
+					oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringArrayParameterNoValuesNotEditable", "Label: Has static label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+					assert.ok(oField.getEditor().isA("sap.m.Text"), "Field: Editor is Text");
+					assert.ok(oField.getEditor().getText() === "key1", "Field: Select items lenght is OK");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 string array parameter with request values from json file", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringArrayWithRequestValues",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringArrayParameter": {}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					setTimeout(function () {
+                        assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+						var oField = this.oCardEditor.getAggregation("_formContent")[1];
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+						assert.ok(oField.getEditor().isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
+						assert.ok(oField.getEditor().getItems().length === 4, "Field: MultiComboBox items lenght is OK");
+						resolve();
+                    }.bind(this), 500);
+				}.bind(this));
+			}.bind(this));
+		});
 
 		QUnit.test("1 string parameter and label (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
