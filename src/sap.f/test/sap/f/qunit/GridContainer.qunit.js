@@ -1084,7 +1084,7 @@ function (
 		// Arrange
 		var oItemWrapperTile = this.oGrid.getDomRef().children[4],
 			oTile = oItemWrapperTile.children[0],
-			oForwardTabSpy = this.spy(this.oGrid, "forwardTab");
+			oForwardTabSpy = this.spy(this.oGrid._oItemNavigation, "forwardTab");
 
 		oItemWrapperTile.focus();
 		Core.applyChanges();
@@ -1112,7 +1112,7 @@ function (
 			this.oGrid._oItemNavigation.setFocusedIndex(4);
 			var listDomRef = this.oCard.getCardContent()._getList().getDomRef(),
 				firstListItem = listDomRef.children[1].children[0],
-				oForwardTabSpy = sinon.spy(this.oGrid, "forwardTab");
+				oForwardTabSpy = sinon.spy(this.oGrid._oItemNavigation, "forwardTab");
 
 			firstListItem.focus();
 			Core.applyChanges();

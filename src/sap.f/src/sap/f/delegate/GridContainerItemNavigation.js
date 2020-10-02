@@ -42,6 +42,11 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridContainerItemNavigation = GridItemNavigation.extend("sap.f.delegate.GridContainerItemNavigation", /** @lends sap.f.GridContainerItemNavigation.prototype */ {
+		constructor: function () {
+			GridItemNavigation.apply(this, arguments);
+
+			this.attachEvent(ItemNavigation.Events.FocusLeave, this._onFocusLeave, this);
+		},
 		metadata: {
 			library: "sap.f",
 			properties: {
@@ -52,6 +57,89 @@ sap.ui.define([
 			}
 		}
 	});
+
+	GridContainerItemNavigation.prototype._onFocusLeave = function (oEvent) {
+		var currentFocused = this.getFocusedDomRef();
+		this.getItemDomRefs().forEach(function (item, index) {
+			if (currentFocused === item) {
+				var nextFocusableIndex = index++;
+				this.setFocusedIndex(nextFocusableIndex);
+			}
+		}.bind(this));
+
+		this._bFocusLeft = true;
+	};
+
+	/**
+	 * Forward tab before or after GridContainer
+	 *
+	 * @protected
+	 */
+	GridContainerItemNavigation.prototype.forwardTab = function(bForward) {
+
+		var sId = this._getRootDomRefId() + "-" + (bForward ? "after" : "before");
+
+		document.getElementById(sId).focus();
+	};
+
+	GridContainerItemNavigation.prototype._getRootDomRefId = function(bForward) {
+		return this.getRootDomRef().getAttribute("id");
+	};
+
+	/**
+	 * Forward tab to next focusable element inside GridContainer or out of it
+	 * This function should be called before tab key is pressed
+	 *
+	 * @protected
+	 */
+	GridContainerItemNavigation.prototype.onsaptabnext = function(oEvent) {
+		// get the last focused element from the ItemNavigation
+		var aNavigationDomRefs = this.getItemDomRefs(),
+			iLastFocusedIndex = this.getFocusedIndex(),
+			$LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]),
+			Tabbables = [];
+
+		// Tabbable elements in wrapper
+		var $AllTabbables = $LastFocused.find(":sapTabbable");
+
+		// leave only real tabbable elements in the tab chain, GridContainer and List types have dummy areas
+		$AllTabbables.map(function (index, element) {
+			if (element.className.indexOf("DummyArea") === -1) {
+				Tabbables.push(element);
+			}
+		});
+
+		var $Tabbables = jQuery(Tabbables),
+			focusableIndex = $Tabbables.length === 1 ? 0 : $Tabbables.length  - 1;
+
+		if (focusableIndex === -1 ||
+			($Tabbables.control(focusableIndex) && $Tabbables.control(focusableIndex).getId() === oEvent.target.id)) {
+			this._lastFocusedElement = oEvent.target;
+			this.forwardTab(true);
+		}
+	};
+
+	/**
+	 * Forward tab to the previous focusable element inside GridContainer or out of it
+	 * This function should be called before shift + tab key is pressed
+	 *
+	 * @protected
+	 */
+	GridContainerItemNavigation.prototype.onsaptabprevious = function(oEvent) {
+		if (!oEvent.target.classList.contains("sapFGridContainerItemWrapper")) {
+			this._lastFocusedElement = oEvent.target;
+			return;
+		}
+
+		var sTargetId = oEvent.target.id;
+		if (sTargetId === (this._getRootDomRefId() + "-nodata")) {
+			this.forwardTab(false);
+		}
+
+		// SHIFT + TAB out of the GridContainer should focused the last focused grid cell
+		this._lastFocusedElement = null;
+		this.forwardTab(false);
+	};
 
 	/**
 	 * Handles the onmousedown event
@@ -121,8 +209,8 @@ sap.ui.define([
 			this._lastFocusedElement = null;
 		}
 
-		if (this._oItemNavigationFocusLeft) {
-			this._oItemNavigationFocusLeft = false;
+		if (this._bFocusLeft) {
+			this._bFocusLeft = false;
 
 			aNavigationDomRefs = this.getItemDomRefs();
 			lastFocusedIndex = this.getFocusedIndex();
