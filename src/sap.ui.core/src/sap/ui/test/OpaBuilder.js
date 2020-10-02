@@ -488,6 +488,19 @@ sap.ui.define(
         };
 
         /**
+         * Adds a matcher that checks whether at least one child fulfilling given matcher(s).
+         *
+         * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder}
+         *                [vBuilderOrMatcher] the matchers to filter child items
+         * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
+         * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
+         * @public
+         */
+        OpaBuilder.prototype.hasChildren = function (vBuilderOrMatcher, bDirect) {
+            return this.has(OpaBuilder.Matchers.childrenMatcher(vBuilderOrMatcher, bDirect));
+        };
+
+        /**
          * Adds a matcher that checks states for given conditions. It is internally using {@link OpaBuilder.Matchers.conditional}.
          *
          * @param {sap.ui.test.matchers.Matcher | function | Array | Object | boolean} vConditions conditions to pre-check
@@ -1003,7 +1016,7 @@ sap.ui.define(
              * The result will always be an array, even if only one child was found.
              *
              * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder}
-             *                [vBuilderOrMatcher] the matchers to filter aggregation items
+             *                [vBuilderOrMatcher] the matchers to filter child items
              * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
              * @returns {function} matcher function returning all matching children
              * @public
@@ -1030,7 +1043,7 @@ sap.ui.define(
              * Creates a matcher function that checks whether one children fulfilling given matcher(s).
              *
              * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder}
-             *                [vBuilderOrMatcher] the matchers to filter aggregation items
+             *                [vBuilderOrMatcher] the matchers to filter child items
              * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
              * @returns {function} matcher function
              * @public
