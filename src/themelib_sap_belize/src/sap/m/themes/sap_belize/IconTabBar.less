@@ -20,20 +20,23 @@
 	margin-top: 1rem;
 }
 
-.sapMITH.sapUiSizeCompact.sapMITBTextOnly .sapMITHOverflow {
-	margin-top: 0;
+.sapUiSizeCompact .sapMITH,
+.sapUiSizeCompact.sapMITH {
+	&.sapMITBTextOnly .sapMITHOverflow {
+		margin-top: 0;
 	
-	.sapMITBText {
-		padding: 0;
+		.sapMITBText {
+			padding: 0;
+		}
+	
+		.sapMITBFilterExpandBtn {
+			padding-bottom: 0.5rem;
+		}
 	}
 
-	.sapMITBFilterExpandBtn {
-		padding-bottom: 0.5rem;
+	&.sapMITBTextOnly.sapMITBInLine .sapMITHOverflow .sapMITBText {
+		padding-bottom: 0.25rem;
 	}
-}
-
-.sapMITH.sapUiSizeCompact.sapMITBTextOnly.sapMITBInLine .sapMITHOverflow .sapMITBText {
-	padding-bottom: 0.25rem;
 }
 
 /* Arrow */
