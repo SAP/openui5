@@ -97,9 +97,8 @@ sap.ui.define([
 				oModel.updateBindings(true);
 			}
 
-			if (oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion")) {
-				oModel.setProperty("/activateEnabled", true);
-			}
+			var bActivateEnabled = oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion");
+			oModel.setProperty("/activateEnabled", bActivateEnabled);
 		};
 
 		return oModel;
