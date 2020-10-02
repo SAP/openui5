@@ -5,10 +5,11 @@ sap.ui.define([
 	"sap/ui/unified/FileUploader",
 	"sap/ui/unified/FileUploaderHttpRequestMethod",
 	"sap/ui/core/TooltipBase",
+	"sap/ui/core/InvisibleText",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/Device"
-], function(qutils, FileUploader, FileUploaderHttpRequestMethod, TooltipBase, Label, Text, Device) {
+], function(qutils, FileUploader, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device) {
 	"use strict";
 
 	/**
@@ -1178,6 +1179,20 @@ sap.ui.define([
 		assert.ok(sAccDescription.indexOf(sUpdatedPlaceholder) !== -1, "FileUploader's updated placeholder is in the description");
 
 		// Cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Internal hidden label for the Input", function (assert) {
+		var oFileUploader = new sap.ui.unified.FileUploader(),
+			sExpectedLabelId = InvisibleText.getStaticId("sap.ui.unified", "FILEUPLOAD_FILENAME"),
+			aInputLabels;
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		aInputLabels = oFileUploader.oFilePath.getAriaLabelledBy();
+		assert.strictEqual(aInputLabels[0], sExpectedLabelId, "A hidden label is added to FileUploader's input");
+
 		oFileUploader.destroy();
 	});
 
