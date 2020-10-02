@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
+	"sap/base/util/restricted/_CancelablePromise",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/base/util/isPlainObject",
@@ -29,6 +30,7 @@ sap.ui.define([
 	ManagedObjectObserver,
 	PropertyEditorFactory,
 	createPromise,
+	CancelablePromise,
 	deepClone,
 	deepEqual,
 	isPlainObject,
@@ -750,19 +752,24 @@ sap.ui.define([
 		this._setReady(false);
 		this._bFragmentReady = false;
 
-		if (this._fnCancelFragmentLoading) {
-			this._fnCancelFragmentLoading();
+		if (this._oFragmentPromise) {
+			this._oFragmentPromise.cancel();
 		}
 
-		var oFragmentPromise = createPromise(function (fnResolve, fnReject) {
+		var oFragmentPromise = new CancelablePromise(function (fnResolve, fnReject, onCancel) {
+			onCancel.shouldReject = false;
+
 			this._loadFragment(sFragmentName).then(fnResolve, fnReject);
 		}.bind(this));
+		this._oFragmentPromise = oFragmentPromise;
 
-		this._fnCancelFragmentLoading = oFragmentPromise.cancel;
-
-		return oFragmentPromise.promise
+		return oFragmentPromise
 			.then(function (oFragment) {
-				delete this._fnCancelFragmentLoading;
+				if (oFragmentPromise.isCanceled) {
+					oFragment.destroy();
+					return;
+				}
+
 				this._bFragmentReady = true;
 				this.setContent(oFragment);
 				this.onFragmentReady();
@@ -800,8 +807,8 @@ sap.ui.define([
 			this._oWrapperObserver.destroy();
 		}
 
-		if (this._fnCancelFragmentLoading) {
-			this._fnCancelFragmentLoading();
+		if (this._oFragmentPromise) {
+			this._oFragmentPromise.cancel();
 		}
 	};
 
