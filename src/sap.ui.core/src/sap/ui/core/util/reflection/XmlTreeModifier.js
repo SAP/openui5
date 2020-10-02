@@ -29,6 +29,9 @@ sap.ui.define([
 ) {
 
 	"use strict";
+
+	var CUSTOM_DATA_NS = "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1";
+
 	/**
 	 * Static utility class to access XMLNodes like ManagedObjects,
 	 * inside this classes oControl usually means XML node.
@@ -185,6 +188,13 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
+		createAndAddCustomData: function(oControl, sCustomDataKey, sValue) {
+			oControl.setAttributeNS(CUSTOM_DATA_NS, "custom.data.via.modifier:" + sCustomDataKey, XmlTreeModifier._escapeCurlyBracketsInString(sValue));
+		},
+
+		/**
+		 * @inheritDoc
+		 */
 		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {
 			var sId, sLocalName, oError;
 			if (!XmlTreeModifier.bySelector(oSelector, oAppComponent, oView)) {
@@ -316,8 +326,6 @@ sap.ui.define([
 			return oControlMetadata.getAllAggregations();
 		},
 
-
-
 		/**
 		 * @inheritDoc
 		 */
@@ -332,7 +340,6 @@ sap.ui.define([
 			}
 			if (sName === "customData") {
 				//check namespaced attributes:
-				var CUSTOM_DATA_NS = "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1";
 				var mCustomSettings;
 				var aNewCustomData = Array.prototype.slice.call(oParent.attributes).reduce(function(aNamespacedCustomData, oAttribute) {
 					var sLocalName = XmlTreeModifier._getLocalName(oAttribute);

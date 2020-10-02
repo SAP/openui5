@@ -148,6 +148,26 @@ function(
 			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton), 0, "then the index of the most recently created button is found correctly");
 		});
 
+		QUnit.test("createAndAddCustomData adds Custom Data properly", function(assert) {
+			var oCreateStub = sandbox.stub(JsControlTreeModifier, "createControl").returns("foo");
+			var oSetPropertyStub = sandbox.stub(JsControlTreeModifier, "setProperty");
+			var oInsertAggregationStub = sandbox.stub(JsControlTreeModifier, "insertAggregation");
+			JsControlTreeModifier.createAndAddCustomData(this.oControl, "myKey", "myValue", this.oComponent);
+			assert.equal(oCreateStub.lastCall.args[0], "sap.ui.core.CustomData", "the type is passed");
+			assert.equal(oCreateStub.lastCall.args[1], this.oComponent, "the component is passed");
+
+			assert.equal(oSetPropertyStub.callCount, 2, "two properties were set");
+			assert.equal(oSetPropertyStub.getCall(0).args[1], "key", "the key is set");
+			assert.equal(oSetPropertyStub.getCall(0).args[2], "myKey", "the key is set");
+			assert.equal(oSetPropertyStub.getCall(1).args[1], "value", "the value is set");
+			assert.equal(oSetPropertyStub.getCall(1).args[2], "myValue", "the value is set");
+
+			assert.equal(oInsertAggregationStub.lastCall.args[0], this.oControl, "the control is passed");
+			assert.equal(oInsertAggregationStub.lastCall.args[1], "customData", "the aggregation name is passed");
+			assert.equal(oInsertAggregationStub.lastCall.args[2], "foo", "the new custom data control is passed");
+			assert.equal(oInsertAggregationStub.lastCall.args[3], 0, "the index is passed");
+		});
+
 		QUnit.test("the modifier is not invalidating controls for changes in custom data aggregation", function (assert) {
 			var mData = {
 				key : "key",

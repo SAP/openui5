@@ -42,7 +42,7 @@ sap.ui.define([
 	 * @returns {string|undefined} Returns the custom data or 'undefined'
 	 */
 	FlexCustomData.getAppliedCustomDataValue = function(oControl, oChange, oModifier) {
-		var mCustomData = this._getCustomData(oControl, oModifier, this._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey));
+		var mCustomData = getCustomData(oControl, oModifier, this._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey));
 		return mCustomData.customDataValue;
 	};
 
@@ -106,7 +106,7 @@ sap.ui.define([
 			sCustomDataValue = "true";
 		}
 
-		this._writeCustomData(oControl, sCustomDataKey, sCustomDataValue, mPropertyBag);
+		writeCustomData(oControl, sCustomDataKey, sCustomDataValue, mPropertyBag);
 	};
 
 	/**
@@ -123,7 +123,7 @@ sap.ui.define([
 	 */
 	FlexCustomData.addFailedCustomData = function(oControl, oChange, mPropertyBag, sIdentifier) {
 		var sCustomDataKey = this._getCustomDataKey(oChange, sIdentifier);
-		this._writeCustomData(oControl, sCustomDataKey, "true", mPropertyBag);
+		writeCustomData(oControl, sCustomDataKey, "true", mPropertyBag);
 	};
 
 	/**
@@ -135,7 +135,7 @@ sap.ui.define([
 	 */
 	FlexCustomData.destroyAppliedCustomData = function(oControl, oChange, oModifier) {
 		var sKey = this._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
-		var mCustomData = this._getCustomData(oControl, oModifier, sKey);
+		var mCustomData = getCustomData(oControl, oModifier, sKey);
 		if (mCustomData.customData) {
 			oModifier.destroy(mCustomData.customData);
 		}
@@ -168,33 +168,29 @@ sap.ui.define([
 		return FlexCustomData.failedChangesCustomDataKeyJs;
 	};
 
+	/**
+	 * Creates the Custom Data key by combining the identifier and the change ID.
+	 * Also used in tests.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change Instance
+	 * @param {string} sIdentifier - Identifier of the Custom Data that should be written
+	 * @returns {string} Returns the key for the Custom Data
+	 */
 	FlexCustomData._getCustomDataKey = function(oChange, sIdentifier) {
 		return sIdentifier + "." + oChange.getId();
 	};
 
-	FlexCustomData._writeCustomData = function(oControl, sKey, sValue, mPropertyBag) {
-		var mCustomData = this._getCustomData(oControl, mPropertyBag.modifier, sKey);
+	function writeCustomData(oControl, sKey, sValue, mPropertyBag) {
+		var mCustomData = getCustomData(oControl, mPropertyBag.modifier, sKey);
 
 		if (!mCustomData.customData) {
-			this._createAndAddCustomDataControl(oControl, mPropertyBag, sKey, sValue);
+			mPropertyBag.modifier.createAndAddCustomData(oControl, sKey, sValue, mPropertyBag.appComponent);
 		} else {
 			mPropertyBag.modifier.setProperty(mCustomData.customData, "value", sValue);
 		}
-	};
+	}
 
-	FlexCustomData._createAndAddCustomDataControl = function(oControl, mPropertyBag, sCustomDataKey, sValue) {
-		var oModifier = mPropertyBag.modifier;
-		var oView = mPropertyBag.view;
-		var oComponent = mPropertyBag.appComponent;
-
-		var oCustomData = oModifier.createControl("sap.ui.core.CustomData", oComponent, oView, undefined, undefined, false);
-		oModifier.setProperty(oCustomData, "key", sCustomDataKey);
-		oModifier.setProperty(oCustomData, "value", sValue);
-		oModifier.insertAggregation(oControl, "customData", oCustomData, 0, oView);
-		return oCustomData;
-	};
-
-	FlexCustomData._getCustomData = function(oControl, oModifier, sCustomDataKey) {
+	function getCustomData(oControl, oModifier, sCustomDataKey) {
 		var aCustomData = oModifier.getAggregation(oControl, "customData") || [];
 		var oReturn = {};
 		aCustomData.some(function (oCustomData) {
@@ -206,7 +202,7 @@ sap.ui.define([
 			}
 		});
 		return oReturn;
-	};
+	}
 
 	return FlexCustomData;
 }, /* bExport= */true);

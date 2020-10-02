@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	"sap/ui/base/Event",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/CustomData",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -12,25 +11,24 @@ function(
 	XMLHelper,
 	Event,
 	JSONModel,
-	CustomData,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+	var HBOX_ID = "hboxId";
+	var TEXT_ID = "textId";
+	var ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT = "controlWithPropertyTypeObject";
+	var ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 = "controlWithPropertyTypeObject2";
+	var ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 = "controlWithPropertyTypeObject3";
+	var ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY = "controlWithPropertyTypeArray";
+	var ID_OF_CONTROL_WITH_PROP_BINDING = "controlWithPropertyBinding";
+	var CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
+	var ID_OF_CONTROL_WITH_CUSTOM_DATA = "controlWithCustomData";
+	var ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA = "controlWithInlineCustomData";
 
 	QUnit.module("Using the XmlTreeModifier...", {
 		beforeEach: function () {
-			this.HBOX_ID = "hboxId";
-			this.TEXT_ID = "textId";
-			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT = "controlWithPropertyTypeObject";
-			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 = "controlWithPropertyTypeObject2";
-			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 = "controlWithPropertyTypeObject3";
-			this.ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY = "controlWithPropertyTypeArray";
-			this.ID_OF_CONTROL_WITH_PROP_BINDING = "controlWithPropertyBinding";
-			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
-			this.ID_OF_CONTROL_WITH_CUSTOM_DATA = "controlWithCustomData";
-			this.ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA = "controlWithInlineCustomData";
 
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
@@ -49,17 +47,17 @@ function(
 						'<Label visible="true"></Label>' + //content in default aggregation
 						'<Label visible="false" design="Bold"></Label>' + //content in default aggregation, property set that has default value
 					'</VBox>' +
-					'<HBox id="' + this.HBOX_ID + '">' +
+					'<HBox id="' + HBOX_ID + '">' +
 						'<tooltip>' +	//0..1 aggregation
 							'<TooltipBase xmlns="sap.ui.core"></TooltipBase>' + //inline namespace as sap.ui.core is use case for not existing namespace
 						'</tooltip>' +
 						'<items>\n' +
-							'<Text id="' + this.TEXT_ID + '"></Text>' + //content in default aggregation
+							'<Text id="' + TEXT_ID + '"></Text>' + //content in default aggregation
 						'</items>' +
 					'</HBox>' +
 					'<Bar tooltip="barTooltip">' + //control without default aggregation, tooltip aggregation filled with altType
 					'</Bar>\n' +
-					'<VBox id="foo.' + this.HBOX_ID + '">' +
+					'<VBox id="foo.' + HBOX_ID + '">' +
 						'<Button text="Button1" id="button1"></Button>' +
 						'<Button text="Button2"></Button>\n' +
 						'<Button text="Button3"></Button>' +
@@ -77,7 +75,7 @@ function(
 						'<Button text="Button2"></Button>' +
 						'<Button text="Button3"></Button>' +
 					'</VBox>' +
-					'<f:DynamicPageTitle id="' + this.ID_OF_CONTROL_WITH_CUSTOM_DATA + '" fl:flexibility="' + this.CHANGE_HANDLER_PATH + '" app:someInlineAppCustomData="inlineValue" >' +
+					'<f:DynamicPageTitle id="' + ID_OF_CONTROL_WITH_CUSTOM_DATA + '" fl:flexibility="' + CHANGE_HANDLER_PATH + '" app:someInlineAppCustomData="inlineValue" >' +
 						'<f:actions>' +
 							'<Button text="Action1"></Button>' +
 							'<Button text="Action2"></Button>' +
@@ -96,12 +94,12 @@ function(
 						'<Label text="visibleLabel" stashed="false"></Label>' +
 						'<Label text="stashedInvisibleLabel" visible="false" stashed="true"></Label>' +
 					'</VBox>' +
-					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT + '" crossAppNavCallback="\\{&quot;key&quot;:&quot;value&quot;\\}" />' +
-					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 + '" crossAppNavCallback="\{&quot;key&quot;:&quot;value&quot;\}" />' +
-					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 + '" crossAppNavCallback="{\'key\': \'value\'}" />' +
-					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_BINDING + '" crossAppNavCallback="{/foo}" />' +
-					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY + '" crossAppNavCallback="[\\{&quot;key&quot;:&quot;value&quot;\\}]" />' +
-					'<f:DynamicPageTitle id="' + this.ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA + '" app:someInlineAppCustomData="inlineValue" />' +
+					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT + '" crossAppNavCallback="\\{&quot;key&quot;:&quot;value&quot;\\}" />' +
+					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 + '" crossAppNavCallback="\{&quot;key&quot;:&quot;value&quot;\}" />' +
+					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 + '" crossAppNavCallback="{\'key\': \'value\'}" />' +
+					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_BINDING + '" crossAppNavCallback="{/foo}" />' +
+					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY + '" crossAppNavCallback="[\\{&quot;key&quot;:&quot;value&quot;\\}]" />' +
+					'<f:DynamicPageTitle id="' + ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA + '" app:someInlineAppCustomData="inlineValue" />' +
 				'</mvc:View>';
 			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 
@@ -240,7 +238,7 @@ function(
 		});
 
 		QUnit.test("attribute specified inline is returned in custom data aggregation", function (assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA, this.oXmlView);
 			var aCustomData = XmlTreeModifier.getAggregation(oControl, 'customData');
 			assert.equal(aCustomData.length, 1, "the single custom data is returned");
 			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "key"), "someInlineAppCustomData", " inline specified custom data is available");
@@ -248,7 +246,7 @@ function(
 		});
 
 		QUnit.test("all the namespaced attributes are returned in custom data aggregation", function (assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_CUSTOM_DATA, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_CUSTOM_DATA, this.oXmlView);
 			var aCustomData = XmlTreeModifier.getAggregation(oControl, 'customData');
 			assert.equal(aCustomData.length, 3, "all 3 cases for custom data are returned");
 			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "key"), "fullCustomData", " fully specified custom data is available");
@@ -258,9 +256,23 @@ function(
 			assert.equal(XmlTreeModifier.getProperty(aCustomData[2], "key"), "sap-ui-custom-settings", " fully specified custom data is available");
 			assert.deepEqual(XmlTreeModifier.getProperty(aCustomData[2], "value"), {
 				"sap.ui.fl" : {
-					"flexibility" : this.CHANGE_HANDLER_PATH
+					"flexibility" : CHANGE_HANDLER_PATH
 				}
 			}, " sap-ui-custom-settings custom data is available");
+		});
+
+		QUnit.test("createAndAddCustomData adds the custom data properly, and getAggregation returns them", function(assert) {
+			assert.expect(2);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_CUSTOM_DATA, this.oXmlView);
+			XmlTreeModifier.createAndAddCustomData(oControl, "myKey", "myValue");
+			var aCustomData = XmlTreeModifier.getAggregation(oControl, 'customData');
+			assert.equal(aCustomData.length, 4, "the new custom data was returned");
+			aCustomData.some(function(oCustomData) {
+				if (XmlTreeModifier.getProperty(oCustomData, "key") === "myKey") {
+					assert.equal(XmlTreeModifier.getProperty(oCustomData, "value"), "myValue", "the newly added custom data is returned");
+					return true;
+				}
+			});
 		});
 
 		QUnit.test("the first non default aggregation childNode is added under a newly created aggregation node ", function (assert) {
@@ -274,6 +286,7 @@ function(
 			assert.equal(aNonDefaultAggregationElements[0].localName, "CustomData");
 			assert.equal(aNonDefaultAggregationElements[0].namespaceURI, "sap.ui.core");
 		});
+
 		QUnit.test("a child is added to the default aggregation ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 			var oCustomDataElement = XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView);
@@ -414,37 +427,37 @@ function(
 		});
 
 		QUnit.test("getProperty for properties of type object (double escaped case)", function (assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
 			assert.deepEqual(mData, { key : "value"}, "returns json value");
 		});
 
 		QUnit.test("getProperty for properties of type object (single escaped case)", function (assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2, this.oXmlView);
 			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
 			assert.deepEqual(mData, { key : "value"}, "returns json value");
 		});
 
 		QUnit.test("getProperty for properties of type object (single quote case)", function (assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3, this.oXmlView);
 			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
 			assert.deepEqual(mData, { key : "value"}, "returns json value");
 		});
 
 		QUnit.test("getProperty for properties of type object with an array (curly braces escaped case)", function (assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY, this.oXmlView);
 			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
 			assert.deepEqual(mData, [{ "key" : "value"}], "returns array value");
 		});
 
 		QUnit.test("getProperty for properties controlled by a binding", function(assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
 			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
 			assert.equal(mData, undefined, "nothing is returned");
 		});
 
 		QUnit.test("setProperty for properties of type object", function (assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", { key2 : 2});
 
 			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
@@ -452,7 +465,7 @@ function(
 		});
 
 		QUnit.test("setProperty for properties of type array", function (assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", [{ key2 : 2}]);
 
 			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
@@ -460,7 +473,7 @@ function(
 		});
 
 		QUnit.test("getPropertyBinding for bound properties", function(assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
 			var mData = XmlTreeModifier.getPropertyBinding(oControl, "crossAppNavCallback");
 			var oBindingInfo = {
 				path: "/foo"
@@ -469,7 +482,7 @@ function(
 		});
 
 		QUnit.test("getPropertyBinding for unbound properties of type object", function(assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			var mData = XmlTreeModifier.getPropertyBinding(oControl, "crossAppNavCallback");
 			assert.equal(mData, undefined, "nothing is returned");
 		});
@@ -481,19 +494,19 @@ function(
 		});
 
 		QUnit.test("getPropertyBinding for empty properties", function(assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
 			var mData = XmlTreeModifier.getPropertyBinding(oControl, "crossAppNavCallback2");
 			assert.equal(mData, undefined, "nothing is returned");
 		});
 
 		QUnit.test("setPropertyBinding with a binding string", function(assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			XmlTreeModifier.setPropertyBinding(oControl, "crossAppNavCallback", "{/foo}");
 			assert.equal(oControl.getAttribute("crossAppNavCallback"), "{/foo}", "the string was set");
 		});
 
 		QUnit.test("setPropertyBinding with a binding info object", function(assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			var oValueBefore = oControl.getAttribute("crossAppNavCallback");
 			assert.throws(function() {
 				XmlTreeModifier.setPropertyBinding(oControl, "crossAppNavCallback", {path: "foo"});
@@ -514,27 +527,27 @@ function(
 			XmlTreeModifier.applySettings(oVisibleLabel, {
 				design: "Bold", //simple property type string
 				required: true, //property type is not string
-				labelFor: this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT //association
+				labelFor: ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT //association
 			});
 			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "design"), "Bold", "the design value is changed from applySettings");
 			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "required"), true, "the required value is changed from applySettings");
 
 			var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
-			assert.strictEqual(sAssociatedControlId, this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
+			assert.strictEqual(sAssociatedControlId, ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
 		});
 
 		QUnit.test("applySetting with association as object", function (assert) {
 			var oVisibleLabel = getVisibleLabel(this.oXmlView);
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			XmlTreeModifier.applySettings(oVisibleLabel, {
 				labelFor: oControl //association
 			});
 			var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
-			assert.strictEqual(sAssociatedControlId, this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
+			assert.strictEqual(sAssociatedControlId, ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
 		});
 
 		QUnit.test("applySetting with property of type object", function (assert) {
-			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			var mData = { key2 : 2};
 			XmlTreeModifier.applySettings(oControl, {crossAppNavCallback: mData});
 			assert.deepEqual(XmlTreeModifier.getProperty(oControl, "crossAppNavCallback"), mData, "the property of type object returns in JSON notation");
@@ -564,16 +577,16 @@ function(
 		QUnit.test("setAssociation and removeAssociation works with single association and control id passed", function(assert) {
 			var oControl = getVisibleLabel(this.oXmlView);
 
-			XmlTreeModifier.setAssociation(oControl, "labelFor", this.HBOX_ID);
-			assert.strictEqual(XmlTreeModifier.getAssociation(oControl, "labelFor"), this.HBOX_ID);
+			XmlTreeModifier.setAssociation(oControl, "labelFor", HBOX_ID);
+			assert.strictEqual(XmlTreeModifier.getAssociation(oControl, "labelFor"), HBOX_ID);
 		});
 
 		QUnit.test("setAssociation works with single association and control instance passed", function(assert) {
 			var oControl = getVisibleLabel(this.oXmlView);
-			var oAssociatedControl = XmlTreeModifier._byId(this.HBOX_ID, this.oXmlView);
+			var oAssociatedControl = XmlTreeModifier._byId(HBOX_ID, this.oXmlView);
 
 			XmlTreeModifier.setAssociation(oControl, "labelFor", oAssociatedControl);
-			assert.strictEqual(XmlTreeModifier.getAssociation(oControl, "labelFor"), this.HBOX_ID, "associated control instance got converted to its ID");
+			assert.strictEqual(XmlTreeModifier.getAssociation(oControl, "labelFor"), HBOX_ID, "associated control instance got converted to its ID");
 		});
 
 		QUnit.test("byId finds the node specified", function (assert) {
@@ -582,9 +595,9 @@ function(
 			var oExpectedText = oExpectedHBox.childNodes[1].childNodes[1];
 			oExpectedText.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
 
-			var oHBox = XmlTreeModifier._byId(this.HBOX_ID, this.oXmlView);
+			var oHBox = XmlTreeModifier._byId(HBOX_ID, this.oXmlView);
 			assert.strictEqual(oHBox, oExpectedHBox, "HBox node found");
-			var oText = XmlTreeModifier._byId(this.TEXT_ID, this.oXmlView);
+			var oText = XmlTreeModifier._byId(TEXT_ID, this.oXmlView);
 			assert.strictEqual(oText, oExpectedText, "Text node found");
 		});
 
@@ -688,7 +701,7 @@ function(
 
 		QUnit.test("when getChangeHandlerModule is called for control instance on which changeHandler is defined", function (assert) {
 			var oDynamicPageTitle = XmlTreeModifier._children(this.oXmlView)[6];
-			assert.strictEqual(XmlTreeModifier.getChangeHandlerModulePath(oDynamicPageTitle), this.CHANGE_HANDLER_PATH, "then the changehandler path defined at the control instance is returned");
+			assert.strictEqual(XmlTreeModifier.getChangeHandlerModulePath(oDynamicPageTitle), CHANGE_HANDLER_PATH, "then the changehandler path defined at the control instance is returned");
 		});
 
 		QUnit.test("when getBingingTemplate is called for an aggregation without nodes", function (assert) {
@@ -717,11 +730,11 @@ function(
 		QUnit.test("when instantiateFragment is called with a duplicate ID", function(assert) {
 			var sFragment =
 				'<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
-					'<Button id="' + this.HBOX_ID + '" text="Button1"></Button>' +
+					'<Button id="' + HBOX_ID + '" text="Button1"></Button>' +
 				'</core:FragmentDefinition>';
 			assert.throws(function() {
 				XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView);
-			}, Error("The following ID is already in the view: foo." + this.HBOX_ID),
+			}, Error("The following ID is already in the view: foo." + HBOX_ID),
 			"then the right exception is thrown");
 		});
 
