@@ -52,16 +52,6 @@ div.dt-button-info > div {
   padding: 1em;
 }
 
-div.dt-button-collection-title {
-  text-align: center;
-  padding: 0.3em 0 0.5em;
-  font-size: 0.9em;
-}
-
-div.dt-button-collection-title:empty {
-  display: none;
-}
-
 div.dt-buttons {
   position: relative;
   float: left;
@@ -97,6 +87,11 @@ div.dt-button-collection {
   border-radius: 5px;
   box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
   z-index: 2002;
+  -webkit-column-gap: 8px;
+  -moz-column-gap: 8px;
+  -ms-column-gap: 8px;
+  -o-column-gap: 8px;
+  column-gap: 8px;
   -webkit-column-gap: 0;
   -moz-column-gap: 0;
   -ms-column-gap: 0;
@@ -107,11 +102,11 @@ div.dt-button-collection .dt-button {
   position: relative;
   left: 0;
   right: 0;
-  width: 100%;
-  box-sizing: border-box;
   display: block;
   float: none;
   margin-right: 0;
+}
+div.dt-button-collection .dt-button:last-child {
   margin-bottom: 4px;
 }
 div.dt-button-collection .dt-button:hover > span {
@@ -125,7 +120,7 @@ div.dt-button-collection.fixed {
   border-radius: 0;
 }
 div.dt-button-collection.fixed.two-column {
-  margin-left: -200px;
+  margin-left: -150px;
 }
 div.dt-button-collection.fixed.three-column {
   margin-left: -225px;
@@ -133,22 +128,12 @@ div.dt-button-collection.fixed.three-column {
 div.dt-button-collection.fixed.four-column {
   margin-left: -300px;
 }
-div.dt-button-collection > :last-child {
-  display: block !important;
-  -webkit-column-gap: 8px;
-  -moz-column-gap: 8px;
-  -ms-column-gap: 8px;
-  -o-column-gap: 8px;
-  column-gap: 8px;
-}
-div.dt-button-collection > :last-child > * {
+div.dt-button-collection > * {
   -webkit-column-break-inside: avoid;
   break-inside: avoid;
 }
 div.dt-button-collection.two-column {
-  width: 400px;
-}
-div.dt-button-collection.two-column > :last-child {
+  width: 300px;
   padding-bottom: 1px;
   -webkit-column-count: 2;
   -moz-column-count: 2;
@@ -158,8 +143,6 @@ div.dt-button-collection.two-column > :last-child {
 }
 div.dt-button-collection.three-column {
   width: 450px;
-}
-div.dt-button-collection.three-column > :last-child {
   padding-bottom: 1px;
   -webkit-column-count: 3;
   -moz-column-count: 3;
@@ -169,17 +152,12 @@ div.dt-button-collection.three-column > :last-child {
 }
 div.dt-button-collection.four-column {
   width: 600px;
-}
-div.dt-button-collection.four-column > :last-child {
   padding-bottom: 1px;
   -webkit-column-count: 4;
   -moz-column-count: 4;
   -ms-column-count: 4;
   -o-column-count: 4;
   column-count: 4;
-}
-div.dt-button-collection .dt-button {
-  border-radius: 0;
 }
 
 div.dt-button-background {

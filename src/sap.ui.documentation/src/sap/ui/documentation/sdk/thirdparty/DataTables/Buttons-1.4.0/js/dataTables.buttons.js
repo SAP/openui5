@@ -1,5 +1,5 @@
-/*! Buttons for DataTables 1.6.3
- * ©2016-2020 SpryMedia Ltd - datatables.net/license
+/*! Buttons for DataTables 1.4.0
+ * ©2016 SpryMedia Ltd - datatables.net/license
  */
 
 (function (factory) {
@@ -41,52 +41,12 @@
 
 	var _dtButtons = DataTable.ext.buttons;
 
-	// Allow for jQuery slim
-	function _fadeIn(el, duration, fn) {
-		if ($.fn.animate) {
-			el
-				.stop()
-				.fadeIn(duration, fn);
-		}
-		else {
-			el.css('display', 'block');
-
-			if (fn) {
-				fn.call(el);
-			}
-		}
-	}
-
-	function _fadeOut(el, duration, fn) {
-		if ($.fn.animate) {
-			el
-				.stop()
-				.fadeOut(duration, fn);
-		}
-		else {
-			el.css('display', 'none');
-
-			if (fn) {
-				fn.call(el);
-			}
-		}
-	}
-
 	/**
 	 * [Buttons description]
 	 * @param {[type]}
 	 * @param {[type]}
 	 */
 	var Buttons = function (dt, config) {
-		// If not created with a `new` keyword then we return a wrapper function that
-		// will take the settings object for a DT. This allows easy use of new instances
-		// with the `layout` option - e.g. `topLeft: $.fn.dataTable.Buttons( ... )`.
-		if (!(this instanceof Buttons)) {
-			return function (settings) {
-				return new Buttons(settings, dt).container();
-			};
-		}
-
 		// If there is no config set it to an empty object
 		if (typeof (config) === 'undefined') {
 			config = {};
@@ -135,11 +95,11 @@
 		 * @param  {int|string} Button index
 		 * @return {function}
 		 *//**
-	* Set the action of a button
-	* @param  {node} node Button element
-	* @param  {function} action Function to set
-	* @return {Buttons} Self for chaining
-	*/
+		* Set the action of a button
+		* @param  {node} node Button element
+		* @param  {function} action Function to set
+		* @return {Buttons} Self for chaining
+		*/
 		action: function (node, action) {
 			var button = this._nodeToButton(node);
 
@@ -194,7 +154,7 @@
 				idx = split[split.length - 1] * 1;
 			}
 
-			this._expandButton(buttons, config, base !== undefined, idx);
+			this._expandButton(buttons, config, false, idx);
 			this._draw();
 
 			return this;
@@ -216,9 +176,7 @@
 		disable: function (node) {
 			var button = this._nodeToButton(node);
 
-			$(button.node)
-				.addClass(this.c.dom.button.disabled)
-				.attr('disabled', true);
+			$(button.node).addClass(this.c.dom.button.disabled);
 
 			return this;
 		},
@@ -269,9 +227,7 @@
 			}
 
 			var button = this._nodeToButton(node);
-			$(button.node)
-				.removeClass(this.c.dom.button.disabled)
-				.removeAttr('disabled');
+			$(button.node).removeClass(this.c.dom.button.disabled);
 
 			return this;
 		},
@@ -285,27 +241,21 @@
 		},
 
 		/**
-		 * Get a button's node of the buttons container if no button is given
-		 * @param  {node} [node] Button node
-		 * @return {jQuery} Button element, or container
+		 * Get a button's node
+		 * @param  {node} node Button node
+		 * @return {jQuery} Button element
 		 */
 		node: function (node) {
-			if (!node) {
-				return this.dom.container;
-			}
-
 			var button = this._nodeToButton(node);
 			return $(button.node);
 		},
 
 		/**
 		 * Set / get a processing class on the selected button
-		 * @param {element} node Triggering button node
 		 * @param  {boolean} flag true to add, false to remove, undefined to get
 		 * @return {boolean|Buttons} Getter value or this if a setter.
 		 */
 		processing: function (node, flag) {
-			var dt = this.s.dt;
 			var button = this._nodeToButton(node);
 
 			if (flag === undefined) {
@@ -313,10 +263,6 @@
 			}
 
 			$(button.node).toggleClass('processing', flag);
-
-			$(dt.table().node()).triggerHandler('buttons-processing.dt', [
-				flag, dt.button(node), dt, $(node), button.conf
-			]);
 
 			return this;
 		},
@@ -358,11 +304,11 @@
 		 * @param  {int|string} node Button index
 		 * @return {string} Button text
 		 *//**
-	* Set the text for a button
-	* @param  {int|string|function} node Button index
-	* @param  {string} label Text
-	* @return {Buttons} Self for chaining
-	*/
+		* Set the text for a button
+		* @param  {int|string|function} node Button index
+		* @param  {string} label Text
+		* @return {Buttons} Self for chaining
+		*/
 		text: function (node, label) {
 			var button = this._nodeToButton(node);
 			var buttonLiner = this.c.dom.collection.buttonLiner;
@@ -421,10 +367,8 @@
 				this.add(buttons[i]);
 			}
 
-			dt.on('destroy', function (e, settings) {
-				if (settings === dtSettings) {
-					that.destroy();
-				}
+			dt.on('destroy', function () {
+				that.destroy();
 			});
 
 			// Global key event binding to listen for button keys
@@ -475,7 +419,6 @@
 
 			for (var i = 0, ien = buttons.length; i < ien; i++) {
 				container.append(buttons[i].inserter);
-				container.append(' ');
 
 				if (buttons[i].buttons && buttons[i].buttons.length) {
 					this._draw(buttons[i].collection, buttons[i].buttons);
@@ -516,7 +459,7 @@
 					continue;
 				}
 
-				if (attachPoint !== undefined && attachPoint !== null) {
+				if (attachPoint !== undefined) {
 					attachTo.splice(attachPoint, 0, built);
 					attachPoint++;
 				}
@@ -525,8 +468,10 @@
 				}
 
 				if (built.conf.buttons) {
-					built.collection = $('<' + this.c.dom.collection.tag + '/>');
-
+					var collectionDom = this.c.dom.collection;
+					built.collection = $('<' + collectionDom.tag + '/>')
+						.addClass(collectionDom.className)
+						.attr('role', 'menu');
 					built.conf._collection = built.collection;
 
 					this._expandButton(built.buttons, built.conf.buttons, true, attachPoint);
@@ -582,9 +527,7 @@
 				]);
 			};
 
-			var tag = config.tag || buttonDom.tag;
-			var clickBlurs = config.clickBlurs === undefined ? true : config.clickBlurs
-			var button = $('<' + tag + '/>')
+			var button = $('<' + buttonDom.tag + '/>')
 				.addClass(buttonDom.className)
 				.attr('tabindex', this.s.dt.settings()[0].iTabIndex)
 				.attr('aria-controls', this.s.dt.table().node().id)
@@ -594,9 +537,8 @@
 					if (!button.hasClass(buttonDom.disabled) && config.action) {
 						action(e, dt, button, config);
 					}
-					if (clickBlurs) {
-						button.trigger('blur');
-					}
+
+					button.blur();
 				})
 				.on('keyup.dtb', function (e) {
 					if (e.keyCode === 13) {
@@ -607,13 +549,8 @@
 				});
 
 			// Make `a` tags act like a link
-			if (tag.toLowerCase() === 'a') {
+			if (buttonDom.tag.toLowerCase() === 'a') {
 				button.attr('href', '#');
-			}
-
-			// Button tags should have `type=button` so they don't have any default behaviour
-			if (tag.toLowerCase() === 'button') {
-				button.attr('type', 'button');
 			}
 
 			if (linerDom.tag) {
@@ -643,10 +580,6 @@
 				button.attr('title', text(config.titleAttr));
 			}
 
-			if (config.attr) {
-				button.attr(config.attr);
-			}
-
 			if (!config.namespace) {
 				config.namespace = '.dt-button-' + (_buttonCounter++);
 			}
@@ -663,13 +596,6 @@
 			}
 
 			this._addKey(config);
-
-			// Style integration callback for DOM manipulation
-			// Note that this is _not_ documented. It is currently
-			// for style integration only
-			if (this.c.buttonCreated) {
-				inserter = this.c.buttonCreated(config, inserter);
-			}
 
 			return {
 				conf: config,
@@ -743,18 +669,12 @@
 		 * @private
 		 */
 		_keypress: function (character, e) {
-			// Check if this button press already activated on another instance of Buttons
-			if (e._buttonsHandled) {
-				return;
-			}
-
 			var run = function (conf, node) {
 				if (!conf.key) {
 					return;
 				}
 
 				if (conf.key === character) {
-					e._buttonsHandled = true;
 					$(node).click();
 				}
 				else if ($.isPlainObject(conf.key)) {
@@ -779,7 +699,6 @@
 					}
 
 					// Made it this far - it is good
-					e._buttonsHandled = true;
 					$(node).click();
 				}
 			};
@@ -932,277 +851,6 @@
 			}
 
 			return conf;
-		},
-
-		/**
-		 * Display (and replace if there is an existing one) a popover attached to a button
-		 * @param {string|node} content Content to show
-		 * @param {DataTable.Api} hostButton DT API instance of the button
-		 * @param {object} inOpts Options (see object below for all options)
-		 */
-		_popover: function (content, hostButton, inOpts) {
-			var dt = hostButton;
-			var buttonsSettings = this.c;
-			var options = $.extend({
-				align: 'button-left', // button-right, dt-container
-				autoClose: false,
-				background: true,
-				backgroundClassName: 'dt-button-background',
-				contentClassName: buttonsSettings.dom.collection.className,
-				collectionLayout: '',
-				collectionTitle: '',
-				dropup: false,
-				fade: 400,
-				rightAlignClassName: 'dt-button-right',
-				tag: buttonsSettings.dom.collection.tag
-			}, inOpts);
-			var hostNode = hostButton.node();
-
-			var close = function () {
-				_fadeOut(
-					$('.dt-button-collection'),
-					options.fade,
-					function () {
-						$(this).detach();
-					}
-				);
-
-				$(dt.buttons('[aria-haspopup="true"][aria-expanded="true"]').nodes())
-					.attr('aria-expanded', 'false');
-
-				$('div.dt-button-background').off('click.dtb-collection');
-				Buttons.background(false, options.backgroundClassName, options.fade, hostNode);
-
-				$('body').off('.dtb-collection');
-				dt.off('buttons-action.b-internal');
-			};
-
-			if (content === false) {
-				close();
-			}
-
-			var existingExpanded = $(dt.buttons('[aria-haspopup="true"][aria-expanded="true"]').nodes());
-			if (existingExpanded.length) {
-				hostNode = existingExpanded.eq(0);
-
-				close();
-			}
-
-			var display = $('<div/>')
-				.addClass('dt-button-collection')
-				.addClass(options.collectionLayout)
-				.css('display', 'none');
-
-			content = $(content)
-				.addClass(options.contentClassName)
-				.attr('role', 'menu')
-				.appendTo(display);
-
-			hostNode.attr('aria-expanded', 'true');
-
-			if (hostNode.parents('body')[0] !== document.body) {
-				hostNode = document.body.lastChild;
-			}
-
-			if (options.collectionTitle) {
-				display.prepend('<div class="dt-button-collection-title">' + options.collectionTitle + '</div>');
-			}
-
-			_fadeIn(display.insertAfter(hostNode));
-
-			var tableContainer = $(hostButton.table().container());
-			var position = display.css('position');
-
-			if (options.align === 'dt-container') {
-				hostNode = hostNode.parent();
-				display.css('width', tableContainer.width());
-			}
-
-			// Align the popover relative to the DataTables container
-			// Useful for wide popovers such as SearchPanes
-			if (
-				position === 'absolute' &&
-				(
-					display.hasClass(options.rightAlignClassName) ||
-					display.hasClass(options.leftAlignClassName) ||
-					options.align === 'dt-container'
-				)
-			) {
-
-				var hostPosition = hostNode.position();
-
-				display.css({
-					top: hostPosition.top + hostNode.outerHeight(),
-					left: hostPosition.left
-				});
-
-				// calculate overflow when positioned beneath
-				var collectionHeight = display.outerHeight();
-				var tableBottom = tableContainer.offset().top + tableContainer.height();
-				var listBottom = hostPosition.top + hostNode.outerHeight() + collectionHeight;
-				var bottomOverflow = listBottom - tableBottom;
-
-				// calculate overflow when positioned above
-				var listTop = hostPosition.top - collectionHeight;
-				var tableTop = tableContainer.offset().top;
-				var topOverflow = tableTop - listTop;
-
-				// if bottom overflow is larger, move to the top because it fits better, or if dropup is requested
-				var moveTop = hostPosition.top - collectionHeight - 5;
-				if ((bottomOverflow > topOverflow || options.dropup) && -moveTop < tableTop) {
-					display.css('top', moveTop);
-				}
-
-				// Get the size of the container (left and width - and thus also right)
-				var tableLeft = tableContainer.offset().left;
-				var tableWidth = tableContainer.width();
-				var tableRight = tableLeft + tableWidth;
-
-				// Get the size of the popover (left and width - and ...)
-				var popoverLeft = display.offset().left;
-				var popoverWidth = display.width();
-				var popoverRight = popoverLeft + popoverWidth;
-
-				// Get the size of the host buttons (left and width - and ...)
-				var buttonsLeft = hostNode.offset().left;
-				var buttonsWidth = hostNode.outerWidth()
-				var buttonsRight = buttonsLeft + buttonsWidth;
-
-				// You've then got all the numbers you need to do some calculations and if statements,
-				//  so we can do some quick JS maths and apply it only once
-				// If it has the right align class OR the buttons are right aligned OR the button container is floated right,
-				//  then calculate left position for the popover to align the popover to the right hand
-				//  side of the button - check to see if the left of the popover is inside the table container.
-				// If not, move the popover so it is, but not more than it means that the popover is to the right of the table container
-				var popoverShuffle = 0;
-				if (display.hasClass(options.rightAlignClassName)) {
-					popoverShuffle = buttonsRight - popoverRight;
-					if (tableLeft > (popoverLeft + popoverShuffle)) {
-						var leftGap = tableLeft - (popoverLeft + popoverShuffle);
-						var rightGap = tableRight - (popoverRight + popoverShuffle);
-
-						if (leftGap > rightGap) {
-							popoverShuffle += rightGap;
-						}
-						else {
-							popoverShuffle += leftGap;
-						}
-					}
-				}
-				// else attempt to left align the popover to the button. Similar to above, if the popover's right goes past the table container's right,
-				//  then move it back, but not so much that it goes past the left of the table container
-				else {
-					popoverShuffle = tableLeft - popoverLeft;
-
-					if (tableRight < (popoverRight + popoverShuffle)) {
-						var leftGap = tableLeft - (popoverLeft + popoverShuffle);
-						var rightGap = tableRight - (popoverRight + popoverShuffle);
-
-						if (leftGap > rightGap) {
-							popoverShuffle += rightGap;
-						}
-						else {
-							popoverShuffle += leftGap;
-						}
-
-					}
-				}
-
-				display.css('left', display.position().left + popoverShuffle);
-
-			}
-			else if (position === 'absolute') {
-				// Align relative to the host button
-				var hostPosition = hostNode.position();
-
-				display.css({
-					top: hostPosition.top + hostNode.outerHeight(),
-					left: hostPosition.left
-				});
-
-				// calculate overflow when positioned beneath
-				var collectionHeight = display.outerHeight();
-				var top = hostNode.offset().top
-				var popoverShuffle = 0;
-
-				// Get the size of the host buttons (left and width - and ...)
-				var buttonsLeft = hostNode.offset().left;
-				var buttonsWidth = hostNode.outerWidth()
-				var buttonsRight = buttonsLeft + buttonsWidth;
-
-				// Get the size of the popover (left and width - and ...)
-				var popoverLeft = display.offset().left;
-				var popoverWidth = content.width();
-				var popoverRight = popoverLeft + popoverWidth;
-
-				var moveTop = hostPosition.top - collectionHeight - 5;
-				var tableBottom = tableContainer.offset().top + tableContainer.height();
-				var listBottom = hostPosition.top + hostNode.outerHeight() + collectionHeight;
-				var bottomOverflow = listBottom - tableBottom;
-
-				// calculate overflow when positioned above
-				var listTop = hostPosition.top - collectionHeight;
-				var tableTop = tableContainer.offset().top;
-				var topOverflow = tableTop - listTop;
-
-				if ((bottomOverflow > topOverflow || options.dropup) && -moveTop < tableTop) {
-					display.css('top', moveTop);
-				}
-
-				popoverShuffle = options.align === 'button-right'
-					? buttonsRight - popoverRight
-					: buttonsLeft - popoverLeft;
-
-				display.css('left', display.position().left + popoverShuffle);
-			}
-			else {
-				// Fix position - centre on screen
-				var top = display.height() / 2;
-				if (top > $(window).height() / 2) {
-					top = $(window).height() / 2;
-				}
-
-				display.css('marginTop', top * -1);
-			}
-
-			if (options.background) {
-				Buttons.background(true, options.backgroundClassName, options.fade, hostNode);
-			}
-
-			// This is bonkers, but if we don't have a click listener on the
-			// background element, iOS Safari will ignore the body click
-			// listener below. An empty function here is all that is
-			// required to make it work...
-			$('div.dt-button-background').on('click.dtb-collection', function () { });
-
-			$('body')
-				.on('click.dtb-collection', function (e) {
-					// andSelf is deprecated in jQ1.8, but we want 1.7 compat
-					var back = $.fn.addBack ? 'addBack' : 'andSelf';
-					var parent = $(e.target).parent()[0];
-
-					if ((!$(e.target).parents()[back]().filter(content).length && !$(parent).hasClass('dt-buttons')) || $(e.target).hasClass('dt-button-background')) {
-						close();
-					}
-				})
-				.on('keyup.dtb-collection', function (e) {
-					if (e.keyCode === 27) {
-						close();
-					}
-				});
-
-			if (options.autoClose) {
-				setTimeout(function () {
-					dt.on('buttons-action.b-internal', function (e, btn, dt, node) {
-						if (node[0] === hostNode[0]) {
-							return;
-						}
-						close();
-					});
-				}, 0);
-			}
-
-			$(display).trigger('buttons-popover.dt');
 		}
 	});
 
@@ -1219,33 +867,25 @@
 	 * @param  {string} Class to assign to the background
 	 * @static
 	 */
-	Buttons.background = function (show, className, fade, insertPoint) {
+	Buttons.background = function (show, className, fade) {
 		if (fade === undefined) {
 			fade = 400;
 		}
-		if (!insertPoint) {
-			insertPoint = document.body;
-		}
 
 		if (show) {
-			_fadeIn(
-				$('<div/>')
-					.addClass(className)
-					.css('display', 'none')
-					.insertAfter(insertPoint),
-				fade
-			);
+			$('<div/>')
+				.addClass(className)
+				.css('display', 'none')
+				.appendTo('body')
+				.fadeIn(fade);
 		}
 		else {
-			_fadeOut(
-				$('div.' + className),
-				fade,
-				function () {
+			$('body > div.' + className)
+				.fadeOut(fade, function () {
 					$(this)
 						.removeClass(className)
 						.remove();
-				}
-			);
+				});
 		}
 	};
 
@@ -1261,7 +901,7 @@
 	 * @static
 	 */
 	Buttons.instanceSelector = function (group, buttons) {
-		if (group === undefined || group === null) {
+		if (!group) {
 			return $.map(buttons, function (v) {
 				return v.inst;
 			});
@@ -1459,13 +1099,10 @@
 			},
 			collection: {
 				tag: 'div',
-				className: ''
+				className: 'dt-button-collection'
 			},
 			button: {
-				// Flash buttons will not work with `<button>` in IE - it has to be `<a>`
-				tag: 'ActiveXObject' in window ?
-					'a' :
-					'button',
+				tag: 'a',
 				className: 'dt-button',
 				active: 'active',
 				disabled: 'disabled'
@@ -1482,7 +1119,7 @@
 	 * @type {string}
 	 * @static
 	 */
-	Buttons.version = '1.6.3';
+	Buttons.version = '1.4.0';
 
 
 	$.extend(_dtButtons, {
@@ -1491,23 +1128,112 @@
 				return dt.i18n('buttons.collection', 'Collection');
 			},
 			className: 'buttons-collection',
-			init: function (dt, button, config) {
-				button.attr('aria-expanded', false);
-			},
 			action: function (e, dt, button, config) {
-				e.stopPropagation();
+				var host = button;
+				var hostOffset = host.offset();
+				var tableContainer = $(dt.table().container());
+				var multiLevel = false;
 
-				if (config._collection.parents('body').length) {
-					this.popover(false, config);
+				// Remove any old collection
+				if ($('div.dt-button-background').length) {
+					multiLevel = $('.dt-button-collection').offset();
+					$('body').trigger('click.dtb-collection');
+				}
+
+				config._collection
+					.addClass(config.collectionLayout)
+					.css('display', 'none')
+					.appendTo('body')
+					.fadeIn(config.fade);
+
+				var position = config._collection.css('position');
+
+				if (multiLevel && position === 'absolute') {
+					config._collection.css({
+						top: multiLevel.top,
+						left: multiLevel.left
+					});
+				}
+				else if (position === 'absolute') {
+					config._collection.css({
+						top: hostOffset.top + host.outerHeight(),
+						left: hostOffset.left
+					});
+
+					// calculate overflow when positioned beneath
+					var tableBottom = tableContainer.offset().top + tableContainer.height();
+					var listBottom = hostOffset.top + host.outerHeight() + config._collection.outerHeight();
+					var bottomOverflow = listBottom - tableBottom;
+
+					// calculate overflow when positioned above
+					var listTop = hostOffset.top - config._collection.outerHeight();
+					var tableTop = tableContainer.offset().top;
+					var topOverflow = tableTop - listTop;
+
+					// if bottom overflow is larger, move to the top because it fits better
+					if (bottomOverflow > topOverflow) {
+						config._collection.css('top', hostOffset.top - config._collection.outerHeight() - 5);
+					}
+
+					var listRight = hostOffset.left + config._collection.outerWidth();
+					var tableRight = tableContainer.offset().left + tableContainer.width();
+					if (listRight > tableRight) {
+						config._collection.css('left', hostOffset.left - (listRight - tableRight));
+					}
 				}
 				else {
-					this.popover(config._collection, config);
+					// Fix position - centre on screen
+					var top = config._collection.height() / 2;
+					if (top > $(window).height() / 2) {
+						top = $(window).height() / 2;
+					}
+
+					config._collection.css('marginTop', top * -1);
+				}
+
+				if (config.background) {
+					Buttons.background(true, config.backgroundClassName, config.fade);
+				}
+
+				// Need to break the 'thread' for the collection button being
+				// activated by a click - it would also trigger this event
+				setTimeout(function () {
+					// This is bonkers, but if we don't have a click listener on the
+					// background element, iOS Safari will ignore the body click
+					// listener below. An empty function here is all that is
+					// required to make it work...
+					$('div.dt-button-background').on('click.dtb-collection', function () { });
+
+					$('body').on('click.dtb-collection', function (e) {
+						// andSelf is deprecated in jQ1.8, but we want 1.7 compat
+						var back = $.fn.addBack ? 'addBack' : 'andSelf';
+
+						if (!$(e.target).parents()[back]().filter(config._collection).length) {
+							config._collection
+								.fadeOut(config.fade, function () {
+									config._collection.detach();
+								});
+
+							$('div.dt-button-background').off('click.dtb-collection');
+							Buttons.background(false, config.backgroundClassName, config.fade);
+
+							$('body').off('click.dtb-collection');
+							dt.off('buttons-action.b-internal');
+						}
+					});
+				}, 10);
+
+				if (config.autoClose) {
+					dt.on('buttons-action.b-internal', function () {
+						$('div.dt-button-background').click();
+					});
 				}
 			},
-			attr: {
-				'aria-haspopup': true
-			}
-			// Also the popover options, defined in Buttons.popover
+			background: true,
+			collectionLayout: '',
+			backgroundClassName: 'dt-button-background',
+			autoClose: false,
+			fade: 400
 		},
 		copy: function (dt, conf) {
 			if (_dtButtons.copyHtml5) {
@@ -1584,7 +1310,7 @@
 				init: function (dt, node, conf) {
 					var that = this;
 					dt.on('length.dt' + conf.namespace, function () {
-						that.text(conf.text);
+						that.text(text(dt));
 					});
 				},
 				destroy: function (dt, node, conf) {
@@ -1722,15 +1448,8 @@
 		});
 	});
 
-	// Button resolver to the popover
-	DataTable.Api.register('button().popover()', function (content, options) {
-		return this.map(function (set) {
-			return set.inst._popover(content, this.button(this[0].node), options);
-		});
-	});
-
 	// Get the container elements
-	DataTable.Api.register('buttons().containers()', function () {
+	DataTable.Api.registerPlural('buttons().containers()', 'buttons().container()', function () {
 		var jq = $();
 		var groupSelector = this._groupSelector;
 
@@ -1747,11 +1466,6 @@
 		});
 
 		return jq;
-	});
-
-	DataTable.Api.register('buttons().container()', function () {
-		// API level of nesting is `buttons()` so we can zip into the containers method
-		return this.containers().eq(0);
 	});
 
 	// Add a new button
@@ -1794,14 +1508,9 @@
 		var that = this;
 
 		if (title === false) {
-			this.off('destroy.btn-info');
-			_fadeOut(
-				$('#datatables_buttons_info'),
-				400,
-				function () {
-					$(this).remove();
-				}
-			);
+			$('#datatables_buttons_info').fadeOut(function () {
+				$(this).remove();
+			});
 			clearTimeout(_infoTimer);
 			_infoTimer = null;
 
@@ -1818,23 +1527,18 @@
 
 		title = title ? '<h2>' + title + '</h2>' : '';
 
-		_fadeIn(
-			$('<div id="datatables_buttons_info" class="dt-button-info"/>')
-				.html(title)
-				.append($('<div/>')[typeof message === 'string' ? 'html' : 'append'](message))
-				.css('display', 'none')
-				.appendTo('body')
-		);
+		$('<div id="datatables_buttons_info" class="dt-button-info"/>')
+			.html(title)
+			.append($('<div/>')[typeof message === 'string' ? 'html' : 'append'](message))
+			.css('display', 'none')
+			.appendTo('body')
+			.fadeIn();
 
 		if (time !== undefined && time !== 0) {
 			_infoTimer = setTimeout(function () {
 				that.buttons.info(false);
 			}, time);
 		}
-
-		this.on('destroy.btn-info', function () {
-			that.buttons.info(false);
-		});
 
 		return this;
 	});
@@ -1857,7 +1561,7 @@
 		return {
 			filename: _filename(conf),
 			title: _title(conf),
-			messageTop: _message(this, conf.message || conf.messageTop, 'top'),
+			messageTop: _message(this, conf.messageTop || conf.message, 'top'),
 			messageBottom: _message(this, conf.messageBottom, 'bottom')
 		};
 	});
@@ -1872,7 +1576,7 @@
 	 */
 	var _filename = function (config) {
 		// Backwards compatibility
-		var filename = config.filename === '*' && config.title !== '*' && config.title !== undefined && config.title !== null && config.title !== '' ?
+		var filename = config.filename === '*' && config.title !== '*' && config.title !== undefined ?
 			config.title :
 			config.filename;
 
@@ -1885,7 +1589,7 @@
 		}
 
 		if (filename.indexOf('*') !== -1) {
-			filename = $.trim(filename.replace('*', $('head > title').text()));
+			filename = $.trim(filename.replace('*', $('title').text()));
 		}
 
 		// Strip characters which the OS will object to
@@ -1925,7 +1629,7 @@
 
 		return title === null ?
 			null : title.indexOf('*') !== -1 ?
-				title.replace('*', $('head > title').text() || 'Exported data') :
+				title.replace('*', $('title').text() || 'Exported data') :
 				title;
 	};
 
@@ -1980,8 +1684,7 @@
 				body: function (d) {
 					return strip(d);
 				}
-			},
-			customizeData: null
+			}
 		}, inOpts);
 
 		var strip = function (str) {
@@ -1991,9 +1694,6 @@
 
 			// Always remove script tags
 			str = str.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-
-			// Always remove comments
-			str = str.replace(/<!\-\-.*?\-\->/g, '');
 
 			if (config.stripHtml) {
 				str = str.replace(/<[^>]*>/g, '');
@@ -2028,17 +1728,7 @@
 			}).toArray() :
 			null;
 
-		// If Select is available on this table, and any rows are selected, limit the export
-		// to the selected rows. If no rows are selected, all rows will be exported. Specify
-		// a `selected` modifier to control directly.
-		var modifier = $.extend({}, config.modifier);
-		if (dt.select && typeof dt.select.info === 'function' && modifier.selected === undefined) {
-			if (dt.rows(config.rows, $.extend({ selected: true }, modifier)).any()) {
-				$.extend(modifier, { selected: true })
-			}
-		}
-
-		var rowIndexes = dt.rows(config.rows, modifier).indexes().toArray();
+		var rowIndexes = dt.rows(config.rows, config.modifier).indexes().toArray();
 		var selectedCells = dt.cells(rowIndexes, config.columns);
 		var cells = selectedCells
 			.render(config.orthogonal)
@@ -2049,11 +1739,11 @@
 
 		var columns = header.length;
 		var rows = columns > 0 ? cells.length / columns : 0;
-		var body = [];
+		var body = new Array(rows);
 		var cellCounter = 0;
 
 		for (var i = 0, ien = rows; i < ien; i++) {
-			var row = [columns];
+			var row = new Array(columns);
 
 			for (var j = 0; j < columns; j++) {
 				row[j] = config.format.body(cells[cellCounter], i, j, cellNodes[cellCounter]);
@@ -2063,17 +1753,11 @@
 			body[i] = row;
 		}
 
-		var data = {
+		return {
 			header: header,
 			footer: footer,
 			body: body
 		};
-
-		if (config.customizeData) {
-			config.customizeData(data);
-		}
-
-		return data;
 	};
 
 
@@ -2104,25 +1788,16 @@
 		}
 	});
 
-	function _init(settings, options) {
-		var api = new DataTable.Api(settings);
-		var opts = options
-			? options
-			: api.init().buttons || DataTable.defaults.buttons;
-
-		return new Buttons(api, opts).container();
-	}
-
 	// DataTables `dom` feature option
 	DataTable.ext.feature.push({
-		fnInit: _init,
+		fnInit: function (settings) {
+			var api = new DataTable.Api(settings);
+			var opts = api.init().buttons || DataTable.defaults.buttons;
+
+			return new Buttons(api, opts).container();
+		},
 		cFeature: "B"
 	});
-
-	// DataTables 2 layout feature
-	if (DataTable.ext.features) {
-		DataTable.ext.features.register('buttons', _init);
-	}
 
 
 	return Buttons;

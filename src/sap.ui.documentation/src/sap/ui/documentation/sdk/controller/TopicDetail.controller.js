@@ -58,7 +58,7 @@ sap.ui.define([
 
 				jQuery.sap.includeStyleSheet("resources/sap/ui/thirdparty/jqueryui/themes/base/jquery.ui.all.css");
 				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/css/dataTables.jqueryui.css");
-				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/css/buttons.jqueryui.css");
+				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/css/buttons.jqueryui.css");
 
 				// order is important
 				jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/jquery.dataTables.js" })
@@ -66,16 +66,16 @@ sap.ui.define([
 						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/dataTables.jqueryui.js" });
 					})
 					.then(function () {
-						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/js/dataTables.buttons.js" });
+						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/dataTables.buttons.js" });
 					})
 					.then(function () {
-						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/js/buttons.jqueryui.js" });
+						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.jqueryui.js" });
 					})
 					.then(function () {
-						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/js/buttons.html5.js" });
+						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.html5.js" });
 					})
 					.then(function () {
-						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/js/buttons.colVis.js" });
+						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.colVis.js" });
 					})
 					.then(function () {
 						dataTablesConfigURL = ResourcesUtil.getResourceOriginPath(oConfig.docuPath + 'dataTablesConfig.json');

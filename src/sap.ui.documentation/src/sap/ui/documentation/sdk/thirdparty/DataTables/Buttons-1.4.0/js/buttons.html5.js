@@ -48,20 +48,6 @@
 		return pdfmake || window.pdfMake;
 	}
 
-	DataTable.Buttons.pdfMake = function (_) {
-		if (!_) {
-			return _pdfMake();
-		}
-		pdfmake = _;
-	}
-
-	DataTable.Buttons.jszip = function (_) {
-		if (!_) {
-			return _jsZip();
-		}
-		jszip = _;
-	}
-
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * FileSaver.js dependency
@@ -382,7 +368,7 @@
 			// drop attributes
 			_ieExcel = _serialiser
 				.serializeToString(
-					(new window.DOMParser()).parseFromString(excelStrings['xl/worksheets/sheet1.xml'], 'text/xml')
+					$.parseXML(excelStrings['xl/worksheets/sheet1.xml'])
 				)
 				.indexOf('xmlns:r') === -1;
 		}
@@ -432,9 +418,6 @@
 
 					// Return namespace attributes to being as such
 					str = str.replace(/_dt_b_namespace_token_/g, ':');
-
-					// Remove testing name space that IE puts into the space preserve attr
-					str = str.replace(/xmlns:NS[\d]+="" NS[\d]+:/g, '');
 				}
 
 				// Safari, IE and Edge will put empty name space attributes onto
@@ -518,11 +501,11 @@
 
 			// Max width rather than having potentially massive column widths
 			if (max > 40) {
-				return 54; // 40 * 1.35
+				return 52; // 40 * 1.3
 			}
 		}
 
-		max *= 1.35;
+		max *= 1.3;
 
 		// And a min width
 		return max > 6 ? max : 6;
@@ -563,9 +546,8 @@
 			'<workbookView xWindow="0" yWindow="0" windowWidth="25600" windowHeight="19020" tabRatio="500"/>' +
 			'</bookViews>' +
 			'<sheets>' +
-			'<sheet name="Sheet1" sheetId="1" r:id="rId1"/>' +
+			'<sheet name="" sheetId="1" r:id="rId1"/>' +
 			'</sheets>' +
-			'<definedNames/>' +
 			'</workbook>',
 
 		"xl/worksheets/sheet1.xml":
@@ -616,9 +598,7 @@
 			'<fill>' +
 			'<patternFill patternType="none" />' +
 			'</fill>' +
-			'<fill>' + // Excel appears to use this as a dotted background regardless of values but
-			'<patternFill patternType="none" />' + // to be valid to the schema, use a patternFill
-			'</fill>' +
+			'<fill/>' + // Excel appears to use this as a dotted background regardless of values
 			'<fill>' +
 			'<patternFill patternType="solid">' +
 			'<fgColor rgb="FFD9D9D9" />' +
@@ -671,7 +651,7 @@
 			'<cellStyleXfs count="1">' +
 			'<xf numFmtId="0" fontId="0" fillId="0" borderId="0" />' +
 			'</cellStyleXfs>' +
-			'<cellXfs count="68">' +
+			'<cellXfs count="67">' +
 			'<xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>' +
 			'<xf numFmtId="0" fontId="1" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>' +
 			'<xf numFmtId="0" fontId="2" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>' +
@@ -751,7 +731,6 @@
 			'<xf numFmtId="4" fontId="0" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1" xfId="0" applyNumberFormat="1"/>' +
 			'<xf numFmtId="1" fontId="0" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1" xfId="0" applyNumberFormat="1"/>' +
 			'<xf numFmtId="2" fontId="0" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1" xfId="0" applyNumberFormat="1"/>' +
-			'<xf numFmtId="14" fontId="0" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1" xfId="0" applyNumberFormat="1"/>' +
 			'</cellXfs>' +
 			'<cellStyles count="1">' +
 			'<cellStyle name="Normal" xfId="0" builtinId="0" />' +
@@ -778,8 +757,7 @@
 		{ match: /^\([\d,]+\)$/, style: 61, fmt: function (d) { return -1 * d.replace(/[\(\)]/g, ''); } },  // Negative numbers indicated by brackets
 		{ match: /^\([\d,]+\.\d{2}\)$/, style: 62, fmt: function (d) { return -1 * d.replace(/[\(\)]/g, ''); } },  // Negative numbers indicated by brackets - 2d.p.
 		{ match: /^\-?[\d,]+$/, style: 63 }, // Numbers with thousand separators
-		{ match: /^\-?[\d,]+\.\d{2}$/, style: 64 },
-		{ match: /^[\d]{4}\-[\d]{2}\-[\d]{2}$/, style: 67, fmt: function (d) { return Math.round(25569 + (Date.parse(d) / (86400 * 1000))); } } //Date yyyy-mm-dd
+		{ match: /^\-?[\d,]+\.\d{2}$/, style: 64 }  // Numbers with 2 d.p. and thousands separators
 	];
 
 
@@ -829,7 +807,7 @@
 			}
 
 			if (config.customize) {
-				output = config.customize(output, config, dt);
+				output = config.customize(output, config);
 			}
 
 			var textarea = $('<textarea readonly/>')
@@ -941,7 +919,7 @@
 			var charset = config.charset;
 
 			if (config.customize) {
-				output = config.customize(output, config, dt);
+				output = config.customize(output, config);
 			}
 
 			if (charset !== false) {
@@ -1008,7 +986,6 @@
 
 			var that = this;
 			var rowPos = 0;
-			var dataStartRow, dataEndRow;
 			var getXml = function (type) {
 				var str = excelStrings[type];
 
@@ -1050,15 +1027,9 @@
 
 					// For null, undefined of blank cell, continue so it doesn't create the _createNode
 					if (row[i] === null || row[i] === undefined || row[i] === '') {
-						if (config.createEmptyCells === true) {
-							row[i] = '';
-						}
-						else {
-							continue;
-						}
+						continue;
 					}
 
-					var originalContent = row[i];
 					row[i] = $.trim(row[i]);
 
 					// Special number formatting options
@@ -1109,9 +1080,9 @@
 						}
 						else {
 							// String output - replace non standard characters for text output
-							var text = !originalContent.replace ?
-								originalContent :
-								originalContent.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, '');
+							var text = !row[i].replace ?
+								row[i] :
+								row[i].replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, '');
 
 							cell = _createNode(rels, 'c', {
 								attr: {
@@ -1122,10 +1093,7 @@
 									row: _createNode(rels, 'is', {
 										children: {
 											row: _createNode(rels, 't', {
-												text: text,
-												attr: {
-													'xml:space': 'preserve'
-												}
+												text: text
 											})
 										}
 									})
@@ -1141,6 +1109,8 @@
 				rowPos++;
 			};
 
+			$('sheets sheet', xlsx.xl['workbook.xml']).attr('name', _sheetname(config));
+
 			if (config.customizeData) {
 				config.customizeData(data);
 			}
@@ -1148,12 +1118,8 @@
 			var mergeCells = function (row, colspan) {
 				var mergeCells = $('mergeCells', rels);
 
-				mergeCells[0].appendChild(_createNode(rels, 'mergeCell', {
-					attr: {
-						ref: 'A' + row + ':' + createCellPos(colspan) + row
-					}
-				}));
-				mergeCells.attr('count', parseFloat(mergeCells.attr('count')) + 1);
+				mergeCells.append('<mergeCell ref="A' + row + ':' + createCellPos(colspan) + row + '" />');
+				mergeCells.attr('count', mergeCells.attr('count') + 1);
 				$('row:eq(' + (row - 1) + ') c', rels).attr('s', '51'); // centre
 			};
 
@@ -1169,20 +1135,15 @@
 				mergeCells(rowPos, data.header.length - 1);
 			}
 
-
 			// Table itself
 			if (config.header) {
 				addRow(data.header, rowPos);
 				$('row:last c', rels).attr('s', '2'); // bold
 			}
 
-			dataStartRow = rowPos;
-
 			for (var n = 0, ie = data.body.length; n < ie; n++) {
 				addRow(data.body[n], rowPos);
 			}
-
-			dataEndRow = rowPos;
 
 			if (config.footer && data.footer) {
 				addRow(data.footer, rowPos);
@@ -1210,37 +1171,9 @@
 				}));
 			}
 
-			// Workbook modifications
-			var workbook = xlsx.xl['workbook.xml'];
-
-			$('sheets sheet', workbook).attr('name', _sheetname(config));
-
-			// Auto filter for columns
-			if (config.autoFilter) {
-				$('mergeCells', rels).before(_createNode(rels, 'autoFilter', {
-					attr: {
-						ref: 'A' + dataStartRow + ':' + createCellPos(data.header.length - 1) + dataEndRow
-					}
-				}));
-
-				$('definedNames', workbook).append(_createNode(workbook, 'definedName', {
-					attr: {
-						name: '_xlnm._FilterDatabase',
-						localSheetId: '0',
-						hidden: 1
-					},
-					text: _sheetname(config) + '!$A$' + dataStartRow + ':' + createCellPos(data.header.length - 1) + dataEndRow
-				}));
-			}
-
 			// Let the developer customise the document if they want to
 			if (config.customize) {
-				config.customize(xlsx, config, dt);
-			}
-
-			// Excel doesn't like an empty mergeCells tag
-			if ($('mergeCells', rels).children().length === 0) {
-				$('mergeCells', rels).remove();
+				config.customize(xlsx);
 			}
 
 			var jszip = _jsZip();
@@ -1285,13 +1218,7 @@
 
 		messageTop: '*',
 
-		messageBottom: '*',
-
-		createEmptyCells: false,
-
-		autoFilter: false,
-
-		sheetName: ''
+		messageBottom: '*'
 	};
 
 	//
@@ -1327,9 +1254,6 @@
 
 			for (var i = 0, ien = data.body.length; i < ien; i++) {
 				rows.push($.map(data.body[i], function (d) {
-					if (d === null || d === undefined) {
-						d = '';
-					}
 					return {
 						text: typeof d === 'string' ? d : d + '',
 						style: i % 2 ? 'tableBodyEven' : 'tableBodyOdd'
@@ -1412,19 +1336,23 @@
 			}
 
 			if (config.customize) {
-				config.customize(doc, config, dt);
+				config.customize(doc, config);
 			}
 
 			var pdf = _pdfMake().createPdf(doc);
 
 			if (config.download === 'open' && !_isDuffSafari()) {
 				pdf.open();
+				this.processing(false);
 			}
 			else {
-				pdf.download(info.filename);
-			}
+				pdf.getBuffer(function (buffer) {
+					var blob = new Blob([buffer], { type: 'application/pdf' });
 
-			this.processing(false);
+					_saveAs(blob, info.filename);
+					that.processing(false);
+				});
+			}
 		},
 
 		title: '*',
