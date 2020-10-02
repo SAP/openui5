@@ -3525,9 +3525,9 @@ sap.ui.define([
 			.returns(oGroupLock0);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
 		oCreateInCacheExpectation = oBindingMock.expects("createInCache")
-			.withExactArgs(sinon.match.same(oGroupLock0), sinon.match.same(oCreatePathPromise), "",
-				sinon.match(rTransientPredicate), sinon.match.same(oInitialData0), sinon.match.func,
-				sinon.match.func)
+			.withExactArgs(sinon.match.same(oGroupLock0), sinon.match.same(oCreatePathPromise),
+				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData0),
+				sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve({})));
 
 		// code under test (create first entity, skip refresh)
@@ -3543,9 +3543,9 @@ sap.ui.define([
 			.returns(oGroupLock1);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
 		oBindingMock.expects("createInCache")
-			.withExactArgs(sinon.match.same(oGroupLock1), sinon.match.same(oCreatePathPromise), "",
-				sinon.match(rTransientPredicate), sinon.match.same(oInitialData1), sinon.match.func,
-				sinon.match.func)
+			.withExactArgs(sinon.match.same(oGroupLock1), sinon.match.same(oCreatePathPromise),
+				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData1),
+				sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve({})));
 
 		// code under test (create second entity, skip refresh)
@@ -3671,9 +3671,9 @@ sap.ui.define([
 					.returns(oCreatePathPromise);
 				oBindingMock.expects("createInCache")
 					.withExactArgs(sinon.match.same(oGroupLock),
-						sinon.match.same(oCreatePathPromise), "", sinon.match(rTransientPredicate),
-						sinon.match.same(oFixture.oInitialData), sinon.match.func,
-						sinon.match.func)
+						sinon.match.same(oCreatePathPromise), "/EMPLOYEES",
+						sinon.match(rTransientPredicate), sinon.match.same(oFixture.oInitialData),
+						sinon.match.func, sinon.match.func)
 					.returns(aCreatePromises[iCurrentCreateNo]);
 
 				aCreatePromises[iCurrentCreateNo].then(function () {
@@ -3770,7 +3770,7 @@ sap.ui.define([
 			oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
 			oBindingMock.expects("createInCache")
 				.withExactArgs(sinon.match.same(oGroupLock0), sinon.match.same(oCreatePathPromise),
-					"", sinon.match(rTransientPredicate), sinon.match.same(oInitialData),
+					"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData),
 					sinon.match.func, sinon.match.func)
 				.returns(oCreatePromise);
 			oCreatePromise.then(function () {
@@ -3845,8 +3845,9 @@ sap.ui.define([
 				.returns(oCreateGroupLock);
 			oBindingMock.expects("createInCache")
 				.withExactArgs(sinon.match.same(oCreateGroupLock),
-					sinon.match.same(oCreatePathPromise), "", sinon.match(rTransientPredicate),
-					sinon.match.same(oFixture.oInitialData), sinon.match.func, sinon.match.func)
+					sinon.match.same(oCreatePathPromise), "/TEAMS/1/TEAM_2_EMPLOYEES",
+					sinon.match(rTransientPredicate), sinon.match.same(oFixture.oInitialData),
+					sinon.match.func, sinon.match.func)
 				.returns(oCreateInCachePromise);
 			oCreateInCachePromise.then(function (oEntityCreated) {
 				that.mock(_Helper).expects("getPrivateAnnotation")
@@ -3948,9 +3949,9 @@ sap.ui.define([
 			.returns(oGroupLock);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
 		oBindingMock.expects("createInCache")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oCreatePathPromise), "",
-				sinon.match(rTransientPredicate), sinon.match.same(oInitialData), sinon.match.func,
-				sinon.match.func)
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oCreatePathPromise),
+				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData),
+				sinon.match.func, sinon.match.func)
 			.returns(oCreatePromise);
 
 		oBindingMock.expects("refreshSingle").never();

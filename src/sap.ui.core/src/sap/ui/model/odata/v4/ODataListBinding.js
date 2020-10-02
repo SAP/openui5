@@ -716,8 +716,8 @@ sap.ui.define([
 				that._fireChange({reason : ChangeReason.Remove});
 			});
 		});
-		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, "", sTransientPredicate,
-			oInitialData,
+		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, sResolvedPath,
+			sTransientPredicate, oInitialData,
 			function (oError) { // error callback
 				that.oModel.reportError("POST on '" + oCreatePathPromise
 					+ "' failed; will be repeated automatically", sClassName, oError);
