@@ -31,6 +31,20 @@ function(
 		return aFlexObjects;
 	}
 
+	function isInitialCompSection(oCompSection) {
+		var bInitial = true;
+
+		if (oCompSection) {
+			Object.keys(oCompSection).some(function(sKey) {
+				if (oCompSection[sKey].length) {
+					bInitial = false;
+					return true;
+				}
+			});
+		}
+		return bInitial;
+	}
+
 	/**
 	 * @namespace sap.ui.fl.initial._internal.StorageResultDisassemble
 	 * @since 1.70
@@ -45,8 +59,9 @@ function(
 	 *
 	 */
 	return function(oResponse) {
+		var aFlexObjects;
 		if (!isEmptyObject(oResponse.variantSection)) {
-			var aFlexObjects = oResponse.changes || [];
+			aFlexObjects = oResponse.changes || [];
 
 			for (var sVariantManagement in oResponse.variantSection) {
 				var oVariantManagement = oResponse.variantSection[sVariantManagement];
@@ -65,8 +80,8 @@ function(
 			return aDisassembleResponses;
 		}
 
-		if (!oResponse.comp) {
-			var aFlexObjects = oResponse.changes || [];
+		if (isInitialCompSection(oResponse.comp)) {
+			aFlexObjects = oResponse.changes || [];
 			oResponse.comp = {
 				variants: [],
 				changes: [],
