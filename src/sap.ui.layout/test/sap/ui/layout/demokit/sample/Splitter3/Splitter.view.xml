@@ -3,15 +3,15 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:Splitter>
-		<Button width="100%" text="Content 1">
+		<Text text="Content 1">
 			<layoutData>
 				<l:SplitterLayoutData size="30%" resizable="false" />
 			</layoutData>
-		</Button>
-		<Button width="100%" text="Content 2">
+		</Text>
+		<Text text="Content 2">
 			<layoutData>
 				<l:SplitterLayoutData size="auto" />
 			</layoutData>
-		</Button>
+		</Text>
 	</l:Splitter>
 </mvc:View>
