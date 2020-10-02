@@ -25,10 +25,8 @@
 			<p>
 				Destinations that are listed in the <code>configuration</code> part of the <code>manifest</code>
 				should be resolved by the application with the help of <a data-demokit-href="/api/sap.ui.integration.Host" target="_blank"><code>sap.ui.integration.Host</code></a>.
-				The host application developer should use the <code>resolveDestination</code> property in the constructor
-				to pass a callback function to resolve a destination name to the corresponding URL.
+				The host application developer should set the <code>resolveDestination</code> to a function, which resolves destination name to the corresponding URL.
 				The card calls this function when it needs to send a request to the destination.
-				The function returns the URL to which the request will be sent.
 				If a card depends on a destination, but this callback is not implemented, an error will be logged.
 				The callback receives <code>destinationName</code> as parameter and returns a string with the URL.
 				Or alternatively the callback may return a <code>Promise</code> which resolves with the URL as argument.
@@ -58,7 +56,7 @@ var oHost = new sap.ui.integration.Host({
 this.getView().byId('card1').setHost(oHost);</pre>
 
 XML View
-<pre class="prettyprint  lang-js">
+<pre class="prettyprint lang-js">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card id="card1" manifest="./manifest.json" /&gt;
 &lt;/mvc:View&gt;</pre>

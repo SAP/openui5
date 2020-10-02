@@ -199,8 +199,8 @@ sap.ui.define([
 			this.getRouter().navTo(
 				"exploreSamples",
 				{
-					key: this.oModel.getProperty("/sample").key,
-					subSampleKey: item.getKey()
+					sample: this.oModel.getProperty("/sample").key,
+					subSample: item.getKey()
 				}
 			);
 		},
@@ -254,9 +254,9 @@ sap.ui.define([
 
 		_onRouteMatched: function (oEvent) {
 			var oArgs = oEvent.getParameter("arguments"),
-				sSampleKey = oArgs["key"],
+				sSampleKey = oArgs.sample,
 				oSample = this._findSample(sSampleKey),
-				sSubSampleKey = oArgs["subSampleKey"],
+				sSubSampleKey = oArgs.subSample,
 				oSubSample;
 
 			// reset the model

@@ -1,30 +1,34 @@
 (function () {
-    'use strict';
+	'use strict';
 
-    resolveDemokitLinks();
+	window.addEventListener("message", function (oEvent) {
+		document.getElementById(oEvent.data.id).scrollIntoView();
+	}, false);
 
-    function resolveDemokitLinks() {
-        var aLinks = document.getElementsByTagName("a"),
-            iInd,
-            oLink;
+	resolveDemokitLinks();
 
-        for (iInd = 0; iInd < aLinks.length; iInd++) {
-            oLink = aLinks[iInd];
+	function resolveDemokitLinks() {
+		var aLinks = document.getElementsByTagName("a"),
+			iInd,
+			oLink;
 
-            if (oLink.dataset.demokitHref) {
-                oLink.href = getUrlToDemokit(oLink.dataset.demokitHref);
-            }
-        }
-    }
+		for (iInd = 0; iInd < aLinks.length; iInd++) {
+			oLink = aLinks[iInd];
 
-    function getUrlToDemokit(sUrl) {
-        var sCurrentUrl = window.location.href,
-            sDemokitUrl = sCurrentUrl.replace(/sap\/ui\/integration\/.*/, "../");
+			if (oLink.dataset.demokitHref) {
+				oLink.href = getUrlToDemokit(oLink.dataset.demokitHref);
+			}
+		}
+	}
 
-        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-            sDemokitUrl += "documentation.html";
-        }
+	function getUrlToDemokit(sUrl) {
+		var sCurrentUrl = window.location.href,
+			sDemokitUrl = sCurrentUrl.replace(/sap\/ui\/integration\/.*/, "../");
 
-        return sDemokitUrl + "#" + sUrl;
-    }
+		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+			sDemokitUrl += "documentation.html";
+		}
+
+		return sDemokitUrl + "#" + sUrl;
+	}
 })();

@@ -35,6 +35,9 @@ sap.ui.define([
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
 			this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
+			this.getRouter().attachBypassed(function () {
+				this.navToRoute("overview/introduction");
+			}, this);
 
 			this.getView().setModel(ExploreSettingsModel, "settings");
 
@@ -117,35 +120,35 @@ sap.ui.define([
 			switch (aParts[0]) {
 				case "overview":
 					this.getRouter().navTo("overview", {
-						group: aParts[1],
-						key: aParts[2]
+						topic: aParts[1],
+						subTopic: aParts[2]
 					});
 					break;
 				case "learn":
 					this.getRouter().navTo("learnDetail", {
-						group: aParts[1] || "gettingStarted",
-						key: aParts[2]
+						topic: aParts[1] || "gettingStarted",
+						subTopic: aParts[2]
 					});
 					break;
 				case "explore":
 					this.getRouter().navTo("exploreSamples", {
-						key: aParts[1],
-						subSampleKey: aParts[2]
+						sample: aParts[1],
+						subSample: aParts[2]
 					});
 					break;
 				case "exploreOverview":
 					this.getRouter().navTo("exploreOverview", {
-						key: aParts[1]
+						topic: aParts[1]
 					});
 					break;
 				case "integrate":
 					this.getRouter().navTo("integrate", {
-						key: aParts[1]
+						topic: aParts[1]
 					});
 					break;
 				case "designtime":
 					this.getRouter().navTo("designtime", {
-						key: aParts[1]
+						topic: aParts[1]
 					});
 					break;
 				default:
@@ -155,29 +158,32 @@ sap.ui.define([
 		onSideNavigationItemSelect: function (oEvent) {
 			var oItem = oEvent.getParameter("item"),
 				oItemConfig = this.getView().getModel().getProperty(oItem.getBindingContext().getPath()),
-				sGroupKey,
-				sTopicKey;
-			if (oItem.getCustomData()[0].getKey() === "groupItem") {
-				sGroupKey = oItemConfig.key;
-				if (oItemConfig.target === "exploreOverview" ||
-					oItemConfig.target === "integrate" ||
-					oItemConfig.target === "designtime") {
-					sTopicKey = oItemConfig.key;
-				}
-			} else {
-				sGroupKey = oItem.getParent().getKey();
-				sTopicKey = oItemConfig.key;
+				sRootKey,
+				sChildKey;
+
+			if (oItem.data("type") === "root") {
+				sRootKey = oItemConfig.key;
+			} else { // child
+				sRootKey = oItem.getParent().getKey();
+				sChildKey = oItemConfig.key;
 			}
-			if (oItemConfig.target) {
+
+			if (oItemConfig.target === "exploreSamples") {
 				this.getRouter().navTo(
 					oItemConfig.target,
 					{
-						group: sGroupKey,
-						key: sTopicKey
+						sample: sChildKey,
+						subSample: undefined
 					}
 				);
 			} else {
-				this.getRouter().navTo(oItemConfig.key);
+				this.getRouter().navTo(
+					oItemConfig.target,
+					{
+						topic: sRootKey,
+						subTopic: sChildKey
+					}
+				);
 			}
 		},
 
@@ -191,18 +197,23 @@ sap.ui.define([
 		},
 
 		onRouteChange: function (oEvent) {
-			var routeConfig = oEvent.getParameter('config');
-			var routeArgs = oEvent.getParameter("arguments");
-			var routeName = routeConfig.name;
-			var sideNavigation = this.getView().byId('sideNavigation');
-			this.switchCurrentModelAndTab(routeName);
-			if (routeArgs["key"] || routeArgs["group"]) {
-				sideNavigation.setSelectedKey(routeArgs["key"] || routeArgs["group"]);
-			} else if (routeConfig.name !== "default") {
-				sideNavigation.setSelectedKey(routeConfig.name);
-			} else {
-				sideNavigation.setSelectedKey('overview');
+			var oConfig = oEvent.getParameter("config"),
+				oArgs = oEvent.getParameter("arguments"),
+				sRouteName = oConfig.name,
+				oSideNavigation = this.getView().byId("sideNavigation"),
+				sKey = "overview";
+
+			this.switchCurrentModelAndTab(sRouteName);
+
+			if (oArgs.sample) {
+				sKey = oArgs.sample;
+			} else if (oArgs.topic) {
+				sKey = oArgs.subTopic || oArgs.topic;
+			} else if (sRouteName === "default") {
+				sKey = "introduction";
 			}
+
+			oSideNavigation.setSelectedKey(sKey);
 		},
 
 		onDeviceSizeChange: function () {
