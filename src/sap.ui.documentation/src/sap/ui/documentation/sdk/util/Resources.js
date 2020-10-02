@@ -3,8 +3,8 @@
  */
 
 // Provides a simple search feature
-sap.ui.define([],
-	function() {
+sap.ui.define(['sap/ui/thirdparty/URI'],
+	function(URI) {
 		"use strict";
 
 		// this module helps with getting a full URL using the
@@ -17,8 +17,13 @@ sap.ui.define([],
 			 * @param {string} sPath Relative path to resources
 			 */
 			getResourceOriginPath: function (sPath) {
-				var oConfig = window['sap-ui-documentation-config'],
-					sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
+				var oConfig, sOrigin,
+					oUri = URI(sPath);
+				if (oUri && oUri.is("absolute")) {
+					return sPath;
+				}
+				oConfig = window['sap-ui-documentation-config'];
+				sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
 				return sOrigin + this._formatPath(sPath);
 			},
 			_formatPath: function(sPath) {
