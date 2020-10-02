@@ -211,7 +211,8 @@ function(
 			if (!oCtrl) {
 				oCtrl = new Button({
 					icon: "sap-icon://slim-arrow-down",
-					press: this._handleAction.bind(this, true)
+					press: this._handleAction.bind(this, true),
+					tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_ARROW_TOOLTIP")
 				}).addStyleClass("sapMSBArrow");
 				this.setAggregation("_arrowButton", oCtrl);
 			}
