@@ -10,7 +10,7 @@
 		<customHeader>
 			<Bar design="Header">
 				<contentMiddle>
-					<Title text="Rule Presets" />
+					<Title id="rulePresetsTitle" text="Rule Presets" />
 				</contentMiddle>
 				<contentRight>
 					<core:Icon id="help" width="18px" src="sap-icon://sys-help" decorative="false" press="openHelp" />

@@ -15,12 +15,19 @@ sap.ui.define([
 
 	QUnit.module("Support Assistant Rule Presets - Export");
 
-	opaTest("Should see validation messages when required inputs are not filled", function(Given, When, Then) {
+	opaTest("Should see Support Assistant rules loaded", function(Given, When, Then) {
 		Given.iDeletePersistedData()
 			.and.iStartMyApp();
 
-		When.onThePresetsPage.iOpenPresetsPopover();
+		Then.onTheRulesPage.iShouldSeeRulesTreeTable();
+	});
 
+	opaTest("Should see default presets loaded", function(Given, When, Then) {
+		When.onThePresetsPage.iOpenPresetsPopover();
+		Then.onThePresetsPage.iShouldSeePresetInPopover(presetUtil.titles.MY_SELECTION_TITLE);
+	});
+
+	opaTest("Should see validation messages when required inputs are not filled", function(Given, When, Then) {
 		When.onThePresetsPage.iPressExport();
 
 		When.onThePresetsPage.iEnterExportData("title", "")

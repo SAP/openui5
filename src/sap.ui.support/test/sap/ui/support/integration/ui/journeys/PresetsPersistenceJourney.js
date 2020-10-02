@@ -32,6 +32,7 @@ sap.ui.define([
 			.and.iShouldSeeSelectedPreset(presetUtil.titles.SYSTEM_ACCESSIBILITY_TITLE);
 
 		Then.onTheRulesPage.iShouldSeeRulesSelectedCountColumnHeader(presetUtil.titles.SYSTEM_ACCESSIBILITY_COUNT);
+		When.onThePresetsPage.iClosePresetsPopover();
 	});
 
 	opaTest("Should be able to switch from 'Accessibility' preset and keep selections", function (Given, When, Then) {
@@ -67,7 +68,6 @@ sap.ui.define([
 	});
 
 	opaTest("Should be able to undo changes in System Preset 'Accessibility' and see change in title", function(Given, When, Then) {
-		When.onThePresetsPage.iOpenPresetsPopover();
 		When.onThePresetsPage.iPressUndoButton(sModifiedTitle);
 		When.onThePresetsPage.iOpenPresetsPopover();
 		Then.onThePresetsPage.iShouldSeePresetInPopover(presetUtil.titles.SYSTEM_ACCESSIBILITY_TITLE);
@@ -112,7 +112,6 @@ sap.ui.define([
 	});
 
 	opaTest("Should create custom preset", function (Given, When, Then) {
-		When.onThePresetsPage.iOpenPresetsPopover();
 		When.onThePresetsPage.iPressPresetInPopover(testPreset.title);
 		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs",  "Rules selection was changed", "Could not change rules selection");
 		Then.onThePresetsPage.iShouldSeePresetTitleInVariantSelect(testPreset._forTestTitleIfModified);
