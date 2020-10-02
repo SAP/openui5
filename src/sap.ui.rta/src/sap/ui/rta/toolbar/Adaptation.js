@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Fragment",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/Device",
 	"./Base",
 	"sap/ui/core/library",
@@ -12,6 +13,7 @@ sap.ui.define([
 ],
 function(
 	Fragment,
+	DateFormat,
 	Device,
 	Base,
 	coreLibrary,
@@ -149,6 +151,12 @@ function(
 		return sTitle || oTextResources.getText("TIT_VERSION_1");
 	};
 
+	Adaptation.prototype.formatVersionTimeStamp = function (sTimeStamp) {
+		return DateFormat.getInstance({
+			format: "yMMMdjm"
+		}).format(new Date(sTimeStamp));
+	};
+
 	Adaptation.prototype.formatHighlight = function (sType) {
 		switch (sType) {
 			case "draft":
@@ -230,6 +238,7 @@ function(
 				id: this.getId() + "_versionHistoryDialog",
 				controller: {
 					formatVersionTitle: this.formatVersionTitle.bind(this),
+					formatVersionTimeStamp: this.formatVersionTimeStamp.bind(this),
 					formatVersionTableVisibility: this.formatVersionTableVisibility.bind(this),
 					formatHighlight: this.formatHighlight.bind(this),
 					formatHighlightText: this.formatHighlightText.bind(this),

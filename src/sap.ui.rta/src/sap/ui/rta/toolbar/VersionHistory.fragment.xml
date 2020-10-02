@@ -10,8 +10,8 @@
                 items="{versions>/versions}" >
             <FeedListItem
                 text="{parts: [{path: 'versions>title'}, {path: 'versions>type'}], formatter: '.formatVersionTitle'}"
-                info="{versions>activatedAt}"
-                timestamp="{versions>activatedBy}"
+                info="{versions>activatedBy}"
+                timestamp="{path: 'versions>activatedAt', formatter: '.formatVersionTimeStamp'}"
                 type="{path: 'versions>/switchVersionsActive', formatter: '.formatVersionListItemType'}"
                 press=".versionSelected"
                 highlight="{path: 'versions>type', formatter: '.formatHighlight'}"

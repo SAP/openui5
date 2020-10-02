@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Control",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/MessageType",
 	"sap/ui/core/Core",
@@ -16,6 +17,7 @@ function(
 	Device,
 	Fragment,
 	Control,
+	DateFormatter,
 	JSONModel,
 	MessageType,
 	Core,
@@ -553,6 +555,17 @@ function(
 		QUnit.test("Given the draft title should be formatted", function (assert) {
 			var sTitle = this.oToolbar.formatVersionTitle(undefined, "draft");
 			assert.equal(sTitle, this.oMessageBundle.getText("TIT_DRAFT"), "then title is 'Draft'");
+		});
+
+		QUnit.test("Given the timestamp of a version should be formatted", function (assert) {
+			// the format function is mocked, because the formatter is dependent on the locale of the test executioner
+			var sFormattedTimeStamp = "Sep 20, 2020, 12:43 PM";
+			sandbox.stub(DateFormatter, "getInstance").returns({
+				format: sandbox.stub().returns(sFormattedTimeStamp)
+			});
+			var sTimeStamp = this.oToolbar.formatVersionTimeStamp(new Date("2020-09-20 12:43:15.17"));
+
+			assert.equal(sTimeStamp, sFormattedTimeStamp, "then timestamp was formatted");
 		});
 
 		QUnit.test("Given the 'Version 1' title should be formatted", function (assert) {
