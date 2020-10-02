@@ -25,5 +25,21 @@
         ]
       }
     ]
+  },
+  "1.82.1": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "4dad5e2f0416ee5877443bba636af0a891b3bc05",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
