@@ -2,4 +2,3 @@
 	<mvc:XMLView id="xmlViewInsideFragment" viewName="testdata/fragments/XMLViewWithFragments">
 	</mvc:XMLView>
 </core:FragmentDefinition>
-

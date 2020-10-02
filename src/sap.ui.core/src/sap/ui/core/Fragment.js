@@ -65,10 +65,15 @@ function(
 				/*
 				 * The Fragment type. Types "XML", "HTML" and JS" are built-in and always available.
 				 */
-				type: "string"
+				type: 'string'
 			},
 			specialSettings: {
 
+				/**
+				 * Whether to load and parse the fragment asynchronous
+				 * @private
+				 */
+				async: { type: 'boolean', visibility: 'hidden' },
 				/*
 				 * Name of the fragment to load
 				 */
@@ -98,18 +103,21 @@ function(
 				 * The processing mode is not used by the Fragment itself.
 				 * It is only relevant for XMLViews nested within the Fragment.
 				 */
-				processingMode: { type: "string", visibility: "hidden" }
+				processingMode: { type: 'string', visibility: 'hidden' }
 			}
 		},
 
 		constructor: function(sId, mSettings) {
 			ManagedObject.apply(this, arguments);
 
-			// in case of only one control, return it directly
-			if (this._aContent && this._aContent.length == 1) {
-				return this._aContent[0];
-			} else {
-				return this._aContent;
+			// When async, the fragment content is already passed to the constructor
+			if (!this._bAsync) {
+				if (this._aContent && this._aContent.length == 1) {
+					// in case of only one control, return it directly
+					return this._aContent[0];
+				} else {
+					return this._aContent;
+				}
 			}
 		}
 	});
@@ -145,6 +153,8 @@ function(
 		if (mSettings.oController) {
 			this.oController = mSettings.oController;
 		}
+
+		this._bAsync = mSettings.async || false;
 
 		// remember the ID which has been explicitly given in the factory function
 		this._sExplicitId = mSettings.sId || mSettings.id;
@@ -287,7 +297,7 @@ function(
 	 * Otherwise the Fragment ID is generated. In any case, the Fragment ID will be used as prefix for the ID of
 	 * all contained controls.
 	 *
-	 * @param {string} sName the Fragment name
+	 * @param {string|Object} sName the Fragment name
 	 * @param {string} sType the Fragment type, e.g. "XML", "JS", or "HTML"
 	 * @param {sap.ui.core.mvc.Controller|Object} [oController] the Controller or Object which should be used by the controls in the Fragment.
 	 *     Note that some Fragments may not need a Controller and other may need one - and even rely on certain methods implemented in the Controller.
@@ -329,9 +339,48 @@ function(
 
 		} else if (typeof (vName) === "object") { // advanced call with config object
 			mSettings = vName; // pass all config parameters to the implementation
+
+			// mSettings.async could be undefined when fragmentFactory is triggered by old sap.ui.fragment api
+			mSettings.async = mSettings.async === true ? mSettings.async : false;
+
 			if (vType) { // second parameter "vType" is in this case the optional Controller
 				mSettings.oController = vType;
 			}
+
+			if (mSettings.async) {
+				if (mSettings.fragmentName) {
+					var sFragmentPath = mSettings.fragmentName.replace(/\./g, "/") + ".fragment";
+
+					return new Promise(function(resolve, reject) {
+						switch (mSettings.type) {
+							case "XML":
+							default:
+								// type "XML"
+								XMLTemplateProcessor.loadTemplatePromise(mSettings.fragmentName, "fragment").then(function(documentElement) {
+									mSettings.fragmentContent = documentElement;
+									resolve(new Fragment(mSettings));
+								});
+								break;
+							case "JS":
+								// type "JS"
+								sap.ui.require([sFragmentPath], function(content) {
+									mSettings.fragmentContent = content;
+									resolve(new Fragment(mSettings));
+								}, reject);
+								break;
+							case "HTML":
+								LoaderExtensions.loadResource(sFragmentPath + ".html", {async: true}).then(function(oContent) {
+									mSettings.fragmentContent = oContent;
+									resolve(new Fragment(mSettings));
+								});
+								break;
+						}
+					});
+				} else { // in case there is no 'fragmentName' but a 'definition' for the fragment provided
+					return Promise.resolve(new Fragment(mSettings));
+				}
+			}
+
 		} else {
 			Log.error("sap.ui.fragment() must be called with Fragment name or config object as first parameter, but is: " + vName);
 		}
@@ -395,6 +444,7 @@ function(
 	 * @param {string} [mOptions.id] the ID of the Fragment
 	 * @param {sap.ui.core.mvc.Controller|Object} [mOptions.controller] the Controller or Object which should be used by the controls in the Fragment.
 	 *    Note that some Fragments may not need a Controller while others may need one and certain methods to be implemented by it.
+	 * @param {sap.ui.core.mvc.View} [mOptions.containingView] The view containing the Fragment content
 	 * @public
 	 * @static
 	 * @since 1.58
@@ -404,6 +454,8 @@ function(
 		var mParameters = Object.assign({}, mOptions);
 
 		mParameters.type = mParameters.type || "XML";
+		mParameters.async = true;
+		mParameters.processingMode = "sequential";
 
 		// map new parameter names to classic API, delete new names to avoid assertion failures
 		mParameters.fragmentName = mParameters.name;
@@ -413,7 +465,21 @@ function(
 		delete mParameters.definition;
 		delete mParameters.controller;
 
-		return Promise.resolve(fragmentFactory(mParameters));
+		var pFragment = fragmentFactory(mParameters);
+
+		return pFragment.then(function(oFragment) {
+			return oFragment._parsed();
+		});
+	};
+
+	/**
+	 * @returns {Promise}
+	 */
+	Fragment.prototype._parsed = function() {
+		if (this._bAsync) {
+			return this._pContentPromise;
+		}
+		return Promise.resolve(this._pContentPromise.unwrap());
 	};
 
 	/**
@@ -649,6 +715,7 @@ function(
 
 	Fragment.registerType("XML" , {
 		init: function(mSettings) {
+			this._aContent = [];
 			// use specified content or load the content definition
 			if (mSettings.fragmentContent) {
 				if (typeof (mSettings.fragmentContent) === "string") {
@@ -675,28 +742,36 @@ function(
 				this._oContainingView.oController = (mSettings.containingView && mSettings.containingView.oController) || mSettings.oController;
 			}
 
-			var that = this;
-
 			// If given, processingMode will be passed down to nested subviews in XMLTemplateProcessor
-			that._sProcessingMode = mSettings.processingMode;
+			this._sProcessingMode = mSettings.processingMode;
 
-			// unset any preprocessors (e.g. from an enclosing JSON view)
-			ManagedObject.runWithPreprocessors(function() {
-				// parse the XML tree
+			// take the settings preprocessor from the containing view (if any)
+			var fnSettingsPreprocessor = this._oContainingView._fnSettingsPreprocessor;
 
-				//var xmlNode = that._xContent;
-				// if sub ID is given, find the node and parse it
-				// TODO: for sub-fragments   if () {
-				//	xmlNode = jQuery(that._xContent).find("# ")
-				//}
-				that._aContent = XMLTemplateProcessor.parseTemplate(that._xContent, that);
+			// similar to the XMLView we need to have a scoped runWithPreprocessors function
+			var oParseConfig = {
+				fnRunWithPreprocessor: function(fn) {
+					return ManagedObject.runWithPreprocessors(fn, {
+						settings: fnSettingsPreprocessor
+					});
+				}
+			};
 
+			// we take over the scoped owner component from our containing view (if any)
+			this.fnScopedRunWithOwner = this._oContainingView.fnScopedRunWithOwner;
+
+			// finally trigger the actual XML processing and control creation
+			// IMPORTANT:
+			// this call can be triggered with both "async = true" and "async = false"
+			// In case of sync processing, the XMLTemplateProcessor makes sure to only use SyncPromises.
+			this._pContentPromise = XMLTemplateProcessor.parseTemplatePromise(this._xContent, this, this._bAsync, oParseConfig).then(function(aContent) {
+				this._aContent = aContent;
 				/*
 				 * If content was parsed and an objectBinding at the fragment was defined
 				 * the objectBinding must be forwarded to the created controls
 				 */
-				if (that._aContent && that._aContent.length && mSettings.objectBindings) {
-					that._aContent.forEach(function(oContent, iIndex) {
+				if (this._aContent && this._aContent.length && mSettings.objectBindings) {
+					this._aContent.forEach(function (oContent, iIndex) {
 						if (oContent instanceof Element) {
 							for (var sModelName in mSettings.objectBindings) {
 								oContent.bindObject(mSettings.objectBindings[sModelName]);
@@ -704,9 +779,9 @@ function(
 						}
 					});
 				}
-			}, {
-				settings: that._oContainingView._fnSettingsPreprocessor
-			});
+
+				return this._aContent.length > 1 ? this._aContent : this._aContent[0];
+			}.bind(this));
 		}
 	});
 
@@ -716,25 +791,40 @@ function(
 
 	Fragment.registerType("JS", {
 		init: function(mSettings) {
-			/*** require fragment definition if not yet done... ***/
-			if (!mRegistry[mSettings.fragmentName]) {
-				sap.ui.requireSync(mSettings.fragmentName.replace(/\./g, "/") + ".fragment");
-			}
-			/*** Step 2: merge() ***/
-			merge(this, mRegistry[mSettings.fragmentName]);
+			this._aContent = [];
 
+			if (mSettings.fragmentContent) {
+				// Mixin fragmentContent into Fragment instance
+				merge(this, mSettings.fragmentContent);
+			} else {
+				/*** require fragment definition if not yet done... ***/
+				if (!mRegistry[mSettings.fragmentName]) {
+					sap.ui.requireSync(mSettings.fragmentName.replace(/\./g, "/") + ".fragment");
+				}
+				/*** Step 2: merge() ***/
+				merge(this, mRegistry[mSettings.fragmentName]);
+			}
 			this._oContainingView = mSettings.containingView || this;
 
-			var that = this;
 			// unset any preprocessors (e.g. from an enclosing JSON view)
 			ManagedObject.runWithPreprocessors(function() {
+				var vContent = this.createContent(mSettings.oController || this._oContainingView.oController);
 
-				var content = that.createContent(mSettings.oController || that._oContainingView.oController);
-				that._aContent = [];
-				that._aContent = that._aContent.concat(content);
-
-			}, {
-				settings: that._oContainingView._fnSettingsPreprocessor
+				// createContent might return a Promise too
+				if (vContent instanceof Promise) {
+					this._pContentPromise = vContent.then(function(aContent) {
+						this._aContent = this._aContent.concat(aContent);
+						return this._aContent.length > 1 ? this._aContent : this._aContent[0];
+					}.bind(this));
+				} else {
+					// vContent is not a Promise, but a synchronously processed array of controls
+					this._pContentPromise = new Promise(function (resolve, reject) {
+						this._aContent = this._aContent.concat(vContent);
+						resolve(this._aContent.length > 1 ? this._aContent : this._aContent[0]);
+					}.bind(this));
+				}
+			}.bind(this), {
+				settings: this._oContainingView._fnSettingsPreprocessor
 			});
 		}
 	});
@@ -836,19 +926,21 @@ function(
 				}
 
 				// unset any preprocessors (e.g. from an enclosing HTML view)
-				var that = this;
 				ManagedObject.runWithPreprocessors(function() {
-					DeclarativeSupport.compile(that._oTemplate, that);
+					DeclarativeSupport.compile(this._oTemplate, this);
 
-					// FIXME declarative support automatically inject the content into that through "that.addContent()"
-					var content = that.getContent();
+					// FIXME declarative support automatically inject the content into this through "this.addContent()"
+					var content = this.getContent();
 					if (content && content.length === 1) {
-						that._aContent = [content[0]];
+						this._aContent = [content[0]];
+						this._pContentPromise = new Promise(function(resolve, reject) {
+							resolve(this._aContent[0]);
+						}.bind(this));
 					}// else {
 						// TODO: error
 					//}
-				}, {
-					settings: that._oContainingView._fnSettingsPreprocessor
+				}.bind(this), {
+					settings: this._oContainingView._fnSettingsPreprocessor
 				});
 			}
 		});
