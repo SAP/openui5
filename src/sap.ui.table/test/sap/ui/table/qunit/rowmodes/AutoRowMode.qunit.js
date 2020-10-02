@@ -18,8 +18,8 @@ sap.ui.define([
 	var HeightTestControl = TableQUnitUtils.HeightTestControl;
 
 	function waitForResizeHandler() {
-		// Default of IntervalTrigger singleton used by ResizeHandler is 200ms. Wait for 2 more frames to give the table time to react.
-		return TableQUnitUtils.wait(201).then(TableQUnitUtils.$wait()).then(TableQUnitUtils.$wait());
+		// Give the table time to react. Default interval of IntervalTrigger singleton that is used by the ResizeHandler is 200ms.
+		return TableQUnitUtils.wait(250);
 	}
 
 	QUnit.module("Legacy support", {
@@ -340,11 +340,10 @@ sap.ui.define([
 
 		this.oTable.getExtension()[0].setVisible(false);
 
-		return waitForResizeHandler().then(function() {
+		return waitForResizeHandler().then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(that.oTable.getRows().length, 15, "Row count after hiding an extension");
 			that.oTable.getExtension()[0].setVisible(true);
-			return waitForResizeHandler();
-		}).then(function() {
+		}).then(waitForResizeHandler).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(that.oTable.getRows().length, 13, "Row count after showing an extension");
 		});
 	});
@@ -354,11 +353,10 @@ sap.ui.define([
 
 		this.oTable.getFooter().setVisible(false);
 
-		return waitForResizeHandler().then(function() {
+		return waitForResizeHandler().then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(that.oTable.getRows().length, 14, "Row count after hiding the footer");
 			that.oTable.getFooter().setVisible(true);
-			return waitForResizeHandler();
-		}).then(function() {
+		}).then(waitForResizeHandler).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(that.oTable.getRows().length, 13, "Row count after showing the footer");
 		});
 	});
@@ -368,11 +366,10 @@ sap.ui.define([
 
 		this.oTable.getCreationRow().setVisible(false);
 
-		return waitForResizeHandler().then(function() {
+		return waitForResizeHandler().then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(that.oTable.getRows().length, 14, "Row count after hiding the creation row");
 			that.oTable.getCreationRow().setVisible(true);
-			return waitForResizeHandler();
-		}).then(function() {
+		}).then(waitForResizeHandler).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(that.oTable.getRows().length, 13, "Row count after showing the creation row");
 		});
 	});

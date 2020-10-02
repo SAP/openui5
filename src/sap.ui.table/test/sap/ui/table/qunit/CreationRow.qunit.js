@@ -163,6 +163,38 @@ sap.ui.define([
 		assert.notEqual(oDefaultToolbar.getDomRef(), null, "No custom toolbar is set: The default toolbar is rendered");
 	});
 
+	QUnit.test("Horizontal scrollbar position in the DOM", function(assert) {
+		var sBusySection = "sapUiTableGridCnt";
+
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+		assert.notOk(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
+			"After rendering the table with a visible creation row,"
+			+ " the horizontal scrollbar is rendered outside the element that is covered by the busy indicator.");
+
+		this.oCreationRow.setVisible(false);
+		sap.ui.getCore().applyChanges();
+		assert.ok(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
+			"After making the creation row invisible,"
+			+ " the horizontal scrollbar is rendered inside the element that is covered by the busy indicator.");
+
+		this.oCreationRow.setVisible(true);
+		sap.ui.getCore().applyChanges();
+		assert.notOk(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
+			"After making the creation row visible,"
+			+ " the horizontal scrollbar is rendered outside the element that is covered by the busy indicator.");
+
+		this.oTable.setCreationRow();
+		sap.ui.getCore().applyChanges();
+		this.oCreationRow.setVisible(false);
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
+			"After rendering the table with an invisible creation row,"
+			+ " the horizontal scrollbar is rendered inside the element that is covered by the busy indicator.");
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
