@@ -615,6 +615,7 @@
 			"sap.m.sample.InputAssistedTwoValues",
 			"sap.m.sample.InputAssistedTabularSuggestions",
 			"sap.m.sample.InputChecked",
+			"sap.m.sample.InputCustomValueHelpIcon",
 			"sap.m.sample.InputDescription",
 			"sap.m.sample.InputPassword",
 			"sap.m.sample.InputSuggestionsCustomFilter",
@@ -2531,6 +2532,11 @@
 		  "id": "sap.m.sample.InputChecked",
 		  "name": "Input - Checked",
 		  "description": "Input checks are handled via the validation of the data binding. In this example there are two inputs that are validated (a) while the user types and (b) when the user continues the process. If the built-in validation types are not sufficient you can create your own, like the email type in this example."
+		},
+		{
+			"id": "sap.m.sample.InputCustomValueHelpIcon",
+			"name": "Input - Custom Value Help Icon",
+			"description": "This example shows the usage of a custom value help icon instead of the default one."
 		},
 		{
 		  "id": "sap.m.sample.InputAssisted",
