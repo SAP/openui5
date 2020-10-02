@@ -265,7 +265,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Test mimeType property - setter used on after rendering", function (assert) {
+	QUnit.test("Test mimeType property - setter", function (assert) {
 		//prepare
 		var done = assert.async(),
 			oFileUploader = new FileUploader();
@@ -273,25 +273,25 @@ sap.ui.define([
 		oFileUploader.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oFileUploader.oAfterRenderingDelegate = {
+		var oAfterRenderingDelegate = {
 			onAfterRendering: function() {
 				//assert
 				assert.equal(document.querySelectorAll("[type='file']").length, 1, "There is only one upload input element");
 
 				//clean
-				oFileUploader.removeDelegate(oFileUploader.oAfterRenderingDelegate);
+				oFileUploader.removeDelegate(oAfterRenderingDelegate);
 				oFileUploader.destroy();
 				done();
 			}
 		};
 
-		oFileUploader.addDelegate(oFileUploader.oAfterRenderingDelegate);
+		oFileUploader.addDelegate(oAfterRenderingDelegate);
 
 		//act
 		oFileUploader.setMimeType(["audio"]);
 	});
 
-	QUnit.test("Test multiple property - setter used on after rendering", function (assert) {
+	QUnit.test("Test multiple property - setter", function (assert) {
 		//prepare
 		var done = assert.async(),
 			oFileUploader = new FileUploader({
@@ -303,22 +303,49 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		sInputName = document.querySelector("[type='file']").getAttribute("name");
 
-		oFileUploader.oAfterRenderingDelegate = {
+		var oAfterRenderingDelegate = {
 			onAfterRendering: function() {
 				//assert
 				assert.strictEqual(document.querySelector("[type='file']").getAttribute("name"), sInputName + "[]", "multiple files can be uploaded");
 
 				//clean
-				oFileUploader.removeDelegate(oFileUploader.oAfterRenderingDelegate);
+				oFileUploader.removeDelegate(oAfterRenderingDelegate);
 				oFileUploader.destroy();
 				done();
 			}
 		};
 
-		oFileUploader.addDelegate(oFileUploader.oAfterRenderingDelegate);
+		oFileUploader.addDelegate(oAfterRenderingDelegate);
 
 		//act
 		oFileUploader.setMultiple(true);
+	});
+
+	QUnit.test("Setters used on after rendering, don't create additional input field type file", function (assert) {
+		//prepare
+		var done = assert.async(),
+			oFileUploader = new FileUploader({
+				multiple: false
+			});
+
+		var oAfterRenderingDelegate = {
+			onAfterRendering: function() {
+				//act
+				oFileUploader.setMultiple(true);
+
+				//assert
+				assert.strictEqual(document.querySelectorAll("[type='file']").length, 1, "There is only one input field");
+
+				//clean
+				oFileUploader.removeDelegate(oAfterRenderingDelegate);
+				oFileUploader.destroy();
+				done();
+			}
+		};
+
+		oFileUploader.addDelegate(oAfterRenderingDelegate);
+		oFileUploader.placeAt("content");
+		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("Test httpRequestMethod property with native form submit", function (assert) {
