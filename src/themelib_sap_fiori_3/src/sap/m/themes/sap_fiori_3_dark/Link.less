@@ -3,7 +3,6 @@
 /* Quartz Dark theme           */
 /* =========================== */
 
-@_sap_m_Link_TextShadowColor: none;
 @sapUiLinkSubtleColor: lighten(@sapUiLink, 10);
 
 .sapMLnkDsbl {
@@ -28,7 +27,7 @@
 }
 
 .sapMLnk:not(.sapMLnkDsbl) {
-	text-shadow: @_sap_m_Link_TextShadowColor;
+	text-shadow: @sapContent_TextShadow;
 }
 
 .sapMLnk:hover:not(.sapMLnkDsbl) {

@@ -3,7 +3,6 @@
 /* Fiori 3 theme               */
 /* =========================== */
 
-@_sap_m_Link_TextShadowColor: none;
 @sapUiLinkSubtleColor: darken(@sapUiLink, 15);
 
 .sapMLnkDsbl {
@@ -28,7 +27,7 @@
 }
 
 .sapMLnk:not(.sapMLnkDsbl) {
-	text-shadow: @_sap_m_Link_TextShadowColor;
+	text-shadow: @sapContent_TextShadow;
 }
 
 .sapMLnk:hover:not(.sapMLnkDsbl) {
