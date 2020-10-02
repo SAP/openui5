@@ -13,6 +13,15 @@ describe("sap.ui.unified.MenuVisual", function() {
 		expect(takeScreenshot(oButton2)).toLookAs('second_button_focused_after_tab');
 	});
 
+	it('After selecting an item, the focus returns to main menu opener button', function () {
+		var oButton1 = element(by.id("B1"));
+
+		oButton1.click();
+		element(by.id("I221")).click();
+
+		expect(takeScreenshot(oButton1)).toLookAs("focus_returned_to_domRef");
+	});
+
 	it('Focus persists on the last focused menu item on mouse out of the menu', function() {
 		var oMenu = element(by.id("mainMenu"));
 
