@@ -492,7 +492,19 @@ sap.ui.define([
 						key: 'data',
 						target: 'exploreSamples',
 						title: 'Data',
-						manifestUrl: '/samples/data/manifest.json'
+						subSamples: [
+							{
+								title: 'Basic Data Request',
+								key: 'basic',
+								manifestUrl: '/samples/data/manifest.json'
+							},
+							{
+								title: 'Using GraphQL',
+								key: 'graphql',
+								mockServer: true,
+								manifestUrl: '/samples/data/graphql/manifest.json'
+							}
+						]
 					},
 					{
 						key: 'dataSources',

@@ -4,9 +4,13 @@ sap.ui.define([
 ], function (MockServer) {
 	"use strict";
 
-	var oMockServer,
-		_sAppPath = "sap/ui/demo/cardExplorer/localService/SEPMRA_PROD_MAN",
-		_sJsonFilesPath = _sAppPath + "/mockdata";
+	// configure all mock servers with default delay of 1s
+	MockServer.config({
+		autoRespond: true,
+		autoRespondAfter: 1000
+	});
+
+	var oMockServer;
 
 	var oMockServerInterface = {
 
@@ -20,22 +24,15 @@ sap.ui.define([
 
 			// avoid reinitialization of mock server
 			if (oMockServer) {
-				return;
+				return Promise.resolve();
 			}
 
 			var oOptions = oOptionsParameter || {},
-				sJsonFilesUrl = sap.ui.require.toUrl(_sJsonFilesPath),
-				sMetadataUrl = sap.ui.require.toUrl(_sAppPath + "/metadata.xml"),
-				sMockServerUrl = "./SEPMRA_PROD_MAN/";
+				sJsonFilesUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/localService/SEPMRA_PROD_MAN/mockdata"),
+				sMetadataUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/localService/SEPMRA_PROD_MAN/metadata.xml");
 
 			oMockServer = new MockServer({
-				rootUri: sMockServerUrl
-			});
-
-			// configure mock server with the given options or a default delay of 0.5s
-			MockServer.config({
-				autoRespond : true,
-				autoRespondAfter : oOptions.delay || 1000
+				rootUri: "./SEPMRA_PROD_MAN/"
 			});
 
 			// simulate all requests using mock data
@@ -91,6 +88,8 @@ sap.ui.define([
 
 			oMockServer.setRequests(aRequests);
 			oMockServer.start();
+
+			return Promise.resolve();
 		},
 
 		/**

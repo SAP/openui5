@@ -33,7 +33,8 @@ sap.ui.define([
 				 * Array containing list of objects which have property name and link
 				 */
 				files: {
-					type: "object[]"
+					type: "object[]",
+					defaultValue: []
 				},
 				editable: {
 					type: "boolean",
@@ -137,7 +138,8 @@ sap.ui.define([
 		this._getHeader().destroyItems();
 		this._bFetch = true;
 		this._createInternalFiles(aFiles);
-		this.setProperty("files", aFiles);
+
+		return this.setProperty("files", aFiles);
 	};
 
 	FileEditor.prototype._getHeader = function () {

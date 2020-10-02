@@ -96,12 +96,19 @@ sap.ui.define([
 				Log.error("To specify dataType property in the Request Configuration, first set allowCustomDataType to 'true'.");
 			}
 
+			var vData = oRequestConfig.parameters;
+
+			// if not 'application/x-www-form-urlencoded', data has to be serialized manually
+			if (this._hasHeader(oRequestConfig, "Content-Type", "application/json")) {
+				vData = JSON.stringify(oRequestConfig.parameters);
+			}
+
 			var oRequest = {
 				"mode": oRequestConfig.mode || "cors",
 				"url": oRequestConfig.url,
 				"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
 				"dataType": (this.getAllowCustomDataType() && oRequestConfig.dataType) || "json",
-				"data": oRequestConfig.parameters,
+				"data": vData,
 				"headers": oRequestConfig.headers,
 				"timeout": 15000,
 				"xhrFields": {
@@ -120,6 +127,30 @@ sap.ui.define([
 				reject(sMessage);
 			}
 		}.bind(this));
+	};
+
+	/**
+	 * Checks if header with given value is part of the request.
+	 * Header name is case-insensitive, but the value is case-sensitive (RFC7230 https://tools.ietf.org/html/rfc7230#section-3.2).
+	 *
+	 * @private
+	 * @param {*} oRequestConfig The request config.
+	 * @param {*} sHeader Searched header. For example "Content-Type"
+	 * @param {*} sValue Checked value. For example "application/json"
+	 * @returns {boolean} Whether a header with given value is present.
+	 */
+	RequestDataProvider.prototype._hasHeader = function (oRequestConfig, sHeader, sValue) {
+		if (!oRequestConfig.headers) {
+			return false;
+		}
+
+		for (var sKey in oRequestConfig.headers) {
+			if (sKey.toLowerCase() === sHeader.toLowerCase() && oRequestConfig.headers[sKey] === sValue) {
+				return true;
+			}
+		}
+
+		return false;
 	};
 
 	return RequestDataProvider;

@@ -6,6 +6,7 @@ sap.ui.define([
 	"../model/formatter",
 	"../util/FileUtils",
 	"../localService/SEPMRA_PROD_MAN/mockServer",
+	"../localService/graphql/mockServer",
 	"sap/m/MessageToast",
 	"sap/m/Dialog",
 	"sap/m/Button",
@@ -25,7 +26,8 @@ sap.ui.define([
 	exploreSettingsModel,
 	formatter,
 	FileUtils,
-	mockServer,
+	SEPMRA_PROD_MAN_mockServer,
+	graphql_mockServer,
 	MessageToast,
 	Dialog,
 	Button,
@@ -280,18 +282,12 @@ sap.ui.define([
 
 			var oSubSampleOrSample = oSubSample || oSample;
 
-			this._fileEditor.setFiles(oSubSampleOrSample.files || [{
-				url: oSubSampleOrSample.manifestUrl,
-				name: 'manifest.json',
-				key: 'manifest.json',
-				content: ''
-			}]);
-
 			if (oSubSampleOrSample.isApplication) {
 				exploreSettingsModel.setProperty("/editorType", "text");
 			}
 
 			exploreSettingsModel.setProperty("/isApplication", !!oSubSampleOrSample.isApplication);
+			this._fileEditor.setBusy(true);
 			this._showSample(oSample, oSubSample);
 		},
 
@@ -356,48 +352,68 @@ sap.ui.define([
 		},
 
 		_showSample: function (oSample, oSubSample) {
-
 			var oCurrentSample = oSubSample || oSample,
 				oFrameWrapperEl = this.byId("iframeWrapper"),
 				bUseIFrame = !!oCurrentSample.useIFrame,
-				bMockServer = !!oCurrentSample.mockServer;
+				bMockServer = !!oCurrentSample.mockServer,
+				pAwait = Promise.resolve();
+
+			this._oCurrSample = oCurrentSample;
 
 			// init mock server only on demand
 			if (bMockServer) {
-				mockServer.init();
+				pAwait = Promise.all([
+					SEPMRA_PROD_MAN_mockServer.init(),
+					graphql_mockServer.init()
+				]);
 			}
 
-			exploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
-
-			this.oModel.setProperty("/sample", oSample);
-
-			if (oSubSample) {
-				this.oModel.setProperty("/subSample", oSubSample);
-			}
-
-			if (bUseIFrame) {
-				oFrameWrapperEl._sSample = oSubSample ? oSample.key + "/" + oSubSample.key : oSample.key;
-				oFrameWrapperEl.invalidate();
-			} else {
-				var sManifestUrl = this._fileEditor.getManifestFile().url,
-					oLayoutSettings = {
-						minRows: 1,
-						columns: 4
-					},
-					oCard = this.byId("cardSample");
-
-				oFrameWrapperEl._sSample = '';
-
-				oLayoutSettings = Object.assign(oLayoutSettings, oCurrentSample.settings);
-
-				if (oCard) {
-					oCard.setLayoutData(new GridContainerItemLayoutData(oLayoutSettings));
-					this.byId("cardContainer").invalidate();
+			pAwait.then(function () {
+				// cancel if sample changed while initializing the mock server
+				if (this._oCurrSample.key !== oCurrentSample.key) {
+					return;
 				}
 
-				sManifestUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + sManifestUrl);
-				this._sSampleManifestUrl = sManifestUrl;
-			}
+				this._fileEditor
+					.setFiles(oCurrentSample.files || [{
+						url: oCurrentSample.manifestUrl,
+						name: 'manifest.json',
+						key: 'manifest.json',
+						content: ''
+					}])
+					.setBusy(false);
+
+				exploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
+				this.oModel.setProperty("/sample", oSample);
+
+				if (oSubSample) {
+					this.oModel.setProperty("/subSample", oSubSample);
+				}
+
+				if (bUseIFrame) {
+					oFrameWrapperEl._sSample = oSubSample ? oSample.key + "/" + oSubSample.key : oSample.key;
+					oFrameWrapperEl.invalidate();
+				} else {
+					var sManifestUrl = this._fileEditor.getManifestFile().url,
+						oLayoutSettings = {
+							minRows: 1,
+							columns: 4
+						},
+						oCard = this.byId("cardSample");
+
+					oFrameWrapperEl._sSample = '';
+
+					oLayoutSettings = Object.assign(oLayoutSettings, oCurrentSample.settings);
+
+					if (oCard) {
+						oCard.setLayoutData(new GridContainerItemLayoutData(oLayoutSettings));
+						this.byId("cardContainer").invalidate();
+					}
+
+					sManifestUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + sManifestUrl);
+					this._sSampleManifestUrl = sManifestUrl;
+				}
+			}.bind(this));
 		},
 
 		_initIFrameCreation: function () {
