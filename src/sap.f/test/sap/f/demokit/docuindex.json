@@ -154,7 +154,7 @@
 		{
 		  "id": "sap.f.sample.DynamicPageAnalyticalTable",
 		  "name": "Dynamic Page with Analytical Table",
-		  "description": "Dynamic Page containing an Analytical Table in the content area and filters in the header aligned with the SAP Fiori 2 List Report floorplan."
+		  "description": "Dynamic Page containing an Analytical Table in the content area aligned with the SAP Fiori List Report floorplan."
 		},
 		{
 		  "id": "sap.f.sample.DynamicPageWithStickySubheader",
