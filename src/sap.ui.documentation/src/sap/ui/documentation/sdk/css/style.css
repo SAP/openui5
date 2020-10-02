@@ -32,6 +32,51 @@
 	padding-top: 0;
 }
 
+
+/* Cookie Settings Dialog */
+.cookiesDetailedView .sapMDialogScroll {
+    background-color: #F7F7F7;
+}
+
+li.cookieSetting {
+    position: relative;
+    padding: 1rem 1rem 0 1rem;
+    background-color: white;
+    box-shadow: 0 0 0.25rem 0 rgba(0, 0, 0, 0.15), inset 0 -0.0625rem 0 0 #d9d9d9;
+}
+
+li.cookieSetting .sapMPanel > .sapMPanelHdr,
+li.cookieSetting .sapMPanelWrappingDiv,
+li.cookieSetting .sapMPanelWrappingDivTb,
+li.cookieSetting .sapMPanelContent:not(.sapMPanelBGTransparent) {
+    border-bottom: none;
+}
+
+li.cookieSetting .sapMPanel {
+    margin-left: -1rem;
+}
+
+.cookieSummaryText {
+    display: block;
+    margin-right: 5rem;
+    padding-top: 4px;
+}
+
+.cookieStateSwitch {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+@media (min-width: 852px) {
+    .sapUiMedia-StdExt-Tablet div.cookieSettingsContainer,
+    .sapUiMedia-StdExt-Desktop div.cookieSettingsContainer,
+    .sapUiMedia-StdExt-LargeDesktop div.cookieSettingsContainer{
+        width: 718px;
+    }
+}
+
+
 /* Custom html wrapping Label */
 .sapUiFeedbackDialogNoteLabel {
 	white-space: pre-line;

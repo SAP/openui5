@@ -17,6 +17,10 @@ sap.ui.getCore().attachInit(function() {
 
 		var sViewName = "DemoApps";
 
+		// set the cookie that states the user already set cookie preferences,
+		// to prevent the cookie settings dialog interfere the test
+		document.cookie = "dk_approval_requested=1";
+
 		Opa5.extendConfig({
 			viewNamespace: "sap.ui.documentation.sdk.view.",
 			autoWait: true
