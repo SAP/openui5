@@ -2177,6 +2177,33 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.test("Cut with keyboard", function(assert) {
+		var oSpy = sinon.spy(Tokenizer.prototype, "_cut");
+
+		this.multiInput1.addToken(new Token({text: "Token1"}));
+		this.multiInput1.addToken(new Token({text: "Token2"}));
+
+		this.multiInput1.getTokens()[0].focus();
+
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
+			which: KeyCodes.A,
+			ctrlKey: true
+		});
+
+		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
+			which: KeyCodes.X,
+			ctrlKey: true
+		});
+
+		// assert
+		assert.ok(oSpy.called, "Tokenizer's cut method is called");
+
+		// cleanup
+		oSpy.restore();
+	});
+
 	QUnit.test("Copy", function(assert) {
 		var oSpy = sinon.spy(Tokenizer.prototype, "_copy");
 
@@ -2186,6 +2213,33 @@ sap.ui.define([
 		this.multiInput1.getTokens()[0].setSelected(true);
 
 		sap.ui.getCore().applyChanges();
+
+		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
+			which: KeyCodes.C,
+			ctrlKey: true
+		});
+
+		// assert
+		assert.ok(oSpy.called, "Tokenizer's copy method is called");
+
+		// cleanup
+		oSpy.restore();
+	});
+
+	QUnit.test("Copy with keyboard", function(assert) {
+		var oSpy = sinon.spy(Tokenizer.prototype, "_copy");
+
+		this.multiInput1.addToken(new Token({text: "Token1"}));
+		this.multiInput1.addToken(new Token({text: "Token2"}));
+
+		this.multiInput1.focus();
+
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
+			which: KeyCodes.A,
+			ctrlKey: true
+		});
 
 		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.C,
