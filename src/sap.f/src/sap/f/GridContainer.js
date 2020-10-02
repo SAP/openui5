@@ -5,6 +5,7 @@ sap.ui.define([
 	"./GridContainerRenderer",
 	"./GridContainerSettings",
 	"./GridContainerUtils",
+	"./delegate/GridContainerItemNavigation",
 	"./library",
 	"./dnd/GridKeyboardDragAndDrop",
 	"sap/base/strings/capitalize",
@@ -22,6 +23,7 @@ sap.ui.define([
 	GridContainerRenderer,
 	GridContainerSettings,
 	GridContainerUtils,
+	GridContainerItemNavigation,
 	library,
 	GridKeyboardDragAndDrop,
 	capitalize,
@@ -95,17 +97,6 @@ sap.ui.define([
 	function hasItemAutoHeight(item) {
 		var layoutData = item.getLayoutData();
 		return layoutData ? layoutData.hasAutoHeight() : true;
-	}
-
-	/**
-	 * When the GridContainer list item is focused, the control inside received a virtual focus.
-	 * @private
-	 * @param {sap.ui.core.Control} oControl The control
-	 */
-	function doVirtualFocusin(oControl) {
-		if (oControl.onfocusin) {
-			oControl.onfocusin();
-		}
 	}
 
 	/**
@@ -479,7 +470,7 @@ sap.ui.define([
 
 		//Initialize the ItemNavigation
 		if (!that._oItemNavigation) {
-			that._oItemNavigation = new ItemNavigation()
+			that._oItemNavigation = new GridContainerItemNavigation()
 				.setCycling(false)
 				.attachEvent(ItemNavigation.Events.FocusLeave, this._onItemNavigationFocusLeave, this)
 				.attachEvent(ItemNavigation.Events.BorderReached, this._onItemNavigationBorderReached, this)
@@ -488,43 +479,6 @@ sap.ui.define([
 					sapprevious : ["alt", "meta", "ctrl"]
 				})
 				.setFocusedIndex(0);
-
-			// modified ItemNavigation.focusItem function.
-			that._oItemNavigation.focusItem = function (iIndex, oEvent) {
-				if (iIndex == this.iFocusedIndex && this.aItemDomRefs[this.iFocusedIndex] == document.activeElement) {
-					this.fireEvent(ItemNavigation.Events.FocusAgain, {
-						index: iIndex,
-						event: oEvent
-					});
-					return; // item already focused -> nothing to do
-				}
-
-				this.fireEvent(ItemNavigation.Events.BeforeFocus, {
-					index: iIndex,
-					event: oEvent
-				});
-
-				this.setFocusedIndex(iIndex);
-				this.bISetFocus = true;
-
-				if (oEvent && jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot")) {
-
-					// store event type for nested ItemNavigations
-					var oItemItemNavigation = jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot");
-					oItemItemNavigation._sFocusEvent = oEvent.type;
-				}
-
-				// this is what the GridContainer changes
-				if (!that._bIsMouseDown && this.aItemDomRefs.length) {
-					this.aItemDomRefs[this.iFocusedIndex].focus();
-				}
-				/////////////////////////////////////////////
-
-				this.fireEvent(ItemNavigation.Events.AfterFocus, {
-					index: iIndex,
-					event: oEvent
-				});
-			};
 
 			that.addDelegate(this._oItemNavigation);
 		}
@@ -548,7 +502,7 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		this._oItemNavigationFocusLeft = true;
+		this._oItemNavigation._oItemNavigationFocusLeft = true;
 	};
 
 	/**
@@ -1246,7 +1200,7 @@ sap.ui.define([
 
 		if (focusableIndex === -1 ||
 			($Tabbables.control(focusableIndex) && $Tabbables.control(focusableIndex).getId() === oEvent.target.id)) {
-			this._lastFocusedElement = oEvent.target;
+			this._oItemNavigation._lastFocusedElement = oEvent.target;
 			this.forwardTab(true);
 		}
 	};
@@ -1260,7 +1214,7 @@ sap.ui.define([
 	*/
 	GridContainer.prototype.onsaptabprevious = function(oEvent) {
 		if (!this._isItemWrapper(oEvent.target)) {
-			this._lastFocusedElement = oEvent.target;
+			this._oItemNavigation._lastFocusedElement = oEvent.target;
 			return;
 		}
 
@@ -1273,86 +1227,8 @@ sap.ui.define([
 		}
 
 		// SHIFT + TAB out of the GridContainer should focused the last focused grid cell
-		this._lastFocusedElement = null;
+		this._oItemNavigation._lastFocusedElement = null;
 		this.forwardTab(false);
-	};
-
-
-	/**
-	 * Handles the <code>onmousedown</code> event.
-	 *
-	 */
-	GridContainer.prototype.onmousedown = function(oEvent) {
-		this._bIsMouseDown = true;
-	};
-
-	/**
-	 * Handles the <code>mouseup</code> event.
-	 *
-	 */
-	GridContainer.prototype.onmouseup = function(oEvent) {
-
-		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
-			oControl;
-
-		if ($listItem.length) {
-			oControl = $listItem.children().eq(0).control()[0];
-
-			// if the list item visual focus is displayed by the currently focused control,
-			// move the focus to the list item
-			if (oControl && oControl.getFocusDomRef() === document.activeElement) {
-				this._lastFocusedElement = null;
-				$listItem.trigger("focus");
-				doVirtualFocusin(oControl);
-			}
-		}
-
-		this._bIsMouseDown = false;
-	};
-
-	/**
-	 * Handles the <code>focusin</code> event.
-	 *
-	 * Handles when it is needed to return focus to correct place
-	 */
-	GridContainer.prototype.onfocusin = function(oEvent) {
-		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
-			oControl,
-			aNavigationDomRefs,
-			lastFocusedIndex;
-
-		if ($listItem.length) {
-			oControl = $listItem.children().eq(0).control()[0];
-
-			if (oControl) {
-				doVirtualFocusin(oControl);
-
-				// if the list item visual focus is displayed by the currently focused control,
-				// move the focus to the list item
-				if (!this._bIsMouseDown && oControl.getFocusDomRef() === oEvent.target) {
-					this._lastFocusedElement = null;
-					$listItem.trigger("focus");
-					return;
-				}
-			}
-		}
-
-		if (oEvent.target.classList.contains("sapFGridContainerItemWrapper")) {
-			this._lastFocusedElement = null;
-		}
-
-		if (this._oItemNavigationFocusLeft) {
-			this._oItemNavigationFocusLeft = false;
-
-			aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
-			lastFocusedIndex = this._oItemNavigation.getFocusedIndex();
-
-			if (this._lastFocusedElement) {
-				this._lastFocusedElement.focus();
-			} else {
-				aNavigationDomRefs[lastFocusedIndex].focus();
-			}
-		}
 	};
 
 	/**
