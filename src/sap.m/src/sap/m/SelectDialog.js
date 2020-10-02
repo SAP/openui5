@@ -629,6 +629,7 @@ function(
 
 		// set the search value
 		this._oSearchField.setValue(sSearchValue);
+		this._sSearchFieldValue = sSearchValue || "";
 
 		// open the dialog
 		this._oDialog.open();
@@ -1082,6 +1083,9 @@ function(
 			fnOKAfterClose = null;
 
 		fnOKAfterClose = function () {
+			// reset internal selection value
+			that._sSearchFieldValue = null;
+
 			//after searching we need all the items
 			var oBindings = that._oList.getBinding("items");
 			if (oBindings && oBindings.aFilters && oBindings.aFilters.length) {

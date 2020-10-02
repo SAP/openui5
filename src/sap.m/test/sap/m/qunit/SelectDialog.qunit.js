@@ -656,6 +656,29 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("liveChange event fired when 'clear' is pressed on a TSD that has initial value set", function (assert) {
+			var done = assert.async(),
+				oSelectDialog = new SelectDialog({
+					liveChange: function () {
+						// assert
+						assert.ok(1, "fired liveChange event");
+						done();
+					}
+				});
+
+			// act
+			oSelectDialog.open("somevalue");
+			sap.ui.getCore().applyChanges();
+
+			qutils.triggerKeydown(oSelectDialog._oSearchField.getDomRef().id, KeyCodes.ESCAPE);
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+			oSelectDialog._oDialog.close();
+			this.clock.tick(500);
+			oSelectDialog.destroy();
+		});
+
 		QUnit.test("Confirm Event", function (assert) {
 			var done = assert.async(),
 				that = this;
