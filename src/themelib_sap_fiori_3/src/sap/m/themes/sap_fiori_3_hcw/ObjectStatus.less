@@ -5,6 +5,15 @@
 
 @_sap_m_ObjectStatus_TextShadowColor: none;
 
+.sapMObjStatusInverted .sapMObjStatusText,
+.sapMObjStatusInverted .sapMObjStatusIcon {
+	line-height: 1rem;
+}
+
+.sapMObjStatusIcon > .sapUiIcon {
+	line-height: 0.75rem;
+}
+
 .sapMObjStatus .sapMObjStatusText,
 .sapMObjStatus .sapMObjStatusIcon {
 	text-shadow: @_sap_m_ObjectStatus_TextShadowColor;
@@ -15,6 +24,7 @@
 	.sapMObjStatusText,
 	.sapMObjStatusIcon {
 		font-size: 1.5rem;
+		line-height: 2rem;
 	}
 }
 
@@ -164,4 +174,20 @@ html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink::after {
 .sapMListTbl .sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon),
 .sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon {
 	height: 0.875rem;
+}
+
+.sapMObjectStatusLarge.sapMObjStatusInverted {
+	.sapMObjStatusIcon > .sapUiIcon {
+		vertical-align: baseline;
+		font-size: 1.25rem;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.sapMObjStatusIcon:not(.sapMObjStatusIconOnly) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.sapMObjStatusText {
+		padding-left: 0;
+	}
 }
