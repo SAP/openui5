@@ -21,7 +21,8 @@ sap.ui.define([
 	"./library",
 	"sap/uxap/AnchorBarRenderer",
 	"sap/base/Log",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler,	ScrollEnablement,
 		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, KeyCodes) {
 	"use strict";
@@ -533,7 +534,13 @@ sap.ui.define([
 				$scrollContainer = $dom.find(".sapUxAPAnchorBarScrollContainer"),
 				bNeedScrollingBegin,
 				bNeedScrollingEnd,
-				iContainerWidth;
+				iContainerWidth,
+				iScrollLeft,
+				fnSwapBeginEnd = function swapBeginEnd () {
+					var vSwap = bNeedScrollingBegin;
+					bNeedScrollingBegin = bNeedScrollingEnd;
+					bNeedScrollingEnd = vSwap;
+				};
 
 			// if width has changed we need to scroll AnchorBar to selected section
 			if (bWidthChange) {
@@ -541,23 +548,16 @@ sap.ui.define([
 			}
 
 			iContainerWidth = $scrollContainer.width();
+			iScrollLeft = this._bRtlScenario ? $scrollContainer.scrollLeftRTL() : $scrollContainer.scrollLeft();
 
-			//do we need to scroll left or right
+			bNeedScrollingBegin = iScrollLeft >= this._iTolerance;
+			bNeedScrollingEnd = iScrollLeft + iContainerWidth < (this._iMaxPosition - this._iTolerance);
+
 			if (this._bRtlScenario) {
-
-				if (Device.browser.firefox) {
-					bNeedScrollingEnd = Math.abs($scrollContainer.scrollLeft()) + iContainerWidth < (this._iMaxPosition - this._iTolerance);
-					bNeedScrollingBegin = Math.abs($scrollContainer.scrollLeft()) >= this._iTolerance;
-				} else {
-					bNeedScrollingEnd = Math.abs($scrollContainer.scrollLeft()) >= this._iTolerance;
-					bNeedScrollingBegin = Math.abs($scrollContainer.scrollLeft()) + iContainerWidth < (this._iMaxPosition - this._iTolerance);
-				}
-			} else {
-				bNeedScrollingEnd = $scrollContainer.scrollLeft() + iContainerWidth < (this._iMaxPosition - this._iTolerance);
-				bNeedScrollingBegin = $scrollContainer.scrollLeft() >= this._iTolerance;
+				fnSwapBeginEnd();
 			}
 
-			Log.debug("AnchorBar :: scrolled at " + $scrollContainer.scrollLeft(), "scrollBegin [" + (bNeedScrollingBegin ? "true" : "false") + "] scrollEnd [" + (bNeedScrollingEnd ? "true" : "false") + "]");
+			Log.debug("AnchorBar :: scrolled at " + iScrollLeft, "scrollBegin [" + (bNeedScrollingBegin ? "true" : "false") + "] scrollEnd [" + (bNeedScrollingEnd ? "true" : "false") + "]");
 
 			$dom.toggleClass("sapUxAPAnchorBarScrollLeft", bNeedScrollingBegin);
 			$dom.toggleClass("sapUxAPAnchorBarScrollRight", bNeedScrollingEnd);
@@ -876,12 +876,19 @@ sap.ui.define([
 
 		//initial state
 		if (this._bHasButtonsBar) {
-			setTimeout(function () {
+			this._iComputeContentSizeTimeout = setTimeout(function () {
 				if (this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon) {
 					this._computeBarSectionsInfo();
 				}
 				this._adjustSize();
+				this._iComputeContentSizeTimeout = null;
 			}.bind(this), AnchorBar.DOM_CALC_DELAY);
+		}
+	};
+
+	AnchorBar.prototype.onThemeChanged = function () {
+		if (this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon) {
+			this._computeBarSectionsInfo();
 		}
 	};
 
@@ -907,7 +914,7 @@ sap.ui.define([
 		//chrome, safari && Device.browser.webkit && firefox
 		if (this._bRtlScenario && (Device.browser.webkit || Device.browser.firefox)) {
 			aContent.forEach(this._adjustNextSectionInfo, this); // adjust positions depending of the browser
-			this._oScroller.scrollTo(this._iMaxPosition, 0, 0);
+			this._oScroller && this._oScroller.scrollTo(this._iMaxPosition, 0, 0);
 		}
 	};
 
@@ -1010,6 +1017,11 @@ sap.ui.define([
 
 		if (this.oLibraryResourceBundleOP) {
 			this.oLibraryResourceBundleOP = null;
+		}
+
+		if (this._iComputeContentSizeTimeout) {
+			clearTimeout(this._iComputeContentSizeTimeout);
+			this._iComputeContentSizeTimeout = null;
 		}
 	};
 
