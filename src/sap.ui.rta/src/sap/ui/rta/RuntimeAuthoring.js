@@ -835,11 +835,57 @@ function(
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._onStackModified = function() {
+		var bBackEndDraftExists = this._oVersionsModel.getProperty("/backendDraft");
+		var bDraftDisplayed = this._oVersionsModel.getProperty("/displayedVersion") === sap.ui.fl.Versions.Draft;
 		var oCommandStack = this.getCommandStack();
 		var bCanUndo = oCommandStack.canUndo();
-		var bCanRedo = oCommandStack.canRedo();
 
+		if (
+			!this.getShowToolbars() ||
+			!bCanUndo ||
+			this._bUserDiscardedDraft ||
+			bDraftDisplayed ||
+			!bBackEndDraftExists
+		) {
+			return this._modifyStack();
+		}
+
+		// warn the user: the existing draft would be discarded in case the user saves
+		if (!this._oDraftDiscardWarningPromise) {
+			this._oDraftDiscardWarningPromise = Fragment.load({
+				name: "sap.ui.rta.DraftDiscardDialog",
+				id: this.getId() + "_DraftDiscardDialog",
+				controller: this
+			}).then(function (oDialog) {
+				// adding a controlDependency for model propagation
+				this._oDraftDiscardWarningDialog = oDialog;
+				this.getToolbar().addDependent(oDialog);
+				return oDialog;
+			}.bind(this));
+		}
+
+		return this._oDraftDiscardWarningPromise.then(function (oDialog) {
+			oDialog.open();
+		});
+	};
+
+	RuntimeAuthoring.prototype._discardDraftConfirmed = function() {
+		this._bUserDiscardedDraft = true;
+		this._modifyStack();
+		this._oDraftDiscardWarningDialog.close();
+	};
+
+	RuntimeAuthoring.prototype._discardDraftCanceled = function() {
+		this.undo();
+		this._oDraftDiscardWarningDialog.close();
+	};
+
+	RuntimeAuthoring.prototype._modifyStack = function() {
 		if (this.getShowToolbars()) {
+			var oCommandStack = this.getCommandStack();
+			var bCanUndo = oCommandStack.canUndo();
+			var bCanRedo = oCommandStack.canRedo();
+
 			// TODO: move to the setter to the ChangesState
 			this._oVersionsModel.setDirtyChanges(bCanUndo);
 			this._oToolbarControlsModel.setProperty("/undoEnabled", bCanUndo);
@@ -848,6 +894,7 @@ function(
 			this._oToolbarControlsModel.setProperty("/restoreEnabled", this.bInitialResetEnabled || bCanUndo);
 		}
 		this.fireUndoRedoStackModified();
+		return Promise.resolve();
 	};
 
 	RuntimeAuthoring.prototype._checkToolbarAndExecuteFunction = function (sName, vValue) {
