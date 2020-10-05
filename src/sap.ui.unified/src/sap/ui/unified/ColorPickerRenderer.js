@@ -27,6 +27,12 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
 			bResponsive = oControl.bResponsive;
 
 		oRm.openStart("div", oControl);
+
+		oRm.accessibilityState(oControl, {
+			role: "group",
+			roledescription: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("COLOR_PICKER_TITLE")
+		});
+
 		if (bResponsive) {
 			oRm.class("sapUiColorPicker-ColorPickerMatrix");
 			oRm.class("sapUiColorPicker-" + sDisplayMode);
