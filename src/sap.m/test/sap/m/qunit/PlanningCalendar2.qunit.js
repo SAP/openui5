@@ -1120,6 +1120,66 @@ sap.ui.define([
 		oGetSelectedDatesStub.restore();
 	});
 
+	// BCP: 1930624418
+	QUnit.test("Proper classes are added/removed when resizing the outer container", function (assert) {
+		// arrange
+		var oPC = new PlanningCalendar({ viewKey: "One Month"}),
+			iContainerWidth = jQuery("#qunit-fixture").css("width");
+
+		jQuery("#qunit-fixture").css("width", "320px");
+		oPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oPC.hasStyleClass("sapMSize0"), "Width 320px: Size 0 class exists");
+		assert.notOk(oPC.hasStyleClass("sapMSize1"), "Width 320px: Size 1 class doesn't exist");
+		assert.notOk(oPC.hasStyleClass("sapMSize2"), "Width 320px: Size 2 class doesn't exist");
+
+		// act
+		jQuery("#qunit-fixture").css("width", "800px");
+		oPC.setWidth("800px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oPC.hasStyleClass("sapMSize0"), "Width 800px: Size 0 class doesn't exist");
+		assert.ok(oPC.hasStyleClass("sapMSize1"), "Width 800px: Size 1 class exists");
+		assert.notOk(oPC.hasStyleClass("sapMSize2"), "Width 800px: Size 2 class doesn't exist");
+
+		// act
+		jQuery("#qunit-fixture").css("width", "1200px");
+		oPC.setWidth("1200px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oPC.hasStyleClass("sapMSize0"), "Width 1200px: Size 0 class doesn't exist");
+		assert.notOk(oPC.hasStyleClass("sapMSize1"), "Width 1200px: Size 1 class doesn't exist");
+		assert.ok(oPC.hasStyleClass("sapMSize2"), "Width 1200px: Size 2 class exists");
+
+		// act
+		jQuery("#qunit-fixture").css("width", "800px");
+		oPC.setWidth("800px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oPC.hasStyleClass("sapMSize0"), "Width 800px: Size 0 class doesn't exist");
+		assert.ok(oPC.hasStyleClass("sapMSize1"), "Width 800px: Size 1 class exists");
+		assert.notOk(oPC.hasStyleClass("sapMSize2"), "Width 800px: Size 2 class doesn't exist");
+
+		// act
+		jQuery("#qunit-fixture").css("width", "320px");
+		oPC.setWidth("320px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oPC.hasStyleClass("sapMSize0"), "Width 320px: Size 0 class exists");
+		assert.notOk(oPC.hasStyleClass("sapMSize1"), "Width 320px: Size 1 class doesn't exist");
+		assert.notOk(oPC.hasStyleClass("sapMSize2"), "Width 320px: Size 2 class doesn't exist");
+
+		// cleanup
+		oPC.destroy();
+		jQuery("#qunit-fixture").css("width", iContainerWidth);
+	});
+
 	QUnit.module("ARIA", {
 		beforeEach: function() {
 

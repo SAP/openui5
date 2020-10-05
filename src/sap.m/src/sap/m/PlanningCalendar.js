@@ -661,6 +661,8 @@ sap.ui.define([
 			this._iSizeScreen = 2;
 		}
 
+		this.addStyleClass("sapMSize" + this._iSize);
+
 		this.setAggregation("header", this._createHeader());
 		this._attachHeaderEvents();
 
