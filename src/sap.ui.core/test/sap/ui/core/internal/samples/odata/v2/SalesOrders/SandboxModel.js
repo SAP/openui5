@@ -628,6 +628,10 @@ sap.ui.define([
 				},
 				/* Test Case X */
 				"SalesOrderSet('110')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
 					headers : getMessageHeader(undefined, oCurrentMessages.reset()
 						.add("infoCurrency",
 							"ToLineItems(SalesOrderID='110',ItemPosition='010')/CurrencyCode")),
@@ -635,6 +639,35 @@ sap.ui.define([
 				},
 				"SalesOrderSet('110')/ToLineItems?$skip=0&$top=4" : {
 					source : "Messages/TC10/SalesOrderSet-ToLineItems.json"
+				},
+
+				/* Test Case XI */
+				"SalesOrderSet('111')" : {
+					ifMatch : function (request) {
+						// start with 110 to be able respond properly for the GET request with the
+						// content ID as resource path
+						iTimesSaved = 110;
+						return true;
+					},
+					headers : getMessageHeader(undefined, oCurrentMessages.reset()
+						.add("order",
+							"ToLineItems(SalesOrderID='111',ItemPosition='010')/Quantity")),
+					source : "Messages/TC11/SalesOrderSet.json"
+				},
+				"SalesOrderSet('111')/ToLineItems?$skip=0&$top=4" : [{
+					ifMatch : ithCall.bind(null, 111),
+					source : "Messages/TC11/SalesOrderSet-ToLineItems-2.json"
+				}, {
+					source : "Messages/TC11/SalesOrderSet-ToLineItems.json"
+				}],
+				"POST SalesOrderItem_Clone?ItemPosition='010'&SalesOrderID='111'" : {
+					code : 200,
+					ifMatch : increaseSaveCount.bind(),
+					headers : {
+						location : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet"
+							+ "(SalesOrderID='111',ItemPosition='020')"
+					},
+					source : "Messages/TC11/SalesOrderItem_Clone.json"
 				}
 			},
 			aRegExpFixture : [{
@@ -729,7 +762,7 @@ sap.ui.define([
 				}
 			}, {
 
-				/* Test Case VI */
+				/* Test Case VI and XI*/
 				regExp :
 					/GET .*\$id(?:-[0-9]+){2}\?\$expand=ToProduct%2CToHeader&\$select=ToProduct%2CToHeader/,
 				response : [{
@@ -737,6 +770,16 @@ sap.ui.define([
 						.add("note", "Note").add("order", "Quantity")),
 					ifMatch : ithCall.bind(null, 3),
 					source : "Messages/TC6/SalesOrderLineItem-ToProduct-ToHeader.json"
+				}, { // used in Test Case XI
+					headers : Object.assign(
+						getMessageHeader(undefined,
+							oCurrentMessages.reset().add("order", "Quantity")),
+						{
+							location : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/"
+								+ "SalesOrderLineItemSet(SalesOrderID='111',ItemPosition='020')"
+						}),
+					ifMatch : ithCall.bind(null, 111),
+					source : "Messages/TC11/SalesOrderLineItem-ToProduct-ToHeader.json"
 				}, {
 					code : 400,
 					source : "Messages/TC6/error-1.json"

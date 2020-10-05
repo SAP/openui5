@@ -1032,4 +1032,30 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("aria-setsize & aria-posinset for hidden elements", function (assert) {
+		var iCount = 10, i, bVisible;
+
+		for (i = 0; i < iCount; i++) {
+			bVisible = true;
+			if (i % 2 == 0) {
+				bVisible = false;
+			}
+			this.oHeaderContainer.addContent(new Label({
+				text: "test",
+				visible: bVisible
+			}));
+		}
+
+		sap.ui.getCore().applyChanges();
+
+		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+
+		assert.equal(this.oHeaderContainer.getContent().length, iCount, "Number of elements added to the HeaderContainer is " + iCount);
+		assert.ok($items.length, "Number of Visible elements added to the HeaderContainer is " + $items.length);
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+	});
 });

@@ -214,5 +214,11 @@ sap.ui.define([
 		return true;
 	};
 
+	AddSimpleFormGroup.getChangeVisualizationInfo = function(oChange) {
+		return {
+			affectedControls: [oChange.getDefinition().content.group.selector]
+		};
+	};
+
 	return AddSimpleFormGroup;
 }, /* bExport= */true);

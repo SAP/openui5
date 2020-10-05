@@ -64,7 +64,7 @@ sap.ui.define([
 		Then.onTheLearnPage.iShouldSeeSampleTitle("Card Features");
 
 		When.onTheNavigationList.iSwitchToSample("gettingStarted");
-		Then.onTheLearnPage.iShouldSeeSampleTitle("Integration Card Getting Started");
+		Then.onTheLearnPage.iShouldSeeSampleTitle("Getting Started");
 
 		Then.iTeardownMyApp();
 	});

@@ -12,6 +12,7 @@
 			</layoutData>
 			<items>
 				<IconTabFilter id="fromList" text="{parts: ['$i18n>valuehelp.SELECTFROMLIST', '$this>/conditions'], formatter: '._formatListTabTitle'}" key="selectFromList" visible="false">
+					<!-- <ScrollContainer height="100%" width="100%" vertical="true" horizontal="false"> -->
 					<l:FixFlex>
 						<l:fixContent>
 							<Toolbar id="toolbar" width="100%" visible="{= ${$this>/searchEnabled} || ${$this>/showFilterbar}}">
@@ -34,11 +35,9 @@
 								<Button id="Go" press="_onGo" text="{$i18n>filterbar.GO}" type="Emphasized"
 									visible="{$this>/showFilterbar}"/>
 							</Toolbar>
-							<ScrollContainer height="calc(100% - 3rem)" width="100%" vertical="true" horizontal="false">
-								<VBox id="filterbarVBox" visible="{$this>/_filterBarVisible}">
-									<!-- container for the Filterbar / advanced FilterFields -->
-								</VBox>
-							</ScrollContainer>
+							<VBox id="filterbarVBox" visible="{$this>/_filterBarVisible}">
+								<!-- container for the Filterbar / advanced FilterFields -->
+							</VBox>
 						</l:fixContent>
 
 						<l:flexContent>
@@ -50,12 +49,13 @@
 							</Panel>
 						</l:flexContent>
 					</l:FixFlex>
+					<!-- </ScrollContainer> -->
 				</IconTabFilter>
 
 				<IconTabFilter id="defineCondition" text="{parts: ['$i18n>valuehelp.DEFINECONDITIONS', '$this>/conditions'], formatter: '._formatDefineTabTitle'}" key="defineCondition" visible="false">
-					<Panel id="defineConditionPanel" headerText="{parts: ['$i18n>valuehelp.DEFINECONDITIONS', '$this>/conditions'], formatter: '._formatDefineConditionTitle'}" class="sapMdcDefineconditionPanel" expanded="true" height="100%"  backgroundDesign="Transparent">
+				 	<ScrollContainer id="defineConditionPanel" height="100%" horizontal="false" vertical="true">
 						<!-- container for the DefineConditionPanel -->
-					</Panel>
+					</ScrollContainer>
 				</IconTabFilter>
 			</items>
 		</IconTabBar>

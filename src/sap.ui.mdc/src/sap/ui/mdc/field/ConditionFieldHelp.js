@@ -6,14 +6,14 @@ sap.ui.define([
 //	'sap/ui/mdc/library',
 	'sap/m/library',
 	'sap/ui/mdc/field/FieldHelpBase',
-	'sap/ui/mdc/condition/Condition'//,
-//	'sap/ui/base/ManagedObjectObserver'
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/base/ManagedObjectObserver'
 ], function(
 //		library,
 		mobileLibrary,
 		FieldHelpBase,
-		Condition//,
-//		ManagedObjectObserver
+		Condition,
+		ManagedObjectObserver
 		) {
 	"use strict";
 
@@ -42,7 +42,32 @@ sap.ui.define([
 	var ConditionFieldHelp = FieldHelpBase.extend("sap.ui.mdc.field.ConditionFieldHelp", /** @lends sap.ui.mdc.field.ConditionFieldHelp.prototype */
 	{
 		metadata: {
-			library: "sap.ui.mdc"
+			library: "sap.ui.mdc",
+			properties: {
+				/**
+				 * Title text that appears in the popover header.
+				 *
+				 * @since 1.83.0
+				 */
+				title: {
+					type: "string",
+					group: "Appearance",
+					defaultValue: ""
+				},
+
+				/**
+				 * Label text that appears as label for the conditions.
+				 *
+				 * @since 1.84.0
+				 */
+				label: {
+					type: "string",
+					group: "Appearance",
+					defaultValue: ""
+				}
+
+
+			}
 		}
 	});
 
@@ -50,11 +75,11 @@ sap.ui.define([
 
 		FieldHelpBase.prototype.init.apply(this, arguments);
 
-//		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
-//
-//		this._oObserver.observe(this, {
-//			properties: ["conditions"]
-//		});
+		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
+
+		this._oObserver.observe(this, {
+			properties: ["title"]
+		});
 
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
@@ -74,8 +99,8 @@ sap.ui.define([
 
 		FieldHelpBase.prototype.exit.apply(this, arguments);
 
-//		this._oObserver.disconnect();
-//		this._oObserver = undefined;
+		this._oObserver.disconnect();
+		this._oObserver = undefined;
 
 	};
 
@@ -115,11 +140,11 @@ sap.ui.define([
 
 		if (oPopover) { // empty if loaded async
 			oPopover.setShowArrow(true);
-			oPopover.setTitle("Define Filter Conditions"); // TODO: I18N text
+			oPopover.setTitle(this.getTitle());
 			oPopover.setShowHeader(true);
 			oPopover.setTitleAlignment("Center");
 			oPopover.setContentWidth("500px"); // TODO: use CSS?
-			oPopover.setResizable(true); // TODO: really?
+			oPopover.setResizable(false);
 			_createDefineConditionPanel.call(this);
 		}
 
@@ -133,7 +158,8 @@ sap.ui.define([
 			this._oManagedObjectModel = new ManagedObjectModel(this);
 			this._oDefineConditionPanel = new DefineConditionPanel(this.getId() + "-DCP", {
 				conditions: {path: "$help>/conditions"},
-				formatOptions: _getFormatOptions.call(this)
+				formatOptions: _getFormatOptions.call(this),
+				label: "{$help>/label}"
 			}).setModel(this._oManagedObjectModel, "$help");
 			this._setContent(this._oDefineConditionPanel);
 
@@ -197,17 +223,16 @@ sap.ui.define([
 
 	};
 
-//	function _observeChanges(oChanges) {
-//
-//		if (oChanges.name === "conditions") {
-//			_updateConditions.call(this, oChanges.current);
-//		}
-//
-//	}
-//
-//	function _updateConditions(aConditions) {
-//
-//	}
+	function _observeChanges(oChanges) {
+
+		if (oChanges.name === "title") {
+			var oPopover = this.getAggregation("_popover");
+			if (oPopover) {
+				oPopover.setTitle(this.getTitel());
+			}
+		}
+
+	}
 
 	ConditionFieldHelp.prototype.isValidationSupported = function() {
 		// Input will not be validated

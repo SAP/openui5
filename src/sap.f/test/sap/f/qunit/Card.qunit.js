@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/f/cards/Header",
 	"sap/f/cards/NumericHeader",
 	"sap/m/BadgeCustomData",
+	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ],
@@ -13,12 +14,14 @@ function (
 	CardHeader,
 	CardNumericHeader,
 	BadgeCustomData,
+	mLibrary,
 	Core,
 	jQuery
 ) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
+	var AvatarColor = mLibrary.AvatarColor;
 
 	function createCard(HeaderType) {
 		var oCard = new Card("somecard", {
@@ -140,6 +143,24 @@ function (
 
 		// Clean up
 		oCard.destroy();
+	});
+
+	QUnit.test("Default Header avatar default color", function (assert) {
+		// Arrange
+		var oHeader = new CardHeader({
+				iconSrc: "sap-icon://accept"
+			});
+
+		// Act
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+
+		assert.strictEqual(oHeader._getAvatar().getBackgroundColor(), AvatarColor.Transparent, "Default background of avatar is 'Transparent'");
+
+		// Clean up
+		oHeader.destroy();
 	});
 
 	QUnit.module("Headers ACC roles");

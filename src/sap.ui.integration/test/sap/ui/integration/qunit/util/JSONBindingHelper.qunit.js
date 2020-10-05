@@ -82,6 +82,14 @@ function (
 				[
 					{"property": "static string {model>/value1}"},
 					{"property": "static string value1"}
+				],
+				[
+					{"property": "{model>/value1} \\{escaped \\{brackets\\}\\}"},
+					{"property": "value1 {escaped {brackets}}"}
+				],
+				[
+					{"property": "symbols and expression \\{\\}\\?:!@#$%^&*()[]|/.,_=+-~`\"' {= !${model>/value1} ? '' : ${model>/value1} + '-' + ${model>/value2}}"},
+					{"property": "symbols and expression {}\\?:!@#$%^&*()[]|/.,_=+-~`\"' value1-value2"}
 				]
 			],
 			oModel = new JSONModel({

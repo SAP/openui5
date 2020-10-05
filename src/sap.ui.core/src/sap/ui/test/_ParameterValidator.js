@@ -3,25 +3,113 @@
  */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery"
-], function(jQueryDOM) {
+], function (jQueryDOM) {
 	"use strict";
-	var _ParameterValidator = function (options) {
-		this._errorPrefix = options.errorPrefix;
+
+	/**
+	 * A class used for validating an object's properties
+	 * @class
+	 * @private
+	 * @param {object} oOptions validator options
+	 * @param {string} oOptions.errorPrefix prefix for validation error messages - usually contains the class and method that called the validation
+	 */
+	var _ParameterValidator = function (oOptions) {
+		this._errorPrefix = oOptions.errorPrefix;
 	};
 
-	var validationInfo = {
-		validationInfo: {
-			type: "object",
-			mandatory: true
-		},
-		inputToValidate: {
-			type: "object",
-			mandatory: true
-		},
-		allowUnknownProperties: "bool"
+	/**
+	 * Validates parameters. Throws error if some parameters are not valid.
+	 * @param {object} oOptions validation options
+	 * @param {object} oOptions.validationInfo definition of accepted parameters including name, type, 'mandatory' flag.
+	 * short syntax: {paramName: "paramType"}  - same as
+	 * full syntax: {paramName: {type: "paramType", mandatory: false}}
+	 * If the value is an object without 'type' property, it is considered to be a nested validationInfo:
+	 * {param1: {param2: "param2Type", param3: {type: "param3Type"}}}
+	 * @param {object} oOptions.inputToValidate object to validate against validationInfo
+	 * @param {boolean} oOptions.allowUnknownProperties false by default. when false, throw error if a parameter is not defined in the validationInfo
+	 */
+	_ParameterValidator.prototype.validate = function (oOptions) {
+		// validate _ParameterValidator#validate's own parameters - oOptions
+		this._validate({
+			inputToValidate: oOptions,
+			validationInfo: {
+				validationInfo: {
+					type: "object",
+					mandatory: true
+				},
+				inputToValidate: {
+					type: "object",
+					mandatory: true
+				},
+				allowUnknownProperties: "bool"
+			}
+		});
+		// validate the actual parameters - inputToValidate
+		this._validate(oOptions);
 	};
 
-	function createValidationInfo (vValidationInfo) {
+	_ParameterValidator.prototype._validate = function (oOptions) {
+		var aErrors = this._getErrors(oOptions);
+
+		if (aErrors.length === 1) {
+			throw new Error(this._errorPrefix + " - " + aErrors[0]);
+		}
+
+		if (aErrors.length) {
+			throw new Error("Multiple errors where thrown " + this._errorPrefix + "\n" + aErrors.join("\n"));
+		}
+	};
+
+	/**
+	 * Inspects the oOptions.inputToValidate object in depth to find all errors
+	 * @param {object} oOptions validator options
+	 * @param {array} aErrors an array containing the result
+	 * @param {string} sPropertyPath full property path
+	 * @returns {array} an array of all the errors
+	 * @private
+	 */
+	_ParameterValidator.prototype._getErrors = function (oOptions, aErrors, sPropertyPath) {
+		aErrors = aErrors || [];
+		sPropertyPath = sPropertyPath ? sPropertyPath + "." : "";
+
+		if (!oOptions.allowUnknownProperties) {
+			Object.keys(oOptions.inputToValidate).forEach(function (sKey) {
+				if (!oOptions.validationInfo[sKey]) {
+					aErrors.push("the property '" + sPropertyPath +  sKey + "' is not defined in the API");
+				}
+			});
+		}
+
+		Object.keys(oOptions.validationInfo).forEach(function (sKey) {
+			var sFullPropertyPath = sPropertyPath + sKey;
+			var vValue = oOptions.inputToValidate[sKey];
+			var oParameterValidationInfo = this._getParameterValidationInfo(oOptions.validationInfo[sKey]);
+
+			if (vValue === undefined || vValue === null) {
+				if (oParameterValidationInfo.mandatory) {
+					aErrors.push("No '" + sFullPropertyPath + "' given but it is a mandatory parameter");
+				}
+			} else if (oParameterValidationInfo.hasOwnProperty("type")) {
+				// value is not empty and should be validated
+				var oType = _ParameterValidator.types[oParameterValidationInfo.type];
+				if (!oType.isValid(vValue)) {
+					aErrors.push("the '" + sFullPropertyPath + "' parameter needs to be " + oType.description + " but '"
+						+ vValue + "' was passed");
+				}
+			} else {
+				// value is a nested input to validate - resursion
+				aErrors.concat(this._getErrors({
+					validationInfo: oParameterValidationInfo,
+					inputToValidate: vValue,
+					allowUnknownProperties: oOptions.allowUnknownProperties
+				}, aErrors, sFullPropertyPath));
+			}
+		}.bind(this));
+
+		return aErrors;
+	};
+
+	_ParameterValidator.prototype._getParameterValidationInfo = function (vValidationInfo) {
 		if (typeof vValidationInfo === "string") {
 			return {
 				type: vValidationInfo,
@@ -30,142 +118,58 @@ sap.ui.define([
 		}
 
 		return vValidationInfo;
-	}
-
-	_ParameterValidator.prototype = {
-		validate: function (options) {
-			// validate its own parameters
-			this._validate({
-				inputToValidate: options,
-				validationInfo: validationInfo
-			});
-			// validate the actual parameters
-			this._validate(options);
-		},
-
-		_validate: function (oOptions) {
-			var aErrors = this._getErrors(oOptions);
-
-			if (aErrors.length === 1) {
-				throw new Error(this._errorPrefix + " - " + aErrors[0]);
-			}
-
-			if (aErrors.length) {
-				aErrors.unshift("Multiple errors where thrown " + this._errorPrefix);
-				throw new Error(aErrors.join("\n"));
-			}
-		},
-
-		/**
-		 * Fills the aErrors parameter recursively
-		 * @param oOptions
-		 * @param aErrors
-		 * @param {string} sPropertyPath
-		 * @returns {*}
-		 * @private
-		 */
-		_getErrors: function (oOptions, aErrors, sPropertyPath) {
-			var mValidationInfo = oOptions.validationInfo,
-				oInputToValidate = oOptions.inputToValidate,
-				bAllowUnknownProperties = oOptions.allowUnknownProperties;
-
-			if (!aErrors) {
-				aErrors = [];
-			}
-			if (!sPropertyPath) {
-				sPropertyPath = "";
-			}
-
-			Object.keys(oInputToValidate).forEach(function (sKey) {
-				var oValidationInfo = createValidationInfo(mValidationInfo[sKey]);
-
-				if (!bAllowUnknownProperties && !oValidationInfo) {
-					aErrors.push("the property '" + sPropertyPath + sKey + "' is not defined in the API");
-				}
-			});
-
-
-			Object.keys(mValidationInfo).forEach(function (sKey) {
-				var vValue = oInputToValidate[sKey],
-					oValidationInfo = createValidationInfo(mValidationInfo[sKey]);
-
-				if ((!oValidationInfo.hasOwnProperty("type") || !oValidationInfo.hasOwnProperty("mandatory")) && vValue) {
-					sPropertyPath += sKey + ".";
-
-					aErrors.concat(this._getErrors({
-						validationInfo: oValidationInfo,
-						inputToValidate: vValue,
-						allowUnknownProperties: bAllowUnknownProperties
-					}, aErrors, sPropertyPath));
-					return;
-				}
-
-				var sCompletePropertyPath = sPropertyPath + sKey;
-
-				if (oValidationInfo.mandatory && (vValue === undefined || vValue === null)) {
-					aErrors.push("No '" + sCompletePropertyPath + "' given but it is a mandatory parameter");
-				}
-				if (vValue === undefined || vValue === null) {
-					// parameter undefined if it was mandatory the error is pushed already
-					return;
-				}
-
-				var fnValidator = _ParameterValidator.types[oValidationInfo.type];
-				var sError = fnValidator(vValue, sCompletePropertyPath);
-				if (sError) {
-					aErrors.push(sError);
-				}
-			}.bind(this));
-
-			return aErrors;
-		}
 	};
 
 	_ParameterValidator.types = {
-		func : function (fnValue, sPropertyName) {
-			if (jQueryDOM.isFunction(fnValue)) {
-				return "";
-			}
-			return "the '" + sPropertyName + "' parameter needs to be a function but '"
-				+ fnValue + "' was passed";
+		func: {
+			isValid: function (fnValue) {
+				return jQueryDOM.isFunction(fnValue);
+			},
+			description: "a function"
 		},
-		array: function (aValue, sPropertyName) {
-			if (Array.isArray(aValue)) {
-				return "";
-			}
-			return "the '" + sPropertyName + "' parameter needs to be an array but '"
-				+ aValue + "' was passed";
+		array: {
+			isValid: function (aValue) {
+				return Array.isArray(aValue);
+			},
+			description: "an array"
 		},
-		object: function (oValue, sPropertyName) {
-			if (jQueryDOM.isPlainObject(oValue)) {
-				return "";
-			}
-			return "the '" + sPropertyName + "' parameter needs to be an object but '"
-				+ oValue + "' was passed";
+		object: {
+			isValid: function (oValue) {
+				return jQueryDOM.isPlainObject(oValue);
+			},
+			description: "an object"
 		},
-		string: function (sValue, sPropertyName) {
-			if (typeof sValue === "string" || sValue instanceof String) {
-				return "";
-			}
-			return "the '" + sPropertyName + "' parameter needs to be a string but '"
-				+ sValue + "' was passed";
+		string: {
+			isValid: function (sValue) {
+				return typeof sValue === "string" || sValue instanceof String;
+			},
+			description: "a string"
 		},
-		bool: function (bValue, sPropertyName) {
-			if (typeof bValue === "boolean") {
-				return "";
-			}
-			return "the '" + sPropertyName + "' parameter needs to be a boolean value but '"
-				+ bValue + "' was passed";
+		bool: {
+			isValid: function (bValue) {
+				return typeof bValue === "boolean";
+			},
+			description: "a boolean value"
 		},
-		numeric: function (iValue, sPropertyName) {
-			if (jQueryDOM.isNumeric(iValue)) {
-				return "";
-			}
-			return "the '" + sPropertyName + "' parameter needs to be numeric but '"
-				+ iValue + "' was passed";
+		numeric: {
+			isValid: function (iValue) {
+				return jQueryDOM.isNumeric(iValue);
+			},
+			description: "numeric"
+		},
+		positivenumeric: {
+			isValid: function (iValue) {
+				return jQueryDOM.isNumeric(iValue) && iValue > 0;
+			},
+			description: "a positive numeric"
 		},
 		// no validation just for declaring optional and mandatory params
-		any: jQueryDOM.noop
+		any: {
+			isValid: function () {
+				return true;
+			},
+			description: "any value"
+		}
 	};
 
 	return _ParameterValidator;

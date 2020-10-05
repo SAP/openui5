@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/InvisibleTex
 			role: "grid",
 			readonly: "true",
 			multiselectable: oMP.getIntervalSelection(),
-			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER"),
+			roledescription: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER"),
 			describedby: oMP._bCalendar ? InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_PICKER_OPEN_HINT") : ""
 		});
 

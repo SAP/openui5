@@ -1,0 +1,12 @@
+{
+	"routes": [
+		{
+			"path": "/destinations/northwind/V3/Northwind/Northwind.svc",
+			"target": {
+				"type": "destination",
+				"name": "Northwind"
+			},
+			"description": "Northwind OData Service"
+		}
+	]
+}

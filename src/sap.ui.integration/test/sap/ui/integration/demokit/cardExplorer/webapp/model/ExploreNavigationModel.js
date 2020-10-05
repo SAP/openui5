@@ -132,7 +132,6 @@ sap.ui.define([
 						title: 'Calendar',
 						target: 'exploreSamples',
 						key: 'calendar',
-						experimental: true,
 						manifestUrl: '/samples/calendar/calendar.json',
 						settings: {
 							columns: 7
@@ -493,7 +492,19 @@ sap.ui.define([
 						key: 'data',
 						target: 'exploreSamples',
 						title: 'Data',
-						manifestUrl: '/samples/data/manifest.json'
+						subSamples: [
+							{
+								title: 'Basic Data Request',
+								key: 'basic',
+								manifestUrl: '/samples/data/manifest.json'
+							},
+							{
+								title: 'Using GraphQL',
+								key: 'graphql',
+								mockServer: true,
+								manifestUrl: '/samples/data/graphql/manifest.json'
+							}
+						]
 					},
 					{
 						key: 'dataSources',
@@ -971,6 +982,46 @@ sap.ui.define([
 										key: 'Component.js'
 									}
 								]
+							},
+							{
+								title: 'SAP Cloud Platform',
+								key: 'scp',
+								useIFrame: true,
+								isApplication: true,
+								mockServer: true,
+								files: [
+									{
+										url: '/samples/destinations/scp/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/destinations/scp/cardBundle/cardManifest.json',
+										name: 'cardBundle/cardManifest.json',
+										key: 'cardBundle/cardManifest.json'
+									},
+									{
+										url: '/samples/destinations/scp/neo-app.json',
+										name: 'neo-app.json',
+										key: 'neo-app.json'
+									},
+									{
+										url: '/samples/destinations/scp/View.view.xml',
+										name: 'Destinations.view.xml',
+										key: 'Destinations.view.xml'
+									},
+									{
+										url: '/samples/destinations/scp/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										isApplicationManifest: true
+									},
+									{
+										url: '/samples/destinations/scp/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									}
+								]
 							}
 						]
 					},
@@ -1192,6 +1243,16 @@ sap.ui.define([
 								url: '/samples/designtimeTranslation/manifest.json',
 								name: 'manifest.json',
 								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeTranslation/i18n/i18n_fr.properties',
+								name: 'i18n/i18n_fr.properties',
+								key: 'i18n.properties'
+							},
+							{
+								url: '/samples/designtimeTranslation/i18n/i18n_de.properties',
+								name: 'i18n/i18n_de.properties',
+								key: 'i18n.properties'
 							},
 							{
 								url: '/samples/designtimeTranslation/i18n/i18n.properties',

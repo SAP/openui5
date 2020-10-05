@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/m/IconTabFilter',
 	'sap/m/IconTabSeparator',
 	'sap/m/IconTabBarDragAndDropUtil',
-	'sap/ui/core/dnd/DropPosition',
+	'sap/ui/core/library',
 	'sap/m/IconTabHeaderRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
@@ -35,13 +35,16 @@ sap.ui.define([
 	IconTabFilter,
 	IconTabSeparator,
 	IconTabBarDragAndDropUtil,
-	DropPosition,
+	coreLibrary,
 	IconTabHeaderRenderer,
 	jQuery,
 	Log,
 	KeyCodes
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.dnd.DropPosition
+	var DropPosition = coreLibrary.dnd.DropPosition;
 
 	// shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = library.BackgroundDesign;
@@ -727,7 +730,7 @@ sap.ui.define([
 			return oItem;
 		}
 
-		if (oItem && oItem == this.oSelectedItem && sAggregationName == 'items') {
+		if (!this._getPreserveSelection() && oItem && oItem == this.oSelectedItem && sAggregationName == 'items') {
 
 			var iIndexOf = (aItems ? Array.prototype.indexOf.call(aItems, oItem) : -1);
 			aItems = this.getTabFilters();
@@ -759,6 +762,23 @@ sap.ui.define([
 		}
 
 		return Control.prototype.removeAllAggregation.apply(this, arguments);
+	};
+
+	/**
+	 * Returns whether the currently selected item is preserved.
+	 * @private
+	 */
+	IconTabHeader.prototype._getPreserveSelection = function () {
+		return this._bPreserveSelection;
+	};
+
+	/**
+	 * Sets whether the currently selected item is preserved.
+	 * @param {Boolean} bPreserveSelection The new value
+	 * @private
+	 */
+	IconTabHeader.prototype._setPreserveSelection = function (bPreserveSelection) {
+		this._bPreserveSelection = bPreserveSelection;
 	};
 
 	/**

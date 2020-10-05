@@ -53,14 +53,14 @@
 	}
 }
 
-.sapMLIBHoverable:hover + .sapMListTblSubRow,
-.sapMLIBHoverable.sapMPopinHovered {
+.sapMLIBHoverable:not(.sapMLIBSelected):hover + .sapMListTblSubRow,
+.sapMLIBHoverable:not(.sapMLIBSelected) + .sapMListTblSubRow:hover,
+.sapMLIBHoverable:not(.sapMLIBSelected).sapMPopinHovered {
 	background : @sapUiListHoverBackground;
 }
 
 .sapMLIBHoverable + .sapMListTblSubRow:hover {
 	cursor: pointer;
-	background : @sapUiListHoverBackground;
 }
 
 .sapMLIBSelected + .sapMListTblSubRow,
@@ -73,7 +73,9 @@
 	background: @sapUiListActiveBackground;
 }
 
-.sapMLIBHoverable.sapMLIBSelected:hover + .sapMListTblSubRow {
+.sapMLIBHoverable.sapMLIBSelected:hover + .sapMListTblSubRow,
+.sapMLIBHoverable.sapMLIBSelected + .sapMListTblSubRow:hover,
+.sapMLIBHoverable.sapMLIBSelected.sapMPopinHovered {
 	background : @sapUiListSelectionHoverBackground;
 }
 

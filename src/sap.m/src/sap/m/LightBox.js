@@ -9,17 +9,14 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Text",
 	"sap/m/Button",
-	"sap/m/ButtonType",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
 	"sap/ui/core/Icon",
 	"sap/ui/layout/VerticalLayout",
 	"./InstanceManager",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/OpenState",
-	"sap/ui/core/TextAlign",
+	"sap/ui/core/library",
 	"./LightBoxRenderer",
-	"sap/m/LightBoxLoadingStates",
 	"sap/m/BusyIndicator",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/units/Rem"
@@ -30,22 +27,31 @@ sap.ui.define([
 	Core,
 	Text,
 	Button,
-	ButtonType,
 	ResizeHandler,
 	Device,
 	Icon,
 	VerticalLayout,
 	InstanceManager,
 	InvisibleText,
-	OpenState,
-	TextAlign,
+	coreLibrary,
 	LightBoxRenderer,
-	LightBoxLoadingStates,
 	BusyIndicator,
 	jQuery,
 	DomUnitsRem
 ) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.LightBoxLoadingStates
+	var LightBoxLoadingStates = library.LightBoxLoadingStates;
+
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = coreLibrary.OpenState;
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
 
 	/**
 	 * Constructor for a new LightBox.

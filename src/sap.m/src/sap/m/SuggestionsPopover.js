@@ -347,7 +347,7 @@ sap.ui.define([
 					// If the popover is closed while the pseudo focus is on value state header containing links
 					if (that.bMessageValueStateActive) {
 						that._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
-						this.bMessageValueStateActive = false;
+						that.bMessageValueStateActive = false;
 					}
 				}
 			}))
@@ -576,57 +576,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Close the control when tab is pressed while the focus is on the last link
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._closePopoverDelegate = {
-		onsaptabnext: function(oEvent) {
-			this.bMessageValueStateActive = false;
-			this._oInput.onsapfocusleave(oEvent);
-			this._oPopover.close();
-
-			/* By default the value state message popup is opened when the suggestion popover
-			is closed. We don't want that in this case because the focus will move on to the next object.
-			The popup must be closed with setTimeout() because it is opened with one. */
-			setTimeout(function() {
-				this._oInput.closeValueStateMessage();
-			}.bind(this), 0);
-		}
-	};
-
-	/**
-	 * Moves the real focus to the input and the visual focus to the value state header
-	 * when saptabprevious is fired on the first link in a value state message
-	 * @private
-	 */
-	SuggestionsPopover.prototype._focusValueStateHeader = {
-		onsaptabprevious: function(oEvent) {
-			oEvent.preventDefault();
-			this._oInput.getFocusDomRef().focus();
-			this._getValueStateHeader().addStyleClass("sapMPseudoFocus");
-			this._oInput.removeStyleClass("sapMFocus");
-		}
-	};
-
-	/**
-	 * Event delegate that handles the arrow navigation of the links in the <code>sap.m.ValueStateHeader</code>.
-	 * Moves the real focus to the input and the visual focus to the first suggested item
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._valueStateLinkArrowNav = {
-		onsapup: function(oEvent) {
-			this._oInput.getFocusDomRef().focus();
-			this._onsaparrowkey(oEvent, "up", 1);
-		},
-		onsapdown: function(oEvent) {
-			this._oInput.getFocusDomRef().focus();
-			this._onsaparrowkey(oEvent, "down", 1);
-		}
-	};
-
-	/**
 	 * Handles value state link navigation
 	 *
 	 * @param {jQuery.Event} oEvent The event object
@@ -654,13 +603,42 @@ sap.ui.define([
 		this._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
 
 		aValueStateLinks.forEach(function(oLink) {
-			oLink.addDelegate(this._valueStateLinkArrowNav, this);
+			oLink.addDelegate({
+				onsapup: function(oEvent) {
+					this._oInput.getFocusDomRef().focus();
+					this._onsaparrowkey(oEvent, "up", 1);
+				},
+				onsapdown: function(oEvent) {
+					this._oInput.getFocusDomRef().focus();
+					this._onsaparrowkey(oEvent, "down", 1);
+				}
+			}, this);
 		}, this);
 
 		// If saptabnext is fired on the last link of the value state - close the control
-		oLastValueStateLink.addDelegate(this._closePopoverDelegate	, this);
+		oLastValueStateLink.addDelegate({
+			onsaptabnext: function(oEvent) {
+				this.bMessageValueStateActive = false;
+				this._oInput.onsapfocusleave(oEvent);
+				this._oPopover.close();
+
+				/* By default the value state message popup is opened when the suggestion popover
+				is closed. We don't want that in this case because the focus will move on to the next object.
+				The popup must be closed with setTimeout() because it is opened with one. */
+				setTimeout(function() {
+					this._oInput.closeValueStateMessage();
+				}.bind(this), 0);
+			}
+		}, this);
 		// If saptabprevious is fired on the first link move real focus on the input and the visual one back to the value state header
-		aValueStateLinks[0].addDelegate(this._focusValueStateHeader, this);
+		aValueStateLinks[0].addDelegate({
+			onsaptabprevious: function(oEvent) {
+				oEvent.preventDefault();
+				this._oInput.getFocusDomRef().focus();
+				this._getValueStateHeader().addStyleClass("sapMPseudoFocus");
+				this._oInput.removeStyleClass("sapMFocus");
+			}
+		}, this);
 	};
 
 	/**
@@ -1172,6 +1150,7 @@ sap.ui.define([
 	 * @param {string} sValueState Value state of the control
 	 * @param {(string|object)} vValueStateText Value state message text of the control.
 	 * @param {boolean} bShowValueStateMessage Whether or not a value state message should be displayed.
+	 * @returns {sap.m.SuggestionsPopover} <code>this</code> to allow method chaining
 	 *
 	 * @private
 	 */
@@ -1187,35 +1166,22 @@ sap.ui.define([
 		}
 
 		this._getValueStateHeader().setValueState(sValueState);
-		this._setValueStateHeaderText(vValueStateText);
-		this._showValueStateHeader(bShow);
-		this._alignValueStateStyles(sValueState);
 
-		return this;
-	};
+		// Set the value state text
+		if (this._oValueStateHeader && typeof vValueStateText === "string") {
+			this._oValueStateHeader.setText(vValueStateText);
+		} else if (this._oValueStateHeader && typeof vValueStateText === "object") {
+			this._oValueStateHeader.setFormattedText(vValueStateText);
+		}
 
-	/**
-	 * Shows/hides the value state text
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._showValueStateHeader = function(bShow) {
+		// adjust ValueStateHeader visibility
 		if (this._oValueStateHeader) {
 			this._oValueStateHeader.setVisible(bShow);
 		}
-	};
 
-	/**
-	 * Sets the value state text
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._setValueStateHeaderText = function(vText) {
-		if (this._oValueStateHeader && typeof vText === "string") {
-			this._oValueStateHeader.setText(vText);
-		} else if (this._oValueStateHeader && typeof vText === "object") {
-			this._oValueStateHeader.setFormattedText(vText);
-		}
+		this._alignValueStateStyles(sValueState);
+
+		return this;
 	};
 
 	/**

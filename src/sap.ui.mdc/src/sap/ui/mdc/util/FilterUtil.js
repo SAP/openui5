@@ -84,10 +84,12 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', "sap/ui/mdc/condition/Condition
 								} else {
 									Log.error("no such property: " + sFieldPath);
 								}
-
-								// create filter statement
-								oFilterInfo.filters = FilterConverter.createFilters(mInternalFilterConditions, mFilterTypes);
 							}
+						}
+
+						if (Object.keys(mInternalFilterConditions).length > 0) {
+							// create filter statement
+							oFilterInfo.filters = FilterConverter.createFilters(mInternalFilterConditions, mFilterTypes);
 						}
 					}
 

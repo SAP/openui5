@@ -20,7 +20,7 @@ sap.ui.define([
 	}
 
 	// Use elementActionTest to check if a control is ready for the move action of UI adaptation
-	elementActionTest("Checking the move action for a sap.uxap.ObjectPageSection control", {
+	elementActionTest("Checking the move action for a sap.uxap.ObjectPageSection control subsections", {
 		xmlView :
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
@@ -73,6 +73,111 @@ sap.ui.define([
 		afterRedo : fnConfirmGroupelement1IsOn2ndPosition
 	});
 
+	function fnConfirmSection1IsOn2ndPosition(oAppComponent, oViewAfterAction, assert) {
+		assert.strictEqual( oViewAfterAction.byId("section1").getId(),       // Id of element at first position in original view
+			oViewAfterAction.byId("op").getSections() [2].getId(),   // Id of second element in group after change has been applied
+			"then the control has been moved to the right position");
+	}
+	function fnConfirmSection1IsOn1stPosition(oAppComponent, oViewAfterAction, assert) {
+		assert.strictEqual( oViewAfterAction.byId("section1").getId(),       // Id of element at first position in original view
+			oViewAfterAction.byId("op").getSections() [0].getId(),   // Id of second element in group after change has been applied
+			"then the control has been moved to the previous position");
+	}
+
+	// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+	elementActionTest("Checking the move action for a sap.uxap.ObjectPageSection control", {
+		xmlView :
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+			'<uxap:ObjectPageLayout id="op">' +
+				'<uxap:sections>' +
+					'<uxap:ObjectPageSection id="section1">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="subSection1" title="Subsection with action buttons">' +
+								'<uxap:actions>' +
+									'<m:Button icon="sap-icon://synchronize" />' +
+									'<m:Button icon="sap-icon://expand" />' +
+								'</uxap:actions>' +
+								'<m:Button text="Subsection UI adaptation" />' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+					'<uxap:ObjectPageSection id="section2">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="subSection2" title="Subsection with action buttons">' +
+								'<uxap:actions>' +
+									'<m:Button icon="sap-icon://synchronize" />' +
+									'<m:Button icon="sap-icon://expand" />' +
+								'</uxap:actions>' +
+								'<m:Button text="Subsection UI adaptation" />' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+					'<uxap:ObjectPageSection id="section3">' +
+					'<uxap:subSections>' +
+						'<uxap:ObjectPageSubSection id="subSection3" title="Subsection with action buttons">' +
+							'<uxap:actions>' +
+								'<m:Button icon="sap-icon://synchronize" />' +
+								'<m:Button icon="sap-icon://expand" />' +
+							'</uxap:actions>' +
+							'<m:Button text="Subsection UI adaptation" />' +
+						'</uxap:ObjectPageSubSection>' +
+					'</uxap:subSections>' +
+				'</uxap:ObjectPageSection>' +
+				'</uxap:sections>' +
+			'</uxap:ObjectPageLayout>' +
+		'</mvc:View>',
+		action : {
+			name : "move",
+			controlId : "op",
+			parameter : function(oView){
+				return {
+					movedElements : [{
+						element : oView.byId("section1"),
+						sourceIndex : 1,
+						targetIndex : 2
+					}],
+					source : {
+						aggregation: "sections",
+						parent: oView.byId("op")
+					},
+					target : {
+						aggregation: "sections",
+						parent: oView.byId("op")
+					}
+				};
+			}
+		},
+		previousActions: [ // OPTIONAL
+			{
+				name : "move",
+				controlId : "op",
+				parameter : function(oView) {
+					return {
+						movedElements : [{
+							element : oView.byId("section1"),
+							sourceIndex : 0,
+							targetIndex : 1
+						}],
+						source : {
+							aggregation: "sections",
+							parent: oView.byId("op")
+						},
+						target : {
+							aggregation: "sections",
+							parent: oView.byId("op")
+						}
+					};
+				}
+			}
+		],
+		changesAfterCondensing: 1, // OPTIONAL
+		layer : "VENDOR",
+		afterAction : fnConfirmSection1IsOn2ndPosition,
+		afterUndo : fnConfirmSection1IsOn1stPosition,
+		afterRedo : fnConfirmSection1IsOn2ndPosition
+	});
+
 	// Rename action
 	var fnConfirmSectionRenamedWithNewValue = function (oUIComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("section").getTitle(),
@@ -115,6 +220,19 @@ sap.ui.define([
 				};
 			}
 		},
+		previousActions: [ // OPTIONAL
+            {
+                name: "rename",
+                controlId: "section",
+                parameter: function (oView) {
+                    return {
+                        newValue: 'Intermediate Value',
+                        renamedElement: oView.byId("section")
+                    };
+                }
+            }
+        ],
+        changesAfterCondensing: 1, // OPTIONAL
 		afterAction: fnConfirmSectionRenamedWithNewValue,
 		afterUndo: fnConfirmSectionIsRenamedWithOldValue,
 		afterRedo: fnConfirmSectionRenamedWithNewValue

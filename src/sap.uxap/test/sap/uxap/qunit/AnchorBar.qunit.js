@@ -777,4 +777,56 @@ sap.ui.define([
 		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnInitRendering);
 		this.oObjectPage.placeAt("qunit-fixture");
 	});
+
+
+	QUnit.module("RTL", {
+		beforeEach: function (assert) {
+			Core.getConfiguration().setRTL(true);
+			var done = assert.async(),
+			oAnchorBar = new AnchorBar();
+			this.anchorBar = oAnchorBar;
+			this.anchorBar.addEventDelegate({
+				onAfterRendering: function() {
+					done();
+					oAnchorBar.removeEventDelegate(this);
+				}
+			});
+			for (var i = 0; i < 100; i++) {
+				this.anchorBar.addContent(new Button({text: "button " + i}));
+			}
+			this.anchorBar.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			Core.getConfiguration().setRTL(false);
+			this.anchorBar.destroy();
+			this.anchorBar = null;
+		}
+	});
+
+	QUnit.test("Scroll direction is correct", function (assert) {
+		var done = assert.async();
+		setTimeout(function() {
+
+			// Setup: Ensure there is content in the left overflow
+			this.anchorBar.$().find(".sapUxAPAnchorBarScrollContainer").scrollLeftRTL(1000);
+
+			// Act: trigger layout calculations
+			this.anchorBar._adjustSize({size: { width: 1000 }, oldSize: {}});
+
+			// Check scroll direction
+			assert.ok(this.anchorBar.$().hasClass("sapUxAPAnchorBarScrollRight"), "sapUxAPAnchorBarScrollRight is correct");
+
+			// Act: no more content in the left overflow
+			this.anchorBar.$().find(".sapUxAPAnchorBarScrollContainer").scrollLeftRTL(0);
+
+			// Act: re-trigger layout calculations
+			this.anchorBar._adjustSize({size: { width: 1000 }, oldSize: {}});
+
+			// Check that scroll direction reversed
+			assert.ok(this.anchorBar.$().hasClass("sapUxAPAnchorBarScrollLeft"), "sapUxAPAnchorBarScrollLeft is correct");
+
+			done();
+		}.bind(this), 2000);
+	});
 });

@@ -129,16 +129,16 @@ function(
 				}, "the invisible section is found", assert);
 				TestUtils.assertElementsEqual(aAdditionalElements[1], {
 					selected : false,
-					label : "idMain1--ObjectPageSectionStashed1",
-					tooltip : "idMain1--ObjectPageSectionStashed1",
+					label : "Stashed ObjectPage Section 1",
+					tooltip : "Stashed ObjectPage Section 1",
 					type : "invisible",
 					elementId : "idMain1--ObjectPageSectionStashed1",
 					bindingPath: undefined
 				}, "the 1. stashed section is found", assert);
 				TestUtils.assertElementsEqual(aAdditionalElements[2], {
 					selected : false,
-					label : "idMain1--ObjectPageSectionStashed2",
-					tooltip : "idMain1--ObjectPageSectionStashed2",
+					label : "Stashed ObjectPage Section 2",
+					tooltip : "Stashed ObjectPage Section 2",
 					type : "invisible",
 					elementId : "idMain1--ObjectPageSectionStashed2",
 					bindingPath: undefined

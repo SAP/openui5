@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global sinon QUnit */
 sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/library",
@@ -243,7 +243,14 @@ sap.ui.define([
 		assert.ok(sError,"Not ending with binding in {model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}huhuhuh is detected");
 	});
 
-	QUnit.module("Propagation of processingMode: 'sequential'");
+	QUnit.module("Propagation of processingMode: 'sequential'", {
+		beforeEach: function() {
+			this.loadTemplatePromiseSpy = sinon.spy(XMLTemplateProcessor, "loadTemplatePromise");
+		},
+		afterEach: function() {
+			this.loadTemplatePromiseSpy.restore();
+		}
+	});
 
 	QUnit.test("Async rootView & childView", function(assert) {
 		var done = assert.async();
@@ -346,17 +353,26 @@ sap.ui.define([
 				assert.ok(oView, "View is loaded.");
 				assert.ok(oView.oAsyncState, "View is an async view.");
 				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+				assert.equal(this.loadTemplatePromiseSpy.callCount, 1, "loadTemplatePromiseSpy should be called once");
 
-				var oFragment = oView.byId("fragment");
-				oFragment.loaded().then(function(oChildView) {
-					assert.ok(oChildView, "View is loaded.");
-					assert.notOk(oChildView.oAsyncState, "View is a sync view.");
-					assert.equal(oChildView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oChildView.getViewName());
+				var oXMLView = oView.byId("xmlViewInsideFragment");
+				assert.ok(oXMLView, "View is loaded.");
+				assert.notOk(oXMLView.oAsyncState, "View is a sync view.");
+				assert.equal(oXMLView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oXMLView.getViewName());
 
-					done();
+				assert.deepEqual(Component.getOwnerComponentFor(oXMLView), oComponent, "Should be the same owner component.");
+
+				sap.ui.require(["sap/ui/core/Fragment"], function(Fragment) {
+					Fragment.load({
+						name: "testdata/fragments/XMLFragment",
+						containingView: oView
+					}).then(function (oFragment) {
+						assert.deepEqual(Component.getOwnerComponentFor(oFragment), oComponent, "Should be the same owner component.");
+						done();
+					});
 				});
-			});
-		});
+			}.bind(this));
+		}.bind(this));
 	});
 
 	QUnit.test("Async XML rootView with HTML tags with nested XML view", function(assert) {

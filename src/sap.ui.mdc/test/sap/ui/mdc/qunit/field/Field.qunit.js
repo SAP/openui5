@@ -1192,7 +1192,28 @@ sap.ui.define([
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
 
 		oField.setConditions([Condition.createItemCondition([2, "USD"])]); // fake user Input with parsing
-		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
+		oField.setConditions([Condition.createItemCondition([2, "EUR"])]); // fake user Input with parsing
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
+
+		var oPromise = Promise.resolve(oField._getResultForPromise(oField.getConditions()));
+		oField._fireChange(oField.getConditions(), true, undefined, oPromise); // fake change event
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated with change event");
+		assert.deepEqual(oField.getValue(), [2, "EUR"], "Field value");
+
+		oField.setProperty.reset();
+		oField.setConditions([Condition.createItemCondition([3, "EUR"])]); // fake user Input with parsing
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
+
+		var fnDone = assert.async();
+		oPromise = Promise.resolve(oField._getResultForPromise(oField.getConditions()));
+		oField._fireChange(undefined, undefined, undefined, oPromise); // fake change event with promise
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated directly");
+		oPromise.then(function(vResult) {
+			assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated after promise of change event resolved");
+			assert.deepEqual(oField.getValue(), [3, "EUR"], "Field value");
+			fnDone();
+		});
 
 	});
 

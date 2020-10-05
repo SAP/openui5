@@ -3,6 +3,105 @@
     "date": "September 2020",
     "notes": [
       {
+        "id": "ba7851d0c7f152ff973134058f5d310e07153674",
+        "type": "FIX",
+        "text": " mdc.AdaptationFilterBar: check for existence",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070336983"
+          }
+        ]
+      },
+      {
+        "id": "bba1b5a3213018a40a78873a14a2a0c6a9da0f54",
+        "type": "FIX",
+        "text": " FilterField: wrong role description for multi-help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070313054"
+          }
+        ]
+      },
+      {
+        "id": "35e8bfb5abc288592336e5e57ee3ca14cd309589",
+        "type": "FIX",
+        "text": " DefineConditionPanel: new row added after add-button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070275881"
+          }
+        ]
+      },
+      {
+        "id": "7fde86071dc5d6724c6db8f75aa1284672947fe4",
+        "type": "FIX",
+        "text": " FieldValueHelp: OutParameter cannot be updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080376089"
+          }
+        ]
+      },
+      {
+        "id": "0731b33c61df56ea00082d688bccd004bd77fc36",
+        "type": "FIX",
+        "text": " FieldValueHelp: no request if BindingContext destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "876f918211d33339f29ec27cb9623057ef2cddac",
+        "type": "FIX",
+        "text": " Field Help: add top padding only or DefineConditionPanel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070287016"
+          }
+        ]
+      },
+      {
+        "id": "e34d5b2d96d0bbb92549b5200f87cb8b2fe0eec3",
+        "type": "FIX",
+        "text": " Field: clear input leads to runtime error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080362761"
+          }
+        ]
+      },
+      {
+        "id": "270955652b0cd146b9fc035ebef462eb37c0b1e7",
+        "type": "FIX",
+        "text": " Revert: mdc.FieldValueHelp: Value not displayed in edit mode fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "45dc257b4226e00c8682cf2ca7236d797eea121b",
+        "type": "FIX",
+        "text": " mdc.Chart: Breadcrumbs are not displayed on back navigation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080374199"
+          }
+        ]
+      },
+      {
         "id": "8cf0b1897910b20769f9c1452cc517cad12e5cdd",
         "type": "FIX",
         "text": " mdc.odata.v4.FieldValueHelpDelegate: Handle ListBinding errors"
@@ -38,98 +137,6 @@
         "id": "b41f2d1934fdd1e02d20cc0fc060aeed4975fa6e",
         "type": "FIX",
         "text": " mdc.Chart: Create inner Chart after flex changes are applied"
-      },
-      {
-        "id": "3347e0d3a3a5d9bf79f283a0af65003ca754c9c9",
-        "type": "FIX",
-        "text": " FieldValueHelp: selected item not selected in table",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080372980"
-          }
-        ]
-      },
-      {
-        "id": "a2271ff6919a57d5c676a41998968fc6ca147420",
-        "type": "FEATURE",
-        "text": " ConditionFieldHelp. New field help to enter conditions"
-      },
-      {
-        "id": "423f7779c56cbc159a8a10cf29272f2f6c4623b6",
-        "type": "FIX",
-        "text": " ConditionType: error if empty string parsed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080362761"
-          }
-        ]
-      },
-      {
-        "id": "fb4959769f801c2c421e0b109917512100a3a786",
-        "type": "FIX",
-        "text": " FieldValueHelpMTableWrapper: create no request if no fieldPath",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080254861"
-          }
-        ]
-      },
-      {
-        "id": "c2a03f148f3311e619d940828cb7739bed826e2e",
-        "type": "FIX",
-        "text": " FieldHelp: no request if InParameter is set to null",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080357396"
-          }
-        ]
-      },
-      {
-        "id": "d9a53cbfa29b174d9477d0aaca5c39d30a5a3480",
-        "type": "FIX",
-        "text": " ValuHelpPanel: no search event on press on search icon",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080352672"
-          }
-        ]
-      },
-      {
-        "id": "52f1c93aa1613bb51da644d3a5eb001a854d8ef1",
-        "type": "FEATURE",
-        "text": " FilterBar: ENTER triggers search"
-      },
-      {
-        "id": "58375ed7b365f1ab9311f718f979edb0b506c106",
-        "type": "FEATURE",
-        "text": " Field/FilterField: new submit event"
-      },
-      {
-        "id": "07d41485fe3d87c7456ce80a663c96eddccaeae4",
-        "type": "FIX",
-        "text": " mdc.Chart: Custom actions are now displayed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080249537"
-          }
-        ]
-      },
-      {
-        "id": "4e74ca121513b763dc2b23e6e35659dd5ba14137",
-        "type": "FIX",
-        "text": " Field: error for wrong input remains after BindingContext change",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080233654"
-          }
-        ]
       }
     ]
   }

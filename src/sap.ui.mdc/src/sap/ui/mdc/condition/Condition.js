@@ -44,7 +44,9 @@ sap.ui.define([
 				 * @param {object} oInParameters In parameters of the condition
 				 * @param {object} oOutParameters Out parameters of the condition
 				 * @returns {object} The new condition object with the given operator EQ along with sKey and sDescription as aValues
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * MDC_PUBLIC_CANDIDATE
 				 *
 				 */
 				createItemCondition: function(sKey, sDescription, oInParameters, oOutParameters) {
@@ -67,6 +69,9 @@ sap.ui.define([
 				 * @param {object} oOutParameters Out parameters of the condition
 				 * @param {sap.ui.mdc.enum.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by field help) and not shown in <code>DefineConditionPanel</code> control
 				 * @returns {object} The new condition object with the given operator and values
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * MDC_PUBLIC_CANDIDATE
 				 *
 				 */
 				createCondition: function(sOperator, aValues, oInParameters, oOutParameters, sValidated) {

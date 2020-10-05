@@ -133,7 +133,7 @@ sap.ui.define([
 	QUnit.test("getOperatorsForType", function(assert) {
 
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.String).length, 20, "Default operators for String");
-		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 42, "Default operators for date");
+		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 43, "Default operators for date");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.DateTime).length, 12, "Default operators for datetime");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Time).length, 12, "Default operators for time");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Numeric).length, 12, "Default operators for numeric");
@@ -974,6 +974,18 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Last x days",
 				tokenText: "Last {0} days"
+			}],
+			"TODAYXYDAYS": [{
+				formatArgs: [Condition.createCondition("TODAYXYDAYS", [4, 6])],
+				formatValue: "Today -4 / +6 days",
+				//parseArgs: ["Last 4 days"],
+				parsedValue: "46",
+				condition: Condition.createCondition("TODAYXYDAYS", [4, 6], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: false,
+				longText: "Today -x / +y days",
+				tokenText: "Today -{0} / +{1} days"
 			}],
 			"NEXTDAYS": [{
 				formatArgs: [Condition.createCondition("NEXTDAYS", [3])],

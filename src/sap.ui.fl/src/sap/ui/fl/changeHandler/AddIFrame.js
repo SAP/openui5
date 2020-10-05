@@ -90,5 +90,11 @@ sap.ui.define([
 		oChangeJson.content.selector = oModifier.getSelector(oChangeJson.content.baseId, oAppComponent);
 	};
 
+	AddIFrame.getChangeVisualizationInfo = function(oChange) {
+		return {
+			affectedControls: [oChange.getContent().selector]
+		};
+	};
+
 	return AddIFrame;
 }, /* bExport= */true);

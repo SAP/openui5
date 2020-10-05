@@ -193,7 +193,10 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 */
-	RatingIndicator.prototype.setValue = function (fValue) {
+	RatingIndicator.prototype.setValue = function (vValue) {
+		// Allow passing float values as strings to support oData v2. Edm.Double type format
+		var fValue = typeof vValue !== "string" ? vValue : Number(vValue);
+
 		// validates the property and sets null/undefined values to the default
 		fValue = this.validateProperty("value", fValue);
 
@@ -204,7 +207,7 @@ sap.ui.define([
 
 		// check for valid numbers
 		if (isNaN(fValue)) {
-			Log.warning('Ignored new rating value "' + fValue + '" because it is NAN');
+			Log.warning('Ignored new rating value "' + vValue + '" because it is NAN');
 
 		// check if the number is in the range 0-maxValue (only if control is rendered)
 		// if control is not rendered it is handled by onBeforeRendering()

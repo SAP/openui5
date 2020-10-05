@@ -5,8 +5,12 @@ sap.ui.define([
 	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/RequestDataProvider"
-],
-function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataProvider) {
+], function (
+	DataProviderFactory,
+	ServiceDataProvider,
+	DataProvider,
+	RequestDataProvider
+) {
 	"use strict";
 
 	// Regression test
@@ -370,6 +374,76 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		// Act
 		this.oDataProvider.triggerDataUpdate();
 		this.deferred.reject(null, null, "Some error message.");
+	});
+
+	QUnit.module("RequestDataProvider - Content encoding", {
+		beforeEach: function () {
+			this.oDataProvider = new RequestDataProvider();
+			this.oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
+		},
+		afterEach: function () {
+			this.oServer.restore();
+		}
+	});
+
+	QUnit.test("Content-Type: application/json", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url",
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				parameters: {
+					someKey: "someValue",
+					someKey2: "someValue2"
+				}
+			}
+		});
+
+		this.oServer.respondWith("POST", "/data/provider/test/url", function (oXhr) {
+			// Assert
+			try {
+				JSON.parse(oXhr.requestBody);
+				assert.ok(true, "Request body is correctly encoded as JSON");
+			} catch (e) {
+				assert.ok(false, "Request body is NOT correctly encoded as JSON");
+			}
+
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Content-Type: application/x-www-form-urlencoded (default)", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url",
+				method: "POST",
+				parameters: {
+					someKey: "someValue",
+					someKey2: "someValue2"
+				}
+			}
+		});
+
+		this.oServer.respondWith("POST", "/data/provider/test/url", function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.requestBody, "someKey=someValue&someKey2=someValue2");
+
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
 	});
 
 	QUnit.module("ServiceDataProvider", {

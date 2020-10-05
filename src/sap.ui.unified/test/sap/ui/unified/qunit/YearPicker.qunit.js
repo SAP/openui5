@@ -284,7 +284,7 @@ sap.ui.define([
 			var sControlDescription = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_PICKER");
 
 			// Assert
-			assert.strictEqual(this.oYP.$().attr("aria-label"), sControlDescription , "Control description is added");
+			assert.strictEqual(this.oYP.$().attr("aria-roledescription"), sControlDescription , "Control description is added in aria-roledescription");
 		});
 
 		QUnit.module("Corner cases", {

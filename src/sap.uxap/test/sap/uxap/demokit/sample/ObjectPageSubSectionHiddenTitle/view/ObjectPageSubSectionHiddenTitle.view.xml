@@ -2,6 +2,7 @@
 		height="100%"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:core="sap.ui.core"
+		xmlns:forms="sap.ui.layout.form"
 		xmlns:uxap="sap.uxap"
 		xmlns="sap.m"
 		controllerName="sap.uxap.sample.ObjectPageSubSectionHiddenTitle.controller.ObjectPageSubSectionHiddenTitle"
@@ -14,9 +15,51 @@
 		</uxap:headerTitle>
 
 		<uxap:sections>
+			<uxap:ObjectPageSection titleUppercase="false" title="Sample Forms">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="First Sample Form" titleUppercase="false">
+						<uxap:blocks>
+							<forms:SimpleForm
+								title="Location"
+								editable="false"
+								layout="ColumnLayout">
+
+								<Label text="Country"/>
+								<Text text="France"/>
+
+								<Label text="Subsidiary"/>
+								<Text text="SAP France"/>
+
+							</forms:SimpleForm>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection title="Second Sample Form" titleUppercase="false">
+						<uxap:blocks>
+							<forms:SimpleForm
+									title="Location"
+									editable="false"
+									layout="ColumnLayout">
+
+								<Label text="Country"/>
+								<Text text="France"/>
+
+								<Label text="Subsidiary"/>
+								<Text text="SAP France"/>
+
+								<Label text="Building"/>
+								<Text text="LVL B"/>
+
+								<Label text="Room"/>
+								<Text text="AppHaus"/>
+
+							</forms:SimpleForm>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
 			<uxap:ObjectPageSection titleUppercase="false" showTitle="false">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="Hidden Title" titleUppercase="false">
+					<uxap:ObjectPageSubSection title="Promoted SubSection with Hidden Title" titleUppercase="false">
 						<Table
 							headerText="Products"
 							items="{

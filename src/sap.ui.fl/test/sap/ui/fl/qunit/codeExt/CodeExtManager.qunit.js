@@ -226,6 +226,7 @@ sap.ui.define([
 					creation: "",
 					originalLanguage: sLanguage,
 					support: {
+						command: "",
 						generator: "Change.createInitialFileContent",
 						service: "",
 						user: "",
@@ -259,6 +260,7 @@ sap.ui.define([
 					creation: "",
 					originalLanguage: sLanguage,
 					support: {
+						command: "",
 						generator: "Change.createInitialFileContent",
 						service: "",
 						user: "",

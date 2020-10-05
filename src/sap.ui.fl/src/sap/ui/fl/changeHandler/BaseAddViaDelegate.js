@@ -299,6 +299,18 @@ sap.ui.define([
 						//used to connect to default delegate
 						mChangeDefinition.content.modelType = mSpecificChangeInfo.modelType;
 					}
+				},
+
+				getChangeVisualizationInfo: function(oChange) {
+					var oRevertData = oChange.getRevertData();
+					if (oRevertData) {
+						return {
+							affectedControls: [oRevertData.labelSelector]
+						};
+					}
+					return {
+						affectedControls: [oChange.getContent().newFieldSelector]
+					};
 				}
 			};
 		}

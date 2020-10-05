@@ -181,21 +181,15 @@ function (
 			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, false, aChanges), "then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters");
 		});
 
-		QUnit.test("createAndApplyChange shall not crash if Applier.applyChangeOnControl throws an error", function(assert) {
-			assert.expect(2);
-			var oChangeSpecificData = {};
+		QUnit.test("applyChange shall not crash if Applier.applyChangeOnControl throws an error", function(assert) {
 			var oControl = new Control();
-			var oChange = {
-				setQueuedForApply: function() {
-					assert.ok(true, "the change was queued");
-				}
-			};
+			var oChange = {};
 
 			sandbox.stub(this.oFlexController, "addChange").resolves(oChange);
 			sandbox.stub(Applier, "applyChangeOnControl").rejects();
 			sandbox.stub(this.oFlexController._oChangePersistence, "deleteChange");
 
-			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
+			return this.oFlexController.applyChange(oChange, oControl)
 				.catch(function() {
 					assert.ok(true, "then Promise was rejected");
 				});
@@ -306,7 +300,7 @@ function (
 			assert.ok(oRemoveChangeStub.calledOnce, "then model's removeChange is called as VariantManagement Change is detected and deleted");
 		});
 
-		QUnit.test("resetChanges for control shall call ChangePersistance.resetChanges(), reset control variant URL parameters, and revert changes", function(assert) {
+		QUnit.test("resetChanges for control shall call ChangePersistence.resetChanges(), reset control variant URL parameters, and revert changes", function(assert) {
 			var oVariantModel = {
 				id: "variantModel"
 			};
@@ -320,7 +314,7 @@ function (
 			var sGenerator = "test.Generator";
 			var sSelectorString = "abc123";
 			var sChangeTypeString = "labelChange";
-			var aDeletedChanges = [{fileName: "change1"}, {fileName: "change2"}];
+			var aDeletedChanges = [new Change({fileName: "change1"}), new Change({fileName: "change2"})];
 			sandbox.stub(URLHandler, "update");
 			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
 				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
@@ -344,6 +338,8 @@ function (
 		});
 
 		QUnit.test("resetChanges for whole component shall call ChangePersistance.resetChanges(), reset control variant URL parameters but do not revert changes", function(assert) {
+			assert.expect(4);
+
 			var oVariantModel = {
 				id: "variantModel"
 			};
@@ -372,6 +368,38 @@ function (
 						model: oVariantModel
 					}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
 				});
+		});
+
+		QUnit.test("resetChanges for whole component was called and two changes are present, one related to a control variant", function(assert) {
+			assert.expect(3);
+
+			var oDeletedChangeWithVariantReference = new Change({
+				variantReference: "someReference"
+			});
+
+			var oDeletedChange = new Change({});
+
+			var oVariantModel = {
+				id: "variantModel",
+				removeChange: function (oChange) {
+					assert.equal(oChange, oDeletedChangeWithVariantReference, "the Model.removeChange was called for a change with a variant reference");
+				}
+			};
+			var oComp = {
+				name: "testComp",
+				getModel: function() {
+					return oVariantModel;
+				}
+			};
+			var sLayer = "testLayer";
+			var sGenerator = "test.Generator";
+			sandbox.stub(URLHandler, "update");
+			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
+				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
+				assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
+				return Promise.resolve([oDeletedChangeWithVariantReference, oDeletedChange]);
+			});
+			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp);
 		});
 
 		QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {
@@ -567,12 +595,15 @@ function (
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 			sandbox.spy(this.oFlexController._oChangePersistence, "deleteChange");
 
-			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
-				.catch(function(oError) {
-					assert.equal(oError.message, "myError", "the error was passed correctly");
-					assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "Change persistence should have no dirty changes");
-					assert.ok(this.oFlexController._oChangePersistence.deleteChange.calledWith(sandbox.match.any, true), "then ChangePersistence.deleteChange was called with the correct parameters");
-				}.bind(this));
+			return this.oFlexController.addChange(oChangeSpecificData, oControl)
+			.then(function(oChange) {
+				return this.oFlexController.applyChange(oChange, oControl);
+			}.bind(this))
+			.catch(function(oError) {
+				assert.equal(oError.message, "myError", "the error was passed correctly");
+				assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "Change persistence should have no dirty changes");
+				assert.ok(this.oFlexController._oChangePersistence.deleteChange.calledWith(sandbox.match.any, true), "then ChangePersistence.deleteChange was called with the correct parameters");
+			}.bind(this));
 		});
 
 		QUnit.test("createAndApplyChange shall add a change to dirty changes and return the change", function(assert) {
@@ -586,11 +617,14 @@ function (
 			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(oChange);
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
-			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
-				.then(function(oAppliedChange) {
-					assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 1, "then change was added to dirty changes");
-					assert.deepEqual(oAppliedChange, oChange, "then the applied change was received");
-				}.bind(this));
+			return this.oFlexController.addChange(oChangeSpecificData, oControl)
+			.then(function(oChange) {
+				return this.oFlexController.applyChange(oChange, oControl);
+			}.bind(this))
+			.then(function(oAppliedChange) {
+				assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 1, "then change was added to dirty changes");
+				assert.deepEqual(oAppliedChange, oChange, "then the applied change was received");
+			}.bind(this));
 		});
 
 		QUnit.test("createAndApplyChange shall remove the change from the persistence and throw a generic error, if applying the changefailed without exception", function(assert) {
@@ -605,11 +639,14 @@ function (
 			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(new Change(oChangeSpecificData));
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
-			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
-				.catch(function(ex) {
-					assert.equal(ex.message, "The change could not be applied.", "the generic error is thrown");
-					assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "Change persistence should have no dirty changes");
-				}.bind(this));
+			return this.oFlexController.addChange(oChangeSpecificData, oControl)
+			.then(function(oChange) {
+				return this.oFlexController.applyChange(oChange, oControl);
+			}.bind(this))
+			.catch(function(ex) {
+				assert.equal(ex.message, "The change could not be applied.", "the generic error is thrown");
+				assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "Change persistence should have no dirty changes");
+			}.bind(this));
 		});
 
 		QUnit.test("createAndApplyChange shall return Promise.reject() if there was an exception during FlexController.addChange()", function(assert) {
@@ -622,12 +659,15 @@ function (
 			var oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl");
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
-			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
-				.catch(function(oError) {
-					assert.strictEqual(oApplyChangeOnControlStub.callCount, 0, "then Applier.applyChangeOnControl was not called");
-					assert.equal(oError.message, "No application component found. To offer flexibility, the control with the ID '" + oControl.getId() + "' has to have a valid relation to its owning application component.", "the generic error is thrown");
-					assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "Change persistence should have no dirty changes");
-				}.bind(this));
+			return this.oFlexController.addChange(oChangeSpecificData, oControl)
+			.then(function(oChange) {
+				return this.oFlexController.applyChange(oChange, oControl);
+			}.bind(this))
+			.catch(function(oError) {
+				assert.strictEqual(oApplyChangeOnControlStub.callCount, 0, "then Applier.applyChangeOnControl was not called");
+				assert.equal(oError.message, "No application component found. To offer flexibility, the control with the ID '" + oControl.getId() + "' has to have a valid relation to its owning application component.", "the generic error is thrown");
+				assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "Change persistence should have no dirty changes");
+			}.bind(this));
 		});
 
 		QUnit.test("throws an error of a change should be created but no control was passed", function(assert) {

@@ -595,10 +595,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["requestKey", undefined].forEach(function (sRequestKey, i) {
-	[{isFunction : "isFunction" }, undefined].forEach(function (oEntityType, j) {
-	QUnit.test("_processSuccess for function import:" + i + ", " + j, function (assert) {
-		var aRequests = [],
+["requestKey", undefined].forEach(function (sRequestKey) {
+	[
+		{entityType : "entityType", isFunction : "isFunction"},
+		undefined
+	].forEach(function (oEntityType) {
+		["POST", "GET"].forEach(function (sMethod) {
+	var sTitle = "_processSuccess for function import: method=" + sMethod + ", key=" + sRequestKey
+			+ ", " + (oEntityType ? "with" : "without") + " entity type";
+
+	QUnit.test(sTitle, function (assert) {
+		var mEntityTypes = {},
+			aRequests = [],
 			oModel = {
 				_createEventInfo : function () {},
 				_decreaseDeferredRequestCount : function () {},
@@ -611,6 +619,7 @@ sap.ui.define([
 				},
 				_normalizePath : function () {},
 				_parseResponse : function () {},
+				_removeEntity : function () {},
 				sServiceUrl : "/service/",
 				_updateETag : function () {}
 			},
@@ -618,7 +627,10 @@ sap.ui.define([
 			oRequest = {
 				data : "requestData",
 				deepPath : "deepPath",
+				functionTarget : "functionTarget",
+				functionMetadata : "functionMetadata",
 				key : sRequestKey,
+				method : sMethod,
 				requestUri : "/service/path"
 			},
 			oResponse = {
@@ -635,8 +647,9 @@ sap.ui.define([
 			.returns(oEntityType);
 		oModelMock.expects("_normalizePath")
 			.withExactArgs("/path", undefined, /*bCanonical*/ !oEntityType)
-			.returns("normalizedPath");
-		oModelMock.expects("decreaseLaundering").withExactArgs("normalizedPath","requestData");
+			.returns("normalizedCannonicalPath");
+		oModelMock.expects("decreaseLaundering")
+			.withExactArgs("normalizedCannonicalPath","requestData");
 		oModelMock.expects("_decreaseDeferredRequestCount")
 			.withExactArgs(sinon.match.same(oRequest));
 		// test that bFunctionImport is propagated to _importData
@@ -646,10 +659,11 @@ sap.ui.define([
 			/*sKey*/ undefined, oEntityType && "isFunction");
 		} else {
 			oModelMock.expects("_importData").withExactArgs(oResponse.data,
-			/*mLocalGetEntities*/ {}, oResponse, "normalizedPath", "deepPath",
-			/*sKey*/ undefined, oEntityType && "isFunction");
+			/*mLocalGetEntities*/ {}, oResponse, "normalizedCannonicalPath",
+			/*sDeepPath*/"functionTarget", /*sKey*/ undefined, oEntityType && "isFunction");
 		}
 		oModelMock.expects("_getEntity").withExactArgs(sRequestKey). returns({__metadata : {}});
+		oModelMock.expects("_removeEntity").withExactArgs(sRequestKey).exactly(sRequestKey ? 1 : 0);
 		oModelMock.expects("_parseResponse").withExactArgs(oResponse, oRequest,
 			/*mLocalGetEntities*/ {}, /*mLocalChangeEntities*/ {});
 		oModelMock.expects("_updateETag").withExactArgs(oRequest, oResponse);
@@ -659,11 +673,13 @@ sap.ui.define([
 
 		// code under test
 		bSuccess = ODataModel.prototype._processSuccess.call(oModel, oRequest, oResponse,
-			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {},
-			/*mEntityTypes*/ {}, /*bBatch*/ false, aRequests);
+			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {}, mEntityTypes,
+			/*bBatch*/ false, aRequests);
 
 		assert.strictEqual(bSuccess, true);
+		assert.deepEqual(mEntityTypes, oEntityType ? {entityType : true} : {});
 	});
+		});
 	});
 });
 	//TODO refactor ODataModel#mPathCache to a simple map path -> canonical path instead of map
@@ -767,6 +783,7 @@ sap.ui.define([
 		inputDeepPath : "/different/function/target",
 		mock : function () {}
 	},
+	contentID2KeyAndDeepPath : {},
 	functionMetadata : true,
 	headers : {location : "/service/different/function/target"},
 	result : {
@@ -780,6 +797,12 @@ sap.ui.define([
 		inputDeepPath : "/new/deep/path",
 		mock : function () {}
 	},
+	contentID2KeyAndDeepPath : {
+		"~contentID" : {
+			deepPath : "~oldDeepPath",
+			key : "~key"
+		}
+	},
 	getDeepPathForCanonicalPath : {
 		inputParam : "/function/target",
 		result : "/new/deep/path"
@@ -791,7 +814,8 @@ sap.ui.define([
 		// from sDeepPath which is calculated using getDeepPathForCanonicalPath
 		deepPath : "/correct/deep/path",
 		functionTarget : "/function/target"
-	}
+	},
+	withContentID : "~contentID"
 }].forEach(function (oFixture, i) {
 	var sTitle = "_processSuccess for function import: update deepPath/functionTarget, " + i;
 
@@ -819,7 +843,8 @@ sap.ui.define([
 				deepPath : "/deep/path",
 				functionMetadata : oFixture.functionMetadata,
 				functionTarget : "/function/target",
-				requestUri : "/service/path"
+				requestUri : "/service/path",
+				withContentID : oFixture.withContentID
 			},
 			oResponse = {
 				data : {
@@ -860,7 +885,7 @@ sap.ui.define([
 		// code under test
 		ODataModel.prototype._processSuccess.call(oModel, oRequest, oResponse,
 			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {},
-			/*mEntityTypes*/ {}, /*bBatch*/ false, "aRequests");
+			/*mEntityTypes*/ {}, /*bBatch*/ false, "aRequests", oFixture.contentID2KeyAndDeepPath);
 
 		assert.strictEqual(oRequest.deepPath, oFixture.result.deepPath);
 		assert.strictEqual(oRequest.functionTarget, oFixture.result.functionTarget);
@@ -871,6 +896,14 @@ sap.ui.define([
 			// mParameters.response is a deep copy
 			mParameters.response.data.foo = "bar";
 			assert.notDeepEqual(mParameters.response, oResponse);
+		}
+		if (oFixture.withContentID) {
+			assert.deepEqual(oFixture.contentID2KeyAndDeepPath, {
+				"~contentID" : {
+					deepPath : oFixture.result.deepPath,
+					key : "~key"
+				}
+			});
 		}
 	});
 });
@@ -954,8 +987,6 @@ sap.ui.define([
 		oModelMock.expects("_decreaseDeferredRequestCount")
 			.withExactArgs(sinon.match.same(oRequest));
 		oModelMock.expects("_getEntity").withExactArgs("key('id-0-0')").returns({__metadata : {}});
-		oMetadataMock.expects("_getEntityTypeByPath").withExactArgs("~sPath")
-			.returns("~oEntityMetadata");
 		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oResponse.data))
 			.returns(oFixture.responseEntityKey);
 		oModelMock.expects("getContext").withExactArgs("/key('id-0-0')").returns(oContext);
@@ -1478,8 +1509,24 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_createEventInfo: expandAfterCreateFailed", function (assert) {
+["expandAfterCreateFailed", "expandAfterFunctionCallFailed"].forEach(function (sExpandAfter) {
+	QUnit.test("_createEventInfo: " + sExpandAfter, function (assert) {
 		var oEventInfo,
+			oResponseHeaders = {},
+			oExpectedEventInfo = {
+				ID : "~requestID",
+				async : "~async",
+				headers : "~requestHeader",
+				method : "~method",
+				response : {
+					headers : oResponseHeaders,
+					responseText : "~body",
+					statusCode : 201,
+					statusText : "~statusText"
+				},
+				success : true,
+				url : "~requestUri"
+			},
 			oModel = {},
 			oRequest = {
 				async : "~async",
@@ -1488,37 +1535,25 @@ sap.ui.define([
 				requestID : "~requestID",
 				requestUri : "~requestUri"
 			},
-			oResponseHeaders = {},
 			oResponse = {
 				response : {
 					body : "~body",
-					expandAfterCreateFailed : "~expandAfterCreateFailed",
 					headers : oResponseHeaders,
 					statusCode : 201,
 					statusText : "~statusText"
 				}
 			};
 
+		oResponse.response[sExpandAfter] = true;
+		oExpectedEventInfo.response[sExpandAfter] = true;
+
 		// code under test
 		oEventInfo = ODataModel.prototype._createEventInfo.call(oModel, oRequest, oResponse);
 
-		assert.deepEqual(oEventInfo, {
-			ID : "~requestID",
-			async : "~async",
-			headers : "~requestHeader",
-			method : "~method",
-			response : {
-				expandAfterCreateFailed : "~expandAfterCreateFailed",
-				headers : oResponseHeaders,
-				responseText : "~body",
-				statusCode : 201,
-				statusText : "~statusText"
-			},
-			success : true,
-			url : "~requestUri"
-		});
+		assert.deepEqual(oEventInfo, oExpectedEventInfo);
 		assert.strictEqual(oEventInfo.response.headers, oResponseHeaders);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_processChange: restore expandRequest", function (assert) {
@@ -2104,7 +2139,36 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_submitBatchRequest: with content-IDs", function (assert) {
+[{
+	contentID2KeyAndDeepPath : {
+		"~contentID" : {
+			deepPath : "~deepPath('~key')",
+			key : "Foo('~key')"
+		}
+	},
+	request0Info : {
+		created : true,
+		deepPath : "~deepPath('~contentID')",
+		requestUri : "~serviceUri/Foo?bar",
+		withContentID : "~contentID"
+	},
+	resultingDeepPath : "~deepPath('~key')"
+}, {
+	contentID2KeyAndDeepPath : {
+		"~contentID" : {
+			deepPath : "~/FunctionName",
+			key : "Foo('~key')"
+		}
+	},
+	request0Info : {
+		deepPath : "~/FunctionName",
+		functionMetadata : "~functionMetadata",
+		requestUri : "~FunctionName?bar",
+		withContentID : "~contentID"
+	},
+	resultingDeepPath : "~/FunctionName"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_submitBatchRequest: with content-IDs, #" + i, function (assert) {
 		var oBatchRequest = {},
 			oBatchResponse = {
 				headers : "~batchResponseHeaders"
@@ -2115,12 +2179,7 @@ sap.ui.define([
 					request : oRequestPOST,
 					fnSuccess : "~fnSuccess0"
 				}],
-				request : {
-					created : true,
-					deepPath : "~deepPath('~contentID')",
-					requestUri : "~serviceUri/Foo?bar",
-					withContentID : "~contentID"
-				}
+				request : oFixture.request0Info
 			},
 			oRequestGET = {},
 			oRequest1 = {
@@ -2170,10 +2229,12 @@ sap.ui.define([
 			.returns("Foo('~key')");
 		oModelMock.expects("_processSuccess")
 			.withExactArgs(sinon.match.same(oRequestPOST), sinon.match.same(oResponsePOST),
-				"~fnSuccess0", sinon.match.object, sinon.match.object, sinon.match.object);
+				"~fnSuccess0", sinon.match.object, sinon.match.object, sinon.match.object,
+				false, undefined, oFixture.contentID2KeyAndDeepPath);
 		oModelMock.expects("_processSuccess")
 			.withExactArgs(sinon.match.same(oRequestGET), sinon.match.same(oResponseGET),
-				"~fnSuccess1", sinon.match.object, sinon.match.object, sinon.match.object);
+				"~fnSuccess1", sinon.match.object, sinon.match.object, sinon.match.object,
+				false, undefined, oFixture.contentID2KeyAndDeepPath);
 		oModelMock.expects("_invalidatePathCache").withExactArgs();
 		oModelMock.expects("checkUpdate").withExactArgs(false, false, sinon.match.object);
 		oModelMock.expects("_processSuccess")
@@ -2189,8 +2250,9 @@ sap.ui.define([
 		fnHandleSuccess(oData, oBatchResponse);
 
 		assert.strictEqual(oRequest1.request.requestUri, "~serviceUri/Foo('~key')?bar");
-		assert.strictEqual(oRequest1.request.deepPath, "~deepPath('~key')");
+		assert.strictEqual(oRequest1.request.deepPath, oFixture.resultingDeepPath);
 	});
+});
 
 	//*********************************************************************************************
 [true, false].forEach(function (bReject) {
@@ -2836,6 +2898,283 @@ sap.ui.define([
 			assert.ok(true, "created Promise is rejected");
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("callFunction: with expand; not a POST", function (assert) {
+		var oModel = {
+				bUseBatch : true
+			};
+
+		assert.throws(function () {
+			// code under test
+			ODataModel.prototype.callFunction.call(oModel, "/~sFunctionName", {
+				expand : "ToFoo"
+			});
+		}, new Error("Use 'expand' parameter only with HTTP method 'POST'"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("callFunction: with expand; not in batch mode", function (assert) {
+		var oModel = {
+				bUseBatch : false
+			};
+
+		assert.throws(function () {
+			// code under test
+			ODataModel.prototype.callFunction.call(oModel, "/~sFunctionName", {
+				expand : "ToFoo"
+			});
+		}, new Error("Use 'expand' parameter only with 'useBatch' set to 'true'"));
+	});
+
+	//*********************************************************************************************
+[
+	{},
+	{entitySet : "~FooSet"},
+	{entitySetPath : "~FooSetPath"},
+	{entitySet : "~FooSet", returnType : "Collection(~FooType)"},
+	{entitySetPath : "~FooSetPath", returnType : "Collection(~FooType)"}
+].forEach(function (oFunctionMetadata) {
+	QUnit.test("callFunction: with expand; retuns a collection", function (assert) {
+		var callFunctionResult,
+			oMetadata = {
+				_getFunctionImportMetadata : function () {}
+			},
+			oModel = {
+				bUseBatch : true,
+				oMetadata : oMetadata,
+				_processRequest : function () {},
+				_getRefreshAfterChange : function () {}
+			};
+
+		this.mock(oModel).expects("_getRefreshAfterChange") // don't care about parameters
+			.returns(false);
+		this.mock(oModel).expects("_processRequest") // don't care about parameters
+			.callsFake(function (fnProcessRequest, fnError, bDeferred) {
+				fnProcessRequest();
+
+				return {};
+			});
+		this.mock(oMetadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~sFunctionName", "POST")
+			.returns(oFunctionMetadata);
+
+		// code under test
+		callFunctionResult = ODataModel.prototype.callFunction.call(oModel, "/~sFunctionName", {
+			expand : "ToBar",
+			method : "POST"
+		});
+
+		return callFunctionResult.contextCreated().then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError) {
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message,
+				"Use 'expand' parameter only for functions returning a single entity");
+		});
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bWithCallbacks) {
+	[
+		// successful POST and successful GET
+		function (assert, fnSuccess, fnError, oCallbacksMock) {
+			// code under test
+			fnSuccess("~oDataPOST", "~oResponsePOST");
+
+			this.mock(Object).expects("assign")
+				.withExactArgs({}, "~oDataPOST", "~oDataGET")
+				.exactly(bWithCallbacks ? 1 : 0)
+				.returns("~mergedData");
+			oCallbacksMock.expects("success")
+				.withExactArgs("~mergedData", "~oResponsePOST")
+				.exactly(bWithCallbacks ? 1 : 0);
+
+			// code under test
+			fnSuccess("~oDataGET", "~oResponseGET");
+		},
+		// successful POST and failed GET
+		function (assert, fnSuccess, fnError, oCallbacksMock) {
+			var oErrorGET = {},
+				oResponsePOST = {};
+
+			// code under test
+			fnSuccess("~oDataPOST", oResponsePOST);
+
+			this.oLogMock.expects("error")
+				.withExactArgs("Function '/~sFunctionName' was called successfully, but expansion"
+					+ " of navigation properties (~expand) failed",
+					sinon.match.same(oErrorGET), sClassName);
+			oCallbacksMock.expects("success")
+				.withExactArgs("~oDataPOST", sinon.match.same(oResponsePOST)
+					.and(sinon.match.hasOwn("expandAfterFunctionCallFailed", true)))
+				.exactly(bWithCallbacks ? 1 : 0);
+
+			// code under test
+			fnError(oErrorGET);
+
+			assert.strictEqual(oErrorGET.expandAfterFunctionCallFailed, true);
+		},
+		// failed POST and failed GET
+		function (assert, fnSuccess, fnError, oCallbacksMock) {
+			var oErrorGET = {};
+
+			oCallbacksMock.expects("error")
+				.withExactArgs("~oErrorPOST")
+				.exactly(bWithCallbacks ? 1 : 0);
+
+			// code under test
+			fnError("~oErrorPOST");
+
+			// code under test
+			fnError(oErrorGET);
+
+			assert.strictEqual(oErrorGET.expandAfterFunctionCallFailed, true);
+		}
+	].forEach(function (fnCallbackHandling, i) {
+	var sTitle = "callFunction: with expand; with callback handlers: " + bWithCallbacks + ", #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var fnError, fnProcessRequest, oResult, oResultingRequest, fnSuccess, sUid,
+			oCallbacks = {
+				error : function () {},
+				success : function () {}
+			},
+			oCallbacksMock = this.mock(oCallbacks),
+			oExpandRequest = {},
+			oFunctionCallRequest = {},
+			oFunctionMetadata = {
+				entitySet : "~entitySet",
+				parameter : null, // parameters are not relevant for this test
+				returnType : "~returnType"
+			},
+			mInputHeaders = {foo : "bar"},
+			oMetadata = {
+				_getCanonicalPathOfFunctionImport : function () {},
+				_getFunctionImportMetadata : function () {}
+			},
+			oModel = {
+				mDeferredGroups : {},
+				oMetadata : oMetadata,
+				mRequests : "~mRequests",
+				bUseBatch : true,
+				sServiceUrl : "/service/url",
+				_addEntity : function () {},
+				_createRequest : function () {},
+				_createRequestUrlWithNormalizedPath : function () {},
+				_getHeaders : function () {},
+				_getRefreshAfterChange : function () {},
+				_processRequest : function () {},
+				_pushToRequestQueue : function () {},
+				_writePathCache : function () {},
+				getContext : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oCallbacksMock.expects("error").never();
+		oCallbacksMock.expects("success").never();
+		oModelMock.expects("_getRefreshAfterChange") // don't care about parameters
+			.returns("~bRefreshAfterChange");
+		oModelMock.expects("_processRequest")
+			.withExactArgs(sinon.match.func,
+				bWithCallbacks ? sinon.match.same(oCallbacks.error) : undefined)
+			.callsFake(function (fnProcessRequest0) {
+				fnProcessRequest = fnProcessRequest0;
+				return /*oRequestHandle*/ {};
+			});
+
+		// code under test
+		oResult = ODataModel.prototype.callFunction.call(oModel, "/~sFunctionName", {
+			error : bWithCallbacks ? oCallbacks.error : undefined,
+			eTag : "~eTag",
+			expand : "~expand",
+			headers : mInputHeaders,
+			method : "POST",
+			success : bWithCallbacks ? oCallbacks.success : undefined
+		});
+
+		this.mock(oMetadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~sFunctionName", "POST")
+			.returns(oFunctionMetadata);
+		oModelMock.expects("_addEntity") // don't care about parameters
+			.callsFake(function (oData) {
+				sUid = rTemporaryKey.exec(oData.__metadata.uri)[1];
+				fnError = oData.__metadata.created.error;
+				fnSuccess = oData.__metadata.created.success;
+
+				assert.ok(typeof fnError === "function");
+				assert.notStrictEqual(fnError, oCallbacks.error, "wrapped error handler");
+				assert.ok(typeof fnSuccess === "function");
+				assert.notStrictEqual(fnSuccess, oCallbacks.success, "wrapped success handler");
+				assert.notStrictEqual(oData.__metadata.created.headers, mInputHeaders);
+				assert.deepEqual(oData.__metadata.created.headers, {
+					"Content-ID" : sUid,
+					foo : "bar",
+					"sap-messages" : "transientOnly"
+				});
+
+				return "~sKey";
+			});
+		oModelMock.expects("getContext").withExactArgs("/~sKey").returns("~oContext");
+		oModelMock.expects("_writePathCache").withExactArgs("/~sKey", "/~sKey");
+		this.mock(ODataUtils).expects("_createUrlParamsArray") // don't care about parameters
+			.returns("~aUrlParams");
+		oModelMock.expects("_createRequestUrlWithNormalizedPath") // don't care about parameters
+			.returns("~sUrl");
+		oModelMock.expects("_getHeaders")
+			.withExactArgs(sinon.match(function (mHeaders0) {
+				assert.notStrictEqual(mHeaders0, mInputHeaders);
+				assert.deepEqual(mHeaders0, {
+					"Content-ID" : sUid,
+					foo : "bar",
+					"sap-messages" : "transientOnly"
+				});
+
+				return true;
+			}))
+			.returns("~mHeadersPOST");
+		oModelMock.expects("_createRequest")
+			.withExactArgs("~sUrl", "/~sFunctionName", "POST", "~mHeadersPOST", undefined, "~eTag",
+				undefined, true)
+			.returns(oFunctionCallRequest);
+		this.mock(oMetadata).expects("_getCanonicalPathOfFunctionImport")
+			// don't care about parameters
+			.returns("~functionTarget");
+		this.mock(ODataUtils).expects("_encodeURLParameters")
+			.withExactArgs({$expand : "~expand", $select : "~expand"})
+			.returns("~expandselect");
+		oModelMock.expects("_getHeaders").withExactArgs(undefined, true).returns("~mHeadersGET");
+		oModelMock.expects("_createRequest")
+			.withExactArgs(sinon.match.string, sinon.match.string, "GET", "~mHeadersGET", undefined,
+				undefined, undefined, true)
+			.callsFake(function (sUrl, sDeepPath) {
+				assert.strictEqual(sUrl, "$" + sUid + "?~expandselect");
+				assert.strictEqual(sDeepPath, "/$" + sUid);
+
+				return oExpandRequest;
+			});
+		oModelMock.expects("_pushToRequestQueue")
+			.withExactArgs("~mRequests", /*sGroupId*/ undefined, /*sChangeSetId*/ undefined,
+				sinon.match.same(oFunctionCallRequest),
+				sinon.match(function (fnSuccess0) { return fnSuccess0 === fnSuccess; }),
+				sinon.match(function (fnError0) { return fnError0 === fnError; }),
+				"~requestHandle", "~bRefreshAfterChange");
+
+		// code under test
+		oResultingRequest = fnProcessRequest("~requestHandle");
+
+		assert.strictEqual(oResultingRequest, oFunctionCallRequest);
+		assert.strictEqual(oResultingRequest.withContentID, sUid);
+		assert.strictEqual(oResultingRequest.expandRequest, oExpandRequest);
+		assert.strictEqual(oResultingRequest.expandRequest.withContentID, sUid);
+
+		fnCallbackHandling.call(this, assert, fnSuccess, fnError, oCallbacksMock);
+
+		return oResult.contextCreated();
+	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getDeepPathForCanonicalPath", function (assert) {

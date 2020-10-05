@@ -78,6 +78,17 @@ sap.ui.define([
 		 * <li>You need to select between up to 12 options. Use a {@link sap.m.Select select} control instead.</li>
 		 * <li>You need to select between more than 200 options. Use a {@link sap.m.Input input} control with value help instead.</li>
 		 * </ul>
+		 *
+		 * <h4>Note:</h4>
+		 * The control has the following behavior regarding the <code>selectedKey</code> and <code>value</code> properties:
+		 * <ul>
+		 * <li> On initial loading, if the control has a <code>selectedKey</code> set which corresponds to a matching item, and a set <code>value</code>, the <code>value</code> will be updated to the matching item's text. </li>
+		 * <li> If a <code>selectedKey</code> is set and the user types an input which corresponds to an item's text, the <code>selectedKey</code> will be updated with the matching item's key. </li>
+		 * <li> If a <code>selectedKey</code> is set and the user types an input which does not correspond to any item's text, the <code>selectedKey</code> will be set to an empty string ("") </li>
+		 * <li> If a <code>selectedKey</code> is set and the user selects an item, the <code>selectedKey</code> will be updated to match the selected item's key. </li>
+		 * <li> If a <code>selectedKey</code> is bound and the user types before the data is loaded, the user's input will be overwritten by the binding update. </li>
+		 * </ul>
+		 *
 		 * <h3>Responsive Behavior</h3>
 		 * <ul>
 		 * <li>As the <code>sap.m.ComboBox</code> control allows free text, as well as has <code>selectedKey</code> / <code>selectedItem</code> properties, here is brief explanation of how they are updated during model change:</li>
@@ -1866,15 +1877,11 @@ sap.ui.define([
 			// if there is an item that match with the "selectedKey" property and
 			// the "selectedKey" property does not have the default value
 			if (vItem && (sKey !== "")) {
-
 				this.setAssociation("selectedItem", vItem, true);
 				this._setPropertyProtected("selectedItemId", vItem.getId(), true);
 
-				// sets the value if it has not changed
-				if (this._sValue === this.getValue()) {
-					this.setValue(vItem.getText());
-					this._sValue = this.getValue();
-				}
+				this.setValue(vItem.getText());
+				this._sValue = this.getValue();
 			}
 		};
 

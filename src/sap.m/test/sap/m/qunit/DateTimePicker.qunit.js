@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/TimePickerSliders",
 	"jquery.sap.keycodes",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/unified/DateRange",
 	"jquery.sap.global"
 ], function(
@@ -22,6 +23,7 @@ sap.ui.define([
 	Device,
 	TimePickerSliders,
 	jQuery,
+	KeyCodes,
 	DateRange
 ) {
 	createAndAppendDiv("uiArea1");
@@ -547,6 +549,34 @@ sap.ui.define([
 		assert.strictEqual(oInfo.description, "2014-03-26-10-32-30  Date and Time", "Description");
 		oInput.destroy();
 	});
+
+	QUnit.test("When tab is pressed on year button the focus should go to first slider", function(assert) {
+		//Prepare
+		var done = assert.async();
+
+		var oDTP = new DateTimePicker().placeAt("uiArea1");
+		sap.ui.getCore().applyChanges();
+
+		oDTP._createPopup();
+		oDTP._createPopupContent();
+		sap.ui.getCore().applyChanges();
+		oDTP._openPopup();
+
+		setTimeout(function() {
+			var oYearButton = oDTP._oPopup.getContent()[0].getCalendar().getAggregation("header").getDomRef("B2"),
+				oHoursSlider = oDTP._oPopup.getContent()[0].getTimeSliders().getAggregation("_columns")[0];
+			oYearButton.focus();
+			sap.ui.getCore().applyChanges();
+			qutils.triggerKeydown(oYearButton, KeyCodes.TAB);
+			sap.ui.getCore().applyChanges();
+			// Assert
+			assert.strictEqual(oHoursSlider.getDomRef(), document.activeElement, "The slider's value is focused after a tap");
+
+			oDTP.destroy();
+			done();
+		}, 400);
+	});
+
 	QUnit.module("Calendar and TimePicker");
 
 	QUnit.test("When the popover is initially opened and there is a tap on the hours slider it should gain focus", function(assert) {

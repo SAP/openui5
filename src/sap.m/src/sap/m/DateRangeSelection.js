@@ -919,6 +919,7 @@ sap.ui.define([
 				sValue = this._formatValue(oDate, this.getSecondDateValue());
 			}
 		}
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
 		oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
 		return oInfo;
 	};

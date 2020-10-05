@@ -224,7 +224,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.mdc.FilterBar} oFilterbar <code>FilterBar</code> control
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		setFilterbar: function(oFilterbar) {
@@ -274,7 +275,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Control} oTable Content control
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		setTable: function(oTable) {
@@ -308,7 +310,8 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Control} Content control
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		getTable: function() {
@@ -324,7 +327,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.mdc.field.DefineConditionPanel} oDefineConditionPanel <code>DefineConditionPanel</code> control
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		setDefineConditions: function(oDefineConditionPanel) {
@@ -443,14 +447,6 @@ sap.ui.define([
 
 		},
 
-		_formatDefineConditionTitle: function() {
-
-			//TODO Workaround to get the dialog Title as header for the defineConditionPanel
-			var sText = this.getParent().getTitle && this.getParent().getTitle();
-			return sText;
-
-		},
-
 		_formatTableTitle: function(sText) {
 
 			var iItems = 0;
@@ -516,10 +512,14 @@ sap.ui.define([
 			var oVBox = this.byId("rootVBox");
 			var oListBinding = this._oTokenizer.getBinding("tokens");
 			if (oChanges.current) {
-				oListBinding.resume();
+				if (oListBinding) {
+					oListBinding.resume();
+				}
 				oVBox.insertItem(this._oTokenizerPanel, 1);
 			} else {
-				oListBinding.suspend(); // don't create Tokens
+				if (oListBinding) {
+					oListBinding.suspend(); // don't create Tokens
+				}
 				oVBox.removeItem(this._oTokenizerPanel);
 			}
 		}

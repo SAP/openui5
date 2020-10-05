@@ -170,7 +170,8 @@ sap.ui.define([
 			 * @public
 			 */
 			onReadMoreButtonPress: function () {
-				window.open("topic/a3ab54ecf7ac493b91904beb2095d208", "_blank");
+				var sLink = formatter.formatHttpHrefForNewWindow(this.getModel("newWindowLinks").getProperty("/demoAppsHomeLink"));
+				window.open(sLink, "_blank");
 			},
 
 			/**

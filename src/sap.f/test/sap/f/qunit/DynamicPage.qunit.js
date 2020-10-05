@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/f/DynamicPageTitle",
 	"sap/f/DynamicPageHeader",
 	"sap/ui/Device",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Core",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
@@ -26,6 +27,7 @@ function (
 	DynamicPageTitle,
 	DynamicPageHeader,
 	Device,
+	ManagedObject,
 	Core,
 	ComponentContainer,
 	UIComponent,
@@ -430,6 +432,18 @@ function (
 		// obtain the distance of the expand button from the top of the scrollable content
 		iButtonOffsetTop = oHeader._getCollapseButton().getDomRef().offsetTop + oHeader.getDomRef().offsetTop;
 		assert.ok(iButtonOffsetTop >= iScrollTop, "snap button is not in the overflow");
+	});
+
+	QUnit.test("_getSnappingHeight does not return negative values", function (assert) {
+		// Аrrange
+		var oDynamicPage = oFactory.getDynamicPageHeaderSnappedNoContent();
+
+		// Аssert
+		assert.strictEqual(oDynamicPage._canSnapHeaderOnScroll(), false, "Not enough content to snap with scroll");
+		assert.ok(oDynamicPage._getSnappingHeight() >= 0, "Snapping height cannot be less than 0");
+
+		// Clean-up
+		oDynamicPage.destroy();
 	});
 
 	QUnit.module("DynamicPage - Rendering - Header State Preserved On Scroll", {
@@ -1227,7 +1241,7 @@ function (
 			oStubHeaderHeight = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeExpandedInTitleArea", function () {
 				return true;
 			}),
-			oMockResizeWidthEvent = {size:{width: 100}};
+			oMockResizeWidthEvent = {size:{width: 100, height: 100}, oldSize:{height: 100}};
 
 		// Final setup step: snap header => the expand button should become visible after rendering
 		oDynamicPage.setHeaderExpanded(false);
@@ -1255,6 +1269,34 @@ function (
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 		}
+	});
+
+	QUnit.test("DynamicPage _overridePreserveHeaderStateOnScroll() should be called, when a change of DynamicPage's height occurs and 'preserveHeaderStateOnScroll' is 'true'", function (assert) {
+		// Arrange
+		var oSpy,
+			oMockResizeWidthEvent = {size: {height: 500}, oldSize:{height: 100}},
+			done = assert.async(),
+			oDynamicPage = this.oDynamicPage;
+
+		// Act
+		oDynamicPage.addEventDelegate({
+			"onAfterRendering": function() {
+				setTimeout(function() {
+					// Act
+					oSpy = sinon.spy(oDynamicPage, "_overridePreserveHeaderStateOnScroll");
+					oDynamicPage._onResize(oMockResizeWidthEvent);
+
+					// Assert
+					assert.ok(oSpy.calledOnce, "_overridePreserveHeaderStateOnScroll called once");
+
+					// Clean Up
+					oSpy.reset();
+					done();
+				}, 200);
+			}
+		});
+
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 	});
 
 	QUnit.test("DynamicPage _shouldOverridePreserveHeaderStateOnScroll() should return 'true' for Desktop when needed", function (assert) {
@@ -1811,13 +1853,18 @@ function (
 	});
 
 	QUnit.test("DynamicPage _applyContextualSettings changes media classes" , function (assert) {
+		// Arrange
+		var oSpy = this.spy(ManagedObject.prototype, "_applyContextualSettings"),
+			oContextualSettings = {contextualWidth: 800};
+
 		// Act
-		this.oDynamicPage._applyContextualSettings({contextualWidth: 800});
+		this.oDynamicPage._applyContextualSettings(oContextualSettings);
 
 		// Assert
 		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Tablet"), "Tablet class is applied");
 		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop"), "Desktop class is removed");
 		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Phone"), "Phone class is removed");
+		assert.deepEqual(oSpy.getCall(0).args[0], oContextualSettings, "Contextual settings object is passed");
 
 		// Act
 		this.oDynamicPage._applyContextualSettings({contextualWidth: 500});

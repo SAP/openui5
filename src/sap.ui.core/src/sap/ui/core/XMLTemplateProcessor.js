@@ -914,7 +914,18 @@ function(
 				sStyleClasses = "",
 				aCustomData = [],
 				mCustomSettings = null,
-				sSupportData = null;
+				sSupportData = null,
+				// for stashed nodes we need to ignore the following type of attributes:
+				// 1. Aggregations
+				//    -> might lead to the creation of bindings; also the aggregation template is removed anyway
+				// 2. Associations
+				//    -> might refer to controls inside the node, which have been removed earlier when the StashedControl was created
+				// 3. Events
+				bStashedControl = node.getAttribute("stashed") === "true";
+				// remove stashed attribute as it is an uknown property.
+				if (!bEnrichFullIds) {
+					node.removeAttribute("stashed");
+				}
 
 			if (!oClass) {
 				return SyncPromise.resolve([]);
@@ -968,26 +979,30 @@ function(
 							mSettings['containingView'] = oView._oContainingView;
 
 						} else if ((sName === "binding" && !oInfo) || sName === 'objectBindings' ) {
-							var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
-							// TODO reject complex bindings, types, formatters; enable 'parameters'?
-							if (oBindingInfo) {
-								mSettings.objectBindings = mSettings.objectBindings || {};
-								mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
+							if (!bStashedControl) {
+								var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+								// TODO reject complex bindings, types, formatters; enable 'parameters'?
+								if (oBindingInfo) {
+									mSettings.objectBindings = mSettings.objectBindings || {};
+									mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
+								}
 							}
 						} else if (sName === 'metadataContexts') {
-							var mMetaContextsInfo = null;
+							if (!bStashedControl) {
+								var mMetaContextsInfo = null;
 
-							try {
-								mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue,oView._oContainingView.oController,true);
-							} catch (e) {
-								Log.error(oView + ":" + e.message);
-							}
+								try {
+									mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue,oView._oContainingView.oController,true);
+								} catch (e) {
+									Log.error(oView + ":" + e.message);
+								}
 
-							if (mMetaContextsInfo) {
-								mSettings.metadataContexts = mMetaContextsInfo;
+								if (mMetaContextsInfo) {
+									mSettings.metadataContexts = mMetaContextsInfo;
 
-								if (XMLTemplateProcessor._preprocessMetadataContexts) {
-									XMLTemplateProcessor._preprocessMetadataContexts(oClass.getMetadata().getName(), mSettings, oView._oContainingView.oController);
+									if (XMLTemplateProcessor._preprocessMetadataContexts) {
+										XMLTemplateProcessor._preprocessMetadataContexts(oClass.getMetadata().getName(), mSettings, oView._oContainingView.oController);
+									}
 								}
 							}
 						} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
@@ -1026,43 +1041,54 @@ function(
 
 						} else if (oInfo && oInfo._iKind === 1 /* SINGLE_AGGREGATION */ && oInfo.altTypes ) {
 							// AGGREGATION with scalar type (altType)
-							mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName, oView._oContainingView.oController, oRequireModules);
+							if (!bStashedControl) {
+								mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName, oView._oContainingView.oController, oRequireModules);
+							}
 
 						} else if (oInfo && oInfo._iKind === 2 /* MULTIPLE_AGGREGATION */ ) {
-							var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController, false, false, false, false, oRequireModules);
-							if ( oBindingInfo ) {
-								mSettings[sName] = oBindingInfo;
-							} else {
-								// TODO we now in theory allow more than just a binding path. Update message?
-								Log.error(oView + ": aggregations with cardinality 0..n only allow binding paths as attribute value (wrong value: " + sName + "='" + sValue + "')");
+							if (!bStashedControl) {
+								var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController, false, false, false, false, oRequireModules);
+								if ( oBindingInfo ) {
+									mSettings[sName] = oBindingInfo;
+								} else {
+									// TODO we now in theory allow more than just a binding path. Update message?
+									Log.error(oView + ": aggregations with cardinality 0..n only allow binding paths as attribute value (wrong value: " + sName + "='" + sValue + "')");
+								}
 							}
 
 						} else if (oInfo && oInfo._iKind === 3 /* SINGLE_ASSOCIATION */ ) {
 							// ASSOCIATION
-							mSettings[sName] = createId(sValue); // use the value as ID
+							if (!bStashedControl) {
+								mSettings[sName] = createId(sValue); // use the value as ID
+							}
 
 						} else if (oInfo && oInfo._iKind === 4 /* MULTIPLE_ASSOCIATION */ ) {
 							// we support "," and " " to separate IDs and filter out empty IDs
-							mSettings[sName] = sValue.split(/[\s,]+/g).filter(identity).map(createId);
+							if (!bStashedControl) {
+								mSettings[sName] = sValue.split(/[\s,]+/g).filter(identity).map(createId);
+							}
 
 						} else if (oInfo && oInfo._iKind === 5 /* EVENT */ ) {
 							// EVENT
-							var aEventHandlers = [];
+							if (!bStashedControl) {
+								var aEventHandlers = [];
 
-							EventHandlerResolver.parse(sValue).forEach(function (sEventHandler) { // eslint-disable-line no-loop-func
-								var vEventHandler = EventHandlerResolver.resolveEventHandler(sEventHandler, oView._oContainingView.oController, oRequireModules); // TODO: can this be made async? (to avoid the hard resolver dependency)
-								if (vEventHandler) {
-									aEventHandlers.push(vEventHandler);
-								} else  {
-									Log.warning(oView + ": event handler function \"" + sEventHandler + "\" is not a function or does not exist in the controller.");
+								EventHandlerResolver.parse(sValue).forEach(function (sEventHandler) { // eslint-disable-line no-loop-func
+									var vEventHandler = EventHandlerResolver.resolveEventHandler(sEventHandler, oView._oContainingView.oController, oRequireModules); // TODO: can this be made async? (to avoid the hard resolver dependency)
+									if (vEventHandler) {
+										aEventHandlers.push(vEventHandler);
+									} else  {
+										Log.warning(oView + ": event handler function \"" + sEventHandler + "\" is not a function or does not exist in the controller.");
+									}
+								});
+
+								if (aEventHandlers.length) {
+									mSettings[sName] = aEventHandlers;
 								}
-							});
-
-							if (aEventHandlers.length) {
-								mSettings[sName] = aEventHandlers;
 							}
 						} else if (oInfo && oInfo._iKind === -1) {
-							// SPECIAL SETTING - currently only allowed for View's async setting
+							// SPECIAL SETTING - currently only allowed for:
+							// - View's async setting
 							if (View.prototype.isPrototypeOf(oClass.prototype) && sName == "async") {
 								mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController, oRequireModules);
 							} else {
@@ -1131,10 +1157,17 @@ function(
 						// TODO consider moving this to a place where HTML and SVG nodes can be handled properly
 						// create a StashedControl for inactive controls, which is not placed in an aggregation
 						if (!bActivate && childNode.getAttribute("stashed") === "true" && !bEnrichFullIds) {
+							var oStashedNode = childNode;
+							// remove child-nodes...
+							childNode = childNode.cloneNode();
+							// remove stashed attribute as it is an uknown property.
+							oStashedNode.removeAttribute("stashed");
+
 							fnCreateStashedControl = function() {
-								StashedControlSupport.createStashedControl(getId(oView, childNode), {
-									sParentId: mSettings["id"],
-									sParentAggregationName: oAggregation.name,
+								var sControlId = getId(oView, childNode);
+
+								StashedControlSupport.createStashedControl({
+									wrapperId: sControlId,
 									fnCreate: function() {
 										// EVO-Todo: stashed control-support is still mandatory SYNC
 										// this means we need to switch back the view processing to synchronous too
@@ -1143,7 +1176,7 @@ function(
 										bAsync = false;
 
 										try {
-											return handleChild(node, oAggregation, mAggregations, childNode, true, pRequireContext).unwrap();
+											return handleChild(node, oAggregation, mAggregations, oStashedNode, true, pRequireContext).unwrap();
 										} finally {
 											// EVO-Todo:revert back to the original async/sync behavior
 											// if we moved to the sync path for the stashed control, we might now go back to the async path.
@@ -1159,7 +1192,9 @@ function(
 								fnCreateStashedControl();
 							}
 
-							return;
+							// ...and mark the stashed node as invisible.
+							// The original visibility value is still scoped in the clone (visible could be bound, yet stashed controls are never visible)
+							childNode.setAttribute("visible", "false");
 						}
 
 						// child node name does not equal an aggregation name,
@@ -1232,10 +1267,15 @@ function(
 				// apply the settings to the control
 				var vNewControlInstance;
 				var pProvider = SyncPromise.resolve();
+				var pInstanceCreated = SyncPromise.resolve();
 
 				if (bEnrichFullIds && node.hasAttribute("id")) {
 						setId(oView, node);
 				} else if (!bEnrichFullIds) {
+					// Pass processingMode to Fragments only
+					if (oClass.getMetadata().isA("sap.ui.core.Fragment") && node.getAttribute("type") !== "JS" && oView._sProcessingMode === "sequential") {
+						mSettings.processingMode = "sequential";
+					}
 
 					if (View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
 						var fnCreateViewInstance = function () {
@@ -1255,19 +1295,32 @@ function(
 							vNewControlInstance = fnCreateViewInstance();
 						}
 
+					} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync) {
+						var sFragmentPath = "sap/ui/core/Fragment";
+						var Fragment = sap.ui.require(sFragmentPath);
+
+						// call Fragment.load with mSettings.name
+						mSettings.name = mSettings.name || mSettings.fragmentName;
+
+						if (Fragment) {
+							pInstanceCreated = Fragment.load(mSettings);
+						} else {
+							pInstanceCreated = new Promise(function (resolve, reject) {
+								sap.ui.require([sFragmentPath], function (Fragment) {
+									Fragment.load(mSettings).then(function (oFragmentContent) {
+										resolve(oFragmentContent);
+									});
+								}, reject);
+							});
+						}
 					} else {
 						// call the control constructor with the according owner in scope
 						var fnCreateInstance = function() {
 							var oInstance;
 
-							// Pass processingMode to Fragments only
-							if (oClass.getMetadata().isA("sap.ui.core.Fragment") && node.getAttribute("type") !== "JS" && oView._sProcessingMode === "sequential") {
-								mSettings.processingMode = "sequential";
-							}
-
 							// the scoped runWithOwner function is only during ASYNC processing!
 							if (oView.fnScopedRunWithOwner) {
-								oInstance = oView.fnScopedRunWithOwner(function() {
+								oInstance = oView.fnScopedRunWithOwner(function () {
 									var oInstance = new oClass(mSettings);
 									return oInstance;
 								});
@@ -1286,54 +1339,57 @@ function(
 						} else {
 							vNewControlInstance = fnCreateInstance();
 						}
-
 					}
-
-					if (sStyleClasses && vNewControlInstance.addStyleClass) {
+				}
+				return pInstanceCreated.then(function (aFragmentContent) {
+					return aFragmentContent || vNewControlInstance;
+				}).then(function (vFinalInstance) {
+					if (sStyleClasses && vFinalInstance.addStyleClass) {
 						// Elements do not have a style class!
-						vNewControlInstance.addStyleClass(sStyleClasses);
+						vFinalInstance.addStyleClass(sStyleClasses);
 					}
-				}
 
-				if (!vNewControlInstance) {
-					vNewControlInstance = [];
-				} else if (!Array.isArray(vNewControlInstance)) {
-					vNewControlInstance = [vNewControlInstance];
-				}
-
-				//apply support info if needed
-				if (XMLTemplateProcessor._supportInfo && vNewControlInstance) {
-					for (var i = 0, iLength = vNewControlInstance.length; i < iLength; i++) {
-						var oInstance = vNewControlInstance[i];
-						if (oInstance && oInstance.getId()) {
-							//create a support info for id creation and add it to the support data
-							var iSupportIndex = XMLTemplateProcessor._supportInfo({context:node, env:{caller:"createRegularControls", nodeid: node.getAttribute("id"), controlid: oInstance.getId()}}),
-								sData = sSupportData ? sSupportData + "," : "";
-							sData += iSupportIndex;
-							//add the controls support data to the indexed map of support info control instance map
-							XMLTemplateProcessor._supportInfo.addSupportInfo(oInstance.getId(), sData);
-						}
+					if (!vFinalInstance) {
+						vFinalInstance = [];
+					} else if (!Array.isArray(vFinalInstance)) {
+						vFinalInstance = [vFinalInstance];
 					}
-				}
 
-				if (bDesignMode) {
-					vNewControlInstance.forEach(function (oInstance) {
-						if (oMetadata.getCompositeAggregationName) {
-							var aNodes = node.getElementsByTagName(oInstance.getMetadata().getCompositeAggregationName());
-							for (var i = 0; i < aNodes.length; i++) {
-								node.removeChild(aNodes[0]);
+					//apply support info if needed
+					if (XMLTemplateProcessor._supportInfo && vFinalInstance) {
+						for (var i = 0, iLength = vFinalInstance.length; i < iLength; i++) {
+							var oInstance = vFinalInstance[i];
+							if (oInstance && oInstance.getId()) {
+								//create a support info for id creation and add it to the support data
+								var iSupportIndex = XMLTemplateProcessor._supportInfo({ context: node, env: { caller: "createRegularControls", nodeid: node.getAttribute("id"), controlid: oInstance.getId() } }),
+									sData = sSupportData ? sSupportData + "," : "";
+								sData += iSupportIndex;
+								//add the controls support data to the indexed map of support info control instance map
+								XMLTemplateProcessor._supportInfo.addSupportInfo(oInstance.getId(), sData);
 							}
 						}
-						oInstance._sapui_declarativeSourceInfo = {
-							xmlNode: node,
-							xmlRootNode: oView._sapui_declarativeSourceInfo.xmlRootNode,
-							fragmentName: oMetadata.getName() === 'sap.ui.core.Fragment' ? mSettings['fragmentName'] : null
-						};
-					});
-				}
+					}
 
-				return pProvider.then(function() {
-					return vNewControlInstance;
+					if (bDesignMode) {
+						vFinalInstance.forEach(function (oInstance) {
+							if (oMetadata.getCompositeAggregationName) {
+								var aNodes = node.getElementsByTagName(oInstance.getMetadata().getCompositeAggregationName());
+								for (var i = 0; i < aNodes.length; i++) {
+									node.removeChild(aNodes[0]);
+								}
+							}
+							oInstance._sapui_declarativeSourceInfo = {
+								xmlNode: node,
+								xmlRootNode: oView._sapui_declarativeSourceInfo.xmlRootNode,
+								fragmentName: oMetadata.getName() === 'sap.ui.core.Fragment' ? mSettings['fragmentName'] : null
+							};
+						});
+					}
+
+					return pProvider.then(function () {
+						// either resolve with fragment or control instance
+						return vFinalInstance;
+					});
 				});
 			});
 

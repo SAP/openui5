@@ -42,6 +42,14 @@ sap.ui.define([
 		return sandbox.stub(oChangePersistence, sFunctionName).resolves();
 	}
 
+	function _prepareUriParametersFromQuery(sValue) {
+		sandbox.stub(UriParameters, "fromQuery").returns({
+			get : function () {
+				return sValue;
+			}
+		});
+	}
+
 	QUnit.module("Internal Caching", {
 		beforeEach: function () {
 			this.aReturnedVersions = [];
@@ -70,8 +78,9 @@ sap.ui.define([
 				assert.equal(oData.backendDraft, false, ", a backendDraft flag set to false");
 				assert.equal(oData.dirtyChanges, false, ", a dirty changes flag set to false");
 				assert.equal(oData.draftAvailable, false, ", a draftAvailable flag set to false");
+				assert.equal(oData.activateEnabled, false, ", a activateEnabled flag set to false");
 				assert.equal(oData.activeVersion, sap.ui.fl.Versions.Original, ", a activeVersion property set to the original version");
-				assert.equal(oData.displayedVersion, sap.ui.fl.Versions.Original, ", a displayedVersion property set to the original version");
+				assert.equal(oData.displayedVersion, sap.ui.fl.Versions.Original, ", a version property set to the original version");
 				assert.equal(oData.switchVersionsActive, false, "and a switchVersionsActive flag set to false as data");
 			}.bind(this));
 		});
@@ -83,11 +92,7 @@ sap.ui.define([
 				reference : "com.sap.app"
 			};
 
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get : function () {
-					return "true";
-				}
-			});
+			_prepareUriParametersFromQuery("true");
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				var oData = oResponse.getData();
@@ -102,11 +107,7 @@ sap.ui.define([
 				reference : "com.sap.app"
 			};
 
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get : function () {
-					return "something";
-				}
-			});
+			_prepareUriParametersFromQuery("something");
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				var oData = oResponse.getData();
@@ -121,11 +122,7 @@ sap.ui.define([
 				reference : "com.sap.app"
 			};
 
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get : function () {
-					return "false";
-				}
-			});
+			_prepareUriParametersFromQuery("false");
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				var oData = oResponse.getData();
@@ -307,6 +304,53 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("with setDirtyChange(false) and a connector is configured which returns a list of versions with entries while an older version is displayed", function (assert) {
+			var nActiveVersion = 2;
+			//set displayedVersion to 1
+			_prepareUriParametersFromQuery("1");
+			var mPropertyBag = {
+				layer : Layer.CUSTOMER,
+				reference : "com.sap.app"
+			};
+
+			var oFirstVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a long while ago",
+				version : 1
+			};
+
+			var oSecondVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a while ago",
+				version : nActiveVersion
+			};
+
+			var aReturnedVersions = [
+				oSecondVersion,
+				oFirstVersion
+			];
+
+			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
+
+			return Versions.initialize(mPropertyBag)
+			.then(function (oVersionsModel) {
+				oVersionsModel.setDirtyChanges(false);
+			})
+			.then(function () {
+				var oData = Versions.getVersionsModel(mPropertyBag).getData();
+				var aVersions = oData.versions;
+				assert.equal(aVersions.length, 2, "then versions has two entries");
+				assert.deepEqual(aVersions[0], oSecondVersion, "with the second");
+				assert.equal(aVersions[1], oFirstVersion, "and the first version");
+				assert.equal(oData.backendDraft, false, "the backendDraft flag is false");
+				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
+				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+				assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
+				assert.equal(oData.displayedVersion, "1", "the displayedVersion set 1");
+				assert.equal(oData.activeVersion, nActiveVersion, "and the activeVersion set to 2");
+			});
+		});
+
 		QUnit.test("and a connector is configured which returns a list of versions with entries and a draft", function (assert) {
 			var nActiveVersion = 2;
 
@@ -371,7 +415,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("and a connector is configured which returns a list of versions while a draft exists", function (assert) {
 			var nActiveVersion = 2;
-
+			//set displayedVersion to draft
+			_prepareUriParametersFromQuery(sap.ui.fl.Versions.Draft.toString());
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
@@ -425,6 +470,62 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("to reactivate an old version and a connector is configured which returns a list of versions while a draft does NOT exists", function (assert) {
+			var sReference = "com.sap.app";
+			var nActiveVersion = 3;
+			//set displayedVersion to 1
+			_prepareUriParametersFromQuery("1");
+			var mPropertyBag = {
+				layer : Layer.CUSTOMER,
+				reference : sReference,
+				nonNormalizedReference: sReference,
+				appComponent: this.oAppComponent
+			};
+
+			var oFirstVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: 1
+			};
+
+			var oSecondVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a while ago",
+				version : 2
+			};
+
+			var aReturnedVersions = [
+				oSecondVersion,
+				oFirstVersion
+			];
+
+			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
+
+			var oActivatedVersion = {
+				activatedBy: "qunit",
+				activatedAt: "just now",
+				version: nActiveVersion
+			};
+			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
+
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
+				.then(function () {
+					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
+				})
+				.then(Versions.getVersionsModel.bind(Versions, mPropertyBag))
+				.then(function (oResponse) {
+					var aVersions = oResponse.getProperty("/versions");
+					assert.equal(aVersions.length, 3, "with three versions");
+					assert.equal(aVersions[0], oActivatedVersion, "and the newly activated is the first");
+					assert.equal(aVersions[1], oSecondVersion, "where the old version is the second");
+					assert.equal(aVersions[2], oFirstVersion, "where the older version is the third");
+					assert.equal(oResponse.getProperty("/backendDraft"), false, "backendDraft property was set to false");
+					assert.equal(oResponse.getProperty("/displayedVersion"), nActiveVersion, ", a displayedVersion property set to the active version");
+					assert.equal(oResponse.getProperty("/activeVersion"), nActiveVersion, "and the active version was determined correct");
+				});
+		});
+
 		QUnit.test("and a connector is configured which returns a list of versions while a draft does NOT exists", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
@@ -457,7 +558,7 @@ sap.ui.define([
 				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
 				.catch(function (sErrorMessage) {
 					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
-					assert.equal(sErrorMessage, "No draft exists", "then the promise is rejected with an error message");
+					assert.equal(sErrorMessage, "Version is already active", "then the promise is rejected with an error message");
 				});
 		});
 
@@ -507,6 +608,7 @@ sap.ui.define([
 					assert.equal(oData.backendDraft, false, "the backendDraft flag is false");
 					assert.equal(oData.dirtyChanges, true, "the dirtyChanges flag is set to true");
 					assert.equal(oData.draftAvailable, true, "as well as draftAvailable true");
+					assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
 				})
 				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
 				.then(function () {
@@ -525,6 +627,7 @@ sap.ui.define([
 					assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
 					assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
 					assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+					assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
 				}.bind(this));
 		});
 	});
@@ -597,6 +700,7 @@ sap.ui.define([
 				assert.equal(oData.backendDraft, false, "the backendDraft flag is false");
 				assert.equal(oData.dirtyChanges, true, "the dirtyChanges flag is set to true");
 				assert.equal(oData.draftAvailable, true, "as well as draftAvailable true");
+				assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
 				assert.equal(oData.displayedVersion, sap.ui.fl.Versions.Draft, ", a displayedVersion property set to the draft version");
 			})
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
@@ -615,6 +719,7 @@ sap.ui.define([
 				assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
 				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
 				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+				assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
 				assert.equal(oData.displayedVersion, 1, ", a displayedVersion property set to the active version");
 			});
 		});
@@ -659,6 +764,7 @@ sap.ui.define([
 				assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
 				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
 				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+				assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), 1, ", a displayedVersion property set to the active version");
 			}.bind(this));
 		});

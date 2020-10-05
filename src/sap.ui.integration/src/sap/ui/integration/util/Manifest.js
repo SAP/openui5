@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/base/util/deepClone",
 	"sap/base/util/isPlainObject",
+	"sap/base/util/isEmptyObject",
 	"sap/base/Log",
 	"./ParameterMap",
 	"sap/ui/integration/util/CardMerger"
@@ -15,6 +16,7 @@ sap.ui.define([
 	CoreManifest,
 	deepClone,
 	isPlainObject,
+	isEmptyObject,
 	Log,
 	ParameterMap,
 	CardMerger
@@ -320,7 +322,7 @@ sap.ui.define([
 			oValue,
 			sPath;
 
-		if (oParam) {
+		if (!isEmptyObject(oParam)) {
 			for (var oProperty in oParam) {
 				oValue = oParam[oProperty].value;
 				sPath = "{{parameters." + oProperty;
@@ -490,7 +492,7 @@ sap.ui.define([
 
 		var oManifestParams = this.get(this.PARAMETERS);
 
-		if (oParameters && !oManifestParams) {
+		if (!isEmptyObject(oParameters) && !oManifestParams) {
 			Log.error("If parameters property is set, parameters should be described in the manifest");
 			return;
 		}
@@ -523,7 +525,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Manifest.prototype._syncParameters = function (oParameters, oManifestParameters) {
-		if (!oParameters) {
+		if (isEmptyObject(oParameters)) {
 			return oManifestParameters;
 		}
 

@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
+	"sap/base/util/restricted/_CancelablePromise",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/base/util/isPlainObject",
@@ -29,6 +30,7 @@ sap.ui.define([
 	ManagedObjectObserver,
 	PropertyEditorFactory,
 	createPromise,
+	CancelablePromise,
 	deepClone,
 	deepEqual,
 	isPlainObject,
@@ -484,11 +486,20 @@ sap.ui.define([
 	 * @param {string} sErrorMessage - Error message
 	 */
 	BasePropertyEditor.prototype.setInputState = function (bHasError, sErrorMessage) {
+		this._sErrorMessage = sErrorMessage;
+		if (this.isReady()) {
+			this._setInputState();
+		}
+	};
+
+	BasePropertyEditor.prototype._setInputState = function () {
 		var oInput = this.getContent();
 		if (!oInput || !oInput.setValueState) {
 			return;
 		}
-		if (bHasError) {
+
+		var sErrorMessage = this._sErrorMessage;
+		if (sErrorMessage) {
 			oInput.setValueState("Error");
 			oInput.setValueStateText(sErrorMessage);
 		} else {
@@ -605,6 +616,8 @@ sap.ui.define([
 						findNestedWrappers(oObservedWrapper).forEach(function (oWrapper) {
 							if (!isTemplate(oWrapper, this)) {
 								this._registerWrapper(oWrapper);
+							} else {
+								observeRootParent(this._oWrapperObserver, oWrapper);
 							}
 						}.bind(this));
 						this._oWrapperObserver.unobserve(oObservedWrapper);
@@ -626,21 +639,25 @@ sap.ui.define([
 			// the wrapper is properly registered when the fragment content is added to the
 			// content aggregation of the parent BasePropertyEditor
 
-			var oRootElement = getRootParent(oWrapper);
-			if (
-				!this._oWrapperObserver.isObserved(oRootElement, {
-					parent: true
-				})
-			) {
-				this._oWrapperObserver.observe(oRootElement, {
-					parent: true
-				});
-			}
+			observeRootParent(this._oWrapperObserver, oWrapper);
 			return;
 		}
 
 		this._registerWrapper(oWrapper);
 	};
+
+	function observeRootParent(oWrapperObserver, oWrapper) {
+		var oRootElement = getRootParent(oWrapper);
+		if (
+			!oWrapperObserver.isObserved(oRootElement, {
+				parent: true
+			})
+		) {
+			oWrapperObserver.observe(oRootElement, {
+				parent: true
+			});
+		}
+	}
 
 	function getRootParent(oElement) {
 		var oParent = oElement.getParent();
@@ -735,22 +752,28 @@ sap.ui.define([
 		this._setReady(false);
 		this._bFragmentReady = false;
 
-		if (this._fnCancelFragmentLoading) {
-			this._fnCancelFragmentLoading();
+		if (this._oFragmentPromise) {
+			this._oFragmentPromise.cancel();
 		}
 
-		var oFragmentPromise = createPromise(function (fnResolve, fnReject) {
+		var oFragmentPromise = new CancelablePromise(function (fnResolve, fnReject, onCancel) {
+			onCancel.shouldReject = false;
+
 			this._loadFragment(sFragmentName).then(fnResolve, fnReject);
 		}.bind(this));
+		this._oFragmentPromise = oFragmentPromise;
 
-		this._fnCancelFragmentLoading = oFragmentPromise.cancel;
-
-		return oFragmentPromise.promise
+		return oFragmentPromise
 			.then(function (oFragment) {
-				delete this._fnCancelFragmentLoading;
+				if (oFragmentPromise.isCanceled) {
+					oFragment.destroy();
+					return;
+				}
+
 				this._bFragmentReady = true;
 				this.setContent(oFragment);
 				this.onFragmentReady();
+				this._setInputState();
 				// When the expected wrapper count was already set, initialization finished after the editor
 				// value was set and the ready check might already have been executed and failed
 				// Therefore execute the check again
@@ -784,8 +807,8 @@ sap.ui.define([
 			this._oWrapperObserver.destroy();
 		}
 
-		if (this._fnCancelFragmentLoading) {
-			this._fnCancelFragmentLoading();
+		if (this._oFragmentPromise) {
+			this._oFragmentPromise.cancel();
 		}
 	};
 

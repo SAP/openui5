@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/Device",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
 	"./TitlePropagationSupport",
@@ -53,7 +52,6 @@ function(
 	ResizeHandler,
 	ResponsivePaddingsEnablement,
 	Device,
-	ManagedObject,
 	coreLibrary,
 	KeyCodes,
 	TitlePropagationSupport,
@@ -1944,7 +1942,7 @@ function(
 		 * @private
 		 */
 		Dialog.prototype._applyContextualSettings = function () {
-			ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+			Control.prototype._applyContextualSettings.call(this);
 		};
 
 		// enrich the control functionality with TitleAlignmentMixin

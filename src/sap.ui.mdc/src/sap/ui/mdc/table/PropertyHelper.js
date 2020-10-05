@@ -137,6 +137,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the sortable properties for the column.
+	 * @param {sap.ui.mdc.table.Column} oColumn column instance
+	 * @returns {null|Array} null or array of sortable properties
+	 * @public
+	 */
+	PropertyHelper.prototype.getColumnSortProperties = function(oColumn) {
+		if (!isMdcColumnInstance(oColumn)) {
+			return null;
+		}
+
+		var aDataProperties = oColumn.getDataProperties(),
+			aSortableProperties = [];
+
+		if (!aDataProperties.length) {
+			return [];
+		}
+
+		// suppport for multiple dataPorperties which should alter be removed and should be relaced by complexProperty
+		if (!this.isComplex(aDataProperties[0]) && aDataProperties.length > 1) {
+			aDataProperties.forEach(function(sDataProperty) {
+				var aSortProperty = this.getSortableProperties(sDataProperty);
+				if (aSortProperty.length && aSortProperty.length === 1) {
+					aSortableProperties.push(aSortProperty[0]);
+				}
+			}, this);
+
+			return aSortableProperties;
+		}
+
+		aSortableProperties = this.getSortableProperties(aDataProperties[0]);
+		return aSortableProperties;
+	};
+
+	/**
 	 * Gets the property that is identified by a <code>path</code>.
 	 *
 	 * @param {sap.ui.mdc.table.PropertyHelper} oPropertyHelper Property helper instance

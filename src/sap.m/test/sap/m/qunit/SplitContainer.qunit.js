@@ -6,6 +6,7 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	"jquery.sap.global",
 	"sap/m/SplitContainer",
+	"sap/m/ScrollContainer",
 	"sap/m/Page",
 	"sap/m/library",
 	"sap/m/Bar",
@@ -24,6 +25,7 @@ sap.ui.define([
 	Core,
 	jQuery,
 	SplitContainer,
+	ScrollContainer,
 	Page,
 	mobileLibrary,
 	Bar,
@@ -1287,7 +1289,7 @@ sap.ui.define([
 		assert.equal(oSplitContainer.getDetailPages().length, 1, "Detail pages should be properly set through the model.");
 	});
 
-	QUnit.module("Touch Swipe");
+	QUnit.module("Use Cases");
 
 	QUnit.test("Show/Hide master", function(assert) {
 
@@ -1341,4 +1343,92 @@ sap.ui.define([
 		// clean up
 		oSplitContainer.destroy();
 	});
+
+	QUnit.test("showMaster() method called from a Button with an icon", function(assert) {
+
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: false,
+			tablet: true
+		});
+
+		this.stub(Device, "support", {
+			touch: true
+		});
+
+		var oSplitContainer,
+			oScrollContainer,
+			oBtn = new Button({
+				icon: "sap-icon://nav-back",
+				press: function () {
+					oSplitContainer.showMaster();
+				}
+			});
+
+		oSplitContainer = new SplitContainer({
+			mode: "ShowHideMode",
+			detailPages : new Page({
+				title: "Mode: ShowHide",
+				content: [
+					oBtn
+				]
+			}),
+			masterPages : [
+				new Page({ title : "master1"})
+			]
+		});
+
+		oScrollContainer = new ScrollContainer({
+			width: "300px",
+			height: "400px",
+			content: [
+				oSplitContainer
+			]
+		});
+
+		oScrollContainer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oSplitContainer.$("Master").hasClass("sapMSplitContainerMasterHidden"), "Master is initially hidden");
+
+		// act
+		qutils.triggerEvent("tap", oBtn.getDomRef("img"));
+
+		assert.ok(oSplitContainer.$("Master").hasClass("sapMSplitContainerMasterVisible"), "Master is shown");
+
+		// clean up
+		oScrollContainer.destroy();
+	});
+
+	QUnit.test("Master button text", function(assert) {
+		// arrange
+		var oSplitContainer = new SplitContainer({
+			mode: "ShowHideMode",
+			detailPages: [
+				new Page({
+					title : "detail"
+				})
+			],
+			masterPages: [
+				new Page({ title : "master1"})
+			]
+		});
+		oSplitContainer.placeAt("content");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oSplitContainer._oShowMasterBtn.getText(), "Navigation", "Master button text is 'Navigation'");
+
+		// act
+		oSplitContainer._removeMasterButton(oSplitContainer._getRealPage(oSplitContainer._oDetailNav.getCurrentPage()));
+		oSplitContainer._afterShowMasterAnimation();
+		oSplitContainer._afterHideMasterAnimation();
+
+		// assert
+		assert.strictEqual(oSplitContainer._oShowMasterBtn.getText(), "Navigation", "Master button text is still 'Navigation'");
+
+		// clean up
+		oSplitContainer.destroy();
+	});
+
 });

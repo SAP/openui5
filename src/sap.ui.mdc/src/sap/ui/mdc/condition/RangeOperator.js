@@ -29,6 +29,7 @@ sap.ui.define([
 		 * @param {string} [oConfiguration.tokenParse]
 		 * @param {string} [oConfiguration.tokenFormat]
 		 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
+		 * @param {string} [oConfiguration.label] additional array of labels for the values of the operator. Will be shown as placeholder text or label on the value fields.
 		 * @param {function} [oConfiguration.calcRange] function to calculate the date range of the operation. the function returns an array of UniversalDates.
 		 * @param {function} [oConfiguration.formatRange] function to format the date range.
 		 * @constructor
@@ -44,6 +45,11 @@ sap.ui.define([
 				oConfiguration.tokenFormat = oConfiguration.tokenFormat || "#tokenText#";
 
 				Operator.apply(this, arguments);
+
+				if (oConfiguration.label !== undefined) {
+					// label: array of strings of labels will be used as placeholder text inside the value fields on the defineConditionPanel.
+					this.aLabels = oConfiguration.label;
+				}
 
 				if (oConfiguration.additionalInfo !== undefined) {
 					this.additionalInfo = oConfiguration.additionalInfo;
@@ -65,12 +71,21 @@ sap.ui.define([
 		});
 
 		RangeOperator.prototype.getModelFilter = function(oCondition, sFieldPath, oType) {
-			var aRange = this._getRange(oCondition.values[0], oType);
+			var aRange = this._getRange(oCondition.values, oType);
 			return new Filter({ path: sFieldPath, operator: "BT", value1: aRange[0], value2: aRange[1] });
 		};
 
-		RangeOperator.prototype._getRange = function(iDuration, oType) {
-			var aRange = this.calcRange(iDuration);
+		RangeOperator.prototype._getRange = function(aValues, oType) {
+			var aRange;
+			if (aValues) {
+				if (aValues.length === 2) {
+					aRange = this.calcRange(aValues[0], aValues[1]);
+				} else {
+					aRange = this.calcRange(aValues[0]);
+				}
+			} else {
+				aRange = this.calcRange();
+			}
 
 			for (var i = 0; i < 2; i++) {
 				//the calcRange result must be converted from local time to UTC and into the correct type format.

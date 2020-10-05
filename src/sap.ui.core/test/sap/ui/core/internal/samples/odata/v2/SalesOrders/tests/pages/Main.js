@@ -12,6 +12,7 @@ sap.ui.define([
 			ItemPosition : 1,
 			ProductID : 2,
 			Quantity : 3,
+			Unit : 4,
 			GrossAmount : 5,
 			Currency : 6,
 			Note : 7,
@@ -192,6 +193,12 @@ sap.ui.define([
 						searchOpenDialogs : true,
 						viewName : sViewName
 					});
+				},
+				/*
+				 * Presses the "clone item" button
+				 */
+				pressCloneItem : function () {
+					return pressButton(this, "cloneItem::ToLineItems");
 				},
 				/*
 				 * Presses the "create item" button
@@ -803,6 +810,33 @@ sap.ui.define([
 							Opa5.assert.equal(sValueState, sExpectedValueState,
 								"The table row " + iRow +
 									" has the correct value state: " + sValueState);
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Checks if the given rows have equal values in selected columns.
+				 *
+				 * @param {number} iRow0 The first row to compare
+				 * @param {number} iRow1 The second row to compare
+				 * @param {string[]} aColumns The columns that are compared for equality
+				 */
+				checkTableRowsEqualInColumns : function (iRow0, iRow1, aColumns) {
+					return this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							var iColumn,
+								oRowCells0 = oTable.getRows()[iRow0].getCells(),
+								oRowCells1 = oTable.getRows()[iRow1].getCells();
+
+							aColumns.forEach(function (sColumn) {
+								iColumn = mColumn[sColumn];
+								Opa5.assert.equal(
+									oRowCells1[iColumn].getValue(),
+									oRowCells0[iColumn].getValue(),
+									"The rows " + iRow0 + " and " + iRow1 + " have the identical"
+										+ " value in column '" + sColumn + "'");
+							});
 						},
 						viewName : sViewName
 					});

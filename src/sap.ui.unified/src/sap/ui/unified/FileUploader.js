@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'./library',
 	'sap/ui/core/LabelEnablement',
+	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'./FileUploaderRenderer',
@@ -23,6 +24,7 @@ sap.ui.define([
 	Control,
 	library,
 	LabelEnablement,
+	InvisibleText,
 	coreLibrary,
 	Device,
 	FileUploaderRenderer,
@@ -32,7 +34,6 @@ sap.ui.define([
 	encodeXML,
 	jQuery
 ) {
-	"use strict";
 
 
 
@@ -601,6 +602,10 @@ sap.ui.define([
 			if (this.oBrowse.addAriaDescribedBy) {
 				this.oBrowse.addAriaDescribedBy(this.getId() + "-AccDescr");
 			}
+
+			if (this.oFilePath) {
+				this.oFilePath.addAriaLabelledBy(InvisibleText.getStaticId("sap.ui.unified", "FILEUPLOAD_FILENAME"));
+			}
 		}
 		this._submitAfterRendering = false;
 
@@ -689,10 +694,7 @@ sap.ui.define([
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
 		this.setProperty("fileType", aTypes, false);
-		if (this.oFileUpload) {
-			this.oFileUpload = undefined;
-			this._prepareFileUpload();
-		}
+		this._rerenderInputField();
 		return this;
 	};
 
@@ -700,11 +702,25 @@ sap.ui.define([
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
 		this.setProperty("mimeType", aTypes, false);
-		if (this.oFileUpload) {
-			this.oFileUpload = undefined;
-			this._prepareFileUpload();
-		}
+		this._rerenderInputField();
 		return this;
+	};
+
+	FileUploader.prototype.setMultiple = function(bMultiple) {
+		this.setProperty("multiple", bMultiple, false);
+		this._rerenderInputField();
+		return this;
+	};
+
+	FileUploader.prototype._rerenderInputField = function() {
+		if (this.oFileUpload) {
+			var aFiles = this.oFileUpload.files;
+			this._clearInputField();
+			this._prepareFileUpload();
+			// Reattach files to the input field if already selected
+			/*eslint strict: [2, "never"]*/
+			this.oFileUpload.files = aFiles;
+		}
 	};
 
 	FileUploader.prototype.setTooltip = function(oTooltip) {
@@ -860,13 +876,15 @@ sap.ui.define([
 			sap.ui.getCore().getStaticAreaRef().removeChild(this.oIFrameRef);
 			this.oIFrameRef = null;
 		}
-
 		if (this.oFileUpload) {
-			jQuery(this.oFileUpload).off();
-			this.oFileUpload.parentElement.removeChild(this.oFileUpload);
-			this.oFileUpload = null;
+			this._clearInputField();
 		}
+	};
 
+	FileUploader.prototype._clearInputField = function() {
+		jQuery(this.oFileUpload).off();
+		this.oFileUpload.parentElement.removeChild(this.oFileUpload);
+		this.oFileUpload = null;
 	};
 
 	/**
@@ -1331,34 +1349,15 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FileUploader.prototype.upload = function(bPreProcessFiles) {
+		var uploadForm,
+			sActionAttr;
+
 		//supress Upload if the FileUploader is not enabled
 		if (!this.getEnabled()) {
 			return;
 		}
 
-		// If the file has been edited after it has been chosen,
-		// Chrome 85 fails silently on submit, so we could
-		// check if it is readable first.
-		// https://stackoverflow.com/questions/61916331
-		// BCP: 2070313680
-		if (window.File && this.FUEl && this.FUEl.files.length) {
-			_checkFileReadable(this.FUEl.files[0]).then(
-				function() {
-					this._upload(bPreProcessFiles);
-				}.bind(this),
-				function(error) {
-					Log.error(error + " It is possible that the file has been changed.");
-					this.clear();
-				}.bind(this)
-			);
-		} else {
-			this._upload(bPreProcessFiles);
-		}
-	};
-
-	FileUploader.prototype._upload = function(bPreProcessFiles) {
-		var uploadForm = this.getDomRef("fu_form"),
-			sActionAttr;
+		uploadForm = this.getDomRef("fu_form");
 
 		try {
 			this._bUploading = true;
@@ -2059,23 +2058,40 @@ sap.ui.define([
 		});
 	};
 
-	/*
-	 * Returns a promise that resolves successfully if the file can be read.
+	// If the file has been edited after it has been chosen,
+	// Chrome 85 fails silently on submit, so we could
+	// check if it is readable first.
+	// https://stackoverflow.com/questions/61916331
+	// BCP: 2070313680
+
+	/**
+	 * Checks if the chosen file is readable.
+	 *
+	 * @returns {Promise} A promise that resolves successfully if the
+	 * chosen file can be read and fails with an error message
+	 * if it cannot
+	 * @public
 	 */
-	function _checkFileReadable(oFile) {
+	FileUploader.prototype.checkFileReadable = function() {
 		return new Promise(function(resolve, reject) {
-			var reader = new FileReader();
-			reader.readAsArrayBuffer(oFile.slice(0, 1));
+			var oReader;
 
-			reader.onload = function() {
+			if (window.File && this.FUEl && this.FUEl.files.length) {
+				var oReader = new FileReader();
+				oReader.readAsArrayBuffer(this.FUEl.files[0].slice(0, 1));
+
+				oReader.onload = function() {
+					resolve();
+				};
+
+				oReader.onerror = function() {
+					reject(oReader.error);
+				};
+			} else {
 				resolve();
-			};
-
-			reader.onerror = function() {
-				reject(reader.error);
-			};
-		});
-	}
+			}
+		}.bind(this));
+	};
 
 	return FileUploader;
 

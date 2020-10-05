@@ -897,6 +897,14 @@
 							sap.m.MessageBox.alert("Value help requested");
 						}
 					}),
+					new sap.m.Input({
+						value: "Custom value help icon",
+						showValueHelp: true,
+						valueHelpIconSrc: "sap-icon://arrow-left",
+						valueHelpRequest: function(evt) {
+							sap.m.MessageBox.alert("Value help requested via custom defined value help icon with URI 'sap-icon://arrow-left'");
+						}
+					}),
 					oSuggestInput1,
 					oSuggestInput5, // same as 1 but two value
 					oSuggestInput2,
@@ -998,6 +1006,39 @@
 						valueHelpRequest: function(oEvent){
 							console.log("Zzz: " + oEvent.getParameter("userInputValue"));
 							sap.m.MessageBox.alert("Value help requested with valueForSearch: '" + oEvent.getParameter("_userInputValue") + "'");
+						}
+					}),
+					new sap.m.Input("vsinput-sugg", {
+						placeholder: "Input Search With Suggestions and value state changing while you are typing - type 'text'",
+						valueState: "Information",
+						valueStateText: "Keep typing to change the value states",
+						showSuggestion: true,
+						suggestionItems: [
+							new sap.ui.core.Item({text: "text 1"}),
+							new sap.ui.core.Item({text: "text 2"}),
+							new sap.ui.core.Item({text: "text 3"}),
+							new sap.ui.core.Item({text: "text 4"}),
+							new sap.ui.core.Item({text: "text 15"})
+						],
+						liveChange: function (oEvent) {
+							var i = this.getValue().length;
+							switch(i % 5){
+								case 0:
+									this.setValueState("Warning");
+									break;
+								case 1:
+									this.setValueState("Error");
+									break;
+								case 2:
+									this.setValueState("Success");
+									break;
+								case 3:
+									this.setValueState("Information");
+									break;
+								case 4:
+									this.setValueState("None");
+									break;
+							}
 						}
 					})
 			],

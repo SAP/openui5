@@ -1,15 +1,17 @@
 sap.ui.define([
-	"sap/ui/demo/cardExplorer/controller/BaseController",
-	'sap/ui/model/json/JSONModel',
+	"./Topic.controller",
 	"../model/ExploreNavigationModel",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
-], function (BaseController,
-             JSONModel,
-             ExploreNavigationModel,
-             Device) {
+], function (
+	TopicController,
+	ExploreNavigationModel,
+	JSONModel,
+	Device
+) {
 	"use strict";
 
-	return BaseController.extend("sap.ui.demo.cardExplorer.controller.ExploreOverview", {
+	return TopicController.extend("sap.ui.demo.cardExplorer.controller.ExploreOverview", {
 
 		/**
 		 * Called when the controller is instantiated.
@@ -18,31 +20,31 @@ sap.ui.define([
 			var oRouter = this.getRouter();
 			oRouter.getRoute("exploreOverview").attachMatched(this._onRouteMatched, this);
 
-			this.jsonDefModel = new JSONModel();
-			this.getView().setModel(this.jsonDefModel);
+			this.oDefaultModel = new JSONModel();
+			this.getView().setModel(this.oDefaultModel);
 		},
 		_onRouteMatched: function (oEvent) {
 			var oArgs = oEvent.getParameter("arguments"),
-				sSampleKey = oArgs["key"],
-				topicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/explore/" + sSampleKey + '.html'),
-				topicTitle;
+				sTopic = oArgs.topic,
+				topicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/explore/" + sTopic + '.html'),
+				sTitle;
 
 			var navEntries = ExploreNavigationModel.getProperty('/navigation');
 			navEntries.forEach(function (element) {
-				if (element.key == sSampleKey) {
-					topicTitle = element.title;
+				if (element.key === sTopic) {
+					sTitle = element.title;
 				}
 			});
 
 			var jsonObj = {
-				pageTitle: topicTitle ? topicTitle : "Section",
+				pageTitle: sTitle,
 				topicURL: topicURL,
 				bIsPhone: Device.system.phone
 			};
 
-			this.jsonDefModel.setData(jsonObj);
+			this.oDefaultModel.setData(jsonObj);
 			this.onFrameSourceChange();
-
+			this.scrollTo(oArgs.id);
 		}
 	});
 });

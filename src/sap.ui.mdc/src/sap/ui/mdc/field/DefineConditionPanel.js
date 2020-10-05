@@ -25,7 +25,8 @@ sap.ui.define([
 	'sap/ui/layout/GridData',
 	'sap/m/library',
 	'sap/m/ScrollContainer',
-	'sap/m/Button'
+	'sap/m/Button',
+	'sap/m/Panel'
 ], function(
 		Control,
 		ManagedObjectObserver,
@@ -50,7 +51,8 @@ sap.ui.define([
 		GridData,
 		mLibrary,
 		ScrollContainer,
-		Button
+		Button,
+		Panel
 		) {
 	"use strict";
 
@@ -85,7 +87,7 @@ sap.ui.define([
 	 * @abstract
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.ValueHelpPanel
+	 * @ui5-restricted sap.ui.mdc.field.ValueHelpPanel sap.ui.mdc.field.ConditionFieldHelp
 	 */
 	var DefineConditionPanel = Control.extend("sap.ui.mdc.field.DefineConditionPanel", {
 		metadata: {
@@ -112,7 +114,18 @@ sap.ui.define([
 				formatOptions: {
 					type: "object",
 					defaultValue: {}
+				},
+
+				/**
+				 * The <code>label</code> for the <code>DefineConditionPanel</code> used as panel headerText.
+				 *
+				 * @since 1.84.0
+				 */
+				label: {
+					type: "string",
+					defaultValue: ""
 				}
+
 			},
 			aggregations: {
 				/**
@@ -498,19 +511,18 @@ sap.ui.define([
 
 		if (oControl.getMetadata().hasProperty("placeholder")) {
 			if (iIndex === 0) {
-				oControl.bindProperty("placeholder", {path: "$condition>operator", formatter: _getPlaceholderForOperator});
+				oControl.bindProperty("placeholder", {path: "$condition>operator", formatter: _getPlaceholder1ForOperator});
 			} else { // from Field cannot switch placeholder
-				oControl.bindProperty("placeholder", {path: "$i18n>valuehelp.DEFINECONDITIONS_TO"});
+				oControl.bindProperty("placeholder", {path: "$condition>operator", formatter: _getPlaceholder2ForOperator});
 			}
 		}
 
 		oControl._iValueIndex = iIndex; // to find it for update
-		oControl.addStyleClass("sapUiSmallPaddingBegin");
 		if (oControl.attachChange) { // custom control might not have a change event
 			oControl.attachChange(this.onChange.bind(this));
 		}
 		oControl.onpaste = this.onPaste.bind(this);
-		oControl.setLayoutData(new GridData({span: {path: "$condition>operator", formatter: _getSpanForOperator}}));
+		oControl.setLayoutData(new GridData({span: {path: "$condition>", formatter: _getSpanForValue.bind(this)}}));
 		oControl.setBindingContext(oValueBindingContext, "$this");
 		oControl.setBindingContext(oBindingContext, "$condition");
 
@@ -728,13 +740,13 @@ sap.ui.define([
 	function _createInnerControls() {
 		var oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
 
-		var oScrollContainer = new ScrollContainer({
+		var oPanel = new Panel({headerText: "{$this>/label}",
+			expanded: true,
 			height: "100%",
-			horizontal: false,
-			vertical: true
-		});
+			backgroundDesign: "Transparent"}
+		).addStyleClass("sapMdcDefineconditionPanel");
 
-		oScrollContainer.addDependent(
+		oPanel.addDependent(
 			new ListFieldHelp(this.getId() + "--rowSelect-help", {
 				items: { path:'om>/', templateShareable:false, template: new ListItem({key: "{om>key}", text: "{om>additionalText}", additionalText: "{om>info}"})},
 				filterList: false,
@@ -751,8 +763,8 @@ sap.ui.define([
 
 		_createRow.call(this, undefined, oGrid, 0, null, 0); // create dummy row
 
-		oScrollContainer.addContent(oInvisibleOperatorText);
-		oScrollContainer.addContent(oGrid);
+		oPanel.addContent(oInvisibleOperatorText);
+		oPanel.addContent(oGrid);
 
 		var oAddBtn = new Button(this.getId() + "--addBtn", {
 			press: this.addCondition.bind(this),
@@ -766,11 +778,11 @@ sap.ui.define([
 				visibleM: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
 				visibleL: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
 				visibleXL: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)}})}
-		).addStyleClass("sapUiSmallPaddingBegin");
+		);
 
 		oGrid.addContent(oAddBtn);
 
-		this.setAggregation("_content", oScrollContainer);
+		this.setAggregation("_content", oPanel);
 
 	}
 
@@ -780,6 +792,16 @@ sap.ui.define([
 		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
 
 		return iMaxConditions === -1 || aConditions.length < iMaxConditions;
+
+	}
+
+	function _getRemoveButtonVisible(aConditions) {
+
+		var oFormatOptions = this.getFormatOptions();
+		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+
+		// only on case of maxCondition==1 the Remove icons should be invisible
+		return iMaxConditions !== 1;
 
 	}
 
@@ -848,8 +870,7 @@ sap.ui.define([
 			change: this.onSelectChange.bind(this),
 			ariaLabelledBy: this.getId() + "--ivtOperator"
 		})
-		.addStyleClass("sapUiSmallPaddingBegin")
-		.setLayoutData(new GridData({span: "XL3 L3 M3 S10", linebreak: true}))
+		.setLayoutData(new GridData({span: {path: "$this>/conditions", formatter: _getSpanForOperator.bind(this)}, linebreak: true}))
 		.setBindingContext(oBindingContext, "$this");
 
 		// as selected key can be changed by reopening dialog listen on property change not on change event
@@ -866,8 +887,13 @@ sap.ui.define([
 			icon: "sap-icon://decline",
 			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
 		})
-		.addStyleClass("sapUiSmallPaddingBegin")
-		.setLayoutData(new GridData({span: "XL1 L1 M1 S2", indent: {path: "$this>operator", formatter: _getIndentForOperator}, visibleXL: false, visibleL: false, visibleM: false, visibleS: true}))
+		.setLayoutData(new GridData({span: "XL1 L1 M1 S2",
+			indent: {path: "$this>operator", formatter: _getIndentForOperator},
+			visibleS: {path: "$this>/conditions", formatter: _getRemoveButtonVisible.bind(this)},
+			visibleM: false,
+			visibleL: false,
+			visibleXL: false
+		}))
 		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
 
 		oGrid.insertContent(oRemoveButton, iIndex);
@@ -889,8 +915,13 @@ sap.ui.define([
 			icon: "sap-icon://decline",
 			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
 		})
-		.addStyleClass("sapUiSmallPaddingBegin")
-		.setLayoutData(new GridData({span: "XL1 L1 M1 S1", indent: {path: "$this>operator", formatter: _getIndentForOperator}, visibleXL: true, visibleL: true, visibleM: true, visibleS: false}))
+		.setLayoutData(new GridData({span: "XL1 L1 M1 S1",
+			indent: {path: "$this>operator", formatter: _getIndentForOperator},
+			visibleS: false,
+			visibleM: {path: "$this>/conditions", formatter: _getRemoveButtonVisible.bind(this)},
+			visibleL: {path: "$this>/conditions", formatter: _getRemoveButtonVisible.bind(this)},
+			visibleXL: {path: "$this>/conditions", formatter: _getRemoveButtonVisible.bind(this)}
+		}))
 		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
 
 		oGrid.insertContent(oRemoveButton2, iIndex);
@@ -929,28 +960,63 @@ sap.ui.define([
 
 	}
 
-	function _getSpanForOperator(sOperator) {
+	function _getSpanForOperator(aConditions) {
+		var oFormatOptions = this.getFormatOptions();
+		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+		var sSpan = "XL3 L3 M3 ";
 
-		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
-
-		if (oOperator && oOperator.valueTypes[1]) {
-			return "XL4 L4 M4 S10";
+		if (iMaxConditions === 1) {
+			sSpan += "S12";
 		} else {
-			return "XL8 L8 M8 S10";
+			sSpan += "S10";
 		}
-
+		return sSpan;
 	}
 
-	function _getPlaceholderForOperator(sOperator) {
+	function _getSpanForValue(oCondition) {
+		var oFormatOptions = this.getFormatOptions();
+		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+
+		var oOperator = oCondition && FilterOperatorUtil.getOperator(oCondition.operator);
+		var sSpan = "";
+
+		if (oOperator && oOperator.valueTypes[1]) {
+			sSpan = "XL4 L4 M4 ";
+		} else {
+			sSpan = "XL8 L8 M8 ";
+		}
+
+		if (iMaxConditions === 1) {
+			sSpan += "S12";
+		} else {
+			sSpan += "S10";
+		}
+		return sSpan;
+	}
+
+	function _getPlaceholder1ForOperator(sOperator) {
 
 		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
 
-		if (oOperator && oOperator.valueTypes[1]) {
+		if (oOperator && oOperator.aLabels) {
+			return oOperator.aLabels[0];
+		} else if (oOperator && oOperator.valueTypes[1]) {
 			return oMessageBundle.getText("valuehelp.DEFINECONDITIONS_FROM");
 		} else {
 			return oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE");
 		}
 
+	}
+
+	function _getPlaceholder2ForOperator(sOperator) {
+
+		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
+
+		if (oOperator && oOperator.aLabels) {
+			return oOperator.aLabels[1];
+		} else if (oOperator && oOperator.valueTypes[1]) {
+			return oMessageBundle.getText("valuehelp.DEFINECONDITIONS_TO");
+		}
 	}
 
 	function _updateRow(oCondition, oGrid, iIndex, oBindingContext, iRow) {
@@ -1009,7 +1075,7 @@ sap.ui.define([
 			} else {
 				oValue0Field.destroy();
 				oValue1Field = aGridContent[iIndex + 1];
-				if (oValue1Field) {
+				if (oValue1Field && oValue1Field.hasOwnProperty("_iValueIndex") && oValue1Field._iValueIndex === 1) {
 					oValue1Field.destroy();
 				}
 			}

@@ -1519,6 +1519,18 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test("aria-roledescription on root", function(assert) {
+		var oPC = new PlanningCalendar(),
+			sRoledescription = oPC._oRB.getText("PLANNINGCALENDAR");
+
+		oPC.placeAt("bigUiArea");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oPC.$().attr("aria-roledescription"), sRoledescription, "Control name is indicated in aria-roledescription");
+
+		oPC.destroy();
+	});
+
 	QUnit.module("views", {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar();

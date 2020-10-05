@@ -775,6 +775,30 @@ sap.ui.define([
 
 	};
 
+	// fire change event only if unit and currency field are left
+	function _validateFieldGroup(oEvent) {
+
+		var aFieldGroup = oEvent.getParameters().fieldGroupIds;
+		if (aFieldGroup.indexOf(this.getId()) > -1) { //own FieldGroup left
+			oEvent.bCancelBubble = true; //stop bubbling to the parent control
+
+			if (this._bPendingChange) {
+				var oFocusedElement = document.activeElement;
+				var oFieldHelp = _getFieldHelp.call(this);
+				if (!(oFocusedElement && oFieldHelp && containsOrEquals(oFieldHelp.getDomRef(), oFocusedElement))) {
+					var oPromise = _getAsyncPromise.call(this);
+
+					if (oPromise) {
+						_executeChange.call(this, undefined, undefined, undefined, oPromise);
+					} else {
+						_executeChange.call(this, this.getConditions(), !this._bParseError);
+					}
+				}
+			}
+		}
+
+	}
+
 	FieldBase.prototype.onsapup = function(oEvent) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
@@ -896,6 +920,17 @@ sap.ui.define([
 
 	function _triggerChange(aConditions, bValid, vWrongValue, oPromise) {
 
+		if (this._getContent().length > 1) {
+			// in unit/currency field fire Change only if ENTER pressed or field completely left. Not on focus between number and unit
+			this._bPendingChange = true;
+		} else {
+			_executeChange.call(this, aConditions, bValid, vWrongValue, oPromise);
+		}
+
+	}
+
+	function _executeChange(aConditions, bValid, vWrongValue, oPromise) {
+
 		if (!oPromise) {
 			// not promise -> change is synchronously -> return resolved SyncPromise
 			if (bValid) {
@@ -907,6 +942,8 @@ sap.ui.define([
 
 		this._fireChange(aConditions, bValid, vWrongValue, oPromise);
 
+		this._bPendingChange = false;
+
 	}
 
 	FieldBase.prototype._fireChange = function(aConditions, bValid, vWrongValue, oPromise) {
@@ -917,23 +954,25 @@ sap.ui.define([
 
 		var sEditMode = this.getEditMode();
 
-		if (_getEditable(sEditMode) && this.hasListeners("submit")) {
+		if (_getEditable(sEditMode) && (this.hasListeners("submit") || this._bPendingChange)) {
 			// collect all pending promises for ENTER, only if all resolved it's not pending. (Normally there should be only one.)
-			var aPromises = [];
-			var oPromise;
+			var oPromise = _getAsyncPromise.call(this);
+			var bPending = false;
 
-			for (var i = 0; i < this._aAsyncChanges.length; i++) {
-				aPromises.push(this._aAsyncChanges[i].promise);
-			}
-
-			if (aPromises.length > 0) {
-				oPromise = Promise.all(aPromises).then(function() {
-					return this._getResultForPromise(this.getConditions());
-				}.bind(this));
+			if (oPromise) {
+				bPending = true;
 			} else if (this._bParseError) {
 				oPromise = Promise.reject();
 			} else {
 				oPromise = Promise.resolve(this._getResultForPromise(this.getConditions()));
+			}
+
+			if (this._bPendingChange) {
+				if (bPending) {
+					_executeChange.call(this, undefined, undefined, undefined, oPromise);
+				} else {
+					_executeChange.call(this, this.getConditions(), !this._bParseError, undefined, oPromise);
+				}
 			}
 
 			this.fireSubmit({promise: oPromise});
@@ -1456,7 +1495,7 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 
 		if (oFieldHelp) {
-			var sRoleDescription = oFieldHelp.getRoleDescription();
+			var sRoleDescription = oFieldHelp.getRoleDescription(this.getMaxConditionsForHelp());
 			oAttributes["role"] = "combobox";
 			if (sRoleDescription) {
 				oAttributes.aria["roledescription"] = sRoleDescription;
@@ -1487,7 +1526,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Label} oLabel Label control
 	 * @returns {sap.ui.mdc.field.FieldBase} Reference to <code>this</code> to allow method chaining
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 * @experimental
 	 * @since 1.62.0 Disclaimer: this function is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1843,6 +1884,9 @@ sap.ui.define([
 				this.addAggregation("_content", oControl);
 			}
 			_refreshLabel.call(this);
+			if (aControls.length > 1) {
+				this.attachValidateFieldGroup(_validateFieldGroup, this);
+			}
 		}
 	}
 
@@ -1853,6 +1897,10 @@ sap.ui.define([
 	}
 
 	function _destroyInternalContent() {
+
+		if (this._getContent().length > 1) {
+			this.detachValidateFieldGroup(_validateFieldGroup, this);
+		}
 
 		// if the internalContent must be new created the data type must be switched back to original one
 		// so new creation of control is using original data
@@ -1870,6 +1918,10 @@ sap.ui.define([
 			// as wrong input get lost if content control is destroyed.
 			this._bParseError = false;
 			_removeUIMessage.call(this);
+		}
+
+		if (this._bIsMeasure) {
+			this._bIsMeasure = false;
 		}
 
 	}
@@ -1906,6 +1958,7 @@ sap.ui.define([
 			enabled: { path: "$field>/editMode", formatter: _getEnabled },
 			valueState: "{$field>/valueState}",
 			valueStateText: "{$field>/valueStateText}",
+			valueHelpIconSrc: _getFieldHelpIcon.call(this),
 			showValueHelp: "{$field>/_fieldHelpEnabled}",
 			ariaAttributes: "{$field>/_ariaAttributes}",
 			width: "100%",
@@ -1916,7 +1969,6 @@ sap.ui.define([
 		});
 
 		oInput._setPreferUserInteraction(true);
-		_addFieldHelpIcon.call(this, oInput);
 		_setAriaLabelledBy.call(this, oInput);
 		this._sBoundProperty = "value";
 
@@ -1967,6 +2019,7 @@ sap.ui.define([
 			valueState: "{$field>/valueState}",
 			valueStateText: "{$field>/valueStateText}",
 			showValueHelp: "{$field>/_fieldHelpEnabled}",
+			valueHelpIconSrc: _getFieldHelpIcon.call(this),
 			ariaAttributes: "{$field>/_ariaAttributes}",
 			width: "100%",
 			tooltip: "{$field>/tooltip}",
@@ -1979,7 +2032,6 @@ sap.ui.define([
 		});
 
 		oMultiInput._setPreferUserInteraction(true);
-		_addFieldHelpIcon.call(this, oMultiInput);
 		_setAriaLabelledBy.call(this, oMultiInput);
 
 		return [oMultiInput];
@@ -2138,6 +2190,7 @@ sap.ui.define([
 			placeholder: "{$field>/placeholder}",
 			textAlign: "{$field>/textAlign}",
 			textDirection: "{$field>/textDirection}",
+			valueHelpIconSrc: "sap-icon://slim-arrow-down",
 			required: "{$field>/required}",
 			editable: { path: "$field>/editMode", formatter: _getEditable },
 			enabled: { path: "$field>/editMode", formatter: _getEnabled },
@@ -2146,6 +2199,7 @@ sap.ui.define([
 			showValueHelp: false,
 			width: "70%",
 			tooltip: "{$field>/tooltip}",
+			fieldGroupIds: [this.getId()], // use FieldGroup to fire change only if focus leaved complete Field
 			change: _handleContentChange.bind(this),
 			liveChange: _handleContentLiveChange.bind(this)
 		});
@@ -2199,6 +2253,7 @@ sap.ui.define([
 			showValueHelp: false,
 			width: "70%",
 			tooltip: "{$field>/tooltip}",
+			fieldGroupIds: [this.getId()], // use FieldGroup to fire change only if focus leaved complete Field
 			tokens: {path: "$field>/conditions", template: oToken, filters: [oFilter]},
 			dependents: [oToken], // to destroy it if MultiInput is destroyed
 			change: _handleContentChange.bind(this),
@@ -2234,18 +2289,19 @@ sap.ui.define([
 				editable: { path: "$field>/editMode", formatter: _getEditableUnit },
 				enabled: { path: "$field>/editMode", formatter: _getEnabled },
 				valueState: "{$field>/valueState}",
+				valueHelpIconSrc: _getFieldHelpIcon.call(this),
 				valueStateText: "{$field>/valueStateText}",
 				showValueHelp: "{$field>/_fieldHelpEnabled}",
 				ariaAttributes: "{$field>/_ariaAttributes}",
 				width: "30%",
 				tooltip: "{$field>/tooltip}",
+				fieldGroupIds: [this.getId()], // use FieldGroup to fire change only if focus leaved complete Field
 				change: _handleContentChange.bind(this),
 				liveChange: _handleContentLiveChange.bind(this),
 				valueHelpRequest: _handleValueHelpRequest.bind(this)
 			});
 
 			oInput._setPreferUserInteraction(true);
-			_addFieldHelpIcon.call(this, oInput);
 			_setAriaLabelledBy.call(this, oInput);
 			aControls.push(oInput);
 		}
@@ -2375,7 +2431,10 @@ sap.ui.define([
 	function _defaultFieldHelpUpdate() {
 
 		_fieldHelpChanged.call(this, "BoolDefaultHelp", "insert");
-		_addFieldHelpIcon.call(this, this.getAggregation("_content", [])[0]);
+		var oControl = this.getAggregation("_content", [])[0];
+		if (oControl) {
+			oControl.setValueHelpIconSrc(_getFieldHelpIcon.call(this));
+		}
 
 	}
 
@@ -2836,7 +2895,7 @@ sap.ui.define([
 			}
 
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole field
-			_triggerChange.call(this, aConditions, true );
+			_executeChange.call(this, aConditions, true ); // removing Token don't need to wait for processing both fields in unit case
 			oEvent.preventDefault(true);
 		}
 
@@ -3219,44 +3278,12 @@ sap.ui.define([
 
 	}
 
-	// TODO: need API on Input
-	function _addFieldHelpIcon(oControl) {
+	function _getFieldHelpIcon() {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 
-		if (oFieldHelp && oControl && oControl.addEndIcon) {
-			var sIconName = oFieldHelp.getIcon();
-			var oIcon = oControl.getAggregation("_endIcon", [])[0];
-
-			if (oIcon) {
-				oIcon.setSrc(sIconName);
-			} else {
-				oControl.addEndIcon({
-					id: oControl.getId() + "-vhi",
-					src: sIconName,
-					useIconTooltip: false,
-					noTabStop: true,
-					press: function (oEvent) {
-						// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
-						if (!this.getValueHelpOnly()) {
-							var $input;
-
-							if (Device.support.touch) {
-								// prevent opening the soft keyboard
-								$input = this.$('inner');
-								$input.attr('readonly', 'readonly');
-								this.focus();
-								$input.removeAttr('readonly');
-							} else {
-								this.focus();
-							}
-
-							this.bValueHelpRequested = true;
-							this.fireValueHelpRequest({ fromSuggestions: false });
-						}
-					}.bind(oControl)
-				});
-			}
+		if (oFieldHelp) {
+			return oFieldHelp.getIcon();
 		}
 
 	}
@@ -3510,6 +3537,24 @@ sap.ui.define([
 
 		oChange.promise = oMyPromise;
 		this._aAsyncChanges.push(oChange);
+
+	}
+
+	function _getAsyncPromise() {
+
+		var aPromises = [];
+
+		for (var i = 0; i < this._aAsyncChanges.length; i++) {
+			aPromises.push(this._aAsyncChanges[i].promise);
+		}
+
+		if (aPromises.length > 0) {
+			return Promise.all(aPromises).then(function() {
+				return this._getResultForPromise(this.getConditions());
+			}.bind(this));
+		}
+
+		return null;
 
 	}
 

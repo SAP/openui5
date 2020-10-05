@@ -331,7 +331,7 @@ sap.ui.define([
 		oRating0.setValue(99); // too large
 		assert.strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
 		assert.throws(function () {
-			oRating0.setValue("Querstromzerspaner");
+			oRating0.setValue({});
 		}, /expected float/, "Passing in a wrong type should throw an error");
 		assert.strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
 
@@ -368,6 +368,37 @@ sap.ui.define([
 		assert.strictEqual(oRating.getValue(), 0, "The rating value is 0 after calling the setter with \"null\" on " + oRating);
 
 		oRating.destroy();
+	});
+
+	QUnit.test("setValue()", function(assert) {
+		// Arrange
+		var oRating1 = new RatingIndicator({
+			value: "3.125E-01"
+		}),
+		oRating2 = new RatingIndicator({
+			value: 2
+		});
+
+		oRating1.placeAt("content");
+		oRating2.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oRating1.getValue(), 0.5, "The value is  valid and correctly formatted");
+		assert.strictEqual(oRating2.getValue(), 2, "The value is correct");
+
+		// Act
+		oRating2.setValue("abv");
+		oRating2.setValue("3.125E-01");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oRating1.getValue(), 0.5, "The value is not changed because it is not a valid one.");
+		assert.strictEqual(oRating2.getValue(), 0.5, "The value is changed successfuly");
+
+		// Clean
+		oRating1.destroy();
+		oRating2.destroy();
 	});
 
 	QUnit.test("Popover should be in compact mode if one of it's parents is compact", function (assert) {

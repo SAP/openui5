@@ -168,6 +168,16 @@ sap.ui.define([
 					}
 				},
 				/**
+				 * Defines the semantic level of the title.
+				 * For more information, see {@link sap.m.Title#setLevel}.
+				 * @since 1.84
+				 */
+				titleLevel: {
+					type: "sap.ui.core.TitleLevel",
+					group: "Appearance",
+					defaultValue: sap.ui.core.TitleLevel.Auto
+				},
+				/**
 				 * Contains the information required for binding the rows/items of the table. Changes to this property are only reflected once the
 				 * next complete rebind on the table occurs.<br>
 				 * <b>Note:</b> Do not add filters and sorters here as they will not be shown on the <code>p13n</code> panels of the table.
@@ -676,6 +686,19 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Sets the value for the <code>titleLevel</code> property.
+	 * @param {string} sLevel - The level that is set to the title
+	 */
+	Table.prototype.setTitleLevel = function(sLevel) {
+		if (this.getTitleLevel() === sLevel) {
+			return this;
+		}
+		this.setProperty("titleLevel", sLevel, true);
+		this._oTitle && this._oTitle.setLevel(sLevel);
+		return this;
+	};
+
 	Table.prototype.focus = function(oFocusInfo) {
 		//see Element.prototype.focus, MDCTable does not have any own focusable DOM, therefor forward to inner control
 		var oDomRef = this.getDomRef();
@@ -1085,7 +1108,8 @@ sap.ui.define([
 			// Create Title
 			this._oTitle = new Title(this.getId() + "-title", {
 				text: this.getHeader(),
-				width: this.getHeaderVisible() ? undefined : "0px"
+				width: this.getHeaderVisible() ? undefined : "0px",
+				level: this.getTitleLevel()
 			});
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
@@ -1540,40 +1564,31 @@ sap.ui.define([
 		}
 
 		// TODO: Add utils in mdc.table.PropertyHelper to get sortable, filterable(, and visible) properties that are associated with a column.
+		var iIndex,
+			oParent = oColumn.getParent(),
+			oMDCColumn;
 
-		var iIndex;
-		if (oColumn.getParent()) {
-			iIndex = oColumn.getParent().indexOfColumn(oColumn);
-		}
+		iIndex = oParent.indexOfColumn(oColumn);
 
-		var aDataProperties = this.getColumns()[iIndex].getDataProperties(),
-			aSortProperties;
+		oMDCColumn = this.getColumns()[iIndex];
 
-		if (!aDataProperties.length) {
-			return;
-		}
+		this.awaitPropertyHelper().then(function(oPropertyHelper) {
+			var aSortProperties = oPropertyHelper.getColumnSortProperties(oMDCColumn);
 
-		// provide sort action on columnHeadePopover if the property is sortable
-		this.getControlDelegate().fetchProperties(this).then(function(aProperties) {
-			aSortProperties = aProperties.filter(function(oPropertyInfo) {
-				return aDataProperties.indexOf(oPropertyInfo.name) >= 0 && oPropertyInfo.sortable;
-			});
-
-			if (aSortProperties.length === 0) {
+			if (!aSortProperties.length) {
 				return;
 			}
 
 			var oSortChild, aSortChildren = [];
 
-			// create sort items
-			for (var i = 0; i < aSortProperties.length; i++) {
+			aSortProperties.forEach(function(oSortProperty) {
 				oSortChild = new Item({
-					text: aSortProperties[i].name,
-					key: aSortProperties[i].name
+					text: oPropertyHelper.getName(oSortProperty),
+					key: oPropertyHelper.getName(oSortProperty)
 				});
 
 				aSortChildren.push(oSortChild);
-			}
+			});
 
 			// create ColumnHeaderPopover
 			if (aSortChildren.length > 0) {

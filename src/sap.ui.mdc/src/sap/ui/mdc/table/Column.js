@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element", "sap/m/Label"
-], function(Element, Label) {
+	"sap/ui/core/Element", "sap/m/Label", "sap/ui/core/Core"
+], function(Element, Label, Core) {
 	"use strict";
 
 	/**
@@ -132,19 +132,58 @@ sap.ui.define([
 		}
 
 		this.setProperty("headerVisible", bHeaderVisible, true);
-		this._updateColumnHeaderControl(bHeaderVisible);
+		this._updateColumnHeaderControl();
+		return this;
+	};
+
+	Column.prototype.setHeader = function(sHeader) {
+		this.setProperty("header", sHeader, true);
+		this._updateColumnHeaderControl();
+		var oLabelElement = document.getElementById(this.getId());
+		if (oLabelElement) {
+			oLabelElement.textContent = this.getHeader();
+		}
+
+		return this;
+	};
+
+	Column.prototype.setHAlign = function(sHAlign) {
+		this.setProperty("hAlign", sHAlign, true);
+		this._updateColumnHeaderControl();
 		return this;
 	};
 
 	/**
-	 * Updates the column header control based on the <code>headerVisible</code> property.
-	 * @param {boolean} bHeaderVisible -  column header visibility
+	 * Updates the column header control based on the current column property seetings.
 	 * @private
 	 */
-	Column.prototype._updateColumnHeaderControl = function(bHeaderVisible) {
+	Column.prototype._updateColumnHeaderControl = function() {
 		if (this._oColumnHeaderLabel) {
-			this._oColumnHeaderLabel.setWidth(bHeaderVisible ? null : "0px");
-			this._oColumnHeaderLabel.setWrapping(false);
+			this._oColumnHeaderLabel.setWidth(this.getHeaderVisible() ? null : "0px");
+			this._oColumnHeaderLabel.setWrapping(this._bMobileTable && this.getHeaderVisible());
+			this._oColumnHeaderLabel.setText(this.getHeader());
+			this._oColumnHeaderLabel.setTextAlign(this.getHAlign());
+		}
+	};
+
+	Column.prototype.setParent = function(oParent) {
+		var oPrevParent = this.getParent();
+		Element.prototype.setParent.apply(this, arguments);
+		if (oParent && oParent.isA("sap.ui.mdc.Table")) {
+			if (oParent.getDomRef()) {
+				this._addAriaStaticDom();
+			} else {
+					this.oAfterRenderingDelegate = {
+					onAfterRendering: function () {
+						this._addAriaStaticDom();
+						this.getParent().removeDelegate(this.oAfterRenderingDelegate);
+					}
+				};
+				oParent.addDelegate(this.oAfterRenderingDelegate, this);
+			}
+		} else if (!oParent) {
+			oPrevParent.removeDelegate(this.oAfterRenderingDelegate);
+			this._removeAriaStaticDom();
 		}
 	};
 
@@ -161,14 +200,35 @@ sap.ui.define([
 		}
 
 		this._oColumnHeaderLabel = new Label(this.getId() + "-innerColumnHeader", {
-			textAlign: this.getHAlign(),
-			text: this.getHeader(),
-			wrapping: bMobileTable && this.getHeaderVisible(),
-			wrappingType: bMobileTable ? "Hyphenated" : null,
-			width: this.getHeaderVisible() ? null : "0px"
+			wrappingType: bMobileTable ? "Hyphenated" : null
 		});
+		this._bMobileTable = bMobileTable;
+
+		this._updateColumnHeaderControl();
 
 		return this._oColumnHeaderLabel;
+	};
+
+	Column.prototype._removeAriaStaticDom = function() {
+		var oDomElement = document.getElementById(this.getId());
+
+		if (oDomElement) {
+			oDomElement.parentNode.removeChild(oDomElement);
+		}
+	};
+
+	Column.prototype._addAriaStaticDom = function() {
+		var oInvisibleDiv = document.createElement("div");
+		oInvisibleDiv.setAttribute("id", this.getId());
+		oInvisibleDiv.setAttribute("class", "sapUiInvisibleText");
+		oInvisibleDiv.setAttribute("aria-hidden", "true");
+		var oHeaderTextNode = document.createTextNode(this.getHeader());
+		oInvisibleDiv.appendChild(oHeaderTextNode);
+		var oStaticDiv = Core.getStaticAreaRef();
+
+		if (oInvisibleDiv && oStaticDiv) {
+			oStaticDiv.appendChild(oInvisibleDiv);
+		}
 	};
 
 	Column.prototype.exit = function() {
@@ -186,6 +246,7 @@ sap.ui.define([
 			this._oColumnHeaderLabel.destroy();
 			this._oColumnHeaderLabel = null;
 		}
+		this._removeAriaStaticDom();
 	};
 
 	return Column;

@@ -2,7 +2,8 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<ViewSettingsDialog
-		confirm="handleGroupDialogConfirm">
+		confirm=".handleGroupDialogConfirm"
+		reset=".resetGroupDialog">
 		<groupItems>
 			<ViewSettingsItem text="Supplier" key="SupplierName" />
 			<ViewSettingsItem text="Price" key="Price" />

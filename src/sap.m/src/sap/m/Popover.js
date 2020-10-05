@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/Device',
-	'sap/ui/base/ManagedObject',
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	'sap/ui/core/library',
 	'sap/ui/core/Element',
@@ -43,7 +42,6 @@ sap.ui.define([
 		ScrollEnablement,
 		Parameters,
 		Device,
-		ManagedObject,
 		ResponsivePaddingsEnablement,
 		coreLibrary,
 		Element,
@@ -2624,7 +2622,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype._applyContextualSettings = function () {
-			ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+			Control.prototype._applyContextualSettings.call(this);
 		};
 
 		// enrich the control functionality with TitleAlignmentMixin

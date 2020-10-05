@@ -6,7 +6,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 			form: {
 				items: {
 					dateParameter: {
-						"manifestpath": "/sap.card/configuration/parameters/dateParameter",
+						"manifestpath": "/sap.card/configuration/parameters/dateParameter/value",
 						"type": "date"
 					}
 				}

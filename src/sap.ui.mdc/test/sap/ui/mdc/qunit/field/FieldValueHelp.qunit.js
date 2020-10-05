@@ -830,12 +830,12 @@ sap.ui.define([
 	QUnit.test("getRoleDescription", function(assert) {
 
 		assert.strictEqual(oFieldHelp.getRoleDescription(), null, "no role description returned as default");
+		assert.strictEqual(oFieldHelp.getRoleDescription(1), null, "no role description returned for maxCondition = 1");
 
-		oFieldHelp.connect(oField2);
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		var sText = oResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
 
-		assert.strictEqual(oFieldHelp.getRoleDescription(), sText, "no role description returned for multi-combobox");
+		assert.strictEqual(oFieldHelp.getRoleDescription(-1), sText, "no role description returned for multi-combobox");
 
 	});
 
@@ -1213,8 +1213,15 @@ sap.ui.define([
 		oWrapper.fireNavigate();
 		assert.equal(iNavigate, 0, "Navigate event not fired");
 		assert.ok(oFieldHelp.isFocusInHelp.returnValues[0], "isFocusInHelp returns true");
-
 		assert.ok(oPopover.isOpen(), "Field help opened");
+
+		sinon.spy(oField, "focus");
+		oWrapper.fireNavigate({leave: true});
+		oClock.tick(iPopoverDuration); // fake closing time
+		assert.equal(iNavigate, 0, "Navigate event not fired");
+		assert.ok(oPopover.isOpen(), "Field help opened");
+		assert.ok(oField.focus.called, "focus set on Field");
+
 		oFieldHelp.close();
 		oClock.tick(iPopoverDuration); // fake closing time
 		assert.ok(oWrapper.fieldHelpClose.called, "fieldHelpClose of Wrapper called");

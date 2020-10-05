@@ -3,12 +3,10 @@
 sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Label',
-	'sap/m/Page',
 	'sap/m/QuickViewPage',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	"sap/ui/core/StashedControlSupport",
-	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
 	"sap/ui/base/Event",
@@ -18,12 +16,10 @@ sap.ui.define([
 function(
 	Button,
 	Label,
-	Page,
 	QuickViewPage,
 	XMLView,
 	JsControlTreeModifier,
 	StashedControlSupport,
-	UIComponent,
 	JSONModel,
 	CustomData,
 	Event,
@@ -32,6 +28,7 @@ function(
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+	StashedControlSupport.mixInto(Button);
 
 	QUnit.module("Using the JsControlTreeModifier...", {
 		beforeEach: function () {
@@ -149,6 +146,26 @@ function(
 
 			// assert
 			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton), 0, "then the index of the most recently created button is found correctly");
+		});
+
+		QUnit.test("createAndAddCustomData adds Custom Data properly", function(assert) {
+			var oCreateStub = sandbox.stub(JsControlTreeModifier, "createControl").returns("foo");
+			var oSetPropertyStub = sandbox.stub(JsControlTreeModifier, "setProperty");
+			var oInsertAggregationStub = sandbox.stub(JsControlTreeModifier, "insertAggregation");
+			JsControlTreeModifier.createAndAddCustomData(this.oControl, "myKey", "myValue", this.oComponent);
+			assert.equal(oCreateStub.lastCall.args[0], "sap.ui.core.CustomData", "the type is passed");
+			assert.equal(oCreateStub.lastCall.args[1], this.oComponent, "the component is passed");
+
+			assert.equal(oSetPropertyStub.callCount, 2, "two properties were set");
+			assert.equal(oSetPropertyStub.getCall(0).args[1], "key", "the key is set");
+			assert.equal(oSetPropertyStub.getCall(0).args[2], "myKey", "the key is set");
+			assert.equal(oSetPropertyStub.getCall(1).args[1], "value", "the value is set");
+			assert.equal(oSetPropertyStub.getCall(1).args[2], "myValue", "the value is set");
+
+			assert.equal(oInsertAggregationStub.lastCall.args[0], this.oControl, "the control is passed");
+			assert.equal(oInsertAggregationStub.lastCall.args[1], "customData", "the aggregation name is passed");
+			assert.equal(oInsertAggregationStub.lastCall.args[2], "foo", "the new custom data control is passed");
+			assert.equal(oInsertAggregationStub.lastCall.args[3], 0, "the index is passed");
 		});
 
 		QUnit.test("the modifier is not invalidating controls for changes in custom data aggregation", function (assert) {
@@ -396,17 +413,16 @@ function(
 			assert.equal(JsControlTreeModifier.isPropertyInitial(this.oControl, "text"), false, "the text property of the button is not initial");
 		});
 
-		QUnit.test("when getStashed is called for non-stash control with visible property true", function(assert) {
-			this.oControl = new Button({ text: "Test"  });
-			this.oControl.getStashed = function () { };
-			var fnGetVisibleSpy = sandbox.spy(this.oControl, "getVisible");
-			assert.strictEqual(JsControlTreeModifier.getStashed(this.oControl), false, "then false is returned");
-			assert.ok(fnGetVisibleSpy.calledOnce, "then getVisible is called once");
+		QUnit.test("when getStashed is called for non-stash control", function(assert) {
+			this.oControl = new Label({ text: "Test"  });
+			assert.throws(function() {
+				JsControlTreeModifier.getStashed(this.oControl);
+			}, /Provided control instance has no isStashed method/, "then the function thwors an error");
 		});
 
 		QUnit.test("when getStashed is called for a stashed control", function(assert) {
 			this.oControl = new Button({ text: "Test"  });
-			this.oControl.getStashed = function () {
+			this.oControl.isStashed = function () {
 				return true;
 			};
 			var fnGetVisibleSpy = sandbox.spy(this.oControl, "getVisible");
@@ -416,10 +432,7 @@ function(
 
 		QUnit.test("when setStashed is called for an already unstashed control", function(assert) {
 			this.oControl = new Button({ text: "Test"  });
-			this.oControl.getStashed = function () { };
-			this.oControl.setStashed = function () {
-				assert.ok(false, "then setStashed() should not be called on a non-stash control");
-			};
+			this.oControl.isStashed = function () { return false;};
 			var fnSetVisibleSpy = sandbox.spy(JsControlTreeModifier, "setVisible");
 			JsControlTreeModifier.setStashed(this.oControl, true);
 
@@ -428,38 +441,26 @@ function(
 			assert.strictEqual(this.oControl.getVisible(), false, "then visible property of control is set to false");
 		});
 
-		QUnit.test("when setStashed is called for stash control and no new control is created", function(assert) {
-			var done = assert.async();
-			this.oControl = new Page("pageId");
-			var oStashedControl = StashedControlSupport.createStashedControl("stashedControlId", { sParentId: "pageId" });
+		QUnit.test("when setStashed is called for stash control", function(assert) {
+			var oXmlString =
+			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+				'<Panel id="panel">' +
+					'<Button id="button1" text="button" stashed="true"></Button>' +
+				'</Panel>' +
+			'</mvc:View>';
 
-			sandbox.stub(JsControlTreeModifier, "setVisible");
-			sandbox.stub(oStashedControl, "setStashed").callsFake(function (bValue) {
-				assert.ok(!bValue, "then setStashed() called on control");
-				done();
-			});
-			JsControlTreeModifier.setStashed(oStashedControl, false);
-			assert.strictEqual(JsControlTreeModifier.setVisible.callCount, 0, "then JsControlTreeModifier setVisible() not called");
-			oStashedControl.destroy();
-		});
+			return XMLView.create({id: "testapp---view", definition: oXmlString}).then(function(oXmlView) {
+				this.oXmlView = oXmlView;
+				var oStashedControl = this.oXmlView.byId("button1");
 
-		QUnit.test("when setStashed is called for stash control and a new control is created", function(assert) {
-			this.oControl = new Page("pageId");
-			var oStashedControl = StashedControlSupport.createStashedControl("stashedControlId", { sParentId: "pageId" });
+				sandbox.stub(JsControlTreeModifier, "setVisible");
 
-			sandbox.stub(JsControlTreeModifier, "setVisible");
+				var oUnstashedControl = JsControlTreeModifier.setStashed(oStashedControl, false);
+				assert.ok(oUnstashedControl instanceof Button, "then the returned control is the unstashed control");
+				assert.ok(JsControlTreeModifier.setVisible.calledWith(oUnstashedControl, true), "then JsControlTreeModifier setVisible() called for the unstashed control");
 
-			sandbox.stub(oStashedControl, "setStashed").callsFake(function (bValue) {
-				oStashedControl.destroy();
-				// new control replaces stashed control
-				new Button("stashedControlId");
-				assert.ok(!bValue, "then setStashed() called on control");
-			});
-
-			var oUnstashedControl = JsControlTreeModifier.setStashed(oStashedControl, false, new UIComponent("mockComponent"));
-			assert.ok(oUnstashedControl instanceof Button, "then the returned control is the unstashed control");
-			assert.ok(JsControlTreeModifier.setVisible.calledWith(oUnstashedControl, true), "then JsControlTreeModifier setVisible() called for the unstashed control");
-			oUnstashedControl.destroy();
+				this.oXmlView.destroy();
+			}.bind(this));
 		});
 
 		QUnit.test("when getProperty is called for a property of type object", function(assert) {

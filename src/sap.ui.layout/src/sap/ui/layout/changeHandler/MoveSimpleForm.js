@@ -417,6 +417,14 @@ function(
 		return true;
 	};
 
+	MoveSimpleForm.getChangeVisualizationInfo = function(oChange) {
+		var oMovedElement = oChange.getContent().movedElements[0];
+		return {
+			affectedControls: [oMovedElement.elementSelector],
+			dependentControls: [(oMovedElement.source.groupSelector || oChange.getContent().targetSelector)]
+		};
+	};
+
 	return MoveSimpleForm;
 },
 /* bExport= */true);

@@ -110,7 +110,7 @@ sap.ui.define([
 		When.onThePresetsPage.iOpenPresetsPopover();
 		Then.onThePresetsPage.iShouldSeePresetInPopover(testPresetHana._forTestTitleIfModified)
 			.and.iShouldSeeSelectedPreset(testPresetHana._forTestTitleIfModified);
-
+		When.onThePresetsPage.iClosePresetsPopover();
 	});
 
 	opaTest("Should be able to delete a preset and fallback to My Selection", function(Given, When, Then) {
@@ -126,6 +126,7 @@ sap.ui.define([
 
 		Then.onThePresetsPage.iShouldSeeNumberOfPresetsInPopover(presetsCountBeforeDelete - 1);
 		Then.onThePresetsPage.iShouldSeeSelectedPreset(presetUtil.titles.MY_SELECTION_TITLE);
+		When.onThePresetsPage.iClosePresetsPopover();
 
 	});
 

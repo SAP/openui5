@@ -466,6 +466,26 @@ function(
 							return UniversalDateUtils.ranges.lastDays(iDuration);
 						}
 					}),
+					todayXYDays: new RangeOperator({
+						name: "TODAYXYDAYS",
+						valueTypes: [
+							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }}, //, constraints: { minimum: 0 }},
+							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }} //, constraints: { minimum: 0 }}
+						],
+						paramTypes: ["(\\d+)", "(\\d+)"],
+						//label:["x", "y"],
+						additionalInfo: "",
+						calcRange: function (xDays, yDays) {
+							var oStart = xDays >= 0 ?  UniversalDateUtils.ranges.lastDays(xDays)[0] : UniversalDateUtils.ranges.nextDays(-xDays)[1];
+							var oEnd = yDays >= 0 ? UniversalDateUtils.ranges.nextDays(yDays)[1] : UniversalDateUtils.ranges.lastDays(-yDays)[0];
+
+							if (oStart.oDate.getTime() > oEnd.oDate.getTime()) {
+								oEnd = [oStart, oStart = oEnd][0];
+							}
+
+							return [UniversalDateUtils.resetStartTime(oStart), UniversalDateUtils.resetEndTime(oEnd)];
+						}
+					}),
 					nextDays: new RangeOperator({
 						name: "NEXTDAYS",
 						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
@@ -1051,11 +1071,11 @@ function(
 				BaseType.Date,
 				[
 				 FilterOperatorUtil._mOperators.equal,
-				 FilterOperatorUtil._mOperators.between,
+				 FilterOperatorUtil._mOperators.greaterEqual,
 				 FilterOperatorUtil._mOperators.lessEqual,
 				 FilterOperatorUtil._mOperators.lowerThan,
-				 FilterOperatorUtil._mOperators.greaterEqual,
 				 FilterOperatorUtil._mOperators.greaterThan,
+				 FilterOperatorUtil._mOperators.between,
 
 				 FilterOperatorUtil._mOperators.notEqual,
 				 FilterOperatorUtil._mOperators.notBetween,
@@ -1064,27 +1084,28 @@ function(
 				 FilterOperatorUtil._mOperators.notGreaterEqual,
 				 FilterOperatorUtil._mOperators.notGreaterThan,
 
-				 FilterOperatorUtil._mOperators.lastDays,
-				 FilterOperatorUtil._mOperators.yesterday,
 				 FilterOperatorUtil._mOperators.today,
+				 FilterOperatorUtil._mOperators.yesterday,
 				 FilterOperatorUtil._mOperators.tomorrow,
+				 FilterOperatorUtil._mOperators.todayXYDays,
+				 FilterOperatorUtil._mOperators.lastDays,
 				 FilterOperatorUtil._mOperators.nextDays,
 
-				 FilterOperatorUtil._mOperators.lastWeeks,
-				 FilterOperatorUtil._mOperators.lastWeek,
 				 FilterOperatorUtil._mOperators.currentWeek,
+				 FilterOperatorUtil._mOperators.lastWeek,
+				 FilterOperatorUtil._mOperators.lastWeeks,
 				 FilterOperatorUtil._mOperators.nextWeek,
 				 FilterOperatorUtil._mOperators.nextWeeks,
 
-				 FilterOperatorUtil._mOperators.lastMonths,
-				 FilterOperatorUtil._mOperators.lastMonth,
 				 FilterOperatorUtil._mOperators.currentMonth,
+				 FilterOperatorUtil._mOperators.lastMonth,
+				 FilterOperatorUtil._mOperators.lastMonths,
 				 FilterOperatorUtil._mOperators.nextMonth,
 				 FilterOperatorUtil._mOperators.nextMonths,
 
-				 FilterOperatorUtil._mOperators.lastQuarters,
-				 FilterOperatorUtil._mOperators.lastQuarter,
 				 FilterOperatorUtil._mOperators.currentQuarter,
+				 FilterOperatorUtil._mOperators.lastQuarter,
+				 FilterOperatorUtil._mOperators.lastQuarters,
 				 FilterOperatorUtil._mOperators.nextQuarter,
 				 FilterOperatorUtil._mOperators.nextQuarters,
 
@@ -1093,14 +1114,14 @@ function(
 				 FilterOperatorUtil._mOperators.thirdQuarter,
 				 FilterOperatorUtil._mOperators.fourthQuarter,
 
-				 FilterOperatorUtil._mOperators.lastYears,
-				 FilterOperatorUtil._mOperators.lastYear,
 				 FilterOperatorUtil._mOperators.currentYear,
+				 FilterOperatorUtil._mOperators.lastYear,
+				 FilterOperatorUtil._mOperators.lastYears,
 				 FilterOperatorUtil._mOperators.nextYear,
 				 FilterOperatorUtil._mOperators.nextYears,
 
 				 FilterOperatorUtil._mOperators.yearToDate
-				 // FilterOperatorUtil._mOperators.month
+				 // FilterOperatorUtil._mOperators.month  - currently not supported
 				 ]
 		);
 		FilterOperatorUtil.setOperatorsForType(

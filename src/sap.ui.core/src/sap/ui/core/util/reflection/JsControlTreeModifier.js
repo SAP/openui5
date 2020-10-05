@@ -5,19 +5,19 @@
  */
 
 sap.ui.define([
+	"sap/ui/base/BindingParser",
 	"./BaseTreeModifier",
-	"./XmlTreeModifier", // needed to get extension point info from oView._xContent
+	"./XmlTreeModifier",
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
-	"sap/ui/core/Component",
 	"sap/base/util/merge",
 	"sap/ui/core/Fragment" // also needed to have sap.ui.xmlfragment
 ], function (
+	BindingParser,
 	BaseTreeModifier,
 	XmlTreeModifier,
 	ObjectPath,
 	XMLHelper,
-	Component,
 	merge,
 	Fragment
 ) {
@@ -63,36 +63,22 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		setStashed: function (oControl, bStashed, oAppComponent) {
+		setStashed: function (oControl, bStashed) {
 			bStashed = !!bStashed;
-			if (oControl.setStashed) {
-				var oUnstashedControl;
-
+			if (oControl.unstash) {
 				// check if the control is stashed and should be unstashed
-				if (oControl.getStashed() === true && bStashed === false) {
-					oControl.setStashed(bStashed);
-
-					// replace stashed control with original control
-					// some change handlers (e.g. StashControl) do not pass the component
-					if (oAppComponent instanceof Component) {
-						oUnstashedControl = this.bySelector(
-							this.getSelector(oControl, oAppComponent),  // returns a selector
-							oAppComponent
-						);
-					}
-
+				if (oControl.isStashed() === true && bStashed === false) {
+					oControl = oControl.unstash();
 				}
 
 				// ensure original control's visible property is set
-				// stashed controls do not have a setVisible()
-				if ((oUnstashedControl || oControl)["setVisible"]) {
-					this.setVisible(oUnstashedControl || oControl, !bStashed);
+				if (oControl.setVisible) {
+					this.setVisible(oControl, !bStashed);
 				}
 
-				// can be undefined if app component is not passed or control is not found
-				return oUnstashedControl;
+				return oControl;
 			} else {
-				throw new Error("Provided control instance has no setStashed method");
+				throw new Error("Provided control instance has no unstash method");
 			}
 		},
 
@@ -100,12 +86,10 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		getStashed: function (oControl) {
-			if (oControl.getStashed) {
-				//check if it's a stashed control. If not, return the !visible property
-				return typeof oControl.getStashed() !== "boolean" ? !this.getVisible(oControl) : oControl.getStashed();
-			} else {
-				throw new Error("Provided control instance has no getStashed method");
+			if (oControl.isStashed) {
+				return oControl.isStashed() ? oControl.isStashed() : !this.getVisible(oControl);
 			}
+			throw new Error("Provided control instance has no isStashed method");
 		},
 
 		/**
@@ -129,12 +113,23 @@ sap.ui.define([
 		 */
 		setProperty: function (oControl, sPropertyName, vPropertyValue) {
 			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
+			var oBindingParserResult;
+			var bError;
+
 			this.unbindProperty(oControl, sPropertyName);
+
+			try {
+				oBindingParserResult = BindingParser.complexParser(vPropertyValue, undefined, true);
+			} catch (error) {
+				bError = true;
+			}
 
 			//For compatibility with XMLTreeModifier the value should be serializable
 			if (oMetadata) {
 				if (this._isSerializable(vPropertyValue)) {
-					vPropertyValue = this._escapeCurlyBracketsInString(vPropertyValue);
+					if (oBindingParserResult && typeof oBindingParserResult === "object" || bError) {
+						vPropertyValue = this._escapeCurlyBracketsInString(vPropertyValue);
+					}
 					var sPropertySetter = oMetadata._sMutator;
 					oControl[sPropertySetter](vPropertyValue);
 				} else {
@@ -176,6 +171,16 @@ sap.ui.define([
 		 */
 		getPropertyBinding: function (oControl, sPropertyName) {
 			return oControl.getBindingInfo(sPropertyName);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		createAndAddCustomData: function(oControl, sCustomDataKey, sValue, oAppComponent) {
+			var oCustomData = this.createControl("sap.ui.core.CustomData", oAppComponent);
+			this.setProperty(oCustomData, "key", sCustomDataKey);
+			this.setProperty(oCustomData, "value", sValue);
+			this.insertAggregation(oControl, "customData", oCustomData, 0);
 		},
 
 		/**

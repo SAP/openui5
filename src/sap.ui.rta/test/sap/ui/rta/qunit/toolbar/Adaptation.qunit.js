@@ -5,20 +5,24 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Control",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/MessageType",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/rta/toolbar/ChangeVisualization"
 ],
 function(
 	Adaptation,
 	Device,
 	Fragment,
 	Control,
+	DateFormatter,
 	JSONModel,
 	MessageType,
 	Core,
-	sinon
+	sinon,
+	ChangeVisualization
 ) {
 	'use strict';
 
@@ -329,11 +333,12 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given no dialog is created, when the activate version button is pressed and afterwards pressed a second time", function(assert) {
+		QUnit.test("Given no dialog is created, when the activate version button is pressed with a draft and afterwards pressed a second time", function(assert) {
 			var oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 			var oSetInputSpy;
 			var oConfirmButtonEnabledSpy;
-			return this.oToolbar._openVersionTitleDialog()
+			var sExpectedTitle = this.oToolbar.getTextResources().getText("TIT_VERSION_TITLE_DIALOG");
+			return this.oToolbar._openVersionTitleDialog(sap.ui.fl.Versions.Draft)
 				.then(function () {
 					assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 					// checking for the dialog instance wrapped into a promise
@@ -347,6 +352,7 @@ function(
 				}.bind(this))
 				.then(function (oDialog) {
 					assert.equal(this.oToolbar._oDialog, oDialog, "and the dialog was assigned");
+					assert.equal(oDialog.getTitle(), sExpectedTitle, "and the title is 'Activate New Version'");
 				}.bind(this))
 				.then(this.oToolbar._openVersionTitleDialog.bind(this.oToolbar))
 				.then(function () {
@@ -356,6 +362,14 @@ function(
 					assert.equal(oConfirmButtonEnabledSpy.callCount, 1, "and the confirm button was set");
 					assert.equal(oSetInputSpy.getCall(0).args[0], false, "to be disabled");
 				});
+		});
+
+		QUnit.test("Given display version is original, when the activate version button is pressed", function(assert) {
+			var sExpectedTitle = this.oToolbar.getTextResources().getText("TIT_REACTIVATE_VERSION_TITLE_DIALOG");
+			return this.oToolbar._openVersionTitleDialog(sap.ui.fl.Versions.Original)
+				.then(function () {
+					assert.equal(this.oToolbar._oDialog.getTitle(), sExpectedTitle, "the title is 'Reactivate Version'");
+				}.bind(this));
 		});
 	});
 
@@ -543,6 +557,17 @@ function(
 			assert.equal(sTitle, this.oMessageBundle.getText("TIT_DRAFT"), "then title is 'Draft'");
 		});
 
+		QUnit.test("Given the timestamp of a version should be formatted", function (assert) {
+			// the format function is mocked, because the formatter is dependent on the locale of the test executioner
+			var sFormattedTimeStamp = "Sep 20, 2020, 12:43 PM";
+			sandbox.stub(DateFormatter, "getInstance").returns({
+				format: sandbox.stub().returns(sFormattedTimeStamp)
+			});
+			var sTimeStamp = this.oToolbar.formatVersionTimeStamp(new Date("2020-09-20 12:43:15.17"));
+
+			assert.equal(sTimeStamp, sFormattedTimeStamp, "then timestamp was formatted");
+		});
+
 		QUnit.test("Given the 'Version 1' title should be formatted", function (assert) {
 			var sTitle = this.oToolbar.formatVersionTitle("", "active");
 			assert.equal(sTitle, this.oMessageBundle.getText("TIT_VERSION_1"), "then title is 'Version one'");
@@ -697,6 +722,120 @@ function(
 					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
 					assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
 				}.bind(this));
+		});
+	});
+
+	QUnit.module("ChangeVisualization", {
+		beforeEach: function() {
+			this.oToolbar = new Adaptation({
+				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			});
+		},
+		afterEach: function() {
+			this.oToolbar.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("showChangesPopover when there are change indicators on the screen", function(assert) {
+			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(true);
+			var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover");
+			var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+			var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+
+			return this.oToolbar.showChangesPopover().then(function() {
+				assert.equal(oRemoveChangeIndicatorsStub.callCount, 1, "the blue circles are removed from the screen");
+				assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 1, "the toolbar button color changes dependent on the mode");
+				assert.equal(oOpenChangePopoverStub.callCount, 0, "the popover with the changes is not open");
+			});
+		});
+
+		QUnit.test("showChangesPopover when there are no change indicators", function(assert) {
+			assert.expect(6);
+			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(false);
+
+			return this.oToolbar.onFragmentLoaded().then(function() {
+				var oPopoverButton = this.oToolbar.getControl("showChanges");
+
+				var oEvent = {
+					getSource: function () {
+						return oPopoverButton;
+					}
+				};
+				this.oToolbar.setModel(new JSONModel({
+					rtaRootControlId: "rootControlId",
+					modeSwitcher: "adaptation"
+				}), "controls");
+				var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover");
+				oOpenChangePopoverStub.resolves(new Control("testControl"));
+				var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+				var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+
+				return this.oToolbar.showChangesPopover(oEvent).then(function() {
+					assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
+					assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
+					assert.equal(oOpenChangePopoverStub.callCount, 1, "the changes popover is open");
+					oPopoverButton.getDependents().some(function(oDependentControl) {
+						if (oDependentControl.getId() === "testControl") {
+							assert.ok(true, "the control was added to the dependents list");
+							return true;
+						}
+					});
+					assert.equal(oOpenChangePopoverStub.lastCall.args[0], oPopoverButton, "the function was called with the correct button");
+					assert.equal(oOpenChangePopoverStub.lastCall.args[1], "rootControlId", "the function was called with the correct root control id");
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("showChangesPopover when the popver already exists and there are no change indicators", function(assert) {
+			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(false);
+
+			return this.oToolbar.onFragmentLoaded().then(function() {
+				var oPopoverButton = this.oToolbar.getControl("showChanges");
+				var oEvent = {
+					getSource: function () {
+						return oPopoverButton;
+					}
+				};
+				this.oToolbar.setModel(new JSONModel({
+					rtaRootControlId: "rootControlId",
+					modeSwitcher: "adaptation"
+				}), "controls");
+				var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover").resolves();
+				var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+				var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+				var iDependentControlLength = oPopoverButton.getDependents().length;
+
+				return this.oToolbar.showChangesPopover(oEvent).then(function() {
+					assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
+					assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
+					assert.equal(oOpenChangePopoverStub.callCount, 1, "the changes popover is open");
+					assert.equal(iDependentControlLength, oPopoverButton.getDependents().length, "the popover button does not have new dependents");
+					assert.equal(oOpenChangePopoverStub.lastCall.args[0], oPopoverButton, "the function was called with the correct button");
+					assert.equal(oOpenChangePopoverStub.lastCall.args[1], "rootControlId", "the function was called with the correct root control id");
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("showChangesPopover", function(assert) {
+			sandbox.stub(ChangeVisualization, "changeIndicatorsExist").returns(false);
+			var oPopoverButton = this.oToolbar.getControl("showChanges");
+			var oEvent = {
+				getSource: function () {
+					return oPopoverButton;
+				}
+			};
+			this.oToolbar.setModel(new JSONModel({
+				rtaRootControlId: "rootControlId"
+			}), "controls");
+			var oOpenChangePopoverStub = sandbox.stub(ChangeVisualization, "openChangePopover").resolves();
+			var oRemoveChangeIndicatorsStub = sandbox.stub(ChangeVisualization, "removeChangeIndicators");
+			var oSwitchChangeVisualizationActiveStub = sandbox.stub(ChangeVisualization, "switchChangeVisualizationActive");
+
+			return this.oToolbar.showChangesPopover(oEvent).then(function() {
+				assert.equal(oRemoveChangeIndicatorsStub.callCount, 0, "the blue circles are not removed from the screen");
+				assert.equal(oSwitchChangeVisualizationActiveStub.callCount, 0, "the toolbar button color does not change");
+				assert.equal(oOpenChangePopoverStub.callCount, 0, "the changes popover is not open");
+			});
 		});
 	});
 

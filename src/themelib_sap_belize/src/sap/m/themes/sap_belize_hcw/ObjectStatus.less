@@ -134,3 +134,18 @@
 .sapMObjStatusInverted.sapMObjStatusIndication08 .sapMObjStatusIcon {
 	color: @sapUiIndication8;
 }
+
+.sapMObjStatusInverted {
+	&.sapMObjectStatusLarge .sapMObjStatusIcon {
+		padding-right: 0.25rem;
+	}
+	&.sapMObjectStatusLarge .sapMObjStatusText,
+	&.sapMObjectStatusLarge .sapMObjStatusIcon {
+		font-size: 1.5rem;
+		font-weight: normal;
+		& > .sapUiIcon {
+			font-size: 1.5rem;
+			line-height: 2rem;
+		}
+	}
+}

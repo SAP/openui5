@@ -19,7 +19,7 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 		 */
 		crossLink: function (sLink) {
 			if (sLink[0] === "#") {
-				sLink = document.location.href.substring(0,document.location.href.search("demoapps\.html")) + sLink;
+				sLink = document.location.href.substring(0, document.location.href.search("demoapps\.html")) + sLink;
 			}
 			return sLink;
 		},
@@ -72,7 +72,7 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 		 * @param {string} sOrigName the value to be formatted
 		 * @returns {string} the formatted text
 		 */
-		apiRefEntityName: function(sOrigName) { // TODO: move this to preprocessor instead and remove this function
+		apiRefEntityName: function (sOrigName) { // TODO: move this to preprocessor instead and remove this function
 			if (sOrigName) {
 				return sOrigName.replace("module:", "");
 			}
@@ -85,7 +85,7 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 		 * @param {Array} altTypes the array of alternative types
 		 * @returns {string | undefined} the formatted text
 		 */
-		apiRefAggregationAltTypes: function(altTypes) {
+		apiRefAggregationAltTypes: function (altTypes) {
 			return altTypes && altTypes.join(", ");
 		},
 
@@ -121,7 +121,7 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 			return '<a href="' + sHref + '" class="sapMLnk sapMLnkMaxWidth">' + sTitle + '</a>' + sDescription;
 		},
 
-		formatApiHref: function(sClassName, sEntityId, sEntityType, bStatic) {
+		formatApiHref: function (sClassName, sEntityId, sEntityType, bStatic) {
 			var sHref;
 
 			if (bStatic) {
@@ -197,14 +197,14 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 		 * @returns {object}
 		 * @private
 		 */
-		filePathToRouteParams: function(sFilePath) {
+		filePathToRouteParams: function (sFilePath) {
 			var aFileName, oRouteParams = {};
 			if (!sFilePath) {
 				return {};
 			}
 			aFileName = sFilePath.split("/");
 
-			aFileName.forEach(function(sPart, i) {
+			aFileName.forEach(function (sPart, i) {
 				oRouteParams["p" + ++i] = sPart;
 			});
 			return oRouteParams;
@@ -218,7 +218,7 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 		 * @returns {string}
 		 * @private
 		 */
-		routeParamsToFilePath: function(oRouteParameters) {
+		routeParamsToFilePath: function (oRouteParameters) {
 			var aKeys = Object.keys(oRouteParameters),
 				bIsFileNameKey,
 				sFileNamePart,
@@ -236,6 +236,29 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 			if (aFileName.length) {
 				return aFileName.join("/");
 			}
+		},
+		/**
+		 * Formats a documentation link, intended to be open in a new window
+		 *
+		 * @public
+		 * @param {string} sHref the link to be formatter
+		 * @returns {string} the formatted link
+		 */
+		formatHttpHrefForNewWindow: function (sHref) {
+			if (window['sap-ui-documentation-static'] && !/^https?:\/\//.test(sHref)) {
+				sHref = "#/" + sHref;
+			}
+			return sHref;
+		},
+
+		formatCookieValue: function (sValue) {
+			if (sValue === "1") {
+				return true;
+			}
+			if (sValue === "0") {
+				return false;
+			}
+			return sValue;
 		}
 	};
 });

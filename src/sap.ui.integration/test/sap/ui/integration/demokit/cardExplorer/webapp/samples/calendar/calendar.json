@@ -26,66 +26,75 @@
 	  "json": {
 		"item": [
 		  {
-			"visualization": "blocker",
-			"start": "2019-09-02T09:00",
-			"end": "2019-09-02T10:00",
+			"start": "2020-09-18T09:00",
+			"end": "2020-09-18T10:00",
 			"title": "Payment reminder",
 			"icon": "sap-icon://desktop-mobile",
 			"type": "Type06"
 		  },
 		  {
-			"visualization": "blocker",
-			"start": "2019-09-02T17:00",
-			"end": "2019-09-02T17:30",
+			"start": "2020-09-18T17:00",
+			"end": "2020-09-18T17:30",
 			"title": "Private appointment",
 			"icon": "sap-icon://desktop-mobile",
 			"type": "Type07"
 		  },
 		  {
-			"visualization": "appointment",
-			"start": "2019-09-02T12:00",
-			"end": "2019-09-02T13:00",
+			"start": "2020-09-18T12:00",
+			"end": "2020-09-18T13:00",
 			"title": "Lunch",
 			"text": "working",
 			"icon": "sap-icon://desktop-mobile",
 			"type": "Type03"
 		  },
 		  {
-			"visualization": "appointment",
-			"start": "2019-09-01T08:30",
-			"end": "2019-09-03T17:30",
+			"start": "2020-09-16T08:30",
+			"end": "2020-09-18T17:30",
 			"title": "Workshop",
 			"text": "Out of office",
 			"icon": "sap-icon://sap-ui5",
 			"type": "Type07"
 		  },
 		  {
-			"visualization": "appointment",
-			"start": "2019-09-02T14:00",
-			"end": "2019-09-02T16:30",
+			"start": "2020-09-18T14:00",
+			"end": "2020-09-18T16:30",
 			"title": "Discussion with clients",
 			"text": "working",
 			"icon": "sap-icon://desktop-mobile"
 		  },
 		  {
-			"visualization": "appointment",
-			"start": "2019-09-02T11:00",
-			"end": "2019-09-02T12:00",
+			"start": "2020-09-18T01:00",
+			"end": "2020-09-18T02:00",
 			"title": "Team meeting",
 			"text": "online meeting",
 			"icon": "sap-icon://sap-ui5",
 			"type": "Type04"
-		  }
+			},
+			{
+			"start": "2020-09-18T04:00",
+			"end": "2020-09-18T06:30",
+			"title": "Discussion with clients",
+			"text": "working",
+			"icon": "sap-icon://desktop-mobile"
+			},
+			{
+			"start": "2020-09-18T01:00",
+			"end": "2020-09-18T02:00",
+			"title": "Team meeting",
+			"text": "online meeting",
+			"icon": "sap-icon://sap-ui5",
+			"type": "Type04"
+			}
 		],
 		"specialDate": [
 		  {
-			"start": "2019-09-13",
-			"end": "2019-09-14",
+			"start": "2020-09-13",
+			"end": "2020-09-14",
 			"type": "Type08"
 		  },
 		  {
-			"start": "2019-09-24",
-			"end": "2019-09-24",
+			"start": "2020-09-24",
+			"end": "2020-09-24",
 			"type": "Type13"
 		  }
 		],
@@ -139,13 +148,12 @@
 	  }
 	},
 	"content": {
-	  "date": "2019-09-02",
+	  "date": "2020-09-18",
 	  "maxItems": 5,
-	  "maxLegendItems": 3,
+	  "maxLegendItems": 5,
 	  "noItemsText": "You have nothing planned for that day",
 	  "item": {
 		"template": {
-		  "visualization": "{visualization}",
 		  "startDate": "{start}",
 		  "endDate": "{end}",
 		  "title": "{title}",

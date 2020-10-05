@@ -21,7 +21,13 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 
 		handleUploadPress: function() {
 			var oFileUploader = this.byId("fileUploader");
-			oFileUploader.upload();
+			oFileUploader.checkFileReadable().then(function() {
+				oFileUploader.upload();
+			}, function(error) {
+				MessageToast.show("The file cannot be read. It may have changed.");
+			}).then(function() {
+				oFileUploader.clear();
+			});
 		}
 	});
 

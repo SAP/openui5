@@ -326,6 +326,14 @@ function(
 			}
 		};
 	};
+
+	MoveControls.getChangeVisualizationInfo = function(oChange) {
+		var oChangeContent = oChange.getContent();
+		return {
+			affectedControls: [oChangeContent.movedElements[0].selector],
+			dependentControls: [oChangeContent.source.selector]
+		};
+	};
 	return MoveControls;
 },
 /* bExport= */true);

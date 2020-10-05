@@ -47,81 +47,50 @@ sap.ui.define([
 
 				iOpenPresetsPopover: function() {
 					return this.waitFor({
-						check: function () {
-							var oPopover = Opa5.getWindow().sap.ui.getCore().byId("presetsSelect--presetsPopover");
-							if (oPopover && oPopover.isOpen()) {
-								oPopover.close();
-								return false;
-							} else {
-								return true;
-							}
-						},
-						success: function () {
-							this.waitFor({
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						id: "presetVariantBtn",
+						actions: new Press(),
+						success: function() {
+							return this.waitFor({
+								searchOpenDialogs: true,
 								viewName: sViewName,
 								viewNamespace: sViewNameSpace,
-								id: "presetVariantBtn",
-								actions: new Press(),
-								success: function() {
-									return this.waitFor({
-										searchOpenDialogs: true,
-										viewName: sViewName,
-										viewNamespace: sViewNameSpace,
-										id: "presetsSelect--presetsPopover-popover",
-										matchers: function (oPopover) {
-											return oPopover.isOpen();
-										},
-										success: function () {
-											Opa5.assert.ok(true, "Presets variant select was pressed - presets popover was opened");
-										},
-										errorMessage: "Presets popover was not open"
-									});
+								fragmentId: "presetsSelect",
+								id: "rulePresetsTitle",
+								success: function () {
+									Opa5.assert.ok(true, "Presets popover was successfully opened");
 								},
-								errorMessage: "Was not able to press presets variant select - presets popover was not opened"
+								errorMessage: "Couldn't open presets popover"
 							});
-						}
+						},
+						errorMessage: "Was not able to press presets variant button"
 					});
 				},
 
 				iClosePresetsPopover: function() {
 					return this.waitFor({
-						check: function () {
-							var oPopover = Opa5.getWindow().sap.ui.getCore().byId("presetsSelect--presetsPopover");
-							if (!oPopover) {
-								return false;
-							}
-							if (oPopover.isOpen() || !oPopover.open) {
-								return true;
-							} else {
-								oPopover.open();
-								return false;
-							}
-						},
-						success: function () {
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						id: "presetVariantBtn",
+						actions: new Press(),
+						success: function() {
 							return this.waitFor({
+								searchOpenDialogs: true,
 								viewName: sViewName,
 								viewNamespace: sViewNameSpace,
-								id: "presetVariantBtn",
-								actions: new Press(),
-								success: function() {
-									return this.waitFor({
-										searchOpenDialogs: true,
-										viewName: sViewName,
-										viewNamespace: sViewNameSpace,
-										id: "presetsSelect--presetsPopover-popover",
-										visible: false,
-										matchers: function (oPopover) {
-											return !oPopover.isOpen();
-										},
-										success: function () {
-											Opa5.assert.ok(true, "Presets variant select was pressed - presets popover was closed");
-										},
-										errorMessage: "Presets popover was not closed"
-									});
+								id: "presetsSelect--presetsPopover-popover",
+								visible: false,
+								check: function (oPopover) {
+									return !oPopover.isOpen();
 								},
-								errorMessage: "Was not able to press presets variant select - presets popover was not closed"
+								success: function () {
+									Opa5.assert.ok(true, "Presets popover was successfully closed");
+								},
+								errorMessage: "Couldn't close presets popover"
 							});
-						}
+						},
+						errorMessage: "Was not able to press presets variant button"
 					});
 				},
 

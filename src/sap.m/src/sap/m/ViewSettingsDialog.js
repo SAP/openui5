@@ -3516,7 +3516,7 @@ function(
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._applyContextualSettings = function () {
-		ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+		Control.prototype._applyContextualSettings.call(this);
 	};
 
 	/**

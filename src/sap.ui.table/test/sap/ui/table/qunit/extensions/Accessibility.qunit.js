@@ -1482,6 +1482,38 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("HiddenText cellacc", function(assert) {
+		var oCol1 = oTable.getColumns()[0];
+		var $Cell = getCell(1, 1, true, null, oTable);
+
+		assert.ok((oTable.$("cellacc").text()).indexOf($Cell.text()) > -1,
+			"Table: HiddenText cellacc is properly set");
+
+		oTable.setFixedColumnCount(0);
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oCol1);
+		sap.ui.getCore().applyChanges();
+
+		$Cell = getCell(1, 1, true, null, oTable);
+		assert.ok((oTable.$("cellacc").text()).indexOf($Cell.text()) > -1,
+			"Table: HiddenText cellacc is properly set after the first column is grouped");
+
+		oCol1 = oTreeTable.getColumns()[0];
+		$Cell = getCell(1, 1, true, null, oTreeTable);
+
+		assert.ok((oTreeTable.$("cellacc").text()).indexOf($Cell.text()) > -1,
+			"TreeTable: HiddenText cellacc is properly set");
+
+		oTreeTable.setFixedColumnCount(0);
+		oTreeTable.setEnableGrouping(true);
+		oTreeTable.setGroupBy(oCol1);
+		sap.ui.getCore().applyChanges();
+
+		$Cell = getCell(1, 1, true, null, oTreeTable);
+		assert.ok((oTreeTable.$("cellacc").text()).indexOf($Cell.text()) > -1,
+			"TreeTable: HiddenText cellacc is properly set after the first column is grouped");
+	});
+
 	QUnit.test("Highlight texts", function(assert) {
 		oTable.setVisibleRowCount(1);
 		sap.ui.getCore().applyChanges();

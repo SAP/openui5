@@ -125,7 +125,10 @@ sap.ui.define([
 				var _oNode,
 					sBadgeId = _getBadgeId.call(this),
 					oBadgeElement = _getBadgeElement.call(this),
-					sValue = this._oBadgeCustomData.getValue(),
+					fnBadgeValueFormatter =  typeof this.badgeValueFormatter === "function" && this.badgeValueFormatter,
+					sValue = isValidValue(fnBadgeValueFormatter ? fnBadgeValueFormatter.call(this, this.getBadgeCustomData().getValue())
+						: this.getBadgeCustomData().getValue()),
+
 					sStyle = this._oBadgeConfig.style ? this._oBadgeConfig.style : IBADGE_STYLE.Default;
 				this._oBadgeContainer = this._oBadgeConfig && this._oBadgeConfig.selector ?
 					_getContainerDomElement(this._oBadgeConfig.selector, this) :
@@ -161,17 +164,20 @@ sap.ui.define([
 			//Manually updating the 'span', containing badge
 
 			this.updateBadgeValue = function (sValue) {
-				if (!this._oBadgeCustomData.getVisible()) { return false; }
+				var fnBadgeValueFormatter =  typeof this.badgeValueFormatter === "function" && this.badgeValueFormatter,
+					oBadgeElement;
 
-				var oBadgeElement = _getBadgeElement.call(this),
-					sValue = isValidValue(sValue || this.getBadgeCustomData().getValue()) || "";
-					oBadgeElement.removeClass("sapMBadgeAnimationUpdate");
-					oBadgeElement.attr("data-badge", sValue);
-					oBadgeElement.attr("aria-label", getAriaLabelText.call(this));
-					oBadgeElement.width();
-					oBadgeElement.addClass("sapMBadgeAnimationUpdate");
+				sValue = isValidValue((fnBadgeValueFormatter ? fnBadgeValueFormatter.call(this, sValue) : sValue) || this.getBadgeCustomData().getValue()) || "";
 
-					callHandler.call(this, sValue, IBADGE_STATE["Updated"]);
+				if (!this.getBadgeCustomData().getVisible()) { return false; }
+				oBadgeElement = _getBadgeElement.call(this);
+				oBadgeElement.removeClass("sapMBadgeAnimationUpdate");
+				oBadgeElement.attr("data-badge", sValue);
+				oBadgeElement.attr("aria-label", getAriaLabelText.call(this));
+				oBadgeElement.width();
+				oBadgeElement.addClass("sapMBadgeAnimationUpdate");
+
+				callHandler.call(this, sValue, IBADGE_STATE["Updated"]);
 			};
 
 			function getAriaLabelText() {

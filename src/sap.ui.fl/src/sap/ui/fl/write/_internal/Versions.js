@@ -59,6 +59,7 @@ sap.ui.define([
 			backendDraft: bBackendDraft,
 			dirtyChanges: false,
 			draftAvailable: bBackendDraft,
+			activateEnabled: bBackendDraft,
 			switchVersionsActive: bSwitchVersionsActive,
 			persistedVersion: nPersistedBasisForDisplayedVersion,
 			displayedVersion: nPersistedBasisForDisplayedVersion
@@ -95,6 +96,9 @@ sap.ui.define([
 				oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
 				oModel.updateBindings(true);
 			}
+
+			var bActivateEnabled = oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion");
+			oModel.setProperty("/activateEnabled", bActivateEnabled);
 		};
 
 		return oModel;
@@ -243,9 +247,12 @@ sap.ui.define([
 		var oModel = Versions.getVersionsModel(mPropertyBag);
 		var aVersions = oModel.getProperty("/versions");
 		var bDraftExists = _doesDraftExistInVersions(aVersions);
-		if (!bDraftExists) {
-			return Promise.reject("No draft exists");
+		var sDisplayedVersion = oModel.getProperty("/displayedVersion");
+		var sActiveVersion = oModel.getProperty("/activeVersion");
+		if (sDisplayedVersion === sActiveVersion) {
+			return Promise.reject("Version is already active");
 		}
+		mPropertyBag.version = sDisplayedVersion;
 
 		var aSaveDirtyChangesPromise = [];
 		if (oModel.getProperty("/dirtyChanges")) {
@@ -263,11 +270,14 @@ sap.ui.define([
 				oVersionEntry.type = "inactive";
 			});
 			oVersion.type = "active";
-			aVersions.shift();
+			if (bDraftExists) {
+				aVersions.shift();
+			}
 			aVersions.splice(0, 0, oVersion);
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
+			oModel.setProperty("/activateEnabled", false);
 			oModel.setProperty("/activeVersion", oVersion.version);
 			oModel.setProperty("/displayedVersion", oVersion.version);
 			oModel.updateBindings(true);
@@ -297,6 +307,7 @@ sap.ui.define([
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
+			oModel.setProperty("/activateEnabled", false);
 			oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
 			oModel.updateBindings(true);
 			// in case of a existing draft known by the backend;

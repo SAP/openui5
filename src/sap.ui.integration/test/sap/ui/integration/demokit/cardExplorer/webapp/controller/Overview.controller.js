@@ -1,17 +1,17 @@
 sap.ui.define([
+	"./Topic.controller",
 	"../model/OverviewNavigationModel",
-	"sap/ui/demo/cardExplorer/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
 ], function(
+	TopicController,
 	OverviewNavigationModel,
-	BaseController,
 	JSONModel,
 	Device
 ) {
 	"use strict";
 
-	return BaseController.extend("sap.ui.demo.cardExplorer.controller.Overview", {
+	return TopicController.extend("sap.ui.demo.cardExplorer.controller.Overview", {
 
 		/**
 		 * Called when the controller is instantiated.
@@ -20,32 +20,45 @@ sap.ui.define([
 			this.getRouter().getRoute("overview").attachPatternMatched(this._onTopicMatched, this);
 			this.getRouter().getRoute("default").attachPatternMatched(this._onTopicMatched, this);
 
-			this.jsonDefModel = new JSONModel();
-			this.getView().setModel(this.jsonDefModel);
+			this.oDefaultModel = new JSONModel();
+			this.getView().setModel(this.oDefaultModel);
 		},
 
 		/**
 		 * Binds the view to the object path and expands the aggregated line items.
 		 * @function
-		 * @param {sap.ui.base.Event} event pattern match event in route "topicId"
+		 * @param {sap.ui.base.Event} oEvent pattern match event in route "default" and "overview"
 		 * @private
 		 */
-		_onTopicMatched: function (event) {
-			var oArgs = event.getParameter("arguments"),
-				sGroup = oArgs.group || "introduction", // group is mandatory (described in the manifest)
-				sTopicId = oArgs.key ? "/" + oArgs.key : "",
-				oNavEntry = this._findNavEntry(sGroup),
-				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/overview/" + sGroup + sTopicId + ".html"),
-				sPageTitle = oNavEntry.topicTitle || oNavEntry.title;
+		_onTopicMatched: function (oEvent) {
+			var oArgs = oEvent.getParameter("arguments"),
+				sTopic = oArgs.topic,
+				sSubTopic = oArgs.subTopic || "",
+				sId = oArgs.id;
+
+			if (oEvent.getParameter("name") === "default") {
+				sTopic = "introduction";
+			}
+
+			// Note: oArgs.id shouldn't equal any subTopic, else it won't work.
+			if (sSubTopic && this._isSubTopic(sSubTopic)) {
+				sSubTopic = "/" + sSubTopic;
+			} else if (oArgs.key) {
+				sId = oArgs.sSubTopic; // right shift subTopic to id
+			}
+
+			var oNavEntry = this._findNavEntry(sTopic),
+				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/overview/" + sTopic + sSubTopic + '.html');
 
 			var jsonObj = {
-				pageTitle: sPageTitle,
+				pageTitle: oNavEntry.title,
 				topicURL : sTopicURL,
 				bIsPhone : Device.system.phone
 			};
 
-			this.jsonDefModel.setData(jsonObj);
+			this.oDefaultModel.setData(jsonObj);
 			this.onFrameSourceChange();
+			this.scrollTo(sId);
 		},
 
 		_findNavEntry: function (key) {
@@ -72,6 +85,20 @@ sap.ui.define([
 					}
 				}
 			}
+		},
+
+		/**
+		 * Checks if the given key is subtopic key
+		 * "/overview/{topic}/:subTopic:/:id:",
+		 */
+		_isSubTopic: function (sKey) {
+			var aNavEntries = OverviewNavigationModel.getProperty('/navigation');
+
+			return aNavEntries.some(function (oNavEntry) {
+				return oNavEntry.items && oNavEntry.items.some(function (oSubEntry) {
+					return oSubEntry.key === sKey;
+				});
+			});
 		}
 	});
 });

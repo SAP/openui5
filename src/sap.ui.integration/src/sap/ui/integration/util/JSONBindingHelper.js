@@ -2,13 +2,24 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/util/BindingHelper",
-	"sap/base/util/isPlainObject"
+	"sap/ui/base/BindingParser",
+	"sap/ui/integration/util/BindingHelper"
 ], function (
-	BindingHelper,
-	isPlainObject
+	BindingParser,
+	BindingHelper
 ) {
 	"use strict";
+
+	/**
+	 * @const {Array} A map of chars used in binding syntax which needs to be encoded.
+	 */
+	var aBindingCharsMap = [
+		// code, regex, char
+		["ESCAPED_BINDING_START", /\\{/g, "\\{"],
+		["ESCAPED_BINDING_END", /\\}/g, "\\}"],
+		["BINDING_START", /{/g, "{"],
+		["BINDING_END", /}/g, "}"]
+	];
 
 	/**
 	 * Helper class for working with bindings for json objects.
@@ -47,11 +58,12 @@ sap.ui.define([
 	JSONBindingHelper._createBindableJson = function (oValue) {
 		var sResult;
 
-		sResult = JSON.stringify(oValue, function (sKey, sValue) {
-			if (typeof sValue === "string") {
-				sValue = this._encodeBindingString(sValue);
+		sResult = JSON.stringify(oValue, function (sKey, vValue) {
+			if (typeof vValue === "string") {
+				return this._encodeBindingString(vValue);
 			}
-			return sValue;
+
+			return vValue;
 		  }.bind(this));
 
 		sResult = this._escape(sResult);
@@ -62,15 +74,29 @@ sap.ui.define([
 	};
 
 	JSONBindingHelper._escape = function (sValue) {
-		return sValue.replace(/\{/g, "\\{").replace(/\}/g, "\\}");
+		return BindingParser.complexParser.escape(sValue);
 	};
 
 	JSONBindingHelper._encodeBindingString = function (sValue) {
-		return sValue.replace(/\{/g, "BINDING_START").replace(/\}/g, "BINDING_END");
+		aBindingCharsMap.forEach(function (aCharMap) {
+			var sCode = aCharMap[0],
+				rRegex = aCharMap[1];
+
+			sValue = sValue.replace(rRegex, sCode);
+		});
+
+		return sValue;
 	};
 
 	JSONBindingHelper._decodeBindingString = function (sValue) {
-		return sValue.replace(/BINDING_START/g, "{").replace(/BINDING_END/g, "}");
+		aBindingCharsMap.forEach(function (aCharMap) {
+			var sCode = aCharMap[0],
+				sChar = aCharMap[2];
+
+			sValue = sValue.replace(new RegExp(sCode, "g"), sChar);
+		});
+
+		return sValue;
 	};
 
 	return JSONBindingHelper;

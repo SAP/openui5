@@ -1040,7 +1040,9 @@ function(
 	 */
 	Column.prototype.setProperty = function(sName, vValue) {
 		var oTable = this._getTable();
-		var bNeedRowsUpdate = oTable && sName === "visible" && this.getProperty(sName) != vValue;
+		var bValueChanged = oTable && this.getProperty(sName) != vValue;
+		var bNeedRowsUpdate = bValueChanged && sName === "visible";
+		var bInvalidateFixedColCount = bValueChanged && (sName === "visible" || sName === "headerSpan");
 		var vReturn = Element.prototype.setProperty.apply(this, arguments);
 
 		if (bNeedRowsUpdate) {
@@ -1050,6 +1052,10 @@ function(
 			if (oCreationRow) {
 				oCreationRow._update();
 			}
+		}
+
+		if (bInvalidateFixedColCount) {
+			oTable._invalidateComputedFixedColumnCount();
 		}
 
 		return vReturn;

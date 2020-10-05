@@ -31,7 +31,7 @@ sap.ui.define([
 			// This event is ideal to call scrollToIndex function of the Table
 			var oMasterView = oEvent.getSource().getBeginColumnPages()[0];
 
-			if (oMasterView.getController().iIndex) {
+			if (oMasterView && oMasterView.getController().iIndex) {
 				var oTable = oMasterView.byId("productsTable");
 				oTable.scrollToIndex(oMasterView.getController().iIndex);
 			}

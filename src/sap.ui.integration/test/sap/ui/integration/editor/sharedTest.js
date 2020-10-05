@@ -1,7 +1,32 @@
 /* eslint-disable */
 
 var baseUrl = document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/")),
-	localStorageKey = document.querySelector("script[localstoragekey]").getAttribute("localstoragekey");
+	localStorageKey = document.querySelector("script[localstoragekey]").getAttribute("localstoragekey"),
+	manifest = {
+		"sap.app": {
+			"id": "test.sample",
+			"type": "card",
+			"i18n": "designtime/i18n/i18n.properties",
+			"title": "Test Card for Parameters",
+			"subTitle": "Test Card for Parameters"
+		},
+		"sap.card": {
+			"designtime": "designtime/withPreview/",
+			"type": "List",
+			"configuration": {
+				"parameters": {
+					"stringParameter": {}
+				}
+			},
+			"header": {
+				"title": "Card Title",
+				"subTitle": "Card Sub Title",
+				"icon": {
+					"src": "sap-icon://accept"
+				}
+			},
+		}
+	};
 
 function switchTheme(oSelect) {
 	sap.ui.getCore().applyTheme(oSelect.options[oSelect.selectedIndex].value);
@@ -41,21 +66,26 @@ function deleteCurrentValues(id) {
 	loadCurrentValues(id);
 	updateAllLayerCard();
 }
-function createCardEditorTag(id, changes, mode, language) {
+function createCardEditorTag(id, changes, mode, language, designtime) {
+	language = language || "";
 	var card = {
 		"manifest": "manifest.json",
 		"host": "host",
 		"manifestChanges": changes,
 		"baseUrl": baseUrl
 	};
+	if(designtime && designtime !== "") {
+		manifest["sap.card"].designtime = "designtime/withPreview/" + designtime;
+		card.manifest = manifest;
+	}
 	return '<ui-integration-card-editor id="' + id + '" card=\'' + JSON.stringify(card) + '\' mode="' + mode + '" language="' + language + '"></ui-integration-card-editor>';
 }
 function loadCurrentValues(id) {
-	var dom = document.getElementById(id),
-		settings = getItem(id),
-		div = document.createElement("div");
+	var dom = document.getElementById(id);
 	if (!dom) return;
-	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), dom.getAttribute("language"));
+	var settings = getItem(id),
+		div = document.createElement("div");
+	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), dom.getAttribute("language") || "", dom.getAttribute("designtime") || "");
 	dom.parentNode.replaceChild(div.firstChild, dom);
 }
 
@@ -63,6 +93,14 @@ function loadAllChanges() {
 	loadCurrentValues("cardEditorAdmin");
 	loadCurrentValues("cardEditorContent")
 	loadCurrentValues("cardEditorTranslation");
+	loadCurrentValues("previewAbstract");
+	loadCurrentValues("previewAbstractLive");
+	loadCurrentValues("previewLive")
+	loadCurrentValues("previewLiveAbstract");
+	loadCurrentValues("previewLiveOwnImage");
+	loadCurrentValues("previewOwnImageLive")
+	loadCurrentValues("previewNone");
+	loadCurrentValues("previewNoScale");
 }
 
 function updateAllLayerCard() {
@@ -87,7 +125,7 @@ function updateAdminContentLayerCard() {
 		admin = getItem("cardEditorAdmin"),
 		content = getItem("cardEditorContent");
 	settings.push(admin, content);
-	target.innerHTML = createCardEditorTag("cardEditorAdminContentTranslation", settings, "all");
+	target.innerHTML = createCardEditorTag("cardEditorAdminContent", settings, "content", "");
 }
 function updateAdminContentTranslationLayerCard() {
 	var target = document.getElementById("admincontenttranslation");

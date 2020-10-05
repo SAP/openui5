@@ -238,6 +238,7 @@ html:not(.sap-desktop) .sapFAvatarFocusable:focus {
 
 .sapFAvatarBadgeIcon {
 	display: inline-block;
+	box-sizing: border-box;
 	position: absolute;
 	bottom: 0;
 	right:  0;
@@ -249,12 +250,12 @@ html:not(.sap-desktop) .sapFAvatarFocusable:focus {
 	font-size: 0.75rem;
 	text-align: center;
 
-	background-color: @sapUiLink;
-	border-color: @sapUiContentContrastTextColor;
+	background-color: @sapButton_Emphasized_Background;
+	border: 0.0625rem solid @sapButton_Emphasized_BorderColor;
 
 	>.sapUiIcon {
 		vertical-align: middle;
-		color: @sapUiContentContrastTextColor;
+		color: @sapButton_Emphasized_TextColor;
 	}
 	&:after {
 		content: "";

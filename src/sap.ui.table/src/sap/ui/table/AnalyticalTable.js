@@ -157,7 +157,7 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.76, replaced by the <code>collapseRecursive</code> binding parameter
 			 */
-			collapseRecursive : {type: "boolean", defaultValue: true},
+			collapseRecursive : {type: "boolean", defaultValue: true, deprecated: true},
 
 			/**
 			 * If dirty the content of the Table will be overlayed.

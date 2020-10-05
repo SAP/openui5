@@ -140,16 +140,10 @@ sap.ui.define([
 				selector: {}
 			};
 
-			var mParsedHash = {
-				params: {
-				}
-			};
-
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
-			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges");
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
@@ -169,11 +163,13 @@ sap.ui.define([
 				params: sap.ui.fl.Versions.UrlParameter
 			};
 
+			var oUriWithVersionUrlParameter = UriParameters.fromQuery("?" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Draft);
+			sandbox.stub(UriParameters, "fromQuery").returns(oUriWithVersionUrlParameter);
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
-			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges");
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
@@ -372,6 +368,24 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			assert.equal(oExpectedReloadInfo.hasDraft, false, "then there is no draft");
+		});
+
+		QUnit.test("and an initial draft got activated and in the url version parameter exists", function(assert) {
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				selector: {},
+				changesNeedReload: false,
+				hasDirtyDraftChanges: false,
+				versioningEnabled: true
+			};
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
+
+			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
+			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			assert.equal(oExpectedReloadInfo.hasDraft, false, "then there is no draft");
 		});
 
 		QUnit.test("and appDescriptor changes exist", function(assert) {

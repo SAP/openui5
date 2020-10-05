@@ -31,6 +31,7 @@ sap.ui.define(function () {
 		oRm.openStart("h3", oStep.getId() + "-Title")
 			.class("sapMWizardStepTitle")
 			.openEnd()
+			.text(this._resolveOrder(oStep))
 			.text(oStep.getTitle())
 			.close("h3");
 	};
@@ -42,6 +43,15 @@ sap.ui.define(function () {
 
 	WizardStepRenderer.endWizardStep = function (oRm) {
 		oRm.close("div");
+	};
+
+	WizardStepRenderer._resolveOrder = function (oStep) {
+		var oData = oStep.getCustomData()
+			.filter(function (oCustomData) {
+				return oCustomData.getKey() === "stepIndex";
+			})[0];
+
+		return oData ? (oData.getValue() + ". ") : "";
 	};
 
 	return WizardStepRenderer;

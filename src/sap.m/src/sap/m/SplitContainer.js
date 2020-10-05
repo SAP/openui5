@@ -609,7 +609,7 @@ function(
 
 		if (!Device.system.phone) {
 			this._oDetailNav.setInitialPage(sap.ui.getCore().byId(this.getInitialDetail()));
-			this._oShowMasterBtn.setText(this.getMasterButtonText() || this._rb.getText("SPLITCONTAINER_NAVBUTTON_TEXT"));
+			this._updateMasterButtonText();
 		}
 
 		this._oDetailNav.setDefaultTransitionName(this.getDefaultTransitionNameDetail());
@@ -708,8 +708,10 @@ function(
 		}
 
 		var bIsMasterNav = true,
-			$targetContainer = jQuery(oEvent.target).closest(".sapMSplitContainerDetail, .sapMSplitContainerMaster"), // find the closest master or detail DOM element because SplitContainers may be nested
-			metaData = oEvent.srcControl.getMetadata();
+			$targetContainer = jQuery(oEvent.target).closest(".sapMSplitContainerDetail, .sapMSplitContainerMaster"), // find the closest master or detail DOM element because SplitContainers may be nested,
+			oEventControl = oEvent.srcControl,
+			oParentControl = oEventControl.getParent(),
+			oMetaData = oParentControl && oParentControl.isA("sap.m.Button") ? oParentControl.getMetadata() : oEventControl.getMetadata(); // button with an icon
 
 		if ($targetContainer.length > 0 && $targetContainer.hasClass("sapMSplitContainerDetail")) {
 			bIsMasterNav = false;
@@ -724,7 +726,7 @@ function(
 				&& !bIsMasterNav
 				// press isn't triggered by the showMasterButton
 				&& !containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
-				&& (!metaData.getEvent("tap") || !metaData.getEvent("press"))) {
+				&& (!oMetaData.getEvent("tap") || !oMetaData.getEvent("press"))) {
 			this.hideMaster();
 		}
 	};
@@ -1269,8 +1271,7 @@ function(
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.showMaster = function() {
-		var that = this,
-			_curPage = this._getRealPage(this._oDetailNav.getCurrentPage());
+		var _curPage = this._getRealPage(this._oDetailNav.getCurrentPage());
 
 		function afterPopoverOpen(){
 			this._oPopOver.detachAfterOpen(afterPopoverOpen, this);
@@ -1289,9 +1290,9 @@ function(
 		} else if ((this._portraitHide() || this._hideMode())
 					&& (!this._bMasterisOpen || this._bMasterClosing)) {
 
-			this._oMasterNav.$().one(
+			this._oMasterNav.$().on(
 				"webkitTransitionEnd transitionend",
-				jQuery.proxy(this._afterShowMasterAnimation, this)
+				this._afterShowMasterAnimation.bind(this)
 			);
 
 			this.fireBeforeMasterOpen();
@@ -1300,7 +1301,7 @@ function(
 			this._oMasterNav.getDomRef() && this._oMasterNav.getDomRef().offsetHeight;
 			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", false);
 			this._bMasterOpening = true;
-			that._removeMasterButton(_curPage);
+			this._removeMasterButton(_curPage);
 
 			// workaround for bug in current webkit versions: in slided-in elements the z-order may be wrong and will be corrected once a re-layout is enforced
 			// see http://code.google.com/p/chromium/issues/detail?id=246965
@@ -1334,9 +1335,9 @@ function(
 		} else if ((this._portraitHide() || this._hideMode()) &&
 					(this._bMasterisOpen || this._oMasterNav.$().hasClass("sapMSplitContainerMasterVisible"))) {
 
-			this._oMasterNav.$().one(
+			this._oMasterNav.$().on(
 				"webkitTransitionEnd transitionend",
-				jQuery.proxy(this._afterHideMasterAnimation, this)
+				this._afterHideMasterAnimation.bind(this)
 			);
 
 			this.fireBeforeMasterClose();
@@ -1350,6 +1351,8 @@ function(
 	};
 
 	SplitContainer.prototype._afterShowMasterAnimation = function() {
+		this._oMasterNav.$().off("webkitTransitionEnd transitionend");
+
 		if (this._portraitHide() || this._hideMode()) {
 			this._bMasterOpening = false;
 			this._bMasterisOpen = true;
@@ -1358,6 +1361,8 @@ function(
 	};
 
 	SplitContainer.prototype._afterHideMasterAnimation = function() {
+		this._oMasterNav.$().off("webkitTransitionEnd transitionend");
+
 		var oCurPage = this._getRealPage(this._oDetailNav.getCurrentPage());
 		this._setMasterButton(oCurPage);
 
@@ -1887,6 +1892,10 @@ function(
 		this._oShowMasterBtn.setTooltip(sTooltip);
 	};
 
+	SplitContainer.prototype._updateMasterButtonText = function() {
+		this._oShowMasterBtn.setText(this.getMasterButtonText() || this._rb.getText("SPLITCONTAINER_NAVBUTTON_TEXT"));
+	};
+
 	SplitContainer.prototype._createShowMasterButton = function() {
 		if (this._oShowMasterBtn && !this._oShowMasterBtn.bIsDestroyed) {
 			return;
@@ -1944,6 +1953,7 @@ function(
 			this._createShowMasterButton();
 			//Tooltip should be update again also
 			this._updateMasterButtonTooltip();
+			this._updateMasterButtonText();
 
 			this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
 

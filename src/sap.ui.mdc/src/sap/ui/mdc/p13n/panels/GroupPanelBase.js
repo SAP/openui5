@@ -254,6 +254,12 @@ sap.ui.define([
 		return oP13nCellTemplate;
 	};
 
+	GroupPanelBase.prototype._getSearchField = function() {
+		var oSearchField = BasePanel.prototype._getSearchField.apply(this, arguments);
+		oSearchField.setPlaceholder(this.getResourceText("p13nDialog.ADAPT_FILTER_SEARCH"));
+		return oSearchField;
+	};
+
 	GroupPanelBase.prototype.setGrouping = function(bAllowGrouping) {
 		this.setProperty("grouping", bAllowGrouping);
 		this.setItemFactory(this.getItemFactory());//TODO: don't call setter with getter

@@ -234,6 +234,8 @@ sap.ui.define([
 				return sPersistencyKey;
 			};
 
+			var oFlexStateInitSpy = sandbox.spy(FlexState, "initialize");
+
 			sandbox.stub(LrepConnector, "loadFlexData").resolves({
 				changes: [{
 					fileType: "variant",
@@ -246,7 +248,8 @@ sap.ui.define([
 			return SmartVariantManagementApplyAPI.loadChanges({control: this.oControl})
 				.then(function (aEntities) {
 					assert.equal(aEntities.length, 1, "then one entity is returned");
-				});
+					assert.equal(oFlexStateInitSpy.getCall(0).args[0].manifest, this.oAppComponent.getManifest(), "the manifest was passed");
+				}.bind(this));
 		});
 		QUnit.test("When loadChanges() is called and one variant is present for the persistencyKey of another control", function (assert) {
 			this.oControl = new Control("controlId1");

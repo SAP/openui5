@@ -174,7 +174,7 @@ input.sapMSFI[type="search"]:focus {
 	top: 0;
 }
 
-.sapMSFB:after {
+.sapMSFB::after {
 	speak: none;
 	font-weight: normal;
 	font-family: 'SAP-icons';
@@ -190,7 +190,7 @@ input.sapMSFI[type="search"]:focus {
 	visibility: hidden;
 }
 
-.sapMSFR:after {
+.sapMSFR::after {
 	content: @_sap_m_SearchField_ResetIcon;
 }
 
@@ -200,18 +200,18 @@ input.sapMSFI[type="search"]:focus {
 }
 
 /* search icon in place of the reset button */
-:not(.sapMSFVal)>.sapMSFReload>.sapMSFR:after {
+:not(.sapMSFVal)>.sapMSFReload>.sapMSFR::after {
 	content: "\e00d";
 }
 
 /* search button */
-.sapMSFS:after {
+.sapMSFS::after {
 	content: "\e00d";
 }
 
 /* refresh icon in some cases */
-:not(.sapMFocus)>.sapMSFReload>.sapMSFS:after {
-	content: "\e00a";
+:not(.sapMFocus)>.sapMSFReload>.sapMSFS::after {
+	content: "\e010";
 }
 
 /*grouping is not allowed here*/

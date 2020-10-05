@@ -131,6 +131,16 @@ function(
 	 *
 	 * If <code>showValueHelp</code> or if <code>showSuggestion</code> is <code>true</code>, the native browser autofill will not fire a change event.
 	 *
+	 * <h4>Note:</h4>
+	 * The control has the following behavior regarding the <code>selectedKey</code> and <code>value</code> properties:
+	 * <ul>
+	 * <li> On initial loading, if the control has a <code>selectedKey</code> set which corresponds to a matching item, and a set <code>value</code>, the <code>value</code> will be updated to the matching item's text. </li>
+	 * <li> If a <code>selectedKey</code> is set and the user types an input which corresponds to an item's text, the <code>selectedKey</code> will be updated with the matching item's key. </li>
+	 * <li> If a <code>selectedKey</code> is set and the user types an input which does not correspond to any item's text, the <code>selectedKey</code> will be set to an empty string ("") </li>
+	 * <li> If a <code>selectedKey</code> is set and the user selects an item, the <code>selectedKey</code> will be updated to match the selected item's key. </li>
+	 * <li> If a <code>selectedKey</code> is bound and the user types before the data is loaded, the user's input will be overwritten by the binding update. </li>
+	 * </ul>
+	 *
 	 * @extends sap.m.InputBase
 	 * @author SAP SE
 	 * @version ${version}
@@ -178,6 +188,12 @@ function(
 			 * @since 1.16
 			 */
 			showValueHelp : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Set custom value state icon.
+			 * @since 1.84.0
+			 */
+			valueHelpIconSrc : {type : "sap.ui.core.URI", group : "Behavior", defaultValue : "sap-icon://value-help"},
 
 			/**
 			 * If this is set to true, suggest event is fired when user types in the input. Changing the suggestItems aggregation in suggest event listener will show suggestions within a popup. When runs on phone, input will first open a dialog where the input and suggestions are shown. When runs on a tablet, the suggestions are shown in a popup next to the input.
@@ -1017,13 +1033,14 @@ function(
 	Input.prototype._getValueHelpIcon = function () {
 		var that = this,
 			aEndIcons = this.getAggregation("_endIcon") || [],
+			sIconSrc = this.getValueHelpIconSrc(),
 			oValueStateIcon = aEndIcons[0];
 
 		// for backward compatibility - leave this method to return the instance
 		if (!oValueStateIcon) {
 			oValueStateIcon = this.addEndIcon({
 				id: this.getId() + "-vhi",
-				src: IconPool.getIconURI("value-help"),
+				src: sIconSrc,
 				useIconTooltip: false,
 				alt: this._oRb.getText("INPUT_VALUEHELP_BUTTON"),
 				decorative: false,
@@ -1050,6 +1067,8 @@ function(
 					}
 				}
 			});
+		} else if (oValueStateIcon.getSrc() !== sIconSrc) {
+			oValueStateIcon.setSrc(sIconSrc);
 		}
 
 		return oValueStateIcon;

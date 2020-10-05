@@ -9,7 +9,6 @@ sap.ui.define([
 		navigation: [
 			{
 				title: 'Getting Started',
-				topicTitle: 'Integration Card Getting Started',
 				icon: 'sap-icon://initiative',
 				target: 'learnDetail',
 				key: 'gettingStarted'
@@ -23,14 +22,12 @@ sap.ui.define([
 					{
 						title: 'Default',
 						target: 'learnDetail',
-						key: 'default',
-						topicTitle: 'Integration Card Headers'
+						key: 'default'
 					},
 					{
 						title: 'Numeric',
 						target: 'learnDetail',
-						key: 'numeric',
-						topicTitle: 'Integration Card Headers'
+						key: 'numeric'
 					}
 				]
 			},
@@ -42,50 +39,41 @@ sap.ui.define([
 				items: [
 					{
 						title: 'Adaptive',
-						topicTitle: 'AdaptiveCard',
 						target: 'learnDetail',
 						key: 'adaptive'
 					},
 					{
 						title: 'Analytical',
-						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'analytical'
 					},
 					{
 						title: 'Calendar',
-						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
-						key: 'calendar',
-						experimental: true
+						key: 'calendar'
 					},
 					{
 						title: 'Component',
-						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'component'
 					},
 					{
 						title: 'List',
-						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'list'
 					},
 					{
 						title: 'Object',
-						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'object'
 					},
 					{
 						title: 'Table',
-						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'table'
 					},
 					{
 						title: 'Timeline',
-						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'timeline'
 					}
@@ -98,86 +86,79 @@ sap.ui.define([
 				key: 'features',
 				items: [
 					{
-						title: 'Card Actions',
+						title: 'Actions',
 						target: 'learnDetail',
-						key: 'cardActions',
-						topicTitle: 'Integration Card Features'
+						key: 'cardActions'
 					},
 					{
 						title: 'Data',
 						target: 'learnDetail',
-						key: 'data',
-						topicTitle: 'Integration Card Features'
+						key: 'data'
 					},
 					{
 						title: 'Data Sources',
 						target: 'learnDetail',
-						key: 'dataSources',
-						topicTitle: 'Integration Card Data Sources'
+						key: 'dataSources'
 					},
 					{
 						title: 'Date Ranges',
 						target: 'learnDetail',
 						key: 'dateRanges',
-						topicTitle: 'Integration Card Date Range Handling',
 						experimental: true
 					},
 					{
 						title: 'Destinations',
 						target: 'learnDetail',
-						key: 'destinations',
-						topicTitle: 'Integration'
+						key: 'destinations'
 					},
 					{
 						title: 'Dynamic Counter',
 						target: 'learnDetail',
-						key: 'dynamicCounter',
-						topicTitle: 'Integration Card Features'
+						key: 'dynamicCounter'
 					},
 					{
 						title: 'Dynamic Parameters',
 						target: 'learnDetail',
-						key: 'dynamicParameters',
-						topicTitle: 'Integration Card Features'
+						key: 'dynamicParameters'
 					},
 					{
 						title: 'Extension',
 						target: 'learnDetail',
 						key: 'extension',
-						topicTitle: 'Integration Card Features',
 						experimental: true
 					},
 					{
 						title: 'Filters',
 						target: 'learnDetail',
 						key: 'filters',
-						topicTitle: 'Integration Card Features',
 						experimental: true
 					},
 					{
 						title: 'Manifest Parameters',
 						target: 'learnDetail',
-						key: 'manifestParameters',
-						topicTitle: 'Integration Card Features'
+						key: 'manifestParameters'
 					},
 					{
 						title: 'Microcharts',
 						target: 'learnDetail',
 						key: 'microcharts',
-						topicTitle: 'Card Microcharts',
 						experimental: true
+					},
+					{
+						title: 'Sizing',
+						target: 'learnDetail',
+						key: 'sizing',
+						topicTitle: 'Sizing'
 					},
 					{
 						title: 'Translation',
 						target: 'learnDetail',
-						key: 'translation',
-						topicTitle: 'Integration Card Features'
+						key: 'translation'
 					}
 				]
 			},
 			{
 				title: 'Card Bundle',
-				topicTitle: 'Card Bundle',
 				icon: 'sap-icon://attachment-zip-file',
 				target: 'learnDetail',
 				key: 'bundle'
@@ -191,38 +172,32 @@ sap.ui.define([
 					{
 						title: 'Currency',
 						target: 'learnDetail',
-						key: 'currency',
-						topicTitle: 'Formatters'
+						key: 'currency'
 					},
 					{
 						title: 'Date and Time',
 						target: 'learnDetail',
-						key: 'dateAndTime',
-						topicTitle: 'Formatters'
+						key: 'dateAndTime'
 					},
 					{
 						title: 'Float',
 						target: 'learnDetail',
-						key: 'float',
-						topicTitle: 'Formatters'
+						key: 'float'
 					},
 					{
 						title: 'Integer',
 						target: 'learnDetail',
-						key: 'integer',
-						topicTitle: 'Formatters'
+						key: 'integer'
 					},
 					{
 						title: 'Percent',
 						target: 'learnDetail',
-						key: 'percent',
-						topicTitle: 'Formatters'
+						key: 'percent'
 					},
 					{
 						title: 'Unit of Measurement',
 						target: 'learnDetail',
-						key: 'unit',
-						topicTitle: 'Formatters'
+						key: 'unit'
 					}
 				]
 			}

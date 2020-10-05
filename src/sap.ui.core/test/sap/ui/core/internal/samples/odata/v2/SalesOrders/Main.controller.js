@@ -55,11 +55,13 @@ sap.ui.define([
 			if (sMessageFullTarget) {
 				i = sMessageFullTarget.lastIndexOf("ItemPosition=");
 				if (i >= 0) {
-					return sResult + "Sales Order Item " + sMessageFullTarget.slice(i + 13, i + 25);
+					return sResult + "Sales Order Item "
+						+ sMessageFullTarget.slice(i + 13, sMessageFullTarget.indexOf(")", i));
 				} else {
 					i = sMessageFullTarget.lastIndexOf("SalesOrderSet(");
 					if (i >= 0) {
-						return sResult + "Sales Order " + sMessageFullTarget.slice(i + 14, i + 26);
+						return sResult + "Sales Order "
+							+ sMessageFullTarget.slice(i + 14, sMessageFullTarget.indexOf(")", i));
 					}
 				}
 			}
@@ -68,6 +70,34 @@ sap.ui.define([
 
 		formatMessageTargets : function (aTargets) {
 			return aTargets && aTargets.join("\n");
+		},
+
+		onCloneItem : function (oEvent) {
+			var oView = this.getView(),
+				oModel = oView.getModel(),
+				oTable = oView.byId("ToLineItems"),
+				oSelectedItem = oTable.getContextByIndex(oTable.getSelectedIndex()).getObject(),
+				sSalesOrderID = oSelectedItem.SalesOrderID,
+				sSalesOrderItemPosition = oSelectedItem.ItemPosition,
+				sItem = "\"" + sSalesOrderID + " / " + sSalesOrderItemPosition + "\"";
+
+			oModel.callFunction("/SalesOrderItem_Clone", {
+				adjustDeepPath : function (mParameters) {
+					var aPathSegments = mParameters.response.headers.location.split("/"),
+						sEntityKey = aPathSegments[aPathSegments.length - 1],
+						sKeyPredicate = sEntityKey.slice(sEntityKey.indexOf("("));
+
+					return "/SalesOrderSet('" + sSalesOrderID + "')/ToLineItems" + sKeyPredicate;
+				},
+				error : this.defaultErrorHandler.bind(null, "Failed to clone item " + sItem),
+				expand : "ToProduct,ToHeader",
+				method : "POST",
+				success : MessageToast.show.bind(null, "Successfully cloned item " + sItem),
+				urlParameters : {
+					ItemPosition : encodeURL(sSalesOrderItemPosition),
+					SalesOrderID : encodeURL(sSalesOrderID)
+				}
+			});
 		},
 
 		onCloseMessageDetails : function (oEvent) {

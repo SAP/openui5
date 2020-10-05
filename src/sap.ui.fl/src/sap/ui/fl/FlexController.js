@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
@@ -23,6 +24,7 @@ sap.ui.define([
 	Change,
 	ChangePersistenceFactory,
 	Versions,
+	VariantManagementState,
 	Applier,
 	Reverter,
 	URLHandler,
@@ -32,6 +34,41 @@ sap.ui.define([
 	Log
 ) {
 	"use strict";
+
+	function revertChangesAndUpdateVariantModel(oComponent, aChanges) {
+		return Promise.resolve()
+			.then(function () {
+				if (aChanges.length !== 0) {
+					return Reverter.revertMultipleChanges(aChanges, {
+						appComponent: oComponent,
+						modifier: JsControlTreeModifier,
+						flexController: this
+					});
+				}
+			}.bind(this))
+			.then(function () {
+				if (oComponent) {
+					var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
+					if (oModel) {
+						aChanges.forEach(function (oChange) {
+							var sVariantReference = oChange.getVariantReference();
+							if (sVariantReference) {
+								oModel.removeChange(oChange);
+							}
+						});
+
+						URLHandler.update({
+							parameters: [],
+							updateURL: true,
+							updateHashEntry: true,
+							model: oModel
+						});
+					}
+				}
+
+				return aChanges;
+			});
+	}
 
 	/**
 	 * Retrieves changes (LabelChange, etc.) for an sap.ui.core.mvc.View and applies these changes
@@ -245,6 +282,10 @@ sap.ui.define([
 				// so the propagation listener should ignore this change once
 				oChange._ignoreOnce = true;
 				this.addPreparedChange(oChange, oAppComponent);
+
+				// TODO this should go into an API that applied multiple changes, that does not yet exist
+				// all changes should be queued to apply before the first change gets applied
+				oChange.setQueuedForApply();
 				return oChange;
 			}.bind(this));
 	};
@@ -293,34 +334,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a new change and applies it immediately.
+	 * Must ONLY be used together with FlexController.prototype.addChange.
+	 * Applies a change that was previously created, added to the map and queued.
 	 *
-	 * @param {object} oChangeSpecificData The data specific to the change, e.g. the new label for a RenameField change
+	 * @param {object} oChange Change Instance
 	 * @param {sap.ui.core.Control} oControl The control where the change will be applied to
 	 * @returns {Promise} Returns Promise resolving to the change that was created and applied successfully or a Promise reject with the error object
 	 * @public
 	 */
-	FlexController.prototype.createAndApplyChange = function(oChangeSpecificData, oControl) {
-		var oChange;
-		return this.addChange(oChangeSpecificData, oControl)
-			.then(function(oAddedChange) {
-				oChange = oAddedChange;
-				var mPropertyBag = {
-					modifier: JsControlTreeModifier,
-					appComponent: Utils.getAppComponentForControl(oControl),
-					view: Utils.getViewForControl(oControl)
-				};
-				oChange.setQueuedForApply();
-				return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
-			})
-			.then(function(oReturn) {
-				if (!oReturn.success) {
-					var oException = oReturn.error || new Error("The change could not be applied.");
-					this._oChangePersistence.deleteChange(oChange, true);
-					throw oException;
-				}
-				return oChange;
-			}.bind(this));
+	FlexController.prototype.applyChange = function(oChange, oControl) {
+		var mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: Utils.getAppComponentForControl(oControl),
+			view: Utils.getViewForControl(oControl)
+		};
+
+		return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag)
+		.then(function(oReturn) {
+			if (!oReturn.success) {
+				var oException = oReturn.error || new Error("The change could not be applied.");
+				this._oChangePersistence.deleteChange(oChange, true);
+				throw oException;
+			}
+			return oChange;
+		}.bind(this));
 	};
 
 	function checkDependencies(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
@@ -549,28 +586,23 @@ sap.ui.define([
 	 */
 	FlexController.prototype.resetChanges = function(sLayer, sGenerator, oComponent, aSelectorIds, aChangeTypes) {
 		return this._oChangePersistence.resetChanges(sLayer, sGenerator, aSelectorIds, aChangeTypes)
-		.then(function(aChanges) {
-			if (aChanges.length !== 0) {
-				return Reverter.revertMultipleChanges(aChanges, {
-					appComponent: oComponent,
-					modifier: JsControlTreeModifier,
-					flexController: this
-				});
-			}
-		}.bind(this))
-		.then(function() {
-			if (oComponent) {
-				var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
-				if (oModel) {
-					URLHandler.update({
-						parameters: [],
-						updateURL: true,
-						updateHashEntry: true,
-						model: oModel
-					});
-				}
-			}
-		});
+			.then(revertChangesAndUpdateVariantModel.bind(this, oComponent));
+	};
+
+	/**
+	 * Removes unsaved changes and reverts these.
+	 *
+	 * @param {string} sLayer - Layer for which changes shall be deleted
+	 * @param {sap.ui.core.Component} oComponent - Component instance
+	 * @param {sap.ui.core.Control} oControl - Control for which the changes should be removed
+	 * @param {string} [sGenerator] - Generator of changes (optional)
+	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
+	 *
+	 * @returns {Promise} Promise that resolves after the deletion took place
+	 */
+	FlexController.prototype.removeDirtyChanges = function(sLayer, oComponent, oControl, sGenerator, aChangeTypes) {
+		return this._oChangePersistence.removeDirtyChanges(sLayer, oComponent, oControl, sGenerator, aChangeTypes)
+			.then(revertChangesAndUpdateVariantModel.bind(this, oComponent));
 	};
 
 	/**

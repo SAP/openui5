@@ -575,6 +575,20 @@ sap.ui.define([
 
 	};
 
+	FieldValueHelp.prototype.getDomRef = function() {
+
+		if (!this._bDialogOpen) {
+			return FieldHelpBase.prototype.getDomRef.apply(this, arguments);
+		} else {
+			this._bUseFilterBar = false;
+			var oDialog = this.getAggregation("_dialog");
+
+			if (oDialog) {
+				return oDialog.getDomRef();
+			}
+		}
+
+	};
 
 	function _cleanupFilters() {
 
@@ -2117,7 +2131,7 @@ sap.ui.define([
 			var oValueHelpPanel = oDialog.getContent()[0];
 			if (bActive) { // sow DefineConditions too if only EQ is allowes to suppoer free input. If not wanted, showConditionPanel should be set to false
 				if (!oValueHelpPanel._oDefineConditionPanel) { //TODO: use API?
-					var oDefineConditionPanel = new DefineConditionPanel(this.getId() + "-DCP");
+					var oDefineConditionPanel = new DefineConditionPanel(this.getId() + "-DCP", {label: "{$help>/title}"});
 					oValueHelpPanel.setDefineConditions(oDefineConditionPanel);
 				}
 			} else {
@@ -2297,9 +2311,9 @@ sap.ui.define([
 
 	};
 
-	FieldValueHelp.prototype.getRoleDescription = function() {
+	FieldValueHelp.prototype.getRoleDescription = function(iMaxConditions) {
 
-		if (this.getMaxConditions() === 1) {
+		if (!iMaxConditions || iMaxConditions === 1) {
 			return null;
 		} else {
 			if (!this._oResourceBundleM) {

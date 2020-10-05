@@ -67,6 +67,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
 					oRm.class("sapUiDSCSpan" + oSideControl.getProperty("mcSpan"));
 				} else {
 					oRm.class("sapUiDSCSpan12");
+					bShouldSetHeight = true;
 				}
 			}
 			if (bShouldSetHeight) {
@@ -98,6 +99,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
 					oRm.class("sapUiDSCSpan" + oSideControl.getProperty("scSpan"));
 				} else {
 					oRm.class("sapUiDSCSpan12");
+					bShouldSetHeight = true;
 				}
 			}
 			if (bShouldSetHeight) {

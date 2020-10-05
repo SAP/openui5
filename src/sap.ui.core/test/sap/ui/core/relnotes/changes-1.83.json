@@ -3,6 +3,91 @@
     "date": "September 2020",
     "notes": [
       {
+        "id": "11c55065d5b3f79b1cfcd70999c61a9f9cd6ea40",
+        "type": "FIX",
+        "text": " scrollLeftRTL: adapt to chrome behavior change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070328364"
+          }
+        ]
+      },
+      {
+        "id": "5660dfb6068497bfd850de22b8f8592f2dffa4ed",
+        "type": "FEATURE",
+        "text": " sap.m.Button: new API exposed to set aria-haspopup according to ARIA 1.1"
+      },
+      {
+        "id": "bed6ed612490ebf6d22a9880a8e5a1ac28370abc",
+        "type": "FIX",
+        "text": " Revent '[FIX] routing.HashChanger: avoid forwarding \"updateHashOnly\" event to router'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070320172"
+          }
+        ]
+      },
+      {
+        "id": "5a2cbc35738e8bb617a48706bad824df9659584d",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Suppress 'dataReceived' event if request is aborted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005566692020"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980148224"
+          }
+        ]
+      },
+      {
+        "id": "126affe984d65decff05171597d43fc1243ebbfc",
+        "type": "FEATURE",
+        "text": " Opa: handle promise constructor in autowaiter"
+      },
+      {
+        "id": "df0e9ba3c976b2d6b433c33942eb7b5b5b1e65b3",
+        "type": "FIX",
+        "text": " routing.HashChanger: avoid forwarding \"updateHashOnly\" event to router",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080039881"
+          }
+        ]
+      },
+      {
+        "id": "73c205265ef7359d44aca6c93657395b80e217cb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser#parse: (part2) do not consider 204 response for a GET request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080337477"
+          }
+        ]
+      },
+      {
+        "id": "55c1c22e56c072e612c5e9c81de5a07baad2d0dd",
+        "type": "FEATURE",
+        "text": " Opa: activate waiters conditionally"
+      },
+      {
+        "id": "fc72dc00bed467e33e9b89c81e7266273d9a4910",
+        "type": "FIX",
+        "text": " format/NumberFormat: consider control characters in minus sign",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005462222020"
+          }
+        ]
+      },
+      {
         "id": "7a20955bf94237d19c693a829d153a3562646ff4",
         "type": "FIX",
         "text": " sap.ui.model.analytics.AnalyticalTreeBindingAdapter#setNumberOfExpandedLevels: expand only as many levels as grouped dimensions are available",
@@ -14,6 +99,11 @@
         ]
       },
       {
+        "id": "dfadfc96e3fbff0d3e6591ff83f7725e44a1daa7",
+        "type": "FIX",
+        "text": " Opa: disable entertext for disabled and non-editable controls"
+      },
+      {
         "id": "862f9c705a14ebeca0683408f16d3536f71bec68",
         "type": "FIX",
         "text": " sap.ui.model.odata.ODataMessageParser#parse: do not consider 204 response for a GET request",
@@ -21,6 +111,28 @@
           {
             "type": "BCP",
             "reference": "2080337477"
+          }
+        ]
+      },
+      {
+        "id": "ad76a114328e7ff21731a4d234b2c13825853f76",
+        "type": "FIX",
+        "text": " Opa: escape characters in EnterText constructor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070287245"
+          }
+        ]
+      },
+      {
+        "id": "f49e66ee1e56ae2c126fc925d4fe42579aa7fdd6",
+        "type": "FIX",
+        "text": " format/DateFormat: Immutability of input Date after format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070281118"
           }
         ]
       },
@@ -91,167 +203,20 @@
         ]
       },
       {
+        "id": "c1e5ee430cd860cdaace2a47b4461869ee64636f",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.Router: TitleChanged event was not propagated correctly when target on parent has no title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080344993"
+          }
+        ]
+      },
+      {
         "id": "e5beb2eedbdaecb1fe703e84cd5cbffce9d6938a",
         "type": "FIX",
         "text": " handlebars: usage of latest version 4.7.6"
-      },
-      {
-        "id": "1d36bce41a9bca154d7864c836e859f4415c5a09",
-        "type": "FIX",
-        "text": " ui5loader: use a separate queue for each sync execution",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080197839"
-          }
-        ]
-      },
-      {
-        "id": "5b4405b621c820471e477a1281a560d38804b6c7",
-        "type": "FIX",
-        "text": " sap/ui/base/syncXHRFix: Properly handle failing sync XHR",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400002823642020"
-          }
-        ]
-      },
-      {
-        "id": "3cf8b9623c91403869cbe6eddb658c0eaacee290",
-        "type": "FIX",
-        "text": " encodeURL: extend encoding to code points beyond 0xffff",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080272749"
-          }
-        ]
-      },
-      {
-        "id": "5f963feb4b8f1dc938ac0e9a1fe30d5b3204a791",
-        "type": "FEATURE",
-        "text": " core: upgrade jQuery to 3.5.1 (w/ compatibility layer)"
-      },
-      {
-        "id": "504e8f31619e4b06a45481c917e51876fe345fc7",
-        "type": "FIX",
-        "text": " sap/ui/thirdparty/datajs: make OData the default AMD export",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080356740"
-          }
-        ]
-      },
-      {
-        "id": "a59315aded9ea092534d0847b9a9269b9722b3c0",
-        "type": "FIX",
-        "text": " format/DateFormat: timezone Z and X patterns",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080284929"
-          }
-        ]
-      },
-      {
-        "id": "df5b5076b6783f47875c6794b6ceb5610110d7b4",
-        "type": "FIX",
-        "text": " sap.ui.core.Popup: restore the user selection when popup is invalidated",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080313132"
-          }
-        ]
-      },
-      {
-        "id": "b06771862af6fe115d13d1effab151ccfb7b7449",
-        "type": "FIX",
-        "text": " Revert: core.Fragment: fix error handling"
-      },
-      {
-        "id": "5f5b9a8b12f2c6e272b63b114c716eabbec940f9",
-        "type": "FIX",
-        "text": " ShortcutHint: correct the font size and positioning",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080281837"
-          }
-        ]
-      },
-      {
-        "id": "f2161d716e7cc45ebf48f1bf6b8678c6bdb70ceb",
-        "type": "FIX",
-        "text": " sap.ui.core.Router: support of multiple targets with the same title and titlechanged event propagation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080321371"
-          }
-        ]
-      },
-      {
-        "id": "8fff86ca85f7c4c74c8e5b6178b385731c27df4e",
-        "type": "FIX",
-        "text": " core.routing.History: make test robust for Safari",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": ""
-          }
-        ]
-      },
-      {
-        "id": "92e0ab7a03b7d72adb6337b6ba533016401a9b0c",
-        "type": "FIX",
-        "text": " core/Element: Focus shouldn't be called with empty object",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080335699"
-          }
-        ]
-      },
-      {
-        "id": "0b68ef3ce8505e66611b68d53306a8b69e02b16b",
-        "type": "FIX",
-        "text": " core/Element: preventScrolling Test failed in Firefox"
-      },
-      {
-        "id": "4eddeb973b8e57d74282b39d5d205076aa3ea2d3",
-        "type": "FIX",
-        "text": " core.IconFont: update icon name \"S/4HANA\" to \"s4hana\"",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": ""
-          }
-        ]
-      },
-      {
-        "id": "16bdc08584c9d30ebee6746c2a2884270d692133",
-        "type": "FIX",
-        "text": " core.Fragment: fix error handling",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080321485"
-          }
-        ]
-      },
-      {
-        "id": "d0706217a799eb88c97a73b02c4b78e0abaee1db",
-        "type": "FIX",
-        "text": " sap/ui/thirdparty/jquery-mobile-custom: enable swipe event on internet explorer and edge",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080241660"
-          }
-        ]
       }
     ]
   }

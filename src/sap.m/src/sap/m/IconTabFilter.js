@@ -1043,30 +1043,29 @@ sap.ui.define([
 	};
 
 	/** Handles onDragOver.
-	* @private
-	* @param {jQuery.Event} oEvent The jQuery drag over event
-	*/
+	 * @private
+	 * @param {jQuery.Event} oEvent The jQuery drag over event
+	 */
 	IconTabFilter.prototype._handleOnDragOver = function (oEvent) {
-		if (!this._bIsOverflow && !this._getIconTabHeader().getMaxNestingLevel()) {
-			return;
+
+		if (this._isDropPossible(oEvent)) {
+			this.getDomRef().classList.add("sapMITHDragOver");
+			oEvent.preventDefault(); // allow drop, so that the cursor is correct
 		}
-		this.getDomRef().classList.add("sapMITHDragOver");
-		oEvent.preventDefault(); // allow drop, so that the cursor is correct
 	};
 
 	/** Handles onLongDragOver.
-	* @private
-	*/
-	IconTabFilter.prototype._handleOnLongDragOver = function () {
-		if (!this._bIsOverflow && !this._getIconTabHeader().getMaxNestingLevel()) {
-			return;
-		}
+	 * @param {jQuery.Event} oEvent The jQuery long drag over event
+	 * @private
+	 */
+	IconTabFilter.prototype._handleOnLongDragOver = function (oEvent) {
+		if (this._isDropPossible(oEvent)) {
+			if (this._oPopover && this._oPopover.isOpen()) {
+				return;
+			}
 
-		if (this._oPopover && this._oPopover.isOpen()) {
-			return;
+			this._expandButtonPress();
 		}
-
-		this._expandButtonPress();
 	};
 
 	/**
@@ -1083,6 +1082,37 @@ sap.ui.define([
 	 */
 	IconTabFilter.prototype._handleOnDragLeave = function () {
 		this.getDomRef().classList.remove("sapMITHDragOver");
+	};
+
+	/**
+	 * Checks if the dragged item can be dropped as a sub item to this item.
+	 * @private
+	 */
+	IconTabFilter.prototype._isDropPossible = function (oEvent) {
+		var oIconTabHeader = this._getIconTabHeader(),
+			oDragControl = oEvent.dragSession.getDragControl()._getRealTab(),
+			oSelectedItem = oIconTabHeader.oSelectedItem;
+
+		// disable DnD between different IconTabHeaders
+		if (oIconTabHeader !== oDragControl._getIconTabHeader()) {
+			return false;
+		}
+
+		// an item can't be dropped as a child item to itself
+		if (oDragControl === this || oDragControl._isParentOf(this)) {
+			return false;
+		}
+
+		if (!this._bIsOverflow && !oIconTabHeader.getMaxNestingLevel()) {
+			return false;
+		}
+
+		// disable dragging selected item to the overflow
+		if (this._bIsOverflow && oSelectedItem && (oSelectedItem === oDragControl || oSelectedItem._getRootTab() === oDragControl)) {
+			return false;
+		}
+
+		return true;
 	};
 
 	/**

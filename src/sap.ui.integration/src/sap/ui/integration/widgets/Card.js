@@ -693,7 +693,7 @@ sap.ui.define([
 		return oContextModel.waitForPendingProperties().then(function () {
 			// properties are ready, no resolve again
 			return BindingResolver.resolveValue(oContextParams, this, "/");
-		});
+		}.bind(this));
 	};
 
 	/**
@@ -1543,7 +1543,13 @@ sap.ui.define([
 	 * @protected
 	 */
 	Card.prototype.getFocusDomRef = function () {
-		return this.getCardHeader() ? this.getCardHeader().getDomRef() : this.getDomRef();
+		var oHeader = this.getCardHeader();
+
+		if (oHeader && oHeader.getDomRef()) {
+			return oHeader.getDomRef();
+		}
+
+		return this.getDomRef();
 	};
 
 	Card.prototype.onDataRequested = function () {

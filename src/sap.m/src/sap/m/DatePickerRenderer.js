@@ -46,17 +46,11 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'],
 		return "combobox";
 	};
 
-	DatePickerRenderer.getDescribedByAnnouncement = function(oDP) {
-
-		var sBaseAnnouncement = InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE") + " " + sBaseAnnouncement;
-
-	};
-
 	DatePickerRenderer.getAccessibilityState = function(oDP) {
 
 		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
 
+		mAccessibilityState["roledescription"] = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
 		mAccessibilityState["autocomplete"] = "none";
 		mAccessibilityState["haspopup"] = true;
 		mAccessibilityState["expanded"] = false;

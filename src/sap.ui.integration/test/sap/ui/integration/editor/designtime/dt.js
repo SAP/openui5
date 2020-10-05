@@ -1,5 +1,5 @@
-sap.ui.define(["sap/ui/integration/Designtime"
-], function (Designtime) {
+sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch"
+], function (Designtime, Slider, Switch) {
 	"use strict";
 
 	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
@@ -23,7 +23,6 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					},
 					"stringLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
-						"defaultValue": "{i18n>TRANSLATED_STRING_VALUE}",
 						"type": "string",
 						"label": "{i18n>TRANSLATED_STRING_LABEL}",
 						"translatable": true
@@ -48,10 +47,29 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"label": "String with translated value",
 						"translatable": true
 					},
+					"stringWithTranslatedDTDefaultValue": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedDTDefaultValue/value",
+						"type": "string",
+						"label": "String with translated value",
+						"defaultValue": "{i18n>TRANSLATED_STRING_VALUE}",
+						"translatable": true
+					},
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"defaultValue": 1,
-						"type": "integer"
+						"type": "integer",
+						"visualization": {
+							"type": Slider,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"min": 0,
+								"max": 10,
+								"width": "100%",
+								"showAdvancedTooltip": true,
+								"showHandleTooltip": false,
+								"inputsAsTooltips": true
+							}
+						}
 					},
 					"integerLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/integerLabel/value",
@@ -85,7 +103,15 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"boolean": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 						"defaultValue": false,
-						"type": "boolean"
+						"type": "boolean",
+						"visualization": {
+							"type": Switch,
+							"settings": {
+								"state": "{currentSettings>value}",
+								"customTextOn": "Yes",
+								"customTextOff": "No"
+							}
+						}
 					},
 					"booleanLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",
@@ -137,7 +163,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
 						"type": "string",
 						"values": {
-							"data": {  //this is the same handling as for a card DataProviderFactory
+							"data": {
 								"json": [
 									{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
 									{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
@@ -145,7 +171,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								],
 								"path": "/"
 							},
-							"item": { //this is the same handling as for a card item, how to reuse this part regarding formatters?
+							"item": {
 								"text": "{text}",
 								"key": "{key}",
 								"additionalText": "{additionalText}",
@@ -157,13 +183,13 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestList/value",
 						"type": "string",
 						"values": {
-							"data": {  //this is the same handling as for a card DataProviderFactory
+							"data": {
 								"request": {
 									"url": "./stringWithRequestList.json"
 								},
 								"path": "/"
 							},
-							"item": { //this is the same handling as for a card item, how to reuse this part regarding formatters?
+							"item": {
 								"text": "{text}",
 								"key": "{key}",
 								"additionalText": "{additionalText}",
@@ -177,7 +203,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"defaultValue": ["key1", "key2"],
 						"type": "string[]",
 						"values": {
-							"data": {  //this is the same handling as for a card DataProviderFactory
+							"data": {
 								"json": [
 									{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
 									{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
@@ -185,13 +211,19 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								],
 								"path": "/"
 							},
-							"item": { //this is the same handling as for a card item, how to reuse this part regarding formatters?
+							"item": {
 								"text": "{text}",
 								"key": "{key}",
 								"additionalText": "{additionalText}",
 								"icon": "{icon}"
 							}
 						}
+					},
+					"stringArrayNoValues": {
+						"manifestpath": "/sap.card/configuration/parameters/stringArrayNoValues/value",
+						"label": "String Array With No Values",
+						"defaultValue": ["key1", "key2"],
+						"type": "string[]"
 					}
 				}
 			},

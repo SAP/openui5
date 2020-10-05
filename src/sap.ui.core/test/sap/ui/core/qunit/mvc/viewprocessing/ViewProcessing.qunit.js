@@ -8,11 +8,13 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	"sap/m/Label",
+	"sap/m/Panel",
 	"sap/m/HBox",
 	'sap/ui/core/qunit/mvc/viewprocessing/MyGlobal',
 	'sap/ui/base/SyncPromise',
-	"sap/ui/core/mvc/XMLView"
-], function(jQuery, JSONModel, View, UIArea, UIComponent, Component, ComponentContainer, Label, HBox, MyGlobal, SyncPromise, XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/StashedControlSupport"
+], function(jQuery, JSONModel, View, UIArea, UIComponent, Component, ComponentContainer, Label, Panel, HBox, MyGlobal, SyncPromise, XMLView, StashedControlSupport) {
 
 	"use strict";
 
@@ -105,6 +107,8 @@ sap.ui.define([
 					return url.match(/ExtensionPoints\/Parent\/manifest.json/) == null
 							&& url.match(/StashedControl\/manifest.json/) == null;
 				});
+
+				StashedControlSupport.mixInto(Panel);
 			},
 			afterEach: function() {
 				this._cleanup.forEach(function(ctrl) {
@@ -519,39 +523,71 @@ sap.ui.define([
 			};
 
 			var fnAssertions = function(oComponent, oView) {
-				var oStashedPanel = oView.byId("panel");
-				var oStashedButton = oView.byId("stashedButton");
-				var oNormalButtonInStashedParent = oView.byId("normalButtonInStashedParent");
+				// --------- control tree checks ---------
+				var oPanel = oView.byId("panel");
+				var oButton = oView.byId("stashedButton");
 
-				assert.ok(!oStashedButton, "Stashed button in stashed area isn't created");
+				assert.ok(oPanel, "Panel wrapper is available.");
+				assert.notOk(oButton, "Stashed button inside stashed panel does not exist yet.");
+
+				var oNormalButtonInStashedParent = oView.byId("normalButtonInStashedParent");
 				assert.ok(!oNormalButtonInStashedParent, "Normal button in stashed area isn't created");
 
-				var oButton = oView.byId("normalButton");
+				// check the StashedControl instances
+				var oStashedControlForButtonInPanel = oView.byId("sap-ui-stashed-stashedButton");
+				assert.ok(!oStashedControlForButtonInPanel, "StashedControl for button in stashed area (Panel) isn't created");
 
-				var oOwnerComponent = Component.getOwnerComponentFor(oStashedPanel);
-				assert.ok(oOwnerComponent, "Owner Component for stashed panel can be found");
+				// Owner Component Checks
+				var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
+				assert.ok(oOwnerComponent, "Owner Component for StashedControl of panel can be found");
 				if (oOwnerComponent) {
 					assert.strictEqual(oOwnerComponent.getId(), oComponent.getId(), "Stashed Panel should have owner component");
 				}
 
-				oOwnerComponent = Component.getOwnerComponentFor(oButton);
+				var oStashedPanel = sap.ui.getCore().byId(oView.createId("panel"));
+				oOwnerComponent = Component.getOwnerComponentFor(oStashedPanel);
+				assert.ok(oOwnerComponent, "Owner Component for StashedControl of panel can be found");
+				if (oOwnerComponent) {
+					assert.strictEqual(oOwnerComponent.getId(), oComponent.getId(), "Stashed Panel should have owner component");
+				}
+
+				var oNormalButton = oView.byId("normalButton");
+				oOwnerComponent = Component.getOwnerComponentFor(oNormalButton);
 				assert.ok(oOwnerComponent, "Owner Component for normal button can be found");
 				if (oOwnerComponent) {
 					assert.strictEqual(oOwnerComponent.getId(), oComponent.getId(), "Normal button should have owner component");
 				}
 
-				// unstash the stashed panel
-				oStashedPanel.setStashed(false);
-				var oRealPanel = oView.byId("panel");
+
+				// --------- aggregation checks ---------
+				var oPage = oView.byId("page");
+
+				assert.equal(oPage.getContent().length, 2, "Two elements in page content aggregation.");
+				// stashed panel
+				assert.ok(oPage.getContent()[0].isA("sap.m.Panel"), "1st entry in content aggregation is a Panel.");
+				assert.equal(oPage.getContent()[0].getContent().length, 0, "Wrapper for stashed Panel has no content in its content aggregation.");
+				// normal button
+				assert.ok(oPage.getContent()[1].isA("sap.m.Button"), "2nd entry in content aggregation is a Button.");
+
+				// Stashing API checks
+				var aStashedControlsInPage = StashedControlSupport.getStashedControls(oView.createId("page"));
+				assert.equal(aStashedControlsInPage.length, 1, "Only one stashed control in Page.");
+				assert.deepEqual(aStashedControlsInPage[0], oStashedPanel, "StashedControl in Page is the stashed panel");
+
+
+				// --------- unstash the stashed panel ---------
+				// get the real panel again, since the wrapper should now be replaced
+				var oRealPanel = oStashedPanel.unstash();
 				assert.ok(oRealPanel.isA("sap.m.Panel"), "The real panel instance is created after unstash");
 
-				oStashedButton = oView.byId("stashedButton");
+				// check for additional stashed control inside the now unstashed panel
+				oStashedControlForButtonInPanel = sap.ui.getCore().byId(oView.createId("stashedButton"));
 				oNormalButtonInStashedParent = oView.byId("normalButtonInStashedParent");
 
-				assert.ok(oStashedButton, "Stashed button in stashed area is created");
+				assert.ok(oStashedControlForButtonInPanel, "Stashed button in stashed area is created");
 				assert.ok(oNormalButtonInStashedParent, "Normal button in stashed area is created");
 
-				oOwnerComponent = Component.getOwnerComponentFor(oStashedButton);
+				oOwnerComponent = Component.getOwnerComponentFor(oStashedControlForButtonInPanel);
 				assert.ok(oOwnerComponent, "Owner Component for stashed button can be found");
 				if (oOwnerComponent) {
 					assert.strictEqual(oOwnerComponent.getId(), oComponent.getId(), "Stashed button should have owner component");

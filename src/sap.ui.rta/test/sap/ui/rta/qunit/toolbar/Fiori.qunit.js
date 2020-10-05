@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Fiori",
 	"sap/ui/rta/toolbar/Adaptation",
+	"sap/ui/rta/Utils",
 	"sap/m/Image",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
@@ -14,6 +15,7 @@ function(
 	JSONModel,
 	Fiori,
 	Adaptation,
+	RtaUtils,
 	Image,
 	Log,
 	sinon
@@ -51,7 +53,7 @@ function(
 				modeSwitcher: "adaptation"
 			});
 
-			sandbox.stub(sap.ui.rta.Utils, "getFiori2Renderer").returns({
+			sandbox.stub(RtaUtils, "getFiori2Renderer").returns({
 				getRootControl: function() {
 					return {
 						getOUnifiedShell: function() {

@@ -138,6 +138,12 @@ sap.ui.define([
 		return true;
 	};
 
+	UnhideForm.getChangeVisualizationInfo = function(oChange) {
+		return {
+			affectedControls: [oChange.getDefinition().content.elementSelector]
+		};
+	};
+
 	return UnhideForm;
 },
 /* bExport= */true);

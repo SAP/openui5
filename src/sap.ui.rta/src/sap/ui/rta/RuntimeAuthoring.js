@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Fiori",
 	"sap/ui/rta/toolbar/Standalone",
 	"sap/ui/rta/toolbar/Personalization",
+	"sap/ui/rta/toolbar/FioriLike",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/Overlay",
 	"sap/ui/rta/command/Stack",
@@ -61,6 +62,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment",
 	"sap/ui/rta/util/validateFlexEnabled"
 ],
 function(
@@ -69,6 +71,7 @@ function(
 	FioriToolbar,
 	StandaloneToolbar,
 	PersonalizationToolbar,
+	FioriLikeToolbar,
 	DesignTime,
 	Overlay,
 	CommandStack,
@@ -121,6 +124,7 @@ function(
 	Log,
 	KeyCodes,
 	JSONModel,
+	Fragment,
 	validateFlexEnabled
 ) {
 	"use strict";
@@ -297,7 +301,14 @@ function(
 
 	RuntimeAuthoring.prototype._shouldValidateFlexEnabled = function () {
 		var sHostname = document.location.hostname;
-		return sHostname.endsWith(".sap" + ".corp") || sHostname === "localhost";
+		var bShouldValidateFlexEnabled = sHostname.endsWith(".sap" + ".corp") || sHostname === "localhost";
+
+		if (bShouldValidateFlexEnabled) {
+			var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-rta-skip-flex-validation");
+			bShouldValidateFlexEnabled = sUriParam !== "true";
+		}
+
+		return bShouldValidateFlexEnabled;
 	};
 
 	/**
@@ -471,7 +482,7 @@ function(
 		var oOpenedPopup = oEvent.getParameters().getSource();
 		if (
 			oOpenedPopup.isA("sap.m.Dialog")
-			&& this.getToolbar().isA("sap.ui.rta.toolbar.Fiori")
+			&& this.getToolbar().type === "fiori"
 		) {
 			this.getToolbar().setColor("contrast");
 		}
@@ -1051,11 +1062,6 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onSwitchVersion = function (oEvent) {
-		if (this.canUndo()) {
-			// TODO: give the user an option to save changes and continue
-			return;
-		}
-		// handle FLP and stand alone case to change the URL-parameter
 		var nVersion = oEvent.getParameter("version");
 		var sVersion = nVersion.toString();
 		var sUrlVersionValue = FlexUtils.getParameter(sap.ui.fl.Versions.UrlParameter);
@@ -1064,6 +1070,52 @@ function(
 			// already selected version
 			return;
 		}
+
+		if (this.canUndo()) {
+			if (!this._oVersionSwitchDialogPromise) {
+				this._oVersionSwitchDialogPromise = Fragment.load({
+					name: "sap.ui.rta.VersionSwitchDataLossDialog",
+					id: this.getId() + "_VersionSwitchDataLossDialog",
+					controller: this
+				}).then(function (oDialog) {
+					// adding a controlDependency for model propagation
+					this.getToolbar().addDependent(oDialog);
+					return oDialog;
+				}.bind(this));
+			}
+
+			this._nSwitchToVersion = nVersion;
+			return this._oVersionSwitchDialogPromise.then(function (oDialog) {
+				oDialog.open();
+			});
+		}
+
+		this._switchVersion(nVersion);
+	};
+
+	RuntimeAuthoring.prototype._saveAndSwitchVersion = function () {
+		return this._serializeToLrep(this)
+			.then(this._closeVersionSwitchDialog.bind(this))
+			.then(this._switchVersion.bind(this, this._nSwitchToVersion));
+	};
+
+	RuntimeAuthoring.prototype._discardAndSwitchVersion = function () {
+		return this._closeVersionSwitchDialog()
+			.then(function () {
+				// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
+				this.getCommandStack().removeAllCommands(true);
+			}.bind(this))
+			.then(this._switchVersion.bind(this, this._nSwitchToVersion));
+	};
+
+	RuntimeAuthoring.prototype._closeVersionSwitchDialog = function () {
+		return this._oVersionSwitchDialogPromise.then(function (oDialog) {
+			oDialog.close();
+		});
+	};
+
+	RuntimeAuthoring.prototype._switchVersion = function (nVersion) {
+		var sVersion = nVersion.toString();
 
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 
@@ -1090,25 +1142,27 @@ function(
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
 		if (!this.getDependent('toolbar')) {
-			var fnConstructor;
+			var ToolbarConstructor;
 
 			if (this.getLayer() === Layer.USER) {
-				fnConstructor = PersonalizationToolbar;
+				ToolbarConstructor = PersonalizationToolbar;
+			} else if (Utils.isOriginalFioriToolbarAccessible()) {
+				ToolbarConstructor = FioriToolbar;
 			} else if (Utils.getFiori2Renderer()) {
-				fnConstructor = FioriToolbar;
+				ToolbarConstructor = FioriLikeToolbar;
 			} else {
-				fnConstructor = StandaloneToolbar;
+				ToolbarConstructor = StandaloneToolbar;
 			}
 			var oToolbar;
 			if (this.getLayer() === Layer.USER) {
-				oToolbar = new fnConstructor({
+				oToolbar = new ToolbarConstructor({
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, true),
 					restore: this._onRestore.bind(this)
 				});
 			} else {
-				oToolbar = new fnConstructor({
+				oToolbar = new ToolbarConstructor({
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, false),
@@ -1130,6 +1184,8 @@ function(
 			return oToolbar.onFragmentLoaded().then(function() {
 				var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
 				var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
+				var oUriParams = UriParameters.fromQuery(window.location.search);
+				var bShowChangesVisible = oUriParams.get("sap-ui-rta-xx-changeVisualization") === "true";
 
 				this._oToolbarControlsModel = new JSONModel({
 					undoEnabled: false,
@@ -1143,6 +1199,8 @@ function(
 					saveAsEnabled: false,
 					manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
 					manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
+					showChangesVisible: bShowChangesVisible,
+					rtaRootControlId: this.getRootControl(),
 					modeSwitcher: this.getMode()
 				});
 
@@ -1353,7 +1411,7 @@ function(
 	 * the restoring to the default app state
 	 *
 	 * @private
-	 * @returns {Promise}
+	 * @returns {Promise} Resolves when Message Box is closed.
 	 */
 	RuntimeAuthoring.prototype._onRestore = function() {
 		var sLayer = this.getLayer();
@@ -1559,14 +1617,7 @@ function(
 		if (sVersionParameter) {
 			delete mParsedHash.params[flexLibrary.Versions.UrlParameter];
 		} else if (this._isDraftAvailable() || bTriggerReload /* for discard of dirty changes */) {
-			/*
-			In case we entered RTA without a draft and created dirty changes,
-			we need to add a parameter to trigger the CrossAppNavigation on
-			Reason 1: Exit
-			Reason 2: Discard
-			*/
-			var sActiveVersionString = this._oVersionsModel.getProperty("/activeVersion").toString();
-			mParsedHash.params[flexLibrary.Versions.UrlParameter] = [sActiveVersionString];
+			FlexUtils.getUshellContainer().getService("ShellNavigation").hashChanger.treatHashChanged(window.hasher.getHash());
 		}
 		return mParsedHash;
 	};

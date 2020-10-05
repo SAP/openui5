@@ -30,9 +30,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function(FlexRuntimeIn
 			oChange.resetRevertData();
 		} else {
 			// Set revert data on the change
-			oChange.setRevertData({
-				sortContent: oSortContent
-			});
+			oChange.setRevertData(oSortContent);
 		}
 		// Rebind Table if needed
 		fRebindControl(oControl);

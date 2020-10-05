@@ -1,10 +1,12 @@
 /*global sinon, QUnit, lib */
 sap.ui.define([
 	"sap/ui/core/Component",
-	"sap/ui/core/ShortcutHintsMixin"
+	"sap/ui/core/ShortcutHintsMixin",
+	"sap/ui/core/Fragment"
 ], function(
 	Component,
-	ShortcutHintsMixin
+	ShortcutHintsMixin,
+	Fragment
 ) {
 	"use strict";
 
@@ -207,6 +209,31 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("DOM events when control is destroyed and re-created", function(assert) {
+		return waitForViewReady().then(function(oView) {
+			var oCtrl = oView.byId("myControl");
+			ShortcutHintsMixin.addConfig(oCtrl, { event: "myEvent" }, oCtrl);
+
+			oCtrl.destroy();
+
+			assert.notOk(ShortcutHintsMixin.isControlRegistered(oCtrl.getId()),
+				"the control id is removed from the hints registry");
+
+			assert.notOk(ShortcutHintsMixin.isDOMIDRegistered(oCtrl.getId()),
+				"the dom node id is removed from the hints dom registry");
+
+			Fragment.load({
+				type: "XML",
+				definition: '<my:MyControl xmlns:my="lib.my" id="' + oView.getId() + '--myControl" myEvent="cmd:MyCommand" />'
+			}).then(function(oCtrl) {
+				oView.byId("myPanel").addContent(oCtrl);
+				ShortcutHintsMixin.addConfig(oCtrl, { event: "myEvent" }, oCtrl);
+
+				assert.equal(oCtrl.aDelegates.length, 1, "a delegate is attached");
+			});
+		});
+	});
+
 	QUnit.test("focusin", function(assert) {
 		return waitForViewReady().then(function(oView) {
 			var oCtrl2 = oView.byId("myControl2");
@@ -236,8 +263,12 @@ sap.ui.define([
 		return waitForViewReady().then(function(oView) {
 			var oCtrl2 = oView.byId("myControl2");
 
+			var oEl = document.createElement('div');
+			oEl.setAttribute('id', 'container');
+			document.querySelector('body').appendChild(oEl);
+
 			//render
-			oView.placeAt('qunit-fixture');
+			oView.placeAt('container');
 			sap.ui.getCore().applyChanges();
 
 			ShortcutHintsMixin.addConfig(oCtrl2, { event: "myEvent" }, oCtrl2);

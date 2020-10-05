@@ -341,6 +341,28 @@ sap.ui.define([
 		var oInput = new Input({
 			showSuggestion: true,
 			showValueHelp: true
+		}), oValueHelpIcon;
+
+		// Act
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oValueHelpIcon = document.getElementById(oInput._getValueHelpIcon().sId);
+
+		// Assert
+		assert.strictEqual(oValueHelpIcon.getAttribute("role"), "button", "The value help icon role attribute is correctly set to 'button'");
+		assert.strictEqual(oValueHelpIcon.getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON"), "The value help icon aria-label attribute is correctly set");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("Custom value help icon should be set", function(assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			showValueHelp: true,
+			valueHelpIconSrc: "sap-icon://arrow-down"
 		});
 
 		// Act
@@ -348,8 +370,13 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(document.getElementById(oInput._getValueHelpIcon().sId).getAttribute("role"), "button", "The value help icon role attribute is correctly set to 'button'");
-		assert.strictEqual(document.getElementById(oInput._getValueHelpIcon().sId).getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON"), "The value help icon aria-label attribute is correctly set");
+		assert.strictEqual(oInput._getValueHelpIcon().getSrc(), "sap-icon://arrow-down", "The value help icon is a custom one");
+
+		//Act
+		oInput.setValueHelpIconSrc("sap-icon://value-help");
+
+		// Assert
+		assert.strictEqual(oInput._getValueHelpIcon().getSrc(), "sap-icon://value-help", "The value help icon is changed");
 
 		// Clean
 		oInput.destroy();
@@ -3781,6 +3808,134 @@ sap.ui.define([
 		oInputWithSuggestions.destroy();
 	});
 
+	QUnit.test("Suggestions results describedby node should not be added to the Input's aria-describedby attribute to avoid redundant speech output ", function(assert) {
+		//Arrange
+		var oInputWithSuggestions = createInputWithSuggestions();
+
+		oInputWithSuggestions.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oInputWithSuggestions._openSuggestionsPopover();
+		this.clock.tick();
+
+		// Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oInputWithSuggestions.getFocusDomRef().getAttribute("aria-describedby"), null, "The sugg. results acc node is not referenced in the Input");
+
+		//Clean up
+		oInputWithSuggestions.destroy();
+	});
+
+	QUnit.module("Value State accessibility");
+
+	QUnit.test("Aria-describedby reference element should have a separate persistent DOM node other than the visible value state popup", function(assert) {
+		//Arrange
+		var oInputWithValueState = new Input({
+			valueState: "Warning",
+			valueStateText: "This is a value state with warning message"
+		});
+		var oAccDomRef;
+
+		oInputWithValueState.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
+
+		//Assert
+		assert.strictEqual(oInputWithValueState.getDomRef().contains(oAccDomRef), true, "Accessibility DOM is created");
+
+		//Clean up
+		oInputWithValueState.destroy();
+	});
+
+	QUnit.test("Aria-describedby attribute should persists even if the message popup is not opened", function(assert) {
+		//Arrange
+		var oInputWithValueState = new Input({
+			valueState: "Warning",
+			valueStateText: "This is a value state with warning message"
+		});
+
+		oInputWithValueState.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oInputWithValueState.getFocusDomRef().getAttribute("aria-describedby"), oInputWithValueState.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");
+
+		//Clean up
+		oInputWithValueState.destroy();
+	});
+
+	QUnit.test("A static aria-errormessage attribute should be added to the control when the value state is error", function(assert) {
+		//Arrange
+		var oInputWithValueState = new Input({
+			valueState: "Error",
+			valueStateText: "This is a value state with error message"
+		});
+
+		oInputWithValueState.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oInputWithValueState.getFocusDomRef().getAttribute("aria-errormessage"), oInputWithValueState.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");
+
+		//Clean up
+		oInputWithValueState.destroy();
+	});
+
+	QUnit.test("When value state other than error is updated dynamically by user input the accessibility element should not have aria-live= attribute", function(assert) {
+		//Arrange
+		var oInputWithValueState = new Input({
+			valueState: "Warning"
+		});
+		var oAccDomRef;
+
+		oInputWithValueState.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInputWithValueState.openValueStateMessage();
+		this.clock.tick();
+
+		// Act
+		// Simulate dynamic update of the value state by the user by changing the value state while focused
+		oInputWithValueState.focus();
+		oInputWithValueState.setValueState("Information");
+		sap.ui.getCore().applyChanges();
+		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
+
+		//Assert
+		assert.strictEqual(oAccDomRef.getAttribute("aria-live"), null, "Acc live-region is correctly removed to avoid double speech output on user changed state");
+
+		//Clean up
+		oInputWithValueState.destroy();
+	});
+
+	QUnit.test("When value state is error and is updated dynamically by user input the accessibility element should have aria-live=assertive attribute", function(assert) {
+		//Arrange
+		var oInputWithValueState = new Input({
+			valueState: "Information"
+		});
+		var oAccDomRef;
+
+		oInputWithValueState.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInputWithValueState.openValueStateMessage();
+		this.clock.tick();
+
+		// Act
+		// Simulate dynamic update of the value state by the user by changing the value state while focused
+		oInputWithValueState.focus();
+		oInputWithValueState.setValueState("Error");
+		sap.ui.getCore().applyChanges();
+		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
+
+		//Assert
+		assert.strictEqual(oAccDomRef.getAttribute("aria-live"), "assertive", "The accessibility live-region is correctly set to 'assertive'");
+
+		//Clean up
+		oInputWithValueState.destroy();
+	});
+
 	QUnit.module("Input clone", {
 		beforeEach: function () {
 			this.oTabularInputToClone = createInputWithTabularSuggestions();
@@ -5180,6 +5335,7 @@ sap.ui.define([
 		});
 		var	oSuggPopoverHeaderValueState;
 		var oPopup;
+		var oRenderedValueStateMessage;
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
@@ -5200,10 +5356,11 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick();
 
-		oPopup = this.oInput._oValueStateMessage._oPopup;
+		// Get the actual rendered value state text from the popup content DOM
+		oRenderedValueStateMessage = document.getElementById(this.oInput.getValueStateMessageId()).textContent;
 
 		// Assert
-		assert.strictEqual(oPopup.getContent().childNodes[1].textContent, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the Input's value state popup after the suggestion popover is closed");
+		assert.strictEqual(oRenderedValueStateMessage, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the Input's value state popup after the suggestion popover is closed");
 	});
 
 	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on the formatted text value state message DOM on IE", function (assert) {
@@ -6089,7 +6246,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("User Interaction: Sets value over selectedKey (binding: async)", function (assert) {
+	QUnit.test("User Interaction: Binding update should overwrite user value (binding: async)", function (assert) {
 		// Setup
 		var oModel = new JSONModel(),
 			oInput = new Input({
@@ -6116,7 +6273,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
-		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the user input");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
 
 		// Cleanup
 		oInput.destroy();

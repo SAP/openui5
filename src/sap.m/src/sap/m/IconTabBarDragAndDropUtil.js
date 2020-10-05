@@ -9,10 +9,13 @@ sap.ui.define([
 	'sap/ui/core/dnd/DragInfo',
 	'sap/ui/core/dnd/DropInfo',
 	"sap/ui/events/KeyCodes",
-	'sap/ui/core/dnd/DropPosition'
+	'sap/ui/core/library'
 ],
-	function(DragInfo, DropInfo, KeyCodes, DropPosition) {
+	function(DragInfo, DropInfo, KeyCodes, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.ui.core.dnd.DropPosition
+		var DropPosition = coreLibrary.dnd.DropPosition;
 
 		var INSERT_POSITION_BEFORE = "Before",
 			INSERT_BEFORE = "insertBefore",
@@ -90,7 +93,8 @@ sap.ui.define([
 					bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 					bIsDropPositionBefore = sDropPosition === INSERT_POSITION_BEFORE,
 					//_getNestedLevel returns 1 there is no nesting
-					currentNestedLevel = oDroppedControl._getNestedLevel()  - 1;
+					currentNestedLevel = oDroppedControl._getNestedLevel() - 1;
+
 				// Prevent cycle
 				if (oDraggedControl._isParentOf(oDroppedControl)) {
 					return;
@@ -163,13 +167,17 @@ sap.ui.define([
 			 */
 			_handleConfigurationAfterDragAndDrop: function (oDraggedControl, iDropIndex) {
 
-				var aDraggedControlSubItems = [];
+				var aDraggedControlSubItems = [],
+					oIconTabHeader = this.isA("sap.m.IconTabHeader") ? this : this._getIconTabHeader();
 
 				if (this.isA("sap.m.IconTabBarSelectList")) {
 					aDraggedControlSubItems = this.getItems().filter(function (oItem) {
 						return oDraggedControl._getRealTab()._isParentOf(oItem._getRealTab());
 					});
 				}
+
+				oIconTabHeader._setPreserveSelection(true);
+
 				this.removeAggregation('items', oDraggedControl, true);
 				this.insertAggregation('items', oDraggedControl, iDropIndex, true);
 
@@ -182,6 +190,8 @@ sap.ui.define([
 				aDraggedControlSubItems.reverse().forEach(function (oItem) {
 					this.insertAggregation('items', oItem, iNewDragIndex, true);
 				}.bind(this));
+
+				oIconTabHeader._setPreserveSelection(false);
 
 				IconTabBarDragAndDropUtil._updateAccessibilityInfo.call(this);
 			},

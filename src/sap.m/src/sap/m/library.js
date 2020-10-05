@@ -146,6 +146,7 @@ sap.ui.define([
 			"sap.m.ValueCSSColor",
 			"sap.m.VerticalPlacementType",
 			"sap.m.WrappingType",
+			"sap.m.WizardRenderMode",
 			"sap.m.semantic.SemanticRuleSetType"
 		],
 		interfaces: [
@@ -2866,6 +2867,18 @@ sap.ui.define([
 		GE: "GE",
 		Initial: "Initial",
 		Empty: "Empty",
+
+		// filter exclude operations
+		NotBT: "NotBT",
+		NotEQ: "NotEQ",
+		NotContains: "NotContains",
+		NotStartsWith: "NotStartsWith",
+		NotEndsWith: "NotEndsWith",
+		NotLT: "NotLT",
+		NotLE: "NotLE",
+		NotGT: "NotGT",
+		NotGE: "NotGE",
+		NotInitial: "NotInitial",
 		NotEmpty: "NotEmpty",
 
 		// sort operations
@@ -2881,6 +2894,11 @@ sap.ui.define([
 		Average: "Average",
 		Minimum: "Minimum",
 		Maximum: "Maximum"
+	};
+
+	thisLib.P13nConditionOperationType = {
+		Include: "Incl",
+		Exclude: "Excl"
 	};
 
 	/**
@@ -4088,6 +4106,29 @@ sap.ui.define([
 	thisLib.AvatarType = AvatarType;
 	thisLib.AvatarColor = AvatarColor;
 	thisLib.AvatarImageFitType = AvatarImageFitType;
+
+		/**
+		 * Wizard rendering mode.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @experimental since 1.83
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.WizardRenderMode = {
+
+			/**
+			 * Display all steps into a scroll section.
+			 * @public
+			 */
+			Scroll: "Scroll",
+
+			/**
+			 * Display steps as separate, single pages.
+			 * @public
+			 */
+			Page: "Page"
+		};
 
 		//lazy imports for MessageToast
 	sap.ui.lazyRequire("sap.m.MessageToast", "show");

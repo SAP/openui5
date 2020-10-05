@@ -102,13 +102,14 @@ sap.ui.define([
 			var sConnectorModuleName;
 
 			// the applyConnector / loadConnector is used for a custom connector
-			if (!mConnectorConfiguration.applyConnector && !mConnectorConfiguration.loadConnector) {
+			if (!mConnectorConfiguration.loadConnector && !mConnectorConfiguration.applyConnector && !mConnectorConfiguration.loadConnector) {
 				sConnectorModuleName = bLoadConnectors ? mConnectorNamespaces.load[sConnector] : mConnectorNamespaces.write[sConnector];
 			} else if (bLoadConnectors) {
 				// fallback for configured custom connectors which specify a apply connector
 				sConnectorModuleName = mConnectorConfiguration.loadConnector || mConnectorConfiguration.applyConnector;
 			} else {
-				sConnectorModuleName = mConnectorConfiguration.writeConnector;
+				// fall back for scenarios where only a loadConnector is provided
+				sConnectorModuleName = mConnectorConfiguration.writeConnector || "sap/ui/fl/write/connectors/BaseConnector";
 			}
 
 			return sConnectorModuleName;

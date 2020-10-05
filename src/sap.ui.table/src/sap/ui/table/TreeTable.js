@@ -103,7 +103,7 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.76, replaced by the <code>collapseRecursive</code> binding parameter
 			 */
-			collapseRecursive : {type: "boolean", defaultValue: true},
+			collapseRecursive : {type: "boolean", defaultValue: true, deprecated: true},
 
 			/**
 			 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
@@ -123,7 +123,7 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.76, replaced by the <code>rootLevel</code> binding parameter
 			 */
-			rootLevel : {type: "int", group: "Data", defaultValue: 0}
+			rootLevel : {type: "int", group: "Data", defaultValue: 0, deprecated: true}
 		},
 		events : {
 

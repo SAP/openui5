@@ -267,6 +267,156 @@
 				}
 			}
 		},
+		ROWMODES: {
+			text: "Row mode",
+			group: {
+				ROWMODE: {
+					text: "Mode",
+					selectedKey: "NONE",
+					value: function() {
+						return TABLESETTINGS.actions.ROWMODES.group.ROWMODE.selectedKey;
+					},
+					choice: {
+						NONE: {
+							text: "None",
+							action: function(oTable) {
+								if (oTable.getRowMode()) {
+									oTable.getRowMode().destroy();
+								}
+
+								TABLESETTINGS.actions.ROWMODES.group.ROWMODE.selectedKey = "NONE";
+
+								for (var sKey in TABLESETTINGS.actions.ROWMODES.group) {
+									if (sKey.startsWith("SETTING")) {
+										TABLESETTINGS.actions.ROWMODES.group[sKey].hidden = true;
+									}
+								}
+
+								oSettingsMenu.removeAllContent();
+								oSettingsMenu.addContent(initForm(TABLESETTINGS.actions));
+							}
+						},
+						FIXED: {
+							text: "Fixed",
+							action: function(oTable) {
+								if (oTable.getRowMode()) {
+									oTable.getRowMode().destroy();
+								}
+
+								sap.ui.require(["sap/ui/table/rowmodes/FixedRowMode"], function(FixedRowMode) {
+									oTable.setRowMode(new FixedRowMode());
+
+									TABLESETTINGS.actions.ROWMODES.group.ROWMODE.selectedKey = "FIXED";
+
+									for (var sKey in TABLESETTINGS.actions.ROWMODES.group) {
+										if (sKey.startsWith("SETTING")) {
+											TABLESETTINGS.actions.ROWMODES.group[sKey].hidden = true;
+										}
+										if (sKey.startsWith("SETTING_FIXED")) {
+											TABLESETTINGS.actions.ROWMODES.group[sKey].hidden = false;
+										}
+									}
+
+									oSettingsMenu.removeAllContent();
+									oSettingsMenu.addContent(initForm(TABLESETTINGS.actions));
+								});
+							}
+						},
+						INTERACTIVE: {
+							text: "Interactive",
+							action: function(oTable) {
+								if (oTable.getRowMode()) {
+									oTable.getRowMode().destroy();
+								}
+
+								sap.ui.require(["sap/ui/table/rowmodes/InteractiveRowMode"], function(InteractiveRowMode) {
+									oTable.setRowMode(new InteractiveRowMode());
+
+									TABLESETTINGS.actions.ROWMODES.group.ROWMODE.selectedKey = "INTERACTIVE";
+
+									for (var sKey in TABLESETTINGS.actions.ROWMODES.group) {
+										if (sKey.startsWith("SETTING")) {
+											TABLESETTINGS.actions.ROWMODES.group[sKey].hidden = true;
+										}
+										if (sKey.startsWith("SETTING_INTERACTIVE")) {
+											TABLESETTINGS.actions.ROWMODES.group[sKey].hidden = false;
+										}
+									}
+
+									oSettingsMenu.removeAllContent();
+									oSettingsMenu.addContent(initForm(TABLESETTINGS.actions));
+								});
+							}
+						},
+						AUTO: {
+							text: "Auto",
+							action: function(oTable) {
+								if (oTable.getRowMode()) {
+									oTable.getRowMode().destroy();
+								}
+
+								sap.ui.require(["sap/ui/table/rowmodes/AutoRowMode"], function(AutoRowMode) {
+									oTable.setRowMode(new AutoRowMode());
+
+									TABLESETTINGS.actions.ROWMODES.group.ROWMODE.selectedKey = "AUTO";
+
+									for (var sKey in TABLESETTINGS.actions.ROWMODES.group) {
+										if (sKey.startsWith("SETTING")) {
+											TABLESETTINGS.actions.ROWMODES.group[sKey].hidden = true;
+										}
+										if (sKey.startsWith("SETTING_AUTO")) {
+											TABLESETTINGS.actions.ROWMODES.group[sKey].hidden = false;
+										}
+									}
+
+									oSettingsMenu.removeAllContent();
+									oSettingsMenu.addContent(initForm(TABLESETTINGS.actions));
+								});
+							}
+						}
+					}
+				},
+				SETTING_FIXED_ROWCOUNT: {
+					hidden: true,
+					text: "Row count",
+					input: true,
+					value: function(oTable) {
+						if (sap.ui.table.utils.TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.FixedRowMode")) {
+							return oTable.getRowMode().getRowCount();
+						}
+					},
+					action: function(oTable, sValue) {
+						oTable.getRowMode().setRowCount(parseInt(sValue) || 0);
+					}
+				},
+				SETTING_FIXED_HIDEEMPTYROWS: {
+					hidden: true,
+					text: "Hide empty rows",
+					input: "boolean",
+					value: function(oTable) {
+						if (sap.ui.table.utils.TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.FixedRowMode")) {
+							return oTable.getRowMode().getHideEmptyRows();
+						}
+					},
+					action: function(oTable, bValue) {
+						oTable.getRowMode().setHideEmptyRows(bValue);
+					}
+				},
+				SETTING_AUTO_HIDEEMPTYROWS: {
+					hidden: true,
+					text: "Hide empty rows",
+					input: "boolean",
+					value: function(oTable) {
+						if (sap.ui.table.utils.TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.AutoRowMode")) {
+							return oTable.getRowMode().getHideEmptyRows();
+						}
+					},
+					action: function(oTable, bValue) {
+						oTable.getRowMode().setHideEmptyRows(bValue);
+					}
+				}
+			}
+		},
 		SELECTION: {
 			text: "Selection",
 			group: {
@@ -603,35 +753,35 @@
 						}
 					},
 					value: function() {
-						return DEFAULTACTIONS.AREAS.group.NODATA.selectedKey;
+						return TABLESETTINGS.actions.AREAS.group.NODATA.selectedKey;
 					},
 					selectedKey: "SHOWDATA",
 					choice: {
 						SHOWDATA: {
 							text: "Show Data",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.NODATA.selectedKey = "SHOWDATA";
+								TABLESETTINGS.actions.AREAS.group.NODATA.selectedKey = "SHOWDATA";
 								switchNoData(oTable, "SHOWDATA");
 							}
 						},
 						TEXT: {
 							text: "Text Message",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.NODATA.selectedKey = "TEXT";
+								TABLESETTINGS.actions.AREAS.group.NODATA.selectedKey = "TEXT";
 								switchNoData(oTable, "TEXT");
 							}
 						},
 						CUSTOM: {
 							text: "Custom Control Message",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.NODATA.selectedKey = "CUSTOM";
+								TABLESETTINGS.actions.AREAS.group.NODATA.selectedKey = "CUSTOM";
 								switchNoData(oTable, "CUSTOM");
 							}
 						},
 						EMPTYCELLS: {
 							text: "Show Empty Cells",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.NODATA.selectedKey = "EMPTYCELLS";
+								TABLESETTINGS.actions.AREAS.group.NODATA.selectedKey = "EMPTYCELLS";
 								switchNoData(oTable, "EMPTYCELLS");
 							}
 						}
@@ -670,14 +820,14 @@
 				ROWACTIONS: {
 					text: "Row Actions",
 					value: function() {
-						return DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey;
+						return TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey;
 					},
 					selectedKey: "NONE",
 					choice: {
 						NAVIGATION : {
 							text: "Navigation",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATION";
+								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATION";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({
 										type: "Navigation",
@@ -699,7 +849,7 @@
 						NAVIGATIONDELETE : {
 							text: "Navigation & Delete",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONDELETE";
+								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONDELETE";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({
 										type: "Navigation",
@@ -722,7 +872,7 @@
 						NAVIGATIONCUSTOM : {
 							text: "Navigation & Custom",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONCUSTOM";
+								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONCUSTOM";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({
 										type: "Navigation",
@@ -745,7 +895,7 @@
 						MULTI : {
 							text: "Multiple Actions",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "MULTI";
+								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "MULTI";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
 									new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
@@ -758,7 +908,7 @@
 						MULTI_ONE : {
 							text: "Multiple Actions (1 Column)",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "MULTI_ONE";
+								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "MULTI_ONE";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
 									new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
@@ -771,7 +921,7 @@
 						NONE : {
 							text: "No Actions",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "NONE";
+								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NONE";
 								switchRowActions(oTable, 0, null);
 							}
 						}
@@ -808,7 +958,7 @@
 								}));
 							});
 						} else {
-							oTable.destroyCreationRow();
+							oTable.getCreationRow().destroy();
 						}
 					}
 				}

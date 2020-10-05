@@ -24,10 +24,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
 		var sWidth = oField.getWidth();
 
 		oRm.openStart("div", oField);
-		oRm.class("sapUiMdcBaseField");
+		oRm.class("sapUiMdcFieldBase");
 
 		if (aContent.length > 1) {
-			oRm.class("sapUiMdcBaseFieldMoreFields");
+			oRm.class("sapUiMdcFieldBaseMoreFields");
 		}
 
 		oRm.style("width", sWidth);

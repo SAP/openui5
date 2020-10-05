@@ -22,24 +22,24 @@ sap.ui.define([
 
 	function isDraftAvailable(oReloadInfo) {
 		return FeaturesAPI.isVersioningEnabled(oReloadInfo.layer).then(function(bVersioningAvailable) {
-			if (bVersioningAvailable) {
-				return VersionsAPI.isDraftAvailable({
-					selector: oReloadInfo.selector,
-					layer: oReloadInfo.layer
-				});
-			}
+			return bVersioningAvailable && VersionsAPI.isDraftAvailable({
+				selector: oReloadInfo.selector,
+				layer: oReloadInfo.layer
+			});
 		});
 	}
 
 	function areHigherLayerChangesAvailable(oReloadInfo) {
 		var bUserLayer = oReloadInfo.layer === Layer.USER;
-		if (!bUserLayer) {
-			return PersistenceWriteAPI.hasHigherLayerChanges({
-				selector: oReloadInfo.selector,
-				ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-				upToLayer: oReloadInfo.layer
-			});
+		if (bUserLayer) {
+			return Promise.resolve(false);
 		}
+
+		return PersistenceWriteAPI.hasHigherLayerChanges({
+			selector: oReloadInfo.selector,
+			ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
+			upToLayer: oReloadInfo.layer
+		});
 	}
 
 	/**
@@ -65,7 +65,7 @@ sap.ui.define([
 		 */
 		getReloadReasonsForStart: function(oReloadInfo) {
 			var bUrlHasMaxLayerParameter = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
-			var bUrlHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
+			var bUrlHasVersionParameter = !!Utils.getParameter(sap.ui.fl.Versions.UrlParameter);
 
 			return Promise.all([
 				(!bUrlHasMaxLayerParameter) ?
@@ -73,8 +73,8 @@ sap.ui.define([
 				(!bUrlHasVersionParameter) ?
 					isDraftAvailable(oReloadInfo) : false
 			]).then(function(aReasons) {
-				oReloadInfo.hasHigherLayerChanges = !!aReasons[0];
-				oReloadInfo.hasDraftChanges = !!aReasons[1];
+				oReloadInfo.hasHigherLayerChanges = aReasons[0];
+				oReloadInfo.hasDraftChanges = aReasons[1];
 				return oReloadInfo;
 			});
 		},
@@ -215,6 +215,9 @@ sap.ui.define([
 			}
 			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
 			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
+			if (oReloadInfo.initialDraftGotActivated) {
+				oReloadInfo.hasDraft = false;
+			}
 			if (oReloadInfo.changesNeedReload
 				|| oReloadInfo.hasDraft
 				|| oReloadInfo.hasHigherLayerChanges

@@ -21,7 +21,9 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/mdc/table/TableSettings",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/m/VBox",
+	"sap/m/Link"
 ], function(
 	QUtils,
 	KeyCodes,
@@ -42,7 +44,9 @@ sap.ui.define([
 	containsOrEquals,
 	FlexUtil,
 	TableSettings,
-	Device
+	Device,
+	VBox,
+	Link
 ) {
 	"use strict";
 
@@ -1942,6 +1946,14 @@ sap.ui.define([
 			template: new Text()
 		}));
 
+		stubFetchProperties([
+			{
+				name: "test",
+				label: "Test",
+				path: "test"
+			}
+		]);
+
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
 				"sap/ui/mdc/table/TableSettings"
@@ -1963,13 +1975,6 @@ sap.ui.define([
 
 				this.oTable.setP13nMode([
 					"Sort"
-				]);
-
-				stubFetchProperties([
-					{
-						name: "test",
-						sortable: true
-					}
 				]);
 
 				this.oTable._oTable.fireEvent("columnPress", {
@@ -2033,6 +2038,13 @@ sap.ui.define([
 			template: new Text()
 		}));
 
+		stubFetchProperties([
+			{
+				name: "test",
+				sortable: true
+			}
+		]);
+
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
 				"sap/ui/mdc/table/TableSettings"
@@ -2055,12 +2067,6 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				stubFetchProperties([
-					{
-						name: "test",
-						sortable: true
-					}
-				]);
 
 				// Simulate click on sortable column
 				this.oTable._oTable.fireEvent("columnSelect", {
@@ -2123,6 +2129,13 @@ sap.ui.define([
 			template: new Text()
 		}));
 
+		stubFetchProperties([
+			{
+				name: "test",
+				sortable: false
+			}
+		]);
+
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
 				"sap/ui/mdc/table/TableSettings"
@@ -2133,12 +2146,6 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				stubFetchProperties([
-					{
-						name: "test",
-						sortable: false
-					}
-				]);
 
 				// Simulate click on sortable column
 				this.oTable._oTable.fireEvent("columnSelect", {
@@ -2165,6 +2172,16 @@ sap.ui.define([
 			template: new Text()
 		}));
 
+		stubFetchProperties([
+			{
+				name: "test",
+				sortable: false
+			}, {
+				name: "test2",
+				sortable: true
+			}
+		]);
+
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
 				"sap/ui/mdc/table/TableSettings"
@@ -2175,15 +2192,6 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				stubFetchProperties([
-					{
-						name: "test",
-						sortable: false
-					}, {
-						name: "test2",
-						sortable: true
-					}
-				]);
 
 				// Simulate click on sortable column
 				this.oTable._oTable.fireEvent("columnSelect", {
@@ -4284,6 +4292,85 @@ sap.ui.define([
 			clock.tick(1);
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
 
+			done();
+		}.bind(this));
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function() {
+			this.oTable = new Table();
+		},
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		}
+	});
+
+	QUnit.test("Accessibility test for Responsive inner table", function (assert) {
+		var done = assert.async();
+		this.oTable.setType("ResponsiveTable");
+		assert.strictEqual(this.oTable.getType(), "ResponsiveTable", "Responsive table type");
+		this.oTable.addColumn(
+			new Column({
+				header: "Test0",
+				template: new VBox({
+					items: new Link({
+						text: "template1"
+					})
+				})
+			})
+		);
+
+		this.oTable.addColumn(
+			new Column({
+				header: "Test1",
+				template: new Text({
+					text: "template0"
+				})
+			})
+		);
+
+		var sId = this.oTable.getColumns()[1].getId();
+		this.oTable.removeColumn(this.oTable.getColumns()[1]);
+
+		this.oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		this.oTable.initialized().then(function() {
+			assert.notOk(Core.getStaticAreaRef().querySelector("#" + sId), "Static Area removed after initialized to column before initialized");
+			assert.strictEqual(Core.getStaticAreaRef().querySelector("#" + this.oTable.getColumns()[0].getId()).innerHTML, "Test0", "Static Area added to the first Column Before initialization");
+			sId = this.oTable.getColumns()[0].getId();
+			this.oTable.removeColumn(this.oTable.getColumns()[0]);
+			assert.notOk(Core.getStaticAreaRef().querySelector("#" + sId), "Static Area removed after initialization to column before initialized");
+
+			this.oTable.addColumn(
+				new Column({
+					header: "Test2",
+					template: new Text({
+						text: "template0"
+					})
+				})
+			);
+			// place the table at the dom
+			Core.applyChanges();
+			assert.strictEqual(Core.getStaticAreaRef().querySelector("#" + this.oTable.getColumns()[0].getId()).innerHTML, "Test2", "Static Area added to the second Column after the table is initialised");
+			sId = this.oTable.getColumns()[0].getId();
+			this.oTable.getColumns()[0].destroy();
+			assert.notOk(Core.getStaticAreaRef().querySelector("#" + sId), "Static Area removed after initialization to column after initialized");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Title Level Property added", function(assert) {
+		var done = assert.async();
+		this.oTable.setType("ResponsiveTable");
+		assert.strictEqual(this.oTable.getTitleLevel(), "Auto", "Title level set to the header");
+		this.oTable.setTitleLevel("H2");
+		this.oTable.setHeader("Test Table");
+
+		this.oTable.initialized().then(function() {
+			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getLevel(), "H2", "Title level changed");
 			done();
 		}.bind(this));
 	});

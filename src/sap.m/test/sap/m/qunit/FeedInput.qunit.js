@@ -11,6 +11,8 @@ sap.ui.define([
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 	QUnit.module("Properties", {
 		beforeEach: function () {
 			this.oFeedInput = new FeedInput("input");
@@ -37,6 +39,8 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput.getGrowing(), false, "growing is 'false'");
 		assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 0, "growingMaxLines is '0'");
 		assert.strictEqual(this.oFeedInput.getShowExceededText(), false, "showExceededText is 'false'");
+		assert.strictEqual(this.oFeedInput.$().attr("role"), "group", "role is 'group'");
+		assert.strictEqual(this.oFeedInput.$().attr("aria-label"), oRb.getText("FEED_INPUT_ARIA_LABEL"), "aria-label is 'Your Input'");
 	});
 
 	QUnit.test("TextForPicture", function (assert) {

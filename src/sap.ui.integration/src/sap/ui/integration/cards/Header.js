@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/util/isEmptyObject",
 	"sap/f/cards/Header",
 	"sap/f/cards/HeaderRenderer",
 	"sap/m/library",
@@ -9,6 +10,7 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/integration/util/LoadingProvider"
 ], function (
+	isEmptyObject,
 	FHeader,
 	FHeaderRenderer,
 	mLibrary,
@@ -47,6 +49,8 @@ sap.ui.define([
 			mConfiguration = mConfiguration || {};
 			this._sAppId = sAppId;
 
+			this._bIsEmpty = isEmptyObject(mConfiguration);
+
 			var mSettings = {
 				title: mConfiguration.title,
 				subtitle: mConfiguration.subTitle
@@ -61,7 +65,7 @@ sap.ui.define([
 				mSettings.iconDisplayShape = mConfiguration.icon.shape;
 				mSettings.iconInitials = mConfiguration.icon.text;
 				mSettings.iconAlt = mConfiguration.icon.alt;
-				mSettings.iconBackgroundColor = mConfiguration.icon.backgroundColor || (mConfiguration.icon.text ? undefined : AvatarColor.Transparent);
+				mSettings.iconBackgroundColor = mConfiguration.icon.backgroundColor || (mConfiguration.icon.text ? AvatarColor.Accent6 : AvatarColor.Transparent);
 			}
 
 			mSettings = BindingHelper.createBindingInfos(mSettings);
@@ -75,6 +79,10 @@ sap.ui.define([
 			mSettings.toolbar = oActionsToolbar;
 
 			FHeader.call(this, mSettings);
+
+			if (oActionsToolbar) {
+				oActionsToolbar.attachVisibilityChange(this._handleToolbarVisibilityChange.bind(this));
+			}
 		},
 
 		metadata: {
@@ -149,6 +157,14 @@ sap.ui.define([
 
 	Header.prototype._handleError = function (sLogMessage) {
 		this.fireEvent("_error", { logMessage: sLogMessage });
+	};
+
+	Header.prototype._handleToolbarVisibilityChange = function (oEvent) {
+		var bToolbarVisible = oEvent.getParameter("visible");
+
+		if (this._bIsEmpty) {
+			this.setVisible(bToolbarVisible);
+		}
 	};
 
 	/**

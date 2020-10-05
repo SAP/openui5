@@ -1537,10 +1537,9 @@ sap.ui.define([
 
 		// hide badge
 		this.oBadgeData.setVisible(false);
-		sap.ui.getCore().applyChanges();
 
 		// check for badge visibility
-		assert.equal(this.oButton.$().find(".sapMBadgeIndicator").length, 0, "Badge Indicator DOM element exists and is hidden");
+		assert.equal(this.oButton.$().find(".sapMBadgeIndicator").hasClass("sapMBadgeAnimationRemove"), true, "Badge Indicator DOM element exists and is hidden");
 	});
 
 	QUnit.test("Check badge aria-describedby and invisible text", function (assert) {
@@ -1557,8 +1556,42 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// check if aria-describedby contains invisible text id
-		assert.notOk(this.oButton.$().attr("aria-describedby"),
-				  "When the Badge is not visible, aria-describedby attribute of the button does not exist (and it doesn't contain invisible text id)");
+		assert.equal(this.oButton._getBadgeInvisibleText().getText(), "",
+				  "When the Badge is not visible, aria-describedby attribute of the button and invisible text are empty");
 	});
+
+	QUnit.test("Badge value range", function (assert) {
+		//Arrange
+		var $oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator").first();
+
+		//Act
+		this.oBadgeData.setValue("10000");
+		//Assert
+		assert.equal($oBadgeIndicator.attr("data-badge"), "999+", "Badge value maximum range is correctly taken from the default value");
+
+
+		//Act
+		this.oBadgeData.setValue("0");
+		//Assert
+		assert.equal($oBadgeIndicator.hasClass("sapMBadgeAnimationRemove"), true, "Badge value minimum range is correctly taken from the default value");
+
+		//Arrange
+		this.oButton.setBadgeMinValue(3).setBadgeMaxValue(5);
+		sap.ui.getCore().applyChanges();
+		$oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator");
+
+		//Act
+		this.oBadgeData.setValue("2");
+		//Assert
+		assert.equal($oBadgeIndicator.length, 0, "Badge is not drawn, because validation of the value fails");
+
+		//Act
+		this.oBadgeData.setValue("6");
+
+		//Assert
+		$oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator").first();
+		assert.equal($oBadgeIndicator.attr("data-badge"), "5+", "Badge value maximum range is correctly taken from updated value");
+	});
+
 
 });

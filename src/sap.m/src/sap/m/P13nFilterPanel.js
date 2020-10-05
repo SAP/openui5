@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nFilterPanel.
 sap.ui.define([
-	'./P13nConditionPanel', './P13nPanel', './library', 'sap/m/Panel', './P13nFilterItem', './P13nOperationsHelper'
-], function(P13nConditionPanel, P13nPanel, library, Panel, P13nFilterItem, P13nOperationsHelper) {
+	'./P13nConditionPanel', './P13nPanel', './library', 'sap/m/Panel', './P13nFilterItem', './P13nOperationsHelper', 'sap/m/P13nFilterPanelRenderer'
+], function(P13nConditionPanel, P13nPanel, library, Panel, P13nFilterItem, P13nOperationsHelper, P13nFilterPanelRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
@@ -156,26 +156,7 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: {
-			apiVersion: 2,
-			render: function(oRm, oControl){
-				oRm.openStart("section", oControl);
-				oRm.class("sapMFilterPanel");
-				oRm.openEnd();
-
-				oRm.openStart("div");
-				oRm.class("sapMFilterPanelContent");
-				oRm.class("sapMFilterPanelBG");
-				oRm.openEnd();
-
-				oControl.getAggregation("content").forEach(function(oChildren){
-					oRm.renderControl(oChildren);
-				});
-
-				oRm.close("div");
-				oRm.close("section");
-			}
-		}
+		renderer: P13nFilterPanelRenderer.renderer
 	});
 
 	// EXC_ALL_CLOSURE_003

@@ -5,7 +5,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/Input",
-	"sap/m/InputType",
+	"sap/m/library",
 	"../config/datatable",
 	"./datatable/filters/DataTableFilterDropDown",
 	"./datatable/filters/DataTableFilterRange",
@@ -13,13 +13,16 @@ sap.ui.define([
 ], function (
 	$,
 	Input,
-	InputType,
+	mobileLibrary,
 	datatableConfig,
 	DataTableFilterDropDown,
 	DataTableFilterRange,
 	Highlighter
 ) {
 	"use strict";
+
+	// shortcut for sap.m.InputType
+	var InputType = mobileLibrary.InputType;
 
 	/**
 	 *
@@ -88,7 +91,7 @@ sap.ui.define([
 				)
 			);
 
-			API.on('draw', function () {
+		API.on('draw', function () {
 
 			if (this.get("highlight")) {
                 var sTerms = API.search();
@@ -128,7 +131,7 @@ sap.ui.define([
 
 			}
 
-			}.bind(this));
+		}.bind(this));
 
 		API.buttons().container()
 			.insertBefore('#' + sId + '_length');
@@ -137,12 +140,8 @@ sap.ui.define([
 			this.onColumnVisibilityChange(iColumnIndex, bVisibleState);
 		}.bind(this));
 
-		oConfig.columns.forEach(function (oParams, iIndex) {
-			var oVisible = oParams.visible;
-
-			if (oVisible) {
-				this.onColumnVisibilityChange(iIndex, oVisible.value !== "false");
-			}
+		this.oConfig.columns.forEach(function (oParams, iIndex) {
+			this.onColumnVisibilityChange(iIndex, oParams.visible);
 		}, this);
 
 		return this;
@@ -164,29 +163,18 @@ sap.ui.define([
 	DataTable.prototype.onColumnVisibilityChange = function (iIndex, bVisible) {
 		var oFilterHeader = this.oColumns[iIndex] && this.oColumns[iIndex].filterHeader,
 			oColGroup = this.oDomTable.querySelector("colgroup"), // colgroup contains cols which can configure the whole column (ex. width, color, etc.)
-			oNewCol,
-			iSingleColPercent;
+			oColGroupChild;
 
 		if (oColGroup) {
-			if (bVisible) {
-				oNewCol = document.createElement("col");
-				oColGroup.appendChild(oNewCol);
-			} else {
-				oColGroup.removeChild(oColGroup.lastChild);
+			oColGroupChild = oColGroup.children[iIndex];
+
+			if (oColGroupChild) {
+				oColGroupChild.classList.toggle("hidden", !bVisible);
 			}
-			// after removing or adding a new col to the colgroup
-			// recalculate the available width to be equal for all columns
-
-			iSingleColPercent = 100 / oColGroup.children.length;
-
-			Array.prototype.forEach.call(oColGroup.children, function (oChild) {
-				oChild.setAttribute("width", iSingleColPercent);
-			});
 		}
 
 		if (oFilterHeader) {
 			oFilterHeader.toggle(bVisible);
-			// this.API.fnAdjustColumnSizing();
 		}
 	};
 
@@ -364,14 +352,36 @@ sap.ui.define([
 			.unique()
 			.sort()[0]
 			.forEach(function (sOption) {
-				var oOption = $(sOption);
-				if (oOption.length > 0) {
+				var oOption;
+
+				if (aOptions.indexOf(sOption) > -1) {
+					// if options is already in array return as we don't want duplicates
+					return;
+				}
+
+				try {
+					// some options are lists with list items (ul > li),
+					// so we wrap them to jQuery objects and push their
+					// values to the array of options if they are not already pushed
+
+					// some options may contain special characters ( "(", ")", ";" ...)
+					// this throws exception when we wrap them with jQuery and stops
+					// javascript execution
+					oOption = $(sOption);
+				} catch (error) {
+					oOption = null;
+				}
+
+				if (oOption && oOption.length > 0) {
 					oOption.find('li').each(function (i, sOption) {
-						aOptions.push(sOption.textContent);
+						if (aOptions.indexOf(sOption.textContent) < 0) {
+							aOptions.push(sOption.textContent);
+						}
 					});
 				} else {
 					aOptions.push(sOption);
 				}
+
 			});
 
 		return aOptions;

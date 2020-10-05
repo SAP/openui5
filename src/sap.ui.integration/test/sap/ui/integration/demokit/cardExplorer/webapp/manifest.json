@@ -82,9 +82,6 @@
 				"viewPath": "sap.ui.demo.cardExplorer.view",
 				"controlId": "navContainer",
 				"controlAggregation": "pages",
-				"bypassed": {
-					"target": "learnDetail"
-				},
 				"async": true
 			},
 			"routes": [
@@ -94,32 +91,32 @@
 					"target": "overview"
 				},
 				{
-					"pattern": "overview/{group}/:key:",
+					"pattern": "overview/{topic}/:subTopic:/:id:",
 					"name": "overview",
 					"target": "overview"
 				},
 				{
-					"pattern": "learn/{group}/:key:",
+					"pattern": "learn/{topic}/:subTopic:/:id:",
 					"name": "learnDetail",
 					"target": "learnDetail"
 				},
 				{
-					"pattern": "explore/:key:/:subSampleKey:",
+					"pattern": "explore/{sample}/:subSample:",
 					"name": "exploreSamples",
 					"target": "exploreSamples"
 				},
 				{
-					"pattern": "exploreOverview/:key:",
+					"pattern": "exploreOverview/{topic}/:id:",
 					"name": "exploreOverview",
 					"target": "exploreOverview"
 				},
 				{
-					"pattern": "integrate/:key:",
+					"pattern": "integrate/{topic}/:id:",
 					"name": "integrate",
 					"target": "integrate"
 				},
 				{
-					"pattern": "designtime/:key:",
+					"pattern": "designtime/{topic}/:id:",
 					"name": "designtime",
 					"target": "designtime"
 				}

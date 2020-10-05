@@ -49,15 +49,15 @@ sap.ui.define([
 	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
 	var oComp = oCompCont.getComponentInstance();
 
-	function givenAnFLP(fnFLPToExternalStub, mShellParams) {
+	function givenAnFLP(fnFLPToExternalStub, fnFLPReloadStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
 			getService: function() {
 				return {
 					toExternal: fnFLPToExternalStub,
-					getHash: function() {
+					getHash: function () {
 						return "Action-somestring";
 					},
-					parseShellHash: function() {
+					parseShellHash: function () {
 						var mHash = {
 							semanticObject: "Action",
 							action: "somestring"
@@ -68,8 +68,11 @@ sap.ui.define([
 						}
 						return mHash;
 					},
-					unregisterNavigationFilter: function() {},
-					registerNavigationFilter: function() {}
+					unregisterNavigationFilter: function () {},
+					registerNavigationFilter: function () {},
+					hashChanger: {
+						treatHashChanged: fnFLPReloadStub
+					}
 				};
 			},
 			getLogonSystem: function() {
@@ -82,20 +85,20 @@ sap.ui.define([
 		});
 	}
 
-	function givenMaxLayerParameterIsSetTo(sMaxLayer, fnFLPToExternalStub) {
-		givenAnFLP.call(this, fnFLPToExternalStub, {
+	function givenMaxLayerParameterIsSetTo(sMaxLayer, fnFLPToExternalStub, fnFLPReloadStub) {
+		givenAnFLP.call(this, fnFLPToExternalStub, fnFLPReloadStub, {
 			"sap-ui-fl-max-layer" : [sMaxLayer]
 		});
 	}
 
-	function givenDraftParameterIsSet(fnFLPToExternalStub) {
-		givenAnFLP.call(this, fnFLPToExternalStub, {
+	function givenDraftParameterIsSet(fnFLPToExternalStub, fnFLPReloadStub) {
+		givenAnFLP.call(this, fnFLPToExternalStub, fnFLPReloadStub, {
 			"sap-ui-fl-version" : [sap.ui.fl.Versions.Draft.toString()]
 		});
 	}
 
-	function givenNoParameterIsSet(fnFLPToExternalStub) {
-		givenAnFLP.call(this, fnFLPToExternalStub, {
+	function givenNoParameterIsSet(fnFLPToExternalStub, fnFLPReloadStub) {
+		givenAnFLP.call(this, fnFLPToExternalStub, fnFLPReloadStub, {
 		});
 	}
 
@@ -106,9 +109,7 @@ sap.ui.define([
 			needsReload : function() {
 				return Promise.resolve(bExist);
 			},
-			saveCommands : function() {
-				return;
-			}
+			saveCommands : function() {}
 		};
 	}
 	function whenStartedWithLayer(oRta, sLayer) {
@@ -146,16 +147,6 @@ sap.ui.define([
 		}
 		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
 		return !!mFLPArgs.params["sap-ui-fl-version"];
-	}
-
-	function getReloadedWithVersionParameter(fnFLPToExternalStub) {
-		if (!fnFLPToExternalStub.lastCall) {
-			return false;
-		}
-		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
-		return mFLPArgs.params &&
-			mFLPArgs.params["sap-ui-fl-version"] &&
-			mFLPArgs.params["sap-ui-fl-version"][sap.ui.fl.Versions.Draft.toString()];
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
@@ -452,7 +443,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]});
+			givenAnFLP(function() {return true;}, undefined, {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]});
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
 			return this.oRta._handleReloadOnExit()
@@ -504,7 +495,8 @@ sap.ui.define([
 
 		QUnit.test("when no draft was present and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
+			var fnTriggerRealodStub = sandbox.stub();
+			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealodStub);
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH,
 				hasHigherLayerChanges: true
@@ -517,10 +509,8 @@ sap.ui.define([
 				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					1,
 					"then handleParametersOnExit was called");
-				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
-					1, "then crossAppNavigation was triggered");
-				assert.equal(getReloadedWithVersionParameter(this.fnFLPToExternalStub),
-					sap.ui.fl.Versions.Original, "then version parameter is set to 'Original App'");
+				assert.equal(fnTriggerRealodStub.callCount,
+					1, "then crossAppNavigation was triggered without changing the url");
 			}.bind(this));
 		});
 
@@ -617,9 +607,7 @@ sap.ui.define([
 				needsReload : function(bReload) {
 					return Promise.resolve(bReload);
 				},
-				saveCommands : function() {
-					return;
-				}
+				saveCommands : function() {}
 			};
 			var fnNeedsReloadStub = sandbox.stub(this.oRta._oSerializer, "needsReload");
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
@@ -787,13 +775,13 @@ sap.ui.define([
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 			var oHasMaxLayerParameterSpy = sandbox.spy(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
-			var oHasVersionParameterSpy = sandbox.spy(ReloadInfoAPI, "hasVersionParameterWithValue");
+			var oHasVersionParameterSpy = sandbox.spy(FlexUtils, "getParameter");
 			var oTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
 
 			this.fnHandleParametersForStandalone.returns(document.location.search);
 			return this.oRta._determineReload().then(function() {
 				assert.equal(oHasMaxLayerParameterSpy.callCount, 1, "hasMaxLayerParameterWithValue is called");
-				assert.equal(oHasVersionParameterSpy.callCount, 1, "hasVersionParameterWithValue is called");
+				assert.ok(oHasVersionParameterSpy.calledWith(sap.ui.fl.Versions.UrlParameter), "the version parameter was checked");
 				assert.equal(oTriggerHardReloadStub.callCount, 1, "_triggerHardReload is called");
 			});
 		});
@@ -802,7 +790,7 @@ sap.ui.define([
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(FlexUtils, "getParameter").returns(sap.ui.fl.Versions.Draft.toString());
 			var fnGetReloadMessageOnStartSpy = sandbox.spy(this.oRta, "_getReloadMessageOnStart");
 			var oTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
 
@@ -825,6 +813,38 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			whenHigherLayerChangesExist();
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
+					"then the page is reloaded");
+			}.bind(this));
+		});
+
+		QUnit.test("when _handleReloadOnExit() is called and personalized changes and user exits reloading the personalization with draft", function(assert) {
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
+
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
+					"then the page is reloaded");
+			}.bind(this));
+		});
+
+		QUnit.test("when _handleReloadOnExit() is called and personalized changes and user exits reloading the personalization with avtivated version", function(assert) {
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
+
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
@@ -969,7 +989,7 @@ sap.ui.define([
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl
 			});
-			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]});
+			givenAnFLP(function() {return true;}, undefined, {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]});
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -1049,7 +1069,7 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring in the VENDOR layer was started within an FLP and wants to determine if a reload is needed on exit", {
 		beforeEach: function() {
-			givenAnFLP(function() {return true;}, {});
+			givenAnFLP(function() {return true;}, undefined, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl,

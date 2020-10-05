@@ -1,0 +1,36 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')",
+			"type" : "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"BillingStatus" : "",
+		"BillingStatusDescription" : "Initial",
+		"ChangedAt" : "\/Date(1600248014875)\/",
+		"CreatedAt" : "\/Date(1600247986474)\/",
+		"CurrencyCode" : "EUR",
+		"CustomerID" : "0100000000",
+		"CustomerName" : "SAP",
+		"DeliveryStatus" : "",
+		"DeliveryStatusDescription" : "Initial",
+		"GrossAmount" : "1137.64",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDescription" : "New",
+		"NetAmount" : "956.00",
+		"Note" : "Test Case XI",
+		"NoteLanguage" : "EN",
+		"SalesOrderID" : "111",
+		"TaxAmount" : "181.64",
+		"ToBusinessPartner" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')/ToBusinessPartner"
+			}
+		},
+		"ToLineItems" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')/ToLineItems"
+			}
+		}
+	}
+}
