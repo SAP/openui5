@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/model/Context',
-	'sap/m/library'
+	'sap/m/library',
+	'sap/ui/core/library'
 ], function(
 		FieldHelpBase,
 		Condition,
@@ -31,7 +32,8 @@ sap.ui.define([
 		merge,
 		ResourceModel,
 		Context,
-		mobileLibrary
+		mobileLibrary,
+		coreLibrary
 	) {
 	"use strict";
 
@@ -44,6 +46,7 @@ sap.ui.define([
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
+	var OpenState = coreLibrary.OpenState;
 
 	/**
 	 * Constructor for a new <code>FieldValueHelp</code>.
@@ -2287,7 +2290,7 @@ sap.ui.define([
 
 		var oDialog = this.getAggregation("_dialog");
 
-		if (oDialog && (oDialog.isOpen() || oDialog.oPopup.getOpenState() === "Opening")) { // TODO: better way to get opening state
+		if (oDialog && (oDialog.isOpen() || oDialog.oPopup.getOpenState() === OpenState.OPENING)) { // TODO: better way to get opening state
 			var oWrapper = this.getContent();
 			var oContent = oWrapper && oWrapper.getDialogContent();
 			if (oContent && oContent.getScrollDelegate) {
