@@ -1,7 +1,54 @@
 {
   "1.84.0": {
-    "date": "September 2020",
+    "date": "October 2020",
     "notes": [
+      {
+        "id": "064f1ae57cb2a0370635d9794307de27e15cf8e8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests"
+      },
+      {
+        "id": "589da4a09a6427b93cc6135e8be875a9db79100e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests"
+      },
+      {
+        "id": "9df0249d1993288d0cc66a1342db31bf088ee80e",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Internal label added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070359902"
+          }
+        ]
+      },
+      {
+        "id": "2ece1a0b5d65d0ee8c31a36dd5d88ec8be4defec",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: setters now work properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070351084"
+          }
+        ]
+      },
+      {
+        "id": "d70ae4e6041009871fd53ca70abad05f73239a08",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.YearRangePicker: aria-roledescription adopted"
+      },
+      {
+        "id": "1d68263d41258295c7994ba2713ccebe988fff07",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.YearPicker: aria-roledescription adopted"
+      },
+      {
+        "id": "8501ffa8b5185a689b1d8e18f3bb25e04b6f05f4",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.MonthPicker: aria-roledescription adopted"
+      },
       {
         "id": "59e2e8e193b930c10b882f9cdb91af4ec09ee6f9",
         "type": "FIX",

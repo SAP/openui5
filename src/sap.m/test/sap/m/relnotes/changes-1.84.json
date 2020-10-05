@@ -1,11 +1,141 @@
 {
   "1.84.0": {
-    "date": "September 2020",
+    "date": "October 2020",
     "notes": [
+      {
+        "id": "6156befd74721c684b4fffee01081f1e4b9e7d69",
+        "type": "FIX",
+        "text": " sap.m.Button: proper left padding of Delete button in Generic Tile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070362310"
+          }
+        ]
+      },
+      {
+        "id": "c1bce13fa469f40fd3d8ecd071509254a7918d34",
+        "type": "FIX",
+        "text": " sap.m.SelectList,sap.m.TableSelectList: Remembers its search value upon opening",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070336391"
+          }
+        ]
+      },
+      {
+        "id": "8f1757d698e47a7d647908ca642d10fccabae058",
+        "type": "FEATURE",
+        "text": " sap.m.Input: valueHelpIconSrc property added"
+      },
+      {
+        "id": "779d891bc2e97e29680dc1ef79daed617ed7551d",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Visual Design specification parameters applied for Large Design"
+      },
+      {
+        "id": "cddcb223e834bbc6fb118c21a031afb836b06bbe",
+        "type": "FIX",
+        "text": " sap.m.Button: proper left padding of Delete button in Generic Tile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070362310"
+          }
+        ]
+      },
+      {
+        "id": "576d9df9ceba2705a0dc792e53956f50928aa6aa",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Master button text no longer disappears",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070303064"
+          }
+        ]
+      },
+      {
+        "id": "1fde93408ea10c8fd3c8b3011bbf1537f49b7128",
+        "type": "FIX",
+        "text": " Walkthrough sample fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070350688"
+          }
+        ]
+      },
+      {
+        "id": "0413ea9af9ec11d53721d3ad7c88a44b56bac13a",
+        "type": "FEATURE",
+        "text": " ValueHelpDialog: alignment with V4"
+      },
+      {
+        "id": "04773ed179be1ced9af2456c22e5a7f35707fedc",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: showMaster() method now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070346778"
+          }
+        ]
+      },
+      {
+        "id": "ded410d7da2f4521ffe85f57dbcc185c46972a34",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: sapUiResponsiveContentPadding class is now applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070320025"
+          }
+        ]
+      },
+      {
+        "id": "3b9c52dbbea62100c57dcf31ae85961cb55a67c5",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: aria-roledescription adopted"
+      },
+      {
+        "id": "ffb602ce1c66f6bc23820fef56c06dc64a6b4ece",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Corrected width measurement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070292533"
+          }
+        ]
+      },
       {
         "id": "a2fc4821af30a5b7e67e994fd2c55b8eb36a9746",
         "type": "FEATURE",
         "text": " sap.m.DatePicker: aria-roledescription adopted"
+      },
+      {
+        "id": "a449874e2a7176e837d542066ec5da308d59358c",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus border is now fully shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080358739"
+          }
+        ]
+      },
+      {
+        "id": "4ab727dba03643881f03cdbc63acf7745861899c",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Prevent scrolling in IE when last token is focused",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005932342020"
+          }
+        ]
       },
       {
         "id": "f4cf71bed58c7d00d80faf67592ceca54ee15b09",

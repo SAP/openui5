@@ -1,7 +1,12 @@
 {
   "1.84.0": {
-    "date": "September 2020",
+    "date": "October 2020",
     "notes": [
+      {
+        "id": "8f1757d698e47a7d647908ca642d10fccabae058",
+        "type": "FEATURE",
+        "text": " sap.m.Input: valueHelpIconSrc property added"
+      },
       {
         "id": "ba7851d0c7f152ff973134058f5d310e07153674",
         "type": "FIX",
