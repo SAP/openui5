@@ -2081,5 +2081,32 @@
         ]
       }
     ]
+  },
+  "1.52.45": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "4b88f1cc8304edb9b46517aa499fdfc5fe19ffcd",
+        "type": "FIX",
+        "text": " scrollLeftRTL: adapt to chrome behavior change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070328364"
+          }
+        ]
+      },
+      {
+        "id": "44a3e82e1331cdcc98745f56d39307b0741b37b8",
+        "type": "FIX",
+        "text": " handlebars: usage of latest version 4.7.6",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
