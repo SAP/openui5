@@ -271,6 +271,16 @@ sap.ui.define(
             oMatcherSpy.restore();
         });
 
+        QUnit.test("Should create child matcher when using 'hasChildren'", function(assert) {
+            var oSpy = this.spy(OpaBuilder.Matchers, "childrenMatcher"),
+                fnMatcher = OpaBuilder.Matchers.TRUE,
+                oOpaBuilder = new OpaBuilder();
+            assert.strictEqual(oOpaBuilder.hasChildren(fnMatcher, true), oOpaBuilder, "builder instance returned");
+            assert.ok(oSpy.calledWith(fnMatcher, true));
+            assert.ok(oSpy.returned(oOpaBuilder.build().matchers[0]));
+            oSpy.restore();
+        });
+
         QUnit.test("Should create check function when using 'checkNumberOfMatches'", function(assert) {
             var oSpy = this.spy(OpaBuilder.prototype, "check"),
                 oOpaBuilder = new OpaBuilder();
