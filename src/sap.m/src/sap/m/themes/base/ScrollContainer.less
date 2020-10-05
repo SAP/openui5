@@ -15,3 +15,10 @@
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMScrollCont", ~"> .sapMScrollContScroll");
+
+.sapMScrollCont:focus {
+	outline-width: 0.0625rem;
+	outline-color: @sapUiContentFocusColor;
+	outline-style: dotted;
+	outline-offset: 0.0625rem;
+}
