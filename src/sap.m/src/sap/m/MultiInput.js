@@ -671,6 +671,20 @@ function(
 			oEvent.preventDefault();
 		}
 
+		// ctrl/meta + c OR ctrl/meta + Insert - Copy all selected Tokens
+		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.C || oEvent.which === KeyCodes.INSERT)) {
+			oTokenizer._copy();
+		}
+
+		// ctr/meta + x OR Shift + Delete - Cut all selected Tokens if editable
+		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.X) || (oEvent.shiftKey && oEvent.which === KeyCodes.DELETE)) {
+			if (this.getEditable()) {
+				oTokenizer._cut();
+			} else {
+				oTokenizer._copy();
+			}
+		}
+
 		// ctrl/meta + I -> Open suggestions
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.I && oTokenizer.getTokens().length) {
 			oTokenizer._togglePopup(oTokenizer.getTokensPopup());
