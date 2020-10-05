@@ -118,7 +118,10 @@ function(
 
 		if (nDisplayedVersion === Versions.Original) {
 			sText = oTextResources.getText("TIT_ORIGINAL_APP");
-			sType = aVersions.length ? "inactive" : "active";
+			sType = "inactive";
+			if (aVersions.length === 0 || (aVersions.length === 1 && aVersions[0].type === "draft")) {
+				sType = "active";
+			}
 		} else {
 			var oDisplayedVersion = aVersions.find(function (oVersion) {
 				return oVersion.version === nDisplayedVersion;

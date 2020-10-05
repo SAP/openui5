@@ -218,7 +218,19 @@ function(
 			var sExpectedText = this.oTextResources.getText("TIT_VERSION_1");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Version 1'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
-			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is not a active version accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is not an active version accent");
+		});
+
+		QUnit.test("Given only a draft is present in the back end", function (assert) {
+			var aVersions = [{
+				version: 0,
+				type: "draft"
+			}];
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Original);
+			var sExpectedText = this.oTextResources.getText("TIT_ORIGINAL_APP");
+			assert.equal(sText, sExpectedText, "then the button text matches 'Original App'");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is an active version accent");
 		});
 
 		QUnit.test("Given a version with a title is the first and active version in the list", function(assert) {
@@ -233,7 +245,7 @@ function(
 
 			assert.equal(sText, sTitle, "then the button text matches the version title");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
-			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is not a active version accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is an active version accent");
 		});
 
 		QUnit.test("Given a draft version is the draft version in the list", function(assert) {
@@ -250,7 +262,7 @@ function(
 			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), true, "and the button color is a draft accent");
-			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not a active version accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not an active version accent");
 		});
 
 		QUnit.test("Given two versions and a draft and the displayed version is the second one", function(assert) {
@@ -271,7 +283,7 @@ function(
 
 			assert.equal(sText, sVersionTitle2, "then the button text matches 'Draft'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
-			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is a active version accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color an active version accent");
 		});
 
 		QUnit.test("Given two versions and a draft and the displayed version is the first one", function(assert) {
@@ -292,7 +304,7 @@ function(
 
 			assert.equal(sText, sVersionTitle1, "then the button text matches 'Draft'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
-			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not a active version accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not an active version accent");
 		});
 
 		QUnit.test("Given no version is present", function(assert) {
@@ -301,7 +313,7 @@ function(
 			var sExpectedText = this.oTextResources.getText("TIT_ORIGINAL_APP");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Original App'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
-			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is a active version accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is an active version accent");
 		});
 	});
 
