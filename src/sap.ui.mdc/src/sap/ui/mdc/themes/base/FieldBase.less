@@ -1,11 +1,8 @@
 .sapUiMdcFieldBase {
 	display: inline-block;
 	box-sizing: border-box;
-	overflow: hidden; // otherwise Text controls consumes too much space in Form
-}
-
-.sapUiSizeCompact .sapUiMdcFieldBaseIcon>.sapMInputBaseInner {
-	padding-left: 1.525rem;
+	overflow: hidden; /* otherwise Text controls consumes too much space in Form */
+	vertical-align: top;
 }
 
 .sapUiMdcFieldBaseMoreFields > *{
@@ -16,7 +13,30 @@
 	padding-left: 0;
 }
 
-.sapUiMdcFieldBase .sapMInputBaseReadonlyInner  {
-	border: transparent;
-	background-color: transparent;
+/**
+ * align text-like controls in Table (as done for stand-alone controls in Table)
+ */
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMSlt > .sapMSltLabel,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectNumber,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMLabel,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMText {
+	text-align: inherit !important;
+}
+
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMLnk,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMText,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMLabel,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectNumber,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectIdentifier,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMObjStatus {
+	vertical-align: middle;
+}
+
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMLnk,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMText,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMLabel,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectNumber,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectIdentifier,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMObjStatus {
+	line-height: 1.4;
 }
