@@ -13,6 +13,7 @@ sap.ui.define([
 	'./ComboBoxRenderer',
 	'sap/ui/base/ManagedObjectObserver',
 	"sap/ui/dom/containsOrEquals",
+	"sap/m/inputUtils/scrollToItem",
 	"sap/ui/events/KeyCodes",
 	"./Toolbar",
 	"sap/base/assert",
@@ -32,6 +33,7 @@ sap.ui.define([
 		ComboBoxRenderer,
 		ManagedObjectObserver,
 		containsOrEquals,
+		scrollToItem,
 		KeyCodes,
 		Toolbar,
 		assert,
@@ -228,7 +230,8 @@ sap.ui.define([
 				bShouldResetSelectionStart = oControl._shouldResetSelectionStart(oItem),
 				oSelectedItem = oControl.getSelectedItem(),
 				bGroupHeaderItem = oItem.isA("sap.ui.core.SeparatorItem"),
-				oListItem = this.getListItem(oItem);
+				oListItem = oControl.getListItem(oItem);
+
 
 			oControl.handleListItemsVisualFocus(oListItem);
 
@@ -241,6 +244,7 @@ sap.ui.define([
 
 				// update the selected item after the change event is fired (the selection may change)
 				oItem = oControl.getSelectedItem();
+				oListItem = oControl.getListItem(oItem);
 
 				if (bShouldResetSelectionStart) {
 					iSelectionStart = 0;
@@ -270,41 +274,8 @@ sap.ui.define([
 				oControl.addStyleClass("sapMFocus");
 			}
 
-			oControl.scrollToItem(oItem);
+			scrollToItem(oListItem, oControl.getPicker());
 		}
-
-		/**
-		 * Scrolls an item into the visual viewport.
-		 * @param {object} oItem The item to be scrolled
-		 * @private
-		 */
-		ComboBox.prototype.scrollToItem = function(oItem) {
-			var oPicker = this.getPicker(),
-				oPickerDomRef = oPicker.getDomRef("cont"),
-				oListItem = this.getListItem(oItem),
-				oItemDomRef = oItem && oListItem && oListItem.getDomRef();
-
-			if (!oPicker || !oPickerDomRef || !oItemDomRef) {
-				return;
-			}
-
-			var iPickerScrollTop = oPickerDomRef.scrollTop,
-				iItemOffsetTop = oItemDomRef.offsetTop,
-				iPickerHeight = oPickerDomRef.clientHeight,
-				iItemHeight = oItemDomRef.offsetHeight;
-
-			if (iPickerScrollTop > iItemOffsetTop) {
-
-				// scroll up
-				oPickerDomRef.scrollTop = iItemOffsetTop;
-
-				// bottom edge of item > bottom edge of viewport
-			} else if ((iItemOffsetTop + iItemHeight) > (iPickerScrollTop + iPickerHeight)) {
-
-				// scroll down, the item is partly below the viewport of the list
-				oPickerDomRef.scrollTop = Math.ceil(iItemOffsetTop + iItemHeight - iPickerHeight);
-			}
-		};
 
 		function fnSelectTextIfFocused(iStart, iEnd) {
 			if (document.activeElement === this.getFocusDomRef()) {
@@ -1111,7 +1082,9 @@ sap.ui.define([
 				sValue = oEvent.target.value,
 				bEmptyValue = sValue === "",
 				oControl = oEvent.srcControl,
-				bToggleOpenState = (this.getPickerType() === "Dropdown");
+				bToggleOpenState = (this.getPickerType() === "Dropdown"),
+				oListItem = this.getListItem(oSelectedItem);
+
 
 			if (bEmptyValue && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog()) {
 				aVisibleItems = this.getItems();
@@ -1153,6 +1126,8 @@ sap.ui.define([
 				this.fireSelectionChange({
 					selectedItem: this.getSelectedItem()
 				});
+
+				oListItem = this.getListItem(this.getSelectedItem());
 			}
 
 			this._sInputValueBeforeOpen = sValue;
@@ -1168,7 +1143,7 @@ sap.ui.define([
 					this.close();
 				} else if (bToggleOpenState) {
 					this.open();
-					this.scrollToItem(this.getSelectedItem());
+					scrollToItem(oListItem, this.getPicker());
 				}
 			} else if (this.isOpen()) {
 				if (bToggleOpenState && !this.bOpenedByKeyboardOrButton) {

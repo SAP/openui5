@@ -177,6 +177,15 @@ sap.ui.define([
 					version: 2
 				}
 			},
+			"inputUtils/scrollToItem": {
+				title: "QUnit Page for sap.m.inputs.scrollToItem",
+				ui5: {
+					compatVersion: "1.84"
+				},
+				qunit: {
+					version: 2
+				}
+			},
 			TextArea: {
 				title: "Test Page for sap.m.TextArea",
 				_alternativeTitle: "QUnit page for sap.m.TextArea",

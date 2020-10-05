@@ -185,7 +185,7 @@ sap.ui.define([
 		// NOTE!
 		// This can change in future! In such case please ensure that the scroll is working on mobile devices
 		// and amend this test accordingly and/or add new ones!
-		assert.notEqual(jQuery(oComboBox._oSuggestionPopover._getScrollableContent()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
+		assert.notEqual(jQuery(oComboBox._oSuggestionPopover._oPopover.getDomRef("scroll")).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
 
 		//Cleanup
 		oComboBox.destroy();
@@ -212,26 +212,9 @@ sap.ui.define([
 		// NOTE!
 		// This can change in future! In such case please ensure that the scroll is working on mobile devices
 		// and amend this test accordingly and/or add new ones!
-		assert.notEqual(jQuery(oMultiComboBox._oSuggestionPopover._getScrollableContent()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
+		assert.notEqual(jQuery(oMultiComboBox._oSuggestionPopover._oPopover.getDomRef("scroll")).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
 
 		//Cleanup
 		oMultiComboBox.destroy();
-	});
-
-	QUnit.module("API");
-
-	QUnit.test("_getScrollableContent", function (assert) {
-		//Set up
-		var oInput = new Input({
-			showSuggestion: true
-		});
-
-		sap.ui.getCore().applyChanges();
-
-		//Assert
-		assert.strictEqual(oInput._oSuggPopover._getScrollableContent(), oInput._oSuggPopover._oPopover.getDomRef("scroll"), "_getScrollableContent should return Popover's scroll content");
-
-		//Clean up
-		oInput.destroy();
 	});
 });
