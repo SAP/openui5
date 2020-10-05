@@ -169,6 +169,76 @@ function(
 		});
 	});
 
+	QUnit.module("Versions Model binding & formatter for the restore button", {
+		before: function () {
+			this.oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
+			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		},
+		after: function() {
+			this.oToolbar.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given switching versions is possible", function (assert) {
+			this.oVersionsModel = new JSONModel({
+				versioningEnabled: true,
+				switchVersionsActive: true
+			});
+
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+
+			return this.oToolbar._pFragmentLoaded
+				.then(function() {
+					this.oToolbar.setModel(this.oVersionsModel, "versions");
+					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+					this.sDraftVersionAccent = "sapUiRtaDraftVersionAccent";
+					this.sActiveVersionAccent = "sapUiRtaActiveVersionAccent";
+					this.oVersionButton = this.oToolbar.getControl("versionButton");
+				}.bind(this))
+				.then(function () {
+					assert.equal(this.oToolbar.getControl("restore").getVisible(), false, "then the restore button is hidden");
+				}.bind(this));
+		});
+
+		QUnit.test("Given switching versions is not possible", function (assert) {
+			this.oVersionsModel = new JSONModel({
+				versioningEnabled: false,
+				switchVersionsActive: false
+			});
+
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+
+			return this.oToolbar._pFragmentLoaded
+				.then(function() {
+					this.oToolbar.setModel(this.oVersionsModel, "versions");
+					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+					this.sDraftVersionAccent = "sapUiRtaDraftVersionAccent";
+					this.sActiveVersionAccent = "sapUiRtaActiveVersionAccent";
+					this.oVersionButton = this.oToolbar.getControl("versionButton");
+				}.bind(this))
+				.then(function () {
+					assert.equal(this.oToolbar.getControl("restore").getVisible(), true, "then the restore button is shown");
+				}.bind(this));
+		});
+	});
+
 	QUnit.module("Versions Model binding & formatter for the versions text", {
 		before: function () {
 			this.oVersionsModel = new JSONModel({

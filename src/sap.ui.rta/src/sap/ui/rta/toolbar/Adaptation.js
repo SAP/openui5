@@ -111,12 +111,17 @@ function(
 		oButton.setIcon(sIcon || "");
 	}
 
+	Adaptation.prototype.formatDiscardDraftEnabled = function (nDisplayedVersion) {
+		return nDisplayedVersion === sap.ui.fl.Versions.Draft;
+	};
+
 	Adaptation.prototype.formatVersionButtonText = function (aVersions, nDisplayedVersion) {
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sText = "";
 		var sType = "Active";
+		aVersions = aVersions || [];
 
-		if (nDisplayedVersion === Versions.Original) {
+		if (nDisplayedVersion === undefined || nDisplayedVersion === Versions.Original) {
 			sText = oTextResources.getText("TIT_ORIGINAL_APP");
 			sType = "inactive";
 			if (aVersions.length === 0 || (aVersions.length === 1 && aVersions[0].type === "draft")) {
@@ -270,6 +275,10 @@ function(
 		});
 	};
 
+	Adaptation.prototype.showRestore = function (bSwitchVersionsEnabled) {
+		return !bSwitchVersionsEnabled;
+	};
+
 	Adaptation.prototype._showButtonIcon = function(sButtonName, sIcon, sToolTipKey) {
 		_setButtonProperties.call(this, sButtonName, sIcon, "", sToolTipKey);
 	};
@@ -346,6 +355,7 @@ function(
 			controller: {
 				activateDraft: this._openVersionTitleDialog.bind(this),
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
+				formatDiscardDraftEnabled: this.formatDiscardDraftEnabled.bind(this),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
@@ -357,7 +367,8 @@ function(
 				saveAs: this.eventHandler.bind(this, "SaveAs"),
 				exit: this.eventHandler.bind(this, "Exit"),
 				formatVersionButtonText: this.formatVersionButtonText.bind(this),
-				showVersionHistory: this.showVersionHistory.bind(this)
+				showVersionHistory: this.showVersionHistory.bind(this),
+				showRestore: this.showRestore.bind(this)
 			}
 		});
 	};

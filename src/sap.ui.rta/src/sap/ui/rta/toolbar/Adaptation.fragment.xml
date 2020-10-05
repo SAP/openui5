@@ -38,7 +38,7 @@
 						icon="sap-icon://delete"
 						press=".discardDraft"
 						visible="{versions>/versioningEnabled}"
-						enabled="{versions>/draftAvailable}"
+						enabled="{path: 'versions>/displayedVersion', formatter: '.formatDiscardDraftEnabled'}"
 						type="Transparent"
 						tooltip="{i18n>TOL_DISCARD_DRAFT}" />
 			</content>
@@ -127,6 +127,7 @@
 				<Button
 						id="sapUiRta_restore"
 						enabled="{controls>/restoreEnabled}"
+						visible="{path: 'versions>/switchVersionsActive', formatter: '.showRestore'}"
 						press=".restore"
 						type="Transparent"
 						text="{i18n>BTN_RESTORE}" >
