@@ -1,7 +1,40 @@
 {
   "1.84.0": {
-    "date": "September 2020",
+    "date": "October 2020",
     "notes": [
+      {
+        "id": "1766288e137c40b85152c4225ac7c0f2a441353a",
+        "type": "FEATURE",
+        "text": " core/Fragment: Async loading of XML content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005118452020"
+          }
+        ]
+      },
+      {
+        "id": "a88523716218878c7a124559fd55107dc1df46b1",
+        "type": "FIX",
+        "text": " jquery-compat: Fixed return value of *width/*height functions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070366273"
+          }
+        ]
+      },
+      {
+        "id": "307bfe5d421d03fecc25bef29b6593819f27af5d",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#callFunction: no pending changes after GET",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070333970"
+          }
+        ]
+      },
       {
         "id": "6d780afafc5bb4936b72e079255eccb655535f9e",
         "type": "FEATURE",
