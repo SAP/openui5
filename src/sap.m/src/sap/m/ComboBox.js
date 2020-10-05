@@ -380,7 +380,8 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Item[]} Array of filtered items
 		 */
 		ComboBox.prototype.filterItems = function(mOptions) {
-			var aItems = this.getItems(),
+			var oListItem,
+				aItems = this.getItems(),
 				aFilteredItems = [],
 				aFilteredItemsByText = [],
 				bFilterAdditionalText = mOptions.properties.indexOf("additionalText") > -1,
@@ -407,7 +408,8 @@ sap.ui.define([
 					});
 
 					bGrouped = true;
-					this.getListItem(oItem).setVisible(false);
+					oListItem = this.getListItem(oItem);
+					oListItem && oListItem.setVisible(false);
 
 					return;
 				}
@@ -429,8 +431,6 @@ sap.ui.define([
 			}.bind(this));
 
 			aItems.forEach(function (oItem) {
-				var oListItem;
-
 				if (oItem.isA("sap.ui.core.SeparatorItem")) {
 					return;
 				}
@@ -448,7 +448,8 @@ sap.ui.define([
 
 			aGroups.forEach(function (oGroupItem) {
 				if (oGroupItem.show) {
-					this.getListItem(oGroupItem.separator).setVisible(true);
+					oListItem = this.getListItem(oGroupItem.separator);
+					oListItem && oListItem.setVisible(true);
 				}
 			}.bind(this));
 
@@ -2336,16 +2337,21 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.showItems = function (fnFilter) {
 			var aFilteredItems,
-				fnFilterRestore = this.fnFilter;
+				args = Array.prototype.slice.call(arguments),
+				fnFilterRestore = this.fnFilter,
+				fnLoadItemsListener = function () {
+					// Get filtered items and open the popover only when the items array is not empty.
+					this.setFilterFunction(fnFilter || function () { return true; });
+					aFilteredItems = this.filterItems({value: this.getValue() || "_", properties: this._getFilters()});
+					this.setFilterFunction(fnFilterRestore);
 
-			// Get filtered items and open the popover only when the items array is not empty.
-			this.setFilterFunction(fnFilter || function () { return true; });
-			aFilteredItems = this.filterItems({value: this.getValue() || "_", properties: this._getFilters()});
-			this.setFilterFunction(fnFilterRestore);
+					if (aFilteredItems && aFilteredItems.length) {
+						ComboBoxBase.prototype.showItems.apply(this, args);
+					}
+				}.bind(this);
 
-			if (aFilteredItems && aFilteredItems.length) {
-				ComboBoxBase.prototype.showItems.apply(this, arguments);
-			}
+			this.attachLoadItems(fnLoadItemsListener);
+			this.loadItems(fnLoadItemsListener);
 		};
 
 		/**
