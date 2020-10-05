@@ -747,7 +747,7 @@
 				<m:Label text="{/#Product/CityId/@sap:label}"></m:Label>
 				<mdc:Field
 					id="IOFCity"
-					value="{path: 'CityId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"
+					value="{path: 'CityId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"
 					placeholder="{/#Product/CityId/@sap:label}"
 					display="ValueDescription"
 					change="handleChange"
@@ -968,7 +968,7 @@
 						<mdc:Field id="T-F8" value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit'}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}" placeholder="{/#Product/WeightMeasure/@sap:label}" display="Value" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" fieldHelp="FVH-WeightUnit4" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 						<mdc:Field id="T-F9" value="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}" placeholder="{/#Product/CountryId/@sap:label}" display="ValueDescription" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="IOFVHCountry"/>
 						<mdc:Field id="T-F10" value="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}" placeholder="{/#Product/RegionId/@sap:label}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" display="ValueDescription" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="IOFVHRegion"/>
-						<mdc:Field id="T-F11" value="{path: 'CityId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}" placeholder="{/#Product/CityId/@sap:label}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" display="ValueDescription" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="IOFVHCity"/>
+						<mdc:Field id="T-F11" value="{path: 'CityId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}" placeholder="{/#Product/CityId/@sap:label}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" display="ValueDescription" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="IOFVHCity"/>
 					</m:ColumnListItem>
 				</m:items>
 				<m:dependents>

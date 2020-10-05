@@ -2494,12 +2494,18 @@ sap.ui.define([
 		for (i = 0; i < this._aAsyncChanges.length; i++) {
 			var oChange = this._aAsyncChanges[i];
 			if (oChange.waitForUpdate && Array.isArray(oChange.result)) {
-				for (var j = 0; j < oChange.result.length; j++) {
-					var oCondition = oChange.result[j];
-					if (deepEqual(oCondition.values[0], vValue) || (oCondition.operator === "BT" && deepEqual(oCondition.values[1], vValue))) {
-						oChange.reject(oEvent.getParameter("exception"));
-						bFound = true;
-						break;
+				if (oChange.result.length === 0 && vValue === "") {
+					// for empty string no condition is created
+					oChange.reject(oEvent.getParameter("exception"));
+					bFound = true;
+				} else {
+					for (var j = 0; j < oChange.result.length; j++) {
+						var oCondition = oChange.result[j];
+						if (deepEqual(oCondition.values[0], vValue) || (oCondition.operator === "BT" && deepEqual(oCondition.values[1], vValue))) {
+							oChange.reject(oEvent.getParameter("exception"));
+							bFound = true;
+							break;
+						}
 					}
 				}
 				if (bFound) {
@@ -3429,16 +3435,16 @@ sap.ui.define([
 			return true;
 		}
 
-		if (vValue === "") {
+		if (vValue === "" || (typeof (vValue) === "string" && vValue.match(/^0+$/))) { // if String is dig-sequence, initial value contains only "0"s
 			var oType = _getDataType.call(this);
-			var vResult = oType.parseValue(vValue, "string");
+			var vResult = oType.parseValue("", "string");
 			if (vResult === vValue) {
 				return true; // it's initial value
 			} else {
 				try {
 					oType.validateValue(vResult);
 				} catch (oError) {
-					// if type is not nullable empty is invalid, so it is initial
+					// if type is not nullable, empty is invalid, so it is initial
 					return true;
 				}
 			}
