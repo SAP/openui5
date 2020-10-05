@@ -33,6 +33,15 @@ sap.ui.define(['./ListItemBase', './library', './CustomListItemRenderer'],
 
 		library : "sap.m",
 		defaultAggregation : "content",
+		properties: {
+			/**
+			 * Defines the custom accessibility announcement.
+			 *
+			 * <b>Note:</b> If defined, then only the provided custom accessibility description is announced when there is a focus on the list item.
+			 * @since 1.84
+			 */
+			accDescription: {tpye: "string", group: "Behavior"}
+		},
 		aggregations : {
 
 			/**
@@ -43,7 +52,18 @@ sap.ui.define(['./ListItemBase', './library', './CustomListItemRenderer'],
 		designtime: "sap/m/designtime/CustomListItem.designtime"
 	}});
 
+	CustomListItem.prototype.setAccDescription = function(sAccDescription) {
+		this.setProperty("accDescription", sAccDescription, true);
+		return this;
+	};
+
 	CustomListItem.prototype.getContentAnnouncement = function() {
+		var sAccDescription = this.getAccDescription();
+
+		if (sAccDescription) {
+			return sAccDescription;
+		}
+
 		return this.getContent().map(function(oContent) {
 			return ListItemBase.getAccessibilityText(oContent);
 		}).join(" ").trim();
