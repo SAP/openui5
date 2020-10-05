@@ -1127,7 +1127,11 @@ sap.ui.define([
 			aItemsForList = this._getAllSubItems(),
 			oPrevSelectedItem = oIconTabHeader.oSelectedItem,
 			bHasSelectedItem = false,
-			oItem;
+			oItem,
+			oListItem,
+			aCustomData,
+			i,
+			iCustomDataItemIndex;
 
 		if (this._bIsOverflow) {
 			aItemsForList = oIconTabHeader._getItemsForOverflow();
@@ -1136,14 +1140,15 @@ sap.ui.define([
 		oSelectList.destroyItems();
 		oSelectList.setSelectedItem(null);
 
-		for (var i = 0; i < aItemsForList.length; i++) {
+		for (i = 0; i < aItemsForList.length; i++) {
 			oItem = aItemsForList[i];
-			var oListItem = oItem.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
+			oListItem = oItem.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
 			oItem._oCloneInList = oListItem;
 
-			// clone the badge custom data
-			if (oItem instanceof IconTabFilter && oItem.getBadgeCustomData()) {
-				oListItem.addCustomData(oItem.getBadgeCustomData().clone());
+			// clone all custom data
+			aCustomData = oItem.getCustomData();
+			for (iCustomDataItemIndex = 0; iCustomDataItemIndex < aCustomData.length; iCustomDataItemIndex++) {
+				oListItem.addCustomData(aCustomData[iCustomDataItemIndex].clone());
 			}
 
 			oListItem._oRealItem = oItem; // link list item to its underlying item from the items aggregation
