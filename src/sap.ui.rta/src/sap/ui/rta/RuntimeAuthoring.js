@@ -1664,7 +1664,7 @@ function(
 		if (sVersionParameter) {
 			delete mParsedHash.params[flexLibrary.Versions.UrlParameter];
 		} else if (this._isDraftAvailable() || bTriggerReload /* for discard of dirty changes */) {
-			FlexUtils.getUshellContainer().getService("ShellNavigation").hashChanger.treatHashChanged(window.hasher.getHash());
+			FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
 		}
 		return mParsedHash;
 	};
