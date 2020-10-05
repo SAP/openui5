@@ -443,8 +443,10 @@ sap.ui.define([
 			}
 		} else if (TableUtils.isNoDataVisible(oTable)) {
 			// The noData area is shown
-			if (containsOrEquals(oTable.getDomRef("sapUiTableCnt"), oPreviousFocusRef)) {
+			if (containsOrEquals(oTable.getDomRef("tableCCnt"), oPreviousFocusRef)) {
 				oTable.$("noDataCnt").trigger("focus"); // Set focus on NoData Container if it was on the content before
+			} else if (containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
+				TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(this)); // Set focus on first focusable element
 			}
 		} else if (containsOrEquals(oTable.getDomRef("noDataCnt"), oPreviousFocusRef)
 				   || containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
