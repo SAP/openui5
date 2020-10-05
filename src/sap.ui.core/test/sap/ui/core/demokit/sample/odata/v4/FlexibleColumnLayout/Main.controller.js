@@ -32,30 +32,45 @@ sap.ui.define([
 			return {bDescending : bDescending, sNewIcon : sNewIcon};
 		},
 
+		hasPendingChanges : function (oBinding, sMessage) {
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error(sMessage);
+				return true;
+			}
+			return false;
+		},
+
 		onCancel : function () {
 			this.oModel.resetChanges("UpdateGroup");
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
-			var oButton = oEvent.getSource(),
-				that = this;
-
-			oButton.getBindingContext().delete("$auto").then(function () {
+			oEvent.getSource().getBindingContext().delete("$auto").then(function () {
 				MessageBox.success("Sales order deleted");
-				that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
-				that.oUIModel.setProperty("/bSalesOrderSelected", false);
 			});
 		},
 
 		onDeleteSalesOrderItem : function (oEvent) {
-			var oButton = oEvent.getSource(),
-				that = this;
-
-			oButton.getBindingContext().delete("$auto").then(function () {
+			oEvent.getSource().getBindingContext().delete("$auto").then(function () {
 				MessageBox.success("Sales order line item deleted");
-				that.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
-				that.oUIModel.setProperty("/bSalesOrderItemSelected", false);
 			});
+		},
+
+		onExit : function () {
+			this.oUIModel.destroy(); // avoid changes on UI elements if this view destroys
+			Controller.prototype.onExit.apply(this);
+		},
+
+		onFilterSalesOrders : function (oEvent) {
+			var oBinding = this.byId("SalesOrderList").getBinding("items"),
+				sQuery = oEvent.getParameter("query");
+
+			if (this.hasPendingChanges(oBinding, "Cannot filter due to unsaved changes; save or " +
+				"reset changes before filtering")) {
+				return;
+			}
+
+			oBinding.filter(sQuery ? new Filter("GrossAmount", FilterOperator.GT, sQuery) : null);
 		},
 
 		onInit : function () {
@@ -64,16 +79,25 @@ sap.ui.define([
 			this.oUIModel = this.getView().getModel("ui");
 		},
 
+		onRefreshSalesOrder : function (oEvent) {
+			this.byId("objectPage").getBindingContext().refresh(undefined, true);
+		},
+
 		onSalesOrderLineItemSelect : function (oEvent) {
 			this.setSalesOrderLineItemBindingContext(
 				oEvent.getParameters().listItem.getBindingContext());
 		},
+
 		onSalesOrderSelect : function (oEvent) {
 			var oObjectPage = this.byId("objectPage"),
-				oContext = oEvent.getParameters().listItem.getBindingContext();
+				oContext = oEvent.getParameters().listItem.getBindingContext(),
+				that = this;
 
-			// code sample to switch the context using the Context#setKeepAlive
-			oContext.setKeepAlive(true);
+			oContext.setKeepAlive(true, function () {
+				// React destruction of a kept-alive context
+				that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
+				that.oUIModel.setProperty("/bSalesOrderSelected", false);
+			});
 			if (oObjectPage.getBindingContext()) {
 				oObjectPage.getBindingContext().setKeepAlive(false);
 			}
@@ -92,9 +116,8 @@ sap.ui.define([
 				bDescending = this.oUIModel.getProperty("/bSortGrossAmountDescending"),
 				oSortOrder;
 
-			if (oBinding.hasPendingChanges()) {
-				MessageBox.error("Cannot sort due to unsaved changes"
-					+ "; save or reset changes before sorting");
+			if (this.hasPendingChanges(oBinding, "Cannot sort due to unsaved changes; save or reset"
+				+ " changes before sorting")) {
 				return;
 			}
 
@@ -113,9 +136,8 @@ sap.ui.define([
 				bDescending = this.oUIModel.getProperty("/bSortSalesOrderIDDescending"),
 				oSortOrder;
 
-			if (oBinding.hasPendingChanges()) {
-				MessageBox.error("Cannot change parameters due to unsaved changes"
-					+ "; save or reset changes before sorting");
+			if (this.hasPendingChanges(oBinding, "Cannot change parameters due to unsaved changes; "
+				+ "save or reset changes before sorting")) {
 				return;
 			}
 
@@ -130,11 +152,16 @@ sap.ui.define([
 		},
 
 		setSalesOrderLineItemBindingContext : function (oContext) {
-			var oSubObjectPage = this.byId("subObjectPage");
+			var oSubObjectPage = this.byId("subObjectPage"),
+				that = this;
 
 			// code sample to switch the context using the Context#setKeepAlive
 			if (oContext) {
-				oContext.setKeepAlive(true);
+				oContext.setKeepAlive(true, function () {
+					// React destruction of a kept-alive context
+					that.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
+					that.oUIModel.setProperty("/bSalesOrderItemSelected", false);
+				});
 			}
 			if (oSubObjectPage.getBindingContext()) {
 				oSubObjectPage.getBindingContext().setKeepAlive(false);

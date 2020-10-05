@@ -60,7 +60,6 @@ sap.ui.getCore().attachInit(function () {
 
 			//*****************************************************************************
 			opaTest("Object page and sub-object page are in sync", function (Given, When, Then) {
-				When.onAnyPage.applySupportAssistant();
 				Given.iStartMyUIComponent({
 					autoWait : true,
 					componentConfig : {
@@ -87,15 +86,13 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheSubObjectPage.checkQuantity("4.000");
 				Then.onTheObjectPage.checkSalesOrderItem(9, "0000000010", "4.000");
 
-				Then.onAnyPage.checkLog();
-				Then.onAnyPage.analyzeSupportAssistant();
 				Then.iTeardownMyUIComponent();
 			});
 
 			//*****************************************************************************
-			opaTest("Delete a kept-alive context that is not visible in the sales orders table",
-					function (Given, When, Then) {
-				When.onAnyPage.applySupportAssistant();
+			opaTest("Delete a kept-alive context that is not visible in the sales orders table, "
+					+ "after refresh context is not visible in the sales orders table and the "
+					+ "object page is updated", function (Given, When, Then) {
 				Given.iStartMyUIComponent({
 					autoWait : true,
 					componentConfig : {
@@ -114,9 +111,67 @@ sap.ui.getCore().attachInit(function () {
 				When.onTheObjectPage.deleteSalesOrder();
 				When.onTheApplication.closeDialog("Success"); // close the success dialog
 				Then.onTheApplication.checkMessagesButtonCount(0);
+				Then.onTheApplication.checkObjectPageNotVisible();
+
+				Then.iTeardownMyUIComponent();
+			});
+
+			//*****************************************************************************
+			opaTest("Refresh a kept-alive context that is not visible in the sales order table"
+					+ "; after refresh the object page vanishes", function (Given, When, Then) {
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout"
+					}
+				});
+
+				When.onTheListReport.sortBySalesOrderID();
+				When.onTheListReport.selectSalesOrder(0);
+				Then.onTheObjectPage.checkSalesOrderID("0500000009");
+				When.onTheListReport.sortBySalesOrderID();
+				Then.onTheListReport.checkSalesOrderNotInTheList("0500000009");
+				Then.onTheObjectPage.checkSalesOrderID("0500000009");
+
+				// code under test
+				When.onTheObjectPage.refresh();
+				// context vanishes
+				Then.onTheApplication.checkObjectPageNotVisible();
+
+				Then.iTeardownMyUIComponent();
+			});
+
+			//*****************************************************************************
+			opaTest("Refresh a kept-alive context that is visible in the sales order table"
+					+ "; after refresh the sales order is no longer in the sales order table",
+					function (Given, When, Then) {
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout"
+					}
+				});
+
+				When.onTheListReport.selectSalesOrder(0);
+				Then.onTheObjectPage.checkSalesOrderID("0500000000");
+
+				// apply filter and check context still in collection (pre-condition of refresh)
+				When.onTheListReport.filterByGrossAmount('1000');
+				Then.onTheObjectPage.checkSalesOrderID("0500000000");
+				Then.onTheListReport.checkSalesOrder(0, "0500000000", "Test (original)");
+
+				// code under test
+				When.onTheObjectPage.refresh();
+				// the object page is refreshed
+				Then.onTheObjectPage.checkSalesOrderID("0500000000");
+				Then.onTheObjectPage.checkNote("Test (refreshed)");
+				// and the context is no longer visible in the sales order table
+				Then.onTheListReport.checkSalesOrderNotInTheList("0500000000");
+
 				Then.iTeardownMyUIComponent();
 			});
 		}
+
 		QUnit.start();
 	});
 });
