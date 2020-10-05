@@ -155,6 +155,11 @@ function(
 	};
 
 	Adaptation.prototype.formatVersionTimeStamp = function (sTimeStamp) {
+		if (!sTimeStamp) {
+			// in case of "Original App" and "Draft" no timestamp is set
+			return "";
+		}
+
 		return DateFormat.getInstance({
 			format: "yMMMdjm"
 		}).format(new Date(sTimeStamp));

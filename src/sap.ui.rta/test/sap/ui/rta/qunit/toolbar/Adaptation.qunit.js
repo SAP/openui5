@@ -580,6 +580,17 @@ function(
 			assert.equal(sTimeStamp, sFormattedTimeStamp, "then timestamp was formatted");
 		});
 
+		QUnit.test("Given no timestamp is given (i.e. 'Draft' or 'Original App'", function (assert) {
+			// the format function is mocked, because the formatter is dependent on the locale of the test executioner
+			var oFormatStub = sandbox.stub();
+			sandbox.stub(DateFormatter, "getInstance").returns({
+				format: oFormatStub
+			});
+			this.oToolbar.formatVersionTimeStamp();
+
+			assert.equal(oFormatStub.callCount, 0, "then format was not called");
+		});
+
 		QUnit.test("Given the 'Version 1' title should be formatted", function (assert) {
 			var sTitle = this.oToolbar.formatVersionTitle("", "active");
 			assert.equal(sTitle, this.oMessageBundle.getText("TIT_VERSION_1"), "then title is 'Version one'");
