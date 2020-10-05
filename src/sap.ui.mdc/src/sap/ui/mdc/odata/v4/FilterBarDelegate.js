@@ -461,6 +461,15 @@ sap.ui.define([
 						if (oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@com.sap.vocabularies.UI.v1.Hidden")) {
 							continue;
 						}
+
+						// ignore (as for now) all complex properties
+						// not clear if they might be nesting (complex in complex)
+						// not clear how they are represented in non-filterable annotation
+						// etc.
+						if (oObj.$isCollection) {
+							continue;
+						}
+
 						oPropertyInfo = ODataFilterBarDelegate._fetchPropertyInfo(oMetaModel, sEntitySetPath, sNavigationPropertyName, oObj, sKey, oParameterInfo);
 						if (oPropertyInfo) {
 							oPropertyInfo.group = sGroup;
