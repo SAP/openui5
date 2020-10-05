@@ -2819,6 +2819,9 @@ sap.ui.define([
 								delete this._vLiveChangeValue;
 							}
 						}.bind(this), 300, { leading: false, trailing: true });
+
+						// on first call init FieldHelp (trigger loading metadata on first typing)
+						oFieldHelp.initBeforeOpen(true);
 					}
 					var vOpenByTyping = oFieldHelp.openByTyping(); // trigger determination of search functionality
 					if (vOpenByTyping instanceof Promise) {

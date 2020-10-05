@@ -1050,6 +1050,46 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("initBeforeOpen and open with async contentRequest", function(assert) {
+
+		var fnResolve;
+		var oPromise = new Promise(function(fnMyResolve, fnMyReject) {
+			fnResolve = fnMyResolve;
+		});
+
+		sinon.stub(FieldHelpBaseDelegate, "contentRequest").returns(oPromise);
+		oClock.restore(); // as we need a timeout to test async Promise
+
+		oFieldHelp.connect(oField);
+		oFieldHelp.initBeforeOpen(true); // suggestion
+		oFieldHelp.open(true); // suggestion
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		sinon.spy(oPopover, "openBy");
+
+		assert.ok(FieldHelpBaseDelegate.contentRequest.calledOnce, "FieldHelpBaseDelegate.contentRequest called once");
+		assert.ok(FieldHelpBaseDelegate.contentRequest.calledWith(undefined, oFieldHelp, true), "FieldHelpBaseDelegate.contentRequest called with suggestion");
+		assert.equal(iOpen, 0, "Open event not fired as promise is not resolved right now");
+		assert.notOk(oPopover.openBy.called, "Popover not opened as promise is not resolved right now");
+
+		fnResolve();
+		var fnDone = assert.async();
+		setTimeout( function(){ // as promise is resolves async
+			oClock = sinon.useFakeTimers(); // now we can use fake timer again
+			assert.ok(oPopover.openBy.called, "Popover opened");
+			assert.equal(iOpen, 1, "Open event fired");
+			iOpen = 0;
+			oPopover.openBy.reset();
+			oClock.tick(iPopoverDuration); // fake opening time
+
+			oFieldHelp.close();
+			oClock.tick(iPopoverDuration); // fake closing time
+			FieldHelpBaseDelegate.contentRequest.restore();
+			fnDone();
+		}, 0);
+
+	});
+
 	QUnit.test("getTextForKey with async contentRequest of delegate", function(assert) {
 
 		oClock.restore(); // as we need a timeout to test async Promise
@@ -1279,6 +1319,39 @@ sap.ui.define([
 			assert.ok(oPopover.openBy.called, "Popover opened after delegate loaded");
 			oFieldHelp.close();
 			oClock.tick(iPopoverDuration); // fake closing time
+			FieldHelpBaseDelegate.contentRequest.restore();
+			fnDone();
+		}, 0);
+
+	});
+
+	QUnit.test("initBeforeOpen and open", function(assert) {
+
+		sap.ui.require.withArgs("sap/ui/mdc/field/FieldHelpBaseDelegate").onSecondCall().returns(undefined);
+		oClock.restore(); // as we need a timeout to test async Promise
+		sinon.spy(FieldHelpBaseDelegate, "contentRequest");
+
+		oFieldHelp.connect(oField);
+		oFieldHelp.initBeforeOpen(); // no suggestion
+		oFieldHelp.open(); // no suggestion
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		sinon.spy(oPopover, "openBy");
+
+		assert.notOk(FieldHelpBaseDelegate.contentRequest.called, "FieldHelpBaseDelegate.contentRequest not called before delegate loaded");
+		assert.equal(iOpen, 0, "Open event not fired before delegate loaded");
+		assert.notOk(oPopover.openBy.called, "Popover not opened before delegate loaded");
+
+		var fnDone = assert.async();
+		setTimeout( function(){ // to wait until delegate loaded
+			oClock = sinon.useFakeTimers(); // now we can use fake timer again
+			oClock.tick(iPopoverDuration); // fake opening time
+			assert.ok(FieldHelpBaseDelegate.contentRequest.calledTwice, "FieldHelpBaseDelegate.contentRequest called twice after delegate loaded");
+			assert.equal(iOpen, 1, "Open event fired after delegate loaded");
+			assert.ok(oPopover.openBy.calledOnce, "Popover opened after delegate loaded");
+			oFieldHelp.close();
+			oClock.tick(iPopoverDuration); // fake closing time
+			FieldHelpBaseDelegate.contentRequest.restore();
 			fnDone();
 		}, 0);
 
