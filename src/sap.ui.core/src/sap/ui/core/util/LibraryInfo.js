@@ -7,10 +7,9 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	"sap/base/Log",
 	"sap/base/util/Version",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/documentation/sdk/util/Resources"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(BaseObject, Log, Version, jQuery, ResourcesUtil) {
+	function(BaseObject, Log, Version, jQuery) {
 	"use strict";
 
 	/**
@@ -39,12 +38,6 @@ sap.ui.define([
 		}
 	});
 
-	function formLibraryMetadataUrl(sUrl, sLibraryType) {
-		sUrl += sLibraryType;
-		sUrl = ResourcesUtil.getResourceOriginPath(sUrl);
-
-		return sUrl;
-	}
 
 	LibraryInfo.prototype._loadLibraryMetadata = function(sLibraryName, fnCallback) {
 		sLibraryName = sLibraryName.replace(/\//g, ".");
@@ -69,7 +62,7 @@ sap.ui.define([
 		}
 
 		jQuery.ajax({
-			url : formLibraryMetadataUrl(sUrl, sLibraryType),
+			url : sUrl + sLibraryType,
 			dataType : "xml",
 			error : function(xhr, status, e) {
 				Log.error("failed to load library details from '" + sUrl + sLibraryType + ": " + status + ", " + e);
@@ -153,8 +146,6 @@ sap.ui.define([
 			if ($Doc.attr("resolve") == "lib") {
 				sUrl = oData.url + sUrl;
 			}
-
-			sUrl = ResourcesUtil.getResourceOriginPath(sUrl);
 
 			jQuery.ajax({
 				url : sUrl,
