@@ -3,17 +3,17 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		"sap/m/CheckBox", "sap/m/Select", "sap/m/StandardListItem",
 		"sap/m/Page", "sap/m/Button", "sap/m/Link", "sap/m/RadioButton",
 		"sap/m/RadioButtonGroup", "sap/m/VBox", "sap/m/Dialog", "sap/m/List",
-		"sap/m/SplitApp", "sap/ui/core/Item", "sap/ui/layout/form/SimpleForm"],
+		"sap/m/SplitApp", "sap/ui/core/Item", "sap/ui/layout/form/SimpleForm", "sap/ui/Device"],
 	function(Wizard, WizardStep, MessageToast, Text, Label, Input,
 	         TextArea, CheckBox, Select, StandardListItem, Page, Button , Link,
 	         RadioButton, RadioButtonGroup, VBox, Dialog, List, SplitApp, Item,
-	         SimpleForm) {
+	         SimpleForm, Device) {
 		"use strict";
 
 		var splitAppContainer = new SplitApp(),
 			wizard, bindableWizard, branchingWizard,
 			currentStepTest, iconOnlyWizard,
-			dialogIntegrationTest, wizardBackgroundChange;
+			dialogIntegrationTest, wizardPageMode, wizardBackgroundChange;
 
 		(function () {
 			var checkStep4 = function() {
@@ -740,6 +740,90 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 			});
 		})();
 
+		(function () {
+			var step1 = new WizardStep({
+				validated : true,
+				icon: "sap-icon://permission",
+				content: [new VBox({
+					items: [
+						new Text({text: "Sample text"}),
+						new Text({text: "Sample text"})
+					]
+				})]
+			});
+			var step2 = new WizardStep({
+				validated : true,
+				icon: "sap-icon://person-placeholder",
+				content: [new VBox({
+					items: [
+						new Text({text: "Sample text"}),
+						new Text({text: "Sample text"})
+					]
+				})]
+			});
+			var step3 = new WizardStep({
+				validated: true,
+				icon: "sap-icon://simple-payment",
+				content: [new VBox({
+					items: [
+						new Text({text: "Sample text"}),
+						new Text({text: "Sample text"})
+					]
+				})]
+			});
+			var step4 = new WizardStep({
+				validated: true,
+				icon: "sap-icon://simple-payment",
+				content: [new VBox({
+					items: [
+						new Text({text: "Sample text"}),
+						new Text({text: "Sample text"})
+					]
+				})]
+			});
+
+			var oWizard = new Wizard({
+				width:"100%",
+				showNextButton: true,
+				renderMode: "Page",
+				currentStep: step1,
+				steps: [step1, step2, step3, step4]
+			});
+
+			var oDialog = new Dialog({
+				id: "wiz-page-dialog",
+				contentHeight: "50%",
+				verticalScrolling: false,
+				beginButton: new Button({
+					id: "dialog-next-step-button",
+					text: "Navigate",
+					press: function () {
+						oWizard.nextStep();
+					}
+				}),
+				endButton: new Button({
+					id: "close-dialog-button",
+					text: "Close",
+					press: function () {
+						oDialog.close();
+					}
+				}),
+				content: [oWizard]
+			}).removeStyleClass("sapUiPopupWithPadding");
+
+			var oButton = new Button({
+				id: "open-dialog-button",
+				text: "Open Dialog",
+				press: function() {
+					oDialog.open();
+				}
+			});
+
+			wizardPageMode = new Page({
+				content: [oButton]
+			});
+		})();
+
 		var masterPage = new Page({
 			title: "Navigation",
 			content: [
@@ -787,6 +871,13 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 								splitAppContainer.toDetail("dialog-integration-wiz-page");
 							}
 						}),
+						new StandardListItem('dialog-wiz-page',{
+							title: "Wizard in Page mode",
+							type: "Active",
+							press : function () {
+								splitAppContainer.toDetail("dialog-wiz-page-mode");
+							}
+						}),
 						new StandardListItem('background-change-wiz-sel',{
 							title: "Background change test",
 							type: "Active",
@@ -802,7 +893,7 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		splitAppContainer.addMasterPage(masterPage);
 
 		splitAppContainer.addDetailPage(new Page("fwd-wiz-page", {
-			showNavButton: jQuery.device.is.phone,
+			showNavButton: Device.system.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
@@ -811,7 +902,7 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		}));
 
 		splitAppContainer.addDetailPage(new Page("bnd-wiz-page", {
-			showNavButton: jQuery.device.is.phone,
+			showNavButton: Device.system.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
@@ -820,7 +911,7 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		}));
 
 		splitAppContainer.addDetailPage(new Page("branch-wiz-page", {
-			showNavButton: jQuery.device.is.phone,
+			showNavButton: Device.system.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
@@ -829,7 +920,7 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		}));
 
 		splitAppContainer.addDetailPage(new Page("iconOnly-wiz-page", {
-			showNavButton: jQuery.device.is.phone,
+			showNavButton: Device.system.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
@@ -838,15 +929,16 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		}));
 
 		splitAppContainer.addDetailPage(new Page("currentStep-wiz-page", {
-			showNavButton: jQuery.device.is.phone,
+			showNavButton: Device.system.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
 			content: [currentStepTest]
 		}));
+
 		splitAppContainer.addDetailPage(new Page("dialog-integration-wiz-page", {
-			showNavButton: jQuery.device.is.phone,
+			showNavButton: Device.system.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
@@ -854,8 +946,17 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 			content: [dialogIntegrationTest]
 		}));
 
+		splitAppContainer.addDetailPage(new Page("dialog-wiz-page-mode", {
+			showNavButton: Device.system.phone,
+			navButtonText: "Back",
+			navButtonPress: function() {
+				splitAppContainer.backDetail();
+			},
+			content: [wizardPageMode]
+		}));
+
 		splitAppContainer.addDetailPage(new Page("background-wiz-page", {
-			showNavButton: jQuery.device.is.phone,
+			showNavButton: Device.system.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();

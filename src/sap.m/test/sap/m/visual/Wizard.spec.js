@@ -75,7 +75,28 @@ describe("sap.m.Wizard", function() {
 		closeBtn.click();
 		openBtn.click();
 
-		expect(takeScreenshot(element(by.id("wiz-dialog")))).toLookAs("wizard-in-dialog-initial-focus");
+		expect(takeScreenshot()).toLookAs("wizard-in-dialog-initial-focus");
+		closeBtn.click();
+	});
+
+	it("should navigate between steps in a Page render mode", function () {
+		var openBtn = element(by.id("open-dialog-button")),
+			closeBtn = element(by.id("close-dialog-button")),
+			navigateBtn = element(by.id("dialog-next-step-button"));
+
+		if (bPhone) {
+			element(by.id("branch-wiz-page-navButton")).click();
+		}
+		// navigate to test app page and open dialog
+		element(by.id("dialog-wiz-page")).click();
+		openBtn.click();
+
+		// navigate to the last step
+		for (var i = 0; i < 3; i++) {
+			navigateBtn.click();
+		}
+		expect(takeScreenshot()).toLookAs("wizard-in-dialog-page-mode");
+
 		closeBtn.click();
 	});
 

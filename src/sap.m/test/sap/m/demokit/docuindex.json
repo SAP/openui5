@@ -1432,6 +1432,7 @@
 			"sap.m.sample.Wizard",
 			"sap.m.sample.WizardBranching",
 			"sap.m.sample.WizardCurrentStep",
+			"sap.m.sample.WizardSingleStep",
 			"sap.f.sample.DynamicPageWithWizard"
 		  ]
 		},
@@ -3187,6 +3188,11 @@
 		  "id": "sap.m.sample.WizardCurrentStep",
 		  "name": "Wizard edit mode",
 		  "description": "Demonstrates the usage of the setCurrentStep association, which controlls the current step of the wizard. This association could be used to simulate 'edit mode' for the wizard by showing all steps in the wizard, without need from the user click next button on each of them."
+		},
+		{
+		  "id": "sap.m.sample.WizardSingleStep",
+		  "name": "Wizard page mode",
+		  "description": "Demonstrates the usage of the renderMode property. The Wizard is displayed inside a Dialog to allow blocking of the interface without using page context. The dynamic page is used to provide a consistent and standards-compliant look. In addition it also provides the title and footer to ensure proper Wizard function. The footer contains the Wizard's actions which allow people to navigate."
 		},
 		{
 		  "id": "sap.m.sample.SplitApp",
