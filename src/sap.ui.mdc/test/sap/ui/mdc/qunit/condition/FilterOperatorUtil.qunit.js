@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/model/Filter",
 	"sap/ui/model/type/Integer",
+	"sap/ui/model/odata/type/String",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UniversalDateUtils"
 ], function(
@@ -27,6 +28,7 @@ sap.ui.define([
 	ConditionValidated,
 	Filter,
 	IntegerType,
+	StringType,
 	UniversalDate,
 	UniversalDateUtils
 ) {
@@ -210,7 +212,7 @@ sap.ui.define([
 						}
 
 						if (oTest.filter) {
-							var oFilter = oOperator.getModelFilter(oCondition, "test");
+							var oFilter = oOperator.getModelFilter(oCondition, "test", oTest.oType);
 							assert.ok(oFilter, "Filter returned");
 							assert.equal(oFilter.sPath, oTest.filter.path, "Filter path");
 							assert.equal(oFilter.sOperator, oTest.filter.operator, "Filter operator");
@@ -890,7 +892,18 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						filter: {path: "test", operator: "EQ", value1: ""},
-						isSingleValue: true
+						isSingleValue: true,
+						oType: new StringType({}, {nullable: false})
+					},
+					{
+						formatArgs: [Condition.createCondition("Empty", [])],
+						formatValue: "<empty>",
+						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						isEmpty: false,
+						valid: true,
+						filter: {path: undefined, operator: undefined, value1: undefined, value2: undefined},
+						isSingleValue: true,
+						oType: new StringType({}, {nullable: true})
 					}
 				],
 				"NotEmpty": [{
