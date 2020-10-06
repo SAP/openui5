@@ -109,4 +109,17 @@ sap.ui.define([
 		assert.ok(FilterBarDelegate.getTypeUtil, "getTypeUtil exists");
 		assert.equal(FilterBarDelegate.getTypeUtil(), TypeUtil, "getTypeUtil is v4 typeutil instance");
 	});
+
+	QUnit.test('Check complex property ignored', function(assert) {
+		var done = assert.async();
+
+		createDataModel().then(function (oModel) {
+			this._oFilterBar.setModel(oModel, "sample");
+			FilterBarDelegate.fetchProperties(this._oFilterBar).then(function(aProperties) {
+				assert.equal(aProperties.filter(function(oProperty) { return oProperty.name === "Complex"; }), 0);
+
+				done();
+			});
+		}.bind(this));
+	});
 });

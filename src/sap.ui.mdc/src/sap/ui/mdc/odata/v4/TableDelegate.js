@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/odata/v4/FilterBarDelegate', './ODataMetaModelUtil', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/model/Filter'
-], function(TableDelegate, Core, FilterUtil, DelegateUtil, FilterBarDelegate, ODataMetaModelUtil, TypeUtil, Filter) {
+	"sap/ui/mdc/TableDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/odata/v4/FilterBarDelegate', './ODataMetaModelUtil', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/model/Filter', 'sap/base/Log'
+], function(TableDelegate, Core, FilterUtil, DelegateUtil, FilterBarDelegate, ODataMetaModelUtil, TypeUtil, Filter, Log) {
 	"use strict";
 	/**
 	 * Helper class for sap.ui.mdc.Table.
@@ -73,6 +73,16 @@ sap.ui.define([
 			for ( var sKey in oEntityType) {
 				oObj = oEntityType[sKey];
 				if (oObj && oObj.$kind === "Property") {
+
+					// ignore (as for now) all complex properties
+					// not clear if they might be nesting (complex in complex)
+					// not clear how they are represented in non-filterable annotation
+					// etc.
+					if (oObj.$isCollection) {
+						Log.warning("Complex property with type " + oObj.$Type + " has been ignored");
+						continue;
+					}
+
 					// TODO: Enhance with more properties as used in MetadataAnalyser and check if this should be made async
 					oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 					oPropertyInfo = {
