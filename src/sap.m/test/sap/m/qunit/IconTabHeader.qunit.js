@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleMessage",
+	"sap/ui/core/CustomData",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Panel"
 ], function(
@@ -22,6 +23,7 @@ sap.ui.define([
 	Text,
 	Core,
 	InvisibleMessage,
+	CustomData,
 	createAndAppendDiv,
 	Panel
 ) {
@@ -817,4 +819,39 @@ sap.ui.define([
 		assert.notOk(oSelectedTab._isBadgeAttached, "The badge is removed from initially selected tab");
 	});
 
+	QUnit.module("Filters CustomData", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader();
+
+			// Arrange
+			fillWithItems(this.oITH, 100);
+
+			var oRootTab = new IconTabFilter({
+				text: "Tab2",
+				key: "tab2",
+				customData: new CustomData({
+					key: "a",
+					value: "b",
+					writeToDom: true
+				})
+			});
+			this.oITH.addItem(oRootTab);
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("CustomData is cloned to the overflow item", function (assert) {
+		var oOverflowTab = this.oITH._getOverflow();
+
+		QUnitUtils.triggerKeydown(oOverflowTab.$(), KeyCodes.ENTER);
+		this.clock.tick(4000);
+
+		assert.strictEqual(oOverflowTab._oPopover.$().find("li[data-a]").attr('data-a'), "b", "custom data attribute is correctly cloned");
+
+		oOverflowTab._closePopover();
+	});
 });
