@@ -555,11 +555,14 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 
-	// See class documentation
-	// @override
-	// @public
-	// @see sap.ui.base.EventProvider#attachEvent
-	// @since 1.37.0
+	/**
+	 * See {@link sap.ui.base.EventProvider#attachEvent}
+	 *
+	 * @public
+	 * @see sap.ui.base.EventProvider#attachEvent
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.base.EventProvider#attachEvent
 	ODataListBinding.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
@@ -868,9 +871,10 @@ sap.ui.define([
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
+	 * @see sap.ui.model.Binding#destroy
 	 * @since 1.40.1
 	 */
-	// @override
+	// @override sap.ui.model.Binding#destroy
 	ODataListBinding.prototype.destroy = function () {
 		if (this.bHasAnalyticalInfo && this.aContexts === undefined) {
 			return;
@@ -1486,6 +1490,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#filter
 	 * @since 1.39.0
 	 */
+	// @override sap.ui.model.ListBinding#filter
 	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
@@ -1540,9 +1545,9 @@ sap.ui.define([
 	 *   <code>iMaximumPrefetchSize</code> is set or <code>iStart</code> is not 0
 	 *
 	 * @protected
-	 * @see sap.ui.model.ListBinding#getContexts
 	 * @since 1.37.0
 	 */
+	// @override @see sap.ui.model.ListBinding#getContexts
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize) {
 		var sChangeReason,
 			aContexts,
@@ -1725,7 +1730,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getCurrentContexts
 	 * @since 1.39.0
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#getCurrentContexts
 	ODataListBinding.prototype.getCurrentContexts = function () {
 		var aContexts,
 			iLength = Math.min(this.iCurrentEnd, this.iMaxLength + this.iCreatedContexts)
@@ -1784,7 +1789,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getDistinctValues
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#getDistinctValues
 	ODataListBinding.prototype.getDistinctValues = function () {
 		throw new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues");
 	};
@@ -1858,7 +1863,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.table, sap.ui.export
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#getFilterInfo
 	ODataListBinding.prototype.getFilterInfo = function (bIncludeOrigin) {
 		var oCombinedFilter = FilterProcessor.combineFilters(this.aFilters,
 				this.aApplicationFilters),
@@ -1948,7 +1953,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getLength
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#getLength
 	ODataListBinding.prototype.getLength = function () {
 		if (this.bLengthFinal) {
 			return this.iMaxLength + this.iCreatedContexts;
@@ -2089,7 +2094,6 @@ sap.ui.define([
 	 * event, else it fires a 'refresh' event (since 1.67.0).
 	 *
 	 * @protected
-	 * @see sap.ui.model.Binding#initialize
 	 * @see #getRootBinding
 	 * @since 1.37.0
 	 */
@@ -2125,7 +2129,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#isLengthFinal
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#isLengthFinal
 	ODataListBinding.prototype.isLengthFinal = function () {
 		// some controls use .bLengthFinal on list binding instead of calling isLengthFinal
 		return this.bLengthFinal;
@@ -2672,9 +2676,8 @@ sap.ui.define([
 	 *   entities
 	 *
 	 * @private
-	 * @see sap.ui.model.Binding#setContext
 	 */
-	// @override
+	// @override sap.ui.model.Binding#setContext
 	ODataListBinding.prototype.setContext = function (oContext) {
 		var i,
 			sResolvedPath,
@@ -2742,6 +2745,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#sort
 	 * @since 1.39.0
 	 */
+	// @override sap.ui.model.ListBinding#sort
 	ODataListBinding.prototype.sort = function (vSorters) {
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");

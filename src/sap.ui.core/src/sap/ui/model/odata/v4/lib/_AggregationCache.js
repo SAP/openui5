@@ -286,8 +286,8 @@ sap.ui.define([
 	 *   "$count" in cases where it does not reflect the leaf count.
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.lib._CollectionCache#fetchValue
 	 */
+	// @override sap.ui.model.odata.v4.lib._CollectionCache#fetchValue
 	_AggregationCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
 			oListener) {
 		var that = this;
@@ -358,9 +358,9 @@ sap.ui.define([
 	 * @throws {Error} If given index or length is less than 0
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.lib._CollectionCache#read
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
+	// @override sap.ui.model.odata.v4.lib._CollectionCache#read
 	_AggregationCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
 		var i, n,
@@ -465,7 +465,7 @@ sap.ui.define([
 	 * @public
 	 * @see sap.ui.model.odata.v4.lib._AggregationCache.getResourcePathWithQuery
 	 */
-	// @override
+	// @override sap.ui.model.odata.v4.lib._Cache#toString
 	_AggregationCache.prototype.toString = function () {
 		return this.oRequestor.getServiceUrl() + this.sResourcePath
 			+ this.oRequestor.buildQueryString(this.sMetaPath,
@@ -503,8 +503,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   In case a multi-unit situation is detected via a collision of key predicates
 	 *
-	 * @private
+	 * @public
 	 */
+	// @override sap.ui.model.odata.v4.lib._Cache#calculateKeyPredicate
 	_AggregationCache.calculateKeyPredicate = function (oGroupNode, aGroupBy, aMissing,
 			bLeaf, bTotal, mByPredicate, oElement, mTypeForMetaPath, sMetaPath) {
 		var sPredicate;
@@ -575,6 +576,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
+	// @override sap.ui.model.odata.v4.lib._Cache#create
 	_AggregationCache.create = function (oRequestor, sResourcePath, oAggregation, mQueryOptions) {
 		return new _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions);
 	};
@@ -709,8 +711,9 @@ sap.ui.define([
 	 *   The index after the last element
 	 * @returns {string} The resource path including the query string
 	 *
-	 * @private
+	 * @public
 	 */
+	// @override sap.ui.model.odata.v4.lib._Cache#getResourcePathWithQuery
 	_AggregationCache.getResourcePathWithQuery = function (oAggregation, mQueryOptions, iStart,
 			iEnd) {
 		mQueryOptions = Object.assign({}, mQueryOptions, {
@@ -752,9 +755,9 @@ sap.ui.define([
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
 	 *
-	 * @private
+	 * @public
 	 */
-	// @override
+	// @override sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
 	_AggregationCache.handleResponse = function (oAggregation, mAlias2MeasureAndMethod,
 			fnMeasureRangeResolve, fnHandleResponse, iStart, iEnd, oResult, mTypeForMetaPath) {
 		var sAlias,

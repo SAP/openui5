@@ -15,6 +15,7 @@ sap.ui.define([
 	/**
 	 * Creates the base class for the metadata converters.
 	 *
+	 * @alias sap.ui.model.odata.v4.lib._MetadataConverter
 	 * @constructor
 	 */
 	function MetadataConverter() {
@@ -542,7 +543,7 @@ sap.ui.define([
 	 *
 	 * @abstract
 	 * @function
-	 * @name sap.ui.model.odata.v4.lib._MetadataConverterMetadataConverter#processElement
+	 * @name sap.ui.model.odata.v4.lib._MetadataConverter#processElement
 	 */
 
 	/**

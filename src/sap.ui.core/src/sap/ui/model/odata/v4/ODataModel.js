@@ -445,11 +445,14 @@ sap.ui.define([
 		}
 	};
 
-	// See class documentation
-	// @override
-	// @public
-	// @see sap.ui.base.EventProvider#attachEvent
-	// @since 1.37.0
+	/**
+	 * See {@link sap.ui.base.EventProvider#attachEvent}
+	 *
+	 * @public
+	 * @see sap.ui.base.EventProvider#attachEvent
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.base.EventProvider#attachEvent
 	ODataModel.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
@@ -541,6 +544,7 @@ sap.ui.define([
 	 * @see sap.ui.model.Model#bindContext
 	 * @since 1.37.0
 	 */
+	// @override sap.ui.model.Model#bindContext
 	ODataModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ODataContextBinding(this, sPath, oContext, mParameters);
 	};
@@ -1112,7 +1116,7 @@ sap.ui.define([
 	 * @see sap.ui.model.Model#destroy
 	 * @since 1.38.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#destroy
 	ODataModel.prototype.destroy = function () {
 		this.oMetaModel.destroy();
 		this.oRequestor.destroy();
@@ -1127,9 +1131,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *
 	 * @public
-	 * @see sap.ui.model.Model#destroyBindingContext
 	 * @since 1.37.0
 	 */
+	// @override sap.ui.model.Model#destroyBindingContext
 	ODataModel.prototype.destroyBindingContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#destroyBindingContext");
 	};
@@ -1168,9 +1172,8 @@ sap.ui.define([
 	 * @throws {Error}
 	 *
 	 * @private
-	 * @see sap.ui.model.Model#getContext
 	 */
-	// @override
+	// @override sap.ui.model.Model#getContext
 	ODataModel.prototype.getContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getContext");
 	};
@@ -1265,10 +1268,9 @@ sap.ui.define([
 	 *   The meta model for this ODataModel
 	 *
 	 * @public
-	 * @see sap.ui.model.Model#getMetaModel
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#getMetaModel
 	ODataModel.prototype.getMetaModel = function () {
 		return this.oMetaModel;
 	};
@@ -1279,10 +1281,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *
 	 * @public
-	 * @see sap.ui.model.Model#getObject
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#getObject
 	ODataModel.prototype.getObject = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getObject");
 	};
@@ -1296,7 +1297,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.49.0
 	 */
-	// @override
 	ODataModel.prototype.getODataVersion = function () {
 		return this.sODataVersion;
 	};
@@ -1307,10 +1307,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *
 	 * @public
-	 * @see sap.ui.model.Model#getOriginalProperty
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#getOriginalProperty
 	ODataModel.prototype.getOriginalProperty = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getOriginalProperty");
 	};
@@ -1482,7 +1481,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataPropertyBinding#refresh
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#refresh
 	ODataModel.prototype.refresh = function (sGroupId) {
 		this.checkGroupId(sGroupId);
 
@@ -1880,9 +1879,8 @@ sap.ui.define([
 	 *   Resolved path or <code>undefined</code>
 	 *
 	 * @private
-	 * @see sap.ui.model.Model#resolve
 	 */
-	// @override
+	// @override sap.ui.model.Model#resolve
 	ODataModel.prototype.resolve = function (sPath, oContext) {
 		var sResolvedPath;
 
@@ -1914,10 +1912,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *
 	 * @public
-	 * @see sap.ui.model.Model#setLegacySyntax
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#setLegacySyntax
 	ODataModel.prototype.setLegacySyntax = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#setLegacySyntax");
 	};

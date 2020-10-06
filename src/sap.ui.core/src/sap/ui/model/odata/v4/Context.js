@@ -311,10 +311,10 @@ sap.ui.define([
 	 * and index for debugging purposes.
 	 *
 	 * @public
-	 * @see sap.ui.model.Context#destroy
+	 * @see sap.ui.base.Object#destroy
 	 * @since 1.41.0
 	 */
-	// @override
+	// @override sap.ui.base.Object#destroy
 	Context.prototype.destroy = function () {
 		var fnOnBeforeDestroy = this.fnOnBeforeDestroy;
 
@@ -619,7 +619,7 @@ sap.ui.define([
 	 * @see sap.ui.model.Context#getObject
 	 * @since 1.39.0
 	 */
-	// @override
+	// @override sap.ui.model.Context#getObject
 	Context.prototype.getObject = function (sPath) {
 		return _Helper.publicClone(this.getValue(sPath));
 	};
@@ -646,7 +646,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataMetaModel#requestUI5Type
 	 * @since 1.39.0
 	 */
-	// @override
+	// @override sap.ui.model.Context#getProperty
 	Context.prototype.getProperty = function (sPath, bExternalFormat) {
 		var oError, oSyncPromise;
 

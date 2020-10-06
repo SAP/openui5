@@ -79,7 +79,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
 	 *   A lock for the group ID to be used for the PATCH request; without a lock, no PATCH is sent
 	 * @returns {sap.ui.base.SyncPromise} <code>undefined</code> for the general case which is
-	 *   handled generically by the caller {@link sap.ui.model.odata.v4.ODataContext#doSetProperty}
+	 *   handled generically by the caller {@link sap.ui.model.odata.v4.Context#doSetProperty}
 	 *   or a <code>SyncPromise</code> for the exceptional case
 	 *
 	 * @abstract
