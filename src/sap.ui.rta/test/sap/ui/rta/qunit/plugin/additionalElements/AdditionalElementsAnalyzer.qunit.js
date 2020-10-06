@@ -2,17 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/ColumnListItem",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/ui/dt/ElementUtil",
 	"sap/base/Log",
 	"./TestUtils"
-],
-function(
+], function(
 	AdditionalElementsAnalyzer,
-	JSONModel,
-	ColumnListItem,
 	BindingsExtractor,
 	ElementUtil,
 	Log,
@@ -20,8 +15,7 @@ function(
 ) {
 	"use strict";
 
-	QUnit.module("Given a test view", TestUtils.commonHooks(),
-	function () {
+	QUnit.module("Given a test view", TestUtils.commonHooks(), function () {
 		QUnit.test("checks if navigation and absolute binding work", function(assert) {
 			var oGroupElement1 = this.oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = this.oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
@@ -410,6 +404,30 @@ function(
 			});
 		});
 
+		QUnit.test("when getting invisible elements of a bound group containing an invisible field with field control hiding it as well", function(assert) {
+			var oGroup = this.oView.byId("GroupEntityType02");
+			var oGroupElement1 = this.oView.byId("EntityType02.Property04.DynamicallyInvisibleByFieldControl");
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal: {
+					elements: [{
+						element: oGroupElement1,
+						action: {} //not relevant for test
+					}]
+				},
+				addViaDelegate: {
+					delegateInfo: {
+						delegate: this.oDelegate
+					}
+				}
+			};
+
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field2 is not available on the dialog");
+			});
+		});
+
 		QUnit.test("when getting invisible elements of a bound group with delegate containing an invisible field with bindings inside belonging to the same context", function(assert) {
 			var oGroup = this.oView.byId("DelegateGroupEntityType01");
 			var oGroupElement1 = this.oView.byId("DelegateEntityType01.Prop9");
@@ -439,7 +457,7 @@ function(
 			});
 		});
 
-		QUnit.test("when getting invisible elements of a bound group containing a removed field with other binding context without addViaDelegate action", function(assert) {
+		QUnit.test("when getting invisible elements of a bound group containing a removed field with other binding context without addViaDelegate but with reveal action", function(assert) {
 			var oGroup = this.oView.byId("OtherGroup");
 			var oGroupElement1 = this.oView.byId("NavForm.EntityType01.Prop1");
 			oGroupElement1.setVisible(false);
@@ -460,7 +478,7 @@ function(
 			this.sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
 			});
 		});
 
@@ -622,7 +640,7 @@ function(
 					}]
 				}
 			};
-			var oGroup = this.oView.byId("GroupEntityType01");
+			var oGroup = this.oView.byId("GroupEntityType02");
 			this.sandbox.stub(oGroupElement1, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.addViaCustom.items[0].id);
 			this.sandbox.stub(oGroupElement2, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.addViaCustom.items[1].id);
 
