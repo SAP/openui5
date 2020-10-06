@@ -27,8 +27,8 @@ sap.ui.define([
 
 	oColumnFlex.findItem = function(oModifier, aColumns, sName) {
 		return aColumns.find(function(oColumn) {
-			var aDataProperties = oModifier.getProperty(oColumn, "dataProperties");
-			return aDataProperties[0] === sName;
+			var sDataProperty = oModifier.getProperty(oColumn, "dataProperty");
+			return sDataProperty === sName;
 		});
 	};
 

@@ -64,38 +64,38 @@ sap.ui.define([
 
 			this.oColumnPropA = new Column({
 				id: "propAColumn",
-				dataProperties: "propA"
+				dataProperty: "propA"
 			});
 
 			this.oColumnPropB = new Column({
 				id: "propBColumn",
 				header: "Property B",
-				dataProperties: "propB",
+				dataProperty: "propB",
 				hAlign: "End"
 			});
 
 			this.oColumnComplexPropA = new Column({
 				id: "columnComplexPropA",
 				header: "Complex Property A",
-				dataProperties: "complexPropA"
+				dataProperty: "complexPropA"
 			});
 
 			this.oColumnComplexPropB = new Column({
 				id: "columnComplexPropB",
-				dataProperties: "complexPropB"
+				dataProperty: "complexPropB"
 			});
 
 			this.oColumnPrice = new Column({
 				id: "priceColumn",
 				header: "Price",
-				dataProperties: "price",
+				dataProperty: "price",
 				hAlign: "End"
 			});
 
 			this.oInvalidColumn = new Column({
 				id: "invalidColumn",
 				header: "Invalid",
-				dataProperties: "invalidProperty"
+				dataProperty: "invalidProperty"
 			});
 		},
 		afterEach: function() {
@@ -219,49 +219,5 @@ sap.ui.define([
 			type: "String",
 			width: ""
 		}], "Expected column export settings returned");
-	});
-
-	QUnit.test("getColumnSortProperties", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getColumnSortProperties(), null, "null returned since no mdc.Column instance is provided");
-		assert.strictEqual(this.oPropertyHelper.getColumnSortProperties({}), null, "null returned since no mdc.Column instance is provided");
-		assert.strictEqual(this.oPropertyHelper.getColumnSortProperties(this.oColumnPropA).length, 1, "array of length 1 returned");
-		assert.deepEqual(this.oPropertyHelper.getColumnSortProperties(this.oColumnPropA)[0], {
-			fieldHelp: "",
-			filterable: true,
-			groupLabel: "",
-			label: "Property A",
-			maxConditions: null,
-			name: "propA",
-			path: "propAPath",
-			sortable: true,
-			typeConfig: null,
-			visible: false,
-			exportSettings: {
-				label: "Export label",
-				type: "Number",
-				width: 20
-			}
-		}, "correct propertyInfo returned");
-		assert.strictEqual(this.oPropertyHelper.getColumnSortProperties(this.oColumnPropB).length, 0, "Empty array returned, since the column does not have sortable property");
-		assert.strictEqual(this.oPropertyHelper.getColumnSortProperties(this.oColumnComplexPropA).length, 1, "1 property returned since, propA is sortable and propB is non-sortable");
-		assert.deepEqual(this.oPropertyHelper.getColumnSortProperties(this.oColumnComplexPropA)[0], {
-			fieldHelp: "",
-			filterable: true,
-			groupLabel: "",
-			label: "Property A",
-			maxConditions: null,
-			name: "propA",
-			path: "propAPath",
-			sortable: true,
-			typeConfig: null,
-			visible: false,
-			exportSettings: {
-				label: "Export label",
-				type: "Number",
-				width: 20
-			}
-		}, "correct propertyInfo returned");
-		assert.strictEqual(this.oPropertyHelper.getColumnSortProperties(this.oColumnComplexPropB).length, 0, "Empty array returned since complexProperty contains non-sortable properties");
-		assert.strictEqual(this.oPropertyHelper.getColumnSortProperties(this.oInvalidColumn), null, "Invalid mdc.Column instance");
 	});
 });

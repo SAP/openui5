@@ -242,10 +242,6 @@ sap.ui.define([
 			assert.equal(aInnerColumns[1].getCreationTemplate().getText(), "Test1", "column1: creationTemplate is correct");
 			assert.equal(aInnerColumns[1].getCreationTemplate().getWrapping(), false, "column1: creationTemplate wrapping is disabled");
 			assert.equal(aInnerColumns[1].getCreationTemplate().getRenderWhitespace(), false, "column1: creationTemplate renderWhitespace is disabled");
-			assert.equal(aInnerColumns[0].getShowFilterMenuEntry(), false, "column0: filtering is deactivated");
-			assert.equal(aInnerColumns[0].getShowSortMenuEntry(), false, "column0: sorting is deactivated");
-			assert.equal(aInnerColumns[1].getShowFilterMenuEntry(), false, "column1: filtering is deactivated");
-			assert.equal(aInnerColumns[1].getShowSortMenuEntry(), false, "column1: sorting is deactivated");
 			done();
 		}.bind(this));
 	});
@@ -1269,17 +1265,24 @@ sap.ui.define([
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperties: [
-				"name"
-			]
+			dataProperty: "name"
 		}));
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperties: [
-				"age"
-			]
+			dataProperty: "age"
 		}));
+
+		stubFetchProperties([
+			{
+				name: "name",
+				label: "name"
+			},
+			{
+				name: "age",
+				label: "age"
+			}
+		]);
 
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
@@ -1294,12 +1297,14 @@ sap.ui.define([
 				path: "/foo"
 			});
 
-			assert.deepEqual(oTable.getSortConditions(), oSortConditions, "sortConditions property is correctly set");
-			var aInnerColumns = oTable._oTable.getColumns();
-			assert.equal(aInnerColumns[0].getSorted(), true);
-			assert.equal(aInnerColumns[0].getSortOrder(), "Descending");
-			assert.equal(aInnerColumns[1].getSorted(), false);
-			done();
+			oTable.awaitPropertyHelper().then(function() {
+				assert.deepEqual(oTable.getSortConditions(), oSortConditions, "sortConditions property is correctly set");
+				var aInnerColumns = oTable._oTable.getColumns();
+				assert.equal(aInnerColumns[0].getSorted(), true);
+				assert.equal(aInnerColumns[0].getSortOrder(), "Descending");
+				assert.equal(aInnerColumns[1].getSorted(), false);
+				done();
+			});
 		}.bind(this));
 	});
 
@@ -1309,17 +1314,24 @@ sap.ui.define([
 		this.oTable.setType("ResponsiveTable");
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperties: [
-				"name"
-			]
+			dataProperty: "name"
 		}));
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperties: [
-				"cage", "age"
-			]
+			dataProperty: "age"
 		}));
+
+		stubFetchProperties([
+			{
+				name: "name",
+				label: "name"
+			},
+			{
+				name: "age",
+				label: "age"
+			}
+		]);
 
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
@@ -1334,11 +1346,13 @@ sap.ui.define([
 				path: "/foo"
 			});
 
-			assert.deepEqual(oTable.getSortConditions(), oSortConditions, "sortConditions property is correctly set");
-			var aInnerColumns = oTable._oTable.getColumns();
-			assert.equal(aInnerColumns[0].getSortIndicator(), "None");
-			assert.equal(aInnerColumns[1].getSortIndicator(), "Ascending");
-			done();
+			oTable.awaitPropertyHelper().then(function() {
+				assert.deepEqual(oTable.getSortConditions(), oSortConditions, "sortConditions property is correctly set");
+				var aInnerColumns = oTable._oTable.getColumns();
+				assert.equal(aInnerColumns[0].getSortIndicator(), "None");
+				assert.equal(aInnerColumns[1].getSortIndicator(), "Ascending");
+				done();
+			});
 		}.bind(this));
 	});
 
@@ -1349,17 +1363,24 @@ sap.ui.define([
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperties: [
-				"name"
-			]
+			dataProperty: "name"
 		}));
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperties: [
-				"age"
-			]
+			dataProperty: "age"
 		}));
+
+		stubFetchProperties([
+			{
+				name: "name",
+				label: "name"
+			},
+			{
+				name: "age",
+				label: "age"
+			}
+		]);
 
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
@@ -1374,39 +1395,41 @@ sap.ui.define([
 				path: "/foo"
 			});
 
-			assert.deepEqual(oTable.getSortConditions(), oSortConditions, "sortConditions property is correctly set");
-			var aInnerColumns = oTable._oTable.getColumns();
-			assert.equal(aInnerColumns[0].getSorted(), true);
-			assert.equal(aInnerColumns[0].getSortOrder(), "Descending");
-			assert.equal(aInnerColumns[1].getSorted(), false);
-			oTable.retrieveAdaptationController().then(function (oAdaptationController) {
+			oTable.awaitPropertyHelper().then(function() {
+				assert.deepEqual(oTable.getSortConditions(), oSortConditions, "sortConditions property is correctly set");
+				var aInnerColumns = oTable._oTable.getColumns();
+				assert.equal(aInnerColumns[0].getSorted(), true);
+				assert.equal(aInnerColumns[0].getSortOrder(), "Descending");
+				assert.equal(aInnerColumns[1].getSorted(), false);
+				oTable.retrieveAdaptationController().then(function (oAdaptationController) {
 
-				var oPropertyInfoPromise = new Promise(function(resolve, reject) {
-					resolve([
-						{name: "name", sortable: true},
-						{name: "age", sortable: true}
-					]);
-				});
-
-				sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
-				oAdaptationController._retrievePropertyInfo().then(function() {
-
-
-					var FlexUtil_handleChanges_Stub = sinon.stub(FlexUtil, "handleChanges");
-					FlexUtil_handleChanges_Stub.callsFake(function(aChanges) {
-						assert.equal(aChanges.length, 2);
-						assert.equal(aChanges[0].changeSpecificData.changeType, "removeSort");
-						assert.equal(aChanges[0].changeSpecificData.content.name, "name");
-						assert.equal(aChanges[0].changeSpecificData.content.descending, true);
-						assert.equal(aChanges[1].changeSpecificData.changeType, "addSort");
-						assert.equal(aChanges[1].changeSpecificData.content.name, "name");
-						assert.equal(aChanges[1].changeSpecificData.content.descending, false);
-
-						FlexUtil_handleChanges_Stub.restore();
-						done();
+					var oPropertyInfoPromise = new Promise(function(resolve, reject) {
+						resolve([
+							{name: "name", sortable: true},
+							{name: "age", sortable: true}
+						]);
 					});
 
-					TableSettings.createSort(oTable, "name", true);
+					sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
+					oAdaptationController._retrievePropertyInfo().then(function() {
+
+
+						var FlexUtil_handleChanges_Stub = sinon.stub(FlexUtil, "handleChanges");
+						FlexUtil_handleChanges_Stub.callsFake(function(aChanges) {
+							assert.equal(aChanges.length, 2);
+							assert.equal(aChanges[0].changeSpecificData.changeType, "removeSort");
+							assert.equal(aChanges[0].changeSpecificData.content.name, "name");
+							assert.equal(aChanges[0].changeSpecificData.content.descending, true);
+							assert.equal(aChanges[1].changeSpecificData.changeType, "addSort");
+							assert.equal(aChanges[1].changeSpecificData.content.name, "name");
+							assert.equal(aChanges[1].changeSpecificData.content.descending, false);
+
+							FlexUtil_handleChanges_Stub.restore();
+							done();
+						});
+
+						TableSettings.createSort(oTable, "name", true);
+					});
 				});
 			});
 		}.bind(this));
@@ -1542,18 +1565,14 @@ sap.ui.define([
 	var fnRearrangeTest = function(iColumnIndexFrom, iColumnIndexTo) {
 		return new Promise(function(resolve) {
 			this.oTable.addColumn(new Column({
-				dataProperties: [
-					"col0"
-				],
+				dataProperty: "col0",
 				header: "col0",
 				template: new Text({
 					text: "{col0}"
 				})
 			}));
 			this.oTable.addColumn(new Column({
-				dataProperties: [
-					"col1"
-				],
+				dataProperty: "col1",
 				header: "col1",
 				template: new Text({
 					text: "{col1}"
@@ -1580,11 +1599,11 @@ sap.ui.define([
 					sinon.stub(this.oTable, "getCurrentState").returns({
 						items: [
 							{
-								"name": aColumns[0].getDataProperties()[0],
+								"name": aColumns[0].getDataProperty(),
 								"id": aColumns[0].getId(),
 								"label": aColumns[0].getHeader()
 							}, {
-								"name": aColumns[1].getDataProperties()[0],
+								"name": aColumns[1].getDataProperty(),
 								"id": aColumns[1].getId(),
 								"label": aColumns[1].getHeader()
 							}
@@ -1936,7 +1955,7 @@ sap.ui.define([
 		// Add a column with dataProperty
 		this.oTable.addColumn(new Column({
 			header: "test",
-			dataProperties: "test",
+			dataProperty: "test",
 			template: new Text()
 		}));
 
@@ -2028,7 +2047,7 @@ sap.ui.define([
 		// Add a column with dataProperty
 		this.oTable.addColumn(new Column({
 			header: "test",
-			dataProperties: "test",
+			dataProperty: "test",
 			template: new Text()
 		}));
 
@@ -2119,7 +2138,7 @@ sap.ui.define([
 		// Add a column with dataProperty
 		this.oTable.addColumn(new Column({
 			header: "test",
-			dataProperties: "test",
+			dataProperty: "test",
 			template: new Text()
 		}));
 
@@ -2165,10 +2184,10 @@ sap.ui.define([
 		var done = assert.async();
 		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
 
-		// Add a column with 2 dataProperties: 1 sortable and 1 non-sortable
+		// Add a column with complexProperty: 1 sortable and 1 non-sortable
 		this.oTable.addColumn(new Column({
 			header: "test",
-			dataProperties: ["test", "test2"],
+			dataProperty: "testComplex",
 			template: new Text()
 		}));
 
@@ -2179,6 +2198,9 @@ sap.ui.define([
 			}, {
 				name: "test2",
 				sortable: true
+			}, {
+				name: "testComplex",
+				propertyInfos: ["test", "test2"]
 			}
 		]);
 
@@ -2291,10 +2313,6 @@ sap.ui.define([
 			assert.equal(aInnerColumns[1].getCreationTemplate().getText(), "Test", "column1: creationTemplate is correct");
 			assert.equal(aInnerColumns[1].getCreationTemplate().getWrapping(), false, "column1: creationTemplate wrapping is disabled");
 			assert.equal(aInnerColumns[1].getCreationTemplate().getRenderWhitespace(), false, "column1: creationTemplate renderWhitespace is disabled");
-			assert.equal(aInnerColumns[0].getShowFilterMenuEntry(), false, "column0: filtering is deactivated");
-			assert.equal(aInnerColumns[0].getShowSortMenuEntry(), false, "column0: sorting is deactivated");
-			assert.equal(aInnerColumns[1].getShowFilterMenuEntry(), false, "column1: filtering is deactivated");
-			assert.equal(aInnerColumns[1].getShowSortMenuEntry(), false, "column1: sorting is deactivated");
 
 			aMDCColumns = oTable2.getColumns();
 			aInnerColumns = oTable2._oTable.getColumns();
@@ -2834,7 +2852,7 @@ sap.ui.define([
 			id: "firstNameColumn",
 			header: "First name",
 			width: "10rem",
-			dataProperties: "firstName",
+			dataProperty: "firstName",
 			template: new Text({
 				text: "{firstName}"
 			})
@@ -2844,7 +2862,7 @@ sap.ui.define([
 			id: "lastNameColumn",
 			header: "Last name",
 			width: "10rem",
-			dataProperties: "lastName",
+			dataProperty: "lastName",
 			template: new Text({
 				text: "{lastName}"
 			})
@@ -2854,7 +2872,7 @@ sap.ui.define([
 			id: "fullName",
 			header: "Full name",
 			width: "15rem",
-			dataProperties: "fullName",
+			dataProperty: "fullName",
 			template: new Text({
 				text: "{lastName}, {firstName}"
 			})
@@ -2864,7 +2882,7 @@ sap.ui.define([
 			id: "fullNameExportSettings",
 			header: "Full name 2",
 			width: "15rem",
-			dataProperties: "fullName2",
+			dataProperty: "fullName2",
 			template: new Text({
 				text: "{lastName}, {firstName}"
 			})
@@ -2875,7 +2893,7 @@ sap.ui.define([
 			header: "Age",
 			hAlign: "Right",
 			width: "8rem",
-			dataProperties: "age",
+			dataProperty: "age",
 			template: new Text({
 				text: "{age}"
 			})
@@ -2886,7 +2904,7 @@ sap.ui.define([
 			header: "Date of Birth",
 			hAlign: "Right",
 			width: "12rem",
-			dataProperties: "dob",
+			dataProperty: "dob",
 			template: new Text({
 				text: "{dob}"
 			})
@@ -2897,7 +2915,7 @@ sap.ui.define([
 			header: "Salary",
 			hAlign: "Right",
 			width: "12rem",
-			dataProperties: "salary",
+			dataProperty: "salary",
 			template: new Text({
 				text: "{salary}"
 			})
@@ -3074,7 +3092,7 @@ sap.ui.define([
 			id: "product",
 			header: "Product",
 			width: "10rem",
-			dataProperties: "product",
+			dataProperty: "product",
 			template: new Text({
 				text: "{products}"
 			})
@@ -3085,7 +3103,7 @@ sap.ui.define([
 			header: "Price",
 			width: "8rem",
 			hAlign: "Right",
-			dataProperties: "price",
+			dataProperty: "price",
 			template: new Text({
 				text: "{price} {currencyCode}"
 			})
@@ -3096,7 +3114,7 @@ sap.ui.define([
 			id: "company",
 			header: "Company",
 			width: "10rem",
-			dataProperties: "company",
+			dataProperty: "company",
 			template: new Text({
 				text: "{companyName} ({companyCode})"
 			})
@@ -3569,16 +3587,12 @@ sap.ui.define([
 					columns: [
 						new Column({
 							template: new Text(),
-							dataProperties: [
-								"name"
-							],
+							dataProperty: "name",
 							header: "NameLabelColumnHeader"
 						}),
 						new Column({
 							template: new Text(),
-							dataProperties: [
-								"age"
-							],
+							dataProperty: "age",
 							header: "AgeLabelColumnHeader"
 						})
 					],
@@ -3738,9 +3752,7 @@ sap.ui.define([
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperties: [
-				"name"
-			]
+			dataProperty: "name"
 		}));
 		this.oTable.setP13nMode(["Filter"]);
 
@@ -4061,7 +4073,7 @@ sap.ui.define([
 		}, "Activate 'Column'");
 
 		this.oTable.addColumn(new Column({
-			dataProperties: "test"
+			dataProperty: "test"
 		}));
 		assert.deepEqual(this.oTable.getCurrentState(), {
 			items: [{name: "test"}]

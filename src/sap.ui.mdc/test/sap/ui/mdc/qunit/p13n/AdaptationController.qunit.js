@@ -11,11 +11,11 @@ sap.ui.define([
 				columns: [
 					new Column("col1",{
 						header:"col1",
-						dataProperties: ["col1"]
+						dataProperty: "col1"
 					}),
 					new Column("col2",{
 						header:"col2",
-						dataProperties: ["col2"]
+						dataProperty: "col2"
 					})
 				]
 			});
@@ -38,15 +38,15 @@ sap.ui.define([
 				//mock delegate data
 				this.aPropertyInfo = [
 					{
-						"name": aColumns[0].getDataProperties()[0],
-						"path": "nav/" + aColumns[0].getDataProperties()[0],
+						"name": aColumns[0].getDataProperty(),
+						"path": "nav/" + aColumns[0].getDataProperty(),
 						"id": aColumns[0].getId(),
 						"label": aColumns[0].getHeader(),
 						"sortable": true,
 						"filterable": true
 					}, {
-						"name": aColumns[1].getDataProperties()[0],
-						"path": "nav/" + aColumns[1].getDataProperties()[0],
+						"name": aColumns[1].getDataProperty(),
+						"path": "nav/" + aColumns[1].getDataProperty(),
 						"id": aColumns[1].getId(),
 						"label": aColumns[1].getHeader(),
 						"sortable": true,

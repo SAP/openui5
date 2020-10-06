@@ -169,7 +169,7 @@
 						<Button type="Emphasized" text="Add Book" press="onAddButtonPress" />
 					</mdc:actions>
 					<mdc:columns>
-						<mdc:table.Column id="id2" header="Title" dataProperties="title" width="15rem">
+						<mdc:table.Column id="id2" header="Title" dataProperty="title" width="15rem">
 							<mdc:Field id="fTitle" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display" multipleLines="true">
 								<mdc:fieldInfo>
 									<mdc:Link sourceControl="fTitle" delegate='{ name: "sap/ui/mdc/flp/FlpLinkDelegate", payload: {
@@ -179,20 +179,20 @@
 								</mdc:fieldInfo>
 							</mdc:Field>
 						</mdc:table.Column>
-						<mdc:table.Column id="id3" header="Description" dataProperties="descr" width="30%">
+						<mdc:table.Column id="id3" header="Description" dataProperty="descr" width="30%">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" multipleLines="true" editMode="Display" />
 						</mdc:table.Column>
-						<mdc:table.Column id="id1" header="Author" dataProperties="author_name" width="10rem">
+						<mdc:table.Column id="id1" header="Author" dataProperty="author_name" width="10rem">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FAN_1" value="{author/name}" editMode="Display" multipleLines="true">
 								<mdc:fieldInfo>
 									<mdc:Link delegate="{name: 'sap/ui/v4demo/delegate/Books.Link.delegate'}"></mdc:Link>
 								</mdc:fieldInfo>
 							</mdc:Field>
 						</mdc:table.Column>
-						<mdc:table.Column id="id4" header="Price" dataProperties="price" width="6rem">
+						<mdc:table.Column id="id4" header="Price" dataProperty="price" width="6rem">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" />
 						</mdc:table.Column>
-						<mdc:table.Column id="id5" header="Stock" dataProperties="stock" width="4rem">
+						<mdc:table.Column id="id5" header="Stock" dataProperty="stock" width="4rem">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{stock}" editMode="Display" />
 						</mdc:table.Column>
 					</mdc:columns>

@@ -149,10 +149,8 @@ sap.ui.define([
 		 */
 		_getColumnInfo: function(oPropertyInfo) {
 			return {
-				header: oPropertyInfo.label || oPropertyInfo.name,
-				dataProperties: [
-					oPropertyInfo.name
-				],
+				header: oPropertyInfo.label,
+				dataProperty: oPropertyInfo.name,
 				hAlign: oPropertyInfo.align,
 				width: oPropertyInfo.width
 			};

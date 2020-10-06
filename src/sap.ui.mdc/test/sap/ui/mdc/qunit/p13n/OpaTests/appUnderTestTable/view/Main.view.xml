@@ -39,16 +39,16 @@
 						   type="ResponsiveTable"
 						   p13nMode="Column,Sort,Filter">
 					<mdc:columns>
-						<Column id="IDTableName_01" header="Name" dataProperties="name">
+						<Column id="IDTableName_01" header="Name" dataProperty="name">
 							<m:Text text="{name}"/>
 						</Column>
-						<Column id="IDTableYear" header="Founding Year" dataProperties="foundingYear">
+						<Column id="IDTableYear" header="Founding Year" dataProperty="foundingYear">
 							<m:Text text="{foundingYear}"/>
 						</Column>
-						<Column id="IDTablemodified" header="Changed By" dataProperties="modifiedBy">
+						<Column id="IDTablemodified" header="Changed By" dataProperty="modifiedBy">
 							<m:Text text="{modifiedBy}"/>
 						</Column>
-						<Column id="IDTableCreated" header="Created On" dataProperties="createdAt">
+						<Column id="IDTableCreated" header="Created On" dataProperty="createdAt">
 							<m:Text text="{createdAt}"/>
 						</Column>
 					</mdc:columns>

@@ -62,15 +62,12 @@ sap.ui.define([
 			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
 		]).then(function(aResults) {
 			var oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
-			// TODO: Filter restrictions
-			var aSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
-			var aNonSortableProperties = (aSortRestrictions["NonSortableProperties"] || []).map(function(oCollection) {
-				return oCollection["$PropertyPath"];
-			});
+			var oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
+			var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
 			var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
 			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
 
-			for ( var sKey in oEntityType) {
+			for (var sKey in oEntityType) {
 				oObj = oEntityType[sKey];
 				if (oObj && oObj.$kind === "Property") {
 					// TODO: Enhance with more properties as used in MetadataAnalyser and check if this should be made async
@@ -83,11 +80,11 @@ sap.ui.define([
 						precision: oObj.$Precision,
 						scale: oObj.$Scale,
 						type: oObj.$Type,
-						sortable: aNonSortableProperties.indexOf(sKey) == -1,
+						sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
 
 						//Required for inbuilt filtering: filterable, typeConfig
 						//Optional: maxConditions, fieldHelp
-						filterable: oFilterRestrictionsInfo.propertyInfo[sKey] ? oFilterRestrictionsInfo.propertyInfo[sKey].filterable : true,
+						filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
 						typeConfig: oTable.getTypeUtil().getTypeConfig(oObj.$Type),
 						fieldHelp: undefined,
 						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1

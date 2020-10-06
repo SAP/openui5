@@ -136,22 +136,22 @@
 						<Button type="Emphasized" text="Add Author" press="onAddButtonPress" />
 					</mdc:actions>
 					<mdc:columns>
-						<mdc:table.Column id="cName" header="Name" dataProperties="name" width="15rem">
+						<mdc:table.Column id="cName" header="Name" dataProperty="name" width="15rem">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display" multipleLines="true" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cDoB" header="Date of birth" dataProperties="dateOfBirth" width="15rem">
+						<mdc:table.Column id="cDoB" header="Date of birth" dataProperty="dateOfBirth" width="15rem">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfBirth}" editMode="Display" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cDoD" header="Date of death" dataProperties="dateOfDeath" width="15rem">
+						<mdc:table.Column id="cDoD" header="Date of death" dataProperty="dateOfDeath" width="15rem">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfDeath}" editMode="Display" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cCoO" header="Country of origin" dataProperties="countryOfOrigin_code" width="15rem">
+						<mdc:table.Column id="cCoO" header="Country of origin" dataProperty="countryOfOrigin_code" width="15rem">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin/descr}" editMode="Display" display="ValueDescription" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cRoO" header="Region of origin" dataProperties="regionOfOrigin_code" width="15rem">
+						<mdc:table.Column id="cRoO" header="Region of origin" dataProperty="regionOfOrigin_code" width="15rem">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{regionOfOrigin/text}" editMode="Display" display="ValueDescription" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cCioO" header="City of origin" dataProperties="cityOfOrigin_city" width="15rem">
+						<mdc:table.Column id="cCioO" header="City of origin" dataProperty="cityOfOrigin_city" width="15rem">
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{cityOfOrigin/text}" editMode="Display" display="ValueDescription" />
 						</mdc:table.Column>
 

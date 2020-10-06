@@ -464,7 +464,7 @@ sap.ui.define([
 				success: function (aExistingColumns) {
 					Opa5.assert.equal(aOrderedColumnNames.length, aExistingColumns.length);
 					aExistingColumns.forEach(function (oColumn, iIndex) {
-						var sName = oColumn.getDataProperties()[0];
+						var sName = oColumn.getDataProperty();
 						Opa5.assert.equal(sName, aOrderedColumnNames[iIndex], "Column '" + aOrderedColumnNames[iIndex] + "' is visible on position " + (iIndex + 1));
 					});
 				}
@@ -492,7 +492,7 @@ sap.ui.define([
 					var aExistingColumns = aTables[0].getColumns();
 					Opa5.assert.equal(aOrderedColumnNames.length, aExistingColumns.length);
 					aExistingColumns.forEach(function (oColumn, iIndex) {
-						var sName = oColumn.getDataProperties()[0];
+						var sName = oColumn.getDataProperty();
 						Opa5.assert.equal(sName, aOrderedColumnNames[iIndex], "Column '" + aOrderedColumnNames[iIndex] + "' is visible on position " + (iIndex + 1));
 					});
 				}
