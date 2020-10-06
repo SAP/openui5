@@ -3,17 +3,21 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/dt/ElementUtil",
-	"sap/base/Log",
 	"sap/base/util/ObjectPath",
-	"sap/ui/rta/util/BindingsExtractor"
-], function (
-	jQuery,
-	ElementUtil,
-	Log,
+	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/rta/util/BindingsExtractor",
+	"sap/ui/thirdparty/jquery"
+], function(
 	ObjectPath,
-	BindingsExtractor
+	Log,
+	JsControlTreeModifier,
+	ElementUtil,
+	DelegateMediatorAPI,
+	BindingsExtractor,
+	jQuery
 ) {
 	"use strict";
 
@@ -72,7 +76,7 @@ sap.ui.define([
 		return aFlattenedProperties;
 	}
 
-	function _getAllPropertiesFromDelegate(oElement, sAggregationName, mAction) {
+	function _getAllPropertiesFromAddViaDelegateAction(oElement, sAggregationName, mAction) {
 		var mPropertyBag = {
 			element: oElement,
 			aggregationName: sAggregationName,
@@ -82,13 +86,30 @@ sap.ui.define([
 			.then(_flattenProperties);
 	}
 
+	function getAllPropertiesFromDelegate(oElement, sAggregationName) {
+		return DelegateMediatorAPI.getDelegateForControl({
+			control: oElement,
+			modifier: JsControlTreeModifier,
+			supportsDefault: true
+		}).then(function(mDelegateInfo) {
+			if (mDelegateInfo && mDelegateInfo.instance) {
+				return mDelegateInfo.instance.getPropertyInfo({
+					element: oElement,
+					aggregationName: sAggregationName,
+					payload: mDelegateInfo.payload
+				});
+			}
+			return [];
+		});
+	}
+
 	function _getAllPropertiesFromModels(oElement, sAggregationName, mActions) {
 		var mAddViaDelegate = mActions.addViaDelegate;
 		var fnGetAllProperties;
 		if (mAddViaDelegate) {
-			fnGetAllProperties = _getAllPropertiesFromDelegate.bind(null, oElement, sAggregationName, mAddViaDelegate);
+			fnGetAllProperties = _getAllPropertiesFromAddViaDelegateAction.bind(null, oElement, sAggregationName, mAddViaDelegate);
 		} else {
-			fnGetAllProperties = Promise.resolve.bind(Promise, []);
+			fnGetAllProperties = getAllPropertiesFromDelegate.bind(null, oElement, sAggregationName);
 		}
 		return fnGetAllProperties() //arguments bound before
 			.then(function(aProperties) {
@@ -99,7 +120,7 @@ sap.ui.define([
 	function _filterUnsupportedProperties(aProperties) {
 		return aProperties.filter(function(mProperty) {
 			//see _enrichProperty
-			return !mProperty.unsupported;
+			return !(mProperty.unsupported || mProperty.hideFromReveal);
 		});
 	}
 
@@ -346,7 +367,7 @@ sap.ui.define([
 		}
 
 		var mModelProperty = _findModelProperty(aBindingPaths, aProperties);
-		if (mModelProperty) {
+		if (mModelProperty && !mModelProperty.hideFromReveal) {
 			_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
 			return true;
 		}
@@ -360,25 +381,18 @@ sap.ui.define([
 		var bIncludeElement = true;
 		var aBindingPaths = [];
 
-		if (mAddViaDelegate) {
-			if (mAddViaDelegate && aRepresentedProperties) {
-				aBindingPaths = _getRepresentedBindingPathsOfInvisibleElement(oInvisibleElement, aRepresentedProperties);
+		if (aRepresentedProperties) {
+			aBindingPaths = _getRepresentedBindingPathsOfInvisibleElement(oInvisibleElement, aRepresentedProperties);
+		// BCP: 1880498671
+		} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
+			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
+		} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
+			bIncludeElement = false;
+		}
 
-			// BCP: 1880498671
-			} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
-				aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
-			} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
-				bIncludeElement = false;
-			}
-
-			if (bIncludeElement) {
-				oInvisibleElement.__duplicateName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
-
-				bIncludeElement = _checkAndEnhanceByModelProperty(
-					oInvisibleElement,
-					aProperties,
-					aBindingPaths);
-			}
+		if (bIncludeElement) {
+			oInvisibleElement.__duplicateName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
+			bIncludeElement = _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths);
 		}
 		return bIncludeElement;
 	}
@@ -465,7 +479,7 @@ sap.ui.define([
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;
 			return Promise.all([
-				_getAllPropertiesFromDelegate(oElement, sAggregationName, mAction),
+				_getAllPropertiesFromAddViaDelegateAction(oElement, sAggregationName, mAction),
 				_getRepresentedBindingPaths(oElement, mAction, sModelName, sAggregationName)
 			])
 				.then(function(args) {
