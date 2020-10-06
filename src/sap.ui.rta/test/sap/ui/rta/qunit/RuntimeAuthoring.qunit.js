@@ -1382,31 +1382,36 @@ function(
 			return this.oRta.start();
 		},
 		afterEach : function() {
+			if (this.oRta._oDraftDiscardWarningPromise) {
+				this.oRta._oDraftDiscardWarningPromise = undefined;
+				this.oRta._oDraftDiscardWarningDialog.destroy();
+			}
 			this.oRta.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when an undo operation can be done", function(assert) {
-			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+		QUnit.test("when an undo operation can be done", function (assert) {
 			sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
 			var oVersionsModel = this.oRta.getToolbar().getModel("versions");
+			oVersionsModel.setProperty("/versioningEnabled", true);
 			var oSetDirtyChangesSpy = sandbox.spy(oVersionsModel, "setDirtyChanges");
-			this.oRta._onStackModified();
-			assert.equal(oSetDirtyChangesSpy.callCount, 1, "dirtyChanges was set in the versions model");
-			assert.equal(oSetDirtyChangesSpy.getCall(0).args[0], true, "to true");
+			return this.oRta._onStackModified().then(function () {
+				assert.equal(oSetDirtyChangesSpy.callCount, 1, "dirtyChanges was set in the versions model");
+				assert.equal(oSetDirtyChangesSpy.getCall(0).args[0], true, "to true");
+			});
 		});
 
-		QUnit.test("when an undo operation is not available", function(assert) {
-			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+		QUnit.test("when an undo operation is not available", function (assert) {
 			sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(false);
 			var oVersionsModel = this.oRta.getToolbar().getModel("versions");
+			oVersionsModel.setProperty("/versioningEnabled", true);
 			var oSetDirtyChangesSpy = sandbox.spy(oVersionsModel, "setDirtyChanges");
-			this.oRta._onStackModified();
-			assert.equal(oSetDirtyChangesSpy.callCount, 1, "dirtyChanges was set in the versions model");
-			assert.equal(oSetDirtyChangesSpy.getCall(0).args[0], false, "to false");
+			return this.oRta._onStackModified().then(function () {
+				assert.equal(oSetDirtyChangesSpy.callCount, 1, "dirtyChanges was set in the versions model");
+				assert.equal(oSetDirtyChangesSpy.getCall(0).args[0], false, "to false");
+			});
 		});
 	});
-
 
 
 	QUnit.module("Given a started RTA", {

@@ -658,6 +658,150 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given _onStackModified", {
+		beforeEach : function() {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : true
+			});
+			return this.oRta.start();
+		},
+		afterEach : function() {
+			if (this.oRta._oDraftDiscardWarningPromise) {
+				this.oRta._oDraftDiscardWarningPromise = undefined;
+				this.oRta._oDraftDiscardWarningDialog.destroy();
+			}
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		[{
+			testName: "when the stack was modified and a new draft is created, an old draft exists and the user has not yet confirmed the discarding of the old draft",
+			input: {
+				versionDisplayed: sap.ui.fl.Versions.Original,
+				backendDraft: true,
+				canUndo: true,
+				userConfirmedDiscard: false
+			},
+			expectation: {
+				dialogCreated: true
+			}
+		}, {
+			testName: "when the stack was modified and a new draft is created, an old draft exists and the user has already confirmed the discarding of the old draft",
+			input: {
+				versionDisplayed: sap.ui.fl.Versions.Original,
+				backendDraft: true,
+				canUndo: true,
+				userConfirmedDiscard: true
+			},
+			expectation: {
+				dialogCreated: false
+			}
+		}, {
+			testName: "when the stack was modified in the current draft",
+			input: {
+				versionDisplayed: sap.ui.fl.Versions.Draft,
+				backendDraft: true,
+				canUndo: true,
+				userConfirmedDiscard: false
+			},
+			expectation: {
+				dialogCreated: false
+			}
+		}, {
+			testName: "when the stack was modified but nothing can be undone",
+			input: {
+				versionDisplayed: sap.ui.fl.Versions.Original,
+				backendDraft: true,
+				canUndo: false,
+				userConfirmedDiscard: false
+			},
+			expectation: {
+				dialogCreated: false
+			}
+		}, {
+			testName: "when the stack was modified and a new draft is created, an old draft does not exist",
+			input: {
+				versionDisplayed: sap.ui.fl.Versions.Original,
+				backendDraft: false,
+				canUndo: true,
+				userConfirmedDiscard: false
+			},
+			expectation: {
+				dialogCreated: false
+			}
+		}].forEach(function (mSetup) {
+			QUnit.test(mSetup.testName, function(assert) {
+				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+				this.oRta._oVersionsModel.setProperty("/displayedVersion", mSetup.input.versionDisplayed);
+				this.oRta._oVersionsModel.setProperty("/backendDraft", mSetup.input.backendDraft);
+				this.oRta._bUserDiscardedDraft = mSetup.input.userConfirmedDiscard ? true : undefined;
+				sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(mSetup.input.canUndo);
+
+				return this.oRta._onStackModified()
+				.then(function () {
+					if (mSetup.expectation.dialogCreated) {
+						assert.ok(this.oRta._oDraftDiscardWarningPromise, "the loading of a warning dialog was triggered");
+					} else {
+						assert.notOk(this.oRta._oDraftDiscardWarningPromise, "the loading of a warning dialog was not triggered");
+					}
+				}.bind(this));
+			});
+		});
+	});
+
+
+	QUnit.module("Given a draft discarding warning dialog is openend", {
+		beforeEach : function() {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : true
+			});
+
+			this.oUndoStub = sandbox.stub(this.oRta, "undo");
+
+			return this.oRta.start()
+				.then(function () {
+					this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+					this.oRta._oVersionsModel.setProperty("/displayedVersion", sap.ui.fl.Versions.Original);
+					this.oRta._oVersionsModel.setProperty("/backendDraft", true);
+					sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
+					return this.oRta._onStackModified();
+				}.bind(this))
+				.then(function () {
+					// create the modify Stack stub after the beforeEach modify
+					this.oModifyStackStub = sandbox.stub(this.oRta, "_modifyStack");
+					return this.oRta._oDraftDiscardWarningPromise;
+				}.bind(this))
+				.then(function (oDialog) {
+					this.oDialogCloseSpy = sandbox.spy(oDialog, "close");
+				}.bind(this));
+		},
+		afterEach : function() {
+			delete this.oRta._bUserDiscardedDraft;
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the user confirms the discarding", function(assert) {
+			this.oRta._discardDraftConfirmed();
+			assert.equal(this.oRta._bUserDiscardedDraft, true, "the flag that the user confirmed the discarding is set");
+			assert.equal(this.oModifyStackStub.callCount, 1, "the modify stack function was called");
+			assert.equal(this.oUndoStub.callCount, 0, "the undo was NOT called");
+			assert.equal(this.oDialogCloseSpy.callCount, 1, "the dialog is closed");
+		});
+
+		QUnit.test("when the user cancels the discarding", function(assert) {
+			this.oRta._discardDraftCanceled();
+			assert.equal(this.oRta._bUserDiscardedDraft, undefined, "the flag that the user confirmed the discarding is NOT set");
+			assert.equal(this.oModifyStackStub.callCount, 0, "the modify stack function was NOT called");
+			assert.equal(this.oUndoStub.callCount, 1, "the undo was called");
+			assert.equal(this.oDialogCloseSpy.callCount, 1, "the dialog is closed");
+		});
+	});
+
 	QUnit.done(function() {
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
