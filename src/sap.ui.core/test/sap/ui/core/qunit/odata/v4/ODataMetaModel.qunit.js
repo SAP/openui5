@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/MetaModel",
+	"sap/ui/model/Model",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
@@ -28,8 +29,8 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
 ], function (Log, JSTokenizer, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
-		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, PropertyBinding, Sorter,
-		OperationMode, Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel,
+		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model, PropertyBinding,
+		Sorter, OperationMode, Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel,
 		ValueListType, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
@@ -5695,7 +5696,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	[false, true].forEach(function (bDuplicate) {
 		QUnit.test("requestValueListInfo: duplicate=" + bDuplicate, function (assert) {
-			var sMappingUrl1 = "../ValueListService1/$metadata",
+			var oContext = {
+					getBinding : function () {}
+				},
+				sMappingUrl1 = "../ValueListService1/$metadata",
 				sMappingUrl2 = "../ValueListService2/$metadata",
 				sMappingUrlBar = "../ValueListServiceBar/$metadata",
 				oModel = new ODataModel({
@@ -5707,6 +5711,7 @@ sap.ui.define([
 					"$kind" : "Property"
 				},
 				sPropertyPath = "/ProductList('HT-1000')/Category",
+				aValueListRelevantQualifiers = [],
 				oMetadata = {
 					"$EntityContainer" : "zui5_epm_sample.Container",
 					"zui5_epm_sample.Product" : {
@@ -5721,6 +5726,8 @@ sap.ui.define([
 								[sMappingUrlBar],
 							"@com.sap.vocabularies.Common.v1.ValueListReferences#bar@an.Annotation"
 								: true,
+							"@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers"
+								: aValueListRelevantQualifiers,
 							"@some.other.Annotation" : true
 						}
 					},
@@ -5731,6 +5738,7 @@ sap.ui.define([
 						}
 					}
 				},
+				mValueListByRelevantQualifiers = {},
 				oValueListMappings1 = {
 					"" : {CollectionPath : ""}
 				},
@@ -5766,13 +5774,8 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oValueListModelBar), "zui5_epm_sample.Product",
 					sinon.match.same(oProperty), undefined)
 				.returns(SyncPromise.resolve(oValueListMappingsBar));
-
-			// code under test
-			return oModel.getMetaModel()
-				.requestValueListInfo(sPropertyPath)
-				.then(function (oResult) {
-					assert.ok(!bDuplicate);
-					assert.deepEqual(oResult, {
+			oMetaModelMock.expects("filterValueListRelevantQualifiers").exactly(bDuplicate ? 0 : 1)
+				.withExactArgs({
 						"" : {
 							$model : oValueListModel1,
 							CollectionPath : ""
@@ -5785,7 +5788,18 @@ sap.ui.define([
 							$model : oValueListModelBar,
 							CollectionPath : "bar"
 						}
-					});
+					}, sinon.match.same(aValueListRelevantQualifiers),
+					"/ProductList/Category"
+						+ "@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
+					sinon.match.same(oContext))
+				.resolves(mValueListByRelevantQualifiers);
+
+			// code under test
+			return oModel.getMetaModel()
+				.requestValueListInfo(sPropertyPath, undefined, oContext)
+				.then(function (oResult) {
+					assert.ok(!bDuplicate);
+					assert.strictEqual(oResult, mValueListByRelevantQualifiers);
 				}, function (oError) {
 					assert.ok(bDuplicate);
 					assert.strictEqual(oError.message,
@@ -5851,10 +5865,11 @@ sap.ui.define([
 				sinon.match.same(oMetadata["name.space.Action"][0].$Parameter[1]),
 				oMetadata["name.space.Action"])
 			.resolves(oValueListMappings);
+		oMetaModelMock.expects("filterValueListRelevantQualifiers").never();
 
 		// code under test
 		return oModel.getMetaModel()
-			.requestValueListInfo(sPropertyPath)
+			.requestValueListInfo(sPropertyPath, undefined, {/*not V4 context*/})
 			.then(function (oResult) {
 				assert.deepEqual(oResult, {
 					"" : {
@@ -5930,6 +5945,9 @@ sap.ui.define([
 		QUnit.test("requestValueListInfo: " + sValueList + ", same model w/o reference",
 				function (assert) {
 			var oAnnotations = {},
+				oContext = {
+					getBinding : function () {}
+				},
 				oProperty = {
 					"$kind" : "Property"
 				},
@@ -5964,20 +5982,22 @@ sap.ui.define([
 				{CollectionPath : "bar"};
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
+			oMetaModelMock.expects("filterValueListRelevantQualifiers").never();
 
 			// code under test
-			return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(
-					function (oResult) {
-				assert.strictEqual(oResult.foo.$model, oModel);
-				assert.strictEqual(oResult.bar.$model, oModel);
-				assert.notOk("$model" in oValueListMappingFoo);
-				delete oResult.foo.$model;
-				delete oResult.bar.$model;
-				assert.deepEqual(oResult, {
-					"foo" : {CollectionPath : "foo"},
-					"bar" : {CollectionPath : "bar"}
+			return oModel.getMetaModel()
+				.requestValueListInfo(sPropertyPath, undefined, oContext)
+				.then(function (oResult) {
+					assert.strictEqual(oResult.foo.$model, oModel);
+					assert.strictEqual(oResult.bar.$model, oModel);
+					assert.notOk("$model" in oValueListMappingFoo);
+					delete oResult.foo.$model;
+					delete oResult.bar.$model;
+					assert.deepEqual(oResult, {
+						"foo" : {CollectionPath : "foo"},
+						"bar" : {CollectionPath : "bar"}
+					});
 				});
-			});
 		});
 	});
 
@@ -7179,6 +7199,135 @@ forEach({
 			this.oMetaModel.getAllPathReductions("/Ds(1)/reduce.path.Function(...)/$Parameter/_it",
 				"/Ds(1)"),
 			["/Ds(1)/reduce.path.Function(...)/$Parameter/_it"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValue4Annotation: no edm:Path", function (assert) {
+		var oContext = {
+				getModel : function () { return null; }
+			},
+			oMetaContext = {},
+			vRawValue = {};
+
+		this.oMetaModelMock.expects("createBindingContext").withExactArgs("/meta/path")
+			.returns(oMetaContext);
+		this.mock(AnnotationHelper).expects("value")
+			.withExactArgs(sinon.match.same(vRawValue), {context : sinon.match.same(oMetaContext)})
+			.returns("foo");
+
+		// code under test
+		return this.oMetaModel.requestValue4Annotation(vRawValue, "/meta/path", oContext)
+			.then(function (sValue) {
+				assert.strictEqual(sValue, "foo");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValue4Annotation: composite binding", function (assert) {
+		var oModel = new Model(),
+			oContext = Context.create(oModel, null, "/Entity(1)"),
+			oBarBinding = new PropertyBinding(oModel, "bar", oContext),
+			oFooBinding = new PropertyBinding(oModel, "foo", oContext),
+			oMetaContext = {},
+			oModelMock = this.mock(oModel),
+			vRawValue = {};
+
+		oBarBinding.getValue = function () {};
+		oBarBinding.requestValue = function () {};
+		oFooBinding.getValue = function () {};
+		oFooBinding.requestValue = function () {};
+		oModel.bindProperty = function () {};
+
+		this.oMetaModelMock.expects("createBindingContext").withExactArgs("/meta/path")
+			.returns(oMetaContext);
+		this.mock(AnnotationHelper).expects("value")
+			.withExactArgs(sinon.match.same(vRawValue), {context : sinon.match.same(oMetaContext)})
+			.returns("{foo} {bar}"); // sync behavior only with a sap.ui.model.CompositeBinding
+		oModelMock.expects("bindProperty")
+			.withExactArgs("foo", sinon.match.same(oContext), undefined)
+			.returns(oFooBinding);
+		oModelMock.expects("bindProperty")
+			.withExactArgs("bar", sinon.match.same(oContext), undefined)
+			.returns(oBarBinding);
+		// Note: getValue called by CompositeBinding, no need to _fireChange
+		this.mock(oFooBinding).expects("getValue").withExactArgs().atLeast(1).returns("foo-value");
+		this.mock(oBarBinding).expects("getValue").withExactArgs().atLeast(1).returns("bar-value");
+		this.mock(oFooBinding).expects("requestValue").withExactArgs().resolves();
+		this.mock(oBarBinding).expects("requestValue").withExactArgs().resolves();
+
+		// code under test
+		return this.oMetaModel.requestValue4Annotation(vRawValue, "/meta/path", oContext)
+			.then(function (sValue) {
+				assert.strictEqual(sValue, "foo-value bar-value");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValue4Annotation: async", function (assert) {
+		var oModel = new Model(),
+			oContext = Context.create(oModel, null, "/Entity(1)"),
+			oFooBinding = new PropertyBinding(oModel, "foo", oContext),
+			oMetaContext = {},
+			oModelMock = this.mock(oModel),
+			vRawValue = {},
+			that = this;
+
+		oFooBinding.getValue = function () {};
+		oFooBinding.requestValue = function () {};
+		oModel.bindProperty = function () {};
+
+		this.oMetaModelMock.expects("createBindingContext").withExactArgs("/meta/path")
+			.returns(oMetaContext);
+		this.mock(AnnotationHelper).expects("value")
+			.withExactArgs(sinon.match.same(vRawValue), {context : sinon.match.same(oMetaContext)})
+			.returns("{foo}");
+		oModelMock.expects("bindProperty")
+			.withExactArgs("foo", sinon.match.same(oContext), undefined)
+			.returns(oFooBinding);
+		this.mock(oFooBinding).expects("requestValue").withExactArgs()
+			.callsFake(function () {
+				that.mock(oFooBinding).expects("getValue").withExactArgs().returns("foo-value");
+				oFooBinding._fireChange(); // inform control that then calls getValue
+				return Promise.resolve();
+			});
+
+		// code under test
+		return this.oMetaModel.requestValue4Annotation(vRawValue, "/meta/path", oContext)
+			.then(function (sValue) {
+				assert.strictEqual(sValue, "foo-value");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filterValueListRelevantQualifiers", function (assert) {
+		var oContext = {
+				getModel : function () { return null; }
+			},
+			sMetaPath = "/some/meta/path"
+				+ "@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
+			aRawRelevantQualifiers = [],
+			mValueListByQualifier = {
+				"in" : {
+					$model : {}
+				},
+				maybe : {
+					$model : {}
+				}
+			},
+			sJSON = JSON.stringify(mValueListByQualifier);
+
+		this.oMetaModelMock.expects("requestValue4Annotation")
+			.withExactArgs(sinon.match.same(aRawRelevantQualifiers), sMetaPath,
+				sinon.match.same(oContext))
+			.resolves(["in", "N/A"]);
+
+		return this.oMetaModel.filterValueListRelevantQualifiers(mValueListByQualifier,
+				aRawRelevantQualifiers, sMetaPath, oContext)
+			.then(function (mFilteredValueListInfo) {
+				assert.deepEqual(Object.keys(mFilteredValueListInfo), ["in"]);
+				assert.strictEqual(mFilteredValueListInfo.in, mValueListByQualifier.in);
+				assert.strictEqual(JSON.stringify(mValueListByQualifier), sJSON);
+			});
 	});
 
 	//*********************************************************************************************

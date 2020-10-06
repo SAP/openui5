@@ -5845,21 +5845,21 @@ sap.ui.define([
 		var oBinding,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox id="form" binding="{/As(\'1\')}">\
+<FlexBox id="form" binding="{/As(1)}">\
 	<Text id="avalue" text="{AValue}"/>\
 </FlexBox>\
 <Input id="value" value="{AtoEntityWithComplexKey/Value}"/>',
 			that = this;
 
-		this.expectRequest("As('1')?$select=AID,AValue", {
-				AID : "1",
+		this.expectRequest("As(1)?$select=AID,AValue", {
+				AID : 1,
 				AValue : 23 // Edm.Int16
 			})
 			.expectChange("avalue", "23")
 			.expectChange("value");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("As('1')?$select=AtoEntityWithComplexKey"
+			that.expectRequest("As(1)?$select=AtoEntityWithComplexKey"
 				+ "&$expand=AtoEntityWithComplexKey($select=Key/P1,Key/P2,Value)", {
 					AtoEntityWithComplexKey : {
 						Key : {
@@ -15599,6 +15599,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-255
 [false, true].forEach(function (bWithExpand) {
 	var sTitle = "Data Aggregation: intersecting requests, with expand = " + bWithExpand;
+
 	QUnit.test(sTitle, function (assert) {
 		var oModel = createAggregationModel(),
 			fnRespondExpand,
@@ -28783,6 +28784,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-473
 [false, true].forEach(function (bSort) {
 	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bSort = " + bSort;
+
 	QUnit.test(sTitle, function (assert) {
 		var oKeptContext,
 			oListBinding,
@@ -28925,13 +28927,13 @@ sap.ui.define([
 	QUnit.skip("CPOUI5ODATAV4-408: $If comparing a number", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox id="form" binding="{/As(\'1\')}">\
+<FlexBox id="form" binding="{/As(1)}">\
 	<Text id="avalue" text="{AValue}"/>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("As('1')?$select=AID,AValue", {
-				AID : "1",
+		this.expectRequest("As(1)?$select=AID,AValue", {
+				AID : 1,
 				AValue : 1000 // Edm.Int16
 			})
 			.expectChange("avalue", "1,000");
@@ -28956,6 +28958,38 @@ sap.ui.define([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Evaluate "ValueListRelevantQualifiers" annotation with late property request.
+	// JIRA: CPOUI5ODATAV4-408
+[1, 11].forEach(function (iValue) {
+	var sTitle = "CPOUI5ODATAV4-408: ValueListRelevantQualifiers, value=" + iValue;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/As(1)}">\
+	<Text id="aid" text="{AID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("As(1)?$select=AID", {AID : 1})
+			.expectChange("aid", "1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("As(1)?$select=AValue", {
+					AValue : iValue // Edm.Int16
+				});
+
+			return that.oView.byId("aid").getBinding("text").requestValueListInfo()
+				.then(function (mQualifier2ValueListType) {
+					assert.deepEqual(
+						Object.keys(mQualifier2ValueListType),
+						iValue > 10 ? ["in", "maybe"] : ["in"]);
+				});
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: With the binding parameter <code>$$ignoreMessages</code> the application developer

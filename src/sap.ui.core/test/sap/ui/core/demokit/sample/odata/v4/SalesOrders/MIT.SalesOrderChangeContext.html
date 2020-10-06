@@ -54,5 +54,20 @@
 			button (only enabled w/o realOData)</li>
 			<li><b>Check:</b> That all Business Partner details are gone.</li>
 		</ol>
+		<h3>Test value help with "ValueListRelevantQualifiers" annotation</h3>
+		<ol>
+			<li>Select a sales order with "SAP" as the <code>Business Partner</code></li>
+			<li>Click on the <code>Value Help</code> button for the <code>Product ID</code> in the
+				first row of the <code>Sales Order Line Items</code> table.</li>
+			<li><b>Check:</b> The title of the <code>Value Help</code> is
+				"Value Help: Product ID (Additional)".</li>
+			<li>Close the <code>Value Help</code> dialog.</li>
+			<li>Select another sales order without "SAP" as the <code>Business Partner</code></li>
+			<li>Click on the <code>Value Help</code> button for the <code>Product ID</code> in the
+				first row of the <code>Sales Order Line Items</code> table.</li>
+			<li><b>Check:</b> The title of the <code>Value Help</code> is
+				"Value Help: H_EPM_PR_SH_Set".</li>
+			<li>Close the <code>Value Help</code> dialog.</li>
+		</ol>
 	</body>
 </html>
