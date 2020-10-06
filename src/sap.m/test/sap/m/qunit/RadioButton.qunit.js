@@ -946,10 +946,13 @@ sap.ui.define([
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oBundle = Core.getLibraryResourceBundle("sap.m"),
 				oRadioButton = new RadioButton({ text: "testLabel", selected: true }),
+				oRadioButton1 = new RadioButton({ text: "testLabel", selected: false }),
 				sExpectedType = oBundle.getText("ACC_CTR_TYPE_RADIO"),
 				sExpectedRole = 'radio',
 				sExpectedDescription = oRadioButton.getText() + " " + oBundle.getText("ACC_CTR_STATE_CHECKED"),
-				oAccInfo = oRadioButton.getAccessibilityInfo();
+				sExpectedDescription1 = oRadioButton1.getText() + " " + oBundle.getText("ACC_CTR_STATE_NOT_CHECKED"),
+				oAccInfo = oRadioButton.getAccessibilityInfo(),
+				oAccInfo1 = oRadioButton1.getAccessibilityInfo();
 
 		oRadioButton.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -957,8 +960,11 @@ sap.ui.define([
 		assert.strictEqual(oAccInfo.type, sExpectedType, "input type set correctly");
 		assert.strictEqual(oAccInfo.role, sExpectedRole, "role set correctly");
 		assert.strictEqual(oAccInfo.description, sExpectedDescription, "description set correctly");
+		assert.strictEqual(oAccInfo1.description, sExpectedDescription1, "description set correctly");
+
 
 		oRadioButton.destroy();
+		oRadioButton1.destroy();
 	});
 
 	QUnit.test("SVG aria", function(assert) {

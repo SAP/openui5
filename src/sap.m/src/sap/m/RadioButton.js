@@ -412,7 +412,7 @@ function(
 		return {
 			role: "radio",
 			type: oBundle.getText("ACC_CTR_TYPE_RADIO"),
-			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : ""),
+			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : (" " + oBundle.getText("ACC_CTR_STATE_NOT_CHECKED"))),
 			enabled: this.getEnabled(),
 			editable: this.getEditable()
 		};
