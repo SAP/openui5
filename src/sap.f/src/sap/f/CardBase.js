@@ -145,6 +145,14 @@ sap.ui.define([
 		return this.getCardHeader() ? this.getCardHeader().getDomRef() : this.getDomRef();
 	};
 
+	CardBase.prototype.onmousedown = function () {
+		this._hideBadge();
+	};
+
+	CardBase.prototype.onsapenter = function () {
+		this._hideBadge();
+	};
+
 	CardBase.prototype.onfocusin = function () {
 		this._startBadgeHiding();
 	};

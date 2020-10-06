@@ -248,6 +248,17 @@ function (
 		assert.notOk($badgeIndicator.attr("aria-label"), "Badge aria-label is removed");
 		assert.ok(oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
 
+		oCard.addCustomData(new BadgeCustomData({value: "New"}));
+		Core.applyChanges();
+
+		$badgeIndicator = oCard.$().find(".sapMBadgeIndicator");
+
+		// Assert
+		assert.ok($badgeIndicator.attr("data-badge"), "Badge indicator is rendered");
+
+		oCard.onsapenter();
+		assert.equal(oCard._isBadgeAttached, false, "Badge indicator is not rendered");
+
 		oCard.destroy();
 	});
 });

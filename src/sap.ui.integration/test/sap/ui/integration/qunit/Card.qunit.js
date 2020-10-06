@@ -2046,6 +2046,17 @@ sap.ui.define([
 				assert.notOk($badgeIndicator.attr("aria-label"), "Badge aria-label is removed");
 				assert.ok(this.oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
 
+				this.oCard.addCustomData(new BadgeCustomData({value: "New"}));
+				Core.applyChanges();
+
+				$badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
+
+				// Assert
+				assert.ok(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
+
+				this.oCard.onsapenter();
+				assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
+
 				this.clock.restore();
 				done();
 
