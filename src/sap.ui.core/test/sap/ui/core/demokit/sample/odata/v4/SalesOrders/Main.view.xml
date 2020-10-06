@@ -439,7 +439,7 @@
 					<Text text="{SalesOrderID}"/>
 					<Text text="{ItemPosition}"/>
 					<demo:ValueHelp id="SO_2_SOITEM:ProductID" value="{ProductID}"
-						selectionChanged="onProductIDChanged"/>
+						selectionChanged="onProductIDChanged" qualifier="additional"/>
 					<Text id="SOITEM_2_PRODUCT:Name" text="{SOITEM_2_PRODUCT/Name}"/>
 					<demo:ValueHelp id="SOITEM_2_PRODUCT:Category"
 						value="{SOITEM_2_PRODUCT/Category}" enabled="{= %{ItemPosition} !== ''}"/>

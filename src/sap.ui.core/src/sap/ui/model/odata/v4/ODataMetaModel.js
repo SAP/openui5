@@ -4,6 +4,7 @@
 
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
+	"./AnnotationHelper",
 	"./ValueListType",
 	"./lib/_Helper",
 	"sap/base/assert",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/ObjectPath",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
@@ -39,15 +41,23 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/thirdparty/URI"
-], function (ValueListType, _Helper, assert, Log, isEmptyObject, JSTokenizer, ObjectPath,
-		SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext, ContextBinding,
-		MetaModel, PropertyBinding, OperationMode, Boolean, Byte, EdmDate, DateTimeOffset, Decimal,
-		Double, Guid, Int16, Int32, Int64, Raw, SByte, Single, Stream, String, TimeOfDay, URI) {
+], function (AnnotationHelper, ValueListType, _Helper, assert, Log, isEmptyObject, JSTokenizer,
+		ObjectPath, ManagedObject, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
+		BaseContext, ContextBinding, MetaModel, PropertyBinding, OperationMode, Boolean, Byte,
+		EdmDate, DateTimeOffset, Decimal, Double, Guid, Int16, Int32, Int64, Raw, SByte, Single,
+		Stream, String, TimeOfDay, URI) {
 	"use strict";
 	/*global Map */
 	/*eslint max-nested-callbacks: 0 */
 
-	var oCountType,
+	var Any = ManagedObject.extend("sap.ui.model.odata.v4._any", {
+			metadata : {
+				properties : {
+					any : "any"
+				}
+			}
+		}),
+		oCountType,
 		mCodeListUrl2Promise = new Map(),
 		DEBUG = Log.Level.DEBUG,
 		rLeftBraces = /\$\(/g,
@@ -112,6 +122,8 @@ sap.ui.define([
 		sValueList = "@com.sap.vocabularies.Common.v1.ValueList",
 		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
 		sValueListReferences = "@com.sap.vocabularies.Common.v1.ValueListReferences",
+		sValueListRelevantQualifiers
+			= "@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
 		sValueListWithFixedValues = "@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
 		WARNING = Log.Level.WARNING;
 
@@ -2940,6 +2952,48 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests the resulting value of the given annotation that contains dynamic expressions.
+	 *
+	 * @param {object} vRawValue
+	 *   The raw value of an annotation
+	 * @param {string} sMetaPath
+	 *   Absolute path that points to the given annotation
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   Context to resolve edm:Path references contained in the given annotation
+	 * @returns {Promise}
+	 *   A promise that resolves with the value of the dynamic expression
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.requestValue4Annotation = function (vRawValue, sMetaPath, oContext) {
+		var oAny = new Any({
+				any : AnnotationHelper.value(vRawValue, {
+					context : this.createBindingContext(sMetaPath)
+				}),
+				bindingContexts : oContext,
+				models : oContext.getModel()
+			}),
+			oBinding = oAny.getBinding("any"),
+			oPromise;
+
+		if (oBinding) {
+			if (oBinding.getBindings) { // CompositeBinding
+				oPromise = Promise.all(oBinding.getBindings().map(function (oBinding0) {
+					return oBinding0.requestValue();
+				}));
+			} else {
+				oPromise = oBinding.requestValue();
+			}
+		} else {
+			oPromise = Promise.resolve();
+		}
+
+		return oPromise.then(function () {
+			return oAny.getAny();
+		});
+	};
+
+	/**
 	 * Requests information to retrieve a value list for the property given by
 	 * <code>sPropertyPath</code>.
 	 *
@@ -2950,6 +3004,10 @@ sap.ui.define([
 	 *   The value of the parameter <code>autoExpandSelect</code> for value list models created by
 	 *   this method. If the value list model is the data model associated with this meta model,
 	 *   this flag has no effect. Supported since 1.68.0
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 *   Context to resolve "14.5.12 Expression edm:Path" references contained in a
+	 *   "com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers" annotation. Supported since
+	 *   1.84.0
 	 * @returns {Promise}
 	 *   A promise which is resolved with a map of qualifier to value list mapping objects
 	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListType</code>;
@@ -2989,7 +3047,8 @@ sap.ui.define([
 	 * @public
 	 * @since 1.45.0
 	 */
-	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath, bAutoExpandSelect) {
+	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath, bAutoExpandSelect,
+			oContext) {
 		var sPropertyMetaPath = this.getMetaPath(sPropertyPath),
 			sParentMetaPath = sPropertyMetaPath.slice(0, sPropertyMetaPath.lastIndexOf("/"))
 				.replace("/$Parameter", ""),
@@ -3107,10 +3166,49 @@ sap.ui.define([
 					}
 					return {"" : oValueListInfo[aQualifiers[0]]};
 				}
-
-				return oValueListInfo;
+				aQualifiers = mAnnotationByTerm[sValueListRelevantQualifiers];
+				return aQualifiers && oContext && oContext.getBinding
+					? that.filterValueListRelevantQualifiers(oValueListInfo, aQualifiers,
+						sPropertyMetaPath + sValueListRelevantQualifiers, oContext)
+					: oValueListInfo;
 			});
 		});
+	};
+
+	/**
+	 * Determines which value lists are relevant. Filters out irrelevant value lists by using the
+	 * <code>aRawRelevantQualifiers</code> parameter.
+	 *
+	 * @param {object} mValueListByQualifier
+	 *   A map of qualifier to value list mapping objects that should be filtered
+	 * @param {object[]} aRawRelevantQualifiers
+	 *   The raw value of the "ValueListRelevantQualifiers" annotation
+	 * @param {string} sMetaPath
+	 *   Absolute path that points to the annotation
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   Context to resolve edm:Path references contained in the annotation
+	 * @returns {Promise}
+	 *   A promise which is resolved with the filtered map of qualifier to value list mapping
+	 *   objects
+	 *
+	 * @private
+	 * @see #requestValueListInfo
+	 */
+	ODataMetaModel.prototype.filterValueListRelevantQualifiers = function (mValueListByQualifier,
+		aRawRelevantQualifiers, sMetaPath, oContext) {
+
+		return this.requestValue4Annotation(aRawRelevantQualifiers, sMetaPath, oContext)
+			.then(function (aRelevantQualifiers) {
+				var mValueListByRelevantQualifier = {};
+
+				aRelevantQualifiers.forEach(function (sKey) {
+					if (sKey in mValueListByQualifier) {
+						mValueListByRelevantQualifier[sKey] = mValueListByQualifier[sKey];
+					}
+				});
+
+				return mValueListByRelevantQualifier;
+			});
 	};
 
 	/**

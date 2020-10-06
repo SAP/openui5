@@ -183,7 +183,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Handling of "14.5.5 Expression Collection".
+		 * Handling of "14.5.5 Expression edm:Collection".
 		 *
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the array (see Expression object)

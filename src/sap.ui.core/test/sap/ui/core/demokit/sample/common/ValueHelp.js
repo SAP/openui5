@@ -202,7 +202,7 @@ sap.ui.define([
 						growing : true,
 						mode : "SingleSelectMaster"
 					}),
-					oValueListMapping = mValueListInfo[that.getQualifier()];
+					oValueListMapping = mValueListInfo[that.getQualifier()] || mValueListInfo[""];
 
 				function onClose() {
 					oPopover.close();

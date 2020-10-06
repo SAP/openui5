@@ -10,38 +10,26 @@
 	<body>
 		<h1>Manual Integration Test: Flexible Column Layout - Keep-alive Scenario</h1>
 		<h2>DESCRIPTION</h2>
-		The Flexible Column Layout is used to synchronize data between a list report (left
-		column), an object page (middle column) and a sub-object page (right column). This OPA
-		tests shall address the scenarios which can be covered with the new
-		<code>Context#setKeepAlive</code> API method.
+		This demo application is used to demonstrate how to synchronize data between a list report
+		(left column), an object page (middle column) and a sub-object page (right column) by using
+		the <code>Context#setKeepAlive</code> API method.
 		<h2>PREPARATION</h2>
-
 			To check console errors open the developer tools before starting the application and
 			check with each step, that there are no errors and warnings.
-
 		<h3>Testing with mock data</h3>
-		Start the FlexibleColumnLayout application
-		URL (adjust host and port if necessary):
+		Start the FlexibleColumnLayout application URL (adjust host and port if necessary):
 			<ul>
-				<li> as sample preview in the SDK:
-					http://&lt;host>:&lt;port>/sapui5-sdk-dist/#/sample/sap.ui.core.sample.odata.v4.FlexibleColumnLayout/preview</li>
 				<li> local:
-					<a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.FlexibleColumnLayout">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.FlexibleColumnLayout</a></li>
+					<a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.FlexibleColumnLayout">
+						http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.FlexibleColumnLayout
+					</a>
+				</li>
 			</ul>
-
-		<h3>Testing with back end</h3>
-		Configure your IDE to be able to execute the FlexibleColumnLayout application against an ABAP back
-		end system. Start the FlexibleColumnLayout application URL (adjust host and port if necessary):
-			<ul>
-				<li>local:
-					<a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.FlexibleColumnLayout&amp;realOData=true">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.FlexibleColumnLayout&amp;realOData=true</a></li>
-			</ul>
-
 		<h2>REALIZE and CHECK</h2>
 		<h3>List report and object page are in sync</h3>
 		<ol>
 			<li>Select the first sales order in the sales order list report.</li>
-			<li><b>Check:</b> A new object page for the sales order appears.</li>
+			<li><b>Check:</b> An object page for the sales order appears.</li>
 			<li>Press the <code>Sales Order ID</code> button in the header of the respective column
 				of the sales orders table of the list report.</li>
 			<li><b>Check:</b> The sales order list is sorted by the <code>SalesOrderID</code>
@@ -59,11 +47,10 @@
 			<li>Press the <code>Cancel</code> button.</li>
 			<li><b>Check:</b> Both the list report and the object page are in sync.</li>
 		</ol>
-
 		<h3>Object page and sub-object page are in sync</h3>
 		<ol>
 			<li>Select the first sales order line item on the object page.</li>
-			<li><b>Check:</b> A new sub-object page with item details appears.</li>
+			<li><b>Check:</b> A sub-object page with item details appears.</li>
 			<li>Press the <code>Gross Amount</code> button.</li>
 			<li><b>Check:</b> The sales order item list is sorted by the <code>GrossAmount</code>
 				and the selected sales order item is no longer part	of the items list. In the
@@ -74,7 +61,6 @@
 			<li>Press the <code>Cancel</code> button.</li>
 			<li><b>Check:</b> Both the object page and the sub-object page are in sync.</li>
 		</ol>
-
 		<h3>Delete a kept-alive context that is not visible in the sales orders table</h3>
 		<ol>
 			<li>Select the first sales order on the list report that is currently sorted
@@ -92,6 +78,37 @@
 				button in the header of the respective column of the sales orders table of the list
 				report.</li>
 			<li><b>Check:</b> The deleted sales order is not visible in the list report.</li>
+		</ol>
+		<h3>Refresh the object page of a kept-alive context that is not visible in the sales orders
+			table; after refreshing the sales order is no longer available</h3>
+		<ol>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective column
+				of the sales orders table of the list report.</li>
+			<li>Select the second sales order in the sales order list report.</li>
+			<li><b>Check:</b> An object page with the sales order appears.</li>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective column
+				of the sales orders table of the list report.</li>
+			<li><b>Check:</b> The sales order list is sorted by the <code>SalesOrderID</code>
+				and the selected sales order does no longer appear in the list report. It is still
+				present in the object page.</li>
+			<li><b>Check:</b> The value of the <code>Sales Order ID</code> input field is
+				'0500000009'</li>
+			<li>Press the <code>Refresh</code> button on the sales order object page.</li>
+			<li><b>Check:</b> The corresponding sales order is no longer existing and the object
+				page vanishes.</li>
+		</ol>
+		<h3>Refresh the object page of a kept-alive context that is visible in the sales orders
+			table; after refreshing the object page, the sales order does no longer appear in the
+			list</h3>
+		<ol>
+			<li>Select the first sales order in the sales order list report.</li>
+			<li><b>Check:</b> An object page for the sales order appears.</li>
+			<li>Enter '1000' in the search field of the sales order table.</li>
+			<li><b>Check:</b> The table is filtered but the selected sales order is still visible on
+				the sales order table.
+			<li>Press the <code>Refresh</code> button on the sales order object page.</li>
+			<li><b>Check</b> The object page is updated and shows new data but the sales order
+				does no longer appear in the sales order table.</li>
 		</ol>
 	</body>
 </html>

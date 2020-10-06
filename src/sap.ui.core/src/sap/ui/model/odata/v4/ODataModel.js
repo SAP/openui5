@@ -5,6 +5,13 @@
 /**
  * Model and related classes like bindings for OData V4.
  *
+ * <b>Note:</b> Smart controls (<code>sap.ui.comp</code> library) do not support the SAPUI5 OData V4
+ * model. Also controls such as {@link sap.ui.table.TreeTable} and
+ * {@link sap.ui.table.AnalyticalTable} are not supported together with the SAPUI5 OData V4 model.
+ * The interface for applications has been changed for easier and more efficient use of the model.
+ * For a summary of these changes, see
+ * {@link topic:abd4d7c7548d4c29ab8364d3904a6d74 Changes Compared to OData V2 Model}.
+ *
  * @name sap.ui.model.odata.v4
  * @namespace
  * @public

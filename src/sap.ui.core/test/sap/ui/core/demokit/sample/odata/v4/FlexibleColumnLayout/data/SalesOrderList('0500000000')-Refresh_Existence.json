@@ -1,0 +1,19 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
+	"@odata.metadataEtag" : "W/\"20200804153016\"",
+	"value" : [{
+		"@odata.etag" : "W/\"20200807145436.8614010 \"",
+		"SalesOrderID" : "0500000000",
+		"Note" : "Test (refreshed)",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "530.45",
+		"LifecycleStatusDesc" : "New",
+		"CreatedAt" : "2020-07-01T22:00:00Z",
+		"ChangedAt" : "2020-08-07T14:54:36.861401Z",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20200731122107.4687120 \"",
+			"BusinessPartnerID" : "0100000000",
+			"CompanyName" : "SAP"
+		}
+	}]
+}
