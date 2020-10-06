@@ -514,6 +514,17 @@ sap.ui.define([
 		}, 600);
 	});
 
+	QUnit.test("aria-haspopup set correctly", function(assert) {
+		var oDTP = new DateTimePicker();
+
+		oDTP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oDTP.$("inner").attr("aria-haspopup"), "dialog", "DateTimePicker's Input indicates that it opens a dialog");
+
+		oDTP.destroy();
+	});
+
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oInput = new DateTimePicker({
 			value: "Value",
