@@ -301,23 +301,31 @@
 	var aColumns = [
 		new sap.m.Column({
 			header : new sap.m.Label({
-				text : "LastName"
+				text : "LastName",
+				wrapping: true,
+				wrappingType: "Hyphenated"
 			})
 		}),
 		new sap.m.Column({
 			header : new sap.m.Label({
-				text : "FirstName"
+				text : "FirstName",
+				wrapping: true,
+				wrappingType: "Hyphenated"
 			})
 		}),
 		new sap.m.Column({
 			hAlign: "Center",
 			header : new sap.m.Label({
-				text : "Available"
+				text : "Available",
+				wrapping: true,
+				wrappingType: "Hyphenated"
 			})
 		}),
 		new sap.m.Column({
 			header : new sap.m.Link({
-				text : "Website"
+				text : "Website",
+				wrapping: true,
+				wrappingType: "Hyphenated"
 			}),
 			minScreenWidth : "XXLarge",
 			popinDisplay : "Inline",
@@ -326,13 +334,17 @@
 		new sap.m.Column({
 			hAlign: "Center",
 			header : new sap.m.Label({
-				text : "Image"
+				text : "Image",
+				wrapping: true,
+				wrappingType: "Hyphenated"
 			}),
 			minScreenWidth : "Phone"
 		}),
 		new sap.m.Column({
 			header : new sap.m.Label({
-				text : "Rating"
+				text : "Rating",
+				wrapping: true,
+				wrappingType: "Hyphenated"
 			}),
 			minScreenWidth : "Tablet",
 			popinDisplay : "WithoutHeader",
@@ -340,14 +352,18 @@
 		}),
 		new sap.m.Column({
 			header : new sap.m.Label({
-				text : "Birthday"
+				text : "Birthday",
+				wrapping: true,
+				wrappingType: "Hyphenated"
 			}),
 			minScreenWidth: "800px"
 		}),
 		new sap.m.Column({
 			hAlign: "End",
 			header : new sap.m.Label({
-				text : "Salary"
+				text : "Salary",
+				wrapping: true,
+				wrappingType: "Hyphenated"
 			}),
 			footer : oSalaryFooter.clone(),
 			minScreenWidth : "Desktop",
