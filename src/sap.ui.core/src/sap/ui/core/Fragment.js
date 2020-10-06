@@ -162,6 +162,9 @@ function(
 		// remember the name of this Fragment
 		this._sFragmentName = mSettings.fragmentName;
 
+		// if the containing view (or fragment) has a scoped runWithOnwer function we need to propagate this to the nested Fragment (only for async case)
+		this.fnScopedRunWithOwner = mSettings.containingView && mSettings.containingView.fnScopedRunWithOwner;
+
 		var oFragmentImpl = mTypes[mSettings.type];
 		if (oFragmentImpl) {
 			oFragmentImpl.init.apply(this, [mSettings]);
