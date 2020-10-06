@@ -713,37 +713,37 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 		 * None - the aria-haspopup attribute will not be rendered.
 		 * @public
 		 */
-		None : "None",
+		None : "none",
 
 		/**
 		 * Menu popup type.
 		 * @public
 		 */
-		Menu : "Menu",
+		Menu : "menu",
 
 		/**
 		 * ListBox popup type.
 		 * @public
 		 */
-		ListBox : "ListBox",
+		ListBox : "listbox",
 
 		/**
 		 * Tree popup type.
 		 * @public
 		 */
-		Tree : "Tree",
+		Tree : "tree",
 
 		/**
 		 * Grid popup type.
 		 * @public
 		 */
-		Grid : "Grid",
+		Grid : "grid",
 
 		/**
 		 * Dialog popup type.
 		 * @public
 		 */
-		Dialog : "Dialog"
+		Dialog : "dialog"
 
 	};
 
