@@ -94,41 +94,9 @@ sap.ui.define([
 
 	CalendarInCard.prototype.onAfterRendering = function(oEvent) {};
 
-	CalendarInCard.prototype.onsaptabnext = function(oEvent) {
-		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
-			if (this._oTodayBtn.getEnabled()) {
-				this._oTodayBtn.focus();
-			} else {
-				this._oPickerBtn.focus();
-			}
-			oEvent.preventDefault();
-		} else if (oEvent.target.id === this._oTodayBtn.getId()) {
-			if (this._oPickerBtn.getVisible()) {
-				this._oPickerBtn.focus();
-				oEvent.preventDefault();
-			} else {
-				this._clearTabindex0();
-			}
-		} else if (oEvent.target.id === this._oPickerBtn.getId()) {
-			this._clearTabindex0();
-		}
-	};
+	CalendarInCard.prototype.onsaptabnext = function(oEvent) {};
 
-	CalendarInCard.prototype.onsaptabprevious = function(oEvent) {
-		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
-			this._clearTabindex0();
-		} else if (oEvent.target.id === this._oTodayBtn.getId()) {
-			this._moveFocusToCalContent();
-			oEvent.preventDefault();
-		} else if (oEvent.target.id === this._oPickerBtn.getId()) {
-			if (this._oTodayBtn.getEnabled()) {
-				this._oTodayBtn.focus();
-			} else {
-				this._moveFocusToCalContent();
-			}
-			oEvent.preventDefault();
-		}
-	};
+	CalendarInCard.prototype.onsaptabprevious = function(oEvent) {};
 
 	/**
 	 * Initializes the header part of the calendar.

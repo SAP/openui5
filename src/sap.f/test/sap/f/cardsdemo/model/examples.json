@@ -54,6 +54,12 @@
 		"group": "Card Type Examples"
 	},
 	{
+		"title": "Calendar Card",
+		"description": "Example page for Integration Card of type CalendarCard",
+		"route": "calendarCard",
+		"group": "Card Type Examples"
+	},
+	{
 		"title": "Fit Container",
 		"description": "The cards fit the whole container allowing it to dynamically change their sizes.",
 		"route": "splitter",

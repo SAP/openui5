@@ -147,6 +147,11 @@
 					"target": "adaptiveCard"
 				},
 				{
+					"pattern": "calendarCard",
+					"name": "calendarCard",
+					"target": "calendarCard"
+				},
+				{
 					"pattern": "navigationService",
 					"name": "navigationService",
 					"target": "navigationService"
@@ -321,6 +326,11 @@
 				"adaptiveCard": {
 					"viewId": "adaptiveCard",
 					"viewName": "AdaptiveCard",
+					"viewLevel": 1
+				},
+				"calendarCard": {
+					"viewId": "calendarCard",
+					"viewName": "CalendarCard",
 					"viewLevel": 1
 				},
 				"objectContent": {
