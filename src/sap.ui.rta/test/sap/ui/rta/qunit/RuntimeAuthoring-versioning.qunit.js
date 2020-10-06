@@ -775,6 +775,8 @@ sap.ui.define([
 			}
 		}].forEach(function (mSetup) {
 			QUnit.test(mSetup.testName, function(assert) {
+				var oUserAction = mSetup.input.userConfirmedDiscard ? MessageBox.Action.OK : MessageBox.Action.CANCEL;
+				var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(oUserAction);
 				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 				this.oRta._oVersionsModel.setProperty("/displayedVersion", mSetup.input.versionDisplayed);
 				this.oRta._oVersionsModel.setProperty("/backendDraft", mSetup.input.backendDraft);
@@ -783,12 +785,8 @@ sap.ui.define([
 
 				return this.oRta._onStackModified()
 				.then(function () {
-					if (mSetup.expectation.dialogCreated) {
-						assert.ok(this.oRta._oDraftDiscardWarningPromise, "the loading of a warning dialog was triggered");
-					} else {
-						assert.notOk(this.oRta._oDraftDiscardWarningPromise, "the loading of a warning dialog was not triggered");
-					}
-				}.bind(this));
+					assert.equal(oShowMessageBoxStub.callCount, mSetup.expectation.dialogCreated ? 1 : 0, "the message box display was handled correct");
+				});
 			});
 		});
 	});
@@ -810,15 +808,6 @@ sap.ui.define([
 					this.oRta._oVersionsModel.setProperty("/displayedVersion", sap.ui.fl.Versions.Original);
 					this.oRta._oVersionsModel.setProperty("/backendDraft", true);
 					sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
-					return this.oRta._onStackModified();
-				}.bind(this))
-				.then(function () {
-					// create the modify Stack stub after the beforeEach modify
-					this.oModifyStackStub = sandbox.stub(this.oRta, "_modifyStack");
-					return this.oRta._oDraftDiscardWarningPromise;
-				}.bind(this))
-				.then(function (oDialog) {
-					this.oDialogCloseSpy = sandbox.spy(oDialog, "close");
 				}.bind(this));
 		},
 		afterEach : function() {
@@ -828,19 +817,25 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the user confirms the discarding", function(assert) {
-			this.oRta._discardDraftConfirmed();
-			assert.equal(this.oRta._bUserDiscardedDraft, true, "the flag that the user confirmed the discarding is set");
-			assert.equal(this.oModifyStackStub.callCount, 1, "the modify stack function was called");
-			assert.equal(this.oUndoStub.callCount, 0, "the undo was NOT called");
-			assert.equal(this.oDialogCloseSpy.callCount, 1, "the dialog is closed");
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
+			var oModifyStackStub = sandbox.stub(this.oRta, "_modifyStack");
+			return this.oRta._onStackModified()
+			.then(function() {
+				assert.equal(this.oRta._bUserDiscardedDraft, true, "the flag that the user confirmed the discarding is set");
+				assert.equal(oModifyStackStub.callCount, 1, "the modify stack function was called");
+				assert.equal(this.oUndoStub.callCount, 0, "the undo was NOT called");
+			}.bind(this));
 		});
 
 		QUnit.test("when the user cancels the discarding", function(assert) {
-			this.oRta._discardDraftCanceled();
-			assert.equal(this.oRta._bUserDiscardedDraft, undefined, "the flag that the user confirmed the discarding is NOT set");
-			assert.equal(this.oModifyStackStub.callCount, 0, "the modify stack function was NOT called");
-			assert.equal(this.oUndoStub.callCount, 1, "the undo was called");
-			assert.equal(this.oDialogCloseSpy.callCount, 1, "the dialog is closed");
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
+			var oModifyStackStub = sandbox.stub(this.oRta, "_modifyStack");
+			return this.oRta._onStackModified()
+			.then(function () {
+				assert.equal(this.oRta._bUserDiscardedDraft, undefined, "the flag that the user confirmed the discarding is NOT set");
+				assert.equal(oModifyStackStub.callCount, 0, "the modify stack function was NOT called");
+				assert.equal(this.oUndoStub.callCount, 1, "the undo was called");
+			}.bind(this));
 		});
 	});
 

@@ -858,33 +858,23 @@ function(
 		}
 
 		// warn the user: the existing draft would be discarded in case the user saves
-		if (!this._oDraftDiscardWarningPromise) {
-			this._oDraftDiscardWarningPromise = Fragment.load({
-				name: "sap.ui.rta.DraftDiscardDialog",
-				id: this.getId() + "_DraftDiscardDialog",
-				controller: this
-			}).then(function (oDialog) {
-				// adding a controlDependency for model propagation
-				this._oDraftDiscardWarningDialog = oDialog;
-				this.getToolbar().addDependent(oDialog);
-				return oDialog;
-			}.bind(this));
-		}
-
-		return this._oDraftDiscardWarningPromise.then(function (oDialog) {
-			oDialog.open();
-		});
+		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_DIALOG", {
+			titleKey: "TIT_DRAFT_DISCARD_DIALOG",
+			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			emphasizedAction: MessageBox.Action.OK
+		})
+		.then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
+				this._discardDraftConfirmed();
+			} else {
+				this.undo();
+			}
+		}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype._discardDraftConfirmed = function() {
 		this._bUserDiscardedDraft = true;
 		this._modifyStack();
-		this._oDraftDiscardWarningDialog.close();
-	};
-
-	RuntimeAuthoring.prototype._discardDraftCanceled = function() {
-		this.undo();
-		this._oDraftDiscardWarningDialog.close();
 	};
 
 	RuntimeAuthoring.prototype._modifyStack = function() {
