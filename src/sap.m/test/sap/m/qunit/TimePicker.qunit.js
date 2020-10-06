@@ -2207,20 +2207,11 @@ sap.ui.define([
 		},
 		fnTestReferencing: function (oSut, fnAssert, oResourceManager, aScenarios) {
 			//prepare
-			var sCustomRoleHiddenLblIdSuffix = "descr",
-				sPlaceholderHiddenLblIdSuffix = "labelledby",
-				sTooltipHiddenLblIdSuffix = "describedby",
+			var sPlaceholderHiddenLblIdSuffix = "labelledby",
 				sInnerInputSuffix = oSut.getRenderer().getInnerSuffix(),
 				fnTestCustomRole = function () {
-					//prepare
-					var $CustomRoleHiddenLabel = oSut.$(sCustomRoleHiddenLblIdSuffix),
-						sCustomRoleId = $CustomRoleHiddenLabel.attr('id'),
-						sCustomRoleRealText = $CustomRoleHiddenLabel.text(),
-						sCustomRoleExpectedText = oResourceManager.getText("TIMEPICKER_SCREENREADER_TAG");
-
-					assert.strictEqual($CustomRoleHiddenLabel.length, 1, "The custom role invisible label is rendered");
-					assert.strictEqual(sCustomRoleRealText, sCustomRoleExpectedText, "The text of custom role invisible label is as expected");
-					assert.ok(oSut.$(sInnerInputSuffix).attr("aria-describedby").indexOf(sCustomRoleId) > -1, "'aria-labelledby' contains the custom role invisible label id");
+					fnAssert.strictEqual(oSut.$(sInnerInputSuffix).attr("aria-roledescription"), oSut._oResourceBundle.getText("ACC_CTR_TYPE_TIMEINPUT"),
+						"Control description is added in aria-roledescription");
 				},
 				fnTestExternalLabelReference = function (bReferencedWithExternalLabel) {
 					var sLabelId = "timepicker-aria-label";
