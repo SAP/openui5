@@ -64,9 +64,7 @@ sap.ui.define([
 					},
 					registerNavigationFilter : function () {
 					},
-					hashChanger: {
-						treatHashChanged: fnFLPReloadStub
-					}
+					reloadCurrentApp : fnFLPReloadStub
 				};
 			},
 			getLogonSystem : function () {

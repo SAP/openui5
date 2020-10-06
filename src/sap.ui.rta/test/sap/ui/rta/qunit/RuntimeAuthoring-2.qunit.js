@@ -70,9 +70,7 @@ sap.ui.define([
 					},
 					unregisterNavigationFilter: function () {},
 					registerNavigationFilter: function () {},
-					hashChanger: {
-						treatHashChanged: fnFLPReloadStub
-					}
+					reloadCurrentApp: fnFLPReloadStub
 				};
 			},
 			getLogonSystem: function() {
