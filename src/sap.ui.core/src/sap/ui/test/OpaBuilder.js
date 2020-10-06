@@ -71,8 +71,16 @@ sap.ui.define(
             }, false);
         }
 
+        function _isArguments(vValue) {
+            return Object.prototype.toString.call(vValue) === "[object Arguments]";
+        }
+
         function _parseArguments(aExpectedTypes) {
             var aArguments = Array.prototype.slice.call(arguments, 1);
+
+            if (aArguments.length === 1 && _isArguments(aArguments[0])) {
+                aArguments = Array.prototype.slice.call(aArguments[0], 0);
+            }
 
             return aExpectedTypes.reduce(function (aActualArguments, vExpectedType) {
                 if (_isOfType(aArguments[0], vExpectedType, true)) {
@@ -650,16 +658,16 @@ sap.ui.define(
         /**
          * Performs a {@link sap.ui.test.actions.EnterText} on target control(s).
          *
-         * @param {string} sText the text to be entered
-         * @param {boolean} [bClearFirst] true to clear already existing text, false to keep it (default)
-         * @param {boolean} [bKeepFocus] true to keep focus on target control, false to focus out (default)
-         * @param {string} [sIdSuffix] the id suffix of the DOM Element the action will be executed on
+         * @param {string} sText defines the {@link sap.ui.test.actions.EnterText#setText} setting
+         * @param {boolean} [bClearTextFirst] defines the {@link sap.ui.test.actions.EnterText#setClearTextFirst} setting
+         * @param {boolean} [bKeepFocus] defines the {@link sap.ui.test.actions.EnterText#setKeepFocus} setting
+         * @param {boolean} [bPressEnterKey] defines the {@link sap.ui.test.actions.EnterText#setPressEnterKey} setting
+         * @param {string} [sIdSuffix] defines the {@link sap.ui.test.actions.Action#setIdSuffix} setting
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
          */
-        OpaBuilder.prototype.doEnterText = function (sText, bClearFirst, bKeepFocus, sIdSuffix) {
-            var aArguments = _parseArguments([String, Boolean, Boolean, String], sText, bClearFirst, bKeepFocus, sIdSuffix);
-            return this.do(OpaBuilder.Actions.enterText(aArguments[0], aArguments[1], aArguments[2], aArguments[3]));
+        OpaBuilder.prototype.doEnterText = function (sText, bClearFirst, bKeepFocus, bPressEnterKey, sIdSuffix) {
+            return this.do(OpaBuilder.Actions.enterText(sText, bClearFirst, bKeepFocus, bPressEnterKey, sIdSuffix));
         };
 
         /**
@@ -1323,20 +1331,23 @@ sap.ui.define(
 
             /**
              * Creates a {@link sap.ui.test.actions.EnterText} action.
-             * @param {string} sText defines the {@link sap.ui.test.actions.EnterText#text} setting
-             * @param {boolean} [bClearTextFirst] defines the {@link sap.ui.test.actions.EnterText#clearTextFirst} setting
-             * @param {boolean} [bKeepFocus] defines the {@link sap.ui.test.actions.EnterText#keepFocus} setting
-             * @param {string} [sIdSuffix] the id suffix of the DOM Element the action will be executed on
+             * @param {string} sText defines the {@link sap.ui.test.actions.EnterText#setText} setting
+             * @param {boolean} [bClearTextFirst] defines the {@link sap.ui.test.actions.EnterText#setClearTextFirst} setting
+             * @param {boolean} [bKeepFocus] defines the {@link sap.ui.test.actions.EnterText#setKeepFocus} setting
+             * @param {boolean} [bPressEnterKey] defines the {@link sap.ui.test.actions.EnterText#setPressEnterKey} setting
+             * @param {string} [sIdSuffix] defines the {@link sap.ui.test.actions.Action#setIdSuffix} setting
              * @returns {sap.ui.test.actions.EnterText} an instance of the {@link sap.ui.test.actions.EnterText} action
              * @public
              * @static
              */
-            enterText: function (sText, bClearTextFirst, bKeepFocus, sIdSuffix) {
+            enterText: function (sText, bClearTextFirst, bKeepFocus, bPressEnterKey, sIdSuffix) {
+                var aArguments = _parseArguments([String, Boolean, Boolean, Boolean, String], arguments);
                 return new EnterText({
-                    text: sText,
-                    clearTextFirst: bClearTextFirst,
-                    keepFocus: bKeepFocus,
-                    idSuffix: sIdSuffix
+                    text: aArguments[0],
+                    clearTextFirst: aArguments[1],
+                    keepFocus: aArguments[2],
+                    pressEnterKey: aArguments[3],
+                    idSuffix: aArguments[4]
                 });
             },
 

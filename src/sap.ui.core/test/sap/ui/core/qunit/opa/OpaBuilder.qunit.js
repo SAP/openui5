@@ -324,6 +324,12 @@ sap.ui.define(
             assert.strictEqual(oOpaBuilder.doEnterText("Test", true, true, "myIdSuffix"), oOpaBuilder, "builder instance returned");
             assert.ok(oActionSpy.calledWith("Test", true, true, "myIdSuffix"));
             assert.ok(oSpy.calledWith(oActionSpy.returnValues[0]));
+            oSpy.reset();
+            oActionSpy.reset();
+
+            assert.strictEqual(oOpaBuilder.doEnterText("Test", true, true, true,"myIdSuffix"), oOpaBuilder, "builder instance returned");
+            assert.ok(oActionSpy.calledWith("Test", true, true, true, "myIdSuffix"));
+            assert.ok(oSpy.calledWith(oActionSpy.returnValues[0]));
             oSpy.restore();
             oActionSpy.restore();
         });
@@ -1245,6 +1251,15 @@ sap.ui.define(
             assert.strictEqual(oEnterText.getText(), "my Text");
             assert.strictEqual(oEnterText.getClearTextFirst(), true);
             assert.strictEqual(oEnterText.getKeepFocus(), true);
+            assert.strictEqual(oEnterText.getPressEnterKey(), false);
+            assert.strictEqual(oEnterText.getIdSuffix(), "my.suffix");
+
+            oEnterText = OpaBuilder.Actions.enterText("my Text", true, true, true, "my.suffix");
+            assert.ok(oEnterText instanceof EnterText);
+            assert.strictEqual(oEnterText.getText(), "my Text");
+            assert.strictEqual(oEnterText.getClearTextFirst(), true);
+            assert.strictEqual(oEnterText.getKeepFocus(), true);
+            assert.strictEqual(oEnterText.getPressEnterKey(), true);
             assert.strictEqual(oEnterText.getIdSuffix(), "my.suffix");
         });
 
