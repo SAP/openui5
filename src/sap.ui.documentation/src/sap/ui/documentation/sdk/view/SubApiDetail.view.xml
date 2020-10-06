@@ -759,6 +759,18 @@
 						</ObjectPageSection>
 					</template:if>
 
+					<template:if test="{data>/hasFAQ}">
+						<ObjectPageSection id="faq" title="FAQ">
+							<subSections>
+								<custom:ObjectPageSubSection>
+									<custom:blocks>
+										<core:HTML id="parserId" content="{/faqContent}"/>
+									</custom:blocks>
+								</custom:ObjectPageSubSection>
+							</subSections>
+						</ObjectPageSection>
+					</template:if>
+
 					<core:ExtensionPoint name="customSections" />
 
 				</sections>

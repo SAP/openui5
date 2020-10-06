@@ -103,6 +103,17 @@ sap.ui.define([
 					this._oModel.setProperty("/ui5-metadata/associations", bHasSelfAssoc ? this._selfAssociations : this._allAssociations);
 				}
 
+				if (this._oModel.getProperty("/hasFAQ")) {
+					jQuery.ajax({
+						type: "GET",
+						url: './docs/api/' + this._oEntityData.lib.replace(/\./g, '/') +
+						'/demokit/faq/' + this._oEntityData.displayName + '.html',
+						success: function (data) {
+							this._oModel.setProperty("/faqContent", data);
+						}.bind(this)
+					});
+				}
+
 				// Attach the model to the view
 				this.setModel(this._oModel);
 

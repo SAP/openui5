@@ -100,6 +100,16 @@ module.exports = function(grunt, config) {
 			};
 		}
 
+		copy['faq-target-' + library.name] = {
+			files: [ {
+				expand: true,
+				dot: true,
+				cwd: library.test,
+				src: '**/faq/*.md',
+				dest: 'target/openui5-sdk/test-resources'
+			} ]
+		};
+
 		if (library.bower !== false && grunt.option('publish')) {
 			copy['bower-' + library.name] = {
 				files: [
