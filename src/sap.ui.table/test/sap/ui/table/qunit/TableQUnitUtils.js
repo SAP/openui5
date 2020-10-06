@@ -1191,6 +1191,18 @@ sap.ui.define([
 		return oFocusEvent;
 	};
 
+	TableQUnitUtils.assertNoDataVisible = function(assert, oTable, bVisible, sTitle) {
+		var sTestTitle = sTitle == null ? "" : sTitle + ": ";
+
+		assert.equal(oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible,
+			sTestTitle + "NoData class is " + (bVisible ? "" : "not ") + "set");
+
+		if (!bVisible) {
+			// If the NoData element is not visible, the table must have focusable elements (cells).
+			assert.ok(oTable.qunit.getDataCell(0, 0), sTestTitle + "Rows are rendered");
+		}
+	};
+
 	/***********************************
 	 * Legacy utils                    *
 	 ***********************************/

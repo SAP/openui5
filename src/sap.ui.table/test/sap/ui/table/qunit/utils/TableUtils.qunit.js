@@ -802,34 +802,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("isNoDataVisible / hasData", function(assert) {
-		function createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals, aVisibleColumns) {
-			return {
-				getShowNoData: function() {
-					return bShowNoData;
-				},
-				_getTotalRowCount: function() {
-					return iBindingLength;
-				},
-				getBinding: function() {
-					var oBinding = {};
-					if (bAnalytical) {
-						oBinding.providesGrandTotal = function() {
-							return bHasTotals;
-						};
-						oBinding.hasTotaledMeasures = function() {
-							return bHasTotals;
-						};
-					}
-					return oBinding;
-				},
-				_getVisibleColumns: function() {
-					return aVisibleColumns;
-				}
-			};
+		var oGetTotalRowCount = sinon.stub(oTable, "_getTotalRowCount");
+		var oGetBinding = sinon.stub(oTable, "getBinding");
+		var oGetVisibleColumns = sinon.stub(oTable, "_getVisibleColumns");
+
+		function prepareTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals, aVisibleColumns) {
+			var oBinding = {};
+
+			if (bAnalytical) {
+				oBinding.providesGrandTotal = function() {
+					return bHasTotals;
+				};
+				oBinding.hasTotaledMeasures = function() {
+					return bHasTotals;
+				};
+			}
+
+			oTable.setShowNoData(bShowNoData);
+			oGetTotalRowCount.returns(iBindingLength);
+			oGetBinding.returns(oBinding);
+			oGetVisibleColumns.returns(aVisibleColumns);
 		}
 
 		function testNoDataVisibility(bShowNoData, iBindingLength, bAnalytical, bHasTotals, bExpectedResult, aVisibleColumns) {
-			var bResult = TableUtils.isNoDataVisible(createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals, aVisibleColumns));
+			prepareTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals, aVisibleColumns);
+			var bResult = TableUtils.isNoDataVisible(oTable);
 			assert.equal(bResult, bExpectedResult,
 				"ShowNoData: " + bShowNoData + ", Binding Length: " + iBindingLength + ", Analytical: " + bAnalytical + ", Totals: " + bHasTotals + ", Visible columns: " + aVisibleColumns);
 		}
@@ -875,6 +872,10 @@ sap.ui.define([
 		testNoDataVisibility(false, 2, true, true, true, []);
 		testNoDataVisibility(false, 1, true, true, true, []);
 		testNoDataVisibility(false, 0, true, true, true, []);
+
+		oGetTotalRowCount.restore();
+		oGetBinding.restore();
+		oGetVisibleColumns.restore();
 	});
 
 	QUnit.test("isBusyIndicatorVisible", function(assert) {

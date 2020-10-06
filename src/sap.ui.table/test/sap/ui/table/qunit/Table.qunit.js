@@ -5963,35 +5963,17 @@ sap.ui.define([
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				columns: [
-					new Column({
-						label: new Label({text: "Last Name"}),
-						template: new Text({text: "{lastName}"}),
-						sortProperty: "lastName",
-						filterProperty: "lastName"
-					})
+					TableQUnitUtils.createTextColumn()
 				]
 			});
-
-			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-		},
-		assertNoDataVisible: function(assert, bVisible, sTitle) {
-			var sTestTitle = sTitle == null ? "" : sTitle + ": ";
-
-			assert.equal(this.oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible,
-				sTestTitle + "NoData class is " + (bVisible ? "" : "not ") + "set");
-
-			if (!bVisible) {
-				// If the NoData element is not visible, the table must have focusable elements (cells).
-				assert.ok(this.oTable.qunit.getDataCell(0, 0), sTestTitle + "Rows are rendered");
-			}
 		}
 	});
 
 	QUnit.test("After rendering with data and showNoData=true", function(assert) {
-		this.assertNoDataVisible(assert, false);
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
 	QUnit.test("After rendering without data and showNoData=true", function(assert) {
@@ -6000,18 +5982,10 @@ sap.ui.define([
 			rows: "{/}",
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(0),
 			columns: [
-				new Column({
-					label: new Label({text: "Last Name"}),
-					template: new Text({text: "{lastName}"}),
-					sortProperty: "lastName",
-					filterProperty: "lastName"
-				})
+				TableQUnitUtils.createTextColumn()
 			]
 		});
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			this.assertNoDataVisible(assert, true);
-		}.bind(this));
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
 	});
 
 	QUnit.test("After rendering without data and showNoData=false", function(assert) {
@@ -6021,18 +5995,10 @@ sap.ui.define([
 			rows: "{/}",
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(0),
 			columns: [
-				new Column({
-					label: new Label({text: "Last Name"}),
-					template: new Text({text: "{lastName}"}),
-					sortProperty: "lastName",
-					filterProperty: "lastName"
-				})
+				TableQUnitUtils.createTextColumn()
 			]
 		});
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			this.assertNoDataVisible(assert, false);
-		}.bind(this));
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
 	QUnit.test("Change 'showNoData' property with data", function(assert) {
@@ -6041,30 +6007,29 @@ sap.ui.define([
 		this.oTable.setShowNoData(true);
 		assert.ok(this.oTable.getShowNoData(), "Change from true to true: Property value");
 		assert.ok(oInvalidateSpy.notCalled, "Change from true to true: Table not invalidated");
-		this.assertNoDataVisible(assert, false, "Change from true to true");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to true");
 
 		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(false);
 		assert.ok(!this.oTable.getShowNoData(), "Change from true to false: Property value");
 		assert.ok(oInvalidateSpy.notCalled, "Change from true to false: Table not invalidated");
-		this.assertNoDataVisible(assert, false, "Change from true to false");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to false");
 
 		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(false);
 		assert.ok(!this.oTable.getShowNoData(), "Change from false to false: Property value");
 		assert.ok(oInvalidateSpy.notCalled, "Change from false to false: Table not invalidated");
-		this.assertNoDataVisible(assert, false, "Change from false to false");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from false to false");
 
 		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(true);
 		assert.ok(this.oTable.getShowNoData(), "Change from false to true: Property value");
 		assert.ok(oInvalidateSpy.notCalled, "Change from false to true: Table not invalidated");
-		this.assertNoDataVisible(assert, false, "Change from false to true");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from false to true");
 	});
 
 	QUnit.test("Change 'showNoData' property without data", function(assert) {
 		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
-		var that = this;
 
 		this.oTable.unbindRows();
 
@@ -6072,34 +6037,32 @@ sap.ui.define([
 		this.oTable.setShowNoData(true);
 		assert.ok(this.oTable.getShowNoData(), "Change from true to true: Property value");
 		assert.ok(oInvalidateSpy.notCalled, "Change from true to true: Table not invalidated");
-		this.assertNoDataVisible(assert, true, "Change from true to true");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Change from true to true");
 
 		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(false);
 		assert.ok(!this.oTable.getShowNoData(), "Change from true to false without rows: Property value");
 		assert.equal(oInvalidateSpy.callCount, 1, "Change from true to false without rows: Table invalidated");
+		sap.ui.getCore().applyChanges();
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to false without rows");
 
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			that.assertNoDataVisible(assert, false, "Change from true to false without rows");
+		oInvalidateSpy.reset();
+		this.oTable.setShowNoData(false);
+		assert.ok(!this.oTable.getShowNoData(), "Change from false to false: Property value");
+		assert.ok(oInvalidateSpy.notCalled, "Change from false to false: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from false to false");
 
-			oInvalidateSpy.reset();
-			that.oTable.setShowNoData(false);
-			assert.ok(!that.oTable.getShowNoData(), "Change from false to false: Property value");
-			assert.ok(oInvalidateSpy.notCalled, "Change from false to false: Table not invalidated");
-			that.assertNoDataVisible(assert, false, "Change from false to false");
+		oInvalidateSpy.reset();
+		this.oTable.setShowNoData(true);
+		assert.ok(this.oTable.getShowNoData(), "Change from false to true: Property value");
+		assert.ok(oInvalidateSpy.notCalled, "Change from false to true: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Change from false to true");
 
-			oInvalidateSpy.reset();
-			that.oTable.setShowNoData(true);
-			assert.ok(that.oTable.getShowNoData(), "Change from false to true: Property value");
-			assert.ok(oInvalidateSpy.notCalled, "Change from false to true: Table not invalidated");
-			that.assertNoDataVisible(assert, true, "Change from false to true");
-
-			oInvalidateSpy.reset();
-			that.oTable.setShowNoData(false);
-			assert.ok(!that.oTable.getShowNoData(), "Change from true to false with rows: Property value");
-			assert.ok(oInvalidateSpy.notCalled, "Change from true to false with rows: Table not invalidated");
-			that.assertNoDataVisible(assert, false, "Change from true to false with rows");
-		});
+		oInvalidateSpy.reset();
+		this.oTable.setShowNoData(false);
+		assert.ok(!this.oTable.getShowNoData(), "Change from true to false with rows: Property value");
+		assert.ok(oInvalidateSpy.notCalled, "Change from true to false with rows: Table not invalidated");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to false with rows");
 	});
 
 	QUnit.test("Change 'noData' aggregation", function(assert) {
@@ -6138,7 +6101,7 @@ sap.ui.define([
 		this.oTable.removeAllColumns();
 		this.oTable.setShowNoData(false);
 		sap.ui.getCore().applyChanges();
-		this.assertNoDataVisible(assert, true);
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
 	});
 
 	QUnit.test("Update visibility", function(assert) {
@@ -6149,7 +6112,7 @@ sap.ui.define([
 		var that = this;
 
 		function testNoData(bVisible, sTestTitle) {
-			that.assertNoDataVisible(assert, bVisible, sTestTitle);
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, bVisible, sTestTitle);
 			assert.strictEqual(TableUtils.isNoDataVisible(that.oTable), bVisible, sTestTitle + " - NoData is visible: " + bVisible);
 		}
 
@@ -6181,7 +6144,7 @@ sap.ui.define([
 		this.oTable.setShowNoData(true);
 
 		// Data available: NoData area is not visible.
-		this.assertNoDataVisible(assert, false, "Data available");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Data available");
 		assert.strictEqual(TableUtils.isNoDataVisible(this.oTable), false, "Data available - NoData is visible: false");
 
 		// No data received: NoData area becomes visible.
