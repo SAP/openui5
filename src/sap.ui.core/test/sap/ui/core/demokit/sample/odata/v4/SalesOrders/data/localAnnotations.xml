@@ -36,6 +36,21 @@
 					</Record>
 				</Annotation>
 			</Annotations>
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem/ProductID">
+				<Annotation Term="SAP__common.ValueListRelevantQualifiers">
+					<!-- The empty qualifier is always relevant, "additional" only for SAP -->
+					<Collection>
+						<String/>
+						<If>
+							<Eq>
+								<Path>SOITEM_2_SO/SO_2_BP/BusinessPartnerID</Path>
+								<String>0100000000</String>
+							</Eq>
+							<String>additional</String>
+						</If>
+					</Collection>
+				</Annotation>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

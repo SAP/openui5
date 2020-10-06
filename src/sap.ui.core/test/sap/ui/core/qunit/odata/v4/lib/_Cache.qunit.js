@@ -3094,7 +3094,47 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#refreshSingle", function (assert) {
+	QUnit.test("Cache#replaceElement for an element that has no index", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS"),
+			aElements = [{a : "doNotTouch"}],
+			oNewElement = {a : "4711", b : "0815"},
+			oOldElement = {a : "0815"},
+			mTypeForMetaPath = {};
+
+		aElements.$byPredicate = {doNotTouch : aElements[0], "('42')" : oOldElement};
+
+		this.mock(_Cache).expects("getElementIndex").never();
+		this.mock(_Helper).expects("buildPath").withExactArgs("/TEAMS", "~")
+			.returns("~path~");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("~path~")
+			.returns("~meta~path~");
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oNewElement), sinon.match.same(mTypeForMetaPath),
+				"~meta~path~", "~('42')");
+
+		// code under test
+		oCache.replaceElement(aElements, undefined, "('42')", oNewElement, mTypeForMetaPath, "~");
+
+		assert.deepEqual(aElements,[{a : "doNotTouch"}]);
+		assert.deepEqual(aElements.$byPredicate,
+			{doNotTouch : aElements[0], "('42')" : oNewElement});
+	});
+
+	//*********************************************************************************************
+[
+	/*{index : undefined, keepAlive : false, ...}, combination is never called, use case invalid*/
+	{index : undefined, keepAlive : true, lateQueryOptions : false},
+	{index : undefined, keepAlive : true, lateQueryOptions : true},
+	{index : 1, keepAlive : false, lateQueryOptions : false},
+	{index : 1, keepAlive : false, lateQueryOptions : true},
+	{index : 1, keepAlive : true, lateQueryOptions : false},
+	{index : 1, keepAlive : true, lateQueryOptions : true}
+].forEach(function (oFixture) {
+	var mLateQueryOptions = oFixture.lateQueryOptions ? {} : null,
+		sTitle = "_Cache#refreshSingle: iIndex = " + oFixture.index + ", bKeepAlive = "
+			+ oFixture.keepAlive + ", mLateQueryOptions = " + mLateQueryOptions;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees('31')", {/*mQueryOptions*/},
 				{/*bSortExpandSelect*/}),
 			oCacheMock = this.mock(oCache),
@@ -3102,7 +3142,7 @@ sap.ui.define([
 			fnDataRequested = this.spy(),
 			sKeyPredicate = "('13')",
 			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
-			aElements = [{}, oElement, {}],
+			aElements = oFixture.index !== undefined ? [{}, oElement, {}] : [{}, {}],
 			oFetchValuePromise = Promise.resolve(aElements),
 			oGroupLock = {},
 			oPromise,
@@ -3121,16 +3161,23 @@ sap.ui.define([
 			oResponse = {},
 			mTypeForMetaPath = {};
 
+		oCache.mLateQueryOptions = mLateQueryOptions;
 		aElements.$byPredicate = {};
+		aElements.$byPredicate[sKeyPredicate] = oElement;
 		oCache.fetchValue = function () {};
 		oCacheMock.expects("checkSharedRequest").withExactArgs();
 		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
 			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
 			.returns(SyncPromise.resolve(oFetchValuePromise));
+		this.mock(_Helper).expects("aggregateQueryOptions")
+			.exactly(oFixture.keepAlive && oFixture.lateQueryOptions ? 1 : 0)
+			.withExactArgs(sinon.match.same(mQueryOptionsCopy),
+				sinon.match.same(mLateQueryOptions));
 
 		// code under test
-		oPromise = oCache.refreshSingle(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", 1, fnDataRequested);
+		oPromise = oCache.refreshSingle(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", oFixture.index,
+			sKeyPredicate, oFixture.keepAlive, fnDataRequested);
 
 		assert.ok(oPromise.isFulfilled, "returned a SyncPromise");
 		assert.strictEqual(oCache.bSentRequest, false);
@@ -3164,10 +3211,10 @@ sap.ui.define([
 		return oFetchValuePromise.then(function () {
 			// we are AFTER refreshSingle's then-handler, but before the GET is responded to
 			assert.strictEqual(oCache.bSentRequest, true);
-			assert.strictEqual(aElements[1], oElement, "not replaced yet");
+			assert.strictEqual(aElements.$byPredicate[sKeyPredicate], oElement, "not replaced yet");
 
 			oCacheMock.expects("replaceElement")
-				.withExactArgs(sinon.match.same(aElements), 1, sKeyPredicate,
+				.withExactArgs(sinon.match.same(aElements), oFixture.index, sKeyPredicate,
 					sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath),
 					"EMPLOYEE_2_EQUIPMENTS");
 
@@ -3176,6 +3223,7 @@ sap.ui.define([
 			assert.strictEqual(oResult, oResponse);
 		});
 	});
+});
 
 	//*********************************************************************************************
 [{
@@ -3249,8 +3297,8 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 
 		// code under test
-		oPromise = oCache.refreshSingleWithRemove(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", 1,
-			fnDataRequested, fnOnRemove);
+		oPromise = oCache.refreshSingleWithRemove(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", 1, "~",
+			false, fnDataRequested, fnOnRemove);
 
 		assert.ok(oPromise.isFulfilled, "returned a SyncPromise");
 		assert.strictEqual(oCache.bSentRequest, false);
@@ -3299,12 +3347,203 @@ sap.ui.define([
 			assert.deepEqual(arguments, {"0" : undefined});
 			if (bRemoved) {
 				sinon.assert.calledOnce(fnOnRemove);
+				sinon.assert.calledWithExactly(fnOnRemove, false);
 			}
 		});
 	});
 
 	});
 });
+
+	//*********************************************************************************************
+[
+	{hasFilter : false, hasSearch : false, inCollection : true, secondQuery : false},
+	/*{hasFilter : false, hasSearch : false, inCollection : false, secondQuery : false}, invalid*/
+	{hasFilter : true, hasSearch : false, inCollection : true, secondQuery : true},
+	{hasFilter : false, hasSearch : true, inCollection : false, secondQuery : true}
+].forEach(function (oFixture) {
+	var sTitle = "refreshSingleWithRemove: for (still existing) kept-alive element (in collection)"
+		+ (oFixture.hasFilter ? ", binding has own filter" : "")
+		+ (oFixture.hasSearch ? ", implicit filter via $search" : "")
+		+ "; after refresh the entity exists and the context is"
+		+ (oFixture.inCollection ? " in the collection" : " not in the collection");
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS", {/*mQueryOptions*/}),
+			oCacheMock = this.mock(oCache),
+			fnDataRequested = this.spy(),
+			oElement = {"@$ui5._" : {predicate : "('13')"}},
+			aElements = [oElement],
+			oFetchValuePromise = Promise.resolve(aElements),
+			oGroupLock = {
+				getUnlockedCopy : function () {}
+			},
+			oGroupLockCopy = {},
+			oInCollectionResponse = {
+				"@odata.count" : oFixture.inCollection ? "1" : "0",
+				value : []
+			},
+			oObjectMock = this.mock(Object),
+			fnOnRemove = this.spy(),
+			mQueryOptionsForInCollection = {
+				$apply : "apply",
+				$expand : "expand",
+				$select : "select"
+			},
+			mQueryOptionsForPath = {},
+			mQueryOptionsForPathCopy = {
+				$apply : "apply",
+				$expand : "expand",
+				$select : "select"
+			},
+			oReadResponse = {value : [{}]}, // only cover cases that entity still exists
+			oRemoveExpectation,
+			oReplaceExpectation,
+			mTypeForMetaPath = {};
+
+		aElements.$byPredicate = {"('13')" : oElement};
+		if (oFixture.hasFilter) {
+			mQueryOptionsForPathCopy.$filter = mQueryOptionsForInCollection.$filter = "filter";
+		}
+		if (oFixture.hasSearch) {
+			mQueryOptionsForPathCopy.$search = mQueryOptionsForInCollection.$search = "search";
+		}
+
+		oCache.fetchValue = function () {};
+		oCacheMock.expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~")
+			.returns(SyncPromise.resolve(oFetchValuePromise));
+		oCacheMock.expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		this.mock(_Helper).expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "~")
+			.returns(mQueryOptionsForPath);
+		oObjectMock.expects("assign")
+			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
+			.returns(mQueryOptionsForPathCopy);
+		this.mock(_Helper).expects("buildPath").withExactArgs("TEAMS", "~")
+			.returns("~");
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs(sinon.match.same(oElement), "/TEAMS", sinon.match.same(mTypeForMetaPath))
+			.returns("~key filter~");
+		this.mock(_Helper).expects("aggregateQueryOptions").never();
+		oObjectMock.expects("assign")
+			.withExactArgs({}, mQueryOptionsForPathCopy)
+			.returns(mQueryOptionsForInCollection);
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/TEAMS", mQueryOptionsForPathCopy, false,
+				sinon.match.same(oCache.bSortExpandSelect))
+			.returns("?readDataQuery");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "~?readDataQuery", sinon.match.same(oGroupLock), undefined,
+				undefined, sinon.match.same(fnDataRequested))
+			.callsFake(function () {
+				assert.strictEqual(oCache.bSentRequest, true);
+
+				return Promise.resolve(oReadResponse);
+			});
+		this.oRequestorMock.expects("buildQueryString").exactly(oFixture.secondQuery ? 1 : 0)
+			.withExactArgs("/TEAMS", mQueryOptionsForInCollection)
+			.returns("?inCollectionQuery");
+		this.mock(oGroupLock).expects("getUnlockedCopy").exactly(oFixture.secondQuery ? 1 : 0)
+			.returns(oGroupLockCopy);
+		this.oRequestorMock.expects("request").exactly(oFixture.secondQuery ? 1 : 0)
+			.withExactArgs("GET", "~?inCollectionQuery", sinon.match.same(oGroupLockCopy))
+			.callsFake(function () {
+				assert.strictEqual(oCache.bSentRequest, true);
+
+				return Promise.resolve(oInCollectionResponse);
+			});
+		oReplaceExpectation = oCacheMock.expects("replaceElement")
+			.withExactArgs(sinon.match.same(aElements), oFixture.inCollection ? 0 : undefined,
+				"('13')", sinon.match.same(oReadResponse.value[0]),
+				sinon.match.same(mTypeForMetaPath), "~");
+		oRemoveExpectation = oCacheMock.expects("removeElement")
+			.exactly(oFixture.inCollection ? 0 : 1)
+			.withExactArgs(sinon.match.same(aElements), 0 , "('13')", "~");
+
+		// code under test
+		return oCache.refreshSingleWithRemove(oGroupLock, "~", 0, "('13')", true,
+			fnDataRequested, fnOnRemove).then(function () {
+				if (oFixture.secondQuery) {
+					assert.strictEqual(mQueryOptionsForInCollection.$expand, undefined);
+					assert.strictEqual(mQueryOptionsForInCollection.$select, undefined);
+					assert.strictEqual(mQueryOptionsForInCollection.$count, true);
+					assert.strictEqual(mQueryOptionsForInCollection.$top, 0);
+				}
+				assert.strictEqual(mQueryOptionsForPathCopy.$apply, "apply");
+				assert.strictEqual(mQueryOptionsForPathCopy.$search, undefined);
+				if (!oFixture.inCollection) {
+					oReplaceExpectation.calledAfter(oRemoveExpectation);
+					sinon.assert.calledOnce(fnOnRemove);
+					sinon.assert.calledWithExactly(fnOnRemove, true);
+				}
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingleWithRemove: for kept-alive element (not in list)", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS", {/*mQueryOptions*/}),
+			oCacheMock = this.mock(oCache),
+			fnDataRequested = this.spy(),
+			oElement = {"@$ui5._" : {"predicate" : "('13')"}},
+			aElements = [{a : "42"}],
+			oExistenceResponse = {value : [{}]},
+			oFetchValuePromise = Promise.resolve(aElements),
+			oGroupLock = {},
+			oObjectMock = this.mock(Object),
+			fnOnRemove = this.spy(),
+			mQueryOptionsForPath = {},
+			mQueryOptionsForPathCopy = {$filter : "does~not~matter"},
+			mTypeForMetaPath = {};
+
+		aElements.$byPredicate = {"('13')" : oElement};
+
+		oCache.fetchValue = function () {};
+		oCache.mLateQueryOptions = {};
+
+		oCacheMock.expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~")
+			.returns(SyncPromise.resolve(oFetchValuePromise));
+		oCacheMock.expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		this.mock(_Helper).expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "~")
+			.returns(mQueryOptionsForPath);
+		oObjectMock.expects("assign")
+			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
+			.returns(mQueryOptionsForPathCopy);
+		this.mock(_Helper).expects("aggregateQueryOptions")
+			.withExactArgs(sinon.match.same(mQueryOptionsForPathCopy),
+				sinon.match.same(oCache.mLateQueryOptions));
+		this.mock(_Helper).expects("buildPath").withExactArgs("TEAMS", "~").returns("~");
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs(sinon.match.same(oElement), "/TEAMS", sinon.match.same(mTypeForMetaPath))
+			.returns("~key filter~");
+		oObjectMock.expects("assign")
+			.withExactArgs({}, mQueryOptionsForPathCopy)
+			.returns({/*does not matter*/});
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/TEAMS", {$filter : "~key filter~"}, false,
+				sinon.match.same(oCache.bSortExpandSelect))
+			.returns("?readDataQuery");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "~?readDataQuery", sinon.match.same(oGroupLock), undefined,
+				undefined, sinon.match.same(fnDataRequested))
+			.resolves(oExistenceResponse);
+		oCacheMock.expects("replaceElement")
+			.withExactArgs(sinon.match.same(aElements), undefined, "('13')",
+				sinon.match.same(oExistenceResponse.value[0]), sinon.match.same(mTypeForMetaPath),
+				"~");
+
+		// code under test
+		return oCache.refreshSingleWithRemove(oGroupLock, "~", undefined, "('13')", true,
+			fnDataRequested, fnOnRemove)
+			.then(function () {
+				assert.deepEqual(aElements, [{a : "42"}]);
+			});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("refreshSingleWithRemove: server returns more than one entity", function (assert) {
@@ -3351,7 +3590,7 @@ sap.ui.define([
 			.resolves({value : [oResult, oResult]});
 
 		// code under test
-		return oCache.refreshSingleWithRemove(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", 3,
+		return oCache.refreshSingleWithRemove(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", 3, "~", false,
 				fnDataRequested)
 			.then(function () {
 				assert.ok(false);

@@ -2614,7 +2614,7 @@ sap.ui.define([
 				isRoot : function () { return  true; },
 				requestAbsoluteSideEffects : function () {}
 			},
-			oBinding2 = {
+			oBinding2 = { // has requestAbsoluteSideEffects, but is not root
 				isRoot : function () { return  false; },
 				requestAbsoluteSideEffects : function () {}
 			},
@@ -2622,7 +2622,7 @@ sap.ui.define([
 				isRoot : function () { return  true; },
 				requestAbsoluteSideEffects : function () {}
 			},
-			oBinding4 = {
+			oBinding4 = { // is root, but has no requestAbsoluteSideEffects
 				isRoot : function () { return  true; }
 			},
 			oModel = createModel(),

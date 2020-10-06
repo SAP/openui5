@@ -53,6 +53,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.created(), undefined);
 		assert.strictEqual(oContext.getReturnValueContextId(), undefined);
 		assert.strictEqual(oContext.isKeepAlive(), false);
+		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 
 		// code under test
 		oContext = Context.create(oModel, oBinding, sPath, 42,
@@ -1132,20 +1133,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("destroy", function (assert) {
-		var oModel = {
-				getDependentBindings : function () {}
-			},
-			oBinding1 = {
+[false, true].forEach(function (bfnOnBeforeDestroy, i) {
+	var sTitle = "destroy" + (bfnOnBeforeDestroy ? ", with onBeforeDestroy call back" : "");
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding1 = {
 				setContext : function () {}
 			},
 			oBinding2 = {
 				setContext : function () {}
 			},
+			bCallbackCalled,
+			oGetDependentBindingsCall,
+			oModel = {
+				getDependentBindings : function () {}
+			},
 			oParentBinding = {},
 			oContext = Context.create(oModel, oParentBinding, "/EMPLOYEES/42", 42);
 
-		this.mock(oModel).expects("getDependentBindings")
+		if (bfnOnBeforeDestroy) {
+			oContext.fnOnBeforeDestroy = function () {
+				bCallbackCalled = true;
+				assert.equal(oGetDependentBindingsCall.getCalls().length, 0); // called before
+				assert.ok(oContext.oModel);
+				assert.ok(oContext.oBinding);
+				assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
+			};
+		}
+
+		oGetDependentBindingsCall = this.mock(oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns([oBinding1, oBinding2]);
 		this.mock(oBinding1).expects("setContext").withExactArgs(undefined);
@@ -1157,7 +1173,14 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.oBinding, undefined);
 		assert.strictEqual(oContext.oModel, undefined/*TODO oModel*/);
+		assert.strictEqual(oContext.sPath, "/EMPLOYEES/42");
+		assert.strictEqual(oContext.iIndex, 42);
+
+		if (bfnOnBeforeDestroy) {
+			assert.ok(bCallbackCalled);
+		}
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdate", function (assert) {
@@ -2885,42 +2908,51 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resetKeepAlive", function (assert) {
+		var oBinding = {
+				checkKeepAlive : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+
+		oContext.bKeepAlive = "bTrueOrFalse";
+		oContext.fnOnBeforeDestroy = "fnOnBeforeDestroy";
+
+		// code under test
+		oContext.resetKeepAlive();
+
+		assert.strictEqual(oContext.bKeepAlive, false);
+		assert.strictEqual(oContext.fnOnBeforeDestroy , "fnOnBeforeDestroy");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("setKeepAlive", function (assert) {
 		var oBinding = {
 				checkKeepAlive : function () {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/path");
 
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
-		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
+		this.mock(oContext).expects("isTransient").exactly(3).withExactArgs().returns(false);
+		this.mock(oContext).expects("getValue").exactly(3).withExactArgs().returns("~value~");
+		this.mock(_Helper).expects("getPrivateAnnotation").exactly(3)
+			.withExactArgs("~value~", "predicate")
 			.returns("('foo')");
-		this.mock(oBinding).expects("checkKeepAlive")
+		this.mock(oBinding).expects("checkKeepAlive").exactly(3)
 			.withExactArgs(sinon.match.same(oContext));
 
 		// code under test
 		oContext.setKeepAlive("bTrueOrFalse");
-
 		assert.strictEqual(oContext.isKeepAlive(), "bTrueOrFalse");
-	});
+		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 
-	//*********************************************************************************************
-	QUnit.test("setKeepAlive: no check if kept-alive", function (assert) {
-		var oBinding = {
-				checkKeepAlive : function () {}
-			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+		// code under test
+		oContext.setKeepAlive(true, "fnOnBeforeDestroy");
+		assert.strictEqual(oContext.isKeepAlive(), true);
+		assert.strictEqual(oContext.fnOnBeforeDestroy, "fnOnBeforeDestroy");
 
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
-		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
-			.returns("('foo')");
-		oContext.setKeepAlive(true);
-
-		// code under test - no further precondition checks
-		oContext.setKeepAlive("bTrueOrFalse");
-
-		assert.strictEqual(oContext.isKeepAlive(), "bTrueOrFalse");
+		// code under test
+		oContext.setKeepAlive(false, "fnOnBeforeDestroy");
+		assert.strictEqual(oContext.isKeepAlive(), false);
+		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 	});
 
 	//*********************************************************************************************

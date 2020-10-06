@@ -540,7 +540,7 @@ sap.ui.define([
 			throw new Error(this + " is unresolved");
 		}
 		return this.getModel().getMetaModel()
-			.requestValueListInfo(sResolvedPath, bAutoExpandSelect);
+			.requestValueListInfo(sResolvedPath, bAutoExpandSelect, this.oContext);
 	};
 
 	/**

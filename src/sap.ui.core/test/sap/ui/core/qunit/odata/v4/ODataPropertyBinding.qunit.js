@@ -1955,7 +1955,8 @@ sap.ui.define([
 			.withExactArgs(oPropertyBinding.sPath, oContext)
 			.returns("~");
 		this.mock(this.oModel.getMetaModel()).expects("requestValueListInfo")
-			.withExactArgs("~", sinon.match.same(bAutoExpandSelect)).returns(vResult);
+			.withExactArgs("~", sinon.match.same(bAutoExpandSelect), sinon.match.same(oContext))
+			.returns(vResult);
 
 		// code under test
 		assert.strictEqual(oPropertyBinding.requestValueListInfo(bAutoExpandSelect), vResult);

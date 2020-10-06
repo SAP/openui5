@@ -1,0 +1,5 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
+	"@odata.metadataEtag" : "W/\"20200804153016\"",
+	"value" : []
+}
