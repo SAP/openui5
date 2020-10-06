@@ -127,7 +127,7 @@
 				<Button
 						id="sapUiRta_restore"
 						enabled="{controls>/restoreEnabled}"
-						visible="{path: 'versions>/switchVersionsActive', formatter: '.showRestore'}"
+						visible="{path: 'versions>/versioningEnabled', formatter: '.showRestore'}"
 						press=".restore"
 						type="Transparent"
 						text="{i18n>BTN_RESTORE}" >

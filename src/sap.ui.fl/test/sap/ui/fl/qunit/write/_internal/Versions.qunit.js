@@ -81,53 +81,7 @@ sap.ui.define([
 				assert.equal(oData.activateEnabled, false, ", a activateEnabled flag set to false");
 				assert.equal(oData.activeVersion, sap.ui.fl.Versions.Original, ", a activeVersion property set to the original version");
 				assert.equal(oData.displayedVersion, sap.ui.fl.Versions.Original, ", a version property set to the original version");
-				assert.equal(oData.switchVersionsActive, false, "and a switchVersionsActive flag set to false as data");
 			}.bind(this));
-		});
-
-		QUnit.test("Given Versions.initialize is called and switchVersionsActive is set in the url to 'true'", function (assert) {
-			setVersioningEnabled({CUSTOMER: false});
-			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
-			};
-
-			_prepareUriParametersFromQuery("true");
-
-			return Versions.initialize(mPropertyBag).then(function (oResponse) {
-				var oData = oResponse.getData();
-				assert.equal(oData.switchVersionsActive, true, "then a switchVersionsActive flag set to true as data");
-			});
-		});
-
-		QUnit.test("Given Versions.initialize is called and switchVersionsActive is set in the url to 'something'", function (assert) {
-			setVersioningEnabled({CUSTOMER: false});
-			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
-			};
-
-			_prepareUriParametersFromQuery("something");
-
-			return Versions.initialize(mPropertyBag).then(function (oResponse) {
-				var oData = oResponse.getData();
-				assert.equal(oData.switchVersionsActive, true, "then a switchVersionsActive flag set to true as data");
-			});
-		});
-
-		QUnit.test("Given Versions.initialize is called and switchVersionsActive is set in the url to 'false'", function (assert) {
-			setVersioningEnabled({CUSTOMER: false});
-			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
-			};
-
-			_prepareUriParametersFromQuery("false");
-
-			return Versions.initialize(mPropertyBag).then(function (oResponse) {
-				var oData = oResponse.getData();
-				assert.equal(oData.switchVersionsActive, false, "then a switchVersionsActive flag set to false as data");
-			});
 		});
 
 		QUnit.test("Given Versions.initialize is called", function (assert) {

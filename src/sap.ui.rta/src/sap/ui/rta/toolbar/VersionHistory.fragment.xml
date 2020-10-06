@@ -12,7 +12,7 @@
                 text="{parts: [{path: 'versions>title'}, {path: 'versions>type'}], formatter: '.formatVersionTitle'}"
                 info="{versions>activatedBy}"
                 timestamp="{path: 'versions>activatedAt', formatter: '.formatVersionTimeStamp'}"
-                type="{path: 'versions>/switchVersionsActive', formatter: '.formatVersionListItemType'}"
+                type="Active"
                 press=".versionSelected"
                 highlight="{path: 'versions>type', formatter: '.formatHighlight'}"
                 highlightText="{path: 'versions>type', formatter: '.formatHighlightText'}"
@@ -21,7 +21,7 @@
         <List>
             <FeedListItem
                 text="{i18n>TIT_ORIGINAL_APP}"
-                type="{path: 'versions>/switchVersionsActive', formatter: '.formatVersionListItemType'}"
+                type="Active"
                 press=".versionSelected"
                 highlight="{path: 'versions>/versions', formatter: '.formatOriginalAppHighlight'}"
                 highlightText="{path: 'versions>/versions', formatter: '.formatOriginalAppHighlightText'}"
