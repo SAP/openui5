@@ -114,6 +114,8 @@ sap.ui.define([
 		QUnit.test("when the DOM reference is available", function(assert) {
 			var oButtonDomRef = this.oButton.getDomRef();
 			var mSize = DOMUtil.getSize(oButtonDomRef);
+			mSize.width = Math.round(mSize.width);
+			mSize.height = Math.round(mSize.height);
 			assert.deepEqual(mSize, {width: this.iWidth, height: this.iHeight}, 'then the static method "getSize" returns the right value');
 
 			jQuery('#qunit-fixture').css('z-index', 1000);
@@ -125,6 +127,8 @@ sap.ui.define([
 			this.oButton.addStyleClass("shrink");
 			var oButtonDomRef = this.oButton.getDomRef();
 			var mSizeAfterTransition = DOMUtil.getSize(oButtonDomRef);
+			mSizeAfterTransition.width = Math.round(mSizeAfterTransition.width);
+			mSizeAfterTransition.height = Math.round(mSizeAfterTransition.height);
 			assert.deepEqual(mSizeAfterTransition, {width: 0.1 * this.iWidth, height: 0.5 * this.iHeight}, 'then the static method "getSize" returns the right value');
 			this.oButton.removeStyleClass("shrink");
 		});
@@ -332,12 +336,8 @@ sap.ui.define([
 
 			this.$Panel.scrollLeft(iMaxScrollLeftValue);
 
-			assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), iMaxScrollLeftValue);
-		});
-		QUnit.test("called without argument", function (assert) {
-			assert.throws(function () {
-				DOMUtil.getScrollLeft();
-			});
+			var iExpectedMaxScrollLeftLTRValue = DOMUtil.getScrollLeft(this.$Panel.get(0));
+			assert.strictEqual(Math.round(iExpectedMaxScrollLeftLTRValue), iMaxScrollLeftValue);
 		});
 	});
 
@@ -580,22 +580,22 @@ sap.ui.define([
 			oFixtureNode.appendChild(oNode2);
 
 			oNode1.scrollTop = 100;
-			oNode1.scrollLeft = 100;
+			jQuery(oNode1).scrollLeft(100);
 			oNode2.scrollTop = 0;
-			oNode2.scrollLeft = 0;
+			jQuery(oNode2).scrollLeft(0);
 
 			assert.strictEqual(oNode1.scrollTop, 100);
-			assert.strictEqual(oNode1.scrollLeft, 100);
+			assert.strictEqual(jQuery(oNode1).scrollLeft(), 100);
 			assert.strictEqual(oNode2.scrollTop, 0);
-			assert.strictEqual(oNode2.scrollLeft, 0);
+			assert.strictEqual(jQuery(oNode2).scrollLeft(), 0);
 
 			// Sync
 			DOMUtil.syncScroll(oNode1, oNode2);
 
 			assert.strictEqual(oNode1.scrollTop, 100);
-			assert.strictEqual(oNode1.scrollLeft, 100);
+			assert.strictEqual(jQuery(oNode1).scrollLeft(), 100);
 			assert.strictEqual(oNode2.scrollTop, 100);
-			assert.strictEqual(oNode2.scrollLeft, 100);
+			assert.strictEqual(jQuery(oNode1).scrollLeft(), 100);
 		});
 	});
 
