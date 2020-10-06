@@ -72,8 +72,8 @@ sap.ui.define([
 			});
 		});
 		QUnit.test("given a mock server, when write is triggered for a draft", function (assert) {
-			var mPropertyBag = {url: "/flexKeyuser", flexObjects: [], draft: true};
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/changes/?parentVersion=&sap-language=en";
+			var mPropertyBag = {url: "/flexKeyuser", flexObjects: [], parentVersion: 1};
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/changes/?parentVersion=1&sap-language=en";
 			var oChange = {
 				fileName: "change1"
 			};

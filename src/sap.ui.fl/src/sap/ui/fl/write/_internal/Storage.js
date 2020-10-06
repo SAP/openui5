@@ -125,7 +125,7 @@ sap.ui.define([
 	 * @param {object[]} mPropertyBag.flexObjects - Data to be stored
 	 * @param {string} [mPropertyBag._transport] - The transport ID which will be handled internally, so there is no need to be passed
 	 * @param {boolean} [mPropertyBag.isLegacyVariant] - Whether the update data has file type .variant or not
-	 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
+	 * @param {number} [nParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
 	Storage.write = function(mPropertyBag) {

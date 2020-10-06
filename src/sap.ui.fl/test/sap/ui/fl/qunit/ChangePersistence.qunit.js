@@ -1943,9 +1943,9 @@ function(
 
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, undefined, true).then(function() {
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, undefined, sap.ui.fl.Versions.Draft).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1, "the Connector was called once");
-				assert.equal(this.oWriteStub.getCall(0).args[0].draft, true, "the draft flag was passed");
+				assert.equal(this.oWriteStub.getCall(0).args[0].parentVersion, sap.ui.fl.Versions.Draft, "the draft version number was passed");
 			}.bind(this));
 		});
 
@@ -2445,12 +2445,12 @@ function(
 
 			var aDirtyChanges = [this.oChangePersistence._aDirtyChanges[0], this.oChangePersistence._aDirtyChanges[2]];
 
-			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, true).then(function() {
+			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, sap.ui.fl.Versions.Original).then(function() {
 				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
 				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
-				assert.equal(this.oWriteStub.getCall(0).args[0].draft, true, "the draft flag was passed");
+				assert.equal(this.oWriteStub.getCall(0).args[0].parentVersion, sap.ui.fl.Versions.Original, "the (original) version parameter was passed");
 				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0], oChangeContent3, "the second change was processed afterwards");
-				assert.equal(this.oWriteStub.getCall(1).args[0].draft, true, "the draft flag was passed");
+				assert.equal(this.oWriteStub.getCall(1).args[0].parentVersion, sap.ui.fl.Versions.Draft, "the version parameter is set to draft for further requests");
 			}.bind(this));
 		});
 	});

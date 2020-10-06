@@ -573,10 +573,9 @@ sap.ui.define([
 	 * @param {boolean} [bSkipUpdateCache] - If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @param {sap.ui.fl.Change} [aChanges] - If passed only those changes are saved
-	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} Resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, bDraft) {
+	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, nParentVersion) {
 		aChanges = aChanges || this._aDirtyChanges;
 		var aChangesClone = aChanges.slice(0);
 		var aRequests = this._getRequests(aChanges);
@@ -596,7 +595,7 @@ sap.ui.define([
 						flexObjects: aPreparedDirtyChangesBulk,
 						transport: sRequest,
 						isLegacyVariant: false,
-						draft: bDraft
+						parentVersion: nParentVersion
 					}).then(function(oResponse) {
 						this._massUpdateCacheAndDirtyState(aCondensedChanges, bSkipUpdateCache);
 						this._deleteNotSavedChanges(aChanges, aCondensedChanges);
@@ -606,7 +605,7 @@ sap.ui.define([
 				this._deleteNotSavedChanges(aChanges, aCondensedChanges);
 			}.bind(this));
 		}
-		return this.saveSequenceOfDirtyChanges(aChangesClone, bSkipUpdateCache, bDraft);
+		return this.saveSequenceOfDirtyChanges(aChangesClone, bSkipUpdateCache, nParentVersion);
 	};
 
 	/**
@@ -617,25 +616,38 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change[]} aDirtyChanges - Array of dirty changes to be saved
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
-	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
+	 * @param {number} [nParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache, bDraft) {
+	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache, nParentVersion) {
+		var oFirstNewChange;
+		if (nParentVersion) {
+			// in case of changes saved for a draft only the first writing operation must have the parentVersion targeting the basis
+			// followup changes must point the the existing draft created with the first request
+			var aNewChanges = aDirtyChanges.filter(function (oChange) {
+				return oChange.getPendingAction() === "NEW";
+			});
+			oFirstNewChange = [].concat(aNewChanges).shift();
+		}
+
 		return aDirtyChanges.reduce(function(oPreviousPromise, oDirtyChange) {
 			return oPreviousPromise
-				.then(this._performSingleSaveAction(oDirtyChange, bDraft))
+				.then(this._performSingleSaveAction(oDirtyChange, oFirstNewChange, nParentVersion))
 				.then(this._updateCacheAndDirtyState.bind(this, oDirtyChange, bSkipUpdateCache));
 		}.bind(this), Promise.resolve());
 	};
 
-	ChangePersistence.prototype._performSingleSaveAction = function(oDirtyChange, bDraft) {
+	ChangePersistence.prototype._performSingleSaveAction = function(oDirtyChange, oFirstChange, nParentVersion) {
 		return function() {
 			if (oDirtyChange.getPendingAction() === "NEW") {
+				if (nParentVersion !== undefined) {
+					nParentVersion = oDirtyChange === oFirstChange ? nParentVersion : sap.ui.fl.Versions.Draft;
+				}
 				return Storage.write({
 					layer: oDirtyChange.getLayer(),
 					flexObjects: [oDirtyChange.getDefinition()],
 					transport: oDirtyChange.getRequest(),
-					draft: bDraft
+					parentVersion: nParentVersion
 				});
 			}
 

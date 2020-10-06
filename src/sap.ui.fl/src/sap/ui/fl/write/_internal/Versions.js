@@ -50,7 +50,14 @@ sap.ui.define([
 		}
 
 		var sPersistedBasisForDisplayedVersion = Utils.getParameter(sap.ui.fl.Versions.UrlParameter);
-		var nPersistedBasisForDisplayedVersion = sPersistedBasisForDisplayedVersion ? parseInt(sPersistedBasisForDisplayedVersion) : nActiveVersion;
+		var nPersistedBasisForDisplayedVersion;
+		if (sPersistedBasisForDisplayedVersion) {
+			nPersistedBasisForDisplayedVersion = parseInt(sPersistedBasisForDisplayedVersion);
+		} else if (aVersions.length > 0) {
+			nPersistedBasisForDisplayedVersion = aVersions[0].version;
+		} else {
+			nPersistedBasisForDisplayedVersion = sap.ui.fl.Versions.Original;
+		}
 
 		var oModel = new JSONModel({
 			versioningEnabled: bVersioningEnabled,
@@ -83,18 +90,18 @@ sap.ui.define([
 			var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
 			oModel.setProperty("/draftAvailable", bDraftAvailable);
 
+			var nDisplayedVersion = bDirtyChanges ? sap.ui.fl.Versions.Draft : oModel.getProperty("/persistedVersion");
+			oModel.setProperty("/displayedVersion", nDisplayedVersion);
+
 			// add draft
 			if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
 				aVersions.splice(0, 0, {version: sap.ui.fl.Versions.Draft, type: "draft"});
-				oModel.setProperty("/displayedVersion", 0);
-				oModel.updateBindings(true);
 			}
 
 			// remove draft
 			if (_doesDraftExistInVersions(aVersions) && !bDraftAvailable) {
 				aVersions.shift();
 				oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
-				oModel.updateBindings(true);
 			}
 
 			var bActivateEnabled = oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion");
@@ -249,6 +256,7 @@ sap.ui.define([
 		var bDraftExists = _doesDraftExistInVersions(aVersions);
 		var sDisplayedVersion = oModel.getProperty("/displayedVersion");
 		var sActiveVersion = oModel.getProperty("/activeVersion");
+		var nParentVersion = oModel.getProperty("/persistedVersion");
 		if (sDisplayedVersion === sActiveVersion) {
 			return Promise.reject("Version is already active");
 		}
@@ -260,7 +268,7 @@ sap.ui.define([
 			var oDirtyChangeInfo = _getDirtyChangesInfo(mPropertyBag);
 			var aChangePersistences = oDirtyChangeInfo.changePersistences;
 			aSaveDirtyChangesPromise = aChangePersistences.map(function (oChangePersistence) {
-				return oChangePersistence.saveDirtyChanges(mPropertyBag.appComponent, false, undefined, true);
+				return oChangePersistence.saveDirtyChanges(mPropertyBag.appComponent, false, undefined, nParentVersion);
 			});
 		}
 		return Promise.all(aSaveDirtyChangesPromise)
@@ -280,6 +288,7 @@ sap.ui.define([
 			oModel.setProperty("/activateEnabled", false);
 			oModel.setProperty("/activeVersion", oVersion.version);
 			oModel.setProperty("/displayedVersion", oVersion.version);
+			oModel.setProperty("/persistedVersion", oVersion.version);
 			oModel.updateBindings(true);
 		});
 	};

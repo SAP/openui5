@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -20,6 +21,7 @@ sap.ui.define([
 ], function(
 	ChangeRegistry,
 	Utils,
+	Layer,
 	LayerUtils,
 	Change,
 	ChangePersistenceFactory,
@@ -459,7 +461,11 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.saveAll = function(oAppComponent, bSkipUpdateCache, bDraft) {
-		return this._oChangePersistence.saveDirtyChanges(oAppComponent, bSkipUpdateCache, undefined, bDraft)
+		var nParentVersion = bDraft ? Versions.getVersionsModel({
+			reference: Utils.normalizeReference(this._sComponentName),
+			layer: Layer.CUSTOMER // only the customer layer has draft active
+		}).getProperty("/persistedVersion") : undefined;
+		return this._oChangePersistence.saveDirtyChanges(oAppComponent, bSkipUpdateCache, undefined, nParentVersion)
 			.then(function(oResult) {
 				if (bDraft && oResult && oResult.response) {
 					var vChangeDefinition = oResult.response;

@@ -129,23 +129,32 @@ function (
 			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true), "the app component and the flag were passed");
 		});
 
-		QUnit.test("when saveAll is called for draft", function(assert) {
+		QUnit.test("when saveAll is called for a draft", function(assert) {
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				persistedVersion: sap.ui.fl.Versions.Draft
+			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			this.oFlexController.saveAll(oComponent, undefined, true);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, true));
+			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, sap.ui.fl.Versions.Draft));
 		});
 
 		QUnit.test("when saveAll is called with skipping the cache and for draft", function(assert) {
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				persistedVersion: sap.ui.fl.Versions.Original
+			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			this.oFlexController.saveAll(oComponent, true, true);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true, undefined, true));
+			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true, undefined, sap.ui.fl.Versions.Original));
 		});
 
-		function _runSaveAllAndAssumeVersionsCall(assert, vResponse, bDraft, nCallCount) {
+		function _runSaveAllAndAssumeVersionsCall(assert, vResponse, nParentVersion, nCallCount) {
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				persistedVersion: nParentVersion
+			}));
 			var oVersionsStub = sandbox.stub(Versions, "onAllChangesSaved");
 			var oResult = vResponse ? {response: vResponse} : undefined;
 			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oResult);
-			return this.oFlexController.saveAll(oComponent, undefined, bDraft).then(function() {
+			return this.oFlexController.saveAll(oComponent, undefined, nParentVersion !== false).then(function() {
 				assert.equal(oVersionsStub.callCount, nCallCount);
 			});
 		}
@@ -163,15 +172,15 @@ function (
 		});
 
 		QUnit.test("when saveAll is called with draft and no change was saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, undefined, true, 0);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, undefined, sap.ui.fl.Versions.Draft, 0);
 		});
 
 		QUnit.test("when saveAll is called with draft and a change was saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component"}], true, 1);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component"}], sap.ui.fl.Versions.Draft, 1);
 		});
 
 		QUnit.test("when saveAll is called with draft and multiple changes were saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component"}, {}], true, 1);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component"}, {}], sap.ui.fl.Versions.Draft, 1);
 		});
 
 		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", function(assert) {
