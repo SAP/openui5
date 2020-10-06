@@ -769,6 +769,13 @@ function(
 		}.bind(this));
 	};
 
+	RuntimeAuthoring.prototype._isOldVersionDisplayed = function() {
+		return VersionsAPI.isOldVersionDisplayed({
+			selector: this.getRootControlInstance(),
+			layer: this.getLayer()
+		});
+	};
+
 	RuntimeAuthoring.prototype._isDraftAvailable = function() {
 		return VersionsAPI.isDraftAvailable({
 			selector: this.getRootControlInstance(),
@@ -1055,12 +1062,29 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onActivateDraft = function(oEvent) {
+		var sVersionTitle = oEvent.getParameter("versionTitle");
+		if (this._isOldVersionDisplayed() && this._isDraftAvailable()) {
+			return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_ON_REACTIVATE_DIALOG", {
+				titleKey: "TIT_DRAFT_DISCARD_ON_REACTIVATE_DIALOG",
+				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.OK
+			})
+			.then(function(sAction) {
+				if (sAction === MessageBox.Action.OK) {
+					this._activateDraft(sVersionTitle);
+				}
+			}.bind(this));
+		}
+		return this._activateDraft(sVersionTitle);
+	};
+
+	RuntimeAuthoring.prototype._activateDraft = function(sVersionTitle) {
 		var sLayer = this.getLayer();
 		var oSelector = this.getRootControlInstance();
 		return VersionsAPI.activateDraft({
 			layer: sLayer,
 			selector: oSelector,
-			title: oEvent.getParameter("versionTitle")
+			title: sVersionTitle
 		}).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.bInitialResetEnabled = true;
