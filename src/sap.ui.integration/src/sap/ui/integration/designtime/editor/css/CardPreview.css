@@ -18,8 +18,7 @@
 	height: calc(350px - 3rem);
 	background-color: #f0f0f0; /* background-color needed for blocking */
 	opacity: 0.001;
-	margin: -2rem;
-	z-index: 1999;
+	margin: -2rem
 }
 
 .sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewDark {

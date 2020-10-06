@@ -10,16 +10,16 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 	oHost.getDestinations = function () {
 		return Promise.resolve([
 			{
-				"name": "products"
+				"name": "Products"
 			},
 			{
-				"name": "JAM"
+				"name": "Orders"
 			},
 			{
-				"name": "portal"
+				"name": "Portal"
 			},
 			{
-				"name": "SF"
+				"name": "Northwind"
 			}
 		]);
 	};
@@ -38,7 +38,9 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 	oHost.getContext = function () {
 		var context = {
 			"sap.workzone": {
+				label: "SAP Work Zone",
 				currentUser: {
+					label: "Current User",
 					id: {
 						label: "Id of the Work Zone user",
 						type: "string",
@@ -67,6 +69,7 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 					}
 				},
 				currentWorkspace: {
+					label: "Current Workspace",
 					id: {
 						label: "Id of a workspace",
 						type: "string",
@@ -82,10 +85,11 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 						placeholder: "Workspace Name",
 						description:
 							"Name of a workspace where the card is added by a page administrator.",
-						value: "Sample Workspace"
+						value: null
 					}
 				},
 				currentCompany: {
+					label: "Current Company",
 					id: {
 						label: "Id of the current company",
 						type: "string",
@@ -115,7 +119,9 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 				}
 			},
 			"sap.successfactors": {
+				label: "SAP SucessFactors",
 				currentUser: {
+					label: "Current User",
 					id: {
 						label: "Success Factors User Id",
 						type: "string",
@@ -127,6 +133,7 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 					}
 				},
 				currentCompany: {
+					label: "Current Company",
 					id: {
 						label: "Success Factors Company Id",
 						type: "string",

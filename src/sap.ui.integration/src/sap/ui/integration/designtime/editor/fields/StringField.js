@@ -61,15 +61,28 @@ sap.ui.define([
 					};
 				}
 			} else {
-				oVisualization = {
-					type: Text,
-					settings: {
-						text: {
-							path: 'currentSettings>value'
-						},
-						wrapping: false
-					}
-				};
+				if (this.getMode() === "translation") {
+
+					oVisualization = {
+						type: Text,
+						settings: {
+							text: {
+								path: 'currentSettings>value'
+							},
+							wrapping: false
+						}
+					};
+				} else {
+					oVisualization = {
+						type: Input,
+						settings: {
+							value: {
+								path: 'currentSettings>value'
+							},
+							editable: false
+						}
+					};
+				}
 			}
 		}
 		this._visualization = oVisualization;
