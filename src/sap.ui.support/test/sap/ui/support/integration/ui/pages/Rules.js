@@ -561,17 +561,20 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeNumberOfRulesInLibrary: function (iLibIndex, iNumberOfRulesInsideLib) {
+				iShouldSeeNumberOfRulesInLibrary: function (iLibIndex, iExpectedCount) {
 					return this.waitFor({
 						id: sTreeTableId,
-						matchers: new AggregationFilled({name: "columns"}),
+						matchers: new AggregationFilled({name: "rows"}),
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
-						success: function (oTable) {
-							var iNumberOfRules = countRulesInLibraryFromModel(oTable, iLibIndex);
-							Opa5.assert.ok(iNumberOfRules === iNumberOfRulesInsideLib, "Number of rules inside the library are " + iNumberOfRulesInsideLib);
+						check: function (oTable) {
+							var iCountOfRules = countRulesInLibraryFromModel(oTable, iLibIndex);
+							return iCountOfRules === iExpectedCount;
 						},
-						errorMessage: "Number of rules are incorrect"
+						success: function () {
+							Opa5.assert.ok(true, "Count of rules inside the library is " + iExpectedCount);
+						},
+						errorMessage: "Count of rules is incorrect"
 					});
 				},
 				iShouldSeeARuleWithSpecificTitle: function (iLibIndex, iRuleIndex, sRuleTitle) {

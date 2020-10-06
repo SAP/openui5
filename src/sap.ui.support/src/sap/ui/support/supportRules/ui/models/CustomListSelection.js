@@ -2,8 +2,11 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/ui/base/EventProvider', 'sap/ui/model/SelectionModel', "sap/ui/support/supportRules/ui/models/SharedModel"
-], function(EventProvider, SelectionModel, SharedModel) {
+	"sap/base/util/deepExtend",
+	'sap/ui/base/EventProvider',
+	'sap/ui/model/SelectionModel',
+	"sap/ui/support/supportRules/ui/models/SharedModel"
+], function(deepExtend, EventProvider, SelectionModel, SharedModel) {
 	"use strict";
 
 	function _isInstanceOf(oObject, sType) {
@@ -69,8 +72,8 @@ sap.ui.define([
 			return this.updateSelectionFromModel();
 		},
 
-		syncParentNoteWithChildrenNotes: function (oTreeTableData) {
-			return this.syncParentNoteWithChildrenNotes(oTreeTableData);
+		syncParentNodeSelectionWithChildren: function (oTreeModel, oTreeTableTreeModel) {
+			return this.syncParentNodeSelectionWithChildren(oTreeModel, oTreeTableTreeModel);
 		}
 	};
 
@@ -365,7 +368,9 @@ sap.ui.define([
 			this.fireEvent("selectionChange", {selectedKeys: this.getSelectedKeys()});
 		},
 
-		syncParentNoteWithChildrenNotes: function(oTreeTableData) {
+		syncParentNodeSelectionWithChildren: function(oTreeModel, oTreeTableTreeModel) {
+			var oTreeTableData = deepExtend({}, oTreeModel);
+
 			Object.keys(oTreeTableData).forEach(function(iLibrary) {
 				var flag = true;
 				oTreeTableData[iLibrary].nodes.forEach(function (oRule) {
@@ -379,6 +384,7 @@ sap.ui.define([
 			});
 
 			SharedModel.setProperty('/treeModel', oTreeTableData);
+			oTreeTableTreeModel.setData(deepExtend({}, oTreeTableData));
 		},
 
 		updateModelAfterChangedSelection: function(oTreeTableData, sPath, bSelected) {
