@@ -1390,10 +1390,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				if (this.getMultiple()) {
 					//multiple is not supported in IE <= 9
 					if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
-						aFileUpload.push('name="' + this.getName() + '[]" ');
+						aFileUpload.push('name="' + jQuery.sap.encodeHTML(this.getName()) + '[]" ');
 					}
 				} else {
-					aFileUpload.push('name="' + this.getName() + '" ');
+					aFileUpload.push('name="' + jQuery.sap.encodeHTML(this.getName()) + '" ');
 				}
 			} else {
 				if (this.getMultiple()) {
@@ -1433,7 +1433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			if (this.getMimeType() && window.File) {
 				var aMimeTypes = this.getMimeType();
 				var sMimeTypes = aMimeTypes.join(",");
-				aFileUpload.push('accept="' + sMimeTypes + '" ');
+				aFileUpload.push('accept="' + jQuery.sap.encodeHTML(sMimeTypes) + '" ');
 			}
 			aFileUpload.push('>');
 
