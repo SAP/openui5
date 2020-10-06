@@ -167,24 +167,25 @@ sap.ui.define([
 			]);
 		}
 
-		function buildCommands(assert) {
-			var aActions = [];
-			if (mOptions.previousActions) {
-				aActions = aActions.concat(mOptions.previousActions);
-			}
-			aActions.push(mOptions.action);
+		function buildAndExecuteCommands(assert) {
+			var aActions = [].concat(
+				mOptions.previousActions || [],
+				mOptions.action
+			);
 			var aCommands = [];
+
 			return aActions.reduce(function(oLastPromise, oAction) {
 				return oLastPromise
-				.then(buildCommand.bind(this, assert, oAction))
-				.then(function(oCommand) {
-					aCommands.push(oCommand);
-				});
+					.then(buildCommand.bind(this, assert, oAction))
+					.then(function(oCommand) {
+						aCommands.push(oCommand);
+						// Execute commands one by one to allow change dependencies
+						return oCommand.execute();
+					});
 			}.bind(this), Promise.resolve())
-
-			.then(function() {
-				return aCommands;
-			});
+				.then(function() {
+					return aCommands;
+				});
 		}
 
 		function buildCommand(assert, oAction) {
@@ -223,7 +224,7 @@ sap.ui.define([
 							var oAggregationOverlay;
 
 							if (oAction.name === "move") {
-								var oElementOverlay = OverlayRegistry.getOverlay(mParameter.movedElements[0].element);
+								var oElementOverlay = OverlayRegistry.getOverlay(mParameter.movedElements[0].element || mParameter.movedElements[0].id);
 								var oRelevantContainer = oElementOverlay.getRelevantContainer();
 								oControl = oRelevantContainer;
 								oElementDesignTimeMetadata = oElementOverlay.getParentAggregationOverlay().getDesignTimeMetadata();
@@ -311,7 +312,7 @@ sap.ui.define([
 				changes: aChanges
 			}).then(function(aCondensedChanges) {
 				if (mOptions.changesAfterCondensing !== undefined) {
-					assert.equal(mOptions.changesAfterCondensing, aCondensedChanges.length, "after condensing the amount of changes is correct");
+					assert.equal(aCondensedChanges.length, mOptions.changesAfterCondensing, "after condensing the amount of changes is correct");
 				}
 				var aChangeIds = aCondensedChanges.map(function(oChange) {return oChange.getId();});
 				aCommands.forEach(function(oCommand) {
@@ -348,20 +349,34 @@ sap.ui.define([
 			sandbox.stub(ChangePersistence.prototype, "getCacheKey").resolves("etag-123");
 
 			return createViewInComponent.call(this, SYNC)
-			.then(function() {
-				return buildCommands.call(this, assert);
-			}.bind(this))
+				.then(buildCommandsAndApplyChangesOnXML.bind(this, assert, aChanges));
+		}
 
-			.then(function(aCommands) {
-				this.aCommands = aCommands;
-				aCommands.forEach(function(oCommand) {
-					aChanges.push(oCommand.getPreparedChange());
-				});
+		function buildCommandsAndApplyChangesOnXML(assert, aChanges) {
+			var aActions = [].concat(
+				mOptions.previousActions || [],
+				mOptions.action
+			);
+			var aCommands = [];
 
-				//destroy and recreate component and view to get the changes applied
-				this.oUiComponentContainer.destroy();
-				return createViewInComponent.call(this, ASYNC);
-			}.bind(this));
+			return aActions.reduce(function(oLastPromise, oAction) {
+				return oLastPromise
+					.then(buildCommand.bind(this, assert, oAction))
+					.then(function(oCommand) {
+						aCommands.push(oCommand);
+						aChanges.push(oCommand.getPreparedChange());
+
+						// Destroy and recreate component and view to get the changes applied
+						// Wait for each change to be applied individually to allow dependencies
+						// between changes of different actions
+						this.oUiComponentContainer.destroy();
+						return createViewInComponent.call(this, ASYNC);
+					}.bind(this));
+			}.bind(this), Promise.resolve())
+				.then(function (oView) {
+					this.aCommands = aCommands;
+					return oView;
+				}.bind(this));
 		}
 
 		// XML View checks
@@ -443,8 +458,8 @@ sap.ui.define([
 		function waitForDtSync(oDesignTime) {
 			if (oDesignTime.getStatus() !== DesignTimeStatus.SYNCED) {
 				return new Promise(function(fnResolve) {
-					this.oDesignTime.attachEventOnce("synced", fnResolve);
-				}.bind(this));
+					oDesignTime.attachEventOnce("synced", fnResolve);
+				});
 			}
 			return Promise.resolve();
 		}
@@ -464,10 +479,10 @@ sap.ui.define([
 				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {}}));
 
 				return createViewInComponent.call(this, SYNC)
-				.then(buildCommands.bind(this, assert))
-				.then(function(aCommands) {
-					this.aCommands = aCommands;
-				}.bind(this));
+					.then(buildAndExecuteCommands.bind(this, assert))
+					.then(function(aCommands) {
+						this.aCommands = aCommands;
+					}.bind(this));
 			},
 			afterEach: function() {
 				this.oDesignTime.destroy();
@@ -477,9 +492,7 @@ sap.ui.define([
 			}
 		}, function() {
 			QUnit.test("When executing the underlying command on the control at runtime", function(assert) {
-				return executeCommands(this.aCommands)
-
-				.then(waitForDtSync.bind(this, this.oDesignTime))
+				return waitForDtSync(this.oDesignTime)
 
 				.then(function() {
 					sap.ui.getCore().applyChanges();
@@ -488,9 +501,7 @@ sap.ui.define([
 			});
 
 			QUnit.test("When executing and undoing the command", function(assert) {
-				return executeCommands(this.aCommands)
-
-				.then(waitForDtSync.bind(this, this.oDesignTime))
+				return waitForDtSync(this.oDesignTime)
 
 				.then(undoCommands.bind(null, this.aCommands))
 
@@ -503,9 +514,7 @@ sap.ui.define([
 			});
 
 			QUnit.test("When executing, undoing and redoing the command", function(assert) {
-				return executeCommands(this.aCommands)
-
-				.then(waitForDtSync.bind(this, this.oDesignTime))
+				return waitForDtSync(this.oDesignTime)
 
 				// condensing has to be done before the changes are reverted
 				.then(condenseCommands.bind(this, this.oView, this.aCommands, assert))
