@@ -247,12 +247,20 @@ sap.ui.define([
 
 				if (oTargetsConfig) {
 					this._oTargets = this._createTargets(this._oConfig, oTargetsConfig);
+
+					// The router instance can't be forwarded to the target through the constructor parameter because
+					// the _createTargets method is overwritten in router subclasses, for example sap.m.routing.Router,
+					// without calling the parent's constructor
+					this._oTargets._setRouter(this);
+
 					this._oTargets.attachDisplay(function(oEvent) {
+						var bIsRouteRelevant = oEvent.getParameter("routeRelevant");
+
 						if (this.isInitialized() && !this._bMatchingProcessStarted) {
 							var oHashChanger = this.getHashChanger();
 							// check the type of oHashChanger before calling the function "resetHash"
 							// which only exists on RouterHashChanger
-							if (oHashChanger instanceof RouterHashChanger) {
+							if (oHashChanger instanceof RouterHashChanger && !bIsRouteRelevant) {
 								// reset the hash to allow the match with the previous route after
 								// displaying a target without involving the router
 								oHashChanger.resetHash();

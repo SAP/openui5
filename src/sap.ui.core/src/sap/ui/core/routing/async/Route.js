@@ -62,6 +62,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/util/extend", "sap/ui/
 					aAlignedTargets = oTargets._alignTargetsInfo(this._oConfig.target);
 					aAlignedTargets.forEach(function(oTarget){
 						oTarget.propagateTitle = oTarget.hasOwnProperty("propagateTitle") ? oTarget.propagateTitle : oRouter._oConfig.propagateTitle;
+						oTarget.routeRelevant = true;
 					});
 				}
 			} else {

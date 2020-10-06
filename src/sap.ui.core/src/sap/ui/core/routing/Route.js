@@ -230,6 +230,12 @@ sap.ui.define([
 				if (this._oRouter._oTargets) {
 					// suspend the targets which were displayed when the route was matched
 					this._oRouter._oTargets.suspend(this._oConfig.target);
+
+					// suspend the dynamic targets
+					if (this._oConfig.dynamicTarget) {
+						this._oRouter._oTargets.suspend(this._oConfig.dynamicTarget);
+						delete this._oConfig.dynamicTarget;
+					}
 				}
 			},
 

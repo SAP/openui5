@@ -38,6 +38,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"async/Views": {
 				title: "QUnit Page for sap.ui.core.routing.Views (async)"
 			},
+			"async/TitleHistory": {
+				title: "QUnit Page for sap.ui.core.routing.TitleHistory (async)"
+			},
 			"sync/Route": {
 				title: "QUnit Page for sap.ui.core.routing.Route (sync)",
 				sinon: {

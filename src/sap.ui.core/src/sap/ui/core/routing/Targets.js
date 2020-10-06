@@ -342,6 +342,23 @@ sap.ui.define([
 			},
 
 			/**
+			 * Associate the Targets with a router. Once the Targets is already connected with a router, futher calls of
+			 * this function is ignored
+			 *
+			 * @param {sap.ui.core.routing.Router} oRouter The router instance
+			 * @return {sap.ui.core.routing.Targets} The Targets itself
+			 * @private
+			 */
+			_setRouter: function(oRouter) {
+				if (!this._oRouter) {
+					this._oRouter = oRouter;
+				} else {
+					Log.warning("The Targets is already connected with a router and this call of _setRouter is ignored");
+				}
+				return this;
+			},
+
+			/**
 			 * Destroys the targets instance and all created targets. Does not destroy the views instance passed to the constructor. It has to be destroyed separately.
 			 * @public
 			 * @returns { sap.ui.core.routing.Targets } this for chaining.
@@ -365,9 +382,22 @@ sap.ui.define([
 			},
 
 			/**
+			 * @typedef {object} sap.ui.core.routing.TargetInfo
+			 * @description Object containing the target info for displaying targets
+			 * @property {string} name Defines the name of the target that is going to be displayed
+			 * @property {string} [prefix] A prefix that is used for reserving a dedicated section in the browser hash
+			 *  for the router of this target. This needs to be set only for target that has type "Component"
+			 * @property {boolean} [propagateTitle=false] Whether the titleChanged event from this target should be propagated to the parent or not
+			 * @property {boolean} [routeRelevant=false] Whether the target is relevant to the current matched route or not. If 'true', then the dynamic target is linked to the route's life cycle.
+			 *     When switching to a different route, then the dynamic target will be suspended.
+			 * @protected
+			 * @since 1.84.0
+			 */
+
+			/**
 			 * Creates a view and puts it in an aggregation of the specified control.
 			 *
-			 * @param {string|string[]} vTargets Key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys.
+			 * @param {string|string[]|sap.ui.core.routing.TargetInfo|sap.ui.core.routing.TargetInfo[]} vTargets Either the target name or a target info object. To display multiple targets you may also pass an array of target names or target info objects.
 			 * @param {object} [oData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
 			 * @param {string} [sTitleTarget] the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged titleChanged} event
 			 * @public
@@ -465,12 +495,12 @@ sap.ui.define([
 				var aTargetsInfo = this._alignTargetsInfo(vTargets);
 
 				aTargetsInfo.forEach(function(oTargetInfo) {
-					var oTarget = this.getTarget(oTargetInfo.name);
+					var sTargetName = oTargetInfo.name;
+					var oTarget = this.getTarget(sTargetName);
 
 					if (oTarget) {
 						oTarget.suspend();
 					}
-
 				}.bind(this));
 
 				return this;
@@ -491,6 +521,7 @@ sap.ui.define([
 			 * @param {object} oEvent.getParameters.config The options object passed to the constructor {@link sap.ui.core.routing.Targets#constructor}
 			 * @param {object} oEvent.getParameters.name The name of the target firing the event
 			 * @param {object} oEvent.getParameters.data The data passed into the {@link sap.ui.core.routing.Targets#display} function
+			 * @param {object} oEvent.getParameters.routeRelevant=false Whether the target is relevant to the matched route or not
 			 * @public
 			 */
 
@@ -675,12 +706,15 @@ sap.ui.define([
 					this.fireDisplay({
 						name : sName,
 						view : oParameters.view,
+						object: oParameters.object,
 						control : oParameters.control,
 						config : oParameters.config,
-						data: oParameters.data
+						data: oParameters.data,
+						routeRelevant: oParameters.routeRelevant
 					});
 				}, this);
 				this._mTargets[sName] = oTarget;
+
 				return oTarget;
 			},
 

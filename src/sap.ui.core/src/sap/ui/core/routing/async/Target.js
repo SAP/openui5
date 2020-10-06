@@ -388,13 +388,15 @@ sap.ui.define([
 			return Promise.all([oSequencePromise, pNestedRouteMatched]).then(function(aObjects) {
 				var oContainerControl = aObjects[0].control;
 				var oObject = aObjects[0].view;
+
 				if (oContainerControl && oObject) {
 					that.fireDisplay({
 						view : oObject.isA("sap.ui.core.mvc.View") ? oObject : undefined,
 						object: oObject,
 						control : oContainerControl,
 						config : that._oOptions,
-						data: vData
+						data: vData,
+						routeRelevant: that._routeRelevant
 					});
 				}
 				return aObjects[0];

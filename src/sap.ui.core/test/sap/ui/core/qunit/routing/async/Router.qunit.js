@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/routing/HashChanger",
+	"sap/ui/core/routing/RouterHashChanger",
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/routing/Views",
 	"sap/ui/model/json/JSONModel",
@@ -18,8 +19,9 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/Device",
 	"sap/ui/core/Component",
-	"sap/ui/core/ComponentContainer"
-], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Device, Component, ComponentContainer) {
+	"sap/ui/core/ComponentContainer",
+	"sap/m/VBox"
+], function (Log, UIComponent, Controller, JSView, View, HashChanger, RouterHashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Device, Component, ComponentContainer, VBox) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
@@ -2172,754 +2174,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("title history", {
-		beforeEach: function () {
-			// reset hash
-			HashChanger.getInstance().setHash("");
-
-			this.oApp = new App();
-
-			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
-				return oView;
-			});
-
-			this.getRouteMatchedSpy = function (oRouteMatchedSpies, sRouteName) {
-				oRouteMatchedSpies[sRouteName] = sinon.spy(this.oRouter.getRoute(sRouteName), "_routeMatched");
-				return oRouteMatchedSpies;
-			}.bind(this);
-
-			this.oDefaults = {
-				// only shells will be used
-				controlAggregation: "pages",
-				viewName: "foo",
-				controlId: this.oApp.getId(),
-				async: true
-			};
-
-		},
-		afterEach: function () {
-			this.fnStub.restore();
-			this.oRouter.destroy();
-			for (var sKey in this.oRouteMatchedSpies) {
-				this.oRouteMatchedSpies[sKey].restore();
-			}
-		}
-	});
-
-	QUnit.test("title history", function(assert) {
-		// Arrange
-		var done = assert.async(),
-			oParameters,
-			sHomeTitle = "HOME",
-			sProductTitle = "PRODUCT",
-			sProductDetailTitle = "PRODUCT_DETAIL",
-			fnEventSpy = this.spy(function (oEvent) {
-				oParameters = oEvent.getParameters();
-			});
-
-		this.oRouterConfig = {
-			home: {
-				pattern: "",
-				target: "home"
-			},
-			product : {
-				pattern : "product",
-				target: "product"
-			},
-			productDetail : {
-				pattern : "productDetail",
-				target: "productDetail"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: sHomeTitle
-			},
-			product: {
-				title: sProductTitle
-			},
-			productDetail: {
-				title: sProductDetailTitle
-			}
-		};
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
-		this.oRouter.attachTitleChanged(fnEventSpy);
-
-		// Act
-		this.oRouter.initialize();
-
-		var that = this;
-
-		sinon.assert.calledOnce(that.oRouteMatchedSpies["home"]);
-		that.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
-			assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
-			assert.deepEqual(oParameters.history, [], "history state is currently empty");
-			// Act
-			that.oRouter.navTo("product");
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["product"]);
-			that.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-				assert.deepEqual(oParameters.history, [{
-					hash: "",
-					title: sHomeTitle
-				}], "history state is currently empty");
-				// Act
-				that.oRouter.navTo("productDetail");
-				sinon.assert.calledOnce(that.oRouteMatchedSpies["productDetail"]);
-				that.oRouteMatchedSpies["productDetail"].returnValues[0].then(function() {
-					// Assert
-					assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
-					assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
-					assert.equal(oParameters.history.length, 2, "history was updated only once");
-					assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-						hash: "product",
-						title: sProductTitle
-					}, "history state is currently empty");
-					// Act
-					window.history.go(-1);
-					that.oRouter.getRoute("product").attachMatched(function() {
-						sinon.assert.calledTwice(that.oRouteMatchedSpies["product"]);
-						that.oRouteMatchedSpies["product"].returnValues[1].then(function() {
-							// Assert
-							assert.strictEqual(fnEventSpy.callCount, 4, "titleChanged event is fired again");
-							assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-							assert.equal(oParameters.history.length, 1, "history was updated only once");
-							assert.deepEqual(oParameters.history, [{
-								hash: "",
-								title: sHomeTitle
-							}], "history state is currently empty");
-							done();
-						});
-					});
-				});
-			});
-		});
-	});
-
-	QUnit.test("avoid title history redundancy", function(assert) {
-		// Arrange
-		var that = this,
-			oParameters,
-			sHomeTitle = "HOME",
-			sProductTitle = "PRODUCT",
-			sProductDetailTitle = "PRODUCT_DETAIL",
-			fnEventSpy = this.spy(function (oEvent) {
-				oParameters = oEvent.getParameters();
-			});
-
-		this.oRouterConfig = {
-			home: {
-				pattern: "",
-				target: "home"
-			},
-			product : {
-				pattern : "product",
-				target: "product"
-			},
-			productDetail : {
-				pattern : "productDetail",
-				target: "productDetail"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: sHomeTitle
-			},
-			product: {
-				title: sProductTitle
-			},
-			productDetail: {
-				title: sProductDetailTitle
-			}
-		};
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
-		this.oRouter.attachTitleChanged(fnEventSpy);
-
-		return Promise.resolve().then(function() {
-
-			// Act
-			that.oRouter.initialize();
-
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["home"]);
-			return that.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
-				assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
-				assert.deepEqual(oParameters.history, [], "history state is currently empty");
-			});
-
-		}).then(function() {
-
-			// Act
-			that.oRouter.navTo("product");
-
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["product"]);
-			return that.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-				assert.deepEqual(oParameters.history, [{
-					hash: "",
-					title: sHomeTitle
-				}], "history state is correctly updated");
-			});
-
-		}).then(function() {
-
-			// Act
-			that.oRouter.navTo("productDetail");
-
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["productDetail"]);
-			return that.oRouteMatchedSpies["productDetail"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
-				assert.equal(oParameters.history.length, 2, "history was updated only once");
-				assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-					hash: "product",
-					title: sProductTitle
-				}, "history state is correctly updated");
-			});
-
-		}).then(function() {
-
-			// Act
-			that.oRouter.navTo("home");
-
-			sinon.assert.calledTwice(that.oRouteMatchedSpies["home"]);
-			return that.oRouteMatchedSpies["home"].returnValues[1].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 4, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
-				assert.equal(oParameters.history.length, 2, "history was updated only once");
-				assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-					hash: "productDetail",
-					title: sProductDetailTitle
-				}, "history state is correctly updated");
-			});
-
-		});
-	});
-
-	QUnit.test("Replace the last history instead of inserting new one when hash is replaced", function(assert) {
-		// Arrange
-		var oParameters,
-			sHomeTitle = "HOME",
-			sProductTitle = "PRODUCT",
-			sProductDetailTitle = "PRODUCT_DETAIL",
-			fnEventSpy = this.spy(function (oEvent) {
-				oParameters = oEvent.getParameters();
-			});
-
-		this.oRouterConfig = {
-			home: {
-				pattern: "",
-				target: "home"
-			},
-			product : {
-				pattern : "product",
-				target: "product"
-			},
-			productDetail : {
-				pattern : "productDetail",
-				target: "productDetail"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: sHomeTitle
-			},
-			product: {
-				title: sProductTitle
-			},
-			productDetail: {
-				title: sProductDetailTitle
-			}
-		};
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
-		this.oRouter.attachTitleChanged(fnEventSpy);
-
-		// Act
-		this.oRouter.initialize();
-
-		var that = this;
-
-		sinon.assert.calledOnce(that.oRouteMatchedSpies["home"]);
-		return that.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
-			assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
-			assert.deepEqual(oParameters.history, [], "history state is currently empty");
-
-			// Act
-			that.oRouter.navTo("product");
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["product"]);
-			return that.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-				assert.deepEqual(oParameters.history, [{
-					hash: "",
-					title: sHomeTitle
-				}], "history state is correctly updated");
-
-				// Act
-				that.oRouter.navTo("productDetail", null, true);
-				sinon.assert.calledOnce(that.oRouteMatchedSpies["productDetail"]);
-				return that.oRouteMatchedSpies["productDetail"].returnValues[0].then(function() {
-					// Assert
-					assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
-					assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
-					assert.equal(oParameters.history.length, 1, "history was updated only once");
-					assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-						hash: "",
-						title: sHomeTitle
-					}, "history state is correctly updated");
-				});
-			});
-		});
-	});
-
-	QUnit.test("titleChanged event is fired before next navigation shouldn't create new history entry", function(assert) {
-		// Arrange
-		var oParameters,
-			sHomeTitle = "homeTitle",
-			sNewTitle = "newTitle",
-			fnEventSpy = this.spy(function (oEvent) {
-				oParameters = oEvent.getParameters();
-			}),
-			oModel = new JSONModel({
-				title: sHomeTitle
-			});
-
-		this.oApp.setModel(oModel);
-
-		this.oRouterConfig = {
-			home: {
-				pattern: "",
-				target: "home"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: "{/title}"
-			}
-		};
-
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
-		this.oRouter.attachTitleChanged(fnEventSpy);
-
-		// Act
-		this.oRouter.initialize();
-
-		sinon.assert.calledOnce(this.oRouteMatchedSpies["home"]);
-		return this.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			assert.ok(fnEventSpy.calledOnce, "titleChanged event is fired");
-			assert.equal(oParameters.title, sHomeTitle, "title parameter is set");
-			assert.equal(oParameters.history.length, 0, "No new history entry is created");
-			assert.equal(this.oRouter._aHistory[0].title, sHomeTitle, "title is updated in title history stack");
-
-			oModel.setProperty("/title", sNewTitle);
-			assert.ok(fnEventSpy.calledTwice, "titleChanged event is fired again");
-			assert.equal(oParameters.title, sNewTitle, "title parameter is set");
-			assert.equal(oParameters.history.length, 0, "No new history entry is created");
-			assert.equal(this.oRouter._aHistory[0].title, sNewTitle, "title is updated in title history stack");
-		}.bind(this));
-	});
-
-	QUnit.test("Back navigation from target w/o title should not remove history entry", function(assert) {
-		// Arrange
-		var done = assert.async(),
-			oParameters,
-			sHomeTitle = "HOME",
-			sProductTitle = "PRODUCT",
-			fnEventSpy = this.spy(function (oEvent) {
-				oParameters = oEvent.getParameters();
-			});
-
-		this.oRouterConfig = {
-			home: {
-				pattern: "",
-				target: "home"
-			},
-			product : {
-				pattern : "product",
-				target: "product"
-			},
-			productDetail : {
-				pattern : "productDetail",
-				target: "productDetailNoTitle"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: sHomeTitle
-			},
-			product: {
-				title: sProductTitle
-			},
-			productDetailNoTitle: {
-			}
-		};
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
-		this.oRouter.attachTitleChanged(fnEventSpy);
-
-		var that = this;
-
-		// Act
-		that.oRouter.initialize();
-		sinon.assert.calledOnce(that.oRouteMatchedSpies["home"]);
-		return that.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			that.oRouter.navTo("product");
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["product"]);
-			return that.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-				that.oRouter.navTo("productDetail");
-				sinon.assert.calledOnce(that.oRouteMatchedSpies["productDetail"]);
-				return that.oRouteMatchedSpies["productDetail"].returnValues[0].then(function() {
-					assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired twice");
-					window.history.go(-1);
-
-					// Assert
-					that.oRouter.attachRouteMatched(function() {
-						assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event isn't fired again");
-						assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-						assert.equal(oParameters.history.length, 1, "history entry was not removed");
-						assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-							hash: "",
-							title: sHomeTitle
-						}, "history state is correctly updated");
-						done();
-					});
-				});
-			});
-		});
-	});
-
-	QUnit.test("getTitleHistory", function(assert) {
-		// Arrange
-		var sHomeTitle = "HOME";
-
-		this.oRouterConfig = {
-			home: {
-				pattern: "",
-				target: "home"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: sHomeTitle
-			}
-		};
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
-		// Act
-		this.oRouter.initialize();
-		sinon.assert.calledOnce(this.oRouteMatchedSpies["home"]);
-		return this.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			// Assert
-			var aHistoryRef = {
-				hash: "",
-				title: "HOME"
-			};
-			assert.deepEqual(this.oRouter.getTitleHistory()[0], aHistoryRef);
-		}.bind(this));
-
-	});
-
-	QUnit.test("home route declaration", function(assert) {
-		// Arrange
-		var sHomeTitle = "HOME",
-			sProductTitle = "PRODUCT",
-			done = assert.async(),
-			oParameters,
-			fnEventSpy = this.spy(function (oEvent) {
-				oParameters = oEvent.getParameters();
-			});
-
-		this.oRouterConfig = {
-			home : {
-				pattern: "",
-				target: "home"
-			},
-			product : {
-				pattern : "product",
-				target: "product"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: sHomeTitle
-			},
-			product: {
-				title: sProductTitle
-			}
-		};
-
-		this.oDefaults = {
-			// only shells will be used
-			controlAggregation: "pages",
-			viewName: "foo",
-			controlId: this.oApp.getId(),
-			homeRoute: "home",
-			async: true
-		};
-
-		this.oOwner = {
-			getManifestEntry: function() {
-				return "HOME";
-			},
-			getId: function() {
-				return "component1";
-			}
-		};
-
-
-		hasher.setHash(this.oRouterConfig.product.pattern);
-
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-		this.oRouter._oOwner = this.oOwner;
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
-		this.oRouter.attachTitleChanged(fnEventSpy);
-
-		// Act
-		this.oRouter.initialize();
-
-		return this.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-			// Assert
-			var aHistoryRef = {
-				hash: "",
-				isHome: true,
-				title: "HOME"
-			};
-
-			assert.deepEqual(this.oRouter.getTitleHistory()[0], aHistoryRef, "Home route attached to history.");
-			assert.strictEqual(this.oRouter.getTitleHistory().length, 2, "Product route attached to history");
-			assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired.");
-			assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-			assert.deepEqual(oParameters.history[oParameters.history.length - 1], aHistoryRef, "history state is correctly updated");
-			done();
-
-		}.bind(this));
-	});
-
-	QUnit.test("Home Route declaration with dynamic parts", function(assert) {
-		// Arrange
-		var sHomeTitle = "HOME",
-			sProductTitle = "PRODUCT",
-			oParameters,
-			fnEventSpy = this.spy(function (oEvent) {
-				oParameters = oEvent.getParameters();
-			});
-
-		this.oRouterConfig = {
-			home : {
-				pattern: "home/{testid}",
-				target: "home"
-			},
-			product : {
-				pattern : "/product",
-				target: "product"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: sHomeTitle
-			},
-			product: {
-				title: sProductTitle
-			}
-		};
-
-		this.oDefaults = {
-			// only shells will be used
-			controlAggregation: "pages",
-			viewName: "foo",
-			controlId: this.oApp.getId(),
-			homeRoute: "home",
-			async: true
-		};
-		this.spy = sinon.spy(Log, "error");
-
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
-		this.oRouter.attachTitleChanged(fnEventSpy);
-
-		hasher.setHash(this.oRouterConfig.product.pattern);
-
-		// Act
-		this.oRouter.initialize();
-
-		return this.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-			// Assert
-			sinon.assert.calledWith(this.spy, "Routes with dynamic parts cannot be resolved as home route.");
-			assert.strictEqual(oParameters.history.length, 0, "Home route shouldn't be added to history.");
-			assert.deepEqual(this.oRouter.getTitleHistory()[0], {
-				hash: "/product",
-				title: "PRODUCT"
-			}, "Product route is added to history.");
-			assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired.");
-			assert.strictEqual(oParameters.title, sProductTitle, "Did pass product title value to the event parameters");
-			this.spy.restore();
-		}.bind(this));
-	});
-
-	QUnit.test("App home indicator for later navigations", function(assert) {
-		// Arrange
-		var sHomeTitle = "HOME",
-			sProductTitle = "PRODUCT",
-			done = assert.async();
-
-		this.oRouterConfig = {
-			home : {
-				pattern: "",
-				target: "home"
-			},
-			product : {
-				pattern : "/product",
-				target: "product"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: sHomeTitle
-			},
-			product: {
-				title: sProductTitle
-			}
-		};
-
-		this.oDefaults = {
-			// only shells will be used
-			controlAggregation: "pages",
-			viewName: "foo",
-			controlId: this.oApp.getId(),
-			homeRoute: "home",
-			async: true
-		};
-
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		hasher.setHash(this.oRouterConfig.product.pattern);
-
-		this.oRouter.attachTitleChanged(function(oEvent) {
-
-			if (hasher.getHash() !== this.oRouterConfig.home.pattern) {
-				hasher.setHash(this.oRouterConfig.home.pattern);
-			} else {
-				// Assert
-				assert.strictEqual(arguments[0].mParameters.history.length, 2, "Home and Product route should be added to history.");
-				assert.strictEqual(arguments[0].mParameters.isHome, true);
-				assert.strictEqual(arguments[0].mParameters.history[0].isHome, true);
-				assert.strictEqual(this.oRouter.getTitleHistory()[0].isHome, true);
-				done();
-			}
-
-		}.bind(this));
-
-		// Act
-		this.oRouter.initialize();
-	});
-
-	QUnit.test("App home indicator for later navigations with dynamic parts", function(assert) {
-		// Arrange
-		var sHomeTitle = "HOME",
-			sProductTitle = "PRODUCT",
-			done = assert.async();
-
-		this.oRouterConfig = {
-			home : {
-				pattern: "home/{testId}",
-				target: "home"
-			},
-			product : {
-				pattern : "/product",
-				target: "product"
-			}
-		};
-
-		this.oTargetConfig = {
-			home: {
-				title: sHomeTitle
-			},
-			product: {
-				title: sProductTitle
-			}
-		};
-
-		this.oDefaults = {
-			// only shells will be used
-			controlAggregation: "pages",
-			viewName: "foo",
-			controlId: this.oApp.getId(),
-			homeRoute: "home",
-			async: true
-		};
-
-		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		hasher.setHash(this.oRouterConfig.product.pattern);
-
-		this.oRouter.attachTitleChanged(function() {
-
-			var oRefProductRoute = {
-				"hash": "/product",
-				"title": "PRODUCT"
-			};
-
-			var oRefHomeRoute = {
-				"hash": "home/{testId}",
-				"title": "HOME"
-			};
-
-			if (hasher.getHash() !== this.oRouterConfig.home.pattern) {
-				hasher.setHash(this.oRouterConfig.home.pattern);
-			} else {
-				// Assert
-				assert.strictEqual(arguments[0].mParameters.history.length, 1, "Product route should be added to history.");
-				assert.deepEqual(this.oRouter.getTitleHistory()[0], oRefProductRoute);
-				assert.deepEqual(this.oRouter.getTitleHistory()[1], oRefHomeRoute);
-				assert.strictEqual(this.oRouter.getTitleHistory().length, 2, "Home route should be added to history.");
-				done();
-			}
-		}.bind(this));
-
-		// Act
-		this.oRouter.initialize();
-	});
-
 	QUnit.module("component");
 
 	QUnit.test("Should create a view with an component", function (assert) {
@@ -2945,6 +2199,7 @@ sap.ui.define([
 
 	QUnit.module("targets", {
 		beforeEach: function () {
+			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 			this.oShell = new ShellSubstitute();
 			this.oChildShell = new ShellSubstitute();
 			this.oSecondShell = new ShellSubstitute();
@@ -2966,6 +2221,7 @@ sap.ui.define([
 			};
 		},
 		afterEach: function () {
+			this.oEventProviderStub.restore();
 			this.oRouter.destroy();
 			this.oShell.destroy();
 			this.oChildShell.destroy();
@@ -2988,9 +2244,12 @@ sap.ui.define([
 
 		// System under test
 		this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
-		var oPlaceSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
+		var oTarget = this.oRouter.getTarget("myTarget");
+		var oPlaceSpy = this.spy(oTarget, "_place");
 		var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
+		var oDisplayEventSpy = this.spy();
 
+		oTarget.attachDisplay(oDisplayEventSpy);
 
 		// Act
 		this.oRouter.parse(this.sPattern);
@@ -2999,6 +2258,9 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(this.oRouter._oTargets._oCache, this.oRouter._oViews, "Targets are using the same view repository");
 			assert.strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
+
+			assert.equal(oDisplayEventSpy.callCount, 1, "The display event hander is called");
+			assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("routeRelevant"), true, "The routeRelevant parameter is set with true for static target");
 
 			assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
 			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
@@ -3532,11 +2794,32 @@ sap.ui.define([
 		});
 	});
 
+	function resetBrowserHash() {
+		HashChanger.getInstance().fireHashChanged("");
+		hasher.setHash("");
+	}
+
+	function waitTillRouteMatched(oRouter, sRoute) {
+		var oRoute = oRouter.getRoute(sRoute),
+			fnRouteMatched;
+		if (oRoute) {
+			return new Promise(function(resolve, reject) {
+				fnRouteMatched = function(oEvent) {
+					oRoute.detachMatched(fnRouteMatched);
+					resolve(oEvent.getParameters());
+				};
+				oRoute.attachMatched(fnRouteMatched);
+			});
+		} else {
+			return Promise.reject("Route " + sRoute + " can't be found");
+		}
+	}
+
 	var count = 0;
 	QUnit.module("Router in nested component", {
 		beforeEach: function() {
 			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
-			hasher.setHash("");
+			resetBrowserHash();
 			var that = this;
 			this.fnInitRouter = function() {
 				UIComponent.prototype.init.apply(this, arguments);
@@ -3546,7 +2829,19 @@ sap.ui.define([
 
 			sap.ui.jsview("rootView1", {
 				createContent : function() {
-					return new ShellSubstitute(this.createId("shell"));
+					return new VBox(this.createId("box"), {
+						items: [
+							new ShellSubstitute(this.createId("shell"))
+						]
+					});
+				}
+			});
+
+			sap.ui.jsview("namespace1.footer" + count, {
+				createContent : function() {
+					return new Button({
+						text: "abc"
+					});
 				}
 			});
 
@@ -3566,10 +2861,10 @@ sap.ui.define([
 							{
 								pattern: "",
 								name: "home",
-								target: {
+								target: [ {
 									name: "home",
 									prefix: "child"
-								}
+								}, "footer"]
 							},
 							{
 								pattern: "category",
@@ -3580,11 +2875,19 @@ sap.ui.define([
 							home: {
 								name: "namespace1.ChildComponent" + count,
 								type: "Component",
+								clearControlAggregation: true,
 								controlId: "shell",
 								controlAggregation: "content",
 								options: {
 									manifest: false
 								}
+							},
+							footer: {
+								type: "View",
+								viewType: "JS",
+								name: "namespace1.footer" + count,
+								controlId: "box",
+								controlAggregation: "items"
 							}
 						}
 					}
@@ -3595,7 +2898,7 @@ sap.ui.define([
 			this.oNestedRouteMatchedSpy = sinon.spy();
 
 			sap.ui.predefine("namespace1/ChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				return UIComponent.extend("namespace1.ChildComponent", {
+				return UIComponent.extend("namespace1.ChildComponent" + count, {
 					metadata : {
 						routing:  {
 							config: {
@@ -3644,7 +2947,7 @@ sap.ui.define([
 				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
 
 				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent", "The correct component is loaded and instantiated");
+				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
 				assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
 
 				var oEvent = that.oNestedRouteMatchedSpy.args[0][0];
@@ -3812,11 +3115,383 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Should suspend a dynamic displayed target when router navigates away from it - routeRelevant: true", function(assert) {
+		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
+				metadata : {
+					routing:  {
+						config: {
+							async: true
+						},
+						routes: [
+							{
+								pattern: "product/{id}",
+								name: "product"
+							},
+							{
+								pattern: "",
+								name: "nestedHome"
+							}
+						]
+					}
+				},
+				init : function() {
+					UIComponent.prototype.init.apply(this, arguments);
+					var oRouter = this.getRouter();
+
+					oRouter.initialize();
+				}
+			});
+		});
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			sDynamicComponentName = "DynamicChildComponent" + count;
+
+		var oResetHashSpy = sinon.spy(oRouter.getHashChanger(), "resetHash");
+
+		return waitTillRouteMatched(oRouter, "home").then(function(oParams) {
+			var oContainer = that.oParentComponent.getRootControl(),
+				oShell = oContainer.byId("shell");
+			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
+			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+
+			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
+			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
+			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+
+			return {
+				container: oContainer
+			};
+		})
+		// Step1: display dynamic component target
+		.then(function(mParam) {
+			// Add dynamic component target
+			oRouter.getTargets().addTarget(sDynamicComponentName, {
+				name: "namespace1.DynamicChildComponent" + count,
+				type: "Component",
+				rootView: mParam.container.getId(),
+				controlId: "shell",
+				controlAggregation: "content",
+				options: {
+					manifest: false
+				}
+			});
+
+			var fnDisplayed1 = function (oEvent) {
+				oRouter.getTargets().detachDisplay(fnDisplayed1);
+				assert.equal(oEvent.getParameter("name"), sDynamicComponentName, "correct target is displayed");
+			};
+			oRouter.getTargets().attachDisplay(fnDisplayed1);
+
+			return oRouter.getTargets().display({
+				name: sDynamicComponentName,
+				prefix: "dynamic",
+				routeRelevant: true
+			}).then(function(oTargetInfo) {
+				assert.equal(oResetHashSpy.callCount, 0, "resetHash shouldn't be called");
+				assert.equal(oRouter.getHashChanger().getHash(), "", "hash should be correct");
+
+				var oControl = oTargetInfo[0].control;
+				return Component.getOwnerComponentFor(oControl);
+			});
+		})
+		// Step2: navigate to another route and check whether the dynamic target is suspended
+		.then(function(oComponent) {
+			var oTarget = oRouter.getTarget(sDynamicComponentName);
+			var oTargetSuspendSpy = that.spy(oTarget, "suspend");
+
+			assert.ok(oComponent, "Component should be loaded");
+
+			oRouter.navTo("category");
+			return waitTillRouteMatched(oRouter, "category").then(function() {
+				assert.equal(oTargetSuspendSpy.callCount, 1, "dynamic displayed target is suspended");
+				return {
+					targetSuspendSpy: oTargetSuspendSpy
+				};
+			});
+		})
+		// Step3: navigate back to home
+		.then(function(mParam) {
+			var oDisplayEventSpy = that.spy();
+			oRouter.getTargets().attachDisplay(oDisplayEventSpy);
+
+			oRouter.navTo("home");
+
+			return waitTillRouteMatched(oRouter, "home").then(function() {
+				assert.ok(oDisplayEventSpy.callCount > 0, "Display event handler is called");
+				assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("name"), "home", "Correct target is displayed");
+				var oContainer = that.oParentComponent.getRootControl(),
+					oShell = oContainer.byId("shell");
+				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
+				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+
+				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
+				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
+				assert.equal(that.oNestedRouteMatchedSpy.callCount, 2, "Route is matched again inside the nested component");
+				assert.equal(mParam.targetSuspendSpy.callCount, 1, "Target#suspend shouldn't be called again");
+
+				oResetHashSpy.restore();
+				mParam.targetSuspendSpy.restore();
+			});
+		});
+	});
+
+	QUnit.test("Should suspend a dynamic displayed target when router navigates away from it - routeRelevant: false", function(assert) {
+		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
+				metadata : {
+					routing:  {
+						config: {
+							async: true
+						},
+						routes: [
+							{
+								pattern: "product/{id}",
+								name: "product"
+							},
+							{
+								pattern: "",
+								name: "nestedHome"
+							}
+						]
+					}
+				},
+				init : function() {
+					UIComponent.prototype.init.apply(this, arguments);
+					var oRouter = this.getRouter();
+
+					oRouter.initialize();
+				}
+			});
+		});
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			sDynamicComponentName = "DynamicChildComponent" + count;
+
+		var oResetHashSpy = sinon.spy(oRouter.getHashChanger(), "resetHash");
+
+		var oDisplayEventSpy = that.spy();
+		oRouter.getTargets().attachDisplay(oDisplayEventSpy);
+
+		return waitTillRouteMatched(oRouter, "home").then(function(oParameters) {
+			var oContainer = that.oParentComponent.getRootControl(),
+				oShell = oContainer.byId("shell");
+			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
+			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+
+			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
+			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
+			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+
+			return {
+				container: oContainer
+			};
+		})
+		// Step1: display dynamic component target
+		.then(function(mParam) {
+			// Add dynamic component target
+			oRouter.getTargets().addTarget(sDynamicComponentName, {
+				name: "namespace1.DynamicChildComponent" + count,
+				type: "Component",
+				rootView: mParam.container.getId(),
+				controlId: "shell",
+				controlAggregation: "content",
+				options: {
+					manifest: false
+				}
+			});
+
+			oDisplayEventSpy.resetHistory();
+
+			return oRouter.getTargets().display({
+				name: sDynamicComponentName,
+				prefix: "dynamic",
+				routeRelevant: false
+			}).then(function (oTargetInfo) {
+				assert.equal(oDisplayEventSpy.callCount, 1, "The event handler is called");
+				assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("name"), sDynamicComponentName, "Correct target is displayed");
+
+				assert.equal(oResetHashSpy.callCount, 1, "resetHash should be called once");
+				assert.equal(oRouter.getHashChanger().getHash(), undefined, "hash should be reset");
+
+				var oControl = oTargetInfo[0].control;
+				return Component.getOwnerComponentFor(oControl);
+			});
+		})
+		// Step2: navigate away from home
+		.then(function(oComponent) {
+			var oTarget = oRouter.getTarget(sDynamicComponentName);
+			var oTargetSuspendSpy = that.spy(oTarget, "suspend");
+
+			assert.ok(oComponent, "Component should be loaded");
+
+			oRouter.navTo("category");
+			return waitTillRouteMatched(oRouter, "category").then(function() {
+				assert.equal(oTargetSuspendSpy.callCount, 0, "dynamic displayed shouldn't be suspended");
+				oTargetSuspendSpy.restore();
+			});
+		})
+		// Step3: navigate back to home
+		.then(function() {
+			oDisplayEventSpy.resetHistory();
+			oRouter.navTo("home");
+
+			return waitTillRouteMatched(oRouter, "home").then(function() {
+				var oContainer = that.oParentComponent.getRootControl(),
+					oShell = oContainer.byId("shell");
+				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
+				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+
+				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
+				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
+				assert.equal(that.oNestedRouteMatchedSpy.callCount, 2, "Route is matched again inside the nested component");
+
+				assert.ok(oDisplayEventSpy.callCount > 0, "The event handler is called");
+				assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("name"), "home", "Correct target is displayed");
+
+				oResetHashSpy.restore();
+			});
+		});
+	});
+
+	QUnit.test("Should suspend a dynamic displayed target when router navigates away from it - routeRelevant: true, then routeRelevant: false", function (assert) {
+		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function (UIComponent) {
+			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
+				metadata: {
+					routing: {
+						config: {
+							async: true
+						},
+						routes: [
+							{
+								pattern: "product/{id}",
+								name: "product"
+							},
+							{
+								pattern: "",
+								name: "nestedHome"
+							}
+						]
+					}
+				},
+				init: function () {
+					UIComponent.prototype.init.apply(this, arguments);
+					var oRouter = this.getRouter();
+
+					oRouter.initialize();
+				}
+			});
+		});
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			sDynamicComponentName = "DynamicChildComponent" + count;
+
+		var oResetHashSpy = sinon.spy(oRouter.getHashChanger(), "resetHash");
+
+		var oDisplayEventSpy = that.spy();
+		oRouter.getTargets().attachDisplay(oDisplayEventSpy);
+
+		return waitTillRouteMatched(oRouter, "home").then(function() {
+			var oContainer = that.oParentComponent.getRootControl(),
+				oShell = oContainer.byId("shell");
+			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
+			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+
+			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
+			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
+			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+
+			return {
+				container: oContainer
+			};
+		})
+		// Step1: Display dynamic component target
+		.then(function(mParam) {
+			// Add dynamic component target
+			oRouter.getTargets().addTarget(sDynamicComponentName, {
+				name: "namespace1.DynamicChildComponent" + count,
+				type: "Component",
+				rootView: mParam.container.getId(),
+				controlId: "shell",
+				controlAggregation: "content",
+				options: {
+					manifest: false
+				}
+			});
+
+			oDisplayEventSpy.resetHistory();
+
+			return oRouter.getTargets().display({
+				name: sDynamicComponentName,
+				prefix: "dynamic",
+				routeRelevant: true
+			}).then(function (oTargetInfo) {
+				assert.equal(oDisplayEventSpy.callCount, 1, "The event handler is called");
+				assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("name"), sDynamicComponentName, "Correct target is displayed");
+
+				assert.equal(oResetHashSpy.callCount, 0, "resetHash shouldn't be called");
+				assert.equal(oRouter.getHashChanger().getHash(), "", "hash should be correct");
+
+				var oControl = oTargetInfo[0].control;
+				return Component.getOwnerComponentFor(oControl);
+			});
+		})
+		// Step2: navTo "category" route
+		.then(function(oComponent) {
+			var oTarget = oRouter.getTarget(sDynamicComponentName);
+			var oTargetSuspendSpy = that.spy(oTarget, "suspend");
+
+			assert.ok(oComponent, "Component should be loaded");
+
+			oRouter.navTo("category");
+			return waitTillRouteMatched(oRouter, "category").then(function() {
+				assert.equal(oTargetSuspendSpy.callCount, 1, "dynamic displayed target is suspended");
+				oTargetSuspendSpy.restore();
+			});
+		})
+		// Step3: navTo "home" route
+		.then(function() {
+			oDisplayEventSpy.resetHistory();
+
+			oRouter.navTo("home");
+
+			return waitTillRouteMatched(oRouter, "home").then(function() {
+				assert.ok(oDisplayEventSpy.callCount > 0, "The event handler is called");
+				assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("name"), "home", "Correct target is displayed");
+
+				assert.ok(oRouter.getTargets().getTarget(sDynamicComponentName), "dynamic component target should be available.");
+			});
+
+		})
+		// Step4: display dynamic target again
+		.then(function() {
+			oDisplayEventSpy.resetHistory();
+
+			return oRouter.getTargets().display({
+				name: sDynamicComponentName,
+				prefix: "dynamic",
+				routeRelevant: false
+			}).then(function() {
+				assert.equal(oDisplayEventSpy.callCount, 1, "The event handler is called");
+				assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("name"), sDynamicComponentName, "Correct target is displayed");
+
+				assert.equal(oResetHashSpy.callCount, 1, "resetHash should be called");
+				assert.equal(oRouter.getHashChanger().getHash(), undefined, "hash should be undefined");
+
+				oResetHashSpy.restore();
+			});
+		});
+	});
+
 	QUnit.module("navTo with nested components", {
 		beforeEach: function() {
 			this.buildNestedComponentStructure = function(level, suffix) {
 				this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 				hasher.setHash("");
+				HashChanger.getInstance().fireHashChanged("");
 				var that = this;
 				this.fnInitRouter = function() {
 					UIComponent.prototype.init.apply(this, arguments);
@@ -5391,5 +5066,4 @@ sap.ui.define([
 			done();
 		});
 	});
-
 });
