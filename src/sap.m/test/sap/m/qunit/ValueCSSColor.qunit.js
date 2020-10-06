@@ -13,14 +13,14 @@ sap.ui.define(["sap/m/library"], function(mobileLibrary) {
 	QUnit.module("RegEx check for additional sap.m.ValueColor enum type");
 
 	QUnit.test("All sap.m.ValueColors are supported", function(assert) {
-		assert.expect(4);
+		assert.expect(5);
 		for (var sValueColor in ValueColor) {
 			assert.ok(ValueCSSColor.isValid(sValueColor));
 		}
 	});
 
 	QUnit.test("Invalid sap.m.ValueColors are not supported", function(assert) {
-		assert.expect(8);
+		assert.expect(10);
 		for (var sValueColor in ValueColor) {
 			assert.ok(!ValueCSSColor.isValid(sValueColor + "Color"));
 			assert.ok(!ValueCSSColor.isValid("Color" + sValueColor));

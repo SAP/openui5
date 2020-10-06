@@ -2266,7 +2266,18 @@ sap.ui.define([
 		 * Error value color.
 		 * @public
 		 */
-		Error : "Error"
+		Error : "Error",
+
+		/**
+		 * None value color.
+		 *
+		 * <b>Note:</b> The None value color is set to prevent the display of tooltip
+		 * 'Neutral' for numeric content.
+		 *
+		 * @public
+		 * @since 1.84
+		 */
+		None : "None"
 
 	};
 
