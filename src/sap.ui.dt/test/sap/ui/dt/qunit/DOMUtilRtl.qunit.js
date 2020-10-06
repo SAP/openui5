@@ -35,19 +35,12 @@ function(
 			var iScrollValue = -50;
 			//TODO: Remove when bug in Chrome and Safari is fixed
 			var iExpectedOffsetLeft = (Device.browser.webkit || Device.browser.blink) ? -97 : -85;
-			// IE and Edge use positive leftScroll
-			if (Device.browser.msie || Device.browser.edge) {
-				iScrollValue = -iScrollValue;
-			}
-			// Blink (Chrome) uses positive leftScroll but starts on the extreme left
-			if (Device.browser.blink){
-				var iMaxScrollWidth = oContainerDomRef.scrollWidth - oContainerDomRef.clientWidth;
-				iScrollValue = iMaxScrollWidth + iScrollValue;
-			}
-			this.oContainer.scrollLeft(iScrollValue);
+			var iMaxScrollWidth = oContainerDomRef.scrollWidth - oContainerDomRef.clientWidth;
+			iScrollValue = iMaxScrollWidth + iScrollValue;
+			this.oContainer.scrollLeftRTL(iScrollValue);
 			this.oContainer.scrollTop(60);
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, oContainerDomRef);
-			assert.strictEqual(mOffset.left, iExpectedOffsetLeft, "the left offset is correct");
+			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft, "the left offset is correct");
 			assert.strictEqual(mOffset.top, 100, "the top offset is correct");
 		});
 	});
@@ -70,22 +63,14 @@ function(
 		}
 	}, function () {
 		QUnit.test("initial position", function (assert) {
-			assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), 0);
+			var iScrollLeftResult = DOMUtil.getScrollLeft(this.$Panel.get(0));
+			assert.strictEqual(Math.round(iScrollLeftResult), 0);
 		});
 		QUnit.test("scrolled to the most left position", function (assert) {
 			var iMaxScrollLeftValue = this.$Panel.get(0).scrollWidth - this.$Panel.get(0).clientWidth;
-			var iScrollValue;
-
-			if (Device.browser.blink) {
-				iScrollValue = 0;
-			} else if (Device.browser.msie || Device.browser.edge) {
-				iScrollValue = iMaxScrollLeftValue;
-			} else {
-				iScrollValue = -iMaxScrollLeftValue;
-			}
-
-			this.$Panel.scrollLeft(iScrollValue);
-			assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), -iMaxScrollLeftValue);
+			jQuery(this.$Panel).scrollLeftRTL(0);
+			var iScrollLeftResult = DOMUtil.getScrollLeft(this.$Panel.get(0));
+			assert.strictEqual(Math.round(iScrollLeftResult), -iMaxScrollLeftValue);
 		});
 	});
 

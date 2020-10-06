@@ -115,6 +115,8 @@ function(
 		QUnit.test("when the DOM reference is available", function(assert) {
 			var oButtonDomRef = this.oButton.getDomRef();
 			var mSize = DOMUtil.getSize(oButtonDomRef);
+			mSize.width = Math.round(mSize.width);
+			mSize.height = Math.round(mSize.height);
 			assert.deepEqual(mSize, {width: this.iWidth, height: this.iHeight}, 'then the static method "getSize" returns the right value');
 
 			jQuery('#qunit-fixture').css('z-index', 1000);
@@ -126,6 +128,8 @@ function(
 			this.oButton.addStyleClass("shrink");
 			var oButtonDomRef = this.oButton.getDomRef();
 			var mSizeAfterTransition = DOMUtil.getSize(oButtonDomRef);
+			mSizeAfterTransition.width = Math.round(mSizeAfterTransition.width);
+			mSizeAfterTransition.height = Math.round(mSizeAfterTransition.height);
 			assert.deepEqual(mSizeAfterTransition, {width: 0.1 * this.iWidth, height: 0.5 * this.iHeight}, 'then the static method "getSize" returns the right value');
 			this.oButton.removeStyleClass("shrink");
 		});
@@ -336,12 +340,8 @@ function(
 
 			this.$Panel.scrollLeft(iMaxScrollLeftValue);
 
-			assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), iMaxScrollLeftValue);
-		});
-		QUnit.test("called without argument", function (assert) {
-			assert.throws(function () {
-				DOMUtil.getScrollLeft();
-			});
+			var iExpectedMaxScrollLeftLTRValue = DOMUtil.getScrollLeft(this.$Panel.get(0));
+			assert.strictEqual(Math.round(iExpectedMaxScrollLeftLTRValue), iMaxScrollLeftValue);
 		});
 	});
 

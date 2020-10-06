@@ -100,28 +100,17 @@ function(
 	 * @return {number} returns browser agnostic scrollLeft value (negative in RTL)
 	 */
 	DOMUtil.getScrollLeft = function(oElement) {
-		var iScrollLeft = oElement.scrollLeft;
-		// The adjustment is only required in RTL mode
 		if (
 			!sap.ui.getCore().getConfiguration().getRTL()
 			|| !DOMUtil.hasHorizontalScrollBar(oElement)
 		) {
-			return iScrollLeft;
+			return jQuery(oElement).scrollLeft();
 		}
-		// Blink (Chrome) considers zero scrollLeft when the scrollBar is all the way to the left
+		var iScrollLeftRTL = jQuery(oElement).scrollLeftRTL();
+		// jQuery scrollLeftRTL function considers zero scrollLeft when the scrollBar is all the way to the left
 		// and moves positively to the right
-		if (Device.browser.blink){
-			var iMaxScrollValue = oElement.scrollWidth - oElement.clientWidth;
-			return iScrollLeft - iMaxScrollValue;
-		// Internet Explorer considers zero scrollLeft when the scrollbar is all the way
-		// to the right (initial position) and moves positively to the left
-		} else if (Device.browser.msie || Device.browser.edge) {
-			return -iScrollLeft;
-		// Firefox (Gecko) & Safari (Webkit) consider zero scrollLeft when the scrollbar is
-		// all the way to the right (initial position) and moves negatively to the left [desired behavior]
-		} else {
-			return iScrollLeft;
-		}
+		var iMaxScrollValue = oElement.scrollWidth - oElement.clientWidth;
+		return iScrollLeftRTL - iMaxScrollValue;
 	};
 
 	/**
@@ -454,10 +443,10 @@ function(
 	 */
 	DOMUtil.appendChild = function (oTargetNode, oChildNode) {
 		var iScrollTop = oChildNode.scrollTop;
-		var iScrollLeft = oChildNode.scrollLeft;
+		var iScrollLeft = jQuery(oChildNode).scrollLeft();
 		oTargetNode.appendChild(oChildNode);
 		oChildNode.scrollTop = iScrollTop;
-		oChildNode.scrollLeft = iScrollLeft;
+		jQuery(oChildNode).scrollLeft(iScrollLeft);
 	};
 
 	return DOMUtil;
