@@ -1939,6 +1939,17 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.test("aria-haspopup", function(assert) {
+		var oDP = new DatePicker();
+
+		oDP.placeAt("uiArea4");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oDP._$input.attr("aria-haspopup"), "grid", "DatePicker indicates that it opens a grid");
+
+		oDP.destroy();
+	});
+
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oInput = new DatePicker({
 			value: "Value",
