@@ -250,17 +250,24 @@ sap.ui.define([
 
 		/**
 		 * Renders Wizard in Page mode. The rendering is manual.
+		 *
+		 * @param {sap.m.WizardStep} oStep [optional] The step to be rendered.
 		 * @private
 		 */
-		Wizard.prototype._renderPageMode = function () {
+		Wizard.prototype._renderPageMode = function (oStep) {
 			var iCurrentStepIndex, oCurrentStep, oRenderManager;
 
 			if (this.getRenderMode() !== WizardRenderMode.Page) {
 				return;
 			}
 
-			iCurrentStepIndex = this._getProgressNavigator().getCurrentStep();
-			oCurrentStep = this._aStepPath[iCurrentStepIndex - 1];
+			if (oStep) {
+				iCurrentStepIndex = this._aStepPath.indexOf(oStep) + 1;
+				oCurrentStep = oStep;
+			} else {
+				iCurrentStepIndex = this._getProgressNavigator().getCurrentStep();
+				oCurrentStep = this._aStepPath[iCurrentStepIndex - 1];
+			}
 
 			oRenderManager = Core.createRenderManager();
 			oRenderManager.renderControl(
@@ -400,7 +407,17 @@ sap.ui.define([
 		 * @public
 		 */
 		Wizard.prototype.goToStep = function (oStep, bFocusFirstStepElement) {
+			var fnUpdateProgressNavigator = function () {
+				var oProgressNavigator = this._getProgressNavigator();
+				oProgressNavigator && oProgressNavigator._updateCurrentStep(this._aStepPath.indexOf(oStep) + 1);
+			};
+
 			if (!this.getVisible() || this._aStepPath.indexOf(oStep) < 0) {
+				return this;
+			} else if (this.getRenderMode() === WizardRenderMode.Page) {
+				fnUpdateProgressNavigator.call(this);
+				this._renderPageMode(oStep);
+
 				return this;
 			}
 
@@ -417,13 +434,8 @@ sap.ui.define([
 					},
 					complete: function () {
 						that._bScrollLocked = false;
-						var oProgressNavigator = that._getProgressNavigator();
+						fnUpdateProgressNavigator.call(that);
 
-						if (!oProgressNavigator) {
-							return;
-						}
-
-						oProgressNavigator._updateCurrentStep(that._aStepPath.indexOf(oStep) + 1);
 						if (bFocusFirstStepElement || bFocusFirstStepElement === undefined) {
 							that._focusFirstStepElement(oStep);
 						}
@@ -829,8 +841,6 @@ sap.ui.define([
 				bFocusFirstElement = Device.system.desktop ? true : false;
 
 			this.goToStep(oSubsequentStep, bFocusFirstElement);
-
-			this._renderPageMode();
 		};
 
 		/**
