@@ -19,10 +19,10 @@ sap.ui.define([
 	"sap/ui/integration/util/ContextModel",
 	"sap/base/util/LoaderExtensions",
 	"sap/f/CardRenderer",
+	"sap/f/CardBase",
 	"sap/f/library",
 	"sap/m/library",
 	"sap/ui/integration/library",
-	"sap/ui/core/InvisibleText",
 	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
@@ -30,8 +30,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/formatters/IconFormatter",
-	"sap/ui/integration/util/FilterBarFactory",
-	"sap/m/BadgeEnabler"
+	"sap/ui/integration/util/FilterBarFactory"
 ], function (
 	Interface,
 	jQuery,
@@ -50,10 +49,10 @@ sap.ui.define([
 	ContextModel,
 	LoaderExtensions,
 	FCardRenderer,
+	CardBase,
 	fLibrary,
 	mLibrary,
 	library,
-	InvisibleText,
 	Destinations,
 	LoadingProvider,
 	HeaderFactory,
@@ -61,8 +60,7 @@ sap.ui.define([
 	BindingHelper,
 	BindingResolver,
 	IconFormatter,
-	FilterBarFactory,
-	BadgeEnabler
+	FilterBarFactory
 ) {
 	"use strict";
 	/* global Map */
@@ -83,10 +81,6 @@ sap.ui.define([
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
 
 	var CardDataMode = library.CardDataMode;
-
-	var BadgeState = mLibrary.BadgeState;
-
-	var BADGE_AUTOHIDE_TIME = 3000;
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -142,7 +136,7 @@ sap.ui.define([
 	 * <li>When you need complex behavior. For such cases, use: {@link sap.f.Card sap.f.Card}.</li>
 	 * </ul>
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.f.CardBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -153,13 +147,9 @@ sap.ui.define([
 	 * @alias sap.ui.integration.widgets.Card
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Card = Control.extend("sap.ui.integration.widgets.Card", /** @lends sap.ui.integration.widgets.Card.prototype */ {
+	var Card = CardBase.extend("sap.ui.integration.widgets.Card", /** @lends sap.ui.integration.widgets.Card.prototype */ {
 		metadata: {
 			library: "sap.ui.integration",
-			interfaces: [
-				"sap.f.ICard",
-				"sap.m.IBadge"
-			],
 			properties: {
 
 				/**
@@ -179,24 +169,6 @@ sap.ui.define([
 				parameters: {
 					type: "object",
 					defaultValue: null
-				},
-
-				/**
-				 * Defines the width of the card.
-				 */
-				width: {
-					type: "sap.ui.core.CSSSize",
-					group: "Appearance",
-					defaultValue: "100%"
-				},
-
-				/**
-				 * Defines the height of the card.
-				 */
-				height: {
-					type: "sap.ui.core.CSSSize",
-					group: "Appearance",
-					defaultValue: "auto"
 				},
 
 				/**
@@ -343,25 +315,20 @@ sap.ui.define([
 		renderer: FCardRenderer
 	});
 
-	BadgeEnabler.call(Card.prototype);
-
 	/**
 	 * Initialization hook.
 	 * @private
 	 */
 	Card.prototype.init = function () {
-		this._oRb = Core.getLibraryResourceBundle("sap.f");
+
+		CardBase.prototype.init.call(this);
+
 		this.setModel(new JSONModel(), "parameters");
 		this.setModel(new JSONModel(), "filters");
 		this.setModel(new ContextModel(), "context");
 		this._busyStates = new Map();
 		this._oExtension = null;
 		this._oContentFactory = new ContentFactory(this);
-
-		this._ariaText = new InvisibleText({ id: this.getId() + "-ariaText" });
-
-		this._ariaContentText = new InvisibleText({ id: this.getId() + "-ariaContentText" });
-		this._ariaContentText.setText(this._oRb.getText("ARIA_LABEL_CARD_CONTENT"));
 
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
@@ -384,10 +351,6 @@ sap.ui.define([
 		this._oLimitedInterface = new Interface(this, [
 			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getTranslatedText", "getModel"
 		]);
-
-		this.initBadgeEnablement({
-			accentColor: "AccentColor6"
-		});
 	};
 
 	/**
@@ -748,21 +711,14 @@ sap.ui.define([
 	};
 
 	Card.prototype.exit = function () {
+
+		CardBase.prototype.exit.call(this);
+
 		this.destroyManifest();
 		this._busyStates = null;
-		this._oRb = null;
+
 		this._oExtension = null;
 		this._oContentFactory = null;
-
-		if (this._ariaText) {
-			this._ariaText.destroy();
-			this._ariaText = null;
-		}
-
-		if (this._ariaContentText) {
-			this._ariaContentText.destroy();
-			this._ariaContentText = null;
-		}
 	};
 
 	/**
@@ -1582,62 +1538,6 @@ sap.ui.define([
 			.create({ request: oConfiguration })
 			.setAllowCustomDataType(true)
 			.getData();
-	};
-
-	Card.prototype.onfocusin = function () {
-		this._startBadgeHiding();
-	};
-
-	Card.prototype._startBadgeHiding = function () {
-		if (this._iHideBadgeTimeout) {
-			return;
-		}
-
-		this._iHideBadgeTimeout = setTimeout(this._hideBadge.bind(this), BADGE_AUTOHIDE_TIME);
-	};
-
-	Card.prototype._hideBadge = function () {
-
-		var oBadgeCustomData = this.getBadgeCustomData();
-		if (oBadgeCustomData) {
-			oBadgeCustomData.setVisible(false);
-		}
-
-		this._iHideBadgeTimeout = null;
-	};
-
-	Card.prototype.onBadgeUpdate = function (sValue, sState, sBadgeId) {
-
-		var oHeader = this.getCardHeader(),
-			oDomRef,
-			sAriaLabelledBy;
-
-		if (oHeader) {
-			oDomRef = oHeader.getDomRef();
-		} else {
-			oDomRef = this.getDomRef("contentSection");
-		}
-
-		if (!oDomRef) {
-			return;
-		}
-
-		sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby") || "";
-
-		switch (sState) {
-			case BadgeState.Appear:
-				sAriaLabelledBy = sBadgeId + " " + sAriaLabelledBy;
-				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
-				break;
-			case BadgeState.Disappear:
-				sAriaLabelledBy = sAriaLabelledBy.replace(sBadgeId, "").trim();
-				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
-				break;
-		}
-	};
-
-	Card.prototype.getAriaLabelBadgeText = function () {
-		return this.getBadgeCustomData().getValue();
 	};
 
 	/**
