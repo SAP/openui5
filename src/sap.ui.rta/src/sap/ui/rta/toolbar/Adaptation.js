@@ -9,7 +9,8 @@ sap.ui.define([
 	"./Base",
 	"sap/ui/core/library",
 	"sap/ui/fl/library",
-	"sap/ui/rta/toolbar/ChangeVisualization"
+	"sap/ui/rta/toolbar/ChangeVisualization",
+	"sap/ui/rta/Utils"
 ],
 function(
 	Fragment,
@@ -18,7 +19,8 @@ function(
 	Base,
 	coreLibrary,
 	flexLibrary,
-	ChangeVisualization
+	ChangeVisualization,
+	Utils
 ) {
 	"use strict";
 
@@ -399,6 +401,7 @@ function(
 			}
 		}).then(function (oDialog) {
 			this._oDialog = oDialog;
+			oDialog.addStyleClass(Utils.getRtaStyleClassName());
 			this.addDependent(this._oDialog);
 		}.bind(this));
 	}
