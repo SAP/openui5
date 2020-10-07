@@ -409,13 +409,11 @@ sap.ui.define([
 			});
 
 			sandbox.stub(this.oRta, "canUndo").returns(true);
+			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
 
 			return this.oRta._onSwitchVersion(oEvent)
 			.then(function () {
-				return this.oRta._oVersionSwitchDialogPromise;
-			}.bind(this))
-			.then(function (oDialog) {
-				assert.equal(oDialog.isOpen(), true, "a dialog was opened");
+				assert.equal(oShowMessageBoxStub.callCount, 1, "a MessageBox was opened");
 				assert.equal(this.oEnableRestartStub.callCount, 0, "then no restart is mentioned");
 			}.bind(this));
 		});
@@ -491,10 +489,7 @@ sap.ui.define([
 			this.oSwitchVersionStub = sandbox.stub(this.oRta, "_switchVersion");
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
 			this.nVersionParameter = 1;
-			var oEvent = new Event("someEventId", undefined, {
-				version : this.nVersionParameter
-			});
-			return this.oRta.start().then(this.oRta._onSwitchVersion.bind(this.oRta, oEvent));
+			return this.oRta.start();
 		},
 		afterEach : function () {
 			this.oRta.destroy();
@@ -502,54 +497,45 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when save was called", function (assert) {
-			// async to await the dialog close event
-			var done = assert.async();
-			return this.oRta._oVersionSwitchDialogPromise
-			.then(function (oDialog) {
-				oDialog.attachAfterClose(function () {
-					assert.equal(this.oSerializeStub.callCount, 1, "the changes were saved");
-					assert.equal(this.oSwitchVersionStub.callCount, 1, "the version switch was triggered");
-					var aSwitchVersionArguments = this.oSwitchVersionStub.getCall(0).args;
-					assert.equal(aSwitchVersionArguments[0], this.nVersionParameter, "the version parameter was passed correct");
-					assert.equal(oDialog.isOpen(), false, "the dialog was closed");
-					done();
-				}.bind(this));
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.YES);
 
-				this.oRta._saveAndSwitchVersion();
+			var oEvent = new Event("someEventId", undefined, {
+				version : this.nVersionParameter
+			});
+			return this.oRta._onSwitchVersion(oEvent)
+			.then(function () {
+				assert.equal(this.oSerializeStub.callCount, 1, "the changes were saved");
+				assert.equal(this.oSwitchVersionStub.callCount, 1, "the version switch was triggered");
+				var aSwitchVersionArguments = this.oSwitchVersionStub.getCall(0).args;
+				assert.equal(aSwitchVersionArguments[0], this.nVersionParameter, "the version parameter was passed correct");
 			}.bind(this));
 		});
 
-		QUnit.test("when discard was called", function (assert) {
-			// async to await the dialog close event
-			var done = assert.async();
-			return this.oRta._oVersionSwitchDialogPromise
-			.then(function (oDialog) {
-				oDialog.attachAfterClose(function () {
-					assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
-					assert.equal(this.oSwitchVersionStub.callCount, 1, "the version switch was triggered");
-					var aSwitchVersionArguments = this.oSwitchVersionStub.getCall(0).args;
-					assert.equal(aSwitchVersionArguments[0], this.nVersionParameter, "the version parameter was passed correct");
-					assert.equal(oDialog.isOpen(), false, "the dialog was closed");
-					done();
-				}.bind(this));
+		QUnit.test("when changes should not be saved", function (assert) {
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.NO);
 
-				this.oRta._discardAndSwitchVersion();
+			var oEvent = new Event("someEventId", undefined, {
+				version : this.nVersionParameter
+			});
+			return this.oRta._onSwitchVersion(oEvent)
+			.then(function () {
+				assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
+				assert.equal(this.oSwitchVersionStub.callCount, 1, "the version switch was triggered");
+				var aSwitchVersionArguments = this.oSwitchVersionStub.getCall(0).args;
+				assert.equal(aSwitchVersionArguments[0], this.nVersionParameter, "the version parameter was passed correct");
 			}.bind(this));
 		});
 
 		QUnit.test("when cancel was called", function (assert) {
-			// async to await the dialog close event
-			var done = assert.async();
-			return this.oRta._oVersionSwitchDialogPromise
-			.then(function (oDialog) {
-				oDialog.attachAfterClose(function () {
-					assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
-					assert.equal(this.oSwitchVersionStub.callCount, 0, "the version switch was not triggered");
-					assert.equal(oDialog.isOpen(), false, "the dialog was closed");
-					done();
-				}.bind(this));
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
 
-				this.oRta._closeVersionSwitchDialog();
+			var oEvent = new Event("someEventId", undefined, {
+				version : this.nVersionParameter
+			});
+			return this.oRta._onSwitchVersion(oEvent)
+			.then(function () {
+				assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
+				assert.equal(this.oSwitchVersionStub.callCount, 0, "the version switch was not triggered");
 			}.bind(this));
 		});
 	});
