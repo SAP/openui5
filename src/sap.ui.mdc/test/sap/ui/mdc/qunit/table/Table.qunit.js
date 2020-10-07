@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/VBox",
 	"sap/m/Link",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/mdc/odata/TypeUtil"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -50,7 +51,8 @@ sap.ui.define([
 	Device,
 	VBox,
 	Link,
-	CoreLibrary
+	CoreLibrary,
+	TypeUtil
 ) {
 	"use strict";
 
@@ -4466,5 +4468,155 @@ sap.ui.define([
 			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getLevel(), "H2", "Header level changed");
 			done();
 		}.bind(this));
+	});
+
+	QUnit.test("ACC Announcement of table after a FilterBar search", function(assert) {
+		var done = assert.async();
+		sap.ui.require([
+			"sap/ui/mdc/FilterBar"
+		], function(Filterbar) {
+			var aPropertyInfo = [{
+				name: "name",
+				label: "Name",
+				typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+			}];
+
+			var oModel = new JSONModel();
+			oModel.setData({
+				testPath: [
+					{"name": "A"},
+					{"name": "B"},
+					{"name": "C"},
+					{"name": "D"},
+					{"name": "A"}
+				]
+			});
+
+			var oTable = new Table({
+				type: "ResponsiveTable",
+				autoBindOnInit: true,
+				delegate: {
+					name: "sap/ui/mdc/TableDelegate",
+					payload: {
+						collectionPath: "/testPath"
+					}
+				},
+				p13nMode: ["Filter"]
+			});
+
+			oTable.addColumn(new Column({
+				dataProperty: "name",
+				template: new Text({
+					text: "{name}"
+				})
+			}));
+
+			MDCQUnitUtils.stubPropertyInfos(oTable, aPropertyInfo);
+			oTable.setModel(oModel);
+			oTable.setRowsBindingInfo({
+				path: "/testPath"
+			});
+
+			var oFilter = new Filterbar();
+
+			oTable.setFilter(oFilter);
+			assert.ok(oTable.getFilter(), "FilterBar available");
+			assert.deepEqual(oTable._oFilter, Core.byId(oTable.getFilter()), "Table internal object _oFilter is set");
+
+			oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			var fnAnnounceTableUpdate = sinon.spy(oTable, "_announceTableUpdate");
+
+			oTable.initialized().then(function() {
+				oTable.bindRows({
+					path: "/testPath"
+				}).then(function() {
+					return oFilter.fireSearch();
+				}).then(function() {
+					assert.ok(true, "Search is triggered.");
+					assert.equal(oTable._bAnnounceTableUpdate, true, "Table internal flag _bAnnounceTableUpdate is set to true");
+					oTable.getRowBinding().fireDataReceived(); // invoke event handler manually since we have a JSONModel
+					assert.ok(fnAnnounceTableUpdate.calledOnce, "Function _announceTableUpdate is called once.");
+					MDCQUnitUtils.restorePropertyInfos(oTable);
+					done();
+				});
+				assert.ok(oTable._oTable.isBound, "Inner table is bound");
+			});
+		});
+	});
+
+	QUnit.test("Avoid ACC Announcement of table if dataReceived is not fired by the FilterBar", function(assert) {
+		var done = assert.async();
+		sap.ui.require([
+			"sap/ui/mdc/FilterBar"
+		], function(Filterbar) {
+			var aPropertyInfo = [{
+				name: "name",
+				label: "Name",
+				typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+			}];
+
+			var oModel = new JSONModel();
+			oModel.setData({
+				testPath: [
+					{"name": "A"},
+					{"name": "B"},
+					{"name": "C"},
+					{"name": "D"},
+					{"name": "A"}
+				]
+			});
+
+			var oTable = new Table({
+				type: "ResponsiveTable",
+				autoBindOnInit: true,
+				delegate: {
+					name: "sap/ui/mdc/TableDelegate",
+					payload: {
+						collectionPath: "/testPath"
+					}
+				},
+				p13nMode: ["Filter"]
+			});
+
+			oTable.addColumn(new Column({
+				dataProperty: "name",
+				template: new Text({
+					text: "{name}"
+				})
+			}));
+
+			MDCQUnitUtils.stubPropertyInfos(oTable, aPropertyInfo);
+			oTable.setModel(oModel);
+			oTable.setRowsBindingInfo({
+				path: "/testPath"
+			});
+
+			var oFilter = new Filterbar();
+
+			oTable.setFilter(oFilter);
+			assert.ok(oTable.getFilter(), "FilterBar available");
+
+			oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			var fnOnDataReceived = sinon.spy(oTable, "_onDataReceived");
+			var fnAnnounceTableUpdate = sinon.spy(oTable, "_announceTableUpdate");
+
+			oTable.initialized().then(function() {
+				oTable.bindRows({
+					path: "/testPath"
+				}).then(function() {
+					oTable.getRowBinding().fireDataReceived(); // invoke event handler manually since we have a JSONModel
+					assert.ok(fnOnDataReceived.called, "Event dataReceived is fired.");
+					assert.equal(oTable._bAnnounceTableUpdate, undefined, "Table internal flag _bAnnounceTableUpdate is undefined");
+					assert.notOk(fnAnnounceTableUpdate.called, "Function _announceTableUpdate is never called.");
+					MDCQUnitUtils.restorePropertyInfos(oTable);
+					done();
+				});
+				assert.ok(oTable._oTable.isBound, "Inner table is bound");
+			});
+		});
 	});
 });

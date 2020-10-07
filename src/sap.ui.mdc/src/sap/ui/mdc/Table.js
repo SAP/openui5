@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/strings/capitalize",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/core/InvisibleMessage"
 ], function(
 	Control,
 	ActionToolbar,
@@ -53,7 +54,8 @@ sap.ui.define([
 	Sorter,
 	containsOrEquals,
 	capitalize,
-	deepEqual
+	deepEqual,
+	InvisibleMessage
 ) {
 	"use strict";
 
@@ -951,6 +953,7 @@ sap.ui.define([
 	// FilterIntegrationMixin hook
 	Table.prototype._onFilterProvided = function() {
 		this._updateInnerTableNoDataText();
+		this._attachFilterSearchEvent();
 	};
 
 	Table.prototype.setNoDataText = function(sNoData) {
@@ -987,6 +990,25 @@ sap.ui.define([
 		}
 
 		return oRb.getText("table.NO_RESULTS");
+	};
+
+	Table.prototype._attachFilterSearchEvent = function() {
+		/**
+		 * The FilterIntegrationMixin handles the setter for the 'filter' association of the mdc.Table.
+		 * Because this function is called after FilterIntegrationMixin.setFilter is performed we need to
+		 * store the 'filter' association in order to detach its 'search' event in case the association gets removed.
+ 		 */
+		var oFilter = Core.byId(this.getFilter());
+
+		if (this._oFilter && this._oFilter !== oFilter) {
+			this._oFilter.detachSearch(this._onSearch, this);
+		}
+
+		if (oFilter) {
+			oFilter.attachSearch(this._onSearch, this);
+		}
+
+		this._oFilter = oFilter;
 	};
 
 	Table.prototype._updateRowAction = function() {
@@ -1960,10 +1982,10 @@ sap.ui.define([
 				// Update sorters
 				oBindingInfo.sorter = this._getSorters();
 
-				if (this.getShowRowCount()) {
-					Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
-					Table._addBindingListener(oBindingInfo, "change", this._updateHeaderText.bind(this));
-				}
+				Table._addBindingListener(oBindingInfo, "dataRequested", this._onDataRequested.bind(this));
+			    Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
+			    Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
+
 				this._updateColumnsBeforeBinding(oBindingInfo);
 				this.getControlDelegate().rebindTable(this, oBindingInfo);
 				this._updateInnerTableNoDataText();
@@ -1972,34 +1994,98 @@ sap.ui.define([
 	};
 
 	/**
-	 * Event handler for binding dataReceived
+	 * Event handler for binding dataRequested
 	 *
-	 * @param {object} oEvt - the event instance
 	 * @private
 	 */
-	Table.prototype._onDataReceived = function(oEvt) {
-		// AnalyticalBinding fires dataReceived too often/early
-		if (oEvt && oEvt.getParameter && oEvt.getParameter("__simulateAsyncAnalyticalBinding")) {
-			return;
-		}
+	Table.prototype._onDataRequested = function() {
+		this._bIgnoreChange = true;
+	};
 
+	/**
+	 * Event handler for binding dataReceived
+	 *
+	 * @private
+	 */
+	Table.prototype._onDataReceived = function() {
+		this._bIgnoreChange = false;
 		this._updateHeaderText();
 		this._updateExportState();
 	};
 
+	/**
+	 * Event handler for binding change
+	 *
+	 * @private
+	 */
+	Table.prototype._onBindingChange = function() {
+		/* skip calling of _updateHeaderText till data is received otherwise _announceTableUpdate
+		will be called to early and the user gets an incorrect announcement via screen reader of the actual table state*/
+		if (this._bIgnoreChange) {
+			return;
+		}
+		this._updateHeaderText();
+	};
+
+	/**
+	 * Event handler for 'search' event of {@link sap.ui.mdc.IFilter} .
+	 *
+	 * @private
+	 */
+	Table.prototype._onSearch = function() {
+		this._bIgnoreChange = true;
+		this._bAnnounceTableUpdate = true;
+	};
+
 	Table.prototype._updateHeaderText = function() {
-		var sHeader, sRowCount;
+		var sHeader, iRowCount;
+
+		if (!this._oNumberFormatInstance) {
+			this._oNumberFormatInstance = NumberFormat.getFloatInstance();
+		}
 
 		if (this._oTitle && this.getHeader()) {
 			sHeader = this.getHeader();
 			if (this.getShowRowCount()) {
-				sRowCount = this._getRowCount();
-				if (sRowCount) {
-					sHeader += " (" + sRowCount + ")";
+				iRowCount = this._getRowCount();
+				var sValue = this._oNumberFormatInstance.format(iRowCount);
+				if (sValue) {
+					sHeader += " (" + sValue + ")";
 				}
 			}
 
 			this._oTitle.setText(sHeader);
+		}
+
+		if (!this._bIgnoreChange && this._bAnnounceTableUpdate) {
+			this._bAnnounceTableUpdate = false;
+			this._announceTableUpdate(iRowCount);
+		}
+	};
+
+	/**
+	 * Provides an additional announcement for the screen reader to inform the user that the table
+	 * has been updated.
+	 * @param {int} iRowCount number of total rows
+	 * @private
+	 */
+	Table.prototype._announceTableUpdate = function(iRowCount) {
+		var oInvisibleMessage = InvisibleMessage.getInstance();
+
+		if (oInvisibleMessage) {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var sText = this.getHeader();
+
+			// iRowCount will be undefined if table property showRowCount is set to false
+			if (iRowCount === undefined && this._getRowCount() > 0) {
+				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED", [sText]));
+			} else if (iRowCount > 1) {
+				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_MULT", [sText, iRowCount]));
+			} else if (iRowCount === 1) {
+				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_SING", [sText, iRowCount]));
+			} else {
+				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_NOITEMS", [sText]));
+			}
 		}
 	};
 
@@ -2033,25 +2119,27 @@ sap.ui.define([
 	/**
 	 * gets table's row count
 	 *
-	 * @param {boolean} bConsiderTotal whether to consider total
 	 * @private
 	 * @returns {int} the row count
 	 */
 	Table.prototype._getRowCount = function() {
-		var oRowBinding = this.getRowBinding(), iRowCount, sValue = "";
+		var oRowBinding = this._getRowBinding();
 
-		if (oRowBinding) {
-			iRowCount = oRowBinding.getLength();
-
-			if (!this._oNumberFormatInstance) {
-				this._oNumberFormatInstance = NumberFormat.getFloatInstance();
-			}
-
-			if (oRowBinding.isLengthFinal()) {
-				sValue = this._oNumberFormatInstance.format(iRowCount);
-			}
+		if (!oRowBinding) {
+			return 0;
 		}
-		return sValue;
+
+		var iRowCount;
+
+		if (oRowBinding.isLengthFinal()) {
+			iRowCount = oRowBinding.getLength();
+		}
+
+		if (iRowCount < 0 || iRowCount === "0") {
+			iRowCount = 0;
+		}
+
+		return iRowCount;
 	};
 
 	/**
@@ -2188,6 +2276,7 @@ sap.ui.define([
 		this._oTableReady = null;
 		this._fReject = null;
 		this._fResolve = null;
+		this._oFilter = null;
 
 		Control.prototype.exit.apply(this, arguments);
 	};
