@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/dom/jquery/scrollLeftRTL" // Definition for jQuery plugin. Is called via jQuery.scrollLeftRTL
 ], function (
 	ElementOverlay,
 	DesignTime,
@@ -89,7 +90,7 @@ sap.ui.define([
 			if (Device.browser.msie || Device.browser.edge || Device.browser.blink) {
 				iScrollLeftValue = -iScrollLeftValue;
 			}
-			this.oOuterPanel.$().find('>.sapMPanelContent').scrollLeft(iScrollLeftValue);
+			jQuery(this.oOuterPanel.$().find('>.sapMPanelContent')).scrollLeftRTL(iScrollLeftValue);
 			this.oOuterPanel.$().find('>.sapMPanelContent').scrollTop(20);
 
 			this.oDesignTime = new DesignTime({
