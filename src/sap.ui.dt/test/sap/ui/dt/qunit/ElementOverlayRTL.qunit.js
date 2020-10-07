@@ -46,8 +46,8 @@ sap.ui.require([
 		QUnit.test("then ", function(assert) {
 			// Math.round is required for IE and Edge
 			assert.equal(
-				Math.round(this.oOverlay.$().offset().left),
-				Math.round(this.oButton.$().offset().left),
+				Math.ceil(this.oOverlay.$().offset().left),
+				Math.ceil(this.oButton.$().offset().left),
 				"overlay has same left position as the control"
 			);
 			assert.equal(
@@ -87,7 +87,7 @@ sap.ui.require([
 			if (Device.browser.msie || Device.browser.edge || Device.browser.blink) {
 				iScrollLeftValue = -iScrollLeftValue;
 			}
-			this.oOuterPanel.$().find('>.sapMPanelContent').scrollLeft(iScrollLeftValue);
+			this.oOuterPanel.$().find('>.sapMPanelContent').scrollLeftRTL(iScrollLeftValue);
 			this.oOuterPanel.$().find('>.sapMPanelContent').scrollTop(20);
 
 			this.oDesignTime = new DesignTime({
@@ -113,8 +113,8 @@ sap.ui.require([
 				"overlay has same top position as the control"
 			);
 			assert.equal(
-				Math.round(this.oButtonOverlay.$().offset().left),
-				Math.round(this.oButton.$().offset().left),
+				Math.ceil(this.oButtonOverlay.$().offset().left),
+				Math.ceil(this.oButton.$().offset().left),
 				"overlay has same left position as the control"
 			);
 		});

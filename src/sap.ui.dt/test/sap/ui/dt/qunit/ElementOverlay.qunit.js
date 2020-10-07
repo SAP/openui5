@@ -737,9 +737,11 @@ function (
 	}, function () {
 		QUnit.test("when the control is scrolled", function(assert) {
 			var done = assert.async();
-			var sInitialOffsetTop = this.oContent1.$().offset().top;
+			var sInitialOffsetTop = Math.ceil(this.oContent1.$().offset().top);
 			var oInitialControlOffset = this.oContent1.$().offset();
+			oInitialControlOffset.top = Math.ceil(oInitialControlOffset.top);
 			var oInitialOverlayOffset = this.oContent1Overlay.$().offset();
+			oInitialOverlayOffset.top = Math.ceil(oInitialOverlayOffset.top);
 			var oApplyStylesSpy;
 
 			if (!Device.browser.msie) {
@@ -752,8 +754,12 @@ function (
 				} else {
 					this.oContent1Overlay.applyStyles();
 				}
-				assert.equal(this.oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
-				assert.deepEqual(this.oContent1.$().offset(), this.oContent1Overlay.$().offset(), "Then the offset is still equal");
+				var mOffsetContent = this.oContent1.$().offset();
+				mOffsetContent.top = Math.ceil(mOffsetContent.top);
+				var mOffsetOverlay = this.oContent1Overlay.$().offset();
+				mOffsetOverlay.top = Math.ceil(mOffsetOverlay.top);
+				assert.equal(mOffsetContent.top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
+				assert.deepEqual(mOffsetContent, mOffsetOverlay, "Then the offset is still equal");
 				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
 				done();
 			}, this);
@@ -762,9 +768,11 @@ function (
 
 		QUnit.test("when the overlay is scrolled", function(assert) {
 			var done = assert.async();
-			var sInitialOffsetTop = this.oContent1.$().offset().top;
+			var sInitialOffsetTop = Math.ceil(this.oContent1.$().offset().top);
 			var oInitialControlOffset = this.oContent1.$().offset();
+			oInitialControlOffset.top = Math.ceil(oInitialControlOffset.top);
 			var oInitialOverlayOffset = this.oContent1Overlay.$().offset();
+			oInitialOverlayOffset.top = Math.ceil(oInitialOverlayOffset.top);
 			var oApplyStylesSpy;
 
 			if (!Device.browser.msie) {
@@ -777,8 +785,12 @@ function (
 				} else {
 					this.oContent1Overlay.applyStyles();
 				}
-				assert.equal(this.oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
-				assert.deepEqual(this.oContent1.$().offset(), this.oContent1Overlay.$().offset(), "Then the offset is still equal");
+				var mOffsetContent = this.oContent1.$().offset();
+				mOffsetContent.top = Math.ceil(mOffsetContent.top);
+				var mOffsetOverlay = this.oContent1Overlay.$().offset();
+				mOffsetOverlay.top = Math.ceil(mOffsetOverlay.top);
+				assert.equal(mOffsetContent.top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
+				assert.deepEqual(mOffsetContent, mOffsetOverlay, "Then the offset is still equal");
 				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
 				done();
 			}.bind(this));

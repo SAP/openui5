@@ -143,10 +143,10 @@ function(
 		if (
 			bForce
 			|| this.getScrollTop() !== oSourceDomNode.scrollTop
-			|| this.getScrollLeft() !== oSourceDomNode.scrollLeft
+			|| this.getScrollLeft() !== jQuery(oSourceDomNode).scrollLeft()
 		) {
 			this.setScrollTop(oSourceDomNode.scrollTop);
-			this.setScrollLeft(oSourceDomNode.scrollLeft);
+			this.setScrollLeft(jQuery(oSourceDomNode).scrollLeft());
 
 			if (!this._bSyncing) {
 				this._bSyncing = true;
