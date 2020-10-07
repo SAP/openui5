@@ -93,6 +93,18 @@ function (
 				assert.equal(this.oGetChangeHandlerStub.lastCall.args[2], this.oButton, "the control was correctly passed");
 			}.bind(this));
 		});
+
+		QUnit.test("when 'getVariantManagement' is called", function(assert) {
+			var oObjectWithVM = {
+				getVariantManagement: function() {
+					return "variant-test";
+				}
+			};
+			var sVarMgmtRefForButton = this.oPlugin.getVariantManagementReference(oObjectWithVM);
+			var sVarMgmtRefForEmptyObject = this.oPlugin.getVariantManagementReference({});
+			assert.equal(sVarMgmtRefForButton, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
+			assert.equal(sVarMgmtRefForEmptyObject, undefined, "then for the control without variant ChangeHandler undefined is returned");
+		});
 	});
 
 	QUnit.module("Given the Plugin is initialized with move registered for a control", {
@@ -801,88 +813,6 @@ function (
 				}
 			});
 			assert.notOk(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then it returns false");
-		});
-	});
-
-	QUnit.module("Given the Plugin is initialized", {
-		beforeEach : function(assert) {
-			var done = assert.async();
-
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
-				ObjectPageSection : {
-					rename: "sap/ui/fl/changeHandler/BaseRename"
-				},
-				"sap.m.Button" : {
-					removeButton: "sap/ui/fl/changeHandler/Base"
-				},
-				"sap.ui.core._StashedControl" : {
-					unstashControl: "sap/ui/fl/changeHandler/UnstashControl"
-				}
-			})
-			.then(function() {
-				this.oObjectPageSection = new ObjectPageSection();
-				this.oButton = new Button();
-				this.oLayout = new VerticalLayout({
-					content : [this.oObjectPageSection, this.oButton]
-				}).placeAt("qunit-fixture");
-
-				sap.ui.getCore().applyChanges();
-
-				var oCommandFactory = new CommandFactory();
-				this.oDesignTime = new DesignTime({
-					rootElements : [this.oLayout]
-				});
-				this.oPlugin = new Plugin({
-					commandFactory : oCommandFactory
-				});
-				this.oControlVariantPlugin = new ControlVariant({
-					commandFactory : oCommandFactory
-				});
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-					this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
-					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-					done();
-				}.bind(this));
-			}.bind(this));
-		},
-		afterEach : function() {
-			this.oLayout.destroy();
-			this.oDesignTime.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
-			this.oButtonOverlay.setDesignTimeMetadata({
-				actions: {
-					remove: {
-						changeType: "removeButton"
-					}
-				}
-			});
-
-			sandbox.stub(this.oObjectPageSectionOverlay, "getVariantManagement").returns("variant-test");
-			sandbox.stub(this.oButtonOverlay, "getVariantManagement").returns(undefined);
-
-			var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay);
-			var sVarMgmtRefForButton = this.oPlugin.getVariantManagementReference(this.oButtonOverlay);
-			assert.equal(sVarMgmtRefForObjectPageSection, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
-			assert.equal(sVarMgmtRefForButton, undefined, "then for the control without variant ChangeHandler undefined is returned");
-		});
-
-		QUnit.test("when calling 'getVariantManagementReference' with a stashed control", function(assert) {
-			var mSettings = {};
-			mSettings.sParentId = this.oObjectPageSection.getId();
-
-			sandbox.stub(this.oObjectPageSectionOverlay, "getVariantManagement").returns("variant-test");
-
-			var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay);
-			var sVarMgmtRefForStashedControl = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay);
-
-			assert.equal(sVarMgmtRefForObjectPageSection, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
-			assert.equal(sVarMgmtRefForStashedControl, "variant-test", "then for the stashed control with variant ChangeHandler variant management reference from parent is returned, as no overlay exists");
 		});
 	});
 

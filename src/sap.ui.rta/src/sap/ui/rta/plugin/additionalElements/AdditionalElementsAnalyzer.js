@@ -366,7 +366,6 @@ sap.ui.define([
 
 			// BCP: 1880498671
 			} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
-				//TODO fix with stashed type support
 				aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
 			} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
 				bIncludeElement = false;
