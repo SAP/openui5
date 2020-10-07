@@ -313,10 +313,10 @@ function(
 
 	Adaptation.prototype._onSizeChanged = function(mParams) {
 		if (!mParams) {
-			return;
+			return Promise.resolve();
 		}
 
-		this.onFragmentLoaded().then(function() {
+		return this.onFragmentLoaded().then(function() {
 			var sMode = mParams.name;
 			this.sMode = sMode;
 
