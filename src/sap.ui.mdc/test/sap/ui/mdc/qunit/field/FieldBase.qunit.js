@@ -3080,6 +3080,7 @@ sap.ui.define([
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
 		oFieldHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
 		sap.ui.getCore().applyChanges();
+		sinon.spy(oFieldHelp, "initBeforeOpen");
 
 		var oClock = sinon.useFakeTimers();
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3092,12 +3093,14 @@ sap.ui.define([
 		assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
 		assert.equal(oFieldHelp.getConditions().length, 1, "One condition set on FieldHelp");
 		assert.ok(oFieldHelp.open.called, "open called");
+		assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
 		oContent._$input.val("=A");
 		oContent.fireLiveChange({ value: "=A" });
 		oClock.tick(400); // fake time to open field help
 
 		assert.equal(oFieldHelp.getFilterValue(), "A", "FilterValue set");
+		assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
 		oContent._$input.val("=X");
 		oContent.fireLiveChange({ value: "=X" });

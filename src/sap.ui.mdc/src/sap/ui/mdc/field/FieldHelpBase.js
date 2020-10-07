@@ -594,6 +594,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * Calls initialization of the FieldHelp before the FieldHelp is really opened.
+	 * This is called in typeahead on first letter before the FieldHelp is opened with a delay. So the
+	 * content can be determined in the delegate coding early.
+	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>FieldHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @param {boolean} bSuggestion Flag that determines whether field help is opened for suggestion or for complex help
+	 *
+	 * @since 1.84.0
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype.initBeforeOpen = function(bSuggestion) {
+
+		var fnBeforeOpen = function() {
+			this._bBeforeOpenPending = false;
+			if (this._bOpenAfterPromise) {
+				delete this._bOpenAfterPromise;
+				this.open(bSuggestion);
+			}
+		}.bind(this);
+
+		var bSync = this._callContentRequest(bSuggestion, fnBeforeOpen);
+		if (!bSync) {
+			this._bBeforeOpenPending = true;
+		}
+
+	};
+
+
+	/**
 	 * Creates the internal <code>Popover</code> control.
 	 *
 	 * To be used by an inherited FieldHelp, not from outside.
@@ -1157,6 +1190,11 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._fireOpen = function(bSuggestion, fnCallback) {
+
+		if (this._bBeforeOpenPending) {
+			// it allready waits for content
+			return false;
+		}
 
 		var bSync = this._callContentRequest(bSuggestion, fnCallback);
 
