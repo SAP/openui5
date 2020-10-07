@@ -57,7 +57,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 			oRm.class("sapMInputBaseReadonly");
 		}
 
-		if (sValueState !== ValueState.None) {
+		if (sValueState !== ValueState.None && oControl.getEditable() && oControl.getEnabled()) {
 			oRm.class("sapMInputBaseState");
 		}
 
@@ -100,7 +100,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 			oRm.class("sapMInputBaseReadonlyWrapper");
 		}
 
-		if (sValueState !== ValueState.None) {
+		if (sValueState !== ValueState.None && oControl.getEditable() && oControl.getEnabled()) {
 			this.addValueStateClasses(oRm, oControl);
 		}
 
@@ -307,7 +307,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	InputBaseRenderer.renderValueStateAccDom = function(oRm, oControl) {
 		var sValueState = oControl.getValueState();
 
-		if (sValueState === ValueState.None) {
+		if (sValueState === ValueState.None || !oControl.getEditable() || !oControl.getEnabled()) {
 			return;
 		}
 
@@ -362,10 +362,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 			mAccessibilityState.role = sRole;
 		}
 
-		if (oControl.getValueState() === ValueState.Error) {
+		if (oControl.getValueState() === ValueState.Error && oControl.getEditable() && oControl.getEnabled()) {
 			mAccessibilityState.invalid = true;
 			mAccessibilityState.errormessage = sValueStateAccNodeId;
-		} else if (oControl.getValueState() !== ValueState.None) {
+		} else if (oControl.getValueState() !== ValueState.None && oControl.getEditable() && oControl.getEnabled()) {
 			sAriaDescribedBy = sAriaDescribedBy ? sValueStateAccNodeId + " " + sAriaDescribedBy : sValueStateAccNodeId;
 		}
 
