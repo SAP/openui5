@@ -187,7 +187,7 @@ sap.ui.define([
 
 			_updateCodeEditor : function(sFileName) {
 				var oCodeEditor = this._getCodeEditor(),
-					oAceInstance = oCodeEditor._getEditorInstance(),
+					oAceInstance = oCodeEditor.getInternalEditorInstance(),
 					oAceRenderer = oAceInstance.renderer;
 
 				// set the <code>CodeEditor</code> new code base and its type - xml, js, json or css.

@@ -294,7 +294,7 @@ sap.ui.define([
 				return;
 			}
 			var oCodeEditor = this._getCodeEditor();
-			var oAceInstance = oCodeEditor._getEditorInstance();
+			var oAceInstance = oCodeEditor.getInternalEditorInstance();
 			var sType = sFileName.match(/.*\.(.*?)$/)[1];
 			if (sType === "js") { //Don't use replace because of json
 				sType = "javascript";
@@ -446,7 +446,7 @@ sap.ui.define([
 		 */
 		_setEditorConfig: function () {
 			var oCodeEditor = this._getCodeEditor();
-			var oAceInstance = oCodeEditor._getEditorInstance();
+			var oAceInstance = oCodeEditor.getInternalEditorInstance();
 
 			oAceInstance.setTheme("ace/theme/github");
 			oAceInstance.getSession().setMode("ace/mode/javascript");

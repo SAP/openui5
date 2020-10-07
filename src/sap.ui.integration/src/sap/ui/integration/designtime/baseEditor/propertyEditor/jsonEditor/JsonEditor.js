@@ -64,10 +64,10 @@ sap.ui.define([
 					this._oDialog = oDialog;
 					this._oErrorMsg = this._oDialog.getContent()[0];
 					this._oEditor = this._oDialog.getContent()[1];
-					this._oEditor._getEditorInstance().getSession().on("changeAnnotation", this.onShowError.bind(this));
+					this._oEditor.getInternalEditorInstance().getSession().on("changeAnnotation", this.onShowError.bind(this));
 					this._oDialog.attachAfterOpen(function () {
-						this._oEditor._getEditorInstance().focus();
-						this._oEditor._getEditorInstance().navigateFileEnd();
+						this._oEditor.getInternalEditorInstance().focus();
+						this._oEditor.getInternalEditorInstance().navigateFileEnd();
 					}, this);
 					this.addDependent(this._oDialog);
 					this._openDialog();
@@ -115,7 +115,7 @@ sap.ui.define([
 		},
 
 		onShowError: function () {
-			var sErrors = (this._oEditor._getEditorInstance().getSession().getAnnotations() || []).map(function (oError) {
+			var sErrors = (this._oEditor.getInternalEditorInstance().getSession().getAnnotations() || []).map(function (oError) {
 				return "Line " + String(oError.row) + ": " + oError.text;
 			}).join("\n");
 			this._oErrorMsg.setText(sErrors);

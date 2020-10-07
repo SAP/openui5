@@ -56,6 +56,7 @@ sap.ui.define([
 	 * @class
 	 * Allows to visualize source code of various types with syntax highlighting, line numbers in editable and read only mode.
 	 * Use this controls in scenarios where the user should be able to inspect and edit source code.
+	 * The control currently uses the third-party code editor Ace.
 	 * NOTE: There is a known limitation where CodeEditor won't work within IconTabBar on Internet Explorer. There
 	 * is a way to achieve the same functionality - an example of IconTabHeader and a CodeEditor can be found
 	 * in the CodeEditor's samples.
@@ -151,7 +152,7 @@ sap.ui.define([
 						 */
 						value: { type: "string" },
 						/**
-						 * The underlying change event of the Ace code editor.
+						 * The underlying change event of the third-party code editor.
 						 */
 						editorEvent: { type: "object" }
 					}
@@ -427,7 +428,7 @@ sap.ui.define([
 	/**
 	 * Defines custom completer - object implementing a getCompletions method.
 	 * The method has two parameters - fnCallback method and context object.
-	 * Context object provides details about oPos and sPrefix as provided by ACE.
+	 * Context object provides details about oPos and sPrefix as provided by the third-party code editor.
 	 * @param {object} oCustomCompleter Object with getCompletions method
 	 * @public
 	 * @since 1.52
@@ -444,12 +445,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the internal ace editor instance
-	 * @returns {object} the internal ace editor instance
+	 * Returns the third-party code editor instance
+	 * <b>Caution:</b> Using the third-party code editor instance introduces a dependency to that internal editor. Future changes in the internal editor might lead to undefined behavior, so it should only be used in justified cases.
+	 * @returns {object} the internal third-party code editor instance
 	 * @private
 	 * @ui5-restricted
 	 */
-	CodeEditor.prototype._getEditorInstance = function() {
+	CodeEditor.prototype.getInternalEditorInstance = function() {
 		return this._oEditor;
 	};
 
