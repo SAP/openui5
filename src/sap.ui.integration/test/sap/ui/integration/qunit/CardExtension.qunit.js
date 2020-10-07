@@ -1,9 +1,11 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/Extension"
 ], function (
+	Core,
 	Card,
 	Extension
 ) {
@@ -260,6 +262,105 @@ sap.ui.define([
 		deferred.resolve(new DOMParser().parseFromString('<CitySet> <City Name="Paris"/> <City Name="Berlin" /> </CitySet>', "application/xml"));
 	});
 
+
+	QUnit.module("Actions", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				manifest: {
+					"sap.app": {
+						"id": "test"
+					},
+					"sap.card": {
+						"type": "List",
+						"header": {
+							"title": "Title",
+							"subTitle": "Sub Title"
+						},
+						"extension": "./extensions/Extension1"
+					}
+				}
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Initial actions", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oHeader,
+			aActionButtons;
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			oHeader = this.oCard.getCardHeader();
+			aActionButtons = oHeader.getToolbar()._oActionSheet.getButtons();
+
+			assert.strictEqual(aActionButtons.length, 1, "there is 1 action");
+			assert.strictEqual(aActionButtons[0].getText(), "AutoOpen - SAP website - Extension", "action text is correct");
+
+			done();
+		}.bind(this));
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("setActions method", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oHeader,
+			aActionButtons,
+			oToolbar,
+			aNewActions = [
+				{
+					type: 'Navigation',
+					url: "http://www.sap.com",
+					target: "_blank",
+					text: 'Action 1'
+				},
+				{
+					type: 'Navigation',
+					url: "http://www.sap.com",
+					target: "_blank",
+					text: 'Action 2'
+				}
+			];
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			oHeader = this.oCard.getCardHeader();
+			oToolbar = oHeader.getToolbar();
+
+			// set new actions
+			this.oCard._oExtension.setActions(aNewActions);
+
+			assert.notEqual(oToolbar, oHeader.getToolbar(), "there is a new actions toolbar");
+
+			oToolbar = oHeader.getToolbar();
+			aActionButtons = oToolbar._oActionSheet.getButtons();
+
+			assert.strictEqual(aActionButtons.length, 2, "there are 2 actions");
+			assert.strictEqual(aActionButtons[0].getText(), "Action 1", "action text is correct");
+			assert.strictEqual(aActionButtons[1].getText(), "Action 2", "action text is correct");
+
+			// set the new actions again
+			this.oCard._oExtension.setActions(aNewActions);
+
+			assert.strictEqual(oToolbar, oHeader.getToolbar(), "the actions toolbar is not changed");
+
+			done();
+		}.bind(this));
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.module("Custom Formatters", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -348,12 +449,12 @@ sap.ui.define([
 		// arrange
 		var done = assert.async();
 
-		this.fnOnCardReadyStub.callsFake(function (oCard) {
-			oCard.resolveDestination("test");
+		this.fnOnCardReadyStub.callsFake(function () {
+			this.oCard.resolveDestination("test");
 
 			assert.ok(true, "There is no error when calling resolveDestination.");
 			done();
-		});
+		}.bind(this));
 
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
@@ -388,10 +489,10 @@ sap.ui.define([
 		// arrange
 		var done = assert.async();
 
-		this.fnOnCardReadyStub.callsFake(function (oCard) {
-			assert.strictEqual(oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
+		this.fnOnCardReadyStub.callsFake(function () {
+			assert.strictEqual(this.oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
 			done();
-		});
+		}.bind(this));
 
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
