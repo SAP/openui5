@@ -25,7 +25,8 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch"
 						"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
 						"type": "string",
 						"label": "{i18n>TRANSLATED_STRING_LABEL}",
-						"translatable": true
+						"translatable": true,
+						"allowDynamicValues": false
 					},
 					"stringWithDescription": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithDescription/value",

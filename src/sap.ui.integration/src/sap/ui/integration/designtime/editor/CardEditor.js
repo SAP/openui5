@@ -1,16 +1,15 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
+	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
 	"sap/base/util/merge",
-	"sap/ui/core/Core",
-	"sap/ui/core/Control",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/Designtime",
-	"sap/ui/dom/includeStylesheet",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/LoaderExtensions",
 	"sap/ui/integration/util/CardMerger",
 	"sap/m/Label",
 	"sap/m/Title",
@@ -20,17 +19,19 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Popup",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/thirdparty/URI"
+	"sap/ui/thirdparty/URI",
+	"sap/ui/dom/includeStylesheet",
+	"sap/ui/dom/includeScript",
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/core/theming/Parameters"
 ], function (
+	Control,
+	Core,
 	deepClone,
 	merge,
-	Core,
-	Control,
 	Card,
 	Designtime,
-	includeStylesheet,
 	JSONModel,
-	LoaderExtension,
 	CardMerger,
 	Label,
 	Title,
@@ -40,10 +41,13 @@ sap.ui.define([
 	Log,
 	Popup,
 	ResourceBundle,
-	URI
+	URI,
+	includeStylesheet,
+	includeScript,
+	LoaderExtension,
+	Parameters
 ) {
 	"use strict";
-
 	function getHigherZIndex(source) {
 		if (source && source.nodeType !== 1) {
 			return 0;
@@ -54,8 +58,9 @@ sap.ui.define([
 		}
 		return z + 1;
 	}
+	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
+		CONTEXT_TIMEOUT = 5000;
 
-	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g;
 
 	/**
 	 * Constructor for a new <code>Card Editor</code>.
@@ -82,7 +87,6 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
-
 				/**
 				 * Set an id to an already existing card instance as string or provide the settings for a card as an object
 				 * {
@@ -105,10 +109,20 @@ sap.ui.define([
 					type: "string",
 					defaultValue: "admin"
 				},
-
 				language: {
 					type: "string",
 					defaultValue: ""
+				},
+				allowDynamicValues: {
+					type: "boolean",
+					defaultValue: false
+				},
+				allowSettings: {
+					type: "boolean",
+					defaultValue: false
+				},
+				designtime: {
+					type: "object"
 				}
 			},
 			aggregations: {
@@ -138,29 +152,28 @@ sap.ui.define([
 			oRm.writeClasses();
 			oRm.writeElementData(oControl);
 			oRm.openEnd();
-
 			if (oControl.isReady()) {
 				//surrounding div tag for form <div class="sapUiIntegrationCardEditorForm"
 				oRm.openStart("div");
 				oRm.addClass("sapUiIntegrationCardEditorForm");
+				if (oControl.getMode() !== "translation") {
+					oRm.addClass("settingsButtonSpace");
+				}
 				oRm.writeClasses();
 				oRm.openEnd();
 				var aItems = oControl.getAggregation("_formContent");
-
 				//render items
 				if (aItems) {
 					var oLabel,
 						iCol = 0;
 					for (var i = 0; i < aItems.length; i++) {
 						var oItem = aItems[i];
-
 						if (oItem.isA("sap.m.Label")) {
 							oLabel = oItem; //store the label and render it together with the next field
 							continue;
 						}
 						oRm.openStart("div");
 						oRm.addClass("sapUiIntegrationCardEditorItem");
-
 						if (oControl.getMode() === "translation") {
 							oRm.addClass("language");
 						}
@@ -170,9 +183,7 @@ sap.ui.define([
 						} else {
 							iCol = 0;
 						}
-
 						oRm.writeClasses();
-
 						oRm.openEnd();
 						if (oItem.isA("sap.m.Title")) {
 							oRm.renderControl(oItem);
@@ -193,7 +204,6 @@ sap.ui.define([
 								oRm.close("div");
 							}
 							oRm.renderControl(oItem);
-
 						}
 						oRm.close("div");
 						oLabel = null; //reset the label
@@ -201,7 +211,6 @@ sap.ui.define([
 					}
 				}
 				oRm.close("div");
-
 				//render the preview
 				var oPreview = oControl.getAggregation("_preview");
 				oPreview && oRm.renderControl(oPreview);
@@ -209,24 +218,54 @@ sap.ui.define([
 			oRm.close("div");
 		}
 	});
-
 	/**
-	 * Init of the editor
-	 */
+		 * Init of the editor
+		 */
 	CardEditor.prototype.init = function () {
 		this._ready = false;
+		this._aFieldReadyPromise = [];
 		//load translations
 		this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
 	};
-
 	/**
 	 * Returns whether the editor is ready to be used
 	 */
 	CardEditor.prototype.isReady = function () {
 		return this._ready;
 	};
+
+
+	function flattenData(oData, s, a, path) {
+		path = path || "";
+		a = a || [];
+		if (typeof oData === "object") {
+			if (!oData[s]) {
+				for (var n in oData) {
+					flattenData(oData[n], s, a, path + "/" + n);
+				}
+			} else {
+				//found leave
+				if (oData.type) {
+					a.push({
+						path: oData.pathvalue || path.substring(1),
+						value: oData.pathvalue || "{context>" + path.substring(1) + "/value}",
+						object: oData
+					});
+				} else {
+					a.push({
+						path: path.substring(1),
+						object: oData
+					});
+					for (var n in oData) {
+						flattenData(oData[n], s, a, path + "/" + n);
+					}
+				}
+			}
+		}
+		return a;
+	}
 
 	/**
 	 * Filters the manifestChanges array in the oManifestSettings
@@ -255,14 +294,12 @@ sap.ui.define([
 		oManifestSettings.manifestChanges = aChanges;
 		this._currentLayerManifestChanges = oCurrentLayerChanges;
 	};
-
 	/**
 	 * Sets the card property as a string, object {manifest:{}, baseUrl:{}} or a reference to a card instance
 	 * @param {any} vCardIdOrSettings
 	 * @param {boolean} bSuppressRerendering
 	 */
 	CardEditor.prototype.setCard = function (vCardIdOrSettings, bSuppressRerendering) {
-
 		this._ready = false;
 		if (vCardIdOrSettings === this.getProperty("card")) {
 			return this;
@@ -274,14 +311,12 @@ sap.ui.define([
 			this._oDesigntimeInstance.destroy();
 		}
 		this.setProperty("card", vCardIdOrSettings, bSuppressRerendering);
-
 		//Waiting for additional settings on the card that are applied synchronously
 		Promise.resolve().then(function () {
 			this._initCard(vCardIdOrSettings);
 		}.bind(this));
 		return this;
 	};
-
 	/**
 	 * Sets the language of the editor
 	 *
@@ -294,15 +329,12 @@ sap.ui.define([
 			return this;
 		}
 		this._language = sValue.replace("-", "_");
-
 		this.setProperty("language", sValue, bSuppress);
-
 		if (!CardEditor._languages[this._language]) {
 			Log.warning("The language: " + sValue + " is currently unknown, some UI controls might show " + sValue + " instead of the language name.");
 		}
 		return this;
 	};
-
 	/**
 	 * Increases the zIndex to a higher value for all popups
 	 */
@@ -311,7 +343,6 @@ sap.ui.define([
 			Popup.setInitialZIndex(getHigherZIndex(this.getDomRef()));
 		}
 	};
-
 	/**
 	 * Returns the original manifest json without processed parameters, handlebar translation
 	 */
@@ -322,7 +353,6 @@ sap.ui.define([
 			return {};
 		}
 	};
-
 	/**
 	 * Initializes the editors card settings
 	 * @param {} vCardIdOrSettings
@@ -356,15 +386,12 @@ sap.ui.define([
 		}
 		if (typeof vCardIdOrSettings === "object") {
 			var iCurrentModeIndex = CardMerger.layers[this.getMode()];
-
 			if (vCardIdOrSettings.manifestChanges) {
 				//remove the changes from the current layer
 				this._filterManifestChangesByLayer(vCardIdOrSettings);
 			}
-
 			//create a new card settings for a new card
 			this._oEditorCard = new Card(vCardIdOrSettings);
-
 			this._oEditorCard.attachManifestReady(function () {
 				if (!this._oEditorCard._isManifestReady) {
 					//TODO: manifestReady is fired even if the manifest is not ready. Check why.
@@ -374,28 +401,22 @@ sap.ui.define([
 					//already created
 					return;
 				}
-
 				this._appliedLayerManifestChanges = vCardIdOrSettings.manifestChanges;
 				var oManifestData = this._oEditorCard.getManifestEntry("/");
-
 				if (iCurrentModeIndex < CardMerger.layers["translation"] && this._currentLayerManifestChanges) {
 					//merge if not translation
 					oManifestData = CardMerger.mergeCardDelta(oManifestData, [this._currentLayerManifestChanges]);
 				}
 				//create a manifest model after the changes are merged
 				this._manifestModel = new JSONModel(oManifestData);
-
 				//create a manifest model for the original "raw" manifest that was initially loaded
 				this._originalManifestModel = new JSONModel(this._getOriginalManifestJson());
-
 				this._initInternal();
-
 				//use the translations from the card
 				if (!this._oEditorCard.getModel("i18n")) {
 					this._oEditorCard._loadDefaultTranslations();
 				}
 				this.setModel(this._oEditorCard.getModel("i18n"), "i18n");
-
 				//add a context model
 				this._createContextModel();
 			}.bind(this));
@@ -404,7 +425,6 @@ sap.ui.define([
 			this._oEditorCard.onBeforeRendering();
 		}
 	};
-
 	/**
 	 * Initializes the editor after the card is set
 	 */
@@ -412,8 +432,21 @@ sap.ui.define([
 		//load the designtime control and bundles lazy
 		var sDesigntime = this._oEditorCard.getManifestEntry("/sap.card/designtime"),
 			oConfiguration = this._manifestModel.getProperty("/sap.card/configuration"),
-			oPromise;
-		if (sDesigntime) {
+			oPromise,
+			oDesigntimeConfig = this.getDesigntime();
+		if (oDesigntimeConfig) {
+			oPromise = new Promise(function (resolve, reject) {
+				sap.ui.require(["sap/ui/integration/Designtime"], function (Designtime) {
+					var AdvancedDesigntime = Designtime.extend("test.Designtime");
+					AdvancedDesigntime.prototype.create = function () {
+						return oDesigntimeConfig;
+					};
+					var oDesigntime = new AdvancedDesigntime();
+					this._applyDesigntimeDefaults(oDesigntime.getSettings());
+					resolve(oDesigntime);
+				}.bind(this));
+			}.bind(this));
+		} else if (sDesigntime) {
 			//load designtime from module
 			oPromise = this._oEditorCard.loadDesigntime().then(function (oDesigntime) {
 				this._applyDesigntimeDefaults(oDesigntime.getSettings());
@@ -429,7 +462,6 @@ sap.ui.define([
 				//always add destination settings
 				this._addDestinationSettings(oConfiguration, this._oDesigntimeInstance);
 			}
-
 			//create a settings model
 			this._settingsModel = new JSONModel(this._oDesigntimeInstance.getSettings());
 			this.setModel(this._settingsModel, "currentSettings");
@@ -439,14 +471,14 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this));
 	};
-
 	/**
 	 * Returns the current settings as a json with a manifest path and the current value
 	 * additionally there is a layer number added as ":layer"
 	 */
 	CardEditor.prototype.getCurrentSettings = function () {
 		var oSettings = this._settingsModel.getProperty("/"),
-			mResult = {};
+			mResult = {},
+			mNext;
 		for (var n in oSettings.form.items) {
 			var oItem = oSettings.form.items[n];
 			if (oItem.editable && oItem.visible) {
@@ -463,13 +495,29 @@ sap.ui.define([
 					//in translation mode create an entry if there is a value
 					mResult[oItem.manifestpath] = oItem.value;
 				}
+				if (oItem._next && (this.getAllowSettings())) {
+					if (oItem._next.editable === false) {
+						mNext = mNext || {};
+						mNext[oItem._settingspath + "/editable"] = false;
+					}
+					if (oItem._next.visible === false) {
+						mNext = mNext || {};
+						mNext[oItem._settingspath + "/visible"] = false;
+					}
+					if (typeof oItem._next.allowDynamicValues === "boolean" && this.getAllowDynamicValues()) {
+						mNext = mNext || {};
+						mNext[oItem._settingspath + "/allowDynamicValues"] = oItem._next.allowDynamicValues;
+					}
+				}
 			}
 		}
 		mResult[":layer"] = CardMerger.layers[this.getMode()];
 		mResult[":errors"] = this.checkCurrentSettings()[":errors"];
+		if (mNext) {
+			mResult[":designtime"] = mNext;
+		}
 		return mResult;
 	};
-
 	/**
 	 * Checks for invalid values in the current settings and reports the errors
 	 * TODO: highlight issues and add states...
@@ -486,7 +534,6 @@ sap.ui.define([
 					}
 					mChecks[oItem.manifestpath] = true;
 					var value = oItem.value;
-
 					var sType = oItem.type;
 					if (sType === "string" && value === "") {
 						mChecks[oItem.manifestpath] = value;
@@ -524,17 +571,98 @@ sap.ui.define([
 	 */
 	CardEditor.prototype._createContextModel = function () {
 		var oHost = this._oEditorCard.getHostInstance(),
-			oContextModel = new JSONModel({});
+			oContextModel = new JSONModel({}),
+			oFlatContextModel = new JSONModel([]);
 
-		//add the model
+		//add the models in any case
 		this.setModel(oContextModel, "context");
+		this.setModel(oFlatContextModel, "contextflat");
+		oFlatContextModel._getPathObject = function (sPath) {
+			var a = this.getData().filter(function (o) {
+				if (o.path === sPath) {
+					return true;
+				}
+			});
+			return a.length ? a[0] : null;
+		};
+		oFlatContextModel._getValueObject = function (sValue) {
+			var a = this.getData() || [];
+			a = a.filter(function (o) {
+				if (o.value === sValue || o.object.value === sValue) {
+					return true;
+				}
+			});
+			return a.length ? a[0] : null;
+		};
+		var oContextDataPromise = new Promise(function (resolve, reject) {
+			if (oHost && oHost.getContext) {
+				var bResolved = false;
+				setTimeout(function () {
+					if (bResolved) {
+						return;
+					}
+					Log.error("Card Editor context could not be determined with " + CONTEXT_TIMEOUT + ".");
+					bResolved = true;
+					resolve({});
+				}, CONTEXT_TIMEOUT);
+				oHost.getContext().then(function (oContextData) {
+					if (bResolved) {
+						Log.error("Card Editor context returned after more than " + CONTEXT_TIMEOUT + ". Context is ignored.");
+					}
+					bResolved = true;
+					resolve(oContextData || {});
+				});
+			} else {
+				resolve({});
+			}
+		});
 
 		//get the context from the host
-		if (oHost) {
-			oHost.getContext().then(function (oData) {
-				oContextModel.setData(oData);
-			});
-		}
+		oContextDataPromise.then(function (oContextData) {
+			var oData = {};
+			oData["empty"] = {
+				label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_VAL"),
+				type: "string",
+				description: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_DESC"),
+				placeholder: "",
+				value: ""
+			};
+			for (var n in oContextData) {
+				oData[n] = oContextData[n];
+			}
+			oData["card.internal"] = {
+				label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_INTERNAL_VAL"),
+				todayIso: {
+					type: "string",
+					label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
+					description: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_DESC"),
+					tags: [],
+					placeholder: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
+					customize: ["format.dataTime"],
+					value: "{{parameters.TODAY_ISO}}"
+				},
+				nowIso: {
+					type: "string",
+					label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
+					description: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_DESC"),
+					tags: [],
+					placeholder: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
+					customize: ["dateFormatters"],
+					value: "{{parameters.NOW_ISO}}"
+				},
+				currentLanguage: {
+					type: "string",
+					label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+					description: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+					tags: ["technical"],
+					customize: ["languageFormatters"],
+					placeholder: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+					value: "{{parameters.LOCALE}}"
+				}
+			};
+			oContextModel.setData(oData);
+			oFlatContextModel.setData(flattenData(oData, "label"));
+		}.bind(this));
 
 		//async update of the value via host call
 		oContextModel.getProperty = function (sPath, oContext) {
@@ -558,7 +686,6 @@ sap.ui.define([
 			}
 		};
 	};
-
 	//map editors for a specific type
 	CardEditor.fieldMap = {
 		"string": "sap/ui/integration/designtime/editor/fields/StringField",
@@ -571,7 +698,6 @@ sap.ui.define([
 		"destination": "sap/ui/integration/designtime/editor/fields/DestinationField"
 	};
 	CardEditor.Fields = null;
-
 	/**
 	 * Loads all field modules registered in CardEditor.fieldMap and stores the classes in CardEditor.Fields
 	 */
@@ -589,7 +715,6 @@ sap.ui.define([
 			});
 		});
 	};
-
 	/**
 	 * Creates a label based on the configuration settings
 	 * @param {} oConfig
@@ -602,7 +727,6 @@ sap.ui.define([
 			required: oConfig.required && oConfig.editable || false
 		});
 		oLabel._cols = oConfig.cols || 2; //by default 2 cols
-
 		if (oConfig.description) {
 			var oIcon = new Icon({
 				src: "sap-icon://message-information",
@@ -623,27 +747,21 @@ sap.ui.define([
 		}
 		return oLabel;
 	};
-
 	CardEditor.prototype._getPopover = function () {
 		if (this._oPopover) {
 			return this._oPopover;
 		}
-
 		var oText = new Text({
-			text: "Description"
+			text: ""
 		});
 		oText.addStyleClass("sapUiTinyMargin sapUiIntegrationCardEditorDescriptionText");
-
 		this._oPopover = new RPopover({
 			showHeader: false,
 			content: [oText]
 		});
 		this._oPopover.addStyleClass("sapUiIntegrationCardEditorPopover");
-
 		return this._oPopover;
 	};
-
-
 	/**
 	 * Creates a Field based on the configuration settings
 	 * @param {*} oConfig
@@ -652,25 +770,24 @@ sap.ui.define([
 		var oField = new CardEditor.Fields[oConfig.type]({
 			configuration: oConfig,
 			mode: this.getMode(),
+			host: this._oEditorCard.getHostInstance(),
 			objectBindings: {
 				currentSettings: {
 					path: "currentSettings>" + oConfig._settingspath
 				}
 			}
 		});
+		this._aFieldReadyPromise.push(oField._readyPromise);
 		//listen to changes on the settings
 		var oBinding = this._settingsModel.bindProperty(oConfig._settingspath + "/value");
 		oBinding.attachChange(function () {
 			oConfig._changed = true;
 			this._updatePreview();
 		}.bind(this));
-
 		this._addValueListModel(oConfig, oField);
-
 		oField._cols = oConfig.cols || 2; //by default 2 cols
 		return oField;
 	};
-
 	/**
 	 * Creates a unnamed model if a values.data section exists in the configuration
 	 * @param {object} oConfig
@@ -695,19 +812,23 @@ sap.ui.define([
 			oField._oDataPromise = oPromise;
 		}
 	};
-
 	/**
 	 * Adds an item to the _formContent aggregation based on the config settings
 	 * @param {} oConfig
 	 */
 	CardEditor.prototype._addItem = function (oConfig) {
-
 		var sMode = this.getMode();
+		//force to turn off features for settings and dynamic values
+		if (this.getAllowDynamicValues() === false) {
+			oConfig.allowDynamicValues = false;
+		}
+		if (this.getAllowSettings() === false) {
+			oConfig.allowSettings = false;
+		}
 		//if the item is not visible or translation mode, continue immediately
 		if (oConfig.visible === false || (!oConfig.translatable && sMode === "translation")) {
 			return;
 		}
-
 		if (oConfig.type === "group") {
 			var oTitle = new Title({
 				text: oConfig.label
@@ -716,56 +837,47 @@ sap.ui.define([
 			oTitle._cols = oConfig.cols || 2; //by default 2 cols
 			return;
 		}
-
 		if (sMode === "translation") {
 			//adding an internal _language object to save the original value for the UI
 			oConfig._language = {
 				value: oConfig.value
 			};
-			oConfig.value = oConfig._translatedDefaultValue || "";
 
-			//even if a item is not visible or not editable by another layer for translations it should always be editable and visible
-			oConfig.editable = oConfig.visible = oConfig.translatable;
-
-
-			//if there are changes for the current layer, read the already translated value from there
-			//now merge these changes for translation into the item configs
-			if (this._currentLayerManifestChanges) {
-				oConfig.value = this._currentLayerManifestChanges[oConfig.manifestpath] || oConfig.value;
-			}
 			//force a 2 column layout in the form
 			oConfig.cols = 1;
-
 			//create a configuration clone. map the _settingspath setting to _language, and set it to not editable
 			var origLangField = deepClone(oConfig, 10);
 			origLangField._settingspath += "/_language";
 			origLangField.editable = false;
 			origLangField.required = false;
-
 			this.addAggregation("_formContent",
 				this._createLabel(origLangField)
 			);
-
 			this.addAggregation("_formContent",
 				this._createField(origLangField)
 			);
+			oConfig.value = oConfig._translatedDefaultValue || "";
+			//even if a item is not visible or not editable by another layer for translations it should always be editable and visible
+			oConfig.editable = oConfig.visible = oConfig.translatable;
+			//if there are changes for the current layer, read the already translated value from there
+			//now merge these changes for translation into the item configs
+			if (this._currentLayerManifestChanges) {
+				oConfig.value = this._currentLayerManifestChanges[oConfig.manifestpath] || oConfig.value;
+			}
 			//change the label for the translation field
 			oConfig.label = oConfig._translatedLabel || "";
-
 			oConfig.required = false; //translation is never required
 			//now continue with the default...
 		}
-
 		//default for all modes
 		this.addAggregation("_formContent",
 			this._createLabel(oConfig)
 		);
-
+		var oField = this._createField(oConfig);
 		this.addAggregation("_formContent",
-			this._createField(oConfig)
+			oField
 		);
 	};
-
 	/**
 	 * Returns the current language specific text for a given key or "" if no translation for the key exists
 	 */
@@ -792,13 +904,11 @@ sap.ui.define([
 			return this._getCurrentLanguageSpecificText(sKey);
 		}
 	};
-
 	/**
 	 * Starts the editor, creates the fields and preview
 	 */
 	CardEditor.prototype._startEditor = function () {
-		this.destroyAggregation("_formContent");
-		var oSettings = this._oDesigntimeInstance.getSettings();
+		var oSettings = this._settingsModel.getProperty("/");
 		if (oSettings.form && oSettings.form.items) {
 			if (this.getMode() === "translation") {
 				//add 2 group items to show over the columns to avoid laguage repetition in the labels
@@ -857,15 +967,18 @@ sap.ui.define([
 		//add preview
 		if (this.getMode() !== "translation") {
 			this._initPreview().then(function () {
+				Promise.all(this._aFieldReadyPromise).then(function () {
+					this._ready = true;
+					this.fireReady();
+				}.bind(this));
+			}.bind(this));
+		} else {
+			Promise.all(this._aFieldReadyPromise).then(function () {
 				this._ready = true;
 				this.fireReady();
 			}.bind(this));
-		} else {
-			this._ready = true;
-			this.fireReady();
 		}
 	};
-
 	/**
 	 * Destroy the editor and the internal card instance that it created
 	 */
@@ -882,10 +995,8 @@ sap.ui.define([
 		this._manifestModel = null;
 		this._originalManifestModel = null;
 		this._settingsModel = null;
-
 		Control.prototype.destroy.apply(this, arguments);
 	};
-
 	/**
 	 * Initializes the preview
 	 */
@@ -901,7 +1012,6 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this));
 	};
-
 	/**
 	 * updates the preview
 	 * TODO: Track changes and call update of the preview
@@ -960,7 +1070,6 @@ sap.ui.define([
 			oItem.editable = oItem.editable !== false;
 		}
 	};
-
 	/**
 	 * Applies previous layer designtime settings that were changed
 	 */
@@ -977,8 +1086,26 @@ sap.ui.define([
 				}
 			}
 		}
+		if (this._currentLayerManifestChanges) {
+			var oChanges = this._currentLayerManifestChanges[":designtime"];
+			if (oChanges) {
+				var aKeys = Object.keys(oChanges);
+				for (var j = 0; j < aKeys.length; j++) {
+					//apply the values to a "_next/editable", "_next/visible" entry to the settings.
+					//the current layer needs to be able to change those values
+					var sPath = aKeys[j],
+						sNext = sPath.substring(0, sPath.lastIndexOf("/") + 1) + "_next";
+					if (!this._settingsModel.getProperty(sNext)) {
+						//create a _next entry if it does not exist
+						this._settingsModel.setProperty(sNext, {});
+					}
+					var sNext = sPath.substring(0, sPath.lastIndexOf("/") + 1) + "_next",
+						sProp = sPath.substring(sPath.lastIndexOf("/") + 1);
+					this._settingsModel.setProperty(sNext + "/" + sProp, oChanges[aKeys[j]]);
+				}
+			}
+		}
 	};
-
 	/**
 	 * Creates a designtime instance based on an configuration section within the manifest.
 	 * This is valid if there is no explicit sap.card/designtime module in the manifest itself.
@@ -997,7 +1124,6 @@ sap.ui.define([
 					editable: (sMode !== "translation"),
 					_settingspath: "/form/items/" + n
 				}, oConfiguration.parameters[n]);
-
 				var oItem = oItems[n];
 				if (!oItem.type) {
 					oItem.type === "string";
@@ -1009,7 +1135,6 @@ sap.ui.define([
 		}
 		return new Designtime(oSettings);
 	};
-
 	/**
 	 * Adds additional settings for destinations section in admin mode
 	 * @param {} oConfiguration
@@ -1037,6 +1162,8 @@ sap.ui.define([
 					visible: true,
 					type: "destination",
 					editable: true,
+					allowDynamicValues: false,
+					allowSettings: false,
 					value: oConfiguration.destinations[n].name,
 					defaultValue: oConfiguration.destinations[n].defaultUrl,
 					_settingspath: "/form/items/" + [n + ".destinaton"],
@@ -1053,7 +1180,6 @@ sap.ui.define([
 			}.bind(this));
 		}
 	};
-
 	/**
 	 * Returns the default value that was given by the developer for the given path
 	 * @param {string} sPath
@@ -1061,7 +1187,6 @@ sap.ui.define([
 	CardEditor.prototype._getManifestDefaultValue = function (sPath) {
 		return this._originalManifestModel.getProperty(sPath);
 	};
-
 	/**
 	 * Returns whether the value is translatable via the handlbars translation syntax {{KEY}}
 	 * For other than string values false is returned
@@ -1073,22 +1198,51 @@ sap.ui.define([
 		}
 		return false;
 	};
-
 	//map of language strings in their actual language representation, initialized in CardEditor.init
 	CardEditor._languages = {};
-
 	//map of predefined parameters in the card, initialized in CardEditor.init
 	CardEditor._predefinedParameters = {};
-
+	//theming from parameters to css valiables if css variables are not turned on
+	//find out if css vars are turned on
+	CardEditor._appendThemeVars = function () {
+		var oOldElement = document.getElementById("sap-ui-integration-editor-style");
+		if (oOldElement && oOldElement.parentNode) {
+			oOldElement.parentNode.removeChild(oOldElement);
+		}
+		var aVars = [
+			"sapButton_Hover_Background",
+			"sapBackgroundColor",
+			"sapContent_LabelColor",
+			"sapTile_SeparatorColor",
+			"sapScrollBar_Hover_FaceColor"],
+			oStyle = document.createElement("style");
+		oStyle.setAttribute("id", "sap-ui-integration-editor-style");
+		for (var i = 0; i < aVars.length; i++) {
+			aVars[i] = "--" + aVars[i] + ":" + Parameters.get(aVars[i]);
+		}
+		oStyle.innerHTML = ".sapUiIntegrationCardEditor,.sapUiIntegrationFieldSettings {" + aVars.join(";") + "}";
+		document.body.appendChild(oStyle);
+	};
 	//initializes global settings
 	CardEditor.init = function () {
-
 		this.init = function () { }; //replace self
+		function load() {
 
+			sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"]);
+		}
+		var sUrl = LoaderExtension.resolveUI5Url("ui5://sap-ui-integration-editor.js");
+		includeScript(sUrl, "sap-ui-integration-editor", load, load);
+
+		//add theming variables if css vars are not turned on
+		if (!window.getComputedStyle(document.documentElement).getPropertyValue('--sapBackgroundColor')) {
+			CardEditor._appendThemeVars();
+			Core.attachThemeChanged(function () {
+				CardEditor._appendThemeVars();
+			});
+		}
 		//TODO: This should be replaced with a themable .less file
 		var sCssURL = sap.ui.require.toUrl("sap.ui.integration.designtime.editor.css.CardEditor".replace(/\./g, "/") + ".css");
 		includeStylesheet(sCssURL);
-
 		LoaderExtension.loadResource("sap/ui/integration/designtime/editor/languages.json", {
 			dataType: "json",
 			failOnError: false,

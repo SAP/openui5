@@ -23,7 +23,7 @@
 	</div>
 	<div id="editor">
 		<h2>Admin Mode (only)</h2>
-		<ui-integration-card-editor id="cardEditorAdmin" mode="admin">
+		<ui-integration-card-editor id="cardEditorAdmin" mode="admin" allow-dynamic-values="true" allow-settings="true">
 		</ui-integration-card-editor>
 		<div class="buttons">
 			<button onclick="showCurrentValues('cardEditorAdmin')">
@@ -40,7 +40,8 @@
 			</button>
 		</div>
 		<h2>Content Mode (only)</h2>
-		<ui-integration-card-editor id="cardEditorContent" mode="content">
+		<ui-integration-card-editor id="cardEditorContent" mode="content" allow-dynamic-values="true"
+			allow-settings="true">
 		</ui-integration-card-editor>
 		<div class="buttons">
 			<button onclick="showCurrentValues('cardEditorContent')">
@@ -58,7 +59,7 @@
 		</div>
 		<h2>Translation Mode (only)</h2>
 		<ui-integration-card-editor id="cardEditorTranslation" card='{
-			}' mode="translation" language="ru">
+			}' mode="translation" language="ru" allow-dynamic-values="true" allow-settings="true">
 		</ui-integration-card-editor>
 		<div class="buttons">
 			<button onclick="showCurrentValues('cardEditorTranslation')">

@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @abstract
 	 * @private
 	 */
-	function CustomElementBase () {
+	function CustomElementBase() {
 
 		if (this.constructor === CustomElementBase) {
 			throw new TypeError('Abstract class "CustomElementBase" cannot be instantiated directly.');
@@ -88,7 +88,7 @@ sap.ui.define([
 		} else if (this._mAllAssociations[sCamelizedAttributeName]) {
 			var element = document.getElementById(vNewValue);
 			if (element instanceof CustomElementBase) {
-				vNewValue =  document.getElementById(vNewValue)._getControl();
+				vNewValue = document.getElementById(vNewValue)._getControl();
 			}
 
 			this._mAllAssociations[sCamelizedAttributeName].set(this._oControlInstance, vNewValue);
@@ -200,9 +200,9 @@ sap.ui.define([
 		aDependencies = aDependencies || [];
 
 		CustomElementBase.awaitDependencies(aDependencies)
-		.then(function () {
-			window.customElements.define(sCustomElementName, CustomElementClass);
-		});
+			.then(function () {
+				window.customElements.define(sCustomElementName, CustomElementClass);
+			});
 	};
 
 	/**
@@ -212,7 +212,7 @@ sap.ui.define([
 	 * @param {string[]} aDependencies Array of custom elements names that the current custom element needs to be loaded.
 	 * @returns {Promise} Promise
 	 */
-	CustomElementBase.awaitDependencies = function(aDependencies) {
+	CustomElementBase.awaitDependencies = function (aDependencies) {
 		var aPromises = aDependencies.map(function (sCustomElementName) {
 			return window.customElements.whenDefined(sCustomElementName);
 		});
@@ -266,7 +266,7 @@ sap.ui.define([
 		}
 
 		Object.defineProperty(CustomElementSubClass, "observedAttributes", {
-			get: function() {
+			get: function () {
 				var aAllAttributes = oPrototype._aAllProperties.map(hyphenate); // all properties and associations in "dashed-case"
 				return aAllAttributes;
 			}

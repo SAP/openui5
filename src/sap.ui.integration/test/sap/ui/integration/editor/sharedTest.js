@@ -52,12 +52,12 @@ function saveCurrentValues(id) {
 	var o = document.getElementById(id).getCurrentSettings();
 	var editablecheckbox = document.getElementById(id + "-checkbox");
 	var visiblecheckbox = document.getElementById(id + "-checkbox-visible");
-	if (editablecheckbox) {
-		o[":designtime"] = {
-			"/form/items/string/editable": !editablecheckbox.checked,
-			"/form/items/string/visible": !visiblecheckbox.checked
-		};
-	}
+	// if (editablecheckbox) {
+	// 	o[":designtime"] = {
+	// 		"/form/items/string/editable": !editablecheckbox.checked,
+	// 		"/form/items/string/visible": !visiblecheckbox.checked
+	// 	};
+	// }
 	localStorage.setItem(localStorageKey + id, JSON.stringify(o, null, "\t"));
 	updateAllLayerCard();
 }
@@ -74,11 +74,15 @@ function createCardEditorTag(id, changes, mode, language, designtime) {
 		"manifestChanges": changes,
 		"baseUrl": baseUrl
 	};
-	if(designtime && designtime !== "") {
+	if (designtime && designtime !== "") {
 		manifest["sap.card"].designtime = "designtime/withPreview/" + designtime;
 		card.manifest = manifest;
 	}
-	return '<ui-integration-card-editor id="' + id + '" card=\'' + JSON.stringify(card) + '\' mode="' + mode + '" language="' + language + '"></ui-integration-card-editor>';
+	return '<ui-integration-card-editor id="' + id +
+		'" card=\'' + JSON.stringify(card) +
+		'\' mode="' + mode +
+		'" language="' + language +
+		'" allow-dynamic-values="true" allow-settings="true"></ui-integration-card-editor>';
 }
 function loadCurrentValues(id) {
 	var dom = document.getElementById(id);

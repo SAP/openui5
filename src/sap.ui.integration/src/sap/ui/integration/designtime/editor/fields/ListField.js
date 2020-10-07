@@ -55,6 +55,7 @@ sap.ui.define([
 							value: {
 								path: 'currentSettings>value',
 								formatter: function (a) {
+									a = a || [];
 									return a.join(",");
 								}
 							},

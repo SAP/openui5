@@ -36,90 +36,121 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 			});
 		};
 
-		oHost.getContext = function (bDesigntime) {
+		oHost.getContext = function () {
 			var context = {
 				"sap.workzone": {
+					label: "SAP Work Zone",
 					currentUser: {
+						label: "Current User",
 						id: {
 							label: "Id of the Work Zone user",
+							type: "string",
+							tags: ["technical"],
 							placeholder: "Work Zone user id",
 							description:
-								"The value will change based on the logged on user. The current value for your user is {1}",
+								"Id of the current user. The value will change based on the logged on user. To show the users name, use 'Name of the Work Zone user'",
 							value: "MyCurrentUserId"
 						},
 						name: {
 							label: "Name of the Work Zone user",
+							type: "string",
 							placeholder: "Work Zone user name",
 							description:
-								"The value will change based on the logged on user. The current value for your user is {1}",
-							value: "My Full Name"
+								"Name of the current user with first, middle and last name. The middle name will be abbreviated. The value will change based on the logged on user",
+							value: "Mary J. O'Anna"
 						},
 						email: {
 							label:
 								"Email address of current Work Zone user",
+							type: "string",
 							placeholder: "Work Zone user email",
 							description:
-								"The value will change based on the logged on user. The current value for your user is {1}",
-							value: "my.mail@company.com"
+								"Email address of current Work Zone user. The value will change based on the logged on user.",
+							value: "mary.oanna@company.com"
 						}
 					},
 					currentWorkspace: {
+						label: "Current Workspace",
 						id: {
-							label: "Id of this workspace",
-							placeholder: "Workspace id",
+							label: "Id of a workspace",
+							type: "string",
+							tags: ["technical"],
+							placeholder: "Workspace Id",
 							description:
-								"The value will change based on the current workspace a widget is included. The current value is: {1}",
+								"Id of a workspace where the card is added by a page administrator.",
 							value: "workspaceId"
 						},
 						name: {
-							label: "Name of this Workspace",
-							placeholder: "Workspace name",
+							label: "Name of a Workspace",
+							type: "string",
+							placeholder: "Workspace Name",
 							description:
-								"The value will change based on the current workspace a widget is included. The current value is: {1}",
-							value: "Workspace Name"
+								"Name of a workspace where the card is added by a page administrator.",
+							value: null
 						}
 					},
 					currentCompany: {
+						label: "Current Company",
 						id: {
-							label: "Id of the company",
+							label: "Id of the current company",
+							type: "string",
+							tags: ["technical"],
+							placeholder: "Id of the company",
 							description:
-								"The value will change in case a different company is used. The current value is: {1}",
-							placeholder: "Workspace name",
+								"Id of the company where the card is added by a page administrator.",
 							value: "CompanyId"
 						},
 						name: {
 							label: "Name of the company",
+							type: "string",
+							placeholder: "Name of the company",
 							description:
-								"The value will change in case a different company is used. The current value is: {1}",
+								"Name of the company where the card is added by a page administrator.",
 							value: "Company Nice Name"
 						},
 						webHost: {
-							label: "Work Zone Host",
+							label: "Work Zone Hostname",
+							type: "string",
+							tags: ["technical"],
+							placeholder: "Work Zone Hostname",
 							description:
-								"The value will change in case a different company is used. The current value is: {1}",
+								"The host name of your Work Zone system.",
 							value: "wz.host.name.ondemand.com"
 						}
 					}
 				},
 				"sap.successfactors": {
+					label: "SAP SucessFactors",
 					currentUser: {
+						label: "Current User",
 						id: {
+							label: "Success Factors User Id",
+							type: "string",
+							tags: ["technical"],
+							placeholder: "Success Factors User Id",
 							description:
-								"The value will change based on the logged on user. The current value is: {1}",
+								"The user id of the connected Success Factors system. The value will change based on the logged on user.",
 							value: "SFUserId"
 						}
 					},
 					currentCompany: {
+						label: "Current Company",
 						id: {
 							label: "Success Factors Company Id",
+							type: "string",
+							tags: ["technical"],
+							placeholder: "Success Factors Company Id",
 							description:
-								"The value will change in case a different company is used. The current value is: {1}",
+								"The company id the connected Success Factors system. The value will change in case a different SF company is used.",
 							value: "SFCompanyId"
 						},
 						webHost: {
-							label: "Success Factors Host",
+							label: "Success Factors Hostname",
+							type: "string",
+							placeholder: "Success Factors Hostname",
+							tags: ["technical"],
 							description:
-								"The value will change in case a different company is used. The current value is: {1}",
+								"The hostname of the connected Success Factors system. The value will change in case a different SF host is used.",
 							value: "sf.host.name.ondemand.com"
 						}
 					}
