@@ -1436,6 +1436,53 @@ sap.ui.define([
 		},
 
 		/**
+		 * Expect changes due to resets of the given <t:Table>'s rows after scrolling.
+		 *
+		 * @param {sap.ui.table.Table} oTable
+		 *   <t:Table> to derive columns from
+		 * @param {number} iRowCount
+		 *   Number of rows which are reset
+		 * @param {number} [iMissingExpanded=0]
+		 *   Number of changes for "isExpanded" which will be missing (because already undefined)
+		 * @returns {object} The test instance for chaining
+		 * @throws {Error} For unsupported IDs
+		 */
+		expectResets : function (oTable, iRowCount, iMissingExpanded) {
+			var mValuesById = {
+					accountResponsible : null,
+					country : null,
+					grossAmount : undefined,
+					isExpanded : undefined,
+					isTotal : undefined,
+					level : undefined,
+					lifecycleStatus : null,
+					region : null,
+					salesAmount : undefined,
+					salesNumber : null
+				},
+				that = this;
+
+			function expectChange(sId) {
+				var i = sId === "isExpanded" && iMissingExpanded || 0;
+
+				if (!(sId in mValuesById)) {
+					throw new Error("Unsupported ID: " + sId);
+				}
+				for (; i < iRowCount; i += 1) {
+					that.expectChange(sId, mValuesById[sId], null);
+				}
+			}
+
+			oTable.getColumns().map(function (oColumn) {
+				var sId = oColumn.getTemplate().getId();
+
+				return sId.slice(sId.lastIndexOf("-") + 1);
+			}).forEach(expectChange);
+
+			return this;
+		},
+
+		/**
 		 * Returns whether expected changes for the control are only optional null values.
 		 *
 		 * @param {string} sControlId The control ID
@@ -15092,8 +15139,6 @@ sap.ui.define([
 			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var i;
-
 			oTable = that.oView.byId("table");
 			oListBinding = oTable.getBinding("rows");
 
@@ -15111,15 +15156,9 @@ sap.ui.define([
 						{GrossAmount : "8", LifecycleStatus : "S"},
 						{GrossAmount : "9", LifecycleStatus : "R"}
 					]
-				});
-			for (i = 0; i < 3; i += 1) {
-				that.expectChange("isExpanded", undefined, null)
-					.expectChange("isTotal", undefined, null)
-					.expectChange("level", undefined, null)
-					.expectChange("grossAmount", undefined, null)
-					.expectChange("lifecycleStatus", null, null);
-			}
-			that.expectChange("isExpanded", [,,,,,,, false, false, false])
+				})
+				.expectResets(oTable, 3)
+				.expectChange("isExpanded", [,,,,,,, false, false, false])
 				.expectChange("isTotal", [,,,,,,, true, true, true])
 				.expectChange("level", [,,,,,,, 1, 1, 1])
 				.expectChange("grossAmount", [,,,,,,, "7", "8", "9"])
@@ -15408,19 +15447,6 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		function expectResets(iRowCount) {
-			var i;
-
-			for (i = 0; i < iRowCount; i += 1) {
-				that.expectChange("isTotal", undefined, null)
-					.expectChange("level", undefined, null)
-					.expectChange("region", null, null)
-					.expectChange("accountResponsible", null, null)
-					.expectChange("salesAmount", undefined, null)
-					.expectChange("salesNumber", null, null);
-			}
-		}
-
 		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
 				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
@@ -15471,11 +15497,8 @@ sap.ui.define([
 					value : [
 						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
-				});
-			// expects the reset of the table after scrolling
-			expectResets(2);
-			that.expectChange("isExpanded", undefined, null)
-
+				})
+				.expectResets(oTable, 2, 1)
 				.expectChange("isExpanded", [,,,,, false])
 				.expectChange("isTotal", [,,, false, false, true])
 				.expectChange("level", [,,, 2, 2, 1])
@@ -15521,9 +15544,8 @@ sap.ui.define([
 						value : [
 							{Region : "W", SalesAmount : "400"}
 						]
-				});
-			expectResets(2);
-			that.expectChange("isExpanded", undefined,null)
+				})
+				.expectResets(oTable, 2, 1)
 				.expectChange("isExpanded", [,,,,,,,,,,,,, /*undefined*/, false, false])
 				.expectChange("isTotal", [,,,,,,,,,,,,, false, true, true])
 				.expectChange("level", [,,,,,,,,,,,,, 2, 1, 1])
@@ -15547,10 +15569,8 @@ sap.ui.define([
 						{AccountResponsible : "e", SalesAmount : "50", SalesNumber : 5},
 						{AccountResponsible : "f", SalesAmount : "60", SalesNumber : 6}
 					]
-				});
-			expectResets(3);
-			that.expectChange("isExpanded", undefined, null)
-				.expectChange("isExpanded", undefined, null)
+				})
+				.expectResets(oTable, 3, 1)
 				.expectChange("isExpanded", [,,,,,,,,, /*undefined*/, /*undefined*/, /*undefined*/])
 				.expectChange("isTotal", [,,,,,,,,, false, false, false])
 				.expectChange("level", [,,,,,,,,, 2, 2, 2])
@@ -15630,19 +15650,6 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		function expectResets(iRowCount) {
-			var i;
-
-			for (i = 0; i < iRowCount; i += 1) {
-				that.expectChange("isTotal", undefined, null)
-					.expectChange("level", undefined, null)
-					.expectChange("region", null, null)
-					.expectChange("accountResponsible", null, null)
-					.expectChange("salesAmount", undefined, null)
-					.expectChange("salesNumber", null, null);
-			}
-		}
-
 		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
 				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
@@ -15694,12 +15701,8 @@ sap.ui.define([
 							{Region : "U", SalesAmount : "600"}
 						]
 					});
-				}));
-
-			expectResets(3);
-			that.expectChange("isExpanded", undefined, null)
-				.expectChange("isExpanded", undefined, null)
-				.expectChange("isExpanded", undefined, null);
+				}))
+				.expectResets(oTable, 3);
 
 			oTable.setFirstVisibleRow(3);
 
@@ -15805,19 +15808,6 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		function expectResets(iRowCount) {
-			var i;
-
-			for (i = 0; i < iRowCount; i += 1) {
-				that.expectChange("isTotal", undefined, null)
-					.expectChange("level", undefined, null)
-					.expectChange("region", null, null)
-					.expectChange("accountResponsible", null, null)
-					.expectChange("salesAmount", undefined, null)
-					.expectChange("salesNumber", null, null);
-			}
-		}
-
 		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
 				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
@@ -15869,13 +15859,8 @@ sap.ui.define([
 					value : [
 						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
-				});
-
-			expectResets(3);
-			that.expectChange("isExpanded", undefined, null)
-				.expectChange("isExpanded", undefined, null)
-				.expectChange("isExpanded", undefined, null)
-
+				})
+				.expectResets(oTable, 3)
 				.expectChange("isExpanded", [,,,,,,,false])
 				.expectChange("isTotal", [,,,,, false, false, true])
 				.expectChange("level", [,,,,, 2, 2, 1])
@@ -15945,18 +15930,6 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		function expectResets(iRowCount) {
-			var i;
-
-			for (i = 0; i < iRowCount; i += 1) {
-				that.expectChange("isTotal", undefined, null)
-					.expectChange("level", undefined, null)
-					.expectChange("country", null, null)
-					.expectChange("region", null, null)
-					.expectChange("salesAmount", undefined, null);
-			}
-		}
-
 		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
 			+ "&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "2",
@@ -16000,8 +15973,8 @@ sap.ui.define([
 		}).then(function () {
 			var oThirdRow = oTable.getRows()[2].getBindingContext();
 
-			expectResets(2);
-			that.expectChange("isExpanded", [, false]);
+			that.expectResets(oTable, 2, 2)
+				.expectChange("isExpanded", [, false]);
 
 			// code under test
 			oTable.getRows()[1].getBindingContext().collapse();
@@ -16240,19 +16213,6 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		function expectResets(iRowCount) {
-			var i;
-
-			for (i = 0; i < iRowCount; i += 1) {
-				that.expectChange("isExpanded", undefined, null)
-					.expectChange("isTotal", undefined, null)
-					.expectChange("level", undefined, null)
-					.expectChange("region", null, null)
-					.expectChange("accountResponsible", null, null)
-					.expectChange("salesAmount", undefined, null);
-			}
-		}
-
 		this.expectRequest("BusinessPartners?$apply=groupby((Region))"
 			+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
@@ -16276,16 +16236,15 @@ sap.ui.define([
 			that.expectChange("isExpanded", [, true]);
 
 			if (!bSecondScroll) {
-				expectResets(2);
-				that.expectChange("region", [,, "X"]); // "client side scrolling"
-
-				that.expectChange("isExpanded", [,, undefined])
+				that.expectResets(oTable, 2)
+					.expectChange("region", [,, "X"]) // "client side scrolling"
+					.expectChange("isExpanded", [,, undefined])
 					.expectChange("level", [,, 2])
 					.expectChange("region", [,, "Y"])
 					.expectChange("accountResponsible", [,, "a"])
 					.expectChange("salesAmount", [,, "10"]);
 			} else {
-				expectResets(3);
+				that.expectResets(oTable, 3);
 			}
 
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
