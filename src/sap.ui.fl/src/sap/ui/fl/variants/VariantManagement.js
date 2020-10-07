@@ -1423,6 +1423,7 @@ sap.ui.define([
 			});
 
 			this.oManagementDialog = new Dialog(this.getId() + "-managementdialog", {
+				contentWidth: "40%",
 				resizable: true,
 				draggable: true,
 //				customHeader: new Bar(this.getId() + "-managementHeader", {
