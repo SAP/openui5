@@ -1158,12 +1158,12 @@ sap.ui.define([
 
 	NavContainer.prototype._fadeOutAnimationEnd = function(oEvent) {
 		var oFromPage = this.oFromPage;
-		this.bTransition1EndPending = false;
 
 		if (oEvent && oEvent.originalEvent && oEvent.originalEvent.propertyName !== "opacity") {
 			return; //since we have more than one transition property, we should not execute the animation end more than once.
 		}
 
+		this.bTransition1EndPending = false;
 		jQuery(oFromPage.$()).unbind("webkitTransitionEnd transitionend");
 
 		oFromPage
@@ -1200,10 +1200,12 @@ sap.ui.define([
 	NavContainer.prototype._fadeInAnimationEnd = function(oEvent) {
 		var oToPage = this.oToPage,
 			oFromPage = this.oFromPage;
-		this.bTransition2EndPending = false;
+
 		if (oEvent && oEvent.originalEvent && oEvent.originalEvent.propertyName !== "opacity") {
 			return; //since we have more than one transition property, we should not execute the animation end more than once.
 		}
+
+		this.bTransition2EndPending = false;
 
 		if (fnHasParent(oFromPage)) {
 			oFromPage.addStyleClass("sapMNavItemHidden");
