@@ -442,7 +442,7 @@ function(
 	 *    If "mOptions.controller" is supplied, the (event handler-) methods referenced in the Fragment will be called on this Controller.
 	 *    Note that Fragments may require a Controller to be given and certain methods to be implemented by it.
 	 * @param {string} [mOptions.type=XML] the Fragment type, e.g. "XML", "JS", or "HTML" (see above). Default is "XML"
-	 * @param {string} [mOptions.definition] definition of the Fragment content. When this property is supplied, the "name" parameter must not be used.
+	 * @param {string} [mOptions.definition] definition of the Fragment content. When this property is supplied, the "name" parameter must not be used. If both are supplied, the definition has priority.
 	 * Please see the above example on how to use the 'definition' parameter.
 	 * @param {string} [mOptions.id] the ID of the Fragment
 	 * @param {sap.ui.core.mvc.Controller|Object} [mOptions.controller] the Controller or Object which should be used by the controls in the Fragment.
@@ -455,6 +455,11 @@ function(
 	 */
 	Fragment.load = function(mOptions) {
 		var mParameters = Object.assign({}, mOptions);
+
+		if (mParameters.name && mParameters.definition) {
+			Log.error("The properties 'name' and 'definition' shouldn't be provided at the same time. The fragment definition will be used instead of the name. Fragment name was: " + mParameters.name);
+			delete mParameters.name;
+		}
 
 		mParameters.type = mParameters.type || "XML";
 		mParameters.async = true;

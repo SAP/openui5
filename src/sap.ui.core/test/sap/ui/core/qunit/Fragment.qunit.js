@@ -1,5 +1,6 @@
 /* global sinon QUnit */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/XMLTemplateProcessor",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	'sap/base/util/LoaderExtensions',
 	"jquery.sap.dom"
-], function (qutils, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, LoaderExtensions) {
+], function (Log, qutils, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, LoaderExtensions) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -810,6 +811,22 @@ sap.ui.define([
 			assert.equal(this.loadTemplatePromiseSpy.callCount, 1, "XMLTemplateProcessor.loadTemplatePromise should be called once");
 			assert.ok(this.parseTemplatePromiseSpy.getCall(0).args[2], "XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
 
+			oFragment.destroy();
+		}.bind(this));
+	});
+
+	QUnit.test("Fragment.load with properties 'name' and 'definition' provided at the same time", function (assert) {
+		var myXml = '<Button xmlns="sap.m" id="xmlfragbtn2" text="This is an XML Fragment" press="doSomething"></Button>';
+		var oLogErrorSpy = sinon.spy(Log, "error");
+		return Fragment.load({
+			name: "testdata.fragments.XMLTestFragmentNoController",
+			definition: myXml
+		}).then(function (oFragment) {
+			assert.ok(oFragment, "Fragment should be loaded");
+			assert.equal(this.loadTemplatePromiseSpy.callCount, 0, "XMLTemplateProcessor.loadTemplatePromise shouldn't be called. Fragment constructor is called");
+			assert.equal(oLogErrorSpy.callCount, 1, "Error message should be logged");
+			sinon.assert.calledWith(oLogErrorSpy, "The properties 'name' and 'definition' shouldn't be provided at the same time. The fragment definition will be used instead of the name. Fragment name was: testdata.fragments.XMLTestFragmentNoController");
+			oLogErrorSpy.restore();
 			oFragment.destroy();
 		}.bind(this));
 	});
