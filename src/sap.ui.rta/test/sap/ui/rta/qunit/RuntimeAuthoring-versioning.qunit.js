@@ -387,9 +387,10 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP", {
 		beforeEach : function () {
+			this.oRestartFlpStub = sandbox.stub();
 			givenAnFLP(function () {
 				return true;
-			}, undefined, {});
+			}, this.oRestartFlpStub, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl
@@ -419,12 +420,12 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the version parameter in the url and the in the event are the same", function (assert) {
+		QUnit.test("when the displayed version and the in the event are the same", function (assert) {
 			var oEvent = new Event("someEventId", undefined, {
 				version : 1
 			});
 
-			sandbox.stub(FlexUtils, "getParameter").returns("1");
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", 1);
 
 			this.oRta._onSwitchVersion(oEvent);
 
@@ -448,6 +449,31 @@ sap.ui.define([
 			assert.equal(oLoadVersionArguments.version, 1, ", the version number");
 			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
 			assert.equal(oCrossAppNavigationStub.callCount, 1, "a cross app navigation was triggered");
+		});
+
+		QUnit.test("when a version is in the url and the same version should be loaded again (i.e. loaded the app with " +
+			"the 'Original App' version, create a draft and switch to 'Original Version' again)", function (assert) {
+			var oEvent = new Event("someEventId", undefined, {
+				version : sap.ui.fl.Versions.Original
+			});
+
+			var oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			var mParsedUrlHash = {
+				params: {}
+			};
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", sap.ui.fl.Versions.Draft);
+			mParsedUrlHash.params[sap.ui.fl.Versions.UrlParameter] = sap.ui.fl.Versions.Original.toString();
+			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedUrlHash);
+
+			this.oRta._onSwitchVersion(oEvent);
+
+			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
+			assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
+			var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
+			assert.equal(oLoadVersionArguments.selector, this.oRootControl, "with the selector");
+			assert.equal(oLoadVersionArguments.version, sap.ui.fl.Versions.Original, ", the version number");
+			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+			assert.equal(this.oRestartFlpStub.callCount, 1, "a app restart was triggered");
 		});
 	});
 

@@ -1124,11 +1124,10 @@ function(
 
 	RuntimeAuthoring.prototype._onSwitchVersion = function (oEvent) {
 		var nVersion = oEvent.getParameter("version");
-		var sVersion = nVersion.toString();
-		var sUrlVersionValue = FlexUtils.getParameter(sap.ui.fl.Versions.UrlParameter);
+		var nDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
 
-		if (sVersion === sUrlVersionValue) {
-			// already selected version
+		if (nVersion === nDisplayedVersion) {
+			// already displayed version needs no switch
 			return;
 		}
 
@@ -1188,13 +1187,18 @@ function(
 			return this._triggerHardReload(oReloadInfo);
 		}
 		var mParsedHash = FlexUtils.getParsedURLHash();
-		mParsedHash.params[sap.ui.fl.Versions.UrlParameter] = sVersion;
 		VersionsAPI.loadVersionForApplication({
 			selector: this.getRootControlInstance(),
 			layer: this.getLayer(),
 			version: nVersion
 		});
-		this._triggerCrossAppNavigation(mParsedHash);
+		if (mParsedHash.params[sap.ui.fl.Versions.UrlParameter] === sVersion) {
+			// RTA was started with a version parameter, the displayed version has changed and the key user switches back
+			FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
+		} else {
+			mParsedHash.params[sap.ui.fl.Versions.UrlParameter] = sVersion;
+			this._triggerCrossAppNavigation(mParsedHash);
+		}
 	};
 
 	RuntimeAuthoring.prototype._setUriParameter = function (sParameters) {
