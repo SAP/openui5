@@ -3035,6 +3035,58 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("[Del] key deletes more than one character", function(assert) {
+		//prepare
+		var oTP = new TimePicker({
+				value: "12:00:33",
+				displayFormat: "hh:mm:ss",
+				maskMode: "On"
+			}).placeAt("content"),
+			iDelPressed = -1;
+
+		sap.ui.getCore().applyChanges();
+
+		//act
+		oTP.focus();
+		oTP._setCursorPosition(0);
+
+		// first [Del] "press"
+		simulateDelPress(this);
+
+		//assert
+		assert.equal(oTP._oTempValue._aContent[iDelPressed], "-", "First character is deleted/replaced with placeholder");
+		assert.notEqual(oTP._oTempValue._aContent[iDelPressed + 1], "-", "Second character is not deleted/replaced with placeholder");
+
+		// second [Del] "press"
+		simulateDelPress(this);
+
+		//assert
+		assert.equal(oTP._oTempValue._aContent[iDelPressed], "-", "Second character is deleted/replaced with placeholder");
+		assert.notEqual(oTP._oTempValue._aContent[iDelPressed + 1], "-", "Third character is not deleted/replaced with placeholder");
+
+		// third [Del] "press"
+		simulateDelPress(this);
+
+		//assert
+		assert.equal(oTP._oTempValue._aContent[iDelPressed], "-", "Third character is deleted/replaced with placeholder");
+		assert.notEqual(oTP._oTempValue._aContent[iDelPressed + 1], "-", "Fourth character is not deleted/replaced with placeholder");
+
+		// cleanup
+		oTP.destroy();
+
+		// helper function
+		function simulateDelPress(oThis) {
+			oTP.selectText(0, 0);
+			qutils.triggerKeydown(oTP._$input, jQuery.sap.KeyCodes.DELETE);
+			iDelPressed++;
+			oThis.clock.tick(100);
+			if (oTP._oTempValue._aInitial[iDelPressed] != "-") {
+				iDelPressed++;
+			}
+		}
+
+	});
+
 	QUnit.module("maskMode property", {
 		beforeEach: function () {
 			this.oTp = new TimePicker();
