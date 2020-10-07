@@ -101,8 +101,7 @@ function(
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
-			// settings a timeout to allow the async loading of the icon to finish; in the productive system this async does not matter
-			window.setTimeout(function () {
+			this.oToolbar.onFragmentLoaded().then(function() {
 				var oImage = this.oToolbar.getControl('icon');
 				assert.ok(oImage, "then the logo is among the controls");
 				assert.equal(oImage.getMetadata().getName(), "sap.m.Image", "then the logo control is set correctly");
@@ -120,7 +119,7 @@ function(
 					assert.equal(this.sRemove, "sapUiRtaFioriHeaderInvisible", "then the correct StyleClass got removed");
 					done();
 				}.bind(this));
-			}.bind(this), 0);
+			}.bind(this));
 		});
 	});
 
