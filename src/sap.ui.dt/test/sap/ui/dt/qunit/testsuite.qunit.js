@@ -10,7 +10,7 @@ sap.ui.define(function () {
 			sinon: false,
 			ui5: {
 				language: "en",
-				libs: ["sap.ui.dt"],
+				libs: ["sap.ui.dt", "sap.ui.core"],
 				"xx-waitForTheme": "init"
 			},
 			coverage: {
