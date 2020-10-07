@@ -175,7 +175,7 @@ sap.ui.define([
 				 * @since 1.60.0
 				 */
 				filterBar: {
-					type: "sap.ui.mdc.FilterBar",
+					type: "sap.ui.mdc.filterbar.FilterBarBase",
 					multiple: false
 				},
 
