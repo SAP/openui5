@@ -293,26 +293,22 @@ function(
 		var oIconBox = this.getControl("iconBox");
 		var oIconSpacer = this.getControl("iconSpacer");
 
-		if (oIconBox && oIconSpacer) {
-			oIconBox.setVisible(false);
-			oIconSpacer.setVisible(false);
-			this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
-			this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
-			this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
-		}
+		oIconBox.setVisible(false);
+		oIconSpacer.setVisible(false);
+		this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
+		this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
+		this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
 	};
 
 	Adaptation.prototype._switchToTexts = function () {
 		var oIconBox = this.getControl("iconBox");
 		var oIconSpacer = this.getControl("iconSpacer");
 
-		if (oIconBox && oIconSpacer) {
-			oIconBox.setVisible(true);
-			oIconSpacer.setVisible(true);
-			this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
-			this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
-			this._showButtonText("exit", "BTN_EXIT");
-		}
+		oIconBox.setVisible(true);
+		oIconSpacer.setVisible(true);
+		this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
+		this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
+		this._showButtonText("exit", "BTN_EXIT");
 	};
 
 	Adaptation.prototype._onSizeChanged = function(mParams) {
@@ -320,22 +316,22 @@ function(
 			return;
 		}
 
-		var sMode = mParams.name;
-		this.sMode = sMode;
+		this.onFragmentLoaded().then(function() {
+			var sMode = mParams.name;
+			this.sMode = sMode;
 
-		switch (sMode) {
-			case Adaptation.modes.MOBILE:
-				this._switchToIcons();
-				break;
-			case Adaptation.modes.TABLET:
-				this._switchToTexts();
-				break;
-			case Adaptation.modes.DESKTOP:
-				this._switchToTexts();
-				break;
-			default:
-			// no default
-		}
+			switch (sMode) {
+				case Adaptation.modes.MOBILE:
+					this._switchToIcons();
+					break;
+				case Adaptation.modes.TABLET:
+				case Adaptation.modes.DESKTOP:
+					this._switchToTexts();
+					break;
+				default:
+				// no default
+			}
+		}.bind(this));
 	};
 
 	/**

@@ -24,11 +24,11 @@ function(
 	sinon,
 	ChangeVisualization
 ) {
-	'use strict';
+	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module('Different Screen Sizes', {
+	QUnit.module("Different Screen Sizes", {
 		beforeEach: function() {
 			this.oVersionsModel = new JSONModel({
 				versioningEnabled: false,
@@ -67,23 +67,28 @@ function(
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.DESKTOP});
 			this.oToolbar.animation = false;
-			return this.oToolbar.show()
-			.then(function() {
+			return this.oToolbar.show().then(function() {
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.DESKTOP, "the mode was correctly set");
-				assert.notOk(this.oToolbar.getControl('exit').getIcon(), "the exit button has no icon");
-				assert.ok(this.oToolbar.getControl('exit').getText(), "the exit button has text");
-				assert.equal(this.oToolbar.getControl('restore').getLayoutData().getPriority(), "High", "the layout data priority is correct");
+				assert.notOk(this.oToolbar.getControl("exit").getIcon(), "the exit button has no icon");
+				assert.ok(this.oToolbar.getControl("exit").getText(), "the exit button has text");
+				assert.equal(this.oToolbar.getControl("restore").getLayoutData().getPriority(), "High", "the layout data priority is correct");
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 
-				this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
+				return this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
+			}.bind(this))
+			.then(function() {
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 
-				this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
+				return this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
+			}.bind(this))
+			.then(function() {
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 
-				this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
+				return this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
+			}.bind(this))
+			.then(function() {
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 			}.bind(this));
 		});
@@ -95,19 +100,21 @@ function(
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.DESKTOP});
 			this.oToolbar.animation = false;
 
-			return this.oToolbar.show()
-				.then(function() {
-					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
-
-					this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
-					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
-
-					this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
-					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
-
-					this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
-					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
-				}.bind(this));
+			return this.oToolbar.show().then(function() {
+				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
+				return this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
+			}.bind(this))
+			.then(function() {
+				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
+				return this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
+			}.bind(this))
+			.then(function() {
+				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
+				return this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
+			}.bind(this))
+			.then(function() {
+				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
+			}.bind(this));
 		});
 
 		QUnit.test("when the toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
@@ -119,8 +126,8 @@ function(
 				.then(function() {
 					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 					assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-					assert.notOk(this.oToolbar.getControl('exit').getIcon(), "the exit button has no icon");
-					assert.ok(this.oToolbar.getControl('exit').getText(), "the exit button has text");
+					assert.notOk(this.oToolbar.getControl("exit").getIcon(), "the exit button has no icon");
+					assert.ok(this.oToolbar.getControl("exit").getText(), "the exit button has text");
 				}.bind(this));
 		});
 
@@ -147,8 +154,8 @@ function(
 				.then(function() {
 					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 					assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
-					assert.ok(this.oToolbar.getControl('exit').getIcon(), "the exit button has an icon");
-					assert.notOk(this.oToolbar.getControl('exit').getText(), "the exit button has no text");
+					assert.ok(this.oToolbar.getControl("exit").getIcon(), "the exit button has an icon");
+					assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
 				}.bind(this));
 		});
 
@@ -163,8 +170,8 @@ function(
 				.then(function() {
 					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
 					assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
-					assert.ok(this.oToolbar.getControl('exit').getIcon(), "the exit button has an icon");
-					assert.notOk(this.oToolbar.getControl('exit').getText(), "the exit button has no text");
+					assert.ok(this.oToolbar.getControl("exit").getIcon(), "the exit button has an icon");
+					assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
 				}.bind(this));
 		});
 	});
