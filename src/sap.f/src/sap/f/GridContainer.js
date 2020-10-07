@@ -1045,6 +1045,11 @@ sap.ui.define([
 			});
 		});
 
+		this.virtualGrid = virtualGrid;
+		this.IeColumns = virtualGrid.numberOfCols - 1;
+		this.IeRows = virtualGrid.virtualGridMatrix.length;
+
+
 		// width and height has to be set for the grid because the items inside are absolute positioned and the grid will not have dimensions
 		$that.css("height", virtualGrid.getHeight() + "px");
 
@@ -1150,62 +1155,6 @@ sap.ui.define([
 		this.fireEvent("borderReached", {
 			event: oEvent instanceof jQuery.Event ? oEvent : oEvent.getParameter("event")
 		});
-	};
-
-	/**
-	 * Handles the <code>onsapnext</code> event. Sets the focus to the next item in the current container.
-	 * If the event is triggered by <code>ARROW_DOWN</code>, custom logic is applied to focus the item below and propagation to the ItemNavigation is stopped.
-	 *
-	 * @param {jQuery.Event} oEvent the browser event
-	 * @private
-	 */
-	GridContainer.prototype.onsapnext = function (oEvent) {
-		var aItemDomRefs = this._oItemNavigation.getItemDomRefs();
-
-		if (aItemDomRefs.indexOf(oEvent.target) === -1) {
-			oEvent.stopImmediatePropagation(true);
-		}
-
-		var oItem = jQuery(oEvent.target.firstElementChild).control(0);
-
-		if (oEvent.keyCode === KeyCodes.ARROW_DOWN) {
-			oEvent.stopImmediatePropagation(true);
-			var oNextFocusItem = this._getClosestItemBelowInThisContainer(oItem);
-
-			if (oNextFocusItem) {
-				this._getItemWrapper(oNextFocusItem).focus();
-			} else {
-				this._onItemNavigationBorderReached(oEvent);
-			}
-		}
-	};
-
-	/**
-	 * Handles the <code>onsapprevious</code> event. Sets the focus to the previous item in the current container.
-	 * If the event is triggered by <code>ARROW_UP</code>, custom logic is applied to focus the item above and propagation to the ItemNavigation is stopped.
-	 *
-	 * @param {jQuery.Event} oEvent the browser event
-	 * @private
-	 */
-	GridContainer.prototype.onsapprevious = function (oEvent) {
-		var aItemDomRefs = this._oItemNavigation.getItemDomRefs();
-
-		if (aItemDomRefs.indexOf(oEvent.target) === -1) {
-			oEvent.stopImmediatePropagation(true);
-		}
-
-		var oItem = jQuery(oEvent.target.firstElementChild).control(0);
-
-		if (oEvent.keyCode === KeyCodes.ARROW_UP) {
-			oEvent.stopImmediatePropagation(true);
-			var oNextFocusItem = this._getClosestItemAboveInThisContainer(oItem);
-
-			if (oNextFocusItem) {
-				this._getItemWrapper(oNextFocusItem).focus();
-			} else {
-				this._onItemNavigationBorderReached(oEvent);
-			}
-		}
 	};
 
 	/**
@@ -1485,6 +1434,65 @@ sap.ui.define([
 		}
 
 		return null;
+	};
+
+	GridContainer.prototype._makeMatrix = function () {
+
+		var mGridStyles = window.getComputedStyle(this.getDomRef()),
+			sRows = mGridStyles.gridTemplateRows,
+			sColumns = mGridStyles.gridTemplateColumns,
+			oSettings = this.getActiveLayoutSettings(),
+			iColumnSize = oSettings.getMinColumnSizeInPx() || oSettings.getColumnSizeInPx(),
+			iRowSize = oSettings.getRowSizeInPx(),
+			iGapSize = oSettings.getGapInPx(),
+			iRows =  isGridSupportedByBrowser() ? sRows.split(/\s+/).length : this.IeColumns,
+			iColumns =  isGridSupportedByBrowser() ? sColumns.split(/\s+/).length : this.IeRows,
+			aMatrix = new Array(iRows),
+			aItems = this.getItems(),
+			iGridX = this.getDomRef().getBoundingClientRect().left,
+			iGridY = this.getDomRef().getBoundingClientRect().top;
+
+		for (var i = 0; i < aMatrix.length; i++) {
+			aMatrix[i] = new Array(iColumns);
+			aMatrix[i].fill(false);
+		}
+
+		if (aItems.length) {
+			aItems.forEach(function(oItem) {
+				var oDomRef = oItem.getDomRef().parentElement,
+					iItemWidth = oDomRef.getBoundingClientRect().width,
+					iItemHeight = oDomRef.getBoundingClientRect().height,
+					iColsInItem = oSettings.calculateColumnsForItem(iItemWidth),
+					iRowsInItem = oSettings.calculateRowsForItem(iItemHeight),
+
+					iItemX = oDomRef.getBoundingClientRect().left,
+					iItemY = oDomRef.getBoundingClientRect().top,
+					iStartRow = Math.floor((iItemY - iGridY) / (iRowSize + iGapSize)),
+					iStartCol = Math.floor((iItemX - iGridX) / (iColumnSize + iGapSize)),
+					iEndRow = iRowsInItem,
+					iEndCol = iColsInItem,
+					row,
+					col;
+				if (isGridSupportedByBrowser()) {
+					for (row = iStartRow; row < iEndRow + iStartRow; row++) {
+						for (col = iStartCol; col < iEndCol + iStartCol; col++) {
+							aMatrix[row][col] = oDomRef;
+						}
+					}
+				} else {
+					var virtualGridMatrix = this.virtualGrid.virtualGridMatrix;
+					for (row = 0; row < virtualGridMatrix.length; row++) {
+						for (col = 0; col < virtualGridMatrix[row].length; col++) {
+							aMatrix[row][col] = this._getItemWrapper(aItems[virtualGridMatrix[row][col]]);
+							if (virtualGridMatrix[row][col] === 0) {
+								aMatrix[row][col] = false;
+							}
+						}
+					}
+				}
+			}.bind(this));
+		}
+		return aMatrix;
 	};
 
 	return GridContainer;

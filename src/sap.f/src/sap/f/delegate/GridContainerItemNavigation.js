@@ -59,6 +59,7 @@ sap.ui.define([
 	});
 
 	GridContainerItemNavigation.prototype._onFocusLeave = function (oEvent) {
+
 		var currentFocused = this.getFocusedDomRef();
 		this.getItemDomRefs().forEach(function (item, index) {
 			if (currentFocused === item) {
@@ -182,7 +183,7 @@ sap.ui.define([
 	 */
 	GridContainerItemNavigation.prototype.onfocusin = function(oEvent) {
 
-		ItemNavigation.prototype.onfocusin.call(this, oEvent);
+		GridItemNavigation.prototype.onfocusin.call(this, oEvent);
 
 		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
 			oControl,

@@ -1010,8 +1010,7 @@ function (
 	QUnit.test("Right Arrow navigation through grid container", function (assert) {
 		// Arrange
 		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
-			oItemWrapper2 = this.oGrid.getDomRef().children[2],
-			oItemWrapper3 = this.oGrid.getDomRef().children[3];
+			oItemWrapper2 = this.oGrid.getDomRef().children[2];
 
 		oItemWrapper1.focus();
 		Core.applyChanges();
@@ -1026,7 +1025,7 @@ function (
 		qutils.triggerKeydown(oItemWrapper2, KeyCodes.ARROW_RIGHT, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper3.getAttribute("tabindex"), "0", "Focus should be on the third GridItem (the item on the next row)");
+		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0", "Focus should stay on the same item");
 	});
 
 	QUnit.test("Down Arrow navigating through grid container", function (assert) {
@@ -1045,6 +1044,7 @@ function (
 		assert.strictEqual(oItemWrapper3.getAttribute("tabindex"), "0", "Focus should be on the third GridItem (the item below)");
 
 		// Act
+		this.oGrid._oItemNavigation._onFocusLeave();
 		oItemWrapper5.focus();
 		Core.applyChanges();
 		qutils.triggerKeydown(oItemWrapper5, KeyCodes.ARROW_DOWN, false, false, false);
@@ -1055,8 +1055,7 @@ function (
 
 	QUnit.test("Left Arrow navigating through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper2 = this.oGrid.getDomRef().children[2],
-			oItemWrapper3 = this.oGrid.getDomRef().children[3];
+		var oItemWrapper3 = this.oGrid.getDomRef().children[3];
 		oItemWrapper3.focus();
 		Core.applyChanges();
 
@@ -1064,7 +1063,7 @@ function (
 		qutils.triggerKeydown(oItemWrapper3, KeyCodes.ARROW_LEFT, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0", "Focus should be on the second GridItem");
+		assert.strictEqual(oItemWrapper3.getAttribute("tabindex"), "0", "Focus should stay on the same item");
 	});
 
 	QUnit.test("Up Arrow navigating through grid container", function (assert) {
@@ -1751,4 +1750,124 @@ function (
 		assert.notOk(oWrapper.attr("aria-keyshortcuts"), "there is not aria-keyshortcuts attribute");
 		assert.strictEqual(oWrapper.attr("tabindex"), "-1", "tabindex is set");
 	});
+
+	QUnit.module("2D Navigation", {
+		beforeEach: function () {
+			var oSettings = new GridContainerSettings({columns: 6, rowSize: "80px", columnSize: "80px", gap: "16px"});
+
+			this.oGrid = new GridContainer({
+				layout: oSettings,
+				items: [
+					new Card({
+						header: new Header({ title: "Title" }),
+						content: new Button({ text: "Text" }),
+						layoutData: new GridContainerItemLayoutData({ columns: 4, rows: 4 })
+					}),
+					this.oTile = new GenericTile({
+						header: "headerText 1",
+						subheader: "subheaderText",
+						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+					}),
+					this.oCard = new IntegrationCard({
+						manifest: oIntegrationCardManifest,
+						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+					}),
+					this.oTile = new GenericTile({
+						header: "headerText 2",
+						subheader: "subheaderText",
+						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+					}),
+					this.oCard = new IntegrationCard({
+						manifest: oIntegrationCardManifest,
+						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+					})
+				]
+			});
+
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+			this.oCard.destroy();
+			this.oTile.destroy();
+		}
+	});
+
+	QUnit.test("Creating grid matrix", function (assert) {
+		// Arrange
+		var aMatrix = this.oGrid._makeMatrix();
+
+		// Assert
+		assert.ok(aMatrix.length, 6, "Matrix created with the expected number of rows");
+		assert.ok(aMatrix[0].length, 6, "Matrix created with the expected number of rows");
+	});
+
+	QUnit.test("Arrow Up at the top of the matrix should trigger 'borderReached' event", function (assert) {
+		// Arrange
+		var oTopMostItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement,
+			oSpy = sinon.spy();
+
+		this.oGrid.attachBorderReached(oSpy);
+
+		oTopMostItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oTopMostItemWrapper, KeyCodes.ARROW_UP, false, false, false);
+
+		// Assert
+		assert.ok(oSpy.called, "'borderReached' event is fired");
+	});
+
+	QUnit.test("Arrow Down at the bottom of the matrix should trigger 'borderReached' event", function (assert) {
+		// Arrange
+		var oBottomMostItemWrapper = this.oGrid.getItems()[3].getDomRef().parentElement,
+			oSpy = sinon.spy();
+
+		this.oGrid.attachBorderReached(oSpy);
+
+		oBottomMostItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oBottomMostItemWrapper, KeyCodes.ARROW_DOWN, false, false, false);
+
+		// Assert
+		assert.ok(oSpy.called, "'borderReached' event is fired");
+	});
+
+	QUnit.test("Navigation between items of different size based on starting position top", function (assert) {
+		// Arrange
+		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
+
+		oSecondItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oSecondItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT, false, false, false );
+
+		// Assert
+		assert.strictEqual(document.activeElement, oSecondItemWrapper, "Focus is moved back to the top starting item.");
+
+	});
+
+	QUnit.test("Navigation between items of different size based on starting position bottom", function (assert) {
+		// Arrange
+
+		var oThirdItemWrapper = this.oGrid.getItems()[2].getDomRef().parentElement;
+
+		oThirdItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT, false, false, false );
+
+		// Assert
+		assert.strictEqual(document.activeElement, oThirdItemWrapper, "Focus is moved back to the bottom starting item.");
+
+	});
+
 });
