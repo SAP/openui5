@@ -201,7 +201,9 @@ sap.ui.define([
 
 	QUnit.test("MenuButton in Split mode", function (assert) {
 		//arrange
-		var sText = "Example";
+		var sText = "Example",
+			sExpectedArrowButtonTooltip = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_ARROW_TOOLTIP");
+
 		this.sut.setText(sText);
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		sap.ui.getCore().applyChanges();
@@ -224,6 +226,9 @@ sap.ui.define([
 		assert.strictEqual(aAriaLabelledByDomElements[2].text(),
 				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"),
 				'Referenced control in "aria-labelledby" shows the keyboard handling hint');
+
+		assert.strictEqual(oInnerButton._getArrowButton().getTooltip(), sExpectedArrowButtonTooltip,
+				"Internal arrow button has explicit tooltip");
 
 	});
 
