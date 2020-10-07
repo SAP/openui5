@@ -1703,6 +1703,41 @@ function(
 			return oLocaleData.getTimePattern(TimeFormatStyles.Medium);
 		}
 
+		TimePicker.prototype._revertKey = function(oKey, oSelection) {
+			oSelection = oSelection || this._getTextSelection();
+
+			var iBegin = oSelection.iFrom,
+				iEnd = oSelection.iTo,
+				iStart = iBegin,
+				sPlaceholder,
+				iLen;
+
+			if (!oSelection.bHasSelection) {
+				if (oKey.bBackspace) {
+					iStart = iBegin = this._oRules.previousTo(iBegin);
+				} else if (oKey.bDelete) {
+					sPlaceholder = this.getPlaceholderSymbol();
+					iLen = this._oTempValue._aContent.length;
+
+					// find first character that is not a placeholder or separator character
+					while ((this._oTempValue._aContent[iBegin] === sPlaceholder ||
+							this._oTempValue._aInitial[iBegin] !== sPlaceholder) &&
+							iBegin < iLen) {
+						iBegin++;
+					}
+					iEnd = iBegin;
+				}
+			}
+
+			if (oKey.bBackspace || (oKey.bDelete && oSelection.bHasSelection)) {
+				iEnd = iEnd - 1;
+			}
+
+			this._resetTempValue(iBegin, iEnd);
+			this.updateDomValue(this._oTempValue.toString());
+			this._setCursorPosition(Math.max(this._iUserInputStartPosition, iStart));
+		};
+
 		/**
 		 * Fires when the input operation has finished and the value has changed.
 		 *
