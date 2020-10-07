@@ -31,7 +31,7 @@ sap.ui.define([
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/base/SyncPromise',
-	'sap/base/util/restricted/_throttle',
+	'sap/base/util/restricted/_debounce',
 	'sap/ui/events/KeyCodes'
 ], function(
 	jQuery,
@@ -63,7 +63,7 @@ sap.ui.define([
 	ManagedObjectModel,
 	ManagedObjectObserver,
 	SyncPromise,
-	throttle,
+	debounce,
 	KeyCodes
 ) {
 	"use strict";
@@ -2791,7 +2791,7 @@ sap.ui.define([
 					this._bIgnoreInputValue = false; // after typing the input value is the current one and should be used
 					this._vLiveChangeValue = vValue;
 					if (!this._fnLiveChangeTimer) {
-						this._fnLiveChangeTimer = throttle(function() {
+						this._fnLiveChangeTimer = debounce(function() {
 							var sDisplay = this.getDisplay();
 							// remove "(", ")" from serach string
 							// TODO: better solution to search in this case?
@@ -2835,7 +2835,7 @@ sap.ui.define([
 							// trigger open after Promise resolved
 							var oFocusedElement = document.activeElement;
 							if (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement)) && this._fnLiveChangeTimer) { // if destroyed this._fnLiveChangeTimer is removed
-								this._fnLiveChangeTimer(); // if resolved while initial throttle-time frame, it will not triggered twice
+								this._fnLiveChangeTimer(); // if resolved while initial debounce-time frame, it will not triggered twice
 							}
 						}.bind(this));
 					}
