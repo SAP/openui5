@@ -7,16 +7,15 @@ sap.ui.define([
 	"sap/m/MultiInput",
 	"./Settings",
 	"sap/m/Token",
-	"sap/ui/core/Core",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/core/Core"
+
 ], function (
 	Control,
 	Button,
 	MultiInput,
 	Settings,
 	Token,
-	Core,
-	JSONModel
+	Core
 ) {
 	"use strict";
 	/**
@@ -154,7 +153,7 @@ sap.ui.define([
 		} else if (this._visualization.type) {
 			oControl = new this._visualization.type(this._visualization.settings || {});
 		}
-		if (oControl) {
+		if (oControl instanceof Control) {
 			this.setAggregation("_field", oControl);
 		}
 		//default is true, Card editor needs set to false for translation and page admin mode if needed

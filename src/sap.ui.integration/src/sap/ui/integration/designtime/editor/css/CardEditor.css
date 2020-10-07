@@ -148,14 +148,14 @@
 }
 
 /* default width for menu*/
-#sap-ui-static > .sapUiIntegrationFieldSettings.menu{
+#sap-ui-static > .sapUiIntegrationFieldSettingsMenu{
 	width: 266px;
 	border-top-left-radius: 1px;
 	border-top-right-radius: 1px;
 }
 
 /* reset width for menu for sub menus */
-#sap-ui-static > .sapUiIntegrationFieldSettings.menu ~ .sapUiIntegrationFieldSettings.menu{
+#sap-ui-static > .sapUiIntegrationFieldSettingsMenu ~ .sapUiIntegrationFieldSettingsMenu{
 	width: unset;
 	border-top-left-radius: 4px;
 	border-top-right-radius: 4px;
@@ -233,4 +233,12 @@
 }
 .sapUiIntegrationFieldSettings .cbrow > DIV > .sapMLabel {
 	padding-top: 0.5rem;
+}
+
+.sapUiIntegrationFieldSettings {
+	opacity: 0;
+}
+
+.sapUiIntegrationFieldSettings .resetbutton {
+	margin: 0 0.3rem;
 }

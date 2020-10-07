@@ -166,15 +166,13 @@ sap.ui.define([
 			oFooter.style.marginTop = "0rem";
 			oCVDom.style.display = "flex";
 		}
-		if (oSettingsPanel.getVisible()) {
-			window.requestAnimationFrame(function () {
-				oCVDom && (oCVDom.style.opacity = "0");
-			});
-		} else {
-			window.requestAnimationFrame(function () {
-				oCVDom && (oCVDom.style.opacity = "1");
-			});
-		}
+		var oResetToDefaultButtonDom = oResetToDefaultButton.getDomRef(),
+			oInsert = oFooter.querySelector("button").parentNode;
+		oInsert.insertBefore(oResetToDefaultButtonDom, oInsert.firstChild);
+
+		window.requestAnimationFrame(function () {
+			oPopover.getDomRef() && (oPopover.getDomRef().style.opacity = "1");
+		});
 	});
 
 	function selectSettings() {
@@ -264,12 +262,28 @@ sap.ui.define([
 		})]
 	});
 	oCurrentValue.addStyleClass("currentval");
+	var oResetToDefaultButton = new Button({
+		type: "Transparent",
+		text: oResourceBundle.getText("CARDEDITOR_MORE_RESET"),
+		enabled: "{= ${currentSettings>_next/visible} === false || ${currentSettings>_next/editable} === false || ${currentSettings>_next/allowDynamicValues} === false || ${currentSettings>_beforeValue} !== ${currentSettings>value}}",
+		tooltip: oResourceBundle.getText("CARDEDITOR_MORE_SETTINGS_P_ADMIN_RESET"),
+		press: function () {
+			setNextSetting("visible", true);
+			setNextSetting("editable", true);
+			setNextSetting("allowDynamicValues", true);
+			//how to get the last proper value
+			oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_beforeValue"));
+			oPopover.getBeginButton().firePress();
+		}
+	});
+	oResetToDefaultButton.addStyleClass("resetbutton");
 
 	var oHeader = new VBox({
 		width: "100%",
 		items: [
 			oTitle,
-			oCurrentValue
+			oCurrentValue,
+			oResetToDefaultButton
 		]
 	});
 	oHeader.addStyleClass("tabs");
@@ -327,7 +341,7 @@ sap.ui.define([
 					updateCurrentValue(oFlat._getPathObject(oData.pathvalue));
 				});
 				oDynamicValueField.addDependent(oMenu);
-				oMenu.addStyleClass("sapUiIntegrationFieldSettings menu");
+				oMenu.addStyleClass("sapUiIntegrationFieldSettingsMenu");
 				oMenu.openBy(oDynamicValueField, false, null, null, "1 0");
 			}
 		});

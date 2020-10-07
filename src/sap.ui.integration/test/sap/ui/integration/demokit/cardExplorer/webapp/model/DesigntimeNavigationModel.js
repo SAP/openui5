@@ -22,7 +22,19 @@ sap.ui.define([
 				title: 'Configurations and API',
 				icon: 'sap-icon://header',
 				target: 'designtime',
-				key: 'api'
+				key: 'api',
+				items: [
+					{
+						title: 'Fields and Layouts',
+						target: 'designtime',
+						key: 'fieldslayout'
+					},
+					{
+						title: 'Preview Images',
+						target: 'designtime',
+						key: 'previewimage'
+					}
+				]
 			},
 			{
 				title: 'Host Design-time Capabilities',

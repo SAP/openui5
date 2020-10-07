@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../../css/topic.css">
+	<link rel="stylesheet" href="../../../css/tomorrow.css">
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+	<script id="sap-ui-bootstrap" src="../../../../../../../../../../resources/sap-ui-integration.js"
+		data-sap-ui-theme="sap_fiori_3" data-sap-ui-compatVersion="edge" data-sap-ui-async="true"
+		data-sap-ui-oninit="processSamples" data-sap-ui-xx-supportedLanguages="" data-sap-ui-resourceroots='{
+				"custom": "./"
+			}'>
+			</script>
+	<script
+		src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script
+		src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<style>
+		.tableWrapper td {
+			vertical-align: top !important;
+		}
+
+		.tableWrapper caption {
+			text-align: left;
+			padding: 0.5rem 1rem;
+			font-weight: bold;
+		}
+
+		.tableWrapper td:first-child {
+			font-weight: normal !important;
+		}
+
+		.tableWrapper th {
+			font-weight: bold !important;
+		}
+
+		.sapUiIntegrationDTPreview {
+			display: none ! important;
+		}
+
+		td[sample],
+		td[sample] .sapUiIntegrationCardEditor,
+		td[sample] .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm {
+			width: 350px;
+			height: 90px;
+
+		}
+
+
+		pre[sample] {
+			max-width: 400px;
+			overflow: hidden;
+			height: 90px;
+			padding: 0.2rem !important;
+			font-size: 10pt;
+		}
+
+
+		pre[sample]:hover {
+			overflow: auto;
+		}
+
+
+		pre::-webkit-scrollbar-thumb {
+			background-clip: content-box;
+			border: 4px solid transparent;
+			border-radius: 7px;
+			box-shadow: inset 0 0 rgba(0, 0, 0, 0) !important;
+			transition: all 1s;
+		}
+
+		pre:hover::-webkit-scrollbar-thumb {
+			box-shadow: inset 0 0 0 10px #e0e0e0;
+		}
+	</style>
+	<script>
+		var oBasicSettings = {
+			manifest: {
+				"sap.app": {
+					"id": "test"
+				},
+				"sap.card": {
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"param": {
+
+							}
+						}
+					}
+				}
+			}
+		};
+		var oAdvancedSettings = {
+			manifest: {
+				"sap.app": {
+					"id": "test"
+				},
+				"sap.card": {
+					"designtime": "./advanced",
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"param": {
+
+							}
+						}
+					}
+				}
+			},
+			baseUrl: "./"
+		};
+
+		function processSamples() {
+			sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"], function (CardEditor) {
+				function placeAdvancedEditor(domElement, sItem) {
+					var oAdvancedEditor = new CardEditor({
+						mode: "admin",
+						card: oAdvancedSettings
+					});
+					oAdvancedEditor._startEditor = function () {
+						var mItems = this._oDesigntimeInstance.settings.form.items;
+						for (var n in mItems) {
+							if (n !== sItem) {
+								delete mItems[n];
+							}
+						}
+						CardEditor.prototype._startEditor.apply(this, arguments);
+					};
+					oAdvancedEditor.attachReady(function (oEditor, i) {
+						domElement.innerHTML = "";
+						oAdvancedEditor.placeAt(domElement);
+					}.bind(null, oEditor, i));
+				};
+				var aSamples = document.querySelectorAll("td[sample]");
+				for (var i = 0; i < aSamples.length; i++) {
+					try {
+						var iSample = aSamples[i].getAttribute("sample");
+						if (!iSample) {
+							var sItem = aSamples[i].getAttribute("item");
+							if (!sItem) {
+								continue
+							}
+							placeAdvancedEditor(aSamples[i], sItem);
+						}
+						var sCode = document.querySelector("pre[sample='" + iSample + "']").innerText,
+							oConfig = JSON.parse(sCode);
+						if (!oConfig.param1) {
+							oConfig = {
+								param: oConfig
+							}
+						}
+						var oEditor = new CardEditor({
+							mode: "admin",
+							card: oBasicSettings,
+							designtime: {
+								form: {
+									items: oConfig
+								}
+							}
+						});
+						oEditor.attachReady(function (oEditor, i) {
+							aSamples[i].innerHTML = "";
+							oEditor.placeAt(aSamples[i]);
+						}.bind(null, oEditor, i));
+
+					} catch (ex) {
+
+					}
+				}
+			});
+		}
+		window._samples = {};
+
+	</script>
+</head>
+
+<body class="sapUiBody sapUiSizeCompact topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Controlling Fields and Layout</h1>
+			<p>
+				The Card editor comes with many default visulaizations for fields for basic type. The below examples can
+				help to
+				find the matching field configurations based on your needs.
+			</p>
+			<h2 id="fields">Examples for field configuration</h2>
+			<p>
+				The following examples are part of the items of the form map within the designtime file.
+			<div>
+				<table class="tableWrapper">
+					<tr>
+						<th>Purpose</th>
+						<th>Visualization</th>
+						<th>Example Code</th>
+					</tr>
+					<tr>
+						<td>Simple String field</td>
+
+
+						<td sample="1">
+							Loading...
+						</td>
+						<td>
+							<pre class="prettyprint lang-js" sample="1">{
+	"manifestpath": "/sap.card...param/value",
+	"defaultValue": "StringValue",
+	"label": "Fixed Label Text",
+	"type": "string"
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Simple Boolean field</td>
+
+
+						<td sample="2">
+							Loading...
+						</td>
+						<td>
+							<pre class="prettyprint lang-js" sample="2">{
+	"manifestpath": "/sap.card...param/value",
+	"defaultValue": true,
+	"label": "Fixed Label Text",
+	"type": "boolean"
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Simple Integer field</td>
+
+
+						<td sample="3">
+							Loading...
+						</td>
+						<td>
+							<pre class="prettyprint lang-js" sample="3">{
+	"manifestpath": "/sap.card...param/value",
+	"defaultValue": 1,
+	"label": "Fixed Label Text",
+	"type": "integer"
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Simple Date field</td>
+
+
+						<td sample="4">
+							Loading...
+						</td>
+						<td>
+							<pre class="prettyprint lang-js" sample="4">{
+	"manifestpath": "/sap.card...param/value",
+	"defaultValue": "",
+	"label": "Fixed Label Text",
+	"type": "date"
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Simple Date Time field</td>
+
+
+						<td sample="5">
+							Loading...
+						</td>
+						<td>
+							<pre class="prettyprint lang-js" sample="5">{
+	"manifestpath": "/sap.card...param/value",
+	"defaultValue": "2020-05-31T19:05:30",
+	"label": "Fixed Label Text",
+	"type": "datetime"
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Two columns with fields.<br>If fields semantically belong together, put them next to
+							each other</td>
+
+
+						<td sample="6">
+							Loading...
+						</td>
+						<td>
+							<pre class="prettyprint lang-js" sample="6">{
+	"param1": {
+		"manifestpath": "/sap.card...param/value1",
+		"defaultValue": "",
+		"label": "Field 1",
+		"type": "string",
+		"cols":1
+	},
+	"param2": {
+		"manifestpath": "/sap.card...param/value2",
+		"defaultValue": "",
+		"label": "Field 2",
+		"type": "string",
+		"cols": 1
+	}
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Group header before a field</td>
+
+						<td sample="7">
+							Loading...
+						</td>
+						<td>
+							<pre class="prettyprint lang-js" sample="7">{
+	"group": {
+		"label": "Group Header",
+		"type": "group"
+	},
+	"param1": {
+		"manifestpath": "/sap.card...param/value1",
+		"defaultValue": "",
+		"label": "Field",
+		"type": "string"
+	}
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Showing a Slider for an integer field<br>Please require the sap/m/Slider module in your
+							designtime.js file.</td>
+
+
+						<td item="integer" sample>
+							Loading...
+						</td>
+						<td>
+							<pre class="prettyprint lang-js" sample>{
+	"manifestpath": "/sap.card/.../integer/value",
+	"defaultValue": 1,
+	"type": "integer",
+	"visualization": {
+		"type": Slider,
+		"settings": {
+			"value": "{currentSettings>value}",
+			"min": 0,
+			"max": 10,
+			"width": "100%",
+			"showAdvancedTooltip": true,
+			"showHandleTooltip": false,
+			"inputsAsTooltips": true
+		}
+	}
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Showing a Switch for an integer field.<br>Please require the sap/m/Switch module in your
+							designtime.js file.</td>
+
+
+						<td item="boolean" sample>
+							Loading...
+						</td>
+						<td>
+							<pre class="prettyprint lang-js" sample>{
+
+								"manifestpath": "/sap.card/.../boolean/value",
+	"defaultValue": false,
+	"type": "boolean",
+	"visualization": {
+		"type": Switch,
+		"settings": {
+			"state": "{currentSettings>value}",
+			"customTextOn": "Yes",
+			"customTextOff": "No",
+			"change": "doSomething"
+		}
+	}
+}</pre>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			</p>
+			<h2>Using Custom controls in a designtime implementation</h2>
+			<p>
+				The mechanism to use other controls within the designtime is quire easy.
+				You can see this in the above samples for a Slider and a Switch control already.
+				Below is a complete example
+			</p>
+		</div>
+	</div>
+
+	<script src="../../../scripts/topic.js"></script>
+</body>
+
+</html>

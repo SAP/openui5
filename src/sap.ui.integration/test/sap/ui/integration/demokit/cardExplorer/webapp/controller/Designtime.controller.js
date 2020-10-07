@@ -17,34 +17,82 @@ sap.ui.define([
 		 * Called when the controller is instantiated.
 		 */
 		onInit: function () {
-			var oRouter = this.getRouter();
-			oRouter.getRoute("designtime").attachMatched(this._onRouteMatched, this);
+			this.getRouter().getRoute("designtime").attachPatternMatched(this._onTopicMatched, this);
 
 			this.oDefaultModel = new JSONModel();
 			this.setModel(this.oDefaultModel);
 		},
-
-		_onRouteMatched: function (oEvent) {
-			var oArgs = oEvent.getParameter("arguments"),
+		/**
+				 * Binds the view to the object path and expands the aggregated line items.
+				 * @function
+				 * @param {sap.ui.base.Event} event pattern match event in route 'topicId'
+				 * @private
+				 */
+		_onTopicMatched: function (event) {
+			var oArgs = event.getParameter("arguments"),
 				sTopic = oArgs.topic,
-				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/designtime/" + sTopic + '.html'),
-				oCurrentEntry;
+				sSubTopic = oArgs.subTopic || "",
+				sId = oArgs.id;
 
-			var aNavEntries = DesigntimeNavigationModel.getProperty('/navigation');
+			// Note: oArgs.id shouldn't equal any subTopic, else it won't work.
+			if (sSubTopic && this._isSubTopic(sSubTopic)) {
+				sSubTopic = "/" + sSubTopic;
+			} else if (oArgs.key) {
+				sId = oArgs.sSubTopic; // right shift subTopic to id
+			}
 
-			oCurrentEntry = aNavEntries.find(function (oElement) {
-				return oElement.key === sTopic;
-			});
+			var oNavEntry = this._findNavEntry(sTopic),
+				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/designtime/" + sTopic + sSubTopic + '.html');
 
-			var oJsonObj = {
-				pageTitle: oCurrentEntry.title,
+			var jsonObj = {
+				pageTitle: oNavEntry.title,
 				topicURL: sTopicURL,
 				bIsPhone: Device.system.phone
 			};
 
-			this.oDefaultModel.setData(oJsonObj);
+			this.oDefaultModel.setData(jsonObj);
 			this.onFrameSourceChange();
-			this.scrollTo(oArgs.id);
+			this.scrollTo(sId);
+		},
+
+		_findNavEntry: function (key) {
+			var navEntries = DesigntimeNavigationModel.getProperty('/navigation'),
+				navEntry,
+				subItems,
+				i,
+				j;
+
+			for (i = 0; i < navEntries.length; i++) {
+				navEntry = navEntries[i];
+
+				if (navEntry.key === key) {
+					return navEntry;
+				}
+
+				subItems = navEntry.items;
+
+				if (subItems) {
+					for (j = 0; j < subItems.length; j++) {
+						if (subItems[j].key === key) {
+							return subItems[j];
+						}
+					}
+				}
+			}
+		},
+
+		/**
+		 * Checks if the given key is subtopic key
+		 * "/learn/{topic}/:subTopic:/:id:",
+		 */
+		_isSubTopic: function (sKey) {
+			var aNavEntries = DesigntimeNavigationModel.getProperty('/navigation');
+
+			return aNavEntries.some(function (oNavEntry) {
+				return oNavEntry.items && oNavEntry.items.some(function (oSubEntry) {
+					return oSubEntry.key === sKey;
+				});
+			});
 		}
 	});
 });

@@ -116,7 +116,7 @@
 					"target": "integrate"
 				},
 				{
-					"pattern": "designtime/{topic}/:id:",
+					"pattern": "designtime/{topic}/:subTopic:/:id:",
 					"name": "designtime",
 					"target": "designtime"
 				}
