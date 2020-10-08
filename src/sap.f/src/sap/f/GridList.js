@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"./library",
+	"sap/ui/events/KeyCodes",
 	"sap/m/ListBase",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"./GridListRenderer"
 ], function(
 	library,
+	KeyCodes,
 	ListBase,
 	ManagedObjectObserver,
 	GridLayoutDelegate,
@@ -120,15 +122,6 @@ sap.ui.define([
 		this._oGridObserver.observe(this, { aggregations: ["items"] });
 	};
 
-	GridList.prototype.onfocusin = function() {
-		ListBase.prototype.onfocusin.apply(this, arguments);
-
-		this._oItemNavigation = this.getItemNavigation();
-		if (this._oItemNavigation) {
-			//Enable Up/Left Arrow and Down/Right Arrow to navigate
-			this._oItemNavigation.setTableMode(false, false);
-		}
-	};
 	GridList.prototype.exit = function () {
 		this._removeGridLayoutDelegate();
 
@@ -221,6 +214,54 @@ sap.ui.define([
 	 */
 	GridList.prototype.onLayoutDataChange = function (oEvent) {
 		GridLayoutBase.setItemStyles(oEvent.srcControl);
+	};
+
+	/**
+	 * Handles the onsapnext event
+	 * Right arrow focus to the next item
+	 *
+	 * @param {jQuery.Event} oEvent the browser event
+	 * @private
+	 */
+	GridList.prototype.onsapnext = function (oEvent) {
+
+		var oItemNavigation = this._oItemNavigation;
+		if (!oItemNavigation) {
+			return;
+		}
+
+		if (oEvent.keyCode === KeyCodes.ARROW_RIGHT) {
+			oItemNavigation.onsapnext({
+				keyCode: KeyCodes.ARROW_DOWN,
+				target: oEvent.target,
+				preventDefault: oEvent.preventDefault,
+				stopPropagation: oEvent.stopPropagation
+			});
+		}
+	};
+
+	/**
+	 * Handles the onsapprevious event
+	 * Left arrow the previous item
+	 *
+	 * @param {jQuery.Event} oEvent the browser event
+	 * @private
+	 */
+	GridList.prototype.onsapprevious = function (oEvent) {
+
+		var oItemNavigation = this._oItemNavigation;
+		if (!oItemNavigation) {
+			return;
+		}
+
+		if (oEvent.keyCode === KeyCodes.ARROW_LEFT) {
+			oItemNavigation.onsapprevious({
+				keyCode: KeyCodes.ARROW_UP,
+				target: oEvent.target,
+				preventDefault: oEvent.preventDefault,
+				stopPropagation: oEvent.stopPropagation
+			});
+		}
 	};
 
 	return GridList;

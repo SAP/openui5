@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/f/GridListItem",
 	"sap/m/VBox",
 	"sap/m/Text",
+	"sap/m/Button",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
@@ -21,6 +22,7 @@ function (
 	GridListItem,
 	VBox,
 	Text,
+	Button,
 	GroupHeaderListItem,
 	JSONModel,
 	Sorter,
@@ -395,7 +397,8 @@ function (
 				items: [
 					new GridListItem({
 						content: [
-							new Text({ text: "This is the content"})
+							new Text({ text: "This is the content"}),
+							new Button({ text: "Button" })
 						]
 					}),
 					new GridListItem({
@@ -461,5 +464,26 @@ function (
 
 		// Assert
 		assert.strictEqual(document.activeElement === oItem.getFocusDomRef(), true,  "Focus should be on the first GridListItem");
+	});
+
+	QUnit.test("Left/Right Arrow when the focus is inside an item", function (assert) {
+
+		// Arrange
+		var oButton = this.oGridList.getItems()[0].getContent()[1];
+
+		oButton.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oButton.$(), KeyCodes.ARROW_LEFT, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement, oButton.getFocusDomRef(), "Focus should remains on the button");
+
+		// Act
+		qutils.triggerKeydown(oButton.$(), KeyCodes.ARROW_RIGHT, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement, oButton.getFocusDomRef(), "Focus should remains on the button");
 	});
 });
