@@ -21,6 +21,7 @@ sap.ui.define([
 	'./Toolbar',
 	'./ToolbarSpacer',
 	'./Button',
+	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/assert",
 	"sap/base/util/deepEqual",
@@ -50,6 +51,7 @@ function(
 	Toolbar,
 	ToolbarSpacer,
 	Button,
+	ResizeHandler,
 	containsOrEquals,
 	assert,
 	deepEqual,
@@ -1352,9 +1354,7 @@ function(
 	 * @private
 	 */
 	Input.prototype._deregisterEvents = function() {
-		if (this._oSuggPopover) {
-			this._oSuggPopover._deregisterResize();
-		}
+		this._deregisterPopupResize();
 
 		if (this.isMobileDevice() && this._oSuggPopover && this._oSuggPopover._oPopover) {
 			this.$().off("click");
@@ -2789,7 +2789,7 @@ function(
 						oList.destroyItems();
 					}
 
-					oSuggPopover._deregisterResize();
+					this._deregisterPopupResize();
 				}, this)
 				.attachBeforeOpen(function () {
 					oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
@@ -2798,8 +2798,8 @@ function(
 					oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
 
 					this._sBeforeSuggest = this.getValue();
-					oSuggPopover._resizePopup();
-					oSuggPopover._registerResize();
+					oSuggPopover.resizePopup(this);
+					this._registerPopupResize();
 				}, this);
 		}
 
@@ -2807,6 +2807,28 @@ function(
 		this.setAggregation("_suggestionPopup", oPopover);
 
 		this._oSuggestionPopup = oPopover; // for backward compatibility (used in some other controls)
+	};
+
+	/**
+	 * Registers Popover resize handler
+	 *
+	 * @private
+	 */
+	Input.prototype._registerPopupResize = function () {
+		if (this._oSuggPopover) {
+			this._sPopupResizeHandler = ResizeHandler.register(this, this._oSuggPopover.resizePopup.bind(this._oSuggPopover, this));
+		}
+	};
+
+	/**
+	 * Removes Popover's resize handler
+	 *
+	 * @private
+	 */
+	Input.prototype._deregisterPopupResize = function () {
+		if (this._sPopupResizeHandler) {
+			this._sPopupResizeHandler = ResizeHandler.deregister(this._sPopupResizeHandler);
+		}
 	};
 
 	/**

@@ -55,7 +55,7 @@ sap.ui.define([
 		assert.ok(this.oSuggestionsPopover._oValueStateHeader, "The ValueStateHeader is created.");
 
 		// Arrange
-		oSpy = new this.spy(this.oSuggestionsPopover._oValueStateHeader, "destroy");
+		oSpy = this.spy(this.oSuggestionsPopover._oValueStateHeader, "destroy");
 
 		// Act
 		this.oSuggestionsPopover.destroy();
