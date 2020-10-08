@@ -1153,7 +1153,17 @@ sap.ui.define([
 						vReference: sSourceVariantReference,
 						model: this
 					})
-						.then(this.oFlexController.saveSequenceOfDirtyChanges.bind(this.oFlexController, aCopiedVariantDirtyChanges, oAppComponent));
+						.then(this.oFlexController.saveSequenceOfDirtyChanges.bind(this.oFlexController, aCopiedVariantDirtyChanges, oAppComponent))
+						.then(function(oResponse) {
+							if (oResponse) {
+								var oResponseData = oResponse.response[0];
+								this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
+									if (oVariant.key === oResponseData.fileName) {
+										oVariant.author = oResponseData.support.user;
+									}
+								});
+							}
+						}.bind(this));
 				}.bind(this));
 		}.bind(this, sVMReference, oAppComponent, oEvent.getParameters()), this, sVMReference);
 	};

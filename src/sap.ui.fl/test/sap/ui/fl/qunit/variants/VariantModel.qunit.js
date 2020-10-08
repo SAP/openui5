@@ -1377,11 +1377,12 @@ sap.ui.define([
 			});
 
 			var oVariantManagement = new VariantManagement(sVMReference);
+			var sCopyVariantName = "variant1";
 			var oCopiedVariantContent = {
 				content: {
 					title: "Personalization Test Variant",
 					variantManagementReference: sVMReference,
-					variantReference: "variant1",
+					variantReference: sCopyVariantName,
 					layer: Layer.USER
 				}
 			};
@@ -1399,7 +1400,8 @@ sap.ui.define([
 					return oVariantManagement;
 				}
 			};
-
+			var sUserName = "testUser";
+			var oResponse = {response : [{fileName: sCopyVariantName, support: {user: sUserName}}]};
 			this.oModel.getData()[sVMReference].modified = true;
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
@@ -1417,7 +1419,7 @@ sap.ui.define([
 			sandbox.stub(this.oModel.oFlexController, "deleteChange");
 			sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
 			sandbox.stub(this.oModel, "setVariantProperties").returns({fileName: "changeWithSetDefault"});
-			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves();
+			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
 			sandbox.spy(Utils, "createDefaultFileName");
 
 			return this.oModel._handleSave(oEvent)
@@ -1449,6 +1451,11 @@ sap.ui.define([
 						}), "then dirty changes were removed from the source variant");
 						assert.ok(this.oModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComponent), "then dirty changes from source variant were deleted from the persistence");
 					}.bind(this));
+					this.oModel.getData()[sVMReference].variants.forEach(function(oVariant) {
+						if (oVariant.key === sCopyVariantName) {
+							assert.equal(oVariant.author, sUserName, "then 'testUser' is add as author");
+						}
+					});
 					oVariantManagement.destroy();
 					done();
 				}.bind(this));
