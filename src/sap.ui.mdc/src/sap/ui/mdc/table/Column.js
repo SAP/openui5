@@ -102,7 +102,7 @@ sap.ui.define([
 		this.setProperty("dataProperties", aDataProperties);
 
 		if (!this.getDataProperty()) {
-			this.setProperty("dataProperty", aDataProperties[0]);
+			this.setProperty("dataProperty", this.getDataProperties()[0]);
 		}
 
 		Log.error("The property 'dataProperties' is deprecated, please use the property 'dataProperty' instead", this);
