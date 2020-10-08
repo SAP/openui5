@@ -1563,7 +1563,6 @@ sap.ui.define([
 			return;
 		}
 
-		// TODO: Add utils in mdc.table.PropertyHelper to get sortable, filterable(, and visible) properties that are associated with a column.
 		var iIndex,
 			oParent = oColumn.getParent(),
 			oMDCColumn;
@@ -1575,7 +1574,7 @@ sap.ui.define([
 		this.awaitPropertyHelper().then(function(oPropertyHelper) {
 			var aSortProperties = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty());
 
-			if (!aSortProperties.length) {
+			if (!aSortProperties || !aSortProperties.length) {
 				return;
 			}
 
@@ -2009,18 +2008,21 @@ sap.ui.define([
 			aMDCColumns.forEach(function(oMDCColumn) {
 				var oInnerColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
 				var aSortableProperties = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty());
-				var aSortablePaths = aSortableProperties.map(function(sPropertyName) {
+				var aSortablePaths = aSortableProperties && aSortableProperties.map(function(sPropertyName) {
 					return oPropertyHelper.getPath(sPropertyName);
 				});
-				var oSorter = aSorters.find(function(oSorter) {
-					return aSortablePaths.indexOf(oSorter.sPath) > -1;
-				});
-				var sSortOrder = oSorter && oSorter.bDescending ? "Descending" : "Ascending";
 
-				if (bMobileTable) {
-					oInnerColumn.setSortIndicator(oSorter ? sSortOrder : "None");
-				} else {
-					oInnerColumn.setSorted(!!oSorter).setSortOrder(sSortOrder);
+				if (aSortablePaths) {
+					var oSorter = aSorters.find(function(oSorter) {
+						return aSortablePaths.indexOf(oSorter.sPath) > -1;
+					});
+					var sSortOrder = oSorter && oSorter.bDescending ? "Descending" : "Ascending";
+
+					if (bMobileTable) {
+						oInnerColumn.setSortIndicator(oSorter ? sSortOrder : "None");
+					} else {
+						oInnerColumn.setSorted(!!oSorter).setSortOrder(sSortOrder);
+					}
 				}
 			});
 		});
