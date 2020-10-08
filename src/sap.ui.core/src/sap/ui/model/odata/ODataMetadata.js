@@ -1681,9 +1681,6 @@ sap.ui.define([
 				Log.error("Cannot determine keys of the entity type '" + mEntityType.entityType
 					+ "' for the function import '" + mFunctionInfo.name + "'", this, sClassName);
 			}
-		} else {
-			Log.error("Cannot determine an entity type for the function import '"
-				+ mFunctionInfo.name + "'", this, sClassName);
 		}
 
 		return "";
