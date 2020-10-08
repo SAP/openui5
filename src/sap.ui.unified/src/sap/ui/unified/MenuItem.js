@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.MenuItem.
-sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
-	function(IconPool, MenuItemBase, library) {
+sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/core/library'],
+	function(IconPool, MenuItemBase, library, coreLibrary) {
 	"use strict";
 
 
@@ -97,7 +97,7 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 				labelledby: {value: /*oMenu.getId() + "-label " + */this.getId() + "-txt " + this.getId() + "-scuttxt", append: true}
 			});
 			if (oSubMenu) {
-				rm.attr("aria-haspopup", true);
+				rm.attr("aria-haspopup", coreLibrary.aria.HasPopup.Menu.toLowerCase());
 				rm.attr("aria-owns", oSubMenu.getId());
 			}
 		}

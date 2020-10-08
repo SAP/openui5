@@ -38,6 +38,21 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
+	QUnit.test("aria-haspopup", function (assert) {
+		var oMenuItem = new MenuItem({ text: "Plain" }),
+			oMenuItemWithSubmenu = new MenuItem({ text: "With submenu", submenu: new Menu() }),
+			oMenu = new Menu({ items: [oMenuItem, oMenuItemWithSubmenu] });
+
+		oMenu.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oMenu.open();
+		assert.notOk(oMenuItem.$().attr("aria-haspopup"), "Menu items don't have aria-haspopup when there's no submenu");
+		assert.strictEqual(oMenuItemWithSubmenu.$().attr("aria-haspopup"), "menu", "Submenu presence is indicated in aria-haspopup");
+
+		oMenu.destroy();
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.oMenuItem = new MenuItem({
