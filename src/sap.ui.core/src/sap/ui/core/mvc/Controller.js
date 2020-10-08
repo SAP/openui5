@@ -185,27 +185,27 @@ sap.ui.define([
 							Log.error("Method '" + sOverrideMember + "' does not exist in controller " + oController.getMetadata().getName() + " and cannot be overridden");
 						}
 					}
-					//handle non member extension overrides
-					if (oOverrides.extension) {
-						//allow to override methods of other controller extensions
-						for (var sExtensionNamespace in oOverrides.extension) {
-							oOrigExtensionMetadata = oExtensions[sExtensionNamespace].extension.getMetadata();
-							var oOrigExtensionInterface = ObjectPath.create(sExtensionNamespace, oController.extension);
-							var oOrigExtension = oExtensions[sExtensionNamespace].extension;
-							var oExtensionOverrides = oOverrides.extension[sExtensionNamespace];
-							for (sExtensionOverride in oExtensionOverrides) {
-								if (!oOrigExtensionMetadata.isMethodFinal(sExtensionOverride)) {
-									//override interface
-									ControllerExtension.overrideMethod(sExtensionOverride, oOrigExtensionInterface, oExtensionOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
-									//override Extension so 'this' is working for overrides
-									ControllerExtension.overrideMethod(sExtensionOverride, oOrigExtension, oExtensionOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
-								} else {
-									Log.error("Method '" + sExtensionOverride + "' of extension '" + sExtensionNamespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
-								}
+					oExtensionInfo.reloadNeeded = true;
+				}
+				//handle non member extension overrides
+				if (oOverrides && oOverrides.extension) {
+					//allow to override methods of other controller extensions
+					for (var sExtensionNamespace in oOverrides.extension) {
+						oOrigExtensionMetadata = oExtensions[sExtensionNamespace].extension.getMetadata();
+						var oOrigExtensionInterface = ObjectPath.create(sExtensionNamespace, oController.extension);
+						var oOrigExtension = oExtensions[sExtensionNamespace].extension;
+						var oExtensionOverrides = oOverrides.extension[sExtensionNamespace];
+						for (sExtensionOverride in oExtensionOverrides) {
+							if (!oOrigExtensionMetadata.isMethodFinal(sExtensionOverride)) {
+								//override interface
+								ControllerExtension.overrideMethod(sExtensionOverride, oOrigExtensionInterface, oExtensionOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
+								//override Extension so 'this' is working for overrides
+								ControllerExtension.overrideMethod(sExtensionOverride, oOrigExtension, oExtensionOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
+							} else {
+								Log.error("Method '" + sExtensionOverride + "' of extension '" + sExtensionNamespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
 							}
 						}
 					}
-					oExtensionInfo.reloadNeeded = true;
 				}
 			}
 
