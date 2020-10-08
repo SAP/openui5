@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/dnd/GridKeyboardDragAndDrop"
+	"sap/f/dnd/GridKeyboardDragAndDrop",
+	"sap/f/dnd/GridDragOver"
 ],
 function (
 	jQuery,
@@ -40,7 +41,8 @@ function (
 	Header,
 	IntegrationCard,
 	JSONModel,
-	GridKeyboardDragAndDrop
+	GridKeyboardDragAndDrop,
+	GridDragOver
 ) {
 	"use strict";
 
@@ -1434,6 +1436,21 @@ function (
 
 		// Assert
 		assert.strictEqual(this.oGrid.getItems()[3].getId(), oItem.getId(), "Item hasn't moved");
+	});
+
+	QUnit.test("Keyboard Drag&Drop: Check that GridDragOver is not used", function (assert) {
+		// Arrange
+		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
+			fnGetInstanceSpy = sinon.spy(GridDragOver, "getInstance");
+
+		// Act
+		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
+
+		// Assert
+		assert.ok(fnGetInstanceSpy.notCalled, "GridDragOver#getInstance() is not called during keyboard drag and drop.");
+
+		// Clean
+		fnGetInstanceSpy.restore();
 	});
 
 	QUnit.module("Keyboard Drag&Drop in RTL mode - suggested positions in different directions", {

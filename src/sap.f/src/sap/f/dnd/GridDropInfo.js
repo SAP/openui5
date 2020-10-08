@@ -115,7 +115,7 @@ sap.ui.define([
 	};
 
 	GridDropInfo.prototype.fireDragEnter = function(oEvent) {
-		if (!this._shouldEnhance()) {
+		if (!this._shouldEnhance() || this._isKeyboardEvent(oEvent)) {
 			return DropInfo.prototype.fireDragEnter.apply(this, arguments);
 		}
 
@@ -147,8 +147,7 @@ sap.ui.define([
 			target: mDropPosition ? mDropPosition.targetControl : null
 		}, true);
 
-		// don't handle drag over when performing keyboard dnd
-		if (eventResult && oEvent.originalEvent.type !== "keydown") {
+		if (eventResult) {
 			gridDragOver.handleDragOver(oEvent);
 		}
 
@@ -156,7 +155,7 @@ sap.ui.define([
 	};
 
 	GridDropInfo.prototype.fireDragOver = function(oEvent) {
-		if (!this._shouldEnhance()) {
+		if (!this._shouldEnhance() || this._isKeyboardEvent(oEvent)) {
 			return DropInfo.prototype.fireDragOver.apply(this, arguments);
 		}
 
@@ -187,7 +186,7 @@ sap.ui.define([
 	 * @override
 	 */
 	GridDropInfo.prototype.fireDrop = function(oEvent) {
-		if (!this._shouldEnhance()) {
+		if (!this._shouldEnhance() || this._isKeyboardEvent(oEvent)) {
 			return DropInfo.prototype.fireDrop.apply(this, arguments);
 		}
 
@@ -207,34 +206,15 @@ sap.ui.define([
 
 		mDropPosition = gridDragOver.getSuggestedDropPosition();
 
-		this.fireDropEvent(
-			oEvent.dragSession,
-			oEvent.originalEvent,
-			mDropPosition ? mDropPosition.position : null,
-			oDragSession.getDragControl(),
-			mDropPosition ? mDropPosition.targetControl : null
-		);
+		this.fireEvent("drop", {
+			dragSession: oEvent.dragSession,
+			browserEvent: oEvent.originalEvent,
+			dropPosition: mDropPosition ? mDropPosition.position : null,
+			draggedControl: oDragSession.getDragControl(),
+			droppedControl: mDropPosition ? mDropPosition.targetControl : null
+		});
 
 		gridDragOver.scheduleEndDrag();
-	};
-
-	/**
-	 * Fires "drop" event.
-	 *
-	 * @param {sap.ui.core.dnd.DragSession} oDragSession The drag session.
-	 * @param {object} oBrowserEvent The browser event.
-	 * @param {string} sDropPosition "Before" or "After".
-	 * @param {object} oDraggedControl The dragged control.
-	 * @param {object} oDroppedControl The control around which the drop happened.
-	 */
-	GridDropInfo.prototype.fireDropEvent = function(oDragSession, oBrowserEvent, sDropPosition, oDraggedControl, oDroppedControl) {
-		this.fireEvent("drop", {
-			dragSession: oDragSession,
-			browserEvent: oBrowserEvent,
-			dropPosition: sDropPosition,
-			draggedControl: oDraggedControl,
-			droppedControl: oDroppedControl
-		});
 	};
 
 	/**
@@ -256,6 +236,16 @@ sap.ui.define([
 		}
 
 		return this._bShouldEnhance;
+	};
+
+	/**
+	 * Is the drag and drop triggered by keyboard.
+	 * @private
+	 * @param {jQuery.Event} oEvent The event which has triggered drag and drop.
+	 * @returns {boolean} True if it is triggered by keyboard. False if triggered by mouse.
+	 */
+	GridDropInfo.prototype._isKeyboardEvent = function(oEvent) {
+		return oEvent.originalEvent.type === "keydown";
 	};
 
 	/**
