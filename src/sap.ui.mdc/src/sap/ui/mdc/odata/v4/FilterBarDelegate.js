@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	'./ODataMetaModelUtil', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/fl/Utils", "sap/ui/mdc/FilterBarDelegate", 'sap/base/util/ObjectPath', 'sap/base/util/merge', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/mdc/condition/FilterOperatorUtil', "sap/ui/model/FilterOperator", "sap/ui/model/Filter", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier'
-	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, TypeUtil, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier) {
+	'./ODataMetaModelUtil', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/fl/Utils", "sap/ui/mdc/FilterBarDelegate", 'sap/base/util/ObjectPath', 'sap/base/util/merge', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/mdc/condition/FilterOperatorUtil', "sap/ui/model/FilterOperator", "sap/ui/model/Filter", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/base/Log'
+	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, TypeUtil, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log) {
 	"use strict";
 
 	/**
@@ -467,6 +467,7 @@ sap.ui.define([
 						// not clear how they are represented in non-filterable annotation
 						// etc.
 						if (oObj.$isCollection) {
+							Log.warning("Complex property with type " + oObj.$Type + " has been ignored");
 							continue;
 						}
 

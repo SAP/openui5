@@ -34,6 +34,7 @@
 				<Property Name="TimeOfDay" Type="Edm.TimeOfDay" />
 				<Property Name="DateTimeOffset" Type="Edm.DateTimeOffset" />
 				<Property Name="Guid" Type="Edm.Guid" />
+				<Property Name="Complex" Type="Collection(sample)" Nullable="false"/>
 
 				<Property Name="StringMulti" Type="Edm.String" Nullable="false" MaxLength="10"/>
 				<Property Name="ByteMulti" Type="Edm.Byte"/>
