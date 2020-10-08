@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils", "sap/ui/qunit/utils/createAndAppendDiv", "sap/m/P13nColumnsPanel", "sap/m/P13nColumnsItem", "sap/m/P13nItem", "sap/ui/model/json/JSONModel", "sap/ui/events/jquery/EventExtension"
 ], function(qutils, createAndAppendDiv, P13nColumnsPanel, P13nColumnsItem, P13nItem, JSONModel, EventExtension) {
@@ -277,8 +277,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("selected B after selected A", function(assert) {
-		this.oPanel.setModel(new JSONModel({
+	var fnSetModel = function(oPanel) {
+		oPanel.setModel(new JSONModel({
 			items: [
 				{
 					columnKey: "B",
@@ -307,8 +307,46 @@ sap.ui.define([
 				}
 			]
 		}));
-		this.oPanel.placeAt("content");
+		oPanel.placeAt("content");
 		sap.ui.getCore().applyChanges();
+	};
+
+	QUnit.test("check item focus - move to top", function(assert){
+		fnSetModel(this.oPanel);
+
+		var iLastItem = this.oPanel._oTable.getItems().length - 1;
+		var oLastItem = this.oPanel._oTable.getItems()[iLastItem];
+
+		sinon.stub(this.oPanel, "_getMarkedTableItem").returns(oLastItem);
+		this.oPanel.onPressButtonMoveToTop();
+
+		assert.equal(sap.ui.getCore().getCurrentFocusedControlId(), this.oPanel.getId() + "-showSelected", "Show selected button focused");
+	});
+
+	QUnit.test("check item focus - move down", function(assert){
+		fnSetModel(this.oPanel);
+
+		var oFirstItem = this.oPanel._oTable.getItems()[0];
+
+		sinon.stub(this.oPanel, "_getMarkedTableItem").returns(oFirstItem);
+		this.oPanel.onPressButtonMoveDown();
+
+		assert.notEqual(sap.ui.getCore().getCurrentFocusedControlId(), this.oPanel.getId() + "-showSelected", "Show selected button is not focused");
+	});
+
+	QUnit.test("check item focus - move bottom", function(assert){
+		fnSetModel(this.oPanel);
+
+		var oFirstItem = this.oPanel._oTable.getItems()[0];
+
+		sinon.stub(this.oPanel, "_getMarkedTableItem").returns(oFirstItem);
+		this.oPanel.onPressButtonMoveToBottom();
+
+		assert.equal(sap.ui.getCore().getCurrentFocusedControlId(), this.oPanel.getId() + "-showSelected", "Show selected button is not focused");
+	});
+
+	QUnit.test("selected B after selected A", function(assert) {
+		fnSetModel(this.oPanel);
 
 		// act: B, A, C -> A, B, C
 		this.oPanel.onPressButtonMoveDown();
@@ -327,37 +365,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("selected B after unselected C", function(assert) {
-		this.oPanel.setModel(new JSONModel({
-			items: [
-				{
-					columnKey: "B",
-					text: "B"
-				}, {
-					columnKey: "A",
-					text: "A"
-				}, {
-					columnKey: "C",
-					text: "C"
-				}
-			],
-			columnsItems: [
-				{
-					columnKey: "B",
-					index: 0,
-					visible: true
-				}, {
-					columnKey: "A",
-					index: 1,
-					visible: true
-				}, {
-					columnKey: "C",
-					index: 2,
-					visible: false
-				}
-			]
-		}));
-		this.oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		fnSetModel(this.oPanel);
 
 		// act: B, A, C -> A, C, B
 		this.oPanel.onPressButtonMoveToBottom();
@@ -377,37 +385,7 @@ sap.ui.define([
 
 	QUnit.test("unselected A after unselected C", function(assert) {
 		this.oPanel._setColumnKeyOfMarkedItem("A");
-		this.oPanel.setModel(new JSONModel({
-			items: [
-				{
-					columnKey: "A",
-					text: "A"
-				}, {
-					columnKey: "B",
-					text: "B"
-				}, {
-					columnKey: "C",
-					text: "C"
-				}
-			],
-			columnsItems: [
-				{
-					columnKey: "A",
-					index: 0,
-					visible: false
-				}, {
-					columnKey: "B",
-					index: 1,
-					visible: true
-				}, {
-					columnKey: "C",
-					index: 2,
-					visible: false
-				}
-			]
-		}));
-		this.oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		fnSetModel(this.oPanel);
 
 		// act: B, A, C -> A, C, B
 		this.oPanel.onPressButtonMoveToBottom();

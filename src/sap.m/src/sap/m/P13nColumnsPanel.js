@@ -552,7 +552,7 @@ sap.ui.define([
 						moveToOverflow: false,
 						stayInOverflow: false
 					})
-				}), new Button({
+				}), new Button(this.getId() + "-showSelected", {
 					text: {
 						path: '/showOnlySelectedItems',
 						formatter: function(bShowOnlySelectedItems) {
@@ -693,11 +693,26 @@ sap.ui.define([
 
 		this._moveModelItems(iIndexFrom, iIndexTo);
 
+		this._checkButtonFocus(iIndexTo);
 		this._scrollToSelectedItem(this._getMarkedTableItem());
 		this._updateControlLogic();
 		this._fireChangeColumnsItems();
 		this._fireSetData();
 		this._notifyChange();
+	};
+
+	/**
+	 * Used to check whether the item is on the first or last index of the inner Table's <code>items</code> aggregration
+	 * and sets the focus to the 'Show Selected' Button.
+	 *
+	 * @param {int} iIndexTo index to which the item has been moved
+	 */
+	P13nColumnsPanel.prototype._checkButtonFocus = function(iIndexTo) {
+		var iMaxIndex = this._oTable.getItems().length - 1;
+
+		if (iIndexTo === 0 || iIndexTo === iMaxIndex) {
+			sap.ui.getCore().byId(this.getId() + "-showSelected").focus();
+		}
 	};
 
 	/**
