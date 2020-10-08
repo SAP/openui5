@@ -15,7 +15,6 @@ sap.ui.define([
 	'./Toolbar',
 	'./AssociativeOverflowToolbar',
 	'./Button',
-	'./AccButton',
 	'./Title',
 	'./ToolbarSpacer',
 	'./SegmentedButton',
@@ -27,6 +26,7 @@ sap.ui.define([
 	'sap/ui/core/Popup',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
+	'sap/ui/core/library',
 	"./PlanningCalendarHeaderRenderer"
 ],
 function(
@@ -36,7 +36,6 @@ function(
 	Toolbar,
 	AssociativeOverflowToolbar,
 	Button,
-	AccButton,
 	Title,
 	ToolbarSpacer,
 	SegmentedButton,
@@ -48,6 +47,7 @@ function(
 	Popup,
 	IconPool,
 	InvisibleText,
+	coreLibrary,
 	PlanningCalendarHeaderRenderer
 ) {
 	"use strict";
@@ -297,9 +297,9 @@ function(
 		oYearPicker.setPopupMode(true);
 		this.setAggregation("_yearPicker", oYearPicker);
 
-		this._oPickerBtn = new AccButton(sNavToolbarId + "-PickerBtn", {
+		this._oPickerBtn = new Button(sNavToolbarId + "-PickerBtn", {
 			text: this.getPickerText(),
-			ariaHaspopup: "dialog",
+			ariaHasPopup: coreLibrary.aria.HasPopup.Grid,
 			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_SELECT_RANGE"),
 			press: function () {
 				if (this.fireEvent("_pickerButtonPress", {}, true)) {
