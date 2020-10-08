@@ -403,13 +403,17 @@ sap.ui.define([
 				}
 				this._appliedLayerManifestChanges = vCardIdOrSettings.manifestChanges;
 				var oManifestData = this._oEditorCard.getManifestEntry("/");
+				var _beforeCurrentLayer = merge({}, oManifestData);
+				this._beforeManifestModel = new JSONModel(_beforeCurrentLayer);
 				if (iCurrentModeIndex < CardMerger.layers["translation"] && this._currentLayerManifestChanges) {
 					//merge if not translation
+
 					oManifestData = CardMerger.mergeCardDelta(oManifestData, [this._currentLayerManifestChanges]);
 				}
 				//create a manifest model after the changes are merged
 				this._manifestModel = new JSONModel(oManifestData);
 				//create a manifest model for the original "raw" manifest that was initially loaded
+
 				this._originalManifestModel = new JSONModel(this._getOriginalManifestJson());
 				this._initInternal();
 				//use the translations from the card
@@ -825,6 +829,8 @@ sap.ui.define([
 		if (this.getAllowSettings() === false) {
 			oConfig.allowSettings = false;
 		}
+		oConfig._beforeValue = this._beforeManifestModel.getProperty(oConfig.manifestpath);
+
 		//if the item is not visible or translation mode, continue immediately
 		if (oConfig.visible === false || (!oConfig.translatable && sMode === "translation")) {
 			return;
@@ -850,6 +856,10 @@ sap.ui.define([
 			origLangField._settingspath += "/_language";
 			origLangField.editable = false;
 			origLangField.required = false;
+			if (!origLangField.value) {
+				//the original language field shows only a text control. If empty we show a dash to avoid empty text.
+				origLangField.value = "-";
+			}
 			this.addAggregation("_formContent",
 				this._createLabel(origLangField)
 			);
@@ -1052,7 +1062,9 @@ sap.ui.define([
 				if (!oItem.type) {
 					oItem.type = "string";
 				}
-				if (!oItem.value) {
+				//only if the value is undefined from the this._manifestModel.getProperty(oItem.manifestpath)
+				//false, "", 0... are valid values and should not apply the default.
+				if (oItem.value === undefined || oItem.value === null) {
 					switch (oItem.type) {
 						case "boolean": oItem.value = oItem.defaultValue || false; break;
 						case "integer":

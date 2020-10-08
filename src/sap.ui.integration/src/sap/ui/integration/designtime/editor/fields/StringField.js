@@ -62,7 +62,6 @@ sap.ui.define([
 				}
 			} else {
 				if (this.getMode() === "translation") {
-
 					oVisualization = {
 						type: Text,
 						settings: {

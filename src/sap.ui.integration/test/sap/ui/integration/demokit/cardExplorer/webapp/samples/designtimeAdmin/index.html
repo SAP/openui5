@@ -44,6 +44,40 @@
 				});
 				oButton.placeAt("buttons");
 
+				var oButton = new Button({
+					text: "Show Card Editor for Administrator with Dynamic Values and Settings",
+					press: function () {
+						var oDialog = new Dialog({
+							title: "Edit Card Settings as Administrator with Dynamic Values and Settings",
+							horizontalScrolling: false,
+							beginButton: new Button({
+								type: "Emphasized",
+								text: "OK",
+								press: function () {
+									sap.m.MessageToast.show("Apply settings");
+									document.getElementById("card")._getControl().setManifestChanges([oEditor.getCurrentSettings()]);
+									oDialog.close();
+								}
+							}),
+							endButton: new Button({
+								text: "Close",
+								press: function () {
+									oDialog.close();
+								}
+							})
+						});
+						var oEditor = new CardEditor({
+							card: document.getElementById("card")._getControl(),
+							mode: "admin",
+							allowSettings: true,
+							allowDynamicValues: true
+						});
+						oDialog.addContent(oEditor);
+						oDialog.open();
+					}
+				});
+				oButton.placeAt("buttons");
+
 			});
 		}
 
