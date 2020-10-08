@@ -1132,46 +1132,25 @@ function(
 		}
 
 		if (this.canUndo()) {
-			if (!this._oVersionSwitchDialogPromise) {
-				this._oVersionSwitchDialogPromise = Fragment.load({
-					name: "sap.ui.rta.VersionSwitchDataLossDialog",
-					id: this.getId() + "_VersionSwitchDataLossDialog",
-					controller: this
-				}).then(function (oDialog) {
-					// adding a controlDependency for model propagation
-					this.getToolbar().addDependent(oDialog);
-					return oDialog;
-				}.bind(this));
-			}
-
 			this._nSwitchToVersion = nVersion;
-			return this._oVersionSwitchDialogPromise.then(function (oDialog) {
-				oDialog.open();
-			});
+			return Utils.showMessageBox("warning", "MSG_SWITCH_VERSION_DIALOG", {
+				titleKey: "TIT_SWITCH_VERSION_DIALOG",
+				actions: [MessageBox.Action.YES, MessageBox.Action.NO, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.YES
+			}).then(function (sAction) {
+				switch (sAction) {
+					case MessageBox.Action.YES:
+						return this._serializeToLrep(this)
+							.then(this._switchVersion.bind(this, this._nSwitchToVersion));
+					case MessageBox.Action.NO:
+						// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
+						this.getCommandStack().removeAllCommands(true);
+						this._switchVersion(this._nSwitchToVersion);
+				}
+			}.bind(this));
 		}
 
 		this._switchVersion(nVersion);
-	};
-
-	RuntimeAuthoring.prototype._saveAndSwitchVersion = function () {
-		return this._serializeToLrep(this)
-			.then(this._closeVersionSwitchDialog.bind(this))
-			.then(this._switchVersion.bind(this, this._nSwitchToVersion));
-	};
-
-	RuntimeAuthoring.prototype._discardAndSwitchVersion = function () {
-		return this._closeVersionSwitchDialog()
-			.then(function () {
-				// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
-				this.getCommandStack().removeAllCommands(true);
-			}.bind(this))
-			.then(this._switchVersion.bind(this, this._nSwitchToVersion));
-	};
-
-	RuntimeAuthoring.prototype._closeVersionSwitchDialog = function () {
-		return this._oVersionSwitchDialogPromise.then(function (oDialog) {
-			oDialog.close();
-		});
 	};
 
 	RuntimeAuthoring.prototype._switchVersion = function (nVersion) {
