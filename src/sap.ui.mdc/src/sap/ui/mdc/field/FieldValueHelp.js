@@ -393,13 +393,19 @@ sap.ui.define([
 		// as BindingContext of Field might change (happens in table) update if needed
 		_updateBindingContext.call(this);
 
+		if (this._bOpenAfterPromise) {
+			this._bSuggestion = bSuggestion;
+			return; // already wait for opening
+		}
+
 		var oWrapper = this.getContent();
 
 		// trigger content loading in event or delegate
 		var fnOpen = function() {
 			if (this._bOpenAfterPromise) {
 				delete this._bOpenAfterPromise;
-				this.open(bSuggestion);
+				this.open(this._bSuggestion);
+				delete this._bSuggestion;
 			}
 		}.bind(this);
 		var bSync = this._bOpen ? this._callContentRequest(!!bSuggestion, fnOpen) : this._fireOpen(!!bSuggestion, fnOpen); // no open event of Popover async loaded
@@ -407,6 +413,7 @@ sap.ui.define([
 		if (!bSync) {
 			// open after delegates promise is resolved
 			// but trigger loading of Popover or Dialog to use the pending time (otherwise we run in the next async loading afterwards)
+			this._bSuggestion = bSuggestion;
 			if (bSuggestion) {
 				this._getPopover();
 			} else {
