@@ -210,7 +210,6 @@ sap.ui.define([
 }, {
 	entitySet : undefined,
 	entityType : undefined,
-	expectedLog : "Cannot determine an entity type for the function import '~functionName'",
 	result : "",
 	resultCollection : ""
 }].forEach(function (oFixture, i) {
@@ -283,10 +282,6 @@ sap.ui.define([
 	QUnit.test("_getCanonicalPathOfFunctionImport: sFunctionReturnType = undefined",
 		function (assert) {
 			var mFunctionInfo = {name : "Foo"};
-
-			this.oLogMock.expects("error")
-				.withExactArgs("Cannot determine an entity type for the function import '"
-					+ mFunctionInfo.name + "'", sinon.match.same(this.oMetadata), sClassName);
 
 			// code under test
 			assert.strictEqual(
