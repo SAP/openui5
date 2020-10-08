@@ -4,6 +4,12 @@
 sap.ui.define(function () {
 	"use strict";
 
+	function loadCardEditor() {
+		return new Promise(function (fnResolve, fnReject) {
+			sap.ui.require(["sap/ui/integration/designtime/cardEditor/CardEditor"], fnResolve, fnReject);
+		});
+	}
+
 	/**
 	 * Loads Card Editor preload bundle
 	 *
@@ -22,10 +28,8 @@ sap.ui.define(function () {
 	 * @public
 	 */
 	return function () {
-		return sap.ui.loader._.loadJSResourceAsync("sap-ui-integration-cardEditor.js").then(function () {
-			return new Promise(function (fnResolve, fnReject) {
-				sap.ui.require(["sap/ui/integration/designtime/cardEditor/CardEditor"], fnResolve, fnReject);
-			});
-		});
+		return sap.ui.loader._.loadJSResourceAsync("sap-ui-integration-cardEditor.js")
+			.then(loadCardEditor)
+			.catch(loadCardEditor);
 	};
 });
