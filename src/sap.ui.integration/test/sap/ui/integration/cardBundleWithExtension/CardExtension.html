@@ -73,7 +73,7 @@
 		var button = new sap.m.Button({
 			text: "Set new extension actions",
 			press: function () {
-				card1._oExtension.setActions([
+				card1.getAggregation("_extension").setActions([
 					{
 						type: 'Navigation',
 						url: "http://www.sap.com",
@@ -94,7 +94,7 @@
 		var buttonNewFormatters = new sap.m.Button({
 			text: "Set new extension formatters",
 			press: function () {
-				card1._oExtension.setFormatters({
+				card1.getAggregation("_extension").setFormatters({
 					titleToUpperCase: function (title) {
 						return title.toUpperCase() + " NEW";
 					},

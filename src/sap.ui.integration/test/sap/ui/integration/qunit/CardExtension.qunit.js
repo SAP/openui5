@@ -52,7 +52,7 @@ sap.ui.define([
 
 		this.oCard.attachEvent("_ready", function () {
 			// assert
-			assert.ok(this.oCard._oExtension, "The extension is created successfully.");
+			assert.ok(this.oCard.getAggregation("_extension"), "The extension is created successfully.");
 			done();
 		}.bind(this));
 
@@ -340,7 +340,7 @@ sap.ui.define([
 			oToolbar = oHeader.getToolbar();
 
 			// set new actions
-			this.oCard._oExtension.setActions(aNewActions);
+			this.oCard.getAggregation("_extension").setActions(aNewActions);
 
 			assert.notEqual(oToolbar, oHeader.getToolbar(), "there is a new actions toolbar");
 
@@ -352,7 +352,7 @@ sap.ui.define([
 			assert.strictEqual(aActionButtons[1].getText(), "Action 2", "action text is correct");
 
 			// set the new actions again
-			this.oCard._oExtension.setActions(aNewActions);
+			this.oCard.getAggregation("_extension").setActions(aNewActions);
 
 			assert.strictEqual(oToolbar, oHeader.getToolbar(), "the actions toolbar is not changed");
 
@@ -417,7 +417,7 @@ sap.ui.define([
 
 		this.oCard.attachEvent("_ready", function () {
 
-			this.oCard._oExtension.setFormatters({
+			this.oCard.getAggregation("_extension").setFormatters({
 				toUpperCase: function (sValue) {
 					return sValue.toUpperCase() + " New";
 				}
