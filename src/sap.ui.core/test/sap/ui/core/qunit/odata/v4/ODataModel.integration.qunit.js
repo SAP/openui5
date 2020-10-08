@@ -132,6 +132,16 @@ sap.ui.define([
 	}
 
 	/**
+	 * Returns the given context's path.
+	 *
+	 * @param {sap.ui.model.Context} oContext - A context
+	 * @returns {string} The context's path
+	 */
+	function getPath(oContext) {
+		return oContext.getPath();
+	}
+
+	/**
 	 *  Create a view with a relative ODataListBinding which is ready to create a new entity.
 	 *
 	 * @param {object} oTest The QUnit test object
@@ -1232,11 +1242,11 @@ sap.ui.define([
 				// enable parse error messages in the message manager
 				sap.ui.getCore().getMessageManager().registerObject(oView, true);
 				// Place the view in the page so that it is actually rendered. In some situations,
-				// esp. for the table.Table this is essential.
+				// esp. for the sap.ui.table.Table this is essential.
 				oView.placeAt("qunit-fixture");
 				that.oView = oView;
 
-				return that.waitForChanges(assert);
+				return that.waitForChanges(assert, "createView");
 			});
 		},
 
@@ -1269,10 +1279,10 @@ sap.ui.define([
 		 *                                 // expect value "d" for control with ID "foo" in a
 		 *                                 // metamodel table on "/MyEntitySet/ID"
 		 * this.expectChange("foo", "bar").expectChange("foo", "baz"); // expect 2 changes for "foo"
-		 * this.expectChange("foo", null, null); // table.Table sets the binding context on an
-		 *                                       // existing row to null when scrolling
-		 * this.expectChange("foo", null); // row is deleted in table.Table so that its context is
-		 *                                 // destroyed
+		 * this.expectChange("foo", null, null); // sap.ui.table.Table sets the binding context on
+		 *                                       // an existing row to null when scrolling
+		 * this.expectChange("foo", null); // row is deleted in sap.ui.table.Table so that its
+		 *                                 // context is destroyed
 		 *
 		 * @param {string} sControlId The control ID
 		 * @param {string|string[]|number|number[]} [vValue] The expected value or a list of
@@ -1648,7 +1658,7 @@ sap.ui.define([
 				assert.strictEqual(that.aExpectedEvents.length, 0, "no missing events");
 				that.checkMessages(assert);
 				if (sTitle) {
-					assert.ok(true, "waitForChanges: Done with " + sTitle);
+					assert.ok(true, "waitForChanges: Done with " + sTitle + " *".repeat(25));
 				}
 			});
 
@@ -2126,9 +2136,7 @@ sap.ui.define([
 
 			// code under test
 			oPromise = oBinding.requestContexts(0, 3, "group").then(function (aContexts) {
-				assert.deepEqual(aContexts.map(function (oContext) {
-					return oContext.getPath();
-				}), [
+				assert.deepEqual(aContexts.map(getPath), [
 					"/SalesOrderList('01')",
 					"/SalesOrderList('02')",
 					"/SalesOrderList('03')"
@@ -2178,9 +2186,7 @@ sap.ui.define([
 			// code under test
 			return Promise.all([
 				oBinding.requestContexts(0, 3, "group").then(function (aContexts) {
-					assert.deepEqual(aContexts.map(function (oContext) {
-						return oContext.getPath();
-					}), [
+					assert.deepEqual(aContexts.map(getPath), [
 						"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT(1)",
 						"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT(2)",
 						"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT(3)"
@@ -2227,9 +2233,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oBinding.requestContexts(2, 10).then(function (aContexts) {
-					assert.deepEqual(aContexts.map(function (oContext) {
-						return oContext.getPath();
-					}), [
+					assert.deepEqual(aContexts.map(getPath), [
 						"/SalesOrderList('03')",
 						"/SalesOrderList('04')",
 						"/SalesOrderList('05')"
@@ -2297,9 +2301,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oBinding.requestContexts(2, 10).then(function (aContexts) {
-					assert.deepEqual(aContexts.map(function (oContext) {
-						return oContext.getPath();
-					}), [
+					assert.deepEqual(aContexts.map(getPath), [
 						"/SalesOrderList('03')",
 						"/SalesOrderList('04')",
 						"/SalesOrderList('05')"
@@ -5399,16 +5401,11 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.deepEqual(
-				oTable.getBinding("items").getCurrentContexts().map(function (oContext) {
-					return oContext.getPath();
-				}),
-				[
-					"/SalesOrderList('0500000001')",
-					"/SalesOrderList('0500000003')",
-					"/SalesOrderList('0500000004')"
-				]
-			);
+			assert.deepEqual(oTable.getBinding("items").getCurrentContexts().map(getPath), [
+				"/SalesOrderList('0500000001')",
+				"/SalesOrderList('0500000003')",
+				"/SalesOrderList('0500000004')"
+			]);
 		});
 	});
 
@@ -5572,15 +5569,11 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.deepEqual(
-				oTable.getBinding("items").getCurrentContexts().map(function (oContext) {
-					return oContext.getPath();
-				}), [
-					"/SalesOrderList('0500000001')",
-					"/SalesOrderList('0500000003')",
-					"/SalesOrderList('0500000004')"
-				]
-			);
+			assert.deepEqual(oTable.getBinding("items").getCurrentContexts().map(getPath), [
+				"/SalesOrderList('0500000001')",
+				"/SalesOrderList('0500000003')",
+				"/SalesOrderList('0500000004')"
+			]);
 		});
 	});
 
@@ -14768,8 +14761,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: BCP 1870017061
-	// List/Detail, object page with a table.Table: When changing the entity for the object page
-	// the property bindings below the table's list binding complained about an invalid path in
+	// List/Detail, object page with a sap.ui.table.Table: When changing the entity for the object
+	// page the property bindings below the table's list binding complained about an invalid path in
 	// deregisterChange. This scenario only simulates the object page, the contexts from the list
 	// are hardcoded to keep the test small.
 	QUnit.test("deregisterChange", function (assert) {
@@ -15033,7 +15026,7 @@ sap.ui.define([
 	//Table._updateTableSizes (Table.js?eval:1503)
 	//Promise.then (async)
 	//Table.onAfterRendering (Table.js?eval:1402)
-	QUnit.skip("ODLB: resume/refresh/filter w/ submitBatch on a table.Table", function (assert) {
+	QUnit.skip("ODLB: resume/refresh/filter w/ submitBatch on a t:Table", function (assert) {
 		var oListBinding,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -15253,6 +15246,9 @@ sap.ui.define([
 	//
 	// Collapse the first node.
 	// JIRA: CPOUI5ODATAV4-179
+	//
+	// Expand the first node again.
+	// JIRA: CPOUI5ODATAV4-378
 	QUnit.test("Data Aggregation: expand, paging and collapse on sap.m.Table", function (assert) {
 		var oListBinding,
 			oModel = createAggregationModel({autoExpandSelect : true}),
@@ -15353,20 +15349,14 @@ sap.ui.define([
 		}).then(function () {
 			oListBinding = oTable.getBinding("items");
 
-			assert.deepEqual(
-				oListBinding.getCurrentContexts()
-					.map(function (oContext) {
-						return oContext.getPath();
-					}),
-				[
-					"/BusinessPartners(Region='Z')",
-					"/BusinessPartners(Region='Z',AccountResponsible='a')",
-					"/BusinessPartners(Region='Z',AccountResponsible='b')",
-					"/BusinessPartners(Region='Z',AccountResponsible='c')",
-					"/BusinessPartners(Region='Z',AccountResponsible='d')",
-					"/BusinessPartners(Region='Y')"
-				]
-			);
+			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
+				"/BusinessPartners(Region='Z')",
+				"/BusinessPartners(Region='Z',AccountResponsible='a')",
+				"/BusinessPartners(Region='Z',AccountResponsible='b')",
+				"/BusinessPartners(Region='Z',AccountResponsible='c')",
+				"/BusinessPartners(Region='Z',AccountResponsible='d')",
+				"/BusinessPartners(Region='Y')"
+			]);
 
 			that.expectChange("regionDetail", "Z");
 			that.oView.byId("detail").setBindingContext(
@@ -15398,20 +15388,36 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "collapse 'Z'");
 		}).then(function () {
-			assert.deepEqual(
-				oListBinding.getCurrentContexts()
-					.map(function (oContext) {
-						return oContext.getPath();
-					}),
-				[
-					"/BusinessPartners(Region='Z')",
-					"/BusinessPartners(Region='Y')",
-					"/BusinessPartners(Region='X')",
-					"/BusinessPartners(Region='W')",
-					"/BusinessPartners(Region='V')",
-					"/BusinessPartners(Region='U')"
-				]
-			);
+			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
+				"/BusinessPartners(Region='Z')",
+				"/BusinessPartners(Region='Y')",
+				"/BusinessPartners(Region='X')",
+				"/BusinessPartners(Region='W')",
+				"/BusinessPartners(Region='V')",
+				"/BusinessPartners(Region='U')"
+			]);
+
+			that.expectChange("isExpanded", [true, undefined, undefined, undefined, undefined])
+				.expectChange("isTotal", [/*true*/, false, false, false, false])
+				.expectChange("level", [/*1*/, 2, 2, 2, 2])
+				.expectChange("region", [/*"Z"*/, "Z", "Z", "Z", "Z"])
+				.expectChange("accountResponsible", [/*""*/, "a", "b", "c", "d"])
+				.expectChange("salesAmount", [/*"100"*/, "10", "20", "30", "40"])
+				.expectChange("salesNumber", [/*null*/, "1", "2", "3", "4"]);
+
+			// code under test
+			oTable.getItems()[0].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "expand 'Z'");
+		}).then(function () {
+			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
+				"/BusinessPartners(Region='Z')",
+				"/BusinessPartners(Region='Z',AccountResponsible='a')",
+				"/BusinessPartners(Region='Z',AccountResponsible='b')",
+				"/BusinessPartners(Region='Z',AccountResponsible='c')",
+				"/BusinessPartners(Region='Z',AccountResponsible='d')",
+				"/BusinessPartners(Region='Y')"
+			]);
 		});
 	});
 
@@ -15599,22 +15605,16 @@ sap.ui.define([
 			return that.waitForChanges(assert, "scroll back to the first row: "
 				+ "'Z', 'Z-a' and 'Z-b' visible");
 		}).then(function () {
-			assert.deepEqual(
-				oTable.getBinding("rows").getCurrentContexts()
-					.map(function (oContext) {
-						return oContext.getPath();
-					}),
-				[
-					"/BusinessPartners(Region='Z')",
-					"/BusinessPartners(Region='Z',AccountResponsible='a')",
-					"/BusinessPartners(Region='Z',AccountResponsible='b')"
-				]
-			);
+			assert.deepEqual(oTable.getBinding("rows").getCurrentContexts().map(getPath), [
+				"/BusinessPartners(Region='Z')",
+				"/BusinessPartners(Region='Z',AccountResponsible='a')",
+				"/BusinessPartners(Region='Z',AccountResponsible='b')"
+			]);
 		});
 	});
 
 	//*********************************************************************************************
-	// Scenario: table.Table with aggregation and visual grouping.
+	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
 	// Optionally expand and scroll down in two steps with intersecting ranges.
 	// JIRA: CPOUI5ODATAV4-255
 [false, true].forEach(function (bWithExpand) {
@@ -15778,7 +15778,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: table.Table with aggregation and visual grouping.
+	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
 	// Expand the last visible node and scroll to the last loaded leaf.
 	// JIRA: CPOUI5ODATAV4-255
 	QUnit.test("Data Aggregation: expand and paging to the last loaded leaf", function (assert) {
@@ -15877,7 +15877,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: table.Table with aggregation and visual grouping.
+	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
 	// Collapse with placeholders
 	//
 	// JIRA: CPOUI5ODATAV4-179
@@ -15897,41 +15897,17 @@ sap.ui.define([
 			groupLevels : [\'Country\']\
 		}\
 	}}" threshold="0" visibleRowCount="4">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="country" text="{Country}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
 </t:Table>',
 			that = this;
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
-			+ "&$count=true&$skip=0&$top=4", {
+				+ "&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "2",
 				value : [
 					{Country : "US", SalesAmount : "100"},
@@ -15949,8 +15925,7 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'UK')"
-				+ "/groupby((Region),aggregate(SalesAmount))"
-				+ "&$count=true&$skip=0&$top=4", {
+					+ "/groupby((Region),aggregate(SalesAmount))&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "12",
 					value : [
 						{Region : "Z", SalesAmount : "10"},
@@ -15996,14 +15971,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: table.Table with aggregation and visual grouping.
-	// Expand three levels and collapse at the root level.
+	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
+	// Expand three levels and collapse at the root level, then expand again.
 	//
 	// JIRA: CPOUI5ODATAV4-178
 	// JIRA: CPOUI5ODATAV4-179
-	QUnit.test("Data Aggregation: expand three levels", function (assert) {
+	// JIRA: CPOUI5ODATAV4-378
+	QUnit.test("Data Aggregation: expand three levels, expand after collapse", function (assert) {
 		var oModel = createAggregationModel(),
+			oRowsBinding,
 			oTable,
+			oUKContext,
 			sView = '\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
 	parameters : {\
@@ -16018,51 +15996,15 @@ sap.ui.define([
 			groupLevels : [\'Country\', \'Region\', \'Segment\']\
 		}\
 	}}" threshold="0" visibleRowCount="4">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="country" text="{Country}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="segment" text="{Segment}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="accountResponsible" text="{AccountResponsible}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}"/>\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="segment" text="{Segment}"/>\
+	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 			that = this;
 
@@ -16088,10 +16030,12 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
+			oRowsBinding = oTable.getBinding("rows");
+
+			assert.strictEqual(oRowsBinding.getLength(), 26);
 
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
-				+ "/groupby((Region),aggregate(SalesAmount))"
-				+ "&$count=true&$skip=0&$top=4", {
+					+ "/groupby((Region),aggregate(SalesAmount))&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "3",
 					value : [
 						{Region : "Z", SalesAmount : "10"},
@@ -16114,13 +16058,14 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "first expand 'US'");
 		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 26 + 3);
+
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US' and Region eq 'Z')"
-				+ "/groupby((Segment),aggregate(SalesAmount))"
-				+ "&$count=true&$skip=0&$top=4", {
+					+ "/groupby((Segment),aggregate(SalesAmount))&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "2",
 					value : [
-						{Region : "Z", Segment : "z", SalesAmount : "10"},
-						{Region : "Z", Segment : "y", SalesAmount : "20"}
+						{SalesAmount : "10", Segment : "z"},
+						{SalesAmount : "20", Segment : "y"}
 					]
 				})
 				.expectChange("isExpanded", [, true])
@@ -16138,13 +16083,15 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "second expand 'US-Z'");
 		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2);
+
 			that.expectRequest("BusinessPartners?$apply="
-				+ "filter(Country eq 'US' and Region eq 'Z' and Segment eq 'z')"
-				+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-				+ "&$count=true&$skip=0&$top=4", {
+					+ "filter(Country eq 'US' and Region eq 'Z' and Segment eq 'z')"
+					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
+					+ "&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "1",
 					value : [
-						{AccountResponsible : "a", SalesNumber : 1, SalesAmount : "10"}
+						{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1}
 					]
 				})
 				.expectChange("isExpanded", [,, true, undefined])
@@ -16162,6 +16109,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "third expand 'US-Z-z'");
 		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2 + 1);
+
 			that.expectChange("isExpanded", [false, false, false, false])
 				.expectChange("isTotal", [,,, true])
 				.expectChange("level", [, 1, 1, 1])
@@ -16176,11 +16125,44 @@ sap.ui.define([
 			oTable.getRows()[0].getBindingContext().collapse();
 
 			return that.waitForChanges(assert, "collapse 'US'");
+		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 26);
+			oUKContext = oRowsBinding.getCurrentContexts()[1];
+
+			// expectation: tree should be restored with all previously expanded nodes
+			that.expectChange("isExpanded", [true, true, true, undefined])
+				.expectChange("isTotal", [,,, false])
+				.expectChange("level", [, 2, 3, 4])
+				.expectChange("country", [, "US", "US", "US"])
+				.expectChange("region", [, "Z", "Z", "Z"])
+				.expectChange("segment", [,, "z", "z"])
+				.expectChange("accountResponsible", [,,, "a"])
+				.expectChange("salesAmount", [, "10", "10", "10"])
+				.expectChange("salesNumber", [,,, "1"]);
+
+			// code under test
+			oTable.getRows()[0].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "expand 'US' again");
+		}).then(function () {
+			var oUKContext0;
+
+			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2 + 1);
+			assert.deepEqual(oRowsBinding.getCurrentContexts().map(getPath), [
+				"/BusinessPartners(Country='US')",
+				"/BusinessPartners(Country='US',Region='Z')",
+				"/BusinessPartners(Country='US',Region='Z',Segment='z')",
+				"/BusinessPartners(Country='US',Region='Z',Segment='z',AccountResponsible='a')"
+			]);
+
+			oUKContext0 = oRowsBinding.getContexts(7, 1)[0];
+			assert.strictEqual(oUKContext0.getPath(), oUKContext.getPath());
+			assert.ok(oUKContext0 === oUKContext, "'UK' context is still the same instance");
 		});
 	});
 
 	//*********************************************************************************************
-	// Scenario: table.Table with aggregation and visual grouping.
+	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
 	// Expand and paging in parallel.
 	//
 	// JIRA: CPOUI5ODATAV4-336
@@ -16214,7 +16196,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Region))"
-			+ "&$count=true&$skip=0&$top=3", {
+				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
 				value : [
 					{Region : "Z"},
@@ -16250,10 +16232,10 @@ sap.ui.define([
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount))"
 					+ "&$count=true&$skip=0&$top=3", {
-						"@odata.count" : "1",
-						value : [
-							{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1}
-						]
+					"@odata.count" : "1",
+					value : [
+						{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1}
+					]
 				});
 
 			// code under test
@@ -16261,11 +16243,11 @@ sap.ui.define([
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region))"
 					+ "&$count=true&$skip=3&$top=" + (bSecondScroll ? "3" : "2"), {
-						"@odata.count" : "26",
-						value : [
-							{Region : "W"},
-							{Region : "V"}
-						]
+					"@odata.count" : "26",
+					value : [
+						{Region : "W"},
+						{Region : "V"}
+					]
 				});
 
 			if (!bSecondScroll) {
@@ -16292,23 +16274,187 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand and paging in parallel");
 		}).then(function () {
-			assert.deepEqual(
-				oTable.getBinding("rows").getContexts(0, 6)
-					.map(function (oContext) {
-						return oContext.getPath();
-					}),
-				[
-					"/BusinessPartners(Region='Z')",
-					"/BusinessPartners(Region='Y')",
-					"/BusinessPartners(Region='Y',AccountResponsible='a')",
-					"/BusinessPartners(Region='X')",
-					"/BusinessPartners(Region='W')",
-					"/BusinessPartners(Region='V')"
-				]
-			);
+			assert.deepEqual(oTable.getBinding("rows").getContexts(0, 6).map(getPath), [
+				"/BusinessPartners(Region='Z')",
+				"/BusinessPartners(Region='Y')",
+				"/BusinessPartners(Region='Y',AccountResponsible='a')",
+				"/BusinessPartners(Region='X')",
+				"/BusinessPartners(Region='W')",
+				"/BusinessPartners(Region='V')"
+			]);
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: sap.ui.table.Table with aggregation and visual grouping. Expand at the root level
+	// and collapse before loading has finished, then expand again. Expand two nodes on 2nd level
+	// and collapse at the root level before the 2nd level has finished loading. Then expand again
+	// at the root level and find the 2nd level properly expanded as well.
+	//
+	// JIRA: CPOUI5ODATAV4-378
+	QUnit.test("Data Aggregation: collapse while expanding", function (assert) {
+		var oModel = createAggregationModel(),
+			oRowsBinding,
+			oTable,
+			oUKContext,
+			sView = '\
+<t:Table id="table" rows="{path : \'/BusinessPartners\',\
+	parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				SalesAmount : {subtotals : true}\
+			},\
+			group : {\
+				Segment : {}\
+			},\
+			groupLevels : [\'Country\', \'Region\']\
+		}\
+	}}" threshold="0" visibleRowCount="8">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="segment" text="{Segment}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
+				+ "&$count=true&$skip=0&$top=8", {
+				"@odata.count" : "26",
+				value : [
+					{Country : "US", SalesAmount : "100"},
+					{Country : "UK", SalesAmount : "200"},
+					{Country : "DE", SalesAmount : "300"},
+					{Country : "IT", SalesAmount : "400"},
+					{Country : "FR", SalesAmount : "500"},
+					{Country : "BE", SalesAmount : "600"},
+					{Country : "NL", SalesAmount : "700"},
+					{Country : "LU", SalesAmount : "800"}
+				]
+			})
+			.expectChange("isExpanded", [false, false, false, false, false, false, false, false])
+			.expectChange("isTotal", [true, true, true, true, true, true, true, true])
+			.expectChange("level", [1, 1, 1, 1, 1, 1, 1, 1])
+			.expectChange("country", ["US", "UK", "DE", "IT", "FR", "BE", "NL", "LU"])
+			.expectChange("region", ["", "", "", "", "", "", "", ""])
+			.expectChange("segment", ["", "", "", "", "", "", "", ""])
+			.expectChange("salesAmount", ["100", "200", "300", "400", "500", "600", "700", "800"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oRowsBinding = oTable.getBinding("rows");
+			assert.strictEqual(oRowsBinding.getLength(), 26);
+			oUKContext = oRowsBinding.getCurrentContexts()[1];
+
+			that.expectChange("isExpanded", [true])
+				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+					+ "/groupby((Region),aggregate(SalesAmount))&$count=true&$skip=0&$top=8", {
+					"@odata.count" : "3",
+					value : [
+						{Region : "Z", SalesAmount : "10"},
+						{Region : "Y", SalesAmount : "20"},
+						{Region : "X", SalesAmount : "30"}
+					]
+				})
+				.expectChange("isExpanded", [false]);
+
+			// code under test
+			oTable.getRows()[0].getBindingContext().expand();
+			oTable.getRows()[0].getBindingContext().collapse();
+
+			return that.waitForChanges(assert, "expand and collapse 'US'");
+		}).then(function () {
+			var oUKContext0;
+
+			assert.strictEqual(oRowsBinding.getLength(), 26);
+			assert.deepEqual(oRowsBinding.getCurrentContexts().map(getPath), [
+				"/BusinessPartners(Country='US')",
+				"/BusinessPartners(Country='UK')",
+				"/BusinessPartners(Country='DE')",
+				"/BusinessPartners(Country='IT')",
+				"/BusinessPartners(Country='FR')",
+				"/BusinessPartners(Country='BE')",
+				"/BusinessPartners(Country='NL')",
+				"/BusinessPartners(Country='LU')"
+			]);
+
+			oUKContext0 = oRowsBinding.getCurrentContexts()[1];
+			assert.strictEqual(oUKContext0.getPath(), oUKContext.getPath());
+			assert.ok(oUKContext0 === oUKContext, "'UK' context is still the same instance");
+
+			that.expectChange("isExpanded", [true])
+				.expectChange("level", [, 2, 2, 2])
+				.expectChange("country", [, "US", "US", "US", "UK", "DE", "IT", "FR"])
+				.expectChange("region", [, "Z", "Y", "X"])
+				.expectChange("salesAmount", [, "10", "20", "30", "200", "300", "400", "500"]);
+
+			// code under test
+			oTable.getRows()[0].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "expand 'US' again");
+		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 26 + 3);
+
+			that.expectChange("isExpanded", [, true, true])
+				.expectChange("isExpanded", [false, false, false])
+				.expectChange("level", [, 1, 1, 1])
+				.expectChange("country", [, "UK", "DE", "IT", "FR", "BE", "NL", "LU"])
+				.expectChange("region", [, "", "", ""])
+				.expectChange("salesAmount", [, "200", "300", "400", "500", "600", "700", "800"])
+				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US' and Region eq 'Z')"
+					+ "/groupby((Segment),aggregate(SalesAmount))&$count=true&$skip=0&$top=8", {
+					"@odata.count" : "2",
+					value : [
+						{SalesAmount : "1", Segment : "z"},
+						{SalesAmount : "2", Segment : "y"}
+					]
+				})
+				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US' and Region eq 'Y')"
+					+ "/groupby((Segment),aggregate(SalesAmount))&$count=true&$skip=0&$top=8", {
+					"@odata.count" : "1",
+					value : [
+						{SalesAmount : "26", Segment : "a"}
+					]
+				});
+
+			// code under test
+			oTable.getRows()[1].getBindingContext().expand();
+			oTable.getRows()[2].getBindingContext().expand();
+			oTable.getRows()[0].getBindingContext().collapse();
+
+			return that.waitForChanges(assert, "expand 'US-Z' and 'US-Y' and collapse 'US'");
+		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 26);
+
+			/*
+				+ US
+					+ US-Z
+						* US-Z-z
+						* US-Z-y
+					+ US-Y
+						* US-Y-a
+					- US-X
+				- UK
+			 */
+			that.expectChange("isExpanded", [true, true, undefined, undefined, true, undefined])
+				.expectChange("isTotal", [,, false, false,, false])
+				.expectChange("level", [, 2, 3, 3, 2, 3, 2])
+				.expectChange("country", [, "US", "US", "US", "US", "US", "US", "UK"])
+				.expectChange("region", [, "Z", "Z", "Z", "Y", "Y", "X"])
+				.expectChange("segment", [,, "z", "y",, "a"])
+				.expectChange("salesAmount", [, "10", "1", "2", "20", "26", "30", "200"]);
+
+			// code under test
+			oTable.getRows()[0].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "expand 'US' again");
+		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2 + 1);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
@@ -17330,7 +17476,7 @@ sap.ui.define([
 	//TODO this should work the same for an initially suspended binding where #updateAnalyticalInfo
 	// is called before #resume, see CPOUI5UISERVICESV3-1754 (PS2 of the change contains that test);
 	// currently sap.ui.table.Table interferes with suspend/resume, see skipped test
-	// "ODLB: resume/refresh/filter w/ submitBatch on a table.Table"
+	// "ODLB: resume/refresh/filter w/ submitBatch on a t:Table"
 	QUnit.test("ODLB#updateAnalyticalInfo with min/max", function (assert) {
 		var aAggregation = [{ // dimension
 				grouped : false,
@@ -26646,10 +26792,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Server-driven paging with table.Table
+	// Scenario: Server-driven paging with sap.ui.table.Table
 	// Read with server-driven paging in "gaps" does not remove elements behind the gap
 	// JIRA: CPOUI5UISERVICESV3-1908
-	QUnit.test("Server-driven paging with table.Table: no remove behind gap", function (assert) {
+	QUnit.test("Server-driven paging with t:Table: no remove behind gap", function (assert) {
 		var oTable,
 			sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
@@ -26725,11 +26871,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Server-driven paging with table.Table
+	// Scenario: Server-driven paging with sap.ui.table.Table
 	// Requests following the first request which returned an @odata.nextLink do not request
 	//   the prefetch size to avoid server load.
 	// JIRA: CPOUI5UISERVICESV3-2018
-	QUnit.test("Server-driven paging with table.Table: do not read prefetch", function (assert) {
+	QUnit.test("Server-driven paging with t:Table: do not read prefetch", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
 	<Text id="text" text="{Name}"/>\
@@ -26785,9 +26931,7 @@ sap.ui.define([
 
 			// code under test
 			oPromise = oBinding.requestContexts(0, 3).then(function (aContexts) {
-				assert.deepEqual(aContexts.map(function (oContext) {
-					return oContext.getPath();
-				}), [
+				assert.deepEqual(aContexts.map(getPath), [
 					"/EMPLOYEES('1')",
 					"/EMPLOYEES('2')",
 					"/EMPLOYEES('3')"

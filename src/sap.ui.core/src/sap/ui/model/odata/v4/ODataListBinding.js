@@ -606,14 +606,16 @@ sap.ui.define([
 			i,
 			that = this;
 
-		aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
-			that.mPreviousContextsByPath[oContext.getPath()] = oContext;
-		});
-		for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
-			aContexts[i].iIndex = i;
-		}
-		this.iMaxLength -= iCount;
-		this._fireChange({reason : ChangeReason.Change});
+		if (iCount > 0) {
+			aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
+				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+			});
+			for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
+				aContexts[i].iIndex = i;
+			}
+			this.iMaxLength -= iCount;
+			this._fireChange({reason : ChangeReason.Change});
+		} // else: collapse before expand has finished
 	};
 
 	/**
@@ -1044,22 +1046,25 @@ sap.ui.define([
 			}
 		).then(function (iCount) {
 			var aContexts = that.aContexts,
-				iModelIndex = oContext.getModelIndex(),
+				iModelIndex,
 				oMovingContext,
 				i;
 
-			for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
-				oMovingContext = aContexts[i];
-				if (oMovingContext) {
-					oMovingContext.iIndex += iCount;
-					aContexts[i + iCount] = oMovingContext;
-					delete aContexts[i];
+			if (iCount > 0) {
+				iModelIndex = oContext.getModelIndex(); // already destroyed if !iCount
+				for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
+					oMovingContext = aContexts[i];
+					if (oMovingContext) {
+						oMovingContext.iIndex += iCount;
+						aContexts[i + iCount] = oMovingContext;
+						delete aContexts[i]; // Note: iCount > 0
+					}
+					// else: nothing to do because !(i in aContexts) and aContexts[i + iCount]
+					// has been deleted before (loop works backwards)
 				}
-				// else: nothing to do because !(i in aContexts) and aContexts[i + iCount]
-				// has been deleted before (loop works backwards)
-			}
-			that.iMaxLength += iCount;
-			that._fireChange({reason : ChangeReason.Change});
+				that.iMaxLength += iCount;
+				that._fireChange({reason : ChangeReason.Change});
+			} // else: collapse before expand has finished
 			if (bDataRequested) {
 				that.fireDataReceived({});
 			}

@@ -6619,9 +6619,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSuccess) {
-	[false, true].forEach(function (bRequest) {
+	[false, true].forEach(function (bDataRequested) {
+		[0, 3].forEach(function (iCount) { // 0 means collapse before expand has finished
+			var sTitle = "expand: success=" + bSuccess + ", data requested=" + bDataRequested
+					+ ", count=" + iCount;
 
-	QUnit.test("expand: success=" + bSuccess + ", request=" + bRequest, function (assert) {
+	if (!bSuccess && !iCount) { // ignore useless combination
+		return;
+	}
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext = {
 				getModelIndex : function () {},
@@ -6656,16 +6663,16 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock), "~cachepath~", sinon.match.func)
 			.returns(Promise.resolve().then(function () {
 				if (bSuccess) {
-					that.mock(oContext).expects("getModelIndex").withExactArgs().returns(1);
-					oChangeCall = that.mock(oBinding).expects("_fireChange")
+					that.mock(oContext).expects("getModelIndex").exactly(iCount ? 1 : 0)
+						.withExactArgs().returns(1);
+					oChangeCall = that.mock(oBinding).expects("_fireChange").exactly(iCount ? 1 : 0)
 						.withExactArgs({reason : ChangeReason.Change});
 					oDataReceivedCall = that.mock(oBinding).expects("fireDataReceived")
-						.exactly(bRequest ? 1 : 0)
-						.withExactArgs({});
+						.exactly(bDataRequested ? 1 : 0).withExactArgs({});
 
-					return 3;
+					return iCount;
 				} else {
-					that.mock(oBinding).expects("fireDataReceived").exactly(bRequest ? 1 : 0)
+					that.mock(oBinding).expects("fireDataReceived").exactly(bDataRequested ? 1 : 0)
 						.withExactArgs({error : sinon.match.same(oError)});
 
 					throw oError;
@@ -6675,23 +6682,29 @@ sap.ui.define([
 		// code under test
 		oPromise = oBinding.expand(oContext).then(function () {
 			assert.ok(bSuccess);
+			assert.strictEqual(oBinding.getLength(), 5 + iCount);
+			assert.strictEqual(oBinding.aContexts.length, 5 + iCount);
 			assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
-			assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
-			assert.notOk(2 in oBinding.aContexts, "2");
-			assert.notOk(3 in oBinding.aContexts, "3");
-			assert.notOk(4 in oBinding.aContexts, "4");
-			assert.notOk(5 in oBinding.aContexts, "5");
-			assert.strictEqual(oBinding.aContexts[6], aContextsBefore[3], "6");
-			assert.strictEqual(oBinding.aContexts[7], aContextsBefore[4], "7");
-
 			assert.strictEqual(oBinding.aContexts[0].iIndex, 0);
+			assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
 			assert.strictEqual(oBinding.aContexts[1].iIndex, 1);
-			assert.strictEqual(oBinding.aContexts[6].iIndex, 6);
-			assert.strictEqual(oBinding.aContexts[7].iIndex, 7);
+			assert.notOk(2 in oBinding.aContexts, "2");
+			if (iCount) {
+				assert.notOk(3 in oBinding.aContexts, "3");
+				assert.notOk(4 in oBinding.aContexts, "4");
+				assert.notOk(5 in oBinding.aContexts, "5");
+				assert.strictEqual(oBinding.aContexts[6], aContextsBefore[3], "6");
+				assert.strictEqual(oBinding.aContexts[6].iIndex, 6);
+				assert.strictEqual(oBinding.aContexts[7], aContextsBefore[4], "7");
+				assert.strictEqual(oBinding.aContexts[7].iIndex, 7);
+			} else {
+				assert.strictEqual(oBinding.aContexts[3], aContextsBefore[3], "3");
+				assert.strictEqual(oBinding.aContexts[3].iIndex, 3);
+				assert.strictEqual(oBinding.aContexts[4], aContextsBefore[4], "4");
+				assert.strictEqual(oBinding.aContexts[4].iIndex, 4);
+			}
 
-			assert.strictEqual(oBinding.getLength(), 8);
-
-			if (bRequest) {
+			if (bDataRequested && iCount) {
 				sinon.assert.callOrder(oChangeCall, oDataReceivedCall);
 			}
 		}, function (oResult) {
@@ -6699,9 +6712,9 @@ sap.ui.define([
 			assert.strictEqual(oResult, oError);
 		});
 
-		that.mock(oBinding).expects("fireDataRequested").exactly(bRequest ? 1 : 0)
+		that.mock(oBinding).expects("fireDataRequested").exactly(bDataRequested ? 1 : 0)
 			.withExactArgs();
-		if (bRequest) {
+		if (bDataRequested) {
 			oExpectation.args[0][2]();
 		}
 
@@ -6709,11 +6722,13 @@ sap.ui.define([
 	});
 	// TODO aContexts may be sparse
 
+		});
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("collapse", function (assert) {
+[0, 3].forEach(function (iCount) {
+	QUnit.test("collapse: iCount = " + iCount, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCollapseExpectation,
 			oContext = {
@@ -6721,7 +6736,6 @@ sap.ui.define([
 				getPath : function () {}
 			},
 			aContextsBefore,
-			iCount = 3,
 			oFireChangeExpectation,
 			i;
 
@@ -6752,29 +6766,40 @@ sap.ui.define([
 			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
 		oCollapseExpectation = this.mock(oBinding.oCache).expects("collapse")
 			.withExactArgs("~cachepath~").returns(iCount);
-		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
+		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange").exactly(iCount ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
 		oBinding.collapse(oContext);
 
-		sinon.assert.callOrder(oCollapseExpectation, oFireChangeExpectation);
-		assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
-		assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
-		assert.strictEqual(oBinding.aContexts[2], aContextsBefore[5], "2");
-		assert.strictEqual(oBinding.aContexts[3], aContextsBefore[6], "3");
-		assert.strictEqual(oBinding.aContexts[4], aContextsBefore[7], "4");
-		assert.strictEqual(oBinding.aContexts.length, 5);
-		assert.strictEqual(oBinding.iMaxLength, 5);
-		oBinding.aContexts.forEach(function (oContext, iIndex) {
-			assert.strictEqual(oContext.iIndex, iIndex);
-		});
-		assert.deepEqual(oBinding.mPreviousContextsByPath, {
-			"/EMPLOYEES/2" : aContextsBefore[2],
-			"/EMPLOYEES/3" : aContextsBefore[3],
-			"/EMPLOYEES/4" : aContextsBefore[4]
-		});
+		if (iCount) {
+			sinon.assert.callOrder(oCollapseExpectation, oFireChangeExpectation);
+			assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
+			assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
+			assert.strictEqual(oBinding.aContexts[2], aContextsBefore[5], "2");
+			assert.strictEqual(oBinding.aContexts[3], aContextsBefore[6], "3");
+			assert.strictEqual(oBinding.aContexts[4], aContextsBefore[7], "4");
+			assert.strictEqual(oBinding.aContexts.length, 5);
+			assert.strictEqual(oBinding.iMaxLength, 5);
+			oBinding.aContexts.forEach(function (oContext, iIndex) {
+				assert.strictEqual(oContext.iIndex, iIndex);
+			});
+			assert.deepEqual(oBinding.mPreviousContextsByPath, {
+				"/EMPLOYEES/2" : aContextsBefore[2],
+				"/EMPLOYEES/3" : aContextsBefore[3],
+				"/EMPLOYEES/4" : aContextsBefore[4]
+			});
+		} else {
+			assert.strictEqual(oBinding.iMaxLength, 8);
+			assert.strictEqual(oBinding.aContexts.length, 8);
+			oBinding.aContexts.forEach(function (oContext, iIndex) {
+				assert.strictEqual(oContext.iIndex, iIndex);
+				assert.strictEqual(oContext.getPath(), "/EMPLOYEES/" + iIndex);
+			});
+			assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+		}
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bOldCache) {
