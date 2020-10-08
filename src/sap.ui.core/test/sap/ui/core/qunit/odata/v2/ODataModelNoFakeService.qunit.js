@@ -3356,10 +3356,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[
+	{bPersist : true, bExpected : true},
+	{bPersist : undefined, bExpected : false},
+	{bPersist : false, bExpected : false}
+].forEach(function (oFixture) {
 	QUnit.test("_parseResponse, message parser does not exist", function (assert) {
 		var oModel = {
 				bIsMessageScopeSupported : "~bIsMessageScopeSupported",
-				bPersistTechnicalMessages : "~bPersistTechnicalMessages",
+				bPersistTechnicalMessages : oFixture.bPersist,
 				oMetadata : "~oMetadata",
 				sServiceUrl : "/service/"
 			};
@@ -3376,9 +3381,9 @@ sap.ui.define([
 
 		assert.strictEqual(oModel.oMessageParser._serviceUrl, "/service/");
 		assert.strictEqual(oModel.oMessageParser._metadata, "~oMetadata");
-		assert.strictEqual(oModel.oMessageParser._persistTechnicalMessages,
-			"~bPersistTechnicalMessages");
+		assert.strictEqual(oModel.oMessageParser._bPersistTechnicalMessages, oFixture.bExpected);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_parseResponse, parse function throws error", function (assert) {
@@ -3401,4 +3406,72 @@ sap.ui.define([
 		ODataModel.prototype._parseResponse.call(oModel, "~oResponse", "~oRequest", "~mGetEntities",
 			"~mChangeEntities");
 	});
+
+	//*********************************************************************************************
+[
+	{_setPersistTechnicalMessages : function () {}},
+	undefined
+].forEach(function (oODataMessageParser, i) {
+	[
+		{persist : true, result : true},
+		{persist : "foo", result : true},
+		{persist : false, result : false},
+		{persist : undefined, result : false},
+		{persist : null, result : false}
+	].forEach(function (oFixture) {
+	var sTitle = "setPersistTechnicalMessages: " + oFixture.persist + "; #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oODataModel = {
+				oMessageParser : oODataMessageParser
+			},
+			oODataMessageParserMock = oODataMessageParser
+				? this.mock(oODataMessageParser) : undefined;
+
+		if (oODataMessageParserMock) {
+			oODataMessageParserMock.expects("_setPersistTechnicalMessages")
+				.withExactArgs(oFixture.result);
+		}
+
+		// code under test
+		ODataModel.prototype.setPersistTechnicalMessages.call(oODataModel, oFixture.persist);
+
+		assert.strictEqual(oODataModel.bPersistTechnicalMessages, oFixture.result);
+
+		if (oODataMessageParserMock) {
+			oODataMessageParserMock.expects("_setPersistTechnicalMessages").exactly(0);
+		}
+
+		// code under test - setting the same value again does nothing
+		ODataModel.prototype.setPersistTechnicalMessages.call(oODataModel, oFixture.persist);
+
+		assert.strictEqual(oODataModel.bPersistTechnicalMessages, oFixture.result);
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("The flag whether technical messages should always be treated as"
+				+ " persistent has been overwritten to " + !oFixture.result, undefined, sClassName);
+		if (oODataMessageParserMock) {
+			oODataMessageParserMock.expects("_setPersistTechnicalMessages")
+				.withExactArgs(!oFixture.result);
+		}
+
+		// code under test - setting a different value !== undefined logs a warning
+		ODataModel.prototype.setPersistTechnicalMessages.call(oODataModel, !oFixture.persist);
+
+		assert.strictEqual(oODataModel.bPersistTechnicalMessages, !oFixture.result);
+	});
+	});
+});
+
+	//*********************************************************************************************
+[true, false, undefined].forEach(function (bPersist) {
+	QUnit.test("getPersistTechnicalMessages: " + bPersist, function (assert) {
+		var oODataModel = {
+				bPersistTechnicalMessages : bPersist
+			};
+
+		assert.strictEqual(ODataModel.prototype.getPersistTechnicalMessages.call(oODataModel),
+			bPersist);
+	});
+});
 });

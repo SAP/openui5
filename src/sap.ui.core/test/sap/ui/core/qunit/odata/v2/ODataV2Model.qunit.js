@@ -5587,7 +5587,7 @@ sap.ui.define([
 	});
 });
 
-[false, undefined, "", null, 0].forEach(function (bPersistTechnicalMessages) {
+[false, "", null, 0].forEach(function (bPersistTechnicalMessages) {
 	QUnit.test("Persist technical messages: " + bPersistTechnicalMessages, function (assert) {
 		// code under test
 		var oModel = new ODataModel(sURI, {persistTechnicalMessages : bPersistTechnicalMessages});
@@ -5600,7 +5600,7 @@ sap.ui.define([
 		// code under test
 		var oModel = new ODataModel(sURI);
 
-		assert.strictEqual(oModel.bPersistTechnicalMessages, false);
+		assert.strictEqual(oModel.bPersistTechnicalMessages, undefined);
 	});
 
 	QUnit.module("Soft State Header Support");

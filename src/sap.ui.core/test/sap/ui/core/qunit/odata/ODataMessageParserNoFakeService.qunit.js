@@ -1401,7 +1401,7 @@ sap.ui.define([
 			oMessageObject = oFixture.oMessageObject,
 			oODataMessageParser = {
 				_createTargets : function () {},
-				_persistTechnicalMessages : oFixture.bPersistTechnicalMessages,
+				_bPersistTechnicalMessages : oFixture.bPersistTechnicalMessages,
 				_processor : "~_processor"
 			},
 			mRequestInfo = {
@@ -1669,7 +1669,7 @@ sap.ui.define([
 		assert.strictEqual(oMessageParser._processor, null);
 		assert.strictEqual(oMessageParser._headerField, "sap-message");
 		assert.deepEqual(oMessageParser._lastMessages, []);
-		assert.strictEqual(oMessageParser._persistTechnicalMessages, "~persist");
+		assert.strictEqual(oMessageParser._bPersistTechnicalMessages, "~persist");
 	});
 
 	//*********************************************************************************************
@@ -1777,4 +1777,15 @@ sap.ui.define([
 			"~mGetEntities", "~mChangeEntities", true);
 	});
 });
+
+	//**********************************************************************************************
+	QUnit.test("_setPersistTechnicalMessages", function (assert) {
+		var oODataMessageParser = {};
+
+		//code under test
+		ODataMessageParser.prototype._setPersistTechnicalMessages.call(oODataMessageParser,
+			"~bPersist");
+
+		assert.strictEqual(oODataMessageParser._bPersistTechnicalMessages, "~bPersist");
+	});
 });
