@@ -413,7 +413,7 @@ sap.ui.define([
 				setTimeout(function () {
 					assert.strictEqual(oSpy.callCount, 1, "Then no re-rendering is triggered");
 					fnDone();
-				}, 100);
+				}, 1000);
 			}.bind(this));
 		});
 
@@ -458,7 +458,7 @@ sap.ui.define([
 					assert.ok(oSpy.notCalled);
 					assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then priority is over config object");
 					fnDone();
-				}.bind(this), 100);
+				}.bind(this), 1000);
 
 				this.oPropertyEditors.setTags("foo");
 			}.bind(this));
@@ -486,7 +486,7 @@ sap.ui.define([
 					assert.ok(oSpy.notCalled);
 					assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "the unset of propertyName doesn't trigger re-rendering");
 					fnDone();
-				}.bind(this), 100);
+				}.bind(this), 1000);
 
 				this.oPropertyEditors.setTags(null);
 			}.bind(this));
@@ -661,7 +661,7 @@ sap.ui.define([
 			setTimeout(function () {
 				assert.strictEqual(oSpy.callCount, 1);
 				fnDone();
-			}, 100);
+			}, 1000);
 		});
 
 		QUnit.test("when same config is set several times (check for duplicate events for same value)", function (assert) {
@@ -715,7 +715,7 @@ sap.ui.define([
 			setTimeout(function () {
 				assert.strictEqual(oSpy.callCount, 1);
 				fnDone();
-			}, 100);
+			}, 1000);
 		});
 
 		QUnit.test("when config is set and later unset", function (assert) {
@@ -812,7 +812,7 @@ sap.ui.define([
 				assert.ok(oSpy.notCalled);
 				assert.ok(!this.oPropertyEditors._getPropertyEditors(), "then internal editor is not created");
 				fnDone();
-			}.bind(this), 100);
+			}.bind(this), 1000);
 
 			this.oPropertyEditors.setTags("foo");
 		});
@@ -870,7 +870,7 @@ sap.ui.define([
 			setTimeout(function () {
 				assert.strictEqual(oSpy.callCount, 1);
 				fnDone();
-			}, 100);
+			}, 1000);
 		});
 	});
 
@@ -942,7 +942,7 @@ sap.ui.define([
 			var iCreationTimeout = setTimeout(function() {
 				assert.strictEqual(oCreationStub.callCount, 1, "Then only one editor was created");
 				fnDone();
-			}, 100);
+			}, 1000);
 
 			var oEditorInCreation;
 			oCreationStub.onFirstCall().callsFake(function (sType) {
@@ -991,7 +991,7 @@ sap.ui.define([
 			var iCreationTimeout = setTimeout(function() {
 				assert.strictEqual(oCreationStub.callCount, 0, "Then no editor was created");
 				fnDone();
-			}, 100);
+			}, 1000);
 
 			var oEditorInCreation;
 			oCreationStub.callsFake(function () {
