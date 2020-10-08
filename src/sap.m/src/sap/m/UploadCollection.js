@@ -1630,48 +1630,65 @@ sap.ui.define([
 		sStatus = item._status;
 
 		oRm = this._RenderManager;
-		oRm.write("<div class=\"sapMUCTextContainer "); // text container for fileName, attributes and statuses
+		oRm.openStart("div"); // text container for fileName, attributes and statuses
+		oRm.class("sapMUCTextContainer");
 		if (sStatus === "Edit") {
-			oRm.write("sapMUCEditMode ");
+			oRm.class("sapMUCEditMode");
 		}
-		oRm.write("\" >");
+		oRm.openEnd();
 		oRm.renderControl(this._getFileNameControl(item));
 		// if status is uploading only the progress label is displayed under the Filename
 		if (sStatus === UploadCollection._uploadingStatus) {
 			oRm.renderControl(this._createProgressLabel(item, sPercentUploaded));
 		} else {
 			if (iMarkersCounter > 0) {
-				oRm.write("<div class=\"sapMUCObjectMarkerContainer\">");// begin of markers container
+				oRm.openStart("div"); // begin of markers container
+				oRm.class("sapMUCObjectMarkerContainer");
+				oRm.openEnd();
 				for (i = 0; i < iMarkersCounter; i++) {
 					oRm.renderControl(aMarkers[i].addStyleClass("sapMUCObjectMarker"));
 				}
-				oRm.write("</div>");// end of markers container
+				oRm.close("div");// end of markers container
 			}
 			if (iAttrCounter > 0) {
-				oRm.write("<div class=\"sapMUCAttrContainer\" tabindex=\"-1\">"); // begin of attributes container
+				oRm.openStart("div"); // begin of attributes container
+				oRm.class("sapMUCAttrContainer");
+				oRm.attr("tabindex", "-1");
+				oRm.openEnd();
 				for (i = 0; i < iAttrCounter; i++) {
 					aAttributes[i].addStyleClass("sapMUCAttr");
 					oRm.renderControl(aAttributes[i]);
 					if ((i + 1) < iAttrCounter) {
-						oRm.write("<div class=\"sapMUCSeparator\">&nbsp&#x00B7&#160</div>"); // separator between attributes
+						oRm.openStart("div");  // separator between attributes
+						oRm.class("sapMUCSeparator");
+						oRm.openEnd();
+						oRm.unsafeHtml("&nbsp&#x00B7&#160");
+						oRm.close("div");
 					}
 				}
-				oRm.write("</div>"); // end of attributes container
+				oRm.close("div"); // end of attributes container
 			}
 			if (iStatusesCounter > 0) {
-				oRm.write("<div class=\"sapMUCStatusContainer\" tabindex=\"-1\">"); // begin of statuses container
+				oRm.openStart("div"); // begin of statuses container
+				oRm.class("sapMUCStatusContainer");
+				oRm.attr("tabindex", "-1");
+				oRm.openEnd();
 				for (i = 0; i < iStatusesCounter; i++) {
 					aStatuses[i].detachBrowserEvent("hover");
 					aStatuses[i].setTooltip(aStatuses[i].getTitle() +  ":" + aStatuses[i].getText());
 					oRm.renderControl(aStatuses[i]);
 					if ((i + 1) < iStatusesCounter) {
-						oRm.write("<div class=\"sapMUCSeparator\">&nbsp&#x00B7&#160</div>"); // separator between statuses
+						oRm.openStart("div"); // separator between statuses
+						oRm.class("sapMUCSeparator");
+						oRm.openEnd();
+						oRm.unsafeHtml("&nbsp&#x00B7&#160");
+						oRm.close("div");
 					}
 				}
-				oRm.write("</div>"); // end of statuses container
+				oRm.close("div"); // end of statuses container
 			}
 		}
-		oRm.write("</div>"); // end of container for Filename, attributes and statuses
+		oRm.close("div"); // end of container for Filename, attributes and statuses
 		this._renderButtons(oRm, item, sStatus, sItemId);
 		oRm.flush(jQuery(document.getElementById(containerId))[0], true); // after removal to UploadCollectionItemRenderer delete this line
 		this._truncateFileName(item);
@@ -1696,14 +1713,16 @@ sap.ui.define([
 		}
 		// render div container only if there is at least one button
 		if (iButtonCounter > 0) {
-			oRm.write("<div class=\"sapMUCButtonContainer\">"); //begin of div for buttons
+			oRm.openStart("div"); //begin of div for buttons
+			oRm.class("sapMUCButtonContainer");
+			oRm.openEnd();
 			for (var i = 0; i < iButtonCounter; i++) {
 				if ((i + 1) < iButtonCounter) { // if both buttons are displayed
 					aButtons[i].addStyleClass("sapMUCFirstButton");
 				}
 				oRm.renderControl(aButtons[i]);
 			}
-			oRm.write("</div>"); // end of div for buttons
+			oRm.close("div"); // end of div for buttons
 		}
 	};
 
