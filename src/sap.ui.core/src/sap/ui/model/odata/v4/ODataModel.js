@@ -111,6 +111,8 @@ sap.ui.define([
 	 *   converted from XML to JSON unless really needed.
 	 *   Supported since 1.53.0.
 	 *   <b>BEWARE:</b> The default value may change to <code>true</code> in later releases.
+	 *   You may also set {@link topic:26ba6a5c1e5c417f8b21cce1411dba2c Manifest Model Preload} in
+	 *   order to further speed up the start of a UI5 component.
 	 * @param {string} [mParameters.groupId="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
