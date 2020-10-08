@@ -32,6 +32,7 @@ sap.ui.define([
 	var model = new JSONModel({
 		selectedRule: null,
 		libraries: null,
+		treeModel: null,
 		selectedIssue: null,
 		issues: [],
 		progress: 0.1,

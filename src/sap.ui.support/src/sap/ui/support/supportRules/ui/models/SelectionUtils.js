@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/util/deepExtend",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/support/supportRules/ui/models/SharedModel"
-], function (jQuery, constants, storage, SharedModel) {
+], function (deepExtend, Constants, Storage, SharedModel) {
 	"use strict";
 
 	var SelectionUtils = {
@@ -70,7 +70,7 @@ sap.ui.define([
 		 * @returns {Array} Rule selections array
 		 */
 		updateSelectedRulesFromLocalStorage: function (oTreeViewModelRules) {
-			var aSelectedRules = storage.getSelectedRules();
+			var aSelectedRules = Storage.getSelectedRules();
 
 			if (!aSelectedRules) {
 				return null;
@@ -103,7 +103,7 @@ sap.ui.define([
 		persistSelection: function () {
 			var aSelectedRules = this.getRulesSelectionState();
 
-			storage.setSelectedRules(aSelectedRules);
+			Storage.setSelectedRules(aSelectedRules);
 		},
 
 		/**
@@ -112,19 +112,19 @@ sap.ui.define([
 		 * @param {Array} aSelectedRules The selected rules - same as the result of getSelectedRulesPlain
 		 */
 		setSelectedRules: function (aSelectedRules) {
-			var oTreeViewModelRules = this.model.getProperty("/treeModel");
+			var oTreeModelData = deepExtend({}, this.model.getProperty("/treeModel"));
 
 			// deselect all
-			Object.keys(oTreeViewModelRules).forEach(function(iKey) {
-				oTreeViewModelRules[iKey].nodes.forEach(function(oRule) {
+			Object.keys(oTreeModelData).forEach(function(iKey) {
+				oTreeModelData[iKey].nodes.forEach(function(oRule) {
 					oRule.selected = false;
 				});
 			});
 
 			// select those from aSelectedRules
 			aSelectedRules.forEach(function (oRuleDescriptor) {
-				Object.keys(oTreeViewModelRules).forEach(function(iKey) {
-					oTreeViewModelRules[iKey].nodes.forEach(function(oRule) {
+				Object.keys(oTreeModelData).forEach(function(iKey) {
+					oTreeModelData[iKey].nodes.forEach(function(oRule) {
 						if (oRule.id === oRuleDescriptor.ruleId) {
 							oRule.selected = true;
 						}
@@ -132,8 +132,11 @@ sap.ui.define([
 				});
 			});
 
+			this.model.setProperty("/treeModel", oTreeModelData);
+			this.treeTable.getModel("treeModel").setData(deepExtend({}, oTreeModelData));
+
 			// syncs the parent and child selected/deselected state
-			this.treeTable.syncParentNoteWithChildrenNotes(oTreeViewModelRules);
+			this.treeTable.syncParentNodeSelectionWithChildren(oTreeModelData, this.treeTable.getModel("treeModel"));
 
 			// apply selection to ui
 			this.treeTable.updateSelectionFromModel();
@@ -141,7 +144,7 @@ sap.ui.define([
 			// update the count in ui
 			this.getSelectedRules();
 
-			if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
+			if (Storage.readPersistenceCookie(Constants.COOKIE_NAME)) {
 				this.persistSelection();
 			}
 		},

@@ -62,9 +62,7 @@ sap.ui.define([
 
 			}
 
-			//Sync parent notes with children
-			this.syncParentNoteWithChildrenNotes(oData);
-
+			this.syncParentNodeSelectionWithChildren(oData, oBinding.getModel("treeModel"));
 			this._finalizeSelectionUpdate();
 
 			SelectionUtils.getSelectedRules();
