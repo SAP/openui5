@@ -46,15 +46,12 @@ sap.ui.define([
 		}
 
 		// By default, variant sharing is enabled
-		if (!(Settings._IS_VARIANT_SHARING_ENABLED in oSettings)) {
+		if (oSettings.isVariantSharingEnabled === undefined) {
 			oSettings.isVariantSharingEnabled = true;
 		}
 
 		this._oSettings = oSettings;
 	};
-
-	Settings._IS_VARIANT_SHARING_ENABLED = "isVariantSharingEnabled";
-
 
 	/**
 	 * attaches a callback to an event on the event provider of Settings
@@ -247,7 +244,7 @@ sap.ui.define([
 	 * @returns {boolean} true if sharing of variants is enabled
 	 */
 	Settings.prototype.isVariantSharingEnabled = function() {
-		return (this._oSettings.isVariantSharingEnabled === true);
+		return this._getBooleanProperty("isVariantSharingEnabled");
 	};
 
 	/**

@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
 	CompVariantState,
 	TransportSelection,
+	Settings,
 	ManifestUtils
 ) {
 	"use strict";
@@ -102,6 +104,21 @@ sap.ui.define([
 		 */
 		setExecuteOnSelect: function(mPropertyBag) {
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.setExecuteOnSelect);
+		},
+
+		/**
+		 * Checks whether sharing of variants is enabled.
+		 *
+		 * @private
+		 * @ui5-restricted
+		 * @since 1.84.0
+		 *
+		 * @returns {boolean} <code>true</code> if sharing of variants is enabled
+		 */
+		isVariantSharingEnabled: function() {
+			return Settings.getInstance().then(function (oInstance) {
+				return oInstance.isVariantSharingEnabled();
+			});
 		},
 
 		/**

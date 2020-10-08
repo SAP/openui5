@@ -115,6 +115,8 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted
+		 * @deprecated replaced by <code>sap.ui.fl.write.api.SmartVariantWriteAPI.isVariantSharingEnabled</code>
+		 *
 		 * @returns {boolean} <code>true</code> if sharing of variants is enabled
 		 */
 		isVariantSharingEnabled: function() {
