@@ -77,14 +77,12 @@ sap.ui.define([
 		getCompEntities: function (mPropertyBag) {
 			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
 
-
-
 			// TODO clarify why in a test we come here without an initialized FlexState (1980546095)
 			return FlexState.initialize({
 				reference: sReference,
 				componentData: {},
 				manifest: Utils.getAppDescriptor(mPropertyBag.control),
-				componentId: sReference.replace(".Component", "")
+				componentId: Utils.getAppComponentForControl(mPropertyBag.control).getId()
 			})
 			.then(getChangeMap.bind(undefined, mPropertyBag.control));
 		},
