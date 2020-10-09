@@ -1,0 +1,5 @@
+<core:FragmentDefinition
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:core="sap.ui.core">
+	<w:Card id="cardSample" action="._onCardAction"/>
+</core:FragmentDefinition>

@@ -5,7 +5,6 @@
 	xmlns:f="sap.f"
 	xmlns:core="sap.ui.core"
 	xmlns:editor="sap.ui.codeeditor"
-	xmlns:w="sap.ui.integration.widgets"
 	xmlns:cardExplorer="sap.ui.demo.cardExplorer.controls">
 	<l:ResponsiveSplitter id="splitView">
 		<l:PaneContainer orientation="Horizontal">
@@ -24,9 +23,7 @@
 						</Bar>
 					</customHeader>
 					<MessageStrip text="This type of card is in a beta state - incompatible API changes in the manifest may be done before its official public release." visible="{= !!${/sample/experimental} || !!${/subSample/experimental} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
-					<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }">
-						<w:Card id="cardSample" action="._onCardAction"/>
-					</f:GridContainer>
+					<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }"></f:GridContainer>
 					<core:HTML id="iframeWrapper" visible="{= ${settings>/useIFrame} }" preferDOM="false" content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;
 								 &lt;/div&gt;'></core:HTML>
 				</Page>

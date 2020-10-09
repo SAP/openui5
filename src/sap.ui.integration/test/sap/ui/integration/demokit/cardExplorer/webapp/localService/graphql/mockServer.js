@@ -42,17 +42,14 @@ sap.ui.define([
 	}
 
 	var oMockServerInterface = {
+		_pInit: null,
 
 		/**
 		 * Initializes mock server for Products service.
 		 * For demo purposes the local mock data in this folder is returned instead of real data.
 		 */
 		init: function () {
-			if (oMockServer) {
-				return Promise.resolve();
-			}
-
-			return new Promise(function (resolve, reject) {
+			this._pInit = this._pInit || new Promise(function (resolve, reject) {
 				jQuery.ajax(sMockDataPath, {
 					dataType: "json"
 				}).done(function (oData) {
@@ -80,6 +77,8 @@ sap.ui.define([
 					reject(sError);
 				});
 			});
+
+			return this._pInit;
 		},
 
 		/**
