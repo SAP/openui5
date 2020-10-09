@@ -8644,6 +8644,7 @@ sap.ui.define([
 
 			// assert
 			assert.strictEqual(document.activeElement, oSelect.getFocusDomRef(), "Focus was successfully restored to the Select");
+			oSelect.destroy();
 		});
 
 		QUnit.module("onfocusout");
@@ -10425,12 +10426,6 @@ sap.ui.define([
 			assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenSelectRef.attr("id"), "getIdForLabel() returns the hidden select ID");
 		});
 
-		QUnit.test("Hidden select options", function (assert) {
-			var aOptions = this.$oHiddenSelectRef.find('option');
-
-			assert.strictEqual(aOptions.length, 2, "An exact number of options have been created");
-		});
-
 		QUnit.module("OverflowToolbar configuration");
 
 		QUnit.test("OverflowToolbar configuration is set correctly", function (assert) {
@@ -10745,5 +10740,60 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.module("Select in OverflowToolbar", {
+			beforeEach: function () {
+				this.oSelect = new Select({
+					items : [
+						new sap.ui.core.Item({
+							key: "0",
+							text: "Footer Select 1"
+						}),
+						new sap.ui.core.Item({
+							key: "1",
+							text: "Footer Select 2"
+						})
+					]
+				});
+				this.OTB = new sap.m.OverflowToolbar();
+				this.OTB.addContent(this.oSelect);
+				this.OTB.placeAt("content");
+				Core.applyChanges();
+
+			},
+			afterEach: function () {
+				this.OTB.destroyContent();
+				this.oSelect.destroy();
+			}
+		});
+
+		QUnit.test("Hidden select focus class attached on 'focus()' called on the control", function (assert) {
+			//Arrange
+			var oSelect = this.oSelect;
+			//Act
+			oSelect.focus();
+			//Assert
+			assert.equal(oSelect.$().hasClass("sapMSltFocused"), true);
+			oSelect.destroy();
+		});
+
+		QUnit.test("Hidden select focus class attached on 'focus()' called on the control, after rerendering from OTB",
+			function (assert) {
+				//Arrange
+				var oSelect = this.oSelect,
+					oItemToSelect;
+				//Act
+				oSelect.open();
+				this.clock.tick(1000);
+
+				oItemToSelect = oSelect.getItems()[1];
+				oSelect.setSelectedItem(oItemToSelect);
+
+				oSelect.close();
+				this.clock.tick(1000);
+
+				//Assert
+				assert.equal(oSelect.$().hasClass("sapMSltFocused"), true);
+
+			});
 
 	});
