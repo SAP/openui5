@@ -268,7 +268,7 @@ sap.ui.define(function() {
 			// *************************************************************************
 			// contained in testsuite.databinding.qunit.js
 			ResourceModel : {
-				// not in 1RingModels.qunit because "originInfo" cannot be changes at runtime
+				// not in 1RingModels.qunit because "originInfo" cannot be changed at runtime
 				title : "sap.ui.model.resource.ResourceModel",
 				loader : {
 					paths : {
@@ -281,6 +281,18 @@ sap.ui.define(function() {
 					language : "en",
 					originInfo : true
 				}
+			},
+
+			// *************************************************************************
+			// Test for support assistant rule 'bindingPathSyntaxValidation'
+			// *************************************************************************
+			// contained in testsuite.rule.qunit.js
+			bindingPathSyntaxValidation : {
+				// not in 1RingModels.qunit because usage of sap.ui.table library in
+				// ODataModel.integration.qunit leads to a console error
+				title : "sap.ui.core.rules.Model.support",
+				module : ["test-resources/sap/ui/core/qunit/rule/model/"
+					+ "bindingPathSyntaxValidation.qunit"]
 			}
 		}
 	};

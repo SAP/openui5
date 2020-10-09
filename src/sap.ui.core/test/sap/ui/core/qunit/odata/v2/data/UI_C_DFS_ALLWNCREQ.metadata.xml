@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+		   xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+		   xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:Reference
+			Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Validation.V1" Alias="Validation"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="cds_ui_c_dfs_allwncreq" xml:lang="en" sap:schema-version="1"
+				xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="C_DFS_AllwncReqType" sap:label="Projection View Allowance Request"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="DfsAllwncReqUUID"/>
+				</Key>
+				<Property Name="CreateAllowancePlan_ac" Type="Edm.Boolean"
+						  sap:label="Dyn. Action Control" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DfsAllwncPlanID_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="DfsAllwncReqBaseType_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DfsAllwncReqComment_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DfsAllwncReqDescription_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DfsAllwncReqDueDate_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DfsAllwncReqID_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="DfsAllwncReqValdtyEndDate_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DfsAllwncReqValdtyStrtDate_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="FlxblMatlPlngObjectID_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="FlxblMatlPlngObjVariantID_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="ForceElementOrgID_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="FrcElmntOrgUsageType_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Product_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="Delete_mc" Type="Edm.Boolean" sap:label="Dyn. Method Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="Update_mc" Type="Edm.Boolean" sap:label="Dyn. Method Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="to_AllwncReqToFe_oc" Type="Edm.Boolean"
+						  sap:label="Dynamic CbA-Control" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DfsAllwncReqUUID" Type="Edm.Guid" Nullable="false"
+						  sap:label="Allowance Req UUID" sap:quickinfo="Allowance Request UUID"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DfsAllwncReqID" Type="Edm.String" MaxLength="30"
+						  sap:field-control="DfsAllwncReqID_fc" sap:label="Request ID"
+						  sap:quickinfo="Allowance Request ID"/>
+				<Property Name="DfsAllwncReqDescription" Type="Edm.String" MaxLength="60"
+						  sap:field-control="DfsAllwncReqDescription_fc"
+						  sap:label="Request Description"
+						  sap:quickinfo="Allowance Request Description"/>
+				<Property Name="DfsAllwncReqValdtyStrtDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date"
+						  sap:field-control="DfsAllwncReqValdtyStrtDate_fc" sap:label="Valid From"
+						  sap:quickinfo="Validity Start Date"/>
+				<Property Name="DfsAllwncReqValdtyEndDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:field-control="DfsAllwncReqValdtyEndDate_fc"
+						  sap:label="Valid To" sap:quickinfo="Validity End Date"/>
+				<Property Name="DfsAllwncReqDueDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:field-control="DfsAllwncReqDueDate_fc"
+						  sap:label="Due By" sap:quickinfo="Due Date"/>
+				<Property Name="DfsAllwncPlanBaseTypeDesc" Type="Edm.String" MaxLength="60"
+						  sap:label="Short Descript." sap:quickinfo="Short Text for Fixed Values"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DfsAllwncReqBaseType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:field-control="DfsAllwncReqBaseType_fc"
+						  sap:text="DfsAllwncPlanBaseTypeDesc" sap:label="Base Type"
+						  sap:quickinfo="Base Type for Allowance Request"
+						  sap:value-list="fixed-values"/>
+				<Property Name="FlxblMatlPlngObjectUUID" Type="Edm.Guid" sap:label="FMPO UUID"
+						  sap:quickinfo="Flexible Material Planning Object UUID"/>
+				<Property Name="FlxblMatlPlngObjDescription" Type="Edm.String" MaxLength="60"
+						  sap:label="FMPO Description"
+						  sap:quickinfo="Flexible Material Planning Object Description"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="FlxblMatlPlngObjVariantDesc" Type="Edm.String" MaxLength="60"
+						  sap:label="Variant Description"
+						  sap:quickinfo="Flexible Material Planning Object: Variant Description"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="FlxblMatlPlngObjectID" Type="Edm.String" MaxLength="40"
+						  sap:display-format="UpperCase"
+						  sap:field-control="FlxblMatlPlngObjectID_fc"
+						  sap:text="FlxblMatlPlngObjDescription" sap:label="FMPO ID"
+						  sap:quickinfo="Flexible Material Planning Object"
+						  sap:value-list="standard"/>
+				<Property Name="FlxblMatlPlngObjVariantUUID" Type="Edm.Guid"
+						  sap:label="Variant UUID"/>
+				<Property Name="FlxblMatlPlngObjVariantID" Type="Edm.String" MaxLength="6"
+						  sap:display-format="NonNegative"
+						  sap:field-control="FlxblMatlPlngObjVariantID_fc"
+						  sap:text="FlxblMatlPlngObjVariantDesc" sap:label="Variant ID"
+						  sap:value-list="standard"/>
+				<Property Name="ProductName" Type="Edm.String" MaxLength="40"
+						  sap:label="Product Description" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="Product" Type="Edm.String" MaxLength="40"
+						  sap:display-format="UpperCase" sap:field-control="Product_fc"
+						  sap:text="ProductName" sap:label="Product" sap:quickinfo="Product Number"
+						  sap:value-list="standard"/>
+				<Property Name="ForceElementOrgUUID" Type="Edm.Guid" sap:display-format="UpperCase"
+						  sap:label="GUID 32" sap:quickinfo="Internal Key for Force Element"/>
+				<Property Name="FrcElmntOrgName" Type="Edm.String" MaxLength="40"
+						  sap:label="Force Element Name" sap:quickinfo="Object Name"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="ForceElementOrgID" Type="Edm.String" MaxLength="8"
+						  sap:display-format="NonNegative" sap:field-control="ForceElementOrgID_fc"
+						  sap:text="FrcElmntOrgName" sap:label="Force Element ID"
+						  sap:quickinfo="Object ID" sap:value-list="standard"/>
+				<Property Name="FrcElmntOrgUsageTypeDesc" Type="Edm.String" MaxLength="35"
+						  sap:label="Desc. Usage Ty." sap:quickinfo="Description"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="FrcElmntOrgUsageType" Type="Edm.String" MaxLength="1"
+						  sap:field-control="FrcElmntOrgUsageType_fc"
+						  sap:text="FrcElmntOrgUsageTypeDesc" sap:label="Usage Type"
+						  sap:value-list="fixed-values"/>
+				<Property Name="DfsAllwncReqCreationDateTime" Type="Edm.DateTimeOffset"
+						  Precision="7" sap:label="Created At"
+						  sap:quickinfo="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DfsAllwncReqCreatedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase"
+						  sap:text="to_CreatedByUserContactCard/UserDescription"
+						  sap:label="Created By" sap:quickinfo="Name of Person Who Created Object"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DfsAllwncReqChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Changed At"
+						  sap:quickinfo="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DfsAllwncReqLastChgdByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase"
+						  sap:text="to_LastChangedByUserContactCard/UserDescription"
+						  sap:label="Changed By" sap:quickinfo="Last Changed By"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DfsAllwncReqComment" Type="Edm.String" MaxLength="255"
+						  sap:field-control="DfsAllwncReqComment_fc" sap:label="Comment"/>
+				<Property Name="DfsAllwncReqQuantityUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Base Unit of Measure" sap:semantics="unit-of-measure"/>
+				<Property Name="DfsAllwncPlanUUID" Type="Edm.Guid" sap:label="Allowance Plan UUID"/>
+				<Property Name="DfsAllwncPlanID" Type="Edm.String" MaxLength="30"
+						  sap:field-control="DfsAllwncPlanID_fc" sap:label="Plan ID"
+						  sap:quickinfo="Allowance Plan ID"/>
+				<Property Name="DfsAllwncPlanCreatedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase"
+						  sap:text="to_PlanCreatedByUserContactCard/UserDescription"
+						  sap:label="Plan created by"
+						  sap:quickinfo="Name of Person Who Created Object"/>
+				<Property Name="DfsAllwncPlanCreationDateTime" Type="Edm.DateTimeOffset"
+						  Precision="7" sap:label="Plan created At"
+						  sap:quickinfo="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)"/>
+				<Property Name="DfsRequestIsCompleted" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:filter-restriction="single-value"
+						  sap:label="Request Converted to Plan"
+						  sap:quickinfo="Data element for domain BOOLE: TRUE (='X') and FALSE (=' ')"/>
+				<Property Name="DfsRequestStatusCriticality" Type="Edm.Byte"/>
+				<NavigationProperty Name="to_AllwncReqToFe"
+									Relationship="cds_ui_c_dfs_allwncreq.assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4"
+									FromRole="FromRole_assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4"
+									ToRole="ToRole_assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4"/>
+				<NavigationProperty Name="to_CreatedByUserContactCard"
+									Relationship="cds_ui_c_dfs_allwncreq.assoc_A119BE4609C02D04EB50B0766301AC8D"
+									FromRole="FromRole_assoc_A119BE4609C02D04EB50B0766301AC8D"
+									ToRole="ToRole_assoc_A119BE4609C02D04EB50B0766301AC8D"/>
+				<NavigationProperty Name="to_LastChangedByUserContactCard"
+									Relationship="cds_ui_c_dfs_allwncreq.assoc_50C304A4D1EEF004796D6250882388CF"
+									FromRole="FromRole_assoc_50C304A4D1EEF004796D6250882388CF"
+									ToRole="ToRole_assoc_50C304A4D1EEF004796D6250882388CF"/>
+				<NavigationProperty Name="to_PlanCreatedByUserContactCard"
+									Relationship="cds_ui_c_dfs_allwncreq.assoc_74F369C5CD65947FC767C13C9D8937D2"
+									FromRole="FromRole_assoc_74F369C5CD65947FC767C13C9D8937D2"
+									ToRole="ToRole_assoc_74F369C5CD65947FC767C13C9D8937D2"/>
+			</EntityType>
+			<EntityType Name="C_DFS_AllwncReqToFeType" sap:label="Projection View  Request to Fe"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="DfsAllwncReqUUID"/>
+					<PropertyRef Name="ForceElementOrgUUID"/>
+				</Key>
+				<Property Name="DfsAllwncReqReqdQuantity_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Update_mc" Type="Edm.Boolean" sap:label="Dyn. Method Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="DfsAllwncReqUUID" Type="Edm.Guid" Nullable="false"
+						  sap:label="Allowance Req UUID" sap:quickinfo="Allowance Request UUID"/>
+				<Property Name="ForceElementOrgUUID" Type="Edm.Guid" Nullable="false"
+						  sap:display-format="UpperCase" sap:label="GUID 32"
+						  sap:quickinfo="Internal Key for Force Element"/>
+				<Property Name="DfsFrcElmntIsChangeable" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Maintenance"
+						  sap:quickinfo="Processing Type" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ForceElementOrgTargetUUID" Type="Edm.Guid"
+						  sap:display-format="UpperCase" sap:label="GUID 32"
+						  sap:quickinfo="Internal Key for Force Element"/>
+				<Property Name="DfsAllwncReqReqdQuantity" Type="Edm.Decimal" Precision="13"
+						  Scale="0" sap:field-control="DfsAllwncReqReqdQuantity_fc"
+						  sap:unit="DfsAllwncReqQuantityUnit" sap:label="Requested Quantity"
+						  sap:quickinfo="Requested Quantity for Allowance Request"/>
+				<Property Name="DfsAllwncReqQuantityUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Base Unit of Measure" sap:creatable="false"
+						  sap:updatable="false" sap:semantics="unit-of-measure"/>
+				<Property Name="ForceElementOrgID" Type="Edm.String" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Force Element ID"
+						  sap:quickinfo="Object ID" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="FrcElmntOrgName" Type="Edm.String" MaxLength="40"
+						  sap:label="Force Element Name" sap:quickinfo="Object Name"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="FrcElmntOrgShortName" Type="Edm.String" MaxLength="12"
+						  sap:label="Force Element Abbreviation" sap:quickinfo="Object Abbreviation"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DfsAllwncReqReqdSubQuantity" Type="Edm.Decimal" Precision="13"
+						  Scale="0" sap:unit="DfsAllwncReqQuantityUnit"
+						  sap:label="Requested Quantity, incl. Sub-Levels"
+						  sap:quickinfo="Requested Quantity for Allowance Request"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DfsAllwncReqChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Time Stamp"
+						  sap:quickinfo="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HierarchyNode" Type="Edm.String" MaxLength="1333"
+						  sap:hierarchy-node-for="ForceElementOrgUUID"/>
+				<Property Name="HierarchyParentNode" Type="Edm.String" MaxLength="1333"
+						  sap:hierarchy-parent-node-for="HierarchyNode"/>
+				<Property Name="HierarchyLevel" Type="Edm.Int32"
+						  sap:hierarchy-level-for="HierarchyNode"/>
+				<Property Name="HierarchyDescendantCount" Type="Edm.Int32"
+						  sap:hierarchy-node-descendant-count-for="HierarchyNode"/>
+				<Property Name="DrillDownState" Type="Edm.String" MaxLength="20"
+						  sap:hierarchy-drill-state-for="HierarchyNode"/>
+				<Property Name="HierarchyNodeOrdinalNumber" Type="Edm.Int32"
+						  sap:hierarchy-preorder-rank-for="HierarchyNode"/>
+				<NavigationProperty Name="to_AllwncReqTP"
+									Relationship="cds_ui_c_dfs_allwncreq.assoc_8814401784D836E810577307E837B372"
+									FromRole="FromRole_assoc_8814401784D836E810577307E837B372"
+									ToRole="ToRole_assoc_8814401784D836E810577307E837B372"/>
+			</EntityType>
+			<EntityType Name="I_UserContactCardType" sap:label="User Contact Card"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ContactCardID"/>
+				</Key>
+				<Property Name="ContactCardID" Type="Edm.String" Nullable="false" MaxLength="12"
+						  sap:display-format="UpperCase" sap:text="UserDescription" sap:label="User"
+						  sap:quickinfo="User Name in User Master Record"/>
+				<Property Name="Person" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Person Number"/>
+				<Property Name="BusinessPartnerUUID" Type="Edm.Guid" sap:label="BP GUID"
+						  sap:quickinfo="Business Partner GUID"/>
+				<Property Name="FirstName" Type="Edm.String" MaxLength="40" sap:label="First Name"/>
+				<Property Name="LastName" Type="Edm.String" MaxLength="40" sap:label="Last Name"/>
+				<Property Name="FullName" Type="Edm.String" MaxLength="80" sap:label="Full Name"
+						  sap:quickinfo="Full Name of Person"/>
+				<Property Name="UserDescription" Type="Edm.String" MaxLength="80"
+						  sap:label="Description" sap:quickinfo="User Description"/>
+				<Property Name="AddressID" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Address Number"/>
+				<Property Name="PhoneNumber" Type="Edm.String" MaxLength="30" sap:label="Phone"
+						  sap:quickinfo="Contact Card Phone Number" sap:semantics="tel"/>
+				<Property Name="MobilePhoneNumber" Type="Edm.String" MaxLength="30"
+						  sap:label="Mobile" sap:quickinfo="Contact Card Mobile Phone Number"
+						  sap:semantics="tel"/>
+				<Property Name="FaxNumber" Type="Edm.String" MaxLength="30" sap:label="Fax"
+						  sap:quickinfo="Contact Card Fax Number" sap:semantics="tel"/>
+				<Property Name="EmailAddress" Type="Edm.String" MaxLength="241" sap:label="E-Mail"
+						  sap:quickinfo="Contact Card E-Mail Address" sap:semantics="email"/>
+				<Property Name="Department" Type="Edm.String" MaxLength="40"
+						  sap:label="Department"/>
+				<Property Name="FunctionalTitleName" Type="Edm.String" MaxLength="40"
+						  sap:label="Function"/>
+				<Property Name="ContactCardRole" Type="Edm.String" MaxLength="7"/>
+				<Property Name="ContactCardType" Type="Edm.String" MaxLength="4"/>
+				<Property Name="ContactCardNavLinkSemanticObj" Type="Edm.String" MaxLength="4"/>
+				<Property Name="ContactCardNavLinkQueryPart" Type="Edm.String" MaxLength="17"/>
+			</EntityType>
+			<Association Name="assoc_8814401784D836E810577307E837B372" sap:content-version="1">
+				<End Type="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqToFeType" Multiplicity="1"
+					 Role="FromRole_assoc_8814401784D836E810577307E837B372"/>
+				<End Type="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType" Multiplicity="1"
+					 Role="ToRole_assoc_8814401784D836E810577307E837B372"/>
+			</Association>
+			<Association Name="assoc_A119BE4609C02D04EB50B0766301AC8D" sap:content-version="1">
+				<End Type="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType" Multiplicity="1"
+					 Role="FromRole_assoc_A119BE4609C02D04EB50B0766301AC8D"/>
+				<End Type="cds_ui_c_dfs_allwncreq.I_UserContactCardType" Multiplicity="0..1"
+					 Role="ToRole_assoc_A119BE4609C02D04EB50B0766301AC8D"/>
+				<ReferentialConstraint>
+					<Principal Role="ToRole_assoc_A119BE4609C02D04EB50B0766301AC8D">
+						<PropertyRef Name="ContactCardID"/>
+					</Principal>
+					<Dependent Role="FromRole_assoc_A119BE4609C02D04EB50B0766301AC8D">
+						<PropertyRef Name="DfsAllwncReqCreatedByUser"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_50C304A4D1EEF004796D6250882388CF" sap:content-version="1">
+				<End Type="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType" Multiplicity="1"
+					 Role="FromRole_assoc_50C304A4D1EEF004796D6250882388CF"/>
+				<End Type="cds_ui_c_dfs_allwncreq.I_UserContactCardType" Multiplicity="0..1"
+					 Role="ToRole_assoc_50C304A4D1EEF004796D6250882388CF"/>
+				<ReferentialConstraint>
+					<Principal Role="ToRole_assoc_50C304A4D1EEF004796D6250882388CF">
+						<PropertyRef Name="ContactCardID"/>
+					</Principal>
+					<Dependent Role="FromRole_assoc_50C304A4D1EEF004796D6250882388CF">
+						<PropertyRef Name="DfsAllwncReqLastChgdByUser"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_74F369C5CD65947FC767C13C9D8937D2" sap:content-version="1">
+				<End Type="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType" Multiplicity="1"
+					 Role="FromRole_assoc_74F369C5CD65947FC767C13C9D8937D2"/>
+				<End Type="cds_ui_c_dfs_allwncreq.I_UserContactCardType" Multiplicity="0..1"
+					 Role="ToRole_assoc_74F369C5CD65947FC767C13C9D8937D2"/>
+				<ReferentialConstraint>
+					<Principal Role="ToRole_assoc_74F369C5CD65947FC767C13C9D8937D2">
+						<PropertyRef Name="ContactCardID"/>
+					</Principal>
+					<Dependent Role="FromRole_assoc_74F369C5CD65947FC767C13C9D8937D2">
+						<PropertyRef Name="DfsAllwncPlanCreatedByUser"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4" sap:content-version="1">
+				<End Type="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType" Multiplicity="1"
+					 Role="FromRole_assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4">
+					<OnDelete Action="Cascade"/>
+				</End>
+				<End Type="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqToFeType" Multiplicity="*"
+					 Role="ToRole_assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4">
+						<PropertyRef Name="DfsAllwncReqUUID"/>
+					</Principal>
+					<Dependent Role="ToRole_assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4">
+						<PropertyRef Name="DfsAllwncReqUUID"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<EntityContainer Name="cds_ui_c_dfs_allwncreq_Entities"
+							 m:IsDefaultEntityContainer="true" sap:message-scope-supported="true"
+							 sap:supported-formats="atom json xlsx">
+				<EntitySet Name="C_DFS_AllwncReq"
+						   EntityType="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType"
+						   sap:searchable="true" sap:content-version="1"
+						   sap:deletable-path="Delete_mc" sap:updatable-path="Update_mc"/>
+				<EntitySet Name="C_DFS_AllwncReqToFe"
+						   EntityType="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqToFeType"
+						   sap:deletable="false" sap:content-version="1"
+						   sap:updatable-path="Update_mc"/>
+				<EntitySet Name="I_UserContactCard"
+						   EntityType="cds_ui_c_dfs_allwncreq.I_UserContactCardType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:addressable="false" sap:content-version="1"/>
+				<AssociationSet Name="assoc_A119BE4609C02D04EB50B0766301AC8D"
+								Association="cds_ui_c_dfs_allwncreq.assoc_A119BE4609C02D04EB50B0766301AC8D"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_DFS_AllwncReq"
+						 Role="FromRole_assoc_A119BE4609C02D04EB50B0766301AC8D"/>
+					<End EntitySet="I_UserContactCard"
+						 Role="ToRole_assoc_A119BE4609C02D04EB50B0766301AC8D"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_8814401784D836E810577307E837B372"
+								Association="cds_ui_c_dfs_allwncreq.assoc_8814401784D836E810577307E837B372"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_DFS_AllwncReqToFe"
+						 Role="FromRole_assoc_8814401784D836E810577307E837B372"/>
+					<End EntitySet="C_DFS_AllwncReq"
+						 Role="ToRole_assoc_8814401784D836E810577307E837B372"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_74F369C5CD65947FC767C13C9D8937D2"
+								Association="cds_ui_c_dfs_allwncreq.assoc_74F369C5CD65947FC767C13C9D8937D2"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_DFS_AllwncReq"
+						 Role="FromRole_assoc_74F369C5CD65947FC767C13C9D8937D2"/>
+					<End EntitySet="I_UserContactCard"
+						 Role="ToRole_assoc_74F369C5CD65947FC767C13C9D8937D2"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_50C304A4D1EEF004796D6250882388CF"
+								Association="cds_ui_c_dfs_allwncreq.assoc_50C304A4D1EEF004796D6250882388CF"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_DFS_AllwncReq"
+						 Role="FromRole_assoc_50C304A4D1EEF004796D6250882388CF"/>
+					<End EntitySet="I_UserContactCard"
+						 Role="ToRole_assoc_50C304A4D1EEF004796D6250882388CF"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4"
+								Association="cds_ui_c_dfs_allwncreq.assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_DFS_AllwncReq"
+						 Role="FromRole_assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4"/>
+					<End EntitySet="C_DFS_AllwncReqToFe"
+						 Role="ToRole_assoc_DFED6E53D0A6ADD1C0E1EF1E1B541FC4"/>
+				</AssociationSet>
+				<FunctionImport Name="CreateAllowancePlan"
+								ReturnType="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType"
+								EntitySet="C_DFS_AllwncReq" m:HttpMethod="POST"
+								sap:action-for="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType"
+								sap:applicable-path="CreateAllowancePlan_ac">
+					<Parameter Name="DfsAllwncReqUUID" Type="Edm.Guid" Mode="In"/>
+				</FunctionImport>
+			</EntityContainer>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType/DfsAllwncReqBaseType"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType/FlxblMatlPlngObjectID"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticObject" String="FlexibleMaterialPlanningObject"/>
+			</Annotations>
+			<Annotations
+					Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType/FlxblMatlPlngObjVariantID"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticObject" String="FlexibleMaterialPlanningObject"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType/Product"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticObject" String="Material"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType/ForceElementOrgID"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticObject" String="ForceElement"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType/FrcElmntOrgUsageType"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.cds_ui_c_dfs_allwncreq_Entities"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+				<Annotation Term="Aggregation.ApplySupported">
+					<Record>
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>groupby</String>
+								<String>filter</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Rollup" EnumMember="None"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="cds_ui_c_dfs_allwncreq.cds_ui_c_dfs_allwncreq_Entities/C_DFS_AllwncReq"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>CreateAllowancePlan_ac</PropertyPath>
+								<PropertyPath>DfsAllwncPlanID_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqBaseType_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqComment_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqDescription_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqDueDate_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqID_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqValdtyEndDate_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqValdtyStrtDate_fc</PropertyPath>
+								<PropertyPath>FlxblMatlPlngObjectID_fc</PropertyPath>
+								<PropertyPath>FlxblMatlPlngObjVariantID_fc</PropertyPath>
+								<PropertyPath>ForceElementOrgID_fc</PropertyPath>
+								<PropertyPath>FrcElmntOrgUsageType_fc</PropertyPath>
+								<PropertyPath>Product_fc</PropertyPath>
+								<PropertyPath>Delete_mc</PropertyPath>
+								<PropertyPath>Update_mc</PropertyPath>
+								<PropertyPath>to_AllwncReqToFe_oc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property"
+												   PropertyPath="DfsRequestIsCompleted"/>
+									<PropertyValue Property="AllowedExpressions"
+												   String="SingleValue"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.NavigationRestrictions">
+					<Record>
+						<PropertyValue Property="RestrictedProperties">
+							<Collection>
+								<Record>
+									<PropertyValue Property="NavigationProperty"
+												   NavigationPropertyPath="to_AllwncReqToFe"/>
+									<PropertyValue Property="InsertRestrictions">
+										<Record>
+											<PropertyValue Property="Insertable"
+														   Path="to_AllwncReqToFe_oc"/>
+										</Record>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>CreateAllowancePlan_ac</PropertyPath>
+								<PropertyPath>DfsAllwncPlanID_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqBaseType_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqComment_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqDescription_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqDueDate_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqID_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqValdtyEndDate_fc</PropertyPath>
+								<PropertyPath>DfsAllwncReqValdtyStrtDate_fc</PropertyPath>
+								<PropertyPath>FlxblMatlPlngObjectID_fc</PropertyPath>
+								<PropertyPath>FlxblMatlPlngObjVariantID_fc</PropertyPath>
+								<PropertyPath>ForceElementOrgID_fc</PropertyPath>
+								<PropertyPath>FrcElmntOrgUsageType_fc</PropertyPath>
+								<PropertyPath>Product_fc</PropertyPath>
+								<PropertyPath>Delete_mc</PropertyPath>
+								<PropertyPath>Update_mc</PropertyPath>
+								<PropertyPath>to_AllwncReqToFe_oc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="cds_ui_c_dfs_allwncreq.cds_ui_c_dfs_allwncreq_Entities/C_DFS_AllwncReqToFe"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>DfsAllwncReqReqdQuantity_fc</PropertyPath>
+								<PropertyPath>Update_mc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>DfsAllwncReqReqdQuantity_fc</PropertyPath>
+								<PropertyPath>Update_mc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncPlanBaseTypeVHType"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticKey">
+					<Collection>
+						<PropertyPath>DfsAllwncPlanBaseType</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticKey">
+					<Collection>
+						<PropertyPath>DfsAllwncReqUUID</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_ForceElementVHType"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticKey">
+					<Collection>
+						<PropertyPath>ForceElementOrgID</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_FrcElmntOrgUsageTypeVHType"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticKey">
+					<Collection>
+						<PropertyPath>FrcElmntOrgUsageType</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.I_UserContactCardType"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Communication.Contact">
+					<Record>
+						<PropertyValue Property="fn" Path="FullName"/>
+						<PropertyValue Property="org" Path="Department"/>
+						<PropertyValue Property="role" Path="FunctionalTitleName"/>
+						<PropertyValue Property="n">
+							<Record>
+								<PropertyValue Property="given" Path="FirstName"/>
+								<PropertyValue Property="surname" Path="LastName"/>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="tel">
+							<Collection>
+								<Record>
+									<PropertyValue Property="type"
+												   EnumMember="Communication.PhoneType/fax"/>
+									<PropertyValue Property="uri" Path="FaxNumber"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="type"
+												   EnumMember="Communication.PhoneType/cell"/>
+									<PropertyValue Property="uri" Path="MobilePhoneNumber"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="type"
+												   EnumMember="Communication.PhoneType/work"/>
+									<PropertyValue Property="uri" Path="PhoneNumber"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="email">
+							<Collection>
+								<Record>
+									<PropertyValue Property="type"
+												   EnumMember="Communication.ContactInformationType/work"/>
+									<PropertyValue Property="address" Path="EmailAddress"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType/DfsRequestIsCompleted"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FilterDefaultValue" Bool="false"/>
+			</Annotations>
+			<Annotations
+					Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType/DfsRequestStatusCriticality"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="UI.HiddenFilter"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.C_DFS_AllwncReqType/DfsAllwncPlanID"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticObject" String="AllowancePlan"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.I_UserContactCardType/EmailAddress"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Communication.IsEmailAddress"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.I_UserContactCardType/PhoneNumber"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Communication.IsPhoneNumber"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.I_UserContactCardType/MobilePhoneNumber"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Communication.IsPhoneNumber"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.I_UserContactCardType/FaxNumber"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Communication.IsPhoneNumber"/>
+			</Annotations>
+			<Annotations Target="cds_ui_c_dfs_allwncreq.cds_ui_c_dfs_allwncreq_Entities"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Org.OData.Capabilities.V1.BatchSupport">
+					<Record Type="Org.OData.Capabilities.V1.BatchSupportType">
+						<PropertyValue Property="ReferencesAcrossChangeSetsSupported" Bool="true"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<atom:link rel="self"
+					   href="/sap/opu/odata/sap/UI_C_DFS_ALLWNCREQ/$metadata"
+					   xmlns:atom="http://www.w3.org/2005/Atom"/>
+			<atom:link rel="latest-version"
+					   href="/sap/opu/odata/sap/UI_C_DFS_ALLWNCREQ/$metadata"
+					   xmlns:atom="http://www.w3.org/2005/Atom"/>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
