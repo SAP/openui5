@@ -6,9 +6,11 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Text",
 	"sap/m/Select",
-	"sap/ui/core/ListItem"
+	"sap/m/ComboBox",
+	"sap/ui/core/ListItem",
+	"./viz/IconSelect"
 ], function (
-	BaseField, Input, Text, Select, ListItem
+	BaseField, Input, Text, Select, ComboBox, ListItem, IconSelect
 ) {
 	"use strict";
 
