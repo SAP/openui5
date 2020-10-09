@@ -191,7 +191,6 @@ function (
 						layer: Layer.VENDOR,
 						namespace: "applier/test/reference/changes/",
 						creation: "2020-02-07T09:57:43.523Z",
-						validAppVersions: {creation: "1.0.0", from: "1.0.0", to: "1.0.0"},
 						jsOnly: false,
 						variantReference: "",
 						appDescriptorChange: false

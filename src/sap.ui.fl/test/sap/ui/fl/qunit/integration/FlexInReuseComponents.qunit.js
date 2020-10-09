@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Layer"
 ], function(
 	Input,
 	jQuery,
@@ -16,8 +15,7 @@ sap.ui.define([
 	ManifestUtils,
 	FlexControllerFactory,
 	Change,
-	Layer,
-	Utils
+	Layer
 ) {
 	"use strict";
 
@@ -66,8 +64,7 @@ sap.ui.define([
 			Component._fnLoadComponentCallback = undefined;
 
 			// create a hide control change
-			var sAppVersion = Utils.getAppVersionFromManifest(this.oComponent.getManifest());
-			var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
+			var oFlexController = FlexControllerFactory.create(sFlexReference);
 			return oFlexController.addChange(oChangeContent, oInitialFieldInstance)
 			.then(function(oChange) {
 				return oFlexController.applyChange(oChange, oInitialFieldInstance);

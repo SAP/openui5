@@ -239,7 +239,7 @@ function (
 					assert.ok(oChange);
 
 
-					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController._sAppVersion);
+					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
 					var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
 					assert.strictEqual(aDirtyChanges.length, 1);
@@ -256,7 +256,7 @@ function (
 			var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
 			assert.ok(oPrepChange);
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
 			var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
 			assert.strictEqual(aDirtyChanges.length, 1);
@@ -297,7 +297,7 @@ function (
 			var oPrepChange = this.oFlexController.addPreparedChange(oChange, oAppComponent);
 			assert.ok(oPrepChange, "then change object returned");
 			assert.ok(oAddChangeStub.calledOnce, "then model's addChange is called as VariantManagement Change is detected");
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
 			var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
 			assert.strictEqual(aDirtyChanges.length, 1);
@@ -420,18 +420,16 @@ function (
 			fChangeHandler.applyChange = sandbox.stub();
 			fChangeHandler.completeChangeContent = sandbox.stub();
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
-			var oCreateStub = sandbox.stub(Storage, "write").resolves();
+			sandbox.stub(Storage, "write").resolves();
 
 			return this.oFlexController.addChange({}, oControl).then(function(oChange) {
 				assert.ok(oChange);
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
 				sandbox.stub(oChangePersistence, "_massUpdateCacheAndDirtyState").returns(undefined);
 
 				return oChangePersistence.saveDirtyChanges();
 			}.bind(this))
 			.then(function() {
-				assert.equal(oCreateStub.getCall(0).args[0].flexObjects[0].validAppVersions.creation, "1.2.3");
-				assert.equal(oCreateStub.getCall(0).args[0].flexObjects[0].validAppVersions.from, "1.2.3");
 				oControl.destroy();
 			});
 		});
@@ -459,7 +457,7 @@ function (
 				.then(function(oChange) {
 					assert.ok(oChange);
 
-					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController._sAppVersion);
+					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
 					var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
 					assert.strictEqual(aDirtyChanges.length, 1);
@@ -854,31 +852,12 @@ function (
 
 	QUnit.module("applicationVersions when using createBaseChange", {
 		beforeEach: function() {
-			this.sAppVersion = "1.2.3";
-			this.oFlexController = new FlexController("testScenarioComponent", this.sAppVersion);
+			this.oFlexController = new FlexController("testScenarioComponent");
 		},
 		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("calling createBaseChange with scenario AppVariant and developerMode = true", function(assert) {
-			var bDeveloperModeMode = true;
-			var sScenario = sap.ui.fl.Scenario.AppVariant;
-			var oGetValidAppVersionsStub = sandbox.stub(Utils, "getValidAppVersions");
-
-			var oChangeSpecificData = {
-				developerMode: bDeveloperModeMode,
-				scenario: sScenario
-			};
-			this.oFlexController.createBaseChange(oChangeSpecificData, {});
-
-			assert.equal(oGetValidAppVersionsStub.callCount, 1, "the utils was called to provide the validAppVersions section");
-			var mPropertyBag = oGetValidAppVersionsStub.getCall(0).args[0];
-			assert.equal(mPropertyBag.appVersion, this.sAppVersion, "the app version was passed correctly");
-			assert.equal(mPropertyBag.developerMode, bDeveloperModeMode, "the developer mode flag was passed correctly");
-			assert.equal(mPropertyBag.scenario, sScenario, "the scenario was passed correctly");
-		});
-
 		QUnit.test("calling createBaseChange without appComponent should throw an Error", function(assert) {
 			assert.throws(function() {
 				this.oFlexController.createBaseChange({});
@@ -1019,7 +998,6 @@ function (
 			var oManifest = new Manifest(oManifestObj);
 			this.oComponent = {
 				name: "testScenarioComponent",
-				appVersion: "1.2.3",
 				getId: function() { return "RTADemoAppMD"; },
 				getManifestObject: function() { return oManifest; }
 			};
@@ -1122,7 +1100,6 @@ function (
 			var oManifest = new Manifest(oManifestObj);
 			this.oComponent = {
 				name: "testScenarioComponent",
-				appVersion: "1.2.3",
 				getId: function() {return "RTADemoAppMD";},
 				getManifestObject: function() {return oManifest;}
 			};

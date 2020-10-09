@@ -38,27 +38,27 @@ sap.ui.define([
 		QUnit.test("when no static changes-bundle.json is placed, loading flex data is triggered and an empty response as 'json' is returned", function (assert) {
 			var oMockResponse = {changes:[]};
 			mockResponse.call(this, JSON.stringify(oMockResponse), "json");
-			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
+			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function (oResult) {
 				assert.deepEqual(this.oXHRLoadSpy.firstCall.args[0].target.response, oMockResponse, "then xhr.onLoad was called with the right response");
 				assert.deepEqual(oResult, oMockResponse, "then the default response is returned");
 			}.bind(this));
 		});
 
 		QUnit.test("when no static changes-bundle.json is placed, loading flex data is triggered and an empty response as default is returned", function (assert) {
-			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
+			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function (oResult) {
 				assert.strictEqual(this.oXHRLoadSpy.firstCall.args[0].target.response, JSON.stringify(oResult), "then xhr.onLoad was called with the right response");
 				assert.deepEqual(oResult, {changes: []}, "then the default response is returned");
 			}.bind(this));
 		});
 
 		QUnit.test("given a mock server, when loading flex data is triggered with the correct url", function (assert) {
-			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference", appVersion: "1.0.0"}).then(function () {
-				assert.equal(this.oXHR.url, "/flexPersonalization/flex/personalization/v1/data/reference?appVersion=1.0.0", "url is correct");
+			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function () {
+				assert.equal(this.oXHR.url, "/flexPersonalization/flex/personalization/v1/data/reference", "url is correct");
 			}.bind(this));
 		});
 
 		QUnit.test("loadFlexData also requests and stores an xsrf token", function (assert) {
-			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference", appVersion: "1.0.0"}).then(function () {
+			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function () {
 				assert.equal(PersonalizationConnector.xsrfToken, newToken, "the token was stored correct");
 			});
 		});
@@ -69,13 +69,10 @@ sap.ui.define([
 			"- merges the compVariants in the changes", function (assert) {
 			var mPropertyBag = {
 				url: "/flexPersonalization",
-				reference: "reference",
-				appVersion: "1.0.0"
+				reference: "reference"
 			};
-			var mParameter = {
-				appVersion: "1.0.0"
-			};
-			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/data/reference?appVersion=1.0.0";
+			var mParameter = {};
+			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/data/reference";
 			var oStubGetUrlWithQueryParameters = sandbox.stub(InitialUtils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({
 				response : {

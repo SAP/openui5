@@ -71,9 +71,6 @@ sap.ui.define([
 		var oChangeJson = {
 			moduleName: sPath,
 			reference: "sap.ui.fl.qunit.changeHander.AddXMLAtExtensionPoint",
-			validAppVersions: {
-				creation: "1.0.0"
-			},
 			selector: {
 				name: sSelectorExtensionName || "extension",
 				viewSelector: {

@@ -38,7 +38,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
-			var mParameters = _pick(mPropertyBag, ["appVersion", "version"]);
+			var mParameters = _pick(mPropertyBag, ["version"]);
 
 			if (this.isLanguageInfoRequired) {
 				InitialUtils.addLanguageInfo(mParameters);

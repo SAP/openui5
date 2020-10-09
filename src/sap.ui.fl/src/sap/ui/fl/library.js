@@ -106,7 +106,6 @@ sap.ui.define([
 	 *
 	 * @typedef {object} sap.ui.fl.ComponentSelector
 	 * @property {string} appId - Control object to be used as the selector for the change
-	 * @property {string} appVersion - Control object to be used as the selector for the change
 	 * @private
 	 * @ui5-restricted
 	 */

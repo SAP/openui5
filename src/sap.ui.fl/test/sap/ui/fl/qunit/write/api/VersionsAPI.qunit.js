@@ -30,6 +30,46 @@ sap.ui.define([
 	jQuery("#qunit-fixture").hide();
 	var sandbox = sinon.sandbox.create();
 
+	QUnit.module("getVersionsModel", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest : function () {
+					return {};
+				},
+				getId : function () {
+					return "sComponentId";
+				},
+				getComponentData : function () {
+					return {
+						startupParameters : ["sap-app-id"]
+					};
+				}
+			};
+		}
+	}, function () {
+		QUnit.test("Given isDraftAvailable is called", function (assert) {
+			var oGetModelStub = sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function () {
+					return [];
+				}
+			});
+
+			var sNormalizedReference = "com.sap.test.app";
+			var sReference = sNormalizedReference + ".Component";
+
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
+
+			VersionsAPI.isDraftAvailable({
+				layer: Layer.CUSTOMER,
+				selector: new Control()
+			});
+
+			assert.equal(oGetModelStub.callCount, 1, "then the model was requested once");
+			assert.equal(oGetModelStub.getCall(0).args[0].reference, sNormalizedReference, "the model was requested without '.Component'");
+		});
+	});
+
 
 	QUnit.module("Given VersionsAPI.isDraftAvailable is called", {
 		before: function() {
@@ -377,8 +417,8 @@ sap.ui.define([
 				version: sap.ui.fl.Versions.Original
 			};
 
-			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "The application ID could not be determined", "then an Error is thrown");
+			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (oError) {
+				assert.equal(oError.message, "The application ID could not be determined", "then an Error is thrown");
 			});
 		});
 
@@ -469,8 +509,8 @@ sap.ui.define([
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(undefined);
 
-			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "The application ID could not be determined", "then an Error is thrown");
+			return VersionsAPI.activateDraft(mPropertyBag).catch(function (oError) {
+				assert.equal(oError.message, "The application ID could not be determined", "then an Error is thrown");
 			});
 		});
 
@@ -538,8 +578,8 @@ sap.ui.define([
 				selector: new Control()
 			};
 
-			return VersionsAPI.discardDraft(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "The application ID could not be determined", "then an Error is thrown");
+			return VersionsAPI.discardDraft(mPropertyBag).catch(function (oError) {
+				assert.equal(oError.message, "The application ID could not be determined", "then an Error is thrown");
 			});
 		});
 
@@ -568,8 +608,6 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: new Control()
 			};
-			var sAppVersion = "1.0.0";
-			sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
 
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
@@ -580,7 +618,6 @@ sap.ui.define([
 					assert.equal(oClearAndInitStub.calledOnce, true, "then the FlexState was cleared and initialized");
 					assert.equal(oDiscardInfo.backendChangesDiscarded, true, "then the discard outcome was returned");
 					assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "then the discard outcome was returned");
-					assert.deepEqual(oDiscardStub.getCall(0).args[0].appVersion, sAppVersion, "the app version was passed");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].reference, sReference, "the reference was passed");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].layer, Layer.CUSTOMER, "the layer was passed");
 				});

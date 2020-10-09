@@ -45,7 +45,6 @@ function(
 	 * @experimental Since 1.25.0
 	 */
 	var Utils = {
-		DEFAULT_APP_VERSION: "DEFAULT_APP_VERSION",
 		APP_ID_AT_DESIGN_TIME: "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
 		VARIANT_MODEL_NAME: "$FlexVariants",
 
@@ -410,8 +409,7 @@ function(
 			var oAppComponent = this.getAppComponentForControl(oControl);
 			var oManifest = oAppComponent.getManifest();
 			return {
-				name: this.getAppIdFromManifest(oManifest),
-				version: this.getAppVersionFromManifest(oManifest)
+				name: this.getAppIdFromManifest(oManifest)
 			};
 		},
 
@@ -849,44 +847,6 @@ function(
 			return sRootNamespace;
 		},
 
-
-		/** Generates a ValidAppVersions object for changes and variants; Depending on the parameters passed a 'to' field is included.
-		 *
-		 * @param {map} mPropertyBag
-		 * @param {string} mPropertyBag.appVersion Version to be filled into the validAppVersions object fields
-		 * @param {boolean} mPropertyBag.developerMode Flag if the creation of the object takes place in the developer mode
-		 * @param {sap.ui.fl.Scenario} mPropertyBag.scenario Depending on the scenario a 'to' field must be filled
-		 * @returns {{creation: string, from: string, to: (string|undefined)}}
-		 */
-		getValidAppVersions: function(mPropertyBag) {
-			var sAppVersion = mPropertyBag.appVersion;
-			var bDeveloperMode = mPropertyBag.developerMode;
-			var sScenario = mPropertyBag.scenario;
-			var oValidAppVersions = {
-				creation: sAppVersion,
-				from: sAppVersion
-			};
-			if (this._isValidAppVersionToRequired(sAppVersion, bDeveloperMode, sScenario)) {
-				oValidAppVersions.to = sAppVersion;
-			}
-			return oValidAppVersions;
-		},
-
-		/** Determines if a 'to' field is required in a validAppVersions object.
-		 *
-		 * @param sAppVersion
-		 * @param bDeveloperMode
-		 * @param sScenario
-		 * @returns {boolean}
-		 * @private
-		 */
-		_isValidAppVersionToRequired: function(sAppVersion, bDeveloperMode, sScenario) {
-			return !!sAppVersion
-				&& !!bDeveloperMode
-				&& sScenario !== sap.ui.fl.Scenario.AdaptationProject
-				&& sScenario !== sap.ui.fl.Scenario.AppVariant;
-		},
-
 		/** Returns the type of "sap.app" from the manifest object passed.
 		 * @param {sap.ui.core.Manifest} oManifest - Manifest object
 		 * @returns {string | undefined} Manifest object's "type" property for "sap.app" entry
@@ -981,26 +941,6 @@ function(
 		},
 
 		/**
-		 * Returns the semantic application version using format: "major.minor.patch".
-		 *
-		 * @param {object} oManifest - Manifest of the component
-		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string
-		 * @public
-		 */
-		getAppVersionFromManifest: function(oManifest) {
-			var sVersion = "";
-			if (oManifest) {
-				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
-				if (oSapApp && oSapApp.applicationVersion && oSapApp.applicationVersion.version) {
-					sVersion = oSapApp.applicationVersion.version;
-				}
-			} else {
-				Log.warning("No Manifest received.");
-			}
-			return sVersion;
-		},
-
-		/**
 		 * Returns the uri of the main service specified in the app manifest
 		 *
 		 * @param {object} oManifest - Manifest of the component
@@ -1018,50 +958,6 @@ function(
 				Log.warning("No Manifest received.");
 			}
 			return sUri;
-		},
-
-		/**
-		 * Checks if the application version has the correct format: "major.minor.patch".
-		 *
-		 * @param {string} sVersion - Version of application
-		 * @returns {boolean} true if the format is correct, otherwise false
-		 * @public
-		 */
-		isCorrectAppVersionFormat: function(sVersion) {
-			// remove all whitespaces
-			sVersion = sVersion.replace(/\s/g, "");
-
-			// get version without snapshot
-			// we need to run the regex twice to avoid that version 1-2-3-SNAPSHOT will result in version 1.
-			var oRegexp1 = /\b\d{1,5}(.\d{1,5}){0,2}/g;
-			var oRegexp2 = /\b\d{1,5}(\.\d{1,5}){0,2}/g;
-			var nLength = sVersion.match(oRegexp1) ? sVersion.match(oRegexp1)[0].length : 0;
-			var nLenghtWithDot = sVersion.match(oRegexp2) ? sVersion.match(oRegexp2)[0].length : 0;
-
-			if (nLenghtWithDot < 1 || nLenghtWithDot !== nLength) {
-				return false;
-			}
-
-			//if the character after the version is also a number or a dot, it should also be a format error
-			if (nLenghtWithDot && sVersion !== sVersion.substr(0, nLenghtWithDot)) {
-				var cNextCharacter = sVersion.substr(nLenghtWithDot, 1);
-				var oRegexp = /^[0-9.]$/;
-				if (oRegexp.test(cNextCharacter)) {
-					return false;
-				}
-			}
-
-			// split into number-parts and check if there are max. three parts
-			var aVersionParts = sVersion.substr(0, nLenghtWithDot).split(".");
-			if (aVersionParts.length > 3) {
-				return false;
-			}
-
-			// 5 digits maximum per part
-			if (!aVersionParts.every(function(sPart) {return sPart.length <= 5;})) {
-				return false;
-			}
-			return true;
 		},
 
 		/**

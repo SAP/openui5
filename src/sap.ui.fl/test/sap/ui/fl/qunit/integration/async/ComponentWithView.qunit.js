@@ -76,11 +76,7 @@ function(
 							user: "",
 							sapui5Version: sap.ui.version
 						},
-						dependentSelector: {},
-						validAppVersions: {
-							creation: "${project.version}",
-							from: "${project.version}"
-						}
+						dependentSelector: {}
 					}],
 					contexts: [],
 					settings: {

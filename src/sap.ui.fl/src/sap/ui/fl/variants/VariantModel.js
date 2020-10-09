@@ -618,7 +618,6 @@ sap.ui.define([
 		};
 
 		var oVariant = VariantUtil.createVariant({
-			appVersion: this.oFlexController.getAppVersion(),
 			model: this,
 			variantSpecificData: oDuplicateVariantData
 		});

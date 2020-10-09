@@ -31,8 +31,7 @@ sap.ui.define([
 			flexSettings: {
 				developerMode: false,
 				layer: Layer.CUSTOMER
-			},
-			validateAppVersion: true
+			}
 		};
 		return adaptationStarter(mOptions);
 	}

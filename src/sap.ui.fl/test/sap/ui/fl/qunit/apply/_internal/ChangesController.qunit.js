@@ -57,13 +57,12 @@ sap.ui.define([
 			oManagedObject.destroy();
 		});
 
-		QUnit.test("when getFlexControllerInstance is called with a component name and app version", function(assert) {
+		QUnit.test("when getFlexControllerInstance is called with a component name", function(assert) {
 			var sComponentName = "componentName";
-			var sAppVersion = "1.2.3";
 
-			setMethodStub([FlexControllerFactory, "create"], [sComponentName, sAppVersion], sReturnValue);
+			setMethodStub([FlexControllerFactory, "create"], [sComponentName], sReturnValue);
 
-			assert.ok(ChangesController.getFlexControllerInstance(sComponentName, sAppVersion), sReturnValue, "then the flex persistence was called with the correct parameters");
+			assert.ok(ChangesController.getFlexControllerInstance(sComponentName), sReturnValue, "then the flex persistence was called with the correct parameters");
 		});
 
 		QUnit.test("when getDescriptorFlexControllerInstance is called with a selector object", function(assert) {
@@ -75,12 +74,11 @@ sap.ui.define([
 				}
 			};
 			var oMockDescriptorFlexController = {
-				name: "descriptorPersistenceName",
-				version: "1.2.3"
+				name: "descriptorPersistenceName"
 			};
 
 			setMethodStub([FlexUtils, "getAppDescriptorComponentObjectForControl"], [oSelector.appComponent], oMockDescriptorFlexController);
-			setMethodStub([FlexControllerFactory, "create"], [oMockDescriptorFlexController.name, oMockDescriptorFlexController.version], sReturnValue);
+			setMethodStub([FlexControllerFactory, "create"], [oMockDescriptorFlexController.name], sReturnValue);
 
 			assert.ok(ChangesController.getDescriptorFlexControllerInstance(oSelector), sReturnValue, "then the flex persistence was called with the correct parameters");
 		});
@@ -88,14 +86,13 @@ sap.ui.define([
 		QUnit.test("when getDescriptorFlexControllerInstance is called with a managed object instance", function(assert) {
 			var oManagedObject = new ManagedObject();
 			var oMockDescriptorFlexController = {
-				name: "descriptorPersistenceName",
-				version: "1.2.3"
+				name: "descriptorPersistenceName"
 			};
 
 			setMethodStub([FlexUtils, "getAppDescriptorComponentObjectForControl"], [oManagedObject], oMockDescriptorFlexController);
-			setMethodStub([FlexControllerFactory, "create"], [oMockDescriptorFlexController.name, oMockDescriptorFlexController.version], sReturnValue);
+			setMethodStub([FlexControllerFactory, "create"], [oMockDescriptorFlexController.name], sReturnValue);
 
-			assert.ok(ChangesController.getDescriptorFlexControllerInstance(oManagedObject), sReturnValue, "then the flex persistence was called with the correct parameters");
+			assert.equal(ChangesController.getDescriptorFlexControllerInstance(oManagedObject), sReturnValue, "then the flex persistence was called with the correct parameters");
 			oManagedObject.destroy();
 		});
 
@@ -118,7 +115,7 @@ sap.ui.define([
 
 			setMethodStub([FlexUtils, "getAppComponentForControl"], [oManagedObject], sReturnValue);
 
-			assert.ok(ChangesController.getAppComponentForSelector(oManagedObject), sReturnValue, "then the flex persistence was called with the correct parameters");
+			assert.equal(ChangesController.getAppComponentForSelector(oManagedObject), sReturnValue, "then the flex persistence was called with the correct parameters");
 			oManagedObject.destroy();
 		});
 	});

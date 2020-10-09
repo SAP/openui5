@@ -132,10 +132,6 @@ sap.ui.define([
 			defaultVariantId: "Grendalin",
 			selector: {
 				stableId: "Galustika"
-			},
-			validAppVersions: {
-				creation: "1.2.3",
-				from: "1.2.3"
 			}
 		};
 
@@ -149,8 +145,6 @@ sap.ui.define([
 		assert.equal(oChange.getChangeType(), 'defaultVariant');
 		assert.equal(oChange.getSelector(), mParameterBag.selector);
 		assert.equal(oChange.getLayer(), 'USER');
-		assert.equal(oChange.getDefinition().validAppVersions.creation, "1.2.3");
-		assert.equal(oChange.getDefinition().validAppVersions.from, "1.2.3");
 	});
 
 	QUnit.test('getDefaultVariantChanges should return all default variant changes', function(assert) {

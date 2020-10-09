@@ -80,7 +80,6 @@ sap.ui.define([
 
 			this.sLayer = Layer.CUSTOMER;
 			this.sReference = "sampleComponent";
-			this.sAppVersion = "1.0.0";
 			this.aMockLocalChanges = [this.oMockNewChange];
 			this.aAppVariantDescriptors = [this.oAppVariantDescriptor];
 		},
@@ -107,7 +106,7 @@ sap.ui.define([
 			};
 			fnReturnData(500, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 
-			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: Layer.VENDOR};
+			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", layer: Layer.VENDOR};
 			return WriteLrepConnector.getFlexInfo(mPropertyBag).catch(function (oError) {
 				assert.equal(oError.userMessage, "Error text 1\nError text 2\n", "Correct user message is returned in the error object");
 				assert.equal(oError.status, "500", "Correct status is returned in the error object");
@@ -122,8 +121,8 @@ sap.ui.define([
 			};
 			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 
-			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: Layer.VENDOR};
-			var sUrl = "/sap/bc/lrep/flex/info/reference?layer=VENDOR&appVersion=1.0.0";
+			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", layer: Layer.VENDOR};
+			var sUrl = "/sap/bc/lrep/flex/info/reference?layer=VENDOR";
 			return WriteLrepConnector.getFlexInfo(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a flex info request is send containing the reference in the url and the app version and the layer as query parameters");
@@ -149,7 +148,6 @@ sap.ui.define([
 				},
 				layer: this.sLayer,
 				reference: this.sReference,
-				appVersion: this.sAppVersion,
 				localChanges: this.aMockLocalChanges,
 				appVariantDescriptors: this.aAppVariantDescriptors
 			}).then(function(sMessage) {
@@ -159,7 +157,6 @@ sap.ui.define([
 				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
 				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, this.aMockLocalChanges, this.aAppVariantDescriptors, {
 					reference: this.sReference,
-					appVersion: this.sAppVersion,
 					layer: this.sLayer
 				}), "then _prepareChangesForTransport called with the transport info and changes array");
 			}.bind(this));
@@ -183,7 +180,6 @@ sap.ui.define([
 				},
 				layer: this.sLayer,
 				reference: this.sReference,
-				appVersion: this.sAppVersion,
 				localChanges: this.aMockLocalChanges,
 				appVariantDescriptors: this.aAppVariantDescriptors
 			}).then(function(sMessage) {
@@ -193,7 +189,6 @@ sap.ui.define([
 				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
 				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, this.aMockLocalChanges, this.aAppVariantDescriptors, {
 					reference: this.sReference,
-					appVersion: this.sAppVersion,
 					layer: this.sLayer
 				}), "then _prepareChangesForTransport called with the transport info and changes array");
 			}.bind(this));
@@ -281,11 +276,10 @@ sap.ui.define([
 			sandbox.spy(BusyIndicator, "hide");
 			sandbox.spy(BusyIndicator, "show");
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
-			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&generator=Change.createInitialFileContent";
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&changelist=transportId&generator=Change.createInitialFileContent";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: [{name: "1"}, {name: "2"}]});
 			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
-				appVersion: "1.0.0",
 				layer: Layer.VENDOR,
 				generator: "Change.createInitialFileContent",
 				changes: [oVENDORChange1, oVENDORChange2],
@@ -356,12 +350,11 @@ sap.ui.define([
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
-			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&selector=abc123&changeType=labelChange";
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&changelist=transportId&selector=abc123&changeType=labelChange";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 
 			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
-				appVersion: "1.0.0",
 				layer: Layer.VENDOR,
 				changeTypes: ["labelChange"],
 				selectorIds: ["abc123"],
@@ -445,12 +438,11 @@ sap.ui.define([
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves(oMockTransportInfo);
-			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&appVersion=1.0.0&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent";
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 
 			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
-				appVersion: "1.0.0",
 				layer: Layer.CUSTOMER,
 				generator: "Change.createInitialFileContent",
 				changes: aChanges,
@@ -475,7 +467,7 @@ sap.ui.define([
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&appVersion=1.0.0&selector=view--control1,feview--control2";
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&selector=view--control1,feview--control2";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 
 			var aControlIds = [
@@ -484,7 +476,6 @@ sap.ui.define([
 			];
 			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
-				appVersion: "1.0.0",
 				layer: Layer.CUSTOMER,
 				changes: [],
 				reference: "flexReference",
@@ -509,7 +500,7 @@ sap.ui.define([
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=USER&appVersion=1.0.0&generator=Change.createInitialFileContent&selector=view--control1,feview--control2";
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=USER&generator=Change.createInitialFileContent&selector=view--control1,feview--control2";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 			var aControlIds = [
 				"view--control1",
@@ -517,7 +508,6 @@ sap.ui.define([
 			];
 			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
-				appVersion: "1.0.0",
 				layer: Layer.USER,
 				changes: [],
 				reference: "flexReference",

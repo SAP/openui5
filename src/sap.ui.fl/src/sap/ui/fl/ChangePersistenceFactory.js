@@ -30,26 +30,18 @@ sap.ui.define([
 	/**
 	 * Creates or returns an instance of the ChangePersistence
 	 * @param {String} sComponentName - Name of the component
-	 * @param {String} sAppVersion - Current running version of application
 	 * @returns {sap.ui.fl.ChangePersistence} <code>ChangePersistence</code> instance
 	 *
 	 * @public
 	 */
-	ChangePersistenceFactory.getChangePersistenceForComponent = function(sComponentName, sAppVersion) {
-		var oChangePersistence;
-		sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
-
-		if (!ChangePersistenceFactory._instanceCache[sComponentName]) {
-			ChangePersistenceFactory._instanceCache[sComponentName] = {};
-		}
-		oChangePersistence = ChangePersistenceFactory._instanceCache[sComponentName][sAppVersion];
+	ChangePersistenceFactory.getChangePersistenceForComponent = function(sComponentName) {
+		var oChangePersistence = ChangePersistenceFactory._instanceCache[sComponentName];
 		if (!oChangePersistence) {
 			var oComponent = {
-				name : sComponentName,
-				appVersion : sAppVersion
+				name : sComponentName
 			};
 			oChangePersistence = new ChangePersistence(oComponent);
-			ChangePersistenceFactory._instanceCache[sComponentName][sAppVersion] = oChangePersistence;
+			ChangePersistenceFactory._instanceCache[sComponentName] = oChangePersistence;
 		}
 
 		return oChangePersistence;
@@ -66,8 +58,7 @@ sap.ui.define([
 	ChangePersistenceFactory.getChangePersistenceForControl = function(oControl) {
 		var sComponentId;
 		sComponentId = Utils.getComponentClassName(oControl);
-		var sAppVersion = Utils.getAppVersionFromManifest(Utils.getAppComponentForControl(oControl).getManifest());
-		return ChangePersistenceFactory.getChangePersistenceForComponent(sComponentId, sAppVersion);
+		return ChangePersistenceFactory.getChangePersistenceForComponent(sComponentId);
 	};
 
 	/**

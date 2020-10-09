@@ -40,7 +40,7 @@ sap.ui.define([
 			var oResponse = {changes: [], loadModules: false};
 			mockResponse.call(this, JSON.stringify(oResponse));
 
-			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function (oResult) {
 				assert.deepEqual(oResult, oResponse, "the default response resolves the request Promise");
 				assert.strictEqual(this.oXHRLoadSpy.firstCall.args[0].target.response, JSON.stringify(oResponse), "then xhr.onLoad was called with the right response");
 			}.bind(this));
@@ -50,7 +50,7 @@ sap.ui.define([
 			var oResponse = {changes: [], loadModules: false};
 			mockResponse.call(this, JSON.stringify(oResponse), undefined, "json");
 
-			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function (oResult) {
 				assert.deepEqual(oResult, oResponse, "the default response resolves the request Promise");
 				assert.deepEqual(this.oXHRLoadSpy.firstCall.args[0].target.response, oResponse, "then xhr.onLoad was called with the right response");
 			}.bind(this));
@@ -61,16 +61,16 @@ sap.ui.define([
 
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: false}));
 
-			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", cacheKey: sCacheKey}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0&sap-language=en", "the cacheKey is included in the request");
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", cacheKey: sCacheKey}).then(function () {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=en", "the cacheKey is included in the request");
 			}.bind(this));
 		});
 
 		QUnit.test("when loading flex data is triggered end Etag is available in the response header", function (assert) {
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: false}), "cacheKey");
 
-			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
-				assert.deepEqual(oResult, {changes: [], loadModules: false, cacheKey: "cacheKey"}, "/sap/bc/lrep/flex/data/reference?appVersion=1.0.0", "cacheKey is set in the result");
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function (oResult) {
+				assert.deepEqual(oResult, {changes: [], loadModules: false, cacheKey: "cacheKey"}, "/sap/bc/lrep/flex/data/reference", "cacheKey is set in the result");
 			});
 		});
 
@@ -82,7 +82,6 @@ sap.ui.define([
 			return LrepConnector.loadFlexData({
 				url: "/sap/bc/lrep",
 				reference: "reference",
-				appVersion: "1.0.0",
 				cacheKey: sCacheKey,
 				siteId: "dummySite",
 				appDescriptor: {
@@ -91,7 +90,7 @@ sap.ui.define([
 					}
 				}
 			}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0&sap-language=en", "the cacheKey is included in the request");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=en", "the cacheKey is included in the request");
 				assert.equal(this.oXHR.requestHeaders["X-LRep-Site-Id"], "dummySite", "the siteId is included in the request");
 				assert.equal(this.oXHR.requestHeaders["X-LRep-AppDescriptor-Id"], "appDescriptorId", "the appDescriptorId is included in the request");
 			}.bind(this));
@@ -102,8 +101,8 @@ sap.ui.define([
 
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
 			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
-			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", cacheKey: sCacheKey}).then(function (oResult) {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0&sap-language=en", "and the URL was correct");
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", cacheKey: sCacheKey}).then(function (oResult) {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=en", "and the URL was correct");
 				assert.ok(oStubLoadModule.calledOnce, "loadModule triggered");
 				assert.deepEqual(oResult, {changes: [], loadModules: true, cacheKey: "abc123"}, "and the flex_data response resolves the promise");
 			}.bind(this));
@@ -111,7 +110,7 @@ sap.ui.define([
 
 		QUnit.test("when loading flex data the settings value is stored", function (assert) {
 			mockResponse.call(this, JSON.stringify({changes: [], settings: {isKeyUser: true}}));
-			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function () {
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function () {
 				assert.deepEqual(LrepConnector.settings, {isKeyUser: true}, "and the settings value is stored");
 			});
 		});

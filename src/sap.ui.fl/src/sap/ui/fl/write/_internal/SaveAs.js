@@ -120,13 +120,6 @@ sap.ui.define([
 		var sChangesNamespace = Utils.createNamespace(oPropertyBag, "changes");
 		oChange.setNamespace(sChangesNamespace);
 		oChange.setComponent(oAppVariant.getId());
-		if (oAppVariant.getVersion()) {
-			// Only needed for RTA tool, Smart business might not pass the version
-			oChange.setValidAppVersions({
-				creation: oAppVariant.getVersion(),
-				from: oAppVariant.getVersion()
-			});
-		}
 	}
 
 	function _inlineDescriptorChanges(aAllInlineChanges, oAppVariant) {

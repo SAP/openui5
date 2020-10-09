@@ -576,10 +576,8 @@ function(
 			var oComponent = new sap.ui.core.UIComponent();
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			sandbox.stub(Utils, "getAppVersionFromManifest").returns("1.0.0");
 			var oAppDescriptorComponent = Utils.getAppDescriptorComponentObjectForControl(oComponent);
 			assert.equal(oAppDescriptorComponent.name, "sap.ui.core", "the component name is correct");
-			assert.equal(oAppDescriptorComponent.version, "1.0.0", "the version is the same as in the original component");
 		});
 
 		QUnit.test("getComponentClassName shall return the next component of type 'application' in the hierarchy", function(assert) {
@@ -1244,31 +1242,6 @@ function(
 			assert.equal(Utils.getFlexReference(oManifest), sComName);
 		});
 
-		QUnit.test("getAppVersionFromManifest returns the application version from manifest", function(assert) {
-			var sAppVersion = "1.2.3";
-			var oManifestJson = {
-				"sap.app": {
-					applicationVersion: {
-						version: sAppVersion
-					}
-				}
-			};
-			var oManifest = {
-				"sap.app": {
-					applicationVersion: {
-						version: sAppVersion
-					}
-				},
-				getEntry: function(key) {
-					return this[key];
-				}
-			};
-
-			assert.equal(Utils.getAppVersionFromManifest(oManifest), sAppVersion, "if the manifest object was passed");
-			assert.equal(Utils.getAppVersionFromManifest(oManifestJson), sAppVersion, "if the manifest json data was passed");
-			assert.equal(Utils.getAppVersionFromManifest(), "", "if nothing was passed, return empty string");
-		});
-
 		QUnit.test("getODataServiceUriFromManifest returns the OData service uri from manifest", function(assert) {
 			var oLogStub = sandbox.stub(Log, "warning");
 			var sUri = "ODataUri";
@@ -1717,91 +1690,6 @@ function(
 		});
 	});
 
-	QUnit.module("Utils.getValidAppVersions & isValidAppVersionToRequired", {}, function() {
-		QUnit.test("filling app version in case of a non-developer mode", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var oAppVersions = Utils.getValidAppVersions({
-				appVersion: sCreationVersion
-			});
-			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
-			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
-			assert.equal(oAppVersions.to, undefined, "the 'to' is not filled");
-		});
-
-		QUnit.test("filling app version in case of a developer mode without a scenario mentioned", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var oAppVersions = Utils.getValidAppVersions({appVersion: sCreationVersion, developerMode: true});
-			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
-			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
-			assert.equal(oAppVersions.to, sCreationVersion, "the 'to' is  filled correctly");
-		});
-
-		QUnit.test("filling app version in case of a developer mode and a versioned app variant scenario", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var oAppVersions = Utils.getValidAppVersions({
-				appVersion: sCreationVersion,
-				developerMode: true,
-				scenario: Scenario.VersionedAppVariant
-			});
-			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
-			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
-			assert.equal(oAppVersions.to, sCreationVersion, "the 'to' is  filled correctly");
-		});
-
-		QUnit.test("filling app version in case of a developer mode and a app variant scenario", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var oAppVersions = Utils.getValidAppVersions({
-				appVersion: sCreationVersion,
-				developerMode: true,
-				scenario: Scenario.AppVariant
-			});
-			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
-			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
-			assert.equal(oAppVersions.to, undefined, "the 'to' is not filled");
-		});
-
-		QUnit.test("filling app version in case of a developer mode and a adaptation project scenario", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var oAppVersions = Utils.getValidAppVersions({
-				appVersion: sCreationVersion,
-				developerMode: true,
-				scenario: Scenario.AdaptationProject
-			});
-			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
-			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
-			assert.equal(oAppVersions.to, undefined, "the 'to' is not filled");
-		});
-		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a non-developer mode", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion);
-			assert.equal(bIsValidAppVersionToRequired, false, "the necessity of 'to' correct defined");
-		});
-
-		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode without a scenario mentioned", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true);
-			assert.equal(bIsValidAppVersionToRequired, true, "the necessity of 'to' correct defined");
-		});
-
-		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode and a versioned app variant scenario", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, Scenario.VersionedAppVariant);
-			assert.equal(bIsValidAppVersionToRequired, true, "the necessity of 'to' correct defined");
-		});
-
-		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode and a app variant scenario", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, Scenario.AppVariant);
-			assert.equal(bIsValidAppVersionToRequired, false, "the necessity of 'to' correct defined");
-		});
-
-		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode and a adaptation project scenario", function(assert) {
-			var sCreationVersion = "1.0.0";
-			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, Scenario.AdaptationProject);
-			assert.equal(bIsValidAppVersionToRequired, false, "the necessity of 'to' correct defined");
-		});
-	});
-
 	QUnit.module("Utils.buildLrepRootNamespace", {
 		beforeEach: function() {
 			this.sErrorText = "Error in sap.ui.fl.Utils#buildLrepRootNamespace: ";
@@ -1885,39 +1773,6 @@ function(
 				Error(this.sNoBaseIdErrorText),
 				"without base id calling 'buildLrepRootNamespace' for no specific scenario throws an error"
 			);
-		});
-	});
-
-	QUnit.module("Utils.isCorrectAppVersionFormat", {
-		beforeEach: function() {},
-		afterEach: function() {}
-	}, function() {
-		QUnit.test("when called with an empty appversion", function(assert) {
-			assert.notOk(Utils.isCorrectAppVersionFormat(""), "then the format of the app version is not correct");
-		});
-
-		QUnit.test("when called with a number after the version", function(assert) {
-			assert.notOk(Utils.isCorrectAppVersionFormat("1.2.333336"), "then the format of the app version is not correct");
-		});
-
-		QUnit.test("when called with a dot after the version", function(assert) {
-			assert.notOk(Utils.isCorrectAppVersionFormat("1.2.33333.678"), "then the format of the app version is not correct");
-		});
-
-		QUnit.test("when called with more than 5 digits", function(assert) {
-			assert.notOk(Utils.isCorrectAppVersionFormat("1.222222.3"), "then the format of the app version is not correct");
-		});
-
-		QUnit.test("when called with a version without snapshot", function(assert) {
-			assert.ok(Utils.isCorrectAppVersionFormat("1.2.3"), "then the format of the app version is correct");
-		});
-
-		QUnit.test("when called with a version with snapshot", function(assert) {
-			assert.ok(Utils.isCorrectAppVersionFormat("1.2.3-SNAPSHOT"), "then the format of the app version is correct");
-		});
-
-		QUnit.test("when called with placeholder without a scenario", function(assert) {
-			assert.notOk(Utils.isCorrectAppVersionFormat("${project.version}"), "then the format of the app version is not valid");
 		});
 	});
 

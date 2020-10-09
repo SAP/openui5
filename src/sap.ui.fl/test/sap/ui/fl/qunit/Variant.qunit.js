@@ -85,14 +85,12 @@ sap.ui.define([
 		QUnit.test("when getDefinition is called", function(assert) {
 			this.oVariantDef.content.self = this.oVariantDef.content.namespace + this.oVariantDef.content.fileName + "." + "ctrl_variant";
 			this.oVariantDef.content.support.sapui5Version = sap.ui.version;
-			this.oVariantDef.content.validAppVersions = {};
 			assert.deepEqual(this.oVariant.getDefinition(), this.oVariantDef.content);
 		});
 
 		QUnit.test("when getDefinitionWithChanges is called", function(assert) {
 			this.oVariantDef.content.self = this.oVariantDef.content.namespace + this.oVariantDef.content.fileName + "." + "ctrl_variant";
 			this.oVariantDef.content.support.sapui5Version = sap.ui.version;
-			this.oVariantDef.content.validAppVersions = {};
 			this.oVariantDef.variantChanges = {};
 			assert.deepEqual(this.oVariant.getDefinitionWithChanges(), this.oVariantDef);
 		});
@@ -225,8 +223,7 @@ sap.ui.define([
 						service: "",
 						user: "",
 						sapui5Version: sap.ui.version
-					},
-					validAppVersions: {}
+					}
 				},
 				controlChanges: [],
 				variantChanges: {}
@@ -271,8 +268,7 @@ sap.ui.define([
 						service: "",
 						user: "",
 						sapui5Version: sap.ui.version
-					},
-					validAppVersions: {}
+					}
 				},
 				controlChanges: [],
 				variantChanges: {}

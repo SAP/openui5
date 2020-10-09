@@ -89,7 +89,6 @@ sap.ui.define([
 
 			this.oComponent = {
 				name: "MyComponent",
-				appVersion: "1.2.3",
 				getId: function() {
 					return "RTADemoAppMD";
 				},
@@ -1726,7 +1725,6 @@ sap.ui.define([
 			this.oVariantManagement = new VariantManagement("varMgmtRef1");
 			var oComponent = {
 				name: "MyComponent",
-				appVersion: "1.2.3",
 				getId: function() {
 					return "RTADemoAppMD";
 				},

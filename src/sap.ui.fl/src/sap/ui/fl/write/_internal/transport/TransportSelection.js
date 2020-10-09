@@ -365,7 +365,6 @@ sap.ui.define([
 	 * @param {Array} [aAppVariantDescriptors] - Array that includes all app variant descriptors
 	 * @param {object} oContentParameters - Object containing parameters added into the publish request
 	 * @param {string} oContentParameters.reference - Application ID of the changes which should be transported
-	 * @param {string} oContentParameters.appVersion - Version of the application for which the changes should be transported
 	 * @param {string} oContentParameters.layer - Layer in which the changes are stored
 	 * @returns {Promise} Promise which resolves without parameters
 	 */
@@ -378,7 +377,6 @@ sap.ui.define([
 		oTransportParams.transportId = oTransportInfo.transport;
 		oTransportParams.changeIds = aTransportData;
 		oTransportParams.reference = oContentParameters.reference;
-		oTransportParams.appVersion = oContentParameters.appVersion;
 		oTransportParams.layer = oContentParameters.layer;
 
 		return Transports.makeChangesTransportable(oTransportParams).then(function() {

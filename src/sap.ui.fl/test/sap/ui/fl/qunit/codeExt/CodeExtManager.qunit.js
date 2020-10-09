@@ -236,7 +236,6 @@ sap.ui.define([
 					},
 					oDataInformation: {},
 					dependentSelector: {},
-					validAppVersions: {},
 					jsOnly: false,
 					variantReference: ""
 				}, {
@@ -270,7 +269,6 @@ sap.ui.define([
 					},
 					oDataInformation: {},
 					dependentSelector: {},
-					validAppVersions: {},
 					jsOnly: false,
 					variantReference: ""
 				}]

@@ -132,14 +132,14 @@ sap.ui.define([
 		};
 
 		if (mPropertyBag.reference) {
-			var oChangePersistenceForAppDescriptorChanges = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference, mPropertyBag.appVersion);
+			var oChangePersistenceForAppDescriptorChanges = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
 			if (oChangePersistenceForAppDescriptorChanges.getDirtyChanges().length > 0) {
 				oDirtyChangesInfo.dirtyChangesExist = true;
 				oDirtyChangesInfo.changePersistences.push(oChangePersistenceForAppDescriptorChanges);
 			}
 		}
 		if (mPropertyBag.nonNormalizedReference) {
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.nonNormalizedReference, mPropertyBag.appVersion);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.nonNormalizedReference);
 			if (oChangePersistence.getDirtyChanges().length > 0) {
 				oDirtyChangesInfo.dirtyChangesExist = true;
 				oDirtyChangesInfo.changePersistences.push(oChangePersistence);
@@ -242,7 +242,6 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
 	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
-	 * @param {string} mPropertyBag.appVersion - Version of the app
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.title - Title of the to be activated version
 	 * @param {string} mPropertyBag.appComponent - Application Component
@@ -300,7 +299,6 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
 	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @param {string} mPropertyBag.appVersion - Version of the app
 	 * @returns {Promise<object>} Promise resolving to an object to indicate if a discarding took place on backend side and/or dirty changes were discarded;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */

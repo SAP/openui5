@@ -173,7 +173,6 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference - Flexibility reference
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer on which the reset should take place
 	 * @param {sap.ui.fl.Change[]} mPropertyBag.changes - Changes of the selected layer and flex reference
-	 * @param {string} [mPropertyBag.appVersion] - Version of the application
 	 * @param {string} [mPropertyBag.generator] - Generator with which the changes were created
 	 * @param {string[]} [mPropertyBag.selectorIds] - Selector IDs of controls for which the reset should filter
 	 * @param {string} [mPropertyBag.changeTypes] - Change types of the changes which should be reset
@@ -193,7 +192,6 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
 	 * @param {string} mPropertyBag.reference - Flex reference
 	 * @param {string} [mPropertyBag.url] - Configured url for the connector
-	 * @param {string} [mPropertyBag.appVersion] - Version of the application
 	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 	 */
 	Storage.getFlexInfo = function(mPropertyBag) {
@@ -221,7 +219,6 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.transportDialogSettings.styleClass - Style class name to be added in the TransportDialog
 	 * @param {string} mPropertyBag.layer - Working layer
 	 * @param {string} mPropertyBag.reference - Flex reference of the application
-	 * @param {string} mPropertyBag.appVersion - Version of the application for which the reset takes place
 	 * @param {sap.ui.fl.Change[]} mPropertyBag.localChanges - Local changes to be published
 	 * @param {object[]} [mPropertyBag.appVariantDescriptors] - An array of app variant descriptors which needs to be transported
 	 * @returns {Promise<string>} Promise that can resolve to the following strings:

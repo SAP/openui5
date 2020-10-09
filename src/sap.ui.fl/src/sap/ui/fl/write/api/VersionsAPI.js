@@ -15,22 +15,21 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function getReferenceAndAppVersion(oAppComponent) {
+	function getReference(oAppComponent) {
 		var sReference;
-		var sAppVersion;
 		if (oAppComponent) {
 			var oManifest = oAppComponent.getManifest();
 			sReference = ManifestUtils.getFlexReference({
 				manifest: oManifest,
 				componentData: oAppComponent.getComponentData()
 			});
-			sAppVersion = Utils.getAppVersionFromManifest(oManifest);
 		}
 
-		return {
-			reference: sReference,
-			appVersion: sAppVersion
-		};
+		if (!sReference) {
+			throw Error("The application ID could not be determined");
+		}
+
+		return sReference;
 	}
 
 	function getVersionsModel(mPropertyBag) {
@@ -42,13 +41,9 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
-		if (!oAppInfo.reference) {
-			throw Error("The application ID could not be determined");
-		}
 		return Versions.getVersionsModel({
-			reference : Utils.normalizeReference(oAppInfo.reference),
-			layer : mPropertyBag.layer
+			reference: Utils.normalizeReference(getReference(oAppComponent)),
+			layer: mPropertyBag.layer
 		});
 	}
 
@@ -82,13 +77,9 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
 
-		if (!oAppInfo.reference) {
-			return Promise.reject("The application ID could not be determined");
-		}
 		return Versions.initialize({
-			reference: Utils.normalizeReference(oAppInfo.reference),
+			reference: Utils.normalizeReference(getReference(oAppComponent)),
 			layer: mPropertyBag.layer
 		});
 	};
@@ -171,19 +162,19 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
-		if (!oAppInfo.reference) {
-			return Promise.reject("The application ID could not be determined");
-		}
-		return FlexState.clearAndInitialize({
-			componentId: oAppComponent.getId(),
-			reference: oAppInfo.reference,
-			version: mPropertyBag.version
+		return Promise.resolve()
+		.then(getReference.bind(undefined, oAppComponent))
+		.then(function (sReference) {
+			return FlexState.clearAndInitialize({
+				componentId: oAppComponent.getId(),
+				reference: sReference,
+				version: mPropertyBag.version
+			});
 		});
 	};
 
 	/**
-	 * Activates a draft version.
+	 * (Re-)activates a version.
 	 *
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
@@ -208,17 +199,17 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
-		if (!oAppInfo.reference) {
-			return Promise.reject("The application ID could not be determined");
-		}
-		return Versions.activateDraft({
-			nonNormalizedReference: oAppInfo.reference,
-			reference: Utils.normalizeReference(oAppInfo.reference),
-			appVersion: oAppInfo.appVersion,
-			layer: mPropertyBag.layer,
-			title: mPropertyBag.title,
-			appComponent: oAppComponent
+
+		return Promise.resolve()
+		.then(getReference.bind(undefined, oAppComponent))
+		.then(function (sReference) {
+			return Versions.activateDraft({
+				nonNormalizedReference: sReference,
+				reference: Utils.normalizeReference(sReference),
+				layer: mPropertyBag.layer,
+				title: mPropertyBag.title,
+				appComponent: oAppComponent
+			});
 		});
 	};
 
@@ -242,24 +233,24 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
-		if (!oAppInfo.reference) {
-			return Promise.reject("The application ID could not be determined");
-		}
-		return Versions.discardDraft({
-			nonNormalizedReference: oAppInfo.reference,
-			reference: Utils.normalizeReference(oAppInfo.reference),
-			layer: mPropertyBag.layer,
-			appVersion: oAppInfo.appVersion
-		}).then(function(oDiscardInfo) {
-			if (oDiscardInfo.backendChangesDiscarded) {
-				//invalidate flexState to trigger getFlexData for the current active version after discard
-				FlexState.clearAndInitialize({
-					componentId: oAppComponent.getId(),
-					reference: oAppInfo.reference
-				});
-			}
-			return oDiscardInfo;
+
+		return Promise.resolve()
+		.then(getReference.bind(undefined, oAppComponent))
+		.then(function (sReference) {
+			return Versions.discardDraft({
+				nonNormalizedReference: sReference,
+				reference: Utils.normalizeReference(sReference),
+				layer: mPropertyBag.layer
+			}).then(function(oDiscardInfo) {
+				if (oDiscardInfo.backendChangesDiscarded) {
+					//invalidate flexState to trigger getFlexData for the current active version after discard
+					FlexState.clearAndInitialize({
+						componentId: oAppComponent.getId(),
+						reference: sReference
+					});
+				}
+				return oDiscardInfo;
+			});
 		});
 	};
 

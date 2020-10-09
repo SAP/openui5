@@ -62,7 +62,6 @@ sap.ui.define([
 	 * @experimental Since 1.25.0
 	 * @param {object} mComponent Component data to initiate <code>ChangePersistence</code> instance
 	 * @param {string} mComponent.name Name of the component this instance is responsible for
-	 * @param {string} mComponent.appVersion Version of application
 	 */
 	var ChangePersistence = function(mComponent) {
 		this._mComponent = mComponent;
@@ -511,10 +510,8 @@ sap.ui.define([
 			var bNoFlPropagationListenerAttached = oAppComponent.getPropagationListeners().every(fnCheckIsNotFlPropagationListener);
 
 			if (bNoFlPropagationListenerAttached) {
-				var oManifest = oAppComponent.getManifestObject();
-				var sVersion = Utils.getAppVersionFromManifest(oManifest);
 				var oFlexControllerFactory = sap.ui.require("sap/ui/fl/FlexControllerFactory");
-				var oFlexController = oFlexControllerFactory.create(this.getComponentName(), sVersion);
+				var oFlexController = oFlexControllerFactory.create(this.getComponentName());
 				var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, this.getChangesMapForComponent.bind(this), oAppComponent, oFlexController);
 				fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 				oAppComponent.addPropagationListener(fnPropagationListener);
@@ -816,7 +813,6 @@ sap.ui.define([
 				},
 				layer: sLayer,
 				reference: this.getComponentName(),
-				appVersion: this._mComponent.appVersion,
 				localChanges: aLocalChanges,
 				appVariantDescriptors: aAppVariantDescriptors
 			});
@@ -911,7 +907,6 @@ sap.ui.define([
 		}).then(function(aChanges) {
 			var mParams = {
 				reference: this.getComponentName(),
-				appVersion: this._mComponent.appVersion,
 				layer: sLayer,
 				changes: aChanges
 			};

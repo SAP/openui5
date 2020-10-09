@@ -88,7 +88,6 @@ function(
 	 *
 	 * @param {map} mComponent - component map
 	 * @param {string} mComponent.name - Name of the application component
-	 * @param {string} mComponent.appVersion - Version of the application component
 	 * @param {object} oAppComponent - Application component
 	 * @return {Promise} Returns the promise resolved with the determined cache key
 	 *
@@ -122,7 +121,6 @@ function(
 	 *
 	 * @param {object} oComponent - Contains component data needed for adding change
 	 * @param {string} oComponent.name - Name of the component
-	 * @param {string} oComponent.appVersion - Current running version of application
 	 * @param {object} oChange - The change in JSON format
 	 * @public
 	 */
@@ -140,7 +138,6 @@ function(
 	 *
 	 * @param {object} oComponent - Contains component data needed for adding change
 	 * @param {string} oComponent.name - Name of the component
-	 * @param {string} oComponent.appVersion - Current running version of application
 	 * @param {object} oChange - The change in JSON format
 	 * @public
 	 */
@@ -164,7 +161,6 @@ function(
 	 *
 	 * @param {object} oComponent - Contains component data needed for adding change
 	 * @param {string} oComponent.name - Name of the component
-	 * @param {string} oComponent.appVersion - Current running version of application
 	 * @param {object} oChangeDefinition - The change in JSON format
 	 * @public
 	 */
@@ -188,7 +184,6 @@ function(
 	 *
 	 * @param {object} oComponent - Component data needed for adding change
 	 * @param {string} oComponent.name - Name of the component
-	 * @param {string} oComponent.appVersion - Current running version of application
 	 * @param {string[]} aChangeNames - Array of names of the changes to be deleted
 	 * @public
 	 */

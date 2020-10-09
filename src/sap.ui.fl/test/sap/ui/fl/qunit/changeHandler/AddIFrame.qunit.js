@@ -49,9 +49,6 @@ sap.ui.define([
 
 			var oChangeJson = {
 				reference: "sap.ui.fl.qunit.changeHander.AddIFrame",
-				validAppVersions: {
-					creation: "1.0.0"
-				},
 				selector: mExpectedSelector,
 				changeType: "addIFrame",
 				fileName: "AddIFrameChange",
@@ -116,9 +113,6 @@ sap.ui.define([
 			var oChangeJson = {
 				selector: mExpectedSelector,
 				reference: "sap.ui.fl.qunit.changeHander.AddIFrame",
-				validAppVersions: {
-					creation: "1.0.0"
-				},
 				changeType: "addIFrame",
 				fileName: "AddIFrameChange",
 				projectId: "projectId"
@@ -214,9 +208,6 @@ sap.ui.define([
 			var oChangeJson = {
 				selector: mExpectedSelector,
 				reference: "sap.ui.fl.qunit.changeHander.AddIFrame",
-				validAppVersions: {
-					creation: "1.0.0"
-				},
 				changeType: "AddIFrame",
 				fileName: "AddIFrameChange",
 				projectId: "projectId"

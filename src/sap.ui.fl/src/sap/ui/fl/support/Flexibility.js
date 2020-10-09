@@ -136,16 +136,13 @@ sap.ui.define([
 			var aApps = [];
 
 			if (ChangePersistenceFactory._instanceCache) {
-				jQuery.each(ChangePersistenceFactory._instanceCache, function (sReference, mInstancesOfVersions) {
-					jQuery.each(mInstancesOfVersions, function (sVersion, oChangePersistanceInstance) {
-						aApps.push({
-							key : sReference + this.sDelimiter + sVersion,
-							text : sReference,
-							additionalText : sVersion,
-							data: Extractor.extractData(oChangePersistanceInstance)
-						});
-					}.bind(this));
-				}.bind(this));
+				jQuery.each(ChangePersistenceFactory._instanceCache, function (sReference, oChangePersistanceInstance) {
+					aApps.push({
+						key : sReference,
+						text : sReference,
+						data: Extractor.extractData(oChangePersistanceInstance)
+					});
+				});
 			}
 
 			this._oStub.sendEvent(this.getId() + "SetApps", aApps);
@@ -161,8 +158,7 @@ sap.ui.define([
 			var sAppKey = oEvent.mParameters.appKey;
 			var aAppParameters = sAppKey.split(this.sDelimiter);
 			var sAppName = aAppParameters[0];
-			var sAppVersion = aAppParameters[1];
-			this._getChangesMapForApp(sAppName, sAppVersion);
+			this._getChangesMapForApp(sAppName);
 		};
 
 		/**
@@ -195,11 +191,10 @@ sap.ui.define([
 		 * Collect data of changes
 		 *
 		 * @param {string} sAppName Name of the application
-		 * @param {string} sAppVersion Version of the application
 		 *
 		 * @private
 		 */
-		Flexibility.prototype._getChangesMapForApp = function (sAppName, sAppVersion) {
+		Flexibility.prototype._getChangesMapForApp = function (sAppName) {
 			function _collectChangesData(mChanges, sControlId) {
 				mChangedControls[sControlId] = [];
 				var aChangesForControl = mChangeFromPersistence[sControlId];
@@ -336,7 +331,7 @@ sap.ui.define([
 			var mChanges = {};
 			var mChangedControls = {};
 			var aTreeNodes = [];
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppName, sAppVersion);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppName);
 			var mChangeFromPersistence = oChangePersistence._mChanges.mChanges;
 			var mDependencies = oChangePersistence._mChangesInitial.mDependencies;
 
