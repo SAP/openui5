@@ -95,7 +95,7 @@ sap.ui.define([
 			oRm.renderControl(oField);
 			oRm.close("span");
 			oRm.close("span");
-			if (oSettingsButton) {
+			if (oSettingsButton || oControl._hasDynamicValue()) {
 				oRm.openStart("span");
 				oRm.addClass("sapUiIntegrationCardEditorSettings");
 				oRm.writeClasses();
@@ -109,7 +109,6 @@ sap.ui.define([
 				oRm.writeClasses();
 				oRm.writeStyles();
 				oRm.openEnd();
-
 				oRm.renderControl(oDynamicField);
 				oRm.close("span");
 
@@ -160,7 +159,8 @@ sap.ui.define([
 		var sMode = this.getMode();
 		oConfig.allowSettings = oConfig.allowSettings || oConfig.allowSettings !== false && sMode === "admin";
 		oConfig.allowDynamicValues = oConfig.allowDynamicValues || oConfig.allowDynamicValues !== false;
-		if (oConfig.visible && oConfig.editable && (oConfig.allowDynamicValues || oConfig.allowSettings) && sMode !== "translation") {
+		oConfig._changeDynamicValues = oConfig.visible && oConfig.editable && (oConfig.allowDynamicValues || oConfig.allowSettings) && sMode !== "translation";
+		if (oConfig._changeDynamicValues) {
 			this._addSettingsButton();
 		}
 		this._applySettings(oConfig);
@@ -286,6 +286,9 @@ sap.ui.define([
 		var oDynamicField = this._getDynamicField(),
 			o = this.getModel("contextflat")._getValueObject(oData.value);
 		oDynamicField.removeAllTokens();
+		if (!this._getCurrentProperty("_changeDynamicValues")) {
+			oDynamicField.setEnabled(false);
+		}
 		if (o && o.path !== "empty") {
 			if (o.object.value && o.object.value.indexOf("{{") == 0) {
 				this._setCurrentProperty("value", o.object.value);

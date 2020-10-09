@@ -33,10 +33,12 @@ function switchTheme(oSelect) {
 }
 
 function init() {
-	updateAllLayerCard();
-	loadAllChanges();
-	//load common implementation for host testing
-	sap.ui.require(["testjs/HostImpl"]);
+	sap.ui.require(["sap-ui-integration-editor"], function () {
+		updateAllLayerCard();
+		loadAllChanges();
+		//load common implementation for host testing
+		sap.ui.require(["testjs/HostImpl"]);
+	});
 }
 
 function getItem(id) {
@@ -49,15 +51,7 @@ function showCurrentValues(id) {
 	alert(JSON.stringify(o, null, "\t"));
 }
 function saveCurrentValues(id) {
-	var o = document.getElementById(id).getCurrentSettings();
-	var editablecheckbox = document.getElementById(id + "-checkbox");
-	var visiblecheckbox = document.getElementById(id + "-checkbox-visible");
-	// if (editablecheckbox) {
-	// 	o[":designtime"] = {
-	// 		"/form/items/string/editable": !editablecheckbox.checked,
-	// 		"/form/items/string/visible": !visiblecheckbox.checked
-	// 	};
-	// }
+	var o = document.getElementById(id).getCurrentSettings()
 	localStorage.setItem(localStorageKey + id, JSON.stringify(o, null, "\t"));
 	updateAllLayerCard();
 }

@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/dom/includeStylesheet",
-	"sap/ui/dom/includeScript",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters"
 ], function (
@@ -43,7 +42,6 @@ sap.ui.define([
 	ResourceBundle,
 	URI,
 	includeStylesheet,
-	includeScript,
 	LoaderExtension,
 	Parameters
 ) {
@@ -59,8 +57,8 @@ sap.ui.define([
 		return z + 1;
 	}
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
-		CONTEXT_TIMEOUT = 5000;
-
+		CONTEXT_TIMEOUT = 5000,
+		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 	/**
 	 * Constructor for a new <code>Card Editor</code>.
@@ -225,7 +223,7 @@ sap.ui.define([
 		this._ready = false;
 		this._aFieldReadyPromise = [];
 		//load translations
-		this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		this._oResourceBundle = oResourceBundle;
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
 	};
@@ -624,49 +622,17 @@ sap.ui.define([
 		//get the context from the host
 		oContextDataPromise.then(function (oContextData) {
 			var oData = {};
-			oData["empty"] = {
-				label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_VAL"),
-				type: "string",
-				description: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_DESC"),
-				placeholder: "",
-				value: ""
-			};
+			//empty entry
+			oData["empty"] = CardEditor._contextEntries.empty;
+			//custom entries
 			for (var n in oContextData) {
 				oData[n] = oContextData[n];
 			}
-			oData["card.internal"] = {
-				label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_INTERNAL_VAL"),
-				todayIso: {
-					type: "string",
-					label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
-					description: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_DESC"),
-					tags: [],
-					placeholder: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
-					customize: ["format.dataTime"],
-					value: "{{parameters.TODAY_ISO}}"
-				},
-				nowIso: {
-					type: "string",
-					label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
-					description: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_DESC"),
-					tags: [],
-					placeholder: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
-					customize: ["dateFormatters"],
-					value: "{{parameters.NOW_ISO}}"
-				},
-				currentLanguage: {
-					type: "string",
-					label: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
-					description: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
-					tags: ["technical"],
-					customize: ["languageFormatters"],
-					placeholder: this._oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
-					value: "{{parameters.LOCALE}}"
-				}
-			};
+			//card internal
+			oData["card.internal"] = CardEditor._contextEntries.cardinternal;
 			oContextModel.setData(oData);
 			oFlatContextModel.setData(flattenData(oData, "label"));
-		}.bind(this));
+		});
 
 		//async update of the value via host call
 		oContextModel.getProperty = function (sPath, oContext) {
@@ -844,6 +810,10 @@ sap.ui.define([
 			return;
 		}
 		if (sMode === "translation") {
+			if (typeof oConfig.value === "string" && oConfig.value.indexOf("{") === 0) {
+				//do not show dynamic values for translation
+				return;
+			}
 			//adding an internal _language object to save the original value for the UI
 			oConfig._language = {
 				value: oConfig.value
@@ -926,7 +896,7 @@ sap.ui.define([
 					type: "group",
 					cols: 1,
 					translatable: true,
-					label: this._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG")
+					label: oResourceBundle.getText("CARDEDITOR_ORIGINALLANG")
 				});
 				this._addItem({
 					type: "group",
@@ -1063,7 +1033,7 @@ sap.ui.define([
 					oItem.type = "string";
 				}
 				//only if the value is undefined from the this._manifestModel.getProperty(oItem.manifestpath)
-				//false, "", 0... are valid values and should not apply the default.
+				//false, "", 0... are valid values and should not apply the default
 				if (oItem.value === undefined || oItem.value === null) {
 					switch (oItem.type) {
 						case "boolean": oItem.value = oItem.defaultValue || false; break;
@@ -1160,7 +1130,7 @@ sap.ui.define([
 			if (!oSettings.form.items["destination.group"]) {
 				//destination section separated by a group header
 				oSettings.form.items["destination.group"] = {
-					label: this._oResourceBundle.getText("CARDEDITOR_DESTINATIONS") || "Destinations",
+					label: oResourceBundle.getText("CARDEDITOR_DESTINATIONS") || "Destinations",
 					type: "group",
 					visible: true
 				};
@@ -1210,10 +1180,51 @@ sap.ui.define([
 		}
 		return false;
 	};
+
+	//create static context entries
+	CardEditor._contextEntries =
+	{
+		empty: {
+			label: oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_VAL"),
+			type: "string",
+			description: oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_DESC"),
+			placeholder: "",
+			value: ""
+		},
+		cardinternal: {
+			label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_INTERNAL_VAL"),
+			todayIso: {
+				type: "string",
+				label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
+				description: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_DESC"),
+				tags: [],
+				placeholder: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
+				customize: ["format.dataTime"],
+				value: "{{parameters.TODAY_ISO}}"
+			},
+			nowIso: {
+				type: "string",
+				label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
+				description: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_DESC"),
+				tags: [],
+				placeholder: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
+				customize: ["dateFormatters"],
+				value: "{{parameters.NOW_ISO}}"
+			},
+			currentLanguage: {
+				type: "string",
+				label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+				description: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+				tags: ["technical"],
+				customize: ["languageFormatters"],
+				placeholder: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+				value: "{{parameters.LOCALE}}"
+			}
+		}
+	};
 	//map of language strings in their actual language representation, initialized in CardEditor.init
 	CardEditor._languages = {};
-	//map of predefined parameters in the card, initialized in CardEditor.init
-	CardEditor._predefinedParameters = {};
+
 	//theming from parameters to css valiables if css variables are not turned on
 	//find out if css vars are turned on
 	CardEditor._appendThemeVars = function () {
@@ -1235,15 +1246,10 @@ sap.ui.define([
 		oStyle.innerHTML = ".sapUiIntegrationCardEditor,.sapUiIntegrationFieldSettings {" + aVars.join(";") + "}";
 		document.body.appendChild(oStyle);
 	};
+
 	//initializes global settings
 	CardEditor.init = function () {
 		this.init = function () { }; //replace self
-		function load() {
-
-			sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"]);
-		}
-		var sUrl = LoaderExtension.resolveUI5Url("ui5://sap-ui-integration-editor.js");
-		includeScript(sUrl, "sap-ui-integration-editor", load, load);
 
 		//add theming variables if css vars are not turned on
 		if (!window.getComputedStyle(document.documentElement).getPropertyValue('--sapBackgroundColor')) {
@@ -1252,7 +1258,7 @@ sap.ui.define([
 				CardEditor._appendThemeVars();
 			});
 		}
-		//TODO: This should be replaced with a themable .less file
+
 		var sCssURL = sap.ui.require.toUrl("sap.ui.integration.designtime.editor.css.CardEditor".replace(/\./g, "/") + ".css");
 		includeStylesheet(sCssURL);
 		LoaderExtension.loadResource("sap/ui/integration/designtime/editor/languages.json", {
@@ -1261,13 +1267,6 @@ sap.ui.define([
 			async: true
 		}).then(function (o) {
 			CardEditor._languages = o;
-		});
-		LoaderExtension.loadResource("sap/ui/integration/designtime/editor/predefinedParameters.json", {
-			dataType: "json",
-			failOnError: false,
-			async: true
-		}).then(function (o) {
-			CardEditor._predefinedParameters = o;
 		});
 	};
 	CardEditor.init();

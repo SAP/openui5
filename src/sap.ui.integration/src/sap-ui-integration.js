@@ -3,7 +3,7 @@
  */
 
 /*
- * Bootstrap to use sap ui integration in a HTML page in local evironment
+ * Bootstrap to use sap ui integration in a HTML page in local environment
  *
  * CAUTION: This file is only used in local test environments and cause individual loading of required files
  *          In production this file is replaced with an optimized bundling needed for Cards.
@@ -58,17 +58,17 @@
 
 		function listener(e) {
 			pending--;
-			if ( e.type === 'error' ) {
+			if (e.type === 'error') {
 				errors++;
 			}
 			e.target.removeEventListener("load", listener);
 			e.target.removeEventListener("error", listener);
-			if ( pending === 0 && errors === 0 && callback ) {
+			if (pending === 0 && errors === 0 && callback) {
 				callback();
 			}
 		}
 
-		for ( var i = 0; i < urls.length; i++ ) {
+		for (var i = 0; i < urls.length; i++) {
 			var script = document.createElement("script");
 			script.addEventListener("load", listener);
 			script.addEventListener("error", listener);
@@ -85,7 +85,7 @@
 		aPolyfills.push("sap/ui/thirdparty/es6-promise.js");
 		aPolyfills.push("sap/ui/thirdparty/es6-shim-nopromise.js");
 	} else if (/(edge)[ \/]([\w.]+)/i.test(window.navigator.userAgent) ||
-			/Version\/(11\.0).*Safari/.test(window.navigator.userAgent)) {
+		/Version\/(11\.0).*Safari/.test(window.navigator.userAgent)) {
 		// for Microsoft Edge and Safari 11.0 the Promise polyfill is still needed
 		aPolyfills.push("sap/ui/thirdparty/es6-promise.js");
 	}
