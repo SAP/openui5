@@ -4,210 +4,116 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>SAPUI5 Testsuite</title>
-		<script src="../sap/ui/core/shared-config.js"></script>
+		<link rel="stylesheet" id="sap-ui-theme-sap.ui.core" href="../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+		<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../resources/sap/ui/layout/themes/sap_fiori_3/library.css">
+		<link rel="stylesheet" id="sap-ui-theme-sap.m" href="../../resources/sap/m/themes/sap_fiori_3/library.css">
+		<link rel="stylesheet" href="styles/main.css">
 		<script id="sap-ui-bootstrap"
 				src="../../resources/sap-ui-core.js"
-				data-sap-ui-libs="">
-		</script>
-		<script src="js/testfwk.js"></script>
-		<script>
-
-			window.resize = onResizePage;
-
-			var testfwk = sap.ui.testfwk.TestFWK;
-
-			var settingsURL = "settings.html";
-			var traceURL = "trace.html";
-
-			function _onload() {
-
-				var oSettingsWindow = top.frames['sap-ui-SettingsWindow'],
-					oContentWindow = top.frames['sap-ui-ContentWindow'],
-					oTraceWindow = window.top.frames['sap-ui-TraceWindow'];
-
-				oSettingsWindow.location.href = settingsURL;
-				oTraceWindow.location.href = traceURL;
-
-				window.addEventListener("popstate", function(evt) {
-					var sURL = evt.state;
-					if (!sURL) { // can happen when the user directly launches the testsuite with a hash: the browser still creates a history entry with no hash and no data
-						sURL = "../testsuite/welcome.html"; // for this additional history entry, just add the homepage as initial page
-						window.history.replaceState(sURL, null, document.location.href.split("#")[0]);
-					}
-					oContentWindow.document.location.replace(sURL);
-				});
-
-				testfwk.init(oContentWindow);
-
-				var sURL = top.location.hash;
-				if ( sURL && (sURL.match(/^#(\.\.)?\/\w/)) ) { // load a specific page initially, only server-absolute and ascending relative local URLs (/bla or ../bla)
-					sURL = sURL.substring(1); // remove the hash
-
-					// try to find out which library the page belongs to, in order to allow and set the appropriate themes
-					var themeConstraints = null;
-					var m = sURL.match(/.*\/test-resources\/(.*)\/[^\/]+.html/);
-					if (m && (m.length > 1)) {
-						var libName = m[1].replace(/\//g,".");
-						var themes = testfwk.LIBRARY_THEMES[libName]; // try to get theme information for the current library
-						themeConstraints = themes || testfwk.LIBRARY_THEMES["all"]; // use the found config - or "all themes" if nothing was found
-					}
-					testfwk.setContentURL(sURL, themeConstraints);
-
-					// The Theme ComboBox should be updated accordingly, but is usually not instantiated yet... just use a timeout to make it work in most cases
-					if (testfwk.mThemeConfigListeners.length === 0) { // ComboBox does not listen yet
-						window.setTimeout(function(){
-							testfwk.fireThemeConfigurationChanged.apply(testfwk);
-						}, 2000)
-					}
-
-				} else { // load the welcome page initially
-					sURL = "welcome.html";
-					var loc = top.location.pathname;
-					var index = loc.indexOf("testframe.html");
-					if (index > -1) { // try to build an absolute URL, so settings changes do not lead to a 404 on the initial screen
-						sURL = loc.substr(0, index) + "welcome.html";
-					}
-					testfwk.setContentURL(sURL, null); // no theme constraints
-				}
-
-				setTimeout(onResizePage, 10);
-			}
-
-			function onResizePage() {
-				var oTitleWindow = top.frames['sap-ui-TitleWindow'],
-					oSampleWindow = top.frames['sap-ui-SampleWindow'],
-					oSettingsWindow = top.frames['sap-ui-SettingsWindow'],
-					oContentWindow = top.frames['sap-ui-ContentWindow'],
-					oTraceWindow = top.frames['sap-ui-TraceWindow'],
-					oControlTreeWindow = top.frames['sap-ui-ControlTreeWindow'],
-					oPropertyListWindow = top.frames['sap-ui-PropertyListWindow'];
-
-				if (oSampleWindow && oTraceWindow && oControlTreeWindow && oPropertyListWindow) {
-					var middleX0 = oSampleWindow.frameElement ? (oSampleWindow.frameElement.offsetWidth+2) : oSampleWindow.innerWidth;
-					var rightX0 = middleX0 + oTraceWindow.frameElement ? (oTraceWindow.frameElement.offsetWidth+2) : oTraceWindow.innerWidth;
-
-					oTraceWindow.document.body.style.backgroundPosition = '-' + middleX0 + 'px 0px';
-					oControlTreeWindow.document.body.style.backgroundPosition = '-' + rightX0 + 'px 0px';
-					oPropertyListWindow.document.body.style.backgroundPosition = '-' + rightX0 + 'px 0px';
-				}
-			};
-
-			function setFrameLayout(layout) {
-				var oOuterFrameset = document.getElementById('sap-ui-testsuite-outer');
-				var oMiddleFrameset = document.getElementById('sap-ui-testsuite-middle');
-				frameLayout = layout;
-				switch (layout) {
-					case "newwindow":
-						// theme is not set via URL parameter and reload, but directly via JS API, so the URL to open now needs to be adapted
-						var url = window.frames['sap-ui-ContentWindow'].document.location.href.replace(/&?sap-ui-theme=[^&#]+/g, ""); // remove old theme
-						if (url.indexOf("?") > -1) {
-							url += "&";
-						} else {
-							url += "?";
-						}
-						window.open(url + "sap-ui-theme=" + testfwk.getTheme(), '_blank');
-						break;
-					case "sampleonly":
-						oOuterFrameset.cols = "0,*,0";
-						oMiddleFrameset.rows = "*,0";
-						break;
-					case "sampletree":
-						oOuterFrameset.cols = "250,*,0";
-						oMiddleFrameset.rows = "*,0";
-						break;
-					case "controltree":
-						oOuterFrameset.cols = "0,*,220";
-						oMiddleFrameset.rows = "*,0";
-						break;
-					case "full":
-						oOuterFrameset.cols = "250,*,220";
-						oMiddleFrameset.rows = "*,250";
-						break;
-				}
-
-				onResizePage();
-				// Safari 4 bug: doesn't update/refresh the frameset --> do a resize. Timeout is necessary otherwise Safari didn't refresh the window
-				if (jQuery.browser.webkit && (jQuery.browser.version.indexOf("4") == 0)) { // only in Safari 4
-					window.resizeBy(-1, 0);
-					window.setTimeout("window.resizeBy(1, 0)", 1);
-				}
-			}
-
-			function createFrameset() {
-				var out=[];
-				out.push('<frameset rows="30,*" style="border:none" onload="_onload();" frameborder="0" framespacing="0" border="0">');
-					out.push('<frame src="title.html" scrolling="no" name="sap-ui-TitleWindow" noresize="noresize" frameborder="0" border="0"/>');
-					out.push('<frameset id="sap-ui-testsuite-outer" cols="250,*,220" frameborder="0" framespacing="0" border="0" name="OuterFrameset" >');
-						out.push('<frameset id="sap-ui-testsuite-left" rows="*,360" style="border:1px solid #c0c0c0" frameborder="0" framespacing="0" border="0">');
-							out.push('<frame src="samples.html" scrolling="no" frameborder="0" name="sap-ui-SampleWindow" />');
-				            out.push('<frame scrolling="no" src="', settingsURL, '" frameborder="0" name="sap-ui-SettingsWindow" />');
-				        out.push('</frameset>');
-				        out.push('<frameset id="sap-ui-testsuite-middle" name="Content" rows="*,250" style="border:1px solid #c0c0c0" frameborder="0" framespacing="0" border="0">');
-				            out.push('<frame name="sap-ui-ContentWindow" frameborder="0" scrolling="auto" onload="testfwk.onContentLoad();" />');
-				            out.push('<frame name="sap-ui-TraceWindow" src="', traceURL, '" frameborder="0" scrolling="no" />');
-				        out.push('</frameset>');
-				        out.push('<frameset id="sap-ui-testsuite-right" rows="50%,*" style="border:1px solid #c0c0c0" frameborder="0" framespacing="0" border="0">');
-				            out.push('<frame src="controltree.html" name="sap-ui-ControlTreeWindow" frameborder="0" scrolling="no" />');
-				            out.push('<frame src="properties.html" name="sap-ui-PropertyListWindow" frameborder="0" scrolling="no"/>');
-				        out.push('</frameset>');
-					out.push('</frameset>');
-				out.push('</frameset>');
-
-				var sHTML = out.join("\n");
-				var oOldElem = document.getElementsByTagName("body")[0];
-				var oTemp = document.createElement("div");
-				oTemp.innerHTML = sHTML;
-				var oNewRef = oTemp.childNodes[0];
-				var oParentRef = oOldElem.parentNode;
-				oParentRef.replaceChild(oNewRef, oOldElem);
-			}
-
-			function editInSnippix() {
-				var snippixBaseUrl = "/snippix/"; /* always use the central snippix to avoid spreading snippets across multiple servers; the correct server is ensured when the button is present */
-				var url = window.frames['sap-ui-ContentWindow'].document.location.href;
-				url = url.replace(/%/g, "%25").replace(/\?/g, "%3F").replace(/&/g, "%26").replace(/#/g, "%23"); // escape special characters in URL
-				window.open(snippixBaseUrl + "?url=" + url, '_blank');
-			}
-
-			function openInDeviceSimulator() {
-				var baseUrl = "../../DeviceSimulator.html";
-				var url = window.frames['sap-ui-ContentWindow'].document.location.href;
-				url = url.replace(/%/g, "%25").replace(/\?/g, "%3F").replace(/&/g, "%26").replace(/#/g, "%23"); // escape special characters in URL
-				window.open(baseUrl + "?url=" + url, '_blank');
-			}
-
-			function redirectToTestrunner() {
-
-				var sContentUrl = sap.ui.testfwk.TestFWK.getContentURL(),
-				    aMatches = /.*\/test-resources\/(.*\.qunit\.html)$/i.exec(sContentUrl)
-				    sTestPage = aMatches && aMatches[0],
-				    sTestrunnerUrl = "../sap/ui/qunit/testrunner.html" + (sTestPage ? "?testpage=" + encodeURIComponent(sTestPage) : ""),
-
-				window.open(sTestrunnerUrl);
-
-			}
-
+				data-sap-ui-async="true"
+				data-sap-ui-theme="sap_fiori_3"
+				data-sap-ui-modules="test-resources.testsuite.js.testframe,sap.m.library,sap.ui.layout.library"
+				data-sap-ui-resourceroots='{"test-resources":"../"}'>
 		</script>
 	</head>
+	<body>
+		<div class="mainLayoutContainer full">
+			<div id="sap-ui-TitleWindow" class="banner">
+				<img src="../../resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png" style="position:absolute; left:10px;height:30px;" alt="SAPUI5">
+				<div style="position:absolute;top:9px;left:105px">Testsuite</div>
+				<div style="position:absolute;bottom:10px;right:350px">UI5 version ${version}</div>
+				<img src="images/newwindow.png" data-layout="newwindow" class="btn" style="right:310px;" title="Open this sample in a new window.">
+				<img src="images/sampletree.png" data-layout="sampletree" class="btn" style="right:280px;" title="Sample Tree">
+				<img src="images/sampleonly.png" data-layout="sampleonly" class="btn" style="right:250px;" title="Sample Only">
+				<img src="images/controltree.png" data-layout="controltree" class="btn" style="right:220px;" title="Control Tree">
+				<img src="images/full.png" data-layout="full" class="btn" style="right:190px;" title="Full Testsuite">
+				<img src="images/edit.png" id="snippixButton" class="btn" style="right:160px;display:none;" title="Edit in Snippix">
+				<img src="images/jsunit.png" id="jsunit" class="btn" style="right:130px;" title="Open QUnit Testrunner">
+				<img src="../../resources/sap/ui/core/mimes/logo/sap_73x36.gif" style="position:absolute; right:10px;height:30px;" alt="SAP SE">
+			</div>
+			<div id="sap-ui-SampleWindow" class="expanded">
+				<h2>Tests &amp; Samples
+					<span id="refreshTests" title="Refresh List of TestStarter tests (expensive)" class="icon">&#xe010;</span>
+					<span class="expander" data-expands="sap-ui-SampleWindow">&#xe076;</span>
+				</h2>
+				<div id="toolbar" class="toolbar" style="float:right;">
+					<span>Filter: </span>
+					<input tabindex="2" id="filter" title="Filter tests by name or path">
+					<span id="clearFilter" class="icon" title="Clear filter">&#xe249;</span>
+				</div>
+				<div id="samples" class="scrollpanel">
 
-	<!-- replaced by the dynamically created frameset above -->
-	<frameset rows="35,*" style="border:none" onload="_onload();" frameborder="0" framespacing="0" border="0">
-		<frame src="title.html" scrolling="no" name="sap-ui-TitleWindow" noresize="noresize" frameborder="0" border="0"/>
-		<frameset id="sap-ui-testsuite-outer" cols="250,*,220" frameborder="0" framespacing="0" border="0" name="OuterFrameset" >
-			<frameset id="sap-ui-testsuite-left" rows="*,360" style="border:1px solid #c0c0c0" frameborder="0" framespacing="0" border="0">
-				<frame src="samples.html" scrolling="auto" frameborder="0" name="sap-ui-SampleWindow" />
-	            <frame scrolling="no" frameborder="0" name="sap-ui-SettingsWindow" src="empty.html" />
-	        </frameset>
-	        <frameset id="sap-ui-testsuite-middle" name="Content" rows="*,250" style="border:1px solid #c0c0c0" frameborder="0" framespacing="0" border="0">
-	            <frame name="sap-ui-ContentWindow" frameborder="0" scrolling="auto" onload="testfwk.onContentLoad();" />
-	            <frame name="sap-ui-TraceWindow" src="empty.html" frameborder="0" scrolling="no" />
-	        </frameset>
-	        <frameset id="sap-ui-testsuite-right" rows="50%,*" style="border:1px solid #c0c0c0" frameborder="0" framespacing="0" border="0">
-	            <frame src="controltree.html" name="sap-ui-ControlTreeWindow" frameborder="0" scrolling="no" />
-	            <frame src="properties.html" name="sap-ui-PropertyListWindow" frameborder="0" scrolling="no"/>
-	        </frameset>
-		</frameset>
-	</frameset>
-	<!-- -->
+					<div id="library-tests-node" class='node section expanded'>
+						<div class="caption">
+							<span>Library Tests</span>
+							<span class="matches"></span>
+						</div>
+						<div id="library-tests" class="children">
+						</div>
+					</div>
 
+					<div id="application-pages-node" class='node section expanded'>
+						<div class="caption">
+							<span>Application Pages</span>
+							<span class="matches"></span>
+						</div>
+						<div id="application-pages" class="children">
+						</div>
+					</div>
+
+					<div id="custom-tests-node" class='node section expanded'>
+						<div class="caption">
+							<span>Custom Tests</span>
+							<span class="matches"></span>
+						</div>
+						<div id="custom-tests" class="children">
+							<span id="custom-tests-empty" class="info-msg">none so far...</span>
+							<div id="add-custom-test" style="padding-left:10px;margin-top:10px" >
+								<label>URL to HTML resource:</label>
+								<div>
+									<input id="sampleurl" value="">
+									<button id="add-sampleurl">Add</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="sap-ui-SettingsWindow">
+				<h2>Settings</h2>
+				<div id="uiArea1" class="sapUiSizeCompact"></div>
+			</div>
+			<div id="sap-ui-ContentWindow">
+				<iframe id="sap-ui-ContentWindowFrame" src="welcome.html"></iframe>
+			</div>
+			<div id="sap-ui-TraceWindow" class="collapsed">
+				<div class="expander" data-expands="sap-ui-TraceWindow">&#xe0a6;</div>
+				<div id="trace-toolbar" class="toolbar">
+					<span id="clear" class="icon" title="Clear">&#xe03d;</span>
+					<select id="loglevel" title="Select the recording level of the sample page loggers">
+						<option value="-1">NONE</option>
+						<option value="0">FATAL</option>
+						<option value="1">ERROR</option>
+						<option value="2">WARNING</option>
+						<option value="3" selected>INFO</option>
+						<option value="4">DEBUG</option>
+						<!-- <option value="5">FINE</option> -->
+						<option value="6">ALL</option>
+					</select>
+					<input id="filterString" type="text" placeholder="Filter" title="Show only those entries that contain the given text">
+					<span id="resetFilter" class="icon">&#xe249;</span>
+				</div>
+				<div id="sap-ui-TraceWindowRoot" class="logviewer scrollpanel">
+				</div>
+			</div>
+			<div id="sap-ui-ControlTreeWindow">
+				<h2>Control Tree</h2>
+				<div id="sap-ui-ControlTreeRoot" class="scrollpanel"></div>
+			</div>
+			<div id="sap-ui-PropertyListWindow">
+				<h2>Properties</h2>
+				<div id="sap-ui-PropertyWindowRoot" class="scrollpanel"></div>
+			</div>
+		</div>
+	</body>
 </html>

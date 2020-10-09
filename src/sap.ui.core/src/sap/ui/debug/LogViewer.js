@@ -19,7 +19,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 	 */
 	var LogViewer = function(oWindow, sRootId) {
 		this.oWindow = oWindow;
-		this.oDomNode = oWindow.document.getElementById(sRootId);
+		this.oDomNode = oWindow.querySelector("#" + sRootId);
 		if (!this.oDomNode) {
 			var oDiv = this.oWindow.document.createElement("DIV");
 			oDiv.setAttribute("id", sRootId);
@@ -70,7 +70,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 	 */
 	LogViewer.prototype.addEntry = function(oLogEntry) {
 
-		var oDomEntry = this.oWindow.document.createElement("div");
+		var oDomEntry = this.oWindow.ownerDocument.createElement("div");
 
 		// style the entry
 		if ( this.sLogEntryClassPrefix ) {
@@ -86,7 +86,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 
 		// create text as text node
 		var sText = LogViewer.xmlEscape(oLogEntry.time + "  " + oLogEntry.message),
-			oTextNode = this.oWindow.document.createTextNode(sText);
+			oTextNode = this.oWindow.ownerDocument.createTextNode(sText);
 		oDomEntry.appendChild(oTextNode);
 		oDomEntry.title = oLogEntry.message;
 

@@ -1,8 +1,6 @@
-* {
-	font-family: Arial;
-}
-
-HTML,BODY {
+html,body {
+	font-size: 1rem;
+	font-family: "72","72full",Arial,Helvetica,sans-serif;
 	border-style: none;
 	margin: 0px;
 	padding: 0px;
@@ -10,197 +8,189 @@ HTML,BODY {
 	height: 100%;
 }
 
-BODY {
-	font: 14px Arial, Helvetica;
+body {
+	/* make the body always fill the client window */
+	display: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+
+	color: #32363a;
+	background-color: #f7f7f7;
+}
+
+/* ---------------------------------------
+ * Main Layout Container
+ * --------------------------------------- */
+
+.mainLayoutContainer {
+	display: grid;
+	display: -ms-grid;
+	grid-gap: 0.5rem;
+	-ms-grid-gap: 0.5rem;
+	width: 100%;
+	height: 100%;
+}
+
+.mainLayoutContainer > div {
+	position: relative;
 	background-color: white;
+	box-shadow: 0 0 0 0.0625rem rgba(0,0,0,0.1), 0 0.125rem 0.5rem 0 rgba(0,0,0,0.1);
+	border-radius: .25rem;
+	border: .0625rem solid transparent;
 }
 
-BODY.banner {
-	color:#666;
-	border-bottom:5px solid #009de0;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	font-weight:bold;
-
-	/* Blue Crystal header style */
-	background-color: #f2f2f2;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#f7f7f7,endColorstr=#ededed,GradientType=0);
-	background: -ms-linear-gradient(top,#f7f7f7 0,#f2f2f2 33%,#f2f2f2 75%,#ededed 100%);
-	background: -webkit-gradient(linear,left top,left bottom,color-stop(0,#f7f7f7),color-stop(0.33,#f2f2f2),color-stop(0.75,#f2f2f2),color-stop(1,#ededed));
-	background-image: -webkit-linear-gradient(top,#f7f7f7 0,#f2f2f2 33%,#f2f2f2 75%,#ededed 100%);
-	background: linear-gradient(top,#f7f7f7 0,#f2f2f2 33%,#f2f2f2 75%,#ededed 100%);
+#sap-ui-TitleWindow {
+	grid-column: 1 / 4;
+	grid-row: 1 / 1;
+	-ms-grid-column: 1;
+	-ms-grid-column-span: 4;
+	-ms-grid-row: 1;
 }
 
-BODY.banner > img.btn {
-	position:absolute;
-	cursor:pointer;
-	width:20px;
-	height:20px;
-	top: 6px;
+#sap-ui-SampleWindow {
+	grid-column: 1;
+	grid-row: 2 / 4;
+	-ms-grid-column: 1;
+	-ms-grid-row: 2;
+	-ms-grid-row-span: 2;
 }
 
-BODY>#sap-ui-ide-less-mode {
-	display: none;
+#sap-ui-SettingsWindow {
+	grid-column: 1;
+	grid-row: 4;
+	-ms-grid-column: 1;
+	-ms-grid-row: 4;
+	-ms-grid-row-span: 2;
 }
 
-.border { /*font: 14px Arial, Helvetica;*/
-	/*background-color:blue;*/
-	border: 0px solid buttonshadow;
-	padding: 0px;
-	margin: 0px;
-	/*height:auto;*/
+#sap-ui-ContentWindow {
+	grid-column: 2;
+	grid-row: 2 / 4;
+	-ms-grid-column: 2;
+	-ms-grid-row: 2;
+	-ms-grid-row-span: 3;
 }
 
-.border.left {
-	margin-left: 4px;
-	margin-right: 4px;
-	/*border-left-width: 1px !important;*/
+#sap-ui-TraceWindow {
+	grid-column: 2;
+	grid-row: 4;
+	-ms-grid-column: 2;
+	-ms-grid-row: 4;
 }
 
-.border.bottom {
-	margin-bottom: 2px;
-	/*border-bottom-width: 1px !important;*/
+#sap-ui-ControlTreeWindow {
+	grid-column: 3;
+	grid-row: 2;
+	-ms-grid-column: 3;
+	-ms-grid-row: 2;
 }
 
-.border.top {
-	margin-top: 2px;
-	/*border-bottom-width: 1px !important;*/
-}
-
-.border.right {
-	margin-left: 4px;
-	margin-right: 4px;
-	/*border-left-width: 1px !important;*/
-}
-
-h1 {
-	font-size: 1.6em;
-	padding: 5px 5px 5px 0;
-	line-height: 125%;
-	color: rgb(100, 110, 120);
-}
-
-h2 {
-	font-weight: bold;
-	font-size: 1.2em;
-	padding: 5px 5px 5px 5px;
-	/* line-height: 125%;*/
-	color: rgb(100, 110, 120);
-}
-
-h2 div {
-	background-color: rgb(230, 240, 250);
-	/* width:100%;*/
-	vertical-align: middle;
-	padding-left: 10px
-}
-
-button {
-	border: gray 1px solid;
-	font-size: 8pt;
-	background-color: #d0d0d0;
-	height: 20px;
-	margin-top: 2px;
-	vertical-align: top;
-	display: inline-block;
-}
-
-BODY.welcome {
-	background-color: rgb(253, 253, 253);
-	background-image: none !important;
-	width: 98% !important;
-	height: 95% !important;
-	margin-top: 5px;
-	margin-left: 5px;
-	padding-bottom: 20px;
-	text-align: left;
-	color: black;
+#sap-ui-PropertyListWindow {
+	grid-column: 3;
+	grid-row: 3 / 5;
+	-ms-grid-column: 3;
+	-ms-grid-row: 3;
+	-ms-grid-row-span: 3;
 }
 
 /*
- * FOOTER STYLES
+ * Layout variant which shows only the current sample page only
  */
-#footer-wrapper {
-	clear: both;
-	margin: 0;
-	height: 29px;
-	width: 100%;
-	border-top: 3px solid #009de0;
+.mainLayoutContainer.sampleonly {
+	grid-template-columns: 0 auto 0;
+	grid-template-rows: 35px auto 0 0;
+	-ms-grid-columns: 0 1fr 0;
+	-ms-grid-rows: 35px 1fr 0 0;
 }
 
-#footer-left,#footer-right {
-	margin: 0;
-	font-size: 85%;
-	padding: 1em;
-	height: 29px;
+.mainLayoutContainer.sampleonly #sap-ui-SampleWindow,
+.mainLayoutContainer.sampleonly #sap-ui-SettingsWindow,
+.mainLayoutContainer.sampleonly #sap-ui-TraceWindow,
+.mainLayoutContainer.sampleonly #sap-ui-ControlTreeWindow,
+.mainLayoutContainer.sampleonly #sap-ui-PropertyListWindow {
+	display: none;
 }
 
-#footer-left {
-	text-align: left;
-	position: relative;
-	left: 0;
-	float: left;
+/*
+ * Layout variant which shows the tree of samples and the sample
+ */
+.mainLayoutContainer.sampletree {
+	grid-template-columns: 16rem auto 0;
+	grid-template-rows: 35px auto 100px 250px;
+	-ms-grid-columns: 16rem 1fr 0;
+	-ms-grid-rows: 35px 1fr 100px 250px;
 }
 
-#footer-right {
-	text-align: right;
-	position: relative;
-	right: 0;
-	float: right;
+.mainLayoutContainer.sampletree #sap-ui-ControlTreeWindow,
+.mainLayoutContainer.sampletree #sap-ui-PropertyListWindow {
+	display: none;
 }
 
-#header {
-	padding: 0;
-	background: url(../images/header-stretch.png) repeat-x;
-	height: 23px;
-	position: relative;
-	margin: 8px 0 0 0;
+.mainLayoutContainer.sampletree #sap-ui-ContentWindow {
+	grid-column: 2;
+	grid-row: 2 / 5;
+	-ms-grid-column: 2;
+	-ms-grid-row: 2;
+	-ms-grid-row-span: 4;
 }
 
-#header-left {
-	background-image: url(../images/header-stretch.png);
-	background-repeat: no-repeat;
-	background-position: top left;
-	font-size: 93%;
-	line-height: normal;
-	padding: 0 0 0 8px;
-	height: 23px;
-	position: relative;
-	float: left;
+.mainLayoutContainer.sampletree #sap-ui-TraceWindow {
+	display: none;
 }
 
-#header-right {
-	background-image: url(../images/header-stretch.png);
-	background-repeat: no-repeat;
-	background-position: top right;
-	font-size: 93%;
-	line-height: normal;
-	padding: 0 8px 0 0;
-	height: 23px;
-	position: relative;
-	float: right;
+/*
+ * Layout variant which shows the sample page and the control tree / control properties
+ */
+.mainLayoutContainer.controltree {
+	grid-template-columns: 0 auto 15rem;
+	grid-template-rows: 35px auto 100px 250px;
+	-ms-grid-columns: 0 1fr 15rem;
+	-ms-grid-rows: 35px 1fr 100px 250px;
 }
 
-.title {
-	display: block;
-	background-color: transparent;
+.mainLayoutContainer.controltree #sap-ui-SampleWindow,
+.mainLayoutContainer.controltree #sap-ui-SettingsWindow {
+	display: none;
+}
+
+.mainLayoutContainer.controltree #sap-ui-ContentWindow {
+	grid-column: 2;
+	grid-row: 2 / 5;
+	-ms-grid-column: 2;
+	-ms-grid-row: 2;
+	-ms-grid-row-span: 4;
+}
+
+.mainLayoutContainer.controltree #sap-ui-TraceWindow {
+	display: none;
+}
+
+/*
+ * Layout variant that shows all areas: sample tree, sample page, control tree & properties, log viewer
+ */
+.mainLayoutContainer.full {
+	grid-template-columns: 16rem auto 15rem;
+	grid-template-rows: 35px auto 100px 250px;
+	-ms-grid-columns: 16rem 1fr 15rem;
+	-ms-grid-rows: 35px 1fr 100px 250px;
+}
+
+h2 {
+	color: #0a6ed1;
 	font-weight: bold;
-	font-size: 1.2em;
-	padding: 5px 5px 5px 5px;
-	color: #444444;
+	font-size: 1rem;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 5px;
+	line-height: 1.2rem;
+	height: 2rem;
 }
 
-.section {
-	background-color: #e5e5e5;
-	vertical-align: middle;
-	padding-left: 10px;
-	margin: 5px;
-	padding: 3px 5px;
-	font-weight: bold;
-	cursor: pointer;
-	cursor: hand;
-}
+/* ---------------------------------------
+ * Common styles used in different areas
+ * --------------------------------------- */
 
 .scrollpanel {
 	background-color: transparent;
@@ -208,81 +198,295 @@ BODY.welcome {
 	/* height:100%; */
 }
 
-.tabstrip {
-	margin: 4px 0px 0px;
-	padding: 0px 2px;
-	height: 21px;
-	border-bottom: 1px solid buttonshadow;
-}
-
-.tab {
-	margin: 0px 1px;
-	padding: 3px 5px;
-	border: 1px solid buttonshadow;
-	float: left;
-	cursor: pointer;
-	cursor: hand;
-}
-
-.tab.selected {
-	background-color: buttonface !important;
-	color: #646E78;
-	font-weight: bold;
-	border-bottom-color: buttonface !important;
-}
-
-.tab.deselected { /* background-color: rgb(240,240,240); */
-	color: rgb(60, 60, 60);
-}
-
-.tab.disabled {
-	background-color: rgb(245, 245, 245);
-	color: rgb(180, 180, 180);
-}
-
 .toolbar {
-	border-style: solid none solid none;
-	border-width: 1px;
-	border-color: transparent;
-	background-color: transparent;
+	box-sizing: border-box;
+	font-size: 0.75rem;
 	padding: 2px;
 }
 
-.toolbar * {
-	font-size: 8pt;
+/* ---------------------------------------
+ * Title area styles
+ * --------------------------------------- */
+
+/* Note: selector must be more specific than .mainLayoutContainer > div */ 
+.mainLayoutContainer > div.banner {
+	border-radius: 0;
+	font-weight:bold;
+	color: #fafafa;
+	background-color: #3f5161;
+	text-shadow: 0 0 0.125rem #000;
+	box-shadow: inset 0 -0.0625rem #4f667a;
 }
 
-.toolbar BUTTON {
-	margin-right: 4px;
+.banner > img.btn {
+	position: absolute;
+	cursor: pointer;
+	width: 20px;
+	height: 20px;
+	top: 6px;
 }
 
-.clickable {
+/* ---------------------------------------
+ * Sample Tree area styles
+ * --------------------------------------- */
+
+#samples {
+	font-size: 0.8rem;
+	padding: 0 3px;
+	position: absolute;
+	box-sizing: border-box;
+	left: 2px;
+	right: 2px;
+	bottom: 2px;
+	overflow: auto;
+}
+
+#samples .node,
+#samples .leaf {
+	overflow: hidden;
+	white-space: nowrap;
+	margin: 4px 0 0 0;
+}
+
+#samples .node > .caption {
 	cursor: pointer;
 	cursor: hand;
+}
+
+#samples .node > .caption:before {
+	font-family: 'SAP-icons';
+	width: 1.2em;
+	display: inline-block;
+	text-align: center;
+}
+
+#samples .children {
+	margin-left: 1.2em;
+	font-style: normal;
+	cursor: default;
+}
+
+#samples .leaf:before {
+	content: '\2022';
+	width: 1.2em;
+	display: inline-block;
+	text-align: center;
+}
+
+#samples .leaf a {
+	color: black;
+	text-decoration: none;
+}
+
+#samples .leaf a:hover {
+	color: #0a6ed1;
+	text-decoration: underline;
+}
+
+#samples .node.expanded > .children {
+	display: block;
+}
+
+#samples .node.expanded > .caption:before {
+	content: '\e1e2';
+}
+
+#samples .node.collapsed > .children {
+	display: none;
+}
+
+#samples .node.collapsed > .caption:before {
+	content: '\e066';
+}
+
+#samples > .node:first-child {
+	margin-top: 0;
+}
+
+#samples .node.section > .caption {
+	font-weight: bold;
+	font-size: 0.8rem;
+	background-color: #e5e5e5;
+	vertical-align: middle;
+	padding: 3px 5px;
+}
+
+#samples .node.library > .caption {
+	font-weight: bold;
+}
+
+#samples .node.library > .caption > .icon {
+	color: #d16e0a;
+	text-align: center;
+	width: 1.2em;
+}
+
+#samples .node.folder {
+	font-style: italic;
+}
+
+#samples .node > .caption > .matches {
+	padding-left: 5px;
+	color: #888;
+	font-weight: normal;
+	font-style: italic;
+}
+
+#refreshTests {
+	position: absolute;
+	right: 2rem;
 }
 
 .expander {
+	font-family: 'SAP-icons';
+	font-weight: normal;
+	color: #aaa;
 	position: absolute;
-	right: 0px;
-	top: 2px;
-	width: 12px;
-	height: 12px;
-	padding: 1px;
-	border-style: none;
-	background-color: transparent;
-	background-repeat: no-repeat;
+	display:inline-block;
+	right: 0.5em;
 	cursor: pointer;
 	cursor: hand;
-	z-index: 2;
 }
 
-.expander.more {
-	background-image: url('../images/more.gif');
+.expanded .expander, .collapsed .expander:hover {
+	color: #0a8ef1;
+	font-weight: bold;
+	text-shadow: 0 0 0.125rem #8cf;
 }
 
-.expander.less {
-	background-image: url('../images/less.gif');
+.icon {
+	font-family: 'SAP-icons';
+	display: inline-block;
+	cursor: pointer;
+	cursor: hand;
 }
+
+#sap-ui-SampleWindow.expanded > #toolbar {
+	display: block;
+	height: 1.75rem;
+}
+
+#sap-ui-SampleWindow.expanded > #samples {
+	top: calc(2rem + 1.75rem);
+	height: calc(100% - 2rem - 1.75rem);
+}
+
+#sap-ui-SampleWindow.collapsed > #toolbar {
+	display: none;
+}
+
+#sap-ui-SampleWindow.collapsed > #samples {
+	top: 2rem;
+	height: calc(100% - 2rem);
+}
+
+#sap-ui-SettingsWindow > div {
+	box-sizing: border-box;
+	padding: 5px;
+}
+
+#sap-ui-ContentWindowFrame {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+
+#samples > .section > .children > .loading {
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+	border:none;
+	vertical-align:middle;	
+}
+
+#samples > .section > .children > .error-msg {
+	font-size:10pt;
+	font-style:italic;
+	color:red;
+}
+
+#samples > .section > .children > .info-msg {
+	font-size:10pt;
+	font-style:italic;
+	padding-left:22px;
+}
+
+/* ---------------------------------------
+ * TraceWindow styles
+ * --------------------------------------- */
+#sap-ui-TraceWindow {
+	box-sizing: border:box;
+	padding: 2px;
+	height: 100&;
+	font-size: 8pt;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#sap-ui-TraceWindow .expander {
+	font-size: 1rem;
+	padding: 0.2rem;
+	width: 1.5rem;
+	right: 1rem;
+	text-align: center;
+	background-color: rgba(255,255,255,0.8);
+}
+
+#sap-ui-ControlTreeRoot, #sap-ui-PropertyWindowRoot {
+	position: absolute;
+	box-sizing: border-box;
+	top: 2rem;
+	height: calc(100% - 2rem);
+	right: 4px;
+	left: 4px;
+	bottom: 4px;
+	font-size: 8pt;
+	overflow-x: hidden;
+	padding: 2px;
+}
+
+#sap-ui-PropertyWindowRoot input {
+	border: 1px solid #ccc
+}
+
+#sap-ui-TraceWindow.expanded > #trace-toolbar {
+	display: block;
+	height: 1.75rem;
+}
+
+#sap-ui-TraceWindow.expanded .expander {
+	background-color: transparent;
+}
+
+
+#sap-ui-TraceWindow.expanded > #sap-ui-TraceWindowRoot {
+	top: 1.75rem;
+	height: calc(100% - 1.75rem - 4px);
+}
+
+#sap-ui-TraceWindow.collapsed > #trace-toolbar {
+	display: none;
+}
+
+#sap-ui-TraceWindow.collapsed > #sap-ui-TraceWindowRoot {
+	top: 0px;
+	height: calc(100% - 4px);
+}
+
+#sap-ui-TraceWindow > #trace-toolbar {
+	background-color: #ddd;
+}
+
+#sap-ui-TraceWindow > #trace-toolbar > * {
+	font-size: 0.75rem;
+	margin: 0 0.2rem;
+}
+
 
 .logviewer {
 	font-size: 8pt;
@@ -327,62 +531,15 @@ BODY.welcome {
 	color: #aaa !important;
 }
 
-.dummy {
-	color: rgb(26, 71, 83); /* SAPUI5 letters in banner */
-	color: rgb(0, 90, 116); /* upper left corner of welcome banner */
-	color: rgb(0, 64, 82); /* lower left corner of welcome banner */
-	color: rgb(200, 220, 231); /* background color on left hand side of SAPUI5 banner */
-	color: rgb(244, 248, 250); /* background color on bottom of rhs of SAPUI5 banner */
-	color: rgb(110, 144, 156);
+#loglevel {
+	font-size: 8pt;
+	line-height: 1rem;
 }
 
-#samples .node,#samples .leaf {
-	display: block;
-	overflow: hidden;
-	white-space: nowrap;
-	margin: 2px 0px;
-}
+/* ---------------------------------------
+ * Other, special styles
+ * --------------------------------------- */
 
-#samples .node.section {
-	margin: 5px;
-}
-
-#samples .node.library {
-	margin-top: 10px !important;
-	font-weight: bold;
-	cursor: pointer;
-	cursor: hand;
-}
-
-#samples .node.folder {
-	font-size: 10pt;
-	font-style: italic;
-	cursor: pointer;
-	cursor: hand;
-}
-
-#samples .leaf A {
-	color: black;
-	font-size: 10pt;
-	text-decoration: none;
-	cursor: pointer;
-	cursor: hand;
-}
-
-#samples SPAN.matches {
-	padding-left: 5px;
-	font-color: red;
-	font-weight: bold;
-	font-style: italic;
-	/* color: yellow; */
-}
-
-.showdiv {
-	visibility: visible;
-	display: block;
-}
-
-.hidediv {
-	visibility: hidden;
-	display: none;
+body > #sap-ui-ide-less-mode {
+	display: none; /* hide the no-less indicator */
 }
