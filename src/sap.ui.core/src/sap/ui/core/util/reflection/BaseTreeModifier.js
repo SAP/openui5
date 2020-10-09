@@ -426,16 +426,16 @@ sap.ui.define([
 		getVisible: function (vControl) {},
 
 		/**
-		 * See {@link sap.ui.core.StashedControlSupport#setVisible} method.
+		 * Sets the new value for stashed and visible.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
-		 * @param {boolean} bVisible - New value for <code>stashed</code> property
+		 * @param {boolean} bStashed - New value for <code>stashed</code> property
 		 * @public
 		 */
 		setStashed: function (vControl, bStashed) {},
 
 		/**
-		 * See {@link sap.ui.core.StashedControlSupport#getVisible} method.
+		 * Retrieves the current value of the stashed property.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @returns {boolean} <code>true</code> if the control is stashed

@@ -181,28 +181,6 @@ function (
 				assert.equal(oUpdateAggregationStub.callCount, 1, "the function was called");
 			});
 		});
-
-		QUnit.test("with the control being stashed and no revert data available", function(assert) {
-			sandbox.stub(JsControlTreeModifier, "getControlType").returns("sap.ui.core._StashedControl");
-			sandbox.stub(this.oAppliedChange, "getChangeType").returns("stashControl");
-
-			return Reverter.revertChangeOnControl(this.oAppliedChange, this.oControl, this.mPropertyBag).then(function(oResult) {
-				assert.ok(oResult, "the return value is truthy");
-				assert.equal(this.oSetChangeRevertDataStub.callCount, 1, "the revert data was set");
-				assert.equal(this.oSetChangeRevertDataStub.lastCall.args[1], false, "the revert data was set to false");
-			}.bind(this));
-		});
-
-		QUnit.test("with the control being stashed and revert data already available", function(assert) {
-			sandbox.stub(JsControlTreeModifier, "getControlType").returns("sap.ui.core._StashedControl");
-			sandbox.stub(this.oAppliedChange, "getChangeType").returns("stashControl");
-			sandbox.stub(this.oAppliedChange, "hasRevertData").returns(true);
-
-			return Reverter.revertChangeOnControl(this.oAppliedChange, this.oControl, this.mPropertyBag).then(function(oResult) {
-				assert.ok(oResult, "the return value is truthy");
-				assert.equal(this.oSetChangeRevertDataStub.callCount, 0, "the revert data was not set");
-			}.bind(this));
-		});
 	});
 
 	QUnit.module("revertMultipleChanges", {
