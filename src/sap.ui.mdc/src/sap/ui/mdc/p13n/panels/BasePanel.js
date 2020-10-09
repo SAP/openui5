@@ -32,15 +32,6 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			associations: {},
 			defaultAggregation: "items",
-			properties: {
-				/**
-				 * Callback executed once the <code>Reset</code> Button has been pressed.
-				 */
-				onReset: {
-					type: "function",
-					defaultValue: false
-				}
-			},
 			aggregations: {
 				/**
 				 * Content to be set for the <code>BasePanel</code>.
@@ -387,10 +378,7 @@ sap.ui.define([
 		this._oSearchField.setValue("");
 
 		// set the movement buttons to visible / invisible
-		this._moveTopButton.setVisible(bReorderMode);
-		this._moveUpButton.setVisible(bReorderMode);
-		this._moveDownButton.setVisible(bReorderMode);
-		this._moveBottomButton.setVisible(bReorderMode);
+		this._setMoveButtonVisibility(bReorderMode);
 
 		this._moveTopButton.setEnabled(false);
 		this._moveUpButton.setEnabled(false);
@@ -399,6 +387,13 @@ sap.ui.define([
 
 		//disable / enable d&d
 		this._oDragDropInfo.setEnabled(bReorderMode);
+	};
+
+	BasePanel.prototype._setMoveButtonVisibility = function(bVisible) {
+		this._moveTopButton.setVisible(bVisible);
+		this._moveUpButton.setVisible(bVisible);
+		this._moveDownButton.setVisible(bVisible);
+		this._moveBottomButton.setVisible(bVisible);
 	};
 
 	BasePanel.prototype._updateModelItems = function() {

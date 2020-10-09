@@ -7,8 +7,9 @@ sap.ui.define([
     "sap/m/Toolbar",
     "sap/ui/base/Event",
     "sap/m/Text",
-    "sap/m/List"
-], function(GroupPanelBase, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List) {
+    "sap/m/List",
+    "sap/m/SegmentedButtonItem"
+], function(GroupPanelBase, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem) {
     "use strict";
 
     var oMockExisting = {
@@ -109,11 +110,13 @@ sap.ui.define([
     QUnit.test("check instantiation", function(assert){
         assert.ok(this.oPanel, "Panel created");
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
         assert.ok(this.oPanel.getModel(this.oPanel.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Model has been set");
     });
 
     var fnCheckListCreation = function(assert) {
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         var oOuterList = this.oPanel._oListControl;
         assert.ok(oOuterList.isA("sap.m.ListBase"), "Inner control is a list");
@@ -137,6 +140,7 @@ sap.ui.define([
     QUnit.test("Check Search implementation", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         this.oPanel._getSearchField().setValue("Field 5");
         var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
@@ -151,6 +155,7 @@ sap.ui.define([
     QUnit.test("Check Search implementation - also for ToolTip", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         this.oPanel._getSearchField().setValue("Some Tooltip");
         var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
@@ -165,6 +170,7 @@ sap.ui.define([
     QUnit.test("Check Search implementation in combination with 'group mode' Select for 'active'", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         this.oPanel._sModeKey = "active";
         var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
@@ -191,6 +197,7 @@ sap.ui.define([
     QUnit.test("Check Search implementation in combination with 'group mode' Select for 'visibleactive'", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         this.oPanel._sModeKey = "visibleactive";
         var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
@@ -229,6 +236,7 @@ sap.ui.define([
     QUnit.test("Check Search implementation in combination with 'group mode' Select", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         this.oPanel._getSearchField().setValue("Some Tooltip");
         this.oPanel._sModeKey = "visible";
@@ -250,6 +258,7 @@ sap.ui.define([
 
         var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
         this.oPanel.setP13nModel(new JSONModel(oP13nData));
+        this.oPanel.switchViewMode("group");
 
         assert.equal(this.oPanel._oListControl.getVisibleItems().length, 2, "All groups visible");
 
@@ -266,6 +275,7 @@ sap.ui.define([
     QUnit.test("Check method 'setGroupExpanded' ", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         var oSecondPanel = this.oPanel._oListControl.getItems()[1].getContent()[0];
         assert.ok(!oSecondPanel.getExpanded(), "Panel is initially collapsed");
@@ -283,19 +293,10 @@ sap.ui.define([
         assert.ok(!oSecondPanel.getExpanded(), "Panel is collapsed when calling with 'false'' as second parameter");
     });
 
-
-    QUnit.test("Check 'onReset' Button visibility", function(assert){
-
-        assert.ok(!this.oPanel._oResetBtn.getVisible(), "No handler --> No Reset button");
-
-        this.oPanel.setOnReset(function(){});
-
-        assert.ok(this.oPanel._oResetBtn.getVisible(), "Once handler is provided, Button is visible");
-    });
-
     QUnit.test("Check 'getSelectedFields' - should only return selected fields", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         //Three existing items --> the amount of selected items should match the initially visible ones
         assert.equal(this.oPanel.getSelectedFields().length, this.oExistingMock.items.length, "Correct amount of selected items returned");
@@ -306,6 +307,7 @@ sap.ui.define([
 
         this.oPanel.setAllowSelection(false);
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         assert.equal(this.oPanel._oGroupModeSelect.getVisible(), false, "Group Select is not visible without selection");
 		this.oPanel._oListControl.getItems().forEach(function(oOuterItem){
@@ -361,6 +363,7 @@ sap.ui.define([
         }.bind(this));
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
         var aGroups = this.oPanel._oListControl.getItems();
         var oFirstGroup = aGroups[0].getContent()[0];
@@ -380,32 +383,34 @@ sap.ui.define([
     QUnit.test("Check view toggle", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
-        assert.equal(this.oPanel.getViewMode(), "Group", "Group view is the default");
+        assert.equal(this.oPanel.getViewMode(), "group", "Group view is the default");
 
-        this.oPanel.switchViewMode("Group");
-        assert.equal(this.oPanel.getViewMode(), "Group", "Group view is unchanged");
+        this.oPanel.switchViewMode("group");
+        assert.equal(this.oPanel.getViewMode(), "group", "Group view is unchanged");
 
-        this.oPanel.switchViewMode("List");
-        assert.equal(this.oPanel.getViewMode(), "List", "List view should be selected");
+        this.oPanel.switchViewMode("list");
+        assert.equal(this.oPanel.getViewMode(), "list", "List view should be selected");
 
-        this.oPanel.switchViewMode("Group");
-        assert.equal(this.oPanel.getViewMode(), "Group", "List view should be selected");
+        this.oPanel.switchViewMode("group");
+        assert.equal(this.oPanel.getViewMode(), "group", "List view should be selected");
 
     });
 
     QUnit.test("Check view toggle + search Field", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
-        assert.equal(this.oPanel.getViewMode(), "Group", "Group view is the default");
+        assert.equal(this.oPanel.getViewMode(), "group", "Group view is the default");
 
         this.oPanel._sSearchString = "Some test";
 
-        this.oPanel.switchViewMode("List");
+        this.oPanel.switchViewMode("list");
         assert.equal(this.oPanel._getSearchField().getValue(), "Some test", "Search value remains");
 
-        this.oPanel.switchViewMode("Group");
+        this.oPanel.switchViewMode("group");
         assert.equal(this.oPanel._getSearchField().getValue(), "Some test", "Search value remains");
 
     });
@@ -426,14 +431,67 @@ sap.ui.define([
     QUnit.test("Check inner controls upon toggling the view", function (assert) {
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
 
-        this.oPanel.switchViewMode("List");
+        this.oPanel.switchViewMode("list");
         assert.ok(this.oPanel._oListControl.isA("sap.m.Table"));
 
-        this.oPanel.switchViewMode("Group");
+        this.oPanel.switchViewMode("group");
         assert.ok(this.oPanel._oListControl.isA("sap.m.List"));
 
     });
+
+    QUnit.test("Check inner view storage", function(assert){
+
+        //Check inner list creation
+        assert.ok(this.oPanel._oReorderList.isA("sap.m.Table"));
+        assert.ok(this.oPanel._oGroupList.isA("sap.m.List"));
+
+        //Check _mView
+        assert.ok(this.oPanel._mView[this.oPanel.GROUP_KEY].isA("sap.m.List"));
+        assert.ok(this.oPanel._mView[this.oPanel.LIST_KEY].isA("sap.m.Table"));
+
+        //Check that _mView has two entries by default
+        assert.equal(Object.keys(this.oPanel._mView).length, 2, "Two views created by 'GroupPanelBase'");
+
+        //Check amount of 'SegmentedButtonItem'
+        assert.equal(this.oPanel._oViewSwitch.getItems().length, 2, "Two items by default");
+    });
+
+    QUnit.test("Check 'addCustomView'", function(assert){
+
+        //add a custom view
+        this.oPanel.addCustomView({
+            item: new SegmentedButtonItem({
+                key: "test",
+                icon: "sap-icon://bar-chart"
+            }),
+            content: new List("myCustomList",{})
+        });
+
+        //Check that the UI has been enhanced
+        assert.equal(Object.keys(this.oPanel._mView).length, 3, "A custom view has been added");
+        assert.equal(this.oPanel._oViewSwitch.getItems().length, 3, "The item has been set on the view switch control");
+    });
+
+    QUnit.test("Check 'addCustomView' can be used via 'switchViewMode'", function(assert){
+
+        //add a custom view
+        this.oPanel.addCustomView({
+            item: new SegmentedButtonItem({
+                key: "test",
+                icon: "sap-icon://bar-chart"
+            }),
+            content: new List("myCustomList",{})
+        });
+
+        this.oPanel.switchViewMode("test");
+
+        assert.equal(this.oPanel.getViewMode(), "test", "Correct view has been selected");
+
+        assert.equal(this.oPanel._oViewSwitch.getSelectedKey(), "test", "Correct item has been selected in the SegmentedButton");
+    });
+
 
     QUnit.module("'GroupPanelBase' instance with a custom model name",{
         beforeEach: function() {
@@ -465,6 +523,8 @@ sap.ui.define([
     QUnit.test("Instantiate panel and check model", function(assert){
         assert.ok(this.oPanel, "Panel created");
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
+
         assert.ok(this.oPanel.getP13nModel().isA("sap.ui.model.json.JSONModel"), "Model has been set");
         assert.ok(!this.oPanel.getModel("$p13n"), "The default $p13n model has not been set");
         assert.ok(this.oPanel.getModel("$My_very_own_model").isA("sap.ui.model.json.JSONModel"), "Model has been set");

@@ -266,6 +266,7 @@ sap.ui.define([
 
 		//select item from default group
 		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
+		When.onTheBooksListReportPage.iChangeAdaptFiltersView("group");
 		Then.onTheBooksListReportPage.iShouldSeeTheAdaptFiltersP13nDialog();
 		When.onTheBooksListReportPage.iSelectTheAdaptFiltersP13nItem("Book ID");
 		When.onTheBooksListReportPage.iPressAdaptFiltersOk();
@@ -275,6 +276,7 @@ sap.ui.define([
 
 		//Select item from a different group
 		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
+		When.onTheBooksListReportPage.iChangeAdaptFiltersView("group");
 		When.onTheBooksListReportPage.iToggleFilterPanel("Books");
 		When.onTheBooksListReportPage.iToggleFilterPanel("Authors");
 		When.onTheBooksListReportPage.iSelectTheAdaptFiltersP13nItem("Date of Birth");
@@ -290,6 +292,7 @@ sap.ui.define([
 	opaTest('I should not see the "Stock" filter field', function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
+		When.onTheBooksListReportPage.iChangeAdaptFiltersView("group");
 		Then.onTheBooksListReportPage.iShouldSeeTheAdaptFiltersP13nDialog();
 		When.onTheBooksListReportPage.iDeselectTheAdaptFiltersP13nItem("Stock range");
 		When.onTheBooksListReportPage.iPressAdaptFiltersOk();

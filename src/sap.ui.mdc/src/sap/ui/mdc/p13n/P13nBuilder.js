@@ -2,12 +2,12 @@
 * ! ${copyright}
 */
 sap.ui.define([
-    "sap/m/Toolbar",
-    "sap/m/MenuButton",
-    "sap/m/Menu",
-    "sap/m/MenuItem",
-    "sap/base/util/merge"
-], function(Toolbar, MenuButton, Menu, MenuItem, merge) {
+    "sap/m/Button",
+    "sap/m/Bar",
+    "sap/m/Title",
+    "sap/base/util/merge",
+    "sap/m/MessageBox"
+], function(Button, Bar, Title, merge, MessageBox) {
     "use strict";
 
     var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -24,8 +24,11 @@ sap.ui.define([
 
         /**
          *
-         * @param {object} oP13nUI control displayed in the content area
-         * @param {object} mDialogSettings settings to overwrite defaults
+         * @param {object} oP13nUI Control displayed in the content area
+         * @param {object} mDialogSettings Settings to overwrite popover default properties, such as: <code>contentHeight</code>
+         * @param {object} [mDialogSettings.reset] Reset settings for the custom header creation
+         * @param {Function} [mDialogSettings.reset.onExecute] Callback executed upon triggering a reset
+         * @param {String} [mDialogSettings.reset.warningText] Warning which is displyed prior to executing the reset
          *
          * @returns {Promise} promise resolving in the Popover instance
          */
@@ -48,10 +51,15 @@ sap.ui.define([
                         afterClose: mDialogSettings.afterClose ? mDialogSettings.afterClose : function(){}
                     });
 
-                    //TODO: check if this needs to be a function
-                    if (mDialogSettings.customHeader) {
-                        oPopover.setCustomHeader(mDialogSettings.customHeader());
+                    if (mDialogSettings.reset) {
+                        var oCustomHeader = this._createResetHeader({
+                            title: mDialogSettings.title,
+                            reset: mDialogSettings.reset.onExecute,
+                            warningText: mDialogSettings.reset.warningText
+                        });
+                        oPopover.setCustomHeader(oCustomHeader);
                     }
+
                     resolve(oPopover);
                 },reject);
             });
@@ -60,10 +68,13 @@ sap.ui.define([
 
         /**
          *
-         * @param {object} oP13nUI control displayed in the content area
-         * @param {object} mDialogSettings settings to overwrite defaults
+         * @param {object} oP13nUI Control displayed in the content area
+         * @param {object} mDialogSettings Settings to overwrite dialog default properties, such as: <code>contentHeight</code>
+         * @param {object} [mDialogSettings.reset] Reset settings for the custom header creation
+         * @param {Function} [mDialogSettings.reset.onExecute] Callback executed upon triggering a reset
+         * @param {String} [mDialogSettings.reset.warningText] Warning which is displyed prior to executing the reset
          *
-         * @returns {Promise} promise resolving in the Dialog instance
+         * @returns {Promise} Promise resolving in the Dialog instance
          */
         createP13nDialog: function(oP13nUI, mDialogSettings) {
 
@@ -104,9 +115,13 @@ sap.ui.define([
                         ]
                     });
 
-                    //TODO: check if this needs to be a function
-                    if (mDialogSettings.customHeader) {
-                        oContainer.setCustomHeader(mDialogSettings.customHeader());
+                    if (mDialogSettings.reset) {
+                        var oCustomHeader = P13nBuilder._createResetHeader({
+                            title: mDialogSettings.title,
+                            reset: mDialogSettings.reset.onExecute,
+                            warningText: mDialogSettings.reset.warningText
+                        });
+                        oContainer.setCustomHeader(oCustomHeader);
                     }
 
                     var aAdditionalButtons = mDialogSettings.additionalButtons;
@@ -126,39 +141,42 @@ sap.ui.define([
 
         /**
          *
-         * @param {object} mSettings Settings object to create a customized view switch control within a Toolbar
-         * @param {string} mSettings.defaultText Default text which should be displayed
-         * @param {array} mSettings.menuItems Array containint the settings it should contain objects defined as: [{text: "Item 1", handler:fnCustom}]
+         * @param {object} mSettings Settings object to create a customHeader including a reset Button
+         * @param {String} mSettings.title Title for the custom reset header
+         * @param {function} mSettings.reset Control specific reset handling
+         * @param {String} [mSettings.warningText] Text which is displayed prior to executing to reset execution
          *
-         * @returns {sap.m.Toolbar} The created view switch control
+         * @returns {sap.m.Bar} The created custom header Bar
          */
-        createViewSwitch: function(mSettings) {
+        _createResetHeader: function(mSettings) {
 
-            var aMenuItems = [];
-
-            mSettings.menuItems.forEach(function(oItem){
-                aMenuItems.push(new MenuItem({
-                    text: oItem.text,
-                    press: oItem.handler
-                }));
-            });
-
-            var oViewSwitch = new Toolbar({
-                content: [
-                    new MenuButton({
-                        text: mSettings.defaultText,
-                        buttonMode: "Split",
-                        menu: [
-                            new Menu({
-                                items: aMenuItems
-                            })
-                        ]
+            var oBar = new Bar({
+                contentLeft: [
+                    new Title({
+                        text: mSettings.title
                     })
                 ]
             });
 
-            return oViewSwitch;
+            if (mSettings.reset) {
+                oBar.addContentRight(new Button({
+                    text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET"),
+                    press: function() {
+                        var sResetText = mSettings.warningText ? mSettings.warningText : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
+                        MessageBox.warning(sResetText, {
+                            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+                            emphasizedAction: MessageBox.Action.OK,
+                            onClose: function (sAction) {
+                                if (sAction === MessageBox.Action.OK) {
+                                    mSettings.reset();
+                                }
+                            }
+                        });
+                    }
+                }));
+            }
 
+            return oBar;
         },
 
         /**

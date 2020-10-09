@@ -228,6 +228,18 @@ sap.ui.define([
 					}, reject);
 				});
 			});
+		},
+
+		discardChanges: function(mPropertyBag) {
+			return new Promise(function (resolve, reject) {
+				sap.ui.require([
+					"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+				], function (ControlPersonalizationWriteAPI) {
+					ControlPersonalizationWriteAPI.restore(mPropertyBag).then(function () {
+						resolve();
+					}, reject);
+				});
+			});
 		}
 	};
 	return FlexUtil;

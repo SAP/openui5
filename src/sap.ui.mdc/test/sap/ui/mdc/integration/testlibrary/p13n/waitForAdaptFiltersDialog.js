@@ -21,7 +21,7 @@ sap.ui.define([
 			controlType: "sap.m.Dialog",
 			matchers: {
 				descendant: {
-					controlType: "sap.m.MenuButton",
+					controlType: "sap.m.Title",
 					properties: {
 						text: sTitle
 					}

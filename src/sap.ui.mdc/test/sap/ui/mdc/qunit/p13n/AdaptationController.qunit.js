@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/p13n/AdaptationController", "sap/ui/mdc/p13n/panels/BasePanel", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
-], function (AdaptationController, BasePanel, FilterBarDelegate, Table, Chart, TableDelegate, TableSettings, ChartSettings, FilterBar, Button, Column, Dimension, Measure, FilterField) {
+	"sap/ui/mdc/p13n/FlexUtil" ,"sap/ui/mdc/p13n/AdaptationController", "sap/ui/mdc/p13n/panels/BasePanel", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
+], function (FlexUtil, AdaptationController, BasePanel, FilterBarDelegate, Table, Chart, TableDelegate, TableSettings, ChartSettings, FilterBar, Button, Column, Dimension, Measure, FilterField) {
 	"use strict";
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
@@ -609,7 +609,7 @@ sap.ui.define([
 				assert.ok(oP13nControl, "Container has been created");
 				assert.ok(oP13nControl.isA("sap.m.Dialog"));
 				assert.ok(!oP13nControl.getVerticalScrolling(), "Vertical scrolling is disabled for FilterBarBase 'filterConfig'");
-				assert.equal(oP13nControl.getCustomHeader().getContent()[0].getText(), oResourceBundle.getText("filterbar.ADAPT_GROUP"), "Correct title has been set");
+				assert.equal(oP13nControl.getCustomHeader().getContentLeft()[0].getText(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
 				assert.ok(this.oNonStubAC.bIsDialogOpen,"dialog is open");
 
 				//check inner panel
@@ -638,6 +638,7 @@ sap.ui.define([
 			assert.ok(oP13nFilter.isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "P13n FilterBar created for filter UI adaptation");
 
 			var oGroupPanel = oP13nFilter._oFilterBarLayout.getInner();
+			oGroupPanel.switchViewMode("group");
 			assert.ok(oGroupPanel.isA("sap.ui.mdc.p13n.panels.GroupPanelBase"), "GroupPanelBase as inner layout");
 
 			var oList = oGroupPanel._oListControl;
@@ -653,6 +654,49 @@ sap.ui.define([
 			done();
 
 		});
+	});
+
+	QUnit.test("check inner model reset", function (assert) {
+		var done = assert.async();
+		var oBtn = new Button();
+		this.oAdaptationController.showP13n(oBtn, "Filter").then(function(oP13nControl){
+
+			var oP13nFilter = oP13nControl.getContent()[0];
+			var oGroupPanel = oP13nFilter._oFilterBarLayout.getInner();
+			oGroupPanel.switchViewMode("group");
+			var oList = oGroupPanel._oListControl;
+			var oFirstGroup = oList.getItems()[0];
+
+			//3 items, 2 initially selected
+			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
+			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
+			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
+
+			var aModelItems = this.oAdaptationController.oAdaptationModel.getData().items;
+			var aModelItemsGrouped = this.oAdaptationController.oAdaptationModel.getData().itemsGrouped;
+
+			aModelItems[2].selected = true;
+			aModelItemsGrouped[0].items[2].selected = true;
+
+			//3 items selected --> mock a model change
+			this.oAdaptationController.oAdaptationModel.setProperty("/items", aModelItems);
+			this.oAdaptationController.oAdaptationModel.setProperty("/itemsGrouped", aModelItemsGrouped);
+
+			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
+			assert.equal(oFirstGroupList.getSelectedItems().length, 3, "3 items selected");
+
+			sinon.stub(FlexUtil, "discardChanges").callsFake(function(){
+				return Promise.resolve();
+			});
+
+			this.oAdaptationController.resetP13n().then(function(){
+				//Model has been reset --> initial state recovered in model
+				assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
+				assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
+				done();
+			});
+
+		}.bind(this));
 	});
 
 	QUnit.test("create condition changes via 'createConditionChanges'", function(assert){
@@ -887,6 +931,48 @@ sap.ui.define([
 		}.bind(this));
 
 		assert.ok(this.oAdaptationController.bIsDialogOpen, "Prevent duplicate issues");
+	});
+
+	QUnit.test("check title creation - no reset provided", function(assert){
+		var done = assert.async();
+		this.oAdaptationController.setLiveMode(false);
+		this.oAdaptationController.setItemConfig({
+			containerSettings: {
+				verticalScrolling: false,
+				title: "Some Title"
+			}
+		});
+
+		this.oAdaptationController._createP13nContainer(new BasePanel()).then(function(oContainer){
+			assert.ok(!oContainer.getVerticalScrolling(), "Vertical Scrolling overwritten by config in liveMode");
+			assert.equal(oContainer.getTitle(), "Some Title", "Correct title provided");
+			assert.ok(!oContainer.getCustomHeader(), "No custom header provided if no reset is provided");
+			oContainer.destroy();
+			done();
+		});
+	});
+
+	QUnit.test("check title creation - no reset provided", function(assert){
+		var done = assert.async();
+		this.oAdaptationController.setLiveMode(false);
+		this.oAdaptationController.setItemConfig({
+			containerSettings: {
+				verticalScrolling: false,
+				title: "Some Title"
+			}
+		});
+
+		this.oAdaptationController.setOnReset(function(){
+			//Control specific reset handling
+		});
+
+		this.oAdaptationController._createP13nContainer(new BasePanel()).then(function(oContainer){
+			assert.ok(!oContainer.getVerticalScrolling(), "Vertical Scrolling overwritten by config in liveMode");
+			assert.equal(oContainer.getTitle(), "Some Title", "Correct title provided");
+			assert.ok(oContainer.getCustomHeader(), "Custom header provided as reset has been providded");
+			oContainer.destroy();
+			done();
+		});
 	});
 
 });

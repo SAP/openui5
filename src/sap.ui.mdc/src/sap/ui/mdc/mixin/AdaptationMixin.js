@@ -222,7 +222,10 @@ sap.ui.define(
                     if (bCurrentLiveMode) {
                         oAdaptationController.setLiveMode(false);
                     }
+
                     var fnRuntimeHandling = oAdaptationController.getAfterChangesCreated();
+                    var fnRuntimeReset = oAdaptationController.getOnReset();
+
                     var fnEnhanceDialog = function (oEvt) {
                         var oContainer = oEvt.getParameter("container");
                         oContainer.isPopupAdaptationAllowed = function () {
@@ -246,6 +249,8 @@ sap.ui.define(
                         }
                     });
 
+                    oAdaptationController.setOnReset();
+
                     var fnResolveAndCleanup = function (oEvt) {
                         var sReason = oEvt.getParameter("reason");
 
@@ -264,6 +269,7 @@ sap.ui.define(
                         oAdaptationController._executeAfterAsyncActions(function (params) {
                             setTimeout(function () {
                                 oAdaptationController.setAfterChangesCreated(fnRuntimeHandling);
+                                oAdaptationController.setOnReset(fnRuntimeReset);
                             }, 0);
                         });
 

@@ -13,13 +13,15 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	"sap/ui/layout/FixFlex",
 	"sap/m/Page",
-	"sap/m/Button",
 	"sap/m/ColumnListItem",
 	"sap/m/HBox",
 	"sap/ui/core/Icon",
 	"sap/m/Text",
-	"sap/m/Column"
-], function (BasePanel, Label, CustomListItem, Panel, Select, Item, Toolbar, List, Filter, FixFlex, Page, Button, ColumnListItem, HBox, Icon, Text, Column) {
+	"sap/m/Column",
+	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
+	"sap/m/Table"
+], function (BasePanel, Label, CustomListItem, Panel, Select, Item, Toolbar, List, Filter, FixFlex, Page, ColumnListItem, HBox, Icon, Text, Column, SegmentedButton, SegmentedButtonItem, Table) {
 	"use strict";
 
 	/**
@@ -67,6 +69,26 @@ sap.ui.define([
 				grouping: {
 					type: "boolean",
 					defaultValue: true
+				},
+				/**
+				 * Determines whether the order of items can be changed
+				 */
+				enableReorder: {
+					type: "boolean",
+					defaultValue: true
+				},
+				/**
+				 * Determines whether the list view is available
+				 */
+				enableListView: {
+					type: "boolean",
+					defaultValue: true
+				},
+				/**
+				 * Determines the default view for the GroupPanel
+				 */
+				defaultView: {
+					type: "String"
 				}
 			},
 			aggregations: {
@@ -82,23 +104,34 @@ sap.ui.define([
 		renderer: {}
 	});
 
+	GroupPanelBase.prototype.GROUP_KEY = "group";
+	GroupPanelBase.prototype.LIST_KEY = "list";
+
 	GroupPanelBase.prototype.init = function() {
+		this._mView = {};
 		BasePanel.prototype.init.apply(this, arguments);
-		this._sView = "Group";
+
+		this._sView = this.LIST_KEY;
+	};
+
+	GroupPanelBase.prototype.addCustomView = function(mViewSettings) {
+		var oItem = mViewSettings.item;
+		var sKey = oItem.getKey();
+		var oContent = mViewSettings.content;
+		var fnOnSearch = mViewSettings.search;
+
+		if (fnOnSearch) {
+			this._getSearchField().attachLiveChange(fnOnSearch);
+		}
+
+		this._mView[sKey] = oContent;
+		if (this._oViewSwitch && !this._oViewSwitch.getVisible()){
+			this._oViewSwitch.setVisible(true);
+		}
+		this._oViewSwitch.addItem(oItem);
 	};
 
 	GroupPanelBase.prototype._setInnerLayout = function() {
-
-		if (!this._oResetBtn){
-			this._oResetBtn = new Button(this.getId() + "-resetBtn", {
-				text: this.getResourceText("p13nDialog.RESET"),
-				visible: false,
-				type: "Transparent",
-				press: function(oEvt) {
-					this.getOnReset()();
-				}.bind(this)
-			}).addStyleClass("sapUiGroupPanelFloatRight");
-		}
 
 		if (!this._oGroupModeSelect) {
 			this._oGroupModeSelect = new Select({
@@ -124,21 +157,55 @@ sap.ui.define([
 			});
 		}
 
-		var oContainer = this._createOuterContainer();
+		if (!this._oViewSwitch) {
+			this._oViewSwitch = new SegmentedButton({
+				visible: false,
+				items: [
+					new SegmentedButtonItem({
+						tooltip: this.getResourceText("filterbar.ADAPT_LIST_VIEW"),
+						icon: "sap-icon://list",
+						key: this.LIST_KEY
+					}),
+					new SegmentedButtonItem({
+						tooltip: this.getResourceText("filterbar.ADAPT_GROUP_VIEW"),
+						icon: "sap-icon://group-2",
+						key: this.GROUP_KEY
+					})
+				],
+				selectionChange: function(oEvt) {
+					var sKey = oEvt.getParameter("item").getKey();
+					this.switchViewMode(sKey);
+				}.bind(this)
+			});
+		}
+
+		var oContainer = this._createContainer();
 
 		this.addStyleClass("sapUiMDCGroupPanelBase");
 		this.setAggregation("_content", oContainer);
 	};
 
-	GroupPanelBase.prototype._createOuterContainer = function() {
+	GroupPanelBase.prototype._createContainer = function() {
 		var oContainer = new Page({
 			showHeader: false,
 			content: [
 				new FixFlex({
 					minFlexSize: 1,
 					fixContent: [
-						this._oGroupModeSelect,
-						this._oResetBtn,
+						new HBox({
+							justifyContent: "SpaceBetween",
+							items: [
+								/* wrapping FlexBox required for the custom view toggle
+								/* as the view switch will left align without a wrapper for the invisible control
+								*/
+								new HBox({
+									items: [
+										this._oGroupModeSelect
+									]
+								}),
+								this._oViewSwitch
+							]
+						}),
 						this._getSearchField()
 					],
 						flexContent: [
@@ -151,23 +218,10 @@ sap.ui.define([
 		return oContainer;
 	};
 
-	GroupPanelBase.prototype.setOnReset = function(fnOnReset) {
-		this.setProperty("onReset", fnOnReset);
-
-		if (fnOnReset instanceof Function) {
-			this._oResetBtn.setVisible(true);
-		} else {
-			this._oResetBtn.setVisible(false);
-		}
-
-		return this;
-	};
-
 	GroupPanelBase.prototype.setItemFactory = function (fnFactory) {
 
 		this.setProperty("itemFactory", fnFactory);
-		var oOuterTemplate = this._getDefaultGroupTemplate(fnFactory);
-		this.setTemplate(oOuterTemplate);
+		this._createInnerListControl();
 
 		return this;
 	};
@@ -177,11 +231,31 @@ sap.ui.define([
 
 		this._oGroupModeSelect.setVisible(bAllowSelection);
 
-		this.setItemFactory(this.getItemFactory());//TODO: don't call setter with getter
+		this._updateTemplate();
 		return this;
 	};
 
-	GroupPanelBase.prototype._getDefaultGroupTemplate = function(fnFactory) {
+	GroupPanelBase.prototype.setEnableReorder = function(bReorder) {
+		this.setProperty("enableReorder", bReorder);
+		this._oReorderList.removeDragDropConfig();
+		return this;
+	};
+
+	GroupPanelBase.prototype.setEnableListView = function(bEnableListView) {
+		this.setProperty("enableListView", bEnableListView);
+		this._oViewSwitch.setVisible(bEnableListView); //only required if atleast 2 views are present
+		if (bEnableListView){
+			this._mView[this.LIST_KEY] = this._oReorderList;
+		} else {
+			var oItem = this._oViewSwitch.getItems()[0];
+			this._oViewSwitch.removeItem(oItem);
+			this._sView = this.GROUP_KEY;
+		}
+		return this;
+	};
+
+	GroupPanelBase.prototype._getDefaultGroupTemplate = function() {
+		var fnFactory = this.getItemFactory();
 
 		var bExpandFirstGroup = this.getExpandFirstGroup();
 
@@ -254,6 +328,11 @@ sap.ui.define([
 		return oP13nCellTemplate;
 	};
 
+	GroupPanelBase.prototype._updateTemplate = function() {
+		var oOuterTemplate = this.getPanelMode() ? this._getSimpleLayout() : this._getDefaultGroupTemplate();
+		this.setTemplate(oOuterTemplate);
+	};
+
 	GroupPanelBase.prototype._getSearchField = function() {
 		var oSearchField = BasePanel.prototype._getSearchField.apply(this, arguments);
 		oSearchField.setPlaceholder(this.getResourceText("p13nDialog.ADAPT_FILTER_SEARCH"));
@@ -262,27 +341,31 @@ sap.ui.define([
 
 	GroupPanelBase.prototype.setGrouping = function(bAllowGrouping) {
 		this.setProperty("grouping", bAllowGrouping);
-		this.setItemFactory(this.getItemFactory());//TODO: don't call setter with getter
+		this._updateTemplate();
 		return this;
 	};
 
     GroupPanelBase.prototype._createInnerListControl = function(){
 
 		var bReorder = this.getPanelMode();
-		var ListControl =  bReorder ? sap.m.Table : List;
 
-		if (bReorder && !this._oReorderList){
-			this._oReorderList = new ListControl(this._getListControlConfig());
+		if (!this._oReorderList){
+			this._oReorderList = new Table(this._getListControlConfig());
 			this._oReorderList.bPreventMassSelection = true;
 			this._oReorderList.setMode("MultiSelect");
+			this._mView[this.LIST_KEY] = this._oReorderList;
 		}
 
-		if (!bReorder && !this._oGroupList){
-			this._oGroupList = new ListControl(this._getListControlConfig());
+		if (!this._oGroupList){
+			this._oGroupList = new List(this._getListControlConfig());
 			this._oGroupList.setMode("None");
+			this._mView[this.GROUP_KEY] = this._oGroupList;
 		}
 
 		this._oListControl = bReorder ? this._oReorderList : this._oGroupList;
+
+		this._setMoveButtonVisibility(bReorder);
+		this._updateContainer(bReorder);
 
 		return this._oListControl;
 	};
@@ -324,9 +407,17 @@ sap.ui.define([
 		this._filterByModeAndSearch();
 	};
 
+	GroupPanelBase.prototype._isCustomView = function() {
+		return this._sView != this.GROUP_KEY && this._sView != this.LIST_KEY;
+	};
+
 	GroupPanelBase.prototype._filterByModeAndSearch = function() {
 		var aFiltersSearch = [], oFilterMode;
 		var aFilters;
+
+		if (this._isCustomView()) {
+			return;
+		}
 
 		if (this._sSearchString){
 			aFiltersSearch = [
@@ -431,16 +522,45 @@ sap.ui.define([
 
 	GroupPanelBase.prototype.switchViewMode = function(sView) {
 
-		if (sView != "Group" && sView != "List") {
-			throw new Error("Please provide either 'Group' or 'List' as view mode");
+		//TODO:
+		//Reconsider BasePanel derivation as the reorder toggle is not sufficient here
+
+		var bIsStandardView = true;
+
+		if (!this._mView[sView]) {
+			throw new Error("Please provide either 'Group' or 'List' as view mode or define a custom view via 'addCustomView'");
 		}
 
+		//Same view --> do nothing
 		if (sView == this._sView) {
 			return;
 		} else {
 			this._sView = sView;
-			this._togglePanelMode();
+			this._oViewSwitch.setSelectedKey(sView);
+
+			//custom view --> display custom content f
+			if (this._isCustomView()) {
+				bIsStandardView = false;
+				var oContainer = this._createContainer();
+				oContainer.getContent()[0].setFlexContent(this._mView[sView]);
+				this.setAggregation("_content", oContainer);
+
+			//predefined view --> check if a view-toggle is required
+			} else {
+				var bReorder = this.getPanelMode();
+
+				//mode does not need to be updated --> only replace view
+				if (sView == this.LIST_KEY && bReorder || sView == this.GROUP_KEY && !bReorder) {
+					this._createInnerListControl();
+
+				//mode needs to be updated --> trigger a toggle
+				} else {
+					this._togglePanelMode();
+				}
+			}
 		}
+
+		this._oGroupModeSelect.setVisible(bIsStandardView && this.getAllowSelection());
 	};
 
 	GroupPanelBase.prototype.getViewMode = function () {
@@ -454,14 +574,18 @@ sap.ui.define([
 			this._moveTopButton.getParent().removeAllItems();
 		}
 
-		BasePanel.prototype._togglePanelMode.apply(this, arguments);
-
-		var bReorder = this.getPanelMode();
+		var bReorderMode = !this.getPanelMode();
+		this.setPanelMode(bReorderMode);
 
 		this._createInnerListControl();
+		this._filterByModeAndSearch();
 
+		this._getSearchField().setVisible(true);
+	};
+
+	GroupPanelBase.prototype._updateContainer = function(bReorder) {
 		if (bReorder) {
-			var oContainer = this._createOuterContainer();
+			var oContainer = this._createContainer();
 			this.setAggregation("_content", oContainer);
 			this.setPanelColumns([
 				this.getResourceText("p13nDialog.LIST_VIEW_COLUMN"),
@@ -474,18 +598,14 @@ sap.ui.define([
 					})
 				})
 			]);
-			this._setSimpleLayout();
 		} else {
 			this._setInnerLayout();
-			this.setItemFactory(this.getItemFactory());
 		}
 
-		this._filterByModeAndSearch();
-
-		this._getSearchField().setVisible(true);
+		this._updateTemplate();
 	};
 
-	GroupPanelBase.prototype._setSimpleLayout = function() {
+	GroupPanelBase.prototype._getSimpleLayout = function() {
 		this._bDefaultTemplateUsed = true;
 
 		var oP13nCellTemplate = new ColumnListItem({
@@ -522,29 +642,34 @@ sap.ui.define([
 
 		var that = this;
 
-		oP13nCellTemplate.attachBrowserEvent("mouseenter", function(oEvt){
-			var oIcon = this.getCells()[1].getItems()[0];
-			oIcon.setVisible(false);
-			that._oSelectedItem = this;
-			that._updateEnableOfMoveButtons(this);
-		});
+		if (this.getEnableReorder()){
+			oP13nCellTemplate.attachBrowserEvent("mouseenter", function(oEvt){
+				var oIcon = this.getCells()[1].getItems()[0];
+				oIcon.setVisible(false);
+				that._oSelectedItem = this;
+				that._updateEnableOfMoveButtons(this);
+			});
 
-		oP13nCellTemplate.attachBrowserEvent("mouseleave", function(oEvt){
-			var bVisible = !!that.getP13nModel().getProperty(this.getBindingContextPath()).isFiltered;
-			var oIcon = this.getCells()[1].getItems()[0];
-			if (that._oSelectedItem) {
-				that._oSelectedItem.getCells()[1].removeItem(that._moveTopButton);
-				that._oSelectedItem.getCells()[1].removeItem(that._moveUpButton);
-				that._oSelectedItem.getCells()[1].removeItem(that._moveDownButton);
-				that._oSelectedItem.getCells()[1].removeItem(that._moveBottomButton);
-			}
-			oIcon.setVisible(bVisible);
-		});
+			oP13nCellTemplate.attachBrowserEvent("mouseleave", function(oEvt){
+				var bVisible = !!that.getP13nModel().getProperty(this.getBindingContextPath()).isFiltered;
+				var oIcon = this.getCells()[1].getItems()[0];
+				if (that._oSelectedItem) {
+					that._oSelectedItem.getCells()[1].removeItem(that._moveTopButton);
+					that._oSelectedItem.getCells()[1].removeItem(that._moveUpButton);
+					that._oSelectedItem.getCells()[1].removeItem(that._moveDownButton);
+					that._oSelectedItem.getCells()[1].removeItem(that._moveBottomButton);
+				}
+				oIcon.setVisible(bVisible);
+			});
+		}
 
-		this.setTemplate(oP13nCellTemplate);
+		return oP13nCellTemplate;
 	};
 
 	GroupPanelBase.prototype._updateEnableOfMoveButtons = function(oTableItem) {
+		if (!this.getEnableReorder()) {
+			return;
+		}
 		BasePanel.prototype._updateEnableOfMoveButtons.apply(this, arguments);
 		//oTableItem.getCells()[1].removeAllItems();
 		oTableItem.getCells()[1].addItem(this._moveTopButton);
@@ -560,35 +685,59 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	GroupPanelBase.prototype.getPanelMode = function() {
+		if (!this.getEnableListView()){
+			return false;
+		} else {
+			return this.getP13nModel() ? this.getP13nModel().getProperty("/reorderMode") : true;
+		}
+	};
+
 	GroupPanelBase.prototype.setP13nModel = function(oP13nModel) {
+		var bInitialized = !!this.getP13nModel();
 		BasePanel.prototype.setP13nModel.apply(this, arguments);
-		if (this.getGrouping()){
+		if (!bInitialized) {
+			this.setPanelMode(true);
+		}
+		if (this.getGrouping() && !this.getPanelMode()){
 			this._checkAllPanels();
 		}
 		this._bindListItems();
+
+		var sDefaultView = this.getDefaultView();
+		if (sDefaultView) {
+			this.switchViewMode(sDefaultView);
+		}
 	};
 
     GroupPanelBase.prototype._bindListItems = function() {
 
 		var bReorder = this.getPanelMode();
 
-		var mBindingInfo = {
+		//Overwrite default binding
+		this._oListControl.bindItems(Object.assign({
 			path: this.P13N_MODEL + (bReorder === true ? ">/items" : ">/itemsGrouped"),
 			key: "name",
 			templateShareable: false,
 			template: this.getTemplate().clone()
-		};
-
-		//Overwrite default binding
-		BasePanel.prototype._bindListItems.call(this, mBindingInfo);
+		}));
 	};
 
 	GroupPanelBase.prototype.exit = function(){
+
+		Object.keys(this._mView).forEach(function(sKey) {
+			if ((this._sView !== sKey) && this._mView[sKey]) {
+				this._mView[sKey].destroy();
+			}
+		}.bind(this));
+
 		BasePanel.prototype.exit.apply(this, arguments);
 		this._oGroupList = null;
 		this._oReorderList = null;
 		this._sSearchString = null;
 		this._oResetBtn = null;
+
+		this._mView = null;
 		this._sView = null;
 	};
 

@@ -59,7 +59,7 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the FilterBar should appear", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-complexP13n=true');
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
 		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
@@ -79,6 +79,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I press on 'Adapt Filters' button, I change the FilterField selection", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");
+		When.iChangeAdaptFiltersView("group");
 		Then.thePersonalizationDialogOpens(false);
 
 		//add 2 new FilterFields
@@ -117,7 +118,7 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the current variant should affect the FilterBar", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-complexP13n=true');
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
 		When.iLookAtTheScreen();
 
 		//check buttons
@@ -135,6 +136,7 @@ sap.ui.define([
 
 	opaTest("Recheck dialog", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters (2)");
+		When.iChangeAdaptFiltersView("group");
 
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 		When.iTogglePanelInDialog("Artists");
@@ -143,6 +145,61 @@ sap.ui.define([
 
 		//close modal dialog
 		When.iPressDialogOk();
+	});
+
+	// ----------------------------------------------------------------
+	// Create dirty changes on existing variant 'FilterBarTest'
+	// ----------------------------------------------------------------
+	opaTest("When I press on 'Adapt Filters' button, I change the FilterField selection for an existing variant", function (Given, When, Then) {
+		When.iPressButtonWithText("Adapt Filters (2)");
+		Then.thePersonalizationDialogOpens(false);
+
+		//Enter a different value
+		When.iEnterTextInFilterDialog("Country Name", "GB");
+
+		When.iTogglePanelInDialog("Countries");
+		When.iTogglePanelInDialog("Artists");
+
+		//deselect a selected field stored in the variant
+		When.iSelectColumn("Country", null, null, true, true);
+
+		//close modal dialog
+		When.iPressDialogOk();
+
+		//check that variant is dirty
+		Then.theVariantManagementIsDirty(true);
+	});
+
+	// ----------------------------------------------------------------
+	// Reset dirty changes for variant 'FilterBarTest'
+	// ----------------------------------------------------------------
+	opaTest("When I press on 'Adapt Filters' button, I reset my changes made", function (Given, When, Then) {
+		When.iPressButtonWithText("Adapt Filters (2)");
+
+		When.iPressResetInDialog();
+		When.iConfirmResetWarning();
+
+		//The old values stored in the variant should be present in the dialog
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
+		When.iTogglePanelInDialog("Artists");
+		When.iTogglePanelInDialog("Countries");
+		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Countries"], "Countries");
+
+		//close modal dialog
+		When.iPressDialogOk();
+	});
+
+	// ----------------------------------------------------------------
+	// Recheck FilterBar after reset
+	// ----------------------------------------------------------------
+	opaTest("Check the 'FilterBarTest' variant after reset", function (Given, When, Then) {
+
+		//check visible FilterFields
+		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Country"]);
+
+		//check if the correct variant is selected
+		Then.iShouldSeeSelectedVariant("FilterBarVariant");
+
 	});
 
 	opaTest("When I switch back to standard variant I should see the default items", function (Given, When, Then) {

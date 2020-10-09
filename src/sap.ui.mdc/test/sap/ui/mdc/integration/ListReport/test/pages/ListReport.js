@@ -79,6 +79,10 @@ sap.ui.define([
 					return this.mdcTestLibrary.iPressOnTheAdaptFiltersP13nItem(sText);
 				},
 
+				iChangeAdaptFiltersView: function(sView) {
+					return this.mdcTestLibrary.iChangeAdaptFiltersView(sView);
+				},
+
 				// p13n
 				iToggleFilterPanel: function(sGroupName) {
 					return this.mdcTestLibrary.iToggleFilterPanel(sGroupName, true);
