@@ -2627,6 +2627,26 @@ sap.ui.define([
 			assert.strictEqual(oCLI.getContentAnnouncement(), "Foo Bar", "custom accessilbility announcement returned");
 		});
 
+		QUnit.test("Aria-LabelledBy to selection control", function(assert) {
+			var oListItem = new StandardListItem({
+				type: "Active",
+				title: "Hello World"
+			});
+
+			oList.setMode("MultiSelect");
+			oList.addItem(oListItem);
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			var sSelectionItemId = oListItem._oMultiSelectControl.getAriaLabelledBy();
+			assert.strictEqual(Core.byId(sSelectionItemId).getText(), "Item Selection", "MultiSelect associated with aria-labelledBy");
+
+			oList.setMode("SingleSelectLeft");
+			Core.applyChanges();
+			sSelectionItemId = oListItem._oMultiSelectControl.getAriaLabelledBy();
+			assert.strictEqual(Core.byId(sSelectionItemId).getText(), "Item Selection", "Invisible text added to Static area");
+		});
+
 		QUnit.module("Context Menu", {
 			beforeEach: function() {
 				oList = new List();

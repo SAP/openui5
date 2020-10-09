@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Icon",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/core/theming/Parameters",
 	"./library",
 	"./Button",
@@ -32,6 +33,7 @@ function(
 	Control,
 	IconPool,
 	Icon,
+	InvisibleText,
 	ThemeParameters,
 	library,
 	Button,
@@ -612,7 +614,8 @@ function(
 			id: this.getId() + "-selectSingle",
 			groupName: this.getListProperty("id") + "_selectGroup",
 			activeHandling: false,
-			selected: this.getSelected()
+			selected: this.getSelected(),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "LIST_ITEM_SELECTION")
 		}).addStyleClass("sapMLIBSelectS").setParent(this, null, true).setTabIndex(-1).attachSelect(function(oEvent) {
 			var bSelected = oEvent.getParameter("selected");
 			this.setSelected(bSelected);
@@ -642,7 +645,8 @@ function(
 		this._oMultiSelectControl = new CheckBox({
 			id: this.getId() + "-selectMulti",
 			activeHandling: false,
-			selected: this.getSelected()
+			selected: this.getSelected(),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "LIST_ITEM_SELECTION")
 		}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).setTabIndex(-1).addEventDelegate({
 			onkeydown: function (oEvent) {
 				this.informList("KeyDown", oEvent);
