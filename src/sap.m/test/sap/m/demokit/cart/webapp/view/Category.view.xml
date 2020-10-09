@@ -13,7 +13,7 @@
 				rootRole="Region"
 				rootLabel="{i18n>Category_rootLabel}"
 				contentRole="Main"
-				contentLabel="{i18n>Category_contentLabel}"
+				contentLabel="{CategoryName} {i18n>Category_contentLabel}"
 				footerRole="Region"
 				footerLabel="{i18n>Category_footerLabel}"
 				headerRole="Region"
