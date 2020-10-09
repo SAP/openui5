@@ -15,20 +15,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function _handleStashedControls(oChange, oControl, oChangeHandler, mPropertyBag) {
-		var bStashed = false;
-		var sControlType = mPropertyBag.modifier.getControlType(oControl);
-		if (oChange.getChangeType() === "stashControl" && sControlType === "sap.ui.core._StashedControl") {
-			bStashed = true;
-
-			// the revertData has to be faked when it is not available
-			if (!oChange.hasRevertData()) {
-				oChangeHandler.setChangeRevertData(oChange, false);
-			}
-		}
-		return bStashed;
-	}
-
 	function _waitForApplyIfNecessary(oChange) {
 		if (!oChange.isApplyProcessFinished() && oChange.hasApplyProcessStarted()) {
 			// wait for the change to be applied
@@ -65,10 +51,7 @@ sap.ui.define([
 			.then(_waitForApplyIfNecessary.bind(null, oChange))
 
 			.then(function() {
-				// stashed controls don't have custom data in Runtime, so we have to assume that it is applied so we can perform the revert
-				var bStashed = _handleStashedControls(oChange, oControl, oChangeHandler, mPropertyBag);
-
-				if (oChange.isApplyProcessFinished() || bStashed) {
+				if (oChange.isApplyProcessFinished()) {
 					if (!oChange.hasRevertData()) {
 						oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, mPropertyBag.modifier));
 					}

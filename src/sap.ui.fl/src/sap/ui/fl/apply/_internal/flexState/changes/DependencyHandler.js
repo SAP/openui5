@@ -411,50 +411,5 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Checks the dependencies map for any unresolved dependencies belonging to the given control and returns the
-	 * the file name of the unresolved changes.
-	 *
-	 * @param {object} mChangesMap - Map with changes and dependencies
-	 * @param {object} sControlId - ID of the control
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
-	 * @returns {string[]} file names of unresolved changes
-	 */
-	DependencyHandler.getOpenDependenciesForControl = function(mChangesMap, sControlId, oAppComponent) {
-		var aOpenDependencies = [];
-		Object.keys(mChangesMap.mDependencies).forEach(function(sKey) {
-			mChangesMap.mDependencies[sKey].changeObject.getDependentSelectorList().some(function(oDependendSelector) {
-				if (JsControlTreeModifier.getControlIdBySelector(oDependendSelector, oAppComponent) === sControlId) {
-					aOpenDependencies.push(sKey);
-					return true;
-				}
-			});
-		});
-
-		return aOpenDependencies;
-	};
-
-	/**
-	 * Removes the dependencies from the map with changes and dependencies for any unresolved dependencies belonging to the given control.
-	 *
-	 * @param {object} mChangesMap - Map with changes and dependencies
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
-	 * @param {object} sControlId - ID of the control whose open dependencies should be removed.
-	 * @param {object} sEmbeddingControlId - ID of the control that contains the control with sControlId and for which the dependencies are going to be resolved.
-	 * @returns {sap.ui.fl.Change[]} Change instances that are removed from dependencies
-	 */
-	DependencyHandler.removeOpenDependentChanges = function(mChangesMap, oAppComponent, sControlId, sEmbeddingControlId) {
-		var aOpenDependencies = DependencyHandler.getOpenDependenciesForControl(mChangesMap, sControlId, oAppComponent);
-		var aChangesToBeDeleted = [];
-		aOpenDependencies.forEach(function(sChangeKey) {
-			if (mChangesMap.mDependencies[sChangeKey].controlsDependencies.length) {
-				aChangesToBeDeleted.push(mChangesMap.mDependencies[sChangeKey].changeObject);
-				DependencyHandler.removeChangeFromDependencies(mChangesMap, sChangeKey, sEmbeddingControlId);
-			}
-		});
-
-		return aChangesToBeDeleted;
-	};
-
 	return DependencyHandler;
 });

@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Control",
-	"sap/ui/core/StashedControlSupport",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
@@ -21,8 +20,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	merge,
 	Log,
 	Label,
@@ -30,7 +28,6 @@ function(
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Control,
-	StashedControlSupport,
 	Applier,
 	FlexCustomData,
 	ChangeUtils,
@@ -65,59 +62,6 @@ function(
 			selector: {
 				id: sSelectorId || "abc123",
 				idIsLocal: !sSelectorId
-			},
-			content: {
-				something: "createNewVariant"
-			}
-		};
-	}
-
-	function getStashingChangeContent(sFileName, sSelectorId, bIsStash) {
-		var sChangeType = bIsStash ? "stashControl" : "unstashControl";
-		return {
-			fileType: "change",
-			layer: Layer.USER,
-			fileName: sFileName || "a",
-			namespace: "b",
-			packageName: "c",
-			changeType: sChangeType,
-			creation: "",
-			reference: "",
-			selector: {
-				id: sSelectorId || "abc123",
-				idIsLocal: !sSelectorId
-			},
-			content: {
-				something: "createNewVariant"
-			}
-		};
-	}
-
-	function getMoveChangeContent(sFileName, sSelectorId, sParentSelectorId) {
-		return {
-			fileType: "change",
-			layer: Layer.USER,
-			fileName: sFileName || "a",
-			namespace: "b",
-			packageName: "c",
-			changeType: "moveControls",
-			creation: "",
-			reference: "",
-			selector: {
-				id: sSelectorId || "abc123",
-				idIsLocal: !sSelectorId
-			},
-			dependentSelector: {
-				movedElements: [{
-					id: sSelectorId || "abc123",
-					idIsLocal: !sSelectorId
-				}],
-				source: {
-					selector: {
-						id: sParentSelectorId || "def456",
-						idIsLocal: !sParentSelectorId
-					}
-				}
 			},
 			content: {
 				something: "createNewVariant"
@@ -285,112 +229,6 @@ function(
 					view:sinon.match.any
 				}), "then Applier.applyChangeOnControl was always called with the component responsible for the change selector");
 			}.bind(this));
-		});
-
-		QUnit.test("when applyAllChangesForControl is called for an app with one moved stashed control and a stashed control without changes", function(assert) {
-			var oObjectPageLayout = new Control("objectPageLayout");
-			var oObjectPageSection1 = new Control("objectPageSection1");
-			var oChange0 = new Change(getMoveChangeContent("fileNameChange0", "objectPageSection1", "objectPageLayout"));
-			var oChange1 = new Change(getStashingChangeContent("fileNameChange1", "objectPageSection1", true));
-			var oRemoveOpenDependentChangesSpy = sandbox.spy(DependencyHandler, "removeOpenDependentChanges");
-			var oProcessDependentQueueSpy = sandbox.spy(DependencyHandler, "processDependentQueue");
-			sandbox.stub(StashedControlSupport, "getStashedControlIds").returns(["objectPageSection1", "objectPageSection2"]);
-
-			var mChangesMap = getInitialChangesMap({
-				mChanges: {
-					objectPageLayout: [oChange0],
-					objectPageSection1: [oChange1]
-				},
-				mDependencies: {
-					fileNameChange0: {
-						changeObject: oChange0,
-						dependencies: [],
-						controlsDependencies: ["objectPageLayout", "objectPageSection1"]
-					},
-					fileNameChange1: {
-						changeObject: oChange1,
-						dependencies: ["fileNameChange0"],
-						controlsDependencies: ["objectPageSection1"]
-					}
-				},
-				mDependentChangesOnMe: {
-					fileNameChange0: ["fileNameChange1"]
-				}
-			});
-
-			function fnGetChangesMap() {
-				return mChangesMap;
-			}
-
-			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oObjectPageLayout)
-			.then(function() {
-				assert.equal(oRemoveOpenDependentChangesSpy.callCount, 2, "the open dependencies were removed for both stashed controls");
-				assert.equal(oProcessDependentQueueSpy.callCount, 1, "the dependent changes queue was updated");
-				assert.equal(oProcessDependentQueueSpy.firstCall.args[2], "objectPageLayout", "for the embedding control");
-
-				oObjectPageLayout.destroy();
-				oObjectPageSection1.destroy();
-			});
-		});
-
-		QUnit.test("when applyAllChangesForControl is called for an app with one moved stashed and then unstashed control", function(assert) {
-			var oObjectPageLayout = new Control("objectPageLayout");
-			var oObjectPageSection1 = new Control("objectPageSection1");
-			var oChange0 = new Change(getMoveChangeContent("fileNameChange0", "objectPageSection1", "objectPageLayout"));
-			var oChange1 = new Change(getStashingChangeContent("fileNameChange1", "objectPageSection1", true));
-			var oChange2 = new Change(getStashingChangeContent("fileNameChange2", "objectPageSection1", false));
-			var oChange3 = new Change(getMoveChangeContent("fileNameChange3", "objectPageSection1", "objectPageLayout"));
-			var oRemoveOpenDependentChangesSpy = sandbox.spy(DependencyHandler, "removeOpenDependentChanges");
-			var oProcessDependentQueueSpy = sandbox.spy(DependencyHandler, "processDependentQueue");
-			sandbox.stub(StashedControlSupport, "getStashedControlIds").returns([]);
-
-			var mChangesMap = getInitialChangesMap({
-				mChanges: {
-					objectPageLayout: [oChange0, oChange3],
-					objectPageSection1: [oChange1, oChange2]
-				},
-				mDependencies: {
-					fileNameChange0: {
-						changeObject: oChange0,
-						dependencies: [],
-						controlsDependencies: ["objectPageLayout", "objectPageSection1"]
-					},
-					fileNameChange1: {
-						changeObject: oChange1,
-						dependencies: ["fileNameChange0"],
-						controlsDependencies: ["objectPageSection1"]
-					},
-					fileNameChange2: {
-						changeObject: oChange2,
-						dependencies: ["fileNameChange1"],
-						controlsDependencies: ["objectPageSection1"]
-					},
-					fileNameChange3: {
-						changeObject: oChange3,
-						dependencies: ["fileNameChange2", "fileNameChange0"],
-						controlsDependencies: ["objectPageLayout", "objectPageSection1"]
-					}
-				},
-				mDependentChangesOnMe: {
-					fileNameChange0: ["fileNameChange1", "fileNameChange3"],
-					fileNameChange1: ["fileNameChange2"],
-					fileNameChange2: ["fileNameChange3"]
-				}
-			});
-
-			function fnGetChangesMap() {
-				return mChangesMap;
-			}
-
-			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oObjectPageLayout)
-			.then(function() {
-				assert.equal(oRemoveOpenDependentChangesSpy.callCount, 0, "the removal of open dependencies was not called");
-				assert.equal(oProcessDependentQueueSpy.callCount, 1, "the dependent changes queue was updated");
-				assert.equal(oProcessDependentQueueSpy.firstCall.args[2], "objectPageLayout", "for the embedding control");
-
-				oObjectPageLayout.destroy();
-				oObjectPageSection1.destroy();
-			});
 		});
 
 		QUnit.test("applyAllChangesForControl dependency test 1", function(assert) {

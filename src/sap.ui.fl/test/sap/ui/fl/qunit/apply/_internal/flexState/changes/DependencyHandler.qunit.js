@@ -488,49 +488,6 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("getOpenDependenciesForControl", function(assert) {
-			assert.deepEqual(
-				DependencyHandler.getOpenDependenciesForControl(this.mChangesMap, "controlId2", this.oAppComponent),
-				["fileNameChange1", "fileNameChange3"],
-				"the given control ID has open dependencies to two changes"
-			);
-
-			assert.deepEqual(
-				DependencyHandler.getOpenDependenciesForControl(this.mChangesMap, "controlId25", this.oAppComponent),
-				[],
-				"the given control ID has no open dependencies to any changes"
-			);
-		});
-
-		QUnit.test("removeOpenDependentChanges", function(assert) {
-			var mChangesCopy = merge({}, this.mChangesMap);
-			delete mChangesCopy.mDependencies.fileNameChange1;
-			delete mChangesCopy.mDependencies.fileNameChange3;
-			delete mChangesCopy.mDependentChangesOnMe.fileNameChange1;
-			delete mChangesCopy.mDependentChangesOnMe.fileNameChange3;
-			mChangesCopy.mDependencies.fileNameChange2.dependencies = [];
-			mChangesCopy.mDependencies.fileNameChange4.dependencies = [];
-
-			var oRemoveChangeFromDependenciesSpy = sandbox.spy(DependencyHandler, "removeChangeFromDependencies");
-			var aChangesToBeDeleted = DependencyHandler.removeOpenDependentChanges(this.mChangesMap, this.oAppComponent, "controlId2", "controlId1");
-			assert.deepEqual(aChangesToBeDeleted, [this.mChangesMap.aChanges[0], this.mChangesMap.aChanges[2]], "correct change objects are returned");
-			assert.equal(oRemoveChangeFromDependenciesSpy.callCount, 2, "the two dependent changes were removed from dependencies");
-			assert.deepEqual(this.mChangesMap.mDependencies, mChangesCopy.mDependencies, "the dependencies map looks as expected after removal of the dependencies");
-			assert.deepEqual(this.mChangesMap.mDependentChangesOnMe, mChangesCopy.mDependentChangesOnMe, "the dependentChangesOnMe map looks as expected after removal of the dependencies");
-		});
-
-		QUnit.test("removeOpenDependentChanges without dependencies", function(assert) {
-			var mChangesCopy = merge({}, this.mChangesMap);
-
-			var oRemoveChangeFromDependenciesSpy = sandbox.spy(DependencyHandler, "removeChangeFromDependencies");
-
-			var aChangesToBeDeleted = DependencyHandler.removeOpenDependentChanges(this.mChangesMap, this.oAppComponent, "controlId25", undefined);
-			assert.deepEqual(aChangesToBeDeleted, [], "no change objects are returned");
-			assert.equal(oRemoveChangeFromDependenciesSpy.callCount, 0, "no changes were removed from dependencies");
-			assert.deepEqual(this.mChangesMap.mDependencies, mChangesCopy.mDependencies, "the dependencies map looks as before");
-			assert.deepEqual(this.mChangesMap.mDependentChangesOnMe, mChangesCopy.mDependentChangesOnMe, "the dependentChangesOnMe map looks as before");
-		});
-
 		QUnit.test("removeChangeFromDependencies", function (assert) {
 			var oResolveStub = sandbox.stub(DependencyHandler, "resolveDependenciesForChange");
 			assert.ok(this.mChangesMap.mDependencies.fileNameChange2, "the change has a dependency");
