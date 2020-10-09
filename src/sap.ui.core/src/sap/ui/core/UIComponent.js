@@ -436,6 +436,7 @@ sap.ui.define([
 	/**
 	 * Returns the reference to the router instance which has been created by
 	 * the UIComponent once the routes in the routing metadata has been defined.
+	 *
 	 * @since 1.16.1
 	 * @return {sap.ui.core.routing.Router} the router instance
 	 * @public
@@ -444,6 +445,19 @@ sap.ui.define([
 		return this._oRouter;
 	};
 
+	/**
+	 * Determines if the router instance is created by the component and not overriden by overridding the
+	 * <code>{@link sap.ui.core.UIComponent#getRouter}</code> method.
+	 *
+	 * @since 1.84.0
+	 * @return {boolean} If <code>{@link sap.ui.core.UIComponent#getRouter}</code> is overriden returns
+	 *  <code>false</code>, otherwise <code>true</code>
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	UIComponent.prototype.hasNativeRouter = function() {
+		return this._oRouter === this.getRouter();
+	};
 
 	/**
 	 * Returns the reference to the Targets instance which has been created by

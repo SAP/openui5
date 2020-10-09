@@ -299,8 +299,7 @@ sap.ui.define([
 				}
 				this.setHashChanger(oRouterHashChanger);
 
-				var oParentComponent = this._oOwner && Component.getOwnerComponentFor(this._oOwner);
-				var oParentRouter = oParentComponent && oParentComponent.getRouter();
+				var oParentRouter = this._getParentRouter();
 
 				if (oParentRouter) {
 					// attach titleChanged event and forward event parameters to parent router
@@ -749,6 +748,17 @@ sap.ui.define([
 			setView : function (sViewName, oView) {
 				this._oViews.setView(sViewName, oView);
 				return this;
+			},
+
+			/**
+			 * Determines the router instance of the parent component
+			 *
+			 * @private
+			 * @returns {sap.ui.core.routing.Router} The router of the parent component
+			 */
+			_getParentRouter : function(){
+				var oParentComponent = this._oOwner && Component.getOwnerComponentFor(this._oOwner);
+				return oParentComponent && oParentComponent.getRouter();
 			},
 
 			/**
