@@ -1153,6 +1153,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.Model#filterMatchingMessages
+	 */
+	ODataModel.prototype.filterMatchingMessages = function (sMessageTarget, sPathPrefix) {
+		return _Helper.hasPathPrefix(sMessageTarget, sPathPrefix)
+			? this.mMessages[sMessageTarget]
+			: [];
+	};
+
+	/**
 	 * Returns the model's bindings.
 	 *
 	 * @returns {sap.ui.model.Binding[]}

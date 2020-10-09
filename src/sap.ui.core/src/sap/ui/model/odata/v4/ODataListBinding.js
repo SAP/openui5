@@ -573,6 +573,16 @@ sap.ui.define([
 
 	/**
 	 * @override
+	 * @see sap.ui.model.Binding#_checkDataStateMessages
+	 */
+	ODataListBinding.prototype._checkDataStateMessages = function(oDataState, sResolvedPath) {
+		if (sResolvedPath) {
+			oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath, true));
+		}
+	};
+
+	/**
+	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#checkKeepAlive
 	 */
 	ODataListBinding.prototype.checkKeepAlive = function (oContext) {

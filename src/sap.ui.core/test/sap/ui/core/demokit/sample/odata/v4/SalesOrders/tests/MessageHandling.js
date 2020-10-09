@@ -39,6 +39,7 @@ sap.ui.define([
 			When.onTheMainPage.firstSalesOrderIsVisible();
 			Then.onTheMainPage.checkMessagesButtonCount(2);
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
+			Then.onTheMainPage.checkMessageStrip("Warning");
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMessagePopover.checkMessages([{
@@ -106,6 +107,7 @@ sap.ui.define([
 				sNoteBoundWarning);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
 				sQuantityBoundError);
+			Then.onTheMainPage.checkMessageStrip("Error");
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMessagePopover.checkMessages([{
