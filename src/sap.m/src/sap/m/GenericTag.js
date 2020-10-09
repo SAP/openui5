@@ -136,10 +136,22 @@ sap.ui.define([
 	};
 
 	GenericTag.prototype.setValue = function(oValue) {
+		var oPreviousValue = this.getValue();
+		if (oPreviousValue) {
+			oValue.detachEvent("_change", this._fireValueChanged, this);
+		}
+
 		this.setAggregation("value", oValue);
-		this.fireEvent("_valueChanged");
+		oValue.attachEvent("_change", this._fireValueChanged, this);
+
+		this._fireValueChanged();
 
 		return this;
+	};
+
+	// Fires invalidation event for OverflowToolbar
+	GenericTag.prototype._fireValueChanged = function() {
+		this.fireEvent("_valueChanged");
 	};
 
 	/**
