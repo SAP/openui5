@@ -219,7 +219,7 @@ sap.ui.define(["jquery.sap.encoder"], function (jQuery) {
 
 	});
 
-	QUnit.test("Whitelist", function (assert) {
+	QUnit.test("Deprecated jQuery.sap.validateUrl", function (assert) {
 		jQuery.sap.addUrlWhitelist("http", "www.sap.com");
 		jQuery.sap.addUrlWhitelist("http", "www.sap.de");
 		jQuery.sap.addUrlWhitelist("http", "sap.com");

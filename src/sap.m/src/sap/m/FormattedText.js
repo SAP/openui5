@@ -9,7 +9,7 @@ sap.ui.define([
 	'./FormattedTextAnchorGenerator',
 	'./FormattedTextRenderer',
 	"sap/base/Log",
-	"sap/base/security/URLWhitelist",
+	"sap/base/security/URLListValidator",
 	"sap/base/security/sanitizeHTML"
 ],
 function(
@@ -18,7 +18,7 @@ function(
 	FormattedTextAnchorGenerator,
 	FormattedTextRenderer,
 	Log,
-	URLWhitelist,
+	URLListValidator,
 	sanitizeHTML0
 	) {
 		"use strict";
@@ -80,7 +80,7 @@ function(
 					 * </ul>
 					 * <p><code>class, style,</code> and <code>target</code> attributes are allowed.
 					 * If <code>target</code> is not set, links open in a new window by default.
-					 * <p>Only safe <code>href</code> attributes can be used. See {@link module:sap/base/security/URLWhitelist URLWhitelist}.
+					 * <p>Only safe <code>href</code> attributes can be used. See {@link module:sap/base/security/URLListValidator URLListValidator}.
 					 *
 					 * <b>Note:</b> Keep in mind that not supported HTML tags and
 					 * the content nested inside them are both not rendered by the control.
@@ -227,7 +227,7 @@ function(
 
 				// sanitize hrefs
 				if (attr == "href") { // a::href
-					if (!URLWhitelist.validate(value)) {
+					if (!URLListValidator.validate(value)) {
 						Log.warning("FormattedText: incorrect href attribute:" + value, this);
 						attribs[i + 1] = "#";
 						addTarget = false;
@@ -278,8 +278,8 @@ function(
 			return sanitizeHTML0(sText, {
 				tagPolicy: fnPolicy.bind(this),
 				uriRewriter: function (sUrl) {
-					// by default we use the URL whitelist to check the URLs
-					if (URLWhitelist.validate(sUrl)) {
+					// by default, we use the URLListValidator to check the URLs
+					if (URLListValidator.validate(sUrl)) {
 						return sUrl;
 					}
 				}

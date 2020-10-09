@@ -14,7 +14,7 @@ sap.ui.define([
 	'./LinkRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-		"sap/base/security/URLWhitelist"
+	"sap/base/security/URLListValidator"
 ],
 function(
 	library,
@@ -27,7 +27,7 @@ function(
 	LinkRenderer,
 	KeyCodes,
 	Log,
-	URLWhitelist
+	URLListValidator
 ) {
 	"use strict";
 
@@ -131,8 +131,8 @@ function(
 			 *
 			 * If validation fails, the value of the <code>href</code> property will still be set, but will not be applied to the DOM.
 			 *
-			 * <b>Note:</b> Additional whitelisting of URLs is allowed through
-			 * {@link module:sap/base/security/URLWhitelist URLWhitelist}.
+			 * <b>Note:</b> Additional URLs are allowed through
+			 * {@link module:sap/base/security/URLListValidator URLListValidator}.
 			 *
 			 * @since 1.54.0
 			 */
@@ -356,7 +356,7 @@ function(
 	 * @private
 	 */
 	Link.prototype._isHrefValid = function (sUri) {
-		return this.getValidateUrl() ? URLWhitelist.validate(sUri) : true;
+		return this.getValidateUrl() ? URLListValidator.validate(sUri) : true;
 	};
 
 	/**

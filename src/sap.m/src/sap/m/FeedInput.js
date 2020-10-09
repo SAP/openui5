@@ -10,10 +10,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"./FeedInputRenderer",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/security/URLWhitelist",
+	"sap/base/security/URLListValidator",
 	"sap/base/security/sanitizeHTML"
 ],
-	function(library, Control, IconPool, TextArea, Button, FeedInputRenderer, jQuery,URLWhitelist,sanitizeHTML0) {
+	function(library, Control, IconPool, TextArea, Button, FeedInputRenderer, jQuery, URLListValidator, sanitizeHTML0) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -226,7 +226,7 @@ sap.ui.define([
 
 			// sanitize hrefs
 			if (attr == "href") { // a::href
-				if (!URLWhitelist.validate(value)) {
+				if (!URLListValidator.validate(value)) {
 					attribs[i + 1] = "#";
 					addTarget = false;
 				}
@@ -270,8 +270,8 @@ sap.ui.define([
 		return sanitizeHTML0(sText, {
 			tagPolicy: fnPolicy.bind(this),
 			uriRewriter: function (sUrl) {
-				// by default we use the URL whitelist to check the URLs
-				if (URLWhitelist.validate(sUrl)) {
+				// by default, we use the URLListValidator to check the URLs
+				if (URLListValidator.validate(sUrl)) {
 					return sUrl;
 				}
 			}

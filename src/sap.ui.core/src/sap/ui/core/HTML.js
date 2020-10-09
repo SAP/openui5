@@ -107,7 +107,7 @@ sap.ui.define([
 				/**
 				 * Whether to run the HTML sanitizer once the content (HTML markup) is applied or not.
 				 *
-				 * To configure the set of allowed URLs, you can use the {@link jQuery.sap.addUrlWhitelist whitelist API}.
+				 * To configure the set of allowed URLs, you can use the {@link module:sap/base/security/URLListValidator#add URLListValidator API}.
 				 */
 				sanitizeContent : {type : "boolean", group : "Misc", defaultValue : false},
 

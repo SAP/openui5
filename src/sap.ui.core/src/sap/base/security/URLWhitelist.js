@@ -1,22 +1,24 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/assert"], function(assert) {
+sap.ui.define(["sap/base/security/URLListValidator"], function(URLListValidator) {
 
 	"use strict";
 
 	/**
-	 * Registry to add whitelisted URLs and validate against them.
+	 * Registry to manage allowed URLs and validate against them.
 	 *
 	 * @namespace
 	 * @since 1.58
 	 * @alias module:sap/base/security/URLWhitelist
 	 * @public
+	 * @deprecated Since 1.85 use {@link module:sap/base/security/URLListValidator} instead.
+	 * SAP strives to replace insensitive terms with inclusive language.
+	 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
 	 */
-	var oURLWhitelist = {};
 
 	/**
-	 * Entry object of the URLWhitelist
+	 * Entry object of the URLWhitelist.
 	 *
 	 * @public
 	 * @typedef {object} module:sap/base/security/URLWhitelist.Entry
@@ -24,67 +26,57 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * @property {string} host The host of the URL
 	 * @property {string} port The port of the URL
 	 * @property {string} path the path of the URL
+	 * @deprecated Since 1.85 use {@link module:sap/base/security/URLListValidator.Entry} instead.
 	 */
-	function URLWhitelistEntry(protocol, host, port, path){
-		if (protocol) {
-			this.protocol = protocol.toUpperCase();
-		}
-		if (host) {
-			this.host = host.toUpperCase();
-		}
-		this.port = port;
-		this.path = path;
-	}
 
 	/**
-	 * The internally managed whitelist array
-	 * @private
-	 */
-	var aWhitelist = [];
-
-	/**
-	 * Clears the whitelist for URL validation
+	 * Clears the entries in the list.
 	 *
+	 * @name module:sap/base/security/URLWhitelist.clear
+	 * @function
 	 * @public
+	 * @deprecated Since 1.85 use {@link module:sap/base/security/URLListValidator.clear} instead.
 	 */
-	oURLWhitelist.clear = function() {
-		aWhitelist.splice(0,aWhitelist.length);
-	};
 
 	/**
-	 * Adds a whitelist entry
+	 * Adds an entry.
+	 *
+	 * Note:
+	 * Adding the first entry to the list of allowed entries will disallow all URLs but the ones matching the newly added entry.
 	 *
 	 * @param {string} protocol The protocol of the URL
 	 * @param {string} host The host of the URL
 	 * @param {string} port The port of the URL
 	 * @param {string} path the path of the URL
+	 * @name module:sap/base/security/URLWhitelist.add
+	 * @function
 	 * @public
+	 * @deprecated Since 1.85 use {@link module:sap/base/security/URLListValidator.add} instead.
 	 */
-	oURLWhitelist.add = function(protocol, host, port, path) {
-		var oEntry = new URLWhitelistEntry(protocol, host, port, path);
-		var iIndex = aWhitelist.length;
-		aWhitelist[iIndex] = oEntry;
-	};
+
 
 	/**
-	 * Deletes an entry from the whitelist entry
+	 * Deletes an entry from the list.
+	 *
+	 * Note:
+	 * Deleting the last entry from the list of allowed entries will allow all URLs.
 	 *
 	 * @param {module:sap/base/security/URLWhitelist.Entry} oEntry The entry to be deleted
+	 * @name module:sap/base/security/URLWhitelist.delete
+	 * @function
 	 * @public
+	 * @deprecated Since 1.85 use {@link module:sap/base/security/URLListValidator.clear} and {@link module:sap/base/security/URLListValidator.add} instead.
 	 */
-	oURLWhitelist.delete = function(oEntry) {
-		aWhitelist.splice(aWhitelist.indexOf(oEntry), 1);
-	};
 
 	/**
-	 * Gets an array with the whitelist entries
+	 * Gets the list of allowed entries.
 	 *
-	 * @returns {module:sap/base/security/URLWhitelist.Entry[]} An array with whitelist entries
+	 * @returns {module:sap/base/security/URLWhitelist.Entry[]} The allowed entries
+	 * @name module:sap/base/security/URLWhitelist.entries
+	 * @function
 	 * @public
+	 * @deprecated Since 1.85 use {@link module:sap/base/security/URLListValidator.entries} instead.
 	 */
-	oURLWhitelist.entries = function() {
-		return aWhitelist.slice();
-	};
 
 	/**
 	 * Validates a URL. Check if it's not a script or other security issue.
@@ -191,153 +183,31 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 *
 	 * </pre>
 	 *
-	 * When a whitelist has been configured using {@link #.addUrlWhitelist addUrlWhitelist},
+	 * When a allowlist has been configured using {@link #add and @link #delete},
 	 * any URL that passes the syntactic checks above, additionally will be tested against
-	 * the content of the whitelist.
+	 * the content of the allowlist.
 	 *
 	 * @param {string} sUrl URL to be validated
 	 * @return {boolean} true if valid, false if not valid
+	 * @name module:sap/base/security/URLWhitelist.validate
+	 * @function
 	 * @public
+	 * @deprecated Since 1.85 use {@link module:sap/base/security/URLListValidator.validate} instead
 	 */
-	oURLWhitelist.validate = function(sUrl) {
 
-		var result = /^(?:([^:\/?#]+):)?((?:\/\/((?:\[[^\]]+\]|[^\/?#:]+))(?::([0-9]+))?)?([^?#]*))(?:\?([^#]*))?(?:#(.*))?$/.exec(sUrl);
-		if (!result) {
-			return false;
+	return {
+		"add": URLListValidator.add,
+		"delete": URLListValidator._delete,
+		"clear": URLListValidator.clear,
+		"entries": URLListValidator.entries,
+		"validate": URLListValidator.validate,
+		"_createEntry": function (protocol, host, port, path) {
+			return {
+				protocol: protocol && protocol.toUpperCase(),
+				host: host && host.toUpperCase(),
+				port: port,
+				path: path
+			};
 		}
-
-		var sProtocol = result[1],
-			sBody = result[2],
-			sHost = result[3],
-			sPort = result[4],
-			sPath = result[5],
-			sQuery = result[6],
-			sHash = result[7];
-
-		var rCheckPath = /^([a-z0-9-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*$/i;
-		var rCheckQuery = /^([a-z0-9-._~!$&'()*+,;=:@\/?]|%[0-9a-f]{2})*$/i;
-		var rCheckFragment = rCheckQuery;
-		var rCheckMail = /^([a-z0-9!$'*+:^_`{|}~-]|%[0-9a-f]{2})+(?:\.([a-z0-9!$'*+:^_`{|}~-]|%[0-9a-f]{2})+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
-		var rCheckIPv4 = /^([0-9]{1,3}\.){3}[0-9]{1,3}$/;
-		var rCheckValidIPv4 = /^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$/;
-		var rCheckIPv6 = /^\[[^\]]+\]$/;
-		var rCheckValidIPv6 = /^\[(((([0-9a-f]{1,4}:){6}|(::([0-9a-f]{1,4}:){5})|(([0-9a-f]{1,4})?::([0-9a-f]{1,4}:){4})|((([0-9a-f]{1,4}:){0,1}[0-9a-f]{1,4})?::([0-9a-f]{1,4}:){3})|((([0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::([0-9a-f]{1,4}:){2})|((([0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:)|((([0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::))(([0-9a-f]{1,4}:[0-9a-f]{1,4})|(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])))|((([0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4})|((([0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::))\]$/i;
-		var rCheckHostName = /^([a-z0-9]([a-z0-9\-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9\-]*[a-z0-9])?$/i;
-
-		// protocol
-		if (sProtocol) {
-			sProtocol = sProtocol.toUpperCase();
-			if (aWhitelist.length <= 0) {
-				// no whitelist -> check for default protocols
-				if (!/^(https?|ftp)/i.test(sProtocol)) {
-					return false;
-				}
-			}
-		}
-
-		// Host -> validity check for IP address or hostname
-		if (sHost) {
-			if (rCheckIPv4.test(sHost)) {
-				if (!rCheckValidIPv4.test(sHost)) {
-					//invalid ipv4 address
-					return false;
-				}
-			} else if (rCheckIPv6.test(sHost)) {
-				if (!rCheckValidIPv6.test(sHost)) {
-					//invalid ipv6 address
-					return false;
-				}
-			} else if (!rCheckHostName.test(sHost)) {
-				// invalid host name
-				return false;
-			}
-			sHost = sHost.toUpperCase();
-		}
-
-		// Path -> split for "/" and check if forbidden characters exist
-		if (sPath) {
-			if (sProtocol === "MAILTO") {
-				var aAddresses = sBody.split(",");
-				for ( var i = 0; i < aAddresses.length; i++) {
-					if (!rCheckMail.test(aAddresses[i])) {
-						// forbidden character found
-						return false;
-					}
-				}
-			} else {
-				var aComponents = sPath.split("/");
-				for ( var i = 0; i < aComponents.length; i++) {
-					if (!rCheckPath.test(aComponents[i])) {
-						// forbidden character found
-						return false;
-					}
-				}
-			}
-		}
-
-		// query
-		if (sQuery) {
-			if (!rCheckQuery.test(sQuery)) {
-				// forbidden character found
-				return false;
-			}
-		}
-
-		// hash
-		if (sHash) {
-			if (!rCheckFragment.test(sHash)) {
-				// forbidden character found
-				return false;
-			}
-		}
-
-		//filter whitelist
-		if (aWhitelist.length > 0) {
-			var bFound = false;
-			for (var i = 0; i < aWhitelist.length; i++) {
-				assert(aWhitelist[i] instanceof URLWhitelistEntry, "whitelist entry type wrong");
-				if (!sProtocol || !aWhitelist[i].protocol || sProtocol == aWhitelist[i].protocol) {
-					// protocol OK
-					var bOk = false;
-					if (sHost && aWhitelist[i].host && /^\*/.test(aWhitelist[i].host)) {
-						// check for wildcard search at begin
-						var sHostEscaped = aWhitelist[i].host.slice(1).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-						var rFilter = RegExp(sHostEscaped + "$");
-						if (rFilter.test(sHost)) {
-							bOk = true;
-						}
-					} else if (!sHost || !aWhitelist[i].host || sHost == aWhitelist[i].host) {
-						bOk = true;
-					}
-					if (bOk) {
-						// host OK
-						if ((!sHost && !sPort) || !aWhitelist[i].port || sPort == aWhitelist[i].port) {
-							// port OK
-							if (aWhitelist[i].path && /\*$/.test(aWhitelist[i].path)) {
-								// check for wildcard search at end
-								var sPathEscaped = aWhitelist[i].path.slice(0, -1).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-								var rFilter = RegExp("^" + sPathEscaped);
-								if (rFilter.test(sPath)) {
-									bFound = true;
-								}
-							} else if (!aWhitelist[i].path || sPath == aWhitelist[i].path) {
-								// path OK
-								bFound = true;
-							}
-						}
-					}
-				}
-				if (bFound) {
-					break;
-				}
-			}
-			if (!bFound) {
-				return false;
-			}
-		}
-
-		return true;
 	};
-
-	return oURLWhitelist;
 });

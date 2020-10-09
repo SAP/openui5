@@ -20,13 +20,15 @@
 				alert("This test page requires the library 'sap.ui.commons' which is not available.");
 				throw(e);
 			}
+			jQuery.sap.require("sap/base/security/URLListValidator");
+			var URLListValidator = sap.ui.require("sap/base/security/URLListValidator");
 
 			oCore.attachInitEvent(function () {
 
 				function onChange(oEvent){
 					var oInput = oCore.getControl("Input1");
 					var sUrl = oInput.getValue();
-					var sValid = jQuery.sap.validateUrl(sUrl);
+					var sValid = URLListValidator.validate(sUrl);
 
 					if (sValid){
 						oInput.setValueState(sap.ui.core.ValueState.Success);
@@ -45,20 +47,20 @@
 				}
 
 				function fillListBox(){
-					var aWhitelist = jQuery.sap.getUrlWhitelist();
+					var aAllowlist = URLListValidator.entries();
 					var oListBox = oCore.getControl("ListBox1");
 					oListBox.removeAllItems();
 
-					if (aWhitelist instanceof Array && aWhitelist.length > 0){
-						for(var i=0; i<aWhitelist.length; i++){
-							if (aWhitelist[i] instanceof Object){
-								oListBox.addItem(new sap.ui.core.ListItem({text: aWhitelist[i].protocol +"|"+ aWhitelist[i].host +"|"+ aWhitelist[i].port +"|"+ aWhitelist[i].path}));
+					if (aAllowlist instanceof Array && aAllowlist.length > 0){
+						for(var i=0; i<aAllowlist.length; i++){
+							if (aAllowlist[i] instanceof Object){
+								oListBox.addItem(new sap.ui.core.ListItem({text: aAllowlist[i].protocol +"|"+ aAllowlist[i].host +"|"+ aAllowlist[i].port +"|"+ aAllowlist[i].path}));
 							}
 						}
 					}
 				}
 
-				function addToWhitelist(oEvent){
+				function addToAllowlist(oEvent){
 					var oProtocol = oCore.getControl("Protocol");
 					var oHost = oCore.getControl("Host");
 					var oPort = oCore.getControl("Port");
@@ -66,7 +68,7 @@
 					var oListBox = oCore.getControl("ListBox1");
 					var sNewUrl = oProtocol.getValue() +"|"+ oHost.getValue() +"|"+ oPort.getValue() +"|"+ oPath.getValue();
 					oListBox.addItem(new sap.ui.core.ListItem({text: sNewUrl}));
-					jQuery.sap.addUrlWhitelist(oProtocol.getValue(), oHost.getValue(), oPort.getValue(), oPath.getValue());
+					URLListValidator.add(oProtocol.getValue(), oHost.getValue(), oPort.getValue(), oPath.getValue());
 					oProtocol.setValue("");
 					oHost.setValue("");
 					oPort.setValue("");
@@ -74,19 +76,19 @@
 					onChange(oEvent);
 				}
 
-				function removeFromWhitelist(oEvent){
+				function removeFromAllowlist(oEvent){
 					var oListBox = oCore.getControl("ListBox1");
 					var iIndex = oListBox.getSelectedIndex();
 					var oItem = oListBox.getSelectedItem();
 					oListBox.removeItem(oItem);
 					oItem.destroy();
-					jQuery.sap.removeUrlWhitelist(iIndex);
+					URLListValidator._delete(URLListValidator.entries()[iIndex]);
 					onChange(oEvent)
 				}
 
-				function clearWhitelist(oEvent){
+				function clearAllowlist(oEvent){
 					var oListBox = oCore.getControl("ListBox1");
-					jQuery.sap.clearUrlWhitelist();
+					URLListValidator.clear();
 					oListBox.destroyItems();
 					onChange(oEvent)
 				}
@@ -100,8 +102,8 @@
 	  	  oLabel.placeAt("target0");
 				oInput.placeAt("target0");
 
-				// whitelist
-		    oLabel = new sap.ui.commons.Label({ text: "Whitelist: "});
+				// allowlist
+		    oLabel = new sap.ui.commons.Label({ text: "Allowlist: "});
 	  	  oLabel.placeAt("target1");
 				var oListBox = new sap.ui.commons.ListBox("ListBox1",{
 					width: "50em",
@@ -120,13 +122,13 @@
 					text: "Remove",
 					width: "7em",
 					style: sap.ui.commons.ButtonStyle.Reject,
-					press: removeFromWhitelist
+					press: removeFromAllowlist
 				});
 				var oButton3 = new sap.ui.commons.Button("Button3",{
 					text: "Clear",
 					width: "7em",
 					style: sap.ui.commons.ButtonStyle.Reject,
-					press: clearWhitelist
+					press: clearAllowlist
 				});
 				var oLayout = new sap.ui.layout.VerticalLayout("Layout1", {
 					content: [oButton, oButton2, oButton3]
@@ -134,7 +136,7 @@
 
 				var oRow1 = new sap.ui.commons.layout.MatrixLayoutRow("Row1");
 				var oRow2 = new sap.ui.commons.layout.MatrixLayoutRow("Row2");
-				var oLyt = new sap.ui.commons.layout.MatrixLayout("WhitelistEntry",{
+				var oLyt = new sap.ui.commons.layout.MatrixLayout("AllowlistEntry",{
 					colums: 5,
 					widths: ["6em", "16em", "5em", "31em", "auto"],
 					rows: [oRow1, oRow2]
@@ -162,7 +164,7 @@
 				var oButton = new sap.ui.commons.Button("Button4",{
 					text: "Add",
 					style: sap.ui.commons.ButtonStyle.Accept,
-					press: addToWhitelist
+					press: addToAllowlist
 				});
 				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oButton}));
 
