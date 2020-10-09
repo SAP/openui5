@@ -55,6 +55,7 @@
 				"dataSource" : "default",
 				"preload" : true,
 				"settings" : {
+					"earlyRequests" : true,
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "update"
