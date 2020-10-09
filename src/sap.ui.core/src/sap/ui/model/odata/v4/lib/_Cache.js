@@ -566,7 +566,8 @@ sap.ui.define([
 						vValue = vValue[aMatches[1]]; // there is a navigation property, follow it
 					}
 					if (vValue) { // ensure that we do not fail on a missing navigation property
-						vValue = vValue.$byPredicate[aMatches[2]]; // search the key predicate
+						vValue = vValue.$byPredicate // not available on empty collections!
+							&& vValue.$byPredicate[aMatches[2]]; // search the key predicate
 					}
 				} else {
 					vIndex = Cache.from$skip(sSegment, vValue);
