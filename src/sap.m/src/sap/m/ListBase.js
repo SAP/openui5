@@ -1664,7 +1664,7 @@ function(
 		that._renderSwipeContent();
 
 		// add to instance manager
-		InstanceManager.addDialogInstance(that);
+		InstanceManager.addPopoverInstance(that);
 
 		// maybe keyboard is opened
 		window.document.activeElement.blur();
@@ -1715,7 +1715,7 @@ function(
 		this._isSwipeActive = false;
 
 		// remove from instance manager
-		InstanceManager.removeDialogInstance(this);
+		InstanceManager.removePopoverInstance(this);
 	};
 
 
