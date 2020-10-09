@@ -37,9 +37,6 @@ sap.ui.define([
 			roledescription: oPC._oRB.getText("PLANNINGCALENDAR")
 		});
 		this.addAdditionalClasses(oRm, oPC);
-		if (oPC._iSize !== undefined && oPC._iSize !== null) {
-			oRm.class("sapMSize" + oPC._iSize);
-		}
 
 		switch (oPC.getAppointmentRoundWidth()) {
 			case CalendarAppointmentRoundWidth.HalfColumn :
