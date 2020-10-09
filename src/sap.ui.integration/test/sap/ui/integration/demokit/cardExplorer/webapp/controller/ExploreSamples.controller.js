@@ -16,9 +16,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/restricted/_debounce",
-	"sap/ui/integration/designtime/cardEditor/CardEditor"
+	"sap/ui/integration/util/loadCardEditor",
+	"sap/base/util/restricted/_debounce"
 ], function (
 	BaseController,
 	Constants,
@@ -37,9 +36,8 @@ sap.ui.define([
 	JSONModel,
 	BindingMode,
 	Device,
-	jQuery,
-	_debounce,
-	CardEditor
+	loadCardEditor,
+	_debounce
 ) {
 	"use strict";
 
@@ -208,27 +206,31 @@ sap.ui.define([
 		},
 
 		_initCardEditor: function () {
-			var oCardEditor,
-				oPage = this.byId("editPage");
+			var oPage = this.byId("editPage");
 
-			if (this._oCardEditor) {
-				// already initialized
-				return;
-			}
+			this._pLoadCardEditor = this._pLoadCardEditor || loadCardEditor(); // only trigger request once
 
-			oCardEditor = new CardEditor({
-				visible: "{= ${settings>/editorType} === 'card' }",
-				jsonChange: this.onCardEditorChange.bind(this)
-			});
-			oCardEditor.addStyleClass("sapUiSmallMargin");
+			this._pLoadCardEditor
+				.then(function (CardEditor) {
+					if (this._oCardEditor) {
+						// already initialized
+						return;
+					}
 
-			oPage.addContent(oCardEditor);
+					this._oCardEditor = new CardEditor({
+						visible: "{= ${settings>/editorType} === 'card' }",
+						jsonChange: this.onCardEditorChange.bind(this)
+					});
 
-			this._fileEditor.getManifestContent().then(function (sJson) {
-				oCardEditor.setJson(sJson);
-			});
-
-			this._oCardEditor = oCardEditor;
+					this._oCardEditor.addStyleClass("sapUiSmallMargin");
+					oPage.addContent(this._oCardEditor);
+				}.bind(this))
+				.then(function () {
+					return this._fileEditor.getManifestContent();
+				}.bind(this))
+				.then(function (sJson) {
+					this._oCardEditor.setJson(sJson);
+				}.bind(this));
 		},
 
 		_onCardError: function (oEvent) {
@@ -535,7 +537,7 @@ sap.ui.define([
 
 		/**
 		 * Handler for selection of "Schema Validation" checkbox.
-		 * @param {jQuery.Event} oEvent The given event.
+		 * @param {sap.ui.base.Event} oEvent The given event.
 		 */
 		onSchemaValidationCheck: function (oEvent) {
 			if (oEvent.getParameter("selected")) {
