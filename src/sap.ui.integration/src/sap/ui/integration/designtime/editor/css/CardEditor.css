@@ -39,11 +39,11 @@
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm:hover::-webkit-scrollbar-thumb {
-	background-color: var(--sapScrollBar_Hover_FaceColor, rgba(148, 148, 148, 0.4))!important;
+	background-color: var(--sapUiChartScrollbarBorderColor, rgba(148, 148, 148, 0.4))!important;
 }
 
 .sapUiIntegrationCardEditor.sapUiIntegrationCardEditorDark .sapUiIntegrationCardEditorForm:hover::-webkit-scrollbar-thumb {
-	background-color: var(--sapScrollBar_Hover_FaceColor, rgba(222, 222, 222, 0.2))!important;;
+	background-color: var(--sapUiChartScrollbarBorderColor, rgba(222, 222, 222, 0.2))!important;;
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem {
@@ -83,7 +83,7 @@
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorSettingsButton .sapMBtnIcon {
-	color: var(--sapContent_LabelColor, #c0c0c0)
+	color: var(--sapUiContentLabelColor, #c0c0c0)
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorSettingsField {
@@ -165,7 +165,7 @@
 }
 
 .sapUiIntegrationFieldSettings .headertitle {
-	border-bottom: 1px solid var(--sapTile_SeparatorColor,#e5e5e5);
+	border-bottom: 1px solid var(--sapUiTileSeparatorColor,#e5e5e5);
 }
 .sapUiIntegrationFieldSettings .headertitle > DIV {
 	width:100%;
@@ -173,8 +173,8 @@
 }
 
 .sapUiIntegrationFieldSettings .currentval {
-	border-top: 1px solid var(--sapTile_SeparatorColor,#e5e5e5);
-	background-color: var(--sapBackgroundColor,#f5f5f5);
+	border-top: 1px solid var(--sapUiTileSeparatorColor,#e5e5e5);
+	background-color: var(--sapUiBaseBG,#f5f5f5);
 	height: 5rem;
 	opacity: 0;
 	transition: opacity 0.2s;
@@ -203,7 +203,7 @@
     margin-left: -10px;
     margin-top: 0.4rem;
     font-size: 10px;
-    background-color:var(--sapButton_Hover_Background,#f5f5f5);
+    background-color:var(--sapUiButtonHoverBackground,#f5f5f5);
     clip-path: circle(5px at 5px 12px);
 }
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItemField.dynamicvalue .sapUiIntegrationCardEditorSettingsButton .sapMBtnIcon{
@@ -244,8 +244,6 @@
 }
 
 /* Icon Select */
-
-
 .sapUiIntegrationIconSelectList li[aria-posinset] IMG.sapMSelectListItemIcon {
 	width: 1.1rem;
 	height: 1.1rem;
@@ -262,8 +260,12 @@
 	padding-left: 0.8rem;
 }
 .sapUiIntegrationIconSelectList li[aria-posinset='2'].sapMSelectListItem {
-	border-bottom: 1px solid #f0f0f0;
+	border-bottom: 1px solid var(--sapTile_SeparatorColor,#e5e5e5);
 	margin-bottom: 0.5rem;
+}
+.sapUiIntegrationIconSelectList li .sapUiIcon {
+	color: var(--sapUiContentLabelColor, #333);
+
 }
 
 .sapUiIntegrationIconSelectList li[aria-posinset='2'].sapMSelectListItem,
@@ -273,7 +275,6 @@
 	font-size:0.875rem;
 	text-overflow: inherit;
 	width: inherit;
-	padding-left: inherit;
 }
 .sapUiIntegrationIconSelectList li[aria-posinset].sapMSelectListItem .sapUiIcon::before {
 	margin-right: 2rem;
@@ -282,14 +283,25 @@
 }
 
 .sapUiIntegrationIconSelectList li[aria-posinset].sapMSelectListItemBaseSelected {
-	background: #e5f0fa;
-	border: 0.0625rem solid #0854a0;
+	background-color: var(--sapUiListSelectionBackgroundColor, #e5f0fa);
+	border: 0.0625rem solid var(--sapUiHighlight, #0854a0);
 	border-radius: 3px;
 }
 
-.sapUiIntegrationIconSelectList li[aria-posinset='2'] IMG.sapMSelectListItemIcon {
+.sapUiIntegrationIconSelectList li[aria-posinset='2'] .sapMSelectListItemIcon {
 	width: 1rem;
 	height: 1rem;
-	border:none;
-	vertical-align: middle;
+}
+.sapUiIntegrationIconSelectList li.sapMSelectListItemBaseDisabled {
+	display: none !important
+}
+.sapUiIntegrationIconSelect .sapMSelectListItemIconCustom {
+	background-size: 1.1rem 1.1rem;
+	margin-left: -0.4rem;
+	width:1.1rem;
+	height : 1.5rem;
+	background-repeat:no-repeat;
+	background-position: center;
+	color:transparent;
+	vertical-align:top;
 }

@@ -7,71 +7,15 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/IconPool",
-	"sap/ui/core/CustomData"
+	"sap/base/util/merge",
+	"sap/ui/core/Core"
 ], function (
-	Control, Select, ListItem, JSONModel, IconPool, CustomData
+	Control, Select, ListItem, JSONModel, IconPool, merge, Core
 ) {
 	"use strict";
 
-
-	//create a icon model enhance the model data once otherwise the formatters run all the time.
-	var aIconNames = IconPool.getIconNames();
-	aIconNames = aIconNames.sort(function (a, b) {
-		return a.toLowerCase().localeCompare(b.toLowerCase());
-	});
-
-
-	var aIcons = [];
-	aIconNames.filter(function (s) {
-		var text = IconPool.getIconInfo(s).text || ("-" + s).replace(/-(.)/ig, function (sMatch, sChar) {
-			return " " + sChar.toUpperCase();
-		}).substring(1);
-		aIcons.push({
-			icon: "sap-icon://" + s,
-			key: "sap-icon://" + s,
-			text: text,
-			tooltip: text
-		});
-	});
-
-	aIcons = [{
-		icon: "",
-		text: "(No Icon)",
-		tooltip: "",
-		key: "empty"
-	},{
-		icon: "sap-icon://upload",
-		text: "Choose from file...",
-		tooltip: "",
-		key: "file"
-	}].concat(aIcons);
-
-	var oIconModel = new JSONModel(aIcons);
-	oIconModel.setSizeLimit(aIcons.length);
-
-	function y(oSelect, oItem, o) {
-		var fr = new window.FileReader();
-		fr.onload = function () {
-			oSelect._customImage = fr.result;
-			oItem.setIcon(fr.result);
-			oItem.setKey("file");
-			oItem.setText("Selected from file");
-			var oValue = oSelect._customImage;
-			oSelect.getModel("currentSettings").setProperty("value", oValue, oSelect.getBindingContext("currentSettings"));
-			oSelect.invalidate();
-		};
-		fr.readAsDataURL(o.files[0]);
-	}
-	function x(oSelect, o) {
-		oSelect.getDomRef("hiddenSelect").removeEventListener("focus", x);
-		setTimeout(function () {
-			//wait for change
-			if (oSelect._customImage) {
-				return;
-			}
-			o.removeEventListener("change", y);
-		}, 300);
-	}
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+		aIcons;
 
 	/**
 	 * @class
@@ -85,45 +29,111 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var IconSelect = Control.extend("sap.ui.integration.designtime.editor.fields.viz.IconSelect", {
+		metadata: {
+			properties: {
+				value: {
+					type: "string",
+					defaultValue: "sap-icon://accept"
+				},
+				editable: {
+					type: "boolean",
+					defaultValue: true
+				},
+				allowFile: {
+					type: "boolean",
+					defaultValue: true
+				},
+				allowNone: {
+					type: "boolean",
+					defaultValue: true
+				}
+			},
+			aggregations: {
+				_select: {
+					type: "sap.m.Select",
+					multiple: false,
+					visibility: "hidden"
+				}
+			}
+		},
 		renderer: function (oRm, oControl) {
-			var oEditor = oControl.getDependents()[0];
+			var oSelect = oControl.getAggregation("_select");
 			oRm.openStart("div");
 			oRm.addClass("sapUiIntegrationIconSelect");
-			if (oEditor && oControl.getWidth) {
-				oRm.addStyle("width", oEditor.getWidth());
+			if (oSelect && oControl.getWidth) {
+				oRm.addStyle("width", oSelect.getWidth());
 			}
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.writeElementData(oControl);
 			oRm.openEnd();
-			oRm.renderControl(oEditor);
+			oRm.renderControl(oSelect);
 			oRm.close("div");
 		}
 	});
 
+	IconSelect.prototype._initIconModel = function () {
+		var aIconNames = IconPool.getIconNames();
+		aIconNames = aIconNames.sort(function (a, b) {
+			return a.toLowerCase().localeCompare(b.toLowerCase());
+		});
+		if (!aIcons) {
+			aIcons = [];
+			aIconNames.filter(function (s) {
+				var text = IconPool.getIconInfo(s).text || ("-" + s).replace(/-(.)/ig, function (sMatch, sChar) {
+					return " " + sChar.toUpperCase();
+				}).substring(1);
+				aIcons.push({
+					icon: "sap-icon://" + s,
+					key: "sap-icon://" + s,
+					text: text,
+					tooltip: text,
+					enabled: true
+				});
+			});
+			aIcons = [{
+				icon: "",
+				text: oResourceBundle.getText("CARDEDITOR_ICON_NONE"),
+				tooltip: "",
+				key: "empty",
+				enabled: true
+			}, {
+				icon: "sap-icon://upload",
+				text: oResourceBundle.getText("CARDEDITOR_ICON_CHOOSE"),
+				tooltip: "",
+				key: "file",
+				enabled: true
+			}, {
+				icon: "sap-icon://download",
+				text: oResourceBundle.getText("CARDEDITOR_ICON_SELECTED"),
+				tooltip: "",
+				key: "selected",
+				enabled: false
+			}].concat(aIcons);
+		}
+		this._oIconModel = new JSONModel(aIcons);
+		this._oIconModel.setSizeLimit(aIcons.length);
+	};
+
 	IconSelect.prototype.init = function () {
+		if (!this._oIconModel) {
+			this._initIconModel();
+		}
 		var oItem = new ListItem({
 			icon: "{iconlist>icon}",
 			text: "{iconlist>text}",
 			tooltip: "{iconlist>tooltip}",
-			key: "{iconlist>key}"
+			key: "{iconlist>key}",
+			enabled: "{iconlist>enabled}"
 		});
 
+		this._oFileUpload = document.createElement("INPUT");
+		this._oFileUpload.type = "file";
+		this._oFileUpload.accept = ".png,.jpg,.jpeg,.svg";
+		this._boundFileUploadChange = this._fileUploadChange.bind(this);
+		this._oFileUpload.addEventListener("change", this._boundFileUploadChange);
+
 		this._oSelect = new Select({
-			selectedKey: {
-				path: 'currentSettings>value',
-				formatter: function(oIconValue) {
-					if (oIconValue) {
-						if (oIconValue.indexOf("sap-icon://") > -1) {
-							return oIconValue;
-						} else if (oIconValue.indexOf("data:image/") > -1) {
-							this._customImage = oIconValue;
-							return "file";
-						}
-					}
-					return "empty";
-				}
-			},
 			width: "100%",
 			items: {
 				path: "iconlist>/",
@@ -132,82 +142,151 @@ sap.ui.define([
 			change: function (oEvent) {
 				var oSelect = oEvent.getSource();
 				var sSelectedKey = oEvent.getSource().getSelectedKey();
-				if (sSelectedKey.indexOf("file") > -1) {
-					var oItem = oEvent.getParameters().selectedItem;
-					var o = document.createElement("INPUT");
-					o.type = "file";
-					o.accept = ".png,.jpg,.jpeg,.svg";
-
-					o.addEventListener("change", y.bind(this, oSelect, oItem, o));
-					o.click();
-					oSelect.getDomRef("hiddenSelect").addEventListener("focus", x.bind(this, oSelect, o));
-				} else {
+				if (sSelectedKey === "file") {
 					oSelect._customImage = null;
-					var oData = oSelect.getModel("iconlist").getData();
-					var oFileData = {
-						icon: "sap-icon://upload",
-						text: "Choose from file...",
-						tooltip: "",
-						key: "file"
-					};
-					oData.splice(1, 1, oFileData);
-					oSelect.getModel("iconlist").setData(oData);
-					var sValue = "";
-					if (sSelectedKey.indexOf("sap-icon://") > -1) {
-						sValue = sSelectedKey;
-					}
-					oSelect.getModel("currentSettings").setProperty("value", sValue, oSelect.getBindingContext("currentSettings"));
-					oSelect.invalidate();
+					//open file upload
+					this._oFileUpload.click();
+					this._boundFocusBack = this._focusBack.bind(this);
+					oSelect.getDomRef("hiddenSelect").addEventListener("focus", this._boundFocusBack);
+				} else {
+					this.setValue(sSelectedKey);
 				}
-			}
+			}.bind(this)
 		});
+		this._oSelect.setModel(this._oIconModel, "iconlist");
 
-		var fnAfterRendering = this._oSelect.onAfterRendering;
+		//add style class and height on open
 		var fnOpen = this._oSelect.open;
-
 		this._oSelect.open = function () {
 			fnOpen && fnOpen.apply(this, arguments);
-			var oIconList = this.getModel("iconlist").getData();
-			var sValue = this.getModel("currentSettings").getProperty("value", this._getBindingContext("currentSettings"));
-			if (sValue && sValue.indexOf("data:image/") > -1 && oIconList[1].icon.indexOf("sap-icon://") > -1) {
-				oIconList[1].icon = sValue;
-				this.getModel("iconlist").setData(oIconList);
-			} else if (sValue && sValue.indexOf("sap-icon://") > -1 && oIconList[1].icon.indexOf("data:image/") > -1) {
-				oIconList[1].icon = "sap-icon://upload";
-				this.getModel("iconlist").setData(oIconList);
-			}
 			this.getPicker().addStyleClass("sapUiIntegrationIconSelectList");
 			this.getPicker().setContentHeight("400px");
 		};
-		this._oSelect.onAfterRendering = function () {
-			fnAfterRendering && fnAfterRendering.apply(this, arguments);
-			var oIconDomRef = this.getDomRef("labelIcon");
-			if (oIconDomRef) {
-				if (this._customImage) {
-					oIconDomRef.style.backgroundImage = "url('" + this._customImage + "')";
-					oIconDomRef.style.backgroundSize = "1.1rem";
-					oIconDomRef.style.width = "1.2rem";
-					oIconDomRef.style.height = "1.5rem";
-					oIconDomRef.style.backgroundRepeat = "no-repeat";
-					oIconDomRef.style.backgroundPosition = "center";
-					oIconDomRef.style.color = "transparent";
-					oIconDomRef.style.verticalAlign = "top";
-				} else {
-					oIconDomRef.style.backgroundImage = "unset";
-					oIconDomRef.style.backgroundSize = "unset";
-					oIconDomRef.style.marginRight = "unset";
-					oIconDomRef.style.width = "unset";
-					oIconDomRef.style.height = "unset";
-					oIconDomRef.style.backgroundRepeat = "unset";
-					oIconDomRef.style.backgroundPosition = "unset";
-					oIconDomRef.style.color = "unset";
-					oIconDomRef.style.verticalAlign = "unset";
-				}
-			}
-		};
-		this._oSelect.setModel(oIconModel, "iconlist");
 
-		this.addDependent(this._oSelect);
+		//show file image before the label
+		this._oSelect.addDelegate({
+			onAfterRendering: function () {
+				var oIconDomRef = this._oSelect.getDomRef("labelIcon");
+				if (oIconDomRef) {
+					var sCustomImage = this._oSelect._customImage;
+					if (sCustomImage) {
+						oIconDomRef.style.backgroundImage = "url('" + sCustomImage + "')";
+						oIconDomRef.classList.add("sapMSelectListItemIconCustom");
+					} else {
+						oIconDomRef.style.backgroundImage = "unset";
+						oIconDomRef.classList.remove("sapMSelectListItemIconCustom");
+					}
+				}
+			}.bind(this)
+		});
+
+		//keyboard handling only if the list is open
+		this._oSelect.addDelegate({
+			onsappageup: function () {
+				if (this._oSelect.isOpen()) {
+					var iSelected = this._oSelect.getSelectedIndex();
+					this._oSelect.setSelectedIndex(iSelected - 50); //select will do -10
+				}
+			}.bind(this),
+			onsappagedown: function () {
+				if (this._oSelect.isOpen()) {
+					var iSelected = this._oSelect.getSelectedIndex();
+					if (iSelected < 3) {
+						this._oSelect.setSelectedIndex(29);
+					} else {
+						this._oSelect.setSelectedIndex(iSelected + 50); //select will do +10
+					}
+				}
+			}.bind(this),
+			onsapup: function () {
+				if (this._oSelect.isOpen()) {
+					var iSelected = this._oSelect.getSelectedIndex();
+					if (iSelected > 11 + 2) {
+						this._oSelect.setSelectedIndex(iSelected - 11);//select will do -1
+					} else if (iSelected > 3) {
+						this._oSelect.setSelectedIndex(3);
+					}
+				}
+			}.bind(this),
+			onsapdown: function () {
+				if (this._oSelect.isOpen()) {
+					var iSelected = this._oSelect.getSelectedIndex();
+					if (iSelected > 2) {
+						this._oSelect.setSelectedIndex(iSelected + 11); //select will do +1
+					}
+				}
+			}.bind(this),
+			onsapleft: function () {
+				if (this._oSelect.isOpen()) { //just do up
+					this._oSelect.onsapup.apply(this._oSelect, arguments);
+				}
+			}.bind(this),
+			onsapright: function () {
+				if (this._oSelect.isOpen()) { //just do up
+					this._oSelect.onsapdown.apply(this._oSelect, arguments);
+				}
+			}.bind(this)
+
+		}, true);
+		this.setAggregation("_select", this._oSelect);
+	};
+
+	IconSelect.prototype._fileUploadChange = function () {
+		var fileReader = new window.FileReader();
+		fileReader.onload = function () {
+			//file is uploaded
+			this.setValue(fileReader.result);
+			this._oSelect.invalidate();
+		}.bind(this);
+		if (this._oFileUpload.files.length === 1) {
+			fileReader.readAsDataURL(this._oFileUpload.files[0]);
+		}
+	};
+
+	//focus is back after a file upload dialog
+	IconSelect.prototype._focusBack = function () {
+		this._oSelect.getDomRef("hiddenSelect").removeEventListener("focus", this._boundFocusBack);
+		setTimeout(function () {
+			this.setValue(this.getValue());
+		}.bind(this), 150);
+	};
+
+
+	IconSelect.prototype.bindProperty = function (sProperty, oBindingInfo) {
+		Control.prototype.bindProperty.apply(this, arguments);
+		var oSelectBindingInfo = merge({}, oBindingInfo);
+		if (sProperty === "editable") {
+			this._oSelect.bindProperty("editable", oSelectBindingInfo);
+		}
+		return this;
+	};
+
+	IconSelect.prototype.setValue = function (sValue) {
+		this.setProperty("value", sValue, true);
+		if (sValue.indexOf("data:image/") === 0) {
+			this._oSelect._customImage = sValue;
+			this._oSelect.setSelectedKey("selected");
+		} else {
+			this._oSelect._customImage = null;
+			this._oSelect.setSelectedKey(sValue);
+		}
+		this._oSelect.invalidate();
+		return this;
+	};
+
+	IconSelect.prototype.setAllowFile = function (bValue) {
+		this.setProperty("allowFile", bValue, true);
+		bValue = this.getAllowFile();
+		this._oIconModel.setProperty("/1/enabled", bValue);
+		this._oIconModel.setProperty("/2/enabled", bValue);
+		return this;
+	};
+
+	IconSelect.prototype.setAllowNone = function (bValue) {
+		this.setProperty("allowNone", bValue, true);
+		bValue = this.getAllowNone();
+		this._oIconModel.setProperty("/0/enabled", bValue);
+		return this;
 	};
 
 	return IconSelect;

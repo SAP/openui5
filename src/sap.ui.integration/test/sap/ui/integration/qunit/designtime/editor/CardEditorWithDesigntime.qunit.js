@@ -387,6 +387,23 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
+		QUnit.test("1 icon parameter  (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
+					var oSelect = oField.getAggregation("_field").getAggregation("_select");
+					oSelect.setSelectedIndex(10);
+					oSelect.open();
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
 
 		QUnit.test("1 string parameter and label trans (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });

@@ -1233,17 +1233,19 @@ sap.ui.define([
 			oOldElement.parentNode.removeChild(oOldElement);
 		}
 		var aVars = [
-			"sapButton_Hover_Background",
-			"sapBackgroundColor",
-			"sapContent_LabelColor",
-			"sapTile_SeparatorColor",
-			"sapScrollBar_Hover_FaceColor"],
+			"sapUiButtonHoverBackground",
+			"sapUiBaseBG",
+			"sapUiContentLabelColor",
+			"sapUiTileSeparatorColor",
+			"sapUiHighlight",
+			"sapUiListSelectionBackgroundColor",
+			"sapUiChartScrollbarBorderColor"],
 			oStyle = document.createElement("style");
 		oStyle.setAttribute("id", "sap-ui-integration-editor-style");
 		for (var i = 0; i < aVars.length; i++) {
 			aVars[i] = "--" + aVars[i] + ":" + Parameters.get(aVars[i]);
 		}
-		oStyle.innerHTML = ".sapUiIntegrationCardEditor,.sapUiIntegrationFieldSettings {" + aVars.join(";") + "}";
+		oStyle.innerHTML = ".sapUiIntegrationCardEditor, .sapUiIntegrationFieldSettings, .sapUiIntegrationIconSelectList {" + aVars.join(";") + "}";
 		document.body.appendChild(oStyle);
 	};
 
@@ -1252,12 +1254,12 @@ sap.ui.define([
 		this.init = function () { }; //replace self
 
 		//add theming variables if css vars are not turned on
-		if (!window.getComputedStyle(document.documentElement).getPropertyValue('--sapBackgroundColor')) {
+		//if (!window.getComputedStyle(document.documentElement).getPropertyValue('--sapBackgroundColor')) {
+		CardEditor._appendThemeVars();
+		Core.attachThemeChanged(function () {
 			CardEditor._appendThemeVars();
-			Core.attachThemeChanged(function () {
-				CardEditor._appendThemeVars();
-			});
-		}
+		});
+		//}
 
 		var sCssURL = sap.ui.require.toUrl("sap.ui.integration.designtime.editor.css.CardEditor".replace(/\./g, "/") + ".css");
 		includeStylesheet(sCssURL);

@@ -8,7 +8,6 @@ sap.ui.define([
 	"./Settings",
 	"sap/m/Token",
 	"sap/ui/core/Core"
-
 ], function (
 	Control,
 	Button,
@@ -50,7 +49,8 @@ sap.ui.define([
 			aggregations: {
 				_field: {
 					type: "sap.ui.core.Control",
-					multiple: false
+					multiple: false,
+					visibility: "hidden"
 				},
 				_settingsButton: {
 					type: "sap.ui.core.Control",

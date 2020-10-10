@@ -68,7 +68,8 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", 
 								"width": "100%",
 								"showAdvancedTooltip": true,
 								"showHandleTooltip": false,
-								"inputsAsTooltips": true
+								"inputsAsTooltips": true,
+								"editable": "{currentSettings>editable}"
 							}
 						}
 					},
@@ -110,7 +111,8 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", 
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
-								"customTextOff": "No"
+								"customTextOff": "No",
+								"editable": "{currentSettings>editable}"
 							}
 						}
 					},
@@ -231,13 +233,17 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", 
 						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"visualization": {
-							"type": IconSelect
+							"type": IconSelect,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
 						}
 					}
 				}
 			},
 			preview: {
-				modes: "Abstract"
+				modes: "Live"
 			}
 		};
 	};
