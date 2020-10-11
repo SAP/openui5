@@ -1,5 +1,17 @@
-sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", "sap/ui/integration/designtime/editor/fields/viz/IconSelect"
-], function (Designtime, Slider, Switch, IconSelect) {
+sap.ui.define(["sap/ui/integration/Designtime",
+	"sap/m/Slider",
+	"sap/m/Switch",
+	"sap/ui/integration/designtime/editor/fields/viz/IconSelect",
+	"sap/ui/integration/designtime/editor/fields/viz/ColorSelect",
+	"sap/ui/integration/designtime/editor/fields/viz/ShapeSelect"
+], function (
+	Designtime,
+	Slider,
+	Switch,
+	IconSelect,
+	ColorSelect,
+	ShapeSelect
+) {
 	"use strict";
 
 	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
@@ -262,6 +274,7 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", 
 						"manifestpath": "/sap.card/header/icon/src",
 						"defaultValue": "sap-icon://account",
 						"type": "string",
+						"label": "Icon",
 						"visualization": {
 							"type": IconSelect,
 							"settings": {
@@ -269,11 +282,57 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", 
 								"editable": "{currentSettings>editable}"
 							}
 						}
+					},
+					"color": {
+						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"defaultValue": "",
+						"type": "string",
+						"label": "Icon Background",
+						"visualization": {
+							"type": ColorSelect,
+							"settings": {
+								"enumValue": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
+					"shape": {
+						"manifestpath": "/sap.card/header/icon/shape",
+						"defaultValue": "Circle",
+						"label": "Icon Shape",
+						"type": "string",
+						"visualization": {
+							"type": ShapeSelect,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
+					"maxItems": {
+						"manifestpath": "/sap.card/content/maxItems",
+						"defaultValue": 1,
+						"type": "integer",
+						"visualization": {
+							"type": Slider,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"min": 0,
+								"max": 10,
+								"width": "100%",
+								"showAdvancedTooltip": true,
+								"showHandleTooltip": false,
+								"inputsAsTooltips": true,
+								"enabled": "{currentSettings>editable}"
+							}
+						}
 					}
 				}
 			},
 			preview: {
-				modes: "Live"
+				modes: "LiveAbstract"
 			}
 		};
 	};

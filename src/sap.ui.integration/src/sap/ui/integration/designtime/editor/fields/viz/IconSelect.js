@@ -22,10 +22,10 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 * @alias sap.ui.integration.designtime.editor.fields.viz.IconSelect
 	 * @author SAP SE
-	 * @since 1.83.0
+	 * @since 1.84.0
 	 * @version ${version}
 	 * @private
-	 * @experimental since 1.83.0
+	 * @experimental since 1.84.0
 	 * @ui5-restricted
 	 */
 	var IconSelect = Control.extend("sap.ui.integration.designtime.editor.fields.viz.IconSelect", {
@@ -140,8 +140,8 @@ sap.ui.define([
 				template: oItem
 			},
 			change: function (oEvent) {
-				var oSelect = oEvent.getSource();
-				var sSelectedKey = oEvent.getSource().getSelectedKey();
+				var oSelect = oEvent.getSource(),
+					sSelectedKey = oEvent.getSource().getSelectedKey();
 				if (sSelectedKey === "file") {
 					oSelect._customImage = null;
 					//open file upload
@@ -254,8 +254,8 @@ sap.ui.define([
 
 	IconSelect.prototype.bindProperty = function (sProperty, oBindingInfo) {
 		Control.prototype.bindProperty.apply(this, arguments);
-		var oSelectBindingInfo = merge({}, oBindingInfo);
 		if (sProperty === "editable") {
+			var oSelectBindingInfo = merge({}, oBindingInfo);
 			this._oSelect.bindProperty("editable", oSelectBindingInfo);
 		}
 		return this;
