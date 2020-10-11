@@ -33,7 +33,31 @@ sap.ui.define([
 		var oVisualization = oConfig.visualization;
 		if (!oVisualization) {
 			if (oConfig.editable) {
-				if (oConfig.values) {
+				if (oConfig.enum) {
+					var oItem = new ListItem({
+						key: {
+							path: "currentSettings>"
+						},
+						text: {
+							path: "currentSettings>"
+						}
+					});
+					oVisualization = {
+						type: Select,
+						settings: {
+							selectedKey: {
+								path: 'currentSettings>value'
+							},
+							editable: oConfig.editable,
+							showSecondaryValues: false,
+							width: "100%",
+							items: {
+								path: "currentSettings>enum", //empty, because the bindingContext for the undefined model already points to the path
+								template: oItem
+							}
+						}
+					};
+				} else if (oConfig.values) {
 					var oItem = new ListItem(oConfig.values.item);
 					oVisualization = {
 						type: Select,

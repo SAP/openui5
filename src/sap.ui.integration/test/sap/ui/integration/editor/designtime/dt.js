@@ -14,6 +14,11 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", 
 						"translatable": true,
 						"required": true
 					},
+					"stringGroup": {
+						"type": "group",
+						"label": "Dependent group title {items>string/value}",
+						"visible": "{= ${items>string/value} !== 'StringValue'}"
+					},
 					"stringLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
 						"defaultValue": "StringValue",
@@ -69,7 +74,7 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", 
 								"showAdvancedTooltip": true,
 								"showHandleTooltip": false,
 								"inputsAsTooltips": true,
-								"editable": "{currentSettings>editable}"
+								"enabled": "{currentSettings>editable}"
 							}
 						}
 					},
@@ -112,9 +117,23 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", 
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
 								"customTextOff": "No",
-								"editable": "{currentSettings>editable}"
+								"enabled": "{currentSettings>editable}"
 							}
 						}
+					},
+					"dependentfield1": {
+						"manifestpath": "/sap.card/configuration/parameters/dependent1/value",
+						"defaultValue": "Editable changes from boolean",
+						"type": "string",
+						"editable": "{items>boolean/value}"
+
+					},
+					"dependentfield2": {
+						"manifestpath": "/sap.card/configuration/parameters/dependent2/value",
+						"defaultValue": "Visible changes from boolean",
+						"type": "string",
+						"visible": "{items>boolean/value}"
+
 					},
 					"booleanLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",
@@ -161,6 +180,17 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch", 
 						"defaultValue": "2020-09-02T11:21:51.470Z",
 						"type": "datetime",
 						"label": "{i18n>TRANSLATED_DATETIME_LABEL}"
+					},
+					"enum": {
+						"manifestpath": "/sap.card/configuration/parameters/enum/value",
+						"label": "Enumerations",
+						"type": "enum",
+						"defaultValue": "Option A",
+						"enum": [
+							"Option A",
+							"Option B",
+							"Option C"
+						]
 					},
 					"stringWithStaticList": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",

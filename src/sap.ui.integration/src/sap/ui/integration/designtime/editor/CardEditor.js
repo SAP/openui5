@@ -467,6 +467,7 @@ sap.ui.define([
 			//create a settings model
 			this._settingsModel = new JSONModel(this._oDesigntimeInstance.getSettings());
 			this.setModel(this._settingsModel, "currentSettings");
+			this.setModel(this._settingsModel, "items");
 			this._applyDesigntimeLayers(); //changes done from admin to content on the dt values
 			this._requireFields().then(function () {
 				this._startEditor();
@@ -694,7 +695,16 @@ sap.ui.define([
 			text: oConfig.label,
 			//mark only fields that are required and editable,
 			//otherwise this is confusing because user will not be able to correct it
-			required: oConfig.required && oConfig.editable || false
+			required: oConfig.required && oConfig.editable || false,
+			visible: oConfig.visible,
+			objectBindings: {
+				currentSettings: {
+					path: "currentSettings>" + oConfig._settingspath
+				},
+				items: {
+					path: "items>/form/items"
+				}
+			}
 		});
 		oLabel._cols = oConfig.cols || 2; //by default 2 cols
 		if (oConfig.description) {
@@ -744,9 +754,14 @@ sap.ui.define([
 			objectBindings: {
 				currentSettings: {
 					path: "currentSettings>" + oConfig._settingspath
+				},
+				items: {
+					path: "items>/form/items"
 				}
-			}
+			},
+			visible: oConfig.visible
 		});
+
 		this._aFieldReadyPromise.push(oField._readyPromise);
 		//listen to changes on the settings
 		var oBinding = this._settingsModel.bindProperty(oConfig._settingspath + "/value");
@@ -803,7 +818,16 @@ sap.ui.define([
 		}
 		if (oConfig.type === "group") {
 			var oTitle = new Title({
-				text: oConfig.label
+				text: oConfig.label,
+				visible: oConfig.visible,
+				objectBindings: {
+					currentSettings: {
+						path: "currentSettings>" + oConfig._settingspath
+					},
+					items: {
+						path: "items>/form/items"
+					}
+				}
 			});
 			this.addAggregation("_formContent", oTitle);
 			oTitle._cols = oConfig.cols || 2; //by default 2 cols
@@ -891,7 +915,7 @@ sap.ui.define([
 		var oSettings = this._settingsModel.getProperty("/");
 		if (oSettings.form && oSettings.form.items) {
 			if (this.getMode() === "translation") {
-				//add 2 group items to show over the columns to avoid laguage repetition in the labels
+				//add 2 group items to show over the columns to avoid language repetition in the labels
 				this._addItem({
 					type: "group",
 					cols: 1,
@@ -1017,39 +1041,41 @@ sap.ui.define([
 			var oItem = mItems[n];
 			if (oItem.manifestpath) {
 				oItem.value = this._manifestModel.getProperty(oItem.manifestpath);
-				if (typeof oItem.visible !== "boolean") {
-					oItem.visible = true;
+			}
+			if (oItem.visible === undefined || oItem.visible === null) {
+				oItem.visible = true;
+			}
+			if (typeof oItem.translatable !== "boolean") {
+				oItem.translatable = false;
+			}
+			if (oItem.editable === undefined || oItem.editable === null) {
+				oItem.editable = true;
+			}
+			if (!oItem.label) {
+				oItem.label = n;
+			}
+
+			if (!oItem.type || oItem.type === "enum") {
+
+				oItem.type = "string";
+			}
+			//only if the value is undefined from the this._manifestModel.getProperty(oItem.manifestpath)
+			//false, "", 0... are valid values and should not apply the default
+			if (oItem.value === undefined || oItem.value === null) {
+				switch (oItem.type) {
+					case "boolean": oItem.value = oItem.defaultValue || false; break;
+					case "integer":
+					case "number": oItem.value = oItem.defaultValue || 0; break;
+					case "string[]": oItem.value = oItem.defaultValue || []; break;
+					default: oItem.value = oItem.defaultValue || "";
 				}
-				if (typeof oItem.translatable !== "boolean") {
-					oItem.translatable = false;
-				}
-				if (typeof oItem.editable !== "boolean") {
-					oItem.editable = true;
-				}
-				if (!oItem.label) {
-					oItem.label = n;
-				}
-				if (!oItem.type) {
-					oItem.type = "string";
-				}
-				//only if the value is undefined from the this._manifestModel.getProperty(oItem.manifestpath)
-				//false, "", 0... are valid values and should not apply the default
-				if (oItem.value === undefined || oItem.value === null) {
-					switch (oItem.type) {
-						case "boolean": oItem.value = oItem.defaultValue || false; break;
-						case "integer":
-						case "number": oItem.value = oItem.defaultValue || 0; break;
-						case "string[]": oItem.value = oItem.defaultValue || []; break;
-						default: oItem.value = oItem.defaultValue || "";
-					}
-				}
-			} else if (oItem.type === "group") {
-				if (typeof oItem.visible !== "boolean") {
+			}
+			if (oItem.type === "group") {
+				if (oItem.visible === undefined || oItem.value === null) {
 					oItem.visible = true;
 				}
 			}
 			oItem._settingspath = "/form/items/" + n;
-			oItem.editable = oItem.editable !== false;
 		}
 	};
 	/**

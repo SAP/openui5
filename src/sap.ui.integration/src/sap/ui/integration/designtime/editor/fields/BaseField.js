@@ -44,6 +44,10 @@ sap.ui.define([
 				},
 				host: {
 					type: "object"
+				},
+				visible: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			aggregations: {
@@ -76,49 +80,54 @@ sap.ui.define([
 			if (oField && oField.getWidth && !oSettingsButton) {
 				//oRm.addStyle("width", oField.getWidth());
 			}
+			if (!oControl.getVisible()) {
+				oRm.addStyle("display", "none");
+			}
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.writeElementData(oControl);
 			oRm.openEnd();
-			oRm.openStart("span");
-			oRm.writeClasses();
-			oRm.openEnd();
-			oRm.openStart("span");
-			oRm.addClass("sapUiIntegrationCardEditorEditor");
-			if (oControl._hasDynamicValue()) {
-				oRm.addStyle("width", "1px");
-				oRm.addStyle("opacity", "0");
-			}
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.openEnd();
-			oRm.renderControl(oField);
-			oRm.close("span");
-			oRm.close("span");
-			if (oSettingsButton || oControl._hasDynamicValue()) {
+			if (oControl.getVisible()) {
 				oRm.openStart("span");
-				oRm.addClass("sapUiIntegrationCardEditorSettings");
 				oRm.writeClasses();
 				oRm.openEnd();
 				oRm.openStart("span");
-				oRm.addClass("sapUiIntegrationCardEditorSettingsField");
+				oRm.addClass("sapUiIntegrationCardEditorEditor");
 				if (oControl._hasDynamicValue()) {
-					oRm.addStyle("width", "calc(100% - 2.5rem)");
-					oRm.addStyle("opacity", "1");
+					oRm.addStyle("width", "1px");
+					oRm.addStyle("opacity", "0");
 				}
-				oRm.writeClasses();
 				oRm.writeStyles();
-				oRm.openEnd();
-				oRm.renderControl(oDynamicField);
-				oRm.close("span");
-
-				oRm.openStart("span");
-				oRm.addClass("sapUiIntegrationCardEditorSettingsButton");
 				oRm.writeClasses();
 				oRm.openEnd();
-				oRm.renderControl(oSettingsButton);
+				oRm.renderControl(oField);
 				oRm.close("span");
 				oRm.close("span");
+				if (oSettingsButton || oControl._hasDynamicValue()) {
+					oRm.openStart("span");
+					oRm.addClass("sapUiIntegrationCardEditorSettings");
+					oRm.writeClasses();
+					oRm.openEnd();
+					oRm.openStart("span");
+					oRm.addClass("sapUiIntegrationCardEditorSettingsField");
+					if (oControl._hasDynamicValue()) {
+						oRm.addStyle("width", "calc(100% - 2.5rem)");
+						oRm.addStyle("opacity", "1");
+					}
+					oRm.writeClasses();
+					oRm.writeStyles();
+					oRm.openEnd();
+					oRm.renderControl(oDynamicField);
+					oRm.close("span");
+
+					oRm.openStart("span");
+					oRm.addClass("sapUiIntegrationCardEditorSettingsButton");
+					oRm.writeClasses();
+					oRm.openEnd();
+					oRm.renderControl(oSettingsButton);
+					oRm.close("span");
+					oRm.close("span");
+				}
 			}
 			oRm.close("div");
 
