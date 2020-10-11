@@ -35,6 +35,7 @@ sap.ui.define([
 							return new Date(v);
 						}
 					},
+					editable: { path: 'currentSettings>editable' },
 					valueFormat: "YYYY-MM-dd",
 					width: "16rem",
 					change: function (oEvent) {
