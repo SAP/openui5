@@ -422,11 +422,19 @@ sap.ui.define([
 			content: this._getTokensList()
 		})
 			.attachBeforeOpen(function () {
-				var oPopup = this._oPopup;
+				var iWidestElement = this.getEditable() ? 120 : 0, // Paddings & Delete icons in editable mode
+					oPopup = this._oPopup;
 				if (oPopup.getContent && !oPopup.getContent().length) {
 					oPopup.addContent(this._getTokensList());
 				}
 				this._fillTokensList(this._getTokensList());
+
+				iWidestElement += Object.keys(this._oTokensWidthMap) // Object.values is not supported in IE
+					.map(function (sKey) { return this._oTokensWidthMap[sKey]; }, this)
+					.sort(function (a, b) { return a - b; }) // Just sort() returns odd results
+					.pop() || 0; // Get the longest element in PX
+
+				oPopup.setContentWidth(iWidestElement + "px");
 			}, this);
 
 		this.addDependent(this._oPopup);
