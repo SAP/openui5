@@ -4178,13 +4178,46 @@ sap.ui.define([
 	//*** Service data consolidation (for multi-unit entities)
 	//********************************************************************************/
 
+	/**
+	 * Returns an object containing the given ID of the node as <code>sGroupId</code>, the given
+	 * index of the child in that node as <code>iIndex</code>, and the corresponding index for that
+	 * child in the list of service keys for that node as <code>iServiceKeyIndex</code>.
+	 * <code>iIndex</code> represents the index in the visible table/tree and
+	 * <code>iServiceKeyIndex</code> the index in internal data structure for the entity keys. For
+	 * aggregated data it may happen that there exist more entries in the service key list,
+	 * representing different values for units of the aggregated data (multi unit case), for a
+	 * single line in the table/tree.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID of the node
+	 * @param {number} iStartIndex
+	 *   The index of the child element within the given node
+	 * @returns {object}
+	 *   An object containing the given ID of the node as <code>sGroupId</code>, the given index of
+	 *   the child in that node as <code>iIndex</code>, and the corresponding index for that child
+	 *   in the list of service keys for that node as <code>iServiceKeyIndex</code>
+	 */
 	AnalyticalBinding.prototype._getKeyIndexMapping = function(sGroupId, iStartIndex) {
-		var aKeyIndex = this.mKeyIndex[sGroupId];
-		var aServiceKey = this.mServiceKey[sGroupId];
-		var iServiceKeyIndex = iStartIndex;
+		var iDistance, iLastOccupiedIndex, iLastOccupiedServiceKeyIndex,
+			aKeyIndex = this.mKeyIndex[sGroupId],
+			oKeyIndexMapping = {
+				sGroupId : sGroupId,
+				iIndex : iStartIndex,
+				iServiceKeyIndex : iStartIndex
+			},
+			aServiceKey = this.mServiceKey[sGroupId];
+
 		if (aKeyIndex !== undefined) { // find appropriate service key index for given start index
+			if (aKeyIndex[iStartIndex] !== undefined) { // index is already known
+				oKeyIndexMapping.iServiceKeyIndex = aKeyIndex[iStartIndex] === "ZERO"
+					? 0
+					: Math.abs(aKeyIndex[iStartIndex]);
+
+				return oKeyIndexMapping;
+			}
+
 			// search for the last occupied key index
-			var iLastOccupiedIndex = iStartIndex;
+			iLastOccupiedIndex = iStartIndex;
 			if (iLastOccupiedIndex > 0) {
 				while (--iLastOccupiedIndex > 0) {
 					if (aKeyIndex[iLastOccupiedIndex] !== undefined) {
@@ -4192,32 +4225,31 @@ sap.ui.define([
 					}
 				}
 			}
-			var iLastOccupiedServiceKeyIndex;
 			if (iLastOccupiedIndex == 0) {
 				iLastOccupiedServiceKeyIndex = 0;
 			} else {
 				if (aKeyIndex[iLastOccupiedIndex] >= 0) {
 					iLastOccupiedServiceKeyIndex = aKeyIndex[iLastOccupiedIndex];
-				} else if (aKeyIndex[iLastOccupiedIndex + 1] === undefined) { // iLastOccupiedIndex is the last key index before hole.
-					iLastOccupiedServiceKeyIndex = aKeyIndex[iLastOccupiedIndex] == "ZERO" ? 0 : -aKeyIndex[iLastOccupiedIndex];
+				} else if (aKeyIndex[iLastOccupiedIndex + 1] === undefined) {
+					// iLastOccupiedIndex is the last key index before hole
+					iLastOccupiedServiceKeyIndex = -aKeyIndex[iLastOccupiedIndex];
 					while (aServiceKey[iLastOccupiedServiceKeyIndex + 1] !== undefined) {
 						++iLastOccupiedServiceKeyIndex;
 					}
-				} else { // iLastOccupiedServiceKeyIndex is the service key index before start of service keys related to next key index.
+				} else {
+					// iLastOccupiedServiceKeyIndex is the service key index before start of service
+					// keys related to next key index.
 					iLastOccupiedServiceKeyIndex = Math.abs(aKeyIndex[iLastOccupiedIndex + 1]) - 1;
 				}
 				if (aServiceKey[iLastOccupiedServiceKeyIndex] === undefined) {
-					oLogger.fatal("assertion failed: no service key at iLastOccupiedServiceKeyIndex = " + iLastOccupiedServiceKeyIndex);
+					oLogger.fatal(
+						"assertion failed: no service key at iLastOccupiedServiceKeyIndex = "
+						+ iLastOccupiedServiceKeyIndex);
 				}
 			}
-			var iDistance = iStartIndex - iLastOccupiedIndex;
-			iServiceKeyIndex = iLastOccupiedServiceKeyIndex + iDistance;
+			iDistance = iStartIndex - iLastOccupiedIndex;
+			oKeyIndexMapping.iServiceKeyIndex = iLastOccupiedServiceKeyIndex + iDistance;
 		}
-		var oKeyIndexMapping = {
-				sGroupId : sGroupId,
-				iIndex : iStartIndex,
-				iServiceKeyIndex : iServiceKeyIndex
-		};
 		return oKeyIndexMapping;
 	};
 

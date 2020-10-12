@@ -3180,4 +3180,77 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+[{
+	aKeyIndex : undefined,
+	aServiceKeyIndex : undefined,
+	iStartIndex : "~iStartIndex",
+	iExpectedServiceKeyIndex : "~iStartIndex"
+}, {
+	aKeyIndex : ["ZERO", 2],
+	aServiceKeyIndex : ["key0.0", "key0.1", "key1"],
+	iStartIndex : 3,
+	iExpectedServiceKeyIndex : 4
+}, {
+	aKeyIndex : [0, -1],
+	aServiceKeyIndex : ["key0", "key1.0", "key1.1"],
+	iStartIndex : 2,
+	iExpectedServiceKeyIndex : 3
+}, {
+	aKeyIndex : [0, 1, -2, 4],
+	aServiceKeyIndex : ["key0", "key1", "key2", "key2.1", "key3"],
+	iStartIndex : 2,
+	iExpectedServiceKeyIndex : 2
+}, {
+	aKeyIndex : ["ZERO", 2, 3],
+	aServiceKeyIndex : ["key0.0", "key0.1", "key1.0", "key2"],
+	iStartIndex : 2,
+	iExpectedServiceKeyIndex : 3
+}, {
+	aKeyIndex : [0],
+	aServiceKeyIndex : ["key0"],
+	iStartIndex : 0,
+	iExpectedServiceKeyIndex : 0
+}, {
+	aKeyIndex : ["ZERO"],
+	aServiceKeyIndex : ["key0"],
+	iStartIndex : 0,
+	iExpectedServiceKeyIndex : 0
+}, { // BCP: 2070284104
+	aKeyIndex : ["ZERO", 2],
+	aServiceKeyIndex : ["key0.0", "key0.1", "key1"],
+	iStartIndex : 1,
+	iExpectedServiceKeyIndex : 2
+}, {
+	aKeyIndex : [0, 1, -2, 4, -5, 9],
+	iStartIndex : 4,
+	iExpectedServiceKeyIndex : 5
+}, { // BCP: 2070284104
+	aKeyIndex : [0, 1, -2, 4, -5, 9],
+	iStartIndex : 5,
+	iExpectedServiceKeyIndex : 9
+}].forEach(function (oFixture, i) {
+	QUnit.test("_getKeyIndexMapping: " + i, function (assert) {
+		var oBinding = {
+				mKeyIndex : {
+					"~sGroupId" : oFixture.aKeyIndex
+				},
+				mServiceKey : {
+					"~sGroupId" : oFixture.aServiceKeyIndex
+				}
+			},
+			oKeyIndexMapping;
+
+		// code under test
+		oKeyIndexMapping = AnalyticalBinding.prototype._getKeyIndexMapping.call(oBinding,
+			"~sGroupId", oFixture.iStartIndex);
+
+		assert.deepEqual(oKeyIndexMapping, {
+			sGroupId : "~sGroupId",
+			iIndex : oFixture.iStartIndex,
+			iServiceKeyIndex : oFixture.iExpectedServiceKeyIndex
+		});
+	});
+});
 });
