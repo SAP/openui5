@@ -624,6 +624,8 @@ sap.ui.define([
 			this._iSizeScreen = 2;
 		}
 
+		this.addStyleClass("sapMSize" + this._iSize);
+
 		this.setAggregation("header", this._createHeader());
 		this._attachHeaderEvents();
 
@@ -4051,20 +4053,17 @@ sap.ui.define([
 	// as all our css should depend on the main container size, not screen size like sapUiMedia-Std-Tablet...
 	function toggleSizeClasses(iSize) {
 		var sCurrentSizeClass = 'sapMSize' + iSize,
-			oRef = this.$(),
 			i,
 			sClass;
 
-		if (oRef) {
 			for (i = 0; i < 3; i++) {
 				sClass = 'sapMSize' + i;
 				if (sClass === sCurrentSizeClass) {
-					oRef.addClass(sClass);
+					this.addStyleClass(sClass);
 				} else {
-					oRef.removeClass(sClass);
+					this.removeStyleClass(sClass);
 				}
 			}
-		}
 	}
 
 	function updateSelectItems() {

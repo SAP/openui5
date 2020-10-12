@@ -32,9 +32,6 @@ sap.ui.define([
 			labelledby: InvisibleText.getStaticId("sap.m", oPC._oRB.getText("PLANNINGCALENDAR"))
 		});
 		oRm.addClass("sapMPlanCal");
-		if (oPC._iSize !== undefined && oPC._iSize !== null) {
-			oRm.addClass("sapMSize" + oPC._iSize);
-		}
 
 		if (!oPC.getSingleSelection()) {
 			oRm.addClass("sapMPlanCalMultiSel");
