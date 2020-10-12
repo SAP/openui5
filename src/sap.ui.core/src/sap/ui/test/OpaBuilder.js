@@ -941,7 +941,7 @@ sap.ui.define(
                 }
 
                 return {
-                    I18NText: {
+                    i18NText: {
                         propertyName: sPropertyName,
                         modelName: sModelName,
                         key: sToken,
