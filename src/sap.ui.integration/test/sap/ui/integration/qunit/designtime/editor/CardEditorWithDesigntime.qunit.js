@@ -2407,8 +2407,11 @@ sap.ui.define([
 						var oItem = testInterface.getMenuItems()[3].getItems()[2];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
 						testInterface.oPopover.getBeginButton().firePress();
-						assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
-						resolve();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
+							resolve();
+						}, 1000);
 					}, 1000);
 				}.bind(this));
 			}.bind(this));
@@ -2482,8 +2485,11 @@ sap.ui.define([
 						testInterface.oPopover.getEndButton().firePress();
 						testInterface.oSettingsPanel.getItems()[0].getItems()[1].firePress();
 						testInterface.oSegmentedButton.getItems()[1].firePress();
-						assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was canceled");
-						resolve();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
+							resolve();
+						}, 1000);
 					}, 1000);
 				}.bind(this));
 			}.bind(this));
@@ -2556,12 +2562,15 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is not enabled after setting visible to false");
 						assert.ok(testInterface.oSettingsPanel.getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting visible to false");
 						testInterface.oPopover.getBeginButton().firePress();
-						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
-						var oCurrentSettings = oCardEditor.getCurrentSettings();
-						var sContext = oField.getBindingContext("currentSettings");
-						var bVisible = oCurrentSettings[":designtime"][sContext.getPath() + "/visible"];
-						assert.ok(typeof (bVisible) !== "undefined" && !bVisible, "Field: visible value false is set to designtime");
-						resolve();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
+							var oCurrentSettings = oCardEditor.getCurrentSettings();
+							var sContext = oField.getBindingContext("currentSettings");
+							var bVisible = oCurrentSettings[":designtime"][sContext.getPath() + "/visible"];
+							assert.ok(typeof (bVisible) !== "undefined" && !bVisible, "Field: visible value false is set to designtime");
+							resolve();
+						}, 1000);
 					}, 1000);
 				}.bind(this));
 			}.bind(this));
@@ -2633,12 +2642,15 @@ sap.ui.define([
 						testInterface.oSettingsPanel.getItems()[2].getItems()[1].fireSelect({ selected: false });
 						assert.ok(testInterface.oSettingsPanel.getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting editing enable to false");
 						testInterface.oPopover.getBeginButton().firePress();
-						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
-						var oCurrentSettings = oCardEditor.getCurrentSettings();
-						var sContext = oField.getBindingContext("currentSettings");
-						var bEditable = oCurrentSettings[":designtime"][sContext.getPath() + "/editable"];
-						assert.ok(typeof (bEditable) !== "undefined" && !bEditable, "Field: editable value false is set to designtime");
-						resolve();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
+							var oCurrentSettings = oCardEditor.getCurrentSettings();
+							var sContext = oField.getBindingContext("currentSettings");
+							var bEditable = oCurrentSettings[":designtime"][sContext.getPath() + "/editable"];
+							assert.ok(typeof (bEditable) !== "undefined" && !bEditable, "Field: editable value false is set to designtime");
+							resolve();
+						}, 1000);
 					}, 1000);
 				}.bind(this));
 			}.bind(this));

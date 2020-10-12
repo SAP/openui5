@@ -146,9 +146,12 @@ sap.ui.define([
 			text: oResourceBundle.getText("CARDEDITOR_MORE_OK"),
 			type: "Emphasized",
 			press: function () {
-				oCurrentInstance._applyCurrentSettings();
-				bCancel = false;
-				oPopover.close();
+				oCurrentInstance._oOpener._showDynamicField();
+				window.setTimeout(function () {
+					oCurrentInstance._applyCurrentSettings();
+					bCancel = false;
+					oPopover.close();
+				}, 200);
 			}
 		}),
 		afterClose: function () {
@@ -168,7 +171,9 @@ sap.ui.define([
 		}
 		var oResetToDefaultButtonDom = oResetToDefaultButton.getDomRef(),
 			oInsert = oFooter.querySelector("button").parentNode;
-		oInsert.insertBefore(oResetToDefaultButtonDom, oInsert.firstChild);
+		if (oResetToDefaultButtonDom) {
+			oInsert.insertBefore(oResetToDefaultButtonDom, oInsert.firstChild);
+		}
 
 		window.requestAnimationFrame(function () {
 			oPopover.getDomRef() && (oPopover.getDomRef().style.opacity = "1");
@@ -199,7 +204,6 @@ sap.ui.define([
 			}
 			updateCurrentValue(o);
 		}
-		oCurrentInstance._oOpener._showDynamicField();
 		var oCVDom = oCurrentValue.getDomRef();
 		window.requestAnimationFrame(function () {
 			oCVDom && (oCVDom.style.opacity = "1");
@@ -254,12 +258,16 @@ sap.ui.define([
 
 	var oCurrentValue = new VBox({
 		width: "100%",
-		items: [new Text({ text: "Current Value" }), new Input({
-			value: {
-				path: "currentSettings>_currentContextValue"
-			},
-			editable: false
-		})]
+		items: [
+			new Text({
+				text: oResourceBundle.getText("CARDEDITOR_ACTUAL_VALUE")
+			}),
+			new Input({
+				value: {
+					path: "currentSettings>_currentContextValue"
+				},
+				editable: false
+			})]
 	});
 	oCurrentValue.addStyleClass("currentval");
 	var oResetToDefaultButton = new Button({
@@ -271,7 +279,6 @@ sap.ui.define([
 			setNextSetting("visible", true);
 			setNextSetting("editable", true);
 			setNextSetting("allowDynamicValues", true);
-			//how to get the last proper value
 			oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_beforeValue"));
 			oPopover.getBeginButton().firePress();
 		}
@@ -407,6 +414,7 @@ sap.ui.define([
 					tooltip: oResourceBundle.getText("CARDEDITOR_MORE_SETTINGS_P_ADMIN_RESET"),
 					enabled: "{= ${currentSettings>_next/visible} === false || ${currentSettings>_next/editable} === false || ${currentSettings>_next/allowDynamicValues} === false}",
 					icon: "sap-icon://reset",
+					visible: false,
 					press: function () {
 						//set the focus to avoid closing of popup. enabled binding sets disabled and then focus handling breaks.
 						oSettingsPanel.getItems()[1].getItems()[1].focus(); //first checkbox

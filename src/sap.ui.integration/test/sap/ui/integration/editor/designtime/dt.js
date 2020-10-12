@@ -26,11 +26,6 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"translatable": true,
 						"required": true
 					},
-					"stringGroup": {
-						"type": "group",
-						"label": "Dependent group title {items>string/value}",
-						"visible": "{= ${items>string/value} !== 'StringValue'}"
-					},
 					"stringLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
 						"defaultValue": "StringValue",
