@@ -10,7 +10,7 @@
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
-				rootLabel="{i18n>Home_rootLabel}"
+				rootLabel="{i18n>homeTitle} {i18n>Home_rootLabel}"
 				subHeaderRole="Search"
 				subHeaderLabel="{i18n>Home_subHeaderLabel}"
 				contentRole="Navigation"
