@@ -7,19 +7,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../../../css/topic.css">
-	<link rel="stylesheet" href="../../../css/tomorrow.css">
-	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
-	<script id="sap-ui-bootstrap" src="../../../../../../../../../../resources/sap-ui-integration.js"
-		data-sap-ui-theme="sap_fiori_3" data-sap-ui-compatVersion="edge" data-sap-ui-async="true"
-		data-sap-ui-oninit="processSamples" data-sap-ui-xx-supportedLanguages="" data-sap-ui-resourceroots='{
-				"custom": "./"
-			}'>
-			</script>
-	<script
-		src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
-	<script
-		src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<script require-ui5-init src="../../../scripts/boot.js"></script>
+
 	<style>
 		.tableWrapper td {
 			vertical-align: top !important;
@@ -49,33 +38,6 @@
 			width: 350px;
 			height: 90px;
 
-		}
-
-
-		pre[sample] {
-			max-width: 400px;
-			overflow: hidden;
-			height: 90px;
-			padding: 0.2rem !important;
-			font-size: 10pt;
-		}
-
-
-		pre[sample]:hover {
-			overflow: auto;
-		}
-
-
-		pre::-webkit-scrollbar-thumb {
-			background-clip: content-box;
-			border: 4px solid transparent;
-			border-radius: 7px;
-			box-shadow: inset 0 0 rgba(0, 0, 0, 0) !important;
-			transition: all 1s;
-		}
-
-		pre:hover::-webkit-scrollbar-thumb {
-			box-shadow: inset 0 0 0 10px #e0e0e0;
 		}
 	</style>
 	<script>
@@ -116,7 +78,7 @@
 			baseUrl: "./"
 		};
 
-		function processSamples() {
+		function init() {
 			sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"], function (CardEditor) {
 				function placeAdvancedEditor(domElement, sItem) {
 					var oAdvancedEditor = new CardEditor({
@@ -337,20 +299,37 @@
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample>{
-	"manifestpath": "/sap.card/.../integer/value",
-	"defaultValue": 1,
-	"type": "integer",
-	"visualization": {
-		"type": Slider,
-		"settings": {
-			"value": "{currentSettings>value}",
-			"min": 0,
-			"max": 10,
-			"width": "100%",
-			"showAdvancedTooltip": true,
-			"showHandleTooltip": false,
-			"inputsAsTooltips": true
+							<pre class="prettyprint lang-js" lines="2,4,17-26" sample>sap.ui.define(["sap/ui/integration/Designtime",
+	"sap/m/Slider"],
+function (Designtime,
+	Slider
+	) {
+	"use strict";
+
+	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
+
+	AdvancedDesigntime.prototype.create = function () {
+		return {
+			form: {
+				items: {
+					manifestpath: "/sap.card/.../boolean/value",
+					defaultValue: false,
+					type: "boolean",
+					visualization: {
+						type: Slider,
+							settings: {
+								value: "{currentSettings>value}",
+								min: 0,
+								max: 10,
+								width: "100%",
+								showAdvancedTooltip: true,
+								showHandleTooltip: false,
+								inputsAsTooltips: true
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }</pre>
@@ -365,18 +344,32 @@
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample>{
+							<pre class="prettyprint lang-js" sample lines="2,4,18-22" style="height:250px">sap.ui.define(["sap/ui/integration/Designtime",
+	"sap/m/Switch"],
+function (Designtime,
+	Switch
+	) {
+	"use strict";
 
-								"manifestpath": "/sap.card/.../boolean/value",
-	"defaultValue": false,
-	"type": "boolean",
-	"visualization": {
-		"type": Switch,
-		"settings": {
-			"state": "{currentSettings>value}",
-			"customTextOn": "Yes",
-			"customTextOff": "No",
-			"change": "doSomething"
+	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
+
+	AdvancedDesigntime.prototype.create = function () {
+		return {
+			form: {
+				items: {
+					manifestpath: "/sap.card/.../boolean/value",
+					defaultValue: false,
+					type: "boolean",
+					visualization: {
+						type: Switch,
+						settings: {
+							state: "{currentSettings>value}",
+							customTextOn: "Yes",
+							customTextOff": "No"
+						}
+					}
+				}
+			}
 		}
 	}
 }</pre>
@@ -386,16 +379,9 @@
 			</div>
 
 			</p>
-			<h2>Using Custom controls in a designtime implementation</h2>
-			<p>
-				The mechanism to use other controls within the designtime is quire easy.
-				You can see this in the above samples for a Slider and a Switch control already.
-				Below is a complete example
-			</p>
+
 		</div>
 	</div>
-
-	<script src="../../../scripts/topic.js"></script>
 </body>
 
 </html>

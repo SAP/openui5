@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<title>Data Sources</title>
 	<meta http-equiv="Content-Type" content="text/html">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../../../css/topic.css">
-	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
-
-	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
-	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
-	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<script src="../../../scripts/boot.js"></script>
 </head>
+
 <body class="sapUiBody topicBody">
 
 	<div class="topic">
@@ -24,8 +21,10 @@
 
 			<p>
 				Data Sources are named and reusable manifest entities that hold configuration settings for services.
-				This concept comes from the App Descriptor (see <a id="linkToAppDescriptorDocumentation" target="_blank">"sap.app" namespace</a>).
-				In the card context, named Data Sources can be used with a special double bracket syntax to construct data request urls - "{{dataSources.dataSourceName.uri}}".
+				This concept comes from the App Descriptor (see <a id="linkToAppDescriptorDocumentation"
+					target="_blank">"sap.app" namespace</a>).
+				In the card context, named Data Sources can be used with a special double bracket syntax to construct
+				data request urls - "{{dataSources.dataSourceName.uri}}".
 			</p>
 
 			<p>Data Sources' properties:</p>
@@ -62,7 +61,8 @@
 			</div>
 
 			<p>
-				<b>Note:</b> Types <code>ODataAnnotation</code>, <code>INA</code>, and <code>XML</code>, as well as properties
+				<b>Note:</b> Types <code>ODataAnnotation</code>, <code>INA</code>, and <code>XML</code>, as well as
+				properties
 				<code>localUri</code>, <code>annotations</code> and <code>maxAge</code> are no supported.
 			</p>
 
@@ -70,7 +70,7 @@
 
 			<p>Using the configured <code>dataSources</code> in "sap.app" to make request for top products:</p>
 
-<pre class="prettyprint lang-js">
+			<pre class="prettyprint lang-js">
 {
 	"sap.app": {
 		"id": "card.explorer.dataSources.topProducts",
@@ -131,4 +131,5 @@
 		}
 	</script>
 </body>
+
 </html>

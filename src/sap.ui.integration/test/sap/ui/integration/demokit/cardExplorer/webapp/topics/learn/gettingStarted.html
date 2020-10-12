@@ -7,14 +7,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-
-	<link rel="stylesheet" href="../../css/topic.css">
-	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
-
-	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
-	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
-	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<script src="../../scripts/boot.js"></script>
 </head>
+
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
@@ -33,7 +28,8 @@
 			</h2>
 
 			<p>
-				Add sap.app namespace, set the type to "card" and set an id. Add the sap.card namespace where all card configurations will be added.
+				Add sap.app namespace, set the type to "card" and set an id. Add the sap.card namespace where all card
+				configurations will be added.
 				Set the type of the card to "List".
 			</p>
 
@@ -58,7 +54,7 @@
 				Add a header property with title, subTitle, and icon.
 			</p>
 
-			<pre class="prettyprint lang-js">{
+			<pre class="prettyprint lang-js" lines="11-17">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card",
@@ -83,10 +79,11 @@
 			</h2>
 
 			<p>
-				Add an actions property with an action of type "Navigation". Set a URL to navigate to, when the header is clicked.
+				Add an actions property with an action of type "Navigation". Set a URL to navigate to, when the header
+				is clicked.
 			</p>
 
-			<pre class="prettyprint  lang-js">{
+			<pre class="prettyprint  lang-js" lines="17-22">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card",
@@ -117,13 +114,15 @@
 			</h2>
 
 			<p>
-				Add a content property to the card. Inside it add a data section with static JSON with an array of 3 sales orders.
+				Add a content property to the card. Inside it add a data section with static JSON with an array of 3
+				sales orders.
 				After that add an item template that will be used for all items in the data section.
 				To bind the item title and description you can use UI5's binding syntax.
-				The binding also allows <a data-demokit-href="/topic/daf6852a04b44d118963968a1239d2c0" target="_blank">expression binding</a>.
+				The binding also allows <a data-demokit-href="/topic/daf6852a04b44d118963968a1239d2c0"
+					target="_blank">expression binding</a>.
 			</p>
 
-			<pre class="prettyprint  lang-js">{
+			<pre class="prettyprint  lang-js" lines="24-49">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card",
@@ -178,13 +177,14 @@
 			<h2 id="step5">
 				Step 5: Integrate the card in a host environment
 			</h2>
-			<p>The following are possible ways to integrate a card. For more information about integrating read the <a href="../../index.html#/integrate/overview" target="_parent">Integrate</a> section.</p>
+			<p>The following are possible ways to integrate a card. For more information about integrating read the <a
+					href="../../index.html#/integrate/overview" target="_parent">Integrate</a> section.</p>
 			<h3>
 				Use the card in an HTML Page
 			</h3>
 			<p>Create a UI Integration Card inside an HTML Page that points to the created manifest:</p>
 
-			<pre class="prettyprint lang-html">
+			<pre class="prettyprint lang-html" lines="3-6,9">
 &lt;html&gt;
 	&lt;head&gt;
 		&lt;script
@@ -220,7 +220,7 @@
 		</div>
 	</div>
 
-	<script src="../../scripts/topic.js"></script>
+
 </body>
 
 </html>

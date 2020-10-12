@@ -6,8 +6,7 @@
 	<meta charset="utf-8" />
 	<title>Card Editor in Admin Mode</title>
 	<script>
-		var sUrl = new URL(document.location.href),
-			sBaseUrl = sUrl.origin + sUrl.pathname.substring(sUrl.pathname, sUrl.pathname.lastIndexOf("/"));
+		var sBaseUrl = document.location.protocol + "/" + document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/") + 1);
 		function init() {
 			sap.ui.require(["testjs/genericHost", "sap-ui-integration-editor"], function () {
 				sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/ui/integration/designtime/editor/CardEditor"], function (Button, Dialog, CardEditor) {

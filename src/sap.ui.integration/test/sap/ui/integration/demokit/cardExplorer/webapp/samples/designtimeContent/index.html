@@ -10,40 +10,41 @@
 	<script src="../editorOutput.js"></script>
 	<script>
 		function init() {
-			sap.ui.require(["testjs/genericHost"]);
-			sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/ui/integration/designtime/editor/CardEditor"], function (Button, Dialog, CardEditor) {
-				var oButton = new Button({
-					text: "Show Card Editor for Page/Content Administrator",
-					press: function () {
-						var oDialog = new Dialog({
-							title: "Edit Card Settings as Page/Content Administrator",
-							horizontalScrolling: false,
-							beginButton: new Button({
-								type: "Emphasized",
-								text: "OK",
-								press: function () {
-									sap.m.MessageToast.show("Apply settings");
-									document.getElementById("card")._getControl().setManifestChanges([oEditor.getCurrentSettings()]);
-									oDialog.close();
-								}
-							}),
-							endButton: new Button({
-								text: "Close",
-								press: function () {
-									oDialog.close();
-								}
-							})
-						});
-						var oEditor = new CardEditor({
-							card: document.getElementById("card")._getControl(),
-							mode: "content"
-						});
-						oDialog.addContent(oEditor);
-						oDialog.open();
-					}
-				});
-				oButton.placeAt("buttons");
+			sap.ui.require(["testjs/genericHost", "sap-ui-integration-editor"], function () {
+				sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/ui/integration/designtime/editor/CardEditor"], function (Button, Dialog, CardEditor) {
+					var oButton = new Button({
+						text: "Show Card Editor for Page/Content Administrator",
+						press: function () {
+							var oDialog = new Dialog({
+								title: "Edit Card Settings as Page/Content Administrator",
+								horizontalScrolling: false,
+								beginButton: new Button({
+									type: "Emphasized",
+									text: "OK",
+									press: function () {
+										sap.m.MessageToast.show("Apply settings");
+										document.getElementById("card")._getControl().setManifestChanges([oEditor.getCurrentSettings()]);
+										oDialog.close();
+									}
+								}),
+								endButton: new Button({
+									text: "Close",
+									press: function () {
+										oDialog.close();
+									}
+								})
+							});
+							var oEditor = new CardEditor({
+								card: document.getElementById("card")._getControl(),
+								mode: "content"
+							});
+							oDialog.addContent(oEditor);
+							oDialog.open();
+						}
+					});
+					oButton.placeAt("buttons");
 
+				});
 			});
 		}
 

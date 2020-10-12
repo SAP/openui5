@@ -329,6 +329,9 @@ sap.ui.define([
 		this._language = sValue.replace("-", "_");
 		this.setProperty("language", sValue, bSuppress);
 		if (!CardEditor._languages[this._language]) {
+			this._language = this._language.split("_")[0];
+		}
+		if (!CardEditor._languages[this._language]) {
 			Log.warning("The language: " + sValue + " is currently unknown, some UI controls might show " + sValue + " instead of the language name.");
 		}
 		return this;

@@ -146,12 +146,9 @@ sap.ui.define([
 			text: oResourceBundle.getText("CARDEDITOR_MORE_OK"),
 			type: "Emphasized",
 			press: function () {
-				oCurrentInstance._oOpener._showDynamicField();
-				window.setTimeout(function () {
-					oCurrentInstance._applyCurrentSettings();
-					bCancel = false;
-					oPopover.close();
-				}, 200);
+				oCurrentInstance._applyCurrentSettings();
+				bCancel = false;
+				oPopover.close();
 			}
 		}),
 		afterClose: function () {

@@ -1,5 +1,8 @@
-sap.ui.define(["sap/ui/integration/Designtime"
-], function (Designtime) {
+sap.ui.define([
+	"sap/ui/integration/Designtime",
+	"sap/ui/integration/designtime/editor/fields/viz/IconSelect",
+	"sap/m/Slider"
+], function (Designtime, IconSelect, Slider) {
 	"use strict";
 
 	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
@@ -29,12 +32,41 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"manifestpath": "/sap.card/header/icon/src",
 						"type": "string",
 						"label": "Card Icon",
-						"cols": 1
+						"cols": 1,
+						"allowDynamicValues": false,
+						"allowSettings": false,
+						"visualization": {
+							"type": IconSelect,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						}
+					},
+					"maxItems": {
+						"manifestpath": "/sap.card/content/maxItems",
+						"defaultValue": 1,
+						"type": "integer",
+						"allowDynamicValues": false,
+						"allowSettings": false,
+						"visualization": {
+							"type": Slider,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"min": 0,
+								"max": 10,
+								"width": "100%",
+								"showAdvancedTooltip": true,
+								"showHandleTooltip": false,
+								"inputsAsTooltips": true,
+								"enabled": "{currentSettings>editable}"
+							}
+						}
 					}
 				}
 			},
 			preview: {
-				modes: "Abstract"
+				modes: "AbstractLive"
 			}
 		};
 	};

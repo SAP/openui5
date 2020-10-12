@@ -41,6 +41,12 @@ sap.ui.define([
 				icon: 'sap-icon://bbyd-dashboard',
 				target: 'designtime',
 				key: 'hostCapabilities'
+			},
+			{
+				title: 'Playground',
+				icon: 'sap-icon://popup-window',
+				target: 'designtime',
+				key: 'playground'
 			}
 		]
 	});

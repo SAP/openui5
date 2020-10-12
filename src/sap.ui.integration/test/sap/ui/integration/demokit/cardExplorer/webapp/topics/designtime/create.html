@@ -7,39 +7,29 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../../css/topic.css">
-	<link rel="stylesheet" href="../../css/tomorrow.css">
-	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
-
-	<link rel="stylesheet"
-		href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
-	<script
-		src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
-	<script
-		src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<script src="../../scripts/boot.js"></script>
 </head>
 
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
 
-			<h1 id="overview">Create a Design-time module and lauch an </h1>
+			<h1 id="overview">Create a Design-time module</h1>
 
 			<p>
 				A new design-time module will be used to configure and implement functionality used in the <strong>Card
-					Editor</strong>.
-				The Card Editor is launched by the host environment for the different personas and uses your design-time
-				module to create the user interface.
+					Editor</strong>. The Card Editor is launched by the host environment for the different personas and
+				uses your design-time module to create the user interface.
 			</p>
 
 			<h2 id="dest">Add destinations for data sources in the Card manifest</h2>
 			<p>
 				Administrators using your Card, should be able to influence the runtime URL for data sources. This can
 				be achieved adding a destination to the configuration section of the manifest. This destination can be
-				connected by the administrator in the design-time editor of the Card.<br>
-				Add a label that is translatable to the setting for better usability.
+				connected by the administrator in the design-time
+				editor of the Card.<br> Add a label that is translatable to the setting for better usability.
 			</p>
-			<pre class="prettyprint lang-js">
+			<pre class="prettyprint lang-json">
 "sap.card": {
 	"configuration": {
 		"destinations": {
@@ -57,10 +47,8 @@
 				Advanced design-time configuration and implementation should happen outside the manifest of the Card.
 				With that design-time code will not harm or influence the runtime or the Card instance for the end-user.
 
-				<br>
-				Create a folder "dt" besides the manifest.json to store all designt-time related artifacts.
-				Create a designtime.js file in this new folder.<br>
-				Add the following inital module setup into the js file.
+				<br> Create a folder "dt" besides the manifest.json to store all designt-time related artifacts. Create
+				a designtime.js file in this new folder.<br> Add the following inital module setup into the js file.
 			</p>
 			<pre class="prettyprint lang-js">
 sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
@@ -85,8 +73,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 }</pre>
 			<p>
 				The designtime configuration that is returned in the
-			<pre>Designtime.prototype.create</pre> method of your designtime file will contain the
-			field definitions that should be shown in the editor. Those are described in detail in the
+			<pre>Designtime.prototype.create</pre> method of your designtime file will contain the field definitions
+			that should be shown in the editor. Those are described in detail in the
 			<a href="./api.html">API section</a>.
 
 

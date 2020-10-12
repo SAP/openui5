@@ -7,13 +7,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../../css/topic.css">
-	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
-
-	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
-	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
-	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<script src="../../scripts/boot.js"></script>
 </head>
+
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
@@ -31,27 +27,33 @@
 				Nevertheless there might be the necessity to add other resources needed for design-time or runtime
 				purposes.
 				Such files are:
-				<ul>
-					<li>Image resources that are used instead of icons from an icon font</li>
-					<li>Translations of texts for the card <a href="../../index.html#/learn/features/translation" target="_parent">details</a></li>
-					<li>Other static resources, for example static JSON data</li>
-					<li>Design-time artifacts that define the design-time behavior of the card</li>
-					<li>UI5 Component files in case of a <a href="../../index.html#/learn/types/component" target="_parent">Component Card</a></li>
-					<li>JavaScript logic held in <a href="../../index.html#/learn/features/extension" target="_parent">Extension</a> file</li>
-				</ul>
+			<ul>
+				<li>Image resources that are used instead of icons from an icon font</li>
+				<li>Translations of texts for the card <a href="../../index.html#/learn/features/translation"
+						target="_parent">details</a></li>
+				<li>Other static resources, for example static JSON data</li>
+				<li>Design-time artifacts that define the design-time behavior of the card</li>
+				<li>UI5 Component files in case of a <a href="../../index.html#/learn/types/component"
+						target="_parent">Component Card</a></li>
+				<li>JavaScript logic held in <a href="../../index.html#/learn/features/extension"
+						target="_parent">Extension</a> file</li>
+			</ul>
 			</p>
 
 			<h2 id="resolvingPaths">How are paths resolved?</h2>
 			<p>
-				When the <code>manifest</code> property of the card is set as a URL to the <code>manifest.json</code> file all paths are
-				<b>resolved relatively</b> to that file and will be loaded from there. If the <code>manifest</code> property is set as an <code>object</code>
-				the <a href="../../index.html#/integrate/usage" target="_parent">baseUrl</a> property can be used as a starting point when resolving paths.
+				When the <code>manifest</code> property of the card is set as a URL to the <code>manifest.json</code>
+				file all paths are
+				<b>resolved relatively</b> to that file and will be loaded from there. If the <code>manifest</code>
+				property is set as an <code>object</code>
+				the <a href="../../index.html#/integrate/usage" target="_parent">baseUrl</a> property can be used as a
+				starting point when resolving paths.
 			</p>
 
 			<h2 id="conventions">Conventions</h2>
 			<p>
 				A Card Bundle should have the name:
-				<pre>[CARDNAME].card.zip</pre>
+			<pre>[CARDNAME].card.zip</pre>
 			</p>
 			<p>
 				Translation files and images should be stored in a separate folders for convenience.

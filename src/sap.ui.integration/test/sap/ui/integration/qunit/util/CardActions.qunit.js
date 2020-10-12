@@ -1,22 +1,22 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-		"sap/ui/integration/library",
-		"sap/ui/integration/widgets/Card",
-		"sap/ui/integration/cards/ListContent",
-		"sap/ui/integration/util/RequestDataProvider",
-		"sap/ui/integration/Host",
-		"sap/ui/core/Core",
-		"sap/f/cards/NumericSideIndicator",
-		"sap/ui/integration/cards/NumericHeader",
-		"sap/ui/integration/cards/Header",
-		"sap/base/Log",
-		"sap/ui/core/ComponentContainer",
-		"sap/ui/integration/util/CardActions",
-		"sap/ui/qunit/QUnitUtils",
-		"../services/SampleServices",
-		"sap/ui/events/KeyCodes"
-	],
+	"sap/ui/integration/library",
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/cards/ListContent",
+	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/integration/Host",
+	"sap/ui/core/Core",
+	"sap/f/cards/NumericSideIndicator",
+	"sap/ui/integration/cards/NumericHeader",
+	"sap/ui/integration/cards/Header",
+	"sap/base/Log",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/integration/util/CardActions",
+	"sap/ui/qunit/QUnitUtils",
+	"../services/SampleServices",
+	"sap/ui/events/KeyCodes"
+],
 	function (
 		library,
 		Card,
@@ -358,9 +358,9 @@ sap.ui.define([
 					"data": {
 						"json":
 							[{
-							"Name": "Comfort Easy",
-							"Category": "PDA & Organizers",
-							"url": "https://www.sap.com"
+								"Name": "Comfort Easy",
+								"Category": "PDA & Organizers",
+								"url": "https://www.sap.com"
 							},
 							{
 								"Name": "ITelO Vault",
@@ -386,104 +386,104 @@ sap.ui.define([
 		};
 
 		var oManifest_List_Binded_Items = {
-				"_version": "1.8.0",
-				"sap.app": {
-					"type": "card"
-				},
-				"sap.ui5": {
-					"services": {
-						"IntentBasedNavigation": {
-							"factoryName": "test.service.SampleNavigationFactory"
-						}
-					}
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"title": "Sales Orders",
-						"subTitle": "Static Data",
-						"icon": {
-							"src": "sap-icon://sales-order"
-						},
-						"status": {
-							"text": "100 of 200"
-						}
-					},
-					"content": {
-						"data": {
-							"request": {
-								"url": "test-resources/sap/ui/integration/qunit/manifests/someitems_services2.json"
-							},
-							"path": "/items"
-						},
-						"item": {
-							"title": {
-								"value": "{Name}"
-							},
-							"actions": [
-								{
-									"type": "Navigation",
-									"service": "IntentBasedNavigation",
-									"parameters": {
-										"intentSemanticObject": "SalesOrder",
-										"name": "{Name}"
-									}
-								}
-							]
-						}
+			"_version": "1.8.0",
+			"sap.app": {
+				"type": "card"
+			},
+			"sap.ui5": {
+				"services": {
+					"IntentBasedNavigation": {
+						"factoryName": "test.service.SampleNavigationFactory"
 					}
 				}
-			};
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Sales Orders",
+					"subTitle": "Static Data",
+					"icon": {
+						"src": "sap-icon://sales-order"
+					},
+					"status": {
+						"text": "100 of 200"
+					}
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "test-resources/sap/ui/integration/qunit/manifests/someitems_services2.json"
+						},
+						"path": "/items"
+					},
+					"item": {
+						"title": {
+							"value": "{Name}"
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"service": "IntentBasedNavigation",
+								"parameters": {
+									"intentSemanticObject": "SalesOrder",
+									"name": "{Name}"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
 
 		var oManifest_List_Hidden_Items = {
-				"_version": "1.8.0",
-				"sap.app": {
-					"type": "card"
-				},
-				"sap.ui5": {
-					"services": {
-						"IntentBasedNavigation": {
-							"factoryName": "test.service.SampleNavigationFactory"
-						}
-					}
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"title": "Sales Orders",
-						"subTitle": "Static Data",
-						"icon": {
-							"src": "sap-icon://sales-order"
-						},
-						"status": {
-							"text": "100 of 200"
-						}
-					},
-					"content": {
-						"data": {
-							"request": {
-								"url": "test-resources/sap/ui/integration/qunit/manifests/items.json"
-							}
-						},
-						"item": {
-							"title": {
-								"value": "{Name}"
-							},
-							"actions": [
-								{
-									"type": "Navigation",
-									"service": "IntentBasedNavigation",
-									"parameters": {
-										"intentSemanticObject": "SalesOrder",
-										"name": "{Name}",
-										"hidden": "{url}"
-									}
-								}
-							]
-						}
+			"_version": "1.8.0",
+			"sap.app": {
+				"type": "card"
+			},
+			"sap.ui5": {
+				"services": {
+					"IntentBasedNavigation": {
+						"factoryName": "test.service.SampleNavigationFactory"
 					}
 				}
-			};
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Sales Orders",
+					"subTitle": "Static Data",
+					"icon": {
+						"src": "sap-icon://sales-order"
+					},
+					"status": {
+						"text": "100 of 200"
+					}
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "test-resources/sap/ui/integration/qunit/manifests/items.json"
+						}
+					},
+					"item": {
+						"title": {
+							"value": "{Name}"
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"service": "IntentBasedNavigation",
+								"parameters": {
+									"intentSemanticObject": "SalesOrder",
+									"name": "{Name}",
+									"hidden": "{url}"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
 
 		var objectContent_service = {
 			"sap.app": {
@@ -766,7 +766,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				}),
 				oCard = new Card({
@@ -806,7 +806,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {}),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () { }),
 				oCard = new Card({
 					width: "400px",
 					height: "600px",
@@ -845,7 +845,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {}),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () { }),
 				oCard = new Card({
 					width: "400px",
 					height: "600px",
@@ -857,7 +857,7 @@ sap.ui.define([
 			oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
 				var oCardLContent = oCard.getCardContent(),
-					oCardHeader =  oCard.getCardHeader();
+					oCardHeader = oCard.getCardHeader();
 
 				// Assert
 				assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
@@ -930,7 +930,7 @@ sap.ui.define([
 		QUnit.test("Action URL should navigate", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -961,7 +961,7 @@ sap.ui.define([
 
 		QUnit.test("Action URL should navigate without parameters", function (assert) {
 			var done = assert.async(),
-				oStubOpenUrl = sinon.stub(CardActions, "openUrl").callsFake( function () {
+				oStubOpenUrl = sinon.stub(CardActions, "openUrl").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -1121,9 +1121,9 @@ sap.ui.define([
 			oCard.attachEvent("_ready", function () {
 				var oCardListItems = oCard.getCardContent()._getList().getItems();
 
-			//Assert
+				//Assert
 				assert.ok(oCardListItems.length === 1, "There should be only one item");
-				assert.ok(oCardListItems[1] === undefined , "There should be no second item");
+				assert.ok(oCardListItems[1] === undefined, "There should be no second item");
 				oCard.destroy();
 				done();
 			});
@@ -1151,7 +1151,7 @@ sap.ui.define([
 				oCard.attachAction(function () {
 					// Assert
 					assert.ok(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
-					assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation , "Card list item is NOT actionable");
+					assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
 					assert.ok(oLogSpy.calledWith(LOG_MESSAGE), "Provided message should be logged to the console.");
 					assert.ok(oActionSpy.callCount, "Card List item is clicked");
 
@@ -1173,7 +1173,7 @@ sap.ui.define([
 
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				}),
 				oCard = new Card({
@@ -1196,10 +1196,10 @@ sap.ui.define([
 
 				// Assert
 				assert.notOk(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
-				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation , "Card list item is NOT actionable");
+				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
 				assert.notOk(oCardListItems[2].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
-				assert.ok(oCardListItems[3].getType() === CardActionType.Navigation , "Card list item is actionable");
-				assert.ok(oCardListItems[4].getType() === CardActionType.Navigation , "Card list item is actionable");
+				assert.ok(oCardListItems[3].getType() === CardActionType.Navigation, "Card list item is actionable");
+				assert.ok(oCardListItems[4].getType() === CardActionType.Navigation, "Card list item is actionable");
 
 				assert.ok(oActionSpy.callCount, "Card List item is clicked");
 
@@ -1228,15 +1228,15 @@ sap.ui.define([
 			oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
 				var oCardListItems = oCard.getCardContent()._getList().getItems();
-					// Assert
-					assert.notOk(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
-					assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation , "Card list item is NOT actionable");
-					assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
+				// Assert
+				assert.notOk(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
+				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
+				assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
 
-					//Clean up
-					oAttachNavigationSpy.restore();
-					oCard.destroy();
-					done();
+				//Clean up
+				oAttachNavigationSpy.restore();
+				oCard.destroy();
+				done();
 			});
 		});
 
@@ -1259,7 +1259,7 @@ sap.ui.define([
 				var oCardListItems = oCard.getCardContent()._getList().getItems();
 				// Assert
 				assert.notOk(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
-				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation , "Card list item is NOT actionable");
+				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
 				assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
 
 				//Clean up
@@ -1287,7 +1287,7 @@ sap.ui.define([
 
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -1400,8 +1400,8 @@ sap.ui.define([
 				mEventArguments = {
 					card: this.oCard,
 					host: null,
-					action: {type: CardActionType.Submit},
-					parameters: {configuration: {}, data: {foo: "bar"}},
+					action: { type: CardActionType.Submit },
+					parameters: { configuration: {}, data: { foo: "bar" } },
 					source: this.oCard.getCardContent()
 				};
 				// Act
@@ -1445,8 +1445,8 @@ sap.ui.define([
 				mEventArguments = {
 					card: this.oCard,
 					host: oHost1,
-					action: {type: CardActionType.Submit},
-					parameters: {configuration: {}, data: {foo: "bar"}},
+					action: { type: CardActionType.Submit },
+					parameters: { configuration: {}, data: { foo: "bar" } },
 					source: this.oCard.getCardContent()
 				};
 				// Act
@@ -1489,7 +1489,7 @@ sap.ui.define([
 			var done = assert.async(),
 				oCard = this.oCard,
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "openUrl").callsFake(function () {});
+				oStubOpenUrl = sinon.stub(CardActions, "openUrl").callsFake(function () { });
 
 			oCard.attachEvent("_ready", function () {
 				// Act

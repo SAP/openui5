@@ -7,22 +7,22 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../../../css/topic.css">
-	<link rel="stylesheet" href="../../../css/tomorrow.css">
-	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
-	<script
-		src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
-	<script
-		src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<script src="../../../scripts/boot.js"></script>
 	<style>
 		.tableWrapper td {
 			vertical-align: top;
+			line-height: 1.4rem !important;
 		}
 
 		.tableWrapper caption {
 			text-align: left;
 			padding: 0.5rem 1rem;
 			font-weight: bold;
+		}
+
+		table,
+		td {
+			font-weight: normal !important;
 		}
 	</style>
 </head>
@@ -34,28 +34,34 @@
 			<h1 id="overview">Preview Images</h1>
 			<h3 id="preview">Configure the editor's preview</h3>
 			<p>An additional section in the configuration allows to influence the preview shown in the Card editor
-				<br><br>
-				<a class="try-button" href="../../index.html#/explore/designtimePreview" target="_parent">Try it Out</a>
-				<br>
 			</p>
-			<pre class="prettyprint lang-js">
+			<table style="background-color: transparent; border:none;">
+				<tr>
+					<td style="vertical-align: top;background-color: transparent; border:none;">
+						<pre class="prettyprint lang-js " lines="11-13">
 sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
-"use strict";
-var Designtime = BaseDesigntime.extend();
-Designtime.prototype.create = function () {
-	return {
-		form: {
-			items: {
+	"use strict";
+	var Designtime = BaseDesigntime.extend();
+	Designtime.prototype.create = function () {
+		return {
+			form: {
+				items: {
+
+				}
+			},
+			preview: {
 
 			}
-		},
-		preview: {
-
 		}
 	}
-}
-return Designtime
-			});</pre>
+	return Designtime
+});</pre>
+					</td>
+					<td style="vertical-align: top;background-color: transparent; border:none;">
+						<img src="../img/ConfigurationEditorForm.png"
+							style="margin:2rem;width:400px;border:1px solid #f5f5f5"></td>
+				</tr>
+			</table>
 			<div class="tableWrapper">
 				<table>
 					<caption>Field Type items</caption>
@@ -72,15 +78,17 @@ return Designtime
 						<td>string</td>
 						<td>No</td>
 						<td>"Abstract"</td>
-						<td>Possible values are <br>
-							"None" : No preview is shown<br>
-							"Abstract" : An abstract preview is shown with placeholders for the possible result<br>
-							"Live" : A small scaled preview of the real Card is shown.<br>
-							"AbstractLive" : The user will be able to toggle between abstract and live preview,
-							starting with the abstract preview<br>
-							"LiveAbstract" : The user will be able to toggle between live and abstract preview,
-							starting with the live
+						<td>Possible values are <br> <code>"None"</code> : No preview is shown<br>
+							<code>"Abstract"</code> : An
+							abstract preview
+							is shown with placeholders for the possible result<br> <code>"Live"</code> : A small scaled
+							preview of
+							the real Card is shown.<br> <code>"AbstractLive"</code> : The
+							user will be able to toggle between abstract and live preview, starting with the abstract
 							preview<br>
+							<code>"LiveAbstract"</code> : The user will be able to toggle between live and abstract
+							preview, starting with the live preview
+							<br>
 							<pre class="prettyprint lang-js">modes : "AbstractLive"</pre>
 						</td>
 						<td>1.83</td>
@@ -90,10 +98,12 @@ return Designtime
 						<td>string</td>
 						<td>No</td>
 						<td>""</td>
-						<td>Points to a image that should be used as the abstract view. If omited the abstract
-							preview is created based on the Card type and settings in the card manifest. The path to
-							the image is relative to the baseUrl of the Card. To support theming options on the
-							customer side, the image should use transparency settings and gray shades explained
+						<td>Relative path to an image (png, gif, jpeg) within the card bundle. Is image will be used as
+							the abstract view and can replace the card internal preview. If omited the abstract preview
+							is created based on the Card type and settings in the card manifest. The path to the image
+							is relative to the baseUrl of the Card. To support
+							theming options on the customer side, the image should use transparency settings and gray
+							shades explained
 							<a href="#previewimage">here</a>.<br>
 							<pre class="prettyprint lang-js">src : "dt/preview.png"</pre>
 						</td>
@@ -107,42 +117,36 @@ return Designtime
 			<h3>Preview Modes</h3>
 			<ul>
 				<li>
-					None: No preview
+					None: No preview<br><br>
 				</li>
 				<li>Abstract: (default) Only an abstract preview is available. If an own image is provided in the src
-					property, it
-					will be used for
-					the abstract preview.
-					<br>
-					<img src="../../images/CardDTAbstractPreview.png">
-					<img src="../../images/CardDTAbstractOwnPreview.png"></li>
+					property, it will be used for the abstract preview.
+					<br><br><img src="../../images/CardDTAbstractPreview.png">
+					<img src="../../images/CardDTAbstractOwnPreview.png"><br><br></li>
 				<li>AbstractLive: The user is able to switch from an abstract preview to a live preview and back. If an
-					own image is provided in the src
-					property, it will be used for the abstract preview..
-					<img src="../../images/CardDTAbstractPreview.png"> <img src="../../images/CardDTLivePreview.png">
+					own image is provided in the src property, it will be used for the abstract preview..
+					<br><br><img src="../../images/CardDTAbstractPreview.png"> <img
+						src="../../images/CardDTLivePreview.png"><br><br>
 				</li>
 				<li>LiveAbstract: The user is able to switch from an abstract preview to a live preview and back. If an
-					own image is provided in the src
-					property, it will be used for the abstract preview..
-					<img src="../../images/CardDTLivePreview.png"> <img src="../../images/CardDTAbstractPreview.png">
+					own image is provided in the src property, it will be used for the abstract preview..
+					<br><br><img src="../../images/CardDTLivePreview.png"> <img
+						src="../../images/CardDTAbstractPreview.png"><br><br>
 				</li>
-				<li>Live: The user is able to switch from an abstract preview to a live preview and back. If an
-					own image is provided in the src
-					property, it will be used for the abstract preview..
-					<img src="../../images/CardDTLivePreview.png"></li>
+				<li>Live: The user is able to switch from an abstract preview to a live preview and back. If an own
+					image is provided in the src property, it will be used for the abstract preview..
+					<br><br><img src="../../images/CardDTLivePreview.png"><br></li>
 			</ul>
 
 			</p>
 			<h3>Create a themeable preview for a Card</h3>
 			<p>
 				Preview images for Card should an abstract preview to give the user an impression of look of the final
-				Card.
-				As a Card developer, you should create the picture for such abstract in case you want to override the
-				default
-				representation that is created based on the Card type you chose.
-				To avoid additional overhead the preview image should be created in a themable fashion.
-				Working with gray shades and transparency this is easily possible.
-				The image should work with these sizes and colors.
+				Card. As a Card developer, you should create the picture for such abstract in case you want to override
+				the default representation that is created based
+				on the Card type you chose. To avoid additional overhead the preview image should be created in a
+				themable fashion. Working with gray shades and transparency this is easily possible. The image should
+				work with these sizes and colors.
 			<ul>
 				<li>Width: 250px</li>
 				<li>Height: 300px</li>
@@ -157,9 +161,9 @@ return Designtime
 			</p>
 
 			After creation of the image save it with the Card sources, ideally in the design-time folder, and refer to
-			the image
-			in the preview section's src property.
-			<pre class="prettyprint lang-js">
+			the image in the preview section's src property.
+			<pre class="prettyprint lang-js collapsed" lines="11-13"
+				caption="Custom image within preview section designtime.js">
 sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 "use strict";
 	var Designtime = BaseDesigntime.extend();
@@ -177,8 +181,11 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 	}
 	return Designtime
 });</pre>
-
+			<br><br>
+			<a class="try-button" href="../../index.html#/explore/designtimePreview" target="_parent">Try it Out</a>
+			<br>
 			</p>
+
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
@@ -186,7 +193,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 		</div>
 	</div>
 
-	<script src="../../../scripts/topic.js"></script>
 </body>
 
 </html>

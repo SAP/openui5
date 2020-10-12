@@ -10,71 +10,71 @@
 	<script src="../editorOutput.js"></script>
 	<script>
 		function init() {
-			sap.ui.require(["testjs/genericHost"]);
+			sap.ui.require(["testjs/genericHost", "sap-ui-integration-editor"], function () {
+				sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/m/Select", "sap/ui/core/ListItem", "sap/ui/model/json/JSONModel", "sap/ui/integration/designtime/editor/CardEditor", "sap/base/util/LoaderExtensions"], function (Button, Dialog, Select, ListItem, JSONModel, CardEditor, LoaderExtensions) {
+					var aLanguages = [],
+						oLanguageModel = new JSONModel();
 
-			sap.ui.require(["sap/base/util/LoaderExtensions", "sap/m/Button", "sap/m/Dialog", "sap/m/Select", "sap/ui/core/ListItem", "sap/ui/model/json/JSONModel", "sap/ui/integration/designtime/editor/CardEditor"], function (LoaderExtension, Button, Dialog, Select, ListItem, JSONModel, CardEditor) {
-				var aLanguages = [],
-					oLanguageModel = new JSONModel();
+					LoaderExtensions.loadResource("sap/ui/integration/designtime/editor/languages.json", {
+						dataType: "json",
+						failOnError: false,
+						async: true
+					}).then(function (o) {
+						for (var n in o) {
+							aLanguages.push({
+								key: n,
+								text: o[n]
+							});
+						}
+						oLanguageModel.setData(aLanguages);
+					});
 
-				LoaderExtension.loadResource("sap/ui/integration/designtime/editor/languages.json", {
-					dataType: "json",
-					failOnError: false,
-					async: true
-				}).then(function (o) {
-					for (var n in o) {
-						aLanguages.push({
-							key: n,
-							text: o[n]
-						});
-					}
-					oLanguageModel.setData(aLanguages);
-				});
+					var oSelect = new Select({
+						selectedKey: "fr",
+						items: {
+							path: "languages>/",
+							template: new ListItem({
+								key: "{languages>key}",
+								text: "{languages>text}"
 
-				var oSelect = new Select({
-					selectedKey: "fr",
-					items: {
-						path: "languages>/",
-						template: new ListItem({
-							key: "{languages>key}",
-							text: "{languages>text}"
-
-						})
-					}
-				});
-				oSelect.setModel(oLanguageModel, "languages");
-				oSelect.placeAt("buttons");
-
-				var oButton = new Button({
-					text: "Show Card Editor for Translation", press: function () {
-						var oDialog = new Dialog({
-							title: "Edit Card Settings as Translator",
-							horizontalScrolling: false,
-							beginButton: new Button({
-								type: "Emphasized",
-								text: "OK",
-								press: function () {
-									sap.m.MessageToast.show("Apply settings");
-									document.getElementById("card")._getControl().setManifestChanges([oEditor.getCurrentSettings()]);
-									oDialog.close();
-								}
-							}),
-							endButton: new Button({
-								text: "Close",
-								press: function () {
-									oDialog.close();
-								}
 							})
-						});
-						var oEditor = new CardEditor({
-							card: document.getElementById("card")._getControl(),
-							mode: "translation",
-							language: oSelect.getSelectedKey()
-						});
-						oDialog.addContent(oEditor);
-						oDialog.open();
-					}
+						}
+					});
+					oSelect.setModel(oLanguageModel, "languages");
+					oSelect.placeAt("buttons");
+
+					var oButton = new Button({
+						text: "Show Card Editor for Translation", press: function () {
+							var oDialog = new Dialog({
+								title: "Edit Card Settings as Translator",
+								horizontalScrolling: false,
+								beginButton: new Button({
+									type: "Emphasized",
+									text: "OK",
+									press: function () {
+										sap.m.MessageToast.show("Apply settings");
+										document.getElementById("card")._getControl().setManifestChanges([oEditor.getCurrentSettings()]);
+										oDialog.close();
+									}
+								}),
+								endButton: new Button({
+									text: "Close",
+									press: function () {
+										oDialog.close();
+									}
+								})
+							});
+							var oEditor = new CardEditor({
+								card: document.getElementById("card")._getControl(),
+								mode: "translation",
+								language: oSelect.getSelectedKey()
+							});
+							oDialog.addContent(oEditor);
+							oDialog.open();
+						}
+					});
+					oButton.placeAt("buttons");
 				});
-				oButton.placeAt("buttons");
 			});
 		}
 
