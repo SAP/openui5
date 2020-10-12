@@ -431,7 +431,7 @@ sap.ui.define([
 		if (oField) {
 			var oPopover = this._getPopover();
 
-			if (oPopover) {
+			if (oPopover && !this._bOpenAfterPromise) { // if already waiting for popover or delegate it don't need to try
 				delete this._bOpen;
 				delete this._bSuggestion;
 				if (!oPopover.isOpen()) {
@@ -609,6 +609,10 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.initBeforeOpen = function(bSuggestion) {
+
+		if (this._bOpenAfterPromise) {
+			return; // it already waits for opening, must not be initialized again
+		}
 
 		var fnBeforeOpen = function() {
 			this._bBeforeOpenPending = false;
@@ -1222,6 +1226,11 @@ sap.ui.define([
 		if (!this._bNoContentRequest) {
 			if (this._oContentRequestPromise) {
 				// we are waiting for resolving the promise - don't request open again
+				this._oContentRequestPromise.then(function() {
+					this._bNoContentRequest = true;
+					fnCallback();
+					this._bNoContentRequest = false;
+				}.bind(this));
 				return false;
 			}
 

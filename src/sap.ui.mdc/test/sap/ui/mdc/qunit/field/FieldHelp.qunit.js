@@ -1063,6 +1063,7 @@ sap.ui.define([
 		oFieldHelp.connect(oField);
 		oFieldHelp.initBeforeOpen(true); // suggestion
 		oFieldHelp.open(true); // suggestion
+		oFieldHelp.initBeforeOpen(true); // check to don't init again while pending
 
 		var oPopover = oFieldHelp.getAggregation("_popover");
 		sinon.spy(oPopover, "openBy");
