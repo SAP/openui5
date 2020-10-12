@@ -2695,8 +2695,9 @@ sap.ui.define([
 
 	Popup.prototype._hideBlockLayer = function() {
 		// a dialog was closed so pop his z-index from the stack
-		var oLastPopup = Popup.blStack.pop();
-		var $oBlockLayer = jQuery("#sap-ui-blocklayer-popup");
+		var $oBlockLayer = jQuery("#sap-ui-blocklayer-popup"),
+			that = this,
+			oLastPopupInfo;
 
 		if ($oBlockLayer.length) {
 			// if there are more z-indices this means there are more dialogs stacked
@@ -2704,12 +2705,16 @@ sap.ui.define([
 			// current dialog which should be displayed.
 			var oBlockLayerDomRef = $oBlockLayer.get(0);
 
-			if (Popup.blStack.length > 0) {
+			if (Popup.blStack.length > 1) {
+				Popup.blStack = Popup.blStack.filter(function(oPopupInfo) {
+					return oPopupInfo.popup !== that;
+				});
 				// set the block layer z-index to the last z-index in the stack and show it
 				oBlockLayerDomRef.style.zIndex = Popup.blStack[Popup.blStack.length - 1].zIndex;
 				oBlockLayerDomRef.style.visibility = "visible";
 				oBlockLayerDomRef.style.display = "block";
 			} else {
+				oLastPopupInfo = Popup.blStack.pop();
 				// the last dialog was closed so we can hide the block layer now
 				oBlockLayerDomRef.style.visibility = "hidden";
 				oBlockLayerDomRef.style.display = "none";
@@ -2721,7 +2726,7 @@ sap.ui.define([
 
 				_fireBlockLayerStateChange({
 					visible: false,
-					zIndex: oLastPopup.zIndex
+					zIndex: oLastPopupInfo.zIndex
 				});
 			}
 		}

@@ -588,6 +588,51 @@ sap.ui.define([
 		oSecondPopup.open(0);
 	});
 
+	QUnit.test("Open two modal popups and close the first one, the focus should stay in the second popup after block layer gets focus", function(assert) {
+		var done = assert.async();
+		var sandbox = sinon.sandbox.create();
+		sandbox.stub(Device, "system").value({
+			desktop: true
+		});
+
+		var oSecondPopup = new Popup(jQuery.sap.domById("popup1"));
+
+		var fnAfterFirstPopupClosed = function() {
+			assert.ok(oSecondPopup.isOpen(), "the second popup is still open");
+
+			var $BlockLayer = jQuery.sap.byId("sap-ui-blocklayer-popup");
+			assert.equal($BlockLayer.length, 1, "there's 1 blocklayer");
+
+			jQuery.sap.focus($BlockLayer[0]);
+
+			window.setTimeout(function () {
+				assert.ok(jQuery.sap.containsOrEquals(oSecondPopup.getContent(), document.activeElement), "The focus is set back to the popup");
+
+				oSecondPopup.attachClosed(function() {
+					sandbox.restore();
+					oSecondPopup.destroy();
+					done();
+				});
+
+				oSecondPopup.close();
+			}, 10);
+		};
+
+		var fnAfterSecondPopupOpen = function() {
+			oSecondPopup.detachOpened(fnAfterSecondPopupOpen);
+			this.oPopup.attachClosed(fnAfterFirstPopupClosed);
+
+			this.oPopup.close();
+		}.bind(this);
+
+		this.oPopup.setModal(true);
+		oSecondPopup.setModal(true);
+
+		oSecondPopup.attachOpened(fnAfterSecondPopupOpen);
+		this.oPopup.open(0);
+		oSecondPopup.open(0);
+	});
+
 	QUnit.test("Check if no scrolling happens when a popup is opened and closed", function(assert){
 		var done = assert.async();
 
