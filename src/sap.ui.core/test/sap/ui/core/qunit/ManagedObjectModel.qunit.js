@@ -723,11 +723,11 @@ sap.ui.define([
 
 	QUnit.test("ManagedObjectModel - Generic Testing for sap.m Controls", function (assert) {
 		sap.ui.getCore().loadLibrary("sap.m");
-		assert.equal(true, true, "Not activted");
+		assert.equal(true, true, "Not activated");
 		return;
 		/*
 		// this generic test loops over all controls in sap.m and checks whether a property binding in the model causes a change.
-		// currently there are some controls and properties blacklisted.
+		// currently there are some controls and properties excluded.
 
 		// test values for types
 		// maybe we can cover more types
@@ -745,7 +745,7 @@ sap.ui.define([
 				1.1, 2, 1000000000000.000000001
 			]
 		};
-		var mBlackList = {
+		var mExcluded = {
 			"sap.m.DatePicker": {
 				"displayFormatType": true
 			},
@@ -839,7 +839,7 @@ sap.ui.define([
 		for (var i = 0; i < aControls.length; i++) {
 			var sControlName = aControls[i];
 
-			if (sControlName in mBlackList && mBlackList[sControlName] === true) {
+			if (sControlName in mExcluded && mExcluded[sControlName] === true) {
 				continue;
 			}
 
@@ -850,11 +850,11 @@ sap.ui.define([
 			var mProperties = oControl.getMetadata().getProperties();
 			for (var n in mProperties) {
 				var oProperty = mProperties[n], aTestValues = mTestProperties[oProperty.type];
-				if (sControlName in mBlackList) {
-					if (mBlackList[sControlName][n] === true) {
+				if (sControlName in mExcluded) {
+					if (mExcluded[sControlName][n] === true) {
 						continue;
-					} else if (mBlackList[sControlName][n]) {
-						aTestValues = mBlackList[sControlName][n];
+					} else if (mExcluded[sControlName][n]) {
+						aTestValues = mExcluded[sControlName][n];
 					}
 				}
 				var iCount = 0;

@@ -15,7 +15,7 @@ sap.ui.define([
     var oLogger = _OpaLogger.getLogger("sap.ui.test._OpaUriParameterParser");
 
     _OpaUriParameterParser.PREFIX = "opa";
-    _OpaUriParameterParser.BLACKLIST_PATTERNS = [
+    _OpaUriParameterParser.EXCLUDED_PATTERNS = [
         /^opa((?!(Frame)).*)$/,
         /hidepassed/,
         /noglobals/,
@@ -58,7 +58,7 @@ sap.ui.define([
         var mUriParams = new URI().search(true);
 
         for (var sUriParamName in mUriParams) {
-            if (_OpaUriParameterParser._isBlacklistedParam(sUriParamName)) {
+            if (_OpaUriParameterParser._isExcludedParam(sUriParamName)) {
                 oLogger.debug("URI parameter '" + sUriParamName + "' is recognized as OPA parameter and will not be set in application frame!");
             } else {
                 mAppParams[sUriParamName] = mUriParams[sUriParamName];
@@ -68,14 +68,10 @@ sap.ui.define([
         return mAppParams;
     };
 
-    _OpaUriParameterParser._isBlacklistedParam = function (sParam) {
-        var bIsBlacklisted = false;
-
-        _OpaUriParameterParser.BLACKLIST_PATTERNS.forEach(function (oPattern) {
-            bIsBlacklisted = bIsBlacklisted || (sParam && sParam.match(oPattern));
+    _OpaUriParameterParser._isExcludedParam = function (sParam) {
+        return sParam && _OpaUriParameterParser.EXCLUDED_PATTERNS.some(function(oPattern) {
+            return sParam.match(oPattern);
         });
-
-        return bIsBlacklisted;
     };
 
     _OpaUriParameterParser._parseParam = function (sParam) {
