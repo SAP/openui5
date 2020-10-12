@@ -546,12 +546,14 @@ sap.ui.define([
 		assert.strictEqual(this.oPropertyHelper.isSortable({}), null, "Empty object");
 		assert.strictEqual(this.oPropertyHelper.isSortable("propA"), true, "Key of a sortable simple property");
 		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[0]), true, "Sortable simple property");
-		assert.strictEqual(this.oPropertyHelper.isSortable("complexPropA"), true, "Key of a sortable complex property");
-		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[2]), true, "Sortable complex property");
+		assert.strictEqual(this.oPropertyHelper.isSortable("complexPropA"), false,
+			"Key of a complex property referencing sortable properties");
+		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[2]), false, "Complex property referencing sortable properties");
 		assert.strictEqual(this.oPropertyHelper.isSortable("propB"), false, "Key of a non-sortable simple property");
 		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[1]), false, "Non-sortable simple property");
-		assert.strictEqual(this.oPropertyHelper.isSortable("complexPropB"), false, "Key of a non-sortable complex property");
-		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[3]), false, "Non-sortable complex property");
+		assert.strictEqual(this.oPropertyHelper.isSortable("complexPropB"), false,
+			"Key of a complex property referencing non-sortable properties");
+		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[3]), false, "Complex property referencing non-sortable properties");
 		assert.strictEqual(this.oPropertyHelper.isSortable("unknownProp"), null, "Unknown property key");
 		assert.strictEqual(this.oPropertyHelper.isSortable({
 			name: "propA",
@@ -606,12 +608,14 @@ sap.ui.define([
 		assert.strictEqual(this.oPropertyHelper.isFilterable({}), null, "Empty object");
 		assert.strictEqual(this.oPropertyHelper.isFilterable("propA"), true, "Key of a filterable simple property");
 		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[0]), true, "Filterable simple property");
-		assert.strictEqual(this.oPropertyHelper.isFilterable("complexPropA"), true, "Key of a filterable complex property");
-		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[2]), true, "Filterable complex property");
+		assert.strictEqual(this.oPropertyHelper.isFilterable("complexPropA"), false,
+			"Key of a complex property referencing filterable properties");
+		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[2]), false, "Complex property referencing sortable properties");
 		assert.strictEqual(this.oPropertyHelper.isFilterable("propB"), false, "Key of a non-filterable simple property");
 		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[1]), false, "Non-filterable simple property");
-		assert.strictEqual(this.oPropertyHelper.isFilterable("complexPropB"), false, "Key of a non-filterable complex property");
-		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[3]), false, "Non-filterable complex property");
+		assert.strictEqual(this.oPropertyHelper.isFilterable("complexPropB"), false,
+			"Key of a complex property referencing non-filterable properties");
+		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[3]), false, "Complex property referencing non-filterable properties");
 		assert.strictEqual(this.oPropertyHelper.isFilterable("unknownProp"), null, "Unknown property key");
 		assert.strictEqual(this.oPropertyHelper.isFilterable({
 			name: "propA",

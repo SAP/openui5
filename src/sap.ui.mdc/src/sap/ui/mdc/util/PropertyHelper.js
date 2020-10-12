@@ -189,6 +189,20 @@ sap.ui.define([
 		return mProperties;
 	}
 
+	function extractProperties(oPropertyHelper, vProperty, fnFilter) {
+		var oProperty = oPropertyHelper.getProperty(vProperty);
+
+		if (oPropertyHelper.isComplex(oProperty)) {
+			return oPropertyHelper.getPropertiesFromComplexProperty(oProperty).filter(function(oProperty) {
+				return fnFilter.call(oPropertyHelper, oProperty);
+			});
+		} else if (fnFilter.call(oPropertyHelper, oProperty)) {
+			return [oProperty];
+		}
+
+		return oProperty ? [] : null;
+	}
+
 	/**
 	 * Constructor for a new helper for the given properties.
 	 *
@@ -427,7 +441,7 @@ sap.ui.define([
 	 * @param {string|object} vProperty A property or its name
 	 * @returns {boolean|null}
 	 *     Whether the property is sortable.
-	 *     Returns <code>true</code> for complex properties if at least one of the properties it references is sortable.
+	 *     Returns <code>false</code> for complex properties.
 	 *     Returns <code>null</code> if the property is unknown.
 	 * @public
 	 */
@@ -435,9 +449,7 @@ sap.ui.define([
 		var oProperty = this.getProperty(vProperty);
 
 		if (this.isComplex(oProperty)) {
-			return this.getPropertiesFromComplexProperty(oProperty).some(function(oProperty) {
-				return oProperty.sortable;
-			});
+			return false;
 		}
 
 		return oProperty ? oProperty.sortable : null;
@@ -452,17 +464,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getSortableProperties = function(vProperty) {
-		var oProperty = this.getProperty(vProperty);
-
-		if (this.isComplex(oProperty)) {
-			return this.getPropertiesFromComplexProperty(oProperty).filter(function(oProperty) {
-				return this.isSortable(oProperty);
-			}, this);
-		} else if (this.isSortable(oProperty)) {
-			return [oProperty];
-		}
-
-		return oProperty ? [] : null;
+		return extractProperties(this, vProperty, this.isSortable);
 	};
 
 	/**
@@ -473,7 +475,7 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.getAllSortableProperties = function() {
 		return this.getProperties().filter(function(oProperty) {
-			return !this.isComplex(oProperty) && this.isSortable(oProperty);
+			return this.isSortable(oProperty);
 		}, this);
 	};
 
@@ -483,7 +485,7 @@ sap.ui.define([
 	 * @param {string|object} vProperty A property or its name
 	 * @returns {boolean}
 	 *     Whether the property is filterable.
-	 *     Returns <code>true</code> for complex properties if at least one of the properties it references is filterable.
+	 *     Returns <code>true</code> for complex properties.
 	 *     Returns <code>null</code> if the property is unknown.
 	 * @public
 	 */
@@ -491,11 +493,7 @@ sap.ui.define([
 		var oProperty = this.getProperty(vProperty);
 
 		if (this.isComplex(oProperty)) {
-			var aRelatedProperties = this.getPropertiesFromComplexProperty(oProperty);
-
-			return aRelatedProperties.some(function(oProperty) {
-				return oProperty.filterable;
-			});
+			return false;
 		}
 
 		return oProperty ? oProperty.filterable : null;
@@ -510,17 +508,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getFilterableProperties = function(vProperty) {
-		var oProperty = this.getProperty(vProperty);
-
-		if (this.isComplex(oProperty)) {
-			return this.getPropertiesFromComplexProperty(oProperty).filter(function(oProperty) {
-				return this.isFilterable(oProperty);
-			}, this);
-		} else if (this.isFilterable(oProperty)) {
-			return [oProperty];
-		}
-
-		return oProperty ? [] : null;
+		return extractProperties(this, vProperty, this.isFilterable);
 	};
 
 	/**
@@ -531,7 +519,7 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.getAllFilterableProperties = function() {
 		return this.getProperties().filter(function(oProperty) {
-			return !this.isComplex(oProperty) && this.isFilterable(oProperty);
+			return this.isFilterable(oProperty);
 		}, this);
 	};
 
@@ -597,17 +585,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getVisibleProperties = function(vProperty) {
-		var oProperty = this.getProperty(vProperty);
-
-		if (this.isComplex(oProperty)) {
-			return this.getPropertiesFromComplexProperty(oProperty).filter(function(oProperty) {
-				return this.isVisible(oProperty);
-			}, this);
-		} else if (this.isVisible(oProperty)) {
-			return [oProperty];
-		}
-
-		return oProperty ? [] : null;
+		return extractProperties(this, vProperty, this.isVisible);
 	};
 
 	/**
