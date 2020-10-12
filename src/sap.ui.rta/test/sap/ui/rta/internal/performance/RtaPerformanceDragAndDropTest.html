@@ -35,22 +35,22 @@
 				sap.ui.require([
 					"dt/performance/PerformanceTestUtil",
 					"rta/performance/RtaPerformanceTestUtil",
-					"sap/ui/layout/VerticalLayout",
 					"sap/m/FlexWrap",
 					"sap/m/HBox",
 					"sap/m/Label",
 					"sap/ui/core/CustomData",
+					"sap/ui/layout/VerticalLayout",
 					"sap/ui/thirdparty/sinon-4"
 				], function(
 					DtPerformanceTestUtil,
 					RtaPerformanceTestUtil,
-					VerticalLayout,
 					FlexWrap,
 					HBox,
 					Label,
 					CustomData,
+					VerticalLayout,
 					sinon
-				){
+				) {
 
 					//create Vertical Layout
 					var oLayout1 = new VerticalLayout("Layout1");
@@ -107,7 +107,8 @@
 							})
 						]
 					});
-					oHBox.setWidth('100%');
+					oHBox.setWidth("100%");
+
 					oHBox.placeAt("content");
 					sap.ui.getCore().applyChanges();
 					var mHBoxDesigntimeMetadata = {
@@ -126,12 +127,19 @@
 				});
 			});
 
-			function startDragAndDrop(){
+			function startDragAndDrop() {
 				sap.ui.require([
-					"dt/performance/PerformanceTestUtil"
+					"dt/performance/PerformanceTestUtil",
+					"sap/ui/core/UIComponent",
+					"sap/ui/fl/Utils"
 				], function(
-					DtPerformanceTestUtil
+					DtPerformanceTestUtil,
+					UIComponent,
+					FlUtils
 				) {
+					var oAppComponent = new UIComponent()
+					sinon.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
+
 					jQuery.get("./dragDropEvents.json")
 					.done(function(aEvents) {
 						DtPerformanceTestUtil.measureApplyStylePerformance("applyStylesDragDrop", 3000);

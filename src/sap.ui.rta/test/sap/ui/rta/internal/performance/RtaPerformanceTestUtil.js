@@ -42,6 +42,9 @@ sap.ui.define([
 		getManifest: function () {
 			return oManifest;
 		},
+		getId: function() {
+			return "componentId";
+		},
 		getModel: function () {},
 		getLocalId: function() {},
 		getComponentData: function () {}
@@ -101,6 +104,9 @@ sap.ui.define([
 				oOverlay.setSelected(true);
 			})
 			.then(function() {
+				sandbox.restore();
+			})
+			.catch(function() {
 				sandbox.restore();
 			});
 		},
