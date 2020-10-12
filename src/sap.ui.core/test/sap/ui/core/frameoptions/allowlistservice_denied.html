@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta name="sap.whitelistService" content="denied.json">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>Frame Options Testpage - sap.ui.core</title>
@@ -10,7 +9,9 @@
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m">
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-frameOptions="trusted"
+				data-sap-ui-allowlistService="denied.json">
 		</script>
 		<script src="createcontent.js"></script>
 	</head>

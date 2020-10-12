@@ -193,7 +193,7 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 			assert.equal(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
 		});
 	}
-	function testWhitelistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
+	function testAllowlistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
 		QUnit.test(sName, function(assert) {
 
 			// arrangements
@@ -207,7 +207,7 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 			this.oFrameOptions = new FrameOptions({
 				mode: sMode,
 				allowSameOrigin: bAllowSameOrigin,
-				whitelist: [ 'some.other.origin.local' ],
+				allowlist: [ 'some.other.origin.local' ],
 				callback: fnCallback
 			});
 
@@ -231,7 +231,7 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 			assert.ok(fnCallback.calledWith(true));
 		});
 	}
-	function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin, bActive, bFraming, bAllow) {
+	function testAllowlistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin, bActive, bFraming, bAllow) {
 		QUnit.test(sName, function(assert) {
 
 			// arrangements
@@ -246,7 +246,7 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 					origin: "http://some.other.origin.local",
 					framing: !!bFraming
 				};
-			oServer.respondWith("GET", /\/whitelist\.json\?parentOrigin=.*/, [
+			oServer.respondWith("GET", /\/allowlist\.json\?parentOrigin=.*/, [
 				200,
 				{
 					"Content-Type": "application/json"
@@ -260,7 +260,7 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 			this.oFrameOptions = new FrameOptions({
 				mode: sMode,
 				allowSameOrigin: bAllowSameOrigin,
-				whitelistService: '/whitelist.json',
+				allowlistService: '/allowlist.json',
 				callback: fnCallback,
 				timeout: 200
 			});
@@ -322,7 +322,7 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 		oClock = sinon.sandbox.useFakeTimers();
 	}
 
-	function setupWhitelist(){
+	function setupAllowlist(){
 		setup.bind(this)();
 		oServer = sinon.sandbox.useFakeServer();
 	}
@@ -335,7 +335,7 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 		oClock.restore();
 	}
 
-	function teardownWhitelist(){
+	function teardownAllowlist(){
 		teardown.bind(this)();
 		oServer.restore();
 	}
@@ -377,32 +377,32 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 	testPostMessageLock( "same origin not allowed",                   'SAME_ORIGIN',   'SAFE',         'trusted',     false);
 	testPostMessageLock( "different origin",                          'DIFF_ORIGIN',   'SAFE',         'trusted');
 
-	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, whitelist", { afterEach: teardown , beforeEach: setup});
-	testWhitelistUnlock( "same origin not allowed, whitelist",        'SAME_ORIGIN',   'SAFE',         'trusted',     false);
-	testWhitelistUnlock( "different origin, whitelist",               'DIFF_ORIGIN',   'SAFE',         'trusted');
+	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, allowlist", { afterEach: teardown , beforeEach: setup});
+	testAllowlistUnlock( "same origin not allowed, allowlist",        'SAME_ORIGIN',   'SAFE',         'trusted',     false);
+	testAllowlistUnlock( "different origin, allowlist",               'DIFF_ORIGIN',   'SAFE',         'trusted');
 
 	//                   test name,                                   environment,     parent mode,    frame option,  same origin,  active,   framing,  allow
 
-	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, witelist service, parent safe", { afterEach: teardownWhitelist, beforeEach: setupWhitelist});
-	testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE',         'trusted',     false,        true,     true,     true);
-	testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     true,     true);
-	testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     false,    false);
-	testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         false,    true,     true);
+	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, witelist service, parent safe", { afterEach: teardownAllowlist, beforeEach: setupAllowlist});
+	testAllowlistService("same origin not allowed, allowlistService", 'SAME_ORIGIN',   'SAFE',         'trusted',     false,        true,     true,     true);
+	testAllowlistService("diff origin, allowlistService",             'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     true,     true);
+	testAllowlistService("diff origin, allowlistService, denied",     'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     false,    false);
+	testAllowlistService("diff origin, allowlistService, inactive",   'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         false,    true,     true);
 
-	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, witelist service, parent safe delayed", { afterEach: teardownWhitelist , beforeEach: setupWhitelist});
-	testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE_DELAYED', 'trusted',     false,        true,     true,     true);
-	testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     true,     true);
-	testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     false,    false);
-	testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         false,    true,     true);
+	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, witelist service, parent safe delayed", { afterEach: teardownAllowlist , beforeEach: setupAllowlist});
+	testAllowlistService("same origin not allowed, allowlistService", 'SAME_ORIGIN',   'SAFE_DELAYED', 'trusted',     false,        true,     true,     true);
+	testAllowlistService("diff origin, allowlistService",             'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     true,     true);
+	testAllowlistService("diff origin, allowlistService, denied",     'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     false,    false);
+	testAllowlistService("diff origin, allowlistService, inactive",   'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         false,    true,     true);
 
-	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, witelist service, parent unsafe", { afterEach: teardownWhitelist , beforeEach: setupWhitelist});
-	testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'UNSAFE',       'trusted',     false,        true,     true,     false);
-	testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         true,     true,     false);
-	testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         false,    true,     true);
+	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, witelist service, parent unsafe", { afterEach: teardownAllowlist , beforeEach: setupAllowlist});
+	testAllowlistService("same origin not allowed, allowlistService", 'SAME_ORIGIN',   'UNSAFE',       'trusted',     false,        true,     true,     false);
+	testAllowlistService("diff origin, allowlistService",             'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         true,     true,     false);
+	testAllowlistService("diff origin, allowlistService, inactive",   'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         false,    true,     true);
 
-	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, witelist service, parent no response", { afterEach: teardownWhitelist , beforeEach: setupWhitelist});
-	testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'NO_RESPONSE',  'trusted',     false,        true,     true,     false);
-	testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         true,     true,     false);
-	testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         false,    true,     true);
+	QUnit.module("sap.ui.security.FrameOptions - mode: trusted, witelist service, parent no response", { afterEach: teardownAllowlist , beforeEach: setupAllowlist});
+	testAllowlistService("same origin not allowed, allowlistService", 'SAME_ORIGIN',   'NO_RESPONSE',  'trusted',     false,        true,     true,     false);
+	testAllowlistService("diff origin, allowlistService",             'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         true,     true,     false);
+	testAllowlistService("diff origin, allowlistService, inactive",   'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         false,    true,     true);
 
 });

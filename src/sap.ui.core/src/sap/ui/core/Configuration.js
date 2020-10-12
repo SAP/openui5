@@ -133,7 +133,8 @@ sap.ui.define([
 					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
 					"manifestFirst"         : { type : "boolean",  defaultValue : false },
 					"flexibilityServices"   : { type : "string",   defaultValue : "/sap/bc/lrep"},
-					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
+					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // deprecated, use allowlistService instead
+					"allowlistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 					"support"               : { type : "string[]", defaultValue : null },
@@ -467,11 +468,13 @@ sap.ui.define([
 				config["bindingSyntax"] = (config.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
 			}
 
-			// Configure whitelistService / frameOptions via <meta> tag if not already defined via UI5 configuration
-			if (!config["whitelistService"]) {
-				var sMetaTagValue = getMetaTagValue('sap.whitelistService');
-				if (sMetaTagValue) {
-					config["whitelistService"] = sMetaTagValue;
+			config["allowlistService"] = config["allowlistService"] || /* fallback to legacy config */ config["whitelistService"];
+
+			// Configure allowlistService / frameOptions via <meta> tag if not already defined via UI5 configuration
+			if (!config["allowlistService"]) {
+				var sAllowlistMetaTagValue = getMetaTagValue('sap.allowlistService') || /* fallback to legacy config */ getMetaTagValue('sap.whitelistService');
+				if (sAllowlistMetaTagValue) {
+					config["allowlistService"] = sAllowlistMetaTagValue;
 					// Set default "frameOptions" to "trusted" instead of "allow"
 					if (config["frameOptions"] === "default") {
 						config["frameOptions"] = "trusted";
@@ -487,6 +490,12 @@ sap.ui.define([
 
 				// default => allow
 				config["frameOptions"] = "allow";
+			}
+
+			// frameOptionsConfig: Handle compatibility of renamed config option
+			var oFrameOptionsConfig = config["frameOptionsConfig"];
+			if (oFrameOptionsConfig) {
+				oFrameOptionsConfig.allowlist = oFrameOptionsConfig.allowlist || oFrameOptionsConfig.whitelist;
 			}
 
 			// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
@@ -1392,9 +1401,22 @@ sap.ui.define([
 		 *
 		 * @return {string} whitelist service URL
 		 * @public
+		 * @deprecated Since 1.85.0. Use {@link sap.ui.core.Configuration#getAllowlistService} instead.
+		 * SAP strives to replace insensitive terms with inclusive language.
+		 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
 		 */
 		getWhitelistService : function() {
-			return this.whitelistService;
+			return this.getAllowlistService();
+		},
+
+		/**
+		 * URL of the allowlist service.
+		 *
+		 * @return {string} allowlist service URL
+		 * @public
+		 */
+		getAllowlistService : function() {
+			return this.allowlistService;
 		},
 
 		/**

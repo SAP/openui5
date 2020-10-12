@@ -366,7 +366,7 @@ sap.ui.define([
 			// initialize frameOptions script (anti-clickjacking, etc.)
 			var oFrameOptionsConfig = this.oConfiguration["frameOptionsConfig"] || {};
 			oFrameOptionsConfig.mode = this.oConfiguration.getFrameOptions();
-			oFrameOptionsConfig.whitelistService = this.oConfiguration.getWhitelistService();
+			oFrameOptionsConfig.allowlistService = this.oConfiguration.getAllowlistService();
 			this.oFrameOptions = new FrameOptions(oFrameOptionsConfig);
 
 			// enable complex bindings if configured
