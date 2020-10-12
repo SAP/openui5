@@ -61,7 +61,7 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @public
+		 * @private
 		 * @since 1.74
 		 * @alias sap.ui.integration.cards.CalendarContent
 		 */
