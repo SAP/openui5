@@ -31,6 +31,7 @@ sap.ui.define([
 				type: Input,
 				settings: {
 					value: { path: 'currentSettings>value', type: new FloatType() },
+					editable: { path: 'currentSettings>editable' },
 					type: "Number"
 				}
 			};

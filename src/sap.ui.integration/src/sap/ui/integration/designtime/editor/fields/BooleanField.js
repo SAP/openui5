@@ -30,7 +30,8 @@ sap.ui.define([
 			oVisualization = {
 				type: CheckBox,
 				settings: {
-					selected: { path: 'currentSettings>value' }
+					selected: { path: 'currentSettings>value' },
+					editable: { path: 'currentSettings>editable' }
 				}
 			};
 			oConfig.withLabel = true;

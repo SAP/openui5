@@ -35,6 +35,7 @@ sap.ui.define([
 							return new Date(v);
 						}
 					},
+					editable: { path: 'currentSettings>editable' },
 					width: "16rem",
 					change: function (oEvent) {
 						if (oEvent.getParameters().valid) {
