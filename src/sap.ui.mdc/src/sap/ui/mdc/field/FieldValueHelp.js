@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/model/Context',
+	'sap/ui/Device',
 	'sap/m/library',
 	'sap/ui/core/library'
 ], function(
@@ -32,6 +33,7 @@ sap.ui.define([
 		merge,
 		ResourceModel,
 		Context,
+		Device,
 		mobileLibrary,
 		coreLibrary
 	) {
@@ -1936,8 +1938,8 @@ sap.ui.define([
 			var oValueHelpPanel = _createValueHelpPanel.call(this);
 
 			oDialog = new Dialog(this.getId() + "-dialog", {
-				contentHeight: "600px",
-				contentWidth: "1000px",
+				contentHeight: _getContentHeight(),
+				contentWidth: _getContentWidth(),
 				horizontalScrolling: false,
 				verticalScrolling: false,
 				title: this.getTitle(),
@@ -1962,6 +1964,24 @@ sap.ui.define([
 
 		return oDialog;
 
+	}
+
+	function _getContentHeight() {
+		if (Device.system.desktop) {
+			return "700px";
+		}
+		if (Device.system.tablet) {
+			return Device.orientation.landscape ? "600px" : "600px";
+		}
+	}
+
+	function _getContentWidth() {
+		if (Device.system.desktop) {
+			return "1080px";
+		}
+		if (Device.system.tablet) {
+			return Device.orientation.landscape ? "920px" : "600px";
+		}
 	}
 
 	function _DialogLoaded(fnDialog, fnButton, fnValueHelpPanel, fnDefineConditionPanel, fnManagedObjectModel) {
