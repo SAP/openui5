@@ -880,6 +880,38 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("valueState with editable and enabled", function(assert) {
+		// system under test
+		var oInput = new InputBase({
+			valueState: ValueState.Information,
+			editable: false
+		});
+
+		// arrange
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
+
+		// act
+		oInput.setEditable(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
+
+		// act
+		oInput.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
+
+		// cleanup
+		oInput.destroy();
+	});
+
 	/* ------------------------------ */
 	/* setName()                      */
 	/* ------------------------------ */
