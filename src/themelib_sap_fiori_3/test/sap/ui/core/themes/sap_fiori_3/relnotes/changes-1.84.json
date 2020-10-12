@@ -3,6 +3,28 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "d05936526a66905301cf551b2fd13832abf9f68c",
+        "type": "FIX",
+        "text": " sap.m.ScrollContainer: Focus outline is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080342315"
+          }
+        ]
+      },
+      {
+        "id": "c1d96019328f35b196ed7cbfc13d1b709d7e2fcd",
+        "type": "FIX",
+        "text": " sap.m.Link: Contrast is now fixed when in selected row",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080323699"
+          }
+        ]
+      },
+      {
         "id": "779d891bc2e97e29680dc1ef79daed617ed7551d",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: Visual Design specification parameters applied for Large Design"

@@ -3,6 +3,42 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "7ce0b24af0843303f58c9d6ce5f80c4dc1eff594",
+        "type": "FIX",
+        "text": " sap.ui.core.Router: support shared router in nested component"
+      },
+      {
+        "id": "5513a9e5413d8da68154213907f9a1edeb9ac883",
+        "type": "FEATURE",
+        "text": " routing.Targets: connect dynamic Target with the current matched route"
+      },
+      {
+        "id": "f7d03bbb34b809575db0c38b0a8a2b7d9a498b99",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: Custom Fragment Types",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070373936"
+          }
+        ]
+      },
+      {
+        "id": "354be7ea4804516957f608bf1f408cff2b7093f3",
+        "type": "FIX",
+        "text": " core/Fragment: Propagate ScopedRunWithOwner to nested Fragments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070375374"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070375371"
+          }
+        ]
+      },
+      {
         "id": "1766288e137c40b85152c4225ac7c0f2a441353a",
         "type": "FEATURE",
         "text": " core/Fragment: Async loading of XML content",

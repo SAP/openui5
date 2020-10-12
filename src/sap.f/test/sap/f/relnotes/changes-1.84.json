@@ -3,6 +3,28 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "87aa40cf8c8168bd93e888f008b20c243c109741",
+        "type": "FIX",
+        "text": " sap.f.GridList: Navigation with left/right arrow is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070376459"
+          }
+        ]
+      },
+      {
+        "id": "99e6f1d861208719996ab8a2cef2857af0423f05",
+        "type": "FIX",
+        "text": " sap.f.GridList: Items with table inside are now correctly focused",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070358305"
+          }
+        ]
+      },
+      {
         "id": "9a86f037670cc2177c8f06d406c735391309352d",
         "type": "FIX",
         "text": " sap.f.AvatarGroup: Error in console is fixed",

@@ -3,6 +3,152 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "252232f0c26367dfbffb88bee9110b04d50e53a0",
+        "type": "FIX",
+        "text": " sap.m.ResponsivePopover: removeEventDelegate is forwarded to the control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070368444"
+          }
+        ]
+      },
+      {
+        "id": "4123426e44f1b87d65e691fcaa8bf98f1691e1ee",
+        "type": "FIX",
+        "text": " sap.m.Select: Restore focus after rerendering from OTB",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070352773"
+          }
+        ]
+      },
+      {
+        "id": "aba36593a8f1237434619dce5341d1fd50c17419",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: now header is displayed properly after resize from size S",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1930624418"
+          }
+        ]
+      },
+      {
+        "id": "dd7a9abfb4346244a9c15eff6dc00c05ba33a0a6",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Icon is correctly positioned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070377016"
+          }
+        ]
+      },
+      {
+        "id": "02d521e9c928a2ae846a92368dcee4c1373255b2",
+        "type": "FIX",
+        "text": " sap.m.ValueStateMessage: Correct font-size is applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070355208"
+          }
+        ]
+      },
+      {
+        "id": "5122bfd055e4ce961dab010bb9d86c054ca495ab",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: Del key deletes more than one character when maskMode is On",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2030340988"
+          }
+        ]
+      },
+      {
+        "id": "369df12874c791938e0d804c4e5a258c1af123f5",
+        "type": "FEATURE",
+        "text": " Support semantic rendering for upload collection and upload set"
+      },
+      {
+        "id": "fc8c3e281a2d76d099b7dd1587ef75afb7e607f6",
+        "type": "FEATURE",
+        "text": " sap.m.DateTimePicker: aria-haspopup value enhanced"
+      },
+      {
+        "id": "3159ca49a5be14541602c9441df0adf53348d889",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker: HasPopup enumeration consumed"
+      },
+      {
+        "id": "104647847bd694e760c71476f86c60bcf68cd230",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: aria-roledescription adopted"
+      },
+      {
+        "id": "50972d1f4e2ef8da28b0dc52e1228f7e051bfb05",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Incorrect box-shadow fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070368612"
+          }
+        ]
+      },
+      {
+        "id": "089b77819d72412d830de6ce07c3dfe0c14abdf7",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: Arrow button's accessability name improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070308052"
+          }
+        ]
+      },
+      {
+        "id": "d05936526a66905301cf551b2fd13832abf9f68c",
+        "type": "FIX",
+        "text": " sap.m.ScrollContainer: Focus outline is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080342315"
+          }
+        ]
+      },
+      {
+        "id": "c046d6116807f7568baf7ecb87fb8c1de51b7370",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Filters customData is now cloned in the overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070373711"
+          }
+        ]
+      },
+      {
+        "id": "aa48e73e2a1a3ac563c6603d5833b0adc4411ba2",
+        "type": "FEATURE",
+        "text": " CustomListItem: new property accDescription added"
+      },
+      {
+        "id": "690fbf443447baf222f7bfe71176a8bfde27d15b",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: now change event is fired when the input field is cleared (oData v4/TimeOfDay)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070354898"
+          }
+        ]
+      },
+      {
         "id": "6156befd74721c684b4fffee01081f1e4b9e7d69",
         "type": "FIX",
         "text": " sap.m.Button: proper left padding of Delete button in Generic Tile",
@@ -10,6 +156,17 @@
           {
             "type": "BCP",
             "reference": "2070362310"
+          }
+        ]
+      },
+      {
+        "id": "ab3b2c0c7a50dd14af960cd3edb0d62eb0fc23b9",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Accessibility info is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080247616"
           }
         ]
       },

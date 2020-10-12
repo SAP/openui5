@@ -3,6 +3,17 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "f27ef21b248214f1099d88604e678762fd76ceeb",
+        "type": "FIX",
+        "text": " Calendar Card: bottom border of the Toolbar in Calendar header doesn't break other Toolbars",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070351088"
+          }
+        ]
+      },
+      {
         "id": "b88831cd42168b9658d7c5b2faf697698e664984",
         "type": "FEATURE",
         "text": " integration/Card: application/json is now supported in requests"

@@ -3,9 +3,31 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "8b6ea420d05a385780a1c0593f9c1cb23273717a",
+        "type": "FIX",
+        "text": " Field: align text inside Table and AlignedFlowLayout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080322135"
+          }
+        ]
+      },
+      {
         "id": "8f1757d698e47a7d647908ca642d10fccabae058",
         "type": "FEATURE",
         "text": " sap.m.Input: valueHelpIconSrc property added"
+      },
+      {
+        "id": "679f6c71dc877ad2c9e123844dd7476eb57f4bd5",
+        "type": "FIX",
+        "text": " Field: support String with digsequence and not nullable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080362761"
+          }
+        ]
       },
       {
         "id": "ba7851d0c7f152ff973134058f5d310e07153674",

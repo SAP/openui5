@@ -3,6 +3,16 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "0549fd553363a317f3481b5011f03ea3513330f9",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.MenuItem: HasPopup enumeration consumed"
+      },
+      {
+        "id": "cb18374edf42cb40738a6ec852a0ec71d82b9011",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.ColorPicker: aria-roledescription adopted"
+      },
+      {
         "id": "064f1ae57cb2a0370635d9794307de27e15cf8e8",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: fix of failed QUnit tests"
