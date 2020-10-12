@@ -1,6 +1,7 @@
-/*global QUnit,sinon */
+/*global Mobify, QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Carousel",
 	"sap/m/CarouselLayout",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/F6Navigation"
 ], function(
+	jQuery,
 	qutils,
 	Carousel,
 	CarouselLayout,
@@ -598,18 +600,30 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getBusyIndicatorSize(), "Medium", "Default busy indicator size should be 'Medium'");
 	});
 
-	QUnit.test("Destroying _oMobifyCarousel will set its _needsUpdate property to false;", function (assert) {
+	QUnit.module("Managing the Internal Instance of Mobify Carousel");
+
+	QUnit.test("Destroying the Carousel will set the _needsUpdate property of the Mobify Carousel to 'false'", function (assert) {
 		// Arrange
-		var oMobifyCarousel = this.oCarousel._oMobifyCarousel;
+		// on the next animation frame _needsUpdate will automatically become false,
+		// so make sure that it doesn't happen during our test
+		var oReqAnimationFrameStub = sinon.stub(Mobify.UI.Utils, "requestAnimationFrame", jQuery.noop),
+			oCarousel = createCarouselWithContent("");
+
+		oCarousel.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+		var oMobifyCarousel = oCarousel._oMobifyCarousel;
 
 		// Assert
-		assert.strictEqual(oMobifyCarousel._needsUpdate, true, "_needsUpdate property is initially true");
+		assert.strictEqual(oMobifyCarousel._needsUpdate, true, "'_needsUpdate' property is initially true");
 
 		// Act
-		this.oCarousel.destroy();
+		oCarousel.destroy();
 
 		// Assert
-		assert.strictEqual(oMobifyCarousel._needsUpdate, false, "_needsUpdate property is false after destroy");
+		assert.strictEqual(oMobifyCarousel._needsUpdate, false, "'_needsUpdate' property is false after destroy");
+
+		// Clean up
+		oReqAnimationFrameStub.restore();
 	});
 
 	//================================================================================
