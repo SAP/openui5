@@ -14,9 +14,10 @@ sap.ui.define([
 	'sap/base/util/UriParameters',
 	'sap/base/Log',
 	'sap/base/util/extend',
+	'sap/ui/core/ThemeCheck',
 	'sap/ui/thirdparty/jquery'
 ],
-	function(URI, Element, UriParameters, Log, extend, jQuery) {
+	function(URI, Element, UriParameters, Log, extend, ThemeCheck, jQuery) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
@@ -138,7 +139,7 @@ sap.ui.define([
 			// Remove CSS file name and query to create theme base url (to resolve relative urls)
 			var sThemeBaseUrl = new URI(sStyleSheetUrl).filename("").query("").toString();
 
-			var bThemeApplied = sap.ui.getCore().isThemeApplied();
+			var bThemeApplied = ThemeCheck.checkStyle(sId);
 
 			if (!bThemeApplied) {
 				Log.warning("Parameters have been requested but theme is not applied, yet.", "sap.ui.core.theming.Parameters");
@@ -228,6 +229,7 @@ sap.ui.define([
 		function loadPendingLibraryParameters() {
 			// lazy loading of further library parameters
 			aParametersToLoad.forEach(loadParameters);
+
 
 			// clear queue
 			aParametersToLoad = [];
