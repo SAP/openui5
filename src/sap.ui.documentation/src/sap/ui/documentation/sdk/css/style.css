@@ -249,6 +249,9 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 /* Menu Select`s bakground on HCB */
+.sapUiTheme-sap_fiori_3_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_fiori_3_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
+.sapUiTheme-sap_fiori_3_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow,
 .sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
 .sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
 .sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
@@ -256,6 +259,9 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 /* Menu Select`s bakground on HCW */
+.sapUiTheme-sap_fiori_3_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_fiori_3_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
+.sapUiTheme-sap_fiori_3_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow,
 .sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
 .sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
 .sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
@@ -269,10 +275,13 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 /* Menu Select`s color on HCB */
+.sapUiTheme-sap_fiori_3_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
 .sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
 	color: #fff;
 }
+
 /* Menu Select`s color on HCW */
+.sapUiTheme-sap_fiori_3_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel
 .sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
 	color: #000;
 }
@@ -296,6 +305,8 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 	width: auto;
 }
 
+.sapUiTheme-sap_fiori_3_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
+.sapUiTheme-sap_fiori_3_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
 .sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
 .sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
 	border-bottom: 0.1875rem solid;
@@ -305,9 +316,13 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
 	color: #cae4fb;
 }
+
+.sapUiTheme-sap_fiori_3_hcb .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before,
 .sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
 	color: #fff;
 }
+
+.sapUiTheme-sap_fiori_3_hcw .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before,
 .sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
 	color: #000;
 }
@@ -886,11 +901,15 @@ html.sapUiTheme-sap_belize_plus .sapUiDemokit .sapUiDocumentationSplitApp > .sap
 	border-right: 1px solid #4f667a;
 }
 
+html.sapUiTheme-sap_fiori_3_hcb .sapUiDemokit .sapMSplitContainerMaster,
+html.sapUiTheme-sap_fiori_3_hcw .sapUiDemokit .sapMSplitContainerMaster,
 html.sapUiTheme-sap_belize_hcb .sapUiDemokit .sapMSplitContainerMaster,
 html.sapUiTheme-sap_belize_hcw .sapUiDemokit .sapMSplitContainerMaster {
 	border-right: none;
 }
 
+html.sapUiTheme-sap_fiori_3_hcb .sapUiDemokit .sapMSplitContainerMaster::before,
+html.sapUiTheme-sap_fiori_3_hcw .sapUiDemokit .sapMSplitContainerMaster::before,
 html.sapUiTheme-sap_belize_hcb .sapUiDemokit .sapMSplitContainerMaster::before,
 html.sapUiTheme-sap_belize_hcw .sapUiDemokit .sapMSplitContainerMaster::before {
 	height: 100%;
@@ -911,33 +930,33 @@ html.sapUiTheme-sap_belize_hcw .sapUiDemokit .sapMSplitContainerMaster::before {
 	width: calc(100% - 3.0rem);
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPageColorPatternA {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPageColorPatternA {
 	background-color: #ffffff;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternC {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesColorPatternC {
 	background-color: #d5e2ef;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
 	background-color: #354a5f;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesWhiteText {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesWhiteText {
 	color: #fff;
 	text-shadow: none;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesWhiteText .sapMLnk {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesWhiteText .sapMLnk {
 	color: #fff;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesWhiteText .sapMLnk:hover:not(.sapMLnkDsbl) {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesWhiteText .sapMLnk:hover:not(.sapMLnkDsbl) {
 	color: #7ed0ff;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightLink.sapMLnk,
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightLink.sapMLnk:hover {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesBrightLink.sapMLnk,
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesBrightLink.sapMLnk:hover {
 	color: #d1e8ff;
 }
 
@@ -967,39 +986,46 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 	object-fit: cover;
 }
 
+html.sapUiTheme-sap_fiori_3_hcb .sapUiJSD p,
+html.sapUiTheme-sap_fiori_3_hcb .sapUiJSD a
 html.sapUiTheme-sap_belize_hcb .sapUiJSD p,
 html.sapUiTheme-sap_belize_hcb .sapUiJSD a {
 	color: #ffffff;
 }
-
+html.sapUiTheme-sap_fiori_3_hcw .sapUiJSD p,
+html.sapUiTheme-sap_fiori_3_hcw .sapUiJSD a,
 html.sapUiTheme-sap_belize_hcw .sapUiJSD p,
 html.sapUiTheme-sap_belize_hcw .sapUiJSD a {
 	color: #000000;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .sapUiJSD a {
 	color: #0070b1;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a,
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .sapUiJSD a,
+html.sapUiTheme-sap_fiori_3_hcb .sapUiJSD a:hover,
+html.sapUiTheme-sap_fiori_3_hcw .sapUiJSD a:hover,
 html.sapUiTheme-sap_belize_hcb .sapUiJSD a:hover,
 html.sapUiTheme-sap_belize_hcw .sapUiJSD a:hover {
 	text-decoration: none;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a:hover {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .sapUiJSD a:hover {
 	text-decoration: underline;
 }
 
+html.sapUiTheme-sap_fiori_3_hcb .sapUiJSD a:focus,
 html.sapUiTheme-sap_belize_hcb .sapUiJSD a:focus {
 	outline: 0.125rem dotted #ffffff;
 }
 
+html.sapUiTheme-sap_fiori_3_hcw .sapUiJSD a:focus,
 html.sapUiTheme-sap_belize_hcw .sapUiJSD a:focus {
 	outline: 0.125rem dotted #000000;
 }
 
-html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a:focus {
+html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .sapUiJSD a:focus {
 	outline: 0.0625rem dotted #000000;
 }
 
@@ -1511,6 +1537,7 @@ html[data-sap-ui-browser^="ff"] .sapUiDemokit .welcomeImage {
 }
 
 /* Only for hcb set another color as the one provided by the theme is not suitable */
+html.sapUiTheme-sap_fiori_3_hcb .sapUiDocumentationTopicsIframe,
 html.sapUiTheme-sap_belize_hcb .sapUiDocumentationTopicsIframe {
 	background: #fff;
 }
