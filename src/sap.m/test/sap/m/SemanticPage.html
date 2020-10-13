@@ -1143,7 +1143,8 @@
 		});
 
 		var oStatusBox = new sap.ui.layout.form.SimpleForm ({
-			maxContainerCols : 2,
+			maxContainerCols : 1,
+            layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 			editable: true,
 			content: [
 				new sap.m.Text({text: "Last action: "}),
