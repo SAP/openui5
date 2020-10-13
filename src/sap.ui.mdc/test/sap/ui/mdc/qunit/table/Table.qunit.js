@@ -2,6 +2,7 @@
 // These are some globals generated due to fl (signals, hasher) and m (hyphenation) libs.
 
 sap.ui.define([
+	"../QUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
@@ -25,6 +26,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/Link"
 ], function(
+	MDCQUnitUtils,
 	QUtils,
 	KeyCodes,
 	Core,
@@ -51,58 +53,6 @@ sap.ui.define([
 	"use strict";
 
 	var aTestedTypes = ["Table", "ResponsiveTable"];
-
-	function stubFetchProperties(aPropertyInfos, oTable) {
-		var oTarget = oTable || Table.prototype;
-		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
-		var oDelegate;
-		var fnOriginalFetchProperties;
-
-		unstubFetchProperties();
-
-		function getDelegate() {
-			if (oDelegate) {
-				return oDelegate;
-			}
-
-			oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
-			fnOriginalFetchProperties = oDelegate.fetchProperties;
-
-			oDelegate.fetchProperties = function() {
-				fnOriginalFetchProperties.apply(this, arguments);
-				return Promise.resolve(aPropertyInfos);
-			};
-
-			return oDelegate;
-		}
-
-		sinon.stub(oTarget, "getControlDelegate").callsFake(function() {
-			return getDelegate.call(this);
-		});
-
-		sinon.stub(oTarget, "awaitControlDelegate").callsFake(function() {
-			return Promise.resolve(getDelegate.call(this));
-		});
-
-		oTarget.__unstubFetchProperties = function() {
-			delete oTarget.__unstubFetchProperties;
-			if (oTarget.awaitControlDelegate.restore) {
-				oTarget.awaitControlDelegate.restore();
-			}
-			if (oTarget.getControlDelegate.restore) {
-				oTarget.getControlDelegate.restore();
-			}
-			oDelegate.fetchProperties = fnOriginalFetchProperties;
-		};
-	}
-
-	function unstubFetchProperties(oTable) {
-		var oTarget = oTable || Table.prototype;
-
-		if (oTarget.__unstubFetchProperties) {
-			oTarget.__unstubFetchProperties();
-		}
-	}
 
 	function wait(iMilliseconds) {
 		return new Promise(function(resolve) {
@@ -155,7 +105,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			unstubFetchProperties();
 		}
 	});
 
@@ -1273,7 +1222,7 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		stubFetchProperties([
+		MDCQUnitUtils.stubFetchProperties([
 			{
 				name: "name",
 				label: "name"
@@ -1282,7 +1231,7 @@ sap.ui.define([
 				name: "age",
 				label: "age"
 			}
-		]);
+		], this.oTable);
 
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
@@ -1322,7 +1271,7 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		stubFetchProperties([
+		MDCQUnitUtils.stubFetchProperties([
 			{
 				name: "name",
 				label: "name"
@@ -1331,7 +1280,7 @@ sap.ui.define([
 				name: "age",
 				label: "age"
 			}
-		]);
+		], this.oTable);
 
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
@@ -1371,7 +1320,7 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		stubFetchProperties([
+		MDCQUnitUtils.stubFetchProperties([
 			{
 				name: "name",
 				label: "name"
@@ -1380,7 +1329,7 @@ sap.ui.define([
 				name: "age",
 				label: "age"
 			}
-		]);
+		], this.oTable);
 
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
@@ -1965,13 +1914,13 @@ sap.ui.define([
 			template: new Text()
 		}));
 
-		stubFetchProperties([
+		MDCQUnitUtils.stubFetchProperties([
 			{
 				name: "test",
 				label: "Test",
 				path: "test"
 			}
-		]);
+		], this.oTable);
 
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
@@ -2057,12 +2006,12 @@ sap.ui.define([
 			template: new Text()
 		}));
 
-		stubFetchProperties([
+		MDCQUnitUtils.stubFetchProperties([
 			{
 				name: "test",
 				sortable: true
 			}
-		]);
+		], this.oTable);
 
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
@@ -2148,12 +2097,12 @@ sap.ui.define([
 			template: new Text()
 		}));
 
-		stubFetchProperties([
+		MDCQUnitUtils.stubFetchProperties([
 			{
 				name: "test",
 				sortable: false
 			}
-		]);
+		], this.oTable);
 
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
@@ -2191,7 +2140,7 @@ sap.ui.define([
 			template: new Text()
 		}));
 
-		stubFetchProperties([
+		MDCQUnitUtils.stubFetchProperties([
 			{
 				name: "test",
 				sortable: false
@@ -2202,7 +2151,7 @@ sap.ui.define([
 				name: "testComplex",
 				propertyInfos: ["test", "test2"]
 			}
-		]);
+		], this.oTable);
 
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
@@ -2995,71 +2944,71 @@ sap.ui.define([
 			}
 		];
 
+		MDCQUnitUtils.stubFetchProperties([
+			{
+				name: "firstName",
+				path: "firstName",
+				label: "First name",
+				exportSettings: {
+					width: 19,
+					type: "String",
+					label: "First_Name"
+				}
+			}, {
+				name: "lastName",
+				path: "lastName",
+				label: "Last name"
+			}, {
+				name: "fullName", // complex PropertyInfo without exportSettings => 2 spreadsheet column configs will be created
+				label: "Full name",
+				propertyInfos: ["firstName", "lastName"]
+			}, {
+				name: "fullName2", // complex PropertyInfo withexportSettings => 1 spreadsheet column config will be created
+				label: "Name",
+				propertyInfos: ["firstName", "lastName"],
+				exportSettings: {
+					template: "{0}, {1}"
+				}
+			}, {
+				name: "age",
+				path: "age",
+				label: "Age",
+				exportSettings: {
+					type: "Number"
+				}
+			}, {
+				name: "dob",
+				path: "dob",
+				exportSettings: {
+					label: "Date of Birth",
+					type: "Date",
+					inputFormat: "YYYYMMDD",
+					width: 15,
+					template: "{0}"
+				}
+			}, {
+				name: "salary",
+				path: "salary",
+				label: "Salary",
+				exportSettings: {
+					displayUnit: true,
+					unitProperty: "currency",
+					template: "{0} {1}",
+					width: 10,
+					type: "Currency"
+				}
+			}, {
+				name: "currency",
+				path: "currency",
+				label: "Currency code",
+				exportSettings: {
+					width: 5
+				}
+			}
+		], this.oTable);
+
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable);
-
-			stubFetchProperties([
-				{
-					name: "firstName",
-					path: "firstName",
-					label: "First name",
-					exportSettings: {
-						width: 19,
-						type: "String",
-						label: "First_Name"
-					}
-				}, {
-					name: "lastName",
-					path: "lastName",
-					label: "Last name"
-				}, {
-					name: "fullName", // complex PropertyInfo without exportSettings => 2 spreadsheet column configs will be created
-					label: "Full name",
-					propertyInfos: ["firstName", "lastName"]
-				}, {
-					name: "fullName2", // complex PropertyInfo withexportSettings => 1 spreadsheet column config will be created
-					label: "Name",
-					propertyInfos: ["firstName", "lastName"],
-					exportSettings: {
-						template: "{0}, {1}"
-					}
-				}, {
-					name: "age",
-					path: "age",
-					label: "Age",
-					exportSettings: {
-						type: "Number"
-					}
-				}, {
-					name: "dob",
-					path: "dob",
-					exportSettings: {
-						label: "Date of Birth",
-						type: "Date",
-						inputFormat: "YYYYMMDD",
-						width: 15,
-						template: "{0}"
-					}
-				}, {
-					name: "salary",
-					path: "salary",
-					label: "Salary",
-					exportSettings: {
-						displayUnit: true,
-						unitProperty: "currency",
-						template: "{0} {1}",
-						width: 10,
-						type: "Currency"
-					}
-				}, {
-					name: "currency",
-					path: "currency",
-					label: "Currency code",
-					exportSettings: {
-						width: 5
-					}
-				}
-			]);
 
 			this.oTable._createExportColumnConfiguration({fileName: 'Table header'}).then(function(aActualOutput) {
 				assert.deepEqual(aActualOutput[0], aExpectedOutput, "The export configuration was created as expected");
@@ -3166,47 +3115,47 @@ sap.ui.define([
 			}
 		];
 
+		MDCQUnitUtils.stubFetchProperties([
+			{
+				name: "product",
+				path: "product",
+				label: "Product"
+			}, {
+				name: "price",
+				path: "price",
+				label: "Price",
+				exportSettings: {
+					label: "Price",
+					displayUnit: true,
+					unitProperty: "currencyCode",
+					type: "Currency"
+				}
+			}, {
+				name: "currencyCode",
+				path: "currencyCode",
+				label: "Currency Code",
+				exportSettings: {
+					width: 4,
+					textAlign: "Left"
+				}
+			}, {
+				name: "company",
+				label: "Company Name",
+				propertyInfos: ["companyName", "companyCode"]
+			}, {
+				name: "companyName",
+				label: "Company Name",
+				exportSettings: {
+					width: 15
+				}
+			}, {
+				name: "companyCode",
+				label: "Company Code"
+			}
+		], this.oTable);
+
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable);
-
-			stubFetchProperties([
-				{
-					name: "product",
-					path: "product",
-					label: "Product"
-				}, {
-					name: "price",
-					path: "price",
-					label: "Price",
-					exportSettings: {
-						label: "Price",
-						displayUnit: true,
-						unitProperty: "currencyCode",
-						type: "Currency"
-					}
-				}, {
-					name: "currencyCode",
-					path: "currencyCode",
-					label: "Currency Code",
-					exportSettings: {
-						width: 4,
-						textAlign: "Left"
-					}
-				}, {
-					name: "company",
-					label: "Company Name",
-					propertyInfos: ["companyName", "companyCode"]
-				}, {
-					name: "companyName",
-					label: "Company Name",
-					exportSettings: {
-						width: 15
-					}
-				}, {
-					name: "companyCode",
-					label: "Company Code"
-				}
-			]);
 
 			this.oTable._createExportColumnConfiguration({fileName: 'Table header', splitCells: true}).then(function(aActualOutput) {
 				assert.deepEqual(aActualOutput[0], aExpectedOutput, "The export configuration was created as expected");
@@ -3455,7 +3404,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			unstubFetchProperties();
 		},
 		getFilterInfoBar: function(oMDCTable) {
 			var oTable = this.oTable || oMDCTable;
@@ -3505,12 +3453,12 @@ sap.ui.define([
 	QUnit.test("Filter info bar (filter disabled)", function(assert) {
 		var that = this;
 
-		stubFetchProperties([
+		MDCQUnitUtils.stubFetchProperties([
 			{
 				name: "name",
 				label: "NameLabel"
 			}
-		]);
+		], this.oTable);
 
 		return this.oTable.initialized().then(function() {
 			assert.ok(!that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar does not exist");
@@ -3565,7 +3513,7 @@ sap.ui.define([
 				p13nMode: ["Filter"]
 			});
 
-			stubFetchProperties([
+			MDCQUnitUtils.stubFetchProperties([
 				{
 					name: "name",
 					label: "NameLabel"
@@ -3576,7 +3524,7 @@ sap.ui.define([
 					name: "gender",
 					label: "GenderLabel"
 				}
-			]);
+			], this.oTable);
 
 			return this.oTable.initialized().then(function() {
 				assert.ok(that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar exists");
@@ -3756,14 +3704,14 @@ sap.ui.define([
 		}));
 		this.oTable.setP13nMode(["Filter"]);
 
-		return this.oTable.initialized().then(function() {
-			stubFetchProperties([
-				{
-					name: "age",
-					label: "AgeLabel"
-				}
-			]);
+		MDCQUnitUtils.stubFetchProperties([
+			{
+				name: "age",
+				label: "AgeLabel"
+			}
+		], this.oTable);
 
+		return this.oTable.initialized().then(function() {
 			that.oTable.setFilterConditions({
 				age: [
 					{
