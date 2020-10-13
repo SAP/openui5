@@ -168,8 +168,8 @@ sap.ui.define([
 			async: true
 		}).then(function() {
 			sap.ui.require([
-				'sap/ui/fl/write/api/ControlPersonalizationWriteAPI', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI', 'sap/ui/fl/Utils', this.getMetadataHelperPath() || "sap/ui/mdc/Link"
-			], function(ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, Utils, MetadataHelper) {
+				'sap/ui/fl/write/api/ControlPersonalizationWriteAPI', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI', this.getMetadataHelperPath() || "sap/ui/mdc/Link"
+			], function(ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, MetadataHelper) {
 
 				// If the condition, that a control is assigned to a AppComponent is not fulfilled, we can go ahead
 				if (!FlexRuntimeInfoAPI.isFlexSupported({element: this})) {

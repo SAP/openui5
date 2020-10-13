@@ -740,7 +740,7 @@ sap.ui.define([
 		this.oLink._retrieveUnmodifiedLinkItems().then(function() {
 			// assert
 			assert.equal(SapBaseLog.getLevel(), SapBaseLog.Level.TRACE);
-			assert.ok(this.oLink._getLogFormattedText().indexOf("item 01") > -1);
+			assert.ok(this.oLink._getInfoLog()._getLogFormattedText().indexOf("item 01") > -1);
 
 			done();
 		}.bind(this));
@@ -755,9 +755,9 @@ sap.ui.define([
 		}).then(function() {
 			// assert
 			assert.equal(SapBaseLog.getLevel(), SapBaseLog.Level.TRACE);
-			assert.ok(this.oLink._getLogFormattedText().indexOf("SOMainActionWithText") > -1);
-			assert.ok(this.oLink._getLogFormattedText().indexOf("param01") > -1);
-			assert.ok(this.oLink._getLogFormattedText().indexOf("param02") > -1);
+			assert.ok(this.oLink._getInfoLog()._getLogFormattedText().indexOf("SOMainActionWithText") > -1);
+			assert.ok(this.oLink._getInfoLog()._getLogFormattedText().indexOf("param01") > -1);
+			assert.ok(this.oLink._getInfoLog()._getLogFormattedText().indexOf("param02") > -1);
 			done();
 		}.bind(this));
 	});
@@ -768,9 +768,9 @@ sap.ui.define([
 		this.oLink._retrieveUnmodifiedLinkItems().then(function() {
 			// assert
 			assert.equal(SapBaseLog.getLevel(), SapBaseLog.Level.TRACE);
-			assert.ok(this.oLink._getLogFormattedText().indexOf("SOMainActionWithText") > -1);
-			assert.ok(this.oLink._getLogFormattedText().indexOf("item 00") > -1);
-			assert.ok(this.oLink._getLogFormattedText().indexOf("item 01") > -1);
+			assert.ok(this.oLink._getInfoLog()._getLogFormattedText().indexOf("SOMainActionWithText") > -1);
+			assert.ok(this.oLink._getInfoLog()._getLogFormattedText().indexOf("item 00") > -1);
+			assert.ok(this.oLink._getInfoLog()._getLogFormattedText().indexOf("item 01") > -1);
 
 			done();
 		}.bind(this));
