@@ -16,11 +16,11 @@
 			<VBox>
 				<items>
 					<mdc:Chart id="IDChartOfAppUnderTestChart"
-								data="{path: '/SalesDenormalized'}"
+								data="{path: '/Books'}"
 								delegate='{
 									"name": "sap/ui/mdc/odata/v4/ChartDelegate",
 									"payload": {
-									   		collectionName: "SalesDenormalized"
+									   		collectionName: "Books"
 										}
 									}'
 								p13nMode="Item,Sort,Type"
@@ -29,10 +29,10 @@
 								height="400px"
 								width="1000px">
 						<mdc:items>
-							<chart:DimensionItem id="IDProductName" key="ProductName" role="category"
-												 label="Product Name"/>
-							<chart:DimensionItem id="IDDate" key="Date" role="series"/>
-							<chart:MeasureItem id="IDAmount" key="Amount" role="axis1"/>
+							<chart:DimensionItem id="IDGenre" key="genre_code" role="series"
+												 label="Genre"/>
+							<chart:MeasureItem id="IDPrice" key="averageprice" role="axis1"
+							label="Price (average)"/>
 						</mdc:items>
 					</mdc:Chart>
 				</items>
