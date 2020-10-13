@@ -44,14 +44,14 @@ sap.ui.define([
 			assert.equal(oFormatData, oData, "then the original data is return");
 		});
 
-		QUnit.test("when a black list item is verified", function(assert) {
+		QUnit.test("when a excluded item is verified", function(assert) {
 			var oContentItem = {
 				category: "NS",
 				name: "LREP_HOME_CONTENT",
 				ns: "UIF/"
 			};
 
-			assert.equal(DataUtils.isNotOnBlacklist(oContentItem), false, "then it is recognized");
+			assert.equal(DataUtils.isNotExcluded(oContentItem), false, "then it is recognized");
 		});
 
 		QUnit.test("when cleanLeadingAndTrailingSlashes is called for a string with leading and trailing slashes", function(assert) {
