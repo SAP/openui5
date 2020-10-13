@@ -1,0 +1,1 @@
+<mvc:View async="true" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" controllerName="testdata.fragments.ownerPropagation.XMLViewController" ></mvc:View>
