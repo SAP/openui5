@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
 	"sap/base/util/merge",
+	"sap/base/util/deepEqual",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/m/HBox",
 	"sap/ui/core/Icon",
@@ -40,6 +41,7 @@ sap.ui.define([
 	ServiceManager,
 	Log,
 	merge,
+	deepEqual,
 	DataProviderFactory,
 	HBox,
 	Icon,
@@ -517,6 +519,7 @@ sap.ui.define([
 			sap.ui.require([sFullExtensionPath], function (vExtension) {
 				if (typeof vExtension === "function") {
 					this._oExtension = new vExtension();
+					this._oExtension._setCard(this, this._oLimitedInterface);
 					this.setAggregation("_extension", this._oExtension); // let the framework validate and take care of the instance
 				} else {
 					this._oExtension = vExtension;
@@ -707,6 +710,47 @@ sap.ui.define([
 			this.destroyManifest();
 			this._bApplyManifest = true;
 			this.invalidate();
+		}
+	};
+
+	/**
+	 * Refreshes the card actions menu.
+	 *
+	 * @private
+	 */
+	Card.prototype._refreshActionsMenu = function () {
+		var oCardHeader = this.getCardHeader(),
+			oHost = this.getHostInstance(),
+			oExtension = this._oExtension,
+			aActions = [],
+			oCurrentActionsToolbar,
+			oHeaderFactory,
+			oActionsToolbar;
+
+		if (!oCardHeader) {
+			return;
+		}
+
+		oCurrentActionsToolbar = oCardHeader.getToolbar();
+		if (oCurrentActionsToolbar) {
+			if (oHost) {
+				aActions = aActions.concat(oHost.getActions() || []);
+			}
+
+			if (oExtension) {
+				aActions = aActions.concat(oExtension.getActions() || []);
+			}
+
+			if (deepEqual(aActions, oCurrentActionsToolbar._aActions)) {
+				return;
+			}
+		}
+
+		oHeaderFactory = new HeaderFactory(this);
+		oActionsToolbar = oHeaderFactory._createActionsToolbar();
+
+		if (oActionsToolbar) {
+			oCardHeader.setToolbar(oActionsToolbar);
 		}
 	};
 
@@ -962,7 +1006,7 @@ sap.ui.define([
 		this._oLoadingProvider = new LoadingProvider();
 
 		if (this._oExtension) {
-			this._oExtension.onCardReady(this._oLimitedInterface);
+			this._oExtension.onCardReady();
 		}
 
 		this._fillFiltersModel();

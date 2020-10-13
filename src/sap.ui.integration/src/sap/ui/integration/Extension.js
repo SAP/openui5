@@ -97,22 +97,31 @@ sap.ui.define([
 	});
 
 	Extension.prototype.init = function () {
+		this._oCardInterface = null;
 		this._oCard = null;
 	};
 
 	Extension.prototype.exit = function () {
+		this._oCardInterface = null;
 		this._oCard = null;
 	};
 
 	/**
-	 * Called before any other method is called, so that the card is available there.
-	 * Reconsider the name of the method before making it public and available for overriding.
-	 *
-	 * @param {object} oCardInterface A limited interface to the card.
-	 * @private
+	 * See generated JSDoc
 	 */
-	Extension.prototype.onCardReady = function (oCardInterface) {
-		this._oCard = oCardInterface;
+	Extension.prototype.setActions = function (aActions) {
+		this.setProperty("actions", aActions);
+
+		if (this._oCard) {
+			this._oCard._refreshActionsMenu();
+		}
+	};
+
+	/**
+	 * Called when the card is ready.
+	 * @public
+	 */
+	Extension.prototype.onCardReady = function () {
 	};
 
 	/**
@@ -121,7 +130,19 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.CardFacade} An interface to the card.
 	 */
 	Extension.prototype.getCard = function () {
-		return this._oCard;
+		return this._oCardInterface;
+	};
+
+	/**
+	 * Sets the card.
+	 *
+	 * @param {object} oCard The card.
+	 * @param {object} oCardInterface A limited interface to the card.
+	 * @private
+	 */
+	Extension.prototype._setCard = function (oCard, oCardInterface) {
+		this._oCard = oCard;
+		this._oCardInterface = oCardInterface;
 	};
 
 	return Extension;
