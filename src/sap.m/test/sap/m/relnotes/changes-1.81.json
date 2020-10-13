@@ -57,5 +57,36 @@
         ]
       }
     ]
+  },
+  "1.81.4": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "0c6876425268bffab31e4015c0ab49e12c4b3b83",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Removed custom setter for selected property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080296975"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070392692"
+          }
+        ]
+      },
+      {
+        "id": "36114a8e20eb41f383dbbcf32355377827bc06dc",
+        "type": "FIX",
+        "text": " sap.m.Table: ScrollToIndex Sample fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070320683"
+          }
+        ]
+      }
+    ]
   }
 }
