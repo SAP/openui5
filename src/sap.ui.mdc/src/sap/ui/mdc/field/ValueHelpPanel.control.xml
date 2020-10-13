@@ -6,7 +6,7 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:l="sap.ui.layout">
 	<VBox id="rootVBox" fitContainer= "true" class="sapMdcValueHelpPanel">
-		<IconTabBar id="iconTabBar" expandable="false" upperCase="true" stretchContentHeight="true" class="sapUiNoContentPadding" select="iconTabSelect">
+		<IconTabBar id="iconTabBar" expandable="false" upperCase="false" stretchContentHeight="true" class="sapUiNoContentPadding" select="iconTabSelect">
 			<layoutData>
 				<FlexItemData growFactor= "1" shrinkFactor= "1"/>
 			</layoutData>
