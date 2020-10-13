@@ -15,51 +15,59 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.74.0
 	 * @alias sap.ui.mdc.enum.BaseType
 	 */
 	var BaseType = {
 		/**
 		 * Data type represents a string
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		String: "String",
 
 		/**
 		 * Data type represents a number.
 		 * (This can be integer, float or any other numeric type.)
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Numeric: "Numeric",
 
 		/**
 		 * Data type represents a boolean
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Boolean: "Boolean",
 
 		/**
 		 * Data type represents a date
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Date: "Date",
 
 		/**
 		 * Data type represents a time
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Time: "Time",
 
 		/**
 		 * Data type represents a date with time
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		DateTime: "DateTime",
 
 		/**
 		 * Data type represents a unit.
 		 * This means a composite type with a number and a unit part is used.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Unit: "Unit"
 	};

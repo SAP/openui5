@@ -14,28 +14,33 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
 	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.48.0
 	 * @alias sap.ui.mdc.enum.FieldDisplay
 	 */
 	var FieldDisplay = {
 		/**
 		 * Only the value (key) is displayed
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc, sap.fe
 		 */
 		Value: "Value",
 		/**
 		 * Only the description is displayed
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc, sap.fe
 		 */
 		Description: "Description",
 		/**
 		 * The value (key) and the description are displayed in the field. The description is displayed after the value (key) in brackets.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc, sap.fe
 		 */
 		ValueDescription: "ValueDescription",
 		/**
 		 * The description and the value (key) are displayed in the field. The value (key) is displayed after the description in brackets.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc, sap.fe
 		 */
 		DescriptionValue: "DescriptionValue"
 	};

@@ -75,6 +75,7 @@ sap.ui.define([
 		 * @param {boolean} [oConfiguration.validateInput] If set, the user input for this operator needs to be validated using a field help
 		 * @constructor
 		 * @private
+		 * @ui5-restricted sap.ui.mdc, sap.fe
 		 * @alias sap.ui.mdc.condition.Operator
 		 * @version 1.73.0
 		 * @author SAP SE
@@ -256,7 +257,8 @@ sap.ui.define([
 		 * @param {string} sFieldPath Path of filter
  		 * @param {sap.ui.model.Type} oType Data type of the used filter field
 		 * @returns {sap.ui.model.Filter} filter object
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Operator.prototype.getModelFilter = function(oCondition, sFieldPath, oType) {
 
@@ -309,7 +311,8 @@ sap.ui.define([
 		 * @param {sap.ui.model.Type} oType Data type
 		 * @returns {boolean} true if empty
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Operator.prototype.isEmpty = function(oCondition, oType) {
 
@@ -340,7 +343,8 @@ sap.ui.define([
 		 * @returns {string} formatted text
 		 * @throws {sap.ui.model.FormatException} if the values cannot be formatted
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Operator.prototype.format = function(oCondition, oType, sDisplay) { // sDisplay needed in EQ formatter
 
@@ -372,7 +376,8 @@ sap.ui.define([
 		 * @returns {any[]} array of values
 		 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Operator.prototype.parse = function(sText, oType, sDisplayFormat, bDefaultOperator) {
 
@@ -451,7 +456,8 @@ sap.ui.define([
 		 * @param {sap.ui.model.Type} oType Data type
 		 * @throws {sap.ui.model.ValidateException} if the values are invalid
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Operator.prototype.validate = function(aValues, oType) {
 
@@ -509,7 +515,8 @@ sap.ui.define([
 		 * @param {string} sText Text
 		 * @returns {boolean} true valid
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Operator.prototype.test = function(sText) {
 
@@ -527,7 +534,8 @@ sap.ui.define([
 		 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
 		 * @returns {string[]} array of value parts without operator sign
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 * @since 1.77.0
 		 */
 		Operator.prototype.getValues = function(sText, sDisplayFormat, bDefaultOperator) {
@@ -564,7 +572,8 @@ sap.ui.define([
 		 * @returns {object} condition
 		 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Operator.prototype.getCondition = function(sText, oType, sDisplayFormat, bDefaultOperator) {
 
@@ -631,7 +640,8 @@ sap.ui.define([
 		 * @param {object} oCondition1 Condition to check
 		 * @param {object} oCondition2 Condition to check
 		 * @returns {boolean} True if conditions are equal
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 * @since: 1.76.0
 		 */
 		Operator.prototype.compareConditions = function(oCondition1, oCondition2) {
@@ -677,7 +687,8 @@ sap.ui.define([
 		 * For EQ set <code>validated</code> flag if a description is given.
 		 *
 		 * @param {object} oCondition condition to check
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 * @since: 1.78.0
 		 */
 		Operator.prototype.checkValidated = function(oCondition) {

@@ -39,8 +39,8 @@ function(
 		 * @alias sap.ui.mdc.condition.FilterOperatorUtil
 		 *
 		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 * @experimental
-		 * @ui5-restricted
 		 */
 		var FilterOperatorUtil = {
 
@@ -718,7 +718,8 @@ function(
 				 *
 				 * @param {sap.ui.mdc.condition.Operator} oOperator Operator
 				 *
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc, sap.fe
 				 */
 				addOperator: function(oOperator) {
 
@@ -733,7 +734,8 @@ function(
 				 * @param {sap.ui.mdc.condition.Operator[]} aOperators Operators
 				 * @param {sap.ui.mdc.condition.Operator} oDefaultOperator Default operator
 				 *
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc, sap.fe
 				 */
 				setOperatorsForType: function(sType, aOperators, oDefaultOperator) {
 					var aOps = [];
@@ -765,7 +767,8 @@ function(
 				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
 				 * @returns {string[]} an array with the supported filter operators
 				 *
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc, sap.fe
 				 */
 				getOperatorsForType: function(sType) {
 
@@ -786,7 +789,8 @@ function(
 				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
 				 * @returns {sap.ui.mdc.condition.Operator} the default filter operator for the given type
 				 *
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc, sap.fe
 				 */
 				getDefaultOperator: function(sType) {
 
@@ -804,7 +808,8 @@ function(
 				 * @param {string} [sValue] Value entered (including operator)
 				 * @returns {sap.ui.mdc.condition.Operator[]} the operator objects suitable for the given input string, depending on the given type
 				 *
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 */
 				getMatchingOperators: function(aOperators, sValue) {
 
@@ -826,7 +831,8 @@ function(
 				 * @param {string} sOperator Name of the operator
 				 * @returns {sap.ui.mdc.condition.Operator} the operator object, or undefined if the operator with the requested name does not exist
 				 *
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc, sap.fe
 				 */
 				getOperator: function(sOperator) {
 
@@ -882,7 +888,8 @@ function(
 				 *
 				 * @param {object[]} aConditions Conditions
 				 *
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 */
 				checkConditionsEmpty: function(aConditions) {
 
@@ -921,7 +928,8 @@ function(
 				 *
 				 * @param {object} oCondition condition
 				 * @since: 1.75.0
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 */
 				updateConditionValues: function(oCondition) {
 
@@ -964,7 +972,8 @@ function(
 				 * @param {object} oCondition Condition to check
 				 * @param {object[]} aConditions Array of conditions
 				 * @returns {int} Index of the condition, -1 if not found
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.76.0
 				 */
 				indexOfCondition: function(oCondition, aConditions) {
@@ -992,7 +1001,8 @@ function(
 				 * @param {object} oCondition1 Condition to check
 				 * @param {object} oCondition2 Condition to check
 				 * @returns {boolean} True if conditions are equal
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.76.0
 				 */
 				compareConditions: function(oCondition1, oCondition2) {
@@ -1020,7 +1030,8 @@ function(
 				 * @param {object[]} aConditions1 Conditions to check
 				 * @param {object[]} aConditions2 Conditions to check
 				 * @returns {boolean} True if conditions are equal
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.76.0
 				 */
 				compareConditionsArray: function(aConditions1, aConditions2) {
@@ -1046,7 +1057,8 @@ function(
 				 * For EQ set <code>validated</code> flag if a description is given.
 				 *
 				 * @param {object} oCondition condition to check
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.78.0
 				 */
 				checkConditionValidated: function(oCondition) {

@@ -38,6 +38,7 @@ sap.ui.define([
 		 * @alias sap.ui.mdc.condition.ConditionModel
 		 *
 		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 * @experimental
 		 * @ui5-restricted
 		 */
@@ -100,7 +101,8 @@ sap.ui.define([
 		 * creates a clone of the ConditionModel which contains the conditions for the sFieldPath
 		 * @param {string} sFieldPath specifies which conditions should be copied into the clone. If not specified all conditions will be copied.
 		 * @returns {sap.ui.mdc.condition.ConditionModel} instance of new ConditionModel
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.clone = function (sFieldPath) {
 			var oCM = new ConditionModel();
@@ -131,7 +133,8 @@ sap.ui.define([
 		 * @param {string} sFieldPath specifies which conditions should be removed and replaced by the conditions from the source ConditionModel
 		 * @param {sap.ui.mdc.condition.ConditionModel} oSourceConditionModel source ConditionModel.
 		 * @param {string} sSourceFieldPath specifies which conditions from the source should be merged.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.merge = function (sFieldPath, oSourceConditionModel, sSourceFieldPath) {
 			this.removeAllConditions(sFieldPath);
@@ -156,7 +159,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @returns {object[]} array of conditions
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.getConditions = function (sFieldPath) {
 			//TODO: only works for simple flat condition model content
@@ -186,7 +190,8 @@ sap.ui.define([
 		 *
 		 * @param {string|string[]} vFieldPath fieldPath for that conditions are requested
 		 * @returns {object} object with array of conditions for each FieldPath
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.getAllConditions = function (vFieldPath) {
 
@@ -215,7 +220,8 @@ sap.ui.define([
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @param {object} oCondition condition to be searched
 		 * @returns {object} index of condition (-1 if not found)
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.indexOf = function (sFieldPath, oCondition) {
 
@@ -242,7 +248,8 @@ sap.ui.define([
 		 *
 		 * @param {object} oConditions object of conditions for corresponding fieldPaths
 		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.setConditions = function (oConditions) {
 
@@ -278,7 +285,8 @@ sap.ui.define([
 		 * @param {object} oCondition condition to be added
 		 * @param {boolean} bForce if set the condition will be added even if it already exist
 		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.addCondition = function (sFieldPath, oCondition, bForce) {
 
@@ -297,7 +305,8 @@ sap.ui.define([
 		 * @param {object} oCondition condition to be inserted
 		 * @param {boolean} bForce if set the condition will be inserted even if it already exist
 		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.insertCondition = function (sFieldPath, iIndex, oCondition, bForce) {
 
@@ -345,7 +354,8 @@ sap.ui.define([
 		 * @param {string} sKey the operator for the condition
 		 * @param {string} sDescription the description of the operator
 		 * @returns {object} the new condition object with the given fieldPath, the operator EQ and the sKey and sDescription as aValues.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 * @deprecated use the sap.ui.mdc.condition.Condition.createItemCondition
 		 */
 		ConditionModel.prototype.createItemCondition = function (sFieldPath, sKey, sDescription) {
@@ -360,7 +370,8 @@ sap.ui.define([
 		 * @param {string} sOperator the operator for the condition
 		 * @param {any[]} aValues the array of values for the condition
 		 * @returns {object} the new condition object with the given fieldPath, operator and values.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 * @deprecated use the sap.ui.mdc.condition.Condition.createCondition
 		 */
 		ConditionModel.prototype.createCondition = function (sFieldPath, sOperator, aValues) {
@@ -374,7 +385,8 @@ sap.ui.define([
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @param {int | object} vCondition condition or index of the condition
 		 * @returns {boolean} flag if condition was removed.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.removeCondition = function (sFieldPath, vCondition) {
 
@@ -409,7 +421,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.removeAllConditions = function (sFieldPath) {
 

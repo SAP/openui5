@@ -31,7 +31,8 @@ sap.ui.define([
 				 * @param {any} vDate Date
 				 * @param {sap.ui.model.SimpleType} oType Data type
 				 * @return {sap.ui.core.date.UniversalDate} UniversalDate
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since 1.74.0
 				 */
 				typeToUniversalDate: function(vDate, oType) {
@@ -52,7 +53,8 @@ sap.ui.define([
 				 * @param {sap.ui.core.date.UniversalDate} oDate UniversalDate
 				 * @param {sap.ui.model.SimpleType} oType Data type
 				 * @return {any} type specific date
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since 1.74.0
 				 */
 				universalDateToType: function(oDate, oType) {
@@ -73,7 +75,8 @@ sap.ui.define([
 				 * @param {sap.ui.model.SimpleType} oType Data type
 				 * @param {string} sPattern Pattern based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
 				 * @return {sap.ui.model.SimpleType} nes data type
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since 1.74.0
 				 */
 				createInternalType: function(oType, sPattern) {
@@ -112,7 +115,8 @@ sap.ui.define([
 				 * @param {sap.ui.model.SimpleType} oType Data type
 				 * @param {string} sPattern Pattern based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
 				 * @return {string} Date as String
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since 1.74.0
 				 */
 				typeToString: function(vDate, oType, sPattern) {
@@ -130,7 +134,8 @@ sap.ui.define([
 				 * @param {sap.ui.model.SimpleType} oType Data type
 				 * @param {string} sPattern Pattern based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
 				 * @return {any} Date for type
-				 * @public
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since 1.74.0
 				 */
 				stringToType: function(sDate, oType, sPattern) {

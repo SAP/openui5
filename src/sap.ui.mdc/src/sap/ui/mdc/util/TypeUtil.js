@@ -14,6 +14,7 @@ sap.ui.define([
 	 * This utility is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 * @author SAP SE
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 * @experimental
 	 * @since 1.79.0
 	 * @alias sap.ui.mdc.util.TypeUtil
@@ -59,7 +60,8 @@ sap.ui.define([
 		 * @param {object} oFormatOptions Used <code>FormatOptions</code>
 		 * @param {object} oConstraints Used <code>Constraints</code>
 		 * @returns {sap.ui.mdc.enum.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		getBaseType: function(sType, oFormatOptions, oConstraints) {
 
@@ -109,7 +111,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sDataType Class path as string where each name is separated by '.'
 		 * @returns {sap.ui.model.SimpleType} creates returns a dataType class
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		getDataTypeClass: function(sDataType) {
 			var TypeClass = ObjectPath.get(this.getDataTypeClassName(sDataType) || "");
@@ -127,7 +130,8 @@ sap.ui.define([
   		 * @param {object} formatOptions formatOptions for the dataType
  		 * @param {object} constraints constraints for the dataType
 		 * @returns {sap.ui.model.SimpleType} creates returns an instance of the resolved dataType
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		getDataTypeInstance: function(sDataType, formatOptions, constraints) {
 			var TypeClass = this.getDataTypeClass(sDataType);
@@ -139,7 +143,8 @@ sap.ui.define([
 		 *
 		 * @param {string|sap.ui.model.SimpleType} vType Given dataType as string or type
 		 * @returns {sap.ui.mdc.TypeConfig} output returns typeConfig object
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		getTypeConfig: function (vType, formatOptions, constraints) {
 

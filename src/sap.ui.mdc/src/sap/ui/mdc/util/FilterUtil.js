@@ -12,7 +12,8 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', "sap/ui/mdc/condition/Condition
 	/**
 	 * Utility class used by mdc controls to create the filter statement
 	 *
-	 * @protected
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 		var FilterUtil = {
 
@@ -22,7 +23,8 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', "sap/ui/mdc/condition/Condition
 				 * @param {array} aPropertiesMetadata - array with all the property metadata
 				 * @param {string} sKey - name of the property
 				 * @returns {object}  PropertyInfo object for a given name, or <code>null</code>
-				 * @protected
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 */
 				getPropertyByKey : function(aPropertiesMetadata, sKey) {
 					var oPropertyInfo = null;
@@ -45,7 +47,8 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', "sap/ui/mdc/condition/Condition
 				 * @param {array} aPropertiesMetadata - array with all the property metadata
 				 * @param {array} aIgnoreProperties - an array of property names which should be not considered for filtering
 				 * @returns {object} Object with filters
-				 * @protected
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 */
 				getFilterInfo: function(oMDCControl, mConditions, aPropertiesMetadata, aIgnoreProperties) {
 
