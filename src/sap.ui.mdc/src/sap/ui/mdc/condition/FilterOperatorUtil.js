@@ -736,12 +736,24 @@ function(
 				 * @public
 				 */
 				setOperatorsForType: function(sType, aOperators, oDefaultOperator) {
+					var aOps = [];
+					aOperators.forEach(function(oOperator) {
+						if (typeof oOperator  === "string") {
+							aOps.push(FilterOperatorUtil.getOperator(oOperator));
+						} else {
+							aOps.push(oOperator);
+						}
+					});
 
 					FilterOperatorUtil._mDefaultOpsForType[sType] = {
-							operators: aOperators
+						operators: aOps
 					};
 
 					if (oDefaultOperator) {
+						if (typeof oDefaultOperator  === "string") {
+							oDefaultOperator = FilterOperatorUtil.getOperator(oDefaultOperator);
+						}
+
 						FilterOperatorUtil._mDefaultOpsForType[sType].defaultOperator = oDefaultOperator;
 					}
 

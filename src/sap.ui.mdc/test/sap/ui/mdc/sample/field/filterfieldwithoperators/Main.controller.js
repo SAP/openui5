@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
+	"sap/ui/mdc/condition/RangeOperator",
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/field/FieldBaseDelegate", // just to have it in Fields from beginning
 	"sap/ui/mdc/FilterField",
@@ -26,6 +27,7 @@ sap.ui.define([
 		Condition,
 		FilterOperatorUtil,
 		Operator,
+		RangeOperator,
 		BaseType,
 		FieldBaseDelegate,
 		FilterField,
@@ -61,7 +63,7 @@ sap.ui.define([
 			this.getView().setModel(oCM, "cm");
 
 			// add some custom operations to the Fields
-			// this.addCustomOperators();
+			this.addCustomOperators();
 
 			//listen on ConditionModel change event to handle model changes
 			var oConditionChangeBinding = oCM.bindProperty("/", oCM.getContext("/"));
@@ -118,42 +120,29 @@ sap.ui.define([
 		},
 
 		addCustomOperators: function() {
-			//add the LASTYEAR and LASTXYEARS operation to the date Fields
-			var oFilterField = this.byId("releaseDateFF");
-			var aOperators = FilterOperatorUtil.getOperatorsForType(BaseType.Date);
+			//TODO:
+			//Howto clone an operator
+			//HowTo overwrite the tokenText and longText
 
-			aOperators.push("LASTYEAR");
-			aOperators.push("LASTXYEARS");
-			aOperators.push("LASTXYYEARS");
+			// var op = FilterOperatorUtil.getOperator("EQ");
+			// op.longText = "Date";
+			// op.tokenText = "Date";
 
-			FilterOperatorUtil.addOperator(new Operator({
-				name: "LASTYEAR",
-				tokenParse: "^#tokenText#$",
-				tokenFormat: "#tokenText#",
-				valueTypes: [],
-				getModelFilter: function(oCondition, sFieldPath) {
-					return new Filter({ path: sFieldPath, operator: "BT", value1: new Date(new Date().getFullYear() - 1, 0, 1), value2: new Date(new Date().getFullYear() - 1, 11, 31) });
-				}
-			}));
+			// new EQ Operator for Date
+			var myEqual =  new Operator({
+				name: "MYEQ",
+				filterOperator: "EQ",
+				tokenParse: "^=(.+)$",
+				tokenFormat: "Date - {0}",
+				longText: "Date",
+				tokenText: "Date",
+				valueTypes: [Operator.ValueType.Self],
+				exclude: false
+			});
+			FilterOperatorUtil.addOperator(myEqual);
 
-			FilterOperatorUtil.addOperator(new Operator({
-				name: "LASTXYEARS",
-				tokenParse: "^#tokenText#$",
-				tokenFormat: "#tokenText#",
-				valueTypes: ["sap.ui.model.type.Integer"],
-				paramTypes: ["(\\d+)"],
-				getModelFilter: function(oCondition, sFieldPath) {
-					return new Filter({ path: sFieldPath, operator: "BT", value1: new Date(new Date().getFullYear() - oCondition.values[0], 0, 1), value2: new Date(new Date().getFullYear(), 11, 31) });
-				},
-				createControl: function(oDataType, oOperator, sPath, index) {
-					jQuery.extend(true, oDataType.oFormatOptions, { emptyString: null });
-					var oNullableType = new TypeInteger(oDataType.oFormatOptions, oDataType.oConstraints);
-					// return new sap.m.Input({ value: { path: sPath, type: oNullableType, mode: 'TwoWay' } });
-					return new Slider({ min: 1, max: 10, value: { path: sPath, type: oNullableType, mode: 'TwoWay' } });
-				}
-			}));
-
-			FilterOperatorUtil.addOperator(new Operator({
+			// new Years range Operator
+			FilterOperatorUtil.addOperator(new RangeOperator({
 				name: "LASTXYYEARS",
 				tokenParse: "^#tokenText#$",
 				tokenFormat: "#tokenText#",
@@ -166,9 +155,19 @@ sap.ui.define([
 				}
 			}));
 
+
+			var aOperators = FilterOperatorUtil.getOperatorsForType(BaseType.Date);
+			// aOperators.splice(0, 1); // remove EQ
+			aOperators[0] = "MYEQ"; // overwrite the old EQ
+			aOperators.push("LASTXYYEARS");
+
+			//add the LASTXYEARS operation to the date Fields
+			var oFilterField = this.byId("releaseDateFF");
 			// assign the new Operators to the Date field
 			oFilterField.setOperators(aOperators);
 
+			// Or update the default operator for the type
+			// FilterOperatorUtil.setOperatorsForType(BaseType.Date, aOperators, "MYEQ");
 		},
 
 		onSaveVariant: function() {
