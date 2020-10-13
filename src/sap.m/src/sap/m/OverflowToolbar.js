@@ -1340,7 +1340,7 @@ sap.ui.define([
 			return;
 		}
 
-		// Do nothing if the changed property is in the blacklist above
+		// Do nothing if the changed property is in the blocklist above
 		if (typeof oControlConfig !== "undefined" &&
 			oControlConfig.noInvalidationProps.indexOf(sParameterName) !== -1) {
 			return;

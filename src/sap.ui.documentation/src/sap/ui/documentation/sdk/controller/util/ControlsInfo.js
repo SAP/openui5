@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 
 			_getIndices: function (aLibs, oDocIndicies, fnComponentLoadCallback) {
 
-				var aCategoryWhiteList = [
+				var aCategoryAllowList = [
 					"Action",
 					"Application",
 					"Container",
@@ -170,7 +170,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 						}
 
 						// check category white list
-						if (aCategoryWhiteList.indexOf(oEnt.category) === -1) {
+						if (aCategoryAllowList.indexOf(oEnt.category) === -1) {
 							Log.error("explored: cannot register entity '" + oEnt.id + "'. category '" + oEnt.category + "' is not allowed");
 							return;
 						}
