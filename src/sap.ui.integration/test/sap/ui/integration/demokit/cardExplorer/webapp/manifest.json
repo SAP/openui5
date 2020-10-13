@@ -46,7 +46,11 @@
 				"sap.m": {},
 				"sap.f": {},
 				"sap.ui.layout": {},
-				"sap.tnt": {}
+				"sap.tnt": {},
+				"sap.ui.unified": {},
+				"sap.ui.integration": {
+					"lazy": true
+				}
 			}
 		},
 		"resources": {

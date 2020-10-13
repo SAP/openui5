@@ -13,6 +13,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/FormattedText",
 	"sap/f/GridContainerItemLayoutData",
+	"sap/ui/core/Core",
+	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
@@ -33,6 +35,8 @@ sap.ui.define([
 	library,
 	FormattedText,
 	GridContainerItemLayoutData,
+	Core,
+	Fragment,
 	JSONModel,
 	BindingMode,
 	Device,
@@ -62,9 +66,7 @@ sap.ui.define([
 			var oRouter = this.getRouter();
 			oRouter.getRoute("exploreSamples").attachMatched(this._onRouteMatched, this);
 
-			this.oModel = new JSONModel({
-				schemaErrors: ""
-			});
+			this.oModel = new JSONModel({});
 			this.oModel.setDefaultBindingMode(BindingMode.OneWay);
 
 			this.getView().setModel(this.oModel);
@@ -72,8 +74,6 @@ sap.ui.define([
 
 			this._fileEditor = this.byId("fileEditor");
 
-			//This catches any error that was produced by the card
-			this.byId("cardSample").attachEvent("_error", this._onCardError, this);
 			this._registerResize();
 			this._initIFrameCreation();
 		},
@@ -289,7 +289,7 @@ sap.ui.define([
 			}
 
 			exploreSettingsModel.setProperty("/isApplication", !!oSubSampleOrSample.isApplication);
-			this._fileEditor.setBusy(true);
+			this.byId("splitView").setBusy(true);
 			this._showSample(oSample, oSubSample);
 		},
 
@@ -356,22 +356,15 @@ sap.ui.define([
 		_showSample: function (oSample, oSubSample) {
 			var oCurrentSample = oSubSample || oSample,
 				oFrameWrapperEl = this.byId("iframeWrapper"),
-				bUseIFrame = !!oCurrentSample.useIFrame,
-				bMockServer = !!oCurrentSample.mockServer,
-				pAwait = Promise.resolve();
+				bUseIFrame = !!oCurrentSample.useIFrame;
 
 			this._oCurrSample = oCurrentSample;
 
-			// init mock server only on demand
-			if (bMockServer) {
-				pAwait = Promise.all([
-					SEPMRA_PROD_MAN_mockServer.init(),
-					graphql_mockServer.init()
-				]);
-			}
-
-			pAwait.then(function () {
-				// cancel if sample changed while initializing the mock server
+			Promise.all([
+				this._initCardSample(),
+				this._initMockServers(oCurrentSample)
+			]).then(function () {
+				// cancel if sample changed while initializing
 				if (this._oCurrSample.key !== oCurrentSample.key) {
 					return;
 				}
@@ -382,8 +375,7 @@ sap.ui.define([
 						name: 'manifest.json',
 						key: 'manifest.json',
 						content: ''
-					}])
-					.setBusy(false);
+					}]);
 
 				exploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
 				this.oModel.setProperty("/sample", oSample);
@@ -400,22 +392,59 @@ sap.ui.define([
 						oLayoutSettings = {
 							minRows: 1,
 							columns: 4
-						},
-						oCard = this.byId("cardSample");
+						};
 
 					oFrameWrapperEl._sSample = '';
 
 					oLayoutSettings = Object.assign(oLayoutSettings, oCurrentSample.settings);
 
-					if (oCard) {
-						oCard.setLayoutData(new GridContainerItemLayoutData(oLayoutSettings));
+					if (this._oCardSample) {
+						this._oCardSample.setLayoutData(new GridContainerItemLayoutData(oLayoutSettings));
 						this.byId("cardContainer").invalidate();
 					}
 
 					sManifestUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + sManifestUrl);
 					this._sSampleManifestUrl = sManifestUrl;
 				}
+				this.byId("splitView").setBusy(false);
 			}.bind(this));
+		},
+
+		_initMockServers: function (oSample) {
+			var pAwait = Promise.resolve(),
+				bMockServer = !!oSample.mockServer;
+
+			// init mock server only on demand
+			if (bMockServer) {
+				pAwait = Promise.all([
+					SEPMRA_PROD_MAN_mockServer.init(),
+					graphql_mockServer.init()
+				]);
+			}
+
+			return pAwait;
+		},
+
+		_initCardSample: function () {
+			if (!this._pInitCardSample) {
+				this._pInitCardSample = Core.loadLibrary("sap.ui.integration", { async: true })
+					.then(function () {
+						return Fragment.load({
+							name: "sap.ui.demo.cardExplorer.view.CardSample",
+							controller: this
+						});
+					}.bind(this))
+					.then(function (oCard) {
+						this.byId("cardContainer").addItem(oCard);
+
+						//This catches any error that was produced by the card
+						oCard.attachEvent("_error", this._onCardError, this);
+
+						this._oCardSample = oCard;
+					}.bind(this));
+			}
+
+			return this._pInitCardSample;
 		},
 
 		_initIFrameCreation: function () {
@@ -459,7 +488,7 @@ sap.ui.define([
 
 			if (!sValue) {
 				// TODO hide the card or something like that. Currently it shows busy indicator which might be confusing
-				this.byId("cardSample").setManifest(null);
+				this._oCardSample.setManifest(null);
 				return;
 			}
 
@@ -476,13 +505,13 @@ sap.ui.define([
 					var sManifestFileName = this._sSampleManifestUrl.split("/").pop(),
 						sBaseUrl = this._sSampleManifestUrl.substring(0, this._sSampleManifestUrl.length - sManifestFileName.length);
 
-					this.byId("cardSample")
+					this._oCardSample
 						.setBaseUrl(sBaseUrl)
 						.setManifest(oValue)
 						.setParameters(null)
 						.refresh();
 				} catch (oException) {
-					this.byId("cardSample").setManifest(null);
+					this._oCardSample.setManifest(null);
 				}
 			}
 		},
