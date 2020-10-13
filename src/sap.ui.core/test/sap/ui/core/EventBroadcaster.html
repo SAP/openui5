@@ -30,13 +30,13 @@
 								<TimePicker/>
 							</content>
 						</Panel>
-						<Panel headerText="Blacklist configuration for filtering events" expandable="true" expanded="true">
+						<Panel headerText="ExcludeList configuration for filtering events" expandable="true" expanded="true">
 								<l:VerticalLayout class="sapUiLargeMarginBegin">
 									<Label text="Enter events configuration:" />
 									<TextArea id="txtConfig" rows="10" width="550px" />
 									<l:HorizontalLayout>
-										<Button id="setConfig" text="Set Blacklist" press="setBlacklistConfig"/>
-										<Button id="getConfig" text="Get Blacklist events configuration" press="getBlacklistConfig"/>
+										<Button id="setConfig" text="Set ExcludeList" press="setExcludeListConfig"/>
+										<Button id="getConfig" text="Get ExcludeList events configuration" press="getExcludeListConfig"/>
 									</l:HorizontalLayout>
 								</l:VerticalLayout>
 						</Panel>
@@ -138,17 +138,17 @@
 									]
 								}, 0));
 							},
-							setBlacklistConfig: function () {
+							setExcludeListConfig: function () {
 								var oConfig;
 								try {
 									oConfig = JSON.parse(this.getView().byId("txtConfig").getValue());
-									EventBroadcaster.setEventsBlacklist(oConfig);
+									EventBroadcaster.setEventsExcludeList(oConfig);
 								} catch (e) {
 									MessageToast.show("Please enter valid JSON." + e.message);
 								}
 							},
-							getBlacklistConfig: function () {
-								this.getView().byId("txtConfig").setValue(JSON.stringify(EventBroadcaster.getEventsBlacklist()));
+							getExcludeListConfig: function () {
+								this.getView().byId("txtConfig").setValue(JSON.stringify(EventBroadcaster.getEventsExcludeList()));
 							}
 						});
 
