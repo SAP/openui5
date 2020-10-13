@@ -208,6 +208,13 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 		return this._oDelegateInitialized;
 	};
 
+	/**
+	 * Loads and initializes the property helper related to the enhanced control.
+	 *
+	 * @protected
+	 * @param {sap.ui.mdc.util.PropertyHelper} [CustomPropertyHelper] Custom property helper class
+	 * @returns {Promise<sap.ui.mdc.util.PropertyHelper>} Returns a <code>Promise</code> that resolves with the property helper
+	 */
 	DelegateMixin.initPropertyHelper = function(CustomPropertyHelper) {
 		if (CustomPropertyHelper && (!CustomPropertyHelper.getMetadata || !CustomPropertyHelper.getMetadata().isA("sap.ui.mdc.util.PropertyHelper"))) {
 			throw new Error("The custom property helper must be sap.ui.mdc.util.PropertyHelper or a subclass of it.");
@@ -240,10 +247,23 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 		return this._pInitPropertyHelper;
 	};
 
+	/**
+	 * Provides access to the property helper initialization <code>Promise</code>.
+	 *
+	 * @protected
+	 * @returns {Promise<sap.ui.mdc.util.PropertyHelper>} Returns a <code>Promise</code> that resolves with the property helper
+	 */
 	DelegateMixin.awaitPropertyHelper = function() {
 		return this._pInitPropertyHelper;
 	};
 
+	/**
+	 * Returns the property helper instance, if available.
+	 *
+	 * @protected
+	 * @returns {sap.ui.mdc.util.PropertyHelper} The property helper
+	 * @throws Throws an error if the property helper is not available
+	 */
 	DelegateMixin.getPropertyHelper = function() {
 		if (!this._oPropertyHelper) {
 			throw new Error("A property helper is not (yet) available. You must first initialize the delegate and the property helper.");
