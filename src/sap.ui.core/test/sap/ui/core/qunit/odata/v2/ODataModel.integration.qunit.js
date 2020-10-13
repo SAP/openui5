@@ -6179,6 +6179,88 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		return this.createView(assert, sView, oModel);
 	});
 
+	//**********************************************************************************************
+	// Scenario: Allow changing of persistTechnicalMessages on model after instantiation.
+	// JIRA: CPOUI5MODELS-344
+[true, undefined, false].forEach(function (bPersistTechnicalMessages) {
+	var sTitle = "Messages: Change persistTechnicalMessages after instantiation, "
+		+ "bPersistTechnicalMessages=" + bPersistTechnicalMessages;
+
+	QUnit.test(sTitle, function (assert) {
+		var oErrorMessage = createErrorResponse({message : "Not Found", statusCode : 404}),
+			oModel = createSalesOrdersModel({
+				persistTechnicalMessages : bPersistTechnicalMessages,
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="idNote" value="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')", oErrorMessage)
+			.expectMessages([{
+				code : "UF0",
+				descriptionUrl : "",
+				fullTarget : bPersistTechnicalMessages ? "" : "/SalesOrderSet('1')",
+				message : "Not Found",
+				persistent : !!bPersistTechnicalMessages,
+				target : bPersistTechnicalMessages ? "" : "/SalesOrderSet('1')",
+				technical : true,
+				type : "Error"
+			}])
+			.expectChange("idNote", null);
+
+		this.oLogMock.expects("error")
+			.withExactArgs("HTTP request failed (404 FAILED): " + oErrorMessage.body, undefined,
+				sODataModelClassName);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oErrorMessage = createErrorResponse({message : "Not Found", statusCode : 404});
+
+			that.expectRequest("SalesOrderSet('1')", oErrorMessage)
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : bPersistTechnicalMessages ? "" : "/SalesOrderSet('1')",
+					message : "Not Found",
+					persistent : !!bPersistTechnicalMessages,
+					target : bPersistTechnicalMessages ? "" : "/SalesOrderSet('1')",
+					technical : true,
+					type : "Error"
+				}, {
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : !bPersistTechnicalMessages ? "" : "/SalesOrderSet('1')",
+					message : "Not Found",
+					persistent : !bPersistTechnicalMessages,
+					target : !bPersistTechnicalMessages ? "" : "/SalesOrderSet('1')",
+					technical : true,
+					type : "Error"
+				}])
+				.expectChange("idNote", null);
+
+			that.oLogMock.expects("error")
+				.withExactArgs("HTTP request failed (404 FAILED): " + oErrorMessage.body, undefined,
+					sODataModelClassName);
+
+			if (bPersistTechnicalMessages !== undefined) {
+				that.oLogMock.expects("warning")
+					.withExactArgs("The flag whether technical messages should always be treated as"
+						+ " persistent has been overwritten to " + !bPersistTechnicalMessages,
+						undefined, sODataModelClassName);
+			}
+
+			// code under test
+			oModel.setPersistTechnicalMessages(!bPersistTechnicalMessages);
+			oModel.refresh(true);
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
 	//*********************************************************************************************
 	// Scenario: Root entity returns a message for a *:0..1 navigation property which is
 	// <code>null</code>. The data for the navigation property is requested in an own request.

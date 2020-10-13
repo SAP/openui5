@@ -98,7 +98,7 @@ var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessagePa
 		this._metadata = oMetadata;
 		this._headerField = "sap-message"; // Default header field
 		this._lastMessages = [];
-		this._persistTechnicalMessages = bPersistTechnicalMessages;
+		this._bPersistTechnicalMessages = bPersistTechnicalMessages;
 	}
 });
 
@@ -368,7 +368,7 @@ ODataMessageParser.prototype._createMessage = function (oMessageObject, mRequest
 	var bPersistent = oMessageObject.target && oMessageObject.target.indexOf("/#TRANSIENT#") === 0
 			|| oMessageObject.transient
 			|| oMessageObject.transition
-			|| bIsTechnical && this._persistTechnicalMessages,
+			|| bIsTechnical && this._bPersistTechnicalMessages,
 		oTargetInfos,
 		sText = typeof oMessageObject.message === "object"
 			? oMessageObject.message.value
@@ -790,6 +790,17 @@ ODataMessageParser.prototype._parseUrl = function(sUrl) {
 	}
 
 	return mUrlData;
+};
+
+/**
+ * Sets whether technical messages should always be treated as persistent.
+ *
+ * @param {boolean} bPersistTechnicalMessages
+ *   Whether technical messages should always be treated as persistent
+ * @private
+ */
+ODataMessageParser.prototype._setPersistTechnicalMessages = function (bPersistTechnicalMessages) {
+	this._bPersistTechnicalMessages = bPersistTechnicalMessages;
 };
 
 ///////////////////////////////////////// Hidden Functions /////////////////////////////////////////

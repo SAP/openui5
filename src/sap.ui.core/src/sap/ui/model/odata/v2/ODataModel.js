@@ -303,7 +303,8 @@ sap.ui.define([
 			this.bPreliminaryContext = bPreliminaryContext || false;
 			this.mMetadataUrlParams = mMetadataUrlParams || {};
 			this.mChangedEntities4checkUpdate = {};
-			this.bPersistTechnicalMessages = !!bPersistTechnicalMessages;
+			this.bPersistTechnicalMessages = bPersistTechnicalMessages === undefined
+				? undefined : !!bPersistTechnicalMessages;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -6844,7 +6845,7 @@ sap.ui.define([
 		try {
 			if (!this.oMessageParser) {
 				this.oMessageParser = new ODataMessageParser(this.sServiceUrl, this.oMetadata,
-					this.bPersistTechnicalMessages);
+					!!this.bPersistTechnicalMessages);
 				this.oMessageParser.setProcessor(this);
 			}
 			// Parse response and delegate messages to the set message parser
@@ -7490,6 +7491,45 @@ sap.ui.define([
 		}
 
 		return sDeepPath;
+	};
+
+	/**
+	 * Gets the flag whether technical messages should always be treated as persistent.
+	 *
+	 * @returns {boolean} Whether technical messages should always be treated as persistent
+	 *
+	 * @private
+	 * @since 1.84.0
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 */
+	ODataModel.prototype.getPersistTechnicalMessages = function () {
+		return this.bPersistTechnicalMessages;
+	};
+
+	/**
+	 * Sets the flag whether technical messages should always be treated as persistent. Works only
+	 * with {@link class sap.ui.model.odata.ODataMessageParser}.
+	 *
+	 * @param {boolean} bPersistTechnicalMessages
+	 *   Whether technical messages should always be treated as persistent
+	 *
+	 * @private
+	 * @since 1.84.0
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 */
+	ODataModel.prototype.setPersistTechnicalMessages = function (bPersistTechnicalMessages) {
+		bPersistTechnicalMessages = !!bPersistTechnicalMessages;
+		if (this.bPersistTechnicalMessages === bPersistTechnicalMessages) {
+			return;
+		}
+		if (this.bPersistTechnicalMessages !== undefined) {
+			Log.warning("The flag whether technical messages should always be treated as persistent"
+				+ " has been overwritten to " + bPersistTechnicalMessages, undefined, sClassName);
+		}
+		this.bPersistTechnicalMessages = bPersistTechnicalMessages;
+		if (this.oMessageParser) {
+			this.oMessageParser._setPersistTechnicalMessages(bPersistTechnicalMessages);
+		}
 	};
 
 	return ODataModel;
