@@ -255,10 +255,10 @@ sap.ui.define([
 
 	UIContextInjector.prototype._generateTestRecorderUrl = function () {
 		var mUriParams = new URI().search(true);
-		var aWhitelist = ["sap-language"];
-		var aBlacklist = ["sap-ui-testRecorder"];
+		var aIncludeList = ["sap-language"];
+		var aExcludeList = ["sap-ui-testRecorder"];
 		var sSapUriParams = Object.keys(mUriParams).map(function (sUriParamName) {
-			if (aBlacklist.indexOf(sUriParamName) === -1 && sUriParamName.startsWith("sap-ui-") || aWhitelist.indexOf(sUriParamName) > -1) {
+			if (aExcludeList.indexOf(sUriParamName) === -1 && sUriParamName.startsWith("sap-ui-") || aIncludeList.indexOf(sUriParamName) > -1) {
 				return "&" + sUriParamName + "=" + mUriParams[sUriParamName];
 			}
 		}).join("");
