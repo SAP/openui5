@@ -1,0 +1,10 @@
+<mvc:View
+		height="100%"
+		controllerName="sap.m.sample.WizardSingleStep.controller.WizardSingleStep"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+		<Button class="sapUiSmallMargin"
+				text="Open Wizard in Dialog"
+				press="handleOpenDialog" />
+</mvc:View>
