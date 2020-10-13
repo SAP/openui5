@@ -60,7 +60,7 @@
 							class="sapUiHideOnPhone"
 							tooltip="{i18n>SAMPLE_ADAPT_BTN_TOOLTIP}"
 							press="onToggleAdaptationMode"
-							visible="false" />
+							visible="{= !${/iframe} &amp;&amp; ${/rtaLoaded}}" />
 					<Button
 							id="code"
 							icon="sap-icon://syntax"
