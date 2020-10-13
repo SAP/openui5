@@ -265,6 +265,51 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"defaultValue": ["key1", "key2"],
 						"type": "string[]"
 					},
+					"iconNotAllowFile": {
+						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFile/src",
+						"defaultValue": "sap-icon://account",
+						"type": "string",
+						"label": "Icon Not Allow File",
+						"visualization": {
+							"type": IconSelect,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}",
+								"allowFile": false,
+								"allowNone": true
+							}
+						}
+					},
+					"iconNotAllowNone": {
+						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowNone/src",
+						"defaultValue": "sap-icon://account",
+						"type": "string",
+						"label": "Icon Not Allow None",
+						"visualization": {
+							"type": IconSelect,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}",
+								"allowFile": true,
+								"allowNone": false
+							}
+						}
+					},
+					"iconNotAllowFileAndNone": {
+						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFileAndNone/src",
+						"defaultValue": "sap-icon://account",
+						"type": "string",
+						"label": "Icon Not Allow File And None",
+						"visualization": {
+							"type": IconSelect,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}",
+								"allowFile": false,
+								"allowNone": false
+							}
+						}
+					},
 					"icon": {
 						"manifestpath": "/sap.card/header/icon/src",
 						"defaultValue": "sap-icon://account",
@@ -274,7 +319,9 @@ sap.ui.define(["sap/ui/integration/Designtime",
 							"type": IconSelect,
 							"settings": {
 								"value": "{currentSettings>value}",
-								"editable": "{currentSettings>editable}"
+								"editable": "{currentSettings>editable}",
+								"allowFile": true,
+								"allowNone": true
 							}
 						}
 					},
