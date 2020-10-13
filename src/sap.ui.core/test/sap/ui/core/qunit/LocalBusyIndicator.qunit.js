@@ -141,8 +141,9 @@ sap.ui.define([
 			assert.ok(!$LB[0].hasAttribute("aria-busy"), "ARIA busy isn't set to Control");
 			assert.equal(oBusyIndicatorDOM.getAttribute("role"), "progressbar", 'ARIA role "progressbar" is set to busy indicator');
 			assert.ok(oBusyIndicatorDOM.hasAttribute("title"), 'title is set to busy indicator');
-			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuemin"), 'aria-valuemin is set to busy indicator');
-			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuemax"), 'aria-valuemax is set to busy indicator');
+			assert.notOk(oBusyIndicatorDOM.hasAttribute("aria-valuemin"), "aria-valuemin isn't set to busy indicator because it's indeterminate");
+			assert.notOk(oBusyIndicatorDOM.hasAttribute("aria-valuemax"), "aria-valuemax isn't set to busy indicator because it's indeterminate");
+			assert.strictEqual(oBusyIndicatorDOM.getAttribute("aria-valuenow"), "indeterminate", "aria-valuenow is set to busy indicator because it's indeterminate");
 			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuetext"), 'aria-valuetext is set to busy indicator');
 			done();
 		}, 1200);
