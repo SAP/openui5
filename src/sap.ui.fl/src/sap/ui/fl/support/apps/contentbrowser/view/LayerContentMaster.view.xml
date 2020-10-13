@@ -24,7 +24,7 @@
 						description="{path: 'content>fileType'}"
 						type="Active"
 						press="onContentSelected"
-						visible="{path: 'content>', formatter: '.oDataUtils.isNotOnBlacklist'}"
+						visible="{path: 'content>', formatter: '.oDataUtils.isNotExcluded'}"
 						icon="{= ${content>fileType} ? 'sap-icon://document' : 'sap-icon://folder-full'}">
 					</StandardListItem>
 				</items>

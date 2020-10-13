@@ -16,8 +16,7 @@ sap.ui.define(["sap/m/GroupHeaderListItem", "sap/ui/thirdparty/jquery"],
 		 * @experimental Since 1.45
 		 */
 		var DataUtils = {
-
-			aBlacklist: [{
+			aExcludeList: [{
 				category: "NS",
 				name: "LREP_HOME_CONTENT",
 				ns: "UIF/"
@@ -71,26 +70,26 @@ sap.ui.define(["sap/m/GroupHeaderListItem", "sap/ui/thirdparty/jquery"],
 			},
 
 			/**
-			 * Verifies if item content is not in the black list.
+			 * Verifies if item content is not in the exclude list.
 			 * @param {Object} oContentItem - content item needs to be verified
-			 * @returns {Boolean} - <code>true</code> if not in the black list
+			 * @returns {Boolean} - <code>true</code> if the item is not excluded
 			 * @public
 			 */
-			isNotOnBlacklist: function (oContentItem) {
-				var bNotBlacklisted = true;
-				jQuery.each(this.aBlacklist, function (index, mBlacklistedElement) {
+			isNotExcluded: function (oContentItem) {
+				var bNotExcluded = true;
+				jQuery.each(this.aExcludeList, function (index, mExcludeListElement) {
 					var bAllPropertiesMatched = true;
 
-					jQuery.each(mBlacklistedElement, function (sProperty, sValue) {
+					jQuery.each(mExcludeListElement, function (sProperty, sValue) {
 						bAllPropertiesMatched = bAllPropertiesMatched && oContentItem[sProperty] === sValue;
 					});
 
 					if (bAllPropertiesMatched) {
-						bNotBlacklisted = false;
+						bNotExcluded = false;
 						return false; // break each
 					}
 				});
-				return bNotBlacklisted;
+				return bNotExcluded;
 			},
 
 			/**
