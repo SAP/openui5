@@ -300,6 +300,16 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"util/Utils": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/Utils"
+					]
+				},
+				sinon: {
+					useFakeTimers: true
+				}
+			},
 			"designtime/baseEditor/integration/ReadyHandling": {
 				group: "Base DesignTime Editor",
 				coverage: {

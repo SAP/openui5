@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/integration/util/Utils"
 ], function (
 	BaseObject,
-	Log
+	Log,
+	Utils
 ) {
 	"use strict";
 	/* global Map */
@@ -130,7 +132,7 @@ sap.ui.define([
 			return Promise.resolve(sDefaultUrl);
 		}
 
-		pResult = this._oHost.getDestination(sName);
+		pResult = Utils.timeoutPromise(this._oHost.getDestination(sName));
 
 		if (sDefaultUrl) {
 			return pResult.catch(function (sMessage) {
