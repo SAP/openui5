@@ -436,7 +436,7 @@ sap.ui.define([
 		} else {
 			oTitle = new Title({
 				text	: sTitle,
-				level	: CoreTitleLevel.H1
+				level	: CoreTitleLevel.H3
 			});
 		}
 
@@ -486,7 +486,7 @@ sap.ui.define([
 		if (oGroup.getHeading()) {
 			oForm.addContent(new CoreTitle({
 				text : oGroup.getHeading(),
-				level : CoreTitleLevel.H2
+				level : CoreTitleLevel.H4
 			}));
 		}
 

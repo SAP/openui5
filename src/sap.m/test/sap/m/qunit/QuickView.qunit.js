@@ -531,6 +531,25 @@ sap.ui.define([
 		assert.ok($container[0].style.height, "Container height is set");
 	});
 
+	QUnit.test("Levels of headings", function (assert) {
+		// act
+		this.oButton.firePress();
+		this.clock.tick(500);
+
+		var oPage = this.oQuickView.getPages()[0],
+			oHeaderTitle = this.oQuickView._oPopover.$().find(".sapMQuickViewTitle");
+
+		assert.strictEqual(oHeaderTitle.attr("role"), "heading", "title heading has correct aria-role");
+		assert.strictEqual(oHeaderTitle.attr("aria-level"), "2", "title heading has correct level");
+
+		var oPageTitle = oPage._oPageTitle.getDomRef();
+		assert.strictEqual(oPageTitle.tagName, "H3", "page heading has correct level");
+
+		var oGroupTitleDomRef = oPage._mPageContent.form.getContent()[0].getDomRef();
+		assert.strictEqual(oGroupTitleDomRef.tagName, "H4", "quick view group headings have correct level");
+	});
+
+
 	QUnit.test("test focus", function(assert) {
 		// act
 		this.oButton.firePress();
