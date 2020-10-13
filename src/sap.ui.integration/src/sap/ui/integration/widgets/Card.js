@@ -31,7 +31,8 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/formatters/IconFormatter",
-	"sap/ui/integration/util/FilterBarFactory"
+	"sap/ui/integration/util/FilterBarFactory",
+	"sap/ui/integration/util/CardActions"
 ], function (
 	Interface,
 	jQuery,
@@ -62,7 +63,8 @@ sap.ui.define([
 	BindingHelper,
 	BindingResolver,
 	IconFormatter,
-	FilterBarFactory
+	FilterBarFactory,
+	CardActions
 ) {
 	"use strict";
 	/* global Map */
@@ -349,9 +351,10 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as getBaseUrl
 		 * @borrows sap.ui.integration.widgets.Card#getTranslatedText as getTranslatedText
 		 * @borrows sap.ui.integration.widgets.Card#getModel as getModel
+		 * @borrows sap.ui.integration.widgets.Card#triggerAction as triggerAction
 		 */
 		this._oLimitedInterface = new Interface(this, [
-			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getTranslatedText", "getModel"
+			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getTranslatedText", "getModel", "triggerAction"
 		]);
 	};
 
@@ -1582,6 +1585,40 @@ sap.ui.define([
 			.create({ request: oConfiguration })
 			.setAllowCustomDataType(true)
 			.getData();
+	};
+
+	/**
+	 * Triggers an action inside the card.
+	 *
+	 * Use this method if you need to trigger an action programmatically from inside an <code>Extension</code> or from a Component card.
+	 *
+	 * For other use cases use the manifest to define the actions. See {@link https://ui5.sap.com/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/learn/features/cardActions}
+	 *
+	 * <h3>Example</h3>
+	 * <pre>
+	 * oCard.triggerAction({
+	 *     type: "Navigation",
+	 *     parameters: {
+	 *         url: "...",
+	 *         target: "_blank"
+	 *     }
+	 * });
+	 * </pre>
+	 *
+	 * @public
+	 * @experimental since 1.84
+	 * @param {object} oAction The settings of the action.
+	 * @param {sap.ui.integration.CardActionType} oAction.type The type of the action.
+	 * @param {object} [oAction.parameters] Additional parameters which will be used by the action handler to perform the action.
+	 */
+	Card.prototype.triggerAction = function (oAction) {
+		CardActions.fireAction({
+			card: this,
+			host: this.getHostInstance(),
+			action: oAction,
+			parameters: oAction.parameters,
+			source: this
+		});
 	};
 
 	/**

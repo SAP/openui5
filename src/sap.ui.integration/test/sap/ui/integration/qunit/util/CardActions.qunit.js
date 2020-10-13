@@ -1472,5 +1472,50 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		});
+
+		QUnit.module("Card API", {
+			beforeEach: function () {
+				this.oCard = new Card();
+
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Trigger action", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard,
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "openUrl").callsFake(function () {});
+
+			oCard.attachEvent("_ready", function () {
+				// Act
+				oCard.triggerAction({
+					type: "Navigation",
+					parameters: {
+						url: "test-url"
+					}
+				});
+
+				// Assert
+				assert.ok(oActionSpy.calledOnce, "The action is triggered.");
+				assert.ok(oStubOpenUrl.calledOnce, "The predefined action is executed.");
+				assert.ok(oStubOpenUrl.calledWith("test-url"), "The predefined action has correct parameters.");
+
+				done();
+
+				// Clean
+				oActionSpy.restore();
+				oStubOpenUrl.restore();
+			});
+
+			oCard.setManifest(oIntegrationCardManifest);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
 	}
 );
