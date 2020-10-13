@@ -151,10 +151,6 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 
 		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
 
-		if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
-			mAccessibilityState.autocomplete = "list";
-		}
-
 		return mAccessibilityState;
 
 	};
