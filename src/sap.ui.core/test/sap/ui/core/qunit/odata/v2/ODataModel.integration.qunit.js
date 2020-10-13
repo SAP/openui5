@@ -1204,7 +1204,7 @@ sap.ui.define([
 		 *   requestor
 		 * @returns {object} The test instance for chaining
 		 */
-		expectRequest : function (vRequest, oResponse, mResponseHeaders, bDisableUriEncoding) {
+		expectRequest : function (vRequest, oResponse, mResponseHeaders) {
 			var aUrlParts;
 
 			if (typeof vRequest === "string") {
@@ -4912,6 +4912,97 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.deepEqual(oModel.getPendingChanges(), {});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Use latest ETag when sending a change request for an entity. Modify a property of
+	// an entity and submit the changes. Before the request comes back, modify the property again
+	// but wait with the submit until the response of the first modification is processed. The ETag
+	// of that response has to be used when sending the second modification to the backend.
+	// BCP: 2080271261
+	QUnit.test("BCP 2080271261: Use latest ETag when sending a request", function (assert) {
+		var oModel = createSalesOrdersModel({refreshAfterChange : false, useBatch : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				__metadata : {
+					etag : "InitialETag",
+					uri : "SalesOrderSet('1')"
+				},
+				Note : "Foo",
+				SalesOrderID : "1"
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					data : {
+						__metadata : {
+							etag : "InitialETag",
+							uri : "SalesOrderSet('1')"
+						},
+						Note : "Bar"
+					},
+					deepPath : "/SalesOrderSet('1')",
+					headers : {
+						"If-Match" : "InitialETag"
+					},
+					key : "SalesOrderSet('1')",
+					method : "MERGE",
+					requestUri : "SalesOrderSet('1')"
+				}, NO_CONTENT, {
+					etag : "ETagAfter1stModification"
+				})
+				.expectChange("note", "Bar");
+
+			// code under test
+			oModel.setProperty("/SalesOrderSet('1')/Note", "Bar");
+			oModel.submitChanges();
+
+			that.expectChange("note", "Baz");
+
+			// code under test do a second modification but do not yet submit the change
+			oModel.setProperty("/SalesOrderSet('1')/Note", "Baz");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					data : {
+						__metadata : {
+							etag : "ETagAfter1stModification",
+							uri : "SalesOrderSet('1')"
+						},
+						Note : "Baz"
+					},
+					deepPath : "/SalesOrderSet('1')",
+					headers : {
+						"If-Match" : "ETagAfter1stModification"
+					},
+					key : "SalesOrderSet('1')",
+					method : "MERGE",
+					requestUri : "SalesOrderSet('1')"
+				}, NO_CONTENT, {
+					etag : "ETagAfter2ndModification"
+				});
+
+			// code under test
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oModel.getObject("/SalesOrderSet('1')").__metadata.etag,
+				"ETagAfter2ndModification");
 		});
 	});
 
