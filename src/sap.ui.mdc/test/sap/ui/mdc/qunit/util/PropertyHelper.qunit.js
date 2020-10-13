@@ -351,11 +351,11 @@ sap.ui.define([
 
 	QUnit.test("Without a parent", function(assert) {
 		var oPropertyHelper = new PropertyHelper([]);
-		assert.strictEqual(oPropertyHelper.getParent(), undefined, "The property helper has no parent");
+		assert.strictEqual(oPropertyHelper.getParent(), null, "The property helper has no parent");
 		oPropertyHelper.destroy();
 
 		oPropertyHelper = new PropertyHelper([], null);
-		assert.strictEqual(oPropertyHelper.getParent(), undefined, "The property helper has no parent");
+		assert.strictEqual(oPropertyHelper.getParent(), null, "The property helper has no parent");
 		oPropertyHelper.destroy();
 	});
 
@@ -388,14 +388,119 @@ sap.ui.define([
 		}], oParent);
 
 		oPropertyHelper.destroy();
-		assert.strictEqual(oPropertyHelper._aProperties, null, "The reference to the properties was removed");
 		assert.strictEqual(oPropertyHelper.getProperties(), null, "#getProperties no longer returns the properties");
-		assert.strictEqual(oPropertyHelper._mProperties, null, "The reference to the property map was removed");
 		assert.strictEqual(oPropertyHelper.getPropertyMap(), null, "#getPropertyMap no longer returns the property map");
-		assert.strictEqual(oPropertyHelper._oParent, undefined, "The reference to the parent was removed");
-		assert.strictEqual(oPropertyHelper.getParent(), undefined, "#getParent no longer returns the parent");
+		assert.strictEqual(oPropertyHelper.getParent(), null, "#getParent no longer returns the parent");
 
 		oParent.destroy();
+	});
+
+	QUnit.module("Immutability of property infos", {
+		beforeEach: function() {
+			this.oPropertyHelper = new PropertyHelper([{
+				name: "prop",
+				label: "prop"
+			}, {
+				name: "complexProperty",
+				label: "My complex property",
+				propertyInfos: ["prop"]
+			}]);
+		},
+		afterEach: function() {
+			this.oPropertyHelper.destroy();
+		}
+	});
+
+	QUnit.test("Property info array", function(assert) {
+		// IE does not always throw when writing on immutable objects.
+
+		try {
+			delete this.oPropertyHelper.getProperties()[0];
+		} catch (e) {
+			assert.ok(true, "Deleting an item from the property infos array throws an error");
+		}
+
+		try {
+			this.oPropertyHelper.getProperties()[1] = "test";
+		} catch (e) {
+			assert.ok(true, "Changing an item of the property infos array throws an error");
+		}
+
+		try {
+			this.oPropertyHelper.getProperties().push("test");
+		} catch (e) {
+			assert.ok(true, "Adding an item to the property infos array throws an error");
+		}
+
+		try {
+			this.oPropertyHelper.getProperties()[0].name = "otherName";
+		} catch (e) {
+			assert.ok(true, "Manipulating an item in the property infos array throws an error");
+		}
+
+		assert.deepEqual(this.oPropertyHelper.getProperties(), [{
+			name: "prop",
+			label: "prop",
+			groupLabel: "",
+			visible: true,
+			filterable: true,
+			sortable: true,
+			fieldHelp: "",
+			maxConditions: null,
+			exportSettings: null,
+			typeConfig: null,
+			path: "prop"
+		}, {
+			name: "complexProperty",
+			label: "My complex property",
+			groupLabel: "",
+			visible: true,
+			exportSettings: null,
+			propertyInfos: ["prop"]
+		}], "The property infos array is immutable");
+	});
+
+	QUnit.test("Property info map", function(assert) {
+		// IE does not always throw when writing on immutable objects.
+
+		try {
+			delete this.oPropertyHelper.getPropertyMap().prop;
+		} catch (e) {
+			assert.ok(true, "Deleting a key from the property infos map throws an error");
+		}
+
+		try {
+			this.oPropertyHelper.getPropertyMap().test = "test";
+		} catch (e) {
+			assert.ok(true, "Adding a key to the property infos map throws an error");
+		}
+
+		try {
+			this.oPropertyHelper.getPropertyMap().prop = "another test";
+		} catch (e) {
+			assert.ok(true, "Manipulating a value in the property infos map throws an error");
+		}
+
+		assert.deepEqual(this.oPropertyHelper.getProperties(), [{
+			name: "prop",
+			label: "prop",
+			groupLabel: "",
+			visible: true,
+			filterable: true,
+			sortable: true,
+			fieldHelp: "",
+			maxConditions: null,
+			exportSettings: null,
+			typeConfig: null,
+			path: "prop"
+		}, {
+			name: "complexProperty",
+			label: "My complex property",
+			groupLabel: "",
+			visible: true,
+			exportSettings: null,
+			propertyInfos: ["prop"]
+		}], "The property infos map is immutable");
 	});
 
 	QUnit.module("API", {

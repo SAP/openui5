@@ -17,7 +17,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	/*global Set */
+	/*global Set, WeakMap */
 
 	/*
 	 * Key-value map to define the characteristics of a property attribute, where the key is the name of the attribute.
@@ -95,6 +95,8 @@ sap.ui.define([
 		return mAttributeMetadata[sAttribute].mandatory;
 	});
 
+	var _private = new WeakMap();
+
 	function stringifyPlainObject(oObject) {
 		return JSON.stringify(oObject, function(sKey, oValue) {
 			return oValue === undefined ? null : oValue;
@@ -136,7 +138,7 @@ sap.ui.define([
 			aClonedProperties.push(oClonedProperty);
 		});
 
-		return aClonedProperties;
+		return Object.freeze(aClonedProperties);
 	}
 
 	function prepareProperties(aProperties, mProperties) {
@@ -176,6 +178,8 @@ sap.ui.define([
 					})
 				});
 			}
+
+			Object.freeze(oProperty);
 		});
 	}
 
@@ -186,7 +190,7 @@ sap.ui.define([
 			mProperties[oProperty.name] = oProperty;
 		});
 
-		return mProperties;
+		return Object.freeze(mProperties);
 	}
 
 	function extractProperties(oPropertyHelper, vProperty, fnFilter) {
@@ -231,15 +235,22 @@ sap.ui.define([
 			BaseObject.call(this);
 
 			var bParentIsValid = BaseObject.isA(oParent, ["sap.ui.base.ManagedObject"]);
+
 			if (oParent != null && !bParentIsValid) {
 				throw new Error("The type of the parent is invalid");
 			}
-			this._oParent = bParentIsValid ? oParent : undefined;
 
 			this.validateProperties(aProperties);
-			this._aProperties = cloneProperties(aProperties);
-			this._mProperties = createPropertyMap(this._aProperties);
-			prepareProperties(this._aProperties, this._mProperties);
+
+			var aClonedProperties = cloneProperties(aProperties);
+
+			_private.set(this, {
+				oParent: bParentIsValid ? oParent : null,
+				aProperties: aClonedProperties,
+				mProperties: createPropertyMap(aClonedProperties)
+			});
+
+			prepareProperties(_private.get(this).aProperties, _private.get(this).mProperties);
 		}
 	});
 
@@ -339,31 +350,34 @@ sap.ui.define([
 	/**
 	 * If available, it gets the instance that acts as the parent of this helper. This may not reflect the UI5 object relationship tree.
 	 *
-	 * @returns {sap.ui.base.ManagedObject|undefined} The parent if one was passed to the constructor, <code>undefined</code> otherwise.
+	 * @returns {sap.ui.base.ManagedObject|null} The parent if one was passed to the constructor, <code>null</code> otherwise.
 	 * @protected
 	 */
 	PropertyHelper.prototype.getParent = function() {
-		return this._oParent;
+		var oPrivate = _private.get(this);
+		return oPrivate ? oPrivate.oParent : null;
 	};
 
 	/**
 	 * Gets all properties known to this helper.
 	 *
-	 * @returns {object[]} All properties
+	 * @returns {object[]|null} All properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getProperties = function() {
-		return this._aProperties;
+		var oPrivate = _private.get(this);
+		return oPrivate ? oPrivate.aProperties : null;
 	};
 
 	/**
 	 * Gets the properties as a key-value map, where the key is the <code>name</code> attribute of a property.
 	 *
-	 * @returns {object} A map of all properties
+	 * @returns {object|null} A map of all properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getPropertyMap = function() {
-		return this._mProperties;
+		var oPrivate = _private.get(this);
+		return oPrivate ? oPrivate.mProperties : null;
 	};
 
 	/**
@@ -631,9 +645,7 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.destroy = function() {
 		BaseObject.prototype.destroy.apply(this, arguments);
-		this._mProperties = null;
-		this._aProperties = null;
-		this._oParent = undefined;
+		_private.delete(this);
 	};
 
 	return PropertyHelper;
