@@ -61,7 +61,7 @@ function(
 				manageApps: {},
 				appVariantOverview: {},
 				saveAs: {},
-				activateDraft: {},
+				activate: {},
 				discardDraft: {},
 				switchVersion: {}
 			}
@@ -351,7 +351,7 @@ function(
 			name: "sap.ui.rta.toolbar.Adaptation",
 			id: this.getId() + "_fragment",
 			controller: {
-				activateDraft: this._openVersionTitleDialog.bind(this),
+				activate: this._openVersionTitleDialog.bind(this),
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
 				formatDiscardDraftEnabled: this.formatDiscardDraftEnabled.bind(this),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
@@ -384,7 +384,7 @@ function(
 			controller: {
 				onConfirmVersioningDialog: function () {
 					var sVersionTitle = this.getControl("versionTitleInput").getValue();
-					this.fireEvent("activateDraft", {versionTitle: sVersionTitle});
+					this.fireEvent("activate", {versionTitle: sVersionTitle});
 					this._oDialog.close();
 				}.bind(this),
 				onCancelVersioningDialog: function () {

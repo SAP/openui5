@@ -26,13 +26,13 @@
 					</layoutData>
 				</Button>
 				<Button
-						id="sapUiRta_activateDraft"
+						id="sapUiRta_activate"
 						icon="sap-icon://activate"
-						press=".activateDraft(${versions>/displayedVersion})"
+						press=".activate(${versions>/displayedVersion})"
 						visible="{versions>/versioningEnabled}"
 						enabled="{versions>/activateEnabled}"
 						type="Transparent"
-						tooltip="{i18n>TOL_ACTIVATE_DRAFT}" />
+						tooltip="{i18n>TOL_ACTIVATE}" />
 				<Button
 						id="sapUiRta_discardDraft"
 						icon="sap-icon://delete"

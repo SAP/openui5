@@ -391,7 +391,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Calling the Storage: Given Versions.activateDraft is called", {
+	QUnit.module("Calling the Storage: Given Versions.activate is called", {
 		before: function() {
 			this.oAppComponent = {
 				getManifest: function () {
@@ -453,7 +453,7 @@ sap.ui.define([
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
 			return Versions.initialize(mPropertyBag)
-				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
+				.then(Versions.activate.bind(undefined, mPropertyBag))
 				.then(function () {
 					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
 				})
@@ -510,7 +510,7 @@ sap.ui.define([
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
 			return Versions.initialize(mPropertyBag)
-				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
+				.then(Versions.activate.bind(undefined, mPropertyBag))
 				.then(function () {
 					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
 				})
@@ -556,7 +556,7 @@ sap.ui.define([
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
 			return Versions.initialize(mPropertyBag)
-				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
+				.then(Versions.activate.bind(undefined, mPropertyBag))
 				.catch(function (sErrorMessage) {
 					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
 					assert.equal(sErrorMessage, "Version is already active", "then the promise is rejected with an error message");
@@ -612,7 +612,7 @@ sap.ui.define([
 					assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
 					assert.equal(oData.displayedVersion, sap.ui.fl.Versions.Draft, "as well as the displayedVersion is set to 'Draft'");
 				})
-				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
+				.then(Versions.activate.bind(undefined, mPropertyBag))
 				.then(function () {
 					assert.equal(oSaveStub.callCount, 1, "the changes were saved");
 					var aSaveCallArgs = oSaveStub.getCall(0).args;
@@ -683,7 +683,7 @@ sap.ui.define([
 					assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
 					assert.equal(oData.displayedVersion, sap.ui.fl.Versions.Draft, "as well as the displayedVersion is set to 'Draft'");
 				})
-				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
+				.then(Versions.activate.bind(undefined, mPropertyBag))
 				.then(function () {
 					assert.equal(oSaveStub.callCount, 1, "the changes were saved");
 					var aSaveCallArgs = oSaveStub.getCall(0).args;

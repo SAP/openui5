@@ -107,7 +107,7 @@ sap.ui.define([
 			assert.ok(this.oRootControlOverlay.$().css("z-index") < this.oRta.getToolbar().$().css("z-index"), "and the toolbar is in front of the root overlay");
 
 			assert.equal(this.oRta.getToolbar().getControl('versionButton').getVisible(), false, "then the version label is hidden");
-			assert.equal(this.oRta.getToolbar().getControl('activateDraft').getVisible(), false, "then the activate draft Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('activate').getVisible(), false, "then the activate draft Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('discardDraft').getVisible(), false, "then the discard draft Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('exit').getVisible(), true, "then the exit Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('exit').getEnabled(), true, "then the exit Button is enabled");
@@ -1432,7 +1432,7 @@ sap.ui.define([
 			var oEvent = {
 				versionTitle: "VersionTitle"
 			};
-			sandbox.stub(VersionsAPI, "activateDraft").rejects("myFancyError");
+			sandbox.stub(VersionsAPI, "activate").rejects("myFancyError");
 			sandbox.stub(RtaUtils, "showMessageBox").callsFake(function(sIconType, sMessage, mPropertyBag) {
 				assert.equal(sIconType, "error", "the error message box is used");
 				assert.equal(mPropertyBag.error, "myFancyError", "and a message box shows the error to the user");
@@ -1440,7 +1440,7 @@ sap.ui.define([
 				done();
 			});
 
-			this.oRta.getToolbar().fireEvent("activateDraft", oEvent);
+			this.oRta.getToolbar().fireEvent("activate", oEvent);
 		});
 	});
 

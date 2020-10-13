@@ -450,7 +450,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given VersionsAPI.activateDraft is called", {
+	QUnit.module("Given VersionsAPI.activate is called", {
 		before: function() {
 			this.oAppComponent = {
 				getManifest: function () {
@@ -475,7 +475,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+			return VersionsAPI.activate(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
 			});
 		});
@@ -485,7 +485,7 @@ sap.ui.define([
 				selector: new Control()
 			};
 
-			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+			return VersionsAPI.activate(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
 			});
 		});
@@ -496,7 +496,7 @@ sap.ui.define([
 				selector: new Control()
 			};
 
-			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+			return VersionsAPI.activate(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "No version title was provided", "then an Error is thrown");
 			});
 		});
@@ -509,7 +509,7 @@ sap.ui.define([
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(undefined);
 
-			return VersionsAPI.activateDraft(mPropertyBag).catch(function (oError) {
+			return VersionsAPI.activate(mPropertyBag).catch(function (oError) {
 				assert.equal(oError.message, "The application ID could not be determined", "then an Error is thrown");
 			});
 		});
@@ -523,9 +523,9 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [];
-			sandbox.stub(Versions, "activateDraft").resolves(aReturnedVersions);
+			sandbox.stub(Versions, "activate").resolves(aReturnedVersions);
 
-			return VersionsAPI.activateDraft(mPropertyBag)
+			return VersionsAPI.activate(mPropertyBag)
 				.then(function(oResult) {
 					assert.equal(oResult, aReturnedVersions, "then the returned version list is passed");
 				});

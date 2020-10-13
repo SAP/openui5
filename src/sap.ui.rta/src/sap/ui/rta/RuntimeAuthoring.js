@@ -1033,7 +1033,7 @@ function(
 		return this.getCommandStack().redo();
 	};
 
-	RuntimeAuthoring.prototype._onActivateDraft = function(oEvent) {
+	RuntimeAuthoring.prototype._onActivate = function(oEvent) {
 		var sVersionTitle = oEvent.getParameter("versionTitle");
 		if (this._isOldVersionDisplayed() && this._isDraftAvailable()) {
 			return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_ON_REACTIVATE_DIALOG", {
@@ -1043,17 +1043,17 @@ function(
 			})
 			.then(function(sAction) {
 				if (sAction === MessageBox.Action.OK) {
-					this._activateDraft(sVersionTitle);
+					this._activate(sVersionTitle);
 				}
 			}.bind(this));
 		}
-		return this._activateDraft(sVersionTitle);
+		return this._activate(sVersionTitle);
 	};
 
-	RuntimeAuthoring.prototype._activateDraft = function(sVersionTitle) {
+	RuntimeAuthoring.prototype._activate = function(sVersionTitle) {
 		var sLayer = this.getLayer();
 		var oSelector = this.getRootControlInstance();
-		return VersionsAPI.activateDraft({
+		return VersionsAPI.activate({
 			layer: sLayer,
 			selector: oSelector,
 			title: sVersionTitle
@@ -1200,7 +1200,7 @@ function(
 					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true, this.getLayer()),
 					appVariantOverview: this._onGetAppVariantOverview.bind(this),
 					saveAs: RtaAppVariantFeature.onSaveAs.bind(RtaAppVariantFeature, true, true, this.getLayer(), null),
-					activateDraft: this._onActivateDraft.bind(this),
+					activate: this._onActivate.bind(this),
 					discardDraft: this._onDiscardDraft.bind(this),
 					switchVersion: this._onSwitchVersion.bind(this)
 				});
