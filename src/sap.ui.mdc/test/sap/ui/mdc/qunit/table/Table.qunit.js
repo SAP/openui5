@@ -105,6 +105,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
+			MDCQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
@@ -1222,7 +1223,7 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
 				label: "name"
@@ -1231,7 +1232,7 @@ sap.ui.define([
 				name: "age",
 				label: "age"
 			}
-		], this.oTable);
+		]);
 
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
@@ -1271,7 +1272,7 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
 				label: "name"
@@ -1280,7 +1281,7 @@ sap.ui.define([
 				name: "age",
 				label: "age"
 			}
-		], this.oTable);
+		]);
 
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
@@ -1320,7 +1321,7 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
 				label: "name"
@@ -1329,7 +1330,7 @@ sap.ui.define([
 				name: "age",
 				label: "age"
 			}
-		], this.oTable);
+		]);
 
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
@@ -1914,13 +1915,13 @@ sap.ui.define([
 			template: new Text()
 		}));
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "test",
 				label: "Test",
 				path: "test"
 			}
-		], this.oTable);
+		]);
 
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
@@ -2006,12 +2007,12 @@ sap.ui.define([
 			template: new Text()
 		}));
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "test",
 				sortable: true
 			}
-		], this.oTable);
+		]);
 
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
@@ -2097,12 +2098,12 @@ sap.ui.define([
 			template: new Text()
 		}));
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "test",
 				sortable: false
 			}
-		], this.oTable);
+		]);
 
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
@@ -2140,7 +2141,7 @@ sap.ui.define([
 			template: new Text()
 		}));
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "test",
 				sortable: false
@@ -2151,7 +2152,7 @@ sap.ui.define([
 				name: "testComplex",
 				propertyInfos: ["test", "test2"]
 			}
-		], this.oTable);
+		]);
 
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
@@ -2944,7 +2945,7 @@ sap.ui.define([
 			}
 		];
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "firstName",
 				path: "firstName",
@@ -3005,7 +3006,7 @@ sap.ui.define([
 					width: 5
 				}
 			}
-		], this.oTable);
+		]);
 
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable);
@@ -3115,7 +3116,7 @@ sap.ui.define([
 			}
 		];
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "product",
 				path: "product",
@@ -3152,7 +3153,7 @@ sap.ui.define([
 				name: "companyCode",
 				label: "Company Code"
 			}
-		], this.oTable);
+		]);
 
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable);
@@ -3404,6 +3405,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
+			MDCQUnitUtils.restorePropertyInfos(this.oTable);
 		},
 		getFilterInfoBar: function(oMDCTable) {
 			var oTable = this.oTable || oMDCTable;
@@ -3453,12 +3455,12 @@ sap.ui.define([
 	QUnit.test("Filter info bar (filter disabled)", function(assert) {
 		var that = this;
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
 				label: "NameLabel"
 			}
-		], this.oTable);
+		]);
 
 		return this.oTable.initialized().then(function() {
 			assert.ok(!that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar does not exist");
@@ -3513,7 +3515,7 @@ sap.ui.define([
 				p13nMode: ["Filter"]
 			});
 
-			MDCQUnitUtils.stubFetchProperties([
+			MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 				{
 					name: "name",
 					label: "NameLabel"
@@ -3524,7 +3526,7 @@ sap.ui.define([
 					name: "gender",
 					label: "GenderLabel"
 				}
-			], this.oTable);
+			]);
 
 			return this.oTable.initialized().then(function() {
 				assert.ok(that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar exists");
@@ -3704,12 +3706,12 @@ sap.ui.define([
 		}));
 		this.oTable.setP13nMode(["Filter"]);
 
-		MDCQUnitUtils.stubFetchProperties([
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "age",
 				label: "AgeLabel"
 			}
-		], this.oTable);
+		]);
 
 		return this.oTable.initialized().then(function() {
 			that.oTable.setFilterConditions({

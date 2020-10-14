@@ -10,12 +10,33 @@
 sap.ui.define(function() {
 	"use strict";
 
-	function stubFetchProperties(aPropertyInfos, oTarget) {
+	function stubPropertyInfos(oTarget, aPropertyInfos) {
 		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
+		var fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
 		var oDelegate;
 		var fnOriginalFetchProperties;
+		var bPropertyHelperExists;
 
-		restoreFetchProperties(oTarget);
+		if (typeof fnOriginalGetControlDelegate !== "function") {
+			throw new Error("The target cannot be stubbed. " + oTarget);
+		}
+
+		if (oTarget.__restorePropertyInfos) {
+			throw new Error("The target is already stubbed. " + oTarget);
+		}
+
+		if (typeof oTarget.getPropertyHelper === "function") {
+			try {
+				oTarget.getPropertyHelper();
+				bPropertyHelperExists = true;
+			} catch (e) {
+				bPropertyHelperExists = false;
+			}
+
+			if (bPropertyHelperExists) {
+				throw new Error("The target cannot be stubbed if the property helper is already initialized. " + oTarget);
+			}
+		}
 
 		function getDelegate() {
 			if (oDelegate) {
@@ -33,42 +54,33 @@ sap.ui.define(function() {
 			return oDelegate;
 		}
 
-		var fnGetControlDelegate = oTarget.getControlDelegate;
 		oTarget.getControlDelegate = function() {
 			return getDelegate.call(this);
 		};
-		oTarget.getControlDelegate.restore = function() {
-			oTarget.getControlDelegate = fnGetControlDelegate;
-		};
 
-		var fnAwaitControlDelegate = oTarget.awaitControlDelegate;
 		oTarget.awaitControlDelegate = function() {
 			return Promise.resolve(getDelegate.call(this));
 		};
-		oTarget.awaitControlDelegate.restore = function() {
-			oTarget.awaitControlDelegate = fnAwaitControlDelegate;
-		};
 
-		oTarget.__restoreFetchProperties = function() {
-			delete oTarget.__restoreFetchProperties;
-			if (oTarget.awaitControlDelegate.restore) {
-				oTarget.awaitControlDelegate.restore();
+		oTarget.__restorePropertyInfos = function() {
+			delete oTarget.__restorePropertyInfos;
+			oTarget.getControlDelegate = fnOriginalGetControlDelegate;
+			oTarget.awaitControlDelegate = fnOriginalAwaitControlDelegate;
+
+			if (oDelegate) {
+				oDelegate.fetchProperties = fnOriginalFetchProperties;
 			}
-			if (oTarget.getControlDelegate.restore) {
-				oTarget.getControlDelegate.restore();
-			}
-			oDelegate.fetchProperties = fnOriginalFetchProperties;
 		};
 	}
 
-	function restoreFetchProperties(oTarget) {
-		if (oTarget.__restoreFetchProperties) {
-			oTarget.__restoreFetchProperties();
+	function restorePropertyInfos(oTarget) {
+		if (oTarget.__restorePropertyInfos) {
+			oTarget.__restorePropertyInfos();
 		}
 	}
 
 	return {
-		stubFetchProperties: stubFetchProperties,
-		restoreFetchProperties: restoreFetchProperties
+		stubPropertyInfos: stubPropertyInfos,
+		restorePropertyInfos: restorePropertyInfos
 	};
 });
