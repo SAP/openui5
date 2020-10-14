@@ -527,7 +527,7 @@
 									size="2.5rem"
 									color="Default"/>
 							<custom:TitleLink
-									href="https://developers.sap.com/topics/ui5.html"
+									href="https://community.sap.com/topics/ui5"
 									target="_blank"
 									text="{i18n>WELCOME_BLOCK_12_TITLE}"
 									titleStyle="H2"
