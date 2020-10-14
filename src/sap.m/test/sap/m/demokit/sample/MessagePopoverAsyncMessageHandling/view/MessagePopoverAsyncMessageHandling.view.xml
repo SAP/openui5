@@ -14,7 +14,8 @@
 					icon="{ path: '/', formatter: '.buttonIconFormatter' }"
 					type="{ path: '/', formatter: '.buttonTypeFormatter' }"
 					text= "{path: '/', formatter: '.highestSeverityMessages' }"
-					press=".handleMessagePopoverPress"/>
+					press=".handleMessagePopoverPress"
+					ariaHasPopup="Dialog"/>
 				<ToolbarSpacer/>
 			</OverflowToolbar>
 		</footer>

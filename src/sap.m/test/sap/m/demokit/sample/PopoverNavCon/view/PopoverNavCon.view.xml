@@ -9,7 +9,8 @@
 		<l:content>
 			<Button
 				text="Open Popover"
-				press="onOpenPopover" />
+				press="onOpenPopover"
+				ariaHasPopup="Dialog" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

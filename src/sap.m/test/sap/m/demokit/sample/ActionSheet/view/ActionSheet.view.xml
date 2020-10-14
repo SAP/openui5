@@ -6,7 +6,8 @@
 	<Button
 		text="Open Action Sheet"
 		class="sapUiSmallMargin"
-		press=".onButtonPress">
+		press=".onButtonPress"
+		ariaHasPopup="Menu" >
 		<dependents>
 			<core:Fragment
 				fragmentName="sap.m.sample.ActionSheet.view.ActionSheet"
