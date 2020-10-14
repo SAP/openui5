@@ -175,6 +175,7 @@ sap.ui.define([
 
 			/**
 			 * Chosen HTTP request method for file upload.
+			 * @since 1.81.0
 			 *
 			 */
 			httpRequestMethod : {type: "sap.ui.unified.FileUploaderHttpRequestMethod", group : "Behavior", defaultValue : HttpRequestMethod.Post},
