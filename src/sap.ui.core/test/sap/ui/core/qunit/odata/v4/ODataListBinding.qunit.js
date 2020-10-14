@@ -6899,6 +6899,25 @@ sap.ui.define([
 		// code under test
 		oBinding.resetKeepAlive();
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_checkDataStateMessages", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oDataState = {
+				setModelMessages : function () {}
+			};
+
+		this.mock(this.oModel).expects("getMessagesByPath")
+			.withExactArgs("/resolved/path", true)
+			.returns("aMessages");
+		this.mock(oDataState).expects("setModelMessages").withExactArgs("aMessages");
+
+		// code under test
+		oBinding._checkDataStateMessages(oDataState, "/resolved/path");
+
+		// code under test - no resolved path
+		oBinding._checkDataStateMessages(oDataState);
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select
