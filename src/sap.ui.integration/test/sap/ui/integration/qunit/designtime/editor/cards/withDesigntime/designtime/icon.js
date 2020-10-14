@@ -12,7 +12,9 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/ui/integration/designtime/e
 							"type": IconSelect,
 							"settings": {
 								"value": "{currentSettings>value}",
-								"editable": "{currentSettings>editable}"
+								"editable": "{currentSettings>editable}",
+								"allowFile": true,
+								"allowNone": true
 							}
 						}
 					}

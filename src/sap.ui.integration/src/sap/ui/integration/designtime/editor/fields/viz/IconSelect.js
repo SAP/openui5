@@ -200,18 +200,23 @@ sap.ui.define([
 			}.bind(this),
 			onsapup: function () {
 				if (this._oSelect.isOpen()) {
+					var bAllowFile = this.getAllowFile();
 					var iSelected = this._oSelect.getSelectedIndex();
 					if (iSelected > 11 + 2) {
 						this._oSelect.setSelectedIndex(iSelected - 11);//select will do -1
 					} else if (iSelected > 3) {
-						this._oSelect.setSelectedIndex(3);
+						if (bAllowFile) {
+							this._oSelect.setSelectedIndex(3);
+						} else {
+							this._oSelect.setSelectedIndex(4);
+						}
 					}
 				}
 			}.bind(this),
 			onsapdown: function () {
 				if (this._oSelect.isOpen()) {
 					var iSelected = this._oSelect.getSelectedIndex();
-					if (iSelected > 2) {
+					if (iSelected > 1) {
 						this._oSelect.setSelectedIndex(iSelected + 11); //select will do +1
 					}
 				}
