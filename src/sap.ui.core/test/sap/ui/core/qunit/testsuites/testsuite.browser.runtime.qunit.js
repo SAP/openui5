@@ -39,6 +39,9 @@ sap.ui.define(function() {
 			"util/Mobile": {
 				title: "sap.ui.util.Mobile"
 			},
+			"util/openWindow": {
+				title: "sap.ui.util.openWindow"
+			},
 			"jquery.sap.mobile": {
 				title: "jquery.sap.mobile: 1",
 				ui5: {
