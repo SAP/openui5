@@ -29417,6 +29417,40 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: A binding drills down via key predicate into a missing element. Depending on
+	// whether or not the collection itself is empty, drill-down fails or just logs.
+	// BCP: 2070374495
+	QUnit.test("$byPredicate for empty collections", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			sView = '\
+<FlexBox binding="{path : \'/Artists(ArtistID=\\\'ABC\\\',IsActiveEntity=false)\',\
+	parameters : {$expand : {_Friend : null, _Publication : null}}}">\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text text="{_Friend(ArtistID=\'bar\',IsActiveEntity=false)/ArtistID}"/>\
+	<Text text="{_Publication(\'foo\')/PublicationID}"/>\
+</FlexBox>';
+
+		this.oLogMock.expects("error").withArgs("Failed to drill-down into"
+			+ " _Friend(ArtistID='bar',IsActiveEntity=false)/ArtistID"
+			+ ", invalid segment: _Friend(ArtistID='bar',IsActiveEntity=false)");
+		this.oLogMock.expects("error").withArgs("Failed to drill-down into"
+			+ " _Publication('foo')/PublicationID, invalid segment: _Publication('foo')");
+		this.expectRequest("Artists(ArtistID=\'ABC\',IsActiveEntity=false)"
+			+ "?$expand=_Friend,_Publication", {
+				ArtistID : "ABC",
+				IsActiveEntity : false,
+				_Friend : [{
+					ArtistID : "n/a",
+					IsActiveEntity : true
+				}],
+				_Publication : []
+			})
+			.expectChange("id", "ABC");
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Refresh a single kept context that is in the collection of a list binding w/o any $filter or
 	// $search. Only a query for the existence of the entity is sent. No additional query to check
 	// if the entity is still in the collection is sent.
