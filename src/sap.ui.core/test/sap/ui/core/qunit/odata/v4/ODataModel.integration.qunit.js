@@ -27072,7 +27072,7 @@ sap.ui.define([
 						oModel.bindContext("/MANAGERS('2')", null, {$expand : "Manager_to_Team"})
 							.getBoundContext());
 					fnRespond();
-				}, 100),
+				}, 10),
 				that.waitForChanges(assert)
 			]);
 		});
