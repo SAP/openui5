@@ -110,6 +110,7 @@
 								</MenuItem>
 								<MenuItem text="{i18n>APP_INFORMATION_BTN_LICENSE}" key="license" visible="{versionData>/isOpenUI5}"/>
 								<MenuItem text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" key="terms_of_use" visible="{versionData>/isOpenUI5}"/>
+								<MenuItem text="{i18n>APP_INFORMATION_BTN_SITEMAP}" key="sitemap" visible="{versionData>/isOpenUI5}"/>
 								<MenuItem text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" key="settings"/>
 								<MenuItem text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}" key="cookie_preferences"/>
 							</items>

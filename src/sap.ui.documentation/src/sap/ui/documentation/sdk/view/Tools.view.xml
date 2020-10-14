@@ -59,8 +59,8 @@
 								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
-										text="UI Theme Designer"
-										href="https://themedesigner-themedesigner.dispatcher.hanatrial.ondemand.com/index.html"
+										text="{/uiThemeDesigner/text}"
+										href="{/uiThemeDesigner/href}"
 										target="_blank"/>
 								<Image
 									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
@@ -108,8 +108,8 @@
 								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
-										text="Business Application Studio"
-										href="http://www.sap.com/appstudio"
+										text="{/businessApplicationStudio/text}"
+										href="{/businessApplicationStudio/href}"
 										target="_blank"/>
 								<Image
 									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
@@ -147,8 +147,8 @@
 								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
-										text="UI5 Tooling"
-										href="https://github.com/SAP/ui5-tooling"
+										text="{/ui5Tooling/text}"
+										href="{/ui5Tooling/href}"
 										target="_blank"/>
 								<Image
 									src="./resources/sap/ui/documentation/sdk/images/link-external.png"
@@ -193,8 +193,8 @@
 								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
-										text="UI5 Inspector"
-										href="https://chrome.google.com/webstore/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo?hl=en"
+										text="{/ui5Inspector/text}"
+										href="{/ui5Inspector/href}"
 										target="_blank"/>
 								<Image
 									src="./resources/sap/ui/documentation/sdk/images/link-external.png"
@@ -235,8 +235,8 @@
 							<custom:TitleLink
 								level="H1"
 								titleStyle="H1"
-								text="Card Explorer"
-								href="test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
+								text="{/cardExplorer/text}"
+								href="{/cardExplorer/href}"
 								target="_blank"
 								class="sapUiSmallMarginBottom"/>
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_5_TEXT}" />
@@ -265,7 +265,7 @@
 							<custom:TitleLink
 									level="H1"
 									titleStyle="H1"
-									text="Support Assistant"
+									text="{/supportAssistant/text}"
 									class="sapUiSmallMarginBottom"
 									href="{
 										path : 'newWindowLinks>/supportAssistantHomeLink',
@@ -297,8 +297,8 @@
 							<custom:TitleLink
 								level="H1"
 								titleStyle="H1"
-								text="Icon Explorer"
-								href="test-resources/sap/m/demokit/iconExplorer/webapp/index.html"
+								text="{/iconExplorer/text}"
+								href="{/iconExplorer/href}"
 								target="_blank"
 								class="sapUiSmallMarginBottom"/>
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_7_TEXT}" />
@@ -335,8 +335,8 @@
 								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
-										text="SAP Web IDE"
-										href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"
+										text="{/sapWebIDE/text}"
+										href="{/sapWebIDE/href}"
 										target="_blank"/>
 								<Image
 									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
@@ -383,9 +383,9 @@
 							<custom:TitleLink
 									level="H1"
 									titleStyle="H1"
-									text="Theme Parameter Toolbox"
+									text="{/themeParameterToolbox/text}"
 									class="sapUiSmallMarginBottom"
-									href="test-resources/sap/m/demokit/theming/webapp/index.html"
+									href="{/themeParameterToolbox/href}"
 									target="_blank"/>
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_8_TEXT}" />
 						</VBox>
@@ -405,8 +405,8 @@
 								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
-										text="UI5 Web Components"
-										href="https://sap.github.io/ui5-webcomponents/"
+										text="{/ui5WebComponents/text}"
+										href="{/ui5WebComponents/href}"
 										target="_blank"/>
 								<Image
 									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"

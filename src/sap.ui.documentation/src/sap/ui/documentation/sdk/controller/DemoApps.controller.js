@@ -40,6 +40,11 @@ sap.ui.define([
 				this.setModel(oModel);
 				this.getView().setModel(oMessageBundle, "i18n");
 
+				this.setModel(new JSONModel({
+					demoAppsHomeLink: "topic/a3ab54ecf7ac493b91904beb2095d208"
+					// etc
+				}), "newWindowLinks");
+
 				this.getRouter().getRoute("demoapps").attachPatternMatched(this._onMatched, this);
 
 				sap.ui.getVersionInfo({async: true}).then(function (oVersionInfo) {
