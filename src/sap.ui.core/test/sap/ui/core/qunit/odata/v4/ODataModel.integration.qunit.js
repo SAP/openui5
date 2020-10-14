@@ -28025,17 +28025,17 @@ sap.ui.define([
 				+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID)&$skip=0&$top=110", {
 				value : [{
 					EMPLOYEE_2_EQUIPMENTS : [
-						{Category : "F1"},
-						{Category : "F2"},
-						{Category : "F3"}
+						{Category : "F1", ID : 21},
+						{Category : "F2", ID : 22},
+						{Category : "F3", ID : 23}
 					],
 					ID : "2",
 					Name : "Frederic Fall"
 				}, {
 					EMPLOYEE_2_EQUIPMENTS : [
-						{Category : "J1"},
-						{Category : "J2"},
-						{Category : "J3"}
+						{Category : "J1", ID : 31},
+						{Category : "J2", ID : 32},
+						{Category : "J3", ID : 33}
 					],
 					ID : "3",
 					Name : "Jonathan Smith"
@@ -28046,6 +28046,108 @@ sap.ui.define([
 			.expectChange("category", ["F1", "F2", "F3"]);
 
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a context in a nested table w/o cache and see that error message and success
+	// message are bound to the corresponding control.
+	// BCP: 2070272170
+	QUnit.test("BCP: 2070272170", function (assert) {
+		var oCreatedContext,
+			oInput,
+			oTable,
+			sView = '\
+<Table id="employees" items="{path : \'/EMPLOYEES\',\
+		parameters : {$expand : {\'EMPLOYEE_2_EQUIPMENTS\' : null}}}">\
+	<Text id="id" text="{ID}"/>\
+</Table>\
+<Table id="equipments" items="{EMPLOYEE_2_EQUIPMENTS}">\
+	<Input id="category" value="{Category}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$skip=0&$top=100", {
+				value : [{
+					ID : "1",
+					EMPLOYEE_2_EQUIPMENTS : [{Category : "F1", ID : 11}]
+				}]
+			})
+			.expectChange("id", ["1"])
+			.expectChange("category", []);
+
+		return this.createView(assert, sView).then(function () {
+			that.expectChange("category", ["F1"]);
+
+			oTable = that.oView.byId("equipments");
+			oTable.setBindingContext(
+				that.oView.byId("employees").getItems()[0].getBindingContext()
+			);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("category", ["F2", "F1"])
+				.expectRequest({
+					method : "POST",
+					payload : {Category : "F2"},
+					url : "EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS"
+				}, createError({
+					code : "CODE",
+					message : "Invalid category",
+					target : "Category"
+				}))
+				.expectMessages([{
+					code : "CODE",
+					message : "Invalid category",
+					persistent : true,
+					target : "/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS($uid=...)/Category",
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withArgs("POST on 'EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS' failed;"
+					+ " will be repeated automatically");
+
+			oCreatedContext = oTable.getBinding("items").create({Category : "F2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oInput = oTable.getItems()[0].getCells()[0];
+
+			return that.checkValueState(assert, oInput, "Error", "Invalid category");
+		}).then(function () {
+			that.expectChange("category", ["F3"])
+				.expectRequest({
+					method : "POST",
+					payload : {Category : "F3"},
+					url : "EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS"
+				}, {
+					Category : "F3",
+					ID : "42",
+					__FAKE__Messages : [{
+						code : "CODE",
+						message : "Correct category",
+						numericSeverity : 1,
+						target : "Category"
+					}]
+				})
+				.expectMessages([{
+					code : "CODE",
+					message : "Correct category",
+					persistent : false,
+					target : "/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS(Category='F3',ID=42)/Category",
+					type : "Success"
+				}]);
+
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+			oInput.getBinding("value").setValue("F3");
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return that.checkValueState(assert, oInput, "Success", "Correct category");
+		});
 	});
 
 	//*********************************************************************************************
