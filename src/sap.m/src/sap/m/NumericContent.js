@@ -365,7 +365,9 @@ sap.ui.define([
 			sAltText = sAltText.concat(this._rb.getText(("NUMERICCONTENT_DEVIATION_" + this.getIndicator()).toUpperCase()));
 			sAltText = sAltText.concat("\n");
 		}
-		sAltText = sAltText.concat(sMeaning);
+		if (this.getValueColor() !== this._rb.getText("SEMANTIC_COLOR_NONE")) {
+			sAltText = sAltText.concat(sMeaning);
+		}
 		return sAltText;
 	};
 

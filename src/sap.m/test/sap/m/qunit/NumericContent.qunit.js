@@ -228,6 +228,25 @@ sap.ui.define([
 		assert.notDeepEqual(sTooltip, "Test, test", "Tooltip is not a string");
 	});
 
+	QUnit.test("Tests tooltip to check if it includes value color text", function (assert) {
+		//Arrange
+		var sTooltip = this.oNumericContent.getTooltip_AsString();
+		//Act
+		var isValueColorPresent = sTooltip.indexOf(oResourceBundle.getText("SEMANTIC_COLOR_" + this.oNumericContent.getValueColor().toUpperCase())) > -1;
+		//Assert
+		assert.equal(isValueColorPresent, true, "The tooltip contains the value color text");
+
+		//Arrange
+		this.oNumericContent.setValueColor(oResourceBundle.getText("SEMANTIC_COLOR_NONE"));
+		//Act
+		sap.ui.getCore().applyChanges();
+		sTooltip = this.oNumericContent.getTooltip_AsString();
+		isValueColorPresent = sTooltip.indexOf(oResourceBundle.getText("SEMANTIC_COLOR_NONE")) > -1;
+
+		//Assert
+		assert.equal(isValueColorPresent, false, "The tooltip does not contain the value color text");
+	});
+
 	QUnit.test("Test alternative text", function (assert) {
 		//Act
 		var sAltText = this.oNumericContent.getAltText();
