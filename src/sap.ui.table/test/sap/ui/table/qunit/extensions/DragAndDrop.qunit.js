@@ -343,17 +343,17 @@ sap.ui.define([
 		}
 
 		function testGroupHeaderRow() {
-			fakeGroupRow(0);
-
-			test(getCell(0, 0).parent(), {sRowType: "Group header", sRowAreaType: "Fixed", iRowIndex: 0});
-			test(getCell(0, 1).parent(), {sRowType: "Group header", sRowAreaType: "Scrollable", iRowIndex: 0});
+			return fakeGroupRow(0).then(function() {
+				test(getCell(0, 0).parent(), {sRowType: "Group header", sRowAreaType: "Fixed", iRowIndex: 0});
+				test(getCell(0, 1).parent(), {sRowType: "Group header", sRowAreaType: "Scrollable", iRowIndex: 0});
+			});
 		}
 
 		function testSumRow() {
-			fakeSumRow(0);
-
-			test(getCell(0, 0).parent(), {sRowType: "Sum", sRowAreaType: "Fixed", iRowIndex: 0});
-			test(getCell(0, 1).parent(), {sRowType: "Sum", sRowAreaType: "Scrollable", iRowIndex: 0});
+			return fakeSumRow(0).then(function() {
+				test(getCell(0, 0).parent(), {sRowType: "Sum", sRowAreaType: "Fixed", iRowIndex: 0});
+				test(getCell(0, 1).parent(), {sRowType: "Sum", sRowAreaType: "Scrollable", iRowIndex: 0});
+			});
 		}
 
 		testStandardRow();
@@ -466,21 +466,21 @@ sap.ui.define([
 		}
 
 		function testGroupHeaderRow() {
-			fakeGroupRow(1);
-
-			test({sRowType: "Group header", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 1});
-			test({sRowType: "Group header", sRowAreaType: "Fixed", iFromRowIndex: 0, iToRowIndex: 1});
-			test({sRowType: "Group header", sRowAreaType: "Scrollable", iFromRowIndex: 0, iToRowIndex: 1});
-			test({sRowType: "Group header", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 1});
+			return fakeGroupRow(1).then(function() {
+				test({sRowType: "Group header", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 1});
+				test({sRowType: "Group header", sRowAreaType: "Fixed", iFromRowIndex: 0, iToRowIndex: 1});
+				test({sRowType: "Group header", sRowAreaType: "Scrollable", iFromRowIndex: 0, iToRowIndex: 1});
+				test({sRowType: "Group header", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 1});
+			});
 		}
 
 		function testSumRow() {
-			fakeSumRow(1);
-
-			test({sRowType: "Sum", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 1});
-			test({sRowType: "Sum", sRowAreaType: "Fixed", iFromRowIndex: 0, iToRowIndex: 1});
-			test({sRowType: "Sum", sRowAreaType: "Scrollable", iFromRowIndex: 0, iToRowIndex: 1});
-			test({sRowType: "Sum", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 1});
+			return fakeSumRow(1).then(function() {
+				test({sRowType: "Sum", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 1});
+				test({sRowType: "Sum", sRowAreaType: "Fixed", iFromRowIndex: 0, iToRowIndex: 1});
+				test({sRowType: "Sum", sRowAreaType: "Scrollable", iFromRowIndex: 0, iToRowIndex: 1});
+				test({sRowType: "Sum", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 1});
+			});
 		}
 
 		testStandardRow();

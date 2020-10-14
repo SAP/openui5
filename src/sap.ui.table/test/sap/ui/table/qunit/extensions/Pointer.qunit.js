@@ -662,13 +662,14 @@ sap.ui.define([
 			bSelected = true;
 		};
 
-		fakeSumRow(0, oTreeTable);
-		var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel0");
-		qutils.triggerMouseEvent($RowHdr, "click");
-		assert.ok(!bSelected, "Selection was not performed");
+		return fakeSumRow(0, oTreeTable).then(function() {
+			var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel0");
+			qutils.triggerMouseEvent($RowHdr, "click");
+			assert.ok(!bSelected, "Selection was not performed");
 
-		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
-		oExtension._ExtensionHelper.__handleClickSelection = null;
+			oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
+			oExtension._ExtensionHelper.__handleClickSelection = null;
+		});
 	});
 
 	QUnit.test("Mobile Group Menu Button", function(assert) {
