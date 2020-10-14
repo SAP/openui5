@@ -34,7 +34,6 @@ sap.ui.define([
 	 * @param {object} [mOptions.flexSettings] - Map with flex-related settings
 	 * @param {string} [mOptions.flexSettings.layer] - The Layer in which RTA should be started. Default: "CUSTOMER"
 	 * @param {boolean} [mOptions.flexSettings.developerMode] - Whether RTA is started in developerMode mode. Default: <code>false</code>
-	 * @param {boolean} [mOptions.validateAppVersion] - Whether app version must be validated on start. Default: <code>true</code>
 	 * @param {function} [loadPlugins] - Callback function that enables the modification of the default plugin list of UI adaptation. UI adaptation is passed to this function
 	 * @param {function} [onStart] - Event handler function called on start event
 	 * @param {function} [onFailed] - Event handler function called on failed event
@@ -48,8 +47,7 @@ sap.ui.define([
 			flexSettings: {
 				developerMode: false,
 				layer: Layer.CUSTOMER
-			},
-			validateAppVersion: true
+			}
 		};
 		mOptions = merge(mDefaultOptions, mOptions);
 		return Promise.resolve()

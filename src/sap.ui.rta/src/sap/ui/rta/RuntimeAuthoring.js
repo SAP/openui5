@@ -220,14 +220,6 @@ function(
 				metadataScope: {
 					type: "string",
 					defaultValue: "default"
-				},
-
-				/**
-				 * Whether app version must be validated on start
-				 */
-				validateAppVersion: {
-					type: "boolean",
-					defaultValue: false
 				}
 			},
 			events: {
@@ -580,16 +572,6 @@ function(
 		if (!this._oDesignTime) {
 			if (!oRootControl) {
 				vError = new Error("Root control not found");
-				Log.error(vError);
-				return Promise.reject(vError);
-			}
-
-			// Check if the App Variant has the correct Format
-			if (
-				this.getValidateAppVersion()
-				&& !FlexUtils.isCorrectAppVersionFormat(FlexUtils.getAppVersionFromManifest(FlexUtils.getAppComponentForControl(oRootControl).getManifest()))
-			) {
-				vError = this._getTextResources().getText("MSG_INCORRECT_APP_VERSION_ERROR");
 				Log.error(vError);
 				return Promise.reject(vError);
 			}

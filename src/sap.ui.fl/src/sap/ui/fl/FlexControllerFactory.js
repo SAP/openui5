@@ -43,21 +43,15 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {String} sComponentName - Name of the component
-	 * @param {String} sAppVersion - Current version of the application
 	 * @returns {sap.ui.fl.FlexController} instance
 	 *
 	 */
-	FlexControllerFactory.create = function(sComponentName, sAppVersion) {
-		sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
-
-		if (!FlexControllerFactory._instanceCache[sComponentName]) {
-			FlexControllerFactory._instanceCache[sComponentName] = {};
-		}
-		var oFlexController = FlexControllerFactory._instanceCache[sComponentName][sAppVersion];
+	FlexControllerFactory.create = function(sComponentName) {
+		var oFlexController = FlexControllerFactory._instanceCache[sComponentName];
 
 		if (!oFlexController) {
-			oFlexController = new FlexController(sComponentName, sAppVersion);
-			FlexControllerFactory._instanceCache[sComponentName][sAppVersion] = oFlexController;
+			oFlexController = new FlexController(sComponentName);
+			FlexControllerFactory._instanceCache[sComponentName] = oFlexController;
 		}
 
 		return oFlexController;
@@ -71,15 +65,13 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {sap.ui.core.Control} oControl The control
-	 * @param {object} [oManifest] - Manifest of the component
 	 * @returns {sap.ui.fl.FlexController} instance
 	 */
-	FlexControllerFactory.createForControl = function(oControl, oManifest) {
+	FlexControllerFactory.createForControl = function(oControl) {
 		try {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var sComponentName = Utils.getComponentClassName(oAppComponent || oControl);
-			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent ? oAppComponent.getManifest() : oManifest);
-			return FlexControllerFactory.create(sComponentName, sAppVersion);
+			return FlexControllerFactory.create(sComponentName);
 		} catch (oError) {
 			Log.error(oError.message, undefined, "sap.ui.fl.FlexControllerFactory");
 		}
@@ -187,8 +179,7 @@ sap.ui.define([
 	function _propagateChangesForAppComponent (oAppComponent) {
 		// only manifest with type = "application" will fetch changes
 		var oManifest = oAppComponent.getManifestObject();
-		var oFlexController;
-		oFlexController = FlexControllerFactory.createForControl(oAppComponent, oManifest);
+		var oFlexController = FlexControllerFactory.createForControl(oAppComponent, oManifest);
 		return oFlexController._oChangePersistence.loadChangesMapForComponent(oAppComponent)
 		.then(function (fnGetChangesMap) {
 			var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, oAppComponent, oFlexController);

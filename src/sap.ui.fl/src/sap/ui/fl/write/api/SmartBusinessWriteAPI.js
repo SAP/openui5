@@ -65,7 +65,6 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
 		 * @param {string} mPropertyBag.selector.appId - ID of the reference application
-		 * @param {string} [mPropertyBag.selector.appVersion] - Version of the referenced application
 		 * @param {string} mPropertyBag.id - App variant ID
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Current working layer
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant;

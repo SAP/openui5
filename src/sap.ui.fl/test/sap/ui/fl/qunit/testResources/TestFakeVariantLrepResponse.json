@@ -202,10 +202,6 @@
 									"sapui5Version": "1.51.0-SNAPSHOT"
 								},
 								"dependentSelector": {},
-								"validAppVersions": {
-									"creation": "1.0.0",
-									"from": "1.0.0"
-								},
 								"variantReference": ""
 							}
 						]

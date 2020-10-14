@@ -35,7 +35,6 @@ function(
 			sId: "testView"
 		};
 		var sFlexReference = "someName";
-		var sAppVersion = "1.0.0";
 		var mProperties = {
 			sync: false
 		};
@@ -62,7 +61,6 @@ function(
 		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
-		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
 		sandbox.stub(Utils, "isApplication").returns(true);
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve("abc123"));
@@ -78,7 +76,6 @@ function(
 			sId: "testView"
 		};
 		var sFlexReference = "someName";
-		var sAppVersion = "1.0.0";
 		var mProperties = {
 			sync: false
 		};
@@ -101,7 +98,6 @@ function(
 		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
-		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
 		sandbox.stub(Utils, "isApplication").returns(true);
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
@@ -127,7 +123,6 @@ function(
 		sandbox.stub(sap.ui.getCore(), "getComponent");
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getComponentName");
-		sandbox.stub(Utils, "getAppVersionFromManifest");
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sCacheKey));
 
@@ -169,7 +164,6 @@ function(
 		};
 		var sComponentName = "someComponentName";
 		var sFlexReference = "someVariantName";
-		var sAppVersion = "1.0.0";
 		var sValidCacheKey = "someVeryValidKey";
 		var mProperties = {
 			sync: false
@@ -208,7 +202,6 @@ function(
 		});
 		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
 		sandbox.stub(Utils, "isApplication").returns(true);
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sValidCacheKey));
@@ -247,7 +240,6 @@ function(
 			sync: false
 		};
 		var sComponentName = "someComponentName";
-		var sAppVersion = "1.0.0";
 
 		var oComponentData = {
 			startupParameters: {
@@ -272,7 +264,6 @@ function(
 
 		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
 		sandbox.stub(Utils, "isApplication").returns(true);
 
 		return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {

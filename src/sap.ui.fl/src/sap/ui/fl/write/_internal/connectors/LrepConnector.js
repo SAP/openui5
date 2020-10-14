@@ -153,7 +153,6 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} mPropertyBag.changelist Transport Id
 		 * @param {sap.ui.fl.Change[]} mPropertyBag.changes Changes of the selected layer and flex reference
-		 * @param {string} [mPropertyBag.appVersion] Version of the application for which the reset takes place
 		 * @param {string} [mPropertyBag.generator] Generator with which the changes were created
 		 * @param {string} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter (comma-separated list)
 		 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset (comma-separated list)
@@ -184,7 +183,7 @@ sap.ui.define([
 
 			return oTransportSelectionPromise.then(function() {
 				BusyIndicator.show(0); //Re-display the busy indicator in case it was hide by transport selection
-				var aParameters = ["reference", "layer", "appVersion", "changelist", "generator"];
+				var aParameters = ["reference", "layer", "changelist", "generator"];
 				var mParameters = _pick(mPropertyBag, aParameters);
 
 				InitialConnector._addClientInfo(mParameters);
@@ -230,7 +229,6 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.transportDialogSettings.styleClass Style class name to be added in the TransportDialog
 		 * @param {string} mPropertyBag.layer Working layer
 		 * @param {string} mPropertyBag.reference Flex reference of the application
-		 * @param {string} mPropertyBag.appVersion Version of the application for which the reset takes place
 		 * @param {sap.ui.fl.Change[]} mPropertyBag.localChanges Local changes to  be published
 		 * @param {object[]} [mPropertyBag.appVariantDescriptors] An array of app variant descriptors which needs to be transported
 		 * @returns {Promise<string>} Promise that can resolve to the following strings:
@@ -261,7 +259,6 @@ sap.ui.define([
 						BusyIndicator.show(0);
 						var oContentParameters = {
 							reference: mPropertyBag.reference,
-							appVersion: mPropertyBag.appVersion,
 							layer: mPropertyBag.layer
 						};
 						return oTransportSelection._prepareChangesForTransport(
@@ -291,11 +288,10 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
 		 * @param {string} mPropertyBag.reference Flex reference of the application
 		 * @param {string} mPropertyBag.url Configured url for the connector
-		 * @param {string} [mPropertyBag.appVersion] Version of the application
 		 * @returns {Promise} Promise resolves as soon as flex info has been retrieved
 		 */
 		getFlexInfo: function (mPropertyBag) {
-			var aParameters = ["layer", "appVersion"];
+			var aParameters = ["layer"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
 			InitialConnector._addClientInfo(mParameters);

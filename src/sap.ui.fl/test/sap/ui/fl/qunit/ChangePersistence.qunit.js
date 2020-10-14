@@ -63,8 +63,7 @@ function(
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this._mComponentProperties = {
-				name: "MyComponent",
-				appVersion: "1.2.3"
+				name: "MyComponent"
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 
@@ -1172,7 +1171,6 @@ function(
 					},
 					layer: sLayer,
 					reference: this._mComponentProperties.name,
-					appVersion: this._mComponentProperties.appVersion,
 					localChanges: aMockLocalChanges,
 					appVariantDescriptors: aAppVariantDescriptors
 				}), "then publish called with the transport info and changes array");
@@ -1454,7 +1452,6 @@ function(
 				assert.equal(oResetChangesStub.callCount, 1, "Storage.reset is called once");
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
 				assert.equal(oResetArgs.reference, "MyComponent");
-				assert.equal(oResetArgs.appVersion, "1.2.3");
 				assert.equal(oResetArgs.layer, Layer.VENDOR);
 				assert.equal(oResetArgs.generator, "Change.createInitialFileContent");
 				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
@@ -1512,7 +1509,6 @@ function(
 				assert.equal(oResetChangesStub.callCount, 1, "Storage.reset is called once");
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
 				assert.equal(oResetArgs.reference, "MyComponent");
-				assert.equal(oResetArgs.appVersion, "1.2.3");
 				assert.equal(oResetArgs.layer, Layer.VENDOR);
 				assert.deepEqual(oResetArgs.selectorIds, ["abc123"]);
 				assert.deepEqual(oResetArgs.changeTypes, ["labelChange"]);
@@ -1530,8 +1526,7 @@ function(
 			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
 			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this._mComponentProperties = {
-				name: "saveChangeScenario",
-				appVersion: "1.2.3"
+				name: "saveChangeScenario"
 			};
 			sandbox.stub(Utils, "isApplication").returns(false);
 			return Component.create({
@@ -1810,8 +1805,7 @@ function(
 			var oBackendResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
 			this.oGetFlexObjectsFromStorageResponseStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oBackendResponse.changes);
 			this._mComponentProperties = {
-				name: "saveChangeScenario",
-				appVersion: "1.2.3"
+				name: "saveChangeScenario"
 			};
 			this._oComponentInstance = sap.ui.component({
 				name: "sap/ui/fl/qunit/integration/testComponentComplex"
@@ -2465,14 +2459,12 @@ function(
 				})
 			);
 			this._mComponentProperties = {
-				name: "testScenarioComponent",
-				appVersion: "1.2.3"
+				name: "testScenarioComponent"
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			this.mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: "testScenarioComponent",
-				appVersion: "1.2.3"
+				reference: "testScenarioComponent"
 			};
 		},
 		afterEach: function() {

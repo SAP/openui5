@@ -246,11 +246,9 @@ sap.ui.define([
 			var aMockLocalChanges = [];
 			var aAppVariantDescriptors = [];
 			var sReference = "MyComponent";
-			var sAppVersion = "1.2.3";
 			var sLayer = Layer.CUSTOMER;
 			var oContentParameters = {
 				reference: sReference,
-				appVersion: sAppVersion,
 				layer: sLayer
 			};
 
@@ -258,7 +256,6 @@ sap.ui.define([
 			var oSendStub = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, oContentParameters).then(function() {
 				assert.equal(JSON.parse(oSendStub.getCall(0).args[2].payload).reference, sReference, "the reference is added to the request");
-				assert.equal(JSON.parse(oSendStub.getCall(0).args[2].payload).appVersion, sAppVersion, "the app version is added to the request");
 				assert.equal(JSON.parse(oSendStub.getCall(0).args[2].payload).layer, sLayer, "the layer is added to the request");
 			});
 		});

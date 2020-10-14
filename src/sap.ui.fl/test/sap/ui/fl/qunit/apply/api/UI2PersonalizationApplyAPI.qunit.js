@@ -75,9 +75,6 @@ sap.ui.define([
 			var fnMockedFlexController = {
 				getComponentName: function() {
 					return;
-				},
-				getAppVersion: function() {
-					return "1.2.3";
 				}
 			};
 

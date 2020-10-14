@@ -67,8 +67,7 @@ sap.ui.define([
 			}
 
 			var sFlexReference = Utils.getComponentClassName(oAppComponent);
-			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
-			var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
+			var oFlexController = FlexControllerFactory.create(sFlexReference);
 
 			return oFlexController.processXmlView(oView, mProperties)
 			.then(function() {
@@ -106,8 +105,7 @@ sap.ui.define([
 		}
 
 		var sFlexReference = Utils.getComponentClassName(oAppComponent);
-		var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
 		return oChangePersistence.getCacheKey(oAppComponent);
 	};
 

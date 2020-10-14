@@ -76,9 +76,6 @@ sap.ui.define([
 				label: "created at",
 				value: oDefinition.creation
 			}, {
-				label: "created with app version",
-				value: oDefinition.validAppVersions ? oDefinition.validAppVersions.creation : "N/A"
-			}, {
 				label: "created by",
 				value: oDefinition.support.user
 			}, {

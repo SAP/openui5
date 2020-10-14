@@ -16,12 +16,11 @@ sap.ui.define([
 		 * Returns the FlexController of the app component where the UI changes are saved
 		 *
 		 * @param {sap.ui.fl.Selector|string} vSelectorOrName - Selector object, managed object or component name to find the associated flex persistence
-		 * @param {string} [sAppVersion] - App version can be passed optionally with component name
 		 * @returns {sap.ui.fl.FlexController} Returns FlexController Instance of Component for changes
 		 */
-		getFlexControllerInstance: function(vSelectorOrName, sAppVersion) {
+		getFlexControllerInstance: function(vSelectorOrName) {
 			if (typeof vSelectorOrName === "string") {
-				return OldFlexControllerFactory.create(vSelectorOrName, sAppVersion);
+				return OldFlexControllerFactory.create(vSelectorOrName);
 			}
 			var oManagedObject = vSelectorOrName.appComponent || vSelectorOrName;
 			return OldFlexControllerFactory.createForControl(oManagedObject);
@@ -35,11 +34,11 @@ sap.ui.define([
 		 */
 		getDescriptorFlexControllerInstance: function(vSelector) {
 			if (typeof vSelector.appId === "string") {
-				return OldFlexControllerFactory.create(vSelector.appId, vSelector.appVersion);
+				return OldFlexControllerFactory.create(vSelector.appId);
 			}
 			var oAppComponent = vSelector.appComponent || vSelector;
 			var oAppDescriptorComponent = FlexUtils.getAppDescriptorComponentObjectForControl(oAppComponent);
-			return OldFlexControllerFactory.create(oAppDescriptorComponent.name, oAppDescriptorComponent.version);
+			return OldFlexControllerFactory.create(oAppDescriptorComponent.name);
 		},
 
 		/**

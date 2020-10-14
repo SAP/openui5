@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/Utils",
-	"sap/ui/dom/includeScript",
-	"sap/base/util/restricted/_pick"
+	"sap/ui/dom/includeScript"
 ], function(
 	Utils,
 	FlexUtils,
-	includeScript,
-	_pick
+	includeScript
 ) {
 	"use strict";
 
@@ -75,7 +73,6 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Further properties
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} mPropertyBag.reference Flexibility reference
-		 * @param {string} [mPropertyBag.appVersion] Version of the application
 		 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
 		 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 		 * @param {string} [mPropertyBag.cacheKey] Cache buster token
@@ -87,7 +84,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
-			var mParameters = _pick(mPropertyBag, ["appVersion"]);
+			var mParameters = {};
 			this._addClientInfo(mParameters);
 			Utils.addLanguageInfo(mParameters);
 			var sAppDescriptorId;

@@ -742,19 +742,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets valid app versions for an app(variant).
-	 *
-	 * @param {string} mValidAppVersions - Object with parameters as properties
-	 * @param {string} mValidAppVersions.creation - Creation app(variant) version
-	 * @param {string} mValidAppVersions.from - From app(variant) version
-	 * @param {string} [mValidAppVersions.to] - To app(variant) version
-	 * @public
-	 */
-	Change.prototype.setValidAppVersions = function (mValidAppVersions) {
-		this._oDefinition.validAppVersions = mValidAppVersions;
-	};
-
-	/**
 	 * Gets the creation timestamp.
 	 *
 	 * @returns {String} Creation timestamp
@@ -1048,7 +1035,6 @@ sap.ui.define([
 	 * @param {Boolean} [oPropertyBag.isVariant] - Name of the component
 	 * @param {Boolean} [oPropertyBag.isUserDependent] - <code>true</code> in case of end user changes
 	 * @param {Object}  [oPropertyBag.dependentSelector] - List of selectors saved under an alias for creating the dependencies between changes
-	 * @param {Object}  [oPropertyBag.validAppVersions] - Application versions where the change is active
 	 * @param {String}  [oPropertyBag.reference] - Application component name
 	 * @param {String}  [oPropertyBag.namespace] - Namespace of the change file
 	 * @param {String}  [oPropertyBag.projectId] - Project ID of the change file
@@ -1106,7 +1092,6 @@ sap.ui.define([
 			},
 			oDataInformation: oPropertyBag.oDataInformation || {},
 			dependentSelector: oPropertyBag.dependentSelector || {},
-			validAppVersions: oPropertyBag.validAppVersions || {},
 			jsOnly: oPropertyBag.jsOnly || false,
 			variantReference: oPropertyBag.variantReference || "",
 			// since not all storage implementations know about all app descriptor change types, we store a flag if this change type changes a descriptor

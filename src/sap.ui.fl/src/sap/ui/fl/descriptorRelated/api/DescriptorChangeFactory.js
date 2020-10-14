@@ -80,8 +80,7 @@ sap.ui.define([
 	DescriptorChange.prototype.store = function() {
 		// create persistence
 		var sComponentName = this._mChangeFile.reference;
-		var sAppVersion = this._mChangeFile.validAppVersions.creation;
-		var oChangePersistence = this._getChangePersistence(sComponentName, sAppVersion);
+		var oChangePersistence = this._getChangePersistence(sComponentName);
 
 		//add change to persistence
 		var oChange = this._getChangeToSubmit();
@@ -90,8 +89,8 @@ sap.ui.define([
 		return oChange;
 	};
 
-	DescriptorChange.prototype._getChangePersistence = function(sComponentName, sAppVersion) {
-		return ChangePersistenceFactory.getChangePersistenceForComponent(sComponentName, sAppVersion);
+	DescriptorChange.prototype._getChangePersistence = function(sComponentName) {
+		return ChangePersistenceFactory.getChangePersistenceForComponent(sComponentName);
 	};
 
 	DescriptorChange.prototype._getChangeToSubmit = function() {
@@ -158,24 +157,10 @@ sap.ui.define([
 		};
 		fSetHostingIdForTextKey(oInlineChange, sReference);
 
-		var sAppVersion;
-		if (oAppComponent) {
-			sAppVersion = oAppComponent.appVersion;
-
-			if (!oAppComponent.appId && !sAppVersion) {
-				var mManifest = oAppComponent.getManifest();
-				sAppVersion = FlexUtils.getAppVersionFromManifest(mManifest);
-			}
-		}
-
 		var mPropertyBag = {};
 		mPropertyBag.changeType = oInlineChange._getChangeType();
 		mPropertyBag.componentName = sReference;
 		mPropertyBag.reference = sReference;
-		mPropertyBag.validAppVersions = sAppVersion ? {
-			creation: sAppVersion,
-			from: sAppVersion
-		} : {};
 		mPropertyBag.generator = sTool;
 
 		//default to 'CUSTOMER'

@@ -41,34 +41,20 @@ sap.ui.define([
 
 		QUnit.test("shall create a new ChangePersistence for a given control", function(assert) {
 			var sComponentName = "AComponentForAControl";
-			var sAppVersion = "1.2.3";
 			var oControl = new Control();
-			var oComponent = {
-				getManifest: function () {
-					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : sAppVersion
-							}
-						}
-					};
-				}
-			};
 			sandbox.stub(Utils, "getComponentClassName").returns(sComponentName);
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 
 			assert.ok(oChangePersistence, "ChangePersistence shall be created");
 			assert.equal(sComponentName, oChangePersistence._mComponent.name, "with correct component name");
-			assert.ok(sAppVersion, oChangePersistence._mComponent.appVersion, "and correct application version");
 		});
 
 		QUnit.test("shall return the same cached instance, if it exists", function(assert) {
 			var componentName = "Sinalukasi";
 
-			var firstlyRequestedChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(componentName, "1.2.3");
-			var secondlyRequestedChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(componentName, "1.2.3");
+			var firstlyRequestedChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(componentName);
+			var secondlyRequestedChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(componentName);
 
 			assert.strictEqual(firstlyRequestedChangePersistence, secondlyRequestedChangePersistence, "Retrieved ChangePersistence instances are equal");
 		});

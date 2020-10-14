@@ -311,22 +311,18 @@ sap.ui.define([
 				}
 			};
 			var sMockComponentName = "MockCompName";
-			var sMockComponentAppVersion = "1.23";
 
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oMockControl).returns(oAppComponent);
 			sandbox.stub(Utils, "getComponentClassName")
 				.withArgs(oAppComponent)
 				.returns(sMockComponentName);
 
-			sandbox.stub(Utils, "getAppVersionFromManifest")
-				.withArgs(oMockManifest)
-				.returns(sMockComponentAppVersion);
 
 			sandbox.stub(FlexControllerFactory, "create");
 
 			FlexControllerFactory.createForControl(oMockControl);
 
-			assert.ok(FlexControllerFactory.create.calledWith(sMockComponentName, sMockComponentAppVersion), "then FlexController created with the correct component name and app version");
+			assert.ok(FlexControllerFactory.create.calledWith(sMockComponentName), "then FlexController created with the correct component name");
 		});
 	});
 
@@ -354,18 +350,20 @@ sap.ui.define([
 				addPropagationListener: function() {},
 				setModel: function() {}
 			};
-			var sMockComponentAppVersion = "1.23";
 
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(Utils, "getComponentClassName")
 				.returns(sMockComponentName);
-			sandbox.stub(Utils, "getAppVersionFromManifest")
-				.returns(sMockComponentAppVersion);
 			FlexControllerFactory._instanceCache[sMockComponentName] = {
 				_oChangePersistence: {
-					loadChangesMapForComponent: Promise.resolve()
+					loadChangesMapForComponent: function () {
+						return Promise.resolve();
+					},
+					getComponentName: function () {
+						return sMockComponentName;
+					}
 				}
 			};
 

@@ -31,7 +31,6 @@ sap.ui.define([
 			this.oManifest = new Manifest(this.oRawManifest);
 			this.oLoadFlexDataStub = sandbox.stub(ApplyStorage, "loadFlexData").resolves("load");
 			this.oCompleteFlexDataStub = sandbox.stub(ApplyStorage, "completeFlexData").resolves("complete");
-			this.oGetAppVersionStub = sandbox.stub(Utils, "getAppVersionFromManifest").returns("appVersion");
 			this.oGetSiteIdStub = sandbox.stub(Utils, "getSiteIdByComponentData").returns("siteId");
 			this.oGetBaseCompNameStub = sandbox.stub(ManifestUtils, "getBaseComponentNameFromManifest").returns("baseName");
 			this.oGetCacheKeyStub = sandbox.stub(ManifestUtils, "getCacheKeyFromAsyncHints").returns("cacheKey");
@@ -51,7 +50,6 @@ sap.ui.define([
 
 			var oExpectedProperties = {
 				reference: "reference",
-				appVersion: "appVersion",
 				componentName: "baseName",
 				cacheKey: "cacheKey",
 				siteId: "siteId",
@@ -63,7 +61,6 @@ sap.ui.define([
 				assert.equal(oResult.changes, "load", "the Loader loads data");
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the Storage.loadFlexData was called");
 				assert.equal(this.oCompleteFlexDataStub.callCount, 0, "the Storage.completeFlexData was not called");
-				assert.equal(this.oGetAppVersionStub.callCount, 1, "the app version was retrieved from the Utils");
 				assert.equal(this.oGetSiteIdStub.callCount, 1, "the siteId was retrieved from the Utils");
 				assert.equal(this.oGetBaseCompNameStub.callCount, 1, "the name was retrieved from the Utils");
 				assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");
@@ -82,20 +79,17 @@ sap.ui.define([
 
 			var oExpectedProperties = {
 				reference: "reference",
-				appVersion: "DEFAULT_APP_VERSION",
 				cacheKey: "cacheKey",
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
 				componentName: "baseName",
 				version: undefined
 			};
-			this.oGetAppVersionStub.returns();
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
 				assert.equal(oResult.changes, "load", "the Loader tries to load data");
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the Storage.loadFlexData was called");
 				assert.equal(this.oCompleteFlexDataStub.callCount, 0, "the Storage.completeFlexData was not called");
-				assert.equal(this.oGetAppVersionStub.callCount, 1, "the app version was retrieved from the Utils");
 				assert.equal(this.oGetSiteIdStub.callCount, 1, "the siteId was retrieved from the Utils");
 				assert.equal(this.oGetBaseCompNameStub.callCount, 1, "the name was retrieved from the Utils");
 				assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");

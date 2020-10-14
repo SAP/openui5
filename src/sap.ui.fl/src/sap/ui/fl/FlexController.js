@@ -76,7 +76,6 @@ sap.ui.define([
 	 * Retrieves changes (LabelChange, etc.) for an sap.ui.core.mvc.View and applies these changes
 	 *
 	 * @param {string} sComponentName - Component name the flexibility controller is responsible for
-	 * @param {string} sAppVersion - Current version of the application
 	 * @constructor
 	 * @class
 	 * @alias sap.ui.fl.FlexController
@@ -84,11 +83,10 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var FlexController = function(sComponentName, sAppVersion) {
+	var FlexController = function(sComponentName) {
 		this._oChangePersistence = undefined;
 		this._sComponentName = sComponentName || "";
-		this._sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
-		if (this._sComponentName && this._sAppVersion) {
+		if (this._sComponentName) {
 			this._createChangePersistence();
 		}
 	};
@@ -101,16 +99,6 @@ sap.ui.define([
 	 */
 	FlexController.prototype.getComponentName = function() {
 		return this._sComponentName;
-	};
-
-	/**
-	 * Returns the application version of the FlexController
-	 *
-	 * @returns {String} Application version
-	 * @public
-	 */
-	FlexController.prototype.getAppVersion = function() {
-		return this._sAppVersion;
 	};
 
 	/**
@@ -153,13 +141,6 @@ sap.ui.define([
 
 		oChangeSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
 		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
-
-		// fallback in case no application descriptor is available (e.g. during unit testing)
-		oChangeSpecificData.validAppVersions = Utils.getValidAppVersions({
-			appVersion: this.getAppVersion(),
-			developerMode: oChangeSpecificData.developerMode,
-			scenario: oChangeSpecificData.scenario
-		});
 
 		oChangeFileContent = Change.createInitialFileContent(oChangeSpecificData);
 		oChange = new Change(oChangeFileContent);
@@ -573,7 +554,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexController.prototype._createChangePersistence = function() {
-		this._oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.getComponentName(), this.getAppVersion());
+		this._oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.getComponentName());
 		return this._oChangePersistence;
 	};
 
@@ -692,7 +673,6 @@ sap.ui.define([
 	 */
 	FlexController.prototype.getResetAndPublishInfo = function(mPropertyBag) {
 		mPropertyBag.reference = this._sComponentName;
-		mPropertyBag.appVersion = this._sAppVersion;
 		return this._oChangePersistence.getResetAndPublishInfo(mPropertyBag);
 	};
 

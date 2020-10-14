@@ -107,10 +107,9 @@ sap.ui.define([
 				reference: "reference",
 				generator: "generator",
 				selectorIds: ["id1", "id2"],
-				appVersion: "1.0.1",
 				changeTypes: "rename"
 			};
-			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/?reference=reference&appVersion=1.0.1&generator=generator&selector=id1,id2&changeType=rename";
+			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/?reference=reference&generator=generator&selector=id1,id2&changeType=rename";
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -131,11 +130,10 @@ sap.ui.define([
 				reference: "reference",
 				generator: undefined,
 				selectorIds: undefined,
-				appVersion: "1.0.1",
 				changeTypes: undefined,
 				somethingNotNecessary: "somethingNotNecessary"
 			};
-			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/?reference=reference&appVersion=1.0.1";
+			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/?reference=reference";
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});

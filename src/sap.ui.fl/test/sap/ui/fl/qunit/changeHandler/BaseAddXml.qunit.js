@@ -60,9 +60,6 @@ sap.ui.define([
 
 			var oChangeJson = {
 				reference: "sap.ui.fl.qunit.changeHander.BaseAddXml.Component",
-				validAppVersions: {
-					creation: "1.0.0"
-				},
 				selector: {
 					id: this.oHBox.getId(),
 					type: "sap.m.HBox"
@@ -122,9 +119,6 @@ sap.ui.define([
 					type: "sap.m.HBox"
 				},
 				reference: "sap.ui.fl.qunit.changeHander.BaseAddXml",
-				validAppVersions: {
-					creation: "1.0.0"
-				},
 				changeType: "addXML",
 				fileName: "addXMLChange",
 				projectId: "projectId"
@@ -241,9 +235,6 @@ sap.ui.define([
 					type: "sap.m.HBox"
 				},
 				reference: "sap.ui.fl.qunit.changeHander.BaseAddXml",
-				validAppVersions: {
-					creation: "1.0.0"
-				},
 				changeType: "addXML",
 				fileName: "addXMLChange",
 				projectId: "projectId"

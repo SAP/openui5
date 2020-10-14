@@ -75,10 +75,6 @@ function(
 						id: "controlTarget1",
 						idIsLocal: true
 					}
-				},
-				validAppVersions: {
-					creation: "1.0.0",
-					from: "1.0.0"
 				}
 			};
 
@@ -222,16 +218,6 @@ function(
 		QUnit.test("Change.getPackage", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			assert.equal(oInstance.getPackage(), "$TMP");
-		});
-
-		QUnit.test("Change.setValidAppVersions", function(assert) {
-			var oInstance = new Change(this.oChangeDef);
-			oInstance.setValidAppVersions({
-				creation: "1.2.3",
-				from: "1.2.3"
-			});
-			assert.equal(oInstance.getDefinition().validAppVersions.creation, "1.2.3");
-			assert.equal(oInstance.getDefinition().validAppVersions.from, "1.2.3");
 		});
 
 		QUnit.test("getNamespace should return the namespace of the defintion", function(assert) {
@@ -430,11 +416,6 @@ function(
 						idIsLocal: true
 					}
 				},
-				validAppVersions: {
-					creation: "1.0.0",
-					from: "1.0.0",
-					to: "1.0.0"
-				},
 				oDataInformation: {
 					propertyName: "propertyName",
 					entityType: "entityType",
@@ -458,7 +439,6 @@ function(
 			assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});
 			assert.deepEqual(oCreatedFile.selector, {id: "control1"});
 			assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
-			assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
 			assert.deepEqual(oCreatedFile.oDataInformation, {propertyName: "propertyName", entityType: "entityType", oDataServiceUri: "oDataServiceUri"});
 			assert.ok(oCreatedFile.jsOnly);
 		});
@@ -490,11 +470,6 @@ function(
 						id: "controlTarget1",
 						idIsLocal: true
 					}
-				},
-				validAppVersions: {
-					creation: "1.0.0",
-					from: "1.0.0",
-					to: "1.0.0"
 				},
 				oDataInformation: {
 					propertyName: "propertyName",

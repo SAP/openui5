@@ -74,7 +74,6 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.reference Flex reference of the application
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
-		 * @param {string} [mPropertyBag.appVersion] Version of the application for which the reset takes place
 		 * @param {string} [mPropertyBag.generator] Generator with which the changes were created
 		 * @param {string} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter (comma-separated list)
 		 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset (comma-separated list)
@@ -92,7 +91,6 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.reference Flex reference of the application
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} mPropertyBag.changelist Transport Id
-		 * @param {string} [mPropertyBag.appVersion] Version of the application
 		 * @returns {Promise} Resolves as soon as the publish is completed without data
 		 */
 		publish: function (/* mPropertyBag */) {
@@ -108,7 +106,6 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
 		 * @param {string} mPropertyBag.reference Flex reference
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
-		 * @param {string} [mPropertyBag.appVersion] Version of the application
 		 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 		 */
 		getFlexInfo: function (/* mPropertyBag */) {

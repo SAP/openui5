@@ -389,17 +389,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when RTA gets started with an app version validation", function(assert) {
-			assert.expect(3);
-			this.oRta.setValidateAppVersion(true);
-			return this.oRta.start()
-			.catch(function(vError) {
-				assert.ok(true, "the start function rejects the promise");
-				assert.ok(typeof vError === 'string', "the a string error has been returned");
-				assert.ok(vError.includes('version'));
-			});
-		});
-
 		QUnit.test("when RTA gets started and DesignTime fails to start", function(assert) {
 			assert.expect(3);
 			sandbox.stub(DesignTime.prototype, "addRootElement").callsFake(function() {

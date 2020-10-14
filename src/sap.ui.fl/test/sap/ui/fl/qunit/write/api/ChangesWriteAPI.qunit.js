@@ -369,7 +369,6 @@ sap.ui.define([
 
 		QUnit.test("when create is called for a descriptor change with app version as a part of selector", function(assert) {
 			var sChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			this.vSelector.appVersion = "1.0.0";
 			var mPropertyBag = {
 				selector: this.vSelector,
 				changeSpecificData: {

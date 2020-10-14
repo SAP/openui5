@@ -134,7 +134,7 @@ sap.ui.define([
 		};
 
 		var checkChangesContent = function(sReference) {
-			var mChanges = ChangePersistenceFactory._instanceCache["sap.ui.fl.qunit.extensionPoint.testApp.Component"]["1.0.0"]._mChangesEntries;
+			var mChanges = ChangePersistenceFactory._instanceCache["sap.ui.fl.qunit.extensionPoint.testApp.Component"]._mChangesEntries;
 			//Changes on async view carries no ep info
 			assert.equal(mChanges[sReference + "_EP1_async_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo(), null, "oChange2 carries no extension point info");
 			assert.equal(mChanges[sReference + "_EP3_async_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo(), null, "oChange4 carries no extension point info");

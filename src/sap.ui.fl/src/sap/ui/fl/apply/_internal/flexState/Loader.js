@@ -61,7 +61,6 @@ sap.ui.define([
 
 			return ApplyStorage.loadFlexData({
 				reference: mPropertyBag.reference,
-				appVersion: Utils.getAppVersionFromManifest(mPropertyBag.manifest) || Utils.DEFAULT_APP_VERSION,
 				componentName: sComponentName,
 				cacheKey: ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.asyncHints),
 				siteId: Utils.getSiteIdByComponentData(mPropertyBag.componentData),

@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/base/util/includes",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Variant",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Variant"
 ], function(
 	includes,
 	JsControlTreeModifier,
-	Variant,
-	Utils
+	Variant
 ) {
 	"use strict";
 
@@ -58,7 +56,6 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.variantSpecificData - Property bag (nvp) holding the variant information (see sap.ui.fl.Variant#createInitialFileContentoPropertyBag).
 		 * The property "mPropertyBag.variantSpecificData.content.packageName" is set to $TMP internally since flex changes are always local when they are created.
 		 * @param {sap.ui.fl.variants.VariantModel} mPropertyBag.model - Variant model
-		 * @param {string} mPropertyBag.appVersion - App Version
 		 * @returns {sap.ui.fl.Variant} the created variant
 		 * @public
 		 */
@@ -76,11 +73,6 @@ sap.ui.define([
 
 			mPropertyBag.variantSpecificData.content.reference = mPropertyBag.model.sFlexReference; //in this case the component name can also be the value of sap-app-id
 			mPropertyBag.variantSpecificData.content.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
-
-			// fallback in case no application descriptor is available (e.g. during unit testing)
-			mPropertyBag.variantSpecificData.content.validAppVersions = Utils.getValidAppVersions(
-				mPropertyBag.appVersion, mPropertyBag.variantSpecificData.developerMode, mPropertyBag.variantSpecificData.scenario
-			);
 
 			oVariantFileContent = Variant.createInitialFileContent(mPropertyBag.variantSpecificData);
 			oVariant = new Variant(oVariantFileContent);
