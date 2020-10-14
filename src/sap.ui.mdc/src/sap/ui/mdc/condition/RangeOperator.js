@@ -28,7 +28,6 @@ sap.ui.define([
 		 * @param {string} [oConfiguration.filterOperator] should not be set
 		 * @param {string} [oConfiguration.tokenParse]
 		 * @param {string} [oConfiguration.tokenFormat]
-		 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
 		 * @param {string} [oConfiguration.label] additional array of labels for the values of the operator. Will be shown as placeholder text or label on the value fields.
 		 * @param {function} [oConfiguration.calcRange] function to calculate the date range of the operation. the function returns an array of UniversalDates.
 		 * @param {function} [oConfiguration.formatRange] function to format the date range.
@@ -49,10 +48,6 @@ sap.ui.define([
 				if (oConfiguration.label !== undefined) {
 					// label: array of strings of labels will be used as placeholder text inside the value fields on the defineConditionPanel.
 					this.aLabels = oConfiguration.label;
-				}
-
-				if (oConfiguration.additionalInfo !== undefined) {
-					this.additionalInfo = oConfiguration.additionalInfo;
 				}
 
 				if (oConfiguration.calcRange) {

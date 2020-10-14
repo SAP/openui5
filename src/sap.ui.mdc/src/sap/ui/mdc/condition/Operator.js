@@ -73,6 +73,7 @@ sap.ui.define([
 		 * @param {function} [oConfiguration.checkValidated] Function to check if a condition is validated (sets the <code>validated</code> flag
 		 * @param {boolean} [oConfiguration.exclude] If set, the operator is handled as exclude filter when creating the filters of all conditions
 		 * @param {boolean} [oConfiguration.validateInput] If set, the user input for this operator needs to be validated using a field help
+ 		 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.mdc.condition.Operator
@@ -184,6 +185,9 @@ sap.ui.define([
 				}
 				if (oConfiguration.checkValidated) {
 					this.checkValidated = oConfiguration.checkValidated;
+				}
+				if (oConfiguration.additionalInfo !== undefined) {
+					this.additionalInfo = oConfiguration.additionalInfo;
 				}
 
 				this.exclude = !!oConfiguration.exclude; // to have always a boolean value
