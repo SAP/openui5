@@ -16,6 +16,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var _private = TableUtils.createWeakMapFacade();
+
 	/**
 	 * Constructor for a new auto row mode.
 	 *
@@ -88,8 +90,9 @@ sap.ui.define([
 	AutoRowMode.prototype.init = function() {
 		RowMode.prototype.init.apply(this, arguments);
 
-		this.bRowCountAutoAdjustmentActive = false;
-		this.iLastAvailableSpace = 0;
+		_private(this).iPendingStartTableUpdateSignals = 0;
+		_private(this).bRowCountAutoAdjustmentActive = false;
+		_private(this).iLastAvailableSpace = 0;
 
 		/*
 		 * Flag indicating whether the table is a CSS flex item.
@@ -99,7 +102,7 @@ sap.ui.define([
 		 *
 		 * @type {boolean}
 		 */
-		this.bTableIsFlexItem = false;
+		_private(this).bTableIsFlexItem = false;
 
 		/**
 		 * Asynchronously calculates and applies the row count based on the available vertical space.
@@ -435,7 +438,8 @@ sap.ui.define([
 	AutoRowMode.prototype.stopAutoRowMode = function() {
 		this.deregisterResizeHandler();
 		this.adjustRowCountToAvailableSpaceAsync.cancel();
-		this.bRowCountAutoAdjustmentActive = false;
+		_private(this).bRowCountAutoAdjustmentActive = false;
+		signalEndTableUpdate(this);
 	};
 
 	/**
@@ -451,7 +455,6 @@ sap.ui.define([
 			TableUtils.registerResizeHandler(oTable, "AutoRowMode", this.onResize.bind(this), null, bOnTableParent === true);
 			TableUtils.registerResizeHandler(oTable, "AutoRowMode-BeforeTable", this.onResize.bind(this), "before");
 			TableUtils.registerResizeHandler(oTable, "AutoRowMode-AfterTable", this.onResize.bind(this), "after");
-			TableUtils.registerResizeHandler(oTable, "AutoRowMode-GridExtension", this.onResize.bind(this), "gridExtension");
 		}
 	};
 
@@ -464,7 +467,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 
 		if (oTable) {
-			TableUtils.deregisterResizeHandler(oTable, ["AutoRowMode, AutoRowMode-BeforeTable, AutoRowMode-AfterTable, AutoRowMode-GridExtension"]);
+			TableUtils.deregisterResizeHandler(oTable, ["AutoRowMode, AutoRowMode-BeforeTable, AutoRowMode-AfterTable"]);
 		}
 	};
 
@@ -479,6 +482,7 @@ sap.ui.define([
 		var iNewHeight = oEvent.size.height;
 
 		if (iOldHeight !== iNewHeight) {
+			signalStartTableUpdate(this);
 			this.adjustRowCountToAvailableSpaceAsync(TableUtils.RowsUpdateReason.Resize);
 		}
 	};
@@ -495,7 +499,8 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.bRowCountAutoAdjustmentActive) {
+		if (_private(this).bRowCountAutoAdjustmentActive) {
+			signalStartTableUpdate(this);
 			this.adjustRowCountToAvailableSpaceAsync(sReason);
 		}
 	};
@@ -515,18 +520,20 @@ sap.ui.define([
 		var oTableDomRef = oTable ? oTable.getDomRef() : null;
 
 		if (!oTable || oTable._bInvalid || !oTableDomRef || !sap.ui.getCore().isThemeApplied()) {
+			signalEndTableUpdate(this);
 			return;
 		}
 
-		this.bTableIsFlexItem = window.getComputedStyle(oTableDomRef.parentNode).display === "flex";
+		_private(this).bTableIsFlexItem = window.getComputedStyle(oTableDomRef.parentNode).display === "flex";
 
 		// If the table is invisible, it might get visible without re-rendering, which is basically the same as a resize.
 		// We need to react on that, but not adjust the row count now.
 		if (oTableDomRef.scrollHeight === 0) {
 			if (bStartAutomaticAdjustment) {
-				this.registerResizeHandler(!this.bTableIsFlexItem);
-				this.bRowCountAutoAdjustmentActive = true;
+				this.registerResizeHandler(!_private(this).bTableIsFlexItem);
+				_private(this).bRowCountAutoAdjustmentActive = true;
 			}
+			signalEndTableUpdate(this);
 			return;
 		}
 
@@ -565,9 +572,11 @@ sap.ui.define([
 		}
 
 		if (bStartAutomaticAdjustment) {
-			this.registerResizeHandler(!this.bTableIsFlexItem);
-			this.bRowCountAutoAdjustmentActive = true;
+			this.registerResizeHandler(!_private(this).bTableIsFlexItem);
+			_private(this).bRowCountAutoAdjustmentActive = true;
 		}
+
+		signalEndTableUpdate(this);
 	};
 
 	/**
@@ -590,7 +599,7 @@ sap.ui.define([
 		var iRowContainerHeight = oRowContainer.clientHeight;
 		var iPlaceholderHeight = oPlaceholder ? oPlaceholder.clientHeight : 0;
 
-		if (this.bTableIsFlexItem) {
+		if (_private(this).bTableIsFlexItem) {
 			var aChildNodes = oTableDomRef.childNodes;
 			for (var i = 0; i < aChildNodes.length; i++) {
 				iUsedHeight += aChildNodes[i].offsetHeight;
@@ -613,15 +622,15 @@ sap.ui.define([
 			iUsedHeight += mDefaultScrollbarHeight[Device.browser.name];
 		}
 
-		var oReferenceElement = this.bTableIsFlexItem ? oTableDomRef : oTableDomRef.parentNode;
+		var oReferenceElement = _private(this).bTableIsFlexItem ? oTableDomRef : oTableDomRef.parentNode;
 		var iNewAvailableSpace = Math.max(0, Math.floor(jQuery(oReferenceElement).height() - iUsedHeight));
-		var iAvailableSpaceDifference = Math.abs(iNewAvailableSpace - this.iLastAvailableSpace);
+		var iAvailableSpaceDifference = Math.abs(iNewAvailableSpace - _private(this).iLastAvailableSpace);
 
 		if (iAvailableSpaceDifference >= 5) {
-			this.iLastAvailableSpace = iNewAvailableSpace;
+			_private(this).iLastAvailableSpace = iNewAvailableSpace;
 		}
 
-		return this.iLastAvailableSpace;
+		return _private(this).iLastAvailableSpace;
 	};
 
 	/**
@@ -646,6 +655,18 @@ sap.ui.define([
 			this.startAutoRowMode();
 		}
 	};
+
+	function signalStartTableUpdate(oRowMode) {
+		_private(oRowMode).iPendingStartTableUpdateSignals++;
+		TableUtils.Hook.call(oRowMode.getTable(), TableUtils.Hook.Keys.Signal, "StartTableUpdate");
+	}
+
+	function signalEndTableUpdate(oRowMode) {
+		for (var i = 0; i < _private(oRowMode).iPendingStartTableUpdateSignals; i++) {
+			TableUtils.Hook.call(oRowMode.getTable(), TableUtils.Hook.Keys.Signal, "EndTableUpdate");
+		}
+		_private(oRowMode).iPendingStartTableUpdateSignals = 0;
+	}
 
 	return AutoRowMode;
 });

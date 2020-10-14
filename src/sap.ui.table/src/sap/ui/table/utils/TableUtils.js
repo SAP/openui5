@@ -1484,6 +1484,40 @@ sap.ui.define([
 			if (oElement && oDelegate) {
 				oElement.removeDelegate(oDelegate);
 			}
+		},
+
+		/**
+		 * Creates a <code>WeakMap</code> and returns a facade to simplify the access. Indirect access to the <code>WeakMap</code> is provided
+		 * with the returned function. As the first argument, this function expects to receive the key of type <code>object</code>, and it returns the
+		 * value for this key.
+		 *
+		 * Due to the usage of <code>WeakMap</code>, key and value have a weak reference. If there are no more references to the key, the
+		 * value will also be picked up by the garbage collector. <b>Make sure to not hold any strong references to the these objects!</b>
+		 *
+		 * @example
+		 * var oStorage = TableUtils.createWeakMapFacade();
+		 * oStorage(oMyObject); // returns {}
+		 * oStorage(oMyOtherObject); // returns {}
+		 * oStorage(oMyObject).foo = "bar";
+		 * oStorage(oMyObject); // returns {foo: "bar"}
+		 * oStorage(oMyOtherObject); // returns {}
+		 *
+		 * @returns {function(object):object | null} The function to access a value by key. Returns <code>null</code> if the key is not an object.
+		 */
+		createWeakMapFacade: function() {
+			var oWeakMap = new window.WeakMap();
+
+			return function(oKey) {
+				if (!oKey || !(typeof oKey === "object")) {
+					return null;
+				}
+
+				if (!oWeakMap.has(oKey)) {
+					oWeakMap.set(oKey, {});
+				}
+
+				return oWeakMap.get(oKey);
+			};
 		}
 	};
 

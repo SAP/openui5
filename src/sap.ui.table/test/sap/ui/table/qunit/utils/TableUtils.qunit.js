@@ -1362,15 +1362,23 @@ sap.ui.define([
 		oDelegateSpy.restore();
 	});
 
-	QUnit.module("Cozy", {
-		beforeEach: function() {
-			jQuery(document.body).toggleClass("sapUiSizeCozy", true);
-			createTables();
-		},
-		afterEach: function() {
-			destroyTables();
-			jQuery(document.body).toggleClass("sapUiSizeCozy", false);
-		}
+	QUnit.test("createWeakMapFacade", function(assert) {
+		var oWeakMapFacade = TableUtils.createWeakMapFacade();
+		var oKeyA = {};
+		var oKeyB = {};
+
+		assert.strictEqual(oWeakMapFacade(undefined), null, "WeakMap is not accessible if the key is undefined");
+		assert.strictEqual(oWeakMapFacade(null), null, "WeakMap is not accessible if the key is null");
+		assert.strictEqual(oWeakMapFacade("not an object"), null, "WeakMap is not accessible if the key is a string");
+
+		assert.deepEqual(oWeakMapFacade(oKeyA), {}, "New value object created vor key A");
+		assert.deepEqual(oWeakMapFacade(oKeyB), {}, "New value object created for key B");
+
+		oWeakMapFacade(oKeyA).foo = "bar";
+		assert.deepEqual(oWeakMapFacade(oKeyA), {foo: "bar"}, "Value of key A was changed");
+		assert.deepEqual(oWeakMapFacade(oKeyB), {}, "Value of key B was not changed");
+
+		assert.deepEqual(TableUtils.createWeakMapFacade()(oKeyA), {}, "New value object created vor key A in another WeakMap");
 	});
 
 	QUnit.module("Resize Handler", {

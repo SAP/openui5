@@ -16,6 +16,7 @@ sap.ui.define([
 
 	var SharedDomRef = library.SharedDomRef;
 	var Hook = TableUtils.Hook.Keys;
+	var _private = TableUtils.createWeakMapFacade();
 
 	/*
 	 * Maximum width/height of elements in pixel:
@@ -344,45 +345,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Static object to store internal instance information that should not be exposed but be hidden in this extension.
-	 */
-	var internalMap = new window.WeakMap();
-	var internal = function(oTable) {
-		if (!oTable) {
-			return {};
-		}
-
-		if (!internalMap.has(oTable)) {
-			internalMap.set(oTable, {
-				// Horizontal scrolling
-				oHorizontalScrollbar: null,
-				iHorizontalScrollPosition: null,
-
-				// Vertical scrolling
-				oVerticalScrollbar: null,
-				oVerticalScrollPosition: new ScrollPosition(oTable),
-				pVerticalScrollUpdateProcess: null,
-
-				// External vertical scrolling
-				oExternalVerticalScrollbar: null,
-				bIsVerticalScrollbarExternal: false,
-
-				// Timers
-				mTimeouts: {},
-				mAnimationFrames: {},
-
-				mTouchSessionData: null,
-				aOnRowsUpdatedPreprocessors: []
-			});
-		}
-
-		return internalMap.get(oTable);
-	};
-	internal.destroy = function(oTable) {
-		delete internalMap.delete(oTable);
-	};
-
-	/**
 	 * Helper for vertical scroll update processes.
 	 */
 	var VerticalScrollProcess = {
@@ -395,7 +357,7 @@ sap.ui.define([
 		UpdateFromViewport: {id: "UpdateFromViewport", rank: 1},
 
 		canStart: function(oTable, oProcessInfo) {
-			var pCurrentProcess = internal(oTable).pVerticalScrollUpdateProcess;
+			var pCurrentProcess = _private(oTable).pVerticalScrollUpdateProcess;
 			var oCurrentProcessInfo = pCurrentProcess ? pCurrentProcess.getInfo() : null;
 
 			if (pCurrentProcess && pCurrentProcess.isRunning() && oCurrentProcessInfo.rank > oProcessInfo.rank) {
@@ -411,11 +373,11 @@ sap.ui.define([
 				return;
 			}
 
-			if (internal(oTable).pVerticalScrollUpdateProcess) {
-				internal(oTable).pVerticalScrollUpdateProcess.cancel();
+			if (_private(oTable).pVerticalScrollUpdateProcess) {
+				_private(oTable).pVerticalScrollUpdateProcess.cancel();
 			}
 
-			internal(oTable).pVerticalScrollUpdateProcess = new Process(fnProcessExecutor, oProcessInfo);
+			_private(oTable).pVerticalScrollUpdateProcess = new Process(fnProcessExecutor, oProcessInfo);
 		}
 	};
 
@@ -455,7 +417,7 @@ sap.ui.define([
 					}
 				}
 
-				internal(this).iHorizontalScrollPosition = iNewScrollLeft;
+				_private(this).iHorizontalScrollPosition = iNewScrollLeft;
 			}
 		},
 
@@ -469,7 +431,7 @@ sap.ui.define([
 			var oScrollExtension = oTable._getScrollExtension();
 			var oHSb = oScrollExtension.getHorizontalScrollbar();
 
-			if (oHSb && internal(oTable).iHorizontalScrollPosition !== null) {
+			if (oHSb && _private(oTable).iHorizontalScrollPosition !== null) {
 				var aScrollTargets = HorizontalScrollingHelper.getScrollAreas(oTable);
 
 				for (var i = 0; i < aScrollTargets.length; i++) {
@@ -477,8 +439,8 @@ sap.ui.define([
 					delete oScrollTarget._scrollLeft;
 				}
 
-				if (oHSb.scrollLeft !== internal(oTable).iHorizontalScrollPosition) {
-					oHSb.scrollLeft = internal(oTable).iHorizontalScrollPosition;
+				if (oHSb.scrollLeft !== _private(oTable).iHorizontalScrollPosition) {
+					oHSb.scrollLeft = _private(oTable).iHorizontalScrollPosition;
 				} else {
 					var oEvent = jQuery.Event("scroll");
 					oEvent.target = oHSb;
@@ -653,7 +615,7 @@ sap.ui.define([
 						return;
 					}
 
-					var oScrollPosition = internal(oTable).oVerticalScrollPosition;
+					var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 
 					log("VerticalScrollingHelper.performUpdateFromScrollPosition (async: firstVisibleRow update)", oTable);
 
@@ -682,11 +644,9 @@ sap.ui.define([
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 */
 		performUpdateFromScrollbar: function(oTable) {
-			var _internal = internal(oTable);
-
 			log("VerticalScrollingHelper.performUpdateFromScrollbar", oTable);
-			clearTimeout(_internal.mTimeouts.largeDataScrolling);
-			delete _internal.mTimeouts.largeDataScrolling;
+			clearTimeout(_private(oTable).mTimeouts.largeDataScrolling);
+			delete _private(oTable).mTimeouts.largeDataScrolling;
 
 			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromScrollbar, function(resolve, reject, oProcessInterface) {
 				TableUtils.Hook.call(oTable, Hook.Signal, "StartTableUpdate");
@@ -700,8 +660,8 @@ sap.ui.define([
 				oTable._getKeyboardExtension().setActionMode(false);
 
 				if (oTable._bLargeDataScrolling) {
-					_internal.mTimeouts.largeDataScrolling = setTimeout(function() {
-						delete _internal.mTimeouts.largeDataScrolling;
+					_private(oTable).mTimeouts.largeDataScrolling = setTimeout(function() {
+						delete _private(oTable).mTimeouts.largeDataScrolling;
 
 						if (oTable._getScrollExtension().getVerticalScrollbar() != null) {
 							log("VerticalScrollingHelper.performUpdateFromScrollbar (async: large data scrolling)", oTable);
@@ -712,9 +672,9 @@ sap.ui.define([
 					}, 300);
 
 					oProcessInterface.addCancelListener(function() {
-						if (_internal.mTimeouts.largeDataScrolling != null) {
-							clearTimeout(_internal.mTimeouts.largeDataScrolling);
-							delete _internal.mTimeouts.largeDataScrolling;
+						if (_private(oTable).mTimeouts.largeDataScrolling != null) {
+							clearTimeout(_private(oTable).mTimeouts.largeDataScrolling);
+							delete _private(oTable).mTimeouts.largeDataScrolling;
 							resolve();
 						}
 					});
@@ -736,7 +696,7 @@ sap.ui.define([
 					return Promise.resolve();
 				}
 
-				var oScrollPosition = internal(oTable).oVerticalScrollPosition;
+				var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 				var iIndex = oScrollPosition.getIndex();
 				var iMaxFirstRenderedRowIndex = oTable._getMaxFirstRenderedRowIndex();
 				var aRowHeights = oTable._aRowHeights;
@@ -845,7 +805,7 @@ sap.ui.define([
 
 			bSuppressRendering = bSuppressRendering === true;
 
-			var oScrollPosition = internal(oTable).oVerticalScrollPosition;
+			var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 			var iNewIndex = oScrollPosition.getIndex();
 			var iOldIndex = oTable.getFirstVisibleRow();
 			var bNewIndexIsInBuffer = VerticalScrollingHelper.isIndexInBuffer(oTable, iNewIndex);
@@ -911,7 +871,7 @@ sap.ui.define([
 
 			bForceFirstVisibleRowChangedEvent = bForceFirstVisibleRowChangedEvent === true;
 
-			var oScrollPosition = internal(oTable).oVerticalScrollPosition;
+			var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 			var iIndex = oScrollPosition.getIndex();
 
 			if (!VerticalScrollingHelper.isIndexInBuffer(oTable, iIndex)) {
@@ -983,7 +943,7 @@ sap.ui.define([
 			}
 
 			log("VerticalScrollingHelper.adjustScrollPositionToFirstVisibleRow", oTable);
-			internal(oTable).oVerticalScrollPosition.setPosition(oTable.getFirstVisibleRow());
+			_private(oTable).oVerticalScrollPosition.setPosition(oTable.getFirstVisibleRow());
 
 			return Promise.resolve();
 		},
@@ -1000,7 +960,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
-			var oScrollPosition = internal(oTable).oVerticalScrollPosition;
+			var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 			var nScrollbarScrollTop = VerticalScrollingHelper.getScrollPositionOfScrollbar(oTable);
 			var iScrollRange = VerticalScrollingHelper.getScrollRange(oTable);
 			var nScrollRangeRowFraction = VerticalScrollingHelper.getScrollRangeRowFraction(oTable);
@@ -1081,7 +1041,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
-			var oScrollPosition = internal(oTable).oVerticalScrollPosition;
+			var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 			var aRowHeights = oTable._aRowHeights;
 			var iNewIndex = oTable._iRenderedFirstVisibleRow;
 			var iNewOffset = 0;
@@ -1119,7 +1079,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
-			var oScrollPosition = internal(oTable).oVerticalScrollPosition;
+			var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 			var oViewport = oTable.getDomRef("tableCCnt");
 			var iScrollRange = VerticalScrollingHelper.getScrollRangeOfViewport(oTable);
 			var aRowHeights = oTable._aRowHeights;
@@ -1236,8 +1196,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
-			var _internal = internal(oTable);
-			var oScrollPosition = _internal.oVerticalScrollPosition;
+			var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 			var iIndex = oScrollPosition.getIndex();
 			var iBuffer = VerticalScrollingHelper.getScrollRangeBuffer(oTable);
 			var iScrollRange = VerticalScrollingHelper.getScrollRange(oTable);
@@ -1474,7 +1433,7 @@ sap.ui.define([
 		 * @private
 		 */
 		addOnRowsUpdatedPreprocessor: function(oTable, fnPreprocessor) {
-			internal(oTable).aOnRowsUpdatedPreprocessors.push(fnPreprocessor);
+			_private(oTable).aOnRowsUpdatedPreprocessors.push(fnPreprocessor);
 		},
 
 		/**
@@ -1489,14 +1448,14 @@ sap.ui.define([
 		 */
 		removeOnRowsUpdatedPreprocessor: function(oTable, fnPreprocessor) {
 			if (!fnPreprocessor) {
-				internal(oTable).aOnRowsUpdatedPreprocessors = [];
+				_private(oTable).aOnRowsUpdatedPreprocessors = [];
 				return false;
 			}
 
-			var iIndex = internal(oTable).aOnRowsUpdatedPreprocessors.indexOf(fnPreprocessor);
+			var iIndex = _private(oTable).aOnRowsUpdatedPreprocessors.indexOf(fnPreprocessor);
 
 			if (iIndex > -1) {
-				internal(oTable).aOnRowsUpdatedPreprocessors.splice(iIndex, 1);
+				_private(oTable).aOnRowsUpdatedPreprocessors.splice(iIndex, 1);
 				return true;
 			}
 
@@ -1514,10 +1473,10 @@ sap.ui.define([
 
 			this._getScrollExtension().updateVerticalScrollbarVisibility();
 
-			if (internal(this).aOnRowsUpdatedPreprocessors.length > 0) {
+			if (_private(this).aOnRowsUpdatedPreprocessors.length > 0) {
 				log("VerticalScrollingHelper.onRowsUpdated (preprocessors)", this);
 
-				var bExecuteDefault = internal(this).aOnRowsUpdatedPreprocessors.reduce(function(bExecuteDefault, fnPreprocessor) {
+				var bExecuteDefault = _private(this).aOnRowsUpdatedPreprocessors.reduce(function(bExecuteDefault, fnPreprocessor) {
 					var _bExecuteDefault = fnPreprocessor.call(this, oEvent);
 					return !(bExecuteDefault && !_bExecuteDefault);
 				}, true);
@@ -1601,7 +1560,7 @@ sap.ui.define([
 		},
 
 		_restoreScrollPosition: function(oTable) {
-			var oScrollPosition = internal(oTable).oVerticalScrollPosition;
+			var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 			var bScrollPositionIsInitial = oScrollPosition.isInitial();
 
 			log("VerticalScrollingHelper.restoreScrollPosition: "
@@ -1626,7 +1585,7 @@ sap.ui.define([
 
 				oProcessInterface.onPromiseCreated = function(oPromise) {
 					oPromise.then(function() {
-						if (oProcessInterface.isCancelled() || internal(oTable).oVerticalScrollPosition.isInitial()) {
+						if (oProcessInterface.isCancelled() || _private(oTable).oVerticalScrollPosition.isInitial()) {
 							return;
 						}
 
@@ -1639,7 +1598,7 @@ sap.ui.define([
 					});
 				};
 
-				if (internal(oTable).oVerticalScrollPosition.isInitial()) {
+				if (_private(oTable).oVerticalScrollPosition.isInitial()) {
 					resolve();
 				} else {
 					var fnOnRowsUpdatedPreprocessor = function() {
@@ -1784,7 +1743,7 @@ sap.ui.define([
 			} else if (!bHorizontalScrolling && (mOptions.scrollDirection === ScrollDirection.VERTICAL
 												 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
 				var oVSb = oScrollExtension.getVerticalScrollbar();
-				var oVerticalScrollPosition = internal(this).oVerticalScrollPosition;
+				var oVerticalScrollPosition = _private(this).oVerticalScrollPosition;
 
 				if (bScrollingForward) {
 					bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
@@ -1834,7 +1793,7 @@ sap.ui.define([
 				var oVSb = oScrollExtension.getVerticalScrollbar();
 				var oTouchObject = oEvent.touches ? oEvent.touches[0] : oEvent;
 
-				internal(this).mTouchSessionData = {
+				_private(this).mTouchSessionData = {
 					initialPageX: oTouchObject.pageX,
 					initialPageY: oTouchObject.pageY,
 					initialScrollTop: oVSb ? oVSb.scrollTop : 0,
@@ -1857,7 +1816,7 @@ sap.ui.define([
 			}
 
 			var oScrollExtension = this._getScrollExtension();
-			var mTouchSessionData = internal(this).mTouchSessionData;
+			var mTouchSessionData = _private(this).mTouchSessionData;
 
 			if (!mTouchSessionData) {
 				return;
@@ -2218,6 +2177,28 @@ sap.ui.define([
 		 * @returns {string} The name of this extension.
 		 */
 		_init: function(oTable, sTableType, mSettings) {
+			var _ = _private(oTable);
+
+			// Horizontal scrolling
+			_.oHorizontalScrollbar = null;
+			_.iHorizontalScrollPosition = null;
+
+			// Vertical scrolling
+			_.oVerticalScrollbar = null;
+			_.oVerticalScrollPosition = new ScrollPosition(oTable);
+			_.pVerticalScrollUpdateProcess = null;
+
+			// External vertical scrolling
+			_.oExternalVerticalScrollbar = null;
+			_.bIsVerticalScrollbarExternal = false;
+
+			// Timers
+			_.mTimeouts = {};
+			_.mAnimationFrames = {};
+
+			_.mTouchSessionData = null;
+			_.aOnRowsUpdatedPreprocessors = [];
+
 			TableUtils.addDelegate(oTable, ExtensionDelegate, oTable);
 			return "ScrollExtension";
 		},
@@ -2253,14 +2234,16 @@ sap.ui.define([
 		destroy: function() {
 			var oTable = this.getTable();
 
-			TableUtils.removeDelegate(oTable, ExtensionDelegate);
 			this._clearCache();
 
-			if (internal(oTable).pVerticalScrollUpdateProcess) {
-				internal(oTable).pVerticalScrollUpdateProcess.cancel();
-				internal(oTable).pVerticalScrollUpdateProcess = null;
+			if (oTable) {
+				TableUtils.removeDelegate(oTable, ExtensionDelegate);
+
+				if (_private(oTable).pVerticalScrollUpdateProcess) {
+					_private(oTable).pVerticalScrollUpdateProcess.cancel();
+					_private(oTable).pVerticalScrollUpdateProcess = null;
+				}
 			}
-			internal.destroy(oTable);
 
 			ExtensionBase.prototype.destroy.apply(this, arguments);
 		}
@@ -2364,14 +2347,18 @@ sap.ui.define([
 	ScrollExtension.prototype.getHorizontalScrollbar = function() {
 		var oTable = this.getTable();
 
-		if (oTable && !oTable._bInvalid && !internal(oTable).oHorizontalScrollbar) {
+		if (!oTable) {
+			return null;
+		}
+
+		if (!oTable._bInvalid && !_private(oTable).oHorizontalScrollbar) {
 			// If the table is invalid and about to be (re-)rendered, the scrollbar element will be removed from DOM. The reference to the new
 			// scrollbar element can be obtained only after rendering.
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
-			internal(oTable).oHorizontalScrollbar = oTable.getDomRef(SharedDomRef.HorizontalScrollBar);
+			_private(oTable).oHorizontalScrollbar = oTable.getDomRef(SharedDomRef.HorizontalScrollBar);
 		}
 
-		return internal(oTable).oHorizontalScrollbar || null;
+		return _private(oTable).oHorizontalScrollbar;
 	};
 
 	/**
@@ -2386,18 +2373,22 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var bIsExternal = this.isVerticalScrollbarExternal();
 
-		if (oTable && !oTable._bInvalid && !internal(oTable).oVerticalScrollbar) {
+		if (!oTable) {
+			return null;
+		}
+
+		if (!oTable._bInvalid && !_private(oTable).oVerticalScrollbar) {
 			// If the table is invalid and about to be (re-)rendered, the scrollbar element will be removed from DOM. The reference to the new
 			// scrollbar element can be obtained only after rendering.
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
-			internal(oTable).oVerticalScrollbar = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
+			_private(oTable).oVerticalScrollbar = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
 
-			if (!internal(oTable).oVerticalScrollbar && bIsExternal) {
-				internal(oTable).oVerticalScrollbar = internal(oTable).oExternalVerticalScrollbar;
+			if (!_private(oTable).oVerticalScrollbar && bIsExternal) {
+				_private(oTable).oVerticalScrollbar = _private(oTable).oExternalVerticalScrollbar;
 			}
 		}
 
-		var oScrollbar = internal(oTable).oVerticalScrollbar;
+		var oScrollbar = _private(oTable).oVerticalScrollbar;
 
 		if (oScrollbar && !bIsExternal && !bIgnoreDOMConnection && !isConnected(oScrollbar)) {
 			// The internal scrollbar was removed from DOM without notifying the table.
@@ -2405,7 +2396,7 @@ sap.ui.define([
 			return null;
 		}
 
-		return oScrollbar || null;
+		return oScrollbar;
 	};
 
 	/**
@@ -2434,7 +2425,8 @@ sap.ui.define([
 	 * @returns {boolean} Whether the vertical scrollbar is external.
 	 */
 	ScrollExtension.prototype.isVerticalScrollbarExternal = function() {
-		return internal(this.getTable()).bIsVerticalScrollbarExternal;
+		var oTable = this.getTable();
+		return oTable ? _private(oTable).bIsVerticalScrollbarExternal : false;
 	};
 
 	/**
@@ -2444,9 +2436,11 @@ sap.ui.define([
 	 * @param {HTMLElement} oScrollbarElement The reference to the external scrollbar element.
 	 */
 	ScrollExtension.prototype.markVerticalScrollbarAsExternal = function(oScrollbarElement) {
-		if (oScrollbarElement) {
-			internal(this.getTable()).bIsVerticalScrollbarExternal = true;
-			internal(this.getTable()).oExternalVerticalScrollbar = oScrollbarElement;
+		var oTable = this.getTable();
+
+		if (oTable && oScrollbarElement) {
+			_private(oTable).bIsVerticalScrollbarExternal = true;
+			_private(oTable).oExternalVerticalScrollbar = oScrollbarElement;
 		}
 	};
 
@@ -2743,9 +2737,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ScrollExtension.prototype._clearCache = function() {
+		var oTable = this.getTable();
+
+		if (!oTable) {
+			return;
+		}
+
 		// Clear cached DOM references.
-		internal(this.getTable()).oVerticalScrollbar = null;
-		internal(this.getTable()).oHorizontalScrollbar = null;
+		_private(oTable).oVerticalScrollbar = null;
+		_private(oTable).oHorizontalScrollbar = null;
 	};
 
 	ScrollExtension.ScrollDirection = ScrollDirection;

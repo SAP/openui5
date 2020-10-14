@@ -635,11 +635,8 @@ sap.ui.define([
 			}
 
 			if ((mSizes.height != null && mSizes.height != sOldHeight) || (mSizes.width != null && mSizes.width != sOldWidth)) {
-				return Promise.race([
-					// Default of IntervalTrigger singleton used by ResizeHandler is 200ms. Wait for 2 more frames to give the table time to react.
-					TableQUnitUtils.wait(201).then(TableQUnitUtils.$wait()).then(TableQUnitUtils.$wait()),
-					oTable.qunit.whenNextRenderingFinished()
-				]);
+				// Give the table time to react. Default interval of IntervalTrigger singleton that is used by the ResizeHandler is 200ms.
+				return TableQUnitUtils.wait(250).then(oTable.qunit.whenRenderingFinished);
 			} else {
 				return Promise.resolve();
 			}
