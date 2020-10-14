@@ -115,6 +115,15 @@ function(
 			target : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
+			 * Specifies the value of the HTML <code>rel<code> attribute.
+			 *
+			 * <b>Note:</b> A default value of <code>noopener noreferrer<code> is set only to links that have a cross-origin URL
+			 * and a specified <code>target</code> with value other than <code>_self</code>.
+			 * @since 1.84
+			 */
+			rel : {type : "string", group : "Behavior", defaultValue : null},
+
+			/**
 			 * Determines the width of the link (CSS-size such as % or px). When it is set, this is the exact size.
 			 * When left blank, the text defines the size.
 			 */
