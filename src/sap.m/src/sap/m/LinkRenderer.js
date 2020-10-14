@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
- sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
-	function(Renderer, coreLibrary) {
+ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', "sap/ui/util/defaultLinkTypes"],
+	function(Renderer, coreLibrary, defaultLinkTypes) {
 	"use strict";
 
 
@@ -31,6 +31,7 @@
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
 			bShouldHaveOwnLabelledBy = oControl._determineSelfReferencePresence(),
 			sHref = oControl.getHref(),
+			sRel = defaultLinkTypes(oControl.getRel(), sHref, oControl.getTarget()),
 			oAccAttributes =  {
 				role: sHref ? "" : "button",
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
@@ -88,6 +89,10 @@
 
 		if (oControl.getTarget()) {
 			oRm.attr("target", oControl.getTarget());
+		}
+
+		if (sRel) {
+			oRm.attr("rel", sRel);
 		}
 
 		if (oControl.getWidth()) {

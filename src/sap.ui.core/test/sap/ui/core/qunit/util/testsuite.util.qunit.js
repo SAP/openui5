@@ -127,6 +127,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			LabelEnablement: {},
 			Mobile: {},
+			OpenWindow: {},
 			Popup: {
 				page: "test-resources/sap/ui/core/qunit/util/Popup.qunit.html",
 				qunit: {
