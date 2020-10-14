@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/m/DatePicker", // don't want to test async loading in Field here
 	"sap/m/Text", // don't want to test async loading in Field here
 	"sap/m/Button", // test custom control
-	"sap/ui/core/ListItem"
+	"sap/ui/core/ListItem",
+	"sap/base/util/merge"
 ], function(
 		jQuery,
 		qutils,
@@ -47,7 +48,8 @@ sap.ui.define([
 		DatePicker,
 		Text,
 		Button,
-		ListItem
+		ListItem,
+		merge
 		) {
 	"use strict";
 
@@ -148,6 +150,10 @@ sap.ui.define([
 
 	QUnit.test("bind filled condition Model", function(assert) {
 
+		var oFormatOptions = merge({}, oDefineConditionPanelView.getFormatOptions());
+		oFormatOptions.maxConditions = 4;
+		oDefineConditionPanelView.setFormatOptions(oFormatOptions); // to test visibility of add button
+
 		sinon.spy(oDefineConditionPanelView, "updateDefineConditions");
 		// update twice to test only one call of dummy row
 
@@ -172,23 +178,38 @@ sap.ui.define([
 		var fnDone = assert.async();
 
 		setTimeout(function () {
+			sap.ui.getCore().applyChanges();
 			assert.ok(oDefineConditionPanelView.updateDefineConditions.calledOnce, "updateDefineConditions called once");
 			assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			assert.equal(aContent.length, 13, "three rows with one field created - Grid contains 13 controls");
+
 
 			var oAddBtn = sap.ui.getCore().byId("DCP1--addBtn");
-			assert.ok(oAddBtn.getVisible(), "Button is visible");
+			var oGridData = oAddBtn.getLayoutData();
+			assert.ok(oGridData.getVisibleL(), "Add-Button is visible");
 			oAddBtn.firePress();
-			sap.ui.getCore().applyChanges();
-			assert.equal(oModel.getConditions("Name").length, 4, "4 conditions should exist");
+			setTimeout(function () { // as condition rendering is triggered async.
+				sap.ui.getCore().applyChanges();
+				assert.equal(oModel.getConditions("Name").length, 4, "4 conditions should exist");
+				aContent = oGrid.getContent();
+				assert.equal(aContent.length, 17, "four rows with one field created - Grid contains 17 controls");
+				assert.notOk(oGridData.getVisibleL(), "Add-Button is not visible");
 
-			var oRemoveBtn = sap.ui.getCore().byId("DCP1--2--removeBtnLarge");
-			oRemoveBtn.firePress();
-			sap.ui.getCore().applyChanges();
-			assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
-			oAddBtn = sap.ui.getCore().byId("DCP1--addBtn");
-			assert.ok(oAddBtn.getVisible(), "Button is visible");
+				var oRemoveBtn = sap.ui.getCore().byId("DCP1--2--removeBtnLarge");
+				oRemoveBtn.firePress();
+				setTimeout(function () { // as condition rendering is triggered async.
+					sap.ui.getCore().applyChanges();
+					assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
+					assert.ok(oGridData.getVisibleL(), "Add-Button is visible");
+					assert.ok(oAddBtn.getVisible(), "Button is visible");
+					aContent = oGrid.getContent();
+					assert.equal(aContent.length, 13, "three rows with one field created - Grid contains 13 controls");
 
-			fnDone();
+					fnDone();
+				}, 0);
+			}, 0);
 		}, 0);
 
 	});
@@ -232,7 +253,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("change condition operator", function(assert) {
+	QUnit.test("change condition operator EQ->BT", function(assert) {
 
 		oModel.setData({
 			conditions: {
@@ -253,6 +274,7 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				var aConditions = oDefineConditionPanelView.getConditions();
 				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+				assert.deepEqual(aConditions[0].values, ["Andreas", null], "Values set on condition");
 
 				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
 				var aContent = oGrid.getContent();
@@ -264,6 +286,80 @@ sap.ui.define([
 				assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
 				assert.equal(oField1.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_FROM"), "Placeholder of Field1");
 				assert.equal(oField2.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_TO"), "Placeholder of Field2");
+				assert.equal(oField1.getValue(), "Andreas", "Field1 value not changed");
+				assert.equal(oField2.getValue(), null, "Field2 value is empty");
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("change condition operator BT->EQ", function(assert) {
+
+		oModel.setData({
+			conditions: {
+				Name: [
+					   Condition.createCondition("BT", ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
+			}
+		});
+
+		var fnDone = assert.async();
+		setTimeout(function () { // wait for rendering
+			sap.ui.getCore().applyChanges();
+			var oOperatorField = sap.ui.getCore().byId("DCP1--0-operator-inner");
+			oOperatorField.setValue("EQ");
+			oOperatorField.fireChange({value: "EQ"}); // fake item select
+
+			setTimeout(function () { // as model update is async
+				sap.ui.getCore().applyChanges();
+				var aConditions = oDefineConditionPanelView.getConditions();
+				assert.equal(aConditions[0].operator, "EQ", "Operator set on condition");
+				assert.deepEqual(aConditions[0].values, ["A"], "Values set on condition");
+
+				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var aContent = oGrid.getContent();
+				var oField1 = aContent[2];
+
+				assert.equal(aContent.length, 5, "One row with one fields created - Grid contains 5 controls");
+				assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
+				assert.equal(oField1.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE"), "Placeholder of Field1");
+				assert.equal(oField1.getValue(), "A", "Field1 value not changed");
+
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("change condition operator BT->Empty", function(assert) {
+
+		oModel.setData({
+			conditions: {
+				Name: [
+					   Condition.createCondition("BT", ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
+			}
+		});
+
+		var fnDone = assert.async();
+		setTimeout(function () { // wait for rendering
+			sap.ui.getCore().applyChanges();
+			var oOperatorField = sap.ui.getCore().byId("DCP1--0-operator-inner");
+			oOperatorField.setValue("Empty");
+			oOperatorField.fireChange({value: "Empty"}); // fake item select
+
+			setTimeout(function () { // as model update is async
+				sap.ui.getCore().applyChanges();
+				var aConditions = oDefineConditionPanelView.getConditions();
+				assert.equal(aConditions[0].operator, "Empty", "Operator set on condition");
+				assert.deepEqual(aConditions[0].values, [], "Values set on condition");
+
+				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var aContent = oGrid.getContent();
+
+				assert.equal(aContent.length, 4, "One row with no fields created - Grid contains 4 controls");
+
 				fnDone();
 			}, 0);
 		}, 0);
@@ -500,7 +596,63 @@ sap.ui.define([
 							assert.ok(oType instanceof DateType, "Type of Field binding");
 							assert.notOk(oField.getValue(), "no Value");
 
-							fnDone();
+							oOperatorField.setValue("TODAYXYDAYS");
+							oOperatorField.fireChange({value: "TODAYXYDAYS"}); // fake item select
+
+							setTimeout(function () { // as model update is async
+								sap.ui.getCore().applyChanges();
+								aContent = oGrid.getContent();
+								oField = aContent[2];
+								assert.equal(aContent.length, 6, "One row with two field created - Grid contains 6 controls");
+								aContent = oField && oField.getAggregation("_content");
+								oControl = aContent && aContent.length > 0 && aContent[0];
+								assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
+								oType = oField.getBindingInfo("value").type;
+								assert.ok(oType instanceof IntegerType, "Type of Field binding");
+								assert.notOk(oField.getValue(), "no Value");
+								oControl.setValue("6");
+								oControl.fireChange({value: "6"}); //fake input
+
+								aContent = oGrid.getContent();
+								oField = aContent[3];
+								aContent = oField && oField.getAggregation("_content");
+								oControl = aContent && aContent.length > 0 && aContent[0];
+								assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "second Field uses Input");
+								oType = oField.getBindingInfo("value").type;
+								assert.ok(oType instanceof IntegerType, "Type of second Field binding");
+								assert.notOk(oField.getValue(), "no Value");
+								oControl.setValue("6");
+								oControl.fireChange({value: "6"}); //fake input
+
+								setTimeout(function () { // as model update is async
+									oOperatorField.setValue("BT");
+									oOperatorField.fireChange({value: "BT"}); // fake item select
+
+									setTimeout(function () { // as model update is async
+										sap.ui.getCore().applyChanges();
+										aContent = oGrid.getContent();
+										oField = aContent[2];
+										assert.equal(aContent.length, 6, "One row with two field created - Grid contains 6 controls");
+										aContent = oField && oField.getAggregation("_content");
+										oControl = aContent && aContent.length > 0 && aContent[0];
+										assert.ok(oControl.isA("sap.m.DatePicker"), "Field uses DatePicker");
+										oType = oField.getBindingInfo("value").type;
+										assert.ok(oType instanceof DateType, "Type of Field binding");
+										assert.notOk(oField.getValue(), "no Value");
+
+										aContent = oGrid.getContent();
+										oField = aContent[3];
+										aContent = oField && oField.getAggregation("_content");
+										oControl = aContent && aContent.length > 0 && aContent[0];
+										assert.ok(oControl.isA("sap.m.DatePicker"), "second Field uses DatePicker");
+										oType = oField.getBindingInfo("value").type;
+										assert.ok(oType instanceof DateType, "Type of second Field binding");
+										assert.notOk(oField.getValue(), "no Value");
+
+										fnDone();
+									}, 0);
+								}, 0);
+							}, 0);
 						}, 0);
 					}, 0);
 				}, 0);
