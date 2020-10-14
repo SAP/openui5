@@ -1887,6 +1887,25 @@ sap.ui.define([
 		localNc.back();
 	});
 
+	QUnit.module("_fadeOutAnimationEnd & _fadeInAnimationEnd");
+
+	QUnit.test("Should not reset the transition pending flag if transitionProperty is not opacity", function (assert) {
+		// Arrange
+		var localNc = new NavContainer(),
+			testData = { originalEvent: { propertyName: "dummyProp" } };
+
+		// Act
+		localNc.bTransition1EndPending = true;
+		localNc.bTransition2EndPending = true;
+
+		localNc._fadeOutAnimationEnd(testData);
+		localNc._fadeInAnimationEnd(testData);
+
+		// Assert
+		assert.strictEqual(localNc.bTransition1EndPending, true);
+		assert.strictEqual(localNc.bTransition2EndPending, true);
+	});
+
 	QUnit.module("Navigation stack cleanup");
 
 	QUnit.test("Should remove a page that is no longer aggregated from the navigation stack", function(assert) {
