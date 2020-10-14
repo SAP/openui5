@@ -101,6 +101,10 @@ sap.ui.define([
 	 *
 	 * Note the 'dataPoint' property is final
 	 * @param oValue
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	MeasureItem.prototype.setDataPoint = function(oValue) {
 		if (!this.isPropertyInitial("dataPoint")) {
@@ -110,6 +114,15 @@ sap.ui.define([
 		return this.setProperty("dataPoint", oValue);
 	};
 
+	/**
+	 * Creates a vizChart Item with given settings
+	 *
+	 * @param {*} mSettings settings for the item
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	MeasureItem.createVizChartItem = function(mSettings) {
 		return new SyncPromise(function(resolve) {
 			var oVizItem;
@@ -132,6 +145,10 @@ sap.ui.define([
 	 *
 	 * @param mMetadataSettings
 	 * @return {{role: *, name: *, label: *}}
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	MeasureItem.getVizItemSettings = function(mMetadataSettings) {
 		var mSettings = {
@@ -156,6 +173,10 @@ sap.ui.define([
 	 *
 	 * @param mMetadataSettings
 	 * @return {*}
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	MeasureItem.prototype.getSettings = function(mMetadataSettings) {
 		if (mMetadataSettings && mMetadataSettings.key == this.getKey()) {
@@ -175,6 +196,15 @@ sap.ui.define([
 		return MeasureItem.getVizItemSettings(mMetadataSettings);
 	};
 
+	/**
+	 * Pushes updates on the item to the inner chart
+	 *
+	 * @param {object} oChart chart to push the update to
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	MeasureItem.prototype.toChart = function(oChart) {
 		return new SyncPromise(function(resolve) {
 			var oVizItem = oChart.getMeasureByName(this.getKey());
@@ -195,6 +225,16 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 * Returns a promise that resolves to a Vizchart Item with given metadata
+	 *
+	 * @param mMetadata given metadata for the item
+	 * @returns {sap.ui.base.SyncPromise} resolves to Vizchart Item
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	MeasureItem.prototype.toVizChartItem = function(mMetadata) {
 		if (!this._pToVizItem) {
 			this._pToVizItem = new SyncPromise(function (resolve) {
@@ -212,7 +252,11 @@ sap.ui.define([
 	/**
 	 * Role of the inner chart item, see @sap.ui.mdc.ChartItemRoleType
 	 * @param vRole The role of the inner chart item
-	 * @return {sap.ui.mdc.chart.MeasureItem}
+	 * @return {sap.ui.mdc.chart.MeasureItem} reference to the <code>MeasureItem</code> for method chaining
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	MeasureItem.prototype.setRole = function(vRole) {
 		if (!_SUPPORTED_ROLE[vRole]) {
@@ -234,8 +278,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the type of the item (dimension or measure)
 	 *
 	 * @return {string} The type of the inner charts item which can be 'Dimension' or 'Measure'
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	MeasureItem.prototype.getVizItemType = function() {
 		return MDCLib.ChartItemType.Measure;
@@ -245,6 +294,10 @@ sap.ui.define([
 	 * Retrieve the additional measures from coloring for initially equiping the chart
 	 * @param mItems
 	 * @return {Array}
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	MeasureItem.prototype.getAdditionalColoringMeasures = function() {
 		var aAdditional = [];

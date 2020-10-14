@@ -81,6 +81,15 @@ sap.ui.define([
 		"horizontal_waterfall": "sap-icon://horizontal-waterfall-chart"
 	};
 
+	/**
+	 * Shows popover to select chart type
+	 * @param oButton button opening the popover
+	 * @param oChart the inner chart
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted Fiori Elements, sap.ui.mdc
+	 */
 	ChartTypeButton.prototype.displayChartTypes = function(oButton, oChart) {
 		if (!oChart || !oButton) {
 			return;
@@ -125,6 +134,15 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 * Creates the popover
+	 * @param oButton button opening the popover
+	 * @param oChart inner chart
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	ChartTypeButton.prototype._createPopover = function(oButton, oChart) {
 		var oItemTemplate = new StandardListItem({
 			title: "{$chart>text}",
@@ -204,6 +222,13 @@ sap.ui.define([
 		return oPopover;
 	};
 
+	/**
+	 * Closes the popover to select chart type
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted Fiori Elements, sap.ui.mdc
+	 */
 	ChartTypeButton.prototype.exit = function() {
 		Button.prototype.exit.apply(this, arguments);
 		if (this.oPopover) {

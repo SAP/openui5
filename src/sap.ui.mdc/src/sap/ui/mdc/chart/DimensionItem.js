@@ -98,6 +98,15 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * Translate mdc dimension item settings to viz chart dimension settings
+	 *
+	 * @param mMetadata
+	 * @return {{role: *, name: *, label: *}}
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	DimensionItem.prototype.getSettings = function(mMetadata) {
 		var mSettings = {
 			label: this.getLabel() || mMetadata.label,
@@ -114,6 +123,15 @@ sap.ui.define([
 		return mSettings;
 	};
 
+	/**
+	 * Pushes updates on the item to the inner chart
+	 *
+	 * @param {object} oChart chart to push the update to
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	DimensionItem.prototype.toChart = function(oChart) {
 		return new SyncPromise(function(resolve) {
 			this._oVizItem = oChart.getDimensionByName(this.getKey());
@@ -137,6 +155,16 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 * Returns a promise that resolves to a Vizchart Item with given metadata
+	 *
+	 * @param mMetadata given metadata for the item
+	 * @returns {sap.ui.base.SyncPromise} resolves to Vizchart Item
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	DimensionItem.prototype.toVizChartItem = function(mMetadata) {
 		if (!this._pToVizItem) {
 			this._pToVizItem = new SyncPromise(function(resolve) {
@@ -174,7 +202,11 @@ sap.ui.define([
 	/**
 	 * Role of the inner chart item, see @sap.ui.mdc.ChartItemRoleType
 	 * @param vRole The role of the inner chart item
-	 * @return {sap.ui.mdc.chart.Item}
+	 * @return {sap.ui.mdc.chart.Item} reference to <code>this</code> for method chaining
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	DimensionItem.prototype.setRole = function(vRole) {
 		if (!_SUPPORTED_ROLE[vRole]) {
@@ -198,6 +230,10 @@ sap.ui.define([
 	/**
 	 *
 	 * @return {string} The type of the inner charts item which can be 'Dimension' or 'Measure'
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	DimensionItem.prototype.getVizItemType = function() {
 		return MDCLib.ChartItemType.Dimension;
@@ -206,7 +242,10 @@ sap.ui.define([
 	/**
 	 *
 	 * @return {boolean} <code>true</code> if the item is a hierarchy dimension
+	 *
+	 * @experimental
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	DimensionItem.prototype._isHierarchyDimension = function() {
 		return false;
@@ -215,7 +254,10 @@ sap.ui.define([
 	/**
 	 *
 	 * @return {boolean} <code>true</code> if the item is a time dimension
+	 *
+	 * @experimental
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	DimensionItem.prototype._isTimeDimension = function() {
 		if (this.getVizItemType() == "Measure") {
