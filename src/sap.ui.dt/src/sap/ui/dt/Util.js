@@ -36,7 +36,11 @@ sap.ui.define([
 	 */
 
 	var Util = {};
-	var S_LIBRARY_NAME = 'sap.ui.dt';
+	var S_LIBRARY_NAME = "sap.ui.dt";
+
+	function isNumeric(n) {
+		return !isNaN(parseFloat(n)) && isFinite(n);
+	}
 
 	/**
 	 * Wraps specified error into an Error object
@@ -46,7 +50,7 @@ sap.ui.define([
 	Util.wrapError = function (vError) {
 		var oError = vError instanceof Error && vError || new Error();
 
-		if (typeof vError === 'string') {
+		if (typeof vError === "string") {
 			oError.message = vError;
 		}
 
@@ -63,7 +67,7 @@ sap.ui.define([
 		if (oError instanceof Error) {
 			return oError.name.indexOf(sLibraryName || S_LIBRARY_NAME) === -1;
 		}
-		throw Util.createError('Util#isForeignError', 'Wrong parameter specified');
+		throw Util.createError("Util#isForeignError", "Wrong parameter specified");
 	};
 
 	/**
@@ -87,8 +91,8 @@ sap.ui.define([
 	 */
 	Util.createError = function (sLocation, sMessage, sLibraryName) {
 		var oError = new Error();
-		var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + (sLocation ? '.' + sLocation : '');
-		oError.name = 'Error in ' + sLocationFull;
+		var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + (sLocation ? "." + sLocation : "");
+		oError.name = "Error in " + sLocationFull;
 		oError.message = sMessage;
 
 		return oError;
@@ -100,16 +104,16 @@ sap.ui.define([
 	 * @return {string} - Printable string
 	 */
 	Util.errorToString = function (vError) {
-		if (typeof vError === 'string') {
+		if (typeof vError === "string") {
 			return vError;
 		} else if (vError instanceof Error) {
 			var sError = vError.toString();
 			if (vError.stack) {
-				sError += '\n' + vError.stack.replace(sError, '').trim();
+				sError += "\n" + vError.stack.replace(sError, "").trim();
 			}
 			return sError;
 		}
-		throw Util.createError('Util#errorToString', 'Wrong parameter specified');
+		throw Util.createError("Util#errorToString", "Wrong parameter specified");
 	};
 
 	/**
@@ -126,13 +130,13 @@ sap.ui.define([
 
 		// Adding payload only if it wasn't added before explicitly.
 		if (Util.isForeignError(oError, sLibraryName)) {
-			var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + '.' + sLocation;
+			var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + "." + sLocation;
 			var sOriginalMessage = [
 				oError.name,
 				oError.message
 			].join(" - ");
-			oError.name = 'Error in ' + sLocationFull;
-			oError.message = Util.printf('{0}. Original error: {1}', sMessage, sOriginalMessage || '¯\\_(ツ)_/¯');
+			oError.name = "Error in " + sLocationFull;
+			oError.message = Util.printf("{0}. Original error: {1}", sMessage, sOriginalMessage || "¯\\_(ツ)_/¯");
 		}
 
 		return oError;
@@ -171,7 +175,7 @@ sap.ui.define([
 	Util.printf = function(sString) {
 		var aArgs = Array.prototype.slice.call(arguments, 1);
 		return sString.replace(/{(\d+)}/g, function(sMatch, iIndex) {
-			return typeof aArgs[iIndex] !== 'undefined'
+			return typeof aArgs[iIndex] !== "undefined"
 				? aArgs[iIndex]
 				: sMatch;
 		});
@@ -194,7 +198,7 @@ sap.ui.define([
 	 * @return {boolean} - true if specified value is an integer
 	 */
 	Util.isInteger = function (vValue) {
-		return jQuery.isNumeric(vValue) && Math.ceil(vValue) === vValue;
+		return isNumeric(vValue) && Math.ceil(vValue) === vValue;
 	};
 
 	/**
