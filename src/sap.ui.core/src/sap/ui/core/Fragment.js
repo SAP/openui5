@@ -10,7 +10,8 @@ sap.ui.define([
 	'./XMLTemplateProcessor',
 	'sap/base/Log',
 	'sap/base/util/LoaderExtensions',
-	'sap/base/util/merge'
+	'sap/base/util/merge',
+	'sap/ui/core/Component'
 ],
 function(
 	jQuery,
@@ -20,7 +21,8 @@ function(
 	XMLTemplateProcessor,
 	Log,
 	LoaderExtensions,
-	merge
+	merge,
+	Component
 ) {
 	"use strict";
 
@@ -100,6 +102,11 @@ function(
 				sId : { type: 'sap.ui.core.ID', visibility: 'hidden' },
 
 				/**
+				 * The ID of the owner component (optional)
+				 */
+				sOwnerId : { type: 'sap.ui.core.ID', visibility: 'hidden' },
+
+				/**
 				 * The processing mode is not used by the Fragment itself.
 				 * It is only relevant for XMLViews nested within the Fragment.
 				 */
@@ -164,6 +171,13 @@ function(
 
 		// if the containing view (or fragment) has a scoped runWithOnwer function we need to propagate this to the nested Fragment (only for async case)
 		this.fnScopedRunWithOwner = mSettings.containingView && mSettings.containingView.fnScopedRunWithOwner;
+
+        if (!this.fnScopedRunWithOwner && this._sOwnerId) {
+			var oOwnerComponent = Component.get(this._sOwnerId);
+			this.fnScopedRunWithOwner = function(fnCallbackToBeScoped) {
+			    return oOwnerComponent.runAsOwner(fnCallbackToBeScoped);
+			};
+        }
 
 		var oFragmentImpl = mTypes[mSettings.type];
 		if (oFragmentImpl) {
@@ -351,6 +365,17 @@ function(
 			}
 
 			if (mSettings.async) {
+
+				var fnCreateInstance = function () {
+					var oOwnerComponent = Component.get(mSettings.sOwnerId);
+					if (oOwnerComponent) {
+						return oOwnerComponent.runAsOwner(function () {
+							return new Fragment(mSettings);
+						});
+					}
+					return new Fragment(mSettings);
+				};
+
 				if (mSettings.fragmentName) {
 					var sFragmentPath = mSettings.fragmentName.replace(/\./g, "/") + ".fragment";
 
@@ -361,26 +386,26 @@ function(
 								// type "XML"
 								XMLTemplateProcessor.loadTemplatePromise(mSettings.fragmentName, "fragment").then(function(documentElement) {
 									mSettings.fragmentContent = documentElement;
-									resolve(new Fragment(mSettings));
+									resolve(fnCreateInstance());
 								});
 								break;
 							case "JS":
 								// type "JS"
 								sap.ui.require([sFragmentPath], function(content) {
 									mSettings.fragmentContent = content;
-									resolve(new Fragment(mSettings));
+									resolve(fnCreateInstance());
 								}, reject);
 								break;
 							case "HTML":
 								LoaderExtensions.loadResource(sFragmentPath + ".html", {async: true}).then(function(oContent) {
 									mSettings.fragmentContent = oContent;
-									resolve(new Fragment(mSettings));
+									resolve(fnCreateInstance());
 								});
 								break;
 						}
 					});
 				} else { // in case there is no 'fragmentName' but a 'definition' for the fragment provided
-					return Promise.resolve(new Fragment(mSettings));
+					return Promise.resolve(fnCreateInstance());
 				}
 			}
 
@@ -469,6 +494,7 @@ function(
 		mParameters.fragmentName = mParameters.name;
 		mParameters.fragmentContent = mParameters.definition;
 		mParameters.oController = mParameters.controller;
+		mParameters.sOwnerId = ManagedObject._sOwnerId;
 		delete mParameters.name;
 		delete mParameters.definition;
 		delete mParameters.controller;
@@ -732,16 +758,12 @@ function(
 					this._xContent = mSettings.fragmentContent;
 				}
 			} else {
-				/*
-				// TO-BE-ACTIVATED:
-				// Logging currently disabled because of missing async path
 				Log.warning("Synchronous loading of fragment, due to Fragment.init() call for '" + mSettings.fragmentName + "'. Use 'sap/ui/core/Fragment' module with Fragment.load() instead.", "SyncXHR", null, function() {
 					return {
 						type: "SyncXHR",
 						name: "Fragment"
 					};
 				});
-				*/
 				this._xContent = XMLTemplateProcessor.loadTemplate(mSettings.fragmentName, "fragment");
 			}
 
@@ -816,7 +838,14 @@ function(
 
 			// unset any preprocessors (e.g. from an enclosing JSON view)
 			ManagedObject.runWithPreprocessors(function() {
-				var vContent = this.createContent(mSettings.oController || this._oContainingView.oController);
+				var vContent;
+				if (this.fnScopedRunWithOwner) {
+					this.fnScopedRunWithOwner(function () {
+						vContent = this.createContent(mSettings.oController || this._oContainingView.oController);
+					}.bind(this));
+				} else {
+					vContent = this.createContent(mSettings.oController || this._oContainingView.oController);
+				}
 
 				// createContent might return a Promise too
 				if (vContent instanceof Promise) {
@@ -935,7 +964,13 @@ function(
 
 				// unset any preprocessors (e.g. from an enclosing HTML view)
 				ManagedObject.runWithPreprocessors(function() {
-					DeclarativeSupport.compile(this._oTemplate, this);
+					if (this.fnScopedRunWithOwner) {
+						this.fnScopedRunWithOwner(function () {
+							DeclarativeSupport.compile(this._oTemplate, this);
+						}.bind(this));
+					} else {
+						DeclarativeSupport.compile(this._oTemplate, this);
+					}
 
 					// FIXME declarative support automatically inject the content into this through "this.addContent()"
 					var content = this.getContent();

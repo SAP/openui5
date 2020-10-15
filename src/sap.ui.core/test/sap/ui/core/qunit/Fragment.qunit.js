@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/Component",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/m/Panel",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	'sap/base/util/LoaderExtensions',
 	"jquery.sap.dom"
-], function (Log, qutils, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, LoaderExtensions) {
+], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, LoaderExtensions) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -899,11 +900,119 @@ sap.ui.define([
 		return Fragment.load({
 			name: "testdata.fragments.nested.JSFragment_Level0",
 			type: "JS"
-		}).then(function () {
+		}).then(function (aFragmentContent) {
 			var aCalls = this.requireSpy.getCalls().filter(function (oCall) {return oCall.args.length === 3 && oCall.args[0][0].endsWith("fragment");});
 			assert.equal(aCalls.length, 2, "sap.ui.require should be called three two with 3 arguments (for the JS fragment require)");
 			assert.equal(aCalls[0].args[0][0], "testdata/fragments/nested/JSFragment_Level0.fragment", "First call of sap.ui.require should be called with fragment name 'testdata/fragments/nested/JSFragment_Level0.fragment'");
 			assert.equal(aCalls[1].args[0][0], "testdata/fragments/nested/JSFragment_Level1.fragment", "Second call of sap.ui.require should be called with fragment name 'testdata/fragments/nested/JSFragment_Level1.fragment'");
+
+			aFragmentContent[0].destroy();
+			aFragmentContent[1].destroy();
 		}.bind(this));
+	});
+
+	QUnit.test("Propagate owner component to Fragment (XML)", function(assert) {
+		sap.ui.define("myComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("myComponent", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "myComponent"
+						}
+					}
+				}
+			});
+		});
+
+		return Component.create({
+			id: "myComponent",
+			name: "myComponent",
+			manifest: false
+		}).then(function(oComponent) {
+			return oComponent.runAsOwner(function() {
+				return Fragment.load({
+					name: "testdata.fragments.ownerPropagation.XMLFragmentWithNestedView",
+					type: "XML"
+				}).then(function(oFragment) {
+					// the nested View inside the fragment tries to access the owner component. Without it the test would crash.
+					assert.ok(oFragment, "Fragment is loaded.");
+					assert.ok(oFragment.getController().getOwnerComponent(), "Owner component should be propagated correctly.");
+					assert.equal(oFragment.getController().getOwnerComponent().getId(), "myComponent", "Owner component should be propagated correctly.");
+
+					oFragment.destroy();
+					oComponent.destroy();
+				});
+			});
+		});
+	});
+
+	QUnit.test("Propagate owner component to Fragment (JS)", function(assert) {
+		sap.ui.define("myComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("myComponent", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "myComponent"
+						}
+					}
+				}
+			});
+		});
+
+		return Component.create({
+			id: "myComponent",
+			name: "myComponent",
+			manifest: false
+		}).then(function(oComponent) {
+			return oComponent.runAsOwner(function() {
+				return Fragment.load({
+					name: "testdata.fragments.ownerPropagation.JSFragmentWithNestedXMLView",
+					type: "JS"
+				}).then(function(oFragment) {
+					// the nested View inside the fragment tries to access the owner component. Without it the test would crash.
+					assert.ok(oFragment, "Fragment is loaded.");
+					assert.ok(oFragment.getController().getOwnerComponent(), "Owner component should be propagated correctly.");
+					assert.equal(oFragment.getController().getOwnerComponent().getId(), "myComponent", "Owner component should be propagated correctly.");
+
+					oFragment.destroy();
+					oComponent.destroy();
+				});
+			});
+		});
+	});
+
+	QUnit.test("Propagate owner component to Fragment (HTML)", function(assert) {
+		sap.ui.define("myComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("myComponent", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "myComponent"
+						}
+					}
+				}
+			});
+		});
+
+		return Component.create({
+			id: "myComponent",
+			name: "myComponent",
+			manifest: false
+		}).then(function(oComponent) {
+			return oComponent.runAsOwner(function() {
+				return Fragment.load({
+					name: "testdata.fragments.ownerPropagation.HTMLFragmentWithNestedXMLView",
+					type: "HTML"
+				}).then(function(oFragment) {
+					// the nested View inside the fragment tries to access the owner component. Without it the test would crash.
+					assert.ok(oFragment, "Fragment is loaded.");
+					assert.ok(oFragment.getController().getOwnerComponent(), "Owner component should be propagated correctly.");
+					assert.equal(oFragment.getController().getOwnerComponent().getId(), "myComponent", "Owner component should be propagated correctly.");
+
+					oFragment.destroy();
+					oComponent.destroy();
+				});
+			});
+		});
 	});
 });
