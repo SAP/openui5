@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/ui/mdc/AggregationBaseDelegate",
 	"sap/ui/mdc/util/TypeUtil",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/mdc/FilterField"
+	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/FilterBar",
+	"./UnitTestMetadataDelegate"
 ], function (
 	AdaptationFilterBar,
 	FlexUtil,
@@ -21,7 +23,9 @@ sap.ui.define([
 	AggregationBaseDelegate,
 	TypeUtil,
 	JSONModel,
-	FilterField
+	FilterField,
+	FilterBar,
+	FBTestDelegate
 ) {
 	"use strict";
 
@@ -501,6 +505,78 @@ sap.ui.define([
 
 			});
 		});
+	});
+
+	QUnit.module("FilterBar with bound filterItems aggregation", {
+		beforeEach: function(assert){
+			var oMyModel = new JSONModel({
+				data: [
+					{
+						key: "key1",
+						label: "Some custom label"
+					}
+				]
+			});
+
+			this.oParent = new FilterBar({
+				delegate: {
+					name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate",
+					payload: {
+						modelName: undefined,
+						collectionName: "test"
+					}
+				},
+				filterItems: {
+					path: "$custom>/data",
+					template: new FilterField({
+						conditions: "{$filters>/conditions/key1}",
+						label: "{$custom>label}"
+					})
+				}
+			});
+
+			this.oParent.setModel(oMyModel, "$custom");
+
+			sinon.stub(FBTestDelegate, "addItem").callsFake(function(sKey, oControl){
+				return Promise.resolve(new FilterField({
+					conditions: "{$filters>/conditions/" + sKey + "}"
+				}));
+			});
+
+			return this.oParent.retrieveInbuiltFilter();
+		},
+		afterEach: function(assert) {
+			FBTestDelegate.addItem.restore();
+			this.oParent.destroy();
+		}
+	});
+
+	QUnit.test("Use bound label property for p13n", function(assert){
+		var done = assert.async();
+
+		this.oParent._oP13nFilter.setP13nModel(new JSONModel({
+			items: [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				}
+			]
+		}));
+
+		this.oParent.initControlDelegate().then(function(){
+
+			this.oParent._oP13nFilter.createFilterFields().then(function(oAdaptationFilterBar){
+
+				var aFilterItems = oAdaptationFilterBar.getFilterItems();
+				assert.ok(oAdaptationFilterBar.getModel("$custom"), "Custom model provided in AdaptationFilterBar");
+				assert.equal(aFilterItems[0].getLabel(), "Some custom label", "Initially bound label used in dialog");
+
+				done();
+
+			});
+		}.bind(this));
 	});
 
 });
