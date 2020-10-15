@@ -27,11 +27,12 @@ sap.ui.define([
 	 *
 	 * @namespace sap.ui.fl.apply._internal.connectors.ObjectStorageConnector
 	 * @implements {sap.ui.fl.interfaces.BaseLoadConnector}
+	 * @deprecated
 	 * @since 1.70
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage, WebIDE
 	 */
-	return {
+	var ObjectStorageConnector = {
 		/**
 		 * can be either window.sessionStorage or window.localStorage
 		 */
@@ -58,4 +59,8 @@ sap.ui.define([
 			});
 		}
 	};
+
+	ObjectStorageConnector.storage = ObjectStorageConnector.oStorage;
+
+	return ObjectStorageConnector;
 });

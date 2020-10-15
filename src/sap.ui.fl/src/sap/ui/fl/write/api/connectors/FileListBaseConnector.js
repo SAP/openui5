@@ -12,7 +12,7 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @alias sap.ui.fl.initial.api.connectors.FileListBaseConnector
+	 * @alias sap.ui.fl.write.api.connectors.FileListBaseConnector
 	 * Abstract connector class loading a list of files and returning them in a format understood by <code>sap.ui.fl</code>.
 	 * The inherited objects must implement the function <code>getFileList</code>.
 	 * The <code>loadFlexData</code> already ensures that all <code>sap.ui.fl</code>-internals are handled accordingly.

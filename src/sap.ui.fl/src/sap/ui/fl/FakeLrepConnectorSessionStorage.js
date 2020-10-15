@@ -52,7 +52,7 @@ function(
 					FakeLrepConnector.forTesting.synchronous.clearAll(window.sessionStorage);
 				},
 				getNumberOfChanges: function(sReference) {
-					return FakeLrepConnector.forTesting.synchronous.getNumberOfChanges(SessionStorageConnector.oStorage, sReference);
+					return FakeLrepConnector.forTesting.synchronous.getNumberOfChanges(SessionStorageConnector.storage, sReference);
 				}
 			}
 		}

@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -15,7 +14,6 @@ sap.ui.define([
 	ManifestUtils,
 	JsObjectConnector,
 	ApplyStorage,
-	Layer,
 	Utils,
 	sinon
 ) {
@@ -150,7 +148,7 @@ sap.ui.define([
 			this.oManifest = new Manifest(this.oRawManifest);
 		},
 		afterEach: function () {
-			JsObjectConnector.oStorage.clear();
+			JsObjectConnector.storage.clear();
 			sandbox.restore();
 		}
 	}, function() {

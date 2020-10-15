@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector"
+	"sap/ui/fl/write/api/connectors/ObjectStorageConnector"
 ], function(
 	merge,
 	ObjectStorageConnector
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector
 	 */
 	var LocalStorageConnector = merge({}, ObjectStorageConnector, /** @lends sap.ui.fl.write._internal.connectors.LocalStorageConnector */ {
-		oStorage: window.localStorage
+		storage: window.localStorage
 	});
 
 	return LocalStorageConnector;
