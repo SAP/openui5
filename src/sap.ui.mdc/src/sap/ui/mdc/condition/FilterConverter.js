@@ -27,6 +27,7 @@ function(
 	 * @alias sap.ui.mdc.condition.FilterConverter
 	 *
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 * @experimental
 	 * @ui5-restricted
 	 */
@@ -39,7 +40,8 @@ function(
 			 * @param {sap.ui.mdc.FilterBar} oFilterBar <code>FilterBar</code> control
 			 * @returns {object} aConditionTypes map containing the types of the condition.
 			 *
-			 * @public
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
 			 */
 			createConditionTypesMapFromFilterBar: function (oConditions, oFilterBar) {
 				var oResult = {};
@@ -63,7 +65,8 @@ function(
 			 * @param {function} [fConvert2FilterCallback] callback function
 			 * @returns {sap.ui.model.Filter} Filter object for filtering a listbinding
 			 *
-			 * @public
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
 			 */
 			createFilters: function (oConditions, oConditionTypes, fConvert2FilterCallback) {
 				var i, aLocalIncludeFilters, aLocalExcludeFilters, aOverallFilters = [],

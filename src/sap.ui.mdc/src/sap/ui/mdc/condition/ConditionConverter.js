@@ -28,6 +28,7 @@ sap.ui.define([
 		 *
 		 * @author SAP SE
 		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 * @since 1.74.0
 		 * @alias sap.ui.mdc.condition.ConditionConverter
 		 */
@@ -42,7 +43,8 @@ sap.ui.define([
 			 * @param {sap.ui.mdc.TypeConfig} oTypeConfig given dataType mapping configuration
 			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent type util
 			 * @returns {object} stringified condition
-			 * @public
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
 			 * @since 1.74.0
 			 */
 			toString: function(oCondition, oTypeConfig, oTypeUtil) {
@@ -81,7 +83,8 @@ sap.ui.define([
 			 * @param {sap.ui.mdc.TypeConfig} oTypeConfig Data type of the condition
 			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent type util
 			 * @returns {object} condition
-			 * @public
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
 			 * @since 1.74.0
 			 */
 			toType: function(oCondition, oTypeConfig, oTypeUtil) {

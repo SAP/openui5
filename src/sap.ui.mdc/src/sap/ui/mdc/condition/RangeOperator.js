@@ -33,7 +33,8 @@ sap.ui.define([
 		 * @param {function} [oConfiguration.formatRange] function to format the date range.
 		 * @constructor
 		 * @private
-		 * @alias sap.ui.mdc.condition.Operator
+		 * @ui5-restricted sap.ui.mdc, sap.fe
+		 * @alias sap.ui.mdc.condition.RangeOperator
 		 * @version 1.74.0
 		 * @author SAP SE
 		 */
