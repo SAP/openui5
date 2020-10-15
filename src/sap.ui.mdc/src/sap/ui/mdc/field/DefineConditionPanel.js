@@ -242,7 +242,10 @@ sap.ui.define([
 
 		addDummyCondition: function(index) {
 			var aOperators = _getOperators.call(this);
-			var sOperator = aOperators.indexOf("EQ") >= 0 ? "EQ" : aOperators[0];
+			var oType = _getType.call(this);
+			var sType = _getBaseType.call(this, oType);
+			var oDefaultOperator = FilterOperatorUtil.getDefaultOperator(sType);
+			var sOperator = aOperators.indexOf(oDefaultOperator.name) >= 0 ? oDefaultOperator.name : aOperators[0];
 			var oCondition = Condition.createCondition(sOperator, [null], undefined, undefined, ConditionValidated.NotValidated);
 			FilterOperatorUtil.updateConditionValues(oCondition);
 			FilterOperatorUtil.checkConditionsEmpty(oCondition, aOperators);
@@ -451,16 +454,28 @@ sap.ui.define([
 			var oValueField;
 			iIndex = oGrid.indexOfContent(oField);
 
-			if (oOperator.valueTypes[0] !== oOperatorOld.valueTypes[0]) {
+			if (oOperator.createControl || oOperatorOld.createControl) {
+				// custom control used -> needs to be created new
 				oValueField = oGrid.getContent()[iIndex + 2];
 				if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 0) {
-					oValueField.unbindProperty("value");
+					oValueField.destroy();
 				}
-			}
-			if (oOperator.valueTypes[1] !== oOperatorOld.valueTypes[1] && oOperatorOld.valueTypes[1]) { // 2nd Field only exist if there was a valueType defined
-				oValueField = oGrid.getContent()[iIndex + 3];
+				oValueField = oGrid.getContent()[iIndex + 2];
 				if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 1) {
-					oValueField.unbindProperty("value");
+					oValueField.destroy();
+				}
+			} else {
+				if (oOperator.valueTypes[0] !== oOperatorOld.valueTypes[0]) {
+					oValueField = oGrid.getContent()[iIndex + 2];
+					if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 0) {
+						oValueField.unbindProperty("value");
+					}
+				}
+				if (oOperator.valueTypes[1] !== oOperatorOld.valueTypes[1] && oOperatorOld.valueTypes[1]) { // 2nd Field only exist if there was a valueType defined
+					oValueField = oGrid.getContent()[iIndex + 3];
+					if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 1) {
+						oValueField.unbindProperty("value");
+					}
 				}
 			}
 		}
