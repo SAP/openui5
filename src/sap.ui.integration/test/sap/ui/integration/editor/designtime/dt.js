@@ -97,6 +97,29 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "integer",
 						"label": "{i18n>TRANSLATED_INTEGER_LABEL}"
 					},
+					"integer1": {
+						"manifestpath": "/sap.card/configuration/parameters/integer1/value",
+						"defaultValue": 1,
+						"type": "integer",
+						"label": "Integer Label"
+					},
+					"dependentInteger1": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
+						"defaultValue": "Editable changes from boolean",
+						"type": "string",
+						"editable": "{= ${items>integer1/value} > 2}"
+					},
+					"dependentInteger2": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
+						"defaultValue": "Visible changes from boolean",
+						"type": "string",
+						"visible": "{= ${items>integer1/value} > 5}"
+					},
+					"dependentInteger3": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentInteger3/value",
+						"label": "{= ${items>integer1/value} > 8 ? 'dependentfield3 True' : 'dependentfield3 False' }",
+						"type": "string"
+					},
 					"number": {
 						"manifestpath": "/sap.card/configuration/parameters/number/value",
 						"defaultValue": 1.5,
@@ -133,14 +156,17 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"defaultValue": "Editable changes from boolean",
 						"type": "string",
 						"editable": "{items>boolean/value}"
-
 					},
 					"dependentfield2": {
 						"manifestpath": "/sap.card/configuration/parameters/dependent2/value",
 						"defaultValue": "Visible changes from boolean",
 						"type": "string",
 						"visible": "{items>boolean/value}"
-
+					},
+					"dependentfield3": {
+						"manifestpath": "/sap.card/configuration/parameters/dependent3/value",
+						"label": "{= ${items>boolean/value} === true ? 'dependentfield3 True' : 'dependentfield3 False' }",
+						"type": "string"
 					},
 					"booleanLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",

@@ -186,7 +186,7 @@ sap.ui.define([
 	 */
 	BaseField.prototype._hasDynamicValue = function () {
 		var vValue = this._getCurrentProperty("value");
-		var bDynamicValue = typeof vValue === "string" && vValue.indexOf("{") === 0;
+		var bDynamicValue = typeof vValue === "string" && (vValue.indexOf("{context>") === 0 || vValue.indexOf("{{parameters") === 0);
 		this._setCurrentProperty("_hasDynamicValue", bDynamicValue);
 		return bDynamicValue;
 	};

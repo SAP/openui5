@@ -3042,6 +3042,419 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Fields enhancement", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Visualization: default value", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/fieldEnhancemantVisualization", "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
+					assert.ok(oLabel.getText() === "Integer Label", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Default Input control");
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel1.isA("sap.m.Label"), "Label: Form content contains 2 Labels");
+					assert.ok(oLabel1.getText() === "Integer Label using Slider", "Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
+					assert.ok(oField1.getAggregation("_field").isA("sap.m.Slider"), "Field: Slider control");
+					assert.ok(oField1.getAggregation("_field").getValue() === 2, "Field: Value correct");
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					assert.ok(oLabel2.isA("sap.m.Label"), "Label: Form content contains 3 Labels");
+					assert.ok(oLabel2.getText() === "Boolean Label", "Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField2.getAggregation("_field").isA("sap.m.CheckBox"), "Field: Default CheckBox control");
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					var oField3 = this.oCardEditor.getAggregation("_formContent")[7];
+					assert.ok(oLabel3.isA("sap.m.Label"), "Label: Form content contains 4 Labels");
+					assert.ok(oLabel3.getText() === "Boolean Label using Switch", "Label: Has label text");
+					assert.ok(oField3.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField3.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
+					assert.ok(oField3.getAggregation("_field").getState() === false, "Field: Value correct");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Visualization: value from manifest", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/fieldEnhancemantVisualization",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"integerVisualization": {
+									"value": 3
+								},
+								"booleanVisualization": {
+									"value": true
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
+					assert.ok(oLabel.getText() === "Integer Label", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Default Input control");
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel1.isA("sap.m.Label"), "Label: Form content contains 2 Labels");
+					assert.ok(oLabel1.getText() === "Integer Label using Slider", "Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
+					assert.ok(oField1.getAggregation("_field").isA("sap.m.Slider"), "Field: Slider control");
+					assert.ok(oField1.getAggregation("_field").getValue() === 3, "Field: Value correct");
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					assert.ok(oLabel2.isA("sap.m.Label"), "Label: Form content contains 3 Labels");
+					assert.ok(oLabel2.getText() === "Boolean Label", "Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField2.getAggregation("_field").isA("sap.m.CheckBox"), "Field: Default CheckBox control");
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					var oField3 = this.oCardEditor.getAggregation("_formContent")[7];
+					assert.ok(oLabel3.isA("sap.m.Label"), "Label: Form content contains 4 Labels");
+					assert.ok(oLabel3.getText() === "Boolean Label using Switch", "Label: Has label text");
+					assert.ok(oField3.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField3.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
+					assert.ok(oField3.getAggregation("_field").getState() === true, "Field: Value correct");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Dependece: Boolean value default", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/fieldEnhancemantDependeceForBoolean",
+						"type": "List",
+						"header":{},
+						"configuration": {
+							"parameters": {}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
+					assert.ok(oLabel.getText() === "Boolean Label using Switch", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
+					assert.ok(oField.getAggregation("_field").getState() === true, "Field: Value correct");
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					assert.ok(oField2.getVisible() === true, "Field: Value correct");
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+
+					oField.getAggregation("_field").setState(false);
+					setTimeout(function () {
+						assert.ok(oField.getAggregation("_field").getState() === false, "Field: Value correct");
+						assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
+						assert.ok(oField2.getVisible() === false, "Field: Value correct");
+						assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+						resolve();
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Dependece: Boolean value from manifest", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/fieldEnhancemantDependeceForBoolean",
+						"type": "List",
+						"header":{},
+						"configuration": {
+							"parameters": {
+								"boolean": {
+									"value": false
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
+					assert.ok(oLabel.getText() === "Boolean Label using Switch", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
+					assert.ok(oField.getAggregation("_field").getState() === false, "Field: Value correct");
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					assert.ok(oField2.getVisible() === false, "Field: Value correct");
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+
+					oField.getAggregation("_field").setState(true);
+					setTimeout(function () {
+						assert.ok(oField.getAggregation("_field").getState() === true, "Field: Value correct");
+						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
+						assert.ok(oField2.getVisible() === true, "Field: Value correct");
+						assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+						resolve();
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Dependece: String value default", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/fieldEnhancemantDependeceForString",
+						"type": "List",
+						"header":{},
+						"configuration": {
+							"parameters": {}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oField.getAggregation("_field").getValue() === "editable", "Field: Value correct");
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					assert.ok(oField2.getVisible() === false, "Field: Value correct");
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+
+					oField.getAggregation("_field").setValue("visible");
+					setTimeout(function () {
+						assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
+						assert.ok(oField2.getVisible() === true, "Field: Value correct");
+						assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+						oField.getAggregation("_field").setValue("label");
+						setTimeout(function () {
+							assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
+							assert.ok(oField2.getVisible() === false, "Field: Value correct");
+							assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Dependece: String value from manifest", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/fieldEnhancemantDependeceForString",
+						"type": "List",
+						"header":{},
+						"configuration": {
+							"parameters": {
+								"string" : {
+									"value" : "visible"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oField.getAggregation("_field").getValue() === "visible", "Field: Value correct");
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					assert.ok(oField2.getVisible() === true, "Field: Value correct");
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+
+					oField.getAggregation("_field").setValue("editable");
+					setTimeout(function () {
+						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
+						assert.ok(oField2.getVisible() === false, "Field: Value correct");
+						assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+						oField.getAggregation("_field").setValue("label");
+						setTimeout(function () {
+							assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
+							assert.ok(oField2.getVisible() === false, "Field: Value correct");
+							assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Dependece: Integer value default", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/fieldEnhancemantDependeceForInteger",
+						"type": "List",
+						"header":{},
+						"configuration": {
+							"parameters": {}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oField.getAggregation("_field").getValue() === "1", "Field: Value correct");
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					assert.ok(oField2.getVisible() === false, "Field: Value correct");
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+
+					oField.getAggregation("_field").setValue("3");
+					setTimeout(function () {
+						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
+						assert.ok(oField2.getVisible() === false, "Field: Value correct");
+						assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+						oField.getAggregation("_field").setValue("10");
+						setTimeout(function () {
+							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
+							assert.ok(oField2.getVisible() === true, "Field: Value correct");
+							assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Dependece: Integer value from manifest", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample"
+					},
+					"sap.card": {
+						"designtime": "designtime/fieldEnhancemantDependeceForInteger",
+						"type": "List",
+						"header":{},
+						"configuration": {
+							"parameters": {
+								"integer": {
+									"value": 4
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oField.getAggregation("_field").getValue() === "4", "Field: Value correct");
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					assert.ok(oField2.getVisible() === false, "Field: Value correct");
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+
+					oField.getAggregation("_field").setValue("1");
+					setTimeout(function () {
+						assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
+						assert.ok(oField2.getVisible() === false, "Field: Value correct");
+						assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+						oField.getAggregation("_field").setValue("10");
+						setTimeout(function () {
+							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
+							assert.ok(oField2.getVisible() === true, "Field: Value correct");
+							assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
 	QUnit.done(function () {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

@@ -8,14 +8,15 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/IconPool",
 	"sap/base/util/merge",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/util/deepClone"
 ], function (
-	Control, Select, ListItem, JSONModel, IconPool, merge, Core
+	Control, Select, ListItem, JSONModel, IconPool, merge, Core, deepClone
 ) {
 	"use strict";
 
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
-		aIcons;
+		aDefaultIcons;
 
 	/**
 	 * @class
@@ -77,8 +78,8 @@ sap.ui.define([
 		aIconNames = aIconNames.sort(function (a, b) {
 			return a.toLowerCase().localeCompare(b.toLowerCase());
 		});
-		if (!aIcons) {
-			aIcons = [];
+		var aIcons = [];
+		if (!aDefaultIcons) {
 			aIconNames.filter(function (s) {
 				var text = IconPool.getIconInfo(s).text || ("-" + s).replace(/-(.)/ig, function (sMatch, sChar) {
 					return " " + sChar.toUpperCase();
@@ -110,6 +111,9 @@ sap.ui.define([
 				key: "selected",
 				enabled: false
 			}].concat(aIcons);
+			aDefaultIcons = deepClone(aIcons);
+		} else {
+			aIcons = deepClone(aDefaultIcons);
 		}
 		this._oIconModel = new JSONModel(aIcons);
 		this._oIconModel.setSizeLimit(aIcons.length);
