@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/m/ComboBoxBase",
 	"sap/ui/dom/containsOrEquals",
+	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/InvisibleText",
 	"sap/m/library"
@@ -49,6 +50,7 @@ sap.ui.define([
 	ListItem,
 	ComboBoxBase,
 	containsOrEquals,
+	inputsDefaultFilter,
 	SeparatorItem,
 	InvisibleText,
 	mLibrary
@@ -6462,7 +6464,7 @@ sap.ui.define([
 
 	QUnit.module("highlighting");
 
-	QUnit.test("_highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function(assert) {
+	QUnit.test("highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function(assert) {
 
 		// system under test
 		var fnOnAfterOpenSpy = this.spy(MultiComboBox.prototype, "onAfterOpen");
@@ -6491,7 +6493,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("_highlightList doesn't throw an error when combobox's value contains special characters", function(assert) {
+	QUnit.test("highlightList doesn't throw an error when combobox's value contains special characters", function(assert) {
 
 		// system under test
 		var fnOnAfterOpenSpy = this.spy(MultiComboBox.prototype, "onAfterOpen");
@@ -6509,7 +6511,7 @@ sap.ui.define([
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
-		oMultiComboBox._highlightList("(T");
+		oMultiComboBox.highlightList("(T");
 
 		// act
 		oMultiComboBox.open();
@@ -6615,29 +6617,28 @@ sap.ui.define([
 
 	QUnit.test("Setting an invalid filter should fallback to default text filter", function (assert) {
 		var log = sap.ui.require('sap/base/Log'),
-			fnWarningSpy = this.spy(log, "warning"),
-			fnDefaultFilterSpy = this.stub(ComboBoxBase, "DEFAULT_TEXT_FILTER");
+			fnWarningSpy = this.spy(log, "warning");
 
 		// null is passed for a filter
 		this.oMultiComboBox.setFilterFunction(null);
 		assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is null");
 
 		this.oMultiComboBox.filterItems({ value:  "", items: this.oMultiComboBox.getItems() });
-		assert.ok(ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+		assert.notOk(this.oMultiComboBox.fnFilter, "Default text filter should be applied, since fnFilter is not set");
 
 		// undefined is passed for a filter
 		this.oMultiComboBox.setFilterFunction(undefined);
 		assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is undefined");
 
 		this.oMultiComboBox.filterItems({ value:  "", items: this.oMultiComboBox.getItems() });
-		assert.ok(ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+		assert.notOk(this.oMultiComboBox.fnFilter, "Default text filter should be applied, since fnFilter is not set");
 
 		// wrong filter type is passed
 		this.oMultiComboBox.setFilterFunction({});
 		assert.ok(fnWarningSpy.called, "Warning should be logged in the console when filter is not a function");
 
 		this.oMultiComboBox.filterItems({ value:  "", items: this.oMultiComboBox.getItems() });
-		assert.ok(ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+		assert.notOk(this.oMultiComboBox.fnFilter, "Default text filter should be applied, since fnFilter is not set");
 	});
 
 	QUnit.test("Setting a valid filter should apply on items", function (assert) {
@@ -7830,11 +7831,11 @@ sap.ui.define([
 	QUnit.test("Filtering", function (assert) {
 		this.multiComboBox.syncPickerContent();
 		// act
-		var bMatched = ComboBoxBase.DEFAULT_TEXT_FILTER("서", this.multiComboBox.getItems()[0], "getText");
+		var bMatched = inputsDefaultFilter("서", this.multiComboBox.getItems()[0]);
 		var aFilteredItems = this.multiComboBox.filterItems({ value: "서", items: this.multiComboBox.getItems() });
 
 		// assert
-		assert.ok(bMatched, "'DEFAULT_TEXT_FILTER' should match composite characters");
+	assert.ok(bMatched, "'inputsDefaultFilter' should match composite characters");
 		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
 		assert.strictEqual(aFilteredItems[0].getText(), "서비스 ID", "Text should start with 서");
 	});

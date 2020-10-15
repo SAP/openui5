@@ -23,6 +23,7 @@ sap.ui.define([
 	'./MultiComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/m/inputUtils/completeTextSelected",
+	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
@@ -56,6 +57,7 @@ function(
 	MultiComboBoxRenderer,
 	containsOrEquals,
 	completeTextSelected,
+	inputsDefaultFilter,
 	KeyCodes,
 	deepEqual,
 	assert,
@@ -925,7 +927,7 @@ function(
 
 		if (this.isOpen()) {
 			// wait a tick so the setVisible call has replaced the DOM
-			setTimeout(this._highlightList.bind(this, this._sOldInput));
+			setTimeout(this.highlightList.bind(this, this._sOldInput));
 		}
 
 		// if recommendations were shown - add the icon pressed style
@@ -942,7 +944,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.filterItems = function (mOptions) {
-		var fnFilter = this.fnFilter ? this.fnFilter : ComboBoxBase.DEFAULT_TEXT_FILTER;
+		var fnFilter = this.fnFilter ? this.fnFilter : inputsDefaultFilter;
 		var aFilteredItems = [];
 		var bGrouped = false;
 		var oGroups = [];
@@ -961,7 +963,7 @@ function(
 				return;
 			}
 
-			var bMatch = !!fnFilter(mOptions.value, oItem, "getText");
+			var bMatch = !!fnFilter(mOptions.value, oItem);
 
 			if (mOptions.value === "") {
 				bMatch = true;
@@ -2501,11 +2503,11 @@ function(
 	MultiComboBox.prototype._getItemsStartingWithPerTerm = function(sText, bInput) {
 		var aItems = [],
 			selectableItems = bInput ? this.getEnabledItems() : this.getSelectableItems(),
-			fnFilter = this.fnFilter ? this.fnFilter : ComboBoxBase.DEFAULT_TEXT_FILTER;
+			fnFilter = this.fnFilter ? this.fnFilter : inputsDefaultFilter;
 
 		selectableItems.forEach(function(oItem) {
 
-			if (fnFilter(sText, oItem, "getText")) {
+			if (fnFilter(sText, oItem)) {
 				aItems.push(oItem);
 			}
 

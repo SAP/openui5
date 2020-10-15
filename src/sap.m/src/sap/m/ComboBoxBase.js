@@ -43,6 +43,8 @@ sap.ui.define([
 		highlightDOMElements
 	) {
 		"use strict";
+		// shortcut for sap.m.ListType
+		var ListType = library.ListType;
 
 		// shortcut for sap.m.PlacementType
 		var PlacementType = library.PlacementType;
@@ -155,29 +157,6 @@ sap.ui.define([
 		});
 
 		/**
-		 * Default filtering function for items.
-		 *
-		 * @param {string} sInputValue Current value of the input field.
-		 * @param {sap.ui.core.Item} oItem Item to be matched
-		 * @param {string} sPropertyGetter A Getter for property of an item (could be getText or getAdditionalText)
-		 * @static
-		 * @since 1.58
-		 */
-		ComboBoxBase.DEFAULT_TEXT_FILTER = function (sInputValue, oItem, sPropertyGetter) {
-			var sLowerCaseText, sInputLowerCaseValue, oMatchingTextRegex;
-
-			if (!oItem[sPropertyGetter]) {
-				return false;
-			}
-
-			sLowerCaseText = oItem[sPropertyGetter]().toLowerCase();
-			sInputLowerCaseValue = sInputValue.toLowerCase();
-			oMatchingTextRegex = new RegExp('(^|\\s)' + escapeRegExp(sInputLowerCaseValue) + ".*", 'g');
-
-			return oMatchingTextRegex.test(sLowerCaseText);
-		};
-
-		/**
 		 * Called when the composition of a passage of text is started.
 		 *
 		 * @protected
@@ -267,51 +246,17 @@ sap.ui.define([
 		};
 
 		/**
-		 * Highlights Dom Refs based on a value of the input and text of an item
-		 *
-		 * @param {string} sValue Currently typed value of the input
-		 * @param {object[]} aItemsDomRefs Array of objects with information for dom ref and text to be highlighted
-		 * @param {function} fnBold Method for bolding the text
-		 *
-		 * @protected
-		 * @since 1.58
-		 */
-		ComboBoxBase.prototype.highLightList = function (sValue, aItemsDomRefs, fnBold) {
-			if (fnBold && typeof fnBold === "function") {
-				fnBold(aItemsDomRefs, sValue);
-			} else {
-				highlightDOMElements(aItemsDomRefs, sValue, true);
-			}
-		};
-
-		/**
 		 * Handles highlighting of items after filtering.
 		 *
 		 * @param {string} sValue The value of the item
 		 * @protected
 		 */
-		ComboBoxBase.prototype._highlightList = function (sValue) {
-			var aListItemsDOM = [],
-				aListItemAdditionalText = [],
-				oItemAdditionalTextRef, oItemDomRef, oItemTitleDomRef;
+		ComboBoxBase.prototype.highlightList = function (sValue) {
+			var aListItemsDOM = [];
 
-			this._getList().getItems().forEach(function (oItem) {
-				oItemDomRef = oItem.getDomRef();
-				oItemTitleDomRef = oItemDomRef && oItemDomRef.getElementsByClassName("sapMSLITitleOnly")[0];
+			aListItemsDOM = this._getList().$().find('.sapMSLIInfo, .sapMSLITitleOnly');
 
-				if (oItemTitleDomRef) {
-					aListItemsDOM.push(oItemTitleDomRef);
-
-					oItemAdditionalTextRef = oItemDomRef.querySelector(".sapMSLIInfo");
-
-					if (oItemAdditionalTextRef && oItem.getInfo) {
-						aListItemAdditionalText.push(oItemAdditionalTextRef);
-					}
-				}
-			});
-
-			this.highLightList(sValue, aListItemsDOM);
-			this.highLightList(sValue, aListItemAdditionalText);
+			highlightDOMElements(aListItemsDOM, sValue);
 		};
 
 		ComboBoxBase.prototype._modifyPopupInput = function (oInput) {
@@ -1532,16 +1477,14 @@ sap.ui.define([
 		 * @returns {sap.m.GroupHeaderListItem} The matched GroupHeaderListItem
 		 * @private
 		 */
-		ComboBoxBase.prototype._mapSeparatorItemToGroupHeader = function (oSeparatorItem, oControlRenderer) {
+		ComboBoxBase.prototype._mapSeparatorItemToGroupHeader = function (oSeparatorItem) {
 			var oGroupHeaderListItem = new GroupHeaderListItem({
 				title: oSeparatorItem.getText(),
-				ariaLabelledBy: this._getGroupHeaderInvisibleText().getId()
+				ariaLabelledBy: this._getGroupHeaderInvisibleText().getId(),
+				type: ListType.Inactive
 			});
 
-			oGroupHeaderListItem.addStyleClass(oControlRenderer.CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem");
-			if (oSeparatorItem.getText && !oSeparatorItem.getText()) {
-				oGroupHeaderListItem.addStyleClass(oControlRenderer.CSS_CLASS_COMBOBOXBASE + "SeparatorItemNoText");
-			}
+			oGroupHeaderListItem.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem");
 
 			return oGroupHeaderListItem;
 		};

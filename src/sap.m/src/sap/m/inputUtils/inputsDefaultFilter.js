@@ -15,10 +15,15 @@ sap.ui.define([
 	 *
 	 * @param {string} sValue the current filter string.
 	 * @param {sap.ui.core.Item} oItem the filtered list item.
+	 * @param {boolean} bFilterAdditionalText true, if the item should be filtered by additional text
 	 * @returns {boolean} true for items that start with the parameter sValue, false for non matching items.
 	 */
-	var defaultFilterFn = function (sValue, oItem) {
-		if (oItem.isA("sap.ui.core.ListItem") && wordStartsWithValue(oItem.getAdditionalText(), sValue)) {
+	var defaultFilterFn = function (sValue, oItem, bFilterAdditionalText) {
+		if (!oItem) {
+			return false;
+		}
+
+		if (oItem.isA("sap.ui.core.ListItem") && bFilterAdditionalText && wordStartsWithValue(oItem.getAdditionalText(), sValue)) {
 			return true;
 		}
 

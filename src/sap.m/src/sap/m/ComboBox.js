@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	"sap/ui/dom/containsOrEquals",
 	"sap/m/inputUtils/scrollToItem",
+	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/ui/events/KeyCodes",
 	"./Toolbar",
 	"sap/base/assert",
@@ -34,6 +35,7 @@ sap.ui.define([
 		ManagedObjectObserver,
 		containsOrEquals,
 		scrollToItem,
+		inputsDefaultFilter,
 		KeyCodes,
 		Toolbar,
 		assert,
@@ -385,7 +387,7 @@ sap.ui.define([
 				aFilteredItems = [],
 				aFilteredItemsByText = [],
 				bFilterAdditionalText = mOptions.properties.indexOf("additionalText") > -1,
-				fnFilter = this.fnFilter || ComboBoxBase.DEFAULT_TEXT_FILTER,
+				fnFilter = this.fnFilter || inputsDefaultFilter,
 				aGroups = [],
 				bGrouped = false;
 
@@ -393,18 +395,9 @@ sap.ui.define([
 
 			aItems.forEach(function (oItem) {
 				if (oItem.isA("sap.ui.core.SeparatorItem")) {
-					// --- If the separator item is considered only for visual separation
-					// Separator items were not part of the filtering before. So in order to keep
-					// the behaviour the same, those items are not shown in the filtered list
-					if (!oItem.getText()) {
-						this.getListItem(oItem).setVisible(false);
-						return;
-					}
-
-					// --- If the SeparatorItem is considered a group header
 					aGroups.push({
-						separator: oItem,
-						show: false
+						header: oItem,
+						visible: false
 					});
 
 					bGrouped = true;
@@ -414,18 +407,15 @@ sap.ui.define([
 					return;
 				}
 
-				var bMatchedByText = fnFilter.call(this, mOptions.value, oItem, "getText");
-				var bMatchedByAdditionalText = fnFilter.call(this, mOptions.value, oItem, "getAdditionalText");
+				var bMatchedText = fnFilter.call(this, mOptions.value, oItem, bFilterAdditionalText);
 
-				if ((bMatchedByText || bMatchedByAdditionalText) && bGrouped) {
-					aGroups[aGroups.length - 1].show = true;
+				if (bMatchedText && bGrouped && aGroups.length) {
+					aGroups[aGroups.length - 1].visible = true;
 					bGrouped = false;
 				}
 
-				if (bMatchedByText) {
+				if (bMatchedText) {
 					aFilteredItemsByText.push(oItem);
-					aFilteredItems.push(oItem);
-				} else if (bMatchedByAdditionalText && bFilterAdditionalText) {
 					aFilteredItems.push(oItem);
 				}
 			}.bind(this));
@@ -435,20 +425,20 @@ sap.ui.define([
 					return;
 				}
 
-				var bItemMached = aFilteredItems.indexOf(oItem) > -1;
-				var bItemTextMached = aFilteredItemsByText.indexOf(oItem) > -1;
+				var bItemMatched = aFilteredItems.indexOf(oItem) > -1;
+				var bItemTextMatched = aFilteredItemsByText.indexOf(oItem) > -1;
 
-				if (!this._oFirstItemTextMatched && bItemTextMached) {
+				if (!this._oFirstItemTextMatched && bItemTextMatched) {
 					this._oFirstItemTextMatched = oItem;
 				}
 
 				oListItem = this.getListItem(oItem);
-				oListItem && oListItem.setVisible(bItemMached);
+				oListItem && oListItem.setVisible(bItemMatched);
 			}, this);
 
 			aGroups.forEach(function (oGroupItem) {
-				if (oGroupItem.show) {
-					oListItem = this.getListItem(oGroupItem.separator);
+				if (oGroupItem.visible) {
+					oListItem = this.getListItem(oGroupItem.header);
 					oListItem && oListItem.setVisible(true);
 				}
 			}.bind(this));
@@ -1003,7 +993,7 @@ sap.ui.define([
 			var oList = this._getList(),
 				oFocusDomRef = this.getFocusDomRef();
 
-			this._highlightList(this._sInputValueBeforeOpen);
+			this.highlightList(this._sInputValueBeforeOpen);
 
 			if (oSelectedItem) {
 				oList.setSelectedItem(oSelectedListItem);
@@ -1135,7 +1125,7 @@ sap.ui.define([
 
 			if (this.isOpen()) {
 				setTimeout(function () {
-						this._highlightList(sValue);
+						this.highlightList(sValue);
 					}.bind(this));
 				}
 
