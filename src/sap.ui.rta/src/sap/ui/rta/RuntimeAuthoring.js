@@ -1081,8 +1081,8 @@ function(
 			return this._triggerHardReload(oReloadInfo);
 		}
 		var bTriggerReload = true;
-		var mParsedHash = this._removeVersionParameterForFLP(FlexUtils.getParsedURLHash(), bTriggerReload);
 		this.getCommandStack().removeAllCommands();
+		var mParsedHash = this._removeVersionParameterForFLP(FlexUtils.getParsedURLHash(), bTriggerReload);
 		this._triggerCrossAppNavigation(mParsedHash);
 		return this.stop(true, true);
 	};

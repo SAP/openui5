@@ -669,12 +669,12 @@ sap.ui.define([
 					assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_DIALOG", "then the message is correct");
 					assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
 					assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
+					assert.equal(oRemoveAllCommandsStub.callCount, 1, "and all commands were removed");
 					assert.equal(oRemoveVersionParameterStub.callCount, 1, "then _removeVersionParameterForFLP was called");
 					assert.equal(oRemoveVersionParameterStub.getCall(0).args[0], mParsedHash, "then _removeVersionParameterForFLP was called with the correct parameters");
 					var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
 					assert.equal(oDiscardCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 					assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
-					assert.equal(oRemoveAllCommandsStub.callCount, 1, "and all commands were removed");
 					assert.equal(oStopStub.callCount, 1, "then stop was called");
 					assert.equal(this.oRestartFlpStub.callCount, 1, "a restart was triggered");
 				}.bind(this));
