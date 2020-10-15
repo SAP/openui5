@@ -49,24 +49,34 @@ sap.ui.define([
 		},
 		renderer: function (oRm, oControl) {
 			if (oControl._getCurrentMode() === "None") {
-				oRm.openStart("div");
-				oRm.writeElementData(oControl);
+				oRm.openStart("div", oControl);
 				oRm.openEnd();
 				return;
 			}
-			oRm.openStart("div");
-			oRm.writeElementData(oControl);
+			oRm.openStart("div", oControl);
 			oRm.addClass("sapUiIntegrationDTPreview");
 			if (isDark()) {
 				oRm.addClass("sapUiIntegrationDTPreviewDark");
 			}
 			oRm.writeClasses();
 			oRm.openEnd();
+			oRm.openStart("div");
+			oRm.addClass("before");
+			oRm.writeAttribute("tabindex", "0");
+			oRm.writeAttributeEscaped("id", oControl.getId() + "-before");
+			oRm.addStyle("z-index", oControl.getParent()._iZIndex + 1);
+			oRm.writeStyles();
+			oRm.openEnd();
+			oRm.close("div");
 			oRm.renderControl(oControl._getCardPreview());
+			oRm.openStart("div");
+			oRm.writeAttribute("tabindex", "0");
+			oRm.writeAttributeEscaped("id", oControl.getId() + "-after");
+			oRm.openEnd();
+			oRm.close("div");
 			if (oControl._getModes().indexOf("Live") > -1 && oControl._getModes().indexOf("Abstract") > -1) {
 				oRm.renderControl(oControl._getModeToggleButton());
 			}
-			oRm.close("div");
 		}
 	});
 
@@ -221,6 +231,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Information that can be requested by the card to adapt the preview to the transformation scale if needed
+	 * It needs to know the original height and width and the current transformation style.
+	 */
+	CardPreview.prototype.getTransformContentInfo = function () {
+		return {
+			transformStyle: "scale3d(0.4, 0.4, 1)",
+			transformFactor: 0.4,
+			transformOriginStyle: "0 0",
+			widthStyle: "500px",
+			heightStyle: "600px",
+			zIndex: this.getParent()._iZIndex
+		};
+	};
+
+	/**
 	 * returns the real scaled instance of the card
 	 */
 	CardPreview.prototype._getCardRealPreview = function () {
@@ -233,6 +258,8 @@ sap.ui.define([
 		this._oCardPreview.setManifestChanges(aChanges);
 		this._oCardPreview.setManifest(this.getCard().getManifestEntry("/"));
 		this._oCardPreview.refresh();
+		this._oCardPreview.editor = this._oCardPreview.editor || {};
+		this._oCardPreview.preview = this._oCardPreview.editor.preview = this;
 		return this._oCardPreview;
 	};
 
@@ -355,12 +382,24 @@ sap.ui.define([
 			yiq = (r * 299 + g * 587 + b * 114) / 1000;
 		return (yiq <= 128);
 	}
+	CardPreview.prototype.onsaptabnext = function (oEvent) {
+		if (oEvent.target === this.getDomRef("before")) {
+			this.getDomRef("after").focus();
+		}
+	};
+
+	CardPreview.prototype.onsaptabprevious = function (oEvent) {
+		if (oEvent.target === this.getDomRef("after")) {
+			this.getDomRef("before").focus();
+		}
+	};
 
 	CardPreview.init = function () {
 		var sCssURL = sap.ui.require.toUrl("sap.ui.integration.designtime.editor.css.CardPreview".replace(/\./g, "/") + ".css");
 		includeStylesheet(sCssURL);
 		this.init = function () { };
 	};
+
 
 	CardPreview.init();
 
