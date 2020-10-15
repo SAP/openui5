@@ -99,5 +99,32 @@ sap.ui.define([
 		return vDate;
 	};
 
+	/**
+	 * @const {int} The default timeout before a promise is rejected when Utils.timeoutPromise is used.
+	 */
+	Utils.DEFAULT_PROMISE_TIMEOUT = 5000;
+
+	/**
+	 * If the given promise does not resolve before the timeout, the promise is rejected and an error is logged.
+	 * @param {Promise} pOriginalPromise The promise which will be encapsulated in a timeout.
+	 * @param {int} [iTimeout=Utils.DEFAULT_PROMISE_TIMEOUT] The time in ms before timeout.
+	 * @returns {Promise} Resolves or rejects when the given promise resolves or rejects. Additionally, if the timeout is reached - the promise is rejected.
+	 */
+	Utils.timeoutPromise = function (pOriginalPromise, iTimeout) {
+		var pTimeoutPromise;
+
+		if (iTimeout === undefined) {
+			iTimeout = Utils.DEFAULT_PROMISE_TIMEOUT;
+		}
+
+		pTimeoutPromise = new Promise(function (resolve, reject) {
+			setTimeout(function () {
+				reject("The promise was not resolved after " + iTimeout + " ms so it timed out.");
+			}, iTimeout);
+		});
+
+		return Promise.race([pOriginalPromise, pTimeoutPromise]);
+	};
+
 	return Utils;
 });

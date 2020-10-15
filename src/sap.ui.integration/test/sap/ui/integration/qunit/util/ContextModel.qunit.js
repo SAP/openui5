@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/integration/util/ContextModel",
-	"sap/ui/integration/Host"
+	"sap/ui/integration/Host",
+	"sap/ui/integration/util/Utils"
 ],
 function (
 	ContextModel,
-	Host
+	Host,
+	Utils
 ) {
 	"use strict";
 
@@ -23,7 +25,14 @@ function (
 		oModel.destroy();
 	});
 
-	QUnit.module("Test #getProperty");
+	QUnit.module("Test #getProperty", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach:  function () {
+			this.clock.restore();
+		}
+	});
 
 	QUnit.test("Call #getProperty without Host", function (assert) {
 		// act
@@ -70,5 +79,34 @@ function (
 		oModel.destroy();
 		oHost.destroy();
 		fnSpy.restore();
+	});
+
+	QUnit.test("Call #getProperty with Host which never resolves", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oModel = new ContextModel(),
+			oHost = new Host(),
+			sSamplePath = "/sap.host/property/value";
+
+		oHost.getContextValue = function (sPath) {
+			return new Promise(function () {});
+		};
+
+		oModel.setHost(oHost);
+
+		// assert
+		assert.strictEqual(oModel.getProperty(sSamplePath), null, "The property returns null the first time.");
+
+		oModel.waitForPendingProperties().then(function () {
+			assert.strictEqual(oModel.getProperty(sSamplePath), null, "The property is null. The promise has timed out.");
+			done();
+		});
+
+		// act
+		this.clock.tick(Utils.DEFAULT_PROMISE_TIMEOUT + 100);
+
+		// cleanup
+		oModel.destroy();
+		oHost.destroy();
 	});
 });

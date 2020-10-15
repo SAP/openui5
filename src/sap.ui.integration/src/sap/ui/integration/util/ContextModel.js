@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/integration/util/Utils"
 ], function (
 	JSONModel,
-	Log
+	Log,
+	Utils
 ) {
 	"use strict";
 
@@ -57,19 +59,22 @@ sap.ui.define([
 
 		if (bHasHost) {
 			this._mValues = this._mValues || {};
-			if (this._mValues[sAbsolutePath]) {
+			if (this._mValues[sAbsolutePath] !== undefined) {
 				return this._mValues[sAbsolutePath];
 			}
 
-			// ask the host
-			pGetProperty = oHost.getContextValue(sAbsolutePath.substring(1))
-				.then(function (vValue) {
+			// ask the host and timeout if it does not respond
+			pGetProperty = Utils.timeoutPromise(oHost.getContextValue(sAbsolutePath.substring(1)));
+
+			pGetProperty = pGetProperty.then(function (vValue) {
 					this._mValues[sAbsolutePath] = vValue;
 					this.checkUpdate();
 				}.bind(this))
 				.catch(function (sReason) {
+					this._mValues[sAbsolutePath] = null;
+					this.checkUpdate();
 					Log.error("Path " + sAbsolutePath + " could not be resolved. Reason: " + sReason);
-				});
+				}.bind(this));
 
 			this._aPendingPromises.push(pGetProperty);
 
