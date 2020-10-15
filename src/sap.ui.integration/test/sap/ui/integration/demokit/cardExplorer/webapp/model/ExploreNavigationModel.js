@@ -625,7 +625,7 @@ sap.ui.define([
 								key: 'northwindImage',
 								files: [
 									{
-										url: '/samples/extensioan/northwindImage/manifest.json',
+										url: '/samples/extension/northwindImage/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
 									},
