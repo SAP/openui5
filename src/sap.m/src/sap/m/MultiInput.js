@@ -409,10 +409,6 @@ function(
 			this.focus();
 		}.bind(this));
 
-		aDeletingTokens.forEach(function(oToken) {
-			oToken.destroy();
-		}, this);
-
 		if (!bPreventTokenUpdateEvent) {
 			this.fireTokenUpdate({
 				type: Tokenizer.TokenUpdateType.Removed,
@@ -420,6 +416,10 @@ function(
 				removedTokens: aDeletingTokens
 			});
 		}
+
+		aDeletingTokens.forEach(function(oToken) {
+			oToken.destroy();
+		}, this);
 	};
 
 	MultiInput.prototype._handleInnerVisibility = function () {

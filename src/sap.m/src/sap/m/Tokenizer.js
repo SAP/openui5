@@ -262,10 +262,6 @@ sap.ui.define([
 			var oToken = oEvent.getSource();
 			var aSelectedTokens = this.getSelectedTokens();
 
-			this.fireEvent("tokenDelete", {
-				tokens: [oToken]
-			});
-
 			// compatibility
 			this.fireTokenChange({
 				type: sap.m.Tokenizer.TokenChangeType.Removed,
@@ -280,6 +276,10 @@ sap.ui.define([
 				type: sap.m.Tokenizer.TokenChangeType.Removed,
 				addedTokens: [],
 				removedTokens: aSelectedTokens.length ? aSelectedTokens : [oToken]
+			});
+
+			this.fireEvent("tokenDelete", {
+				tokens: [oToken]
 			});
 
 		}, this);
