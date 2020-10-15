@@ -312,7 +312,7 @@ sap.ui.define([
 		_importIFrameSize: function(sFieldName, sSize) {
 			var aResults = sSize.split(/(px|rem|%)/);
 			if (aResults.length >= 2) {
-				this._oJSONModel.setProperty("/" + sFieldName + "/value", parseInt(aResults[0]));
+				this._oJSONModel.setProperty("/" + sFieldName + "/value", parseFloat(aResults[0]));
 				this._oJSONModel.setProperty("/" + sFieldName + "Unit/value", aResults[1]);
 			}
 		},
