@@ -112,7 +112,8 @@ sap.ui.define([
 
 		assert.notOk(oFieldHelp.openByTyping(), "openByTyping");
 		assert.ok(oFieldHelp.isFocusInHelp(), "isFocusInHelp");
-		assert.equal(oFieldHelp.getIcon(), "sap-icon://filter-fields", "getIcon");
+//		assert.equal(oFieldHelp.getIcon(), "sap-icon://filter-fields", "getIcon");
+		assert.equal(oFieldHelp.getIcon(), "sap-icon://value-help", "getIcon");
 		assert.notOk(oFieldHelp.isValidationSupported(), "isValidationSupported");
 
 	});

@@ -106,7 +106,8 @@ sap.ui.define([
 
 	ConditionFieldHelp.prototype.getIcon = function() {
 
-		return "sap-icon://filter-fields";
+//		return "sap-icon://filter-fields";
+		return "sap-icon://value-help";
 
 	};
 
