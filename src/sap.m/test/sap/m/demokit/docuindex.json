@@ -541,7 +541,8 @@
 				"sap.m.sample.HeaderContainer",
 				"sap.m.sample.HeaderContainerNoDividers",
 				"sap.m.sample.HeaderContainerOH",
-				"sap.m.sample.HeaderContainerVM"
+				"sap.m.sample.HeaderContainerVM",
+				"sap.m.sample.HeaderContainerLazyLoading"
 			]
 		},
 		{
@@ -3273,6 +3274,11 @@
 		  "id": "sap.m.sample.HeaderContainerVM",
 		  "name": "Header Container - Vertical Mode",
 		  "description": "The Header Container with a vertical layout and with divider lines."
+		},
+		{
+		  "id": "sap.m.sample.HeaderContainerLazyLoading",
+		  "name": "Header Container - Lazy Loading",
+		  "description": "The header container with lazy loading functionality on pressing the scroll button."
 		},
 		{
 		  "id": "sap.m.sample.Breadcrumbs",

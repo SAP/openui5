@@ -248,6 +248,14 @@ sap.ui.define([
 						multiple: true,
 						singularName: "ariaLabelledBy"
 					}
+				},
+				events: {
+					/**
+					 * This event is triggered on pressing the scroll button.
+					 */
+					scroll: {
+
+					}
 				}
 			}
 		});
@@ -466,6 +474,7 @@ sap.ui.define([
 
 		HeaderContainer.prototype._scroll = function (iDelta, iDuration) {
 			this._setScrollInProcess(true);
+			this.fireScroll();
 			setTimeout(this._setScrollInProcess.bind(this, false), iDuration + 300);
 			if (this.getOrientation() === Orientation.Horizontal) {
 				this._hScroll(iDelta, iDuration);

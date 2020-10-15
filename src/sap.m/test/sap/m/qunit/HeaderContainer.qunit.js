@@ -275,6 +275,14 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Scroll event is being triggered", function (assert) {
+		this.oHeaderContainer.attachScroll(function (oEvent) {
+			assert.ok(oEvent, "Scroll event is fired");
+		});
+		sap.ui.getCore().applyChanges();
+		this.oHeaderContainer._scroll();
+	});
+
 	QUnit.test("Scrolling by item, using _getScrollValue, scroll 100", function (assert) {
 		assert.equal(this.oHeaderContainer._getScrollValue(true), this.oItem1.$().parent().outerWidth(true) + this.OFFSET);
 		assert.equal(this.oHeaderContainer._getScrollValue(false), 0);
