@@ -20,7 +20,7 @@
 	window.BeforePush = {
 		tests : {
 			'internal/samples/odata/v2/SalesOrders/Opa.qunit.html' : 'both',
-			// '../../../sap/m/demokit/cart/webapp/test/integration/opaTestsComponent.qunit.html' : 'both',
+			'../../../sap/m/demokit/cart/webapp/test/integration/opaTestsComponent.qunit.html' : 'both',
 			'demokit/sample/ViewTemplate/scenario/Opa.qunit.html?supportAssistant=true' : 'both',
 			'demokit/sample/ViewTemplate/types/Opa.qunit.html?supportAssistant=true' : 'both',
 			'demokit/sample/ViewTemplate/types/Opa.qunit.html?realOData=true' : 'both',
