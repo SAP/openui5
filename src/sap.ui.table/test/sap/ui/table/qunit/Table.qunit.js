@@ -2887,7 +2887,7 @@ sap.ui.define([
 					new Filter({
 						path: "modelData>money",
 						operator: "LT",
-						value: 5
+						value1: 5
 					})
 				],
 				template: new Label({
@@ -2943,7 +2943,7 @@ sap.ui.define([
 			var oFilter = new Filter({
 				path: "modelData>money",
 				operator: "LT",
-				value: 5
+				value1: 5
 			});
 			var oTemplate = new Label({
 				text: "Last Name"
@@ -3153,7 +3153,7 @@ sap.ui.define([
 		oTable.getBinding("rows").filter(new Filter({
 			path: "modelData>money",
 			operator: "LT",
-			value: 5
+			value1: 5
 		}));
 		assert.equal(oTable.getFirstVisibleRow(), 0, "'firstVisibleRow' set to 0 when filtering");
 	});
@@ -5229,7 +5229,7 @@ sap.ui.define([
 		oBody.classList.add("sapUiSizeCozy");
 	});
 
-	QUnit.test("_getTotalRowCount", function(assert){
+	QUnit.test("_getTotalRowCount with client binding", function(assert){
 		oTable.bindRows({path: "/modelData"});
 		assert.strictEqual(oTable._getTotalRowCount(), 200, "Binding#getLength defines the total row count in the table");
 
@@ -5243,6 +5243,72 @@ sap.ui.define([
 
 		oTable.unbindRows();
 		assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
+	});
+
+	QUnit.test("_getTotalRowCount with OData binding", function(assert){
+		var oMockServer = startMockServer();
+
+		oTable.bindRows({path: "/Products"});
+		oTable.setModel(createODataModel());
+		assert.strictEqual(oTable._getTotalRowCount(), 200, "On rebind, the last known binding length of the previous binding is returned");
+
+		return new Promise(function(resolve) {
+			oTable.getBinding("rows").attachEventOnce("change", function() {
+				assert.strictEqual(oTable._getTotalRowCount(), 16, "After rebind, the new binding length is returned");
+				resolve();
+			});
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oTable.getBinding("rows").refresh();
+				assert.strictEqual(oTable._getTotalRowCount(), 16, "On refresh, the last known binding length is returned");
+				oTable.getBinding("rows").attachEventOnce("change", function() {
+					assert.strictEqual(oTable._getTotalRowCount(), 16, "After refresh, the new binding length is returned");
+					resolve();
+				});
+			});
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oTable.getBinding("rows").filter(new Filter({
+					path: "Category",
+					operator: "EQ",
+					value1: "GC"
+				}));
+				assert.strictEqual(oTable._getTotalRowCount(), 16, "On filter, the last known binding length is returned");
+				oTable.getBinding("rows").attachEventOnce("change", function() {
+					assert.strictEqual(oTable._getTotalRowCount(), 3, "After filter, the new binding length is returned");
+					oTable.getBinding("rows").refresh();
+					resolve();
+				});
+			});
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oTable.bindRows({path: "/Products", length: 5});
+				assert.strictEqual(oTable._getTotalRowCount(), 5, "The \"length\" parameter in the binding info overrides Binding#getLength");
+				oTable.getBinding("rows").attachEventOnce("change", function() {
+					assert.strictEqual(oTable._getTotalRowCount(), 5, "After data is received, still the \"length\" parameter is returned");
+					resolve();
+				});
+			});
+		}).then(function() {
+				return new Promise(function(resolve) {
+					oTable.getBinding("rows").refresh();
+					assert.strictEqual(oTable._getTotalRowCount(), 5, "On refresh, still the \"length\" parameter is returned");
+					oTable.getBinding("rows").attachEventOnce("change", function() {
+						assert.strictEqual(oTable._getTotalRowCount(), 5, "After refresh, still the \"length\" parameter is returned");
+						resolve();
+					});
+				});
+		}).then(function() {
+			var oModel = oTable.getModel();
+			oTable.setModel(null);
+			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding the total row count is 0, regardless of the binding info");
+
+			oTable.setModel(oModel);
+			oTable.unbindRows();
+			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
+
+			oMockServer.destroy();
+		});
 	});
 
 	QUnit.module("Performance", {

@@ -603,30 +603,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the logical number of rows.
-		 * Optionally empty visible rows are added (in case that the number of data rows is smaller than the number of visible rows).
+		 * Returns the number of rows that are not empty.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {boolean} bIncludeEmptyRows Whether empty rows should also be counted.
-		 * @returns {int} The logical number of rows.
+		 * @returns {int} The number of rows that are not empty.
 		 */
-		getTotalRowCount: function(oTable, bIncludeEmptyRows) {
-			var iRowCount = oTable._getTotalRowCount();
-			if (bIncludeEmptyRows) {
-				iRowCount = Math.max(iRowCount, oTable._getRowCounts().count);
-			}
-			return iRowCount;
-		},
-
-		/**
-		 * Returns the number of visible rows that are not empty.
-		 * If the number of visible rows is smaller than the number of data rows, the number of visible rows is returned, otherwise the number of
-		 * data rows.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {int} The number of rendered rows that are not empty.
-		 */
-		getNonEmptyVisibleRowCount: function(oTable) {
+		getNonEmptyRowCount: function(oTable) {
 			return Math.min(oTable._getRowCounts().count, oTable._getTotalRowCount());
 		},
 

@@ -507,7 +507,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Wrapper around #scrollVSbTo for easier promise chaining. Returns a function that returns a promise.
+		 * Wrapper around {@link #scrollVSbTo} for easier promise chaining. Returns a function that returns a promise.
 		 *
 		 * @param {int} iScrollPosition The new vertical scroll position.
 		 * @returns {function(): Promise} Wrapper function.
@@ -530,7 +530,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Wrapper around #scrollVSbBy for easier promise chaining. Returns a function that returns a promise.
+		 * Wrapper around {@link #scrollVSbBy} for easier promise chaining. Returns a function that returns a promise.
 		 *
 		 * @param {int} iDistance The distance to scroll.
 		 * @returns {function(): Promise} Wrapper function.
@@ -567,7 +567,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Wrapper around #scrollHSbTo for easier promise chaining. Returns a function that returns a promise.
+		 * Wrapper around {@link #scrollHSbTo} for easier promise chaining. Returns a function that returns a promise.
 		 *
 		 * @param {int} iScrollPosition The new horizontal scroll position.
 		 * @returns {function(): Promise} Wrapper function.
@@ -590,7 +590,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Wrapper around #scrollHSbBy for easier promise chaining. Returns a function that returns a promise.
+		 * Wrapper around {@link #scrollHSbBy} for easier promise chaining. Returns a function that returns a promise.
 		 *
 		 * @param {int} iDistance The distance to scroll.
 		 * @returns {function(): Promise} Wrapper function.
@@ -643,7 +643,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Wrapper around #resize for easier promise chaining. Returns a function that returns a promise.
+		 * Wrapper around {@link #resize} for easier promise chaining. Returns a function that returns a promise.
 		 *
 		 * @param {Object} mSizes The new sizes.
 		 * @param {string} [mSizes.height] The new height. Must be a valid CSSSize.
@@ -699,7 +699,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Wrapper around #focus for easier promise chaining. Returns a function that returns a promise.
+		 * Wrapper around {@link #focus} for easier promise chaining. Returns a function that returns a promise.
 		 *
 		 * @param {HTMLElement} oElement The element that is focused.
 		 * @returns {function(): Promise} Wrapper function.
@@ -902,7 +902,7 @@ sap.ui.define([
 
 	TableQUnitUtils.createJSONModel = function(iLength) {
 		fillDataUpTo(iLength);
-		return new JSONModel(aData);
+		return new JSONModel(aData.slice(0, iLength));
 	};
 
 	function fillDataUpTo(iLength) {
@@ -995,7 +995,7 @@ sap.ui.define([
 		mConfig = Object.assign({}, mConfig);
 		return TableQUnitUtils.createTextColumn({
 			text: mConfig.text,
-			bind: mConfig.bindText,
+			bind: mConfig.bind,
 			focusable: true,
 			tabbable: true,
 			label: mConfig.label,
@@ -1144,7 +1144,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Wrapper around #wait for easier promise chaining. Returns a function that returns a promise.
+	 * Wrapper around {@link #wait} for easier promise chaining. Returns a function that returns a promise.
 	 *
 	 * @param {int} [iMilliseconds] The delay in milliseconds. If none is set, <code>requestAnimationFrame</code> is used.
 	 * @returns {function(): Promise} Wrapper function.
@@ -1169,12 +1169,24 @@ sap.ui.define([
 		return TableQUnitUtils.wait(1000).then(TableQUnitUtils.wait);
 	};
 
+	/**
+	 * Wrapper around {@link #changeTextDirection} for easier promise chaining. Returns a function that returns a promise.
+	 *
+	 * @param {boolean} bRTL Whether to set the direction to RTL. If <code>false</code>, the direction is set to LTR.
+	 * @returns {function(): Promise} Wrapper function.
+	 */
 	TableQUnitUtils.$changeTextDirection = function(bRTL) {
 		return function() {
 			return TableQUnitUtils.changeTextDirection(bRTL);
 		};
 	};
 
+	/**
+	 * Creates a focus event object.
+	 *
+	 * @param {string} sFocusEventType The focus event type.
+	 * @returns {FocusEvent} The focus event object.
+	 */
 	TableQUnitUtils.createFocusEvent = function(sFocusEventType) {
 		var oFocusEvent;
 
@@ -1188,6 +1200,14 @@ sap.ui.define([
 		return oFocusEvent;
 	};
 
+	/**
+	 * Checks if the "NoData" text of a table matches certain conditions.
+	 *
+	 * @param {object} assert QUnit assert object.
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {boolean} bVisible Whether the "NoData" text is expected to be visible.
+	 * @param {string} [sTitle] Title of the test that prefixes all test messages.
+	 */
 	TableQUnitUtils.assertNoDataVisible = function(assert, oTable, bVisible, sTitle) {
 		var sTestTitle = sTitle == null ? "" : sTitle + ": ";
 
@@ -1196,8 +1216,39 @@ sap.ui.define([
 
 		if (!bVisible) {
 			// If the NoData element is not visible, the table must have focusable elements (cells).
-			assert.ok(oTable.qunit.getDataCell(0, 0), sTestTitle + "Rows are rendered");
+			assert.ok(oTable.qunit.getDataCell(0, 0), sTestTitle + "If 'NoData' is not visible, rows are rendered");
 		}
+	};
+
+	/**
+	 * Focus an element that is outside of a table.
+	 *
+	 * @param {object} [assert] QUnit assert object. This parameter can be omitted.
+	 * @param {string} [sId] Id of an element outside of the table.
+	 * @throws {Error} If the focused element is inside a table.
+	 * @returns {HTMLElement} The focused element.
+	 */
+	TableQUnitUtils.setFocusOutsideOfTable = function(assert, sId) {
+		var oOuterElement;
+
+		if (typeof assert === "string") {
+			sId = assert;
+		}
+
+		sId = sId || "outerelement";
+		oOuterElement = document.getElementById(sId);
+		oOuterElement.focus();
+
+		// IE does not support Element.closest
+		if (oOuterElement.closest && oOuterElement.closest(".sapUiTable")) {
+			throw new Error("Element with id '" + sId + "' is inside a table");
+		}
+
+		if (assert) {
+			assert.deepEqual(oOuterElement, document.activeElement, "Outer element with id '" + sId + "' focused");
+		}
+
+		return oOuterElement;
 	};
 
 	/***********************************
@@ -1443,14 +1494,6 @@ sap.ui.define([
 			}
 		}
 		return jQuery(oCell);
-	};
-
-	window.setFocusOutsideOfTable = function(assert, sId) {
-		sId = sId || "outerelement";
-		var oOuterElement = jQuery.sap.domById(sId);
-		oOuterElement.focus();
-		assert.deepEqual(oOuterElement, document.activeElement, "Outer element with id '" + sId + "' focused");
-		return jQuery(oOuterElement);
 	};
 
 	/**

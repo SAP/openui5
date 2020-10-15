@@ -355,19 +355,16 @@ sap.ui.define([
 		var iTotalRowCount = oTable._getTotalRowCount();
 		var iVisibleRowCount = oTable.getVisibleRowCount();
 		var iNotVisibleRows = iTotalRowCount - iVisibleRowCount;
-		var bScrolled;
 		var i;
 
 		for (i = 0; i < iNotVisibleRows + 2; i++) {
 			if (i < iNotVisibleRows) {
 				assert.equal(oTable.getFirstVisibleRow(), i, "First visible row before scroll (forward, " + i + ")");
-				bScrolled = oScrollExtension.scrollVertically(true, false);
-				assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+				oScrollExtension.scrollVertically(true, false);
 				assert.equal(oTable.getFirstVisibleRow(), i + 1, "First visible row after scroll");
 			} else {
 				assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, " + i + ")");
-				bScrolled = oScrollExtension.scrollVertically(true, false);
-				assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+				oScrollExtension.scrollVertically(true, false);
 				assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
 			}
 		}
@@ -375,13 +372,11 @@ sap.ui.define([
 		for (i = 0; i < iNotVisibleRows + 2; i++) {
 			if (i < iNotVisibleRows) {
 				assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i, "First visible row before scroll (backward, " + i + ")");
-				bScrolled = oScrollExtension.scrollVertically(false, false);
-				assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
+				oScrollExtension.scrollVertically(false, false);
 				assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i - 1, "First visible row after scroll");
 			} else {
 				assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, " + i + ")");
-				bScrolled = oScrollExtension.scrollVertically(false, false);
-				assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+				oScrollExtension.scrollVertically(false, false);
 				assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
 			}
 		}
@@ -397,21 +392,18 @@ sap.ui.define([
 		var iNotVisibleRows = iTotalRowCount - iVisibleRowCount;
 		var iPageSize = iVisibleRowCount - iFixedTop - iFixedBottom;
 		var iPages = Math.ceil((iTotalRowCount - iFixedTop - iFixedBottom) / iPageSize);
-		var bScrolled;
 		var iCurrentPosition = 0;
 		var i;
 
 		for (i = 0; i < iPages + 2; i++) {
 			if (i < iPages - 1) {
 				assert.equal(oTable.getFirstVisibleRow(), iCurrentPosition, "First visible row before scroll (forward, " + i + ")");
-				bScrolled = oScrollExtension.scrollVertically(true, true);
+				oScrollExtension.scrollVertically(true, true);
 				iCurrentPosition += iPageSize;
-				assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
 				assert.equal(oTable.getFirstVisibleRow(), Math.min(iCurrentPosition, iNotVisibleRows), "First visible row after scroll");
 			} else {
 				assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, " + i + ")");
-				bScrolled = oScrollExtension.scrollVertically(true, true);
-				assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+				oScrollExtension.scrollVertically(true, true);
 				assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
 			}
 		}
@@ -420,14 +412,12 @@ sap.ui.define([
 		for (i = 0; i < iPages + 2; i++) {
 			if (i < iPages - 1) {
 				assert.equal(oTable.getFirstVisibleRow(), iCurrentPosition, "First visible row before scroll (backward, " + i + ")");
-				bScrolled = oScrollExtension.scrollVertically(false, true);
-				assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+				oScrollExtension.scrollVertically(false, true);
 				iCurrentPosition -= iPageSize;
 				assert.equal(oTable.getFirstVisibleRow(), Math.max(iCurrentPosition, 0), "First visible row after scroll");
 			} else {
 				assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, " + i + ")");
-				bScrolled = oScrollExtension.scrollVertically(false, true);
-				assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+				oScrollExtension.scrollVertically(false, true);
 				assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
 			}
 		}
@@ -437,17 +427,14 @@ sap.ui.define([
 		var oTable = this.oTable;
 		var oScrollExtension = oTable._getScrollExtension();
 		var iTotalRowCount = oTable._getTotalRowCount();
-		var bScrolled;
 
 		/* More data rows than visible rows, with fixed top/bottom rows */
 		// ↓ Down
 		assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
-		bScrolled = oScrollExtension.scrollVerticallyMax(true);
-		assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+		oScrollExtension.scrollVerticallyMax(true);
 		assert.equal(oTable.getFirstVisibleRow(), iTotalRowCount - oTable.getVisibleRowCount(), "First visible row after scrolling");
 		// ↑ Up
-		bScrolled = oScrollExtension.scrollVerticallyMax(false);
-		assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+		oScrollExtension.scrollVerticallyMax(false);
 		assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
 
 		/* As many data rows as there are visible rows, with fixed top/bottom rows */
@@ -457,12 +444,10 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			// ↓ Down
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
-			bScrolled = oScrollExtension.scrollVerticallyMax(true);
-			assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+			oScrollExtension.scrollVerticallyMax(true);
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
 			// ↑ Up
-			bScrolled = oScrollExtension.scrollVerticallyMax(false);
-			assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+			oScrollExtension.scrollVerticallyMax(false);
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
 
 		}).then(function() {
@@ -474,12 +459,10 @@ sap.ui.define([
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			// ↓ Down
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
-			bScrolled = oScrollExtension.scrollVerticallyMax(true);
-			assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+			oScrollExtension.scrollVerticallyMax(true);
 			assert.equal(oTable.getFirstVisibleRow(), iTotalRowCount - oTable.getVisibleRowCount(), "First visible row after scrolling");
 			// ↑ Up
-			bScrolled = oScrollExtension.scrollVerticallyMax(false);
-			assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+			oScrollExtension.scrollVerticallyMax(false);
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
 
 		}).then(function() {
@@ -489,12 +472,10 @@ sap.ui.define([
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			// ↓ Down
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
-			bScrolled = oScrollExtension.scrollVerticallyMax(true);
-			assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+			oScrollExtension.scrollVerticallyMax(true);
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
 			// ↑ Up
-			bScrolled = oScrollExtension.scrollVerticallyMax(false);
-			assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+			oScrollExtension.scrollVerticallyMax(false);
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
 		});
 	});
@@ -682,15 +663,15 @@ sap.ui.define([
 		});
 		oGetBaseRowHeightStub.returns(100);
 		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(), 11 * 100,
-			"Total row count > Visible row count: The vertical scroll height is correct");
+			"Total row count > Table row count: The vertical scroll height is correct");
 
 		oGetTotalRowCountStub.returns(10);
 		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(), 10 * 100,
-			"Total row count = Visible row count: The vertical scroll height is correct");
+			"Total row count = Table row count: The vertical scroll height is correct");
 
 		oGetTotalRowCountStub.returns(9);
 		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(), 10 * 100,
-			"Total row count < Visible row count: The vertical scroll height is correct");
+			"Total row count < Table row count: The vertical scroll height is correct");
 
 		oGetTotalRowCountStub.returns(1000000);
 		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(true), 1000000 * 100,
@@ -700,17 +681,17 @@ sap.ui.define([
 			"Total row count = 1000000: The vertical scroll height is at its maximum");
 
 		oTable._bVariableRowHeightEnabled = true;
-		oGetTotalRowCountStub.returns(12);
-		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(), 13 * 100,
-			"Variable row heights enabled & Total row count > Visible row count: The vertical scroll height is correct");
-
 		oGetTotalRowCountStub.returns(11);
 		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(), 12 * 100,
-			"Variable row heights enabled & Total row count = Visible row count: The vertical scroll height is correct");
+			"Variable row heights enabled & Total row count > Table row count: The vertical scroll height is correct");
 
 		oGetTotalRowCountStub.returns(10);
-		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(), 12 * 100,
-			"Variable row heights enabled & Total row count < Visible row count: The vertical scroll height is correct");
+		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(), 11 * 100,
+			"Variable row heights enabled & Total row count = Table row count: The vertical scroll height is correct");
+
+		oGetTotalRowCountStub.returns(9);
+		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(), 11 * 100,
+			"Variable row heights enabled & Total row count < Table row count: The vertical scroll height is correct");
 
 		oGetTotalRowCountStub.returns(1000000);
 		assert.strictEqual(oScrollExtension.getVerticalScrollHeight(true), 1000001 * 100,
@@ -757,7 +738,7 @@ sap.ui.define([
 		function test(iTotalRowCount, iRowCount, bRowsOverflowViewport, bVSbShouldBeRequired) {
 			oGetTotalRowCountStub.returns(iTotalRowCount);
 			oGetRowCountsStub.returns({
-				count: iRowCount
+				_fullsize: iRowCount
 			});
 
 			if (bRowsOverflowViewport) {
@@ -1406,18 +1387,22 @@ sap.ui.define([
 			}
 		},
 		_bypassBinding: function(oTable, iLength) {
+			var fnGetTotalRowCount = oTable._getTotalRowCount;
+
+			oTable.__iBindingLength = iLength;
 			oTable._getTotalRowCount = function() {
-				var oBinding = this.getBinding("rows");
+				var oBinding = oTable.getBinding("rows");
 				if (oBinding) {
-					return iLength;
-				} else {
-					return 0;
+					oBinding.getLength = function() {
+						return oTable.__iBindingLength;
+					};
 				}
+				return fnGetTotalRowCount.apply(oTable, arguments);
 			};
 			oTable._getContexts = function(iStartIndex, iLength) {
 				var aContexts = [];
 				if (this.getBinding("rows")) {
-					var iBindingLength = oTable._getTotalRowCount();
+					var iBindingLength = oTable.__iBindingLength;
 					var iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
 					var bVariableHeights = TableUtils.isVariableRowHeightEnabled(oTable);
 
@@ -1457,13 +1442,7 @@ sap.ui.define([
 			var iOldLength = this.oTable._getTotalRowCount();
 			var oBinding = this.oTable.getBinding("rows");
 
-			this.oTable._getTotalRowCount = function() {
-				if (oBinding) {
-					return iNewLength;
-				} else {
-					return 0;
-				}
-			};
+			this.oTable.__iBindingLength = iNewLength;
 
 			if (iOldLength !== iNewLength && sReason && oBinding) {
 				this.oTable._iBindingLength = -1; // Ensure that the table detects a binding length change to update the UI.
@@ -1483,7 +1462,7 @@ sap.ui.define([
 				return;
 			}
 
-			var iBindingLength = this.oTable._getTotalRowCount();
+			var iBindingLength = this.oTable.__iBindingLength;
 			this.changeBindingLength(0);
 			oBinding.fireEvent("refresh", {reason: ChangeReason.Refresh});
 
@@ -2243,6 +2222,47 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
+	QUnit.test("Initial scroll position if binding length changed after rendering; Small data; Variable row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode,
+				firstVisibleRow: mConfig.firstVisibleRow,
+				bindingLength: that.mDefaultOptions.bindingLength - 1,
+				_bVariableRowHeightEnabled: true
+			}, function(oTable) {
+				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
+					that.changeBindingLength(that.mDefaultOptions.bindingLength, ChangeReason.Change);
+				});
+			});
+
+			return oTable.qunit.whenRenderingFinished().then(function() {
+				that.assertPosition(assert, mConfig.firstVisibleRow, mConfig.firstVisibleRow * that.iBaseRowHeight, 0,
+					mConfig.rowMode + ", " + mConfig.title + "; After rendering");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					title: "FirstVisibleRow = 0",
+					rowMode: oRowModeConfig.rowMode,
+					firstVisibleRow: 0
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = 5",
+					rowMode: oRowModeConfig.rowMode,
+					firstVisibleRow: 5
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
 	QUnit.test("Scroll with scrollbar; Tiny data; Variable row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();
@@ -2938,6 +2958,38 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
+	QUnit.test("Scroll by setting FirstVisibleRow when re-rendering; Small data; Variable row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode,
+				_bVariableRowHeightEnabled: true
+			});
+
+			return oTable.qunit.whenRenderingFinished().then(function() {
+				TableQUnitUtils.addDelegateOnce(oTable, "onBeforeRendering", function() {
+					oTable.setFirstVisibleRow(1);
+				});
+				oTable.invalidate();
+				sap.ui.getCore().applyChanges();
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					rowMode: oRowModeConfig.rowMode
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
 	QUnit.test("Scroll by setting FirstVisibleRow when binding refresh; Small data; Fixed row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();
@@ -2950,6 +3002,96 @@ sap.ui.define([
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				that.fakeODataBindingRefresh();
 				oTable.setFirstVisibleRow(1);
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					rowMode: oRowModeConfig.rowMode
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
+	QUnit.test("Scroll by setting FirstVisibleRow when binding refresh; Small data; Variable row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode,
+				_bVariableRowHeightEnabled: true
+			});
+
+			return oTable.qunit.whenRenderingFinished().then(function() {
+				that.fakeODataBindingRefresh();
+				oTable.setFirstVisibleRow(1);
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					rowMode: oRowModeConfig.rowMode
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
+	QUnit.test("Scroll by setting FirstVisibleRow before being bound; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				models: undefined,
+				rowMode: mConfig.rowMode
+			});
+
+			return oTable.qunit.whenRenderingFinished().then(function() {
+				oTable.setFirstVisibleRow(1);
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				oTable.setModel(that.mDefaultOptions.models);
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					rowMode: oRowModeConfig.rowMode
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
+	QUnit.test("Scroll by setting FirstVisibleRow before being bound; Small data; Variable row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				models: undefined,
+				rowMode: mConfig.rowMode,
+				_bVariableRowHeightEnabled: true
+			});
+
+			return oTable.qunit.whenRenderingFinished().then(function() {
+				oTable.setFirstVisibleRow(1);
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				oTable.setModel(that.mDefaultOptions.models);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
 			});
@@ -3834,6 +3976,56 @@ sap.ui.define([
 		});
 
 		return pTestSequence;
+	});
+
+	QUnit.test("Scroll row-wise with #scrollVertically; Small data; Variable row heights", function(assert) {
+		var oTable = this.createTable({
+			_bVariableRowHeightEnabled: true
+		});
+		var that = this;
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			oTable._getScrollExtension().scrollVertically(true, false);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 7, 362, 655);
+			oTable._getScrollExtension().scrollVertically(false, false);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 0, 0, 0);
+		});
+	});
+
+	QUnit.test("Scroll page-wise with #scrollVertically; Small data; Variable row heights", function(assert) {
+		var oTable = this.createTable({
+			_bVariableRowHeightEnabled: true
+		});
+		var that = this;
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			oTable._getScrollExtension().scrollVertically(true, true);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 17, 852, 655);
+			oTable._getScrollExtension().scrollVertically(false, true);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 0, 0, 0);
+		});
+	});
+
+	QUnit.test("Scroll to top and bottom with #scrollVerticallyMay; Small data; Variable row heights", function(assert) {
+		var oTable = this.createTable({
+			_bVariableRowHeightEnabled: true
+		});
+		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+		var that = this;
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			oTable._getScrollExtension().scrollVerticallyMax(true);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, iMaxFirstVisibleRow, iMaxScrollTop, 655);
+			oTable._getScrollExtension().scrollVerticallyMax(false);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 0, 0, 0);
+		});
 	});
 
 	QUnit.test("Restore scroll position after setting ScrollTop; Tiny data; Variable row heights", function(assert) {
@@ -4980,7 +5172,8 @@ sap.ui.define([
 
 				that.fakeODataBindingRefresh(10);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
-				that.assertPosition(assert, 3, 69, 355, sTitle + "ScrollTop = MAX; After binding length increased (refresh)");
+				that.assertPosition(assert, 3, 69, 355,
+					sTitle + "ScrollTop = MAX; After binding length increased (refresh)");
 
 			}).then(oTable.qunit.$scrollVSbTo(9999999)).then(function() {
 				that.fakeODataBindingRefresh(11);
@@ -4996,7 +5189,7 @@ sap.ui.define([
 				that.fakeODataBindingRefresh(100);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, iFirstVisibleRow, 264, 58,
-					sTitle + "ScrollTop = MAX; After binding length decreased (refresh)");
+					sTitle + "ScrollTop = MAX; After binding length increased (refresh)");
 
 			}).then(function() {
 				that.changeBindingLength(0, ChangeReason.Change);

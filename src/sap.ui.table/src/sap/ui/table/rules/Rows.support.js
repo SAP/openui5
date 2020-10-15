@@ -67,14 +67,14 @@ sap.ui.define([
 	});
 
 	/*
-	 * Checks whether the currently visible rows have the expected height.
+	 * Checks whether the currently rendered rows have the expected height.
 	 */
 	var oRowHeights = SupportHelper.normalizeRule({
 		id: "RowHeights",
 		minversion: "1.38",
 		categories: [Categories.Usage],
 		title: "Row heights",
-		description: "Checks whether the currently visible rows have the expected height.",
+		description: "Checks whether the currently rendered rows have the expected height.",
 		resolution: "Check whether content densities are correctly used, and only the supported controls are used as column templates, with their"
 					+ " wrapping property set to \"false\"",
 		resolutionurls: [
