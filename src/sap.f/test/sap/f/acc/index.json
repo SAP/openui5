@@ -24,6 +24,11 @@
 			"control": "sap.f.ShellBar",
 			"url": "ShellBar.html",
 			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
+		  "control": "sap.f.GridContainer",
+		  "url": "GridContainer.html",
+		  "appComponent": "CA-UI5-CTR-ROD"
 		}
 	]
 }
