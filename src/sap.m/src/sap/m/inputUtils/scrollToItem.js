@@ -16,8 +16,8 @@ sap.ui.define([], function () {
 	 * @public
 	 */
 	var scrollToItem = function(oItem, oPicker) {
-		var oItemDomRef = oItem && oItem.getDomRef(),
-			oPickerContentDomRef = oPicker && oPicker.getDomRef('cont');
+		var oItemDomRef = oItem && oItem.getDomRef && oItem.getDomRef(),
+			oPickerContentDomRef = oPicker && oPicker.getDomRef && oPicker.getDomRef('cont');
 
 		if (!oPickerContentDomRef || !oItemDomRef) {
 			return;

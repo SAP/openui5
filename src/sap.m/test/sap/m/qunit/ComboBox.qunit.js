@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/ui/Device",
 	"sap/m/InputBase",
 	'sap/ui/core/ValueStateSupport',
@@ -64,6 +65,7 @@ sap.ui.define([
 	sinon,
 	containsOrEquals,
 	createAndAppendDiv,
+	inputsDefaultFilter,
 	Device,
 	InputBase,
 	ValueStateSupport,
@@ -11342,7 +11344,7 @@ sap.ui.define([
 
 	QUnit.module("highlighting");
 
-	QUnit.test("_highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function (assert) {
+	QUnit.test("highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function (assert) {
 
 		// system under test
 		var fnOnAfterOpenSpy = this.spy(ComboBox.prototype, "onAfterOpen");
@@ -11372,7 +11374,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("_highlightList doesn't throw an error when combobox's value contains special characters", function (assert) {
+	QUnit.test("highlightList doesn't throw an error when combobox's value contains special characters", function (assert) {
 
 		// system under test
 		var fnOnAfterOpenSpy = this.spy(ComboBox.prototype, "onAfterOpen");
@@ -11390,7 +11392,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		oComboBox._highlightList("(T");
+		oComboBox.highlightList("(T");
 
 		// act
 		oComboBox.open();
@@ -11468,29 +11470,28 @@ sap.ui.define([
 
 	QUnit.test("Setting an invalid filter should fallback to default text filter", function (assert) {
 		var log = sap.ui.require('sap/base/Log'),
-			fnWarningSpy = this.spy(log, "warning"),
-			fnDefaultFilterSpy = this.stub(ComboBoxBase, "DEFAULT_TEXT_FILTER");
+			fnWarningSpy = this.spy(log, "warning");
 
 		// null is passed for a filter
 		this.oComboBox.setFilterFunction(null);
 		assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is null");
 
 		this.oComboBox.filterItems({value: "", properties: this.oComboBox._getFilters()});
-		assert.ok(fnDefaultFilterSpy.called, "Default text filter should be applied");
+		assert.notOk(this.oComboBox.fnFilter, "Default text filter should be applied, since fnFilter is not set");
 
 		// undefined is passed for a filter
 		this.oComboBox.setFilterFunction(undefined);
 		assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is undefined");
 
 		this.oComboBox.filterItems({value: "", properties: this.oComboBox._getFilters()});
-		assert.ok(ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+		assert.notOk(this.oComboBox.fnFilter, "Default text filter should be applied, since fnFilter is not set");
 
 		// wrong filter type is passed
 		this.oComboBox.setFilterFunction({});
 		assert.ok(fnWarningSpy.called, "Warning should be logged in the console when filter is not a function");
 
 		this.oComboBox.filterItems({value: "", properties: this.oComboBox._getFilters()});
-		assert.ok(ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+		assert.notOk(this.oComboBox.fnFilter, "Default text filter should be applied, since fnFilter is not set");
 	});
 
 	QUnit.test("Setting a valid filter should apply on items", function (assert) {
@@ -11715,11 +11716,11 @@ sap.ui.define([
 		this.comboBox.syncPickerContent();
 
 		// act
-		var bMatched = ComboBoxBase.DEFAULT_TEXT_FILTER("서", this.comboBox.getItems()[0], "getText");
+		var bMatched = inputsDefaultFilter("서", this.comboBox.getItems()[0], "getText");
 		var aFilteredItems = this.comboBox.filterItems({value: "서", properties: this.comboBox._getFilters()});
 
 		// assert
-		assert.ok(bMatched, "'DEFAULT_TEXT_FILTER' should match composite characters");
+		assert.ok(bMatched, "'inputsDefaultFilter' should match composite characters");
 		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
 		assert.strictEqual(aFilteredItems[0].getText(), "서비스 ID", "Text should start with 서");
 	});
@@ -11832,22 +11833,6 @@ sap.ui.define([
 		assert.ok(oListItem.isA("sap.m.GroupHeaderListItem"), "The ListItem is of type 'sap.m.GroupHeaderListItem'.");
 		assert.ok(oListItem.aCustomStyleClasses.indexOf(sClass) > -1, "Class " + sClass + " was added to the ListItem");
 		assert.strictEqual(oListItem.getTitle(), "Group header text", "The title of the GroupHeaderListItem was set correctly.");
-	});
-
-	QUnit.test("returns GroupHeaderListItem when called with SeparatorItem without text", function (assert) {
-		// system under test
-		var oItem = new SeparatorItem(),
-			sClass = this.oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem",
-			sAdditionalClass = this.oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "SeparatorItemNoText",
-			oListItem;
-
-		// act
-		oListItem = this.oComboBox._mapItemToListItem(oItem);
-
-		// assert
-		assert.ok(oListItem.isA("sap.m.GroupHeaderListItem"), "The ListItem is of type 'sap.m.GroupHeaderListItem'.");
-		assert.ok(oListItem.aCustomStyleClasses.indexOf(sClass) > -1, "Class " + sClass + " was added to the ListItem");
-		assert.ok(oListItem.aCustomStyleClasses.indexOf(sAdditionalClass) > -1, "Class " + sAdditionalClass + " was added to the ListItem");
 	});
 
 	QUnit.test("forwards custom data to StandardListItem.", function (assert) {
@@ -12271,31 +12256,6 @@ sap.ui.define([
 		this.fnCheckFilterWithGrouping(assert, aItems);
 	});
 
-	QUnit.test("Visual separator items not part of the filtering", function (assert) {
-		assert.expect(5);
-		var aItems,
-			oItem = new SeparatorItem();
-
-		// act
-		this.oComboBox.insertItem(oItem, 1);
-		aItems = this.oComboBox.getVisibleItems();
-
-		// assert
-		assert.strictEqual(aItems.length, 7, "There should be 7 items initially");
-
-		// act
-		this.oComboBox.filterItems({
-			properties: this.oComboBox._getFilters(),
-			value: "item1"
-		});
-		aItems = this.oComboBox.getVisibleItems();
-
-		// assert
-		// Note: The separator items were not part of the filtering even before
-		// and are hidden when the user starts filtering
-		this.fnCheckFilterWithGrouping(assert, aItems);
-	});
-
 	QUnit.test("onsapdown when picker closed should select first non separator item", function (assert) {
 		assert.expect(3);
 		var oExpectedItem = this.oComboBox.getItems()[1],
@@ -12670,31 +12630,6 @@ sap.ui.define([
 		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "", "Correct text was selected in the combo box.");
 		assert.ok(oComboBox.getSelectedItem() === null, "Nothing was selected.");
 
-		oComboBox.destroy();
-	});
-
-	QUnit.module("Separator item no text");
-
-	QUnit.test("should be have styleClass 'SeparatorItemNoText'.", function (assert) {
-		// System under test
-		var oComboBox = new ComboBox({
-			items: [
-				new Item({text: "item1", key: "key1"}),
-				new SeparatorItem(),
-				new Item({text: "item2", key: "key2"})
-			]
-		});
-		oComboBox.syncPickerContent();
-		var oItem = oComboBox.getItems()[1],
-			oListItem = oComboBox.getListItem(oItem);
-
-		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assert
-		assert.ok(oListItem.hasStyleClass("sapMComboBoxBaseSeparatorItemNoText"), "The separator item has the correct style class 'SeparatorItemNoText'.");
-
-		// clean up
 		oComboBox.destroy();
 	});
 
