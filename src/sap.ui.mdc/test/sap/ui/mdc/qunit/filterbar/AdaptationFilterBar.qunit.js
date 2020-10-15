@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/AdaptationController",
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/Control",
-	"sap/ui/mdc/BaseDelegate",
+	"sap/ui/mdc/AggregationBaseDelegate",
 	"sap/ui/mdc/util/TypeUtil",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/FilterField"
@@ -18,7 +18,7 @@ sap.ui.define([
 	AdaptationController,
 	TableDelegate,
 	Control,
-	BaseDelegate,
+	AggregationBaseDelegate,
 	TypeUtil,
 	JSONModel,
 	FilterField
@@ -130,6 +130,7 @@ sap.ui.define([
 			this.oAdaptationFilterBar.initialized().then(function(){
 
 				assert.deepEqual(this.oAdaptationFilterBar._aProperties.length, this.aMockProperties.length, "Property info has been passed from the Parent");
+				TableDelegate.fetchProperties.restore();
 				done();
 			}.bind(this));
 		}.bind(this));
@@ -142,7 +143,7 @@ sap.ui.define([
 			//mock parent as 'AdaptationControl'
 			this.oParent = new Control({
 				delegate: {
-					name: "sap/ui/mdc/BaseDelegate"
+					name: "sap/ui/mdc/AggregationBaseDelegate"
 				}
 			});
 
@@ -189,21 +190,31 @@ sap.ui.define([
 				resolve(this.aMockProperties);
 			}.bind(this));
 
-			BaseDelegate.fetchProperties = function() {
-				return oMockedPropertyInfoPromise;
+			sinon.stub(AggregationBaseDelegate, "fetchProperties").returns(oMockedPropertyInfoPromise);
+
+			sinon.stub(AggregationBaseDelegate, "getFilterDelegate").returns({
+				addFilterItem: function(oProperty, oControl) {
+					return Promise.resolve(new FilterField());
+				}
+			});
+
+			this.addItem = function(sKey, oControl){
+				return Promise.resolve(new FilterField({
+					conditions: "{$filters>/conditions/" + sKey + "}"
+				}));
 			};
 
-			BaseDelegate.getFilterDelegate = function() {
-				return {
-					addFilterItem: function(oProperty, oControl) {
-						return Promise.resolve(new FilterField());
-					}
-				};
-			};
+			this.oAddStub = sinon.stub(AggregationBaseDelegate, "addItem");
+
+			this.oRemoveStub = sinon.stub(AggregationBaseDelegate, "removeItem");
 
 			oAdaptationFilterBar.setAdaptationControl(this.oParent);
 		},
 		afterEach: function () {
+			AggregationBaseDelegate.fetchProperties.restore();
+			AggregationBaseDelegate.getFilterDelegate.restore();
+			AggregationBaseDelegate.addItem.restore();
+			AggregationBaseDelegate.removeItem.restore();
 			oAdaptationFilterBar.destroy();
 			this.oParent = null;
 			this.oParentAC = null;
@@ -311,16 +322,12 @@ sap.ui.define([
 	QUnit.test("Check 'advanvedMode' - check 'remove' hook executions", function(assert){
 		var done = assert.async(2);
 
-		BaseDelegate.addItem = function(sKey, oFilterBar) {
-			return Promise.resolve(new FilterField({
-				conditions: "{$filters>/conditions/" + sKey + "}"
-			}));
-		};
+		this.oAddStub.callsFake(this.addItem);
 
-		BaseDelegate.removeItem = function(sKey, oFilterBar) {
+		this.oRemoveStub.callsFake(function(){
 			assert.ok(true, "remove hook called");
 			done(2);
-		};
+		});
 
 		oAdaptationFilterBar.setAdvancedMode(true);
 
@@ -364,16 +371,12 @@ sap.ui.define([
 	QUnit.test("Check 'advanvedMode' - check 'remove' hook executions, but change the selection before", function(assert){
 		var done = assert.async(1);
 
-		BaseDelegate.addItem = function(sKey, oFilterBar) {
-			return Promise.resolve(new FilterField({
-				conditions: "{$filters>/conditions/" + sKey + "}"
-			}));
-		};
+		this.oAddStub.callsFake(this.addItem);
 
-		BaseDelegate.removeItem = function(sKey, oFilterBar) {
+		this.oRemoveStub.callsFake(function(){
 			assert.ok(true, "remove hook called");
 			done(1);
-		};
+		});
 
 		oAdaptationFilterBar.setAdvancedMode(true);
 
@@ -414,6 +417,88 @@ sap.ui.define([
 
 				//Call it again --> no more hooks should be executed
 				oAdaptationFilterBar._executeRequestedRemoves();
+			});
+		});
+	});
+
+	QUnit.test("CreateFilterFields should only resolve once all Fields have been created", function(assert) {
+
+		var done = assert.async();
+
+		//Use a timeout to mock FilterField creation delay
+		this.oAddStub.callsFake(function(){
+			return new Promise(function(resolve){
+				setTimeout(function(){
+					resolve(this.addItem());
+				}.bind(this), 750);
+			}.bind(this));
+		}.bind(this));
+
+		this.oParent.getFilterItems = function() {
+			return [];
+		};
+
+		oAdaptationFilterBar.setAdvancedMode(true);
+
+		oAdaptationFilterBar.setP13nModel(new JSONModel({
+			items: [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				}
+			]
+		}));
+
+		this.oParent.initControlDelegate().then(function(){
+
+			oAdaptationFilterBar.createFilterFields().then(function(oAdaptationFilterBar){
+
+				assert.ok(oAdaptationFilterBar, "Promise resolved");
+
+				assert.equal(oAdaptationFilterBar.getFilterItems().length, 2, "FilterItems created");
+
+				done();
+
+			});
+		});
+	});
+
+	QUnit.test("Throw an error for undefined FilterField creation", function(assert) {
+
+		var done = assert.async();
+
+		this.oAddStub.callsFake(function(){
+			return Promise.resolve(undefined);
+		});
+
+		this.oParent.getFilterItems = function() {
+			return [];
+		};
+
+		oAdaptationFilterBar.setAdvancedMode(true);
+
+		oAdaptationFilterBar.setP13nModel(new JSONModel({
+			items: [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				}
+			]
+		}));
+
+		this.oParent.initControlDelegate().then(function(){
+
+			oAdaptationFilterBar.createFilterFields().catch(function(oErr){
+
+				assert.ok(oErr, "Error thrown");
+				assert.equal(oErr.message, "No FilterField could be created for property: 'key1'.");
+
+				done();
+
 			});
 		});
 	});

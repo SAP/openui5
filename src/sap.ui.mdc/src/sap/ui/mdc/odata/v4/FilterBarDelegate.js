@@ -604,6 +604,15 @@ sap.ui.define([
 								});
 							}
 
+							var mProperties = aProperties.reduce(function(mMap, oProp){
+								mMap[oProp.name] = oProp;
+								return mMap;
+							}, {});
+
+							aProperties = Object.keys(mProperties).map(function(sName) {
+								return mProperties[sName];
+							});
+
 							mMainEntitySet[sCachKey] = aProperties;
 							resolve(aProperties);
 						});
