@@ -59,7 +59,7 @@ sap.ui.define([
 	var oDataType;
 	var oFormatOptions;
 
-	var _init = function() {
+	var _init = function(bNoRender) {
 		oDataType = new StringType();
 		oFormatOptions = {
 				valueType: oDataType,
@@ -75,7 +75,10 @@ sap.ui.define([
 			conditions: '{cm>/conditions/Name}',
 			formatOptions: oFormatOptions
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+
+		if (!bNoRender) {
+			sap.ui.getCore().applyChanges();
+		}
 	};
 
 	var _teardown = function() {
@@ -90,7 +93,9 @@ sap.ui.define([
 	};
 
 	QUnit.module("Common functions", {
-		beforeEach: _init,
+		beforeEach: function() {
+			_init();
+			},
 		afterEach: _teardown
 	});
 
@@ -366,26 +371,34 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("use custom operator", function(assert) {
+	var oCustomOperator;
 
-		FilterOperatorUtil.addOperator(new Operator({
-			name: "MyOperator",
-			filterOperator: "EQ",
-			tokenParse: "^#tokenText#$",
-			tokenFormat: "#tokenText#",
-			tokenText: "Text",
-			longText: "Longtext",
-			valueTypes: [Operator.ValueType.Self],
-			createControl: function(oType, oOperator, sPath, index) {
-				return new Button({text: {path: sPath, type: oType}});
-			}
-		}));
+	QUnit.module("Custom Operator", {
+		beforeEach: function() {
+			oCustomOperator = new Operator({
+				name: "MyOperator",
+				filterOperator: "EQ",
+				tokenParse: "^#tokenText#$",
+				tokenFormat: "#tokenText#",
+				tokenText: "Text",
+				longText: "Longtext",
+				valueTypes: [Operator.ValueType.Self],
+				createControl: function(oType, oOperator, sPath, index) {
+					return new Button({text: {path: sPath, type: oType}});
+				}
+			});
 
-		if (oDefineConditionPanelView.oOperatorModel) {
-			// fake initial rendering (changing operators at runtime is not a real use case)
-			oDefineConditionPanelView.oOperatorModel.destroy();
-			oDefineConditionPanelView.oOperatorModel = undefined;
+			FilterOperatorUtil.addOperator(oCustomOperator);
+			_init(true);
+		},
+		afterEach: function() {
+			_teardown();
+			delete FilterOperatorUtil._mOperators[oCustomOperator.name]; // TODO: do we need an API?
+			oCustomOperator = undefined;
 		}
+	});
+
+	QUnit.test("use custom operator", function(assert) {
 
 		oModel.setData({
 			conditions: {
@@ -403,7 +416,6 @@ sap.ui.define([
 		};
 
 		oDefineConditionPanelView.setFormatOptions(oFormatOptions);
-		oDefineConditionPanelView.rerender(); // to invalidate operator texts
 		sap.ui.getCore().applyChanges();
 
 		var fnDone = assert.async();
@@ -422,13 +434,95 @@ sap.ui.define([
 
 			assert.equal(aItems.length, 1, "Only one Operator available");
 			assert.equal(aItems[0].getText(), "Longtext", "Text of operator");
+
+			// fake changing value
+			oField.setText("X");
+			assert.equal(oModel.getConditions("Name")[0].values[0], "X", "condition value should be changed");
+
 			fnDone();
 		}, 0);
 
 	});
 
+	QUnit.test("switch custom operator", function(assert) {
+
+		var aOriginalOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String);
+		FilterOperatorUtil.setOperatorsForType(BaseType.String, [FilterOperatorUtil.getOperator("BT"), oCustomOperator], oCustomOperator);
+
+		sap.ui.getCore().applyChanges();
+
+		var fnDone = assert.async();
+		setTimeout(function () { // to wait for rendering
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oOperatorField = aContent[0]; // operator
+			var oFH = sap.ui.getCore().byId(oOperatorField.getFieldHelp());
+			var aItems = oFH.getItems();
+			var oField = aContent[2];
+			var aConditions = oDefineConditionPanelView.getConditions();
+
+			// check for default operator
+			assert.equal(oOperatorField.getValue(), "MyOperator", "Operator value");
+			assert.equal(aItems.length, 2, "Only two Operators available");
+			assert.equal(aItems[0].getText(), oMessageBundle.getText("operators.BT.longText"), "Text of operator0");
+			assert.equal(aItems[1].getText(), "Longtext", "Text of operator1");
+			assert.equal(aConditions.length, 1, "one empty condition should exist");
+			assert.equal(aConditions[0].operator, "MyOperator", "Operator of empty condition");
+			assert.equal(aConditions[0].values[0], null, "Value of empty condition");
+			assert.ok(aConditions[0].isEmpty, "isEmpty of empty condition");
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+			assert.ok(oField && oField.isA("sap.m.Button"), "Field is sap.m.Button");
+			assert.deepEqual(oField.getText && oField.getText(), "", "Field empty");
+
+			// switch operator
+			oOperatorField.setValue("BT");
+			oOperatorField.fireChange({value: "BT"}); // fake item select
+
+			setTimeout(function () { // as model update is async
+				sap.ui.getCore().applyChanges();
+				aConditions = oDefineConditionPanelView.getConditions();
+				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+				assert.deepEqual(aConditions[0].values, [null, null], "Values set on condition");
+
+				aContent = oGrid.getContent();
+				oField = aContent[2];
+
+				assert.equal(aContent.length, 6, "One row with one fields created - Grid contains 6 controls");
+				assert.ok(oField && oField.isA("sap.ui.mdc.Field"), "Field is mdc Field");
+				assert.deepEqual(oField.getValue && oField.getValue(), null, "Field value");
+				oField = aContent[3];
+				assert.ok(oField && oField.isA("sap.ui.mdc.Field"), "Field is mdc Field2");
+				assert.deepEqual(oField.getValue && oField.getValue(), null, "Field2 value");
+
+				// switch operator back
+				oOperatorField.setValue("MyOperator");
+				oOperatorField.fireChange({value: "MyOperator"}); // fake item select
+
+				setTimeout(function () { // as model update is async
+					sap.ui.getCore().applyChanges();
+					aConditions = oDefineConditionPanelView.getConditions();
+					assert.equal(aConditions[0].operator, "MyOperator", "Operator set on condition");
+					assert.deepEqual(aConditions[0].values, [null], "Values set on condition");
+
+					aContent = oGrid.getContent();
+					oField = aContent[2];
+
+					assert.equal(aContent.length, 5, "One row with one fields created - Grid contains 5 controls");
+					assert.ok(oField && oField.isA("sap.m.Button"), "Field is sap.m.Button");
+					assert.deepEqual(oField.getText && oField.getText(), "", "Field empty");
+
+					FilterOperatorUtil.setOperatorsForType(BaseType.String, aOriginalOperators, FilterOperatorUtil.getOperator("EQ"));
+					fnDone();
+				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
 	QUnit.module("Type dependend functions", {
-		beforeEach: _init,
+		beforeEach: function() {
+			_init();
+			},
 		afterEach: _teardown
 	});
 
@@ -774,7 +868,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction", {
-		beforeEach: _init,
+		beforeEach: function() {
+			_init();
+			},
 		afterEach: _teardown
 	});
 
