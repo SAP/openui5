@@ -30,6 +30,7 @@ sap.ui.define([
 		["en-x-saptrc",				"en",		null,	null,	null,			null,			"x-saptrc",	"1Q"],
 		["EN-X-sAptRc",				"en",		null,	null,	null,			null,			"X-sAptRc",	"1Q"],
 		["en-x-sappsd",				"en",		null,	null,	null,			null,			"x-sappsd",	"2Q"],
+		["bg-x-saprigi",			"bg",		null,	null,	null,			null,			"x-saprigi","3Q"],
 		["de-CH-x-sapufmt-sappsd",	"de",		null,	"CH",	null,			null,			"x-sapufmt-sappsd",	"2Q"],
 		["iw-IL",					"iw",		null,	"IL",	null,			null,			null,		"HE"],
 		["zz",						"zz",		null,	null,	null,			null,			null,		"ZZ"] // unknown language

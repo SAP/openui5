@@ -259,8 +259,8 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/assert"],
 				}
 
 				// recognize SAP supportability pseudo languages
-				if ( this.sPrivateUse && (m = /-(saptrc|sappsd)(?:-|$)/i.exec(this.sPrivateUse)) ) {
-					sLanguage = (m[1].toLowerCase() === "saptrc") ? "1Q" : "2Q";
+				if ( this.sPrivateUse && (m = /-(saptrc|sappsd|saprigi)(?:-|$)/i.exec(this.sPrivateUse)) ) {
+					sLanguage = SAP_PSEUDO_LANGUAGES[m[1].toLowerCase()];
 				}
 
 				// by convention, SAP systems seem to use uppercase letters
@@ -269,11 +269,20 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/assert"],
 
 		});
 
+		/*
+		 * Maps wellknown private use extensions for pseudo languages to the corresponding SAP Logon Language.
+		 */
+		var SAP_PSEUDO_LANGUAGES = {
+			"saptrc"  : "1Q",
+			"sappsd"  : "2Q",
+			"saprigi" : "3Q"
+		};
+
 		var M_ISO639_OLD_TO_NEW = {
-				"iw" : "he",
-				"ji" : "yi",
-				"in" : "id",
-				"sh" : "sr"
+			"iw" : "he",
+			"ji" : "yi",
+			"in" : "id",
+			"sh" : "sr"
 		};
 
 		/**

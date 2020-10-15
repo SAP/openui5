@@ -64,12 +64,16 @@ sap.ui.define([
 		checkSequence("zh_HK", ["_zh_HK", "_zh_TW", "_zh", "_en", ""]);
 		// special case BCP47 tag with private extension for 1Q/saptrc, must always map to en-US and variant saptrc
 		checkSequence("es-ES-x-saptrc", ["_en_US_saptrc", "_en_US", "_en", ""]);
-		// special case BCP47 tag with private extension for 1Q/sappsd, must always map to en-US and variant sappsd
+		// special case BCP47 tag with private extension for 2Q/sappsd, must always map to en-US and variant sappsd
 		checkSequence("es-ES-x-sappsd", ["_en_US_sappsd", "_en_US", "_en", ""]);
+		// special case BCP47 tag with private extension for 3Q/saprigi, must always map to en-US and variant saprigi
+		checkSequence("es-ES-x-saprigi", ["_en_US_saprigi", "_en_US", "_en", ""]);
 		// special case BCP47 tag with variant for 1Q/saptrc, must always map to en-US and variant saptrc
 		checkSequence("es-ES-saptrc", ["_en_US_saptrc", "_en_US", "_en", ""]);
-		// special case BCP47 tag with variant for 1Q/sappsd, must always map to en-US and variant sappsd
+		// special case BCP47 tag with variant for 2Q/sappsd, must always map to en-US and variant sappsd
 		checkSequence("es-ES-sappsd", ["_en_US_sappsd", "_en_US", "_en", ""]);
+		// special case BCP47 tag with variant for 3Q/saprigi, must always map to en-US and variant saprigi
+		checkSequence("es-ES-saprigi", ["_en_US_saprigi", "_en_US", "_en", ""]);
 	});
 
 	function loadBundle(assert, mParams, fnDoWhenLoaded) {

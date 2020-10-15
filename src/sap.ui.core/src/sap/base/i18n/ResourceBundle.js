@@ -60,14 +60,15 @@ sap.ui.define([
 
 	/**
 	 * HANA XS Engine can't handle private extensions in BCP47 language tags.
-	 * Therefore, the agreed BCP47 codes for the technical languages 1Q and 2Q
+	 * Therefore, the agreed BCP47 codes for the technical languages 1Q..3Q
 	 * don't work as Accept-Header and need to be send as URL parameters as well.
 	 * @const
 	 * @private
 	 */
 	var M_SUPPORTABILITY_TO_XS = {
-		"en_US_saptrc" : "1Q",
-		"en_US_sappsd" : "2Q"
+		"en_US_saptrc"  : "1Q",
+		"en_US_sappsd"  : "2Q",
+		"en_US_saprigi" : "3Q"
 	};
 
 	/**
@@ -77,7 +78,7 @@ sap.ui.define([
 	 */
 	var sDefaultFallbackLocale = "en";
 
-	var rSAPSupportabilityLocales = /(?:^|-)(saptrc|sappsd)(?:-|$)/i;
+	var rSAPSupportabilityLocales = /(?:^|-)(saptrc|sappsd|saprigi)(?:-|$)/i;
 
 	/**
 	 * Helper to normalize the given locale (in BCP-47 syntax) to the java.util.Locale format.

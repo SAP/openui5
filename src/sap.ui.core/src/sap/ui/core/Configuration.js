@@ -636,6 +636,8 @@ sap.ui.define([
 		 *                                    represented as en-US with a private extension
 		 *    "2Q"  -->  "en-US-x-sappsd"  // special language code for supportability (pseudo translation),
 		 *                                    represented as en-US with a private extension
+		 *    "3Q"  -->  "en-US-x-saprigi" // special language code for the Rigi pseudo language,
+		 *                                    represented as en-US with a private extension
 		 * </pre>
 		 *
 		 * For a normalized BCP47 tag, call {@link #getLanguageTag} or call {@link #getLocale} to get a
@@ -1616,7 +1618,8 @@ sap.ui.define([
 		"ZH" : "zh-Hans",
 		"ZF" : "zh-Hant",
 		"1Q" : "en-US-x-saptrc",
-		"2Q" : "en-US-x-sappsd"
+		"2Q" : "en-US-x-sappsd",
+		"3Q" : "en-US-x-saprigi"
 	};
 
 	var M_ABAP_DATE_FORMAT_PATTERN = {
