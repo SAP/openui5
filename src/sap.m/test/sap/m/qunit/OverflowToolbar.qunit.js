@@ -2140,6 +2140,30 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("[_cacheControlsInfo] when media is changed", function (assert) {
+		// Arrange
+		var aDefaultContent = [
+					new Text({text: "Label1" }),
+					new Text({text: "Label2" })
+				],
+				oOverflowTB = createOverflowToolbar({
+					width: "100%"
+				}, aDefaultContent, true),
+				oSpyCache;
+
+		sap.ui.getCore().applyChanges();
+		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
+
+		// Act
+		oOverflowTB._fnMediaChange(); // Simulating media change
+
+		// Assert
+		assert.ok(oSpyCache.called, "Caching of controls' width is called as the media is changed");
+
+		// Clean up
+		oOverflowTB.destroy();
+	});
+
 	QUnit.test("no Popover when Popover content is not visible", function (assert) {
 		var oToolbarOnlyControl = new Text({
 				maxLines: 1, wrapping: true, text: "Sales and Total sales by Product and Quarter",

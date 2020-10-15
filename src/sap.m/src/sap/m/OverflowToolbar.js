@@ -221,6 +221,9 @@ sap.ui.define([
 		this._sAriaRoleDescription = sap.ui.getCore()
 			.getLibraryResourceBundle("sap.m")
 			.getText(OverflowToolbar.ARIA_ROLE_DESCRIPTION);
+
+		this._fnMediaChangeRef = this._fnMediaChange.bind(this);
+		Device.media.attachHandler(this._fnMediaChangeRef);
 	};
 
 	OverflowToolbar.prototype.exit = function () {
@@ -237,6 +240,8 @@ sap.ui.define([
 			window.cancelAnimationFrame(this._iFrameRequest);
 			this._iFrameRequest = null;
 		}
+
+		Device.media.detachHandler(this._fnMediaChangeRef);
 	};
 
 	/**
@@ -441,6 +446,21 @@ sap.ui.define([
 			return;
 		}
 
+		this._callDoLayout();
+	};
+
+	// Media Change Handler
+	OverflowToolbar.prototype._fnMediaChange = function() {
+		// There are some predefined device-dependent CSS classes, which depend on media queries and show/hide controls with CSS.
+		// In some cases, upon device orientation change, some controls (previously hidden) become visible, but their width is cached as 0.
+		// That is why here we reset _bControlsInfoCached property and _iPreviousToolbarWidth, if there is a device change (based on media queries).
+		this._bControlsInfoCached = false;
+		this._iPreviousToolbarWidth = null;
+		this._callDoLayout();
+	};
+
+	// Calls doLayout, depending on the "asyncMode"
+	OverflowToolbar.prototype._callDoLayout = function () {
 		if (this.getAsyncMode()) {
 			this._doLayoutAsync();
 		} else {
