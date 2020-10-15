@@ -59,6 +59,44 @@ sap.ui.define([
 			assert.strictEqual(oStatusIcon.getSrc(), "", "Status icon's src property should be an empty string");
 	});
 
+	QUnit.module("GenericTag - setValue", {
+		beforeEach: function() {
+			this.oGenericTag = new GenericTag({
+				value: new ObjectNumber({
+					number: 456,
+					unit: "EUR"
+				})
+			}).placeAt(TESTS_DOM_CONTAINER);
+		},
+		afterEach: function() {
+			this.oGenericTag.destroy();
+			this.oGenericTag = null;
+		}
+	});
+
+	QUnit.test("GenericTag - setValue fires '_valueChanged' event", function (assert) {
+		//arrange
+		var oSpy = this.spy(this.oGenericTag, "fireEvent");
+
+		//act
+		this.oGenericTag.setValue(new ObjectNumber());
+
+		//assert
+		assert.ok(oSpy.calledWith("_valueChanged"), "When setting new 'value' aggregation, '_valueChanged' is fired");
+	});
+
+	QUnit.test("GenericTag - change in 'value' aggregation fires '_valueChanged' event", function (assert) {
+		//arrange
+		var oValue = this.oGenericTag.getValue(),
+			oSpy = this.spy(this.oGenericTag, "fireEvent");
+
+		//act
+		oValue.setNumber(50000);
+
+		//assert
+		assert.ok(oSpy.calledWith("_valueChanged"), "When changing a property of the 'value' aggregation, '_valueChanged' is fired");
+	});
+
 	QUnit.module("GenericTag - setStatus", {
 		beforeEach: function() {
 			this.oGenericTag = new GenericTag({
