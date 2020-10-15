@@ -41,7 +41,20 @@ sap.ui.define([
 				label: "bar"
 			}, "string"
 			]);
-		}, "Error thrown");
+		}, "Error thrown if an item is a string");
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "foo",
+				label: "bar"
+			}, new ManagedObject()
+			]);
+		}, "Error thrown if an item is an instance");
+		assert.throws(function() {
+			new PropertyHelper([Object.create({
+				name: "prop",
+				label: "prop"
+			})]);
+		}, "Error thrown if an item is a complex object");
 	});
 
 	QUnit.test("PropertyInfo containing properties with the same key", function(assert) {
@@ -347,6 +360,34 @@ sap.ui.define([
 		oPropertyHelper.destroy();
 	});
 
+	QUnit.test("Cloning of non-enumerable attributes", function(assert) {
+		var aPropertyInfos = [{
+			name: "prop",
+			label: "prop"
+		}];
+		Object.defineProperty(aPropertyInfos[0], "foo", {
+			value: "bar"
+		});
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
+
+		assert.deepEqual(oPropertyHelper.getProperties(), [{
+			name: "prop",
+			label: "prop",
+			groupLabel: "",
+			visible: true,
+			filterable: true,
+			sortable: true,
+			fieldHelp: "",
+			maxConditions: null,
+			path: "prop",
+			exportSettings: null,
+			typeConfig: null
+		}], "Cloned property infos");
+		assert.notOk(oPropertyHelper.getProperties()[0].hasOwnProperty("foo"), "The non-enumerable attribute was not cloned");
+
+		oPropertyHelper.destroy();
+	});
+
 	QUnit.module("Reference to a parent");
 
 	QUnit.test("Without a parent", function(assert) {
@@ -399,11 +440,20 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
-				label: "prop"
+				label: "My property",
+				exportSettings: {
+					nestedSetting: {
+						deepNestedSetting: {}
+					},
+					nestedArray: [{}]
+				}
 			}, {
-				name: "complexProperty",
+				name: "complexProp",
 				label: "My complex property",
-				propertyInfos: ["prop"]
+				propertyInfos: ["prop", "otherProp"]
+			}, {
+				name: "otherProp",
+				label: "My other property"
 			}]);
 		},
 		afterEach: function() {
@@ -412,95 +462,40 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property info array", function(assert) {
-		// IE does not always throw when writing on immutable objects.
-
-		try {
-			delete this.oPropertyHelper.getProperties()[0];
-		} catch (e) {
-			assert.ok(true, "Deleting an item from the property infos array throws an error");
-		}
-
-		try {
-			this.oPropertyHelper.getProperties()[1] = "test";
-		} catch (e) {
-			assert.ok(true, "Changing an item of the property infos array throws an error");
-		}
-
-		try {
-			this.oPropertyHelper.getProperties().push("test");
-		} catch (e) {
-			assert.ok(true, "Adding an item to the property infos array throws an error");
-		}
-
-		try {
-			this.oPropertyHelper.getProperties()[0].name = "otherName";
-		} catch (e) {
-			assert.ok(true, "Manipulating an item in the property infos array throws an error");
-		}
-
-		assert.deepEqual(this.oPropertyHelper.getProperties(), [{
-			name: "prop",
-			label: "prop",
-			groupLabel: "",
-			visible: true,
-			filterable: true,
-			sortable: true,
-			fieldHelp: "",
-			maxConditions: null,
-			exportSettings: null,
-			typeConfig: null,
-			path: "prop"
-		}, {
-			name: "complexProperty",
-			label: "My complex property",
-			groupLabel: "",
-			visible: true,
-			exportSettings: null,
-			propertyInfos: ["prop"]
-		}], "The property infos array is immutable");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()), "The property infos array is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[0]), "The first item of the property infos array is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[1]), "The second item of the property infos array is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[1]), "The third item of the property infos array is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[1].propertyInfos), "The 'propertyInfos' attribute is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[1]._relatedProperties), "The '_relatedProperties' helper attribute is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[0].exportSettings), "Object attributes are frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[0].exportSettings.nestedSetting),
+			"Objects nested in object attributes are frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[0].exportSettings.nestedSetting.deepNestedSetting),
+			"Objects deeply nested in object attributes are frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[0].exportSettings.nestedArray),
+			"Arrays nested in object attributes are frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getProperties()[0].exportSettings.nestedArray[0]),
+			"Objects in arrays nested in object attributes are frozen");
 	});
 
 	QUnit.test("Property info map", function(assert) {
-		// IE does not always throw when writing on immutable objects.
-
-		try {
-			delete this.oPropertyHelper.getPropertyMap().prop;
-		} catch (e) {
-			assert.ok(true, "Deleting a key from the property infos map throws an error");
-		}
-
-		try {
-			this.oPropertyHelper.getPropertyMap().test = "test";
-		} catch (e) {
-			assert.ok(true, "Adding a key to the property infos map throws an error");
-		}
-
-		try {
-			this.oPropertyHelper.getPropertyMap().prop = "another test";
-		} catch (e) {
-			assert.ok(true, "Manipulating a value in the property infos map throws an error");
-		}
-
-		assert.deepEqual(this.oPropertyHelper.getProperties(), [{
-			name: "prop",
-			label: "prop",
-			groupLabel: "",
-			visible: true,
-			filterable: true,
-			sortable: true,
-			fieldHelp: "",
-			maxConditions: null,
-			exportSettings: null,
-			typeConfig: null,
-			path: "prop"
-		}, {
-			name: "complexProperty",
-			label: "My complex property",
-			groupLabel: "",
-			visible: true,
-			exportSettings: null,
-			propertyInfos: ["prop"]
-		}], "The property infos map is immutable");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap()), "The property map is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().prop), "The first item of the property map is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().complexProp), "The second item of the property map is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().otherProp), "The third item of the property map is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().prop.propertyInfos), "The 'propertyInfos' attribute is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().prop._relatedProperties),
+			"The '_relatedProperties' helper attribute is frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().prop.exportSettings), "Object attributes are frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().prop.exportSettings.nestedSetting),
+			"Objects nested in object attributes are frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().prop.exportSettings.nestedSetting.deepNestedSetting),
+			"Objects deeply nested in object attributes are frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().prop.exportSettings.nestedArray),
+			"Arrays nested in object attributes are frozen");
+		assert.ok(Object.isFrozen(this.oPropertyHelper.getPropertyMap().prop.exportSettings.nestedArray[0]),
+			"Objects in arrays nested in object attributes are frozen");
 	});
 
 	QUnit.module("API", {

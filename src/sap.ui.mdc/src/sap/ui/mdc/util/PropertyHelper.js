@@ -141,6 +141,24 @@ sap.ui.define([
 		return Object.freeze(aClonedProperties);
 	}
 
+	function deepFreeze(oObject) {
+		var aKeys = Object.getOwnPropertyNames(oObject);
+
+		for (var i = 0; i < aKeys.length; i++) {
+			var vValue = oObject[aKeys[i]];
+
+			if (isPlainObject(vValue) || Array.isArray(vValue)) {
+				if (aKeys[i] === "_relatedProperties") {
+					Object.freeze(vValue);
+				} else {
+					deepFreeze(vValue);
+				}
+			}
+		}
+
+		return Object.freeze(oObject);
+	}
+
 	function prepareProperties(aProperties, mProperties) {
 		aProperties.forEach(function(oProperty) {
 			var aDependenciesForDefaults = [];
@@ -179,7 +197,7 @@ sap.ui.define([
 				});
 			}
 
-			Object.freeze(oProperty);
+			deepFreeze(oProperty);
 		});
 	}
 
