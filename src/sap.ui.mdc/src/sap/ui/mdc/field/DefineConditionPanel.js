@@ -231,11 +231,11 @@ sap.ui.define([
 			var oFormatOptions = this.getFormatOptions();
 			var iMaxConditions = oFormatOptions.maxConditions;
 
-			if (iMaxConditions == -1 || aConditions.length < iMaxConditions) {
+			if (iMaxConditions === -1 || aConditions.length < iMaxConditions) {
 				// create a new dummy condition for a new condition on the UI - must be removed later if not used or filled correct
 				this.addDummyCondition(aConditions.length + 1);
 				if (this.getConditions().length === iMaxConditions) {
-					this._bFocusLastCondition = true; // as add-Button will disappear anf focus should stay in DefineConditionPanel
+					this._bFocusLastCondition = true; // as add-Button will disappear and focus should stay in DefineConditionPanel
 				}
 			}
 		},
@@ -447,18 +447,25 @@ sap.ui.define([
 		if (sKey && sOldKey) {
 			var oOperator = FilterOperatorUtil.getOperator(sKey);
 			var oOperatorOld = FilterOperatorUtil.getOperator(sOldKey);
+			var oGrid = oField.getParent();
+			var oValueField;
+			iIndex = oGrid.indexOfContent(oField);
 
-			if (oOperator.valueTypes[0] !== oOperatorOld.valueTypes[0]) { // TODO: same with second Field?
-				var oGrid = oField.getParent();
-				iIndex = oGrid.indexOfContent(oField);
-				var oValueField = oGrid.getContent()[iIndex + 2];
+			if (oOperator.valueTypes[0] !== oOperatorOld.valueTypes[0]) {
+				oValueField = oGrid.getContent()[iIndex + 2];
 				if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 0) {
+					oValueField.unbindProperty("value");
+				}
+			}
+			if (oOperator.valueTypes[1] !== oOperatorOld.valueTypes[1] && oOperatorOld.valueTypes[1]) { // 2nd Field only exist if there was a valueType defined
+				oValueField = oGrid.getContent()[iIndex + 3];
+				if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 1) {
 					oValueField.unbindProperty("value");
 				}
 			}
 		}
 
-		if (!sKey) {
+		if (!sKey) { // TODO: remove? Because cannot longer happen as Field don't allow empty input because of used data type constraints
 			// key must not be empty
 			var oCondition = oField.getBindingContext("$this").getObject();
 			if (oCondition) { // condition might be deleted before Field instance is deleted
@@ -477,8 +484,9 @@ sap.ui.define([
 		var sDescription;
 		for (var i = 0; i < aOperatorsData.length; i++) {
 			var oOperatorData = aOperatorsData[i];
-			if (oOperatorData === sKey) {
+			if (oOperatorData.key === sKey) {
 				sDescription = oOperatorData.additionalText;
+				break;
 			}
 		}
 		oField.setAdditionalValue(sDescription);
@@ -1038,7 +1046,7 @@ sap.ui.define([
 		var oValue1Field;
 		if (oValue0Field.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
 			var sEditMode = _getEditModeFromOperator(oCondition.operator);
-			if (oCondition.values.length > 0 || sEditMode === EditMode.Display) { // as static text for display contols is created after update
+			if (oCondition.values.length > 0 || sEditMode === EditMode.Display) { // as static text for display controls is created after update
 				oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/0/");
 				oValue0Field.setBindingContext(oValueBindingContext, "$this");
 				oValue0Field.setBindingContext(oBindingContext, "$condition");
