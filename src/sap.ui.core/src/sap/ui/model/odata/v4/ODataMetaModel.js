@@ -973,6 +973,8 @@ sap.ui.define([
 				// binding parameter's type name ({string}) for overloading of bound operations
 				// or UNBOUND ({object}) for unbound operations called via an import
 			var vBindingParameterType,
+				// the entity set or singleton targeted by the current annotation, if any
+				oEntitySetOrSingleton,
 				bInsideAnnotation, // inside an annotation, invalid names are OK
 				vLocation, // {string[]|string} location of indirection
 				sName, // what "@sapui.name" refers to: OData or annotation name
@@ -1297,6 +1299,10 @@ sap.ui.define([
 						}
 						sSegment = sSegment.slice(iIndexOfAt);
 						bSplitSegment = true;
+						if (vResult
+							&& (vResult.$kind === "EntitySet" || vResult.$kind === "Singleton")) {
+							oEntitySetOrSingleton = vResult;
+						}
 					}
 
 					if (typeof vResult === "string"
@@ -1440,10 +1446,9 @@ sap.ui.define([
 						vResult = undefined;
 						return !bInsideAnnotation && log(DEBUG, "Invalid segment: ", sSegment);
 					}
-					if (bODataMode && sSegment[0] === "@") {
-						// annotation(s) via external targeting
-						// Note: inline annotations can only be reached via pure "JSON" drill-down,
-						//       e.g. ".../$ReferentialConstraint/...@..."
+					if (bODataMode && sSegment[0] === "@") { // annotation(s) via external targeting
+						// Note: inline annotations are reached via above fast path for pure "JSON"
+						// drill-down
 						vBindingParameterType = vResult.$Type || vBindingParameterType;
 						vResult = mScope.$Annotations[sTarget] || {};
 						bODataMode = false; // switch to pure "JSON" drill-down
@@ -1465,7 +1470,8 @@ sap.ui.define([
 
 			/*
 			 * Takes multiple steps according to the given relative path, starting at the global
-			 * scope and changing <code>vResult</code>.
+			 * scope (unless inside "annotations [...] targeting an entity set or a singleton") and
+			 * changing <code>vResult</code>.
 			 *
 			 * @param {string} sRelativePath
 			 *   Some relative path (semantically, it is absolute as we start at the global scope,
@@ -1487,6 +1493,18 @@ sap.ui.define([
 				bInsideAnnotation = false;
 				bODataMode = true;
 				vResult = mScope;
+				if (oEntitySetOrSingleton) {
+					// "14.5.12 Expression edm:Path" within an annotation targeting an entity set or
+					// a singleton
+					if (!sRelativePath) { // "an empty path resolves to the entity set or singleton"
+						vResult = oEntitySetOrSingleton;
+						oEntitySetOrSingleton = vLocation = undefined;
+						return true;
+					}
+					// "non-empty paths" are "evaluated starting at the type"
+					sSchemaChildName = oEntitySetOrSingleton.$Type;
+					oEntitySetOrSingleton = oSchemaChild = undefined;
+				}
 				bContinue = sRelativePath.split("/").every(step);
 
 				vLocation = undefined;
