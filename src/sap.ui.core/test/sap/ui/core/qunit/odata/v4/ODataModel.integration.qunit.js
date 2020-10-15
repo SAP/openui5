@@ -1145,6 +1145,9 @@ sap.ui.define([
 				}
 				if (oExpectedRequest) {
 					oResponse = oExpectedRequest.response;
+					if (typeof oResponse === "function") { // invoke "just in time"
+						oResponse = oResponse();
+					}
 					bWaitForResponse = !(oResponse && typeof oResponse.then === "function");
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.response;
@@ -1415,13 +1418,15 @@ sap.ui.define([
 		 * this case you can control the response time (typically to control the order of the
 		 * responses).
 		 *
-		 * @param {string|object} vRequest The request with the properties "method", "url" and
-		 *   "headers". A string is interpreted as URL with method "GET". Spaces inside the URL are
-		 *   percent-encoded automatically.
-		 * @param {object|Promise|Error} [oResponse] The response message to be returned from the
-		 *   requestor or a promise on it
-		 * @param {object} [mResponseHeaders] The response headers to be returned from the
-		 *   requestor
+		 * @param {string|object} vRequest
+		 *   The request with the properties "method", "url" and "headers". A string is interpreted
+		 *   as URL with method "GET". Spaces inside the URL are percent-encoded automatically.
+		 * @param {function|object|Error|Promise} [oResponse]
+		 *   The response message to be returned from the requestor or a promise on it or a function
+		 *   (invoked "just in time" when the request is actually sent) returning the response
+		 *   message (error, object, or promise)
+		 * @param {object} [mResponseHeaders]
+		 *   The response headers to be returned from the requestor
 		 * @returns {object} The test instance for chaining
 		 */
 		expectRequest : function (vRequest, oResponse, mResponseHeaders) {
@@ -16453,6 +16458,154 @@ sap.ui.define([
 			return that.waitForChanges(assert, "expand 'US' again");
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2 + 1);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: sap.ui.table.Table with aggregation and visual grouping. Collapse before paging
+	// has finished.
+	//
+	// JIRA: CPOUI5ODATAV4-378
+	QUnit.test("Data Aggregation: collapse while paging", function (assert) {
+		var oModel = createAggregationModel(),
+			oRowsBinding,
+			oTable,
+			oUSContext,
+			sView = '\
+<t:Table id="table" rows="{path : \'/BusinessPartners\',\
+	parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				SalesAmount : {subtotals : true}\
+			},\
+			group : {\
+				Region : {}\
+			},\
+			groupLevels : [\'Country\']\
+		}\
+	}}" threshold="0" visibleRowCount="4">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [
+					{Country : "US", SalesAmount : "100"}
+				]
+			})
+			.expectChange("isExpanded", [false])
+			.expectChange("isTotal", [true])
+			.expectChange("level", [1])
+			.expectChange("country", ["US"])
+			.expectChange("region", [""])
+			.expectChange("salesAmount", ["100"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oRowsBinding = oTable.getBinding("rows");
+			assert.strictEqual(oRowsBinding.getLength(), 1);
+			oUSContext = oRowsBinding.getCurrentContexts()[0];
+
+			that.expectChange("isExpanded", [true])
+				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+					+ "/groupby((Region),aggregate(SalesAmount))&$count=true&$skip=0&$top=4", {
+					"@odata.count" : "26",
+					value : [
+						{Region : "Z", SalesAmount : "10"},
+						{Region : "Y", SalesAmount : "20"},
+						{Region : "X", SalesAmount : "30"},
+						{Region : "W", SalesAmount : "40"}
+					]
+				})
+				.expectChange("isExpanded", [, undefined, undefined, undefined])
+				.expectChange("isTotal", [, false, false, false])
+				.expectChange("level", [, 2, 2, 2])
+				.expectChange("country", [, "US", "US", "US"])
+				.expectChange("region", [, "Z", "Y", "X"])
+				.expectChange("salesAmount", [, "10", "20", "30"]);
+
+			// code under test
+			oUSContext.expand();
+
+			return that.waitForChanges(assert, "expand 'US'");
+		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 1 + 26);
+
+			that.expectResets(oTable, 4, 3)
+				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+					+ "/groupby((Region),aggregate(SalesAmount))&$count=true&$skip=4&$top=3",
+					function () {
+						// code under test
+						oUSContext.collapse();
+
+						return resolveLater({
+							"@odata.count" : "26",
+							value : [
+								{Region : "V", SalesAmount : "50"},
+								{Region : "U", SalesAmount : "60"},
+								{Region : "T", SalesAmount : "70"}
+							]
+						});
+					})
+				.expectChange("isExpanded", [false])
+				.expectChange("isTotal", [true])
+				.expectChange("level", [1])
+				.expectChange("country", ["US"])
+				.expectChange("region", [""])
+				.expectChange("salesAmount", ["100"]);
+
+			// code under test
+			oTable.setFirstVisibleRow(4);
+
+			return that.waitForChanges(assert, "collapse 'US' while paging");
+		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 1);
+
+			that.expectChange("isExpanded", [true])
+				.expectChange("isTotal", [, false, false, false])
+				.expectChange("level", [, 2, 2, 2])
+				.expectChange("country", [, "US", "US", "US"])
+				.expectChange("region", [, "Z", "Y", "X"])
+				.expectChange("salesAmount", [, "10", "20", "30"]);
+
+			// code under test
+			oUSContext.expand();
+
+			return that.waitForChanges(assert, "expand 'US' again");
+		}).then(function () {
+			assert.strictEqual(oRowsBinding.getLength(), 1 + 26);
+
+			// Note: we only see the delta of row content compared to above, but then with a
+			// different row index!
+			that.expectChange("isExpanded", [,,,, undefined])
+				.expectChange("isTotal", [,,,, false])
+				.expectChange("level", [,,,, 2])
+				.expectChange("region", [,,,, "W", "V", "U", "T"])
+				.expectChange("salesAmount", [,,,, "40", "50", "60", "70"]);
+
+			// code under test
+			oTable.setFirstVisibleRow(4);
+
+			return that.waitForChanges(assert, "just paging");
+		}).then(function () {
+			assert.deepEqual(oRowsBinding.getContexts(0, 8).map(getPath), [
+				"/BusinessPartners(Country='US')",
+				"/BusinessPartners(Country='US',Region='Z')",
+				"/BusinessPartners(Country='US',Region='Y')",
+				"/BusinessPartners(Country='US',Region='X')",
+				"/BusinessPartners(Country='US',Region='W')",
+				"/BusinessPartners(Country='US',Region='V')",
+				"/BusinessPartners(Country='US',Region='U')",
+				"/BusinessPartners(Country='US',Region='T')"
+			]);
+			assert.strictEqual(oRowsBinding.getContexts(0, 1)[0], oUSContext);
 		});
 	});
 

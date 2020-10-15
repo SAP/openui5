@@ -115,13 +115,17 @@ sap.ui.define([
 	 * @param {number} iStart
 	 *   The index of the first element within the cache's collection
 	 * @throws {Error}
-	 *   In case an unexpected element or placeholder would be overwritten
+	 *   In case an unexpected element or placeholder would be overwritten, if the given offset is
+	 *   negative, or if a resulting array index is out of bounds
 	 *
 	 * @private
 	 */
 	_AggregationCache.prototype.addElements = function (aReadElements, iOffset, oCache, iStart) {
 		var aElements = this.aElements;
 
+		if (iOffset < 0) {
+			throw new Error("Illegal offset: " + iOffset);
+		}
 		aReadElements.forEach(function (oElement, i) {
 			var oOldElement = aElements[iOffset + i],
 				oParent,
@@ -139,6 +143,8 @@ sap.ui.define([
 					|| _Helper.getPrivateAnnotation(oOldElement, "index") !== iStart + i) {
 					throw new Error("Wrong placeholder");
 				}
+			} else if (iOffset + i >= aElements.length) {
+				throw new Error("Array index out of bounds: " + (iOffset + i));
 			}
 
 			aElements[iOffset + i] = oElement;
@@ -304,10 +310,14 @@ sap.ui.define([
 			}
 
 			iCount = oResult.value.$count;
-			// create the gap
-			for (i = that.aElements.length - 1; i >= iIndex; i -= 1) {
-				that.aElements[i + iCount] = that.aElements[i];
-				delete that.aElements[i]; // delete to allow overwrite below
+			if (iIndex === that.aElements.length) { // expanding last node: make room for children
+				that.aElements.length += iCount;
+			} else {
+				// create the gap
+				for (i = that.aElements.length - 1; i >= iIndex; i -= 1) {
+					that.aElements[i + iCount] = that.aElements[i];
+					delete that.aElements[i]; // delete to allow overwrite below
+				}
 			}
 			// fill in the results
 			that.addElements(oResult.value, iIndex, oCache, 0);
@@ -404,7 +414,8 @@ sap.ui.define([
 	 *   prefetch data for a paged access. The cache ensures that at least half the prefetch length
 	 *   is available left and right of the requested range without a further request. If data is
 	 *   missing on one side, the full prefetch length is added at this side.
-	 *   <code>Infinity</code> is supported
+	 *   <code>Infinity</code> is supported. In case server-driven paging (@odata.nextLink) has been
+	 *   encountered before, this parameter is ignored.
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
 	 * @param {function} [fnDataRequested]
@@ -417,8 +428,9 @@ sap.ui.define([
 	 *   <code>$count</code> may be <code>undefined</code>, but not <code>Infinity</code>). If an
 	 *   HTTP request fails, the error from the _Requestor is returned and the requested range is
 	 *   reset to <code>undefined</code>.
-	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
-	 *   arrives.
+	 *   The promise is rejected if a conflicting {@link #collapse} happens before the response
+	 *   arrives, in this case the error has the property <code>canceled</code> with value
+	 *   <code>true</code>.
 	 * @throws {Error} If given index or length is less than 0
 	 *
 	 * @public
@@ -451,14 +463,21 @@ sap.ui.define([
 				oGapParent.read(iStart, iGapEnd - iGapStart, 0, oGroupLock.getUnlockedCopy(),
 						fnDataRequested)
 					.then(function (oReadResult) {
+						var oError;
+
 						// Note: aElements[iGapStart] may have changed by a parallel operation
 						if (oStartElement !== that.aElements[iGapStart]
-							&& oReadResult.value[0] !== that.aElements[iGapStart]) {
-								// start of the gap has moved meanwhile
-								iGapStart = that.aElements.indexOf(oStartElement);
+								&& oReadResult.value[0] !== that.aElements[iGapStart]) {
+							// start of the gap has moved meanwhile
+							iGapStart = that.aElements.indexOf(oStartElement);
+							if (iGapStart < 0) {
+								iGapStart = that.aElements.indexOf(oReadResult.value[0]);
 								if (iGapStart < 0) {
-									iGapStart = that.aElements.indexOf(oReadResult.value[0]);
+									oError = new Error("Collapse before read has finished");
+									oError.canceled = true;
+									throw oError;
 								}
+							}
 						}
 						that.addElements(oReadResult.value, iGapStart, oCache, iStart);
 					})
@@ -498,8 +517,8 @@ sap.ui.define([
 			var j;
 
 			if (bHasGroupLevels) {
+				that.aElements.length = that.aElements.$count = oResult.value.$count;
 				that.addElements(oResult.value, iIndex, that.oFirstLevel, iIndex);
-				that.aElements.$count = oResult.value.$count;
 				// create placeholders
 				for (j = 0; j < that.aElements.$count; j += 1) {
 					if (!that.aElements[j]) {
