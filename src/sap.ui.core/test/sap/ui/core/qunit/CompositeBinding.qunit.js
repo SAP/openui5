@@ -1,29 +1,24 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/model/CompositeType",
-	"sap/ui/model/CompositeBinding",
-	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException",
+	"sap/base/Log",
+	"sap/base/util/deepEqual",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/CompositeBinding",
+	"sap/ui/model/CompositeType",
+	"sap/ui/model/Context",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/PropertyBinding",
+	"sap/ui/model/StaticBinding",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Date",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/String",
-	"sap/ui/model/type/Date",
-	"sap/base/util/deepEqual"
-], function(
-	CompositeType,
-	CompositeBinding,
-	ParseException,
-	ValidateException,
-	BindingMode,
-	JSONModel,
-	TypeFloat,
-	TypeInteger,
-	TypeString,
-	TypeDate,
-	deepEqual
-) {
+	"sap/ui/test/TestUtils"
+], function(Log, deepEqual, BindingMode, CompositeBinding, CompositeType, Context, ParseException,
+		PropertyBinding, StaticBinding, ValidateException, JSONModel, TypeDate, TypeFloat,
+		TypeInteger, TypeString, TestUtils) {
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
@@ -758,4 +753,273 @@ sap.ui.define([
 		assert.equal(this.composite.getExternalValue(), "4 5 3", "Value is not updated for OneTime");
 		oSpy.reset();
 	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.model.CompositeBinding", {
+		beforeEach : function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
+		},
+		afterEach : function (assert) {
+			return TestUtils.awaitRendering();
+		}
+	});
+
+	//**********************************************************************************************
+	QUnit.test("setContext: propagate null context", function () {
+		var aBindings = [
+				new PropertyBinding({}, ""),
+				new StaticBinding("")
+			],
+			oCompositeBinding = new CompositeBinding(aBindings);
+
+		this.mock(aBindings[0]).expects("getModel").never();
+		this.mock(aBindings[0]).expects("getContext").returns("~oBindingContext0");
+		this.mock(aBindings[0]).expects("isRelative").returns(false);
+		this.mock(aBindings[0]).expects("setContext").withExactArgs(null);
+		this.mock(aBindings[1]).expects("getModel").never();
+		this.mock(aBindings[1]).expects("getContext").returns("~oBindingContext0");
+		this.mock(aBindings[1]).expects("isRelative").returns(false);
+		this.mock(aBindings[1]).expects("setContext").withExactArgs(null);
+
+		this.mock(oCompositeBinding).expects("checkUpdate").never();
+
+		// code under test
+		oCompositeBinding.setContext(null);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("setContext: no context propagation if the context's model is already destroyed",
+			function () {
+		var aBindings = [new PropertyBinding(/*model*/undefined, "")],
+			oCompositeBinding = new CompositeBinding(aBindings),
+			oContext = new Context(/*model*/{}, "");
+
+		this.mock(oContext).expects("getModel").returns(/*destroyed context*/undefined);
+		this.mock(aBindings[0]).expects("getContext").never();
+		this.mock(aBindings[0]).expects("isRelative").never();
+		this.mock(aBindings[0]).expects("setContext").never();
+
+		this.mock(oCompositeBinding).expects("checkUpdate").never();
+
+		// code under test
+		oCompositeBinding.setContext(oContext);
+	});
+
+	//**********************************************************************************************
+[undefined, {}, {foo : "bar"}].forEach(function (mParameters, i) {
+	var sTitle = "setContext: propagate context if context update is required; mParameters without "
+			+ "'fnIsBindingRelevant' does not affect old behavior; " + i;
+
+	QUnit.test(sTitle, function () {
+		var oModel = {},
+			aBindings = [
+				new PropertyBinding(oModel, ""), // same model
+				new PropertyBinding({}, ""), // different model
+				new StaticBinding("") // no model
+			],
+			oBindingMock0 = this.mock(aBindings[0]),
+			oBindingMock1 = this.mock(aBindings[1]),
+			oBindingMock2 = this.mock(aBindings[2]),
+			oCompositeBinding = new CompositeBinding(aBindings),
+			oContext = new Context(oModel, "");
+
+		this.mock(oContext).expects("getModel").returns(oModel);
+
+		// aBindings[0]
+		oBindingMock0.expects("getModel").returns(oModel);
+		oBindingMock0.expects("getContext").returns("~oBindingContext0");
+		oBindingMock0.expects("isRelative")
+			.returns(false); // return value irrelevant; scenario does not cover call of checkUpdate
+		oBindingMock0.expects("setContext").withExactArgs(sinon.match.same(oContext));
+
+		// aBindings[1]
+		oBindingMock1.expects("getModel").returns({/*different model*/});
+		oBindingMock1.expects("getContext").never();
+		oBindingMock1.expects("isRelative").never();
+		oBindingMock1.expects("setContext").never();
+
+		// aBindings[2]
+		oBindingMock2.expects("getModel").returns(null);
+		oBindingMock2.expects("getContext").never();
+		oBindingMock2.expects("isRelative").never();
+		oBindingMock2.expects("setContext").never();
+
+		this.mock(oCompositeBinding).expects("checkUpdate").never();
+
+		// code under test
+		oCompositeBinding.setContext(oContext, mParameters);
+	});
+});
+
+	//**********************************************************************************************
+	QUnit.test("setContext: context propagation decision via callback function", function () {
+		var aBindings = [
+				new PropertyBinding({}, ""),
+				new PropertyBinding({}, "")
+			],
+			oBindingMock0 = this.mock(aBindings[0]),
+			oBindingMock1 = this.mock(aBindings[1]),
+			oCompositeBinding = new CompositeBinding(aBindings),
+			oContext = new Context({}, ""),
+			mParameters = {fnIsBindingRelevant : function () {}},
+			mParametersMock = this.mock(mParameters);
+
+		this.mock(oContext).expects("getModel")
+			.returns(undefined); // return value irrelevant; value not required for test scenario
+
+		// aBindings[0]
+		mParametersMock.expects("fnIsBindingRelevant").withExactArgs(0).returns(false);
+		oBindingMock0.expects("getContext").never();
+		oBindingMock0.expects("isRelative").never();
+		oBindingMock0.expects("setContext").never();
+
+		// aBindings[1]
+		mParametersMock.expects("fnIsBindingRelevant").withExactArgs(1).returns(true);
+		oBindingMock1.expects("getContext").returns("oBindingContext1");
+		oBindingMock1.expects("isRelative")
+			.returns(false); // return value irrelevant; scenario does not cover call of checkUpdate
+		oBindingMock1.expects("setContext").withExactArgs(sinon.match.same(oContext));
+
+		this.mock(oCompositeBinding).expects("checkUpdate").never();
+
+		// code under test
+		oCompositeBinding.setContext(oContext, mParameters);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("setContext: check if checkUpdate is required", function () {
+		var oModel = {},
+			aBindings = [
+				new PropertyBinding(oModel, ""),
+				new PropertyBinding(oModel, ""),
+				new PropertyBinding(oModel, ""),
+				new PropertyBinding(oModel, "")
+			],
+			oBindingMock0 = this.mock(aBindings[0]),
+			oBindingMock1 = this.mock(aBindings[1]),
+			oBindingMock2 = this.mock(aBindings[2]),
+			oBindingMock3 = this.mock(aBindings[3]),
+			oCompositeBinding = new CompositeBinding(aBindings),
+			oContext = new Context(oModel, ""),
+			oContextMock = this.mock(Context),
+			oDataState = {getControlMessages : function () {}};
+
+		this.mock(oContext).expects("getModel").returns(oModel);
+
+		// aBindings[0]
+		oBindingMock0.expects("getModel").returns(oModel);
+		oBindingMock0.expects("getContext").returns("~oBindingContext0");
+		oBindingMock0.expects("isRelative").returns(false);
+		oContextMock.expects("hasChanged").never();
+		oBindingMock0.expects("setContext").withExactArgs(sinon.match.same(oContext));
+
+		// aBindings[1]
+		oBindingMock1.expects("getModel").returns(oModel);
+		oBindingMock1.expects("getContext").returns("oBindingContext1");
+		oBindingMock1.expects("isRelative").returns(true);
+		oContextMock.expects("hasChanged")
+			.withExactArgs("oBindingContext1", sinon.match.same(oContext))
+			.returns(false);
+		oBindingMock1.expects("setContext").withExactArgs(sinon.match.same(oContext));
+
+		// aBindings[2]
+		oBindingMock2.expects("getModel").returns(oModel);
+		oBindingMock2.expects("getContext").returns("oBindingContext2");
+		oBindingMock2.expects("isRelative").returns(true);
+		oContextMock.expects("hasChanged")
+			.withExactArgs("oBindingContext2", sinon.match.same(oContext))
+			.returns(true);
+		oBindingMock2.expects("setContext").withExactArgs(sinon.match.same(oContext));
+
+		// aBindings[3]
+		oBindingMock3.expects("getModel").returns(oModel);
+		oBindingMock3.expects("getContext").returns("oBindingContext3");
+		oBindingMock3.expects("isRelative").never();
+		oContextMock.expects("hasChanged").never();
+		oBindingMock3.expects("setContext").withExactArgs(sinon.match.same(oContext));
+
+		this.mock(oCompositeBinding).expects("getDataState").returns(oDataState);
+		this.mock(oDataState).expects("getControlMessages").returns([]);
+		this.mock(oCompositeBinding).expects("checkUpdate").withExactArgs(0);
+
+		// code under test
+		oCompositeBinding.setContext(oContext);
+	});
+
+	//**********************************************************************************************
+[{
+	binding0 : {checkUpdate : true, newContext : true},
+	binding1 : {checkUpdate : false, newContext : false},
+	bForceUpdate : true
+}, {
+	binding0 : {checkUpdate : false, newContext : false},
+	binding1 : {checkUpdate : true, newContext : true},
+	bForceUpdate : true
+}, {
+	binding0 : {checkUpdate : true, newContext : false},
+	binding1 : {checkUpdate : false, newContext : true},
+	bForceUpdate : true
+}, {
+	binding0 : {checkUpdate : false, newContext : true},
+	binding1 : {checkUpdate : true, newContext : false},
+	bForceUpdate : false
+}].forEach(function (oFixture, i) {
+	[0, 42].forEach(function (iControlMessages) {
+	var sTitle = "setContext: check if checkUpdate is called with bForceUpdate; " + i
+			+ "; control messages: " + iControlMessages;
+
+	QUnit.test(sTitle, function () {
+		var oModel = {},
+			aBindings = [
+				new PropertyBinding(oModel, ""),
+				new PropertyBinding(oModel, "")
+			],
+			oBindingMock0 = this.mock(aBindings[0]),
+			oBindingMock1 = this.mock(aBindings[1]),
+			oCompositeBinding = new CompositeBinding(aBindings),
+			oContext = new Context(oModel, ""),
+			oContextMock = this.mock(Context),
+			oDataState = {getControlMessages : function () {}};
+
+		this.mock(oContext).expects("getModel").returns(oModel);
+
+		// aBindings[0]
+		oBindingMock0.expects("getModel").returns(oModel);
+		oBindingMock0.expects("getContext")
+			.returns(oFixture.binding0.newContext ? "foo" : oContext);
+		oBindingMock0.expects("isRelative").returns(true);
+		oContextMock.expects("hasChanged")
+			.withExactArgs(sinon.match.same(oContext).or("foo"), sinon.match.same(oContext))
+			.returns(oFixture.binding0.checkUpdate);
+		oBindingMock0.expects("setContext").withExactArgs(sinon.match.same(oContext));
+
+		// aBindings[1]
+		oBindingMock1.expects("getModel").returns(oModel);
+		oBindingMock1.expects("getContext")
+			.returns(oFixture.binding1.newContext ? "foo" : oContext);
+		oBindingMock1.expects("isRelative").returns(true)
+			.exactly(!oFixture.binding0.checkUpdate ? 1 : 0);
+		oContextMock.expects("hasChanged")
+			.withExactArgs(sinon.match.same(oContext).or("foo"), sinon.match.same(oContext))
+			.returns(oFixture.binding1.checkUpdate)
+			.exactly(!oFixture.binding0.checkUpdate ? 1 : 0);
+		oBindingMock1.expects("setContext").withExactArgs(sinon.match.same(oContext));
+
+
+		if (oFixture.bForceUpdate) {
+			this.mock(oCompositeBinding).expects("getDataState").returns(oDataState);
+			this.mock(oDataState).expects("getControlMessages")
+				.returns(new Array(iControlMessages));
+			this.mock(oCompositeBinding).expects("checkUpdate").withExactArgs(iControlMessages);
+		} else {
+			this.mock(oCompositeBinding).expects("checkUpdate").withExactArgs(false);
+		}
+
+		// code under test
+		oCompositeBinding.setContext(oContext);
+	});
+	});
+});
 });

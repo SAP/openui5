@@ -4425,7 +4425,13 @@ sap.ui.define([
 			oContext,
 			sName,
 			oBindingInfo,
-			i;
+			aParts;
+
+		// Whether the binding part with the given index belongs to the current model name and is
+		// not a static binding
+		function isPartForModel(iPartIndex) {
+			return aParts[iPartIndex].model == sModelName && aParts[iPartIndex].value === undefined;
+		}
 
 		// find models that need a context update
 		if (bUpdateAll) {
@@ -4466,26 +4472,22 @@ sap.ui.define([
 				// update context in existing bindings
 				for ( sName in this.mBindingInfos ){
 					var oBindingInfo = this.mBindingInfos[sName],
-						oBinding = oBindingInfo.binding,
-						aParts = oBindingInfo.parts;
+						oBinding = oBindingInfo.binding;
+
+					aParts = oBindingInfo.parts;
 
 					if (!oBinding) {
 						continue;
 					}
-					if (aParts && aParts.length > 1) {
-						// composite binding: update required  when a part use the model with the same name
-						for (i = 0; i < aParts.length; i++) {
-							if ( aParts[i].model == sModelName && aParts[i].value === undefined) {
-								oBinding.aBindings[i].setContext(oContext);
-							}
-						}
+					if (oBinding instanceof CompositeBinding) {
+						oBinding.setContext(oContext, {fnIsBindingRelevant : isPartForModel});
 					} else if (oBindingInfo.factory) {
 						// list binding: update required when the model has the same name (or updateall)
 						if ( oBindingInfo.model == sModelName) {
 							oBinding.setContext(oContext);
 						}
 
-					} else if (aParts[0].model == sModelName && aParts[0].value === undefined) {
+					} else if (isPartForModel(0)) {
 						// simple property binding: update required when the model has the same name
 						oBinding.setContext(oContext);
 					}

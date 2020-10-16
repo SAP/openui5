@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Context",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/model/type/String",
 	"sap/ui/core/Control",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/strings/escapeRegExp",
 	"sap/base/util/isEmptyObject"
-], function(ManagedObject, Element, JSONModel, ManagedObjectModel, StringType, Control, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
+], function(ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
 	"use strict";
 	var mObjects = {};
 
@@ -655,6 +656,46 @@ sap.ui.define([
 		this.obj.setProperty("value", "othervalue");
 		assert.equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
 		oModel.setProperty("/value", "testvalue");
+	});
+
+	QUnit.test("Bind property Composite: set different binding contexts for different models",
+			function(assert) {
+		var oBindingMock,
+			oContext = new Context(oModel, "/"),
+			oModel2 = new JSONModel({model2value : "foo"}),
+			oContext2 = new Context(oModel2, "/");
+
+		this.obj.setModel(oModel2, "model2")
+				.bindProperty("value", {parts : [
+					{path : "value"},
+					{path : "model2>model2value"},
+					{value : "static"}
+				]});
+
+		oBindingMock = this.mock(this.obj.getBindingInfo("value").binding);
+		oBindingMock.expects("setContext")
+			.withExactArgs(sinon.match.same(oContext),
+				sinon.match.object.and(sinon.match.has("fnIsBindingRelevant", sinon.match.func)))
+			.callsFake(function (oContext0, mParameters) {
+				assert.strictEqual(mParameters.fnIsBindingRelevant(0), true);
+				assert.strictEqual(mParameters.fnIsBindingRelevant(1), false);
+				assert.strictEqual(mParameters.fnIsBindingRelevant(2), false);
+			});
+
+		// code under test
+		this.obj.setBindingContext(oContext);
+
+		oBindingMock.expects("setContext")
+			.withExactArgs(sinon.match.same(oContext2),
+				sinon.match.object.and(sinon.match.has("fnIsBindingRelevant", sinon.match.func)))
+			.callsFake(function (oContext0, mParameters) {
+				assert.strictEqual(mParameters.fnIsBindingRelevant(0), false);
+				assert.strictEqual(mParameters.fnIsBindingRelevant(1), true);
+				assert.strictEqual(mParameters.fnIsBindingRelevant(2), false);
+			});
+
+		// code under test
+		this.obj.setBindingContext(oContext2, "model2");
 	});
 
 	QUnit.test("Bind property in settings", function(assert) {

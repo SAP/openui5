@@ -4,29 +4,19 @@
 
 // Provides an abstract property binding.
 sap.ui.define([
-	'sap/ui/base/DataType',
-	'./BindingMode',
-	'./ChangeReason',
-	'./PropertyBinding',
-	'./CompositeType',
-	'./CompositeDataState',
-	"sap/ui/base/SyncPromise",
-	"sap/base/util/deepEqual",
+	"./BindingMode",
+	"./ChangeReason",
+	"./CompositeDataState",
+	"./CompositeType",
+	"./Context",
+	"./PropertyBinding",
 	"sap/base/assert",
-	"sap/base/Log"
-],
-	function(
-		DataType,
-		BindingMode,
-		ChangeReason,
-		PropertyBinding,
-		CompositeType,
-		CompositeDataState,
-		SyncPromise,
-		deepEqual,
-		assert,
-		Log
-	) {
+	"sap/base/Log",
+	"sap/base/util/deepEqual",
+	"sap/ui/base/DataType",
+	"sap/ui/base/SyncPromise"
+], function(BindingMode, ChangeReason, CompositeDataState, CompositeType, Context, PropertyBinding,
+		assert, Log, deepEqual, DataType, SyncPromise) {
 	"use strict";
 
 
@@ -158,16 +148,47 @@ sap.ui.define([
 	};
 
 	/**
-	 * sets the context for each property binding in this composite binding
-	 * @param {object} oContext the new context for the bindings
+	 * Sets the context for the property bindings of this composite binding which are either checked
+	 * thruthy via <code>mParameters.fnIsBindingRelevant</code> or whose model is the given
+	 * context's model.
+	 *
+	 * @param {sap.ui.model.Context} oContext
+	 *   The new context for the bindings
+	 * @param {Object<string,any>} [mParameters]
+	 *   Additional map of binding specific parameters
+	 * @param {function} [mParameters.fnIsBindingRelevant]
+	 *   A callback function that checks whether the given context needs to be propagated to a
+	 *   property binding of this composite binding. It gets the index of a property binding as
+	 *   parameter and returns whether the given context needs to be propagated to that property
+	 *   binding.
 	 */
-	CompositeBinding.prototype.setContext = function(oContext) {
-		this.aBindings.forEach(function(oBinding) {
-			// null context could also be set
-			if (!oContext || oBinding.updateRequired(oContext.getModel())) {
+	CompositeBinding.prototype.setContext = function (oContext, mParameters) {
+		var bCheckUpdate, bForceUpdate,
+			aBindings = this.aBindings,
+			oModel = oContext && oContext.getModel(),
+			fnIsBindingRelevant = mParameters && mParameters.fnIsBindingRelevant
+				? mParameters.fnIsBindingRelevant
+				: function (i) {
+					// check if oModel is given since a context's model may have been destroyed
+					return !oContext || oModel && oModel === aBindings[i].getModel();
+				};
+
+		aBindings.forEach(function (oBinding, i) {
+			var oBindingContext;
+
+			if (fnIsBindingRelevant(i)) {
+				oBindingContext = oBinding.getContext();
+				bCheckUpdate = bCheckUpdate
+					|| oBinding.isRelative() && Context.hasChanged(oBindingContext, oContext);
+				bForceUpdate = bForceUpdate || (bCheckUpdate && oBindingContext !== oContext);
+
 				oBinding.setContext(oContext);
 			}
 		});
+
+		if (bCheckUpdate) {
+			this.checkUpdate(bForceUpdate && this.getDataState().getControlMessages().length);
+		}
 	};
 
 	/**

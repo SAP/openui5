@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -23,8 +24,8 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, uid, Device, SyncPromise, coreLibrary, Message, Controller, View, BindingMode,
-		Filter, FilterOperator, Sorter, CountMode, MessageScope, ODataModel, TestUtils, datajs,
-		XMLHelper) {
+		Filter, FilterOperator, Sorter, JSONModel, CountMode, MessageScope, ODataModel, TestUtils,
+		datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -649,7 +650,8 @@ sap.ui.define([
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {string} sViewXML The view content as XML
-		 * @param {sap.ui.model.odata.v2.ODataModel} [oModel] The model; it is attached to the view
+		 * @param {sap.ui.model.odata.v2.ODataModel|Object<string,object>} [oModel] The model resp.
+		 *   a map of named models (default model is undefined); the models are attached to the view
 		 *   and to the test instance.
 		 *   If no model is given, <code>createSalesOrdersModel</code> is used.
 		 * @param {object} [oController]
@@ -657,8 +659,9 @@ sap.ui.define([
 		 * @returns {Promise} A promise that is resolved when the view is created and all expected
 		 *   values for controls have been set
 		 */
-		createView : function (assert, sViewXML, oModel, oController) {
-			var that = this;
+		createView : function (assert, sViewXML, vModel, oController) {
+			var mNamedModels,
+				that = this;
 
 			/**
 			 * Stub function for datajs#request. Decides if a request should be executed as single
@@ -919,7 +922,10 @@ sap.ui.define([
 				});
 			}
 
-			this.oModel = oModel || createSalesOrdersModel();
+			mNamedModels = vModel && !(vModel instanceof sap.ui.model.Model)
+				? vModel
+				: {undefined : vModel || createSalesOrdersModel()};
+			this.oModel = mNamedModels.undefined;
 			this.mock(datajs).expects("request").atLeast(0).callsFake(checkRequest);
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 
@@ -928,6 +934,8 @@ sap.ui.define([
 				controller : oController && new (Controller.extend(uid(), oController))(),
 				definition : xml(sViewXML)
 			}).then(function (oView) {
+				var sModelName;
+
 				Object.keys(that.mChanges).forEach(function (sControlId) {
 					var oControl = oView.byId(sControlId);
 
@@ -943,7 +951,10 @@ sap.ui.define([
 					}
 				});
 
-				oView.setModel(that.oModel);
+				for (sModelName in mNamedModels) {
+					sModelName = sModelName === "undefined" ? undefined : sModelName;
+					oView.setModel(mNamedModels[sModelName], sModelName);
+				}
 				// enable parse error messages in the message manager
 				sap.ui.getCore().getMessageManager().registerObject(oView, true);
 				// Place the view in the page so that it is actually rendered. In some situations,
@@ -6956,5 +6967,174 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectChange("orgID", ["4711"]);
 
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Controls with PropertyBinding and CompositeBinding discard invalid values when the
+	// context gets overwritten by another context that has the same values stored in the model.
+	// JIRA: CPOUI5MODELS-336
+[true, false].forEach(function (bUseStatic) {
+	var sTitle = "CompositeBinding: Overwrite invalid entry with model value after context switch, "
+			+ "static = " + bUseStatic;
+
+	QUnit.test(sTitle, function (assert) {
+		var oAmount0,
+			oCurrency0,
+			sCurrencyCodeJSON = "path : 'JSONModel>CurrencyCode',"
+				+ "type : 'sap.ui.model.odata.type.String'",
+			sCurrencyCodeStatic = "value : 'USD'",
+			oJSONModel = new JSONModel({"CurrencyCode" : "USD"}),
+			oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				refreshAfterChange : false
+			}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="Amount0" value="{\
+			formatOptions : {showMeasure : false},\
+			parts : [{\
+				path : \'GrossAmount\',\
+				type : \'sap.ui.model.odata.type.Decimal\'\
+			}, {'
+				+ (bUseStatic ? sCurrencyCodeStatic : sCurrencyCodeJSON) +
+			'}],\
+			type : \'sap.ui.model.type.Currency\'\
+		}" />\
+	<Input id="Currency0" value="{\
+			constraints : {maxLength : 3},\
+			path : \'CurrencyCode\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}" />\
+</FlexBox>\
+<FlexBox binding="{/SalesOrderSet(\'2\')}">\
+	<Input id="Amount1" value="{GrossAmount}" />\
+	<Input id="Currency1" value="{CurrencyCode}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')", {
+				CurrencyCode : "USD",
+				GrossAmount : "10",
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderSet('2')", {
+				CurrencyCode : "USD",
+				GrossAmount : "10",
+				SalesOrderID : "2"
+			})
+			.expectChange("Amount0", "10.00")
+			.expectChange("Currency0", "")
+			.expectChange("Currency0", "USD")
+			.expectChange("Amount1", null)
+			.expectChange("Amount1", "10")
+			.expectChange("Currency1", null)
+			.expectChange("Currency1", "USD");
+
+		return this.createView(assert, sView, {undefined : oModel, JSONModel : oJSONModel}).then(
+				function () {
+			oAmount0 = that.oView.byId("Amount0");
+			oCurrency0 = that.oView.byId("Currency0");
+			// remove the formatter so that we can call setValue at the control
+			oAmount0.getBinding("value").setFormatter(undefined);
+			oCurrency0.getBinding("value").setFormatter(undefined);
+
+			that.expectMessages([{
+				descriptionUrl : undefined,
+				message : "Enter a valid currency amount",
+				target : oAmount0.getId() + "/value",
+				type : "Error"
+			}, {
+				descriptionUrl : undefined,
+				message : "Enter a text with a maximum of 3 characters and spaces",
+				target : oCurrency0.getId() + "/value",
+				type : "Error"
+			}]);
+
+			// code under test
+			oAmount0.setValue("invalid amount");
+			oCurrency0.setValue("invalid currency");
+
+			return Promise.all([
+				that.checkValueState(assert, oAmount0, "Error", "Enter a valid currency amount"),
+				that.checkValueState(assert, oCurrency0, "Error",
+					"Enter a text with a maximum of 3 characters and spaces"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectMessages([]);
+
+			// code under test
+			oAmount0.setBindingContext(that.oView.byId("Amount1").getBindingContext());
+			oCurrency0.setBindingContext(that.oView.byId("Currency1").getBindingContext());
+
+			assert.strictEqual(oAmount0.getValue(), "10.00");
+			assert.strictEqual(oAmount0.getBindingContext().getPath(), "/SalesOrderSet('2')");
+			assert.strictEqual(oCurrency0.getValue(), "USD");
+			assert.strictEqual(oCurrency0.getBindingContext().getPath(), "/SalesOrderSet('2')");
+
+			return Promise.all([
+				that.checkValueState(assert, oAmount0, "None", ""),
+				that.checkValueState(assert, oCurrency0, "None", ""),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: One model instance is defined as two named models. Setting a new binding context to
+	// a composite binding must only use the context that is related to the expected named model.
+	// JIRA: CPOUI5MODELS-336
+	QUnit.test("CompositeBinding: Set binding context; one model instance for two named models",
+			function (assert) {
+		var oModel = createSalesOrdersModel({useBatch : true}),
+			sView = '\
+<Table id="SalesOrderList" items="{/SalesOrderSet}">\
+	<Text id="SalesOrderNote" text="{Note}" />\
+</Table>\
+<Table id="LineItems0" items="{ToLineItems}">\
+	<Text id="LineItems0Note" text="{ItemPosition}: {Note}" />\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				deepPath : "/SalesOrderSet",
+				method : "GET",
+				requestUri : "SalesOrderSet?$skip=0&$top=100"
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("LineItems0Note", false);
+
+		return this.createView(assert, sView, {undefined : oModel, model2 : oModel}).then(
+				function () {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')/ToLineItems",
+					method : "GET",
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						},
+						ItemPosition : "10~0~",
+						Note : "note0",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("LineItems0Note", ["10~0~: note0"]);
+
+			// code under test
+			that.oView.byId("LineItems0").setBindingContext(
+				that.oView.byId("SalesOrderList").getItems()[0].getBindingContext()
+			);
+
+			return that.waitForChanges(assert);
+		});
 	});
 });
