@@ -113,10 +113,10 @@ sap.ui.define([
 					//Example:
 					//#XTIT: token text for "last x days" operator
 					//operators.LASTDAYS.tokenText=Last {0} days
-					//#XTIT: token long text for "last x days" operator
-					//__operators.LASTDAYS.longText=Last x days
-					this.longText = this.tokenText.replace(/\{0\}/g, "x")
-						.replace(/\{1\}/g, "y");
+					//#XTIT: token long text for "last X days" operator
+					//__operators.LASTDAYS.longText=Last X days
+					this.longText = this.tokenText.replace(/\{0\}/g, "X")
+						.replace(/\{1\}/g, "Y");
 				}
 				if (this.tokenText === sTokenTextKey) {
 					this.tokenText = this.longText;
