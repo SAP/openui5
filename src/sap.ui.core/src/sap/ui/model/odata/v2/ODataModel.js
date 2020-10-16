@@ -4244,6 +4244,10 @@ sap.ui.define([
 					}
 				}
 			});
+			// ensure to take the latest ETag
+			if (oUnModifiedEntry.__metadata.etag) {
+				oPayload.__metadata.etag = oUnModifiedEntry.__metadata.etag;
+			}
 		}
 
 		// remove any yet existing references which should already have been deleted
@@ -4328,7 +4332,7 @@ sap.ui.define([
 		if (!sUrl.startsWith("/")) {
 			sUrl = "/" + sUrl;
 		}
-		oEntry = this._getObject(sUrl.split("?")[0]);
+		oEntry = this._getObject(sUrl.split("?")[0], undefined, true);
 		sETag = this._getHeader("etag", oResponse.headers);
 		if (oEntry && oEntry.__metadata && sETag){
 			oEntry.__metadata.etag = sETag;

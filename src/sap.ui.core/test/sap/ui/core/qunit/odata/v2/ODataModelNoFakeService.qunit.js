@@ -300,9 +300,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_processChange: ", function (assert) {
-		var oData = {},
+		var oData = {__metadata : {etag : "~changedETag"}},
 			sDeepPath = "~deepPath",
-			oEntityType/* = undefined*/, //not realistic but simplifies the test
 			sETag = "~etag",
 			mHeaders = "~headers",
 			sKey = "~key",
@@ -316,7 +315,8 @@ sap.ui.define([
 				getETag : function () {},
 				mChangedEntities : {},
 				oMetadata : {
-					_getEntityTypeByPath : function () {}
+					_getEntityTypeByPath : function () {},
+					_getNavigationPropertyNames : function () {}
 				},
 				sServiceUrl : "~serviceUrl",
 				bUseBatch : "~useBatch"
@@ -329,13 +329,21 @@ sap.ui.define([
 
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
 			.withExactArgs(sKey)
-			.returns(oEntityType);
+			.returns("~oEntityType");
 		this.mock(oModel).expects("_getObject").withExactArgs("/~key", true)
 			.returns({/* content not relevant for this test */});
 		this.mock(oModel).expects("_getEntity").withExactArgs(sKey)
-			.returns({/* content not relevant for this test */});
+			.returns({__metadata : {etag : "~internalETag"}});
+		this.mock(oModel.oMetadata).expects("_getNavigationPropertyNames")
+			.withExactArgs("~oEntityType")
+			.returns([/* content not relevant for this test */]);
 		// withExactArgs() for _removeReferences is not relevant for this test
-		this.mock(oModel).expects("_removeReferences").returns(oPayload);
+		this.mock(oModel).expects("_removeReferences")
+			.withExactArgs(sinon.match(function (oPayload0) {
+				assert.strictEqual(oPayload0.__metadata.etag, "~internalETag");
+				return true;
+			}))
+			.returns(oPayload);
 		this.mock(oModel).expects("_getHeaders").withExactArgs().returns(mHeaders);
 		this.mock(oModel).expects("getETag").withExactArgs(oPayload).returns(sETag);
 
@@ -3472,6 +3480,49 @@ sap.ui.define([
 
 		assert.strictEqual(ODataModel.prototype.getPersistTechnicalMessages.call(oODataModel),
 			bPersist);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	oEntry : undefined,
+	sETag : undefined,
+	oExpectedEntry : undefined
+}, {
+	oEntry : {},
+	sETag : "~etag",
+	oExpectedEntry : {}
+}, {
+	oEntry : {__metadata : {}},
+	sETag : undefined,
+	oExpectedEntry : {__metadata : {}}
+}, {
+	oEntry : {__metadata : {}},
+	sETag : "~etag",
+	oExpectedEntry : {__metadata : {etag : "~etag"}}
+}].forEach(function (oFixture, i) {
+	QUnit.test("_updateETag: " + i, function (assert) {
+		var oModel = {
+				_getHeader : function () {},
+				_getObject : function () {},
+				sServiceUrl : "/service_url"
+			},
+			oRequest = {
+				requestUri : "/service_url/~requestedEntity?filter"
+			},
+			oResponse = {
+				headers : "~headers"
+			};
+
+		this.mock(oModel).expects("_getObject")
+			.withExactArgs("/~requestedEntity", undefined, true).returns(oFixture.oEntry);
+		this.mock(oModel).expects("_getHeader").withExactArgs("etag", "~headers")
+			.returns(oFixture.sETag);
+
+		// code under test
+		ODataModel.prototype._updateETag.call(oModel, oRequest, oResponse);
+
+		assert.deepEqual(oFixture.oEntry, oFixture.oExpectedEntry);
 	});
 });
 });
