@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageLayout",
-	"sap/base/util/UriParameters",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/uxap/library"
@@ -39,12 +38,11 @@ function(
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageLayout,
-	UriParameters,
 	_omit,
 	sinon,
 	uxapLibrary
 ) {
-	'use strict';
+	"use strict";
 
 	// shortcut for sap.uxap.ObjectPageSubSectionLayout
 	var ObjectPageSubSectionLayout = uxapLibrary.ObjectPageSubSectionLayout;
@@ -269,7 +267,7 @@ function(
 				subSectionLayout: ObjectPageSubSectionLayout.TitleOnLeft,
 				sections: [this.oObjectPageSection1]
 			});
-			this.oObjectPageLayout.placeAt('qunit-fixture');
+			this.oObjectPageLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -397,7 +395,7 @@ function(
 			});
 			this.oLayout0 = new ObjectPageLayout("layout0", {
 				sections : [this.oSection0, this.oSection1]
-			}).placeAt('qunit-fixture');
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -450,8 +448,8 @@ function(
 
 	QUnit.module("Given some dom elements in and out of viewport...", {
 		beforeEach: function() {
-			this.$insideDom = jQuery('<input>').appendTo('#qunit-fixture');
-			this.$outsideDom = jQuery('<button></button>').appendTo('#qunit-fixture');
+			this.$insideDom = jQuery("<input>").appendTo("#qunit-fixture");
+			this.$outsideDom = jQuery("<button></button>").appendTo("#qunit-fixture");
 
 			this.$insideDom.css("margin-bottom", jQuery("#qunit-fixture").get(0).clientHeight);
 			this.$insideDom.css("margin-right", jQuery("#qunit-fixture").get(0).clientWidth);

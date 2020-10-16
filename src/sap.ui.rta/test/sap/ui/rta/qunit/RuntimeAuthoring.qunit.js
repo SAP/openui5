@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Feature",
@@ -32,10 +31,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
-	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	MessageBox,
 	MessageToast,
 	Group,
@@ -50,7 +47,6 @@ function(
 	Change,
 	Layer,
 	Utils,
-	FeaturesAPI,
 	RtaUtils,
 	AppVariantUtils,
 	RtaAppVariantFeature,
@@ -67,7 +63,6 @@ function(
 	QUnitUtils,
 	PersistenceWriteAPI,
 	VersionsAPI,
-	ReloadInfoAPI,
 	sinon
 ) {
 	"use strict";
@@ -76,7 +71,7 @@ function(
 	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
 	var oComp = oCompCont.getComponentInstance();
 
-	var fnTriggerKeydown = function(oTargetDomRef, iKeyCode, bShiftKey, bAltKey, bCtrlKey, bMetaKey) {
+	function triggerKeydown(oTargetDomRef, iKeyCode, bShiftKey, bAltKey, bCtrlKey, bMetaKey) {
 		var oParams = {};
 		oParams.keyCode = iKeyCode;
 		oParams.which = oParams.keyCode;
@@ -85,7 +80,7 @@ function(
 		oParams.metaKey = bMetaKey;
 		oParams.ctrlKey = bCtrlKey;
 		QUnitUtils.triggerEvent("keydown", oTargetDomRef, oParams);
-	};
+	}
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
 		beforeEach : function() {
@@ -110,7 +105,6 @@ function(
 			assert.ok(this.oRta, " then RuntimeAuthoring is created");
 			assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
 			assert.ok(this.oRootControlOverlay.$().css("z-index") < this.oRta.getToolbar().$().css("z-index"), "and the toolbar is in front of the root overlay");
-			assert.notOk(RuntimeAuthoring.needsRestart(), "restart is not needed initially");
 
 			assert.equal(this.oRta.getToolbar().getControl('versionButton').getVisible(), false, "then the version label is hidden");
 			assert.equal(this.oRta.getToolbar().getControl('activateDraft').getVisible(), false, "then the activate draft Button is visible");
@@ -523,6 +517,43 @@ function(
 		});
 	});
 
+	QUnit.module("enableRestart", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when enabling restart", function(assert) {
+			var sComponentId = "restartingComponent";
+			var oComponent = {
+				getManifestEntry: function () {},
+				getMetadata: function () {
+					return {
+						getName: function () {
+							return sComponentId;
+						}
+					};
+				}
+			};
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			var sLayer = "LAYER";
+			RuntimeAuthoring.enableRestart(sLayer, {});
+			var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
+			assert.ok(RuntimeAuthoring.needsRestart(sLayer), "then restart is needed");
+			assert.equal(sRestartingComponent, sComponentId + ".Component", "and the component ID is set with an added .Component");
+		});
+
+		QUnit.test("when enabling and disabling restart", function(assert) {
+			var sLayer = "LAYER";
+			RuntimeAuthoring.enableRestart(sLayer);
+			RuntimeAuthoring.enableRestart(sLayer);
+			RuntimeAuthoring.enableRestart(sLayer);
+
+			RuntimeAuthoring.disableRestart(sLayer);
+
+			assert.notOk(RuntimeAuthoring.needsRestart(sLayer), "then restart is not needed");
+		});
+	});
+
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available together with a CommandStack with changes...", {
 		beforeEach : function(assert) {
 			var fnDone = assert.async();
@@ -629,10 +660,10 @@ function(
 
 			//undo -> _unExecute -> fireModified
 			document.activeElement.blur(); // reset focus to body
-			fnTriggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, false, true);
+			triggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, false, true);
 
 			//redo -> execute -> fireModified (inside promise)
-			fnTriggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Z, true, false, false, true);
+			triggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Z, true, false, false, true);
 		});
 
 		QUnit.test("when cut is triggered by keydown-event on rootElementOverlay, with no macintosh device and ctrlKey is pushed", function(assert) {
@@ -654,10 +685,10 @@ function(
 
 			//undo -> _unExecute -> fireModified
 			document.activeElement.blur(); // reset focus to body
-			fnTriggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, true, false);
+			triggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, true, false);
 
 			//redo -> execute -> fireModified (inside promise)
-			fnTriggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Y, false, false, true, false);
+			triggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Y, false, false, true, false);
 		});
 
 		QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert) {
@@ -1270,37 +1301,6 @@ function(
 				assert.equal(oMessageBoxStub.callCount, 0, "no MessageBox got shown");
 			});
 		});
-
-		QUnit.test("when enabling restart", function(assert) {
-			var sComponentId = "restartingComponent";
-			var oComponent = {
-				getManifestEntry: function () {},
-				getMetadata: function () {
-					return {
-						getName: function () {
-							return sComponentId;
-						}
-					};
-				}
-			};
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			var sLayer = "LAYER";
-			RuntimeAuthoring.enableRestart(sLayer, {});
-			var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
-			assert.ok(RuntimeAuthoring.needsRestart(sLayer), "then restart is needed");
-			assert.equal(sRestartingComponent, sComponentId + ".Component", "and the component ID is set with an added .Component");
-		});
-
-		QUnit.test("when enabling and disabling restart", function(assert) {
-			var sLayer = "LAYER";
-			RuntimeAuthoring.enableRestart(sLayer);
-			RuntimeAuthoring.enableRestart(sLayer);
-			RuntimeAuthoring.enableRestart(sLayer);
-
-			RuntimeAuthoring.disableRestart(sLayer);
-
-			assert.notOk(RuntimeAuthoring.needsRestart(sLayer), "then restart is not needed");
-		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created without flexSettings", {
@@ -1412,7 +1412,6 @@ function(
 			});
 		});
 	});
-
 
 	QUnit.module("Given a started RTA", {
 		beforeEach: function() {
