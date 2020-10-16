@@ -222,7 +222,7 @@ sap.ui.define([
 			})
 		});
 		oOpa.waitFor({
-			controlType: "sap.m.DisplayListItem",
+			controlType: "sap.m.StandardListItem",
 			success: function (aItems) {
 				Opa5.assert.strictEqual(aItems.length, 2, "Should show suggestions");
 				Opa5.assert.strictEqual(this.oControl.getValue(), sTextInControl, "Should change input value");

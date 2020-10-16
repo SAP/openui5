@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'./ColumnListItem',
 	'./GroupHeaderListItem',
-	'./DisplayListItem',
 	'./StandardListItem',
 	'sap/ui/core/SeparatorItem',
 	'./List',
@@ -39,7 +38,6 @@ function(
 	Item,
 	ColumnListItem,
 	GroupHeaderListItem,
-	DisplayListItem,
 	StandardListItem,
 	SeparatorItem,
 	List,
@@ -1643,15 +1641,10 @@ function(
 					this._configureListItem(oItem, oListItem);
 					aHitItems.push(oListItem);
 				} else if (!bFilter || this._fnFilter(sTypedChars, oItem)) {
-					if (aItems[i].isA("sap.ui.core.ListItem")) {
-						oListItem = new DisplayListItem(oItem.getId() + "-dli");
-						oListItem.setLabel(oItem.getText());
-						oListItem.setValue(oItem.getAdditionalText());
-					} else {
-						oListItem = new StandardListItem(oItem.getId() + "-sli");
-						oListItem.setTitle(oItem.getText());
-					}
-
+					oListItem = new StandardListItem({
+						title: oItem.getText(),
+						info: oItem.getAdditionalText && oItem.getAdditionalText()
+					});
 					if (!bIsAnySuggestionAlreadySelected && (this._oSuggPopover._sProposedItemText === aItems[i].getText())) {
 						oListItem.setSelected(true);
 						bIsAnySuggestionAlreadySelected = true;
