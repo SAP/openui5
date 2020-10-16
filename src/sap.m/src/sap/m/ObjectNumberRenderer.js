@@ -67,6 +67,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 		this.renderText(oRm, oON);
 		oRm.text("  "); // space between the number text and unit
 		this.renderUnit(oRm, oON);
+
+		this.renderEmphasizedInfoElement(oRm, oON);
 		this.renderHiddenARIAElement(oRm, oON);
 
 		oRm.close("div");
@@ -90,6 +92,18 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 			oRm.text(sUnit);
 			oRm.close("span");
 		}
+	};
+
+	ObjectNumberRenderer.renderEmphasizedInfoElement = function(oRm, oON) {
+		if (!oON.getEmphasized()) {
+			return;
+		}
+
+		oRm.openStart("span", oON.getId() + "-emphasized");
+		oRm.class("sapUiPseudoInvisibleText");
+		oRm.openEnd();
+		oRm.text(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_EMPHASIZED"));
+		oRm.close("span");
 	};
 
 	ObjectNumberRenderer.renderHiddenARIAElement = function(oRm, oON) {
