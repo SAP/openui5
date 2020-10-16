@@ -275,6 +275,7 @@ sap.ui.define([
 			})
 			.then(function () {
 				oCompVariantStateMapForPersistencyKey.changes[0].setState(Change.states.DIRTY);
+				oCompVariantStateMapForPersistencyKey.variants[0].setState(Change.states.DELETED);
 				oCompVariantStateMapForPersistencyKey.defaultVariant.setState(Change.states.DELETED);
 				oCompVariantStateMapForPersistencyKey.standardVariant.setState(Change.states.DELETED);
 			})
@@ -285,8 +286,8 @@ sap.ui.define([
 			.then(function () {
 				assert.equal(oWriteStub.callCount, 4, "AFTER SOME CHANGES; still the write method was called 4 times,");
 				assert.equal(oUpdateStub.callCount, 1, "one update was called");
-				assert.equal(oRemoveStub.callCount, 2, "and two deletes were called");
-				assert.equal(oCompVariantStateMapForPersistencyKey.variants[0].getState(), Change.states.PERSISTED, "the variant is persisted");
+				assert.equal(oRemoveStub.callCount, 3, "and three deletes were called");
+				assert.equal(oCompVariantStateMapForPersistencyKey.variants.length, 0, "the variant is cleared");
 				assert.equal(oCompVariantStateMapForPersistencyKey.changes[0].getState(), Change.states.PERSISTED, "the addFavorite change is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, undefined, "the default variant was cleared");
 				assert.equal(oCompVariantStateMapForPersistencyKey.standardVariant, undefined, "the standard variant was cleared");
