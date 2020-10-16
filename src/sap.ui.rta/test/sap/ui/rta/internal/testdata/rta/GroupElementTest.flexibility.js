@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"/sap/ui/comp/smartform/flexibility/changes/RenameField"
+	"sap/ui/comp/smartform/flexibility/changes/RenameField"
 ], function (RenameField) {
 	"use strict";
 
