@@ -152,13 +152,6 @@
 		"annotation1": {
 			"namespace": "com.sap.mock.vocabularies",
 			"annotation": "annotation1",
-			"whiteList": {
-				"properties": [
-					"Property1",
-					"Property2",
-					"Property3"
-				]
-			},
 			"ignore": false,
 			"appliesTo": [
 				"Page/Button"
