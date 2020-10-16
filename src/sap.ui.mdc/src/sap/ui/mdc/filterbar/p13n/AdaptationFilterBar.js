@@ -201,60 +201,65 @@ sap.ui.define([
 	 * @returns {Promise} A Promise which resolves once all FilterFields are ready and added to the <code>filterItems</code> aggregation
 	 */
 	AdaptationFilterBar.prototype.createFilterFields = function(){
-		return new Promise(function(resolve, reject){
-			this.initialized().then(function(){
-				var mConditions = this._bPersistValues ? this.getAdaptationControl().getFilterConditions() : this.getAdaptationControl()._getXConditions();
-				this._setXConditions(mConditions, true);
+		return this.initialized().then(function(){
+			var mConditions = this._bPersistValues ? this.getAdaptationControl().getFilterConditions() : this.getAdaptationControl()._getXConditions();
+			this._setXConditions(mConditions, true);
 
-				if (this._bFilterFieldsCreated) {
-					resolve(this);
-					return;
+			if (this._bFilterFieldsCreated) {
+				return this;
+			}
+
+			var oDelegate = this.getAdaptationControl().getControlDelegate();
+
+			//used to store the originals
+			this._mOriginalsForClone = {};
+
+			var aFieldPromises = [];
+
+			this.oAdaptationModel.getProperty("/items").forEach(function(oItem, iIndex){
+				var oFilterFieldPromise;
+
+				if (this.getAdvancedMode()) {
+					oFilterFieldPromise = this._checkExisting(oItem, oDelegate);
+				} else {
+					oFilterFieldPromise = oDelegate.getFilterDelegate().addFilterItem(oItem, this.getAdaptationControl());
 				}
 
-				var oDelegate = this.getAdaptationControl().getControlDelegate();
+				oFilterFieldPromise.then(function(oFilterField){
 
-				//used to store the originals
-				this.mOriginalsForClone = {};
+					var oFieldForDialog;
 
-				this.oAdaptationModel.getProperty("/items").forEach(function(oItem, iIndex){
-					var oFilterFieldPromise;
-
+					//Important: always use clones for the personalization dialog. The "originals" should never be shown in the P13n UI
+					//Currently the advancedMode property is being used in case a more complex personalization is required, this is
+					//as of now only part for the sap.ui.mdc.FilterBar, as the AdaptationFilterBar will allow to select FilterFields in advance.
+					//This logic requires a cloning logic, as there is a mix of parent/child filterFields which is not the case if the advancedMode
+					//is configured to false.
 					if (this.getAdvancedMode()) {
-						oFilterFieldPromise = this._checkExisting(oItem, oDelegate);
+						if (oFilterField._bTemporaryOriginal) {
+							delete oFilterFieldPromise._bTemporaryOriginal;
+							this._mOriginalsForClone[oFilterField.getFieldPath()] = oFilterField;
+						}
+						oFieldForDialog = oFilterField.clone();
 					} else {
-						oFilterFieldPromise = oDelegate.getFilterDelegate().addFilterItem(oItem, this.getAdaptationControl());
+						oFieldForDialog = oFilterField;
 					}
 
-					oFilterFieldPromise.then(function(oFilterField){
+					this.addAggregation("filterItems", oFieldForDialog);
 
-						var oFieldForDialog;
-
-						//Important: always use clones for the personalization dialog. The "originals" should never be shown in the P13n UI
-						//Currently the advancedMode property is being used in case a more complex personalization is required, this is
-						//as of now only part for the sap.ui.mdc.FilterBar, as the AdaptationFilterBar will allow to select FilterFields in advance.
-						//This logic requires a cloning logic, as there is a mix of parent/child filterFields which is not the case if the advancedMode
-						//is configured to false.
-						if (this.getAdvancedMode()) {
-							if (oFilterField._bTemporaryOriginal) {
-								delete oFilterFieldPromise._bTemporaryOriginal;
-								this.mOriginalsForClone[oFilterField.getFieldPath()] = oFilterField;
-							}
-							oFieldForDialog = oFilterField.clone();
-						} else {
-							oFieldForDialog = oFilterField;
-						}
-
-						this.addAggregation("filterItems", oFieldForDialog);
-						if (iIndex == this.oAdaptationModel.getProperty("/items").length - 1) {
-							if (this._oFilterBarLayout.getInner().setP13nModel){
-								this._oFilterBarLayout.getInner().setP13nModel(this.oAdaptationModel);
-							}
-							this._bFilterFieldsCreated = true;
-							resolve(this);
-						}
-					}.bind(this));
 				}.bind(this));
+
+				aFieldPromises.push(oFilterFieldPromise);
+
 			}.bind(this));
+
+			return Promise.all(aFieldPromises).then(function(){
+				if (this._oFilterBarLayout.getInner().setP13nModel){
+					this._oFilterBarLayout.getInner().setP13nModel(this.oAdaptationModel);
+				}
+				this._bFilterFieldsCreated = true;
+				return this;
+			}.bind(this));
+
 		}.bind(this));
 	};
 
@@ -279,6 +284,11 @@ sap.ui.define([
 			oFilterFieldPromise = Promise.resolve(mExistingFilterItems[oItem.name]);
 		}else {
 			oFilterFieldPromise = oDelegate.addItem(oItem.name, this.getAdaptationControl()).then(function(oFilterField){
+
+				if (!oFilterField) {
+					throw new Error("No FilterField could be created for property: '" + oItem.name + "'.");
+				}
+
 				oFilterField._bTemporaryOriginal = true;
 				return oFilterField;
 			});
@@ -291,14 +301,14 @@ sap.ui.define([
 
 		var aExistingItems = this._oFilterBarLayout.getInner().getSelectedFields();
 
-		Object.keys(this.mOriginalsForClone).forEach(function(sKey){
+		Object.keys(this._mOriginalsForClone).forEach(function(sKey){
 			var oDelegate = this.getAdaptationControl().getControlDelegate();
 
 			if (aExistingItems.indexOf(sKey) < 0) {
 				oDelegate.removeItem.call(oDelegate, sKey, this.getAdaptationControl());
 			}
 
-			delete this.mOriginalsForClone[sKey];
+			delete this._mOriginalsForClone[sKey];
 
 		}.bind(this));
 	};
@@ -328,6 +338,7 @@ sap.ui.define([
 	AdaptationFilterBar.prototype.exit = function() {
 		FilterBarBase.prototype.exit.apply(this, arguments);
 		this.oAdaptationModel = null;
+		this._mOriginalsForClone = null;
 	};
 
 	return AdaptationFilterBar;
