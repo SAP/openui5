@@ -1162,7 +1162,9 @@ sap.ui.define([
 		assert.ok(oPopup1 instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup1.isOpen(), "Two Value Suggestion Popup is open now");
 		assert.equal(aItems.length, aNames.length, "Suggestions are inserted");
-		assert.ok(aItems[0] instanceof sap.m.DisplayListItem, "Suggestion item is a DisplayListItem");
+		assert.ok(aItems[0] instanceof sap.m.StandardListItem, "Suggestion item is a StandardListItem");
+		assert.ok(aItems[0].getTitle(), aNames[0], "Suggestion item has a title set equal to the ListItem's text");
+		assert.ok(aItems[0].getInfo(), aDescription[0], "Suggestion item has an info set equal to the ListItem's additionalText");
 
 		oInput7._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
@@ -1226,7 +1228,9 @@ sap.ui.define([
 		assert.ok(oPopup instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
-		assert.ok(getPopupItemsContent(oPopup).getItems()[0] instanceof sap.m.DisplayListItem, "Suggestion item is a DisplayListItem");
+		assert.ok(getPopupItemsContent(oPopup).getItems()[0] instanceof sap.m.StandardListItem, "Suggestion item is a StandardListItem");
+		assert.ok(getPopupItemsContent(oPopup).getItems()[0].getTitle(), aNames[0], "Suggestion item has a title set equal to the ListItem's text");
+		assert.ok(getPopupItemsContent(oPopup).getItems()[0].getInfo(), aDescription[0], "Suggestion item has an info set equal to the ListItem's additionalText");
 
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is still open now");

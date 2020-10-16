@@ -19,7 +19,6 @@ sap.ui.define([
 	'sap/m/GroupHeaderListItem',
 	'sap/ui/core/SeparatorItem',
 	'sap/m/Dialog',
-	'sap/m/DisplayListItem',
 	'sap/m/List',
 	'sap/m/Popover',
 	'sap/m/StandardListItem',
@@ -47,7 +46,6 @@ sap.ui.define([
 	GroupHeaderListItem,
 	SeparatorItem,
 	Dialog,
-	DisplayListItem,
 	List,
 	Popover,
 	StandardListItem,
@@ -422,7 +420,7 @@ sap.ui.define([
 						return;
 					}
 
-					aListItemsDomRef = this._oList.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
+					aListItemsDomRef = this._oList.$().find('.sapMSLIInfo, .sapMSLITitleOnly');
 					sInputValue = (this._sTypedInValue || this._oInput.getValue()).toLowerCase();
 
 					highlightDOMElements(aListItemsDomRef, sInputValue);
@@ -808,9 +806,6 @@ sap.ui.define([
 				aListItems[iSelectedIndex].addStyleClass("sapMInputFocusedHeaderGroup");
 				oSelectedItem && oSelectedItem.setSelected(false);
 				this._oLastSelectedHeader = aListItems[iSelectedIndex];
-			} else if (aListItems[iSelectedIndex] instanceof DisplayListItem) {
-				// for two value suggestions we use the item label
-				sNewValue = oInput._getInputValue(aListItems[iSelectedIndex].getLabel());
 			} else {
 				// otherwise we use the item title
 				sNewValue = oInput._getInputValue(aListItems[iSelectedIndex].getTitle());
