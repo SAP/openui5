@@ -376,12 +376,12 @@ sap.ui.define([
 				var sOwnerId = ManagedObject._sOwnerId;
 				if (!oController._isExtended()) {
 					if (bAsync) {
-						oController = Controller.extendByCustomizing(oController, sName, bAsync)
+						oController = Controller.extendByCustomizing(oController, sName, bAsync, sOwnerId)
 							.then(function(oController) {
 								return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
 							});
 					} else {
-						oController = Controller.extendByCustomizing(oController, sName, bAsync);
+						oController = Controller.extendByCustomizing(oController, sName, bAsync, sOwnerId);
 						oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
 					}
 				} else if (bAsync) {
