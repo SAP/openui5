@@ -18,7 +18,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 
 	var GridDnD = {};
 
-	function createDragSession(oEvent, oDraggedControl, oDroppedControl) {
+	function createDragSession(oEvent, oDraggedControl, oDroppedControl, sDropPosition) {
 		// provide only a minimal set of sap.ui.core.dnd.DragSession capabilities, in order to make internal calculations
 		return {
 			/**
@@ -37,6 +37,26 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 			 */
 			getDragControl: function() {
 				return oDraggedControl;
+			},
+
+			/**
+			 * Returns the control over which we drop.
+			 *
+			 * @returns {sap.ui.core.Element|null}
+			 * @protected
+			 */
+			getDropControl: function() {
+				return oDroppedControl;
+			},
+
+			/**
+			 * Returns the drop position - "Before" or "After"
+			 *
+			 * @returns {string}
+			 * @protected
+			 */
+			getDropPosition: function() {
+				return sDropPosition;
 			}
 		};
 	}
@@ -84,7 +104,12 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	GridDnD.fireDnDByKeyboard = function (oDraggedControl, oDroppedControl, sDropPosition, oEvent) {
 		var aValidDragInfos = getValidDragInfos(oDraggedControl);
 
-		oEvent.dragSession = createDragSession(oEvent, oDraggedControl, oDroppedControl);
+		oEvent.dragSession = createDragSession(
+			oEvent,
+			oDraggedControl,
+			oDroppedControl.isA("sap.f.GridContainer") ? null : oDroppedControl,
+			sDropPosition
+		);
 
 		if (!aValidDragInfos.length) {
 			return;
@@ -108,15 +133,8 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 			return oDropInfo.fireDragEnter(oEvent);
 		});
 
-
 		aValidDropInfos.forEach(function (oDropConfig) {
-			oDropConfig.fireDropEvent(
-				null,
-				oEvent.originalEvent,
-				sDropPosition,
-				oDraggedControl,
-				oDroppedControl.isA("sap.f.GridContainer") ? null : oDroppedControl
-			);
+			oDropConfig.fireDrop(oEvent);
 		});
 	};
 
