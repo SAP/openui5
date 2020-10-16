@@ -197,8 +197,17 @@ html.sap-desktop .sapMPlanCalInCard .sapUiCalendarApp.sapUiCalendarAppSel:hover:
 	}
 }
 
-html[data-sap-ui-browser^="ff"] .sapMPlanCalInCard.sapMPCInCardTwoColumns .sapMListTbl {
-	width: max-content;
+html[data-sap-ui-browser^="ff"] .sapMPlanCalInCard.sapMPCInCardTwoColumns {
+	.sapMListTbl {
+		width: max-content;
+	}
+	.sapMListInfoTBarContainer {
+		max-width: 50%
+	}
+}
+
+.sapMPlanCalInCard.sapMPCInCardTwoColumns .sapMListTbl {
+	max-width: 50%;
 }
 
 html[data-sap-ui-browser^="ie"] {
