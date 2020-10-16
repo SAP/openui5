@@ -104,20 +104,42 @@ sap.ui.define([
 	_AggregationCache.prototype = Object.create(_Cache.prototype);
 
 	/**
-	 * Unconditionally copies the given elements from a cache read into aElements.
+	 * Copies the given elements from a cache read into <code>this.aElements</code>.
 	 *
 	 * @param {object[]} aReadElements
 	 *   The elements from a cache read
 	 * @param {number} iOffset
 	 *   The offset within aElements
+	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
+	 *   The group level cache which the given elements have been read from
+	 * @param {number} iStart
+	 *   The index of the first element within the cache's collection
+	 * @throws {Error}
+	 *   In case an unexpected element or placeholder would be overwritten
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.addElements = function (aReadElements, iOffset) {
+	_AggregationCache.prototype.addElements = function (aReadElements, iOffset, oCache, iStart) {
 		var aElements = this.aElements;
 
 		aReadElements.forEach(function (oElement, i) {
-			var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+			var oOldElement = aElements[iOffset + i],
+				oParent,
+				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+
+			if (oOldElement) { // check before overwriting
+				if (oOldElement === oElement) {
+					return;
+				}
+				oParent = _Helper.getPrivateAnnotation(oOldElement, "parent");
+				if (!oParent) {
+					throw new Error("Unexpected element");
+				}
+				if (oParent !== oCache
+					|| _Helper.getPrivateAnnotation(oOldElement, "index") !== iStart + i) {
+					throw new Error("Wrong placeholder");
+				}
+			}
 
 			aElements[iOffset + i] = oElement;
 			aElements.$byPredicate[sPredicate] = oElement;
@@ -151,7 +173,7 @@ sap.ui.define([
 			iCount += 1;
 			i += 1;
 		}
-		aElements.splice(iIndex + 1, iCount);
+		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aElements.splice(iIndex + 1, iCount));
 		aElements.$count -= iCount;
 
 		return iCount;
@@ -209,45 +231,86 @@ sap.ui.define([
 	};
 
 	/**
-	 * Expands the group node at the given path.
+	 * Expands the given group node.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
-	 * @param {string} sGroupNodePath
-	 *   The group node path relative to the cache
+	 * @param {object|string} vGroupNodeOrPath
+	 *   The group node or its path relative to the cache; a group node instance (instead of a path)
+	 *   MUST only be given in case of "expanding" continued
 	 * @returns {sap.ui.base.SyncPromise<number>}
 	 *   A promise that is resolved with the number of nodes at the next level
 	 *
 	 * @public
 	 * @see #collapse
 	 */
-	_AggregationCache.prototype.expand = function (oGroupLock, sGroupNodePath) {
+	_AggregationCache.prototype.expand = function (oGroupLock, vGroupNodeOrPath) {
 		var oCache,
-			oGroupNode,
+			iCount,
+			oGroupNode = typeof vGroupNodeOrPath === "string"
+				? this.fetchValue(_GroupLock.$cached, vGroupNodeOrPath).getResult()
+				: vGroupNodeOrPath,
+			aSpliced = _Helper.getPrivateAnnotation(oGroupNode, "spliced"),
 			that = this;
 
-		oGroupNode = this.fetchValue(_GroupLock.$cached, sGroupNodePath).getResult();
+		if (vGroupNodeOrPath !== oGroupNode) {
+			// Note: this also prevents a 2nd expand of the same node
+			_Helper.updateAll(this.mChangeListeners, vGroupNodeOrPath, oGroupNode, {
+				"@$ui5.node.isExpanded" : true
+			});
+		} // else: no update needed!
 
-		// Note: this also prevents a 2nd expand of the same node
-		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, {
-			"@$ui5.node.isExpanded" : true
-		});
+		if (aSpliced) {
+			_Helper.deletePrivateAnnotation(oGroupNode, "spliced");
+			// Note: Array#splice uses varargs syntax for inserted items!
+			this.aElements.splice.apply(this.aElements,
+				[this.aElements.indexOf(oGroupNode) + 1, 0].concat(aSpliced));
+			iCount = aSpliced.length;
+			this.aElements.$count += iCount;
+			aSpliced.forEach(function (oElement) {
+				var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
-		oCache = this.createGroupLevelCache(oGroupNode);
+				if (sPredicate) {
+					that.aElements.$byPredicate[sPredicate] = oElement;
+					if (_Helper.getPrivateAnnotation(oElement, "expanding")) {
+						_Helper.deletePrivateAnnotation(oElement, "expanding");
+						iCount += that.expand(_GroupLock.$cached, oElement).getResult();
+					}
+				}
+			});
+
+			return SyncPromise.resolve(iCount);
+		}
+
+		oCache = _Helper.getPrivateAnnotation(oGroupNode, "cache");
+		if (!oCache) {
+			oCache = this.createGroupLevelCache(oGroupNode);
+			_Helper.setPrivateAnnotation(oGroupNode, "cache", oCache);
+		}
 
 		// prefetch from the group level cache
 		return oCache.read(0, this.iReadLength, 0, oGroupLock).then(function (oResult) {
-			var iCount = oResult.value.$count,
-				iIndex = that.aElements.indexOf(oGroupNode) + 1,
+			var iIndex = that.aElements.indexOf(oGroupNode) + 1,
 				i;
 
+			if (!oGroupNode["@$ui5.node.isExpanded"]) { // already collapsed again
+				// Note: we MUST not change "@$ui5.node.isExpanded" in this case!
+				_Helper.deletePrivateAnnotation(oGroupNode, "spliced");
+				return 0;
+			}
+			if (!iIndex) { // some parent already collapsed again
+				_Helper.setPrivateAnnotation(oGroupNode, "expanding", true);
+				return 0;
+			}
+
+			iCount = oResult.value.$count;
 			// create the gap
 			for (i = that.aElements.length - 1; i >= iIndex; i -= 1) {
 				that.aElements[i + iCount] = that.aElements[i];
-				// no need to delete, that.aElements[i] is overwritten below
+				delete that.aElements[i]; // delete to allow overwrite below
 			}
 			// fill in the results
-			that.addElements(oResult.value, iIndex);
+			that.addElements(oResult.value, iIndex, oCache, 0);
 			that.aElements.$count += iCount;
 			// create placeholder
 			for (i = iIndex + oResult.value.length; i < iIndex + iCount; i += 1) {
@@ -257,7 +320,8 @@ sap.ui.define([
 
 			return iCount;
 		}, function (oError) {
-			_Helper.updateAll(that.mChangeListeners, sGroupNodePath, oGroupNode, {
+			// Note: typeof vGroupNodeOrPath === "string"
+			_Helper.updateAll(that.mChangeListeners, vGroupNodeOrPath, oGroupNode, {
 				"@$ui5.node.isExpanded" : false
 			});
 
@@ -379,7 +443,8 @@ sap.ui.define([
 		 * @param {number} iGapEnd end of gap, exclusive
 		 */
 		function readGap(iGapStart, iGapEnd) {
-			var iStart = _Helper.getPrivateAnnotation(that.aElements[iGapStart], "index"),
+			var oCache = oGapParent,
+				iStart = _Helper.getPrivateAnnotation(that.aElements[iGapStart], "index"),
 				oStartElement = that.aElements[iGapStart];
 
 			aReadPromises.push(
@@ -395,7 +460,7 @@ sap.ui.define([
 									iGapStart = that.aElements.indexOf(oReadResult.value[0]);
 								}
 						}
-						that.addElements(oReadResult.value, iGapStart);
+						that.addElements(oReadResult.value, iGapStart, oCache, iStart);
 					})
 			);
 		}
@@ -433,7 +498,7 @@ sap.ui.define([
 			var j;
 
 			if (bHasGroupLevels) {
-				that.addElements(oResult.value, iIndex);
+				that.addElements(oResult.value, iIndex, that.oFirstLevel, iIndex);
 				that.aElements.$count = oResult.value.$count;
 				// create placeholders
 				for (j = 0; j < that.aElements.$count; j += 1) {
