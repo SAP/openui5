@@ -11,13 +11,12 @@
 	border-radius: 2px;
 }
 
-.sapUiIntegrationDTPreview::before {
-	content: " ";
+.sapUiIntegrationDTPreview>.before {
 	position: absolute;
 	min-width: calc(190px + 5rem);
-	height: calc(350px - 3rem);
-	background-color: #f0f0f0; /* background-color needed for blocking */
-	opacity: 0.001;
+	height: calc(350px - 3.5rem);
+	background-color: rgba(222, 222, 222, 0.5); /* background-color needed for blocking */
+	opacity: 0.01;
 	margin: -2rem
 }
 

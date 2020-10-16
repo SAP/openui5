@@ -338,7 +338,8 @@ sap.ui.define([
 	 */
 	CardEditor.prototype.onAfterRendering = function () {
 		if (this.getDomRef()) {
-			Popup.setInitialZIndex(getHigherZIndex(this.getDomRef()));
+			this._iZIndex = getHigherZIndex(this.getDomRef());
+			Popup.setInitialZIndex(this._iZIndex);
 		}
 	};
 	/**
