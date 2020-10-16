@@ -79,8 +79,8 @@ sap.ui.define([
 			return oManifest;
 		},
 		getModel: function() {
-			return oModel;
-		} // eslint-disable-line no-use-before-define
+			return oModel; // eslint-disable-line no-use-before-define
+		}
 	};
 	var oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 	sinon.stub(Component, "get")

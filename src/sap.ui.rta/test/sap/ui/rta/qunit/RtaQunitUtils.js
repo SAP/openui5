@@ -1,31 +1,39 @@
 sap.ui.define([
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Component",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/core/Component",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/rta/RuntimeAuthoring"
 ], function(
+	JsControlTreeModifier,
+	ComponentContainer,
+	Component,
+	KeyCodes,
 	Layer,
 	flUtils,
 	FakeLrepConnectorSessionStorage,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
-	Component,
-	ComponentContainer,
 	QUnitUtils,
-	KeyCodes,
-	JsControlTreeModifier
+	RuntimeAuthoring
 ) {
 	"use strict";
+
+	function disableRtaRestart() {
+		RuntimeAuthoring.disableRestart(Layer.CUSTOMER);
+		RuntimeAuthoring.disableRestart(Layer.USER);
+	}
 
 	var RtaQunitUtils = {};
 
 	RtaQunitUtils.renderTestModuleAt = function(sNamespace, sDomId) {
+		disableRtaRestart();
 		var oComp = sap.ui.getCore().createComponent({
 			name : "sap.ui.rta.qunitrta",
 			id : "Comp1",
@@ -45,6 +53,7 @@ sap.ui.define([
 	};
 
 	RtaQunitUtils.renderTestAppAt = function(sDomId) {
+		disableRtaRestart();
 		sap.ui.getCore().getConfiguration().setFlexibilityServices([{
 			connector: "SessionStorageConnector"
 		}]);
@@ -113,6 +122,7 @@ sap.ui.define([
 	};
 
 	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
+		disableRtaRestart();
 		sap.ui.getCore().getConfiguration().setFlexibilityServices([{
 			connector: "SessionStorageConnector"
 		}]);
@@ -141,6 +151,7 @@ sap.ui.define([
 	};
 
 	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId) {
+		disableRtaRestart();
 		var oComp = sap.ui.getCore().createComponent({
 			name : "sap.ui.rta.test",
 			id : "Comp1",
