@@ -37,6 +37,13 @@
 				displayValue="40%"
 				showValue="true"
 				state="Information" />
+			<Text text="Information Popover Scenario" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="40"
+				displayValue="Reduce container width until this text is truncated, then press the ProgressIndicator"
+				showValue="true"
+				state="Success" />
 			<Text text="Invalid percent values" class="sapUiSmallMarginBottom" />
 			<ProgressIndicator
 				class="sapUiSmallMarginBottom"

@@ -11,6 +11,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	var POPOVER_WAIT_TIME = 500;
+
 	createAndAppendDiv("content");
 
 
@@ -432,5 +434,111 @@ sap.ui.define([
 		// Clean up
 		oSpy.reset();
 		oProgressIndicator.destroy();
+	});
+
+	/* --------------------------- ProgressIndicator Popover -------------------------------------- */
+
+	QUnit.module("ProgressIndicator - Popover ", {
+		beforeEach: function () {
+			this.oPI = new ProgressIndicator({
+				width : "30%",
+				percentValue : 30,
+				displayValue : "Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Long Value"
+			});
+			this.oPIPopover = this.oPI._getPopover();
+			this.oPI.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oPI.destroy();
+			this.oPI = null;
+		}
+	});
+
+	QUnit.test("Popover behavior when UX requirements are met", function (assert) {
+		// Arrange
+		var done = assert.async();
+		assert.expect(3);
+
+		this.oPIPopover.attachAfterOpen(function(){
+			// Assert
+			assert.ok(this.oPIPopover.isOpen(), "Popover is opened when the Progress Indicator is pressed.");
+
+			this.oPIPopover.attachAfterClose(function(){
+				// Assert
+				assert.notOk(this.oPIPopover.isOpen(), "Popover is closed when the Progress Indicator is pressed.");
+				done();
+			}, this);
+
+			// Act
+			this.oPI.ontap();
+			this.clock.tick(POPOVER_WAIT_TIME);
+		}, this);
+
+		// Assert
+		assert.ok(this.oPI._isHoverable(), "Popover is hoverable.");
+
+		// Act
+		this.oPI.ontap();
+		this.clock.tick(POPOVER_WAIT_TIME);
+	});
+
+	QUnit.test("Popover behavior when UX requirements are not met (displayValue is not truncated)", function (assert) {
+		// Act
+		this.oPI.setDisplayValue(".");
+		Core.applyChanges();
+		this.oPI.ontap();
+		this.clock.tick(POPOVER_WAIT_TIME);
+
+		// Assert
+		assert.notOk(this.oPIPopover.isOpen(), "Popover is not opened when the Progress Indicator is pressed.");
+		assert.notOk(this.oPI._isHoverable(), "Popover is not hoverable.");
+	});
+
+	QUnit.test("Popover behavior when UX requirements are not met (no displayValue)", function (assert) {
+		// Act
+		this.oPI.setDisplayValue("");
+		Core.applyChanges();
+		this.oPI.ontap();
+		this.clock.tick(POPOVER_WAIT_TIME);
+
+		// Assert
+		assert.notOk(this.oPIPopover.isOpen(), "Popover is not opened when the Progress Indicator is pressed.");
+		assert.notOk(this.oPI._isHoverable(), "Popover is not hoverable.");
+	});
+
+	QUnit.test("Popover close icon/button behavior", function (assert) {
+		// Arrange
+		var done = assert.async();
+		assert.expect(1);
+
+		this.oPIPopover.attachAfterOpen(function(){
+			this.oPIPopover.attachAfterClose(function(){
+				// Assert
+				assert.notOk(this.oPIPopover.isOpen(), "Popover is closed when its close icon/button is pressed.");
+				done();
+			}, this);
+
+			// Act
+			this.oPI._onPopoverCloseIconPress();
+			this.clock.tick(POPOVER_WAIT_TIME);
+		}, this);
+
+		// Act
+		this.oPI.ontap();
+		this.clock.tick(POPOVER_WAIT_TIME);
+	});
+
+	QUnit.test("Popover text behavior", function (assert) {
+		// Assert
+		assert.strictEqual(this.oPI.getDisplayValue(), this.oPI._oPopoverText.getText(),
+			"The text inside the popover is initially equal with the displayValue text of the ProgressIndicator.");
+
+		// Act
+		this.oPI.setDisplayValue("Test");
+
+		// Assert
+		assert.strictEqual(this.oPI.getDisplayValue(), this.oPI._oPopoverText.getText(),
+			"The text inside the popover is synced with the displayValue text after updating the displayValue property of the ProgressIndicator.");
 	});
 });
