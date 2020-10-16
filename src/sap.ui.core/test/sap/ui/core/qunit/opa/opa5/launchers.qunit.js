@@ -110,7 +110,7 @@ sap.ui.define([
 			success: function () {
 				var oUriParams = new URI().search(true);
 				assert.strictEqual(oUriParams.key, "value", "Should include params from OPA config");
-				assert.strictEqual(oUriParams.opaSpecific, "value", "Should include OPA blacklisted param");
+				assert.strictEqual(oUriParams.opaSpecific, "value", "Should include OPA excluded param");
 				for (var sKey in mOriginalSearch) {
 					assert.strictEqual(oUriParams[sKey], mOriginalSearch[sKey], "Should include initial param " + sKey);
 				}
@@ -122,7 +122,7 @@ sap.ui.define([
 		Opa5.emptyQueue().done(function () {
 			var oUriParams = new URI().search(true);
 			assert.ok(!oUriParams.key, "Should remove params from OPA config");
-			assert.strictEqual(oUriParams.opaSpecific, "value", "Should not remove OPA blacklisted param");
+			assert.strictEqual(oUriParams.opaSpecific, "value", "Should not remove OPA excluded param");
 			for (var sKey in mOriginalSearch) {
 				assert.strictEqual(oUriParams[sKey], mOriginalSearch[sKey], "Should not remove initial params");
 			}

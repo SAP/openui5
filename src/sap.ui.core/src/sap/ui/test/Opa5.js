@@ -961,7 +961,7 @@ sap.ui.define([
 		 * </pre>
 		 *
 		 * @since 1.48 Application config parameters could be overwritten from URL.
-		 * Every parameter that is not prefixed with 'opa' and is not blacklisted as QUnit
+		 * Every parameter that is not prefixed with 'opa' and is allowed as QUnit
 		 * parameter is parsed and overwrites respective 'appParams' value.
 		 *
 		 * @since 1.49 Declarative configuration of test libraries is supported

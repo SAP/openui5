@@ -237,7 +237,7 @@ function (
 		});
 	});
 
-	QUnit.test("when a message is sent to unknown origin (this origin must be whitelisted in sender window)", function (assert) {
+	QUnit.test("when a message is sent to unknown origin (this origin must be allowed in sender window)", function (assert) {
 		var fnDone = assert.async();
 		var mData = {
 			foo: 'bar'
