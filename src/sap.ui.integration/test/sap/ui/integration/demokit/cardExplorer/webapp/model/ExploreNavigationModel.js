@@ -256,6 +256,32 @@ sap.ui.define([
 										key: 'View.view.xml'
 									}
 								]
+							},
+							{
+								title: 'Trigger action',
+								key: 'triggerAction',
+								files: [
+									{
+										url: '/samples/component/triggerAction/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/triggerAction/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/triggerAction/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									},
+									{
+										url: '/samples/component/triggerAction/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									}
+								]
 							}
 						]
 					},
