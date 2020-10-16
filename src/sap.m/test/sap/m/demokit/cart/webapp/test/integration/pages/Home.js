@@ -39,7 +39,6 @@ sap.ui.define([
 				iShouldSeeTheCategoryList : function () {
 					return this.waitFor({
 						id : "categoryList",
-						timeout: 30,
 						success : function (oList) {
 							Opa5.assert.ok(oList, "Found the category List");
 						}
