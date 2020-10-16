@@ -120,7 +120,7 @@ sap.ui.define([
 
 	function getNumberOfFlexObjects(oConnector) {
 		var iCount = 0;
-		return ObjectStorageUtils.forEachObjectInStorage({storage: oConnector.oStorage}, function() {
+		return ObjectStorageUtils.forEachObjectInStorage({storage: oConnector.storage}, function() {
 			iCount++;
 		})
 		.then(function() {
@@ -137,11 +137,11 @@ sap.ui.define([
 			QUnit.test("when write is called with various changes", function(assert) {
 				return saveListWithConnector(oConnector, values(oTestData))
 					.then(function () {
-						return Promise.all([assertFileWritten(assert, oConnector.oStorage, oTestData, " was written")]);
+						return Promise.all([assertFileWritten(assert, oConnector.storage, oTestData, " was written")]);
 					})
 					.then(function () {
 						// clean up
-						return removeListFromStorage(oConnector.oStorage, values(oTestData));
+						return removeListFromStorage(oConnector.storage, values(oTestData));
 					});
 			});
 
@@ -154,9 +154,9 @@ sap.ui.define([
 						return Promise.all([
 							values(oTestData)
 							.map(function (oFlexObject) {
-								return getFlexObjectFromStorage(oFlexObject, oConnector.oStorage)
+								return getFlexObjectFromStorage(oFlexObject, oConnector.storage)
 									.then(function (vItem) {
-										aCreationFields.push(oConnector.oStorage._itemsStoredAsObjects ? vItem.creation : JSON.parse(vItem).creation);
+										aCreationFields.push(oConnector.storage._itemsStoredAsObjects ? vItem.creation : JSON.parse(vItem).creation);
 									});
 							})
 						])
@@ -178,7 +178,7 @@ sap.ui.define([
 
 			// TODO: fix the getFlexInfo to take the mandatory reference parameter into account
 			QUnit.skip("when getFlexInfo is called without changes present", function(assert) {
-				return oConnector.getFlexInfo({storage: oConnector.oStorage}).then(function(oFlexInfo) {
+				return oConnector.getFlexInfo({storage: oConnector.storage}).then(function(oFlexInfo) {
 					var oExpectedFlexInfo = {
 						isResetEnabled: false
 					};
@@ -191,13 +191,13 @@ sap.ui.define([
 					oTestData.oChange1
 				])
 				.then(function() {
-					return oConnector.getFlexInfo({storage: oConnector.oStorage}).then(function(oFlexInfo) {
+					return oConnector.getFlexInfo({storage: oConnector.storage}).then(function(oFlexInfo) {
 						var oExpectedFlexInfo = {
 							isResetEnabled: true
 						};
 						assert.deepEqual(oFlexInfo, oExpectedFlexInfo, "the function resolves with an empty object");
 
-						return removeListFromStorage(oConnector.oStorage, [
+						return removeListFromStorage(oConnector.storage, [
 							oTestData.oChange1
 						]);
 					});
@@ -210,7 +210,7 @@ sap.ui.define([
 				return saveListWithConnector(oConnector, values(oTestData));
 			},
 			afterEach: function() {
-				return removeListFromStorage(oConnector.oStorage, values(oTestData));
+				return removeListFromStorage(oConnector.storage, values(oTestData));
 			}
 		}, function() {
 			QUnit.test("when reset is called", function(assert) {
@@ -366,7 +366,7 @@ sap.ui.define([
 				fileName: "id123"
 			};
 
-			var oSetItemStub = sandbox.stub(JsObjectConnector.oStorage, "setItem");
+			var oSetItemStub = sandbox.stub(JsObjectConnector.storage, "setItem");
 
 			return JsObjectConnector.write({
 				flexObjects : [oObject]
@@ -387,7 +387,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				var sObject = JSON.stringify(oObject);
-				assert.strictEqual(SessionStorageWriteConnector.oStorage.getItem(sKey), sObject, "the write was called with the object as string");
+				assert.strictEqual(SessionStorageWriteConnector.storage.getItem(sKey), sObject, "the write was called with the object as string");
 			});
 		});
 	});
@@ -427,7 +427,7 @@ sap.ui.define([
 		}
 	};
 	var oConnectorWithAsyncStorage = merge({}, ObjectStorageConnector, {
-		oStorage: oAsyncStorage
+		storage: oAsyncStorage
 	});
 
 	parameterizedTest(JsObjectConnector, "JsObjectStorage");

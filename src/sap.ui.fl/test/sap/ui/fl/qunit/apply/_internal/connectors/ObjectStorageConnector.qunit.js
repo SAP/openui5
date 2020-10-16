@@ -231,7 +231,7 @@ sap.ui.define([
 				});
 			},
 			after: function () {
-				removeListFromStorage(oWriteStorageConnector.oStorage, [
+				removeListFromStorage(oWriteStorageConnector.storage, [
 					oTestData.change1.fileName,
 					oTestData.change2.fileName,
 					oTestData.change3.fileName,
@@ -293,7 +293,7 @@ sap.ui.define([
 				});
 			},
 			after: function () {
-				removeListFromStorage(oWriteStorageConnector.oStorage, [
+				removeListFromStorage(oWriteStorageConnector.storage, [
 					oTestData.baseChange.fileName,
 					oTestData.vendorVariant.fileName,
 					oTestData.partnerVariantChange.fileName,

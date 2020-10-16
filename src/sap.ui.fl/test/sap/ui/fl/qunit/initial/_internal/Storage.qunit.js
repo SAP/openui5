@@ -58,7 +58,7 @@ sap.ui.define([
 	QUnit.module("Storage merges results from different connectors", {
 		afterEach: function () {
 			sandbox.restore();
-			JsObjectConnector.oStorage.clear();
+			JsObjectConnector.storage.clear();
 		}
 	}, function () {
 		QUnit.test("Given all connectors provide empty variant properties", function (assert) {
@@ -116,7 +116,7 @@ sap.ui.define([
 				}
 			});
 			var mVariant1 = oVariant1.content;
-			JsObjectConnector.oStorage.setItem(ObjectStorageUtils.createFlexObjectKey(mVariant1), mVariant1);
+			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mVariant1), mVariant1);
 
 			var sChangeId1 = "change1";
 			var oChange1 = new Change({
@@ -132,7 +132,7 @@ sap.ui.define([
 				variantReference: sVariant1
 			});
 			var mChange1 = oChange1.getDefinition();
-			JsObjectConnector.oStorage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange1), mChange1);
+			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange1), mChange1);
 
 			var sChangeId2 = "change2";
 			var oChange2 = new Change({
@@ -147,7 +147,7 @@ sap.ui.define([
 				}
 			});
 			var mChange2 = oChange2.getDefinition();
-			JsObjectConnector.oStorage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange2), mChange2);
+			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange2), mChange2);
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 1, "only the UI change was added to the result");

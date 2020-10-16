@@ -13,8 +13,8 @@ sap.ui.define([
 
 	QUnit.module("Loading of Connector", {}, function() {
 		QUnit.test("the storage is configured", function(assert) {
-			assert.equal(typeof JsObjectConnector.oStorage.setItem, "function", "the storage has the setItem function");
-			assert.equal(typeof JsObjectConnector.oStorage.clear, "function", "the storage has the clear function");
+			assert.equal(typeof JsObjectConnector.storage.setItem, "function", "the storage has the setItem function");
+			assert.equal(typeof JsObjectConnector.storage.clear, "function", "the storage has the clear function");
 		});
 	});
 
@@ -30,18 +30,18 @@ sap.ui.define([
 
 	QUnit.module("Storage functions - both connectors mixed", function() {
 		QUnit.test("setItem / getItem / clear", function(assert) {
-			JsObjectConnector.oStorage.setItem("key1", "value1");
-			JsObjectConnector.oStorage.setItem("key2", "value2");
+			JsObjectConnector.storage.setItem("key1", "value1");
+			JsObjectConnector.storage.setItem("key2", "value2");
 
-			assert.equal(JsObjectConnector.oStorage.getItem("key1"), "value1", "the value was set and retrieved");
-			assert.equal(JsObjectConnector.oStorage.getItem("key2"), "value2", "the value was set and retrieved");
+			assert.equal(JsObjectConnector.storage.getItem("key1"), "value1", "the value was set and retrieved");
+			assert.equal(JsObjectConnector.storage.getItem("key2"), "value2", "the value was set and retrieved");
 
-			JsObjectConnector.oStorage.clear();
-			assert.equal(Object.keys(JsObjectConnector.oStorage.getItems()).length, 0, "the object again has no items");
+			JsObjectConnector.storage.clear();
+			assert.equal(Object.keys(JsObjectConnector.storage.getItems()).length, 0, "the object again has no items");
 
-			JsObjectConnector.oStorage.setItem("key1", "value1");
-			JsObjectConnector.oStorage.clear();
-			assert.equal(Object.keys(JsObjectConnector.oStorage.getItems()).length, 0, "the object again has no items");
+			JsObjectConnector.storage.setItem("key1", "value1");
+			JsObjectConnector.storage.clear();
+			assert.equal(Object.keys(JsObjectConnector.storage.getItems()).length, 0, "the object again has no items");
 		});
 	});
 
@@ -63,7 +63,7 @@ sap.ui.define([
 		});
 	}
 
-	parameterizedTest(JsObjectConnector.oStorage, "WriteConnector");
+	parameterizedTest(JsObjectConnector.storage, "WriteConnector");
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();

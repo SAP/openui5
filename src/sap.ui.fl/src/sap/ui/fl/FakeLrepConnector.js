@@ -81,7 +81,7 @@ sap.ui.define([
 			return oConnector.reset(mPropertyBag);
 		},
 		setStorage: function(oConnector, oNewStorage) {
-			oConnector.oStorage = oNewStorage;
+			oConnector.storage = oNewStorage;
 		},
 		synchronous: {
 			clearAll: function (oStorage) {

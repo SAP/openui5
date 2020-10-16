@@ -455,19 +455,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/StorageFeaturesMerger"]
 				}
 			},
-			"write/_internal/connectors/ObjectStorageConnector": {
-				group: "Write Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector",
-						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
-						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
-					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
-				}
-			},
 			"write/_internal/connectors/JsObjectConnector": {
 				group: "Write Internal",
 				coverage: {
@@ -555,9 +542,22 @@ sap.ui.define([
 				}
 			},
 			"write/api/connectors/FileListBaseConnector": {
-				group: "Initial API",
+				group: "Write API conntectors",
 				coverage: {
 					only: ["sap/ui/fl/write/api/connectors/FileListBaseConnector"]
+				}
+			},
+			"write/api/connectors/ObjectStorageConnector": {
+				group: "Write API conntectors",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/api/connectors/ObjectStorageConnector",
+						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
+						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
 			"descriptorRelated/internal/Utils": {
