@@ -237,11 +237,11 @@ sap.ui.define([
 		assert.equal(isValueColorPresent, true, "The tooltip contains the value color text");
 
 		//Arrange
-		this.oNumericContent.setValueColor(oResourceBundle.getText("SEMANTIC_COLOR_NONE"));
+		this.oNumericContent.setValueColor(ValueColor.None);
 		//Act
 		sap.ui.getCore().applyChanges();
 		sTooltip = this.oNumericContent.getTooltip_AsString();
-		isValueColorPresent = sTooltip.indexOf(oResourceBundle.getText("SEMANTIC_COLOR_NONE")) > -1;
+		isValueColorPresent = sTooltip.indexOf(ValueColor.None) > -1;
 
 		//Assert
 		assert.equal(isValueColorPresent, false, "The tooltip does not contain the value color text");
