@@ -82,12 +82,12 @@ sap.ui.define([
 		}
 	}, {
 		input: {
-			frameWidth: "50%",
-			frameHeight: "75%"
+			frameWidth: "50.5%",
+			frameHeight: "75.5%"
 		},
 		expectedResults: {
-			frameWidth: 50,
-			frameHeight: 75,
+			frameWidth: 50.5,
+			frameHeight: 75.5,
 			frameWidthUnit: "%",
 			frameHeightUnit: "%"
 		}
