@@ -91,6 +91,8 @@ sap.ui.define([
 		"zh_tw": 6
 	};
 
+	var ValueColor = library.ValueColor;
+
 	/**
 	 * Constructor for a new sap.m.GenericTile control.
 	 *
@@ -360,12 +362,12 @@ sap.ui.define([
 		} else {
 			sAltText = sAltText.concat(sEmptyValue);
 		}
-		sAltText = sAltText.concat("\n");
 		if (this.getIndicator() && this.getIndicator() !== library.DeviationIndicator.None) {
-			sAltText = sAltText.concat(this._rb.getText(("NUMERICCONTENT_DEVIATION_" + this.getIndicator()).toUpperCase()));
 			sAltText = sAltText.concat("\n");
+			sAltText = sAltText.concat(this._rb.getText(("NUMERICCONTENT_DEVIATION_" + this.getIndicator()).toUpperCase()));
 		}
-		if (this.getValueColor() !== this._rb.getText("SEMANTIC_COLOR_NONE")) {
+		if (this.getValueColor() !== ValueColor.None) {
+			sAltText = sAltText.concat("\n");
 			sAltText = sAltText.concat(sMeaning);
 		}
 		return sAltText;

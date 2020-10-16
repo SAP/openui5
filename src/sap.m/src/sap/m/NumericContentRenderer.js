@@ -9,6 +9,8 @@ sap.ui.define([
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
+	var ValueColor = library.ValueColor;
+
 	/**
 	 * NumericContent renderer.
 	 * @namespace
@@ -171,7 +173,7 @@ sap.ui.define([
 		oRm.openStart("div", oControl.getId() + "-value");
 		oRm.class("sapMNCValue");
 		oRm.class(sWithoutMargin);
-		if (oControl.getValueColor() === oResourceBundle.getText("SEMANTIC_COLOR_NONE")) {
+		if (oControl.getValueColor() === ValueColor.None) {
 			oRm.class(oResourceBundle.getText("SEMANTIC_COLOR_NEUTRAL"));
 		} else {
 			oRm.class(oControl.getValueColor());
