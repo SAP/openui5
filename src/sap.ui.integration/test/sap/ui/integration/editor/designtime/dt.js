@@ -97,29 +97,6 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "integer",
 						"label": "{i18n>TRANSLATED_INTEGER_LABEL}"
 					},
-					"integer1": {
-						"manifestpath": "/sap.card/configuration/parameters/integer1/value",
-						"defaultValue": 1,
-						"type": "integer",
-						"label": "Integer Label"
-					},
-					"dependentInteger1": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
-						"defaultValue": "Editable changes from boolean",
-						"type": "string",
-						"editable": "{= ${items>integer1/value} > 2}"
-					},
-					"dependentInteger2": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
-						"defaultValue": "Visible changes from boolean",
-						"type": "string",
-						"visible": "{= ${items>integer1/value} > 5}"
-					},
-					"dependentInteger3": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentInteger3/value",
-						"label": "{= ${items>integer1/value} > 8 ? 'dependentfield3 True' : 'dependentfield3 False' }",
-						"type": "string"
-					},
 					"number": {
 						"manifestpath": "/sap.card/configuration/parameters/number/value",
 						"defaultValue": 1.5,
@@ -150,23 +127,6 @@ sap.ui.define(["sap/ui/integration/Designtime",
 								"enabled": "{currentSettings>editable}"
 							}
 						}
-					},
-					"dependentfield1": {
-						"manifestpath": "/sap.card/configuration/parameters/dependent1/value",
-						"defaultValue": "Editable changes from boolean",
-						"type": "string",
-						"editable": "{items>boolean/value}"
-					},
-					"dependentfield2": {
-						"manifestpath": "/sap.card/configuration/parameters/dependent2/value",
-						"defaultValue": "Visible changes from boolean",
-						"type": "string",
-						"visible": "{items>boolean/value}"
-					},
-					"dependentfield3": {
-						"manifestpath": "/sap.card/configuration/parameters/dependent3/value",
-						"label": "{= ${items>boolean/value} === true ? 'dependentfield3 True' : 'dependentfield3 False' }",
-						"type": "string"
 					},
 					"booleanLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",
@@ -301,8 +261,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}",
-								"allowFile": false,
-								"allowNone": true
+								"allowFile": false
 							}
 						}
 					},
@@ -316,7 +275,6 @@ sap.ui.define(["sap/ui/integration/Designtime",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}",
-								"allowFile": true,
 								"allowNone": false
 							}
 						}
@@ -345,9 +303,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 							"type": IconSelect,
 							"settings": {
 								"value": "{currentSettings>value}",
-								"editable": "{currentSettings>editable}",
-								"allowFile": true,
-								"allowNone": true
+								"editable": "{currentSettings>editable}"
 							}
 						}
 					},
@@ -396,6 +352,89 @@ sap.ui.define(["sap/ui/integration/Designtime",
 								"enabled": "{currentSettings>editable}"
 							}
 						}
+					},
+					"group": {
+						"label": "Dependent",
+						"type": "group"
+					},
+					"string1": {
+						"manifestpath": "/sap.card/configuration/parameters/string1/value",
+						"defaultValue": "editable",
+						"label": "String: editable, visible, label",
+						"type": "string"
+					},
+					"dependentString1": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentString1/value",
+						"defaultValue": "Editable changes depend on string1",
+						"type": "string",
+						"editable": "{= ${items>string1/value} === 'editable'}"
+					},
+					"dependentString2": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentString2/value",
+						"defaultValue": "Visible changes depend on string1",
+						"type": "string",
+						"visible": "{= ${items>string1/value} === 'visible'}"
+					},
+					"dependentString3": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentString3/value",
+						"label": "{= ${items>string1/value} === 'label'? 'dependentString3 True' : 'dependentString3 False' }",
+						"defaultValue": "Label changes depend on string1",
+						"type": "string"
+					},
+					"integer1": {
+						"manifestpath": "/sap.card/configuration/parameters/integer1/value",
+						"defaultValue": 1,
+						"type": "integer",
+						"label": "Integer: 1, 3, 6, 9"
+					},
+					"dependentInteger1": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
+						"defaultValue": "Editable changes depend on integer1",
+						"type": "string",
+						"editable": "{= ${items>integer1/value} > 2}"
+					},
+					"dependentInteger2": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
+						"defaultValue": "Visible changes depend on integer1",
+						"type": "string",
+						"visible": "{= ${items>integer1/value} > 5}"
+					},
+					"dependentInteger3": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentInteger3/value",
+						"label": "{= ${items>integer1/value} > 8 ? 'dependentInteger3 True' : 'dependentInteger3 False' }",
+						"type": "string"
+					},
+					"boolean1": {
+						"manifestpath": "/sap.card/configuration/parameters/boolean1/value",
+						"defaultValue": false,
+						"type": "boolean",
+						"label": "boolean",
+						"visualization": {
+							"type": Switch,
+							"settings": {
+								"state": "{currentSettings>value}",
+								"customTextOn": "Yes",
+								"customTextOff": "No",
+								"enabled": "{currentSettings>editable}"
+							}
+						}
+					},
+					"dependentBoolean1": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean1/value",
+						"defaultValue": "Editable changes depend on boolean1",
+						"type": "string",
+						"editable": "{items>boolean1/value}"
+					},
+					"dependentBoolean2": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean2/value",
+						"defaultValue": "Visible changes depend on boolean1",
+						"type": "string",
+						"visible": "{items>boolean1/value}"
+					},
+					"dependentBoolean3": {
+						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean3/value",
+						"label": "{= ${items>boolean1/value} === true ? 'dependentBoolean3 True' : 'dependentBoolean3 False' }",
+						"type": "string"
 					}
 				}
 			},
