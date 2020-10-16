@@ -936,7 +936,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.module("Classes");
+	QUnit.module("Rendering");
 
 	QUnit.test("Class for hidden actionsToolbar", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
@@ -1050,6 +1050,24 @@ sap.ui.define([
 		// Assert
 		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyAll"), "sapMSinglePCStickyAll class isn't applied");
 		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyNavBarAndColHeaders"), "sapMSinglePCStickyNavBarAndColHeaders class isn't applied");
+
+		// Clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("Pointer events are disabled for the now marker", function (assert) {
+		// Prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oNowMarker;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oNowMarker = oSPC.getDomRef().querySelector(".sapMSinglePCNowMarker");
+
+		// Act
+		// Assert
+		assert.strictEqual(getComputedStyle(oNowMarker).getPropertyValue("pointer-events"), "none" , "pointer-events: none propety is applied");
 
 		// Clean up
 		oSPC.destroy();
