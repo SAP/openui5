@@ -263,7 +263,8 @@ function(
 
 		oTokenizer.getTokensPopup()
 			.setInitialFocus(this)
-			.attachBeforeOpen(this._onBeforeOpenTokensPicker.bind(this));
+			.attachBeforeOpen(this._onBeforeOpenTokensPicker.bind(this))
+			.attachAfterClose(this._onAfterCloseTokensPicker.bind(this));
 
 		this.setAggregation("tokenizer", oTokenizer);
 
@@ -1436,6 +1437,17 @@ function(
 				(oDomRef.offsetWidth / parseFloat(library.BaseFontSize)) + "rem";
 
 			oPopover.setContentWidth(bEditable ? sWidth : "auto");
+		}
+	};
+
+	/**
+	 * This event handler will be called after the control's picker popover is closed.
+	 *
+	 * @private
+	 */
+	MultiInput.prototype._onAfterCloseTokensPicker = function () {
+		if (document.activeElement !== this.getDomRef("inner")) {
+			this.getAggregation("tokenizer").setRenderMode(TokenizerRenderMode.Narrow);
 		}
 	};
 

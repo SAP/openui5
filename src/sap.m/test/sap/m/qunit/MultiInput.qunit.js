@@ -2475,7 +2475,7 @@ sap.ui.define([
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
 	});
 
-	QUnit.test("onfocusin 2", function (assert) {
+	QUnit.test("RenderMode behaviour against different interactions", function (assert) {
 		var oTokenizer = this.multiInput.getAggregation("tokenizer"),
 			oTokenizerSpy;
 
@@ -2506,6 +2506,22 @@ sap.ui.define([
 		// assert
 		assert.ok(oTokenizerSpy.calledOnce, "setRenderMode should be triggered");
 		assert.strictEqual(oTokenizer.getRenderMode(), TokenizerRenderMode.Loose, "renderMode property should be set when the focus is on the input");
+
+		// Act. Click on the nMore
+		if (Device.browser.msie) {
+			oTokenizer.$().trigger("click");
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
+		// Focus first item in the popover.
+		oTokenizer.getTokensPopup().getContent()[0].getItems()[0].$().trigger("focus");
+		sap.ui.getCore().applyChanges();
+
+		oTokenizer.getTokensPopup().close();
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.multiInput.getAggregation("tokenizer").getRenderMode(), TokenizerRenderMode.Narrow, "The tokenizer is in Narrow mode");
 	});
 
 	QUnit.test("_mapTokenToListItem", function(assert) {
