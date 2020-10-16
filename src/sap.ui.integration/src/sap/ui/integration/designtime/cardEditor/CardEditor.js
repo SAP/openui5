@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/integration/util/CardMerger",
 	"sap/ui/thirdparty/jquery",
 	"./config/index"
-], function(
+], function (
 	CancelablePromise,
 	_isEqual,
 	_omit,
@@ -109,13 +109,13 @@ sap.ui.define([
 
 		var oDiff = {};
 
-		each(oConfiguration, function(sObjectName, oObject) {
-			each(oObject, function(sName, oSubObject) {
+		each(oConfiguration, function (sObjectName, oObject) {
+			each(oObject, function (sName, oSubObject) {
 				if (!oInitialConfiguration[sObjectName][sName]) {
 					oDiff[sObjectName] = oDiff[sObjectName] || {};
 					oDiff[sObjectName][sName] = oSubObject;
 				} else {
-					each(oSubObject, function(sKey, oValue) {
+					each(oSubObject, function (sKey, oValue) {
 						if (oInitialConfiguration[sObjectName][sName][sKey] !== oValue) {
 							addValueToDiff(oDiff, sObjectName, sName, sKey, oValue);
 						}
@@ -226,7 +226,7 @@ sap.ui.define([
 		}
 	};
 
-	CardEditor.prototype.setDesigntimeChanges = function(aDesigntimeChanges) {
+	CardEditor.prototype.setDesigntimeChanges = function (aDesigntimeChanges) {
 		if (this._oInitialDesigntimeMetadata) {
 			throw Error("Designtime Changes can only be set initially");
 		}
@@ -234,7 +234,7 @@ sap.ui.define([
 		this.setProperty("designtimeChanges", aDesigntimeChanges);
 	};
 
-	function formatImportedDesigntimeMetadata (oFlatMetadata) {
+	function formatImportedDesigntimeMetadata(oFlatMetadata) {
 		var oFormattedMetadata = {};
 		Object.keys(oFlatMetadata).forEach(function (sPath) {
 			ObjectPath.set(sPath.split("/"), { __value: deepClone(oFlatMetadata[sPath]) }, oFormattedMetadata);
@@ -257,18 +257,18 @@ sap.ui.define([
 	 * @param {String} oPropertyBag.layer - Layer of the Change
 	 * @returns {Promise<object>} Promise with both designtime and runtime change
 	 */
-	CardEditor.prototype.getChanges = function(oPropertyBag) {
+	CardEditor.prototype.getChanges = function (oPropertyBag) {
 		return Promise.all([
 			this.getDeltaChangeDefinition(oPropertyBag)
-				.catch(function() {
+				.catch(function () {
 					return;
 				}),
 			this.getDesigntimeChangeDefinition(oPropertyBag)
-				.catch(function() {
+				.catch(function () {
 					return;
 				})
 		])
-			.then(function(aChanges) {
+			.then(function (aChanges) {
 				if (aChanges[0] === undefined && aChanges[1] === undefined) {
 					return Promise.reject("No changes");
 				}
@@ -281,8 +281,8 @@ sap.ui.define([
 	};
 
 	function createChangeDefinition(mParameters) {
-		return new Promise(function(resolve) {
-			sap.ui.require(["sap/ui/fl/Change"], function(Change) {
+		return new Promise(function (resolve) {
+			sap.ui.require(["sap/ui/fl/Change"], function (Change) {
 				var oChangeDefinition = Change.createInitialFileContent(mParameters);
 				// by default the function createInitialFileContent sets the creation to ""
 				oChangeDefinition.creation = new Date().toISOString();
@@ -296,11 +296,11 @@ sap.ui.define([
 	 * @param {String} oPropertyBag.layer - Layer of the Change
 	 * @returns {Promise<object>} Promise with the change definition for the designtime delta change
 	 */
-	CardEditor.prototype.getDesigntimeChangeDefinition = function(oPropertyBag) {
+	CardEditor.prototype.getDesigntimeChangeDefinition = function (oPropertyBag) {
 		var aChanges = [];
 		var oOldValue = Object.assign({}, this._oInitialDesigntimeMetadata);
 		var oNewValue = this._formatExportedDesigntimeMetadata(this.getDesigntimeMetadata());
-		each(oNewValue, function(sKey, vValue) {
+		each(oNewValue, function (sKey, vValue) {
 			if (oOldValue.hasOwnProperty(sKey)) {
 				if (!_isEqual(oOldValue[sKey], vValue)) {
 					aChanges.push({
@@ -319,7 +319,7 @@ sap.ui.define([
 			}
 		});
 
-		each(oOldValue, function(sKey) {
+		each(oOldValue, function (sKey) {
 			aChanges.push({
 				propertyPath: sKey,
 				operation: "DELETE"
@@ -351,7 +351,7 @@ sap.ui.define([
 	 * @param {String} oPropertyBag.layer - Layer of the Change
 	 * @returns {Promise<object>} Promise with the change definition for the current delta changes
 	 */
-	CardEditor.prototype.getDeltaChangeDefinition = function(oPropertyBag) {
+	CardEditor.prototype.getDeltaChangeDefinition = function (oPropertyBag) {
 		var oCurrentJson = this.getJson();
 		var mParameters = merge({}, oPropertyBag);
 		mParameters.content = getCardConfigurationDeltaForChange(oCurrentJson, this._oInitialJson);

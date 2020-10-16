@@ -438,17 +438,25 @@ sap.ui.define([
 			oPromise,
 			oDesigntimeConfig = this.getDesigntime();
 		if (oDesigntimeConfig) {
-			oPromise = new Promise(function (resolve, reject) {
-				sap.ui.require(["sap/ui/integration/Designtime"], function (Designtime) {
-					var AdvancedDesigntime = Designtime.extend("test.Designtime");
-					AdvancedDesigntime.prototype.create = function () {
-						return oDesigntimeConfig;
-					};
-					var oDesigntime = new AdvancedDesigntime();
-					this._applyDesigntimeDefaults(oDesigntime.getSettings());
-					resolve(oDesigntime);
+			if (typeof oDesigntimeConfig === "function") {
+				oPromise = new Promise(function (resolve, reject) {
+					var oDesigntimeInstance = new oDesigntimeConfig();
+					this._applyDesigntimeDefaults(oDesigntimeInstance.getSettings());
+					resolve(oDesigntimeInstance);
 				}.bind(this));
-			}.bind(this));
+			} else if (typeof oDesigntimeConfig === "object") {
+				oPromise = new Promise(function (resolve, reject) {
+					sap.ui.require(["sap/ui/integration/Designtime"], function (Designtime) {
+						var AdvancedDesigntime = Designtime.extend("test.Designtime");
+						AdvancedDesigntime.prototype.create = function () {
+							return oDesigntimeConfig;
+						};
+						var oDesigntime = new AdvancedDesigntime();
+						this._applyDesigntimeDefaults(oDesigntime.getSettings());
+						resolve(oDesigntime);
+					}.bind(this));
+				}.bind(this));
+			}
 		} else if (sDesigntime) {
 			//load designtime from module
 			oPromise = this._oEditorCard.loadDesigntime().then(function (oDesigntime) {
@@ -483,38 +491,41 @@ sap.ui.define([
 		var oSettings = this._settingsModel.getProperty("/"),
 			mResult = {},
 			mNext;
-		for (var n in oSettings.form.items) {
-			var oItem = oSettings.form.items[n];
-			if (oItem.editable && oItem.visible) {
-				if (this.getMode() !== "translation") {
-					if (oItem.translatable && !oItem._changed && oItem._translatedDefaultPlaceholder) {
-						//do not save a value that was not changed and comes from a translated default value
-						//mResult[oItem.manifestpath] = oItem._translatedDefaultPlaceholder;
-						//if we would save it
-						continue;
-					} else {
+		if (oSettings && oSettings.form && oSettings.form.items) {
+			for (var n in oSettings.form.items) {
+				var oItem = oSettings.form.items[n];
+				if (oItem.editable && oItem.visible) {
+					if (this.getMode() !== "translation") {
+						if (oItem.translatable && !oItem._changed && oItem._translatedDefaultPlaceholder) {
+							//do not save a value that was not changed and comes from a translated default value
+							//mResult[oItem.manifestpath] = oItem._translatedDefaultPlaceholder;
+							//if we would save it
+							continue;
+						} else {
+							mResult[oItem.manifestpath] = oItem.value;
+						}
+					} else if (oItem.translatable && oItem.value) {
+						//in translation mode create an entry if there is a value
 						mResult[oItem.manifestpath] = oItem.value;
 					}
-				} else if (oItem.translatable && oItem.value) {
-					//in translation mode create an entry if there is a value
-					mResult[oItem.manifestpath] = oItem.value;
-				}
-				if (oItem._next && (this.getAllowSettings())) {
-					if (oItem._next.editable === false) {
-						mNext = mNext || {};
-						mNext[oItem._settingspath + "/editable"] = false;
-					}
-					if (oItem._next.visible === false) {
-						mNext = mNext || {};
-						mNext[oItem._settingspath + "/visible"] = false;
-					}
-					if (typeof oItem._next.allowDynamicValues === "boolean" && this.getAllowDynamicValues()) {
-						mNext = mNext || {};
-						mNext[oItem._settingspath + "/allowDynamicValues"] = oItem._next.allowDynamicValues;
+					if (oItem._next && (this.getAllowSettings())) {
+						if (oItem._next.editable === false) {
+							mNext = mNext || {};
+							mNext[oItem._settingspath + "/editable"] = false;
+						}
+						if (oItem._next.visible === false) {
+							mNext = mNext || {};
+							mNext[oItem._settingspath + "/visible"] = false;
+						}
+						if (typeof oItem._next.allowDynamicValues === "boolean" && this.getAllowDynamicValues()) {
+							mNext = mNext || {};
+							mNext[oItem._settingspath + "/allowDynamicValues"] = oItem._next.allowDynamicValues;
+						}
 					}
 				}
 			}
 		}
+
 		mResult[":layer"] = CardMerger.layers[this.getMode()];
 		mResult[":errors"] = this.checkCurrentSettings()[":errors"];
 		if (mNext) {
@@ -529,43 +540,45 @@ sap.ui.define([
 	CardEditor.prototype.checkCurrentSettings = function () {
 		var oSettings = this._settingsModel.getProperty("/"),
 			mChecks = {};
-		for (var n in oSettings.form.items) {
-			var oItem = oSettings.form.items[n];
-			if (oItem.editable) {
-				if ((oItem.isValid || oItem.required) && !(this.getMode() === "translation" && oItem.translatable)) {
-					if (oItem.isValid) {
-						mChecks[oItem.manifestpath] = oItem.isValid(oItem);
-					}
-					mChecks[oItem.manifestpath] = true;
-					var value = oItem.value;
-					var sType = oItem.type;
-					if (sType === "string" && value === "") {
-						mChecks[oItem.manifestpath] = value;
-						//inform user of this error
-					}
-					if ((sType === "date" || sType === "datetime") && isNaN(Date.parse(value))) {
-						mChecks[oItem.manifestpath] = value;
-						//inform user of this error
-					}
-					if (sType === "integer") {
-						if (isNaN(parseInt(value))) {
-							mChecks[oItem.manifestpath] = value;
-							//inform user of this error
-						} else if (value < oItem.min || value > oItem.max) {
+		if (oSettings && oSettings.form && oSettings.form.items) {
+			for (var n in oSettings.form.items) {
+				var oItem = oSettings.form.items[n];
+				if (oItem.editable) {
+					if ((oItem.isValid || oItem.required) && !(this.getMode() === "translation" && oItem.translatable)) {
+						if (oItem.isValid) {
+							mChecks[oItem.manifestpath] = oItem.isValid(oItem);
+						}
+						mChecks[oItem.manifestpath] = true;
+						var value = oItem.value;
+						var sType = oItem.type;
+						if (sType === "string" && value === "") {
 							mChecks[oItem.manifestpath] = value;
 							//inform user of this error
 						}
-					} if (sType === "number") {
-						if (isNaN(parseFloat(value))) {
+						if ((sType === "date" || sType === "datetime") && isNaN(Date.parse(value))) {
 							mChecks[oItem.manifestpath] = value;
-						} else if (value < oItem.min || value > oItem.max) {
-							mChecks[oItem.manifestpath] = value;
+							//inform user of this error
+						}
+						if (sType === "integer") {
+							if (isNaN(parseInt(value))) {
+								mChecks[oItem.manifestpath] = value;
+								//inform user of this error
+							} else if (value < oItem.min || value > oItem.max) {
+								mChecks[oItem.manifestpath] = value;
+								//inform user of this error
+							}
+						} if (sType === "number") {
+							if (isNaN(parseFloat(value))) {
+								mChecks[oItem.manifestpath] = value;
+							} else if (value < oItem.min || value > oItem.max) {
+								mChecks[oItem.manifestpath] = value;
+							}
 						}
 					}
 				}
 			}
+			mChecks[":layer"] = CardMerger.layers[this.getMode()];
 		}
-		mChecks[":layer"] = CardMerger.layers[this.getMode()];
 		mChecks[":errors"] = Object.values(mChecks).indexOf(false) > -1;
 		return mChecks;
 	};
@@ -812,6 +825,7 @@ sap.ui.define([
 			oConfig.allowSettings = false;
 		}
 		oConfig._beforeValue = this._beforeManifestModel.getProperty(oConfig.manifestpath);
+		oConfig.__cols = oConfig.cols || 2;
 
 		//if the item is not visible or translation mode, continue immediately
 		if (oConfig.visible === false || (!oConfig.translatable && sMode === "translation")) {
@@ -844,7 +858,8 @@ sap.ui.define([
 				value: oConfig.value
 			};
 
-			//force a 2 column layout in the form
+			//force a 2 column layout in the form, remember the original to reset
+
 			oConfig.cols = 1;
 			//create a configuration clone. map the _settingspath setting to _language, and set it to not editable
 			var origLangField = deepClone(oConfig, 10);
@@ -882,6 +897,9 @@ sap.ui.define([
 		this.addAggregation("_formContent",
 			oField
 		);
+		//reset the cols to original
+		oConfig.cols = oConfig.__cols;
+		delete oConfig.__cols;
 	};
 	/**
 	 * Returns the current language specific text for a given key or "" if no translation for the key exists

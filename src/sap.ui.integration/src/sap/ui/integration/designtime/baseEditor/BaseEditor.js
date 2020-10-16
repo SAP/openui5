@@ -182,11 +182,11 @@ sap.ui.define([
 					defaultValue: "list"
 				}
 			},
-			defaultAggregation : "content",
+			defaultAggregation: "content",
 			aggregations: {
 				content: {
 					type: "sap.ui.core.Control",
-					multiple : true
+					multiple: true
 				}
 			},
 			events: {
@@ -226,13 +226,13 @@ sap.ui.define([
 				 */
 				propertyEditorsReady: {
 					parameters: {
-						propertyEditors: {type: "array"}
+						propertyEditors: { type: "array" }
 					}
 				}
 			}
 		},
 
-		constructor: function() {
+		constructor: function () {
 			this._oSetConfigPromise = Promise.resolve();
 			this._mObservableConfig = {};
 			this._mPropertyEditors = {};
@@ -255,18 +255,18 @@ sap.ui.define([
 			}, this);
 		},
 
-		renderer: function(oRm, oControl) {
+		renderer: function (oRm, oControl) {
 			var aContent = oControl.getContent();
 
 			oRm.openStart("div", oControl);
 			oRm.openEnd();
 
 			if (aContent.length) {
-				aContent.forEach(function(oChildControl) {
+				aContent.forEach(function (oChildControl) {
 					oRm.renderControl(oChildControl);
 				});
 			} else {
-				oControl.getPropertyEditorsSync().forEach(function(oPropertyEditor) {
+				oControl.getPropertyEditorsSync().forEach(function (oPropertyEditor) {
 					oRm.renderControl(oPropertyEditor);
 				});
 			}
@@ -275,7 +275,7 @@ sap.ui.define([
 		}
 	});
 
-	BaseEditor.prototype.init = function () {};
+	BaseEditor.prototype.init = function () { };
 
 	BaseEditor.prototype.exit = function () {
 		this._reset();
@@ -344,7 +344,7 @@ sap.ui.define([
 			.then(this._registerPropertyEditorTypes.bind(this, oConfig.propertyEditors))
 			.then(this._setConfig.bind(this, oConfig, bIsDefaultConfig));
 
-			return this._oSetConfigPromise;
+		return this._oSetConfigPromise;
 	};
 
 	BaseEditor.prototype._registerPropertyEditorTypes = function (mPropertyEditors) {
@@ -410,10 +410,10 @@ sap.ui.define([
 		return oResult;
 	}
 
-	BaseEditor.prototype._addSpecificConfig = function(oSpecificConfig) {
+	BaseEditor.prototype._addSpecificConfig = function (oSpecificConfig) {
 		var oCurrentConfig;
 		this._oSetConfigPromise = this._oSetConfigPromise
-			.then(function() {
+			.then(function () {
 				this._oSpecificConfig = oSpecificConfig;
 
 				oCurrentConfig = _merge({}, this.getConfig());
@@ -460,12 +460,12 @@ sap.ui.define([
 
 		// merge properties
 		oNewConfig.properties = {};
-		each(oCurrentConfig.properties, function(sPropertyName, oProperty) {
+		each(oCurrentConfig.properties, function (sPropertyName, oProperty) {
 			var sEditor = oCurrentConfig.propertyEditors[oProperty.type] && oCurrentConfig.propertyEditors[oProperty.type].split("/").join(".");
 			var oConfigMetadata = sEditor && mPropertyEditors[sEditor].configMetadata;
 
 			if (oConfigMetadata && oSpecificConfig.properties[sPropertyName]) {
-				each(oProperty, function(sKey, vTargetValue) {
+				each(oProperty, function (sKey, vTargetValue) {
 					var vNewValue;
 					var sMergeStrategy = oConfigMetadata[sKey] && oConfigMetadata[sKey].mergeStrategy;
 					if (sMergeStrategy) {
@@ -815,7 +815,7 @@ sap.ui.define([
 						return oPropertyEditor.ready();
 					})
 			)
-			.then(this._checkReady.bind(this))
+				.then(this._checkReady.bind(this))
 		);
 	};
 
@@ -907,7 +907,7 @@ sap.ui.define([
 		this._bIsReady = bReadyState;
 		if (bPreviousReadyState !== true && bReadyState === true) {
 			// If the editor was not ready before, fire the ready event
-			this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditorsSync()});
+			this.firePropertyEditorsReady({ propertyEditors: this.getPropertyEditorsSync() });
 		}
 	};
 
@@ -999,9 +999,9 @@ sap.ui.define([
 				fnResolve();
 			}
 		}.bind(this))
-		.then(function () {
-			return this.getPropertyEditorsByNameSync(sPropertyName);
-		}.bind(this));
+			.then(function () {
+				return this.getPropertyEditorsByNameSync(sPropertyName);
+			}.bind(this));
 	};
 
 	/**
@@ -1019,7 +1019,7 @@ sap.ui.define([
 	 * @param {string|string[]} vTag - List of tags
 	 * @returns {Promise<sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null>} List of property editors for the specified tags
 	 */
-	BaseEditor.prototype.getPropertyEditorsByTag = function(vTag) {
+	BaseEditor.prototype.getPropertyEditorsByTag = function (vTag) {
 		return new Promise(function (fnResolve) {
 			if (!this._mPropertyEditors || Object.keys(this._mPropertyEditors).length === 0) {
 				this.attachEventOnce("propertyEditorsReady", fnResolve);
@@ -1027,9 +1027,9 @@ sap.ui.define([
 				fnResolve();
 			}
 		}.bind(this))
-		.then(function () {
-			return this.getPropertyEditorsByTagSync(vTag);
-		}.bind(this));
+			.then(function () {
+				return this.getPropertyEditorsByTagSync(vTag);
+			}.bind(this));
 	};
 
 	/**
@@ -1055,7 +1055,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null} List of property editors for the specified tags
 	 */
 	BaseEditor.prototype.getPropertyEditorsByTagSync = function (vTag) {
-		return this.getPropertyEditorsSync().filter(function(oPropertyEditor) {
+		return this.getPropertyEditorsSync().filter(function (oPropertyEditor) {
 			return hasTag(oPropertyEditor.getConfig(), vTag);
 		});
 	};

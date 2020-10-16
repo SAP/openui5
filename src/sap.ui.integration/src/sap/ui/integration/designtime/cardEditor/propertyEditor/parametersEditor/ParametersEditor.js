@@ -61,34 +61,90 @@ sap.ui.define([
 		}
 	});
 
-	ParametersEditor.prototype.formatItemConfig = function(oConfigValue) {
+	ParametersEditor.prototype.formatItemConfig = function (oConfigValue) {
 		var oMapItemConfig = MapEditor.prototype.formatItemConfig.apply(this, arguments);
 		var sKey = oConfigValue.key;
+		var sVisible = oConfigValue.value.visible !== false;
+		var sEditable = oConfigValue.value.editable !== false;
+		var sDescription = oConfigValue.value.description || "";
+		var bTranslatable = oConfigValue.value.translatable || false;
+		var bAllowSettings = oConfigValue.value.allowSettings || true;
+		var bAllowDynamicValues = oConfigValue.value.allowDynamicValues || true;
 		var vItemMetadata = this.getNestedDesigntimeMetadataValue(sKey);
 		var sLabel = vItemMetadata.label;
 
-		oMapItemConfig.splice(1, 0, {
-			label: this.getI18nProperty("CARD_EDITOR.LABEL"),
-			path: "label",
-			value: sLabel,
-			placeholder: sLabel ? undefined : sKey,
-			type: "string",
-			enabled: this.getConfig().allowLabelChange,
-			itemKey: sKey
-		});
-
+		oMapItemConfig.push(
+			{
+				label: this.getI18nProperty("CARD_EDITOR.LABEL"),
+				path: "label",
+				value: sLabel,
+				placeholder: sLabel ? undefined : sKey,
+				type: "string",
+				enabled: this.getConfig().allowLabelChange,
+				itemKey: sKey
+			},
+			{
+				label: "Description",
+				path: "description",
+				value: sDescription,
+				allowBindings: true,
+				type: "string",
+				itemKey: sKey
+			},
+			{
+				label: "Visible in Configuration",
+				path: "visible",
+				value: sVisible,
+				allowBindings: true,
+				type: "boolean",
+				itemKey: sKey
+			},
+			{
+				label: "Editable in Configuration",
+				path: "editable",
+				allowBindings: true,
+				value: sEditable,
+				enabled: true,
+				type: "boolean",
+				itemKey: sKey
+			},
+			{
+				label: "Translatable in Configuration",
+				path: "translatable",
+				value: bTranslatable,
+				enabled: true,
+				type: "boolean",
+				itemKey: sKey
+			},
+			{
+				label: "Allow Dynamic Values in Configuration",
+				path: "allowDynamicValues",
+				allowBindings: true,
+				enabled: true,
+				value: bAllowDynamicValues,
+				type: "boolean",
+				itemKey: sKey
+			},
+			{
+				label: "Allow Settings in Configuration",
+				path: "allowSettings",
+				allowBindings: true,
+				value: bAllowSettings,
+				type: "boolean",
+				itemKey: sKey
+			});
 		return oMapItemConfig;
 	};
 
-	ParametersEditor.prototype.processInputValue = function(oValue) {
+	ParametersEditor.prototype.processInputValue = function (oValue) {
 		return oValue;
 	};
 
-	ParametersEditor.prototype.processOutputValue = function(oValue) {
+	ParametersEditor.prototype.processOutputValue = function (oValue) {
 		return oValue;
 	};
 
-	ParametersEditor.prototype._configItemsFormatter = function(aItems) {
+	ParametersEditor.prototype._configItemsFormatter = function (aItems) {
 		return Array.isArray(aItems) ? aItems.map(function (oItem) {
 			var oItemMetadata = this.getNestedDesigntimeMetadataValue(oItem.key);
 			var oConfig = _merge({}, oItem.value, oItemMetadata);
@@ -112,7 +168,7 @@ sap.ui.define([
 		);
 	};
 
-	ParametersEditor.prototype.onBeforeConfigChange = function(oConfig) {
+	ParametersEditor.prototype.onBeforeConfigChange = function (oConfig) {
 		// Config scenario
 		if (!oConfig.allowTypeChange && !oConfig.allowKeyChange) {
 			this.setFragment("sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersConfigurationEditor", function () {
@@ -122,12 +178,11 @@ sap.ui.define([
 		return oConfig;
 	};
 
-	ParametersEditor.prototype._isValidItem = function(oItem, oOriginalItem) {
+	ParametersEditor.prototype._isValidItem = function (oItem, oOriginalItem) {
 		// If invalid entries should be excluded, only keep items which have a type in the manifest or have a string value
 		var sType = oOriginalItem.type;
 		var vValue = oOriginalItem.value;
 		var aAllowedTypes = this._getAllowedTypes();
-
 		return (
 			sType && includes(aAllowedTypes, sType) ||
 			typeof vValue === "string" && includes(aAllowedTypes, "string")

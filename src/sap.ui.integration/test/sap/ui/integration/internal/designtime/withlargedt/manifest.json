@@ -1,0 +1,210 @@
+{
+	"_version": "1.18.0",
+	"sap.app": {
+		"id": "sap.ui5.test.editor.listcard",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Test Card for Parameters",
+		"subTitle": "Test Card for Parameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://accept"
+		}
+	},
+	"sap.card": {
+		"designtime": "dt/configuration",
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"string": {
+					"value": "StringValue"
+				},
+				"stringLabel": {
+					"value": "StringValue"
+				},
+				"stringLabelTrans": {
+					"value": "StringValue"
+				},
+				"stringWithDescription": {
+					"value": "StringValue"
+				},
+				"stringWithLongDescription": {
+					"value": "StringValue"
+				},
+				"stringWithTranslatedValue": {
+					"value": "{{TRANSLATED_STRING_VALUE}}"
+				},
+				"stringWithTranslatedDTDefaultValue": {},
+				"integer": {
+					"value": 1
+				},
+				"integerLabel": {
+					"value": 1
+				},
+				"integerLabelTrans": {
+					"value": 1
+				},
+				"number": {
+					"value": 1.5
+				},
+				"numberLabel": {
+					"value": 1.5
+				},
+				"numberLabelTrans": {
+					"value": 1.5
+				},
+				"boolean": {
+					"value": false
+				},
+				"booleanLabel": {
+					"value": true
+				},
+				"booleanLabelTrans": {
+					"value": false
+				},
+				"date": {
+					"value": "2020-09-02"
+				},
+				"dateLabel": {
+					"value": "2020-09-02"
+				},
+				"dateLabelTrans": {
+					"value": "2020-09-02"
+				},
+				"dateTime": {
+					"value": "2020-09-02T11:21:51.470Z"
+				},
+				"dateTimeLabel": {
+					"value": "2020-09-02T11:21:51.470Z"
+				},
+				"dateTimeLabelTrans": {
+					"value": "2020-09-02T11:21:51.470Z"
+				},
+				"stringWithStaticList": {
+					"value": "key1"
+				},
+				"stringWithRequestList": {
+					"value": "key1"
+				},
+				"stringArray": {
+					"value": [
+						"key1",
+						"key2"
+					]
+				},
+				"stringArrayNoValues": {
+					"value": [
+						"key1",
+						"key2"
+					]
+				},
+				"iconNotAllowFile": {
+					"value": "sap-icon://accept"
+				},
+				"iconNotAllowNone": {
+					"value": "sap-icon://accept"
+				},
+				"iconNotAllowFileAndNone": {
+					"value": "sap-icon://accept"
+				}
+			},
+			"destinations": {
+				"string": {
+					"name": "JAM"
+				},
+				"dest": {
+					"name": "JAM"
+				},
+				"destLabel": {
+					"name": "products",
+					"label": "Direct Destination Label"
+				},
+				"destLabelTrans": {
+					"name": "SF",
+					"label": "{{TRANSLATED_DESTINATION_LABEL}}"
+				}
+			}
+		},
+		"header": {
+			"title": "Card Title",
+			"subTitle": "Card Sub Title",
+			"icon": {
+				"src": "sap-icon://accept",
+				"backgroundColor": ""
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Comfort Easy",
+						"Description": "32 GB Digital Assistant with high-resolution color screen",
+						"Highlight": "Error"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Highlight": "Warning"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Highlight": "Success"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+						"Highlight": "Information"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+						"Highlight": "None"
+					},
+					{
+						"Name": "Comfort Easy",
+						"Description": "32 GB Digital Assistant with high-resolution color screen",
+						"Highlight": "Error"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Highlight": "Warning"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Highlight": "Success"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+						"Highlight": "Information"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+						"Highlight": "None"
+					}
+				],
+				"path": "/"
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": "{Name}",
+				"description": "{Description}",
+				"info": {
+					"value": "{info}"
+				}
+			},
+			"maxItems": 3
+		}
+	}
+}

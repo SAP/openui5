@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/validator/ValidatorRegistry",
 	"sap/ui/integration/designtime/baseEditor/util/BaseDefaultValidatorModules",
 	"sap/ui/integration/designtime/baseEditor/util/cleanupDesigntimeMetadata"
-], function(
+], function (
 	Control,
 	isTemplate,
 	JSONModel,
@@ -59,9 +59,9 @@ sap.ui.define([
 	var BasePropertyEditor = Control.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor", {
 		metadata: {
 			library: "sap.ui.integration",
-			interfaces : ["sap.ui.core.IFormContent"],
+			interfaces: ["sap.ui.core.IFormContent"],
 			properties: {
-				"renderLabel" : {
+				"renderLabel": {
 					type: "boolean",
 					defaultValue: true
 				},
@@ -138,7 +138,7 @@ sap.ui.define([
 				/**
 				 * Fires when config is changed
 				 */
-				 configChange: {
+				configChange: {
 					parameters: {
 						previousConfig: {
 							type: "object"
@@ -147,12 +147,12 @@ sap.ui.define([
 							type: "object"
 						}
 					}
-				 },
+				},
 
 				/**
 				 * Fires when fragment is changed
 				 */
-				 fragmentChange: {
+				fragmentChange: {
 					parameters: {
 						previousFragment: {
 							type: "string"
@@ -161,7 +161,7 @@ sap.ui.define([
 							type: "string"
 						}
 					}
-				 },
+				},
 
 				/**
 				 * Fired when the editor fragment was loaded and the <code>asyncInit</code> method was executed
@@ -181,7 +181,7 @@ sap.ui.define([
 		_currentXmlFragment: null,
 		_bFragmentReady: false,
 
-		constructor: function() {
+		constructor: function () {
 			this._iExpectedWrapperCount = 0;
 			this._currentXmlFragment = this.xmlFragment;
 
@@ -299,7 +299,7 @@ sap.ui.define([
 	/**
 	 * Hook which is called when fragment is ready on initial start or when it's exchanged.
 	 */
-	BasePropertyEditor.prototype.onFragmentReady = function () {};
+	BasePropertyEditor.prototype.onFragmentReady = function () { };
 
 	/**
 	 * Sets the editor value. If no value is provided, the default value provided
@@ -674,7 +674,7 @@ sap.ui.define([
 
 	function isWrapper(oElement) {
 		return oElement.isA("sap.ui.integration.designtime.baseEditor.PropertyEditors")
-		|| oElement.isA("sap.ui.integration.designtime.baseEditor.PropertyEditor");
+			|| oElement.isA("sap.ui.integration.designtime.baseEditor.PropertyEditor");
 	}
 
 	BasePropertyEditor.prototype._registerWrapper = function (oWrapper) {
@@ -788,7 +788,7 @@ sap.ui.define([
 		});
 	};
 
-	BasePropertyEditor.prototype.clone = function() {
+	BasePropertyEditor.prototype.clone = function () {
 		// as content is a public aggregation (to simplify creation of the property editors), we ensure it is not cloned
 		// otherwise if PropertyEditor is used as template for the list binding,
 		// constructor will be called once for the template and once for the cloned instance
@@ -796,7 +796,7 @@ sap.ui.define([
 		return Control.prototype.clone.apply(this, arguments);
 	};
 
-	BasePropertyEditor.prototype.exit = function() {
+	BasePropertyEditor.prototype.exit = function () {
 		this._oDefaultModel.destroy();
 
 		if (this._oConfigBinding) {
@@ -861,14 +861,14 @@ sap.ui.define([
 		return oConfig;
 	};
 
-	BasePropertyEditor.prototype.getI18nProperty = function(sName, aPlaceholders) {
+	BasePropertyEditor.prototype.getI18nProperty = function (sName, aPlaceholders) {
 		if (this.getModel("i18n")) {
 			return this.getModel("i18n").getResourceBundle().getText(sName, aPlaceholders);
 		}
 		return sName;
 	};
 
-	BasePropertyEditor.prototype.getLabel = function() {
+	BasePropertyEditor.prototype.getLabel = function () {
 		var oLabel = this.getAggregation("_label");
 		if (!oLabel) {
 			oLabel = new Label({
@@ -892,7 +892,7 @@ sap.ui.define([
 		return mAriaProps;
 	};
 
-	BasePropertyEditor.prototype.getFocusDomRef = function() {
+	BasePropertyEditor.prototype.getFocusDomRef = function () {
 		var oControl = this.getContent();
 
 		if (oControl && oControl.isA("sap.ui.core.IFormContent")) {
@@ -900,7 +900,7 @@ sap.ui.define([
 		}
 	};
 
-	BasePropertyEditor.prototype.getIdForLabel = function() {
+	BasePropertyEditor.prototype.getIdForLabel = function () {
 		var oControl = this.getContent();
 
 		if (oControl && oControl.isA("sap.ui.core.IFormContent")) {

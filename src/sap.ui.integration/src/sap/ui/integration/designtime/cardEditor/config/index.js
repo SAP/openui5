@@ -96,7 +96,7 @@ sap.ui.define([
 				]
 			}
 		},
-		"properties" : Object.assign(
+		"properties": Object.assign(
 			{},
 			AppConfig,
 			{
@@ -135,8 +135,7 @@ sap.ui.define([
 					"itemLabel": "{key}",
 					"addItemLabel": "{i18n>CARD_EDITOR.DESTINATION}",
 					"path": "configuration/destinations",
-					"type": "destinations",
-					"allowedValues": ["Northwind", "JAM"]
+					"type": "destinations"
 				}
 			},
 			HeaderConfig,
@@ -149,12 +148,12 @@ sap.ui.define([
 		),
 		"propertyEditors": {
 			// base editors:
-			"enum" : "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor",
-			"select" : "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
-			"string" : "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-			"simpleicon" : "sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor",
-			"array" : "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
-			"parameters" : "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
+			"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor",
+			"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
+			"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+			"simpleicon": "sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor",
+			"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+			"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 			"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
 			"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
 			"integer": "sap/ui/integration/designtime/baseEditor/propertyEditor/integerEditor/IntegerEditor",
@@ -163,15 +162,14 @@ sap.ui.define([
 			"list": "sap/ui/integration/designtime/baseEditor/propertyEditor/listEditor/ListEditor",
 			"datetime": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor",
 			"date": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor",
-
 			// card editors
-			"icon" : "sap/ui/integration/designtime/cardEditor/propertyEditor/iconEditor/IconEditor",
+			"icon": "sap/ui/integration/designtime/cardEditor/propertyEditor/iconEditor/IconEditor",
 			"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
 			"destinations": "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
 		},
 		"validators": {
 			"patternList": "sap/ui/integration/designtime/cardEditor/validator/IsPatternMatchList"
 		},
-		"i18n" : "sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
+		"i18n": "sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
 	};
 });

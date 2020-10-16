@@ -20,9 +20,15 @@ sap.ui.define([
 				var oNestedEditors = oItem.getContent()[0]._getPropertyEditors();
 				return {
 					key: oNestedEditors[0],
-					label: oNestedEditors[1],
-					type: oNestedEditors[2],
-					value: oNestedEditors[3],
+					type: oNestedEditors[1],
+					value: oNestedEditors[2],
+					label: oNestedEditors[3],
+					description: oNestedEditors[4],
+					visible: oNestedEditors[5],
+					editable: oNestedEditors[6],
+					translatable: oNestedEditors[7],
+					allowDynamicValues: oNestedEditors[8],
+					allowSettings: oNestedEditors[9],
 					deleteButton: oItem.getHeaderToolbar().getContent()[2]
 				};
 			})
@@ -41,6 +47,7 @@ sap.ui.define([
 				"propertyEditors": {
 					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
 					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			};
@@ -212,6 +219,7 @@ sap.ui.define([
 					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
+					"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
 					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			});
@@ -290,6 +298,7 @@ sap.ui.define([
 					"propertyEditors": {
 						"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 						"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+						"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
 						"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 					}
 				},
