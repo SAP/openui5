@@ -3,10 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/test/_LogCollector",
 	"sap/base/Log",
 	"sap/ui/test/matchers/_Visitor"
-], function (_LogCollector, Log, _Visitor) {
+], function (Log, _Visitor) {
 	"use strict";
 	var oLogger = Log.getLogger("sap.ui.test.matchers.Ancestor");
 	var oVisitor = new _Visitor();

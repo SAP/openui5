@@ -48,10 +48,12 @@ sap.ui.define([
 	 * @alias sap.ui.core.mvc.HTMLView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var HTMLView = View.extend("sap.ui.core.mvc.HTMLView", /** @lends sap.ui.core.mvc.HTMLView.prototype */ { metadata : {
-
-		library : "sap.ui.core"
-	}});
+	var HTMLView = View.extend("sap.ui.core.mvc.HTMLView", /** @lends sap.ui.core.mvc.HTMLView.prototype */ {
+		metadata : {
+			library : "sap.ui.core"
+		},
+		renderer: HTMLViewRenderer
+	});
 
 
 
@@ -352,7 +354,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl reference to a Control
 	 * @private
 	 */
-		HTMLView.prototype.connectControl = function(oControl) {
+	HTMLView.prototype.connectControl = function(oControl) {
 		this._connectedControls = this._connectedControls || [];
 		this._connectedControls.push(oControl);
 	};

@@ -5,8 +5,12 @@
 /**
  * Initialization Code and shared classes of library sap.ui.core.
  */
-sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
-	function(DataType, CalendarType) {
+sap.ui.define([
+	'sap/ui/base/DataType',
+	'./CalendarType', // provides sap.ui.core.CalendarType
+	'./Core' // provides sap.ui.getCore()
+],
+	function(DataType) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core

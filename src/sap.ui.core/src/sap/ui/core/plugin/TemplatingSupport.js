@@ -3,10 +3,12 @@
  */
 
 // Provides class sap.ui.core.plugin.TemplatingSupport
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/tmpl/Template', "sap/base/Log"],
-	function(Core, Template, Log) {
+sap.ui.define([
+	"sap/base/Log",
+	'sap/ui/core/tmpl/Template', // provides sap.ui.template
+	'sap/ui/core/Core' // provides sap.ui.getCore()
+], function(Log) {
 	"use strict";
-
 
 
 	/**
@@ -50,10 +52,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/tmpl/Template', "sap/base/Log"],
 	 * Create the <code>sap.ui.core.plugin.TemplatingSupport</code> plugin and
 	 * register it within the <code>sap.ui.core.Core</code>.
 	 */
-	(function(){
-		var oThis = new TemplatingSupport();
-		sap.ui.getCore().registerPlugin(oThis);
-	}());
+	sap.ui.getCore().registerPlugin(new TemplatingSupport());
 
 	return TemplatingSupport;
 

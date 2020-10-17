@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.core.mvc.JSONView.
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'./View',
 	'./JSONViewRenderer',
 	'./EventHandlerResolver',
@@ -16,7 +15,6 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions'
 ],
 	function(
-		jQuery,
 		View,
 		JSONViewRenderer,
 		EventHandlerResolver,
@@ -48,10 +46,12 @@ sap.ui.define([
 	 * @alias sap.ui.core.mvc.JSONView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var JSONView = View.extend("sap.ui.core.mvc.JSONView", /** @lends sap.ui.core.mvc.JSONView.prototype */ { metadata : {
-
-		library : "sap.ui.core"
-	}});
+	var JSONView = View.extend("sap.ui.core.mvc.JSONView", /** @lends sap.ui.core.mvc.JSONView.prototype */ {
+		metadata : {
+			library : "sap.ui.core"
+		},
+		renderer: JSONViewRenderer
+	});
 
 	/**
 	 * Creates a JSON view of the given configuration.

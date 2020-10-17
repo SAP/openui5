@@ -11,7 +11,6 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/base/strings/escapeRegExp',
 	'sap/base/util/merge',
-	'sap/base/util/extend',
 	'sap/base/util/isPlainObject'
 ],
 function(
@@ -22,7 +21,6 @@ function(
 	ObjectPath,
 	escapeRegExp,
 	merge,
-	extend,
 	isPlainObject
 ) {
 	"use strict";

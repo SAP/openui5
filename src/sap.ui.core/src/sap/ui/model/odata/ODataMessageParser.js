@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/message/MessageParser",
 	"sap/ui/core/message/Message",
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/Log"
 ],
-	function(ODataMetadata, ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
+	function(ODataMetadata, ODataUtils, coreLibrary, URI, MessageParser, Message, Log) {
 	"use strict";
 
 var sClassName = "sap.ui.model.odata.ODataMessageParser",

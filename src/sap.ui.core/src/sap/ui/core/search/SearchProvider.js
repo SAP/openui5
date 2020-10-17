@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.search.SearchProvider.
-sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/library', "sap/base/Log"],
-	function(Element, library, Log) {
+sap.ui.define(['sap/ui/core/Element', "sap/base/Log", 'sap/ui/core/library'],
+	function(Element, Log) {
 	"use strict";
 
 

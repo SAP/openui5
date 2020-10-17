@@ -3,9 +3,8 @@
  */
 
 sap.ui.define([
-	'./HashChangerBase',
-	"sap/base/Log"
-], function(HashChangerBase, Log) {
+	'./HashChangerBase'
+], function(HashChangerBase) {
 	"use strict";
 
 	/**

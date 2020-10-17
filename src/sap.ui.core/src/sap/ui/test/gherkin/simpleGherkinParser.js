@@ -2,8 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.sjax",
-	"sap/ui/thirdparty/jquery"], function(jQuery, jQueryDOM) {
+sap.ui.define(["jquery.sap.sjax"], function(jQuery) {
   "use strict";
 
   /**

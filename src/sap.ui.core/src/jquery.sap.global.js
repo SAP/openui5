@@ -28,26 +28,26 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet", "sap/ui/core/support/Hotkeys", "sap/ui/test/RecorderHotkeyListener",
 	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/trace/Interaction",
 	"sap/ui/base/syncXHRFix", "sap/base/util/LoaderExtensions",
-	'sap/ui/events/PasteEventFix',
 
 	// former sap-ui-core.js dependencies
-	"sap/ui/Device", "sap/ui/thirdparty/URI",
+	"sap/ui/Device",
 
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
 	"ui5loader-autoconfig",
-	"jquery.sap.stubs"
+	"jquery.sap.stubs",
+	"sap/ui/thirdparty/URI", // side effect: make global URI available
+	"sap/ui/events/PasteEventFix" // side effect: activates paste event fix
 ], function(now, Version, assert, Log,
 
 	getComputedStyleFix, activeElementFix, includeScript,
 	includeStylesheet, SupportHotkeys, TestRecorderHotkeyListener,
 	FrameOptions, Measurement, Interaction,
 	syncXHRFix, LoaderExtensions,
-	PasteEventFix,
 
-	Device, URI,
+	Device,
 
-	jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs */) {
+	jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs, URI, PasteEventFix */) {
 
 	"use strict";
 

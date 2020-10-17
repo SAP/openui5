@@ -5,10 +5,9 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./HashChanger',
 	"sap/base/Log",
-	"sap/ui/thirdparty/URI",
 	"sap/ui/Device",
 	"sap/base/util/ObjectPath"
-], function(library, HashChanger, Log, URI, Device, ObjectPath) {
+], function(library, HashChanger, Log, Device, ObjectPath) {
 	"use strict";
 
 	// shortcut for enum(s)

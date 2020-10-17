@@ -4,9 +4,8 @@
 
 // Provides control sap.ui.core.tmpl.DOMAttribute.
 sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/library'],
-	function(Element, library) {
+	function(Element) {
 	"use strict";
-
 
 
 	/**

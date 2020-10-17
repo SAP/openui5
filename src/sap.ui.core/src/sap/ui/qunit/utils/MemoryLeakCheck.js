@@ -4,8 +4,8 @@
 
 /*global QUnit*/
 
-sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/Element', 'sap/ui/core/Control' ],
-		function(jQuery, Core, BaseObject, Element, Control) {
+sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control', 'sap/ui/core/Core' /* provides sap.ui.getCore() */ ],
+		function(jQuery, Element, Control) {
 	"use strict";
 
 	//TODO: global jquery call found

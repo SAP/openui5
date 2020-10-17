@@ -3,14 +3,14 @@
  */
 
 sap.ui.define([
-	'./Core',
 	'./Component',
 	'sap/base/Log',
 	'sap/base/util/extend',
 	'sap/base/util/ObjectPath',
-	"sap/base/util/isEmptyObject"
+	"sap/base/util/isEmptyObject",
+	'./Core' // provides sap.ui.getCore()
 ],
-	function(Core, Component, Log, extend, ObjectPath, isEmptyObject) {
+	function(Component, Log, extend, ObjectPath, isEmptyObject /*, Core */) {
 	"use strict";
 
 

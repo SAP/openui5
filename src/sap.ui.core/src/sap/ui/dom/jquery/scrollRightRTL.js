@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/Device", "sap/ui/util/_FeatureDetection", "sap/ui/thirdparty/jquery"], function(Device, _FeatureDetection, jQuery) {
+sap.ui.define(["sap/ui/util/_FeatureDetection", "sap/ui/thirdparty/jquery"], function(_FeatureDetection, jQuery) {
 	"use strict";
 
 	var fnScroll;

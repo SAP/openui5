@@ -3,11 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/test/_LogCollector",
 	"sap/base/Log",
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery"
-], function (_LogCollector, Log, capitalize, jQueryDOM) {
+], function (Log, capitalize, jQueryDOM) {
 	"use strict";
 	var oLogger = Log.getLogger("sap.ui.test.matchers.Properties");
 

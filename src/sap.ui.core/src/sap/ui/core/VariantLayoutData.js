@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.core.VariantLayoutData.
 sap.ui.define(['./LayoutData', './library'],
-	function(LayoutData, library) {
+	function(LayoutData) {
 	"use strict";
 
 

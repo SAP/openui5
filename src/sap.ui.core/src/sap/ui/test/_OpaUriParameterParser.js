@@ -6,9 +6,8 @@
 sap.ui.define([
     "sap/ui/base/Object",
     "sap/ui/test/_OpaLogger",
-    "sap/ui/thirdparty/jquery",
     "sap/ui/thirdparty/URI"
-], function(Ui5Object, _OpaLogger, $, URI) {
+], function(Ui5Object, _OpaLogger, URI) {
     "use strict";
 
     var _OpaUriParameterParser = Ui5Object.extend("sap.ui.test._OpaUriParameterParser", {});

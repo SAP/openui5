@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.core.SeparatorItem.
 sap.ui.define(['./Item', './library'],
-	function(Item, library) {
+	function(Item) {
 	"use strict";
 
 

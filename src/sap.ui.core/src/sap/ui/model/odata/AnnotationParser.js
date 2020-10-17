@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
-], function (assert, Log, isEmptyObject, Device, jQuery) {
+	"sap/ui/Device"
+], function (assert, Log, isEmptyObject, Device) {
 "use strict";
 
 /*

@@ -3,8 +3,8 @@
  */
 
 // Provides helper class IndicationColoreSupport
-sap.ui.define(['./Element', './library', "sap/base/assert"],
-	function(Element, library, assert) {
+sap.ui.define(['./library'],
+	function(library) {
 	"use strict";
 
 	// shortcut for enum(s)

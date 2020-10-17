@@ -5,7 +5,6 @@
 // Provides class sap.ui.core.ComponentSupport
 sap.ui.define([
 	'sap/ui/base/DataType',
-	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/library',
 	"sap/base/Log",
@@ -14,7 +13,6 @@ sap.ui.define([
 ],
 	function(
 		DataType,
-		Component,
 		ComponentContainer,
 		library,
 		Log,

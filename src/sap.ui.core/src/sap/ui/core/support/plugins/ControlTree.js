@@ -13,13 +13,13 @@ sap.ui.define([
 	'sap/ui/core/ElementMetadata',
 	'sap/ui/core/UIArea',
 	'sap/ui/core/mvc/View',
-	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/Binding',
 	'sap/ui/model/CompositeBinding',
 	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/base/security/encodeXML"
+	"sap/base/security/encodeXML",
+	'sap/ui/core/mvc/Controller' // provides sap.ui.controller
 ], function(
 	Plugin,
 	ViewSerializer,
@@ -30,7 +30,6 @@ sap.ui.define([
 	ElementMetadata,
 	UIArea,
 	View,
-	Controller,
 	Binding,
 	CompositeBinding,
 	ObjectPath,
