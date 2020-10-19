@@ -90,7 +90,10 @@ sap.ui.define([
 
 	function removeFromArrayByName(aObjectArray, oFlexObject) {
 		for (var i = 0; i < aObjectArray.length; i++) {
-			if (aObjectArray[i].fileName === oFlexObject.fileName) {
+			//aObjectArray can come from either back end response or flex state
+			//In the first case, the fileName is a direct property of object
+			//In the second case, it can be obtained from getFileName() function
+			if ((aObjectArray[i].fileName || aObjectArray[i].getFileName()) === oFlexObject.fileName) {
 				aObjectArray.splice(i, 1);
 				break;
 			}
