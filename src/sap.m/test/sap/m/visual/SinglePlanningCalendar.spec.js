@@ -155,7 +155,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		}
 	});
 
-	it("should focus a grid cell with Click", function() {
+	it("should focus a grid cell via mouse click", function() {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 		//there is no focus on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
