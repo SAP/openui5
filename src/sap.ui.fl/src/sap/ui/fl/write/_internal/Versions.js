@@ -237,7 +237,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Activates the draft for a given application and layer.
+	 * (Re-)activates a version.
 	 *
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
@@ -247,9 +247,10 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.appComponent - Application Component
 	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated list of versions for the application
 	 * when the version was activated;
-	 * rejects if an error occurs or the layer does not support draft handling or there is no draft to activate
+	 * rejects if an error occurs, the layer does not support draft handling, there is no draft to activate or
+	 * when the displayed version is already active
 	 */
-	Versions.activateDraft = function(mPropertyBag) {
+	Versions.activate = function(mPropertyBag) {
 		var oModel = Versions.getVersionsModel(mPropertyBag);
 		var aVersions = oModel.getProperty("/versions");
 		var bDraftExists = _doesDraftExistInVersions(aVersions);

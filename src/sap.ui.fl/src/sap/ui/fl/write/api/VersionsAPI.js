@@ -185,9 +185,10 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated list of versions for the application
 	 * when the version was activated;
-	 * rejects if an error occurs or the layer does not support draft handling or there is no draft to activate
+	 * rejects if an error occurs, the layer does not support draft handling, there is no draft to activate or
+	 * when the displayed version is already active
 	 */
-	VersionsAPI.activateDraft = function (mPropertyBag) {
+	VersionsAPI.activate = function (mPropertyBag) {
 		if (!mPropertyBag.selector) {
 			return Promise.reject("No selector was provided");
 		}
@@ -203,7 +204,7 @@ sap.ui.define([
 		return Promise.resolve()
 		.then(getReference.bind(undefined, oAppComponent))
 		.then(function (sReference) {
-			return Versions.activateDraft({
+			return Versions.activate({
 				nonNormalizedReference: sReference,
 				reference: Utils.normalizeReference(sReference),
 				layer: mPropertyBag.layer,
