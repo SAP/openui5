@@ -3,6 +3,17 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "bc773dce27eb6e3d67543ea9aa1a29e23028703a",
+        "type": "FIX",
+        "text": " Card Explorer: Corrected link to sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070400297"
+          }
+        ]
+      },
+      {
         "id": "f27ef21b248214f1099d88604e678762fd76ceeb",
         "type": "FIX",
         "text": " Calendar Card: bottom border of the Toolbar in Calendar header doesn't break other Toolbars",

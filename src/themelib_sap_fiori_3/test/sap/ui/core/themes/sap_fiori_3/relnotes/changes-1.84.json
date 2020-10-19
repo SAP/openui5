@@ -3,6 +3,28 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "96dfb778703aac68e5e65164bdaf6d9f434e135d",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Adjust selection bar according to spec",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070401296"
+          }
+        ]
+      },
+      {
+        "id": "af707c9182f8b2d43e4b2527ab1cb2e7780a1e7a",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Fixed whitespace on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070379467"
+          }
+        ]
+      },
+      {
         "id": "d05936526a66905301cf551b2fd13832abf9f68c",
         "type": "FIX",
         "text": " sap.m.ScrollContainer: Focus outline is now visible",

@@ -3,6 +3,87 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "dded8437b64f5c88a85e197c85c117b95f88da5f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: proper line-height for ObjectStatus Text in Table in Condensed mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070400238"
+          }
+        ]
+      },
+      {
+        "id": "10de455a0aaf671a82585d396969519430a53f8d",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: now \"All\" checkbox is aligned to other checkboxes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070401110"
+          }
+        ]
+      },
+      {
+        "id": "61c467c23532971faf2f22025ee8f3255a4ca355",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Adjusted levels of headings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070350282"
+          }
+        ]
+      },
+      {
+        "id": "632b0d1865a819d269d221e8cd520a8462d1c867",
+        "type": "FEATURE",
+        "text": " Expose click event for header container scroll"
+      },
+      {
+        "id": "c56b8abd2a75ef7bfc0474feb79ca44258ea2023",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Destroy tokens after firing delete events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070402900"
+          }
+        ]
+      },
+      {
+        "id": "7e1bf08b36c3a7859c371532852f5bdfd540b348",
+        "type": "FEATURE",
+        "text": " Prevent the display of tooltip text 'Neutral'"
+      },
+      {
+        "id": "245c49cdf570560217f768a2f15c7caa816a94f2",
+        "type": "FEATURE",
+        "text": " sap.m.MenuButton: ariaHasPopup enumeration adopted"
+      },
+      {
+        "id": "f5fc3ab5c00e07ff48ea4f624c2cd9a5ea11a50a",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Truncate issue is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070384949"
+          }
+        ]
+      },
+      {
+        "id": "af707c9182f8b2d43e4b2527ab1cb2e7780a1e7a",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Fixed whitespace on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070379467"
+          }
+        ]
+      },
+      {
         "id": "252232f0c26367dfbffb88bee9110b04d50e53a0",
         "type": "FIX",
         "text": " sap.m.ResponsivePopover: removeEventDelegate is forwarded to the control",

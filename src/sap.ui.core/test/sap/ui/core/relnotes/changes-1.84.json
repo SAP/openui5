@@ -3,6 +3,94 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "5fc6881bc672e7ad331c1753d67d4ece5dc28b53",
+        "type": "FIX",
+        "text": " core/Fragment: Ensure owner component propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070394405"
+          }
+        ]
+      },
+      {
+        "id": "3f187c6e4de8250da1bda1cde36a853b97d41be0",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: use latest known ETag for concurrent modifications",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080271261"
+          }
+        ]
+      },
+      {
+        "id": "33ab8bc528d8e5c78286ad761fa2c9352f43da5c",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: Align the popup correctly in cases where position has to be fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080366934"
+          }
+        ]
+      },
+      {
+        "id": "215007ae09ad8c7e4575ed00c26ba6419a94b3b2",
+        "type": "FIX",
+        "text": " core.Popup: restore focus when modal popups are closed in reverse order",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080169071"
+          }
+        ]
+      },
+      {
+        "id": "ff71f95ee151ac5178547a63d04710531adc1623",
+        "type": "FIX",
+        "text": " mvc/Controller: Pass the correct ownerId for controller extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005374432020"
+          }
+        ]
+      },
+      {
+        "id": "1b1b017934252b0fa7f4262da9462088427a8b7c",
+        "type": "FIX",
+        "text": " core.BusyIndicator: improve the screen reader text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070376460"
+          }
+        ]
+      },
+      {
+        "id": "34fc8c3121cb2be264096bee3f668ae6c696c416",
+        "type": "FIX",
+        "text": " theming/Parameters: Check each library theme for being applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006834862020"
+          }
+        ]
+      },
+      {
+        "id": "0498dfe44d87bc1670149feebd94410832b01c47",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#_getKeyIndexMapping: use available service key index",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284104"
+          }
+        ]
+      },
+      {
         "id": "7ce0b24af0843303f58c9d6ce5f80c4dc1eff594",
         "type": "FIX",
         "text": " sap.ui.core.Router: support shared router in nested component"
