@@ -119,7 +119,8 @@ sap.ui.define([
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
 		oDOM.setAttribute("role", "progressbar");
-		oDOM.setAttribute("aria-valuenow", "indeterminate");
+		oDOM.setAttribute("aria-valuemin", "0");
+		oDOM.setAttribute("aria-valuemax", "100");
 		oDOM.setAttribute("aria-valuetext", oResourceBundle.getText("BUSY_VALUE_TEXT"));
 		oDOM.setAttribute("alt", "");
 		oDOM.setAttribute("tabindex", "0");
