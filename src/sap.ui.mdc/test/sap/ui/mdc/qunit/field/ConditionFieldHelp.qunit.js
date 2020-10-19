@@ -177,6 +177,16 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("_getControlForSuggestion", function(assert) { // TODO: better way to test arrow position
+
+		sinon.stub(oField, "getAggregation").withArgs("_endIcon").returns("X");
+		oFieldHelp.connect(oField);
+		var oControl = oFieldHelp._getControlForSuggestion();
+
+		assert.equal(oControl, "X", "Control for opening Popover");
+
+	});
+
 	QUnit.module("Interaction", {
 		beforeEach: _initFieldHelp,
 		afterEach: _teardown

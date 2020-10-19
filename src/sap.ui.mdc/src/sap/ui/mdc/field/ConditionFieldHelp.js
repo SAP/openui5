@@ -224,6 +224,19 @@ sap.ui.define([
 
 	};
 
+	ConditionFieldHelp.prototype._getControlForSuggestion = function() {
+
+		var oControl = FieldHelpBase.prototype._getControlForSuggestion.apply(this, arguments);
+		var aIcons = oControl.getAggregation("_endIcon", []);
+
+		if (aIcons.length === 1) {
+			oControl = aIcons[0];
+		}
+
+		return oControl;
+
+	};
+
 	function _observeChanges(oChanges) {
 
 		if (oChanges.name === "title") {
