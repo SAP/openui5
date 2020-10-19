@@ -264,10 +264,10 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 	 * Creates a filter function for libraries, taking the given parameters into account.
 	 *
 	 * When a list of libraries is given (<code>aLibrariesToTest</code>), the returned filter
-	 * function will match exactly the given libraries (whitelist).
+	 * function will match exactly the given libraries (allowlist).
 	 * Alternatively, a list of libraries to exclude can be given (<code>aExcludedLibraries</code>,
-	 * blacklist) which will then not be matched by the returned filter function. In the case of
-	 * the blacklist, the filter is additionally restricted to openui5 and sapui5.runtime libraries
+	 * blocklist) which will then not be matched by the returned filter function. In the case of
+	 * the blocklist, the filter is additionally restricted to openui5 and sapui5.runtime libraries
 	 * unless <code>bIncludeDistLayer</code> is set to true.
 	 *
 	 * @param {string[]} [aLibrariesToTest] List of libraries to load
@@ -344,8 +344,8 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 	 * should be included in the iterator or with a falsy value otherwise.
 	 *
 	 * @param {string} sControlName Qualified name (dot notation) of the control to test
-	 * @param {string[]} aControlsToTest List of controls to include in the tests (whitelist)
-	 * @param {string[]} aExcludedControls List of controls to exclude from the tests (blacklist)
+	 * @param {string[]} aControlsToTest List of controls to include in the tests (allowlist)
+	 * @param {string[]} aExcludedControls List of controls to exclude from the tests (blocklist)
 	 * @param {boolean} bIncludeNonRenderable Whether the iterator should include controls that can't be rendered
 	 * @param {boolean} bIncludeNonInstantiable Whether the iterator should include controls that can't be instantiated
 	 * @returns Promise<({name:string,class:function,canBeInstantiated:boolean,canBeRendered:boolean}|false)>
