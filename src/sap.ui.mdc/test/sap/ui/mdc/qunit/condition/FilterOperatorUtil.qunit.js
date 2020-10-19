@@ -985,7 +985,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last x days",
+				longText: "Last X days",
 				tokenText: "Last {0} days"
 			}],
 			"TODAYXYDAYS": [{
@@ -997,7 +997,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: false,
-				longText: "Today -x / +y days",
+				longText: "Today -X / +Y days",
 				tokenText: "Today -{0} / +{1} days"
 			}],
 			"NEXTDAYS": [{
@@ -1009,7 +1009,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next x days",
+				longText: "Next X days",
 				tokenText: "Next {0} days"
 			}],
 
@@ -1048,7 +1048,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last x weeks",
+				longText: "Last X weeks",
 				tokenText: "Last {0} weeks"
 			}],
 			"NEXTWEEKS": [{
@@ -1059,7 +1059,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next x weeks",
+				longText: "Next X weeks",
 				tokenText: "Next {0} weeks"
 			}],
 
@@ -1098,7 +1098,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last x months",
+				longText: "Last X months",
 				tokenText: "Last {0} months"
 			}],
 			"NEXTMONTHS": [{
@@ -1109,7 +1109,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next x months",
+				longText: "Next X months",
 				tokenText: "Next {0} months"
 			}],
 
@@ -1148,7 +1148,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last x quarters",
+				longText: "Last X quarters",
 				tokenText: "Last {0} quarters"
 			}],
 			"NEXTQUARTERS": [{
@@ -1159,7 +1159,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next x quarters",
+				longText: "Next X quarters",
 				tokenText: "Next {0} quarters"
 			}],
 
@@ -1198,7 +1198,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last x years",
+				longText: "Last X years",
 				tokenText: "Last {0} years"
 			}],
 			"NEXTYEARS": [{
@@ -1209,7 +1209,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next x years",
+				longText: "Next X years",
 				tokenText: "Next {0} years"
 			}],
 
