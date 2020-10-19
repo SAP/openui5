@@ -57,7 +57,7 @@
                  <m:VBox class="sapUiSmallMarginBottom sapUiLargeMarginEnd">
                     <m:Title text="Reliability" class="sapUiTinyMarginBottom"/>
                     <m:Label text="Based on fulfiled contracts"/>
-                    <m:RatingIndicator value="4" iconSize="32px"/>
+                    <m:RatingIndicator value="4" iconSize="16px"/>
                 </m:VBox>
 
 				 <m:VBox width="448px" class="sapUiSmallMarginBottom">

@@ -138,7 +138,7 @@
                 <m:VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
                     <m:Title text="Average User Rating" class="sapUiTinyMarginBottom"/>
                     <m:Label text="6 Reviews"/>
-                    <m:RatingIndicator value="4" iconSize="32px" />
+                    <m:RatingIndicator value="4" iconSize="16px" />
                     <m:VBox alignItems="End">
                         <m:Text text="4.1 out of 5"/>
                     </m:VBox>
