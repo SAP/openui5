@@ -24,13 +24,13 @@
 
 						<m:VBox>
 							<m:Title text="Sample 2" wrapping="true"/>
-							<m:Text text="Example of an ObjectPage with header facet."/>
+							<m:Text text="Example of an ObjectPage with header facet"/>
 						</m:VBox>
 					</m:HBox>
 				</snappedHeading>
 
 				<expandedContent>
-					<m:Text text="Example of an ObjectPage with header facet."/>
+					<m:Text text="Example of an ObjectPage with header facet"/>
 				</expandedContent>
 
 				<snappedTitleOnMobile>
@@ -54,17 +54,17 @@
                     <m:Title text="Order Details" class="sapUiTinyMarginBottom"/>
 
                     <m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
-                        <m:Label text="Manufacturer:" class="sapUiTinyMarginEnd"/>
+                        <m:Label text="Manufacturer" class="sapUiTinyMarginEnd"/>
                         <m:Text text=" Robotech"/>
                     </m:HBox>
 
                     <m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
-                        <m:Label text="Factory:" class="sapUiTinyMarginEnd"/>
+                        <m:Label text="Factory" class="sapUiTinyMarginEnd"/>
                         <m:Text text=" Florida, OL"/>
                     </m:HBox>
 
                     <m:HBox>
-                        <m:Label text="Supplier:" class="sapUiTinyMarginEnd"/>
+                        <m:Label text="Supplier" class="sapUiTinyMarginEnd"/>
                         <m:Link text="Robotech (234242343)"/>
                     </m:HBox>
                 </m:VBox>
@@ -90,22 +90,22 @@
 
                 <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
                     <m:HBox class="sapUiTinyMarginBottom">
-                        <m:Label text="Created By:" class="sapUiSmallMarginEnd"/>
+                        <m:Label text="Created By" class="sapUiSmallMarginEnd"/>
                         <m:Link text="Julie Armstrong"/>
                     </m:HBox>
 
                     <m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
-                        <m:Label text="Created On:" class="sapUiSmallMarginEnd"/>
+                        <m:Label text="Created On" class="sapUiSmallMarginEnd"/>
                         <m:Text text=" February 20, 2020"/>
                     </m:HBox>
 
                     <m:HBox class="sapUiTinyMarginBottom">
-                        <m:Label text="Changed By:" class="sapUiSmallMarginEnd"/>
+                        <m:Label text="Changed By" class="sapUiSmallMarginEnd"/>
                         <m:Link text="John Miller"/>
                     </m:HBox>
 
                     <m:HBox renderType="Bare">
-                        <m:Label text="Changed By:" class="sapUiSmallMarginEnd"/>
+                        <m:Label text="Changed By" class="sapUiSmallMarginEnd"/>
                         <m:Text text=" February 20, 2020"/>
                     </m:HBox>
                 </m:VBox>
@@ -116,22 +116,22 @@
                 </m:VBox>
 
                 <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <m:Title text="Status:" class="sapUiTinyMarginBottom"/>
+                    <m:Title text="Status" class="sapUiTinyMarginBottom"/>
                     <m:ObjectStatus text="Delivery" state="Success" class="sapMObjectStatusLarge"/>
                 </m:VBox>
 
                 <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <m:Title text="Delivery Time:" class="sapUiTinyMarginBottom"/>
+                    <m:Title text="Delivery Time" class="sapUiTinyMarginBottom"/>
                     <m:ObjectStatus text="12 Days" icon="sap-icon://shipping-status" class="sapMObjectStatusLarge"/>
                 </m:VBox>
 
                 <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <m:Title text="Assembly Option:" class="sapUiTinyMarginBottom"/>
+                    <m:Title text="Assembly Option" class="sapUiTinyMarginBottom"/>
                     <m:ObjectStatus text="To Be Selected" state="Error" class="sapMObjectStatusLarge"/>
                 </m:VBox>
 
                 <m:VBox class="sapUiLargeMarginEnd">
-                    <m:Title text="Price:" class="sapUiTinyMarginBottom"/>
+                    <m:Title text="Price" class="sapUiTinyMarginBottom"/>
                     <m:ObjectStatus text="579 EUR" class="sapMObjectStatusLarge"/>
                 </m:VBox>
 
