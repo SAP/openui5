@@ -29,7 +29,6 @@ sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/La
 	};
 
 	FilterGroupLayout.prototype.setFilterField = function (oFilterField) {
-		this._sLabel = oFilterField.getLabel();
 		this._oFilterField = oFilterField;
 		this._sFieldPath = oFilterField.getFieldPath();
 	};
@@ -38,9 +37,11 @@ sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/La
 		var aContent = [];
 
 		var oLabel = new Label({
-			text: this._sLabel,
+			//TODO/CHECK: Use and set propertyInfo for FilterField instead?
+			text: this._oFilterField.getLabel(),
 			required: "{$p13n>required}"
 		});
+
 		oLabel.addStyleClass("sapUiMdcFilterBarBaseLabel");
 
 		oLabel.setParent(this);
@@ -54,7 +55,6 @@ sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/La
 
 	FilterGroupLayout.prototype.exit = function () {
 		CustomListItem.prototype.exit.apply(this, arguments);
-		this._sLabel = null;
 		this._oFilterField = null;
 		this._sFieldPath = null;
 	};
