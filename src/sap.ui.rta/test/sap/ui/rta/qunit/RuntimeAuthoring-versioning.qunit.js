@@ -308,6 +308,38 @@ sap.ui.define([
 				assert.equal(oHandleParameterOnStartStub.callCount, 1, "then handleParametersOnStart is called once");
 			}.bind(this));
 		});
+
+		QUnit.test("and a reload is needed on start because of draft changes", function (assert) {
+			var oLoadDraftForApplication = sandbox.stub(VersionsAPI, "loadDraftForApplication").returns(Promise.resolve());
+			var oLoadVersionForApplication = sandbox.stub(VersionsAPI, "loadVersionForApplication").returns(Promise.resolve());
+
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
+
+			var oReloadInfo = {
+				hasDraftChanges: true,
+				hasHigherLayerChanges: false
+			};
+			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function () {
+				assert.equal(oLoadDraftForApplication.callCount, 1, "then loadDraftForApplication is called once");
+				assert.equal(oLoadVersionForApplication.callCount, 0, "then loadVersionForApplication is not called");
+			});
+		});
+
+		QUnit.test("and a reload is needed on start because of personalization changes", function (assert) {
+			var oLoadDraftForApplication = sandbox.stub(VersionsAPI, "loadDraftForApplication").returns(Promise.resolve());
+			var oLoadVersionForApplication = sandbox.stub(VersionsAPI, "loadVersionForApplication").returns(Promise.resolve());
+
+			whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
+
+			var oReloadInfo = {
+				hasDraftChanges: false,
+				hasHigherLayerChanges: true
+			};
+			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function () {
+				assert.equal(oLoadDraftForApplication.callCount, 0, "then loadDraftForApplication is called once");
+				assert.equal(oLoadVersionForApplication.callCount, 1, "then loadVersionForApplication is not called");
+			});
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring in the CUSTOMER layer was started within an FLP and wants to determine if a reload is needed on exit", {
