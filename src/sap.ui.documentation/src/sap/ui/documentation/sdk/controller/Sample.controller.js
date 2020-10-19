@@ -47,7 +47,8 @@ sap.ui.define([
 
 				this.oModel = new JSONModel({
 					showNavButton : true,
-					showNewTab: false
+					showNewTab: false,
+					rtaLoaded: false
 				});
 
 				this._sId = null; // Used to hold sample ID
@@ -400,6 +401,8 @@ sap.ui.define([
 					FakeLrepConnectorLocalStorage,
 					JsControlTreeModifier
 				) {
+					var oModelData = this.oModel.getData();
+
 					// fake stable IDs
 					JsControlTreeModifier.checkControlId = function () {
 						return true;
@@ -411,7 +414,9 @@ sap.ui.define([
 					FakeLrepConnectorLocalStorage.enableFakeConnector({
 						"isProductiveSystem": true
 					});
-					this.byId("toggleRTA").setVisible(true);
+					oModelData.rtaLoaded = true;
+
+					this.oModel.setData(oModelData);
 
 					this.getRouter().attachRouteMatched(function () {
 						if (this._oRTA) {
