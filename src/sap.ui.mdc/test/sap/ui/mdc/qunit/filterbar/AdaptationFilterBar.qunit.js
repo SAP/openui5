@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/FilterBar",
-	"./UnitTestMetadataDelegate"
+	"./UnitTestMetadataDelegate",
+	"../QUnitUtils"
 ], function (
 	AdaptationFilterBar,
 	FlexUtil,
@@ -25,13 +26,22 @@ sap.ui.define([
 	JSONModel,
 	FilterField,
 	FilterBar,
-	FBTestDelegate
+	FBTestDelegate,
+	MDCQUnitUtils
 ) {
 	"use strict";
 
 	var oAdaptationFilterBar;
 	QUnit.module("AdaptationFilterBar - MDC Control specific tests", {
 		beforeEach: function () {
+			var aPropertyInfo = [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				}
+			];
 
 			this.oTestTable = new Table();
 
@@ -43,18 +53,8 @@ sap.ui.define([
 				FlexUtil.handleChanges.restore();
 			}
 
-			this.aMockProperties = [
-				{
-					name: "key1"
-				},
-				{
-					name: "key2"
-				}
-			];
-
-
-
 			return this.oAdaptationFilterBar.retrieveAdaptationController().then(function (oAdaptationControllerInstance) {
+				MDCQUnitUtils.stubPropertyInfos(this.oTestTable, aPropertyInfo);
 				this.oAdaptationController = this.oAdaptationFilterBar.getAdaptationController();
 			}.bind(this));
 		},
@@ -63,8 +63,8 @@ sap.ui.define([
 			this.oAdaptationFilterBar.destroy();
 			this.oAdaptationFilterBar = undefined;
 			this.oAdaptationController = undefined;
-			this.aMockProperties = null;
 			this.oTestTable.destroy();
+			MDCQUnitUtils.restorePropertyInfos(this.oTestTable);
 			this.oTestTable = null;
 		}
 	});
@@ -104,7 +104,6 @@ sap.ui.define([
 		});
 
 		this.oTestTable._oAdaptationController = oAdaptationController;
-		oAdaptationController.aPropertyInfo = [{name: "key1"}];
 
 		oAdaptationController.createConditionChanges(mSampleConditions).then(function(aChanges){
 			assert.equal(aChanges.length, 1, "One change has been created");
@@ -116,12 +115,6 @@ sap.ui.define([
 	QUnit.test("Set propertyInfo depending on parent", function(assert) {
 		var done = assert.async();
 
-		var oMockedPropertyInfoPromise = new Promise(function(resolve){
-			resolve(this.aMockProperties);
-		}.bind(this));
-
-		sinon.stub(TableDelegate, "fetchProperties").returns(oMockedPropertyInfoPromise);
-
 		//AdaptationFilterBar should listen to parent "fetchProperties"
 		this.oAdaptationFilterBar.setAdaptationControl(this.oTestTable);
 
@@ -132,9 +125,8 @@ sap.ui.define([
 
 			//init AdaptationFilterBar
 			this.oAdaptationFilterBar.initialized().then(function(){
-
-				assert.deepEqual(this.oAdaptationFilterBar._aProperties.length, this.aMockProperties.length, "Property info has been passed from the Parent");
-				TableDelegate.fetchProperties.restore();
+				var oPropertyHelper = this.oTestTable.getPropertyHelper();
+				assert.deepEqual(this.oAdaptationFilterBar._aProperties.length, oPropertyHelper.getProperties().length, "Property info has been passed from the Parent");
 				done();
 			}.bind(this));
 		}.bind(this));

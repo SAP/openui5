@@ -69,6 +69,12 @@ sap.ui.define([
 
 	QUnit.module("Basic functionality with JsControlTreeModifier", {
 		beforeEach: function() {
+			return this.createTestObjects();
+		},
+		afterEach: function() {
+			this.destroyTestObjects();
+		},
+		createTestObjects: function() {
 			this.oUiComponent = new UIComp("comp");
 
 			// Place component in container and display
@@ -96,7 +102,7 @@ sap.ui.define([
 				};
 			};
 		},
-		afterEach: function() {
+		destroyTestObjects: function() {
 			this.oUiComponentContainer.destroy();
 			TableDelegate.fetchProperties = this._orgFn;
 			delete this._orgFn;
@@ -173,61 +179,56 @@ sap.ui.define([
 	QUnit.test("addCondition (via AdaptationFilterBar _oP13nFilter)", function(assert){
 		var done = assert.async();
 
+		this.destroyTestObjects();
+
+		aPropertyInfo.forEach(function(oProperty){
+			oProperty.typeConfig = TypeUtil.getTypeConfig("sap.ui.model.type.String");
+		});
+
+		this.createTestObjects();
+
+		var mNewConditions = {
+			column0: [
+				{
+					operator: "EQ",
+					values: [
+						"Test"
+					],
+					validated: "NotValidated"
+				}
+			],
+			column1: [
+				{
+					operator: "EQ",
+					values: [
+						"ABC"
+					],
+					validated: "NotValidated"
+				}
+			]
+		};
+
 		//wait for Table initialization
 		this.oTable.initialized().then(function(){
-
-			aPropertyInfo.forEach(function(oProperty){
-				oProperty.typeConfig = TypeUtil.getTypeConfig("sap.ui.model.type.String");
-			});
-
 			this.oTable.retrieveAdaptationController().then(function(oAdaptationController) {
 				//prepare AdaptationController
 				this.oTable.retrieveInbuiltFilter().then(function(oP13nFilter){
-					oAdaptationController.createP13n("Filter", aPropertyInfo).then(function(oP13nControl){
+					oAdaptationController.setAfterChangesCreated(function(oAdaptationController, aChanges){
+						//check raw changes
+						assert.equal(aChanges[0].selectorElement, this.oTable, "Correct Selector");
+						assert.equal(aChanges[1].selectorElement, this.oTable, "Correct Selector");
 
-						//sample condition
-						var mNewConditions = {
-							column0: [
-								{
-									operator: "EQ",
-									values: [
-										"Test"
-									],
-									validated: "NotValidated"
-								}
-							],
-							column1: [
-								{
-									operator: "EQ",
-									values: [
-										"ABC"
-									],
-									validated: "NotValidated"
-								}
-							]
-						};
+						FlexUtil.handleChanges(aChanges).then(function(){
+							//check updates via changehandler
+							assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
+							assert.deepEqual(this.oTable._oP13nFilter.getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
+							done();
 
-						oAdaptationController.setAfterChangesCreated(function(oAdaptationController, aChanges){
-							assert.equal(aChanges.length, 2, "Two condition based changes created");
-
-							//check raw changes
-							assert.equal(aChanges[0].selectorElement, this.oTable, "Correct Selector");
-							assert.equal(aChanges[1].selectorElement, this.oTable, "Correct Selector");
-
-							FlexUtil.handleChanges(aChanges).then(function(){
-
-								//check updates via changehandler
-								assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
-								assert.deepEqual(this.oTable._oP13nFilter.getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
-								done();
-
-							}.bind(this));
 						}.bind(this));
-
-						//create filter change to trigger 'afterChangesCreated' on AC
-						oAdaptationController.createConditionChanges(mNewConditions);
-
 					}.bind(this));
+
+					//create filter change to trigger 'afterChangesCreated' on AC
+					oAdaptationController.createConditionChanges(mNewConditions);
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));

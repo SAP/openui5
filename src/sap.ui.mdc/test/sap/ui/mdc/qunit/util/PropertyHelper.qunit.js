@@ -429,8 +429,8 @@ sap.ui.define([
 		}], oParent);
 
 		oPropertyHelper.destroy();
-		assert.strictEqual(oPropertyHelper.getProperties(), null, "#getProperties no longer returns the properties");
-		assert.strictEqual(oPropertyHelper.getPropertyMap(), null, "#getPropertyMap no longer returns the property map");
+		assert.deepEqual(oPropertyHelper.getProperties(), [], "#getProperties no longer returns the properties");
+		assert.deepEqual(oPropertyHelper.getPropertyMap(), {}, "#getPropertyMap no longer returns the property map");
 		assert.strictEqual(oPropertyHelper.getParent(), null, "#getParent no longer returns the parent");
 
 		oParent.destroy();

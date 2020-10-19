@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/mdc/odata/TypeUtil",
 	'sap/base/util/merge',
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"../QUnitUtils"
 ], function (
 	FilterBar,
 	FilterBarBase,
@@ -23,7 +24,8 @@ sap.ui.define([
 	FlexUtil,
 	TypeUtil,
 	merge,
-	CoreLibrary
+	CoreLibrary,
+	MDCQUnitUtils
 ) {
 	"use strict";
 
@@ -219,6 +221,16 @@ sap.ui.define([
 
 	QUnit.module("FilterBar adaptation", {
 		beforeEach: function () {
+			return this.createTestObjects();
+		},
+		afterEach: function () {
+			this.destroyTestObjects();
+		},
+		createTestObjects: function(aPropertyInfo) {
+			if (!aPropertyInfo) {
+				aPropertyInfo = [];
+			}
+
 			oFilterBar = new FilterBar({
 				delegate: { name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate", payload: { modelName: undefined, collectionName: "test" } }
 			});
@@ -228,12 +240,14 @@ sap.ui.define([
 			}
 
 			return oFilterBar.retrieveAdaptationController().then(function (oAdaptationControllerInstance) {
+				MDCQUnitUtils.stubPropertyInfos(oFilterBar, aPropertyInfo);
 				oAdaptationController = oAdaptationControllerInstance;
 			});
 		},
-		afterEach: function () {
+		destroyTestObjects: function() {
 			oFilterBar.destroy();
-			oFilterBar = undefined;
+			oAdaptationController && oAdaptationController.destroy();
+			MDCQUnitUtils.restorePropertyInfos(oFilterBar);
 		}
 	});
 
@@ -537,13 +551,16 @@ sap.ui.define([
 
 
 	QUnit.test("create single valued change", function (assert) {
+		var done = assert.async();
+		this.destroyTestObjects();
 
-		var oProperty = {
+		var aPropertyInfo = [{
 			name: "key",
-			type: "Edm.String",
 			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"),
 			visible: true
-		};
+		}];
+
+		this.createTestObjects(aPropertyInfo);
 
 		var aResultingChanges = [];
 
@@ -553,115 +570,101 @@ sap.ui.define([
 
 		sinon.stub(oFilterBar, "_isFlexSupported").returns(true);
 
-		var fnResolveInfo = new Promise(function(resolve){
-			oAdaptationController.aPropertyInfo = [oProperty];
-			resolve([oProperty]);
-		});
-
-		sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(fnResolveInfo);
 		sinon.stub(FlexUtil, "handleChanges").callsFake(fnStoreChanges);
-
-		var done = assert.async();
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._oMetadataAppliedPromise.then(function () {
+		oAdaptationController._retrievePropertyHelper(aPropertyInfo).then(function(oPropertyHelper) {
+			oFilterBar._oMetadataAppliedPromise.then(function () {
 
-			assert.ok(oFilterBar.getControlDelegate());
-			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty]));
+				assert.ok(oFilterBar.getControlDelegate());
+				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getName(oPropertyHelper.getProperties()[0]), oFilterBar);
 
-			var oPromise = oFilterBar.getControlDelegate().addItem(oProperty.name, oFilterBar);
+				oPromise.then(function (oFilterField) {
 
-			oPromise.then(function (oFilterField) {
+					var iCount = 0;
+					oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
+						iCount++;
+						FlexUtil.handleChanges(aChanges);
 
-				var iCount = 0;
-				oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
-					iCount++;
-					FlexUtil.handleChanges(aChanges);
+						if (iCount == 1) {
+							oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
+						}
 
-					if (iCount == 1) {
-						oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
-					}
+						if (iCount == 2) {
+							assert.equal(aResultingChanges.length, 3, "correct amount of changes created");
+							assert.ok(FlexUtil.handleChanges.calledTwice);
+							done();
+						}
+					});
 
-					if (iCount == 2) {
-						assert.equal(aResultingChanges.length, 3, "correct amount of changes created");
-						assert.ok(FlexUtil.handleChanges.calledTwice);
-						done();
-					}
+					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
 				});
-
-				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
-
-				oFilterBar.getControlDelegate().fetchProperties.restore();
 			});
 		});
 	});
 
 	QUnit.test("create single valued change with inParameters", function (assert) {
 
-		var oProperty = {
+		var aPropertyInfo = [{
 			name: "key",
 			maxConditions: 1,
 			visible: true,
 			typeConfig: TypeUtil.getTypeConfig("Edm.String")
-		};
-
-		var oPropertyIn = {
+		}, {
 			name: "in",
 			visible: true,
 			typeConfig: TypeUtil.getTypeConfig("Edm.String")
-		};
+		}];
+
+		this.destroyTestObjects();
+		this.createTestObjects(aPropertyInfo);
 
 		var done = assert.async();
 
 		sinon.stub(oFilterBar, "_isFlexSupported").returns(true);
-		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty, oPropertyIn]);
+		sinon.stub(oFilterBar, "getPropertyInfoSet").returns(aPropertyInfo);
 
-		var fnResolveInfo = new Promise(function(resolve){
-			oAdaptationController.aPropertyInfo = [oProperty, oPropertyIn];
-			resolve([oProperty, oPropertyIn]);
-		});
-
-		sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(fnResolveInfo);
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._oMetadataAppliedPromise.then(function () {
+		oAdaptationController._retrievePropertyHelper(aPropertyInfo).then(function(oPropertyHelper) {
+			oFilterBar._oMetadataAppliedPromise.then(function () {
 
-			assert.ok(oFilterBar.getControlDelegate());
-			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty, oPropertyIn]));
+				assert.ok(oFilterBar.getControlDelegate());
+				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getName(oPropertyHelper.getProperties()[0]), oFilterBar);
 
-			var oPromise = oFilterBar.getControlDelegate().addItem(oProperty.name, oFilterBar);
+				oPromise.then(function (oFilterField) {
 
-			oPromise.then(function (oFilterField) {
+					oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
 
-				oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
+						assert.ok(aChanges);
+						assert.equal(aChanges.length, 1); // condition model does not know about filterExpression="Single"...
 
-					assert.ok(aChanges);
-					assert.equal(aChanges.length, 1); // condition model does not know about filterExpression="Single"...
+						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
+						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in"]);
+						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in"], "INTEST");
+						done();
+					});
 
-					assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
-					assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in"]);
-					assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in"], "INTEST");
+					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"], { "in": "INTEST" }));
 
-					oFilterBar.getControlDelegate().fetchProperties.restore();
-
-					done();
 				});
-
-				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"], { "in": "INTEST" }));
-
 			});
+
 		});
 	});
 
 	QUnit.test("create multi valued change", function (assert) {
 
-		var oProperty = {
+		var aPropertyInfo = [{
 			name: "key",
 			maxConditions: -1,
 			visible: true,
 			typeConfig: TypeUtil.getTypeConfig("Edm.String")
-		};
+		}];
+
+		this.destroyTestObjects();
+		this.createTestObjects(aPropertyInfo);
 
 		var aResultingChanges = [];
 		var fnStoreChanges = function (aChanges) {
@@ -671,42 +674,35 @@ sap.ui.define([
 		sinon.stub(FlexUtil, "handleChanges").callsFake(fnStoreChanges);
 		sinon.stub(oFilterBar, "_isFlexSupported").returns(true);
 
-		var fnResolveInfo = new Promise(function(resolve){
-			oAdaptationController.aPropertyInfo = [oProperty];
-			resolve([oProperty]);
-		});
-
-		sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(fnResolveInfo);
 		var done = assert.async();
 
-		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty]);
+		sinon.stub(oFilterBar, "getPropertyInfoSet").returns(aPropertyInfo);
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._oMetadataAppliedPromise.then(function () {
+		oAdaptationController._retrievePropertyHelper(aPropertyInfo).then(function(oPropertyHelper) {
+			oFilterBar._oMetadataAppliedPromise.then(function () {
 
-			assert.ok(oFilterBar.getControlDelegate());
-			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty]));
+				assert.ok(oFilterBar.getControlDelegate());
 
-			var oPromise = oFilterBar.getControlDelegate().addItem(oProperty.name, oFilterBar);
+				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getName(oPropertyHelper.getProperties()[0]), oFilterBar);
 
-			oPromise.then(function (oFilterField) {
+				oPromise.then(function (oFilterField) {
 
-				var iCount = 0;
-				oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
-					iCount++;
-					FlexUtil.handleChanges(aChanges);
-					if (iCount == 2) {
-						assert.equal(aResultingChanges.length, 2, "correct amount of changes created");
-						assert.ok(FlexUtil.handleChanges.calledTwice);
-						done();
-					}
+					var iCount = 0;
+					oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
+						iCount++;
+						FlexUtil.handleChanges(aChanges);
+						if (iCount == 2) {
+							assert.equal(aResultingChanges.length, 2, "correct amount of changes created");
+							assert.ok(FlexUtil.handleChanges.calledTwice);
+							done();
+						}
+					});
+
+					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
+					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
 				});
-
-				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
-				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
-
-				oFilterBar.getControlDelegate().fetchProperties.restore();
 			});
 		});
 	});
@@ -714,130 +710,114 @@ sap.ui.define([
 	QUnit.test("create multi valued change with 'filterConditions'", function (assert) {
 		var done = assert.async();
 
-		var oProperty = {
+		var aPropertyInfo = [{
 			name: "key",
 			maxConditions: -11,
 			visible: true,
 			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+		}];
+
+		this.destroyTestObjects();
+		this.createTestObjects(aPropertyInfo);
+
+		oFilterBar.setFilterConditions({ key: [{ operator: "EQ", values: ["a"] }] });
+		oFilterBar.setP13nMode(["Value"]);
+
+		var aResultingChanges = [];
+		var fnStoreChanges = function (aChanges) {
+			aResultingChanges = aChanges;
 		};
 
-		var oFB = new FilterBar({ filterConditions: { key: [{ operator: "EQ", values: ["a"] }] }, p13nMode: ["Value"] });
-		oFB.retrieveAdaptationController().then(function (oAdaptationController) {
-			var aResultingChanges = [];
-			var fnStoreChanges = function (aChanges) {
-				aResultingChanges = aChanges;
-			};
+		var oCondition1 = Condition.createCondition("EQ", ["a"]);
+		var oCondition2 = Condition.createCondition("EQ", ["foo"]);
 
-			var fnResolveInfo = new Promise(function(resolve){
-				oAdaptationController.aPropertyInfo = [oProperty];
-				resolve([oProperty]);
-			});
+		sinon.stub(oFilterBar, "getPropertyInfoSet").returns(aPropertyInfo);
+		sinon.stub(oFilterBar, "_isFlexSupported").returns(true);
+		sinon.stub(FlexUtil, 'handleChanges').callsFake(fnStoreChanges);
 
-			sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(fnResolveInfo);
-
-			var oCondition1 = Condition.createCondition("EQ", ["a"]);
-			var oCondition2 = Condition.createCondition("EQ", ["foo"]);
-
-			sinon.stub(oFB, "getPropertyInfoSet").returns([oProperty]);
-			sinon.stub(oFB, "_isFlexSupported").returns(true);
-			sinon.stub(FlexUtil, 'handleChanges').callsFake(fnStoreChanges);
-
-			oFB._oInitialFiltersAppliedPromise.then(function () {
+		oAdaptationController._retrievePropertyHelper(aPropertyInfo).then(function() {
+			oFilterBar._oInitialFiltersAppliedPromise.then(function () {
 
 				oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
 
 					FlexUtil.handleChanges(aChanges);
 
 					assert.equal(aResultingChanges.length, 1);
-					assert.equal(aResultingChanges[0].selectorElement, oFB);
+					assert.equal(aResultingChanges[0].selectorElement, oFilterBar);
 					assert.equal(aResultingChanges[0].changeSpecificData.changeType, "addCondition");
 					assert.equal(aResultingChanges[0].changeSpecificData.content.name, "key");
 					assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: "EQ", values: ["foo"], validated: undefined});
-
-					oFB.destroy();
-					oAdaptationController = oFilterBar.getAdaptationController();
 					done();
 
 				});
 
-				oFB._getConditionModel().addCondition("key", oCondition1);
-				oFB._getConditionModel().addCondition("key", oCondition2);
+				oFilterBar._getConditionModel().addCondition("key", oCondition1);
+				oFilterBar._getConditionModel().addCondition("key", oCondition2);
 			});
 		});
 	});
 
 	QUnit.test("create multi valued change with inParameters", function (assert) {
 
-		var oProperty = {
+		var aPropertyInfo = [{
 			name: "key",
 			maxConditions: -1,
 			visible: true,
 			typeConfig: TypeUtil.getTypeConfig("Edm.String")
-		};
-
-		var oPropertyIn1 = {
+		}, {
 			name: "in1",
 			visible: true,
 			typeConfig: TypeUtil.getTypeConfig("Edm.String")
-		};
-
-		var oPropertyIn2 = {
+		}, {
 			name: "in2",
 			visible: true,
 			typeConfig: TypeUtil.getTypeConfig("Edm.String")
-		};
+		}];
+
+		this.destroyTestObjects();
+		this.createTestObjects(aPropertyInfo);
 
 		var aResultingChanges = [];
 		var fnStoreChanges = function (aChanges) {
 			aResultingChanges = aResultingChanges.concat(aChanges);
 		};
 
-		var fnResolveInfo = new Promise(function(resolve){
-			oAdaptationController.aPropertyInfo = [oProperty,oPropertyIn1,oPropertyIn2];
-			resolve([oProperty,oPropertyIn1,oPropertyIn2]);
-		});
-
-		sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(fnResolveInfo);
 		var done = assert.async();
 
 		sinon.stub(oFilterBar, "_isFlexSupported").returns(true);
 		sinon.stub(FlexUtil, 'handleChanges').callsFake(fnStoreChanges);
-		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty, oPropertyIn1, oPropertyIn2]);
+		sinon.stub(oFilterBar, "getPropertyInfoSet").returns(aPropertyInfo);
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._oMetadataAppliedPromise.then(function () {
+		oAdaptationController._retrievePropertyHelper(aPropertyInfo).then(function(oPropertyHelper) {
+			oFilterBar._oMetadataAppliedPromise.then(function () {
 
-			assert.ok(oFilterBar.getControlDelegate());
-			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty, oPropertyIn1, oPropertyIn2]));
+				assert.ok(oFilterBar.getControlDelegate());
+				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getName(oPropertyHelper.getProperties()[0]), oFilterBar);
 
-			var oPromise = oFilterBar.getControlDelegate().addItem(oProperty.name, oFilterBar);
+				oPromise.then(function (oFilterField) {
 
-			oPromise.then(function (oFilterField) {
-
-				oAdaptationController.createConditionChanges({"key": [Condition.createCondition("EQ", ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })]})
-					.then(function(aChanges){
-
-						assert.equal(aChanges.length, 1);
-						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
-						assert.equal(Object.keys(aChanges[0].changeSpecificData.content.condition.inParameters).length, 2);
-						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in1"]);
-						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in1"], "IN1_TEST");
-						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in2"]);
-						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in2"], "IN2_TEST");
-
-						oAdaptationController.setAfterChangesCreated(function(oAC, aCallbackChanges){
+					oAdaptationController.createConditionChanges({"key": [Condition.createCondition("EQ", ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })]})
+						.then(function(aChanges){
 
 							assert.equal(aChanges.length, 1);
-							assert.ok(!aCallbackChanges[0].changeSpecificData.content.condition.inParameters);
+							assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
+							assert.equal(Object.keys(aChanges[0].changeSpecificData.content.condition.inParameters).length, 2);
+							assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in1"]);
+							assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in1"], "IN1_TEST");
+							assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in2"]);
+							assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in2"], "IN2_TEST");
 
-							oFilterBar.getControlDelegate().fetchProperties.restore();
+							oAdaptationController.setAfterChangesCreated(function(oAC, aCallbackChanges){
+								assert.equal(aChanges.length, 1);
+								assert.ok(!aCallbackChanges[0].changeSpecificData.content.condition.inParameters);
+								done();
+							});
 
-							done();
+							oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
 						});
-
-						oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
-					});
+				});
 			});
 		});
 	});

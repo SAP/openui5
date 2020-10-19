@@ -59,7 +59,9 @@ sap.ui.define(function() {
 		};
 
 		oTarget.awaitControlDelegate = function() {
-			return Promise.resolve(getDelegate.call(this));
+			return fnOriginalAwaitControlDelegate.apply(this, arguments).then(function() {
+				return getDelegate.call(this);
+			}.bind(this));
 		};
 
 		oTarget.__restorePropertyInfos = function() {

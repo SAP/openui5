@@ -1,12 +1,34 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/p13n/FlexUtil" ,"sap/ui/mdc/p13n/AdaptationController", "sap/ui/mdc/p13n/panels/BasePanel", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
-], function (FlexUtil, AdaptationController, BasePanel, FilterBarDelegate, Table, Chart, TableDelegate, TableSettings, ChartSettings, FilterBar, Button, Column, Dimension, Measure, FilterField) {
+	"../QUnitUtils", "sap/ui/mdc/p13n/FlexUtil" ,"sap/ui/mdc/p13n/AdaptationController", "sap/ui/mdc/p13n/panels/BasePanel", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
+], function (MDCQUnitUtils, FlexUtil, AdaptationController, BasePanel, FilterBarDelegate, Table, Chart, ChartDelegate, TableDelegate, TableSettings, ChartSettings, FilterBar, Button, Column, Dimension, Measure, FilterField) {
 	"use strict";
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("AdaptationController API tests showP13n Table", {
 		beforeEach: function () {
+				var aPropertyInfos = [
+				{
+					"name": "col1",
+					"path": "nav/col1",
+					"label": "col1",
+					"sortable": true,
+					"filterable": true
+				}, {
+					"name": "col2",
+					"path": "nav/col2",
+					"label": "col2",
+					"sortable": true,
+					"filterable": false
+				}
+			];
+
+			return this.createTestObjects(aPropertyInfos);
+		},
+		afterEach: function () {
+			this.destroyTestObjects();
+		},
+		createTestObjects: function(aPropertyInfos) {
 			this.oTable = new Table("TestTabl", {
 				columns: [
 					new Column("col1",{
@@ -20,10 +42,12 @@ sap.ui.define([
 				]
 			});
 			this.oTable.setP13nMode(["Column","Sort","Filter"]);
+
 			return this.oTable.retrieveAdaptationController().then(function (oAdaptationController) {
+				MDCQUnitUtils.stubPropertyInfos(this.oTable, aPropertyInfos);
+
 				this.oAdaptationController = oAdaptationController;
 				this.oAdaptationController.oAdaptationControlDelegate = TableDelegate;//necessary as the "getCurrentState" is in TableDelegate + retrieve in AC is stubbed
-				var aColumns = this.oTable.getColumns();
 
 				this.oAdaptationController.oAdaptationControlDelegate.getFilterDelegate = function() {
 					return {
@@ -34,38 +58,12 @@ sap.ui.define([
 						}
 					};
 				};
-
-				//mock delegate data
-				this.aPropertyInfo = [
-					{
-						"name": aColumns[0].getDataProperty(),
-						"path": "nav/" + aColumns[0].getDataProperty(),
-						"id": aColumns[0].getId(),
-						"label": aColumns[0].getHeader(),
-						"sortable": true,
-						"filterable": true
-					}, {
-						"name": aColumns[1].getDataProperty(),
-						"path": "nav/" + aColumns[1].getDataProperty(),
-						"id": aColumns[1].getId(),
-						"label": aColumns[1].getHeader(),
-						"sortable": true,
-						"filterable": false
-					}
-				];
-
-				//no delegate in Test --> Stub property info call
-				var oPropertyInfoPromise = new Promise(function(resolve,reject){
-					resolve(this.aPropertyInfo);
-				}.bind(this));
-
-				sinon.stub(TableDelegate, "fetchProperties").returns(Promise.resolve(oPropertyInfoPromise));
 			}.bind(this));
 		},
-		afterEach: function () {
+		destroyTestObjects: function() {
 			this.oTable.destroy();
-			TableDelegate.fetchProperties.restore();
 			this.oAdaptationController.destroy();
+			MDCQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
@@ -94,7 +92,8 @@ sap.ui.define([
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
-			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
+			var oPropertyHelper = this.oAdaptationController.getAdaptationControl().getPropertyHelper();
+			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
 			done();
 		}.bind(this));
 	});
@@ -116,7 +115,8 @@ sap.ui.define([
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
-			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
+			var oPropertyHelper = this.oAdaptationController.getAdaptationControl().getPropertyHelper();
+			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
 			done();
 		}.bind(this));
 	});
@@ -152,7 +152,6 @@ sap.ui.define([
 	QUnit.test("open filter dialog - do not maintain 'filterable'", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-		delete this.aPropertyInfo[0].filterable;
 
 		this.oTable.initialized().then(function(){
 			this.oTable.retrieveInbuiltFilter().then(function(oP13nFilter){
@@ -170,7 +169,17 @@ sap.ui.define([
 	QUnit.test("create filter control for personalization", function (assert) {
 		var done = assert.async();
 
-		this.oAdaptationController.createP13n("Item", [this.aPropertyInfo[0]]).then(function(oP13nControl){
+		var aPropertyInfos = [
+			{
+				"name": "col1",
+				"path": "nav/col1",
+				"label": "col1",
+				"sortable": true,
+				"filterable": false
+			}
+		];
+
+		this.oAdaptationController.createP13n("Item", aPropertyInfos).then(function(oP13nControl){
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
 			assert.ok(oP13nControl.isA("sap.m.Dialog"));
@@ -234,7 +243,8 @@ sap.ui.define([
 
 				//check that only required information is present in the change content
 				var oChangeContent = aChanges[0].changeSpecificData.content;
-				assert.equal(oChangeContent.name, this.aPropertyInfo[1].name, "The stored key should be equal to the 'name' in property info (NOT PATH!)");
+				var oPropertyHelper = this.oAdaptationController.getAdaptationControl().getPropertyHelper();
+				assert.equal(oChangeContent.name, oPropertyHelper.getName(oPropertyHelper.getProperties()[1]), "The stored key should be equal to the 'name' in property info (NOT PATH!)");
 				done();
 			}.bind(this));
 
@@ -259,7 +269,8 @@ sap.ui.define([
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
-			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
+			var oPropertyHelper = this.oAdaptationController.getAdaptationControl().getPropertyHelper();
+			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
 			done();
 		}.bind(this));
 	});
@@ -267,7 +278,25 @@ sap.ui.define([
 	QUnit.test("check with 'Sort' +  non sortable properties", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-		this.aPropertyInfo[0].sortable = false;
+		this.destroyTestObjects();
+
+		var aPropertyInfos = [
+			{
+				"name": "col1",
+				"path": "nav/col1",
+				"label": "col1",
+				"sortable": false,
+				"filterable": true
+			}, {
+				"name": "col2",
+				"path": "nav/col2",
+				"label": "col2",
+				"sortable": true,
+				"filterable": false
+			}
+		];
+
+		this.createTestObjects(aPropertyInfos);
 
 		this.oAdaptationController.showP13n(oBtn, "Sort").then(function(oP13nControl){
 
@@ -281,14 +310,33 @@ sap.ui.define([
 			assert.ok(oInnerTable, "Inner Table has been created");
 
 			//-1 non sortable property
-			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length - 1, "correct amount of items has been set");
+			var oPropertyHelper = this.oAdaptationController.getAdaptationControl().getPropertyHelper();
+			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length - 1, "correct amount of items has been set");
 			done();
 		}.bind(this));
 	});
 
 	QUnit.test("use 'createSortChanges' to create changes without UI panel", function (assert) {
 		var done = assert.async();
-		this.aPropertyInfo[0].sortable = false;
+		this.destroyTestObjects();
+
+		var aPropertyInfos = [
+			{
+				"name": "col1",
+				"path": "nav/col1",
+				"label": "col1",
+				"sortable": false,
+				"filterable": true
+			}, {
+				"name": "col2",
+				"path": "nav/col2",
+				"label": "col2",
+				"sortable": true,
+				"filterable": false
+			}
+		];
+
+		this.createTestObjects(aPropertyInfos);
 
 		var aP13nData = [
 			{name:"col2", descending: true}
@@ -388,6 +436,29 @@ sap.ui.define([
 
 	QUnit.module("AdaptationController API tests showP13n Chart", {
 		beforeEach: function () {
+			//mock delegate data
+			var aPropertyInfos = [
+				{
+					"name": "item1",
+					"label": "Item 1"
+				}, {
+					"name": "item2",
+					"label": "Item 2"
+				}
+			];
+
+			this.bModuleRunning = true;
+			return this.createTestObjects(aPropertyInfos);
+		},
+		afterEach: function () {
+			this.bModuleRunning = false;
+			this.oChart.destroy();
+
+			if (this.oAdaptationController) {
+				this.oAdaptationController.destroy();
+			}
+		},
+		createTestObjects: function(aPropertyInfos) {
 			this.oChart = new Chart("TestChart", {
 				p13nMode: ['Item', 'Sort'],
 				items: [
@@ -402,38 +473,18 @@ sap.ui.define([
 				]
 			});
 
-			var aItems = this.oChart.getItems();
-
-			//mock delegate data
-			this.aPropertyInfo = [
-				{
-					"name": aItems[0].getKey(),
-					"id": aItems[0].getId(),
-					"label": "Item 1"
-				}, {
-					"name": aItems[1].getKey(),
-					"id": aItems[1].getId(),
-					"label": "Item 2"
-				}
-			];
-
 			this.bModuleRunning = true;
 
 			return this.oChart.retrieveAdaptationController().then(function () {
+				MDCQUnitUtils.stubPropertyInfos(this.oChart, aPropertyInfos);
 				this.oAdaptationController = this.oChart.getAdaptationController();
-				var oPropertyInfoPromise = new Promise(function(resolve,reject){
-					resolve(this.aPropertyInfo );
-				}.bind(this));
-				sinon.stub(this.oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
+				this.oAdaptationController.oAdaptationControlDelegate = ChartDelegate;
 			}.bind(this));
 		},
-		afterEach: function () {
-			this.bModuleRunning = false;
+		destroyTestObjects: function() {
 			this.oChart.destroy();
-
-			if (this.oAdaptationController) {
-				this.oAdaptationController.destroy();
-			}
+			this.oAdaptationController.destroy();
+			MDCQUnitUtils.restorePropertyInfos(this.oChart);
 		}
 	});
 
@@ -453,7 +504,8 @@ sap.ui.define([
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ChartItemPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
-			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
+			var oPropertyHelper = this.oAdaptationController.getAdaptationControl().getPropertyHelper();
+			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
 			assert.equal(oInnerTable.getItems()[0].getCells()[2].getSelectedKey(), "category", "Correct role selected");
 			done();
 		}.bind(this));
@@ -502,7 +554,7 @@ sap.ui.define([
 
 		this.oChart.setSortConditions({
 			sorters: [
-				{name: this.aPropertyInfo[0].name, descending: true}
+				{name: "item1", descending: true}
 			]
 		});
 
@@ -527,6 +579,27 @@ sap.ui.define([
 
 	QUnit.module("AdaptationController API tests showP13n FilterBar", {
 		beforeEach: function () {
+			this.aPropertyInfos = [
+				{
+					"name": "item1",
+					"label": "item1"
+				}, {
+					"name": "item2",
+					"label": "item2"
+				}, {
+					"name": "item3",
+					"label": "item3"
+				}, {
+					"name": "$search"
+				}
+			];
+
+			return this.createTestObjects(this.aPropertyInfos);
+		},
+		afterEach: function () {
+			this.destroyTestObjects();
+		},
+		createTestObjects: function(aPropertyInfos) {
 			this.oFilterBar = new FilterBar("TestFB", {
 				p13nMode: ["Item","Value"],
 				filterItems: [
@@ -542,25 +615,8 @@ sap.ui.define([
 			});
 
 			return this.oFilterBar.retrieveAdaptationController().then(function (oAdaptationController) {
+				MDCQUnitUtils.stubPropertyInfos(this.oFilterBar, aPropertyInfos);
 				this.oAdaptationController = oAdaptationController;
-
-				var aItems = this.oFilterBar.getFilterItems();
-
-				//mock delegate data
-				this.aPropertyInfo = [
-					{
-						"name": "item1",
-						"id": aItems[0].getId(),
-						"label": aItems[0].getLabel()
-					}, {
-						"name": "item2",
-						"id": aItems[1].getId(),
-						"label": aItems[1].getLabel()
-					}, {
-						"name": "item3",
-						"label": aItems[1].getLabel()
-					}
-				];
 
 				FilterBarDelegate.addItem = function(sKey, oFilterBar) {
 					return Promise.resolve(new FilterField({
@@ -569,60 +625,35 @@ sap.ui.define([
 				};
 
 				this.oAdaptationController.oAdaptationControlDelegate = FilterBarDelegate;
-
-				//no delegate in Test --> Stub property info call
-				var oPropertyInfoPromise = new Promise(function(resolve,reject){
-					this.oAdaptationController.aPropertyInfo = this.aPropertyInfo;
-					resolve(this.aPropertyInfo);
-				}.bind(this));
-
-				//stub '_retrievePropertyInfo'
-				sinon.stub(this.oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
-				}.bind(this));
+			}.bind(this));
 		},
-		afterEach: function () {
+		destroyTestObjects: function() {
 			this.oFilterBar.destroy();
 			this.oAdaptationController.destroy();
+			MDCQUnitUtils.restorePropertyInfos(this.oFilterBar);
 		}
 	});
 
 	QUnit.test("Custom 'retrievePropertyInfo' should not take $search into account for FilterBar", function(assert){
 		var done = assert.async();
 
-		var aMockProperties = [
-			{name:"Test1"},
-			{name:"Test2"},
-			{name:"Test3"},
-			{name:"Test4"},
-			{name:"$search"}
-		];
+		this.oAdaptationController.setLiveMode(false);
 
-		this.oFilterBarNonStub = new FilterBar();
-		this.oFilterBarNonStub._aProperties = aMockProperties;
+		this.oAdaptationController.showP13n(undefined, "Filter").then(function(oP13nControl){
+			//check container
+			assert.ok(oP13nControl, "Container has been created");
+			assert.ok(oP13nControl.isA("sap.m.Dialog"));
+			assert.ok(!oP13nControl.getVerticalScrolling(), "Vertical scrolling is disabled for FilterBarBase 'filterConfig'");
+			assert.equal(oP13nControl.getCustomHeader().getContentLeft()[0].getText(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
+			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
-		this.oFilterBarNonStub.retrieveAdaptationController().then(function (oAdaptationController) {
-		this.oNonStubAC = oAdaptationController;
-		this.oNonStubAC.setLiveMode(false);
-		this.oNonStubAC.showP13n(undefined, "Filter").then(function(oP13nControl){
+			//check inner panel
+			var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner()._oListControl;
+			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct P13n UI created");
+			assert.ok(oInnerTable, "Inner Table has been created");
 
-				//check container
-				assert.ok(oP13nControl, "Container has been created");
-				assert.ok(oP13nControl.isA("sap.m.Dialog"));
-				assert.ok(!oP13nControl.getVerticalScrolling(), "Vertical scrolling is disabled for FilterBarBase 'filterConfig'");
-				assert.equal(oP13nControl.getCustomHeader().getContentLeft()[0].getText(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
-				assert.ok(this.oNonStubAC.bIsDialogOpen,"dialog is open");
+			done();
 
-				//check inner panel
-				var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner()._oListControl;
-				assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct P13n UI created");
-				assert.ok(oInnerTable, "Inner Table has been created");
-
-				this.oFilterBarNonStub.destroy();
-				this.oFilterBarNonStub = null;
-				this.oNonStubAC = null;
-				done();
-
-			}.bind(this));
 		}.bind(this));
 
 	});
@@ -708,18 +739,20 @@ sap.ui.define([
 			item3: [{operator: "EQ", values:["Test"]}]
 		};
 
-		this.oAdaptationController.createConditionChanges(mConditions).then(function(){
-			assert.ok(true, "Callback triggered");
-		});
+		this.oAdaptationController.createP13n("Filter").then(function() {
+			this.oAdaptationController.createConditionChanges(mConditions).then(function(){
+				assert.ok(true, "Callback triggered");
+			});
 
-		this.oAdaptationController.setProperty("afterChangesCreated", function(oAC, aChanges){
-			assert.ok(aChanges, "changes created");
-			assert.equal(aChanges.length, 3, "three changes created");
-			assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition", "one condition change created");
-			assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created");
-			assert.equal(aChanges[2].changeSpecificData.changeType, "addCondition", "one condition change created");
-			done();
-		});
+			this.oAdaptationController.setProperty("afterChangesCreated", function(oAC, aChanges){
+				assert.ok(aChanges, "changes created");
+				assert.equal(aChanges.length, 3, "three changes created");
+				assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition", "one condition change created");
+				assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created");
+				assert.equal(aChanges[2].changeSpecificData.changeType, "addCondition", "one condition change created");
+				done();
+			});
+		}.bind(this));
 
 	});
 
@@ -752,7 +785,7 @@ sap.ui.define([
 			item3: [{operator: "EQ", values:["Test"]}]
 		};
 
-		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfo);
+		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfos);
 		this.oFilterBar.setFilterConditions({item1: [{operator: "EQ", values:["Test"]}]});
 
 		this.oAdaptationController.createConditionChanges(mConditions).then(function(){
@@ -778,7 +811,7 @@ sap.ui.define([
 			item3: [{operator: "EQ", values:["Test"]}]
 		};
 
-		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfo);
+		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfos);
 		this.oFilterBar.setFilterConditions({item1: [{operator: "EQ", values:["Test"]}]});
 
 		this.oAdaptationController.createConditionChanges(mConditions).then(function(){
@@ -803,7 +836,7 @@ sap.ui.define([
 			$search: [{operator: "EQ", values:["Test"]}]
 		};
 
-		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfo);
+		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfos);
 		this.oFilterBar.setFilterConditions({item1: [{operator: "EQ", values:["Test"]}]});
 
 		this.oAdaptationController.createConditionChanges(mConditions).then(function(){
