@@ -1994,7 +1994,8 @@ sap.ui.define([
 		 * @returns {boolean}
 		 */
 		SinglePlanningCalendarGrid.prototype._isEndTime0000 = function(oAppStartDate, oAppEndDate) {
-			return (oAppEndDate.getTime() - oAppStartDate.getTime()) % MILLISECONDS_IN_A_DAY === 0;
+			var iTimeDifference = CalendarDate.fromLocalJSDate(oAppEndDate).valueOf() - CalendarDate.fromLocalJSDate(oAppStartDate).valueOf();
+			return iTimeDifference % MILLISECONDS_IN_A_DAY === 0;
 		};
 
 		SinglePlanningCalendarGrid.prototype._createBlockersDndPlaceholders = function (oStartDate, iColumns) {
