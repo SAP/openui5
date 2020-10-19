@@ -2287,7 +2287,12 @@ sap.ui.define([
 				oBinding = new ODataParentBinding({
 					oCache : oCache,
 					mCacheByResourcePath : {},
-					oCachePromise : SyncPromise.resolve(oCache)
+					oCachePromise : SyncPromise.resolve(oCache),
+					oContext : {},
+					oModel : {
+						resolve : function () {}
+					},
+					sPath : "TEAMS('1')"
 				}),
 				oCreateResult = {},
 				oCreatePromise = SyncPromise.resolve(
@@ -2299,15 +2304,21 @@ sap.ui.define([
 
 			oBinding.mCacheByResourcePath[sCanonicalPath] = oCache;
 
+			this.mock(oBinding.oModel).expects("resolve")
+				.withExactArgs("TEAMS('1')", sinon.match.same(oBinding.oContext))
+				.returns("/TEAMS('1')");
+			this.mock(_Helper).expects("getRelativePath")
+				.withExactArgs("/TEAMS('1')/TEAM_2_EMPLOYEES", "/TEAMS('1')")
+				.returns("TEAM_2_EMPLOYEES");
 			this.mock(oCache).expects("create")
-				.withExactArgs("updateGroupId", "EMPLOYEES", "", sTransientPredicate,
+				.withExactArgs("groupLock", "EMPLOYEES", "TEAM_2_EMPLOYEES", sTransientPredicate,
 					sinon.match.same(oInitialData),
 					sinon.match.same(fnError), sinon.match.same(fnSubmit))
 				.returns(oCreatePromise);
 
 			// code under test
-			return oBinding.createInCache("updateGroupId", "EMPLOYEES", "", sTransientPredicate,
-				oInitialData, fnError, fnSubmit)
+			return oBinding.createInCache("groupLock", "EMPLOYEES", "/TEAMS('1')/TEAM_2_EMPLOYEES",
+				sTransientPredicate, oInitialData, fnError, fnSubmit)
 				.then(function (oResult) {
 					assert.strictEqual(bCancel, false);
 					assert.strictEqual(oResult, oCreateResult);
@@ -2328,7 +2339,12 @@ sap.ui.define([
 			oBinding = new ODataParentBinding({
 				oCache : oCache,
 				mCacheByResourcePath : undefined,
-				oCachePromise : SyncPromise.resolve(oCache)
+				oCachePromise : SyncPromise.resolve(oCache),
+				oContext : {},
+				oModel : {
+					resolve : function () {}
+				},
+				sPath : "TEAMS('1')"
 			}),
 			oCreateResult = {},
 			oCreatePromise = SyncPromise.resolve(oCreateResult),
@@ -2338,15 +2354,22 @@ sap.ui.define([
 			fnSubmit = function () {},
 			sTransientPredicate = "($uid=id-1-23)";
 
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs("TEAMS('1')", sinon.match.same(oBinding.oContext))
+			.returns("/TEAMS('1')");
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("/TEAMS('1')/TEAM_2_EMPLOYEES", "/TEAMS('1')")
+			.returns("TEAM_2_EMPLOYEES");
 		this.mock(oCache).expects("create")
-			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "", sTransientPredicate,
-				sinon.match.same(oInitialData), sinon.match.same(fnError),
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "TEAM_2_EMPLOYEES",
+				sTransientPredicate, sinon.match.same(oInitialData), sinon.match.same(fnError),
 				sinon.match.same(fnSubmit))
 			.returns(oCreatePromise);
 
 		// code under test
 		return oBinding.createInCache(
-				oGroupLock, "EMPLOYEES", "", sTransientPredicate, oInitialData, fnError, fnSubmit
+				oGroupLock, "EMPLOYEES", "/TEAMS('1')/TEAM_2_EMPLOYEES", sTransientPredicate,
+				oInitialData, fnError, fnSubmit
 			).then(function (oResult) {
 				assert.strictEqual(oResult, oCreateResult);
 			});
@@ -2377,17 +2400,14 @@ sap.ui.define([
 			fnSubmit = {},
 			sTransientPredicate = "($uid=id-1-23)";
 
-		this.mock(_Helper).expects("buildPath")
-			.withExactArgs(42, "SO_2_SCHEDULE", "")
-			.returns("~");
 		this.mock(oParentBinding).expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrderList('4711')/SO_2_SCHEDULE",
-				"~", sTransientPredicate, oInitialData, sinon.match.same(fnError),
+				"/path", sTransientPredicate, oInitialData, sinon.match.same(fnError),
 				sinon.match.same(fnSubmit))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
-			oBinding.createInCache(oGroupLock, "SalesOrderList('4711')/SO_2_SCHEDULE", "",
+			oBinding.createInCache(oGroupLock, "SalesOrderList('4711')/SO_2_SCHEDULE", "/path",
 				sTransientPredicate, oInitialData, fnError, fnSubmit).getResult(), oResult);
 	});
 

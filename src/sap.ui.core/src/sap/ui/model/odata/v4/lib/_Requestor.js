@@ -76,6 +76,7 @@ sap.ui.define([
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
 	 *
+	 * @alias sap.ui.model.odata.v4.lib._Requestor
 	 * @private
 	 */
 	function Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface) {
@@ -814,11 +815,11 @@ sap.ui.define([
 	};
 
 	/**
-	*  Get the batch queue for the given group or create it if it does not exist yet.
-	*
-	*  @param {string} sGroupId The group ID
-	*  @returns {object[]} The batch queue for the group
-	*
+	 * Get the batch queue for the given group or create it if it does not exist yet.
+	 *
+	 * @param {string} sGroupId The group ID
+	 * @returns {object[]} The batch queue for the group
+	 *
 	 * @private
 	 */
 	Requestor.prototype.getOrCreateBatchQueue = function (sGroupId) {

@@ -1857,25 +1857,33 @@ sap.ui.define([
 	error : {
 		details : [
 			{target : "_it"},
+			{target : "$Parameter/_it"},
 			{target : "_it/Name"},
+			{target : "$Parameter/_it/Name"},
 			{target : "unknown"}, // unknown operation parameter
 			{target : null},
 			{target : ""},
 			{target : "$filter"}, // starting with $ (e.g. system query option)
 			{target : "Param"},
-			{target : "Complex/Param"}
+			{target : "$Parameter/Param"},
+			{target : "Complex/Param"},
+			{target : "$Parameter/Complex/Param"}
 		],
 		target : "foo"
 	},
 	reported : {
 		details : [
 			{target : "/TEAMS('42')"},
+			{target : "/TEAMS('42')"},
+			{target : "/TEAMS('42')/Name"},
 			{target : "/TEAMS('42')/Name"},
 			{},
 			{},
 			{},
 			{},
 			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Param"},
+			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Param"},
+			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Complex/Param"},
 			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Complex/Param"}
 		]
 	}
@@ -1950,7 +1958,9 @@ sap.ui.define([
 			{target : "bar"},
 			{target : null},
 			{target : "Param"},
-			{target : "Complex/Param"}
+			{target : "$Parameter/Param"},
+			{target : "Complex/Param"},
+			{target : "$Parameter/Complex/Param"}
 		],
 		target : "foo"
 	},
@@ -1959,6 +1969,8 @@ sap.ui.define([
 			{},
 			{},
 			{target : "/ActionImport(...)/$Parameter/Param"},
+			{target : "/ActionImport(...)/$Parameter/Param"},
+			{target : "/ActionImport(...)/$Parameter/Complex/Param"},
 			{target : "/ActionImport(...)/$Parameter/Complex/Param"}
 		]
 	}

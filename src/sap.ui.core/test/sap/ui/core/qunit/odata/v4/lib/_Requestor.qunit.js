@@ -3694,8 +3694,8 @@ sap.ui.define([
 			})
 			.returns(createMock(assert, undefined, "OK", {}));
 
-		// code under test
-		oExpectation.callArg(0); //callback
+		// code under test - call setInterval function
+		oExpectation.callArg(0);
 	});
 
 	//*****************************************************************************************
@@ -3738,14 +3738,18 @@ sap.ui.define([
 				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
 					.withExactArgs(true);
 
-				// code under test
-				oExpectation.callArg(0); //callback
+				// code under test - call setInterval function
+				oExpectation.callArg(0);
 			});
 		});
 	});
 
 	//*****************************************************************************************
-	QUnit.test("setSessionContext: callback termination", function (assert) {
+	// Tests the case that the setInterval timer is active for more than 30 minutes without having
+	// been restarted by an application-triggered request. During this time the setInterval function
+	// may have been called several times sending pings. Here we test the first call after the 30
+	// minutes which is expected to terminate the session.
+	QUnit.test("setSessionContext: session termination", function (assert) {
 		var oClock,
 			oExpectation,
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
@@ -3757,12 +3761,14 @@ sap.ui.define([
 
 			oRequestor.setSessionContext("context", "120");
 
-			oClock.tick(30 * 60 * 1000); // 30 min
+			// Tick the clock ahead 30 min; does not call the timer because setInterval is mocked.
+			oClock.tick(30 * 60 * 1000);
+
 			this.mock(jQuery).expects("ajax").never();
 			this.mock(oRequestor).expects("clearSessionContext").withExactArgs(true);
 
-			// code under test
-			oExpectation.callArg(0); //callback
+			// code under test - call setInterval function
+			oExpectation.callArg(0);
 		} finally {
 			oClock.restore();
 		}

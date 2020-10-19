@@ -79,7 +79,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
 	 *   A lock for the group ID to be used for the PATCH request; without a lock, no PATCH is sent
 	 * @returns {sap.ui.base.SyncPromise} <code>undefined</code> for the general case which is
-	 *   handled generically by the caller {@link sap.ui.model.odata.v4.ODataContext#doSetProperty}
+	 *   handled generically by the caller {@link sap.ui.model.odata.v4.Context#doSetProperty}
 	 *   or a <code>SyncPromise</code> for the exceptional case
 	 *
 	 * @abstract
@@ -429,14 +429,14 @@ sap.ui.define([
 
 	/**
 	 * Creates the entity in the cache. If the binding doesn't have a cache, it forwards to the
-	 * parent binding adjusting <code>sPathInCache</code>.
+	 * parent binding.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oUpdateGroupLock
 	 *   The group ID to be used for the POST request
 	 * @param {string|sap.ui.base.SyncPromise} vCreatePath
 	 *   The path for the POST request or a SyncPromise that resolves with that path
-	 * @param {string} sPathInCache
-	 *   The path within the cache where to create the entity
+	 * @param {string} sCollectionPath
+	 *   The absolute path to the collection in the cache where to create the entity
 	 * @param {string} sTransientPredicate
 	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 	 * @param {object} oInitialData
@@ -453,11 +453,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.createInCache = function (oUpdateGroupLock, vCreatePath,
-			sPathInCache, sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback) {
+			sCollectionPath, sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
+			var sPathInCache;
+
 			if (oCache) {
+				sPathInCache = _Helper.getRelativePath(sCollectionPath,
+					that.oModel.resolve(that.sPath, that.oContext));
 				return oCache.create(oUpdateGroupLock, vCreatePath, sPathInCache,
 					sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback
 				).then(function (oCreatedEntity) {
@@ -470,8 +474,8 @@ sap.ui.define([
 				});
 			}
 			return that.oContext.getBinding().createInCache(oUpdateGroupLock, vCreatePath,
-				_Helper.buildPath(that.oContext.iIndex, that.sPath, sPathInCache),
-				sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback);
+				sCollectionPath, sTransientPredicate, oInitialData, fnErrorCallback,
+				fnSubmitCallback);
 		});
 	};
 

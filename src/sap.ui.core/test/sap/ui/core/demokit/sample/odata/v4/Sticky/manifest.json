@@ -58,6 +58,7 @@
 				"preload" : true,
 				"settings" : {
 					"autoExpandSelect" : true,
+					"earlyRequests" : true,
 					"groupId" : "$direct",
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",

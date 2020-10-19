@@ -61,7 +61,7 @@ sap.ui.define([
 	 * Throws an Error that the response is discarded if the current cache not the expected one.
 	 * The error has the property <code>canceled : true</code>
 	 *
-	 * @param {sap.ui.model.odata.v4.lib_Cache} oExpectedCache - The expected cache
+	 * @param {sap.ui.model.odata.v4.lib._Cache} oExpectedCache - The expected cache
 	 * @throws {Error} If the cache has changed
 	 *
 	 * @private
@@ -782,7 +782,6 @@ sap.ui.define([
 	 * @throws {Error}
 	 *
 	 * @public
-	 * @see sap.ui.model.Binding#isInitial
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#isInitial
