@@ -1,10 +1,12 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/Extension"
 ], function (
+	Log,
 	Core,
 	Card,
 	Extension
@@ -364,7 +366,26 @@ sap.ui.define([
 	QUnit.module("Custom Formatters", {
 		beforeEach: function () {
 			this.oCard = new Card({
-				baseUrl: "test-resources/sap/ui/integration/qunit/"
+				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				manifest: {
+					"sap.app": {
+						"id": "sap.ui.integration.test"
+					},
+					"sap.card": {
+						"type": "List",
+						"extension": "./extensions/Extension1",
+						"data": {
+							"extension": {
+								"method": "getData"
+							}
+						},
+						"content": {
+							"item": {
+								"title": "{= extension.formatters.toUpperCase(${city}) }"
+							}
+						}
+					}
+				}
 			});
 		},
 		afterEach: function () {
@@ -376,31 +397,35 @@ sap.ui.define([
 	QUnit.test("Formatting the title", function (assert) {
 		// arrange
 		var done = assert.async();
-		this.oCard.setManifest({
-			"sap.app": {
-				"id": "sap.ui.integration.test"
-			},
-			"sap.card": {
-				"type": "List",
-				"extension": "./extensions/Extension1",
-				"data": {
-					"extension": {
-						"method": "getData"
-					}
-				},
-				"content": {
-					"item": {
-						"title": "{= extension.formatters.toUpperCase(${city}) }"
-					}
-				}
-			}
-		});
 
 		this.oCard.attachEvent("_ready", function () {
 			var oFirstItem = this.oCard.getCardContent().getInnerList().getItems()[0];
 
 			// assert
 			assert.strictEqual(oFirstItem.getTitle(), "BERLIN", "The formatter successfully transformed the title to upper case characters.");
+			done();
+		}.bind(this));
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("setFormatters method", function (assert) {
+		// arrange
+		var oErrorSpy = this.spy(Log, "error"),
+			done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+
+			this.oCard._oExtension.setFormatters({
+				toUpperCase: function (sValue) {
+					return sValue.toUpperCase() + " New";
+				}
+			});
+
+			assert.ok(oErrorSpy.called, "An error is logged");
+
+			oErrorSpy.restore();
 			done();
 		}.bind(this));
 

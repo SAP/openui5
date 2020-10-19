@@ -71,7 +71,7 @@
 		cardContainer.placeAt("preview");
 
 		var button = new sap.m.Button({
-			text: "Set new extension action",
+			text: "Set new extension actions",
 			press: function () {
 				card1._oExtension.setActions([
 					{
@@ -90,6 +90,21 @@
 			}
 		});
 		button.placeAt("preview");
+
+		var buttonNewFormatters = new sap.m.Button({
+			text: "Set new extension formatters",
+			press: function () {
+				card1._oExtension.setFormatters({
+					titleToUpperCase: function (title) {
+						return title.toUpperCase() + " NEW";
+					},
+					descriptionToUpperCase: function (sDescr) {
+						return sDescr.toUpperCase() + " NEW";
+					}
+				});
+			}
+		});
+		buttonNewFormatters.placeAt("preview");
 
 	</script>
 </head>

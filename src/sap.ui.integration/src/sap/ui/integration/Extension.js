@@ -2,8 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject"
-], function (ManagedObject) {
+], function (Log,
+			 ManagedObject) {
 	"use strict";
 
 	/**
@@ -118,11 +120,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * See generated JSDoc
+	 */
+	Extension.prototype.setFormatters = function (aFormatters) {
+		this.setProperty("formatters", aFormatters);
+
+		if (!this._oCard) {
+			return;
+		}
+
+		if (!this._oCard._bApplyManifest ||
+			this._oCard._oExtension !== this) {
+			Log.error("Extension formatters must be set before the initialization of the card. Do this inside Extension#init().");
+		}
+	};
+
+	/**
 	 * Called when the card is ready.
 	 * @public
 	 */
-	Extension.prototype.onCardReady = function () {
-	};
+	Extension.prototype.onCardReady = function () { };
 
 	/**
 	 * Returns an interface to the card, which uses this extension.
