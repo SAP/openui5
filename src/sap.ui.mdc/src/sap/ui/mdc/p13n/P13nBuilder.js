@@ -55,6 +55,7 @@ sap.ui.define([
                         var oCustomHeader = this._createResetHeader({
                             title: mDialogSettings.title,
                             reset: mDialogSettings.reset.onExecute,
+                            idResetButton: mDialogSettings.reset.idButton,
                             warningText: mDialogSettings.reset.warningText
                         });
                         oPopover.setCustomHeader(oCustomHeader);
@@ -118,6 +119,7 @@ sap.ui.define([
                     if (mDialogSettings.reset) {
                         var oCustomHeader = P13nBuilder._createResetHeader({
                             title: mDialogSettings.title,
+                            idResetButton: mDialogSettings.reset.idButton,
                             reset: mDialogSettings.reset.onExecute,
                             warningText: mDialogSettings.reset.warningText
                         });
@@ -159,7 +161,8 @@ sap.ui.define([
             });
 
             if (mSettings.reset) {
-                oBar.addContentRight(new Button({
+                var sId = mSettings.idResetButton;
+                oBar.addContentRight(new Button( sId, {
                     text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET"),
                     press: function() {
                         var sResetText = mSettings.warningText ? mSettings.warningText : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
