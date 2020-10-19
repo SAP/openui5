@@ -7,13 +7,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../../css/topic.css">
-	<link rel="stylesheet" href="../../css/tomorrow.css">
-	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
-	<script
-		src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
-	<script
-		src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<script src="../../scripts/boot.js"></script>
 	<style>
 		.tableWrapper td {
 			vertical-align: top;
@@ -37,6 +31,7 @@
 				page/content administrator and translator.
 				Build in configuration settings allow to easily create an appealing UI for the user.
 			</p>
+			<img src="img/ConfigurationEditorSample.png" style="margin:2rem;width:400px;border:1px solid #f5f5f5"></td>
 			<h2 id="createfile">Create a Design-time module and register it in the Cards manifest</h2>
 			<p>
 				Advanced design-time configuration and implementation should happen outside the manifest of the Card.
@@ -75,7 +70,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 			<p>
 				Within the configuration the form section will contain the items that are shown in the Editor
 			</p>
-			<pre class="prettyprint lang-js">
+			<table style="background-color: transparent; border:none;">
+				<tr>
+					<td style="vertical-align: top;background-color: transparent; border:none;">
+						<pre class="prettyprint lang-js" lines="6-10" style="font-weight:normal">
 sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 "use strict";
 	var Designtime = BaseDesigntime.extend();
@@ -90,6 +88,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 	}
 	return Designtime
 });</pre>
+					</td>
+					<td style="vertical-align: top;background-color: transparent; border:none;">
+						<img src="img/ConfigurationEditorForm.png"
+							style="margin:2rem;width:400px;border:1px solid #f5f5f5"></td>
+				</tr>
+			</table>
+
 			<h3>Form Items</h3>
 			<p>
 				The items section is a map of item configuration.
@@ -153,8 +158,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 						<td>Depending on type property</td>
 						<td>Defines the default value that is used if the current value in the manifest for this
 							property is empty.
-							<pre class="prettyprint
-								lang-js">defaultValue : "stringValue" //string type<br>defaultValue : true //boolean type</pre>
+							<pre
+								class="prettyprint
+								lang-js">defaultValue : "stringValue" //string type<br>defaultValue : true //boolean type<br>"<br>defaultValue : "{i18n>translatedDefaultKey}" //trnaslatedDefaultValue for strings</pre>
 						</td>
 						<td>1.83</td>
 					</tr>
@@ -244,7 +250,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 				The item section in the values definition links the data. The "key" property of the item is used as
 				the value for the setting referred by the "manifestPath".
 				<strong>Static Data List</strong>
-			<pre class="prettyprint lang-js">
+
+			<pre class="prettyprint lang-js collapsed" lines="4-18" caption="Static Values">
 "stringWithStaticList": {
   "manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
   "type": "string",
@@ -263,12 +270,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
         "text": "{text}",
         "key": "{key}"
      }
-}
+  }
 }</pre>
 			<strong>Request Data List</strong>
 			<p>There referred url will deliver the data asynchronous. Also an extension could be used as a data
 				propvider.</p>
-			<pre class="prettyprint lang-js">
+			<pre class="prettyprint lang-js collapsed" lines="6-9" caption="Request Values">
 "stringWithStaticList": {
   "manifestpath": "/sap.card/configuration/parameters/stringWithRequestList/value",
   "type": "string",
@@ -283,10 +290,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
         "text": "{text}",
         "key": "{key}"
      }
-}
+  }
 }</pre>
-			<strong>Data of dt/listdata.json</strong>
-			<pre class="prettyprint lang-js">
+
+			<pre class="prettyprint lang-js collapsed" lines="0" caption="Data of dt/listdata.json">
 	"values": [
 		{ "text": "From JSON 1", "key": "key1" },
 		{ "text": "From JSON 2", "key": "key2" },
@@ -297,12 +304,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 			</p>
 			<h3 id="lists">Providing Lists for string arrays</h3>
 			<p>
-				To allow a selection of values for fields of type "string", you can add a values section.
+				To allow a selection of values for fields of type "string[]", you can add the same values sections as
+				above.
 				Similar to the Card data section, the list can be filled with a static json or a request.
 				The item section in the values definition links the data. The "key" property of the item is used as
 				the value for the setting referred by the "manifestPath".
 				<strong>Static Data List</strong>
-			<pre class="prettyprint lang-js">
+			<pre class="prettyprint lang-js collapsed" lines="3" caption="String Array Lists">
 "stringArrayWithStaticList": {
 	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithStaticList/value",
 	"type": "string[]",
@@ -326,7 +334,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 			<strong>Request Data List</strong>
 			<p>There referred url will deliver the data asynchronous. Also an extension could be used as a data
 				propvider.</p>
-			<pre class="prettyprint lang-js">
+			<pre class="prettyprint lang-js collapsed" lines="3" caption="String Array Lists with requests">
 "stringWithStaticList": {
 	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithRequestList/value",
 	"type": "string[]",
@@ -343,8 +351,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 		}
 	}
 }</pre>
-			<strong>Data of dt/listdata.json</strong>
-			<pre class="prettyprint lang-js">
+
+			<pre class="prettyprint lang-js collapsed" caption="Data of dt/listdata.json">
+
 	"values": [
 		{ "text": "From JSON 1", "key": "key1" },
 		{ "text": "From JSON 2", "key": "key2" },
@@ -360,7 +369,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 			</div>
 		</div>
 
-		<script src="../../scripts/topic.js"></script>
+
 </body>
 
 </html>

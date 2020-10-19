@@ -227,6 +227,7 @@ sap.ui.define([
 			oStyle.width = "1px";
 			oStyle.opacity = 0;
 			oStyle = oField.getDomRef().parentNode.style;
+			oField.getDomRef().style.visibility = "visible";
 			oStyle.width = "calc(100% - 2.5rem)";
 			oStyle.opacity = 1;
 		}
@@ -240,6 +241,7 @@ sap.ui.define([
 			oStyle.width = "calc(100% - 2.5rem)";
 			oStyle.opacity = 1;
 			oStyle = oField.getDomRef().parentNode.style;
+			oField.getDomRef().style.visibility = "hidden";
 			oStyle.width = "1px";
 			oStyle.opacity = 0;
 		}
@@ -304,7 +306,7 @@ sap.ui.define([
 			} else {
 				this._setCurrentProperty("value", o.value);
 			}
-			this._showDynamicField();
+
 			oDynamicField.addToken(new Token({
 				text: o.object.label,
 				"delete": function () {
@@ -328,6 +330,8 @@ sap.ui.define([
 		this._applyButtonStyles();
 		if (!this._hasDynamicValue()) {
 			this._hideDynamicField();
+		} else {
+			this._showDynamicField();
 		}
 		this._fieldResolver && this._fieldResolver();
 		this._fieldResolver = null;

@@ -1273,12 +1273,12 @@ sap.ui.define([
 							{
 								url: '/samples/designtimeTranslation/i18n/i18n_fr.properties',
 								name: 'i18n/i18n_fr.properties',
-								key: 'i18n.properties'
+								key: 'i18n_fr.properties'
 							},
 							{
 								url: '/samples/designtimeTranslation/i18n/i18n_de.properties',
 								name: 'i18n/i18n_de.properties',
-								key: 'i18n.properties'
+								key: 'i18n_de.properties'
 							},
 							{
 								url: '/samples/designtimeTranslation/i18n/i18n.properties',

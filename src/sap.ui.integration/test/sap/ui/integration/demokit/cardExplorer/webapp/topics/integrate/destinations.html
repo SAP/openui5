@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<title>Integration Cards</title>
 	<meta http-equiv="Content-Type" content="text/html">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../../css/topic.css">
-	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
-
-	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
-	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
-	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<script src="../../scripts/boot.js"></script>
 </head>
+
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
@@ -24,8 +21,11 @@
 
 			<p>
 				Destinations that are listed in the <code>configuration</code> part of the <code>manifest</code>
-				should be resolved by the application with the help of <a data-demokit-href="/api/sap.ui.integration.Host" target="_blank"><code>sap.ui.integration.Host</code></a>.
-				The host application developer should set the <code>resolveDestination</code> to a function, which resolves destination name to the corresponding URL.
+				should be resolved by the application with the help of <a
+					data-demokit-href="/api/sap.ui.integration.Host"
+					target="_blank"><code>sap.ui.integration.Host</code></a>.
+				The host application developer should set the <code>resolveDestination</code> to a function, which
+				resolves destination name to the corresponding URL.
 				The card calls this function when it needs to send a request to the destination.
 				If a card depends on a destination, but this callback is not implemented, an error will be logged.
 				The callback receives <code>destinationName</code> as parameter and returns a string with the URL.
@@ -37,7 +37,7 @@
 			</h2>
 
 			Controller
-<pre class="prettyprint  lang-js">
+			<pre class="prettyprint  lang-js">
 var oHost = new sap.ui.integration.Host({
 	resolveDestination: function(sDestinationName) {
 		switch (sDestinationName) {
@@ -55,8 +55,8 @@ var oHost = new sap.ui.integration.Host({
 
 this.getView().byId('card1').setHost(oHost);</pre>
 
-XML View
-<pre class="prettyprint lang-js">
+			XML View
+			<pre class="prettyprint lang-js">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card id="card1" manifest="./manifest.json" /&gt;
 &lt;/mvc:View&gt;</pre>
@@ -69,6 +69,7 @@ XML View
 		</div>
 	</div>
 
-	<script src="../../scripts/topic.js"></script>
+
 </body>
+
 </html>

@@ -1,0 +1,172 @@
+.prettyprint {
+    background: #fff;
+    font-family: Consolas, monospace;
+    border: 0!important;
+    tab-size: 4;
+	font-size: 0.85rem;
+	transition: height 0.3s ease-out;
+}
+
+.prettyprint[caption] {
+    margin-top: 2.8rem;
+    box-sizing: border-box;
+    max-width: 950px;
+}
+
+.prettyprint[caption]::before {
+    background: #e4e4e4;
+    content: attr(caption);
+    position: absolute;
+    font-family: '72' !important;
+	z-index: 1;
+	font-size: 0.9rem;
+	padding: 0.2rem 0.5rem;
+	padding-left: 16px;
+    border-radius: 3px;
+    width: 948px;
+    box-sizing: border-box;
+    margin: -2.5rem -1.1rem;
+}
+.prettyprint.collapsed[caption] {
+	height:0rem;
+}
+
+.prettyprint.collapsed[caption]::before, .prettyprint.expanded[caption]::before {
+	color: rgb(32, 88, 155);
+}
+
+.prettyprint.collapsed[caption]:hover::before, .prettyprint.expanded[caption]:hover::before  {
+	color: rgb(60, 121, 196);
+}
+
+.prettyprint.expanded[caption]:hover::before {
+		color: rgb(60, 121, 196);
+}
+
+.prettyprint.linenums[caption]::before {
+    margin: -1.7rem 0rem !important;
+}
+
+.pln {
+    color: #6c6c5b
+}
+
+.prettyprint ol.linenums {
+    margin-top: 0;
+    margin-bottom: 0;
+    background-color: rgba(206, 206, 206, 0.4);
+	line-height: 20px;
+}
+.prettyprint.linenumshidden ol.linenums {
+	margin-left: -40px;
+	background-color: rgba(206, 206, 206, 0.4);
+}
+
+.prettyprint li.L0,
+.prettyprint li.L1,
+.prettyprint li.L2,
+.prettyprint li.L3,
+.prettyprint li.L4,
+.prettyprint li.L5,
+.prettyprint li.L6,
+.prettyprint li.L7,
+.prettyprint li.L8,
+.prettyprint li.L9 {
+    padding-left: 0.5rem;
+	background-color: #fff;
+	border: 1px solid white;
+    list-style-type: decimal
+}
+
+.prettyprint.linenumshidden ol.linenums li {
+	padding-left: 0.5rem;
+	background-color: #fff;
+	border: 1px solid white;
+    list-style-type: none
+}
+.prettyprint .str {
+    color: #4a1283
+}
+
+.prettyprint .kwd {
+    color: #2b64ae
+}
+
+.prettyprint .com {
+    color: #92b019
+}
+
+.prettyprint .typ {
+    color: #88760b
+}
+
+.prettyprint .lit {
+    color: #4d4d4c
+}
+
+.prettyprint .pun {
+    color: #4d4d4c
+}
+
+.prettyprint .opn {
+    color: #4d4d4c
+}
+
+.prettyprint .clo {
+    color: #4d4d4c
+}
+
+.prettyprint .tag {
+    color: #243cc5
+}
+
+.prettyprint .atn {
+    color: #718c00
+}
+
+.prettyprint .atv {
+    color: #8959a8
+}
+
+.prettyprint .dec {
+    color: #f5871f
+}
+
+.prettyprint .var {
+    color: #c82829
+}
+
+.prettyprint .fun {
+    color: #4271ae
+}
+
+.prettyprint:not(.linenums) {
+    padding: 0.8rem 1.1rem!important
+}
+
+.prettyprint::-webkit-scrollbar {
+    width: 5px !important;
+    background-color: transparent !important;
+    transition: all 0.5s ease-in;
+}
+
+.prettyprint::-webkit-scrollbar-thumb {
+    background-color: transparent !important;
+    border-radius: 3px;
+}
+
+.prettyprint:hover::-webkit-scrollbar-thumb {
+    background-color: var(--sapUiChartScrollbarBorderColor, rgba(148, 148, 148, 0.4))!important;
+    outline: 1px solid white;
+}
+
+.prettyprint.linenums li.marked {
+	background-color: rgb(233, 243, 252) !important;
+	border-radius: 2px;
+	border-left: none;
+	border: 1px solid rgb(217, 238, 255)!important;
+	border-bottom: 1px solid #fff!important;
+}
+
+
+

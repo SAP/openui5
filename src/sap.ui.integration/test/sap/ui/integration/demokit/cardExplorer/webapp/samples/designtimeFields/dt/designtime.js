@@ -1,5 +1,9 @@
-sap.ui.define(["sap/ui/integration/Designtime"
-], function (Designtime) {
+sap.ui.define(["sap/ui/integration/Designtime",
+	"sap/m/Slider",
+	"sap/ui/integration/designtime/editor/fields/viz/IconSelect",
+	"sap/ui/integration/designtime/editor/fields/viz/ColorSelect",
+	"sap/ui/integration/designtime/editor/fields/viz/ShapeSelect"
+], function (Designtime, Slider, IconSelect, ColorSelect, ShapeSelect) {
 	"use strict";
 
 	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
@@ -7,6 +11,95 @@ sap.ui.define(["sap/ui/integration/Designtime"
 		return {
 			form: {
 				items: {
+					"groupheader1": {
+						"label": "General Settings",
+						"type": "group"
+					},
+					"title": {
+						"manifestpath": "/sap.card/header/title",
+						"type": "string",
+						"translatable": true,
+						"label": "Card Title",
+						"cols": 2
+					},
+					"subtitle": {
+						"manifestpath": "/sap.card/header/subTitle",
+						"type": "string",
+						"translatable": true,
+						"label": "Card Subtitle",
+						"cols": 2
+					},
+					"icongroup": {
+						"label": "Icon Settings",
+						"type": "group"
+					},
+					"icon": {
+						"manifestpath": "/sap.card/header/icon/src",
+						"defaultValue": "sap-icon://account",
+						"type": "string",
+						"label": "Icon",
+						"allowDynamicValues": false,
+						"allowSettings": false,
+						"visualization": {
+							"type": IconSelect,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						}
+					},
+					"color": {
+						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"defaultValue": "",
+						"type": "string",
+						"label": "Icon Background",
+						"allowDynamicValues": false,
+						"allowSettings": false,
+						"visualization": {
+							"type": ColorSelect,
+							"settings": {
+								"enumValue": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
+					"shape": {
+						"manifestpath": "/sap.card/header/icon/shape",
+						"defaultValue": "Circle",
+						"label": "Icon Shape",
+						"type": "string",
+						"allowDynamicValues": false,
+						"allowSettings": false,
+						"visualization": {
+							"type": ShapeSelect,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
+					"maxItems": {
+						"manifestpath": "/sap.card/content/maxItems",
+						"defaultValue": 1,
+						"type": "integer",
+						"allowDynamicValues": false,
+						"allowSettings": false,
+						"visualization": {
+							"type": Slider,
+							"settings": {
+								"value": "{currentSettings>value}",
+								"min": 0,
+								"max": 10,
+								"width": "100%",
+								"showAdvancedTooltip": true,
+								"showHandleTooltip": false,
+								"inputsAsTooltips": true,
+								"enabled": "{currentSettings>editable}"
+							}
+						}
+					},
 					"stringLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
 						"defaultValue": "String Value",
@@ -201,7 +294,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 				}
 			},
 			preview: {
-				modes: "Abstract"
+				modes: "LiveAbstract"
 			}
 		};
 	};

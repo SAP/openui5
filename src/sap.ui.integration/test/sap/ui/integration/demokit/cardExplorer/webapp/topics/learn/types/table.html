@@ -1,229 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<title>Table Card</title>
 	<meta http-equiv="Content-Type" content="text/html">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../../../css/topic.css">
-	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
-
-	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
-	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
-	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+	<script src="../../../scripts/boot.js"></script>
 </head>
+
 <body class="sapUiBody topicBody">
-<div class="topic">
-	<div class="content">
-		<h1 id="overview">
-			Table Card
-		</h1>
-		<p>
-			The Table Card is used to display multiple items in table view.
-		</p>
-		<h2 id="properties">Properties</h2>
-		<p>The Table Card contains an array of rows.</p>
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">
+				Table Card
+			</h1>
+			<p>
+				The Table Card is used to display multiple items in table view.
+			</p>
+			<h2 id="properties">Properties</h2>
+			<p>The Table Card contains an array of rows.</p>
 
-		<h4>Table row properties</h4>
+			<h4>Table row properties</h4>
 
-		<div class="tableWrapper">
-			<table>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Required</th>
-					<th>Description</th>
-					<th>Schema Version</th>
-					<th>Since</th>
-				</tr>
-				<tr>
-					<td>columns</td>
-					<td>array</td>
-					<td>No</td>
-					<td>Defines the columns attributes.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>actions</td>
-					<td>object</td>
-					<td>No</td>
-					<td>Defines actions that can be applied on the item.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-			</table>
-		</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>columns</td>
+						<td>array</td>
+						<td>No</td>
+						<td>Defines the columns attributes.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td>object</td>
+						<td>No</td>
+						<td>Defines actions that can be applied on the item.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+				</table>
+			</div>
 
-		<h4>Table column properties</h4>
+			<h4>Table column properties</h4>
 
-		<div class="tableWrapper">
-			<table>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Required</th>
-					<th>Description</th>
-					<th>Schema Version</th>
-					<th>Since</th>
-				</tr>
-				<tr>
-					<td>title</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Defines language-dependent title of the column.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>width</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Defines the width of the column.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>hAlign</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Defines the horizontal alignment of the column content. For a list of possible values see <a data-demokit-href="/api/sap.ui.core.TextAlign" target="_blank">sap.ui.core.TextAlign</a>.</td>
-					<td>1.19.0</td>
-					<td>1.75</td>
-				</tr>
-				<tr>
-					<td>value</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Represents the text value of the column.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>icon</td>
-					<td><a href="#iconApi">Icon</a></td>
-					<td>No</td>
-					<td>Represents column with icon.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>state</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Defines the state of the column.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>url</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Defines the URL string.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>target</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Specifies where to open the 'url', if it is provided.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>identifier</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Defines whether the column is an identifier.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>progressIndicator</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Defines the progress indicator attributes.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>visible</td>
-					<td>boolean</td>
-					<td>No</td>
-					<td>Determines the visibility of the column</td>
-					<td>1.25.0</td>
-					<td>1.81</td>
-				</tr>
-			</table>
-		</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines language-dependent title of the column.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>width</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines the width of the column.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>hAlign</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines the horizontal alignment of the column content. For a list of possible values see <a
+								data-demokit-href="/api/sap.ui.core.TextAlign"
+								target="_blank">sap.ui.core.TextAlign</a>.</td>
+						<td>1.19.0</td>
+						<td>1.75</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Represents the text value of the column.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>icon</td>
+						<td><a href="#iconApi">Icon</a></td>
+						<td>No</td>
+						<td>Represents column with icon.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>state</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines the state of the column.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>url</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines the URL string.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>target</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Specifies where to open the 'url', if it is provided.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>identifier</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines whether the column is an identifier.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>progressIndicator</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines the progress indicator attributes.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>Determines the visibility of the column</td>
+						<td>1.25.0</td>
+						<td>1.81</td>
+					</tr>
+				</table>
+			</div>
 
-		<h4 id="iconApi">Icon Properties</h4>
-		<div class="tableWrapper">
-			<table>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Required</th>
-					<th>Description</th>
-					<th>Schema Version</th>
-					<th>Since</th>
-				</tr>
-				<tr>
-					<td>src</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Icon name or source URL</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>shape</td>
-					<td><a data-demokit-href="/api/sap.m.AvatarShape" target="_blank">sap.m.AvatarShape</a></td>
-					<td>No</td>
-					<td>The shape of the icon.</td>
-					<td>1.15.0</td>
-					<td>1.65</td>
-				</tr>
-				<tr>
-					<td>alt</td>
-					<td>string</td>
-					<td>No</td>
-					<td>Alternative text for the icon.</td>
-					<td>1.26.0</td>
-					<td>1.82</td>
-				</tr>
-				<tr>
-					<td>size</td>
-					<td>string</td>
-					<td>No</td>
-					<td>
-						One of "XS", "S" or "M". By default it is set to "XS".<br>
-						<b>Note:</b> This property is experimental and may change!
-					</td>
-					<td>1.26.0</td>
-					<td>1.82</td>
-				</tr>
-				<tr>
-					<td>backgroundColor</td>
-					<td><a data-demokit-href="/api/sap.m.AvatarColor" target="_blank">sap.m.AvatarColor</a></td>
-					<td>No</td>
-					<td>
-						By default it is set to "Transparent".<br>
-						<b>Note:</b> This property is experimental and may change!
-					</td>
-					<td>1.27.0</td>
-					<td>1.83</td>
-				</tr>
-			</table>
-		</div>
+			<h4 id="iconApi">Icon Properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>src</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Icon name or source URL</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>shape</td>
+						<td><a data-demokit-href="/api/sap.m.AvatarShape" target="_blank">sap.m.AvatarShape</a></td>
+						<td>No</td>
+						<td>The shape of the icon.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>alt</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Alternative text for the icon.</td>
+						<td>1.26.0</td>
+						<td>1.82</td>
+					</tr>
+					<tr>
+						<td>size</td>
+						<td>string</td>
+						<td>No</td>
+						<td>
+							One of "XS", "S" or "M". By default it is set to "XS".<br>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.26.0</td>
+						<td>1.82</td>
+					</tr>
+					<tr>
+						<td>backgroundColor</td>
+						<td><a data-demokit-href="/api/sap.m.AvatarColor" target="_blank">sap.m.AvatarColor</a></td>
+						<td>No</td>
+						<td>
+							By default it is set to "Transparent".<br>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.27.0</td>
+						<td>1.83</td>
+					</tr>
+				</table>
+			</div>
 
-		<h2 id="example">Example</h2>
-		<p>Define the type and data for the card:
-		</p>
-		<p>To bind row information we need to provide a path to the data. Use the root path to bind the column information, as shown in the example below.</p>
-<pre class="prettyprint  lang-js">
+			<h2 id="example">Example</h2>
+			<p>Define the type and data for the card:
+			</p>
+			<p>To bind row information we need to provide a path to the data. Use the root path to bind the column
+				information, as shown in the example below.</p>
+			<pre class="prettyprint  lang-js">
 {
 	"sap.app": {
 		"id": "card.explorer.table.card",
@@ -274,10 +274,10 @@
 	}
 }
 </pre>
-		<p>
-			The content of the tableitems.json that we are requesting:
-		</p>
-<pre class="prettyprint  lang-js">
+			<p>
+				The content of the tableitems.json that we are requesting:
+			</p>
+			<pre class="prettyprint  lang-js">
 {
 	"results": [
 		{
@@ -323,20 +323,20 @@
 	]
 }
 </pre>
-		<p>Create the view to display the card:</p>
-		<pre class="prettyprint  lang-xml">
+			<p>Create the view to display the card:</p>
+			<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;</pre>
-		<a class="try-button" href="../../../index.html#/explore/table" target="_parent">Try it Out</a>
+			<a class="try-button" href="../../../index.html#/explore/table" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Table Card</a></div>
+			<div><a href="#properties">Properties</a></div>
+			<div><a href="#example">Example</a></div>
+		</div>
 	</div>
-	<div class="navigation">
-		<h4>Table of Contents</h4>
-		<div><a href="#overview">Table Card</a></div>
-		<div><a href="#properties">Properties</a></div>
-		<div><a href="#example">Example</a></div>
-	</div>
-</div>
-<script src="../../../scripts/topic.js"></script>
 </body>
+
 </html>
