@@ -10,20 +10,22 @@
             data-sap-ui-libs="sap.m">
     </script>
     <script>
-        new sap.m.App().addPage(new sap.m.Page({
-            title: "sap.m.SplitButton",
-            content: [
-                new sap.m.SplitButton({
-                    text: "abc",
-                    arrowPress: function(oEvent) {
-                        alert("arrow down: " + oEvent.getParameter('down'));
-                    },
-                    press: function() {
-                        alert("press");
-                    }
-                })
-            ]
-        })).placeAt("body");
+		sap.ui.require(["sap/m/SplitButton"], function(SplitButton) {
+			new sap.m.App().addPage(new sap.m.Page({
+				title: "sap.m.SplitButton",
+				content: [
+					new sap.m.SplitButton({
+						text: "abc",
+						arrowPress: function(oEvent) {
+							alert("arrow down: " + oEvent.getParameter('down'));
+						},
+						press: function() {
+							alert("press");
+						}
+					})
+				]
+			})).placeAt("body");
+		});
     </script>
 </head>
 <body id="body" class="sapUiBody">
