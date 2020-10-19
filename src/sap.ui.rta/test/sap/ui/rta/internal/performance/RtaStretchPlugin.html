@@ -25,40 +25,19 @@
 
 		<script src="../../shared-config.js"></script>
 		<script>
-			window['sap-ui-config'].noConflict = 'true';
-			window['sap-ui-config'].libs = 'sap.ui.rta, sap.ui.dt, sap.m, sap.ui.layout';
-			window['sap-ui-config'].resourceroots = {
-				"rta.performance": "./",
-				"dt.performance": "../../../../../sap/ui/dt/performance/"
-			};
-			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+			var __sPathPrefix = document.location.pathname.match(/(.*)\/test-resources\//)[1];
+
+			window["sap-ui-config"] = window["sap-ui-config"] || {};
+			window["sap-ui-config"].onInit = "module:rta/performance/stretch/main";
+			window["sap-ui-config"].async = "true";
+			window["sap-ui-config"].libs = "sap.ui.rta, sap.ui.dt, sap.m, sap.ui.layout";
+			window["sap-ui-config"].resourceroots = {"rta.performance": "./", "dt.performance": "../../../../../sap/ui/dt/performance/"};
+			window["sap-ui-config"].flexibilityServices = '[{"connector": "SessionStorageConnector"}]';
+
+			document.write('<script src="' + __sPathPrefix + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 
 		<script>
-			window.wpp = {
-				customMetrics: {}
-			};
-			window.fnResolve;
-			window.onAppReady = new Promise(function (fnResolve) {
-				window.fnResolve = fnResolve;
-			});
-
-			sap.ui.getCore().attachInit(function() {
-				sap.ui.require([
-					"dt/performance/PerformanceTestUtil",
-					"sap/ui/layout/VerticalLayout"
-				], function(
-					PerformanceTestUtil,
-					VerticalLayout
-				) {
-					var oLayout = new VerticalLayout("visibleLayout");
-					PerformanceTestUtil.addBoxesWithMixedControls(oLayout, 100);
-					oLayout.placeAt("content");
-					sap.ui.getCore().applyChanges();
-					fnResolve()
-				});
-			});
-
 			window.measureApplyStylesAfterStartUpWithStretchPlugin = function() {
 				sap.ui.require([
 					"rta/performance/RtaPerformanceTestUtil",
@@ -74,8 +53,7 @@
 					var aStack = [];
 					aStack.push(new Date().getTime());
 
-					RtaPerformanceTestUtil.startRta(sap.ui.getCore().byId("visibleLayout"))
-					.then(function() {
+					RtaPerformanceTestUtil.startRta(sap.ui.getCore().byId("visibleLayout")).then(function() {
 						var iCountCall = 0;
 						var bMeasurementDone = false;
 
@@ -117,8 +95,7 @@
 					var aStack = [];
 					aStack.push(new Date().getTime());
 
-					RtaPerformanceTestUtil.startRtaWithoutStretch(sap.ui.getCore().byId("visibleLayout"))
-					.then(function() {
+					RtaPerformanceTestUtil.startRtaWithoutStretch(sap.ui.getCore().byId("visibleLayout")).then(function() {
 						var iCountCall = 0;
 						var bMeasurementDone = false;
 
