@@ -209,5 +209,19 @@ sap.ui.define([
 		return this.getBadgeCustomData().getValue();
 	};
 
+	/**
+	 * Gets the ids of the elements labelling the Card container.
+	 *
+	 * @return {string} sAriaLabelledBy ids of elements that have to be labelled
+	 * @private
+	 */
+	CardBase.prototype._getAriaLabelledIds = function () {
+		var oHeader = this.getCardHeader(),
+			sTitleId = oHeader && oHeader._getTitle() ? oHeader._getTitle().getId() : "",
+			sAriaLabelledBy = this.getId() + "-ariaText " + sTitleId;
+
+		return sAriaLabelledBy.trim();
+	};
+
 	return CardBase;
 });

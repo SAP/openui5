@@ -410,15 +410,15 @@ sap.ui.define([
 	 * @returns {string} IDs of controls
 	 */
 	NumericHeader.prototype._getHeaderAccessibility = function () {
-		var sTitleId = this._getTitle() ? this._getTitle().getId() : "",
-			sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
+		var sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
 			sStatusTextId = this.getStatusText() ? this.getId() + "-status" : "",
 			sUnitOfMeasureId = this._getUnitOfMeasurement() ? this._getUnitOfMeasurement().getId() : "",
 			sSideIndicatorsId = this.getSideIndicators() ? this._getSideIndicatorIds() : "",
 			sDetailsId = this._getDetails() ? this._getDetails().getId() : "",
-			sMainIndicatorId = this._getMainIndicator() ? this._getMainIndicator().getId() : "";
+			sMainIndicatorId = this._getMainIndicator() ? this._getMainIndicator().getId() : "",
+			sIds = sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + sSideIndicatorsId + " " + sDetailsId;
 
-			return sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + sSideIndicatorsId + " " + sDetailsId;
+			return sIds.trim();
 	};
 
 	/**

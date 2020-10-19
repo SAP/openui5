@@ -56,7 +56,7 @@ sap.ui.define([
 		//Accessibility state
 		oRm.accessibilityState(oCard, {
 			role: "region",
-			labelledby: { value: oCard.getId() + "-ariaText", append: true }
+			labelledby: { value: oCard._getAriaLabelledIds(), append: true }
 		});
 		oRm.openEnd();
 

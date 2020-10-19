@@ -224,12 +224,12 @@ sap.ui.define([
 	 * @returns {string} IDs of controls
 	 */
 	Header.prototype._getHeaderAccessibility = function () {
-		var sTitleId = this._getTitle() ? this._getTitle().getId() : "",
-			sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
+		var sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
 			sStatusTextId = this.getStatusText() ? this.getId() + "-status" : "",
-			sAvatarId = this._getAvatar() ? this._getAvatar().getId() : "";
+			sAvatarId = this._getAvatar() ? this._getAvatar().getId() : "",
+			sIds = sSubtitleId + " " + sStatusTextId + " " + sAvatarId;
 
-		return sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sAvatarId;
+		return sIds.trim();
 	};
 
 	/**
