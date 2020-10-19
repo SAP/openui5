@@ -94,7 +94,7 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 				disabled: null, // Prevent aria-disabled as a disabled attribute is enough
 				posinset: oInfo.iItemNo,
 				setsize: oInfo.iTotalItems,
-				labelledby: {value: /*oMenu.getId() + "-label " + */this.getId() + "-txt " + this.getId() + "-scuttxt", append: true}
+				labelledby: {value: this.getId() + "-txt " + this.getId() + "-scuttxt", append: true}
 			});
 			if (oSubMenu) {
 				rm.attr("aria-haspopup", coreLibrary.aria.HasPopup.Menu.toLowerCase());

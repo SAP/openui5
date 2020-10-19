@@ -71,19 +71,11 @@ sap.ui.define([],
 		oRm.openEnd();
 		MenuRenderer.renderItems(oRm, oMenu);
 		if (bAccessible) {
-			/*var _getText = function(sKey, aArgs) {
-				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-				if (rb) {
-					return rb.getText(sKey, aArgs);
-				}
-				return sKey;
-			};*/
-
 			oRm.openStart("span", oMenu.getId() + "-label");
 			oRm.class("sapUiInvisibleText");
 			oRm.attr("aria-hidden", true);
 			oRm.openEnd();
-			oRm.text(oMenu.getAriaDescription() ? oMenu.getAriaDescription() : ""/*_getText("MNU_ARIA_NAME")*/);
+			oRm.text(oMenu.getAriaDescription() ? oMenu.getAriaDescription() : "");
 			oRm.close("span");
 		}
 		oRm.close("div");
