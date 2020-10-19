@@ -2030,10 +2030,10 @@ sap.ui.define([
 		Fiori20Adapter.detachViewChange(fnTitleListener);
 	});
 
-	QUnit.test("Blacklisted non-adaptable content is skipped", function (assert) {
+	QUnit.test("Blocklisted non-adaptable content is skipped", function (assert) {
 
-		var oBlacklistedControl = new Table(),
-			oPage = new Page({title: "Page Title", content:[oBlacklistedControl]});
+		var oBlocklistedControl = new Table(),
+			oPage = new Page({title: "Page Title", content:[oBlocklistedControl]});
 
 		this.oApp.addPage(oPage);
 
@@ -2056,7 +2056,7 @@ sap.ui.define([
 		assert.ok(oProcessNodeSpy.calledWith, this.oApp);
 		assert.ok(oProcessNodeSpy.calledWith, oPage);
 		assert.ok(oProcessNodeSpy.calledWith, oPage._getInternalHeader());
-		assert.ok(oProcessNodeSpy.neverCalledWith,oBlacklistedControl);
+		assert.ok(oProcessNodeSpy.neverCalledWith,oBlocklistedControl);
 
 		//cleanup
 		Fiori20Adapter.detachViewChange(fnTitleListener);
