@@ -191,5 +191,21 @@
         ]
       }
     ]
+  },
+  "1.78.10": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "284912b277a3b6ad6890c92a53e2b7b8e2c9c1db",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed failing qunit test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070355486"
+          }
+        ]
+      }
+    ]
   }
 }

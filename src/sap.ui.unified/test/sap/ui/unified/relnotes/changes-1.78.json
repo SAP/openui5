@@ -98,5 +98,55 @@
         ]
       }
     ]
+  },
+  "1.78.10": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "6afa777b09320d9836981af05a29689983b6df90",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: setters now work properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880070218"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070351084"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006337402020"
+          }
+        ]
+      },
+      {
+        "id": "8c9cfaf4a9d17025ebb29c15ba18445faad8b3eb",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "9d9472493884584541350c58e464b02d439186dd",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: focus is now correctly set on the opener button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070235043"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070360272"
+          }
+        ]
+      }
+    ]
   }
 }
