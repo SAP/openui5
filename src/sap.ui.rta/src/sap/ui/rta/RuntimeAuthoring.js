@@ -1153,7 +1153,8 @@ function(
 			layer: this.getLayer(),
 			version: nVersion
 		});
-		if (mParsedHash.params[sap.ui.fl.Versions.UrlParameter] === sVersion) {
+		var aVersionsParameter = mParsedHash.params[sap.ui.fl.Versions.UrlParameter];
+		if (aVersionsParameter && aVersionsParameter[0] === sVersion) {
 			// RTA was started with a version parameter, the displayed version has changed and the key user switches back
 			FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
 		} else {
