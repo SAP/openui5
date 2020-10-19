@@ -114,14 +114,37 @@ sap.ui.define([
 		this._sView = this.LIST_KEY;
 	};
 
+	/**
+	 * Adds custom content to the <code>sap.ui.mdc.p13n.panels.GroupPanelBase</code>
+	 *
+	 * @param {object} mViewSettings the setting for the cutom view
+	 * @param {sap.m.SegmentedButtonItem} mViewSettings.item the custom button used in the view switch
+	 * @param {sap.ui.core.Control} mViewSettings.content the content displayed in the custom view
+	 * @param {function} [mViewSettings.search] callback triggered by search - executed with the string as parameter
+	 * @param {function} [mViewSettings.selectionChange] callback triggered by selecting a view - executed with the key as parameter
+	 *
+	 */
 	GroupPanelBase.prototype.addCustomView = function(mViewSettings) {
 		var oItem = mViewSettings.item;
 		var sKey = oItem.getKey();
 		var oContent = mViewSettings.content;
 		var fnOnSearch = mViewSettings.search;
+		var fnSelectionChange = mViewSettings.selectionChange;
+
+		if (!sKey) {
+			throw new Error("Please provide an item of type sap.m.SegmentedButtonItem with a key");
+		}
 
 		if (fnOnSearch) {
-			this._getSearchField().attachLiveChange(fnOnSearch);
+			this._getSearchField().attachLiveChange(function(oEvt){
+				fnOnSearch(oEvt.getSource().getValue());
+			});
+		}
+
+		if (fnSelectionChange && this._oViewSwitch) {
+			this._oViewSwitch.attachSelectionChange(function(oEvt){
+				fnSelectionChange(oEvt.getParameter("item").getKey());
+			});
 		}
 
 		this._mView[sKey] = oContent;
