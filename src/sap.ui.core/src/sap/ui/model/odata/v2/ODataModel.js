@@ -7081,7 +7081,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.increaseLaundering = function(sPath, oChangedEntity) {
-		if (!oChangedEntity) {
+		if (!isPlainObject(oChangedEntity)) {
 			return;
 		}
 		for (var n in oChangedEntity) {
@@ -7112,7 +7112,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.decreaseLaundering = function(sPath, oChangedEntity) {
-		if (!oChangedEntity) {
+		if (!isPlainObject(oChangedEntity)) {
 			return;
 		}
 		for (var n in oChangedEntity) {
