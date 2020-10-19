@@ -3,8 +3,9 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
+	"sap/ui/table/Row",
 	"sap/ui/table/Column"
-], function(TableQUnitUtils, TableUtils, Column) {
+], function(TableQUnitUtils, TableUtils, Row, Column) {
 	"use strict";
 
 	var Hook = TableUtils.Hook;
@@ -14,7 +15,7 @@ sap.ui.define([
 			TableUtils.Hook.call(oScope, this.key, TableUtils.RowsUpdateReason.Change);
 		},
 		invalidCall: function(oScope) {
-			TableUtils.Hook.call(oScope, this.key, TableUtils.RowsUpdateReason.Change, undefined);
+			TableUtils.Hook.call(oScope, this.key, TableUtils.RowsUpdateReason.Change, "invalidArgument");
 		},
 		assertArguments: function(assert, _arguments) {
 			assert.deepEqual(Array.prototype.slice.call(_arguments), [TableUtils.RowsUpdateReason.Change], "Arguments are correct");
@@ -26,22 +27,11 @@ sap.ui.define([
 			TableUtils.Hook.call(oScope, this.key);
 		},
 		invalidCall: function(oScope) {
-			TableUtils.Hook.call(oScope, this.key, undefined);
+			TableUtils.Hook.call(oScope, this.key, "invalidArgument");
 		},
 		assertArguments: function(assert, _arguments) {
 			assert.deepEqual(Array.prototype.slice.call(_arguments), [], "Arguments are correct");
 		}
-	};
-	var oHookWithReturnValue = {
-		key: "Column.MenuItemNotification",
-		validCall: function(oScope) {
-			var oColumn = new Column();
-			var aReturnValues = TableUtils.Hook.call(oScope, this.key, oColumn);
-			oColumn.destroy();
-			return aReturnValues;
-		},
-		validReturnValue: true,
-		invalidReturnValue: 1
 	};
 
 	QUnit.module("Misc");
@@ -184,6 +174,57 @@ sap.ui.define([
 		}, "Calling a hook that does not expect arguments with arguments throws an error");
 	});
 
+	QUnit.test("Optional arguments", function(assert) {
+		var oRow = new Row();
+		var oHookWithOptionalArguments = {
+			key: "Row.ToggleOpenState",
+			validCalls: [
+				function(oScope) {
+					TableUtils.Hook.call(oScope, oHookWithOptionalArguments.key, oRow);
+				},
+				function(oScope) {
+					TableUtils.Hook.call(oScope, oHookWithOptionalArguments.key, oRow, null);
+				},
+				function(oScope) {
+					TableUtils.Hook.call(oScope, oHookWithOptionalArguments.key, oRow, true);
+				}
+			],
+			invalidCall: function(oScope) {
+				TableUtils.Hook.call(oScope, this.key, new Row(), 1);
+			},
+			assertArguments: [
+				function(assert, _arguments) {
+					assert.deepEqual(Array.prototype.slice.call(_arguments), [oRow], "Arguments are correct");
+				},
+				function(assert, _arguments) {
+					assert.deepEqual(Array.prototype.slice.call(_arguments), [oRow], "Arguments are correct");
+				},
+				function(assert, _arguments) {
+					assert.deepEqual(Array.prototype.slice.call(_arguments), [oRow, true], "Arguments are correct");
+				}
+			]
+		};
+		var oTable = this.oFakeTable;
+
+		for (var i = 0; i < oHookWithOptionalArguments.validCalls.length; i++) {
+			var handler = function() { //eslint-disable-line no-loop-func
+				oHookWithOptionalArguments.assertArguments[this](assert, arguments);
+			}.bind(i);
+			Hook.register(oTable, oHookWithOptionalArguments.key, handler);
+			oHookWithOptionalArguments.validCalls[i](oTable);
+			Hook.deregister(oTable, oHookWithOptionalArguments.key, handler);
+		}
+
+		assert.throws(function() {
+			var handler = function() {};
+			Hook.register(oTable, oHookWithOptionalArguments.key, handler);
+			oHookWithOptionalArguments.invalidCall(oTable);
+			Hook.deregister(oTable, oHookWithOptionalArguments.key, handler);
+		}, "Calling a hook with an invalid optional argument throws an error");
+
+		oRow.destroy();
+	});
+
 	QUnit.test("Call order", function(assert) {
 		var oTable = this.oFakeTable;
 		var oObject = {};
@@ -257,6 +298,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Return value", function(assert) {
+		var oColumn = new Column();
+		var oHookWithReturnValue = {
+			key: "Column.MenuItemNotification",
+			validCall: function(oScope) {
+				return TableUtils.Hook.call(oScope, this.key, oColumn);
+			},
+			validReturnValue: true,
+			invalidReturnValue: 1
+		};
 		var oTable = this.oFakeTable;
 		var oObjectA = {};
 		var oObjectB = {};
@@ -287,6 +337,8 @@ sap.ui.define([
 			oHookWithReturnValue.validReturnValue,
 			oHookWithReturnValue.validReturnValue
 		], "Return values for valid call");
+
+		oColumn.destroy();
 	});
 
 	QUnit.module("Registration", {
