@@ -105,6 +105,18 @@ sap.ui.define([
 						group: "Misc",
 						defaultValue: false
 					},
+					/**
+					 * Determines the ratio between the first and the second column when secondary values are displayed.
+					 *
+					 * <b>Note:</b> This property takes effect only when the <code>showSecondaryValues</code> property is set to <code>true</code>
+					 * and only in the context of <code>sap.m.Select</code>.
+					 * @private
+					 */
+					_columnRatio: {
+						type: "sap.m.SelectColumnRatio",
+						group: "Appearance",
+						visibility: "hidden"
+					},
 
 					/**
 					 * Defines the keyboard navigation mode.
@@ -685,6 +697,35 @@ sap.ui.define([
 			}
 
 			return aVisiblesItems;
+		};
+
+		/*
+		 * Returns the <code>columnRatio</code> transformed to columns percentages.
+		 *
+		 * @returns {Object}
+		 * @private
+		 */
+		SelectList.prototype._getColumnsPercentages = function() {
+			var sRatio = this.getProperty("_columnRatio"),
+				aRatios,
+				iTotalProportions,
+				iFirstColumnProportion;
+
+			if (!sRatio) {
+				return null;
+			}
+
+			aRatios = sRatio.split(":").map(function(sNumber){
+					return parseInt(sNumber);
+				});
+
+			iTotalProportions = aRatios[0] + aRatios[1];
+			iFirstColumnProportion = Math.round(aRatios[0] / iTotalProportions * 100);
+
+			return {
+				firstColumn: iFirstColumnProportion + "%",
+				secondColumn: 100 - iFirstColumnProportion + "%"
+			};
 		};
 
 		/*

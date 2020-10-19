@@ -125,7 +125,8 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 				CSS_CLASS = SelectListRenderer.CSS_CLASS,
 				sTooltip = oItem.getTooltip_AsString(),
 				sTextDir = oItem.getTextDirection(),
-				bShowSecondaryValues = oList.getShowSecondaryValues();
+				bShowSecondaryValues = oList.getShowSecondaryValues(),
+				oColumnsProportions;
 
 			oRm.openStart("li", mStates.elementData ? oItem : null);
 
@@ -184,10 +185,14 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 			oRm.openEnd();
 
 			if (bShowSecondaryValues) {
+				oColumnsProportions = oList._getColumnsPercentages();
 
 				oRm.openStart("span");
 				oRm.class(CSS_CLASS + "Cell");
 				oRm.class(CSS_CLASS + "FirstCell");
+				if (oColumnsProportions) {
+					oRm.style("width", oColumnsProportions.firstColumn);
+				}
 				oRm.attr("disabled", "disabled"); // fixes span obtaining focus in IE
 				this.renderDirAttr(oRm, sTextDir);
 
@@ -201,6 +206,9 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 				oRm.openStart("span");
 				oRm.class(CSS_CLASS + "Cell");
 				oRm.class(CSS_CLASS + "LastCell");
+				if (oColumnsProportions) {
+					oRm.style("width", oColumnsProportions.secondColumn);
+				}
 				oRm.attr("disabled", "disabled"); // fixes span obtaining focus in IE
 				oRm.openEnd();
 

@@ -10844,4 +10844,90 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.module("columnRatio property", {
+			beforeEach: function () {
+				this.oSelect = new Select({
+					items : [
+						new ListItem({
+							text: "First item text",
+							additionalText: "First item additional text"
+						}),
+						new ListItem({
+							text: "Second item text",
+							additionalText: "Second item additional text"
+						})
+					]
+				});
+				this.oSelect.placeAt("content");
+				Core.applyChanges();
+
+			},
+			afterEach: function () {
+				this.oSelect.destroy();
+			}
+		});
+
+		QUnit.test("columnRatio value is propagated correctly", function (assert) {
+			//Arrange
+			var oList = this.oSelect.getList(),
+				oSelect = this.oSelect;
+
+			//Assert
+			assert.equal(oList.getProperty("_columnRatio"), undefined, "List's columnRatio property is not set by default");
+
+			//Act
+			oSelect.setShowSecondaryValues(true);
+			Core.applyChanges();
+
+			//Assert
+			assert.equal(oList.getProperty("_columnRatio"), oSelect.getColumnRatio(), "List's columnRatio property is synced correctly");
+
+			//Act
+			oSelect.setShowSecondaryValues(false);
+			Core.applyChanges();
+
+			//Assert
+			assert.equal(oList.getProperty("_columnRatio"), undefined, "List's columnRatio property is synced correctly");
+		});
+
+		QUnit.test("columnRatio value is synced correctly", function (assert) {
+			//Arrange
+			var oList = this.oSelect.getList(),
+				oSelect = this.oSelect;
+
+			//Act
+			oSelect.setShowSecondaryValues(true);
+			Core.applyChanges();
+
+			//Assert
+			assert.equal(oList.getProperty("_columnRatio"), oSelect.getColumnRatio(), "List's columnRatio property is synced correctly");
+
+			//Act
+			oSelect.setColumnRatio("5:1");
+			Core.applyChanges();
+
+			//Assert
+			assert.equal(oList.getProperty("_columnRatio"), oSelect.getColumnRatio(), "List's columnRatio property is synced correctly");
+
+			//Act
+			oSelect.setColumnRatio(null);
+			Core.applyChanges();
+
+			//Assert
+			assert.equal(oList.getProperty("_columnRatio"), oSelect.getColumnRatio(), "List's columnRatio property is synced correctly");
+
+			//Act
+			oSelect.setColumnRatio("1:1");
+			Core.applyChanges();
+
+			//Assert
+			assert.equal(oList.getProperty("_columnRatio"), oSelect.getColumnRatio(), "List's columnRatio property is synced correctly");
+
+			//Act
+			oSelect.setColumnRatio(undefined);
+			Core.applyChanges();
+
+			//Assert
+			assert.equal(oList.getProperty("_columnRatio"), oSelect.getColumnRatio(), "List's columnRatio property is synced correctly");
+		});
 	});

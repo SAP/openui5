@@ -327,6 +327,18 @@ function(
 						defaultValue: false
 					},
 					/**
+					 * Determines the ratio between the first and the second column when secondary values are displayed.
+					 *
+					 * <b>Note:</b> This property takes effect only when the <code>showSecondaryValues</code> property is set to <code>true</code>.
+					 * @since 1.86
+					 * @experimental As of version 1.86
+					 */
+					columnRatio: {
+						type: "sap.m.SelectColumnRatio",
+						group: "Appearance",
+						defaultValue: "3:2"
+					},
+					/**
 					 * Indicates that user input is required. This property is only needed for accessibility purposes when a single relationship between
 					 * the field and a label (see aggregation <code>labelFor</code> of <code>sap.m.Label</code>) cannot be established
 					 * (e.g. one label should label multiple fields).
@@ -1942,6 +1954,18 @@ function(
 			this._handleAriaActiveDescendant(vItem);
 		};
 
+		Select.prototype.setColumnRatio = function(sRatio) {
+			var oList = this.getList();
+
+			this.setProperty("columnRatio", sRatio, true);
+
+			if (oList && this.getShowSecondaryValues()) {
+				oList.setProperty("_columnRatio", this.getColumnRatio());
+			}
+
+			return this;
+		};
+
 		/**
 		 * Determines whether the <code>selectedItem</code> association and <code>selectedKey</code> property are synchronized.
 		 *
@@ -2559,10 +2583,13 @@ function(
 			// otherwise invalidate only the dropdown list
 			var bSuppressInvalidate = !this._isShadowListRequired();
 			this.setProperty("showSecondaryValues", bAdditionalText, bSuppressInvalidate);
-			var oList = this.getList();
+			var oList = this.getList(),
+				sColumnRatio = bAdditionalText ? this.getColumnRatio() : null;
 
 			if (oList) {
 				oList.setShowSecondaryValues(bAdditionalText);
+
+				oList.setProperty("_columnRatio", sColumnRatio);
 			}
 
 			return this;
