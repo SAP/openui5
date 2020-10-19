@@ -138,7 +138,7 @@ sap.ui.define([
 					},
 					/**
 					 * Defines how the steps of the Wizard would be visualized.
-					 * @experimental since 1.83
+					 * @experimental since 1.84
 					 */
 					renderMode: {
 						type: "sap.m.WizardRenderMode",
