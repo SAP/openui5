@@ -460,7 +460,7 @@ sap.ui.define([
 				params: {}
 			};
 			this.oRta._oVersionsModel.setProperty("/displayedVersion", sap.ui.fl.Versions.Draft);
-			mParsedUrlHash.params[sap.ui.fl.Versions.UrlParameter] = sap.ui.fl.Versions.Original.toString();
+			mParsedUrlHash.params[sap.ui.fl.Versions.UrlParameter] = [sap.ui.fl.Versions.Original.toString()];
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedUrlHash);
 
 			this.oRta._onSwitchVersion(oEvent);
