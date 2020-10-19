@@ -1133,4 +1133,149 @@ sap.ui.define([
 		assert.strictEqual(oError.$reported, true);
 	});
 });
+
+	//*********************************************************************************************
+[{
+	input : undefined,
+	output : {}
+}, {
+	input : null,
+	output : {}
+}, {
+	input : "foo",
+	output : {}
+}, {
+	input : 42,
+	output : {}
+}, {
+	input : ["a", "b", "c"],
+	output : {}
+}].forEach(function (oFixture, i) {
+	QUnit.test("increaseLaundering: skip laundering if oChangedEntity is not a plain object " + i,
+			function (assert) {
+		var oModel = {
+				mLaunderingState : {}
+			};
+
+		// code under test
+		ODataModel.prototype.increaseLaundering.call(oModel, "/Test", oFixture.input);
+
+		assert.deepEqual(oModel.mLaunderingState, oFixture.output);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	input : {},
+	launderingState : {},
+	output : {"/Test" : 1}
+}, {
+	input : {property1 : "foo", property2 : "bar"},
+	launderingState : {},
+	output : {"/Test" : 1, "/Test/property1" : 1, "/Test/property2" : 1}
+}, {
+	input : {__metadata : {}, property1 : "foo"},
+	launderingState : {},
+	output : {"/Test" : 1, "/Test/property1" : 1}
+}, {
+	increaseLaunderingPath : "/Test/property2",
+	input : {property1 : "foo", property2 : {}},
+	launderingState : {},
+	output : {"/Test" : 1, "/Test/property1" : 1}
+}, {
+	input : {property1 : "foo", property3 : "baz"},
+	launderingState : {"/Test" : 1, "/Test/property1" : 1, "/Test/property2" : 1},
+	output : {"/Test" : 2, "/Test/property1" : 2, "/Test/property2" : 1, "/Test/property3" : 1}
+}].forEach(function (oFixture, i) {
+	QUnit.test("increaseLaundering: oChangedEntity is a plain object " + i, function (assert) {
+		var sIncreaseLaunderingPath = oFixture.increaseLaunderingPath || "",
+			oModel = {
+				increaseLaundering : function () {},
+				mLaunderingState : oFixture.launderingState
+			};
+
+		this.mock(oModel).expects("increaseLaundering")
+			.withExactArgs(sIncreaseLaunderingPath,
+				sinon.match.same(oFixture.input[sIncreaseLaunderingPath.slice(6)]))
+			.exactly(sIncreaseLaunderingPath ? 1 : 0);
+
+		// code under test
+		ODataModel.prototype.increaseLaundering.call(oModel, "/Test", oFixture.input);
+
+		assert.deepEqual(oModel.mLaunderingState, oFixture.output);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	input : undefined,
+	output : {"/Test" : 1}
+}, {
+	input : null,
+	output : {"/Test" : 1}
+}, {
+	input : "foo",
+	output : {"/Test" : 1}
+}, {
+	input : 42,
+	output : {"/Test" : 1}
+}, {
+	input : ["a", "b", "c"],
+	output : {"/Test" : 1}
+}].forEach(function (oFixture, i) {
+	QUnit.test("decreaseLaundering: skip laundering if oChangedEntity is not a plain object " + i,
+			function (assert) {
+		var oModel = {
+				mLaunderingState : {"/Test" : 1}
+			};
+
+		// code under test
+		ODataModel.prototype.decreaseLaundering.call(oModel, "/Test", oFixture.input);
+
+		assert.deepEqual(oModel.mLaunderingState, oFixture.output);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	input : {},
+	launderingState : {"/Test" : 1},
+	output : {}
+}, {
+	input : {property1 : "foo", property2 : "bar"},
+	launderingState : {"/Test" : 1, "/Test/property1" : 1, "/Test/property2" : 1},
+	output : {}
+}, {
+	input : {__metadata : {}, property1 : "foo"},
+	launderingState : {"/Test" : 1, "/Test/property1" : 1},
+	output : {}
+}, {
+	decreaseLaunderingPath : "/Test/property2",
+	input : {property1 : "foo", property2 : {}},
+	launderingState : {"/Test" : 1, "/Test/property1" : 1},
+	output : {}
+}, {
+	input : {property1 : "foo", property3 : "baz"},
+	launderingState : {"/Test" : 2, "/Test/property1" : 2, "/Test/property2" : 1,
+		"/Test/property3" : 1},
+	output : {"/Test" : 1, "/Test/property1" : 1, "/Test/property2" : 1}
+}].forEach(function (oFixture, i) {
+	QUnit.test("decreaseLaundering: oChangedEntity is a plain object " + i, function (assert) {
+		var sDecreaseLaunderingPath = oFixture.decreaseLaunderingPath || "",
+			oModel = {
+				decreaseLaundering : function () {},
+				mLaunderingState : oFixture.launderingState
+			};
+
+		this.mock(oModel).expects("decreaseLaundering")
+			.withExactArgs(sDecreaseLaunderingPath,
+				sinon.match.same(oFixture.input[sDecreaseLaunderingPath.slice(6)]))
+			.exactly(sDecreaseLaunderingPath ? 1 : 0);
+
+		// code under test
+		ODataModel.prototype.decreaseLaundering.call(oModel, "/Test", oFixture.input);
+
+		assert.deepEqual(oModel.mLaunderingState, oFixture.output);
+	});
+});
 });
