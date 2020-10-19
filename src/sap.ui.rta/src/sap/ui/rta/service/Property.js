@@ -412,94 +412,27 @@ sap.ui.define([
 				 * Example:
 				 *
 				 * <pre>
-				 *     {
-				 *        "properties": {
-				 *           "dtMetadataProperty2": {
-				 *              "value": {
-				 *                 "mockKey2": "dtMetadataProperty2"
-				 *              },
-				 *              "virtual": false,
-				 *              "ignore": false
-				 *              },
-				 *           "virtualProperty1": {
-				 *              "value": "Virtual property value 1",
-				 *              "virtual": true,
-				 *              "type": "Virtual property type",
-				 *              "name": "Virtual Property Name 1",
-				 *              "ignore": false,
-				 *              "possibleValues": [
-				 *                 "possibleValue1",
-				 *                 "possibleValue2"
-				 *              ]
-				 *           },
-				 *           "metadataProperty1": {
-				 *              "value": "metadataPropertyValue1",
-				 *              "virtual": false,
-				 *              "type": "metadataPropertyType1",
-				 *              "name": "metadataPropertyName1",
-				 *              "ignore": false,
-				 *              "binding": {
-				 *                 "parts": [
-				 *                 {
-				 *                    "path": "path1",
-				 *                    "model": "model1"
-				 *                 },
-				 *                 {
-				 *                    "path": "path2",
-				 *                    "model": "model2"
-				 *                 }
-				 *                 ],
-				 *                 "bindingValues": {
-				 *                    "values": "Binding Value",
-				 *                    "originalValues": "Original Binding Value"
-				 *                 },
-				 *                 "bindingString": "bindingString"
-				 *              }
-				 *           }
-				 *        },
-				 *        "annotations": {
-				 *           "annotation1": {
-				 *              "namespace": "com.sap.mock.vocabularies",
-				 *              "annotation": "annotation1",
-				 *              "whiteList": {
-				 *                 "properties": [
-				 *                    "Property1",
-				 *                    "Property2",
-				 *                    "Property3"
-				 *                 ]
-				 *              },
-				 *              "ignore": false,
-				 *              "appliesTo": [
-				 *                 "Page/Button"
-				 *              ],
-				 *              "links": {
-				 *                 "developer": [
-				 *                 {
-				 *                    "href": "annotation1.html",
-				 *                    "text": "Annotation 1 Text 1"
-				 *                 },
-				 *                 {
-				 *                    "href": "annotation2.html",
-				 *                    "text": "Annotation 1 Text 2"
-				 *                 }
-				 *                 ]
-				 *              }
-				 *           }
-				 *        },
-				 *        "name": {
-				 *           "singular": "Singular Control Name",
-				 *           "plural": "Plural Control Name"
-				 *        },
-				 *        "label": "dt-metadata label",
-				 *        "links": {
-				 *                 "developer": [
-				 *                 {
-				 *                    "href": "Links.html",
-				 *                    "text": "Links Text 1"
-				 *                 }
-				 *                 ]
-				 *         }
-				 *     }
+				 *	{
+				 * 		"properties": {
+				 * 			<...>,
+				 * 			"virtualProperty1": {
+				 * 				<...>
+				 * 			},
+				 * 			"metadataProperty1": {
+				 * 				<...>
+				 * 			}
+				 * 		},
+				 * 		"annotations": {
+				 * 			"annotation1": {
+				 *				<...>
+				 * 			},
+				 * 			<...>
+				 * 		},
+				 * 		"links": {
+				 * 			<...>
+				 * 		},
+				 * 		<...>
+				 * 	}
 				 * </pre>
 				 * @name sap.ui.rta.service.Property.get
 				 * @param {string} sControlId - ID of the control to start with

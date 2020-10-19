@@ -247,11 +247,6 @@ function(
 					// annotation not ignored
 						namespace: "com.sap.mock.vocabularies",
 						annotation: "annotation1",
-						whiteList: {
-							properties: [
-								"Property1", "Property2", "Property3"
-							]
-						},
 						ignore: function (oControl) {
 							return oControl.getId() !== "mockControl"; // false
 						},
@@ -284,11 +279,6 @@ function(
 					// annotation ignored
 						namespace: "com.sap.mock.vocabularies",
 						annotation: "annotation2",
-						whiteList: {
-							properties: [
-								"Property1", "Property2", "Property3"
-							]
-						},
 						ignore: function (oControl) {
 							return oControl.getId() === "mockControl"; // true
 						},
