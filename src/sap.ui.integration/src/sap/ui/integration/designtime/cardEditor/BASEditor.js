@@ -54,6 +54,10 @@ sap.ui.define([
 		return this._oCurrent.configuration;
 	};
 
+	BASEditor.prototype.getConfigurationString = function () {
+		return this._oCurrent.configurationstring;
+	};
+
 	BASEditor.prototype._generateDesigntimeJSConfig = function () {
 		var oMetadata = this._formatExportedDesigntimeMetadata(this.getDesigntimeMetadata());
 		var oJson = this.getJson();
@@ -202,8 +206,8 @@ sap.ui.define([
 		}
 	};
 
-	BASEditor.prototype._cleanJson = function () {
-		var oJson = this.getJson();
+	BASEditor.prototype._cleanJson = function (oJson) {
+		oJson = oJson || this.getJson();
 		oJson = deepClone(oJson);
 		var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
 		for (var n in mParameters) {
@@ -332,7 +336,8 @@ sap.ui.define([
 				sTempDesigntimeUrl = "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate";
 				this.fireCreateConfiguration({
 					file: "dt/configuration.js",
-					content: sDesigntime
+					content: sDesigntime,
+					manifest: this._cleanJson(oJson)
 				});
 				sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
 			}

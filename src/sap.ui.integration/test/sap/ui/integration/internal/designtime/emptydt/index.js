@@ -8,8 +8,7 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 		oConfigAdmin,
 		oConfigContent,
 		oConfigTranslation,
-		sUrl = new URL(document.location.href),
-		sBaseUrl = sUrl.origin + sUrl.pathname.substring(sUrl.pathname, sUrl.pathname.lastIndexOf("/") + 1);
+		sBaseUrl = document.location.protocol + "//" + document.location.host + document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/") + 1);
 
 	loadCardEditor().then(function (x) {
 		sap.ui.require(["sap/ui/integration/designtime/cardEditor/BASEditor", "sap/ui/integration/widgets/Card", "sap/ui/integration/designtime/editor/CardEditor"], function (BASCardEditor, Card, ConfigurationEditor) {
