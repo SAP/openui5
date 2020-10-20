@@ -1209,6 +1209,25 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Description for required FileUploader", function (assert) {
+		// Setup
+		var oLabel = new sap.m.Label({ text: "Label", labelFor: "fu", required: true }),
+			oFileUploader = new sap.ui.unified.FileUploader("fu"),
+			sRequiredText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("FILEUPLOAD_REQUIRED");
+
+		oLabel.placeAt("qunit-fixture");
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $description = oFileUploader.$().find("#fu-AccDescr");
+		assert.ok($description.text().indexOf(sRequiredText) !== -1, "Word Required is added in the description");
+
+		// Cleanup
+		oLabel.destroy();
+		oFileUploader.destroy();
+	});
+
 	QUnit.test("Internal hidden label for the Input", function (assert) {
 		var oFileUploader = new sap.ui.unified.FileUploader(),
 			sExpectedLabelId = InvisibleText.getStaticId("sap.ui.unified", "FILEUPLOAD_FILENAME"),
