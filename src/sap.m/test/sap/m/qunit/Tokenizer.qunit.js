@@ -359,6 +359,10 @@ sap.ui.define([
 					return oTokenizer._getTokensList().getItems()[0];
 				}
 			};
+
+		var oTokenDeleteSpy = this.spy(oTokenizer, "fireTokenDelete");
+		var oTokenUpdateSpy = this.spy(oTokenizer, "fireTokenUpdate");
+
 		sap.ui.getCore().applyChanges();
 
 		// Act
@@ -378,7 +382,8 @@ sap.ui.define([
 		// Assert
 		aItems = oTokenizer._getTokensList().getItems();
 		aTokens = oTokenizer.getTokens();
-		assert.strictEqual(aItems.length, aTokens.length, "List items and tokens should be equal:" + aItems.length);
+		assert.ok(oTokenUpdateSpy.called, "Token Update event should be called");
+		assert.ok(oTokenDeleteSpy.called, "Token Delete event should be called");
 
 		oItem = aItems[0];
 		oToken = sap.ui.getCore().byId(oItem.data("tokenId"));

@@ -386,6 +386,10 @@ sap.ui.define([
 				type: Tokenizer.TokenUpdateType.Removed
 			});
 
+			this.fireTokenDelete({
+				tokens: [oTokenToDelete]
+			});
+
 			aListItems = this._getTokensList().getItems();
 			iItemIndex = aListItems.indexOf(oListItem);
 			oItemtoFocus = (iItemIndex === aListItems.length - 1) ?
@@ -393,7 +397,6 @@ sap.ui.define([
 
 			oItemtoFocus && oItemtoFocus.focus();
 
-			this.removeAggregation("tokens", oTokenToDelete);
 			oListItem.destroy();
 
 			this._adjustTokensVisibility();
