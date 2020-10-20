@@ -394,13 +394,12 @@ sap.ui.define([
 		 * @param {object|sap.ui.core.mvc.Controller} Controller to extend
 		 * @param {string} Name of the controller
 		 * @param {boolean} If set to true, extension will be run in async mode
-		 * @param {string} ID of the owner component
 		 * @return {sap.ui.core.mvc.Controller|Promise} A <code>Promise</code> in case of asynchronous extend
 		 *           or the <code>controller</code> in case of synchronous extend
 		 *
 		 * @private
 		 */
-		Controller.extendByCustomizing = function(oController, sName, bAsync, sOwnerId) {
+		Controller.extendByCustomizing = function(oController, sName, bAsync) {
 			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
 
 			if (!CustomizingConfiguration) {
@@ -437,7 +436,7 @@ sap.ui.define([
 				aControllerNames = [],
 				sExtControllerName,
 				vController = bAsync ? Promise.resolve(oController) : oController,
-				controllerExtensionConfig = CustomizingConfiguration.getControllerExtension(sName, sOwnerId);
+				controllerExtensionConfig = CustomizingConfiguration.getControllerExtension(sName, ManagedObject._sOwnerId);
 
 			if (controllerExtensionConfig) {
 				sExtControllerName = typeof controllerExtensionConfig === "string" ? controllerExtensionConfig : controllerExtensionConfig.controllerName;
@@ -488,7 +487,6 @@ sap.ui.define([
 		 *
 		 * @param {object|sap.ui.core.mvc.Controller} Controller to extend
 		 * @param {string} Name of the controller
-		 * @param {string} ID of the owner component
 		 * @param {boolean} If set to true, extension will be run in async mode
 		 * @return {sap.ui.core.mvc.Controller|Promise} A <code>Promise</code> in case of asynchronous extend
 		 *           or the <code>controller</code> in case of synchronous extend
@@ -611,7 +609,7 @@ sap.ui.define([
 							return instantiateController(ControllerClass, sName);
 						})
 						.then(function(oController) {
-							return Controller.extendByCustomizing(oController, sName, bAsync, sOwnerId);
+							return Controller.extendByCustomizing(oController, sName, bAsync);
 						})
 						.then(function(oController) {
 							return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
@@ -622,7 +620,7 @@ sap.ui.define([
 				} else {
 					ControllerClass = loadControllerClass(sName, bAsync);
 					oController = instantiateController(ControllerClass, sName);
-					oController = Controller.extendByCustomizing(oController, sName, bAsync, sOwnerId);
+					oController = Controller.extendByCustomizing(oController, sName, bAsync);
 					oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
 					//if controller is created via the factory all extensions are already mixed in
 					oController._sapui_isExtended = true;
