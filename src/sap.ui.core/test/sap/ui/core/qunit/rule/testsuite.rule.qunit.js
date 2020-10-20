@@ -23,13 +23,13 @@ sap.ui.define(function () {
 					}
 				}
 			},
-			"config/v4ModelPreloadAndEarlyRequests": {
-				title: "QUnit Tests for 'v4ModelPreloadAndEarlyRequests' rules",
+			"config/modelPreloadAndEarlyRequests": {
+				title: "QUnit Tests for 'modelPreloadAndEarlyRequests' rules",
 				loader: {
 					paths: {
-						"samples/components/config/v4ModelPreloadAndEarlyRequests":
+						"samples/components/config/modelPreloadAndEarlyRequests":
 							"test-resources/sap/ui/core/samples/components/config/"
-							+ "v4ModelPreloadAndEarlyRequests/"
+							+ "modelPreloadAndEarlyRequests/"
 					}
 				}
 			},

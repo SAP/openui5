@@ -3,7 +3,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	"use strict";
 
 	return UIComponent.extend(
-			"samples.components.config.v4ModelPreloadAndEarlyRequests.Component", {
+			"samples.components.config.modelPreloadAndEarlyRequests.Component", {
 		metadata : {
 			manifest : "json"
 		}
