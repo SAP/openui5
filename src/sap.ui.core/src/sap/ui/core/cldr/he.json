@@ -1,5 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
+	"__version": "35.1.0",
+	"__buildtime": "2020-10-20T05:15:22.539Z",
 	"languages": {
 		"aa": "אפארית",
 		"ab": "אבחזית",
