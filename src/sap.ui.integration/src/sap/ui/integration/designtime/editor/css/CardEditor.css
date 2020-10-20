@@ -63,6 +63,19 @@
 	padding-left:1px;
 	box-sizing: border-box;
 }
+
+/** force inputs with no border **/
+.sapUiIntegrationCardEditor input {
+	border: none;
+	height: 100%;
+}
+
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiLocalBusyIndicatorAnimation {
+	left: 1.3rem;
+	transform: scale3d(0.4, 0.4, 1);
+	transform-origin: 0px 0px;
+}
+
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemField .sapUiIntegrationCardEditorEditor {
 	width: 100%;
 }

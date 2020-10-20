@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"./CardEditor",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
+	"sap/ui/integration/Designtime",
 	"sap/ui/integration/util/CardMerger",
 	"sap/base/util/LoaderExtensions"
 ], function (
@@ -21,6 +22,7 @@ sap.ui.define([
 	ObjectPath,
 	CardEditor,
 	BaseEditor,
+	Designtime,
 	CardMerger,
 	LoaderExtensions
 ) {
@@ -172,9 +174,15 @@ sap.ui.define([
 				}
 			}
 			this._oDesigntimeJSConfig = oCopyConfig;
-			this._fnDesigntime.prototype.create = function () {
-				return this._oDesigntimeJSConfig;
-			}.bind(this);
+			if (this._fnDesigntime.prototype.create) {
+				this._fnDesigntime.prototype.create = function () {
+					return this._oDesigntimeJSConfig;
+				}.bind(this);
+			} else {
+				this._fnDesigntime = function (o) {
+					return new Designtime(o);
+				}.bind(this, this._oDesigntimeJSConfig);
+			}
 			this._oCurrent = {
 				configuration: this._cleanConfig(this._oDesigntimeJSConfig),
 				manifest: this._cleanJson(),
@@ -331,7 +339,7 @@ sap.ui.define([
 			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
 			if (!sDesigntimePath) {
 				var sDesigntime = configurationTemplate;
-				sDesigntime = sDesigntime.replace(/\$\$CARDID\$\$/, sCardId + ".Configuration");
+				//sDesigntime = sDesigntime.replace(/\$\$CARDID\$\$/, sCardId + ".Configuration");
 				ObjectPath.set(["sap.card", "designtime"], "dt/configuration", oJson);
 				sTempDesigntimeUrl = "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate";
 				this.fireCreateConfiguration({
@@ -371,8 +379,14 @@ sap.ui.define([
 						if (!DesigntimeClass) {
 							//file exists but no valid js
 						} else if (DesigntimeClass) {
-							//check if it is a designtime class
-							if (DesigntimeClass.getMetadata &&
+							if (!DesigntimeClass.getMetadata) {
+								var oDesigntime = new DesigntimeClass();
+								that._oDesigntimeJSConfig = oDesigntime.getSettings();
+								that._fnDesigntime = DesigntimeClass;
+								var oMetadata = that._generateMetadataFromJSConfig(that._oDesigntimeJSConfig);
+								DesigntimeClass = oDesigntime.getMetadata().getClass();
+								fnResolve(oMetadata);
+							} else if (DesigntimeClass.getMetadata &&
 								DesigntimeClass.getMetadata() &&
 								DesigntimeClass.getMetadata().getParent &&
 								DesigntimeClass.getMetadata().getParent().getName() === "sap.ui.integration.Designtime") {
