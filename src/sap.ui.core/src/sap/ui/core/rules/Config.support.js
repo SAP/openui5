@@ -384,8 +384,8 @@ sap.ui.define([
 		}
 	};
 
-	var oV4ModelPreloadAndEarlyRequests = {
-		id: "v4ModelPreloadAndEarlyRequests",
+	var oModelPreloadAndEarlyRequests = {
+		id: "modelPreloadAndEarlyRequests",
 		audiences: [Audiences.Application],
 		categories: [Categories.Performance],
 		enabled: true,
@@ -517,7 +517,7 @@ sap.ui.define([
 		oLazyComponents,
 		oReuseComponents,
 		oModelPreloading,
-		oV4ModelPreloadAndEarlyRequests,
+		oModelPreloadAndEarlyRequests,
 		oAsynchronousXMLViews
 	];
 }, true);

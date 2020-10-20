@@ -10,14 +10,14 @@ sap.ui.define([
 	"use strict";
 	var oCreatedComponent;
 
-	QUnit.module("sap.ui.core v4ModelPreloadAndEarlyRequests rule tests", {
+	QUnit.module("sap.ui.core modelPreloadAndEarlyRequests rule tests", {
 		afterEach: function() {
 			oCreatedComponent.destroy();
 		}
 	});
 
 	return Component.create({
-		name: "samples.components.config.v4ModelPreloadAndEarlyRequests"
+		name: "samples.components.config.modelPreloadAndEarlyRequests"
 	}).then(function(oComponent) {
 		oCreatedComponent = oComponent;
 
@@ -27,7 +27,7 @@ sap.ui.define([
 						+ "'].settings.earlyRequests in manifest to true";
 
 				assert.strictEqual(oIssue.details, sDetail);
-				assert.strictEqual(oIssue.rule.id, "v4ModelPreloadAndEarlyRequests");
+				assert.strictEqual(oIssue.rule.id, "modelPreloadAndEarlyRequests");
 				assert.strictEqual(oIssue.rule.title,
 					"OData V4 model preloading and no earlyRequests");
 				assert.strictEqual(oIssue.severity, "High");
@@ -37,7 +37,7 @@ sap.ui.define([
 		testRule({
 			executionScopeType: "global",
 			libName: "sap.ui.core",
-			ruleId: "v4ModelPreloadAndEarlyRequests",
+			ruleId: "modelPreloadAndEarlyRequests",
 			expectedNumberOfIssues: 2,
 			checkIssues: checkIssues
 		});

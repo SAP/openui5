@@ -10,7 +10,7 @@
 				}
 			}
 		},
-		"id" : "samples.components.sample.config.v4ModelPreloadAndEarlyRequests"
+		"id" : "samples.components.sample.config.modelPreloadAndEarlyRequests"
 	},
 	"sap.ui5" : {
 		"dependencies" : {
