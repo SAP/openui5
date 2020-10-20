@@ -16542,6 +16542,7 @@ sap.ui.define([
 				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
 					+ "/groupby((Region),aggregate(SalesAmount))&$count=true&$skip=4&$top=3",
 					function () {
+						oTable.setFirstVisibleRow(0); // scroll 'US' back into view
 						// code under test
 						oUSContext.collapse();
 
