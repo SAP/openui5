@@ -205,10 +205,6 @@ function(
 		return doesActiveVersionExists(aVersions) ? MessageType.None : MessageType.Success;
 	};
 
-	Adaptation.prototype.formatVersionListItemType = function (bSwitchVersionsActive) {
-		return bSwitchVersionsActive ? "Active" : "Inactive";
-	};
-
 	Adaptation.prototype.formatOriginalAppHighlightText = function (aVersions) {
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		return doesActiveVersionExists(aVersions) ? oTextResources.getText("LBL_INACTIVE") : oTextResources.getText("LBL_ACTIVE");
@@ -259,7 +255,6 @@ function(
 					formatHighlightText: this.formatHighlightText.bind(this),
 					formatOriginalAppHighlight: this.formatOriginalAppHighlight.bind(this),
 					formatOriginalAppHighlightText: this.formatOriginalAppHighlightText.bind(this),
-					formatVersionListItemType: this.formatVersionListItemType.bind(this),
 					versionSelected: this.versionSelected.bind(this)
 				}
 			}).then(function (oVersionsDialog) {
@@ -277,8 +272,8 @@ function(
 		});
 	};
 
-	Adaptation.prototype.showRestore = function (bSwitchVersionsEnabled) {
-		return !bSwitchVersionsEnabled;
+	Adaptation.prototype.showRestore = function (bVersioningEnabled) {
+		return !bVersioningEnabled;
 	};
 
 	Adaptation.prototype._showButtonIcon = function(sButtonName, sIcon, sToolTipKey) {

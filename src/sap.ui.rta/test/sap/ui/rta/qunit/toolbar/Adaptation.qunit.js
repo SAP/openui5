@@ -201,8 +201,7 @@ function(
 	}, function() {
 		QUnit.test("Given switching versions is possible", function (assert) {
 			this.oVersionsModel = new JSONModel({
-				versioningEnabled: true,
-				switchVersionsActive: true
+				versioningEnabled: true
 			});
 
 			this.oToolbar = new Adaptation({
@@ -224,8 +223,7 @@ function(
 
 		QUnit.test("Given switching versions is not possible", function (assert) {
 			this.oVersionsModel = new JSONModel({
-				versioningEnabled: false,
-				switchVersionsActive: false
+				versioningEnabled: false
 			});
 
 			this.oToolbar = new Adaptation({

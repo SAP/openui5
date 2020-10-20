@@ -43,12 +43,6 @@ sap.ui.define([
 			}
 		});
 
-		var sSwitchVersionsActive = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-versionSwitchActive");
-		var bSwitchVersionsActive = false;
-		if (sSwitchVersionsActive && (sSwitchVersionsActive !== "false")) {
-			bSwitchVersionsActive = true;
-		}
-
 		var sPersistedBasisForDisplayedVersion = Utils.getParameter(sap.ui.fl.Versions.UrlParameter);
 		var nPersistedBasisForDisplayedVersion;
 		if (sPersistedBasisForDisplayedVersion) {
@@ -67,7 +61,6 @@ sap.ui.define([
 			dirtyChanges: false,
 			draftAvailable: bBackendDraft,
 			activateEnabled: bBackendDraft,
-			switchVersionsActive: bSwitchVersionsActive,
 			persistedVersion: nPersistedBasisForDisplayedVersion,
 			displayedVersion: nPersistedBasisForDisplayedVersion
 		});
