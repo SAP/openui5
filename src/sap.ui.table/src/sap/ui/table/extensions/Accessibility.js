@@ -764,6 +764,9 @@ sap.ui.define([
 					mAttributes["aria-rowcount"] = oTable._getTotalRowCount();
 					mAttributes["aria-colcount"] = oTable._getVisibleColumns().length + (bHasRowActions ? 1 : 0);
 
+					if (oTable.isA("sap.ui.table.AnalyticalTable")) {
+						mAttributes["aria-roledescription"] = TableUtils.getResourceText("TBL_ANALYTICAL_TABLE_ROLE_DESCRIPTION");
+					}
 					break;
 
 				case AccExtension.ELEMENTTYPES.TABLEHEADER: //The table header area

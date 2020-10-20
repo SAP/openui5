@@ -1406,6 +1406,15 @@ sap.ui.define([
 			oTreeTable.removeAriaLabelledBy(oTreeTable.getAriaLabelledBy()[0]);
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
+
+			var oAnalyticalTable = new sap.ui.table.AnalyticalTable();
+			oAnalyticalTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			$Elem = oAnalyticalTable.$("sapUiTableGridCnt");
+			assert.strictEqual($Elem.attr("aria-roledescription"), TableUtils.getResourceText("TBL_ANALYTICAL_TABLE_ROLE_DESCRIPTION"),
+				"aria-roledescription");
+			oAnalyticalTable.destroy();
+			oAnalyticalTable = null;
 			done();
 		});
 

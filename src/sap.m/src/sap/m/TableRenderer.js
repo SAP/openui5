@@ -267,6 +267,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 	 */
 	TableRenderer.renderContainerAttributes = function(rm, oControl) {
 		rm.attr("role", "application");
+		rm.attr("aria-roledescription", Core.getLibraryResourceBundle("sap.m").getText("TABLE_ROLE_DESCRIPTION"));
 		rm.class("sapMListTblCnt");
 
 		// write accessibility state for the table container
@@ -294,18 +295,6 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 	 */
 	TableRenderer.getAriaRole = function(oControl) {
 		return "";
-	};
-
-	/**
-	 * returns additional labels for accessibility
-	 */
-	TableRenderer.getAriaLabelledBy = function(oControl) {
-		var sParentLabel = ListBaseRenderer.getAriaLabelledBy.call(this, oControl);
-		var sLabel = this.getAriaAnnouncement("TABLE_ROLE_DESCRIPTION");
-		if (sParentLabel && sLabel) {
-			return sParentLabel + " " + sLabel;
-		}
-		return sLabel || sParentLabel;
 	};
 
 	/**
