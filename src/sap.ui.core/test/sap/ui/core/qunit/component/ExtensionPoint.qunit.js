@@ -80,13 +80,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(10);
+		assert.expect(9);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
-			var oPanel = oView.byId("Panel");
-			var aPanelContent = oPanel.getContent();
+			var aPanelContent = oView.byId("Panel").getContent();
 			assert.strictEqual(aPanelContent.length, 7, "ExtensionView content added to view");
 
 			assert.strictEqual(aPanelContent[0].getId(), "ExtComponent---mainView--customFragment--customButton1", "EP1 content is in correct order"); // EP1
@@ -96,15 +95,12 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
-
-			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
-			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
 		});
 
 	});
 
 	QUnit.test("ExtensionPoint on top-level of XMLView", function(assert) {
-		assert.expect(27);
+		assert.expect(26);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
@@ -134,8 +130,7 @@ sap.ui.define([
 			assert.strictEqual(aTableItems.length, 4, "Number of Table Items is correct");
 
 			// inner control panel
-			var oPanel = oView.byId("Panel");
-			var aPanelContent = oPanel.getContent();
+			var aPanelContent = oView.byId("Panel").getContent();
 			assert.strictEqual(aPanelContent.length, 7, "ExtensionView content added to view");
 
 			assert.strictEqual(aPanelContent[0].getId(), "ExtComponent---mainView--customFragment--customButton1", "EP1 content is in correct order"); // EP1
@@ -145,9 +140,6 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
-
-			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
-			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
 		});
 
 	});
@@ -158,7 +150,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(23);
+		assert.expect(22);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.strictEqual(ExtensionPoint._fnExtensionProvider(), undefined, "ExtensionPointProvider exists, but no module returned");
@@ -186,8 +178,7 @@ sap.ui.define([
 			assert.strictEqual(aTableItems.length, 4, "Number of Table Items is correct");
 
 			// panel
-			var oPanel = oView.byId("Panel");
-			var aPanelContent = oPanel.getContent();
+			var aPanelContent = oView.byId("Panel").getContent();
 			assert.strictEqual(aPanelContent.length, 5, "ExtensionView content added to view");
 
 			assert.strictEqual(aPanelContent[0].getId(), "ExtComponent---mainView--button1", "Main.view content is in correct order"); // Main
@@ -195,9 +186,6 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[2].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[3].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
-
-			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
-			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
 		});
 	});
 
@@ -207,7 +195,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(23);
+		assert.expect(22);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(!ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
@@ -235,8 +223,7 @@ sap.ui.define([
 			assert.strictEqual(aTableItems.length, 4, "Number of Table Items is correct");
 
 			// panel
-			var oPanel = oView.byId("Panel");
-			var aPanelContent = oPanel.getContent();
+			var aPanelContent = oView.byId("Panel").getContent();
 			assert.strictEqual(aPanelContent.length, 5, "ExtensionView content added to view");
 
 			assert.strictEqual(aPanelContent[0].getId(), "ExtComponent---mainView--button1", "Main.view content is in correct order"); // Main
@@ -244,9 +231,6 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[2].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[3].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
-
-			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
-			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
 		});
 	});
 
@@ -257,14 +241,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(10);
+		assert.expect(9);
 		var done = assert.async();
 
 		var oView = oComponent.getRootControl();
 
 		var fnAssert = function() {
-			var oPanel = oView.byId("Panel");
-			var aPanelContent = oPanel.getContent();
+			var aPanelContent = oView.byId("Panel").getContent();
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 			assert.strictEqual(aPanelContent.length, 7, "ExtensionView content added to view");
@@ -276,9 +259,6 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
-
-			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
-			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
 
 			done();
 		};
@@ -295,7 +275,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ExtensionPoint on top-level of XMLView", function(assert) {
-		assert.expect(27);
+		assert.expect(26);
 		var done = assert.async();
 
 		var oView = oComponent.getRootControl();
@@ -329,8 +309,7 @@ sap.ui.define([
 			assert.strictEqual(aTableItems.length, 4, "Number of Table Items is correct");
 
 			// inner control panel
-			var oPanel = oView.byId("Panel");
-			var aPanelContent = oPanel.getContent();
+			var aPanelContent = oView.byId("Panel").getContent();
 			assert.strictEqual(aPanelContent.length, 7, "ExtensionView content added to view");
 
 			assert.strictEqual(aPanelContent[0].getId(), "ExtComponent---mainView--customFragment--customButton1", "EP1 content is in correct order"); // EP1
@@ -340,9 +319,6 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
-
-			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
-			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
 
 			done();
 		};
@@ -369,7 +345,7 @@ sap.ui.define([
 	 * since the default content in this test is inserted sync anyway.
 	 */
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(23);
+		assert.expect(22);
 		var oView = oComponent.getRootControl();
 
 		assert.strictEqual(ExtensionPoint._fnExtensionProvider(), undefined, "ExtensionPointProvider exists, but no module returned");
@@ -397,8 +373,7 @@ sap.ui.define([
 		assert.strictEqual(aTableItems.length, 4, "Number of Table Items is correct");
 
 		// panel
-		var oPanel = oView.byId("Panel");
-		var aPanelContent = oPanel.getContent();
+		var aPanelContent = oView.byId("Panel").getContent();
 		assert.strictEqual(aPanelContent.length, 5, "ExtensionView content added to view");
 
 		assert.strictEqual(aPanelContent[0].getId(), "ExtComponent---mainView--button1", "Main.view content is in correct order"); // Main
@@ -406,9 +381,6 @@ sap.ui.define([
 		assert.strictEqual(aPanelContent[2].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 		assert.strictEqual(aPanelContent[3].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 		assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
-
-		var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
-		assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
 	});
 
 
@@ -423,7 +395,7 @@ sap.ui.define([
 	 * since the default content in this test is inserted sync anyway.
 	 */
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(23);
+		assert.expect(22);
 		var oView = oComponent.getRootControl();
 
 		assert.ok(!ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
@@ -451,8 +423,7 @@ sap.ui.define([
 		assert.strictEqual(aTableItems.length, 4, "Number of Table Items is correct");
 
 		// panel
-		var oPanel = oView.byId("Panel");
-		var aPanelContent = oPanel.getContent();
+		var aPanelContent = oView.byId("Panel").getContent();
 		assert.strictEqual(aPanelContent.length, 5, "ExtensionView content added to view");
 
 		assert.strictEqual(aPanelContent[0].getId(), "ExtComponent---mainView--button1", "Main.view content is in correct order"); // Main
@@ -460,9 +431,6 @@ sap.ui.define([
 		assert.strictEqual(aPanelContent[2].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 		assert.strictEqual(aPanelContent[3].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 		assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
-
-		var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
-		assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
 	});
 
 });
