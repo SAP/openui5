@@ -463,12 +463,14 @@ sap.ui.define([
 				oGapParent.read(iStart, iGapEnd - iGapStart, 0, oGroupLock.getUnlockedCopy(),
 						fnDataRequested)
 					.then(function (oReadResult) {
-						var oError;
+						var bGapHasMoved = false,
+							oError;
 
 						// Note: aElements[iGapStart] may have changed by a parallel operation
 						if (oStartElement !== that.aElements[iGapStart]
 								&& oReadResult.value[0] !== that.aElements[iGapStart]) {
 							// start of the gap has moved meanwhile
+							bGapHasMoved = true;
 							iGapStart = that.aElements.indexOf(oStartElement);
 							if (iGapStart < 0) {
 								iGapStart = that.aElements.indexOf(oReadResult.value[0]);
@@ -479,7 +481,14 @@ sap.ui.define([
 								}
 							}
 						}
+
 						that.addElements(oReadResult.value, iGapStart, oCache, iStart);
+
+						if (bGapHasMoved) {
+							oError = new Error("Collapse or expand before read has finished");
+							oError.canceled = true;
+							throw oError;
+						}
 					})
 			);
 		}

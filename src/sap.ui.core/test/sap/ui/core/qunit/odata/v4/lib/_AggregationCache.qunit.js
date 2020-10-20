@@ -1563,12 +1563,11 @@ sap.ui.define([
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		return oCache.read(3, 2, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
-			assert.strictEqual(oResult.value.length, 2);
-			//TODO is this the expected result?
-			assert.strictEqual(oResult.value[0], oFirstLeaf);
-			assert.strictEqual(oResult.value[1], oReadResult0.value[0]);
-			assert.strictEqual(oResult.value.$count, 42);
+		return oCache.read(3, 2, 0, oGroupLock, "~fnDataRequested~").then(function () {
+			assert.ok(false, "Unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError.message, "Collapse or expand before read has finished");
+			assert.strictEqual(oError.canceled, true);
 
 			assert.strictEqual(oCache.aElements[1], oInsertedNode);
 			assert.strictEqual(oCache.aElements[3], oFirstLeaf);
@@ -1625,11 +1624,11 @@ sap.ui.define([
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		return oCache.read(4, 1, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
-			assert.strictEqual(oResult.value.length, 1);
-			//TODO is this the expected result?
-			assert.strictEqual(oResult.value[0], oPlaceholder0);
-			assert.strictEqual(oResult.value.$count, 42);
+		return oCache.read(4, 1, 0, oGroupLock, "~fnDataRequested~").then(function () {
+			assert.ok(false, "Unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError.message, "Collapse or expand before read has finished");
+			assert.strictEqual(oError.canceled, true);
 
 			assert.strictEqual(oCache.aElements[3], oFirstLeaf);
 			assert.strictEqual(oCache.aElements[4], oPlaceholder0);
