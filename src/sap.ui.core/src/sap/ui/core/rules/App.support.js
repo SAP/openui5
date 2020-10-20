@@ -245,5 +245,42 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 
 	};
 
-	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule];
+	/**
+	 * Check if deprecated factories are called.
+	 */
+	var oFragmentLoadRule = {
+		id: "fragmentLoad",
+		audiences: [Audiences.Application, Audiences.Control, Audiences.Internal],
+		categories: [Categories.Usage],
+		enabled: true,
+		minversion: "1.60",
+		title: "Check for improper usage of sap.ui.core.Fragment.load() factory",
+		description: "When used improperly the Fragment.load() factory might cause issues in UI5 versions >= 1.84. " +
+		"With UI5 versions >= 1.84, the 'sap.ui.core.Fragment.load()' API will change its internal implementation for loading and processing resources from synchronous to asynchronous.",
+		resolution: "Please make sure that control and/or application code correctly awaits the resolution of the Promise returned by 'Fragment.load()'. " +
+		"The content controls of a fragment can only safely be accessed by their ID once the 'Fragment.load()' result promise has resolved." +
+		"This support rule will be removed with UI5 versions >= 1.84.",
+		resolutionurls: [{
+			text: 'Documentation: Programmatically Instantiating XML Fragments',
+			href: 'https://openui5nightly.hana.ondemand.com/topic/d6af195124cf430599530668ddea7425'
+		},
+		{
+			text: 'Documentation: Programmatically Instantiating JS Fragments',
+			href: 'https://openui5nightly.hana.ondemand.com/topic/3cff5d0fa6754c0d9fdacd80653b81fb'
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var oLoggedObjects = oScope.getLoggedObjects("FragmentLoad");
+			oLoggedObjects.forEach(function(oLoggedObject) {
+				oIssueManager.addIssue({
+					severity: Severity.High,
+					details: "sap.ui.core.Fragment.load() API is used. Behavior changes with UI5 versions >= 1.84.",
+					context: {
+						id: "WEBPAGE"
+					}
+				});
+			});
+		}
+	};
+
+	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oFragmentLoadRule];
 }, true);
