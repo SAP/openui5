@@ -8,8 +8,13 @@
 	height="100%">
 	<NavContainer id="navContainer">
 		<pages>
-			<f:DynamicPage id="dynamicPage" toggleHeaderOnTitleClick="{/titleClickable}"
-			               class="sapUiNoContentPadding" showFooter="true" fitContent="true">
+			<f:DynamicPage
+				id="dynamicPage"
+				toggleHeaderOnTitleClick="{/titleClickable}"
+				stickySubheaderProvider="ShoppingCartWizard"
+				class="sapUiNoContentPadding"
+				showFooter="true"
+				fitContent="true">
 				<!-- DynamicPage Title -->
 				<f:title>
 					<f:DynamicPageTitle>

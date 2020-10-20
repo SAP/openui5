@@ -11,6 +11,7 @@
 		contentHeight="70%"
 		contentWidth="80%">
 		<f:DynamicPage
+			stickySubheaderProvider="CreateProductWizard"
 			toggleHeaderOnTitleClick="false"
 			class="sapUiNoContentPadding"
 			showFooter="true">
