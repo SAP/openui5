@@ -402,6 +402,20 @@ function(
 	Fragment.load = function(mOptions) {
 		var mParameters = Object.assign({}, mOptions);
 
+		Log.warning(
+			"With UI5 versions >= 1.84, the 'sap.ui.core.Fragment.load()' API will change its internal implementation for loading and processing resources from synchronous to asynchronous. " +
+			"Please make sure that control and/or application code correctly awaits the resolution of the Promise returned by 'Fragment.load()'. " +
+			"The content controls of a fragment can only safely be accessed by their ID once the 'Fragment.load()' result promise has resolved.",
+			"FragmentLoad",
+			null,
+			function() {
+				return {
+					type: "FragmentLoad",
+					name: "sap.ui.core.Fragment.load"
+				};
+			}
+		);
+
 		mParameters.type = mParameters.type || "XML";
 
 		// map new parameter names to classic API, delete new names to avoid assertion failures
