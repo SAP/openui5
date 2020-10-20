@@ -111,6 +111,20 @@ sap.ui.define([
 
 	};
 
+	var _cleanupEvents = function() {
+		iCount = 0;
+		sId = null;
+		sValue = null;
+		bValid = null;
+		oPromise = null;
+		iLiveCount = 0;
+		sLiveId = null;
+		sLiveValue = null;
+		iPressCount = 0;
+		sPressId = "";
+		iParseError = 0;
+	};
+
 	QUnit.module("Field rendering", {
 		beforeEach: function() {
 			oField = new Field("F1");
@@ -118,6 +132,7 @@ sap.ui.define([
 		afterEach: function() {
 			oField.destroy();
 			oField = undefined;
+			_cleanupEvents();
 		}
 	});
 
@@ -200,6 +215,7 @@ sap.ui.define([
 			oFieldDisplay.destroy();
 			oFieldEdit = undefined;
 			oFieldDisplay = undefined;
+			_cleanupEvents();
 		}
 	});
 
@@ -517,17 +533,7 @@ sap.ui.define([
 		afterEach: function() {
 			oField.destroy();
 			oField = undefined;
-			iCount = 0;
-			sId = null;
-			sValue = null;
-			bValid = null;
-			oPromise = null;
-			iLiveCount = 0;
-			sLiveId = null;
-			sLiveValue = null;
-			iPressCount = 0;
-			sPressId = "";
-			iParseError = 0;
+			_cleanupEvents();
 		}
 	});
 
@@ -662,9 +668,7 @@ sap.ui.define([
 		afterEach: function() {
 			oField.destroy();
 			oField = undefined;
-			iCount = 0;
-			sId = "";
-			sValue = "";
+			_cleanupEvents();
 		}
 	});
 
@@ -857,9 +861,7 @@ sap.ui.define([
 			oType3 = undefined;
 			oType4.destroy();
 			oType4 = undefined;
-			iCount = 0;
-			sId = "";
-			sValue = "";
+			_cleanupEvents();
 		}
 	});
 
@@ -1034,6 +1036,7 @@ sap.ui.define([
 		afterEach: function() {
 			oField.destroy();
 			oField = undefined;
+			_cleanupEvents();
 		}
 	});
 
@@ -1141,12 +1144,15 @@ sap.ui.define([
 		beforeEach: function() {
 			oField = new Field("F1", {
 				dataType: "sap.ui.model.odata.type.Currency",
-				delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}}
+				dataTypeFormatOptions: {parseAsString : false},
+				delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
+				change: _myChangeHandler
 			});
 		},
 		afterEach: function() {
 			oField.destroy();
 			oField = undefined;
+			_cleanupEvents();
 		}
 	});
 
@@ -1245,6 +1251,93 @@ sap.ui.define([
 			assert.deepEqual(oField.getValue(), [3, "EUR"], "Field value");
 			fnDone();
 		});
+
+	});
+
+	QUnit.test("update while user input pending", function(assert) {
+
+		// simulates OutParameter sets unit while user alredy types number
+		oField.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oField.setValue([undefined, undefined, oCurrencyCodeList]); // after rendering to create internal data type (as we don't use binding here)
+
+		sinon.spy(oField, "setProperty");
+
+		var aContent = oField.getAggregation("_content");
+		var oContent1 = aContent && aContent.length > 0 && aContent[0];
+		var oContent2 = aContent && aContent.length > 1 && aContent[1];
+
+		oContent1.focus();
+		oContent1._$input.val("1");
+		oContent1.onChange(); // simulate user input
+		oContent2.focus();
+
+		var fnDone = assert.async();
+		setTimeout(function () { // model update
+			assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
+			assert.deepEqual(oField.getValue(), [undefined, undefined, oCurrencyCodeList], "Value of Field");
+			var aConditions = oField.getConditions();
+			assert.equal(aConditions.length, 1, "One condition exist");
+			var oCondition = aConditions[0];
+			assert.deepEqual(oCondition && oCondition.values[0], [1, null], "Value of condition");
+			assert.equal(iCount, 0, "change event not fired");
+
+			oField.setValue([undefined, "EUR"]); // simulate OutParameter
+			aConditions = oField.getConditions();
+			oCondition = aConditions[0];
+			assert.deepEqual(oCondition && oCondition.values[0], [1, "EUR", oCurrencyCodeList], "Value of condition");
+
+			setTimeout(function () { // model update
+				assert.equal(oContent2.getValue(), "EUR", "Value set on currency control");
+
+				oField.setProperty.reset();
+				qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false); // trigger update
+				assert.equal(iCount, 1, "change event fired once");
+				assert.equal(sId, "F1", "change event fired on Field");
+				assert.deepEqual(sValue, [1, "EUR", oCurrencyCodeList], "change event value");
+				assert.ok(bValid, "change event valid");
+				assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value updated once");
+				assert.deepEqual(oField.getValue(), [1, "EUR", oCurrencyCodeList], "Value of Field");
+
+				// test number set while unit change
+				oField.setProperty.reset();
+				iCount = 0;
+				oContent2._$input.val("USD");
+				oContent2.onChange(); // simulate user input
+				oContent1.focus();
+
+				setTimeout(function () { // model update
+					assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
+					assert.deepEqual(oField.getValue(), [1, "EUR", oCurrencyCodeList], "Value of Field");
+					aConditions = oField.getConditions();
+					assert.equal(aConditions.length, 1, "One condition exist");
+					oCondition = aConditions[0];
+					assert.deepEqual(oCondition && oCondition.values[0], [1, "USD"], "Value of condition");
+					assert.equal(iCount, 0, "change event not fired");
+
+					oField.setValue([2, "EUR"]); // simulate OutParameter
+					aConditions = oField.getConditions();
+					oCondition = aConditions[0];
+					assert.deepEqual(oCondition && oCondition.values[0], [2, "USD", oCurrencyCodeList], "Value of condition");
+
+					setTimeout(function () { // model update
+						var sNumber = oField._oDataType.formatValue([2, "USD"], "string"); // use parser of type to have locale dependent parsing
+						assert.equal(oContent1.getValue(), sNumber, "Value set on number control");
+
+						oField.setProperty.reset();
+						qutils.triggerKeyboardEvent(oContent1.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false); // trigger update
+						assert.equal(iCount, 1, "change event fired once");
+						assert.equal(sId, "F1", "change event fired on Field");
+						assert.deepEqual(sValue, [2, "USD", oCurrencyCodeList], "change event value");
+						assert.ok(bValid, "change event valid");
+						assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value updated once");
+						assert.deepEqual(oField.getValue(), [2, "USD", oCurrencyCodeList], "Value of Field");
+
+						fnDone();
+					}, 0);
+				}, 0);
+			}, 0);
+		}, 0);
 
 	});
 

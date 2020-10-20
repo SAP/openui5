@@ -1125,6 +1125,9 @@ sap.ui.define([
 			oFormatOptions = merge({}, oFormatOptions); // do not manipulate original object
 			oFormatOptions.showMeasure = false;
 			oFormatOptions.strictParsing = true; // do not allow to enter unit in number field
+			if (oFormatOptions.hasOwnProperty("parseAsString") && oType.hasOwnProperty("bParseAsString")) {
+				oFormatOptions.parseAsString = oType.bParseAsString; // as V4 types set it always to true and uses internal value
+			}
 			if (oFormatOptions.customCurrencies) {
 				delete oFormatOptions.customCurrencies; // cannot be set from outside
 			}

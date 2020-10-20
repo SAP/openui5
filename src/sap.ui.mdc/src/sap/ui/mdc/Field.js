@@ -325,6 +325,21 @@ sap.ui.define([
 			// As we cannot be sure that inner control is already rendered and dataType.formatValue was calles with unit table.
 			vValue = merge([], vValue); // do not change original array.
 			vValue[2] = vOldValue[2];
+
+			if (this._bPendingChange) { //change is pending because navigated between number and unit
+				var oCondition = this.getConditions()[0];
+				if (oCondition) {
+					// check what was updated
+					if (vValue[0] === vOldValue[0] && vValue[0] !== oCondition.values[0][0]) {
+						// number not changed -> use pending value from condition
+						vValue[0] = oCondition.values[0][0];
+					}
+					if (vValue[1] === vOldValue[1] && vValue[1] !== oCondition.values[0][1]) {
+						// unit not changed -> use pending value from condition
+						vValue[1] = oCondition.values[0][1];
+					}
+				}
+			}
 		}
 
 		return vValue;
@@ -373,7 +388,7 @@ sap.ui.define([
 			}
 
 			var oBinding = this.getBinding("value");
-			var oDataType = oBinding && oBinding.getType(); // use type from binding, not internal (might be a different one)
+			var oDataType = oBinding ? oBinding.getType() : this._oDataType; // use type from binding, not internal (might be a different one)
 			this._oTypeInitialization = this.getControlDelegate().initializeTypeFromBinding(this.getPayload(), oDataType, vValue);
 			this._bTypeInitialized = this._oTypeInitialization.bTypeInitialized;
 		}
