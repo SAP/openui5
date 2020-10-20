@@ -252,7 +252,7 @@ sap.ui.define([
 			assert.ok(true, "Test skipped since window is too small");
 		}
 
-		assert.expect(3);
+		assert.expect(2);
 
 		var fnClosed = function() {
 			oTP1.detachClosed(fnClosed);
@@ -290,11 +290,6 @@ sap.ui.define([
 			}
 			assert.ok(bTest, "ToolPopup opened left from button");
 
-			if (bTest) {
-				// -1 since arrow starts at next pixel
-				bTest = (oTPRect.left + oTPRect.width - iBorderWidth - 1 <= oArrowRect.left) && (oArrowRect.left + oTP1.iArrowWidth <= oBtnRect.left);
-			}
-			assert.ok(bTest, "Arrow opened between button and ToolPopup");
 			done();
 		};
 
