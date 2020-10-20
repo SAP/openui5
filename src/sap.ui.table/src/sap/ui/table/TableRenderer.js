@@ -457,7 +457,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.attr("tabindex", "-1");
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNROWHEADER", {enabled: bEnabled, checked: bSelAll});
+		var oParams = {
+			enabled: bEnabled,
+			checked: bSelAll
+		};
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNROWHEADER", oParams);
 
 		rm.openEnd();
 
@@ -657,7 +661,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		var bRowSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
 
 		rm.openStart("div");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow.isEmpty()});
+		var oRowSettings = oRow.getAggregation("_settings");
+		var oParams = {
+			index: iRowIndex,
+			rowHidden: oRow.isEmpty(),
+			rowNavigated: oRowSettings ? oRowSettings.getNavigated() : false
+		};
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", oParams);
 		rm.attr("data-sap-ui-related", oRow.getId());
 		rm.attr("data-sap-ui-rowindex", iRowIndex);
 
@@ -687,7 +697,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.attr("tabindex", "-1");
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, bHeader ? "ROWHEADER" : "ROWACTION", {rowSelected: bRowSelected, rowHidden: oRow.isEmpty()});
+		oParams = {
+			rowSelected: bRowSelected,
+			rowHidden: oRow.isEmpty()
+		};
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, bHeader ? "ROWHEADER" : "ROWACTION", oParams);
 
 		rm.openEnd();
 		if (bHeader) {
@@ -1084,7 +1098,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.attr("data-sap-ui-rowindex", iRowIndex);
 		oTable._getRowMode().renderRowStyles(rm);
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow.isEmpty()});
+		var oRowSettings = oRow.getAggregation("_settings");
+		var oParams = {
+			index: iRowIndex,
+			rowHidden: oRow.isEmpty(),
+			rowNavigated: oRowSettings ? oRowSettings.getNavigated() : false
+		};
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", oParams);
 
 		rm.openEnd();
 
@@ -1118,13 +1138,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			var bIsLastColumn = nColumns > 0 && aVisibleColumns[nColumns - 1] === oColumn;
 			var bIsLastFixedColumn = bFixedTable && iLastFixedColumnIndex === iColIndex;
 
-			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "DATACELL", {
+			var oParams = {
 				index: iColIndex,
 				column: oColumn,
 				row: oRow,
 				fixed: bFixedTable,
 				rowSelected: bSelected
-			});
+			};
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "DATACELL", oParams);
 
 			var sTextAlign = Renderer.getTextAlign(oColumn.getHAlign());
 			if (sTextAlign) {

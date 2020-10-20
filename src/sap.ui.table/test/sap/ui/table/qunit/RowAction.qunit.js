@@ -521,10 +521,10 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(!aIcons[0].getDomRef().getAttribute("aria-haspopup"), "No aria-haspopup on icon 0");
-		assert.equal(aIcons[1].getDomRef().getAttribute("aria-haspopup"), "true", "aria-haspopup on icon 1");
+		assert.equal(aIcons[1].getDomRef().getAttribute("aria-haspopup"), "menu", "aria-haspopup on icon 1");
 
 		this.stub(this.oRowAction, "_getSize").returns(1);
 		this.oRowAction.rerender();
-		assert.equal(aIcons[0].getDomRef().getAttribute("aria-haspopup"), "true", "aria-haspopup on icon 0");
+		assert.equal(aIcons[0].getDomRef().getAttribute("aria-haspopup"), "menu", "aria-haspopup on icon 0");
 	});
 });

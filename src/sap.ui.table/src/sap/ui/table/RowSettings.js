@@ -148,6 +148,14 @@ sap.ui.define([
 			oNavigatedElement.classList.remove("sapUiTableRowNavigated");
 		}
 
+		// Update the accessibility information.
+		var oTable = oRow.getParent();
+		var oAccessibilityExtension = oTable ? oTable._getAccExtension() : null;
+
+		if (oAccessibilityExtension) {
+			oAccessibilityExtension._updateAriaStateOfNavigatedRow(this);
+		}
+
 		return this;
 	};
 
