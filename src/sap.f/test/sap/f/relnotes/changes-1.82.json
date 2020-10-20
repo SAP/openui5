@@ -47,5 +47,21 @@
         ]
       }
     ]
+  },
+  "1.82.2": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "c5b5bc08d3281dec552c6ade7a3c25ea77dc26d4",
+        "type": "FIX",
+        "text": " Calendar Card: fixed two-column layout in all browsers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070403281"
+          }
+        ]
+      }
+    ]
   }
 }
