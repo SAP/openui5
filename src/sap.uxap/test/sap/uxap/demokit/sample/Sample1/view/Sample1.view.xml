@@ -22,13 +22,13 @@
 
 						<m:VBox>
 							<m:Title text="Sample 1" wrapping="true"/>
-							<m:Text text="Example of an ObjectPage with header facet."/>
+							<m:Text text="Example of an ObjectPage with header facet"/>
 						</m:VBox>
 					</m:HBox>
 				</snappedHeading>
 
 				<expandedContent>
-					<m:Text text="Example of an ObjectPage with header facet."/>
+					<m:Text text="Example of an ObjectPage with header facet"/>
 				</expandedContent>
 
 				<snappedTitleOnMobile>
