@@ -1187,7 +1187,7 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		SinglePlanningCalendarGrid.prototype._fireSelectionEvent = function (oEvent) {
-			var oAppointment = oEvent.srcControl,
+			var oControl = oEvent.srcControl,
 				oGridCell = oEvent.target;
 
 			if (oEvent.target.classList.contains("sapMSinglePCRow") ||
@@ -1202,10 +1202,10 @@ sap.ui.define([
 					appointment: undefined,
 					appointments: this._toggleAppointmentSelection(undefined, true)
 				});
-			} else if (oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment")) {
+			} else if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment")) {
 				this.fireAppointmentSelect({
-					appointment: oAppointment,
-					appointments: this._toggleAppointmentSelection(oAppointment, !(oEvent.ctrlKey || oEvent.metaKey))
+					appointment: oControl,
+					appointments: this._toggleAppointmentSelection(oControl, !(oEvent.ctrlKey || oEvent.metaKey))
 				});
 			}
 		};
