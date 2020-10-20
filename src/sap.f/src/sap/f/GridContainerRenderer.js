@@ -102,7 +102,6 @@ sap.ui.define([ "sap/ui/Device"],
 
 			rm.accessibilityState(oControl, {
 				role: "listitem",
-				keyshortcuts: oControl._oRb.getText("GRIDCONTAINER_ITEM_KEYSHORTCUTS"),
 				labelledby: oItem.getId()
 			});
 
