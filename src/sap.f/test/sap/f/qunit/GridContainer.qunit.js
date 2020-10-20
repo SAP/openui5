@@ -1720,6 +1720,35 @@ function (
 		// Clean up
 		oDragContainer.destroy();
 		oDropContainer.destroy();
+	});
 
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oGrid = new GridContainer({
+				items: [
+					new GenericTile({
+						header: "Tile 1",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 2",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					})
+				]
+			});
+
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+		}
+	});
+
+	QUnit.test("Wrapper attributes", function (assert) {
+		var oWrapper = this.oGrid.$().children().eq(1);
+
+		assert.notOk(oWrapper.attr("aria-keyshortcuts"), "there is not aria-keyshortcuts attribute");
+		assert.strictEqual(oWrapper.attr("tabindex"), "-1", "tabindex is set");
 	});
 });
