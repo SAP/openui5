@@ -661,6 +661,21 @@ sap.ui.define(
             oHasSpy.restore();
         });
 
+        QUnit.test("Should create OpaBuilder.Matchers.i18n matcher when using 'hasI18NText'", function(assert) {
+            var oOpaBuilder = new OpaBuilder(),
+                sPropertyName = "Hello",
+                sModelTokenPath = "World",
+                aParameters = ["!"],
+                oMatcherSpy = this.spy(OpaBuilder.Matchers, "i18n"),
+                oHasSpy = this.spy(OpaBuilder.prototype, "has");
+            assert.strictEqual(oOpaBuilder.hasI18NText(sPropertyName, sModelTokenPath, aParameters), oOpaBuilder, "builder instance returned");
+            assert.strictEqual(oMatcherSpy.callCount, 1);
+            assert.ok(oMatcherSpy.calledWith(sPropertyName, sModelTokenPath, aParameters));
+            assert.ok(oHasSpy.calledWith(oMatcherSpy.returnValues[0]));
+            oMatcherSpy.restore();
+            oHasSpy.restore();
+        });
+
         QUnit.test("Should set/get the Opa5 instance on 'setOpaInstance' and 'getOpaInstance'", function(assert) {
             var oOpaBuilder = new OpaBuilder(),
                 oOpa5Instance = new Opa5();
@@ -711,7 +726,7 @@ sap.ui.define(
 
         QUnit.test("'i18n' should return a corresponding declarative definition of sap.ui.test.matchers.I18NText", function(assert) {
             assert.deepEqual(OpaBuilder.Matchers.i18n("text", "i18nTest>IAM_A_TOKEN", "first", "second"), {
-                I18NText: {
+                i18NText: {
                     propertyName: "text",
                     modelName: "i18nTest",
                     key: "IAM_A_TOKEN",
