@@ -5,6 +5,9 @@ var async = require('async');
 var path = require('path');
 var cldr = require('../../lib/cldr-openui5/lib/index.js');
 
+// CLDR version to be downloaded and generated
+var CLDR_VERSION = "35.1.0";
+
 module.exports = function(grunt, config) {
 
 	return {
@@ -325,14 +328,13 @@ module.exports = function(grunt, config) {
 					'cldr-cal-persian-modern',
 					'cldr-cal-buddhist-modern'
 				],
-				sVersion = "35.1.0",
 				baseFolder = path.join(__dirname, "../../"),
 				downloadFolder = path.join(baseFolder, "tmp/cldr"),
 				pacote = require('pacote'),
 				done = this.async();
 			
 			Promise.all(aPakets.map(function(sName) {
-				return pacote.extract(sName + "@" + sVersion, path.join(downloadFolder, sName));
+				return pacote.extract(sName + "@" + CLDR_VERSION, path.join(downloadFolder, sName));
 					
 			})).then(function() {
 				grunt.log.ok("DONE", "Files downloaded and extracted to", downloadFolder);
@@ -363,7 +365,8 @@ module.exports = function(grunt, config) {
 				cldr({
 					source: sourceFolder,
 					output: outputFolder,
-					prettyPrint: prettyPrint
+					prettyPrint: prettyPrint,
+					version: CLDR_VERSION
 				}).on("generated", function() {
 					grunt.log.ok("DONE", "Files saved to", outputFolder);
 				}).on("error", function(err) {
