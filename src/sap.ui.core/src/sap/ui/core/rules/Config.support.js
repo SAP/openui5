@@ -384,6 +384,57 @@ sap.ui.define([
 		}
 	};
 
+	var oV4ModelPreloadAndEarlyRequests = {
+		id: "v4ModelPreloadAndEarlyRequests",
+		audiences: [Audiences.Application],
+		categories: [Categories.Performance],
+		enabled: true,
+		minversion: "1.53",
+		title: "OData V4 model preloading and no earlyRequests",
+		description: "Manifest model preload is useless if V4 ODataModel earlyRequests is false",
+		resolution: "Set manifest parameter models[<Model Name>].settings.earlyRequests to true",
+		resolutionurls: [{
+			text: 'Documentation: Manifest Model Preload',
+			href: 'https://openui5.hana.ondemand.com/#/topic/26ba6a5c1e5c417f8b21cce1411dba2c'
+		}, {
+			text: 'API: V4 ODataModel, parameter earlyRequests',
+			href: 'https://openui5.hana.ondemand.com/api/sap.ui.model.odata.v4.ODataModel'
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var mComponents = oCoreFacade.getComponents();
+
+			Object.keys(mComponents).forEach(function(sComponentId) {
+				var oManifest = mComponents[sComponentId].getManifest(),
+					mDataSources = oManifest['sap.app'].dataSources,
+					mModels = oManifest['sap.ui5'].models || {};
+
+				Object.keys(mModels).forEach(function(sModel) {
+					var mDataSource,
+						mModel = mModels[sModel];
+
+					if (mModel.dataSource) {
+						mDataSource = mDataSources[mModel.dataSource];
+					}
+					if (mModel.type === "sap.ui.model.odata.v4.ODataModel"
+						|| mDataSource && mDataSource.type === "OData" && mDataSource.settings
+							 && mDataSource.settings.odataVersion === "4.0") {
+						if (mModel.preload === true
+							&& !(mModel.settings && mModel.settings.earlyRequests === true)) {
+							oIssueManager.addIssue({
+								severity: Severity.High,
+								details: "Set sap.ui5.models['" + sModel + "'].settings" +
+									".earlyRequests in manifest to true",
+								context: {
+									id: sComponentId
+								}
+							});
+						}
+					}
+				});
+			});
+		}
+	};
+
 	var oAsynchronousXMLViews = {
 		id: "asynchronousXMLViews",
 		audiences: [Audiences.Application],
@@ -466,6 +517,7 @@ sap.ui.define([
 		oLazyComponents,
 		oReuseComponents,
 		oModelPreloading,
+		oV4ModelPreloadAndEarlyRequests,
 		oAsynchronousXMLViews
 	];
 }, true);
