@@ -704,7 +704,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.83
+	 * @since 1.84
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.aria.HasPopup = {
@@ -713,37 +713,37 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 		 * None - the aria-haspopup attribute will not be rendered.
 		 * @public
 		 */
-		None : "none",
+		None : "None",
 
 		/**
 		 * Menu popup type.
 		 * @public
 		 */
-		Menu : "menu",
+		Menu : "Menu",
 
 		/**
 		 * ListBox popup type.
 		 * @public
 		 */
-		ListBox : "listbox",
+		ListBox : "ListBox",
 
 		/**
 		 * Tree popup type.
 		 * @public
 		 */
-		Tree : "tree",
+		Tree : "Tree",
 
 		/**
 		 * Grid popup type.
 		 * @public
 		 */
-		Grid : "grid",
+		Grid : "Grid",
 
 		/**
 		 * Dialog popup type.
 		 * @public
 		 */
-		Dialog : "dialog"
+		Dialog : "Dialog"
 
 	};
 
