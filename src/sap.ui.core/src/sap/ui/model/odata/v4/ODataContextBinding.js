@@ -356,8 +356,8 @@ sap.ui.define([
 						aSegments;
 
 					/*
-					* Checks whether sParameterName exists in the metadata as operation parameter.
-					*/
+					 * Checks whether sParameterName exists in the metadata as operation parameter.
+					 */
 					function hasParameterName() {
 						return oOperationMetadata.$Parameter.some(function (oParameter) {
 							return sParameterName === oParameter.$Name;
@@ -367,6 +367,10 @@ sap.ui.define([
 					if (oMessage.target) {
 						aSegments = oMessage.target.split("/");
 						sParameterName = aSegments.shift();
+						if (sParameterName === "$Parameter") {
+							oMessage.target = aSegments.join("/");
+							sParameterName = aSegments.shift();
+						}
 
 						if (oOperationMetadata.$IsBound
 							&& sParameterName === oOperationMetadata.$Parameter[0].$Name) {
@@ -560,11 +564,14 @@ sap.ui.define([
 	 * @since 1.59.0
 	 */
 
-	// See class documentation
-	// @override
-	// @public
-	// @see sap.ui.base.EventProvider#attachEvent
-	// @since 1.37.0
+	/**
+	 * See {@link sap.ui.base.EventProvider#attachEvent}
+	 *
+	 * @public
+	 * @see sap.ui.base.EventProvider#attachEvent
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.base.EventProvider#attachEvent
 	ODataContextBinding.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
@@ -574,9 +581,9 @@ sap.ui.define([
 	};
 
 	/**
-	 *  Returns this operation binding's cache query options.
+	 * Returns this operation binding's cache query options.
 	 *
-	 *  @returns {object} The query options
+	 * @returns {object} The query options
 	 *
 	 * @private
 	 */
@@ -683,9 +690,10 @@ sap.ui.define([
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
+	 * @see sap.ui.model.Binding#destroy
 	 * @since 1.40.1
 	 */
-	// @override
+	// @override sap.ui.model.Binding#destroy
 	ODataContextBinding.prototype.destroy = function () {
 		if (this.oElementContext) {
 			this.oElementContext.destroy();
@@ -752,10 +760,8 @@ sap.ui.define([
 	/**
 	 * Handles setting a parameter property in case of a deferred operation binding, otherwise it
 	 * returns <code>undefined</code>.
-	 *
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
 	 */
+	// @override sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
 	ODataContextBinding.prototype.doSetProperty = function (sPath, vValue, oGroupLock) {
 		if (this.oOperation && (sPath === "$Parameter" || sPath.startsWith("$Parameter/"))) {
 			_Helper.updateAll(this.oOperation.mChangeListeners, "", this.oOperation.mParameters,
@@ -1076,7 +1082,6 @@ sap.ui.define([
 	 * resolved path and its root binding is not suspended.
 	 *
 	 * @protected
-	 * @see sap.ui.model.Binding#initialize
 	 * @see #getRootBinding
 	 * @since 1.37.0
 	 */
@@ -1288,7 +1293,7 @@ sap.ui.define([
 	 *   If the context's root binding is suspended
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.ODataContext#requestObject
+	 * @see sap.ui.model.odata.v4.Context#requestObject
 	 * @since 1.69.0
 	 */
 	ODataContextBinding.prototype.requestObject = function (sPath) {
@@ -1332,9 +1337,8 @@ sap.ui.define([
 	 *   If the binding's root binding is suspended
 	 *
 	 * @private
-	 * @see sap.ui.model.Binding#setContext
 	 */
-	// @override
+	// @override sap.ui.model.Binding#setContext
 	ODataContextBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
 			if (this.bRelative && (this.oContext || oContext)) {

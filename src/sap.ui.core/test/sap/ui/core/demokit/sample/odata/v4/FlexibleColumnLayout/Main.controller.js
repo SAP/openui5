@@ -10,9 +10,11 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
-	"sap/ui/model/Sorter"
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/test/TestUtils"
 ], function (Log, library, MessageBox, MessageToast, Controller, Filter, FilterOperator,
-		FilterType, Sorter) {
+		FilterType, Sorter, JSONModel, TestUtils) {
 	"use strict";
 
 	var LayoutType = library.LayoutType;
@@ -41,7 +43,7 @@ sap.ui.define([
 		},
 
 		onCancel : function () {
-			this.oModel.resetChanges("UpdateGroup");
+			this.getView().getModel().resetChanges("UpdateGroup");
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
@@ -75,8 +77,16 @@ sap.ui.define([
 
 		onInit : function () {
 			this.initMessagePopover("showMessages");
-			this.oModel = this.getView().getModel();
-			this.oUIModel = this.getView().getModel("ui");
+			this.oUIModel = new JSONModel({
+					iMessages : 0,
+					bRealOData : TestUtils.isRealOData(),
+					bSortGrossAmountDescending : true,
+					sSortGrossAmountIcon : "",
+					bSortSalesOrderIDDescending : undefined,
+					sSortSalesOrderIDIcon : ""
+				}
+			);
+			this.getView().setModel(this.oUIModel, "ui");
 		},
 
 		onRefreshSalesOrder : function (oEvent) {
@@ -181,7 +191,7 @@ sap.ui.define([
 			var oView = this.getView();
 
 			oView.setBusy(true);
-			return this.oModel.submitBatch(sGroupId).finally(function () {
+			return oView.getModel().submitBatch(sGroupId).finally(function () {
 				oView.setBusy(false);
 			});
 		}

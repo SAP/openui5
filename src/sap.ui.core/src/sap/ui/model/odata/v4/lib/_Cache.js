@@ -94,6 +94,7 @@ sap.ui.define([
 	 * @param {boolean} [bSharedRequest=false]
 	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
 	 *
+	 * @alias sap.ui.model.odata.v4.lib._Cache
 	 * @private
 	 */
 	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
@@ -565,7 +566,8 @@ sap.ui.define([
 						vValue = vValue[aMatches[1]]; // there is a navigation property, follow it
 					}
 					if (vValue) { // ensure that we do not fail on a missing navigation property
-						vValue = vValue.$byPredicate[aMatches[2]]; // search the key predicate
+						vValue = vValue.$byPredicate // not available on empty collections!
+							&& vValue.$byPredicate[aMatches[2]]; // search the key predicate
 					}
 				} else {
 					vIndex = Cache.from$skip(sSegment, vValue);
@@ -1906,6 +1908,8 @@ sap.ui.define([
 	 *   The deep resource path to be used to build the target path for bound messages
 	 * @param {boolean} [bSharedRequest=false]
 	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
+	 *
+	 * @alias sap.ui.model.odata.v4.lib._CollectionCache
 	 */
 	function CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest) {
@@ -2578,6 +2582,8 @@ sap.ui.define([
 	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
+	 *
+	 * @alias sap.ui.model.odata.v4.lib._PropertyCache
 	 */
 	function PropertyCache(oRequestor, sResourcePath, mQueryOptions) {
 		Cache.call(this, oRequestor, sResourcePath, mQueryOptions);
@@ -2702,6 +2708,7 @@ sap.ui.define([
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
 	 *
+	 * @alias sap.ui.model.odata.v4.lib._SingleCache
 	 * @private
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,

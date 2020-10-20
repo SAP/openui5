@@ -2672,6 +2672,32 @@ sap.ui.define([
 			oModel.requestSideEffects("group", ["/wrong/path"]);
 		}, new Error("Path must start with '/~container~': /wrong/path"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("filterMatchingMessages: no match", function (assert) {
+		var oModel = createModel();
+
+		this.mock(_Helper).expects("hasPathPrefix").withExactArgs("/target", "/prefix")
+			.returns(false);
+
+		// code under test
+		assert.deepEqual(oModel.filterMatchingMessages("/target", "/prefix"), []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filterMatchingMessages: match", function (assert) {
+		var aMessages = [],
+			oModel = createModel();
+
+		oModel.mMessages = {
+			"/target" : aMessages
+		};
+		this.mock(_Helper).expects("hasPathPrefix").withExactArgs("/target", "/prefix")
+			.returns(true);
+
+		// code under test
+		assert.strictEqual(oModel.filterMatchingMessages("/target", "/prefix"), aMessages);
+	});
 });
 
 //TODO constructor: test that the service root URL is absolute?

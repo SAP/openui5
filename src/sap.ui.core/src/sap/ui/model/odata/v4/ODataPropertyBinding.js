@@ -178,11 +178,14 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.adjustPredicate = function () {};
 
-	// See class documentation
-	// @override
-	// @public
-	// @see sap.ui.base.EventProvider#attachEvent
-	// @since 1.37.0
+	/**
+	 * See {@link sap.ui.base.EventProvider#attachEvent}
+	 *
+	 * @public
+	 * @see sap.ui.base.EventProvider#attachEvent
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.base.EventProvider#attachEvent
 	ODataPropertyBinding.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
@@ -361,9 +364,10 @@ sap.ui.define([
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
+	 * @see sap.ui.model.Binding#destroy
 	 * @since 1.39.0
 	 */
-	// @override
+	// @override sap.ui.model.Binding#destroy
 	ODataPropertyBinding.prototype.destroy = function () {
 		this.deregisterChange();
 		this.oModel.bindingDestroyed(this);
@@ -453,7 +457,10 @@ sap.ui.define([
 		return false;
 	};
 
-	// @override sap.ui.model.Binding#initialize
+	/**
+	 * @override
+	 * @see sap.ui.model.Binding#initialize
+	 */
 	ODataPropertyBinding.prototype.initialize = function () {
 		if (this.isResolved()) {
 			if (this.getRootBinding().isSuspended()) {
@@ -627,9 +634,8 @@ sap.ui.define([
 	 *   The context which is required as base for a relative path
 	 *
 	 * @private
-	 * @see sap.ui.model.Binding#setContext
 	 */
-	// @override
+	// @override sap.ui.model.Binding#setContext
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
@@ -656,10 +662,10 @@ sap.ui.define([
 	 *   information
 	 *
 	 * @public
-	 * @since 1.43.0
 	 * @see sap.ui.model.PropertyBinding#setType
+	 * @since 1.43.0
 	 */
-	// @override
+	// @override sap.ui.model.PropertyBinding#setType
 	ODataPropertyBinding.prototype.setType = function (oType) {
 		var oOldType = this.oType;
 

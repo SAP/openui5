@@ -750,11 +750,14 @@ sap.ui.define([
 		});
 	};
 
-	// See class documentation
-	// @override
-	// @public
-	// @see sap.ui.base.EventProvider#attachEvent
-	// @since 1.37.0
+	/**
+	 * See {@link sap.ui.base.EventProvider#attachEvent}
+	 *
+	 * @public
+	 * @see sap.ui.base.EventProvider#attachEvent
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.base.EventProvider#attachEvent
 	ODataMetaModel.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
@@ -763,9 +766,14 @@ sap.ui.define([
 		return MetaModel.prototype.attachEvent.apply(this, arguments);
 	};
 
-	// @public
-	// @see sap.ui.model.Model#bindContext
-	// @since 1.37.0
+	/**
+	 * See <code>sap.ui.model.Model#bindContext</code>
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#bindContext
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.model.Model#bindContext
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext) {
 		return new ODataMetaContextBinding(this, sPath, oContext);
 	};
@@ -795,11 +803,12 @@ sap.ui.define([
 	 *   A list binding for this metadata model
 	 *
 	 * @public
+	 * @see sap.ui.model.Model#bindList
 	 * @see #requestObject
 	 * @see sap.ui.model.FilterOperator
-	 * @see sap.ui.model.Model#bindList
 	 * @since 1.37.0
 	 */
+	// @override sap.ui.model.Model#bindList
 	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters) {
 		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters);
 	};
@@ -827,6 +836,7 @@ sap.ui.define([
 	 * @see sap.ui.model.Model#bindProperty
 	 * @since 1.37.0
 	 */
+	// @override sap.ui.model.Model#bindProperty
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 		return new ODataMetaPropertyBinding(this, sPath, oContext, mParameters);
 	};
@@ -840,6 +850,7 @@ sap.ui.define([
 	 * @see sap.ui.model.Model#bindTree
 	 * @since 1.37.0
 	 */
+	// @override sap.ui.model.Model#bindTree
 	ODataMetaModel.prototype.bindTree = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#bindTree");
 	};
@@ -2205,11 +2216,11 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @public
-	 * @see #requestObject
 	 * @see sap.ui.model.Model#getObject
+	 * @see #requestObject
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#getObject
 	ODataMetaModel.prototype.getObject = _Helper.createGetMethod("fetchObject");
 
 	/**
@@ -2256,10 +2267,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *
 	 * @public
-	 * @see sap.ui.model.Model#getOriginalProperty
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#getOriginalProperty
 	ODataMetaModel.prototype.getOriginalProperty = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#getOriginalProperty");
 	};
@@ -2376,8 +2386,8 @@ sap.ui.define([
 	 * @throws {Error}
 	 *
 	 * @private
-	 * @see sap.ui.model.Model#isList
 	 */
+	// @override sap.ui.model.Model#isList
 	ODataMetaModel.prototype.isList = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#isList");
 	};
@@ -2391,7 +2401,7 @@ sap.ui.define([
 	 * @see sap.ui.model.Model#refresh
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#refresh
 	ODataMetaModel.prototype.refresh = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#refresh");
 	};
@@ -3257,9 +3267,8 @@ sap.ui.define([
 	 *   If relative path starts with a dot which is not followed by a forward slash
 	 *
 	 * @private
-	 * @see sap.ui.model.Model#resolve
 	 */
-	// @override
+	// @override sap.ui.model.Model#resolve
 	ODataMetaModel.prototype.resolve = function (sPath, oContext) {
 		var sContextPath,
 			sPathFirst;
@@ -3292,10 +3301,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *
 	 * @public
-	 * @see sap.ui.model.Model#setLegacySyntax
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.Model#setLegacySyntax
 	ODataMetaModel.prototype.setLegacySyntax = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax");
 	};

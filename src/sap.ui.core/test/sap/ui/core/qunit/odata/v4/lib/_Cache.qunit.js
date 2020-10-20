@@ -890,6 +890,7 @@ sap.ui.define([
 				foo : {
 					bar : 42,
 					empty : "",
+					emptyList : [],
 					list : [{/*created*/}, {/*created*/}, {}, {}],
 					"null" : null,
 					zero : 0
@@ -997,6 +998,12 @@ sap.ui.define([
 			assert.strictEqual(drillDown("0/foo/list/" + sProperty), undefined,
 				"0/foo/list/" + sProperty);
 		});
+
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into 0/foo/emptyList('0'), invalid segment: emptyList('0')",
+			oCache.toString(), sClassName);
+
+		assert.strictEqual(drillDown("0/foo/emptyList('0')"), undefined, "0/foo/emptyList('0')");
 
 		oCacheMock.expects("from$skip")
 			.withExactArgs("foo", sinon.match.same(oData[0])).returns("foo");
