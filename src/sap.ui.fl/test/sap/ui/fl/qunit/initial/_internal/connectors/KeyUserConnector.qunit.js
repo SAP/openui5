@@ -27,13 +27,13 @@ sap.ui.define([
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "reference",
-				version: 0
+				version: sap.ui.fl.Versions.Draft
 			};
 			var mParameter = {
-				version: 0,
+				version: sap.ui.fl.Versions.Draft,
 				"sap-language": "en"
 			};
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=0";
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + sap.ui.fl.Versions.Draft;
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response : {
@@ -66,18 +66,27 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("loadFlexData resolves immeadiatly in case of the 'Original App'", function (assert) {
+		QUnit.test("loadFlexData requests the 'Original App'", function (assert) {
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "reference",
 				version: sap.ui.fl.Versions.Original
 			};
-			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl");
-			var oStubSendRequest = sandbox.stub(Utils, "sendRequest");
-			return KeyUserConnector.loadFlexData(mPropertyBag).then(function (oFlexData) {
-				assert.equal(oStubGetUrlWithQueryParameters.callCount, 0, "getUrl was not called");
-				assert.equal(oStubSendRequest.callCount, 0, "sendRequest was not called");
-				assert.equal(oFlexData, undefined, "the return value is 'undefined'");
+
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + sap.ui.fl.Versions.Original;
+			sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
+			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
+				response : {
+					changes: []
+				},
+				xsrfToken : "newToken",
+				status: "200",
+				etag: "abc123"
+			});
+			return KeyUserConnector.loadFlexData(mPropertyBag).then(function () {
+				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 			});
 		});
 	});
