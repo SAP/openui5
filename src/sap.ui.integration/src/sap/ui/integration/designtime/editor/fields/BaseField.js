@@ -29,7 +29,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+		sBuildInViz = "sap/ui/integration/designtime/editor/fields/viz";
+
 	var BaseField = Control.extend("sap.ui.integration.designtime.editor.fields.Base", {
 		metadata: {
 			properties: {
@@ -159,6 +161,20 @@ sap.ui.define([
 		if (this._visualization.editor) {
 			oControl = this._visualization.editor;
 		} else if (this._visualization.type) {
+			if (typeof this._visualization.type === "string") {
+				if (this._visualization.type.indexOf("/") === -1) {
+					this._visualization.type = sBuildInViz + "/" + this._visualization.type;
+					this._visualization.settings = {
+						value: "{currentSettings>value}",
+						editable: "{currentSettings>editable}"
+					};
+				}
+				sap.ui.require([this._visualization.type], function (f) {
+					this._visualization.type = f;
+					this.initEditor(oConfig);
+				}.bind(this));
+				return;
+			}
 			oControl = new this._visualization.type(this._visualization.settings || {});
 		}
 		if (oControl instanceof Control) {

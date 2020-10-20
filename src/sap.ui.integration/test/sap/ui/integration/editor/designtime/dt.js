@@ -72,7 +72,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"defaultValue": 1,
 						"type": "integer",
 						"visualization": {
-							"type": Slider,
+							"type": "sap/m/Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -257,7 +257,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "string",
 						"label": "Icon Not Allow File",
 						"visualization": {
-							"type": IconSelect,
+							"type": "IconSelect",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}",

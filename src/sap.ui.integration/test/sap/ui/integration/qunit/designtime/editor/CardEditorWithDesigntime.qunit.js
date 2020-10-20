@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/integration/designtime/editor/CardEditor",
+	"sap/ui/integration/Designtime",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function (
 	merge,
 	CardEditor,
+	Designtime,
 	Host,
 	sinon,
 	ContextHost,
@@ -503,7 +505,7 @@ sap.ui.define([
 						var oSelect = oField.getAggregation("_field").getAggregation("_select");
 						oSelect.open();
 						oSelect.setSelectedIndex(10);
-						oSelect.fireChange({selectedItem: oSelect.getItems()[10]});
+						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -523,7 +525,7 @@ sap.ui.define([
 						var oSelect = oField.getAggregation("_field").getAggregation("_select");
 						oSelect.open();
 						oSelect.setSelectedItem(oSelect.getItems()[2]);
-						oSelect.fireChange({selectedItem: oSelect.getItems()[2]});
+						oSelect.fireChange({ selectedItem: oSelect.getItems()[2] });
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -542,7 +544,7 @@ sap.ui.define([
 					setTimeout(function () {
 						var oSelect = oField.getAggregation("_field").getAggregation("_select");
 						oSelect.setSelectedIndex(10);
-						oSelect.fireChange({selectedItem: oSelect.getItems()[10]});
+						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
 						oSelect.focus();
 						oSelect.open();
 						setTimeout(function () {
@@ -619,7 +621,7 @@ sap.ui.define([
 					setTimeout(function () {
 						var oSelect = oField.getAggregation("_field").getAggregation("_select");
 						oSelect.setSelectedIndex(10);
-						oSelect.fireChange({selectedItem: oSelect.getItems()[10]});
+						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
 						oSelect.focus();
 						oSelect.open();
 						setTimeout(function () {
@@ -680,7 +682,7 @@ sap.ui.define([
 					setTimeout(function () {
 						var oSelect = oField.getAggregation("_field").getAggregation("_select");
 						oSelect.setSelectedIndex(10);
-						oSelect.fireChange({selectedItem: oSelect.getItems()[10]});
+						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
 						oSelect.focus();
 						oSelect.open();
 						setTimeout(function () {
@@ -741,7 +743,7 @@ sap.ui.define([
 					setTimeout(function () {
 						var oSelect = oField.getAggregation("_field").getAggregation("_select");
 						oSelect.setSelectedIndex(10);
-						oSelect.fireChange({selectedItem: oSelect.getItems()[10]});
+						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
 						oSelect.focus();
 						oSelect.open();
 						setTimeout(function () {
@@ -3176,7 +3178,7 @@ sap.ui.define([
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependeceForBoolean",
 						"type": "List",
-						"header":{},
+						"header": {},
 						"configuration": {
 							"parameters": {}
 						}
@@ -3222,7 +3224,7 @@ sap.ui.define([
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependeceForBoolean",
 						"type": "List",
-						"header":{},
+						"header": {},
 						"configuration": {
 							"parameters": {
 								"boolean": {
@@ -3272,7 +3274,7 @@ sap.ui.define([
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependeceForString",
 						"type": "List",
-						"header":{},
+						"header": {},
 						"configuration": {
 							"parameters": {}
 						}
@@ -3318,11 +3320,11 @@ sap.ui.define([
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependeceForString",
 						"type": "List",
-						"header":{},
+						"header": {},
 						"configuration": {
 							"parameters": {
-								"string" : {
-									"value" : "visible"
+								"string": {
+									"value": "visible"
 								}
 							}
 						}
@@ -3368,7 +3370,7 @@ sap.ui.define([
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependeceForInteger",
 						"type": "List",
-						"header":{},
+						"header": {},
 						"configuration": {
 							"parameters": {}
 						}
@@ -3414,7 +3416,7 @@ sap.ui.define([
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependeceForInteger",
 						"type": "List",
-						"header":{},
+						"header": {},
 						"configuration": {
 							"parameters": {
 								"integer": {
@@ -3450,6 +3452,208 @@ sap.ui.define([
 							resolve();
 						}, 1000);
 					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Create editors from existing controls", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+
+		QUnit.test("Slider is created from  dt json inline", function (assert) {
+
+			var dt = {
+				form: {
+					items: {
+						"integer": {
+							"manifestpath": "/sap.card/configuration/parameters/integer/value",
+							"defaultValue": 1,
+							"type": "integer",
+							"visualization": {
+								"type": "sap/m/Slider", //NO CLASS ANYMORE
+								"settings": {
+									"value": "{currentSettings>value}",
+									"min": 0,
+									"max": 10,
+									"width": "100%",
+									"showAdvancedTooltip": true,
+									"showHandleTooltip": false,
+									"inputsAsTooltips": true,
+									"enabled": "{currentSettings>editable}"
+								}
+							}
+						}
+					}
+				}
+			};
+
+			this.oCardEditor.setDesigntime(dt);
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					assert.ok(this.oCardEditor.getAggregation("_formContent")[1].getAggregation("_field").isA("sap.m.Slider"), "Content of Form contains: Slider ");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Slider is created from  dt class inline", function (assert) {
+			var dt = function () {
+				return new Designtime(
+					{
+						form: {
+							items: {
+								"integer": {
+									"manifestpath": "/sap.card/configuration/parameters/integer/value",
+									"defaultValue": 1,
+									"type": "integer",
+									"visualization": {
+										"type": "sap/m/Slider", //NO CLASS ANYMORE
+										"settings": {
+											"value": "{currentSettings>value}",
+											"min": 0,
+											"max": 10,
+											"width": "100%",
+											"showAdvancedTooltip": true,
+											"showHandleTooltip": false,
+											"inputsAsTooltips": true,
+											"enabled": "{currentSettings>editable}"
+										}
+									}
+								}
+							}
+						}
+					});
+			};
+
+			this.oCardEditor.setDesigntime(dt);
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					assert.ok(this.oCardEditor.getAggregation("_formContent")[1].getAggregation("_field").isA("sap.m.Slider"), "Content of Form contains: Slider ");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+		QUnit.test("IconSelect is created from  dt class inline", function (assert) {
+			var dt = function () {
+				return new Designtime(
+					{
+						form: {
+							items: {
+								"icon": {
+									"manifestpath": "/sap.card/configuration/parameters/integer/value",
+									"defaultValue": "sap-icon://accept",
+									"type": "integer",
+									"visualization": {
+										"type": "IconSelect"
+									}
+								}
+							}
+						}
+					});
+			};
+
+			this.oCardEditor.setDesigntime(dt);
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					assert.ok(this.oCardEditor.getAggregation("_formContent")[1].getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Content of Form contains: IconSelect ");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+
+	QUnit.module("Lazy loading of destinations", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oHost.getDestinations = function () {
+				return new Promise(function (resolve) {
+					setTimeout(function () {
+						resolve([
+							{
+								"name": "Products"
+							},
+							{
+								"name": "Orders"
+							},
+							{
+								"name": "Portal"
+							},
+							{
+								"name": "Northwind"
+							}
+						]);
+					}, 1000);
+				});
+			};
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+
+		QUnit.test("Check Loading animation on destination", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "MyDestination" } } }, "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					assert.ok(this.oCardEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.designtime.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field").getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					setTimeout(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field").getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+						resolve();
+					}.bind(this), 1500);
 				}.bind(this));
 			}.bind(this));
 		});
