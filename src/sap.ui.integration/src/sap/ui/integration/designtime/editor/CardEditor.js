@@ -1203,8 +1203,11 @@ sap.ui.define([
 					oItems[n + ".destinaton"].label = n;
 				}
 				if (oHost) {
+					oItems[n + ".destinaton"]._loading = true;
 					this._oEditorCard.getHostInstance().getDestinations().then(function (n, a) {
 						oItems[n + ".destinaton"]._values = _values.concat(a);
+						oItems[n + ".destinaton"]._loading = false;
+						this._settingsModel.checkUpdate(true);
 					}.bind(this, n)); //pass in n as first parameter
 				}
 			}.bind(this));

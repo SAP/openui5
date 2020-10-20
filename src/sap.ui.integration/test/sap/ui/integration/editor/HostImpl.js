@@ -8,20 +8,24 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 	});
 
 	oHost.getDestinations = function () {
-		return Promise.resolve([
-			{
-				"name": "Products"
-			},
-			{
-				"name": "Orders"
-			},
-			{
-				"name": "Portal"
-			},
-			{
-				"name": "Northwind"
-			}
-		]);
+		return new Promise(function (resolve) {
+			setTimeout(function () {
+				resolve([
+					{
+						"name": "Products"
+					},
+					{
+						"name": "Orders"
+					},
+					{
+						"name": "Portal"
+					},
+					{
+						"name": "Northwind"
+					}
+				]);
+			}, 1000);
+		});
 	};
 	oHost.getContextValue = function (sPath) {
 		return this.getContext().then(function (oNode) {

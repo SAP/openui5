@@ -9,10 +9,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 	Designtime
 ) {
 	"use strict";
-
-	var Configuration = Designtime.extend("$$CARDID$$.Configuration");
-	Configuration.prototype.create = function () {
-		return {
+	return function () {
+		return new Designtime({
 			form: {
 				items: {
 				}
@@ -20,7 +18,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 			preview: {
 				modes: "Abstract"
 			}
-		};
+		});
 	};
-	return Configuration;
 });
