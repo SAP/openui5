@@ -181,10 +181,10 @@ function(
 			formattedValueStateText: { type: "sap.m.FormattedText", multiple: false, defaultValue: null },
 
 			/**
-			 * Clone of the <code>formattedValueStateText</code> aggregaion created for the accessibility elements used
+			 * Clone of the <code>formattedValueStateText</code> aggregation created for the accessibility elements used
 			 * by screen readers.
-			 * @experimental Since 1.83. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
-			 * @since 1.83
+			 * @experimental Since 1.84. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
+			 * @since 1.84
 			 */
 			_invisibleFormattedValueStateText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden", defaultValue: null },
 
