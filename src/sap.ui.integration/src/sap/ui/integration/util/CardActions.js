@@ -357,7 +357,7 @@ sap.ui.define([
 		CardActions.fireAction = function (mConfig) {
 			var oHost = mConfig.host,
 				oCard = mConfig.card,
-				oExtension = oCard._oExtension,
+				oExtension = oCard.getAggregation("_extension"),
 				oAction = mConfig.action,
 				mParameters = mConfig.parameters || {},
 				mActionParams = {

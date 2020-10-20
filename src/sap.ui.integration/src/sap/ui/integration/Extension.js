@@ -130,7 +130,7 @@ sap.ui.define([
 		}
 
 		if (!this._oCard._bApplyManifest ||
-			this._oCard._oExtension !== this) {
+			this._oCard.getAggregation("_extension") !== this) {
 			Log.error("Extension formatters must be set before the initialization of the card. Do this inside Extension#init().");
 		}
 	};

@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/base/Interface",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/Control",
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
@@ -22,7 +21,6 @@ sap.ui.define([
 	"sap/f/CardRenderer",
 	"sap/f/CardBase",
 	"sap/f/library",
-	"sap/m/library",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/util/LoadingProvider",
@@ -37,7 +35,6 @@ sap.ui.define([
 	Interface,
 	jQuery,
 	Core,
-	Control,
 	CardManifest,
 	ServiceManager,
 	Log,
@@ -54,7 +51,6 @@ sap.ui.define([
 	FCardRenderer,
 	CardBase,
 	fLibrary,
-	mLibrary,
 	library,
 	Destinations,
 	LoadingProvider,
@@ -331,7 +327,6 @@ sap.ui.define([
 		this.setModel(new JSONModel(), "filters");
 		this.setModel(new ContextModel(), "context");
 		this._busyStates = new Map();
-		this._oExtension = null;
 		this._oContentFactory = new ContentFactory(this);
 
 		/**
@@ -519,19 +514,13 @@ sap.ui.define([
 		var sFullExtensionPath = this._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + sExtensionPath;
 
 		return new Promise(function (resolve, reject) {
-			sap.ui.require([sFullExtensionPath], function (vExtension) {
-				if (typeof vExtension === "function") {
-					this._oExtension = new vExtension();
-					this._oExtension._setCard(this, this._oLimitedInterface);
-					this.setAggregation("_extension", this._oExtension); // let the framework validate and take care of the instance
-				} else {
-					this._oExtension = vExtension;
-					Log.error("Expected module '" + sExtensionPath + "' to export a class, which extends sap.ui.integration.Extension, but it exports an Extension instance instead. "
-								+ "In the future this will not work." );
-				}
+			sap.ui.require([sFullExtensionPath], function (ExtensionSubclass) {
+				var oExtension = new ExtensionSubclass();
+				oExtension._setCard(this, this._oLimitedInterface);
+				this.setAggregation("_extension", oExtension); // the framework validates that the subclass extends "sap.ui.integration.Extension"
 
 				BindingHelper.addNamespace("extension", {
-					formatters: this._oExtension.getFormatters()
+					formatters: oExtension.getFormatters()
 				});
 				resolve();
 			}.bind(this), function (vErr) {
@@ -724,7 +713,7 @@ sap.ui.define([
 	Card.prototype._refreshActionsMenu = function () {
 		var oCardHeader = this.getCardHeader(),
 			oHost = this.getHostInstance(),
-			oExtension = this._oExtension,
+			oExtension = this.getAggregation("_extension"),
 			aActions = [],
 			oCurrentActionsToolbar,
 			oHeaderFactory,
@@ -763,8 +752,6 @@ sap.ui.define([
 
 		this.destroyManifest();
 		this._busyStates = null;
-
-		this._oExtension = null;
 		this._oContentFactory = null;
 	};
 
@@ -992,7 +979,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._prepareToApplyManifestSettings = function () {
-		var sAppType = this._oCardManifest.get(MANIFEST_PATHS.APP_TYPE);
+		var sAppType = this._oCardManifest.get(MANIFEST_PATHS.APP_TYPE),
+			oExtension = this.getAggregation("_extension");
+
 		if (sAppType && sAppType !== "card") {
 			Log.error("sap.app/type entry in manifest is not 'card'");
 		}
@@ -1004,12 +993,12 @@ sap.ui.define([
 		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS));
 		this._oIconFormatter = new IconFormatter(this._oDestinations);
 
-		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, this._oExtension, this);
+		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, oExtension, this);
 
 		this._oLoadingProvider = new LoadingProvider();
 
-		if (this._oExtension) {
-			this._oExtension.onCardReady();
+		if (oExtension) {
+			oExtension.onCardReady();
 		}
 
 		this._fillFiltersModel();

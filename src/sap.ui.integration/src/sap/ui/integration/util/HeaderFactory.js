@@ -138,7 +138,7 @@ sap.ui.define([
 	HeaderFactory.prototype._createActionsToolbar = function () {
 		var oCard = this._oCard,
 			oHost = oCard.getHostInstance(),
-			oExtension = oCard._oExtension,
+			oExtension = oCard.getAggregation("_extension"),
 			oActionsToolbar,
 			bHasActions;
 
