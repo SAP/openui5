@@ -28,6 +28,38 @@ sap.ui.define([
 		});
 	}
 
+	var aChartItems = [
+		{p13nItem: "Genre", selected: true},
+		{p13nItem: "Price (average)", selected: true},
+		{p13nItem: "Author ID", selected: false},
+		{p13nItem: "Classification", selected: false},
+		{p13nItem: "DetailGenre", selected: false},
+		{p13nItem: "Language", selected: false},
+		{p13nItem: "Price (max)", selected: false},
+		{p13nItem: "Price (min)", selected: false},
+		{p13nItem: "SubGenre", selected: false},
+		{p13nItem: "Title", selected: false},
+		{p13nItem: "Words (average)", selected: false},
+		{p13nItem: "Words (max)", selected: false},
+		{p13nItem: "Words (min)", selected: false}
+	];
+
+	var aSortItems = [
+		{p13nItem: "Author ID", selected: false},
+		{p13nItem: "Classification", selected: false},
+		{p13nItem: "DetailGenre", selected: false},
+		{p13nItem: "Genre", selected: false},
+		{p13nItem: "Language", selected: false},
+		{p13nItem: "Price (average)", selected: false},
+		{p13nItem: "Price (max)", selected: false},
+		{p13nItem: "Price (min)", selected: false},
+		{p13nItem: "SubGenre", selected: false},
+		{p13nItem: "Title", selected: false},
+		{p13nItem: "Words (average)", selected: false},
+		{p13nItem: "Words (max)", selected: false},
+		{p13nItem: "Words (min)", selected: false}
+	];
+
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimentions and measures appears", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html');
 		Given.enableAndDeleteLrepLocalStorage();
@@ -38,10 +70,10 @@ sap.ui.define([
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Product Name", "Date"
+			"Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Amount)"
+			"Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
@@ -54,95 +86,17 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.chart);
 
-		Then.iShouldSeeItemOnPosition("ProductName", 0);
-		Then.iShouldSeeItemWithSelection("ProductName", true);
-		Then.iShouldSeeEnabledSelectControl("ProductName", true);
-
-		Then.iShouldSeeItemOnPosition("Date", 1);
-		Then.iShouldSeeItemWithSelection("Date", true);
-		Then.iShouldSeeEnabledSelectControl("Date", true);
-
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Amount)", 2);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Amount)", true);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Amount)", true);
-
-		Then.iShouldSeeItemOnPosition("CategoryId", 3);
-		Then.iShouldSeeItemWithSelection("CategoryId", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryId", false);
-
-		Then.iShouldSeeItemOnPosition("CategoryName", 4);
-		Then.iShouldSeeItemWithSelection("CategoryName", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryName", false);
-
-		Then.iShouldSeeItemOnPosition("Color", 5);
-		Then.iShouldSeeItemWithSelection("Color", false);
-		Then.iShouldSeeEnabledSelectControl("Color", false);
-
-		Then.iShouldSeeItemOnPosition("Country", 6);
-		Then.iShouldSeeItemWithSelection("Country", false);
-		Then.iShouldSeeEnabledSelectControl("Country", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyCode", 7);
-		Then.iShouldSeeItemWithSelection("CurrencyCode", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyCode", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyName", 8);
-		Then.iShouldSeeItemWithSelection("CurrencyName", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyName", false);
-
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Forecast)", 9);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Forecast)", false);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Forecast)", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerId", 10);
-		Then.iShouldSeeItemWithSelection("CustomerId", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerId", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerName", 11);
-		Then.iShouldSeeItemWithSelection("CustomerName", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerName", false);
-
-		Then.iShouldSeeItemOnPosition("Month", 12);
-		Then.iShouldSeeItemWithSelection("Month", false);
-		Then.iShouldSeeEnabledSelectControl("Month", false);
-
-		Then.iShouldSeeItemOnPosition("ProductId", 13);
-		Then.iShouldSeeItemWithSelection("ProductId", false);
-		Then.iShouldSeeEnabledSelectControl("ProductId", false);
-
-		Then.iShouldSeeItemOnPosition("Quarter", 14);
-		Then.iShouldSeeItemWithSelection("Quarter", false);
-		Then.iShouldSeeEnabledSelectControl("Quarter", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationId", 15);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationId", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationId", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationName", 16);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationName", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationName", false);
-
-		Then.iShouldSeeItemOnPosition("SuperOrdinateId", 17);
-		Then.iShouldSeeItemWithSelection("SuperOrdinateId", false);
-		Then.iShouldSeeEnabledSelectControl("SuperOrdinateId", false);
-
-		Then.iShouldSeeItemOnPosition("TaxRate", 18);
-		Then.iShouldSeeItemWithSelection("TaxRate", false);
-		Then.iShouldSeeEnabledSelectControl("TaxRate", false);
-
-		Then.iShouldSeeItemOnPosition("Year", 19);
-		Then.iShouldSeeItemWithSelection("Year", false);
-		Then.iShouldSeeEnabledSelectControl("Year", false);
+		Then.iShouldSeeP13nItems(aChartItems);
 	});
 	opaTest("When I close the 'Define Chart Properties', the chart has not been changed", function(Given, When, Then) {
 		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Product Name", "Date"
+			"Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Amount)"
+			"Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
@@ -154,24 +108,17 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.sort);
 
-		Then.iShouldSeeP13nItem("Custom Aggregate (Amount)", 6, false);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Amount)", false);
-
-		Then.iShouldSeeP13nItem("Date", 10, false);
-		Then.iShouldSeeEnabledSelectControl("Date", false);
-
-		Then.iShouldSeeP13nItem("ProductName", 13, false);
-		Then.iShouldSeeEnabledSelectControl("ProductName", false);
+		Then.iShouldSeeP13nItems(aSortItems);
 	});
 	opaTest("When I close the 'Define Sort Properties', the chart has not been changed", function(Given, When, Then) {
 		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Product Name", "Date"
+			"Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Amount)"
+			"Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
@@ -200,10 +147,10 @@ sap.ui.define([
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Product Name", "Date"
+			"Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Amount)"
+			"Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
@@ -223,10 +170,10 @@ sap.ui.define([
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Product Name", "Date"
+			"Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Amount)"
+			"Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
@@ -253,10 +200,10 @@ sap.ui.define([
 		When.iClickOnListItem(TestUtil.getTextOfChartType("pie"));
 
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Product Name", "Date"
+			"Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Amount)"
+			"Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("pie");
 		Then.iShouldSeeButtonWithIcon("sap-icon://pie-chart");
@@ -276,10 +223,10 @@ sap.ui.define([
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Product Name", "Date"
+			"Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Amount)"
+			"Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
@@ -290,180 +237,40 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.chart);
 
-		Then.iShouldSeeItemOnPosition("ProductName", 0);
-		Then.iShouldSeeItemWithSelection("ProductName", true);
-		Then.iShouldSeeEnabledSelectControl("ProductName", true);
-
-		Then.iShouldSeeItemOnPosition("Date", 1);
-		Then.iShouldSeeItemWithSelection("Date", true);
-		Then.iShouldSeeEnabledSelectControl("Date", true);
-
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Amount)", 2);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Amount)", true);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Amount)", true);
-
-		Then.iShouldSeeItemOnPosition("CategoryId", 3);
-		Then.iShouldSeeItemWithSelection("CategoryId", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryId", false);
-
-		Then.iShouldSeeItemOnPosition("CategoryName", 4);
-		Then.iShouldSeeItemWithSelection("CategoryName", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryName", false);
-
-		Then.iShouldSeeItemOnPosition("Color", 5);
-		Then.iShouldSeeItemWithSelection("Color", false);
-		Then.iShouldSeeEnabledSelectControl("Color", false);
-
-		Then.iShouldSeeItemOnPosition("Country", 6);
-		Then.iShouldSeeItemWithSelection("Country", false);
-		Then.iShouldSeeEnabledSelectControl("Country", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyCode", 7);
-		Then.iShouldSeeItemWithSelection("CurrencyCode", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyCode", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyName", 8);
-		Then.iShouldSeeItemWithSelection("CurrencyName", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyName", false);
-
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Forecast)", 9);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Forecast)", false);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Forecast)", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerId", 10);
-		Then.iShouldSeeItemWithSelection("CustomerId", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerId", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerName", 11);
-		Then.iShouldSeeItemWithSelection("CustomerName", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerName", false);
-
-		Then.iShouldSeeItemOnPosition("Month", 12);
-		Then.iShouldSeeItemWithSelection("Month", false);
-		Then.iShouldSeeEnabledSelectControl("Month", false);
-
-		Then.iShouldSeeItemOnPosition("ProductId", 13);
-		Then.iShouldSeeItemWithSelection("ProductId", false);
-		Then.iShouldSeeEnabledSelectControl("ProductId", false);
-
-		Then.iShouldSeeItemOnPosition("Quarter", 14);
-		Then.iShouldSeeItemWithSelection("Quarter", false);
-		Then.iShouldSeeEnabledSelectControl("Quarter", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationId", 15);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationId", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationId", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationName", 16);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationName", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationName", false);
-
-		Then.iShouldSeeItemOnPosition("SuperOrdinateId", 17);
-		Then.iShouldSeeItemWithSelection("SuperOrdinateId", false);
-		Then.iShouldSeeEnabledSelectControl("SuperOrdinateId", false);
-
-		Then.iShouldSeeItemOnPosition("TaxRate", 18);
-		Then.iShouldSeeItemWithSelection("TaxRate", false);
-		Then.iShouldSeeEnabledSelectControl("TaxRate", false);
-
-		Then.iShouldSeeItemOnPosition("Year", 19);
-		Then.iShouldSeeItemWithSelection("Year", false);
-		Then.iShouldSeeEnabledSelectControl("Year", false);
+		Then.iShouldSeeP13nItems(aChartItems);
 	});
-	opaTest("When I select the 'Custom Aggregate (Forecast)' measure and move the 'Custom Aggregate (Forecast)' to the top, the chart should be changed", function(Given, When, Then) {
-		When.iSelectColumn("Custom Aggregate (Forecast)", Arrangement.P13nDialog.Titles.chart);
+	opaTest("When I select the 'Words (average)' measure and move the 'Words (average)' to the top, the chart should be changed", function(Given, When, Then) {
+		When.iSelectColumn("Words (average)", Arrangement.P13nDialog.Titles.chart);
 
 		When.iPressButtonWithText("Reorder");
-		When.iClickOnTableItem("Custom Aggregate (Forecast)").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
+		When.iClickOnTableItem("Words (average)").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 		When.iPressButtonWithText("Select");
 
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Forecast)", 0);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Forecast)", true);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Amount)", true);
+		aChartItems = [
+			{p13nItem: "Words (average)", selected: true},
+			{p13nItem: "Genre", selected: true},
+			{p13nItem: "Price (average)", selected: true},
+			{p13nItem: "Author ID", selected: false},
+			{p13nItem: "Classification", selected: false},
+			{p13nItem: "DetailGenre", selected: false},
+			{p13nItem: "Language", selected: false},
+			{p13nItem: "Price (max)", selected: false},
+			{p13nItem: "Price (min)", selected: false},
+			{p13nItem: "SubGenre", selected: false},
+			{p13nItem: "Title", selected: false},
+			{p13nItem: "Words (max)", selected: false},
+			{p13nItem: "Words (min)", selected: false}
+		];
 
-		Then.iShouldSeeItemOnPosition("ProductName", 1);
-		Then.iShouldSeeItemWithSelection("ProductName", true);
-		Then.iShouldSeeEnabledSelectControl("ProductName", true);
-
-		Then.iShouldSeeItemOnPosition("Date", 2);
-		Then.iShouldSeeItemWithSelection("Date", true);
-		Then.iShouldSeeEnabledSelectControl("Date", true);
-
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Amount)", 3);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Amount)", true);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Amount)", true);
-
-		Then.iShouldSeeItemOnPosition("CategoryId", 4);
-		Then.iShouldSeeItemWithSelection("CategoryId", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryId", false);
-
-		Then.iShouldSeeItemOnPosition("CategoryName", 5);
-		Then.iShouldSeeItemWithSelection("CategoryName", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryName", false);
-
-		Then.iShouldSeeItemOnPosition("Color", 6);
-		Then.iShouldSeeItemWithSelection("Color", false);
-		Then.iShouldSeeEnabledSelectControl("Color", false);
-
-		Then.iShouldSeeItemOnPosition("Country", 7);
-		Then.iShouldSeeItemWithSelection("Country", false);
-		Then.iShouldSeeEnabledSelectControl("Country", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyCode", 8);
-		Then.iShouldSeeItemWithSelection("CurrencyCode", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyCode", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyName", 9);
-		Then.iShouldSeeItemWithSelection("CurrencyName", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyName", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerId", 10);
-		Then.iShouldSeeItemWithSelection("CustomerId", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerId", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerName", 11);
-		Then.iShouldSeeItemWithSelection("CustomerName", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerName", false);
-
-		Then.iShouldSeeItemOnPosition("Month", 12);
-		Then.iShouldSeeItemWithSelection("Month", false);
-		Then.iShouldSeeEnabledSelectControl("Month", false);
-
-		Then.iShouldSeeItemOnPosition("ProductId", 13);
-		Then.iShouldSeeItemWithSelection("ProductId", false);
-		Then.iShouldSeeEnabledSelectControl("ProductId", false);
-
-		Then.iShouldSeeItemOnPosition("Quarter", 14);
-		Then.iShouldSeeItemWithSelection("Quarter", false);
-		Then.iShouldSeeEnabledSelectControl("Quarter", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationId", 15);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationId", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationId", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationName", 16);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationName", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationName", false);
-
-		Then.iShouldSeeItemOnPosition("SuperOrdinateId", 17);
-		Then.iShouldSeeItemWithSelection("SuperOrdinateId", false);
-		Then.iShouldSeeEnabledSelectControl("SuperOrdinateId", false);
-
-		Then.iShouldSeeItemOnPosition("TaxRate", 18);
-		Then.iShouldSeeItemWithSelection("TaxRate", false);
-		Then.iShouldSeeEnabledSelectControl("TaxRate", false);
-
-		Then.iShouldSeeItemOnPosition("Year", 19);
-		Then.iShouldSeeItemWithSelection("Year", false);
-		Then.iShouldSeeEnabledSelectControl("Year", false);
+		Then.iShouldSeeP13nItems(aChartItems);
 
 		When.iPressDialogOk();
 
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Product Name", "Date"
+			"Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Forecast)", "Custom Aggregate (Amount)"
+			"Words (average)", "Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
@@ -486,194 +293,67 @@ sap.ui.define([
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Product Name", "Date"
+			"Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Amount)"
+			"Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
 		Then.theVariantManagementIsDirty(false);
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-
-		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.chart);
-
-		Then.iShouldSeeItemOnPosition("ProductName", 0);
-		Then.iShouldSeeItemWithSelection("ProductName", true);
-		Then.iShouldSeeEnabledSelectControl("ProductName", true);
-
-		Then.iShouldSeeItemOnPosition("Date", 1);
-		Then.iShouldSeeItemWithSelection("Date", true);
-		Then.iShouldSeeEnabledSelectControl("Date", true);
-
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Amount)", 2);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Amount)", true);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Amount)", true);
-
-		Then.iShouldSeeItemOnPosition("CategoryId", 3);
-		Then.iShouldSeeItemWithSelection("CategoryId", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryId", false);
-
-		Then.iShouldSeeItemOnPosition("CategoryName", 4);
-		Then.iShouldSeeItemWithSelection("CategoryName", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryName", false);
-
-		Then.iShouldSeeItemOnPosition("Color", 5);
-		Then.iShouldSeeItemWithSelection("Color", false);
-		Then.iShouldSeeEnabledSelectControl("Color", false);
-
-		Then.iShouldSeeItemOnPosition("Country", 6);
-		Then.iShouldSeeItemWithSelection("Country", false);
-		Then.iShouldSeeEnabledSelectControl("Country", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyCode", 7);
-		Then.iShouldSeeItemWithSelection("CurrencyCode", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyCode", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyName", 8);
-		Then.iShouldSeeItemWithSelection("CurrencyName", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyName", false);
-
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Forecast)", 9);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Forecast)", false);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Forecast)", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerId", 10);
-		Then.iShouldSeeItemWithSelection("CustomerId", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerId", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerName", 11);
-		Then.iShouldSeeItemWithSelection("CustomerName", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerName", false);
-
-		Then.iShouldSeeItemOnPosition("Month", 12);
-		Then.iShouldSeeItemWithSelection("Month", false);
-		Then.iShouldSeeEnabledSelectControl("Month", false);
-
-		Then.iShouldSeeItemOnPosition("ProductId", 13);
-		Then.iShouldSeeItemWithSelection("ProductId", false);
-		Then.iShouldSeeEnabledSelectControl("ProductId", false);
-
-		Then.iShouldSeeItemOnPosition("Quarter", 14);
-		Then.iShouldSeeItemWithSelection("Quarter", false);
-		Then.iShouldSeeEnabledSelectControl("Quarter", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationId", 15);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationId", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationId", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationName", 16);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationName", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationName", false);
-
-		Then.iShouldSeeItemOnPosition("SuperOrdinateId", 17);
-		Then.iShouldSeeItemWithSelection("SuperOrdinateId", false);
-		Then.iShouldSeeEnabledSelectControl("SuperOrdinateId", false);
-
-		Then.iShouldSeeItemOnPosition("TaxRate", 18);
-		Then.iShouldSeeItemWithSelection("TaxRate", false);
-		Then.iShouldSeeEnabledSelectControl("TaxRate", false);
-
-		Then.iShouldSeeItemOnPosition("Year", 19);
-		Then.iShouldSeeItemWithSelection("Year", false);
-		Then.iShouldSeeEnabledSelectControl("Year", false);
+		Then.iShouldSeeP13nItems([
+			{p13nItem: "Genre", selected: true},
+			{p13nItem: "Price (average)", selected: true},
+			{p13nItem: "Author ID", selected: false},
+			{p13nItem: "Classification", selected: false},
+			{p13nItem: "DetailGenre", selected: false},
+			{p13nItem: "Language", selected: false},
+			{p13nItem: "Price (max)", selected: false},
+			{p13nItem: "Price (min)", selected: false},
+			{p13nItem: "SubGenre", selected: false},
+			{p13nItem: "Title", selected: false},
+			{p13nItem: "Words (average)", selected: false},
+			{p13nItem: "Words (max)", selected: false},
+			{p13nItem: "Words (min)", selected: false}
+		]);
 	});
-	opaTest("When I select the 'Country' dimension and move the 'Country' to the top, the chart should be changed", function(Given, When, Then) {
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.chart);
+	opaTest("When I select the 'Language' dimension and move the 'Language' to the top, the chart should be changed", function(Given, When, Then) {
+		When.iSelectColumn("Language", Arrangement.P13nDialog.Titles.chart);
 
 		When.iPressButtonWithText("Reorder");
-		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
+		When.iClickOnTableItem("Language").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 		When.iPressButtonWithText("Select");
 
-		Then.iShouldSeeItemOnPosition("Country", 0);
-		Then.iShouldSeeItemWithSelection("Country", true);
-		Then.iShouldSeeEnabledSelectControl("Country", true);
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
-		Then.iShouldSeeItemOnPosition("ProductName", 1);
-		Then.iShouldSeeItemWithSelection("ProductName", true);
-		Then.iShouldSeeEnabledSelectControl("ProductName", true);
+		aChartItems = [
+			{p13nItem: "Language", selected: true},
+			{p13nItem: "Genre", selected: true},
+			{p13nItem: "Price (average)", selected: true},
+			{p13nItem: "Author ID", selected: false},
+			{p13nItem: "Classification", selected: false},
+			{p13nItem: "DetailGenre", selected: false},
+			{p13nItem: "Price (max)", selected: false},
+			{p13nItem: "Price (min)", selected: false},
+			{p13nItem: "SubGenre", selected: false},
+			{p13nItem: "Title", selected: false},
+			{p13nItem: "Words (average)", selected: false},
+			{p13nItem: "Words (max)", selected: false},
+			{p13nItem: "Words (min)", selected: false}
+		];
 
-		Then.iShouldSeeItemOnPosition("Date", 2);
-		Then.iShouldSeeItemWithSelection("Date", true);
-		Then.iShouldSeeEnabledSelectControl("Date", true);
-
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Amount)", 3);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Amount)", true);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Amount)", true);
-
-		Then.iShouldSeeItemOnPosition("CategoryId", 4);
-		Then.iShouldSeeItemWithSelection("CategoryId", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryId", false);
-
-		Then.iShouldSeeItemOnPosition("CategoryName", 5);
-		Then.iShouldSeeItemWithSelection("CategoryName", false);
-		Then.iShouldSeeEnabledSelectControl("CategoryName", false);
-
-		Then.iShouldSeeItemOnPosition("Color", 6);
-		Then.iShouldSeeItemWithSelection("Color", false);
-		Then.iShouldSeeEnabledSelectControl("Color", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyCode", 7);
-		Then.iShouldSeeItemWithSelection("CurrencyCode", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyCode", false);
-
-		Then.iShouldSeeItemOnPosition("CurrencyName", 8);
-		Then.iShouldSeeItemWithSelection("CurrencyName", false);
-		Then.iShouldSeeEnabledSelectControl("CurrencyName", false);
-
-		Then.iShouldSeeItemOnPosition("Custom Aggregate (Forecast)", 9);
-		Then.iShouldSeeItemWithSelection("Custom Aggregate (Forecast)", false);
-		Then.iShouldSeeEnabledSelectControl("Custom Aggregate (Forecast)", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerId", 10);
-		Then.iShouldSeeItemWithSelection("CustomerId", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerId", false);
-
-		Then.iShouldSeeItemOnPosition("CustomerName", 11);
-		Then.iShouldSeeItemWithSelection("CustomerName", false);
-		Then.iShouldSeeEnabledSelectControl("CustomerName", false);
-
-		Then.iShouldSeeItemOnPosition("Month", 12);
-		Then.iShouldSeeItemWithSelection("Month", false);
-		Then.iShouldSeeEnabledSelectControl("Month", false);
-
-		Then.iShouldSeeItemOnPosition("ProductId", 13);
-		Then.iShouldSeeItemWithSelection("ProductId", false);
-		Then.iShouldSeeEnabledSelectControl("ProductId", false);
-
-		Then.iShouldSeeItemOnPosition("Quarter", 14);
-		Then.iShouldSeeItemWithSelection("Quarter", false);
-		Then.iShouldSeeEnabledSelectControl("Quarter", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationId", 15);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationId", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationId", false);
-
-		Then.iShouldSeeItemOnPosition("SalesOrganizationName", 16);
-		Then.iShouldSeeItemWithSelection("SalesOrganizationName", false);
-		Then.iShouldSeeEnabledSelectControl("SalesOrganizationName", false);
-
-		Then.iShouldSeeItemOnPosition("SuperOrdinateId", 17);
-		Then.iShouldSeeItemWithSelection("SuperOrdinateId", false);
-		Then.iShouldSeeEnabledSelectControl("SuperOrdinateId", false);
-
-		Then.iShouldSeeItemOnPosition("TaxRate", 18);
-		Then.iShouldSeeItemWithSelection("TaxRate", false);
-		Then.iShouldSeeEnabledSelectControl("TaxRate", false);
-
-		Then.iShouldSeeItemOnPosition("Year", 19);
-		Then.iShouldSeeItemWithSelection("Year", false);
-		Then.iShouldSeeEnabledSelectControl("Year", false);
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		Then.iShouldSeeP13nItems(aChartItems);
 
 		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		Then.iShouldSeeVisibleDimensionsInOrder([
-			"Country", "Product Name", "Date"
+			"Language", "Genre"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
-			"Custom Aggregate (Amount)"
+			"Price (average)"
 		]);
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
