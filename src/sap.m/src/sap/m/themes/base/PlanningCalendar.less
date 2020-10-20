@@ -281,8 +281,14 @@
 			width: 100%;
 
 			html[data-sap-ui-browser^="ie"] & {
-				top: .5rem;
+				top: .5625rem;
 				left: 0;
+			}
+		}
+
+		.sapMSLIImgIcon + .sapMSLIDiv {
+			html[data-sap-ui-browser^="ie"] & {
+				padding-top: .4375rem;
 			}
 		}
 	}
@@ -359,4 +365,8 @@ html[dir=rtl][data-sap-ui-browser ^= "ie"], html[dir=rtl][data-sap-ui-browser^="
 
 .sapMPlanCal .sapUiCalMonthView .sapUiCalWeekNum {
 	text-align: center;
+}
+
+.sapMPlanCal .sapMListTblCell.sapMPlanCalRowHead {
+	vertical-align: top;
 }
