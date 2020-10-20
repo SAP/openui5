@@ -970,7 +970,7 @@ sap.ui.define([
 							oItem.translatable = true;
 							oItem._translatedDefaultPlaceholder = sDefaultDTValue;
 							//resolve value to default i18n binding otherwise the binding string will be in the field
-							oItem.value = this.getModel("i18n").getResourceBundle().getText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
+							oItem.value = oItem.value || this.getModel("i18n").getResourceBundle().getText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
 							if (this.getMode() === "translation") {
 								//resolve to _translatedDefaultValue language specific i18n binding
 								oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
@@ -1156,7 +1156,7 @@ sap.ui.define([
 				}, oConfiguration.parameters[n]);
 				var oItem = oItems[n];
 				if (!oItem.type) {
-					oItem.type === "string";
+					oItem.type = "string";
 				}
 				if (!oItem.hasOwnProperty("visible")) {
 					oItem.visible = true;
