@@ -391,7 +391,7 @@ sap.ui.define([
 				var mTableCntRect = oTable.getDomRef("sapUiTableCnt").getBoundingClientRect();
 
 				if (mParams.sRowType === "Empty") {
-					var oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyVisibleRowCount(this) - 1];
+					var oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyRowCount(this) - 1];
 					assert.strictEqual(oEvent.dragSession.getDropControl(), oLastNonEmptyRow,
 						sMessagePrefix + "The drop control was set to the last non-empty row");
 				}

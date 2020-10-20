@@ -244,14 +244,12 @@ sap.ui.define([
 				bIsInitial = false;
 
 			if (oIN) {
-				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1; // +1 -> we want to announce a count and not the
-																								 // index, the action column is handled like a normal
-																								 // column
-				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable._getFirstRenderedRowIndex() + 1; // same here + take
-																													   // virtualization
-																													   // into account
+				// +1 -> we want to announce a count and not the index, the action column is handled like a normal column
+				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1;
+				// same here + take virtualization into account
+				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable._getFirstRenderedRowIndex() + 1;
 				var iColCount = TableUtils.getVisibleColumnCount(oTable) + (TableUtils.hasRowActions(oTable) ? 1 : 0);
-				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : TableUtils.getTotalRowCount(oTable, true);
+				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : Math.max(oTable._getTotalRowCount(), oTable._getRowCounts().count);
 
 				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber
 																			 && oExtension._iLastColumnNumber == iColumnNumber);

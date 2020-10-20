@@ -61,13 +61,14 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var GroupEventType = library.GroupEventType,
-		NavigationMode = library.NavigationMode,
-		SelectionMode = library.SelectionMode,
-		SelectionBehavior = library.SelectionBehavior,
-		SortOrder = library.SortOrder,
-		VisibleRowCountMode = library.VisibleRowCountMode,
-		Hook = TableUtils.Hook.Keys.Table;
+	var GroupEventType = library.GroupEventType;
+	var NavigationMode = library.NavigationMode;
+	var SelectionMode = library.SelectionMode;
+	var SelectionBehavior = library.SelectionBehavior;
+	var SortOrder = library.SortOrder;
+	var VisibleRowCountMode = library.VisibleRowCountMode;
+	var Hook = TableUtils.Hook.Keys.Table;
+	var _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Constructor for a new Table.
@@ -897,6 +898,14 @@ sap.ui.define([
 			rowSettingsTemplate: true
 		};
 
+		/*
+		 * The binding length that the table currently knows and that is not affected by a rebind or refresh where the actual binding length is 0.
+		 */
+		_private(this).iCachedBindingLength = 0;
+
+		_private(this).iFirstRenderedRowIndex = 0;
+		_private(this).iComputedFixedColumnCount = null;
+
 		// Extensions are part of the core of the table must be initialized first, for example for correct delegate order.
 		this._attachExtensions();
 
@@ -931,7 +940,6 @@ sap.ui.define([
 		this._bHideStandardTooltips = false;
 
 		this._aRowHeights = [];
-		this._iRenderedFirstVisibleRow = 0;
 		this._aSortedColumns = [];
 		this._aTableHeaders = [];
 
@@ -951,7 +959,6 @@ sap.ui.define([
 		}
 
 		this._bInvalid = true;
-		this._iComputedFixedColumnCount = null;
 	};
 
 	/**
@@ -1701,47 +1708,41 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the first visible row property of the table, updates the rows, and fires the <code>firstVisibleRowChanged</code> event.
+	 * Sets the <code>firstVisibleRow</code> property of the table, updates the rows, and fires the <code>firstVisibleRowChanged</code> event.
 	 *
 	 * @param {int} iRowIndex
 	 *     The new first visible row index.
-	 * @param {Object} [mConfig]
-	 *     Config object.
-	 * @param {boolean} [mConfig.onScroll=false]
+	 * @param {Object} [mOptions]
+	 *     Config options.
+	 * @param {boolean} [mOptions.onScroll=false]
 	 *     Whether the first visible row is changed by scrolling. Any scroll-related updates are suppressed. The
 	 *     setting <code>suppressScrolling</code> is ignored.
-	 * @param {boolean} [mConfig.suppressScrolling=false]
+	 * @param {boolean} [mOptions.suppressScrolling=false]
 	 *     Whether to suppress any scroll-related updates.
-	 * @param {boolean} [mConfig.suppressEvent=false]
+	 * @param {boolean} [mOptions.suppressEvent=false]
 	 *     Whether to suppress the <code>firstVisibleRowChanged</code> event.
-	 * @param {boolean} [mConfig.forceEvent=false]
+	 * @param {boolean} [mOptions.forceEvent=false]
 	 *     Whether to force the <code>firstVisibleRowChanged</code> event. Ignored if <code>suppressEvent=true</code>.
-	 * @param {boolean} [mConfig.suppressRendering=false]
+	 * @param {boolean} [mOptions.suppressRendering=false]
 	 *     Whether the first visible row should only be set, without re-rendering the rows.
-	 * @param {boolean} [mConfig.suppressEverything=false]
+	 * @param {boolean} [mOptions.onlySetProperty=false]
 	 *     Shortcut for <code>suppressScrolling=true</code>, <code>suppressEvent=true</code>, and <code>suppressRendering=true</code>.
 	 *     Overrules other settings.
 	 * @returns {boolean}
 	 *     Whether the <code>_rowsUpdated</code> event will be fired.
 	 * @private
 	 */
-	Table.prototype._setFirstVisibleRowIndex = function(iRowIndex, mConfig) {
-		mConfig = Object.assign({
+	Table.prototype._setFirstVisibleRowIndex = function(iRowIndex, mOptions) {
+		mOptions = Object.assign({
 			onScroll: false,
 			suppressScrolling: false,
 			suppressEvent: false,
 			forceEvent: false,
 			suppressRendering: false,
-			suppressEverything: false
-		}, mConfig);
+			onlySetProperty: false
+		}, mOptions);
 
-		if (mConfig.suppressEverything) {
-			mConfig.suppressScrolling = true;
-			mConfig.suppressEvent = true;
-			mConfig.suppressRendering = true;
-		}
-
-		if (parseInt(iRowIndex) < 0) {
+		if (iRowIndex < 0) {
 			Log.error("The index of the first visible row must be greater than or equal to 0. The value has been set to 0.", this);
 			iRowIndex = 0;
 		}
@@ -1750,7 +1751,7 @@ sap.ui.define([
 			var iMaxRowIndex = this._getMaxFirstVisibleRowIndex();
 
 			if (iMaxRowIndex < iRowIndex) {
-				if (!mConfig.onScroll) {
+				if (!mOptions.onScroll) {
 					Log.warning(
 						"The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
 						" The value has been set to " + iMaxRowIndex + ".", this);
@@ -1761,50 +1762,51 @@ sap.ui.define([
 		}
 
 		var bFirstVisibleRowChanged = this.getFirstVisibleRow() != iRowIndex;
+		var iOldFirstRenderedRowIndex = this._getFirstRenderedRowIndex();
+		var iNewFirstRenderedRowIndex = this.getBinding("rows") ? Math.min(iRowIndex, this._getMaxFirstRenderedRowIndex()) : iRowIndex;
 		var oScrollExtension = this._getScrollExtension();
+
+		this.setProperty("firstVisibleRow", iRowIndex, true);
+
+		if (!mOptions.suppressRendering) {
+			_private(this).iFirstRenderedRowIndex = iNewFirstRenderedRowIndex;
+		}
+
+		if (mOptions.onlySetProperty) {
+			return false;
+		}
+
+		if ((bFirstVisibleRowChanged || mOptions.forceEvent) && !mOptions.suppressEvent) {
+			this.fireFirstVisibleRowChanged({
+				firstVisibleRow: iRowIndex
+			});
+		}
+
+		if (!this.getBinding("rows")) {
+			oScrollExtension.updateVerticalScrollPosition();
+			return false;
+		}
+
 		var bExpectRowsUpdatedEvent = false;
+		var bRowsUpdateRequired = this.getBinding("rows") != null && iNewFirstRenderedRowIndex !== iOldFirstRenderedRowIndex;
 
-		if (bFirstVisibleRowChanged) {
-			var iOldFirstRenderedRowIndex = this._getFirstRenderedRowIndex();
-
-			// Prevent re-rendering of the table, just update the rows.
-			this.setProperty("firstVisibleRow", iRowIndex, true);
-
-			if (this.getBinding("rows")) {
-				var bFirstRenderedRowChanged = this._getFirstRenderedRowIndex() !== iOldFirstRenderedRowIndex;
-
-				if (bFirstRenderedRowChanged && !mConfig.suppressRendering) {
-					triggerRowsUpdate(this, mConfig.onScroll
-											? TableUtils.RowsUpdateReason.VerticalScroll
-											: TableUtils.RowsUpdateReason.FirstVisibleRowChange);
-
-					bExpectRowsUpdatedEvent = true;
-				}
-
-				// If changing the first visible row was initiated by a scroll action, the scroll position is already accurate.
-				// If the first visible row is set to the maximum row index, the table is scrolled to the bottom including the overflow.
-				if (!mConfig.onScroll && !mConfig.suppressScrolling) {
-					oScrollExtension.updateVerticalScrollPosition(bFirstRenderedRowChanged);
-				}
+		if (bRowsUpdateRequired) {
+			if (!mOptions.suppressRendering) {
+				triggerRowsUpdate(this, mOptions.onScroll
+										? TableUtils.RowsUpdateReason.VerticalScroll
+										: TableUtils.RowsUpdateReason.FirstVisibleRowChange);
+				bExpectRowsUpdatedEvent = true;
 			}
 
-			if (!mConfig.suppressEvent) {
-				this.fireFirstVisibleRowChanged({
-					firstVisibleRow: iRowIndex
-				});
+			// If changing the first visible row was initiated by a scroll action, the scroll position is already accurate.
+			// If the first visible row is set to the maximum row index, the table is scrolled to the bottom including the overflow.
+			if (!mOptions.onScroll && !mOptions.suppressScrolling) {
+				oScrollExtension.updateVerticalScrollPosition(bExpectRowsUpdatedEvent);
 			}
-		} else {
-			if (mConfig.forceEvent && !mConfig.suppressEvent) {
-				this.fireFirstVisibleRowChanged({
-					firstVisibleRow: iRowIndex
-				});
-			}
-
-			if (!mConfig.onScroll && !mConfig.suppressScrolling) {
-				// Even if the first visible row was not changed, this row may not be visible because of the inner scroll position. Therefore, the
-				// scroll position is adjusted to make it visible (by resetting the inner scroll position).
-				oScrollExtension.updateVerticalScrollPosition();
-			}
+		} else if (!mOptions.onScroll && !mOptions.suppressScrolling) {
+			// Even if the first visible row was not changed, this row may not be fully visible because of the inner scroll position. Therefore, the
+			// scroll position is adjusted to make it fully visible.
+			oScrollExtension.updateVerticalScrollPosition(!this._bContextsAvailable);
 		}
 
 		return bExpectRowsUpdatedEvent;
@@ -2097,7 +2099,19 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getRowCounts = function() {
-		return this._getRowMode().getComputedRowCounts();
+		var mRowCounts = this._getRowMode().getComputedRowCounts();
+
+		// TODO: Enhance the RowMode interface and move these calculations to the row modes that support variable row heights.
+		// TableUtils.isVariableRowHeightEnabled can't be used because it calls this method, which causes infinite recursion.
+		var bVariableRowHeightEnabled = this._bVariableRowHeightEnabled && !mRowCounts.fixedTop && !mRowCounts.fixedBottom;
+		mRowCounts._fullsize = mRowCounts.count;
+		mRowCounts._scrollSize = mRowCounts.scrollable;
+		if (mRowCounts.count > 0 && bVariableRowHeightEnabled) {
+			mRowCounts.count++;
+			mRowCounts.scrollable++;
+		}
+
+		return mRowCounts;
 	};
 
 	/*
@@ -2265,7 +2279,7 @@ sap.ui.define([
 		bSuppressAdjustToBindingLength = bSuppressAdjustToBindingLength === true;
 		bSecondCall = bSecondCall === true;
 
-		var iFirstVisibleRow = this._getFirstRenderedRowIndex();
+		var iFirstRenderedRowIndex = this._getFirstRenderedRowIndex();
 		var mRowCounts = this._getRowCounts();
 		var aContexts = [];
 		var aTmpContexts;
@@ -2281,7 +2295,7 @@ sap.ui.define([
 		iThreshold = iThreshold ? Math.max(iRowCount, iThreshold) : 0;
 
 		// data can be requested with a single getContexts call if the fixed rows and the scrollable rows overlap.
-		var iStartIndex = iFirstVisibleRow;
+		var iStartIndex = iFirstRenderedRowIndex;
 
 		var fnMergeArrays = function(aTarget, aSource, iStartIndex) {
 			for (var i = 0; i < aSource.length; i++) {
@@ -2289,11 +2303,11 @@ sap.ui.define([
 			}
 		};
 
-		if (mRowCounts.fixedTop > 0 && iFirstVisibleRow > 0) {
+		if (mRowCounts.fixedTop > 0 && iFirstRenderedRowIndex > 0) {
 			// since there is a gap between first visible row and fixed rows it must be requested separately
 			// the first visible row always starts counting with 0 in the scroll part of the table no matter
 			// how many fixed rows there are.
-			iStartIndex = iFirstVisibleRow + mRowCounts.fixedTop;
+			iStartIndex = iFirstRenderedRowIndex + mRowCounts.fixedTop;
 			// length must be reduced by number of fixed rows since they were just requested separately
 			iLength -= mRowCounts.fixedTop;
 			iMergeOffsetScrollRows = mRowCounts.fixedTop;
@@ -2330,11 +2344,13 @@ sap.ui.define([
 			fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetBottomRow);
 		}
 
+		// If the Binding#getContexts call triggers recalculation of the binding length, the first visible row index needs to be corrected and a new
+		// context range needs to be requested.
+
 		var iMaxRowIndex = this._getMaxFirstRenderedRowIndex();
-		if (iMaxRowIndex < iFirstVisibleRow && this._bContextsAvailable && !bSecondCall) {
-			// Get the contexts again, this time with the maximum possible value for the first visible row.
-			this._setFirstVisibleRowIndex(iMaxRowIndex, {
-				suppressEverything: true
+		if (iMaxRowIndex < iFirstRenderedRowIndex && this._bContextsAvailable && !bSecondCall) {
+			this._setFirstVisibleRowIndex(this.getFirstVisibleRow(), {
+				onlySetProperty: true
 			});
 			aContexts = this._getRowContexts(iRequestLength, bSuppressAdjustToBindingLength, true);
 		}
@@ -2716,11 +2732,20 @@ sap.ui.define([
 			return oBindingInfo.length;
 		}
 
-		return oBinding.getLength();
+		if (!this._bContextsAvailable) {
+			return _private(this).iCachedBindingLength;
+		}
+
+		_private(this).iCachedBindingLength = oBinding.getLength();
+
+		return _private(this).iCachedBindingLength;
 	};
 
 	/**
-	 * Returns the maximum row index to which can be scrolled to
+	 * Returns the maximum row index to which can be scrolled to. It may not be accurate if the index is in the last page, but it never less
+	 * than the actual maximum.
+	 *
+	 * @returns {int} The maximum index of the first visible row.
 	 * @private
 	 */
 	Table.prototype._getMaxFirstVisibleRowIndex = function() {
@@ -2736,37 +2761,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the maximum row index where rendering can start from.
+	 * Gets the maximum row index where rendering of scrollable rows can start from.
 	 *
-	 * @returns {int} The maximum first rendered row index
+	 * @returns {int} The maximum index of the first scrollable row.
 	 * @private
 	 */
 	Table.prototype._getMaxFirstRenderedRowIndex = function() {
-		var iMaxRowIndex;
-
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			iMaxRowIndex = this._getTotalRowCount() - this._getRowCounts().count - 1;
-		} else {
-			iMaxRowIndex = this._getTotalRowCount() - this._getRowCounts().count;
-		}
-
+		var iMaxRowIndex = this._getTotalRowCount() - this._getRowCounts().count;
 		return Math.max(0, iMaxRowIndex);
 	};
 
 	/**
-	 * Gets the index of the first rendered row.
+	 * Gets the index of the first rendered scrollable row. Rows do not need to exist or be rendered for the index to be available. It shows the
+	 * current status. The table may still be updated.
 	 *
-	 * @returns {int} The first rendered row index
+	 * @returns {int} The index of the first scrollable row.
 	 * @private
 	 */
 	Table.prototype._getFirstRenderedRowIndex = function() {
-		var iFirstVisibleRowIndex = this.getFirstVisibleRow();
-
-		if (TableUtils.isVariableRowHeightEnabled(this) && iFirstVisibleRowIndex > this._getMaxFirstRenderedRowIndex()) {
-			return this._getMaxFirstRenderedRowIndex();
-		} else {
-			return iFirstVisibleRowIndex;
-		}
+		return _private(this).iFirstRenderedRowIndex;
 	};
 
 	/**
@@ -3480,7 +3493,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getSpanBasedComputedFixedColumnCount = function() {
-		if (this._iComputedFixedColumnCount === null) {
+		if (_private(this).iComputedFixedColumnCount === null) {
 			var aCols = this.getColumns();
 			var oColumn;
 			var iFixedColumnCount = this.getFixedColumnCount();
@@ -3492,10 +3505,10 @@ sap.ui.define([
 					break;
 				}
 			}
-			this._iComputedFixedColumnCount = Math.min(iFixedColumnCount, aCols.length);
+			_private(this).iComputedFixedColumnCount = Math.min(iFixedColumnCount, aCols.length);
 		}
 
-		return this._iComputedFixedColumnCount;
+		return _private(this).iComputedFixedColumnCount;
 	};
 
 	/*
@@ -3653,6 +3666,7 @@ sap.ui.define([
 
 	/**
 	 * Sets a marker to indicate that the rows aggregation is invalid and should be destroyed within the next cycle
+	 *
 	 * @private
 	 */
 	Table.prototype.invalidateRowsAggregation = function() {
@@ -3660,11 +3674,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets the internally cached value of the _iComputedFixedColumnCount used by the control
+	 * Invalidates the cached computed fixed column count.
+	 *
 	 * @private
 	 */
 	Table.prototype._invalidateComputedFixedColumnCount = function() {
-		this._iComputedFixedColumnCount = null;
+		_private(this).iComputedFixedColumnCount = null;
 	};
 
 	/**
@@ -4285,7 +4300,6 @@ sap.ui.define([
 	};
 
 	Table.prototype.onRowsUpdated = function(mParameters) {
-		this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
 		TableUtils.Grouping.updateGroups(this);
 		this._getAccExtension()._updateAriaRowIndices();
 		this._updateSelection();

@@ -469,18 +469,7 @@ sap.ui.define([
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 0, "Multiline Headers hidden");
 	});
 
-	QUnit.test("getTotalRowCount", function(assert) {
-		assert.equal(TableUtils.getTotalRowCount(oTable), iNumberOfRows, "Number of data rows (#data > #visiblerows)");
-		assert.equal(TableUtils.getTotalRowCount(oTable, true), iNumberOfRows, "Number of data rows (incl. empty) (#data > #visiblerows)");
-
-		oTable.setVisibleRowCount(10);
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(TableUtils.getTotalRowCount(oTable), iNumberOfRows, "Number of data rows (#data <= #visiblerows)");
-		assert.equal(TableUtils.getTotalRowCount(oTable, true), 10, "Number of data rows (incl. empty) (#data <= #visiblerows)");
-	});
-
-	QUnit.test("getNonEmptyVisibleRowCount", function(assert) {
+	QUnit.test("getNonEmptyRowCount", function(assert) {
 		var oTableDummy1 = {
 			_getRowCounts: function() {
 				return {
@@ -511,11 +500,11 @@ sap.ui.define([
 				return 10;
 			}
 		};
-		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy1), oTableDummy1._getTotalRowCount(),
+		assert.equal(TableUtils.getNonEmptyRowCount(oTableDummy1), oTableDummy1._getTotalRowCount(),
 			"Number of data rows (#data < #visiblerows)");
-		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy2), oTableDummy2._getRowCounts().count,
+		assert.equal(TableUtils.getNonEmptyRowCount(oTableDummy2), oTableDummy2._getRowCounts().count,
 			"Number of visible rows (#data > #visiblerows)");
-		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy3), oTableDummy3._getRowCounts().count,
+		assert.equal(TableUtils.getNonEmptyRowCount(oTableDummy3), oTableDummy3._getRowCounts().count,
 			"Number of visible and data rows (#data = #visiblerows)");
 	});
 

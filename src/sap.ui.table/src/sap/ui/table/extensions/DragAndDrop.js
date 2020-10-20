@@ -118,7 +118,7 @@ sap.ui.define([
 					// If dragging over an empty row with a drop position other than "On", the drop control should be the first non-empty row. If
 					// all rows are empty, the drop target should be the table to perform a drop in aggregation.
 					if (!oDropRowContext) {
-						var oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyVisibleRowCount(this) - 1];
+						var oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyRowCount(this) - 1];
 						oDragSession.setDropControl(oLastNonEmptyRow || this);
 					}
 

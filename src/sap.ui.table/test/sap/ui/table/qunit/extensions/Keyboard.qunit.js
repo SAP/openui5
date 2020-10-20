@@ -23,7 +23,6 @@ sap.ui.define([
 	var getRowAction = window.getRowAction;
 	var getSelectAll = window.getSelectAll;
 	var initRowActions = window.initRowActions;
-	var setFocusOutsideOfTable = window.setFocusOutsideOfTable;
 
 	var TestControl = TableQUnitUtils.TestControl;
 
@@ -51,7 +50,7 @@ sap.ui.define([
 
 		getCell(0, 0, true, assert);
 		assert.ok(oExtension._itemNavigation, "Item Navigation initialized on focus");
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("_debug()", function(assert) {

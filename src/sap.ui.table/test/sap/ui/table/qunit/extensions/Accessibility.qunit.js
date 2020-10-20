@@ -27,7 +27,6 @@ sap.ui.define([
 	var getSelectAll = window.getSelectAll;
 	var initRowActions = window.initRowActions;
 	var removeRowActions = window.removeRowActions;
-	var setFocusOutsideOfTable = window.setFocusOutsideOfTable;
 	var fakeGroupRow = window.fakeGroupRow;
 	var fakeSumRow = window.fakeSumRow;
 
@@ -318,7 +317,7 @@ sap.ui.define([
 			$Cell = getCell(2, i, true, assert);
 			testAriaLabelsForFocusedDataCell($Cell, 2, i, assert, {rowChange: i == 0, colChange: true});
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, oTable.columnCount - 1, assert);
 			done();
@@ -344,7 +343,7 @@ sap.ui.define([
 			$Cell = getCell(2, i, true, assert, oTreeTable);
 			testAriaLabelsForFocusedDataCell($Cell, 2, i, assert, {rowChange: i == 0, colChange: true, table: oTreeTable});
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, oTreeTable.columnCount - 1, assert, {table: oTreeTable});
 			done();
@@ -352,7 +351,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("aria-labelledby without Focus", function(assert) {
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var $Cell;
 		var i;
 		for (i = 0; i < oTable.columnCount; i++) {
@@ -363,7 +362,7 @@ sap.ui.define([
 			$Cell = getCell(1, i, false, assert);
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, i, assert);
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("ACCInfo", function(assert) {
@@ -373,7 +372,7 @@ sap.ui.define([
 			$Cell = getCell(0, i, true, assert);
 			testACCInfoForFocusedDataCell($Cell, 0, i, assert);
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell($Cell, 0, oTable.columnCount - 1, assert);
 			done();
@@ -392,7 +391,7 @@ sap.ui.define([
 			$Cell = getCell(1, i, true, assert);
 			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true});
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [1, " + (oTable.columnCount - 1) + "]");
 			done();
@@ -423,7 +422,7 @@ sap.ui.define([
 				$Cell = getCell(2, 0, true, assert, oTreeTable);
 				testAriaDescriptionsForFocusedDataCell($Cell, 2, 0, assert, {firstTime: true, colChange: true, table: oTreeTable}, true);
 
-				setFocusOutsideOfTable(assert);
+				TableQUnitUtils.setFocusOutsideOfTable(assert);
 				setTimeout(function() {
 					assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [1, " + (oTable.columnCount - 1) + "]");
 					done();
@@ -433,7 +432,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("aria-describedby without Focus", function(assert) {
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var $Cell;
 		var i;
 		for (i = 0; i < oTable.columnCount; i++) {
@@ -444,7 +443,7 @@ sap.ui.define([
 			$Cell = getCell(1, i, false, assert);
 			assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [1, " + i + "]");
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("Group Header Row", function(assert) {
@@ -479,7 +478,7 @@ sap.ui.define([
 				"Group row doesn't have row selector text");
 		}
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
 			done();
@@ -519,7 +518,7 @@ sap.ui.define([
 				"Sum row doesn't have row selector text");
 		}
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
 			done();
@@ -626,7 +625,7 @@ sap.ui.define([
 			$Cell = getColumnHeader(i, true, assert);
 			testAriaLabelsForColumnHeader($Cell, i, assert, {firstTime: false, colChange: true, focus: true});
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForColumnHeader($Cell, oTable.columnCount - 1, assert);
 			done();
@@ -634,13 +633,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("aria-labelledby without Focus", function(assert) {
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var $Cell;
 		for (var i = 0; i < oTable.columnCount; i++) {
 			$Cell = getColumnHeader(i, false, assert);
 			testAriaLabelsForColumnHeader($Cell, i, assert, {firstTime: i == 0, colChange: true});
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("aria-describedby with Focus", function(assert) {
@@ -650,20 +649,20 @@ sap.ui.define([
 			$Cell = getColumnHeader(i, true, assert);
 			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of column header " + i);
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			done();
 		}, 100);
 	});
 
 	QUnit.test("aria-describedby without Focus", function(assert) {
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var $Cell;
 		for (var i = 0; i < oTable.columnCount; i++) {
 			$Cell = getColumnHeader(i, false, assert);
 			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of column header " + i);
 		}
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("Other ARIA Attributes of Column Header", function(assert) {
@@ -749,7 +748,7 @@ sap.ui.define([
 			this.testAriaLabels($Cell, i, assert, {firstTime: i == 0, rowChange: true, focus: true});
 		}
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			that.testAriaLabels($Cell, 2, assert);
 			done();
@@ -757,7 +756,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("aria-labelledby without Focus", function(assert) {
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 
 		for (var i = 0; i < 2; i++) {
 			var $Cell = getRowHeader(i, false, assert);
@@ -773,14 +772,14 @@ sap.ui.define([
 			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of row header " + i);
 		}
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			done();
 		}, 100);
 	});
 
 	QUnit.test("aria-describedby without Focus", function(assert) {
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 
 		for (var i = 0; i < 2; i++) {
 			var $Cell = getRowHeader(i, false, assert);
@@ -810,7 +809,7 @@ sap.ui.define([
 		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
 			"The row header of a group row doesn't have row selector text");
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			that.testAriaLabels($Cell, 1, assert);
 			done();
@@ -861,7 +860,7 @@ sap.ui.define([
 		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
 			"The row header of a sum row doesn't have row selector text");
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			that.testAriaLabels($Cell, 1, assert);
 			done();
@@ -1095,7 +1094,7 @@ sap.ui.define([
 			});
 		}
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			that.testAriaLabels($Cell, 2, assert);
 			done();
@@ -1121,7 +1120,7 @@ sap.ui.define([
 			});
 		}
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			that.testAriaLabels($Cell, 2, assert);
 			done();
@@ -1146,7 +1145,7 @@ sap.ui.define([
 			});
 		}
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			that.testAriaLabels($Cell, 2, assert);
 			done();
@@ -1154,14 +1153,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("aria-labelledby without Focus", function(assert) {
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 
 		for (var i = 0; i < 2; i++) {
 			var $Cell = getRowAction(i, false, assert);
 			this.testAriaLabels($Cell, i, assert, {rowChange: true, colChange: i < 2});
 		}
 
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("Other ARIA Attributes", function(assert) {
@@ -1229,7 +1228,7 @@ sap.ui.define([
 		$Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
 			sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			done();
 		}, 100);
@@ -1248,42 +1247,42 @@ sap.ui.define([
 		$Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
 			sId + "-ariacolrowheaderlabel", "aria-labelledby of select all");
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("aria-labelledby without Focus", function(assert) {
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var $Cell = getSelectAll(false, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
 			oTable.getId() + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("aria-labelledby without Focus (Single Selection)", function(assert) {
 		oTable.setSelectionMode(SelectionMode.Single);
 		sap.ui.getCore().applyChanges();
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var $Cell = getSelectAll(false, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
 			oTable.getId() + "-ariacolrowheaderlabel", "aria-labelledby of select all");
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("aria-describedby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of select all");
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			done();
 		}, 100);
 	});
 
 	QUnit.test("aria-describedby without Focus", function(assert) {
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var $Cell = getSelectAll(false, assert);
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of select all");
-		setFocusOutsideOfTable(assert);
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
 	QUnit.test("Other ARIA Attributes SelectAll", function(assert) {
@@ -1770,7 +1769,7 @@ sap.ui.define([
 			assert.ok(!$Cell.attr("aria-busy"), "Cell is not in busy mode anymore");
 			assert.ok(!$Cell.attr("aria-hidden"), "Cell is not hidden anymore");
 			assert.ok((oTable.$("cellacc").html() || "").indexOf("A4") >= 0, "Acc Text after scrolling");
-			setFocusOutsideOfTable(assert);
+			TableQUnitUtils.setFocusOutsideOfTable(assert);
 			oTable.setFirstVisibleRow(0);
 			setTimeout(function() {
 				testAriaLabelsForNonFocusedDataCell($Cell, 2, 0, assert);

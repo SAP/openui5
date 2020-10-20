@@ -213,7 +213,7 @@ sap.ui.define([
 		_openContentCellContextMenu: function(oTable, oCell, oEvent) {
 			var oCellInfo = MenuUtils.TableUtils.getCellInfo(oCell);
 
-			if (oCellInfo.rowIndex >= MenuUtils.TableUtils.getNonEmptyVisibleRowCount(oTable)) {
+			if (oCellInfo.rowIndex >= MenuUtils.TableUtils.getNonEmptyRowCount(oTable)) {
 				return false;
 			}
 
