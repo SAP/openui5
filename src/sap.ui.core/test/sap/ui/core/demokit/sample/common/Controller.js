@@ -52,7 +52,11 @@ sap.ui.define([
 					});
 
 				if (aControls.length) {
-					oBestMatch = aControls.reduce(function (oBefore, oCurrent) {
+					// aControls contains all controls matching the message target. This includes
+					// the table too. Filter it out because it doesn't have getEditable.
+					oBestMatch = aControls.filter(function (oControl) {
+						return oControl.getEditable;
+					}).reduce(function (oBefore, oCurrent) {
 						// editable wins over non editable control
 						if (!oBefore.getEditable() && oCurrent.getEditable()) {
 							return oCurrent;

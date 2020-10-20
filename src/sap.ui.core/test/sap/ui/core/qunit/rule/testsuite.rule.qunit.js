@@ -23,6 +23,16 @@ sap.ui.define(function () {
 					}
 				}
 			},
+			"config/modelPreloadAndEarlyRequests": {
+				title: "QUnit Tests for 'modelPreloadAndEarlyRequests' rules",
+				loader: {
+					paths: {
+						"samples/components/config/modelPreloadAndEarlyRequests":
+							"test-resources/sap/ui/core/samples/components/config/"
+							+ "modelPreloadAndEarlyRequests/"
+					}
+				}
+			},
 			"app/globalApiUsage": {
 				title: "QUnit Tests for 'global api usage' rules"
 			},

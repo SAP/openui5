@@ -76,6 +76,12 @@
 			"$Type" : "Edm.String",
 			"$Nullable" : false
 		},
+		"__FAKE__Messages" : {
+			"$kind" : "Property",
+			"$isCollection" : true,
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__Message",
+			"$Nullable" : false
+		},
 		"EQUIPMENT_2_EMPLOYEE" : {
 			"$kind" : "NavigationProperty",
 			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
@@ -719,6 +725,11 @@
 	"com.sap.gateway.default.iwbep.tea_busi.v0001." : {
 		"$kind" : "Schema",
 		"$Annotations" : {
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT" : {
+				"@com.sap.vocabularies.Common.v1.Messages" : {
+					"$Path" : "__FAKE__Messages"
+				}
+			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" : {
 				"@com.sap.vocabularies.Common.v1.Messages" : {
 					"$Path" : "__CT__FAKE__Message/__FAKE__Messages"

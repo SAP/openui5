@@ -1,0 +1,39 @@
+{
+	"_version" : "1.0.0",
+	"sap.app" : {
+		"dataSources" : {
+			"default" : {
+				"uri" : "/foo/bar/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"id" : "samples.components.sample.config.modelPreloadAndEarlyRequests"
+	},
+	"sap.ui5" : {
+		"dependencies" : {
+			"minUI5Version" : "1.53"
+		},
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"earlyRequests" : false,
+					"operationMode" : "Server",
+					"synchronizationMode" : "None"
+				}
+			},
+			"without earlyRequests" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"operationMode" : "Server",
+					"synchronizationMode" : "None"
+				}
+			}
+		}
+	}
+}

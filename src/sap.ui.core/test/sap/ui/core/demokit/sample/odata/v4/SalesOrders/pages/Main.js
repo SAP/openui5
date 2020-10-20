@@ -838,6 +838,19 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				checkMessageStrip : function (sExpectedMessageType) {
+					return this.waitFor({
+						controlType : "sap.m.MessageStrip",
+						success : function (aMatchedControls) {
+							var sMessageType = aMatchedControls[0].getProperty("type");
+
+							Opa5.assert.strictEqual(sMessageType, sExpectedMessageType,
+								"Message strip shows correct message: " + sExpectedMessageType);
+						},
+						viewName : sViewName,
+						visible : false
+					});
+				},
 				checkNewSalesOrderItemProductName : function (sExpectProductName) {
 					return this.waitFor({
 						controlType : "sap.m.Table",

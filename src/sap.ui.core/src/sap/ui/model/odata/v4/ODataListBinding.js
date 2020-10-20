@@ -555,17 +555,30 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 
-	// See class documentation
-	// @override
-	// @public
-	// @see sap.ui.base.EventProvider#attachEvent
-	// @since 1.37.0
+	/**
+	 * See {@link sap.ui.base.EventProvider#attachEvent}
+	 *
+	 * @public
+	 * @see sap.ui.base.EventProvider#attachEvent
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.base.EventProvider#attachEvent
 	ODataListBinding.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
 				+ "': v4.ODataListBinding#attachEvent");
 		}
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.Binding#_checkDataStateMessages
+	 */
+	ODataListBinding.prototype._checkDataStateMessages = function(oDataState, sResolvedPath) {
+		if (sResolvedPath) {
+			oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath, true));
+		}
 	};
 
 	/**
@@ -603,14 +616,16 @@ sap.ui.define([
 			i,
 			that = this;
 
-		aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
-			that.mPreviousContextsByPath[oContext.getPath()] = oContext;
-		});
-		for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
-			aContexts[i].iIndex = i;
-		}
-		this.iMaxLength -= iCount;
-		this._fireChange({reason : ChangeReason.Change});
+		if (iCount > 0) {
+			aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
+				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+			});
+			for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
+				aContexts[i].iIndex = i;
+			}
+			this.iMaxLength -= iCount;
+			this._fireChange({reason : ChangeReason.Change});
+		} // else: collapse before expand has finished
 	};
 
 	/**
@@ -716,8 +731,8 @@ sap.ui.define([
 				that._fireChange({reason : ChangeReason.Remove});
 			});
 		});
-		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, "", sTransientPredicate,
-			oInitialData,
+		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, sResolvedPath,
+			sTransientPredicate, oInitialData,
 			function (oError) { // error callback
 				that.oModel.reportError("POST on '" + oCreatePathPromise
 					+ "' failed; will be repeated automatically", sClassName, oError);
@@ -868,9 +883,10 @@ sap.ui.define([
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
+	 * @see sap.ui.model.Binding#destroy
 	 * @since 1.40.1
 	 */
-	// @override
+	// @override sap.ui.model.Binding#destroy
 	ODataListBinding.prototype.destroy = function () {
 		if (this.bHasAnalyticalInfo && this.aContexts === undefined) {
 			return;
@@ -1040,22 +1056,25 @@ sap.ui.define([
 			}
 		).then(function (iCount) {
 			var aContexts = that.aContexts,
-				iModelIndex = oContext.getModelIndex(),
+				iModelIndex,
 				oMovingContext,
 				i;
 
-			for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
-				oMovingContext = aContexts[i];
-				if (oMovingContext) {
-					oMovingContext.iIndex += iCount;
-					aContexts[i + iCount] = oMovingContext;
-					delete aContexts[i];
+			if (iCount > 0) {
+				iModelIndex = oContext.getModelIndex(); // already destroyed if !iCount
+				for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
+					oMovingContext = aContexts[i];
+					if (oMovingContext) {
+						oMovingContext.iIndex += iCount;
+						aContexts[i + iCount] = oMovingContext;
+						delete aContexts[i]; // Note: iCount > 0
+					}
+					// else: nothing to do because !(i in aContexts) and aContexts[i + iCount]
+					// has been deleted before (loop works backwards)
 				}
-				// else: nothing to do because !(i in aContexts) and aContexts[i + iCount]
-				// has been deleted before (loop works backwards)
-			}
-			that.iMaxLength += iCount;
-			that._fireChange({reason : ChangeReason.Change});
+				that.iMaxLength += iCount;
+				that._fireChange({reason : ChangeReason.Change});
+			} // else: collapse before expand has finished
 			if (bDataRequested) {
 				that.fireDataReceived({});
 			}
@@ -1486,6 +1505,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#filter
 	 * @since 1.39.0
 	 */
+	// @override sap.ui.model.ListBinding#filter
 	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
@@ -1540,9 +1560,9 @@ sap.ui.define([
 	 *   <code>iMaximumPrefetchSize</code> is set or <code>iStart</code> is not 0
 	 *
 	 * @protected
-	 * @see sap.ui.model.ListBinding#getContexts
 	 * @since 1.37.0
 	 */
+	// @override @see sap.ui.model.ListBinding#getContexts
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize) {
 		var sChangeReason,
 			aContexts,
@@ -1725,7 +1745,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getCurrentContexts
 	 * @since 1.39.0
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#getCurrentContexts
 	ODataListBinding.prototype.getCurrentContexts = function () {
 		var aContexts,
 			iLength = Math.min(this.iCurrentEnd, this.iMaxLength + this.iCreatedContexts)
@@ -1784,7 +1804,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getDistinctValues
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#getDistinctValues
 	ODataListBinding.prototype.getDistinctValues = function () {
 		throw new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues");
 	};
@@ -1858,7 +1878,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.table, sap.ui.export
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#getFilterInfo
 	ODataListBinding.prototype.getFilterInfo = function (bIncludeOrigin) {
 		var oCombinedFilter = FilterProcessor.combineFilters(this.aFilters,
 				this.aApplicationFilters),
@@ -1948,7 +1968,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getLength
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#getLength
 	ODataListBinding.prototype.getLength = function () {
 		if (this.bLengthFinal) {
 			return this.iMaxLength + this.iCreatedContexts;
@@ -2089,7 +2109,6 @@ sap.ui.define([
 	 * event, else it fires a 'refresh' event (since 1.67.0).
 	 *
 	 * @protected
-	 * @see sap.ui.model.Binding#initialize
 	 * @see #getRootBinding
 	 * @since 1.37.0
 	 */
@@ -2125,7 +2144,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#isLengthFinal
 	 * @since 1.37.0
 	 */
-	// @override
+	// @override sap.ui.model.ListBinding#isLengthFinal
 	ODataListBinding.prototype.isLengthFinal = function () {
 		// some controls use .bLengthFinal on list binding instead of calling isLengthFinal
 		return this.bLengthFinal;
@@ -2672,9 +2691,8 @@ sap.ui.define([
 	 *   entities
 	 *
 	 * @private
-	 * @see sap.ui.model.Binding#setContext
 	 */
-	// @override
+	// @override sap.ui.model.Binding#setContext
 	ODataListBinding.prototype.setContext = function (oContext) {
 		var i,
 			sResolvedPath,
@@ -2742,6 +2760,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#sort
 	 * @since 1.39.0
 	 */
+	// @override sap.ui.model.ListBinding#sort
 	ODataListBinding.prototype.sort = function (vSorters) {
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");

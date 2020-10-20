@@ -72,6 +72,8 @@
 					Type="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product" Nullable="false"/>
 				<NavigationProperty Name="EQUIPMENT_2_REGISTRATION"
 					Type="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Registration"/>
+				<Property Name="__FAKE__Messages" Type="Collection(SAP__self.__FAKE__Message)" Nullable="false" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="__FAKE__Messages" />
 			</EntityType>
 			<EntityType Name="MANAGER">
 				<Key>

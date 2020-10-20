@@ -17,6 +17,8 @@ sap.ui.define([
 	 * @param {string} oSettings.libName - the name of the library.
 	 * @param {string} oSettings.ruleId - the id of the rule to check.
 	 * @param {number|function} oSettings.expectedNumberOfIssues - the expected number of issues from the specified rule. E.g. 4 or function(){return 4;}
+	 * @param {function} [oSettings.checkIssues] - callback to be used to check the found issues in detail;
+	 *   if supplied it will be called with the QUnit.assert object of the current QUnit test and the issues found by the RuleAnalyzer
 	 */
 	return function(oSettings) {
 
@@ -43,6 +45,9 @@ sap.ui.define([
 				// If there are issues found check the rule id
 				if (oHistory.issues.length) {
 					assert.equal(oHistory.issues[0].rule.id, oSettings.ruleId, " should be an issue from rule " + oSettings.ruleId);
+				}
+				if (oSettings.checkIssues) {
+					oSettings.checkIssues(assert, oHistory.issues);
 				}
 
 				done();
