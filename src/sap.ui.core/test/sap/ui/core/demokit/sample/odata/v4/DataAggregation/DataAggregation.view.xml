@@ -22,7 +22,9 @@
 				},
 				$count : false,
 				$orderby : 'Country desc,Region desc,Segment,AccountResponsible'
-			}}" selectionMode="None" threshold="0" visibleRowCount="5">
+			},
+			suspended : true}" selectionMode="None" threshold="0"
+		visibleRowCount="{ui>/iVisibleRowCount}">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" text="Sales Amount by Region" level="H1"/>
