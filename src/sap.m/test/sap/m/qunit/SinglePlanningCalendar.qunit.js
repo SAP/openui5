@@ -1850,6 +1850,20 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("isAllDayAppointment: daylight saving time is between start and end date of a full day appointment", function (assert) {
+		// Prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oGrid = oSPC.getAggregation("_grid"),
+			startDate =  new Date(2020, 9, 14),
+			endDate = new Date(2020, 9, 26);
+
+		// Assert
+		assert.equal(oGrid.isAllDayAppointment(startDate, endDate), true, "The appointment is full day");
+
+		// Clean up
+		oSPC.destroy();
+	});
+
 	QUnit.test("View Switch is dependent on the header", function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
