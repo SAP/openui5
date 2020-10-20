@@ -1590,7 +1590,17 @@ function(
 							}
 							oEvent.stopPropagation();
 						}
-					}
+					},
+					ontouchend: function(oEvent) {
+						if (oEvent.originalEvent && oEvent.originalEvent.cancelable) {
+							oEvent.preventDefault();
+						}
+						if (bIncrementButton) {
+							this._getIncrementButton().invalidate();
+						} else {
+							this._getDecrementButton().invalidate();
+						}
+					}.bind(this)
 				};
 
 				oBtn.addDelegate(oEvents, true);
