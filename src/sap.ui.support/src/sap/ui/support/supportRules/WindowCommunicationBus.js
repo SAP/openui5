@@ -102,7 +102,7 @@ sap.ui.define([
 		this._frame = {
 			origin: oOptions.origin,
 			identifier: oOptions.identifier,
-			url: oOptions.url.replace(/\.\.\//g, '')
+			url: oOptions.url
 		};
 	};
 
@@ -158,7 +158,10 @@ sap.ui.define([
 		// the message should have the correct details, validating that it comes from a known tool frame
 		var bMatchOrigin = eMessage.origin === this._frame.origin;
 		var bMatchIdentifier = eMessage.data._frameIdentifier === this._frame.identifier;
-		var bMatchUrl = eMessage.data._origin.indexOf(this._frame.url) > -1;
+		// remove relative paths (if the frame src is relative to the parent)
+		var iFrameUrlQuery = this._frame.url.indexOf("?");
+		var sFrameUrl = this._frame.url.substr(0, iFrameUrlQuery).replace(/\.\.\//g, "") + this._frame.url.substr(iFrameUrlQuery);
+		var bMatchUrl = eMessage.data._origin.indexOf(sFrameUrl) > -1;
 
 		return bMatchOrigin && bMatchIdentifier && bMatchUrl;
 	};
