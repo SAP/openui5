@@ -1770,11 +1770,18 @@ function(
 
 	RuntimeAuthoring.prototype._triggerReloadOnStart = function(oReloadInfo) {
 		FlexUtils.ifUShellContainerThen(function() {
-			// clears FlexState and triggers reloading of the flex data without blocking
-			VersionsAPI.loadDraftForApplication({
-				selector: oReloadInfo.selector,
-				layer: oReloadInfo.layer
-			});
+			if (oReloadInfo.hasDraftChanges) {
+				// clears FlexState and triggers reloading of the flex data without blocking
+				VersionsAPI.loadDraftForApplication({
+					selector: oReloadInfo.selector,
+					layer: oReloadInfo.layer
+				});
+			} else {
+				VersionsAPI.loadVersionForApplication({
+					selector: oReloadInfo.selector,
+					layer: oReloadInfo.layer
+				});
+			}
 		}, ["CrossApplicationNavigation"]);
 		var sReason = this._getReloadMessageOnStart(oReloadInfo);
 		if (!sReason) {

@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
+	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -40,6 +41,7 @@ sap.ui.define([
 	VersionsAPI,
 	FeaturesAPI,
 	ReloadInfoAPI,
+	Versions,
 	LayerUtils,
 	sinon
 ) {
@@ -277,7 +279,11 @@ sap.ui.define([
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
 				showToolbars : false
 			});
-
+			sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function () {
+					return true;
+				}
+			});
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 			this.fnFLPToExternalStub = sandbox.spy();
 
@@ -295,8 +301,6 @@ sap.ui.define([
 			whenHigherLayerChangesExist();
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(Promise.resolve(false));
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-
 			whenUserConfirmsMessage.call(this, "MSG_PERSONALIZATION_EXISTS", assert);
 
 			return this.oRta._determineReload().then(function() {

@@ -399,17 +399,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when no version is provided", function (assert) {
-			var mPropertyBag = {
-				selector : new Control(),
-				layer: Layer.CUSTOMER
-			};
-
-			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "No version was provided", "then an Error is thrown");
-			});
-		});
-
 		QUnit.test("when a selector, a layer and a version were provided, but no app ID could be determined", function (assert) {
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
@@ -447,6 +436,39 @@ sap.ui.define([
 					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
 					assert.equal(oInitializePropertyBag.version, sap.ui.fl.Versions.Draft, "and passing the version number accordingly");
 				});
+		});
+
+		QUnit.test("when a selector and a layer but no version were provided and the request returns a list of versions", function (assert) {
+			var sComponentId = "sComponentId";
+			var sLayer = Layer.CUSTOMER;
+			var mPropertyBag = {
+				layer : sLayer,
+				selector : new Control(),
+				componentData: {},
+				manifest: {}
+			};
+
+			var sActiveVersion = 1;
+			sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function () {
+					return sActiveVersion;
+				}
+			});
+
+			var sReference = "com.sap.app";
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
+			var aReturnedVersions = [];
+			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves(aReturnedVersions);
+
+			return VersionsAPI.loadVersionForApplication(mPropertyBag)
+			.then(function () {
+				assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
+				var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
+				assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
+				assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
+				assert.equal(oInitializePropertyBag.version, sActiveVersion, "and passing the version number accordingly");
+			});
 		});
 	});
 

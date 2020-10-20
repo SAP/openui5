@@ -146,7 +146,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @param {number} mPropertyBag.version - Version number to be loaded
+	 * @param {number} [mPropertyBag.version] - Version number to be loaded
 	 *
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
@@ -157,8 +157,11 @@ sap.ui.define([
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
-		if (!Number.isInteger(mPropertyBag.version)) {
-			return Promise.reject("No version was provided");
+		if (mPropertyBag.version === undefined) {
+			var oModel = getVersionsModel(mPropertyBag);
+			if (oModel) {
+				mPropertyBag.version = oModel.getProperty("/activeVersion");
+			}
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
