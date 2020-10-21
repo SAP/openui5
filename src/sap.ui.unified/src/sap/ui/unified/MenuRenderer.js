@@ -49,8 +49,7 @@ sap.ui.define([],
 		// ARIA
 		if (bAccessible) {
 			oRm.accessibilityState(oMenu, {
-				disabled: null,
-				labelledby: {value: oMenu.getId() + "-label", append: true}
+				disabled: null
 			});
 		}
 
@@ -70,14 +69,6 @@ sap.ui.define([],
 
 		oRm.openEnd();
 		MenuRenderer.renderItems(oRm, oMenu);
-		if (bAccessible) {
-			oRm.openStart("span", oMenu.getId() + "-label");
-			oRm.class("sapUiInvisibleText");
-			oRm.attr("aria-hidden", true);
-			oRm.openEnd();
-			oRm.text(oMenu.getAriaDescription() ? oMenu.getAriaDescription() : "");
-			oRm.close("span");
-		}
 		oRm.close("div");
 	};
 

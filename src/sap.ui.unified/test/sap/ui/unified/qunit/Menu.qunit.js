@@ -1050,6 +1050,14 @@ sap.ui.define([
 
 	QUnit.module("Aria");
 
+	QUnit.test("Root element is clear of any ARIA labelling", function(assert) {
+		// Act
+		openMenu(oRootMenu, undefined, assert);
+
+		// Assert
+		assert.notOk(oRootMenu.$().attr("aria-labelledby"), "Root element isn't labelled");
+	});
+
 	QUnit.test("Role 'menu' is set to the unordered list html element", function(assert) {
 		// Act
 		openMenu(oRootMenu, undefined, assert);

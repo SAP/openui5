@@ -9,7 +9,24 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("ariaLabelledBy", function (assert) {
+	QUnit.test("Default labelling", function(assert) {
+		// Prepare
+		var oMenuItem = new MenuItem(),
+			oMenu = new Menu({ items: oMenuItem }).placeAt("qunit-fixture");
+
+		// act
+		oMenu.open();
+		var $menuItem = oMenuItem.$();
+
+		// assert
+		assert.strictEqual($menuItem.attr("aria-labelledby"), oMenuItem.getId() + "-txt",
+			"Only a reference to the internal text element is added");
+
+		// clean up
+		oMenu.destroy();
+	});
+
+	QUnit.test("ariaLabelledBy association", function (assert) {
 		var oLabel = new Label("menuItemLabel", {
 			text: "Some label"
 		});
