@@ -603,6 +603,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/cardEditor/BASEditor": {
+				group: "Card DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/cardEditor/BASEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {

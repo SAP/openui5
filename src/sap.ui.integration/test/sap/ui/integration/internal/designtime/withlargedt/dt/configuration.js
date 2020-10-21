@@ -1,22 +1,12 @@
-sap.ui.define(["sap/ui/integration/Designtime",
-	"sap/m/Slider",
-	"sap/m/Switch",
-	"sap/ui/integration/designtime/editor/fields/viz/IconSelect",
-	"sap/ui/integration/designtime/editor/fields/viz/ColorSelect",
-	"sap/ui/integration/designtime/editor/fields/viz/ShapeSelect"
-], function (
-	Designtime,
-	Slider,
-	Switch,
-	IconSelect,
-	ColorSelect,
-	ShapeSelect
+/*!
+ * ${copyright}
+ */
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
 ) {
 	"use strict";
-
-	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
-	AdvancedDesigntime.prototype.create = function () {
-		return {
+	return function () {
+		return new Designtime({
 			form: {
 				items: {
 					"string": {
@@ -73,7 +63,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"defaultValue": 1,
 						"type": "integer",
 						"visualization": {
-							"type": Slider,
+							"type": "sap/m/Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -120,7 +110,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"defaultValue": false,
 						"type": "boolean",
 						"visualization": {
-							"type": Switch,
+							"type": "sap/m/Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
@@ -258,7 +248,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "string",
 						"label": "Icon Not Allow File",
 						"visualization": {
-							"type": IconSelect,
+							"type": "IconSelect",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}",
@@ -272,7 +262,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "string",
 						"label": "Icon Not Allow None",
 						"visualization": {
-							"type": IconSelect,
+							"type": "IconSelect",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}",
@@ -286,7 +276,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "string",
 						"label": "Icon Not Allow File And None",
 						"visualization": {
-							"type": IconSelect,
+							"type": "IconSelect",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}",
@@ -301,7 +291,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "string",
 						"label": "Icon",
 						"visualization": {
-							"type": IconSelect,
+							"type": "IconSelect",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}"
@@ -314,7 +304,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "string",
 						"label": "Icon Background",
 						"visualization": {
-							"type": ColorSelect,
+							"type": "ColorSelect",
 							"settings": {
 								"enumValue": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}"
@@ -328,7 +318,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"label": "Icon Shape",
 						"type": "string",
 						"visualization": {
-							"type": ShapeSelect,
+							"type": "ShapeSelect",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}"
@@ -341,7 +331,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"defaultValue": 1,
 						"type": "integer",
 						"visualization": {
-							"type": Slider,
+							"type": "sap/m/Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -407,7 +397,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "boolean",
 						"label": "boolean",
 						"visualization": {
-							"type": Switch,
+							"type": "sap/m/Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
@@ -438,9 +428,6 @@ sap.ui.define(["sap/ui/integration/Designtime",
 			preview: {
 				modes: "LiveAbstract"
 			}
-		};
+		});
 	};
-	return AdvancedDesigntime;
 });
-
-

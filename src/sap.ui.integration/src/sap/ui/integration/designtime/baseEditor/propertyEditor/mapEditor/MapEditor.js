@@ -242,6 +242,9 @@ sap.ui.define([
 			var sKey = oConfigValue.key;
 			var sType = oConfigValue.value.type;
 			var vValue = oConfigValue.value.value;
+			if (sType === "boolean") {
+				vValue = oConfigValue.value.value !== false;
+			}
 			var oDesigntime = (oConfigValue.designtime || {}).__value;
 			var oConfig = this.getConfig();
 
