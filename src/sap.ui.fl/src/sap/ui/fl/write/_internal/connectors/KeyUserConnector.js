@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/_internal/connectors/BackendConnector",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
-	"sap/ui/fl/initial/_internal/connectors/Utils"
+	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/connectors/Utils"
 ], function(
 	merge,
 	BackendConnector,
 	InitialConnector,
-	InitialUtils
+	InitialUtils,
+	WriteUtils
 ) {
 	"use strict";
 
@@ -83,7 +85,7 @@ sap.ui.define([
 			var mParameters = {version: mPropertyBag.version};
 			InitialUtils.addLanguageInfo(mParameters);
 			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameters);
-			return InitialUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
+			return WriteUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
 				var oVersion = oResult.response;
 				return renameVersionNumberProperty(oVersion);
 			});
@@ -91,7 +93,7 @@ sap.ui.define([
 		discardDraft: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.DISCARD, mPropertyBag);
-			return InitialUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
+			return WriteUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
 		}
 	};
 
