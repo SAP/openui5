@@ -84,21 +84,28 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 	 * Every hook must be defined before it can be used. There can be no dynamic hooks. Calling or registering to an undefined hook has no effect.
 	 *
 	 * Hook metadata:
-	 * - "arguments" (required) - List of types of arguments that have to be provided to a call.
-	 *   Examples: [] | ["any"] | ["string"] | ["int[]", "any", ...] | ["object"] | ["class:sap.ui.table.Table"] | [function():boolean] | ...
+	 * - "arguments" (required) - List arguments that have to be provided to a call. If a hook has no arguments, this has to be specified with an
+	 *   empty array.
+	 *
+	 *   Definition:
+	 *   {
+	 *     type: string | function():boolean,
+	 *     [optional=false]: boolean
+	 *   }
+	 *
+	 *   Examples of valid types:
+	 *   "any", "string", "int[]", "object", "class:sap.ui.table.Table", function(vValue) {return typeof vValue === "boolean"}
 	 *
 	 *   Calls with invalid arguments are ignored. This includes the number of arguments as well as their types.
 	 *   Almost any type that can be used for a property, for example, can also be used here. Classes have to be prefixed with "class:", so the
 	 *   correct method is used to validate arguments.
-	 *
-	 *   If a hook does not allow any values to be passed, an empty array has to be set.
 	 *
 	 *   Type function():boolean -> Custom validation
 	 *   For example for internal types like sap.ui.table.Row.State. It is also possible to use sap.ui.base.DataType#createType to create
 	 *   a type that can be used here. But this is not done to avoid polluting the type registry just for this util.
 	 *
 	 * - "returnValue" (optional) - Type of the return value.
-	 *   Examples: "boolean" | "Promise"
+	 *   Examples: "boolean", "Promise"
 	 *
 	 *   If a type for the return value is defined, an array of valid return values is returned to the caller. Invalid values that do not match
 	 *   the type are discarded.
@@ -112,19 +119,19 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 			// Called when Table#bindRows or Table#bindAggregation("rows", ...) is called, before Control#bindAggregation.
 			BindRows: {
 				arguments: [
-					"object" // BindingInfo
+					{type: "object" /* BindingInfo */}
 				]
 			},
 			// Called when a binding object is created for the rows aggregation.
 			RowsBound: {
 				arguments: [
-					"class:sap.ui.model.Binding"
+					{type: "class:sap.ui.model.Binding"}
 				]
 			},
 			// Called when Table#unbindRows or Table#unbindAggregation("rows", ...) is called, before Control#unbindAggregation.
 			UnbindRows: {
 				arguments: [
-					"object" // BindingInfo
+					{type: "object" /* BindingInfo */}
 				]
 			},
 			// Called after the Table.UnbindRows hook, if the unbind is not caused by rebind or destroy.
@@ -134,34 +141,26 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 			// Called when Table#refreshRows is called.
 			RefreshRows: {
 				arguments: [
-					function(sReason) { // sap.ui.table.utils.TableUtils.RowsUpdateReason
-						return sReason in HookUtils.TableUtils.RowsUpdateReason || DataType.getType("sap.ui.model.ChangeReason").isValid(sReason);
-					}
+					{type: validateRowsUpdateReason}
 				]
 			},
 			// Called when Table#updateRows is called.
 			UpdateRows: {
 				arguments: [
-					function(sReason) { // sap.ui.table.utils.TableUtils.RowsUpdateReason
-						return sReason in HookUtils.TableUtils.RowsUpdateReason || DataType.getType("sap.ui.model.ChangeReason").isValid(sReason);
-					}
+					{type: validateRowsUpdateReason}
 				]
 			},
 			// Called when Table#_updateTableSizes is called.
 			UpdateSizes: {
 				arguments: [
-					function(sReason) { // sap.ui.table.utils.TableUtils.RowsUpdateReason
-						return sReason in HookUtils.TableUtils.RowsUpdateReason || DataType.getType("sap.ui.model.ChangeReason").isValid(sReason);
-					}
+					{type: validateRowsUpdateReason}
 				]
 			},
 			// Called when a menu is opened.
 			OpenMenu: {
 				arguments: [
-					function(oCellInfo) { // sap.ui.table.utils.TableUtils.CellInfo
-						return oCellInfo ? typeof oCellInfo.isOfType === "function" : false;
-					},
-					"class:sap.ui.unified.Menu"
+					{type: validateCellInfo},
+					{type: "class:sap.ui.unified.Menu"}
 				]
 			}
 		},
@@ -169,14 +168,14 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 			// Called when the state of a row is updated.
 			UpdateState: {
 				arguments: [
-					function(oRowState) { // sap.ui.table.Row.State
-						// instanceof check not possible due to missing reference, just check for some properties
-						return oRowState != null
-							   && oRowState.hasOwnProperty("context")
-							   && oRowState.hasOwnProperty("Type")
-							   && oRowState.hasOwnProperty("type")
-							   && oRowState.type in oRowState.Type;
-					}
+					{type: validateRowState}
+				]
+			},
+			// Called when the open state of a row is changed by user interaction.
+			ToggleOpenState: {
+				arguments: [
+					{type: "class:sap.ui.table.Row"},
+					{type: "boolean", optional: true} // true = expand, false = collapse, undefined = toggle
 				]
 			}
 		},
@@ -184,13 +183,17 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 			// Called when the table needs to know whether menu items will be added on the Table.OpenMenu hook. Returning "true" indicates that
 			// the consumer will add menu items on Table.OpenMenu.
 			MenuItemNotification: {
-				arguments: ["class:sap.ui.table.Column"],
+				arguments: [
+					{type: "class:sap.ui.table.Column"}
+				],
 				returnValue: "boolean"
 			}
 		},
 		// Can be used to send any signal.
 		Signal: {
-			arguments: ["string"]
+			arguments: [
+				{type: "string"}
+			]
 		}
 	};
 
@@ -229,7 +232,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 			return undefined;
 		}
 
-		var aArguments = Array.prototype.slice.call(arguments, 2);
+		var aArguments = sanitizeArguments(Array.prototype.slice.call(arguments, 2));
 		var bArgumentsValid = validateArguments(mHookMetadata, aArguments);
 
 		if (!bArgumentsValid) {
@@ -420,15 +423,36 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 		return mHookMetadataByKey[sKey];
 	}
 
-	function validateArguments(mHookMetadata, aArguments) {
-		return mHookMetadata.arguments.length === aArguments.length && mHookMetadata.arguments.every(function(vType, iIndex) {
-			if (typeof vType === "function") {
-				return vType(aArguments[iIndex]);
-			} else if (vType.startsWith("class:")) {
-				return HookUtils.TableUtils.isA(aArguments[iIndex], vType.substring(6));
-			} else {
-				return DataType.getType(vType).isValid(aArguments[iIndex]);
+	function sanitizeArguments(aArguments) {
+		while (aArguments.length > 0) {
+			var vArgument = aArguments.pop();
+			if (vArgument != null) {
+				aArguments.push(vArgument);
+				break;
 			}
+		}
+
+		aArguments.map(function(vArgument) {
+			if (vArgument === null) {
+				return undefined;
+			} else {
+				return vArgument;
+			}
+		});
+
+		return aArguments;
+	}
+
+	function validateArguments(mHookMetadata, aArguments) {
+		return mHookMetadata.arguments.length >= aArguments.length && aArguments.every(function(vValue, iIndex) {
+			var mArgument = mHookMetadata.arguments[iIndex];
+			if (typeof mArgument.type === "function") {
+				return mArgument.type(vValue);
+			}
+			if (mArgument.type.startsWith("class:")) {
+				return HookUtils.TableUtils.isA(vValue, mArgument.type.substring(6));
+			}
+			return mArgument.optional === true && vValue == null || DataType.getType(mArgument.type).isValid(vValue);
 		});
 	}
 
@@ -452,6 +476,23 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 				return DataType.getType(vType).isValid(vValue);
 			}
 		});
+	}
+
+	function validateRowsUpdateReason(sReason) { // sap.ui.table.utils.TableUtils.RowsUpdateReason
+		return sReason in HookUtils.TableUtils.RowsUpdateReason || DataType.getType("sap.ui.model.ChangeReason").isValid(sReason);
+	}
+
+	function validateCellInfo(oCellInfo) { // sap.ui.table.utils.TableUtils.CellInfo
+		return oCellInfo ? typeof oCellInfo.isOfType === "function" : false;
+	}
+
+	function validateRowState(oRowState) { // sap.ui.table.Row.State
+		// instanceof check not possible due to missing reference, just check for some properties
+		return oRowState != null
+			   && oRowState.hasOwnProperty("context")
+			   && oRowState.hasOwnProperty("Type")
+			   && oRowState.hasOwnProperty("type")
+			   && oRowState.type in oRowState.Type;
 	}
 
 	return HookUtils;
