@@ -153,7 +153,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		sActualValue =  jQuery("#" + messagePageId + " .sapMBarChild").text();
+		sActualValue =  jQuery("#" + messagePageId + " .sapMTitle").text();
 		assert.equal(sActualValue, sExpectedValue, "The title is correct");
 	});
 

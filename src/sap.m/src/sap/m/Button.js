@@ -369,16 +369,25 @@ sap.ui.define([
 	Button.prototype.setType = function(sButtonType) {
 		this.setProperty("type", sButtonType, false);
 
-		if (sButtonType === ButtonType.Critical) {
-			this._sTypeIconURI = "sap-icon://message-warning";
-		} else if (sButtonType === ButtonType.Negative) {
-			this._sTypeIconURI = "sap-icon://message-error";
-		} else if (sButtonType === ButtonType.Success) {
-			this._sTypeIconURI = "sap-icon://message-success";
-		} else if (sButtonType === ButtonType.Neutral) {
-			this._sTypeIconURI = "sap-icon://message-information";
-		} else {
-			this._sTypeIconURI = null;
+		switch (sButtonType) {
+			case ButtonType.Critical:
+				this._sTypeIconURI = "sap-icon://message-warning";
+				break;
+			case ButtonType.Negative:
+				this._sTypeIconURI = "sap-icon://message-error";
+				break;
+			case ButtonType.Success:
+				this._sTypeIconURI = "sap-icon://message-success";
+				break;
+			case ButtonType.Neutral:
+				this._sTypeIconURI = "sap-icon://message-information";
+				break;
+			case ButtonType.Back:
+			case ButtonType.Up:
+				this._sTypeIconURI = "sap-icon://nav-back";
+				break;
+			default:
+				this._sTypeIconURI = null;
 		}
 
 		return this;
