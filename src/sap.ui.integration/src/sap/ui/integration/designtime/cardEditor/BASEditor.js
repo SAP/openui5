@@ -40,7 +40,8 @@ sap.ui.define([
 			library: "sap.ui.integration",
 			events: {
 				configurationChange: {},
-				createConfiguration: {}
+				createConfiguration: {},
+				error: {}
 			}
 		},
 		renderer: CardEditor.getMetadata().getRenderer()
@@ -281,6 +282,22 @@ sap.ui.define([
 				}
 				ObjectPath.set(aPath, oMetaItem, this._oInitialJson);
 
+				if (!oMetaItem.hasOwnProperty("type")) {
+					this.fireError({
+						"name": "Designtime Error",
+						"detail": {
+							"message": "Type of parameter " + n + " not exist"
+						}
+					});
+				} else if (oMetaItem.type === "") {
+					this.fireError({
+						"name": "Designtime Error",
+						"detail": {
+							"message": "Type of parameter " + n + " is Invalid"
+						}
+					});
+				}
+
 				if (!oMetaItem.hasOwnProperty("value")) {
 					var aOtherPath = oMetaItem.manifestpath.substring(1).split("/"),
 						vValue = ObjectPath.get(aOtherPath, this._oInitialJson);
@@ -385,6 +402,10 @@ sap.ui.define([
 					}).catch(function (o) {
 						//error no valid js file... create one
 						Log.error(o);
+						that.fireError({
+							"name": "Designtime Error",
+							"detail": o
+						});
 					});
 				});
 
