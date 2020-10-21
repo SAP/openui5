@@ -99,6 +99,15 @@ describe('sap.m.MultiInput', function() {
 		});
 	});
 
+	//Show multi input with N-more and whole N-more label
+	it("should show multiInput with N-more and wider token/List item", function () {
+		browser.executeScript('document.getElementById("minWidthMI").scrollIntoView()').then(function() {
+			element(by.id("minWidthMI")).click();
+
+			expect(takeScreenshot()).toLookAs("multi-input-nmore-popover-wide");
+		});
+	});
+
 	//Multiinput read-only
 	it("should show multiInput in read-only-state", function () {
 		browser.executeScript('document.getElementById("multiInputReadOnlyInitial").scrollIntoView()').then(function() {

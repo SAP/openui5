@@ -1426,17 +1426,20 @@ function(
 			oPopover = oTokenizer.getTokensPopup(),
 			oDomRef = this.getDomRef(),
 			bEditable = this.getEditable(),
-			sWidth;
+			iCurrentWidth, iCalculatedWidth;
 
 		this._setValueVisible(false);
 		this._manageListsVisibility(true);
 
 		if (oDomRef && oPopover) {
-			sWidth = (oTokenizer.getTokens().length === 1) ?
-				"auto" :
-				(oDomRef.offsetWidth / parseFloat(library.BaseFontSize)) + "rem";
+			// Popover's width was calculated once in its onBeforeOpen method and is set in PX
+			iCurrentWidth = parseInt(oPopover.getContentWidth());
+			iCalculatedWidth = oDomRef.offsetWidth > iCurrentWidth ? oDomRef.offsetWidth : iCurrentWidth;
 
-			oPopover.setContentWidth(bEditable ? sWidth : "auto");
+			iCalculatedWidth = ((oTokenizer.getTokens().length === 1) || !bEditable) ? "auto" :
+				(iCalculatedWidth / parseFloat(library.BaseFontSize)) + "rem";
+
+			oPopover.setContentWidth(iCalculatedWidth);
 		}
 	};
 
