@@ -3,6 +3,17 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "daf2b874b3534eb755f83cdc2edf17e2752a5c0c",
+        "type": "FIX",
+        "text": " P13nBuilder: New parameter for button id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070408675"
+          }
+        ]
+      },
+      {
         "id": "8b6ea420d05a385780a1c0593f9c1cb23273717a",
         "type": "FIX",
         "text": " Field: align text inside Table and AlignedFlowLayout",

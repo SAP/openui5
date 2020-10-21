@@ -3,6 +3,17 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "f843e0efd36ab4edd23c385afb3f10858262e08f",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card, sap.f.Card:Landmark regions have uniqe names now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070367202"
+          }
+        ]
+      },
+      {
         "id": "87aa40cf8c8168bd93e888f008b20c243c109741",
         "type": "FIX",
         "text": " sap.f.GridList: Navigation with left/right arrow is now correct",

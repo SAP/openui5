@@ -3,6 +3,17 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "f843e0efd36ab4edd23c385afb3f10858262e08f",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card, sap.f.Card:Landmark regions have uniqe names now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070367202"
+          }
+        ]
+      },
+      {
         "id": "bc773dce27eb6e3d67543ea9aa1a29e23028703a",
         "type": "FIX",
         "text": " Card Explorer: Corrected link to sample",

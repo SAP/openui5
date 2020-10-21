@@ -1,0 +1,45 @@
+{
+  "1.84.0": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "d05936526a66905301cf551b2fd13832abf9f68c",
+        "type": "FIX",
+        "text": " sap.m.ScrollContainer: Focus outline is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080342315"
+          }
+        ]
+      },
+      {
+        "id": "779d891bc2e97e29680dc1ef79daed617ed7551d",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Visual Design specification parameters applied for Large Design"
+      },
+      {
+        "id": "57a51f152ef57778f0608b568814831a169e85e9",
+        "type": "FIX",
+        "text": " \"72\" font: add fallback font for glyphs with diacritics",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080350984"
+          }
+        ]
+      },
+      {
+        "id": "f79b1937656f842888c7f27921530d714d7fa652",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Added a right margin for the icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070279555"
+          }
+        ]
+      }
+    ]
+  }
+}

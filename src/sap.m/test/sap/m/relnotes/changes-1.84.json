@@ -3,6 +3,66 @@
     "date": "October 2020",
     "notes": [
       {
+        "id": "ed2af10346ea394e3d5ffedc1cfc2ef02ee0b4d1",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.m.Tokenizer: Adjust NMore's popup width to display elements' full text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070303103"
+          }
+        ]
+      },
+      {
+        "id": "0aee3dc3ed93bbdad95586068e15e79f36d4cdaf",
+        "type": "FEATURE",
+        "text": " sap.m.ProgressIndicator: Added information popover"
+      },
+      {
+        "id": "79c3b14d66bdcbc609bea11359ab90266e86f543",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: all-day events are now properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007132172020"
+          }
+        ]
+      },
+      {
+        "id": "16293030d7288c027dd1883d06f1c6a2d31ed229",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Prevent removing of tokens in the Tokenizer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070382503"
+          }
+        ]
+      },
+      {
+        "id": "8fd69f93fdbcd6b9a0fad58bd0edd029334252bb",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: pointer events are now disabled for the now marker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006539142020"
+          }
+        ]
+      },
+      {
+        "id": "58f7e95cb09117088039ac2a09f2985c945c6556",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Align padding around the title by VD specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070379171"
+          }
+        ]
+      },
+      {
         "id": "dded8437b64f5c88a85e197c85c117b95f88da5f",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: proper line-height for ObjectStatus Text in Table in Condensed mode",
@@ -52,6 +112,11 @@
         ]
       },
       {
+        "id": "6915e5188d1cf6f8dfddf2379e5f76788857ccc6",
+        "type": "FIX",
+        "text": " sap.m.StepInput: inrease/decrease buttons don't remain in active/hover state after touch out"
+      },
+      {
         "id": "7e1bf08b36c3a7859c371532852f5bdfd540b348",
         "type": "FEATURE",
         "text": " Prevent the display of tooltip text 'Neutral'"
@@ -60,6 +125,11 @@
         "id": "245c49cdf570560217f768a2f15c7caa816a94f2",
         "type": "FEATURE",
         "text": " sap.m.MenuButton: ariaHasPopup enumeration adopted"
+      },
+      {
+        "id": "4bd6cb27171c79ed2cc26700e2c6e28769184c0d",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed buttons and placeholder position in Search field in Compact mode"
       },
       {
         "id": "f5fc3ab5c00e07ff48ea4f624c2cd9a5ea11a50a",
