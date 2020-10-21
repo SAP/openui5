@@ -160,20 +160,44 @@ sap.ui.define([
 		return bFocusSet;
 	};
 
+	/*
+	 * The FocusHandler triggers the <code>sapfocusleave</code> event in a timeout of 0ms after a blur event. To give the control in the cell
+	 * enough time to react to the <code>sapfocusleave</code> event (e.g. sap.m.Input - changes its value), the <code>apply<code/> event is fired
+	 * asynchronously.
+	 */
+	function setEventMarkedAndFireApplyAsync(oCreationRow, oEvent) {
+		var oFocusedElement = document.activeElement;
+
+		oFocusedElement.blur();
+		oEvent.setMarked();
+
+		window.setTimeout(function() {
+			if (!oCreationRow._fireApply()) {
+				oFocusedElement.focus();
+			}
+		}, 0);
+	}
+
+	/**
+	 * Event handler called when the enter key is pressed inside the CreationRow. It fires the <code>apply</code> event only if the inner
+	 * focused control has not handled the event already.
+	 *
+	 * @param {jQuery.Event} oEvent The ENTER keyboard key event object
+	 */
+	CreationRow.prototype.onsapenter = function(oEvent) {
+		if (this.getApplyEnabled() && !oEvent.isMarked()) {
+			setEventMarkedAndFireApplyAsync(this, oEvent);
+		}
+	};
+
+	/**
+	 * Event handler called when the enter key is pressed in combination with modifier keys (Meta or Ctrl) inside the CreationRow.
+	 *
+	 * @param {jQuery.Event} oEvent The ENTER keyboard key event object
+	 */
 	CreationRow.prototype.onsapentermodifiers = function(oEvent) {
-		if (this.getApplyEnabled() &&  (oEvent.metaKey || oEvent.ctrlKey)) {
-			// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
-			// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), the "apply" event is fired asynchronously.
-			var oFocusedElement = document.activeElement;
-
-			oFocusedElement.blur();
-			oEvent.setMarked();
-
-			window.setTimeout(function() {
-				if (!this._fireApply()) {
-					oFocusedElement.focus();
-				}
-			}.bind(this), 0);
+		if (this.getApplyEnabled() && (oEvent.metaKey || oEvent.ctrlKey)) {
+			setEventMarkedAndFireApplyAsync(this, oEvent);
 		}
 	};
 
