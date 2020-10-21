@@ -54,7 +54,7 @@ describe("sap.f.GridListVisualTests", function () {
 	});
 
 	it("should visualize growing GridList with GridBoxLayout and Grouping", function () {
-		browser.executeScript("sap.ui.getCore().byId('gridplayground---app--page').scrollTo(0)").then(function () {
+		browser.executeScript("sap.ui.getCore().byId('__component0---app--page').scrollTo(0)").then(function () {
 			goToIconTabFilter("GridList4a");
 		}).then(function () {
 			takePictureOfContent("4A_growing");
@@ -78,7 +78,7 @@ describe("sap.f.GridListVisualTests", function () {
 	});
 
 	it("should visualize GridList grouping with auto row height", function () {
-		browser.executeScript("sap.ui.getCore().byId('gridplayground---app--page').scrollTo(0)").then(function () {
+		browser.executeScript("sap.ui.getCore().byId('__component0---app--page').scrollTo(0)").then(function () {
 			goToIconTabFilter("GridList5");
 		}).then(function () {
 			takePictureOfContent("5_grouping1");
@@ -132,8 +132,14 @@ describe("sap.f.GridListVisualTests", function () {
 			controlType: "sap.m.ColumnListItem"
 		}));
 
+		var oGLI = element(by.control({
+			id: "item1",
+			viewName: "sap.f.gridlist.view.Main",
+			controlType: "sap.m.StandardListItem"
+		}));
+
 		oTableItem.click();
-		expect(takeScreenshot(oTableItem)).toLookAs("11_table_focus");
+		expect(takeScreenshot(oGLI)).toLookAs("11_table_focus");
 	});
 
 	it("should show correct focus border of List as content", function () {
@@ -143,7 +149,13 @@ describe("sap.f.GridListVisualTests", function () {
 			controlType: "sap.m.StandardListItem"
 		}));
 
+		var oGLI = element(by.control({
+			id: "item2",
+			viewName: "sap.f.gridlist.view.Main",
+			controlType: "sap.m.StandardListItem"
+		}));
+
 		oListItem.click();
-		expect(takeScreenshot(oListItem)).toLookAs("12_list_focus");
+		expect(takeScreenshot(oGLI)).toLookAs("12_list_focus");
 	});
 });
