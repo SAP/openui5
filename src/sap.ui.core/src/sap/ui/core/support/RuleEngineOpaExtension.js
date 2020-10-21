@@ -109,8 +109,8 @@ sap.ui.define([
 				 * @returns {Promise} Promise.
 				 */
 				noRuleFailures: function(options) {
+					options = options || {};
 					var ruleDeferred = jQuery.Deferred(),
-						options = options[0] || {},
 						failOnAnyRuleIssues = options["failOnAnyIssues"],
 						failOnHighRuleIssues = options["failOnHighIssues"],
 						rules = options.rules,
@@ -211,7 +211,7 @@ sap.ui.define([
 				getReportAsFileInFormat: function (options) {
 					var oContext,
 						oHistory,
-						oOptions = options[0] || {},
+						oOptions = options || {},
 						ruleDeferred = jQuery.Deferred(),
 						sHistoryFormat = oOptions["historyFormat"],
 						sFileName = oOptions["fileName"];
