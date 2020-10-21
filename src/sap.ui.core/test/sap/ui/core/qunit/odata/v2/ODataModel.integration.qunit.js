@@ -775,15 +775,15 @@ sap.ui.define([
 			 *   Returns a Promise resolving with the result of the given success or error callback
 			 */
 			function checkSingleRequest(oActualRequest, fnSuccess, fnError, iBatchNo) {
-				var oExpectedRequest,
+				var sContentID,
+					oExpectedRequest,
 					oExpectedResponse,
 					mHeaders,
 					sMethod = oActualRequest.method,
 					oResponse,
 					mResponseHeaders,
 					sUrl = oActualRequest.requestUri,
-					bWaitForResponse = true,
-					sWithContentID;
+					bWaitForResponse = true;
 
 				function checkFinish() {
 					if (!that.aRequests.length && !that.iPendingResponses) {
@@ -804,7 +804,7 @@ sap.ui.define([
 
 				oActualRequest = Object.assign({}, oActualRequest);
 				oActualRequest.headers = Object.assign({}, oActualRequest.headers);
-				sWithContentID = oActualRequest.withContentID;
+				sContentID = oActualRequest.contentID;
 
 				if (sUrl.startsWith(that.oModel.sServiceUrl)) {
 					oActualRequest.requestUri = sUrl.slice(that.oModel.sServiceUrl.length + 1);
@@ -831,7 +831,7 @@ sap.ui.define([
 				delete oActualRequest["requestID"];
 				delete oActualRequest["updateAggregatedMessages"];
 				delete oActualRequest["user"];
-				delete oActualRequest["withContentID"];
+				delete oActualRequest["contentID"];
 				if (oExpectedRequest) {
 					oExpectedResponse = oExpectedRequest.response;
 					if (oExpectedResponse === NO_CONTENT) {
@@ -866,7 +866,7 @@ sap.ui.define([
 
 					if (oActualRequest.key && sMethod !== "MERGE"
 							&& oActualRequest.headers["x-http-method"] !== "MERGE") {
-						that.sTemporaryKey = sWithContentID
+						that.sTemporaryKey = sContentID
 							|| oActualRequest.key.match(rTemporaryKey)[0];
 
 						oExpectedRequest.deepPath = oExpectedRequest.deepPath.replace("~key~",
