@@ -2544,11 +2544,14 @@ sap.ui.define([
 			oSetSelectionStub = sinon.stub(Event.prototype, "getParameter");
 
 		oSetSelectionStub.withArgs("listItem").returns(oListItem);
+		oSetSelectionStub.withArgs("tokens").returns([oToken]);
 
 		this.multiInput.addToken(oToken);
 		oListItem.data("key", "key123");
 		oListItem.data("text", "text123");
 		oListItem.data("tokenId", "token");
+
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		aTokens = this.multiInput.getTokens();
@@ -2676,6 +2679,7 @@ sap.ui.define([
 
 		// act
 		oDeleteStub.withArgs("listItem").returns(oList.getItems()[0]);
+		oDeleteStub.withArgs("tokens").returns([oMI.getTokens()[0]]);
 		oTokenizer._handleListItemDelete(oFakeEvent);
 		sap.ui.getCore().applyChanges();
 
