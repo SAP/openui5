@@ -45,7 +45,7 @@ sap.ui.define([
 		assert.notOk(Router._interceptRouteMatched, "Initially #disable is no intercept logic attached to Router");
 	});
 
-	QUnit.test("set/get EventsBlacklist", function (assert) {
+	QUnit.test("set/get EventsExcludeList", function (assert) {
 		//Prepare
 		var oConfig = {
 				global: ["modelContextChange", "beforeRendering", "afterRendering", "propertyChanged", "beforeGeometryChanged", "geometryChanged",
@@ -59,13 +59,13 @@ sap.ui.define([
 			};
 
 		// Act
-		EventBroadcaster.setEventsBlacklist(oConfig);
+		EventBroadcaster.setEventsExcludeList(oConfig);
 
 		// Assert
-		assert.deepEqual(EventBroadcaster.getEventsBlacklist(), oConfig, "Blacklist configuration is set correctly");
+		assert.deepEqual(EventBroadcaster.getEventsExcludeList(), oConfig, "ExcludeList configuration is set correctly");
 	});
 
-	QUnit.test("configuration blacklist can't be changed without the setter", function (assert) {
+	QUnit.test("configuration ExcludeList can't be changed without the setter", function (assert) {
 		//Prepare
 		var oConfig = {
 				global: ["modelContextChange", "beforeRendering", "afterRendering", "propertyChanged", "beforeGeometryChanged", "geometryChanged",
@@ -79,7 +79,7 @@ sap.ui.define([
 			};
 
 		// Act
-		EventBroadcaster.setEventsBlacklist(oConfig);
+		EventBroadcaster.setEventsExcludeList(oConfig);
 
 		oConfig = {
 			global: [],
@@ -89,7 +89,7 @@ sap.ui.define([
 		};
 
 		// Assert
-		assert.notDeepEqual(EventBroadcaster.getEventsBlacklist().controls, oConfig.controls, "Blacklist configuration wasn't modified when the configuration object was modified");
+		assert.notDeepEqual(EventBroadcaster.getEventsExcludeList().controls, oConfig.controls, "ExcludeList configuration wasn't modified when the configuration object was modified");
 	});
 
 	QUnit.module("Integration", {
@@ -202,21 +202,21 @@ sap.ui.define([
 
 	QUnit.module("Private functions");
 
-	QUnit.test("_shouldExpose function filters out blacklisted events ", function (assert) {
+	QUnit.test("_shouldExpose function filters out excluded events ", function (assert) {
 		assert.notOk(EventBroadcaster._shouldExpose("load", new Image()), "event 'load' should not be exposed");
 		assert.notOk(EventBroadcaster._shouldExpose("load", new Image()), "event 'load' should not be exposed");
 	});
 
-	QUnit.test("_isTrackableControlEvent function filters out blacklisted events ", function (assert) {
+	QUnit.test("_isTrackableControlEvent function filters out excluded events ", function (assert) {
 		var oConfig = {
 				global: ["modelContextChange", "beforeRendering", "afterRendering", "propertyChanged", "beforeGeometryChanged", "geometryChanged",
 					"aggregationChanged", "componentCreated", "afterInit", "updateStarted", "updateFinished", "load", "scroll"],
 			controls: {
 				"sap.m.Button": {
-					include: ["tap"]
+					exclude: ["tap"]
 				},
 				"sap.m.Image": {
-					exclude: ["load"]
+					include: ["load"]
 				},
 				"sap.m.Link": {}
 			}
@@ -239,10 +239,10 @@ sap.ui.define([
 		var oInvalidConfig = {something: {}, something_else: "test"};
 		var oInvalidConfig2 = {global: [], something: "test"};
 
-		assert.ok(EventBroadcaster._isValidConfig(oValidConfig), "Blacklist is valid");
-		assert.ok(EventBroadcaster._isValidConfig(oValidConfig2), "Blacklist containing 'global' and 'controls' is valid, even if it contains some additional properties");
-		assert.notOk(EventBroadcaster._isValidConfig(oInvalidConfig), "Blacklist is not valid");
-		assert.notOk(EventBroadcaster._isValidConfig(oInvalidConfig2), "Blacklist containing only one of the needed properties is not valid");
+		assert.ok(EventBroadcaster._isValidConfig(oValidConfig), "ExcludeList is valid");
+		assert.ok(EventBroadcaster._isValidConfig(oValidConfig2), "ExcludeList containing 'global' and 'controls' is valid, even if it contains some additional properties");
+		assert.notOk(EventBroadcaster._isValidConfig(oInvalidConfig), "ExcludeList is not valid");
+		assert.notOk(EventBroadcaster._isValidConfig(oInvalidConfig2), "ExcludeList containing only one of the needed properties is not valid");
 	});
 
 });
