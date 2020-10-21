@@ -1140,6 +1140,44 @@ function(
 				id: "changeId2"
 			};
 
+			var sLayer = Layer.CUSTOMER;
+
+			var oMockCompVariant1 = {
+				getRequest: function () {
+					return "$TMP";
+				},
+				getLayer: function () {
+					return sLayer;
+				}
+			};
+
+			var oMockCompVariant2 = {
+				getRequest: function () {
+					return "some_transport_id";
+				},
+				getLayer: function () {
+					return sLayer;
+				}
+			};
+
+			var oMockCompVariant3 = {
+				getRequest: function () {
+					return "";
+				},
+				getLayer: function () {
+					return sLayer;
+				}
+			};
+
+			var oMockCompVariant4 = {
+				getRequest: function () {
+					return "";
+				},
+				getLayer: function () {
+					return Layer.USER;
+				}
+			};
+
 			var oAppVariantDescriptor = {
 				packageName: "$TMP",
 				fileType: "appdescr_variant",
@@ -1151,13 +1189,16 @@ function(
 				id: "sampleControl"
 			};
 			var sStyleClass = "sampleStyle";
-			var sLayer = Layer.CUSTOMER;
-			var aMockLocalChanges = [oMockNewChange];
 			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
 			var fnPublishStub = sandbox.stub(WriteStorage, "publish").resolves();
-			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aMockLocalChanges);
-			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompEntitiesByIdMap").resolves([]);
+			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oMockNewChange]);
+			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompEntitiesByIdMap").resolves({
+				id1: oMockCompVariant1,
+				id2: oMockCompVariant2,
+				id3: oMockCompVariant3,
+				id4: oMockCompVariant4
+			});
 
 
 			return this.oChangePersistence.transportAllUIChanges(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors).then(function() {
@@ -1171,7 +1212,7 @@ function(
 					},
 					layer: sLayer,
 					reference: this._mComponentProperties.name,
-					localChanges: aMockLocalChanges,
+					localChanges: [oMockNewChange, oMockCompVariant1, oMockCompVariant3],
 					appVariantDescriptors: aAppVariantDescriptors
 				}), "then publish called with the transport info and changes array");
 			}.bind(this));

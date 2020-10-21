@@ -782,7 +782,7 @@ sap.ui.define([
 	};
 
 	function isLocalAndInLayer(sLayer, oObject) {
-		return oObject.getRequest() === "$TMP" && oObject.getLayer() === sLayer;
+		return (oObject.getRequest() === "$TMP" || oObject.getRequest() === "") && oObject.getLayer() === sLayer;
 	}
 
 	/**
@@ -800,11 +800,14 @@ sap.ui.define([
 			FlexState.getCompEntitiesByIdMap(this.getComponentName())// FIXME: also transport comp changes via compState
 		]).then(function(aResponses) {
 			var aLocalChanges = aResponses[0];
-			var aCompVariantEntities = aResponses[1];
-			for (var key in aCompVariantEntities) {
-				aLocalChanges = aLocalChanges.concat(
-					aCompVariantEntities[key].variants.filter(isLocalAndInLayer.bind(this, sLayer)));
+			var mCompVariantEntities = aResponses[1];
+			var aCompVariantEntities = [];
+			for (var key in mCompVariantEntities) {
+				aCompVariantEntities.push(mCompVariantEntities[key]);
 			}
+
+			aLocalChanges = aLocalChanges.concat(
+				aCompVariantEntities.filter(isLocalAndInLayer.bind(this, sLayer)));
 
 			return Storage.publish({
 				transportDialogSettings: {
