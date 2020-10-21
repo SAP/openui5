@@ -3,7 +3,15 @@
 /* Base theme                               */
 /* ======================================== */
 
+@sapMPIPopoverCloseIconWidth: 1.4375rem;
+@sapMPIPopoverCloseIconHeight: 1.375rem;
+@sapMPIPopoverCloseIconMargin: 0.125rem;
+
 .sapMPI {
+	&.sapMPIHoverable:hover {
+		cursor: pointer;
+	}
+
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: flex;
@@ -21,6 +29,42 @@
 	border: none;
 	border-radius: 0.5rem;
 	overflow: hidden;
+}
+
+.sapMPIPopover {
+	min-height: @sapMPIPopoverCloseIconHeight;
+
+	.sapMPopoverScroll {
+		padding-left: 0.5rem;
+		display: flex !important;
+		justify-content: space-between;
+	}
+
+	.sapMText {
+		align-self: center;
+		margin: 0.25rem 0;
+		word-break: break-all;
+	}
+
+	.sapUiIcon {
+		width: @sapMPIPopoverCloseIconWidth;
+		height: @sapMPIPopoverCloseIconHeight;
+		line-height: @sapMPIPopoverCloseIconHeight;
+		font-size: @sapFontSmallSize;
+		color: @sapContent_IconColor;
+		flex-shrink: 0;
+		margin: @sapMPIPopoverCloseIconMargin;
+	}
+
+	/* Additional touch area for the close icon/button required by ACC standards*/
+	.sapUiIcon:after {
+		content: "";
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: @sapMPIPopoverCloseIconWidth + (@sapMPIPopoverCloseIconMargin * 2);
+		height: @sapMPIPopoverCloseIconHeight + (@sapMPIPopoverCloseIconMargin * 2);
+	}
 }
 
 .sapMPIBar,

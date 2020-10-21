@@ -1021,6 +1021,9 @@ sap.ui.define([
 			},
 			ProgressIndicator: {
 				title: "QUnit ProgressIndicator",
+				sinon: {
+					useFakeTimers: true
+				},
 				_alternativeTitle: "QUnit page for sap.m.ProgressIndicator"
 			},
 			PullToRefresh_desktop: {
