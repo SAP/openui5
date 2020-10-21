@@ -55,6 +55,8 @@ sap.ui.define([
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.OpenMenu, this.onOpenMenu, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Column.MenuItemNotification, this.notifyColumnAboutMenuItems, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Expand, this.expandRow, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Collapse, this.collapseRow, this);
 	};
 
 	V4Aggregation.prototype.onDeactivate = function(oTable) {
@@ -63,6 +65,8 @@ sap.ui.define([
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.OpenMenu, this.onOpenMenu, this);
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Column.MenuItemNotification, this.notifyColumnAboutMenuItems, this);
+		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, this.expandRow, this);
+		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Collapse, this.collapseRow, this);
 
 		this.aGroupMenuItems.concat(this.aAggregateMenuItems, this.aContextMenuItems)
 			.forEach(function(oItem) {
@@ -104,29 +108,21 @@ sap.ui.define([
 	};
 
 	V4Aggregation.prototype.expandRow = function(oRow) {
-		var oBinding = this.getTableBinding();
+		if (TableUtils.isA(oRow, "sap.ui.table.Row")) {
+			var oRowBindingContext = oRow.getRowBindingContext();
 
-		if (oBinding && TableUtils.isA(oRow, "sap.ui.table.Row")) {
-			if (oBinding.expand) {
-				oBinding.expand(oRow.getIndex());
-			} else {
-				sap.ui.require(["sap/m/MessageToast"], function(MessageToast) {
-					MessageToast.show("not yet ;)");
-				});
+			if (oRowBindingContext) {
+				oRowBindingContext.expand();
 			}
 		}
 	};
 
 	V4Aggregation.prototype.collapseRow = function(oRow) {
-		var oBinding = this.getTableBinding();
+		if (TableUtils.isA(oRow, "sap.ui.table.Row")) {
+			var oRowBindingContext = oRow.getRowBindingContext();
 
-		if (oBinding && TableUtils.isA(oRow, "sap.ui.table.Row")) {
-			if (oBinding.collapse) {
-				oBinding.collapse(oRow.getIndex());
-			} else {
-				sap.ui.require(["sap/m/MessageToast"], function(MessageToast) {
-					MessageToast.show("not yet ;)");
-				});
+			if (oRowBindingContext) {
+				oRowBindingContext.collapse();
 			}
 		}
 	};

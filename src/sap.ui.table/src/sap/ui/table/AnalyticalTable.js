@@ -200,8 +200,8 @@ sap.ui.define([
 		this._bSuspendUpdateAnalyticalInfo = false;
 		this._mGroupHeaderMenuItems = null;
 		TableUtils.Grouping.setGroupMode(this);
-		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
-		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenMenu, this._onOpenTableContextMenu, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenMenu, onOpenTableContextMenu, this);
 	};
 
 	AnalyticalTable.prototype.exit = function() {
@@ -428,7 +428,7 @@ sap.ui.define([
 		return aColumns;
 	};
 
-	AnalyticalTable.prototype._updateRowState = function(oState) {
+	function updateRowState(oState) {
 		var oBinding = this.getBinding("rows");
 		var oBindingInfo = this.getBindingInfo("rows");
 		var oNode = oState.context;
@@ -449,7 +449,7 @@ sap.ui.define([
 		oState.expanded = oNode.nodeState.expanded;
 		oState.contentHidden = oState.expanded && !oBindingInfo.parameters.sumOnTop;
 		oState.title = oState.type === oState.Type.GroupHeader ? oBinding.getGroupName(oNode.context, oNode.level) : "";
-	};
+	}
 
 	AnalyticalTable.prototype.onRowsUpdated = function(mParameters) {
 		Table.prototype.onRowsUpdated.apply(this, arguments);
@@ -499,7 +499,7 @@ sap.ui.define([
 		}
 	};
 
-	AnalyticalTable.prototype._onOpenTableContextMenu = function(oCellInfo, oMenu) {
+	function onOpenTableContextMenu(oCellInfo, oMenu) {
 		var oRow = oCellInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL) ? this.getRows()[oCellInfo.rowIndex] : null;
 
 		if (!oRow || !oRow.isGroupHeader()) {
@@ -509,7 +509,7 @@ sap.ui.define([
 
 		this._iGroupedLevel = oRow.getLevel();
 		this._addGroupHeaderMenuItems(oMenu);
-	};
+	}
 
 	AnalyticalTable.prototype._addGroupHeaderMenuItems = function(oMenu) {
 		var that = this;

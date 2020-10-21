@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -151,149 +151,6 @@ sap.ui.define([
 					done();
 				}
 			});
-		});
-	});
-
-	QUnit.test("Expand and collapse a row", function(assert) {
-		var done = assert.async();
-		var that = this;
-
-		this.testAsync({
-			act: function() {
-				that.table.expand(0);
-			},
-			test: function() {
-				assert.equal(that.table._getTotalRowCount(), 5, "Expanded: Row count is correct");
-				assert.equal(that.table.isExpanded(0), true, "Expanded state is correct");
-			}
-		}).then(function() {
-			that.testAsync({
-				act: function() {
-					that.table.collapse(0);
-				},
-				test: function() {
-					assert.equal(that.table._getTotalRowCount(), 3, "Collapsed: Row count is correct");
-					assert.equal(that.table.isExpanded(0), false, "Expanded state is correct");
-					done();
-				}
-			});
-		});
-	});
-
-	QUnit.test("Expand and collapse a row synchronously", function(assert) {
-		var done = assert.async();
-		var that = this;
-
-		this.testAsync({
-			act: function() {
-				that.table.setModel(new JSONModel(getData()));
-				that.table.bindRows("/root");
-				that.table.expand(0);
-			},
-			test: function() {
-				assert.equal(that.table._getTotalRowCount(), 5, "Expanded: Row count is correct");
-				assert.equal(that.table.isExpanded(0), true, "Expanded state is correct");
-			}
-		}).then(function() {
-			that.testAsync({
-				act: function() {
-					that.table.setModel(new JSONModel(getData()));
-					that.table.bindRows({
-						path: "/root",
-						parameters: {
-							numberOfExpandedLevels: 1
-						}
-					});
-					that.table.collapse(0);
-				},
-				test: function() {
-					assert.equal(that.table._getTotalRowCount(), 4, "Collapsed: Row count is correct");
-					assert.equal(that.table.isExpanded(0), false, "Expanded state is correct");
-					done();
-				}
-			});
-		});
-	});
-
-	QUnit.test("Expand and collapse multiple rows", function(assert) {
-		var that = this;
-		var oBindingExpandSpy = this.spy(this.table.getBinding("rows"), "expand");
-		var oBindingCollapseSpy = this.spy(this.table.getBinding("rows"), "collapse");
-
-		for (var i = 3; i <= 15; i++) {
-			this.table.getModel().getData().root[i] = {
-				name: "item",
-				description: "item description",
-				0: {
-					name: "subitem",
-					description: "subitem description"
-				}
-			};
-		}
-		this.table.getModel().refresh();
-
-		return new Promise(function(resolve) {
-			that.table.attachEventOnce("_rowsUpdated", resolve);
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					that.table.expand([0, 1]);
-				},
-				test: function() {
-					assert.equal(that.table._getTotalRowCount(), 19, "Expanded: Row count is correct");
-					assert.equal(that.table.isExpanded(0), true, "Expanded state of the first expanded row is correct");
-					assert.equal(that.table.isExpanded(3), true, "Expanded state of the second expanded row is correct");
-				}
-			});
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					that.table.collapse([0, 3]);
-				},
-				test: function() {
-					assert.equal(that.table._getTotalRowCount(), 16, "Collapsed: Row count is correct");
-					assert.equal(that.table.isExpanded(0), false, "Expanded state of the first collapsed row is correct");
-					assert.equal(that.table.isExpanded(1), false, "Expanded state of the second collapsed row is correct");
-				}
-			});
-		}).then(function() {
-			that.table.setFirstVisibleRow(4);
-			return new Promise(function(resolve) {
-				that.table.attachEventOnce("_rowsUpdated", resolve);
-			});
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					oBindingExpandSpy.reset();
-					that.table.expand([10, 9]);
-				},
-				test: function() {
-					assert.equal(that.table._getTotalRowCount(), 18, "Expanded: Row count is correct");
-					assert.equal(that.table.isExpanded(9), true, "Expanded state of the first expanded row is correct");
-					assert.equal(that.table.isExpanded(11), true, "Expanded state of the second expanded row is correct");
-					assert.ok(oBindingExpandSpy.calledTwice, "Binding#expand was called twice");
-					assert.ok(oBindingExpandSpy.getCall(0).calledWithExactly(10, true), "First call with index 10");
-					assert.ok(oBindingExpandSpy.getCall(1).calledWithExactly(9, false), "Second call with index 9");
-				}
-			});
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					oBindingCollapseSpy.reset();
-					that.table.collapse([9, 11]);
-				},
-				test: function() {
-					assert.equal(that.table._getTotalRowCount(), 16, "Collapsed: Row count is correct");
-					assert.equal(that.table.isExpanded(9), false, "Expanded state of the first collapsed row is correct");
-					assert.equal(that.table.isExpanded(10), false, "Expanded state of the second collapsed row is correct");
-					assert.ok(oBindingCollapseSpy.calledTwice, "Binding#collapse was called twice");
-					assert.ok(oBindingCollapseSpy.getCall(0).calledWithExactly(11, true), "First call with index 11");
-					assert.ok(oBindingCollapseSpy.getCall(1).calledWithExactly(9, false), "Second call with index 9");
-				}
-			});
-		}).then(function() {
-			oBindingExpandSpy.restore();
-			oBindingCollapseSpy.restore();
 		});
 	});
 
@@ -670,7 +527,7 @@ sap.ui.define([
 			oTable.attachEvent("_rowsUpdated", function(oEvent) {
 				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+			oTable.getRows()[0].expand();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Expand
@@ -684,12 +541,12 @@ sap.ui.define([
 		var oTable = this.createTable();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+			oTable.getRows()[0].expand();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			oTable.attachEvent("_rowsUpdated", function(oEvent) {
 				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+			oTable.getRows()[0].collapse();
 
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Collapse
@@ -844,5 +701,285 @@ sap.ui.define([
 		assert.deepEqual(this.table.isIndexSelected(2), false, "collapse(0), clearSelection() - isIndexSelected(2) returns false");
 		assert.deepEqual(this.table.isIndexSelected(3), false, "collapse(0), clearSelection() - isIndexSelected(3) returns false");
 		assert.deepEqual(this.table.isIndexSelected(4), false, "collapse(0), clearSelection() - isIndexSelected(4) returns false");
+	});
+
+	QUnit.module("Expand/Collapse", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable(TreeTable, {
+				rows: {path: "/"},
+				models: new TableQUnitUtils.createJSONModel(8),
+				visibleRowCount: 5
+			});
+			var oBinding = this.oTable.getBinding("rows");
+
+			this.oBindingExpandSpy = sinon.spy(oBinding, "expand");
+			this.oBindingCollapseSpy = sinon.spy(oBinding, "collapse");
+			this.oChangeEventSpy = sinon.spy();
+			oBinding.attachChange(this.oChangeEventSpy);
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		test: function(sMessage, oTestConfig, assert) {
+			var mOperations = [];
+
+			if (oTestConfig.prepare != null) {
+				oTestConfig.prepare();
+			}
+
+			this.oBindingExpandSpy.reset();
+			this.oBindingCollapseSpy.reset();
+			this.oChangeEventSpy.reset();
+
+			if (oTestConfig.expand === true) {
+				this.oTable.expand(oTestConfig.indices);
+			} else {
+				this.oTable.collapse(oTestConfig.indices);
+			}
+
+			this.oBindingExpandSpy.getCalls().forEach(function(oCall) {
+				mOperations.push({operation: "expand", index: oCall.args[0], suppressChange: oCall.args[1]});
+			});
+			this.oBindingCollapseSpy.getCalls().forEach(function(oCall) {
+				mOperations.push({operation: "collapse", index: oCall.args[0], suppressChange: oCall.args[1]});
+			});
+
+			if (oTestConfig.expectedOperations && oTestConfig.expectedOperations.length > 0) {
+				assert.deepEqual(mOperations, oTestConfig.expectedOperations, sMessage + ": Operations were performed correctly");
+				assert.ok(this.oChangeEventSpy.calledOnce, sMessage + ": Change event was fired once");
+			} else {
+				assert.deepEqual(mOperations, [], sMessage + ": No operations performed");
+				assert.ok(this.oChangeEventSpy.notCalled, sMessage + ": Change event was not fired");
+			}
+		}
+	});
+
+	QUnit.test("#expand", function(assert) {
+		var that = this;
+
+		[0, [0]].forEach(function(vIndexParameter) {
+			that.test("Expand a collapsed row", {
+				prepare: function() {
+					that.oTable.collapse(0);
+				},
+				indices: vIndexParameter,
+				expand: true,
+				expectedOperations: [
+					{operation: "expand", index: 0, suppressChange: false}
+				]
+			}, assert);
+			that.test("Expand an expanded row", {
+				indices: vIndexParameter,
+				expand: true
+			}, assert);
+		});
+
+		[1, [1]].forEach(function(vIndexParameter) {
+			that.test("Expand a leaf", {
+				prepare: function() {
+					that.oTable.expand(0);
+				},
+				indices: vIndexParameter,
+				expand: true
+			}, assert);
+		});
+
+		this.test("Expand multiple rows", {
+			prepare: function() {
+				/* Create the following state:
+				 * 0 - Collapsed
+				 * 1 - Expanded
+				 * 2 -   Leaf
+				 * 3 - Collapsed
+				 * 4 - Collapsed
+				 */
+				that.oTable.collapseAll();
+				that.oTable.expand(1);
+			},
+			indices: [1, 0, 3, -1, 2, 4, that.oTable._getTotalRowCount()],
+			expand: true,
+			expectedOperations: [
+				{operation: "expand", index: 4, suppressChange: true},
+				{operation: "expand", index: 3, suppressChange: true},
+				{operation: "expand", index: 0, suppressChange: false}
+			]
+		}, assert);
+	});
+
+	QUnit.test("#collapse", function(assert) {
+		var that = this;
+
+		[0, [0]].forEach(function(vIndexParameter) {
+			that.test("Collapse an expanded row", {
+				prepare: function() {
+					that.oTable.expand(0);
+				},
+				indices: vIndexParameter,
+				expand: false,
+				expectedOperations: [
+					{operation: "collapse", index: 0, suppressChange: false}
+				]
+			}, assert);
+			that.test("Collapse a collapsed row", {
+				indices: vIndexParameter,
+				expand: false
+			}, assert);
+		});
+
+		[1, [1]].forEach(function(vIndexParameter) {
+			that.test("Collapse a leaf", {
+				prepare: function() {
+					that.oTable.expand(0);
+				},
+				indices: vIndexParameter,
+				expand: false
+			}, assert);
+		});
+
+		this.test("Collapse multiple rows", {
+			prepare: function() {
+				/* Create the following state:
+				 * 0 - Collapsed
+				 * 1 - Expanded
+				 * 2 -   Leaf
+				 * 3 - Expanded
+				 * 4 -   Expanded
+				 */
+				that.oTable.getModel().setData([{}, {}, {children: {children: {}}}], true);
+				that.oTable.collapseAll();
+				that.oTable.expand(2);
+				that.oTable.expand(3);
+				that.oTable.expand(1);
+			},
+			indices: [1, 2, -1, 3, 0, 4, that.oTable._getTotalRowCount()],
+			expand: false,
+			expectedOperations: [
+				{operation: "collapse", index: 4, suppressChange: true},
+				{operation: "collapse", index: 3, suppressChange: true},
+				{operation: "collapse", index: 1, suppressChange: false}
+			]
+		}, assert);
+	});
+
+	QUnit.test("#expand/#collapse with invalid parameters", function(assert) {
+		var that = this;
+
+		[-1, [-1]].forEach(function(vIndexParameter) {
+			that.test("Expand index < 0", {
+				indices: vIndexParameter,
+				expand: true
+			}, assert);
+			that.test("Collapse index < 0", {
+				indices: vIndexParameter,
+				expand: false
+			}, assert);
+		});
+
+		var iTotalRowCount = this.oTable._getTotalRowCount();
+		[iTotalRowCount, [iTotalRowCount]].forEach(function(vIndexParameter) {
+			that.test("Expand index > maximum row index", {
+				indices: vIndexParameter,
+				expand: true
+			}, assert);
+			that.test("Collapse index > maximum row index", {
+				indices: vIndexParameter,
+				expand: false
+			}, assert);
+		});
+	});
+
+	QUnit.test("Row#expand", function(assert) {
+		this.oTable.getRows()[0].expand();
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(this.oTable._getTotalRowCount(), 9, "Expanded: Total row count");
+			assert.ok(this.oTable.isExpanded(0), "Expanded: Expanded state");
+		}.bind(this));
+	});
+
+	QUnit.test("Row#collapse", function(assert) {
+		var that = this;
+
+		this.oTable.getRows()[0].expand();
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			that.oTable.getRows()[0].collapse();
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(that.oTable._getTotalRowCount(), 8, "Collapsed: Total row count");
+			assert.notOk(that.oTable.isExpanded(0), "Collapsed: Expanded state");
+		});
+	});
+
+	QUnit.test("Row#toggleExpandedState", function(assert) {
+		var that = this;
+
+		this.oTable.getRows()[0].toggleExpandedState();
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(that.oTable._getTotalRowCount(), 9, "Expanded: Total row count");
+			assert.ok(that.oTable.isExpanded(0), "Expanded: Expanded state");
+			that.oTable.getRows()[0].toggleExpandedState();
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(that.oTable._getTotalRowCount(), 8, "Collapsed: Total row count");
+			assert.notOk(that.oTable.isExpanded(0), "Collapsed: Expanded state");
+		});
+	});
+
+	QUnit.test("Result of expand/collapse a single row", function(assert) {
+		var that = this;
+
+		this.oTable.expand(0);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(that.oTable._getTotalRowCount(), 9, "Expanded: Total row count");
+			assert.ok(that.oTable.isExpanded(0), "Expanded: Expanded state");
+			that.oTable.collapse(0);
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(that.oTable._getTotalRowCount(), 8, "Collapsed: Total row count");
+			assert.notOk(that.oTable.isExpanded(0), "Collapsed: Expanded state");
+		});
+	});
+
+	QUnit.test("Result of expand/collapse a single row synchronously after bind", function(assert) {
+		var that = this;
+
+		this.oTable.bindRows(this.oTable.getBindingInfo("rows"));
+		this.oTable.expand(0);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(that.oTable._getTotalRowCount(), 9, "Expanded: Total row count");
+			assert.ok(that.oTable.isExpanded(0), "Expanded: Expanded state");
+
+			that.oTable.bindRows({
+				path: "/",
+				parameters: {
+					numberOfExpandedLevels: 1
+				}
+			});
+			that.oTable.collapse(0);
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(that.oTable._getTotalRowCount(), 15, "Collapsed: Total row count");
+			assert.notOk(that.oTable.isExpanded(0), "Collapsed: Expanded state");
+		});
+	});
+
+	QUnit.test("Result of expand/collapse multiple rows", function(assert) {
+		var that = this;
+
+		this.oTable.expand([0, 1]);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(that.oTable._getTotalRowCount(), 10, "Expanded: Total row count");
+			assert.equal(that.oTable.isExpanded(0), true, "Expanded state of the first expanded row");
+			assert.equal(that.oTable.isExpanded(2), true, "Expanded state of the second expanded row");
+
+			that.oTable.collapse([0, 2]);
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			assert.equal(that.oTable._getTotalRowCount(), 8, "Collapsed: Total row count");
+			assert.equal(that.oTable.isExpanded(0), false, "Expanded state of the first collapsed row");
+			assert.equal(that.oTable.isExpanded(1), false, "Expanded state of the second collapsed row");
+		});
 	});
 });

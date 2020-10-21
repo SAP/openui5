@@ -174,7 +174,8 @@ sap.ui.define([
 		}, "Calling a hook that does not expect arguments with arguments throws an error");
 	});
 
-	QUnit.test("Optional arguments", function(assert) {
+	// There are currently no hooks with optional arguments that could be used for testing.
+	QUnit.skip("Optional arguments", function(assert) {
 		var oRow = new Row();
 		var oHookWithOptionalArguments = {
 			key: "Row.ToggleOpenState",

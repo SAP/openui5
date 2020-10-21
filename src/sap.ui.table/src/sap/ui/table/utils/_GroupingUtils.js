@@ -103,116 +103,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Toggles or sets the expanded state of a single or multiple rows. Toggling only works for a single row.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int | int[]} vRowIndex A single index, or an array of indices of the rows to expand or collapse.
-		 * @param {boolean} [bExpand] If defined, instead of toggling the desired state is set.
-		 * @returns {boolean | null} The new expanded state in case an action was performed, otherwise <code>null</code>.
-		 */
-		toggleGroupHeader: function(oTable, vRowIndex, bExpand) {
-			var aIndices = [];
-			var oBinding = oTable ? oTable.getBinding("rows") : null;
-
-			if (!oTable || !oBinding || !oBinding.expand || vRowIndex == null) {
-				return null;
-			}
-
-			if (typeof vRowIndex === "number") {
-				aIndices = [vRowIndex];
-			} else if (Array.isArray(vRowIndex)) {
-				if (bExpand == null && vRowIndex.length > 1) {
-					// Toggling the expanded state of multiple rows seems to be an absurd task. Therefore we assume this is unintentional and
-					// prevent the execution.
-					return null;
-				}
-				aIndices = vRowIndex;
-			}
-
-			// The cached binding length cannot be used here. In the synchronous execution after re-binding the rows, the cached binding length is
-			// invalid. The table will validate it in its next update cycle, which happens asynchronously.
-			// As of now, this is the required behavior for some features, but leads to failure here. Therefore, the length is requested from the
-			// binding directly.
-			var iTotalRowCount = oTable._getTotalRowCount();
-
-			var aValidSortedIndices = aIndices.filter(function(iIndex) {
-				// Only indices of existing, expandable/collapsible nodes must be considered. Otherwise there might be no change event on the final
-				// expand/collapse.
-				var bIsExpanded = oBinding.isExpanded(iIndex);
-				var bIsLeaf = true; // If the node state cannot be determined, we assume it is a leaf.
-
-				if (oBinding.nodeHasChildren) {
-					if (oBinding.getNodeByIndex) {
-						bIsLeaf = !oBinding.nodeHasChildren(oBinding.getNodeByIndex(iIndex));
-					} else {
-						// The sap.ui.model.TreeBindingCompatibilityAdapter has no #getNodeByIndex function and #nodeHasChildren always returns true.
-						bIsLeaf = false;
-					}
-				}
-
-				return iIndex >= 0 && iIndex < iTotalRowCount
-					   && !bIsLeaf
-					   && bExpand !== bIsExpanded;
-			}).sort(function(a, b) { return a - b; });
-
-			if (aValidSortedIndices.length === 0) {
-				return null;
-			}
-
-			// Operations need to be performed from the highest index to the lowest. This ensures correct results with OData bindings. The indices
-			// are sorted ascending, so the array is iterated backwards.
-
-			// Expand/Collapse all nodes except the first, and suppress the change event.
-			for (var i = aValidSortedIndices.length - 1; i > 0; i--) {
-				if (bExpand) {
-					oBinding.expand(aValidSortedIndices[i], true);
-				} else {
-					oBinding.collapse(aValidSortedIndices[i], true);
-				}
-			}
-
-			// Expand/Collapse the first node without suppressing the change event.
-			if (bExpand === true) {
-				oBinding.expand(aValidSortedIndices[0], false);
-			} else if (bExpand === false) {
-				oBinding.collapse(aValidSortedIndices[0], false);
-			} else {
-				oBinding.toggleIndex(aValidSortedIndices[0]);
-			}
-
-			return oBinding.isExpanded(aValidSortedIndices[0]);
-		},
-
-		/**
-		 * Toggles the expand / collapse state of the group which contains the given DOM element.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {jQuery|HTMLElement} oRef DOM reference of an element within the table group header
-		 * @param {boolean} [bExpand] If defined instead of toggling the desired state is set.
-		 * @returns {boolean} Whether the operation was performed.
-		 */
-		toggleGroupHeaderByRef: function(oTable, oRef, bExpand) {
-			var oCell = GroupingUtils.TableUtils.getCell(oTable, oRef);
-			var oCellInfo = GroupingUtils.TableUtils.getCellInfo(oCell);
-			var oRow = oTable.getRows()[oCellInfo.rowIndex];
-			var oBinding = oTable.getBinding("rows");
-
-			if (oRow && oRow.isExpandable() && oBinding) {
-				var iAbsoluteRowIndex = oRow.getIndex();
-				var bIsExpanded = GroupingUtils.toggleGroupHeader(oTable, iAbsoluteRowIndex, bExpand);
-				var bChanged = bIsExpanded === true || bIsExpanded === false;
-
-				if (bChanged && oTable._onGroupHeaderChanged) {
-					oTable._onGroupHeaderChanged(iAbsoluteRowIndex, bIsExpanded);
-				}
-
-				return bChanged;
-			}
-
-			return false;
-		},
-
-		/**
 		 * Whether the cell is in a group header row. Returns <code>false</code> if it is not a cell.
 		 *
 		 * @param {jQuery | HTMLElement} oCellRef DOM reference of the table cell.
@@ -533,56 +423,13 @@ sap.ui.define([
 				},
 				getContexts: function(iStartIndex, iLength) {
 					return aContexts.slice(iStartIndex, iStartIndex + iLength);
-				},
-				isGroupHeader: function(iIndex) {
-					var oContext = aContexts[iIndex];
-					return (oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader) === true;
-				},
-				getTitle: function(iIndex) {
-					var oContext = aContexts[iIndex];
-					return oContext && oContext.__groupInfo && oContext.__groupInfo.name + " - " + oContext.__groupInfo.count;
-				},
-				isExpanded: function(iIndex) {
-					var oContext = aContexts[iIndex];
-					return this.isGroupHeader(iIndex) && oContext.__groupInfo && oContext.__groupInfo.expanded;
-				},
-				expand: function(iIndex) {
-					if (this.isGroupHeader(iIndex) && !aContexts[iIndex].__groupInfo.expanded) {
-						for (var i = 0; i < aContexts[iIndex].__childs.length; i++) {
-							aContexts.splice(iIndex + 1 + i, 0, aContexts[iIndex].__childs[i]);
-						}
-						delete aContexts[iIndex].__childs;
-						aContexts[iIndex].__groupInfo.expanded = true;
-						this._fireChange();
-					}
-				},
-				collapse: function(iIndex) {
-					if (this.isGroupHeader(iIndex) && aContexts[iIndex].__groupInfo.expanded) {
-						aContexts[iIndex].__childs = aContexts.splice(iIndex + 1, aContexts[iIndex].__groupInfo.count);
-						aContexts[iIndex].__groupInfo.expanded = false;
-						this._fireChange();
-					}
-				},
-				toggleIndex: function(iIndex) {
-					if (this.isExpanded(iIndex)) {
-						this.collapse(iIndex);
-					} else {
-						this.expand(iIndex);
-					}
-				},
-
-				// For compatibility with TreeBinding adapters.
-				nodeHasChildren: function(oContext) {
-					if (!oContext || !oContext.__groupInfo) {
-						return false;
-					} else {
-						return oContext.__groupInfo.groupHeader === true;
-					}
-				},
-				getNodeByIndex: function(iIndex) {
-					return aContexts[iIndex];
 				}
 			});
+
+			function isGroupHeader(iIndex) {
+				var oContext = aContexts[iIndex];
+				return (oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader) === true;
+			}
 
 			oTable._experimentalGroupingRowState = function(oState) {
 				var oContext = oState.context;
@@ -597,7 +444,31 @@ sap.ui.define([
 				oState.contentHidden = oState.expandable;
 			};
 
-			GroupingUtils.TableUtils.Hook.register(oTable, GroupingUtils.TableUtils.Hook.Keys.Row.UpdateState, oTable._experimentalGroupingRowState, oTable);
+			oTable._experimentalGroupingExpand = function(oRow) {
+				var iRowIndex = oRow.getIndex();
+				if (isGroupHeader(iRowIndex) && !aContexts[iRowIndex].__groupInfo.expanded) {
+					for (var i = 0; i < aContexts[iRowIndex].__childs.length; i++) {
+						aContexts.splice(iRowIndex + 1 + i, 0, aContexts[iRowIndex].__childs[i]);
+					}
+					delete aContexts[iRowIndex].__childs;
+					aContexts[iRowIndex].__groupInfo.expanded = true;
+					oBinding._fireChange();
+				}
+			};
+
+			oTable._experimentalGroupingCollapse = function(oRow) {
+				var iRowIndex = oRow.getIndex();
+				if (isGroupHeader(iRowIndex) && aContexts[iRowIndex].__groupInfo.expanded) {
+					aContexts[iRowIndex].__childs = aContexts.splice(iRowIndex + 1, aContexts[iRowIndex].__groupInfo.count);
+					aContexts[iRowIndex].__groupInfo.expanded = false;
+					oBinding._fireChange();
+				}
+			};
+
+			var Hook = GroupingUtils.TableUtils.Hook;
+			Hook.register(oTable, Hook.Keys.Row.UpdateState, oTable._experimentalGroupingRowState);
+			Hook.register(oTable, Hook.Keys.Row.Expand, oTable._experimentalGroupingExpand);
+			Hook.register(oTable, Hook.Keys.Row.Collapse, oTable._experimentalGroupingCollapse);
 
 			// the table need to fetch the updated/changed contexts again, therefore requires the binding to fire a change event
 			oTable._mTimeouts.groupingFireBindingChange = oTable._mTimeouts.groupingFireBindingChange || window.setTimeout(
@@ -611,13 +482,19 @@ sap.ui.define([
 		 */
 		resetExperimentalGrouping: function(oTable) {
 			var oBinding = oTable.getBinding("rows");
+			var Hook = GroupingUtils.TableUtils.Hook;
+
 			if (oBinding && oBinding._modified) {
 				GroupingUtils.clearMode(oTable);
-				var oBindingInfo = oTable.getBindingInfo("rows");
-				oTable.unbindRows();
-				oTable.bindRows(oBindingInfo);
+				oTable.bindRows(oTable.getBindingInfo("rows"));
 			}
-			GroupingUtils.TableUtils.Hook.deregister(oTable, GroupingUtils.TableUtils.Hook.Keys.Row.UpdateState, oTable._experimentalGroupingRowState, oTable);
+
+			Hook.deregister(oTable, Hook.Keys.Row.UpdateState, oTable._experimentalGroupingRowState);
+			Hook.deregister(oTable, Hook.Keys.Row.Expand, oTable._experimentalGroupingExpand);
+			Hook.deregister(oTable, Hook.Keys.Row.Collapse, oTable._experimentalGroupingCollapse);
+			delete oTable._experimentalGroupingRowState;
+			delete oTable._experimentalGroupingExpand;
+			delete oTable._experimentalGroupingCollapse;
 		}
 	};
 

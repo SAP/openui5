@@ -1,16 +1,14 @@
-/*global QUnit, oTable */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/table/Column"
-], function(TableQUnitUtils, Column) {
+	"sap/ui/table/Row",
+	"sap/ui/table/Column",
+	"sap/ui/table/utils/TableUtils"
+], function(TableQUnitUtils, Row, Column, TableUtils) {
 	"use strict";
 
-	// mapping of global function calls
-	var createTables = window.createTables;
-	var destroyTables = window.destroyTables;
 	var initRowActions = window.initRowActions;
-
 	var TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Cells", {
@@ -18,15 +16,15 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCount: 1,
 				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			}, function(oTable) {
-				oTable.addColumn(new Column());
-				oTable.addColumn(new Column({template: new TestControl({text: "Column2"})}));
-				oTable.addColumn(new Column({template: new TestControl({text: "Column3"}), visible: false}));
-				oTable.addColumn(new Column({template: new TestControl({text: "Column4"})}));
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
+				columns: [
+					new Column(),
+					TableQUnitUtils.createTextColumn({text: "Column2"}),
+					TableQUnitUtils.createTextColumn({text: "Column3"}).setVisible(false),
+					TableQUnitUtils.createTextColumn({text: "Column4"})
+				]
 			});
 
-			sap.ui.getCore().applyChanges();
 			return this.oTable.qunit.whenRenderingFinished();
 		},
 		assertCells: function(assert) {
@@ -113,12 +111,25 @@ sap.ui.define([
 
 	QUnit.module("Functions", {
 		beforeEach: function() {
-			createTables();
-			oTable.clearSelection();
-			initRowActions(oTable, 2, 2);
+			this.oTable = TableQUnitUtils.createTable({
+				visibleRowCount: 1,
+				fixedColumnCount: 1,
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
+				columns: [
+					new Column(),
+					TableQUnitUtils.createTextColumn({text: "Column2"}),
+					TableQUnitUtils.createTextColumn({text: "Column3"}).setVisible(false),
+					TableQUnitUtils.createTextColumn({text: "Column4"})
+				]
+			}, function(oTable) {
+				initRowActions(oTable, 2, 2);
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
-			destroyTables();
+			this.oTable.destroy();
 		},
 		assertRowStyleHovered: function(assert, oRow) {
 			var mDomRefs = oRow.getDomRefs(false);
@@ -151,7 +162,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_setHovered", function(assert) {
-		var oRow = oTable.getRows()[0];
+		var oRow = this.oTable.getRows()[0];
 
 		this.assertRowStyleUnhovered(assert, oRow);
 		oRow._setHovered(true);
@@ -165,19 +176,97 @@ sap.ui.define([
 	});
 
 	QUnit.test("_setSelected", function(assert) {
-		var oRow = oTable.getRows()[0];
+		var oRow = this.oTable.getRows()[0];
 
 		this.assertRowStyleUnselected(assert, oRow);
 		oRow._setSelected(true);
-		assert.deepEqual(oTable.getSelectedIndices(), [], "Styling the row as selected should not actually perform selection");
+		assert.deepEqual(this.oTable.getSelectedIndices(), [], "Styling the row as selected should not actually perform selection");
 		this.assertRowStyleSelected(assert, oRow);
 		oRow._setSelected(true);
 		this.assertRowStyleSelected(assert, oRow);
-		oTable.setSelectedIndex(5);
+		this.oTable.setSelectedIndex(0);
 		oRow._setSelected(false);
-		assert.deepEqual(oTable.getSelectedIndices(), [5], "Styling the row as unselected should not actually perform deselection");
+		assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Styling the row as unselected should not actually perform deselection");
 		this.assertRowStyleUnselected(assert, oRow);
 		oRow._setSelected(false);
 		this.assertRowStyleUnselected(assert, oRow);
+	});
+
+	QUnit.module("Hooks", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
+			this.oRow = new Row();
+			this.oTable.addDependent(this.oRow);
+			sinon.stub(this.oRow, "isExpandable");
+			sinon.stub(this.oRow, "isExpanded");
+		},
+		afterEach: function() {
+			this.oRow.destroy();
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Expand", function(assert) {
+		var oExpandSpy = sinon.spy();
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.Expand, oExpandSpy);
+
+		this.oRow.isExpandable.returns(false);
+		this.oRow.isExpanded.returns(false);
+		this.oRow.expand();
+		assert.ok(oExpandSpy.notCalled, "'Expand' hook not called when calling #expand on a non-expandable row");
+
+		this.oRow.isExpandable.returns(false);
+		this.oRow.isExpanded.returns(false);
+		this.oRow.toggleExpandedState();
+		assert.ok(oExpandSpy.notCalled, "'Expand' hook not called when calling #toggleExpandedState on a non-expandable row");
+
+		this.oRow.isExpandable.returns(true);
+		this.oRow.isExpanded.returns(true);
+		this.oRow.expand();
+		assert.ok(oExpandSpy.notCalled, "'Expand' hook not called when calling #expand on an expanded row");
+
+		this.oRow.isExpandable.returns(true);
+		this.oRow.isExpanded.returns(false);
+		this.oRow.expand();
+		assert.strictEqual(oExpandSpy.callCount, 1, "'Expand' hook called once when calling #expand on a collapsed row");
+
+		oExpandSpy.reset();
+		this.oRow.isExpandable.returns(true);
+		this.oRow.isExpanded.returns(false);
+		this.oRow.toggleExpandedState();
+		assert.strictEqual(oExpandSpy.callCount, 1, "'Expand' hook called once when calling #toggleExpandedState on a collapsed row");
+	});
+
+	QUnit.test("Collapse", function(assert) {
+		var oCollapseSpy = sinon.spy();
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.Collapse, oCollapseSpy);
+
+		this.oRow.isExpandable.returns(false);
+		this.oRow.isExpanded.returns(true);
+		this.oRow.collapse();
+		assert.ok(oCollapseSpy.notCalled, "'Collapse' hook not called when calling #collapse on a non-expandable row");
+
+		this.oRow.isExpandable.returns(false);
+		this.oRow.isExpanded.returns(true);
+		this.oRow.toggleExpandedState();
+		assert.ok(oCollapseSpy.notCalled, "'Collapse' hook not called when calling #toggleExpandedState on a non-expandable row");
+
+		this.oRow.isExpandable.returns(true);
+		this.oRow.isExpanded.returns(false);
+		this.oRow.collapse();
+		assert.ok(oCollapseSpy.notCalled, "'Collapse' hook not called when calling #collapse on a collapsed row");
+
+		this.oRow.isExpandable.returns(true);
+		this.oRow.isExpanded.returns(true);
+		this.oRow.collapse();
+		assert.strictEqual(oCollapseSpy.callCount, 1, "'Collapse' hook called once when calling #collapse on an expanded row");
+
+		oCollapseSpy.reset();
+		this.oRow.isExpandable.returns(true);
+		this.oRow.isExpanded.returns(true);
+		this.oRow.toggleExpandedState();
+		assert.strictEqual(oCollapseSpy.callCount, 1, "'Collapse' hook called once when calling #toggleExpandedState on a collapsed row");
 	});
 });
