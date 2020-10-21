@@ -752,7 +752,7 @@
 		test("pageup increases the hours", function() {
 			//arrange
 			var oDate = new Date();
-			oDate.setHours(5);
+			oDate.setHours(5, 10, 15);
 
 			//sut
 			var tp = new sap.m.TimePicker({
@@ -769,6 +769,8 @@
 
 			//assert
 			equal(tp.getDateValue().getHours(), 6, "The time picker hours are increased");
+			equal(tp.getDateValue().getMinutes(), 10, "The time picker minutes are not changed");
+			equal(tp.getDateValue().getSeconds(), 15, "The time picker seconds are not changed");
 
 			//cleanup
 			tp.destroy();
@@ -777,7 +779,7 @@
 		test("pagedown decreases the hours", function() {
 			//arrange
 			var oDate = new Date();
-			oDate.setHours(5);
+			oDate.setHours(5, 10, 15);
 
 			//sut
 			var tp = new sap.m.TimePicker({
@@ -794,35 +796,8 @@
 
 			//assert
 			equal(tp.getDateValue().getHours(), 4, "The time picker hours are decreased");
-
-			//cleanup
-			tp.destroy();
-		});
-
-		test("pageup does not have side effects", function() {
-			//arrange
-			var oDate = new Date();
-			oDate.setMinutes(20);
-			oDate.setSeconds(21);
-
-			//sut
-			var tp = new sap.m.TimePicker({
-				dateValue: oDate
-			});
-			tp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			//arrange
-			tp.focus();
-
-			//act
-			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
-
-			//assert
-			equal(tp.getDateValue().getMinutes(), 20, "The time picker minutes stay the same");
-			equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
-			ok(!tp._getPicker(), "picker is missing");
-
+			equal(tp.getDateValue().getMinutes(), 10, "The time picker minutes are not changed");
+			equal(tp.getDateValue().getSeconds(), 15, "The time picker seconds are not changed");
 			//cleanup
 			tp.destroy();
 		});
@@ -830,7 +805,7 @@
 		test("shift+pageup increases the minutes", function() {
 			//arrange
 			var oDate = new Date();
-			oDate.setMinutes(15);
+			oDate.setHours(5, 10, 15);
 
 			//sut
 			var tp = new sap.m.TimePicker({
@@ -846,7 +821,9 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
 
 			//assert
-			equal(tp.getDateValue().getMinutes(), 16, "The time picker minutes are increased");
+			equal(tp.getDateValue().getMinutes(), 11, "The time picker minutes are increased");
+			equal(tp.getDateValue().getHours(), 5, "The time picker hours are not changed");
+			equal(tp.getDateValue().getSeconds(), 15, "The time picker seconds are not changed");
 
 			//cleanup
 			tp.destroy();
@@ -855,7 +832,7 @@
 		test("shift+pagedown decreases the minutes", function() {
 			//arrange
 			var oDate = new Date();
-			oDate.setMinutes(13);
+			oDate.setHours(5, 10, 15);
 
 			//sut
 			var tp = new sap.m.TimePicker({
@@ -871,35 +848,9 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
 
 			//assert
-			equal(tp.getDateValue().getMinutes(), 12, "The time picker minutes are decreased");
-
-			//cleanup
-			tp.destroy();
-		});
-
-		test("shift+pageup does not have side effects", function() {
-			//arrange
-			var oDate = new Date();
-			oDate.setHours(5);
-			oDate.setSeconds(21);
-
-			//sut
-			var tp = new sap.m.TimePicker({
-				dateValue: oDate
-			});
-			tp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			//arrange
-			tp.focus();
-
-			//act
-			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
-
-			//assert
-			equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
-			equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
-			ok(!tp._getPicker(), "picker is missing");
+			equal(tp.getDateValue().getMinutes(), 9, "The time picker minutes are decreased");
+			equal(tp.getDateValue().getHours(), 5, "The time picker hours are not changed");
+			equal(tp.getDateValue().getSeconds(), 15, "The time picker seconds are not changed");
 
 			//cleanup
 			tp.destroy();
@@ -908,7 +859,7 @@
 		test("ctrl+shift+pageup increases the seconds", function() {
 			//arrange
 			var oDate = new Date();
-			oDate.setSeconds(11);
+			oDate.setHours(5, 10, 15);
 
 			//sut
 			var tp = new sap.m.TimePicker({
@@ -924,7 +875,9 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
 
 			//assert
-			equal(tp.getDateValue().getSeconds(), 12, "The time picker seconds are increased");
+			equal(tp.getDateValue().getSeconds(), 16, "The time picker seconds are increased");
+			equal(tp.getDateValue().getHours(), 5, "The time picker hours are not changed");
+			equal(tp.getDateValue().getMinutes(), 10, "The time picker minutes are not changed");
 
 			//cleanup
 			tp.destroy();
@@ -933,7 +886,7 @@
 		test("ctrl+shift+pagedown decreases the seconds", function() {
 			//arrange
 			var oDate = new Date();
-			oDate.setSeconds(4);
+			oDate.setHours(5, 10, 15);
 
 			//sut
 			var tp = new sap.m.TimePicker({
@@ -949,35 +902,9 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, true);
 
 			//assert
-			equal(tp.getDateValue().getSeconds(), 3, "The time picker seconds are decreased");
-
-			//cleanup
-			tp.destroy();
-		});
-
-		test("ctrl+pageup does not have side effects", function() {
-			//arrange
-			var oDate = new Date();
-			oDate.setHours(5);
-			oDate.setMinutes(38);
-
-			//sut
-			var tp = new sap.m.TimePicker({
-				dateValue: oDate
-			});
-			tp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			//arrange
-			tp.focus();
-
-			//act
-			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, false, false, true);
-
-			//assert
-			equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
-			equal(tp.getDateValue().getMinutes(), 38, "The time picker minutes stay the same");
-			ok(!tp._getPicker(), "picker is missing");
+			equal(tp.getDateValue().getSeconds(), 14, "The time picker seconds are decreased");
+			equal(tp.getDateValue().getHours(), 5, "The time picker hours are not changed");
+			equal(tp.getDateValue().getMinutes(), 10, "The time picker minutes are not changed");
 
 			//cleanup
 			tp.destroy();
