@@ -19,6 +19,9 @@ sap.ui.define([
 		addToChangesMap: function(mProperties, sUniqueKey, oChange) {
 			if (!mProperties[sUniqueKey]) {
 				mProperties[sUniqueKey] = [oChange];
+				oChange.condenserState = "select";
+			} else {
+				oChange.condenserState = "delete";
 			}
 		}
 	};

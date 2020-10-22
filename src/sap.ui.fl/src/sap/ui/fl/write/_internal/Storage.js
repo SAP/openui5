@@ -104,6 +104,66 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
+	function _evaluateCondensing(mPropertyBag) {
+		var mCondense;
+		if (mPropertyBag.allChanges
+			&& mPropertyBag.allChanges.length
+			&& mPropertyBag.condensedChanges
+		) {
+			mCondense = {
+				namespace: mPropertyBag.allChanges[0].getDefinition().namespace,
+				layer: mPropertyBag.layer,
+				"delete": {
+					change: []
+				},
+				update: {
+					change: []
+				},
+				reorder: {
+					change: []
+				},
+				create: {
+					change: []
+				}
+			};
+
+			var iOffset = 0;
+			var bAlreadyReordered = false;
+			mPropertyBag.allChanges.forEach(function(oChange, index) {
+				if (oChange.condenserState) {
+					var bDifferentOrder = false;
+					if (mPropertyBag.condensedChanges.length) {
+						bDifferentOrder = mPropertyBag.allChanges[index].getFileName() !== mPropertyBag.condensedChanges[index - iOffset].getFileName();
+					}
+					if (oChange.condenserState === "delete") {
+						mCondense.delete.change.push(oChange.getFileName());
+						iOffset++;
+					} else if (oChange.condenserState === "select" && bDifferentOrder && !bAlreadyReordered) {
+						var aReorderedChanges = mPropertyBag.condensedChanges.slice(index - iOffset).map(function(oChange) {
+							return oChange.getFileName();
+						});
+						mCondense.reorder.change = aReorderedChanges;
+						bAlreadyReordered = true;
+					}
+					if (oChange.condenserState === "select" && oChange.getProperty("state") === "NEW") {
+						var iChangeCreateIndex = mCondense.create.change.length;
+						mCondense.create.change[iChangeCreateIndex] = {};
+						mCondense.create.change[iChangeCreateIndex][oChange.getFileName()] = oChange.getDefinition();
+					} else if (oChange.condenserState === "update") {
+						var iChangeUpdateIndex = mCondense.update.change.length;
+						mCondense.update.change[iChangeUpdateIndex] = {};
+						mCondense.update.change[iChangeUpdateIndex][oChange.getFileName()] = {
+							content: oChange.getContent()
+						};
+					}
+
+					delete oChange.condenserState;
+				}
+			});
+		}
+		return mCondense;
+	}
+
 	function _executeActionByName(sActionName, mPropertyBag) {
 		return _validateDraftScenario(mPropertyBag)
 			.then(_getConnectorConfigByLayer.bind(undefined, mPropertyBag.layer))
@@ -130,6 +190,27 @@ sap.ui.define([
 	 */
 	Storage.write = function(mPropertyBag) {
 		return _executeActionByName("write", mPropertyBag);
+	};
+
+	/**
+	 * Stores the flex data by calling the according condense of the connector in charge of the passed layer;
+	 * The promise is rejected in case the writing failed or no connector is configured to handle the layer.
+	 *
+	 * @param {object} mPropertyBag - Contains additional information for all the Connectors
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer on which the file should be stored
+	 * @param {sap.ui.fl.Change[]} mPropertyBag.allChanges - All changes for the given layer and app
+	 * @param {sap.ui.fl.Change[]} mPropertyBag.condensedChanges - The changes returned by the condenser
+	 * @param {string} [mPropertyBag._transport] - The transport ID which will be handled internally, so there is no need to be passed
+	 * @param {boolean} [mPropertyBag.isLegacyVariant] - Whether the update data has file type .variant or not
+	 * @param {number} [nParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
+	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
+	 */
+	Storage.condense = function(mPropertyBag) {
+		mPropertyBag.flexObjects = _evaluateCondensing(mPropertyBag);
+		if (!mPropertyBag.flexObjects) {
+			return Promise.reject("No changes were provided");
+		}
+		return _executeActionByName("condense", mPropertyBag);
 	};
 
 	/**

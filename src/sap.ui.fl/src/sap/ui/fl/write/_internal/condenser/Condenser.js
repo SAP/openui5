@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/isPlainObject",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/changes/Utils",
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function(
 	each,
 	isPlainObject,
+	isEmptyObject,
 	JsControlTreeModifier,
 	Core,
 	ChangesUtils,
@@ -103,16 +105,30 @@ sap.ui.define([
 			var sClassification = oCondenserInfo.classification;
 			if (!mClassifications[sClassification]) {
 				oCondenserInfo.change = oChange;
+				oChange.condenserState = "select";
 				mClassifications[sClassification] = [oCondenserInfo];
+			} else {
+				oChange.condenserState = "delete";
 			}
+			mClassifications[sClassification][0].updateChange = oChange;
 		}
 
 		if (
 			isCreateAfterMoveSubtype(mClassifications, oCondenserInfo)
 			|| isCreateAfterDestroySubtype(mClassifications, oCondenserInfo)
 		) {
-			delete mClassifications[sap.ui.fl.condenser.Classification.Move];
-			delete mClassifications[sap.ui.fl.condenser.Classification.Destroy];
+			if (mClassifications[sap.ui.fl.condenser.Classification.Move]) {
+				mClassifications[sap.ui.fl.condenser.Classification.Move].forEach(function(oCondenserInfo) {
+					oCondenserInfo.change.condenserState = "delete";
+				});
+				delete mClassifications[sap.ui.fl.condenser.Classification.Move];
+			}
+			if (mClassifications[sap.ui.fl.condenser.Classification.Destroy]) {
+				mClassifications[sap.ui.fl.condenser.Classification.Destroy].forEach(function(oCondenserInfo) {
+					oCondenserInfo.change.condenserState = "delete";
+				});
+				delete mClassifications[sap.ui.fl.condenser.Classification.Destroy];
+			}
 		}
 
 		UIReconstruction.addChange(mUIReconstructions, oCondenserInfo);
@@ -157,6 +173,7 @@ sap.ui.define([
 			mTypes[sKey] = [];
 		}
 		mTypes[sKey].push(oChange);
+		oChange.condenserState = "select";
 	}
 
 	/**
@@ -369,6 +386,24 @@ sap.ui.define([
 		});
 	}
 
+	function handleChangeUpdate(aCondenserInfos, aReducedChanges) {
+		aCondenserInfos.forEach(function(oCondenserInfo, index) {
+			var oUpdateChange = oCondenserInfo.updateChange;
+			if (oUpdateChange && oUpdateChange.getState() !== Change.states.NEW) {
+				var oCondensedChange = oCondenserInfo.change;
+				if (oUpdateChange.getFileName() !== oCondensedChange.getFileName()) {
+					var oNewContent = oCondensedChange.getContent();
+					oUpdateChange.setContent(oNewContent);
+					oCondensedChange.condenserState = "delete";
+					aReducedChanges.splice(index, 1, oUpdateChange);
+				} else {
+					oUpdateChange.setState(Change.states.DIRTY);
+				}
+				oUpdateChange.condenserState = "update";
+			}
+		});
+	}
+
 	/**
 	 * The condensing algorithm gets an array of changes that should be reduced to the bare minimum.
 	 * The steps of the algorithm are:
@@ -419,6 +454,9 @@ sap.ui.define([
 
 			// with unclassified changes no index relevant changes can be reduced
 			if (bUnclassifiedChanges) {
+				aAllIndexRelatedChanges.forEach(function(oChange) {
+					oChange.condenserState = "select";
+				});
 				addAllIndexRelatedChanges(aReducedChanges, aAllIndexRelatedChanges);
 			}
 
@@ -435,6 +473,7 @@ sap.ui.define([
 				Measurement.end("Condenser_sort");
 
 				UIReconstruction.swapChanges(aReducedIndexRelatedChanges, aReducedChanges);
+				handleChangeUpdate(aCondenserInfos, aReducedChanges);
 
 				Measurement.end("Condenser_handleIndexRelatedChanges");
 			}

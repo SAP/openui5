@@ -219,6 +219,51 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when calling condense successfully", function(assert) {
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
+			var mCondense = {
+				namespace: "namespace",
+				layer: this.sLayer,
+				"delete": {
+					change: ["change1", "change2"]
+				},
+				update: {
+					change: []
+				},
+				reorder: {
+					change: []
+				},
+				create: {
+					change: [{change3: {
+						fileType: "change",
+						layer: this.sLayer,
+						fileName: "change3",
+						namespace: "b",
+						packageName: "$TMP",
+						changeType: "labelChange",
+						creation: "",
+						reference: "",
+						selector: {
+							id: "abc123"
+						},
+						content: {
+							something: "change_content"
+						}
+					}}]
+				}
+			};
+
+			return WriteLrepConnector.condense({
+				flexObjects: mCondense,
+				url: "/sap/bc/lrep",
+				reference: this.sReference
+			}).then(function() {
+				assert.equal(oStubSendRequest.args[0][0], "/sap/bc/lrep/actions/condense/sampleComponent?sap-language=en", "the correct route is used");
+				assert.equal(oStubSendRequest.args[0][2].payload, JSON.stringify(mCondense), "the request contains the correct map of changes as payload");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
 		QUnit.test("when calling reset in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
 			var oMockTransportInfo = {
 				packageName : "PackageName",

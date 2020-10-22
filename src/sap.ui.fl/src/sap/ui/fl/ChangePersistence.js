@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Cache",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -35,6 +36,7 @@ sap.ui.define([
 	Utils,
 	LayerUtils,
 	Cache,
+	Settings,
 	Applier,
 	Storage,
 	JsControlTreeModifier,
@@ -554,6 +556,11 @@ sap.ui.define([
 		return bCondenserEnabled;
 	}
 
+	function updateCacheAndDeleteUnsavedChanges(aAllChanges, aCondensedChanges, bSkipUpdateCache) {
+		this._massUpdateCacheAndDirtyState(aCondensedChanges, bSkipUpdateCache);
+		this._deleteNotSavedChanges(aAllChanges, aCondensedChanges);
+	}
+
 	/**
 	 * Saves the passed or all dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
 	 * to ensure the correct order, the methods are called sequentially;
@@ -568,10 +575,24 @@ sap.ui.define([
 	 * @returns {Promise} Resolving after all changes have been saved
 	 */
 	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, nParentVersion) {
-		aChanges = aChanges || this._aDirtyChanges;
-		var aChangesClone = aChanges.slice(0);
-		var aRequests = this._getRequests(aChanges);
-		var aPendingActions = this._getPendingActions(aChanges);
+		var aAllChanges;
+		var aDirtyChanges;
+		var bBackendCondensingEnabled = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isCondensingEnabled();
+		var bIsCondensingEnabled = false;
+		if (bBackendCondensingEnabled) {
+			aAllChanges = aChanges || this._mChanges.aChanges;
+			bIsCondensingEnabled = shouldCondensingBeEnabled(oAppComponent, aAllChanges);
+		}
+		if (bIsCondensingEnabled) {
+			aDirtyChanges = aChanges || this._aDirtyChanges;
+		} else {
+			aAllChanges = aChanges || this._aDirtyChanges;
+			aDirtyChanges = aAllChanges;
+		}
+		var aChangesClone = aAllChanges.slice(0);
+		var aDirtyChangesClone = aDirtyChanges.slice(0);
+		var aRequests = this._getRequests(aDirtyChanges);
+		var aPendingActions = this._getPendingActions(aDirtyChanges);
 
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var oCondensedChangesPromise = Promise.resolve(aChangesClone);
@@ -579,25 +600,38 @@ sap.ui.define([
 				oCondensedChangesPromise = Condenser.condense(oAppComponent, aChangesClone);
 			}
 			return oCondensedChangesPromise.then(function(aCondensedChanges) {
-				if (aCondensedChanges.length) {
-					var sRequest = aRequests[0];
-					var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aCondensedChanges);
-					return Storage.write({
-						layer: aPreparedDirtyChangesBulk[0].layer,
-						flexObjects: aPreparedDirtyChangesBulk,
+				var sRequest = aRequests[0];
+				var sLayer = aDirtyChanges[0].getDefinition().layer;
+				if (bIsCondensingEnabled) {
+					return Storage.condense({
+						allChanges: aAllChanges,
+						condensedChanges: aCondensedChanges,
+						layer: sLayer,
 						transport: sRequest,
 						isLegacyVariant: false,
 						parentVersion: nParentVersion
 					}).then(function(oResponse) {
-						this._massUpdateCacheAndDirtyState(aCondensedChanges, bSkipUpdateCache);
-						this._deleteNotSavedChanges(aChanges, aCondensedChanges);
+						updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aCondensedChanges, bSkipUpdateCache);
 						return oResponse;
 					}.bind(this));
 				}
-				this._deleteNotSavedChanges(aChanges, aCondensedChanges);
+				if (aCondensedChanges.length) {
+					return Storage.write({
+						layer: sLayer,
+						flexObjects: this._prepareDirtyChanges(aCondensedChanges),
+						transport: sRequest,
+						isLegacyVariant: false,
+						parentVersion: nParentVersion
+					}).then(function(oResponse) {
+						updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aCondensedChanges, bSkipUpdateCache);
+						return oResponse;
+					}.bind(this));
+				}
+				this._deleteNotSavedChanges(aAllChanges, aCondensedChanges);
 			}.bind(this));
 		}
-		return this.saveSequenceOfDirtyChanges(aChangesClone, bSkipUpdateCache, nParentVersion);
+
+		return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache, nParentVersion);
 	};
 
 	/**
@@ -671,10 +705,12 @@ sap.ui.define([
 					reference: this._mComponent.name,
 					changeToBeAddedOrDeleted: oDirtyChange
 				});
-			} else if (oDirtyChange.getPendingAction() === "NEW") {
+			} else if (oDirtyChange.getPendingAction() === Change.states.NEW) {
 				Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
-			} else if (oDirtyChange.getPendingAction() === "DELETE") {
+			} else if (oDirtyChange.getPendingAction() === Change.states.DELETED) {
 				Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
+			} else if (oDirtyChange.getPendingAction() === Change.states.DIRTY) {
+				Cache.updateChange(this._mComponent, oDirtyChange.getDefinition());
 			}
 		}
 
