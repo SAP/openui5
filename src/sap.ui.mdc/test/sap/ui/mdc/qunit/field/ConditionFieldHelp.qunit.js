@@ -241,6 +241,8 @@ sap.ui.define([
 				var oDCP = aContent[0];
 				var oCondition = Condition.createCondition("StartsWith", ["A"], undefined, undefined, ConditionValidated.NotValidated);
 				var aConditions = [oCondition];
+				oCondition = Condition.createCondition("TODAY", ["staticTextDummy"], undefined, undefined, ConditionValidated.NotValidated);
+				aConditions.push(oCondition);
 				oDCP.setConditions(aConditions);
 
 				var oToolbar = oPopover.getFooter();
@@ -249,11 +251,15 @@ sap.ui.define([
 				oButton.firePress(); // simulate user action
 
 				assert.equal(iSelect, 1, "Select event fired");
-				assert.equal(aSelectConditions.length, 1, "Selected conditions length");
-				assert.equal(aSelectConditions[0].operator, "StartsWith", "Condition operator");
-				assert.equal(aSelectConditions[0].values[0], "A", "Selected conditions value0");
-				assert.equal(aSelectConditions[0].values[1], undefined, "Selected conditions value1");
-				assert.equal(aSelectConditions[0].validated, ConditionValidated.NotValidated, "Condition is not validated");
+				assert.equal(aSelectConditions.length, 2, "Selected conditions length");
+				assert.equal(aSelectConditions[0].operator, "StartsWith", "Condition0 operator");
+				assert.equal(aSelectConditions[0].values[0], "A", "Condition0 value0");
+				assert.equal(aSelectConditions[0].values[1], undefined, "Condition0 value1");
+				assert.equal(aSelectConditions[0].validated, ConditionValidated.NotValidated, "Condition0 is not validated");
+				assert.equal(aSelectConditions[1].operator, "TODAY", "Condition1 operator");
+				assert.equal(aSelectConditions[1].values[0], undefined, "Condition1 value0");
+				assert.equal(aSelectConditions[1].values[1], undefined, "Condition1 value1");
+				assert.equal(aSelectConditions[1].validated, ConditionValidated.NotValidated, "Condition1 is not validated");
 				assert.notOk(bSelectAdd, "all items should be used");
 				assert.ok(bSelectClose, "FieldHelp closed in Event");
 			}
