@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/Icon',
 	'sap/ui/core/IconPool',
 	'./Button',
@@ -36,6 +37,7 @@ function(
 	Core,
 	Control,
 	EnabledPropagator,
+	LabelEnablement,
 	Icon,
 	IconPool,
 	Button,
@@ -2467,13 +2469,9 @@ function(
 				return Core.byId(sLabelID);
 			});
 
-			var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
-
-			if (oLabelEnablement) {
-				aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
-					return Core.byId(sLabelID);
-				}));
-			}
+			aLabelIDs = aLabelIDs.concat(LabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
+				return Core.byId(sLabelID);
+			}));
 
 			return aLabelIDs;
 		};
@@ -2985,6 +2983,10 @@ function(
 		 */
 		Select.prototype.getDomRefForValueState = function() {
 			return this.getDomRef();
+		};
+
+		Select.prototype._isRequired = function () {
+			return this.getRequired() || LabelEnablement.isRequired(this);
 		};
 
 		/**
