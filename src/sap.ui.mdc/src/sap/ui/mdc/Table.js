@@ -168,11 +168,11 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * Defines the semantic level of the title.
+				 * Defines the semantic level of the header.
 				 * For more information, see {@link sap.m.Title#setLevel}.
 				 * @since 1.84
 				 */
-				titleLevel: {
+				headerLevel: {
 					type: "sap.ui.core.TitleLevel",
 					group: "Appearance",
 					defaultValue: sap.ui.core.TitleLevel.Auto
@@ -687,14 +687,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the value for the <code>titleLevel</code> property.
-	 * @param {string} sLevel - The level that is set to the title
+	 * Sets the value for the <code>headerLevel</code> property.
+	 * @param {string} sLevel - The level that is set to the header
 	 */
-	Table.prototype.setTitleLevel = function(sLevel) {
-		if (this.getTitleLevel() === sLevel) {
+	Table.prototype.setHeaderLevel = function(sLevel) {
+		if (this.getHeaderLevel() === sLevel) {
 			return this;
 		}
-		this.setProperty("titleLevel", sLevel, true);
+		this.setProperty("headerLevel", sLevel, true);
 		this._oTitle && this._oTitle.setLevel(sLevel);
 		return this;
 	};
@@ -1109,7 +1109,7 @@ sap.ui.define([
 			this._oTitle = new Title(this.getId() + "-title", {
 				text: this.getHeader(),
 				width: this.getHeaderVisible() ? undefined : "0px",
-				level: this.getTitleLevel()
+				level: this.getHeaderLevel()
 			});
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
