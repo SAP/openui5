@@ -4324,15 +4324,15 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Title Level Property added", function(assert) {
+	QUnit.test("Header Level Property added", function(assert) {
 		var done = assert.async();
 		this.oTable.setType("ResponsiveTable");
-		assert.strictEqual(this.oTable.getTitleLevel(), "Auto", "Title level set to the header");
-		this.oTable.setTitleLevel("H2");
+		assert.strictEqual(this.oTable.getHeaderLevel(), "Auto", "Header level set to the header");
+		this.oTable.setHeaderLevel("H2");
 		this.oTable.setHeader("Test Table");
 
 		this.oTable.initialized().then(function() {
-			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getLevel(), "H2", "Title level changed");
+			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getLevel(), "H2", "Header level changed");
 			done();
 		}.bind(this));
 	});
