@@ -8,7 +8,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 	 * <b>Note:</b>
 	 * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
 	 * @author SAP SE
-	 * @private
+	 * @protected
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @experimental
 	 * @since 1.74
 	 * @alias sap.ui.mdc.LinkDelegate
@@ -16,7 +17,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 	var LinkDelegate = Object.assign({}, BaseDelegate, {
 		/**
 		 * Retrieves and returns the relevant {@link sap.ui.mdc.link.LinkItem} for the <code>Link</code> control.
-		 * @public
+		 * @protected
+		 * @ui5-restricted sap.ui.mdc
 		 * @param {Object} oPayload Payload of the <code>Link</code> control given by the application
 		 * @param {Object} oBindingContext Binding context of the <code>Link</code> control
 		 * @param {Object} oInfoLog InfoLog of the <code>Link</code> control
@@ -36,6 +38,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 		 */
 		/**
 		 * Calculates and returns the type of link that is displayed.
+		 * @protected
+		 * @ui5-restricted sap.ui.mdc
 		 * @param {Object} oPayload Payload of the <code>Link</code> given by the application
 		 * @returns {Promise} Once resolved, an object containing an initial {@link sap.ui.mdc.LinkDelegate.LinkType} and an optional <code>Promise</code> are returned
 		 * The optional <code>Promise</code> also returns a {@link sap.ui.mdc.LinkDelegate.LinkType} object.
@@ -52,7 +56,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 		},
 		/**
 		 * Retrieves and returns the relevant <code>additionalContent</code> for the <code>Link</code> control as an array.
-		 * @public
+		 * @protected
+		 * @ui5-restricted sap.ui.mdc
 		 * @param {Object} oPayload Payload of the <code>Link</code> control given by the application
 		 * @param {Object} oLink Instance of the <code>Link</code> control
 		 * @returns {Promise} Once resolved, an array of {@link sap.ui.core.Control} is returned
@@ -63,6 +68,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 		/**
 		 * Enables the modification of the {@link sap.ui.mdc.link.LinkItem} instances before the popover opens. This enables additional parameters
 		 * to be added to the link.
+		 * @protected
+	 	 * @ui5-restricted sap.ui.mdc
 		 * @param {Object} oPayload Payload of the <code>Link</code> control given by the application
 		 * @param {Object} oBindingContext Binding context of the <code>Link</code> control
 		 * @param {sap.ui.mdc.link.LinkItem} aLinkItems The {@link sap.ui.mdc.link.LinkItem} instances of the link that can be modified
@@ -73,6 +80,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 		},
 		/**
 		 * Allows for interception before the actual navigation takes place.
+		 * @protected
+		 * @ui5-restricted sap.ui.mdc
 		 * @param {Object} oPayload Payload of the <code>Link</code> control given by the application
 		 * @param {Object} oEvent The <code>pressLink</code> event which is fired by the <code>Link</code> control
 		 * @returns {Promise} Once resolved, it returns a Boolean value which determines whether the navigation takes place
