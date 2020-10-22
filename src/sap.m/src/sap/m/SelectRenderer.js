@@ -129,7 +129,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 
 			this.writeAccessibilityState(oRm, oSelect);
 
-			if (oSelect.getRequired()) {
+			if (oSelect._isRequired()) {
 				oRm.attr("required", "required");
 			}
 
