@@ -697,9 +697,6 @@ sap.ui.define([
 	 */
 	Card.prototype.refresh = function () {
 		if (this.getDataMode() === CardDataMode.Active) {
-			this._clearReadyState();
-			this._initReadyState();
-			this.destroyManifest();
 			this._bApplyManifest = true;
 			this.invalidate();
 		}
@@ -1156,12 +1153,12 @@ sap.ui.define([
 	Card.prototype._applyHeaderManifestSettings = function () {
 		var oHeader = this.createHeader();
 
+		this.destroyAggregation("_header");
+
 		if (!oHeader) {
 			this.fireEvent("_headerReady");
 			return;
 		}
-
-		this.destroyAggregation("_header");
 
 		this.setAggregation("_header", oHeader);
 
@@ -1177,6 +1174,8 @@ sap.ui.define([
 	Card.prototype._applyFilterBarManifestSettings = function () {
 		var oFilterBar = this.createFilterBar();
 
+		this.destroyAggregation("_filterBar");
+
 		if (!oFilterBar) {
 			this.fireEvent("_filterBarReady");
 			return;
@@ -1186,7 +1185,6 @@ sap.ui.define([
 			this.fireEvent("_filterBarReady");
 		}.bind(this));
 
-		this.destroyAggregation("_filterBar");
 		this.setAggregation("_filterBar", oFilterBar);
 	};
 
@@ -1384,6 +1382,11 @@ sap.ui.define([
 		// only destroy previous content of type BaseContent
 		if (oPreviousContent && !oPreviousContent.hasStyleClass("sapFCardErrorContent")) {
 			oPreviousContent.destroy();
+
+			if (oPreviousContent === this._oTemporaryContent) {
+				this._oTemporaryContent = null;
+			}
+
 			this.fireEvent("_contentReady"); // content won't show up so mark it as ready
 		}
 
@@ -1393,12 +1396,20 @@ sap.ui.define([
 				if (!this._oCardManifest) {
 					return;
 				}
+
 				var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
 					oContentManifest = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-					sHeight = this._oContentFactory.getClass(sCardType).getMetadata().getRenderer().getMinHeight(oContentManifest, oError);
+					ContentClass = this._oContentFactory.getClass(sCardType),
+					sHeight;
+
+				if (!ContentClass) {
+					return;
+				}
+
+				sHeight = ContentClass.getMetadata().getRenderer().getMinHeight(oContentManifest, oError);
 
 				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-					oError.$().css({ "min-height": sHeight });
+					oError.$().css({"min-height": sHeight});
 				}
 			}
 		}, this);
