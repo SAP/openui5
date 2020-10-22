@@ -124,6 +124,17 @@ sap.ui.define([
 		window.Highcharts = null;
 	});
 
+	QUnit.test("loadHighcharts shouldn't append anything to the given URL", function (assert) {
+		// Arrange
+		var sUrl = "/dummy-url";
+
+		// Act
+		AnalyticsCloudContent.loadHighcharts(sUrl);
+
+		// Assert
+		assert.strictEqual(AnalyticsCloudContent._sIncludedFrom, sUrl, "Nothing is appended to the given URL");
+	});
+
 	QUnit.module("Creating a chart", {
 		beforeEach: function () {
 			this.fnLoadStub = sinon.stub(AnalyticsCloudContent, "loadHighcharts");

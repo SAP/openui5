@@ -161,13 +161,6 @@ sap.ui.define([
 	AnalyticsCloudContent.SAC_DESTINATION_KEY = "sac";
 
 	/**
-	 * The sub-path which points to the firefly service.
-	 * @readonly
-	 * @const {string}
-	 */
-	AnalyticsCloudContent.SAC_FIREFLY_SERVICE_PATH = "/firefly-service";
-
-	/**
 	 * List of Highcharts modules to load.
 	 * @readonly
 	 * @const {Object}
@@ -222,7 +215,7 @@ sap.ui.define([
 	 */
 	AnalyticsCloudContent.loadHighcharts = function (sBaseUrl) {
 		var sSanitizedUrl = sBaseUrl.trim().replace(/\/$/, ""), // remove any trailing spaces and slashes
-			sFireflyServiceUrl = sSanitizedUrl + this.SAC_FIREFLY_SERVICE_PATH,
+			sFireflyServiceUrl = sSanitizedUrl,
 			bIsIncluded = this._isHighchartsIncluded(sFireflyServiceUrl),
 			bIsIncludedByOthers = this._isHighchartsIncludedByThirdParty();
 
