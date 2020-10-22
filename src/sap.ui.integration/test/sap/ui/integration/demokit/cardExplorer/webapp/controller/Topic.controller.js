@@ -11,21 +11,21 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.Topic", {
 
 		/**
-		 * Adds eventListener on "load" event listener to the iframe, which is used to display topics.
+		 * Adds event listener for "bootFinished" event of the topic iframe.
 		 * Only handles initial loading of the iframe.
 		 */
 		onFrameSourceChange: function () {
-			var oDomRef = this.byId("topicFrame").getDomRef();
-
-			if (oDomRef) {
-				oDomRef.querySelector("iframe").addEventListener("load", this.onFrameLoaded.bind(this), { once: true });
-			}
+			window.addEventListener("message", function (e) {
+				if (e.data === "bootFinished") {
+					this._onFrameLoaded();
+				}
+			}.bind(this), { once: true });
 		},
 
-		onFrameLoaded: function (oEvent) {
+		_onFrameLoaded: function () {
 			// sync sapUiSizeCompact with the iframe
 			var sClass = this.getOwnerComponent().getContentDensityClass();
-			oEvent.target.contentDocument.body.classList.add(sClass);
+			this._getIFrame().contentDocument.body.classList.add(sClass);
 
 			// navigate to the id in the URL
 			var sCurrentHash = this.getRouter().getHashChanger().getHash();
@@ -35,15 +35,24 @@ sap.ui.define([
 		},
 
 		scrollTo: function (sId) {
-			var oDomRef = this.byId("topicFrame").getDomRef();
+			var oIFrame = this._getIFrame();
 
-			if (!oDomRef || !sId) {
+			if (!oIFrame || !sId) {
 				return;
 			}
 
-			var oIFrame = oDomRef.querySelector("iframe");
+			oIFrame.contentWindow.postMessage({
+				channel: "scrollTo",
+				id: sId
+			}, window.location.origin);
+		},
 
-			oIFrame.contentWindow.postMessage({ id: sId }, window.location.origin);
+		_getIFrame: function () {
+			if (this.byId("topicFrame").getDomRef()) {
+				return this.byId("topicFrame").getDomRef().querySelector("iframe");
+			}
+
+			return null;
 		}
 	});
 

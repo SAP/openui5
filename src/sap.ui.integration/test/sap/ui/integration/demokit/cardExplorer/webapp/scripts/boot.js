@@ -8,8 +8,10 @@ window.addEventListener("load", function () {
 	"use strict";
 	var sTargetRoot = document.location.href.substring(0, document.location.href.indexOf("/test-resources")),
 		sWebApp = sTargetRoot + "/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/",
-		sRes = sTargetRoot + "/resources/";
-	var aNodes = [];
+		sRes = sTargetRoot + "/resources/",
+		aNodes = [],
+		iLoadedCnt = 0,
+		oEl = document.createElement("div");
 
 	aNodes.push('<script src="' + sWebApp + 'scripts/codesample.js"></script>');
 	aNodes.push('<link rel="stylesheet" href="' + sWebApp + 'css/topic.css">');
@@ -17,7 +19,14 @@ window.addEventListener("load", function () {
 	aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/core/themes/sap_fiori_3/library.css">');
 	aNodes.push('<script src="' + sRes + 'sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>');
 	aNodes.push('<script src="' + sWebApp + 'scripts/topic.js"></script>');
-	var oEl = document.createElement("div");
+
+	function afterLoad() {
+		iLoadedCnt++;
+		if (iLoadedCnt === aNodes.length) {
+			window.parent.postMessage("bootFinished", window.location.origin);
+		}
+	}
+
 	aNodes.forEach(function (s) {
 		oEl.innerHTML = s;
 		if (oEl.firstChild.tagName === "SCRIPT") {
@@ -41,9 +50,11 @@ window.addEventListener("load", function () {
 						document.head.appendChild(oScript);
 					}
 				}
+				afterLoad();
 			});
 			document.head.appendChild(sc);
 		} else {
+			oEl.firstChild.addEventListener("load", afterLoad);
 			document.head.appendChild(oEl.firstChild);
 		}
 	});

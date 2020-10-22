@@ -2,7 +2,9 @@
 	'use strict';
 
 	window.addEventListener("message", function (oEvent) {
-		document.getElementById(oEvent.data.id).scrollIntoView();
+		if (oEvent.data.channel === "scrollTo") {
+			document.getElementById(oEvent.data.id).scrollIntoView();
+		}
 	}, false);
 
 	resolveDemokitLinks();
