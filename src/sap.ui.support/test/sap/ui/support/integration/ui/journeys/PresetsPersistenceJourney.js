@@ -69,7 +69,6 @@ sap.ui.define([
 
 	opaTest("Should be able to undo changes in System Preset 'Accessibility' and see change in title", function(Given, When, Then) {
 		When.onThePresetsPage.iPressUndoButton(sModifiedTitle);
-		When.onThePresetsPage.iOpenPresetsPopover();
 		Then.onThePresetsPage.iShouldSeePresetInPopover(presetUtil.titles.SYSTEM_ACCESSIBILITY_TITLE);
 
 		Then.iTeardownSupportAssistantFrame();
@@ -122,7 +121,6 @@ sap.ui.define([
 
 		When.onThePresetsPage.iPressUndoButton(testPreset._forTestTitleIfModified);
 
-		When.onThePresetsPage.iOpenPresetsPopover();
 		Then.onThePresetsPage.iShouldSeePresetInPopover(testPreset.title);
 
 		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(3); // Error logs - rule
