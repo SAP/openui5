@@ -8,17 +8,10 @@ sap.ui.define([
 	"./_Cache",
 	"./_GroupLock",
 	"./_Helper",
-	"./_Parser",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise"
-], function (_AggregationHelper, _Cache, _GroupLock, _Helper, _Parser, Log, SyncPromise) {
+], function (_AggregationHelper, _Cache, _GroupLock, _Helper, Log, SyncPromise) {
 	"use strict";
-
-	var rComma = /,|%2C|%2c/,
-		rODataIdentifier = new RegExp("^" + _Parser.sODataIdentifier
-			+ "(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
-		// "required white space"
-		rRws = new RegExp(_Parser.sWhitespace + "+");
 
 	//*********************************************************************************************
 	// _AggregationCache
@@ -44,6 +37,7 @@ sap.ui.define([
 	 *   if group levels are combined with min/max, or if the system query options "$expand" or
 	 *   "$select" are used at all
 	 *
+	 * @alias sap.ui.model.odata.v4.lib._AggregationCache
 	 * @private
 	 */
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions) {
@@ -65,7 +59,7 @@ sap.ui.define([
 			if (oAggregation.groupLevels.length) {
 				throw new Error("Unsupported group levels together with min/max");
 			}
-			this.oMeasureRangePromise = new Promise(function (resolve, reject) {
+			this.oMeasureRangePromise = new Promise(function (resolve) {
 				fnMeasureRangeResolve = resolve;
 			});
 			mFirstQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions,
@@ -202,7 +196,7 @@ sap.ui.define([
 
 		iLevel = oParentGroupNode ? oParentGroupNode["@$ui5.node.level"] + 1 : 1;
 
-		oFilteredAggregation = _AggregationCache.filterAggregation(this.oAggregation, iLevel);
+		oFilteredAggregation = _AggregationHelper.filterAggregation(this.oAggregation, iLevel);
 		aGroupBy = oFilteredAggregation.$groupBy;
 		delete oFilteredAggregation.$groupBy;
 		aMissing = oFilteredAggregation.$missing;
@@ -210,7 +204,7 @@ sap.ui.define([
 
 		mQueryOptions = Object.assign({}, this.mQueryOptions);
 		sFilteredOrderby
-			= _AggregationCache.filterOrderby(this.mQueryOptions.$orderby, oFilteredAggregation);
+			= _AggregationHelper.filterOrderby(this.mQueryOptions.$orderby, oFilteredAggregation);
 		if (sFilteredOrderby) {
 			mQueryOptions.$orderby = sFilteredOrderby;
 		} else {
@@ -663,115 +657,6 @@ sap.ui.define([
 	// @override sap.ui.model.odata.v4.lib._Cache#create
 	_AggregationCache.create = function (oRequestor, sResourcePath, oAggregation, mQueryOptions) {
 		return new _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions);
-	};
-
-	/**
-	 * Returns the aggregation information for the given level.
-	 *
-	 * @param {object} oAggregation
-	 *   An object holding the information needed for data aggregation; see also
-	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>,
-	 *   <code>group</code>, <code>groupLevels</code>
-	 * @param {number} iLevel
-	 *   The level of the request
-	 * @returns {object[]}
-	 *   The aggregation information for the given level with two additional properties:
-	 *   <code>$groupBy</code> is an array with the ordered list of all groupables up to the given
-	 *   level (to be used for key predicate and filter for child nodes);
-	 *   <code>$missing</code> is an array of all properties that are not yet grouped or aggregated
-	 *   at this level and thus missing in the level's result
-	 *
-	 * @private
-	 */
-	_AggregationCache.filterAggregation = function (oAggregation, iLevel) {
-		var oFilteredAggregation, aGroupLevels, aLeafGroups;
-
-		// copies the value with the given key from this map to the given target map
-		function copyTo(mTarget, sKey) {
-			mTarget[sKey] = this[sKey];
-			return mTarget;
-		}
-
-		// filters the map using the given keys
-		function filterMap(mMap, aKeys) {
-			return aKeys.reduce(copyTo.bind(mMap), {});
-		}
-
-		// filters the keys of the given map according to the given filter function
-		function filterKeys(mMap, fnFilter) {
-			return Object.keys(mMap).filter(fnFilter);
-		}
-
-		// tells whether the given alias does not have subtotals
-		function hasNoSubtotals(sAlias) {
-			return !oAggregation.aggregate[sAlias].subtotals;
-		}
-
-		// tells whether the given alias has subtotals
-		function hasSubtotals(sAlias) {
-			return oAggregation.aggregate[sAlias].subtotals;
-		}
-
-		// tells whether the given groupable property is not a group level
-		function isNotGroupLevel(sGroupable) {
-			return oAggregation.groupLevels.indexOf(sGroupable) < 0;
-		}
-
-		aGroupLevels = oAggregation.groupLevels.slice(iLevel - 1, iLevel);
-		oFilteredAggregation = {
-			aggregate : aGroupLevels.length
-				? filterMap(oAggregation.aggregate,
-					filterKeys(oAggregation.aggregate, hasSubtotals))
-				: oAggregation.aggregate,
-			groupLevels : aGroupLevels,
-			$groupBy : oAggregation.groupLevels.slice(0, iLevel)
-		};
-		aLeafGroups = filterKeys(oAggregation.group, isNotGroupLevel).sort();
-
-		if (aGroupLevels.length) {
-			oFilteredAggregation.group = {};
-			oFilteredAggregation.$missing
-				= oAggregation.groupLevels.slice(iLevel).concat(aLeafGroups)
-					.concat(Object.keys(oAggregation.aggregate).filter(hasNoSubtotals));
-		} else { // leaf
-			oFilteredAggregation.group = filterMap(oAggregation.group, aLeafGroups);
-			oFilteredAggregation.$groupBy = oFilteredAggregation.$groupBy.concat(aLeafGroups);
-			oFilteredAggregation.$missing = [];
-		}
-
-		return oFilteredAggregation;
-	};
-
-	/**
-	 * Returns the "$orderby" system query option filtered in such a way that only aggregatable or
-	 * groupable properties contained in the given aggregation information are used.
-	 *
-	 * @param {string} [sOrderby]
-	 *   The original "$orderby" system query option
-	 * @param {object} oAggregation
-	 *   An object holding the information needed for data aggregation; see also
-	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>,
-	 *   <code>group</code>, <code>groupLevels</code>
-	 * @returns {string}
-	 *   The filtered "$orderby" system query option
-	 *
-	 * @private
-	 */
-	_AggregationCache.filterOrderby = function (sOrderby, oAggregation) {
-		if (sOrderby) {
-			return sOrderby.split(rComma).filter(function (sOrderbyItem) {
-				var sName;
-
-				if (rODataIdentifier.test(sOrderbyItem)) {
-					sName = sOrderbyItem.split(rRws)[0]; // drop optional asc/desc
-					return sName in oAggregation.aggregate || sName in oAggregation.group
-						|| oAggregation.groupLevels.indexOf(sName) >= 0;
-				}
-				return true;
-			}).join(",");
-		}
 	};
 
 	/**

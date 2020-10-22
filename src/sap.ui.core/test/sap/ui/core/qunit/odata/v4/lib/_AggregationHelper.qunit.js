@@ -656,4 +656,155 @@ sap.ui.define([
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "index"), 5);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "parent"), oParentCache);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("filterAggregation - optional group entry", function (assert) {
+		var oAggregation = {
+			aggregate : {
+				MeasureWithoutTotal : {},
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {
+				// GroupedDimension : {},
+				UngroupedDimension : {}
+			},
+			groupLevels : ["GroupedDimension"]
+		};
+
+		assert.deepEqual(_AggregationHelper.filterAggregation(oAggregation, 1), {
+			aggregate : {
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {},
+			groupLevels : ["GroupedDimension"],
+			$groupBy : ["GroupedDimension"],
+			$missing : ["UngroupedDimension", "MeasureWithoutTotal"]
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		iLevel : 1,
+		oResult : {
+			aggregate : {
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {},
+			groupLevels : ["GroupedDimension1"],
+			$groupBy : ["GroupedDimension1"],
+			$missing : ["GroupedDimension2", "UngroupedDimension1", "UngroupedDimension2",
+				"MeasureWithoutTotal"]
+		}
+	}, {
+		iLevel : 2,
+		oResult : {
+			aggregate : {
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {},
+			groupLevels : ["GroupedDimension2"],
+			$groupBy : ["GroupedDimension1", "GroupedDimension2"],
+			$missing : ["UngroupedDimension1", "UngroupedDimension2", "MeasureWithoutTotal"]
+		}
+	}, {
+		iLevel : 3,
+		oResult : {
+			aggregate : {
+				MeasureWithoutTotal : {},
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {
+				UngroupedDimension1 : {},
+				UngroupedDimension2 : {}
+			},
+			groupLevels : [],
+			$groupBy : ["GroupedDimension1", "GroupedDimension2", "UngroupedDimension1",
+				"UngroupedDimension2"],
+			$missing : []
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("filterAggregation: level " + oFixture.iLevel, function (assert) {
+			var oAggregation = {
+				aggregate : {
+					MeasureWithoutTotal : {},
+					MeasureWithTotal : {subtotals : true}
+				},
+				group : { // intentionally in this order to test sorting
+					UngroupedDimension2 : {},
+					UngroupedDimension1 : {},
+					GroupedDimension1 : {}
+				},
+				groupLevels : ["GroupedDimension1", "GroupedDimension2"]
+			};
+
+			assert.deepEqual(
+				_AggregationHelper.filterAggregation(oAggregation, oFixture.iLevel),
+				oFixture.oResult
+			);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filterOrderby", function (assert) {
+		var oAggregation = {
+				aggregate : {
+					Measure : {}
+				},
+				group : {
+					Dimension : {}
+				},
+				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
+			},
+			oAggregationWithLevels = {
+				aggregate : {},
+				group : {},
+				groupLevels : ["Dimension"]
+			};
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Dimension %20desc%2COtherDimension asc", oAggregation),
+			"Dimension %20desc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Dimension\tdesc,OtherDimension asc", oAggregation),
+			"Dimension\tdesc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Dimension desc", oAggregationWithLevels),
+			"Dimension desc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Measure desc%2cDimension", oAggregation),
+			"Measure desc,Dimension");
+
+		// code under test
+		assert.strictEqual(_AggregationHelper.filterOrderby(undefined, {}), undefined);
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("NavigationProperty/$count", []),
+			"NavigationProperty/$count");
+	});
+	//TODO Also support orderbyItems that start with a type cast?
+	// See "11.2.5.2 System Query Option $orderby":
+	// "A special case of such an expression is a property path terminating on a primitive property.
+	// A type cast using the qualified entity type name is required to order by a property defined
+	// on a derived type."
+	//
+	// ABNF:
+	// orderby     = '$orderby' EQ orderbyItem *( COMMA orderbyItem )
+	// orderbyItem = commonExpr [ RWS ( 'asc' / 'desc' ) ]
+	// commonExpr = (... / firstMemberExpr / ...)[...]
+	// firstMemberExpr = memberExpr / inscopeVariableExpr [ "/" memberExpr ]
+	// memberExpr = [ qualifiedEntityTypeName "/" ] ( propertyPathExpr / boundFunctionExpr )
+	// inscopeVariableExpr : not supported
+	// boundFunctionExpr : not supported
+	// qualifiedEntityTypeName = odataIdentifier 1*( "." odataIdentifier )
+	// propertyPathExpr : /-separated path of odataIdentifier or qualified names;
+	//   otherwise not supported (e.g. $count)
+	// complexProperty : probably not supported by current service implementations
 });

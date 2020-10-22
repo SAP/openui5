@@ -30,157 +30,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filterAggregation - optional group entry", function (assert) {
-		var oAggregation = {
-				aggregate : {
-					MeasureWithoutTotal : {},
-					MeasureWithTotal : {subtotals : true}
-				},
-				group : {
-					// GroupedDimension : {},
-					UngroupedDimension : {}
-				},
-				groupLevels : ["GroupedDimension"]
-			};
-
-		assert.deepEqual(_AggregationCache.filterAggregation(oAggregation, 1), {
-			aggregate : {
-				MeasureWithTotal : {subtotals : true}
-			},
-			group : {},
-			groupLevels : ["GroupedDimension"],
-			$groupBy : ["GroupedDimension"],
-			$missing : ["UngroupedDimension", "MeasureWithoutTotal"]
-		});
-	});
-
-	//*********************************************************************************************
-[{
-	iLevel : 1,
-	oResult : {
-		aggregate : {
-			MeasureWithTotal : {subtotals : true}
-		},
-		group : {},
-		groupLevels : ["GroupedDimension1"],
-		$groupBy : ["GroupedDimension1"],
-		$missing : ["GroupedDimension2", "UngroupedDimension1", "UngroupedDimension2",
-			"MeasureWithoutTotal"]
-	}
-}, {
-	iLevel : 2,
-	oResult : {
-		aggregate : {
-			MeasureWithTotal : {subtotals : true}
-		},
-		group : {},
-		groupLevels : ["GroupedDimension2"],
-		$groupBy : ["GroupedDimension1", "GroupedDimension2"],
-		$missing : ["UngroupedDimension1", "UngroupedDimension2", "MeasureWithoutTotal"]
-	}
-}, {
-	iLevel : 3,
-	oResult : {
-		aggregate : {
-			MeasureWithoutTotal : {},
-			MeasureWithTotal : {subtotals : true}
-		},
-		group : {
-			UngroupedDimension1 : {},
-			UngroupedDimension2 : {}
-		},
-		groupLevels : [],
-		$groupBy : ["GroupedDimension1", "GroupedDimension2", "UngroupedDimension1",
-			"UngroupedDimension2"],
-		$missing : []
-	}
-}].forEach(function (oFixture) {
-	QUnit.test("filterAggregation: level " + oFixture.iLevel, function (assert) {
-		var oAggregation = {
-				aggregate : {
-					MeasureWithoutTotal : {},
-					MeasureWithTotal : {subtotals : true}
-				},
-				group : { // intentionally in this order to test sorting
-					UngroupedDimension2 : {},
-					UngroupedDimension1 : {},
-					GroupedDimension1 : {}
-				},
-				groupLevels : ["GroupedDimension1", "GroupedDimension2"]
-			};
-
-		assert.deepEqual(
-			_AggregationCache.filterAggregation(oAggregation, oFixture.iLevel),
-			oFixture.oResult
-		);
-	});
-});
-
-	//*********************************************************************************************
-	QUnit.test("filterOrderby", function (assert) {
-		var oAggregation = {
-				aggregate : {
-					Measure : {}
-				},
-				group : {
-					Dimension : {}
-				},
-				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
-			},
-			oAggregationWithLevels = {
-				aggregate : {},
-				group : {},
-				groupLevels : ["Dimension"]
-			};
-
-		// code under test
-		assert.strictEqual(
-			_AggregationCache.filterOrderby("Dimension %20desc%2COtherDimension asc", oAggregation),
-			"Dimension %20desc");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationCache.filterOrderby("Dimension\tdesc,OtherDimension asc", oAggregation),
-			"Dimension\tdesc");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationCache.filterOrderby("Dimension desc", oAggregationWithLevels),
-			"Dimension desc");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationCache.filterOrderby("Measure desc%2cDimension", oAggregation),
-			"Measure desc,Dimension");
-
-		// code under test
-		assert.strictEqual(_AggregationCache.filterOrderby(undefined, {}), undefined);
-
-		// code under test
-		assert.strictEqual(
-			_AggregationCache.filterOrderby("NavigationProperty/$count", []),
-			"NavigationProperty/$count");
-	});
-	//TODO Also support orderbyItems that start with a type cast?
-	// See "11.2.5.2 System Query Option $orderby":
-	// "A special case of such an expression is a property path terminating on a primitive property.
-	// A type cast using the qualified entity type name is required to order by a property defined
-	// on a derived type."
-	//
-	// ABNF:
-	// orderby     = '$orderby' EQ orderbyItem *( COMMA orderbyItem )
-	// orderbyItem = commonExpr [ RWS ( 'asc' / 'desc' ) ]
-	// commonExpr = (... / firstMemberExpr / ...)[...]
-	// firstMemberExpr = memberExpr / inscopeVariableExpr [ "/" memberExpr ]
-	// memberExpr = [ qualifiedEntityTypeName "/" ] ( propertyPathExpr / boundFunctionExpr )
-	// inscopeVariableExpr : not supported
-	// boundFunctionExpr : not supported
-	// qualifiedEntityTypeName = odataIdentifier 1*( "." odataIdentifier )
-	// propertyPathExpr : /-separated path of odataIdentifier or qualified names;
-	//   otherwise not supported (e.g. $count)
-	// complexProperty : probably not supported by current service implementations
-
-	//*********************************************************************************************
 	QUnit.test("create with min/max", function (assert) {
 		var mAlias2MeasureAndMethod,
 			oAggregation = {
@@ -270,7 +119,7 @@ sap.ui.define([
 			"replaced");
 		assert.notEqual(oCache.oFirstLevel.handleResponse, fnHandleResponse, "replaced");
 
-		oCache.oMeasureRangePromise.then(function (mMeasureRange0) {
+		oCache.oMeasureRangePromise.then(function () {
 			bMeasureRangePromiseResolved = true;
 		});
 
@@ -825,10 +674,10 @@ sap.ui.define([
 		if (oFixture.total) {
 			oFilteredAggregation.aggregate.x = {subtotal : true};
 		}
-		this.mock(_AggregationCache).expects("filterAggregation")
+		this.mock(_AggregationHelper).expects("filterAggregation")
 			.withExactArgs(sinon.match.same(oCache.oAggregation), iLevel)
 			.returns(oFilteredAggregation);
-		this.mock(_AggregationCache).expects("filterOrderby")
+		this.mock(_AggregationHelper).expects("filterOrderby")
 			.withExactArgs("~orderby~", sinon.match.same(oFilteredAggregation))
 			.returns(oFixture.filteredOrderby);
 		this.mock(Object).expects("assign")
