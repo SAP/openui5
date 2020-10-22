@@ -160,7 +160,7 @@ sap.ui.define([
 					FlexRuntimeInfoAPI.waitForChanges({element: oPanel}).then(function () {
 						oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
 					});
-				} else {
+				} else if (oPanel) {
 					oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
 				}
 			});
