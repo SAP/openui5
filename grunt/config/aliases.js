@@ -299,6 +299,7 @@ module.exports = function(grunt, config) {
 					return;
 				}
 				aTasks.push('jsdoc:library-' + library.name);
+				aTasks.push('copy:faq-target-' + library.name);
 				if (!useDefaultTemplate) {
 					aTasks.push('ui5docs-preprocess:library-' + library.name);
 				}
@@ -332,10 +333,10 @@ module.exports = function(grunt, config) {
 				downloadFolder = path.join(baseFolder, "tmp/cldr"),
 				pacote = require('pacote'),
 				done = this.async();
-			
+
 			Promise.all(aPakets.map(function(sName) {
 				return pacote.extract(sName + "@" + CLDR_VERSION, path.join(downloadFolder, sName));
-					
+
 			})).then(function() {
 				grunt.log.ok("DONE", "Files downloaded and extracted to", downloadFolder);
 				done();
