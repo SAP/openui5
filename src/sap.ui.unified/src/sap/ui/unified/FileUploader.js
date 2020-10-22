@@ -811,7 +811,12 @@ sap.ui.define([
 		var sTooltip = this.getTooltip_AsString(),
 			sPlaceholder = this.getPlaceholder(),
 			sValue = this.getValue(),
+			bIsRequired = LabelEnablement.isRequired(this),
 			sAccDescription = "";
+
+		if (bIsRequired) {
+			sAccDescription += sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("FILEUPLOAD_REQUIRED") + " ";
+		}
 
 		if (sTooltip) {
 			sAccDescription += sTooltip + " ";
@@ -932,10 +937,6 @@ sap.ui.define([
 		// native file uploader requires the focus for catching the keyboard events
 		if ((!!Device.browser.internet_explorer && Device.browser.version == 9)) {
 			this.oBrowse.$().attr("tabindex", "-1");
-		}
-
-		if (LabelEnablement.isRequired(this)) {
-			this.oBrowse.$().attr("aria-required", "true");
 		}
 
 		setTimeout(this._recalculateWidth.bind(this), 0);
