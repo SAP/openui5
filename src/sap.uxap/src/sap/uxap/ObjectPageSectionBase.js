@@ -282,12 +282,23 @@ sap.ui.define([
 	 * If the <code>titleLevel</code> is <code>TitleLevel.Auto</code>,
 	 * the result would be "3" for <code>ObjectPageSection</code> and "4" for <code>ObjectPageSubSection</code>.
 	 * The method is used by <code>ObjectPageSectionRenderer</code> and <code>ObjectPageSubSectionRenderer</code>.
+	 *
+	 * If there is a case where a TitleLevel.Auto is returned from _getTitleLevel in order to prevent a wrong
+	 * value to be se to the aria-level attribute title level fallbacks to TitleLevel.H2 as this is the default
+	 * aria-level according to aria specification
+	 *
 	 * @returns {String} the <code>aria-level</code>
 	 * @since 1.44
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._getARIALevel = function () {
-		return this._getTitleLevel().slice(-1);
+		var sTitleLevel = this._getTitleLevel();
+
+		if (sTitleLevel === TitleLevel.Auto) {
+			sTitleLevel = TitleLevel.H2;
+		}
+
+		return sTitleLevel.slice(-1);
 	};
 
 	/**
@@ -310,8 +321,13 @@ sap.ui.define([
 	 * @since 1.44
 	 * @private
 	 */
-	ObjectPageSectionBase.prototype._setInternalTitleLevel = function (sTitleLevel) {
-		this._sInternalTitleLevel = sTitleLevel;
+	ObjectPageSectionBase.prototype._setInternalTitleLevel = function (sTitleLevel, bInvalidate) {
+		if (sTitleLevel !== this._sInternalTitleLevel) {
+			this._sInternalTitleLevel = sTitleLevel;
+			if (bInvalidate) {
+				this.invalidate();
+			}
+		}
 	};
 
 	/**

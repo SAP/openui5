@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/base/Log",
 	"sap/uxap/library",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",
@@ -13,8 +14,10 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Button",
 	"sap/m/Text"],
-function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button, Text) {
+function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button, Text) {
 	"use strict";
+
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var aStandardModeConfig = [{
 		"configString": "a-1",
@@ -1601,6 +1604,43 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 
 		this.oObjectPage.destroy();
 	});
+
+	QUnit.module("SubSection internalTitle");
+
+	QUnit.test("Subsection _setInternalTitleLevel should invalidate control", function (assert) {
+		// arrange
+		var oSubSection = new ObjectPageSubSectionClass({
+				title: "Title",
+				titleLevel: TitleLevel.Auto,
+				showTitle: true,
+				blocks: [new Text({ text: "test" })]
+			}),
+			oObjectPage = new ObjectPageLayout({
+				sections: new ObjectPageSection({
+					subSections: [
+						oSubSection
+					]
+				})
+			});
+
+		oObjectPage.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		// act
+		oSubSection._setInternalTitleVisible(true);
+		oSubSection._setInternalTitleLevel(TitleLevel.H5, true);
+
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oSubSection.$("headerTitle").attr("aria-level") === "5", true,
+			"Title level should not be 'Auto' but auto generate value from 1 to 6");
+
+		// clean up
+		oObjectPage.destroy();
+	});
+
+
 	QUnit.module("See more / see less", {
 		beforeEach: function() {
 			this.oObjectPage = new ObjectPageLayout({
