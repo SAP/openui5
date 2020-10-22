@@ -24,6 +24,7 @@ sap.ui.define([
 	var ToolbarSpacer;
 	var Button;
 	var ManagedObjectModel;
+	var FilterOperatorUtil;
 
 	/**
 	 * Constructor for a new ConditionFieldHelp.
@@ -127,14 +128,16 @@ sap.ui.define([
 
 		var oPopover = FieldHelpBase.prototype._createPopover.apply(this, arguments);
 
-		if ((!DefineConditionPanel || !Toolbar || !ToolbarSpacer || !Button || !ManagedObjectModel) && !this._bModulesRequested) {
+		if ((!DefineConditionPanel || !Toolbar || !ToolbarSpacer || !Button || !ManagedObjectModel || !FilterOperatorUtil) && !this._bModulesRequested) {
 			DefineConditionPanel = sap.ui.require("sap/ui/mdc/field/DefineConditionPanel");
 			Toolbar = sap.ui.require("sap/m/Toolbar");
 			ToolbarSpacer = sap.ui.require("sap/m/ToolbarSpacer");
 			Button = sap.ui.require("sap/m/Button");
 			ManagedObjectModel = sap.ui.require("sap/ui/model/base/ManagedObjectModel");
+			FilterOperatorUtil = sap.ui.require("sap/ui/mdc/condition/FilterOperatorUtil");
 			if (!DefineConditionPanel || !Toolbar || !ToolbarSpacer || !Button || !ManagedObjectModel) {
-				sap.ui.require(["sap/ui/mdc/field/DefineConditionPanel", "sap/m/Toolbar", "sap/m/ToolbarSpacer", "sap/m/Button", "sap/ui/model/base/ManagedObjectModel"], _ModulesLoaded.bind(this));
+				sap.ui.require(["sap/ui/mdc/field/DefineConditionPanel", "sap/m/Toolbar", "sap/m/ToolbarSpacer", "sap/m/Button",
+				                "sap/ui/model/base/ManagedObjectModel", "sap/ui/mdc/condition/FilterOperatorUtil"], _ModulesLoaded.bind(this));
 				this._bModulesRequested = true;
 			}
 		}
@@ -155,7 +158,7 @@ sap.ui.define([
 
 	function _createDefineConditionPanel() {
 
-		if (!this._oDefineConditionPanel && DefineConditionPanel && Toolbar && ToolbarSpacer && Button && ManagedObjectModel && !this._bModulesRequested) {
+		if (!this._oDefineConditionPanel && DefineConditionPanel && Toolbar && ToolbarSpacer && Button && ManagedObjectModel && FilterOperatorUtil && !this._bModulesRequested) {
 			this._oManagedObjectModel = new ManagedObjectModel(this);
 			this._oDefineConditionPanel = new DefineConditionPanel(this.getId() + "-DCP", {
 				conditions: {path: "$help>/conditions"},
@@ -187,13 +190,14 @@ sap.ui.define([
 
 	}
 
-	function _ModulesLoaded(fnDefineConditionPanel, fnToolbar, fnToolbarSpacer, fnButton, fnManagedObjectModel) {
+	function _ModulesLoaded(fnDefineConditionPanel, fnToolbar, fnToolbarSpacer, fnButton, fnManagedObjectModel, fnFilterOperatorUtil) {
 
 		DefineConditionPanel = fnDefineConditionPanel;
 		Toolbar = fnToolbar;
 		ToolbarSpacer = fnToolbarSpacer;
 		Button = fnButton;
 		ManagedObjectModel = fnManagedObjectModel;
+		FilterOperatorUtil = fnFilterOperatorUtil;
 		this._bModulesRequested = false;
 
 		if (!this._bIsBeingDestroyed) {
@@ -277,6 +281,7 @@ sap.ui.define([
 
 		var aConditions = this.getConditions();
 		aConditions = Condition._removeEmptyConditions(aConditions);
+		FilterOperatorUtil.updateConditionsValues(aConditions, _getFormatOptions.call(this).operators); // to remove static text from static conditions
 
 		this.setProperty("conditions", aConditions, true); // do not invalidate whole FieldHelp
 
