@@ -196,7 +196,7 @@
 
 	<profiles>
 
-		<!-- attach the LICENSE.txt file -->
+		<!-- attach the LICENSE.txt and THIRDPARTY.txt files -->
 		<profile>
 
 			<activation>
@@ -209,7 +209,7 @@
 
 				<plugins>
 
-					<!-- attach the LICENSE.txt as separate artifact -->
+					<!-- attach the LICENSE.txt and THIRDPARTY.txt as separate artifacts -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
@@ -227,6 +227,11 @@
 											<file>${basedir}/LICENSE.txt</file>
 											<type>txt</type>
 											<classifier>LICENSE</classifier>
+										</artifact>
+										<artifact>
+											<file>${basedir}/THIRDPARTY.txt</file>
+											<type>txt</type>
+											<classifier>THIRDPARTY</classifier>
 										</artifact>
 									</artifacts>
 								</configuration>

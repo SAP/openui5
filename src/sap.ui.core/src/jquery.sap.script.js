@@ -2,6 +2,16 @@
  * ${copyright}
  */
 
+/**
+ * This module is overall:
+ * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * but contains code taken from jQuery 2.2.3 (see the respective comment):
+ * SPDX-FileCopyrightText: jQuery Foundation and other contributors
+ * SPDX-License-Identifier: MIT
+ */
+
 // Provides miscellaneous utility functions that might be useful for any script
 sap.ui.define([
 	'jquery.sap.global',

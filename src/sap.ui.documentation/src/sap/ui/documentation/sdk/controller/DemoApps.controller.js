@@ -225,17 +225,12 @@ sap.ui.define([
 							aPromises.push(oPromise);
 						});
 
-						// add generic license and notice file
-						var oLicensePromise = sourceFileDownloader(sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl/LICENSE.txt"));
+						// add generic license file
+						var oLicensePromise = sourceFileDownloader(sap.ui.require.toUrl("LICENSE.txt")); // FIXME: this needs to go up one directory
 						oLicensePromise.then(function (oContent) {
 							oZipFile.file("LICENSE.txt", oContent, { base64: false, binary: true });
 						});
 						aPromises.push(oLicensePromise);
-						var oNoticePromise = sourceFileDownloader(sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl/NOTICE.txt"));
-						oNoticePromise.then(function (oContent) {
-							oZipFile.file("NOTICE.txt", oContent, { base64: false, binary: true });
-						});
-						aPromises.push(oNoticePromise);
 
 						Promise.all(aPromises).then(function () {
 							// collect errors and show them

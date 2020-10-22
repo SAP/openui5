@@ -23,9 +23,12 @@
 					<Image id="aboutLogoSAP" src="./resources/sap/ui/documentation/sdk/images/Logo_B_SAPUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
 					<Image id="aboutLogoUI5" src="./resources/sap/ui/documentation/sdk/images/Logo_B_OpenUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{versionData>/isOpenUI5}"/>
 					<Text text="{i18n>ABOUT_DIALOG_TEXT_1}" class="sapMTitleStyleH2 sapUiSmallMarginBottom" />
-					<Text text="{i18n>ABOUT_DIALOG_TEXT_2}" class="sapUiMediumMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
+					<Text text="{i18n>ABOUT_DIALOG_TEXT_2}" class="sapUiTinyMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
 					<Text text="{i18n>ABOUT_DIALOG_TEXT_3}" visible="{versionData>/isOpenUI5}"/>
-					<custom:JSDocText class="sapUiMediumMarginBottom" visible="{versionData>/isOpenUI5}" text="Licensed under the Apache License, Version 2.0 – see &lt;a href='LICENSE.txt' target='_blank' class='sapMLnk sapMLnkMaxWidth aboutLink'&gt;LICENSE.txt&lt;/a&gt;"/>
+					<custom:JSDocText class="sapUiSmallMarginBottom" visible="{versionData>/isOpenUI5}" text="Licensed under the Apache License, Version 2.0 – see &lt;a href='LICENSE.txt' target='_blank' class='sapMLnk sapMLnkMaxWidth aboutLink'&gt;LICENSE.txt&lt;/a&gt;"/>
+					<Text text="{i18n>ABOUT_DIALOG_TEXT_7}" class="sapUiTinyMarginBottom"/>
+					<Link text="{i18n>ABOUT_DIALOG_TEXT_8}" press="onAboutThirdParty" class="sapUiMediumMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
+					<Link text="{i18n>ABOUT_DIALOG_TEXT_8}" href="THIRDPARTY.txt" target="_blank" class="sapUiMediumMarginBottom" visible="{versionData>/isOpenUI5}"/>
 					<Text text="{
 							parts: [
 								'i18n>ABOUT_DIALOG_TEXT_4',
@@ -48,8 +51,6 @@
 					<Text text="{i18n>ABOUT_DIALOG_TEXT_6}"/>
 					<custom:JSDocText class="sapUiTinyMarginBottom" text="(a full change log for all libraries can be found &lt;a href='releasenotes.html' target='_blank' class='sapMLnk sapMLnkMaxWidth aboutLink'&gt;here&lt;/a&gt;)."/>
 					<Link text="{i18n>ABOUT_DIALOG_LINK_1}" press="onAboutVersionDetails" class="sapUiSmallMarginBottom"/>
-					<Text text="{i18n>ABOUT_DIALOG_TEXT_7}" class="sapUiTinyMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
-					<Link text="{i18n>ABOUT_DIALOG_TEXT_8}" press="onAboutThirdParty" class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
 					<MessageStrip showIcon="true" text="{= ${versionData>/isOpenUI5} ? ${appView>/sAboutInfoOpenUI5} : ${appView>/sAboutInfoSAPUI5}}" class="sapUiSmallMarginBottom" enableFormattedText="true"/>
 				</VBox>
 			</Page>
@@ -119,12 +120,7 @@
 									<f:FormElement>
 										<f:fields>
 											<Link text="Web Site" target="_blank" href="{appView>homepage}" class="sapUiSmallMarginBottom"/>
-											<Link text="License Conditions" target="_blank" href="{appView>license/url}" class="sapUiSmallMarginBottom"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:fields>
-											<Link text="Licensed by SAP under '{appView>license/type}'" target="_blank" href="{appView>license/file}" class="sapUiSmallMarginBottom"/>
+											<Link text="Licensed by SAP under {appView>license/type} license" target="_blank" href="{appView>license/url}" class="sapUiSmallMarginBottom"/>
 										</f:fields>
 									</f:FormElement>
 								</f:formElements>

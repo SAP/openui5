@@ -2,6 +2,16 @@
  * ${copyright}
  */
 
+/**
+ * This module is overall:
+ * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * but contains code taken from or inspired by TDOP by Douglas Crockford (see the respective comment):
+ * SPDX-FileCopyrightText: 2010 Douglas Crockford
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/strings/escapeRegExp",

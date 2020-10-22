@@ -48,6 +48,20 @@ abandoned completely.
             </modules>
         </component>
     </ownership>
+
+    <!-- Thirdparty references -->
+    <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
+        <lib name="jquery_UI" displayName="jQuery UI" version="1.10.4" homepage="https://jqueryui.com">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>2014 jQuery Foundation and other contributors</copyright>
+            <pattern>sap/ui/commons/themes/base/jQueryUi*</pattern>
+        </lib>
+        <lib name="jquery-fix-clone" displayName="jquery.fix.clone" version="unknown" homepage="https://github.com/spencertipping/jquery.fix.clone">
+            <license url="https://github.com/spencertipping/jquery.fix.clone" type="MIT" />
+            <copyright>Spencer Tipping</copyright>
+            <pattern partial="true">sap/ui/commons/Carousel.js</pattern>
+        </lib>
+    </thirdparty>
   </appData>
 
 </library>

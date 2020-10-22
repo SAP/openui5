@@ -2,6 +2,16 @@
  * ${copyright}
  */
 
+/**
+ * This module is overall:
+ * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * but contains an improved implementation of the clone function which is taken from jquery-fix-clone:
+ * SPDX-FileCopyrightText: Spencer Tipping
+ * SPDX-License-Identifier: MIT
+ */
+
 // Provides control sap.ui.commons.Carousel.
 sap.ui.define([
     'sap/ui/thirdparty/jquery',

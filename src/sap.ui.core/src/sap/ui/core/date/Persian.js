@@ -2,6 +2,16 @@
  * ${copyright}
  */
 
+/**
+ * This module is overall:
+ * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * But the calculation is taken from jalaali-js:
+ * SPDX-FileCopyrightText: Behrang Norouzinia
+ * SPDX-License-Identifier: MIT
+ */
+
 // Provides class sap.ui.core.date.Persian
 sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 	function(UniversalDate, CalendarType, _Calendars) {

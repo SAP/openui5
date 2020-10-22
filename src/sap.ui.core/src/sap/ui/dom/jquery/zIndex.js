@@ -1,6 +1,17 @@
 /*!
  * ${copyright}
  */
+
+/**
+ * This module is overall:
+ * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * but contains an implementation of the function "fnzIndex" which is taken from jQuery UI Datepicker 1.11.1:
+ * SPDX-FileCopyrightText: 2014 jQuery Foundation and other contributors
+ * SPDX-License-Identifier: MIT
+ */
+
 /*
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.

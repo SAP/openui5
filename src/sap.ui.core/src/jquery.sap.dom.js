@@ -2,6 +2,16 @@
  * ${copyright}
  */
 
+/**
+ * This module is overall:
+ * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * but contains code taken from jQuery UI Core (see the respective comment):
+ * SPDX-FileCopyrightText: 2014 jQuery Foundation and other contributors
+ * SPDX-License-Identifier: MIT
+ */
+
 // Provides functionality related to DOM analysis and manipulation which is not provided by jQuery itself.
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/dom/containsOrEquals',
@@ -208,7 +218,7 @@ sap.ui.define([
 	jQuery.sap.denormalizeScrollBeginRTL = domDenormalizeScrollBeginRTL;
 
 	/*
-	 * The following methods are taken from jQuery UI core but modified.
+	 * The following code is taken from jQuery UI core but modified.
 	 *
 	 * jQuery UI Core
 	 * http://jqueryui.com
