@@ -323,6 +323,8 @@ sap.ui.define([
 		assert.equal(oConfig.getSAPLogonLanguage(), "1Q", "SAP Logon language should be '1Q'");
 		oConfig.setLanguage("en-US-x-sappsd");
 		assert.equal(oConfig.getSAPLogonLanguage(), "2Q", "SAP Logon language should be '2Q'");
+		oConfig.setLanguage("en-US-x-saprigi");
+		assert.equal(oConfig.getSAPLogonLanguage(), "3Q", "SAP Logon language should be '3Q'");
 	});
 
 	QUnit.test("configured via API", function(assert) {
@@ -360,6 +362,7 @@ sap.ui.define([
 		[ "?sap-language=ZF",						"zh-Hant",			"zh-Hant",			"ZF",	"sap-language is the known SAP language ZF"],
 		[ "?sap-language=1Q",						"en-US-x-saptrc",	"en-US-x-saptrc",	"1Q",	"sap-language is the known SAP language 1Q"],
 		[ "?sap-language=2Q",						"en-US-x-sappsd",	"en-US-x-sappsd",	"2Q",	"sap-language is the known SAP language 2Q"],
+		[ "?sap-language=3Q",						"en-US-x-saprigi",	"en-US-x-saprigi",	"3Q",	"sap-language is the known SAP language 3Q"],
 		[ "?sap-language=6N",						"de",				"de",				"6N",	"sap-language is the unknown SAP language 6N"],
 		[ "?sap-locale=fr_CH",						"fr_CH",			"fr-CH",			"FR",	"sap-locale is the accepted BCP47 tag fr_CH"],
 		[ "?sap-locale=En_gb&sap-language=6N",		"En_gb",			"en-GB",			"6N",	"valid combination of sap-locale and sap-language (En_gb, 6N)"],
