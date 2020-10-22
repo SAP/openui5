@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbarToggleButton",
 	"sap/ui/mdc/chart/ChartTypeButton",
-	"sap/ui/mdc/chart/ChartSettings"
+	"sap/ui/mdc/chart/ChartSettings",
+	"sap/ui/core/library"
 ], function(
 	MDCLib,
 	ActionToolbar,
@@ -17,9 +18,12 @@ sap.ui.define([
 	OverflowButton,
 	OverflowToggleButton,
 	ChartTypeButton,
-	ChartSettings
+	ChartSettings,
+	CoreLibrary
 ) {
 	"use strict";
+
+	var HasPopup = CoreLibrary.aria.HasPopup;
 
 	/**
 	 * Toolbar helper class for sap.ui.mdc.Chart.
@@ -137,7 +141,8 @@ sap.ui.define([
 						oChart._getPropertyData().then(function(aProperties) {
 							ChartSettings.showPanel(oChart, "Chart", oSource, aProperties);
 						});
-					}
+					},
+					ariaHasPopup: HasPopup.ListBox
 				}));
 			}
 
@@ -150,7 +155,8 @@ sap.ui.define([
 						oChart._getPropertyData().then(function(aProperties) {
 							ChartSettings.showPanel(oChart, "Sort", oSource, aProperties);
 						});
-					}
+					},
+					ariaHasPopup: HasPopup.ListBox
 				}));
 			}
 

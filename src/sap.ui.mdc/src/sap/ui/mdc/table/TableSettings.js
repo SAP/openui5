@@ -9,9 +9,11 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/OverflowToolbarLayoutData", "sap/base/util/merge", "sap/m/library", "sap/m/MenuButton"
-], function(OverflowToolbarButton, OverflowToolbarLayoutData, merge, MLibrary, MenuButton) {
+	"sap/m/OverflowToolbarButton", "sap/m/OverflowToolbarLayoutData", "sap/base/util/merge", "sap/m/library", "sap/m/MenuButton", "sap/ui/core/library"
+], function(OverflowToolbarButton, OverflowToolbarLayoutData, merge, MLibrary, MenuButton, CoreLibrary) {
 	"use strict";
+
+	var HasPopup = CoreLibrary.aria.HasPopup;
 
 	// TODO: this is just a draft version and is not final --> just for verifying flex/p13n concepts
 	var oRb;
@@ -38,7 +40,8 @@ sap.ui.define([
 				tooltip: oRb.getText("table.SETTINGS_SORT"),
 				layoutData: new OverflowToolbarLayoutData({
 					closeOverflowOnInteraction: false
-				})
+				}),
+				ariaHasPopup: HasPopup.Dialog
 			});
 		},
 		createColumnsButton: function(sIdPrefix, aEventInfo) {
@@ -52,7 +55,8 @@ sap.ui.define([
 				tooltip: oRb.getText("table.SETTINGS_COLUMN"),
 				layoutData: new OverflowToolbarLayoutData({
 					closeOverflowOnInteraction: false
-				})
+				}),
+				ariaHasPopup: HasPopup.Dialog
 			});
 		},
 		createFilterButton: function(sIdPrefix, aEventInfo) {
@@ -66,7 +70,8 @@ sap.ui.define([
 				tooltip: oRb.getText("filter.PERSONALIZATION_DIALOG_TITLE"),
 				layoutData: new OverflowToolbarLayoutData({
 					closeOverflowOnInteraction: false
-				})
+				}),
+				ariaHasPopup: HasPopup.Dialog
 			});
 		},
 		createExportButton: function(sIdPrefix, mEventInfo) {

@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/mdc/chart/ToolbarHandler",
 	"sap/ui/model/Sorter",
-	"sap/ui/model/Filter"
+	"sap/ui/model/Filter",
+	"sap/ui/core/library"
 ],
 function(
 	Core,
@@ -22,9 +23,12 @@ function(
 	ComponentContainer,
 	ToolbarHandler,
 	Sorter,
-	Filter
+	Filter,
+	CoreLibrary
 ) {
 	"use strict";
+
+	var HasPopup = CoreLibrary.aria.HasPopup;
 
 	QUnit.module("sap.ui.mdc.Chart: Simple Properties", {
 		beforeEach: function() {
@@ -124,8 +128,11 @@ function(
 		this.oChart.initialized().then(function() {
 			var aToolbarButtons = this.oChart.getAggregation("_toolbar").getEnd();
 			assert.equal(aToolbarButtons[aToolbarButtons.length - 1].getIcon(), "sap-icon://vertical-bar-chart", "correct button has been added to the chart toolbar");
+			assert.equal(aToolbarButtons[aToolbarButtons.length - 1].getAriaHasPopup(), HasPopup.ListBox, "button has correct ariaHasPopup value");
 			assert.equal(aToolbarButtons[aToolbarButtons.length - 2].getIcon(), "sap-icon://sort", "correct button has been added to the chart toolbar");
+			assert.equal(aToolbarButtons[aToolbarButtons.length - 2].getAriaHasPopup(), HasPopup.ListBox, "button has correct ariaHasPopup value");
 			assert.equal(aToolbarButtons[aToolbarButtons.length - 3].getIcon(), "sap-icon://action-settings", "correct button has been added to the chart toolbar");
+			assert.equal(aToolbarButtons[aToolbarButtons.length - 3].getAriaHasPopup(), HasPopup.ListBox, "button has correct ariaHasPopup value");
 			done();
 		}.bind(this));
 

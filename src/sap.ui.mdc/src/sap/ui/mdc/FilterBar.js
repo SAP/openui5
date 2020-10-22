@@ -2,10 +2,11 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/ui/mdc/p13n/StateUtil", "sap/base/util/merge", "sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"
-], function(FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, StateUtil, merge, AdaptationFilterBar) {
+	"sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/ui/mdc/p13n/StateUtil", "sap/base/util/merge", "sap/ui/mdc/filterbar/p13n/AdaptationFilterBar", "sap/ui/core/library"
+], function(FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, StateUtil, merge, AdaptationFilterBar, CoreLibrary) {
 	"use strict";
 
+	var HasPopup = CoreLibrary.aria.HasPopup;
 
 	/**
 	 * Constructor for a new FilterBar.
@@ -150,6 +151,7 @@ sap.ui.define([
 				text: "{" + FilterBarBase.INNER_MODEL_NAME + ">/_filterCount}",
 				press: this.onAdaptFilters.bind(this)
 			});
+			this._btnAdapt.setAriaHasPopup(HasPopup.ListBox);
 			this._btnAdapt.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
 
 			this._btnAdapt.bindProperty("visible", {
