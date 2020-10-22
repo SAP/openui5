@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	'./Core',
 	'sap/ui/thirdparty/URI',
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	'./Core' // provides sap.ui.getCore()
 ],
-	function(core, URI, ResourceBundle, Log, jQuery) {
+	function(URI, ResourceBundle, Log, jQuery) {
 		"use strict";
 
 		/**

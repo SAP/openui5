@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/core/util/ShortcutHelper",
-	'sap/base/assert',
-	'sap/ui/dom/jquery/control'
+	'sap/base/assert'
 ], function(
 		ShortcutHelper,
-		assert,
-		jQuery
+		assert
 	) {
 	"use strict";
 

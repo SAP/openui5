@@ -10,7 +10,6 @@ sap.ui.define([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/odata/ODataTreeBindingAdapter',
 	'sap/ui/model/TreeBindingAdapter',
-	'sap/ui/model/TreeBindingUtils',
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
@@ -22,7 +21,6 @@ sap.ui.define([
 		ChangeReason,
 		ODataTreeBindingAdapter,
 		TreeBindingAdapter,
-		TreeBindingUtils,
 		assert,
 		Log,
 		jQuery

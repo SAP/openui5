@@ -5,13 +5,13 @@
 // Provides an abstract property binding.
 sap.ui.define([
 	'./Binding',
-	'./SimpleType',
-	'./DataState',
 	"sap/ui/base/SyncPromise",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	'./SimpleType', // convenience dependency for legacy code that uses global names
+	'./DataState' // convenience dependency for legacy code that uses global names
 ],
-	function(Binding, SimpleType, DataState, SyncPromise, Log, assert) {
+	function(Binding, SyncPromise, Log, assert) {
 	"use strict";
 
 	/**

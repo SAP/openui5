@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /*global Blob*/
-sap.ui.define(["sap/base/Log"], function (Log) {
+sap.ui.define([], function () {
 	"use strict";
 
 	/**

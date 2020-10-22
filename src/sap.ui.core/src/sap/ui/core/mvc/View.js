@@ -63,138 +63,141 @@ sap.ui.define([
 	 * @alias sap.ui.core.mvc.View
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var View = Control.extend("sap.ui.core.mvc.View", /** @lends sap.ui.core.mvc.View.prototype */ { metadata : {
+	var View = Control.extend("sap.ui.core.mvc.View", /** @lends sap.ui.core.mvc.View.prototype */ {
+		metadata : {
 
-		interfaces: [
-			"sap.ui.core.IDScope"
-		],
-		library : "sap.ui.core",
-		properties : {
+			interfaces: [
+				"sap.ui.core.IDScope"
+			],
+			library : "sap.ui.core",
+			properties : {
 
-			/**
-			 * The width
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				/**
+				 * The width
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
-			/**
-			 * The height
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * The height
+				 */
+				height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Name of the View
-			 */
-			viewName : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Name of the View
+				 */
+				viewName : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Whether the CSS display should be set to "block".
-			 * Set this to "true" if the default display "inline-block" causes a vertical scrollbar with Views that are set to 100% height.
-			 * Do not set this to "true" if you want to display other content in the same HTML parent on either side of the View (setting to "true" may push that other content to the next/previous line).
-			 */
-			displayBlock : {type : "boolean", group : "Appearance", defaultValue : false}
-		},
-		aggregations : {
-
-			/**
-			 * Child Controls of the view
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		},
-		events : {
-
-			/**
-			 * Fired when the View has parsed the UI description and instantiated the contained controls (/control tree).
-			 */
-			afterInit : {},
-
-			/**
-			 * Fired when the view has received the request to destroy itself, but before it has destroyed anything.
-			 */
-			beforeExit : {},
-
-			/**
-			 * Fired when the View has been (re-)rendered and its HTML is present in the DOM.
-			 */
-			afterRendering : {},
-
-			/**
-			 * Fired before this View is re-rendered. Use to unbind event handlers from HTML elements etc.
-			 */
-			beforeRendering : {}
-		},
-		specialSettings : {
-
-			/**
-			 * Controller instance to use for this view.
-			 */
-			controller : 'sap.ui.core.mvc.Controller',
-
-			/**
-			 * Name of the controller class to use for this view.
-			 * If given, it overrides the same information in the view definition (XML, HTML).
-			 */
-			controllerName : 'string',
-
-			/**
-			 * Preprocessors that the view can use before constructing the view.
-			 */
-			preprocessors : 'Object',
-
-			/**
-			 * (module) Name of a resource bundle that should be loaded for this view
-			 */
-			resourceBundleName : 'string',
-
-			/**
-			 * URL of a resource bundle that should be loaded for this view
-			 */
-			resourceBundleUrl : 'sap.ui.core.URI',
-
-			/**
-			 * Locale that should be used to load a resource bundle for this view
-			 */
-			resourceBundleLocale : 'string', // should be something like 'languageTag'
-
-			/**
-			 * Model name under which the resource bundle should be stored.
-			 */
-			resourceBundleAlias : 'string',
-
-			/**
-			 * Type of the view
-			 */
-			type : 'string',
-
-			/**
-			 * A view definition
-			 */
-			definition : 'any',
-
-			/**
-			 * Deprecated as of 1.56: Use <code>definition</code> instead.
-			 */
-			viewContent : {
-				type: 'any',
-				deprecated: true
+				/**
+				 * Whether the CSS display should be set to "block".
+				 * Set this to "true" if the default display "inline-block" causes a vertical scrollbar with Views that are set to 100% height.
+				 * Do not set this to "true" if you want to display other content in the same HTML parent on either side of the View (setting to "true" may push that other content to the next/previous line).
+				 */
+				displayBlock : {type : "boolean", group : "Appearance", defaultValue : false}
 			},
+			aggregations : {
 
-			/**
-			 * Additional configuration data that should be given to the view at construction time
-			 * and which will be available early, even before model data or other constructor settings are applied.
-			 */
-			viewData : 'any',
+				/**
+				 * Child Controls of the view
+				 */
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+			},
+			events : {
 
-			/**
-			 * Determines initialization mode of the view
-			 * @since 1.30
-			 */
-			async : {
-				type : "boolean",
-				defaultValue : false
-			}
+				/**
+				 * Fired when the View has parsed the UI description and instantiated the contained controls (/control tree).
+				 */
+				afterInit : {},
+
+				/**
+				 * Fired when the view has received the request to destroy itself, but before it has destroyed anything.
+				 */
+				beforeExit : {},
+
+				/**
+				 * Fired when the View has been (re-)rendered and its HTML is present in the DOM.
+				 */
+				afterRendering : {},
+
+				/**
+				 * Fired before this View is re-rendered. Use to unbind event handlers from HTML elements etc.
+				 */
+				beforeRendering : {}
+			},
+			specialSettings : {
+
+				/**
+				 * Controller instance to use for this view.
+				 */
+				controller : 'sap.ui.core.mvc.Controller',
+
+				/**
+				 * Name of the controller class to use for this view.
+				 * If given, it overrides the same information in the view definition (XML, HTML).
+				 */
+				controllerName : 'string',
+
+				/**
+				 * Preprocessors that the view can use before constructing the view.
+				 */
+				preprocessors : 'Object',
+
+				/**
+				 * (module) Name of a resource bundle that should be loaded for this view
+				 */
+				resourceBundleName : 'string',
+
+				/**
+				 * URL of a resource bundle that should be loaded for this view
+				 */
+				resourceBundleUrl : 'sap.ui.core.URI',
+
+				/**
+				 * Locale that should be used to load a resource bundle for this view
+				 */
+				resourceBundleLocale : 'string', // should be something like 'languageTag'
+
+				/**
+				 * Model name under which the resource bundle should be stored.
+				 */
+				resourceBundleAlias : 'string',
+
+				/**
+				 * Type of the view
+				 */
+				type : 'string',
+
+				/**
+				 * A view definition
+				 */
+				definition : 'any',
+
+				/**
+				 * Deprecated as of 1.56: Use <code>definition</code> instead.
+				 */
+				viewContent : {
+					type: 'any',
+					deprecated: true
+				},
+
+				/**
+				 * Additional configuration data that should be given to the view at construction time
+				 * and which will be available early, even before model data or other constructor settings are applied.
+				 */
+				viewData : 'any',
+
+				/**
+				 * Determines initialization mode of the view
+				 * @since 1.30
+				 */
+				async : {
+					type : "boolean",
+					defaultValue : false
+				}
+			},
+			designtime: "sap/ui/core/designtime/mvc/View.designtime"
 		},
-		designtime: "sap/ui/core/designtime/mvc/View.designtime"
-	}});
+		renderer: ViewRenderer
+	});
 
 	/**
 	 * Global map of preprocessors with view types and source types as keys,

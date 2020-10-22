@@ -2,24 +2,19 @@
  * ${copyright}
  */
 
-/* global XMLHttpRequest */
-
 // Provides client-based DataBinding implementation
 sap.ui.define([
-	'./ClientContextBinding',
-	'./ClientListBinding',
-	'./ClientPropertyBinding',
-	'./ClientTreeBinding',
+	"sap/ui/thirdparty/jquery",
 	'./Model',
-	"sap/ui/thirdparty/jquery"
+	'./ClientContextBinding',
+	'./ClientListBinding', // convenience dependency for legacy code using global names
+	'./ClientPropertyBinding', // convenience dependency for legacy code using global names
+	'./ClientTreeBinding' // convenience dependency for legacy code using global names
 ],
 	function(
-		ClientContextBinding,
-		ClientListBinding,
-		ClientPropertyBinding,
-		ClientTreeBinding,
+		jQuery,
 		Model,
-		jQuery
+		ClientContextBinding
 	) {
 	"use strict";
 

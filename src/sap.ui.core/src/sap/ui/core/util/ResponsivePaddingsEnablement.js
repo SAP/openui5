@@ -4,13 +4,12 @@
 
 // sap.ui.core.util.ResponsivePaddingsEnabler
 sap.ui.define([
-	"sap/ui/core/library",
 	"sap/base/Log",
 	'sap/ui/core/ResizeHandler',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/library" // ensures loading of CSS
 ],
 function (
-	library,
 	Log,
 	ResizeHandler,
 	jQuery

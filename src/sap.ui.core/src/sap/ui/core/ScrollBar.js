@@ -49,67 +49,70 @@ sap.ui.define([
 	 * @alias sap.ui.core.ScrollBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ScrollBar = Control.extend("sap.ui.core.ScrollBar", /** @lends sap.ui.core.ScrollBar.prototype */ { metadata : {
+	var ScrollBar = Control.extend("sap.ui.core.ScrollBar", /** @lends sap.ui.core.ScrollBar.prototype */ {
+		metadata : {
 
-		library : "sap.ui.core",
-		properties : {
+			library : "sap.ui.core",
+			properties : {
 
-			/**
-			 * Orientation. Defines if the Scrollbar is vertical or horizontal.
-			 */
-			vertical : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Orientation. Defines if the Scrollbar is vertical or horizontal.
+				 */
+				vertical : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Scroll position in steps or pixels.
-			 */
-			scrollPosition : {type : "int", group : "Behavior", defaultValue : null},
+				/**
+				 * Scroll position in steps or pixels.
+				 */
+				scrollPosition : {type : "int", group : "Behavior", defaultValue : null},
 
-			/**
-			 * Size of the Scrollbar (in pixels).
-			 */
-			size : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Size of the Scrollbar (in pixels).
+				 */
+				size : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Size of the scrollable content (in pixels).
-			 */
-			contentSize : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Size of the scrollable content (in pixels).
+				 */
+				contentSize : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Number of steps to scroll. Used if the size of the content is not known as the data is loaded dynamically.
-			 */
-			steps : {type : "int", group : "Dimension", defaultValue : null}
-		},
-		events : {
+				/**
+				 * Number of steps to scroll. Used if the size of the content is not known as the data is loaded dynamically.
+				 */
+				steps : {type : "int", group : "Dimension", defaultValue : null}
+			},
+			events : {
 
-			/**
-			 * Scroll event.
-			 */
-			scroll : {
-				parameters : {
+				/**
+				 * Scroll event.
+				 */
+				scroll : {
+					parameters : {
 
-					/**
-					 * Actions are: Click on track, button, drag of thumb, or mouse wheel click.
-					 */
-					action : {type : "sap.ui.core.ScrollBarAction"},
+						/**
+						 * Actions are: Click on track, button, drag of thumb, or mouse wheel click.
+						 */
+						action : {type : "sap.ui.core.ScrollBarAction"},
 
-					/**
-					 * Direction of scrolling: back (up) or forward (down).
-					 */
-					forward : {type : "boolean"},
+						/**
+						 * Direction of scrolling: back (up) or forward (down).
+						 */
+						forward : {type : "boolean"},
 
-					/**
-					 * Current Scroll position either in pixels or in steps.
-					 */
-					newScrollPos : {type : "int"},
+						/**
+						 * Current Scroll position either in pixels or in steps.
+						 */
+						newScrollPos : {type : "int"},
 
-					/**
-					 * Old Scroll position - can be in pixels or in steps.
-					 */
-					oldScrollPos : {type : "int"}
+						/**
+						 * Old Scroll position - can be in pixels or in steps.
+						 */
+						oldScrollPos : {type : "int"}
+					}
 				}
 			}
-		}
-	}});
+		},
+		renderer: ScrollBarRenderer
+	});
 
 
 	// =============================================================================

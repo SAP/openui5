@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "sap/ui/VersionInfo"],
-		function(oCore, ObjectPath, Log, VersionInfo) {
+sap.ui.define(['sap/ui/core/Core', "sap/ui/VersionInfo"],
+		function(oCore, VersionInfo) {
 	"use strict";
 
 	/**

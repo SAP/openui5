@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	'sap/ui/model/Sorter',
 	"sap/base/Log",
-	'sap/base/util/ObjectPath',
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/resolveReference"
 ], function(
@@ -18,7 +17,6 @@ sap.ui.define([
 		Filter,
 		Sorter,
 		Log,
-		ObjectPath,
 		JSTokenizer,
 		resolveReference
 	) {

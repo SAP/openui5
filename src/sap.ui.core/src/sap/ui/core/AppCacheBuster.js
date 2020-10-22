@@ -9,14 +9,14 @@
  */
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
-	'./Core',
 	'sap/ui/thirdparty/URI',
 	'sap/base/Log',
 	'sap/base/util/extend',
 	'sap/base/strings/escapeRegExp',
-	'sap/ui/thirdparty/jquery'
+	'sap/ui/thirdparty/jquery',
+	'./Core' // provides sap.ui.getCore()
 ],
-	function(ManagedObject, Core, URI, Log, extend, escapeRegExp, jQuery) {
+	function(ManagedObject, URI, Log, extend, escapeRegExp, jQuery /*, Core */) {
 	"use strict";
 
 	/*

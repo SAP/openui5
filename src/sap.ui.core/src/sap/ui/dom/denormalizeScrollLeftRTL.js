@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/Device", "sap/ui/util/_FeatureDetection"], function(Device, _FeatureDetection) {
+sap.ui.define(["sap/ui/util/_FeatureDetection"], function(_FeatureDetection) {
 	"use strict";
 
 	var fnDenormalize;

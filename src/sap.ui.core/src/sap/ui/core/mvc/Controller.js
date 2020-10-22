@@ -11,8 +11,7 @@ sap.ui.define([
 	'sap/ui/core/mvc/ControllerMetadata',
 	'sap/ui/core/mvc/ControllerExtension',
 	'sap/ui/core/mvc/OverrideExecution',
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/Log"
 ], function(
 	ObjectPath,
 	extend,
@@ -21,8 +20,7 @@ sap.ui.define([
 	ControllerMetadata,
 	ControllerExtension,
 	OverrideExecution,
-	Log,
-	jQuery
+	Log
 ) {
 	"use strict";
 

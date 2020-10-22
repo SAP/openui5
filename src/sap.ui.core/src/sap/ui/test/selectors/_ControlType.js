@@ -3,9 +3,8 @@
  */
 
 sap.ui.define([
-    "sap/ui/test/selectors/_Selector",
-    "sap/ui/test/_OpaLogger"
-], function (_Selector, _OpaLogger) {
+    "sap/ui/test/selectors/_Selector"
+], function (_Selector) {
 	"use strict";
 
     var _ControlType = _Selector.extend("sap.ui.test.selectors._ControlType", {

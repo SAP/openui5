@@ -16,10 +16,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/XMLCompositeMetadata',
 	'sap/ui/model/base/ManagedObjectModel',
-	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/Fragment',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/base/DataType',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/base/Log',
 	'sap/ui/performance/Measurement'
@@ -28,10 +25,7 @@ sap.ui.define([
 		Control,
 		XMLCompositeMetadata,
 		ManagedObjectModel,
-		JSONModel,
 		Fragment,
-		ManagedObject,
-		DataType,
 		ResourceModel,
 		Log,
 		Measurement

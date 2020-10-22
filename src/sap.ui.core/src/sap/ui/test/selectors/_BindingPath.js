@@ -4,11 +4,8 @@
 
 sap.ui.define([
     "sap/ui/test/selectors/_Selector",
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/model/resource/ResourceModel",
-    "sap/m/ListBase",
-    "sap/m/ListItemBase"
-], function (_Selector, $, ResourceModel, ListBase, ListItemBase) {
+    "sap/ui/model/resource/ResourceModel"
+], function (_Selector, ResourceModel) {
 	"use strict";
 
     /**

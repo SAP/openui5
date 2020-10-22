@@ -15,7 +15,6 @@
 sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	'jquery.sap.global',
 	'sap/base/util/ObjectPath',
-	'sap/ui/Device',
 	'sap/ui/base/DataType',
 	'sap/ui/events/KeyCodes',
 	"sap/base/strings/camelize",
@@ -27,7 +26,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	function(
 		jQuery,
 		ObjectPath,
-		Device,
 		DataType,
 		KeyCodes,
 		camelize,

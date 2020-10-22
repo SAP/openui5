@@ -3,25 +3,22 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Core',
 	'./Template',
 	'./TemplateControl',
 	'sap/ui/thirdparty/handlebars',
 	'sap/ui/base/ManagedObject',
 	'sap/base/util/ObjectPath',
 	"sap/base/security/encodeXML",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isEmptyObject"
+	"sap/base/util/isEmptyObject",
+	'sap/ui/core/Core' // provides sap.ui.getCore()
 ],
 	function(
-		Core,
 		Template,
 		TemplateControl,
 		Handlebars,
 		ManagedObject,
 		ObjectPath,
 		encodeXML,
-		jQuery,
 		isEmptyObject
 	) {
 	"use strict";

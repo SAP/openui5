@@ -3,8 +3,12 @@
  */
 
 // Provides control sap.ui.core.InvisibleText.
-sap.ui.define(['./Control', './library', "sap/base/Log", "sap/base/security/encodeXML"],
-	function(Control, library, Log, encodeXML) {
+sap.ui.define([
+	"./Control",
+	"sap/base/Log",
+	"sap/base/security/encodeXML",
+	"./library" // ensure loading of CSS
+], function(Control, Log, encodeXML) {
 	"use strict";
 
 

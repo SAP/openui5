@@ -35,10 +35,12 @@ function(library, View, TemplateViewRenderer, Log) {
 	 * @alias sap.ui.core.mvc.TemplateView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TemplateView = View.extend("sap.ui.core.mvc.TemplateView", /** @lends sap.ui.core.mvc.TemplateView.prototype */ { metadata : {
-
-		library : "sap.ui.core"
-	}});
+	var TemplateView = View.extend("sap.ui.core.mvc.TemplateView", /** @lends sap.ui.core.mvc.TemplateView.prototype */ {
+		metadata : {
+			library : "sap.ui.core"
+		},
+		renderer: TemplateViewRenderer
+	});
 
 	(function(){
 

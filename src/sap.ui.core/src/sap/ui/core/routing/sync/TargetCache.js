@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/Log", "sap/ui/core/mvc/View"], function(Log, View) {
+sap.ui.define(["sap/ui/core/mvc/View"], function(View) {
 	"use strict";
 
 	/**

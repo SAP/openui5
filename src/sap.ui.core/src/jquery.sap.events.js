@@ -11,11 +11,11 @@ sap.ui.define([
 	'sap/ui/events/isSpecialKey',
 	'sap/ui/events/isMouseEventDelayed',
 	'sap/ui/events/F6Navigation',
-	'sap/ui/events/jquery/EventExtension',
 	'sap/ui/events/jquery/EventSimulation',
 	'sap/ui/events/KeyCodes',
-	'sap/base/util/defineCoupledProperty'
-], function(jQuery, ControlEvents, PseudoEvents, fnCheckMouseEnterOrLeave, fnIsSpecialKey, fnIsMouseEventDelayed, F6Navigation, EventExtension, EventSimulation, KeyCodes, defineCoupledProperty) {
+	'sap/base/util/defineCoupledProperty',
+	'sap/ui/events/jquery/EventExtension' // implicit dependency
+], function(jQuery, ControlEvents, PseudoEvents, fnCheckMouseEnterOrLeave, fnIsSpecialKey, fnIsMouseEventDelayed, F6Navigation, EventSimulation, KeyCodes, defineCoupledProperty) {
 	"use strict";
 
 

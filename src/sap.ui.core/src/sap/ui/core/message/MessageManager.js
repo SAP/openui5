@@ -12,8 +12,7 @@ sap.ui.define([
 	'sap/ui/core/message/MessageProcessor',
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	'sap/base/util/merge',
-	'sap/base/util/array/uniqueSort'
+	'sap/base/util/merge'
 ],
 	function(
 		EventProvider,
@@ -24,8 +23,7 @@ sap.ui.define([
 		MessageProcessor,
 		deepEqual,
 		Log,
-		merge,
-		uniqueSort
+		merge
 	) {
 
 	"use strict";

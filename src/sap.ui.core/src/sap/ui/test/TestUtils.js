@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/base/util/UriParameters",
-	"sap/ui/core/Core",
-	"sap/ui/thirdparty/URI"
-], function (jQuery, Log, merge, UriParameters, Core, URI) {
+	"sap/ui/thirdparty/URI",
+	"sap/ui/core/Core" // provides sap.ui.getCore()
+], function (jQuery, Log, merge, UriParameters, URI) {
 	"use strict";
 	/*global QUnit, sinon */
 	// Note: The dependency to Sinon.JS has been omitted deliberately. Most test files load it via

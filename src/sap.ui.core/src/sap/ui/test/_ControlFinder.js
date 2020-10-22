@@ -4,14 +4,12 @@
 
 sap.ui.define([
     "sap/ui/base/Object",
-    "sap/ui/test/Opa5",
     "sap/ui/test/OpaPlugin",
     "sap/ui/test/actions/Press",
     "sap/ui/test/_LogCollector",
     "sap/ui/test/_OpaLogger",
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/base/ManagedObjectMetadata"
-], function(UI5Object, Opa5, OpaPlugin, Press, _LogCollector, _OpaLogger, $, ManagedObjectMetadata) {
+    "sap/ui/thirdparty/jquery"
+], function(UI5Object, OpaPlugin, Press, _LogCollector, _OpaLogger, $) {
     "use strict";
 
     var oPlugin = new OpaPlugin();
