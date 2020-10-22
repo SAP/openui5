@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/core/sample/MessageManager/BasicODataMessages/localService/mockserver"
-], function(Controller, ODataModel, mockserver) {
+	"sap/ui/core/sample/MessageManager/BasicODataMessages/localService/mockserver",
+	"sap/ui/core/Fragment"
+], function(Controller, ODataModel, mockserver, Fragment) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.MessageManager.BasicODataMessages.Controller", {
@@ -35,7 +36,10 @@ sap.ui.define([
 		},
 
 		onMessagePopoverPress : function (oEvent) {
-			this._getMessagePopover().openBy(oEvent.getSource());
+			var oSourceControl = oEvent.getSource();
+			this._getMessagePopover().then(function(oMessagePopover){
+				oMessagePopover.openBy(oSourceControl);
+			});
 		},
 
 		onDelete : function (oEvent) {
@@ -50,13 +54,19 @@ sap.ui.define([
 		//################ Private APIs ###################
 
 		_getMessagePopover : function () {
+			var oView = this.getView();
+
 			// create popover lazily (singleton)
-			if (!this._oMessagePopover) {
-				// create popover lazily (singleton)
-				this._oMessagePopover = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.core.sample.MessageManager.BasicODataMessages.MessagePopover", this);
-				this.getView().addDependent(this._oMessagePopover);
+			if (!this._pMessagePopover) {
+				this._pMessagePopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.ui.core.sample.MessageManager.BasicODataMessages.MessagePopover"
+				}).then(function (oMessagePopover) {
+					oView.addDependent(oMessagePopover);
+					return oMessagePopover;
+				});
 			}
-			return this._oMessagePopover;
+			return this._pMessagePopover;
 		}
 
 	});
