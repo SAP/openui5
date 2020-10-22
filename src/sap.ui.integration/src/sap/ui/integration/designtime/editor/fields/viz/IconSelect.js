@@ -205,14 +205,18 @@ sap.ui.define([
 			onsapup: function () {
 				if (this._oSelect.isOpen()) {
 					var bAllowFile = this.getAllowFile();
+					var bAllowNone = this.getAllowNone();
+					var bFileSelected = this._oIconModel.getProperty("/2/enabled");
 					var iSelected = this._oSelect.getSelectedIndex();
 					if (iSelected > 11 + 2) {
 						this._oSelect.setSelectedIndex(iSelected - 11);//select will do -1
-					} else if (iSelected > 3) {
-						if (bAllowFile) {
-							this._oSelect.setSelectedIndex(3);
+					} else if (iSelected >= 3) {
+						if (bAllowNone && !bAllowFile) {
+							this._oSelect.setSelectedIndex(0);
+						} else if (bFileSelected) {
+							this._oSelect.setSelectedIndex(2);
 						} else {
-							this._oSelect.setSelectedIndex(4);
+							this._oSelect.setSelectedIndex(3);
 						}
 					}
 				}
@@ -274,9 +278,11 @@ sap.ui.define([
 		this.setProperty("value", sValue, true);
 		if (sValue.indexOf("data:image/") === 0) {
 			this._oSelect._customImage = sValue;
+			this._oIconModel.setProperty("/2/enabled", true);
 			this._oSelect.setSelectedKey("selected");
 		} else {
 			this._oSelect._customImage = null;
+			this._oIconModel.setProperty("/2/enabled", false);
 			this._oSelect.setSelectedKey(sValue);
 		}
 		this._oSelect.invalidate();
@@ -287,7 +293,6 @@ sap.ui.define([
 		this.setProperty("allowFile", bValue, true);
 		bValue = this.getAllowFile();
 		this._oIconModel.setProperty("/1/enabled", bValue);
-		this._oIconModel.setProperty("/2/enabled", bValue);
 		return this;
 	};
 

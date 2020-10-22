@@ -395,7 +395,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -414,7 +414,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with Not Allow File (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -434,7 +434,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with Not Allow None (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -446,7 +446,7 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.ok(!oSelect.getItemByKey("empty").getEnabled(), "Icon: item none is disabled");
 						assert.ok(oSelect.getItemByKey("file").getEnabled(), "Icon: item file is enabled");
-						assert.ok(oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected is enabled");
+						assert.ok(!oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected is disabled");
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -454,7 +454,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with Not Allow File and None (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFileAndNone", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFileAndNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -474,7 +474,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with image (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -493,7 +493,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with change to new icon (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -513,7 +513,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with change to file (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -533,7 +533,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -549,17 +549,11 @@ sap.ui.define([
 						oSelect.open();
 						setTimeout(function () {
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Up navigation correct for 3 < index < 14");
-							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 2");
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for 3 < index < 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 0");
-							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 0");
-							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Page Up navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
 							assert.ok(oSelect.getSelectedIndex() === 39, "Field: Page DOWN navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
@@ -567,41 +561,41 @@ sap.ui.define([
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Down navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Down navigation correct for index = 1");
+							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Down navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Down navigation correct for index = 2");
-							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 13, "Field: Arrow Left navigation correct for index = 14");
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 73, "Field: Page DOWN navigation correct for index = 13");
+							assert.ok(oSelect.getSelectedIndex() === 76, "Field: Page DOWN navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
-							assert.ok(oSelect.getSelectedIndex() === 13, "Field: Page Up navigation correct for index = 73");
+							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Page Up navigation correct for index = 76");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 12, "Field: Arrow Left navigation correct for index = 13");
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Left navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 11, "Field: Arrow Left navigation correct for index = 12");
+							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Left navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 12, "Field: Arrow Right navigation correct for index = 11");
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Right navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 13, "Field: Arrow Right navigation correct for index = 12");
+							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Right navigation correct for index = 13");
+							assert.ok(oSelect.getSelectedIndex() === 17, "Field: Arrow Right navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 26, "Field: Arrow Down navigation correct for index = 14");
+							assert.ok(oSelect.getSelectedIndex() === 29, "Field: Arrow Down navigation correct for index = 17");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 27, "Field: Arrow Right navigation correct for index = 26");
+							assert.ok(oSelect.getSelectedIndex() === 30, "Field: Arrow Right navigation correct for index = 29");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 28, "Field: Arrow Right navigation correct for index = 27");
+							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Right navigation correct for index = 30");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 40, "Field: Arrow Down navigation correct for index = 28");
+							assert.ok(oSelect.getSelectedIndex() === 43, "Field: Arrow Down navigation correct for index = 31");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 28, "Field: Arrow Up navigation correct for index = 40");
+							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Up navigation correct for index = 43");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Up navigation correct for index = 28");
+							assert.ok(oSelect.getSelectedIndex() === 19, "Field: Arrow Up navigation correct for index = 31");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 4, "Field: Arrow Up navigation correct for index = 16");
+							assert.ok(oSelect.getSelectedIndex() === 7, "Field: Arrow Up navigation correct for index = 19");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Up navigation correct for index = 4");
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 7");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -610,7 +604,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with NOT Allow None: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -626,15 +620,17 @@ sap.ui.define([
 						oSelect.open();
 						setTimeout(function () {
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Up navigation correct for 3 < index < 14");
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for 3 < index < 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 2");
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Down navigation correct for index = 1");
+							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Down navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Down navigation correct for index = 2");
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
+							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Left navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
 							assert.ok(oSelect.getSelectedIndex() === 13, "Field: Arrow Left navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
@@ -662,7 +658,7 @@ sap.ui.define([
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 							assert.ok(oSelect.getSelectedIndex() === 4, "Field: Arrow Up navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Up navigation correct for index = 4");
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 4");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -671,7 +667,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with NOT Allow File: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -687,9 +683,7 @@ sap.ui.define([
 						oSelect.open();
 						setTimeout(function () {
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Up navigation correct for 3 < index < 14");
-							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 3");
+							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for 3 < index < 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
@@ -723,7 +717,7 @@ sap.ui.define([
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 							assert.ok(oSelect.getSelectedIndex() === 5, "Field: Arrow Up navigation correct for index = 17");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Up navigation correct for index = 5");
+							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 5");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -732,7 +726,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with NOT Allow None and NOT Allow File: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFileAndNone", "type": "List", "configuration": { "parameters": { "stringParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFileAndNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -785,6 +779,154 @@ sap.ui.define([
 							assert.ok(oSelect.getSelectedIndex() === 5, "Field: Arrow Up navigation correct for index = 17");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Up navigation correct for index = 5");
+							resolve();
+						}, 1000);
+					}, 500);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 icon parameter with image: keyboard navigation (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
+					setTimeout(function () {
+						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						assert.ok(oSelect.getSelectedIndex() === 2, "Field: selected index is 2");
+						oSelect.focus();
+						oSelect.open();
+						setTimeout(function () {
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 2");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 1");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 0");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 39, "Field: Page DOWN navigation correct for index = 0");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
+							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Page Up navigation correct for index = 39");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Down navigation correct for index = 0");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Down navigation correct for index = 1");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Down navigation correct for index = 2");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Up navigation correct for index = 14");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Right navigation correct for index = 2");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 76, "Field: Page DOWN navigation correct for index = 16");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
+							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Page Up navigation correct for index = 76");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Left navigation correct for index = 16");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
+							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Left navigation correct for index = 15");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Right navigation correct for index = 14");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 17, "Field: Arrow Right navigation correct for index = 16");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 29, "Field: Arrow Down navigation correct for index = 17");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 30, "Field: Arrow Right navigation correct for index = 29");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Right navigation correct for index = 30");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 43, "Field: Arrow Down navigation correct for index = 31");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Up navigation correct for index = 43");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 19, "Field: Arrow Up navigation correct for index = 31");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 7, "Field: Arrow Up navigation correct for index = 19");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 7");
+							resolve();
+						}, 1000);
+					}, 500);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 icon parameter with image and Not Allow None: keyboard navigation (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
+					setTimeout(function () {
+						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						assert.ok(oSelect.getSelectedIndex() === 2, "Field: selected index is 2");
+						oSelect.focus();
+						oSelect.open();
+						setTimeout(function () {
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 2");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 1");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 39, "Field: Page DOWN navigation correct for index = 1");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Page Up navigation correct for index = 39");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Down navigation correct for index = 1");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Down navigation correct for index = 2");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Up navigation correct for index = 14");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Right navigation correct for index = 2");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 76, "Field: Page DOWN navigation correct for index = 16");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
+							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Page Up navigation correct for index = 76");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Left navigation correct for index = 16");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
+							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Left navigation correct for index = 15");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Right navigation correct for index = 14");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 17, "Field: Arrow Right navigation correct for index = 16");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 29, "Field: Arrow Down navigation correct for index = 17");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 30, "Field: Arrow Right navigation correct for index = 29");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
+							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Right navigation correct for index = 30");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+							assert.ok(oSelect.getSelectedIndex() === 43, "Field: Arrow Down navigation correct for index = 31");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Up navigation correct for index = 43");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 19, "Field: Arrow Up navigation correct for index = 31");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 7, "Field: Arrow Up navigation correct for index = 19");
+							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
+							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 7");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -3168,7 +3310,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Dependece: Boolean value default", function (assert) {
+		QUnit.test("Dependence: Boolean value default", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
 				manifest: {
@@ -3176,7 +3318,7 @@ sap.ui.define([
 						"id": "test.sample"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependeceForBoolean",
+						"designtime": "designtime/fieldEnhancemantDependenceForBoolean",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -3214,7 +3356,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Dependece: Boolean value from manifest", function (assert) {
+		QUnit.test("Dependence: Boolean value from manifest", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
 				manifest: {
@@ -3222,7 +3364,7 @@ sap.ui.define([
 						"id": "test.sample"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependeceForBoolean",
+						"designtime": "designtime/fieldEnhancemantDependenceForBoolean",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -3264,7 +3406,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Dependece: String value default", function (assert) {
+		QUnit.test("Dependence: String value default", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
 				manifest: {
@@ -3272,7 +3414,7 @@ sap.ui.define([
 						"id": "test.sample"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependeceForString",
+						"designtime": "designtime/fieldEnhancemantDependenceForString",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -3310,7 +3452,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Dependece: String value from manifest", function (assert) {
+		QUnit.test("Dependence: String value from manifest", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
 				manifest: {
@@ -3318,7 +3460,7 @@ sap.ui.define([
 						"id": "test.sample"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependeceForString",
+						"designtime": "designtime/fieldEnhancemantDependenceForString",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -3360,7 +3502,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Dependece: Integer value default", function (assert) {
+		QUnit.test("Dependence: Integer value default", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
 				manifest: {
@@ -3368,7 +3510,7 @@ sap.ui.define([
 						"id": "test.sample"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependeceForInteger",
+						"designtime": "designtime/fieldEnhancemantDependenceForInteger",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -3406,7 +3548,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Dependece: Integer value from manifest", function (assert) {
+		QUnit.test("Dependence: Integer value from manifest", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
 				manifest: {
@@ -3414,7 +3556,7 @@ sap.ui.define([
 						"id": "test.sample"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependeceForInteger",
+						"designtime": "designtime/fieldEnhancemantDependenceForInteger",
 						"type": "List",
 						"header": {},
 						"configuration": {
