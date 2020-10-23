@@ -237,13 +237,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			return;
 		}
 
-		if (this._oCurrent == this._oRoot) {
-			this._oReference = this._oCurrent.nextSibling;
-			this._oParent.removeChild(this._oCurrent);
-		} else {
-			this._oReference = this._oCurrent;
-		}
-
+		this._oReference = this._oCurrent;
 		this._oCurrent = null;
 	};
 
@@ -286,7 +280,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 */
 	Patcher._insertNewElement = function() {
 		if (this._oCurrent == this._oNewElement) {
-			this._oNewParent.insertBefore(this._oNewElement, this._oNewReference);
+			this._oNewParent[this._oNewReference == this._oRoot ? "replaceChild" : "insertBefore"](this._oNewElement, this._oNewReference);
 			this._oNewElement = this._oNewParent = this._oNewReference = null;
 		}
 	};
@@ -426,9 +420,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			return this;
 		}
 
-		var aRemainingAttributes = Object.keys(this._mAttributes);
-		for (var i = 0; i < aRemainingAttributes.length; i++) {
-			var sAttribute = aRemainingAttributes[i];
+		for (var sAttribute in this._mAttributes) {
 			var fnMutator = AttributeMutators[sAttribute];
 			fnMutator && fnMutator(this._oCurrent, null);
 			this._oCurrent.removeAttribute(sAttribute);
