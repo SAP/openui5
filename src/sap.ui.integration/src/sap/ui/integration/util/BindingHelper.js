@@ -4,14 +4,12 @@
 sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/base/util/extend",
-	"sap/base/util/merge",
 	"sap/ui/integration/formatters/DateTimeFormatter",
 	"sap/ui/integration/formatters/NumberFormatter",
 	"sap/ui/integration/bindingFeatures/DateRange"
 ], function (
 	BindingParser,
 	extend,
-	merge,
 	DateTimeFormatter,
 	NumberFormatter,
 	DateRange
@@ -240,6 +238,19 @@ sap.ui.define([
 				oTarget.setModel(oModel, sModelName);
 			}
 		});
+	};
+
+	/**
+	 * Allows to reuse same binding info object.
+	 * @param {*} vBindingInfo The parsed value from manifest
+	 * @returns {*} Shallow copy of binding info, or unmodified primitive value.
+	 */
+	BindingHelper.reuse = function (vBindingInfo) {
+		if (typeof vBindingInfo === "object") {
+			return extend({}, vBindingInfo);
+		}
+
+		return vBindingInfo;
 	};
 
 	return BindingHelper;
