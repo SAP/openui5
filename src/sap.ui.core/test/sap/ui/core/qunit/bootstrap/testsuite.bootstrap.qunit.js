@@ -333,7 +333,10 @@ sap.ui.define(function() {
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit",
-				autostart : false
+				autostart : false,
+				qunit: {
+					reorder: false
+				}
 			},
 			"ThemeVersion-on-async": {
 				group: "Theme Versioning",
