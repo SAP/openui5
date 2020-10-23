@@ -62,6 +62,7 @@ sap.ui.define([
 					oVisualization = {
 						type: Select,
 						settings: {
+							busy: { path: 'currentSettings>_loading' },
 							selectedKey: {
 								path: 'currentSettings>value'
 							},
