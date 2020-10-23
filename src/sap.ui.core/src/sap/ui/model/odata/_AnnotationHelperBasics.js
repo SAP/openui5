@@ -324,18 +324,21 @@ sap.ui.define([
 		 *   formatOptions: {object} optional type format options when result is "binding"
 		 *   parameters: {object} optional binding parameters when result is "binding"
 		 * @param {boolean} bExpression
-		 *   if true the value is to be embedded into a binding expression, otherwise in a
-		 *   composite binding
+		 *   if <code>true</code> the value is to be embedded into a binding expression,
+		 *   otherwise in a composite binding
 		 * @param {boolean} [bWithType=false]
-		 *  if this is <code>true</code>, <code>oResult.result</code> is "binding" and
-		 *  <code>oResult.type</code> maps to a UI5 type, then both type and constraint information,
-		 *  as well as format options, are written to the resulting binding string; if this is
-		 *  <code>false</code> and <code>oResult.result</code> is "binding", then binding parameters
-		 *  are written to the resulting binding string if present
+		 *   if <code>true</code>, <code>oResult.result</code> is "binding" and
+		 *   <code>oResult.type</code> maps to a UI5 type, then both type and constraint
+		 *   information, as well as format options, are written to the resulting binding string;
+		 *   if this is <code>false</code> and <code>oResult.result</code> is "binding",
+		 *   then binding parameters are written to the resulting binding string if present
+		 * @param {boolean} [bRaw=false]
+		 *   if <code>true</code> and <code>oResult.result</code> is "binding", the resulting
+		 *   string will contain the raw value instead of being formatted with the type
 		 * @returns {string}
 		 *   the resulting string to embed into a composite binding or a binding expression
 		 */
-		resultToString : function (oResult, bExpression, bWithType) {
+		resultToString : function (oResult, bExpression, bWithType, bRaw) {
 			var vValue = oResult.value;
 
 			function binding(bAddType) {
@@ -382,7 +385,10 @@ sap.ui.define([
 
 			switch (oResult.result) {
 			case "binding":
-				return (bExpression ?  "$" : "") + binding(bWithType);
+				if (bExpression) {
+					return (bRaw ? "%" : "$") + binding(bWithType);
+				}
+				return binding(bWithType);
 
 			case "composite":
 				if (bExpression) {
