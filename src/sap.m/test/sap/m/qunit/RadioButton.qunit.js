@@ -219,6 +219,36 @@ sap.ui.define([
 		oRadioButton2.destroy();
 	});
 
+
+	QUnit.test("RadioButton selection in same groupName should be changed after setSelected", function(assert) {
+
+
+		// arrange
+		var oRadioButton1 = new RadioButton({
+			groupName: "R1",
+			text:'Hello World2'
+		});
+		oRadioButton1.placeAt("qunit-fixture");
+		var oRadioButton2 = new RadioButton({
+			groupName: "R1",
+			text:'Hello World2',
+			selected: true
+		});
+		oRadioButton2.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oRadioButton1.setSelected(true);
+		Core.applyChanges();
+
+		// assertions
+		assert.equal(oRadioButton1.getSelected(),true, "The Radio Button should not be selected");
+		assert.equal(oRadioButton2.getSelected(),false, "The Radio Button should be selected");
+
+		// cleanup
+		oRadioButton1.destroy();
+		oRadioButton2.destroy();
+	});
+
 	QUnit.test("setSelected after rendering with null value passed", function(assert) {
 		var oRadioButton = new RadioButton();
 
