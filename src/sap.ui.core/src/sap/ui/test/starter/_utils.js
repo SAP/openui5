@@ -9,8 +9,9 @@
 
 /*global sap */
 sap.ui.define([
-	"sap/base/util/merge"
-], function(merge) {
+	"sap/base/util/merge",
+	"sap/ui/thirdparty/URI"
+], function(merge, URI) {
 	"use strict";
 
 	// ---- helpers ----
@@ -163,6 +164,11 @@ sap.ui.define([
 				oTestConfig.module = resolvePackage(resolvePlaceholders(oTestConfig.module, name));
 			}
 			oTestConfig.beforeBootstrap = resolvePackage(resolvePlaceholders(oTestConfig.beforeBootstrap, name));
+			if (oTestConfig.uriParams) {
+				var oUri = new URI(oTestConfig.page);
+				oUri.search(oTestConfig.uriParams);
+				oTestConfig.page = oUri.toString();
+			}
 			oTestConfig.page = resolvePlaceholders(oTestConfig.page, name);
 			oTestConfig.title = resolvePlaceholders(oTestConfig.title, name);
 			oSuiteConfig.tests[name] = oTestConfig;

@@ -83,7 +83,12 @@
 		{
 			"control": "sap.m.Dialog",
 			"url": "Dialog.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "dialog",
+				"title": "ACC test for sap.m.Dialog",
+				"module": "./dialog.qunit"
+			}
 		},
 		{
 			"control": "sap.m.FacetFilter",
