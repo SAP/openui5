@@ -6,8 +6,9 @@ sap.ui.define([
 		'sap/ui/model/json/JSONModel',
 		'sap/m/Menu',
 		'sap/m/MenuItem',
+		'sap/ui/core/Fragment',
 		'./Formatter'
-	], function(Controller, Device ,Filter, Sorter, JSONModel, Menu, MenuItem /*, Formatter*/) {
+	], function(Controller, Device , Filter, Sorter, JSONModel, Menu, MenuItem, Fragment /*, Formatter*/) {
 	"use strict";
 
 	var SettingsDialogController = Controller.extend("sap.m.sample.TableViewSettingsDialog.SettingsDialogController", {
@@ -50,47 +51,48 @@ sap.ui.define([
 			};
 		},
 
-		onExit: function () {
-			var oDialogKey,
-				oDialogValue;
-
-			for (oDialogKey in this._mViewSettingsDialogs) {
-				oDialogValue = this._mViewSettingsDialogs[oDialogKey];
-
-				if (oDialogValue) {
-					oDialogValue.destroy();
-				}
-			}
-		},
-
 		resetGroupDialog: function(oEvent) {
 			this.groupReset =  true;
 		},
 
-		createViewSettingsDialog: function (sDialogFragmentName) {
-			var oDialog = this._mViewSettingsDialogs[sDialogFragmentName];
+		getViewSettingsDialog: function (sDialogFragmentName) {
+			var pDialog = this._mViewSettingsDialogs[sDialogFragmentName];
 
-			if (!oDialog) {
-				oDialog = sap.ui.xmlfragment(sDialogFragmentName, this);
-				this._mViewSettingsDialogs[sDialogFragmentName] = oDialog;
-
-				if (Device.system.desktop) {
-					oDialog.addStyleClass("sapUiSizeCompact");
-				}
+			if (!pDialog) {
+				pDialog = Fragment.load({
+					id: this.getView().getId(),
+					name: sDialogFragmentName,
+					controller: this
+				}).then(function (oDialog) {
+					if (Device.system.desktop) {
+						oDialog.addStyleClass("sapUiSizeCompact");
+					}
+					return oDialog;
+				});
+				this._mViewSettingsDialogs[sDialogFragmentName] = pDialog;
 			}
-			return oDialog;
+			return pDialog;
 		},
 
 		handleSortButtonPressed: function () {
-			this.createViewSettingsDialog("sap.m.sample.TableViewSettingsDialog.SortDialog").open();
+			this.getViewSettingsDialog("sap.m.sample.TableViewSettingsDialog.SortDialog")
+				.then(function (oViewSettingsDialog) {
+					oViewSettingsDialog.open();
+				});
 		},
 
 		handleFilterButtonPressed: function () {
-			this.createViewSettingsDialog("sap.m.sample.TableViewSettingsDialog.FilterDialog").open();
+			this.getViewSettingsDialog("sap.m.sample.TableViewSettingsDialog.FilterDialog")
+				.then(function (oViewSettingsDialog) {
+					oViewSettingsDialog.open();
+				});
 		},
 
 		handleGroupButtonPressed: function () {
-			this.createViewSettingsDialog("sap.m.sample.TableViewSettingsDialog.GroupDialog").open();
+			this.getViewSettingsDialog("sap.m.sample.TableViewSettingsDialog.GroupDialog")
+				.then(function (oViewSettingsDialog) {
+					oViewSettingsDialog.open();
+				});
 		},
 
 		handleSortDialogConfirm: function (oEvent) {

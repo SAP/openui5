@@ -17,27 +17,34 @@ sap.ui.define([
 		},
 
 		onDialogOpen: function (oEvent) {
-			if (!this.dialog) {
-				this.dialog = sap.ui.xmlfragment(
-					"sap.m.sample.ContainerPadding.Dialog",
-					this // associate controller with the fragment
-				);
-				this.getView().addDependent(this.dialog);
+			var oView = this.getView();
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.ContainerPadding.Dialog",
+					controller: this
+				}).then(function(oDialog){
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
 
-			// bind product data
-			this.dialog.bindElement("/ProductCollection/0");
+			this._pDialog.then(function(oDialog){
+				// bind product data
+				oDialog.bindElement("/ProductCollection/0");
 
-			// toggle compact style
-			syncStyleClass("sapUiSizeCompact", this.getView(), this.dialog);
-			this.dialog.open();
+				// toggle compact style
+				syncStyleClass("sapUiSizeCompact", oView, oDialog);
+				oDialog.open();
+			});
 		},
 
 		onDialogCloseButton: function (oEvent) {
-			this.dialog.close();
+			this._pDialog.then(function(oDialog){
+				oDialog.close();
+			});
 		}
 	});
-
 
 	return PageController;
 

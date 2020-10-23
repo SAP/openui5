@@ -14,7 +14,6 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionSortingFiltering.Page", {
-		_oDialog: null,
 
 		onInit: function() {
 			// set mock data
@@ -75,12 +74,22 @@ sap.ui.define([
 		},
 
 		onViewSettingsPressed: function(oEvent) {
-			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.m.sample.UploadCollectionSortingFiltering.Dialog", this);
+			var oView = this.getView();
+
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.UploadCollectionSortingFiltering.Dialog",
+					controller: this
+				});
 			}
-			// toggle compact style
-			syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
-			this._oDialog.open();
+
+			this._pDialog.then(function(oDialog){
+				// toggle compact style
+				syncStyleClass("sapUiSizeCompact", oView, oDialog);
+				oDialog.open();
+			});
+
 		},
 
 		onViewSettingsConfirm: function(oEvent) {

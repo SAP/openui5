@@ -17,18 +17,25 @@ sap.ui.define([
 		},
 
 		handleValueHelp : function (oEvent) {
+			var oView = this.getView();
 			this.inputId = oEvent.getSource().getId();
+
 			// create value help dialog
-			if (!this._valueHelpDialog) {
-				this._valueHelpDialog = sap.ui.xmlfragment(
-					"sap.m.sample.InputStates.Dialog",
-					this
-				);
-				this.getView().addDependent(this._valueHelpDialog);
+			if (!this._pValueHelpDialog) {
+				this._pValueHelpDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.InputStates.Dialog",
+					controller: this
+				}).then(function(oValueHelpDialog){
+					oView.addDependent(oValueHelpDialog);
+					return oValueHelpDialog;
+				});
 			}
 
-			// open value help dialog
-			this._valueHelpDialog.open();
+			this._pValueHelpDialog.then(function(oValueHelpDialog){
+				// open value help dialog
+				oValueHelpDialog.open();
+			});
 		},
 
 		_handleValueHelpSearch : function (evt) {

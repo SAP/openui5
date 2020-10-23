@@ -1029,9 +1029,14 @@
 				'		</HeaderCell>' +
 				'	</items>'+
 				'</HeaderContainer>';
-				oFragmentHeaderContainer = sap.ui.xmlfragment({fragmentContent:xml});
-				// connect HeaderContainer and ObjectHeader
-				oh10.setHeaderContainer(oFragmentHeaderContainer);
+
+				jQuery.sap.require("sap.ui.core.Fragment");
+				sap.ui.core.Fragment.load({
+					definition: xml
+				}).then(function(oHeaderContainer){
+					// connect HeaderContainer and ObjectHeader
+					oh10.setHeaderContainer(oHeaderContainer);
+				});
 			}
 
 			var oh11 = new sap.m.ObjectHeader("oh11", {

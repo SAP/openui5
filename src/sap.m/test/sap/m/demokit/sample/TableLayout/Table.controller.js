@@ -20,21 +20,31 @@ sap.ui.define([
 		},
 
 		onOpenPressed: function (oEvent) {
-			if (!this.oDialog) {
-				this.oDialog = sap.ui.xmlfragment("sap.m.sample.TableLayout.Dialog", this);
-				this.getView().addDependent(this.oDialog);
+			var oView = this.getView();
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.TableLayout.Dialog",
+					controller: this
+				}).then(function(oDialog){
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
 
-			// toggle compact style for the dialog
-			syncStyleClass("sapUiSizeCompact", this.getView(), this.oDialog);
-			this.oDialog.open();
+			this._pDialog.then(function(oDialog){
+				// toggle compact style for the dialog
+				syncStyleClass("sapUiSizeCompact", oView, oDialog);
+				oDialog.open();
+			});
 		},
 
 		onClosePressed: function (oEvent) {
-			this.oDialog.close();
+			this._pDialog.then(function(oDialog){
+				oDialog.close();
+			});
 		}
 	});
-
 
 	return TableController;
 

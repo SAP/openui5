@@ -199,7 +199,6 @@ sap.ui.define([
 		onOK: function(oEvent) {
 			this.oDataBeforeOpen = {};
 			oEvent.getSource().close();
-			oEvent.getSource().destroy();
 		},
 
 		onCancel: function(oEvent) {
@@ -207,7 +206,6 @@ sap.ui.define([
 
 			this.oDataBeforeOpen = {};
 			oEvent.getSource().close();
-			oEvent.getSource().destroy();
 		},
 
 		onReset: function() {
@@ -215,14 +213,25 @@ sap.ui.define([
 		},
 
 		onPersonalizationDialogPress: function() {
-			var oPersonalizationDialog = sap.ui.xmlfragment("sap.m.sample.P13nDialogWithDimMeasurePanel.PersonalizationDialog", this);
-			this.oJSONModel.setProperty("/ShowResetEnabled", this._isChangedDimMeasureItems());
-			oPersonalizationDialog.setModel(this.oJSONModel);
+			var oView = this.getView();
 
-			this.getView().addDependent(oPersonalizationDialog);
+			if (!this._pPersonalizationDialog) {
+				this._pPersonalizationDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.P13nDialogWithDimMeasurePanel.PersonalizationDialog",
+					controller: this
+				}).then(function (oPersonalizationDialog) {
+					oView.addDependent(oPersonalizationDialog);
+					oPersonalizationDialog.setModel(this.oJSONModel);
+					return oPersonalizationDialog;
+				}.bind(this));
+			}
 
-			this.oDataBeforeOpen = deepExtend({}, this.oJSONModel.getData());
-			oPersonalizationDialog.open();
+			this._pPersonalizationDialog.then(function(oPersonalizationDialog){
+				this.oJSONModel.setProperty("/ShowResetEnabled", this._isChangedDimMeasureItems());
+				this.oDataBeforeOpen = deepExtend({}, this.oJSONModel.getData());
+				oPersonalizationDialog.open();
+			}.bind(this));
 		},
 
 		onChangeChartType: function(oEvent) {

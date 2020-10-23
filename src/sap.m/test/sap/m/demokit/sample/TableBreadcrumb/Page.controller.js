@@ -33,8 +33,11 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 			this.getView().setModel(new JSONModel(this.mInitialOrderState), "Order");
 
-			if (!this.oTemplate) {
-				this.oTemplate = sap.ui.xmlfragment("sap.m.sample.TableBreadcrumb.Row");
+			if (!this._pTemplate) {
+				this._pTemplate = Fragment.load({
+					id: this.getView().getId(),
+					name: "sap.m.sample.TableBreadcrumb.Row"
+				});
 			}
 			this._oTable = this.byId("idProductsTable");
 
@@ -87,7 +90,9 @@ sap.ui.define([
 			}
 
 			// Set the new aggregation
-			this._oTable.bindAggregation("items", sPath, this.oTemplate);
+			this._pTemplate.then(function(oTemplate){
+				this._oTable.bindAggregation("items", sPath, oTemplate);
+			}.bind(this));
 		},
 
 
