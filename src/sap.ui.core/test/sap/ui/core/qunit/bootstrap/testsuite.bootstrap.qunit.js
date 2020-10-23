@@ -352,7 +352,10 @@ sap.ui.define(function() {
 					preload: "async"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit"
+				module: "./ThemeVersion.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"ThemeVersion-on-async": {
 				group: "Theme Versioning",
