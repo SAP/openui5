@@ -1,12 +1,12 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
-	"sap/base/Log"
-], function (jQuery, Controller, Filter, JSONModel, MessageToast, DateFormat, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Fragment"
+], function (jQuery, Controller, JSONModel, MessageToast, DateFormat, Log, Fragment) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.DynamicPageAnalyticalTable.controller.DynamicPageAnalyticalTable", {
@@ -67,17 +67,21 @@ sap.ui.define([
 			MessageToast.show("Details for product with id " + this.getView().getModel().getProperty("ProductId", oEvent.getSource().getBindingContext()));
 		},
 		onGenericTagPress: function (oEvent) {
-			if (!this._oPopover) {
-				this._oPopover = sap.ui.xmlfragment("sap.f.sample.DynamicPageAnalyticalTable.view.Card", this);
-				this.getView().addDependent(this._oPopover);
+			var oView = this.getView(),
+				oSourceControl = oEvent.getSource();
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.f.sample.DynamicPageAnalyticalTable.view.Card"
+				}).then(function (oPopover) {
+					oView.addDependent(oPopover);
+					return oPopover;
+				});
 			}
 
-			this._oPopover.openBy(oEvent.getSource());
-		},
-		onExit: function () {
-			if (this._oPopover) {
-				this._oPopover.destroy();
-			}
+			this._pPopover.then(function (oPopover) {
+				oPopover.openBy(oSourceControl);
+			});
 		}
 	});
 });

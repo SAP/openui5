@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function (Controller, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment"
+], function (Controller, JSONModel, Fragment) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.DynamicPageWithStickySubheader.controller.DynamicPageWithStickySubheader", {
@@ -16,17 +17,21 @@ sap.ui.define([
 			this.getPage().setShowFooter(!this.getPage().getShowFooter());
 		},
 		onGenericTagPress: function (oEvent) {
-			if (!this._oPopover) {
-				this._oPopover = sap.ui.xmlfragment("sap.f.sample.DynamicPageWithStickySubheader.view.Card", this);
-				this.getView().addDependent(this._oPopover);
+			var oView = this.getView(),
+				oSourceControl = oEvent.getSource();
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.f.sample.DynamicPageWithStickySubheader.view.Card"
+				}).then(function (oPopover) {
+					oView.addDependent(oPopover);
+					return oPopover;
+				});
 			}
 
-			this._oPopover.openBy(oEvent.getSource());
-		},
-		onExit: function () {
-			if (this._oPopover) {
-				this._oPopover.destroy();
-			}
+			this._pPopover.then(function (oPopover) {
+				oPopover.openBy(oSourceControl);
+			});
 		}
 	});
 });

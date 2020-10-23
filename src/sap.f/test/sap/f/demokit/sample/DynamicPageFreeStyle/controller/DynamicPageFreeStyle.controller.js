@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/library"
-], function (Controller, JSONModel, library) {
+	"sap/f/library",
+	"sap/ui/core/Fragment"
+], function (Controller, JSONModel, library, Fragment) {
 	"use strict";
 
 	// shortcut for sap.f.DynamicPageTitleArea
@@ -25,17 +26,22 @@ sap.ui.define([
 			oTitle.setPrimaryArea(sNewPrimaryArea);
 		},
 		onPressOpenPopover: function (oEvent) {
-			if (!this._oPopover) {
-				this._oPopover = sap.ui.xmlfragment("sap.f.sample.DynamicPageFreeStyle.view.Card", this);
-				this.getView().addDependent(this._oPopover);
+			var oView = this.getView(),
+				oSourceControl = oEvent.getSource();
+
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.f.sample.DynamicPageFreeStyle.view.Card"
+				}).then(function (oPopover) {
+					oView.addDependent(oPopover);
+					return oPopover;
+				});
 			}
 
-			this._oPopover.openBy(oEvent.getSource());
-		},
-		onExit: function () {
-			if (this._oPopover) {
-				this._oPopover.destroy();
-			}
+			this._pPopover.then(function (oPopover) {
+				oPopover.openBy(oSourceControl);
+			});
 		}
 	});
 });

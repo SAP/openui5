@@ -3,22 +3,29 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	'sap/ui/model/json/JSONModel',
 	"sap/m/Button",
-	"sap/m/MessageToast"
-], function (Device, Controller, JSONModel, Button, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/core/Fragment"
+], function (Device, Controller, JSONModel, Button, MessageToast, Fragment) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.ShellBarProductSwitch.controller.ShellBarProductSwitch", {
 		onInit: function () {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/sample/ShellBarProductSwitch/model/data.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/sample/ShellBarProductSwitch/model/data.json")),
+				oView = this.getView();
 			this.getView().setModel(oModel);
 
-			if (!this._oPopover) {
-				this._oPopover = sap.ui.xmlfragment("sap.f.sample.ShellBarProductSwitch.view.ProductSwitchPopover", this);
-				this.getView().addDependent(this._oPopover);
-
-				if (Device.system.phone) {
-					this._oPopover.setEndButton(new Button({text: "Close", type: "Emphasized", press: this.fnClose.bind(this)}));
-				}
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.f.sample.ShellBarProductSwitch.view.ProductSwitchPopover",
+					controller: this
+				}).then(function(oPopover){
+					oView.addDependent(oPopover);
+					if (Device.system.phone) {
+						oPopover.setEndButton(new Button({text: "Close", type: "Emphasized", press: this.fnClose.bind(this)}));
+					}
+					return oPopover;
+				}.bind(this));
 			}
 		},
 		fnChange: function (oEvent) {
@@ -30,10 +37,15 @@ sap.ui.define([
 				+ ".");
 		},
 		fnOpen: function (oEvent) {
-			this._oPopover.openBy(oEvent.getParameter("button"));
+			var oButton = oEvent.getParameter("button");
+			this._pPopover.then(function(oPopover){
+				oPopover.openBy(oButton);
+			});
 		},
 		fnClose: function () {
-			this._oPopover.close();
+			this._pPopover.then(function(oPopover){
+				oPopover.close();
+			});
 		}
 	});
 });
