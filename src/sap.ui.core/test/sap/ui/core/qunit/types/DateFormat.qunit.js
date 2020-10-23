@@ -301,7 +301,8 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 					iTarget, aExpected;
 
 				for (var i = -10; i <= 10; i++) {
-					iTarget = iToday + i * (24 * 60 * 60 * 1000);
+					// use Date Object for getting Dates in the past and in the future, to avoid summer/standard timezone change conflicts
+					iTarget = new Date(iToday).setDate(oToday.getDate() + i);
 					aExpected = getExpectedRelativeDate(i, iTarget, oFormatOptions, sLocale);
 					if (bFormat) {
 						assert.equal(oFormat1.format(new Date(iTarget)), aExpected[0], sTestInfo + " ----------- Today" + (i >= 0 ? " + " : " ") + i + " -> " + aExpected[0] + " " + (aExpected[0] == aExpected[1] ? "" : "(" + aExpected[1] + ")"));
