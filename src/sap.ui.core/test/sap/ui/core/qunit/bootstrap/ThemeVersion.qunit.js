@@ -125,12 +125,37 @@ function setupQUnitTests(mOptions) {
 				QUnit.test("library-parameters.json", function(assert) {
 					this.initFakeServer();
 
+					var fnJQueryAjaxOrig = jQuery.ajax;
+					jQuery.ajax = function(options) {
+						if (options.xhrFields && !options.xhrFields.withCredentials && typeof options.error === 'function') {
+
+							jQuery.ajax = fnJQueryAjaxOrig;
+							// call error handler to simulate probing scenario. error handler re-tries withCredentials=true
+							options.error(undefined, undefined, new Error("Not found"));
+
+							assert.equal(options.xhrFields.withCredentials, false,
+								"library-parameters.json should be requested with 'withCredentials: false'");
+						}
+					};
+
 					// prevent inline data-uri parameter usage and force a json request to test the request params
 					var oLink = $.sap.byId("sap-ui-theme-sap.ui.core");
 					oLink.attr("style", "background-image: none !important;")
 
 					// trigger loading library-parameters.json files
 					Parameters.get();
+
+					if (sap.ui.getCore().getConfiguration().getTheme() === "customcss") {
+						// the following assert is relevant for the 'withCredentials' probing.
+						// Since the requests goes against the UI5 bootstrap origin, the first request is done without credentials.
+						// The second request re-tries with credentials.
+						assert.equal(this.oServer.requests[0].withCredentials, true,
+							"library-parameters.json should be requested with 'withCredentials: true'");
+
+					} else {
+						assert.equal(this.oServer.requests.length, 1,
+							"Loading the parameters should trigger one request.");
+					}
 
 					assert.equal(this.oServer.requests.length, 1,
 						"Loading the parameters should trigger one request.");
