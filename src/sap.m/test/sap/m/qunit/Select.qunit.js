@@ -10426,6 +10426,26 @@ sap.ui.define([
 			assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenSelectRef.attr("id"), "getIdForLabel() returns the hidden select ID");
 		});
 
+		QUnit.test("Hidden select value is changed", function (assert) {
+			// assert
+			assert.strictEqual(this.$oHiddenSelectRef.attr("value"), "1", "Value is set to first item key when forceSelection is set to true");
+
+			// act
+			this.oSelect.setSelectedKey("2");
+			Core.applyChanges();
+
+			// assert
+			assert.strictEqual(this.$oHiddenSelectRef.attr("value"), "2", "Value is correctly changed");
+
+			// act
+			this.oSelect.setForceSelection(false);
+			this.oSelect.setSelectedKey(null);
+			Core.applyChanges();
+
+			// assert
+			assert.strictEqual(this.$oHiddenSelectRef.attr("value"), "", "Value is set to default when forceSelection is set to false");
+		});
+
 		QUnit.module("OverflowToolbar configuration");
 
 		QUnit.test("OverflowToolbar configuration is set correctly", function (assert) {
