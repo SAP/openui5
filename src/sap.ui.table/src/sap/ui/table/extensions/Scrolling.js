@@ -582,10 +582,9 @@ sap.ui.define([
 
 		_performUpdateFromFirstVisibleRow: function(oTable, oProcessInterface) {
 			return VerticalScrollingHelper.adjustScrollPositionToFirstVisibleRow(oTable, oProcessInterface).then(function() {
-				if (VerticalScrollingHelper.isIndexInBuffer(oTable, oTable.getFirstVisibleRow())) {
-					return VerticalScrollingHelper.fixTemporaryFirstVisibleRow(oTable, null, oProcessInterface);
-				}
-				return Promise.resolve();
+				return VerticalScrollingHelper.fixTemporaryFirstVisibleRow(oTable, null, oProcessInterface);
+			}).then(function() {
+				return VerticalScrollingHelper.fixScrollPosition(oTable, oProcessInterface);
 			}).then(function() {
 				return Promise.all([
 					VerticalScrollingHelper.scrollViewport(oTable, oProcessInterface),
@@ -629,6 +628,8 @@ sap.ui.define([
 							oScrollPosition.setOffset(0);
 						}
 					}
+				}).then(function() {
+					return VerticalScrollingHelper.fixScrollPosition(oTable, oProcessInterface);
 				}).then(function() {
 					return Promise.all([
 						VerticalScrollingHelper.scrollViewport(oTable, oProcessInterface),
@@ -688,31 +689,9 @@ sap.ui.define([
 			return VerticalScrollingHelper.adjustScrollPositionToScrollbar(oTable, oProcessInterface).then(function() {
 				return VerticalScrollingHelper.adjustFirstVisibleRowToScrollPosition(oTable, null, oProcessInterface);
 			}).then(function() {
-				if (oProcessInterface.isCancelled()) {
-					return Promise.resolve();
-				}
-
-				if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-					return VerticalScrollingHelper.scrollViewport(oTable, oProcessInterface);
-				}
-
-				var oScrollPosition = _private(oTable).oVerticalScrollPosition;
-				var iIndex = oScrollPosition.getIndex();
-				var iMaxFirstRenderedRowIndex = oTable._getMaxFirstRenderedRowIndex();
-				var aRowHeights = oTable._aRowHeights;
-
-				switch (oScrollPosition.getOffsetType()) {
-					case ScrollPosition.OffsetType.Percentage:
-						var iTargetRowIndex = Math.max(0, Math.min(aRowHeights.length - 1, iIndex - iMaxFirstRenderedRowIndex));
-						oScrollPosition.setOffset(aRowHeights[iTargetRowIndex] * oScrollPosition.getOffset());
-						break;
-					case ScrollPosition.OffsetType.PercentageOfViewport:
-						oScrollPosition.setOffset(0);
-						break;
-					default:
-				}
-
-				return Promise.resolve();
+				return VerticalScrollingHelper.fixScrollPosition(oTable, oProcessInterface);
+			}).then(function() {
+				return VerticalScrollingHelper.scrollViewport(oTable, oProcessInterface);
 			});
 		},
 
@@ -890,7 +869,7 @@ sap.ui.define([
 			var aRowHeights = oTable._aRowHeights;
 			var iRowIndex;
 
-			log("VerticalScrollingHelper.fixTemporaryFirstVisibleRow");
+			log("VerticalScrollingHelper.fixTemporaryFirstVisibleRow", oTable);
 
 			if (bOffsetIsInPercentageOfViewport) {
 				var nRemaining = iViewportScrollRange * oScrollPosition.getOffset();
@@ -1073,91 +1052,80 @@ sap.ui.define([
 		},
 
 		/**
-		 * Scrolls the viewport to match the scroll position. Adjusts the scroll position if the viewport cannot be scrolled to match the scroll
-		 * position.
+		 * If the offset is specified in percentage, index and offset are recalculated to the actual index and an offset in pixel. The current
+		 * state of the viewport including the row heights is taken into account for this correction. The offset is limited to the height of the
+		 * row at this index.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {ProcessInterface} [oProcessInterface} The interface to the process.
-		 * @returns {Promise} A Promise that resolves when <code>scrollTop</code> of the viewport was set.
+		 * @param {ProcessInterface} [oProcessInterface] The interface to the process.
+		 * @returns {Promise} A Promise that resolves when the scroll position is set to the correct value.
 		 */
-		scrollViewport: function(oTable, oProcessInterface) {
+		fixScrollPosition: function(oTable, oProcessInterface) {
 			if (oProcessInterface && oProcessInterface.isCancelled()) {
 				return Promise.resolve();
 			}
 
 			var oScrollPosition = _private(oTable).oVerticalScrollPosition;
 			var oViewport = oTable.getDomRef("tableCCnt");
-			var iScrollRange = VerticalScrollingHelper.getScrollRangeOfViewport(oTable);
+			var iViewportScrollRange = VerticalScrollingHelper.getScrollRangeOfViewport(oTable);
 			var aRowHeights = oTable._aRowHeights;
 
-			if (!TableUtils.isVariableRowHeightEnabled(oTable) || !oViewport || !oTable.getBinding("rows")) {
-				log("VerticalScrollingHelper.scrollViewport: Aborted - Guard clause not passed", oTable);
+			if (!oViewport || !oTable.getBinding("rows")) {
+				log("VerticalScrollingHelper.fixScrollPosition: Aborted - Viewport or binding not available", oTable);
 				return Promise.resolve();
 			}
 
-			if (iScrollRange === 0) {
-				// Heights of empty rows are not included into the inner vertical scroll range. But because of them, the scroll position may be
-				// greater than 0, even though the calculated range is 0, so the browser does not automatically adjust it. Therefore, the inner scroll
-				// position should be reset.
+			log("VerticalScrollingHelper.fixScrollPosition", oTable);
 
-				log("VerticalScrollingHelper.scrollViewport: No overflow in viewport - Scroll to 0", oTable);
-				oTable._setFirstVisibleRowIndex(0, {onScroll: true});
-				oScrollPosition.setPosition(0);
-				oViewport.scrollTop = 0;
-
-				return Promise.resolve();
-			}
-
-			var iScrollTop = 0;
+			var iNewIndex = oScrollPosition.getIndex();
+			var iNewOffset = oScrollPosition.getOffset();
 			var iTargetRowIndex = 0;
 			var iRowIndex;
-
-			log("VerticalScrollingHelper.scrollViewport");
+			var iFirstRenderedRowIndex = oTable._getFirstRenderedRowIndex();
 
 			switch (oScrollPosition.getOffsetType()) {
 				case ScrollPosition.OffsetType.Pixel:
 				case ScrollPosition.OffsetType.Percentage:
 					var iIndex = oScrollPosition.getIndex();
-					var iMaxFirstRenderedRowIndex = oTable._getMaxFirstRenderedRowIndex();
+					var iVirtualViewportScrollTop = 0;
+					var iCurrentOffsetType = oScrollPosition.getOffsetType();
 
 					if (VerticalScrollingHelper.isIndexInBuffer(oTable, iIndex)) {
 						var iVirtualScrollTop = 0;
 
-						iTargetRowIndex = Math.max(0, Math.min(aRowHeights.length - 1, iIndex - iMaxFirstRenderedRowIndex));
+						iTargetRowIndex = Math.max(0, Math.min(aRowHeights.length - 1, iIndex - iFirstRenderedRowIndex));
 
 						for (iRowIndex = 0; iRowIndex < iTargetRowIndex; iRowIndex++) {
 							iVirtualScrollTop += aRowHeights[iRowIndex];
 
-							if (iVirtualScrollTop > iScrollRange) {
+							if (iVirtualScrollTop > iViewportScrollRange) {
 								// The index is too high. It is not possible to scroll down so far that the row at this index is shown on top.
-								oScrollPosition.setPosition(iMaxFirstRenderedRowIndex + iRowIndex, iScrollRange - iScrollTop);
+								iNewIndex = iFirstRenderedRowIndex + iRowIndex;
+								iNewOffset = iViewportScrollRange - iVirtualViewportScrollTop;
+								iCurrentOffsetType = ScrollPosition.OffsetType.Pixel;
 								iTargetRowIndex = iRowIndex;
 								break;
 							} else {
-								iScrollTop = iVirtualScrollTop;
+								iVirtualViewportScrollTop = iVirtualScrollTop;
 							}
 						}
 					}
 
-					if (oScrollPosition.isOffsetInPixel()) {
+					if (iCurrentOffsetType === ScrollPosition.OffsetType.Pixel) {
 						// The offset may not be larger than the row.
-						oScrollPosition.setOffset(Math.min(oScrollPosition.getOffset(), aRowHeights[iTargetRowIndex]));
+						iNewOffset = Math.min(iNewOffset, aRowHeights[iTargetRowIndex]);
 					} else {
-						oScrollPosition.setOffset(aRowHeights[iTargetRowIndex] * oScrollPosition.getOffset());
+						iNewOffset = aRowHeights[iTargetRowIndex] * iNewOffset;
 					}
 
-					iScrollTop += oScrollPosition.getOffset();
+					iVirtualViewportScrollTop += iNewOffset;
 
-					if (iScrollTop > iScrollRange) {
-						oScrollPosition.setOffset(oScrollPosition.getOffset() - (iScrollTop - iScrollRange));
-						iScrollTop = iScrollRange;
+					if (iVirtualViewportScrollTop > iViewportScrollRange && TableUtils.isVariableRowHeightEnabled(oTable)) {
+						iNewOffset -= iVirtualViewportScrollTop - iViewportScrollRange;
 					}
 					break;
 				case ScrollPosition.OffsetType.PercentageOfViewport:
-					var nRemaining = iScrollRange * oScrollPosition.getOffset();
-					var iFirstRenderedRowIndex = oTable._getFirstRenderedRowIndex();
-
-					iScrollTop = Math.round(nRemaining);
+					var nRemaining = iViewportScrollRange * oScrollPosition.getOffset();
 
 					for (iRowIndex = 0; iRowIndex < aRowHeights.length; iRowIndex++) {
 						var nRemainingTemp = nRemaining - aRowHeights[iRowIndex];
@@ -1166,12 +1134,67 @@ sap.ui.define([
 							nRemaining = nRemainingTemp;
 							iTargetRowIndex++;
 						} else {
-							oScrollPosition.setPosition(iFirstRenderedRowIndex + iTargetRowIndex, Math.round(nRemaining));
+							iNewIndex = iFirstRenderedRowIndex + iTargetRowIndex;
+							iNewOffset = Math.round(nRemaining);
 							break;
 						}
 					}
 					break;
 				default:
+			}
+
+			oScrollPosition.setPosition(iNewIndex, iNewOffset);
+
+			return Promise.resolve();
+		},
+
+		/**
+		 * Scrolls the viewport to match the scroll position. Adjusts the scroll position if the viewport cannot be scrolled to match the scroll
+		 * position.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {ProcessInterface} [oProcessInterface] The interface to the process.
+		 * @returns {Promise} A Promise that resolves when <code>scrollTop</code> of the viewport was set.
+		 */
+		scrollViewport: function(oTable, oProcessInterface) {
+			if (oProcessInterface && oProcessInterface.isCancelled()) {
+				return Promise.resolve();
+			}
+
+			if (!TableUtils.isVariableRowHeightEnabled(oTable)) {
+				log("VerticalScrollingHelper.scrollViewport: Aborted - Variable row height not enabled", oTable);
+				return Promise.resolve();
+			}
+
+			var oScrollPosition = _private(oTable).oVerticalScrollPosition;
+			var oViewport = oTable.getDomRef("tableCCnt");
+			var iScrollRange = VerticalScrollingHelper.getScrollRangeOfViewport(oTable);
+			var aRowHeights = oTable._aRowHeights;
+			var iScrollTop = 0;
+
+			if (iScrollRange === 0) {
+				log("VerticalScrollingHelper.scrollViewport: Aborted - No overflow in viewport", oTable);
+				oViewport.scrollTop = iScrollTop;
+				oViewport._scrollTop = oViewport.scrollTop;
+				return Promise.resolve();
+			}
+
+			log("VerticalScrollingHelper.scrollViewport", oTable);
+
+			switch (oScrollPosition.getOffsetType()) {
+				case ScrollPosition.OffsetType.Pixel:
+					var iIndex = oScrollPosition.getIndex();
+					var iTargetRowIndex = Math.max(0, Math.min(aRowHeights.length - 1, iIndex - oTable._getFirstRenderedRowIndex()));
+
+					for (var iRowIndex = 0; iRowIndex < iTargetRowIndex; iRowIndex++) {
+						iScrollTop += aRowHeights[iRowIndex];
+					}
+
+					iScrollTop += oScrollPosition.getOffset();
+					break;
+				default:
+					log("VerticalScrollingHelper.scrollViewport: The viewport can only be scrolled if the offset is in pixel", oTable);
+					return Promise.resolve();
 			}
 
 			log("VerticalScrollingHelper.scrollViewport: Scroll from " + oViewport.scrollTop + " to " + iScrollTop, oTable);
@@ -1185,7 +1208,7 @@ sap.ui.define([
 		 * Scrolls the scrollbar to match the scroll position.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {ProcessInterface} [oProcessInterface} The interface to the process.
+		 * @param {ProcessInterface} [oProcessInterface] The interface to the process.
 		 * @returns {Promise} A Promise that resolves when <code>scrollTop</code> of the scrollbar was set.
 		 */
 		scrollScrollbar: function(oTable, oProcessInterface) {
@@ -1213,7 +1236,6 @@ sap.ui.define([
 
 			switch (oScrollPosition.getOffsetType()) {
 				case ScrollPosition.OffsetType.Pixel:
-				case ScrollPosition.OffsetType.Percentage:
 					if (VerticalScrollingHelper.isIndexInBuffer(oTable, iIndex)) {
 						var iVirtualViewportScrollTop = 0;
 
@@ -1223,11 +1245,7 @@ sap.ui.define([
 							iVirtualViewportScrollTop += aRowHeights[iRowIndex];
 						}
 
-						if (oScrollPosition.isOffsetInPixel()) {
-							iVirtualViewportScrollTop += Math.min(aRowHeights[iTargetRowIndex], oScrollPosition.getOffset());
-						} else {
-							iVirtualViewportScrollTop += aRowHeights[iTargetRowIndex] * oScrollPosition.getOffset();
-						}
+						iVirtualViewportScrollTop += Math.min(aRowHeights[iTargetRowIndex], oScrollPosition.getOffset());
 
 						var nScrolledBufferPercentage = Math.min(iVirtualViewportScrollTop / iViewportScrollRange, 1);
 						var nScrolledBuffer = iBuffer * nScrolledBufferPercentage;
@@ -1237,23 +1255,13 @@ sap.ui.define([
 						var nScrollRangeRowFraction = VerticalScrollingHelper.getScrollRangeRowFraction(oTable);
 
 						nScrollPosition = iIndex * nScrollRangeRowFraction;
-
-						if (oScrollPosition.isOffsetInPixel()) {
-							iTargetRowIndex = Math.max(0, Math.min(aRowHeights.length - 1, iIndex - oTable._getFirstRenderedRowIndex()));
-							nScrollPosition += nScrollRangeRowFraction * Math.min(oScrollPosition.getOffset() / aRowHeights[iTargetRowIndex], 1);
-						} else {
-							nScrollPosition += nScrollRangeRowFraction * oScrollPosition.getOffset();
-						}
-					}
-					break;
-				case ScrollPosition.OffsetType.PercentageOfViewport:
-					if (VerticalScrollingHelper.isIndexInBuffer(oTable, iIndex)) {
-						nScrollPosition = iScrollRangeWithoutBuffer + iBuffer * oScrollPosition.getOffset();
-					} else {
-						log("VerticalScrollingHelper.scrollScrollbar: Scroll position could not be determined", oTable);
+						iTargetRowIndex = Math.max(0, Math.min(aRowHeights.length - 1, iIndex - oTable._getFirstRenderedRowIndex()));
+						nScrollPosition += nScrollRangeRowFraction * Math.min(oScrollPosition.getOffset() / aRowHeights[iTargetRowIndex], 1);
 					}
 					break;
 				default:
+					log("VerticalScrollingHelper.scrollViewport: The scrollbar can only be scrolled if the offset is in pixel", oTable);
+					return Promise.resolve();
 			}
 
 			// As soon as the scroll position is > 0, scrollTop must be set to 1. Otherwise the user cannot scroll back to the first row with
@@ -1502,9 +1510,10 @@ sap.ui.define([
 					});
 				};
 
-				VerticalScrollingHelper.scrollViewport(that, oProcessInterface).then(function() {
+				VerticalScrollingHelper.fixScrollPosition(that, oProcessInterface).then(function() {
 					return Promise.all([
 						VerticalScrollingHelper.adjustFirstVisibleRowToScrollPosition(that, true, oProcessInterface),
+						VerticalScrollingHelper.scrollViewport(that, oProcessInterface),
 						VerticalScrollingHelper.scrollScrollbar(that, oProcessInterface)
 					]);
 				}).then(resolve);

@@ -3978,6 +3978,20 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
+	QUnit.test("Scroll row-wise with #scrollVertically; Small data; Fixed row heights", function(assert) {
+		var oTable = this.createTable();
+		var that = this;
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			oTable._getScrollExtension().scrollVertically(true, false);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 1, that.iBaseRowHeight, 0);
+			oTable._getScrollExtension().scrollVertically(false, false);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 0, 0, 0);
+		});
+	});
+
 	QUnit.test("Scroll row-wise with #scrollVertically; Small data; Variable row heights", function(assert) {
 		var oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
@@ -3989,6 +4003,20 @@ sap.ui.define([
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			that.assertPosition(assert, 7, 362, 655);
 			oTable._getScrollExtension().scrollVertically(false, false);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 0, 0, 0);
+		});
+	});
+
+	QUnit.test("Scroll page-wise with #scrollVertically; Small data; Fixed row heights", function(assert) {
+		var oTable = this.createTable();
+		var that = this;
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			oTable._getScrollExtension().scrollVertically(true, true);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 10, 490, 0);
+			oTable._getScrollExtension().scrollVertically(false, true);
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			that.assertPosition(assert, 0, 0, 0);
 		});
@@ -4010,7 +4038,23 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll to top and bottom with #scrollVerticallyMay; Small data; Variable row heights", function(assert) {
+	QUnit.test("Scroll to top and bottom with #scrollVerticallyMax; Small data; Fixed row heights", function(assert) {
+		var oTable = this.createTable();
+		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+		var iMaxScrollTop = this.getMaxScrollTop();
+		var that = this;
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			oTable._getScrollExtension().scrollVerticallyMax(true);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, iMaxFirstVisibleRow, iMaxScrollTop, 0);
+			oTable._getScrollExtension().scrollVerticallyMax(false);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertPosition(assert, 0, 0, 0);
+		});
+	});
+
+	QUnit.test("Scroll to top and bottom with #scrollVerticallyMax; Small data; Variable row heights", function(assert) {
 		var oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
