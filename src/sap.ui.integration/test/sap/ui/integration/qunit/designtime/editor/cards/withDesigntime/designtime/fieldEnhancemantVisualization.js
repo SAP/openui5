@@ -1,10 +1,6 @@
-sap.ui.define(["sap/ui/integration/Designtime",
-	"sap/m/Slider",
-	"sap/m/Switch"
+sap.ui.define(["sap/ui/integration/Designtime"
 ], function (
-	Designtime,
-	Slider,
-	Switch
+	Designtime
 ) {
 	"use strict";
 	return function () {
@@ -23,7 +19,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "integer",
 						"label": "Integer Label using Slider",
 						"visualization": {
-							"type": Slider,
+							"type": "sap/m/Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -48,7 +44,7 @@ sap.ui.define(["sap/ui/integration/Designtime",
 						"type": "boolean",
 						"label": "Boolean Label using Switch",
 						"visualization": {
-							"type": Switch,
+							"type": "sap/m/Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",

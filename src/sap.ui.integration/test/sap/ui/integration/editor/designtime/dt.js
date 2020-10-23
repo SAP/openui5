@@ -213,6 +213,24 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"stringWithRequestFromDestinationList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestDestinationList/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.local}}/stringWithRequestList.json"
+								},
+								"path": "/"
+							},
+							"item": {
+								"text": "{text}",
+								"key": "{key}",
+								"additionalText": "{additionalText}",
+								"icon": "{icon}"
+							}
+						}
+					},
 					"stringArray": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArray/value",
 						"label": "String Array",
@@ -280,6 +298,33 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}",
 								"allowFile": false,
+								"allowNone": false
+							}
+						}
+					},
+					"iconWithImage": {
+						"manifestpath": "/sap.card/configuration/parameters/iconWithImage/value",
+						"defaultValue": "sap-icon://account",
+						"type": "string",
+						"label": "iconWithImage",
+						"visualization": {
+							"type": "IconSelect",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						}
+					},
+					"iconWithImageNotAllowNone": {
+						"manifestpath": "/sap.card/configuration/parameters/iconWithImageNotAllowNone/value",
+						"defaultValue": "sap-icon://account",
+						"type": "string",
+						"label": "iconWithImage Not Allow None",
+						"visualization": {
+							"type": "IconSelect",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}",
 								"allowNone": false
 							}
 						}
