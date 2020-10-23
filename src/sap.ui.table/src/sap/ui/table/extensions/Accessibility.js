@@ -1164,11 +1164,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.table.Row} oRow Instance of the row.
 	 * @param {jQuery} $Ref The jQuery references to the DOM areas of the row.
-	 * @param {Object} mTooltipTexts texts for aria descriptions and tooltips.
 	 * @param {string} sSelectReference The text for the tooltip.
 	 * @public
 	 */
-	AccExtension.prototype.updateRowTooltips = function(oRow, $Ref, mTooltipTexts, sSelectReference) {
+	AccExtension.prototype.updateRowTooltips = function(oRow, $Ref, sTextMouse) {
 		if (!this._accMode) {
 			return;
 		}
@@ -1178,7 +1177,7 @@ sap.ui.define([
 
 		if ($Ref.row) {
 			if (bShowRowTooltips && TableUtils.isRowSelectionAllowed(oTable) && !$Ref.row.hasClass("sapUiTableRowHidden")) {
-				$Ref.row.attr("title", mTooltipTexts.mouse[sSelectReference]);
+				$Ref.row.attr("title", sTextMouse);
 			} else {
 				$Ref.row.removeAttr("title");
 			}
@@ -1186,7 +1185,7 @@ sap.ui.define([
 
 		if ($Ref.rowSelector) {
 			if (bShowRowTooltips && TableUtils.isRowSelectorSelectionAllowed(oTable)) {
-				$Ref.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
+				$Ref.rowSelector.attr("title", sTextMouse);
 			} else {
 				$Ref.rowSelector.removeAttr("title");
 			}
@@ -1197,7 +1196,7 @@ sap.ui.define([
 
 			if (bShowRowTooltips && TableUtils.isRowSelectionAllowed(oTable)) {
 				// the row requires a tooltip for selection if the cell selection is allowed
-				$Row.attr("title", mTooltipTexts.mouse[sSelectReference]);
+				$Row.attr("title", sTextMouse);
 			} else {
 				$Row.removeAttr("title");
 			}
@@ -1218,28 +1217,31 @@ sap.ui.define([
 		}
 
 		var $Ref = oRow.getDomRefs(true);
-		var mTooltipTexts = this.getAriaTextsForSelectionMode(true);
-		var oTable = this.getTable();
-		var bIsSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
-		var sSelectReference = "rowSelect";
-		if (bIsSelected) {
-			// when the row is selected it must show texts how to deselect
-			sSelectReference = "rowDeselect";
-		}
-		this.updateRowTooltips(oRow, $Ref, mTooltipTexts, sSelectReference);
+		var sTextKeyboard = "";
+		var sTextMouse = "";
 
 		if (!oRow.isEmpty() && !oRow.isGroupHeader() && !oRow.isSummary()) {
+			var mTooltipTexts = this.getAriaTextsForSelectionMode(true);
+			var oTable = this.getTable();
+			var bIsSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
+
 			if ($Ref.row) {
 				$Ref.row.add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
 			}
-			if ($Ref.rowSelectorText) {
-				var sText = mTooltipTexts.keyboard[sSelectReference];
-				if (bIsSelected) {
-					sText = TableUtils.getResourceText("TBL_ROW_DESC_SELECTED") + " " + sText;
-				}
-				$Ref.rowSelectorText.text(sText);
+
+			if (!bIsSelected) {
+				sTextKeyboard = mTooltipTexts.keyboard["rowSelect"];
+				sTextMouse = mTooltipTexts.mouse["rowSelect"];
+			} else {
+				sTextKeyboard = TableUtils.getResourceText("TBL_ROW_DESC_SELECTED") + " " + mTooltipTexts.keyboard["rowDeselect"];
+				sTextMouse = mTooltipTexts.mouse["rowDeselect"];
 			}
 		}
+
+		if ($Ref.rowSelectorText) {
+			$Ref.rowSelectorText.text(sTextKeyboard);
+		}
+		this.updateRowTooltips(oRow, $Ref, sTextMouse);
 	};
 
 	/**

@@ -2204,14 +2204,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Group Row Header", function(assert) {
-		fakeGroupRow(0);
-
-		// If the focus is on a group row header, the focus should not be changed by pressing Home or End.
-		var oElem = getCell(0, 0, true, assert);
-		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
-		checkFocus(oElem, assert);
-		qutils.triggerKeydown(oElem, Key.END, false, false, false);
-		checkFocus(oElem, assert);
+		return fakeGroupRow(0).then(function() {
+			// If the focus is on a group row header, the focus should not be changed by pressing Home or End.
+			var oElem = getCell(0, 0, true, assert);
+			qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+			checkFocus(oElem, assert);
+			qutils.triggerKeydown(oElem, Key.END, false, false, false);
+			checkFocus(oElem, assert);
+		});
 	});
 
 	QUnit.module("Navigation > Ctrl+Home & Ctrl+End ", {
@@ -3636,22 +3636,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("Group Row Header", function(assert) {
-		fakeGroupRow(0);
+		return fakeGroupRow(0).then(function() {
+			// Selection cell
+			var oElem = checkFocus(getRowHeader(0, true), assert);
 
-		// Selection cell
-		var oElem = checkFocus(getRowHeader(0, true), assert);
+			// *PAGE_DOWN* -> Group header
+			qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
+			oElem = checkFocus(getCell(0, 0), assert);
 
-		// *PAGE_DOWN* -> Group header
-		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
-		oElem = checkFocus(getCell(0, 0), assert);
+			// *PAGE_DOWN* -> Group header
+			qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
+			checkFocus(getCell(0, 0), assert);
 
-		// *PAGE_DOWN* -> Group header
-		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
-		checkFocus(getCell(0, 0), assert);
-
-		// *PAGE_UP* -> Selection cell
-		qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
-		checkFocus(getRowHeader(0), assert);
+			// *PAGE_UP* -> Selection cell
+			qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
+			checkFocus(getRowHeader(0), assert);
+		});
 	});
 
 	QUnit.module("Navigation > F6 & Shift+F6", {

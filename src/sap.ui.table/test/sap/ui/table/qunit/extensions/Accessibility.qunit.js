@@ -450,79 +450,91 @@ sap.ui.define([
 		var done = assert.async();
 		initRowActions(oTable, 1, 1);
 
-		var oRefs = fakeGroupRow(1);
+		fakeGroupRow(1).then(function(oRefs) {
+			assert.strictEqual(oRefs.row.attr("aria-expanded"), "true", "aria-expanded set on group row");
+			assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on group row");
+			assert.strictEqual(oRefs.fixed.attr("aria-expanded"), "true", "aria-expanded set on group row (fixed)");
+			assert.strictEqual(oRefs.fixed.attr("aria-level"), "1", "aria-level set on group row (fixed)");
+			assert.strictEqual(oRefs.act.attr("aria-expanded"), "true", "aria-expanded set on row action");
+			assert.strictEqual(oRefs.act.attr("aria-level"), "1", "aria-level set on row action");
 
-		assert.strictEqual(oRefs.row.attr("aria-expanded"), "true", "aria-expanded set on group row");
-		assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on group row");
-		assert.strictEqual(oRefs.fixed.attr("aria-expanded"), "true", "aria-expanded set on group row (fixed)");
-		assert.strictEqual(oRefs.fixed.attr("aria-level"), "1", "aria-level set on group row (fixed)");
-		assert.strictEqual(oRefs.act.attr("aria-expanded"), "true", "aria-expanded set on row action");
-		assert.strictEqual(oRefs.act.attr("aria-level"), "1", "aria-level set on row action");
+			var $Cell;
+			var i;
+			for (i = 0; i < oTable.columnCount; i++) {
+				$Cell = getCell(1, i, false, assert);
+				assert.strictEqual($Cell.attr("aria-describedby") || "", "", "aria-describedby not set on data cell group row");
+				testAriaLabelsForNonFocusedDataCell($Cell, 1, i, assert, {group: true});
+			}
 
-		var $Cell;
-		var i;
-		for (i = 0; i < oTable.columnCount; i++) {
-			$Cell = getCell(1, i, false, assert);
-			assert.strictEqual($Cell.attr("aria-describedby") || "", "", "aria-describedby not set on data cell group row");
-			testAriaLabelsForNonFocusedDataCell($Cell, 1, i, assert, {group: true});
-		}
+			for (i = 0; i < oTable.columnCount; i++) {
+				$Cell = getCell(1, i, true, assert);
+				testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {
+					firstTime: i == 0,
+					colChange: true,
+					group: true
+				});
+				testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {
+					rowChange: i == 0,
+					colChange: true,
+					group: true
+				}, true);
+				oTable.setSelectionMode(SelectionMode.Row);
+				sap.ui.getCore().applyChanges();
+				assert.ok(!$Cell[0].hasAttribute("title"), "Group row data cells have no title");
+				assert.equal(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).text(), "",
+					"Group row doesn't have row selector text");
+			}
 
-		for (i = 0; i < oTable.columnCount; i++) {
-			$Cell = getCell(1, i, true, assert);
-			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {firstTime: i == 0, colChange: true, group: true});
-			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true, group: true}, true);
-			oTable.setSelectionMode(SelectionMode.Row);
-			sap.ui.getCore().applyChanges();
-			assert.ok(!$Cell[0].hasAttribute("title"), "Group row data cells have no title");
-			assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
-				"Group row doesn't have row selector text");
-		}
-
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-		setTimeout(function() {
-			testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
-			done();
-		}, 100);
+			TableQUnitUtils.setFocusOutsideOfTable(assert);
+			setTimeout(function () {
+				testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
+				done();
+			}, 100);
+		});
 	});
 
 	QUnit.test("Sum Row", function(assert) {
 		var done = assert.async();
 		initRowActions(oTable, 1, 1);
 
-		var oRefs = fakeSumRow(1);
+		fakeSumRow(1).then(function(oRefs) {
+			assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on sum row");
+			assert.strictEqual(oRefs.fixed.attr("aria-level"), "1", "aria-level set on sum row (fixed part)");
+			assert.strictEqual(oRefs.act.attr("aria-level"), "1", "aria-level set on sum row (action part)");
 
-		assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on sum row");
-		assert.strictEqual(oRefs.fixed.attr("aria-level"), "1", "aria-level set on sum row (fixed part)");
-		assert.strictEqual(oRefs.act.attr("aria-level"), "1", "aria-level set on sum row (action part)");
+			var $Cell;
+			var i;
+			for (i = 0; i < oTable.columnCount; i++) {
+				$Cell = getCell(1, i, false, assert);
+				assert.strictEqual($Cell.attr("aria-describedby") || "", "", "aria-describedby not set on data cell sum row");
+				testAriaLabelsForNonFocusedDataCell($Cell, 1, i, assert, {sum: true});
+			}
 
-		var $Cell;
-		var i;
-		for (i = 0; i < oTable.columnCount; i++) {
-			$Cell = getCell(1, i, false, assert);
-			assert.strictEqual($Cell.attr("aria-describedby") || "", "", "aria-describedby not set on data cell sum row");
-			testAriaLabelsForNonFocusedDataCell($Cell, 1, i, assert, {sum: true});
-		}
+			for (i = 0; i < oTable.columnCount; i++) {
+				$Cell = getCell(1, i, true, assert);
+				testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {
+					firstTime: i == 0,
+					colChange: true,
+					sum: true
+				});
+				testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {
+					firstTime: i == 0,
+					colChange: true,
+					sum: true
+				});
+				oTable.setSelectionMode(SelectionMode.Row);
+				sap.ui.getCore().applyChanges();
+				assert.ok(!$Cell[0].hasAttribute("title"), "Sum row data cells have no title");
+				assert.equal(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).text(), "",
+					"Sum row doesn't have row selector text");
+			}
 
-		for (i = 0; i < oTable.columnCount; i++) {
-			$Cell = getCell(1, i, true, assert);
-			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {firstTime: i == 0, colChange: true, sum: true});
-			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {
-				firstTime: i == 0,
-				colChange: true,
-				sum: true
-			});
-			oTable.setSelectionMode(SelectionMode.Row);
-			sap.ui.getCore().applyChanges();
-			assert.ok(!$Cell[0].hasAttribute("title"), "Sum row data cells have no title");
-			assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
-				"Sum row doesn't have row selector text");
-		}
-
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-		setTimeout(function() {
-			testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
-			done();
-		}, 100);
+			TableQUnitUtils.setFocusOutsideOfTable(assert);
+			setTimeout(function () {
+				testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
+				done();
+			}, 100);
+		});
 	});
 
 	QUnit.test("Other ARIA Attributes of Data Cell", function(assert) {
@@ -790,30 +802,36 @@ sap.ui.define([
 	QUnit.test("Group Header Row", function(assert) {
 		var that = this;
 		var done = assert.async();
-		var oRefs = fakeGroupRow(1);
-		var $Cell;
+		fakeGroupRow(1).then(function(oRefs) {
+			var $Cell;
 
-		assert.strictEqual(oRefs.hdr.attr("aria-expanded"), "true", "aria-expanded set on group row header");
-		assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on group row header");
-		assert.strictEqual(oRefs.hdr.attr("aria-haspopup"), "menu", "aria-haspopup set on group row header");
+			assert.strictEqual(oRefs.hdr.attr("aria-expanded"), "true", "aria-expanded set on group row header");
+			assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on group row header");
+			assert.strictEqual(oRefs.hdr.attr("aria-haspopup"), "menu", "aria-haspopup set on group row header");
 
-		$Cell = getRowHeader(1, false, assert);
-		this.testAriaLabels($Cell, 1, assert, {group: true});
-		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
+			$Cell = getRowHeader(1, false, assert);
+			that.testAriaLabels($Cell, 1, assert, {group: true});
+			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
-		$Cell = getRowHeader(1, true, assert);
-		this.testAriaLabels($Cell, 1, assert, {group: true, focus: true, firstTime: true, expanded: true});
-		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
+			$Cell = getRowHeader(1, true, assert);
+			that.testAriaLabels($Cell, 1, assert, {
+				group: true,
+				focus: true,
+				firstTime: true,
+				expanded: true
+			});
+			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
-		assert.ok(!$Cell[0].hasAttribute("title"), "The row header of a group row has no title");
-		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
-			"The row header of a group row doesn't have row selector text");
+			assert.ok(!$Cell[0].hasAttribute("title"), "The row header of a group row has no title");
+			assert.equal(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).text(), "",
+				"The row header of a group row doesn't have row selector text");
 
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-		setTimeout(function() {
-			that.testAriaLabels($Cell, 1, assert);
-			done();
-		}, 100);
+			TableQUnitUtils.setFocusOutsideOfTable(assert);
+			setTimeout(function () {
+				that.testAriaLabels($Cell, 1, assert);
+				done();
+			}, 100);
+		});
 	});
 
 	QUnit.test("Group Header Row (TreeTable)", function(assert) {
@@ -828,7 +846,7 @@ sap.ui.define([
 		this.testAriaLabels($Cell, 0, assert, {group: true, focus: true, firstTime: true, rowChange: true, colChange: true, table: oTreeTable});
 
 		assert.ok(!$Cell[0].hasAttribute("title"), "The row header of a group row has no title");
-		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
+		assert.equal(jQuery(document.getElementById(oTreeTable.getRows()[1].getId() + "-rowselecttext")).text(), "",
 			"The row header of a group row doesn't have row selector text");
 
 		oTreeTable.expand(0);
@@ -843,28 +861,29 @@ sap.ui.define([
 	QUnit.test("Sum Row", function(assert) {
 		var that = this;
 		var done = assert.async();
-		var oRefs = fakeSumRow(1);
-		var $Cell;
+		fakeSumRow(1).then(function(oRefs) {
+			var $Cell;
 
-		assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on sum row header");
+			assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on sum row header");
 
-		$Cell = getRowHeader(1, false, assert);
-		this.testAriaLabels($Cell, 1, assert, {sum: true});
-		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
+			$Cell = getRowHeader(1, false, assert);
+			that.testAriaLabels($Cell, 1, assert, {sum: true});
+			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
-		$Cell = getRowHeader(1, true, assert);
-		this.testAriaLabels($Cell, 1, assert, {sum: true, focus: true, firstTime: true});
-		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
+			$Cell = getRowHeader(1, true, assert);
+			that.testAriaLabels($Cell, 1, assert, {sum: true, focus: true, firstTime: true});
+			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
-		assert.ok(!$Cell[0].hasAttribute("title"), "The row header of a sum row has no title");
-		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
-			"The row header of a sum row doesn't have row selector text");
+			assert.ok(!$Cell[0].hasAttribute("title"), "The row header of a sum row has no title");
+			assert.equal(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).text(), "",
+				"The row header of a sum row doesn't have row selector text");
 
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-		setTimeout(function() {
-			that.testAriaLabels($Cell, 1, assert);
-			done();
-		}, 100);
+			TableQUnitUtils.setFocusOutsideOfTable(assert);
+			setTimeout(function () {
+				that.testAriaLabels($Cell, 1, assert);
+				done();
+			}, 100);
+		});
 	});
 
 	QUnit.test("Other ARIA Attributes", function(assert) {
@@ -897,7 +916,7 @@ sap.ui.define([
 			assert.ok(!$Cell[0].hasAttribute("title"), "The row header has no title because SelectionMode is \"None\"");
 			assert.ok(!$Ref.rowScrollPart[0].hasAttribute("title"), "The scrollable part of the row has no title because SelectionMode is \"None\"");
 			assert.ok(!$Ref.rowActionPart[0].hasAttribute("title"), "The action part of the row has no title because SelectionMode is \"None\"");
-			assert.ok($RowSelectorTextRef.empty(), "The row header doesn't have row selector text because SelectionMode is \"None\"");
+			assert.equal($RowSelectorTextRef.text(), "", "The row header doesn't have row selector text because SelectionMode is \"None\"");
 		} else {
 			var sTitle = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT") : TableUtils.getResourceText("TBL_ROW_SELECT");
 			var sRowSelectorText = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT_KEY") :
@@ -1000,7 +1019,7 @@ sap.ui.define([
 			});
 		}).then(function() {
 			assert.ok(!$Cell[0].hasAttribute("title"), "The row has no title because it is empty");
-			assert.ok($RowSelectorTextRef.empty(), "The row doesn't have row selector text because it is empty");
+			assert.equal($RowSelectorTextRef.text(), "", "The row doesn't have row selector text because it is empty");
 		});
 	});
 
@@ -1106,25 +1125,25 @@ sap.ui.define([
 		var done = assert.async();
 		var $Cell;
 
-		fakeGroupRow(1);
+		fakeGroupRow(1).then(function() {
+			for (var i = 0; i < 2; i++) {
+				$Cell = getRowAction(i, true, assert);
+				that.testAriaLabels($Cell, i, assert, {
+					firstTime: i == 0,
+					rowChange: true,
+					colChange: i < 2,
+					focus: true,
+					group: i == 1,
+					expanded: true
+				});
+			}
 
-		for (var i = 0; i < 2; i++) {
-			$Cell = getRowAction(i, true, assert);
-			this.testAriaLabels($Cell, i, assert, {
-				firstTime: i == 0,
-				rowChange: true,
-				colChange: i < 2,
-				focus: true,
-				group: i == 1,
-				expanded: true
-			});
-		}
-
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-		setTimeout(function() {
-			that.testAriaLabels($Cell, 2, assert);
-			done();
-		}, 100);
+			TableQUnitUtils.setFocusOutsideOfTable(assert);
+			setTimeout(function () {
+				that.testAriaLabels($Cell, 2, assert);
+				done();
+			}, 100);
+		});
 	});
 
 	QUnit.test("aria-labelledby with Focus (Sum Row)", function(assert) {
@@ -1132,24 +1151,24 @@ sap.ui.define([
 		var done = assert.async();
 		var $Cell;
 
-		fakeSumRow(1);
+		fakeSumRow(1).then(function() {
+			for (var i = 0; i < 2; i++) {
+				$Cell = getRowAction(i, true, assert);
+				that.testAriaLabels($Cell, i, assert, {
+					firstTime: i == 0,
+					rowChange: true,
+					colChange: i < 2,
+					focus: true,
+					sum: i == 1
+				});
+			}
 
-		for (var i = 0; i < 2; i++) {
-			$Cell = getRowAction(i, true, assert);
-			this.testAriaLabels($Cell, i, assert, {
-				firstTime: i == 0,
-				rowChange: true,
-				colChange: i < 2,
-				focus: true,
-				sum: i == 1
-			});
-		}
-
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-		setTimeout(function() {
-			that.testAriaLabels($Cell, 2, assert);
-			done();
-		}, 100);
+			TableQUnitUtils.setFocusOutsideOfTable(assert);
+			setTimeout(function () {
+				that.testAriaLabels($Cell, 2, assert);
+				done();
+			}, 100);
+		});
 	});
 
 	QUnit.test("aria-labelledby without Focus", function(assert) {
@@ -1190,7 +1209,7 @@ sap.ui.define([
 		oTreeTable.setSelectionMode(SelectionMode.Row);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!$Cell[0].hasAttribute("title"), "Group row data cells have no title");
-		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
+		assert.equal(jQuery(document.getElementById(oTreeTable.getRows()[1].getId() + "-rowselecttext")).text(), "",
 			"Group row data cells don't have row selector text");
 
 		oTreeTable.expand(1);

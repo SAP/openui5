@@ -77,8 +77,9 @@ sap.ui.define([
 		beforeEach: function() {
 			createTables(false, false, iRowsWithHighlight + 2);
 			initRowSettings();
-			fakeGroupRow(iRowsWithHighlight);
-			fakeSumRow(iRowsWithHighlight + 1);
+			return fakeGroupRow(iRowsWithHighlight).then(function() {
+				return fakeSumRow(iRowsWithHighlight + 1);
+			});
 		},
 		afterEach: function() {
 			destroyTables();

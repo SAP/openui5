@@ -1511,38 +1511,35 @@ sap.ui.define([
 		return $ActiveElement;
 	};
 
+	function getRowDomRefs(oTableInstance, iRow) {
+		return {
+			row: oTableInstance.$("rows-row" + iRow),
+			fixed: oTableInstance.$("rows-row" + iRow + "-fixed"),
+			hdr: oTableInstance.$("rowsel" + iRow).parent(),
+			act: oTableInstance.$("rowact" + iRow).parent()
+		};
+	}
+
 	window.fakeGroupRow = function(iRow, oTableInstance) {
 		if (!oTableInstance) {
 			oTableInstance = oTable;
 		}
 
 		var oRow = oTableInstance.getRows()[iRow];
-		var $Row = oTableInstance.$("rows-row" + iRow);
-		var $RowFixed = oTableInstance.$("rows-row" + iRow + "-fixed");
-		var $RowHdr = oTableInstance.$("rowsel" + iRow).parent();
-		var $RowAct = oTableInstance.$("rowact" + iRow).parent();
-		var $Ref = oRow.getDomRefs(true);
-		var oAccExtension = oTable._getAccExtension();
-		var mTooltipTexts = oAccExtension.getAriaTextsForSelectionMode(true);
-		var iLevel = 1;
 
+		oTable._mode = "Group";
 		oRow.getType = function() {return oRow.Type.GroupHeader;};
-		oRow.getLevel = function() {return iLevel;};
+		oRow.getLevel = function() {return 1;};
 		oRow.isExpandable = function() {return true;};
 		oRow.isExpanded = function() {return true;};
 		oRow.isContentHidden = function() {return true;};
-		$Row.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
-		$RowFixed.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
-		$RowHdr.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
-		$RowAct.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
-		oAccExtension.updateAriaExpandAndLevelState(oRow);
-		oAccExtension.updateRowTooltips(oRow, $Ref, mTooltipTexts, false);
-		return {
-			row: $Row,
-			fixed: $RowFixed,
-			hdr: $RowHdr,
-			act: $RowAct
-		};
+
+		oTableInstance.rerender();
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("_rowsUpdated", function() {
+				resolve(getRowDomRefs(oTableInstance, iRow));
+			});
+		});
 	};
 
 	window.fakeSumRow = function(iRow, oTableInstance) {
@@ -1551,29 +1548,17 @@ sap.ui.define([
 		}
 
 		var oRow = oTableInstance.getRows()[iRow];
-		var $Row = oTableInstance.$("rows-row" + iRow);
-		var $RowFixed = oTableInstance.$("rows-row" + iRow + "-fixed");
-		var $RowHdr = oTableInstance.$("rowsel" + iRow).parent();
-		var $RowAct = oTableInstance.$("rowact" + iRow).parent();
-		var $Ref = oRow.getDomRefs(true);
-		var oAccExtension = oTable._getAccExtension();
-		var mTooltipTexts = oAccExtension.getAriaTextsForSelectionMode(true);
-		var iLevel = 1;
 
+		oTable._mode = "Tree";
 		oRow.getType = function() {return oRow.Type.Summary;};
-		oRow.getLevel = function() {return iLevel;};
-		$Row.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
-		$RowFixed.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
-		$RowHdr.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
-		$RowAct.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
-		oAccExtension.updateAriaExpandAndLevelState(oRow);
-		oAccExtension.updateRowTooltips(oRow, $Ref, mTooltipTexts, false);
-		return {
-			row: $Row,
-			fixed: $RowFixed,
-			hdr: $RowHdr,
-			act: $RowAct
-		};
+		oRow.getLevel = function() {return 1;};
+
+		oTableInstance.rerender();
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("_rowsUpdated", function() {
+				resolve(getRowDomRefs(oTableInstance, iRow));
+			});
+		});
 	};
 
 	window.initRowActions = function(oTable, iCount, iNumberOfActions) {

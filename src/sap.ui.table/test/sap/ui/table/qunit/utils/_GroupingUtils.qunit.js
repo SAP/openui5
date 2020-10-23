@@ -393,41 +393,41 @@ sap.ui.define([
 	QUnit.test("isInSummaryRow", function(assert) {
 		initRowActions(oTable, 1, 1);
 
-		fakeSumRow(0);
+		return fakeSumRow(0).then(function() {
+			assert.ok(TableUtils.Grouping.isInSummaryRow(getCell(0, 0)), "DATACELL in sum row");
+			assert.ok(!TableUtils.Grouping.isInSummaryRow(getCell(1, 0)), "DATACELL in normal row");
 
-		assert.ok(TableUtils.Grouping.isInSummaryRow(getCell(0, 0)), "DATACELL in sum row");
-		assert.ok(!TableUtils.Grouping.isInSummaryRow(getCell(1, 0)), "DATACELL in normal row");
+			assert.ok(TableUtils.Grouping.isInSummaryRow(getRowHeader(0)), "ROWHEADER in sum row");
+			assert.ok(!TableUtils.Grouping.isInSummaryRow(getRowHeader(1)), "ROWHEADER in normal row");
 
-		assert.ok(TableUtils.Grouping.isInSummaryRow(getRowHeader(0)), "ROWHEADER in sum row");
-		assert.ok(!TableUtils.Grouping.isInSummaryRow(getRowHeader(1)), "ROWHEADER in normal row");
+			assert.ok(TableUtils.Grouping.isInSummaryRow(getRowAction(0)), "ROWACTION in sum row");
+			assert.ok(!TableUtils.Grouping.isInSummaryRow(getRowAction(1)), "ROWACTION in normal row");
 
-		assert.ok(TableUtils.Grouping.isInSummaryRow(getRowAction(0)), "ROWACTION in sum row");
-		assert.ok(!TableUtils.Grouping.isInSummaryRow(getRowAction(1)), "ROWACTION in normal row");
-
-		assert.ok(!TableUtils.Grouping.isInSummaryRow(getColumnHeader(0)), "COLUMNHEADER");
-		assert.ok(!TableUtils.Grouping.isInSummaryRow(getSelectAll()), "COLUMNROWHEADER");
-		assert.ok(!TableUtils.Grouping.isInSummaryRow(null), "null");
-		assert.ok(!TableUtils.Grouping.isInSummaryRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
+			assert.ok(!TableUtils.Grouping.isInSummaryRow(getColumnHeader(0)), "COLUMNHEADER");
+			assert.ok(!TableUtils.Grouping.isInSummaryRow(getSelectAll()), "COLUMNROWHEADER");
+			assert.ok(!TableUtils.Grouping.isInSummaryRow(null), "null");
+			assert.ok(!TableUtils.Grouping.isInSummaryRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
+		});
 	});
 
 	QUnit.test("isInGroupHeaderRow", function(assert) {
 		initRowActions(oTable, 1, 1);
 
-		fakeGroupRow(0);
+		return fakeGroupRow(0).then(function() {
+			assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getCell(0, 0)), "DATACELL in group row");
+			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getCell(1, 0)), "DATACELL in normal row");
 
-		assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getCell(0, 0)), "DATACELL in group row");
-		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getCell(1, 0)), "DATACELL in normal row");
+			assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getRowHeader(0)), "ROWHEADER in group row");
+			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getRowHeader(1)), "ROWHEADER in normal row");
 
-		assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getRowHeader(0)), "ROWHEADER in group row");
-		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getRowHeader(1)), "ROWHEADER in normal row");
+			assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getRowAction(0)), "ROWACTION in group row");
+			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getRowAction(1)), "ROWACTION in normal row");
 
-		assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getRowAction(0)), "ROWACTION in group row");
-		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getRowAction(1)), "ROWACTION in normal row");
-
-		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getColumnHeader(0)), "COLUMNHEADER");
-		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getSelectAll()), "COLUMNROWHEADER");
-		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(null), "null");
-		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
+			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getColumnHeader(0)), "COLUMNHEADER");
+			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getSelectAll()), "COLUMNROWHEADER");
+			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(null), "null");
+			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
+		});
 	});
 
 	QUnit.module("Grouping Modes", {

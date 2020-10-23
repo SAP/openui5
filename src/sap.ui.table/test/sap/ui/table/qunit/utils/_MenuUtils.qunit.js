@@ -753,23 +753,25 @@ sap.ui.define([
 			var fnOpenAsContextMenu = that.spy(oContextMenu, "openAsContextMenu");
 			var fnOpen = that.spy(oContextMenu, "openBy");
 
-			fakeGroupRow(0);
-			assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
-			assertCloseMenuSpiesNotCalled();
-			assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-			assert.ok(fnOpen.notCalled, "#open was not called");
-			resetSpies();
-			fnOpenAsContextMenu.reset();
-			fnOpen.reset();
+			return fakeGroupRow(0).then(function() {
+				assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
+				assertCloseMenuSpiesNotCalled();
+				assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+				assert.ok(fnOpen.notCalled, "#open was not called");
+				resetSpies();
+				fnOpenAsContextMenu.reset();
+				fnOpen.reset();
 
-			oCell = getCell(1, 0)[0];
-			fakeSumRow(1);
-			assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
-			assertCloseMenuSpiesNotCalled();
-			assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-			assert.ok(fnOpen.notCalled, "#open was not called");
+				oCell = getCell(1, 0)[0];
+				return fakeSumRow(1);
+			}).then(function() {
+				assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
+				assertCloseMenuSpiesNotCalled();
+				assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+				assert.ok(fnOpen.notCalled, "#open was not called");
 
-			oCloseDefaultContentCellContextMenu.restore();
+				oCloseDefaultContentCellContextMenu.restore();
+			});
 		});
 	});
 
@@ -863,14 +865,15 @@ sap.ui.define([
 		fnOpenAsContextMenu.reset();
 		fnOpen.reset();
 
-		fakeGroupRow(0);
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
-		assert.ok(oContentCellContextMenu, oTable._oCellContextMenu, "The cell content context menu still exists");
-		assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-		assert.ok(fnOpen.notCalled, "#open was not called");
-		assertCloseMenuSpiesNotCalled();
+		return fakeGroupRow(0).then(function() {
+			assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
+			assert.ok(oContentCellContextMenu, oTable._oCellContextMenu, "The cell content context menu still exists");
+			assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+			assert.ok(fnOpen.notCalled, "#open was not called");
+			assertCloseMenuSpiesNotCalled();
 
-		oCloseCustomContentCellContextMenu.restore();
+			oCloseCustomContentCellContextMenu.restore();
+		});
 	});
 
 	QUnit.test("Cell filter menu item", function(assert) {
