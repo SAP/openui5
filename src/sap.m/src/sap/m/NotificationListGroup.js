@@ -168,6 +168,8 @@ function(
 					var isCollapsed = !this.getCollapsed();
 					this.setCollapsed(isCollapsed);
 					this.fireOnCollapse({collapsed: isCollapsed});
+
+					this.getAggregation("_collapseButton").focus();
 				}.bind(this)
 			});
 

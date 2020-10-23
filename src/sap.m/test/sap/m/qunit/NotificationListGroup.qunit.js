@@ -47,7 +47,8 @@ sap.ui.define([
 			items: [
 				new NotificationListItem({
 					title: 'Item 1',
-					description: 'Item 1 Description'
+					description: 'Item 1 Description',
+					buttons: [new Button({ text: "Button" }), new Button({ text: "Button" }), new Button({ text: "Button" })]
 				}),
 				new NotificationListItem({
 					title: 'Item 2',
@@ -147,6 +148,30 @@ sap.ui.define([
 
 		$item = this.notificationListGroup.$();
 		assert.notOk($item.hasClass('sapMNLGroupCollapsed'), 'sapMNLGroupCollapsed class is not set');
+	});
+
+	QUnit.test("collapse button retains focus when pressed after a child notification item's overflow menu closes", function (assert) {
+		var done = assert.async(),
+			$NLG = this.notificationListGroup.$(),
+			oNLGCollapseButton = $NLG.find('.sapMNLGroupCollapseButton button').control()[0],
+			oNLIOverflowToolbar = this.notificationListGroup.getItems()[0]._getOverflowToolbar(),
+			oNLIOverflowToolbarButton = oNLIOverflowToolbar._getOverflowButton();
+
+		// arrange
+		oNLIOverflowToolbarButton.$().tap();
+		Core.applyChanges();
+		assert.strictEqual(oNLIOverflowToolbar._getPopover().isOpen(), true, "Notification's OverflowToolbar's Popover is open");
+
+		// act
+		oNLGCollapseButton.$().tap();
+		oNLIOverflowToolbar.closeOverflow();
+		Core.applyChanges();
+
+		setTimeout(function () {
+			assert.ok($NLG.hasClass('sapMNLGroupCollapsed'), 'sapMNLGroupCollapsed class is set');
+			assert.strictEqual(document.activeElement.id, oNLGCollapseButton.getId(), "collapse button is focused after being pressed");
+			done();
+		}, 200);
 	});
 
 	QUnit.test('close button', function(assert) {
