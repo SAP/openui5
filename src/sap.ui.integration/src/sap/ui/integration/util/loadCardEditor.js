@@ -6,7 +6,7 @@ sap.ui.define(function () {
 
 	function loadCardEditor() {
 		return new Promise(function (fnResolve, fnReject) {
-			sap.ui.require(["sap/ui/integration/designtime/cardEditor/CardEditor"], fnResolve, fnReject);
+			sap.ui.require(["sap/ui/integration/designtime/cardEditor/BASEditor"], fnResolve, fnReject);
 		});
 	}
 

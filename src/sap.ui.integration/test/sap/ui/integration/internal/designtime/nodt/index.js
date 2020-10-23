@@ -10,8 +10,8 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 		oConfigTranslation,
 		sBaseUrl = document.location.protocol + "//" + document.location.host + document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/") + 1);
 
-	loadCardEditor().then(function (x) {
-		sap.ui.require(["sap/ui/integration/designtime/cardEditor/BASEditor", "sap/ui/integration/widgets/Card", "sap/ui/integration/designtime/editor/CardEditor"], function (BASCardEditor, Card, ConfigurationEditor) {
+	loadCardEditor().then(function (BASCardEditor) {
+		sap.ui.require(["sap/ui/integration/widgets/Card", "sap/ui/integration/designtime/editor/CardEditor"], function (Card, ConfigurationEditor) {
 			LoaderExtensions.loadResource("indexjs/manifest.json", {
 				dataType: "json",
 				failOnError: false,
@@ -24,7 +24,16 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 				oCard.placeAt("card");
 				oBASCardEditor = new BASCardEditor({
 					createConfiguration: function (oEvent) {
-						oEvent.getParameters();
+						var mParameters = oEvent.getParameters();
+
+						//var sFilePath = mParameters.file;
+						//var sFileContent = mParameters.content;
+						//create dt file in BAS using above info
+
+						//Reset json to reload BAS Card Editor
+						var oManifest = mParameters.manifest;
+						var oSource = oEvent.getSource();
+						oSource.setJson(oManifest);
 					},
 					configurationChange: function (oEvent) {
 						var mParameters = oEvent.getParameters();
@@ -91,9 +100,10 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 							}
 						}
 					},
-					baseUrl: sBaseUrl
+					baseUrl: sBaseUrl,
+					json: oManifest
 				});
-				oBASCardEditor.setJson(oManifest);
+				//oBASCardEditor.setJson(oManifest);
 				oBASCardEditor.placeAt("BASeditor");
 			});
 		});

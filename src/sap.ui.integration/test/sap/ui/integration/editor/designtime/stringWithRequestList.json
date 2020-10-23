@@ -16,5 +16,11 @@
 		"key": "key3",
 		"additionalText": "addtext3",
 		"icon": "sap-icon://zoom-in"
+	},
+	{
+		"text": "text4req",
+		"key": "key4",
+		"additionalText": "addtext4",
+		"icon": "sap-icon://zoom-out"
 	}
 ]

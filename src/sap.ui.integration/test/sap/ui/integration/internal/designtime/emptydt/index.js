@@ -10,8 +10,8 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 		oConfigTranslation,
 		sBaseUrl = document.location.protocol + "//" + document.location.host + document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/") + 1);
 
-	loadCardEditor().then(function (x) {
-		sap.ui.require(["sap/ui/integration/designtime/cardEditor/BASEditor", "sap/ui/integration/widgets/Card", "sap/ui/integration/designtime/editor/CardEditor"], function (BASCardEditor, Card, ConfigurationEditor) {
+	loadCardEditor().then(function (BASCardEditor) {
+		sap.ui.require(["sap/ui/integration/widgets/Card", "sap/ui/integration/designtime/editor/CardEditor"], function (Card, ConfigurationEditor) {
 			LoaderExtensions.loadResource("indexjs/manifest.json", {
 				dataType: "json",
 				failOnError: false,
