@@ -2097,5 +2097,40 @@ sap.ui.define([
 			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest.json");
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
+
+		QUnit.module("Size", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Content height is not bigger than container height", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.setWidth("400px");
+			oCard.setHeight("200px");
+
+			oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				var oContent = oCard.getCardContent(),
+					iHeight = oContent.getDomRef().getBoundingClientRect().height;
+
+				// Assert
+				assert.ok(iHeight < 200, "The height of the content is not larger than the height of the container.");
+
+				done();
+			});
+
+			// Act
+			oCard.setManifest(oManifest_ListCard);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
 	}
 );
