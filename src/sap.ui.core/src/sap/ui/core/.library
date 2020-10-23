@@ -275,10 +275,14 @@
             <pattern partial="true">sap/ui/dom/jquery/zIndex.js</pattern>
             <pattern partial="true">sap/ui/dom/jquery/Selectors.js</pattern>
         </lib>
-        <lib name="qunit" displayName="QUnit" version="1.18.0 and 2.3.2" homepage="https://qunitjs.com">
+        <lib name="qunit" displayName="QUnit" version="1.18.0" homepage="https://qunitjs.com">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/qunit.*</pattern>
+        </lib>
+        <lib name="qunit-2" displayName="QUnit 2" version="2.3.2" homepage="https://qunitjs.com">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/qunit-2.*</pattern>
         </lib>
         <lib name="jquery-migrate" displayName="jQuery-Migrate" version="3.3.1" homepage="https://github.com/jquery/jquery-migrate/">
@@ -307,10 +311,15 @@
             <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/qunit-reporter-junit.js</pattern>
         </lib>
-        <lib name="iscroll" displayName="cubiq.org - iscroll" version="4.2.5" homepage="https://github.com/cubiq/iscroll">
+        <lib name="iscroll" displayName="cubiq.org - iScroll" version="4.2.5" homepage="https://github.com/cubiq/iscroll">
             <license url="https://github.com/cubiq/iscroll/blob/master/LICENSE" type="MIT" />
             <copyright>2012 Matteo Spinelli</copyright>
-            <pattern>sap/ui/thirdparty/iscroll*</pattern>
+            <pattern>sap/ui/thirdparty/iscroll.js</pattern>
+        </lib>
+        <lib name="iscroll-lite" displayName="cubiq.org - iScroll Lite" version="4.1.6" homepage="https://github.com/cubiq/iscroll">
+            <license url="https://github.com/cubiq/iscroll/blob/master/LICENSE" type="MIT" />
+            <copyright>2011 Matteo Spinelli</copyright>
+            <pattern>sap/ui/thirdparty/iscroll-lite.js</pattern>
         </lib>
         <lib name="swipeview" displayName="cubiq.org - swipeview" version="1.0" homepage="https://github.com/cubiq/SwipeView/">
             <license url="https://github.com/cubiq/SwipeView/blob/master/license.txt" type="MIT" />
@@ -525,7 +534,7 @@
             <copyright>Behrang Norouzinia</copyright>
             <pattern partial="true">sap/ui/core/date/Persian.js</pattern>
         </lib>
-        <lib name="vkbeautify" displayName="vkBeautify" version="unknown" homepage="http://www.eslinstructor.net/vkbeautify/">
+        <lib name="vkbeautify" displayName="vkBeautify" version="0.99.00.beta" homepage="http://www.eslinstructor.net/vkbeautify/">
             <license url="https://github.com/vkiryukhin/vkBeautify/blob/master/LICENSE" type="MIT" />
             <copyright>2012 Vadim Kiryukhin</copyright>
             <pattern>sap/ui/thirdparty/vkbeautify.js</pattern>

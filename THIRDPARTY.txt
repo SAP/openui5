@@ -59,12 +59,17 @@ Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jqueryui/*
 	src/sap.ui.core/src/sap/ui/dom/jquery/zIndex.js
 	src/sap.ui.core/src/sap/ui/dom/jquery/Selectors.js
 
-Component: QUnit 1.18.0 and 2.3.2
+Component: QUnit 1.18.0
 Copyright: jQuery Foundation and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit.*
-	src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.*
+
+Component: QUnit 2 2.3.2
+Copyright: jQuery Foundation and other contributors
+License: MIT
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.*
 
 Component: jQuery-Migrate 3.3.1
 Copyright: OpenJS Foundation and other contributors
@@ -96,11 +101,17 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-reporter-junit.js
 
-Component: cubiq.org - iscroll 4.2.5
+Component: cubiq.org - iScroll 4.2.5
 Copyright: 2012 Matteo Spinelli
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/iscroll*
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/iscroll.js
+
+Component: cubiq.org - iScroll Lite 4.1.6
+Copyright: 2011 Matteo Spinelli
+License: MIT
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/iscroll-lite.js
 
 Component: cubiq.org - swipeview 1.0
 Copyright: 2012 Matteo Spinelli
@@ -349,7 +360,7 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/date/Persian.js
 
-Component: vkBeautify
+Component: vkBeautify 0.99.00.beta
 Copyright: 2012 Vadim Kiryukhin
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
