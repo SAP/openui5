@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/theming/Parameters"
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/integration/util/DataProviderFactory"
 ], function (
 	Control,
 	Core,
@@ -43,7 +44,8 @@ sap.ui.define([
 	URI,
 	includeStylesheet,
 	LoaderExtension,
-	Parameters
+	Parameters,
+	DataProviderFactory
 ) {
 	"use strict";
 	function getHigherZIndex(source) {
@@ -226,6 +228,7 @@ sap.ui.define([
 		this._oResourceBundle = oResourceBundle;
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
+		this._mDestinationDataProviders = {};
 	};
 	/**
 	 * Returns whether the editor is ready to be used
@@ -406,6 +409,8 @@ sap.ui.define([
 				this._appliedLayerManifestChanges = vCardIdOrSettings.manifestChanges;
 				var oManifestData = this._oEditorCard.getManifestEntry("/");
 				var _beforeCurrentLayer = merge({}, oManifestData);
+				this._oProviderCard = this._oEditorCard;
+				this._oProviderCard._editorManifest = oManifestData;
 				this._beforeManifestModel = new JSONModel(_beforeCurrentLayer);
 				if (iCurrentModeIndex < CardMerger.layers["translation"] && this._currentLayerManifestChanges) {
 					//merge if not translation
@@ -417,6 +422,7 @@ sap.ui.define([
 				//create a manifest model for the original "raw" manifest that was initially loaded
 
 				this._originalManifestModel = new JSONModel(this._getOriginalManifestJson());
+				this._tempManifestModel = new JSONModel(deepClone(this._getOriginalManifestJson(), 20));
 				this._initInternal();
 				//use the translations from the card
 				if (!this._oEditorCard.getModel("i18n")) {
@@ -426,8 +432,6 @@ sap.ui.define([
 				//add a context model
 				this._createContextModel();
 			}.bind(this));
-			//the internal card instance should be invisible initially
-			this._oEditorCard.setVisible(false);
 			this._oEditorCard.onBeforeRendering();
 		}
 	};
@@ -759,6 +763,48 @@ sap.ui.define([
 		this._oPopover.addStyleClass("sapUiIntegrationCardEditorPopover");
 		return this._oPopover;
 	};
+
+	CardEditor.prototype._updateProviderCard = function () {
+		if (this._ready) {
+			var aFieldConfigs = this._oProviderCard._aFieldConfigs || [],
+				oManifestData = this._oProviderCard._editorManifest;
+
+			if (aFieldConfigs.length === 0) {
+				return;
+			}
+			delete oManifestData["sap.card"].header;
+			delete oManifestData["sap.card"].content;
+			delete oManifestData["sap.card"].data;
+			oManifestData["sap.card"].type = "List";
+			var oCurrentCard = this._oProviderCard;
+			this._oProviderCard = new Card({
+				manifest: oManifestData,
+				baseUrl: this._oProviderCard.getBaseUrl(),
+				host: this._oProviderCard.getHost()
+			});
+			this._oProviderCard.setManifestChanges([this.getCurrentSettings()]);
+			this._oProviderCard._aFieldConfigs = aFieldConfigs;
+			this._oProviderCard._editorManifest = oManifestData;
+			var that = this;
+			this._oProviderCard._fillFiltersModel = function () {
+				if (!that._oProviderCard._oDataProviderFactory) {
+					return;
+				}
+				that._bIgnoreUpdates = true;
+				for (var i = 0; i < aFieldConfigs.length; i++) {
+					var o = aFieldConfigs[i];
+					that._addValueListModel(o.config, o.field, true);
+				}
+				that._bIgnoreUpdates = false;
+			};
+			this._oProviderCard.setVisible(false);
+			this._oProviderCard.onBeforeRendering();
+			if (oCurrentCard && oCurrentCard !== this._oEditorCard) {
+				oCurrentCard.destroy();
+			}
+		}
+	};
+
 	/**
 	 * Creates a Field based on the configuration settings
 	 * @param {*} oConfig
@@ -783,8 +829,13 @@ sap.ui.define([
 		//listen to changes on the settings
 		var oBinding = this._settingsModel.bindProperty(oConfig._settingspath + "/value");
 		oBinding.attachChange(function () {
-			oConfig._changed = true;
-			this._updatePreview();
+			if (!this._bIgnoreUpdates) {
+				oConfig._changed = true;
+				if (oConfig.manifestpath.startsWith("/sap.card/configuration")) {
+					this._updateProviderCard();
+				}
+				this._updatePreview();
+			}
 		}.bind(this));
 		this._addValueListModel(oConfig, oField);
 		oField._cols = oConfig.cols || 2; //by default 2 cols
@@ -795,15 +846,20 @@ sap.ui.define([
 	 * @param {object} oConfig
 	 * @param {BaseField} oField
 	 */
-	CardEditor.prototype._addValueListModel = function (oConfig, oField) {
-		if (oConfig.values && oConfig.values.data && this._oEditorCard && this._oEditorCard._oDataProviderFactory) {
-			var oValueModel = new JSONModel({});
-			var oPromise = this._oEditorCard._oDataProviderFactory.create(oConfig.values.data).getData();
-			oPromise.then(function (oJson) {
-				oConfig._values = oJson;
-				oValueModel.setData(oConfig._values);
-				oValueModel.checkUpdate();
+	CardEditor.prototype._addValueListModel = function (oConfig, oField, bIgnore) {
+		if (oConfig.values && oConfig.values.data && this._oProviderCard && this._oProviderCard._oDataProviderFactory) {
+			var oValueModel = new JSONModel({}),
+				oPromise = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data).getData();
+			oPromise.then(function (oData) {
+				oConfig._values = oData;
+				oValueModel.setData(oData);
+				oValueModel.checkUpdate(true);
+			}).catch(function () {
+				oConfig._values = {};
+				oValueModel.setData({});
+				oValueModel.checkUpdate(true);
 			});
+
 			//in the designtime the item bindings will not use a named model, therefore we add a unnamed model for the field
 			//to carry the values, also we use the binding context to connect the given path from oConfig.values.data.path
 			//with that the result of the data request can be have also other structures.
@@ -811,7 +867,20 @@ sap.ui.define([
 			oField.bindObject({
 				path: oConfig.values.data.path || "/"
 			});
-			oField._oDataPromise = oPromise;
+			if (!bIgnore) {
+				var sData = JSON.stringify(oConfig.values.data);
+				if (sData) {
+					var destParamRegExp = /\{\{(parameters.)|(destinations.)([^\}\}]+)\}\}/g,
+						oResult = sData.match(destParamRegExp);
+					if (oResult) {
+						this._oProviderCard._aFieldConfigs = this._oProviderCard._aFieldConfigs || [];
+						this._oProviderCard._aFieldConfigs.push({
+							field: oField,
+							config: oConfig
+						});
+					}
+				}
+			}
 		}
 	};
 	/**
@@ -970,7 +1039,7 @@ sap.ui.define([
 							oItem.translatable = true;
 							oItem._translatedDefaultPlaceholder = sDefaultDTValue;
 							//resolve value to default i18n binding otherwise the binding string will be in the field
-							oItem.value = oItem.value || this.getModel("i18n").getResourceBundle().getText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
+							oItem.value = this._currentLayerManifestChanges[oItem.manifestpath] || this.getModel("i18n").getResourceBundle().getText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
 							if (this.getMode() === "translation") {
 								//resolve to _translatedDefaultValue language specific i18n binding
 								oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
@@ -1197,7 +1266,8 @@ sap.ui.define([
 					value: oConfiguration.destinations[n].name,
 					defaultValue: oConfiguration.destinations[n].defaultUrl,
 					_settingspath: "/form/items/" + [n + ".destinaton"],
-					_values: _values
+					_values: _values,
+					_destinationName: n
 				}, oConfiguration.destinations[n]);
 				if (typeof oItems[n + ".destinaton"].label === "undefined") {
 					oItems[n + ".destinaton"].label = n;
@@ -1208,6 +1278,7 @@ sap.ui.define([
 						oItems[n + ".destinaton"]._values = _values.concat(a);
 						oItems[n + ".destinaton"]._loading = false;
 						this._settingsModel.checkUpdate(true);
+						oItems[n + ".destinaton"].value = oConfiguration.destinations[n].name;
 					}.bind(this, n)); //pass in n as first parameter
 				}
 			}.bind(this));

@@ -164,7 +164,7 @@ sap.ui.define([
 			if (typeof this._visualization.type === "string") {
 				if (this._visualization.type.indexOf("/") === -1) {
 					this._visualization.type = sBuildInViz + "/" + this._visualization.type;
-					this._visualization.settings = {
+					this._visualization.settings = this._visualization.settings || {
 						value: "{currentSettings>value}",
 						editable: "{currentSettings>editable}"
 					};
@@ -302,7 +302,10 @@ sap.ui.define([
 	};
 
 	BaseField.prototype._setCurrentProperty = function (sProperty, vValue) {
-		this.getModel("currentSettings").setProperty(sProperty, vValue, this.getBindingContext("currentSettings"));
+		//avoid fire binding changes in the model
+		if (this._getCurrentProperty(sProperty) !== vValue) {
+			this.getModel("currentSettings").setProperty(sProperty, vValue, this.getBindingContext("currentSettings"));
+		}
 	};
 
 	BaseField.prototype._getCurrentProperty = function (sProperty) {

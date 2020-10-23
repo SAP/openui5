@@ -3,6 +3,11 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 
 	var oHost = new Host("host", {
 		resolveDestination: function (name) {
+			if (name === "local") {
+				//resolve local to local path
+				return Promise.resolve("./");
+
+			}
 			return Promise.resolve("https://" + name);
 		}
 	});
@@ -22,6 +27,9 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 					},
 					{
 						"name": "Northwind"
+					},
+					{
+						"name": "local"
 					}
 				]);
 			}, 1000);
