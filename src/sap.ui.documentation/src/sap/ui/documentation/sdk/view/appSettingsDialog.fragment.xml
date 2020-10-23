@@ -12,6 +12,7 @@
 					<Label text="Theme:" design="Standard" labelFor="ThemeSelect" />
 					<Select id="ThemeSelect" width="100%" class="sapUiSmallMarginBottom">
 						<core:Item key="sap_fiori_3" text="Quartz Light"/>
+						<core:Item key="sap_fiori_3_dark" text="Quartz Dark"/>
 						<core:Item key="sap_belize" text="Belize"/>
 						<core:Item key="sap_belize_plus" text="Belize Deep"/>
 						<core:Item key="sap_fiori_3_hcb" text="High Contrast Black"/>
