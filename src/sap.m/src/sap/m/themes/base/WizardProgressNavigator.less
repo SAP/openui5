@@ -47,7 +47,7 @@
 .sapMWizardProgressNavStep {
 	display: table-cell;
 	position: relative;
-	padding: 0 @_sap_m_WizardProgressNavigator_StepPadding;
+	min-width: 10.5rem;
 
 	&:focus {
 		outline: none;
@@ -70,6 +70,7 @@
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	z-index: -1;
+	margin-right: 0.25rem;
 }
 
 // we do not have a separator at the end for known number of steps
@@ -178,6 +179,7 @@
 	background: @sapUiObjectHeaderBackground;
 	border-color: @sapUiObjectHeaderBorderColor;
 	font-size: @sapMFontMediumSize;
+	margin: 0 0.1875rem;
 	.sapUiIcon {
 		font-size: @sapMFontLargeSize;
 	}
@@ -217,7 +219,7 @@ html.sap-phone .sapMWizardProgressNav {
 	display: inline-block;
 	vertical-align: middle;
 	text-align: left;
-	padding: 0 @_sap_m_WizardProgressNavigator_StepPadding;
+	padding: 0 0.5rem 0 0.1875rem;
 	max-height: 3rem;
 	overflow: hidden;
 	max-width: ~"calc(100% - 3rem)";
