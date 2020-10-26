@@ -321,6 +321,23 @@ sap.ui.define([
 				},
 
 				/**
+				 * If set, an empty <code>Field</code> renders an empty-indicator in display mode.
+				 *
+				 * This property only takes effect if <code>editMode</code> is set to <code>Display</code>.
+				 *
+				 * <b>Note</b> Empty means the <code>Field</code> holds no value. If an empty string is a valid value,
+				 * the <code>Field</code> might show nothing, depending on the <code>display</code> settings and assigned description
+				 * or <code>FieldHelp</code>.
+				 *
+				 * @since 1.85.0
+				 */
+				showEmptyIndicator: {
+					type: "boolean",
+					group: "Appearance",
+					defaultValue: false
+				},
+
+				/**
 				 * Internal property to bind the <code>showValueHelp</code> property of the internal <code>Input</code> control.
 				 */
 				_fieldHelpEnabled: {
@@ -740,7 +757,7 @@ sap.ui.define([
 
 		// most properties are rendered from content controls. Only invalidate whole Field if needed
 		// (multipleLines mostly changed together with editMode -> update once om rendering)
-		if (sPropertyName !== "width" && sPropertyName !== "editMode" && sPropertyName !== "multipleLines") {
+		if (sPropertyName !== "width" && sPropertyName !== "editMode" && sPropertyName !== "multipleLines" && sPropertyName !== "showEmptyIndicator") {
 			bSuppressInvalidate = true;
 		}
 
@@ -1308,6 +1325,11 @@ sap.ui.define([
 			}
 			if (bFound) {
 				this._aAsyncChanges.splice(i, 1);
+			}
+
+			// in display mode rerender if changed from or to empty (show or hide empty-indicator)
+			if ((oChanges.current.length === 0 || oChanges.old.length === 0) && this.getShowEmptyIndicator() && this.getEditMode() === EditMode.Display && !this.getContent() && !this.getContentDisplay()) {
+				this.invalidate();
 			}
 		}
 

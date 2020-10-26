@@ -57,6 +57,10 @@
 				<m:Label text="Field with text direction RTL"></m:Label>
 				<mdc:Field id="F21" value="{Name}" textDirection="RTL" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 
+				<m:Label text="Empty Field with empty-indicator"></m:Label>
+				<mdc:Field id="F24" value="" editMode="Display" showEmptyIndicator="true" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
+				<m:ToggleButton id="B24" text="Display" pressed="true" press="toggleDisplay"></m:ToggleButton>
+
 				<c:Title text="Fields with content controls"></c:Title>
 
 				<m:Label text="Slider"></m:Label>

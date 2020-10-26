@@ -166,6 +166,10 @@ sap.ui.define([
 				sId = "F11";
 				break;
 
+			case this.getView().byId("B24"):
+				sId = "F24";
+				break;
+
 			case this.getView().byId("B3-5"):
 				sId = "F3-5";
 				break;

@@ -13,6 +13,11 @@
 	padding-left: 0;
 }
 
+/* empty indicator */
+.sapUiMdcFieldBaseEmpty::after {
+	content: attr(emptyIndicator);
+}
+
 /**
  * align text-like controls in Table (as done for stand-alone controls in Table)
  */
