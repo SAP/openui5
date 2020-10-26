@@ -23,11 +23,12 @@ sap.ui.define([
 		"sap/ui/core/Core",
 		"sap/ui/model/json/JSONModel",
 		"sap/base/Log",
-		"sap/ui/integration/util/LoadingProvider"
+		"sap/ui/integration/util/LoadingProvider",
+		"sap/ui/Device"
 	],
 	function (library, coreLibrary, includeScript, BaseContent, AdaptiveCards, ACData, Markdown,
 			UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig,
-			VBox, MessageStrip, HTML, Core, JSONModel, Log, LoadingProvider) {
+			VBox, MessageStrip, HTML, Core, JSONModel, Log, LoadingProvider, Device) {
 		"use strict";
 
 		// shortcut for sap.ui.core.MessageType
@@ -481,16 +482,19 @@ sap.ui.define([
 					return;
 				}
 
-				includeScript({
-					id: "webcomponents-bundle",
-					attributes: {type: "module"},
-					url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
-				});
-				includeScript({
-					id: "webcomponents-bundle-es5",
-					attributes: {nomodule: "nomodule"},
-					url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.es5.js")
-				});
+				// Older Edge versions don't support some of the modern ES syntax
+				if (Device.browser.edge || Device.browser.msie) {
+					includeScript({
+						id: "webcomponents-bundle-es5",
+						url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.es5.js")
+					});
+				} else {
+					includeScript({
+						id: "webcomponents-bundle",
+						attributes: {type: "module"},
+						url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
+					});
+				}
 				this.setComponentsReady(true);
 				this._fireCardReadyEvent();
 			}.bind(this));
