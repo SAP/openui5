@@ -981,24 +981,9 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
 			sDeepResourcePath) {
-		var oAggregation = this.mParameters.$$aggregation,
-			bAggregate = oAggregation && (oAggregation.groupLevels.length
-				|| _AggregationHelper.hasMinOrMax(oAggregation.aggregate)
-				|| _AggregationHelper.hasGrandTotal(oAggregation.aggregate));
-
-		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
-
-		if (!bAggregate && mQueryOptions.$$filterBeforeAggregate) {
-			mQueryOptions.$apply = "filter(" +  mQueryOptions.$$filterBeforeAggregate + ")/"
-				+ mQueryOptions.$apply;
-			delete mQueryOptions.$$filterBeforeAggregate;
-		}
-		// w/o grouping or min/max, $apply is sufficient; else _AggregationCache is needed
-		return bAggregate
-			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, oAggregation,
-				mQueryOptions)
-			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-				this.oModel.bAutoExpandSelect, sDeepResourcePath, this.bSharedRequest);
+		return _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
+			this.mParameters.$$aggregation, this.inheritQueryOptions(mQueryOptions, oContext),
+			this.oModel.bAutoExpandSelect, this.bSharedRequest);
 	};
 
 	/**

@@ -20,8 +20,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["enhanceCacheWithGrandTotal", "enhanceCacheWithMinMax"].forEach(function (sEnhance) {
-	QUnit.test("getResourcePathWithQuery via " + sEnhance, function (assert) {
+	QUnit.test("getResourcePathWithQuery", function (assert) {
 		var oAggregation = {},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			bCount = "/*false,true*/", // dummy value suitable for deepEqual()
@@ -38,7 +37,7 @@ sap.ui.define([
 			oRequestorMock = this.mock(oFirstLevelCache.oRequestor),
 			sResourcePath;
 
-		_GrandTotalHelper[sEnhance](oFirstLevelCache, oAggregation, mQueryOptions);
+		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation, mQueryOptions);
 		oAggregationHelperMock.expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation), {
 				$count : bCount, $skip : 42, $top : 57, "sap-client" : "123"
@@ -75,80 +74,6 @@ sap.ui.define([
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON,
 			"unmodified");
 		assert.strictEqual(oFirstLevelCache.bFollowUp, true, "next request is still a follow-up");
-	});
-});
-
-	//*********************************************************************************************
-	QUnit.test("handleMinMaxResponse", function (assert) {
-		var mAlias2MeasureAndMethod = {
-				"UI5min__MinAndMax" : {
-					measure : "MinAndMax",
-					method : "min"
-				},
-				"UI5max__MinAndMax" : {
-					measure : "MinAndMax",
-					method : "max"
-				},
-				"UI5min__OnlyMin" : {
-					measure : "OnlyMin",
-					method : "min"
-				},
-				"UI5max__OnlyMax" : {
-					measure : "OnlyMax",
-					method : "max"
-				}
-			},
-			oFirstLevelCache = {
-				handleResponse : sinon.stub()
-			},
-			fnHandleResponse = oFirstLevelCache.handleResponse,
-			mMeasureRange = {
-				MinAndMax : {
-					min : 3,
-					max : 99
-				},
-				OnlyMin : {
-					min : 7
-				},
-				OnlyMax : {
-					max : 10
-				}
-			},
-			fnMeasureRangeResolve = sinon.stub(),
-			oResponseRecord = {},
-			oResult = { /*GET response*/
-				value : [
-					{
-						"@odata.id" : null,
-						"UI5min__MinAndMax" : 3,
-						"UI5max__MinAndMax" : 99,
-						"UI5min__OnlyMin" : 7,
-						"UI5max__OnlyMax" : 10,
-						"UI5__count" : "42",
-						"UI5__count@odata.type" : "#Decimal"
-					},
-					oResponseRecord
-				]
-			},
-			mTypeForMetaPath = {/*fetchTypes result*/},
-			iStart = 0,
-			iEnd = 10;
-
-		_GrandTotalHelper.enhanceCacheWithMinMax(oFirstLevelCache, null, null,
-			mAlias2MeasureAndMethod, fnMeasureRangeResolve);
-
-		// code under test
-		oFirstLevelCache.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);
-
-		assert.notOk("handleResponse" in oFirstLevelCache, "reverted to prototype");
-		assert.strictEqual(fnHandleResponse.callCount, 1);
-		assert.ok(fnHandleResponse.calledWith(iStart, iEnd, sinon.match.same(oResult),
-			sinon.match.same(mTypeForMetaPath)));
-		assert.strictEqual(fnMeasureRangeResolve.callCount, 1);
-		assert.deepEqual(fnMeasureRangeResolve.args[0][0], mMeasureRange, "mMeasureRange");
-		assert.strictEqual(oResult["@odata.count"], "42");
-		assert.strictEqual(oResult.value.length, 1);
-		assert.strictEqual(oResult.value[0], oResponseRecord);
 	});
 
 	//*********************************************************************************************

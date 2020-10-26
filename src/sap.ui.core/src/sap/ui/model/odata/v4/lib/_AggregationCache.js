@@ -9,9 +9,11 @@ sap.ui.define([
 	"./_GrandTotalHelper",
 	"./_GroupLock",
 	"./_Helper",
+	"./_MinMaxHelper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise"
-], function (_AggregationHelper, _Cache, _GrandTotalHelper, _GroupLock, _Helper, Log, SyncPromise) {
+], function (_AggregationHelper, _Cache, _GrandTotalHelper, _GroupLock, _Helper, _MinMaxHelper,
+		Log, SyncPromise) {
 	"use strict";
 
 	//*********************************************************************************************
@@ -34,42 +36,17 @@ sap.ui.define([
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string
 	 * @throws {Error}
-	 *   If the system query options "$count" or "$filter" are used together with group levels, or
-	 *   if group levels are combined with min/max, or if the system query options "$expand" or
-	 *   "$select" are used at all
+	 *   If the system query options "$count" or "$filter" are used together with group levels
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._AggregationCache
 	 * @extends sap.ui.model.odata.v4.lib._Cache
 	 * @private
 	 */
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions) {
-		var mAlias2MeasureAndMethod = {},
-			mFirstQueryOptions,
-			fnMeasureRangeResolve;
-
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 		this.oAggregation = oAggregation;
-		if ("$expand" in mQueryOptions) {
-			throw new Error("Unsupported system query option: $expand");
-		}
-		if ("$select" in mQueryOptions) {
-			throw new Error("Unsupported system query option: $select");
-		}
 
-		if (_AggregationHelper.hasMinOrMax(oAggregation.aggregate)) {
-			// Note: ignore existing mQueryOptions.$apply, e.g. from ODLB#updateAnalyticalInfo
-			if (oAggregation.groupLevels.length) {
-				throw new Error("Unsupported group levels together with min/max");
-			}
-			this.oMeasureRangePromise = new Promise(function (resolve) {
-				fnMeasureRangeResolve = resolve;
-			});
-			mFirstQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions,
-				mAlias2MeasureAndMethod); // 1st request only
-			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mFirstQueryOptions, true);
-			_GrandTotalHelper.enhanceCacheWithMinMax(this.oFirstLevel, oAggregation, mQueryOptions,
-				mAlias2MeasureAndMethod, fnMeasureRangeResolve);
-		} else if (oAggregation.groupLevels.length) {
+		if (oAggregation.groupLevels.length) {
 			this.aElements = [];
 			this.aElements.$byPredicate = {};
 			this.aElements.$count = undefined;
@@ -361,34 +338,15 @@ sap.ui.define([
 					this.toString(), "sap.ui.model.odata.v4.lib._Cache");
 				return SyncPromise.resolve();
 			}
-			if (!this.oMeasureRangePromise) {
-				return this.oFirstLevel.fetchValue(oGroupLock, sPath).then(function () {
-						return that.oFirstLevel.iLeafCount;
-					});
-			} // else: in case of min/max, no special handling is needed
+			return this.oFirstLevel.fetchValue(oGroupLock, sPath).then(function () {
+					return that.oFirstLevel.iLeafCount;
+				});
 		}
 		if (this.oAggregation.groupLevels.length) {
 			this.registerChange(sPath, oListener);
 			return this.drillDown(this.aElements, sPath, oGroupLock);
 		}
 		return this.oFirstLevel.fetchValue(oGroupLock, sPath, fnDataRequested, oListener);
-	};
-
-	/**
-	 * Gets the <code>Promise</code> which resolves with a map of minimum and maximum values.
-	 *
-	 * @returns {Promise}
-	 *   A <code>Promise</code> which resolves with a map of minimum and maximum values for
-	 *   requested measures, or <code>undefined</code> if no minimum or maximum is requested. The
-	 *   key of the map is the measure property name and the value is an object with a
-	 *   <code>min</code> or <code>max</code> property containing the corresponding minimum or
-	 *   maximum value.
-	 *
-	 * @public
-	 */
-	// @override sap.ui.model.odata.v4.lib._Cache#getMeasureRangePromise
-	_AggregationCache.prototype.getMeasureRangePromise = function () {
-		return this.oMeasureRangePromise;
 	};
 
 	/**
@@ -525,7 +483,7 @@ sap.ui.define([
 					}
 				}
 				that.iReadLength = iLength + iPrefetchLength;
-			} else if (!that.oMeasureRangePromise) {
+			} else {
 				oResult.value.forEach(function (oElement) {
 					if (!("@$ui5.node.level" in oElement)) {
 						oElement["@$ui5.node.isExpanded"] = undefined;
@@ -633,14 +591,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a cache for data aggregation that performs requests using the given requestor.
-	 * Note: The paths in $expand and $select will always be sorted in the cache's query string.
+	 * Creates a cache for a collection of entities or for data aggregation that performs requests
+	 * using the given requestor.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL; it must not contain a query string<br>
 	 *   Example: Products
+	 * @param {string} sDeepResourcePath
+	 *   The deep resource path to be used to build the target path for bound messages
 	 * @param {object} oAggregation
 	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
@@ -653,14 +613,57 @@ sap.ui.define([
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
-	 * @returns {sap.ui.model.odata.v4.lib._AggregationCache}
+	 * @param {boolean} [bSortExpandSelect]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string. When
+	 *   using min, max, grand total, or data aggregation they will always be sorted
+	 * @param {boolean} [bSharedRequest]
+	 *   If this parameter is set, multiple requests for a cache using the same resource path will
+	 *   always return the same, shared cache. This cache is read-only, modifying calls lead to an
+	 *   error.
+	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
+	 * @throws {Error}
+	 *   If the system query options "$count" or "$filter" are used together with group levels, or
+	 *   if group levels are combined with min/max, or if the system query options "$expand" or
+	 *   "$select" are used at all
 	 *
 	 * @public
 	 */
-	// @override sap.ui.model.odata.v4.lib._Cache#create
-	_AggregationCache.create = function (oRequestor, sResourcePath, oAggregation, mQueryOptions) {
-		return new _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions);
+	_AggregationCache.create = function (oRequestor, sResourcePath, sDeepResourcePath, oAggregation,
+			mQueryOptions, bSortExpandSelect, bSharedRequest) {
+		var bAggregate, bHasMinOrMax;
+
+		if (oAggregation) {
+			bHasMinOrMax = _AggregationHelper.hasMinOrMax(oAggregation.aggregate);
+			bAggregate = oAggregation.groupLevels.length || bHasMinOrMax
+				|| _AggregationHelper.hasGrandTotal(oAggregation.aggregate);
+
+			if (bAggregate) {
+				if ("$expand" in mQueryOptions) {
+					throw new Error("Unsupported system query option: $expand");
+				}
+				if ("$select" in mQueryOptions) {
+					throw new Error("Unsupported system query option: $select");
+				}
+
+				if (bHasMinOrMax) {
+					return _MinMaxHelper.createCache(oRequestor, sResourcePath, oAggregation,
+						mQueryOptions);
+				}
+
+				return new _AggregationCache(oRequestor, sResourcePath, oAggregation,
+					mQueryOptions);
+			}
+		}
+
+		if (mQueryOptions.$$filterBeforeAggregate) {
+			mQueryOptions.$apply = "filter(" +  mQueryOptions.$$filterBeforeAggregate + ")/"
+				+ mQueryOptions.$apply;
+			delete mQueryOptions.$$filterBeforeAggregate;
+		}
+
+		return _Cache.create(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			sDeepResourcePath, bSharedRequest);
 	};
 
 	return _AggregationCache;
