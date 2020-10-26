@@ -365,6 +365,76 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest_ObjectCard_Visible);
 	});
 
+	QUnit.test("Visible property of items - determined by binding", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Object",
+					"data": {
+						"json": {
+							"visible": false
+						}
+					},
+					"content": {
+						"groups": [{
+								"title": "Contact Details",
+								"items": [{
+										"label": "First Name",
+										"value": "{firstName}",
+										"type": "link",
+										"visible": "{visible}"
+									},
+									{
+										"label": "Last Name",
+										"value": "{lastName}",
+										"type": "phone",
+										"visible": "{visible}"
+									},
+									{
+										"label": "Phone",
+										"value": "{phone}",
+										"type": "email",
+										"visible": "{visible}"
+									},
+									{
+										"label": "Email",
+										"value": "{email}",
+										"visible": "{visible}"
+									}
+								]
+							}
+						]
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oContent = this.oCard.getAggregation("_content"),
+				oLayout = oContent.getAggregation("_content"),
+				aGroupItems = oLayout.getContent()[0].getItems();
+
+			Core.applyChanges();
+
+			// Assert
+			assert.notOk(aGroupItems[1].getVisible(), "Label for link is NOT visible");
+			assert.notOk(aGroupItems[2].getVisible(), "Link is also NOT visible");
+			assert.notOk(aGroupItems[3].getVisible(), "Label for phone is NOT visible");
+			assert.notOk(aGroupItems[4].getVisible(), "Phone is also NOT visible");
+			assert.notOk(aGroupItems[5].getVisible(), "Label for email is NOT visible");
+			assert.notOk(aGroupItems[6].getVisible(), "Email is also NOT visible");
+			assert.notOk(aGroupItems[7].getVisible(), "Label for text is NOT visible");
+			assert.notOk(aGroupItems[8].getVisible(), "Text is also NOT visible");
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
 	QUnit.test("Icon property", function (assert) {
 		// Arrange
 		var done = assert.async();

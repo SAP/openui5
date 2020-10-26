@@ -211,7 +211,7 @@ sap.ui.define([
 								href: oItem.url || vValue,
 								text: vValue,
 								target: oItem.target || '_blank',
-								visible: oItem.visible
+								visible: BindingHelper.reuse(oItem.visible)
 							});
 							break;
 						case 'email':
@@ -233,7 +233,7 @@ sap.ui.define([
 							oItemValue = new Link({
 								href: vHref,
 								text: vValue,
-								visible: oItem.visible
+								visible: BindingHelper.reuse(oItem.visible)
 							});
 							break;
 						case 'phone':
@@ -243,13 +243,13 @@ sap.ui.define([
 							oItemValue = new Link({
 								href: vHref,
 								text: vValue,
-								visible: oItem.visible
+								visible: BindingHelper.reuse(oItem.visible)
 							});
 							break;
 						default:
 							oItemValue = new Text({
 								text:  vValue,
-								visible: oItem.visible
+								visible: BindingHelper.reuse(oItem.visible)
 							});
 							break;
 					}
