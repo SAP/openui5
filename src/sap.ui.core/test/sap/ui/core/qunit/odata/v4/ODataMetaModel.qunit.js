@@ -171,10 +171,32 @@ sap.ui.define([
 				"tea_busi.DefaultContainer" : {
 					"@DefaultContainer" : {}
 				},
+				"tea_busi.DefaultContainer/Me" : {
+					"@Singleton" : {
+						Age : {
+							"$Path" : "AGE"
+						},
+						EMPLOYEE_2_TEAM : {
+							"$Path" : "EMPLOYEE_2_TEAM"
+						},
+						Empty : {
+							"$Path" : "" // "an empty path resolves to the entity set or singleton"
+						}
+					}
+				},
 				"tea_busi.DefaultContainer/OverloadedAction" : {
 					"@Common.Label" : "OverloadAction import's label"
 				},
 				"tea_busi.DefaultContainer/T€AMS" : {
+					"@Capabilities.DeleteRestrictions" : {
+						Deletable : {
+							// in real life, path would point to Edm.Boolean, but never mind
+							"$Path" : "TEAM_2_MANAGER/TEAM_ID"
+						},
+						Empty : {
+							"$Path" : "" // "an empty path resolves to the entity set or singleton"
+						}
+					},
 					"@Session.StickySessionSupported" : {
 						NewAction : "tea_busi.NewAction",
 						"NewAction@Common.Label" : "New Team"
@@ -228,6 +250,11 @@ sap.ui.define([
 					"@Session.StickySessionSupported#EntityType" : {
 						NewAction : "tea_busi.NewAction"
 					},
+					"@Type" : {
+						Empty : {
+							"$Path" : "" // "an empty path resolves to the type"
+						}
+					},
 					"@UI.Badge" : {
 						"@Common.Label" : "Label inside",
 						"$Type" : "UI.BadgeType",
@@ -280,6 +307,11 @@ sap.ui.define([
 						"$If" : [true, {
 							"$Path" : "Name"
 						}] // "else" is missing!
+					},
+					"@Type" : {
+						Empty : {
+							"$Path" : "" // "an empty path resolves to the type"
+						}
 					},
 					"@UI.Facets" : [{
 						"$Type" : "UI.ReferenceFacet",
@@ -620,6 +652,22 @@ sap.ui.define([
 					"$Type" : "Edm.Int16"
 				}
 			}],
+			"tea_busi.MANAGER" : {
+				"$kind" : "EntityType",
+				"$Key" : ["ID"],
+				"ID" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String",
+					"$Nullable" : false,
+					"$MaxLength" : 4
+				},
+				"TEAM_ID" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String",
+					"$Nullable" : false,
+					"$MaxLength" : 10
+				}
+			},
 			// "NewAction" is overloaded by collection of type, returning instance of type
 			//TODO There can be one overload with "$isCollection" : true and another w/o, for the
 			// same binding parameter $Type! How to tell these apart?
@@ -684,22 +732,6 @@ sap.ui.define([
 				"SystemAlias" : {
 					"$kind" : "Property",
 					"$Type" : "Edm.String"
-				}
-			},
-			"tea_busi.MANAGER" : {
-				"$kind" : "EntityType",
-				"$Key" : ["ID"],
-				"ID" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String",
-					"$Nullable" : false,
-					"$MaxLength" : 4
-				},
-				"TEAM_ID" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String",
-					"$Nullable" : false,
-					"$MaxLength" : 10
 				}
 			},
 			"tea_busi.TEAM" : {
@@ -1755,6 +1787,16 @@ sap.ui.define([
 			: mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		"/EMPLOYEES/@UI.Facets/3/Target/$AnnotationPath/"
 			: mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
+		"/Me@Singleton/Age/$Path/$" : oWorkerData.AGE,
+		"/Me@Singleton/Empty/$Path/$" : oContainerData.Me,
+		"/Me@Singleton/Empty/$Path/$Type" : "tea_busi.Worker",
+		"/Me@Singleton/Empty/$Path/$Type/$" : oWorkerData,
+		// Note: checks that oEntitySetOrSingleton is reset (no matter whether path is empty or not)
+		"/Me@Singleton/Empty/$Path/@Type/Empty/$Path/$" : oWorkerData,
+		"/Me@Singleton/EMPLOYEE_2_TEAM/$Path/@Type/Empty/$Path/$" : oTeamData,
+		"/T€AMS@Capabilities.DeleteRestrictions/Deletable/$Path/$"
+			: mScope["tea_busi.MANAGER"].TEAM_ID,
+		"/T€AMS@Capabilities.DeleteRestrictions/Empty/$Path/$" : oContainerData["T€AMS"],
 		// @sapui.name ----------------------------------------------------------------------------
 		"/@sapui.name" : "tea_busi.DefaultContainer",
 		"/tea_busi.DefaultContainer@sapui.name" : "tea_busi.DefaultContainer",
