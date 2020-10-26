@@ -1,6 +1,10 @@
 ![openui5](http://openui5.org/images/OpenUI5_new_big_side.png)
-=======
+
 [OpenUI5. Build Once. Run on any device.](http://openui5.org)
+
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP/openui5)](https://api.reuse.software/info/github.com/SAP/openui5)
+
+=======
 
 What is it?
 -----------
