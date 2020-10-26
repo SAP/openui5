@@ -47,7 +47,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @since 1.83.0
+	 * @since 1.84.0
 	 * @alias sap.f.CalendarInCard
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
