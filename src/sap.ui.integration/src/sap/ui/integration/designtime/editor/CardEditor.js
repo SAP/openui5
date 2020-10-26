@@ -22,8 +22,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/theming/Parameters",
-	"sap/ui/integration/util/DataProviderFactory"
+	"sap/ui/core/theming/Parameters"
 ], function (
 	Control,
 	Core,
@@ -44,8 +43,7 @@ sap.ui.define([
 	URI,
 	includeStylesheet,
 	LoaderExtension,
-	Parameters,
-	DataProviderFactory
+	Parameters
 ) {
 	"use strict";
 	function getHigherZIndex(source) {
@@ -397,41 +395,42 @@ sap.ui.define([
 			}
 			//create a new card settings for a new card
 			this._oEditorCard = new Card(vCardIdOrSettings);
-			this._oEditorCard.attachManifestReady(function () {
-				if (!this._oEditorCard._isManifestReady) {
+			var that = this;
+			this._oEditorCard._prepareToApplyManifestSettings = function () {
+				Card.prototype._prepareToApplyManifestSettings.apply(this, arguments);
+				if (!that._oEditorCard._isManifestReady) {
 					//TODO: manifestReady is fired even if the manifest is not ready. Check why.
 					return;
 				}
-				if (this._manifestModel) {
+				if (that._manifestModel) {
 					//already created
 					return;
 				}
-				this._appliedLayerManifestChanges = vCardIdOrSettings.manifestChanges;
-				var oManifestData = this._oEditorCard.getManifestEntry("/");
+				that._appliedLayerManifestChanges = vCardIdOrSettings.manifestChanges;
+				var oManifestData = that._oEditorCard.getManifestEntry("/");
 				var _beforeCurrentLayer = merge({}, oManifestData);
-				this._oProviderCard = this._oEditorCard;
-				this._oProviderCard._editorManifest = oManifestData;
-				this._beforeManifestModel = new JSONModel(_beforeCurrentLayer);
-				if (iCurrentModeIndex < CardMerger.layers["translation"] && this._currentLayerManifestChanges) {
+				that._oProviderCard = that._oEditorCard;
+				that._oProviderCard._editorManifest = oManifestData;
+				that._beforeManifestModel = new JSONModel(_beforeCurrentLayer);
+				if (iCurrentModeIndex < CardMerger.layers["translation"] && that._currentLayerManifestChanges) {
 					//merge if not translation
 
-					oManifestData = CardMerger.mergeCardDelta(oManifestData, [this._currentLayerManifestChanges]);
+					oManifestData = CardMerger.mergeCardDelta(oManifestData, [that._currentLayerManifestChanges]);
 				}
 				//create a manifest model after the changes are merged
-				this._manifestModel = new JSONModel(oManifestData);
+				that._manifestModel = new JSONModel(oManifestData);
 				//create a manifest model for the original "raw" manifest that was initially loaded
 
-				this._originalManifestModel = new JSONModel(this._getOriginalManifestJson());
-				this._tempManifestModel = new JSONModel(deepClone(this._getOriginalManifestJson(), 20));
-				this._initInternal();
+				that._originalManifestModel = new JSONModel(that._getOriginalManifestJson());
+				that._initInternal();
 				//use the translations from the card
-				if (!this._oEditorCard.getModel("i18n")) {
-					this._oEditorCard._loadDefaultTranslations();
+				if (!that._oEditorCard.getModel("i18n")) {
+					that._oEditorCard._loadDefaultTranslations();
 				}
-				this.setModel(this._oEditorCard.getModel("i18n"), "i18n");
+				that.setModel(that._oEditorCard.getModel("i18n"), "i18n");
 				//add a context model
-				this._createContextModel();
-			}.bind(this));
+				that._createContextModel();
+			};
 			this._oEditorCard.onBeforeRendering();
 		}
 	};
@@ -764,12 +763,11 @@ sap.ui.define([
 		return this._oPopover;
 	};
 
-	CardEditor.prototype._updateProviderCard = function () {
+	CardEditor.prototype._updateProviderCard = function (aDependentFields) {
 		if (this._ready) {
-			var aFieldConfigs = this._oProviderCard._aFieldConfigs || [],
-				oManifestData = this._oProviderCard._editorManifest;
+			var oManifestData = this._oProviderCard._editorManifest;
 
-			if (aFieldConfigs.length === 0) {
+			if (aDependentFields.length === 0) {
 				return;
 			}
 			delete oManifestData["sap.card"].header;
@@ -783,7 +781,6 @@ sap.ui.define([
 				host: this._oProviderCard.getHost()
 			});
 			this._oProviderCard.setManifestChanges([this.getCurrentSettings()]);
-			this._oProviderCard._aFieldConfigs = aFieldConfigs;
 			this._oProviderCard._editorManifest = oManifestData;
 			var that = this;
 			this._oProviderCard._fillFiltersModel = function () {
@@ -791,8 +788,8 @@ sap.ui.define([
 					return;
 				}
 				that._bIgnoreUpdates = true;
-				for (var i = 0; i < aFieldConfigs.length; i++) {
-					var o = aFieldConfigs[i];
+				for (var i = 0; i < aDependentFields.length; i++) {
+					var o = aDependentFields[i];
 					that._addValueListModel(o.config, o.field, true);
 				}
 				that._bIgnoreUpdates = false;
@@ -831,8 +828,8 @@ sap.ui.define([
 		oBinding.attachChange(function () {
 			if (!this._bIgnoreUpdates) {
 				oConfig._changed = true;
-				if (oConfig.manifestpath.startsWith("/sap.card/configuration")) {
-					this._updateProviderCard();
+				if (oConfig._dependentFields && oConfig._dependentFields.length > 0) {
+					this._updateProviderCard(oConfig._dependentFields);
 				}
 				this._updatePreview();
 			}
@@ -850,15 +847,18 @@ sap.ui.define([
 		if (oConfig.values && oConfig.values.data && this._oProviderCard && this._oProviderCard._oDataProviderFactory) {
 			var oValueModel = new JSONModel({}),
 				oPromise = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data).getData();
+			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
 			oPromise.then(function (oData) {
 				oConfig._values = oData;
 				oValueModel.setData(oData);
 				oValueModel.checkUpdate(true);
-			}).catch(function () {
+				this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
+			}.bind(this)).catch(function () {
 				oConfig._values = {};
 				oValueModel.setData({});
 				oValueModel.checkUpdate(true);
-			});
+				this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
+			}.bind(this));
 
 			//in the designtime the item bindings will not use a named model, therefore we add a unnamed model for the field
 			//to carry the values, also we use the binding context to connect the given path from oConfig.values.data.path
@@ -870,14 +870,23 @@ sap.ui.define([
 			if (!bIgnore) {
 				var sData = JSON.stringify(oConfig.values.data);
 				if (sData) {
-					var destParamRegExp = /\{\{(parameters.)|(destinations.)([^\}\}]+)\}\}/g,
-						oResult = sData.match(destParamRegExp);
-					if (oResult) {
-						this._oProviderCard._aFieldConfigs = this._oProviderCard._aFieldConfigs || [];
-						this._oProviderCard._aFieldConfigs.push({
-							field: oField,
-							config: oConfig
-						});
+					var destParamRegExp = /parameters\.([^\}\}]+)|destinations\.([^\}\}]+)/g,
+						aResult = sData.match(destParamRegExp);
+					if (aResult) {
+						//add the field to dependency to either the parameter or destination
+						for (var i = 0; i < aResult.length; i++) {
+							var sValueKey = aResult[i].indexOf("parameters.") === 0 ? "/value" : "/name",
+								sDependentPath = "/sap.card/configuration/" + aResult[i].replace(".", "/") + sValueKey,
+								oItem = this._mItemsByPaths[sDependentPath];
+							if (oItem) {
+								oItem._dependentFields = oItem._dependentFields || [];
+								oItem._dependentFields.push({
+									field: oField,
+									config: oConfig
+								});
+
+							}
+						}
 					}
 				}
 			}
@@ -1020,8 +1029,12 @@ sap.ui.define([
 					label: CardEditor._languages[this._language] || this.getLanguage()
 				});
 			}
+			this._mItemsByPaths = {};
 			for (var n in oSettings.form.items) {
 				var oItem = oSettings.form.items[n];
+				if (oItem.manifestpath) {
+					this._mItemsByPaths[oItem.manifestpath] = oItem;
+				}
 				if (oItem) {
 					//force a label setting, set it to the name of the item
 					oItem.label = oItem.label || n;
@@ -1055,9 +1068,14 @@ sap.ui.define([
 						}
 					}
 					oItem._changed = false;
-					this._addItem(oItem);
+
 				}
 			}
+		}
+
+		for (var n in oSettings.form.items) {
+			var oItem = oSettings.form.items[n];
+			this._addItem(oItem);
 		}
 		//add preview
 		if (this.getMode() !== "translation") {

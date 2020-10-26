@@ -30,6 +30,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var configurationTemplate = "";
+	configurationTemplate = LoaderExtensions.loadResource("sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js", {
+		dataType: "text",
+		failOnError: false,
+		async: false
+	});
+
 	/**
 	 * @constructor
 	 * @private
@@ -69,7 +76,6 @@ sap.ui.define([
 		if (this._eventTimeout) {
 			clearTimeout(this._eventTimeout);
 			this._eventTimeout = null;
-
 		}
 		var oCopyConfig = merge({}, this._oDesigntimeJSConfig);
 		this._eventTimeout = setTimeout(function () {
@@ -213,6 +219,10 @@ sap.ui.define([
 
 	BASEditor.prototype._cleanJson = function (oJson) {
 		oJson = oJson || this.getJson();
+		var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
+		if (!sDesigntimePath) {
+			ObjectPath.set(["sap.card", "designtime"], "dt/configuration", oJson);
+		}
 		oJson = deepClone(oJson);
 		var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
 		for (var n in mParameters) {
@@ -346,7 +356,6 @@ sap.ui.define([
 
 		if (!this._bDesigntimeInit) {
 			this.setPreventInitialization(true);
-			this._bDesigntimeInit = true;
 			this._bCardId = sCardId;
 			var sTempDesigntimeUrl;
 			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
@@ -360,12 +369,9 @@ sap.ui.define([
 					content: sDesigntime,
 					manifest: this._cleanJson(oJson)
 				});
-				sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
-			}
-			var sBaseUrl = sanitizePath(this.getBaseUrl() || "");
-			if (!sDesigntimePath) {
 				return;
 			}
+			var sBaseUrl = sanitizePath(this.getBaseUrl() || "");
 			if (sBaseUrl && sDesigntimePath) {
 				var mPaths = {};
 				var sSanitizedBaseUrl = sanitizePath(sBaseUrl);
@@ -421,6 +427,7 @@ sap.ui.define([
 
 					// Editor config
 
+					this._bDesigntimeInit = true;
 				}.bind(this));
 			} else {
 				this.setPreventInitialization(false);
@@ -447,14 +454,6 @@ sap.ui.define([
 	function trimCurrentFolderPrefix(sPath) {
 		return sPath.replace(/^\.\//, "");
 	}
-	var configurationTemplate = "";
-	LoaderExtensions.loadResource("sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js", {
-		dataType: "text",
-		failOnError: false,
-		async: true
-	}).then(function (s) {
-		configurationTemplate = s;
-	});
 
 	return BASEditor;
 });
