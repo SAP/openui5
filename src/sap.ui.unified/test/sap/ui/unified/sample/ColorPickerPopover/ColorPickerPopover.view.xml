@@ -47,5 +47,17 @@
 					change="handleInputChange"/>
 			</cells>
 		</ColumnListItem>
+		<ColumnListItem>
+			<cells>
+				<Label text='With liveChange'/>
+				<Input id="colorLC"
+					type="Text"
+					width="200px"
+					placeholder="Enter Color ..."
+					showValueHelp="true"
+					valueHelpRequest="openLiveChangeSample"
+					change="handleInputChange"/>
+			</cells>
+		</ColumnListItem>
 	</Table>
 </mvc:View>

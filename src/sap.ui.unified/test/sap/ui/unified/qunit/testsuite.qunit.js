@@ -241,6 +241,16 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/ColorPicker"]
 				}
 			},
+			"ColorPickerPopover": {
+				group: "ColorPickerPopover",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/unified/ColorPickerPopover"]
+				}
+			},
 			"Currency": {
 				group: "Currency",
 				ui5: {

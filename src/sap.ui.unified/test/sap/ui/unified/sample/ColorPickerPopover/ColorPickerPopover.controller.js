@@ -33,6 +33,10 @@ sap.ui.define([
 				this.oColorPickerSimplifiedPopover.destroy();
 			}
 
+			if (this.oColorPickerLiveChangePopover) {
+				this.oColorPickerLiveChangePopover.destroy();
+			}
+
 		},
 
 		openDefaultModeSample: function (oEvent) {
@@ -73,6 +77,20 @@ sap.ui.define([
 			this.oColorPickerSimplifiedPopover.openBy(oEvent.getSource());
 		},
 
+		openLiveChangeSample: function (oEvent) {
+			this.inputId = oEvent.getSource().getId();
+			if (!this.oColorPickerLiveChangePopover) {
+				this.oColorPickerLiveChangePopover = new ColorPickerPopover("oColorPickerLiveChangePopover", {
+					colorString: "orange",
+					displayMode: ColorPickerDisplayMode.Large,
+					mode: ColorPickerMode.HSL,
+					change: this.handleChange.bind(this),
+					liveChange: this.handleLiveChange.bind(this)
+				});
+			}
+			this.oColorPickerLiveChangePopover.openBy(oEvent.getSource());
+		},
+
 		handleChange: function (oEvent) {
 			var oView = this.getView(),
 				oInput = oView.byId(this.inputId);
@@ -89,6 +107,20 @@ sap.ui.define([
 				sState = bValid ? ValueState.None : ValueState.Error;
 
 			oInput.setValueState(sState);
+		},
+
+		handleLiveChange: function (oEvent) {
+			var oView = this.getView(),
+				oInput = oView.byId(this.inputId);
+
+			oInput.setValue(oEvent.getParameter("colorString"));
+			oInput.setValueState(ValueState.None);
+			oInput.getDomRef().firstChild.style.backgroundColor = "rgba(" + [
+				oEvent.getParameter("r"),
+				oEvent.getParameter("g"),
+				oEvent.getParameter("b"),
+				oEvent.getParameter("alpha")
+			].join(", ") + ")";
 		}
 	});
 
