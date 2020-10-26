@@ -85,10 +85,15 @@ Copyright: 2014 jQuery Foundation and other contributors
 License: MIT
 Comment: these files belong to: jQuery UI
 
-Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit.* src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.*
+Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit.*
 Copyright: jQuery Foundation and other contributors
 License: MIT
 Comment: these files belong to: QUnit
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.*
+Copyright: jQuery Foundation and other contributors
+License: MIT
+Comment: these files belong to: QUnit 2
 
 Files: src/sap.ui.core/src/sap/ui/thirdparty/jquery-compat.js
 Copyright: OpenJS Foundation and other contributors
@@ -110,10 +115,15 @@ Copyright: jQuery Foundation and other contributors
 License: MIT
 Comment: these files belong to: JUnit Reporter for QUnit
 
-Files: src/sap.ui.core/src/sap/ui/thirdparty/iscroll*
+Files: src/sap.ui.core/src/sap/ui/thirdparty/iscroll.js
 Copyright: 2012 Matteo Spinelli
 License: MIT
-Comment: these files belong to: cubiq.org - iscroll
+Comment: these files belong to: cubiq.org - iScroll
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/iscroll-lite.js
+Copyright: 2011 Matteo Spinelli
+License: MIT
+Comment: these files belong to: cubiq.org - iScroll Lite
 
 Files: src/sap.ui.core/src/sap/ui/thirdparty/swipe-view.js
 Copyright: 2012 Matteo Spinelli
