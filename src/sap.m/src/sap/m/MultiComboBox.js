@@ -2349,6 +2349,11 @@ function(
 			return;
 		}
 
+		// Deleting characters, not tokens
+		if (this.getCursorPosition() > 0 || this.getValue().length > 0) {
+			return;
+		}
+
 		if (aSelectedTokens.length > 0) {
 			this._removeAllTokens();
 			return;
