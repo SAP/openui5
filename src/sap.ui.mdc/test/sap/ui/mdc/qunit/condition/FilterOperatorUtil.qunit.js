@@ -988,18 +988,18 @@ sap.ui.define([
 				longText: "Last X days",
 				tokenText: "Last {0} days"
 			}],
-			"TODAYXYDAYS": [{
-				formatArgs: [Condition.createCondition("TODAYXYDAYS", [4, 6])],
-				formatValue: "Today -4 / +6 days",
-				//parseArgs: ["Last 4 days"],
-				parsedValue: "46",
-				condition: Condition.createCondition("TODAYXYDAYS", [4, 6], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: false,
-				longText: "Today -X / +Y days",
-				tokenText: "Today -{0} / +{1} days"
-			}],
+			// "TODAYXYDAYS": [{
+			// 	formatArgs: [Condition.createCondition("TODAYXYDAYS", [4, 6])],
+			// 	formatValue: "Today -4 / +6 days",
+			// 	//parseArgs: ["Last 4 days"],
+			// 	parsedValue: "46",
+			// 	condition: Condition.createCondition("TODAYXYDAYS", [4, 6], undefined, undefined, ConditionValidated.NotValidated),
+			// 	isEmpty: false,
+			// 	valid: true,
+			// 	isSingleValue: false,
+			// 	longText: "Today -X / +Y days",
+			// 	tokenText: "Today -{0} / +{1} days"
+			// }],
 			"NEXTDAYS": [{
 				formatArgs: [Condition.createCondition("NEXTDAYS", [3])],
 				formatValue: "Next 3 days",
