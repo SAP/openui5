@@ -226,4 +226,95 @@ sap.ui.define([
 		oBus.publish("CustomChannel", "Test24");
 	});
 
+	QUnit.module("Suspend & Resume");
+
+	QUnit.test("Suspend the EventBus", function (assert) {
+		assert.expect(7);
+		var sExpectedEventId = "Test_Suspend",
+			sExpectedChannelId = "Test_Suspend_Resume",
+			sExpectedData = "DataSuspend",
+			sExpectedDataEvent1 = sExpectedData + "Event1",
+			sExpectedDataEvent2 = sExpectedData + "Event2",
+
+			fnHandler = function (sChannelId, sEventId, oData) {
+				assert.step("Event was published successfully with data: " + oData.data);
+				checkHandler(assert, false, sChannelId, sEventId, oData, this, sExpectedChannelId, sExpectedEventId);
+			};
+
+		oBus.subscribe(sExpectedChannelId, sExpectedEventId, fnHandler);
+		checkNumberOfListeners(assert, oBus._mChannels[sExpectedChannelId], sExpectedEventId, 1);
+
+		oBus.publish(sExpectedChannelId, sExpectedEventId, {data: sExpectedDataEvent1});
+
+		oBus.suspend();
+
+		oBus.publish(sExpectedChannelId, sExpectedEventId, {data: sExpectedDataEvent2});
+
+		assert.verifySteps(["Event was published successfully with data: " + sExpectedDataEvent1]);
+
+		// clean up, resume the EventBus
+		oBus.resume();
+	});
+
+	QUnit.test("Suspend and Resume the EventBus", function (assert) {
+		assert.expect(12);
+		var sExpectedEventId = "Test_Suspend_Resume",
+			sExpectedChannelId = "Test_Suspend_Resume",
+			sExpectedData = "DataSuspendResume",
+			sExpectedDataEvent1 = sExpectedData + "Event1",
+			sExpectedDataEvent2 = sExpectedData + "Event2",
+			sExpectedDataEvent3 = sExpectedData + "Event3",
+			fnHandler = function (sChannelId, sEventId, oData) {
+				assert.step("Event was published successfully with data: " + oData.data);
+				checkHandler(assert, false, sChannelId, sEventId, oData, this, sExpectedChannelId, sExpectedEventId);
+			};
+
+		oBus.subscribe(sExpectedChannelId, sExpectedEventId, fnHandler);
+		checkNumberOfListeners(assert, oBus._mChannels[sExpectedChannelId], sExpectedEventId, 1);
+
+		oBus.publish(sExpectedChannelId, sExpectedEventId, {data: sExpectedDataEvent1});
+
+		oBus.suspend();
+
+		oBus.publish(sExpectedChannelId, sExpectedEventId, {data: sExpectedDataEvent2});
+
+		oBus.resume();
+
+		oBus.publish(sExpectedChannelId, sExpectedEventId, {data: sExpectedDataEvent3});
+
+		assert.verifySteps([
+			"Event was published successfully with data: " + sExpectedDataEvent1,
+			"Event was published successfully with data: " + sExpectedDataEvent3
+		]);
+	});
+
+	QUnit.test("Subscribe to a suspended EventBus", function (assert) {
+		assert.expect(8);
+
+		var sExpectedEventId = "Test_Subscribe_After_Suspending",
+		sExpectedChannelId = "Test_Suspend_After_Suspending",
+		sExpectedData = "TestSuspendAfterSuspending",
+		sExpectedDataEvent1 = sExpectedData + "Event1",
+		fnHandler = function (sChannelId, sEventId, oData) {
+			assert.step("Event was published successfully with data: " + oData.data);
+			checkHandler(assert, false, sChannelId, sEventId, oData, this, sExpectedChannelId, sExpectedEventId);
+		};
+
+		checkNumberOfListeners(assert, oBus._mChannels[sExpectedChannelId], sExpectedEventId, 0);
+
+		oBus.suspend();
+
+		oBus.subscribe(sExpectedChannelId, sExpectedEventId, fnHandler);
+
+		checkNumberOfListeners(assert, oBus._mChannels[sExpectedChannelId], sExpectedEventId, 1);
+
+		oBus.resume();
+
+		oBus.publish(sExpectedChannelId, sExpectedEventId, {data: sExpectedDataEvent1});
+
+		assert.verifySteps([
+			"Event was published successfully with data: " + sExpectedDataEvent1
+		]);
+
+	});
 });
