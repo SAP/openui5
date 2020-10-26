@@ -732,7 +732,7 @@ function(
 			// CSN# 0001429454/2014: remove class for all other items
 			this.getButtons().forEach(function (oButton) {
 				oButton.$().removeClass("sapMSegBBtnSel");
-				oButton.$().attr("aria-checked", false);
+				oButton.$().attr("aria-selected", false);
 			});
 
 			//get the corresponding item regarding the pressed button
@@ -741,7 +741,7 @@ function(
 			})[0];
 
 			oButtonPressed.$().addClass("sapMSegBBtnSel");
-			oButtonPressed.$().attr("aria-checked", true);
+			oButtonPressed.$().attr("aria-selected", true);
 
 			this.setAssociation('selectedButton', oButtonPressed, true);
 			this.setProperty("selectedKey", this.getSelectedKey(), true);
