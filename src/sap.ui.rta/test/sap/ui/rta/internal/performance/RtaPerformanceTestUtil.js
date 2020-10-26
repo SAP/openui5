@@ -1,80 +1,13 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/rta/plugin/Plugin"
 ], function(
 	RuntimeAuthoring,
-	Plugin,
-	FlexUtils,
-	FlexSettings,
-	PersistenceWriteAPI,
-	sinon
+	Plugin
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
-	var oManifest = {
-		"sap.app" : {
-			id : "sap.ui.rta.test",
-			applicationVersion : {
-				version : "1.2.3"
-			}
-		}
-	};
-
-	var oMockedAppComponent = {
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				},
-				getManifest: function () {
-					return oManifest;
-				}
-			};
-		},
-		getManifest: function () {
-			return oManifest;
-		},
-		getId: function() {
-			return "componentId";
-		},
-		getModel: function () {},
-		getLocalId: function() {},
-		getComponentData: function () {}
-	};
-
 	var Util = {
-		_createStartRtaFunction: function(oRuntimeAuthoring) {
-			return function() {
-				return Promise.all([
-					new Promise(function (fnResolve) {
-						oRuntimeAuthoring.attachStart(fnResolve);
-					}),
-					oRuntimeAuthoring.start()
-				]);
-			};
-		},
-
-		_defineTestStubs: function() {
-			sandbox.stub(FlexSettings, "getInstance").returns(Promise.resolve({
-				isProductiveSystem: function () { return false; },
-				isVersioningEnabled: function () { return false; },
-				isAppVariantSaveAsEnabled: function () { return false; }
-			}));
-			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
-				isResetEnabled: true,
-				isPublishEnabled: false
-			});
-		},
-
 		startRta: function(oHorizontalLayout, aPlugins) {
 			var oRuntimeAuthoring = new RuntimeAuthoring({
 				rootControl: oHorizontalLayout,
@@ -86,7 +19,6 @@ sap.ui.define([
 				}
 				oRuntimeAuthoring.setPlugins(aPlugins);
 			}
-			Util._defineTestStubs(oRuntimeAuthoring);
 
 			// will result in custom timer in webPageTest
 			window.performance.mark("rta.start.starts");
@@ -102,24 +34,17 @@ sap.ui.define([
 				//visual change at the end
 				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oHorizontalLayout);
 				oOverlay.setSelected(true);
-			})
-			.then(function() {
-				sandbox.restore();
-			})
-			.catch(function() {
-				sandbox.restore();
 			});
 		},
 
 		startRtaWithoutStretch: function(oRootControl) {
 			var oRuntimeAuthoring = new RuntimeAuthoring({
-				rootControl: oRootControl
+				rootControl: oRootControl,
+				showToolbars: false
 			});
 			var mPlugins = oRuntimeAuthoring.getDefaultPlugins();
 			delete mPlugins["stretch"];
 			oRuntimeAuthoring.setPlugins(mPlugins);
-
-			Util._defineTestStubs(oRuntimeAuthoring);
 
 			// will result in custom timer in webPageTest
 			window.performance.mark("rta.start.starts");
@@ -135,9 +60,6 @@ sap.ui.define([
 				//visual change at the end
 				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oRootControl);
 				oOverlay.setSelected(true);
-			})
-			.then(function() {
-				sandbox.restore();
 			});
 		},
 
