@@ -95,7 +95,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Access.isServiceOutdated = function(mServiceInfo) {
-		if (!this._isSystemInfoAvailable()) {
+		if (!this._isSystemInfoAvailable() || !mServiceInfo) {
 			return false; // No system information available => All services are valid.
 		}
 
