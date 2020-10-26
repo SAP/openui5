@@ -229,7 +229,8 @@ sap.ui.define([
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			var mExtensionPointInfo3 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId), [mExtensionPointInfo2, mExtensionPointInfo3], "the correct extension point info into an array is returned");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId), [mExtensionPointInfo2, mExtensionPointInfo3],
+				"the correct extension point info into an array is returned");
 		});
 
 		QUnit.test("when calling 'getExtensionPointInfoByParentId' with invalid parameters", function(assert) {
@@ -237,17 +238,39 @@ sap.ui.define([
 			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId("invalidParentId"), [], "then an empty array is returned");
 		});
 
+		QUnit.test("when calling 'getExtensionPointInfoByViewId' with valid parameters", function(assert) {
+			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
+			var mExtensionPointInfo3 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
+			var mExtensionPointsMap = ExtensionPointRegistry.getExtensionPointInfoByViewId(this.oXMLView.getId());
+			assert.deepEqual(Object.keys(mExtensionPointsMap), [mExtensionPointInfo2.name, mExtensionPointInfo3.name],
+				"the correct extension point info into an map is returned");
+		});
+
+		QUnit.test("when calling 'getExtensionPointInfoByViewId' with invalid parameters", function(assert) {
+			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName1, this.oPanel, "content", 0);
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByViewId("invalidViewId"), {}, "then an empty map is returned");
+		});
+
 		QUnit.test("when destroying the parent control of an extension point", function(assert) {
 			var mExtensionPointInfo1 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName1, this.oHBox, "items", 1);
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			var sParentId1 = mExtensionPointInfo1.targetControl.getId();
 			var sParentId2 = mExtensionPointInfo2.targetControl.getId();
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId1), [mExtensionPointInfo1], "then before destroy the correct extension point info is returned for parent1");
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId2), [mExtensionPointInfo2], "then before destroy the correct extension point info is returned for parent2");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId1), [mExtensionPointInfo1],
+				"then before destroy the correct extension point info is returned for parent1");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId2), [mExtensionPointInfo2],
+				"then before destroy the correct extension point info is returned for parent2");
 			this.oPanel.destroy();
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId1), [mExtensionPointInfo1], "then after destroy parent2 control the extension point info for parent1 is still available");
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId2), [], "then after destroy parent2 control the extension point info for parent2 is removed");
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), undefined, "then after destroy parent2 control extension point info for parent2 is removed");
+			var aReturnedExtensionPoints = ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId1);
+			assert.deepEqual(aReturnedExtensionPoints, [mExtensionPointInfo1],
+				"then after destroy parent2 control the extension point info for parent1 is still available");
+			assert.notOk(aReturnedExtensionPoints[0].bParentIsDestroyed, "and is not marked as destroyed");
+			aReturnedExtensionPoints = ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId2);
+			assert.deepEqual(aReturnedExtensionPoints, [mExtensionPointInfo2],
+				"then after destroy parent2 control the extension point info is still available");
+			assert.ok(aReturnedExtensionPoints[0].bParentIsDestroyed, "and is marked as destroyed");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), mExtensionPointInfo2,
+				"then after destroy parent2 control the extension point info is still available");
 		});
 	});
 
