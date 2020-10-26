@@ -92,8 +92,9 @@ sap.ui.define([
 		oAggregationHelperMock.expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation), {
 				$count : "~count~", $skip : 42, $top : 57, "sap-client" : "123"
-			}, {}, false)
-			.callsFake(function (_oAggregation, _mQueryOptions, mAlias2MeasureAndMethod) {
+			}, 1, false, {})
+			.callsFake(function (_oAggregation, _mQueryOptions, _iLevel, _bFollowUp,
+					mAlias2MeasureAndMethod) {
 				Object.assign(mAlias2MeasureAndMethod, {
 					"UI5min__MinAndMax" : {
 						measure : "MinAndMax",
@@ -146,7 +147,7 @@ sap.ui.define([
 			oAggregationHelperMock.expects("buildApply")
 				.withExactArgs(sinon.match.same(oAggregation), {
 					$count : "~count~", $skip : 42, $top : 57, "sap-client" : "123"
-				}, sinon.match.object, true)
+				}, 1, true, sinon.match.object)
 				.returns("~followUpQueryOptions~");
 			oRequestorMock.expects("buildQueryString")
 				.withExactArgs(oCache.sMetaPath, "~followUpQueryOptions~", false, true)

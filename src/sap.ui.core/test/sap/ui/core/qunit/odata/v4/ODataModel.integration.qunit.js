@@ -15188,15 +15188,6 @@ sap.ui.define([
 			assert.throws(function () {
 				oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
 			}, new Error("Cannot combine $$aggregation and $apply"));
-			assert.throws(function () {
-				oListBinding.setAggregation({
-					aggregate : {
-						GrossAmount : {grandTotal : true}
-					},
-					groupLevels : ["LifecycleStatus"]
-				});
-			}, new Error("Cannot combine visual grouping with grand total"));
-			// Note: oListBinding is now in an undefined state, do not use anymore!
 		});
 	});
 
@@ -15783,9 +15774,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
+	// Scenario: sap.ui.table.Table with aggregation, visual grouping, and grand total.
 	// Expand the last visible node and scroll to the last loaded leaf.
 	// JIRA: CPOUI5ODATAV4-255
+	// JIRA: CPOUI5ODATAV4-163
 	QUnit.test("Data Aggregation: expand and paging to the last loaded leaf", function (assert) {
 		var oModel = createAggregationModel(),
 			oTable,
@@ -15794,7 +15786,7 @@ sap.ui.define([
 	parameters : {\
 		$$aggregation : {\
 			aggregate : {\
-				SalesAmount : {subtotals : true},\
+				SalesAmount : {grandTotal : true, subtotals : true},\
 				SalesNumber : {}\
 			},\
 			group : {\
@@ -15802,7 +15794,7 @@ sap.ui.define([
 			},\
 			groupLevels : [\'Region\']\
 		}\
-	}}" threshold="0" visibleRowCount="3">\
+	}}" threshold="0" visibleRowCount="4">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -15813,69 +15805,71 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "26",
+		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesAmount)"
+				+ ",groupby((Region),aggregate(SalesAmount))"
+				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [
+					{SalesAmount : "35100"},
+					{UI5__count : "26"},
 					{Region : "Z", SalesAmount : "100"},
 					{Region : "Y", SalesAmount : "200"},
 					{Region : "X", SalesAmount : "300"}
 				]
 			})
-			.expectChange("isExpanded", [false, false, false])
-			.expectChange("isTotal", [true, true, true])
-			.expectChange("level", [1, 1, 1])
-			.expectChange("region", ["Z", "Y", "X"])
-			.expectChange("accountResponsible", ["", "", ""])
-			.expectChange("salesAmount", ["100", "200", "300"])
-			.expectChange("salesNumber", [null, null, null]);
+			.expectChange("isExpanded", [true, false, false, false])
+			.expectChange("isTotal", [true, true, true, true])
+			.expectChange("level", [0, 1, 1, 1])
+			.expectChange("region", ["", "Z", "Y", "X"])
+			.expectChange("accountResponsible", ["", "", "", ""])
+			.expectChange("salesAmount", ["35100", "100", "200", "300"])
+			.expectChange("salesNumber", [null, null, null, null]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'X')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=0&$top=3", {
-					"@odata.count" : "4",
+					+ "&$count=true&$skip=0&$top=4", {
+					"@odata.count" : "5",
 					value : [
 						{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1},
 						{AccountResponsible : "b", SalesAmount : "20", SalesNumber : 2},
-						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3}
+						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3},
+						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
 				})
-				.expectChange("isExpanded", [,, true]);
+				.expectChange("isExpanded", [,,, true]);
 
 			// code under test
-			oTable.getRows()[2].getBindingContext().expand();
+			oTable.getRows()[3].getBindingContext().expand();
 
 			return that.waitForChanges(assert, "expand node 'X'");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "&$count=true&$skip=3&$top=1", {
-					"@odata.count" : "26",
+					+ "/skip(3)/top(1)", {
 					value : [
 						{Region : "W", SalesAmount : "400"}
 					]
 				})
 				.expectRequest("BusinessPartners?$apply=filter(Region eq 'X')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=3&$top=1", {
-					"@odata.count" : "4",
+					+ "&$count=true&$skip=4&$top=1", {
+					"@odata.count" : "5",
 					value : [
-						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
+						{AccountResponsible : "e", SalesAmount : "50", SalesNumber : 5}
 					]
 				})
-				.expectResets(oTable, 3)
-				.expectChange("isExpanded", [,,,,,,,false])
-				.expectChange("isTotal", [,,,,, false, false, true])
-				.expectChange("level", [,,,,, 2, 2, 1])
-				.expectChange("region", [,,,,, "X", "X", "W"])
-				.expectChange("accountResponsible", [,,,,, "c", "d", ""])
-				.expectChange("salesAmount", [,,,,, "30", "40", "400"])
-				.expectChange("salesNumber", [,,,,, "3", "4", null]);
+				.expectResets(oTable, 4)
+				.expectChange("isExpanded", [,,,,,,,,, false])
+				.expectChange("isTotal", [,,,,,, false, false, false, true])
+				.expectChange("level", [,,,,,, 2, 2, 2, 1])
+				.expectChange("region", [,,,,,, "X", "X", "X", "W"])
+				.expectChange("accountResponsible", [,,,,,, "c", "d", "e", ""])
+				.expectChange("salesAmount", [,,,,,, "30", "40", "50", "400"])
+				.expectChange("salesNumber", [,,,,,, "3", "4", "5", null]);
 
 			// code under test
-			oTable.setFirstVisibleRow(5);
+			oTable.setFirstVisibleRow(6);
 
 			return that.waitForChanges(assert, "scroll to 'X-c'");
 		});

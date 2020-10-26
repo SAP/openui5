@@ -87,7 +87,7 @@ sap.ui.define([
 						Object.assign({}, mQueryOptions, {
 							$skip : iStart,
 							$top : iEnd - iStart
-						}), mAlias2MeasureAndMethod, bFollowUp);
+						}), 1, bFollowUp, mAlias2MeasureAndMethod);
 
 				bFollowUp = true; // next request is a follow-up
 

@@ -12,7 +12,7 @@
 			parameters : {
 				$$aggregation : {
 					aggregate : {
-						SalesAmount : {subtotals : true},
+						SalesAmount : {grandTotal : true, subtotals : true},
 						SalesNumber : {}
 					},
 					group : {

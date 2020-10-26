@@ -41,7 +41,7 @@ sap.ui.define([
 		oAggregationHelperMock.expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation), {
 				$count : bCount, $skip : 42, $top : 57, "sap-client" : "123"
-			}, null, undefined)
+			}, 1, undefined)
 			.returns(mQueryOptionsWithApply);
 		oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oFirstLevelCache.sMetaPath, sinon.match.same(mQueryOptionsWithApply),
@@ -60,7 +60,7 @@ sap.ui.define([
 		oAggregationHelperMock.expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation), {
 				$count : bCount, $skip : 42, $top : 57, "sap-client" : "123"
-			}, null, true)
+			}, 1, true)
 			.returns(mQueryOptionsWithApply);
 		oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oFirstLevelCache.sMetaPath, sinon.match.same(mQueryOptionsWithApply),
@@ -132,7 +132,8 @@ sap.ui.define([
 			"SalesAmountSum@odata.type" : "#Decimal",
 			Segment : null // avoid "Failed to drill-down"
 		});
-		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation);
+		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation, {},
+			Object.keys(oAggregation.group));
 
 		// code under test
 		oFirstLevelCache.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);
