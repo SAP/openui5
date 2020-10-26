@@ -73,5 +73,32 @@
         ]
       }
     ]
+  },
+  "1.71.23": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "1f3e6e654704aa728b4a26c311f6b755e00c5195",
+        "type": "FIX",
+        "text": " \"72\" font: add fallback font for glyphs with diacritics",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080350984"
+          }
+        ]
+      },
+      {
+        "id": "66ffc71b173849212a2abe76986596baac21e087",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed visual misalignments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080121060"
+          }
+        ]
+      }
+    ]
   }
 }

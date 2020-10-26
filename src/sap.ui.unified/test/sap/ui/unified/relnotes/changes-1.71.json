@@ -259,5 +259,36 @@
         ]
       }
     ]
+  },
+  "1.71.23": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "1bda6385d5a0adb637676e201ea6ac77e1789a2b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: focus is now correctly set on the opener button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070235043"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070360272"
+          }
+        ]
+      },
+      {
+        "id": "55929adf43a5f2448b68cd2e242205a028159e8c",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

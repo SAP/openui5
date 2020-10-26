@@ -31,5 +31,21 @@
         ]
       }
     ]
+  },
+  "1.71.23": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "e5bf715ec0236d832411fc509b3e30e263d52fe4",
+        "type": "FIX",
+        "text": " sap.ui.dt - RTL scrolling issues with Chrome86",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070381478"
+          }
+        ]
+      }
+    ]
   }
 }

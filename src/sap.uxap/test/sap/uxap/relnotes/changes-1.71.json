@@ -261,5 +261,21 @@
         ]
       }
     ]
+  },
+  "1.71.23": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "c4d6d72b1e0c55ea9463ac543c182e82e6349c29",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Corrected scroll direction in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070319529"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1990,5 +1990,110 @@
         ]
       }
     ]
+  },
+  "1.71.23": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "99445e809fc2f3b596465cb65463b36711e7a3a8",
+        "type": "FIX",
+        "text": " sap.m.P13nConditionPanel: Define conditions tab on the ValueHelpDialog now shows the selected value correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080338809"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980437959"
+          }
+        ]
+      },
+      {
+        "id": "66ffc71b173849212a2abe76986596baac21e087",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed visual misalignments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080121060"
+          }
+        ]
+      },
+      {
+        "id": "3b88d9208d71c709b2c21db9b08b5ff04f5dbd78",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: now header is displayed properly after resize from size S",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1930624418"
+          }
+        ]
+      },
+      {
+        "id": "b505ab80526a4c8cd6f3262047aa047e2e2c5d61",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: error is not thrown now and control is rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080033050"
+          },
+          {
+            "type": "BCP",
+            "reference": "2040696449"
+          }
+        ]
+      },
+      {
+        "id": "3e955a8b9865acf53201132bd47abbe2b5f55327",
+        "type": "FIX",
+        "text": " sap.m.Token: Icon src attribute set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070065440"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070219423"
+          }
+        ]
+      },
+      {
+        "id": "7c9e7e74d611d071ecd87a3aafc61aa2241b9b3b",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Del key deletes more than one character when maskMode is On",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2030340988"
+          }
+        ]
+      },
+      {
+        "id": "71e73a70f597efabdf017831277272f1a6a53f3e",
+        "type": "FIX",
+        "text": " sap.m.Popover: Stabilize _onOrientationChange method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070355314"
+          }
+        ]
+      },
+      {
+        "id": "993fe67994a57d8c09e5920f8a7600cbe9ff915d",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Prevent scrolling in IE when last token is focused",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005932342020"
+          }
+        ]
+      }
+    ]
   }
 }
