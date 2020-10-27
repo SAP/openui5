@@ -255,6 +255,21 @@ sap.ui.define([
 	 * @private
 	 */
 	ButtonRenderer.writeImgHtml = function(oRm, oButton) {
+		var sType = oButton.getType(),
+			bHasExplicitIcon = oButton.getIcon(),
+			bIsBackType = (sType === ButtonType.Back) || (sType === ButtonType.Up);
+
+		// Avoid duplicated rendering of the default Back/Up icon. Due to legacy
+		// reasons, those types are different than the others and can have 2 icons
+		// at the same time - here we render the one that's explicitly provided.
+		//
+		// If such isn't provided, our button will get the default icon for its type.
+		// However, because Back/Up's default icon is already rendered, two identical
+		// icons will appear unless we escape this here.
+		if (!bHasExplicitIcon && bIsBackType) {
+			return;
+		}
+
 		oRm.renderControl(oButton._getImage(
 			oButton.getId() + "-img",
 			oButton._getAppliedIcon(),

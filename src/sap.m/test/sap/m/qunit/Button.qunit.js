@@ -981,6 +981,26 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("Rendering of icons for Back/Up type", function (assert) {
+		var oButton = new sap.m.Button({
+			type: ButtonType.Back
+		});
+
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oButton.$("iconBtn").length, "Default Back/Up icon is rendered");
+		assert.notOk(oButton.$("img").length, "Explicit icon isn't rendered");
+
+		oButton.setIcon("sap-icon://add");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oButton.$("iconBtn").length, "Default Back/Up icon is still rendered");
+		assert.ok(oButton.$("img").length, "Explicit icon is now rendered too");
+
+		oButton.destroy();
+	});
+
 	QUnit.module("Tap Event Checking", {
 		beforeEach : function() {
 			b15 = sap.ui.getCore().byId("b15");
@@ -1463,7 +1483,22 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
 	});
 
-	QUnit.module("Button ARIA-HASPOPUP");
+	QUnit.module("General ARIA");
+
+	QUnit.test("Default tooltip for Back/Up type", function (assert) {
+		var oButton = new Button({
+				type: ButtonType.Back
+			}),
+			sTooltip = oButton._getTooltip();
+
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(sTooltip, "Button knows that a default tooltip needs to be generated");
+		assert.strictEqual(oButton.$().attr("title"), sTooltip, "That tooltip is added in the DOM");
+
+		oButton.destroy();
+	});
 
 	QUnit.test("Appearance of the aria-haspopup attribute", function (assert) {
 		var oButton = new Button("btn", {
