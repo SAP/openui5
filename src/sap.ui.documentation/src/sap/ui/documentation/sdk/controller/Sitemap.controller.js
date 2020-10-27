@@ -37,7 +37,8 @@ sap.ui.define([
 		formatNode: function (oNode) {
 			return {
 				name: oNode.name,
-				href: RESOURCES_TYPES.API + "/" + oNode.name
+				href: RESOURCES_TYPES.API + "/" + oNode.name,
+				hidden: oNode.visibility !== "public"
 			};
 		}
 	};
@@ -79,7 +80,8 @@ sap.ui.define([
 		formatNode: function (oNode) {
 			return {
 				name: oNode.text,
-				href: oNode.href
+				href: oNode.href,
+				hidden: !oNode.href
 			};
 		}
 	};
@@ -90,16 +92,17 @@ sap.ui.define([
 	 */
 	function formatNodes(aNodes, sType) {
 		var newNodes = [],
-			oNode;
+			oNode,
+			oFormattedNode;
 
 		for (var index = 0; index < aNodes.length; index++) {
 			oNode = aNodes[index];
 
-			if (oNode.visibility !== "public" && sType === RESOURCES_TYPES.API) {
-				continue;
-			}
+			oFormattedNode = parsers[sType].formatNode(oNode);
 
-			newNodes.push(parsers[sType].formatNode(oNode));
+			if (oFormattedNode.hidden !== true) {
+				newNodes.push();
+			}
 		}
 
 		return newNodes;

@@ -56,17 +56,11 @@
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
-								<custom:TitleLink
+								<Title
 										level="H1"
 										titleStyle="H1"
 										text="{/uiThemeDesigner/text}"
-										href="{/uiThemeDesigner/href}"
 										target="_blank"/>
-								<Image
-									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-									tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
-									width="1.25rem"
-									press="onDisclaimerLinkPress"/>
 							</html:div>
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_2_TEXT}" />
 							<HBox wrap="Wrap">
