@@ -89,7 +89,8 @@ sap.ui.define([
 					this._oCurrent = {
 						configuration: this._cleanConfig(this._oDesigntimeJSConfig),
 						manifest: this._cleanJson(),
-						configurationclass: this._fnDesigntime
+						configurationclass: this._fnDesigntime,
+						configurationstring: this._cleanConfig(this._oDesigntimeJSConfig, true)
 					};
 					this.fireConfigurationChange(this._oCurrent);
 					return;
@@ -123,7 +124,7 @@ sap.ui.define([
 						var oNewItem = mParameters[sNewItem];
 						oCopyConfig.form.items[sNewItem] = {
 							manifestpath: "/sap.card/configuration/parameters/" + sNewItem + "/value",
-							type: oNewItem.type,
+							type: oNewItem.type || "string",
 							label: oNewItem.label,
 							translatable: false,
 							editable: oNewItem.editable,
@@ -397,6 +398,12 @@ sap.ui.define([
 					sap.ui.loader._.loadJSResourceAsync(sUrl).then(function (DesigntimeClass) {
 						if (!DesigntimeClass) {
 							//file exists but no valid js
+							that.fireError({
+								"name": "Designtime Error",
+								"detail": {
+									"message": "Invalid file format"
+								}
+							});
 						} else if (DesigntimeClass) {
 							var oDesigntime = new DesigntimeClass();
 							that._oDesigntimeJSConfig = oDesigntime.getSettings();
