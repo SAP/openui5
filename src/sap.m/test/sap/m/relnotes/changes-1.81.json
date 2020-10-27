@@ -88,5 +88,21 @@
         ]
       }
     ]
+  },
+  "1.81.5": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "efc9a3af0936c59169dfb3cd81180f2245a97ec8",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: SetSelected now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070420668"
+          }
+        ]
+      }
+    ]
   }
 }

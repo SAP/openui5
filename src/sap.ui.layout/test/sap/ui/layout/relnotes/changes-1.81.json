@@ -79,5 +79,25 @@
         ]
       }
     ]
+  },
+  "1.81.5": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "02a05859343dcf7015dd6d9a06243eac00aeb62c",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Fixed error when using classList in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070332747"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070405304"
+          }
+        ]
+      }
+    ]
   }
 }
