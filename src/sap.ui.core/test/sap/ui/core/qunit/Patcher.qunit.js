@@ -372,29 +372,29 @@ sap.ui.define([
 		this.html("<div></div>").patch(function() {
 			Patcher.openStart("span").openEnd().close("span");
 		}, function(aMutations, oElement) {
-			assert.equal(aMutations.length, 2, "Two changes");
+			assert.equal(aMutations.length, 1, "One change - div is replaced with span");
 			assert.equal(oElement.tagName, "SPAN", "span is rendered");
 			assert.equal(aMutations[0].removedNodes[0].tagName, "DIV", "div is removed");
-			assert.equal(aMutations[1].addedNodes[0].tagName, "SPAN", "span is added");
+			assert.equal(aMutations[0].addedNodes[0].tagName, "SPAN", "span is added");
 		});
 
 		this.html("<div></div>").patch(function() {
 			Patcher.voidStart("input").voidEnd();
 		}, function(aMutations, oElement) {
-			assert.equal(aMutations.length, 2, "Two changes");
-			assert.equal(oElement.tagName, "INPUT", "span is rendered");
+			assert.equal(aMutations.length, 1, "One change - div is replaced with input");
+			assert.equal(oElement.tagName, "INPUT", "input is rendered");
 			assert.equal(aMutations[0].removedNodes[0].tagName, "DIV", "div is removed");
-			assert.equal(aMutations[1].addedNodes[0].tagName, "INPUT", "input is added");
+			assert.equal(aMutations[0].addedNodes[0].tagName, "INPUT", "input is added");
 		});
 
 		this.html("<input>").patch(function() {
 			Patcher.openStart("svg").attr("viewBox", "-5 -5 10 10").openEnd().close("svg");
 		}, function(aMutations, oElement) {
-			assert.equal(aMutations.length, 2, "Two changes");
+			assert.equal(aMutations.length, 1, "One change - input is replaced with svg element");
 			assert.equal(oElement.tagName, "svg", "svg is rendered");
 			assert.equal(oElement.getAttribute("viewBox"), "-5 -5 10 10", "svg NS attribute is set");
 			assert.equal(aMutations[0].removedNodes[0].tagName, "INPUT", "input is removed");
-			assert.equal(aMutations[1].addedNodes[0].tagName, "svg", "svg is added");
+			assert.equal(aMutations[0].addedNodes[0].tagName, "svg", "svg is added");
 		});
 
 		this.html("<span>Text</span>").patch(function() {
@@ -441,11 +441,11 @@ sap.ui.define([
 		this.html("<div id='x'></div>").patch(function() {
 			Patcher.openStart("span", "x").openEnd().close("span");
 		}, function(aMutations, oElement) {
-			assert.equal(aMutations.length, 2, "Two changes: tagName is changed while keys are equal");
+			assert.equal(aMutations.length, 1, "One change: tag is replaced while keys are equal");
 			assert.equal(oElement.id, "x", "id is not changed");
 			assert.equal(oElement.tagName, "SPAN", "span is rendered");
 			assert.equal(aMutations[0].removedNodes[0].tagName, "DIV", "div is removed");
-			assert.equal(aMutations[1].addedNodes[0].tagName, "SPAN", "span is added");
+			assert.equal(aMutations[0].addedNodes[0].tagName, "SPAN", "span is added");
 		});
 
 		this.html("<ul><li id='x'></li></ul>").patch(function() {

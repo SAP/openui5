@@ -30,15 +30,26 @@ sap.ui.define([], function() {
 
 	/**
 	 * Creates the ID to be used for the invisible placeholder DOM element.
-	 * This method can be used to get direct access to the placeholder DOM element.
 	 *
-	 * @param {sap.ui.core.Element} oElement The <code>element</code> instance for which to create the placeholder ID
+	 * @param {sap.ui.core.Control} oControl The <code>control</code> instance for which to create the placeholder ID
 	 * @returns {string} The ID used for the invisible placeholder of this element
 	 * @static
 	 * @protected
 	 */
-	InvisibleRenderer.createInvisiblePlaceholderId = function(oElement) {
-		return this.PlaceholderPrefix + oElement.getId();
+	InvisibleRenderer.createInvisiblePlaceholderId = function(oControl) {
+		return this.PlaceholderPrefix + oControl.getId();
+	};
+
+	/**
+	 * Returns the placeholder DOM element of the provided control.
+	 *
+	 * @param {sap.ui.core.Control} oControl The <code>control</code> instance for which to get the placeholder DOM element
+	 * @returns {HTMLElement|null} The placeholder DOM element
+	 * @static
+	 * @protected
+	 */
+	InvisibleRenderer.getDomRef = function(oControl) {
+		return document.getElementById(this.createInvisiblePlaceholderId(oControl));
 	};
 
 	/**

@@ -958,10 +958,7 @@ sap.ui.define([
 
 					// rendering interface must be determined for the root control once per rendering
 					// depending on the DOM reference of the control within the DOM tree
-					oDomRef = oControl.getDomRef();
-					if (!oDomRef && !bVisible) {
-						oDomRef = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oControl));
-					}
+					oDomRef = oControl.getDomRef() || InvisibleRenderer.getDomRef(oControl);
 
 					// DOM based rendering is valid only for the controls that are already rendered and providing apiVersion=2 marker.
 					// If the control is in the preserved area then we should not use DOM rendering interface to avoid patching of preserved nodes.
@@ -1053,8 +1050,9 @@ sap.ui.define([
 
 			// let the UIArea know that this control has been rendered
 			// FIXME: RenderManager (RM) should not need to know about UIArea. Maybe UIArea should delegate rendering to RM
-			if (oControl.getUIArea && oControl.getUIArea()) {
-				oControl.getUIArea()._onControlRendered(oControl);
+			var oUIArea = oControl.getUIArea();
+			if (oUIArea) {
+				oUIArea._onControlRendered(oControl);
 			}
 
 			// Special case: If an invisible placeholder was rendered, use a non-boolean value
@@ -1295,7 +1293,7 @@ sap.ui.define([
 					var oldDomNode = oControl.getDomRef();
 					if ( !oldDomNode || RenderManager.isPreservedContent(oldDomNode) ) {
 						// In case no old DOM node was found or only preserved DOM, search for a placeholder (invisible or preserved DOM placeholder)
-						oldDomNode = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oControl)) || document.getElementById(RenderPrefixes.Dummy + oControl.getId());
+						oldDomNode = InvisibleRenderer.getDomRef(oControl) || document.getElementById(RenderPrefixes.Dummy + oControl.getId());
 					}
 
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;

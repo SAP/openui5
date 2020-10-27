@@ -1,11 +1,11 @@
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
-	"sap/ui/core/Patcher",
 	"sap/ui/core/Renderer",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Control, Patcher, Renderer, RenderManager, InvisibleText, createAndAppendDiv) {
+], function(Core, Control, Renderer, RenderManager, InvisibleText, createAndAppendDiv) {
 
 	"use strict";
 	/*global QUnit,sinon*/
@@ -138,7 +138,7 @@ sap.ui.define([
 		});
 
 		oStringControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is called");
 		assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called");
@@ -182,7 +182,7 @@ sap.ui.define([
 		});
 
 		oPatchingControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is called");
 		assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called");
@@ -213,7 +213,7 @@ sap.ui.define([
 	QUnit.test("Rerendering mutations", function(assert) {
 		var oRemovedChild = null;
 		var fnCreateRenderManager = function() {
-			var oRM = sap.ui.getCore().createRenderManager();
+			var oRM = Core.createRenderManager();
 			oRM.openStart("div").openEnd().close("div");
 			oRM.destroy();
 		};
@@ -223,7 +223,7 @@ sap.ui.define([
 		oPatchingControl.data("KEY", "VALUE");
 
 		oPatchingControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var aMutations;
 		var oDomRef = oPatchingControl.getDomRef();
@@ -292,7 +292,7 @@ sap.ui.define([
 		oPatchingControl.getItems()[1].setVisible(false).rerender();
 		aMutations = oObserver.takeRecords();
 		assert.equal(oDomRef.textContent, "H/AC", "Child B is not visible");
-		assert.equal(aMutations.length, 2, "Child B DOM is replaced with the invisible placeholder");
+		assert.equal(aMutations.length, 1, "Child B DOM is replaced with the invisible placeholder");
 
 		oPatchingControl.rerender();
 		aMutations = oObserver.takeRecords();
@@ -381,11 +381,11 @@ sap.ui.define([
 	QUnit.test("UIArea Rendering", function(assert) {
 		var oPatchingControl = new PatchingControl();
 		oPatchingControl.placeAt("uiArea1");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oPatchingControl.setHeader("New Header");
 		oPatchingControl.placeAt("uiArea2");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oDomRef = oPatchingControl.getDomRef();
 		assert.equal(oDomRef.textContent, "New Header", "Header is updated");
@@ -418,7 +418,7 @@ sap.ui.define([
 			]
 		});
 		oRootControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oDomRef = oRootControl.getDomRef();
 
 		assert.equal(onAfterRenderingSpy.callCount, 0, "onAfterRendering is not called");
@@ -431,25 +431,25 @@ sap.ui.define([
 		assert.equal(oDomRef.textContent, "R/", "Children have still no output");
 
 		oRootControl.getItems()[0].setRenderNothing(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is called");
 		assert.equal(onBeforeRenderingSpy.callCount, 6, "onBeforeRendering is called");
 		assert.equal(oDomRef.textContent, "R/S", "StringControl child has output");
 
 		oRootControl.getItems()[0].setRenderNothing(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is not called");
 		assert.equal(onBeforeRenderingSpy.callCount, 7, "onBeforeRendering is called");
 		assert.equal(oDomRef.textContent, "R/", "StringControl has no output anymore");
 
 		oRootControl.getItems()[1].setRenderNothing(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(onAfterRenderingSpy.callCount, 2, "onAfterRendering is called");
 		assert.equal(onBeforeRenderingSpy.callCount, 9, "onBeforeRendering is called");
 		assert.equal(oDomRef.textContent, "R/P", "PatchingControl child has output");
 
 		oRootControl.getItems()[1].setRenderNothing(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(onAfterRenderingSpy.callCount, 2, "onAfterRendering is not called");
 		assert.equal(onBeforeRenderingSpy.callCount, 10, "onBeforeRendering is called");
 		assert.equal(oDomRef.textContent, "R/", "PatchingControl child has no output anymore");
@@ -485,7 +485,7 @@ sap.ui.define([
 		}
 
 		oRootControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oDomRef = oRootControl.getDomRef();
 
 		assert.equal(onAfterRenderingSpy.callCount, 0, "onAfterRendering is not called");
@@ -510,25 +510,25 @@ sap.ui.define([
 		assert.notOk(getInvisibleDomRef(1).classList.contains("P"), "Custom style class is not exist for the 2nd childs invisible placeholder");
 
 		oRootControl.getItems()[0].setVisible(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is called for string rendering, visible=true");
 		assert.equal(onBeforeRenderingSpy.callCount, 5, "onBeforeRendering is called for string rendering, visible=true");
 		assert.equal(oDomRef.textContent, "R/S", "StringControl child has output");
 
 		oRootControl.getItems()[0].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is not called for string rendering, visible=false");
 		assert.equal(onBeforeRenderingSpy.callCount, 6, "onBeforeRendering is called for string rendering, visible=false");
 		assert.equal(oDomRef.textContent, "R/", "StringControl has no output anymore");
 
 		oRootControl.getItems()[1].setVisible(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(onAfterRenderingSpy.callCount, 2, "onAfterRendering is called  for patching control, visible=true");
 		assert.equal(onBeforeRenderingSpy.callCount, 7, "onBeforeRendering is called for patching control, visible=true");
 		assert.equal(oDomRef.textContent, "R/P", "PatchingControl child has output");
 
 		oRootControl.getItems()[1].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(onAfterRenderingSpy.callCount, 2, "onAfterRendering is not called for patching control, visible=false");
 		assert.equal(onBeforeRenderingSpy.callCount, 8, "onBeforeRendering is called for patching control, visible=false");
 		assert.equal(oDomRef.textContent, "R/", "PatchingControl child has no output anymore");
@@ -565,7 +565,7 @@ sap.ui.define([
 			]
 		});
 		oRootControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oDomRef = oRootControl.getDomRef();
 		var oObserver = new MutationObserver(function() {});
@@ -598,12 +598,12 @@ sap.ui.define([
 	QUnit.test("Preserved Area and Patching", function(assert) {
 		var oPatchingControl = new PatchingControl();
 		oPatchingControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oPatchingControl.getDomRef().setAttribute("data-sap-ui-preserve", oPatchingControl.getId());
 		RenderManager.preserveContent(oPatchingControl.getDomRef(), true);
 		oPatchingControl.setHeader("New Header");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(oPatchingControl.getDomRef().textContent, "PatchingControl", "PatchingControl control in the preserved area is not patched");
 
@@ -692,7 +692,7 @@ sap.ui.define([
 			]
 		});
 		oRootControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oChild1GetFocusInfoSpy = sinon.spy(oChild1, "getFocusInfo");
 		var oChild1ApplyFocusInfoSpy = sinon.spy(oChild1, "applyFocusInfo");
