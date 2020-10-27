@@ -10,13 +10,13 @@
 		<Label text="simple DatePicker" labelFor="DP1"/>
 		<DatePicker
 			id="DP1"
-			placeholder="Enter Date ..."
+			placeholder="Enter Date"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
 		<Label text="DatePicker with OK button in the footer and initialFocusedDateValue new Date(2017, 5, 13)" labelFor="DP8"/>
 		<DatePicker
 			id="DP8"
-			placeholder="Enter Date ..."
+			placeholder="Enter Date"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"
 			showFooter="true"/>

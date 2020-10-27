@@ -9,13 +9,13 @@
 		<Label text="Simple DateTimePicker" labelFor="DTP1"/>
 		<DateTimePicker
 			id="DTP1"
-			placeholder="Enter Date ..."
+			placeholder="Enter Date"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
 		<Label text="With initialFocusedDateValue new Date(2017, 5, 13, 11, 12, 13)" labelFor="DTP6"/>
 		<DateTimePicker
 			id="DTP6"
-			placeholder="Enter Date ..."
+			placeholder="Enter Date"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
 		<Label text="DateTimePicker with given Value and Formatter" labelFor="DTP2"/>
