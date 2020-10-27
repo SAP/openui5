@@ -70,7 +70,14 @@
 					"Latitude" : "51.940081800000"
 				}
 			}
-		}
+		},
+		"Messages" : [{
+			"code" : "STATE/0815",
+			"message" : "Enter a Note",
+			"numericSeverity" : 4,
+			"target" : "SO_2_SOITEM(SalesOrderID='0500000006',ItemPosition='0000000010')/Note",
+			"transition" : false
+		}]
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",

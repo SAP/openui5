@@ -792,6 +792,18 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				checkHighlight : function (iRow, sHighlight) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderList",
+						success : function (oSalesOrderTable) {
+							var oRow = oSalesOrderTable.getItems()[iRow];
+							Opa5.assert.strictEqual(oRow.getHighlight(), sHighlight,
+								"Highlighted correctly");
+						},
+						viewName : sViewName
+					});
+				},
 				checkID : function (iRow, sExpectedID) {
 					var that = this;
 					return this.waitFor({

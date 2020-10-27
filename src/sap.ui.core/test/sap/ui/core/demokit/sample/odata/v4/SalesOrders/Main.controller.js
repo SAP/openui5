@@ -317,6 +317,27 @@ sap.ui.define([
 
 		onInit : function () {
 			this.initMessagePopover("showMessages");
+
+			this.byId("highlight").bindProperty("highlight", {
+				formatter : function (aModelMessages, oRowData) {
+					var aMessages,
+						//formatter MUST be defined in a way that this is the control!
+						oRowContext = this.getBindingContext();
+
+					if (oRowContext) { // formatter is called with oRowContext null initially
+						aMessages = oRowContext.getMessages();
+						return aMessages.length ? aMessages[0].type : sap.ui.core.MessageType.None;
+					}
+				},
+				parts : [
+					'messageModel>/',
+					{ // ensure formatter is called on scrolling
+						mode : 'OneTime',
+						path : '',
+						targetType : 'any'
+					}
+				]
+			});
 		},
 
 		onProductIDChanged : function (oEvent) {
@@ -534,6 +555,7 @@ sap.ui.define([
 					{$NavigationPropertyPath : sNavigationPropertyPath},
 					{$PropertyPath : "ChangedAt"},
 					{$PropertyPath : "GrossAmount"},
+					{$PropertyPath : "Messages"},
 					{$PropertyPath : "Note"}
 				],
 				sGroupId
