@@ -146,6 +146,15 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 
 			oRm.openEnd();
 
+			if (oSelect.getForceSelection()) {
+				oRm.openStart("option");
+				oRm.attr("hidden", true);
+				oRm.attr("disabled", true);
+				oRm.attr("selected", true);
+				oRm.openEnd();
+				oRm.close("option");
+			}
+
 			for (i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
 				oRm.openStart("option");
 				oRm.attr("value", aItems[i].getText());

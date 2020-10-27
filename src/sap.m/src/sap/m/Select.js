@@ -718,11 +718,9 @@ function(
 				oSelectedItem = this.getSelectedItem(),
 				sSelectedItemText;
 
-			if (oSelectedItem) {
-				sSelectedItemText = oSelectedItem.getText();
-				oSelect.attr("value", this.getSelectedKey());
-				oSelect.val(sSelectedItemText);
-			}
+			sSelectedItemText = oSelectedItem ? oSelectedItem.getText() : "";
+			oSelect.attr("value", this.getSelectedKey());
+			oSelect.val(sSelectedItemText);
 		};
 
 		Select.prototype._getValueIcon = function() {
