@@ -18,25 +18,26 @@ sap.ui.define([
 			var oView = this._oView;
 
 			// create dialog lazily
-			if (!oView.byId("helloDialog")) {
+			if (!this.pDialog) {
 				var oFragmentController = {
 					onCloseDialog : function () {
 						oView.byId("helloDialog").close();
 					}
 				};
 				// load asynchronous XML fragment
-				Fragment.load({
+				this.pDialog = Fragment.load({
 					id: oView.getId(),
 					name: "sap.ui.demo.walkthrough.view.HelloDialog",
 					controller: oFragmentController
 				}).then(function (oDialog) {
 					// connect dialog to the root view of this component (models, lifecycle)
 					oView.addDependent(oDialog);
-					oDialog.open();
+					return oDialog;
 				});
-			} else {
-				oView.byId("helloDialog").open();
 			}
+			this.pDialog.then(function(oDialog) {
+				oDialog.open();
+			});
 		}
 
 	});
