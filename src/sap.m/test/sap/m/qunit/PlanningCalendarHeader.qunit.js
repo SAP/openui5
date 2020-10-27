@@ -3,12 +3,16 @@ sap.ui.define([
 	"sap/m/PlanningCalendarHeader",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/calendar/CustomMonthPicker",
-	"sap/ui/unified/calendar/CustomYearPicker"
+	"sap/ui/unified/calendar/CustomYearPicker",
+	"sap/m/SegmentedButtonItem",
+	"sap/ui/core/InvisibleText"
 ], function(
 	PlanningCalendarHeader,
 	Calendar,
 	CustomMonthPicker,
-	CustomYearPicker
+	CustomYearPicker,
+	SegmentedButtonItem,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -33,5 +37,27 @@ sap.ui.define([
 
 		// Clean
 		oPCHeader.destroy();
+	});
+
+	QUnit.module("ARIA");
+
+	QUnit.test("View switch has an invisible label", function (assert) {
+		var oPlanningCalendarHeader = new PlanningCalendarHeader(),
+			oFirstMockView = new SegmentedButtonItem({ text: "A view" }),
+			oSecondMockView = new SegmentedButtonItem({ text: "Another view" }),
+			$viewSwitch;
+
+		oPlanningCalendarHeader._oViewSwitch.addItem(oFirstMockView);
+		oPlanningCalendarHeader._oViewSwitch.addItem(oSecondMockView);
+
+		oPlanningCalendarHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+
+		$viewSwitch = oPlanningCalendarHeader._oViewSwitch.$();
+		assert.strictEqual($viewSwitch.attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "PCH_VIEW_SWITCH"),
+			"View switch has an invisible label, which indicates its purpose ");
+
+		oPlanningCalendarHeader.destroy();
 	});
 });
