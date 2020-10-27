@@ -155,7 +155,7 @@ sap.ui.define([
 			 * Specifies the value of the <code>aria-haspopup</code> attribute
 			 *
 			 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered with the selected value.
-			 * @since 1.83.0
+			 * @since 1.84.0
 			 */
 			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
 
