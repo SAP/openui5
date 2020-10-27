@@ -245,11 +245,12 @@ sap.ui.define([
 		oAssert.ok(FormattedText.prototype._setUseLimitedRenderingRules,
 			"sap.m.FormattedText should have this SAP-restricted method");
 		oAssert.strictEqual(oSpy.callCount, 1, "The method should be called once by the 'setEnableFormattedText' setter.");
-		oAssert.strictEqual($Result.length, 4, "Only 4 HTML elements are rendered and evaluated");
+		oAssert.strictEqual($Result.length, 5, "Only 5 HTML elements are rendered and evaluated");
 		oAssert.strictEqual($Result[0].localName, "a", "The element name should be 'a'");
-		oAssert.strictEqual($Result[1].localName, "em", "The element name should be 'em'");
-		oAssert.strictEqual($Result[2].localName, "strong", "The element name should be 'strong'");
-		oAssert.strictEqual($Result[3].localName, "u", "The element name should be 'u'");
+		oAssert.strictEqual($Result[1].localName, "br", "The element name should be 'br'");
+		oAssert.strictEqual($Result[2].localName, "em", "The element name should be 'em'");
+		oAssert.strictEqual($Result[3].localName, "strong", "The element name should be 'strong'");
+		oAssert.strictEqual($Result[4].localName, "u", "The element name should be 'u'");
 
 		// Cleanup
 		oSpy.restore();
