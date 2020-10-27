@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode",
 	"sap/ui/core/message/Message",
-	"sap/m/MessageToast",
-	"sap/ui/core/library"
-], function(Controller, JSONModel, BindingMode, Message, MessageToast, library) {
+	"sap/ui/core/library",
+	"sap/ui/core/Fragment"
+], function(Controller, JSONModel, BindingMode, Message, library, Fragment) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -41,7 +41,10 @@ sap.ui.define([
 		},
 
 		onMessagePopoverPress : function (oEvent) {
-			this._getMessagePopover().openBy(oEvent.getSource());
+			var oSourceControl = oEvent.getSource();
+			this._getMessagePopover().then(function(oMessagePopover){
+				oMessagePopover.openBy(oSourceControl);
+			});
 		},
 
 		onSuccessPress : function(){
@@ -97,15 +100,21 @@ sap.ui.define([
 
 		//################ Private APIs ###################
 
-		_getMessagePopover : function () {
-			// create popover lazily (singleton)
-			if (!this._oMessagePopover) {
-				this._oMessagePopover = sap.ui.xmlfragment(this.getView().getId(),"sap.ui.core.sample.MessageManager.BasicMessages.MessagePopover", this);
-				this.getView().addDependent(this._oMessagePopover);
-			}
-			return this._oMessagePopover;
-		}
+		_getMessagePopover: function () {
+			var oView = this.getView();
 
+			// create popover lazily (singleton)
+			if (!this._pMessagePopover) {
+				this._pMessagePopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.ui.core.sample.MessageManager.BasicMessages.MessagePopover"
+				}).then(function (oMessagePopover) {
+					oView.addDependent(oMessagePopover);
+					return oMessagePopover;
+				});
+			}
+			return this._pMessagePopover;
+		}
 	});
 
 });
