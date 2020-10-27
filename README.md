@@ -1,25 +1,25 @@
-![openui5](http://openui5.org/images/OpenUI5_new_big_side.png)
+![openui5](https://openui5.org/images/OpenUI5_new_big_side.png)
+=======
 
-[OpenUI5. Build Once. Run on any device.](http://openui5.org)
+[OpenUI5. Build Once. Run on any device.](https://openui5.org)
 
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/openui5)](https://api.reuse.software/info/github.com/SAP/openui5)
 
-=======
 
 What is it?
 -----------
 OpenUI5 lets you build enterprise-ready web applications, responsive to all devices, running on almost
-any browser of your choice. It's based on JavaScript, using jQuery as its foundation and follows web standards.
+any browser of your choice. It's based on JavaScript and follows web standards.
 It eases your development with a client-side HTML5 rendering library including a rich set of controls
 and supports data binding to different data models (JSON, XML and OData).
 
 And... it's free and open source: OpenUI5 is licensed under the Apache License, Version 2.0 - see [LICENSE.txt](LICENSE.txt).
-It also contains third-party open source modules, see the list in [THIRDPARTY.txt](THIRDPARTY.txt) and the respective licenses in the LICENSES directory.
+It also contains third-party open source modules. See the list and respective licenses in [THIRDPARTY.txt](THIRDPARTY.txt).
 Third-party module license information is also available in machine-readable format in the [.reuse/dep5](.reuse/dep5) file.
 
 Try it!
 -------
-Check out our [interactive control playground](https://openui5.hana.ondemand.com/#/controls)
+Check out our [control playground](https://openui5.hana.ondemand.com/#/controls)
 as well as a number of [sample applications](https://openui5.hana.ondemand.com/#/demoapps).
 
 Get it!
@@ -29,10 +29,10 @@ and the UI5 SDK containing the documentation and many example apps as well as th
 
 You can also consume OpenUI5 using the [UI5 Tooling](https://sap.github.io/ui5-tooling/). **Get started [here](https://sap.github.io/ui5-tooling/pages/GettingStarted/)!**
 
-Alternatively, you can also download [every OpenUI5 library](https://www.npmjs.com/org/openui5) individually via [npm](https://docs.npmjs.com/getting-started/what-is-npm), for example: `npm install @openui5/sap.ui.core @openui5/sap.m @openui5/themelib_sap_belize [...]`.
+Alternatively, you can also download [every OpenUI5 library](https://www.npmjs.com/org/openui5) individually via [npm](https://docs.npmjs.com/getting-started/what-is-npm), for example: `npm install @openui5/sap.ui.core @openui5/sap.m @openui5/themelib_sap_fiori_3 [...]`.
 
 Preload packages for components and libraries can be built using the [UI5 Tooling](https://github.com/SAP/ui5-tooling).
-See also: [CLI guideline](https://github.com/SAP/ui5-cli#cli-usage).
+See also: [CLI usage](https://sap.github.io/ui5-tooling/pages/CLI/#usagesyntax).
 
 Get started!
 ------------
