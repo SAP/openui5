@@ -370,10 +370,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype._handleListItemDelete = function (oEvent) {
-		var aListItems, oItemtoFocus, iItemIndex,
-			oListItem = oEvent.getParameter("listItem"),
-			sSelectedId = oListItem && oListItem.data("tokenId"),
-			oTokenToDelete;
+		var oListItem = oEvent.getParameter("listItem");
+		var sSelectedId = oListItem && oListItem.data("tokenId");
+		var oTokenToDelete;
 
 		oTokenToDelete = this.getTokens().filter(function(oToken){
 			return (oToken.getId() === sSelectedId) && oToken.getEditable();
@@ -389,13 +388,6 @@ sap.ui.define([
 			this.fireTokenDelete({
 				tokens: [oTokenToDelete]
 			});
-
-			aListItems = this._getTokensList().getItems();
-			iItemIndex = aListItems.indexOf(oListItem);
-			oItemtoFocus = (iItemIndex === aListItems.length - 1) ?
-				aListItems[aListItems.length - 2] : aListItems[iItemIndex + 1];
-
-			oItemtoFocus && oItemtoFocus.focus();
 
 			oListItem.destroy();
 
