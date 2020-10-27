@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/ToolbarLayoutData",
 	"sap/m/ToolbarRenderer",
 	"sap/m/ToolbarSpacer",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/library"
 ], function(
 	QUtils,
 	Toolbar,
@@ -33,7 +34,8 @@ sap.ui.define([
 	ToolbarLayoutData,
 	ToolbarRenderer,
 	ToolbarSpacer,
-	Core
+	Core,
+	coreLibrary
 ) {
 	// shortcut for sap.m.ToolbarStyle
 	var ToolbarStyle = mobileLibrary.ToolbarStyle;
@@ -300,13 +302,13 @@ sap.ui.define([
 		// Arrange
 		var oToolbar = new Toolbar({
 			active: true,
-			ariaHasPopup: 'dialog'
+			ariaHasPopup: coreLibrary.aria.HasPopup.Dialog
 		});
 		oToolbar.placeAt("qunit-fixture");
 		Core.applyChanges();
 
 		//Assert
-		assert.equal(oToolbar.$().attr("aria-haspopup"), "dialog", "Active toolbar should have correct aria-haspopup");
+		assert.equal(oToolbar.$().attr("aria-haspopup"), coreLibrary.aria.HasPopup.Dialog, "Active toolbar should have correct aria-haspopup");
 
 		// Act
 		oToolbar.setActive(false);

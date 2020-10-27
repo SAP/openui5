@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	"sap/ui/events/KeyCodes",
-	'./ToolbarRenderer'
+	'./ToolbarRenderer',
+	"sap/ui/core/library"
 ],
 function(
 	BarInPageEnabler,
@@ -21,12 +22,16 @@ function(
 	Control,
 	EnabledPropagator,
 	KeyCodes,
-	ToolbarRenderer
+	ToolbarRenderer,
+	coreLibrary
 ) {
 	"use strict";
 
 	var ToolbarDesign = library.ToolbarDesign,
 		ToolbarStyle = library.ToolbarStyle;
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	 * Constructor for a new <code>Toolbar</code>.
@@ -130,9 +135,19 @@ function(
 
 			/**
 			 * Defines the aria-haspopup attribute of the <code>Toolbar</code>. if the active <code>design</code> is true.
+			 *
+			 * <b>Guidance for choosing appropriate value:</b>
+			 * <ul>
+			 * <li> If you use controls based on <code>sap.m.Popover</code> or <code>sap.m.Dialog</code>,
+			 * then you must use <code>AriaHasPopup.Dialog</code> (both <code>sap.m.Popover</code> and
+			 * <code>sap.m.Dialog</code> have role "dialog" assigned internally).</li>
+			 * <li> If you use other controls, or directly <code>sap.ui.core.Popup</code>, you need to check
+			 * the container role/type and map the value of <code>ariaHasPopup</code> accordingly.</li>
+			 * </ul>
+			 *
 			 * @since 1.79.0
 			 */
-			ariaHasPopup: {type : "string", group : "Accessibility", defaultValue : null}
+			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
 		},
 		defaultAggregation : "content",
 		aggregations : {
