@@ -469,7 +469,7 @@ function(
 					}),
 					lastDays: new RangeOperator({
 						name: "LASTDAYS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
@@ -479,10 +479,10 @@ function(
 					todayXYDays: new RangeOperator({
 						name: "TODAYXYDAYS",
 						valueTypes: [
-							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }}, //, constraints: { minimum: 0 }},
-							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }} //, constraints: { minimum: 0 }}
+							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }},
+							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }}
 						],
-						paramTypes: ["(\\d+)", "(\\d+)"],
+						paramTypes: ["([-+]?\\d+)", "([-+]?\\d+)"],
 						//label:["x", "y"],
 						additionalInfo: "",
 						calcRange: function (xDays, yDays) {
@@ -498,7 +498,7 @@ function(
 					}),
 					nextDays: new RangeOperator({
 						name: "NEXTDAYS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
@@ -528,7 +528,7 @@ function(
 					}),
 					lastWeeks: new RangeOperator({
 						name: "LASTWEEKS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
@@ -537,7 +537,7 @@ function(
 					}),
 					nextWeeks: new RangeOperator({
 						name: "NEXTWEEKS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
@@ -567,7 +567,7 @@ function(
 					}),
 					lastMonths: new RangeOperator({
 						name: "LASTMONTHS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
@@ -576,7 +576,7 @@ function(
 					}),
 					nextMonths: new RangeOperator({
 						name: "NEXTMONTHS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
@@ -606,7 +606,7 @@ function(
 					}),
 					lastQuarters: new RangeOperator({
 						name: "LASTQUARTERS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
@@ -615,7 +615,7 @@ function(
 					}),
 					nextQuarters: new RangeOperator({
 						name: "NEXTQUARTERS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
@@ -673,7 +673,7 @@ function(
 					}),
 					lastYears: new RangeOperator({
 						name: "LASTYEARS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
@@ -682,7 +682,7 @@ function(
 					}),
 					nextYears: new RangeOperator({
 						name: "NEXTYEARS",
-						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
 						paramTypes: ["(\\d+)"],
 						additionalInfo: "",
 						calcRange: function(iDuration) {
