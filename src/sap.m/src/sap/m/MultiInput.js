@@ -264,7 +264,10 @@ function(
 		oTokenizer.getTokensPopup()
 			.setInitialFocus(this)
 			.attachBeforeOpen(this._onBeforeOpenTokensPicker.bind(this))
-			.attachAfterClose(this._onAfterCloseTokensPicker.bind(this));
+			.attachAfterClose(this._onAfterCloseTokensPicker.bind(this))
+
+			/* Prevent closing of n more popover when input is clicked */
+			._getPopup().setAutoCloseAreas([oTokenizer, this]);
 
 		this.setAggregation("tokenizer", oTokenizer);
 
@@ -421,6 +424,18 @@ function(
 		aDeletingTokens.forEach(function(oToken) {
 			oToken.destroy();
 		}, this);
+
+		if (this.getTokens().length === 0) {
+			oTokenizer.getTokensPopup().close();
+		}
+
+		/*
+			If no keycode has been provided to the event,
+			token has been deleted by clicking and focus should be restored to input field.
+		*/
+		if (!oOptions.keyCode) {
+			this.focus();
+		}
 	};
 
 	MultiInput.prototype._handleInnerVisibility = function () {
