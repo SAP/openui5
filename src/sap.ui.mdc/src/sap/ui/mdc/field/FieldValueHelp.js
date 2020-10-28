@@ -2345,6 +2345,8 @@ sap.ui.define([
 
 		if (!iMaxConditions || iMaxConditions === 1) {
 			return null;
+		} else if (!this.getContent() && this.getShowConditionPanel() && !this.getNoDialog()) { // no table, only condition panel -> no comboBox
+			return null;
 		} else {
 			if (!this._oResourceBundleM) {
 				this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
