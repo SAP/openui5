@@ -66,6 +66,10 @@ sap.ui.define([
 	 * (e.g. the shortcut of a command registered to it)
 	 */
 	ShortcutHintsMixin.addConfig = function(oControl, oConfig, oHintProviderControl) {
+		if (/sap-ui-xx-noshortcuthints=true/.test(document.location.search)) {
+			return;
+		}
+
 		var oMixin = oControl._shortcutHintsMixin;
 
 		if (!oMixin) {
