@@ -95,52 +95,6 @@ sap.ui.define([
 		fnHandleResponse.call(this, iStart, iEnd, oResult, mTypeForMetaPath);
 	}
 
-	/**
-	 * Handles a GET response by extracting the minimum and the maximum values from the given
-	 * result, resolving the measure range promise and calling <code>fnHandleResponse</code> with
-	 * the remaining values of <code>aResult</code>. Restores the original
-	 * <code>handleResponse</code>.
-	 *
-	 * @param {object} [mAlias2MeasureAndMethod]
-	 *   A map of the virtual property names to the corresponding measure property names and the
-	 *   aggregation functions, for example:
-	 *   <code> UI5min__Property : {measure : "Property", method : "min"} </code>
-	 * @param {function} [fnMeasureRangeResolve]
-	 *   Function to resolve the measure range promise, see {@link #getMeasureRangePromise}
-	 * @param {function} fnHandleResponse
-	 *   The original <code>#handleResponse</code> of the first level cache
-	 * @param {number} iStart
-	 *   The index of the first element to request ($skip)
-	 * @param {number} iEnd
-	 *   The index after the last element to request ($skip + $top)
-	 * @param {object} oResult The result of the GET request
-	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
-	 *   {@link #fetchTypes})
-	 */
-	// @override sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
-	function handleMinMaxResponse(mAlias2MeasureAndMethod, fnMeasureRangeResolve, fnHandleResponse,
-			iStart, iEnd, oResult, mTypeForMetaPath) {
-		var sAlias,
-			mMeasureRange = {},
-			oMinMaxElement;
-
-		function getMeasureRange(sMeasure) {
-			mMeasureRange[sMeasure] = mMeasureRange[sMeasure] || {};
-			return mMeasureRange[sMeasure];
-		}
-
-		oMinMaxElement = oResult.value.shift();
-		oResult["@odata.count"] = oMinMaxElement.UI5__count;
-		for (sAlias in mAlias2MeasureAndMethod) {
-			getMeasureRange(mAlias2MeasureAndMethod[sAlias].measure)
-				[mAlias2MeasureAndMethod[sAlias].method] = oMinMaxElement[sAlias];
-		}
-		fnMeasureRangeResolve(mMeasureRange);
-		delete this.handleResponse; // revert to prototype
-
-		fnHandleResponse.call(this, iStart, iEnd, oResult, mTypeForMetaPath);
-	}
-
 	return {
 		/**
 		 * Enhances the given cache, so that the count and/or grand total are requested together
@@ -161,35 +115,6 @@ sap.ui.define([
 				= getResourcePathWithQuery.bind(oCache, oAggregation, mQueryOptions);
 			oCache.handleResponse
 				= handleGrandTotalResponse.bind(oCache, oAggregation, oCache.handleResponse);
-		},
-
-		/**
-		 * Enhances the given cache, so that the mininum and maximum values are requested together
-		 * with the first request. Subsequent requests remain unchanged.
-		 *
-		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
-		 *   The cache to be enhanced
-		 * @param {object} oAggregation
-		 *   An object holding the information needed for data aggregation; see also
-		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-		 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
-		 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
-		 * @param {object} mQueryOptions
-		 *   A map of key-value pairs representing the aggregation cache's original query string
-		 * @param {object} mAlias2MeasureAndMethod
-		 *   A map of the virtual property names to the corresponding measure property names and the
-		 *   aggregation functions, for example:
-		 *   <code> UI5min__Property : {measure : "Property", method : "min"} </code>
-		 * @param {function} fnMeasureRangeResolve
-		 *   Function to resolve the measure range promise, see {@link #getMeasureRangePromise}
-		 */
-		enhanceCacheWithMinMax : function (oCache, oAggregation, mQueryOptions,
-				mAlias2MeasureAndMethod, fnMeasureRangeResolve) {
-			oCache.getResourcePathWithQuery
-				= getResourcePathWithQuery.bind(oCache, oAggregation, mQueryOptions);
-			oCache.handleResponse
-				= handleMinMaxResponse.bind(oCache, mAlias2MeasureAndMethod, fnMeasureRangeResolve,
-					oCache.handleResponse);
 		}
 	};
 }, /* bExport= */false);

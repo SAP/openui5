@@ -33,6 +33,7 @@
 		"sap/ui/core/qunit/odata/v4/lib/_Helper.qunit",
 		"sap/ui/core/qunit/odata/v4/lib/_MetadataConverter.qunit",
 		"sap/ui/core/qunit/odata/v4/lib/_MetadataRequestor.qunit",
+		"sap/ui/core/qunit/odata/v4/lib/_MinMaxHelper.qunit",
 		"sap/ui/core/qunit/odata/v4/lib/_Parser.qunit",
 		"sap/ui/core/qunit/odata/v4/lib/_Requestor.qunit",
 		"sap/ui/core/qunit/odata/v4/lib/_V2MetadataConverter.qunit",

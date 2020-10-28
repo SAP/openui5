@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GrandTotalHelper",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper"
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_MinMaxHelper"
 ], function (Log, SyncPromise, _AggregationCache, _AggregationHelper, _Cache, _GrandTotalHelper,
-		_GroupLock, _Helper) {
+		_GroupLock, _Helper, _MinMaxHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
@@ -30,117 +31,74 @@ sap.ui.define([
 			this.oRequestorMock = this.mock(this.oRequestor);
 		}
 	});
+	//*********************************************************************************************
+[
+	{},
+	{$$filterBeforeAggregate : "foo", $apply : "bar"}
+].forEach(function (mQueryOptions, i) {
+	QUnit.test("create: no aggregation " + i, function (assert) {
+		var oAggregation = i ? {groupLevels : []} : null; // improves code coverage
+
+		this.mock(_Cache).expects("create")
+			.withExactArgs("~requestor~", "resource/path", sinon.match(function (oParam) {
+					if (i) {
+						assert.deepEqual(mQueryOptions, {$apply : "filter(foo)/bar"});
+					}
+					return oParam === mQueryOptions;
+				}), "~sortExpandSelect~", "deep/resource/path", "~sharedRequest~")
+			.returns("~cache~");
+
+		assert.strictEqual(
+			// code under test
+			_AggregationCache.create("~requestor~", "resource/path", "deep/resource/path",
+				oAggregation, mQueryOptions, "~sortExpandSelect~", "~sharedRequest~"),
+			"~cache~");
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("create with min/max", function (assert) {
-		var mAlias2MeasureAndMethod,
-			oAggregation = {
+		var oAggregation = {
 				aggregate : {},
 				group : {},
 				// Note: ODLB#updateAnalyticalInfo called _AggregationHelper.buildApply
 				groupLevels : []
 			},
-			sAggregation = JSON.stringify(oAggregation),
-			sApply = "A.P.P.L.E.",
-			oCache,
-			oExpectation,
-			fnGetResourcePathWithQuery = function () {},
-			fnHandleResponse = function () {},
-			oFirstLevelCache = {
-				getResourcePathWithQuery : fnGetResourcePathWithQuery,
-				handleResponse : fnHandleResponse
-			},
-			bMeasureRangePromiseResolved = false,
-			mQueryOptions = {
-				$apply : "bar",
-				$count : {/*true or false*/},
-				$filter : "baz",
-				$orderby : "X desc",
-				"sap-client" : "123"
-			},
-			sQueryOptions = JSON.stringify(mQueryOptions),
-			sResourcePath = "Foo";
+			mQueryOptions = {};
 
 		this.mock(_AggregationHelper).expects("hasMinOrMax")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
-		this.mock(_AggregationHelper).expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions), {})
-			.callsFake(function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod0) {
-				mAlias2MeasureAndMethod = mAlias2MeasureAndMethod0;
-				mQueryOptions = Object.assign({}, mQueryOptions);
-				delete mQueryOptions.$filter;
-				delete mQueryOptions.$orderby;
-				mQueryOptions.$apply = sApply;
-				return mQueryOptions;
-			});
-		this.mock(_Cache).expects("create")
-			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath, {
-					$apply : sApply,
-					$count : sinon.match.same(mQueryOptions.$count),
-					"sap-client" : "123"
-				}, true)
-			.returns(oFirstLevelCache);
-		oExpectation = this.mock(_GrandTotalHelper).expects("enhanceCacheWithMinMax")
-			.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
-				sinon.match.same(mQueryOptions),  sinon.match(function (mAlias2MeasureAndMethod0) {
-					assert.strictEqual(mAlias2MeasureAndMethod0, mAlias2MeasureAndMethod);
-					return mAlias2MeasureAndMethod0 === mAlias2MeasureAndMethod;
-				}), sinon.match.func);
+		this.mock(_MinMaxHelper).expects("createCache")
+			.withExactArgs("~requestor~", "resource/path", sinon.match.same(oAggregation),
+				sinon.match.same(mQueryOptions))
+			.returns("~cache~");
 
-		// code under test
-		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, oAggregation,
-			mQueryOptions);
-
-		assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
-		assert.ok(oCache instanceof _Cache, "_AggregationCache is a _Cache");
-		assert.strictEqual(oCache.oRequestor, this.oRequestor);
-		assert.strictEqual(oCache.sResourcePath, sResourcePath);
-		assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
-		assert.strictEqual(oCache.bSortExpandSelect, true);
-		assert.strictEqual(typeof oCache.fetchValue, "function");
-		assert.strictEqual(typeof oCache.read, "function");
-		assert.strictEqual(oCache.oAggregation, oAggregation);
-		assert.ok(oCache.oMeasureRangePromise instanceof Promise);
-		assert.strictEqual(oCache.getMeasureRangePromise(), oCache.oMeasureRangePromise);
-		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptions, "not modified");
-		assert.strictEqual(JSON.stringify(oAggregation), sAggregation, "not modified");
-		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
-
-		oCache.oMeasureRangePromise.then(function () {
-			bMeasureRangePromiseResolved = true;
-		});
-
-		return Promise.resolve().then(function () {
-			assert.notOk(bMeasureRangePromiseResolved, "measure range promise is unresolved");
-
-			// code under test - call fnMeasureRangeResolve
-			oExpectation.args[0][4]("~measureRange~");
-
-			return oCache.oMeasureRangePromise.then(function (mMeasureRange) {
-				assert.strictEqual(mMeasureRange, "~measureRange~");
-			});
-		});
+		assert.strictEqual(
+			// code under test
+			_AggregationCache.create("~requestor~", "resource/path", "", oAggregation,
+				mQueryOptions),
+			"~cache~");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("create: $expand not allowed", function (assert) {
-		var oAggregation = {/*irrelevant*/},
+		var oAggregation = {groupLevels : ["foo"]},
 			mQueryOptions = {$expand : undefined}; // even falsy values are forbidden!
 
 		assert.throws(function () {
 			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
+			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
 		}, new Error("Unsupported system query option: $expand"));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("create: $select not allowed", function (assert) {
-		var oAggregation = {/*irrelevant*/},
+		var oAggregation = {groupLevels : ["foo"]},
 			mQueryOptions = {$select : undefined}; // even falsy values are forbidden!
 
 		assert.throws(function () {
 			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
+			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
 		}, new Error("Unsupported system query option: $select"));
 	});
 
@@ -157,7 +115,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
+			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
 		}, new Error("Unsupported system query option: $count"));
 	});
 
@@ -168,33 +126,16 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
+			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
 		}, new Error("Unsupported system query option: $filter"));
 	});
 	//TODO if we allow filtering, do we need to filter $filter by current level, like $orderby?
 
 	//*********************************************************************************************
-	QUnit.test("create: groupLevels not allowed with min/max", function (assert) {
-		var oAggregation = {
-				aggregate : {},
-				group : {},
-				groupLevels : ["BillToParty"]
-			};
-
-		this.mock(_AggregationHelper).expects("hasMinOrMax")
-			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
-
-		assert.throws(function () {
-			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, {/*mQueryOptions*/});
-		}, new Error("Unsupported group levels together with min/max"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("create: grandTotal", function (assert) {
 		var oAggregation = {
 				aggregate : {
-					SalesNumber : {grandTotal : true}
+					// SalesNumber : {grandTotal : true}
 				},
 				group : {
 					Region : {}
@@ -208,16 +149,20 @@ sap.ui.define([
 			oGroupLock = {},
 			fnHandleResponse = function () {},
 			oFirstLevelCache = {
+				fetchValue : function () {},
 				getResourcePathWithQuery : fnGetResourcePathWithQuery,
 				handleResponse : fnHandleResponse,
 				read : function () {}
 			},
 			mQueryOptions = {},
 			sQueryOptions = JSON.stringify(mQueryOptions),
-			sResourcePath = "BusinessPartner";
+			sResourcePath = "BusinessPartner",
+			that = this;
 
 		this.mock(_AggregationHelper).expects("hasMinOrMax")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(false);
+		this.mock(_AggregationHelper).expects("hasGrandTotal")
+			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), true)
@@ -227,7 +172,7 @@ sap.ui.define([
 				sinon.match.same(mQueryOptions));
 
 		// code under test
-		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, oAggregation,
+		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, "", oAggregation,
 			mQueryOptions);
 
 		assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
@@ -274,6 +219,15 @@ sap.ui.define([
 					"@$ui5.node.level" : 1
 				}]
 			});
+
+			that.mock(oFirstLevelCache).expects("fetchValue")
+				.withExactArgs("~groupLock~", "path", "~dataRequested", "~listener~")
+				.returns("~promise~");
+
+			assert.strictEqual(
+				// code under test
+				oCache.fetchValue("~groupLock~", "path", "~dataRequested", "~listener~"),
+				"~promise~");
 		});
 	});
 
@@ -282,11 +236,12 @@ sap.ui.define([
 		var oAggregation = { // Note: properties added by _AggregationHelper.buildApply before
 				aggregate : {},
 				group : {},
-				groupLevels : []
+				groupLevels : ["foo"]
 			},
 			mQueryOptions = {},
 			mQueryOptionsWithApply = {},
-			oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation,
+				mQueryOptions);
 
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions))
@@ -363,7 +318,7 @@ sap.ui.define([
 				$orderby : "~orderby~"
 			};
 
-		oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
+		oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
 
 		if (oFixture.total) {
 			oFilteredAggregation.aggregate.x = {subtotal : true};
@@ -540,7 +495,7 @@ sap.ui.define([
 			.returns(oFirstLevelCache);
 
 		// code under test
-		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, oAggregation,
+		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, "", oAggregation,
 			mQueryOptions);
 
 		assert.deepEqual(oCache.aElements, []);
@@ -569,7 +524,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["BillToParty"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, {});
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
 
 		this.mock(oCache).expects("registerChange").withExactArgs("~path~", "~oListener~");
 		this.mock(oCache).expects("drillDown")
@@ -590,7 +545,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["BillToParty"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {}),
 			fnDoNotCall = assert.ok.bind(assert, false),
 			oListener = {
 				update : fnDoNotCall
@@ -613,9 +568,9 @@ sap.ui.define([
 		var oAggregation = {
 				aggregate : {},
 				group : {},
-				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
+				groupLevels : ["bar"] // Note: added by _AggregationHelper.buildApply before
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {}),
 			fnDoNotCall = assert.ok.bind(assert, false),
 			oListener = {
 				update : fnDoNotCall
@@ -646,7 +601,7 @@ sap.ui.define([
 				},
 				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, {
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {
 				$count : true
 			}),
 			fnDoNotCall = assert.ok.bind(assert, false),
@@ -676,66 +631,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bCount) {
-		QUnit.test("read, fetchValue: with min/max; $count : " + bCount, function (assert) {
-			var oAggregation = {
-					aggregate : {},
-					group : {},
-					// Note: ODLB#updateAnalyticalInfo called _AggregationHelper.buildApply
-					groupLevels : []
-				},
-				oCache,
-				oElement = {},
-				oGroupLock = {},
-				oPromise,
-				oResult = {
-					value : [oElement]
-				},
-				oReadPromise = Promise.resolve(oResult),
-				that = this;
-
-			this.mock(_AggregationHelper).expects("hasMinOrMax")
-				.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
-			oCache
-				= _AggregationCache.create(this.oRequestor, "~", oAggregation, {$count : bCount});
-			this.mock(oCache.oFirstLevel).expects("read").on(oCache.oFirstLevel)
-				.withExactArgs(0, 10, 0, undefined, undefined)
-				.returns(oReadPromise);
-
-			// code under test
-			oPromise = oCache.read(0, 10, 0);
-
-			return oPromise.then(function (oResult) {
-				var fnDataRequested = {},
-					oListener = {},
-					vResult = {};
-
-				assert.strictEqual(oResult.value[0], oElement);
-				assert.notOk("@$ui5.node.isExpanded" in oElement, "no @$ui5.node...");
-				assert.notOk("@$ui5.node.isTotal" in oElement);
-				assert.notOk("@$ui5.node.level" in oElement);
-
-				if (bCount) {
-					that.mock(oCache.oFirstLevel).expects("fetchValue").on(oCache.oFirstLevel)
-						.withExactArgs(sinon.match.same(oGroupLock), "$count",
-							sinon.match.same(fnDataRequested), sinon.match.same(oListener))
-						.returns(SyncPromise.resolve(vResult));
-				} else {
-					that.oLogMock.expects("error")
-						.withExactArgs("Failed to drill-down into $count, invalid segment: $count",
-							oCache.toString(), "sap.ui.model.odata.v4.lib._Cache");
-				}
-
-				// code under test
-				return oCache.fetchValue(oGroupLock, "$count", fnDataRequested, oListener)
-					.then(function (vResult0) {
-						assert.strictEqual(vResult0, bCount ? vResult : undefined);
-					});
-			});
-		});
-	});
-
-	//*********************************************************************************************
 [0, 10].forEach(function (iReadIndex) {
 	QUnit.test("read: with visual grouping - read index: " + iReadIndex, function (assert) {
 		var oAggregation = { // filled before by buildApply
@@ -744,7 +639,7 @@ sap.ui.define([
 				groupLevels : ["group"]
 			},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLock = {
 				unlock : function () {}
 			},
@@ -823,7 +718,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLevelCache = {
 				read : function () {}
 			},
@@ -905,7 +800,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oFirstLeaf = {},
 			oGroupLevelCache = {read : function () {}},
 			oGroupLock = {
@@ -974,7 +869,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oCacheMock = this.mock(oCache),
 			oFirstLeaf = {},
 			oGroupLevelCache = {
@@ -1062,7 +957,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oFirstLeaf = {},
 			oGroupLevelCache = {
 				read : function () {}
@@ -1126,7 +1021,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oFirstLeaf = {},
 			oGroupLevelCache = {
 				read : function () {}
@@ -1186,7 +1081,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLevelCache = {
 				read : function () {}
 			},
@@ -1235,7 +1130,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oCacheMock = this.mock(oCache),
 			oFirstLeaf0 = {},
 			oFirstLeaf1 = {},
@@ -1323,7 +1218,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLock = {
 				getUnlockedCopy : function () {},
 				unlock : function () {}
@@ -1372,7 +1267,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLock = {
 				getUnlockedCopy : function () {},
 				unlock : function () {}
@@ -1416,7 +1311,7 @@ sap.ui.define([
 				groupLevels : ["group"]
 			},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			aElements = [{
 				"@$ui5.node.isExpanded" : vHasCache === "expanding",
 				"@$ui5.node.level" : 0
@@ -1520,7 +1415,7 @@ sap.ui.define([
 				groupLevels : ["group"]
 			},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			aElements = [{}, {}, {
 				"@$ui5.node.isExpanded" : false,
 				"@$ui5.node.level" : 0
@@ -1605,7 +1500,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oCacheMock = this.mock(oCache),
 			aElements,
 			oGroupLevelCache = {
@@ -1694,7 +1589,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			aElements = [{
 				"@$ui5.node.isExpanded" : false,
 				"@$ui5.node.level" : 0
@@ -1765,9 +1660,9 @@ sap.ui.define([
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
-				groupLevels : []
+				groupLevels : ["foo"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oError = new Error(),
 			oGroupLevelCache = {
 				read : function () {}
@@ -1808,7 +1703,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			aElements = [{
 				// "@$ui5._" : {predicate : "('0')"},
 				// "@$ui5.node.level" : ignored
@@ -1891,7 +1786,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			aElements = [{
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.level" : 5
@@ -1924,9 +1819,9 @@ sap.ui.define([
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group: {},
-				groupLevels : []
+				groupLevels : ["foo"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLevelCache = {},
 			oPlaceholder = _AggregationHelper.createPlaceholder(NaN, 42, oGroupLevelCache),
 			aElements = [{}, {}, oPlaceholder,, {}, {}],
@@ -1959,9 +1854,9 @@ sap.ui.define([
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group: {},
-				groupLevels : []
+				groupLevels : ["foo"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLevelCache = {};
 
 			// Note: no need to check for level as well, because oGroupLevelCache belongs to a
@@ -1988,9 +1883,9 @@ sap.ui.define([
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group: {},
-				groupLevels : []
+				groupLevels : ["foo"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {});
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 
 		oCache.aElements = [, {/*unexpected element*/}];
 		oCache.aElements.$byPredicate = {};
@@ -2006,9 +1901,9 @@ sap.ui.define([
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group: {},
-				groupLevels : []
+				groupLevels : ["foo"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLevelCache = {};
 
 		assert.throws(function () {
