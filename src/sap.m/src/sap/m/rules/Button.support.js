@@ -14,15 +14,15 @@ sap.ui.define(["sap/ui/support/library"],
 		Audiences = SupportLib.Audiences; // Control, Internal, Application
 
 	// Controls that internally have sap.m.Button instances.
-	var aBlacklistedControls = [
+	var aExcludeListControls = [
 		"sap.ui.comp.smartvariants.SmartVariantManagement",
 		"sap.m.SplitButton"
 	];
 
-	function isControlBlacklisted(oControl) {
+	function isControlExcludeListed(oControl) {
 		if (oControl) {
-			for (var i = 0; i < aBlacklistedControls.length; i++) {
-				if (oControl.isA(aBlacklistedControls[i])) {
+			for (var i = 0; i < aExcludeListControls.length; i++) {
+				if (oControl.isA(aExcludeListControls[i])) {
 					return true;
 				}
 			}
@@ -30,17 +30,17 @@ sap.ui.define(["sap/ui/support/library"],
 		return false;
 	}
 
-	function isInsideBlacklistedControl(oButton) {
+	function isInsideExcludeListedControl(oButton) {
 		if (!oButton) {
 			return false;
 		}
 
 		// Check one level up.
-		if (isControlBlacklisted(oButton.getParent())) {
+		if (isControlExcludeListed(oButton.getParent())) {
 			return true;
 		}
 		// Check two levels up.
-		if (oButton.getParent() && isControlBlacklisted(oButton.getParent().getParent())) {
+		if (oButton.getParent() && isControlExcludeListed(oButton.getParent().getParent())) {
 			return true;
 		}
 
@@ -77,7 +77,7 @@ sap.ui.define(["sap/ui/support/library"],
 						var sElementId = oElement.getId(),
 							sElementName = oElement.getMetadata().getElementName();
 
-						if (!isInsideBlacklistedControl(oElement)) {
+						if (!isInsideExcludeListedControl(oElement)) {
 							oIssueManager.addIssue({
 								severity: Severity.Medium,
 								details: "Button '" + sElementName + "' (" + sElementId + ") consists of only an icon but has no tooltip",
