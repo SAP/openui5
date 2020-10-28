@@ -65,7 +65,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 	var nPopoverAnimationTick = 300;
 	var TokenizerRenderMode = Library.TokenizerRenderMode;
 
@@ -74,7 +74,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.multiInput1.destroy();
@@ -115,7 +115,7 @@ sap.ui.define([
 	QUnit.test("insertToken aggregation", function(assert) {
 
 		var oSpy = sinon.spy(Tokenizer.prototype, "insertToken");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.insertToken(new Token({text: "Token1"}), 0);
 
@@ -136,11 +136,11 @@ sap.ui.define([
 
 		// Act
 		this.multiInput1.setTokens([oToken1, oToken2, oToken3]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oInvalidationSpy = this.spy(this.multiInput1, "onBeforeRendering");
 		this.multiInput1.destroyTokens();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInvalidationSpy.calledOnce, true, "MultiInput has been rerendered after the tokens has been destroyed");
@@ -172,8 +172,6 @@ sap.ui.define([
 
 		var oDetachSuggestionItemSelectedFireSpy = this.spy(this.multiInput1, "detachSuggestionItemSelected"),
 			oDetachLiveChangeireSpy = this.spy(this.multiInput1, "detachLiveChange"),
-			oDetachTokenChangeFireSpy = this.spy(this.multiInput1.getAggregation("tokenizer"), "detachTokenChange"),
-			oDetachTokenUpdateFireSpy = this.spy(this.multiInput1.getAggregation("tokenizer"), "detachTokenUpdate"),
 			oDetachValueHelpRequestSpy = this.spy(this.multiInput1, "detachValueHelpRequest");
 
 
@@ -183,8 +181,6 @@ sap.ui.define([
 		//assert
 		assert.ok(oDetachSuggestionItemSelectedFireSpy.calledOnce, "detachSuggestionItemSelected should be called");
 		assert.ok(oDetachLiveChangeireSpy.calledOnce, "detachSuggestionItemSelected should be called");
-		assert.ok(oDetachTokenChangeFireSpy.calledOnce, "detachSuggestionItemSelected should be called");
-		assert.ok(oDetachTokenUpdateFireSpy.calledOnce, "detachSuggestionItemSelected should be called");
 		assert.ok(oDetachValueHelpRequestSpy.calledOnce, "detachValueHelpRequest should be called");
 		assert.equal(multiInputClone.getTokens().length, 1, "Cloned MultiInput contains 1 token");
 		assert.equal(multiInputClone.getTokens()[0].getText(), TEXT, "Cloned token has correct text");
@@ -193,8 +189,6 @@ sap.ui.define([
 		multiInputClone.destroy();
 		oDetachSuggestionItemSelectedFireSpy.restore();
 		oDetachLiveChangeireSpy.restore();
-		oDetachTokenChangeFireSpy.restore();
-		oDetachTokenUpdateFireSpy.restore();
 	});
 
 	QUnit.test("check base class prerequisites", function(assert) {
@@ -227,7 +221,7 @@ sap.ui.define([
 
 		this.multiInput1.setMaxTokens(2);
 		this.multiInput1.setTokens([token1, token2, token3]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var aVisibleTokens = this.multiInput1.getTokens().filter(function (oToken) {
 			return oToken.getVisible();
@@ -242,7 +236,7 @@ sap.ui.define([
 		});
 
 		multiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "398px", "_calculateSpaceForTokenizer returns a correct px value");
 
@@ -256,7 +250,7 @@ sap.ui.define([
 		});
 
 		multiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "148px", "_calculateSpaceForTokenizer returns a correct px value");
 
@@ -268,10 +262,10 @@ sap.ui.define([
 			output;
 
 		multiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		multiInput.$().find(".sapMMultiInputInputContainer").removeClass("sapMMultiInputInputContainer");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		output = multiInput._calculateSpaceForTokenizer();
 
@@ -287,7 +281,7 @@ sap.ui.define([
 		});
 
 		multiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "0px", "_calculateSpaceForTokenizer returns a non negative value");
 
@@ -309,7 +303,7 @@ sap.ui.define([
 		oModel.setData(data);
 
 		// set the model to the core
-		sap.ui.getCore().setModel(oModel);
+		Core.setModel(oModel);
 
 		// define the template
 		var oItemTemplate = new ColumnListItem({
@@ -344,7 +338,7 @@ sap.ui.define([
 		oTable.bindItems("/modelData", oItemTemplate);
 		oTable.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oMultiInput1 = oTable.getItems()[0].getCells()[1];
 		assert.equal(oMultiInput1.getTokens()[0].$().text(), "Doe", "text of token is correct");
@@ -386,15 +380,15 @@ sap.ui.define([
 		this.multiInput1.setModel(model);
 		this.multiInput1.bindAggregation("tokens", "/names", oTokenTemplate);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var firstToken = this.multiInput1.getTokens()[0];
 		firstToken.setSelected(true);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(firstToken.$(), KeyCodes.BACKSPACE);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput has only 3 tokens");
@@ -402,7 +396,7 @@ sap.ui.define([
 		// act
 		model.setData(newData);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(this.multiInput1.getTokens().length, 4, "MultiInput has 4 tokens");
@@ -425,7 +419,7 @@ sap.ui.define([
 
 		aFirstToken = this.multiInput1.getTokens()[0];
 		aSecondToken = this.multiInput1.getTokens()[1];
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.equal(aFirstToken.$('icon').css('display'), 'inline-block', 'First token icon is visible');
@@ -433,7 +427,7 @@ sap.ui.define([
 
 		//act
 		this.multiInput1.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.equal(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
@@ -504,7 +498,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.multiInput1.destroy();
@@ -764,7 +758,7 @@ sap.ui.define([
 			return new sap.m.Token({ text: args.text });
 		});
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		this.multiInput1.setValue("Token 1");
@@ -783,7 +777,7 @@ sap.ui.define([
 
 		this.multiInput1.addValidator(oValidator);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.multiInput1.removeValidator(oValidator);
 		// assert
 		assert.strictEqual(this.multiInput1._aTokenValidators.length, 0 , "then the MultiInput has no validators");
@@ -798,7 +792,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.multiInput1.$().trigger("focus");
 		},
@@ -812,13 +806,13 @@ sap.ui.define([
 
 		var token1 = new Token();
 		this.multiInput1.addToken(token1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.focus();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.BACKSPACE);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(token1.getSelected(), "Token got selected");
 		assert.strictEqual(token1.getId(), document.activeElement.id ,"Token got focused");
@@ -839,11 +833,11 @@ sap.ui.define([
 		var token1 = new Token();
 		this.multiInput1.addToken(token1);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.focus();
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.BACKSPACE);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(token1.getId(), document.activeElement.id ,"Token got focused");
 
@@ -874,13 +868,13 @@ sap.ui.define([
 		});
 
 		oMI.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oToken.fireDelete({
 			byKeyboard: false,
 			backspace: false
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMI.destroy();
 	});
@@ -890,24 +884,24 @@ sap.ui.define([
 			that = this;
 		this.multiInput1.addToken(token);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(this.multiInput1.getTokens().length, 1, "MultiInput contains 1 token");
 
 		this.multiInput1.focus();
 
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ARROW_LEFT);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(document.activeElement, KeyCodes.DELETE);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
 
 		token = new Token({selected: false});
 		this.multiInput1.addToken(token);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
 
@@ -924,7 +918,7 @@ sap.ui.define([
 		var token2 = new Token({selected:true});
 		var token3 = new Token({selected:true});
 		this.multiInput1.setTokens([token1, token2, token3]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.fireLiveChange();
 
@@ -937,7 +931,7 @@ sap.ui.define([
 		var token3 = new Token();
 		this.multiInput1.setTokens([token1, token2, token3]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(token1.$(), KeyCodes.A, false, false, true); // trigger Control key + A
 		assert.equal(token1.getSelected(), true, "Token1 got selected using ctrl+a");
@@ -992,7 +986,7 @@ sap.ui.define([
 			token1 = new Token({text: "Token"});
 
 		this.multiInput1.addToken(token1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.getTokens()[0].focus();
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.HOME);
@@ -1009,7 +1003,7 @@ sap.ui.define([
 			token2 = new Token({text: "Token 2"});
 
 		this.multiInput1.setTokens([token1, token2]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.HOME);
 
@@ -1026,14 +1020,14 @@ sap.ui.define([
 
 		this.multiInput1.setTokens([token1, token2]);
 		this.multiInput1.setValue("text123");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.focus();
 		this.multiInput1._$input[0].setSelectionRange(1, 7);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.HOME);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(focusRef.id, document.activeElement.id,
@@ -1047,7 +1041,7 @@ sap.ui.define([
 				token1 = new Token({text: "Token"});
 
 		this.multiInput1.addToken(token1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.getTokens()[0].focus();
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_LEFT);
@@ -1073,7 +1067,7 @@ sap.ui.define([
 		this.multiInput1._$input.trigger("focus");
 		this.multiInput1._$input[0].setSelectionRange(3, 3);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_LEFT);
 
@@ -1108,15 +1102,15 @@ sap.ui.define([
 	QUnit.test("onsapdelete", function(assert) {
 		this.multiInput1.setValue("text123");
 		this.multiInput1.setTokens([new Token()]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.focus();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.multiInput1._$input[0].setSelectionRange(2, 3);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.DELETE);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.multiInput1.getTokens().length, 1, "No token was deleted");
@@ -1128,10 +1122,10 @@ sap.ui.define([
 			token3 = new Token({text: "Token 3"});
 
 		this.multiInput1.setTokens([token1, token2, token3]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.DELETE);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(document.activeElement, token3.getDomRef(),
@@ -1144,10 +1138,10 @@ sap.ui.define([
 			token3 = new Token({text: "Token 3", selected: true});
 
 		this.multiInput1.setTokens([token1, token2, token3]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.DELETE);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(document.activeElement, this.multiInput1.getFocusDomRef(),
@@ -1160,7 +1154,7 @@ sap.ui.define([
 			token3 = new Token({text: "Token 3", selected: true});
 
 		this.multiInput1.setTokens([token1, token2, token3]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.BACKSPACE);
 
@@ -1175,14 +1169,74 @@ sap.ui.define([
 			token3 = new Token({text: "Token 3"});
 
 		this.multiInput1.setTokens([token1, token2, token3]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.BACKSPACE);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(document.activeElement, this.multiInput1.getFocusDomRef(),
 			"The focus is forwarded to the input field.");
+	});
+
+	QUnit.test("backspace should delete token and fire tokenUpdate", function (assert) {
+		var oFirstToken = new Token({ text: "Token 1"});
+		var oMI = new MultiInput({
+			tokens: [
+				oFirstToken,
+				new Token({ text: "Token 2"}),
+				new Token({ text: "Token 3"})
+			]
+		}).placeAt("content");
+
+		Core.applyChanges();
+
+		var oSpy = this.spy(oMI, "fireTokenUpdate");
+
+		oMI.focus();
+
+		// focus last token
+		qutils.triggerKeydown(oMI.getDomRef(), KeyCodes.BACKSPACE);
+		Core.applyChanges();
+
+		// delete last token
+		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+		Core.applyChanges();
+
+		assert.ok(oMI.getTokens().length, 2, "One Token should be deleted");
+		assert.ok(oSpy.called, "Fire Token Update is called");
+
+		oMI.destroy();
+	});
+
+	QUnit.test("backspace should delete token and fire tokenUpdate", function (assert) {
+		var oFirstToken = new Token({ text: "Token 1"});
+		var oMI = new MultiInput({
+			tokens: [
+				oFirstToken,
+				new Token({ text: "Token 2"}),
+				new Token({ text: "Token 3"})
+			]
+		}).placeAt("content");
+
+		Core.applyChanges();
+
+		var oSpy = this.spy(oMI, "fireTokenUpdate");
+
+		oMI.focus();
+
+		// focus last token
+		qutils.triggerKeydown(oMI.getDomRef(), KeyCodes.BACKSPACE);
+		Core.applyChanges();
+
+		// delete last token
+		qutils.triggerKeydown(document.activeElement, KeyCodes.DELETE);
+		Core.applyChanges();
+
+		assert.ok(oMI.getTokens().length, 2, "One Token should be deleted");
+		assert.ok(oSpy.called, "Fire Token Update is called");
+
+		oMI.destroy();
 	});
 
 	QUnit.test("onsapdelete when MultiInput has value", function(assert) {
@@ -1190,7 +1244,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(Tokenizer.prototype, "onsapdelete");
 		this.multiInput1.setValue("value");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.DELETE);
 
 		// assert
@@ -1207,7 +1261,7 @@ sap.ui.define([
 
 		this.multiInput1.addToken(new Token({}));
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.getTokens()[0].focus();
 
@@ -1226,7 +1280,7 @@ sap.ui.define([
 
 		var oSpy = sinon.spy(Tokenizer.prototype, "onsapdelete");
 		this.multiInput1.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.DELETE);
 
 		// assert
@@ -1246,14 +1300,14 @@ sap.ui.define([
 		this.multiInput1.addValidator(function (args) {
 			return new Token({text: args.text, key: args.text});
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		// create new token by user input
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.D });
 		this.multiInput1._$input.trigger("focus").trigger(oFakeKeydown).val("D").trigger("input");
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// move to previous token and than back to the newly added
 		this.multiInput1.getTokens()[3].focus();
@@ -1279,7 +1333,7 @@ sap.ui.define([
 				sValue = oEvent.getParameter("value");
 			}
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMI._getSuggestionsPopoverPopup().open();
@@ -1336,7 +1390,7 @@ sap.ui.define([
 			new Token({text: "XXXX"}),
 			new Token({text: "XXXX"})
 		]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oSpy = sinon.spy(oMI.getAggregation("tokenizer"), "_togglePopup");
 
 		oMI.$().find(".sapMTokenizerIndicator")[0].click();
@@ -1381,11 +1435,11 @@ sap.ui.define([
 				})
 			]
 		}).placeAt( "qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMI._getSuggestionsPopoverPopup().open();
 		oMI.setSelectionItem(oMI.getSuggestionItems()[0]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oMI._getSuggestionsPopoverInstance()._oPopupInput.getValue(), "", "The dialog's input is cleared.");
@@ -1430,7 +1484,7 @@ sap.ui.define([
 			new Token({text: "XXXX"}),
 			new Token({text: "XXXX"})
 		]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oSpy = sinon.spy(oMI, "_manageListsVisibility");
 
@@ -1439,7 +1493,7 @@ sap.ui.define([
 			valueHelpOnly: true
 		});
 		oMultiInput1.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMI.ontap(oFakeEvent);
@@ -1502,7 +1556,7 @@ sap.ui.define([
 			path: "/",
 			template: new Item({text: "{name}", key: "{key}"})
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiInput._$input.trigger("focus");
 		this.clock.tick(400);
@@ -1522,7 +1576,7 @@ sap.ui.define([
 
 		// Act
 		oTokenizer._handleNMoreIndicatorPress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.notOk(oMultiInput._oSuggestionPopup.isOpen(), "Suggestions should not be visible");
@@ -1530,7 +1584,7 @@ sap.ui.define([
 
 		// Act
 		oTokenizer.getTokensPopup().close();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiInput.onfocusin({target: oMultiInput.getDomRef("inner")});
 		this.clock.tick(1000);
@@ -1562,7 +1616,7 @@ sap.ui.define([
 
 			return new Token({text: text});
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiInput._openSuggestionsPopover({});
@@ -1583,7 +1637,7 @@ sap.ui.define([
 		});
 
 		oMI.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMI.getFocusDomRef().focus();
 		qutils.triggerKeydown(oMI.getFocusDomRef(), KeyCodes.ARROW_LEFT);
@@ -1604,7 +1658,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.multiInput1.destroy();
@@ -1619,15 +1673,15 @@ sap.ui.define([
 
 		var token1 = new Token();
 		this.multiInput1.addToken(token1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(eventType, MultiInput.TokenChangeType.Added, "added event raised");
 
 		this.multiInput1.removeToken(token1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.removeAllTokens();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(eventType, MultiInput.TokenChangeType.RemovedAll, "removedAll event raised");
 	});
@@ -1681,7 +1735,7 @@ sap.ui.define([
 			});
 
 			this.clock.tick(10);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			//assert
 			assert.equal(counter, 1, "tokenUpdate event should be fired once");
@@ -1721,7 +1775,7 @@ sap.ui.define([
 
 
 			this.clock.tick(10);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			//assert
 			assert.equal(counter, 0, "tokenUpdate event should not be fired");
@@ -1783,7 +1837,7 @@ sap.ui.define([
 			evt.preventDefault();
 		});
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oDeleteIcon = token1.getAggregation("deleteIcon");
 		qutils.triggerEvent("tap", oDeleteIcon.getDomRef());
@@ -1811,7 +1865,7 @@ sap.ui.define([
 		this.multiInput1.focus();
 		this.multiInput1.$("inner").val("Test token");
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.ok(oChangeFireSpy.calledOnce, "Change is fired");
@@ -1825,7 +1879,7 @@ sap.ui.define([
 		this.multiInput1.bFocusoutDueRendering = false;
 		this.multiInput1.$("inner").val("Test token 2");
 		this.multiInput1.onsapfocusleave({});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.ok(oChangeFireSpy.calledTwice, "Change is fired");
@@ -1841,7 +1895,7 @@ sap.ui.define([
 		// Act
 		this.multiInput1.focus();
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.notOk(oEnterSpy.args[0][0].isMarked());
@@ -1860,11 +1914,11 @@ sap.ui.define([
 		var oSpyChangeEvent = sinon.spy(this.multiInput1, "fireChange");
 
 		this.multiInput1.addSuggestionItem(oItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		this.multiInput1.setSelectionItem(oItem, true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.multiInput1.getValue(), "", "Value of the input should be empty");
@@ -1880,7 +1934,7 @@ sap.ui.define([
 			},
 			oMultiInput = new MultiInput().placeAt("content"),
 			oSpy;
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oSpy = sinon.spy(oMultiInput, "setProperty");
@@ -1908,7 +1962,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oModel = new JSONModel({
 			value: ""
@@ -1921,14 +1975,14 @@ sap.ui.define([
 		oMultiInput.setModel(oModel);
 		oMultiInput.setValue("Token 1");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act - trigger onsapfocusleave and close
 		// the suggestion popover when an item is selected
 		oMultiInput.onsapfocusleave({});
 		oMultiInput.setSelectedKey("1");
 		oMultiInput._getSuggestionsPopoverPopup().close();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiInput.getValue(), "", "Value of the input should be empty");
@@ -1947,7 +2001,7 @@ sap.ui.define([
 			oEvent.preventDefault();
 		});
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerEvent("tap", this.multiInput1.getTokens()[0].getDomRef());
 
@@ -1973,7 +2027,7 @@ sap.ui.define([
 			oEvent.preventDefault();
 		});
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiInput1.getAggregation("tokenizer")._handleNMoreIndicatorPress();
 
@@ -1993,7 +2047,7 @@ sap.ui.define([
 			});
 			this.multiInput1.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.multiInput1.destroy();
@@ -2059,7 +2113,7 @@ sap.ui.define([
 	QUnit.test("Tokens information should be read out", function(assert) {
 		// arrange
 		var sInvisibleTextId = this.multiInput1.getAggregation("tokenizer").getTokensInfoId(),
-			oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
+			oInvisibleText = Core.byId(sInvisibleTextId);
 
 		// assert
 		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_TOKEN"), "'MultiInput may contain tokens' text is set.");
@@ -2114,21 +2168,21 @@ sap.ui.define([
 			});
 
 		oMultiInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiInput._onResize();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		sKeyShortcut = oMultiInput.getFocusDomRef().getAttribute('aria-keyshortcuts');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(sKeyShortcut, "Enter", "'aria-keyshortcuts' attribute should be presented with the correct value");
 
 		// Act
 		oMultiInput.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		sKeyShortcut = oMultiInput.getFocusDomRef().getAttribute('aria-keyshortcuts');
 
 		// Assert
@@ -2137,7 +2191,7 @@ sap.ui.define([
 		// Act
 		oMultiInput.setEnabled(true);
 		oMultiInput.setEditable(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		sKeyShortcut = oMultiInput.getFocusDomRef().getAttribute('aria-keyshortcuts');
 
 		// Assert
@@ -2150,7 +2204,7 @@ sap.ui.define([
 
 		// act
 		this.multiInput1.addToken(new Token({text: "Token2"}));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputHasTokens"), "MultiInput placeholder doesn't show placeholder");
@@ -2163,7 +2217,7 @@ sap.ui.define([
 
 		oMultiInputWithoutSuggestions.placeAt("content");
 		oMultiInputWithSuggestions.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(oMultiInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
@@ -2171,7 +2225,7 @@ sap.ui.define([
 
 		//Act
 		oMultiInputWithSuggestions.setShowSuggestion(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(oMultiInputWithSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
@@ -2186,7 +2240,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.multiInput1.destroy();
@@ -2203,7 +2257,7 @@ sap.ui.define([
 		this.multiInput1.getTokens()[0].focus();
 
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.X,
@@ -2225,7 +2279,7 @@ sap.ui.define([
 
 		this.multiInput1.getTokens()[0].focus();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.A,
@@ -2252,7 +2306,7 @@ sap.ui.define([
 
 		this.multiInput1.getTokens()[0].setSelected(true);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.C,
@@ -2274,7 +2328,7 @@ sap.ui.define([
 
 		this.multiInput1.focus();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.A,
@@ -2312,7 +2366,7 @@ sap.ui.define([
 				}
 			});
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.clock.tick(10);
 
 			//assert
@@ -2327,7 +2381,7 @@ sap.ui.define([
 			return new Token({text: args.text});
 		});
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var result = this.multiInput1._convertTextToToken("  token");
 
@@ -2340,7 +2394,7 @@ sap.ui.define([
 			this.multiInput = new MultiInput();
 			this.multiInput.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.multiInput.destroy();
@@ -2359,7 +2413,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		if (Device.browser.internet_explorer) {
@@ -2390,7 +2444,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		if (Device.browser.internet_explorer) {
@@ -2432,7 +2486,7 @@ sap.ui.define([
 			new Token({text: "XXXX", editable: false})
 		]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oItem = oList.getItems()[0];
 		oFakeEvent = {
@@ -2460,7 +2514,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 
@@ -2469,7 +2523,7 @@ sap.ui.define([
 
 		//close and open the picker
 		this.multiInput.onfocusin(oEventMock);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
@@ -2486,14 +2540,14 @@ sap.ui.define([
 			new Token({text: "XXXX"}),
 			new Token({text: "XXXX"})
 		]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Setup
 		oTokenizerSpy = this.spy(oTokenizer, "setRenderMode");
 
 		// Act. Emulate click on the Icon
 		this.multiInput.onfocusin({target: this.multiInput.getDomRef("vhi")});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(oTokenizerSpy.calledOnce, "setRenderMode should not be triggered");
@@ -2501,7 +2555,7 @@ sap.ui.define([
 
 		// Act. Emulate "real" focusin
 		this.multiInput.onfocusin({target: this.multiInput.getDomRef("inner")});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oTokenizerSpy.calledOnce, "setRenderMode should be triggered");
@@ -2515,7 +2569,7 @@ sap.ui.define([
 		}
 		// Focus first item in the popover.
 		oTokenizer.getTokensPopup().getContent()[0].getItems()[0].$().trigger("focus");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oTokenizer.getTokensPopup().close();
 		this.clock.tick(500);
@@ -2551,7 +2605,7 @@ sap.ui.define([
 		oListItem.data("text", "text123");
 		oListItem.data("tokenId", "token");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		aTokens = this.multiInput.getTokens();
@@ -2629,7 +2683,7 @@ sap.ui.define([
 		var oTokenizer = this.multiInput1.getAggregation("tokenizer"),
 			oStub = sinon.stub(oTokenizer.getTokensPopup(), "openBy");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		// act
 		if (Device.browser.internet_explorer) {
 			oTokenizer.$().trigger("click");
@@ -2671,7 +2725,7 @@ sap.ui.define([
 
 		// act
 		oTokenizer._togglePopup(oTokenizer.getTokensPopup());
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		oList = oTokenizer._getTokensList();
@@ -2681,7 +2735,7 @@ sap.ui.define([
 		oDeleteStub.withArgs("listItem").returns(oList.getItems()[0]);
 		oDeleteStub.withArgs("tokens").returns([oMI.getTokens()[0]]);
 		oTokenizer._handleListItemDelete(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oList.getItems().length, 3, "A list item is removed from the dialog.");
@@ -2697,12 +2751,12 @@ sap.ui.define([
 		oTokenizer = this.multiInput.getAggregation("tokenizer");
 		this.multiInput.addToken(oToken);
 		oTokenizer._togglePopup(oTokenizer.getTokensPopup());
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oTokenizer._fillTokensList(oTokenizer._getTokensList());
 		this.multiInput.removeToken(oToken);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		aListItems = oTokenizer._getTokensList().getItems();
@@ -2739,7 +2793,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oPopover, "Readonly Popover should be created");
@@ -2769,7 +2823,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMIDomRef = oMultiInput.getFocusDomRef();
@@ -2800,7 +2854,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oPopover, "Readonly Popover should be created");
@@ -2833,7 +2887,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		if (Device.browser.msie) {
@@ -2859,7 +2913,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		if (Device.browser.msie) {
@@ -2876,7 +2930,7 @@ sap.ui.define([
 		// act
 		oPicker.close();
 		this.multiInput.setEditable(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		if (Device.browser.msie) {
@@ -2884,7 +2938,7 @@ sap.ui.define([
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		var oEvent = {
@@ -2894,7 +2948,7 @@ sap.ui.define([
 		};
 
 		oTokenizer._handleListItemDelete(oEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var aTokens = this.multiInput.getTokens();
 		var aItems = oPicker.getDomRef().querySelectorAll('.sapMLIB');
@@ -2911,7 +2965,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(100);
 
 		// assert
@@ -2934,7 +2988,7 @@ sap.ui.define([
 		qutils.triggerEvent("input", multiInput.getFocusDomRef());
 
 		multiInput.onsapfocusleave({});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(multiInput.$("inner").css("opacity"), "1", "The input value remains visible, if the n-more label is hidden");
@@ -2953,7 +3007,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oMultiInput.$("inner").css("opacity"), "1", "The input value remains visible, if the n-more label is hidden");
 
@@ -2965,7 +3019,7 @@ sap.ui.define([
 		]);
 
 		// act
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oMultiInput.$("inner").css("opacity"), "0", "The input value is not visible, if the n-more label is shown");
@@ -2987,7 +3041,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible.");
@@ -2997,7 +3051,7 @@ sap.ui.define([
 		// Invalidating when the nMore is to be shown that is why
 		oVisibleInputSpy.reset();
 		this.multiInput.onsapfocusleave({});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oVisibleInputSpy.calledWith(false), "The input field is hidden onfocusout.");
@@ -3014,7 +3068,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is not visible.");
@@ -3042,7 +3096,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 
@@ -3052,7 +3106,7 @@ sap.ui.define([
 
 		oVisibleInputSpy.reset();
 		this.multiInput.invalidate({});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oVisibleInputSpy.calledWith(false), "The input field is hidden.");
@@ -3090,11 +3144,11 @@ sap.ui.define([
 		var oTokenizer = oMultiInput.getAggregation("tokenizer");
 		var oList  = oTokenizer._getTokensList();
 		oMultiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiInput.destroy();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(!oTokenizer._oTokensList, "The SelectedItemsList gets detached");
@@ -3111,12 +3165,12 @@ sap.ui.define([
 
 		// arrange
 		var oMultiInput = new MultiInput("test-input").placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiInput.destroy();
 		oMultiInput = new MultiInput("test-input").placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(true, "If there's no exception so far, everything is ok");
@@ -3139,7 +3193,7 @@ sap.ui.define([
 			});
 			this.multiInput1.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			sinon.config.useFakeTimers = true;
@@ -3182,7 +3236,7 @@ sap.ui.define([
 			});
 
 		oMI.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(1000);
 
 		assert.strictEqual(oSyncInput.callCount, 2);
@@ -3211,12 +3265,12 @@ sap.ui.define([
 			bVisible;
 
 		oMultiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		oMultiInput.updateDomValue("123");
 		qutils.triggerEvent("input", oMultiInput.getFocusDomRef());
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Arrange
 		var oToken1 = new Token({text: "Token with a very long text content"}),
@@ -3230,7 +3284,7 @@ sap.ui.define([
 		oRenderingSpy.reset();
 		oMultiInput.setTokens([oToken1, oToken2, oToken3, oToken4, oToken5, oToken6]);
 		oMultiInput.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oTokenizer._handleNMoreIndicatorPress();
 		bVisible = oTokenizer._getTokensList().getVisible();
@@ -3294,7 +3348,7 @@ sap.ui.define([
 			sorter: [new Sorter('group', false, true)],
 			template: new Item({text: "{name}", key: "{key}"})
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiInput.onfocusin({target: oMultiInput.getDomRef("inner")}); // for some reason this is not triggered when calling focus via API
@@ -3334,7 +3388,7 @@ sap.ui.define([
 			});
 			this.oMultiInput.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.oMultiInput.destroy();
@@ -3377,7 +3431,7 @@ sap.ui.define([
 
 		// Act
 		qutils.triggerEvent("tap", oLastToken.getDomRef());
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oSpy.called, "scrollToEnd has been called.");
@@ -3393,7 +3447,7 @@ sap.ui.define([
 		// Act
 		this.oMultiInput.focus();
 		qutils.triggerKeydown(this.oMultiInput.getFocusDomRef(), KeyCodes.ARROW_LEFT);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oSpy.calledWith({preventScroll: true}), "Focus has been called with preventScroll argument.");
@@ -3478,7 +3532,7 @@ sap.ui.define([
 		var oMultiInput = new MultiInput();
 
 		oMultiInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		qutils.triggerKeydown(oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I

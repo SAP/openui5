@@ -248,8 +248,6 @@ function(
 
 		var oTokenizer = new Tokenizer({
 			renderMode: TokenizerRenderMode.Narrow,
-			tokenChange: this._onTokenChange.bind(this),
-			tokenUpdate: this._onTokenUpdate.bind(this),
 			tokenDelete: this._tokenDelete.bind(this)
 		});
 
@@ -385,7 +383,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._tokenDelete = function (oEvent) {
-		this._deleteTokens(oEvent.getParameter("tokens"), oEvent.getParameters(), true);
+		this._deleteTokens(oEvent.getParameter("tokens"), oEvent.getParameters());
 	};
 
 
@@ -394,10 +392,9 @@ function(
 	 *
 	 * @param {sap.m.Token[]} aDeletingTokens Tokens to be deleted and destroyed.
 	 * @param {object} oOptions Object containing information how the tokens are deleted (backspace or delete button).
-	 * @param {boolean} bPreventTokenUpdateEvent Flag to skip or not tokenUpdate event.
 	 * @private
 	 */
-	MultiInput.prototype._deleteTokens = function (aDeletingTokens, oOptions, bPreventTokenUpdateEvent) {
+	MultiInput.prototype._deleteTokens = function (aDeletingTokens, oOptions) {
 		var oTokenizer = this.getAggregation("tokenizer");
 		var iIndex = 0;
 		var bBackspace = oOptions.keyCode === KeyCodes.BACKSPACE;
@@ -410,13 +407,11 @@ function(
 			this.focus();
 		}.bind(this));
 
-		if (!bPreventTokenUpdateEvent) {
-			this.fireTokenUpdate({
-				type: Tokenizer.TokenUpdateType.Removed,
-				addedTokens: [],
-				removedTokens: aDeletingTokens
-			});
-		}
+		this.fireTokenUpdate({
+			type: Tokenizer.TokenUpdateType.Removed,
+			addedTokens: [],
+			removedTokens: aDeletingTokens
+		});
 
 		aDeletingTokens.forEach(function(oToken) {
 			oToken.destroy();
@@ -506,14 +501,6 @@ function(
 	 */
 	MultiInput.prototype._onResize = function () {
 		this.getAggregation("tokenizer").setMaxWidth(this._calculateSpaceForTokenizer());
-	};
-
-	MultiInput.prototype._onTokenChange = function (oEvent) {
-		this.fireTokenChange(oEvent.getParameters());
-	};
-
-	MultiInput.prototype._onTokenUpdate = function (oEvent) {
-		this.fireTokenUpdate(oEvent.getParameters());
 	};
 
 	MultiInput.prototype._onSuggestionItemSelected = function (eventArgs) {
@@ -1219,21 +1206,16 @@ function(
 	 * @returns {sap.m.MultiInput} reference to the newly created clone
 	 */
 	MultiInput.prototype.clone = function () {
-		var oClone,
-			oTokenizer = this.getAggregation("tokenizer");
+		var oClone;
 
 		this.detachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 		this.detachLiveChange(this._onLiveChange, this);
-		oTokenizer.detachTokenChange(this._onTokenChange, this);
-		oTokenizer.detachTokenUpdate(this._onTokenUpdate, this);
 		this.detachValueHelpRequest(this._onValueHelpRequested, this);
 
 		oClone = Input.prototype.clone.apply(this, arguments);
 
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 		this.attachLiveChange(this._onLiveChange, this);
-		oTokenizer.attachTokenChange(this._onTokenChange, this);
-		oTokenizer.attachTokenUpdate(this._onTokenUpdate, this);
 		this.attachValueHelpRequest(this._onValueHelpRequested, this);
 
 		return oClone;
