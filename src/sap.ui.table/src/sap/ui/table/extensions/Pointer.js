@@ -744,9 +744,8 @@ sap.ui.define([
 				return;
 			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
 				// Expand/Collapse icon
-				if (TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target)) {
-					return;
-				}
+				oRow.toggleExpandedState();
+				return;
 			}
 
 			if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {

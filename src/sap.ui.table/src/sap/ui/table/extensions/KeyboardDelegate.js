@@ -448,6 +448,13 @@ sap.ui.define([
 		return bValidKey && bValidModifierKeys;
 	};
 
+	function getRowByDomRef(oTable, oDomRef) {
+		var $Cell = TableUtils.getCell(oTable, oDomRef);
+		var oCellInfo = TableUtils.getCellInfo($Cell);
+
+		return oTable.getRows()[oCellInfo.rowIndex];
+	}
+
 	/**
 	 * Handler which is called when the Space or Enter keys are pressed.
 	 * Opening the column context menu is not handled here, because pressing the ENTER key triggers sapenter on keydown. The column header should
@@ -465,7 +472,7 @@ sap.ui.define([
 
 		// Expand/Collapse group.
 		} else if (KeyboardDelegate._isElementGroupToggler(oTable, oEvent.target)) {
-			TableUtils.Grouping.toggleGroupHeaderByRef(oTable, oEvent.target);
+			getRowByDomRef(oTable, oEvent.target).toggleExpandedState();
 
 		// Select/Deselect row.
 		} else if (oCellInfo.isOfType(CellType.ROWHEADER)) {
@@ -1057,7 +1064,7 @@ sap.ui.define([
 		// Expand/Collapse group.
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F4) &&
 				   KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
-			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target);
+			getRowByDomRef(this, oEvent.target).toggleExpandedState();
 			return;
 		}
 
@@ -1120,16 +1127,13 @@ sap.ui.define([
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, "+")) {
 			if (KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
-				TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, true);
-
+				getRowByDomRef(this, oEvent.target).expand();
 			} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) {
 				oKeyboardExtension.setActionMode(true);
 			}
-
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, "-")) {
 			if (KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
-				TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, false);
-
+				getRowByDomRef(this, oEvent.target).collapse();
 			} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) {
 				oKeyboardExtension.setActionMode(true);
 			}
@@ -1378,7 +1382,7 @@ sap.ui.define([
 			KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
 
 			preventItemNavigation(oEvent);
-			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, true);
+			getRowByDomRef(this, oEvent.target).expand();
 			return;
 		}
 
@@ -1454,7 +1458,7 @@ sap.ui.define([
 			KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
 
 			preventItemNavigation(oEvent);
-			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, false);
+			getRowByDomRef(this, oEvent.target).collapse();
 			return;
 		}
 

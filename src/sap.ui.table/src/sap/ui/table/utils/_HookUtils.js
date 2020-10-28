@@ -156,7 +156,6 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 					{type: validateRowsUpdateReason}
 				]
 			},
-			// Called when a menu is opened.
 			OpenMenu: {
 				arguments: [
 					{type: validateCellInfo},
@@ -165,17 +164,19 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 			}
 		},
 		Row: {
-			// Called when the state of a row is updated.
 			UpdateState: {
 				arguments: [
 					{type: validateRowState}
 				]
 			},
-			// Called when the open state of a row is changed by user interaction.
-			ToggleOpenState: {
+			Expand: {
 				arguments: [
-					{type: "class:sap.ui.table.Row"},
-					{type: "boolean", optional: true} // true = expand, false = collapse, undefined = toggle
+					{type: "class:sap.ui.table.Row"}
+				]
+			},
+			Collapse: {
+				arguments: [
+					{type: "class:sap.ui.table.Row"}
 				]
 			}
 		},

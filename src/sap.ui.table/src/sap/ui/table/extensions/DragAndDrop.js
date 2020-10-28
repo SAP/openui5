@@ -229,8 +229,8 @@ sap.ui.define([
 			var oRow = iRowIndex == null ? null : this.getRows()[iRowIndex];
 			var oDropControl = oDragSession.getDropControl();
 
-			if (oRow && (oDropControl == oRow || !oDropControl)) {
-				TableUtils.Grouping.toggleGroupHeader(this, oRow.getIndex(), true);
+			if (oRow && (oDropControl === oRow || !oDropControl)) {
+				oRow.expand();
 			}
 		}
 	};

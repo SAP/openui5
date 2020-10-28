@@ -5512,6 +5512,7 @@ sap.ui.define([
 	QUnit.test("On a Group Header Row", function(assert) {
 		var cellClickEventHandler = this.spy();
 		var oElem;
+		var oRowToggleExpandedState = this.spy(oTable.getRows()[0], "toggleExpandedState");
 
 		oTable.clearSelection();
 		oTable.setEnableGrouping(true);
@@ -5520,94 +5521,55 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		function test(assert) {
-			var oRowBinding = oTable.getBinding("rows");
-
+			oRowToggleExpandedState.reset();
+			qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
+			checkFocus(oElem, assert);
 			this.assertSelection(assert, 0, false);
 			assert.ok(cellClickEventHandler.notCalled, "Click handler not called");
-			assert.ok(oRowBinding.isExpanded(0), "Group is expanded");
+			assert.equal(oRowToggleExpandedState.callCount, 1, "Space: Row#toggleExpandedState called once");
 
-			// Space
-			qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
-			checkFocus(oElem, assert);
-			this.assertSelection(assert, 0, false);
-			assert.ok(cellClickEventHandler.notCalled, 0, "Click handler not called");
-			assert.ok(!oRowBinding.isExpanded(0), "Group is collapsed");
-			qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
-			checkFocus(oElem, assert);
-			this.assertSelection(assert, 0, false);
-			assert.ok(cellClickEventHandler.notCalled, 0, "Click handler not called");
-			assert.ok(oRowBinding.isExpanded(0), "Group is expanded");
-
-			// Enter
+			oRowToggleExpandedState.reset();
 			qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
 			checkFocus(oElem, assert);
 			this.assertSelection(assert, 0, false);
-			assert.ok(cellClickEventHandler.notCalled, 0, "Click handler not called");
-			assert.ok(!oRowBinding.isExpanded(0), "Group is collapsed");
-			qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
-			checkFocus(oElem, assert);
-			this.assertSelection(assert, 0, false);
-			assert.ok(cellClickEventHandler.notCalled, 0, "Click handler not called");
-			assert.ok(oRowBinding.isExpanded(0), "Group is expanded");
+			assert.ok(cellClickEventHandler.notCalled, "Click handler not called");
+			assert.equal(oRowToggleExpandedState.callCount, 1, "Enter: Row#toggleExpandedState called once");
 		}
 
-		/* Row Header */
 		oElem = checkFocus(getRowHeader(0, true), assert);
 		test.call(this, assert);
 
-		/* Data Cell */
 		oElem = checkFocus(getCell(0, 1, true), assert);
 		test.call(this, assert);
 	});
 
 	QUnit.test("TreeTable - Expand/Collapse Group", function(assert) {
-		var oRowBinding = oTreeTable.getBinding("rows");
+		var oRowToggleExpandedState = this.spy(oTreeTable.getRows()[0], "toggleExpandedState");
 
-		function testCollapseExpandAndFocus(assert, oCellElement) {
-			TableUtils.Grouping.toggleGroupHeader(oTreeTable, 0, true);
-			oCellElement.focus();
-			checkFocus(oCellElement, assert);
-			assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
+		function testCollapseExpandAndFocus(assert, oElement) {
+			oElement.focus();
 
-			qutils.triggerKeydown(oCellElement, Key.ENTER, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Enter: The group is collapsed");
-			checkFocus(oCellElement, assert);
+			oRowToggleExpandedState.reset();
+			qutils.triggerKeyup(oElement, Key.SPACE, false, false, false);
+			assert.equal(oRowToggleExpandedState.callCount, 1, "Space: Row#toggleExpandedState called once");
+			checkFocus(oElement, assert);
 
-			qutils.triggerKeydown(oCellElement, Key.ENTER, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "Enter: The group is expanded");
-			checkFocus(oCellElement, assert);
-
-			qutils.triggerKeyup(oCellElement, Key.SPACE, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Space: The group is collapsed");
-			checkFocus(oCellElement, assert);
-
-			qutils.triggerKeyup(oCellElement, Key.SPACE, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "Space: The group is expanded");
-			checkFocus(oCellElement, assert);
+			oRowToggleExpandedState.reset();
+			qutils.triggerKeydown(oElement, Key.ENTER, false, false, false);
+			assert.equal(oRowToggleExpandedState.callCount, 1, "Enter: Row#toggleExpandedState called once");
+			checkFocus(oElement, assert);
 		}
 
-		function testNoCollapseExpand(assert, oCellElement) {
-			TableUtils.Grouping.toggleGroupHeader(oTreeTable, 0, true);
-			assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
+		function testNoCollapseExpand(assert, oElement) {
+			oElement.focus();
 
-			oCellElement.focus();
-			qutils.triggerKeydown(oCellElement, Key.ENTER, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "Enter: The group is still expanded");
+			oRowToggleExpandedState.reset();
+			qutils.triggerKeyup(oElement, Key.SPACE, false, false, false);
+			assert.ok(oRowToggleExpandedState.notCalled, "Space: Row#toggleExpandedState not called");
 
-			oCellElement.focus();
-			qutils.triggerKeyup(oCellElement, Key.SPACE, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "Space: The group is still expanded");
-
-			TableUtils.Grouping.toggleGroupHeader(oTreeTable, 0, false);
-			assert.ok(!oRowBinding.isExpanded(0), "The group is collapsed");
-
-			oCellElement.focus();
-			qutils.triggerKeydown(oCellElement, Key.ENTER, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Enter: The group is still collapsed");
-
-			oCellElement.focus();
-			qutils.triggerKeyup(oCellElement, Key.SPACE, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Space: The group is still collapsed");
+			oRowToggleExpandedState.reset();
+			qutils.triggerKeydown(oElement, Key.ENTER, false, false, false);
+			assert.ok(oRowToggleExpandedState.notCalled, "Enter: Row#toggleExpandedState not called");
 		}
 
 		testCollapseExpandAndFocus(assert, getCell(0, 0, null, null, oTreeTable));
@@ -5873,28 +5835,21 @@ sap.ui.define([
 		 * @param {jQuery|HTMLElement} oCellElement The element on which the keyboard events should be triggered.
 		 */
 		testCollapseExpandAndFocus: function(assert, oTable, oCellElement) {
-			var oRowBinding = oTable.getBinding("rows");
+			var oRowExpand = this.spy(oTable.getRows()[0], "expand");
+			var oRowCollapse = this.spy(oTable.getRows()[0], "collapse");
 
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
-			assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
 			oCellElement.focus();
-			checkFocus(oCellElement, assert);
 
 			qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, true, false);
-			assert.ok(oRowBinding.isExpanded(0), "Alt+ArrowDown: The group is expanded");
+			assert.equal(oRowExpand.callCount, 1, "Row#expand called once");
 			checkFocus(oCellElement, assert);
 
 			qutils.triggerKeydown(oCellElement, Key.Arrow.UP, false, true, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Alt+ArrowUp: The group is collapsed");
+			assert.equal(oRowCollapse.callCount, 1, "Row#collapse called once");
 			checkFocus(oCellElement, assert);
 
-			qutils.triggerKeydown(oCellElement, Key.Arrow.UP, false, true, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Alt+ArrowUp: The group is collapsed");
-			checkFocus(oCellElement, assert);
-
-			qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, true, false);
-			assert.ok(oRowBinding.isExpanded(0), "Alt+ArrowDown: The group is expanded");
-			checkFocus(oCellElement, assert);
+			oRowExpand.restore();
+			oRowCollapse.restore();
 		},
 
 		/**
@@ -5906,29 +5861,19 @@ sap.ui.define([
 		 * @param {jQuery|HTMLElement} oCellElement The element on which the keyboard events should be triggered.
 		 */
 		testNoCollapseExpand: function(assert, oTable, oCellElement) {
-			var oRowBinding = oTable.getBinding("rows");
-
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
-			assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
+			var oRowExpand = this.spy(oTable.getRows()[0], "expand");
+			var oRowCollapse = this.spy(oTable.getRows()[0], "collapse");
 
 			oCellElement.focus();
 			qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "Alt+ArrowDown: The group is still expanded");
+			assert.ok(oRowExpand.notCalled, "Row#expand not called");
 
 			oCellElement.focus();
 			qutils.triggerKeydown(oCellElement, Key.Arrow.UP, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "Alt+ArrowUp: The group is still expanded");
+			assert.ok(oRowCollapse.notCalled, "Row#collapse not called");
 
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
-			assert.ok(!oRowBinding.isExpanded(0), "The group is collapsed");
-
-			oCellElement.focus();
-			qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Alt+ArrowDown: The group is still collapsed");
-
-			oCellElement.focus();
-			qutils.triggerKeydown(oCellElement, Key.Arrow.UP, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Alt+ArrowUp: The group is still collapsed");
+			oRowExpand.restore();
+			oRowCollapse.restore();
 		}
 	});
 
@@ -6023,20 +5968,20 @@ sap.ui.define([
 		 * @param {jQuery|HTMLElement} oCellElement The element on which the keyboard events should be triggered.
 		 */
 		testCollapseExpandAndFocus: function(assert, oTable, oCellElement) {
-			var oRowBinding = oTable.getBinding("rows");
+			var oRowToggleExpandedState = this.spy(oTable.getRows()[0], "toggleExpandedState");
 
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
-			assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
 			oCellElement.focus();
-			checkFocus(oCellElement, assert);
 
 			qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "F4: The group is collapsed");
+			assert.equal(oRowToggleExpandedState.callCount, 1, "Row#toggleExpandedState called once");
 			checkFocus(oCellElement, assert);
 
+			oRowToggleExpandedState.reset();
 			qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "F4: The group is expanded");
+			assert.equal(oRowToggleExpandedState.callCount, 1, "Row#toggleExpandedState called once");
 			checkFocus(oCellElement, assert);
+
+			oRowToggleExpandedState.restore();
 		},
 
 		/**
@@ -6048,21 +5993,18 @@ sap.ui.define([
 		 * @param {jQuery|HTMLElement} oCellElement The element on which the keyboard events should be triggered.
 		 */
 		testNoCollapseExpand: function(assert, oTable, oCellElement) {
-			var oRowBinding = oTable.getBinding("rows");
-
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
-			assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
+			var oRowToggleExpandedState = this.spy(oTable.getRows()[0], "toggleExpandedState");
 
 			oCellElement.focus();
 			qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "F4: The group is still expanded");
+			assert.ok(oRowToggleExpandedState.notCalled, "Row#toggleExpandedState not called");
 
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
-			assert.ok(!oRowBinding.isExpanded(0), "The group is collapsed");
-
+			oRowToggleExpandedState.reset();
 			oCellElement.focus();
 			qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "F4: The group is still collapsed");
+			assert.ok(oRowToggleExpandedState.notCalled, "Row#toggleExpandedState not called");
+
+			oRowToggleExpandedState.restore();
 		}
 	});
 
@@ -6113,28 +6055,21 @@ sap.ui.define([
 		 * @param {jQuery|HTMLElement} oCellElement The element on which the keyboard events should be triggered.
 		 */
 		testCollapseExpandAndFocus: function(assert, oTable, oCellElement) {
-			var oRowBinding = oTable.getBinding("rows");
+			var oRowExpand = this.spy(oTable.getRows()[0], "expand");
+			var oRowCollapse = this.spy(oTable.getRows()[0], "collapse");
 
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
-			assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
 			oCellElement.focus();
-			checkFocus(oCellElement, assert);
 
 			qutils.triggerKeypress(oCellElement, Key.PLUS, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "Plus: The group is expanded");
+			assert.equal(oRowExpand.callCount, 1, "Row#expand called once");
 			checkFocus(oCellElement, assert);
 
 			qutils.triggerKeypress(oCellElement, Key.MINUS, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Minus: The group is collapsed");
+			assert.equal(oRowCollapse.callCount, 1, "Row#collapse called once");
 			checkFocus(oCellElement, assert);
 
-			qutils.triggerKeypress(oCellElement, Key.MINUS, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "Minus: The group is collapsed");
-			checkFocus(oCellElement, assert);
-
-			qutils.triggerKeypress(oCellElement, Key.PLUS, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "Plus: The group is expanded");
-			checkFocus(oCellElement, assert);
+			oRowExpand.restore();
+			oRowCollapse.restore();
 		},
 
 		/**
@@ -6146,29 +6081,19 @@ sap.ui.define([
 		 * @param {jQuery|HTMLElement} oCellElement The element on which the keyboard events should be triggered.
 		 */
 		testNoCollapseExpand: function(assert, oTable, oCellElement) {
-			var oRowBinding = oTable.getBinding("rows");
-
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
-			assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
+			var oRowExpand = this.spy(oTable.getRows()[0], "expand");
+			var oRowCollapse = this.spy(oTable.getRows()[0], "collapse");
 
 			oCellElement.focus();
 			qutils.triggerKeydown(oCellElement, Key.PLUS, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "PLUS: The group is still expanded");
+			assert.ok(oRowExpand.notCalled, "Row#expand not called");
 
 			oCellElement.focus();
 			qutils.triggerKeydown(oCellElement, Key.MINUS, false, false, false);
-			assert.ok(oRowBinding.isExpanded(0), "MINUS: The group is still expanded");
+			assert.ok(oRowCollapse.notCalled, "Row#collapse not called");
 
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
-			assert.ok(!oRowBinding.isExpanded(0), "The group is collapsed");
-
-			oCellElement.focus();
-			qutils.triggerKeydown(oCellElement, Key.PLUS, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "PLUS: The group is still collapsed");
-
-			oCellElement.focus();
-			qutils.triggerKeydown(oCellElement, Key.MINUS, false, false, false);
-			assert.ok(!oRowBinding.isExpanded(0), "MINUS: The group is still collapsed");
+			oRowExpand.restore();
+			oRowCollapse.restore();
 		}
 	});
 
@@ -6380,7 +6305,7 @@ sap.ui.define([
 			// Group header icon cell
 			oTable.setEnableGrouping(true);
 			oTable.setGroupBy(oTable.getColumns()[0]);
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0);
+			oTable.getRows()[0].toggleExpandedState();
 			sap.ui.getCore().applyChanges();
 
 			oElem = checkFocus(getRowHeader(0, true), assert);
@@ -6523,9 +6448,6 @@ sap.ui.define([
 		// Stay in Action Mode: Focus a group header icon cell.
 		oTable.setEnableGrouping(true);
 		oTable.setGroupBy(oTable.getColumns()[0]);
-		TableUtils.Grouping.toggleGroupHeader(oTable, 0);
-		TableUtils.Grouping.toggleGroupHeader(oTable, 7);
-		TableUtils.Grouping.toggleGroupHeader(oTable, 8);
 		sap.ui.getCore().applyChanges();
 
 		oElement = checkFocus(getRowHeader(0, true), assert)[0];
@@ -6541,18 +6463,18 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Enter Action Mode: Focus tabbable input control inside a data cell.
-		oElement = TableUtils.getInteractiveElements(getCell(2, oTable.columnCount - 2))[0];
+		oElement = TableUtils.getInteractiveElements(getCell(1, oTable.columnCount - 2))[0];
 		oElement.focus();
 		assert.strictEqual(document.activeElement, oElement, "Tabbable input element in the cell is focused");
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 
 		// Enter Navigation Mode: Focus a row header cell which is no group header icon cell or row selector cell.
-		getRowHeader(2, true);
+		getRowHeader(1, true);
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(),
 			"Focus row header cell which is no group header icon cell or row selector cell: Table is in Navigation Mode");
 
 		// Enter Action Mode: Focus tabbable input control inside a data cell.
-		oElement = TableUtils.getInteractiveElements(getCell(2, oTable.columnCount - 2))[0];
+		oElement = TableUtils.getInteractiveElements(getCell(1, oTable.columnCount - 2))[0];
 		oElement.focus();
 		assert.strictEqual(document.activeElement, oElement, "Tabbable input element in the cell is focused");
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6959,9 +6881,6 @@ sap.ui.define([
 		setupGrouping: function() {
 			oTable.setEnableGrouping(true);
 			oTable.setGroupBy(oTable.getColumns()[0]);
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0);
-			TableUtils.Grouping.toggleGroupHeader(oTable, 7);
-			TableUtils.Grouping.toggleGroupHeader(oTable, 8);
 			sap.ui.getCore().applyChanges();
 		},
 

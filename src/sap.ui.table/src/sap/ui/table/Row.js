@@ -678,6 +678,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Expands the row if it can be expanded.
+	 *
+	 * @private
+	 */
+	Row.prototype.expand = function() {
+		if (this.isExpandable() && !this.isExpanded()) {
+			TableUtils.Hook.call(this.getTable(), TableUtils.Hook.Keys.Row.Expand, this);
+		}
+	};
+
+	/**
+	 * Collapses the row if it can be collapsed.
+	 *
+	 * @private
+	 */
+	Row.prototype.collapse = function() {
+		if (this.isExpandable() && this.isExpanded()) {
+			TableUtils.Hook.call(this.getTable(), TableUtils.Hook.Keys.Row.Collapse, this);
+		}
+	};
+
+	/**
+	 * If possible, it collapses the row if it is expanded, or expands it if it is collapsed.
+	 *
+	 * @private
+	 */
+	Row.prototype.toggleExpandedState = function() {
+		if (this.isExpanded()) {
+			this.collapse();
+		} else {
+			this.expand();
+		}
+	};
+
+	/**
 	 * Types
 	 *
 	 * @type {Readonly<{GroupHeader: string, Summary: string, Standard: string}>}

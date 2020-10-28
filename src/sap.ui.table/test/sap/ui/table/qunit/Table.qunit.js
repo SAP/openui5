@@ -4266,10 +4266,10 @@ sap.ui.define([
 		});
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+			oTable.getRows()[0].collapse();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			aFiredReasons = [];
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+			oTable.getRows()[0].expand();
 
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Unknown
@@ -4292,7 +4292,7 @@ sap.ui.define([
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+			oTable.getRows()[0].collapse();
 
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Unknown

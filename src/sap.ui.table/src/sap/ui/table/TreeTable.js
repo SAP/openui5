@@ -160,7 +160,9 @@ sap.ui.define([
 	TreeTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
 		TableUtils.Grouping.setTreeMode(this);
-		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
 	};
 
 	TreeTable.prototype._bindRows = function(oBindingInfo) {
@@ -183,7 +185,7 @@ sap.ui.define([
 		return Table.prototype._bindRows.call(this, oBindingInfo);
 	};
 
-	TreeTable.prototype._updateRowState = function(oState) {
+	function updateRowState(oState) {
 		var oBinding = this.getBinding("rows");
 		var oNode = oState.context;
 
@@ -215,7 +217,101 @@ sap.ui.define([
 				oState.contentHidden = true;
 			}
 		}
-	};
+	}
+
+	function expandRow(oRow) {
+		var iIndex = oRow.getIndex();
+		var bIsExpanded = toggleGroupHeader(this, iIndex, true);
+
+		if (typeof bIsExpanded === "boolean") {
+			this._onGroupHeaderChanged(iIndex, bIsExpanded);
+		}
+	}
+
+	function collapseRow(oRow) {
+		var iIndex = oRow.getIndex();
+		var bIsExpanded = toggleGroupHeader(this, iIndex, false);
+
+		if (typeof bIsExpanded === "boolean") {
+			this._onGroupHeaderChanged(iIndex, bIsExpanded);
+		}
+	}
+
+	/**
+	 * Toggles or sets the expanded state of a single or multiple rows. Toggling only works for a single row.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {int | int[]} vRowIndex A single index, or an array of indices of the rows to expand or collapse.
+	 * @param {boolean} [bExpand] If defined, instead of toggling the desired state is set.
+	 * @returns {boolean | null} The new expanded state in case an action was performed, otherwise <code>null</code>.
+	 */
+	function toggleGroupHeader(oTable, vRowIndex, bExpand) {
+		var aIndices = [];
+		var oBinding = oTable.getBinding("rows");
+
+		if (!oBinding || vRowIndex == null) {
+			return null;
+		}
+
+		if (typeof vRowIndex === "number") {
+			aIndices = [vRowIndex];
+		} else if (Array.isArray(vRowIndex)) {
+			if (bExpand == null && vRowIndex.length > 1) {
+				// Toggling the expanded state of multiple rows seems to be an absurd task. Therefore we assume this is unintentional and
+				// prevent the execution.
+				return null;
+			}
+			aIndices = vRowIndex;
+		}
+
+		var iTotalRowCount = oTable._getTotalRowCount();
+		var aValidSortedIndices = aIndices.filter(function(iIndex) {
+			// Only indices of existing, expandable/collapsible nodes must be considered. Otherwise there might be no change event on the final
+			// expand/collapse.
+			var bIsExpanded = oBinding.isExpanded(iIndex);
+			var bIsLeaf = true; // If the node state cannot be determined, we assume it is a leaf.
+
+			if (oBinding.nodeHasChildren) {
+				if (oBinding.getNodeByIndex) {
+					bIsLeaf = !oBinding.nodeHasChildren(oBinding.getNodeByIndex(iIndex));
+				} else {
+					// The sap.ui.model.TreeBindingCompatibilityAdapter has no #getNodeByIndex function and #nodeHasChildren always returns true.
+					bIsLeaf = false;
+				}
+			}
+
+			return iIndex >= 0 && iIndex < iTotalRowCount
+				   && !bIsLeaf
+				   && bExpand !== bIsExpanded;
+		}).sort(function(a, b) { return a - b; });
+
+		if (aValidSortedIndices.length === 0) {
+			return null;
+		}
+
+		// Operations need to be performed from the highest index to the lowest. This ensures correct results with OData bindings. The indices
+		// are sorted ascending, so the array is iterated backwards.
+
+		// Expand/Collapse all nodes except the first, and suppress the change event.
+		for (var i = aValidSortedIndices.length - 1; i > 0; i--) {
+			if (bExpand) {
+				oBinding.expand(aValidSortedIndices[i], true);
+			} else {
+				oBinding.collapse(aValidSortedIndices[i], true);
+			}
+		}
+
+		// Expand/Collapse the first node without suppressing the change event.
+		if (bExpand === true) {
+			oBinding.expand(aValidSortedIndices[0], false);
+		} else if (bExpand === false) {
+			oBinding.collapse(aValidSortedIndices[0], false);
+		} else {
+			oBinding.toggleIndex(aValidSortedIndices[0]);
+		}
+
+		return oBinding.isExpanded(aValidSortedIndices[0]);
+	}
 
 	/**
 	 * Setter for property <code>fixedRowCount</code>.
@@ -302,7 +398,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeTable.prototype.expand = function(vRowIndex) {
-		TableUtils.Grouping.toggleGroupHeader(this, vRowIndex, true);
+		toggleGroupHeader(this, vRowIndex, true);
 		return this;
 	};
 
@@ -315,7 +411,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeTable.prototype.collapse = function(vRowIndex) {
-		TableUtils.Grouping.toggleGroupHeader(this, vRowIndex, false);
+		toggleGroupHeader(this, vRowIndex, false);
 		return this;
 	};
 

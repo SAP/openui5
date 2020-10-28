@@ -542,38 +542,36 @@ sap.ui.define([
 			},
 			target: null
 		};
-		var oToggleGroupHeaderSpy = sinon.spy(TableUtils.Grouping, "toggleGroupHeader");
+		var oRow1ExpandSpy = sinon.spy(oTable.getRows()[0], "expand");
+		var oRow2ExpandSpy = sinon.spy(oTable.getRows()[1], "expand");
+		var oRow3ExpandSpy = sinon.spy(oTable.getRows()[2], "expand");
 
 		oFakeEvent.target = getRowHeader(0)[0];
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.ok(oToggleGroupHeaderSpy.calledWith(oTable, 0, true), "TableUtils.Grouping.ToggleGroupHeader was called with the correct arguments");
-		oToggleGroupHeaderSpy.reset();
+		assert.equal(oRow1ExpandSpy.callCount, 1, "Row header cell - Row#expand was called once on the correct row");
 
 		oFakeEvent.target = oTable.getRows()[1].getCells()[0].getDomRef();
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.ok(oToggleGroupHeaderSpy.calledWith(oTable, 1, true), "TableUtils.Grouping.ToggleGroupHeader was called with the correct arguments");
-		oToggleGroupHeaderSpy.reset();
+		assert.equal(oRow2ExpandSpy.callCount, 1, "Data cell in fixed column - Row#expand was called once on the correct row");
 
+		oRow1ExpandSpy.reset();
 		oFakeEvent.target = oTable.getRows()[0].getCells()[1].getDomRef();
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.ok(oToggleGroupHeaderSpy.calledWith(oTable, 0, true), "TableUtils.Grouping.ToggleGroupHeader was called with the correct arguments");
-		oToggleGroupHeaderSpy.reset();
+		assert.equal(oRow1ExpandSpy.callCount, 1, "Data cell in scrollable column - Row#expand was called once on the correct row");
 
 		oFakeEvent.target = getRowAction(2)[0];
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.ok(oToggleGroupHeaderSpy.calledWith(oTable, 2, true), "TableUtils.Grouping.ToggleGroupHeader was called with the correct arguments");
-		oToggleGroupHeaderSpy.reset();
+		assert.equal(oRow3ExpandSpy.callCount, 1, "Row action cell - Row#expand was called once on the correct row");
 
 		oFakeEvent.dragSession = {
 			getDropControl: function() {
 				return oTable.getRows()[0].getCells()[1];
 			}
 		};
+		oRow1ExpandSpy.reset();
 		oFakeEvent.target = oTable.getRows()[0].getCells()[1].getDomRef();
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.ok(oToggleGroupHeaderSpy.notCalled, "TableUtils.Grouping.ToggleGroupHeader was not called");
-
-		oToggleGroupHeaderSpy.restore();
+		assert.ok(oRow1ExpandSpy.notCalled, "If the cell content is the drop target, Row#expand is not called");
 	});
 
 	QUnit.module("Columns", {
