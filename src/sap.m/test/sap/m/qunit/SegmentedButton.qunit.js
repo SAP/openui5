@@ -17,6 +17,7 @@ sap.ui.define([
 	"jquery.sap.keycodes",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/LayoutData",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
 	qutils,
@@ -35,6 +36,7 @@ sap.ui.define([
 	jQuery,
 	CustomData,
 	LayoutData,
+	InvisibleText,
 	waitForThemeApplied
 ) {
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -47,6 +49,8 @@ sap.ui.define([
 	var ButtonType = mobileLibrary.ButtonType;
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
+
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	// Create test for given property
 	var fnTestControlProperty = function(mOptions) {
@@ -2714,15 +2718,66 @@ sap.ui.define([
 
 	QUnit.module('ARIA');
 
-	QUnit.test("Check aria atributes", function(assert) {
+	QUnit.test("Root's general ARIA attributes", function (assert) {
+		var oFirstButton = new SegmentedButtonItem({ text: "First" }),
+			oSecondButton = new SegmentedButtonItem({ text: "Second" }),
+			oSegmentedButton = new SegmentedButton({
+				items: [oFirstButton, oSecondButton]
+			}),
+			$segmentedButton;
+
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+
+		$segmentedButton = oSegmentedButton.$();
+		assert.strictEqual($segmentedButton.attr("role"), "listbox", "Control has role 'listbox'");
+		assert.strictEqual($segmentedButton.attr("aria-multiselectable"), "true", "aria-multiselectable is set to 'true'");
+		assert.strictEqual($segmentedButton.attr("aria-roledescription"), oResourceBundle.getText("SEGMENTEDBUTTON_NAME"),
+			"Additional description for control's role is added");
+		assert.strictEqual($segmentedButton.attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "SEGMENTEDBUTTON_SELECTION"),
+			"Tutor message for selection is added");
+
+		oSegmentedButton.destroy();
+	});
+
+	QUnit.test("Inner buttons' general ARIA attributes", function (assert) {
+		var oInnerButton = new SegmentedButtonItem({ text: "First" }),
+			oInnerDisabledButton = new SegmentedButtonItem({ text: "Second", enabled: false }),
+			oSegmentedButton = new SegmentedButton({
+				items: [oInnerButton, oInnerDisabledButton]
+			}),
+			$innerButton,
+			$innerDisabledButton;
+
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$innerButton = oInnerButton.$();
+		$innerDisabledButton = oInnerDisabledButton.$();
+
+		assert.strictEqual($innerButton.attr("role"), "option", "Inner button has role 'option'");
+		assert.strictEqual($innerDisabledButton.attr("role"), "option", "Second inner button has role 'option' as well");
+
+		assert.strictEqual($innerButton.attr("aria-roledescription"), oResourceBundle.getText("SEGMENTEDBUTTON_BUTTONS_NAME"),
+			"First button has an additional description of its role");
+		assert.strictEqual($innerDisabledButton.attr("aria-roledescription"), oResourceBundle.getText("SEGMENTEDBUTTON_BUTTONS_NAME"),
+			"Second button has an additional description of its role as well");
+
+		assert.notOk($innerButton.attr("aria-disabled"), "Non-disabled buttons aren't marked as disabled");
+		assert.strictEqual($innerDisabledButton.attr("aria-disabled"), "true", "Disabled buttons have aria-disabled");
+
+		oSegmentedButton.destroy();
+	});
+
+	QUnit.test("Selection", function(assert) {
 		// Arrange
 		var oButton1 = new Button();
 		var oButton2 = new Button();
-		var oButton3 = new Button({ enabled : false });
 
 		// System under Test
 		var oSegmentedButton = new SegmentedButton({
-			buttons : [oButton1, oButton2, oButton3]
+			buttons : [oButton1, oButton2]
 		});
 		oSegmentedButton.setSelectedButton(oButton1);
 
@@ -2730,15 +2785,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oButton1.$().attr("aria-checked"), "true", "Property 'aria-checked' of Button1 should be 'true'");
-		assert.strictEqual(oButton2.$().attr("aria-checked"), "false", "Property 'aria-checked'  of Button2 should be 'false'");
-		assert.strictEqual(oButton3.$().attr("aria-disabled"), "true", "Property 'aria-disabled' of Button3 should be 'true'");
+		assert.strictEqual(oButton1.$().attr("aria-selected"), "true", "Property 'aria-selected' of Button1 should be 'true'");
+		assert.strictEqual(oButton2.$().attr("aria-selected"), "false", "Property 'aria-selected'  of Button2 should be 'false'");
 
 		oButton2.$().trigger("tap");	// in a real mobile browser both tap and click are fired
 		oButton2.$().trigger("click");
 
-		assert.strictEqual(oButton1.$().attr("aria-checked"), "false", "Property 'aria-checked' of Button1 after deselect should be 'false'");
-		assert.strictEqual(oButton2.$().attr("aria-checked"), "true", "Property 'aria-checked'  of Button2 after select should be 'true'");
+		assert.strictEqual(oButton1.$().attr("aria-selected"), "false", "Property 'aria-selected' of Button1 after deselect should be 'false'");
+		assert.strictEqual(oButton2.$().attr("aria-selected"), "true", "Property 'aria-selected'  of Button2 after select should be 'true'");
 
 		// Cleanup
 		oSegmentedButton.destroy();
