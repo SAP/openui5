@@ -9,8 +9,9 @@ sap.ui.define([
     "sap/m/Text",
     "sap/m/List",
     "sap/m/SegmentedButtonItem",
-	"sap/ui/mdc/util/PropertyHelper"
-], function(GroupPanelBase, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem, PropertyHelper) {
+    "sap/ui/mdc/util/PropertyHelper",
+    "sap/m/VBox"
+], function(GroupPanelBase, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem, PropertyHelper, VBox) {
     "use strict";
 
     var oMockExisting = {
@@ -84,15 +85,13 @@ sap.ui.define([
             this.oExistingMock = oMockExisting;
             this.aMockInfo = aInfoData;
             this.oPanel = new GroupPanelBase({
+                expandFirstGroup: true,
                 footerToolbar: new Toolbar("ID_TB1",{})
             });
 
             this.oPanel.setItemFactory(function(){
-                return new CustomListItem({
-                    selected: "{" + this.oPanel.P13N_MODEL + ">selected}",
-                    visible: "{" + this.oPanel.P13N_MODEL + ">visibleInDialog}"
-                });
-            }.bind(this));
+                return new VBox();
+            });
 
 			this.oPropertyHelper = new PropertyHelper(this.aMockInfo);
             this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.oPropertyHelper.getProperties());
@@ -275,6 +274,114 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check 'itemFactory' execution for only necessary groups", function(assert){
+
+        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+
+        var fnItemFactoryCallback = function(oContext) {
+            return new VBox();
+        };
+
+        this.oPanel.setItemFactory(fnItemFactoryCallback);
+
+        this.oPanel.setP13nModel(new JSONModel(oP13nData));
+        this.oPanel.switchViewMode("group");
+
+        this.oPanel._loopGroupList(function(oItem, sKey){
+            var oProp = this.oPanel.getP13nModel().getProperty(oItem.getBindingContext(this.oPanel.P13N_MODEL).sPath);
+            var iExpectedLength = oProp.group === "G1" ? 2 : 1;
+
+            assert.equal(oItem.getContent().length, iExpectedLength, "Only required callbacks executed");
+
+        }.bind(this));
+
+    });
+
+    QUnit.test("Check 'itemFactory' execution for expanded groups", function(assert){
+
+        //6 items in 2 groups --> 6x callback excuted after expanding
+        var done = assert.async(6);
+
+        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+
+        var fnItemFactoryCallback = function (oContext) {
+
+            assert.ok(oContext, "Callback executed with binding context");
+            done(6);
+        };
+
+        this.oPanel.setItemFactory(fnItemFactoryCallback);
+
+        this.oPanel.setP13nModel(new JSONModel(oP13nData));
+        this.oPanel.switchViewMode("group");
+
+        this.oPanel.setGroupExpanded("G2");
+
+    });
+
+    QUnit.test("Check 'itemFactory' execution for expanded groups by checking created controls", function(assert){
+
+        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+
+        var fnItemFactoryCallback = function (oContext) {
+
+            return new VBox();
+        };
+
+        this.oPanel.setItemFactory(fnItemFactoryCallback);
+
+        this.oPanel.setP13nModel(new JSONModel(oP13nData));
+        this.oPanel.switchViewMode("group");
+
+        this.oPanel.setGroupExpanded("G2");
+
+        this.oPanel._loopGroupList(function(oItem, sKey){
+
+            //All Panels expanded --> all fields created
+            assert.equal(oItem.getContent().length, 2, "Only required callbacks executed");
+
+        });
+
+    });
+
+    QUnit.test("Check 'itemFactory' execution combined with filtering - panel not expaned while searching", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
+
+        this.oPanel._getSearchField().setValue("Field 5");
+        var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
+
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+
+        assert.equal(this.oPanel._getInitializedGroups().length, 1, "Filter triggerd, but group not yet initialized");
+
+        this.oPanel._loopGroupList(function(oItem, sKey){
+            var oProp = this.oPanel.getP13nModel().getProperty(oItem.getBindingContext(this.oPanel.P13N_MODEL).sPath);
+            var iExpectedLength = oProp.group === "G1" ? 2 : 1;
+
+            assert.equal(oItem.getContent().length, iExpectedLength, "Only required callbacks executed");
+
+        }.bind(this));
+    });
+
+
+    QUnit.test("Check 'itemFactory' execution combined with filtering - panel is expaned while searching", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+        this.oPanel.switchViewMode("group");
+
+        this.oPanel._getSearchField().setValue("Field 5");
+        var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
+
+        this.oPanel.setGroupExpanded("G2");
+
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+
+        assert.equal(this.oPanel._getInitializedGroups().length, 2, "Filter triggerd - group initialized");
+
+    });
+
     QUnit.test("Check method 'setGroupExpanded' ", function(assert){
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
@@ -358,12 +465,9 @@ sap.ui.define([
 
         this.oPanel.setItemFactory(function(){
 
-            return new CustomListItem({
-                selected: "{" + this.oPanel.P13N_MODEL + ">selected}",
-                content: oTestFactory.clone()
-            });
+            return oTestFactory.clone();
 
-        }.bind(this));
+        });
 
         this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
         this.oPanel.switchViewMode("group");
@@ -373,7 +477,7 @@ sap.ui.define([
         var oFirstList = oFirstGroup.getContent()[0];
 
         //List created via template 'oTestFactory'
-        var oCustomList = oFirstList.getItems()[0].getContent()[0];
+        var oCustomList = oFirstList.getItems()[0].getContent()[1];
 
         assert.equal(oCustomList.getItems().length, 1, "Custom template list has one item (oSecondModel, data)");
         assert.deepEqual(oCustomList.getModel(), oSecondModel, "Manual model propagated");
@@ -382,6 +486,7 @@ sap.ui.define([
         assert.equal(oCustomList.getItems()[0].getContent()[0].getText(), "Some Test Text", "Custom binding from outside working in factory");
 
     });
+
 
     QUnit.test("Check view toggle", function(assert){
 

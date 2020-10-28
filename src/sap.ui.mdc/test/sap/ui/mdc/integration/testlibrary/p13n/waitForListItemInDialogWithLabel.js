@@ -17,6 +17,11 @@ sap.ui.define([
 		var aMatchers = [];
 		var oDialog = oSettings.dialog;
 		var sLabel = oSettings.label;
+
+		//Some p13n Controls use nesting of list items,
+		//here we sometimes need to check if its a direct relation
+		var bDirectDescendant = !!oSettings.direct;
+
 		if (oDialog) {
 			aMatchers.push(new Ancestor(oDialog, false));
 		}
@@ -36,7 +41,7 @@ sap.ui.define([
 				this.waitFor({
 					searchOpenDialogs: true,
 					controlType: oSettings.listItemType || "sap.m.ColumnListItem",
-					matchers: new Descendant(oLabel, false),
+					matchers: new Descendant(oLabel, bDirectDescendant),
 					success: function(aColumnListItems) {
 						//Opa5.assert.strictEqual(aColumnListItems.length, 1, 'The ColumnListItem was found');
 						if (typeof oSettings.success === "function") {

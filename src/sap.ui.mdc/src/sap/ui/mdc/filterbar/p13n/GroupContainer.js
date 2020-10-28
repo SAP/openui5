@@ -38,22 +38,10 @@ sap.ui.define([
 			defaultView: "group"
 		});
 
-		this.oLayout.setItemFactory(function(sId, oBindingContext){
+		this.oLayout.setItemFactory(function(oBindingContext){
 			var sKey = this.oLayout.getModel(this.oLayout.P13N_MODEL).getProperty(oBindingContext.sPath).name;
-			var oFilterItemClone, oFilterItem = this.mFilterItems[sKey];
-
-			oFilterItemClone = oFilterItem.bIsDestroyed ? oFilterItem.clone() : oFilterItem;
-
-			oFilterItemClone.bindProperty("selected", {
-				path: this.oLayout.P13N_MODEL + ">selected"
-			});
-
-			var oFilterField = this.mFilterFields[sKey];
-
-			oFilterItemClone.setFilterField(oFilterField);
-
-			this.mFilterItems[sKey] = oFilterItemClone;
-			return oFilterItemClone;
+			var oFilterItem = this.mFilterItems[sKey];
+			return oFilterItem;
 		}.bind(this));
 	};
 

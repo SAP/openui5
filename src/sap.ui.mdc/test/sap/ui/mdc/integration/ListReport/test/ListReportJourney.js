@@ -294,7 +294,7 @@ sap.ui.define([
 		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
 		When.onTheBooksListReportPage.iChangeAdaptFiltersView("group");
 		Then.onTheBooksListReportPage.iShouldSeeTheAdaptFiltersP13nDialog();
-		When.onTheBooksListReportPage.iDeselectTheAdaptFiltersP13nItem("Stock range");
+		When.onTheBooksListReportPage.iDeselectTheAdaptFiltersP13nItem("Stock");
 		When.onTheBooksListReportPage.iPressAdaptFiltersOk();
 
 		var aLabelNames = ["Author", "Title", "CreatedAt", "Language"];

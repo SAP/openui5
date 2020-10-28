@@ -112,6 +112,8 @@ sap.ui.define([
 		BasePanel.prototype.init.apply(this, arguments);
 
 		this._sView = this.LIST_KEY;
+
+		this._aInitializedLists = [];
 	};
 
 	/**
@@ -205,6 +207,7 @@ sap.ui.define([
 		var oContainer = this._createContainer();
 
 		this.addStyleClass("sapUiMDCGroupPanelBase");
+
 		this.setAggregation("_content", oContainer);
 	};
 
@@ -251,16 +254,18 @@ sap.ui.define([
 
 	GroupPanelBase.prototype.setAllowSelection = function(bAllowSelection) {
 		this.setProperty("allowSelection", bAllowSelection);
-
+		this._bindListItems();
 		this._oGroupModeSelect.setVisible(bAllowSelection);
-
-		this._updateTemplate();
 		return this;
 	};
 
 	GroupPanelBase.prototype.setEnableReorder = function(bReorder) {
 		this.setProperty("enableReorder", bReorder);
-		this._oReorderList.removeDragDropConfig();
+
+		if (!bReorder){
+			this._oReorderList.removeDragDropConfig();
+		}
+
 		return this;
 	};
 
@@ -277,12 +282,8 @@ sap.ui.define([
 		return this;
 	};
 
-	GroupPanelBase.prototype._getDefaultGroupTemplate = function() {
-		var fnFactory = this.getItemFactory();
-
-		var bExpandFirstGroup = this.getExpandFirstGroup();
-
-		var oListTemplate = new List({
+	GroupPanelBase.prototype._createGroupListTemplate = function() {
+		return new List({
 			selectionChange: function(oBindingInfo) {
 				var sPath = oBindingInfo.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
 				var oItem = this.getP13nModel().getProperty(sPath);
@@ -292,17 +293,15 @@ sap.ui.define([
 				});
 			}.bind(this),
 			showSeparators: "None",
-			mode: this.getAllowSelection() ? "MultiSelect" : "None",
-			items: {
-				path: this.P13N_MODEL + ">items",
-				key: "name",
-				factory: fnFactory
-			}
+			items: this._getItemsBinding(false),
+			mode: this.getAllowSelection() ? "MultiSelect" : "None"
 		});
+	};
 
+	GroupPanelBase.prototype._createGroupPanelTemplate = function(oInnerListTemplate) {
 		var P13N_MODEL = this.P13N_MODEL;
-
-		var oPanelTemplate = new Panel({
+		var bExpandFirstGroup = this.getExpandFirstGroup();
+		return new Panel({
 			expandable: true,
 			expanded: {
 				path: this.P13N_MODEL + ">group",
@@ -315,6 +314,16 @@ sap.ui.define([
 					}
 				}
 			},
+
+			expand: function(oEvt){
+
+				var oSource = oEvt.getSource();
+				var oInnerList = oSource.getContent()[0];
+				this._addFactoryControl(oInnerList);
+				this._filterByModeAndSearch();// --> check if there is already an existing Filter
+
+			}.bind(this),
+
 			width:"100%",
 			headerToolbar: [
 				new Toolbar({
@@ -327,19 +336,39 @@ sap.ui.define([
 				})
 			],
 			content: [
-				oListTemplate
+				oInnerListTemplate
 			]
 		});
+	};
+
+	GroupPanelBase.prototype._addFactoryControl = function(oList) {
+
+		if (oList.getItems().length == 0 || oList.getItems()[0].getContent().length < 2) {
+
+			oList.getItems().forEach(function(oItem){
+				var oContext = oItem.getBindingContext(this.P13N_MODEL);
+
+				var oField = this.getItemFactory().call(this, oContext);
+				oItem.addContent(oField);
+			}.bind(this));
+
+		}
+	};
+
+	GroupPanelBase.prototype._getGroupTemplate = function() {
+
+		var oInnerListTemplate = this._createGroupListTemplate();
+		var oPanelTemplate = this._createGroupPanelTemplate(oInnerListTemplate);
 
 		var bGroupingEnabled = this.getGrouping();
 
-		if (!bGroupingEnabled && !oListTemplate.hasStyleClass("sapUiMDCPanelPadding")) {
-			oListTemplate.addStyleClass("sapUiMDCPanelPadding");
+		if (!bGroupingEnabled && !oInnerListTemplate.hasStyleClass("sapUiMDCPanelPadding")) {
+			oInnerListTemplate.addStyleClass("sapUiMDCPanelPadding");
 		} else {
-			oListTemplate.removeStyleClass("sapUiMDCPanelPadding");
+			oInnerListTemplate.removeStyleClass("sapUiMDCPanelPadding");
 		}
 
-		var oInnerTemplate = bGroupingEnabled ? oPanelTemplate : oListTemplate;
+		var oInnerTemplate = bGroupingEnabled ? oPanelTemplate : oInnerListTemplate;
 
 		var oP13nCellTemplate = new CustomListItem({
 			visible: "{" + this.P13N_MODEL + ">groupVisible}",
@@ -351,9 +380,30 @@ sap.ui.define([
 		return oP13nCellTemplate;
 	};
 
-	GroupPanelBase.prototype._updateTemplate = function() {
-		var oOuterTemplate = this.getPanelMode() ? this._getSimpleLayout() : this._getDefaultGroupTemplate();
-		this.setTemplate(oOuterTemplate);
+	GroupPanelBase.prototype._getItemsBinding = function(bAddFilterField) {
+
+		var fnCreatePlain = function(sId, oContext) {
+
+			var aInnerListItemContent = [new Label({
+				required: "{" + this.P13N_MODEL + ">required}",
+				text: "{" + this.P13N_MODEL + ">label}"
+			}).addStyleClass("sapUiMdcFilterBarBaseLabel")];
+
+			return new CustomListItem({
+				visible: "{" + this.P13N_MODEL + ">visibleInDialog}",
+				selected: "{" + this.P13N_MODEL + ">selected}",
+				tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+				content: aInnerListItemContent
+			});
+
+		}.bind(this);
+
+		return {
+			path: this.P13N_MODEL + ">items",
+			key: "name",
+			templateShareable: false,
+			template: fnCreatePlain()
+		};
 	};
 
 	GroupPanelBase.prototype._getSearchField = function() {
@@ -364,13 +414,18 @@ sap.ui.define([
 
 	GroupPanelBase.prototype.setGrouping = function(bAllowGrouping) {
 		this.setProperty("grouping", bAllowGrouping);
-		this._updateTemplate();
 		return this;
 	};
 
     GroupPanelBase.prototype._createInnerListControl = function(){
 
 		var bReorder = this.getPanelMode();
+
+		if (!this._oGroupList){
+			this._oGroupList = new List(this._getListControlConfig());
+			this._oGroupList.setMode("None");
+			this._mView[this.GROUP_KEY] = this._oGroupList;
+		}
 
 		if (!this._oReorderList){
 			this._oReorderList = new Table(this._getListControlConfig());
@@ -379,18 +434,26 @@ sap.ui.define([
 			this._mView[this.LIST_KEY] = this._oReorderList;
 		}
 
-		if (!this._oGroupList){
-			this._oGroupList = new List(this._getListControlConfig());
-			this._oGroupList.setMode("None");
-			this._mView[this.GROUP_KEY] = this._oGroupList;
-		}
-
 		this._oListControl = bReorder ? this._oReorderList : this._oGroupList;
 
 		this._setMoveButtonVisibility(bReorder);
 		this._updateContainer(bReorder);
 
 		return this._oListControl;
+	};
+
+	GroupPanelBase.prototype._checkFirstGroup = function() {
+
+		//One time operation for the first panel in the group view
+		if (
+			!this._bInitialized &&
+			this.getExpandFirstGroup() &&
+			this._oGroupList &&
+			this._oGroupList.getItems().length > 0
+			){
+				this._bInitialized = true;
+				this._addFactoryControl(this._oGroupList.getItems()[0].getContent()[0].getContent()[0]);
+			}
 	};
 
 	GroupPanelBase.prototype.setFooterToolbar = function(oFooterToolbar) {
@@ -417,12 +480,17 @@ sap.ui.define([
 
 	GroupPanelBase.prototype._togglePanelVisibility = function(oPanel) {
 		var oInnerList = oPanel.getContent()[0];
-		var sPanelBindingContextPath = oPanel.getBindingContext(this.P13N_MODEL).sPath;
+		var oContext = oPanel.getBindingContext(this.P13N_MODEL);
 
-		var oItem = this.getP13nModel().getProperty(sPanelBindingContextPath);
-		oItem.groupVisible = oInnerList.getVisibleItems().length < 1 ? false : true;
+		if (oContext){
+			var sPanelBindingContextPath = oContext.sPath;
 
-		this.getP13nModel().setProperty(sPanelBindingContextPath, oItem);
+			var oItem = this.getP13nModel().getProperty(sPanelBindingContextPath);
+			oItem.groupVisible = oInnerList.getVisibleItems().length < 1 ? false : true;
+
+			this.getP13nModel().setProperty(sPanelBindingContextPath, oItem);
+		}
+
 	};
 
 	GroupPanelBase.prototype._onSearchFieldLiveChange = function (oEvent) {
@@ -434,14 +502,68 @@ sap.ui.define([
 		return this._sView != this.GROUP_KEY && this._sView != this.LIST_KEY;
 	};
 
-	GroupPanelBase.prototype._filterByModeAndSearch = function() {
-		var aFiltersSearch = [], oFilterMode;
-		var aFilters;
+	GroupPanelBase.prototype._getInitializedGroups = function() {
+        this._loopGroupList(function(oItem, sKey){
+            if (oItem.getContent()[1]){
+                oItem.removeContent(oItem.getContent()[1]);
+                var sListId = oItem.getParent().getId();
+                if (this._aInitializedLists.indexOf(sListId) < 0){
+                    this._aInitializedLists.push(sListId);
+                }
+            }
+		}.bind(this));
 
-		if (this._isCustomView()) {
-			return;
+		return this._aInitializedLists;
+	};
+
+    GroupPanelBase.prototype._filterByModeAndSearch = function(bForce) {
+
+        //Only filter when there is a change in filter criteria
+        if (!this._oListControl.getBinding("items")) {
+            return;
+        }
+
+        //Remove already created Filter controls before triggering a binding filter
+		var aInitializedGroups = this._getInitializedGroups();
+
+        //Create model filter based on search & mode filter
+        var aFilters = this._createFilterQuery();
+
+        //Update value - necessary due to view switch
+        this._getSearchField().setValue(this._sSearchString);
+
+        //trigger model filter + add filter fields again
+        if (!this.getPanelMode()) {
+            if (this.getGrouping()) {
+                this._oListControl.getItems().forEach(function(oOuterItem){
+                    var oPanel = oOuterItem.getContent()[0];
+					var oInnerList = oPanel.getContent()[0];
+
+                    if (oInnerList.getBinding("items")){
+						oInnerList.getBinding("items").filter(aFilters, true);
+						this._togglePanelVisibility(oPanel);
+					}
+
+					if (aInitializedGroups.indexOf(oInnerList.getId()) > -1) {
+                        this._addFactoryControl(oInnerList);
+                    }
+
+
+                }.bind(this));
+            }
+        } else {
+            this._oListControl.getBinding("items").filter(aFilters, true);
 		}
 
+		//Store prior values
+        this._sPriorKey = this._sSearchString;
+        this._sPriorMode =  this._sModeKey;
+
+    };
+
+
+	GroupPanelBase.prototype._createFilterQuery = function() {
+		var aFiltersSearch = [], oFilterMode, aFilters;
 		if (this._sSearchString){
 			aFiltersSearch = [
 				new Filter("label", "Contains", this._sSearchString),
@@ -476,24 +598,7 @@ sap.ui.define([
 			fnAppendFilter();
 		}
 
-		aFilters = aFilters ? aFilters : [];
-
-		//Update value - necessary due to view switch
-		this._getSearchField().setValue(this._sSearchString);
-
-		if (!this.getPanelMode()) {
-			if (this.getGrouping()) {
-				this._oListControl.getItems().forEach(function(oOuterItem){
-					var oPanel = oOuterItem.getContent()[0];
-					var oInnerList = oPanel.getContent()[0];
-					oInnerList.getBinding("items").filter(aFilters, true);
-					this._togglePanelVisibility(oPanel);
-				}.bind(this));
-			}
-		} else {
-			this._oListControl.getBinding("items").filter(aFilters, true);
-		}
-
+		return aFilters || [];
 	};
 
 	GroupPanelBase.prototype.getSelectedFields = function () {
@@ -523,6 +628,16 @@ sap.ui.define([
 		}
 
 		return aSelectedItems;
+	};
+
+	GroupPanelBase.prototype._loopGroupList = function(fnCallback) {
+		this._oGroupList.getItems().forEach(function(oOuterItem){
+			var oPanel = oOuterItem.getContent()[0];
+			var oInnerList = oPanel.getContent()[0];
+			this._loopItems(oInnerList, function(oItem, sKey){
+				fnCallback(oItem, sKey);
+			});
+		}.bind(this));
 	};
 
 	GroupPanelBase.prototype._loopItems = function(oList, fnItemCallback) {
@@ -601,7 +716,8 @@ sap.ui.define([
 		this.setPanelMode(bReorderMode);
 
 		this._createInnerListControl();
-		this._filterByModeAndSearch();
+		this._checkFirstGroup();
+		this._filterByModeAndSearch(true);
 
 		this._getSearchField().setVisible(true);
 	};
@@ -625,10 +741,9 @@ sap.ui.define([
 			this._setInnerLayout();
 		}
 
-		this._updateTemplate();
 	};
 
-	GroupPanelBase.prototype._getSimpleLayout = function() {
+	GroupPanelBase.prototype._getListTemplate = function() {
 		this._bDefaultTemplateUsed = true;
 
 		var oP13nCellTemplate = new ColumnListItem({
@@ -718,32 +833,40 @@ sap.ui.define([
 
 	GroupPanelBase.prototype.setP13nModel = function(oP13nModel) {
 		var bInitialized = !!this.getP13nModel();
-		BasePanel.prototype.setP13nModel.apply(this, arguments);
+		this.setModel(oP13nModel, this.P13N_MODEL);
+
 		if (!bInitialized) {
 			this.setPanelMode(true);
 		}
 		if (this.getGrouping() && !this.getPanelMode()){
 			this._checkAllPanels();
 		}
-		this._bindListItems();
 
 		var sDefaultView = this.getDefaultView();
 		if (sDefaultView) {
 			this.switchViewMode(sDefaultView);
 		}
+
+		this._bindListItems();
+		this._checkFirstGroup();
 	};
 
     GroupPanelBase.prototype._bindListItems = function() {
 
-		var bReorder = this.getPanelMode();
-
-		//Overwrite default binding
-		this._oListControl.bindItems(Object.assign({
-			path: this.P13N_MODEL + (bReorder === true ? ">/items" : ">/itemsGrouped"),
+		this._oReorderList.bindItems(Object.assign({
+			path: this.P13N_MODEL + ">/items",
 			key: "name",
 			templateShareable: false,
-			template: this.getTemplate().clone()
+			template: this._getListTemplate().clone()
 		}));
+
+		this._oGroupList.bindItems(Object.assign({
+			path: this.P13N_MODEL + ">/itemsGrouped",
+			key: "name",
+			templateShareable: false,
+			template: this._getGroupTemplate().clone()
+		}));
+
 	};
 
 	GroupPanelBase.prototype.exit = function(){
@@ -759,6 +882,11 @@ sap.ui.define([
 		this._oReorderList = null;
 		this._sSearchString = null;
 		this._oResetBtn = null;
+		this._sModeKey = null;
+		this._sPriorMode = null;
+		this._sPriorKey = null;
+		this._bInitialized = null;
+		this._aInitializedLists = null;
 
 		this._mView = null;
 		this._sView = null;

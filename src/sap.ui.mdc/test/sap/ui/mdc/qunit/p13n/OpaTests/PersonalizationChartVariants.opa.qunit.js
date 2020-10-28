@@ -18,15 +18,9 @@ sap.ui.define([
 		arrangements: new Arrangement(),
 		actions: new Action(),
 		assertions: new Assertion(),
-		viewNamespace: "view."
+		viewNamespace: "view.",
+		executionDelay: 50
 	});
-
-	//set execution delay for Internet Explorer and Edge
-	if (Device.browser.msie || Device.browser.edge) {
-		Opa5.extendConfig({
-			executionDelay: 50
-		});
-	}
 
 	// Apply a variant and switch back to the standard
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimensions and measures appears", function(Given, When, Then) {
