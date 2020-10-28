@@ -456,11 +456,6 @@ sap.ui.define([
 		},
 		"Opa5Extensions": {
 			title: "QUnit Page for sap.ui.test.Opa5",
-			loader: {
-				paths: {
-					"testResources" : "testResources/"
-				}
-			},
 			sinon: {
 				version: 1
 			},

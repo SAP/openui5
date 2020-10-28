@@ -269,7 +269,7 @@ sap.ui.define([
 					var qunitThis = this;
 					// call the assertion in the app window
 					// assertion is async, push results when ready
-					var oAssertionPromise = fnAssertion.bind(oParams.appWindow)(arguments)
+					var oAssertionPromise = fnAssertion.apply(oParams.appWindow, arguments)
 						.always(function (oResult) {
 							qunitThis.push(
 								oResult.result,

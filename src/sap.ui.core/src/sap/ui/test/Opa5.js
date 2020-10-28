@@ -85,7 +85,6 @@ sap.ui.define([
 		Opa5._oPlugin = new OpaPlugin();
 
 		function iStartMyAppInAFrame() {
-			var that = this;
 			var oOptions = {};
 			var aOptions = ["source", "timeout", "autoWait", "width", "height"];
 			// allow separate arguments for backwards compatibility
@@ -122,13 +121,13 @@ sap.ui.define([
 			oFrameCreatedOptions.check = iFrameLauncher.hasLaunched;
 			oFrameCreatedOptions.timeout = oOptions.timeout || 80;
 			oFrameCreatedOptions.errorMessage = "unable to load the IFrame with the url: " + oOptions.source;
-			that.waitFor(oFrameCreatedOptions);
+			this.waitFor(oFrameCreatedOptions);
 
 			// load extensions
 			var oLoadExtensionOptions = createWaitForObjectWithoutDefaults();
 			oLoadExtensionOptions.success = function () {
-				that._loadExtensions(iFrameLauncher.getWindow());
-			};
+				this._loadExtensions(iFrameLauncher.getWindow());
+			}.bind(this);
 			this.waitFor(oLoadExtensionOptions);
 
 			// wait for the app to load
@@ -200,8 +199,8 @@ sap.ui.define([
 			// load extensions
 			var oLoadExtensionOptions = createWaitForObjectWithoutDefaults();
 			oLoadExtensionOptions.success = function () {
-				that._loadExtensions(window);
-			};
+				this._loadExtensions(window);
+			}.bind(this);
 			this.waitFor(oLoadExtensionOptions);
 
 			// wait for the entire app to load
@@ -1277,44 +1276,33 @@ sap.ui.define([
 
 		//// Extensions
 		Opa5.prototype._loadExtensions = function (oAppWindow) {
-			var that = this;
-
-			// get extension names from config
-			var aExtensionNames =
-				Opa.config.extensions ? Opa.config.extensions : [];
-
+			var aExtensionNames =  Opa.config.extensions ? Opa.config.extensions : [];
 			// load all required extensions in the app frame
-			var oExtensionsPromise = $.when($.map(aExtensionNames, function (sExtensionName) {
-				var oExtension;
+			var oExtensionsPromise = $.when.apply($, $.map(aExtensionNames, function (sExtension) {
 				var oExtensionDeferred = $.Deferred();
-
-				oAppWindow.sap.ui.require([
-					sExtensionName
-				], function (oOpaExtension) {
-					oExtension = new oOpaExtension();
-					oExtension.name = sExtensionName;
-
+				oAppWindow.sap.ui.require([sExtension], function (Extension) {
+					var oExtension = new Extension();
+					oExtension.name = oExtension.getMetadata ? oExtension.getMetadata().getName() : sExtension;
 					// execute the onAfterInit hook
-					that._executeExtensionOnAfterInit(oExtension, oAppWindow)
+					this._executeExtensionOnAfterInit(oExtension, oAppWindow)
 						.done(function () {
 							// notify test framework adapters so it could hook custom assertions
 							Opa5._getEventProvider().fireEvent('onExtensionAfterInit', {
 								extension: oExtension,
 								appWindow: oAppWindow
 							});
-							that._addExtension(oExtension);
+							this._addExtension(oExtension);
 							oExtensionDeferred.resolve();
-						}).fail(function (error) {
+						}.bind(this)).fail(function (error) {
 							// log the error and continue with other extensions
 							oLogger.error(new Error("Error during extension init: " +
 								error), "Opa");
 							oExtensionDeferred.resolve();
 						});
-
-				});
+				}.bind(this));
 
 				return oExtensionDeferred.promise();
-			}));
+			}.bind(this)));
 
 			// schedule the extension loading promise on flow so waitFor's are synchronized
 			// return waitFor-like promise to comply with the caller return
@@ -1324,7 +1312,7 @@ sap.ui.define([
 		Opa5.prototype._unloadExtensions = function (oAppWindow) {
 			var that = this;
 
-			var oExtensionsPromise = $.when($.map(this._getExtensions(), function (oExtension) {
+			var oExtensionsPromise = $.when.apply($, $.map(this._getExtensions(), function (oExtension) {
 				var oExtensionDeferred = $.Deferred();
 
 				Opa5._getEventProvider().fireEvent('onExtensionBeforeExit', {
