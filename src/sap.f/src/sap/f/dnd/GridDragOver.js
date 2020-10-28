@@ -59,9 +59,10 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 	 * @param {sap.ui.core.Control} oDragControl The control which is dragged
 	 * @param {sap.ui.core.Control} oDropContainer The drop container
 	 * @param {string} sTargetAggregation The name of the target aggregation inside the drop container
+	 * @param {sap.ui.core.DragSession} oCoreDragSession
 	 * @returns {sap.f.dnd.GridDragOver} Self for method chaining
 	 */
-	GridDragOver.prototype.setCurrentContext = function (oDragControl, oDropContainer, sTargetAggregation) {
+	GridDragOver.prototype.setCurrentContext = function (oDragControl, oDropContainer, sTargetAggregation, oCoreDragSession) {
 		if (this._oDragControl === oDragControl
 			&& this._oDropContainer === oDropContainer
 			&& this._sTargetAggregation === sTargetAggregation) {
@@ -78,6 +79,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 		this._oDragContainer = oDragControl.getParent();
 		this._oDropContainer = oDropContainer;
 		this._sTargetAggregation = sTargetAggregation;
+		this._oCoreDragSession = oCoreDragSession;
 
 		this._mDragItemDimensions = this._getDimensions(oDragControl);
 		this._bIsInSameContainer = this._oDragContainer === this._oDropContainer;
@@ -94,6 +96,8 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 
 		this._attachEventDelegates();
 
+		this._hideCoreDefaultIndicator();
+
 		return this;
 	};
 
@@ -108,6 +112,8 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 		if (this._shouldFreeze(oDragEvent.pageX, oDragEvent.pageY)) {
 			return;
 		}
+
+		this._hideCoreDefaultIndicator();
 
 		// propose a drop position
 		var mDropPosition = this._calculateDropPosition(oDragEvent);
@@ -202,6 +208,8 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 
 		this._removeEventDelegates();
 
+		this._resetCoreDefaultIndicator();
+
 		// fire private event for handling IE specific layout fixes
 		this._oDropContainer.fireEvent("_gridPolyfillAfterDragEnd", {
 			indicator: this._$indicator
@@ -216,6 +224,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 		this._iDropPositionHoldStart = null;
 		this._mLastDropPosition = null;
 		this._mFreezePosition = null;
+		this._oCoreDragSession = null;
 	};
 
 	/**
@@ -343,6 +352,42 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 			$gridItem.show();
 		}
 
+	};
+
+	/**
+	 * Hide original indicator
+	 * @param {jQuery.Event} oDragEvent The drag event
+	 */
+	GridDragOver.prototype._hideCoreDefaultIndicator = function() {
+		var oCoreDefaultIndicator = this._oCoreDragSession.getIndicator(),
+			mStyles = {
+				visibility: "hidden",
+				position: "relative" // this prevents a scroll to appear sometimes on the page
+			};
+
+		this._oCoreDragSession.setIndicatorConfig(mStyles);
+
+		if (oCoreDefaultIndicator) {
+			jQuery(oCoreDefaultIndicator).css(mStyles);
+		}
+	};
+
+	/**
+	 * Resets the indicator used by the core drag and drop.
+	 * @param {jQuery.Event} oDragEvent The drag event
+	 */
+	GridDragOver.prototype._resetCoreDefaultIndicator = function() {
+		var oCoreDefaultIndicator = this._oCoreDragSession.getIndicator(),
+			mStyles = {
+				visibility: "visible",
+				position: "absolute"
+			};
+
+		this._oCoreDragSession.setIndicatorConfig(mStyles);
+
+		if (oCoreDefaultIndicator) {
+			jQuery(oCoreDefaultIndicator).css(mStyles);
+		}
 	};
 
 	/**

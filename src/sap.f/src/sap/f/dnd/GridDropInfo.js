@@ -123,9 +123,6 @@ sap.ui.define([
 			return null;
 		}
 
-		// hide the original indicator
-		this._hideDefaultIndicator(oEvent);
-
 		var gridDragOver = GridDragOver.getInstance(),
 			oDragControl = oEvent.dragSession.getDragControl();
 
@@ -136,7 +133,8 @@ sap.ui.define([
 		gridDragOver.setCurrentContext(
 			oEvent.dragSession.getDragControl(),
 			this.getDropTarget(),
-			this.getTargetAggregation()
+			this.getTargetAggregation(),
+			oEvent.dragSession
 		);
 
 		var mDropPosition = gridDragOver.getSuggestedDropPosition();
@@ -162,9 +160,6 @@ sap.ui.define([
 		if (!oEvent || !oEvent.dragSession || !oEvent.dragSession.getDragControl()) {
 			return null;
 		}
-
-		// hide the original indicator
-		this._hideDefaultIndicator(oEvent);
 
 		var mDropPosition = this._suggestDropPosition(oEvent);
 
@@ -201,7 +196,8 @@ sap.ui.define([
 		gridDragOver.setCurrentContext(
 			oDragSession.getDragControl(),
 			this.getDropTarget(),
-			this.getTargetAggregation()
+			this.getTargetAggregation(),
+			oDragSession
 		);
 
 		mDropPosition = gridDragOver.getSuggestedDropPosition();
@@ -264,24 +260,13 @@ sap.ui.define([
 		gridDragOver.setCurrentContext(
 			oDragEvent.dragSession.getDragControl(),
 			this.getDropTarget(),
-			this.getTargetAggregation()
+			this.getTargetAggregation(),
+			oDragEvent.dragSession
 		);
 
 		gridDragOver.handleDragOver(oDragEvent);
 
 		return gridDragOver.getSuggestedDropPosition();
-	};
-
-	/**
-	 * Hide original indicator
-	 * @private
-	 * @param {jQuery.Event} oDragEvent The drag event
-	 */
-	GridDropInfo.prototype._hideDefaultIndicator = function(oDragEvent) {
-		oDragEvent.dragSession.setIndicatorConfig({
-			visibility: "hidden",
-			position: "relative" // this prevents a scroll to appear sometimes on the page
-		});
 	};
 
 	return GridDropInfo;
