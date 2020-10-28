@@ -59,7 +59,8 @@ sap.ui.define([
 					}
 				},
 				qunit: {
-					noglobals: true
+					// ignore global variables introduced by recorder communication
+					noglobals: false
 				},
 				autostart: false
 			}
