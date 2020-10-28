@@ -65,9 +65,13 @@
 }
 
 /** force inputs with no border **/
-.sapUiIntegrationCardEditor input {
+.sapUiIntegrationCardEditor input, .sapUiComponentContainer input, #sap-ui-static input {
 	border: none;
 	height: 100%;
+}
+
+#sap-ui-static .sapMSliderTooltip {
+	min-width: 3.2rem;
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiLocalBusyIndicatorAnimation {
