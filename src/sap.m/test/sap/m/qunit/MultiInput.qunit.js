@@ -1596,6 +1596,39 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	QUnit.test("Deleting a token from tokenizer popup should keep popup open", function (assert) {
+		var oToken1 = new Token({ text: "Apple" });
+		var oToken2 = new Token({ text: "Banana" });
+		var oToken3 = new Token({ text: "Orange" });
+		var oMI = new MultiInput({
+			width: "240px",
+			tokens: [
+				oToken1,
+				oToken2,
+				oToken3
+			]
+		}).placeAt("content");
+		var oTokenizerPopover = oMI.getAggregation("tokenizer").getTokensPopup();
+
+		Core.applyChanges();
+
+		oMI.getAggregation("tokenizer")._handleNMoreIndicatorPress();
+
+		oMI._deleteTokens([oToken1], {});
+		Core.applyChanges();
+
+		assert.strictEqual(document.activeElement, oMI.getFocusDomRef(), "Multi Input should be focused");
+		assert.ok(oTokenizerPopover.isOpen(), "Popover should be open");
+
+		var oSpy = this.spy(oTokenizerPopover, "close");
+
+		oMI._deleteTokens([oToken2, oToken3], {});
+		Core.applyChanges();
+
+		assert.strictEqual(document.activeElement, oMI.getFocusDomRef(), "Multi Input should be focused");
+		assert.ok(oSpy.called, "Popover should be closed");
+	});
+
 	QUnit.test("Add tokens on mobile", function(assert) {
 		// system under test
 		this.stub(Device, "system", {
