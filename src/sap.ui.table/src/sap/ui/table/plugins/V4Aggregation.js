@@ -89,10 +89,11 @@ sap.ui.define([
 
 	V4Aggregation.prototype.updateRowState = function(oState) {
 		if (typeof oState.context.getValue("@$ui5.node.isExpanded") === "boolean") {
-			oState.type = oState.Type.GroupHeader;
+			oState.type = (oState.context.getValue("@$ui5.node.level") === 0) ? oState.Type.Summary : oState.Type.GroupHeader;
 		} else if (oState.context.getValue("@$ui5.node.isTotal")) {
 			oState.type = oState.Type.Summary;
 		}
+
 		oState.title = "todo";
 		oState.expandable = oState.type === oState.Type.GroupHeader;
 		oState.expanded = oState.context.getValue("@$ui5.node.isExpanded") === true;
