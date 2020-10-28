@@ -15977,11 +15977,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
-	// Expand three levels and collapse at the root level, then expand again.
+	// Expand three levels and collapse at the root level, then expand root level again, then
+	// collapse first level.
 	//
 	// JIRA: CPOUI5ODATAV4-178
 	// JIRA: CPOUI5ODATAV4-179
 	// JIRA: CPOUI5ODATAV4-378
+	// JIRA: CPOUI5ODATAV4-597
 	QUnit.test("Data Aggregation: expand three levels, expand after collapse", function (assert) {
 		var oModel = createAggregationModel(),
 			oRowsBinding,
@@ -16049,14 +16051,10 @@ sap.ui.define([
 					]
 				})
 				.expectChange("isExpanded", [true])
-				.expectChange("isTotal", [])
 				.expectChange("level", [, 2, 2, 2])
 				.expectChange("country", [, "US", "US", "US"])
 				.expectChange("region", [, "Z", "Y", "X"])
-				.expectChange("segment", [])
-				.expectChange("accountResponsible", [])
-				.expectChange("salesAmount", [, "10", "20", "30"])
-				.expectChange("salesNumber", []);
+				.expectChange("salesAmount", [, "10", "20", "30"]);
 
 			// code under test
 			oTable.getRows()[0].getBindingContext().expand();
@@ -16074,14 +16072,10 @@ sap.ui.define([
 					]
 				})
 				.expectChange("isExpanded", [, true])
-				.expectChange("isTotal", [])
 				.expectChange("level", [,, 3, 3])
-				.expectChange("country", [])
 				.expectChange("region", [,, "Z", "Z"])
 				.expectChange("segment", [,, "z", "y"])
-				.expectChange("accountResponsible", [])
-				.expectChange("salesAmount", [,, "10", "20"])
-				.expectChange("salesNumber", []);
+				.expectChange("salesAmount", [,, "10", "20"]);
 
 			// code under test
 			oTable.getRows()[1].getBindingContext().expand();
@@ -16102,8 +16096,6 @@ sap.ui.define([
 				.expectChange("isExpanded", [,, true, undefined])
 				.expectChange("isTotal", [,,, false])
 				.expectChange("level", [,,, 4])
-				.expectChange("country", [])
-				.expectChange("region", [])
 				.expectChange("segment", [,,, "z"])
 				.expectChange("accountResponsible", [,,, "a"])
 				.expectChange("salesAmount", [,,, "10"])
@@ -16163,6 +16155,20 @@ sap.ui.define([
 			oUKContext0 = oRowsBinding.getContexts(7, 1)[0];
 			assert.strictEqual(oUKContext0.getPath(), oUKContext.getPath());
 			assert.ok(oUKContext0 === oUKContext, "'UK' context is still the same instance");
+		}).then(function () {
+			that.expectChange("isExpanded", [, false, false, false])
+				.expectChange("isTotal", [,,, true])
+				.expectChange("level", [,, 2, 2])
+				.expectChange("region", [,, "Y", "X"])
+				.expectChange("segment", [,, "", ""])
+				.expectChange("accountResponsible", [,,, ""])
+				.expectChange("salesAmount", [,, "20", "30"])
+				.expectChange("salesNumber", [,,, null]);
+
+			// code under test
+			oTable.getRows()[1].getBindingContext().collapse();
+
+			return that.waitForChanges(assert, "collapse 'US-Z'");
 		});
 	});
 
