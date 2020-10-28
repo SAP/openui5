@@ -1074,7 +1074,7 @@ function(
 
 		if (!FlexUtils.getUshellContainer()) {
 			var oReloadInfo = {
-				hasDraftChanges: false, // draft was just discarded
+				isDraftAvailable: false, // draft was just discarded
 				layer: sLayer
 			};
 			this.getCommandStack().removeAllCommands();
@@ -1361,7 +1361,7 @@ function(
 			generator: "Change.createInitialFileContent"
 		}).then(function () {
 			var oReloadInfo = {
-				hasDraftChanges: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}),
+				isDraftAvailable: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}),
 				layer: sLayer,
 				deleteMaxLayer: false,
 				triggerHardReload: true
@@ -1692,7 +1692,7 @@ function(
 	 *
 	 * @param  {object}  oReloadInfo - Contains the information needed to return the correct reload message
 	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
-	 * @param  {boolean} oReloadInfo.hasDraftChanges - Indicates if a draft is available
+	 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 	 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 	 *
 	 * @return {string} sReason Reload message
@@ -1701,11 +1701,11 @@ function(
 		var sReason;
 		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
 
-		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.hasDraftChanges) {
+		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.isDraftAvailable) {
 			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_AND_DRAFT_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS";
 		} else if (oReloadInfo.hasHigherLayerChanges) {
 			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
-		} else if (oReloadInfo.hasDraftChanges) {
+		} else if (oReloadInfo.isDraftAvailable) {
 			sReason = "MSG_DRAFT_EXISTS";
 		} // TODO add app descr changes case for start?
 		return sReason;
@@ -1731,7 +1731,7 @@ function(
 			if (!bIsCustomerLayer) {
 				return "MSG_RELOAD_WITH_ALL_CHANGES";
 			}
-			if (oReloadInfo.hasDraft) {
+			if (oReloadInfo.isDraftAvailable) {
 				return "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT";
 			}
 			return "MSG_RELOAD_WITH_PERSONALIZATION";
@@ -1770,7 +1770,7 @@ function(
 
 	RuntimeAuthoring.prototype._triggerReloadOnStart = function(oReloadInfo) {
 		FlexUtils.ifUShellContainerThen(function() {
-			if (oReloadInfo.hasDraftChanges) {
+			if (oReloadInfo.isDraftAvailable) {
 				// clears FlexState and triggers reloading of the flex data without blocking
 				VersionsAPI.loadDraftForApplication({
 					selector: oReloadInfo.selector,
@@ -1809,14 +1809,14 @@ function(
 	RuntimeAuthoring.prototype._determineReload = function() {
 		var oReloadInfo = {
 			hasHigherLayerChanges: false,
-			hasDraftChanges: false,
+			isDraftAvailable: false,
 			layer: this.getLayer(),
 			selector: this.getRootControlInstance(),
 			ignoreMaxLayerParameter: false
 		};
 		return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo)
 		.then(function (oReloadInfo) {
-			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
+			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.isDraftAvailable) {
 				return this._triggerReloadOnStart(oReloadInfo);
 			}
 		}.bind(this));
@@ -1857,7 +1857,7 @@ function(
 				layer: this.getLayer(),
 				selector: this.getRootControlInstance(),
 				changesNeedReload: bChangesNeedReload,
-				hasDirtyDraftChanges: this._oVersionsModel.getProperty("/draftAvailable") && this._oVersionsModel.getProperty("/dirtyChanges"),
+				isDraftAvailable: this._oVersionsModel.getProperty("/draftAvailable"),
 				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
 				activeVersion: this._oVersionsModel.getProperty("/activeVersion")
 			};

@@ -35,7 +35,7 @@ sap.ui.define([
 		QUnit.test("while a draft is available and the url parameter for draft is not present in the parsed hash", function(assert) {
 			var oReloadInfo = {
 				hasHigherLayerChanges: false,
-				hasDraftChanges: true,
+				isDraftAvailable: true,
 				layer: "CUSTOMER",
 				selector: {}
 			};
@@ -59,7 +59,7 @@ sap.ui.define([
 		QUnit.test("while no draft is available and the url parameter for draft is not present in the parsed hash", function(assert) {
 			var oReloadInfo = {
 				hasHigherLayerChanges: false,
-				hasDraftChanges: false,
+				isDraftAvailable: false,
 				layer: "CUSTOMER",
 				selector: {}
 			};
@@ -82,7 +82,7 @@ sap.ui.define([
 		QUnit.test("while higher layer changes are available and the url parameter for max-layer is not present in the parsed hash", function(assert) {
 			var oReloadInfo = {
 				hasHigherLayerChanges: true,
-				hasDraftChanges: false,
+				isDraftAvailable: false,
 				layer: "CUSTOMER",
 				selector: {}
 			};
@@ -106,7 +106,7 @@ sap.ui.define([
 		QUnit.test("while no higher layer changes are available and the url parameter for max-layer is not present in the parsed hash", function(assert) {
 			var oReloadInfo = {
 				hasHigherLayerChanges: false,
-				hasDraftChanges: false,
+				isDraftAvailable: false,
 				layer: "CUSTOMER",
 				selector: {}
 			};
@@ -147,7 +147,7 @@ sap.ui.define([
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
-				assert.deepEqual(oReloadInfo.hasDraftChanges, true, "hasDraftChanges is set to true");
+				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 			});
 		});
@@ -173,7 +173,7 @@ sap.ui.define([
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
-				assert.deepEqual(oReloadInfo.hasDraftChanges, false, "hasDraftChanges is set to false"); //If param is set it will not load the draft
+				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false"); //If param is set it will not load the draft
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 			});
 		});
@@ -197,7 +197,7 @@ sap.ui.define([
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
-				assert.deepEqual(oReloadInfo.hasDraftChanges, false, "hasDraftChanges is set to false");
+				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, true, "hasHigherLayerChanges is set to true");
 			});
 		});
@@ -221,7 +221,7 @@ sap.ui.define([
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
-				assert.deepEqual(oReloadInfo.hasDraftChanges, false, "hasDraftChanges is set to false");
+				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false"); // parameter already set;
 			});
 		});
@@ -245,7 +245,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: false,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true
 			};
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
@@ -261,7 +261,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: false,
-				hasDirtyDraftChanges: true,
+				isDraftAvailable: true,
 				versioningEnabled: true
 			};
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
@@ -277,7 +277,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: false,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true
 			};
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
@@ -293,7 +293,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: false,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true,
 				activeVersion: 2
 			};
@@ -318,7 +318,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: false,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true,
 				activeVersion: 2
 			};
@@ -343,7 +343,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: false,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true
 			};
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
@@ -359,7 +359,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: false,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true
 			};
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
@@ -368,7 +368,7 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
-			assert.equal(oExpectedReloadInfo.hasDraft, false, "then there is no draft");
+			assert.equal(oExpectedReloadInfo.isDraftAvailable, false, "then there is no draft");
 		});
 
 		QUnit.test("and an initial draft got activated and in the url version parameter exists", function(assert) {
@@ -376,7 +376,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: false,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true
 			};
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
@@ -385,7 +385,7 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
-			assert.equal(oExpectedReloadInfo.hasDraft, false, "then there is no draft");
+			assert.equal(oExpectedReloadInfo.isDraftAvailable, false, "then there is no draft");
 		});
 
 		QUnit.test("and appDescriptor changes exist", function(assert) {
@@ -393,7 +393,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: true,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true
 			};
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
@@ -409,7 +409,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: true,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true
 			};
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
@@ -425,7 +425,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				selector: {},
 				changesNeedReload: true,
-				hasDirtyDraftChanges: false,
+				isDraftAvailable: false,
 				versioningEnabled: true
 			};
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
@@ -617,7 +617,7 @@ sap.ui.define([
 
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
-				hasDraftChanges: true,
+				isDraftAvailable: true,
 				hasHigherLayerChanges: false,
 				parameters: sParams
 			};
@@ -635,7 +635,7 @@ sap.ui.define([
 
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
-				hasDraftChanges: true,
+				isDraftAvailable: true,
 				hasHigherLayerChanges: false,
 				parameters: sParams
 			};
@@ -653,7 +653,7 @@ sap.ui.define([
 
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
-				hasDraftChanges: true,
+				isDraftAvailable: true,
 				hasHigherLayerChanges: false,
 				parameters: sParams
 			};
@@ -671,7 +671,7 @@ sap.ui.define([
 
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
-				hasDraftChanges: false,
+				isDraftAvailable: false,
 				hasHigherLayerChanges: true,
 				parameters: sParams
 			};
@@ -689,7 +689,7 @@ sap.ui.define([
 
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
-				hasDraftChanges: true,
+				isDraftAvailable: true,
 				hasHigherLayerChanges: false,
 				parameters: sParams
 			};
@@ -707,7 +707,7 @@ sap.ui.define([
 
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
-				hasDraftChanges: false,
+				isDraftAvailable: false,
 				hasHigherLayerChanges: true,
 				parameters: sParams
 			};
@@ -725,7 +725,7 @@ sap.ui.define([
 
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
-				hasDraftChanges: true,
+				isDraftAvailable: true,
 				hasHigherLayerChanges: true,
 				parameters: sParams
 			};

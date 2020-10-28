@@ -74,7 +74,7 @@ sap.ui.define([
 					isDraftAvailable(oReloadInfo) : false
 			]).then(function(aReasons) {
 				oReloadInfo.hasHigherLayerChanges = aReasons[0];
-				oReloadInfo.hasDraftChanges = aReasons[1];
+				oReloadInfo.isDraftAvailable = aReasons[1];
 				return oReloadInfo;
 			});
 		},
@@ -110,7 +110,7 @@ sap.ui.define([
 		 * @param  {object} oReloadInfo - Contains the information needed to add the correct URL parameters
 		 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 		 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
-		 * @param  {boolean} oReloadInfo.hasDraftChanges - Indicates if a draft is available
+		 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 		 * @param  {string} oReloadInfo.parameters - The URL parameters to be modified
 		 * @param  {string} oReloadInfo.versionSwitch - Indicates if we are in a version switch scenario
 		 * @param  {string} oReloadInfo.version - Version we want to switch to
@@ -127,7 +127,7 @@ sap.ui.define([
 			oReloadInfo.parameters = oReloadInfo.parameters.replace(oVersionRegExp, "");
 
 			// startup reload due to draft
-			if (oReloadInfo.hasDraftChanges) {
+			if (oReloadInfo.isDraftAvailable) {
 				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, sap.ui.fl.Versions.UrlParameter, sap.ui.fl.Versions.Draft);
 			}
 
@@ -148,7 +148,7 @@ sap.ui.define([
 		 *
 		 * @param  {object}  oReloadInfo - Contains the information needed to add the correct URL parameters
 		 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
-		 * @param  {boolean} oReloadInfo.hasDraftChanges - Indicates if a draft is available
+		 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 		 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 		 * @param  {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
 		 *
@@ -161,7 +161,7 @@ sap.ui.define([
 			if (oReloadInfo.hasHigherLayerChanges) {
 				mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] = [oReloadInfo.layer];
 			}
-			if (oReloadInfo.hasDraftChanges) {
+			if (oReloadInfo.isDraftAvailable) {
 				mParsedHash.params[sap.ui.fl.Versions.UrlParameter] = [sap.ui.fl.Versions.Draft];
 			}
 			return mParsedHash;
@@ -190,8 +190,7 @@ sap.ui.define([
 		 *
 		 * @param  {object} oReloadInfo - Contains the information needed to check if a reload on exit should happen
 		 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
-		 * @param  {boolean} oReloadInfo.hasDraftChanges - Indicates if a draft is available
-		 * @param  {boolean} oReloadInfo.hasDirtyDraftChanges - Indicates if dirty draft changes are available
+		 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 		 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 		 * @param  {boolean} oReloadInfo.changesNeedReload - Indicates if changes (e.g. app descriptor changes) need hard reload
 		 * @param  {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when entering UI adaptation
@@ -209,17 +208,18 @@ sap.ui.define([
 
 			// TODO fix app descriptor handling and reload behavior
 			// TODO move changesNeedReload near flexState; set flag when saving change that needs a reload
-			oReloadInfo.hasDraft = oReloadInfo.hasDirtyDraftChanges || ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
+			oReloadInfo.isDraftAvailable = oReloadInfo.isDraftAvailable || ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
+
 			if (oReloadInfo.activeVersion > sap.ui.fl.Versions.Original) {
 				oReloadInfo.activeVersionNotSelected = oReloadInfo.activeVersion && !ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.activeVersion.toString()});
 			}
 			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
 			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			if (oReloadInfo.initialDraftGotActivated) {
-				oReloadInfo.hasDraft = false;
+				oReloadInfo.isDraftAvailable = false;
 			}
 			if (oReloadInfo.changesNeedReload
-				|| oReloadInfo.hasDraft
+				|| oReloadInfo.isDraftAvailable
 				|| oReloadInfo.hasHigherLayerChanges
 				|| oReloadInfo.initialDraftGotActivated
 				|| oReloadInfo.activeVersionNotSelected

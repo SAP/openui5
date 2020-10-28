@@ -899,7 +899,7 @@ sap.ui.define([
 			assert.equal(oTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
 			var oReloadInfo = oTriggerHardReloadStub.getCall(0).args[0];
 			assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
-			assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
+			assert.equal(oReloadInfo.isDraftAvailable, false, "and with no draft change");
 		});
 
 		QUnit.test("when _deleteChanges() is called", function(assert) {
@@ -907,7 +907,7 @@ sap.ui.define([
 				assert.equal(this.fnHandleParametersOnExitStub.callCount, 1, "then _handleParameterOnExit is called");
 				var oReloadInfo = this.fnHandleParametersOnExitStub.getCall(0).args[0];
 				assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
-				assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
+				assert.equal(oReloadInfo.isDraftAvailable, false, "and with no draft change");
 			}.bind(this));
 		});
 
