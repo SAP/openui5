@@ -502,7 +502,7 @@ sap.ui.define([
 				var oItem = oSettings.form.items[n];
 				if (oItem.editable && oItem.visible) {
 					if (this.getMode() !== "translation") {
-						if (oItem.translatable && !oItem._changed && oItem._translatedDefaultPlaceholder) {
+						if (oItem.translatable && !oItem._changed && oItem._translatedDefaultPlaceholder && !this._currentLayerManifestChanges[oItem.manifestPath]) {
 							//do not save a value that was not changed and comes from a translated default value
 							//mResult[oItem.manifestpath] = oItem._translatedDefaultPlaceholder;
 							//if we would save it
@@ -770,6 +770,10 @@ sap.ui.define([
 			if (aDependentFields.length === 0) {
 				return;
 			}
+			for (var i = 0; i < aDependentFields.length; i++) {
+				var o = aDependentFields[i];
+				o.config._cancel = true;
+			}
 			delete oManifestData["sap.card"].header;
 			delete oManifestData["sap.card"].content;
 			delete oManifestData["sap.card"].data;
@@ -790,6 +794,7 @@ sap.ui.define([
 				that._bIgnoreUpdates = true;
 				for (var i = 0; i < aDependentFields.length; i++) {
 					var o = aDependentFields[i];
+					o.config._cancel = false;
 					that._addValueListModel(o.config, o.field, true);
 				}
 				that._bIgnoreUpdates = false;
@@ -849,6 +854,10 @@ sap.ui.define([
 				oPromise = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data).getData();
 			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
 			oPromise.then(function (oData) {
+				if (oConfig._cancel) {
+					oConfig._values = [];
+					return;
+				}
 				oConfig._values = oData;
 				oValueModel.setData(oData);
 				oValueModel.checkUpdate(true);
