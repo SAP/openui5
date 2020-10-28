@@ -837,6 +837,10 @@ sap.ui.define([
 
 		assert.strictEqual(oFieldHelp.getRoleDescription(-1), sText, "no role description returned for multi-combobox");
 
+		oFieldHelp.destroyContent(); // remove wrapper
+		oFieldHelp.setShowConditionPanel(true);
+		assert.strictEqual(oFieldHelp.getRoleDescription(-1), null, "no role description returned only ConditionPanel");
+
 	});
 
 	QUnit.module("Connect", {
