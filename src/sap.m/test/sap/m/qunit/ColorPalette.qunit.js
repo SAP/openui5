@@ -1824,6 +1824,51 @@ sap.ui.define([
 				oCPP.destroy();
 			});
 
+			QUnit.test("liveChange event", function (assert) {
+				// Prepare
+				var oColorPalettePopover = new ColorPalettePopover({
+						displayMode: sap.ui.unified.ColorPickerDisplayMode.Large
+					}),
+					aTestCasesRed = [128, 192, 255, 0],
+					iTestCasesLength = aTestCasesRed.length,
+					iCase,
+					oColorPalette,
+					oColorPicker;
+
+				// initialize the ColorPickerPopover and its internal ColorPalette without opening it
+				oColorPalettePopover._ensurePopover();
+				oColorPalette = oColorPalettePopover._getPalette();
+				oColorPalette._ensureMoreColorsDialog();
+
+				// prepare internal ColorPicker
+				oColorPicker = oColorPalette._oMoreColorsDialog._oColorPicker;
+				oColorPicker._createLayout();
+				oColorPicker.$CPBox = oColorPicker.oCPBox.$();
+
+				// set initial color of the ColorPicker
+				oColorPicker.oHexField.setValue('#000000');
+				oColorPicker._handleHexValueChange();
+
+				assert.expect(iTestCasesLength * 2); // this is needed to make sure the change event handler is called otherwise we won't know.
+
+				// attach liveChange handler
+				oColorPalettePopover.attachLiveChange(function (oEvent) {
+					var sColorString = oEvent.getParameter("colorString");
+					// assert
+					assert.ok(true, "liveChange event is called");
+					assert.equal(sColorString, "rgb(" + aTestCasesRed[iCase] + ",0,0)", "colorString parameter is correct: " + sColorString);
+				});
+
+				// act - simulate change of the RED color input value and call the field change handler
+				for (iCase = 0; iCase < iTestCasesLength; iCase++) {
+					oColorPicker.oRedField.setValue(aTestCasesRed[iCase]);
+					oColorPicker._handleRedValueChange();
+				}
+
+				// Cleanup
+				oColorPalettePopover.destroy();
+			});
+
 			QUnit.test("Property displayMode", function (assert) {
 				// Prepare
 				var oCP = new ColorPalette(),
