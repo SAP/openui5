@@ -76,7 +76,9 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.prototype.bAppDescriptorCommandAlreadyAvailable = false;
 
 	/**
-	 * Check if the given overlay is editable.
+	 * Check if the given overlay is editable. A stable ID is not required for this,
+	 * as this is also not the case with the old extension points.
+	 *
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for editable
 	 * @returns {Promise.<boolean>} <code>true</code> when editable wrapped in a promise
 	 * @private
@@ -84,12 +86,9 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.prototype._isEditable = function (oOverlay) {
 		if (isDesignMode()) {
 			var oElement = oOverlay.getElement();
-			return this.hasChangeHandler(FLEX_CHANGE_TYPE, oElement)
-				.then(function(bHasChangeHandler) {
-					return bHasChangeHandler
-						&& hasExtensionPoints(oElement)
-						&& this.hasStableId(oOverlay);
-				}.bind(this));
+			return this.hasChangeHandler(FLEX_CHANGE_TYPE, oElement).then(function(bHasChangeHandler) {
+				return bHasChangeHandler && hasExtensionPoints(oElement);
+			});
 		}
 		return Promise.resolve(false);
 	};
