@@ -3670,4 +3670,36 @@ sap.ui.define([
 		assert.deepEqual(oModel.mLaunderingState, oFixture.output);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_processError: update deep path for function imports", function (assert) {
+		var oModel = {
+				_createEventInfo : function () {},
+				_handleError : function () {},
+				fireBatchRequestCompleted : function () {},
+				fireBatchRequestFailed : function () {}
+			},
+			oRequest = {
+				deepPath : "~deepPath",
+				functionMetadata : "~functionMetadata",
+				functionTarget : "~functionTarget"
+			};
+
+		this.mock(oModel).expects("_handleError")
+			.withExactArgs("~oResponse", sinon.match.same(oRequest)
+				.and(sinon.match.has("deepPath", "~functionTarget")))
+			.returns("~oError");
+		this.mock(oModel).expects("_createEventInfo")
+			.withExactArgs(sinon.match.same(oRequest), "~oError", "~aRequests")
+			.returns("~oEventInfo");
+		this.mock(oModel).expects("fireBatchRequestCompleted").withExactArgs("~oEventInfo");
+		this.mock(oModel).expects("fireBatchRequestFailed").withExactArgs("~oEventInfo");
+
+		// code under test
+		ODataModel.prototype._processError.call(oModel, oRequest, "~oResponse",
+			/*fnError*/undefined, "~bBatch", "~aRequests");
+
+		assert.strictEqual(oRequest.deepPath, "~functionTarget");
+		assert.strictEqual(oRequest.deepPath, oRequest.functionTarget);
+	});
 });
