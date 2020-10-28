@@ -22,6 +22,17 @@ describe('sap.m.MultiComboBox', function() {
 		defaultMultiComboBoxArrow.click();
 	});
 
+	//MultiComboBox - After backspace
+	it("should visualize MultiComboBox after deleting text with backspace", function(){
+		var defaultMultiComboBox = element(by.id("MultiComboBox2")),
+			defaultMultiComboBoxArrow = element(by.id("MultiComboBox2-arrow"));
+		defaultMultiComboBox.click();
+		browser.actions().sendKeys("B").perform();
+		browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+		expect(takeScreenshot()).toLookAs("multicombobox-after-backspace");
+		defaultMultiComboBoxArrow.click();
+	});
+
 	//MultiComboBox - Filtering
 	it("should open first ComboBox - Default", function() {
 		var defaultArrow = element(by.id("MultiComboBox0-arrow"));
