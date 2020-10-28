@@ -711,6 +711,7 @@ function(
 			}
 
 			oTokenToFocus.focus();
+			oEvent.preventDefault();
 		}
 	};
 

@@ -880,6 +880,8 @@ sap.ui.define([
 		})[0];
 		var aDeletingTokens = aSelectedTokens.length ? aSelectedTokens : [oFocussedToken];
 
+		oEvent.preventDefault();
+
 		return this.fireTokenDelete({
 			tokens: aDeletingTokens,
 			keyCode: oEvent.which
