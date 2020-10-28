@@ -44,7 +44,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Handles a GET response with count and/or grand total.
+	 * Handles a GET response wich may contain grand total or count, each in a row of its own.
 	 *
 	 * @param {object} oAggregation
 	 *   An object holding the information needed for data aggregation; see also
@@ -64,15 +64,19 @@ sap.ui.define([
 	// @override sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
 	function handleGrandTotalResponse(oAggregation, fnHandleResponse, iStart, iEnd, oResult,
 			mTypeForMetaPath) {
-		var oGrandTotalElement;
+		var oGrandTotalElement = oResult.value[0],
+			that = this;
 
-		oGrandTotalElement = oResult.value[0];
+		function handleCount(iIndex) {
+			that.iLeafCount = parseInt(oResult.value[iIndex].UI5__count);
+			oResult["@odata.count"] = that.iLeafCount + 1;
+			oResult.value.splice(iIndex, 1); // drop row with UI5__count only
+		}
+
 		if ("UI5__count" in oGrandTotalElement) {
-			this.iLeafCount = parseInt(oGrandTotalElement.UI5__count);
-			oResult["@odata.count"] = this.iLeafCount + 1;
-			if (iStart > 0) { // drop row with UI5__count only
-				oResult.value.shift();
-			}
+			handleCount(0);
+		} else if (oResult.value.length > 1 && "UI5__count" in oResult.value[1]) {
+			handleCount(1);
 		}
 		if (iStart === 0) { // grand total row: rename measures, add empty dimensions
 			oGrandTotalElement["@$ui5.node.isExpanded"] = true;

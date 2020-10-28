@@ -828,9 +828,9 @@ sap.ui.define([
 		/**
 		 * Creates a V4 OData model for V2 service <code>RMTSAMPLEFLIGHT</code>.
 		 *
-		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-		 *   potentially overwrite the parameters operationMode, serviceUrl, and synchronizationMode
-		 *   which are set by default
+		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance
+		 *     and potentially overwrite the parameters operationMode, serviceUrl, and
+		 *     synchronizationMode which are set by default
 		 * @returns {ODataModel} The model
 		 */
 		createModelForV2FlightService : function (mModelParameters) {
@@ -855,9 +855,9 @@ sap.ui.define([
 		/**
 		 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
 		 *
-		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-		 *   potentially overwrite the parameters operationMode, serviceUrl, and synchronizationMode
-		 *   which are set by default
+		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance
+		 *     and potentially overwrite the parameters operationMode, serviceUrl, and
+		 *     synchronizationMode which are set by default
 		 * @returns {ODataModel} The model
 		 */
 		createModelForV2SalesOrderService : function (mModelParameters) {
@@ -9923,7 +9923,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)"
-				+ "&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+				+ "&$filter=AGE gt 42&$skip=0&$top=100", {
 				value : [{
 					ID : "1",
 					EMPLOYEE_2_TEAM : {
@@ -13792,7 +13792,7 @@ sap.ui.define([
 			oFormBinding.suspend();
 			oListBinding.setAggregation({aggregate : {AGE : {}}});
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?custom=foo&$apply=aggregate(AGE)"
-					+ "&$orderby=Name&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+					+ "&$orderby=Name&$filter=AGE gt 42&$skip=0&$top=100", {
 				value : [{
 					AGE : 52,
 					ID : "1",
@@ -15224,8 +15224,8 @@ sap.ui.define([
 	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 </Table>';
 
-		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-				+ "/concat(aggregate(GrossAmount),top(99))", {
+		this.expectRequest("SalesOrderList?$apply=concat(aggregate(GrossAmount)"
+				+ ",groupby((LifecycleStatus),aggregate(GrossAmount))/top(99))", {
 				"@odata.count" : "26",
 				value : [
 					{GrossAmount : "12345"},
@@ -16621,13 +16621,10 @@ sap.ui.define([
 				+ bCount + "; autoExpandSelect : " + bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
-			var sBasicPath
-					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
-				oGrandTotalRow = {
+			var aGrandTotalResponse = [{
 					SalesNumber : 351,
 					"SalesNumber@odata.type" : "#Decimal"
-				},
+				}],
 				oModel = createAggregationModel({autoExpandSelect : bAutoExpandSelect}),
 				oTable,
 				sView = '\
@@ -16654,14 +16651,22 @@ sap.ui.define([
 				that = this;
 
 			if (bCount) {
-				oGrandTotalRow["UI5__count"] = "26";
-				oGrandTotalRow["UI5__count@odata.type"] = "#Decimal";
+				aGrandTotalResponse.push({
+					"UI5__count" : "26",
+					"UI5__count@odata.type" : "#Decimal"
+				});
 			}
-			this.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber"
-					+ (bCount ? ",$count as UI5__count" : "") + "),top(0))", {
-					value : [oGrandTotalRow]
+			this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+					+ ",groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/"
+					+ (bCount ? "concat(aggregate($count as UI5__count)," : "")
+					+ "top(0))"
+					+ (bCount ? ")" : ""), {
+					value : aGrandTotalResponse
 				})
-				.expectRequest(sBasicPath + "/skip(1)/top(4)", {
+				.expectRequest("BusinessPartners?$apply="
+					+ "groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/skip(1)/top(4)", {
 					value : [
 						{Country : "b", Region : "Y", SalesNumber : 2},
 						{Country : "c", Region : "X", SalesNumber : 3},
@@ -16695,8 +16700,9 @@ sap.ui.define([
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
-						"/aggregation/" + sBasicPath + "/concat(aggregate(SalesNumber"
-							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
+						"/aggregation/BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+							+ ",groupby((Country,Region),aggregate(SalesNumber))"
+							+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc))",
 						"sap.ui.model.odata.v4.lib._Cache");
 				}
 
@@ -16704,7 +16710,9 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				that.expectRequest(sBasicPath + "/top(1)", {
+				that.expectRequest("BusinessPartners?$apply="
+					+ "groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/top(1)", {
 						value : [
 							{Country : "a", Region : "Z", SalesNumber : 1}
 						]
@@ -16733,10 +16741,7 @@ sap.ui.define([
 				+ bCount + "; grandTotal row not fixed";
 
 		QUnit.test(sTitle, function (assert) {
-			var sBasicPath
-					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
-				oModel = createAggregationModel({autoExpandSelect : true}),
+			var oModel = createAggregationModel({autoExpandSelect : true}),
 				oTable,
 				aValues = [
 					{Country : "a", Region : "Z", SalesNumber : 1},
@@ -16771,10 +16776,12 @@ sap.ui.define([
 			if (bCount) {
 				aValues.unshift({UI5__count : "26", "UI5__count@odata.type" : "#Decimal"});
 			}
-			this.expectRequest(
-					sBasicPath + (bCount
-						? "/concat(aggregate($count as UI5__count),top(5))"
-						: "/top(5)"),
+			this.expectRequest("BusinessPartners?$apply="
+					+ "groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/"
+					+ (bCount ? "concat(aggregate($count as UI5__count)," : "")
+					+ "top(5)"
+					+ (bCount ? ")" : ""),
 					{value : aValues})
 				.expectChange("count")
 				.expectChange("country", [, "a", "b", "c", "d", "e"])
@@ -16802,8 +16809,9 @@ sap.ui.define([
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
-						"/aggregation/" + sBasicPath + "/concat(aggregate(SalesNumber"
-							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
+						"/aggregation/BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+						+ ",groupby((Country,Region),aggregate(SalesNumber))"
+						+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc))",
 						"sap.ui.model.odata.v4.lib._Cache");
 				}
 
@@ -16811,7 +16819,9 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				that.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber),top(0))", {
+				that.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+						+ ",groupby((Country,Region),aggregate(SalesNumber))"
+						+ "/filter(SalesNumber gt 0)/orderby(Region desc)/top(0))", {
 						value : [{
 							SalesNumber : 351,
 							"SalesNumber@odata.type" : "#Decimal"
@@ -16863,11 +16873,11 @@ sap.ui.define([
 		text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }"/>\
 </t:Table>';
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
+		this.expectRequest("BusinessPartners?$apply=concat("
+				+ "aggregate(SalesAmount with sap.unit_sum as UI5grand__SalesAmountSum)"
+				+ ",groupby((Region)"
 				+ ",aggregate(SalesAmount with sap.unit_sum as SalesAmountSum,SalesNumber))"
-				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)"
-				+ "/concat(aggregate(SalesAmountSum with sap.unit_sum as "
-				+ "UI5grand__SalesAmountSum),top(4))", {
+				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)/top(4))", {
 				value : [{
 						UI5grand__SalesAmountSum : 351,
 						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR",
@@ -16941,8 +16951,8 @@ sap.ui.define([
 			oListBinding.setContext(that.oModel.createBindingContext("/"));
 
 			that.expectRequest("BusinessPartners?custom=foo&$apply=filter(Name eq 'Foo')"
-				+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
-				+ "/orderby(Name)/concat(aggregate(SalesNumber),top(99))",
+				+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
+				+ "/filter(SalesNumber gt 0)/orderby(Name)/top(99))",
 				{value : [{/* response does not matter here */}]});
 
 			return Promise.all([
@@ -16980,8 +16990,8 @@ sap.ui.define([
 			]);
 
 			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
-				+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
-				+ "/concat(aggregate(SalesNumber),top(99))",
+				+ "/concat(aggregate(SalesNumber)"
+				+ ",groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)/top(99))",
 				{value : [{}]});
 
 			return Promise.all([
@@ -24832,7 +24842,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
 					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
-					+ "&$filter=SalesOrderID%20eq%20'1'", {
+					+ "&$filter=SalesOrderID eq '1'", {
 					value: [{ // simulate that entity still matches list's filter
 						ItemPosition : "20",
 						Messages : [{
@@ -24871,7 +24881,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
 					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
-					+ "&$filter=SalesOrderID%20eq%20'1'", {
+					+ "&$filter=SalesOrderID eq '1'", {
 					value : [] // simulate that entity does not match list's filter anymore
 				})
 				.expectChange("count", "1")

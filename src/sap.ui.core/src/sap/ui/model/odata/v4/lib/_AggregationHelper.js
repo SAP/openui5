@@ -185,10 +185,12 @@ sap.ui.define([
 		buildApply : function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod, bFollowUp) {
 			var aAggregate,
 				sApply = "",
-				// concat(aggregate(???),.) content for grand totals (w/o unit) or min/max or count
-				aConcatAggregate = [],
+				// concat(aggregate(???),.) content for grand totals (w/o unit)
+				aGrandTotalAggregate = [],
 				aGroupBy,
 				bHasGrandTotal,
+				// concat(aggregate(???),.) content for min/max or count
+				aMinMaxAggregate = [],
 				sSkipTop;
 
 			/*
@@ -204,7 +206,7 @@ sap.ui.define([
 			function aggregate(sAlias) {
 				var oDetails = oAggregation.aggregate[sAlias],
 					sAggregate = oDetails.name || sAlias,
-					sGrandTotal = sAlias,
+					sGrandTotal = sAggregate,
 					sWith = oDetails.with;
 
 				if (sWith) {
@@ -217,12 +219,8 @@ sap.ui.define([
 					sAggregate += " as " + sAlias;
 				}
 				if (!bFollowUp) {
-					if (oDetails.min) {
-						processMinOrMax(sAlias, "min");
-					}
-					if (oDetails.max) {
-						processMinOrMax(sAlias, "max");
-					}
+					processMinOrMax(sAlias, oDetails, "min");
+					processMinOrMax(sAlias, oDetails, "max");
 				}
 				if (oDetails.grandTotal) {
 					bHasGrandTotal = true;
@@ -230,7 +228,7 @@ sap.ui.define([
 						if (sWith) {
 							sGrandTotal += " with " + sWith + " as UI5grand__" + sAlias;
 						}
-						aConcatAggregate.push(sGrandTotal);
+						aGrandTotalAggregate.push(sGrandTotal);
 					}
 				}
 				return sAggregate;
@@ -249,20 +247,25 @@ sap.ui.define([
 			/*
 			 * Builds the min/max expression for the "concat" term (for example
 			 * "AggregatableProperty with min as UI5min__AggregatableProperty") and adds a
-			 * corresponding entry to the optional alias map.
+			 * corresponding entry to the optional alias map if requested in the details.
 			 *
 			 * @param {string} sName - An aggregatable property name
+			 * @param {object} oDetails - The aggregation details
 			 * @param {string} sMinOrMax - Either "min" or "max"
 			 */
-			function processMinOrMax(sName, sMinOrMax) {
-				var sAlias = "UI5" + sMinOrMax + "__" + sName;
+			function processMinOrMax(sName, oDetails, sMinOrMax) {
+				var sAlias;
 
-				aConcatAggregate.push(sName + " with " + sMinOrMax + " as " + sAlias);
-				if (mAlias2MeasureAndMethod) {
-					mAlias2MeasureAndMethod[sAlias] = {
-						measure : sName,
-						method : sMinOrMax
-					};
+				if (oDetails[sMinOrMax]) {
+					sAlias = "UI5" + sMinOrMax + "__" + sName;
+
+					aMinMaxAggregate.push(sName + " with " + sMinOrMax + " as " + sAlias);
+					if (mAlias2MeasureAndMethod) {
+						mAlias2MeasureAndMethod[sAlias] = {
+							measure : sName,
+							method : sMinOrMax
+						};
+					}
 				}
 			}
 
@@ -273,21 +276,18 @@ sap.ui.define([
 			 * @returns {string} The transformation(s) corresponding to $skip/$top or "".
 			 */
 			function skipTop() {
-				var sTransformation = "";
+				var aTransformations = [];
 
 				if (mQueryOptions.$skip) {
-					sTransformation = "skip(" + mQueryOptions.$skip + ")";
+					aTransformations.push("skip(" + mQueryOptions.$skip + ")");
 				}
 				delete mQueryOptions.$skip; // delete 0 value even w/o skip(0)
 				if (mQueryOptions.$top < Infinity) { // ignore +Infinity, undefined, NaN, ...
-					if (sTransformation) {
-						sTransformation += "/";
-					}
-					sTransformation += "top(" + mQueryOptions.$top + ")";
+					aTransformations.push("top(" + mQueryOptions.$top + ")");
 				}
 				delete mQueryOptions.$top;
 
-				return sTransformation;
+				return aTransformations.join("/");
 			}
 
 			mQueryOptions = Object.assign({}, mQueryOptions);
@@ -316,14 +316,10 @@ sap.ui.define([
 			if (bFollowUp) {
 				delete mQueryOptions.$count;
 			} else if (mQueryOptions.$count) {
-				aConcatAggregate.push("$count as UI5__count");
+				aMinMaxAggregate.push("$count as UI5__count");
 				delete mQueryOptions.$count;
 			}
 
-			if (mQueryOptions.$$filterBeforeAggregate) {
-				sApply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/" + sApply;
-				delete mQueryOptions.$$filterBeforeAggregate;
-			}
 			if (mQueryOptions.$filter) {
 				sApply += "/filter(" + mQueryOptions.$filter + ")";
 				delete mQueryOptions.$filter;
@@ -341,11 +337,18 @@ sap.ui.define([
 				}
 			}
 			sSkipTop = skipTop();
-			if (aConcatAggregate.length) {
-				sApply += "/concat(aggregate(" + aConcatAggregate.join(",") + "),"
+			if (aMinMaxAggregate.length) {
+				sApply += "/concat(aggregate(" + aMinMaxAggregate.join(",") + "),"
 					+ (sSkipTop || "identity") + ")";
 			} else if (sSkipTop) {
 				sApply += "/" + sSkipTop;
+			}
+			if (aGrandTotalAggregate.length) {
+				sApply = "concat(aggregate(" + aGrandTotalAggregate.join(",") + ")," + sApply + ")";
+			}
+			if (mQueryOptions.$$filterBeforeAggregate) {
+				sApply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/" + sApply;
+				delete mQueryOptions.$$filterBeforeAggregate;
 			}
 			if (sApply) {
 				mQueryOptions.$apply = sApply;

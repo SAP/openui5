@@ -97,29 +97,30 @@ sap.ui.define([
 				},
 				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 			},
+			oCountRow = {
+				"UI5__count" : "26",
+				"UI5__count@odata.type" : "#Decimal"
+			},
+			oDataRow = {},
 			oExpected = {},
 			oFirstLevelCache = {
 				handleResponse : sinon.stub()
 			},
-			fnHandleResponse = oFirstLevelCache.handleResponse,
-			oResult = { /*GET response*/
-				value : [{
-					"@odata.id" : null,
-					"UI5grand__SalesAmountSum" : 351,
-					"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR",
-					"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
-				}, {
-				}]
+			oGrandTotalRow = {
+				"@odata.id" : null,
+				"UI5grand__SalesAmountSum" : 351,
+				"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR",
+				"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
 			},
+			fnHandleResponse = oFirstLevelCache.handleResponse,
+			oResult = bCount
+				? {value : [oGrandTotalRow, oCountRow, oDataRow]}
+				: {value : [oGrandTotalRow, oDataRow]},
 			mTypeForMetaPath = {/*fetchTypes result*/},
 			iStart = 0,
 			iEnd = 10;
 
-		if (bCount) {
-			oResult.value[0]["UI5__count"] = "26";
-			oResult.value[0]["UI5__count@odata.type"] = "#Decimal";
-		}
-		Object.assign(oExpected, oResult.value[0], {
+		Object.assign(oExpected, oGrandTotalRow, {
 			"@$ui5.node.isExpanded" : true,
 			"@$ui5.node.isTotal" : true,
 			"@$ui5.node.level" : 0,
@@ -152,6 +153,7 @@ sap.ui.define([
 		}
 		assert.strictEqual(oResult.value.length, 2, "data still includes grand total row");
 		assert.deepEqual(oResult.value[0], oExpected);
+		assert.strictEqual(oResult.value[1], oDataRow);
 	});
 });
 

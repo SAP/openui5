@@ -122,9 +122,9 @@ sap.ui.define([
 			$skip : 0, // special case,
 			$top : Infinity // special case
 		},
-		sApply : "groupby((Region),aggregate(SalesNumber))/concat(aggregate(SalesNumber),identity)",
+		sApply : "concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber)))",
 		sFollowUpApply : // Note: follow-up request not needed in this case
-			"groupby((Region),aggregate(SalesNumber))/concat(aggregate(SalesNumber),identity)"
+			"concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber)))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -135,18 +135,20 @@ sap.ui.define([
 			}
 		},
 		mQueryOptions : {
+			$$filterBeforeAggregate : "Region gt 'E'",
 			$count : true,
 			$filter : "SalesNumber ge 100",
 			$orderby : "Region desc",
 			$skip : 0, // special case
 			$top : 42
 		},
-		sApply : "groupby((Region),aggregate(SalesNumber))"
+		sApply : "filter(Region gt 'E')"
+			+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
-			+ "/concat(aggregate(SalesNumber,$count as UI5__count),top(41))",
-		sFollowUpApply : "groupby((Region),aggregate(SalesNumber))"
-			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
-			+ "/concat(aggregate(SalesNumber),top(41))"
+			+ "/concat(aggregate($count as UI5__count),top(41)))",
+		sFollowUpApply : "filter(Region gt 'E')"
+			+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/top(41))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -178,9 +180,8 @@ sap.ui.define([
 				Region : {}
 			}
 		},
-		sApply : "groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum))"
-			+ "/concat(aggregate(SalesNumberSum with sum as UI5grand__SalesNumberSum)"
-			+ ",identity)"
+		sApply : "concat(aggregate(SalesNumber with sum as UI5grand__SalesNumberSum)"
+			+ ",groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum)))"
 	}, {
 		oAggregation : {
 			aggregate : {
