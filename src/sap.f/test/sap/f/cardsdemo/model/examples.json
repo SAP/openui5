@@ -168,5 +168,11 @@
 		"description": "Example with cards using Filters",
 		"route": "filters",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Extension and Host",
+		"description": "Example with cards using Extension and Host",
+		"route": "extensionAndHost",
+		"group": "Other Card Examples"
 	}
 ]

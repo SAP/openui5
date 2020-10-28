@@ -1,7 +1,8 @@
 {
 	"sap.app": {
 		"type": "card",
-		"id": "card.explorer.extension.customActions"
+		"id": "card.explorer.extension.customActions",
+		"i18n": "i18n/i18n.properties"
 	},
 	"sap.card": {
 		"extension": "./CustomActionsExtension",

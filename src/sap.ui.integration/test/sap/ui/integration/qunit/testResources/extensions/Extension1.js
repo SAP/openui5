@@ -1,25 +1,27 @@
-sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
+sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinition"], function (Extension, ActionDefinition) {
 	"use strict";
 
-	var Extension1 = Extension.extend("sap.ui.integration.qunit.extensions.Extension1");
+	var Extension1 = Extension.extend("sap.ui.integration.qunit.testResources.extensions.Extension1");
 
 	Extension1.prototype.init = function () {
 		Extension.prototype.init.apply(this, arguments);
-
-		this.setActions([
-			{
-				type: 'Navigation',
-				url: "http://www.sap.com",
-				target: "_blank",
-				text: 'AutoOpen - SAP website - Extension'
-			}
-		]);
 
 		this.setFormatters({
 			toUpperCase: function (sValue) {
 				return sValue.toUpperCase();
 			}
 		});
+	};
+
+	Extension1.prototype.onCardReady = function () {
+		this.getCard().addActionDefinition(new ActionDefinition({
+			type: 'Navigation',
+			text: 'AutoOpen - SAP website - Extension',
+			parameters: {
+				url: "http://www.sap.com",
+				target: "_blank"
+			}
+		}));
 	};
 
 	Extension1.prototype.getData = function () {

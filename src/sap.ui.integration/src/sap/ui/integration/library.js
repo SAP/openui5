@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/f/library"
 ], function (DataType) {
 	"use strict";
+
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name: "sap.ui.integration",
@@ -37,6 +38,7 @@ sap.ui.define([
 			"card": "sap/ui/integration/customElements/CustomElementCard"
 		}
 	});
+
 	/**
 	 * SAPUI5 library with controls specialized for SAP Fiori apps.
 	 *
@@ -47,6 +49,7 @@ sap.ui.define([
 	 * @public
 	 */
 	var thisLib = sap.ui.integration;
+
 	/**
 	 * Enumeration of possible card action types.
 	 *
@@ -74,6 +77,7 @@ sap.ui.define([
 		 */
 		Custom: 'Custom'
 	};
+
 	/**
 	 * Possible data modes for <code>{@link sap.ui.integration.widgets.Card}</code>.
 	 *
@@ -95,7 +99,8 @@ sap.ui.define([
 		 */
 		Inactive: "Inactive"
 	};
-	/*
+
+	/**
 	 * Specifies different card area types.
 	 *
 	 * @private
@@ -107,6 +112,7 @@ sap.ui.define([
 		Content: 'Content',
 		Header: 'Header'
 	};
+
 	/**
 	 * An object type that represents card menu action properties.
 	 * @typedef {Object}
@@ -134,5 +140,6 @@ sap.ui.define([
 			});
 		}
 	}, "object");
+
 	return thisLib;
 });

@@ -37,9 +37,12 @@ sap.ui.define([
 				 * The actions configuration.
 				 * @experimental since 1.75
 				 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+				 * @deprecated Since version 1.85
+				 * This property is replaced by the <code>actions</code> aggregation of the card;
 				 */
 				actions: {
-					type: "sap.ui.integration.CardMenuAction[]"
+					type: "sap.ui.integration.CardMenuAction[]",
+					deprecated: true
 				},
 
 				/**
