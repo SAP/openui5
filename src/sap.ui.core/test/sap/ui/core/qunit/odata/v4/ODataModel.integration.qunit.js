@@ -29283,7 +29283,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: An annotation with $If comparing a number is evaluated.
 	// JIRA: CPOUI5ODATAV4-408
-	QUnit.skip("CPOUI5ODATAV4-408: $If comparing a number", function (assert) {
+	QUnit.test("CPOUI5ODATAV4-408: $If comparing a number", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/As(1)}">\
