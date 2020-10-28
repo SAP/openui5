@@ -159,41 +159,19 @@ sap.ui.define([
 		});
 
 		/**
-		 * Called when the composition of a passage of text is started.
-		 *
-		 * @protected
-		 */
-		ComboBoxBase.prototype.oncompositionstart = function () {
-			this._bIsComposingCharacter = true;
-		};
-
-		/**
 		 * Called when the composition of a passage of text has been completed or cancelled.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @protected
 		 */
 		ComboBoxBase.prototype.oncompositionend = function (oEvent) {
-			this._bIsComposingCharacter = false;
-			this._sComposition = oEvent.target.value;
+			ComboBoxTextField.prototype.oncompositionend.apply(this, arguments);
 
 			// In Firefox and Edge the events are fired correctly
 			// http://blog.evanyou.me/2014/01/03/composition-event/
 			if (!Device.browser.edge && !Device.browser.firefox) {
-				ComboBoxTextField.prototype.handleInput.apply(this, arguments);
 				this.handleInputValidation(oEvent, this.isComposingCharacter());
 			}
-		};
-
-		/**
-		 * indicating if a character is currently composing.
-		 *
-		 * @returns {boolean} Whether or not a character is composing.
-		 * True if after "compositionstart" event and before "compositionend" event.
-		 * @protected
-		 */
-		ComboBoxBase.prototype.isComposingCharacter = function() {
-			return this._bIsComposingCharacter;
 		};
 
 		/* =========================================================== */
@@ -505,9 +483,6 @@ sap.ui.define([
 			}, this);
 
 			this.getIcon().attachPress(this._handlePopupOpenAndItemsLoad.bind(this, true));
-
-			// handle composition events & validation of composition symbols
-			this._sComposition = "";
 
 			// a method to define whether an item should be filtered in the picker
 			this.fnFilter = null;

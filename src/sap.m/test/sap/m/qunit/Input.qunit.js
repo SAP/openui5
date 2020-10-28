@@ -401,11 +401,9 @@ sap.ui.define([
 				showValueHelp: true,
 				showSuggestion: true
 			}),
-			oSpy = sinon.spy(oInput, "fireValueHelpRequest"),
-			oSuggPopover;
+			oSpy = sinon.spy(oInput, "fireValueHelpRequest");
 
-		oSuggPopover = oInput._getSuggestionsPopover();
-		oSuggPopover._sTypedInValue = "test";
+		oInput._sTypedInValue = "test";
 
 		// Act
 		oInput._fireValueHelpRequest();
@@ -2570,7 +2568,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// assert
-		assert.notOk(oInput._oSuggPopover.getPopover().isOpen(), "Suggestion Popup should NOT be opened");
+		assert.notOk(oInput._oSuggPopover.isOpen(), "Suggestion Popup should NOT be opened");
 		assert.equal(oSelectedRow2.getId(), oInput.getSelectedRow(), "SuggestionRow should be correctly set");
 
 		// clean up
@@ -4289,7 +4287,6 @@ sap.ui.define([
 		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), "", "Input initial suggestion width should be ''");
 		assert.strictEqual(this.oInput._oSuggPopover._sPopoverContentWidth, null, "Suggestions popover should be 'null' if the Input didn't set it");
 		assert.strictEqual(this.oInput.getEnableSuggestionsHighlighting(), this.oInput._oSuggPopover._bEnableHighlighting, "Input and Popover highlighting should be the same.");
-		assert.strictEqual(this.oInput.getAutocomplete(), this.oInput._oSuggPopover._bAutocompleteEnabled, "Input and Popover autocomplete should be the same.");
 
 		// act
 		this.oInput.setMaxSuggestionWidth("50rem", bSuppressInvalidate);
@@ -4300,7 +4297,6 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), this.oInput._oSuggPopover._sPopoverContentWidth, "Input and Popover widths should be the same.");
 		assert.strictEqual(this.oInput.getEnableSuggestionsHighlighting(), this.oInput._oSuggPopover._bEnableHighlighting, "Input and Popover highlighting should be the same.");
-		assert.strictEqual(this.oInput.getAutocomplete(), this.oInput._oSuggPopover._bAutocompleteEnabled, "Input and Popover autocomplete should be the same.");
 	});
 
 	QUnit.module("Input in a Dialog", {
@@ -4371,7 +4367,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// assert
-		assert.notOk(oInput._oSuggPopover._bDoTypeAhead, "_bDoTypeAhead should be set to false'");
+		assert.notOk(oInput._bDoTypeAhead, "_bDoTypeAhead should be set to false'");
 
 		// clean up
 		oInput.destroy();
@@ -4401,7 +4397,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// assert
-		assert.notOk(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should not be allowed when pressing 'G'.");
+		assert.notOk(oInput._bDoTypeAhead, "Type ahead should not be allowed when pressing 'G'.");
 
 		// clean up
 		oInput.destroy();
@@ -4452,7 +4448,7 @@ sap.ui.define([
 
 		this.stub(Device, "system", oSystem);
 		sap.ui.getCore().applyChanges();
-		oInput._oSuggPopover._sTypedInValue = sTestTypedInValue;
+		oInput._sTypedInValue = sTestTypedInValue;
 
 		// Act
 		oInput._hideSuggestionPopup();
@@ -4494,7 +4490,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// assert
-		assert.ok(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should be allowed when pressing 'G'.");
+		assert.ok(oInput._bDoTypeAhead, "Type ahead should be allowed when pressing 'G'.");
 		assert.strictEqual(oInput.getValue(), "Germany", "Input value should be autocompleted.");
 		assert.strictEqual(oInput.getSelectedText(), "ermany", "Suggested value should be selected");
 		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getItems()[0].getSelected(), true, "Correct item in the Suggestions list is selected.");
@@ -4514,12 +4510,13 @@ sap.ui.define([
 		assert.strictEqual(oInput.getSelectedText(), "", "Text shouldn't be selected after pressing 'enter'");
 
 		// act
-		oInput._$input.trigger("focus").val("gre").trigger("input");
+		oInput._$input.trigger("focus");
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+		oInput._$input.val("gre").trigger("input");
 		this.clock.tick(300);
 
 		// assert
-		assert.notOk(oInput._oSuggPopover._bDoTypeAhead, "Autocomplete shouldn't be allowed when deleting.");
+		assert.notOk(oInput._bDoTypeAhead, "Autocomplete shouldn't be allowed when deleting.");
 		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getSelectedItem(), null, "No items in the Suggestions list are selected when deleting.");
 
 		// clean up
@@ -4600,7 +4597,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// assert
-		assert.ok(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should be allowed when pressing 'B'.");
+		assert.ok(oPopupInput._bDoTypeAhead, "Type ahead should be allowed when pressing 'B'.");
 		assert.strictEqual(oPopupInput.getValue(), "united Kingdom", "Input value should be autocompleted and character casing should be preserved.");
 		assert.strictEqual(oPopupInput.getSelectedText(), "ted Kingdom", "Suggested value should be selected");
 		assert.strictEqual(oPopover.getPopover().getContent()[1].getItems()[2].getSelected(), true, "Correct item in the Suggested list is selected");
@@ -4635,7 +4632,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		oInput._oSuggPopover._onsapright();
+		oInput.onsapright();
 
 		assert.equal(fnLiveChange.callCount, 0, "liveChange handler is not fired");
 
@@ -5528,8 +5525,8 @@ sap.ui.define([
 		this.oInput._$input.trigger("focus").val("u").trigger("input");
 		this.clock.tick(300);
 
-		this.oInput._oSuggPopover._bDoTypeAhead = true;
-		this.oInput._oSuggPopover._handleTypeAhead();
+		this.oInput._bDoTypeAhead = true;
+		this.oInput._handleTypeAhead(this.oInput);
 
 		this.oInput.onsapfocusleave({relatedControlId: null});
 		document.getElementById('i2-inner').focus();
@@ -5545,8 +5542,8 @@ sap.ui.define([
 		this.oInput._$input.trigger("focus").val("u").trigger("input");
 		this.clock.tick(300);
 
-		this.oInput._oSuggPopover._bDoTypeAhead = true;
-		this.oInput._oSuggPopover._handleTypeAhead();
+		this.oInput._bDoTypeAhead = true;
+		this.oInput._handleTypeAhead(this.oInput);
 
 		document.getElementById('i2-inner').focus();
 

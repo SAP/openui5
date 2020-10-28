@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/m/ValueStateHeader",
 	"sap/m/inputUtils/highlightDOMElements",
 	"sap/m/inputUtils/scrollToItem",
-	"sap/m/inputUtils/ListHelpers",
 	"sap/m/inputUtils/SuggestionsPopoverDialogMixin",
 	"sap/m/inputUtils/SuggestionsPopoverPopoverMixin"
 ], function (
@@ -41,7 +40,6 @@ sap.ui.define([
 	ValueStateHeader,
 	highlightDOMElements,
 	scrollToItem,
-	ListHelpers,
 	SuggestionsPopoverDialogMixin,
 	SuggestionsPopoverPopoverMixin
 ) {
@@ -83,8 +81,6 @@ sap.ui.define([
 			// stores a reference to the input control that instantiates the popover
 			this._oInput = oInput;
 
-			this._bHasTabularSuggestions = false;
-
 			// show suggestions in a dialog on phones
 			this._bUseDialog = Device.system.phone;
 
@@ -99,12 +95,6 @@ sap.ui.define([
 
 			// is the input incremental type
 			this._bIsInputIncrementalType = false;
-
-			// specifies whether autocomplete is enabled
-			this._bAutocompleteEnabled = false;
-
-			// stores currently typed value
-			this._sTypedInValue = '';
 
 			this._sOldValueState = ValueState.None;
 
@@ -138,7 +128,6 @@ sap.ui.define([
 						this._onsaparrowkey(oEvent, "down", this._oList.getItems().length);
 					}
 				},
-				onsapright: this._onsapright,
 				onsaptabnext: this._handleValueStateLinkNav,
 				onsaptabprevious: this._handleValueStateLinkNav
 			}, this);
@@ -161,8 +150,6 @@ sap.ui.define([
 				this._oList = null;
 			}
 
-			this._oProposedItem = null;
-			this._oInputDelegate = null;
 			this._oValueStateHeader = null; // The value state header is destroyed by the Popover
 
 			if (this._oPickerValueStateText) {
@@ -228,7 +215,6 @@ sap.ui.define([
 		oPopover = this.createPopover(oInput, this._oPopupInput, mOptions);
 
 		this.setPopover(oPopover);
-		this._registerAutocomplete();
 		oPopover.addStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER);
 		oPopover.addStyleClass(CSS_CLASS_NO_CONTENT_PADDING);
 		oPopover.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"));
@@ -246,8 +232,6 @@ sap.ui.define([
 	SuggestionsPopover.prototype._createSuggestionPopupContent = function (bTabular) {
 		var oInput = this._oInput,
 			oPopover = this.getPopover();
-
-		this._bHasTabularSuggestions = bTabular;
 
 		if (!bTabular) {
 			this._oList = new List(oInput.getId() + "-popup-list", {
@@ -268,7 +252,8 @@ sap.ui.define([
 					}
 
 					aListItemsDomRef = this._oList.$().find('.sapMSLIInfo, .sapMSLITitleOnly');
-					sInputValue = (this._sTypedInValue || this._oInput.getValue()).toLowerCase();
+					sInputValue = this._oInput._bDoTypeAhead ? this._oInput._sTypedInValue : this._oInput.getValue();
+					sInputValue = (sInputValue || "").toLowerCase();
 
 					highlightDOMElements(aListItemsDomRef, sInputValue);
 				}.bind(this)
@@ -343,8 +328,6 @@ sap.ui.define([
 			this._oValueStateHeader.destroy();
 			this._oValueStateHeader = null;
 		}
-
-		this._getInput().removeEventDelegate(this._oInputDelegate, this);
 	};
 
 	/**
@@ -597,8 +580,6 @@ sap.ui.define([
 
 		this._iPopupListSelectedIndex = iSelectedIndex;
 
-		this._bSuggestionItemChanged = true;
-
 		this.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {newValue: sNewValue});
 	};
 
@@ -627,143 +608,11 @@ sap.ui.define([
 		// CSN# 1390866/2014: The default for ListItemBase type is "Inactive", therefore disabled entries are only supported for single and two-value suggestions
 		// for tabular suggestions: only check visible
 		// for two-value and single suggestions: check also if item is not inactive
-		var bSelectionAllowed = this._bHasTabularSuggestions
+		var bSelectionAllowed = this._oInput._hasTabularSuggestions()
 			|| oItem.getType() !== ListType.Inactive
 			|| oItem.isA("sap.m.GroupHeaderListItem");
 
 		return oItem.getVisible() && bSelectionAllowed;
-	};
-
-	/**
-	 * Registers event handlers required for
-	 * the autocomplete functionality.
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._registerAutocomplete = function () {
-		var oPopover = this.getPopover(),
-			oUsedInput = this._getInput(),
-			bUseDialog = this._bUseDialog;
-
-		if (bUseDialog) {
-			oPopover.addEventDelegate({
-				ontap: function () {
-					// used when clicking outside the suggestions list
-					if (!this._bSuggestionItemTapped && this._sProposedItemText) {
-						oUsedInput.setValue(this._sProposedItemText);
-						this._sProposedItemText = null;
-					}
-				}
-			}, this);
-		} else {
-			oPopover.attachAfterOpen(this._handleTypeAhead, this);
-		}
-
-		oPopover.attachAfterOpen(this._setSelectedSuggestionItem, this);
-		oPopover.attachAfterClose(this._finalizeAutocomplete, this);
-
-		this._oInputDelegate = {
-			onkeydown: function (oEvent) {
-				// disable the typeahead feature for android devices due to an issue on android soft keyboard, which always returns keyCode 229
-				this._bDoTypeAhead = !Device.os.android && this._bAutocompleteEnabled && (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
-			},
-			oninput: this._handleTypeAhead
-		};
-
-		oUsedInput.addEventDelegate(this._oInputDelegate, this);
-	};
-
-	/**
-	 * Autocompletes input.
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._handleTypeAhead = function() {
-		var oInput = this._getInput(),
-			sValue = oInput.getValue();
-
-		this._oProposedItem = null;
-		this._sProposedItemText = null;
-		this._sTypedInValue = sValue;
-
-		if (!this._bDoTypeAhead || sValue === "") {
-			return;
-		}
-
-		if (!this.getPopover().isOpen() || sValue.length < this._oInput.getStartSuggestion()) {
-			return;
-		}
-
-		if (document.activeElement !== oInput.getFocusDomRef()) {
-			return;
-		}
-
-		var sValueLowerCase = sValue.toLowerCase(),
-			aItems = this._bHasTabularSuggestions ? this._oInput.getSuggestionRows() : ListHelpers.getEnabledItems(this._oInput.getSuggestionItems()),
-			iLength,
-			sNewValue,
-			sItemText,
-			i;
-
-		aItems = aItems.filter(function(oItem){
-			return !(oItem.isA("sap.ui.core.SeparatorItem") || oItem.isA("sap.m.GroupHeaderListItem"));
-		});
-
-		iLength = aItems.length;
-
-		for (i = 0; i < iLength; i++) {
-			sItemText =  this._bHasTabularSuggestions ? this._oInput._fnRowResultFilter(aItems[i]) : aItems[i].getText();
-
-			if (sItemText.toLowerCase().indexOf(sValueLowerCase) === 0) { // startsWith
-				this._oProposedItem = aItems[i];
-				sNewValue = sItemText;
-				break;
-			}
-		}
-
-		this._sProposedItemText = sNewValue;
-
-		if (sNewValue) {
-			sNewValue = this._formatTypedAheadValue(sNewValue);
-
-			if (!oInput.isComposingCharacter()) {
-				oInput.updateDomValue(sNewValue);
-			}
-
-			if (Device.system.desktop) {
-				oInput.selectText(sValue.length, sNewValue.length);
-			} else {
-				// needed when user types too fast
-				setTimeout(function () {
-					oInput.selectText(sValue.length, sNewValue.length);
-				}, 0);
-			}
-		}
-	};
-
-	/**
-	 * Sets matched selected item in the suggestion popover
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._setSelectedSuggestionItem = function () {
-		var aItems = this._oInput.getItems ?  this._oInput.getItems() : this._oInput.getSuggestionItems(),
-			aListItems, oItem;
-
-		if (!this._oList) {
-			return;
-		}
-
-		aListItems = this._oList.getItems();
-		for (var i = 0; i < aListItems.length; i++) {
-			// for tabular suggestions the proposed item should be one of the filtered items,
-			// otherwise the proposed item should be an existing list item
-			oItem = ListHelpers.getItemByListItem(aItems, aListItems[i]) || aListItems[i];
-			if (oItem === this._oProposedItem) {
-				aListItems[i].setSelected(true);
-				break;
-			}
-		}
 	};
 
 	/**
@@ -775,88 +624,6 @@ sap.ui.define([
 	 */
 	SuggestionsPopover.prototype._getInput = function () {
 		return this._bUseDialog ? this._oPopupInput : this._oInput;
-	};
-
-	/**
-	 * Sets the selected item (if it exists) from the autocomplete when pressing Enter.
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._finalizeAutocomplete = function () {
-		if (this._oInput.isComposingCharacter()) {
-			return;
-		}
-
-		if (!this._bAutocompleteEnabled) {
-			return;
-		}
-
-		if (!this._bSuggestionItemTapped && !this._bSuggestionItemChanged && this._oProposedItem) {
-			if (this._bHasTabularSuggestions) {
-				this._oInput.setSelectionRow(this._oProposedItem, true);
-			} else {
-				this._oInput.setSelectionItem(this._oProposedItem, true);
-			}
-		}
-
-		if (this._oProposedItem && document.activeElement === this._oInput.getFocusDomRef()) {
-			var iLength = this._oInput.getValue().length;
-			this._oInput.selectText(iLength, iLength);
-		}
-
-		this._resetTypeAhead();
-	};
-
-	/**
-	 * Resets properties, that are related to autocomplete, to their initial state.
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._resetTypeAhead = function () {
-		this._oProposedItem = null;
-		this._sProposedItemText = null;
-		this._sTypedInValue = '';
-		this._bSuggestionItemTapped = false;
-		this._bSuggestionItemChanged = false;
-	};
-
-	/**
-	 * Formats the input value
-	 * in a way that it preserves character casings typed by the user
-	 * and appends suggested value with casings as they are in the
-	 * corresponding suggestion item.
-	 *
-	 * @private
-	 * @param {string} sNewValue Value which will be formatted.
-	 * @returns {string} The new formatted value.
-	 */
-	SuggestionsPopover.prototype._formatTypedAheadValue = function (sNewValue) {
-		return this._sTypedInValue.concat(sNewValue.substring(this._sTypedInValue.length, sNewValue.length));
-	};
-
-	/**
-	 * Event delegate for right arrow key press
-	 * on the input control.
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._onsapright = function () {
-		var oInput = this._oInput,
-			sValue = oInput.getValue();
-
-		if (!this._bAutocompleteEnabled) {
-			return;
-		}
-
-		if (this._sTypedInValue !== sValue) {
-			this._sTypedInValue = sValue;
-
-			oInput.fireLiveChange({
-				value: sValue,
-				// backwards compatibility
-				newValue: sValue
-			});
-		}
 	};
 
 	/**
