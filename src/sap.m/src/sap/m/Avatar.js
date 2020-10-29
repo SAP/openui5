@@ -180,7 +180,12 @@ sap.ui.define([
 				 * A <code>sap.ui.core.Icon</code> instance that shows the badge icon of the <code>Avatar</code> control.
 				 * @private
 				 */
-				_badge: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
+				_badge: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
+				/**
+				 * A <code>sap.ui.core.Icon</code> instance that shows the icon of the <code>Avatar</code> control.
+				 * @private
+				 */
+				_icon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
 			},
 			associations : {
 				/**
@@ -245,9 +250,6 @@ sap.ui.define([
 	};
 
 	Avatar.prototype.exit = function () {
-		if (this._icon) {
-			this._icon.destroy();
-		}
 		if (this._fnLightBoxOpen) {
 			this._fnLightBoxOpen = null;
 		}
@@ -519,22 +521,24 @@ sap.ui.define([
 	 */
 	Avatar.prototype._getIcon = function () {
 		var sSrc = this.getSrc(),
+			oIcon = this.getAggregation("_icon"),
 			sDisplayShape = this.getDisplayShape();
 
 		if (this._bIsDefaultIcon) {
 			sSrc = this._getDefaultIconPath(sDisplayShape);
 		}
 
-		if (!this._icon) {
-			this._icon = IconPool.createControlByURI({
+		if (!oIcon) {
+			oIcon = IconPool.createControlByURI({
 				alt: "Image placeholder",
 				src: sSrc
 			});
-		} else if (this._icon.getSrc() !== sSrc) {
-			this._icon.setSrc(sSrc);
+			this.setAggregation("_icon", oIcon);
+		} else if (oIcon.getSrc() !== sSrc) {
+			oIcon.setSrc(sSrc);
 		}
 
-		return this._icon;
+		return oIcon;
 	};
 
 	Avatar.prototype._getDefaultTooltip = function() {
