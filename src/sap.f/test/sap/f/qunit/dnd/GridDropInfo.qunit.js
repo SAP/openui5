@@ -165,7 +165,8 @@ sap.ui.define([
 				},
 				setIndicatorConfig: sinon.stub(),
 				setDropControl: sinon.stub(),
-				getDropPosition: sinon.stub()
+				getDropPosition: sinon.stub(),
+				getIndicator: sinon.stub()
 			};
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);

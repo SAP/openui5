@@ -23,6 +23,8 @@ sap.ui.define([
 
 	createAndAppendDiv("content");
 
+	createAndAppendDiv("fakeDnDIndicator");
+
 	function createFakeDragOverEvent(oTargetControl) {
 		var oFakeEvent = new jQuery.Event("dragover"),
 			mTargetRect = oTargetControl.getDomRef().getBoundingClientRect();
@@ -32,6 +34,20 @@ sap.ui.define([
 		oFakeEvent.target = oTargetControl.getDomRef();
 
 		return oFakeEvent;
+	}
+
+	function createFakeDragSession() {
+		return {
+			setIndicatorConfig: function (oConfig) {
+				this._indicatorConfig = oConfig;
+			},
+			getIndicatorConfig: function (oConfig) {
+				return this._indicatorConfig;
+			},
+			getIndicator: function (oConfig) {
+				return document.getElementById("fakeDnDIndicator");
+			}
+		};
 	}
 
 	QUnit.module("Initialization");
@@ -57,10 +73,13 @@ sap.ui.define([
 			this.oGrid.placeAt("content");
 			Core.applyChanges();
 
+			this.fakeDragSession = createFakeDragSession();
+
 			this.oGridDragOver.setCurrentContext(
 				oDragItem,
 				this.oGrid,
-				"items"
+				"items",
+				this.fakeDragSession
 			);
 		},
 		afterEach: function () {
@@ -72,7 +91,8 @@ sap.ui.define([
 	QUnit.test("Simulate drag over", function(assert) {
 		// Arrange
 		var oTargetControl = this.oGrid.getItems()[0],
-			oFakeEvent = createFakeDragOverEvent(oTargetControl);
+			oFakeEvent = createFakeDragOverEvent(oTargetControl),
+			mCoreIndicatorStyle;
 
 		// Act
 		this.oGridDragOver.handleDragOver(oFakeEvent);
@@ -88,6 +108,11 @@ sap.ui.define([
 		assert.strictEqual(mPosition.targetControl.sId, oTargetControl.sId, "The target control is correct");
 		assert.strictEqual(mPosition.position, "Before", "The target position is 'Before'");
 		assert.strictEqual(this.oGridDragOver._iDragFromIndex, 0, "The target index is correct.");
+
+		// Assert if the default core DnD indicator is hidden
+		mCoreIndicatorStyle = this.fakeDragSession.getIndicator().style;
+		assert.strictEqual(mCoreIndicatorStyle.visibility, "hidden", "The default core indicator is hidden.");
+		assert.strictEqual(mCoreIndicatorStyle.position, "relative", "The default core indicator has position:relative.");
 	});
 
 	QUnit.test("Simulate drag leave", function(assert) {
@@ -96,7 +121,8 @@ sap.ui.define([
 			oTargetControl = this.oGrid.getItems()[0],
 			mTargetRect = oTargetControl.getDomRef().getBoundingClientRect(),
 			oSpy = sinon.spy(this.oGridDragOver, "scheduleEndDrag"),
-			oText = new Text({ text: "control outside the grid"});
+			oText = new Text({ text: "control outside the grid"}),
+			mCoreIndicatorStyle;
 
 		oText.placeAt("content");
 		Core.applyChanges();
@@ -121,6 +147,11 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oSpy.calledOnce, "Should end the drag when current position is outside the container");
+
+		// Assert if the default core DnD indicator is restored
+		mCoreIndicatorStyle = this.fakeDragSession.getIndicator().style;
+		assert.strictEqual(mCoreIndicatorStyle.visibility, "visible", "The default core indicator is restored to visible.");
+		assert.strictEqual(mCoreIndicatorStyle.position, "absolute", "The default core indicator has position:absolute.");
 
 		// Clean up
 		oText.destroy();
@@ -166,10 +197,13 @@ sap.ui.define([
 			this.oDragItem.placeAt("content");
 			Core.applyChanges();
 
+			this.fakeDragSession = createFakeDragSession();
+
 			this.oGridDragOver.setCurrentContext(
 				this.oDragItem,
 				this.oGrid,
-				"items"
+				"items",
+				this.fakeDragSession
 			);
 		},
 		afterEach: function () {
@@ -246,10 +280,13 @@ sap.ui.define([
 			this.oGrid2.placeAt("content");
 			Core.applyChanges();
 
+			this.fakeDragSession = createFakeDragSession();
+
 			this.oGridDragOver.setCurrentContext(
 				this.oGrid1.getItems()[0],
 				this.oGrid2,
-				"items"
+				"items",
+				this.fakeDragSession
 			);
 		},
 		afterEach: function () {
