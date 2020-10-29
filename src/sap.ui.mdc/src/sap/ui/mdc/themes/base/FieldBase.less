@@ -5,12 +5,22 @@
 	vertical-align: top;
 }
 
+.sapUiMdcFieldBaseMoreFields{
+	min-width: 6.9rem; /* to avoid wrapping of inner controls */
+}
+
 .sapUiMdcFieldBaseMoreFields > *{
 	padding-left: 0.5rem;
 }
 
 .sapUiMdcFieldBaseMoreFields > *:first-child{
 	padding-left: 0;
+	max-width: calc(~"100% - 4.75rem"); /* as input has a min-width, to not cut off unit */
+	min-width: 2.13rem; /* as inner input has this min-width */
+}
+
+.sapUiMdcFieldBaseMoreFields > *:nth-child(2){
+	min-width: 4.75rem; /* As input has a min-width + padding */
 }
 
 /**
