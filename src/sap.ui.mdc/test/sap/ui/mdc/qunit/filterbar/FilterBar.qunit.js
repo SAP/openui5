@@ -11,8 +11,8 @@ sap.ui.define([
 	"sap/ui/model/type/String",
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/mdc/odata/TypeUtil",
-	'sap/base/util/merge'
-
+	'sap/base/util/merge',
+	"sap/ui/core/library"
 ], function (
 	FilterBar,
 	FilterBarBase,
@@ -22,11 +22,13 @@ sap.ui.define([
 	ModelString,
 	FlexUtil,
 	TypeUtil,
-	merge
+	merge,
+	CoreLibrary
 ) {
 	"use strict";
 
 	var oFilterBar, oAdaptationController;
+	var HasPopup = CoreLibrary.aria.HasPopup;
 
 	QUnit.module("FilterBar", {
 		beforeEach: function () {
@@ -87,6 +89,7 @@ sap.ui.define([
 		var oButton = oFilterBar._btnAdapt;
 		assert.ok(oButton);
 		assert.ok(!oButton.getVisible());
+		assert.equal(oButton.getAriaHasPopup(), HasPopup.ListBox, "button has correct ariaHasPopup value");
 
 		oFilterBar.setP13nMode(["Value"]);
 		assert.ok(!oButton.getVisible());

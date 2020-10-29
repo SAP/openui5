@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/mdc/table/TableSettings",
 	"sap/ui/Device",
 	"sap/m/VBox",
-	"sap/m/Link"
+	"sap/m/Link",
+	"sap/ui/core/library"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -48,10 +49,12 @@ sap.ui.define([
 	TableSettings,
 	Device,
 	VBox,
-	Link
+	Link,
+	CoreLibrary
 ) {
 	"use strict";
 
+	var HasPopup = CoreLibrary.aria.HasPopup;
 	var aTestedTypes = ["Table", "ResponsiveTable"];
 
 	function wait(iMilliseconds) {
@@ -3900,16 +3903,23 @@ sap.ui.define([
 				});
 			}
 
+			var oButton;
 			aModes.forEach(function(sMode) {
 				switch (sMode) {
 					case "Filter":
-						assert.ok(findButton("filter"), sTitlePrefix + "Filter button exists");
+						oButton = findButton("filter")[0];
+						assert.ok(oButton, sTitlePrefix + "Filter button exists");
+						assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
 						break;
 					case "Sort":
-						assert.ok(findButton("sort"), sTitlePrefix + "Sort button exists");
+						oButton = findButton("sort")[0];
+						assert.ok(oButton, sTitlePrefix + "Sort button exists");
+						assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
 						break;
 					default:
-						assert.ok(findButton("action-settings"), sTitlePrefix + "Column settings button exists");
+						oButton = findButton("action-settings")[0];
+						assert.ok(oButton, sTitlePrefix + "Column settings button exists");
+						assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
 				}
 			});
 		},

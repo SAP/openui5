@@ -2,10 +2,11 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/m/Button", "sap/m/ButtonRenderer", "sap/ui/base/ManagedObjectObserver"
-], function(Button, ButtonRenderer, ManagedObjectObserver) {
+	"sap/m/Button", "sap/m/ButtonRenderer", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/library"
+], function(Button, ButtonRenderer, ManagedObjectObserver, CoreLibrary) {
 	"use strict";
 
+	var HasPopup = CoreLibrary.aria.HasPopup;
 	var ResponsivePopover, List, Bar, SearchField, StandardListItem, InvisibleText, Device, oRb;
 
 	var ChartTypeButton = Button.extend("sap.ui.mdc.chart.ChartTypeButton", {
@@ -21,9 +22,9 @@ sap.ui.define([
 				}.bind(this),
 				id: oChart.getId() + "-btnChartType",
 				icon: '{$chart>/getTypeInfo/icon}',
-				tooltip: '{$chart>/getTypeInfo/text}'
+				tooltip: '{$chart>/getTypeInfo/text}',
+				ariaHasPopup: HasPopup.ListBox
 			};
-
 			this.oChart = oChart;
 			Button.apply(this, [
 				mSettings
