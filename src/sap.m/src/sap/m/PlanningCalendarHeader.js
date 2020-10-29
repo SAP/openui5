@@ -458,7 +458,10 @@ function(
 	 */
 	PlanningCalendarHeader.prototype._getOrCreateViewSwitch = function () {
 		if (!this._oViewSwitch) {
-			this._oViewSwitch = new SegmentedButton(this.getId() + "-ViewSwitch");
+			this._oViewSwitch = new SegmentedButton(this.getId() + "-ViewSwitch", {
+				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_VIEW_SWITCH")
+			});
+
 			this._oViewSwitch.attachEvent("selectionChange", this._handleViewSwitchChange, this);
 			this.addDependent(this._oViewSwitch);
 		}
