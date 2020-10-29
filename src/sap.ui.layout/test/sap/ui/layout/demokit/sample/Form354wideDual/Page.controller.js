@@ -15,19 +15,10 @@ sap.ui.define([
 
 			this.getView().bindElement("/SupplierCollection/0");
 
+			this._formFragments = {};
+
 			// Set the initial form to be the display one
 			this._showFormFragment("Display");
-		},
-
-		onExit : function () {
-			for (var sPropertyName in this._formFragments) {
-				if (!this._formFragments.hasOwnProperty(sPropertyName) || this._formFragments[sPropertyName] == null) {
-					return;
-				}
-
-				this._formFragments[sPropertyName].destroy();
-				this._formFragments[sPropertyName] = null;
-			}
 		},
 
 		handleEditPress : function () {
@@ -57,8 +48,6 @@ sap.ui.define([
 
 		},
 
-		_formFragments: {},
-
 		_toggleButtonsAndView : function (bEdit) {
 			var oView = this.getView();
 
@@ -72,27 +61,30 @@ sap.ui.define([
 		},
 
 		_getFormFragment: function (sFragmentName) {
-			var oFormFragment = this._formFragments[sFragmentName];
+			var pFormFragment = this._formFragments[sFragmentName],
+				oView = this.getView();
 
-			if (oFormFragment) {
-				return oFormFragment;
+			if (!pFormFragment) {
+				pFormFragment = Fragment.load({
+					id: oView.getId(),
+					name: "sap.ui.layout.sample.Form354wideDual." + sFragmentName
+				});
+				this._formFragments[sFragmentName] = pFormFragment;
 			}
 
-			oFormFragment = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.layout.sample.Form354wideDual." + sFragmentName);
-
-			this._formFragments[sFragmentName] = oFormFragment;
-			return this._formFragments[sFragmentName];
+			return pFormFragment;
 		},
 
 		_showFormFragment : function (sFragmentName) {
 			var oPage = this.byId("page");
 
 			oPage.removeAllContent();
-			oPage.insertContent(this._getFormFragment(sFragmentName));
+			this._getFormFragment(sFragmentName).then(function(oVBox){
+				oPage.insertContent(oVBox);
+			});
 		}
 
 	});
-
 
 	return PageController;
 

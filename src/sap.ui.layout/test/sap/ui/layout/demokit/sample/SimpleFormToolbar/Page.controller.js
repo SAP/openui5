@@ -18,7 +18,6 @@ sap.ui.define([
 
 	});
 
-
 	return PageController;
 
 });
