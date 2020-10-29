@@ -12,27 +12,29 @@ sap.ui.define([
 
 		onOpenDialog: function () {
 			// load BusyDialog fragment asynchronously
-			if (!this._oBusyDialog) {
-				Fragment.load({
+			if (!this._pBusyDialog) {
+				this._pBusyDialog = Fragment.load({
 					name: "sap.m.sample.BusyDialog.BusyDialog",
 					controller: this
-				}).then(function (oFragment) {
-					this._oBusyDialog = oFragment;
-					this.getView().addDependent(this._oBusyDialog);
-					syncStyleClass("sapUiSizeCompact", this.getView(), this._oBusyDialog);
-					this._oBusyDialog.open();
-					this.simulateServerRequest();
+				}).then(function (oBusyDialog) {
+					this.getView().addDependent(oBusyDialog);
+					syncStyleClass("sapUiSizeCompact", this.getView(), oBusyDialog);
+					return oBusyDialog;
 				}.bind(this));
-			} else {
-				this._oBusyDialog.open();
-				this.simulateServerRequest();
 			}
+
+			this._pBusyDialog.then(function(oBusyDialog) {
+				oBusyDialog.open();
+				this.simulateServerRequest();
+			}.bind(this));
 		},
 
 		simulateServerRequest: function () {
 			// simulate a longer running operation
 			iTimeoutId = setTimeout(function() {
-				this._oBusyDialog.close();
+				this._pBusyDialog.then(function(oBusyDialog) {
+					oBusyDialog.close();
+				});
 			}.bind(this), 3000);
 		},
 
