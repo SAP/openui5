@@ -5,29 +5,34 @@
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/initial/_internal/StorageResultMerger",
 	"sap/ui/fl/initial/_internal/storageResultDisassemble"
 ], function(
 	StorageUtils,
 	FlUtils,
-	LayerUtils,
 	StorageResultMerger,
 	storageResultDisassemble
 ) {
 	"use strict";
 
 	function _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, mPropertyBag) {
-		if (oConnectorConfig.layers && (oConnectorConfig.layers[0] === "ALL" || oConnectorConfig.layers.indexOf("CUSTOMER") !== -1)) {
-			var sVersion = FlUtils.getUrlParameter(sap.ui.fl.Versions.UrlParameter);
-			if (mPropertyBag.version !== undefined) {
-				oConnectorSpecificPropertyBag.version = mPropertyBag.version;
-			} else {
-				oConnectorSpecificPropertyBag.version = sVersion ? parseInt(sVersion) : "";
-			}
-		} else {
-			// removes an existing version entry copied from the original mPropertyBag
+		if (!oConnectorConfig.layers || (oConnectorConfig.layers[0] !== "ALL" && oConnectorConfig.layers.indexOf("CUSTOMER") === -1)) {
 			delete oConnectorSpecificPropertyBag.version;
+			return oConnectorSpecificPropertyBag;
+		}
+
+		if (mPropertyBag.version !== undefined) {
+			// an API call set a version number
+			oConnectorSpecificPropertyBag.version = mPropertyBag.version;
+			return oConnectorSpecificPropertyBag;
+		}
+
+		var sVersion = FlUtils.getUrlParameter(sap.ui.fl.Versions.UrlParameter);
+		if (sVersion === null) {
+			// url parameter is not present --> remove an existing version entry copied from the original mPropertyBag
+			delete oConnectorSpecificPropertyBag.version;
+		} else {
+			oConnectorSpecificPropertyBag.version = parseInt(sVersion);
 		}
 		return oConnectorSpecificPropertyBag;
 	}
