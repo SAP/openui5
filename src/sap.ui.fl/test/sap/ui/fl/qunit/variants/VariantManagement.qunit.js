@@ -1063,6 +1063,44 @@ sap.ui.define([
 			this.oVariantManagement._handleManageSavePressed();
 			assert.ok(bSavePressed);
 		});
+
+		QUnit.test("check displayTextForExecuteOnSelectionForStandardVariant property", function(assert) {
+			assert.ok(!this.oVariantManagement.getDisplayTextForExecuteOnSelectionForStandardVariant());
+
+			this.oVariantManagement.setDisplayTextForExecuteOnSelectionForStandardVariant("TEST");
+			assert.equal(this.oVariantManagement.getDisplayTextForExecuteOnSelectionForStandardVariant(), "TEST");
+
+			this.oVariantManagement.setDisplayTextForExecuteOnSelectionForStandardVariant(null);
+			assert.ok(!this.oVariantManagement.getDisplayTextForExecuteOnSelectionForStandardVariant());
+		});
+
+		QUnit.test("Checking the apply automatic text for standard", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement._openManagementDialog();
+			var aRows = this.oVariantManagement.oManagementTable.getItems();
+			assert.ok(aRows);
+			assert.equal(aRows.length, 5);
+
+			var aCells = aRows[0].getCells();
+			assert.ok(aCells);
+			assert.equal(aCells.length, 7);
+
+			assert.ok(aCells[VariantManagement.COLUMN_EXEC_IDX].isA("sap.m.CheckBox"));
+
+			////
+			this.oVariantManagement._bDeleteOccured = true;
+			this.oVariantManagement.setDisplayTextForExecuteOnSelectionForStandardVariant("TEST");
+
+			this.oVariantManagement._openManagementDialog();
+			aRows = this.oVariantManagement.oManagementTable.getItems();
+			aCells = aRows[0].getCells();
+			assert.ok(aCells);
+			assert.equal(aCells.length, 7);
+
+			assert.ok(aCells[VariantManagement.COLUMN_EXEC_IDX].isA("sap.m.Text"));
+			assert.equal(aCells[VariantManagement.COLUMN_EXEC_IDX].getText(), "TEST");
+		});
 	});
 
 	QUnit.done(function() {
