@@ -266,6 +266,20 @@ sap.ui.define([
 				return fnOriginalValidateAggregation.apply(this, arguments);
 			}
 		};
+
+		// TODO: Remove this once row modes and CreationRow are public.
+		var fnApplySettings = TableClass.prototype.applySettings;
+		TableClass.prototype.applySettings = function(mSettings) {
+			if (mSettings && "rowMode" in mSettings) {
+				this.setRowMode(mSettings.rowMode);
+				delete mSettings.rowMode;
+			}
+			if (mSettings && "creationRow" in mSettings) {
+				this.setCreationRow(mSettings.creationRow);
+				delete mSettings.creationRow;
+			}
+			fnApplySettings.apply(this, arguments);
+		};
 	});
 
 	function createTableConfig(TableClass, mOptions) {
@@ -275,6 +289,8 @@ sap.ui.define([
 		var aAssociations = Object.keys(oMetadata.getAllAssociations());
 		var aAdditionalKeys = ["models"];
 		var aAllMetadataKeys = aProperties.concat(aAggregations).concat(aAssociations).concat(aAdditionalKeys);
+
+		aAllMetadataKeys = aAllMetadataKeys.concat(["rowMode", "creationRow"]); // TODO: Remove this once row modes and CreationRow are public.
 
 		return Object.keys(mOptions).reduce(function(oObject, sKey) {
 			if (aAllMetadataKeys.indexOf(sKey) >= 0) {
@@ -291,11 +307,6 @@ sap.ui.define([
 			if (aExperimentalProperties.indexOf(sKey) >= 0) {
 				oTable[sKey] = mOptions[sKey];
 			}
-		}
-
-		// TODO: Remove this once "row modes" are public.
-		if ("rowMode" in mOptions) {
-			oTable.setRowMode(mOptions.rowMode);
 		}
 	}
 

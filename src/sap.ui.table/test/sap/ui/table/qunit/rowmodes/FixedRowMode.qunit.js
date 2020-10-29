@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/Device"
-], function(TableQUnitUtils, FixedRowMode, Table, Column, RowAction, TableUtils, library, JSONModel, Device) {
+], function(TableQUnitUtils, FixedRowMode, Table, Column, RowAction, TableUtils, library, JSONModel, JSONListBinding, Device) {
 	"use strict";
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;
@@ -79,6 +80,7 @@ sap.ui.define([
 	QUnit.module("Row heights", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new FixedRowMode(),
 				columns: [
 					new Column({template: new HeightTestControl({height: "1px"})}),
 					new Column({template: new HeightTestControl({height: "1px"})})
@@ -88,8 +90,6 @@ sap.ui.define([
 				rowActionTemplate: new RowAction(),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			}, function(oTable) {
-				oTable.setRowMode(new FixedRowMode());
 			});
 		},
 		afterEach: function() {
@@ -329,5 +329,29 @@ sap.ui.define([
 		oRowMode.setHideEmptyRows(true);
 		assert.equal(oDisableNoData.callCount, 1, "Change from false to true: #disableNoData was called once");
 		assert.ok(oEnableNoData.notCalled, "Change from false to true: #enableNoData was not called");
+	});
+
+	QUnit.module("Get contexts", {
+		beforeEach: function() {
+			this.oGetContextsSpy = sinon.spy(JSONListBinding.prototype, "getContexts");
+			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new FixedRowMode(),
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
+			});
+		},
+		afterEach: function() {
+			this.oGetContextsSpy.restore();
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Initialization", function(assert) {
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
+		});
 	});
 });

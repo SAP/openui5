@@ -244,13 +244,28 @@ sap.ui.define([
 				group: "Row Mode",
 				module: "./rowmodes/{name}.qunit"
 			},
+			"FixedRowMode with ODataV2": {
+				group: "Row Mode",
+				module: "./rowmodes/FixedRowMode.ODataV2.qunit",
+				sinon: false /*uses Mockserver*/
+			},
 			"InteractiveRowMode": {
 				group: "Row Mode",
 				module: "./rowmodes/{name}.qunit"
 			},
+			"InteractiveRowMode with ODataV2": {
+				group: "Row Mode",
+				module: "./rowmodes/InteractiveRowMode.ODataV2.qunit",
+				sinon: false /*uses Mockserver*/
+			},
 			"AutoRowMode": {
 				group: "Row Mode",
 				module: "./rowmodes/{name}.qunit"
+			},
+			"AutoRowMode with ODataV2": {
+				group: "Row Mode",
+				module: "./rowmodes/AutoRowMode.ODataV2.qunit",
+				sinon: false /*uses Mockserver*/
 			},
 			"VariableRowMode": {
 				group: "Row Mode",
