@@ -2028,6 +2028,14 @@ function(
 						oEvent.srcControl.focus();
 					}
 				}
+			},
+
+			onsaptabnext: function () {
+				this.getPicker().close();
+			},
+
+			onsaptabprevious: function () {
+				this.getPicker().close();
 			}
 		}, this);
 

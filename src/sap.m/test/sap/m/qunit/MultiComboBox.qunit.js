@@ -5734,6 +5734,24 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getSelectedItems()[0].getText(), "Item1", "The first item should be selected");
 	});
 
+	QUnit.test("onsaptabnext on item from the list should close the picker", function (assert) {
+		// Arrange
+		this.oMultiComboBox.open();
+		this.clock.tick(300);
+
+		var oPicker = this.oMultiComboBox.getPicker();
+		var spy = this.spy(oPicker, "close");
+
+		// Act
+		qutils.triggerKeydown(this.oMultiComboBox._getList().getItems()[0].getDomRef(), KeyCodes.TAB);
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(spy.callCount, 1, "The picker should be closed once");
+
+		spy.restore();
+	});
+
 	QUnit.module("Mobile mode (dialog)");
 
 	QUnit.test("Prevent endless focus loop on mobile", function(assert) {
