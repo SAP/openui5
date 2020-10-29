@@ -1,0 +1,6 @@
+{
+  "@odata.context" : "$metadata#SalesOrderList('0500000000')/SO_2_SOITEM",
+  "@odata.metadataEtag" : "W/\"20200902092535\"",
+  "@odata.count" : "26",
+  "value" : []
+}

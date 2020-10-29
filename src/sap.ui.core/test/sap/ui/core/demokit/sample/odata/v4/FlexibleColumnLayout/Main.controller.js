@@ -46,6 +46,27 @@ sap.ui.define([
 			this.getView().getModel().resetChanges("UpdateGroup");
 		},
 
+		onCreateLineItem : function (oEvent) {
+			var oContext,
+				oDeliveryDate = new Date();
+
+			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
+			oDeliveryDate.setMilliseconds(0);
+			this.byId("SO_2_SOITEM").getBinding("items").create({
+				DeliveryDate : oDeliveryDate.toJSON(),
+				GrossAmount : "42.0",
+				ProductID : "HT-1000",
+				Quantity : "2.000",
+				QuantityUnit : "EA"
+			}, false).created().then(function () {
+				MessageToast.show("Line item created: " + oContext.getProperty("ItemPosition"));
+			}, function (oError) {
+				if (!oError.canceled) {
+					throw oError;
+				}
+			});
+		},
+
 		onDeleteSalesOrder : function (oEvent) {
 			oEvent.getSource().getBindingContext().delete("$auto").then(function () {
 				MessageBox.success("Sales order deleted");
@@ -87,6 +108,10 @@ sap.ui.define([
 				}
 			);
 			this.getView().setModel(this.oUIModel, "ui");
+			this.getView().setModel(this.getView().getModel(), "headerContext");
+			this.byId("salesOrderListTitle").setBindingContext(
+				this.byId("SalesOrderList").getBinding("items").getHeaderContext(),
+				"headerContext");
 		},
 
 		onRefreshSalesOrder : function (oEvent) {
@@ -104,7 +129,7 @@ sap.ui.define([
 				that = this;
 
 			oContext.setKeepAlive(true, function () {
-				// React destruction of a kept-alive context
+				// Handle destruction of a kept-alive context
 				that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
 				that.oUIModel.setProperty("/bSalesOrderSelected", false);
 			});
@@ -112,6 +137,8 @@ sap.ui.define([
 				oObjectPage.getBindingContext().setKeepAlive(false);
 			}
 			oObjectPage.setBindingContext(oContext);
+			this.byId("lineItemsTitle").setBindingContext(
+				this.byId("SO_2_SOITEM").getBinding("items").getHeaderContext(), "headerContext");
 
 			this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
 			this.oUIModel.setProperty("/bSalesOrderSelected", true);
@@ -166,14 +193,15 @@ sap.ui.define([
 				that = this;
 
 			// code sample to switch the context using the Context#setKeepAlive
-			if (oContext) {
+			if (oContext && !oContext.isTransient()) {
 				oContext.setKeepAlive(true, function () {
-					// React destruction of a kept-alive context
+					// Handle destruction of a kept-alive context
 					that.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
 					that.oUIModel.setProperty("/bSalesOrderItemSelected", false);
 				});
 			}
-			if (oSubObjectPage.getBindingContext()) {
+			if (oSubObjectPage.getBindingContext()
+					&& !oSubObjectPage.getBindingContext().isTransient()) {
 				oSubObjectPage.getBindingContext().setKeepAlive(false);
 			}
 			oSubObjectPage.setBindingContext(oContext);
