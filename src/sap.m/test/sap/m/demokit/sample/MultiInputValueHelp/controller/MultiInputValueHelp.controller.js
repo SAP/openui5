@@ -19,34 +19,31 @@ sap.ui.define([
 		},
 
 		handleValueHelp: function (oEvent) {
-			var sInputValue = oEvent.getSource().getValue();
+			var sInputValue = oEvent.getSource().getValue(),
+				oView = this.getView();
 
 			// create value help dialog
-			if (!this._valueHelpDialog) {
-				Fragment.load({
-					id: "valueHelpDialog",
+			if (!this._pValueHelpDialog) {
+				this._pValueHelpDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.MultiInputValueHelp.view.Dialog",
 					controller: this
 				}).then(function (oValueHelpDialog) {
-					this._valueHelpDialog = oValueHelpDialog;
-					this.getView().addDependent(this._valueHelpDialog);
-					this._openValueHelpDialog(sInputValue);
-				}.bind(this));
-			} else {
-				this._openValueHelpDialog(sInputValue);
+					oView.addDependent(oValueHelpDialog);
+					return oValueHelpDialog;
+				});
 			}
-		},
 
-		_openValueHelpDialog: function (sInputValue) {
-			// create a filter for the binding
-			this._valueHelpDialog.getBinding("items").filter([new Filter(
-				"Name",
-				FilterOperator.Contains,
-				sInputValue
-			)]);
-
-			// open value help dialog filtered by the input value
-			this._valueHelpDialog.open(sInputValue);
+			this._pValueHelpDialog.then(function (oValueHelpDialog) {
+				// create a filter for the binding
+				oValueHelpDialog.getBinding("items").filter([new Filter(
+					"Name",
+					FilterOperator.Contains,
+					sInputValue
+				)]);
+				// open value help dialog filtered by the input value
+				oValueHelpDialog.open(sInputValue);
+			});
 		},
 
 		_handleValueHelpSearch: function (evt) {
