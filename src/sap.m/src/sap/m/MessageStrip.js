@@ -54,6 +54,7 @@ sap.ui.define([
 	 * With version 1.50 you can use a limited set of formatting tags for the message text by setting <code>enableFormattedText</code>. The allowed tags are:
 	 * <ul>
 	 * <li>&lt;a&gt;</li>
+	 * <li>&lt;br&gt;</li>
 	 * <li>&lt;em&gt;</li>
 	 * <li>&lt;strong&gt;</li>
 	 * <li>&lt;u&gt;</li>
@@ -128,6 +129,7 @@ sap.ui.define([
 				 * content will not be rendered by the control:
 				 * <ul>
 				 *	<li><code>a</code></li>
+				 *	<li><code>br</code></li>
 				 *	<li><code>em</code></li>
 				 *	<li><code>strong</code></li>
 				 *	<li><code>u</code></li>

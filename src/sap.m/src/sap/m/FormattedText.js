@@ -175,6 +175,7 @@ function(
 			},
 			ELEMENTS: {
 				'a' : {cssClass: 'sapMLnk'},
+				'br': 1,
 				'em': 1,
 				'strong': 1,
 				'u': 1
