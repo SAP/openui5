@@ -76,7 +76,8 @@ sap.ui.define([
 			CHANGE_SETTINGS_TEXT = "settings",
 			CHANGE_COOKIE_PREFERENCES_TEXT = "cookie_preferences",
 			DEMOKIT_DEFAULT_LANGUAGE = "en",
-			DEMOKIT_CONFIGURATION_LANGUAGE = "language";
+			DEMOKIT_CONFIGURATION_LANGUAGE = "language",
+			SITEMAP = "sitemap";
 
 		// We need to hardcode theme depending height of Toolbar to calculate ScrollContainer
 		// height more precisely on the home page
@@ -129,6 +130,7 @@ sap.ui.define([
 					"copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
 					"trademark": "https://www.sap.com/corporate/en/legal/trademark.html",
 					"disclaimer": "https://help.sap.com/viewer/disclaimer",
+					"sitemap": "sitemap",
 					"license": "LICENSE.txt"
 				};
 
@@ -150,14 +152,6 @@ sap.ui.define([
 				this._oView = this.getView();
 
 				this.setModel(oViewModel, "appView");
-
-				this.setModel(new JSONModel({
-					inspectorHomeLink: "topic/b24e72443eb34d0fb7bf6940f2d697eb",
-					supportAssistantHomeLink: "topic/57ccd7d7103640e3a187ed55e1d2c163",
-					demoAppsHomeLink: "topic/a3ab54ecf7ac493b91904beb2095d208",
-					iconExplorerHomeLink: "topic/21ea0ea94614480d9a910b2e93431291"
-					// etc
-				}), "newWindowLinks");
 
 				this.oHeader = this._oView.byId("headerToolbar");
 
@@ -318,6 +312,8 @@ sap.ui.define([
 					this.cookieSettingsDialogOpen(true);
 				} else if (sTargetText === CHANGE_VERSION_TEXT) {
 					this.onChangeVersionButtonPress();
+				} else if (sTarget === SITEMAP) {
+					this.onSiteMapPress();
 				} else if (sTarget) {
 					URLHelper.redirect(sTarget, true);
 				}
@@ -649,6 +645,10 @@ sap.ui.define([
 
 			onLogoIconPress: function () {
 				this.oRouter.navTo("welcome", {});
+			},
+
+			onSiteMapPress: function () {
+				this.oRouter.navTo("sitemap", {});
 			},
 
 			onVersionItemPress: function (oEvent) {

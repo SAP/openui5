@@ -10,8 +10,8 @@ sap.ui.define([
 		"sap/m/library",
 		"sap/base/Log",
 		"sap/ui/documentation/sdk/controller/util/Highlighter",
-		"sap/ui/documentation/sdk/util/Resources"
-	], function (Device, MasterTreeBaseController, JSONModel, mobileLibrary, Log, Highlighter, ResourcesUtil) {
+		"sap/ui/documentation/sdk/controller/util/DocuInfo"
+	], function (Device, MasterTreeBaseController, JSONModel, mobileLibrary, Log, Highlighter, DocuInfo) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
@@ -100,19 +100,7 @@ sap.ui.define([
 			},
 
 			_getDocuIndexPromise: function () {
-				return new Promise(function (resolve, reject) {
-					jQuery.ajax({
-						async: true,
-						url : ResourcesUtil.getResourceOriginPath(this.getConfig().docuPath + "index.json"),
-						dataType : 'json',
-						success : function(oData) {
-							resolve(oData);
-						},
-						error : function (oError) {
-							reject(oError);
-						}
-					});
-				}.bind(this));
+				return DocuInfo.getDocuIndexPromise(this.getConfig());
 			},
 
 			_addSearchMetadata: function (oData, sParentText) {

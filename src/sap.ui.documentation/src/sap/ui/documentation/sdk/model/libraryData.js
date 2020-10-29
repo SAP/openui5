@@ -156,6 +156,17 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 			// load and process all lib info
 			oModel.setProperty("/bFooterVisible", false);
 			library._loadAllLibInfo("", "_getDocuIndex", fnHandleLibInfoLoaded);
+		},
+		getDemoAppsData: function () {
+			return new Promise(function (resolve) {
+				library._loadAllLibInfo("", "_getDocuIndex", function (aLibs, oDocIndicies) {
+					if (!aLibs) {
+						return;
+					}
+
+					resolve(createModelData(aLibs, oDocIndicies));
+				});
+			});
 		}
 	};
 

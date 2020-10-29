@@ -105,12 +105,12 @@
 					]
 				},
 				{
-				  "pattern": "controls/filter/{value}",
-				  "name": "listFilter",
-				  "target": [
-					"controlsMaster",
-					"controls"
-				  ]
+					"pattern": "controls/filter/{value}",
+					"name": "listFilter",
+					"target": [
+						"controlsMaster",
+						"controls"
+					]
 				},
 				{
 					"pattern": "group/{id}",
@@ -333,6 +333,13 @@
 				{
 					"pattern": "docs/api/symbols/{id}",
 					"name": "apiIdLegacyRoute"
+				},
+				{
+					"pattern": "sitemap",
+					"name": "sitemap",
+					"target": [
+						"sitemap"
+					]
 				}
 			],
 			"targets": {
@@ -450,6 +457,10 @@
 				"notFound": {
 					"viewName": "NotFound",
 					"viewId": "notFound"
+				},
+				"sitemap": {
+					"viewName": "Sitemap",
+					"viewId": "sitemap"
 				},
 				"releaseNotes": {
 					"viewName": "ReleaseNotes",
