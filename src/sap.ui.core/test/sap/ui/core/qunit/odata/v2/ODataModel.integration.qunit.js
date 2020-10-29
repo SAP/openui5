@@ -6855,7 +6855,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectMessages([{
 					code : "UF0",
 					descriptionUrl : "",
-					fullTarget : "/SalesOrderItem_Clone",
+					fullTarget : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
 					message : "POST failed",
 					persistent : false,
 					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
