@@ -45,9 +45,10 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var RenderMode = library.TokenizerRenderMode,
-		PlacementType = library.PlacementType,
-		ListMode = library.ListMode;
+	var CSS_CLASS_NO_CONTENT_PADDING = "sapUiNoContentPadding";
+	var RenderMode = library.TokenizerRenderMode;
+	var PlacementType = library.PlacementType;
+	var ListMode = library.ListMode;
 
 	/**
 	 * Constructor for a new Tokenizer.
@@ -389,8 +390,6 @@ sap.ui.define([
 				tokens: [oTokenToDelete]
 			});
 
-			oListItem.destroy();
-
 			this._adjustTokensVisibility();
 		}
 	};
@@ -409,11 +408,12 @@ sap.ui.define([
 
 		this._oPopup = new ResponsivePopover({
 			showArrow: false,
-			showHeader: false,
+			showHeader: Device.system.phone,
 			placement: PlacementType.Auto,
 			offsetX: 0,
 			offsetY: 3,
 			horizontalScrolling: false,
+			title: this._getDialogTitle(),
 			content: this._getTokensList()
 		})
 			.attachBeforeOpen(function () {
@@ -433,6 +433,7 @@ sap.ui.define([
 			}, this);
 
 		this.addDependent(this._oPopup);
+		this._oPopup.addStyleClass(CSS_CLASS_NO_CONTENT_PADDING);
 
 		if (Device.system.phone) {
 			this._oPopup.setEndButton(new Button({
@@ -444,6 +445,15 @@ sap.ui.define([
 		}
 
 		return this._oPopup;
+	};
+
+	Tokenizer.prototype._getDialogTitle = function () {
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var aLabeles = this.getAriaLabelledBy().map(function(sLabelID) {
+			return Core.byId(sLabelID);
+		});
+
+		return aLabeles.length ? aLabeles[0].getText() : oResourceBundle.getText("COMBOBOX_PICKER_TITLE");
 	};
 
 	/**

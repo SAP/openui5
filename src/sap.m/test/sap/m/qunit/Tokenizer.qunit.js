@@ -1,16 +1,19 @@
 /*global QUnit, sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Tokenizer",
 	"sap/m/Token",
+	"sap/m/Dialog",
+	"sap/m/Label",
 	"sap/m/MultiInput",
 	"sap/ui/base/Event",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/m/library"
-], function(QUnitUtils, createAndAppendDiv, Tokenizer, Token, MultiInput, Event, Device, KeyCodes, Library) {
+], function(Core, QUnitUtils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library) {
 	createAndAppendDiv("content");
 
 
@@ -1501,5 +1504,96 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "Token's truncation was set again after resize.");
+	});
+
+	QUnit.module("Mobile Dialog", {
+		stubPlatform: function () {
+			this.stub(Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+		},
+
+		createTokenizer: function () {
+			return new Tokenizer({
+				width: "240px",
+				tokens: [
+					new Token({ text: "Token 1" }),
+					new Token({ text: "Token 2" }),
+					new Token({ text: "Token 3" }),
+					new Token({ text: "Token 4" }),
+					new Token({ text: "Token 5" }),
+					new Token({ text: "Token 6" }),
+					new Token({ text: "Token 7" }),
+					new Token({ text: "Token 8" }),
+					new Token({ text: "Token 9" }),
+					new Token({ text: "Token 10" })
+				]
+			});
+		}
+	});
+
+	QUnit.test("Checks if Dialog opens", function (assert) {
+		this.stubPlatform();
+		var oTokenizer = this.createTokenizer();
+		var oOpenSpy = this.spy(Dialog.prototype, "open");
+
+		oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
+
+		oTokenizer.placeAt("content");
+		Core.applyChanges();
+
+		oTokenizer._handleNMoreIndicatorPress();
+		Core.applyChanges();
+
+		assert.ok(oOpenSpy.called, "Dialog is open");
+
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Checks Dialog's default title", function (assert) {
+		this.stubPlatform();
+		var oTokenizer = this.createTokenizer();
+
+		oTokenizer.placeAt("content");
+		Core.applyChanges();
+
+		var oRPO = oTokenizer.getTokensPopup();
+
+		assert.strictEqual(oRPO.getTitle(), Core.getLibraryResourceBundle("sap.m").getText("COMBOBOX_PICKER_TITLE"), "Default title should be taken from Resource Bundle");
+
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Checks Dialog's custom title", function (assert) {
+		this.stubPlatform();
+		var oTokenizer = this.createTokenizer();
+		var sTitleText = "Custom Title";
+
+		oTokenizer.addAriaLabelledBy(new Label({ text: sTitleText }));
+
+		oTokenizer.placeAt("content");
+		Core.applyChanges();
+
+		var oRPO = oTokenizer.getTokensPopup();
+
+		assert.strictEqual(oRPO.getTitle(), sTitleText, "Label should be set as title");
+		assert.ok(oRPO.getShowHeader(), "Header should be shown");
+
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Checks if title is shown ot desktop", function (assert) {
+		var oTokenizer = this.createTokenizer();
+
+		oTokenizer.placeAt("content");
+		Core.applyChanges();
+
+		var oRPO = oTokenizer.getTokensPopup();
+
+		assert.notOk(oRPO.getShowHeader(), "Header should be hidden");
+
+		oTokenizer.destroy();
 	});
 });
