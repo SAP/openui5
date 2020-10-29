@@ -17,29 +17,25 @@ sap.ui.define([
 		},
 
 		onValueHelpRequest: function (oEvent) {
-			var sInputValue = oEvent.getSource().getValue();
+			var sInputValue = oEvent.getSource().getValue(),
+				oView = this.getView();
 
-			if (!this._oValueHelpDialog) {
-				Fragment.load({
+			if (!this._pValueHelpDialog) {
+				this._pValueHelpDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.InputKeyValue.ValueHelpDialog",
 					controller: this
-				}).then(function (oFragment) {
-					this._oValueHelpDialog = oFragment;
-					this.getView().addDependent(this._oValueHelpDialog);
-
-					// Create a filter for the binding
-					this._oValueHelpDialog.getBinding("items")
-						.filter([new Filter("Name", FilterOperator.Contains, sInputValue)]);
-					// Open ValueHelpDialog filtered by the input's value
-					this._oValueHelpDialog.open(sInputValue);
-				}.bind(this));
-			} else {
-				// Create a filter for the binding
-				this._oValueHelpDialog.getBinding("items")
-				.filter([new Filter("Name", FilterOperator.Contains, sInputValue)]);
-				// Open ValueHelpDialog filtered by the input's value
-				this._oValueHelpDialog.open(sInputValue);
+				}).then(function (oDialog) {
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
+			this._pValueHelpDialog.then(function (oDialog) {
+				// Create a filter for the binding
+				oDialog.getBinding("items").filter([new Filter("Name", FilterOperator.Contains, sInputValue)]);
+				// Open ValueHelpDialog filtered by the input's value
+				oDialog.open(sInputValue);
+			});
 		},
 
 		onValueHelpDialogSearch: function (oEvent) {
