@@ -794,7 +794,7 @@ sap.ui.define([
 
 			Core.applyChanges();
 
-			this.multiInput1.$().trigger("focus");
+			this.multiInput1.focus();
 		},
 		afterEach : function() {
 			this.multiInput1.destroy();
@@ -1240,7 +1240,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapdelete when MultiInput has value", function(assert) {
-
 		var oSpy = sinon.spy(Tokenizer.prototype, "onsapdelete");
 		this.multiInput1.setValue("value");
 
