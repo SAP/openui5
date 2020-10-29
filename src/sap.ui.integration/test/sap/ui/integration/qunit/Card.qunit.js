@@ -735,6 +735,40 @@ sap.ui.define([
 			}
 		});
 
+		QUnit.test("setManifest - correct and incorrect", function (assert) {
+
+			var done = assert.async(),
+				oManifest_WrongType = jQuery.extend(true, {}, oManifest_ListCard);
+
+			oManifest_WrongType["sap.card"].type = "Wrong";
+
+			// Arrange
+			this.oCard.attachEventOnce("_ready", function () {
+
+				// Arrange
+				this.oCard.attachEventOnce("_ready", function () {
+
+					// Arrange
+					this.oCard.attachEventOnce("_ready", function () {
+
+						// Assert
+						assert.ok(true, "Exception is not thrown");
+
+						done();
+					});
+
+					this.oCard.setManifest(oManifest_ListCard);
+
+				}.bind(this));
+
+				this.oCard.setManifest(oManifest_WrongType);
+
+			}.bind(this));
+
+			this.oCard.setManifest(oManifest_ListCard);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
 		QUnit.test("createManifest called twice", function (assert) {
 			var done = assert.async(),
 				oStub = sinon.stub(this.oCard, "_setCardContent").callsFake(function () {
@@ -750,7 +784,6 @@ sap.ui.define([
 			this.oCard.destroyManifest();
 			this.oCard.createManifest(oManifest_ListCard);
 		});
-
 
 		QUnit.test("setManifest with and without translated texts", function (assert) {
 

@@ -508,8 +508,7 @@ sap.ui.define([
 					this._oCardSample
 						.setBaseUrl(sBaseUrl)
 						.setManifest(oValue)
-						.setParameters(null)
-						.refresh();
+						.setParameters(null);
 				} catch (oException) {
 					this._oCardSample.setManifest(null);
 				}
