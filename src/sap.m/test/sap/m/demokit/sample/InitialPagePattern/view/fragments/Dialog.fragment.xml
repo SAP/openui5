@@ -1,5 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
 	<SelectDialog
+		id="selectDialog"
 		title="{i18n>Purchases}"
 		class="sapUiPopupWithPadding"
 		items="{/Purchases}"
