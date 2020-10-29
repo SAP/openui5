@@ -1,7 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
@@ -17,11 +17,9 @@ sap.ui.define([
 	"sap/ui/table/plugins/SelectionPlugin",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
-	"sap/ui/core/util/MockServer",
 	"sap/ui/core/util/PasteHelper",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/ChangeReason",
@@ -35,27 +33,60 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/m/Image",
 	"sap/m/Toolbar",
-	"sap/ui/unified/Menu",
-	"sap/ui/unified/MenuItem",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/base/Log",
-	"sap/m/library"
-], function(TableQUnitUtils, qutils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
-			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin,
-			CoreLibrary, Control, MockServer, PasteHelper, Device, JSONModel, ODataModel, Sorter, Filter, ChangeReason, FloatType,
-			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, MLibrary) {
+	"sap/m/library",
+	"sap/ui/unified/Menu",
+	"sap/ui/unified/MenuItem",
+	"sap/base/Log"
+], function(
+	TableQUnitUtils,
+	qutils,
+	Table,
+	Column,
+	ColumnMenu,
+	ColumnMenuRenderer,
+	AnalyticalColumnMenuRenderer,
+	TablePersoController,
+	RowAction,
+	RowActionItem,
+	RowSettings,
+	TableUtils,
+	library,
+	SelectionPlugin,
+	CoreLibrary,
+	Control,
+	PasteHelper,
+	Device,
+	JSONModel,
+	Sorter,
+	Filter,
+	ChangeReason,
+	FloatType,
+	Text,
+	Input,
+	Label,
+	CheckBox,
+	Button,
+	Link,
+	RatingIndicator,
+	Image,
+	Toolbar,
+	MenuM,
+	MenuItemM,
+	MLibrary,
+	Menu,
+	MenuItem,
+	Log
+) {
 	"use strict";
 
-	// shortcut for sap.m.ToolbarDesign
+	var SortOrder = library.SortOrder;
+	var SelectionMode = library.SelectionMode;
+	var VisibleRowCountMode = library.VisibleRowCountMode;
+	var NavigationMode = library.NavigationMode;
+	var SharedDomRef = library.SharedDomRef;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
-
-	// Shortcuts
-	var SortOrder = TableLibrary.SortOrder;
-	var SelectionMode = TableLibrary.SelectionMode;
-	var VisibleRowCountMode = TableLibrary.VisibleRowCountMode;
-	var NavigationMode = TableLibrary.NavigationMode;
-	var SharedDomRef = TableLibrary.SharedDomRef;
 
 	// mapping of global function calls
 	var getCell = window.getCell;
@@ -64,31 +95,6 @@ sap.ui.define([
 	var getRowAction = window.getRowAction;
 	var getSelectAll = window.getSelectAll;
 	var checkFocus = window.checkFocus;
-
-	var sServiceURI = "/service/";
-
-	function createODataModel(sURL) {
-		sURL = sURL == null ? sServiceURI : sURL;
-		return new ODataModel(sURL, {
-			json: true
-		});
-	}
-
-	function startMockServer(iResponseTime) {
-		MockServer.config({
-			autoRespond: true,
-			autoRespondAfter: iResponseTime == null ? 10 : iResponseTime
-		});
-
-		var oMockServer = new MockServer({
-			rootUri: sServiceURI
-		});
-
-		var sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
-		oMockServer.simulate(sURLPrefix + "/mockdata/metadata.xml", sURLPrefix + "/mockdata/");
-		oMockServer.start();
-		return oMockServer;
-	}
 
 	var personImg = "../images/Person.png";
 	var jobPosImg = "../images/JobPosition.png";
@@ -1574,268 +1580,6 @@ sap.ui.define([
 		oTable.setNavigationMode(NavigationMode.Paginator);
 		assert.equal(oTable.getNavigationMode(), NavigationMode.Scrollbar,
 			"NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
-	});
-
-	QUnit.module("Get contexts from client binding", {
-		before: function() {
-			this.oGetContextsSpy = sinon.spy(sap.ui.table.Table.prototype, "_getContexts");
-			this.iOriginalDeviceHeight = Device.resize.height;
-			Device.resize.height = 500;
-		},
-		beforeEach: function() {
-			this.oGetContextsSpy.reset();
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		},
-		after: function() {
-			this.oGetContextsSpy.restore();
-			Device.resize.height = this.iOriginalDeviceHeight;
-		},
-		createTable: function(sVisibleRowCountMode) {
-			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCountMode: sVisibleRowCountMode,
-				rows: {path: "/"},
-				rowHeight: 50,
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
-			});
-
-			return this.oTable;
-		}
-	});
-
-	QUnit.test("VisibleRowCountMode = Fixed: Initialization", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Fixed);
-		var oGetContextsSpy = this.oGetContextsSpy;
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");  // render
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"All calls to Binding#getContexts consider the visible row count");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Interactive: Initialization", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Interactive);
-		var oGetContextsSpy = this.oGetContextsSpy;
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");  // render
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"All calls to Binding#getContexts consider the visible row count");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Auto: Initialization", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Auto);
-		var oGetContextsSpy = this.oGetContextsSpy;
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The second call to Binding#getContexts considers the visible row count");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Auto: Resize", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Auto);
-		var oGetContextsSpy = this.oGetContextsSpy;
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
-		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The call to Binding#getContexts considers the visible row count");
-			oGetContextsSpy.reset();
-
-		}).then(oTable.qunit.resetSize).then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The call to Binding#getContexts considers the visible row count");
-			oGetContextsSpy.reset();
-		});
-	});
-
-	QUnit.module("Get contexts from OData binding", {
-		before: function() {
-			sinon.stub(ODataModel, "_getSharedData", function() {return {};}); // Avoid caching of metadata across tests.
-			this.oMockServer = startMockServer();
-			this.oDataModel = createODataModel();
-			this.oGetContextsSpy = sinon.spy(sap.ui.table.Table.prototype, "_getContexts");
-			this.iOriginalDeviceHeight = Device.resize.height;
-			Device.resize.height = 500;
-
-			return this.oDataModel.metadataLoaded();
-		},
-		beforeEach: function() {
-			this.oGetContextsSpy.reset();
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		},
-		after: function() {
-			ODataModel._getSharedData.restore();
-			this.oMockServer.destroy();
-			this.oGetContextsSpy.restore();
-			Device.resize.height = this.iOriginalDeviceHeight;
-		},
-		createTable: function(sVisibleRowCountMode, oModel) {
-			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCountMode: sVisibleRowCountMode,
-				rows: {path : "/Products"},
-				rowHeight: 50,
-				models: oModel ? oModel : this.oDataModel
-			});
-
-			return this.oTable;
-		}
-	});
-
-	QUnit.test("VisibleRowCountMode = Fixed: Initialization when metadata not loaded", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Fixed, createODataModel());
-		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
-
-		// render, refreshRows, updateRows
-		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"All calls to Binding#getContexts consider the visible row count");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Fixed: Initialization when metadata loaded", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Fixed);
-		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
-
-		// refreshRows, render, updateRows
-		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"All calls to Binding#getContexts consider the visible row count");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Interactive: Initialization when metadata not loaded", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Interactive, createODataModel());
-		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
-
-		// render, refreshRows, updateRows
-		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"All calls to Binding#getContexts consider the visible row count");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Interactive: Initialization when metadata loaded", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Interactive);
-		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
-
-		// refreshRows, render, updateRows
-		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"All calls to Binding#getContexts consider the visible row count");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Auto: Initialization when metadata not loaded", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Auto, createODataModel());
-		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
-
-		// render, render, auto rerender, refreshRows, updateRows
-		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
-				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 20, 100),
-				"The third call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The fourth call to Binding#getContexts considers the visible row count");
-			assert.notEqual(oTable.getVisibleRowCount(), 20,
-				"The computed request length and the visible row count should not be equal in this test");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Auto: Initialization when metadata loaded", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Auto);
-		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
-
-		// refreshRows, render, auto rerender, updateRows
-		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
-				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 20, 100),
-				"The third call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The fourth call to Binding#getContexts considers the visible row count");
-			assert.notEqual(oTable.getVisibleRowCount(), 20,
-				"The computed request length and the visible row count should not be equal in this test");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Auto: Resize", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Auto);
-		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
-
-		return pReady.then(oTable.qunit.$resize({height: "756px"})).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The call to Binding#getContexts considers the visible row count");
-			oGetContextsSpy.reset();
-
-		}).then(oTable.qunit.resetSize).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The call to Binding#getContexts considers the visible row count");
-		});
-	});
-
-	QUnit.test("VisibleRowCountMode = Auto: Refresh", function(assert) {
-		var oTable = this.createTable(VisibleRowCountMode.Auto);
-		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
-
-		return pReady.then(function() {
-			oTable.getBinding("rows").refresh();
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times"); // refreshRows, updateRows
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The second call to Binding#getContexts considers the visible row count");
-			assert.notEqual(oTable.getVisibleRowCount(), 20,
-				"The computed request length and the visible row count should not be equal in this test");
-		});
 	});
 
 	QUnit.module("Fixed columns", {
@@ -3399,7 +3143,7 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				rows: bWithBinding !== false ? "{/Products}" : "",
 				visibleRowCountMode: sVisibleRowCountMode,
-				models: createODataModel(),
+				models: TableQUnitUtils.createODataModel(),
 				columns: [
 					new Column({
 						label: new Label({text: "Name"}),
@@ -3657,7 +3401,7 @@ sap.ui.define([
 	QUnit.test("Initial rendering with OData binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oMockServer = startMockServer();
+		var oMockServer = TableQUnitUtils.startMockServer();
 
 		function _createTable(sVisibleRowCountMode, iRowHeight) {
 			oTable = that.createTableWithODataModel(sVisibleRowCountMode, true, function(oTable) {
@@ -3696,7 +3440,7 @@ sap.ui.define([
 	QUnit.test("Initial rendering with OData binding in invisible container", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oMockServer = startMockServer();
+		var oMockServer = TableQUnitUtils.startMockServer();
 
 		function _createTable(sVisibleRowCountMode, iRowHeight) {
 			oTable = that.createTableWithODataModel(sVisibleRowCountMode, true, function(oTable) {
@@ -4010,7 +3754,7 @@ sap.ui.define([
 	QUnit.test("Re-render and refresh", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oMockServer = startMockServer();
+		var oMockServer = TableQUnitUtils.startMockServer();
 
 		function test(sVisibleRowCountMode) {
 			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
@@ -4094,7 +3838,7 @@ sap.ui.define([
 	QUnit.test("Refresh", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oMockServer = startMockServer();
+		var oMockServer = TableQUnitUtils.startMockServer();
 
 		function test(sVisibleRowCountMode) {
 			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
@@ -4157,7 +3901,7 @@ sap.ui.define([
 	QUnit.test("Sort with OData binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oMockServer = startMockServer();
+		var oMockServer = TableQUnitUtils.startMockServer();
 
 		function test(sVisibleRowCountMode) {
 			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
@@ -4220,7 +3964,7 @@ sap.ui.define([
 	QUnit.test("Filter with OData binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oMockServer = startMockServer();
+		var oMockServer = TableQUnitUtils.startMockServer();
 
 		function test(sVisibleRowCountMode) {
 			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
@@ -4344,7 +4088,7 @@ sap.ui.define([
 	QUnit.test("Bind with OData binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oMockServer = startMockServer();
+		var oMockServer = TableQUnitUtils.startMockServer();
 
 		function test(sVisibleRowCountMode) {
 			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
@@ -5246,10 +4990,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getTotalRowCount with OData binding", function(assert){
-		var oMockServer = startMockServer();
+		var oMockServer = TableQUnitUtils.startMockServer();
 
 		oTable.bindRows({path: "/Products"});
-		oTable.setModel(createODataModel());
+		oTable.setModel(TableQUnitUtils.createODataModel());
 		assert.strictEqual(oTable._getTotalRowCount(), 200, "On rebind, the last known binding length of the previous binding is returned");
 
 		return new Promise(function(resolve) {

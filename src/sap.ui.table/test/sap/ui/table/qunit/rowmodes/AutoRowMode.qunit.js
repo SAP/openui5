@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/Device"
-], function(TableQUnitUtils, AutoRowMode, Table, Column, RowAction, CreationRow, TableUtils, library, JSONModel, Device) {
+], function(TableQUnitUtils, AutoRowMode, Table, Column, RowAction, CreationRow, TableUtils, library, JSONModel, JSONListBinding, Device) {
 	"use strict";
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;
@@ -91,6 +92,7 @@ sap.ui.define([
 	QUnit.module("Row heights", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new AutoRowMode(),
 				columns: [
 					new Column({template: new HeightTestControl({height: "1px"})}),
 					new Column({template: new HeightTestControl({height: "1px"})})
@@ -100,8 +102,6 @@ sap.ui.define([
 				rowActionTemplate: new RowAction(),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			}, function(oTable) {
-				oTable.setRowMode(new AutoRowMode());
 			});
 		},
 		afterEach: function() {
@@ -300,6 +300,7 @@ sap.ui.define([
 	QUnit.module("Automatic row count adjustment", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new AutoRowMode(),
 				extension: [
 					new HeightTestControl({height: "100px"})
 				],
@@ -308,10 +309,8 @@ sap.ui.define([
 					TableQUnitUtils.createTextColumn()
 				],
 				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			}, function(oTable) {
-				oTable.setRowMode(new AutoRowMode());
-				oTable.setCreationRow(new CreationRow());
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
+				creationRow: new CreationRow()
 			});
 
 			return this.oTable.qunit.whenRenderingFinished();
@@ -418,5 +417,59 @@ sap.ui.define([
 		oRowMode.setHideEmptyRows(true);
 		assert.equal(oDisableNoData.callCount, 1, "Change from false to true: #disableNoData was called once");
 		assert.ok(oEnableNoData.notCalled, "Change from false to true: #enableNoData was not called");
+	});
+
+	QUnit.module("Get contexts", {
+		before: function() {
+			this.iOriginalDeviceHeight = Device.resize.height;
+			Device.resize.height = 500;
+		},
+		beforeEach: function() {
+			this.oGetContextsSpy = sinon.spy(JSONListBinding.prototype, "getContexts");
+			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new AutoRowMode(),
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
+			});
+		},
+		afterEach: function() {
+			this.oGetContextsSpy.restore();
+			this.oTable.destroy();
+		},
+		after: function() {
+			Device.resize.height = this.iOriginalDeviceHeight;
+		}
+	});
+
+	QUnit.test("Initialization", function(assert) {
+		var oGetContextsSpy = this.oGetContextsSpy;
+		var oTable = this.oTable;
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+				"The first call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The second call to Binding#getContexts considers the row count");
+		});
+	});
+
+	QUnit.test("Resize", function(assert) {
+		var oGetContextsSpy = this.oGetContextsSpy;
+		var oTable = this.oTable;
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
+		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The call to Binding#getContexts considers the row count");
+			oGetContextsSpy.reset();
+		}).then(oTable.qunit.resetSize).then(function() {
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The call to Binding#getContexts considers the row count");
+			oGetContextsSpy.reset();
+		});
 	});
 });

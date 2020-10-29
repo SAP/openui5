@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/Device"
-], function(TableQUnitUtils, InteractiveRowMode, Table, Column, RowAction, TableUtils, library, JSONModel, Device) {
+], function(TableQUnitUtils, InteractiveRowMode, Table, Column, RowAction, TableUtils, library, JSONModel, JSONListBinding, Device) {
 	"use strict";
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;
@@ -76,6 +77,7 @@ sap.ui.define([
 	QUnit.module("Row heights", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new InteractiveRowMode(),
 				columns: [
 					new Column({template: new HeightTestControl({height: "1px"})}),
 					new Column({template: new HeightTestControl({height: "1px"})})
@@ -85,8 +87,6 @@ sap.ui.define([
 				rowActionTemplate: new RowAction(),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			}, function(oTable) {
-				oTable.setRowMode(new InteractiveRowMode());
 			});
 		},
 		afterEach: function() {
@@ -279,6 +279,30 @@ sap.ui.define([
 			if (Device.browser.msie || Device.browser.edge) {
 				document.getElementById("qunit-fixture").classList.add("visible");
 			}
+		});
+	});
+
+	QUnit.module("Get contexts", {
+		beforeEach: function() {
+			this.oGetContextsSpy = sinon.spy(JSONListBinding.prototype, "getContexts");
+			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new InteractiveRowMode(),
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
+			});
+		},
+		afterEach: function() {
+			this.oGetContextsSpy.restore();
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Initialization", function(assert) {
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the rendered row count");
 		});
 	});
 });
