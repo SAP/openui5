@@ -217,8 +217,8 @@ function(
 		ObjectListItem.prototype.init = function (oEvent) {
 			this._generateObjectNumber();
 
-			this._observerObjectMarkerChanges = this._observerObjectMarkerChanges.bind(this);
-			this._oMarkersObservers = {};
+			this._observerObjectItemChanges = this._observerObjectItemChanges.bind(this);
+			this._oItemsObservers = {};
 		};
 
 		/**
@@ -316,6 +316,44 @@ function(
 			}
 
 			return aVisibleAttributes;
+		};
+
+		ObjectListItem.prototype.addAttribute = function(oObject) {
+			this._startObservingItem(oObject);
+
+			return Control.prototype.addAggregation.call(this, "attributes", oObject);
+		};
+
+		ObjectListItem.prototype.insertAttribute = function(oObject, iIndex) {
+			this._startObservingItem(oObject);
+
+			return Control.prototype.insertAggregation.call(this, "attributes", oObject, iIndex);
+		};
+
+		ObjectListItem.prototype.removeAttribute = function(vObject) {
+			var oObject = Control.prototype.removeAggregation.call(this, "attributes", vObject);
+
+			this._stopObservingItem(oObject);
+
+			return oObject;
+		};
+
+		ObjectListItem.prototype.removeAllAttributes = function() {
+			var aItems = Control.prototype.removeAllAggregation.call(this, "attributes");
+
+			for (var i = 0; i < aItems.length; i++) {
+				this._stopObservingItem(aItems[i]);
+			}
+
+			return aItems;
+		};
+
+		ObjectListItem.prototype.destroyAttributes = function() {
+			this.getAttributes().forEach(function (oAttribute) {
+				this._stopObservingItem(oAttribute);
+			}, this);
+
+			return Control.prototype.destroyAggregation.call(this, "attributes");
 		};
 
 		/**
@@ -515,13 +553,13 @@ function(
 		};
 
 		ObjectListItem.prototype.addMarker = function(oObject) {
-			this._startObservingMarker(oObject);
+			this._startObservingItem(oObject);
 
 			return Control.prototype.addAggregation.call(this, "markers", oObject);
 		};
 
 		ObjectListItem.prototype.insertMarker = function(oObject, iIndex) {
-			this._startObservingMarker(oObject);
+			this._startObservingItem(oObject);
 
 			return Control.prototype.insertAggregation.call(this, "markers", oObject, iIndex);
 		};
@@ -529,7 +567,7 @@ function(
 		ObjectListItem.prototype.removeMarker = function(vObject) {
 			var oObject = Control.prototype.removeAggregation.call(this, "markers", vObject);
 
-			this._stopObservingMarker(oObject);
+			this._stopObservingItem(oObject);
 
 			return oObject;
 		};
@@ -538,7 +576,7 @@ function(
 			var aItems = Control.prototype.removeAllAggregation.call(this, "markers");
 
 			for (var i = 0; i < aItems.length; i++) {
-				this._stopObservingMarker(aItems[i]);
+				this._stopObservingItem(aItems[i]);
 			}
 
 			return aItems;
@@ -546,32 +584,32 @@ function(
 
 		ObjectListItem.prototype.destroyMarkers = function() {
 			this.getMarkers().forEach(function (oMarker) {
-				this._stopObservingMarker(oMarker);
+				this._stopObservingItem(oMarker);
 			}, this);
 
 			return Control.prototype.destroyAggregation.call(this, "markers");
 		};
 
-		ObjectListItem.prototype._observerObjectMarkerChanges = function (oChanges) {
+		ObjectListItem.prototype._observerObjectItemChanges = function (oChanges) {
 			if (oChanges.current !== oChanges.old) {
 				this.invalidate();
 			}
 		};
 
-		ObjectListItem.prototype._startObservingMarker = function (oMarker) {
-			var oObserver = new ManagedObjectObserver(this._observerObjectMarkerChanges);
-			this._oMarkersObservers[oMarker.getId()] = oObserver;
+		ObjectListItem.prototype._startObservingItem = function (oItem) {
+			var oObserver = new ManagedObjectObserver(this._observerObjectItemChanges);
+			this._oItemsObservers[oItem.getId()] = oObserver;
 
-			oObserver.observe(oMarker, { properties: true });
+			oObserver.observe(oItem, { properties: true });
 
 			return this;
 		};
 
-		ObjectListItem.prototype._stopObservingMarker = function (oMarker) {
-			var sMarkerId = oMarker.getId();
+		ObjectListItem.prototype._stopObservingItem = function (oItem) {
+			var sItemId = oItem.getId();
 
-			this._oMarkersObservers[sMarkerId].disconnect();
-			delete this._oMarkersObservers[sMarkerId];
+			this._oItemsObservers[sItemId].disconnect();
+			delete this._oItemsObservers[sItemId];
 
 			return this;
 		};
