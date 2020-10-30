@@ -209,9 +209,7 @@ sap.ui.define([
 			this._lastFocusedElement = null;
 		}
 
-		if (this._bFocusLeft) {
-			this._bFocusLeft = false;
-
+		if (this._bFocusLeft && !this._bIsMouseDown) {
 			aNavigationDomRefs = this.getItemDomRefs();
 			lastFocusedIndex = this.getFocusedIndex();
 
@@ -221,6 +219,8 @@ sap.ui.define([
 				aNavigationDomRefs[lastFocusedIndex].focus();
 			}
 		}
+
+		this._bFocusLeft = false;
 	};
 
 	/**
