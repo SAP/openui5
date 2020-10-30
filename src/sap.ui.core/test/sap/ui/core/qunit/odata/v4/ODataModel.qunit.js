@@ -2533,6 +2533,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getMessages", function (assert) {
+		var oContext = {
+				getPath : function () { return "~path~"; }
+			},
+			aMessagesByPath = [/*unsorted*/],
+			oModel = createModel();
+
+		this.mock(oModel).expects("getMessagesByPath").withExactArgs("~path~", true)
+			.returns(aMessagesByPath);
+		this.mock(aMessagesByPath).expects("sort").withExactArgs(Message.compare)
+			.returns("~messagesByPathSorted~");
+
+		// code under test
+		assert.strictEqual(oModel.getMessages(oContext), "~messagesByPathSorted~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("addPrerenderingTask: queue", function (assert) {
 		var oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func),
