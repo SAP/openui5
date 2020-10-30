@@ -4074,7 +4074,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processError = function(oRequest, oResponse, fnError, bBatch, aRequests) {
-		var sPath, oError = this._handleError(oResponse, oRequest);
+		var oError, sPath;
+
+		if (oRequest.functionMetadata) {
+			oRequest.deepPath = oRequest.functionTarget;
+		}
+
+		oError = this._handleError(oResponse, oRequest);
 
 		if (!bBatch) {
 			// decrease laundering
