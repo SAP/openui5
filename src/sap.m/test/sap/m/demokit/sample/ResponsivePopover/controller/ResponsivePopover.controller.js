@@ -13,32 +13,30 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		onExit : function () {
-			if (this._oPopover) {
-				this._oPopover.destroy();
-			}
-		},
-
 		handleResponsivePopoverPress: function (oEvent) {
-			var oButton = oEvent.getSource();
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
 
-			if (!this._oPopover) {
-				Fragment.load({
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.ResponsivePopover.view.Popover",
 					controller: this
-				}).then(function(oPopover){
-					this._oPopover = oPopover;
-					this.getView().addDependent(this._oPopover);
-					this._oPopover.bindElement("/ProductCollection/0");
-					this._oPopover.openBy(oButton);
-				}.bind(this));
-			} else {
-				this._oPopover.openBy(oButton);
+				}).then(function(oPopover) {
+					oView.addDependent(oPopover);
+					oPopover.bindElement("/ProductCollection/0");
+					return oPopover;
+				});
 			}
+			this._pPopover.then(function(oPopover) {
+				oPopover.openBy(oButton);
+			});
 		},
 
 		handleCloseButton: function (oEvent) {
-			this._oPopover.close();
+			// note: We don't need to chain to the _pPopover promise, since this event-handler
+			// is only called from within the loaded dialog itself.
+			this.byId("myPopover").close();
 		}
 	});
 });
