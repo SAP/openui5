@@ -2,7 +2,7 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core"
 		xmlns="sap.m">
-	<Dialog>
+	<Dialog id="createDialog">
 		<beginButton>
 			<Button text="Save" type="Emphasized" press="handleDialogSaveButton"/>
 		</beginButton>

@@ -17,12 +17,12 @@
 				editable="false"
 				layout="ResponsiveGridLayout"
 				singleContainerFullSize="false">
-			<Label text="Additional information" labelFor="moreInfo"/>
-			<Text id="moreInfo" text="{text}"/>
-			<Label text="From" labelFor="startDate"/>
-			<Text id="startDate" text="{'startDate'}"/>
-			<Label text="To" labelFor="endDate"/>
-			<Text id="endDate" text="{'endDate'}"/>
+			<Label text="Additional information" labelFor="moreInfoText"/>
+			<Text id="moreInfoText" text="{info}"/>
+			<Label text="From" labelFor="startDateText"/>
+			<Text id="startDateText" text="{path: 'start', formatter: '.formatDate'}"/>
+			<Label text="To" labelFor="endDateText"/>
+			<Text id="endDateText" text="{path: 'end', formatter: '.formatDate'}"/>
 		</f:SimpleForm>
 	</ResponsivePopover>
 </core:FragmentDefinition>
