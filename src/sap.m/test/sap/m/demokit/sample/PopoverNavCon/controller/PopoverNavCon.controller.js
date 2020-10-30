@@ -14,36 +14,39 @@ sap.ui.define([
 		},
 
 		onOpenPopover: function (oEvent) {
-			var oButton = oEvent.getSource();
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
+
 			// create popover
-			if (!this._oPopover) {
-				Fragment.load({
-					id: "popoverNavCon",
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.PopoverNavCon.view.Popover",
 					controller: this
 				}).then(function(oPopover){
-					this._oPopover = oPopover;
-					this.getView().addDependent(this._oPopover);
-					this._oPopover.openBy(oButton);
-				}.bind(this));
-			} else {
-				this._oPopover.openBy(oButton);
+					oView.addDependent(oPopover);
+					return oPopover;
+				});
 			}
+
+			this._pPopover.then(function(oPopover){
+				oPopover.openBy(oButton);
+			});
 		},
 
 		onNavToProduct : function (oEvent) {
 			var oCtx = oEvent.getSource().getBindingContext();
-			var oNavCon = Fragment.byId("popoverNavCon", "navCon");
-			var oDetailPage = Fragment.byId("popoverNavCon", "detail");
+			var oNavCon = this.byId("navCon");
+			var oDetailPage = this.byId("detail");
 			oNavCon.to(oDetailPage);
 			oDetailPage.bindElement(oCtx.getPath());
-			this._oPopover.focus();
+			this.byId("myPopover").focus();
 		},
 
 		onNavBack : function (oEvent) {
-			var oNavCon = Fragment.byId("popoverNavCon", "navCon");
+			var oNavCon = this.byId("navCon");
 			oNavCon.back();
-			this._oPopover.focus();
+			this.byId("myPopover").focus();
 		}
 	});
 });
