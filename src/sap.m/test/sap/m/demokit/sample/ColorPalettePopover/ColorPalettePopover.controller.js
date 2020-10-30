@@ -119,9 +119,39 @@ sap.ui.define([
 			this.oColorPaletteDisplayMode.openBy(oEvent.getSource());
 		},
 
+		/**
+		 * Opens a <code>ColorPalette</code> in a responsive popover, where:
+		 *  - "More Colors.." button is visible
+		 *  - "displayMode" is set to 'Simplified'
+		 *  - "liveChange" event is handled
+		 * @param oEvent
+		 */
+		openSampleWithDisplayModeSetLiveChange: function (oEvent) {
+			this.oButton = this.byId("liveChangeButton");
+			if (!this.oColorPaletteDisplayMode) {
+				this.oColorPaletteDisplayMode = new ColorPalettePopover("oColorPaletteDisplayMode", {
+					showDefaultColorButton: false,
+					displayMode: ColorPickerDisplayMode.Simplified,
+					colorSelect: this.handleColorSelect,
+					liveChange: this.handleLiveChange.bind(this)
+				});
+			}
+
+			this.oColorPaletteDisplayMode.openBy(oEvent.getSource());
+		},
+
 		handleColorSelect: function (oEvent) {
 			MessageToast.show("Color Selected: value - " + oEvent.getParameter("value") +
 				", \n defaultAction - " + oEvent.getParameter("defaultAction"));
+		},
+
+		handleLiveChange: function (oEvent) {
+			this.oButton.getDomRef().firstChild.firstChild.style.color = "rgba(" + [
+				oEvent.getParameter("r"),
+				oEvent.getParameter("g"),
+				oEvent.getParameter("b"),
+				oEvent.getParameter("alpha")
+			].join(", ") + ")";
 		}
 	});
 

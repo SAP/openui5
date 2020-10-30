@@ -123,6 +123,60 @@ sap.ui.define([
 							 */
 							"defaultAction": {type: "boolean"}
 						}
+					},
+					/**
+					 * Fired when the value is changed by user interaction in the internal ColorPicker of the ColorPalette
+					 *
+					 * @since 1.85
+					 */
+					liveChange: {
+						parameters : {
+
+							/**
+							 * Parameter containing the RED value (0-255).
+							 */
+							r : {type: "int"},
+
+							/**
+							 * Parameter containing the GREEN value (0-255).
+							 */
+							g : {type: "int"},
+
+							/**
+							 * Parameter containing the BLUE value (0-255).
+							 */
+							b : {type: "int"},
+
+							/**
+							 * Parameter containing the HUE value (0-360).
+							 */
+							h : {type: "int"},
+
+							/**
+							 * Parameter containing the SATURATION value (0-100).
+							 */
+							s : {type: "int"},
+
+							/**
+							 * Parameter containing the VALUE value (0-100).
+							 */
+							v : {type: "int"},
+
+							/**
+							 * Parameter containing the LIGHTNESS value (0-100).
+							 */
+							l : {type: "int"},
+
+							/**
+							 * Parameter containing the Hexadecimal string (#FFFFFF).
+							 */
+							hex : {type: "string"},
+
+							/**
+							 * Parameter containing the alpha value (transparency).
+							 */
+							alpha : {type: "string"}
+						}
 					}
 				}
 			},
@@ -302,7 +356,11 @@ sap.ui.define([
 		 */
 
 		ColorPalettePopover.prototype._createColorPalette = function () {
-			var oColorPalette = new ColorPalette(this.getId() + "-palette");
+			var oColorPalette = new ColorPalette(this.getId() + "-palette", {
+				liveChange: function (oEvent) {
+					this.fireLiveChange(oEvent.getParameters());
+				}.bind(this)
+			});
 
 			oColorPalette._setShowDefaultColorButton(this.getShowDefaultColorButton());
 			oColorPalette._setShowMoreColorsButton(this.getShowMoreColorsButton());
