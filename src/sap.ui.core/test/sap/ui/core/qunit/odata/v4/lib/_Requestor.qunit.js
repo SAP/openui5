@@ -58,24 +58,24 @@ sap.ui.define([
 						};
 					// Note: getResponseHeader treats sName case insensitive!
 					switch (sName) {
-					case "Content-Type":
-						return mResponseHeaders["Content-Type"] || null;
-					case "DataServiceVersion":
-						return mResponseHeaders["DataServiceVersion"] || null;
-					case "ETag":
-						return mResponseHeaders["ETag"] || null;
-					case "OData-Version":
-						return mResponseHeaders["OData-Version"] || null;
-					case "SAP-ContextId":
-						return mResponseHeaders["SAP-ContextId"] || null;
-					case "SAP-Http-Session-Timeout":
-						return mResponseHeaders["SAP-Http-Session-Timeout"] || null;
-					case "sap-messages":
-						return mResponseHeaders["sap-messages"] || null;
-					case "X-CSRF-Token":
-						return mResponseHeaders["X-CSRF-Token"] || null;
-					default:
-						assert.ok(false, "unexpected getResponseHeader(" + sName + ")");
+						case "Content-Type":
+							return mResponseHeaders["Content-Type"] || null;
+						case "DataServiceVersion":
+							return mResponseHeaders["DataServiceVersion"] || null;
+						case "ETag":
+							return mResponseHeaders["ETag"] || null;
+						case "OData-Version":
+							return mResponseHeaders["OData-Version"] || null;
+						case "SAP-ContextId":
+							return mResponseHeaders["SAP-ContextId"] || null;
+						case "SAP-Http-Session-Timeout":
+							return mResponseHeaders["SAP-Http-Session-Timeout"] || null;
+						case "sap-messages":
+							return mResponseHeaders["sap-messages"] || null;
+						case "X-CSRF-Token":
+							return mResponseHeaders["X-CSRF-Token"] || null;
+						default:
+							assert.ok(false, "unexpected getResponseHeader(" + sName + ")");
 					}
 				}
 			});

@@ -582,34 +582,34 @@ sap.ui.define([
 			}
 
 			switch (sType) {
-			case "Edm.Binary":
-				return "binary'" + vValue + "'";
+				case "Edm.Binary":
+					return "binary'" + vValue + "'";
 
-			case "Edm.Boolean":
-			case "Edm.Byte":
-			case "Edm.Double":
-			case "Edm.Int16":
-			case "Edm.Int32":
-			case "Edm.SByte":
-			case "Edm.Single":
-				return String(vValue);
+				case "Edm.Boolean":
+				case "Edm.Byte":
+				case "Edm.Double":
+				case "Edm.Int16":
+				case "Edm.Int32":
+				case "Edm.SByte":
+				case "Edm.Single":
+					return String(vValue);
 
-			case "Edm.Date":
-			case "Edm.DateTimeOffset":
-			case "Edm.Decimal":
-			case "Edm.Guid":
-			case "Edm.Int64":
-			case "Edm.TimeOfDay":
-				return vValue;
+				case "Edm.Date":
+				case "Edm.DateTimeOffset":
+				case "Edm.Decimal":
+				case "Edm.Guid":
+				case "Edm.Int64":
+				case "Edm.TimeOfDay":
+					return vValue;
 
-			case "Edm.Duration":
-				return "duration'" + vValue + "'";
+				case "Edm.Duration":
+					return "duration'" + vValue + "'";
 
-			case "Edm.String":
-				return "'" + vValue.replace(rSingleQuote, "''") + "'";
+				case "Edm.String":
+					return "'" + vValue.replace(rSingleQuote, "''") + "'";
 
-			default:
-				throw new Error("Unsupported type: " + sType);
+				default:
+					throw new Error("Unsupported type: " + sType);
 			}
 		},
 
@@ -1205,27 +1205,27 @@ sap.ui.define([
 			}
 
 			switch (sType) {
-			case "Edm.Boolean":
-				return sLiteral === "true";
-			case "Edm.Byte":
-			case "Edm.Int16":
-			case "Edm.Int32":
-			case "Edm.SByte":
-				return checkNaN(parseInt(sLiteral));
-			case "Edm.Date":
-			case "Edm.DateTimeOffset":
-			case "Edm.Decimal":
-			case "Edm.Guid":
-			case "Edm.Int64":
-			case "Edm.TimeOfDay":
-				return sLiteral;
-			case "Edm.Double":
-			case "Edm.Single":
-				return sLiteral === "INF" || sLiteral === "-INF" || sLiteral === "NaN"
-					? sLiteral
-					: checkNaN(parseFloat(sLiteral));
-			default:
-				throw new Error(sPath + ": Unsupported type: " + sType);
+				case "Edm.Boolean":
+					return sLiteral === "true";
+				case "Edm.Byte":
+				case "Edm.Int16":
+				case "Edm.Int32":
+				case "Edm.SByte":
+					return checkNaN(parseInt(sLiteral));
+				case "Edm.Date":
+				case "Edm.DateTimeOffset":
+				case "Edm.Decimal":
+				case "Edm.Guid":
+				case "Edm.Int64":
+				case "Edm.TimeOfDay":
+					return sLiteral;
+				case "Edm.Double":
+				case "Edm.Single":
+					return sLiteral === "INF" || sLiteral === "-INF" || sLiteral === "NaN"
+						? sLiteral
+						: checkNaN(parseFloat(sLiteral));
+				default:
+					throw new Error(sPath + ": Unsupported type: " + sType);
 			}
 		},
 

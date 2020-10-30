@@ -147,25 +147,25 @@ sap.ui.define([
 			throw new FormatException("Illegal " + this.getName() + " value: " + vValue);
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
-		case "any":
-			return vValue;
-		case "float":
-			return fValue;
-		case "int":
-			return Math.floor(fValue);
-		case "string":
-			if (fValue && (Math.abs(fValue) >= 1e15 || Math.abs(fValue) < 1e-4)) {
-				oFormatOptions = getFormatter(this).oFormatOptions;
-				return fValue.toExponential()
-					.replace("e", "\u00a0E") // non-breaking space
-					.replace(".", oFormatOptions.decimalSeparator)
-					.replace("+", oFormatOptions.plusSign)
-					.replace("-", oFormatOptions.minusSign);
-			}
-			return getFormatter(this).format(fValue);
-		default:
-			throw new FormatException("Don't know how to format " + this.getName() + " to "
-				+ sTargetType);
+			case "any":
+				return vValue;
+			case "float":
+				return fValue;
+			case "int":
+				return Math.floor(fValue);
+			case "string":
+				if (fValue && (Math.abs(fValue) >= 1e15 || Math.abs(fValue) < 1e-4)) {
+					oFormatOptions = getFormatter(this).oFormatOptions;
+					return fValue.toExponential()
+						.replace("e", "\u00a0E") // non-breaking space
+						.replace(".", oFormatOptions.decimalSeparator)
+						.replace("+", oFormatOptions.plusSign)
+						.replace("-", oFormatOptions.minusSign);
+				}
+				return getFormatter(this).format(fValue);
+			default:
+				throw new FormatException("Don't know how to format " + this.getName() + " to "
+					+ sTargetType);
 		}
 	};
 
@@ -197,19 +197,19 @@ sap.ui.define([
 			return null;
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
-		case "string":
-			fResult = getFormatter(this).parse(vValue);
-			if (isNaN(fResult)) {
-				throw new ParseException(getErrorMessage());
-			}
-			break;
-		case "int":
-		case "float":
-			fResult = vValue;
-			break;
-		default:
-			throw new ParseException("Don't know how to parse " + this.getName() + " from "
-				+ sSourceType);
+			case "string":
+				fResult = getFormatter(this).parse(vValue);
+				if (isNaN(fResult)) {
+					throw new ParseException(getErrorMessage());
+				}
+				break;
+			case "int":
+			case "float":
+				fResult = vValue;
+				break;
+			default:
+				throw new ParseException("Don't know how to parse " + this.getName() + " from "
+					+ sSourceType);
 		}
 		return fResult;
 	};

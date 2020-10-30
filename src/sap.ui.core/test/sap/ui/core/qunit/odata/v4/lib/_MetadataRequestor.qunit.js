@@ -52,14 +52,15 @@ sap.ui.define([
 						// Thus productive code can safely use the nice capitalization only.
 						// Mock does not need to implement case insensitivity!
 						switch (sName) {
-						case "Date":
-							return sDate || null;
-						case "ETag":
-							return sETag || null;
-						case "Last-Modified":
-							return sLastModified || null;
-						default:
-							QUnit.assert.ok(false, "unexpected getResponseHeader(" + sName + ")");
+							case "Date":
+								return sDate || null;
+							case "ETag":
+								return sETag || null;
+							case "Last-Modified":
+								return sLastModified || null;
+							default:
+								QUnit.assert.ok(false,
+									"unexpected getResponseHeader(" + sName + ")");
 						}
 					}
 				});
