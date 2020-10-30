@@ -263,6 +263,19 @@ sap.ui.define([
 
 	});
 
+	// BCP: 2070448340
+	QUnit.test("DatePicker.prototype._getCalendarConstructor works properly, when 'displayFormat' property contains the letter 'L'", function (assert) {
+		// prepare
+		var oCalendarConstructor = new DatePicker({displayFormat: "LLL y"})._getCalendarConstructor();
+
+		// assert
+		assert.strictEqual(
+			oCalendarConstructor.getMetadata().getName(),
+			"sap.ui.unified.internal.CustomMonthPicker",
+			"Proper calendar constructor is returned"
+		);
+	});
+
 	QUnit.test("ValueHelp icon is not visible when DatePicker is not editable", function (assert) {
 		// arrange
 		var oDatePicker = new DatePicker({ editable: false }),
