@@ -2772,7 +2772,13 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(oList.getItems().length, 3, "A list item is removed from the dialog.");
 
-		// clean up
+		// Prepare clean up
+		// In IE the tokenizer's popup is getting auto-closed with delay, after the tokenizer itself has been destroyed.
+		// Close the popup before destroying so it has a place to return the focus to prevent exceptions in IE.
+		oTokenizer._togglePopup(oTokenizer.getTokensPopup());
+		Core.applyChanges();
+
+		// Clean
 		oDeleteStub.restore();
 		oMI.destroy();
 	});
