@@ -4447,6 +4447,18 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> all the given limitation lengths are for URL encoded text (e.g a space character will be encoded as "%20").
 	 *
+	 * It has been reported by some users that the content send through the <code>URLHelper</code> is not correctly displayed by the native applications (e.g. a native mail application).
+	 *
+	 * After sending the body to the application, <code>URLHelper</code> cannot affect its rendering and the application takes responsibility to correctly display the content.
+	 * Inconsistencies between different native applications or operative systems (OS) can lead to different behaviors and differences in the displayed content.
+	 *
+	 * <b>Example:</b>
+	 *
+	 * What happens with a link added to the content of an email using the <code>URLHelper</code> ?
+	 *
+	 * Apart from the correct generation of URL, everything else is outside of the scope of <code>URLHelper</code> as responsibility from then on is passed to the browser and the native applications handling the URL.
+	 * For instance, clicking on an email link should result in triggering an action in the default mail application for the user's OS and it is this application's responsibility to correctly handle the URL, given it is generated correctly.
+	 *
 	 * @see {@link topic:4f1c1075d88c41a5904389fa12b28f6b URL Helper}
 	 *
 	 * @namespace
