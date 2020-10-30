@@ -2155,6 +2155,27 @@ sap.ui.define([
 			oListItem1.destroy();
 		});
 
+		QUnit.test("Aria-LabelledBy to selection control", function(assert) {
+			var oList = new List().placeAt("qunit-fixture");
+			var oListItem = new StandardListItem({
+				type: "Active",
+				title: "Hello World"
+			});
+
+			oList.setMode("MultiSelect");
+			oList.addItem(oListItem);
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sSelectionItemId = oListItem._oMultiSelectControl.getAriaLabelledBy();
+			assert.strictEqual(sap.ui.getCore().byId(sSelectionItemId).getText(), "Item Selection", "MultiSelect associated with aria-labelledBy");
+
+			oList.setMode("SingleSelectLeft");
+			sap.ui.getCore().applyChanges();
+			sSelectionItemId = oListItem._oMultiSelectControl.getAriaLabelledBy();
+			assert.strictEqual(sap.ui.getCore().byId(sSelectionItemId).getText(), "Item Selection", "Invisible text added to Static area");
+		});
+
 		QUnit.module("Context Menu");
 
 		QUnit.test("Context Menu", function(assert) {
