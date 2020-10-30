@@ -17,6 +17,7 @@ sap.ui.define([
 		checkMessages : function (Given, When, Then, sUIComponent) {
 			var sDiscountFailure =
 					"User John Doe is not authorized to approve more than 50% discount",
+				sHighlightError = "Enter a Note",
 				sNoteBoundWarning = "Enter customer reference if available",
 				sNoteFailure = "Property `Note` value `RAISE_ERROR` not allowed!",
 				sQuantityBoundError = "Minimum order quantity is 2",
@@ -40,6 +41,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkMessagesButtonCount(2);
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
 			Then.onTheMainPage.checkMessageStrip("Warning");
+			Then.onTheMainPage.checkHighlight(1, "Warning");
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMessagePopover.checkMessages([{
@@ -108,6 +110,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
 				sQuantityBoundError);
 			Then.onTheMainPage.checkMessageStrip("Error");
+			Then.onTheMainPage.checkHighlight(1, "Error");
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMessagePopover.checkMessages([{
@@ -238,6 +241,44 @@ sap.ui.define([
 			Then.onTheSimulateDiscountDialog.checkDiscountValueState(ValueState.Error,
 				sDiscountFailure);
 			When.onTheSimulateDiscountDialog.close();
+			When.onTheMessagePopover.close(); // opened automatically (due to error)
+
+			// Highlight scenario
+			Then.onTheMainPage.checkMessagesButtonCount(2);
+			When.onTheMainPage.pressMoreButton();
+			Then.onTheMainPage.checkMessageStrip("Error");
+			Then.onTheMainPage.checkHighlight(6, "Error");
+			Then.onTheMainPage.checkMessagesButtonCount(3);
+
+			When.onTheMainPage.pressMessagesButton();
+			Then.onTheMessagePopover.checkMessages([{
+				message : sNoteBoundWarning,
+				type : MessageType.Warning
+			}, {
+				message : sQuantityBoundError,
+				type : MessageType.Error
+			}, {
+				message : sHighlightError,
+				type : MessageType.Error
+			}]);
+			When.onTheMessagePopover.close();
+
+			When.onTheMainPage.selectSalesOrder(6);
+			Then.onTheMainPage.checkMessagesButtonCount(3);
+
+			When.onTheMainPage.changeNoteInLineItem(0, "EPM DG: SO ID 0500000006 Item 0000000010");
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			Then.onTheMainPage.checkHighlight(6, "None");
+			Then.onTheMainPage.checkMessagesButtonCount(2);
+			When.onTheMainPage.pressMessagesButton();
+			Then.onTheMessagePopover.checkMessages([{
+				message : sNoteBoundWarning,
+				type : MessageType.Warning
+			}, {
+				message : sQuantityBoundError,
+				type : MessageType.Error
+			}]);
+			When.onTheMessagePopover.close();
 
 			Then.onAnyPage.checkLog([{
 					component : "sap.ui.model.odata.v4.Context",

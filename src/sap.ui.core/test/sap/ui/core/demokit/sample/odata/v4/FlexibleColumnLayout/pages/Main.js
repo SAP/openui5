@@ -13,6 +13,11 @@ sap.ui.define([
 	var LayoutType = library.LayoutType,
 		sViewName = "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main";
 
+	function checkMoreButtonCount(oTrigger, sExpected) {
+		Opa5.assert.strictEqual(oTrigger.getDomRef().innerText.replace(/\s/g, ""),
+			"More" + sExpected);
+	}
+
 	Opa5.createPageObjects({
 		onTheApplication : {
 			actions : {
@@ -52,6 +57,17 @@ sap.ui.define([
 						success : function (oLayout) {
 							Opa5.assert.strictEqual(oLayout.getLayout(), LayoutType.OneColumn,
 								"Object page not visible");
+						},
+						viewName : sViewName
+					});
+				},
+				checkSubObjectPageNotVisible : function () {
+					return this.waitFor({
+						controlType : "sap.f.FlexibleColumnLayout",
+						id : "layout",
+						success : function (oLayout) {
+							Opa5.assert.strictEqual(oLayout.getLayout(),
+								LayoutType.TwoColumnsMidExpanded, "Sub-object page not visible");
 						},
 						viewName : sViewName
 					});
@@ -104,6 +120,17 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				checkSalesOrderCount : function (iCount) {
+					this.waitFor({
+						id : /salesOrderListTitle|SalesOrderList-trigger/,
+						success : function (aControls) {
+							Opa5.assert.strictEqual(aControls[0].getText(),
+								iCount + " New Sales Orders");
+							checkMoreButtonCount(aControls[1], "[5/" + iCount + "]");
+						},
+						viewName : sViewName
+					});
+				},
 				checkSalesOrderNotInTheList : function (sSalesOrderID) {
 					this.waitFor({
 						controlType : "sap.m.Text",
@@ -124,6 +151,17 @@ sap.ui.define([
 			actions : {
 				changeNote : function (sNote) {
 					return Helper.changeInputValue(this, sViewName, "SalesOrder::note", sNote);
+				},
+				createSalesOrderItem : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "createSalesOrderLineItem",
+						success : function () {
+							Opa5.assert.ok(true, "Sales order line item created");
+						},
+						viewName : sViewName
+					});
 				},
 				deleteSalesOrder : function () {
 					return this.waitFor({
@@ -171,6 +209,9 @@ sap.ui.define([
 				checkNote : function (sNote) {
 					Helper.checkInputValue(this, sViewName, "SalesOrder::note", sNote);
 				},
+				checkSalesOrderID : function (sSalesOrderID) {
+					Helper.checkInputValue(this, sViewName, "SalesOrder::id", sSalesOrderID);
+				},
 				checkSalesOrderItem : function (iRow, sItemPosition, sQuantity) {
 					this.waitFor({
 						controlType : "sap.m.Text",
@@ -185,8 +226,16 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				checkSalesOrderID : function (sSalesOrderID) {
-					Helper.checkInputValue(this, sViewName, "SalesOrder::id", sSalesOrderID);
+				checkSalesOrderItemCount : function (iCount) {
+					this.waitFor({
+						id : /lineItemsTitle|SO_2_SOITEM-trigger/,
+						success : function (aControls) {
+							Opa5.assert.strictEqual(aControls[0].getText(),
+								iCount + " Sales Order Line Items");
+							checkMoreButtonCount(aControls[1], "[5/" + iCount + "]");
+						},
+						viewName : sViewName
+					});
 				},
 				checkSalesOrderItemNotInTheList : function (sItemPosition) {
 					this.waitFor({

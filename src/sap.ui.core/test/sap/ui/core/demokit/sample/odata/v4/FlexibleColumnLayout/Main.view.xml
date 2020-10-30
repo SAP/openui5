@@ -27,7 +27,7 @@
 					<headerToolbar>
 						<Toolbar id="salesOrderListToolbar">
 							<Title id="salesOrderListTitle" level="H2"
-								text="{$count} New Sales Orders">
+								text="{headerContext>$count} New Sales Orders">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
@@ -110,7 +110,10 @@
 					}" mode="SingleSelectMaster" selectionChange="onSalesOrderLineItemSelect">
 					<headerToolbar>
 						<Toolbar id="lineItemsToolbar">
-							<Title id="lineItemsTitle" level="H2" text="Sales Order Line Items"/>
+							<Title id="lineItemsTitle" level="H2"
+								text="{headerContext>$count} Sales Order Line Items"/>
+							<Button press="onCreateLineItem" tooltip="Create Line Item"
+								id="createSalesOrderLineItem" icon="sap-icon://add"/>
 						</Toolbar>
 					</headerToolbar>
 					<columns>

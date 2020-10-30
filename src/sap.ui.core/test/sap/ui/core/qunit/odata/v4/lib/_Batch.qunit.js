@@ -240,6 +240,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{// serialization
 		testTitle : "query parts without headers",
+		epilogue : "foo",
 		requests : [
 			{
 				method : "GET",
@@ -263,7 +264,8 @@ sap.ui.define([
 		"GET Employees('2') HTTP/1.1\r\n" +
 		"\r\n" +
 		"\r\n" +
-		"--batch_id-0123456789012-345--\r\n",
+		"--batch_id-0123456789012-345--\r\n" +
+		"foo",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
@@ -767,7 +769,7 @@ sap.ui.define([
 					oHelperMock.expects("uid").returns("id-0123456789012-345");
 				}
 
-				oBatchRequest = _Batch.serializeBatchRequest(aRequests);
+				oBatchRequest = _Batch.serializeBatchRequest(aRequests, oFixture.epilogue);
 
 				assert.deepEqual(aRequests, oFixture.requests, "input remained unchanged");
 				assert.strictEqual(oBatchRequest.body, oFixture.body);

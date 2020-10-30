@@ -224,7 +224,7 @@ sap.ui.define([
 			aHeaders = [];
 
 		for (sHeaderName in mHeaders) {
-			aHeaders = aHeaders.concat(sHeaderName, ":", mHeaders[sHeaderName], "\r\n");
+			aHeaders.push(sHeaderName, ":", mHeaders[sHeaderName], "\r\n");
 		}
 
 		return aHeaders;
@@ -238,6 +238,8 @@ sap.ui.define([
 	 * @param {number} [iChangeSetIndex]
 	 *   Is only specified if the function is called to serialize change sets and
 	 *   contains zero-based index of the change set within <code>aRequests</code> array.
+	 * @param {string} [sEpilogue]
+	 *   String that will be included in the epilogue
 	 * @returns {object}
 	 *   The $batch request object with the following structure
 	 *   <ul>
@@ -245,17 +247,16 @@ sap.ui.define([
 	 *     <li> <code>batchBoundary</code>: {string} Batch boundary value
 	 *   </ul>
 	 */
-	function _serializeBatchRequest(aRequests, iChangeSetIndex) {
+	function _serializeBatchRequest(aRequests, iChangeSetIndex, sEpilogue) {
 		var sBatchBoundary = (iChangeSetIndex !== undefined ? "changeset_" : "batch_")
 				+ _Helper.uid(),
 			bIsChangeSet = iChangeSetIndex !== undefined,
 			aRequestBody = [];
 
 		if (bIsChangeSet) {
-			aRequestBody = aRequestBody.concat("Content-Type: multipart/mixed;boundary=",
+			aRequestBody.push("Content-Type: multipart/mixed;boundary=",
 				sBatchBoundary, "\r\n\r\n");
 		}
-
 		aRequests.forEach(function (oRequest, iRequestIndex) {
 			var sContentIdHeader = "",
 				sUrl = oRequest.url;
@@ -264,7 +265,7 @@ sap.ui.define([
 				sContentIdHeader = "Content-ID:" + iRequestIndex + "." + iChangeSetIndex + "\r\n";
 			}
 
-			aRequestBody = aRequestBody.concat("--", sBatchBoundary, "\r\n");
+			aRequestBody.push("--", sBatchBoundary, "\r\n");
 			if (Array.isArray(oRequest)) {
 				if (bIsChangeSet) {
 					throw new Error('Change set must not contain a nested change set.');
@@ -294,7 +295,8 @@ sap.ui.define([
 					JSON.stringify(oRequest.body) || "", "\r\n");
 			}
 		});
-		aRequestBody = aRequestBody.concat("--", sBatchBoundary, "--\r\n");
+		aRequestBody.push("--", sBatchBoundary, "--\r\n", sEpilogue);
+
 
 		return {body : aRequestBody, batchBoundary : sBatchBoundary};
 	}
@@ -336,9 +338,11 @@ sap.ui.define([
 		 * mandatory headers for the batch request.
 		 *
 		 * @param {object[]} aRequests
-		 *  An array consisting of request objects <code>oRequest</code> or out of array(s)
-		 *  of request objects <code>oRequest</code>, in case requests need to be sent in scope of
-		 *  a change set. See example below.
+		 *   An array consisting of request objects <code>oRequest</code> or out of array(s)
+		 *   of request objects <code>oRequest</code>, in case requests need to be sent in scope of
+		 *   a change set. See example below.
+		 * @param {string} [sEpilogue]
+		 *   String that will be included in the epilogue
 		 * @param {string} oRequest.method
 		 *   HTTP method, e.g. "GET"
 		 * @param {string} oRequest.url
@@ -399,8 +403,8 @@ sap.ui.define([
 		 *       }
 		 *   ]);
 		 */
-		serializeBatchRequest : function (aRequests) {
-			var oBatchRequest = _serializeBatchRequest(aRequests);
+		serializeBatchRequest : function (aRequests, sEpilogue) {
+			var oBatchRequest = _serializeBatchRequest(aRequests, undefined, sEpilogue);
 
 			return {
 				body : oBatchRequest.body.join(""),

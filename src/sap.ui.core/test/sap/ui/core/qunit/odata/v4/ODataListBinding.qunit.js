@@ -3457,9 +3457,11 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			aContexts = [{iIndex : -2}, {iIndex : -1}, {iIndex : 0}, {iIndex : 1}],
+			bFireChange = oFixture.newMaxLength === 41,
 			oKeptAliveContext = {
 				created : function () { return undefined; },
-				getPath : function () { return "~contextpath~"; },
+				destroy : function () {},
+				getPath : function () { return "~contextPath~"; },
 				isKeepAlive : function () {},
 				resetKeepAlive : function () {}
 			},
@@ -3471,11 +3473,12 @@ sap.ui.define([
 		oBinding.bLengthFinal = oFixture.lengthFinal;
 		oBinding.iMaxLength = oFixture.lengthFinal ? 42 : Infinity;
 		oBinding.mPreviousContextsByPath = {
-			"~contextpath~" : oKeptAliveContext
+			"~contextPath~" : oKeptAliveContext,
+			"~otherContext~" : {}
 		};
 
 		this.mock(_Helper).expects("getRelativePath")
-			.withExactArgs("~contextpath~", "/EMPLOYEES").returns("~predicate~");
+			.withExactArgs("~contextPath~", "/EMPLOYEES").returns("~predicate~");
 		oBindingMock.expects("deleteFromCache")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", "~predicate~", "oETagEntity",
 				sinon.match.func)
@@ -3489,14 +3492,22 @@ sap.ui.define([
 		this.mock(oKeptAliveContext).expects("isKeepAlive").returns(true);
 		this.mock(oKeptAliveContext).expects("resetKeepAlive").withExactArgs();
 		oBindingMock.expects("_fireChange")
-			.exactly(oFixture.newMaxLength === 41 ? 1 : 0)
+			.exactly(bFireChange ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Remove});
+		this.mock(oKeptAliveContext).expects("destroy").exactly(bFireChange ? 0 : 1)
+			.withExactArgs();
 
 		// code under test
 		return oBinding._delete("myGroup", "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity")
 			.then(function () {
-				assert.strictEqual(oBinding.mPreviousContextsByPath["~contextpath~"],
-					oKeptAliveContext);
+				assert.deepEqual(oBinding.mPreviousContextsByPath, bFireChange
+						? {
+							"~contextPath~" : oKeptAliveContext,// deleted in prerendering task
+							"~otherContext~" : {}
+						}
+						: {
+							"~otherContext~" : {}
+						});
 				assert.deepEqual(oBinding.aContexts, aContexts);
 				assert.strictEqual(oBinding.iMaxLength,
 					oFixture.lengthFinal ? oFixture.newMaxLength : Infinity);
@@ -4935,95 +4946,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{},
-	{$$filterBeforeAggregate : "foo", $apply : "bar"}
-].forEach(function (mMergedQueryOptions, i) {
-	QUnit.test("doCreateCache: Cache._CollectionCache " + i, function (assert) {
-		var oAggregation = {
-				group : {
-					Dimension : {}
-				}
-			},
-			bAutoExpandSelect = {/*false, true*/},
-			oBinding = this.bindList("TEAM_2_EMPLOYEES", null, null, null, {
-				$$aggregation : oAggregation
+	QUnit.test("doCreateCache", function (assert) {
+		var oBinding = this.bindList("TEAM_2_EMPLOYEES", null, null, null, {
+				$$aggregation : {}
 			}),
-			oCache = {},
-			oContext = {},
-			sDeepResourcePath = "deep/resource/path",
-			mQueryOptions = {},
-			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
-			bSharedRequest = {/*false, true*/};
+			oCache = {};
 
-		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
-		oBinding.bSharedRequest = bSharedRequest;
+		this.oModel.bAutoExpandSelect = "~autoExpandSelect~";
+		oBinding.bSharedRequest = "~sharedRequest~";
 
 		this.mock(oBinding).expects("inheritQueryOptions")
-			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
-			.returns(mMergedQueryOptions);
-		this.mock(_Cache).expects("create")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mMergedQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sDeepResourcePath, sinon.match.same(bSharedRequest))
+			.withExactArgs("~queryOptions~", "~context~").returns("~mergedQueryOptions~");
+		this.mock(_AggregationCache).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
+				"deep/resource/path", sinon.match.same(oBinding.mParameters.$$aggregation),
+				"~mergedQueryOptions~", "~autoExpandSelect~", "~sharedRequest~")
 			.returns(oCache);
 
 		// code under test
 		assert.strictEqual(
-			oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext, sDeepResourcePath),
+			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
+				"deep/resource/path"),
 			oCache);
-
-		if (i > 1) {
-			assert.deepEqual(mMergedQueryOptions, {$apply : "filter(foo)/bar"});
-		}
-	});
-});
-
-	//*********************************************************************************************
-	[{
-		group : {
-			Dimension : {}
-		},
-		groupLevels : ["Dimension"]
-	}, {
-		aggregate : {
-			Measure : {min : true}
-		},
-		group : {}
-	}, {
-		aggregate : {
-			Measure : {max : true}
-		},
-		group : {}
-	}, {
-		aggregate : {
-			Measure : {grandTotal : true}
-		},
-		group : {}
-	}].forEach(function (oAggregation, i) {
-		QUnit.test("doCreateCache: AggregationCache: " + i, function (assert) {
-			var oBinding = this.bindList("TEAM_2_EMPLOYEES", null, null, null, {
-					$$aggregation : oAggregation
-				}),
-				oCache = {},
-				oContext = {},
-				mMergedQueryOptions = {},
-				sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
-				mQueryOptions = {};
-
-			this.mock(oBinding).expects("inheritQueryOptions")
-				.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
-				.returns(mMergedQueryOptions);
-			this.mock(_AggregationCache).expects("create")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-					sinon.match.same(oBinding.mParameters.$$aggregation),
-					sinon.match.same(mMergedQueryOptions))
-				.returns(oCache);
-
-			// code under test
-			assert.strictEqual(oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext),
-				oCache);
-		});
 	});
 
 	//*********************************************************************************************
