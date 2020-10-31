@@ -1,7 +1,34 @@
 {
   "1.85.0": {
-    "date": "October 2020",
+    "date": "November 2020",
     "notes": [
+      {
+        "id": "1547a7c4a368ecd58e2a3ff87b8d25ddb29870d5",
+        "type": "FIX",
+        "text": " FieldValueHelp: wrong role description for only ConditionPanel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070429185"
+          }
+        ]
+      },
+      {
+        "id": "3c17c8446eab507b2e9c4abcd24001af1b8c26f8",
+        "type": "FIX",
+        "text": " Field: if unit or currency is shown - cut off if too small",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070428399"
+          }
+        ]
+      },
+      {
+        "id": "fa4d21eaa623524814853bae8c52353d25a9d79e",
+        "type": "FEATURE",
+        "text": " Field: show empty indicator in display mode"
+      },
       {
         "id": "654df05aa545d971b9cc135c6f280412e2c83c30",
         "type": "FIX",
