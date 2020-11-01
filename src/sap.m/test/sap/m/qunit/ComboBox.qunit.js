@@ -13127,6 +13127,42 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("Tapping on the disabled input shoould not apply the visual focus", function (assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			enabled: false,
+			items: [
+				new Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new Item({
+					key: "2",
+					text: "item 2"
+				})
+			]
+		});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.ontap();
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oComboBox.getDomRef().classList.contains("sapMFocus"), false, "The visual focus is not applied");
+
+		// Clean
+		oComboBox.destroy();
+	});
+
 	QUnit.test("Setting new value state formatted text aggregation should be update also the value state header", function (assert) {
 		// Arrange
 		var	oSuggPopoverHeaderValueState,

@@ -832,7 +832,7 @@ sap.ui.define([
 
 			this.synchronizeSelection();
 
-			if (!this.getOpen() && document.activeElement === this.getFocusDomRef()) {
+			if (!this.getOpen() && document.activeElement === this.getFocusDomRef() && this.getEnabled()) {
 				this.addStyleClass("sapMFocus");
 			}
 
@@ -1707,6 +1707,10 @@ sap.ui.define([
 		* @param {jQuery.Event} oEvent The event object.
 		*/
 		ComboBox.prototype.ontap = function(oEvent) {
+			if (!this.getEnabled()) {
+				return;
+			}
+
 			var oDomRef = this.getFocusDomRef(),
 				sActivedescendant = "aria-activedescendant";
 
