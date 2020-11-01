@@ -436,6 +436,27 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		assert.equal(this.oStandardBreadCrumbsControl._getSelect().getVisible(), false, "select is not shown");
 	});
 
+	QUnit.test("Skip overflow recalculations when no width change", function (assert) {
+		var oLink1 = new Link({text: "link1"}),
+			oLink2 = new Link({text: "link2"}),
+			oSpy;
+		this.oStandardBreadCrumbsControl = new Breadcrumbs({
+			links: [oLink1, oLink2]
+		});
+
+		helpers.renderObject(this.oStandardBreadCrumbsControl);
+
+		oSpy = this.spy(this.oStandardBreadCrumbsControl, "_getControlDistribution");
+
+		// Act
+		this.oStandardBreadCrumbsControl._handleScreenResize({
+			size: { width: 100},
+			oldSize: { width: 100}
+		});
+
+		assert.notOk(oSpy.called, "skipped overflow recalculations");
+	});
+
 	QUnit.module("Breadcrumbs - private functions", {
 		afterEach: function () {
 			this.oStandardBreadCrumbsControl.destroy();
