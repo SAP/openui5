@@ -100,20 +100,20 @@ sap.ui.getCore().attachInit(function () {
 					}
 				});
 
-				Then.onTheListReport.checkSalesOrderCount(10);
+				Then.onTheListReport.checkSalesOrdersCount(10);
 				When.onTheListReport.selectSalesOrder(4);
 				Then.onTheObjectPage.checkSalesOrderID("0500000004");
 
 				When.onTheListReport.filterByGrossAmount('1000');
 				Then.onTheListReport.checkSalesOrderNotInTheList("0500000004");
-				Then.onTheListReport.checkSalesOrderCount(7);
+				Then.onTheListReport.checkSalesOrdersCount(7);
 				Then.onTheObjectPage.checkSalesOrderID("0500000004");
 
 				When.onTheObjectPage.deleteSalesOrder();
 				When.onTheApplication.closeDialog("Success");
 				Then.onTheApplication.checkMessagesButtonCount(0);
 				Then.onTheApplication.checkObjectPageNotVisible();
-				Then.onTheListReport.checkSalesOrderCount(7);
+				Then.onTheListReport.checkSalesOrdersCount(7);
 
 				Then.iTeardownMyUIComponent();
 			});
@@ -131,7 +131,7 @@ sap.ui.getCore().attachInit(function () {
 
 				When.onTheListReport.selectSalesOrder(0);
 				Then.onTheObjectPage.checkSalesOrderID("0500000000");
-				Then.onTheObjectPage.checkSalesOrderItemCount(27);
+				Then.onTheObjectPage.checkSalesOrderItemsCount(27);
 
 				When.onTheObjectPage.selectSalesOrderItem(0);
 				Then.onTheSubObjectPage.checkItemPosition('0000000010');
@@ -141,16 +141,16 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheSubObjectPage.checkItemPosition('0000000010');
 
 				When.onTheObjectPage.createSalesOrderItem();
-				Then.onTheObjectPage.checkSalesOrderItemCount(28);
+				Then.onTheObjectPage.checkSalesOrderItemsCount(28);
 
 				When.onTheSubObjectPage.deleteSalesOrderItem();
 				When.onTheApplication.closeDialog("Success");
 				Then.onTheApplication.checkMessagesButtonCount(0);
 				Then.onTheApplication.checkSubObjectPageNotVisible();
-				Then.onTheObjectPage.checkSalesOrderItemCount(27);
+				Then.onTheObjectPage.checkSalesOrderItemsCount(27);
 
 				When.onTheApplication.pressCancel();
-				Then.onTheObjectPage.checkSalesOrderItemCount(26);
+				Then.onTheObjectPage.checkSalesOrderItemsCount(26);
 
 				Then.iTeardownMyUIComponent();
 			});
