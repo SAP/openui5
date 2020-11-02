@@ -25,8 +25,8 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 
 			this.oRequestor = {
-				buildQueryString : function () {return "";},
-				getServiceUrl : function () {return "/~/";}
+				buildQueryString : function () { return ""; },
+				getServiceUrl : function () { return "/~/"; }
 			};
 			this.oRequestorMock = this.mock(this.oRequestor);
 		}
@@ -169,7 +169,7 @@ sap.ui.define([
 			.returns(oFirstLevelCache);
 		this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
 			.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
-				sinon.match.same(mQueryOptions), ["Region"]);
+				sinon.match.same(mQueryOptions));
 
 		// code under test
 		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, "", oAggregation,
@@ -254,137 +254,148 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Using PICT
+	// Using PICT /r:42152
 	//
-	// hasFilteredOrderby: false, true
-	// leaf: false, true
-	// parent: false, true
-	// total: false, true
-	//
-	// IF [leaf] = "true" THEN [total] = "false";
+	// sFilteredOrderBy: "", "~filteredOrderBy~"
+	// bHasGrandTotal:   false, true
+	// bLeaf:            false, true
+	// oParentGroupNode: undefined, {}
+	// bSubtotals:       false, true
+	// IF [bLeaf] = "true" THEN [bSubtotals] = "false";
+	// IF [oParentGroupNode] = "undefined" THEN [bLeaf] = "false";
+	// IF [oParentGroupNode] = "{}" THEN [bHasGrandTotal] = "false";
 [{
-	filteredOrderby : "",
-	leaf : true,
-	parent : true,
-	total : false
+	sFilteredOrderBy : "",
+	bHasGrandTotal : false,
+	bLeaf : true,
+	oParentGroupNode : {},
+	bSubtotals : false
 }, {
-	filteredOrderby : "~filteredOrderby~",
-	leaf : false,
-	parent : false,
-	total : false
+	sFilteredOrderBy : "",
+	bHasGrandTotal : true,
+	bLeaf : false,
+	oParentGroupNode : undefined,
+	bSubtotals : true
 }, {
-	filteredOrderby : "~filteredOrderby~",
-	leaf : false,
-	parent : true,
-	total : true
+	sFilteredOrderBy : "~filteredOrderBy~",
+	bHasGrandTotal : false,
+	bLeaf : false,
+	oParentGroupNode : {},
+	bSubtotals : true
 }, {
-	filteredOrderby : "",
-	leaf : false,
-	parent : false,
-	total : true
+	sFilteredOrderBy : "~filteredOrderBy~",
+	bHasGrandTotal : false,
+	bLeaf : false,
+	oParentGroupNode : undefined,
+	bSubtotals : false
 }, {
-	filteredOrderby : "~filteredOrderby~",
-	leaf : true,
-	parent : false,
-	total : false
-}].forEach(function (oFixture) {
-	QUnit.test("createGroupLevelCache: " + JSON.stringify(oFixture), function (assert) {
+	sFilteredOrderBy : "~filteredOrderBy~",
+	bHasGrandTotal : false,
+	bLeaf : true,
+	oParentGroupNode : {},
+	bSubtotals : false
+}, {
+	sFilteredOrderBy : "~filteredOrderBy~",
+	bHasGrandTotal : true,
+	bLeaf : false,
+	oParentGroupNode : undefined,
+	bSubtotals : false
+}].forEach(function (oPICT) {
+	QUnit.test("createGroupLevelCache: " + JSON.stringify(oPICT), function (assert) {
 		var oAggregation = { // filled before by buildApply
-				aggregate : {},
-				group: {},
-				groupLevels : ["a"]
-			},
-			oCache,
-			mCacheQueryOptions = {},
-			oFilteredAggregation = {
-				groupLevels : oFixture.leaf ? [] : ["a", "b"],
-				aggregate : {},
-				$groupBy : ["foo", "bar"],
-				$missing : ["baz", "qux"]
-			},
-			mFilteredQueryOptions = {
-				$count : true,
-				$orderby : "~orderby~"
-			},
-			oGroupLevelCache = {},
-			bHasGrandTotal = !oFixture.parent && !oFixture.leaf, // not PICT?!
-			iLevel = oFixture.parent ? 3 : 1,
-			oParentGroupNode = oFixture.parent ? {
-					"@$ui5.node.level" : 2,
-					"@$ui5._" : {
-						filter : "~filter~"
+				aggregate : {
+					x : {
+						subtotals : oPICT.bSubtotals
+					},
+					y : {
+						grandTotal : oPICT.bHasGrandTotal
 					}
-				} : null,
+				},
+				group: {
+					c : {}, // intentionally out of ABC order
+					a : {},
+					b : {}
+				},
+				groupLevels : ["a", "b"]
+			},
+			oAggregationCache,
+			oCache = {},
+			mCacheQueryOptions = {},
+			aGroupBy = ["a"],
+			iLevel = oPICT.oParentGroupNode ? 3 : 1,
 			mQueryOptions = {
 				$orderby : "~orderby~"
 			};
 
-		oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
-
-		if (oFixture.total) {
-			oFilteredAggregation.aggregate.x = {subtotal : true};
+		if (!oPICT.bHasGrandTotal) {
+			mQueryOptions.$count = "n/a";
 		}
-		this.mock(_AggregationHelper).expects("filterAggregation")
-			.withExactArgs(sinon.match.same(oCache.oAggregation), iLevel)
-			.returns(oFilteredAggregation);
+		if (oPICT.oParentGroupNode) {
+			aGroupBy = ["a", "b", "c"];
+			oPICT.oParentGroupNode["@$ui5.node.level"] = 2;
+			_Helper.setPrivateAnnotation(oPICT.oParentGroupNode, "filter", "~filter~");
+		}
+		if (oPICT.bLeaf) {
+			// Note: duplicates do not hurt for key predicate, but order is important
+			aGroupBy = [/*group levels:*/"a", "b", /*sorted:*/"a", "b", "c"];
+		} else { // Note: iLevel === 3
+			oAggregation.groupLevels.push("c");
+		}
+
+		oAggregationCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation,
+			{/*$orderby : "~orderby~"*/});
+
 		this.mock(Object).expects("assign")
-			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
-			.returns(mFilteredQueryOptions);
+			.withExactArgs({}, sinon.match.same(oAggregationCache.mQueryOptions))
+			.returns(mQueryOptions);
 		this.mock(_AggregationHelper).expects("filterOrderby")
-			.withExactArgs("~orderby~", sinon.match.same(oFilteredAggregation))
-			.returns(oFixture.filteredOrderby);
-		if (bHasGrandTotal) {
+			.withExactArgs("~orderby~", sinon.match.same(oAggregation), iLevel)
+			.returns(oPICT.sFilteredOrderBy);
+		if (oPICT.bHasGrandTotal) {
 			this.mock(_AggregationHelper).expects("buildApply").never();
-			this.mock(_Cache).expects("create")
-				.withExactArgs(sinon.match.same(oCache.oRequestor), "Foo",
-					sinon.match(function (o) {
-						return o === mFilteredQueryOptions && o.$count;
-					}), true)
-				.returns(oGroupLevelCache);
 			this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
-				.exactly(bHasGrandTotal ? 1 : 0)
-				.withExactArgs(sinon.match.same(oGroupLevelCache),
-					sinon.match.same(oFilteredAggregation), sinon.match.same(mFilteredQueryOptions),
-					["foo", "bar", "baz", "qux"]);
+				.withExactArgs(sinon.match.same(oCache), sinon.match.same(oAggregation),
+					sinon.match.same(mQueryOptions));
 		} else {
 			this.mock(_AggregationHelper).expects("buildApply")
-				.withExactArgs(sinon.match(function (o) {
-						return o === oFilteredAggregation && !("$groupBy" in o || "$missing" in o);
-					}), sinon.match(function (o) {
-						return o === mFilteredQueryOptions
+				.withExactArgs(sinon.match.same(oAggregation), sinon.match(function (o) {
+						return o === mQueryOptions
 							&& !("$count" in o)
-							&& (oFixture.parent
+							&& (oPICT.oParentGroupNode
 								? o.$$filterBeforeAggregate === "~filter~"
 								: !("$$filterBeforeAggregate" in o))
-							&& (oFixture.filteredOrderby
-								? o.$orderby === oFixture.filteredOrderby
+							&& (oPICT.sFilteredOrderBy
+								? o.$orderby === oPICT.sFilteredOrderBy
 								: !("$orderby" in o));
 					}), iLevel)
 				.returns(mCacheQueryOptions);
-			this.mock(_Cache).expects("create")
-			.withExactArgs(sinon.match.same(oCache.oRequestor), "Foo",
-				sinon.match(function (o) {
-					return o === mCacheQueryOptions && o.$count === true;
-				}), true)
-			.returns(oGroupLevelCache);
+			this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal").never();
 		}
+		this.mock(_Cache).expects("create")
+			.withExactArgs(sinon.match.same(oAggregationCache.oRequestor), "Foo",
+				sinon.match(function (o) {
+					// Note: w/o grand total, buildApply determines the query options to be used!
+					return o === (oPICT.bHasGrandTotal ? mQueryOptions : mCacheQueryOptions)
+						&& o.$count;
+				}), true)
+			.returns(oCache);
 
 		// This must be done before calling createGroupLevelCache, so that bind grabs the mock
-		this.mock(_AggregationCache).expects("calculateKeyPredicate")
-		.withExactArgs(sinon.match.same(oParentGroupNode),
-			sinon.match.same(oFilteredAggregation.$groupBy),
-			sinon.match.same(oFilteredAggregation.$missing), oFixture.leaf, oFixture.total,
-			sinon.match.same(oCache.aElements.$byPredicate), "~oElement~", "~mTypeForMetaPath~",
-			"~metapath~");
+		this.mock(_AggregationCache).expects("calculateKeyPredicate").on(null)
+			.withExactArgs(sinon.match.same(oPICT.oParentGroupNode), aGroupBy,
+				// Note: order does not matter for aAllProperties
+				["x", "y", "c", "a", "b"], oPICT.bLeaf, oPICT.bSubtotals,
+				sinon.match.same(oAggregationCache.aElements.$byPredicate),
+				"~oElement~", "~mTypeForMetaPath~", "~metapath~");
 
 		assert.strictEqual(
 			// code under test
-			oCache.createGroupLevelCache(oParentGroupNode, bHasGrandTotal),
-			oGroupLevelCache
+			oAggregationCache.createGroupLevelCache(oPICT.oParentGroupNode, oPICT.bHasGrandTotal),
+			oCache
 		);
 
 		// code under test (this normally happens inside the created cache's handleResponse method)
-		oGroupLevelCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~");
+		oCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~");
 	});
 });
 	// TODO can there already be a $$filterBeforeAggregate when creating a group level cache?
@@ -394,17 +405,17 @@ sap.ui.define([
 	[false, true].forEach(function (bParent) {
 
 	QUnit.test("calculateKeyPredicate: leaf=" + bLeaf + ", parent=" + bParent, function (assert) {
-		var mByPredicate = {},
+		var aAllProperties = ["p1", "p2", "p3", "p4"],
+			mByPredicate = {},
 			oElement = {
-				p2: "v2"
+				p2 : "v2"
 			},
 			oGroupNode = {
 				p1 : "v1",
 				"@$ui5.node.level" : 2
 			},
 			aGroupBy = bParent ? ["p1", "p2"] : ["p2"],
-			oHelperMock = this.mock(_Helper),
-			bTotal = {/*false or true*/};
+			oHelperMock = this.mock(_Helper);
 
 		oHelperMock.expects("getKeyPredicate")
 			.withExactArgs(sinon.match(function (o) {
@@ -420,21 +431,20 @@ sap.ui.define([
 			.returns("~filter~");
 		oHelperMock.expects("setPrivateAnnotation").exactly(bLeaf ? 0 : 1)
 			.withExactArgs(sinon.match.same(oElement), "filter", "~filter~");
+		this.mock(_AggregationHelper).expects("setAnnotations")
+			.withExactArgs(sinon.match.same(oElement), bLeaf ? undefined : false, "~bTotal~",
+				bParent ? 3 : 1, aAllProperties);
 
 		// code under test
 		_AggregationCache.calculateKeyPredicate(bParent ? oGroupNode : undefined, aGroupBy,
-			["p3", "p4"], bLeaf, bTotal, mByPredicate, oElement, "~mTypeForMetaPath~",
+			aAllProperties, bLeaf, "~bTotal~", mByPredicate, oElement, "~mTypeForMetaPath~",
 			"~sMetaPath~");
 
-		assert.strictEqual(oElement["@$ui5.node.isExpanded"], bLeaf ? undefined : false);
-		assert.strictEqual(oElement["@$ui5.node.isTotal"], bTotal);
-		assert.strictEqual(oElement["@$ui5.node.level"], bParent ? 3 : 1);
 		if (bParent) {
 			assert.strictEqual(oElement.p1, "v1");
+		} else {
+			assert.notOk("p1" in oElement);
 		}
-		assert.strictEqual(oElement.p2, "v2");
-		assert.strictEqual(oElement.p3, null);
-		assert.strictEqual(oElement.p4, null);
 	});
 
 	});
@@ -453,14 +463,21 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), "~sMetaPath~", "~mTypeForMetaPath~",
 				["group"], true)
 			.returns("~predicate~");
+		this.mock(_AggregationHelper).expects("setAnnotations").never();
 
 		// code under test - simulate call on grandTotal
-		_AggregationCache.calculateKeyPredicate(undefined, ["group"], ["foo", "bar"],
+		_AggregationCache.calculateKeyPredicate(undefined, ["group"], ["bar", "foo", "group"],
 			true, false, {}, oElement, "~mTypeForMetaPath~", "~sMetaPath~");
 
-		assert.strictEqual(oElement["@$ui5.node.isExpanded"], true);
-		assert.strictEqual(oElement["@$ui5.node.isTotal"], true);
-		assert.strictEqual(oElement["@$ui5.node.level"], 0);
+		assert.deepEqual(oElement, {
+			group : null,
+			"@$ui5._": {
+				"predicate": "~predicate~"
+			},
+			"@$ui5.node.isExpanded" : true,
+			"@$ui5.node.isTotal" : true,
+			"@$ui5.node.level" : 0
+		});
 	});
 
 	//*********************************************************************************************
@@ -476,6 +493,7 @@ sap.ui.define([
 				true)
 			.returns("~predicate~");
 		this.mock(_Helper).expects("setPrivateAnnotation").never();
+		this.mock(_AggregationHelper).expects("setAnnotations").never();
 
 		assert.throws(function () {
 			// code under test

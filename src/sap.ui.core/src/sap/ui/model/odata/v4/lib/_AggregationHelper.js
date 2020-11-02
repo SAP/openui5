@@ -164,7 +164,7 @@ sap.ui.define([
 		 *   The value for a "$top" system query option; it is removed from the returned map,
 		 *   but not from <code>mQueryOptions</code> itself, in case it is turned into a "top()"
 		 *   transformation
-		 * @param {number} [iLevel=0]
+		 * @param {number} [iLevel=1]
 		 *   The current level
 		 * @param {boolean} [bFollowUp]
 		 *   Tells whether this method is called for a follow-up request, not for the first one; in
@@ -192,14 +192,14 @@ sap.ui.define([
 				aGrandTotalAggregate = [],
 				aGroupBy,
 				bHasGrandTotal,
+				bIsLeafLevel,
 				// concat(aggregate(???),.) content for min/max or count
 				aMinMaxAggregate = [],
 				sSkipTop;
 
 			/*
 			 * Returns the corresponding part of the "aggregate" term for an aggregatable property,
-			 * for example "AggregatableProperty with method as Alias". Processes min/max as a side
-			 * effect.
+			 * for example "AggregatableProperty with method as Alias".
 			 *
 			 * @param {string} sAlias - An aggregatable property name
 			 * @returns {string} - Part of the "aggregate" term
@@ -209,7 +209,6 @@ sap.ui.define([
 			function aggregate(sAlias) {
 				var oDetails = oAggregation.aggregate[sAlias],
 					sAggregate = oDetails.name || sAlias,
-					sGrandTotal = sAggregate,
 					sWith = oDetails.with;
 
 				if (sWith) {
@@ -221,10 +220,19 @@ sap.ui.define([
 				} else if (oDetails.name) {
 					sAggregate += " as " + sAlias;
 				}
-				if (!bFollowUp) {
-					processMinOrMax(sAlias, oDetails, "min");
-					processMinOrMax(sAlias, oDetails, "max");
-				}
+				return sAggregate;
+			}
+
+			/*
+			 * Process grand total for an aggregatable property.
+			 *
+			 * @param {string} sAlias - An aggregatable property name
+			 */
+			function aggregateGrandTotal(sAlias) {
+				var oDetails = oAggregation.aggregate[sAlias],
+					sGrandTotal = oDetails.name || sAlias,
+					sWith = oDetails.with;
+
 				if (oDetails.grandTotal && iLevel <= 1) {
 					bHasGrandTotal = true;
 					if (!mQueryOptions.$skip) {
@@ -234,17 +242,6 @@ sap.ui.define([
 						aGrandTotalAggregate.push(sGrandTotal);
 					}
 				}
-				return sAggregate;
-			}
-
-			/*
-			 * Tells whether the given groupable property is not a group level.
-			 *
-			 * @param {string} sGroupable - A groupable property name
-			 * @returns {boolean} - Whether it is not a group level
-			 */
-			function notGroupLevel(sGroupable) {
-				return oAggregation.groupLevels.indexOf(sGroupable) < 0;
 			}
 
 			/*
@@ -253,11 +250,11 @@ sap.ui.define([
 			 * corresponding entry to the optional alias map if requested in the details.
 			 *
 			 * @param {string} sName - An aggregatable property name
-			 * @param {object} oDetails - The aggregation details
 			 * @param {string} sMinOrMax - Either "min" or "max"
 			 */
-			function processMinOrMax(sName, oDetails, sMinOrMax) {
-				var sAlias;
+			function processMinOrMax(sName, sMinOrMax) {
+				var sAlias,
+					oDetails = oAggregation.aggregate[sName];
 
 				if (oDetails[sMinOrMax]) {
 					sAlias = "UI5" + sMinOrMax + "__" + sName;
@@ -294,22 +291,39 @@ sap.ui.define([
 			}
 
 			mQueryOptions = Object.assign({}, mQueryOptions);
-			iLevel = iLevel || 0;
+			iLevel = iLevel || 1;
 
 			checkKeys(oAggregation, mAllowedAggregationKeys2Type);
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
+			bIsLeafLevel = iLevel > oAggregation.groupLevels.length;
 
 			oAggregation.aggregate = oAggregation.aggregate || {};
 			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
-			aAggregate = Object.keys(oAggregation.aggregate).sort().map(aggregate);
+			aAggregate = Object.keys(oAggregation.aggregate).sort();
+			aAggregate.forEach(aggregateGrandTotal);
+			if (!bFollowUp) {
+				aAggregate.forEach(function (sAlias) {
+					processMinOrMax(sAlias, "min");
+					processMinOrMax(sAlias, "max");
+				});
+			}
+			aAggregate = aAggregate.filter(function (sAlias) {
+				return bIsLeafLevel || oAggregation.aggregate[sAlias].subtotals;
+			}).map(aggregate);
 			if (aAggregate.length) {
 				sApply = "aggregate(" + aAggregate.join(",") + ")";
 			}
 
 			oAggregation.group = oAggregation.group || {};
 			checkKeys4AllDetails(oAggregation.group);
-			aGroupBy = oAggregation.groupLevels.concat(
-				Object.keys(oAggregation.group).sort().filter(notGroupLevel));
+			oAggregation.groupLevels.forEach(function (sGroup) {
+				oAggregation.group[sGroup] = oAggregation.group[sGroup] || {};
+			});
+			aGroupBy = bIsLeafLevel
+				? Object.keys(oAggregation.group).sort().filter(function (sGroupable) {
+					return oAggregation.groupLevels.indexOf(sGroupable) < 0;
+				})
+				: [oAggregation.groupLevels[iLevel - 1]];
 			if (aGroupBy.length) {
 				sApply = "groupby((" + aGroupBy.join(",") + (sApply ? ")," + sApply + ")" : "))");
 			}
@@ -378,84 +392,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the aggregation information for the given level.
-		 *
-		 * @param {object} oAggregation
-		 *   An object holding the information needed for data aggregation; see also
-		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-		 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>,
-		 *   <code>group</code>, <code>groupLevels</code>
-		 * @param {number} iLevel
-		 *   The level of the request
-		 * @returns {object[]}
-		 *   The aggregation information for the given level with two additional properties:
-		 *   <code>$groupBy</code> is an array with the ordered list of all groupables up to the
-		 *   given level (to be used for key predicate and filter for child nodes);
-		 *   <code>$missing</code> is an array of all properties that are not yet grouped or
-		 *   aggregated at this level and thus missing in the level's result
-		 *
-		 * @private
-		 */
-		filterAggregation : function (oAggregation, iLevel) {
-			var oFilteredAggregation, aGroupLevels, aLeafGroups;
-
-			// copies the value with the given key from this map to the given target map
-			function copyTo(mTarget, sKey) {
-				mTarget[sKey] = this[sKey];
-				return mTarget;
-			}
-
-			// filters the map using the given keys
-			function filterMap(mMap, aKeys) {
-				return aKeys.reduce(copyTo.bind(mMap), {});
-			}
-
-			// filters the keys of the given map according to the given filter function
-			function filterKeys(mMap, fnFilter) {
-				return Object.keys(mMap).filter(fnFilter);
-			}
-
-			// tells whether the given alias does not have subtotals
-			function hasNoSubtotals(sAlias) {
-				return !oAggregation.aggregate[sAlias].subtotals;
-			}
-
-			// tells whether the given alias has subtotals
-			function hasSubtotals(sAlias) {
-				return oAggregation.aggregate[sAlias].subtotals;
-			}
-
-			// tells whether the given groupable property is not a group level
-			function isNotGroupLevel(sGroupable) {
-				return oAggregation.groupLevels.indexOf(sGroupable) < 0;
-			}
-
-			aGroupLevels = oAggregation.groupLevels.slice(iLevel - 1, iLevel);
-			oFilteredAggregation = {
-				aggregate : aGroupLevels.length
-					? filterMap(oAggregation.aggregate,
-						filterKeys(oAggregation.aggregate, hasSubtotals))
-					: oAggregation.aggregate,
-				groupLevels : aGroupLevels,
-				$groupBy : oAggregation.groupLevels.slice(0, iLevel)
-			};
-			aLeafGroups = filterKeys(oAggregation.group, isNotGroupLevel).sort();
-
-			if (aGroupLevels.length) {
-				oFilteredAggregation.group = {};
-				oFilteredAggregation.$missing
-					= oAggregation.groupLevels.slice(iLevel).concat(aLeafGroups)
-				.concat(Object.keys(oAggregation.aggregate).filter(hasNoSubtotals));
-			} else { // leaf
-				oFilteredAggregation.group = filterMap(oAggregation.group, aLeafGroups);
-				oFilteredAggregation.$groupBy = oFilteredAggregation.$groupBy.concat(aLeafGroups);
-				oFilteredAggregation.$missing = [];
-			}
-
-			return oFilteredAggregation;
-		},
-
-		/**
 		 * Returns the "$orderby" system query option filtered in such a way that only aggregatable
 		 * or groupable properties contained in the given aggregation information are used.
 		 *
@@ -466,20 +402,27 @@ sap.ui.define([
 		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 		 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>,
 		 *   <code>group</code>, <code>groupLevels</code>
+		 * @param {number} iLevel
+		 *   The current level
 		 * @returns {string}
 		 *   The filtered "$orderby" system query option
 		 *
 		 * @private
 		 */
-		filterOrderby : function (sOrderby, oAggregation) {
+		filterOrderby : function (sOrderby, oAggregation, iLevel) {
+			var bIsLeafLevel = iLevel > oAggregation.groupLevels.length;
+
 			if (sOrderby) {
 				return sOrderby.split(rComma).filter(function (sOrderbyItem) {
 					var sName;
 
 					if (rODataIdentifier.test(sOrderbyItem)) {
 						sName = sOrderbyItem.split(rRws)[0]; // drop optional asc/desc
-						return sName in oAggregation.aggregate || sName in oAggregation.group
-							|| oAggregation.groupLevels.indexOf(sName) >= 0;
+						return sName in oAggregation.aggregate
+								&& (bIsLeafLevel || oAggregation.aggregate[sName].subtotals)
+							|| bIsLeafLevel && sName in oAggregation.group
+								&& oAggregation.groupLevels.indexOf(sName) < 0
+							|| !bIsLeafLevel && oAggregation.groupLevels[iLevel - 1] === sName;
 					}
 					return true;
 				}).join(",");
@@ -569,6 +512,34 @@ sap.ui.define([
 					|| Object.keys(oAggregation.group).some(fnAffects)
 					|| oAggregation.groupLevels.some(fnAffects)
 					|| hasAffectedFilter(sSideEffectPath, aFilters);
+			});
+		},
+
+		/**
+		 * Sets the "@$ui5.node.*" annotations for the given element as indicated and adds
+		 * <code>null</code> values for all missing properties.
+		 *
+		 * @param {object} oElement
+		 *   Any node or leaf element
+		 * @param {boolean} bIsExpanded
+		 *   The new value of "@$ui5.node.isExpanded"
+		 * @param {boolean} bIsTotal
+		 *   The new value of "@$ui5.node.isTotal"
+		 * @param {number} iLevel
+		 *   The new value of "@$ui5.node.level"
+		 * @param {string[]} aAllProperties
+		 *   A list of all properties that might be missing in the given element and thus have to be
+		 *   nulled to avoid drill-down errors
+		 */
+		setAnnotations : function (oElement, bIsExpanded, bIsTotal, iLevel, aAllProperties) {
+			oElement["@$ui5.node.isExpanded"] = bIsExpanded;
+			oElement["@$ui5.node.isTotal"] = bIsTotal;
+			oElement["@$ui5.node.level"] = iLevel;
+			// avoid "Failed to drill-down" for missing properties
+			aAllProperties.forEach(function (sProperty) {
+				if (!(sProperty in oElement)) {
+					oElement[sProperty] = null;
+				}
 			});
 		},
 

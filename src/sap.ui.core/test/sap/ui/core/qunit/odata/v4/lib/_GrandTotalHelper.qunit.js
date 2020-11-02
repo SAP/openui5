@@ -21,7 +21,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getResourcePathWithQuery", function (assert) {
-		var oAggregation = {},
+		var oAggregation = {
+				aggregate : {},
+				group : {},
+				groupLevels : []
+			},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			bCount = "/*false,true*/", // dummy value suitable for deepEqual()
 			oFirstLevelCache = {
@@ -83,12 +87,15 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
 				aggregate : {
+					NoTotals : {},
 					SalesAmountSum : {
 						grandTotal : true,
 						name : "SalesAmount",
 						"with" : "sap.unit_sum"
 					},
-					SalesNumber : {}
+					SalesNumber : {
+						grandTotal : true
+					}
 				},
 				group : {
 					Country : {},
@@ -98,19 +105,19 @@ sap.ui.define([
 				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 			},
 			oCountRow = {
-				"UI5__count" : "26",
+				UI5__count : "26",
 				"UI5__count@odata.type" : "#Decimal"
 			},
 			oDataRow = {},
-			oExpected = {},
 			oFirstLevelCache = {
 				handleResponse : sinon.stub()
 			},
 			oGrandTotalRow = {
 				"@odata.id" : null,
-				"UI5grand__SalesAmountSum" : 351,
-				"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR",
-				"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
+				UI5grand__SalesAmountSum : "351",
+				"UI5grand__SalesAmountSum@odata.type" : "#Decimal",
+				UI5grand__SalesNumber : 0,
+				"UI5grand__SalesNumber@odata.type" : "#Decimal"
 			},
 			fnHandleResponse = oFirstLevelCache.handleResponse,
 			oResult = bCount
@@ -120,20 +127,10 @@ sap.ui.define([
 			iStart = 0,
 			iEnd = 10;
 
-		Object.assign(oExpected, oGrandTotalRow, {
-			"@$ui5.node.isExpanded" : true,
-			"@$ui5.node.isTotal" : true,
-			"@$ui5.node.level" : 0,
-			Country : null, // avoid "Failed to drill-down"
-			Region : null, // avoid "Failed to drill-down"
-			SalesNumber : null, // avoid "Failed to drill-down"
-			SalesAmountSum : 351,
-			"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR",
-			"SalesAmountSum@odata.type" : "#Decimal",
-			Segment : null // avoid "Failed to drill-down"
-		});
-		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation, {},
-			Object.keys(oAggregation.group));
+		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation);
+		this.mock(_AggregationHelper).expects("setAnnotations")
+			.withExactArgs(oGrandTotalRow, true, true, 0,
+				["NoTotals", "SalesAmountSum", "SalesNumber", "Country", "Region", "Segment"]);
 
 		// code under test
 		oFirstLevelCache.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);
@@ -153,7 +150,13 @@ sap.ui.define([
 			assert.notOk("@odata.count" in oResult, "@odata.count");
 		}
 		assert.strictEqual(oResult.value.length, 2, "data still includes grand total row");
-		assert.deepEqual(oResult.value[0], oExpected);
+		assert.deepEqual(oResult.value[0], {
+			"@odata.id" : null,
+			SalesAmountSum : "351",
+			"SalesAmountSum@odata.type" : "#Decimal",
+			SalesNumber : 0,
+			"SalesNumber@odata.type": "#Decimal"
+		});
 		assert.strictEqual(oResult.value[1], oDataRow);
 	});
 });
@@ -181,7 +184,7 @@ sap.ui.define([
 			oResult = { /*GET response*/
 				value : [
 					bCount
-						? {"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"}
+						? {UI5__count : "26", "UI5__count@odata.type" : "#Decimal"}
 						: {Country : "Country", Region : "Region", Segment : "Segment"}
 				]
 			},
@@ -190,6 +193,7 @@ sap.ui.define([
 			iEnd = 10;
 
 		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation);
+		this.mock(_AggregationHelper).expects("setAnnotations").never();
 
 		// code under test
 		oFirstLevelCache.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);

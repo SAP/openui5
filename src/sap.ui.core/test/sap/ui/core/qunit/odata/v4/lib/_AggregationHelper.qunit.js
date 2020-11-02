@@ -46,21 +46,48 @@ sap.ui.define([
 	}, {
 		oAggregation : {
 			aggregate : {
-				Amount : {}
+				Amount : {subtotals : true}
 			},
-			// group is optional
+			group : {
+				"n/a" : {}
+			},
 			groupLevels : ["TransactionCurrency", "Region"]
 		},
-		sApply : "groupby((TransactionCurrency,Region),aggregate(Amount))"
+		iLevel : 1,
+		sApply : "groupby((TransactionCurrency),aggregate(Amount))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {subtotals : true}
+			},
+			group : {
+				"n/a" : {}
+			},
+			groupLevels : ["TransactionCurrency", "Region"]
+		},
+		mQueryOptions : {
+			$$filterBeforeAggregate : "TransactionCurrency eq 'EUR'"
+		},
+		iLevel : 2,
+		sApply : "filter(TransactionCurrency eq 'EUR')/groupby((Region),aggregate(Amount))"
 	}, {
 		oAggregation : {
 			aggregate : {
 				Amount : {}
 			},
-			// group is optional
-			groupLevels : ["TransactionCurrency", "Region", "Country"]
+			group : {
+				C : {}, // intentionally out of order to test sorting
+				A : {},
+				B : {}
+			},
+			groupLevels : ["TransactionCurrency", "Region"]
 		},
-		sApply : "groupby((TransactionCurrency,Region,Country),aggregate(Amount))"
+		mQueryOptions : {
+			$$filterBeforeAggregate : "TransactionCurrency eq 'EUR' and Region eq 'UK'"
+		},
+		iLevel : 3, // leaf level
+		sApply : "filter(TransactionCurrency eq 'EUR' and Region eq 'UK')"
+			+ "/groupby((A,B,C),aggregate(Amount))"
 	}, {
 		oAggregation : {
 			aggregate : { // Note: intentionally not sorted
@@ -98,20 +125,6 @@ sap.ui.define([
 	}, {
 		oAggregation : {
 			aggregate : {
-				GrossAmountInTransactionCurrency : {subtotals : true}
-			},
-			group : {
-				BillToParty : {}
-				// TransactionCurrency : {} - optional
-			},
-			// some use case where unit appears as "standalone" dimension
-			groupLevels : ["TransactionCurrency"]
-		},
-		sApply : "groupby((TransactionCurrency,BillToParty)"
-			+ ",aggregate(GrossAmountInTransactionCurrency))"
-	}, {
-		oAggregation : {
-			aggregate : {
 				SalesNumber : {grandTotal : true, subtotals : true} // no unit involved here!
 			},
 			group : {
@@ -119,7 +132,7 @@ sap.ui.define([
 			}
 		},
 		mQueryOptions : {
-			$skip : 0, // special case,
+			$skip : 0, // special case
 			$top : Infinity // special case
 		},
 		sApply : "concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber)))",
@@ -197,6 +210,27 @@ sap.ui.define([
 	}, {
 		oAggregation : {
 			aggregate : {
+				SalesAmount : {grandTotal : true},
+				SalesNumber : {subtotals : true} // no unit involved here!
+			},
+			// group is optional
+			groupLevels : ["Region"]
+		},
+		mQueryOptions : {
+			$count : true,
+			$filter : "SalesNumber ge 100",
+			$orderby : "Region desc",
+			$skip : 0, // special case
+			$top : 10
+		},
+		sApply : "concat(aggregate(SalesAmount),groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
+			+ "/concat(aggregate($count as UI5__count),top(9)))",
+		sFollowUpApply : "concat(aggregate(SalesAmount),groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/top(9))"
+	}, {
+		oAggregation : {
+			aggregate : {
 				Amount : {max : true}
 			},
 			group : {
@@ -212,7 +246,7 @@ sap.ui.define([
 			+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)",
 		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))",
 		mExpectedAlias2MeasureAndMethod : {
-			"UI5max__Amount" : {measure : "Amount", method : "max"}
+			UI5max__Amount : {measure : "Amount", method : "max"}
 		}
 	}, {
 		oAggregation : {
@@ -237,8 +271,8 @@ sap.ui.define([
 		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))"
 			+ "/filter(Amount ge 100)/orderby(BillToParty desc)/top(42)",
 		mExpectedAlias2MeasureAndMethod : {
-			"UI5max__Amount" : {measure : "Amount", method : "max"},
-			"UI5min__Amount" : {measure : "Amount", method : "min"}
+			UI5max__Amount : {measure : "Amount", method : "max"},
+			UI5min__Amount : {measure : "Amount", method : "min"}
 		}
 	}, {
 		oAggregation : {
@@ -263,8 +297,8 @@ sap.ui.define([
 		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))"
 			+ "/filter(Amount ge 100)/orderby(BillToParty desc)/skip(42)/top(99)",
 		mExpectedAlias2MeasureAndMethod : {
-			"UI5max__Amount" : {measure : "Amount", method : "max"},
-			"UI5min__Amount" : {measure : "Amount", method : "min"}
+			UI5max__Amount : {measure : "Amount", method : "max"},
+			UI5min__Amount : {measure : "Amount", method : "min"}
 		}
 	}, {
 		oAggregation : {
@@ -283,7 +317,7 @@ sap.ui.define([
 			+ "/concat(aggregate(Amount with max as UI5max__Amount),top(0))",
 		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))/top(0)", // Note: not useful
 		mExpectedAlias2MeasureAndMethod : {
-			"UI5max__Amount" : {measure : "Amount", method : "max"}
+			UI5max__Amount : {measure : "Amount", method : "max"}
 		}
 	}, {
 		oAggregation : {
@@ -307,9 +341,9 @@ sap.ui.define([
 			+ "/concat(aggregate(Amount1Avg with min as UI5min__Amount1Avg,"
 			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
 		mExpectedAlias2MeasureAndMethod : {
-			"UI5min__Amount1Avg" : {measure : "Amount1Avg", method : "min"},
-			"UI5min__Amount2" : {measure : "Amount2", method : "min"},
-			"UI5max__Amount2" : {measure : "Amount2", method : "max"}
+			UI5min__Amount1Avg : {measure : "Amount1Avg", method : "min"},
+			UI5min__Amount2 : {measure : "Amount2", method : "min"},
+			UI5max__Amount2 : {measure : "Amount2", method : "max"}
 		}
 	}, {
 		oAggregation : {
@@ -329,9 +363,9 @@ sap.ui.define([
 			+ "/concat(aggregate(Amount1Avg with min as UI5min__Amount1Avg,"
 			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
 		mExpectedAlias2MeasureAndMethod : {
-			"UI5min__Amount1Avg" : {measure : "Amount1Avg", method : "min"},
-			"UI5min__Amount2" : {measure : "Amount2", method : "min"},
-			"UI5max__Amount2" : {measure : "Amount2", method : "max"}
+			UI5min__Amount1Avg : {measure : "Amount1Avg", method : "min"},
+			UI5min__Amount2 : {measure : "Amount2", method : "min"},
+			UI5max__Amount2 : {measure : "Amount2", method : "max"}
 		}
 	}, {
 		oAggregation : {
@@ -390,6 +424,40 @@ sap.ui.define([
 
 			assert.strictEqual(JSON.stringify(oFixture.mQueryOptions), sQueryOptionsJSON,
 				"original mQueryOptions unchanged");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply: normalizations", function (assert) {
+		var oAggregation = {};
+
+		// code under test
+		_AggregationHelper.buildApply(oAggregation);
+
+		assert.deepEqual(oAggregation, {
+			aggregate : {},
+			group : {},
+			groupLevels : []
+		});
+
+		oAggregation = {
+			group : {
+				AlreadyThere : {}
+			},
+			groupLevels : ["foo", "AlreadyThere", "bar"]
+		};
+
+		// code under test
+		_AggregationHelper.buildApply(oAggregation);
+
+		assert.deepEqual(oAggregation, {
+			aggregate : {},
+			group : {
+				AlreadyThere : {},
+				bar : {},
+				foo : {}
+			},
+			groupLevels : ["foo", "AlreadyThere", "bar"] // no sorting here!
 		});
 	});
 
@@ -665,93 +733,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filterAggregation - optional group entry", function (assert) {
-		var oAggregation = {
-			aggregate : {
-				MeasureWithoutTotal : {},
-				MeasureWithTotal : {subtotals : true}
-			},
-			group : {
-				// GroupedDimension : {},
-				UngroupedDimension : {}
-			},
-			groupLevels : ["GroupedDimension"]
-		};
-
-		assert.deepEqual(_AggregationHelper.filterAggregation(oAggregation, 1), {
-			aggregate : {
-				MeasureWithTotal : {subtotals : true}
-			},
-			group : {},
-			groupLevels : ["GroupedDimension"],
-			$groupBy : ["GroupedDimension"],
-			$missing : ["UngroupedDimension", "MeasureWithoutTotal"]
-		});
-	});
-
-	//*********************************************************************************************
-	[{
-		iLevel : 1,
-		oResult : {
-			aggregate : {
-				MeasureWithTotal : {subtotals : true}
-			},
-			group : {},
-			groupLevels : ["GroupedDimension1"],
-			$groupBy : ["GroupedDimension1"],
-			$missing : ["GroupedDimension2", "UngroupedDimension1", "UngroupedDimension2",
-				"MeasureWithoutTotal"]
-		}
-	}, {
-		iLevel : 2,
-		oResult : {
-			aggregate : {
-				MeasureWithTotal : {subtotals : true}
-			},
-			group : {},
-			groupLevels : ["GroupedDimension2"],
-			$groupBy : ["GroupedDimension1", "GroupedDimension2"],
-			$missing : ["UngroupedDimension1", "UngroupedDimension2", "MeasureWithoutTotal"]
-		}
-	}, {
-		iLevel : 3,
-		oResult : {
-			aggregate : {
-				MeasureWithoutTotal : {},
-				MeasureWithTotal : {subtotals : true}
-			},
-			group : {
-				UngroupedDimension1 : {},
-				UngroupedDimension2 : {}
-			},
-			groupLevels : [],
-			$groupBy : ["GroupedDimension1", "GroupedDimension2", "UngroupedDimension1",
-				"UngroupedDimension2"],
-			$missing : []
-		}
-	}].forEach(function (oFixture) {
-		QUnit.test("filterAggregation: level " + oFixture.iLevel, function (assert) {
-			var oAggregation = {
-				aggregate : {
-					MeasureWithoutTotal : {},
-					MeasureWithTotal : {subtotals : true}
-				},
-				group : { // intentionally in this order to test sorting
-					UngroupedDimension2 : {},
-					UngroupedDimension1 : {},
-					GroupedDimension1 : {}
-				},
-				groupLevels : ["GroupedDimension1", "GroupedDimension2"]
-			};
-
-			assert.deepEqual(
-				_AggregationHelper.filterAggregation(oAggregation, oFixture.iLevel),
-				oFixture.oResult
-			);
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("filterOrderby", function (assert) {
 		var oAggregation = {
 				aggregate : {
@@ -763,38 +744,56 @@ sap.ui.define([
 				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 			},
 			oAggregationWithLevels = {
-				aggregate : {},
-				group : {},
-				groupLevels : ["Dimension"]
-			};
+				aggregate : {
+					SalesAmount : {subtotals : true},
+					SalesNumber : {}
+				},
+				group : { // Note: added by _AggregationHelper.buildApply before
+					Country : {},
+					Region : {},
+					Segment : {}
+				},
+				groupLevels : ["Country", "Region"]
+			},
+			sOrderby = "SalesAmount desc,SalesNumber,Country desc,Region,Segment asc";
 
 		// code under test
 		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Dimension %20desc%2COtherDimension asc", oAggregation),
+			_AggregationHelper.filterOrderby("Dimension %20desc%2CFoo asc", oAggregation, 1),
 			"Dimension %20desc");
 
 		// code under test
 		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Dimension\tdesc,OtherDimension asc", oAggregation),
+			_AggregationHelper.filterOrderby("Dimension\tdesc,Foo asc", oAggregation, 1),
 			"Dimension\tdesc");
 
 		// code under test
 		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Dimension desc", oAggregationWithLevels),
-			"Dimension desc");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Measure desc%2cDimension", oAggregation),
+			_AggregationHelper.filterOrderby("Measure desc%2cDimension", oAggregation, 1),
 			"Measure desc,Dimension");
 
 		// code under test
-		assert.strictEqual(_AggregationHelper.filterOrderby(undefined, {}), undefined);
+		assert.strictEqual(_AggregationHelper.filterOrderby(undefined, oAggregation, 1), undefined);
 
 		// code under test
 		assert.strictEqual(
-			_AggregationHelper.filterOrderby("NavigationProperty/$count", []),
+			_AggregationHelper.filterOrderby("NavigationProperty/$count", oAggregation, 1),
 			"NavigationProperty/$count");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby(sOrderby, oAggregationWithLevels, 1),
+			"SalesAmount desc,Country desc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby(sOrderby, oAggregationWithLevels, 2),
+			"SalesAmount desc,Region");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby(sOrderby, oAggregationWithLevels, 3),
+			"SalesAmount desc,SalesNumber,Segment asc");
 	});
 	//TODO Also support orderbyItems that start with a type cast?
 	// See "11.2.5.2 System Query Option $orderby":
@@ -814,4 +813,26 @@ sap.ui.define([
 	// propertyPathExpr : /-separated path of odataIdentifier or qualified names;
 	//   otherwise not supported (e.g. $count)
 	// complexProperty : probably not supported by current service implementations
+
+	//*********************************************************************************************
+	QUnit.test("setAnnotations", function (assert) {
+		var oElement = {
+				group : "~group~",
+				measure : "~measure~"
+			};
+
+		// code under test
+		_AggregationHelper.setAnnotations(oElement, "~bIsExpanded~", "~bIsTotal~", "~iLevel~",
+			["foo", "bar", "group", "measure"]);
+
+		assert.deepEqual(oElement, {
+			"@$ui5.node.isExpanded" : "~bIsExpanded~",
+			"@$ui5.node.isTotal" : "~bIsTotal~",
+			"@$ui5.node.level" : "~iLevel~",
+			bar : null,
+			foo : null,
+			group : "~group~",
+			measure : "~measure~"
+		});
+	});
 });

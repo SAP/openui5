@@ -20,7 +20,8 @@ sap.ui.define([
 	 * @param {object} oAggregation
 	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>
+	 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
+	 *   {@link _AggregationHelper.buildApply}
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the aggregation cache's original query string
 	 * @param {number} iStart
@@ -49,11 +50,11 @@ sap.ui.define([
 	 * @param {object} oAggregation
 	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
-	 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
-	 * @param {string[]} aMissing
-	 *   A list of properties that are missing in the grand total row, so they have to be nulled to
-	 *   avoid drill-down errors
+	 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
+	 *   {@link _AggregationHelper.buildApply}
+	 * @param {string[]} aAllProperties
+	 *   A list of all properties that might be missing in the grand total row and thus have to be
+	 *   nulled to avoid drill-down errors
 	 * @param {function} fnHandleResponse
 	 *   The original <code>#handleResponse</code> of the first level cache
 	 * @param {number} iStart
@@ -65,7 +66,7 @@ sap.ui.define([
 	 *   {@link #fetchTypes})
 	 */
 	// @override sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
-	function handleGrandTotalResponse(oAggregation, aMissing, fnHandleResponse, iStart, iEnd,
+	function handleGrandTotalResponse(oAggregation, aAllProperties, fnHandleResponse, iStart, iEnd,
 			oResult, mTypeForMetaPath) {
 		var oGrandTotalElement = oResult.value[0],
 			that = this;
@@ -81,21 +82,13 @@ sap.ui.define([
 		} else if (oResult.value.length > 1 && "UI5__count" in oResult.value[1]) {
 			handleCount(1);
 		}
-		if (iStart === 0) { // grand total row: rename measures, add empty dimensions
-			oGrandTotalElement["@$ui5.node.isExpanded"] = true;
-			oGrandTotalElement["@$ui5.node.isTotal"] = true;
-			oGrandTotalElement["@$ui5.node.level"] = 0;
+		if (iStart === 0) { // grand total row: rename measures, add null values, annotate
+			_AggregationHelper.setAnnotations(oGrandTotalElement, true, true, 0, aAllProperties);
 			Object.keys(oGrandTotalElement).forEach(function (sKey) {
 				if (sKey.startsWith("UI5grand__")) {
 					oGrandTotalElement[sKey.slice(10)] = oGrandTotalElement[sKey];
+					delete oGrandTotalElement[sKey];
 				}
-			});
-			// avoid "Failed to drill-down" for missing properties
-			Object.keys(oAggregation.aggregate).forEach(function (sAggregate) {
-				oGrandTotalElement[sAggregate] = oGrandTotalElement[sAggregate] || null;
-			});
-			aMissing.forEach(function (sProperty) {
-				oGrandTotalElement[sProperty] = null;
 			});
 		}
 
@@ -112,19 +105,19 @@ sap.ui.define([
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see also
 		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-		 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
-		 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
+		 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
+	 	 *   {@link _AggregationHelper.buildApply}
 		 * @param {object} mQueryOptions
 		 *   A map of key-value pairs representing the aggregation cache's original query string
-		 * @param {string[]} aMissing
-		 *   A list of properties that are missing in the grand total row, so they have to be nulled
-		 *   to avoid drill-down errors
 		 */
-		enhanceCacheWithGrandTotal : function (oCache, oAggregation, mQueryOptions, aMissing) {
+		enhanceCacheWithGrandTotal : function (oCache, oAggregation, mQueryOptions) {
+			var aAllProperties
+				= Object.keys(oAggregation.aggregate).concat(Object.keys(oAggregation.group));
+
 			oCache.getResourcePathWithQuery
 				= getResourcePathWithQuery.bind(oCache, oAggregation, mQueryOptions);
-			oCache.handleResponse = handleGrandTotalResponse.bind(oCache, oAggregation, aMissing,
-				oCache.handleResponse);
+			oCache.handleResponse = handleGrandTotalResponse.bind(oCache, oAggregation,
+				aAllProperties, oCache.handleResponse);
 		}
 	};
 }, /* bExport= */false);
