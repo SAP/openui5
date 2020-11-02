@@ -1478,6 +1478,7 @@ sap.ui.define([
 
 		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
 		this._toggleExpandVisualIndicator(bExpandVisualIndicatorVisible);
+		this._updateTitleVisualState();
 	};
 
 	/**
@@ -2221,7 +2222,7 @@ sap.ui.define([
 				this._oHeaderObserver = new ManagedObjectObserver(this._updateToggleHeaderVisualIndicators.bind(this));
 			}
 
-			this._oHeaderObserver.observe(oHeader, {aggregations: ["content"]});
+			this._oHeaderObserver.observe(oHeader, {aggregations: ["content"], properties: ["visible"]});
 
 			this._bAlreadyAttachedHeaderObserver = true;
 		}
