@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Component",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/write/_internal/extensionPoint/Registry",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	jQuery,
 	Component,
+	JsControlTreeModifier,
 	Processor,
 	Loader,
 	ExtensionPointRegistry,
@@ -111,6 +113,18 @@ sap.ui.define([
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oHBoxWithSingleEP.getId()).length, 1, "then after registration one item is registered by parent");
 			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName5, this.oXMLView), mExtensionPoint, "then after registration one item is registered by viewId");
 			assert.equal(oObserverObserveSpy.callCount, 1, "then after registration one observer is registered");
+		});
+
+		QUnit.test("given the extensionpoint in an aggregation with cardinality '0..1'", function(assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			var oObserverObserveSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
+			var oLabel1 = new Label("newLabel1");
+			sandbox.stub(JsControlTreeModifier, "getAggregation").returns(oLabel1);
+			var mExtensionPoint = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName5, this.oHBoxWithSingleEP, "items", 0);
+			assert.equal(oObserverObserveSpy.callCount, 1, "then after registration one observer is registered");
+			mExtensionPoint.targetControl.addItem(oLabel1);
+			assert.propEqual(mExtensionPoint.aggregation, ["newLabel1"], "and after adding an object the observer uses an array for the aggregation");
+			oLabel1.destroy();
 		});
 
 		QUnit.test("given a control containing two extension points in an aggregation", function(assert) {
