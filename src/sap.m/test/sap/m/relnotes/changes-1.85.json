@@ -14,6 +14,22 @@
         ]
       },
       {
+        "id": "89f3b27420f0433808d6c2d5776d45f3dd1c3210",
+        "type": "FIX",
+        "text": " Demo Kit: FlexibleColumnLayout ScrollToIndex sample fixed"
+      },
+      {
+        "id": "2d2c6eda523c01dc459f236d8e2bc23653ac4b12",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Prevent incorrect layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070292533"
+          }
+        ]
+      },
+      {
         "id": "32f37c94f12633820ddb241ad1210958cb98cf0f",
         "type": "FEATURE",
         "text": " sap.m.Tokenizer: Show label as dialog title on phone"
