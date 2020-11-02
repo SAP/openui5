@@ -827,7 +827,7 @@
 			]
 		});
 
-		new sap.m.App().addPage(new sap.m.Page("page",{
+		var oPage = new sap.m.Page("page",{
 			title: "sap.m.ComboBox",
 			content: [
 				new sap.ui.core.HTML("title_default",{ content: "<h3>Default</h3>" }),
@@ -938,7 +938,14 @@
 				oComboBoxGrouping,
 				new sap.ui.core.HTML({ content: "<hr>" })
 			]
-		}).addStyleClass("sapUiContentPadding")).placeAt("body");
+		}).addStyleClass("sapUiContentPadding");
+
+		var oApp = new sap.m.App("myApp", {
+			initialPage: "page"
+		});
+
+		oApp.addPage(oPage);
+		oApp.placeAt("body");
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
