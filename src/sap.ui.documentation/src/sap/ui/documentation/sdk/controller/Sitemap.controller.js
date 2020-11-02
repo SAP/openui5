@@ -101,7 +101,7 @@ sap.ui.define([
 			oFormattedNode = parsers[sType].formatNode(oNode);
 
 			if (oFormattedNode.hidden !== true) {
-				newNodes.push();
+				newNodes.push(oFormattedNode);
 			}
 		}
 
