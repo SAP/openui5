@@ -17,6 +17,7 @@ sap.ui.define([
 	var $contextmenu = null;
 	var sSelectedDomElement = {};
 	var mMenuItems = {};
+	var mStaticAreaData = {};
 
 	var ContextMenu = BaseObject.extend("sap.ui.testrecorder.interaction.ContextMenu", {});
 
@@ -60,6 +61,21 @@ sap.ui.define([
 			});
 		}
 
+		// when the context menu opens in app context, prevent the static area controls from auto-closing, so that we can inspect their inner content
+		var $staticArea = $(sap.ui.getCore().getStaticAreaRef());
+		$.map($staticArea.find(":visible"), function (staticAreaChild) {
+			var $staticAreaChild = $(staticAreaChild);
+			if ($staticAreaChild.control && $staticAreaChild.control()[0]) {
+				var oStaticAreaChild = $staticAreaChild.control()[0];
+				if (oStaticAreaChild.oPopup && oStaticAreaChild.oPopup.setAutoClose && !mStaticAreaData[oStaticAreaChild.getId()]) {
+					mStaticAreaData[oStaticAreaChild.getId()] = {
+						autoClose: oStaticAreaChild.oPopup.getAutoClose()
+					};
+					oStaticAreaChild.oPopup.setAutoClose(false);
+				}
+			}
+		});
+
 		var sViewportWidth = $(window).width();
 		var sViewportHeight = $(window).height();
 		var sMenuWidth = $contextmenu.width();
@@ -77,6 +93,13 @@ sap.ui.define([
 		if ($contextmenu) {
 			$contextmenu.hide();
 		}
+		Object.keys(mStaticAreaData).forEach(function (sId) {
+			// relies on the idea that the static area doesn't change while the context menu is open
+			var oPopup = sap.ui.getCore().byId(sId).oPopup;
+			oPopup.setAutoClose(mStaticAreaData[sId].autoClose);
+			oPopup._$().focus();
+		});
+		mStaticAreaData = {};
 	};
 
 	ContextMenu._show = function () {

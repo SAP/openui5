@@ -38,6 +38,12 @@ sap.ui.define([
 				id: "container-myComponent---main--stableId"
 			}
 		}
+	}, {
+		text: "DatePicker",
+		treeText: "DatePicker",
+		selector: {
+			id: "container-myComponent---main--DatePickerOne-RP-popover"
+		}
 	}];
 
 	QUnit.module("Control inspection -- select from app");
@@ -80,6 +86,13 @@ sap.ui.define([
 		When.onTheAppPage.iActOnControl(mItems[0].selector, "Enter Text");
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.OPA5, "Enter Text");
 		Then.onTheIFrameInspectPage.iShouldSeeItemOwnProperties(mItems[0].text);
+	});
+
+	opaTest("Should interact with sap.m.DatePicker", function (Given, When, Then) {
+		When.onTheAppPage.iOpenTheDatePicker();
+		When.onTheAppPage.iActOnControl(mItems[3].selector, "Highlight");
+		Then.onTheAppPage.iShouldSeeTheSelectedControl(mItems[3].selector); // control should still be open after action
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[3].text, Dialects.OPA5, "Highlight");
 	});
 
 	opaTest("Should interact with control in app - UIVERI5", function (Given, When, Then) {

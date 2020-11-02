@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/testrecorder/qunit/integration/pages/Common",
-	"sap/ui/test/actions/EnterText"
-], function(Opa5, jQuery, Common, EnterText) {
+	"sap/ui/test/actions/EnterText",
+	"sap/ui/test/actions/Press"
+], function(Opa5, jQuery, Common, EnterText, Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -44,6 +45,13 @@ sap.ui.define([
 						}),
 						errorMessage: "Cannot find control with selector " + JSON.stringify(mSelector)
 					}));
+				},
+				iOpenTheDatePicker: function () {
+					this.waitFor({
+						id: "container-myComponent---main--DatePickerOne-icon",
+						actions: new Press(),
+						errorMessage: "Cannot find the sap.m.DatePicker"
+					});
 				}
 			},
 			assertions: {
