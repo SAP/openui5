@@ -439,4 +439,45 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oResponsivePopover._oControl.getProperty('ariaRoleApplication'), true, 'Internal\'s popover ariaRoleApplication property is set to true');
 	});
+
+	QUnit.module("Title Alignment");
+
+	QUnit.test("setTitleAlignment test", function (assert) {
+
+		var oPopover = new ResponsivePopover({
+				title: "Header"
+			}),
+			oButton = new Button({text: "Test"}),
+			oCore = sap.ui.getCore(),
+			sAlignmentClass = "sapMBarTitleAlign",
+			setTitleAlignmentSpy = this.spy(oPopover, "setTitleAlignment"),
+			sInitialAlignment,
+			sAlignment;
+
+		oButton.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		oPopover.openBy(oButton);
+		oCore.applyChanges();
+		sInitialAlignment = oPopover.getTitleAlignment();
+
+		// initial titleAlignment test depending on theme
+		assert.ok(oPopover._oControl._getAnyHeader().hasStyleClass(sAlignmentClass + sInitialAlignment),
+					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
+
+		// check if all types of alignment lead to apply the proper CSS class
+		for (sAlignment in sap.m.TitleAlignment) {
+			oPopover.setTitleAlignment(sAlignment);
+			oCore.applyChanges();
+			assert.ok(oPopover._oControl._getAnyHeader().hasStyleClass(sAlignmentClass + sAlignment),
+						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
+		}
+
+		// check how many times setTitleAlignment method is called
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
+
+		// cleanup
+		oPopover.destroy();
+	});
+
 });

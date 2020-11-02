@@ -219,10 +219,10 @@ sap.ui.define([
 	 * Helper function that creates suggestion popup.
 	 */
 	SuggestionsPopover.prototype._createSuggestionPopup = function (mOptions) {
-		mOptions = mOptions || [];
 		var oPopover,
 			oInput = this._oInput;
 
+		mOptions = mOptions || [];
 		oPopover = this.createPopover(oInput, this._oPopupInput, mOptions);
 
 		this.setPopover(oPopover);
