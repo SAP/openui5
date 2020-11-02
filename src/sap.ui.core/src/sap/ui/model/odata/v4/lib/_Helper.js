@@ -21,11 +21,14 @@ sap.ui.define([
 		rEscapedOpenBracket = /%28/g,
 		rEscapedTick = /%27/g,
 		rHash = /#/g,
-		_Helper,
 		// matches the rest of a segment after '(' and any segment that consists only of a number
 		rNotMetaContext = /\([^/]*|\/-?\d+/g,
 		rPlus = /\+/g,
-		rSingleQuote = /'/g;
+		rSingleQuote = /'/g,
+		/**
+		 * @alias sap.ui.model.odata.v4.lib._Helper
+		 */
+		_Helper;
 
 	_Helper = {
 		/**

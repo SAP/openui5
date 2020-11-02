@@ -95,9 +95,10 @@ sap.ui.define([
 	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._Cache
+	 * @constructor
 	 * @private
 	 */
-	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+	function _Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			fnGetOriginalResourcePath, bSharedRequest) {
 		// the number of active usages of this cache (initially 1 because the first usage that
 		// creates the cache does not call #setActive)
@@ -144,7 +145,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback) {
+	_Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback) {
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
 			iIndex = rNumber.test(vDeleteProperty) ? Number(vDeleteProperty) : undefined,
@@ -155,7 +156,7 @@ sap.ui.define([
 		this.addPendingRequest();
 
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
-			var vCachePath = Cache.from$skip(vDeleteProperty, vCacheData),
+			var vCachePath = _Cache.from$skip(vDeleteProperty, vCacheData),
 				oEntity = vDeleteProperty
 					? vCacheData[vCachePath] || vCacheData.$byPredicate[vCachePath]
 					: vCacheData, // deleting at root level
@@ -198,7 +199,7 @@ sap.ui.define([
 							if (vDeleteProperty) {
 								// set to null and notify listeners
 								_Helper.updateExisting(that.mChangeListeners, sParentPath,
-									vCacheData, Cache.makeUpdateData([vDeleteProperty], null));
+									vCacheData, _Cache.makeUpdateData([vDeleteProperty], null));
 							} else { // deleting at root level
 								oEntity["$ui5.deleted"] = true;
 							}
@@ -221,7 +222,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.addPendingRequest = function () {
+	_Cache.prototype.addPendingRequest = function () {
 		var fnResolve;
 
 		if (!this.oPendingRequestsPromise) {
@@ -250,7 +251,7 @@ sap.ui.define([
 	 * @private
 	 */
 	// Note: overridden by _AggregationCache.calculateKeyPredicate
-	Cache.prototype.calculateKeyPredicate = function (oInstance, mTypeForMetaPath, sMetaPath) {
+	_Cache.prototype.calculateKeyPredicate = function (oInstance, mTypeForMetaPath, sMetaPath) {
 		var sPredicate,
 			oType = mTypeForMetaPath[sMetaPath];
 
@@ -270,7 +271,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.checkSharedRequest = function () {
+	_Cache.prototype.checkSharedRequest = function () {
 		if (this.bSharedRequest) {
 			throw new Error(this + " is read-only");
 		}
@@ -305,7 +306,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
+	_Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
 			oEntityData, fnErrorCallback, fnSubmitCallback) {
 		var aCollection,
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
@@ -432,7 +433,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.deregisterChange = function (sPath, oListener) {
+	_Cache.prototype.deregisterChange = function (sPath, oListener) {
 		if (!this.bSharedRequest) {
 			_Helper.removeByPath(this.mChangeListeners, sPath, oListener);
 		}
@@ -458,7 +459,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.drillDown = function (oData, sPath, oGroupLock, bCreateOnDemand) {
+	_Cache.prototype.drillDown = function (oData, sPath, oGroupLock, bCreateOnDemand) {
 		var oDataPromise = SyncPromise.resolve(oData),
 			oEntity,
 			iEntityPathLength,
@@ -570,7 +571,7 @@ sap.ui.define([
 							&& vValue.$byPredicate[aMatches[2]]; // search the key predicate
 					}
 				} else {
-					vIndex = Cache.from$skip(sSegment, vValue);
+					vIndex = _Cache.from$skip(sSegment, vValue);
 					if (bCreateOnDemand && vIndex === sSegment
 							&& (vValue[sSegment] === undefined || vValue[sSegment] === null)) {
 						// create on demand for (navigation) properties only, not for indices
@@ -613,7 +614,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.fetchLateProperty = function (oGroupLock, oResource, sResourcePath,
+	_Cache.prototype.fetchLateProperty = function (oGroupLock, oResource, sResourcePath,
 			sRequestedPropertyPath, sMissingPropertyPath) {
 		var sFullResourceMetaPath,
 			sFullResourcePath,
@@ -735,7 +736,7 @@ sap.ui.define([
 	 * @returns {SyncPromise<object>}
 	 *   A promise resolving with the type
 	 */
-	Cache.prototype.fetchType = function (mTypeForMetaPath, sMetaPath) {
+	_Cache.prototype.fetchType = function (mTypeForMetaPath, sMetaPath) {
 		var that = this;
 
 		return this.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
@@ -779,7 +780,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.fetchTypes = function () {
+	_Cache.prototype.fetchTypes = function () {
 		var aPromises, mTypeForMetaPath, that = this;
 
 		/*
@@ -823,7 +824,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.getDownloadUrl = function (sPath, mCustomQueryOptions) {
+	_Cache.prototype.getDownloadUrl = function (sPath, mCustomQueryOptions) {
 		var mQueryOptions = this.mQueryOptions;
 
 		if (sPath) {
@@ -845,7 +846,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.getLateQueryOptions = function () {
+	_Cache.prototype.getLateQueryOptions = function () {
 		return this.mLateQueryOptions;
 	};
 
@@ -858,7 +859,7 @@ sap.ui.define([
 	 * @private
 	 * @see sap.ui.model.odata.v4.lib._AggregationCache#getMeasureRangePromise
 	 */
-	Cache.prototype.getMeasureRangePromise = function () {
+	_Cache.prototype.getMeasureRangePromise = function () {
 		return undefined;
 	};
 
@@ -872,7 +873,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.getValue = function (sPath) {
+	_Cache.prototype.getValue = function (sPath) {
 		throw new Error("Unsupported operation");
 	};
 
@@ -887,7 +888,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.getOriginalResourcePath = function (oEntity) {
+	_Cache.prototype.getOriginalResourcePath = function (oEntity) {
 		return this.fnGetOriginalResourcePath && this.fnGetOriginalResourcePath(oEntity)
 			|| this.sResourcePath;
 	};
@@ -899,7 +900,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.getResourcePath = function () {
+	_Cache.prototype.getResourcePath = function () {
 		return this.sResourcePath;
 	};
 
@@ -913,7 +914,7 @@ sap.ui.define([
 	 * @see #deregisterChange
 	 * @see #registerChange
 	 */
-	Cache.prototype.hasChangeListeners = function () {
+	_Cache.prototype.hasChangeListeners = function () {
 		return !isEmptyObject(this.mChangeListeners);
 	};
 
@@ -927,7 +928,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.hasPendingChangesForPath = function (sPath) {
+	_Cache.prototype.hasPendingChangesForPath = function (sPath) {
 		return Object.keys(this.mPatchRequests).some(function (sRequestPath) {
 			return isSubPath(sRequestPath, sPath);
 		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
@@ -942,7 +943,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.hasSentRequest = function () {
+	_Cache.prototype.hasSentRequest = function () {
 		return this.bSentRequest;
 	};
 
@@ -957,7 +958,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.patch = function (sPath, oData) {
+	_Cache.prototype.patch = function (sPath, oData) {
 		var that = this;
 
 		this.checkSharedRequest();
@@ -991,7 +992,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.refreshSingle = function (oGroupLock, sPath, iIndex, sPredicate, bKeepAlive,
+	_Cache.prototype.refreshSingle = function (oGroupLock, sPath, iIndex, sPredicate, bKeepAlive,
 			fnDataRequested) {
 		var that = this;
 
@@ -1067,7 +1068,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.refreshSingleWithRemove = function (oGroupLock, sPath, iIndex, sPredicate,
+	_Cache.prototype.refreshSingleWithRemove = function (oGroupLock, sPath, iIndex, sPredicate,
 			bKeepAlive, fnDataRequested, fnOnRemove) {
 		var that = this;
 
@@ -1180,7 +1181,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.registerChange = function (sPath, oListener) {
+	_Cache.prototype.registerChange = function (sPath, oListener) {
 		if (!this.bSharedRequest) {
 			_Helper.addByPath(this.mChangeListeners, sPath, oListener);
 		}
@@ -1206,14 +1207,14 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
+	_Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
 		var oElement,
 			sTransientPredicate;
 
 		oElement = aElements.$byPredicate[sPredicate];
 		if (iIndex !== undefined) {
 			// the element might have moved due to parallel insert/delete
-			iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
+			iIndex = _Cache.getElementIndex(aElements, sPredicate, iIndex);
 			aElements.splice(iIndex, 1);
 			addToCount(this.mChangeListeners, sPath, aElements, -1);
 		}
@@ -1239,7 +1240,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.removePendingRequest = function () {
+	_Cache.prototype.removePendingRequest = function () {
 		if (this.oPendingRequestsPromise) {
 			this.oPendingRequestsPromise.$count -= 1;
 			if (!this.oPendingRequestsPromise.$count) {
@@ -1271,7 +1272,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.replaceElement = function (aElements, iIndex, sPredicate, oElement,
+	_Cache.prototype.replaceElement = function (aElements, iIndex, sPredicate, oElement,
 			mTypeForMetaPath, sPath) {
 		var oOldElement, sTransientPredicate;
 
@@ -1279,7 +1280,7 @@ sap.ui.define([
 			aElements.$byPredicate[sPredicate] = oElement;
 		} else {
 			// the element might have moved due to parallel insert/delete
-			iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
+			iIndex = _Cache.getElementIndex(aElements, sPredicate, iIndex);
 			oOldElement = aElements[iIndex];
 			// _Helper.updateExisting cannot be used because navigation properties cannot be handled
 			aElements[iIndex] = aElements.$byPredicate[sPredicate] = oElement;
@@ -1305,7 +1306,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.requestCount = function (oGroupLock) {
+	_Cache.prototype.requestCount = function (oGroupLock) {
 		var sExclusiveFilter, mQueryOptions, sReadUrl, that = this;
 
 		if (this.mQueryOptions && this.mQueryOptions.$count) {
@@ -1344,7 +1345,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.resetChangesForPath = function (sPath) {
+	_Cache.prototype.resetChangesForPath = function (sPath) {
 		var that = this;
 
 		Object.keys(this.mPatchRequests).forEach(function (sRequestPath) {
@@ -1383,7 +1384,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.setActive = function (bActive) {
+	_Cache.prototype.setActive = function (bActive) {
 		if (bActive) {
 			this.iActiveUsages += 1;
 			this.iInactiveSince = Infinity;
@@ -1405,7 +1406,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.setLateQueryOptions = function (mQueryOptions) {
+	_Cache.prototype.setLateQueryOptions = function (mQueryOptions) {
 		if (mQueryOptions) {
 			this.mLateQueryOptions = {
 				// ensure that $select precedes $expand in the resulting query
@@ -1434,14 +1435,14 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.setProperty = function (sPropertyPath, vValue, sEntityPath) {
+	_Cache.prototype.setProperty = function (sPropertyPath, vValue, sEntityPath) {
 		var that = this;
 
 		this.checkSharedRequest();
 		return this.fetchValue(_GroupLock.$cached, sEntityPath, null, null, true)
 			.then(function (oEntity) {
 				_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity,
-					Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
+					_Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
 			});
 	};
 
@@ -1455,7 +1456,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.setQueryOptions = function (mQueryOptions) {
+	_Cache.prototype.setQueryOptions = function (mQueryOptions) {
 		this.checkSharedRequest();
 		if (this.bSentRequest) {
 			throw new Error("Cannot set query options: Cache has already sent a request");
@@ -1478,7 +1479,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.setResourcePath = function (sResourcePath) {
+	_Cache.prototype.setResourcePath = function (sResourcePath) {
 		this.checkSharedRequest();
 
 		this.sResourcePath = sResourcePath;
@@ -1499,7 +1500,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.toString = function () {
+	_Cache.prototype.toString = function () {
 		return this.oRequestor.getServiceUrl() + this.sResourcePath + this.sQueryString;
 	};
 
@@ -1535,7 +1536,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
+	_Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
 			sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent) {
 		var oPromise,
 			aPropertyPath = sPropertyPath.split("/"),
@@ -1563,7 +1564,7 @@ sap.ui.define([
 				sParkedGroup,
 				sTransientGroup,
 				sUnitOrCurrencyValue,
-				oUpdateData = Cache.makeUpdateData(aPropertyPath, vValue);
+				oUpdateData = _Cache.makeUpdateData(aPropertyPath, vValue);
 
 			/*
 			 * Synchronous callback to cancel the PATCH request so that it is really gone when
@@ -1573,7 +1574,7 @@ sap.ui.define([
 				_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				// write the previous value into the cache
 				_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity,
-					Cache.makeUpdateData(aPropertyPath, vOldValue));
+					_Cache.makeUpdateData(aPropertyPath, vOldValue));
 			}
 
 			function patch(oPatchGroupLock, bAtFront) {
@@ -1689,7 +1690,7 @@ sap.ui.define([
 				} else {
 					// some servers need unit and currency information
 					_Helper.merge(sTransientGroup ? oPostBody : oUpdateData,
-						Cache.makeUpdateData(aUnitOrCurrencyPath, sUnitOrCurrencyValue));
+						_Cache.makeUpdateData(aUnitOrCurrencyPath, sUnitOrCurrencyValue));
 				}
 			}
 			if (sTransientGroup) {
@@ -1731,7 +1732,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, sRootMetaPath, sRootPath,
+	_Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, sRootMetaPath, sRootPath,
 			bKeepTransientPath, iStart) {
 		var aCachePaths,
 			bHasMessages = false,
@@ -1910,10 +1911,11 @@ sap.ui.define([
 	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._CollectionCache
+	 * @constructor
 	 */
-	function CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+	function _CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest) {
-		Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, function () {
+		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, function () {
 				return sDeepResourcePath;
 			}, bSharedRequest);
 
@@ -1936,7 +1938,7 @@ sap.ui.define([
 	}
 
 	// make CollectionCache a Cache
-	CollectionCache.prototype = Object.create(Cache.prototype);
+	_CollectionCache.prototype = Object.create(_Cache.prototype);
 
 	/**
 	 * Adds the element to $byPredicate of the cache's element list.
@@ -1945,7 +1947,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	CollectionCache.prototype.addKeptElement = function (oElement) {
+	_CollectionCache.prototype.addKeptElement = function (oElement) {
 		this.aElements.$byPredicate[_Helper.getPrivateAnnotation(oElement, "predicate")] = oElement;
 	};
 
@@ -1957,7 +1959,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.adjustReadRequests = function (iIndex, iOffset) {
+	_CollectionCache.prototype.adjustReadRequests = function (iIndex, iOffset) {
 		this.aReadRequests.forEach(function (oReadRequest) {
 			if (oReadRequest.iStart >= iIndex) {
 				oReadRequest.iStart += iOffset;
@@ -1989,7 +1991,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	CollectionCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
+	_CollectionCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
 			oListener, bCreateOnDemand) {
 		var aElements,
 			sFirstSegment = sPath.split("/")[0],
@@ -2037,7 +2039,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.fill = function (oPromise, iStart, iEnd) {
+	_CollectionCache.prototype.fill = function (oPromise, iStart, iEnd) {
 		var i,
 			n = Math.max(this.aElements.length, 1024);
 
@@ -2063,7 +2065,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.getFilterExcludingCreated = function () {
+	_CollectionCache.prototype.getFilterExcludingCreated = function () {
 		var oElement, i, sKeyFilter, aKeyFilters = [], mTypeForMetaPath;
 
 		for (i = 0; i < this.aElements.$created; i += 1) {
@@ -2090,7 +2092,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.getQueryString = function () {
+	_CollectionCache.prototype.getQueryString = function () {
 		var sExclusiveFilter = this.getFilterExcludingCreated(),
 			mQueryOptions = Object.assign({}, this.mQueryOptions),
 			sFilterOptions = mQueryOptions.$filter,
@@ -2128,7 +2130,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.getReadRange = function (iStart, iLength, iPrefetchLength) {
+	_CollectionCache.prototype.getReadRange = function (iStart, iLength, iPrefetchLength) {
 		var aElements = this.aElements;
 
 		// Checks whether aElements contains at least one <code>undefined</code> entry within the
@@ -2173,7 +2175,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.getResourcePathWithQuery = function (iStart, iEnd) {
+	_CollectionCache.prototype.getResourcePathWithQuery = function (iStart, iEnd) {
 		var iCreated = this.aElements.$created,
 			sQueryString = this.getQueryString(),
 			sDelimiter = sQueryString ? "&" : "?",
@@ -2198,7 +2200,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.lib._Cache#getValue
 	 */
-	CollectionCache.prototype.getValue = function (sPath) {
+	_CollectionCache.prototype.getValue = function (sPath) {
 		var oSyncPromise = this.drillDown(this.aElements, sPath, _GroupLock.$cached);
 
 		if (oSyncPromise.isFulfilled()) {
@@ -2219,7 +2221,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
+	_CollectionCache.prototype.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
 		var iCount = -1,
 			sCount,
 			iCreated = this.aElements.$created,
@@ -2316,7 +2318,7 @@ sap.ui.define([
 	 * @public
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
+	_CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
 		var i, n,
 			aElementsRange,
@@ -2395,7 +2397,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.requestElements = function (iStart, iEnd, oGroupLock,
+	_CollectionCache.prototype.requestElements = function (iStart, iEnd, oGroupLock,
 			fnDataRequested) {
 		var oPromise,
 			oReadRequest = {
@@ -2455,7 +2457,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	CollectionCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
+	_CollectionCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
 			mNavigationPropertyPaths, iStart, iLength) {
 		var oElement,
 			aFilters = [],
@@ -2584,15 +2586,16 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._PropertyCache
+	 * @constructor
 	 */
-	function PropertyCache(oRequestor, sResourcePath, mQueryOptions) {
-		Cache.call(this, oRequestor, sResourcePath, mQueryOptions);
+	function _PropertyCache(oRequestor, sResourcePath, mQueryOptions) {
+		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions);
 
 		this.oPromise = null;
 	}
 
 	// make PropertyCache a Cache
-	PropertyCache.prototype = Object.create(Cache.prototype);
+	_PropertyCache.prototype = Object.create(_Cache.prototype);
 
 	/**
 	 * Not supported.
@@ -2602,7 +2605,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	PropertyCache.prototype._delete = function () {
+	_PropertyCache.prototype._delete = function () {
 		throw new Error("Unsupported");
 	};
 
@@ -2614,7 +2617,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	PropertyCache.prototype.create = function () {
+	_PropertyCache.prototype.create = function () {
 		throw new Error("Unsupported");
 	};
 
@@ -2643,7 +2646,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	PropertyCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener,
+	_PropertyCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener,
 			bCreateOnDemand) {
 		var that = this;
 
@@ -2675,7 +2678,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	PropertyCache.prototype.update = function () {
+	_PropertyCache.prototype.update = function () {
 		// Note: keep bSharedRequest in mind before implementing this method!
 		throw new Error("Unsupported");
 	};
@@ -2709,11 +2712,12 @@ sap.ui.define([
 	 *   Optional meta path in case it cannot be derived from the given resource path
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._SingleCache
+	 * @constructor
 	 * @private
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+	function _SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			bSharedRequest, fnGetOriginalResourcePath, bPost, sMetaPath) {
-		Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			fnGetOriginalResourcePath, bSharedRequest);
 
 		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
@@ -2723,7 +2727,7 @@ sap.ui.define([
 	}
 
 	// make SingleCache a Cache
-	SingleCache.prototype = Object.create(Cache.prototype);
+	_SingleCache.prototype = Object.create(_Cache.prototype);
 
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data. Calculates
@@ -2751,7 +2755,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener,
+	_SingleCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener,
 			bCreateOnDemand) {
 		var sResourcePath = this.sResourcePath + this.sQueryString,
 			that = this;
@@ -2785,7 +2789,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.lib._Cache#getValue
 	 */
-	SingleCache.prototype.getValue = function (sPath) {
+	_SingleCache.prototype.getValue = function (sPath) {
 		var oSyncPromise;
 
 		if (this.oPromise && this.oPromise.isFulfilled()) {
@@ -2816,7 +2820,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
+	_SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
 		var sGroupId,
 			sHttpMethod = "POST",
 			that = this;
@@ -2890,7 +2894,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
+	_SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
 			mNavigationPropertyPaths, sResourcePath) {
 		var mMergeableQueryOptions,
 			oOldValuePromise = this.oPromise,
@@ -2970,7 +2974,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+	_Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest) {
 		var iCount, aKeys, sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
 
@@ -3003,14 +3007,14 @@ sap.ui.define([
 				}
 
 				oSharedCollectionCache = mSharedCollectionCacheByPath[sPath]
-					= new CollectionCache(oRequestor, sResourcePath, mQueryOptions,
+					= new _CollectionCache(oRequestor, sResourcePath, mQueryOptions,
 						bSortExpandSelect, sDeepResourcePath, bSharedRequest);
 			}
 
 			return oSharedCollectionCache;
 		}
 
-		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+		return new _CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 				sDeepResourcePath);
 	};
 
@@ -3034,8 +3038,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.createProperty = function (oRequestor, sResourcePath, mQueryOptions) {
-		return new PropertyCache(oRequestor, sResourcePath, mQueryOptions);
+	_Cache.createProperty = function (oRequestor, sResourcePath, mQueryOptions) {
+		return new _PropertyCache(oRequestor, sResourcePath, mQueryOptions);
 	};
 
 	/**
@@ -3074,9 +3078,9 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+	_Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			bSharedRequest, fnGetOriginalResourcePath, bPost, sMetaPath) {
-		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+		return new _SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			bSharedRequest, fnGetOriginalResourcePath, bPost, sMetaPath);
 	};
 
@@ -3091,7 +3095,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.from$skip = function (sSegment, aCollection) {
+	_Cache.from$skip = function (sSegment, aCollection) {
 		return rNumber.test(sSegment)
 			? aCollection.$created + Number(sSegment)
 			: sSegment;
@@ -3107,7 +3111,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.getElementIndex = function (aElements, sKeyPredicate, iIndex) {
+	_Cache.getElementIndex = function (aElements, sKeyPredicate, iIndex) {
 		var oElement = aElements[iIndex];
 
 		if (!oElement || _Helper.getPrivateAnnotation(oElement, "predicate") !== sKeyPredicate) {
@@ -3135,7 +3139,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Cache.makeUpdateData = function (aPropertyPath, vValue) {
+	_Cache.makeUpdateData = function (aPropertyPath, vValue) {
 		return aPropertyPath.reduceRight(function (vValue0, sSegment) {
 			var oResult = {};
 			oResult[sSegment] = vValue0;
@@ -3143,5 +3147,5 @@ sap.ui.define([
 		}, vValue);
 	};
 
-	return Cache;
+	return _Cache;
 }, /* bExport= */false);

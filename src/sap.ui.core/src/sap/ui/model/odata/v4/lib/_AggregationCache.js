@@ -41,6 +41,7 @@ sap.ui.define([
 	 *   If the system query options "$count" or "$filter" are used together with group levels
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._AggregationCache
+	 * @constructor
 	 * @extends sap.ui.model.odata.v4.lib._Cache
 	 * @private
 	 */

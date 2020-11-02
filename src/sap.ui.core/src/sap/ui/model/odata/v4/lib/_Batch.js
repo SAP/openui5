@@ -10,7 +10,6 @@ sap.ui.define([
 	"use strict";
 
 	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},
-		oBatch,
 		rContentIdReference = /^\$\d+/,
 		rHeaderParameter = /(\S*?)=(?:"(.+)"|(\S+))/;
 
@@ -301,7 +300,7 @@ sap.ui.define([
 		return {body : aRequestBody, batchBoundary : sBatchBoundary};
 	}
 
-	oBatch = {
+	return {
 		/**
 		 * Deserializes batch response body using batch boundary from the specified value of the
 		 * 'Content-Type' header.
@@ -415,6 +414,4 @@ sap.ui.define([
 			};
 		}
 	};
-
-	return oBatch;
 }, /* bExport= */false);
