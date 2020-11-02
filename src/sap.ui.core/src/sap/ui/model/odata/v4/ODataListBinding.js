@@ -631,7 +631,9 @@ sap.ui.define([
 				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 			});
 			for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
-				aContexts[i].iIndex = i;
+				if (aContexts[i]) {
+					aContexts[i].iIndex = i;
+				}
 			}
 			this.iMaxLength -= iCount;
 			this._fireChange({reason : ChangeReason.Change});

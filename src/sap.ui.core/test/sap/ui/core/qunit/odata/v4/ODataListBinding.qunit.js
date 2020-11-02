@@ -6698,7 +6698,8 @@ sap.ui.define([
 			collapse : function () {}
 		};
 		for (i = 0; i < 8; i += 1) {
-			oBinding.aContexts.push(createContextDummy(i));
+			// with gap at 6
+			oBinding.aContexts.push(i === 6 ? undefined : createContextDummy(i));
 		}
 		oBinding.iMaxLength = 8;
 		aContextsBefore = oBinding.aContexts.slice();
@@ -6722,12 +6723,13 @@ sap.ui.define([
 			assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
 			assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
 			assert.strictEqual(oBinding.aContexts[2], aContextsBefore[5], "2");
-			assert.strictEqual(oBinding.aContexts[3], aContextsBefore[6], "3");
 			assert.strictEqual(oBinding.aContexts[4], aContextsBefore[7], "4");
 			assert.strictEqual(oBinding.aContexts.length, 5);
 			assert.strictEqual(oBinding.iMaxLength, 5);
 			oBinding.aContexts.forEach(function (oContext, iIndex) {
-				assert.strictEqual(oContext.iIndex, iIndex);
+				if (iIndex !== 3) { // 6 - iCount
+					assert.strictEqual(oContext.iIndex, iIndex);
+				}
 			});
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {
 				"/EMPLOYEES/2" : aContextsBefore[2],
@@ -6738,8 +6740,10 @@ sap.ui.define([
 			assert.strictEqual(oBinding.iMaxLength, 8);
 			assert.strictEqual(oBinding.aContexts.length, 8);
 			oBinding.aContexts.forEach(function (oContext, iIndex) {
-				assert.strictEqual(oContext.iIndex, iIndex);
-				assert.strictEqual(oContext.getPath(), "/EMPLOYEES/" + iIndex);
+				if (iIndex !== 6) {
+					assert.strictEqual(oContext.iIndex, iIndex);
+					assert.strictEqual(oContext.getPath(), "/EMPLOYEES/" + iIndex);
+				}
 			});
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		}
