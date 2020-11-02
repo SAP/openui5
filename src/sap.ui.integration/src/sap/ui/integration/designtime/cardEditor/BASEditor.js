@@ -150,8 +150,12 @@ sap.ui.define([
 						}
 
 						oItem = merge(oOriginalItem || {}, mParameters[sKey]);
-						oItem.label = oMetaItem.hasOwnProperty("label") && oMetaItem.label;
-						oItem.position = oMetaItem.hasOwnProperty("position") && oMetaItem.position;
+						if (oMetaItem.hasOwnProperty("label")) {
+							oItem.label = oMetaItem.label;
+						}
+						if (oMetaItem.hasOwnProperty("position")) {
+							oItem.position =  oMetaItem.position;
+						}
 						if (oItem.editable === "false") {
 							oItem.editable = false;
 						} else if (oItem.editable === "true") {
