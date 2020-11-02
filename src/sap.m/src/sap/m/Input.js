@@ -2108,9 +2108,10 @@ function(
 		 */
 		Input.prototype._closeSuggestionPopup = function() {
 
-			if (this._isSuggestionsPopoverOpen()) {
+			if (this._oSuggPopover) {
+				this._bShouldRefreshListItems = false;
 				this.cancelPendingSuggest();
-				this._oSuggPopover._oPopover.close();
+				this._isSuggestionsPopoverOpen() && this._oSuggPopover._oPopover.close();
 
 				// Ensure the valueStateMessage is opened after the suggestion popup is closed.
 				// Only do this for desktop (not required for mobile) when the focus is on the input.
