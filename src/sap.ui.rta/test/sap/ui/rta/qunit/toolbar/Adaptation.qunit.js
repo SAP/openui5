@@ -137,6 +137,7 @@ function(
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
 			this.oVersionsModel.setProperty("/draftAvailable", true);
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
+
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
 				.then(function() {
@@ -244,10 +245,83 @@ function(
 		});
 	});
 
+	QUnit.module("Discard Draft visibility", {
+		before: function () {
+			this.oVersionsModel = new JSONModel({
+				versioningEnabled: true,
+				versions: [],
+				draftAvailable: false,
+				displayedVersion: sap.ui.fl.Versions.Draft
+			});
+			this.oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false,
+				modeSwitcher: "adaptation"
+			});
+			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+
+			return this.oToolbar._pFragmentLoaded.then(function() {
+				this.oToolbar.setModel(this.oVersionsModel, "versions");
+				this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+				this.sDraftVersionAccent = "sapUiRtaDraftVersionAccent";
+				this.sActiveVersionAccent = "sapUiRtaActiveVersionAccent";
+				this.oVersionButton = this.oToolbar.getControl("versionButton");
+				this.oDiscardDraftButton = this.oToolbar.getControl("discardDraft");
+			}.bind(this));
+		},
+		after: function() {
+			this.oToolbar.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given only a draft is present in the back end", function (assert) {
+			var aVersions = [{
+				version: 0,
+				type: "draft"
+			}];
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Draft);
+			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
+			assert.ok(this.oDiscardDraftButton.getVisible(), "the discard button is visible");
+			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), true, "and the button color is not a draft accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is an active version accent");
+		});
+
+		QUnit.test("Given a draft version is the draft version in the list", function(assert) {
+			var aVersions = [{
+				version: sap.ui.fl.Versions.Draft,
+				type: "draft"
+			}, {
+				version: 1,
+				title: "Version Title",
+				type: "active"
+			}];
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Draft);
+
+			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
+			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
+			assert.ok(this.oDiscardDraftButton.getVisible(), "the discard button is visible");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), true, "and the button color is a draft accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not an active version accent");
+		});
+	});
+
 	QUnit.module("Versions Model binding & formatter for the versions text", {
 		before: function () {
 			this.oVersionsModel = new JSONModel({
-				versioningEnabled: false,
+				versioningEnabled: true,
 				versions: [],
 				draftAvailable: false,
 				displayedVersion: sap.ui.fl.Versions.Original
@@ -277,6 +351,7 @@ function(
 				this.sDraftVersionAccent = "sapUiRtaDraftVersionAccent";
 				this.sActiveVersionAccent = "sapUiRtaActiveVersionAccent";
 				this.oVersionButton = this.oToolbar.getControl("versionButton");
+				this.oDiscardDraftButton = this.oToolbar.getControl("discardDraft");
 			}.bind(this));
 		},
 		after: function() {
@@ -294,18 +369,6 @@ function(
 			assert.equal(sText, sExpectedText, "then the button text matches 'Version 1'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is not an active version accent");
-		});
-
-		QUnit.test("Given only a draft is present in the back end", function (assert) {
-			var aVersions = [{
-				version: 0,
-				type: "draft"
-			}];
-			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Original);
-			var sExpectedText = this.oTextResources.getText("TIT_ORIGINAL_APP");
-			assert.equal(sText, sExpectedText, "then the button text matches 'Original App'");
-			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
-			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is an active version accent");
 		});
 
 		QUnit.test("Given a version with a title is the first and active version in the list", function(assert) {
@@ -336,6 +399,20 @@ function(
 
 			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
+			assert.notOk(this.oDiscardDraftButton.getVisible(), "the discard button is hidden");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), true, "and the button color is a draft accent");
+			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not an active version accent");
+		});
+
+		QUnit.test("Given a draft in the list", function(assert) {
+			var aVersions = [{
+				version: sap.ui.fl.Versions.Draft,
+				type: "draft"
+			}];
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Draft);
+
+			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
+			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), true, "and the button color is a draft accent");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not an active version accent");
 		});
@@ -357,6 +434,7 @@ function(
 			var sText = this.oToolbar.formatVersionButtonText(aVersions, 2);
 
 			assert.equal(sText, sVersionTitle2, "then the button text matches 'Draft'");
+			assert.notOk(this.oDiscardDraftButton.getVisible(), "the discard button is hidden");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color an active version accent");
 		});
@@ -378,6 +456,7 @@ function(
 			var sText = this.oToolbar.formatVersionButtonText(aVersions, 1);
 
 			assert.equal(sText, sVersionTitle1, "then the button text matches 'Draft'");
+			assert.notOk(this.oDiscardDraftButton.getVisible(), "the discard button is hidden");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not an active version accent");
 		});
@@ -387,6 +466,7 @@ function(
 			this.oVersionsModel.updateBindings();
 			var sExpectedText = this.oTextResources.getText("TIT_ORIGINAL_APP");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Original App'");
+			assert.notOk(this.oDiscardDraftButton.getVisible(), "the discard button is hidden");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color is an active version accent");
 		});

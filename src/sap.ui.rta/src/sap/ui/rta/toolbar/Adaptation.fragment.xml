@@ -37,8 +37,7 @@
 						id="sapUiRta_discardDraft"
 						icon="sap-icon://delete"
 						press=".discardDraft"
-						visible="{versions>/versioningEnabled}"
-						enabled="{path: 'versions>/displayedVersion', formatter: '.formatDiscardDraftEnabled'}"
+						visible="{parts: ['versions>/displayedVersion', 'versions>/versioningEnabled' ], formatter: '.formatDiscardDraftVisible'}"
 						type="Transparent"
 						tooltip="{i18n>TOL_DISCARD_DRAFT}" />
 			</content>
