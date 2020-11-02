@@ -484,6 +484,7 @@ sap.ui.define([
 		if (this._oCardManifest) {
 			this._oCardManifest.destroy();
 		}
+		this.destroyAggregation("_extension");
 
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl, this.getManifestChanges());
 

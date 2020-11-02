@@ -60,6 +60,60 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.test("Changing manifest from one with extension to one without extension", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oManifest1 = {
+				"sap.app": {
+					"id": "sap.ui.integration.test"
+				},
+				"sap.card": {
+					"type": "List",
+					"extension": "./extensions/Extension1",
+					"data": {
+						"extension": {
+							"method": "getData"
+						}
+					},
+					"content": {
+						"item": {
+							"title": "{Name}"
+						}
+					}
+				}
+			},
+			oManifest2 = {
+				"sap.app": {
+					"id": "sap.ui.integration.test"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": []
+					},
+					"content": {
+						"item": {
+							"title": "{Name}"
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEventOnce("_ready", function () {
+			this.oCard.attachEventOnce("_ready", function () {
+				assert.notOk(!!this.oCard.getAggregation("_extension"), "The extension should be destroyed.");
+				done();
+			}.bind(this));
+
+			// act 2
+			this.oCard.setManifest(oManifest2);
+		}.bind(this));
+
+		// act 1
+		this.oCard.setManifest(oManifest1);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.test("Extension providing data on card level", function (assert) {
 		// arrange
 		var done = assert.async();
