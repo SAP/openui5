@@ -1088,7 +1088,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onDiscardDraft = function() {
-		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_DIALOG", {
+		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_AND_CREATE_NEW_DIALOG", {
 			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 			emphasizedAction: MessageBox.Action.OK
 		})
