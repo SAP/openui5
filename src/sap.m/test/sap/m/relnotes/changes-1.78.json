@@ -207,5 +207,25 @@
         ]
       }
     ]
+  },
+  "1.78.11": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "3248eab89f5692127689b860f46f65494e32f992",
+        "type": "FIX",
+        "text": " sap.m.Input: QUnit test adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070216202"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070409465"
+          }
+        ]
+      }
+    ]
   }
 }
