@@ -35,8 +35,8 @@ sap.ui.define([
 			$skip : iStart,
 			$top : iEnd - iStart
 		});
-		mQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions, null,
-			this.bFollowUp);
+		mQueryOptions
+			= _AggregationHelper.buildApply(oAggregation, mQueryOptions, 1, this.bFollowUp);
 		this.bFollowUp = true; // next request is a follow-up
 
 		return this.sResourcePath
@@ -51,6 +51,9 @@ sap.ui.define([
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
 	 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
+	 * @param {string[]} aMissing
+	 *   A list of properties that are missing in the grand total row, so they have to be nulled to
+	 *   avoid drill-down errors
 	 * @param {function} fnHandleResponse
 	 *   The original <code>#handleResponse</code> of the first level cache
 	 * @param {number} iStart
@@ -62,8 +65,8 @@ sap.ui.define([
 	 *   {@link #fetchTypes})
 	 */
 	// @override sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
-	function handleGrandTotalResponse(oAggregation, fnHandleResponse, iStart, iEnd, oResult,
-			mTypeForMetaPath) {
+	function handleGrandTotalResponse(oAggregation, aMissing, fnHandleResponse, iStart, iEnd,
+			oResult, mTypeForMetaPath) {
 		var oGrandTotalElement = oResult.value[0],
 			that = this;
 
@@ -91,8 +94,8 @@ sap.ui.define([
 			Object.keys(oAggregation.aggregate).forEach(function (sAggregate) {
 				oGrandTotalElement[sAggregate] = oGrandTotalElement[sAggregate] || null;
 			});
-			Object.keys(oAggregation.group).forEach(function (sGroup) {
-				oGrandTotalElement[sGroup] = null;
+			aMissing.forEach(function (sProperty) {
+				oGrandTotalElement[sProperty] = null;
 			});
 		}
 
@@ -113,12 +116,15 @@ sap.ui.define([
 		 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
 		 * @param {object} mQueryOptions
 		 *   A map of key-value pairs representing the aggregation cache's original query string
+		 * @param {string[]} aMissing
+		 *   A list of properties that are missing in the grand total row, so they have to be nulled
+		 *   to avoid drill-down errors
 		 */
-		enhanceCacheWithGrandTotal : function (oCache, oAggregation, mQueryOptions) {
+		enhanceCacheWithGrandTotal : function (oCache, oAggregation, mQueryOptions, aMissing) {
 			oCache.getResourcePathWithQuery
 				= getResourcePathWithQuery.bind(oCache, oAggregation, mQueryOptions);
-			oCache.handleResponse
-				= handleGrandTotalResponse.bind(oCache, oAggregation, oCache.handleResponse);
+			oCache.handleResponse = handleGrandTotalResponse.bind(oCache, oAggregation, aMissing,
+				oCache.handleResponse);
 		}
 	};
 }, /* bExport= */false);

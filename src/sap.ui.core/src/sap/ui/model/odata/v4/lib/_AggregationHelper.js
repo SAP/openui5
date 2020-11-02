@@ -164,15 +164,17 @@ sap.ui.define([
 		 *   The value for a "$top" system query option; it is removed from the returned map,
 		 *   but not from <code>mQueryOptions</code> itself, in case it is turned into a "top()"
 		 *   transformation
+		 * @param {number} [iLevel=0]
+		 *   The current level
+		 * @param {boolean} [bFollowUp]
+		 *   Tells whether this method is called for a follow-up request, not for the first one; in
+		 *   this case, neither the count nor minimum or maximum values are requested again and
+		 *   <code>mAlias2MeasureAndMethod</code> is ignored
 		 * @param {object} [mAlias2MeasureAndMethod]
 		 *   An optional map which is filled in case an aggregatable property requests minimum or
 		 *   maximum values; the alias (for example "UI5min__&lt;alias>") for that value becomes the
 		 *   key; an object with "measure" and "method" becomes the corresponding value. Note that
 		 *   "measure" holds the aggregatable property's alias in case "3.1.1 Keyword as" is used.
-		 * @param {boolean} [bFollowUp]
-		 *   Tells whether this method is called for a follow-up request, not for the first one; in
-		 *   this case, neither the count nor minimum or maximum values are requested again and
-		 *   <code>mAlias2MeasureAndMethod</code> is ignored
 		 * @returns {object}
 		 *   A map of key-value pairs representing the query string, including a value for the
 		 *   "$apply" system query option if needed; it is a modified copy of
@@ -182,7 +184,8 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		buildApply : function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod, bFollowUp) {
+		buildApply : function (oAggregation, mQueryOptions, iLevel, bFollowUp,
+				mAlias2MeasureAndMethod) {
 			var aAggregate,
 				sApply = "",
 				// concat(aggregate(???),.) content for grand totals (w/o unit)
@@ -222,7 +225,7 @@ sap.ui.define([
 					processMinOrMax(sAlias, oDetails, "min");
 					processMinOrMax(sAlias, oDetails, "max");
 				}
-				if (oDetails.grandTotal) {
+				if (oDetails.grandTotal && iLevel <= 1) {
 					bHasGrandTotal = true;
 					if (!mQueryOptions.$skip) {
 						if (sWith) {
@@ -291,6 +294,7 @@ sap.ui.define([
 			}
 
 			mQueryOptions = Object.assign({}, mQueryOptions);
+			iLevel = iLevel || 0;
 
 			checkKeys(oAggregation, mAllowedAggregationKeys2Type);
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
@@ -298,9 +302,6 @@ sap.ui.define([
 			oAggregation.aggregate = oAggregation.aggregate || {};
 			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
 			aAggregate = Object.keys(oAggregation.aggregate).sort().map(aggregate);
-			if (bHasGrandTotal && oAggregation.groupLevels.length) {
-				throw new Error("Cannot combine visual grouping with grand total");
-			}
 			if (aAggregate.length) {
 				sApply = "aggregate(" + aAggregate.join(",") + ")";
 			}
@@ -552,7 +553,7 @@ sap.ui.define([
 				return aFilters0.some(function (oFilter) {
 					return oFilter.aFilters
 						? hasAffectedFilter(sSideEffectPath, oFilter.aFilters)
-					    : affects(sSideEffectPath, oFilter.sPath);
+						: affects(sSideEffectPath, oFilter.sPath);
 				});
 			}
 

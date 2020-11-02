@@ -169,7 +169,7 @@ sap.ui.define([
 			.returns(oFirstLevelCache);
 		this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
 			.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
-				sinon.match.same(mQueryOptions));
+				sinon.match.same(mQueryOptions), ["Region"]);
 
 		// code under test
 		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, "", oAggregation,
@@ -299,21 +299,22 @@ sap.ui.define([
 			oFilteredAggregation = {
 				groupLevels : oFixture.leaf ? [] : ["a", "b"],
 				aggregate : {},
-				$groupBy : [],
-				$missing : []
+				$groupBy : ["foo", "bar"],
+				$missing : ["baz", "qux"]
 			},
-			oGroupNode = oFixture.parent ? {
-					"@$ui5.node.level" : 2,
-					"@$ui5._" : {
-						filter : "~filter~"
-					}
-				} : undefined,
 			mFilteredQueryOptions = {
 				$count : true,
 				$orderby : "~orderby~"
 			},
 			oGroupLevelCache = {},
+			bHasGrandTotal = !oFixture.parent && !oFixture.leaf, // not PICT?!
 			iLevel = oFixture.parent ? 3 : 1,
+			oParentGroupNode = oFixture.parent ? {
+					"@$ui5.node.level" : 2,
+					"@$ui5._" : {
+						filter : "~filter~"
+					}
+				} : null,
 			mQueryOptions = {
 				$orderby : "~orderby~"
 			};
@@ -326,12 +327,12 @@ sap.ui.define([
 		this.mock(_AggregationHelper).expects("filterAggregation")
 			.withExactArgs(sinon.match.same(oCache.oAggregation), iLevel)
 			.returns(oFilteredAggregation);
-		this.mock(_AggregationHelper).expects("filterOrderby")
-			.withExactArgs("~orderby~", sinon.match.same(oFilteredAggregation))
-			.returns(oFixture.filteredOrderby);
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
 			.returns(mFilteredQueryOptions);
+		this.mock(_AggregationHelper).expects("filterOrderby")
+			.withExactArgs("~orderby~", sinon.match.same(oFilteredAggregation))
+			.returns(oFixture.filteredOrderby);
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match(function (o) {
 					return o === oFilteredAggregation && !("$groupBy" in o || "$missing" in o);
@@ -344,7 +345,7 @@ sap.ui.define([
 						&& (oFixture.filteredOrderby
 							? o.$orderby === oFixture.filteredOrderby
 							: !("$orderby" in o));
-				}))
+				}), iLevel)
 			.returns(mCacheQueryOptions);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(oCache.oRequestor), "Foo",
@@ -352,10 +353,15 @@ sap.ui.define([
 					return o === mCacheQueryOptions && o.$count === true;
 				}), true)
 			.returns(oGroupLevelCache);
+		this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
+			.exactly(bHasGrandTotal ? 1 : 0)
+			.withExactArgs(sinon.match.same(oGroupLevelCache),
+				sinon.match.same(oFilteredAggregation), sinon.match.same(mCacheQueryOptions),
+				["foo", "bar", "baz", "qux"]);
 
 		// This must be done before calling createGroupLevelCache, so that bind grabs the mock
 		this.mock(_AggregationCache).expects("calculateKeyPredicate")
-		.withExactArgs(sinon.match.same(oGroupNode),
+		.withExactArgs(sinon.match.same(oParentGroupNode),
 			sinon.match.same(oFilteredAggregation.$groupBy),
 			sinon.match.same(oFilteredAggregation.$missing), oFixture.leaf, oFixture.total,
 			sinon.match.same(oCache.aElements.$byPredicate), "~oElement~", "~mTypeForMetaPath~",
@@ -363,7 +369,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oCache.createGroupLevelCache(oGroupNode),
+			oCache.createGroupLevelCache(oParentGroupNode, bHasGrandTotal),
 			oGroupLevelCache
 		);
 
@@ -490,8 +496,11 @@ sap.ui.define([
 			sResourcePath = "Foo";
 
 		oFirstLevelCache.aElements.$byPredicate = {};
+		this.mock(_AggregationHelper).expects("hasGrandTotal")
+			.withExactArgs(sinon.match.same(oAggregation.aggregate))
+			.returns("~bHasGrandTotal~");
 		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
-			.withExactArgs()
+			.withExactArgs(null, "~bHasGrandTotal~")
 			.returns(oFirstLevelCache);
 
 		// code under test

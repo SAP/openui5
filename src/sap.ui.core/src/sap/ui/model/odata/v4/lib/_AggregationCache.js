@@ -33,6 +33,8 @@ sap.ui.define([
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
 	 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
+	 * @param {boolean} bHasGrandTotal
+	 *   Whether a grand total is needed
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string
 	 * @throws {Error}
@@ -42,27 +44,28 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.v4.lib._Cache
 	 * @private
 	 */
-	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions) {
+	function _AggregationCache(oRequestor, sResourcePath, oAggregation, bHasGrandTotal,
+			mQueryOptions) {
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 		this.oAggregation = oAggregation;
 
 		if (oAggregation.groupLevels.length) {
-			this.aElements = [];
-			this.aElements.$byPredicate = {};
-			this.aElements.$count = undefined;
-			this.aElements.$created = 0; // required for _Cache#drillDown (see _Cache.from$skip)
-
 			if (mQueryOptions.$count) {
 				throw new Error("Unsupported system query option: $count");
 			}
 			if (mQueryOptions.$filter) {
 				throw new Error("Unsupported system query option: $filter");
 			}
-			this.oFirstLevel = this.createGroupLevelCache();
+
+			this.aElements = [];
+			this.aElements.$byPredicate = {};
+			this.aElements.$count = undefined;
+			this.aElements.$created = 0; // required for _Cache#drillDown (see _Cache.from$skip)
+			this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal);
 		} else { // grand total w/o visual grouping
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mQueryOptions, true);
 			_GrandTotalHelper.enhanceCacheWithGrandTotal(this.oFirstLevel, oAggregation,
-				mQueryOptions);
+				mQueryOptions, Object.keys(oAggregation.group));
 		}
 	}
 
@@ -157,12 +160,15 @@ sap.ui.define([
 	 *
 	 * @param {object} [oParentGroupNode]
 	 *   The parent group node or undefined for the first level cache
+	 * @param {boolean} [bHasGrandTotal]
+	 *   Whether a grand total is needed (use only for the first level cache!)
 	 * @returns {sap.ui.model.odata.v4.lib._CollectionCache}
 	 *   The group level cache
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.createGroupLevelCache = function (oParentGroupNode) {
+	_AggregationCache.prototype.createGroupLevelCache = function (oParentGroupNode,
+			bHasGrandTotal) {
 		var oCache, oFilteredAggregation, sFilteredOrderby, aGroupBy, bLeaf, iLevel, aMissing,
 			mQueryOptions, bTotal;
 
@@ -182,17 +188,20 @@ sap.ui.define([
 		} else {
 			delete mQueryOptions.$orderby;
 		}
-
 		if (oParentGroupNode) {
 			mQueryOptions.$$filterBeforeAggregate
 				= _Helper.getPrivateAnnotation(oParentGroupNode, "filter");
 		}
 
 		delete mQueryOptions.$count;
-		mQueryOptions = _AggregationHelper.buildApply(oFilteredAggregation, mQueryOptions);
+		mQueryOptions = _AggregationHelper.buildApply(oFilteredAggregation, mQueryOptions, iLevel);
 		mQueryOptions.$count = true;
 
 		oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
+		if (bHasGrandTotal) {
+			_GrandTotalHelper.enhanceCacheWithGrandTotal(oCache, oFilteredAggregation,
+				mQueryOptions, aGroupBy.concat(aMissing));
+		}
 
 		bLeaf = !oFilteredAggregation.groupLevels.length;
 		bTotal = !bLeaf && Object.keys(oFilteredAggregation.aggregate).length > 0;
@@ -631,12 +640,12 @@ sap.ui.define([
 	 */
 	_AggregationCache.create = function (oRequestor, sResourcePath, sDeepResourcePath, oAggregation,
 			mQueryOptions, bSortExpandSelect, bSharedRequest) {
-		var bAggregate, bHasMinOrMax;
+		var bAggregate, bHasGrandTotal, bHasMinOrMax;
 
 		if (oAggregation) {
+			bHasGrandTotal = _AggregationHelper.hasGrandTotal(oAggregation.aggregate);
 			bHasMinOrMax = _AggregationHelper.hasMinOrMax(oAggregation.aggregate);
-			bAggregate = oAggregation.groupLevels.length || bHasMinOrMax
-				|| _AggregationHelper.hasGrandTotal(oAggregation.aggregate);
+			bAggregate = oAggregation.groupLevels.length || bHasGrandTotal || bHasMinOrMax;
 
 			if (bAggregate) {
 				if ("$expand" in mQueryOptions) {
@@ -652,7 +661,7 @@ sap.ui.define([
 				}
 
 				return new _AggregationCache(oRequestor, sResourcePath, oAggregation,
-					mQueryOptions);
+					bHasGrandTotal, mQueryOptions);
 			}
 		}
 

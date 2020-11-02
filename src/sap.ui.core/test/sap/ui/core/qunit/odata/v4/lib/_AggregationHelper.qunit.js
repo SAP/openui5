@@ -180,8 +180,20 @@ sap.ui.define([
 				Region : {}
 			}
 		},
+		iLevel : 1, // include grandTotal
 		sApply : "concat(aggregate(SalesNumber with sum as UI5grand__SalesNumberSum)"
 			+ ",groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum)))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesNumber : {grandTotal : true}
+			},
+			group : {
+				Region : {}
+			}
+		},
+		iLevel : 2, // ignore grandTotal!
+		sApply : "groupby((Region),aggregate(SalesNumber))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -357,7 +369,7 @@ sap.ui.define([
 
 			// code under test
 			mResult = _AggregationHelper.buildApply(oFixture.oAggregation, oFixture.mQueryOptions,
-				mAlias2MeasureAndMethod);
+				oFixture.iLevel, false, mAlias2MeasureAndMethod);
 
 			assert.deepEqual(mResult, {$apply : oFixture.sApply}, "sApply");
 			if (oFixture.mExpectedAlias2MeasureAndMethod) {
@@ -370,7 +382,7 @@ sap.ui.define([
 
 				// code under test
 				mResult = _AggregationHelper.buildApply(oFixture.oAggregation,
-					oFixture.mQueryOptions, mAlias2MeasureAndMethod, true);
+					oFixture.mQueryOptions, oFixture.iLevel, true, mAlias2MeasureAndMethod);
 
 				assert.deepEqual(mResult, {$apply : oFixture.sFollowUpApply}, "sFollowUpApply");
 				assert.deepEqual(mAlias2MeasureAndMethod, {}, "mAlias2MeasureAndMethod");
@@ -440,12 +452,6 @@ sap.ui.define([
 			groupLevels : {}
 		},
 		sError : "Not a array value for 'groupLevels'"
-	}, {
-		oAggregation : {
-			aggregate : {A : {grandTotal : true}},
-			groupLevels : ["B"]
-		},
-		sError : "Cannot combine visual grouping with grand total"
 	}, {
 		oAggregation : {
 			aggregate : {A : {grandTotal : true, "with" : "average"}}
