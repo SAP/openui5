@@ -66,11 +66,11 @@ sap.ui.define([
 				value : [
 					{
 						"@odata.id" : null,
-						"UI5min__MinAndMax" : 3,
-						"UI5max__MinAndMax" : 99,
-						"UI5min__OnlyMin" : 7,
-						"UI5max__OnlyMax" : 10,
-						"UI5__count" : "43",
+						UI5min__MinAndMax : 3,
+						UI5max__MinAndMax : 99,
+						UI5min__OnlyMin : 7,
+						UI5max__OnlyMax : 10,
+						UI5__count : "43",
 						"UI5__count@odata.type" : "#Decimal"
 					},
 					oResponseRecord
@@ -96,19 +96,19 @@ sap.ui.define([
 			.callsFake(function (_oAggregation, _mQueryOptions, _iLevel, _bFollowUp,
 					mAlias2MeasureAndMethod) {
 				Object.assign(mAlias2MeasureAndMethod, {
-					"UI5min__MinAndMax" : {
+					UI5min__MinAndMax : {
 						measure : "MinAndMax",
 						method : "min"
 					},
-					"UI5max__MinAndMax" : {
+					UI5max__MinAndMax : {
 						measure : "MinAndMax",
 						method : "max"
 					},
-					"UI5min__OnlyMin" : {
+					UI5min__OnlyMin : {
 						measure : "OnlyMin",
 						method : "min"
 					},
-					"UI5max__OnlyMax" : {
+					UI5max__OnlyMax : {
 						measure : "OnlyMax",
 						method : "max"
 					}
