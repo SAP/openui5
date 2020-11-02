@@ -55,7 +55,8 @@
 		  "sap.uxap.sample.ObjectPageHeaderExpanded",
 		  "sap.uxap.sample.ObjectPageHeaderContentPriorities",
 		  "sap.uxap.sample.ObjectPageFormLayout",
-		  "sap.uxap.sample.ObjectPageFormFocusableInput"
+		  "sap.uxap.sample.ObjectPageFormFocusableInput",
+		  "sap.uxap.sample.ObjectPageSectionShowTitle"
 		]
 	  },
 	  {
@@ -66,7 +67,8 @@
 		"since": "1.77",
 		"samples": [
 		  "sap.uxap.sample.Sample1",
-		  "sap.uxap.sample.Sample2"
+		  "sap.uxap.sample.Sample2",
+		  "sap.uxap.sample.ObjectPageSectionShowTitle"
 		]
 	  },
 	  {
@@ -314,6 +316,11 @@
 		"id": "sap.uxap.sample.Sample2",
 		"name": "Sample 2",
 		"description": "ObjectPage sample with header content arranged using containers, called facets, Links, RatingIndicator and ObjectStatus."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageSectionShowTitle",
+		"name": "ObjectPage with Hidden Section Titles",
+		"description": "ObjectPage sample that demonstrates the combination of header facets and showTitle properties of sections and subsections."
 	  }
 	]
   }
