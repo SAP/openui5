@@ -1,0 +1,57 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:html="http://www.w3.org/1999/xhtml">
+	<VBox>
+		<List id="shortList"
+				items="{
+					path: 'searchData>/matches/filteredData',
+					sorter: [{
+						path: '',
+						descending: true,
+						group: '.getSearchPickerTitle'
+					}]
+				}">
+			<StandardListItem
+					title="{searchData>title}: {searchData>summary}"
+					press="onSearchPickerItemPress"
+					type="Active">
+			</StandardListItem>
+		</List>
+		<Link width="100%"
+			  class="sapMSelectListItem sapMSelectListItemBase sapMSelectListItemBaseHoverable"
+			  press="onSearchResultsSummaryPress"
+			  text="{i18n>SEARCH_SUGGESTIONS_ALL_SECTION_TITLE} ({searchData>/matches/AllLength})"
+			  visible="{= ${searchData>/matches/AllLength}>0 }"/>
+		<List id="categoryList">
+			<GroupHeaderListItem title="Results by Category"/>
+			<StandardListItem
+					title="{i18n>SEARCH_SUGGESTIONS_API_SECTION_TITLE}"
+					counter="{searchData>/matches/APILength}"
+					press="onSearchResultsSummaryPress"
+					type="Active">
+				<customData>
+					<core:CustomData key="category" value="apiref" />
+				</customData>
+			</StandardListItem>
+			<StandardListItem
+					title="{i18n>SEARCH_SUGGESTIONS_DOCUMENTATION_SECTION_TITLE}"
+					counter="{searchData>/matches/DocLength}"
+					press="onSearchResultsSummaryPress"
+					type="Active">
+				<customData>
+					<core:CustomData key="category" value="topics" />
+				</customData>
+			</StandardListItem>
+			<StandardListItem
+					title="{i18n>SEARCH_SUGGESTIONS_SAMPLES_SECTION_TITLE}"
+					counter="{searchData>/matches/ExploredLength}"
+					press="onSearchResultsSummaryPress"
+					type="Active">
+				<customData>
+					<core:CustomData key="category" value="entity" />
+				</customData>
+			</StandardListItem>
+		</List>
+	</VBox>
+</core:FragmentDefinition>

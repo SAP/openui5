@@ -265,25 +265,30 @@ sap.ui.define([
 			if (oEvent.preventDefault) {
 				oEvent.preventDefault();
 			}
-
-			if (sTarget === "#") {
-				sTarget = ""; // translate to base route
-			}
-
-			if (window['sap-ui-documentation-static'] && this.shouldConvertHash(sTarget)) {
-				sTarget = sTarget.replace("#", "%23");
-			}
-
-			this.parse(sTarget);
-
-			// Add new URL history and update URL
-			if (window['sap-ui-documentation-static']) {
-				window.history.pushState({},undefined,"#/" + sTarget);
-			} else {
-				window.history.pushState({},undefined, sTarget);
-			}
+			this.parsePath(sTarget);
 		}
 
+	};
+	/**
+	 * @restricted
+	 */
+	DocumentationRouter.prototype.parsePath = function (sPath) {
+		if (sPath === "#") {
+			sPath = ""; // translate to base route
+		}
+
+		if (window['sap-ui-documentation-static'] && this.shouldConvertHash(sPath)) {
+			sPath = sPath.replace("#", "%23");
+		}
+
+		this.parse(sPath);
+
+		// Add new URL history and update URL
+		if (window['sap-ui-documentation-static']) {
+			window.history.pushState({},undefined,"#/" + sPath);
+		} else {
+			window.history.pushState({},undefined, sPath);
+		}
 	};
 
 	DocumentationRouter.prototype.mouseDownClickHandler = function (oEvent) {

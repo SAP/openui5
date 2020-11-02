@@ -7,7 +7,8 @@
 		<op:ObjectPageLayout id="searchPage"
 							useIconTabBar="true"
 							alwaysShowContentHeader="true"
-							upperCaseAnchorBar="false">
+							upperCaseAnchorBar="false"
+							navigate="onSwitchTab">
 		<op:headerTitle>
 			<op:ObjectPageHeader id="searchTitle" objectTitle="{
 				parts: [
@@ -63,14 +64,15 @@
 				</op:ObjectPageSubSection>
 			</op:subSections>
 			</op:ObjectPageSection>
- 			<op:ObjectPageSection title="{
+ 			<op:ObjectPageSection id="apiref" title="{
 					parts: [
 						'i18n>SEARCH_PAGE_API_SECTION_TITLE',
 						'/APILength'
 					],
 					formatter: '.formatMessage'
 				}"
-				visible="{=!!${/APILength}}">
+				visible="{=!!${/APILength}}"
+				app:category="apiref">
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
@@ -91,7 +93,7 @@
 									growingThreshold="25"
 									updateFinished="onAPILoadMore"
 									items="{
-										path: '/dataAPI'
+										path: '/aDataAPI'
 									}">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryAPIFormatter'}"
@@ -105,14 +107,15 @@
 					</op:ObjectPageSubSection>
 				</op:subSections>
 			</op:ObjectPageSection>
-			<op:ObjectPageSection title="{
+			<op:ObjectPageSection id="topics" title="{
 					parts: [
 						'i18n>SEARCH_PAGE_DOCUMENTATION_SECTION_TITLE',
 						'/DocLength'
 					],
 					formatter: '.formatMessage'
 				}"
-				visible="{=!!${/DocLength}}">
+				visible="{=!!${/DocLength}}"
+				app:category="topics">
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
@@ -133,7 +136,7 @@
 									growingThreshold="25"
 									updateFinished="onDocLoadMore"
 									items="{
-										path: '/dataDoc'
+										path: '/aDataDoc'
 									}">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryDocFormatter'}"
@@ -147,14 +150,15 @@
 					</op:ObjectPageSubSection>
  				</op:subSections>
 			</op:ObjectPageSection>
-			<op:ObjectPageSection title="{
+			<op:ObjectPageSection id="samples" title="{
 					parts: [
 						'i18n>SEARCH_PAGE_SAMPLES_SECTION_TITLE',
 						'/ExploredLength'
 					],
 					formatter: '.formatMessage'
 				}"
-				visible="{=!!${/ExploredLength}}">
+				visible="{=!!${/ExploredLength}}"
+				app:category="entity">
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
@@ -175,7 +179,7 @@
 									growingThreshold="25"
 									updateFinished="onExploredLoadMore"
 									items="{
-										path: '/dataExplored'
+										path: '/aDataExplored'
 									}">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryExploredFormatter'}"

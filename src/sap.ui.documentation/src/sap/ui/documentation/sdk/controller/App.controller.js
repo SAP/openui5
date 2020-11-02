@@ -25,7 +25,11 @@ sap.ui.define([
 	"sap/ui/core/syncStyleClass",
 	"sap/ui/documentation/WebPageTitleUtil",
 	"sap/ui/core/Core",
-	"sap/ui/documentation/sdk/model/formatter"
+	"sap/ui/documentation/sdk/model/formatter",
+	"sap/m/ResponsivePopover",
+	"sap/ui/documentation/sdk/controller/util/Highlighter",
+	"sap/m/Button",
+	"sap/m/Toolbar"
 ], function(
 	jQuery,
 	BaseController,
@@ -49,7 +53,11 @@ sap.ui.define([
 	syncStyleClass,
 	WebPageTitleUtil,
 	Core,
-	globalFormatter
+	globalFormatter,
+	ResponsivePopover,
+	Highlighter,
+	Button,
+	Toolbar
 ) {
 		"use strict";
 
@@ -191,6 +199,8 @@ sap.ui.define([
 				} else {
 					this._applyDefaultConfiguration(this._aConfiguration);
 				}
+
+				this.initSearch();
 			},
 
 			onBeforeRendering: function() {
@@ -212,6 +222,9 @@ sap.ui.define([
 
 			onExit: function() {
 				Device.orientation.detachHandler(this._onOrientationChange, this);
+				if (this.highlighter) {
+					this.highlighter.destroy();
+				}
 			},
 
 			onRouteChange: function (oEvent) {
@@ -320,6 +333,215 @@ sap.ui.define([
 				} else if (sTarget) {
 					URLHelper.redirect(sTarget, true);
 				}
+				this.sTarget = sTarget;
+			},
+
+			createSearchPopover: function() {
+				var PlacementType = mobileLibrary.PlacementType,
+					searchInput = this.getView().byId("searchControl"),
+					oPopover = new ResponsivePopover({
+					showArrow: false,
+					showHeader: false,
+					contentWidth: "600px",
+					placement: PlacementType.Vertical,
+					horizontalScrolling: false,
+					initialFocus: this.getView().byId("searchControl-searchField")
+				})
+					.addStyleClass("sapMSltPicker-CTX");
+
+				// implement the same <code>open</code> function as in the dialog
+				// to allow the controller open the search picker regardless its type (popover or dialog)
+				oPopover.open = function() {
+					oPopover.openBy(searchInput);
+				};
+
+				this.getView().addDependent(oPopover);
+
+				return oPopover;
+			},
+
+			createSearchPicker: function() {
+				var oPicker = Device.system.phone ? this.createSearchDialog() : this.createSearchPopover();
+				this.createSearchPickerContent().then(function(oContent) {
+					oPicker.addContent(oContent);
+				});
+				return oPicker;
+			},
+
+			createSearchDialog: function () {
+				var dialog,
+					originalValue,
+					dialogSearchField,
+					customHeader,
+					okButton,
+					closeButton,
+					bSearchRequested;
+
+				var oInput = this.getView().byId("searchControl");
+
+				// use sap.ui.require to avoid circular dependency between the SearchField and Suggest
+				dialogSearchField = new (sap.ui.require('sap/m/SearchField'))({
+					liveChange : function (oEvent) {
+						var value = oEvent.getParameter("newValue");
+						oInput._updateValue(value);
+						oInput.fireLiveChange({newValue: value});
+					},
+					search : function (oEvent) {
+						if (!oEvent.getParameter("clearButtonPressed")) {
+							dialog.close();
+							bSearchRequested = true;
+						}
+					}
+				});
+
+				closeButton = new Button({
+					icon : "sap-icon://decline",
+					press : function() {
+						dialog._oCloseTrigger = true;
+						dialog.close();
+						oInput._updateValue(originalValue);
+					}
+				});
+
+				customHeader = new Toolbar({
+					content: [dialogSearchField, closeButton]
+				});
+
+				okButton = new Button({
+					text : Core.getLibraryResourceBundle("sap.m").getText("MSGBOX_OK"),
+					press : function() {
+						dialog.close();
+					}
+				});
+
+				function moveCursorToEnd(el) {
+					if (typeof el.selectionStart == "number") {
+						el.selectionStart = el.selectionEnd = el.value.length;
+					} else if (typeof el.createTextRange != "undefined") {
+						el.focus();
+						var range = el.createTextRange();
+						range.collapse(false);
+						range.select();
+					}
+				}
+
+				dialog = new (sap.ui.require('sap/m/Dialog'))({
+					stretch: true,
+					customHeader: customHeader,
+					beginButton : okButton,
+					beforeClose: function () {
+						oInput._bSuggestionSuppressed = true;
+					},
+					beforeOpen: function() {
+						originalValue = oInput.getValue();
+						dialogSearchField._updateValue(originalValue);
+						bSearchRequested = false; // reset flag
+					},
+					afterOpen: function() {
+						var $input = dialogSearchField.$().find('input');
+						$input.focus();
+						moveCursorToEnd($input.get(0));
+					},
+					afterClose: function(oEvent) {
+						if (bSearchRequested) { // fire the search event if not cancelled
+							oInput.fireSearch({
+								query: oInput.getValue(),
+								clearButtonPressed: false
+							});
+						}
+					}
+				});
+
+				this.getView().addDependent(dialog);
+
+				return dialog;
+			},
+
+			createSearchPickerContent: function() {
+				return Fragment.load({
+					name: "sap.ui.documentation.sdk.view.GlobalSearchPicker",
+					controller: this
+				}).then(function(oContent) {
+
+					var oShortList =  Core.byId("shortList"),
+						oController = this,
+						sSearchQuery;
+
+					oShortList.addEventDelegate({
+						onAfterRendering: function() {
+							var oConfig = {
+								useExternalStyles: false,
+								shouldBeObserved: true,
+								isCaseSensitive: false
+							};
+
+							oController.highlighter = new Highlighter(oShortList.getDomRef(), oConfig);
+							sSearchQuery = oController.getModel("searchData").getProperty("/query");
+							sSearchQuery && oController.highlighter.highlight(sSearchQuery);
+							oShortList.removeEventDelegate(this);
+						}
+					});
+
+					return oContent;
+				}.bind(this));
+			},
+
+			initSearch: function() {
+				// set the search data to custom search`s suggestions
+				var oModel = new JSONModel(),
+				oSectionToRoutesMap = {
+					"topics": ["topic", "topicId", "subTopicId"],
+					"entity": ["sample", "controlsMaster", "controls", "code", "entity"],
+					"apiref": ["api", "apiSpecialRoute", "apiId"]
+				};
+
+				this.setModel(oModel, "searchData");
+
+				// update current section on navigate
+				this.oRouter.attachRouteMatched(function() {
+					oModel.setProperty("/routeSection", null);
+				});
+				Object.keys(oSectionToRoutesMap).forEach(function(sSectionKey) {
+					var aRoutes = oSectionToRoutesMap[sSectionKey];
+					aRoutes.forEach(function(sRoute) {
+						this.oRouter.getRoute(sRoute).attachPatternMatched(function() {
+							oModel.setProperty("/routeSection", sSectionKey);
+						});
+					}.bind(this));
+				}.bind(this));
+			},
+
+			getSearchPickerTitle: function(oContext) {
+				var getMessageBundle = Core.getLibraryResourceBundle("sap.ui.documentation"),
+				sFinalString = getMessageBundle.getText("SEARCH_SUGGESTIONS_TITLE");
+
+				switch (this.getModel("searchData").getProperty("/routeSection")) {
+					case "topics":
+						sFinalString += " " + getMessageBundle.getText("APP_TABHEADER_ITEM_DOCUMENTATION");
+						break;
+					case "apiref":
+						sFinalString += " " + getMessageBundle.getText("APP_TABHEADER_ITEM_API_REFERENCE");
+						break;
+					case "entity":
+						sFinalString += " " + getMessageBundle.getText("APP_TABHEADER_ITEM_SAMPLES");
+						break;
+					default:
+						sFinalString += " " + getMessageBundle.getText("SEARCH_SUGGESTIONS_ALL_SECTION_TITLE");
+				}
+
+				return sFinalString;
+			},
+
+			onSearchResultsSummaryPress: function(oEvent) {
+				var sCategory = oEvent.oSource.data("category");
+				this.navToSearchResults(sCategory);
+			},
+
+			onSearchPickerItemPress: function(oEvent) {
+				var contextPath = oEvent.oSource.getBindingContextPath(),
+					oDataItem = this.getModel("searchData").getProperty(contextPath);
+				this.getRouter().parsePath(oDataItem.path);
+				this.oPicker.close();
 			},
 
 			/**
@@ -927,6 +1149,48 @@ sap.ui.define([
 					return;
 				}
 				this.getRouter().navTo("search", {searchParam: sQuery}, false);
+				this.oPicker.close();
+			},
+
+			navToSearchResults : function (sCategory) {
+				var sQuery = this.getModel("searchData").getProperty("/query"),
+					oRouterParams = {searchParam: sQuery};
+
+				if (!sQuery) {
+					return;
+				}
+
+				if (sCategory) {
+					oRouterParams["?options"] = {
+						category: sCategory
+					};
+				}
+
+				this.getRouter().navTo("search", oRouterParams, true);
+				this.oPicker.close();
+			},
+
+			onSearchLiveChange: function(oEvent) {
+				var oModel = this.getModel("searchData"),
+				sQuery = oEvent.getParameter("newValue"),
+				sPreferencedCategory = this.getModel("searchData").getProperty("/routeSection");
+
+				if (!this.oPicker) {
+					this.oPicker = this.createSearchPicker();
+				}
+
+				if (!this.oPicker.isOpen()) {
+					this.oPicker.open();
+				}
+
+				if (this.highlighter) {
+					this.highlighter.highlight(sQuery);
+				}
+
+				oModel.setProperty("/query",sQuery);
+				SearchUtil.search(sQuery, sPreferencedCategory).then(function(result) {
+					oModel.setProperty("/matches", result.matches);
+				});
 			},
 
 			onHeaderResize: function (oEvent) {

@@ -290,7 +290,7 @@
 					]
 				},
 				{
-					"pattern": "search/{searchParam}",
+					"pattern": "search/{searchParam}:?options:",
 					"name": "search",
 					"target": [
 						"searchPage"

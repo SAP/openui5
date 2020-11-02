@@ -12,6 +12,34 @@
 		PROMISE_POLYFIL_LIB: "../../../../../../sap/ui/thirdparty/es6-promise.js"
 	};
 
+	var APIREF_URL_PATHS = {
+			"properties": "controlProperties",
+			"fields": "properties",
+			"aggregations": "aggregations",
+			"associations": "associations",
+			"events": "events",
+			"specialSettings": "specialsettings",
+			"annotations": "annotations",
+			"methods": "methods"
+		},
+
+		APIREF_SECTION_TITLE = {
+			"properties": "property",
+			"fields": "field",
+			"aggregations": "aggregation",
+			"associations": "association",
+			"events": "event",
+			"specialSettings": "specialsetting",
+			"annotations": "annotation",
+			"methods": "method"
+		},
+
+		DOC_CATEGORY = {
+			"documentation": "topics",
+			"samples": "entity",
+			"apiref": "apiref"
+		};
+
 	if (!self.Promise) {
 		importScripts(URL.PROMISE_POLYFIL_LIB);
 	}
@@ -88,7 +116,7 @@
 
 
 		} else if (sCmd === WORKER.COMMANDS.SEARCH) {
-			searchIndex(oEvent.data.sQuery).then(function(oSearchResult) {
+			searchIndex(oEvent.data.sQuery, oEvent.data.preferencedCategory).then(function(oSearchResult) {
 				var oResponse = {};
 				oResponse[WORKER.RESPONSE_FIELDS.SEARCH_RESULT] = oSearchResult;
 				self.postMessage(oResponse);
@@ -155,7 +183,7 @@
 	 * @param sQuery, the search string
 	 * @returns {Promise<any>}
 	 */
-	function searchIndex(sQuery) {
+	function searchIndex(sQuery, sPreferencedCategory) {
 
 		sQuery = preprocessQuery(sQuery);
 
@@ -188,11 +216,11 @@
 
 				// collect all results
 				aSearchResults = oSearchResultsCollector.getAll();
-
+				aSearchResults = formatResult(aSearchResults, sQuery, sPreferencedCategory);
 
 				resolve({
-					success: !!(aSearchResults.length),
-					totalHits: aSearchResults.length,
+					success: aSearchResults.data && !!(aSearchResults.data.length),
+					totalHits: aSearchResults.data && aSearchResults.data.length,
 					matches: aSearchResults
 				});
 			});
@@ -475,5 +503,164 @@
 		return aValues;
 	}
 
-})();
 
+	function formatResult(aMatches, sQuery, sPreferencedCategory) {
+		var oNext,
+		iNext = 0,
+		aData = [],
+		aDataAPI = [],
+		aDataDoc = [],
+		aDataExplored = [],
+		aFilteredData = [],
+		iAllLength = 0,
+		iAPILength = 0,
+		iDocLength = 0,
+		iExploredLength = 0;
+
+		if ( aMatches ) {
+
+			for (var i = 0; i < aMatches.length; i++) {
+				var oMatch = aMatches[i],
+					oDoc = oMatch.doc;
+				//TODO: Find a nicer Date formatting procedure
+				oDoc.modifiedStr = oDoc.modified + "";
+				var sModified = oDoc.modifiedStr.substring(0,4) + "/" + oDoc.modifiedStr.substring(4,6) + "/" + oDoc.modifiedStr.substring(6,8) + ", " + oDoc.modifiedStr.substring(8,10) + ":" + oDoc.modifiedStr.substring(10),
+					sTitle = oDoc.title,
+					sSummary = oDoc.summary,
+					sNavURL = oDoc.path,
+					bShouldAddToSearchResults = false,
+					sCategory,
+					oObject;
+				if (oDoc.category === DOC_CATEGORY.documentation) {
+					sNavURL = sNavURL.substring(0, sNavURL.lastIndexOf(".html"));
+					bShouldAddToSearchResults = true;
+					sCategory = "Documentation";
+					oObject = {
+						title: sTitle ? sTitle : "Untitled",
+						path: sNavURL,
+						summary: sSummary || "",
+						score: oDoc.score,
+						modified: sModified,
+						category: sCategory
+					};
+					aDataDoc.push(oObject);
+					iDocLength++;
+				} else if (oDoc.category === DOC_CATEGORY.samples) {
+					bShouldAddToSearchResults = true;
+					sCategory = "Samples";
+					oObject = {
+						title: sTitle ? sTitle + " (samples)" : "Untitled",
+						path: sNavURL,
+						summary: sSummary || "",
+						score: oDoc.score,
+						modified: sModified,
+						category: sCategory
+					};
+					aDataExplored.push(oObject);
+					iExploredLength++;
+				} else if (oDoc.category === DOC_CATEGORY.apiref) {
+					sNavURL = _formatApiRefURL(oMatch);
+					sTitle = _formatApiRefTitle(oMatch);
+					sSummary = _formatApiRefSummary(oMatch);
+					bShouldAddToSearchResults = true;
+					sCategory = "API Reference";
+					oObject = {
+						title: sTitle,
+						path: sNavURL,
+						summary: sSummary || "",
+						score: oDoc.score,
+						modified: sModified,
+						category: sCategory
+					};
+					aDataAPI.push(oObject);
+					iAPILength++;
+				}
+
+				if (bShouldAddToSearchResults) {
+					aData.push(oObject);
+					iAllLength++;
+
+					if ((aFilteredData.length < 10) && (oDoc.category === sPreferencedCategory)) {
+						aFilteredData.push(oObject);
+					}
+				}
+
+			}
+		}
+
+		while ((aFilteredData.length < 10) && (iNext < aData.length)) {
+			oNext = aData[iNext++];
+			if (aFilteredData.indexOf(oNext) === -1) {
+				aFilteredData.push(oNext);
+			}
+		}
+
+		return {
+			data: aData,
+			aDataAPI: aDataAPI,
+			aDataDoc : aDataDoc,
+			aDataExplored: aDataExplored,
+			filteredData : aFilteredData,
+			AllLength: iAllLength,
+			APILength: iAPILength,
+			DocLength : iDocLength,
+			ExploredLength : iExploredLength
+		};
+	}
+
+
+	function _formatApiRefURL(oMatch) {
+		var sEntityType = oMatch.matchedDocField,
+			sEntityName = oMatch.doc.title,
+			sEntityPath = APIREF_URL_PATHS[sEntityType],
+			sURL;
+
+		sURL = "api/" + sEntityName;
+
+		if (sEntityPath) {
+			sURL += "#" + sEntityPath; // add target section
+		}
+
+		if (sEntityType === "methods") {
+			sURL += "/" + oMatch.matchedDocWord; // add target subSection
+		}
+
+		return sURL;
+	}
+
+	function _formatApiRefTitle (oMatch) {
+		var oDoc = oMatch.doc,
+			sMetadataFieldType = APIREF_SECTION_TITLE[oMatch.matchedDocField],
+			sMetadataFieldName = oMatch.matchedDocWord;
+
+		if (sMetadataFieldType && sMetadataFieldName) {
+			// a match was found within a *known* section of the apiref doc
+			return sMetadataFieldName + " (" + sMetadataFieldType + ")";
+		}
+
+		if (oDoc.kind) {
+			return oDoc.title + " (" + oDoc.kind + ")";
+		}
+		//default case
+		return oDoc.title;
+	}
+
+	function _formatApiRefSummary (oMatch) {
+		var oDoc = oMatch.doc,
+			sMatchedFieldType = APIREF_SECTION_TITLE[oMatch.matchedDocField],
+			sMatchedFieldName = oMatch.matchedDocWord,
+			bMatchedSubSection = sMatchedFieldType && sMatchedFieldName;
+
+		if (bMatchedSubSection) {
+			// we matched a known property/aggregation/method (etc.) *name*
+			// so the default doc summary (which is the summary of the entire class/namespace)
+			// may not be the closest context anymore
+			// => return the doc title only (to indicate in which class/namespace the match was found)
+			return oDoc.title;
+		}
+		//default case
+		return oDoc.summary;
+	}
+
+
+})();
