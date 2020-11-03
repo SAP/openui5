@@ -1481,8 +1481,14 @@ sap.ui.define([
 					}
 				} else {
 					var virtualGridMatrix = this.virtualGrid.virtualGridMatrix;
+					aMatrix = new Array(virtualGridMatrix.length);
+					for (var i = 0; i < aMatrix.length; i++) {
+						aMatrix[i] = new Array(virtualGridMatrix[0].length);
+						aMatrix[i].fill(false);
+					}
 					for (row = 0; row < virtualGridMatrix.length; row++) {
 						for (col = 0; col < virtualGridMatrix[row].length; col++) {
+
 							aMatrix[row][col] = this._getItemWrapper(aItems[virtualGridMatrix[row][col]]);
 							if (virtualGridMatrix[row][col] === 0) {
 								aMatrix[row][col] = false;
