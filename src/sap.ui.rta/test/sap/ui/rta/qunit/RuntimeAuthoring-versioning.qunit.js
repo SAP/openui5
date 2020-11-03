@@ -735,12 +735,30 @@ sap.ui.define([
 
 			var oSetUriParameterStub = sandbox.stub(this.oRta, "_setUriParameter").resolves();
 			var oHandleUrlParametersSpy = sandbox.spy(FlexUtils, "handleUrlParameters");
+			var oTriggerHardReloadSpy = sandbox.spy(this.oRta, "_triggerHardReload");
 
 			this.oRta._onSwitchVersion(oEvent);
 
 			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
+			assert.equal(oTriggerHardReloadSpy.callCount, 1, "_triggerHardReload was called");
 			assert.equal(oHandleUrlParametersSpy.callCount, 1, "handleUrlParameters was called");
 			assert.equal(oSetUriParameterStub.callCount, 1, "the uri was changed and will lead to a reload");
+		});
+
+		QUnit.test("when version parameter is in the url no hard reload is triggered", function (assert) {
+			var oEvent = new Event("someEventId", undefined, {
+				version: 1
+			});
+
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			var oTriggerHardReloadSpy = sandbox.spy(this.oRta, "_triggerHardReload");
+			var oReloadPageSpy = sandbox.stub(this.oRta, "_reloadPage").resolves();
+
+			this.oRta._onSwitchVersion(oEvent);
+
+			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
+			assert.equal(oReloadPageSpy.callCount, 1, "_reloadPage was called");
+			assert.equal(oTriggerHardReloadSpy.callCount, 0, "and _triggerHardReload was not called");
 		});
 	});
 
