@@ -1011,7 +1011,11 @@ sap.ui.define([
 			return "";
 		}
 		if (typeof vI18n === "string") {
-			var oI18nURI = new URI(vI18n);
+			var sBase = this._oEditorCard.getBaseUrl();
+			if (!sBase.endsWith("/")) {
+				sBase = sBase + "/";
+			}
+			var oI18nURI = new URI(sBase + vI18n);
 			// load the ResourceBundle relative to the manifest
 			this._oTranslationBundle = new ResourceBundle(oI18nURI, sLanguage, false, false, [sLanguage], "", true);
 			return this._getCurrentLanguageSpecificText(sKey);
@@ -1047,36 +1051,54 @@ sap.ui.define([
 				if (oItem) {
 					//force a label setting, set it to the name of the item
 					oItem.label = oItem.label || n;
+					//what is the current value from the change?
+					var sCurrentLayerValue = this._currentLayerManifestChanges[oItem.manifestpath];
+					//if not changed it should be undefined
+					oItem._changed = sCurrentLayerValue !== undefined;
+
 					//check if the provided value from the parameter or designtime default value is a translated value
 					//restrict this to string types for now
 					if (oItem.type === "string") {
-						var sDefaultParameterValue = this._getManifestDefaultValue(oItem.manifestpath),
-							sDefaultDTValue = oItem.defaultValue;
-						//parameter translated value wins over designtime defaultValue
-						if (this._isValueWithHandlebarsTranslation(sDefaultParameterValue)) {
-							oItem.translatable = true;
-							oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sDefaultParameterValue.substring(2, sDefaultParameterValue.length - 2));
-							oItem._translatedDefaultPlaceholder = sDefaultParameterValue;
-						} else if (sDefaultDTValue && sDefaultDTValue.startsWith("{i18n>")) {
-							oItem.translatable = true;
-							oItem._translatedDefaultPlaceholder = sDefaultDTValue;
-							//resolve value to default i18n binding otherwise the binding string will be in the field
-							oItem.value = this._currentLayerManifestChanges[oItem.manifestpath] || this.getModel("i18n").getResourceBundle().getText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
-							if (this.getMode() === "translation") {
-								//resolve to _translatedDefaultValue language specific i18n binding
-								oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sDefaultDTValue.substring(6, sDefaultDTValue.length - 1));
+						oItem._translatedDefaultPlaceholder = this._getManifestDefaultValue(oItem.manifestpath) || oItem.defaultValue;
+						var sTranslationTextKey = null,
+							sPlaceholder = oItem._translatedDefaultPlaceholder;
+						if (sPlaceholder) {
+							//parameter translated value wins over designtime defaultValue
+							if (this._isValueWithHandlebarsTranslation(sPlaceholder)) {
+								sTranslationTextKey = sPlaceholder.substring(2, sPlaceholder.length - 2);
+							} else if (sPlaceholder.startsWith("{i18n>")) {
+								sTranslationTextKey = sPlaceholder.substring(6, sPlaceholder.length - 1);
+							}
+							//only if there is a translation key
+							if (sTranslationTextKey) {
+								//force translatable, even if it was not explicitly set already
+								oItem.translatable = true;
+								oItem._translatedDefaultValue = this.getModel("i18n").getResourceBundle().getText(sTranslationTextKey);
+								if (oItem._changed) {
+									//item was changed, take the current value
+									oItem.value = sCurrentLayerValue;
+								} else {
+									oItem.value = oItem._translatedDefaultValue;
+								}
+								if (this.getMode() === "translation") {
+									//if we are in translation mode the default value differs and depends on the language
+									//TODO this does not work in SWZ, the base path is not taken into account...
+									//get the translated default value for the language we want to translate this.getLanguage()
+									oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sTranslationTextKey);
+								}
 							}
 						}
+
 						if (this.getMode() === "translation") {
 							if (this._isValueWithHandlebarsTranslation(oItem.label)) {
 								oItem._translatedLabel = this._getCurrentLanguageSpecificText(oItem.label.substring(2, oItem.label.length - 2), true);
 							} else if (oItem.label && oItem.label.startsWith("{i18n>")) {
-								//resolve to _translatedDefaultValue language specific i18n binding
+								//TODO this does not work in SWZ, the base path is not taken into account...
+								//get the translated default value for the language we want to translate this.getLanguage()
 								oItem._translatedLabel = this._getCurrentLanguageSpecificText(oItem.label.substring(6, oItem.label.length - 1), true);
 							}
 						}
 					}
-					oItem._changed = false;
 
 				}
 			}

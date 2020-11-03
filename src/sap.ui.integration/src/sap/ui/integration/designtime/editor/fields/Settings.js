@@ -276,7 +276,13 @@ sap.ui.define([
 			setNextSetting("visible", true);
 			setNextSetting("editable", true);
 			setNextSetting("allowDynamicValues", true);
-			oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_beforeValue"));
+			if (oCurrentModel.getProperty("/translatable")) {
+				oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_translatedDefaultValue"));
+				oCurrentModel.setProperty("/_changed", false);
+			} else {
+				oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_beforeValue"));
+			}
+
 			oPopover.getBeginButton().firePress();
 		}
 	});
