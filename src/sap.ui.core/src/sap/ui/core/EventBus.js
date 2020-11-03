@@ -39,6 +39,7 @@ sap.ui.define([
 			BaseObject.apply(this);
 			this._mChannels = {};
 			this._defaultChannel = new EventProvider();
+			this._bIsSuspended = false;
 		}
 
 	});
@@ -185,6 +186,9 @@ sap.ui.define([
 	 * @public
 	 */
 	EventBus.prototype.publish = function(sChannelId, sEventId, oData) {
+		if (this._bIsSuspended) {
+			return;
+		}
 
 		if (arguments.length == 1) { //sEventId
 			oData = null;
@@ -255,6 +259,25 @@ sap.ui.define([
 		BaseObject.prototype.destroy.apply(this, arguments);
 	};
 
+	/**
+	 * Suspends the EventBus, so no further events will be published
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	EventBus.prototype.suspend = function () {
+		this._bIsSuspended = true;
+	};
+
+	/**
+	 * Resumes the EventBus, so future events will be published
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	EventBus.prototype.resume = function () {
+		this._bIsSuspended = false;
+	};
 
 	function getChannel(oEventBus, sChannelId){
 		if (!sChannelId) {
