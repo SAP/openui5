@@ -379,23 +379,23 @@ sap.ui.define([
 	/**
 	 * Gets all properties known to this helper.
 	 *
-	 * @returns {object[]|null} All properties
+	 * @returns {object[]} All properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getProperties = function() {
 		var oPrivate = _private.get(this);
-		return oPrivate ? oPrivate.aProperties : null;
+		return oPrivate ? oPrivate.aProperties : [];
 	};
 
 	/**
 	 * Gets the properties as a key-value map, where the key is the <code>name</code> attribute of a property.
 	 *
-	 * @returns {object|null} A map of all properties
+	 * @returns {object} A map of all properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getPropertyMap = function() {
 		var oPrivate = _private.get(this);
-		return oPrivate ? oPrivate.mProperties : null;
+		return oPrivate ? oPrivate.mProperties : {};
 	};
 
 	/**

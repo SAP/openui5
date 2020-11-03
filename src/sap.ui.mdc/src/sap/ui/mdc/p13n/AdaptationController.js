@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/merge",
 	"sap/base/Log",
-	"./P13nBuilder"
-], function (SAPUriParameters, ManagedObject, FlexUtil, JSONModel, merge, Log, P13nBuilder) {
+	"./P13nBuilder",
+	"sap/ui/mdc/util/PropertyHelper"
+], function (SAPUriParameters, ManagedObject, FlexUtil, JSONModel, merge, Log, P13nBuilder, PropertyHelper) {
 	"use strict";
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -150,26 +151,24 @@ sap.ui.define([
 
 		if (!this.bIsDialogOpen){
 			this.bIsDialogOpen = true;
-			return this._retrievePropertyInfo().then(function(aPropertyInfo){
-				return this.createP13n(sP13nType, aPropertyInfo).then(function(oP13nDialog){
-					//-------------- TODO: remove hack for FE transition -----------------------
-					var sView = oURLParams.getAll("sap-ui-xx-filterView")[0];
-					if (
-						sView === "list" &&
-						oP13nDialog &&
-						oP13nDialog.getContent()[0] &&
-						oP13nDialog.getContent()[0]._oFilterBarLayout &&
-						oP13nDialog.getContent()[0]._oFilterBarLayout.getInner().isA("sap.ui.mdc.p13n.panels.GroupPanelBase")
-						){
-							oP13nDialog.getContent()[0]._oFilterBarLayout.getInner().switchViewMode("list");
-					}
-					//--------------------------------------------------------------------------
-					this._openP13nControl(oP13nDialog, oSource);
-					return oP13nDialog;
-				}.bind(this), function(){
-					this.bIsDialogOpen = false;
-					Log.warning("P13n container creation failed");
-				}.bind(this));
+			return this.createP13n(sP13nType).then(function(oP13nDialog){
+				//-------------- TODO: remove hack for FE transition -----------------------
+				var sView = oURLParams.getAll("sap-ui-xx-filterView")[0];
+				if (
+					sView === "list" &&
+					oP13nDialog &&
+					oP13nDialog.getContent()[0] &&
+					oP13nDialog.getContent()[0]._oFilterBarLayout &&
+					oP13nDialog.getContent()[0]._oFilterBarLayout.getInner().isA("sap.ui.mdc.p13n.panels.GroupPanelBase")
+					){
+						oP13nDialog.getContent()[0]._oFilterBarLayout.getInner().switchViewMode("list");
+				}
+				//--------------------------------------------------------------------------
+				this._openP13nControl(oP13nDialog, oSource);
+				return oP13nDialog;
+			}.bind(this), function(){
+				this.bIsDialogOpen = false;
+				Log.warning("P13n container creation failed");
 			}.bind(this));
 		}
 	};
@@ -178,44 +177,39 @@ sap.ui.define([
 	 * @public
 	 * @param {string} sP13nType String which describes which config should be used,
 	 * currently available options are: "Item" and "Sort"
-	 * @param {Array} aPropertyInfo String which describes which config should be used,
+	 * @param {Array} [aPropertyInfo] String which describes which config should be used,
 	 * currently available options are: "Item" and "Sort"
-	 * @returns {Promise} returns a Promise resolving in the P13nContainer
+	 * @returns {object} P13nContainer
 	 *
 	 */
 	AdaptationController.prototype.createP13n = function(sP13nType, aPropertyInfo) {
-		return new Promise(function(resolve, reject){
-			this.aPropertyInfo = aPropertyInfo;
-			this._retrieveControl(this.getAdaptationControl().getDelegate().name).then(function(oDelegate){
+		var that = this;
+		return that._retrieveControl(that.getAdaptationControl().getDelegate().name).then(function(oDelegate){
+			that.oAdaptationControlDelegate = oDelegate;
 
-				if (!(aPropertyInfo instanceof Array)) {
-					reject("Please provide a property info array to create a p13n control");
+			return that._retrievePropertyHelper(aPropertyInfo);
+		}).then(function(oPropertyHelper) {
+			that.sP13nType = sP13nType;
+
+			return that._retrieveP13nContainer().then(function(oContainer){
+				var oP13nUI = oContainer.getContent()[0];
+
+				var oP13nData = that._prepareAdaptationData(oPropertyHelper);
+				that._setP13nModelData(oP13nData);
+
+				oP13nUI.setP13nModel(that.oAdaptationModel);
+
+				if (oP13nUI.setLiveMode){
+					oP13nUI.setLiveMode(that.getLiveMode());
 				}
 
-				this.oAdaptationControlDelegate = oDelegate;
-				this.sP13nType = sP13nType;
-
-				this._retrieveP13nContainer().then(function(oContainer){
-					var oP13nUI = oContainer.getContent()[0];
-
-					var oP13nData = this._prepareAdaptationData(aPropertyInfo);
-					this._setP13nModelData(oP13nData);
-
-					oP13nUI.setP13nModel(this.oAdaptationModel);
-
-					if (oP13nUI.setLiveMode){
-						oP13nUI.setLiveMode(this.getLiveMode());
-					}
-
-					var oFnInitPromise = this.getTypeConfig(sP13nType).initializeControl;
-					oFnInitPromise.call(oP13nUI).then(function(){
-						this.getAdaptationControl().addDependent(oContainer);
-						resolve(oContainer);
-					}.bind(this));
-
-				}.bind(this));
-			}.bind(this), reject);
-		}.bind(this));
+				var oFnInitPromise = that.getTypeConfig(sP13nType).initializeControl;
+				return oFnInitPromise.call(oP13nUI).then(function(){
+					that.getAdaptationControl().addDependent(oContainer);
+					return oContainer;
+				});
+			});
+		});
 	};
 
 	/**
@@ -350,37 +344,29 @@ sap.ui.define([
 
 	/************************************************ Async loading *************************************************/
 
-	AdaptationController.prototype._retrievePropertyInfo = function(){
+	AdaptationController.prototype._retrievePropertyHelper = function(aCustomPropertyInfo){
+		// //in case properties have already been fetched, return them
+		if (this.oPropertyHelper) {
+			this.oPropertyHelper.destroy();
+		}
 
-		//!TODO!: once every control is deriving from 'sap.ui.mdc.Control' we should check for mdc control
+		if (aCustomPropertyInfo) {
+			this.oPropertyHelper = new PropertyHelper(aCustomPropertyInfo);
+			return Promise.resolve(this.oPropertyHelper);
+		}
 
-		//by default the "fetchProperties" call is being used to retrieve the property
-		return new Promise(function(resolve,reject){
+		if (this.getRetrievePropertyInfo()){ //in case callback is provided, use it
+			this.oPropertyHelper = new PropertyHelper(this.getRetrievePropertyInfo().call(this.getAdaptationControl()));
+			return Promise.resolve(this.oPropertyHelper);
+		}
 
-			//in case properties have already been fetched, return them
-			if (this.aPropertyInfo) {
-				resolve(this.aPropertyInfo);
-			} else if (this.getRetrievePropertyInfo()){ //in case callback is provided, use it
-					this.aPropertyInfo = this.getRetrievePropertyInfo().call(this.getAdaptationControl());
-					resolve(this.aPropertyInfo);
-			}else {// in case no properties are fetched or callback is provided, use general "fetchProperties"
-				this._retrieveControl(this.getAdaptationControl().getDelegate().name).then(function(oDelegate){
-					this.oAdaptationControlDelegate = oDelegate;
-					oDelegate.fetchProperties(this.getAdaptationControl()).then(function (aPropertyInfo) {
-						this.aPropertyInfo = aPropertyInfo;
-						resolve(this.aPropertyInfo);
-					}.bind(this));
-				}.bind(this));
-			}
-		}.bind(this));
+		return this.getAdaptationControl().initPropertyHelper();
 	};
 
 	AdaptationController.prototype._executeAfterAsyncActions = function(fnCreate) {
-		return new Promise(function (resolve, reject) {
-			this._retrievePropertyInfo().then(function (aPropertyInfo) {
-				resolve(fnCreate());
-			});
-		}.bind(this));
+		return this._retrievePropertyHelper().then(function (aPropertyInfo) {
+			return fnCreate();
+		});
 	};
 
 	/************************************************ P13n related *************************************************/
@@ -438,15 +424,15 @@ sap.ui.define([
 		return aNewItemsPrepared;
 	};
 
-	AdaptationController.prototype._prepareAdaptationData = function(aPropertyInfo){
-
+	AdaptationController.prototype._prepareAdaptationData = function(){
 		var oAdaptationControl = this.getAdaptationControl();
+		var oPropertyHelper = this.oPropertyHelper || oAdaptationControl.getPropertyHelper();
 		var oControlState = merge({}, this.getStateRetriever().call(oAdaptationControl, this.oAdaptationControlDelegate));
 
 		var aIgnoreValues = this._getTypeIgnoreValues(this.sP13nType);
 		var bSortData = this.getTypeConfig(this.sP13nType).sortData;
 
-		return P13nBuilder.prepareP13nData(oControlState, aPropertyInfo, aIgnoreValues, bSortData ? this.sP13nType : "generic");
+		return P13nBuilder.prepareP13nData(oControlState, oPropertyHelper.getProperties(), aIgnoreValues, bSortData ? this.sP13nType : "generic");
 
 	};
 
@@ -467,6 +453,13 @@ sap.ui.define([
 			}];
 		}
 
+		if (this.sP13nType == "Item") {
+			aIgnoreValues = [{
+				ignoreKey: "visible",
+				ignoreValue: false
+			}];
+		}
+
 		return aIgnoreValues;
 	};
 
@@ -481,7 +474,7 @@ sap.ui.define([
 		return FlexUtil.discardChanges({
 			selector: this.getAdaptationControl()
 		}).then(function(){
-			var oP13nData = this._prepareAdaptationData(this.aPropertyInfo);
+			var oP13nData = this._prepareAdaptationData();
 			this.oState = merge({}, oP13nData);
 			this.oAdaptationModel.setProperty("/items", oP13nData.items);
 			this.oAdaptationModel.setProperty("/itemsGrouped", oP13nData.itemsGrouped);
@@ -687,12 +680,11 @@ sap.ui.define([
 			valid: false,
 			property: undefined
 		};
-		this.aPropertyInfo.some(function(oProperty){
-			//First check unique name
-			var bValid = oProperty.name === sName || sName == "$search";
 
-			//Use path as Fallback
-			bValid = bValid ? bValid : oProperty.path === sName;
+		var oPropertyHelper = this.oPropertyHelper || this.getAdaptationControl().getPropertyHelper();
+		oPropertyHelper.getProperties().some(function(oProperty) {
+			//First check unique name
+			var bValid = oPropertyHelper.getName(oProperty) === sName || sName == "$search";
 
 			if (bValid){
 				oInfo.valid = true;
@@ -709,10 +701,14 @@ sap.ui.define([
 
 		if (this.oAdaptationModel){
 			this.oAdaptationModel.destroy();
-		}	this.oAdaptationModel = null;
+			this.oAdaptationModel = null;
+		}
 
-		this.aPropertyInfo = null;
-		this.oAdaptationModel = null;
+		if (this.oPropertyHelper) {
+			this.oPropertyHelper.destroy();
+			this.oPropertyHelper = null;
+		}
+
 		this.oState = null;
 		this.bIsDialogOpen = null;
 		this.sP13nType = null;

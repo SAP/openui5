@@ -1355,18 +1355,7 @@ sap.ui.define([
 				assert.equal(aInnerColumns[0].getSortOrder(), "Descending");
 				assert.equal(aInnerColumns[1].getSorted(), false);
 				oTable.retrieveAdaptationController().then(function (oAdaptationController) {
-
-					var oPropertyInfoPromise = new Promise(function(resolve, reject) {
-						resolve([
-							{name: "name", sortable: true},
-							{name: "age", sortable: true}
-						]);
-					});
-
-					sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
-					oAdaptationController._retrievePropertyInfo().then(function() {
-
-
+					oAdaptationController._retrievePropertyHelper().then(function() {
 						var FlexUtil_handleChanges_Stub = sinon.stub(FlexUtil, "handleChanges");
 						FlexUtil_handleChanges_Stub.callsFake(function(aChanges) {
 							assert.equal(aChanges.length, 2);
@@ -3513,12 +3502,7 @@ sap.ui.define([
 			var oListFormat = ListFormat.getInstance();
 
 			this.oTable.destroy();
-			this.oTable = new Table({
-				type: sTableType,
-				p13nMode: ["Filter"]
-			});
-
-			MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [
 				{
 					name: "name",
 					label: "NameLabel"
@@ -3530,6 +3514,12 @@ sap.ui.define([
 					label: "GenderLabel"
 				}
 			]);
+
+			this.oTable = new Table({
+				type: sTableType,
+				p13nMode: ["Filter"]
+			});
+
 
 			return this.oTable.initialized().then(function() {
 				assert.ok(that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar exists");
@@ -3562,6 +3552,7 @@ sap.ui.define([
 						]
 					}
 				});
+
 				that.oTable.placeAt("qunit-fixture");
 				Core.applyChanges();
 				return Promise.all([that.oTable.initialized(), that.oTable.awaitPropertyHelper()]);
@@ -3667,6 +3658,7 @@ sap.ui.define([
 
 				that.oTable.destroy();
 				assert.ok(oFilterInfoBar.bIsDestroyed, "Filter info bar is destroyed when the table is destroyed");
+				MDCQUnitUtils.restorePropertyInfos(Table.prototype);
 			});
 		});
 	});

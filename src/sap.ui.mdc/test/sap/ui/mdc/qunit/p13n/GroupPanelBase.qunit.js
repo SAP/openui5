@@ -8,8 +8,9 @@ sap.ui.define([
     "sap/ui/base/Event",
     "sap/m/Text",
     "sap/m/List",
-    "sap/m/SegmentedButtonItem"
-], function(GroupPanelBase, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem) {
+    "sap/m/SegmentedButtonItem",
+	"sap/ui/mdc/util/PropertyHelper"
+], function(GroupPanelBase, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem, PropertyHelper) {
     "use strict";
 
     var oMockExisting = {
@@ -93,7 +94,8 @@ sap.ui.define([
                 });
             }.bind(this));
 
-            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+			this.oPropertyHelper = new PropertyHelper(this.aMockInfo);
+            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.oPropertyHelper.getProperties());
 
             this.oPanel.placeAt("qunit-fixture");
             sap.ui.getCore().applyChanges();
@@ -104,6 +106,7 @@ sap.ui.define([
             this.oP13nData = null;
             this.aMockInfo = null;
             this.oPanel.destroy();
+            this.oPropertyHelper.destroy();
         }
     });
 
@@ -256,7 +259,7 @@ sap.ui.define([
 
     QUnit.test("Check that groups are initially only displayed if necessary", function(assert){
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.oPropertyHelper.getProperties());
         this.oPanel.setP13nModel(new JSONModel(oP13nData));
         this.oPanel.switchViewMode("group");
 
@@ -578,7 +581,8 @@ sap.ui.define([
                 });
             }.bind(this));
 
-            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+            this.oPropertyHelper = new PropertyHelper(this.aMockInfo);
+            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.oPropertyHelper.getProperties());
 
             this.oPanel.placeAt("qunit-fixture");
             sap.ui.getCore().applyChanges();
