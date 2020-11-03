@@ -32,6 +32,7 @@ sap.ui.define([
 		{p13nItem: "Changed On", selected: false},
 		{p13nItem: "cityOfOrigin_city", selected: false},
 		{p13nItem: "Country", selected: false},
+		{p13nItem: "Created (Complex)", selected: false},
 		{p13nItem: "Created By", selected: false},
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
@@ -303,6 +304,7 @@ sap.ui.define([
 			{p13nItem: "artistUUID", selected: false},
 			{p13nItem: "Changed On", selected: false},
 			{p13nItem: "cityOfOrigin_city", selected: false},
+			{p13nItem: "Created (Complex)", selected: false},
 			{p13nItem: "regionOfOrigin_code", selected: false}
 		];
 

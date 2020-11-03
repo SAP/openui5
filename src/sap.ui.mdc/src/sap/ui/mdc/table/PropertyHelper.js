@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/util/PropertyHelper"
+	"../util/PropertyHelper"
 ], function(
 	PropertyHelperBase
 ) {
@@ -34,11 +34,7 @@ sap.ui.define([
 	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper");
 
 	function isMdcColumnInstance(oColumn) {
-		if (!oColumn || !oColumn.isA || !oColumn.isA("sap.ui.mdc.table.Column")) {
-			return false;
-		}
-
-		return true;
+		return !!(oColumn && oColumn.isA && oColumn.isA("sap.ui.mdc.table.Column"));
 	}
 
 	function getColumnWidthNumber(sWidth) {
@@ -52,10 +48,6 @@ sap.ui.define([
 
 		return "";
 	}
-
-	PropertyHelper.prototype.getTable = function() {
-		return this.getParent();
-	};
 
 	/**
 	 * Gets the export settings for a column.
@@ -80,7 +72,7 @@ sap.ui.define([
 
 		var	aColumnExportSettings = [];
 		var aPropertiesFromComplexProperty;
-		var oExportSettings = this.getExportSettings(oProperty);
+		var oExportSettings = oProperty.getExportSettings();
 		var oColumnExportSettings;
 		var aPaths = [];
 		var sAdditionalPath;
@@ -88,21 +80,21 @@ sap.ui.define([
 		var oAdditionExportSettings;
 		var oAdditionalColumnExportSettings;
 
-		if (this.isComplex(oProperty)) {
-			aPropertiesFromComplexProperty = this.getPropertiesFromComplexProperty(oProperty);
+		if (oProperty.isComplex()) {
+			aPropertiesFromComplexProperty = oProperty.getPropertiesFromComplexProperty();
 			if (!bSplitCells && oExportSettings) {
 				oColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oProperty, oExportSettings);
-				aPropertiesFromComplexProperty.forEach(function(oPropertyInfo) {
-					aPaths.push(this.getPath(oPropertyInfo));
-				}, this);
+				aPropertiesFromComplexProperty.forEach(function(oProperty) {
+					aPaths.push(oProperty.getPath());
+				});
 				oColumnExportSettings.property = aPaths;
 				aColumnExportSettings.push(oColumnExportSettings);
 			} else {
 				// when there are no exportSettings given for a ComplexProperty or when the splitCells=true
-				aPropertiesFromComplexProperty.forEach(function(oCurrentProperty, iIndex) {
-					var oCurrentExportSettings = this.getExportSettings(oCurrentProperty),
-						oCurrentColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oCurrentProperty, oCurrentExportSettings);
-					oCurrentColumnExportSettings.property = this.getPath(oCurrentProperty);
+				aPropertiesFromComplexProperty.forEach(function(oProperty, iIndex) {
+					var oCurrentExportSettings = oProperty.getExportSettings(),
+						oCurrentColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oProperty, oCurrentExportSettings);
+					oCurrentColumnExportSettings.property = oProperty.getPath();
 					if (iIndex > 0) {
 						oCurrentColumnExportSettings.columnId = oColumn.getId() + "-additionalProperty" + iIndex;
 					}
@@ -112,12 +104,12 @@ sap.ui.define([
 		} else if (!bSplitCells && oExportSettings) {
 			// called for basic propertyInfo having exportSettings
 			oColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oProperty, oExportSettings);
-			oColumnExportSettings.property = this.getPath(oProperty);
+			oColumnExportSettings.property = oProperty.getPath();
 			aColumnExportSettings.push(oColumnExportSettings);
 		} else {
 			oColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oProperty, oExportSettings);
-			oColumnExportSettings.property = this.getPath(oProperty);
-			oColumnExportSettings.displayUnit = !bSplitCells ? true : false;
+			oColumnExportSettings.property = oProperty.getPath();
+			oColumnExportSettings.displayUnit = !bSplitCells;
 			aColumnExportSettings.push(oColumnExportSettings);
 
 			// get Additional path in case of split cells
@@ -125,9 +117,9 @@ sap.ui.define([
 
 			if (sAdditionalPath) {
 				oAdditionalProperty = getAdditionalProperty(this, sAdditionalPath);
-				oAdditionExportSettings = this.getExportSettings(oAdditionalProperty);
+				oAdditionExportSettings = oAdditionalProperty.getExportSettings();
 				oAdditionalColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oAdditionalProperty, oAdditionExportSettings);
-				oAdditionalColumnExportSettings.property = this.getPath(oAdditionalProperty);
+				oAdditionalColumnExportSettings.property = oAdditionalProperty.getPath();
 				oAdditionalColumnExportSettings.columnId = oColumn.getId() + "-additionalProperty";
 				aColumnExportSettings.push(oAdditionalColumnExportSettings);
 			}
@@ -145,15 +137,15 @@ sap.ui.define([
 	 * @public
 	 */
 	function getAdditionalProperty(oPropertyHelper, sPath) {
-		var oProperty = oPropertyHelper.getPropertyMap()[sPath];
+		var oProperty = oPropertyHelper.getProperty(sPath);
 
 		if (!oProperty) {
-			oProperty = oPropertyHelper.getProperties().find(function(oCurrentProperty) {
-				return sPath === oCurrentProperty.path;
+			oProperty = oPropertyHelper.getProperties().find(function(oProperty) {
+				return sPath === oProperty.getPath();
 			});
 		}
 
-		if (oPropertyHelper.isComplex(oProperty)) {
+		if (oProperty.isComplex()) {
 			throw new Error("The 'unitProperty' points to a complex property");
 		}
 
@@ -173,7 +165,7 @@ sap.ui.define([
 	function getColumnExportSettingsObject(oPropertyHelper, oColumn, oProperty, oExportSettings) {
 		return Object.assign({
 			columnId: oColumn.getId(),
-			label: oPropertyHelper.getLabel(oProperty),
+			label: oProperty.getLabel(),
 			width: getColumnWidthNumber(oColumn.getWidth()),
 			textAlign: oColumn.getHAlign(),
 			type: "String"

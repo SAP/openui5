@@ -1580,25 +1580,15 @@ sap.ui.define([
 		oMDCColumn = this.getColumns()[iIndex];
 
 		this.awaitPropertyHelper().then(function(oPropertyHelper) {
-			var aSortProperties = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty());
-
-			if (!aSortProperties || !aSortProperties.length) {
-				return;
-			}
-
-			var oSortChild, aSortChildren = [];
-
-			aSortProperties.forEach(function(oSortProperty) {
-				oSortChild = new Item({
-					text: oPropertyHelper.getName(oSortProperty),
-					key: oPropertyHelper.getName(oSortProperty)
+			var aSortItems = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
+				return new Item({
+					text: oProperty.getName(),
+					key: oProperty.getName()
 				});
-
-				aSortChildren.push(oSortChild);
 			});
 
 			// create ColumnHeaderPopover
-			if (aSortChildren.length > 0) {
+			if (aSortItems.length > 0) {
 				// TODO: introduce a WeakMap and save reference to ColumnHeaderPopover there to enable re-use
 				if (this._oPopover) {
 					// currently the inner popover can not be accessed from outside
@@ -1608,7 +1598,7 @@ sap.ui.define([
 				this._oPopover = new ColumnHeaderPopover({
 					items: [
 						new ColumnPopoverSortItem({
-							items: aSortChildren,
+							items: aSortItems,
 							sort: [
 								this._onCustomSort, this
 							]
@@ -2015,12 +2005,11 @@ sap.ui.define([
 		this.awaitPropertyHelper().then(function(oPropertyHelper) {
 			aMDCColumns.forEach(function(oMDCColumn) {
 				var oInnerColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
-				var aSortableProperties = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty());
-				var aSortablePaths = aSortableProperties && aSortableProperties.map(function(sPropertyName) {
-					return oPropertyHelper.getPath(sPropertyName);
+				var aSortablePaths = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
+					return oProperty.getPath();
 				});
 
-				if (aSortablePaths) {
+				if (aSortablePaths.length > 0) {
 					var oSorter = aSorters.find(function(oSorter) {
 						return aSortablePaths.indexOf(oSorter.sPath) > -1;
 					});

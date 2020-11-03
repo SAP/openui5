@@ -25,6 +25,7 @@ sap.ui.define([
 		{p13nItem: "Changed On", selected: false},
 		{p13nItem: "cityOfOrigin_city", selected: false},
 		{p13nItem: "Country", selected: false},
+		{p13nItem: "Created (Complex)", selected: false},
 		{p13nItem: "Created By", selected: false},
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
@@ -208,8 +209,9 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Changed On", 6, false);
 		Then.iShouldSeeP13nItem("cityOfOrigin_city", 7, false);
 		Then.iShouldSeeP13nItem("Country", 8, false);
-		Then.iShouldSeeP13nItem("Created By", 9, false);
-		Then.iShouldSeeP13nItem("regionOfOrigin_code", 10, false);
+		Then.iShouldSeeP13nItem("Created (Complex)", 9, false);
+		Then.iShouldSeeP13nItem("Created By", 10, false);
+		Then.iShouldSeeP13nItem("regionOfOrigin_code", 11, false);
 
 		if (sap.ui.Device.system.phone) {
 			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back);
@@ -379,7 +381,8 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Changed On", 6, false);
 		Then.iShouldSeeP13nItem("cityOfOrigin_city", 7, true);
 		Then.iShouldSeeP13nItem("Country", 8, false);
-		Then.iShouldSeeP13nItem("Created By", 9, false);
-		Then.iShouldSeeP13nItem("regionOfOrigin_code", 10, false);
+		Then.iShouldSeeP13nItem("Created (Complex)", 9, false);
+		Then.iShouldSeeP13nItem("Created By", 10, false);
+		Then.iShouldSeeP13nItem("regionOfOrigin_code", 11, false);
 	}
 });
