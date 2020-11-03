@@ -2980,6 +2980,14 @@ sap.ui.define([
 			this.oPC2, "Navigating back twice");
 	});
 
+	QUnit.test("Selected date is in visible range after navigation", function(assert){
+		this.oPC2._dateNav.setCurrent(new Date(2016, 8, 2));
+		this.oPC2.setStartDate(new Date());
+		this.oPC2._applyArrowsLogic();
+
+		assert.ok(1, "Error is not thrown.");
+	});
+
 	QUnit.test("previous button when minDate >= current view start date initially", function(assert) {
 		// arange
 		var oPC = new PlanningCalendar({

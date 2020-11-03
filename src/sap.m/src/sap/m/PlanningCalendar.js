@@ -1211,6 +1211,7 @@ sap.ui.define([
 
 		this.setProperty("startDate", oStartDate, true);
 		this._dateNav.setStart(oStartDate);
+		this._dateNav.setCurrent(oStartDate);
 		this._getHeader().setStartDate(oStartDate);
 
 		INTERVAL_CTR_REFERENCES.forEach(function (sControlRef) {
