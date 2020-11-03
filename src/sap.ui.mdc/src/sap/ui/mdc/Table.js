@@ -1010,10 +1010,18 @@ sap.ui.define([
 			oType = GridTableType;
 		}
 
+		var aInitPromises = [
+			this.awaitControlDelegate(),
+			oType.loadTableModules(),
+			this.retrieveAdaptationController()
+		];
+
+		if (this.isFilteringEnabled()) {
+			aInitPromises.push(this.retrieveInbuiltFilter());
+		}
+
 		// Load the necessary modules via the corresponding TableType
-		Promise.all([
-			this.awaitControlDelegate(), oType.loadTableModules(), this.retrieveAdaptationController()
-		]).then(function() {
+		Promise.all(aInitPromises).then(function() {
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
 			if (this.bIsDestroyed) {
 				return;
