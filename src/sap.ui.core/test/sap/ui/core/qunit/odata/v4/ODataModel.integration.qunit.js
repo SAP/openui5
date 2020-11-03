@@ -1376,17 +1376,22 @@ sap.ui.define([
 		 * {@link #waitForChanges}) is expected to report exactly the given messages. All expected
 		 * messages should have a different message text.
 		 *
-		 * @param {object[]} aExpectedMessages The expected messages (with properties code, message,
-		 *   target, persistent, technical and type corresponding the getters of
-		 *   sap.ui.core.message.Message)
+		 * @param {object[]} aExpectedMessages The expected messages with properties corresponding
+		 *   to the getters of sap.ui.core.message.Message: message and type are required; code,
+		 *   descriptionUrl, persistent (default false), target (default ""), technical (default
+		 *   false) are optional; technicalDetails is only compared if given
 		 * @param {boolean} [bHasMatcher] Whether the expected messages have a Sinon.JS matcher
 		 * @returns {object} The test instance for chaining
 		 */
 		expectMessages : function (aExpectedMessages, bHasMatcher) {
 			this.aMessages = aExpectedMessages.map(function (oMessage) {
-				oMessage.descriptionUrl = oMessage.descriptionUrl || undefined;
-				oMessage.technical = oMessage.technical || false;
-				return oMessage;
+				return Object.assign({
+					code : undefined,
+					descriptionUrl : undefined,
+					persistent : false,
+					target : "",
+					technical : false
+				}, oMessage);
 			});
 			this.aMessages.bHasMatcher = bHasMatcher;
 
@@ -1811,10 +1816,8 @@ sap.ui.define([
 		this.expectRequest("EMPLOYEES('1')/ID", oError)
 			.expectMessages([{
 				code : "Code",
-				descriptionUrl : undefined,
 				message : "Request intentionally failed",
 				persistent : true,
-				target : "",
 				technical : true,
 				technicalDetails : {
 					httpStatus : 500, // CPOUI5ODATAV4-428
@@ -1845,10 +1848,8 @@ sap.ui.define([
 			.expectRequest("EMPLOYEES('2')/Name") // no response required
 			.expectMessages([{
 				code : "Code",
-				descriptionUrl : undefined,
 				message : "Request intentionally failed",
 				persistent : true,
-				target : "",
 				technical : true,
 				technicalDetails : {
 					httpStatus : 500, // CPOUI5ODATAV4-428
@@ -1912,10 +1913,8 @@ sap.ui.define([
 				.expectChange("name", null)
 				.expectMessages([{
 					code : "Code",
-					descriptionUrl : undefined,
 					message : "Request intentionally failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -2889,11 +2888,8 @@ sap.ui.define([
 				})
 				.expectMessages([{
 					code : "1",
-					descriptionUrl : undefined,
 					message : "That is very young",
-					persistent : false,
 					target : "/TEAMS('1')/TEAM_2_EMPLOYEES('2')/AGE",
-					technical : false,
 					type : "Warning"
 				}]);
 
@@ -3775,7 +3771,6 @@ sap.ui.define([
 			oMessage1 = {
 				code : "2",
 				message : "Another Text",
-				persistent : false,
 				target : "/EMPLOYEES('1')/ID",
 				type : "Warning"
 			},
@@ -3829,7 +3824,6 @@ sap.ui.define([
 			.expectMessages([{
 				code : "1",
 				message : "Text",
-				persistent : false,
 				target : "/EMPLOYEES('0')/ID",
 				technicalDetails : {
 					originalMessage : oResponseMessage0
@@ -3859,7 +3853,6 @@ sap.ui.define([
 				.expectMessages([{
 					code : "1",
 					message : "Text after refresh",
-					persistent : false,
 					target : "/EMPLOYEES('0')/ID",
 					type : "Warning"
 				}, oMessage1]);
@@ -4203,7 +4196,6 @@ sap.ui.define([
 			.expectMessages([{
 				code : "1",
 				message : "Text",
-				persistent : false,
 				target : "/EMPLOYEES('1')/Name",
 				type : "Warning"
 			}]);
@@ -4242,14 +4234,12 @@ sap.ui.define([
 		var oMessage1 = {
 				code : "1",
 				message : "Text",
-				persistent : false,
 				target : "/EMPLOYEES/1/Name",
 				type : "Warning"
 			},
 			oMessage2 = {
 				code : "2",
 				message : "Text2",
-				persistent : false,
 				target : "/EMPLOYEES/2/Name",
 				type : "Warning"
 			},
@@ -4351,7 +4341,6 @@ sap.ui.define([
 			.expectMessages([{
 				code : "1",
 				message : "Text",
-				persistent : false,
 				target : "/EMPLOYEES('2')/Name",
 				type : "Warning"
 			}]);
@@ -4372,7 +4361,6 @@ sap.ui.define([
 					code : "CODE",
 					message : "Employee does not exist",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -4453,7 +4441,6 @@ sap.ui.define([
 			oModelMessage = {
 				code : "1",
 				message : "Warning Text",
-				persistent : false,
 				target : "/ChangeTeamBudgetByID(...)/Name",
 				type : "Warning"
 			},
@@ -4727,7 +4714,6 @@ sap.ui.define([
 					}
 				}, oError) // simulates failure
 				.expectMessages([{
-					code : undefined,
 					message : "Invalid Budget",
 					persistent : true,
 					target : "/ChangeTeamBudgetByID(...)/$Parameter/Budget",
@@ -6038,10 +6024,8 @@ sap.ui.define([
 
 			that.expectMessages([{
 					code : "CODE",
-					descriptionUrl : undefined,
 					message : "Failure",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -6187,7 +6171,6 @@ sap.ui.define([
 					code : "CODE",
 					message : sCreateError,
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -8985,9 +8968,7 @@ sap.ui.define([
 			oExpectedMessage = {
 				code : "23",
 				message : "Enter a minimum quantity of 2",
-				persistent : false,
 				target : "/BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')/Quantity",
-				technical : false,
 				type : "Warning"
 			},
 			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
@@ -9038,7 +9019,6 @@ sap.ui.define([
 						code : "top",
 						message : "Error occurred while processing the request",
 						persistent : true,
-						target : "",
 						technical : true,
 						technicalDetails : {
 							httpStatus : 500, // CPOUI5ODATAV4-428
@@ -9063,7 +9043,6 @@ sap.ui.define([
 						code : "unbound",
 						message : "Some unbound warning",
 						persistent : true,
-						target : "",
 						technicalDetails : {
 							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
@@ -9289,7 +9268,6 @@ sap.ui.define([
 					code : "CODE",
 					message : "Value 4.22 not allowed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -9779,7 +9757,6 @@ sap.ui.define([
 						code : "CODE",
 						message : "Patch failed",
 						persistent : true,
-						target : "",
 						technical : true,
 						technicalDetails : {
 							httpStatus : 500, // CPOUI5ODATAV4-428
@@ -10389,8 +10366,7 @@ sap.ui.define([
 						target : "EMPLOYEE" // error targeting the complete binding parameter
 					}, {
 						message : "Unexpected Error w/o target",
-						"@Common.numericSeverity" : 4,
-						target : ""
+						"@Common.numericSeverity" : 4
 					} ]
 				});
 
@@ -10406,7 +10382,6 @@ sap.ui.define([
 					payload : {TeamID : ""}
 				}, oError) // simulates failure
 				.expectMessages([{
-					code : undefined,
 					message : "Missing team ID",
 					persistent : true,
 					target : "/EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
@@ -10414,13 +10389,11 @@ sap.ui.define([
 					technical : true,
 					type : "Error"
 				}, {
-					code : undefined,
 					message : "Illegal Status",
 					persistent : true,
 					target : "/EMPLOYEES('1')/STATUS",
 					type : "Error"
 				}, {
-					code : undefined,
 					message : "Target resolved to ''",
 					persistent : true,
 					// Note: checkValueState not possible for whole entity, but it is nice to know
@@ -10428,10 +10401,8 @@ sap.ui.define([
 					target : "/EMPLOYEES('1')",
 					type : "Error"
 				}, {
-					code : undefined,
 					message : "Unexpected Error w/o target",
 					persistent : true,
-					target : "",
 					type : "Error"
 				}])
 				.expectChange("parameterTeamId", "")
@@ -10527,7 +10498,6 @@ sap.ui.define([
 					code : "23",
 					message : "Just A Message",
 					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
-					persistent : false,
 					type : "Success"
 				}]);
 
@@ -10571,7 +10541,6 @@ sap.ui.define([
 					code : "23",
 					message : "Just Another Message",
 					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
-					persistent : false,
 					type : "Success"
 				}]);
 
@@ -10605,7 +10574,6 @@ sap.ui.define([
 					code : "CODE",
 					message : "What a nice acronym!",
 					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
-					persistent : false,
 					type : "Success"
 				}]);
 
@@ -17390,11 +17358,8 @@ sap.ui.define([
 					"sap.ui.model.odata.v4.ODataPropertyBinding");
 
 			that.expectMessages([{
-				code : undefined,
-				descriptionUrl : undefined,
 				message : "/MANAGERS('1')/@$ui5.foo: Not a (navigation) property: @$ui5.foo",
 				persistent : true,
-				target : "",
 				technical : true,
 				technicalDetails : {}, // we do NOT expect technicalDetails for JS Errors
 				type : "Error"
@@ -19684,7 +19649,6 @@ sap.ui.define([
 					descriptionUrl : sTeaBusi + "Messages(1)/LongText/$value",
 					message : "text0",
 					persistent : true,
-					target : "",
 					technicalDetails : {
 						originalMessage : aMessages[0]
 					},
@@ -19693,7 +19657,6 @@ sap.ui.define([
 					code : "foo-77",
 					message : "text1",
 					persistent : true,
-					target : "",
 					technicalDetails : {
 						originalMessage : aMessages[1]
 					},
@@ -19760,7 +19723,6 @@ sap.ui.define([
 				.expectMessages([{
 					code : "1",
 					message : "Text",
-					persistent : false,
 					target : "/TEAMS('Team_01')/TEAM_2_EMPLOYEES('1')/Name",
 					type : "Warning"
 				}]);
@@ -19832,7 +19794,6 @@ sap.ui.define([
 			oExpectedMessage0 = {
 				code : "1",
 				message : "Message0",
-				persistent : false,
 				target : "/SalesOrderList('0500000347')"
 					+ "/SO_2_SOITEM(SalesOrderID='0500000347',ItemPosition='0')/Note",
 				type : "Warning"
@@ -19931,7 +19892,6 @@ sap.ui.define([
 				.expectMessages([oExpectedMessage0, {
 					code : "1",
 					message : "Message1",
-					persistent : false,
 					target : "/SalesOrderList('0500000348')"
 						+ "/SO_2_SOITEM(SalesOrderID='0500000348',ItemPosition='1')/Note",
 					type : "Warning"
@@ -20271,7 +20231,6 @@ sap.ui.define([
 			oReadMessage = {
 				code : "1",
 				message : "Text",
-				persistent : false,
 				target : "/EMPLOYEES('1')/Name",
 				type : "Warning"
 			},
@@ -20387,7 +20346,6 @@ sap.ui.define([
 			.expectMessages([{
 				code : "1",
 				message : "Text",
-				persistent : false,
 				target : "/EMPLOYEES('2')/Name",
 				type : "Warning"
 			}]);
@@ -20455,7 +20413,6 @@ sap.ui.define([
 			.expectMessages([{
 				code : "1",
 				message : "Text",
-				persistent : false,
 				target : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
 				type : "Warning"
 			}]);
@@ -20609,17 +20566,13 @@ sap.ui.define([
 				.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100", oError2)
 				.expectMessages([{
-					code : undefined,
 					message : "404 Not Found",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}, {
-					code : undefined,
 					message : "404 Not Found",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -20672,7 +20625,6 @@ sap.ui.define([
 			.expectMessages([{
 				code : "1",
 				message : "Text",
-				persistent : false,
 				target : "/Equipments(Category='foo',ID=815)/EQUIPMENT_2_EMPLOYEE/Name",
 				type : "Warning"
 			}]);
@@ -20749,7 +20701,6 @@ sap.ui.define([
 				.expectMessages([{
 					code : "1",
 					message : "Enter a name",
-					persistent : false,
 					target : "/EMPLOYEES('1')/Name",
 					type : "Warning"
 				}]);
@@ -20855,7 +20806,6 @@ sap.ui.define([
 				.expectMessages([{
 					code : "1",
 					message : "Enter a name",
-					persistent : false,
 					target : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
 					type : "Warning"
 				}]);
@@ -20936,7 +20886,6 @@ sap.ui.define([
 				.expectMessages([{
 					code : "1",
 					message : "Enter a name",
-					persistent : false,
 					target : "/EMPLOYEES('1')/Name",
 					type : "Warning"
 				}]);
@@ -21011,10 +20960,8 @@ sap.ui.define([
 				}) // no response required since the PATCH fails
 				.expectMessages([{
 					code : "CODE",
-					descriptionUrl : undefined,
 					message : "Value -1 not allowed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -21118,9 +21065,7 @@ sap.ui.define([
 				.expectMessages([{
 					code : "23",
 					message : "Enter a minimum amount of 1",
-					persistent : false,
 					target : "/SalesOrderList('42')/NetAmount",
-					technical : false,
 					type : "Warning"
 				}]);
 
@@ -21781,10 +21726,8 @@ sap.ui.define([
 				.expectMessages([{
 					code : "23",
 					message : "This looks pretty cheap now",
-					persistent : false,
 					target : "/Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
 						+ "/_Publication('42-2')/Price",
-					technical : false,
 					type : "Information"
 				}]);
 
@@ -22526,10 +22469,8 @@ sap.ui.define([
 					createError({code : "CODE", message : "Request intentionally failed"}))
 				.expectMessages([{
 					code : "CODE",
-					descriptionUrl : undefined,
 					message : "Request intentionally failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -22601,10 +22542,8 @@ sap.ui.define([
 				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID") // no reponse req.
 				.expectMessages([{
 					code : "CODE",
-					descriptionUrl : undefined,
 					message : "Request intentionally failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -22668,10 +22607,8 @@ sap.ui.define([
 					createError({code : "CODE2", message : "Request 2 intentionally failed"}))
 				.expectMessages([{
 					code : "CODE1",
-					descriptionUrl : undefined,
 					message : "Request 1 intentionally failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -23036,7 +22973,6 @@ sap.ui.define([
 						code : "CODE",
 						message : "Request intentionally failed",
 						persistent : true,
-						target : "",
 						technical : true,
 						type : "Error"
 					}]);
@@ -23125,7 +23061,6 @@ sap.ui.define([
 						code : "CODE",
 						message : "Request intentionally failed",
 						persistent : true,
-						target : "",
 						technical : true,
 						type : "Error"
 					}]);
@@ -23215,7 +23150,6 @@ sap.ui.define([
 					code : "CODE",
 					message : "Request intentionally failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -23348,7 +23282,6 @@ sap.ui.define([
 					.expectMessages([{
 						code : "1",
 						message : "Enter an ID",
-						persistent : false,
 						target : bKeepTransientPath
 							? "/TEAMS($uid=...)/TEAM_2_EMPLOYEES($uid=...)/ID"
 							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/ID",
@@ -23458,10 +23391,8 @@ sap.ui.define([
 					}, oError)
 					.expectMessages([{
 						code : "top_patch",
-						descriptionUrl : undefined,
 						message : "Error occurred while processing the request",
 						persistent : true,
-						target : "",
 						technical : true,
 						type : "Error"
 					}, {
@@ -23470,7 +23401,6 @@ sap.ui.define([
 						message : "Must not change mock data",
 						persistent : true,
 						target : "/SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')/Name",
-						technical : false,
 						type : "Error"
 					}]);
 
@@ -23507,10 +23437,8 @@ sap.ui.define([
 					}, oError)
 					.expectMessages([{
 						code : "top_delete",
-						descriptionUrl : undefined,
 						message : "Error occurred while processing the request",
 						persistent : true,
-						target : "",
 						technical : true,
 						type : "Error"
 					}, {
@@ -23519,7 +23447,6 @@ sap.ui.define([
 						message : "Must not delete mock data",
 						persistent : true,
 						target : "/SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')",
-						technical : false,
 						type : "Error"
 					}]);
 
@@ -23551,11 +23478,8 @@ sap.ui.define([
 					})
 					.expectMessages([{
 						code : "23",
-						descriptionUrl : undefined,
 						message : "Enter a product name",
-						persistent : false,
 						target : "/SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')/Name",
-						technical : false,
 						type : "Warning"
 					}]);
 
@@ -23651,18 +23575,14 @@ sap.ui.define([
 				.expectMessages([{
 					code : "23",
 					message : "Just a test",
-					persistent : false,
 					target : "/BusinessPartnerList('0500000000')/BP_2_SO('42')"
 						+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='20')/Note",
-					technical : false,
 					type : "Warning"
 				}, {
 					code : "00",
 					message : "Unknown billing status",
-					persistent : false,
 					target : "/BusinessPartnerList('0500000000')/BP_2_SO('42')"
 						+ "/SO_2_BP/BP_2_SO('23')/BillingStatus",
-					technical : false,
 					type : "Warning"
 				}]);
 		}
@@ -23895,11 +23815,8 @@ sap.ui.define([
 		this.oLogMock.restore();
 		this.stub(Log, "error"); // the exact errors do not interest
 		this.expectMessages([{
-			code : undefined,
-			descriptionUrl : undefined,
 			message : "Could not load metadata: 500 Internal Server Error",
 			persistent : true,
-			target : "",
 			technical : true,
 			type : "Error"
 		}]);
@@ -23979,7 +23896,6 @@ sap.ui.define([
 			that.expectMessages([{
 				code : "42",
 				message : "Warning for WeightUnit",
-				persistent : false,
 				target : "/ProductList('HT-1000')/WeightUnit",
 				type : "Warning"
 			}]);
@@ -23992,7 +23908,6 @@ sap.ui.define([
 					message : "Warning for WeightUnit",
 					numericSeverity : 3,
 					target : "('HT-1000')/WeightUnit",
-					technical : false,
 					transition : false
 				}]
 			}, []);
@@ -24048,12 +23963,8 @@ sap.ui.define([
 			assert.strictEqual(oControl.getValue(), "0.00000 KG");
 
 			that.expectMessages([{
-				code : undefined,
-				descriptionUrl : undefined,
 				message : "Enter a number with a maximum of 5 decimal places",
-				persistent : false,
 				target : oControl.getId() + "/value",
-				technical : false,
 				type : "Error"
 			}]);
 
@@ -24137,7 +24048,6 @@ sap.ui.define([
 			that.expectMessages([{
 				code : "43",
 				message : "Info for CurrencyCode",
-				persistent : false,
 				target : "/ProductList('HT-1000')/CurrencyCode",
 				type : "Information"
 			}]);
@@ -24150,7 +24060,6 @@ sap.ui.define([
 					message : "Info for CurrencyCode",
 					numericSeverity : 2,
 					target : "('HT-1000')/CurrencyCode",
-					technical : false,
 					transition : false
 				}]
 			}, []);
@@ -24213,12 +24122,8 @@ sap.ui.define([
 			assert.strictEqual(oControl.getValue(), "0\u00a0JPY");
 
 			that.expectMessages([{
-				code : undefined,
-				descriptionUrl : undefined,
 				message : "Enter a number with no decimal places",
-				persistent : false,
 				target : oControl.getId() + "/value",
-				technical : false,
 				type : "Error"
 			}]);
 
@@ -24783,10 +24688,8 @@ sap.ui.define([
 				.expectMessages([{
 					code : "23",
 					message : "Enter a minimum quantity of 2",
-					persistent : false,
 					target : "/SalesOrderList('1')"
 						+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')/Quantity",
-					technical : false,
 					type : "Warning"
 				}]);
 
@@ -24822,11 +24725,9 @@ sap.ui.define([
 				.expectMessages([{
 					code : "0815",
 					message : "Best Product Ever",
-					persistent : false,
 					target : "/SalesOrderList('1')"
 						+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
 						+ "/SOITEM_2_PRODUCT/ProductID",
-					technical : false,
 					type : "Information"
 				}]);
 
@@ -24861,11 +24762,9 @@ sap.ui.define([
 				.expectMessages([{
 					code : "0123",
 					message : "Keep on buying!",
-					persistent : false,
 					target : "/SalesOrderList('1')"
 						+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
 						+ "/SOITEM_2_PRODUCT/ProductID",
-					technical : false,
 					type : "Success"
 				}]);
 
@@ -24952,7 +24851,6 @@ sap.ui.define([
 				}).expectMessages([{
 					code : "CODE",
 					message : "What a stupid name!",
-					persistent : false,
 					target : "/TEAMS('TEAM_01')/Name",
 					type : "Warning"
 				}]);
@@ -25663,10 +25561,8 @@ sap.ui.define([
 				.expectChange("soCurrencyCode", "invalid")
 				.expectMessages([{
 					code : "Code",
-					descriptionUrl : undefined,
 					message : "Invalid currency code",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -25872,20 +25768,16 @@ sap.ui.define([
 					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
 			}) // no response required
 			.expectMessages([{
-				code : undefined,
 				message : "Communication error: 500 ",
 				persistent : true,
-				target : "",
 				technical : true,
 				technicalDetails : {
 					httpStatus : 500 // CPOUI5ODATAV4-428
 				},
 				type : "Error"
 			}, {
-				code : undefined,
 				message : "HTTP request was not processed because $batch failed",
 				persistent : true,
-				target : "",
 				technical : true,
 				technicalDetails : {
 					httpStatus : 500 // CPOUI5ODATAV4-428
@@ -25931,17 +25823,13 @@ sap.ui.define([
 					url : "BusinessPartnerList('4711')/BP_2_SO"
 				}, createError()) // a technical error -> let the $batch itself fail
 				.expectMessages([{
-					code : undefined,
 					message : "Communication error: 500 ",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}, {
-					code : undefined,
 					message : "HTTP request was not processed because $batch failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}])
@@ -26016,17 +25904,13 @@ sap.ui.define([
 					url : "SalesOrderList"
 				}, createError()) // a technical error -> let the $batch itself fail
 				.expectMessages([{
-					code : undefined,
 					message : "Communication error: 500 ",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}, {
-					code : undefined,
 					message : "HTTP request was not processed because $batch failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}])
@@ -26074,17 +25958,13 @@ sap.ui.define([
 					url : "SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2"
 				}) // no response required
 				.expectMessages([{
-					code : undefined,
 					message : "Communication error: 500 ",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}, {
-					code : undefined,
 					message : "HTTP request was not processed because $batch failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -26169,17 +26049,13 @@ sap.ui.define([
 			return that.waitForChanges(assert); // no real changes but for sake of consistency
 		}).then(function () {
 			that.expectMessages([{
-					code : undefined,
 					message : "Communication error: 500 ",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}, {
-					code : undefined,
 					message : "HTTP request was not processed because $batch failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}])
@@ -26273,17 +26149,13 @@ sap.ui.define([
 			return that.waitForChanges(assert); // no real changes but for sake of consistency
 		}).then(function () {
 			that.expectMessages([{
-					code : undefined,
 					message : "Communication error: 500 ",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}, {
-					code : undefined,
 					message : "HTTP request was not processed because $batch failed",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}])
@@ -26853,7 +26725,6 @@ sap.ui.define([
 				}))
 				.expectMessages([{
 					code : "CODE",
-					descriptionUrl : undefined,
 					message : "MESSAGE",
 					persistent : true,
 					target : "/SalesOrderList('4711')/Note",
@@ -27650,10 +27521,8 @@ sap.ui.define([
 			// refresh via side effect fails
 			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oError)
 				.expectMessages([{
-					code : undefined,
 					message : oError.message,
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -27823,11 +27692,8 @@ sap.ui.define([
 					}
 				})
 				.expectMessages([{
-					code : undefined,
-					descriptionUrl : undefined,
 					message : sError,
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -28003,11 +27869,8 @@ sap.ui.define([
 					payload : {}
 				})
 				.expectMessages([{
-					code : undefined,
-					descriptionUrl : undefined,
 					message : "Could not load metadata: 500 Internal Server Error",
 					persistent : true,
-					target : "",
 					technical : true,
 					technicalDetails : {
 						httpStatus : 500 // CPOUI5ODATAV4-428
@@ -28441,7 +28304,6 @@ sap.ui.define([
 				.expectMessages([{
 					code : "CODE",
 					message : "Correct category",
-					persistent : false,
 					target : "/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS(Category='F3',ID=42)/Category",
 					type : "Success"
 				}]);
@@ -29033,10 +28895,8 @@ sap.ui.define([
 					value : [{"@odata.etag" : "etag1*", SalesOrderID : "1"}]
 				})
 				.expectMessages([{
-					code : undefined,
 					message : "Modified on client and on server: SalesOrderList('1')",
 					persistent : true,
-					target : "",
 					technical : true,
 					type : "Error"
 				}]);
@@ -29444,7 +29304,6 @@ sap.ui.define([
 			.expectMessages([{
 				code : "1",
 				message : "Foo",
-				persistent : false,
 				target : "/EMPLOYEES('1')/Name",
 				type : "Warning"
 			}]);
