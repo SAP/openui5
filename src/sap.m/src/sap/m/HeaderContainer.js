@@ -317,6 +317,7 @@ sap.ui.define([
 						var oFocusRef = this._oScrollCntr.getDomRef("scroll");
 						var oFocusObj = this._oScrollCntr.$("scroll");
 						var aDomRefs = oFocusObj.find(".sapMHrdrCntrInner").attr("tabindex", "0");
+						oFocusRef.setAttribute("role", "list");
 
 						if (!this._oItemNavigation) {
 							this._oItemNavigation = new HeaderContainerItemNavigator();

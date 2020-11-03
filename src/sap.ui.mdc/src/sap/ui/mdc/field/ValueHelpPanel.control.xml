@@ -13,10 +13,9 @@
 			<items>
 				<IconTabFilter id="fromList" text="{parts: ['$i18n>valuehelp.SELECTFROMLIST', '$this>/conditions'], formatter: '._formatListTabTitle'}" key="selectFromList" visible="false">
 					<!-- <ScrollContainer height="100%" width="100%" vertical="true" horizontal="false"> -->
-					<l:FixFlex>
+					<l:FixFlex minFlexSize="200px"> <!-- minHight for the Flex content Items Table -->
 						<l:fixContent>
 							<Toolbar id="toolbar" width="100%" visible="{= ${$this>/searchEnabled} || ${$this>/showFilterbar}}">
-								<!-- <fl:VariantManagement id="VHPVariantManagementCtrl" modelName="VHPSearchTemplates" editable="false" visible="false" class="sapUiTinyMarginBegin"/> -->
 								<mdc:FilterField
 									id="SearchField"
 									dataType="sap.ui.model.type.String"
@@ -43,7 +42,7 @@
 						<l:flexContent>
 							<Panel id="tablePanel" headerText="{parts: ['$i18n>valuehelp.TABLETITLE'], formatter: '._formatTableTitle'}" class="sapMdcTablePanel" expanded="true" height="100%">
 								<layoutData>
-									<FlexItemData growFactor="1" shrinkFactor="1" minHeight="100%"/>
+									<FlexItemData growFactor="1" shrinkFactor="1"/>
 								</layoutData>
 								<!-- container for the Table Scrollcontainer / at the moment the Scrollbar around the m.Table doe snot work -->
 							</Panel>

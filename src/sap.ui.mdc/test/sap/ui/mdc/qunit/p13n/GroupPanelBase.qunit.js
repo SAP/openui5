@@ -492,6 +492,75 @@ sap.ui.define([
         assert.equal(this.oPanel._oViewSwitch.getSelectedKey(), "test", "Correct item has been selected in the SegmentedButton");
     });
 
+    QUnit.test("Check 'addCustomView' search callback execution", function(assert){
+        var done = assert.async();
+
+        //add a custom view
+        this.oPanel.addCustomView({
+            item: new SegmentedButtonItem({
+                key: "test",
+                icon: "sap-icon://bar-chart"
+            }),
+            content: new List("myCustomList",{}),
+            search: function(sValue){
+                assert.equal(sValue, "Test", "Callback executed with searched String");
+                done();
+            }
+        });
+
+        this.oPanel.switchViewMode("test");
+
+        this.oPanel._getSearchField().setValue("Test");
+        this.oPanel._getSearchField().fireLiveChange();
+    });
+
+    QUnit.test("Check 'addCustomView' view switch callback execution", function(assert){
+        var done = assert.async();
+        var oItem = new SegmentedButtonItem({
+            key: "test",
+            icon: "sap-icon://bar-chart"
+        });
+
+        //add a custom view
+        this.oPanel.addCustomView({
+            item: oItem,
+            content: new List("myCustomList",{}),
+            selectionChange: function(sKey){
+                assert.equal(sKey, "test", "Callback executed with key");
+                done();
+            }
+        });
+
+        this.oPanel._oViewSwitch.fireSelectionChange({
+            item: oItem
+        });
+
+    });
+
+    QUnit.test("Check 'addCustomView' error if no key is provided", function(assert){
+
+        assert.throws(
+            function () {
+                this.oPanel.addCustomView({
+                    item: new SegmentedButtonItem({
+                        icon: "sap-icon://bar-chart"
+                    }),
+                    content: new List("myCustomList",{}),
+                    selectionChange: function(sKey){
+                    }
+                });
+            },
+            function (oError) {
+                return (
+                    oError instanceof Error &&
+                    oError.message ===
+                        "Please provide an item of type sap.m.SegmentedButtonItem with a key"
+                );
+            },
+            "An error should be thrown if no item is provided or if the key is missing"
+        );
+
+    });
 
     QUnit.module("'GroupPanelBase' instance with a custom model name",{
         beforeEach: function() {

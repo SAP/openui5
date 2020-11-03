@@ -32,6 +32,10 @@
 			<Label text='Default set of colors with "More Colors..." button and displayMode set to "Simplified"'/>
 			<Button press="openSampleWithDisplayModeSet" icon="sap-icon://color-fill"/>
 		</ColumnListItem>
+		<ColumnListItem>
+			<Label text='liveChange of the Default set of colors with "More Colors..." button and displayMode set to "Simplified"'/>
+			<Button id="liveChangeButton" press="openSampleWithDisplayModeSetLiveChange" icon="sap-icon://color-fill"/>
+		</ColumnListItem>
 
 	</Table>
 </mvc:View>

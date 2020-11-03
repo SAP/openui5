@@ -74,7 +74,7 @@ sap.ui.define([
 	 * A <code>DefineConditionPanel</code> control is used inside the <code>ValueHelpPanel</code> control to enter different types
 	 * of conditions.
 	 *
-	 * @extends sap.ui.core.XMLComposite
+	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -143,7 +143,8 @@ sap.ui.define([
 				 */
 				_content: {
 					type: "sap.ui.core.Control",
-					multiple: false
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
 			events: {}

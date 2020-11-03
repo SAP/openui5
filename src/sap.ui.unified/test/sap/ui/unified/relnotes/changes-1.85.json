@@ -1,7 +1,12 @@
 {
   "1.85.0": {
-    "date": "October 2020",
+    "date": "November 2020",
     "notes": [
+      {
+        "id": "db088a68c1aeaeb6ffaee92d39c7d7f4ecd116f5",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.ColorPickerPopover: 'liveChange' event exposed"
+      },
       {
         "id": "6bc166e744c2d11e8b0171f46927ca7ee130c8cd",
         "type": "FIX",

@@ -538,6 +538,13 @@ sap.ui.define([
 			"Press listener should not be a reference to the original listener");
 	});
 
+	QUnit.test("_icon", function (assert) {
+		this.oAvatar.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		assert.ok(this.oAvatar.getAggregation("_icon"), "The '_icon' aggregation is created.");
+		assert.strictEqual(this.oAvatar._icon, undefined, "The '_icon' is no longer stored as internal object.");
+	});
+
 	QUnit.module("Functionality", {
 		beforeEach: function () {
 			this.oAvatar = createAvatar({ src: "/you/must/escape/single'quotes" });

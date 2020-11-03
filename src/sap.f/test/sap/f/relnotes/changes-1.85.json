@@ -1,7 +1,29 @@
 {
   "1.85.0": {
-    "date": "October 2020",
+    "date": "November 2020",
     "notes": [
+      {
+        "id": "582f008757071314ab339866bcca9fbd494ca1e0",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: DnD between list and grid is improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070429946"
+          }
+        ]
+      },
+      {
+        "id": "155d00436c74acc5750db665fcb6821b6a2a7dae",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Content now shrinks when needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500004032812020"
+          }
+        ]
+      },
       {
         "id": "f843e0efd36ab4edd23c385afb3f10858262e08f",
         "type": "FIX",

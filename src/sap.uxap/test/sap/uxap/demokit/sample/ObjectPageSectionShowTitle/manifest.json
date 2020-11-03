@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.uxap.sample.ObjectPageSectionShowTitle",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.uxap.sample.ObjectPageSectionShowTitle.view.ObjectPageSectionShowTitle",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/ObjectPageSectionShowTitle.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

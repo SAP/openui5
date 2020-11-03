@@ -411,6 +411,22 @@ function (
 		assert.ok(this.oDynamicPage.getHeader()._getCollapseButton().$().hasClass("sapUiHidden"), "Header collapse button is hidden");
 	});
 
+	QUnit.test("_updateTitleVisualState method", function (assert) {
+		var oSpy;
+
+		// setup
+		this.oDynamicPage.getHeader().setVisible(false);
+		Core.applyChanges();
+		oSpy = sinon.spy(this.oDynamicPage, "_updateTitleVisualState");
+
+		// act
+		this.oDynamicPage.getHeader().setVisible(true);
+		Core.applyChanges();
+
+		// asert
+		assert.ok(oSpy.callCount, 1, "Method is called when the visilibity of header is changed");
+	});
+
 	QUnit.test("no cut-off buttons", function (assert) {
 		var iSnapPosition = this.oDynamicPage._getSnappingHeight(),
 			oHeader = this.oDynamicPage.getHeader(),

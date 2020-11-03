@@ -1218,7 +1218,7 @@ sap.ui.define([
 				return oPatternSymbolSettings.type.toLowerCase();
 			}),
 			bDay = aPatternSymbolTypes.indexOf("day") >= 0,
-			bMonth = aPatternSymbolTypes.indexOf("month") >= 0,
+			bMonth = aPatternSymbolTypes.indexOf("month") >= 0 || aPatternSymbolTypes.indexOf("monthstandalone") >= 0,
 			bYear =  aPatternSymbolTypes.indexOf("year") >= 0;
 
 		if (bDay && bMonth && bYear) {

@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-
 sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
@@ -25,27 +24,25 @@ sap.ui.define([
 	var ExtensionPointRegistry = {};
 
 	var mObservers = {};
-	var aExtensionPointsByParent = [];
+	var mExtensionPointsByParent = {};
 	var mExtensionPointsByViewId = {};
 
 	function onParentDestroy(oEvent) {
 		var sParentId = oEvent.object.getId();
-		aExtensionPointsByParent[sParentId].forEach(function (oExtensionPoint) {
-			delete mExtensionPointsByViewId[oExtensionPoint.view.getId()][oExtensionPoint.name];
+		mExtensionPointsByParent[sParentId].forEach(function (oExtensionPoint) {
+			mExtensionPointsByViewId[oExtensionPoint.view.getId()][oExtensionPoint.name].bParentIsDestroyed = true;
 		});
-		delete mObservers[sParentId];
-		delete aExtensionPointsByParent[sParentId];
 	}
 
 	function onAggregationChange(oEvent) {
 		var sParentId = oEvent.object.getId();
-		aExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
+		mExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			var sAggregationName = oExtensionPoint.aggregationName;
 			if (sAggregationName === oEvent.name) {
-				var aControlIds = JsControlTreeModifier.getAggregation(oEvent.object, sAggregationName).map(function(oControl) {
+				var vControlIds = JsControlTreeModifier.getAggregation(oEvent.object, sAggregationName);
+				var aControlIds = [].concat(vControlIds || []).map(function(oControl) {
 					return oControl.getId();
 				});
-
 				if (oEvent.mutation === "insert") {
 					if (aControlIds.indexOf(oEvent.child.getId()) < oExtensionPoint.index) {
 						oExtensionPoint.index++;
@@ -98,14 +95,14 @@ sap.ui.define([
 		});
 
 		var sParentId = oParent.getId();
-		if (!aExtensionPointsByParent[sParentId]) {
-			aExtensionPointsByParent[sParentId] = [];
+		if (!mExtensionPointsByParent[sParentId]) {
+			mExtensionPointsByParent[sParentId] = [];
 		}
 		if (!mExtensionPointsByViewId[sViewId]) {
 			mExtensionPointsByViewId[sViewId] = {};
 		}
 		mExtensionPointInfo.aggregation = aControlIds;
-		aExtensionPointsByParent[sParentId].push(mExtensionPointInfo);
+		mExtensionPointsByParent[sParentId].push(mExtensionPointInfo);
 		mExtensionPointsByViewId[sViewId][mExtensionPointInfo.name] = mExtensionPointInfo;
 	}
 
@@ -140,13 +137,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the extension point information by view ID.
+	 * @param {string} oViewId - ID of the view
+	 * @returns {object} Map of extension points
+	 */
+	ExtensionPointRegistry.getExtensionPointInfoByViewId = function (oViewId) {
+		return mExtensionPointsByViewId[oViewId] || {};
+	};
+
+	/**
 	 * Returns the extension point information by parent ID.
 	 *
 	 * @param {string} sParentId - ID of the extension point parent control
 	 * @returns {Array} Array of extension point information
 	 */
 	ExtensionPointRegistry.getExtensionPointInfoByParentId = function (sParentId) {
-		return aExtensionPointsByParent[sParentId] || [];
+		return mExtensionPointsByParent[sParentId] || [];
 	};
 
 	/**
@@ -158,7 +164,7 @@ sap.ui.define([
 			mObservers[sParentId].observer.destroy();
 		});
 		mObservers = {};
-		aExtensionPointsByParent = [];
+		mExtensionPointsByParent = {};
 		mExtensionPointsByViewId = {};
 	};
 

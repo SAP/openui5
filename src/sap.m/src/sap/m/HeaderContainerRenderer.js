@@ -55,7 +55,7 @@ sap.ui.define(['sap/ui/core/library', "sap/base/security/encodeCSS"],
 		for (var i = 0; aContent && i < aContent.length; i++) {
 			sDesc += aContent[i].getId() + " ";
 		}
-		oRm.writeAttribute("role", "list");
+		// oRm.writeAttribute("role", "list");
 		oRm.write(">");
 
 		oRm.write("<div");

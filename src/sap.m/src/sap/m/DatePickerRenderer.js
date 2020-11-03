@@ -5,7 +5,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 	function(Renderer, InputBaseRenderer, coreLibrary) {
 	"use strict";
 
-
 	/**
 	 * DatePicker renderer.
 	 * @namespace
@@ -47,7 +46,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 	};
 
 	DatePickerRenderer.getAccessibilityState = function(oDP) {
-
 		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
 
 		mAccessibilityState["roledescription"] = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
@@ -63,7 +61,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		}
 
 		return mAccessibilityState;
-
 	};
 
 	return DatePickerRenderer;

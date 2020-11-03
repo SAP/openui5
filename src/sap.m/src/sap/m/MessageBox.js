@@ -47,6 +47,9 @@ sap.ui.define([
 			// shortcut for sap.m.ButtonType
 			var ButtonType = library.ButtonType;
 
+			// shortcut for sap.m.TitleAlignment
+			var TitleAlignment = library.TitleAlignment;
+
 			/**
 			 * Provides easier methods to create sap.m.Dialog with type sap.m.DialogType.Message, such as standard alerts,
 			 * confirmation dialogs, or arbitrary message dialogs.
@@ -474,6 +477,7 @@ sap.ui.define([
 						id: mOptions.id,
 						type: DialogType.Message,
 						title: mOptions.title,
+						titleAlignment: TitleAlignment.Auto,
 						content: vMessageContent,
 						icon: mIcons[mOptions.icon],
 						initialFocus: getInitialFocusControl(),

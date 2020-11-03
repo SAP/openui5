@@ -1,7 +1,23 @@
 {
   "1.85.0": {
-    "date": "October 2020",
+    "date": "November 2020",
     "notes": [
+      {
+        "id": "5954e9cad770edc71ba8227c4b837d66617fa913",
+        "type": "FIX",
+        "text": " Opa: improve extension loading"
+      },
+      {
+        "id": "f43269295e875fee1165a94ad6da8934a1a87992",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#increaseLaundering: skip laundering if oChangedEntity is not an object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006738672020"
+          }
+        ]
+      },
       {
         "id": "e98a9003957b76b516cd14033d31b15d8e2091ee",
         "type": "FEATURE",

@@ -176,6 +176,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Handles 'dragend' event.
+	 * Used to release the mouse down flag. Needed because the browser will not fire 'mouseup' event after drag and drop.
+	 */
+	GridContainerItemNavigation.prototype.ondragend = function() {
+		this._bIsMouseDown = false;
+	};
+
+	/**
+	 * Handles 'drop' event.
+	 * Used to release the mouse down flag. Needed because the browser will not fire 'mouseup' event after drag and drop.
+	 */
+	GridContainerItemNavigation.prototype.ondrop = function() {
+		this._bIsMouseDown = false;
+	};
+
+	/**
 	 * Handles the <code>focusin</code> event.
 	 *
 	 * Handles when it is needed to return focus to correct place
@@ -209,9 +225,7 @@ sap.ui.define([
 			this._lastFocusedElement = null;
 		}
 
-		if (this._bFocusLeft) {
-			this._bFocusLeft = false;
-
+		if (this._bFocusLeft && !this._bIsMouseDown) {
 			aNavigationDomRefs = this.getItemDomRefs();
 			lastFocusedIndex = this.getFocusedIndex();
 
@@ -221,6 +235,8 @@ sap.ui.define([
 				aNavigationDomRefs[lastFocusedIndex].focus();
 			}
 		}
+
+		this._bFocusLeft = false;
 	};
 
 	/**

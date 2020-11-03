@@ -10,8 +10,7 @@ sap.ui.define([],
 		var aTools = [
 			{
 				"id": "uiThemeDesigner",
-				"text": "UI Theme Designer",
-				"href": "https://themedesigner-themedesigner.dispatcher.hanatrial.ondemand.com/index.html"
+				"text": "UI Theme Designer"
 			},
 			{
 				"id": "businessApplicationStudio",

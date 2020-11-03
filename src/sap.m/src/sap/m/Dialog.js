@@ -10,7 +10,6 @@ sap.ui.define([
 	"./ToolbarSpacer",
 	"./Title",
 	"./library",
-	"./TitleAlignmentMixin",
 	"sap/m/Image",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
@@ -41,7 +40,6 @@ function(
 	ToolbarSpacer,
 	Title,
 	library,
-	TitleAlignmentMixin,
 	Image,
 	Control,
 	IconPool,
@@ -481,6 +479,7 @@ function(
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
+			var oHeader = this.getCustomHeader() || this._header;
 			//if content has scrolling, disable scrolling automatically
 			if (this._hasSingleScrollableContent()) {
 				this.setVerticalScrolling(false);
@@ -507,6 +506,11 @@ function(
 
 				this.setAggregation("_valueState", oValueState);
 				this.addAriaLabelledBy(oValueState.getId());
+			}
+
+			// title alignment
+			if (oHeader && oHeader.setTitleAlignment) {
+				oHeader.setProperty("titleAlignment", this.getTitleAlignment(), true);
 			}
 		};
 
@@ -870,7 +874,6 @@ function(
 			return iKeyCode == KeyCodes.SPACE || iKeyCode == KeyCodes.ENTER;
 		};
 
-
 		/* =========================================================== */
 		/*                      end: event handlers                  */
 		/* =========================================================== */
@@ -1113,12 +1116,12 @@ function(
 		Dialog.prototype._createHeader = function () {
 			if (!this._header) {
 				// set parent of header to detect changes on title
-				this._header = new Bar(this.getId() + "-header");
+				this._header = new Bar(this.getId() + "-header", {
+					titleAlignment: this.getTitleAlignment()
+				});
 				this._header._setRootAccessibilityRole("heading");
 				this._header._setRootAriaLevel("2");
 
-				// call the method that registers this Bar for alignment
-				this._setupBarTitleAlignment(this._header, this.getId() + "_header");
 				this.setAggregation("_header", this._header);
 			}
 		};
@@ -1944,9 +1947,6 @@ function(
 		Dialog.prototype._applyContextualSettings = function () {
 			Control.prototype._applyContextualSettings.call(this);
 		};
-
-		// enrich the control functionality with TitleAlignmentMixin
-		TitleAlignmentMixin.mixInto(Dialog.prototype);
 
 		return Dialog;
 	});

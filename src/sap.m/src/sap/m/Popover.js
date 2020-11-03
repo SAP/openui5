@@ -10,7 +10,6 @@ sap.ui.define([
 	'./InstanceManager',
 	'./library',
 	'./Title',
-	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
 	'sap/ui/core/delegate/ScrollEnablement',
@@ -36,7 +35,6 @@ sap.ui.define([
 		InstanceManager,
 		library,
 		Title,
-		TitleAlignmentMixin,
 		Control,
 		Popup,
 		ScrollEnablement,
@@ -612,7 +610,8 @@ sap.ui.define([
 				bHorScrolling = this.getHorizontalScrolling(),
 				bVerScrolling = this.getVerticalScrolling(),
 				bHorScrollingNotApplied = !bHorScrolling || this.isPropertyInitial("horizontalScrolling"),
-				bVerScrollingNotApplied = !bVerScrolling || this.isPropertyInitial("verticalScrolling");
+				bVerScrollingNotApplied = !bVerScrolling || this.isPropertyInitial("verticalScrolling"),
+				oHeader = this.getCustomHeader() || this._internalHeader;
 
 			if (!this._initialWindowDimensions.width || !this._initialWindowDimensions.height) {
 				this._initialWindowDimensions = {
@@ -685,6 +684,12 @@ sap.ui.define([
 			if (!Device.system.desktop) {
 				this.setResizable(false);
 			}
+
+			// title alignment
+			if (oHeader && oHeader.getTitleAlignment) {
+				oHeader.setProperty("titleAlignment", this.getTitleAlignment(), true);
+			}
+
 		};
 
 		/**
@@ -2160,11 +2165,9 @@ sap.ui.define([
 		Popover.prototype._createInternalHeader = function () {
 			if (!this._internalHeader) {
 				var that = this;
-				this._internalHeader = new Bar(this.getId() + "-intHeader");
-
-				// call the method that registers this Bar for alignment
-				this._setupBarTitleAlignment(this._internalHeader, this.getId() + "_internalHeader");
-
+				this._internalHeader = new Bar(this.getId() + "-intHeader", {
+					titleAlignment: this.getTitleAlignment()
+				});
 				this.setAggregation("_internalHeader", this._internalHeader);
 				this._internalHeader.addEventDelegate({
 					onAfterRendering: function () {
@@ -2624,9 +2627,6 @@ sap.ui.define([
 		Popover.prototype._applyContextualSettings = function () {
 			Control.prototype._applyContextualSettings.call(this);
 		};
-
-		// enrich the control functionality with TitleAlignmentMixin
-		TitleAlignmentMixin.mixInto(Popover.prototype);
 
 		return Popover;
 	});

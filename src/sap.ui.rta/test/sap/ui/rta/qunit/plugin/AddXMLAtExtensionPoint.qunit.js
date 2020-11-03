@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	CommandFactory,
 	AddXMLAtExtensionPointCommand,
 	CompositeCommand,
@@ -44,9 +43,14 @@ function (
 				'</core:ExtensionPoint>' +
 			'</content>' +
 		'</Panel>' +
+		'<Panel>' +
+			'<content>' +
+				'<core:ExtensionPoint name="ExtensionPoint3" />' +
+			'</content>' +
+		'</Panel>' +
 	'</mvc:View>';
 
-	function _createComponent() {
+	function createComponent() {
 		return sap.ui.getCore().createComponent({
 			name: "testComponent",
 			id: "testComponent",
@@ -56,7 +60,7 @@ function (
 		});
 	}
 
-	function _createAsyncView(sViewName, oComponent) {
+	function createAsyncView(sViewName, oComponent) {
 		return oComponent.runAsOwner(function () {
 			return XMLView.create({
 				id: sViewName,
@@ -66,12 +70,13 @@ function (
 		});
 	}
 
-	function _createBeforeEach() {
-		this.oComponent = _createComponent();
-		return _createAsyncView("myView", this.oComponent)
+	function createBeforeEach() {
+		this.oComponent = createComponent();
+		return createAsyncView("myView", this.oComponent)
 			.then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				this.oPanel = oXmlView.getContent()[0];
+				this.oPanelWithoutId = oXmlView.getContent()[1];
 				this.oLabel = this.oPanel.getContent()[1];
 				oXmlView.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -93,6 +98,7 @@ function (
 					});
 					this.oDesignTime.attachEventOnce("synced", function() {
 						this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
+						this.oPanelWithoutIdOverlay = OverlayRegistry.getOverlay(this.oPanelWithoutId);
 						this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
 						resolve();
 					}.bind(this));
@@ -105,7 +111,7 @@ function (
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
 			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
-			return _createBeforeEach.call(this);
+			return createBeforeEach.call(this);
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
@@ -131,6 +137,15 @@ function (
 			assert.strictEqual(this.oAddXmlAtExtensionPointPlugin.isAvailable([this.oPanelOverlay]), true, "isAvailable is called and returns true");
 			assert.strictEqual(this.oAddXmlAtExtensionPointPlugin.isEnabled([this.oPanelOverlay]), true, "isEnabled is called and returns true");
 			return this.oAddXmlAtExtensionPointPlugin._isEditable(this.oPanelOverlay)
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, true, "then the overlay is editable");
+				});
+		});
+
+		QUnit.test("when an overlay with extensionpoints but without stable ID available is given", function(assert) {
+			assert.strictEqual(this.oAddXmlAtExtensionPointPlugin.isAvailable([this.oPanelWithoutIdOverlay]), true, "isAvailable is called and returns true");
+			assert.strictEqual(this.oAddXmlAtExtensionPointPlugin.isEnabled([this.oPanelWithoutIdOverlay]), true, "isEnabled is called and returns true");
+			return this.oAddXmlAtExtensionPointPlugin._isEditable(this.oPanelWithoutIdOverlay)
 				.then(function(bEditable) {
 					assert.strictEqual(bEditable, true, "then the overlay is editable");
 				});
@@ -163,7 +178,7 @@ function (
 				fragmentPath: this.sInitialFragmentPath,
 				fragment: "fragment/fragmentName"
 			});
-			return _createBeforeEach.call(this);
+			return createBeforeEach.call(this);
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
