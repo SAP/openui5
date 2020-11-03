@@ -190,9 +190,15 @@ sap.ui.define([
 		_prepareInputValue: function(oValue, sKey) {
 			var mFormattedValue = this.processInputValue(deepClone(oValue), sKey);
 			if (!mFormattedValue.type) {
-				mFormattedValue.type = this._mTypes[sKey] || this._getDefaultType(mFormattedValue.value);
+				mFormattedValue.type = this._mTypes[sKey] || this._getDesigntimeMetadataValue(sKey).type || this._getDefaultType(mFormattedValue.value);
 			}
 			return mFormattedValue;
+		},
+
+		_getDesigntimeMetadataValue: function (sKey) {
+			var oDesigntimeMetadata = (this.getConfig() || {}).designtime || {};
+			var oDesigntimeMetadataValue = oDesigntimeMetadata[sKey] || {};
+			return oDesigntimeMetadataValue.__value || {};
 		},
 
 		/**
@@ -290,7 +296,7 @@ sap.ui.define([
 					label: this.getI18nProperty("BASE_EDITOR.MAP.VALUE"),
 					path: "value",
 					value: vValue,
-					type: sType,
+					type: sType && includes(this._getAllowedTypes(), sType) ? sType : this._getDefaultType(vValue),
 					itemKey: sKey,
 					designtime: (oDesigntime || {}).value
 				}
