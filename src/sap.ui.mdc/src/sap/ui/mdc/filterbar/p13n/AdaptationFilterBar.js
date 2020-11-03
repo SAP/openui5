@@ -315,14 +315,6 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype.setAdvancedMode = function(bAdvancedUI, bSuppressInvalidate) {
 		this.setProperty("advancedMode", bAdvancedUI, bSuppressInvalidate);
-		this._createInnerLayout();
-		//this._oFilterBarLayout.getInner().setAllowSelection(bAdvancedUI);
-		//this._oFilterBarLayout.getInner().setGrouping(bAdvancedUI);
-		return this;
-	};
-
-	AdaptationFilterBar.prototype._createInnerLayout = function() {
-		//TODO: check if Table can use new layout
 		this._cLayoutItem = this.getAdvancedMode() ? FilterGroupLayout : FilterColumnLayout;
 		this._oFilterBarLayout = this.getAdvancedMode() ? new GroupContainer() : new TableContainer();
 		this._oFilterBarLayout.getInner().setParent(this);
@@ -333,6 +325,9 @@ sap.ui.define([
 				this.fireChange();
 			}.bind(this));
 		}
+		//this._oFilterBarLayout.getInner().setAllowSelection(bAdvancedUI);
+		//this._oFilterBarLayout.getInner().setGrouping(bAdvancedUI);
+		return this;
 	};
 
 	AdaptationFilterBar.prototype.exit = function() {
