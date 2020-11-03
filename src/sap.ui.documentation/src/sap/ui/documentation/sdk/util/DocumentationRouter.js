@@ -229,12 +229,6 @@ sap.ui.define([
 			return;
 		}
 
-		// The links from the documentation are already preprocessed at build-time
-		// to the correct format, so we do not need to adjust them here at run-time
-		if (oElement.classList.contains('sap-doc')) {
-			return;
-		}
-
 		if (
 			oElement.classList.contains("scrollToMethod") ||
 			oElement.classList.contains("scrollToEvent") ||
@@ -253,6 +247,11 @@ sap.ui.define([
 		}
 
 		oAnchorElement = getClosestParentLink(oElement);
+		// The links from the documentation are already preprocessed at build-time
+		// to the correct format, so we do not need to adjust them here at run-time
+		if (oAnchorElement.classList.contains('sap-doc')) {
+			return;
+		}
 		sTarget = getHref(oAnchorElement);
 
 		bParsed = /^blob:/.test(sTarget)
