@@ -3272,8 +3272,8 @@ sap.ui.define([
 				} else if (oResponse.message) {
 					that._processError(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
 				} else {
-					if (oRequest.request.withContentID) {
-						sContentID = oRequest.request.withContentID;
+					if (oRequest.request.contentID) {
+						sContentID = oRequest.request.contentID;
 						if (oRequest.request.created || oRequest.request.functionMetadata) {
 							sEntityKey = that._getKey(oResponse.data);
 
@@ -3939,8 +3939,8 @@ sap.ui.define([
 				} else if (!sDeepPath) {
 					oRequest.deepPath = oRequest.functionTarget;
 				}
-				if (mContentID2KeyAndDeepPath && oRequest.withContentID) {
-					mContentID2KeyAndDeepPath[oRequest.withContentID].deepPath = oRequest.deepPath;
+				if (mContentID2KeyAndDeepPath && oRequest.contentID) {
+					mContentID2KeyAndDeepPath[oRequest.contentID].deepPath = oRequest.deepPath;
 				}
 			}
 
@@ -4164,8 +4164,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod, sDeepPath) {
-		var bCreated, oEntityType, sETag, oExpandRequest, mHeaders, sMethod, mParams, oPayload,
-			oRequest, oUnModifiedEntry, sUrl, aUrlParams, sWithContentID,
+		var sContentID, bCreated, oEntityType, sETag, oExpandRequest, mHeaders, sMethod, mParams,
+			oPayload, oRequest, oUnModifiedEntry, sUrl, aUrlParams,
 			that = this;
 
 		if (sDeepPath && this.mChangedEntities[sKey] && this.mChangedEntities[sKey].__metadata) {
@@ -4193,7 +4193,7 @@ sap.ui.define([
 			bCreated = true;
 			mParams = oData.__metadata.created;
 			oExpandRequest = oData.__metadata.created.expandRequest;
-			sWithContentID = oData.__metadata.created.withContentID;
+			sContentID = oData.__metadata.created.contentID;
 			if (oData.__metadata.created.functionImport){
 				// update request url params with changed data from payload
 				mParams.urlParameters = this._createFunctionImportParameters(oData.__metadata.created.key, sMethod, oPayload );
@@ -4274,7 +4274,7 @@ sap.ui.define([
 			// for createEntry requests we need to flag request again
 			if (oExpandRequest) {
 				oRequest.expandRequest = oExpandRequest;
-				oRequest.withContentID = sWithContentID;
+				oRequest.contentID = sContentID;
 			}
 			// for callFunction requests we need to store the updated functionTarget
 			if (oData.__metadata.created.functionMetadata) {
@@ -5139,10 +5139,10 @@ sap.ui.define([
 						+ ODataUtils._encodeURLParameters({$expand : sExpand, $select : sExpand}),
 					"/$" + sUID, "GET", that._getHeaders(undefined, true), undefined, undefined,
 					undefined, true);
-				oExpandRequest.withContentID = sUID;
+				oExpandRequest.contentID = sUID;
 				oRequest.expandRequest = oExpandRequest;
-				oRequest.withContentID = sUID;
-				// expandRequest and withContentID do not need to be added to
+				oRequest.contentID = sUID;
+				// expandRequest and contentID do not need to be added to
 				// oData.__metadata.created as function calls are not retried
 			}
 
@@ -6414,11 +6414,11 @@ sap.ui.define([
 						+ ODataUtils._encodeURLParameters({$expand : sExpand, $select : sExpand}),
 					"/$" + sUID, "GET", that._getHeaders(undefined, true), null, undefined,
 					undefined, true);
-				oExpandRequest.withContentID = sUID;
+				oExpandRequest.contentID = sUID;
 				oRequest.expandRequest = oExpandRequest;
-				oRequest.withContentID = sUID;
+				oRequest.contentID = sUID;
 				oEntity.__metadata.created.expandRequest = oExpandRequest;
-				oEntity.__metadata.created.withContentID = sUID;
+				oEntity.__metadata.created.contentID = sUID;
 			}
 			oCreatedContext = that.getContext("/" + sKey, sDeepPath); // context wants a path
 			oCreatedContext.bCreated = true;

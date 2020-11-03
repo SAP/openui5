@@ -805,6 +805,7 @@ sap.ui.define([
 		inputDeepPath : "/new/deep/path",
 		mock : function () {}
 	},
+	contentID : "~contentID",
 	contentID2KeyAndDeepPath : {
 		"~contentID" : {
 			deepPath : "~oldDeepPath",
@@ -822,8 +823,7 @@ sap.ui.define([
 		// from sDeepPath which is calculated using getDeepPathForCanonicalPath
 		deepPath : "/correct/deep/path",
 		functionTarget : "/function/target"
-	},
-	withContentID : "~contentID"
+	}
 }].forEach(function (oFixture, i) {
 	var sTitle = "_processSuccess for function import: update deepPath/functionTarget, " + i;
 
@@ -847,12 +847,12 @@ sap.ui.define([
 			mParameters,
 			oRequest = {
 				adjustDeepPath : oFixture.adjustDeepPath && oFixture.adjustDeepPath.mock,
+				contentID : oFixture.contentID,
 				data : "requestData",
 				deepPath : "/deep/path",
 				functionMetadata : oFixture.functionMetadata,
 				functionTarget : "/function/target",
-				requestUri : "/service/path",
-				withContentID : oFixture.withContentID
+				requestUri : "/service/path"
 			},
 			oResponse = {
 				data : {
@@ -905,7 +905,7 @@ sap.ui.define([
 			mParameters.response.data.foo = "bar";
 			assert.notDeepEqual(mParameters.response, oResponse);
 		}
-		if (oFixture.withContentID) {
+		if (oFixture.contentID) {
 			assert.deepEqual(oFixture.contentID2KeyAndDeepPath, {
 				"~contentID" : {
 					deepPath : oFixture.result.deepPath,
@@ -1568,9 +1568,9 @@ sap.ui.define([
 		var oData = {
 				__metadata : {
 					created : {
-						key : "~createdKey",
+						contentID : "~contentID",
 						expandRequest : "~expandRequest",
-						withContentID : "~withContentID"
+						key : "~createdKey"
 					}
 				}
 			},
@@ -1618,9 +1618,9 @@ sap.ui.define([
 		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST");
 
 		assert.deepEqual(oResult, {
+			contentID : "~contentID",
 			created : true,
-			expandRequest : "~expandRequest",
-			withContentID : "~withContentID"
+			expandRequest : "~expandRequest"
 		});
 		assert.strictEqual(oResult, oRequest);
 	});
@@ -2095,8 +2095,8 @@ sap.ui.define([
 
 		if (sExpand) {
 			oEntity.__metadata.created.expandRequest = oExpandRequest;
-			oEntity.__metadata.created.withContentID = sUid;
-			assert.deepEqual(oExpandRequest, {withContentID : sUid});
+			oEntity.__metadata.created.contentID = sUid;
+			assert.deepEqual(oExpandRequest, {contentID : sUid});
 		}
 		assert.deepEqual(oModel.mChangedEntities["~sKey"], oEntity);
 		assert.strictEqual(oResult, oCreatedContext);
@@ -2104,7 +2104,12 @@ sap.ui.define([
 			bCreated : true
 		});
 		assert.deepEqual(oRequest, sExpand
-			? {created : true, key : "~sKey", expandRequest : oExpandRequest, withContentID : sUid}
+			? {
+				contentID : sUid,
+				created : true,
+				expandRequest : oExpandRequest,
+				key : "~sKey"
+			}
 			: {created : true, key : "~sKey"});
 
 		// async functionality
@@ -2155,10 +2160,10 @@ sap.ui.define([
 		}
 	},
 	request0Info : {
+		contentID : "~contentID",
 		created : true,
 		deepPath : "~deepPath('~contentID')",
-		requestUri : "~serviceUri/Foo?bar",
-		withContentID : "~contentID"
+		requestUri : "~serviceUri/Foo?bar"
 	},
 	resultingDeepPath : "~deepPath('~key')"
 }, {
@@ -2169,10 +2174,10 @@ sap.ui.define([
 		}
 	},
 	request0Info : {
+		contentID : "~contentID",
 		deepPath : "~/FunctionName",
 		functionMetadata : "~functionMetadata",
-		requestUri : "~FunctionName?bar",
-		withContentID : "~contentID"
+		requestUri : "~FunctionName?bar"
 	},
 	resultingDeepPath : "~/FunctionName"
 }].forEach(function (oFixture, i) {
@@ -2196,9 +2201,9 @@ sap.ui.define([
 					fnSuccess : "~fnSuccess1"
 				}],
 				request : {
+					contentID : "~contentID",
 					deepPath : "/$~contentID",
-					requestUri : "~serviceUri/$~contentID?bar",
-					withContentID : "~contentID"
+					requestUri : "~serviceUri/$~contentID?bar"
 				}
 			},
 			oResponseGET = {headers : "~getHeaders"},
@@ -3173,9 +3178,9 @@ sap.ui.define([
 		oResultingRequest = fnProcessRequest("~requestHandle");
 
 		assert.strictEqual(oResultingRequest, oFunctionCallRequest);
-		assert.strictEqual(oResultingRequest.withContentID, sUid);
+		assert.strictEqual(oResultingRequest.contentID, sUid);
 		assert.strictEqual(oResultingRequest.expandRequest, oExpandRequest);
-		assert.strictEqual(oResultingRequest.expandRequest.withContentID, sUid);
+		assert.strictEqual(oResultingRequest.expandRequest.contentID, sUid);
 
 		fnCallbackHandling.call(this, assert, fnSuccess, fnError, oCallbacksMock);
 
