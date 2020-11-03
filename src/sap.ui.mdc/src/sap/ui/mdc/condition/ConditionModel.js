@@ -219,18 +219,21 @@ sap.ui.define([
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @param {object} oCondition condition to be searched
+		 * @param {function} [fnNormalizeConditions] normalization method for condition comparison
+
 		 * @returns {object} index of condition (-1 if not found)
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.indexOf = function (sFieldPath, oCondition) {
+		ConditionModel.prototype.indexOf = function (sFieldPath, oCondition, fnNormalizeConditions) {
 
 			if (typeof sFieldPath !== "string") {
 				throw new Error("sFieldPath must be a string " + this);
 			}
 
 			var aConditions = this.getConditions(sFieldPath);
-			var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+			var aArgs = fnNormalizeConditions ? [fnNormalizeConditions(oCondition), fnNormalizeConditions(aConditions)] : [oCondition, aConditions];
+			var iIndex = FilterOperatorUtil.indexOfCondition.apply(FilterOperatorUtil, aArgs);
 			return iIndex;
 
 		};
