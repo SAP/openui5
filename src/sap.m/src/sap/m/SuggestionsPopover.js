@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/ValueStateHeader",
 	"sap/m/inputUtils/highlightDOMElements",
 	"sap/m/inputUtils/scrollToItem",
+	"sap/m/inputUtils/ListHelpers",
 	"sap/m/inputUtils/SuggestionsPopoverDialogMixin",
 	"sap/m/inputUtils/SuggestionsPopoverPopoverMixin"
 ], function (
@@ -40,6 +41,7 @@ sap.ui.define([
 	ValueStateHeader,
 	highlightDOMElements,
 	scrollToItem,
+	ListHelpers,
 	SuggestionsPopoverDialogMixin,
 	SuggestionsPopoverPopoverMixin
 ) {
@@ -697,7 +699,7 @@ sap.ui.define([
 		}
 
 		var sValueLowerCase = sValue.toLowerCase(),
-			aItems = this._bHasTabularSuggestions ? this._oInput.getSuggestionRows() : this._oInput.getSuggestionItems(),
+			aItems = this._bHasTabularSuggestions ? this._oInput.getSuggestionRows() : ListHelpers.getEnabledItems(this._oInput.getSuggestionItems()),
 			iLength,
 			sNewValue,
 			sItemText,
@@ -745,15 +747,21 @@ sap.ui.define([
 	 * @private
 	 */
 	SuggestionsPopover.prototype._setSelectedSuggestionItem = function () {
-		var aFilteredItems;
+		var aItems = this._oInput.getItems ?  this._oInput.getItems() : this._oInput.getSuggestionItems(),
+			aListItems, oItem;
 
-		if (this._oList) {
-			aFilteredItems = this._oList.getItems();
-			for (var i = 0; i < aFilteredItems.length; i++) {
-				if ((aFilteredItems[i]._oItem || aFilteredItems[i]) === this._oProposedItem) { // for list || for table
-					aFilteredItems[i].setSelected(true);
-					break;
-				}
+		if (!this._oList) {
+			return;
+		}
+
+		aListItems = this._oList.getItems();
+		for (var i = 0; i < aListItems.length; i++) {
+			// for tabular suggestions the proposed item should be one of the filtered items,
+			// otherwise the proposed item should be an existing list item
+			oItem = ListHelpers.getItemByListItem(aItems, aListItems[i]) || aListItems[i];
+			if (oItem === this._oProposedItem) {
+				aListItems[i].setSelected(true);
+				break;
 			}
 		}
 	};

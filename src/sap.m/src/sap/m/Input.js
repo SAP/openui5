@@ -28,6 +28,8 @@ sap.ui.define([
 	"sap/m/inputUtils/wordStartsWithValue",
 	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/m/inputUtils/highlightDOMElements",
+	"sap/m/inputUtils/filterItems",
+	"sap/m/inputUtils/ListHelpers",
 	"./InputRenderer",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "selectText"
@@ -58,6 +60,8 @@ function(
 	wordStartsWithValue,
 	inputsDefaultFilter,
 	highlightDOMElements,
+	filterItems,
+	ListHelpers,
 	InputRenderer,
 	jQuery
 ) {
@@ -308,6 +312,9 @@ function(
 			 * of the item are displayed. For example, if an <code>icon</code> is set, it is
 			 * ignored. To display more information per item (including icons), you can use the
 			 * <code>suggestionRows</code> aggregation.
+			 *
+			 * <b>Note:</b> Disabled items are not visualized in the list with the suggestions,
+			 * however they can still be accessed through the aggregation.
 			 *
 			 * @since 1.16.1
 			 */
@@ -719,7 +726,7 @@ function(
 			if (this._hasTabularSuggestions()) {
 				this.setSelectionRow(oSelectedItem, true);
 			} else {
-				this.setSelectionItem(oSelectedItem._oItem, true);
+				this.setSelectionItem(ListHelpers.getItemByListItem(this.getSuggestionItems(), oSelectedItem), true);
 			}
 		}
 
@@ -1608,120 +1615,6 @@ function(
 		};
 
 		/**
-		 * Filters list suggestions.
-		 *
-		 * @private
-		 * @param {Array} aItems Array of items
-		 * @param {string} sTypedChars The search term
-		 * @return {object} Object containing the matched items and groups information
-		 */
-		Input.prototype._filterListItems = function (aItems, sTypedChars) {
-			var i,
-				oListItem,
-				oItem,
-				aGroups = [],
-				aHitItems = [],
-				bFilter = this.getFilterSuggests(),
-				bIsAnySuggestionAlreadySelected = false;
-
-			for (i = 0; i < aItems.length; i++) {
-				oItem = aItems[i];
-
-				if (aItems[i].isA("sap.ui.core.SeparatorItem")) {
-					oListItem = new GroupHeaderListItem({
-						id: oItem.getId() + "-ghli",
-						title: aItems[i].getText()
-					});
-
-					aGroups.push({
-						header:oListItem,
-						visible: false
-					});
-
-					this._configureListItem(oItem, oListItem);
-					aHitItems.push(oListItem);
-				} else if (!bFilter || this._fnFilter(sTypedChars, oItem)) {
-					oListItem = new StandardListItem({
-						title: oItem.getText(),
-						info: oItem.getAdditionalText && oItem.getAdditionalText()
-					});
-					if (!bIsAnySuggestionAlreadySelected && (this._oSuggPopover._sProposedItemText === aItems[i].getText())) {
-						oListItem.setSelected(true);
-						bIsAnySuggestionAlreadySelected = true;
-					}
-
-					if (aGroups.length) {
-						aGroups[aGroups.length - 1].visible = true;
-					}
-
-					this._configureListItem(oItem, oListItem);
-					aHitItems.push(oListItem);
-				}
-			}
-
-			aGroups.forEach(function(oGroup){
-				oGroup.header.setVisible(oGroup.visible);
-			});
-
-			return {
-				hitItems: aHitItems,
-				groups: aGroups
-			};
-		};
-
-		/**
-		 * Filters tabular suggestions.
-		 *
-		 * @private
-		 * @param {Array} aTabularRows Array of table rows
-		 * @param {string} sTypedChars The search term
-		 * @return {object} Object containing the matched rows and groups information
-		 */
-		Input.prototype._filterTabularItems = function (aTabularRows, sTypedChars) {
-			var i,
-				bShowItem,
-				bFilter = this.getFilterSuggests(),
-				aHitItems = [],
-				aGroups = [],
-				bIsAnySuggestionAlreadySelected = false;
-
-			// filter tabular items
-			for (i = 0; i < aTabularRows.length; i++) {
-				if (aTabularRows[i].isA("sap.m.GroupHeaderListItem")) {
-					aGroups.push({
-						header: aTabularRows[i],
-						visible: false
-					});
-				} else {
-					bShowItem = !bFilter || this._fnFilter(sTypedChars, aTabularRows[i]);
-
-					aTabularRows[i].setVisible(bShowItem);
-					bShowItem && aHitItems.push(aTabularRows[i]);
-
-					if (!bIsAnySuggestionAlreadySelected && bShowItem && this._oSuggPopover._sProposedItemText === this._fnRowResultFilter(aTabularRows[i])) {
-						aTabularRows[i].setSelected(true);
-						bIsAnySuggestionAlreadySelected = true;
-					}
-
-					if (aGroups.length && bShowItem) {
-						aGroups[aGroups.length - 1].visible = true;
-					}
-				}
-			}
-
-			aGroups.forEach(function(oGroup){
-				oGroup.header.setVisible(oGroup.visible);
-			});
-
-			this._getSuggestionsTable().invalidate();
-
-			return {
-				hitItems: aHitItems,
-				groups: aGroups
-			};
-		};
-
-		/**
 		 * Clears the items from the <code>SuggestionsPopover</code>.
 		 * For List items destroys, and for tabular ones removes the items.
 		 *
@@ -1805,33 +1698,6 @@ function(
 		};
 
 		/**
-		 * Gets filtered items.
-		 * Table/List item agnostic.
-		 *
-		 * @param {String} sTypedChars Chars to filter
-		 * @returns {{hitItems, groups}}
-		 * @private
-		 */
-		Input.prototype._getFilteredSuggestionItems = function (sTypedChars) {
-			var oFilterResults,
-				aItems = this.getSuggestionItems(),
-				aTabularRows = this.getSuggestionRows();
-
-			if (this._hasTabularSuggestions()) {
-				// show list on phone (is hidden when search string is empty)
-				if (this.isMobileDevice() && this._oSuggPopover._oList) {
-					this._oSuggPopover._oList.removeStyleClass("sapMInputSuggestionTableHidden");
-				}
-
-				oFilterResults = this._filterTabularItems(aTabularRows, sTypedChars);
-			} else {
-				oFilterResults = this._filterListItems(aItems, sTypedChars);
-			}
-
-			return oFilterResults;
-		};
-
-		/**
 		 * Adds List items to the <code>SuggestionsPopover</code>.
 		 * Tabular items would be ignored.
 		 *
@@ -1839,21 +1705,14 @@ function(
 		 * @returns {number} Number of suggestions
 		 * @private
 		 */
-		Input.prototype._fillSimpleSuggestionPopupItems = function (oFilterResults) {
+		Input.prototype.getSuggestionsCount = function (oFilterResults) {
 			// The number of all items, including group headers
-			var i,
-				aHitItems = oFilterResults.hitItems,
+			var aHitItems = oFilterResults.items,
 				aGroups = oFilterResults.groups,
 				iItemsLength = aHitItems.length,
 				iSuggestionsLength = iItemsLength;
 
 			if (!this._hasTabularSuggestions()) {
-				for (i = 0; i < iItemsLength; i++) {
-					this._oSuggPopover._oList.addItem(aHitItems[i]);
-				}
-
-				// if list suggestions are used, the group header items are included in the matched items
-				// however the suggestions count should exclude them
 				iSuggestionsLength -= aGroups.length;
 			}
 
@@ -1911,7 +1770,7 @@ function(
 			}
 
 			oFilterResults = this._getFilteredSuggestionItems(sTypedChars);
-			iSuggestionsLength = this._fillSimpleSuggestionPopupItems(oFilterResults);
+			iSuggestionsLength = this.getSuggestionsCount(oFilterResults);
 
 			if (iSuggestionsLength > 0) {
 				this._openSuggestionPopup(this.getValue().length >= this.getStartSuggestion());
@@ -1922,31 +1781,6 @@ function(
 			this._applySuggestionAcc(iSuggestionsLength);
 		};
 
-		/**
-		 * Applies common configuration to a list item.
-		 *
-		 * @private
-		 * @param {sap.ui.core.Item} oItem The associated suggestion item
-		 * @param {sap.m.ListItemBase} oListItem The list item
-		 * @return {sap.m.ListItemBase} The modified list item
-		 */
-		Input.prototype._configureListItem = function (oItem, oListItem) {
-			var sType = ListType.Active;
-
-			if (!oItem.getEnabled() || oListItem.isA("sap.m.GroupHeaderListItem")) {
-				sType = ListType.Inactive;
-			}
-
-			oListItem.setType(sType);
-			oListItem._oItem = oItem;
-			oListItem.addEventDelegate({
-				ontouchstart : function(oEvent) {
-					(oEvent.originalEvent || oEvent)._sapui_cancelAutoClose = true;
-				}
-			});
-
-			return oListItem;
-		};
 		/**
 		 * Adds suggestion item.
 		 *
@@ -2590,7 +2424,7 @@ function(
 
 				if (!oListItem.isA("sap.m.GroupHeaderListItem")) {
 					this._oSuggPopover._bSuggestionItemTapped = true;
-					this.setSelectionItem(oListItem._oItem, true);
+					this.setSelectionItem(ListHelpers.getItemByListItem(this.getSuggestionItems(), oListItem), true);
 				}
 			}, this);
 		} else {
@@ -2859,7 +2693,7 @@ function(
 		this._clearSuggestionPopupItems();
 
 		oFilterResults = this._getFilteredSuggestionItems(this.getDOMValue());
-		iSuggestionsLength = this._fillSimpleSuggestionPopupItems(oFilterResults);
+		iSuggestionsLength = this.getSuggestionsCount(oFilterResults);
 
 		if (iSuggestionsLength > 0) {
 			this._openSuggestionPopup();
@@ -2962,6 +2796,159 @@ function(
 	 */
 	Input.prototype.isValueHelpOnlyOpener = function (oTarget) {
 		return true;
+	};
+
+	/* =========================================================== */
+	/* Filtering                                                   */
+	/* =========================================================== */
+
+	/**
+	 * Gets filtered items.
+	 * Table/List item agnostic.
+	 *
+	 * @param {String} sValue The value, to be used as a filter
+	 * @returns {Object} A filtering result object, containing the matching items and list groups
+	 * @private
+	 */
+	Input.prototype._getFilteredSuggestionItems = function (sValue) {
+		var oFilterResults,
+			aItems = this.getSuggestionItems(),
+			aTabularRows = this.getSuggestionRows();
+
+		if (this._hasTabularSuggestions()) {
+			// show list on phone (is hidden when search string is empty)
+			if (this.isMobileDevice() && this._oSuggPopover._oList) {
+				this._oSuggPopover._oList.removeStyleClass("sapMInputSuggestionTableHidden");
+			}
+
+			oFilterResults = this.filterTabularItems(aTabularRows, sValue);
+		} else {
+			oFilterResults = filterItems(
+				this, // control instance
+				aItems, // array of items to be filtered
+				sValue, // the value, to be used as a filter
+				this.getFilterSuggests(), // boolean that determines if the suggestions should be filtered
+				true, // filter also by secondary values
+				this._fnFilter // the filter function
+			);
+			this._mapItems(oFilterResults);
+		}
+		return oFilterResults;
+	};
+
+	/**
+	 * Filters tabular suggestions.
+	 *
+	 * @private
+	 * @param {Array} aTabularRows Array of table rows
+	 * @param {String} sValue The value, to be used as a filter
+	 * @returns {Object} A filtering result object, containing the matching items and list groups
+	 */
+	Input.prototype.filterTabularItems = function (aTabularRows, sValue) {
+		var bShowItem,
+			bFilter = this.getFilterSuggests(),
+			aFilteredItems = [],
+			aGroups = [],
+			bIsAnySuggestionAlreadySelected = false;
+
+		// filter tabular items
+		aTabularRows.forEach(function(oTabularRow) {
+			if (oTabularRow.isA("sap.m.GroupHeaderListItem")) {
+				aGroups.push({
+					header: oTabularRow,
+					visible: false
+				});
+			} else {
+				bShowItem = !bFilter || this._fnFilter(sValue, oTabularRow);
+
+				oTabularRow.setVisible(bShowItem);
+				bShowItem && aFilteredItems.push(oTabularRow);
+
+				if (!bIsAnySuggestionAlreadySelected && bShowItem && this._oSuggPopover._sProposedItemText === this._fnRowResultFilter(oTabularRow)) {
+					oTabularRow.setSelected(true);
+					bIsAnySuggestionAlreadySelected = true;
+				}
+
+				if (aGroups.length && bShowItem) {
+					aGroups[aGroups.length - 1].visible = true;
+				}
+			}
+		}, this);
+
+		aGroups.forEach(function(oGroup){
+			oGroup.header.setVisible(oGroup.visible);
+		});
+
+		this._getSuggestionsTable().invalidate();
+
+		return {
+			items: aFilteredItems,
+			groups: aGroups
+		};
+	};
+
+	/**
+	 * Calls the mapping method, sets the list selection and updates the visibility of groups headers.
+	 *
+	 * @param {Object} oFilterResults A filtering result object, containing the matching items and list groups
+	 * @private
+	 */
+	Input.prototype._mapItems = function (oFilterResults) {
+		var aItems = oFilterResults.items,
+			aGroups = oFilterResults.groups,
+			oSuggestionsPopover = this._oSuggPopover,
+			bIsAnySuggestionAlreadySelected = false,
+			oListItem;
+
+		for (var i = 0; i < aItems.length; i++) {
+			oListItem = this._mapItemToListItem(aItems[i]);
+
+			if (!bIsAnySuggestionAlreadySelected && oSuggestionsPopover._sProposedItemText === aItems[i].getText()) {
+				oListItem.setSelected(true);
+				bIsAnySuggestionAlreadySelected = true;
+			}
+		}
+
+		aGroups.forEach(function (oGroupItem) {
+			oListItem = ListHelpers.getListItem(oGroupItem.header);
+			oListItem && oListItem.setVisible(oGroupItem.visible);
+		});
+	};
+
+	/**
+	 * Maps items of <code>sap.ui.core.Item</code> type to <code>sap.m.StandardListItem</code> items.
+	 * Maps items of <code>sap.ui.core.SeparatorItem<code> type to <code>sap.m.GroupHeaderListItem</code> items.
+	 *
+	 * @param {sap.ui.core.Item} oItem The item to be matched
+	 * @returns {sap.m.StandardListItem | sap.m.GroupHeaderListItem | null} The matched StandardListItem
+	 * @private
+	 */
+	Input.prototype._mapItemToListItem = function (oItem) {
+		var oListItem,
+			oSuggestionsPopover = this._oSuggPopover,
+			oList = oSuggestionsPopover && oSuggestionsPopover._oList;
+
+		if (oItem.isA("sap.ui.core.SeparatorItem")) {
+			oListItem = new GroupHeaderListItem({
+				title: oItem.getText(),
+				type: ListType.Inactive
+			});
+		} else {
+			oListItem = new StandardListItem({
+				title: oItem.getText(),
+				type: ListType.Active,
+				info: oItem.getAdditionalText && oItem.getAdditionalText()
+			}).addEventDelegate({
+				ontouchstart : function(oEvent) {
+					(oEvent.originalEvent || oEvent)._sapui_cancelAutoClose = true;
+				}
+			});
+		}
+
+		oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
+		oList.addItem(oListItem);
+
+		return oListItem;
 	};
 
 	return Input;

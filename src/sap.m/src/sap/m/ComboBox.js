@@ -15,6 +15,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/m/inputUtils/scrollToItem",
 	"sap/m/inputUtils/inputsDefaultFilter",
+	"sap/m/inputUtils/filterItems",
+	"sap/m/inputUtils/ListHelpers",
 	"sap/ui/events/KeyCodes",
 	"./Toolbar",
 	"sap/base/assert",
@@ -36,6 +38,8 @@ sap.ui.define([
 		containsOrEquals,
 		scrollToItem,
 		inputsDefaultFilter,
+		filterItems,
+		ListHelpers,
 		KeyCodes,
 		Toolbar,
 		assert,
@@ -232,7 +236,7 @@ sap.ui.define([
 				bShouldResetSelectionStart = oControl._shouldResetSelectionStart(oItem),
 				oSelectedItem = oControl.getSelectedItem(),
 				bGroupHeaderItem = oItem.isA("sap.ui.core.SeparatorItem"),
-				oListItem = oControl.getListItem(oItem);
+				oListItem = ListHelpers.getListItem(oItem);
 
 
 			oControl.handleListItemsVisualFocus(oListItem);
@@ -246,7 +250,7 @@ sap.ui.define([
 
 				// update the selected item after the change event is fired (the selection may change)
 				oItem = oControl.getSelectedItem();
-				oListItem = oControl.getListItem(oItem);
+				oListItem = ListHelpers.getListItem(oItem);
 
 				if (bShouldResetSelectionStart) {
 					iSelectionStart = 0;
@@ -287,7 +291,7 @@ sap.ui.define([
 
 		function fnSelectedItemOnViewPort(bIsListHidden) {
 			var oItem = this.getSelectedItem(),
-				oListItem = this.getListItem(oItem),
+				oListItem = ListHelpers.getListItem(oItem),
 				oItemDomRef = oItem && oListItem && oListItem.getDomRef(),
 				oItemOffsetTop = oItemDomRef && oItemDomRef.offsetTop,
 				oItemOffsetHeight = oItemDomRef && oItemDomRef.offsetHeight,
@@ -375,79 +379,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Filters the items of the ComboBox
-		 *
-		 * @param {object} mOptions Settings for filtering
-		 * @private
-		 * @returns {sap.ui.core.Item[]} Array of filtered items
-		 */
-		ComboBox.prototype.filterItems = function(mOptions) {
-			var oListItem,
-				aItems = this.getItems(),
-				aFilteredItems = [],
-				aFilteredItemsByText = [],
-				bFilterAdditionalText = mOptions.properties.indexOf("additionalText") > -1,
-				fnFilter = this.fnFilter || inputsDefaultFilter,
-				aGroups = [],
-				bGrouped = false;
-
-			this._oFirstItemTextMatched = null;
-
-			aItems.forEach(function (oItem) {
-				if (oItem.isA("sap.ui.core.SeparatorItem")) {
-					aGroups.push({
-						header: oItem,
-						visible: false
-					});
-
-					bGrouped = true;
-					oListItem = this.getListItem(oItem);
-					oListItem && oListItem.setVisible(false);
-
-					return;
-				}
-
-				var bMatchedText = fnFilter.call(this, mOptions.value, oItem, bFilterAdditionalText);
-
-				if (bMatchedText && bGrouped && aGroups.length) {
-					aGroups[aGroups.length - 1].visible = true;
-					bGrouped = false;
-				}
-
-				if (bMatchedText) {
-					aFilteredItemsByText.push(oItem);
-					aFilteredItems.push(oItem);
-				}
-			}.bind(this));
-
-			aItems.forEach(function (oItem) {
-				if (oItem.isA("sap.ui.core.SeparatorItem")) {
-					return;
-				}
-
-				var bItemMatched = aFilteredItems.indexOf(oItem) > -1;
-				var bItemTextMatched = aFilteredItemsByText.indexOf(oItem) > -1;
-
-				if (!this._oFirstItemTextMatched && bItemTextMatched) {
-					this._oFirstItemTextMatched = oItem;
-				}
-
-				oListItem = this.getListItem(oItem);
-				oListItem && oListItem.setVisible(bItemMatched);
-			}, this);
-
-			aGroups.forEach(function (oGroupItem) {
-				if (oGroupItem.visible) {
-					oListItem = this.getListItem(oGroupItem.header);
-					oListItem && oListItem.setVisible(true);
-				}
-			}.bind(this));
-
-			return aFilteredItems;
-		};
-
-
-		/**
 		 * Filters all items with 'starts with' filter
 		 *
 		 * @param {string} sInputValue Value to start item
@@ -466,16 +397,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Gets the fields that will be used for filtering the ComboBox's items.
-		 *
-		 * @private
-		 * @returns {string[]} Array of fields to be filtered
-		 */
-		ComboBox.prototype._getFilters = function () {
-			return this.getFilterSecondaryValues() ? ["text", "additionalText"] : ["text"];
-		};
-
-		/**
 		 * Returns the next focusable item when keyboard navigation is in place.
 		 *
 		 * @param {boolean} bDirectionDown The direction of next selected item. <code>true</code> = down, <code>false</code> = up
@@ -486,7 +407,7 @@ sap.ui.define([
 			var aAllSelectableItems = this.getSelectableItems(),
 				aSelectableNotSeparatorItems = this.getNonSeparatorSelectableItems(aAllSelectableItems),
 				bFocusInInput = this.hasStyleClass("sapMFocus"),
-				oItemToUse = this.getSelectedItem() || this._getItemByListItem(this._oLastFocusedListItem),
+				oItemToUse = this.getSelectedItem() || ListHelpers.getItemByListItem(this.getItems(), this._oLastFocusedListItem),
 				bMessageValueStateActive = this.getFormattedTextFocused(),
 				oNextSelectableItem;
 
@@ -620,7 +541,7 @@ sap.ui.define([
 			}
 
 			if (oList) {
-				oListItem = this.getListItem(vItem);
+				oListItem = ListHelpers.getListItem(vItem);
 
 				if (oListItem) {
 					oList.setSelectedItem(oListItem, true);
@@ -650,53 +571,9 @@ sap.ui.define([
 			return this.getSelectedKey() === (vItem && vItem.getKey());
 		};
 
-		/**
-		 * Maps an item type of sap.ui.core.Item to an item type of sap.m.StandardListItem.
-		 *
-		 * @param {sap.ui.core.Item} oItem The item to be matched
-		 * @returns {sap.m.StandardListItem | null} The matched StandardListItem
-		 * @private
-		 */
-		ComboBox.prototype._mapItemToListItem = function(oItem) {
-			var oListItem, sListItem, sListItemSelected, sAdditionalText;
-			var oRenderer = this.getRenderer();
-
-			if (!oItem) {
-				return null;
-			}
-			sAdditionalText = (oItem.getAdditionalText && this.getShowSecondaryValues()) ? oItem.getAdditionalText() : "";
-
-			sListItem = oRenderer.CSS_CLASS_COMBOBOXBASE + "Item";
-			sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
-
-			if (oItem.isA("sap.ui.core.SeparatorItem")) {
-				oListItem = this._mapSeparatorItemToGroupHeader(oItem, oRenderer);
-			} else {
-				oListItem = new StandardListItem({
-					type: ListType.Active,
-					info: sAdditionalText,
-					visible: oItem.getEnabled()
-				}).addStyleClass(sListItem + " " + sListItemSelected);
-			}
-
-			oListItem.setTitle(oItem.getText());
-			this.setSelectable(oItem, oItem.getEnabled());
-
-			oListItem.setTooltip(oItem.getTooltip());
-			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
-
-			oItem.getCustomData().forEach(function(oCustomData){
-				oListItem.addCustomData(oCustomData.clone());
-			});
-
-			this._oItemObserver.observe(oItem, {properties: ["text", "additionalText", "enabled", "tooltip"]});
-
-			return oListItem;
-		};
-
 		ComboBox.prototype._forwardItemProperties = function(oPropertyInfo) {
 			var oItem = oPropertyInfo.object,
-				oListItem = oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem"),
+				oListItem = oItem.data(ListHelpers.CSS_CLASS + "ListItem"),
 				oDirectMapping = {
 					text: "title",
 					enabled: "visible",
@@ -751,7 +628,7 @@ sap.ui.define([
 				if (!(sId instanceof Item)) {
 					sId = this.findItem("id", sId);
 				}
-				oList.setSelectedItem(this.getListItem(sId), true);
+				oList.setSelectedItem(ListHelpers.getListItem(sId), true);
 			}
 
 			return ComboBoxBase.prototype.setAssociation.apply(this, arguments);
@@ -798,9 +675,6 @@ sap.ui.define([
 			// the last selected item before opening the picker
 			this._oSelectedItemBeforeOpen = null;
 
-			// the first item with matching text property if such exists
-			this._oFirstItemTextMatched = null;
-
 			// indicated if the ComboBox is already focused
 			this.bIsFocused = false;
 
@@ -825,7 +699,7 @@ sap.ui.define([
 
 			var oSelectedItem = this.getSelectedItem(),
 				oList = this._getList(),
-				oSelectedListItem = oSelectedItem && this.getListItem(oSelectedItem),
+				oSelectedListItem = oSelectedItem && ListHelpers.getListItem(oSelectedItem),
 				bFormattedTextHeaderFocused = this.getProperty("formattedTextFocused"),
 				oCustomHeader = this.getPicker() && this.getPicker().getCustomHeader(),
 				oPseudoFocusedElement = (Device.browser.msie && oCustomHeader && oCustomHeader.getFormattedText) ?  oCustomHeader.getFormattedText() : oCustomHeader;
@@ -847,50 +721,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Fill the list of items.
-		 *
-		 * @private
-		 */
-		ComboBox.prototype._fillList = function() {
-			var oList = this._getList(),
-				aItems, oListItem, aItemsLength, i, oLastSelectedItem;
-
-			if (!oList) {
-				return;
-			}
-
-			// As the list items are destroyed, the reference kept here will prevent the item's destruction.
-			// Also we need to know the last selected item so that we can determine what will be the next
-			// item which should be focused upon navigation.
-			if (this._oLastFocusedListItem) {
-				oLastSelectedItem = this._getItemByListItem(this._oLastFocusedListItem);
-			}
-
-			oList.destroyItems();
-			aItems = this.getItems();
-
-			if (this._sInputValueBeforeOpen) {
-				aItems = this.filterItems({
-					properties: this._getFilters(),
-					value: this._sInputValueBeforeOpen
-				});
-			}
-
-			for (i = 0, aItemsLength = aItems.length; i < aItemsLength; i++) {
-				// add a private property to the added item containing a reference
-				// to the corresponding mapped item
-				oListItem = this._mapItemToListItem(aItems[i]);
-
-				// add the mapped item type of sap.m.StandardListItem to the list
-				oList.addAggregation("items", oListItem, true);
-			}
-
-			if (oLastSelectedItem) {
-				this._oLastFocusedListItem = this.getListItem(oLastSelectedItem);
-			}
-		};
-
-		/**
 		 * This method will be called when the ComboBox is being destroyed.
 		 *
 		 * @protected
@@ -900,7 +730,6 @@ sap.ui.define([
 			this._oRb = null;
 
 			this._oSelectedItemBeforeOpen = null;
-			this._oFirstItemTextMatched = null;
 			this._oLastFocusedListItem = null;
 
 			if (this._oSuggestionPopover) {
@@ -984,7 +813,7 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onAfterRenderingList = function() {
 			var oSelectedItem = this.getSelectedItem(),
-				oSelectedListItem = this.getListItem(oSelectedItem);
+				oSelectedListItem = ListHelpers.getListItem(oSelectedItem);
 
 			if (this.bProcessingLoadItemsEvent && (this.getItems().length === 0)) {
 				return;
@@ -1007,6 +836,133 @@ sap.ui.define([
 			if (oFocusDomRef) {
 				oFocusDomRef.removeAttribute("aria-busy");
 			}
+		};
+
+
+		/* =========================================================== */
+		/* Filtering                                                   */
+		/* =========================================================== */
+
+		/**
+		 * Fills the list of items.
+		 *
+		 * @private
+		 */
+		ComboBox.prototype._fillList = function() {
+			var oFilterResults, oLastSelectedItem, aItems, oListItem,
+				oList = this._getList();
+
+			if (!oList) {
+				return;
+			}
+
+			// As the list items are destroyed, the reference kept here will prevent the item's destruction.
+			// Also we need to know the last selected item so that we can determine what will be the next
+			// item which should be focused upon navigation.
+			if (this._oLastFocusedListItem) {
+				oLastSelectedItem = ListHelpers.getItemByListItem(this.getItems(), this._oLastFocusedListItem);
+			}
+
+			oList.destroyItems();
+
+			// if there is a user input, filter the items,
+			// otherwise show all items
+			if (this._sInputValueBeforeOpen) {
+				oFilterResults = this.filterItems(this._sInputValueBeforeOpen);
+				aItems = oFilterResults.items;
+			} else {
+				aItems = this.getItems();
+			}
+
+			// map the items to list items and add them to the list
+			aItems.forEach(function (oItem) {
+				oListItem = this._mapItemToListItem(oItem).setVisible(true);
+				oList.addItem(oListItem);
+			}.bind(this));
+
+			// handle the visibility of list items, depending on the filtering result
+			if (this._sInputValueBeforeOpen) {
+				this.handleItemsVisibility(oFilterResults);
+			}
+
+			if (oLastSelectedItem) {
+				this._oLastFocusedListItem = ListHelpers.getListItem(oLastSelectedItem);
+			}
+		};
+
+		/**
+		 * Filters the items of the ComboBox, using the <code>filterItems</code> module.
+		 *
+		 * @param {string} sValue The value, to be used as a filter
+		 * @returns {Object} A result object, containing the matching items and list groups
+		 * @private
+		 */
+		ComboBox.prototype.filterItems = function(sValue) {
+			return filterItems(this, this.getItems(), sValue, true, this.getFilterSecondaryValues(), this.fnFilter || inputsDefaultFilter);
+		};
+
+		/**
+		 * Maps items of <code>sap.ui.core.Item</code> type to <code>sap.m.StandardListItem</code> items.
+		 *
+		 * @param {sap.ui.core.Item} oItem The item to be matched
+		 * @returns {sap.m.StandardListItem | sap.m.GroupHeaderListItem | null} The matched StandardListItem
+		 * @private
+		 */
+		ComboBox.prototype._mapItemToListItem = function (oItem) {
+			var oListItem, sAdditionalText;
+
+			if (oItem.isA("sap.ui.core.SeparatorItem")) {
+				oListItem = this._mapSeparatorItemToGroupHeader(oItem);
+			} else {
+				sAdditionalText = (oItem.getAdditionalText && this.getShowSecondaryValues()) ? oItem.getAdditionalText() : "";
+
+				oListItem = new StandardListItem({
+					type: ListType.Active,
+					info: sAdditionalText,
+					visible: oItem.getEnabled(),
+					title: oItem.getText(),
+					tooltip: oItem.getTooltip()
+				});
+
+				this.setSelectable(oItem, oItem.getEnabled());
+			}
+
+			oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
+			oItem.getCustomData().forEach(function(oCustomData){
+				oListItem.addCustomData(oCustomData.clone());
+			});
+
+			this._oItemObserver.observe(oItem, {properties: ["text", "additionalText", "enabled", "tooltip"]});
+
+			return oListItem;
+		};
+
+		/**
+		 * Updates the visible property of each list item, depending on the filtering result.
+		 *
+		 * @param {Object} oFilterResults A filtering result object, containing the matching items and list groups
+		 * @private
+		 */
+		ComboBox.prototype.handleItemsVisibility = function(oFilterResults) {
+			var aItems = this.getItems(),
+				aFilteredItems = oFilterResults.items,
+				aGroups = oFilterResults.groups,
+				oListItem;
+
+			// toggle visibility of list items, depending if the item is present in the filtered items
+			aItems.forEach(function (oItem) {
+				oListItem = ListHelpers.getListItem(oItem);
+
+				if (!oItem.isA("sap.ui.core.SeparatorItem") && oListItem) {
+					oListItem.setVisible(aFilteredItems.indexOf(oItem) !== -1);
+				}
+			});
+
+			// toggle group headers visibility
+			aGroups.forEach(function (oGroupItem) {
+				oListItem = ListHelpers.getListItem(oGroupItem.header);
+				oListItem && oListItem.setVisible(oGroupItem.visible);
+			});
 		};
 
 		/* =========================================================== */
@@ -1074,16 +1030,15 @@ sap.ui.define([
 				bEmptyValue = sValue === "",
 				oControl = oEvent.srcControl,
 				bToggleOpenState = (this.getPickerType() === "Dropdown"),
-				oListItem = this.getListItem(oSelectedItem);
+				oListItem = ListHelpers.getListItem(oSelectedItem),
+				oFilterResults = this.filterItems(sValue);
 
 
 			if (bEmptyValue && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog()) {
 				aVisibleItems = this.getItems();
 			} else {
-				aVisibleItems = this.filterItems({
-					properties: this._getFilters(),
-					value: sValue
-				});
+				aVisibleItems = this.getNonSeparatorSelectableItems(oFilterResults.items);
+				this.handleItemsVisibility(oFilterResults);
 			}
 
 			oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
@@ -1118,7 +1073,7 @@ sap.ui.define([
 					selectedItem: this.getSelectedItem()
 				});
 
-				oListItem = this.getListItem(this.getSelectedItem());
+				oListItem = ListHelpers.getListItem(this.getSelectedItem());
 			}
 
 			this._sInputValueBeforeOpen = sValue;
@@ -1156,6 +1111,7 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.handleTypeAhead = function (oInput, aItems, sValue, bCompositionEvent) {
 			// filtered items intersercted with starts with items by text
+			aItems = this.getNonSeparatorSelectableItems(aItems);
 			var aCommonStartsWithItems = this.intersectItems(this._filterStartsWithItems(sValue, 'getText'), aItems);
 			var bSearchBoth = this.getFilterSecondaryValues();
 			var bDesktopPlatform = Device.system.desktop;
@@ -1190,7 +1146,7 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.onSelectionChange = function(oControlEvent) {
-			var oItem = this._getItemByListItem(oControlEvent.getParameter("listItem")),
+			var oItem = ListHelpers.getItemByListItem(this.getItems(), oControlEvent.getParameter("listItem")),
 				mParam = this.getChangeEventParams(),
 				bSelectedItemChanged = (oItem !== this.getSelectedItem());
 
@@ -1217,7 +1173,7 @@ sap.ui.define([
 			var oListItem = oControlEvent.getParameter("listItem"),
 				sText = oListItem.getTitle(),
 				mParam = this.getChangeEventParams(),
-				bSelectedItemChanged = (oListItem !== this.getListItem(this.getSelectedItem()));
+				bSelectedItemChanged = (oListItem !== ListHelpers.getListItem(this.getSelectedItem()));
 
 			if (oListItem.isA("sap.m.GroupHeaderListItem")) {
 				return;
@@ -1285,12 +1241,7 @@ sap.ui.define([
 			this._oSelectedItemBeforeOpen = this.getSelectedItem();
 			this._sValueBeforeOpen = this.getValue();
 
-			if (this.getSelectedItem()) {
-				this.filterItems({
-					properties: this._getFilters(),
-					value: ""
-				});
-			}
+			this.getSelectedItem() && this.handleItemsVisibility(this.filterItems(""));
 
 			oPickerTextField.setValue(this._sValueBeforeOpen);
 		};
@@ -1668,7 +1619,7 @@ sap.ui.define([
 				oItem = this.getNonSeparatorSelectableItems(aSelectableItems)[0];
 
 				if (oItem) {
-					oListItem = this.getListItem(oItem);
+					oListItem = ListHelpers.getListItem(oItem);
 
 					if (this.isOpen()) {
 						this.removeStyleClass("sapMFocus");
@@ -2245,7 +2196,7 @@ sap.ui.define([
 
 			// remove the corresponding mapped item from the List
 			if (this._getList()) {
-				this._getList().removeItem(vItem && this.getListItem(vItem));
+				this._getList().removeItem(vItem && ListHelpers.getListItem(vItem));
 			}
 
 			if (this.isBound("items") && !this.bItemsUpdated) {
@@ -2310,7 +2261,7 @@ sap.ui.define([
 				oPicker.detachBeforeOpen(fnPickerOpenListener, this);
 				oPicker = null;
 
-				this.filterItems({value: this.getValue() || "_", properties: this._getFilters()});
+				this.handleItemsVisibility(this.filterItems(this.getValue() || "_"));
 			};
 
 			// Combobox uses onBeforeOpen of the picker in order to sync the items
@@ -2330,15 +2281,17 @@ sap.ui.define([
 		 * @override
 		 */
 		ComboBox.prototype.showItems = function (fnFilter) {
-			var aFilteredItems,
+			var aFilteredItems, oFilterResults,
 				args = Array.prototype.slice.call(arguments),
 				fnFilterRestore = this.fnFilter,
 				fnLoadItemsListener = function () {
 					// Get filtered items and open the popover only when the items array is not empty.
 					this.setFilterFunction(fnFilter || function () { return true; });
-					aFilteredItems = this.filterItems({value: this.getValue() || "_", properties: this._getFilters()});
+					oFilterResults = this.filterItems(this.getValue() || "_");
+					this.handleItemsVisibility(oFilterResults);
 					this.setFilterFunction(fnFilterRestore);
 
+					aFilteredItems = oFilterResults.items;
 					if (aFilteredItems && aFilteredItems.length) {
 						ComboBoxBase.prototype.showItems.apply(this, args);
 					}

@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/m/inputUtils/completeTextSelected",
 	"sap/m/inputUtils/inputsDefaultFilter",
+	"sap/m/inputUtils/ListHelpers",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
@@ -58,6 +59,7 @@ function(
 	containsOrEquals,
 	completeTextSelected,
 	inputsDefaultFilter,
+	ListHelpers,
 	KeyCodes,
 	deepEqual,
 	assert,
@@ -315,7 +317,6 @@ function(
 		// If list is closed...
 		var aItems = this.getSelectableItems();
 		var oItem = aItems[0];
-		var that = this;
 
 		// If there is a link in the value state message
 		if (oItem && this.isOpen() && this.getValueStateLinks().length) {
@@ -326,7 +327,7 @@ function(
 			// since the focus of the list item triggers unwanted extra events
 			// when called in while composing
 			setTimeout(function() {
-				that.getListItem(oItem).focus();
+				ListHelpers.getListItem(oItem).focus();
 			}, 0);
 			return;
 		}
@@ -422,7 +423,7 @@ function(
 		this.oValueStateNavDelegate = {};
 
 		this.oValueStateNavDelegate.onsapdown = function() {
-			that.getListItem(that.getSelectableItems()[0]).focus();
+			ListHelpers.getListItem(that.getSelectableItems()[0]).focus();
 		};
 		this.oValueStateNavDelegate.onsapup = function() {
 			that.getFocusDomRef().focus();
@@ -431,7 +432,7 @@ function(
 			// Prevent document scrolling when End key is pressed
 			oEvent.preventDefault();
 			var aVisibleItems = that.getSelectableItems();
-			that.getListItem(that.getSelectableItems()[aVisibleItems.length - 1]).focus();
+			ListHelpers.getListItem(that.getSelectableItems()[aVisibleItems.length - 1]).focus();
 		};
 
 		// Links should not be tabbable after the focus is moved outside of the value state header
@@ -601,7 +602,7 @@ function(
 			this._bPreventValueRemove = false;
 
 			if (this.getValue() === "" || (typeof this.getValue() === "string" && oItem.getText().toLowerCase().startsWith(this.getValue().toLowerCase()))) {
-				if (this.getListItem(oItem).isSelected()) {
+				if (ListHelpers.getListItem(oItem).isSelected()) {
 					this.setValue('');
 				} else {
 					this.setSelection(oParam);
@@ -778,7 +779,7 @@ function(
 
 			// Scrolls an item into the visual viewport
 			if (oItem) {
-				this.getListItem(oItem).focus();
+				ListHelpers.getListItem(oItem).focus();
 			}
 		}
 	};
@@ -792,7 +793,7 @@ function(
 	MultiComboBox.prototype._handleSelectionLiveChange = function(oEvent) {
 		var oListItem = oEvent.getParameter("listItem");
 		var bIsSelected = oEvent.getParameter("selected");
-		var oNewSelectedItem = this._getItemByListItem(oListItem);
+		var oNewSelectedItem = ListHelpers.getItemByListItem(this.getItems(), oListItem);
 		var oInputControl = this.isPickerDialog() ? this.getPickerTextField() : this;
 
 		if (oListItem.getType() === "Inactive") {
@@ -948,15 +949,16 @@ function(
 		var aFilteredItems = [];
 		var bGrouped = false;
 		var oGroups = [];
+		var aItems = mOptions.items && ListHelpers.getEnabledItems(mOptions.items);
 
-		mOptions.items.forEach(function(oItem) {
+		aItems.forEach(function(oItem) {
 
 			if (oItem.isA("sap.ui.core.SeparatorItem")) {
 				oGroups.push({
 					separator: oItem
 				});
 
-				this.getListItem(oItem).setVisible(false);
+				ListHelpers.getListItem(oItem).setVisible(false);
 
 				bGrouped = true;
 
@@ -974,10 +976,10 @@ function(
 			}
 
 			if (bGrouped && bMatch) {
-				this.getListItem(oGroups[oGroups.length - 1].separator).setVisible(true);
+				ListHelpers.getListItem(oGroups[oGroups.length - 1].separator).setVisible(true);
 			}
 
-			var oListItem = this.getListItem(oItem);
+			var oListItem = ListHelpers.getListItem(oItem);
 
 			if (oListItem) {
 				oListItem.setVisible(bMatch);
@@ -1447,7 +1449,7 @@ function(
 		if (bShowSelectedOnly) {
 			aVisibleItems.forEach(function(oItem) {
 				bMatch = aSelectedItems.indexOf(oItem) > -1 ? true : false;
-				oListItem = this.getListItem(oItem);
+				oListItem = ListHelpers.getListItem(oItem);
 
 				if (!oListItem) {
 					return;
@@ -1502,9 +1504,9 @@ function(
 		}
 
 
-		if (!mOptions.listItemUpdated && this.getListItem(mOptions.item) && oList) {
+		if (!mOptions.listItemUpdated && ListHelpers.getListItem(mOptions.item) && oList) {
 			// set the selected item in the List
-			oList.setSelectedItem(this.getListItem(mOptions.item), true);
+			oList.setSelectedItem(ListHelpers.getListItem(mOptions.item), true);
 		}
 
 		// Fill Tokenizer
@@ -1513,7 +1515,7 @@ function(
 		});
 		oToken.setText(mOptions.item.getText());
 
-		mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
+		mOptions.item.data(ListHelpers.CSS_CLASS + "Token", oToken);
 
 		this.getAggregation("tokenizer").addToken(oToken);
 		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
@@ -1561,7 +1563,6 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.removeSelection = function(mOptions) {
-
 		if (mOptions.item && !this.isItemSelected(mOptions.item)) {
 			return;
 		}
@@ -1576,16 +1577,16 @@ function(
 		aSelectedKeys.splice(iItemSelectIndex, 1);
 		this.setProperty("selectedKeys", aSelectedKeys, mOptions.suppressInvalidate);
 
-		if (!mOptions.listItemUpdated && this.getListItem(mOptions.item)) {
+		if (!mOptions.listItemUpdated && ListHelpers.getListItem(mOptions.item)) {
 			// set the selected item in the List
-			var oListItem = this.getListItem(mOptions.item);
+			var oListItem = ListHelpers.getListItem(mOptions.item);
 			this._getList().setSelectedItem(oListItem, false);
 		}
 
 		// Synch the Tokenizer
 		if (!mOptions.tokenUpdated) {
 			var oToken = this._getTokenByItem(mOptions.item);
-			mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", null);
+			mOptions.item.data(ListHelpers.CSS_CLASS + "Token", null);
 			this.getAggregation("tokenizer").removeToken(oToken);
 		}
 
@@ -1659,7 +1660,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getTokenByItem = function(oItem) {
-		return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token") : null;
+		return oItem ? oItem.data(ListHelpers.CSS_CLASS + "Token") : null;
 	};
 
 	/**
@@ -1702,7 +1703,7 @@ function(
 	 */
 	MultiComboBox.prototype._getSelectedItemsOf = function(aItems) {
 		for ( var i = 0, iLength = aItems.length, aSelectedItems = []; i < iLength; i++) {
-			if (this.getListItem(aItems[i]).isSelected()) {
+			if (ListHelpers.getListItem(aItems[i]).isSelected()) {
 				aSelectedItems.push(aItems[i]);
 			}
 		}
@@ -1755,8 +1756,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getFocusedItem = function() {
-		var oListItem = this._getFocusedListItem();
-		return this._getItemByListItem(oListItem);
+		return ListHelpers.getItemByListItem(this.getItems(), this._getFocusedListItem());
 	};
 
 	/**
@@ -1819,7 +1819,7 @@ function(
 
 					// Scrolls an item into the visual viewport
 					if (oItem) {
-						this.getListItem(oItem).focus();
+						ListHelpers.getListItem(oItem).focus();
 					}
 
 					return;
@@ -1846,7 +1846,7 @@ function(
 
 				if (oItem && oItem !== oItemCurrent) {
 
-					if (this.getListItem(oItemCurrent).isSelected()) {
+					if (ListHelpers.getListItem(oItemCurrent).isSelected()) {
 						this.setSelection({
 							item: oItem,
 							id: oItem.getId(),
@@ -1965,7 +1965,7 @@ function(
 				var oItem = aVisibleItems[0];
 
 				// Scrolls an item into the visual viewport
-				this.getListItem(oItem).focus();
+				ListHelpers.getListItem(oItem).focus();
 			},
 
 			onsapend: function(oEvent) {
@@ -1979,7 +1979,7 @@ function(
 				var oItem = aVisibleItems[aVisibleItems.length - 1];
 
 				// Scrolls an item into the visual viewport
-				this.getListItem(oItem).focus();
+				ListHelpers.getListItem(oItem).focus();
 			},
 
 			onsapup: function(oEvent) {
@@ -1994,11 +1994,11 @@ function(
 				var oItemFirst = aVisibleItems[0];
 				var oItemCurrent = jQuery(document.activeElement).control()[0];
 
-				if (oItemCurrent === this.getListItem(oItemFirst) && this.getValueStateLinks().length) {
+				if (oItemCurrent === ListHelpers.getListItem(oItemFirst) && this.getValueStateLinks().length) {
 					this._handleFormattedTextNav();
 					oEvent.stopPropagation(true);
 					return;
-				} else if (oItemCurrent === this.getListItem(oItemFirst)) {
+				} else if (oItemCurrent === ListHelpers.getListItem(oItemFirst)) {
 					this.focus();
 
 					// Stop the propagation of event. Otherwise the list item sets
@@ -2512,7 +2512,7 @@ function(
 	 */
 	MultiComboBox.prototype._getItemsStartingWithPerTerm = function(sText, bInput) {
 		var aItems = [],
-			selectableItems = bInput ? this.getEnabledItems() : this.getSelectableItems(),
+			selectableItems = bInput ? ListHelpers.getEnabledItems(this.getItems()) : this.getSelectableItems(),
 			fnFilter = this.fnFilter ? this.fnFilter : inputsDefaultFilter;
 
 		selectableItems.forEach(function(oItem) {
@@ -2535,7 +2535,7 @@ function(
 	 */
 	MultiComboBox.prototype._getItemsStartingWith = function(sText, bInput) {
 		var aItems = [],
-			selectableItems = bInput ? this.getEnabledItems() : this.getSelectableItems();
+			selectableItems = bInput ? ListHelpers.getEnabledItems(this.getItems()) : this.getSelectableItems();
 
 		selectableItems.forEach(function(oItem) {
 
@@ -2589,9 +2589,9 @@ function(
 
 			var oPreviousItem = this._getPreviousVisibleItemOf(oItem);
 			if (oPreviousItem) {
-				var oListItem = this.getListItem(oPreviousItem);
+				var oListItem = ListHelpers.getListItem(oPreviousItem);
 				if (oListItem) {
-					bIsSelected = this.getListItem(oPreviousItem).getSelected();
+					bIsSelected = ListHelpers.getListItem(oPreviousItem).getSelected();
 				}
 			}
 
@@ -3066,7 +3066,7 @@ function(
 
 		if (oItem.isA("sap.ui.core.SeparatorItem")) {
 			oListItem = this._mapSeparatorItemToGroupHeader(oItem, oRenderer);
-			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
+			oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
 			this._decorateListItem(oListItem);
 
 			return oListItem;
@@ -3082,7 +3082,7 @@ function(
 
 		oListItem.setTooltip(oItem.getTooltip());
 
-		oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
+		oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
 		oListItem.setTitle(oItem.getText());
 		oListItem.setInfo(sAdditionalText);
 
@@ -3093,7 +3093,7 @@ function(
 
 			oToken.setText(oItem.getText());
 
-			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "Token", oToken);
+			oItem.data(ListHelpers.CSS_CLASS + "Token", oToken);
 			// TODO: Check this invalidation
 			this.getAggregation("tokenizer").addToken(oToken, true);
 		}
@@ -3177,7 +3177,6 @@ function(
 	 */
 	MultiComboBox.prototype.handleInputValidation = function(oEvent, bCompositionEvent) {
 		var sValue = oEvent.target.value,
-			bResetFilter = this._sOldInput && this._sOldInput.length > sValue.length,
 			bValidInputValue = this.isValueValid(sValue),
 			aItemsToCheck, oSelectedButton, aStartsWithItems;
 
@@ -3195,7 +3194,7 @@ function(
 			this._handleTypeAhead(sValue, aStartsWithItems, oInput);
 		}
 
-		aItemsToCheck = this.getEnabledItems();
+		aItemsToCheck = this.getItems();
 
 		if (this.isPickerDialog()) {
 			oSelectedButton = this.getFilterSelectedButton();
@@ -3203,11 +3202,6 @@ function(
 				oSelectedButton.setPressed(false);
 			}
 		}
-
-		if (bResetFilter) {
-			aItemsToCheck = this.getItems();
-		}
-
 		this.filterItems({ value: sValue, items: aItemsToCheck });
 
 		this._sOldInput = sValue;
@@ -3368,7 +3362,7 @@ function(
 
 		// remove the corresponding mapped item from the List
 		if (this._getList()) {
-			this._getList().removeItem(oItem && this.getListItem(oItem));
+			this._getList().removeItem(oItem && ListHelpers.getListItem(oItem));
 		}
 
 		// If the removed item is selected remove it also from 'selectedItems'.
@@ -3469,7 +3463,7 @@ function(
 	 * @since 1.24.0
 	 */
 	MultiComboBox.prototype._getItemByToken = function(oToken) {
-		return this._getItemBy(oToken, "Token");
+		return ListHelpers.getItemBy(this.getItems(), oToken, "Token");
 	};
 
 	/**
@@ -3515,7 +3509,7 @@ function(
 
 		// If no items are selected focuse the first visible one
 		if (!oItemToFocus) {
-			oItemToFocus = aSelectedItems.length ? this._getItemByListItem(this._getList().getSelectedItems()[0]) : aSelectableItems[0];
+			oItemToFocus = aSelectedItems.length ? ListHelpers.getItemByListItem(this.getItems(), this._getList().getSelectedItems()[0]) : aSelectableItems[0];
 		}
 
 		iItemToFocus = aSelectableItems.indexOf(oItemToFocus);
