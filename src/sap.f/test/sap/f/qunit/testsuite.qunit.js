@@ -142,6 +142,17 @@ sap.ui.define(function () {
 					useFakeTimers: true
 				}
 			},
+			"GridItemNavigation": {
+				coverage: {
+					only: [
+						"sap/f/delegate/GridContainerItemNavigation"
+					]
+				},
+				module: './delegate/GridItemNavigation.qunit',
+				sinon: {
+					version: "edge"
+				}
+			},
 			"GridList": {
 				coverage: {
 					only: ["sap/f/GridList"]

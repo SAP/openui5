@@ -67,7 +67,6 @@ sap.ui.define([
 	 * @private
 	 */
 	GridItemNavigation.prototype.onsapnext = function (oEvent) {
-
 		this._moveFocus(oEvent);
 	};
 
@@ -79,7 +78,6 @@ sap.ui.define([
 	 * @private
 	 */
 	GridItemNavigation.prototype.onsapprevious = function (oEvent) {
-
 		this._moveFocus(oEvent);
 	};
 
@@ -90,6 +88,9 @@ sap.ui.define([
 		if (aItemDomRefs.indexOf(oEvent.target) === -1) {
 			return;
 		}
+
+		oEvent.preventDefault();
+
 		var oCurrentItem = oEvent.target,
 			oGridControl = oEvent.srcControl,
 			aMatrix = oGridControl._makeMatrix(oGridControl),
