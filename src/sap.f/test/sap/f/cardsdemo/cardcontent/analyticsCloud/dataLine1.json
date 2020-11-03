@@ -9,7 +9,7 @@
                 "fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
                 "spacingBottom": 10
             },
-            "height": 500
+            "height": 400
         },
         "lang": {},
         "boost": {
@@ -45,8 +45,8 @@
                     "enabled": true,
                     "hideWhenOverlap": true,
                     "style": {
-                        "fill": "black !important",
-                        "color": "black !important",
+                        "fill": "black",
+                        "color": "black",
                         "fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
                         "fontSize": "12px",
                         "fontWeight": "normal",

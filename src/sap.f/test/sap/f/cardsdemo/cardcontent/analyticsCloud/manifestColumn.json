@@ -36,7 +36,7 @@
 				"height": {
 					"label": "Height (px)",
 					"type": "integer",
-					"value": 400
+					"value": 500
 				},
 				"url": {
 					"value": "https://orcastarkiller-fpa10.orcastarkiller.canary.eu10.projectorca.cloud/sap/fpa/ui/app.html#;view_id=story",
@@ -58,7 +58,7 @@
 		"data": {
 			"request": {
 				"_url": "{{destinations.sacData}}/firefly-service/api/v1/prg/AnalyticCards",
-				"url": "./cardsdemo/cardcontent/analyticsCloud/data1.json",
+				"url": "./cardsdemo/cardcontent/analyticsCloud/dataColumn.json",
 				"parameters": {
 					"story": "{{parameters.storyId}}",
 					"height": "{{parameters.height}}",

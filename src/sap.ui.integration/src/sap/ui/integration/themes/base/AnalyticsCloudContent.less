@@ -1,0 +1,86 @@
+/* =========================================================== */
+/* CSS for control sap.ui.integration.controls/AnalyticsCloudContent */
+/* Base theme                                                  */
+/* =========================================================== */
+
+.sapFCardContent {
+	.sapFCardAnalyticsCloudContent {
+		svg {
+			text {
+				font-family: @sapUiFontFamily !important;
+				font-size: @sapMFontSmallSize !important;
+				fill: @sapUiTileTextColor !important;
+			}
+
+			.highcharts-text-outline[stroke-width="2px"] {
+				fill: @sapUiContentFocusColor !important;
+				stroke: @sapBaseColor !important;
+			}
+
+			.highcharts-text-outline[stroke-width="2px"] + tspan {
+				fill: @sapUiContentFocusColor !important;
+			}
+
+			.highcharts-title {
+				font-family: @sapUiFontHeaderFamily !important;
+				font-size: @sapMFontHeader5Size !important;
+				font-weight: @sapUiFontHeaderWeight !important;
+				fill: @sapUiTileTitleTextColor !important;
+			}
+
+			.highcharts-subtitle {
+				font-family: @sapUiFontFamily !important;
+				font-size: @sapMFontMediumSize !important;
+				font-weight: normal !important;
+				fill: @sapUiTileTextColor !important;
+			}
+
+			.highcharts-axis {
+				path[stroke] {
+					stroke: @sapUiText !important;
+				}
+			}
+
+			.highcharts-legend {
+				> rect[fill] {
+					fill: @sapUiTileBackground !important;
+				}
+
+				> rect[stroke] {
+					stroke: @sapUiTileBorderColor !important;
+				}
+			}
+
+			.highcharts-tooltip-box {
+				color: @sapUiTileTitleTextColor !important;
+				fill: @sapUiTileBackground;
+			}
+
+			.highcharts-background {
+				fill: @sapUiTileBackground;
+			}
+
+			.highcharts-scrollbar-track {
+				fill: @sapUiScrollBarTrackColor;
+				stroke: @sapUiScrollBarBorderColor;
+			}
+
+			.highcharts-scrollbar-button,
+			.highcharts-scrollbar-thumb {
+				fill: @sapUiScrollBarFaceColor;
+				stroke: @sapUiScrollBarBorderColor;
+			}
+
+			.highcharts-scrollbar-button:hover,
+			.highcharts-scrollbar-thumb:hover {
+				fill: @sapUiScrollBarHoverFaceColor;
+			}
+
+			.highcharts-scrollbar-arrow,
+			.highcharts-scrollbar-rifles {
+				stroke: @sapUiScrollBarSymbolColor;
+				fill: @sapUiScrollBarSymbolColor;
+			}
+		}
+	}
+}
