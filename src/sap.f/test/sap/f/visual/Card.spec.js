@@ -427,4 +427,21 @@ describe("sap.f.Card", function () {
 		navigateBack();
 	});
 
+	it("AnalyticsCloud Card", function () {
+		navigateTo("AnalyticsCloud Card");
+		var aCardIds = ["card1", "card2", "card3", "card4", "card5"];
+
+		aCardIds.forEach(function (sId) {
+			takePictureOfElement({
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "AnalyticsCloudContent",
+					interaction: "root",
+					id: sId
+				}
+			}, "19_Analytics_Cloud_Content_" + sId);
+		});
+
+		navigateBack();
+	});
 });
