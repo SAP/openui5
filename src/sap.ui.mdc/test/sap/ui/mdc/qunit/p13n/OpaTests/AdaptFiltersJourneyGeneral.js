@@ -75,7 +75,7 @@ sap.ui.define([
 
 	opaTest("When I press on 'Adapt Filters' button, the 'Adapt Filters' Dialog opens", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");//TODO
-		When.iChangeAdaptFiltersView("group");
+		When.iChangeAdaptFiltersView("sap-icon://group-2");
 
 		Then.thePersonalizationDialogOpens(false);
 		Then.iShouldSeeAdaptFiltersTitle(Arrangement.P13nDialog.Titles.adaptFilter);
@@ -150,7 +150,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I select the 'Country' column and move it to the top, the FilterBar should be changed", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");
-		When.iChangeAdaptFiltersView("list");
+		When.iChangeAdaptFiltersView("sap-icon://list");
 		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
 		var aCurrentFilterItems = [
@@ -169,7 +169,7 @@ sap.ui.define([
 
 	opaTest("The List view order should not affect the group view", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");
-		When.iChangeAdaptFiltersView("group");
+		When.iChangeAdaptFiltersView("sap-icon://group-2");
 
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 
@@ -203,13 +203,15 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When toggling to list view to select filters and switch back the filters should be selected in both view modes", function(Given, When, Then){
 		When.iPressButtonWithText("Adapt Filters");
-		When.iChangeAdaptFiltersView("list");
+		When.iChangeAdaptFiltersView("sap-icon://list");
 
 		When.iSelectColumn("Localized Country Code", null, null, true);
 
 		oFilterItems["Countries_texts"][0].selected = true;
 
-		When.iChangeAdaptFiltersView("group");
+		When.iChangeAdaptFiltersView("sap-icon://group-2");
+
+		When.iTogglePanelInDialog("Artists");
 
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 
@@ -327,7 +329,7 @@ sap.ui.define([
 
 		//open dialig
 		When.iPressButtonWithText("Adapt Filters");//TODO
-		When.iChangeAdaptFiltersView("group");
+		When.iChangeAdaptFiltersView("sap-icon://group-2");
 		Then.thePersonalizationDialogOpens(false);
 
 		//Go to "Artists" and enter a value
@@ -354,7 +356,7 @@ sap.ui.define([
 
 		//open dialig
 		When.iPressButtonWithText("Adapt Filters");
-		When.iChangeAdaptFiltersView("group");
+		When.iChangeAdaptFiltersView("sap-icon://group-2");
 		Then.thePersonalizationDialogOpens(false);
 
 		//Go to "Artists" and enter a value

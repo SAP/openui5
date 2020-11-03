@@ -165,9 +165,9 @@ sap.ui.define([
 				//--------------------------------------------------------------------------
 				this._openP13nControl(oP13nDialog, oSource);
 				return oP13nDialog;
-			}.bind(this), function(){
+			}.bind(this), function(oErr){
 				this.bIsDialogOpen = false;
-				Log.warning("P13n container creation failed");
+				Log.error("P13n container creation failed: " + oErr);
 			}.bind(this));
 		}
 	};

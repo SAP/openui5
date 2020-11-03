@@ -649,7 +649,7 @@ sap.ui.define([
 			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner()._oListControl;
+			var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct P13n UI created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 
@@ -669,17 +669,17 @@ sap.ui.define([
 			var oP13nFilter = oP13nControl.getContent()[0];
 			assert.ok(oP13nFilter.isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "P13n FilterBar created for filter UI adaptation");
 
-			var oGroupPanel = oP13nFilter._oFilterBarLayout.getInner();
-			oGroupPanel.switchViewMode("group");
-			assert.ok(oGroupPanel.isA("sap.ui.mdc.p13n.panels.GroupPanelBase"), "GroupPanelBase as inner layout");
+			var oAdaptFilterPanel = oP13nFilter._oFilterBarLayout.getInner();
+			oAdaptFilterPanel.switchView("group");
+			assert.ok(oAdaptFilterPanel.isA("sap.ui.mdc.p13n.panels.AdaptFiltersPanel"), "AdaptFiltersPanel as inner layout");
 
-			var oList = oGroupPanel._oListControl;
+			var oList = oAdaptFilterPanel.getView("group").getContent()._oListControl;
 			assert.ok(oList.isA("sap.m.ListBase"), "ListBase control as inner representation");
 
 			var oFirstGroup = oList.getItems()[0];
 			assert.ok(oFirstGroup.isA("sap.m.ListItemBase"), "ListItem for grup presentation");
 
-			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
+			var oFirstGroupList = oFirstGroup.getCells()[0].getContent()[0];
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
 			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
 
@@ -694,13 +694,13 @@ sap.ui.define([
 		this.oAdaptationController.showP13n(oBtn, "Filter").then(function(oP13nControl){
 
 			var oP13nFilter = oP13nControl.getContent()[0];
-			var oGroupPanel = oP13nFilter._oFilterBarLayout.getInner();
-			oGroupPanel.switchViewMode("group");
-			var oList = oGroupPanel._oListControl;
+			var oAFPanel = oP13nFilter._oFilterBarLayout.getInner();
+			oAFPanel.switchView("group");
+			var oList = oAFPanel.getCurrentViewContent()._oListControl;
 			var oFirstGroup = oList.getItems()[0];
 
 			//3 items, 2 initially selected
-			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
+			var oFirstGroupList = oFirstGroup.getCells()[0].getContent()[0];
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
 			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
 

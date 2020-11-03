@@ -124,7 +124,6 @@ sap.ui.define([
 			var sPopoverTitle = oSettings.title;
 			var sColumnName = oSettings.columnName;
 			var fSuccess = oSettings.success;
-			var bDirectDescendant = !!oSettings.direct;
 
 			var aMatchers = [];
 
@@ -150,7 +149,7 @@ sap.ui.define([
 							this.waitFor({
 								searchOpenDialogs: true,
 								controlType: sItemNameSpace,
-								matchers: new Descendant(aLabels[0], bDirectDescendant),
+								matchers: new Descendant(aLabels[0], false),
 								success: function (aColumnListItems) {
 									fSuccess(aColumnListItems);
 								}
@@ -165,10 +164,9 @@ sap.ui.define([
 			return this.waitForP13nItem({
 				itemNameSpace: "sap.m.ListItemBase",
 				columnName: sFilterName,
-				direct: true,//parent list should not be considered
 				modal: typeof bLive == "boolean" ? !bLive : true,
 				success: function(aItems) {
-					var oFilterField = aItems[0].getContent ? aItems[0].getContent()[1].getItems()[0] : aItems[0].getCells()[1];
+					var oFilterField = aItems.length > 1 ? aItems[1].getContent()[1].getItems()[0] : aItems[0].getCells()[1];
 					Opa5.assert.ok(oFilterField,"FilterField found");
 					setTimeout(function(){
 						new EnterText({
@@ -190,18 +188,22 @@ sap.ui.define([
 			});
 		},
 
-		iChangeAdaptFiltersView: function(sViewMode) {
+		iChangeAdaptFiltersView: function(sViewIcon) {
 			return this.waitFor({
-				controlType: "sap.ui.mdc.p13n.panels.GroupPanelBase",
+				controlType: "sap.m.Button",
+				searchOpenDialogs: true,
 				matchers: {
 					ancestor: {
-						controlType: "sap.ui.mdc.filterbar.FilterBarBase"
+						controlType: "sap.ui.mdc.p13n.panels.AdaptFiltersPanel"
+					},
+					properties: {
+						icon: sViewIcon
 					}
 				},
-				success:function(aGroupPanelBase) {
-					Opa5.assert.equal(aGroupPanelBase.length, 1, "Adapt Filters Panel found");
-					aGroupPanelBase[0].switchViewMode(sViewMode);
-				}
+				success:function(aBtn) {
+					Opa5.assert.equal(aBtn.length, 1, "Adapt Filters Panel toggle found");
+				},
+				actions: new Press()
 			});
 		},
 
@@ -211,7 +213,6 @@ sap.ui.define([
 				title: sPopoverTitle,
 				items: aP13nItems,
 				modal: typeof bModal === "boolean" ? bModal : true,
-				direct: bFilter,
 				itemNameSpace: bFilter ? "sap.m.CustomListItem" : undefined,
 				success: function(aColumnListItems) {
 					var oCheckBox = aColumnListItems[0].getMultiSelectControl();
@@ -288,9 +289,7 @@ sap.ui.define([
 					this.waitFor({
 						controlType: "sap.m.ColumnListItem",
 						matchers: new Descendant(aLabels[0]),
-						success: function (aColumnListItems) {
-							aColumnListItems[0].$().trigger("tap");
-						}
+						actions: new Press()
 					});
 				}
 			});

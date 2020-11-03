@@ -17,7 +17,7 @@ sap.ui.define([
 
 		iChangeAdaptFiltersView: function(sViewMode) {
 			return this.waitFor({
-				controlType: "sap.ui.mdc.p13n.panels.GroupPanelBase",
+				controlType: "sap.ui.mdc.p13n.panels.AdaptFiltersPanel",
 				matchers: {
 					ancestor: {
 						controlType: "sap.ui.mdc.filterbar.FilterBarBase"
@@ -25,7 +25,7 @@ sap.ui.define([
 				},
 				success:function(aGroupPanelBase) {
 					Opa5.assert.equal(aGroupPanelBase.length, 1, "Adapt Filters Panel found");
-					aGroupPanelBase[0].switchViewMode(sViewMode);
+					aGroupPanelBase[0].switchView(sViewMode);
 				}
 			});
 		},

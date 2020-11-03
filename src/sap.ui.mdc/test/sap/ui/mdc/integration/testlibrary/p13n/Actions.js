@@ -37,7 +37,6 @@ sap.ui.define([
 				waitForListItemInDialogWithLabel.call(this, {
 					dialog: oDialog,
 					label: sText,
-					direct: true,
 					listItemType: "sap.m.CustomListItem",
 					success: function(oListItem) {
 						var bColumnListItemSelected = oListItem.isSelected();

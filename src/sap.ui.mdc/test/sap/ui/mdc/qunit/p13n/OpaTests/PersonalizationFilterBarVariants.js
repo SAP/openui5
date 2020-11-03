@@ -79,7 +79,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I press on 'Adapt Filters' button, I change the FilterField selection", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");
-		When.iChangeAdaptFiltersView("group");
+		When.iChangeAdaptFiltersView("sap-icon://group-2");
 		Then.thePersonalizationDialogOpens(false);
 
 		//add 2 new FilterFields
@@ -136,7 +136,7 @@ sap.ui.define([
 
 	opaTest("Recheck dialog", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters (2)");
-		When.iChangeAdaptFiltersView("group");
+		When.iChangeAdaptFiltersView("sap-icon://group-2");
 
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 		When.iTogglePanelInDialog("Artists");

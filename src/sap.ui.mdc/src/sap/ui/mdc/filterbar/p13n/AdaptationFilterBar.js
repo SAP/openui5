@@ -87,11 +87,13 @@ sap.ui.define([
 		this._oConditionModel.attachPropertyChange(function(oEvt){
 			var sKey = oEvt.getParameter("path").substring(12);
 			if (this.oAdaptationModel){
-				var oItem = this.oAdaptationModel.getProperty("/items").find(function(o){
+				var aItems = this.oAdaptationModel.getProperty("/items");
+				var oItem = aItems.find(function(o){
 					return o.name == sKey;
 				});
 				if (oItem) {
 					oItem.isFiltered = this._getConditionModel().getConditions(sKey).length > 0 ? true : false;
+					this.oAdaptationModel.setProperty("/items", aItems);
 				}
 			}
 		}.bind(this));

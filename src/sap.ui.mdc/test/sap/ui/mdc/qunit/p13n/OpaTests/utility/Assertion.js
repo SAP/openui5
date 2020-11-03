@@ -250,13 +250,24 @@ sap.ui.define([
 		/**
 		 * This method will check for existing FilterFields with label + index
 		 *
-		 * @param {object} sItemText - a string representing an item within a mdc BasePanel derived panel
-		 * @param {object} iIndex - the position of the item in the inner table of the panel
-		 * @param {object} aValues - the optional FilterField condition values for the provided item
-		 * @param {object} oPanel - to identify the group of the affected item
+		 * @param {object} mSettings - a map containing the settings to check for
+		 * @param {string} mSettings.itemText - a string representing an item within a mdc BasePanel derived panel
+		 * @param {int} mSettings.index - the position of the item in the inner table of the panel
+		 * @param {array} mSettings.values - the optional FilterField condition values for the provided item
+		 * @param {sap.ui.core.Control} mSettings.panel - to identify the group of the affected item
+		 * @param {boolean} mSettings.selected - check if the item is selected
+		 * @param {boolean} mSettings.hidden - the filter field should not be visible
+		 *
 		 * @private
 		 */
-		iShouldSeeP13nFilterItem: function(sItemText, iIndex, aValues, oPanel, bSelected) {
+		iShouldSeeP13nFilterItem: function(mSettings) {
+
+			var sItemText = mSettings.itemText;
+			var iIndex = mSettings.index;
+			var aValues = mSettings.values;
+			var oPanel = mSettings.panel;
+			var bSelected = mSettings.selected;
+			var bFilterFieldHidden = !!mSettings.hidden;
 
 			var aMatchers = [
 				new Properties({
@@ -275,20 +286,25 @@ sap.ui.define([
 				searchOpenDialogs: true,
 				matchers: aMatchers,
 				success: function(aLabels) {
-					var oListItem = aLabels[0].getParent();
-					var oFilterField = oListItem.getContent ? oListItem.getContent()[1].getItems()[0] : oListItem.getCells()[1];
-					if (aValues.length > 0){
-						aValues.forEach(function(sValue, iIndex){
-							var oValue = oFilterField.getConditions()[iIndex];
-							Opa5.assert.deepEqual(oValue ? oValue.values[0] : undefined, sValue, "Correct conditions in FF");
-						});
+					//TODO: simplify and rework this method once the Table inbuilt filtering uses the same layout as the FilterBar for adaptation
+					var oListItem = aLabels[0].getParent().isA("sap.m.ListItemBase") ? aLabels[0].getParent() : aLabels[0].getParent().getParent();
+					if (bFilterFieldHidden) {
+						Opa5.assert.equal(oListItem.getContent().length, 1, "No FilterField available");
+					} else {
+						var oFilterField = oListItem.getContent ? oListItem.getContent()[1].getItems()[0] : oListItem.getCells()[1];
+						if (aValues.length > 0){
+							aValues.forEach(function(sValue, iIndex){
+								var oValue = oFilterField.getConditions()[iIndex];
+								Opa5.assert.deepEqual(oValue ? oValue.values[0] : undefined, sValue, "Correct conditions in FF");
+							});
+						}
+						if (bSelected === false || bSelected === true){
+							Opa5.assert.equal(oListItem.getSelected(), bSelected, "Selection state correct");
+						}
+						Opa5.assert.equal(oFilterField.getLabel(), sItemText, "Item with label:' " + sItemText + "' has been found." );
+						var iFieldIndex = oListItem.getParent().indexOfItem(oListItem);
+						Opa5.assert.equal(iFieldIndex, iIndex, "Item is on correct index");
 					}
-					if (bSelected === false || bSelected === true){
-						Opa5.assert.equal(oListItem.getSelected(), bSelected, "Selection state correct");
-					}
-					Opa5.assert.equal(oFilterField.getLabel(), sItemText, "Item with label:' " + sItemText + "' has been found." );
-					var iFieldIndex = oListItem.getParent().indexOfItem(oListItem);
-					Opa5.assert.equal(iFieldIndex, iIndex, "Item is on correct index");
 				}
 			});
 		},
@@ -312,22 +328,31 @@ sap.ui.define([
 
 		iShouldSeeP13nFilterItems: function(aP13nFilterItems){
 			aP13nFilterItems.forEach(function(oP13nFilterItem, iIndex){
-				return this.iShouldSeeP13nFilterItem(oP13nFilterItem.p13nItem, iIndex, oP13nFilterItem.value);
+				return this.iShouldSeeP13nFilterItem({
+					itemText: oP13nFilterItem.p13nItem,
+					index: iIndex,
+					values: oP13nFilterItem.value
+				});
 			}.bind(this));
 		},
 
-		iShouldSeeP13nFilterItemsInPanel: function(aP13nFilterItems, sGroupName){
-
+		iShouldSeeP13nFilterItemsInPanel: function(aP13nFilterItems, sGroupName, bNoFilterField){
 			return waitForPanelInP13n.call(this, {
 				groupName: sGroupName,
 				modal: true,
 				success: function(oPanel){
 					aP13nFilterItems.forEach(function(oP13nFilterItem, iIndex){
-						return this.iShouldSeeP13nFilterItem(oP13nFilterItem.p13nItem, iIndex, oP13nFilterItem.value, oPanel, oP13nFilterItem.selected);
+						return this.iShouldSeeP13nFilterItem({
+							itemText: oP13nFilterItem.p13nItem,
+							index: iIndex,
+							values: oP13nFilterItem.value,
+							panel: oPanel,
+							selected: oP13nFilterItem.selected,
+							hidden: bNoFilterField
+						});
 					}.bind(this));
 				}
 			});
-
 		},
 
 		iShouldSeeItemOnPosition: function (sItemText, iIndex) {

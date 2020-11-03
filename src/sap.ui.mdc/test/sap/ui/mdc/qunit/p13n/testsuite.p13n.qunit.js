@@ -48,6 +48,33 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"AdaptFiltersPanel": {
+				group: "UI Panels",
+				module: "./panels/AdaptFiltersPanel.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"ListView": {
+				group: "UI Panels",
+				module: "./panels/ListView.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"GroupView": {
+				group: "UI Panels",
+				module: "./panels/GroupView.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"GroupPanelBase": {
 				group: "UI Panels",
 				module: "./GroupPanelBase.qunit",
@@ -168,7 +195,17 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"PersonalizationFilterBar": {
+			"AdaptFiltersJourneyGeneral": {
+				group: "FilterBar UI Test",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
+			"AdaptFiltersJourneyShowHide": {
 				group: "FilterBar UI Test",
 				autostart: false,
 				module: "./OpaTests/P13nOpa.qunit",
