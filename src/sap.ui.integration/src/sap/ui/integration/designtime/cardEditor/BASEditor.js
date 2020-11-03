@@ -48,7 +48,8 @@ sap.ui.define([
 			events: {
 				configurationChange: {},
 				createConfiguration: {},
-				error: {}
+				error: {},
+				designtimeInited: {}
 			}
 		},
 		renderer: CardEditor.getMetadata().getRenderer()
@@ -439,11 +440,23 @@ sap.ui.define([
 					// Editor config
 
 					this._bDesigntimeInit = true;
+					this.fireDesigntimeInited();
 				}.bind(this));
 			} else {
 				this.setPreventInitialization(false);
 				//this.addConfig({});
 			}
+		}
+	};
+
+	BASEditor.prototype.initialize = function () {
+		//If designtime is not ready, attach to event
+		if (!this._bDesigntimeInit) {
+			this.attachEventOnce("designtimeInited", this.initialize);
+			return;
+		}
+		if (!this._bPreventInitialization) {
+			this._initialize();
 		}
 	};
 
