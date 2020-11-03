@@ -1,11 +1,11 @@
 <mvc:View
-	controllerName="sap.ui.fl.support.apps.uiFlexibilityDiagnostics.controller.Root"
-	xmlns="sap.suite.ui.commons.networkgraph"
-	xmlns:unified="sap.ui.unified"
-	xmlns:m="sap.m"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:layout="sap.suite.ui.commons.networkgraph.layout"
-	displayBlock="true">
+		controllerName="sap.ui.fl.support.apps.uiFlexibilityDiagnostics.controller.Root"
+		xmlns="sap.suite.ui.commons.networkgraph"
+		xmlns:unified="sap.ui.unified"
+		xmlns:m="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:layout="sap.suite.ui.commons.networkgraph.layout"
+		displayBlock="true">
 	<m:App>
 		<m:Page
 				title="UI Flexibility Diagnostics">
@@ -44,10 +44,11 @@
 										key="{selectedData>key}"
 										title="{selectedData>title}"
 										statusIcon="{selectedData>variantIcon}"
+										maxWidth="400px"
 										icon="{selectedData>icon}"
 										group="{selectedData>group}"
 										attributes="{path:'selectedData>attributes', templateShareable:true}"
-										shape="{selectedData>shape}"
+										shape="Box"
 										status="{parts:['selectedData>key','selectedData>/appliedChanges','selectedData>/failedChanges','selectedData>/notApplicableChanges'], formatter: '.formatStatus'}"
 										showActionLinksButton="false">
 									<attributes>
@@ -59,9 +60,9 @@
 							</nodes>
 							<lines>
 								<Line
-									  from="{selectedData>from}"
-									  to="{selectedData>to}"
-									  status="{selectedData>status}">
+										from="{selectedData>from}"
+										to="{selectedData>to}"
+										status="{selectedData>status}">
 								</Line>
 							</lines>
 							<groups>
@@ -81,12 +82,12 @@
 				<m:Toolbar>
 					<m:ToolbarSpacer/>
 					<unified:FileUploader
-						uploadUrl = ""
-						buttonText = "Upload Local File"
-						fileType = "json"
-						buttonOnly = "true"
-						icon = "sap-icon://upload"
-						change = ".loadFile" />
+							uploadUrl = ""
+							buttonText = "Upload Local File"
+							fileType = "json"
+							buttonOnly = "true"
+							icon = "sap-icon://upload"
+							change = ".loadFile" />
 				</m:Toolbar>
 			</m:footer>
 		</m:Page>
