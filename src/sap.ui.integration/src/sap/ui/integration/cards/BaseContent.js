@@ -418,7 +418,10 @@ sap.ui.define([
 	BaseContent.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
 		this.destroyPlaceholder();
-		this._oLoadingProvider.setLoading(false);
+
+		if (this._oLoadingProvider) {
+			this._oLoadingProvider.setLoading(false);
+		}
 	};
 
 	BaseContent.prototype.getCardInstance = function () {
