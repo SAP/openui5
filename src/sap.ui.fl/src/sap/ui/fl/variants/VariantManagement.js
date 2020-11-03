@@ -203,6 +203,17 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
+				},
+
+				/**
+				 * Defines the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
+				 *
+				 * @since 1.85
+				 */
+				displayTextForExecuteOnSelectionForStandardVariant: {
+					type: "string",
+					group: "Misc",
+					defaultValue: ""
 				}
 			},
 			associations: {
@@ -309,6 +320,7 @@ sap.ui.define([
 	VariantManagement.MAX_NAME_LEN = 100;
 	VariantManagement.COLUMN_FAV_IDX = 0;
 	VariantManagement.COLUMN_NAME_IDX = 1;
+	VariantManagement.COLUMN_EXEC_IDX = 3;
 
 	/*
 	 * Constructs and initializes the <code>VariantManagement</code> control.
@@ -1488,6 +1500,7 @@ sap.ui.define([
 		var oDeleteButton;
 		var sBindingPath;
 		var oNameControl;
+		var oExecuteOnSelectCtrl;
 		var oItem = oContext.getObject();
 		if (!oItem) {
 			return undefined;
@@ -1574,6 +1587,19 @@ sap.ui.define([
 
 		oFavoriteIcon.addStyleClass("sapUiFlVarMngmtFavColor");
 
+		if (this.getDisplayTextForExecuteOnSelectionForStandardVariant() && (this.getStandardVariantKey() === oItem.key)) {
+			oExecuteOnSelectCtrl = new Text({
+				text: this.getDisplayTextForExecuteOnSelectionForStandardVariant(),
+				textAlign: "Center"
+			});
+		} else {
+			oExecuteOnSelectCtrl = new CheckBox({
+				// enabled: oItem.rename,
+				select: fSelectCB,
+				selected: '{' + this._sModelName + ">executeOnSelect}"
+			});
+		}
+
 		var oTemplate = new ColumnListItem({
 			cells: [
 				oFavoriteIcon, oNameControl, new RadioButton({
@@ -1587,11 +1613,7 @@ sap.ui.define([
 							return oItem.key === sKey;
 						}
 					}
-				}), new CheckBox({
-					// enabled: oItem.rename,
-					select: fSelectCB,
-					selected: '{' + this._sModelName + ">executeOnSelect}"
-				}), new Text({
+				}), oExecuteOnSelectCtrl, new Text({
 					text: '{' + this._sModelName + ">author}",
 					textAlign: "Begin"
 				}), oDeleteButton, new Text({
