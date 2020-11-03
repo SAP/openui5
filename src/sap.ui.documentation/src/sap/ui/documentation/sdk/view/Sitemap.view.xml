@@ -6,6 +6,7 @@
 		>
 
 	<Page
+		id="sitemapPage"
 		showSubHeader="false"
 		showFooter="false"
 		showNavButton="true"

@@ -111,15 +111,12 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.documentation.sdk.controller.Sitemap", {
 
 		onInit: function () {
-			var oModel = new JSONModel();
-			this.getView().setModel(oModel);
+			this.oPage = this.byId("sitemapPage");
+
+			this.oModel = new JSONModel();
+			this.getView().setModel(this.oModel);
 
 			this._oData = {};
-			this._loadResources()
-				.then(function () {
-					oModel.setData(this._oData);
-				}.bind(this));
-
 			this.getRouter().getRoute("sitemap").attachPatternMatched(this._onMatched, this);
 		},
 
@@ -130,6 +127,16 @@ sap.ui.define([
 		 */
 		_onMatched: function () {
 			this.hideMasterSide();
+
+			this.oPage.setBusy(true);
+			this._loadResources()
+				.then(function () {
+					this.oPage.setBusy(false);
+					this.oModel.setData(this._oData);
+				}.bind(this))
+				.catch(function () {
+					this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+				}.bind(this));
 		},
 
 		/**

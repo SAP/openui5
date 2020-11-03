@@ -7,13 +7,20 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/documentation/sdk/util/Resour
 	function (jQuery, ResourcesUtil) {
 		"use strict";
 
+		var oCachedData;
+
 		function _getDocuIndexPromise(oConfig) {
+			if (oCachedData) {
+				return Promise.resolve(oCachedData);
+			}
+
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
 					url: ResourcesUtil.getResourceOriginPath(oConfig.docuPath + "index.json"),
 					dataType: 'json',
 					success: function (oData) {
+						oCachedData = oData;
 						resolve(oData);
 					},
 					error: function (oError) {
@@ -21,6 +28,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/documentation/sdk/util/Resour
 					}
 				});
 			});
+
 		}
 
 		return {
