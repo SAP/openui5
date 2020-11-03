@@ -400,6 +400,59 @@ sap.ui.define([
 			afterUndo: confirmFieldIsRemoved.bind(null, null),
 			afterRedo : confirmFieldIsAdded.bind(null, null)
 		});
+
+		elementActionTest("Condensing: Check move after add via delegate", {
+			xmlView:buildViewContentForAddDelegate(
+				'<f:Form id="idForm" ' +
+					"fl:delegate='{" +
+						'"name":"' + TEST_DELEGATE_PATH + '"' +
+					"}'" +
+				'>'
+			),
+			action: {
+				name: "move",
+				controlId: "group",
+				parameter: function (oView) {
+					return {
+						movedElements: [{
+							element: oView.byId(NEW_CONTROL_ID),
+							sourceIndex: 1,
+							targetIndex: 0
+						}],
+						source: {
+							aggregation: "formElements",
+							parent: oView.byId("group"),
+							publicAggregation: "formElements",
+							publicParent: oView.byId("group")
+						},
+						target: {
+							aggregation: "formElements",
+							parent: oView.byId("group"),
+							publicAggregation: "formElements",
+							publicParent: oView.byId("group")
+						}
+					};
+				}
+			},
+			previousActions: [
+				{
+					name: ["add", "delegate"],
+					controlId: "group",
+					parameter: function (oView) {
+						return {
+							index: 1,
+							newControlId: oView.createId(NEW_CONTROL_ID),
+							bindingString: "binding/path",
+							parentId: oView.createId("group")
+						};
+					}
+				}
+			],
+			changesAfterCondensing: 2, // Not enabled for condensing yet
+			afterAction: confirmFieldIsAdded.bind(null, null),
+			afterUndo: confirmFieldIsRemoved.bind(null, null),
+			afterRedo : confirmFieldIsAdded.bind(null, null)
+		});
 	});
 
 });

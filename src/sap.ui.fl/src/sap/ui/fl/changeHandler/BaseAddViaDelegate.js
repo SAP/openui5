@@ -63,22 +63,41 @@ sap.ui.define([
 				return sNewPropertyId + mAddViaDelegateSettings.fieldSuffix;
 			}
 
-			function skipCreateLabel(mChangeDefinition) {
-				if (isFunction(mAddViaDelegateSettings.skipCreateLabel)) {
-					return !!mAddViaDelegateSettings.skipCreateLabel({
+			function evaluateSettingsFlag(mChangeDefinition, sSetting) {
+				if (isFunction(mAddViaDelegateSettings[sSetting])) {
+					return !!mAddViaDelegateSettings[sSetting]({
 						changeDefinition: mChangeDefinition
 					});
 				}
-				return !!mAddViaDelegateSettings.skipCreateLabel;
+				return !!mAddViaDelegateSettings[sSetting];
+			}
+
+			function skipCreateLabel(mChangeDefinition) {
+				return evaluateSettingsFlag(mChangeDefinition, "skipCreateLabel");
 			}
 
 			function skipCreateLayout(mChangeDefinition) {
-				if (isFunction(mAddViaDelegateSettings.skipCreateLayout)) {
-					return !!mAddViaDelegateSettings.skipCreateLayout({
-						changeDefinition: mChangeDefinition
+				return evaluateSettingsFlag(mChangeDefinition, "skipCreateLayout");
+			}
+
+			function checkCondensingEnabled(mChange, mPropertyBag) {
+				// createLayout side effects might break condensing
+				// Only enable condensing if the delegate doesn't create a layout
+				// or the handler opts out
+
+				var oControl = mPropertyBag.modifier.bySelector(mChange.getSelector(), mPropertyBag.appComponent);
+				var sModelType = getModelType(mChange.getDefinition().content);
+
+				return DelegateMediatorAPI.getDelegateForControl({
+					control: oControl,
+					modifier: mPropertyBag.modifier,
+					modelType: sModelType,
+					supportsDefault: mAddViaDelegateSettings.supportsDefault
+				})
+					.then(function (oDelegate) {
+						var bCondensingSupported = !isFunction(oDelegate.instance.createLayout);
+						return bCondensingSupported || skipCreateLayout(mChange.getDefinition());
 					});
-				}
-				return !!mAddViaDelegateSettings.skipCreateLayout;
 			}
 
 			function getDelegateControlForPropertyAndLabel(mChangeDefinition, mDelegatePropertyBag, oDelegate) {
@@ -273,6 +292,13 @@ sap.ui.define([
 						} else {
 							oChange.addDependentControl(mSpecificChangeInfo.parentId, mAddViaDelegateSettings.parentAlias, mPropertyBag);
 						}
+						try {
+							mChangeDefinition.content.parentId = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.parentId, oAppComponent);
+						} catch (e) {
+							// If the parentId is not stable, e.g. in the case of SimpleForm groups
+							// don't set the parentId. This error is safe to ignore as a missing parentId
+							// will disable condensing
+						}
 					} else {
 						throw new Error("mSpecificChangeInfo.parentId attribute required");
 					}
@@ -311,6 +337,36 @@ sap.ui.define([
 					return {
 						affectedControls: [oChange.getContent().newFieldSelector]
 					};
+				},
+
+				getCondenserInfo: function(oChange, mPropertyBag) {
+					return checkCondensingEnabled(oChange, mPropertyBag)
+						.then(function (bCondensingEnabled) {
+							if (!bCondensingEnabled) {
+								return undefined;
+							}
+
+							if (
+								!oChange.getContent().newFieldSelector
+								|| !oChange.getContent().parentId
+								|| !mAddViaDelegateSettings.aggregationName
+							) {
+								return undefined;
+							}
+
+							return {
+								affectedControl: oChange.getContent().newFieldSelector,
+								classification: sap.ui.fl.condenser.Classification.Create,
+								targetContainer: oChange.getContent().parentId,
+								targetAggregation: mAddViaDelegateSettings.aggregationName,
+								setTargetIndex: function (oChange, iNewTargetIndex) {
+									oChange.getContent().newFieldIndex = iNewTargetIndex;
+								},
+								getTargetIndex: function(oChange) {
+									return oChange.getContent().newFieldIndex;
+								}
+							};
+						});
 				}
 			};
 		}
