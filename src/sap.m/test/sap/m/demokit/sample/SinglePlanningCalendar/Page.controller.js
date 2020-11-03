@@ -366,16 +366,6 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 			);
 		},
 
-		onExit: function () {
-			this.sPath = null;
-			if (this._oDetailsPopover) {
-				this._oDetailsPopover.destroy();
-			}
-			if (this._oNewAppointmentDialog) {
-				this._oNewAppointmentDialog.destroy();
-			}
-		},
-
 		handleViewChange: function () {
 			MessageToast.show("'viewChange' event fired.");
 		},
@@ -387,7 +377,8 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 				oTrimmedStartDate,
 				oTrimmedEndDate,
 				bAllDate,
-				oModel;
+				oModel,
+				oView = this.getView();
 
 			if (oAppointment === undefined) {
 				return;
@@ -400,8 +391,10 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 			bAllDate = false;
 			oModel = this.getView().getModel("allDay");
 
-			if (!oAppointment.getSelected()) {
-				this._oDetailsPopover.close();
+			if (!oAppointment.getSelected() && this._pDetailsPopover) {
+				this._pDetailsPopover.then(function(oResponsivePopover){
+					oResponsivePopover.close();
+				});
 				return;
 			}
 
@@ -415,22 +408,20 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 			oModel.getData().allDay = bAllDate;
 			oModel.updateBindings();
 
-			if (!this._oDetailsPopover) {
-				Fragment.load({
-					id: "popoverFrag",
+			if (!this._pDetailsPopover) {
+				this._pDetailsPopover = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.SinglePlanningCalendar.Details",
 					controller: this
-				})
-					.then(function(oPopoverContent){
-						this._oDetailsPopover = oPopoverContent;
-						this._oDetailsPopover.setBindingContext(oAppointment.getBindingContext());
-						this.getView().addDependent(this._oDetailsPopover);
-						this._oDetailsPopover.openBy(oAppointment);
-					}.bind(this));
-			} else {
-				this._oDetailsPopover.setBindingContext(oAppointment.getBindingContext());
-				this._oDetailsPopover.openBy(oAppointment);
+				}).then(function(oResponsivePopover){
+					oView.addDependent(oResponsivePopover);
+					return oResponsivePopover;
+				});
 			}
+			this._pDetailsPopover.then(function (oResponsivePopover) {
+				oResponsivePopover.setBindingContext(oAppointment.getBindingContext());
+				oResponsivePopover.openBy(oAppointment);
+			});
 		},
 
 		handleMoreLinkPress: function(oEvent) {
@@ -444,54 +435,58 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 
 		handleEditButton: function () {
 			// The sap.m.Popover has to be closed before the sap.m.Dialog gets opened
-			this._oDetailsPopover.close();
-			this.sPath = this._oDetailsPopover.getBindingContext().getPath();
+			var oDetailsPopover = this.byId("detailsPopover");
+			oDetailsPopover.close();
+			this.sPath = oDetailsPopover.getBindingContext().getPath();
 			this._arrangeDialogFragment("Edit appointment");
 		},
 
 		handlePopoverDeleteButton: function () {
 			var oModel = this.getView().getModel(),
 				oAppointments = oModel.getData().appointments,
-				oAppointment = this._oDetailsPopover._getBindingContext().getObject();
+				oDetailsPopover = this.byId("detailsPopover"),
+				oAppointment = oDetailsPopover._getBindingContext().getObject();
 
-			this._oDetailsPopover.close();
+			oDetailsPopover.close();
 
 			oAppointments.splice(oAppointments.indexOf(oAppointment), 1);
 			oModel.updateBindings();
 		},
 
 		_arrangeDialogFragment: function (sTitle) {
-			if (!this._oNewAppointmentDialog) {
-				Fragment.load({
-					id: "dialogFrag",
+			var oView = this.getView();
+
+			if (!this._pNewAppointmentDialog) {
+				this._pNewAppointmentDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.SinglePlanningCalendar.Modify",
 					controller: this
-				})
-					.then(function(oDialog){
-						this._oNewAppointmentDialog = oDialog;
-						this.getView().addDependent(this._oNewAppointmentDialog);
-						this._arrangeDialog(sTitle);
-					}.bind(this));
-			} else {
-				this._arrangeDialog(sTitle);
+				}).then(function(oNewAppointmentDialog){
+					oView.addDependent(oNewAppointmentDialog);
+					return oNewAppointmentDialog;
+				});
 			}
+
+			this._pNewAppointmentDialog.then(function(oNewAppointmentDialog) {
+				this._arrangeDialog(sTitle, oNewAppointmentDialog);
+			}.bind(this));
 		},
 
-		_arrangeDialog: function (sTitle) {
-			this._setValuesToDialogContent();
-			this._oNewAppointmentDialog.setTitle(sTitle);
-			this._oNewAppointmentDialog.open();
+		_arrangeDialog: function (sTitle, oNewAppointmentDialog) {
+			this._setValuesToDialogContent(oNewAppointmentDialog);
+			oNewAppointmentDialog.setTitle(sTitle);
+			oNewAppointmentDialog.open();
 		},
 
-		_setValuesToDialogContent: function () {
-			var oAllDayAppointment = (Fragment.byId("dialogFrag", "allDay")),
+		_setValuesToDialogContent: function (oNewAppointmentDialog) {
+			var oAllDayAppointment = this.byId("allDay"),
 				sStartDatePickerID = oAllDayAppointment.getSelected() ? "DPStartDate" : "DTPStartDate",
 				sEndDatePickerID = oAllDayAppointment.getSelected() ? "DPEndDate" : "DTPEndDate",
-				oTitleControl = Fragment.byId("dialogFrag", "appTitle"),
-				oTextControl = Fragment.byId("dialogFrag", "moreInfo"),
-				oTypeControl = Fragment.byId("dialogFrag", "appType"),
-				oStartDateControl = Fragment.byId("dialogFrag", sStartDatePickerID),
-				oEndDateControl = Fragment.byId("dialogFrag", sEndDatePickerID),
+				oTitleControl = this.byId("appTitle"),
+				oTextControl = this.byId("moreInfo"),
+				oTypeControl = this.byId("appType"),
+				oStartDateControl = this.byId(sStartDatePickerID),
+				oEndDateControl = this.byId(sEndDatePickerID),
 				oEmptyError = {errorState:false, errorMessage: ""},
 				oContext,
 				oContextObject,
@@ -504,7 +499,7 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 
 
 			if (this.sPath) {
-				oContext = this._oDetailsPopover.getBindingContext();
+				oContext = this.byId("detailsPopover").getBindingContext();
 				oContextObject = oContext.getObject();
 				sTitle = oContextObject.title;
 				sText = oContextObject.text;
@@ -537,23 +532,23 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 			oTypeControl.setSelectedKey(sType);
 			this._setDateValueState(oStartDateControl, oEmptyError);
 			this._setDateValueState(oEndDateControl, oEmptyError);
-			this.updateButtonEnabledState(oStartDateControl, oEndDateControl, this._oNewAppointmentDialog.getBeginButton());
+			this.updateButtonEnabledState(oStartDateControl, oEndDateControl, oNewAppointmentDialog.getBeginButton());
 		},
 
 		handleDialogOkButton: function () {
-			var bAllDayAppointment = (Fragment.byId("dialogFrag", "allDay")).getSelected(),
+			var bAllDayAppointment = (this.byId("allDay")).getSelected(),
 				sStartDate = bAllDayAppointment ? "DPStartDate" : "DTPStartDate",
 				sEndDate = bAllDayAppointment ? "DPEndDate" : "DTPEndDate",
-				sTitle = Fragment.byId("dialogFrag", "appTitle").getValue(),
-				sText = Fragment.byId("dialogFrag", "moreInfo").getValue(),
-				sType = Fragment.byId("dialogFrag", "appType").getSelectedItem().getKey(),
-				oStartDate = Fragment.byId("dialogFrag", sStartDate).getDateValue(),
-				oEndDate = Fragment.byId("dialogFrag", sEndDate).getDateValue(),
+				sTitle = this.byId("appTitle").getValue(),
+				sText = this.byId("moreInfo").getValue(),
+				sType = this.byId("appType").getSelectedItem().getKey(),
+				oStartDate = this.byId(sStartDate).getDateValue(),
+				oEndDate = this.byId(sEndDate).getDateValue(),
 				oModel = this.getView().getModel(),
 				sAppointmentPath;
 
-			if (Fragment.byId("dialogFrag", sStartDate).getValueState() !== ValueState.Error
-				&& Fragment.byId("dialogFrag", sEndDate).getValueState() !== ValueState.Error) {
+			if (this.byId(sStartDate).getValueState() !== ValueState.Error
+				&& this.byId(sEndDate).getValueState() !== ValueState.Error) {
 
 				if (this.sPath) {
 					sAppointmentPath = this.sPath;
@@ -574,7 +569,7 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 
 				oModel.updateBindings();
 
-				this._oNewAppointmentDialog.close();
+				this.byId("modifyDialog").close();
 			}
 		},
 
@@ -594,16 +589,16 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 
 		handleDialogCancelButton:  function () {
 			this.sPath = null;
-			this._oNewAppointmentDialog.close();
+			this.byId("modifyDialog").close();
 		},
 
 		handleCheckBoxSelect: function (oEvent) {
 			var bSelected = oEvent.getSource().getSelected(),
 				sStartDatePickerID = bSelected ? "DTPStartDate" : "DPStartDate",
 				sEndDatePickerID = bSelected ? "DTPEndDate" : "DPEndDate",
-				oOldStartDate = Fragment.byId("dialogFrag", sStartDatePickerID).getDateValue(),
+				oOldStartDate = this.byId(sStartDatePickerID).getDateValue(),
 				oNewStartDate = new Date(oOldStartDate),
-				oOldEndDate = Fragment.byId("dialogFrag", sEndDatePickerID).getDateValue(),
+				oOldEndDate = this.byId(sEndDatePickerID).getDateValue(),
 				oNewEndDate = new Date(oOldEndDate);
 
 			if (!bSelected) {
@@ -616,8 +611,8 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 
 			sStartDatePickerID = !bSelected ? "DTPStartDate" : "DPStartDate";
 			sEndDatePickerID = !bSelected ? "DTPEndDate" : "DPEndDate";
-			Fragment.byId("dialogFrag", sStartDatePickerID).setDateValue(oNewStartDate);
-			Fragment.byId("dialogFrag", sEndDatePickerID).setDateValue(oNewEndDate);
+			this.byId(sStartDatePickerID).setDateValue(oNewStartDate);
+			this.byId(sEndDatePickerID).setDateValue(oNewEndDate);
 		},
 
 		_getDefaultAppointmentStartHour: function() {
@@ -667,8 +662,8 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 		},
 
 		handleDateTimePickerChange: function(oEvent) {
-			var oDateTimePickerStart = Fragment.byId("dialogFrag", "DTPStartDate"),
-				oDateTimePickerEnd = Fragment.byId("dialogFrag", "DTPEndDate"),
+			var oDateTimePickerStart = this.byId("DTPStartDate"),
+				oDateTimePickerEnd = this.byId("DTPEndDate"),
 				oStartDate = oDateTimePickerStart.getDateValue(),
 				oEndDate = oDateTimePickerEnd.getDateValue(),
 				oErrorState = {errorState: false, errorMessage: ""};
@@ -699,12 +694,12 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 				this._setDateValueState(oDateTimePickerEnd, oErrorState);
 			}
 
-			this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, this._oNewAppointmentDialog.getBeginButton());
+			this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, this.byId("modifyDialog").getBeginButton());
 		},
 
 		handleDatePickerChange: function () {
-			var oDatePickerStart = Fragment.byId("dialogFrag", "DPStartDate"),
-				oDatePickerEnd = Fragment.byId("dialogFrag", "DPEndDate"),
+			var oDatePickerStart = this.byId("DPStartDate"),
+				oDatePickerEnd = this.byId("DPEndDate"),
 				oStartDate = oDatePickerStart.getDateValue(),
 				oEndDate = oDatePickerEnd.getDateValue(),
 				bEndDateBiggerThanStartDate = oEndDate.getTime() < oStartDate.getTime(),
@@ -716,7 +711,7 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 			}
 			this._setDateValueState(oDatePickerStart, oErrorState);
 			this._setDateValueState(oDatePickerEnd, oErrorState);
-			this.updateButtonEnabledState(oDatePickerStart, oDatePickerEnd, this._oNewAppointmentDialog.getBeginButton());
+			this.updateButtonEnabledState(oDatePickerStart, oDatePickerEnd, this.byId("modifyDialog").getBeginButton());
 		},
 
 		_setDateValueState: function(oPicker, oErrorState) {
@@ -729,23 +724,27 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 		},
 
 		handleOpenLegend: function (oEvent) {
-			var oSource = oEvent.getSource();
+			var oSource = oEvent.getSource(),
+				oView = this.getView();
 
-			if (!this._oLegendPopover) {
-				Fragment.load({
-					id: "LegendFrag",
+			if (!this._pLegendPopover) {
+				this._pLegendPopover = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.SinglePlanningCalendar.Legend",
 					controller: this
-				}).then(function(oPopoverContent){
-					this._oLegendPopover = oPopoverContent;
-					this.getView().addDependent(this._oLegendPopover);
-					this._oLegendPopover.openBy(oSource);
-				}.bind(this));
-			} else if (this._oLegendPopover.isOpen()) {
-				this._oLegendPopover.close();
-			} else {
-				this._oLegendPopover.openBy(oSource);
+				}).then(function(oLegendPopover) {
+					oView.addDependent(oLegendPopover);
+					return oLegendPopover;
+				});
 			}
+
+			this._pLegendPopover.then(function(oLegendPopover) {
+				if (oLegendPopover.isOpen()){
+					oLegendPopover.close();
+				} else {
+					oLegendPopover.openBy(oSource);
+				}
+			});
 		}
 	});
 });
