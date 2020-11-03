@@ -193,14 +193,18 @@ sap.ui.define([
 				= _Helper.getPrivateAnnotation(oParentGroupNode, "filter");
 		}
 
-		delete mQueryOptions.$count;
-		mQueryOptions = _AggregationHelper.buildApply(oFilteredAggregation, mQueryOptions, iLevel);
-		mQueryOptions.$count = true;
-
-		oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
 		if (bHasGrandTotal) {
+			mQueryOptions.$count = true;
+			oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
 			_GrandTotalHelper.enhanceCacheWithGrandTotal(oCache, oFilteredAggregation,
 				mQueryOptions, aGroupBy.concat(aMissing));
+		} else {
+			delete mQueryOptions.$count;
+			mQueryOptions = _AggregationHelper.buildApply(oFilteredAggregation, mQueryOptions,
+				iLevel);
+			mQueryOptions.$count = true;
+
+			oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
 		}
 
 		bLeaf = !oFilteredAggregation.groupLevels.length;

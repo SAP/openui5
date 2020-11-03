@@ -333,31 +333,41 @@ sap.ui.define([
 		this.mock(_AggregationHelper).expects("filterOrderby")
 			.withExactArgs("~orderby~", sinon.match.same(oFilteredAggregation))
 			.returns(oFixture.filteredOrderby);
-		this.mock(_AggregationHelper).expects("buildApply")
-			.withExactArgs(sinon.match(function (o) {
-					return o === oFilteredAggregation && !("$groupBy" in o || "$missing" in o);
-				}), sinon.match(function (o) {
-					return o === mFilteredQueryOptions
-						&& !("$count" in o)
-						&& (oFixture.parent
-							? o.$$filterBeforeAggregate === "~filter~"
-							: !("$$filterBeforeAggregate" in o))
-						&& (oFixture.filteredOrderby
-							? o.$orderby === oFixture.filteredOrderby
-							: !("$orderby" in o));
-				}), iLevel)
-			.returns(mCacheQueryOptions);
-		this.mock(_Cache).expects("create")
+		if (bHasGrandTotal) {
+			this.mock(_AggregationHelper).expects("buildApply").never();
+			this.mock(_Cache).expects("create")
+				.withExactArgs(sinon.match.same(oCache.oRequestor), "Foo",
+					sinon.match(function (o) {
+						return o === mFilteredQueryOptions && o.$count;
+					}), true)
+				.returns(oGroupLevelCache);
+			this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
+				.exactly(bHasGrandTotal ? 1 : 0)
+				.withExactArgs(sinon.match.same(oGroupLevelCache),
+					sinon.match.same(oFilteredAggregation), sinon.match.same(mFilteredQueryOptions),
+					["foo", "bar", "baz", "qux"]);
+		} else {
+			this.mock(_AggregationHelper).expects("buildApply")
+				.withExactArgs(sinon.match(function (o) {
+						return o === oFilteredAggregation && !("$groupBy" in o || "$missing" in o);
+					}), sinon.match(function (o) {
+						return o === mFilteredQueryOptions
+							&& !("$count" in o)
+							&& (oFixture.parent
+								? o.$$filterBeforeAggregate === "~filter~"
+								: !("$$filterBeforeAggregate" in o))
+							&& (oFixture.filteredOrderby
+								? o.$orderby === oFixture.filteredOrderby
+								: !("$orderby" in o));
+					}), iLevel)
+				.returns(mCacheQueryOptions);
+			this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(oCache.oRequestor), "Foo",
 				sinon.match(function (o) {
 					return o === mCacheQueryOptions && o.$count === true;
 				}), true)
 			.returns(oGroupLevelCache);
-		this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
-			.exactly(bHasGrandTotal ? 1 : 0)
-			.withExactArgs(sinon.match.same(oGroupLevelCache),
-				sinon.match.same(oFilteredAggregation), sinon.match.same(mCacheQueryOptions),
-				["foo", "bar", "baz", "qux"]);
+		}
 
 		// This must be done before calling createGroupLevelCache, so that bind grabs the mock
 		this.mock(_AggregationCache).expects("calculateKeyPredicate")
