@@ -1161,7 +1161,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			AnnotationHelper.value(vRawValue, {context : oContext}),
-			"{=odata.collection(['in',(${EMPLOYEE_2_TEAM/MEMBER_COUNT}>10)?'maybe':undefined])}"
+			"{=odata.collection(['in',(%{EMPLOYEE_2_TEAM/MEMBER_COUNT}>10)?'maybe':undefined])}"
 		);
 
 		oMetaModelMock.expects("fetchObject").twice().withExactArgs("/1/$If/0/$Gt/0/$Path/$")

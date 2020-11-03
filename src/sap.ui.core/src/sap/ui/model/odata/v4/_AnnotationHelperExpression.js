@@ -203,7 +203,7 @@ sap.ui.define([
 
 			return SyncPromise.all(aPromises).then(function (aElements) {
 				aElements = aElements.map(function (oElement) {
-					return Basics.resultToString(oElement, true);
+					return Basics.resultToString(oElement, true, false, true);
 				});
 
 				return {
@@ -286,10 +286,11 @@ sap.ui.define([
 			 * Returns the string representation of the given parameter value.
 			 * @param {object} oParameterValue the parameter value
 			 * @param {boolean} bComplex whether the result is a complex binding or a simple binding
+			 * @param {boolean} [bRaw=false] whether the result will contain the raw value
 			 */
-			function toString(oParameterValue, bComplex) {
+			function toString(oParameterValue, bComplex, bRaw) {
 				return Basics.resultToString(Expression.wrapExpression(oParameterValue), true,
-					bComplex);
+					bComplex, bRaw);
 			}
 
 			return SyncPromise.all([
@@ -314,7 +315,7 @@ sap.ui.define([
 				return {
 					result : "expression",
 					type : sType,
-					value : toString(oCondition, false)
+					value : toString(oCondition, false, true)
 						+ "?" + toString(oThen, bComplexBinding)
 						+ ":" + toString(oElse, bComplexBinding)
 				};
@@ -560,12 +561,12 @@ sap.ui.define([
 					sPrefix = "";
 
 				aParts.push('odata.fillUriTemplate(',
-					Basics.resultToString(aResults[0], true, false),
+					Basics.resultToString(aResults[0], true, false, true),
 					',{');
 				for (i = 1; i < oPathValue.value.length; i += 1) {
 					sName = Basics.property(aParameters[i], "$Name", "string");
 					aParts.push(sPrefix, Basics.toJSON(sName), ":",
-						Basics.resultToString(aResults[i], true, false));
+						Basics.resultToString(aResults[i], true, false, true));
 					sPrefix = ",";
 				}
 				aParts.push("})");
@@ -600,7 +601,7 @@ sap.ui.define([
 			if (bWrapExpression) {
 				Expression.wrapExpression(oResult);
 			}
-			return Basics.resultToString(oResult, true, false);
+			return Basics.resultToString(oResult, true, false, true);
 		},
 
 		/**
@@ -657,8 +658,8 @@ sap.ui.define([
 				return {
 					result : "expression",
 					type : "Edm.Boolean",
-					value : "!"
-						+ Basics.resultToString(Expression.wrapExpression(oParameter), true, false)
+					value : "!" + Basics.resultToString(Expression.wrapExpression(oParameter),
+							true, false, true)
 				};
 			});
 		},
@@ -825,10 +826,10 @@ sap.ui.define([
 					type : "Edm.String",
 					value : oResult.type === "Edm.String"
 						// Note: odata.uriEncode() is V2, but safe for Edm.String!
-						? 'odata.uriEncode(' + Basics.resultToString(oResult, true, false) + ","
-							+ Basics.toJSON(oResult.type) + ")"
+						? 'odata.uriEncode(' + Basics.resultToString(oResult, true, false, true)
+							+ "," + Basics.toJSON(oResult.type) + ")"
 						// Note: see _Helper.formatLiteral()
-						: 'String(' + Basics.resultToString(oResult, true, false) + ")"
+						: 'String(' + Basics.resultToString(oResult, true, false, true) + ")"
 				};
 			});
 		},

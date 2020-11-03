@@ -216,9 +216,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext, oETagEntity) {
-		var bFireChange = false,
+		var bDestroy,
+			bFireChange = false,
 			sPath = oContext.iIndex === undefined
-				// not in the list -> use the predicate
+				// context is not in aContexts -> use the predicate
 				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
 				: String(oContext.iIndex),
 			bReadCount = false,
@@ -230,6 +231,7 @@ sap.ui.define([
 
 				if (oContext.isKeepAlive()) {
 					oContext.resetKeepAlive(); // ensure that it is destroyed later
+					bDestroy = true;
 				}
 				if (oContext.created()) {
 					// happens only for a created context that is not transient anymore
@@ -269,7 +271,7 @@ sap.ui.define([
 					that.iMaxLength -= 1; // this doesn't change Infinity
 					bFireChange = true;
 				} else if (that.bLengthFinal) {
-					// a kept-alive context not in the list -> read the count afterwards
+					// a kept-alive context is not in aContexts  -> read the count afterwards
 					bReadCount = true;
 				}
 				// Do not destroy the context immediately to avoid timing issues with dependent
@@ -281,12 +283,20 @@ sap.ui.define([
 			if (bReadCount) {
 				that.iMaxLength = that.fetchValue("$count", undefined, true).getResult()
 					- that.iCreatedContexts;
+				// Note: Although we know that oContext is not in aContexts, a "change" event needs
+				// to be fired in order to notify the control about the new length, for example, to
+				// update the 'More' button or the scrollbar.
 				bFireChange = iOldMaxLength !== that.iMaxLength;
 			}
 			// Fire the change asynchronously so that Cache#delete is finished and #getContexts can
 			// read the data synchronously. This is important for extended change detection.
+			// Without change event there is no destroyPreviousContexts and a kept-alive context
+			// must be destroyed here.
 			if (bFireChange) {
 				that._fireChange({reason : ChangeReason.Remove});
+			} else if (bDestroy) {
+				delete that.mPreviousContextsByPath[oContext.getPath()];
+				oContext.destroy();
 			}
 		});
 	};
@@ -621,7 +631,9 @@ sap.ui.define([
 				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 			});
 			for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
-				aContexts[i].iIndex = i;
+				if (aContexts[i]) {
+					aContexts[i].iIndex = i;
+				}
 			}
 			this.iMaxLength -= iCount;
 			this._fireChange({reason : ChangeReason.Change});
@@ -981,24 +993,9 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
 			sDeepResourcePath) {
-		var oAggregation = this.mParameters.$$aggregation,
-			bAggregate = oAggregation && (oAggregation.groupLevels.length
-				|| _AggregationHelper.hasMinOrMax(oAggregation.aggregate)
-				|| _AggregationHelper.hasGrandTotal(oAggregation.aggregate));
-
-		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
-
-		if (!bAggregate && mQueryOptions.$$filterBeforeAggregate) {
-			mQueryOptions.$apply = "filter(" +  mQueryOptions.$$filterBeforeAggregate + ")/"
-				+ mQueryOptions.$apply;
-			delete mQueryOptions.$$filterBeforeAggregate;
-		}
-		// w/o grouping or min/max, $apply is sufficient; else _AggregationCache is needed
-		return bAggregate
-			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, oAggregation,
-				mQueryOptions)
-			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-				this.oModel.bAutoExpandSelect, sDeepResourcePath, this.bSharedRequest);
+		return _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
+			this.mParameters.$$aggregation, this.inheritQueryOptions(mQueryOptions, oContext),
+			this.oModel.bAutoExpandSelect, this.bSharedRequest);
 	};
 
 	/**

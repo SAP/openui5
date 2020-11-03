@@ -120,13 +120,13 @@ sap.ui.define([
 				"SalesOrderList('0500000004')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList_4_refresh.json"
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000004'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000004'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
 					source : "SalesOrderList_4_sideEffects1.json"
 				},
-				"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Note" : {
+				"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Messages,Note" : {
 					source : "SalesOrderList_4_sideEffects2.json"
 				},
-				"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Messages,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 					source : "SalesOrderList_4_sideEffects3.json"
 				},
 				"SalesOrderList('0500000004')/SO_2_SOITEM(SalesOrderID='0500000004',ItemPosition='0000000070')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
@@ -144,13 +144,13 @@ sap.ui.define([
 				"SalesOrderList('0500000005')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'%20and%20(ProductID%20eq%20'HT-1061')&$skip=0&$top=100" : {
 					source : "SalesOrderItemsList_5_Filter_via_changeParameter.opa.json"
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000005'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000005'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
 					source : "SalesOrderList_5_sideEffects1.json"
 				},
-				"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,Note" : {
+				"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,Messages,Note" : {
 					source : "SalesOrderList_5_sideEffects2.json"
 				},
-				"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,Messages,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 					source : "SalesOrderList_5_sideEffects3.json"
 				},
 				"SalesOrderList('0500000006')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber)" : {
@@ -198,13 +198,13 @@ sap.ui.define([
 				"SalesOrderList('NEW1')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('NEW1')_refresh.json"
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'NEW1'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'NEW1'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
 					source : "SalesOrderList('NEW1')_sideEffects1.json"
 				},
-				"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Note" : {
+				"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Messages,Note" : {
 					source : "SalesOrderList('NEW1')_sideEffects2.json"
 				},
-				"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Messages,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 					source : "SalesOrderList('NEW1')_sideEffects3.json"
 				},
 				"SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
@@ -237,13 +237,13 @@ sap.ui.define([
 				"SalesOrderList('NEW3')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('NEW3')_refresh.json"
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'NEW3'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'NEW3'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
 					source : "SalesOrderList('NEW3')_sideEffects1.json"
 				},
-				"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Note" : {
+				"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Messages,Note" : {
 					source : "SalesOrderList('NEW3')_sideEffects2.json"
 				},
-				"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Messages,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 					source : "SalesOrderList('NEW3')_sideEffects3.json"
 				},
 				"SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
@@ -342,10 +342,10 @@ sap.ui.define([
 				"SalesOrderList('0500000000')?custom-option=value&$select=SO_2_BP&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('0500000000')_CompanyName_sideEffects.json"
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000000'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000000'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
 					source : "SalesOrderList('0500000000')_ChangeAt-GrossAmount-Note_sideEffects.json"
 				},
-				"SalesOrderList('0500000000')?custom-option=value&$select=ChangedAt,Note" : {
+				"SalesOrderList('0500000000')?custom-option=value&$select=ChangedAt,Messages,Note" : {
 					source : "SalesOrderList('0500000000')_ChangeAt-Note_sideEffects.json"
 				},
 				"POST SalesOrderList?custom-option=value" : [{
@@ -389,7 +389,18 @@ sap.ui.define([
 						return oRequest.requestHeaders["If-Match"] === "New ETag";
 					},
 					message : {"Note" : "You have used the new ETag!"}
-				}]
+				}],
+				"PATCH SalesOrderList('050000006')/SO_2_SOITEM(SalesOrderID='0500000006',ItemPosition='0000000010')?custom-option=value" : [{
+					code : 204,
+					ifMatch : /{"Note":"EPM DG: SO ID 0500000006 Item 0000000010"}/g,
+					source : "PATCH-SalesOrderList('0500000006')-SO_2_SOITEM_0.json"
+				}],
+				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000006'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
+					source : "SalesOrderList_filter_SalesOrderID='0500000006'.json"
+				},
+				"SalesOrderList('0500000006')?custom-option=value&$select=ChangedAt,Messages,Note" : {
+					source : "SalesOrderList_6.json"
+				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/SalesOrders/data"

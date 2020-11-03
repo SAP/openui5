@@ -21,7 +21,7 @@ sap.ui.getCore().attachInit(function () {
 		//*****************************************************************************
 		var sTitle = "Start data aggregation app, expand to node level 4 with paging and collapse";
 		opaTest(sTitle, function (Given, When, Then) {
-			var aBeforeExpandBwSmall;
+			var aAfterExpandBwSmall, aInitialTableState;
 
 			When.onAnyPage.applySupportAssistant();
 			Given.iStartMyUIComponent({
@@ -31,7 +31,7 @@ sap.ui.getCore().attachInit(function () {
 				}
 			});
 
-			Then.onTheMainPage.checkTable([{
+			aInitialTableState = [{
 				level : 1,
 				expanded : false,
 				country : "United Kingdom",
@@ -61,7 +61,8 @@ sap.ui.getCore().attachInit(function () {
 				salesAmount : "24,489,638",
 				salesNumber : "",
 				subtotal : true
-			}]);
+			}];
+			Then.onTheMainPage.checkTable(aInitialTableState);
 
 			When.onTheMainPage.toggleExpandInRow(2, "Expand Germany.");
 			Then.onTheMainPage.checkTable([{
@@ -171,7 +172,7 @@ sap.ui.getCore().attachInit(function () {
 
 			When.onTheMainPage.toggleExpandInRow(9, "Expand BW.");
 			When.onTheMainPage.scrollToRow(8, "Scroll to BW.");
-			aBeforeExpandBwSmall = [{
+			Then.onTheMainPage.checkTable([{
 				level : 2,
 				expanded : false,
 				country : "Germany",
@@ -221,12 +222,11 @@ sap.ui.getCore().attachInit(function () {
 				salesAmount : "125,093",
 				salesNumber : "",
 				subtotal : true
-			}];
-			Then.onTheMainPage.checkTable(aBeforeExpandBwSmall);
+			}]);
 
 			When.onTheMainPage.toggleExpandInRow(12, "Expand BW-Small.");
 			When.onTheMainPage.scrollToRow(10, "Scroll to BW-Small.");
-			Then.onTheMainPage.checkTable([{
+			aAfterExpandBwSmall = [{
 				level : 3,
 				expanded : false,
 				country : "Germany",
@@ -276,10 +276,16 @@ sap.ui.getCore().attachInit(function () {
 				salesAmount : "63,461",
 				salesNumber : "1,178",
 				subtotal : false
-			}]);
+			}];
+			Then.onTheMainPage.checkTable(aAfterExpandBwSmall);
 
-			When.onTheMainPage.toggleExpandInRow(12, "Collapse BW-Small.");
-			Then.onTheMainPage.checkTable(aBeforeExpandBwSmall);
+			When.onTheMainPage.scrollToRow(0, "Scroll to United Kingdom.");
+			When.onTheMainPage.toggleExpandInRow(2, "Collapse Germany.");
+			Then.onTheMainPage.checkTable(aInitialTableState);
+
+			When.onTheMainPage.toggleExpandInRow(2, "Expand Germany again.");
+			When.onTheMainPage.scrollToRow(10, "Scroll to BW-Large.");
+			Then.onTheMainPage.checkTable(aAfterExpandBwSmall);
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();

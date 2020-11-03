@@ -5,8 +5,9 @@
 //Provides class sap.ui.model.odata.v4.lib._AggregationHelper
 sap.ui.define([
 	"./_Helper",
+	"./_Parser",
 	"sap/ui/model/Filter"
-], function (_Helper, Filter) {
+], function (_Helper, _Parser, Filter) {
 	"use strict";
 
 	var mAllowedAggregateDetails2Type =  {
@@ -22,6 +23,11 @@ sap.ui.define([
 			group : "object",
 			groupLevels : "array"
 		},
+		// "required white space"
+		rComma = /,|%2C|%2c/,
+		rRws = new RegExp(_Parser.sWhitespace + "+"),
+		rODataIdentifier = new RegExp("^" + _Parser.sODataIdentifier
+			+ "(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
 		_AggregationHelper;
 
 	/*
@@ -158,15 +164,17 @@ sap.ui.define([
 		 *   The value for a "$top" system query option; it is removed from the returned map,
 		 *   but not from <code>mQueryOptions</code> itself, in case it is turned into a "top()"
 		 *   transformation
+		 * @param {number} [iLevel=0]
+		 *   The current level
+		 * @param {boolean} [bFollowUp]
+		 *   Tells whether this method is called for a follow-up request, not for the first one; in
+		 *   this case, neither the count nor minimum or maximum values are requested again and
+		 *   <code>mAlias2MeasureAndMethod</code> is ignored
 		 * @param {object} [mAlias2MeasureAndMethod]
 		 *   An optional map which is filled in case an aggregatable property requests minimum or
 		 *   maximum values; the alias (for example "UI5min__&lt;alias>") for that value becomes the
 		 *   key; an object with "measure" and "method" becomes the corresponding value. Note that
 		 *   "measure" holds the aggregatable property's alias in case "3.1.1 Keyword as" is used.
-		 * @param {boolean} [bFollowUp]
-		 *   Tells whether this method is called for a follow-up request, not for the first one; in
-		 *   this case, neither the count nor minimum or maximum values are requested again and
-		 *   <code>mAlias2MeasureAndMethod</code> is ignored
 		 * @returns {object}
 		 *   A map of key-value pairs representing the query string, including a value for the
 		 *   "$apply" system query option if needed; it is a modified copy of
@@ -176,13 +184,16 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		buildApply : function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod, bFollowUp) {
+		buildApply : function (oAggregation, mQueryOptions, iLevel, bFollowUp,
+				mAlias2MeasureAndMethod) {
 			var aAggregate,
 				sApply = "",
-				// concat(aggregate(???),.) content for grand totals (w/o unit) or min/max or count
-				aConcatAggregate = [],
+				// concat(aggregate(???),.) content for grand totals (w/o unit)
+				aGrandTotalAggregate = [],
 				aGroupBy,
 				bHasGrandTotal,
+				// concat(aggregate(???),.) content for min/max or count
+				aMinMaxAggregate = [],
 				sSkipTop;
 
 			/*
@@ -198,7 +209,7 @@ sap.ui.define([
 			function aggregate(sAlias) {
 				var oDetails = oAggregation.aggregate[sAlias],
 					sAggregate = oDetails.name || sAlias,
-					sGrandTotal = sAlias,
+					sGrandTotal = sAggregate,
 					sWith = oDetails.with;
 
 				if (sWith) {
@@ -211,20 +222,16 @@ sap.ui.define([
 					sAggregate += " as " + sAlias;
 				}
 				if (!bFollowUp) {
-					if (oDetails.min) {
-						processMinOrMax(sAlias, "min");
-					}
-					if (oDetails.max) {
-						processMinOrMax(sAlias, "max");
-					}
+					processMinOrMax(sAlias, oDetails, "min");
+					processMinOrMax(sAlias, oDetails, "max");
 				}
-				if (oDetails.grandTotal) {
+				if (oDetails.grandTotal && iLevel <= 1) {
 					bHasGrandTotal = true;
 					if (!mQueryOptions.$skip) {
 						if (sWith) {
 							sGrandTotal += " with " + sWith + " as UI5grand__" + sAlias;
 						}
-						aConcatAggregate.push(sGrandTotal);
+						aGrandTotalAggregate.push(sGrandTotal);
 					}
 				}
 				return sAggregate;
@@ -243,20 +250,25 @@ sap.ui.define([
 			/*
 			 * Builds the min/max expression for the "concat" term (for example
 			 * "AggregatableProperty with min as UI5min__AggregatableProperty") and adds a
-			 * corresponding entry to the optional alias map.
+			 * corresponding entry to the optional alias map if requested in the details.
 			 *
 			 * @param {string} sName - An aggregatable property name
+			 * @param {object} oDetails - The aggregation details
 			 * @param {string} sMinOrMax - Either "min" or "max"
 			 */
-			function processMinOrMax(sName, sMinOrMax) {
-				var sAlias = "UI5" + sMinOrMax + "__" + sName;
+			function processMinOrMax(sName, oDetails, sMinOrMax) {
+				var sAlias;
 
-				aConcatAggregate.push(sName + " with " + sMinOrMax + " as " + sAlias);
-				if (mAlias2MeasureAndMethod) {
-					mAlias2MeasureAndMethod[sAlias] = {
-						measure : sName,
-						method : sMinOrMax
-					};
+				if (oDetails[sMinOrMax]) {
+					sAlias = "UI5" + sMinOrMax + "__" + sName;
+
+					aMinMaxAggregate.push(sName + " with " + sMinOrMax + " as " + sAlias);
+					if (mAlias2MeasureAndMethod) {
+						mAlias2MeasureAndMethod[sAlias] = {
+							measure : sName,
+							method : sMinOrMax
+						};
+					}
 				}
 			}
 
@@ -267,24 +279,22 @@ sap.ui.define([
 			 * @returns {string} The transformation(s) corresponding to $skip/$top or "".
 			 */
 			function skipTop() {
-				var sTransformation = "";
+				var aTransformations = [];
 
 				if (mQueryOptions.$skip) {
-					sTransformation = "skip(" + mQueryOptions.$skip + ")";
+					aTransformations.push("skip(" + mQueryOptions.$skip + ")");
 				}
 				delete mQueryOptions.$skip; // delete 0 value even w/o skip(0)
 				if (mQueryOptions.$top < Infinity) { // ignore +Infinity, undefined, NaN, ...
-					if (sTransformation) {
-						sTransformation += "/";
-					}
-					sTransformation += "top(" + mQueryOptions.$top + ")";
+					aTransformations.push("top(" + mQueryOptions.$top + ")");
 				}
 				delete mQueryOptions.$top;
 
-				return sTransformation;
+				return aTransformations.join("/");
 			}
 
 			mQueryOptions = Object.assign({}, mQueryOptions);
+			iLevel = iLevel || 0;
 
 			checkKeys(oAggregation, mAllowedAggregationKeys2Type);
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
@@ -292,9 +302,6 @@ sap.ui.define([
 			oAggregation.aggregate = oAggregation.aggregate || {};
 			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
 			aAggregate = Object.keys(oAggregation.aggregate).sort().map(aggregate);
-			if (bHasGrandTotal && oAggregation.groupLevels.length) {
-				throw new Error("Cannot combine visual grouping with grand total");
-			}
 			if (aAggregate.length) {
 				sApply = "aggregate(" + aAggregate.join(",") + ")";
 			}
@@ -310,14 +317,10 @@ sap.ui.define([
 			if (bFollowUp) {
 				delete mQueryOptions.$count;
 			} else if (mQueryOptions.$count) {
-				aConcatAggregate.push("$count as UI5__count");
+				aMinMaxAggregate.push("$count as UI5__count");
 				delete mQueryOptions.$count;
 			}
 
-			if (mQueryOptions.$$filterBeforeAggregate) {
-				sApply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/" + sApply;
-				delete mQueryOptions.$$filterBeforeAggregate;
-			}
 			if (mQueryOptions.$filter) {
 				sApply += "/filter(" + mQueryOptions.$filter + ")";
 				delete mQueryOptions.$filter;
@@ -335,11 +338,18 @@ sap.ui.define([
 				}
 			}
 			sSkipTop = skipTop();
-			if (aConcatAggregate.length) {
-				sApply += "/concat(aggregate(" + aConcatAggregate.join(",") + "),"
+			if (aMinMaxAggregate.length) {
+				sApply += "/concat(aggregate(" + aMinMaxAggregate.join(",") + "),"
 					+ (sSkipTop || "identity") + ")";
 			} else if (sSkipTop) {
 				sApply += "/" + sSkipTop;
+			}
+			if (aGrandTotalAggregate.length) {
+				sApply = "concat(aggregate(" + aGrandTotalAggregate.join(",") + ")," + sApply + ")";
+			}
+			if (mQueryOptions.$$filterBeforeAggregate) {
+				sApply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/" + sApply;
+				delete mQueryOptions.$$filterBeforeAggregate;
 			}
 			if (sApply) {
 				mQueryOptions.$apply = sApply;
@@ -365,6 +375,115 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oPlaceholder, "parent", oParentCache);
 
 			return oPlaceholder;
+		},
+
+		/**
+		 * Returns the aggregation information for the given level.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation; see also
+		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+		 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>,
+		 *   <code>group</code>, <code>groupLevels</code>
+		 * @param {number} iLevel
+		 *   The level of the request
+		 * @returns {object[]}
+		 *   The aggregation information for the given level with two additional properties:
+		 *   <code>$groupBy</code> is an array with the ordered list of all groupables up to the
+		 *   given level (to be used for key predicate and filter for child nodes);
+		 *   <code>$missing</code> is an array of all properties that are not yet grouped or
+		 *   aggregated at this level and thus missing in the level's result
+		 *
+		 * @private
+		 */
+		filterAggregation : function (oAggregation, iLevel) {
+			var oFilteredAggregation, aGroupLevels, aLeafGroups;
+
+			// copies the value with the given key from this map to the given target map
+			function copyTo(mTarget, sKey) {
+				mTarget[sKey] = this[sKey];
+				return mTarget;
+			}
+
+			// filters the map using the given keys
+			function filterMap(mMap, aKeys) {
+				return aKeys.reduce(copyTo.bind(mMap), {});
+			}
+
+			// filters the keys of the given map according to the given filter function
+			function filterKeys(mMap, fnFilter) {
+				return Object.keys(mMap).filter(fnFilter);
+			}
+
+			// tells whether the given alias does not have subtotals
+			function hasNoSubtotals(sAlias) {
+				return !oAggregation.aggregate[sAlias].subtotals;
+			}
+
+			// tells whether the given alias has subtotals
+			function hasSubtotals(sAlias) {
+				return oAggregation.aggregate[sAlias].subtotals;
+			}
+
+			// tells whether the given groupable property is not a group level
+			function isNotGroupLevel(sGroupable) {
+				return oAggregation.groupLevels.indexOf(sGroupable) < 0;
+			}
+
+			aGroupLevels = oAggregation.groupLevels.slice(iLevel - 1, iLevel);
+			oFilteredAggregation = {
+				aggregate : aGroupLevels.length
+					? filterMap(oAggregation.aggregate,
+						filterKeys(oAggregation.aggregate, hasSubtotals))
+					: oAggregation.aggregate,
+				groupLevels : aGroupLevels,
+				$groupBy : oAggregation.groupLevels.slice(0, iLevel)
+			};
+			aLeafGroups = filterKeys(oAggregation.group, isNotGroupLevel).sort();
+
+			if (aGroupLevels.length) {
+				oFilteredAggregation.group = {};
+				oFilteredAggregation.$missing
+					= oAggregation.groupLevels.slice(iLevel).concat(aLeafGroups)
+				.concat(Object.keys(oAggregation.aggregate).filter(hasNoSubtotals));
+			} else { // leaf
+				oFilteredAggregation.group = filterMap(oAggregation.group, aLeafGroups);
+				oFilteredAggregation.$groupBy = oFilteredAggregation.$groupBy.concat(aLeafGroups);
+				oFilteredAggregation.$missing = [];
+			}
+
+			return oFilteredAggregation;
+		},
+
+		/**
+		 * Returns the "$orderby" system query option filtered in such a way that only aggregatable
+		 * or groupable properties contained in the given aggregation information are used.
+		 *
+		 * @param {string} [sOrderby]
+		 *   The original "$orderby" system query option
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation; see also
+		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+		 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>,
+		 *   <code>group</code>, <code>groupLevels</code>
+		 * @returns {string}
+		 *   The filtered "$orderby" system query option
+		 *
+		 * @private
+		 */
+		filterOrderby : function (sOrderby, oAggregation) {
+			if (sOrderby) {
+				return sOrderby.split(rComma).filter(function (sOrderbyItem) {
+					var sName;
+
+					if (rODataIdentifier.test(sOrderbyItem)) {
+						sName = sOrderbyItem.split(rRws)[0]; // drop optional asc/desc
+						return sName in oAggregation.aggregate || sName in oAggregation.group
+							|| oAggregation.groupLevels.indexOf(sName) >= 0;
+					}
+					return true;
+				}).join(",");
+			}
 		},
 
 		/**
@@ -434,7 +553,7 @@ sap.ui.define([
 				return aFilters0.some(function (oFilter) {
 					return oFilter.aFilters
 						? hasAffectedFilter(sSideEffectPath, oFilter.aFilters)
-					    : affects(sSideEffectPath, oFilter.sPath);
+						: affects(sSideEffectPath, oFilter.sPath);
 				});
 			}
 

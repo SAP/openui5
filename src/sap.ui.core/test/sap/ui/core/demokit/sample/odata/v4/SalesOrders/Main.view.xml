@@ -233,7 +233,7 @@
 					<Text text="Changed At"/>
 				</Column>
 			</columns>
-			<ColumnListItem>
+			<ColumnListItem id="highlight">
 				<Text id="SalesOrderID" text="{SalesOrderID}"/>
 				<Text binding="{SO_2_BP}" text="{CompanyName}"/>
 				<Text text="{GrossAmount}"/>

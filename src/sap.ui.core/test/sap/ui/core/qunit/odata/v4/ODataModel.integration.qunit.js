@@ -828,9 +828,9 @@ sap.ui.define([
 		/**
 		 * Creates a V4 OData model for V2 service <code>RMTSAMPLEFLIGHT</code>.
 		 *
-		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-		 *   potentially overwrite the parameters operationMode, serviceUrl, and synchronizationMode
-		 *   which are set by default
+		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance
+		 *     and potentially overwrite the parameters operationMode, serviceUrl, and
+		 *     synchronizationMode which are set by default
 		 * @returns {ODataModel} The model
 		 */
 		createModelForV2FlightService : function (mModelParameters) {
@@ -855,9 +855,9 @@ sap.ui.define([
 		/**
 		 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
 		 *
-		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-		 *   potentially overwrite the parameters operationMode, serviceUrl, and synchronizationMode
-		 *   which are set by default
+		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance
+		 *     and potentially overwrite the parameters operationMode, serviceUrl, and
+		 *     synchronizationMode which are set by default
 		 * @returns {ODataModel} The model
 		 */
 		createModelForV2SalesOrderService : function (mModelParameters) {
@@ -9923,7 +9923,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)"
-				+ "&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+				+ "&$filter=AGE gt 42&$skip=0&$top=100", {
 				value : [{
 					ID : "1",
 					EMPLOYEE_2_TEAM : {
@@ -13792,7 +13792,7 @@ sap.ui.define([
 			oFormBinding.suspend();
 			oListBinding.setAggregation({aggregate : {AGE : {}}});
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?custom=foo&$apply=aggregate(AGE)"
-					+ "&$orderby=Name&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+					+ "&$orderby=Name&$filter=AGE gt 42&$skip=0&$top=100", {
 				value : [{
 					AGE : 52,
 					ID : "1",
@@ -15188,15 +15188,6 @@ sap.ui.define([
 			assert.throws(function () {
 				oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
 			}, new Error("Cannot combine $$aggregation and $apply"));
-			assert.throws(function () {
-				oListBinding.setAggregation({
-					aggregate : {
-						GrossAmount : {grandTotal : true}
-					},
-					groupLevels : ["LifecycleStatus"]
-				});
-			}, new Error("Cannot combine visual grouping with grand total"));
-			// Note: oListBinding is now in an undefined state, do not use anymore!
 		});
 	});
 
@@ -15224,8 +15215,8 @@ sap.ui.define([
 	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 </Table>';
 
-		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-				+ "/concat(aggregate(GrossAmount),top(99))", {
+		this.expectRequest("SalesOrderList?$apply=concat(aggregate(GrossAmount)"
+				+ ",groupby((LifecycleStatus),aggregate(GrossAmount))/top(99))", {
 				"@odata.count" : "26",
 				value : [
 					{GrossAmount : "12345"},
@@ -15783,9 +15774,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
+	// Scenario: sap.ui.table.Table with aggregation, visual grouping, and grand total.
 	// Expand the last visible node and scroll to the last loaded leaf.
 	// JIRA: CPOUI5ODATAV4-255
+	// JIRA: CPOUI5ODATAV4-163
 	QUnit.test("Data Aggregation: expand and paging to the last loaded leaf", function (assert) {
 		var oModel = createAggregationModel(),
 			oTable,
@@ -15794,7 +15786,7 @@ sap.ui.define([
 	parameters : {\
 		$$aggregation : {\
 			aggregate : {\
-				SalesAmount : {subtotals : true},\
+				SalesAmount : {grandTotal : true, subtotals : true},\
 				SalesNumber : {}\
 			},\
 			group : {\
@@ -15802,7 +15794,7 @@ sap.ui.define([
 			},\
 			groupLevels : [\'Region\']\
 		}\
-	}}" threshold="0" visibleRowCount="3">\
+	}}" threshold="0" visibleRowCount="4">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -15813,69 +15805,71 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "26",
+		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesAmount)"
+				+ ",groupby((Region),aggregate(SalesAmount))"
+				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [
+					{SalesAmount : "35100"},
+					{UI5__count : "26"},
 					{Region : "Z", SalesAmount : "100"},
 					{Region : "Y", SalesAmount : "200"},
 					{Region : "X", SalesAmount : "300"}
 				]
 			})
-			.expectChange("isExpanded", [false, false, false])
-			.expectChange("isTotal", [true, true, true])
-			.expectChange("level", [1, 1, 1])
-			.expectChange("region", ["Z", "Y", "X"])
-			.expectChange("accountResponsible", ["", "", ""])
-			.expectChange("salesAmount", ["100", "200", "300"])
-			.expectChange("salesNumber", [null, null, null]);
+			.expectChange("isExpanded", [true, false, false, false])
+			.expectChange("isTotal", [true, true, true, true])
+			.expectChange("level", [0, 1, 1, 1])
+			.expectChange("region", ["", "Z", "Y", "X"])
+			.expectChange("accountResponsible", ["", "", "", ""])
+			.expectChange("salesAmount", ["35100", "100", "200", "300"])
+			.expectChange("salesNumber", [null, null, null, null]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'X')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=0&$top=3", {
-					"@odata.count" : "4",
+					+ "&$count=true&$skip=0&$top=4", {
+					"@odata.count" : "5",
 					value : [
 						{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1},
 						{AccountResponsible : "b", SalesAmount : "20", SalesNumber : 2},
-						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3}
+						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3},
+						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
 				})
-				.expectChange("isExpanded", [,, true]);
+				.expectChange("isExpanded", [,,, true]);
 
 			// code under test
-			oTable.getRows()[2].getBindingContext().expand();
+			oTable.getRows()[3].getBindingContext().expand();
 
 			return that.waitForChanges(assert, "expand node 'X'");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "&$count=true&$skip=3&$top=1", {
-					"@odata.count" : "26",
+					+ "/skip(3)/top(1)", {
 					value : [
 						{Region : "W", SalesAmount : "400"}
 					]
 				})
 				.expectRequest("BusinessPartners?$apply=filter(Region eq 'X')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=3&$top=1", {
-					"@odata.count" : "4",
+					+ "&$count=true&$skip=4&$top=1", {
+					"@odata.count" : "5",
 					value : [
-						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
+						{AccountResponsible : "e", SalesAmount : "50", SalesNumber : 5}
 					]
 				})
-				.expectResets(oTable, 3)
-				.expectChange("isExpanded", [,,,,,,,false])
-				.expectChange("isTotal", [,,,,, false, false, true])
-				.expectChange("level", [,,,,, 2, 2, 1])
-				.expectChange("region", [,,,,, "X", "X", "W"])
-				.expectChange("accountResponsible", [,,,,, "c", "d", ""])
-				.expectChange("salesAmount", [,,,,, "30", "40", "400"])
-				.expectChange("salesNumber", [,,,,, "3", "4", null]);
+				.expectResets(oTable, 4)
+				.expectChange("isExpanded", [,,,,,,,,, false])
+				.expectChange("isTotal", [,,,,,, false, false, false, true])
+				.expectChange("level", [,,,,,, 2, 2, 2, 1])
+				.expectChange("region", [,,,,,, "X", "X", "X", "W"])
+				.expectChange("accountResponsible", [,,,,,, "c", "d", "e", ""])
+				.expectChange("salesAmount", [,,,,,, "30", "40", "50", "400"])
+				.expectChange("salesNumber", [,,,,,, "3", "4", "5", null]);
 
 			// code under test
-			oTable.setFirstVisibleRow(5);
+			oTable.setFirstVisibleRow(6);
 
 			return that.waitForChanges(assert, "scroll to 'X-c'");
 		});
@@ -15977,11 +15971,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
-	// Expand three levels and collapse at the root level, then expand again.
+	// Expand three levels and collapse at the root level, then expand root level again, then
+	// collapse first level.
 	//
 	// JIRA: CPOUI5ODATAV4-178
 	// JIRA: CPOUI5ODATAV4-179
 	// JIRA: CPOUI5ODATAV4-378
+	// JIRA: CPOUI5ODATAV4-597
 	QUnit.test("Data Aggregation: expand three levels, expand after collapse", function (assert) {
 		var oModel = createAggregationModel(),
 			oRowsBinding,
@@ -16049,14 +16045,10 @@ sap.ui.define([
 					]
 				})
 				.expectChange("isExpanded", [true])
-				.expectChange("isTotal", [])
 				.expectChange("level", [, 2, 2, 2])
 				.expectChange("country", [, "US", "US", "US"])
 				.expectChange("region", [, "Z", "Y", "X"])
-				.expectChange("segment", [])
-				.expectChange("accountResponsible", [])
-				.expectChange("salesAmount", [, "10", "20", "30"])
-				.expectChange("salesNumber", []);
+				.expectChange("salesAmount", [, "10", "20", "30"]);
 
 			// code under test
 			oTable.getRows()[0].getBindingContext().expand();
@@ -16074,14 +16066,10 @@ sap.ui.define([
 					]
 				})
 				.expectChange("isExpanded", [, true])
-				.expectChange("isTotal", [])
 				.expectChange("level", [,, 3, 3])
-				.expectChange("country", [])
 				.expectChange("region", [,, "Z", "Z"])
 				.expectChange("segment", [,, "z", "y"])
-				.expectChange("accountResponsible", [])
-				.expectChange("salesAmount", [,, "10", "20"])
-				.expectChange("salesNumber", []);
+				.expectChange("salesAmount", [,, "10", "20"]);
 
 			// code under test
 			oTable.getRows()[1].getBindingContext().expand();
@@ -16102,8 +16090,6 @@ sap.ui.define([
 				.expectChange("isExpanded", [,, true, undefined])
 				.expectChange("isTotal", [,,, false])
 				.expectChange("level", [,,, 4])
-				.expectChange("country", [])
-				.expectChange("region", [])
 				.expectChange("segment", [,,, "z"])
 				.expectChange("accountResponsible", [,,, "a"])
 				.expectChange("salesAmount", [,,, "10"])
@@ -16163,6 +16149,20 @@ sap.ui.define([
 			oUKContext0 = oRowsBinding.getContexts(7, 1)[0];
 			assert.strictEqual(oUKContext0.getPath(), oUKContext.getPath());
 			assert.ok(oUKContext0 === oUKContext, "'UK' context is still the same instance");
+		}).then(function () {
+			that.expectChange("isExpanded", [, false, false, false])
+				.expectChange("isTotal", [,,, true])
+				.expectChange("level", [,, 2, 2])
+				.expectChange("region", [,, "Y", "X"])
+				.expectChange("segment", [,, "", ""])
+				.expectChange("accountResponsible", [,,, ""])
+				.expectChange("salesAmount", [,, "20", "30"])
+				.expectChange("salesNumber", [,,, null]);
+
+			// code under test
+			oTable.getRows()[1].getBindingContext().collapse();
+
+			return that.waitForChanges(assert, "collapse 'US-Z'");
 		});
 	});
 
@@ -16621,13 +16621,10 @@ sap.ui.define([
 				+ bCount + "; autoExpandSelect : " + bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
-			var sBasicPath
-					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
-				oGrandTotalRow = {
+			var aGrandTotalResponse = [{
 					SalesNumber : 351,
 					"SalesNumber@odata.type" : "#Decimal"
-				},
+				}],
 				oModel = createAggregationModel({autoExpandSelect : bAutoExpandSelect}),
 				oTable,
 				sView = '\
@@ -16654,14 +16651,22 @@ sap.ui.define([
 				that = this;
 
 			if (bCount) {
-				oGrandTotalRow["UI5__count"] = "26";
-				oGrandTotalRow["UI5__count@odata.type"] = "#Decimal";
+				aGrandTotalResponse.push({
+					"UI5__count" : "26",
+					"UI5__count@odata.type" : "#Decimal"
+				});
 			}
-			this.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber"
-					+ (bCount ? ",$count as UI5__count" : "") + "),top(0))", {
-					value : [oGrandTotalRow]
+			this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+					+ ",groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/"
+					+ (bCount ? "concat(aggregate($count as UI5__count)," : "")
+					+ "top(0))"
+					+ (bCount ? ")" : ""), {
+					value : aGrandTotalResponse
 				})
-				.expectRequest(sBasicPath + "/skip(1)/top(4)", {
+				.expectRequest("BusinessPartners?$apply="
+					+ "groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/skip(1)/top(4)", {
 					value : [
 						{Country : "b", Region : "Y", SalesNumber : 2},
 						{Country : "c", Region : "X", SalesNumber : 3},
@@ -16695,8 +16700,9 @@ sap.ui.define([
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
-						"/aggregation/" + sBasicPath + "/concat(aggregate(SalesNumber"
-							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
+						"/aggregation/BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+							+ ",groupby((Country,Region),aggregate(SalesNumber))"
+							+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc))",
 						"sap.ui.model.odata.v4.lib._Cache");
 				}
 
@@ -16704,7 +16710,9 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				that.expectRequest(sBasicPath + "/top(1)", {
+				that.expectRequest("BusinessPartners?$apply="
+					+ "groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/top(1)", {
 						value : [
 							{Country : "a", Region : "Z", SalesNumber : 1}
 						]
@@ -16733,10 +16741,7 @@ sap.ui.define([
 				+ bCount + "; grandTotal row not fixed";
 
 		QUnit.test(sTitle, function (assert) {
-			var sBasicPath
-					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
-				oModel = createAggregationModel({autoExpandSelect : true}),
+			var oModel = createAggregationModel({autoExpandSelect : true}),
 				oTable,
 				aValues = [
 					{Country : "a", Region : "Z", SalesNumber : 1},
@@ -16771,10 +16776,12 @@ sap.ui.define([
 			if (bCount) {
 				aValues.unshift({UI5__count : "26", "UI5__count@odata.type" : "#Decimal"});
 			}
-			this.expectRequest(
-					sBasicPath + (bCount
-						? "/concat(aggregate($count as UI5__count),top(5))"
-						: "/top(5)"),
+			this.expectRequest("BusinessPartners?$apply="
+					+ "groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/"
+					+ (bCount ? "concat(aggregate($count as UI5__count)," : "")
+					+ "top(5)"
+					+ (bCount ? ")" : ""),
 					{value : aValues})
 				.expectChange("count")
 				.expectChange("country", [, "a", "b", "c", "d", "e"])
@@ -16802,8 +16809,9 @@ sap.ui.define([
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
-						"/aggregation/" + sBasicPath + "/concat(aggregate(SalesNumber"
-							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
+						"/aggregation/BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+						+ ",groupby((Country,Region),aggregate(SalesNumber))"
+						+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc))",
 						"sap.ui.model.odata.v4.lib._Cache");
 				}
 
@@ -16811,7 +16819,9 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				that.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber),top(0))", {
+				that.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+						+ ",groupby((Country,Region),aggregate(SalesNumber))"
+						+ "/filter(SalesNumber gt 0)/orderby(Region desc)/top(0))", {
 						value : [{
 							SalesNumber : 351,
 							"SalesNumber@odata.type" : "#Decimal"
@@ -16863,11 +16873,11 @@ sap.ui.define([
 		text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }"/>\
 </t:Table>';
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
+		this.expectRequest("BusinessPartners?$apply=concat("
+				+ "aggregate(SalesAmount with sap.unit_sum as UI5grand__SalesAmountSum)"
+				+ ",groupby((Region)"
 				+ ",aggregate(SalesAmount with sap.unit_sum as SalesAmountSum,SalesNumber))"
-				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)"
-				+ "/concat(aggregate(SalesAmountSum with sap.unit_sum as "
-				+ "UI5grand__SalesAmountSum),top(4))", {
+				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)/top(4))", {
 				value : [{
 						UI5grand__SalesAmountSum : 351,
 						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR",
@@ -16941,8 +16951,8 @@ sap.ui.define([
 			oListBinding.setContext(that.oModel.createBindingContext("/"));
 
 			that.expectRequest("BusinessPartners?custom=foo&$apply=filter(Name eq 'Foo')"
-				+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
-				+ "/orderby(Name)/concat(aggregate(SalesNumber),top(99))",
+				+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
+				+ "/filter(SalesNumber gt 0)/orderby(Name)/top(99))",
 				{value : [{/* response does not matter here */}]});
 
 			return Promise.all([
@@ -16980,8 +16990,8 @@ sap.ui.define([
 			]);
 
 			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
-				+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
-				+ "/concat(aggregate(SalesNumber),top(99))",
+				+ "/concat(aggregate(SalesNumber)"
+				+ ",groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)/top(99))",
 				{value : [{}]});
 
 			return Promise.all([
@@ -24832,7 +24842,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
 					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
-					+ "&$filter=SalesOrderID%20eq%20'1'", {
+					+ "&$filter=SalesOrderID eq '1'", {
 					value: [{ // simulate that entity still matches list's filter
 						ItemPosition : "20",
 						Messages : [{
@@ -24871,7 +24881,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
 					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
-					+ "&$filter=SalesOrderID%20eq%20'1'", {
+					+ "&$filter=SalesOrderID eq '1'", {
 					value : [] // simulate that entity does not match list's filter anymore
 				})
 				.expectChange("count", "1")
@@ -29134,19 +29144,30 @@ sap.ui.define([
 	// Scenario:
 	// 1. Create a view with a list report containing sales orders.
 	// 2. Keep the first context of the table alive.
-	// 3. (optional) Sort the list descending, so that the context drops out of it.
+	// 3. (optional) Filter the list by gross amount, so that the context drops out of it. This
+	//    implies that the new count must be requested after deleting the context. This request can
+	//    result in a changed or unchanged count.
 	// 4. Create and save a new sales order.
 	// 5. Delete the kept-alive context. Check that the context is deleted and a request for $count
 	//    is sent (filtering out the new sales order) if the context was not in the list anymore.
 	// JIRA: CPOUI5ODATAV4-365
 	// JIRA: CPOUI5ODATAV4-473
-[false, true].forEach(function (bSort) {
-	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bSort = " + bSort;
+[
+	{bCountHasChanged : true, bFilter : false},
+	{bCountHasChanged : false, bFilter : true},
+	{bCountHasChanged : true, bFilter : true}
+].forEach(function (oFixture) {
+	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bFilter = "
+		+ oFixture.bFilter;
+	if (oFixture.bFilter) {
+		sTitle += " , bCountHasChanged = " + oFixture.bCountHasChanged;
+	}
 
 	QUnit.test(sTitle, function (assert) {
 		var oKeptContext,
 			oListBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			fnOnBeforeDestroy = sinon.stub(),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
@@ -29162,7 +29183,7 @@ sap.ui.define([
 		}
 
 		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=2", {
-				"@odata.count" : "42",
+				"@odata.count" : "102",
 				value : [{SalesOrderID : "1"}, {SalesOrderID : "2"}]
 			})
 			.expectChange("count")
@@ -29172,7 +29193,7 @@ sap.ui.define([
 			oTable = that.oView.byId("listReport");
 			oListBinding = that.oView.byId("listReport").getBinding("items");
 
-			that.expectChange("count", "42");
+			that.expectChange("count", "102");
 
 			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
 
@@ -29180,23 +29201,24 @@ sap.ui.define([
 		}).then(function () {
 			oKeptContext = oTable.getItems()[0].getBindingContext();
 
-			oKeptContext.setKeepAlive(true);
+			oKeptContext.setKeepAlive(true, fnOnBeforeDestroy);
 			assert.ok(oKeptContext.isKeepAlive(), "(2)");
 
-			if (bSort) {
+			if (oFixture.bFilter) {
 				that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
-						+ "&$orderby=SalesOrderID desc&$skip=0&$top=2", {
+						+ "&$filter=GrossAmount gt 1000&$skip=0&$top=2", {
 						"@odata.count" : "42",
-						value : [{SalesOrderID : "42"}, {SalesOrderID : "41"}]
+						value : [{SalesOrderID : "3"}, {SalesOrderID : "4"}]
 					})
-					.expectChange("id", ["42", "41"]);
+					.expectChange("id", ["3", "4"])
+					.expectChange("count", "42");
 
-				oListBinding.sort(new Sorter("SalesOrderID", true));
+				oListBinding.filter(new Filter("GrossAmount", FilterOperator.GT, 1000));
 			}
 
 			return that.waitForChanges(assert, "(3)");
 		}).then(function () {
-			checkMoreButton("[2/42]");
+			checkMoreButton(oFixture.bFilter ? "[2/42]" : "[2/102]");
 
 			that.expectChange("id", [""])
 				.expectRequest({
@@ -29204,16 +29226,16 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {}
 				}, {SalesOrderID : "new"})
-				.expectChange("count", "43")
+				.expectChange("count", oFixture.bFilter ? "43" : "103")
 				.expectChange("id", ["new"]);
 
 			oListBinding.create({}, true);
 
 			return that.waitForChanges(assert, "(4)");
 		}).then(function () {
-			var iBatch = bSort ? 4 : 3;
+			var iBatch = oFixture.bFilter ? 4 : 3;
 
-			checkMoreButton("[2/43]");
+			checkMoreButton(oFixture.bFilter ? "[2/43]" : "[2/103]");
 
 			that.expectRequest({
 					batchNo : iBatch,
@@ -29221,17 +29243,25 @@ sap.ui.define([
 					url : "SalesOrderList('1')"
 				});
 
-			if (bSort) { // determine $count
+			if (oFixture.bFilter) {
 				that.expectRequest({
 						batchNo : iBatch,
 						method : "GET",
 						url : "SalesOrderList?$count=true"
-							+ "&$filter=not (SalesOrderID eq 'new')&$top=0"
-					}, {"@odata.count" : "41", value : []});
+							+ "&$filter=(GrossAmount gt 1000) and not (SalesOrderID eq 'new')"
+							+ "&$top=0"
+					}, {
+						"@odata.count" : oFixture.bCountHasChanged ? "41" : "42",
+						value : []
+					});
 			} else {
 				that.expectChange("id", [/*"new"*/, "2"]);
 			}
-			that.expectChange("count", "42");
+
+
+			if (oFixture.bCountHasChanged) {
+				that.expectChange("count", oFixture.bFilter ? "42" : "102");
+			}
 
 			return Promise.all([
 				// code under test
@@ -29239,7 +29269,19 @@ sap.ui.define([
 				that.waitForChanges(assert, "(5)")
 			]);
 		}).then(function () {
-			checkMoreButton("[2/42]");
+			if (oFixture.bFilter) {
+				checkMoreButton(oFixture.bCountHasChanged ? "[2/42]" : "[2/43]");
+			} else {
+				checkMoreButton("[2/102]");
+			}
+
+			if (oFixture.bCountHasChanged) {
+				return that.waitForChanges(assert, "await rendering").then(function () {
+					sinon.assert.called(fnOnBeforeDestroy);
+				});
+			} else {
+				sinon.assert.called(fnOnBeforeDestroy);
+			}
 		});
 	});
 });
@@ -29282,7 +29324,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: An annotation with $If comparing a number is evaluated.
 	// JIRA: CPOUI5ODATAV4-408
-	QUnit.skip("CPOUI5ODATAV4-408: $If comparing a number", function (assert) {
+	QUnit.test("CPOUI5ODATAV4-408: $If comparing a number", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/As(1)}">\
@@ -29464,26 +29506,25 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-366
 	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is not in the collection"
 			+ "; after refresh the entity is deleted", function (assert) {
-		var bCallbackCalled,
+		var fnOnBeforeDestroy = sinon.stub(),
 			that = this;
 
-		return this.createKeepAliveScenario(assert, true, function () {
-			bCallbackCalled = true;
-		}).then(function (oKeptContext) {
-			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '1'"
-					+ "&$select=GrossAmount,Note,SalesOrderID", {
-					value : []
-				})
-				.expectChange("objectPageGrossAmount", null)
-				.expectChange("objectPageNote", null);
+		return this.createKeepAliveScenario(assert, true, fnOnBeforeDestroy)
+			.then(function (oKeptContext) {
+				that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,Note,SalesOrderID", {
+						value : []
+					})
+					.expectChange("objectPageGrossAmount", null)
+					.expectChange("objectPageNote", null);
 
-			// code under test
-			oKeptContext.refresh(undefined, true);
+				// code under test
+				oKeptContext.refresh(undefined, true);
 
-			return that.waitForChanges(assert, "(3)");
-		}).then(function () {
-			assert.ok(bCallbackCalled, "called back");
-		});
+				return that.waitForChanges(assert, "(3)");
+			}).then(function () {
+				sinon.assert.called(fnOnBeforeDestroy);
+			});
 	});
 
 	//*********************************************************************************************
@@ -29601,57 +29642,56 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-366
 	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is in the collection"
 		+ ", after refresh the entity is deleted", function (assert) {
-		var bCallbackCalled,
+		var fnOnBeforeDestroy = sinon.stub(),
 			that = this;
 
-		return this.createKeepAliveScenario(assert, false, function () {
-			bCallbackCalled = true;
-		}).then(function (oKeptContext) {
-			that.expectRequest({
-					batchNo : 3,
-					method : "GET",
-					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
-						+ "&$select=GrossAmount,Note,SalesOrderID"
-				}, {
-					value : []
-				})
-				.expectRequest({
-					batchNo : 3,
-					method : "GET",
-					url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
-						+ "&$count=true&$top=0"
-				}, {
-					"@odata.count" : "0",
-					value : []
-				})
-				.expectChange("objectPageGrossAmount", null)
-				.expectChange("objectPageNote", null)
-				// expected as context is also destroyed in the list
-				.expectChange("id", null)
-				.expectChange("grossAmount", null)
-				// as context is no longer part of the collection the list requests a new context
-				.expectRequest({
-					batchNo : 4,
-					method : "GET",
-					url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
-						+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
-				}, {
-					"@odata.count" : "41",
-					value : [{GrossAmount : "120", SalesOrderID : "4"}]
-				})
-				.expectChange("id", [, "4"])
-				.expectChange("grossAmount", [, "120.00"]);
+		return this.createKeepAliveScenario(assert, false, fnOnBeforeDestroy)
+			.then(function (oKeptContext) {
+				that.expectRequest({
+						batchNo : 3,
+						method : "GET",
+						url : "SalesOrderList?$filter=SalesOrderID eq '1'"
+							+ "&$select=GrossAmount,Note,SalesOrderID"
+					}, {
+						value : []
+					})
+					.expectRequest({
+						batchNo : 3,
+						method : "GET",
+						url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
+							+ "&$count=true&$top=0"
+					}, {
+						"@odata.count" : "0",
+						value : []
+					})
+					.expectChange("objectPageGrossAmount", null)
+					.expectChange("objectPageNote", null)
+					// expected as context is also destroyed in the list
+					.expectChange("id", null)
+					.expectChange("grossAmount", null)
+					// as context is no longer part of aContexts the list requests a new context
+					.expectRequest({
+						batchNo : 4,
+						method : "GET",
+						url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
+							+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
+					}, {
+						"@odata.count" : "41",
+						value : [{GrossAmount : "120", SalesOrderID : "4"}]
+					})
+					.expectChange("id", [, "4"])
+					.expectChange("grossAmount", [, "120.00"]);
 
-			// code under test
-			oKeptContext.refresh(undefined, true);
+				// code under test
+				oKeptContext.refresh(undefined, true);
 
-			return that.waitForChanges(assert, "(2)");
-		}).then(function () {
-			assert.ok(bCallbackCalled, "called back");
-			assert.equal(
-				that.oView.byId("listReport").getItems()[0].getBindingContext().getPath(),
-				"/SalesOrderList('2')");
-		});
+				return that.waitForChanges(assert, "(2)");
+			}).then(function () {
+				sinon.assert.called(fnOnBeforeDestroy);
+				assert.equal(
+					that.oView.byId("listReport").getItems()[0].getBindingContext().getPath(),
+					"/SalesOrderList('2')");
+			});
 	});
 
 	//*********************************************************************************************
