@@ -118,7 +118,8 @@ module.exports = function(grunt, config) {
 							/^\/testsuite\/documentation\/entity\/\S+/.test(sRequestUrl) ||
 							/^\/testsuite\/documentation\/sample\/\S+/.test(sRequestUrl) ||
 							/^\/testsuite\/documentation\/demoapps(\/?$)?\S*/.test(sRequestUrl) ||
-							/^\/testsuite\/documentation\/topic(\/?$)?\S*/.test(sRequestUrl)
+							/^\/testsuite\/documentation\/topic(\/?$)?\S*/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/sitemap(\/?$)?\S*/.test(sRequestUrl)
 						) {
 							fs.readFile(sapUiTestsuiteBasePath + '/src/main/webapp/documentation-index.tmpl', { encoding: 'utf-8' } , function(err, data) {
 								if (err) {
