@@ -51,7 +51,7 @@ sap.ui.define(function() {
 			"util/jQuery.sap.FrameOptions-meta-tag-override-service": {
 				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.FrameOptions-meta-tag",
 				ui5: {
-					whitelistService: "/url/to/service/via/ui5/config"
+					allowlistService: "/url/to/service/via/ui5/config"
 				}
 			},
 			"util/jQuery.sap.FrameOptions-meta-tag": {

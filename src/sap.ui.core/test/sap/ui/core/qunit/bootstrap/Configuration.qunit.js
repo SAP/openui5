@@ -965,4 +965,55 @@ sap.ui.define([
 
 	});
 
+	/*
+	 * SAP strives to replace insensitive terms with inclusive language.
+	 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
+	*/
+	QUnit.module("Deprecated / legacy configuration options", {
+		beforeEach: function() {
+			delete window["sap-ui-config"]["whitelistservice"];
+			delete window["sap-ui-config"]["frameoptionsconfig"];
+		},
+		afterEach: function() {
+			delete window["sap-ui-config"]["whitelistservice"];
+			delete window["sap-ui-config"]["frameoptionsconfig"];
+			if (this.oMeta) {
+				if (this.oMeta.parentNode) {
+					this.oMeta.parentNode.removeChild(this.oMeta);
+				}
+				this.oMeta = null;
+			}
+		}
+	});
+
+	QUnit.test("whitelistService", function(assert) {
+		var SERVICE_URL = "/service/url/from/config";
+		window["sap-ui-config"]["whitelistservice"] = SERVICE_URL;
+		var oCfg = new Configuration();
+		assert.equal(oCfg.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
+		assert.equal(oCfg.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+	});
+
+	QUnit.test("sap.whitelistService meta tag", function(assert) {
+		var SERVICE_URL = "/service/url/from/meta";
+		this.oMeta = document.createElement('meta');
+		this.oMeta.setAttribute('name', 'sap.whitelistService');
+		this.oMeta.setAttribute('content', SERVICE_URL);
+		document.head.appendChild(this.oMeta);
+
+		var oCfg = new Configuration();
+		assert.equal(oCfg.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
+		assert.equal(oCfg.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+	});
+
+	QUnit.test("frameOptionsConfig.whitelist", function(assert) {
+		var LIST = "example.com";
+		window["sap-ui-config"]["frameoptionsconfig"] = {
+			whitelist: LIST
+		};
+		var oCfg = new Configuration();
+		assert.equal(oCfg["frameOptionsConfig"].whitelist, LIST, "Deprecated frameOptionsConfig.whitelist should be set");
+		assert.equal(oCfg["frameOptionsConfig"].allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
+	});
+
 });
