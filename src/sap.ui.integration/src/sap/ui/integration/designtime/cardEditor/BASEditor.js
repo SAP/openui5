@@ -78,8 +78,13 @@ sap.ui.define([
 			clearTimeout(this._eventTimeout);
 			this._eventTimeout = null;
 		}
-		var oCopyConfig = merge({}, this._oDesigntimeJSConfig);
 		this._eventTimeout = setTimeout(function () {
+			var oEmptyItems = {
+				form: {
+					items: {}
+				}
+			};
+			var oCopyConfig = merge(oEmptyItems, this._oDesigntimeJSConfig);
 			var oNewItems = {};
 			var aItems = [];
 			var oItem;
