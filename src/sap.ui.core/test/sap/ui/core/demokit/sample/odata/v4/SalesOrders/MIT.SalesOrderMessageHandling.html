@@ -28,6 +28,8 @@
 				<code>2</code>.</li>
 			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
 				<code>0500000001</code> has a colored border indicating a warning.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000001</code> is
+				highlighted as a warning.</li>
 			<li><b>Check:</b> When clicking into the <code>Note</code> field of the sales order with
 				the ID <code>0500000001</code> the warning "Enter customer reference if available"
 				is displayed.</li>
@@ -89,11 +91,13 @@
 				line item with the item position <code>0000000020</code> the error "Minimum order
 				quantity is 2" is displayed.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is diplayed containing 2 messages: a warning message with
+			<li><b>Check:</b> A popover is displayed containing 2 messages: a warning message with
 				the text "Enter customer reference if available" and an error message with the text
 				"Minimum order quantity is 2".</li>
 			<li><b>Check:</b>A message strip is displayed above the table indicating that there are
 				issues for the table.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000001</code> is
+				highlighted as an error.</li>
 			<li>Click on the message "Minimum order quantity is 2" to get to the message details.
 			</li>
 			<li><b>Check:</b> The content of the message details is: <code>Details for "Minimum
@@ -208,6 +212,40 @@
 				input control you see the same error "User John Doe is not authorized to approve
 				more than 50% discount" beside the step input control.
 			</li>
+			<li>Close the message popover.</li>
 		</ol>
+
+		<h4>Highlight scenario</h4>
+		<ul>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>3</code>.</li>
+			<li>Press the 'More' button of the sales order table.</li>
+			<li><b>Check:</b>A message strip is displayed above the table indicating that there are
+				issues for the table.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000006</code> is
+				highlighted as an error.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>3</code>.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is displayed containing 3 messages: a warning message with
+				the text "Enter customer reference if available" and an error message with the text
+				"Minimum order quantity is 2" and an error "Enter a Note".</li>
+			<li>Close the message popover.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000006</code>.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				still <code>3</code>.</li>
+			<li>Enter 'EPM DG: SO ID 0500000006 Item 0000000010' in the note of the first sales
+				order item.</li>
+			<li>Press the <code>Save sales order</code> button in the
+				<code>Sales Order Details</code> section.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000006</code> is
+				no longer highlighted.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> The error "Enter a Note" has disappeared.</li>
+			<li>Close the message popover.</li>
+		</ul>
 	</body>
 </html>

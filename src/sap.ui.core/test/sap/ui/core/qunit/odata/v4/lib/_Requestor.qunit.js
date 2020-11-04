@@ -1414,6 +1414,7 @@ sap.ui.define([
 				$resourcePath : "~Products('4711')",
 				$submit : undefined
 			}],
+			sGroupId = "group1",
 			aMergedRequests,
 			aPromises = [],
 			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, {}],
@@ -1427,7 +1428,7 @@ sap.ui.define([
 
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('23')")
 			.returns("~Products('23')");
-		aPromises.push(oRequestor.request("GET", "Products('23')", this.createGroupLock("group1"),
+		aPromises.push(oRequestor.request("GET", "Products('23')", this.createGroupLock(sGroupId),
 				{Foo : "bar",  Accept : "application/json;odata.metadata=full"})
 			.then(function (oResult) {
 				assert.deepEqual(oResult, {
@@ -1438,7 +1439,7 @@ sap.ui.define([
 			}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('4711')")
 			.returns("~Products('4711')");
-		aPromises.push(oRequestor.request("GET", "Products('4711')", this.createGroupLock("group1"),
+		aPromises.push(oRequestor.request("GET", "Products('4711')", this.createGroupLock(sGroupId),
 				{Accept : "application/json;odata.metadata=full"})
 			.then(function (oResult) {
 				assert.deepEqual(oResult, null);
@@ -1446,7 +1447,7 @@ sap.ui.define([
 			}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Customers")
 			.returns("~Customers");
-		aPromises.push(oRequestor.request("POST", "Customers", this.createGroupLock("group1"), {
+		aPromises.push(oRequestor.request("POST", "Customers", this.createGroupLock(sGroupId), {
 			Foo : "baz"
 		}, {
 			"ID" : 1
@@ -1457,7 +1458,7 @@ sap.ui.define([
 		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders('42')")
 			.returns("~SalesOrders('42')");
 		aPromises.push(
-			oRequestor.request("DELETE", "SalesOrders('42')", this.createGroupLock("group1"))
+			oRequestor.request("DELETE", "SalesOrders('42')", this.createGroupLock(sGroupId))
 			.then(function (oResult) {
 				assert.deepEqual(oResult, aResults[2]);
 				aResults[2] = null;
@@ -1479,9 +1480,10 @@ sap.ui.define([
 			.returns(aCleanedRequests);
 
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(sinon.match.same(aCleanedRequests))
+			.withExactArgs(sinon.match.same(aCleanedRequests), sGroupId)
 			.resolves(aBatchResults);
 
+		// code under test
 		aPromises.push(oRequestor.processBatch("group1").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.deepEqual(aResults, [null, null, null], "all batch requests already resolved");
@@ -1508,7 +1510,7 @@ sap.ui.define([
 		oRequestor.request("GET", "Products", this.createGroupLock());
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests).resolves([
+			.withExactArgs(aExpectedRequests, "groupId").resolves([
 				createResponse({})
 			]);
 
@@ -1607,7 +1609,7 @@ sap.ui.define([
 			{Address : {PostalCode : "69190"}}, fnSubmit4));
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests).resolves([
+			.withExactArgs(aExpectedRequests, "groupId").resolves([
 				[
 					createResponse({Name : "bar2", Note : "hello, world"}),
 					createResponse({Name : "p1"}),
@@ -1704,7 +1706,7 @@ sap.ui.define([
 
 			aExpectedRequests.iChangeSet = 0;
 			oRequestorMock.expects("sendBatch")
-				.withExactArgs(aExpectedRequests)
+				.withExactArgs(aExpectedRequests, "groupId")
 				.resolves([createResponse(oFixture.mProductsResponse)]);
 
 			return Promise.all([oGetProductsPromise, oRequestor.processBatch("groupId")]);
@@ -1935,6 +1937,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[true, false].forEach(function (bSubmitModeIsAuto) {
 	[null, "[{code : 42}]"].forEach(function (sMessage) {
 		QUnit.test("sendBatch(...), message=" + sMessage, function (assert) {
 			var oBatchRequest = {
@@ -1945,14 +1948,19 @@ sap.ui.define([
 					}
 				},
 				aBatchRequests = [{}],
+				sEpilogue = bSubmitModeIsAuto ? "Group ID: groupId" : "Group ID (API): groupId",
 				aExpectedResponses = [],
+				sGroupId = "groupId",
 				oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
 					{"sap-client" : "123"}),
 				oResult = "abc",
 				sResponseContentType = "multipart/mixed; boundary=foo";
 
+			this.mock(oRequestor).expects("getGroupSubmitMode")
+				.withExactArgs(sGroupId)
+				.returns(bSubmitModeIsAuto ? "Auto" : 'API');
 			this.mock(_Batch).expects("serializeBatchRequest")
-				.withExactArgs(sinon.match.same(aBatchRequests))
+				.withExactArgs(sinon.match.same(aBatchRequests), sEpilogue)
 				.returns(oBatchRequest);
 
 			this.mock(oRequestor).expects("sendRequest")
@@ -1967,7 +1975,7 @@ sap.ui.define([
 				.withExactArgs(sResponseContentType, oResult)
 				.returns(aExpectedResponses);
 
-			return oRequestor.sendBatch(aBatchRequests)
+			return oRequestor.sendBatch(aBatchRequests, sGroupId)
 				.then(function (oPayload) {
 					assert.ok(sMessage === null ? true : false, "unexpected success");
 					assert.strictEqual(oPayload, aExpectedResponses);
@@ -1979,6 +1987,7 @@ sap.ui.define([
 				});
 		});
 	});
+});
 
 	//*****************************************************************************************
 	QUnit.test("hasPendingChanges, cancelChanges and running batch requests", function (assert) {
@@ -2215,7 +2224,8 @@ sap.ui.define([
 
 		aExpectedRequests.iChangeSet = 1;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests).resolves([createResponse(), createResponse()]);
+			.withExactArgs(aExpectedRequests, "groupId")
+			.resolves([createResponse(), createResponse()]);
 
 		oRequestor.processBatch("groupId");
 
@@ -2413,7 +2423,8 @@ sap.ui.define([
 
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests).resolves([createResponse({}), createResponse({})]);
+			.withExactArgs(aExpectedRequests, "groupId")
+			.resolves([createResponse({}), createResponse({})]);
 
 		// code under test
 		oRequestor.removePatch(oPromise);
@@ -2482,7 +2493,7 @@ sap.ui.define([
 
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests).resolves([createResponse()]);
+			.withExactArgs(aExpectedRequests, "groupId").resolves([createResponse()]);
 
 		// code under test
 		oRequestor.processBatch("groupId");
@@ -2562,7 +2573,7 @@ sap.ui.define([
 		oRequestorMock.expects("isChangeSetOptional").withExactArgs().returns(true);
 		aExpectedRequests.iChangeSet = 0;
 		oRequestorMock.expects("sendBatch")
-			.withExactArgs(aExpectedRequests).resolves([createResponse()]);
+			.withExactArgs(aExpectedRequests, "groupId").resolves([createResponse()]);
 
 		// code under test
 		return oRequestor.processBatch("groupId");
@@ -3200,6 +3211,7 @@ sap.ui.define([
 				assert.strictEqual(oError.status, 404);
 			});
 
+			// code under test
 			return oRequestor.processBatch("groupId").then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 			});
@@ -3211,6 +3223,7 @@ sap.ui.define([
 				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), oModelInterface),
 				sResourcePath = "ProductList('HT-1001')";
 
+			// code under test
 			return Promise.all([
 					oRequestor.request("PATCH", sResourcePath, this.createGroupLock(), {
 								"If-Match" : {"@odata.etag" : "*"}
@@ -3238,6 +3251,7 @@ sap.ui.define([
 				}
 			}
 
+			// code under test
 			return Promise.all([
 				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
 						{"If-Match" : oEntity}, {Name : "foo"})
