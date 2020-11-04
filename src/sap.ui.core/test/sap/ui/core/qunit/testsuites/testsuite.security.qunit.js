@@ -36,8 +36,11 @@ sap.ui.define(function() {
 			"base/security/sanitizeHTML": {
 				title: "sap.base.security.sanitizeHTML"
 			},
+			"base/security/URLListValidator": {
+				title: "sap.base.security.URLListValidator"
+			},
 			"base/security/URLWhitelist": {
-				title: "sap.base.security.URLWhitelist"
+				title: "Deprecated API: sap.base.security.URLWhitelist"
 			},
 			"security/FrameOptions": {
 				title: "sap.ui.security.FrameOptions"

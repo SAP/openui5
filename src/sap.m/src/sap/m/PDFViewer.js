@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/PDFViewerRenderer",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/base/security/URLWhitelist",
+	"sap/base/security/URLListValidator",
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -24,7 +24,7 @@ sap.ui.define([
 		PDFViewerRenderer,
 		Log,
 		assert,
-		URLWhitelist,
+		URLListValidator,
 		jQuery
 	) {
 		"use strict";
@@ -75,8 +75,8 @@ sap.ui.define([
 						 * an absolute path.<br>
 						 * Optionally, this property can also be set to a data URI path or a blob URL
 						 * in all major web browsers except Internet Explorer and Microsoft Edge, provided
-						 * that this data URI or blob URL is whitelisted in advance. For more information about
-						 * whitelisting, see {@link topic:91f3768f6f4d1014b6dd926db0e91070 URL Whitelist Filtering}.
+						 * that this data URI or blob URL is allowed in advance. For more information about
+						 * URL filtering, see {@link topic:91f3768f6f4d1014b6dd926db0e91070 URLList Validator Filtering}.
 						 */
 						source: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 						/**
@@ -265,11 +265,11 @@ sap.ui.define([
 					sParametrizedSource = sParametrizedSource.substr(0, iCrossPosition);
 				}
 				sParametrizedSource += "#view=FitH";
-				if (!URLWhitelist.validate(sParametrizedSource)) {
+				if (!URLListValidator.validate(sParametrizedSource)) {
 					sParametrizedSource = encodeURI(sParametrizedSource);
 				}
 
-				if (URLWhitelist.validate(sParametrizedSource)) {
+				if (URLListValidator.validate(sParametrizedSource)) {
 					oIframeElement.attr("src", sParametrizedSource);
 				} else {
 					this._fireErrorEvent();

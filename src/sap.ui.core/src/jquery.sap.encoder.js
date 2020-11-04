@@ -9,10 +9,11 @@ sap.ui.define(['jquery.sap.global',
 		'sap/base/security/encodeURL',
 		'sap/base/security/encodeURLParameters',
 		'sap/base/security/encodeCSS',
+		'sap/base/security/URLListValidator',
 		'sap/base/security/URLWhitelist',
 		'sap/base/security/sanitizeHTML'
 	],
-	function(jQuery, encodeXML, encodeJS, encodeURL, encodeURLParameters, encodeCSS, URLWhitelist, sanitizeHTML) {
+	function(jQuery, encodeXML, encodeJS, encodeURL, encodeURLParameters, encodeCSS, URLListValidator, URLWhitelist, sanitizeHTML) {
 	"use strict";
 
 	/**
@@ -123,54 +124,62 @@ sap.ui.define(['jquery.sap.global',
 
 
 	/**
-	 * Clears the whitelist for URL validation
+	 * Clears the allowlist for URL validation.
 	 *
 	 * @public
 	 * @function
-	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.clear} instead
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.clear} instead.
+	 * SAP strives to replace insensitive terms with inclusive language,
+	 * but APIs cannot be renamed or immediately removed for compatibility reasons.
 	 */
-	jQuery.sap.clearUrlWhitelist = URLWhitelist.clear;
+	jQuery.sap.clearUrlWhitelist = URLListValidator.clear;
 
 	/**
-	 * Adds a whitelist entry for URL validation.
+	 * Adds an allowlist entry for URL validation.
 	 *
-	 * @param {string} protocol The protocol of the URL
-	 * @param {string} host The host of the URL
-	 * @param {string} port The port of the URL
-	 * @param {string} path the path of the URL
+	 * @param {string} [protocol] The protocol of the URL, can be falsy to allow all protocols for an entry e.g. "", "http", "mailto"
+	 * @param {string} [host] The host of the URL, can be falsy to allow all hosts. A wildcard asterisk can be set at the beginning, e.g. "examples.com", "*.example.com"
+	 * @param {string} [port] The port of the URL, can be falsy to allow all ports, e.g. "", "8080"
+	 * @param {string} [path] the path of the URL, path of the url, can be falsy to allow all paths. A wildcard asterisk can be set at the end, e.g. "/my-example*", "/my-news"
 	 * @public
 	 * @function
-	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.add} instead
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.add} instead.
+	 * SAP strives to replace insensitive terms with inclusive language,
+	 * but APIs cannot be renamed or immediately removed for compatibility reasons.
 	 */
-	jQuery.sap.addUrlWhitelist = URLWhitelist.add;
+	jQuery.sap.addUrlWhitelist = URLListValidator.add.bind(URLWhitelist);
 
 	/**
-	 * Removes a whitelist entry for URL validation.
+	 * Removes an allowlist entry for URL validation.
 	 *
 	 * @param {int} iIndex index of entry
 	 * @public
 	 * @function
-	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.delete} instead
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator#clear} and {@link module:sap/base/security/URLListValidator#add} instead.
+	 * SAP strives to replace insensitive terms with inclusive language,
+	 * but APIs cannot be renamed or immediately removed for compatibility reasons.
 	 */
 	jQuery.sap.removeUrlWhitelist = function(iIndex) {
-		URLWhitelist.delete(URLWhitelist.entries()[iIndex]);
+		URLListValidator._delete(URLListValidator.entries()[iIndex]);
 	};
 
 	/**
-	 * Gets the whitelist for URL validation.
+	 * Gets the allowlist for URL validation.
 	 *
-	 * @return {object[]} A copy of the whitelist
+	 * @return {object[]} A copy of the allowlist
 	 * @public
 	 * @function
-	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.entries} instead
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.entries} instead.
+	 * SAP strives to replace insensitive terms with inclusive language,
+	 * but APIs cannot be renamed or immediately removed for compatibility reasons.
 	 */
-	jQuery.sap.getUrlWhitelist = URLWhitelist.entries;
+	jQuery.sap.getUrlWhitelist = URLListValidator.entries;
 
 	/**
 	 * Validates a URL. Check if it's not a script or other security issue.
 	 *
 	 * By default the URL validation does only allow the http, https and ftp protocol. If
-	 * other protocols are required, a whitelist of all allowed protocols needs to be defined.
+	 * other protocols are required, an allowlist of all allowed protocols needs to be defined.
 	 *
 	 * Split URL into components and check for allowed characters according to RFC 3986:
 	 *
@@ -274,17 +283,17 @@ sap.ui.define(['jquery.sap.global',
 	 *
 	 * </pre>
 	 *
-	 * When a whitelist has been configured using {@link #.addUrlWhitelist addUrlWhitelist},
+	 * When an allowlist has been configured using {@link module:sap/base/security/URLListValidator#add add},
 	 * any URL that passes the syntactic checks above, additionally will be tested against
-	 * the content of the whitelist.
+	 * the content of the allowlist.
 	 *
 	 * @param {string} sUrl
 	 * @return true if valid, false if not valid
 	 * @public
 	 * @function
-	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.validate} instead
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.validate} instead.
 	 */
-	jQuery.sap.validateUrl = URLWhitelist.validate;
+	jQuery.sap.validateUrl = URLListValidator.validate;
 
 	/**
 	 * Strips unsafe tags and attributes from HTML.

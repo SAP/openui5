@@ -13,6 +13,29 @@ sap.ui.define(["sap/base/security/URLWhitelist"], function(URLWhitelist) {
 		assert.ok(URLWhitelist.validate(sUrl), sUrl + " is valid");
 	});
 
+	QUnit.test("Immutable entries test", function(assert) {
+		URLWhitelist.add("https", "example.com", 1337, "path");
+
+		var aEntries = URLWhitelist.entries();
+		assert.equal(aEntries.length, 1, "1 entry is present");
+		assert.equal(aEntries[0].protocol, "HTTPS", "protocol match");
+		assert.equal(aEntries[0].host, "EXAMPLE.COM", "host match");
+		assert.equal(aEntries[0].port, 1337, "port match");
+		assert.equal(aEntries[0].path, "path", "path match");
+
+		aEntries[0].protocol = "http";
+		aEntries[0].host = "myhost";
+		aEntries[0].port = 1338;
+		aEntries[0].path = "mypath";
+
+		aEntries = URLWhitelist.entries();
+		assert.equal(aEntries.length, 1, "1 entry is present modified");
+		assert.equal(aEntries[0].protocol, "http", "protocol match");
+		assert.equal(aEntries[0].host, "myhost", "host match");
+		assert.equal(aEntries[0].port, 1338, "port match");
+		assert.equal(aEntries[0].path, "mypath", "path match");
+	});
+
 	QUnit.test("edge case parameters as url", function(assert) {
 		assert.ok(URLWhitelist.validate(1231), "number is a valid URL");
 		assert.ok(URLWhitelist.validate(null), "null is a valid URL");
