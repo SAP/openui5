@@ -10,6 +10,10 @@
 			</headerContent>
 			<Input placeholder="Test"></Input>
 			<Button text="Clear Selection" />
+			<DatePicker
+				id="DatePickerOne"
+				placeholder="Enter Date"
+				change="handleChange" />
 		</Page>
 	</App>
 </mvc:View>
