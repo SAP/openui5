@@ -79,7 +79,11 @@ sap.ui.define([
 	 */
 	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oAppComponent) {
 		if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
-			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference, oAppComponent));
+			return this.oModel.updateCurrentVariant({
+				variantManagementReference: this.sVariantManagementReference,
+				newVariantReference: sVariantReference,
+				appComponent: oAppComponent
+			});
 		}
 		return Promise.resolve();
 	};

@@ -248,18 +248,11 @@ sap.ui.define([
 		QUnit.test("when calling 'switchToDefaultForVariant' for a current variant reference", function(assert) {
 			var done = assert.async();
 			this.oData["variantMgmtId1"].currentVariant = "variant0";
-			sandbox.stub(this.oModel, "updateCurrentVariant").callsFake(
-				function(sVariantManagementReference, sVariantReference) {
-					return Promise.resolve().then(function() {
-						if (sVariantManagementReference === "variantMgmtId1" && sVariantReference === this.oData["variantMgmtId1"].defaultVariant) {
-							assert.ok(true, "then the correct variant management and variant references were passed to VariantModel.updateCurrentVariant");
-						} else {
-							assert.notOk(true, "then the correct variant management and variant references were not passed to VariantModel.updateCurrentVariant");
-						}
-						done();
-					}.bind(this));
-				}.bind(this)
-			);
+			sandbox.stub(this.oModel, "updateCurrentVariant").callsFake(function(mPropertyBag) {
+				assert.equal(mPropertyBag.variantManagementReference, "variantMgmtId1", "the correct variant management reference was passed");
+				assert.equal(mPropertyBag.newVariantReference, this.oData["variantMgmtId1"].defaultVariant, "the correct variant reference was passed");
+				return Promise.resolve().then(done);
+			});
 			this.oModel.switchToDefaultForVariant("variant0");
 		});
 
@@ -280,22 +273,17 @@ sap.ui.define([
 
 			var aVariantManagementReferences = ["variantMgmtId1", "dummy"];
 
-			sandbox.stub(this.oModel, "updateCurrentVariant").callsFake(
-				function(sVariantManagementReference, sVariantReference) {
-					return Promise.resolve().then(function() {
-						var iIndex = aVariantManagementReferences.indexOf(sVariantManagementReference);
-						if (sVariantManagementReference === aVariantManagementReferences[iIndex] && sVariantReference === this.oData[aVariantManagementReferences[iIndex]].defaultVariant) {
-							assert.ok(true, "then for variant management reference " + sVariantManagementReference + "  default variant is passed to VariantModel.updateCurrentVariant");
-							aVariantManagementReferences.splice(iIndex, 1);
-						} else {
-							assert.notOk(true, "then variant management reference and default variant were not passed to VariantModel.updateCurrentVariant");
-						}
-						if (aVariantManagementReferences.length === 0) {
-							done();
-						}
-					}.bind(this));
-				}.bind(this)
-			);
+			sandbox.stub(this.oModel, "updateCurrentVariant").callsFake(function(mPropertyBag) {
+				return Promise.resolve().then(function() {
+					var iIndex = aVariantManagementReferences.indexOf(mPropertyBag.variantManagementReference);
+					assert.equal(mPropertyBag.variantManagementReference, aVariantManagementReferences[iIndex], "the correct variant management reference was passed");
+					assert.equal(mPropertyBag.newVariantReference, this.oData[aVariantManagementReferences[iIndex]].defaultVariant, "the correct variant reference was passed");
+					aVariantManagementReferences.splice(iIndex, 1);
+					if (aVariantManagementReferences.length === 0) {
+						done();
+					}
+				}.bind(this));
+			}.bind(this));
 			this.oModel.switchToDefaultForVariant();
 		});
 
@@ -304,8 +292,10 @@ sap.ui.define([
 			this.oData["variantMgmtId1"].currentVariant = "mockCurrentVariant";
 			sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 			this.oModel.switchToDefaultForVariantManagement("variantMgmtId1");
-			assert.ok(this.oModel.updateCurrentVariant.calledOnceWithExactly("variantMgmtId1", this.oData["variantMgmtId1"].defaultVariant),
-				"then VariantModel.updateCurrentVariant called once with the correct parameters");
+			assert.deepEqual(this.oModel.updateCurrentVariant.getCall(0).args[0], {
+				variantManagementReference: "variantMgmtId1",
+				newVariantReference: this.oData["variantMgmtId1"].defaultVariant
+			}, "then VariantModel.updateCurrentVariant called once with the correct parameters");
 		});
 
 		QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
@@ -638,22 +628,25 @@ sap.ui.define([
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant was correct before updating");
 
 			this.oModel.oData["variantMgmtId1"].updateVariantInURL = true;
-			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0", this.oModel.oAppComponent)
-				.then(function() {
-					assert.ok(Switcher.switchVariant.calledWith({
-						vmReference: "variantMgmtId1",
-						currentVReference: "variant1",
-						newVReference: "variant0",
-						flexController: this.oModel.oFlexController,
-						appComponent: this.oModel.oAppComponent,
-						modifier: JsControlTreeModifier,
-						reference: this.oModel.sFlexReference
-					}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
-					assert.ok(oSetVariantSwitchPromiseStub.calledBefore(Switcher.switchVariant), "the switch variant promise was set before switching");
-					assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant was updated");
-					assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then the original current variant was updated");
-					assert.equal(oCallVariantSwitchListenersStub.callCount, 1, "the listeners were called");
-				}.bind(this));
+			return this.oModel.updateCurrentVariant({
+				variantManagementReference: "variantMgmtId1",
+				newVariantReference: "variant0",
+				appComponent: this.oModel.oAppComponent
+			}).then(function() {
+				assert.ok(Switcher.switchVariant.calledWith({
+					vmReference: "variantMgmtId1",
+					currentVReference: "variant1",
+					newVReference: "variant0",
+					flexController: this.oModel.oFlexController,
+					appComponent: this.oModel.oAppComponent,
+					modifier: JsControlTreeModifier,
+					reference: this.oModel.sFlexReference
+				}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
+				assert.ok(oSetVariantSwitchPromiseStub.calledBefore(Switcher.switchVariant), "the switch variant promise was set before switching");
+				assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant was updated");
+				assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then the original current variant was updated");
+				assert.equal(oCallVariantSwitchListenersStub.callCount, 1, "the listeners were called");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling 'updateCurrentVariant' without a root app component", function(assert) {
@@ -661,19 +654,21 @@ sap.ui.define([
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 
 			this.oModel.oData["variantMgmtId1"].updateVariantInURL = true;
-			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
-				.then(function() {
-					assert.ok(Switcher.switchVariant.calledWith({
-						vmReference: "variantMgmtId1",
-						currentVReference: "variant1",
-						newVReference: "variant0",
-						flexController: this.oModel.oFlexController,
-						appComponent: this.oModel.oAppComponent,
-						modifier: JsControlTreeModifier,
-						reference: this.oModel.sFlexReference
-					}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
-					assert.ok(oSetVariantSwitchPromiseStub.calledBefore(Switcher.switchVariant), "the switch variant promise was set before switching");
-				}.bind(this));
+			return this.oModel.updateCurrentVariant({
+				variantManagementReference: "variantMgmtId1",
+				newVariantReference: "variant0"
+			}).then(function() {
+				assert.ok(Switcher.switchVariant.calledWith({
+					vmReference: "variantMgmtId1",
+					currentVReference: "variant1",
+					newVReference: "variant0",
+					flexController: this.oModel.oFlexController,
+					appComponent: this.oModel.oAppComponent,
+					modifier: JsControlTreeModifier,
+					reference: this.oModel.sFlexReference
+				}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
+				assert.ok(oSetVariantSwitchPromiseStub.calledBefore(Switcher.switchVariant), "the switch variant promise was set before switching");
+			}.bind(this));
 		});
 
 		QUnit.skip("when calling 'updateCurrentVariant' with dirty changes in current variant", function(assert) {
@@ -702,17 +697,25 @@ sap.ui.define([
 				.onCall(1).resolves();
 
 			// first call
-			this.oModel.updateCurrentVariant("variantMgmtId1", "variant2", this.oModel.oAppComponent);
+			this.oModel.updateCurrentVariant({
+				variantManagementReference: "variantMgmtId1",
+				newVariantReference: "variant2",
+				appComponent: this.oModel.oAppComponent
+			});
 
 			// second call
-			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0", this.oModel.oAppComponent)
-				.then(this.oModel._oVariantSwitchPromise)
-				.then(function() {
-					assert.equal(oSwitchVariantStub.callCount, 2, "then Switcher.switchVariant() was called twice");
-					assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then variant switch promise was set twice inside FlexController");
-					assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant was updated");
-					assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then the original current variant was updated");
-				}.bind(this));
+			return this.oModel.updateCurrentVariant({
+				variantManagementReference: "variantMgmtId1",
+				newVariantReference: "variant0",
+				appComponent: this.oModel.oAppComponent
+			})
+			.then(this.oModel._oVariantSwitchPromise)
+			.then(function() {
+				assert.equal(oSwitchVariantStub.callCount, 2, "then Switcher.switchVariant() was called twice");
+				assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then variant switch promise was set twice inside FlexController");
+				assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant was updated");
+				assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then the original current variant was updated");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling 'updateCurrentVariant' twice without waiting for the first one to be failed and finished", function(assert) {
@@ -735,21 +738,27 @@ sap.ui.define([
 				}.bind(this));
 
 			// first call with a Promise.reject()
-			this.oModel.updateCurrentVariant(sVMReference, "variant2", this.oModel.oAppComponent)
-				.catch(function() {
-					assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property was unset after the first update call was rejected");
-					assert.ok(true, "then the first promise was rejected");
-				}.bind(this));
+			this.oModel.updateCurrentVariant({
+				variantManagementReference: sVMReference,
+				newVariantReference: "variant2",
+				appComponent: this.oModel.oAppComponent
+			}).catch(function() {
+				assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property was unset after the first update call was rejected");
+				assert.ok(true, "then the first promise was rejected");
+			}.bind(this));
 
 			// second call with a Promise.resolve()
-			return this.oModel.updateCurrentVariant(sVMReference, "variant0", this.oModel.oAppComponent)
-				.then(function() {
-					assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property was unset after the second update call was resolved");
-					assert.equal(SwitchVariantStub.callCount, 2, "then Switcher.switchVariant() was called twice");
-					assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then variant switch promise was set twice inside FlexController");
-					assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant was updated");
-					assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then the original current variant was updated");
-				}.bind(this));
+			return this.oModel.updateCurrentVariant({
+				variantManagementReference: sVMReference,
+				newVariantReference: "variant0",
+				appComponent: this.oModel.oAppComponent
+			}).then(function() {
+				assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property was unset after the second update call was resolved");
+				assert.equal(SwitchVariantStub.callCount, 2, "then Switcher.switchVariant() was called twice");
+				assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then variant switch promise was set twice inside FlexController");
+				assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant was updated");
+				assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then the original current variant was updated");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
@@ -1252,8 +1261,11 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 2, "then one variant removed from VariantModel");
 					assert.ok(oRemoveVariantStub.calledOnce, "then function to remove variant from variants map was called");
-					assert.ok(fnUpdateCurrentVariantSpy.calledWith(mPropertyBag.variantManagementReference, mPropertyBag.sourceVariantReference, mPropertyBag.component),
-						"then updateCurrentVariant() called with the correct parameters");
+					assert.deepEqual(fnUpdateCurrentVariantSpy.getCall(0).args[0], {
+						variantManagementReference: mPropertyBag.variantManagementReference,
+						newVariantReference: mPropertyBag.sourceVariantReference,
+						appComponent: mPropertyBag.component
+					}, "then updateCurrentVariant() called with the correct parameters");
 					assert.ok(fnDeleteChangeStub.calledTwice, "then ChangePersistence.deleteChange called twice");
 					assert.ok(fnDeleteChangeStub.calledWith(oChangeInVariant), "then ChangePersistence.deleteChange called for change in variant");
 					assert.ok(fnDeleteChangeStub.calledWith(oVariant), "then ChangePersistence.deleteChange called for variant");
@@ -1991,11 +2003,13 @@ sap.ui.define([
 			Reverter.revertMultipleChanges.onFirstCall().callsFake(function() {
 				assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, true, "then 'variantBusy' property is set");
 				// make second update call to set variant model busy, when the first call is still in process
-				this.oModel.updateCurrentVariant(sVMReference, sVMReference)
-					.then(function() {
-						assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property is unset");
-						done();
-					}.bind(this));
+				this.oModel.updateCurrentVariant({
+					variantManagementReference: sVMReference,
+					newVariantReference: sVMReference
+				}).then(function() {
+					assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property is unset");
+					done();
+				}.bind(this));
 				return Promise.resolve();
 			}.bind(this));
 
@@ -2140,11 +2154,16 @@ sap.ui.define([
 
 			oVMControl.attachEventOnce("select", function(oEvent) {
 				var sSelectedVariantReference = oEvent.getParameters().key;
-				this.oVariantModel.updateCurrentVariant.onFirstCall().callsFake(function() {
+				this.oVariantModel.updateCurrentVariant.onFirstCall().callsFake(function(mPropertyBag) {
 					// update call will make variant model busy, which will be resolved after the whole update process has taken place
 					this.oVariantModel._oVariantSwitchPromise.then(function() {
 						assert.equal(oCallListenerStub.callCount, 0, "the listeners are not notified again");
-						assert.ok(this.oVariantModel.updateCurrentVariant.calledWith(sSelectedVariantReference, this.sVMReference, this.oComp, true), "then variant switch was performed");
+						assert.deepEqual(mPropertyBag, {
+							variantManagementReference: sSelectedVariantReference,
+							newVariantReference: this.sVMReference,
+							appComponent: this.oComp,
+							internallyCalled: true
+						}, "then variant switch was performed");
 						assert.ok(Reverter.revertMultipleChanges.notCalled, "then variant was not reverted explicitly");
 						assert.ok(VariantManagementState.removeChangeFromVariant.notCalled, "then dirty changes were not removed from the source variant");
 						assert.ok(this.oVariantModel.oFlexController.deleteChange.notCalled, "then no dirty changes were deleted");
@@ -2176,7 +2195,12 @@ sap.ui.define([
 				var sTargetVariantId = oEvent.getParameters().key;
 				this.oVariantModel._oVariantSwitchPromise.then(function() {
 					assert.equal(oCallListenerStub.callCount, 0, "the listeners are not notified again");
-					assert.ok(this.oVariantModel.updateCurrentVariant.calledWith(sTargetVariantId, this.sVMReference, this.oComp), "then variant switch was performed");
+					assert.deepEqual(this.oVariantModel.updateCurrentVariant.getCall(0).args[0], {
+						variantManagementReference: sTargetVariantId,
+						newVariantReference: this.sVMReference,
+						appComponent: this.oComp,
+						internallyCalled: true
+					}, "then variant switch was performed");
 					assert.ok(Reverter.revertMultipleChanges.notCalled, "then variant was not reverted explicitly");
 					assert.strictEqual(this.oVariantModel.oData[this.sVMReference].modified, false);
 
@@ -2301,7 +2325,7 @@ sap.ui.define([
 
 				this.oVariantModel._callVariantSwitchListeners(sVMReference, "variant1");
 				assert.equal(fnCallback1.callCount, 1, "the callback was called once");
-				assert.equal(fnCallback1.lastCall.args[0], this.oVariant1, "the new variant is passed as parmeter");
+				assert.deepEqual(fnCallback1.lastCall.args[0], this.oVariant1, "the new variant is passed as parmeter");
 				assert.equal(fnCallback2.callCount, 0, "the callback was not called");
 
 				return this.oVariantModel.attachVariantApplied({
@@ -2315,7 +2339,7 @@ sap.ui.define([
 				this.oVariantModel._callVariantSwitchListeners(sVMReference, "variant2");
 				assert.equal(fnCallback1.callCount, 1, "the callback was not called again");
 				assert.equal(fnCallback2.callCount, 1, "the callback was called once");
-				assert.equal(fnCallback2.lastCall.args[0], this.oVariant2, "the new variant is passed as parmeter");
+				assert.deepEqual(fnCallback2.lastCall.args[0], this.oVariant2, "the new variant is passed as parmeter");
 
 				return this.oVariantModel.attachVariantApplied({
 					vmControlId: sVMControlId,

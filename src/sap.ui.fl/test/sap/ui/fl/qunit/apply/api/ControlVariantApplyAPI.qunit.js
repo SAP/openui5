@@ -59,12 +59,16 @@ sap.ui.define([
 	};
 
 	var fnStubUpdateCurrentVariant = function() {
-		sandbox.stub(this.oModel, "updateCurrentVariant").returns(Promise.resolve());
+		sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 	};
 
 	var fnCheckUpdateCurrentVariantCalled = function(assert, sVariantManagement, sVariant) {
 		assert.ok(this.oModel.updateCurrentVariant.calledOnce, "then variantModel.updateCurrentVariant called once");
-		assert.ok(this.oModel.updateCurrentVariant.calledWithExactly(sVariantManagement, sVariant, this.oAppComponent), "then variantModel.updateCurrentVariant called to activate the target variant");
+		assert.ok(this.oModel.updateCurrentVariant.calledWithExactly({
+			variantManagementReference: sVariantManagement,
+			newVariantReference: sVariant,
+			appComponent: this.oAppComponent
+		}), "then variantModel.updateCurrentVariant called to activate the target variant");
 	};
 
 	var fnCheckActivateVariantErrorResponse = function(assert, sExpectedError, sReceivedError) {
@@ -299,6 +303,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery('#qunit-fixture').hide();
+		jQuery("#qunit-fixture").hide();
 	});
 });

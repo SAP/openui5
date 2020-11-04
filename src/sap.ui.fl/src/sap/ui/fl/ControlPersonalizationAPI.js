@@ -215,7 +215,11 @@ sap.ui.define([
 
 				// sap/fe is using this API very early during app start, sometimes before FlexState is initialized
 				return oVariantModel.waitForVMControlInit(sVariantManagementReference).then(function() {
-					return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
+					return oVariantModel.updateCurrentVariant({
+						variantManagementReference: sVariantManagementReference,
+						newVariantReference: sVariantReference,
+						appComponent: oAppComponent
+					});
 				});
 			})
 			["catch"](function(oError) {
