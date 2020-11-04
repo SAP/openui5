@@ -564,6 +564,15 @@ Mobify.UI.Carousel = (function($, Utils) {
 
 		// Trigger afterSlide event
 		this.$element.trigger('afterSlide', [this._prevIndex, this._index]);
+		this.setShouldFireEvent(false);
+	};
+
+	Carousel.prototype.getShouldFireEvent = function() {
+		return this._shouldFireEvent;
+	};
+
+	Carousel.prototype.setShouldFireEvent = function(bShouldFireEvent) {
+		this._shouldFireEvent = bShouldFireEvent;
 	};
 
 	Carousel.prototype.hasActiveTransition = function() {
@@ -662,10 +671,12 @@ Mobify.UI.Carousel = (function($, Utils) {
     };
 
     Carousel.prototype.next = function() {
+        this.setShouldFireEvent(true);
         this.move(this._index + 1);
     };
 
     Carousel.prototype.prev = function() {
+        this.setShouldFireEvent(true);
         this.move(this._index - 1);
     };
 

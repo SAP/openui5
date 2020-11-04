@@ -715,6 +715,17 @@ sap.ui.define([
 		assert.ok(bPagesNewIndexdOK, "New page index should be 3");
 	});
 
+	QUnit.test("'pageChanged' event when invalidate", function (assert) {
+		var oPageChangedSpy = this.spy(this.oCarousel, "firePageChanged");
+
+		this.oCarousel.invalidate();
+		forceTransitionComplete(this.oCarousel);
+
+		assert.ok(oPageChangedSpy.notCalled, "pageChanged event is not fired");
+
+		oPageChangedSpy.restore();
+	});
+
 	QUnit.test("Listen to 'beforePageChanged' event", function (assert) {
 		// Arrange
 		var bPagesNewIndexdOK = false;

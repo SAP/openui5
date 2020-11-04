@@ -665,11 +665,13 @@ sap.ui.define([
 			jQuery(document.activeElement).trigger("blur");
 		}
 
-		this.firePageChanged({
-			oldActivePageId: sOldActivePageId,
-			newActivePageId: sNewActivePageId,
-			activePages: this._aAllActivePagesIndexes
-		});
+		if (this._oMobifyCarousel && this._oMobifyCarousel.getShouldFireEvent()) {
+			this.firePageChanged({
+				oldActivePageId: sOldActivePageId,
+				newActivePageId: sNewActivePageId,
+				activePages: this._aAllActivePagesIndexes
+			});
+		}
 
 		// change the number in the page indicator
 		this.$('slide-number').text(sTextBetweenNumbers);
@@ -755,6 +757,7 @@ sap.ui.define([
 			if (!isNaN(iPageNr)) {
 				if (this._oMobifyCarousel) {
 					//mobify carousel's move function is '1' based
+					this._oMobifyCarousel.setShouldFireEvent(true);
 					this._oMobifyCarousel.move(iPageNr + 1);
 				}
 				// if oMobifyCarousel is not present yet, move takes place
@@ -812,6 +815,7 @@ sap.ui.define([
 	 */
 	Carousel.prototype.previous = function () {
 		if (this._oMobifyCarousel) {
+			this._oMobifyCarousel.setShouldFireEvent(true);
 			this._oMobifyCarousel.prev();
 		} else {
 			Log.warning("Unable to execute sap.m.Carousel.previous: carousel must be rendered first.");
@@ -828,6 +832,7 @@ sap.ui.define([
 	 */
 	Carousel.prototype.next = function () {
 		if (this._oMobifyCarousel) {
+			this._oMobifyCarousel.setShouldFireEvent(true);
 			this._oMobifyCarousel.next();
 		} else {
 			Log.warning("Unable to execute sap.m.Carousel.next: carousel must be rendered first.");
@@ -1250,6 +1255,8 @@ sap.ui.define([
 		if (this._oMobifyCarousel.hasActiveTransition()) {
 			this._oMobifyCarousel.onTransitionComplete();
 		}
+
+		this._oMobifyCarousel.setShouldFireEvent(true);
 
 		// Calculate the index of the next page that will be shown
 		if (nIndex !== 0) {
