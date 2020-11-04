@@ -154,7 +154,7 @@ sap.ui.define([
 			var oGetReloadMessageOnStart = sandbox.stub(this.oRta, "_getReloadMessageOnStart").returns("MSG_DRAFT_EXISTS");
 			var oIsVersioningEnabledStub = sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			this.oReloadInfo.hasHigherLayerChanges = false;
-			this.oReloadInfo.hasDraftChanges = true;
+			this.oReloadInfo.isDraftAvailable = true;
 			var oIsDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			var oGetReloadReasonsSpy = sandbox.spy(ReloadInfoAPI, "getReloadReasonsForStart");
 			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
@@ -175,7 +175,7 @@ sap.ui.define([
 
 				assert.equal(oGetReloadMessageOnStart.callCount, 1, "then _getReloadMessageOnStart is called once");
 				assert.deepEqual(oGetReloadMessageOnStart.lastCall.args[0].hasHigherLayerChanges, this.oReloadInfo.hasHigherLayerChanges, "then _getReloadMessageOnStart is called with the correct reload reason");
-				assert.deepEqual(oGetReloadMessageOnStart.lastCall.args[0].hasDraftChanges, this.oReloadInfo.hasDraftChanges, "then _getReloadMessageOnStart is called with the correct reload reason");
+				assert.deepEqual(oGetReloadMessageOnStart.lastCall.args[0].isDraftAvailable, this.oReloadInfo.isDraftAvailable, "then _getReloadMessageOnStart is called with the correct reload reason");
 				assert.equal(oGetReloadReasonsSpy.callCount, 1, "then getReloadReasonsForStart is called once");
 			}.bind(this));
 		});
@@ -188,7 +188,7 @@ sap.ui.define([
 			var oGetReloadMessageOnStart = sandbox.stub(this.oRta, "_getReloadMessageOnStart").returns();
 			this.oRta._bVersioningEnabled = false;
 			this.oReloadInfo.hasHigherLayerChanges = false;
-			this.oReloadInfo.hasDraftChanges = false;
+			this.oReloadInfo.isDraftAvailable = false;
 			var oGetReloadReasonsStub = sandbox.stub(ReloadInfoAPI, "getReloadReasonsForStart").returns(Promise.resolve(this.oReloadInfo));
 
 			return this.oRta._determineReload().then(function () {
@@ -226,7 +226,7 @@ sap.ui.define([
 			};
 			this.oReloadInfo = {
 				hasHigherLayerChanges : false,
-				hasDraftChanges : true,
+				isDraftAvailable : true,
 				layer : this.oRta.getLayer(),
 				selector : this.oRta.getRootControlInstance(),
 				ignoreMaxLayerParameter : false,
@@ -242,7 +242,7 @@ sap.ui.define([
 			var oGetReloadMessageOnStart = sandbox.stub(this.oRta, "_getReloadMessageOnStart").returns(Promise.resolve());
 			this.oRta._bVersioningEnabled = false;
 			this.oReloadInfo.hasHigherLayerChanges = false;
-			this.oReloadInfo.hasDraftChanges = false;
+			this.oReloadInfo.isDraftAvailable = false;
 			var oGetReloadReasonsStub = sandbox.stub(ReloadInfoAPI, "getReloadReasonsForStart").returns(Promise.resolve(this.oReloadInfo));
 
 			return this.oRta._determineReload().then(function () {
@@ -266,7 +266,7 @@ sap.ui.define([
 
 			this.oReloadInfo = {
 				hasHigherLayerChanges : false,
-				hasDraftChanges : true,
+				isDraftAvailable : true,
 				layer : this.oRta.getLayer(),
 				selector : this.oRta.getRootControlInstance(),
 				ignoreMaxLayerParameter : false,
@@ -316,7 +316,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 
 			var oReloadInfo = {
-				hasDraftChanges: true,
+				isDraftAvailable: true,
 				hasHigherLayerChanges: false
 			};
 			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function () {
@@ -332,7 +332,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
 
 			var oReloadInfo = {
-				hasDraftChanges: false,
+				isDraftAvailable: false,
 				hasHigherLayerChanges: true
 			};
 			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function () {
