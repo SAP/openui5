@@ -3,65 +3,113 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 
+	<Panel
+		width="auto"
+		class="sapUiResponsiveMargin">
+		<headerToolbar>
+			<OverflowToolbar>
+				<Title text="maskMode"/>
+			</OverflowToolbar>
+		</headerToolbar>
+		<content>
+			<HBox alignItems="Center">
+				<Text
+					renderWhitespace="true"
+					text="maskMode is  " />
+				<Switch state="{/maskMode/state}" />
+				<Text
+					renderWhitespace="true"
+					text="  for all TimePickers below" />
+			</HBox>
+			<Text
+				class="sapUiSmallMarginTop"
+				visible="{/maskMode/state}"
+				text="When maskMode is 'On', the TimePicker field accepts only the time format predefined by the mask." />
+			<Text
+				class="sapUiSmallMarginTop"
+				visible="{= !${/maskMode/state}}"
+				text="When maskMode is 'Off', the users can enter anything in the TimePicker field. The field is still validated. The 'change' event returns two parameters - 'value' (that is entered) and 'valid' (true or false depending on the validity of the 'value')." />
+		</content>
+	</Panel>
+
 	<VBox class="sapUiSmallMargin">
-		<HBox alignItems="Center">
-			<Text text="MaskInput is: " />
-			<Switch change="handleChangeMaskMode" state="true"/>
-		</HBox>
-		<Label text = "HH:mm"/>
+		<Label
+			class="sapUiSmallMarginTop"
+			text = "{/timePickers/TP1/format}" />
 		<TimePicker
 				id="TP1"
-				value="19:15"
-				valueFormat="HH:mm"
-				displayFormat="HH:mm"
+				value="{/timePickers/TP1/value}"
+				valueFormat="{/timePickers/TP1/format}"
+				displayFormat="{/timePickers/TP1/format}"
 				change="handleChange"
-				placeholder="Enter meeting start time"/>
+				maskMode="{= ${/maskMode/state} ? 'On' : 'Off'}"
+				placeholder="{/timePickers/TP1/placeholder}" />
 
-		<Label text="HH:mm:ss"/>
+		<Label
+			class="sapUiSmallMarginTop"
+			text="{/timePickers/TP2/format}" />
 		<TimePicker
 				id="TP2"
-				valueFormat="HH:mm:ss"
-				displayFormat="HH:mm:ss"
+				valueFormat="{/timePickers/TP2/format}"
+				displayFormat="{/timePickers/TP2/format}"
 				change="handleChange"
-				placeholder="Enter meeting end time"/>
+				maskMode="{= ${/maskMode/state} ? 'On' : 'Off'}"
+				placeholder="{/timePickers/TP2/placeholder}" />
 
-		<Label text="hh:mm a"/>
+		<Label
+			class="sapUiSmallMarginTop"
+			text="{/timePickers/TP3/format}, dateValue: {/timePickers/TP3/dateValue}" />
 		<TimePicker
 				id="TP3"
-				valueFormat="hh:mm a"
-				displayFormat="hh:mm a"
+				valueFormat="{/timePickers/TP3/format}"
+				displayFormat="{/timePickers/TP3/format}"
 				change="handleChange"
-				placeholder="Enter daily task deadline"/>
+				dateValue="{/timePickers/TP3/dateValue}"
+				maskMode="{= ${/maskMode/state} ? 'On' : 'Off'}"
+				placeholder="{/timePickers/TP3/placeholder}" />
 
-		<Label text="hh:mm:ss a"/>
+		<Label
+			class="sapUiSmallMarginTop"
+			text="{/timePickers/TP4/format}" />
 		<TimePicker
 				id="TP4"
-				valueFormat="hh:mm:ss a"
-				displayFormat="hh:mm:ss a"
+				valueFormat="{/timePickers/TP4/format}"
+				displayFormat="{/timePickers/TP4/format}"
 				change="handleChange"
-				placeholder="Enter time"/>
-		<Label text="hh:mm:ss a, initialFocusedDateValue: new Date(2017, 8, 9, 10, 11, 12)"/>
+				maskMode="{= ${/maskMode/state} ? 'On' : 'Off'}"
+				placeholder="{/timePickers/TP4/placeholder}" />
+		<Label
+			class="sapUiSmallMarginTop"
+			text="{/timePickers/TP5/format}, initialFocusedDateValue: {/timePickers/TP5/initialFocusedDateValue}" />
 		<TimePicker
 				id="TP5"
-				valueFormat="hh:mm:ss a"
-				displayFormat="hh:mm:ss a"
+				valueFormat="{/timePickers/TP5/format}"
+				displayFormat="{/timePickers/TP5/format}"
 				change="handleChange"
-				placeholder="Enter time"/>
+				initialFocusedDateValue="{/timePickers/TP5/initialFocusedDateValue}"
+				maskMode="{= ${/maskMode/state} ? 'On' : 'Off'}"
+				placeholder="{/timePickers/TP5/placeholder}" />
 		<Label
-                text="HH:mm:ss, support2400: true (for cases where 24:00:00 indicates the end of the day)"/>
+			class="sapUiSmallMarginTop"
+			text="{/timePickers/TP6/format}, support2400: {/timePickers/TP6/support2400} (for cases where 24:00:00 indicates the end of the day)" />
 		<TimePicker
 				id="TP6"
-				valueFormat="HH:mm:ss"
-				displayFormat="HH:mm:ss"
+				valueFormat="{/timePickers/TP6/format}"
+				displayFormat="{/timePickers/TP6/format}"
 				change="handleChange"
-				placeholder="Enter time"
-				support2400="true"
-				value="23:40:50"/>
+				support2400="{/timePickers/TP6/support2400}"
+				maskMode="{= ${/maskMode/state} ? 'On' : 'Off'}"
+				value="{/timePickers/TP6/value}"
+				placeholder="{/timePickers/TP6/placeholder}" />
+
+		<Toolbar class="sapUiSmallMarginTop">
+			<content>
+				<Title text="change event result" />
+			</content>
+		</Toolbar>
 		<Text
-				id="T1"
-				text="change event result"
-				class="sapUiSmallMarginTop"
-				/>
+			id="T1"
+			class="sapUiSmallMarginTop" />
 	</VBox>
 
 </mvc:View>
