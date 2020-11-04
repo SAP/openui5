@@ -972,20 +972,29 @@ sap.ui.define([
 	QUnit.module("Deprecated / legacy configuration options", {
 		beforeEach: function() {
 			delete window["sap-ui-config"]["whitelistservice"];
+			delete window["sap-ui-config"]["allowlistservice"];
 			delete window["sap-ui-config"]["frameoptionsconfig"];
 		},
 		afterEach: function() {
 			delete window["sap-ui-config"]["whitelistservice"];
+			delete window["sap-ui-config"]["allowlistservice"];
 			delete window["sap-ui-config"]["frameoptionsconfig"];
-			if (this.oMeta) {
-				if (this.oMeta.parentNode) {
-					this.oMeta.parentNode.removeChild(this.oMeta);
+			if (this.oMetaWhiteList) {
+				if (this.oMetaWhiteList.parentNode) {
+					this.oMetaWhiteList.parentNode.removeChild(this.oMetaWhiteList);
 				}
-				this.oMeta = null;
+				this.oMetaWhiteList = null;
+			}
+			if (this.oMetaAllowList) {
+				if (this.oMetaAllowList.parentNode) {
+					this.oMetaAllowList.parentNode.removeChild(this.oMetaAllowList);
+				}
+				this.oMetaAllowList = null;
 			}
 		}
 	});
 
+	// Whitelist service only
 	QUnit.test("whitelistService", function(assert) {
 		var SERVICE_URL = "/service/url/from/config";
 		window["sap-ui-config"]["whitelistservice"] = SERVICE_URL;
@@ -996,10 +1005,10 @@ sap.ui.define([
 
 	QUnit.test("sap.whitelistService meta tag", function(assert) {
 		var SERVICE_URL = "/service/url/from/meta";
-		this.oMeta = document.createElement('meta');
-		this.oMeta.setAttribute('name', 'sap.whitelistService');
-		this.oMeta.setAttribute('content', SERVICE_URL);
-		document.head.appendChild(this.oMeta);
+		this.oMetaWhiteList = document.createElement('meta');
+		this.oMetaWhiteList.setAttribute('name', 'sap.whitelistService');
+		this.oMetaWhiteList.setAttribute('content', SERVICE_URL);
+		document.head.appendChild(this.oMetaWhiteList);
 
 		var oCfg = new Configuration();
 		assert.equal(oCfg.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
@@ -1016,4 +1025,72 @@ sap.ui.define([
 		assert.equal(oCfg["frameOptionsConfig"].allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
 	});
 
+	// AllowList Service only
+	QUnit.test("allowlistService", function(assert) {
+		var SERVICE_URL = "/service/url/from/config";
+		window["sap-ui-config"]["allowlistservice"] = SERVICE_URL;
+		var oCfg = new Configuration();
+		assert.equal(oCfg.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
+		assert.equal(oCfg.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+	});
+
+	QUnit.test("sap.allowlistService meta tag", function(assert) {
+		var SERVICE_URL = "/service/url/from/meta";
+		this.oMetaWhiteList = document.createElement('meta');
+		this.oMetaWhiteList.setAttribute('name', 'sap.allowlistService');
+		this.oMetaWhiteList.setAttribute('content', SERVICE_URL);
+		document.head.appendChild(this.oMetaWhiteList);
+
+		var oCfg = new Configuration();
+		assert.equal(oCfg.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
+		assert.equal(oCfg.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+	});
+
+	QUnit.test("frameOptionsConfig.allowlist", function(assert) {
+		var LIST = "example.com";
+		window["sap-ui-config"]["frameoptionsconfig"] = {
+			allowlist: LIST
+		};
+		var oCfg = new Configuration();
+		assert.equal(oCfg["frameOptionsConfig"].whitelist, undefined, "Deprecated frameOptionsConfig.whitelist should not be set");
+		assert.equal(oCfg["frameOptionsConfig"].allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
+	});
+
+	// AllowList mixed with WhiteList Service (AllowList should be preferred)
+	QUnit.test("whitelistService mixed with allowlistService", function(assert) {
+		var SERVICE_URL = "/service/url/from/config";
+		window["sap-ui-config"]["whitelistservice"] = SERVICE_URL;
+		window["sap-ui-config"]["allowlistservice"] = SERVICE_URL;
+		var oCfg = new Configuration();
+		assert.equal(oCfg.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
+		assert.equal(oCfg.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+	});
+
+	QUnit.test("sap.whitelistService mixed with sap.allowlistService meta tag", function(assert) {
+		var SERVICE_URL = "/service/url/from/meta";
+		this.oMetaWhiteList = document.createElement('meta');
+		this.oMetaWhiteList.setAttribute('name', 'sap.whitelistService');
+		this.oMetaWhiteList.setAttribute('content', SERVICE_URL);
+		document.head.appendChild(this.oMetaWhiteList);
+
+		this.oMetaAllowList = document.createElement('meta');
+		this.oMetaAllowList.setAttribute('name', 'sap.allowlistService');
+		this.oMetaAllowList.setAttribute('content', SERVICE_URL);
+		document.head.appendChild(this.oMetaAllowList);
+
+		var oCfg = new Configuration();
+		assert.equal(oCfg.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
+		assert.equal(oCfg.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+	});
+
+	QUnit.test("frameOptionsConfig.whitelist mixed with frameoptions.allowlist", function(assert) {
+		var LIST = "example.com";
+		window["sap-ui-config"]["frameoptionsconfig"] = {
+			allowlist: LIST,
+			whitelist: LIST
+		};
+		var oCfg = new Configuration();
+		assert.equal(oCfg["frameOptionsConfig"].whitelist, LIST, "Deprecated frameOptionsConfig.whitelist should be set");
+		assert.equal(oCfg["frameOptionsConfig"].allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
+	});
 });
