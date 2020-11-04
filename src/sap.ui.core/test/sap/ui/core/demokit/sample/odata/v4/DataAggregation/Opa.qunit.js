@@ -32,6 +32,16 @@ sap.ui.getCore().attachInit(function () {
 			});
 
 			aInitialTableState = [{
+				level : 0,
+				expanded : true,
+				country : "",
+				region : "",
+				segment : "",
+				accountResponsible : "",
+				salesAmount : "75,790,327",
+				salesNumber : "",
+				subtotal : true
+			}, {
 				level : 1,
 				expanded : false,
 				country : "United Kingdom",
@@ -64,8 +74,18 @@ sap.ui.getCore().attachInit(function () {
 			}];
 			Then.onTheMainPage.checkTable(aInitialTableState);
 
-			When.onTheMainPage.toggleExpandInRow(2, "Expand Germany.");
+			When.onTheMainPage.toggleExpandInRow(3, "Expand Germany.");
 			Then.onTheMainPage.checkTable([{
+				level : 0,
+				expanded : true,
+				country : "",
+				region : "",
+				segment : "",
+				accountResponsible : "",
+				salesAmount : "75,790,327",
+				salesNumber : "",
+				subtotal : true
+			}, {
 				level : 1,
 				expanded : false,
 				country : "United Kingdom",
@@ -105,19 +125,9 @@ sap.ui.getCore().attachInit(function () {
 				salesAmount : "1,161,590",
 				salesNumber : "",
 				subtotal : true
-			}, {
-				level : 2,
-				expanded : false,
-				country : "Germany",
-				region : "Lower Saxony",
-				segment : "",
-				accountResponsible : "",
-				salesAmount : "3,160,739",
-				salesNumber : "",
-				subtotal : true
 			}]);
 
-			When.onTheMainPage.scrollToRow(5, "Scroll to BW with paging.");
+			When.onTheMainPage.scrollToRow(6, "Scroll to BW with paging.");
 			Then.onTheMainPage.checkTable([{
 				level : 2,
 				expanded : false,
@@ -170,8 +180,8 @@ sap.ui.getCore().attachInit(function () {
 				subtotal : true
 			}]);
 
-			When.onTheMainPage.toggleExpandInRow(9, "Expand BW.");
-			When.onTheMainPage.scrollToRow(8, "Scroll to BW.");
+			When.onTheMainPage.toggleExpandInRow(10, "Expand BW.");
+			When.onTheMainPage.scrollToRow(9, "Scroll to BW.");
 			Then.onTheMainPage.checkTable([{
 				level : 2,
 				expanded : false,
@@ -224,8 +234,8 @@ sap.ui.getCore().attachInit(function () {
 				subtotal : true
 			}]);
 
-			When.onTheMainPage.toggleExpandInRow(12, "Expand BW-Small.");
-			When.onTheMainPage.scrollToRow(10, "Scroll to BW-Small.");
+			When.onTheMainPage.toggleExpandInRow(13, "Expand BW-Small.");
+			When.onTheMainPage.scrollToRow(11, "Scroll to BW-Small.");
 			aAfterExpandBwSmall = [{
 				level : 3,
 				expanded : false,
@@ -279,12 +289,12 @@ sap.ui.getCore().attachInit(function () {
 			}];
 			Then.onTheMainPage.checkTable(aAfterExpandBwSmall);
 
-			When.onTheMainPage.scrollToRow(0, "Scroll to United Kingdom.");
-			When.onTheMainPage.toggleExpandInRow(2, "Collapse Germany.");
+			When.onTheMainPage.scrollToRow(0, "Scroll to Grand Total.");
+			When.onTheMainPage.toggleExpandInRow(3, "Collapse Germany.");
 			Then.onTheMainPage.checkTable(aInitialTableState);
 
-			When.onTheMainPage.toggleExpandInRow(2, "Expand Germany again.");
-			When.onTheMainPage.scrollToRow(10, "Scroll to BW-Large.");
+			When.onTheMainPage.toggleExpandInRow(3, "Expand Germany again.");
+			When.onTheMainPage.scrollToRow(11, "Scroll to BW-Large.");
 			Then.onTheMainPage.checkTable(aAfterExpandBwSmall);
 
 			Then.onAnyPage.checkLog();

@@ -50,7 +50,9 @@
 						: (%{@$ui5.node.isExpanded} === false
 							? 'sap-icon://expand' : 'sap-icon://e-care')}"
 					press=".onToggleExpand"
-					tooltip="{= %{@$ui5.node.isExpanded} === true ? 'Collapse' : 'Expand'}"
+					tooltip="{= %{@$ui5.node.isExpanded} === true
+						? 'Collapse'
+						: (%{@$ui5.node.isExpanded} === false ? 'Expand' : 'Leaf')}"
 					/>
 			</template>
 		</Column>

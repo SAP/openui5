@@ -15793,7 +15793,8 @@ sap.ui.define([
 				AccountResponsible : {}\
 			},\
 			groupLevels : [\'Region\']\
-		}\
+		},\
+		$orderby : \'Region desc,AccountResponsible\'\
 	}}" threshold="0" visibleRowCount="4">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -15806,7 +15807,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesAmount)"
-				+ ",groupby((Region),aggregate(SalesAmount))"
+				+ ",groupby((Region),aggregate(SalesAmount))/orderby(Region desc)"
 				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [
 					{SalesAmount : "35100"},
@@ -15829,7 +15830,7 @@ sap.ui.define([
 
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'X')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=0&$top=4", {
+					+ "/orderby(AccountResponsible)&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "5",
 					value : [
 						{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1},
@@ -15846,14 +15847,14 @@ sap.ui.define([
 			return that.waitForChanges(assert, "expand node 'X'");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "/skip(3)/top(1)", {
+					+ "/orderby(Region desc)/skip(3)/top(1)", {
 					value : [
 						{Region : "W", SalesAmount : "400"}
 					]
 				})
 				.expectRequest("BusinessPartners?$apply=filter(Region eq 'X')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=4&$top=1", {
+					+ "/orderby(AccountResponsible)&$count=true&$skip=4&$top=1", {
 					"@odata.count" : "5",
 					value : [
 						{AccountResponsible : "e", SalesAmount : "50", SalesNumber : 5}
