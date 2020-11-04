@@ -92,9 +92,9 @@ function(
 
 		isFlexExtensionPointHandlingEnabled: function (oView) {
 			var oAppComponent = Utils.getAppComponentForControl(oView);
-			return oAppComponent
+			return !!(oAppComponent
 				&& oAppComponent.getManifestEntry("sap.ui5")
-				&& oAppComponent.getManifestEntry("sap.ui5").flexExtensionPointEnabled;
+				&& oAppComponent.getManifestEntry("sap.ui5").flexExtensionPointEnabled);
 		}
 	};
 

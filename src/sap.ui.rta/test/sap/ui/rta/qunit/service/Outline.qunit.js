@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/fl/registry/ExtensionPointRegistry",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/layout/VerticalLayout",
@@ -27,6 +28,7 @@ sap.ui.define([
 	CommandFactory,
 	OverlayRegistry,
 	DesignTime,
+	ExtensionPointRegistry,
 	PersistenceWriteAPI,
 	Loader,
 	VerticalLayout,
@@ -44,6 +46,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+	var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
 
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
 		before: function(assert) {
@@ -613,46 +616,54 @@ sap.ui.define([
 		return new MockComponent("testComponent");
 	}
 
-	function _createAsyncView(sViewName, oComponent) {
+	function _createAsyncView(sViewName, sXmlView, oComponent) {
 		return oComponent.runAsOwner(function () {
 			return XMLView.create({
 				id: sViewName,
-				definition: sXmlString,
+				definition: sXmlView,
 				async: true
 			});
 		});
 	}
 
-	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created ", {
-		beforeEach: function() {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
-			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
-			this.oComponent = _createComponent();
-			return _createAsyncView("myView", this.oComponent)
-				.then(function (oXmlView) {
-					this.oXmlView = oXmlView;
-					this.oPanel = oXmlView.getContent()[0];
-					oXmlView.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
+	function _beforeEachExtensionPoint (sXmlView) {
+		sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+		sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
+		this.oComponent = _createComponent();
+		return _createAsyncView("myView", sXmlView, this.oComponent)
+			.then(function (oXmlView) {
+				this.oXmlView = oXmlView;
+				oXmlView.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				return new RuntimeAuthoring({
+					showToolbars: false,
+					rootControl: this.oXmlView
+				});
+			}.bind(this))
+			.then(function (oRta) {
+				this.oRta = oRta;
+				this.oRta.start();
+				return this.oRta.getService("outline");
+			}.bind(this))
+			.then(function (oService) {
+				this.oOutline = oService;
+			}.bind(this));
+	}
 
-					return new RuntimeAuthoring({
-						showToolbars: false,
-						rootControl: this.oXmlView
-					});
-				}.bind(this))
-				.then(function (oRta) {
-					this.oRta = oRta;
-					this.oRta.start();
-					return this.oRta.getService("outline");
-				}.bind(this))
-				.then(function (oService) {
-					this.oOutline = oService;
-				}.bind(this));
+	function _afterEachExtensionPoint () {
+		this.oRta.destroy();
+		this.oComponent.destroy();
+		this.oXmlView.destroy();
+		oExtensionPointRegistry.exit();
+		sandbox.restore();
+	}
+
+	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created ", {
+		beforeEach: function () {
+			return _beforeEachExtensionPoint.call(this, sXmlString);
 		},
-		afterEach: function() {
-			this.oRta.destroy();
-			this.oComponent.destroy();
-			sandbox.restore();
+		afterEach: function () {
+			return _afterEachExtensionPoint.call(this);
 		}
 	}, function() {
 		QUnit.test("when get() is called", function (assert) {
@@ -678,6 +689,57 @@ sap.ui.define([
 					assert.strictEqual(aPanelContent[3].technicalName, "sap.m.Label", "then in the panel content the fourth item is a Label (default content)");
 					assert.strictEqual(aPanelContent[4].technicalName, "sap.m.Label", "then in the panel content the fifth item is a Label (default content)");
 					assert.deepEqual(aPanelContent[2], mExtensionPointOutlineItem, "then all properties of the extension point outline item are correct");
+				});
+		});
+	});
+
+	var oXmlSimpleForm =
+	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns="sap.m">' +
+		'<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="1" labelSpanM="3" columnsL="1" ' +
+			'columnsM="1" emptySpanL="1" emptySpanM="0" width="100%" title="test_simpleform" maxContainerCols="1">' +
+			'<form:content>' +
+				'<core:ExtensionPoint name="ExtensionPoint3">' +
+					'<Label id="ep3-label3" text="Extension point label3 - default content" />' +
+				'</core:ExtensionPoint>' +
+				'<Label id="label3" text="label3"></Label>' +
+			'</form:content>' +
+		'</form:SimpleForm>' +
+	'</mvc:View>';
+
+	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created with 'simple form'", {
+		beforeEach: function () {
+			return _beforeEachExtensionPoint.call(this, oXmlSimpleForm);
+		},
+		afterEach: function () {
+			return _afterEachExtensionPoint.call(this);
+		}
+	}, function() {
+		QUnit.test("when get() is called", function (assert) {
+			var mExtensionPointOutlineItem = {
+				name: "ExtensionPoint3",
+				technicalName: "sap.ui.extensionpoint",
+				type: "extensionPoint",
+				id: "myView",
+				icon: "sap/ui/core/designtime/Icon.icon.svg",
+				extensionPointInfo: {
+					defaultContent: [
+						"myView--ep3-label3"
+					]
+				}
+			};
+			return this.oOutline.get()
+				.then(function(aReceivedResponse) {
+					var aRootElements = aReceivedResponse[0].elements;
+					assert.strictEqual(aRootElements[0].technicalName, "sap.ui.extensionpoint", "then in the view elements the first item is an ExtensionPoint");
+					assert.strictEqual(aRootElements[1].technicalName, "content", "then in the view elements the second item is an content aggregation");
+					assert.deepEqual(aRootElements[0], mExtensionPointOutlineItem, "then all properties of the extension point outline item are correct");
+					var oFormAggregation = aRootElements[1].elements[0].elements[0];
+					var oFormContainerAggregation = oFormAggregation.elements[0].elements[0];
+					var oFormElementsAggregation = oFormContainerAggregation.elements[0].elements[0];
+					assert.deepEqual(oFormElementsAggregation.elements[0].instanceName, "Extension point label3 - default content",
+						"then the lable from default content of the extension point is now placed in the FormElements aggregation");
+					assert.deepEqual(oFormElementsAggregation.elements[1].instanceName, "label3",
+						"then the lable outsite the extension point is now placed in the FormElements aggregation");
 				});
 		});
 	});

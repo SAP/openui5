@@ -7,23 +7,27 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/AggregationOverlay",
 	"sap/ui/dt/Util",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/ExtensionPointRegistry",
 	"sap/base/util/deepEqual",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
-	"sap/base/util/restricted/_omit",
-	"sap/base/util/restricted/_pick",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/Log",
+	"sap/ui/core/mvc/View",
+	"sap/base/util/restricted/_omit"
 ], function(
 	OverlayRegistry,
 	ElementOverlay,
 	AggregationOverlay,
 	DtUtil,
+	FlUtils,
 	ExtensionPointRegistry,
 	deepEqual,
+	isEmptyObject,
 	merge,
-	_omit,
-	_pick,
-	jQuery
+	Log,
+	View,
+	_omit
 ) {
 	"use strict";
 
@@ -70,6 +74,16 @@ sap.ui.define([
 	 * @property {sap.ui.rta.service.Outline.OutlineObject[]} elements - Outline data for child nodes
 	 */
 
+	function getExtensionPointsForView(sViewId, aConsideredExtensionPointNames) {
+		var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
+		var mExtensionPoints = oExtensionPointRegistry.getExtensionPointInfoByViewId(sViewId);
+		return _omit(mExtensionPoints, aConsideredExtensionPointNames);
+	}
+
+	function cleanupData(oData) {
+		return _omit(oData, ["bIsView"]);
+	}
+
 	return function(oRta, fnPublish) {
 		var oOutline = {};
 
@@ -79,6 +93,22 @@ sap.ui.define([
 					svg: "sap/ui/core/designtime/Icon.icon.svg"
 				}
 			}
+		};
+
+		oOutline._aConsideredExtensionPoints = [];
+
+		oOutline._attachNotConsideredExtensionPoints = function (oOverlay, oData) {
+			var oElement = oOverlay && oOverlay.getElement();
+			var oView = oElement && FlUtils.getViewForControl(oElement);
+			var sViewId = oView && oView.getId();
+			var mExtensionPointInfos = getExtensionPointsForView(sViewId, this._aConsideredExtensionPoints);
+			Object.keys(mExtensionPointInfos).forEach(function (sExtensionPointName, iIndex) {
+				var mExtensionPointInfo = mExtensionPointInfos[sExtensionPointName];
+				var mExtensionPointData = this._getExtensionPointData(mExtensionPointInfo);
+				mExtensionPointData.id = sViewId;
+				oData.elements.splice(iIndex, 0, mExtensionPointData);
+				this._aConsideredExtensionPoints.push(mExtensionPointData.name);
+			}.bind(this));
 		};
 
 		/**
@@ -120,6 +150,7 @@ sap.ui.define([
 				return this._getChildrenNodes(oInitialOverlay, iDepth);
 			}, this);
 
+			this._aConsideredExtensionPoints = [];
 			return oResponse;
 		};
 
@@ -148,9 +179,12 @@ sap.ui.define([
 			};
 		};
 
-		oOutline._enrichExtensionPointData = function (oData) {
+		oOutline._enrichExtensionPointData = function (oData, oOverlay) {
 			var bIsDesignMode = sap.ui.getCore().getConfiguration().getDesignMode();
-			if (oData.type === "aggregation" && bIsDesignMode) {
+			if (!bIsDesignMode) {
+				return undefined;
+			}
+			if (oData.type === "aggregation") {
 				var aExtensionPoints = this._getExtensionPoints(oData)
 					.sort(function (mExtensionPointA, mExtensionPointB) {
 						return mExtensionPointB.index - mExtensionPointA.index;
@@ -158,7 +192,10 @@ sap.ui.define([
 				aExtensionPoints.forEach(function (mExtensionPoint) {
 					var mExtensionPointData = this._getExtensionPointData(mExtensionPoint);
 					oData.elements.splice(mExtensionPoint.index, 0, mExtensionPointData);
+					this._aConsideredExtensionPoints.push(mExtensionPointData.name);
 				}.bind(this));
+			} else if (oData.bIsView) {
+				return this._attachNotConsideredExtensionPoints(oOverlay, oData);
 			}
 		};
 
@@ -188,7 +225,7 @@ sap.ui.define([
 			//check if the tree should be traversed deeper and children overlays are present
 			if ((!bValidDepth || (bValidDepth && iDepth > 0))
 				&& aChildren.length > 0
-				&& !jQuery.isEmptyObject(oData)
+				&& !isEmptyObject(oData)
 			) {
 				//decrement depth for children nodes
 				iDepth = bValidDepth ? iDepth - 1 : iDepth;
@@ -198,14 +235,14 @@ sap.ui.define([
 						return this._getChildrenNodes(oChildOverlay, iDepth, oChildOverlay.getParent());
 					}, this)
 					.filter(function (oChildNode) {
-						return !jQuery.isEmptyObject(oChildNode);
+						return !isEmptyObject(oChildNode);
 					});
 
 				//get extension point information if available
-				this._enrichExtensionPointData(oData);
+				this._enrichExtensionPointData(oData, oOverlay);
 			}
 
-			return oData;
+			return cleanupData(oData);
 		};
 
 		/**
@@ -234,11 +271,13 @@ sap.ui.define([
 				|| undefined
 			);
 
+			var bIsView;
 			if (oOverlay instanceof ElementOverlay) {
 				sType = "element";
 				bIsEditable = oOverlay.getEditable();
 				oDtName = oDtMetadata.getName(oElement);
 				bVisible = oOverlay.isVisible();
+				bIsView = oElement instanceof View;
 			} else {
 				sType = "aggregation";
 				sAggregationName = oOverlay.getAggregationName();
@@ -258,7 +297,8 @@ sap.ui.define([
 				sInstanceName !== sId && sInstanceName !== undefined && { instanceName: sInstanceName }, // element's id should not be set as instanceName
 				oDtName && oDtName.singular && { name: oDtName.singular }, // designTime metadata name.singular
 				sIconType !== undefined && { icon: sIconType }, // designTime metadata icon type
-				typeof bVisible === "boolean" && { visible: bVisible } // visible
+				typeof bVisible === "boolean" && { visible: bVisible }, // visible
+				bIsView && { bIsView: bIsView }
 			);
 
 			return oData;
@@ -280,6 +320,7 @@ sap.ui.define([
 		/**
 		 * Event handler for events from design time representing
 		 * updates on the outline model.
+		 * @param {object} oEvent - Event thrown by designtime
 		 */
 		oOutline._updatesHandler = function(oEvent) {
 			var mParams = oEvent.getParameters();
@@ -353,6 +394,9 @@ sap.ui.define([
 					oResponse.element = oOutline._getOutline(sElementId, 0)[0];
 					oResponse.type = "elementPropertyChange";
 					break;
+
+				default:
+					Log.error("Event type is not expected by handler");
 			}
 
 			// Remove unwanted properties

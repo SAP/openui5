@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-
 sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
@@ -25,7 +24,7 @@ sap.ui.define([
 	var ExtensionPointRegistry = function() {
 		this._bEnabledObserver = sap.ui.getCore().getConfiguration().getDesignMode();
 		this._mObservers = {};
-		this._aExtensionPointsByParent = [];
+		this._mExtensionPointsByParent = {};
 		this._mExtensionPointsByViewId = {};
 		this._aApplyExtensionPointPromises = [];
 	};
@@ -48,10 +47,11 @@ sap.ui.define([
 		var sParentId = oEvent.object.getId();
 		var sAggregationName;
 
-		this._aExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
+		this._mExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			sAggregationName = oExtensionPoint.aggregationName;
 			if (sAggregationName === oEvent.name) {
-				var aControlIds = JsControlTreeModifier.getAggregation(oEvent.object, sAggregationName).map(function(oControl) {
+				var vControlIds = JsControlTreeModifier.getAggregation(oEvent.object, sAggregationName);
+				var aControlIds = [].concat(vControlIds || []).map(function(oControl) {
 					return oControl.getId();
 				});
 
@@ -115,14 +115,14 @@ sap.ui.define([
 		});
 
 		var sParentId = oParent.getId();
-		if (!this._aExtensionPointsByParent[sParentId]) {
-			this._aExtensionPointsByParent[sParentId] = [];
+		if (!this._mExtensionPointsByParent[sParentId]) {
+			this._mExtensionPointsByParent[sParentId] = [];
 		}
 		if (!this._mExtensionPointsByViewId[sViewId]) {
 			this._mExtensionPointsByViewId[sViewId] = {};
 		}
 		mExtensionPointInfo.aggregation = aControlIds;
-		this._aExtensionPointsByParent[sParentId].push(mExtensionPointInfo);
+		this._mExtensionPointsByParent[sParentId].push(mExtensionPointInfo);
 		this._mExtensionPointsByViewId[sViewId][mExtensionPointInfo.name] = mExtensionPointInfo;
 	};
 
@@ -139,13 +139,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the extension point information by view ID.
+	 * @param {string} oViewId - ID of the view
+	 * @returns {object} Map of extension points
+	 */
+	ExtensionPointRegistry.prototype.getExtensionPointInfoByViewId = function (oViewId) {
+		return this._mExtensionPointsByViewId[oViewId] || {};
+	};
+
+	/**
 	 * Returns the extension point information by parent id.
 	 *
 	 * @param {string} sParentId - Id of the extension point parent control
 	 * @returns {Array} of extension point informations.
 	 */
 	ExtensionPointRegistry.prototype.getExtensionPointInfoByParentId = function (sParentId) {
-		return this._aExtensionPointsByParent[sParentId] || [];
+		return this._mExtensionPointsByParent[sParentId] || [];
 	};
 
 	/**
@@ -175,7 +184,7 @@ sap.ui.define([
 			this._mObservers[sParentId].observer.destroy();
 		}.bind(this));
 		this._mObservers = {};
-		this._aExtensionPointsByParent = [];
+		this._mExtensionPointsByParent = {};
 		this._mExtensionPointsByViewId = {};
 		this._aApplyExtensionPointPromises = [];
 		ExtensionPointRegistry._instance = undefined;

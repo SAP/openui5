@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/registry/ExtensionPointRegistry"
+	"sap/ui/fl/registry/ExtensionPointRegistry",
+	"sap/base/util/values"
 ], function(
 	Plugin,
 	DtUtil,
 	FlUtils,
 	ManifestUtils,
-	ExtensionPointRegistry
+	ExtensionPointRegistry,
+	values
 ) {
 	"use strict";
 
@@ -49,13 +51,17 @@ sap.ui.define([
 	var FLEX_CHANGE_TYPE = "addXMLAtExtensionPoint";
 	var APP_DESCRIPTOR_CHANGE_TYPE = "appdescr_ui5_setFlexExtensionPointEnabled";
 
-	function getExtensionPointInfo(oElement) {
+	function getExtensionPointList(oElement) {
+		var oElementId = oElement.getId();
+		// determine a list of extension points for the given element. In case the element is a view
+		// all extension points available for the view are returned
 		var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
-		return oExtensionPointRegistry.getExtensionPointInfoByParentId(oElement.getId());
+		var aExtensionPointInfo = oExtensionPointRegistry.getExtensionPointInfoByParentId(oElementId);
+		return aExtensionPointInfo.length ? aExtensionPointInfo : values(oExtensionPointRegistry.getExtensionPointInfoByViewId(oElementId));
 	}
 
 	function hasExtensionPoints(oElement) {
-		return getExtensionPointInfo(oElement).length > 0;
+		return getExtensionPointList(oElement).length > 0;
 	}
 
 	function isDesignMode() {
@@ -65,7 +71,9 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.prototype.bAppDescriptorCommandAlreadyAvailable = false;
 
 	/**
-	 * Check if the given overlay is editable.
+	 * Check if the given overlay is editable. A stable ID is not required for this,
+	 * as this is also not the case with the old extension points.
+	 *
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for editable
 	 * @returns {Promise.<boolean>} <code>true</code> when editable wrapped in a promise
 	 * @private
@@ -73,14 +81,19 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.prototype._isEditable = function (oOverlay) {
 		if (isDesignMode()) {
 			var oElement = oOverlay.getElement();
-			return this.hasChangeHandler(FLEX_CHANGE_TYPE, oElement)
-				.then(function(bHasChangeHandler) {
-					return bHasChangeHandler
-						&& hasExtensionPoints(oElement)
-						&& this.hasStableId(oOverlay);
-				}.bind(this));
+			return this.hasChangeHandler(FLEX_CHANGE_TYPE, oElement).then(function(bHasChangeHandler) {
+				return bHasChangeHandler && hasExtensionPoints(oElement);
+			});
 		}
 		return Promise.resolve(false);
+	};
+
+	AddXMLAtExtensionPoint.prototype.isAvailable = function (aOverlays) {
+		if (isDesignMode()) {
+			var oElement = aOverlays[0].getElement();
+			return hasExtensionPoints(oElement);
+		}
+		return false;
 	};
 
 	/**
@@ -183,7 +196,7 @@ sap.ui.define([
 				}
 				var oOverlay = aElementOverlays[0];
 				var oElement = oOverlay.getElement();
-				var aExtensionPointInfos = getExtensionPointInfo(oElement);
+				var aExtensionPointInfos = getExtensionPointList(oElement);
 				return fnFragmentHandler(oOverlay, aExtensionPointInfos);
 			}.bind(this))
 

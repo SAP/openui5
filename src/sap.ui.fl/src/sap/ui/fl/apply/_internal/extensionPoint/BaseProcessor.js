@@ -51,9 +51,7 @@ function(
 			// create default content
 			return BaseProcessor.createDefaultContent(oExtensionPoint)
 				.then(function (aControls) {
-					mExtensionPointInfo.defaultContent = mExtensionPointInfo.defaultContent.concat(aControls.map(function (oControl) {
-						return oControl.getId();
-					}));
+					mExtensionPointInfo.defaultContent = mExtensionPointInfo.defaultContent.concat(aControls);
 				});
 		}
 	};

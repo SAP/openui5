@@ -44,9 +44,14 @@ function (
 				'</core:ExtensionPoint>' +
 			'</content>' +
 		'</Panel>' +
+		'<Panel>' +
+			'<content>' +
+				'<core:ExtensionPoint name="ExtensionPoint3" />' +
+			'</content>' +
+		'</Panel>' +
 	'</mvc:View>';
 
-	function _createComponent() {
+	function createComponent() {
 		return sap.ui.getCore().createComponent({
 			name: "testComponent",
 			id: "testComponent",
@@ -56,7 +61,7 @@ function (
 		});
 	}
 
-	function _createAsyncView(sViewName, oComponent) {
+	function createAsyncView(sViewName, oComponent) {
 		return oComponent.runAsOwner(function () {
 			return XMLView.create({
 				id: sViewName,
@@ -66,12 +71,13 @@ function (
 		});
 	}
 
-	function _createBeforeEach() {
-		this.oComponent = _createComponent();
-		return _createAsyncView("myView", this.oComponent)
+	function createBeforeEach() {
+		this.oComponent = createComponent();
+		return createAsyncView("myView", this.oComponent)
 			.then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				this.oPanel = oXmlView.getContent()[0];
+				this.oPanelWithoutId = oXmlView.getContent()[1];
 				this.oLabel = this.oPanel.getContent()[1];
 				oXmlView.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -93,6 +99,7 @@ function (
 					});
 					this.oDesignTime.attachEventOnce("synced", function() {
 						this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
+						this.oPanelWithoutIdOverlay = OverlayRegistry.getOverlay(this.oPanelWithoutId);
 						this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
 						resolve();
 					}.bind(this));
@@ -105,7 +112,7 @@ function (
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
 			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
-			return _createBeforeEach.call(this);
+			return createBeforeEach.call(this);
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
@@ -136,6 +143,15 @@ function (
 				});
 		});
 
+		QUnit.test("when an overlay with extensionpoints but without stable ID available is given", function(assert) {
+			assert.strictEqual(this.oAddXmlAtExtensionPointPlugin.isAvailable([this.oPanelWithoutIdOverlay]), true, "isAvailable is called and returns true");
+			assert.strictEqual(this.oAddXmlAtExtensionPointPlugin.isEnabled([this.oPanelWithoutIdOverlay]), true, "isEnabled is called and returns true");
+			return this.oAddXmlAtExtensionPointPlugin._isEditable(this.oPanelWithoutIdOverlay)
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, true, "then the overlay is editable");
+				});
+		});
+
 		QUnit.test("when getMenuItem is called", function(assert) {
 			var aMenuItems = this.oAddXmlAtExtensionPointPlugin.getMenuItems([this.oPanelOverlay]);
 			assert.strictEqual(aMenuItems[0].id, "CTX_ADDXML_AT_EXTENSIONPOINT", "'getMenuItems' returns the context menu item for the plugin with the correct id");
@@ -154,7 +170,7 @@ function (
 		});
 	});
 
-	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin with fragment handler function are created and the DesignTime is started ", {
+	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin with initial fragment handler function is created and the DesignTime is started ", {
 		beforeEach: function() {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			this.sInitialFragmentPath = "sap/ui/.../fragment/fragmentName";
@@ -163,7 +179,7 @@ function (
 				fragmentPath: this.sInitialFragmentPath,
 				fragment: "fragment/fragmentName"
 			});
-			return _createBeforeEach.call(this);
+			return createBeforeEach.call(this);
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
@@ -172,7 +188,7 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when handler is called without fragmentHandler function in the propertyBag defined", function(assert) {
+		QUnit.test("when handler is called for the view overlay, without fragmentHandler function in the propertyBag defined", function(assert) {
 			var fnDone = assert.async(2);
 			var oPropertyBag = {};
 			this.oAddXmlAtExtensionPointPlugin.attachElementModified(function (oEvent) {
@@ -185,16 +201,24 @@ function (
 				assert.deepEqual(oCommand.getCommands()[1].getParameters(), mAppDescriptorparameters, "then the CompositeCommand contains AppDescriptorCommand");
 				fnDone();
 			}.bind(this));
-			this.oAddXmlAtExtensionPointPlugin.handler([this.oPanelOverlay], oPropertyBag)
+			var oViewOverlay = OverlayRegistry.getOverlay(this.oXmlView);
+			this.oAddXmlAtExtensionPointPlugin.handler([oViewOverlay], oPropertyBag)
 				.then(function () {
-					assert.strictEqual(this.oFragmentHandlerStub.callCount, 1, "then the fragment handler function is called once");
-					assert.strictEqual(this.oFragmentHandlerStub.firstCall.args[0], this.oPanelOverlay, "then the fragment handler function is called with panel overlay as first parameter");
-					assert.ok(Array.isArray(this.oFragmentHandlerStub.firstCall.args[1]), "then the fragment handler function is called with array of ExtensionPointInformations as second parameter");
+					assert.strictEqual(this.oFragmentHandlerStub.callCount, 1,
+						"then the fragment handler function is called once");
+					assert.strictEqual(this.oFragmentHandlerStub.firstCall.args[0], oViewOverlay,
+						"then the fragment handler function is called with panel overlay as first parameter");
+					var aPassedExtensionPointObjects = this.oFragmentHandlerStub.firstCall.args[1];
+					assert.ok(Array.isArray(aPassedExtensionPointObjects),
+						"then the fragment handler function is called with array of ExtensionPointInformations as second parameter");
+					assert.deepEqual(aPassedExtensionPointObjects.map(function (oExtensionPoint) { return oExtensionPoint.name; }),
+						["ExtensionPoint1", "ExtensionPoint2", "ExtensionPoint3"],
+						"then the expected extension points for the view are returned");
 					fnDone();
 				}.bind(this));
 		});
 
-		QUnit.test("when handler is called with fragmentHandler function in the propertyBag defined", function(assert) {
+		QUnit.test("when handler is called for the panel overlay, with fragmentHandler function in the propertyBag defined", function(assert) {
 			var fnDone = assert.async(2);
 			var sSecondFragmentPath = "sap/ui/.../fragment/SecondFragment";
 			var oSecondFragmentHandlerStub = sandbox.stub().resolves({
