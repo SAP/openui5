@@ -3389,6 +3389,59 @@ sap.ui.define([
 		assert.strictEqual(oToolbar.bIsDestroyed, true);
 	});
 
+	QUnit.module("Inbuilt filter initialization", {
+		createTable: function(mSettings) {
+			this.oTable = new Table(mSettings);
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	var fnCheckInbuiltInitialization = function(bInbuiltShouldBeActivated, assert) {
+		var done = assert.async();
+		this.oTable.initialized().then(function(){
+			if (bInbuiltShouldBeActivated) {
+				assert.ok(this.oTable._oP13nFilter.isA("sap.ui.mdc.filterbar.FilterBarBase"), "Inbuilt filtering initialized");
+			} else {
+				assert.ok(!this.oTable._oP13nFilter, "Inbuilt filtering must not be initialized");
+			}
+			done();
+		}.bind(this));
+	};
+
+	QUnit.test("Check AdaptationFilterBar initialization with autoBindOnInit 'true'", function(assert){
+		this.createTable({
+			autoBindOnInit: true,
+			p13nMode: ["Filter"]
+		});
+		fnCheckInbuiltInitialization.call(this, true, assert);
+	});
+
+	QUnit.test("Check AdaptationFilterBar initialization with autoBindOnInit 'false'", function(assert){
+		this.createTable({
+			autoBindOnInit: false,
+			p13nMode: ["Filter"]
+		});
+		fnCheckInbuiltInitialization.call(this, true, assert);
+	});
+
+	QUnit.test("Check AdaptationFilterBar initialization with autoBindOnInit 'true' and inbuilt filtering disabled", function(assert){
+		this.createTable({
+			autoBindOnInit: true
+		});
+		fnCheckInbuiltInitialization.call(this, false, assert);
+	});
+
+	QUnit.test("Check AdaptationFilterBar initialization with autoBindOnInit 'false' and inbuilt filtering enabled", function(assert){
+		this.createTable({
+			autoBindOnInit: false
+		});
+		fnCheckInbuiltInitialization.call(this, false, assert);
+	});
+
 	QUnit.module("Filter info bar", {
 		beforeEach: function() {
 			this.oTable = new Table();
