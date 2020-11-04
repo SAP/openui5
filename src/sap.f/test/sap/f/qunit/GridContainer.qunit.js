@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/f/Card",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainerSettings",
+	"sap/f/GridContainerUtils",
 	"sap/f/dnd/GridDropInfo",
 	"sap/ui/Device",
 	"sap/base/Log",
@@ -32,6 +33,7 @@ function (
 	Card,
 	GridContainerItemLayoutData,
 	GridContainerSettings,
+	GridContainerUtils,
 	GridDropInfo,
 	Device,
 	Log,
@@ -1796,11 +1798,38 @@ function (
 
 	QUnit.test("Creating grid matrix", function (assert) {
 		// Arrange
-		var aMatrix = this.oGrid._makeMatrix();
+		var aMatrix = GridContainerUtils.makeMatrix(this.oGrid);
 
 		// Assert
-		assert.ok(aMatrix.length, 6, "Matrix created with the expected number of rows");
-		assert.ok(aMatrix[0].length, 6, "Matrix created with the expected number of rows");
+		assert.strictEqual(aMatrix.length, 6, "Matrix created with the expected number of rows");
+		assert.strictEqual(aMatrix[0].length, 6, "Matrix created with the expected number of columns");
+	});
+
+	QUnit.test("Creating grid matrix with inlineBlockLayout enabled", function (assert) {
+		// Arrange
+		this.oGrid.setInlineBlockLayout(true);
+		Core.applyChanges();
+		var aMatrix = GridContainerUtils.makeMatrix(this.oGrid);
+
+		// Assert
+		assert.strictEqual(aMatrix.length, 2, "Matrix created with the expected number of rows");
+		assert.strictEqual(aMatrix[0].length, 6, "Matrix created with the expected number of columns");
+	});
+
+	QUnit.test("Grid matrix should not include items with visible=false", function (assert) {
+		// Arrange
+		var oInvisibleItem = this.oGrid.getItems()[0].setVisible(false),
+			oItemWrapper = this.oGrid.getItemWrapper(oInvisibleItem),
+			aMatrix = GridContainerUtils.makeMatrix(this.oGrid),
+
+			bExists = aMatrix.some(function (aRow) {
+				return aRow.some(function (oItemAtColumn) {
+					return oItemAtColumn === oItemWrapper;
+				});
+			});
+
+		// Assert
+		assert.strictEqual(bExists, false, "Created matrix does not include the invisible item");
 	});
 
 	QUnit.test("Arrow Up at the top of the matrix should trigger 'borderReached' event", function (assert) {

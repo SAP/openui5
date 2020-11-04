@@ -2,10 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/f/GridContainerUtils",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log"
 ], function (
+	GridContainerUtils,
 	ItemNavigation,
 	KeyCodes,
 	Log
@@ -47,7 +49,7 @@ sap.ui.define([
 		ItemNavigation.prototype.onfocusin.call(this, oEvent);
 
 		var oGridControl = jQuery(this.oDomRef).control(0),
-			aMatrix = oGridControl._makeMatrix(oGridControl);
+			aMatrix = GridContainerUtils.makeMatrix(oGridControl);
 
 		if (oEvent.target === this.oDomRef) {
 			this._mCurrentPosition = this._findPositionInMatrix(aMatrix, this.getItemDomRefs().indexOf(this.iFocusedIndex));
@@ -93,7 +95,7 @@ sap.ui.define([
 
 		var oCurrentItem = oEvent.target,
 			oGridControl = oEvent.srcControl,
-			aMatrix = oGridControl._makeMatrix(oGridControl),
+			aMatrix = GridContainerUtils.makeMatrix(oGridControl),
 			oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem),
 			oNextFocusItem;
 
