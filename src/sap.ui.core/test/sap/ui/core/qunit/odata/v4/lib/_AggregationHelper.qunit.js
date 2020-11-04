@@ -122,9 +122,9 @@ sap.ui.define([
 			$skip : 0, // special case,
 			$top : Infinity // special case
 		},
-		sApply : "groupby((Region),aggregate(SalesNumber))/concat(aggregate(SalesNumber),identity)",
+		sApply : "concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber)))",
 		sFollowUpApply : // Note: follow-up request not needed in this case
-			"groupby((Region),aggregate(SalesNumber))/concat(aggregate(SalesNumber),identity)"
+			"concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber)))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -135,18 +135,20 @@ sap.ui.define([
 			}
 		},
 		mQueryOptions : {
+			$$filterBeforeAggregate : "Region gt 'E'",
 			$count : true,
 			$filter : "SalesNumber ge 100",
 			$orderby : "Region desc",
 			$skip : 0, // special case
 			$top : 42
 		},
-		sApply : "groupby((Region),aggregate(SalesNumber))"
+		sApply : "filter(Region gt 'E')"
+			+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
-			+ "/concat(aggregate(SalesNumber,$count as UI5__count),top(41))",
-		sFollowUpApply : "groupby((Region),aggregate(SalesNumber))"
-			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
-			+ "/concat(aggregate(SalesNumber),top(41))"
+			+ "/concat(aggregate($count as UI5__count),top(41)))",
+		sFollowUpApply : "filter(Region gt 'E')"
+			+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/top(41))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -178,9 +180,20 @@ sap.ui.define([
 				Region : {}
 			}
 		},
-		sApply : "groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum))"
-			+ "/concat(aggregate(SalesNumberSum with sum as UI5grand__SalesNumberSum)"
-			+ ",identity)"
+		iLevel : 1, // include grandTotal
+		sApply : "concat(aggregate(SalesNumber with sum as UI5grand__SalesNumberSum)"
+			+ ",groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum)))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesNumber : {grandTotal : true}
+			},
+			group : {
+				Region : {}
+			}
+		},
+		iLevel : 2, // ignore grandTotal!
+		sApply : "groupby((Region),aggregate(SalesNumber))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -356,7 +369,7 @@ sap.ui.define([
 
 			// code under test
 			mResult = _AggregationHelper.buildApply(oFixture.oAggregation, oFixture.mQueryOptions,
-				mAlias2MeasureAndMethod);
+				oFixture.iLevel, false, mAlias2MeasureAndMethod);
 
 			assert.deepEqual(mResult, {$apply : oFixture.sApply}, "sApply");
 			if (oFixture.mExpectedAlias2MeasureAndMethod) {
@@ -369,7 +382,7 @@ sap.ui.define([
 
 				// code under test
 				mResult = _AggregationHelper.buildApply(oFixture.oAggregation,
-					oFixture.mQueryOptions, mAlias2MeasureAndMethod, true);
+					oFixture.mQueryOptions, oFixture.iLevel, true, mAlias2MeasureAndMethod);
 
 				assert.deepEqual(mResult, {$apply : oFixture.sFollowUpApply}, "sFollowUpApply");
 				assert.deepEqual(mAlias2MeasureAndMethod, {}, "mAlias2MeasureAndMethod");
@@ -439,12 +452,6 @@ sap.ui.define([
 			groupLevels : {}
 		},
 		sError : "Not a array value for 'groupLevels'"
-	}, {
-		oAggregation : {
-			aggregate : {A : {grandTotal : true}},
-			groupLevels : ["B"]
-		},
-		sError : "Cannot combine visual grouping with grand total"
 	}, {
 		oAggregation : {
 			aggregate : {A : {grandTotal : true, "with" : "average"}}
@@ -656,4 +663,155 @@ sap.ui.define([
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "index"), 5);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "parent"), oParentCache);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("filterAggregation - optional group entry", function (assert) {
+		var oAggregation = {
+			aggregate : {
+				MeasureWithoutTotal : {},
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {
+				// GroupedDimension : {},
+				UngroupedDimension : {}
+			},
+			groupLevels : ["GroupedDimension"]
+		};
+
+		assert.deepEqual(_AggregationHelper.filterAggregation(oAggregation, 1), {
+			aggregate : {
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {},
+			groupLevels : ["GroupedDimension"],
+			$groupBy : ["GroupedDimension"],
+			$missing : ["UngroupedDimension", "MeasureWithoutTotal"]
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		iLevel : 1,
+		oResult : {
+			aggregate : {
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {},
+			groupLevels : ["GroupedDimension1"],
+			$groupBy : ["GroupedDimension1"],
+			$missing : ["GroupedDimension2", "UngroupedDimension1", "UngroupedDimension2",
+				"MeasureWithoutTotal"]
+		}
+	}, {
+		iLevel : 2,
+		oResult : {
+			aggregate : {
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {},
+			groupLevels : ["GroupedDimension2"],
+			$groupBy : ["GroupedDimension1", "GroupedDimension2"],
+			$missing : ["UngroupedDimension1", "UngroupedDimension2", "MeasureWithoutTotal"]
+		}
+	}, {
+		iLevel : 3,
+		oResult : {
+			aggregate : {
+				MeasureWithoutTotal : {},
+				MeasureWithTotal : {subtotals : true}
+			},
+			group : {
+				UngroupedDimension1 : {},
+				UngroupedDimension2 : {}
+			},
+			groupLevels : [],
+			$groupBy : ["GroupedDimension1", "GroupedDimension2", "UngroupedDimension1",
+				"UngroupedDimension2"],
+			$missing : []
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("filterAggregation: level " + oFixture.iLevel, function (assert) {
+			var oAggregation = {
+				aggregate : {
+					MeasureWithoutTotal : {},
+					MeasureWithTotal : {subtotals : true}
+				},
+				group : { // intentionally in this order to test sorting
+					UngroupedDimension2 : {},
+					UngroupedDimension1 : {},
+					GroupedDimension1 : {}
+				},
+				groupLevels : ["GroupedDimension1", "GroupedDimension2"]
+			};
+
+			assert.deepEqual(
+				_AggregationHelper.filterAggregation(oAggregation, oFixture.iLevel),
+				oFixture.oResult
+			);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filterOrderby", function (assert) {
+		var oAggregation = {
+				aggregate : {
+					Measure : {}
+				},
+				group : {
+					Dimension : {}
+				},
+				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
+			},
+			oAggregationWithLevels = {
+				aggregate : {},
+				group : {},
+				groupLevels : ["Dimension"]
+			};
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Dimension %20desc%2COtherDimension asc", oAggregation),
+			"Dimension %20desc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Dimension\tdesc,OtherDimension asc", oAggregation),
+			"Dimension\tdesc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Dimension desc", oAggregationWithLevels),
+			"Dimension desc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Measure desc%2cDimension", oAggregation),
+			"Measure desc,Dimension");
+
+		// code under test
+		assert.strictEqual(_AggregationHelper.filterOrderby(undefined, {}), undefined);
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("NavigationProperty/$count", []),
+			"NavigationProperty/$count");
+	});
+	//TODO Also support orderbyItems that start with a type cast?
+	// See "11.2.5.2 System Query Option $orderby":
+	// "A special case of such an expression is a property path terminating on a primitive property.
+	// A type cast using the qualified entity type name is required to order by a property defined
+	// on a derived type."
+	//
+	// ABNF:
+	// orderby     = '$orderby' EQ orderbyItem *( COMMA orderbyItem )
+	// orderbyItem = commonExpr [ RWS ( 'asc' / 'desc' ) ]
+	// commonExpr = (... / firstMemberExpr / ...)[...]
+	// firstMemberExpr = memberExpr / inscopeVariableExpr [ "/" memberExpr ]
+	// memberExpr = [ qualifiedEntityTypeName "/" ] ( propertyPathExpr / boundFunctionExpr )
+	// inscopeVariableExpr : not supported
+	// boundFunctionExpr : not supported
+	// qualifiedEntityTypeName = odataIdentifier 1*( "." odataIdentifier )
+	// propertyPathExpr : /-separated path of odataIdentifier or qualified names;
+	//   otherwise not supported (e.g. $count)
+	// complexProperty : probably not supported by current service implementations
 });

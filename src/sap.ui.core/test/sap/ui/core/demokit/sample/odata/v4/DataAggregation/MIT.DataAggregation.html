@@ -29,47 +29,116 @@
 		</ul>
 
 		<h2>REALIZE and CHECK</h2>
-		<h3>Expand the third node</h3>
+		<h3>0. Grand Total</h3>
+			<b>Check:</b> The table should have the following content:
+			<table border="1px" cellspacing="0" >
+				<tr>
+					<th>Level</th>
+					<th>(Icon's Tooltip)</th>
+					<th>Country</th>
+					<th>Region</th>
+					<th>Segment</th>
+					<th>Account Responsible</th>
+					<th>Sales Amount</th>
+					<th>Sales Number</th>
+					<th>Subtotal</th>
+				</tr>
+				<tr>
+					<td>0</td>
+					<td>Collapse</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>75,790,327</td>
+					<td></td>
+					<td><input type="checkbox" checked/></td>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>Expand</td>
+					<td>United Kingdom</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>16,165,258</td>
+					<td></td>
+					<td><input type="checkbox" checked/></td>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>Expand</td>
+					<td>USA</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>35,135,431</td>
+					<td></td>
+					<td><input type="checkbox" checked/></td>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>Expand</td>
+					<td>Germany</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>24,489,638</td>
+					<td></td>
+					<td><input type="checkbox" checked/></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>&nbsp;</td>
+				</tr>
+			</table>
+		<h3>1. Expand the fourth node</h3>
 		<ol>
-			<li>After the application is started, click on the expand button in the third row with
-				country <code>Germany</code>.
-			</li>
-			<li><b>Check:</b> Two new rows appear below the third row with country
-				<code>Germany</code>, region <code>Lower-Saxony</code> and region <code>Saxony</code>.
+			<li>Click on the expand button in the fourth row with country <code>Germany</code>.</li>
+			<li><b>Check:</b> One new row appears below the fourth row with country
+				<code>Germany</code> and region <code>Lower-Saxony</code>.
 			</li>
 		</ol>
-		<h3>Scroll to the end of the table</h3>
+		<h3>2. Scroll to the end of the table</h3>
 		<ol>
-			<li>Click on <code>Germany</code> to move the focus to the table. Press CTRL-END to scroll to
-				the end of the table.</li>
+			<li>Click on <code>Germany</code> to move the focus to the table.</li>
+			<li>Press CTRL-END to scroll to	the end of the table.</li>
 			<li><b>Check:</b> The row with the country <code>Germany</code> and region
 				<code>Hessia</code> is displayed at the top.
 			</li>
 		</ol>
-		<h3>Expand the last visible node</h3>
+		<h3>3. Expand the last visible node</h3>
 		<ol>
-			<li>Click on the expand button of
-				the last visible row with the region <code>Baden-W&uuml;rttemberg</code>.
+			<li>Click on the expand button of the last visible row with the region
+				<code>Baden-W&uuml;rttemberg</code>.
 			</li>
 			<li><b>Check:</b> The scrollbar of the table has changed.</li>
-			<li>Scroll down to the end of the table.</li>
+			<li>Press CTRL-END to scroll to the end of the table.</li>
 			<li><b>Check:</b> The first visible row has country <code>Germany</code> and region
-				<code>Bavaria</code>.</li>
+				<code>Bavaria</code>.
+			</li>
 		</ol>
-		<h3>Expand the last visible node</h3>
+		<h3>4. Expand the last visible node</h3>
 		<ol>
-			<li>Click on the expand button of the last visible row with the
-				region <code>Baden-W&uuml;rttemberg</code> and the segment <code>Small</code>.
+			<li>Click on the expand button of the last visible row with the region
+				<code>Baden-W&uuml;rttemberg</code> and the segment <code>Small</code>.
 			</li>
 			<li><b>Check:</b> The scrollbar of the table has changed.</li>
-			<li>Click on <code>Germany</code> to move the focus to the table. Press CTRL-END to scroll to
-				the end of the table.</li>
+			<li>Click on <code>Germany</code> to move the focus to the table.</li>
+			<li>Press CTRL-END to scroll to	the end of the table.</li>
 			<li><b>Check:</b> The table should have the following content:
 				<br>
 				<table border="1px" cellspacing="0" >
 					<tr>
 						<th>Level</th>
-						<th>Expand</th>
+						<th>(Icon's Tooltip)</th>
 						<th>Country</th>
 						<th>Region</th>
 						<th>Segment</th>
@@ -80,34 +149,34 @@
 					</tr>
 					<tr>
 						<td>3</td>
-						<td>Not Expanded</td>
+						<td>Expand</td>
 						<td>Germany</td>
 						<td>Baden-W&uuml;rttemberg</td>
 						<td>Large</td>
 						<td></td>
-						<td>3.765.323</td>
+						<td>3,765,323</td>
 						<td></td>
 						<td><input type="checkbox" checked/></td>
 					</tr>
 					<tr>
 						<td>3</td>
-						<td>Not Expanded</td>
+						<td>Expand</td>
 						<td>Germany</td>
 						<td>Baden-W&uuml;rttemberg</td>
 						<td>Mid-size</td>
 						<td></td>
-						<td>526.122</td>
+						<td>526,122</td>
 						<td></td>
 						<td><input type="checkbox" checked/></td>
 					</tr>
 					<tr>
 						<td>3</td>
-						<td>Expanded</td>
+						<td>Collapse</td>
 						<td>Germany</td>
 						<td>Baden-W&uuml;rttemberg</td>
 						<td>Small</td>
 						<td></td>
-						<td>125.093</td>
+						<td>125,093</td>
 						<td></td>
 						<td><input type="checkbox" checked/></td>
 					</tr>
@@ -118,8 +187,8 @@
 						<td>Baden-W&uuml;rttemberg</td>
 						<td>Small</td>
 						<td>Erwin Fischer</td>
-						<td>61.632</td>
-						<td>1.032</td>
+						<td>61,632</td>
+						<td>1,032</td>
 						<td><input type="checkbox"/></td>
 					</tr>
 					<tr>
@@ -129,22 +198,28 @@
 						<td>Baden-W&uuml;rttemberg</td>
 						<td>Small</td>
 						<td>Winfried Maier</td>
-						<td>63.461</td>
-						<td>1.178</td>
+						<td>63,461</td>
+						<td>1,178</td>
 						<td><input type="checkbox"/></td>
 					</tr>
 				</table>
 			</li>
 		</ol>
-		<h3>Collapse the previous node</h3>
+		<h3>5. Collapse the fourth node</h3>
 		<ol>
-			<li>Click on the expand button of the third visible row with the
-				region <code>Baden-W&uuml;rttemberg</code> and the segment <code>Small</code>.
+			<li>Press CTRL-HOME to scroll to the start of the table.</li>
+			<li>Click on the expand button of the fourth visible row with the country
+				<code>Germany</code>.
 			</li>
-			<li><b>Check:</b> The scrollbar of the table has changed.</li>
-			<li><b>Check:</b> The collapsed node is at the end of the table and the leaves with
-				level 4 have disappeared. There are no empty rows visible.
-			</li>
+			<li><b>Check:</b> The table should have the same content as initially.</li>
+		</ol>
+
+		<h3>6. Expand the fourth node again</h3>
+		<ol>
+			<li>Click on the expand button in the fourth row with country <code>Germany</code>.</li>
+			<li>Click on <code>Germany</code> to move the focus to the table.</li>
+			<li>Press CTRL-END to scroll to the end of the table.</li>
+			<li><b>Check:</b> The table should have the same content as described in #4.4.</li>
 		</ol>
 	</body>
 </html>

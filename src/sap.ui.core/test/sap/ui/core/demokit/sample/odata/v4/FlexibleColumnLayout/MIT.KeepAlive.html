@@ -61,23 +61,58 @@
 			<li>Press the <code>Cancel</code> button.</li>
 			<li><b>Check:</b> Both the object page and the sub-object page are in sync.</li>
 		</ol>
-		<h3>Delete a kept-alive context that is not visible in the sales orders table</h3>
+		<h3>Delete a kept-alive context that is not visible in the sales orders table; after
+			deletion the count does not change</h3>
 		<ol>
-			<li>Select the first sales order on the list report that is currently sorted
-				descending by the <code>Sales Order ID</code>.</li>
-			<li><b>Check:</b> The current sub-object vanishes and the sales order object page is
-				updated.</li>
-			<li>Press the <code>Sales Order ID</code> button in the header of the respective
-				column of the sales orders table of the list report.</li>
-			<li><b>Check:</b> The sales order list is sorted by the <code>SalesOrderID</code>
-				and the selected sales order does no longer appear in the list report. It is still
-				present in the object page.</li>
+			<li>Select the fifth sales order on the list report that is currently sorted ascending
+				by the <code>Sales Order ID</code>.</li>
+			<li><b>Check:</b> The object page is updated.</li>
+			<li><b>Check:</b> The count for the sales order table in both, the title and below the
+				<code>More</code> button is 10.</li>
+			<li>Enter '1000' in the search field of the sales order table.</li>
+			<li><b>Check:</b> The count for the sales order table in both, the title and below the
+				<code>More</code> button is 7.</li>
+			<li><b>Check:</b> The table is filtered and the selected sales order is not visible on
+				the sales order table.</li>
 			<li>Press the <code>Delete</code> button on the sales order object page.</li>
 			<li><b>Check:</b> The object page vanishes and there is no error message.</li>
-			<li>In case of <code>realOData=true</code> press the <code>Sales Order ID</code>
-				button in the header of the respective column of the sales orders table of the list
-				report.</li>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective
+				column of the sales orders table of the list report.</li>
 			<li><b>Check:</b> The deleted sales order is not visible in the list report.</li>
+			<li><b>Check:</b> The count for the sales order table in both, the title and below the
+				<code>More</code> button is still 7.</li>
+			<li><b>Check:</b> The corresponding sales order is no longer existing and the object
+				page vanishes.</li>
+		</ol>
+		<h3>Delete a kept-alive context in a table with transient contexts; after deletion the
+			count changes</h3>
+		<ol>
+			<li>Select the first sales order on the list report that is currently sorted ascending
+				by the <code>Sales Order ID</code>.</li>
+			<li><b>Check:</b> An object page for the first sales order occurs.</li>
+			<li><b>Check:</b> The count for the sales order line item table in both, the title and
+				below the <code>More</code> button is 27.</li>
+			<li>Select the first sales order line item on the object page.</li>
+			<li><b>Check:</b> A sub-object page with the item details appears.</li>
+			<li>Press the <code>Gross Amount</code> button.</li>
+			<li><b>Check:</b> The sales order item list is sorted by <code>GrossAmount</code> and
+				the selected sales order item is no longer part of the items list. In the sub-object
+				page it is still present.</li>
+			<li><b>Check:</b> The count of sales order line items table is still 27.</li>
+			<li>Press the <code>Create Line Item</code> button in the toolbar of the sales order
+				line items table.</li>
+			<li><b>Check:</b> A new line item occurs and the count for the sales order line item
+				table in both, the title and below the <code>More</code> button is 28.
+			</li>
+			<li>Press the <code>Delete</code> button of the sub-object page.</li>
+			<li><b>Check:</b> The sub object page vanishes.</li>
+			<li><b>Check:</b> The newly created sales order item is still there and the count for
+				the sales order line item table in both, the title and below the <code>More</code>
+				button is 27.</li>
+			<li>Press the <code>Cancel</code> button.</li>
+			<li><b>Check:</b> The newly created sales order item vanishes and the count for the
+				sales order line item table in both, the title and below the <code>More</code>
+				button is 26.</li>
 		</ol>
 		<h3>Refresh the object page of a kept-alive context that is not visible in the sales orders
 			table; after refreshing the sales order is no longer available</h3>

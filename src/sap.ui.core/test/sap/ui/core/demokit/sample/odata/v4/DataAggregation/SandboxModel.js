@@ -16,8 +16,8 @@ sap.ui.define([
 				"$metadata" : {
 					source : "metadata.xml"
 				},
-				"BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))/orderby(Country%20desc)&$count=true&$skip=0&$top=5" : {
-					source : "BusinessPartners_L1_top5.json"
+				"BusinessPartners?$apply=concat(aggregate(SalesAmount),groupby((Country),aggregate(SalesAmount))/orderby(Country%20desc)/concat(aggregate($count%20as%20UI5__count),top(4)))" : {
+					source : "BusinessPartners_L1_top4.json"
 				},
 				"BusinessPartners?$apply=filter(Country%20eq%20'Germany')/groupby((Region),aggregate(SalesAmount))/orderby(Region%20desc)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_Country_Germany_top5.json"

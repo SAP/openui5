@@ -90,9 +90,9 @@ sap.ui.getCore().attachInit(function () {
 			});
 
 			//*****************************************************************************
-			opaTest("Delete a kept-alive context that is not visible in the sales orders table, "
-					+ "after refresh context is not visible in the sales orders table and the "
-					+ "object page is updated", function (Given, When, Then) {
+			opaTest("Delete a kept-alive context that is not visible in the sales orders table"
+					+ "; after deletion the count in the table does not change and the object page"
+					+ " vanishes", function (Given, When, Then) {
 				Given.iStartMyUIComponent({
 					autoWait : true,
 					componentConfig : {
@@ -100,18 +100,57 @@ sap.ui.getCore().attachInit(function () {
 					}
 				});
 
-				When.onTheListReport.sortBySalesOrderID();
-				When.onTheListReport.selectSalesOrder(0);
-				Then.onTheObjectPage.checkSalesOrderID("0500000009");
+				Then.onTheListReport.checkSalesOrdersCount(10);
+				When.onTheListReport.selectSalesOrder(4);
+				Then.onTheObjectPage.checkSalesOrderID("0500000004");
 
-				When.onTheListReport.sortBySalesOrderID();
-				Then.onTheListReport.checkSalesOrderNotInTheList("0500000009");
-				Then.onTheObjectPage.checkSalesOrderID("0500000009");
+				When.onTheListReport.filterByGrossAmount('1000');
+				Then.onTheListReport.checkSalesOrderNotInTheList("0500000004");
+				Then.onTheListReport.checkSalesOrdersCount(7);
+				Then.onTheObjectPage.checkSalesOrderID("0500000004");
 
 				When.onTheObjectPage.deleteSalesOrder();
-				When.onTheApplication.closeDialog("Success"); // close the success dialog
+				When.onTheApplication.closeDialog("Success");
 				Then.onTheApplication.checkMessagesButtonCount(0);
 				Then.onTheApplication.checkObjectPageNotVisible();
+				Then.onTheListReport.checkSalesOrdersCount(7);
+
+				Then.iTeardownMyUIComponent();
+			});
+
+			//*****************************************************************************
+			opaTest("Delete a kept-alive context in a table with transient contexts; after"
+					+ " deletion the count changes and the sub-object page vanishes",
+					function (Given, When, Then) {
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout"
+					}
+				});
+
+				When.onTheListReport.selectSalesOrder(0);
+				Then.onTheObjectPage.checkSalesOrderID("0500000000");
+				Then.onTheObjectPage.checkSalesOrderItemsCount(27);
+
+				When.onTheObjectPage.selectSalesOrderItem(0);
+				Then.onTheSubObjectPage.checkItemPosition('0000000010');
+
+				When.onTheObjectPage.sortByGrossAmount();
+				Then.onTheObjectPage.checkSalesOrderItemNotInTheList('0000000010');
+				Then.onTheSubObjectPage.checkItemPosition('0000000010');
+
+				When.onTheObjectPage.createSalesOrderItem();
+				Then.onTheObjectPage.checkSalesOrderItemsCount(28);
+
+				When.onTheSubObjectPage.deleteSalesOrderItem();
+				When.onTheApplication.closeDialog("Success");
+				Then.onTheApplication.checkMessagesButtonCount(0);
+				Then.onTheApplication.checkSubObjectPageNotVisible();
+				Then.onTheObjectPage.checkSalesOrderItemsCount(27);
+
+				When.onTheApplication.pressCancel();
+				Then.onTheObjectPage.checkSalesOrderItemsCount(26);
 
 				Then.iTeardownMyUIComponent();
 			});

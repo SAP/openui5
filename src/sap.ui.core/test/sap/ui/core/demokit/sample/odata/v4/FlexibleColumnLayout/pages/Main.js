@@ -13,6 +13,24 @@ sap.ui.define([
 	var LayoutType = library.LayoutType,
 		sViewName = "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main";
 
+	function checkMoreButtonCount(oTrigger, sExpected) {
+		Opa5.assert.strictEqual(oTrigger.getDomRef().innerText.replace(/\s/g, ""),
+			"More" + sExpected);
+	}
+
+	/**
+	 * Compares the IDs of two different controls lexicographically.
+	 *
+	 * @param {sap.ui.core.Control} oControl1 - The first control
+	 * @param {sap.ui.core.Control} oControl2 - The second control
+	 * @returns {number}
+	 *   <code>-1</code> if the ID of the first control is lexicographically smaller than the ID
+	 *   of the second control; <code>1</code> otherwise.
+	 */
+	function compareByID(oControl1, oControl2) {
+		return oControl1.getId() < oControl2.getId() ? -1 : 1;
+	}
+
 	Opa5.createPageObjects({
 		onTheApplication : {
 			actions : {
@@ -52,6 +70,17 @@ sap.ui.define([
 						success : function (oLayout) {
 							Opa5.assert.strictEqual(oLayout.getLayout(), LayoutType.OneColumn,
 								"Object page not visible");
+						},
+						viewName : sViewName
+					});
+				},
+				checkSubObjectPageNotVisible : function () {
+					return this.waitFor({
+						controlType : "sap.f.FlexibleColumnLayout",
+						id : "layout",
+						success : function (oLayout) {
+							Opa5.assert.strictEqual(oLayout.getLayout(),
+								LayoutType.TwoColumnsMidExpanded, "Sub-object page not visible");
 						},
 						viewName : sViewName
 					});
@@ -98,6 +127,7 @@ sap.ui.define([
 							return oControl.getBindingContext().getIndex() === iRow;
 						},
 						success : function (aControls) {
+							aControls.sort(compareByID);
 							Opa5.assert.strictEqual(aControls[0].getText(), sSalesOrderID);
 							Opa5.assert.strictEqual(aControls[1].getText(), sNote);
 						},
@@ -117,6 +147,18 @@ sap.ui.define([
 						},
 						viewName : sViewName
 					});
+				},
+				checkSalesOrdersCount : function (iCount) {
+					this.waitFor({
+						id : /SalesOrderList-trigger|salesOrderListTitle/,
+						success : function (aControls) {
+							aControls.sort(compareByID);
+							checkMoreButtonCount(aControls[0], "[5/" + iCount + "]");
+							Opa5.assert.strictEqual(aControls[1].getText(),
+								iCount + " New Sales Orders");
+						},
+						viewName : sViewName
+					});
 				}
 			}
 		},
@@ -124,6 +166,17 @@ sap.ui.define([
 			actions : {
 				changeNote : function (sNote) {
 					return Helper.changeInputValue(this, sViewName, "SalesOrder::note", sNote);
+				},
+				createSalesOrderItem : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "createSalesOrderLineItem",
+						success : function () {
+							Opa5.assert.ok(true, "Sales order line item created");
+						},
+						viewName : sViewName
+					});
 				},
 				deleteSalesOrder : function () {
 					return this.waitFor({
@@ -171,6 +224,9 @@ sap.ui.define([
 				checkNote : function (sNote) {
 					Helper.checkInputValue(this, sViewName, "SalesOrder::note", sNote);
 				},
+				checkSalesOrderID : function (sSalesOrderID) {
+					Helper.checkInputValue(this, sViewName, "SalesOrder::id", sSalesOrderID);
+				},
 				checkSalesOrderItem : function (iRow, sItemPosition, sQuantity) {
 					this.waitFor({
 						controlType : "sap.m.Text",
@@ -179,14 +235,12 @@ sap.ui.define([
 							return oControl.getBindingContext().getIndex() === iRow;
 						},
 						success : function (aControls) {
+							aControls.sort(compareByID);
 							Opa5.assert.strictEqual(aControls[0].getText(), sItemPosition);
 							Opa5.assert.strictEqual(aControls[1].getText(), sQuantity);
 						},
 						viewName : sViewName
 					});
-				},
-				checkSalesOrderID : function (sSalesOrderID) {
-					Helper.checkInputValue(this, sViewName, "SalesOrder::id", sSalesOrderID);
 				},
 				checkSalesOrderItemNotInTheList : function (sItemPosition) {
 					this.waitFor({
@@ -198,6 +252,18 @@ sap.ui.define([
 									return oControl.getText() !== sItemPosition;
 								}), "Item'" + sItemPosition + "' not found"
 							);
+						},
+						viewName : sViewName
+					});
+				},
+				checkSalesOrderItemsCount : function (iCount) {
+					this.waitFor({
+						id : /SO_2_SOITEM-trigger|lineItemsTitle/,
+						success : function (aControls) {
+							aControls.sort(compareByID);
+							checkMoreButtonCount(aControls[0], "[5/" + iCount + "]");
+							Opa5.assert.strictEqual(aControls[1].getText(),
+								iCount + " Sales Order Line Items");
 						},
 						viewName : sViewName
 					});
