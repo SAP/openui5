@@ -680,6 +680,22 @@ sap.ui.define([
 				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, sap.ui.fl.Versions.Draft.toString(), "the connector for draft layer has the version property set");
 			});
 		});
+
+		QUnit.test("Given one connector are provided version parameter are not set in url parameter", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]}
+			]);
+
+			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
+			var oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "loadFlexData").resolves();
+
+			return Storage.loadFlexData({
+				reference: "app.id"
+			}).then(function () {
+				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].version, undefined, "the StaticFileConnector has the version property NOT set");
+				assert.equal(oKeyUserConnectorStub.getCall(0).args[0].version, undefined, "version property NOT set for the connector");
+			});
+		});
 	});
 
 
