@@ -46,10 +46,12 @@ sap.ui.define(function () {
 			"lib/_AggregationHelper" : {},
 			"lib/_Batch" : {},
 			"lib/_Cache" : {},
+			"lib/_GrandTotalHelper" : {},
 			"lib/_GroupLock" : {},
 			"lib/_Helper" : {},
 			"lib/_MetadataConverter" : {},
 			"lib/_MetadataRequestor" : {},
+			"lib/_MinMaxHelper" : {},
 			"lib/_Parser" : {},
 			"lib/_Requestor" : {},
 			"lib/_V2MetadataConverter" : {},
@@ -57,6 +59,7 @@ sap.ui.define(function () {
 			"lib/_V4MetadataConverter" : {},
 			// the following tests set autostart=false because they require modules asynchronously
 			// and start QUnit on their own
+			// the following tests must all be named "OPA.*" so that 1Ring ignores them
 			"OPA.DataAggregation" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/DataAggregation/Opa.qunit"]
