@@ -364,8 +364,8 @@ sap.ui.define([
 		oLI.addMarker(oMarker);
 
 		// Assert
-		assert.ok(oLI._oMarkersObservers.marker, "There is key set to the _oMarkersObservers that is equal to the marker id");
-		assert.ok(oLI._oMarkersObservers.marker instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker");
+		assert.ok(oLI._oItemsObservers.marker, "There is key set to the _oItemsObservers that is equal to the marker id");
+		assert.ok(oLI._oItemsObservers.marker instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker");
 
 		// Cleanup
 		oLI.destroy();
@@ -380,8 +380,8 @@ sap.ui.define([
 		oLI.insertMarker(oMarker, 0);
 
 		// Assert
-		assert.ok(oLI._oMarkersObservers.marker, "There is key set to the _oMarkersObservers that is equal to the marker id");
-		assert.ok(oLI._oMarkersObservers.marker instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker");
+		assert.ok(oLI._oItemsObservers.marker, "There is key set to the _oItemsObservers that is equal to the marker id");
+		assert.ok(oLI._oItemsObservers.marker instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker");
 
 		// Cleanup
 		oLI.destroy();
@@ -393,14 +393,14 @@ sap.ui.define([
 		var oLI = new ObjectListItem({ markers: oMarker });
 
 		// Assert
-		assert.ok(oLI._oMarkersObservers.marker, "There is key set to the _oMarkersObservers that is equal to the marker id");
-		assert.ok(oLI._oMarkersObservers.marker instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker");
+		assert.ok(oLI._oItemsObservers.marker, "There is key set to the _oItemsObservers that is equal to the marker id");
+		assert.ok(oLI._oItemsObservers.marker instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker");
 
 		// Act
 		oLI.removeMarker(oMarker);
 
 		// Assert
-		assert.notOk(oLI._oMarkersObservers.marker, "MarkersObservers hashmap should not have marker key");
+		assert.notOk(oLI._oItemsObservers.marker, "ItemsObservers hashmap should not have marker key");
 
 		// Cleanup
 		oLI.destroy();
@@ -414,17 +414,17 @@ sap.ui.define([
 		var oLI = new ObjectListItem({ markers: [oMarker1, oMarker2] });
 
 		// Assert
-		assert.ok(oLI._oMarkersObservers.marker1, "There is key set to the _oMarkersObservers that is equal to the marker1 id");
-		assert.ok(oLI._oMarkersObservers.marker1 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker1");
-		assert.ok(oLI._oMarkersObservers.marker2, "There is key set to the _oMarkersObservers that is equal to the marker2 id");
-		assert.ok(oLI._oMarkersObservers.marker2 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker2");
+		assert.ok(oLI._oItemsObservers.marker1, "There is key set to the _oItemsObservers that is equal to the marker1 id");
+		assert.ok(oLI._oItemsObservers.marker1 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker1");
+		assert.ok(oLI._oItemsObservers.marker2, "There is key set to the _oItemsObservers that is equal to the marker2 id");
+		assert.ok(oLI._oItemsObservers.marker2 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker2");
 
 		// Act
 		oLI.removeAllMarkers();
 
 		// Assert
-		assert.notOk(oLI._oMarkersObservers.marker1, "MarkersObservers hashmap should not have marker1 key");
-		assert.notOk(oLI._oMarkersObservers.marker2, "MarkersObservers hashmap should not have marker2 key");
+		assert.notOk(oLI._oItemsObservers.marker1, "ItemsObservers hashmap should not have marker1 key");
+		assert.notOk(oLI._oItemsObservers.marker2, "ItemsObservers hashmap should not have marker2 key");
 
 		// Cleanup
 		oLI.destroy();
@@ -439,17 +439,17 @@ sap.ui.define([
 		var oLI = new ObjectListItem({ markers: [oMarker1, oMarker2] });
 
 		// Assert
-		assert.ok(oLI._oMarkersObservers.marker1, "There is key set to the _oMarkersObservers that is equal to the marker1 id");
-		assert.ok(oLI._oMarkersObservers.marker1 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker1");
-		assert.ok(oLI._oMarkersObservers.marker2, "There is key set to the _oMarkersObservers that is equal to the marker2 id");
-		assert.ok(oLI._oMarkersObservers.marker2 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker2");
+		assert.ok(oLI._oItemsObservers.marker1, "There is key set to the _oItemsObservers that is equal to the marker1 id");
+		assert.ok(oLI._oItemsObservers.marker1 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker1");
+		assert.ok(oLI._oItemsObservers.marker2, "There is key set to the _oItemsObservers that is equal to the marker2 id");
+		assert.ok(oLI._oItemsObservers.marker2 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker2");
 
 		// Act
 		oLI.destroyMarkers();
 
 		// Assert
-		assert.notOk(oLI._oMarkersObservers.marker1, "MarkersObservers hashmap should not have marker1 key");
-		assert.notOk(oLI._oMarkersObservers.marker2, "MarkersObservers hashmap should not have marker2 key");
+		assert.notOk(oLI._oItemsObservers.marker1, "ItemsObservers hashmap should not have marker1 key");
+		assert.notOk(oLI._oItemsObservers.marker2, "ItemsObservers hashmap should not have marker2 key");
 
 		// Cleanup
 		oLI.destroy();
@@ -635,6 +635,111 @@ sap.ui.define([
 		assert.ok(!liEmptyAll._hasBottomContent(), "Object list item has no bottom content");
 	});
 
+	/******************************************************************/
+
+	QUnit.module("Attributes aggregation general");
+
+	QUnit.test("addAttribute should add observer for changes in attribute properties", function (assert) {
+		// Arrange
+		var oAttribute = new ObjectAttribute("attribute", { text: "test" });
+		var oLI = new ObjectListItem();
+
+		// Act
+		oLI.addAttribute(oAttribute);
+
+		// Assert
+		assert.ok(oLI._oItemsObservers.attribute, "There is key set to the _oItemsObservers that is equal to the attribute id");
+		assert.ok(oLI._oItemsObservers.attribute instanceof ManagedObjectObserver, "observer is set properly for attribute with id: attribute");
+
+		// Cleanup
+		oLI.destroy();
+	});
+
+	QUnit.test("insertAttribute should add observer for changes in attribute properties", function (assert) {
+		// Arrange
+		var oAttribute = new ObjectAttribute("attribute", { text: "test" });
+		var oLI = new ObjectListItem();
+
+		// Act
+		oLI.insertAttribute(oAttribute, 0);
+
+		// Assert
+		assert.ok(oLI._oItemsObservers.attribute, "There is key set to the _oItemsObservers that is equal to the attribute id");
+		assert.ok(oLI._oItemsObservers.attribute instanceof ManagedObjectObserver, "observer is set properly for attribute with id: attribute");
+
+		// Cleanup
+		oLI.destroy();
+	});
+
+	QUnit.test("removeAttribute should remove observer for changes in attribute properties", function (assert) {
+		// Arrange
+		var oAttribute = new ObjectAttribute("attribute", { text: "test" });
+		var oLI = new ObjectListItem({ attributes: oAttribute });
+
+		// Assert
+		assert.ok(oLI._oItemsObservers.attribute, "There is key set to the _oItemsObservers that is equal to the attribute id");
+		assert.ok(oLI._oItemsObservers.attribute instanceof ManagedObjectObserver, "observer is set properly for attribute with id: attribute");
+
+		// Act
+		oLI.removeAttribute(oAttribute);
+
+		// Assert
+		assert.notOk(oLI._oItemsObservers.attribute, "ItemsObservers hashmap should not have attribute key");
+
+		// Cleanup
+		oLI.destroy();
+		oAttribute.destroy();
+	});
+
+	QUnit.test("removeAllAttributes should remove observer for changes in attribite properties", function (assert) {
+		// Arrange
+		var oAttribute1 = new ObjectAttribute("attribute1", { text: "test1" });
+		var oAttribute2 = new ObjectAttribute("attribute2", { text: "test2" });
+		var oLI = new ObjectListItem({ attributes: [oAttribute1, oAttribute2] });
+
+		// Assert
+		assert.ok(oLI._oItemsObservers.attribute1, "There is key set to the _oItemsObservers that is equal to the attribute1 id");
+		assert.ok(oLI._oItemsObservers.attribute1 instanceof ManagedObjectObserver, "observer is set properly for attribute with id: attribute1");
+		assert.ok(oLI._oItemsObservers.attribute2, "There is key set to the _oItemsObservers that is equal to the attribute2 id");
+		assert.ok(oLI._oItemsObservers.attribute2 instanceof ManagedObjectObserver, "observer is set properly for attribute with id: attribute2");
+
+		// Act
+		oLI.removeAllAttributes();
+
+		// Assert
+		assert.notOk(oLI._oItemsObservers.attribute1, "MarkersObservers hashmap should not have marker1 key");
+		assert.notOk(oLI._oItemsObservers.attribute2, "MarkersObservers hashmap should not have marker2 key");
+
+		// Cleanup
+		oLI.destroy();
+		oAttribute1.destroy();
+		oAttribute2.destroy();
+	});
+
+	QUnit.test("destroyAttributes should remove observer for changes in attribute properties", function (assert) {
+		// Arrange
+		var oAttribute1 = new ObjectAttribute("attribute1", { text: "test1" });
+		var oAttribute2 = new ObjectAttribute("attribute2", { text: "test2" });
+		var oLI = new ObjectListItem({ attributes: [oAttribute1, oAttribute2] });
+
+		// Assert
+		assert.ok(oLI._oItemsObservers.attribute1, "There is key set to the _oItemsObservers that is equal to the attribute1 id");
+		assert.ok(oLI._oItemsObservers.attribute1 instanceof ManagedObjectObserver, "observer is set properly for attribute with id: attribute1");
+		assert.ok(oLI._oItemsObservers.attribute2, "There is key set to the _oItemsObservers that is equal to the attribute2 id");
+		assert.ok(oLI._oItemsObservers.attribute2 instanceof ManagedObjectObserver, "observer is set properly for attribute with id: attribute2");
+
+		// Act
+		oLI.destroyAttributes();
+
+		// Assert
+		assert.notOk(oLI._oItemsObservers.attribute1, "ItemsObservers hashmap should not have attribute1 key");
+		assert.notOk(oLI._oItemsObservers.attribute2, "ItemsObservers hashmap should not have attribute2 key");
+
+		// Cleanup
+		oLI.destroy();
+		oAttribute1.destroy();
+		oAttribute2.destroy();
+	});
 
 	/******************************************************************/
 	var markerId = "marker-OLI";
