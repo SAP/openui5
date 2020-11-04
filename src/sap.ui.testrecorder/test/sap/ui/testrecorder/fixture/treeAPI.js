@@ -260,16 +260,16 @@ sap.ui.define([
 						}
 					};
 					case "DatePicker":
-					var sRaw = '{\n' +
-					'    id: "container-myComponent---main--DatePickerOne-RP-popover",\n' +
-					'    searchOpenDialogs: true';
-					return {
-						snippet: {
-							OPA5: {
-								Highlight:  _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert")
+						var sRaw = '{\n' +
+						'    id: "container-myComponent---main--DatePickerOne-RP-popover",\n' +
+						'    searchOpenDialogs: true';
+						return {
+							snippet: {
+								OPA5: {
+									Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert")
+								}
 							}
-						}
-					};
+						};
 					default:
 					return DEFAULT_OUTPUT;
 			}

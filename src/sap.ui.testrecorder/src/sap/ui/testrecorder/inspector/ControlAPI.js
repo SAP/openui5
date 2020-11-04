@@ -37,7 +37,12 @@ sap.ui.define([
 			sControlId = mData.controlId;
 		} else if (mData.domElementId) {
 			// would have DOM element e.g. when control is selected by clicking on the page
-			sControlId = _ControlFinder._getControlForElement(mData.domElementId).getId();
+			var oControl = _ControlFinder._getControlForElement(mData.domElementId);
+			if (oControl) {
+				sControlId = oControl.getId();
+			} else {
+				return {};
+			}
 		}
 
 		var aProperties = this._getFormattedProperties(sControlId);

@@ -88,13 +88,6 @@ sap.ui.define([
 		Then.onTheIFrameInspectPage.iShouldSeeItemOwnProperties(mItems[0].text);
 	});
 
-	opaTest("Should interact with sap.m.DatePicker", function (Given, When, Then) {
-		When.onTheAppPage.iOpenTheDatePicker();
-		When.onTheAppPage.iActOnControl(mItems[3].selector, "Highlight");
-		Then.onTheAppPage.iShouldSeeTheSelectedControl(mItems[3].selector); // control should still be open after action
-		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[3].text, Dialects.OPA5, "Highlight");
-	});
-
 	opaTest("Should interact with control in app - UIVERI5", function (Given, When, Then) {
 		When.onTheAppPage.iActOnControl(mItems[1].selector, "Highlight"); // clear
 		When.onTheIFrameInspectPage.iSelectDialect(Dialects.UIVERI5);
@@ -118,7 +111,7 @@ sap.ui.define([
 		Then.onTheAppPage.iShouldSeeTheSelectedControl(mItems[0].selector);
 	});
 
-	opaTest("Should should switch between snippet dialects - selector only", function (Given, When, Then) {
+	opaTest("Should switch between snippet dialects - selector only", function (Given, When, Then) {
 		When.onTheAppPage.iActOnControl(mItems[0].selector, "Highlight");
 		When.onTheIFrameInspectPage.iSelectDialect(Dialects.RAW);
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.RAW);
@@ -130,7 +123,7 @@ sap.ui.define([
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.UIVERI5);
 	});
 
-	opaTest("Should should switch between snippet dialects - selector and action", function (Given, When, Then) {
+	opaTest("Should switch between snippet dialects - selector and action", function (Given, When, Then) {
 		When.onTheIFrameTreePage.iSelectActionWithItem(mItems[0].treeText, "Press");
 
 		When.onTheIFrameInspectPage.iSelectDialect(Dialects.RAW);
@@ -207,6 +200,14 @@ sap.ui.define([
 
 		When.onTheAppPage.iEnterText(mTestData.selector, mTestData.newValue);
 		Then.onTheIFrameInspectPage.iShouldSeeItemProperty(mTestData.prop, mTestData.newValue);
+	});
+
+	opaTest("Should interact with sap.m.DatePicker", function (Given, When, Then) {
+		When.onTheIFrameInspectPage.iSelectDialect(Dialects.OPA5);
+		When.onTheAppPage.iOpenTheDatePicker();
+		When.onTheAppPage.iActOnControl(mItems[3].selector, "Highlight");
+		Then.onTheAppPage.iShouldSeeTheSelectedControl(mItems[3].selector); // control should still be open after action
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[3].text, Dialects.OPA5, "Highlight");
 
 		Then.iTeardownMyApp();
 	});
