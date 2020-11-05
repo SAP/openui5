@@ -169,7 +169,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin with fragment handler function are created and the DesignTime is started ", {
+	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin with initial fragment handler function is created and the DesignTime is started ", {
 		beforeEach: function() {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			this.sInitialFragmentPath = "sap/ui/.../fragment/fragmentName";
@@ -187,7 +187,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when handler is called without fragmentHandler function in the propertyBag defined", function(assert) {
+		QUnit.test("when handler is called for the view overlay, without fragmentHandler function in the propertyBag defined", function(assert) {
 			var fnDone = assert.async(2);
 			var oPropertyBag = {};
 			this.oAddXmlAtExtensionPointPlugin.attachElementModified(function (oEvent) {
@@ -200,16 +200,24 @@ sap.ui.define([
 				assert.deepEqual(oCommand.getCommands()[1].getParameters(), mAppDescriptorparameters, "then the CompositeCommand contains AppDescriptorCommand");
 				fnDone();
 			}.bind(this));
-			this.oAddXmlAtExtensionPointPlugin.handler([this.oPanelOverlay], oPropertyBag)
+			var oViewOverlay = OverlayRegistry.getOverlay(this.oXmlView);
+			this.oAddXmlAtExtensionPointPlugin.handler([oViewOverlay], oPropertyBag)
 				.then(function () {
-					assert.strictEqual(this.oFragmentHandlerStub.callCount, 1, "then the fragment handler function is called once");
-					assert.strictEqual(this.oFragmentHandlerStub.firstCall.args[0], this.oPanelOverlay, "then the fragment handler function is called with panel overlay as first parameter");
-					assert.ok(Array.isArray(this.oFragmentHandlerStub.firstCall.args[1]), "then the fragment handler function is called with array of ExtensionPointInformations as second parameter");
+					assert.strictEqual(this.oFragmentHandlerStub.callCount, 1,
+						"then the fragment handler function is called once");
+					assert.strictEqual(this.oFragmentHandlerStub.firstCall.args[0], oViewOverlay,
+						"then the fragment handler function is called with panel overlay as first parameter");
+					var aPassedExtensionPointObjects = this.oFragmentHandlerStub.firstCall.args[1];
+					assert.ok(Array.isArray(aPassedExtensionPointObjects),
+						"then the fragment handler function is called with array of ExtensionPointInformations as second parameter");
+					assert.deepEqual(aPassedExtensionPointObjects.map(function (oExtensionPoint) { return oExtensionPoint.name; }),
+						["ExtensionPoint1", "ExtensionPoint2", "ExtensionPoint3"],
+						"then the expected extension points for the view are returned");
 					fnDone();
 				}.bind(this));
 		});
 
-		QUnit.test("when handler is called with fragmentHandler function in the propertyBag defined", function(assert) {
+		QUnit.test("when handler is called for the panel overlay, with fragmentHandler function in the propertyBag defined", function(assert) {
 			var fnDone = assert.async(2);
 			var sSecondFragmentPath = "sap/ui/.../fragment/SecondFragment";
 			var oSecondFragmentHandlerStub = sandbox.stub().resolves({

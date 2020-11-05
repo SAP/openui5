@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/api/ExtensionPointRegistryAPI"
+	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
+	"sap/base/util/values"
 ], function(
 	Plugin,
 	DtUtil,
 	FlUtils,
 	ManifestUtils,
-	ExtensionPointRegistryAPI
+	ExtensionPointRegistryAPI,
+	values
 ) {
 	"use strict";
 
@@ -64,9 +66,16 @@ sap.ui.define([
 	var FLEX_CHANGE_TYPE = "addXMLAtExtensionPoint";
 	var APP_DESCRIPTOR_CHANGE_TYPE = "appdescr_ui5_setFlexExtensionPointEnabled";
 
-	function hasExtensionPoints(oElement) {
+	function getExtensionPointList(oElement) {
 		var oElementId = oElement.getId();
-		return ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: oElementId}).length > 0;
+		// determine a list of extension points for the given element. In case the element is a view
+		// all extension points available for the view are returned
+		var aExtensionPointInfo = ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: oElementId});
+		return aExtensionPointInfo.length ? aExtensionPointInfo : values(ExtensionPointRegistryAPI.getExtensionPointInfoByViewId({viewId: oElementId}));
+	}
+
+	function hasExtensionPoints(oElement) {
+		return getExtensionPointList(oElement).length > 0;
 	}
 
 	function isDesignMode() {
@@ -192,8 +201,8 @@ sap.ui.define([
 					return Promise.reject("Fragment handler function is not available in the handler");
 				}
 				var oOverlay = aElementOverlays[0];
-				var oElementId = oOverlay.getElement().getId();
-				var aExtensionPointInfos = ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: oElementId});
+				var oElement = oOverlay.getElement();
+				var aExtensionPointInfos = getExtensionPointList(oElement);
 				return fnFragmentHandler(oOverlay, aExtensionPointInfos);
 			}.bind(this))
 
