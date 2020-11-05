@@ -5,12 +5,15 @@ describe('sap.m.MultiComboBox', function() {
 
 	// Initial loading
 	it("should load test page",function(){
+		//click over a button that hides the caret when a control is on focus
+		element(by.id("customCssButton")).click();
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
 	//MultiComboBox - Default
 	it("should visualize the first MultiComboBox", function () {
 		var firstMultiComboBox = element(by.id("MultiComboBox2"));
+		firstMultiComboBox.click();
 		expect(takeScreenshot(firstMultiComboBox)).toLookAs("first_multiComboBox");
 	});
 
@@ -34,12 +37,13 @@ describe('sap.m.MultiComboBox', function() {
 	});
 
 	//MultiComboBox - Filtering
-	it("should open first ComboBox - Default", function() {
-		var defaultArrow = element(by.id("MultiComboBox0-arrow"));
-		defaultArrow.click();
+	it("should open first MultiComboBox - Default", function() {
+		var defaultMultiComboBox = element(by.id("MultiComboBox0")),
+			defaultMultiComboBoxArrow = element(by.id("MultiComboBox0-arrow"));
+		defaultMultiComboBox.click();
 		browser.actions().sendKeys("B").perform();
 		expect(takeScreenshot()).toLookAs("multicombobox-filtering");
-		defaultArrow.click();
+		defaultMultiComboBoxArrow.click();
 	});
 
 	//MultiComboBox - 50% width
@@ -81,34 +85,47 @@ describe('sap.m.MultiComboBox', function() {
 	//MultiComboBox - Disabled
 	it("should visualize a MultiComboBox - Disabled", function(){
 		var disabledMultiComboBox = element(by.id("MultiComboBoxDisabled"));
+		//click in order to ensure that there is no visual focus presented
+		disabledMultiComboBox.click();
 		expect(takeScreenshot(disabledMultiComboBox)).toLookAs("disabled");
 	});
 
 	//MultiComboBox - Placeholder
 	it("should visualize a MultiComboBox with placeholder and without selected items", function(){
 		var multiComboBoxPlaceholder = element(by.id("MultiComboBoxWithoutKey"));
+		multiComboBoxPlaceholder.click();
 		expect(takeScreenshot(multiComboBoxPlaceholder)).toLookAs("placeholder");
-	});
-
-	//MultiComboBox Compact Mode
-	it("should select Compact mode", function(){
-		element(by.id("compactMode")).click();
-		expect(takeScreenshot()).toLookAs("compact_mode");
-		element(by.id("compactMode")).click();
 	});
 
 	//MultiComboBox - Error state
 	it("should visualize a MultiComboBox - Error state", function(){
 		var errorStateMultiComboBox = element(by.id("MultiComboBoxError"));
+		errorStateMultiComboBox.click();
 		expect(takeScreenshot(errorStateMultiComboBox)).toLookAs("error_state");
+	});
+
+	//MultiComboBox - Error value state messaage with link
+	it("should visualize a MultiComboBox - Error state", function(){
+		var errorStateMultiComboBox = element(by.id("MultiComboBoxErrorWithLink"));
+		errorStateMultiComboBox.click();
+		expect(takeScreenshot(errorStateMultiComboBox)).toLookAs("error_state_with_link");
 	});
 
 	//MultiComboBox - Warning state
 	it("should visualize a MultiComboBox - Warning State", function(){
 		browser.executeScript('document.getElementById("MultiComboBoxWarning").scrollIntoView()').then(function() {
 			var warningStateMultiComboBox = element(by.id("MultiComboBoxWarning"));
-			expect(takeScreenshot(warningStateMultiComboBox)).toLookAs("warning_state");
-			expect(takeScreenshot()).toLookAs("long_value_state");
+			warningStateMultiComboBox.click();
+			expect(takeScreenshot(warningStateMultiComboBox)).toLookAs("warning_state_with_long_value_state");
+		});
+	});
+
+	//MultiComboBox - Warning value state messaage with link
+	it("should visualize a MultiComboBox - Warning State", function(){
+		browser.executeScript('document.getElementById("MultiComboBoxWarning").scrollIntoView()').then(function() {
+			var warningStateMultiComboBox = element(by.id("MultiComboBoxWarningWithLinks"));
+			warningStateMultiComboBox.click();
+			expect(takeScreenshot(warningStateMultiComboBox)).toLookAs("warning_state_with_link");
 		});
 	});
 
@@ -116,6 +133,7 @@ describe('sap.m.MultiComboBox', function() {
 	it("should visualize a MultiComboBox - Success state", function(){
 		browser.executeScript('document.getElementById("MultiComboBoxSuccess").scrollIntoView()').then(function() {
 			var successStateMultiComboBox = element(by.id("MultiComboBoxSuccess"));
+			successStateMultiComboBox.click();
 			expect(takeScreenshot(successStateMultiComboBox)).toLookAs("success_state");
 		});
 	});
@@ -123,12 +141,26 @@ describe('sap.m.MultiComboBox', function() {
 	//MultiComboBox - Binding
 	it("should visualize a MultiComboBox with binding", function(){
 		browser.executeScript('document.getElementById("MultiComboBoxBinding").scrollIntoView()').then(function() {
-			var successStateMultiComboBox = element(by.id("MultiComboBoxBinding"));
-			expect(takeScreenshot(successStateMultiComboBox)).toLookAs("multiComboBox_binding");
+			var bindingMultiComboBox = element(by.id("MultiComboBoxBinding"));
+			bindingMultiComboBox.click();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			expect(takeScreenshot(bindingMultiComboBox)).toLookAs("multiComboBox_binding_initially_selected");
+		});
+
+		browser.executeScript('document.getElementById("page1-navButton").scrollIntoView()').then(function() {
+			element(by.id("page1-navButton")).click();
+			element(by.id("page2-navButton")).click();
+		});
+
+		browser.executeScript('document.getElementById("MultiComboBoxBinding").scrollIntoView()').then(function() {
+			var bindingMultiComboBox = element(by.id("MultiComboBoxBinding"));
+			bindingMultiComboBox.click();
+			expect(takeScreenshot(bindingMultiComboBox)).toLookAs("multiComboBox_binding_after_navigation");
 		});
 	});
 
-	//MultiComboBox - Binding
+	//MultiComboBox - Last selected item
 	it("should visualize a MultiComboBox and select the last item to check if the popover have unnecessary scroll", function(){
 		browser.executeScript('document.getElementById("MultiComboBoxFourItems").scrollIntoView()').then(function() {
 			element(by.id("MultiComboBoxFourItems-arrow")).click();
@@ -147,6 +179,8 @@ describe('sap.m.MultiComboBox', function() {
 			var oMultiComboBox = element(by.id("MultiComboBoxBinding"));
 			var oMultiComboBoxArrow = element(by.id("MultiComboBoxBinding-arrow"));
 			oMultiComboBox.click();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
@@ -154,5 +188,12 @@ describe('sap.m.MultiComboBox', function() {
 			oMultiComboBoxArrow.click();
 			expect(takeScreenshot()).toLookAs("multiComboBox_dropdown_selection");
 		});
+	});
+
+	//MultiComboBox Compact Mode
+	it("should select Compact mode", function(){
+		element(by.id("compactMode")).click();
+		expect(takeScreenshot()).toLookAs("compact_mode");
+		element(by.id("compactMode")).click();
 	});
 });
