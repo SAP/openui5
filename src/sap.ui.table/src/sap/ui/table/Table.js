@@ -1742,12 +1742,12 @@ sap.ui.define([
 			onlySetProperty: false
 		}, mOptions);
 
-		if (iRowIndex < 0) {
+		if (iRowIndex == null) {
+			iRowIndex = 0;
+		} else if (iRowIndex < 0) {
 			Log.error("The index of the first visible row must be greater than or equal to 0. The value has been set to 0.", this);
 			iRowIndex = 0;
-		}
-
-		if (this._bContextsAvailable) {
+		} else if (this._bContextsAvailable) {
 			var iMaxRowIndex = this._getMaxFirstVisibleRowIndex();
 
 			if (iMaxRowIndex < iRowIndex) {
