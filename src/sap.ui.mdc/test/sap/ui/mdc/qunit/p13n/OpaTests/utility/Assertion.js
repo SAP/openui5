@@ -276,7 +276,7 @@ sap.ui.define([
 				matchers: aMatchers,
 				success: function(aLabels) {
 					var oListItem = aLabels[0].getParent();
-					var oFilterField = oListItem.getContent ? oListItem.getContent()[1] : oListItem.getCells()[1];
+					var oFilterField = oListItem.getContent ? oListItem.getContent()[1].getItems()[0] : oListItem.getCells()[1];
 					if (aValues.length > 0){
 						aValues.forEach(function(sValue, iIndex){
 							var oValue = oFilterField.getConditions()[iIndex];

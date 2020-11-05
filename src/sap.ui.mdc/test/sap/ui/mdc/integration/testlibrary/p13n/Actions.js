@@ -37,25 +37,26 @@ sap.ui.define([
 				waitForListItemInDialogWithLabel.call(this, {
 					dialog: oDialog,
 					label: sText,
-					listItemType: "sap.ui.mdc.filterbar.p13n.FilterGroupLayout",
-					success: function(oColumnListItem) {
-						var bColumnListItemSelected = oColumnListItem.isSelected();
+					direct: true,
+					listItemType: "sap.m.CustomListItem",
+					success: function(oListItem) {
+						var bColumnListItemSelected = oListItem.isSelected();
 
 						// do only select/deselect an item if it not selected/deselected
 						if (bColumnListItemSelected === bSelectionAction) {
 							return;
 						}
 
-						var oTable = oColumnListItem.getParent();
+						var oTable = oListItem.getParent();
 
 						if ((oTable.getMode() === "MultiSelect") && (oTable.getIncludeItemInSelection() === false)) {
 
-							assert(oColumnListItem.isSelectable(), "The table item must be selectable. -");
+							assert(oListItem.isSelectable(), "The table item must be selectable. -");
 
 							this.waitFor({
 								controlType: "sap.m.CheckBox",
 								matchers: [
-									new Ancestor(oColumnListItem)
+									new Ancestor(oListItem)
 								],
 								actions: new Press(),
 								success: function() {

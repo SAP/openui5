@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.mdc.filterbar.p13n.FilterGroupLayout.
-sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/Label'
-], function(CustomListItem, CustomListItemRenderer, Label) {
+sap.ui.define(['sap/m/VBox', 'sap/m/VBoxRenderer', 'sap/m/Label'
+], function(VBox, VBoxRenderer, Label) {
 	"use strict";
 
 	/**
@@ -20,8 +20,8 @@ sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/La
 	 * @alias sap.ui.mdc.filterbar.p13n.FilterGroupLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var FilterGroupLayout = CustomListItem.extend("sap.ui.mdc.filterbar.p13n.FilterGroupLayout", {
-		renderer: CustomListItemRenderer
+	var FilterGroupLayout = VBox.extend("sap.ui.mdc.filterbar.p13n.FilterGroupLayout", {
+		renderer: VBoxRenderer
 	});
 
 	FilterGroupLayout.prototype._getFieldPath = function () {
@@ -33,28 +33,14 @@ sap.ui.define(['sap/m/CustomListItem', 'sap/m/CustomListItemRenderer', 'sap/m/La
 		this._sFieldPath = oFilterField.getFieldPath();
 	};
 
-	FilterGroupLayout.prototype.getContent = function() {
+	FilterGroupLayout.prototype.getItems = function() {
 		var aContent = [];
-
-		var oLabel = new Label({
-			//TODO/CHECK: Use and set propertyInfo for FilterField instead?
-			text: this._oFilterField.getLabel(),
-			required: "{$p13n>required}"
-		});
-
-		oLabel.addStyleClass("sapUiMdcFilterBarBaseLabel");
-
-		oLabel.setParent(this);
-
-		aContent.push(oLabel);
-
 		aContent.push(this._oFilterField);
-
 		return aContent;
 	};
 
 	FilterGroupLayout.prototype.exit = function () {
-		CustomListItem.prototype.exit.apply(this, arguments);
+		VBox.prototype.exit.apply(this, arguments);
 		this._oFilterField = null;
 		this._sFieldPath = null;
 	};

@@ -124,6 +124,7 @@ sap.ui.define([
 			var sPopoverTitle = oSettings.title;
 			var sColumnName = oSettings.columnName;
 			var fSuccess = oSettings.success;
+			var bDirectDescendant = !!oSettings.direct;
 
 			var aMatchers = [];
 
@@ -149,7 +150,7 @@ sap.ui.define([
 							this.waitFor({
 								searchOpenDialogs: true,
 								controlType: sItemNameSpace,
-								matchers: new Descendant(aLabels[0]),
+								matchers: new Descendant(aLabels[0], bDirectDescendant),
 								success: function (aColumnListItems) {
 									fSuccess(aColumnListItems);
 								}
@@ -164,9 +165,10 @@ sap.ui.define([
 			return this.waitForP13nItem({
 				itemNameSpace: "sap.m.ListItemBase",
 				columnName: sFilterName,
+				direct: true,//parent list should not be considered
 				modal: typeof bLive == "boolean" ? !bLive : true,
 				success: function(aItems) {
-					var oFilterField = aItems[0].getContent ? aItems[1].getContent()[1] : aItems[0].getCells()[1];
+					var oFilterField = aItems[0].getContent ? aItems[0].getContent()[1].getItems()[0] : aItems[0].getCells()[1];
 					Opa5.assert.ok(oFilterField,"FilterField found");
 					setTimeout(function(){
 						new EnterText({
@@ -209,7 +211,8 @@ sap.ui.define([
 				title: sPopoverTitle,
 				items: aP13nItems,
 				modal: typeof bModal === "boolean" ? bModal : true,
-				itemNameSpace: bFilter ? "sap.ui.mdc.filterbar.p13n.FilterGroupLayout" : undefined,
+				direct: bFilter,
+				itemNameSpace: bFilter ? "sap.m.CustomListItem" : undefined,
 				success: function(aColumnListItems) {
 					var oCheckBox = aColumnListItems[0].getMultiSelectControl();
 					new Press().executeOn(oCheckBox);
