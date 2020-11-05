@@ -1,9 +1,8 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
-	"sap/m/MessageBox",
-	"sap/ui/core/Fragment"
-], function (Controller, JSONModel, MessageBox, Fragment) {
+	"sap/m/MessageBox"
+], function (Controller, JSONModel, MessageBox) {
 	"use strict";
 
 	var history = {
@@ -16,14 +15,6 @@ sap.ui.define([
 			this._wizard = this.byId("ShoppingCartWizard");
 			this._oNavContainer = this.byId("wizardNavContainer");
 			this._oWizardContentPage = this.byId("wizardContentPage");
-
-			Fragment.load({
-				name: "sap.m.sample.WizardBranching.view.ReviewPage",
-				controller: this
-			}).then(function (oWizardReviewPage) {
-				this._oWizardReviewPage = oWizardReviewPage;
-				this._oNavContainer.addPage(this._oWizardReviewPage);
-			}.bind(this));
 
 			this.model = new JSONModel();
 			this.model.attachRequestCompleted(null, function () {
@@ -177,7 +168,7 @@ sap.ui.define([
 		},
 
 		completedHandler: function () {
-			this._oNavContainer.to(this._oWizardReviewPage);
+			this._oNavContainer.to(this.byId("wizardBranchingReviewPage"));
 		},
 
 		_handleMessageBoxOpen: function (sMessage, sMessageBoxType) {

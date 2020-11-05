@@ -36,26 +36,28 @@ sap.ui.define([
 		},
 
 		handleOpenDialog: function () {
+			var oView = this.getView();
+
 			// create Dialog
-			if (!this._oDialog) {
-				Fragment.load({
-					id: "WizardDialog",
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.WizardSingleStep.view.WizardSingleStep",
 					controller: this
-				}).then(function(pDialog) {
-					this._oDialog = pDialog;
-					this._oDialog.attachAfterOpen(this.onDialogAfterOpen, this);
-					this.getView().addDependent(this._oDialog);
-					this._oDialog.bindElement("/ProductCollection/0");
-					this._oDialog.open();
+				}).then(function(oDialog) {
+					oDialog.attachAfterOpen(this.onDialogAfterOpen, this);
+					oView.addDependent(oDialog);
+					oDialog.bindElement("/ProductCollection/0");
+					return oDialog;
 				}.bind(this));
-			} else {
-				this._oDialog.open();
 			}
+			this._pDialog.then(function(oDialog){
+				oDialog.open();
+			});
 		},
 
 		onDialogAfterOpen: function () {
-			this._oWizard = Fragment.byId("WizardDialog", "CreateProductWizard");
+			this._oWizard = this.byId( "CreateProductWizard");
 
 			this.handleButtonsVisibility();
 		},
@@ -95,20 +97,20 @@ sap.ui.define([
 		setProductType: function (oEvent) {
 			var sProductType = oEvent.getSource().getTitle();
 			this.getView().getModel().setProperty("/productType", sProductType);
-			Fragment.byId("WizardDialog", "ProductStepChosenType").setText("Chosen product type: " + sProductType);
-			this._oWizard.validateStep(Fragment.byId("WizardDialog", "ProductTypeStep"));
+			this.byId( "ProductStepChosenType").setText("Chosen product type: " + sProductType);
+			this._oWizard.validateStep(this.byId( "ProductTypeStep"));
 		},
 
 		setProductTypeFromSegmented: function (oEvent) {
 			var sProductType = oEvent.getParameters().item.getText();
 			this.getView().getModel().setProperty("/productType", sProductType);
-			this._oWizard.validateStep(Fragment.byId("WizardDialog", "ProductTypeStep"));
+			this._oWizard.validateStep(this.byId( "ProductTypeStep"));
 		},
 
 		additionalInfoValidation: function () {
 			var oModel = this.getView().getModel(),
-				sName = Fragment.byId("WizardDialog", "ProductName").getValue(),
-				iWeight = parseInt(Fragment.byId("WizardDialog", "ProductWeight").getValue());
+				sName = this.byId( "ProductName").getValue(),
+				iWeight = parseInt(this.byId( "ProductWeight").getValue());
 
 			this.handleButtonsVisibility();
 
@@ -125,11 +127,11 @@ sap.ui.define([
 			}
 
 			if (sName.length < 6 || isNaN(iWeight)) {
-				this._oWizard.invalidateStep(Fragment.byId("WizardDialog", "ProductInfoStep"));
+				this._oWizard.invalidateStep(this.byId( "ProductInfoStep"));
 				oModel.setProperty("/nextButtonEnabled", false);
 				oModel.setProperty("/finishButtonVisible", false);
 			} else {
-				this._oWizard.validateStep(Fragment.byId("WizardDialog", "ProductInfoStep"));
+				this._oWizard.validateStep(this.byId( "ProductInfoStep"));
 				oModel.setProperty("/nextButtonEnabled", true);
 			}
 		},
@@ -162,8 +164,10 @@ sap.ui.define([
 		},
 
 		_handleNavigationToStep: function (iStepNumber) {
-			this._oDialog.open();
-			this._oWizard.goToStep(this._oWizard.getSteps()[iStepNumber], true);
+			this._pDialog.then(function(oDialog){
+				oDialog.open();
+				this._oWizard.goToStep(this._oWizard.getSteps()[iStepNumber], true);
+			}.bind(this));
 		},
 
 		_handleMessageBoxOpen: function (sMessage, sMessageBoxType) {
@@ -172,7 +176,7 @@ sap.ui.define([
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
 						this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
-						this._oDialog.close();
+						this.byId("wizardDialog").close();
 						this.getView().getModel().setData(Object.assign({}, oData));
 					}
 				}.bind(this)
@@ -206,7 +210,7 @@ sap.ui.define([
 
 		discardProgress: function () {
 			var oModel = this.getView().getModel();
-			this._oWizard.discardProgress(Fragment.byId("WizardDialog", "ProductTypeStep"));
+			this._oWizard.discardProgress(this.byId( "ProductTypeStep"));
 
 			var clearContent = function (aContent) {
 				for (var i = 0; i < aContent.length; i++) {
