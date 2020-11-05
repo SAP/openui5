@@ -3,7 +3,7 @@
 		xmlns:f="sap.ui.layout.form"
 		xmlns:core="sap.ui.core">
 	<ResponsivePopover
-			id="appTitle"
+			id="detailsPopover"
 			title="{title}"
 			class="sapUiResponsivePadding--header"
 			placement="Auto">
@@ -20,27 +20,27 @@
 				singleContainerFullSize="false">
 			<Label
 					text="Additional information"
-					labelFor="moreInfo"/>
-			<Text id="moreInfo" text="{text}"/>
-			<Label text="From" labelFor="startDate"/>
-			<Text
+					labelFor="moreInfoText"/>
+			<Text id="moreInfoText" text="{text}"/>
+			<Label text="From" labelFor="startDateText"/>
+			<Text id="startDateText"
 					text="{
 						path: 'startDate',
 						formatter:'.formatDate'
 					}"/>
-			<Label text="To" labelFor="endDate"/>
-			<Text
+			<Label text="To" labelFor="endDateText"/>
+			<Text id="endDateText"
 					text="{
 						path: 'endDate',
 						formatter:'.formatDate'
 					}"/>
 			<CheckBox
-					id="allDay"
+					id="allDayCheckBox"
 					text="All-day"
 					selected="{allDay>/allDay}"
 					editable="false"/>
 			<Label text="Type" labelFor="appType"/>
-			<Text id="appType" text="{type}"/>
+			<Text id="appTypeText" text="{type}"/>
 		</f:SimpleForm>
 	</ResponsivePopover>
 </core:FragmentDefinition>
