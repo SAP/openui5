@@ -814,11 +814,13 @@ sap.ui.define([
 		expectedResultHandlerCalls : [
 			{key : "$expand", value : "foo,foo/bar,baz"},
 			{key : "$orderby", value : "foo,bar"},
+			{key : "$search", value : "baz"},
 			{key : "$select", value : "foo/xyz,foo/baz,foo/bar/*,baz/*,abc,def"}
 		],
 		expectedResultHandlerCallsSorted : [
 			{key : "$expand", value : "baz,foo,foo/bar"},
 			{key : "$orderby", value : "foo,bar"},
+			{key : "$search", value : "baz"},
 			{key : "$select", value : "abc,baz/*,def,foo/bar/*,foo/baz,foo/xyz"}
 		],
 		queryOptions : {
@@ -832,7 +834,8 @@ sap.ui.define([
 				"baz" : true
 			},
 			"$select" : "abc,def/ghi,def/jkl",
-			"$orderby" : "foo,bar"
+			"$orderby" : "foo,bar",
+			"$search" : "baz"
 		}
 	}, { // garbage in, garbage out - do not touch if there is a type cast
 		expectedResultHandlerCalls : [
