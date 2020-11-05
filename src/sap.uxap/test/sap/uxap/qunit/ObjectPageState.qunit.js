@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageHeader",
 	"sap/uxap/ObjectPageHeaderActionButton",
+	"sap/uxap/ObjectPageDynamicHeaderTitle",
 	"sap/m/Button",
 	"sap/m/Toolbar",
 	"sap/m/Text",
@@ -24,6 +25,7 @@ function (
 	ObjectPageSubSection,
 	ObjectPageHeader,
 	ObjectPageHeaderActionButton,
+	ObjectPageDynamicHeaderTitle,
 	Button,
 	Toolbar,
 	Text,
@@ -37,11 +39,10 @@ function (
 
 	var ButtonType = mLib.ButtonType;
 
-	function createPage(key) {
-
+	function createPage(key, useDynamicTitle) {
+		var oHeaderTitleType = useDynamicTitle ? ObjectPageDynamicHeaderTitle : ObjectPageHeader;
 		var oOPL = new ObjectPageLayout(key,{
-			headerTitle:new ObjectPageHeader({
-				objectTitle:key,
+			headerTitle:new oHeaderTitleType({
 				actions:[
 					new ObjectPageHeaderActionButton({
 						icon:'sap-icon://refresh'
@@ -182,6 +183,74 @@ function (
 		assert.strictEqual(oComputedStyle.whiteSpace, "normal",
 			"CSS white-space should be reset to 'normal' to prevent breaking of responsive behavior");
 		//cleanup
+		oOPL.destroy();
+	});
+
+	QUnit.module("_hasVisibleDynamicTitleAndHeader (private method)");
+
+	QUnit.test("Object page with ObjectPageHeader", function (assert) {
+		// Arrange
+		var oOPL = createPage("testPage", false).placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), false, "Doesn't have visible dynamic title and header");
+
+		// Cleanup
+		oOPL.destroy();
+	});
+
+	QUnit.test("Object page with ObjectPageDynamicHeaderTitle", function (assert) {
+		// Arrange
+		var oOPL = createPage("testPage", true).placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), true, "Has visible dynamic title and header");
+
+		// Cleanup
+		oOPL.destroy();
+	});
+
+	QUnit.test("Object page with not visible ObjectPageDynamicHeaderTitle", function (assert) {
+		// Arrange
+		var oOPL = createPage("testPage", true).placeAt("qunit-fixture");
+		oOPL.getHeaderTitle().setVisible(false);
+
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), false, "Doesn't have visible dynamic title and header");
+
+		// Cleanup
+		oOPL.destroy();
+	});
+
+	QUnit.test("Object page with empty header content", function (assert) {
+		// Arrange
+		var oOPL = createPage("testPage", true).placeAt("qunit-fixture");
+		oOPL.getHeaderContent().forEach(function(oControl) {
+			oControl.destroy();
+		});
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), false, "Doesn't have visible dynamic title and header");
+
+		// Cleanup
+		oOPL.destroy();
+	});
+
+	QUnit.test("Object page with not visible header content", function (assert) {
+		// Arrange
+		var oOPL = createPage("testPage", true).placeAt("qunit-fixture");
+		oOPL.setShowHeaderContent(false);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), false, "Doesn't have visible dynamic title and header");
+
+		// Cleanup
 		oOPL.destroy();
 	});
 
