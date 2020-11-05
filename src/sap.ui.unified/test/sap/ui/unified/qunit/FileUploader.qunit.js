@@ -555,6 +555,24 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("'uploadStart' event is fired with native form submit", function (assert) {
+		// arrange
+		var oFileUploader = new FileUploader({ uploadUrl: "test" }).placeAt("qunit-fixture"),
+			oFireUploadStartSpy = this.spy(oFileUploader, "fireUploadStart");
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oFileUploader.upload();
+
+		// assert
+		assert.ok(oFireUploadStartSpy.calledOnce, "'uploadStart' event is fired.");
+
+		// cleanup
+		oFileUploader.destroy();
+		oFireUploadStartSpy.restore();
+	});
+
 	QUnit.module("File validation");
 	QUnit.test("Test file type validation - handlechange()", function (assert){
 		//setup
