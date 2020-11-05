@@ -20,7 +20,7 @@ sap.ui.define([
 			this._sSelectedView = this._oModel.getProperty("/viewKey");
 			this._sSelectedMember = "Team";
 			this._oCalendarContainer = this.byId("mainContent");
-			this._aFragments = {};
+			this._mCalendars = {};
 			this._sCalendarDisplayed = '';
 
 			// load and display the Planning Calendar
@@ -65,71 +65,87 @@ sap.ui.define([
 
 		// Opend a legend
 		openLegend: function(oEvent) {
-			var oSource = oEvent.getSource();
-			if (!this._oLegendPopover) {
-				Fragment.load({
-					id: "LegendFrag",
+			var oSource = oEvent.getSource(),
+				oView = this.getView();
+			if (!this._pLegendPopover) {
+				this._pLegendPopover = Fragment.load({
+					id: oView.getId(),
 					name: "teamCalendar.view.Legend",
 					controller: this
-				}).then(function(oPopoverContent){
-					this._oLegendPopover = oPopoverContent;
-					this.getView().addDependent(this._oLegendPopover);
-					this._oLegendPopover.openBy(oSource);
-				}.bind(this));
-			} else if (this._oLegendPopover.isOpen()) {
-				this._oLegendPopover.close();
-			} else {
-				this._oLegendPopover.openBy(oSource);
+				}).then(function(oLegendPopover){
+					oView.addDependent(oLegendPopover);
+					return oLegendPopover;
+				});
 			}
+			this._pLegendPopover.then(function(oLegendPopover){
+				if (oLegendPopover.isOpen()) {
+					oLegendPopover.close();
+				} else {
+					oLegendPopover.openBy(oSource);
+				}
+			});
 		},
 
 		// Loads and displays calendar (if not already loaded), otherwise just displays it
 		_loadCalendar: function(sCalendarId) {
-			if (this._aFragments[sCalendarId]) {
-				this._displayCalendar(sCalendarId);
-			} else {
-				Fragment.load({
+			var oView = this.getView();
+
+			if (!this._mCalendars[sCalendarId]) {
+				this._mCalendars[sCalendarId] =	Fragment.load({
+					id: oView.getId(),
 					name: "teamCalendar.view." + sCalendarId,
 					controller: this
-				}).then(function(oContent) {
-					this._aFragments[sCalendarId] = oContent;
-					this._populateSelect(sap.ui.getCore().byId(sCalendarId + "TeamSelector"));
-					this._displayCalendar(sCalendarId);
+				}).then(function(oCalendarVBox){
+					this._populateSelect(this.byId(sCalendarId + "TeamSelector"));
+					return oCalendarVBox;
 				}.bind(this));
 			}
+
+			this._mCalendars[sCalendarId].then(function(oCalendarVBox){
+				this._displayCalendar(sCalendarId, oCalendarVBox);
+			}.bind(this));
+		},
+
+		_hideCalendar: function(){
+			if (this._sCalendarDisplayed === '') {
+				return Promise.resolve();
+			}
+			return this._mCalendars[this._sCalendarDisplayed].then(function(oOldCalendarVBox){
+				this._oCalendarContainer.removeContent(oOldCalendarVBox);
+			}.bind(this));
 		},
 
 		// Displays already loaded calendar
-		_displayCalendar: function(sCalendarId) {
-			var oCalendar = sap.ui.getCore().byId(sCalendarId);
-			if (this._sCalendarDisplayed !== '') {
-				this._oCalendarContainer.removeContent(this._aFragments[this._sCalendarDisplayed]);
-			}
-			this._oCalendarContainer.addContent(this._aFragments[sCalendarId]);
-			this._sCalendarDisplayed = sCalendarId;
-			sap.ui.getCore().byId(sCalendarId + "TeamSelector").setSelectedKey(this._sSelectedMember);
-			oCalendar.setStartDate(this._oStartDate);
-			if (isNaN(this._sSelectedMember)) {
-				// Planning Calendar
-				oCalendar.setViewKey(this._sSelectedView);
-				oCalendar.bindElement({
-					path: "/team",
-					model: "calendar"
-				});
-			} else {
-				// Single Planning Calendar
-				oCalendar.setSelectedView(oCalendar.getViewByKey(this._sSelectedView));
-				oCalendar.bindElement({
-					path: "/team/" + this._sSelectedMember,
-					model: "calendar"
-				});
-			}
+		_displayCalendar: function(sCalendarId, oCalendarVBox) {
+			this._hideCalendar().then(function(){
+				this._oCalendarContainer.addContent(oCalendarVBox);
+				this._sCalendarDisplayed = sCalendarId;
+				var oCalendar = oCalendarVBox.getItems()[0];
+				var oTeamSelect = this.byId(sCalendarId + "TeamSelector");
+				oTeamSelect.setSelectedKey(this._sSelectedMember);
+				oCalendar.setStartDate(this._oStartDate);
+				if (isNaN(this._sSelectedMember)) {
+					// Planning Calendar
+					oCalendar.setViewKey(this._sSelectedView);
+					oCalendar.bindElement({
+						path: "/team",
+						model: "calendar"
+					});
+				} else {
+					// Single Planning Calendar
+					oCalendar.setSelectedView(oCalendar.getViewByKey(this._sSelectedView));
+					oCalendar.bindElement({
+						path: "/team/" + this._sSelectedMember,
+						model: "calendar"
+					});
+				}
+			}.bind(this));
 		},
 
 		// Adds "Team" and all team members as select items
 		_populateSelect: function(oSelect) {
 			var iCount = this._oModel.getProperty("/team").length,
-				iPerson;
+			iPerson;
 			for (iPerson = 0; iPerson < iCount; iPerson++) {
 				oSelect.addItem(new Item({
 					key: iPerson,
