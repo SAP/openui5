@@ -18,65 +18,61 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		onExit: function () {
-			if (this._oDialog) {
-				this._oDialog.destroy();
-			}
-		},
-
 		formatter: Formatter,
 
 		handleTableSelectDialogPress: function (oEvent) {
-			var oButton = oEvent.getSource();
-			if (!this._oDialog) {
-				Fragment.load({
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
+
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.TableSelectDialog.Dialog",
 					controller: this
-				}).then(function (oDialog) {
-					this._oDialog = oDialog;
-					this._configDialog(oButton);
-					this._oDialog.open();
-				}.bind(this));
-			} else {
-				this._configDialog(oButton);
-				this._oDialog.open();
+				}).then(function(oDialog){
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
+
+			this._pDialog.then(function(oDialog){
+				this._configDialog(oButton, oDialog);
+				oDialog.open();
+			}.bind(this));
 		},
 
-		_configDialog: function (oButton) {
+		_configDialog: function (oButton, oDialog) {
 			// Set draggable property
 			var bDraggable = oButton.data("draggable");
-			this._oDialog.setDraggable(bDraggable == "true");
+			oDialog.setDraggable(bDraggable == "true");
 
 			// Set resizable property
 			var bResizable = oButton.data("resizable");
-			this._oDialog.setResizable(bResizable == "true");
+			oDialog.setResizable(bResizable == "true");
 
 			// Multi-select if required
 			var bMultiSelect = !!oButton.data("multi");
-			this._oDialog.setMultiSelect(bMultiSelect);
+			oDialog.setMultiSelect(bMultiSelect);
 
 			// Remember selections if required
 			var bRemember = !!oButton.data("remember");
-			this._oDialog.setRememberSelections(bRemember);
+			oDialog.setRememberSelections(bRemember);
 
 			var sResponsivePadding = oButton.data("responsivePadding");
 			var sResponsiveStyleClasses = "sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer";
 
 			if (sResponsivePadding) {
-				this._oDialog.addStyleClass(sResponsiveStyleClasses);
+				oDialog.addStyleClass(sResponsiveStyleClasses);
 			} else {
-				this._oDialog.removeStyleClass(sResponsiveStyleClasses);
+				oDialog.removeStyleClass(sResponsiveStyleClasses);
 			}
 
 			// Set custom text for the confirmation button
 			var sCustomConfirmButtonText = oButton.data("confirmButtonText");
-			this._oDialog.setConfirmButtonText(sCustomConfirmButtonText);
-
-			this.getView().addDependent(this._oDialog);
+			oDialog.setConfirmButtonText(sCustomConfirmButtonText);
 
 			// toggle compact style
-			syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
+			syncStyleClass("sapUiSizeCompact", this.getView(), oDialog);
 		},
 
 		handleSearch: function (oEvent) {
@@ -99,20 +95,22 @@ sap.ui.define([
 		},
 
 		handleValueHelp: function () {
-			if (!this._oValueHelpDialog) {
-				Fragment.load({
+			var oView = this.getView();
+
+			if (!this._pValueHelpDialog) {
+				this._pValueHelpDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.TableSelectDialog.ValueHelp",
 					controller: this
 				}).then(function (oValueHelpDialog) {
-					this._oValueHelpDialog = oValueHelpDialog;
-					this.getView().addDependent(this._oValueHelpDialog);
-					this._configValueHelpDialog();
-					this._oValueHelpDialog.open();
-				}.bind(this));
-			} else {
-				this._configValueHelpDialog();
-				this._oValueHelpDialog.open();
+					oView.addDependent(oValueHelpDialog);
+					return oValueHelpDialog;
+				});
 			}
+			this._pValueHelpDialog.then(function(oValueHelpDialog) {
+				this._configValueHelpDialog();
+				oValueHelpDialog.open();
+			}.bind(this));
 		},
 
 		_configValueHelpDialog: function () {
