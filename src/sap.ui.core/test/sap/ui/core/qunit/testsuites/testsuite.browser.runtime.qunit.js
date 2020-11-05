@@ -63,6 +63,9 @@ sap.ui.define(function() {
 					qunitBridge: true
 				},
 				bootCore: false
+			},
+			"util/openWindow": {
+				title: "sap.ui.util.openWindow"
 			}
 		}
 	};
