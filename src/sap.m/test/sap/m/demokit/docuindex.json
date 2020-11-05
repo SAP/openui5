@@ -1343,6 +1343,7 @@
 		  "category": "Container",
 		  "since": "1.20",
 		  "samples": [
+			"sap.m.sample.ToolbarResponsive",
 			"sap.m.sample.ToolbarShrinkable",
 			"sap.m.sample.ToolbarVsBar"
 		  ]
@@ -1751,6 +1752,11 @@
 		  "id": "sap.m.sample.ToolbarShrinkable",
 		  "name": "Toolbar - Shrinkable items",
 		  "description": "Toolbar items can shrink/expand when the toolbar is resized. This behavior is enabled/disabled via the ToolbarLayoutData layout. It is also possible to set min/max width for shrinkable items."
+		},
+		{
+		  "id": "sap.m.sample.ToolbarResponsive",
+		  "name": "Toolbar - Responsive",
+		  "description": "Toolbar items can be displayed depending on the current device."
 		},
 		{
 		  "id": "sap.m.sample.Link",
@@ -2494,6 +2500,11 @@
 		  "id": "sap.m.sample.SearchFieldSuggestions",
 		  "name": "Search Field - Suggestions",
 		  "description": "Add suggestion capabilities to a basic Search Field."
+		},
+		{
+		  "id": "sap.m.sample.DialogSearch",
+		  "name": "Dialog with Search Field",
+		  "description": "Use a Search Field inside a Dialog."
 		},
 		{
 		  "id": "sap.m.sample.DialogConfirm",

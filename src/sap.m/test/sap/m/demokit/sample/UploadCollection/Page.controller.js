@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/FileSizeFormat",
-	"sap/ui/Device"
-], function(jQuery, deepExtend, syncStyleClass, Controller, ObjectMarker, MessageToast, UploadCollectionParameter, MobileLibrary, JSONModel, FileSizeFormat, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Fragment"
+], function(jQuery, deepExtend, syncStyleClass, Controller, ObjectMarker, MessageToast, UploadCollectionParameter, MobileLibrary, JSONModel, FileSizeFormat, Device, Fragment) {
 	"use strict";
 
 	var ListMode = MobileLibrary.ListMode,
@@ -321,17 +322,30 @@ sap.ui.define([
 			MessageToast.show("Marker press event - " + oEvent.getSource().getType());
 		},
 
-		onOpenAppSettings: function(oEvent) {
-			if (!this.oSettingsDialog) {
-				this.oSettingsDialog = sap.ui.xmlfragment("sap.m.sample.UploadCollection.AppSettings", this);
-				this.getView().addDependent(this.oSettingsDialog);
+		onOpenAppSettings: function (oEvent) {
+			var oView = this.getView();
+
+			if (!this._pSettingsDialog) {
+				this._pSettingsDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.UploadCollection.AppSettings",
+					controller: this
+				}).then(function (oSettingsDialog) {
+					oView.addDependent(oSettingsDialog);
+					return oSettingsDialog;
+				});
 			}
-			syncStyleClass("sapUiSizeCompact", this.getView(), this.oSettingsDialog);
-			this.oSettingsDialog.open();
+
+			this._pSettingsDialog.then(function (oSettingsDialog) {
+				syncStyleClass("sapUiSizeCompact", oView, oSettingsDialog);
+				oSettingsDialog.open();
+			});
 		},
 
-		onDialogCloseButton: function() {
-			this.oSettingsDialog.close();
+		onDialogCloseButton: function () {
+			this._pSettingsDialog.then(function (oSettingsDialog) {
+				oSettingsDialog.close();
+			});
 		}
 	});
 });

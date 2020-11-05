@@ -15,22 +15,32 @@ sap.ui.define([
 		},
 
 		onOpenDialog: function (oEvent) {
-			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.m.sample.DialogSearch.Dialog", this);
-				this.getView().addDependent(this._oDialog);
+			var oView = this.getView();
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.DialogSearch.Dialog",
+					controller: this
+				}).then(function (oDialog) {
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
 
-			this._oDialog.bindElement("/ProductCollection/0");
-			// toggle compact style
-			syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
-			this._oDialog.open();
+			this._pDialog.then(function (oDialog) {
+				oDialog.bindElement("/ProductCollection/0");
+				// toggle compact style
+				syncStyleClass("sapUiSizeCompact", oView, oDialog);
+				oDialog.open();
+			});
 		},
 
 		onCloseDialog: function (oEvent) {
-			this._oDialog.close();
+			this._pDialog.then(function (oDialog) {
+				oDialog.close();
+			});
 		}
 	});
-
 
 	return CController;
 

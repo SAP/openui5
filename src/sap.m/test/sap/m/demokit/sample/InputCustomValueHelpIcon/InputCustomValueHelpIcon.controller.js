@@ -2,8 +2,9 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
-	'sap/ui/model/json/JSONModel'
-], function(Controller, Filter, FilterOperator, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/Fragment'
+], function(Controller, Filter, FilterOperator, JSONModel, Fragment) {
 "use strict";
 
 var InputCustomValueHelpIconController = Controller.extend("sap.m.sample.InputCustomValueHelpIcon.InputCustomValueHelpIcon", {
@@ -15,18 +16,25 @@ var InputCustomValueHelpIconController = Controller.extend("sap.m.sample.InputCu
 	},
 
 	handleValueHelp : function (oEvent) {
+		var oView = this.getView();
 		this._sInputId = oEvent.getSource().getId();
+
 		// create value help dialog
-		if (!this._oValueHelpDialog) {
-			this._oValueHelpDialog = sap.ui.xmlfragment(
-				"sap.m.sample.InputCustomValueHelpIcon.Dialog",
-				this
-			);
-			this.getView().addDependent(this._oValueHelpDialog);
+		if (!this._pValueHelpDialog) {
+			this._pValueHelpDialog = Fragment.load({
+				id: oView.getId(),
+				name: "sap.m.sample.InputCustomValueHelpIcon.Dialog",
+				controller: this
+			}).then(function(oValueHelpDialog){
+				oView.addDependent(oValueHelpDialog);
+				return oValueHelpDialog;
+			});
 		}
 
 		// open value help dialog
-		this._oValueHelpDialog.open();
+		this._pValueHelpDialog.then(function(oValueHelpDialog){
+			oValueHelpDialog.open();
+		});
 	},
 
 	_handleValueHelpSearch : function (oEvent) {
