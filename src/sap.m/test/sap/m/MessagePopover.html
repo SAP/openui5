@@ -9,6 +9,9 @@
 			.sapMHBox {
 				padding: 5% 0;
 			}
+			.customClassForVisualTests {
+				caret-color: transparent;
+			}
 		</style>
 
 		<script src="shared-config.js"></script>
@@ -389,8 +392,22 @@
 				]
 			});
 
+			// Add a CSS class to the body HTML element, in order to be used for caret stylization in visual tests run.
+			var oCustomCssButton = new sap.m.Button ("customCssButton",{
+				text: "Toggle custom CSS for visual test",
+				press: function() {
+					var $body = jQuery("body");
+
+					$body.toggleClass("customClassForVisualTests");
+				}
+			});
+
 			var oPage = new sap.m.Page({
-				title: "sap.m.MessagePopover Playground",
+				headerContent: [
+					new sap.m.Title({text: "sap.m.MessagePopover Playground"}),
+					new sap.m.ToolbarSpacer({width: "400px"}),
+					oCustomCssButton,
+				],
 				content: [oSimpleForm],
 				footer: new sap.m.Toolbar({
 					content: [
