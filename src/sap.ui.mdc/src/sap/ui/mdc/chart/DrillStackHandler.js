@@ -294,9 +294,10 @@ sap.ui.define([
 						// dimension is existing for this name
 						if (dim.dimension.length > 0 && typeof oInnerChart.getDimensionByName(dim.dimension[dim.dimension.length - 1]) != 'undefined') {
 							// show breadcrumbs
-							/*if (this.getShowDrillBreadcrumbs()) {
-								this._oDrillBreadcrumbs.setVisible(true);
-							}*/
+							//If Breadcrumps were set invisible for no drill stack, they need to be set visible again
+							oDrillBreadcrumbs.setVisible(true);
+
+
 							// use the last entry of each drill-stack entry to built
 							// up the drill-path
 							var sDimText = oInnerChart.getDimensionByName(dim.dimension[dim.dimension.length - 1]).getLabel();
