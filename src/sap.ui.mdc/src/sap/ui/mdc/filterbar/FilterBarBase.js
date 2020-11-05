@@ -1060,32 +1060,34 @@ sap.ui.define([
 		return mConditions;
 	};
 
-	FilterBarBase.prototype.removeCondition = function(sFieldPath, oXCondition) {
+	var _getNormalizeConditions = function (oProperty) {
+		var oTypeUtil = this.getTypeUtil();
+		return oTypeUtil && oProperty && oProperty.typeConfig && oTypeUtil.normalizeConditions(oProperty.typeConfig.typeInstance);
+	};
 
+	FilterBarBase.prototype.removeCondition = function(sFieldPath, oXCondition) {
 		return this.initialized().then(function() {
 			var oCM = this._getConditionModel();
 			if (oCM) {
 				var oProperty = this._getPropertyByName(sFieldPath);
 				if (oProperty) {
 					var oCondition = this._toInternal(oProperty, oXCondition);
-					if (oCM.indexOf(sFieldPath, oCondition) >= 0) {
+					if (oCM.indexOf(sFieldPath, oCondition, _getNormalizeConditions.call(this, oProperty)) >= 0) {
 						oCM.removeCondition(sFieldPath, oCondition);
 					}
 				}
 			}
 		}.bind(this));
-
 	};
 
 	FilterBarBase.prototype.addCondition = function(sFieldPath, oXCondition) {
-
 		return this.initialized().then(function() {
 			var oCM = this._getConditionModel();
 			if (oCM) {
 				var oProperty = this._getPropertyByName(sFieldPath);
 				if (oProperty) {
 					var oCondition = this._toInternal(oProperty, oXCondition);
-					if (oCM.indexOf(sFieldPath, oCondition) < 0) {
+					if (oCM.indexOf(sFieldPath, oCondition, _getNormalizeConditions.call(this, oProperty)) < 0) {
 						var aCondition = [{sFieldPath: oProperty}];
 						StateUtil.checkConditionOperatorSanity(aCondition); //check if the single condition's operator is valid
 						if (aCondition && aCondition.length > 0){

@@ -163,6 +163,18 @@ sap.ui.define([
 				typeInstance: oType,
 				baseType: this.getBaseTypeForType(oType)
 			};
+		},
+
+		/**
+		 * returns a type based function for condition normalization
+		 *
+		 * @param {sap.ui.model.SimpleType} oTypeInstance Given dataType as type
+		 * @returns {undefined|function} returns a type based function for condition normalization
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
+		normalizeConditions: function (oTypeInstance) {
+			return undefined;
 		}
 	};
 
