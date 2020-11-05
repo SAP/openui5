@@ -67,7 +67,7 @@ sap.ui.define([
 		 * <ul>
 		 * <li> Input field - displays the selected option or a custom user entry. Users can type to narrow down the list or enter their own value.</li>
 		 * <li> Drop-down arrow - expands\collapses the option list.</li>
-		 * <li> Option list - the list of available options.</li>
+		 * <li> Option list - the list of available options. <b>Note:</b> Disabled items are not visualized in the list with the available options, however they can still be accessed through the <code>items</code> aggregation.</li>
 		 * </ul>
 		 * By setting the <code>showSecondaryValues</code> property, the combo box can display an additional value for each option (if there is one).
 		 * <b>Note:</b> The typeahead feature is not available on Android devices due to a OS specific issue.
