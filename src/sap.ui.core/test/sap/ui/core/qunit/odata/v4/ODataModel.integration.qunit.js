@@ -29344,10 +29344,8 @@ sap.ui.define([
 				oContext = oMetaModel.createBindingContext(
 					"/As/AID@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers"),
 				vRawValue = oContext.getObject(),
-				// "{=odata.collection(['in',(${AValue}>10)?'maybe':undefined])}"
+				// "{=odata.collection(['in',(%{AValue}>10)?'maybe':undefined])}"
 				sBinding = AnnotationHelper.value(vRawValue, {context : oContext}),
-				//TODO we should rather use % instead of $, as below:
-				// sBinding = "{=odata.collection(['in',(%{AValue}>10)?'maybe':undefined])}",
 				oText = new Text({text : sBinding, models : oModel});
 
 			oText.setBindingContext(that.oView.byId("form").getBindingContext());
