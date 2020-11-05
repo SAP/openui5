@@ -43,7 +43,8 @@ sap.ui.define([
 			"sap.ui.mdc.Field",
 			"sap.ui.mdc.FilterField",
 			"sap.ui.mdc.link.Panel",
-			"sap.ui.mdc.link.ContactDetails"
+			"sap.ui.mdc.link.ContactDetails",
+			"sap.ui.mdc.ui.Container"
 			],
 		elements: [
 			"sap.ui.mdc.table.Column",
@@ -76,7 +77,8 @@ sap.ui.define([
 			"sap.ui.mdc.link.SemanticObjectMapping",
 			"sap.ui.mdc.link.SemanticObjectMappingItem",
 			"sap.ui.mdc.field.InParameter",
-			"sap.ui.mdc.field.OutParameter"
+			"sap.ui.mdc.field.OutParameter",
+			"sap.ui.mdc.ui.ContainerItem"
 		],
 		extensions: {
 			flChangeHandlers: {
