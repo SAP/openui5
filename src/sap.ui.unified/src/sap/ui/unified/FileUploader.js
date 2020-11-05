@@ -1389,6 +1389,7 @@ sap.ui.define([
 		var uploadForm = this.getDomRef("fu_form");
 
 		uploadForm.submit();
+		this.fireUploadStart();
 		this._resetValueAfterUploadStart();
 	};
 
@@ -1898,22 +1899,21 @@ sap.ui.define([
 			oIFrameRef.contentWindow.name = this.getId() + "-frame";
 
 			// sink the load event of the upload iframe
-			var that = this;
 			this._bUploading = false; // flag for uploading
-			jQuery(oIFrameRef).on( "load", function(oEvent) {
-				if (that._bUploading) {
-					Log.info("File uploaded to " + that.getUploadUrl());
+			jQuery(oIFrameRef).on("load", function(oEvent) {
+				if (this._bUploading) {
+					Log.info("File uploaded to " + this.getUploadUrl());
 					var sResponse;
 					try {
-						sResponse = that.oIFrameRef.contentWindow.document.body.innerHTML;
+						sResponse = this.oIFrameRef.contentWindow.document.body.innerHTML;
 					} catch (ex) {
 						// in case of cross-domain submit we get a permission denied exception
 						// when we try to access the body of the IFrame document
 					}
-					that.fireUploadComplete({"response": sResponse});
-					that._bUploading = false;
+					this.fireUploadComplete({"response": sResponse});
+					this._bUploading = false;
 				}
-			});
+			}.bind(this));
 
 			// keep the reference
 			this.oIFrameRef = oIFrameRef;
