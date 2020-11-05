@@ -48,7 +48,8 @@ sap.ui.define([
 			events: {
 				configurationChange: {},
 				createConfiguration: {},
-				error: {}
+				error: {},
+				designtimeInited: {}
 			}
 		},
 		renderer: CardEditor.getMetadata().getRenderer()
@@ -77,8 +78,13 @@ sap.ui.define([
 			clearTimeout(this._eventTimeout);
 			this._eventTimeout = null;
 		}
-		var oCopyConfig = merge({}, this._oDesigntimeJSConfig);
 		this._eventTimeout = setTimeout(function () {
+			var oEmptyItems = {
+				form: {
+					items: {}
+				}
+			};
+			var oCopyConfig = merge(oEmptyItems, this._oDesigntimeJSConfig);
 			var oNewItems = {};
 			var aItems = [];
 			var oItem;
@@ -89,7 +95,8 @@ sap.ui.define([
 					this._oCurrent = {
 						configuration: this._cleanConfig(this._oDesigntimeJSConfig),
 						manifest: this._cleanJson(),
-						configurationclass: this._fnDesigntime
+						configurationclass: this._fnDesigntime,
+						configurationstring: this._cleanConfig(this._oDesigntimeJSConfig, true)
 					};
 					this.fireConfigurationChange(this._oCurrent);
 					return;
@@ -123,7 +130,7 @@ sap.ui.define([
 						var oNewItem = mParameters[sNewItem];
 						oCopyConfig.form.items[sNewItem] = {
 							manifestpath: "/sap.card/configuration/parameters/" + sNewItem + "/value",
-							type: oNewItem.type,
+							type: oNewItem.type || "string",
 							label: oNewItem.label,
 							translatable: false,
 							editable: oNewItem.editable,
@@ -149,8 +156,12 @@ sap.ui.define([
 						}
 
 						oItem = merge(oOriginalItem || {}, mParameters[sKey]);
-						oItem.label = oMetaItem.hasOwnProperty("label") && oMetaItem.label;
-						oItem.position = oMetaItem.hasOwnProperty("position") && oMetaItem.position;
+						if (oMetaItem.hasOwnProperty("label")) {
+							oItem.label = oMetaItem.label;
+						}
+						if (oMetaItem.hasOwnProperty("position")) {
+							oItem.position =  oMetaItem.position;
+						}
 						if (oItem.editable === "false") {
 							oItem.editable = false;
 						} else if (oItem.editable === "true") {
@@ -397,6 +408,12 @@ sap.ui.define([
 					sap.ui.loader._.loadJSResourceAsync(sUrl).then(function (DesigntimeClass) {
 						if (!DesigntimeClass) {
 							//file exists but no valid js
+							that.fireError({
+								"name": "Designtime Error",
+								"detail": {
+									"message": "Invalid file format"
+								}
+							});
 						} else if (DesigntimeClass) {
 							var oDesigntime = new DesigntimeClass();
 							that._oDesigntimeJSConfig = oDesigntime.getSettings();
@@ -428,11 +445,23 @@ sap.ui.define([
 					// Editor config
 
 					this._bDesigntimeInit = true;
+					this.fireDesigntimeInited();
 				}.bind(this));
 			} else {
 				this.setPreventInitialization(false);
 				//this.addConfig({});
 			}
+		}
+	};
+
+	BASEditor.prototype.initialize = function () {
+		//If designtime is not ready, attach to event
+		if (!this._bDesigntimeInit) {
+			this.attachEventOnce("designtimeInited", this.initialize);
+			return;
+		}
+		if (!this._bPreventInitialization) {
+			this._initialize();
 		}
 	};
 

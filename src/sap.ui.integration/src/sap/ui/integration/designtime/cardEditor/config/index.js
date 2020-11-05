@@ -135,7 +135,8 @@ sap.ui.define([
 					"itemLabel": "{key}",
 					"addItemLabel": "{i18n>CARD_EDITOR.DESTINATION}",
 					"path": "configuration/destinations",
-					"type": "destinations"
+					"type": "destinations",
+					"allowedValues": ["Northwind", "JAM"]
 				}
 			},
 			HeaderConfig,

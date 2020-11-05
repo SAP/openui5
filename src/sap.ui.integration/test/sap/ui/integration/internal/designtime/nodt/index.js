@@ -35,6 +35,9 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 						var oSource = oEvent.getSource();
 						oSource.setJson(oManifest);
 					},
+					error: function (oEvent) {
+						//var oError = oEvent.getParameters();
+					},
 					configurationChange: function (oEvent) {
 						var mParameters = oEvent.getParameters();
 						oCard.setManifest(mParameters.manifest);

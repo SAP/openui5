@@ -382,9 +382,7 @@ sap.ui.define([
 			config: deepClone(oNewConfig)
 		});
 
-		if (!this._bPreventInitialization) {
-			this._initialize();
-		}
+		this.initialize();
 	};
 
 	BaseEditor.prototype.addConfig = function (oConfig, bIsDefaultConfig) {
@@ -560,6 +558,12 @@ sap.ui.define([
 
 		if (this._oRootWrapper) {
 			this._oRootWrapper.destroy();
+		}
+	};
+
+	BaseEditor.prototype.initialize = function () {
+		if (!this._bPreventInitialization) {
+			this._initialize();
 		}
 	};
 

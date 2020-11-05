@@ -24,6 +24,10 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 				oCard.placeAt("card");
 				oBASCardEditor = new BASCardEditor({
 					createConfiguration: function (oEvent) {
+						//var mParameters = oEvent.getParameters();
+					},
+					error: function (oEvent) {
+						//var oError = oEvent.getParameters();
 					},
 					configurationChange: function (oEvent) {
 						var mParameters = oEvent.getParameters();

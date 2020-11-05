@@ -95,12 +95,11 @@ sap.ui.define([
 				[
 					{
 						name: "MySampleDestination",
-						label: undefined,
 						key: "sampleDestination"
 					},
 					{
 						name: "AnotherDestination",
-						label: undefined,
+						label: "Hello World",
 						key: "anotherDestination"
 					}
 				],
@@ -112,14 +111,17 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var oLabelEditor = _getComplexMapEditors(this.oNestedArrayEditor)[0].label;
 
-			this.oDestinationsEditor.attachDesigntimeMetadataChange(function (oEvent) {
+			this.oDestinationsEditor.attachValueChange(function (oEvent) {
 				assert.deepEqual(
 					oEvent.getParameter("value"),
 					{
+						"anotherDestination": {
+						  "label": "Hello World",
+						  "name": "AnotherDestination"
+						},
 						"sampleDestination": {
-							"__value": {
-								"label": "Label"
-							}
+						  "label": "Label",
+						  "name": "MySampleDestination"
 						}
 					},
 					"Then the label is updated"
