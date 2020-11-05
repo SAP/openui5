@@ -522,7 +522,7 @@ sap.ui.define([
 							{
 								title: 'Basic Data Request',
 								key: 'basic',
-								manifestUrl: '/samples/data/manifest.json'
+								manifestUrl: '/samples/data/basic/manifest.json'
 							},
 							{
 								title: 'Using GraphQL',

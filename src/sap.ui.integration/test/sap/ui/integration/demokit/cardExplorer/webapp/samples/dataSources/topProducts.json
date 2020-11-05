@@ -13,7 +13,12 @@
 	"sap.card": {
 		"data": {
 			"request": {
-				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product?$filter=AverageRatingValue gt 3&$orderby=AverageRatingValue desc&$inlinecount=allpages"
+				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product",
+				"parameters": {
+					"$filter": "AverageRatingValue gt 3",
+					"$orderby": "AverageRatingValue desc",
+					"$inlinecount": "allpages"
+				}
 			}
 		},
 		"configuration": {
