@@ -11,43 +11,32 @@ sap.ui.define([
 
 	return Controller.extend("sap.m.sample.ViewSettingsDialog.C", {
 
+		onInit: function(){
+			this._mDialogs = {};
+		},
+
 		// View Setting Dialog opener
 		_openDialog : function (sName, sPage, fInit) {
-
-			// creates dialog list if not yet created
-			if (!this._oDialogs) {
-				this._oDialogs = {};
-			}
+			var oView = this.getView();
 
 			// creates requested dialog if not yet created
-			if (!this._oDialogs[sName]) {
-				Fragment.load({
+			if (!this._mDialogs[sName]) {
+				this._mDialogs[sName] = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.ViewSettingsDialog." + sName,
 					controller: this
 				}).then(function(oDialog){
-					this._oDialogs[sName] = oDialog;
-					this.getView().addDependent(this._oDialogs[sName]);
+					oView.addDependent(oDialog);
 					if (fInit) {
-						fInit(this._oDialogs[sName]);
+						fInit(oDialog);
 					}
-					// opens the dialog
-					this._oDialogs[sName].open(sPage);
-				}.bind(this));
-			} else {
+					return oDialog;
+				});
+			}
+			this._mDialogs[sName].then(function(oDialog){
 				// opens the requested dialog
-				this._oDialogs[sName].open(sPage);
-			}
-		},
-
-		// onExit - destroy created dialogs
-		onExit: function () {
-			if (this._oDialogs) {
-				for (var oDialog in this._oDialogs) {
-					this._oDialogs[oDialog].destroy();
-					delete this._oDialogs[oDialog];
-				}
-				this._oDialogs = null;
-			}
+				oDialog.open(sPage);
+			});
 		},
 
 		// Opens View Settings Dialog

@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<ViewSettingsDialog
+		id="settingsDialog"
 		confirm="handleConfirm"
 		cancel="handleCancel"
 		resetFilters="handleResetFilters">
