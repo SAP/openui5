@@ -114,7 +114,7 @@ sap.ui.define([
 				aggregations: {
 
 					/**
-					 * Defines the items contained within this control.
+					 * Defines the items contained within this control. <b>Note:</b> Disabled items are not visualized in the list with the available options, however they can still be accessed through the aggregation.
 					 */
 					items: {
 						type: "sap.ui.core.Item",
