@@ -154,7 +154,7 @@
 							<Label text="Gross Amount" />
 							<t:template>
 								<Input textAlign="Right" value="{
-										formatOptions : {showMeasure : false},
+										formatOptions : {showMeasure : false, parseAsString : true},
 										mode : 'TwoWay',
 										parts : [{
 											constraints : {precision : 16, scale : 3},
