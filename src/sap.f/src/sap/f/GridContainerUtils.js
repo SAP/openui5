@@ -135,8 +135,8 @@ sap.ui.define([
 
 		_getPosition: function (oItemRect, oGrid, oLayoutSizes) {
 			var oGridRect = oGrid.getDomRef().getBoundingClientRect(),
-				iTopOffsetInGrid = oItemRect.top - oGridRect.top,
-				iLeftOffsetInGrid = oItemRect.left - oGridRect.left,
+				iTopOffsetInGrid = Math.round(oItemRect.top - oGridRect.top),
+				iLeftOffsetInGrid = Math.round(oItemRect.left - oGridRect.left),
 
 				iStartRow = Math.floor(iTopOffsetInGrid / (oLayoutSizes.row + oLayoutSizes.gap)),
 				iStartCol = Math.floor(iLeftOffsetInGrid / (oLayoutSizes.column + oLayoutSizes.gap)),

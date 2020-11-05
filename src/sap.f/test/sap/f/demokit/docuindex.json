@@ -132,7 +132,8 @@
 		  "samples": [
 				"sap.f.sample.GridContainer",
 				"sap.f.sample.GridContainerDragAndDrop",
-				"sap.f.sample.GridContainerDragAndDropFromList"
+				"sap.f.sample.GridContainerDragAndDropFromList",
+				"sap.f.sample.GridContainersNavigation"
 			]
 		},
 		{
@@ -301,6 +302,11 @@
 			"id": "sap.f.sample.GridContainerDragAndDropFromList",
 			"name": "Grid Container - Drag and Drop From List to GridContainer",
 			"description": "This sample represents how items from a control which is not GridContainer can be dragged and dropped over a GridContainer."
+		},
+		{
+			"id": "sap.f.sample.GridContainersNavigation",
+			"name": "Grid Container - Keyboard navigation between multiple grids",
+			"description": "This sample demonstrates the keyboard navigation between multiple grids"
 		}
 	  ]
 	}

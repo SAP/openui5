@@ -298,7 +298,21 @@ sap.ui.define([
 						/**
 						 * Event that leads to the focus change.
 						 */
-						event: { type: "jQuery.Event" }
+						event: { type: "jQuery.Event" },
+						/**
+						 * The navigation direction that is used to reach the border.
+						 */
+						direction: {type: "sap.f.NavigationDirection"},
+
+						/**
+						 * The row index, from which the border is reached.
+						 */
+						row: {type: "integer"},
+
+						/**
+						 * The the column index, from which the border is reached.
+						 */
+						column: {type: "integer"}
 					}
 				}
 			},
@@ -460,7 +474,6 @@ sap.ui.define([
 		if (!that._oItemNavigation) {
 			that._oItemNavigation = new GridContainerItemNavigation()
 				.setCycling(false)
-				.attachEvent(ItemNavigation.Events.BorderReached, this._onItemNavigationBorderReached, this)
 				.setDisabledModifiers({
 					sapnext : ["alt", "meta", "ctrl"],
 					sapprevious : ["alt", "meta", "ctrl"]
@@ -1136,13 +1149,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires when border is reached of the <code>sap.f.GridContainer</code>.
-	 * @param {sap.ui.base.Event|jQuery.Event} oEvent The event object
+	 * Fires when border of the <code>sap.f.GridContainer</code> is reached.
+	 * @param {object} mParameters a set of parameters
+	 * @private
+	 * @ui5-restricted
 	 */
-	GridContainer.prototype._onItemNavigationBorderReached = function (oEvent) {
-		this.fireEvent("borderReached", {
-			event: oEvent instanceof jQuery.Event ? oEvent : oEvent.getParameter("event")
-		});
+	GridContainer.prototype.onItemNavigationBorderReached = function (mParameters) {
+		this.fireEvent("borderReached", mParameters);
 	};
 
 	/**
@@ -1401,6 +1414,29 @@ sap.ui.define([
 
 			aItemDomRefs[iIndex].focus();
 		}
+	};
+
+
+	/**
+	 * Focuses an item in the given direction - up, down, left or right,
+	 * from the starting position specified by row and column.
+	 *
+	 * If the direction is up or down, the method focuses
+	 * the nearest item in the same column, located in the specified direction.
+	 *
+	 * If the direction is left or right, the method focuses
+	 * the nearest item at the same row, in the specified direction.
+	 *
+	 * <b>Note:</b>Should be called after the rendering of <code>GridContainer</code> is ready.
+	 *
+	 * @public
+	 * @experimental Since 1.85. Behavior might change.
+	 * @param {sap.f.NavigationDirection} sDirection The navigation direction.
+	 * @param {integer} iRow The row index of the starting position.
+	 * @param {integer} iColumn The column index of the starting position.
+	 */
+	GridContainer.prototype.focusItemByDirection = function (sDirection, iRow, iColumn) {
+		this._oItemNavigation.focusItemByDirection(this, sDirection, iRow, iColumn);
 	};
 
 	GridContainer.prototype._isItemWrapper = function (oElement) {

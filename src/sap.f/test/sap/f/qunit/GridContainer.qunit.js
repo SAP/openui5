@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/f/library",
 	"sap/f/GridContainer",
 	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragInfo",
@@ -25,6 +26,7 @@ sap.ui.define([
 ],
 function (
 	jQuery,
+	library,
 	GridContainer,
 	Core,
 	DragInfo,
@@ -47,6 +49,9 @@ function (
 	GridDragOver
 ) {
 	"use strict";
+
+	// shortcut for sap.f.NavigationDirection
+	var NavigationDirection = library.NavigationDirection;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture",
 		EDGE_VERSION_WITH_GRID_SUPPORT = 16,
@@ -1211,7 +1216,7 @@ function (
 		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), "-1", "Focus DomRef should have tabindex='-1'");
 	});
 
-	QUnit.module("Event - 'borderReached'", {
+	QUnit.module("'borderReached' event and 'focusItemByDirection' method", {
 		beforeEach: function () {
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
 
@@ -1248,69 +1253,104 @@ function (
 	QUnit.test("Arrow Left on edge element should trigger 'borderReached' event", function (assert) {
 		// Arrange
 		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
-			oSpy = sinon.spy();
+			done = assert.async();
 
-		this.oGrid.attachBorderReached(oSpy);
+		this.oGrid.attachBorderReached(function (oEvent) {
+
+			// Assert
+			assert.ok(true, "'borderReached' event is fired");
+			assert.strictEqual(oEvent.getParameter("direction"), NavigationDirection.Left, "'direction' parameter is correct");
+			assert.strictEqual(oEvent.getParameter("row"), 0, "'row' parameter is correct");
+			assert.strictEqual(oEvent.getParameter("column"), 0, "'column' parameter is correct");
+
+			done();
+		});
 
 		oFirstItemWrapper.focus();
 		Core.applyChanges();
 
 		// Act
 		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
-
-		// Assert
-		assert.ok(oSpy.called, "'borderReached' event is fired");
 	});
 
 	QUnit.test("Arrow Up on edge element should trigger 'borderReached' event", function (assert) {
 		// Arrange
 		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
-			oSpy = sinon.spy();
+			done = assert.async();
 
-		this.oGrid.attachBorderReached(oSpy);
+		this.oGrid.attachBorderReached(function (oEvent) {
+			// Assert
+			assert.ok(true, "'borderReached' event is fired");
+			assert.strictEqual(oEvent.getParameter("direction"), NavigationDirection.Up, "'direction' parameter is correct");
+			assert.strictEqual(oEvent.getParameter("row"), 0, "'row' parameter is correct");
+			assert.strictEqual(oEvent.getParameter("column"), 0, "'column' parameter is correct");
+
+			done();
+		});
 
 		oFirstItemWrapper.focus();
 		Core.applyChanges();
 
 		// Act
 		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_UP, false, false, false);
-
-		// Assert
-		assert.ok(oSpy.called, "'borderReached' event is fired");
 	});
 
 	QUnit.test("Arrow Right on edge element should trigger 'borderReached' event", function (assert) {
 		// Arrange
 		var oFourthItemWrapper = this.oGrid.getItems()[3].getDomRef().parentElement,
-			oSpy = sinon.spy();
+			done = assert.async();
 
-		this.oGrid.attachBorderReached(oSpy);
+		this.oGrid.attachBorderReached(function (oEvent) {
+			// Assert
+			assert.ok(true, "'borderReached' event is fired");
+			assert.strictEqual(oEvent.getParameter("direction"), NavigationDirection.Right, "'direction' parameter is correct");
+			assert.strictEqual(oEvent.getParameter("row"), 1, "'row' parameter is correct");
+			assert.strictEqual(oEvent.getParameter("column"), 1, "'column' parameter is correct");
+
+			done();
+		});
 
 		oFourthItemWrapper.focus();
 		Core.applyChanges();
 
 		// Act
 		qutils.triggerKeydown(oFourthItemWrapper, KeyCodes.ARROW_RIGHT, false, false, false);
-
-		// Assert
-		assert.ok(oSpy.called, "'borderReached' event is fired");
 	});
 
 	QUnit.test("Arrow Down on edge element should trigger 'borderReached' event", function (assert) {
 		// Arrange
 		var oThirdItemWrapper = this.oGrid.getItems()[3].getDomRef().parentElement,
-			oSpy = sinon.spy();
+			done = assert.async();
 
-		this.oGrid.attachBorderReached(oSpy);
+		this.oGrid.attachBorderReached(function (oEvent) {
+			// Assert
+			assert.ok(true, "'borderReached' event is fired");
+			assert.strictEqual(oEvent.getParameter("direction"), NavigationDirection.Down, "'direction' parameter is correct");
+			assert.strictEqual(oEvent.getParameter("row"), 1, "'row' parameter is correct");
+			assert.strictEqual(oEvent.getParameter("column"), 1, "'column' parameter is correct");
+
+			done();
+		});
 
 		oThirdItemWrapper.focus();
 		Core.applyChanges();
 
 		// Act
 		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_DOWN, false, false, false);
+	});
 
-		// Assert
-		assert.ok(oSpy.called, "'borderReached' event is fired");
+	QUnit.test("focusItemByDirection method", function (assert) {
+		this.oGrid.focusItemByDirection(NavigationDirection.Down, 0, 0);
+		assert.strictEqual(document.activeElement, this.oGrid.getItems()[0].getDomRef().parentElement, "the item is correctly focused");
+
+		this.oGrid.focusItemByDirection(NavigationDirection.Up, 0, 1);
+		assert.strictEqual(document.activeElement, this.oGrid.getItems()[3].getDomRef().parentElement, "the item is correctly focused");
+
+		this.oGrid.focusItemByDirection(NavigationDirection.Right, 1, 0);
+		assert.strictEqual(document.activeElement, this.oGrid.getItems()[2].getDomRef().parentElement, "the item is correctly focused");
+
+		this.oGrid.focusItemByDirection(NavigationDirection.Left, 1, 0);
+		assert.strictEqual(document.activeElement, this.oGrid.getItems()[3].getDomRef().parentElement, "the item is correctly focused");
 	});
 
 	QUnit.module("Keyboard Drag&Drop - suggested positions in different directions", {
