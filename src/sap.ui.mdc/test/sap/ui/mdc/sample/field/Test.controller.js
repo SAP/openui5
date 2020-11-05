@@ -20,7 +20,8 @@ sap.ui.define([
 				"g": "mass-gram",
 				"kg": "mass-kilogram",
 				"mg": "mass-milligram",
-				"t": "mass-metric-ton"
+				"t": "mass-metric-ton",
+				"cm": "length-centimeter"
 			});
 
 			var oView = this.getView();

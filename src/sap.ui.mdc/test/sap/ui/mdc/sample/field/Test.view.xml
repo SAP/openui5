@@ -120,12 +120,13 @@
 						<m:Text id="MyText" text="Event" width="400px" wrapping="false"></m:Text>
 					</m:contentLeft>
 					<m:contentMiddle>
-						<m:SegmentedButton selectedKey="P0" width="320px" select="handleButton">
+						<m:SegmentedButton selectedKey="P0" width="400px" select="handleButton">
 							<m:items>
-								<m:SegmentedButtonItem key="P0" text="Simple"></m:SegmentedButtonItem>
-								<m:SegmentedButtonItem key="P1" text="FieldHelp"></m:SegmentedButtonItem>
-								<m:SegmentedButtonItem key="P2" text="FieldInfo"></m:SegmentedButtonItem>
-								<m:SegmentedButtonItem key="P3" text="Table"></m:SegmentedButtonItem>
+								<m:SegmentedButtonItem key="P0" text="Simple"/>
+								<m:SegmentedButtonItem key="P1" text="FieldHelp"/>
+								<m:SegmentedButtonItem key="P2" text="FieldInfo"/>
+								<m:SegmentedButtonItem key="P3" text="Table"/>
+								<m:SegmentedButtonItem key="P4" text="SemanticallContected"/>
 							</m:items>
 						</m:SegmentedButton>
 					</m:contentMiddle>
@@ -1052,5 +1053,58 @@
 				</m:dependents>
 			</m:Table>
 		</m:Page>
+
+		<m:Page id="P4" title="Sematically connected Fields" titleLevel="H1">
+			<form:Form id= "Form4" editable="{view>/editModeSemantic}">
+				<form:layout>
+					<form:ColumnLayout columnsXL="2" columnsL="2" columnsM="1"/>
+				</form:layout>
+				<form:toolbar>
+					<m:Toolbar>
+						<m:Title text="Form"/>
+						<m:ToolbarSpacer/>
+						<m:ToggleButton text="Edit" pressed="{view>/editModeSemantic}"/>
+					</m:Toolbar>
+				</form:toolbar>
+				<form:FormContainer title="Different types">
+					<form:SemanticFormElement label="String Fields">
+						<mdc:Field id="F4-1" value="{ProductId}" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"/>
+						<mdc:Field id="F4-2" value="{Name}" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"/>
+					</form:SemanticFormElement>
+					<form:SemanticFormElement label="Date Fields">
+						<mdc:Field id="F4-3" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"/>
+						<mdc:Field id="F4-4" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions="{style: 'short'}" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+						<mdc:Field id="F4-5" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+					</form:SemanticFormElement>
+					<form:SemanticFormElement label="Boolean Fields">
+						<mdc:Field id="F4-6" value="{path:'Important', type:'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}" display="Description" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+						<mdc:Field id="F4-7" value="{path:'Important', type:'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+					</form:SemanticFormElement>
+				</form:FormContainer>
+				<form:FormContainer title="Field Help">
+					<form:SemanticFormElement label="Country, region, city">
+						<mdc:Field id="F4-8" value="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}" placeholder="{/#Product/CountryId/@sap:label}" display="Description" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="IOFVHCountry"/>
+						<mdc:Field id="F4-9" value="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}" placeholder="{/#Product/RegionId/@sap:label}" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="IOFVHRegion"/>
+						<mdc:Field id="F4-10" value="{path: 'CityId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}" placeholder="{/#Product/CityId/@sap:label}" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="IOFVHCity"/>
+					</form:SemanticFormElement>
+				</form:FormContainer>
+				<form:FormContainer title="unit fields">
+					<form:SemanticFormElement label="width, depth, height">
+						<mdc:Field id="F4-11" value="{parts: [{path: 'Width'}, {path: 'DimUnit'}], type: 'sap.ui.model.type.Unit', formatOptions: {showMeasure: false, emptyString : 0}}" placeholder="{/#Product/Width/@sap:label}" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit">
+							<mdc:layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="11"/>
+							</mdc:layoutData>
+						</mdc:Field>
+						<mdc:Field id="F4-12" value="{parts: [{path: 'Depth'}, {path: 'DimUnit'}], type: 'sap.ui.model.type.Unit', formatOptions: {showMeasure: false, emptyString : 0}}" placeholder="{/#Product/Width/@sap:label}" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit">
+							<mdc:layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="11"/>
+							</mdc:layoutData>
+						</mdc:Field>
+						<mdc:Field id="F4-13" value="{parts: [{path: 'Height'}, {path: 'DimUnit'}], type: 'sap.ui.model.type.Unit'}" placeholder="{/#Product/Width/@sap:label}" display="Description" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+					</form:SemanticFormElement>
+				</form:FormContainer>
+			</form:Form>
+		</m:Page>
+
 	</m:App>
 </mvc:View>
