@@ -161,6 +161,8 @@ sap.ui.define([
 	 */
 	OverflowToolbar.ARIA_ROLE_DESCRIPTION = "OVERFLOW_TOOLBAR_ROLE_DESCRIPTION";
 
+	OverflowToolbar.CONTENT_SIZE_TOLERANCE = 1;
+
 	/**
 	 * A shorthand for calling Toolbar.prototype methods
 	 * @param {string} sFuncName - the name of the method
@@ -728,7 +730,8 @@ sap.ui.define([
 		this._markControlsWithShrinkableLayoutData();
 
 		// If all content fits - put the PopoverOnly controls (if any) in the Popover and stop here
-		if (this._iCurrentContentSize <= iToolbarSize) {
+		// Due to rounding issues, add 1px size tolerance
+		if (this._iCurrentContentSize <= (iToolbarSize + OverflowToolbar.CONTENT_SIZE_TOLERANCE)) {
 			this._flushButtonsToPopover();
 			this._invalidateIfHashChanged(sIdsHash);
 			return;
