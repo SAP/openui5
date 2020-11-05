@@ -523,7 +523,7 @@ sap.ui.define([
 
 		var oControl;
 		if (oOperator.createControl) {
-			oControl = oOperator.createControl(oNullableType, oOperator, "$this>", iIndex);
+			oControl = oOperator.createControl(oNullableType, "$this>", iIndex, sId);
 		} else {
 			oControl = new Field(sId, {
 				delegate: _getDelegate.call(this),

@@ -383,7 +383,7 @@ sap.ui.define([
 				tokenText: "Text",
 				longText: "Longtext",
 				valueTypes: [Operator.ValueType.Self],
-				createControl: function(oType, oOperator, sPath, index) {
+				createControl: function(oType, sPath, index, sId) {
 					return new Button({text: {path: sPath, type: oType}});
 				}
 			});
