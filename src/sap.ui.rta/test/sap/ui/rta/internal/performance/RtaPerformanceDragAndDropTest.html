@@ -30,17 +30,10 @@
 		<script>
 			function startDragAndDrop() {
 				sap.ui.require([
-					"dt/performance/PerformanceTestUtil",
-					"sap/ui/core/UIComponent",
-					"sap/ui/fl/Utils"
+					"dt/performance/PerformanceTestUtil"
 				], function(
-					DtPerformanceTestUtil,
-					UIComponent,
-					FlUtils
+					DtPerformanceTestUtil
 				) {
-					var oAppComponent = new UIComponent()
-					sinon.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-
 					jQuery.get("./dragAndDrop/dragDropEvents.json")
 					.done(function(aEvents) {
 						DtPerformanceTestUtil.measureApplyStylePerformance("applyStylesDragDrop", 3000);
