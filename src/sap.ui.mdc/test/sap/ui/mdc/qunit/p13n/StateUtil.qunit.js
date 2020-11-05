@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate"
-], function (TableDelegate, StateUtil, FilterBarDelegate, UIComponent, ComponentContainer, FilterField, ChartDelegate) {
+	"sap/ui/mdc/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil"
+], function (TableDelegate, StateUtil, FilterBarDelegate, UIComponent, ComponentContainer, FilterField, ChartDelegate, TypeUtil) {
 	"use strict";
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl");
@@ -110,7 +110,7 @@ sap.ui.define([
 			aProperties.push({
 				name: mProperties[sProperty].name,
 				label: mProperties[sProperty].label,
-				type: mProperties[sProperty].type,
+				typeConfig: TypeUtil.getTypeConfig(mProperties[sProperty].type),
 				filterable: mProperties[sProperty].filterable
 			});
 		}
