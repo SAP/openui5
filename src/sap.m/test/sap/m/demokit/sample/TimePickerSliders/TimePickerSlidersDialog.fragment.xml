@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<Dialog
+		id="selectTimeDialog"
 		title="Select New Time">
 		<TimePickerSliders
 			id="TPS2"
