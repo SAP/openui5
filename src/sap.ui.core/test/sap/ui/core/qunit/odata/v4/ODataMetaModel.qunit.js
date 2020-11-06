@@ -3511,6 +3511,24 @@ sap.ui.define([
 				: "tea_busi.TEAM"
 		},
 		editUrl : "T%E2%82%ACAMS(~0)"
+	}, { // instance annotation
+		path : "/TEAMS/0|Name@my.annotation",
+		fetchPredicates : {
+			"/TEAMS/0" : "tea_busi.TEAM"
+		},
+		editUrl : "TEAMS(~0)"
+	}, { // complex instance annotation
+		path : "/TEAMS/0|Name@complex/property",
+		fetchPredicates : {
+			"/TEAMS/0" : "tea_busi.TEAM"
+		},
+		editUrl : "TEAMS(~0)"
+	}, { // annotated instance annotation
+		path : "/TEAMS/0|Name@my.annotation@annotation",
+		fetchPredicates : {
+			"/TEAMS/0" : "tea_busi.TEAM"
+		},
+		editUrl : "TEAMS(~0)"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),
@@ -3643,6 +3661,9 @@ sap.ui.define([
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : new Error("failed to load team"),
 		message : "failed to load team at /TEAMS/0"
+	}, {
+		dataPath : "/TEAMS/0/Foo@$ui5.something",
+		message : "Read-only path must not be updated"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.message, function (assert) {
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),

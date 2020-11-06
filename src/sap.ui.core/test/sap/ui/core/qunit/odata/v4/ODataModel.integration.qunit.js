@@ -10465,7 +10465,6 @@ sap.ui.define([
 
 			that.expectRequest({
 					method : "POST",
-					headers : {},
 					url : "Artists/special.cases.Create"
 						+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
 					payload : {
@@ -11536,24 +11535,94 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: stream property with @odata.mediaReadLink
-	QUnit.test("stream property with @odata.mediaReadLink", function (assert) {
+	// Scenario: stream property with @mediaReadLink or @odata.mediaReadLink
+["@mediaReadLink", "@odata.mediaReadLink"].forEach(function (sAnnotation) {
+	QUnit.test("stream property with " + sAnnotation, function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oResponse = {},
 			sView = '\
 <FlexBox binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
 	<Text id="url" text="{ProductPicture/Picture}"/>\
 </FlexBox>';
 
+		oResponse["Picture" + sAnnotation] = "ProductPicture('42')";
 		this.expectRequest(
 			"Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture", {
 				"@odata.context" : "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
 				ID : "42",
-				ProductPicture : {"Picture@odata.mediaReadLink" : "ProductPicture('42')"}
+				ProductPicture : oResponse
 			})
 			.expectChange("url",
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')");
 
 		return this.createView(assert, sView, oModel);
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Writing instance annotations via create and update.
+	// 1. POST: Initial payload containing instance annotations
+	// 2. PATCH: Update instance annotations
+	// JIRA: CPOUI5ODATAV4-593
+	QUnit.test("CPOUI5ODATAV4-593: Writing instance annotations via POST/PATCH", function (assert) {
+		var oContext,
+			oModel = createModel("/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/"),
+			oInitialData = {
+				"@annotation" : "baz",
+				"@annotation@annotation" : "bazbaz",
+				"@complexAnnotation" : {
+					sub : "bar"
+				},
+				ProductPicture : {
+					"Picture@odata.mediaEditLink" : "foo"
+				}
+			},
+			oPayload = Object.assign({}, oInitialData, {"@complexAnnotation" : {sub : "bar*"}}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function() {
+			var oListBinding = that.oModel.bindList("/Products");
+
+			that.expectRequest({
+					method : "POST",
+					url : "Products",
+					payload : oPayload
+				}, Object.assign({ID : "42"}, oPayload));
+
+			// code under test
+			oContext = oListBinding.create(oInitialData, true);
+
+			return Promise.all([
+				// code under test
+				oContext.setProperty("@complexAnnotation/sub", "bar*"),
+				oContext.created(),
+				that.waitForChanges(assert, "POST")
+			]);
+		}).then(function() {
+			that.expectRequest({
+				method : "PATCH",
+				url : "Products(42)",
+				payload : {
+					"@annotation" : "baz*",
+					"@annotation@annotation" : "bazbaz*",
+					"@complexAnnotation" : {
+						sub : "bar**"
+					},
+					ProductPicture : {
+						"Picture@odata.mediaEditLink" : "foo*"
+					}
+				}
+			});
+
+			return Promise.all([
+				// code under test
+				oContext.setProperty("@annotation", "baz*"),
+				oContext.setProperty("@annotation@annotation", "bazbaz*"),
+				oContext.setProperty("@complexAnnotation/sub", "bar**"),
+				oContext.setProperty("ProductPicture/Picture@odata.mediaEditLink", "foo*"),
+				that.waitForChanges(assert, "PATCH")
+			]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -17338,20 +17407,20 @@ sap.ui.define([
 			.expectChange("id", "1");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oMatcher = sinon.match(
-					"/MANAGERS('1')/@$ui5.foo: Not a (navigation) property: @$ui5.foo"),
+			var oMatcher = sinon.match("/MANAGERS('1')/@$ui5.foo: "
+				+ "Read-only path must not be updated"),
 				oPropertyBinding = that.oView.byId("foo").getBinding("value");
 
 			assert.strictEqual(oPropertyBinding.getValue(), 42);
 			that.oLogMock.expects("error")
-				.withExactArgs("Not a (navigation) property: @$ui5.foo", oMatcher,
+				.withExactArgs("Read-only path must not be updated", oMatcher,
 					"sap.ui.model.odata.v4.ODataMetaModel");
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /MANAGERS('1')/@$ui5.foo", oMatcher,
 					"sap.ui.model.odata.v4.ODataPropertyBinding");
 
 			that.expectMessages([{
-				message : "/MANAGERS('1')/@$ui5.foo: Not a (navigation) property: @$ui5.foo",
+				message : "/MANAGERS('1')/@$ui5.foo: Read-only path must not be updated",
 				persistent : true,
 				technical : true,
 				technicalDetails : {}, // we do NOT expect technicalDetails for JS Errors
@@ -17975,7 +18044,6 @@ sap.ui.define([
 				that.expectRequest({
 						method : "PATCH",
 						url : "Artists(ArtistID='42',IsActiveEntity=false)",
-						headers : {},
 						payload : {Name : "foo"}
 					}, {Name : "foo"})
 					.expectChange("name", "foo");

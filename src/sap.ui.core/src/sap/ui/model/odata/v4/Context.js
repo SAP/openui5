@@ -347,7 +347,8 @@ sap.ui.define([
 	 *   fire "patchSent" and "patchCompleted" events
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure
+	 *   instance of <code>Error</code> in case of failure, for example if the annotation belongs to
+	 *   the read-only namespace "@$ui5.*"
 	 *
 	 * @private
 	 */
@@ -1294,7 +1295,8 @@ sap.ui.define([
 
 	/**
 	 * Sets a new value for the property identified by the given path. The path is relative to this
-	 * context and is expected to point to a structural property with primitive type.
+	 * context and is expected to point to a structural property with primitive type or, since
+	 * 1.85.0, to an instance annotation.
 	 *
 	 * @param {string} sPath
 	 *   A path relative to this context
@@ -1306,7 +1308,8 @@ sap.ui.define([
 	 *   <code>null</code> to prevent the PATCH request.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure
+	 *   instance of <code>Error</code> in case of failure, for example if the annotation belongs to
+	 *   the read-only namespace "@$ui5.*"
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended, for invalid group IDs, or if the new value is
 	 *   not primitive
