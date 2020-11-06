@@ -31,11 +31,6 @@ describe("sap.m.MessageStrip", function() {
 		expect(takeScreenshot(element(by.id("mcontainer6")))).toLookAs("verylong-messagestrip");
 	});
 
-	it("should show all MessageStrips with margin between them", function() {
-		element(by.id("margin-button")).click();
-		expect(takeScreenshot()).toLookAs("messagestrips-with-margin");
-	});
-
 	it("should show MessageStrip containing a very long word without adding a scroll under IE11", function() {
 		expect(takeScreenshot(element(by.id("mcontainer8")))).toLookAs("messagestrip-with-long-word");
 	});
