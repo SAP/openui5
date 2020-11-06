@@ -11704,12 +11704,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: test conversion of $orderby for V2 Adapter
 	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
-	QUnit.test("V2 Adapter: $orderby", function (assert) {
+	// BCP: 2070443387 ($search)
+	QUnit.test("V2 Adapter: $orderby & $search", function (assert) {
 		var sView = '\
 <Table id="table" items="{path :\'/SalesOrderSet\',\
 		parameters : {\
 			$select : \'SalesOrderID\',\
-			$orderby : \'SalesOrderID\'\
+			$orderby : \'SalesOrderID\',\
+			$search : \'foo\'\
 		}}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
@@ -11717,7 +11719,7 @@ sap.ui.define([
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 			});
 
-		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID"
+		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$search=foo&$select=SalesOrderID"
 				+ "&$skip=0&$top=100", {
 				d : {
 					results : [{

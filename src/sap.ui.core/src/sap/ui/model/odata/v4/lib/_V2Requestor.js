@@ -739,6 +739,7 @@ sap.ui.define([
 					vValue = (bSortExpandSelect ? vValue.sort() : vValue).join(",");
 					break;
 				case "$orderby":
+				case "$search":
 					break;
 				case "$select":
 					addSelects(vValue);
