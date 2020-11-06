@@ -160,7 +160,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		CalendarWeekInterval.prototype._handleCalendarPickerDateSelect = function(oEvent) {
 			var oCalPicker = this._getCalendarPicker(),
 				oSelectedDate = oCalPicker.getSelectedDates()[0].getStartDate(),
-				oFocusedDate = new CalendarDate.fromLocalJSDate(oSelectedDate),
+				oFocusedDate = CalendarDate.fromLocalJSDate(oSelectedDate),
 				oFirstWeekDate;
 
 			if (this._dateMatchesVisibleRange(oFocusedDate.toLocalJSDate())) {

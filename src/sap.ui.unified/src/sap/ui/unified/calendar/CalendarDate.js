@@ -57,7 +57,7 @@ sap.ui.define([
 				switch (aArgs.length) {
 					case 0: // defaults to the current date
 						oNow = new Date();
-						return this.constructor(oNow.getFullYear(), oNow.getMonth(), oNow.getDate());
+						return CalendarDate.call(this, oNow.getFullYear(), oNow.getMonth(), oNow.getDate());
 
 					case 1: // CalendarDate
 					case 2: // CalendarDate, sCalendarType
