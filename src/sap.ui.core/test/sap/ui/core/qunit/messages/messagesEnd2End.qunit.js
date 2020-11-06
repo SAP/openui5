@@ -410,38 +410,51 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("MessageMixin: Ignore list bindings", function(assert) {
-		var done = assert.async();
-		assert.expect(4);
-		var oModel = new ODataModel(this.sServiceUri);
+	QUnit.test("MessageMixin: Ignore list bindings", function (assert) {
+		var done = assert.async(),
+			oModel = new ODataModel(this.sServiceUri);
 
-        oModel.metadataLoaded().then(function(){
-			var oInput = new Input({
-				value: {path: "/BusinessPartnerSet('0100000000')/EmailAddress"},
-				suggestionItems: {path: "/BusinessPartnerSet", template: new Item({text: "{EmailAddress}"})}
-			});
+		oModel.metadataLoaded().then(function (){
+			var bCall1, bCall2,
+				oInput = new Input({
+					// the order of the properties influence the order of refreshDataState calls
+					value: {path: "/BusinessPartnerSet('0100000000')/EmailAddress"},
+					suggestionItems: {
+						path: "/BusinessPartnerSet",
+						template: new Item({text: "{EmailAddress}"})
+					}
+				}),
+				fnOriginalRefreshDataState = oInput.refreshDataState;
+
 			oInput.setModel(oModel);
 			sap.ui.getCore().getMessageManager().registerObject(oInput);
 
-			var bCall1, bCall2;
-			var orginalFunction = oInput.refreshDataState;
-			oInput.refreshDataState = function(sName, oDataState){
-				orginalFunction.apply(this, arguments);
-				if (sName === "value"){
-					assert.equal(oInput.getValueStateText(), "Correct text", "Correct message text was set and other messages texts were ignored");
-					assert.equal(oInput.getValueState(), "Warning", "Warning state was set.");
+			oInput.refreshDataState = function (sName, oDataState) {
+				fnOriginalRefreshDataState.apply(this, arguments);
+				if (bCall1 && bCall2) {
+					// destroying the input field causes an additional refreshDataState call for
+					// removing the data state
+					assert.strictEqual(sName, "value");
+					assert.strictEqual(oInput.getValueStateText(), "", "while destroying");
+					assert.strictEqual(oInput.getValueState(), "None");
+					done();
+					return;
+				}
+				if (sName === "value") {
+					assert.strictEqual(oInput.getValueStateText(), "Correct text",
+						"refreshDataState for property 'value'");
+					assert.strictEqual(oInput.getValueState(), "Warning");
 					bCall1 = true;
-				} else if (sName === "suggestionItems"){
-					assert.equal(oInput.getValueStateText(), "Correct text", "Correct message text was set and other messages texts were ignored");
-					assert.equal(oInput.getValueState(), "Warning", "Warning state was not set to error.");
+				} else if (sName === "suggestionItems") {
+					// value state from value is not overwritten
+					assert.strictEqual(oInput.getValueStateText(), "Correct text",
+						"refreshDataState for property 'suggestionItems'");
+					assert.strictEqual(oInput.getValueState(), "Warning");
 					bCall2 = true;
 				}
-				if (bCall1 && bCall2){
+				if (bCall1 && bCall2) {
 					oInput.destroy();
-					sap.ui.getCore().getMessageManager().removeAllMessages();
-					done();
 				}
-
 			};
 		});
 	});

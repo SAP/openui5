@@ -682,16 +682,32 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes all control messages for this binding from the MessageManager in addition to the standard clean-up tasks.
+	 * Removes all control messages for this binding from the MessageManager in addition to the
+	 * standard clean-up tasks.
 	 * @see sap.ui.base.EventProvider#destroy
 	 *
 	 * @public
 	 */
 	Binding.prototype.destroy = function() {
+		var oDataState = this.oDataState;
+
+		if (this.bIsBeingDestroyed) { // avoid endless recursion
+			return;
+		}
 		this.bIsBeingDestroyed = true;
-		sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
+
+		if (oDataState) {
+			sap.ui.getCore().getMessageManager()
+				.removeMessages(oDataState.getControlMessages(), true);
+			oDataState.setModelMessages();
+			if (oDataState.changed()) {
+				// notify controls synchronously that data state changed
+				this.fireEvent("DataStateChange", {dataState : oDataState});
+				this.fireEvent("AggregatedDataStateChange", {dataState : oDataState});
+			}
+			delete this.oDataState;
+		}
 		EventProvider.prototype.destroy.apply(this, arguments);
-		this.bIsBeingDestroyed = false;
 	};
 
 	/**

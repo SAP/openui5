@@ -3,10 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/EventProvider",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/test/TestUtils"
-], function (Log, Binding, ChangeReason, TestUtils) {
+], function (Log, EventProvider, Binding, ChangeReason, TestUtils) {
 	/*global QUnit, sinon*/
 	"use strict";
 
@@ -136,6 +137,69 @@ sap.ui.define([
 
 		// code under test
 		Binding.prototype._checkDataState.call(oBinding, "~sResolvedPath");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{dataStateSet : true, dataStateChanged : false},
+	{dataStateSet : true, dataStateChanged : true},
+	{dataStateSet : false}
+].forEach(function (oFixture) {
+	var sTitle = "destroy - data state set: " + oFixture.dataStateSet + "; data state changed: "
+			+ oFixture.dataStateChanged;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				oDataState : null,
+				mEventRegistry : oFixture.eventRegistry,
+				_checkDataStateMessages : function () {},
+				destroy : function () {},
+				fireEvent : function () {},
+				getDataState : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oDataState = {
+				changed : function () {},
+				getControlMessages : function () {},
+				setModelMessages : function () {}
+			},
+			oDataStateMock = this.mock(oDataState),
+			oMessageManager = sap.ui.getCore().getMessageManager();
+
+		if (oFixture.dataStateSet) {
+			oBinding.oDataState = oDataState;
+
+			oDataStateMock.expects("getControlMessages")
+				.withExactArgs().returns("~oControlMessages");
+			this.mock(oMessageManager).expects("removeMessages")
+				.withExactArgs("~oControlMessages", true);
+			oDataStateMock.expects("setModelMessages").withExactArgs();
+			oDataStateMock.expects("changed").withExactArgs().returns(oFixture.dataStateChanged);
+
+			if (oFixture.dataStateChanged) {
+				oBindingMock.expects("fireEvent")
+					.withExactArgs("DataStateChange", {dataState : oDataState})
+					.callsFake(function () {
+						// code under test - recursive call
+						Binding.prototype.destroy.call(oBinding);
+					});
+				oBindingMock.expects("fireEvent")
+					.withExactArgs("AggregatedDataStateChange", {dataState : oDataState});
+			} else {
+				oBindingMock.expects("fireEvent").never();
+			}
+
+			this.mock(EventProvider.prototype).expects("destroy").on(oBinding).withExactArgs();
+		}
+
+		assert.strictEqual(oBinding.bIsBeingDestroyed, undefined);
+
+		// code under test
+		Binding.prototype.destroy.call(oBinding);
+
+		assert.strictEqual(oBinding.bIsBeingDestroyed, true);
+		assert.strictEqual(oBinding.oDataState, oFixture.dataStateSet ? undefined : null);
 	});
 });
 });
