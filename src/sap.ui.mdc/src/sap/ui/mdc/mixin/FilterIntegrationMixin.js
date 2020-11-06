@@ -80,6 +80,10 @@ sap.ui.define([
 		return;
 	};
 
+	function onSearch() {
+		this.rebind();
+	}
+
 	/**
 	 * Registers the MDC Control to the provided IFilter control instance
 	 * events <code>search</code> and <code>filtersChanged</code>.
@@ -87,7 +91,7 @@ sap.ui.define([
     FilterIntegrationMixin._registerFilter = function() {
 		var oFilter = Core.byId(this.getFilter());
 		if (oFilter) {
-			oFilter.attachSearch(this.rebind, this);
+			oFilter.attachSearch(onSearch, this);
 			oFilter.attachFiltersChanged(this._onFiltersChanged, this);
 		}
 	};
@@ -99,7 +103,7 @@ sap.ui.define([
     FilterIntegrationMixin._deregisterFilter = function() {
 		var oFilter = Core.byId(this.getFilter());
 		if (oFilter) {
-			oFilter.detachSearch(this.rebind, this);
+			oFilter.detachSearch(onSearch, this);
 			oFilter.detachFiltersChanged(this._onFiltersChanged, this);
 		}
 	};
