@@ -194,6 +194,21 @@ sap.ui.define([
 		oConditionModel.removeCondition("fieldPath2", 0);
 		assert.equal(oConditionModel.indexOf("fieldPath2", c3), -1, "condition should not exist");
 		assert.notOk(oConditionModel.exist(c3, "fieldPath2"), "condition should not exist");
+
+		// normalization
+		var iNormalized = 0;
+		var fnNormalize = function (oCondition) {
+			iNormalized++;
+			return Object.assign({}, oCondition, {values: oCondition.values.map(function (sValue) {
+				return sValue.replace(/^0*(?=\d)/, "");
+			})});
+		};
+		var oLeadingZerosCondition = Condition.createCondition("EQ", ["0000000763"]);
+		var oCondition = Condition.createCondition("EQ", ["763"]);
+		oConditionModel.addCondition("fieldPath4", oCondition);
+		assert.ok(oConditionModel.indexOf("fieldPath4", oLeadingZerosCondition) === -1, "Existing condition not considered without normalization.");
+		assert.ok(oConditionModel.indexOf("fieldPath4", oLeadingZerosCondition, fnNormalize) >= 0, "Existing condition considered.");
+		assert.ok(iNormalized, "normalization method was called.");
 	});
 
 	QUnit.test("getAllConditions", function(assert) {

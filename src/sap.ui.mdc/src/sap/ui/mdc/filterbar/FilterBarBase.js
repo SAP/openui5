@@ -1060,9 +1060,12 @@ sap.ui.define([
 		return mConditions;
 	};
 
-	var _getNormalizeConditions = function (oProperty) {
-		var oTypeUtil = this.getTypeUtil();
-		return oTypeUtil && oProperty && oProperty.typeConfig && oTypeUtil.normalizeConditions(oProperty.typeConfig.typeInstance);
+	// Normalization is currently only done for IsDigitSequence Types
+	var _fnNormalizeCondition = function (oProperty) {
+		var oTypeInstance = oProperty.typeConfig.typeInstance;
+		return oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.String" && oTypeInstance.oConstraints && oTypeInstance.oConstraints.isDigitSequence && oTypeInstance.oConstraints.maxLength ? function (oCondition) {
+			return this._toExternal(oProperty, oCondition, this.getTypeUtil());
+		}.bind(this) : undefined;
 	};
 
 	FilterBarBase.prototype.removeCondition = function(sFieldPath, oXCondition) {
@@ -1072,7 +1075,7 @@ sap.ui.define([
 				var oProperty = this._getPropertyByName(sFieldPath);
 				if (oProperty) {
 					var oCondition = this._toInternal(oProperty, oXCondition);
-					if (oCM.indexOf(sFieldPath, oCondition, _getNormalizeConditions.call(this, oProperty)) >= 0) {
+					if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) >= 0) {
 						oCM.removeCondition(sFieldPath, oCondition);
 					}
 				}
@@ -1087,7 +1090,7 @@ sap.ui.define([
 				var oProperty = this._getPropertyByName(sFieldPath);
 				if (oProperty) {
 					var oCondition = this._toInternal(oProperty, oXCondition);
-					if (oCM.indexOf(sFieldPath, oCondition, _getNormalizeConditions.call(this, oProperty)) < 0) {
+					if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) < 0) {
 						var aCondition = [{sFieldPath: oProperty}];
 						StateUtil.checkConditionOperatorSanity(aCondition); //check if the single condition's operator is valid
 						if (aCondition && aCondition.length > 0){

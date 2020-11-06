@@ -54,22 +54,6 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType'], functio
 		return sType;
 	};
 
-	ODataV4TypeUtil.normalizeConditions = function (oTypeInstance) {
-
-		var fnNormalize = function (oCondition) {
-			if (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.String" && oTypeInstance.oConstraints.isDigitSequence && oTypeInstance.oConstraints.maxLength) {
-				return Object.assign({}, oCondition, {values: oCondition.values.map(function (oValue) {
-					return oTypeInstance.formatValue(oValue, "string");
-				})});
-			}
-			return oCondition;
-		};
-
-		return function (vConditions) {
-			return Array.isArray(vConditions) ? vConditions.map(fnNormalize) : fnNormalize(vConditions);
-		};
-	};
-
 	return ODataV4TypeUtil;
 
 }, /* bExport= */ true);
