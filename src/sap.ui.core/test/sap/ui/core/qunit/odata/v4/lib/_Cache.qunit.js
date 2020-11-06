@@ -9574,6 +9574,73 @@ sap.ui.define([
 		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101);
 		assert.notOk("/30" in mSharedCollectionCacheByPath);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshKeptElements", function (assert) {
+		var oCache = _Cache.create(this.oRequestor, "Employees", {}),
+			oCacheMock = this.mock(oCache),
+			oElement = {},
+			oEntity = {},
+			mQueryOptionsCopy = {
+				$count : true,
+				$orderby : "~orderby~",
+				$search : "~search~"
+			},
+			oGroupLock = {},
+			oResponse = {value : [oElement]},
+			mTypes = {};
+
+		oCache.aElements.$byPredicate = {
+			"('Foo')" : oEntity
+		};
+
+		// calculateKeptElementQuerry
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
+			.returns(mQueryOptionsCopy);
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs(sinon.match.same(oEntity), oCache.sMetaPath, sinon.match.same(mTypes))
+			.returns("~filter~");
+		this.mock(oCache.oRequestor).expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match(function (oValue) {
+				return oValue === mQueryOptionsCopy
+					&& oValue.$filter === "~filter~"
+					&& !("$count" in oValue)
+					&& !("$orderby" in oValue)
+					&& !("$search" in oValue);
+			}))
+			.returns("?$filter=~filter~");
+
+		// refreshKeptElement
+		oCacheMock.expects("fetchTypes").returns(SyncPromise.resolve(mTypes));
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("GET", "Employees?$filter=~filter~", sinon.match.same(oGroupLock))
+			.returns(Promise.resolve(oResponse));
+		oCacheMock.expects("visitResponse")
+			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypes), undefined,
+				undefined, undefined, 0);
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "predicate")
+			.returns("('Foo')");
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('Foo')",
+				sinon.match.same(oEntity), sinon.match.same(oElement));
+
+		// code under test
+		return oCache.refreshKeptElement(oGroupLock).then(function (oResult) {
+			assert.deepEqual(oResult, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshKeptElement w/o kept-alive element", function (assert) {
+		var oCache = _Cache.create(this.oRequestor, "Employees", {});
+
+		this.mock(oCache.oRequestor).expects("request").never();
+
+		// code under test
+		assert.deepEqual(oCache.refreshKeptElement({/*GroupLock*/}), undefined);
+	});
 });
 //TODO: resetCache if error in update?
 // TODO we cannot update a single property with value null, because the read delivers "204 No

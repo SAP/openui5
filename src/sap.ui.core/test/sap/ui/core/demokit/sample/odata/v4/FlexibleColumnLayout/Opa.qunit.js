@@ -209,6 +209,35 @@ sap.ui.getCore().attachInit(function () {
 
 				Then.iTeardownMyUIComponent();
 			});
+
+			//*****************************************************************************
+			opaTest("Refresh the sales orders table with a kept-alive context that is not visible"
+					+ " in the list; after refreshing the sales orders table, the sales order"
+					+ " appears again in the list", function (Given, When, Then) {
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout"
+					}
+				});
+
+				When.onTheListReport.selectSalesOrder(4);
+				Then.onTheObjectPage.checkSalesOrderID("0500000004");
+
+				// apply filter and check context is not in collection anymore
+				When.onTheListReport.filterByGrossAmount('1000');
+				Then.onTheObjectPage.checkSalesOrderID("0500000004");
+				Then.onTheListReport.checkSalesOrderNotInTheList("0500000004");
+
+				// code under test
+				When.onTheListReport.refresh();
+
+				// the object page is refreshed
+				Then.onTheObjectPage.checkSalesOrderID("0500000004");
+				Then.onTheListReport.checkSalesOrder(4, "0500000004", "Test (refreshed)");
+
+				Then.iTeardownMyUIComponent();
+			});
 		}
 
 		QUnit.start();

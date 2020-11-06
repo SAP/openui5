@@ -145,5 +145,23 @@
 			<li><b>Check</b> The object page is updated and shows new data but the sales order
 				does no longer appear in the sales order table.</li>
 		</ol>
+		<h3>Refresh the <code>New Sales Orders</code> list with a kept-alive context that is not
+			visible in the list; after refreshing the <code>New Sales Orders</code> list, the sales
+			order appears again in the list</h3>
+		<ol>
+			<li>Select the fifth sales order in the <code>New Sales Orders</code> list.</li>
+			<li><b>Check:</b> An object page <code>Sales Order Details</code> for the selected
+				sales order appears.</li>
+			<li>Enter '1000' in the search field of the <code>New Sales Orders</code> list and
+				press enter.</li>
+			<li><b>Check:</b> That the sales order '0500000004' is filtered out from the
+				<code>New Sales Orders</code> list, but still exists on the
+				<code>Sales Order Details</code> object page.
+			<li>Press the <code>Refresh</code> button on the <code>New Sales Orders</code>
+				list.</li>
+			<li><b>Check</b> The object page <code>Sales Order Details</code> is updated and
+				shows new data and the sales order '0500000004' appears again in the
+				<code>New Sales Orders</code> list.</li>
+		</ol>
 	</body>
 </html>
