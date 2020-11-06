@@ -4406,10 +4406,28 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.setFirstVisibleRow(1);
+			assert.strictEqual(oTable.getFirstVisibleRow(), 1, "Set to 1: Property value");
+			assert.strictEqual(oTable._getFirstRenderedRowIndex(), 1, "Set to undefined: First rendered row index");
 
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.FirstVisibleRowChange
 			]);
+		}).then(function() {
+			aFiredReasons = [];
+			oTable.setFirstVisibleRow();
+			assert.strictEqual(oTable.getFirstVisibleRow(), 0, "Set to undefined: Property value");
+			assert.strictEqual(oTable._getFirstRenderedRowIndex(), 0, "Set to undefined: First rendered row index");
+
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.FirstVisibleRowChange
+			]);
+		}).then(function() {
+			aFiredReasons = [];
+			oTable.setFirstVisibleRow(null);
+			assert.strictEqual(oTable.getFirstVisibleRow(), 0, "Set to null: Property value");
+			assert.strictEqual(oTable._getFirstRenderedRowIndex(), 0, "Set to undefined: First rendered row index");
+
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		});
 	});
 
