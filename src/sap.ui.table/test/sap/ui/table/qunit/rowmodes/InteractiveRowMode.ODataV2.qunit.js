@@ -19,10 +19,13 @@ sap.ui.define([
 			this.oGetContextsSpy.reset();
 		},
 		afterEach: function() {
-			this.oTable.destroy();
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
 		},
 		after: function() {
 			this.oMockServer.destroy();
+			this.oDataModel.destroy();
 			this.oGetContextsSpy.restore();
 		},
 		createTable: function(oModel) {
@@ -36,7 +39,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialization when metadata not yet loaded", function(assert) {
+	QUnit.test("Initialization if metadata not yet loaded", function(assert) {
 		var oTable = this.createTable(TableQUnitUtils.createODataModel(null, true));
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
@@ -49,7 +52,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization when metadata already loaded", function(assert) {
+	QUnit.test("Initialization if metadata already loaded", function(assert) {
 		var oTable = this.createTable();
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()

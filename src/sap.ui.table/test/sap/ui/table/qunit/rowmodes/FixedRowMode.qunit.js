@@ -334,24 +334,36 @@ sap.ui.define([
 	QUnit.module("Get contexts", {
 		beforeEach: function() {
 			this.oGetContextsSpy = sinon.spy(JSONListBinding.prototype, "getContexts");
+		},
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+			this.oGetContextsSpy.restore();
+		},
+		createTable: function(bVariableRowHeightEnabled) {
 			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode(),
 				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
+				_bVariableRowHeightEnabled: bVariableRowHeightEnabled
 			});
-		},
-		afterEach: function() {
-			this.oGetContextsSpy.restore();
-			this.oTable.destroy();
+
+			return this.oTable;
 		}
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oGetContextsSpy = this.oGetContextsSpy;
+		return this.createTable().qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
+			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
+		}.bind(this));
+	});
 
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
-		});
+	QUnit.test("Initialization; Variable row heights", function(assert) {
+		return this.createTable(true).qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
+			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100), "All calls to Binding#getContexts consider the row count");
+		}.bind(this));
 	});
 });

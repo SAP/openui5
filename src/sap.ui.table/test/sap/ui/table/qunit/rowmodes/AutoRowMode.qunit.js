@@ -426,37 +426,51 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			this.oGetContextsSpy = sinon.spy(JSONListBinding.prototype, "getContexts");
-			this.oTable = TableQUnitUtils.createTable({
-				rowMode: new AutoRowMode(),
-				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
-			});
 		},
 		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
 			this.oGetContextsSpy.restore();
-			this.oTable.destroy();
 		},
 		after: function() {
 			Device.resize.height = this.iOriginalDeviceHeight;
+		},
+		createTable: function(bVariableRowHeightEnabled) {
+			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new AutoRowMode(),
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
+				_bVariableRowHeightEnabled: bVariableRowHeightEnabled
+			});
+
+			return this.oTable;
 		}
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oGetContextsSpy = this.oGetContextsSpy;
-		var oTable = this.oTable;
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+		return this.createTable().qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(this.oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
+			assert.ok(this.oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
 				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+			assert.ok(this.oGetContextsSpy.getCall(1).calledWithExactly(0, this.oTable.getRowMode().getComputedRowCounts().count, 100),
 				"The second call to Binding#getContexts considers the row count");
-		});
+		}.bind(this));
+	});
+
+	QUnit.test("Initialization; Variable row heights", function(assert) {
+		return this.createTable(true).qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(this.oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
+			assert.ok(this.oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+				"The first call to Binding#getContexts considers the device height for the length");
+			assert.ok(this.oGetContextsSpy.getCall(1).calledWithExactly(0, this.oTable.getRowMode().getComputedRowCounts().count + 1, 100),
+				"The second call to Binding#getContexts considers the row count");
+		}.bind(this));
 	});
 
 	QUnit.test("Resize", function(assert) {
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var oTable = this.oTable;
+		var oTable = this.createTable();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oGetContextsSpy.reset();
