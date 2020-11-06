@@ -706,9 +706,6 @@ sap.ui.define([
 		consumeExpectedRequest : function (oActualRequest) {
 			var oExpectedRequest, i;
 
-			if (this.aRequests.length === 1) {
-				return this.aRequests.shift(); // consume the one and only candidate to get a diff
-			}
 			for (i = 0; i < this.aRequests.length; i += 1) {
 				oExpectedRequest = this.aRequests[i];
 				if (oExpectedRequest.url === oActualRequest.url) {
@@ -716,6 +713,8 @@ sap.ui.define([
 					return oExpectedRequest;
 				}
 			}
+
+			return this.aRequests.shift(); // consume the first candidate to get a diff
 		},
 
 		/**
