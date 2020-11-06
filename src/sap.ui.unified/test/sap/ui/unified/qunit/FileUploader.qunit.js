@@ -1246,6 +1246,27 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Error state indication on the Browse button", function (assert) {
+		var oFileUploader = new FileUploader({
+				valueState: "Error",
+				enabled: false
+			}),
+			oCore = sap.ui.getCore();
+
+		oFileUploader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		assert.notOk(oFileUploader.$("fu_button").attr("aria-invalid"), "aria-invalid doesn't exist on a disabled FileUploader");
+
+		oFileUploader.setEnabled(true);
+		oCore.applyChanges();
+
+		assert.strictEqual(oFileUploader.$("fu_button").attr("aria-invalid"), "true",
+			"aria-invalid correctly indicates Error state if the FileUploader is enabled");
+
+		oFileUploader.destroy();
+	});
+
 	QUnit.test("Internal hidden label for the Input", function (assert) {
 		var oFileUploader = new sap.ui.unified.FileUploader(),
 			sExpectedLabelId = InvisibleText.getStaticId("sap.ui.unified", "FILEUPLOAD_FILENAME"),
