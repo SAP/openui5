@@ -22,31 +22,28 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"data": {
-				"json": {
-					"title": "Header with data coming from data as JSON",
-					"subTitle": "This card is using static JSON data",
-					"iconSrc": "sap-icon://desktop-mobile"
-				}
-			},
-			"title": "{title}",
-			"subTitle": "{subTitle}",
+			"title": "Products",
+			"subTitle": "In Stock Information",
 			"icon": {
-				"src": "{iconSrc}"
+				"src": "sap-icon://product"
 			}
 		},
 		"content": {
 			"data": {
 				"request": {
-					"url": "./samples/data/items.json"
+					"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+					"parameters": {
+						"$format": "json"
+					}
 				},
-				"path": "/staticData"
+				"path": "/value"
 			},
 			"item": {
-				"title": "{Name}",
-				"description": "{Description}",
-				"highlight": "{Highlight}"
-			}
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			},
+			"maxItems": 5
 		}
 	}
 }
