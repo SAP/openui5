@@ -1263,14 +1263,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: stream property w/ read link", function (assert) {
+["@mediaReadLink", "@odata.mediaReadLink"].forEach(function (sMediaReadLink) {
+	QUnit.test("_Cache#drillDown: stream property w/ " + sMediaReadLink, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Products"),
 			oData = [{
-				productPicture : {
-					"picture@odata.mediaReadLink" : "/~/my/Picture"
-				}
+				productPicture : {}
 			}];
 
+		oData[0].productPicture["picture" + sMediaReadLink] = "/~/my/Picture";
 		oData.$byPredicate = {"('42')" : oData[0]};
 
 		this.mock(_Helper).expects("getMetaPath")
@@ -1283,6 +1283,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.drillDown(oData, "('42')/productPicture/picture").getResult(),
 			"/~/my/Picture");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: transient entity, missing simple properties", function (assert) {
@@ -2763,7 +2764,8 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
 			oData = {
 				"id" : "1",
-				"picture@odata.mediaReadLink" : "img_42.jpg",
+				"picture1@odata.mediaReadLink" : "img_1.jpg",
+				"picture2@mediaReadLink" : "img_2.jpg", // OData V4.01 format
 				"messages" : [{
 					"longtextUrl" : "Longtext(1)"
 				}]
@@ -2790,7 +2792,8 @@ sap.ui.define([
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
 
-		assert.strictEqual(oData["picture@odata.mediaReadLink"], "/~/EntitySet('42')/img_42.jpg");
+		assert.strictEqual(oData["picture1@odata.mediaReadLink"], "/~/EntitySet('42')/img_1.jpg");
+		assert.strictEqual(oData["picture2@mediaReadLink"], "/~/EntitySet('42')/img_2.jpg");
 	});
 
 	//*********************************************************************************************

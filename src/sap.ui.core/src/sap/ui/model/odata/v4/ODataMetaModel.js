@@ -1649,6 +1649,7 @@ sap.ui.define([
 				oEntitySet,      // The entity set that starts the edit URL
 				sEntitySetName,  // The name of this entity set (decoded)
 				sFirstSegment,
+				bInsideAnnotation = false,
 				sInstancePath,   // The absolute path to the instance currently in evaluation
 								// (encoded; re-builds sResolvedPath)
 				sNavigationPath, // The relative meta path starting from oEntitySet (decoded)
@@ -1709,9 +1710,17 @@ sap.ui.define([
 				} else {
 					sPropertyName = decodeURIComponent(stripPredicate(sSegment));
 					sNavigationPath = _Helper.buildPath(sNavigationPath, sPropertyName);
-					oProperty = oType[sPropertyName];
+					oProperty = bInsideAnnotation ? {} : oType[sPropertyName];
 					if (!oProperty) {
-						error("Not a (navigation) property: " + sPropertyName);
+						if (sPropertyName.includes("@")) {
+							if (sPropertyName.includes("@$ui5.")) {
+								error("Read-only path must not be updated");
+							}
+							bInsideAnnotation = true;
+							oProperty = {};
+						} else {
+							error("Not a (navigation) property: " + sPropertyName);
+						}
 					}
 					oType = mScope[oProperty.$Type];
 					if (oProperty.$kind === "NavigationProperty") {
