@@ -16,37 +16,27 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		onExit: function () {
-			if (this._oDialog) {
-				this._oDialog.destroy();
-			}
-		},
-
 		formatter: Formatter,
 
 		handleTableSelectDialogPress: function (oEvent) {
-			var oButton = oEvent.getSource();
-			if (!this._oDialog || !this._oTable) {
-				Fragment.load({
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.TableSelectDialogGrowing.Dialog",
 					controller: this
 				}).then(function (oDialog) {
-					this._oDialog = oDialog;
-					this._configDialog(oButton);
-					this._oDialog.open();
-				}.bind(this));
-			} else {
-				this._configDialog(oButton);
-				this._oDialog.open();
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
-		},
-
-		_configDialog: function (oButton) {
-			// Set growing if required
-			var bGrowing = !!oButton.data("growing");
-			this._oDialog.setGrowing(bGrowing);
-
-			this.getView().addDependent(this._oDialog);
+			this._pDialog.then(function(oDialog){
+				// Set growing if required
+				var bGrowing = !!oButton.data("growing");
+				oDialog.setGrowing(bGrowing);
+				oDialog.open();
+			});
 		},
 
 		handleSearch: function (oEvent) {
@@ -54,11 +44,6 @@ sap.ui.define([
 			var oFilter = new Filter("Name", FilterOperator.Contains, sValue);
 			var oBinding = oEvent.getSource().getBinding("items");
 			oBinding.filter([oFilter]);
-		},
-
-		handleClose: function () {
-			this._oDialog.destroy();
 		}
-
 	});
 });
