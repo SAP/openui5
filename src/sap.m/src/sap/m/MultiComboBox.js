@@ -103,7 +103,7 @@ function(
 	 * <ul>
 	 * <li> Input field - displays the selected option/s as token/s. Users can type to filter the list.
 	 * <li> Drop-down arrow - expands\collapses the option list.</li>
-	 * <li> Option list - the list of available options.</li>
+	 * <li> Option list - the list of available options. <b>Note:</b> Disabled items are not visualized in the list with the available options, however they can still be accessed through the <code>items</code> aggregation.</li>
 	 * </ul>
 	 * <h3>Usage</h3>
 	 * <h4>When to use:</h4>
