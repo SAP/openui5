@@ -4,50 +4,46 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/Fragment'],
 
 		return Controller.extend("sap.m.sample.TimePickerSliders.TimePickerSliders", {
 
-			onExit : function () {
-				if (this._oDialog) {
-					this._oDialog.destroy();
-				}
-			},
-
 			handleOpenDialog: function () {
+				var oView = this.getView();
+
 				// create popover
-				if (!this._oDialog) {
-					Fragment.load({
-						id: "fragment",
+				if (!this._pDialog) {
+					this._pDialog = Fragment.load({
+						id: oView.getId(),
 						name: "sap.m.sample.TimePickerSliders.TimePickerSlidersDialog",
 						controller: this
 					}).then(function(oDialog){
-						this._oDialog = oDialog;
-						this.getView().addDependent(this._oDialog);
-						this._oDialog.attachAfterOpen(function () {
-							var oTP = Fragment.byId("fragment", "TPS2");
+						oView.addDependent(oDialog);
 
+						oDialog.attachAfterOpen(function () {
+							var oTP = this.byId("TPS2");
 							this._sOldValue = oTP.getValue();
 						}.bind(this));
-						this._oDialog.open();
+						return oDialog;
 					}.bind(this));
-				} else {
-					this._oDialog.open();
 				}
+				this._pDialog.then(function(oDialog) {
+					oDialog.open();
+				});
 			},
 
 			handleOKPress: function () {
 				var oText = this.byId("T1"),
-					oTP = Fragment.byId("fragment", "TPS2");
+					oTP = this.byId("TPS2");
 
-				this._oDialog.close();
+				this.byId("selectTimeDialog").close();
 				oTP.collapseAll();
 
 				oText.setText("TimePickerSliders " + oTP.getId() + ": " + oTP.getValue());
 			},
 
 			handleCancelPress: function () {
-				var oTP = Fragment.byId("fragment", "TPS2");
+				var oTP = this.byId("TPS2");
 
 				oTP.setValue(this._sOldValue);
 
-				this._oDialog.close();
+				this.byId("selectTimeDialog").close();
 			}
 		});
 
