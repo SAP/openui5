@@ -127,9 +127,8 @@ But do NOT use hungarian notation for API method parameters: the documentation w
 
 | Implementation | Description |
 |-------------|----------------|
-| `this.bReady = false;`| Instance fields (members) should be initialized and described in the constructor function. If necessary
- remove them again in <code>MyClass.prototype.exit = function() { delete this.bReady; }</code> to prevent memory leaks |
 | `this._bFinalized` | Private members should have a name starting with an underscore |
+| `this._aItems = [];`| Instance fields (members) should be initialized and described in the constructor function. If necessary set them to undefined in <code>MyClass.prototype.exit = function() { this._aItems = undefined; }</code> to prevent memory leaks |
 | `MyClass.prototype.doSomething = function(){...}` | Instance methods are defined as members of the prototype of the constructor function |
 | `MyClass.doSomething = function(){...}` | Static members (fields and functions) are defined as members of the constructor function object itself |
 | <code>MyClass.prototype.isOpen = function() { return true; }</code> | Members that return a Boolean value should be prefixed with `is`. An exception are Control properties for Boolean values. The Getters are prefixed with `get`.  |
