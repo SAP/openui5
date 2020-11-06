@@ -43,7 +43,7 @@ sap.ui.define([
 	Sorter,
 	Filter,
 	JSONModel,
-	Event,
+	UI5Event,
 	containsOrEquals,
 	FlexUtil,
 	TableSettings,
@@ -1085,12 +1085,12 @@ sap.ui.define([
 			assert.equal(this.oTable._oTitle.getText(), "Test");
 			assert.ok(fCustomDataReceived.notCalled);
 
-			fDataReceived(new Event("dataReceived", oRowBinding));
+			fDataReceived(new UI5Event("dataReceived", oRowBinding));
 			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
 			assert.ok(fCustomDataReceived.calledOnce);
 
 			oRowBinding.isLengthFinal.returns(false);
-			fDataReceived(new Event("dataReceived", oRowBinding));
+			fDataReceived(new UI5Event("dataReceived", oRowBinding));
 			assert.equal(this.oTable._oTitle.getText(), "Test");
 			assert.ok(fCustomDataReceived.calledTwice);
 
