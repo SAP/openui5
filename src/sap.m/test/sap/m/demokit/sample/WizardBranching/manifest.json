@@ -24,7 +24,6 @@
 				"files": [
 					"view/WizardBranching.view.xml",
 					"controller/WizardBranching.controller.js",
-					"view/ReviewPage.fragment.xml",
 					"manifest.json"
 				]
 			}

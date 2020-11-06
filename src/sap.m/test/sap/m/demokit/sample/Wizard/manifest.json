@@ -25,7 +25,6 @@
 				"files": [
 					"view/Wizard.view.xml",
 					"controller/Wizard.controller.js",
-					"view/ReviewPage.fragment.xml",
 					"manifest.json"
 				]
 			}

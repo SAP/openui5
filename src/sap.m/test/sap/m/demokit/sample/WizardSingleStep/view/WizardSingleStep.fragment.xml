@@ -6,6 +6,7 @@
 	xmlns:u="sap.ui.unified"
 	xmlns:layout="sap.ui.layout">
 	<Dialog
+		id="wizardDialog"
 		showHeader="false"
 		verticalScrolling="false"
 		contentHeight="70%"
