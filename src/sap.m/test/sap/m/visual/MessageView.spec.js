@@ -130,7 +130,6 @@ describe('sap.m.MessageView', function() {
 			element(by.id("mViewButton5")).click();
 			element(by.id("mViewButton6")).click();
 			expect(takeScreenshot(element(by.id("pop4")))).toLookAs("message-view-without-button");
-			element(by.id("page1-intHeader-BarMiddle")).click();
 		});
 
 		it("should open collapsed MessagePopover with filter buttons visible", function () {
