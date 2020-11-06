@@ -943,7 +943,7 @@ sap.ui.define([
 
 		this.oFilePath.$().find('input').removeAttr("role").attr("aria-live", "polite");
 
-		if (this.getValueState() == ValueState.Error) {
+		if (this.getValueState() === ValueState.Error && this.getEnabled()) {
 			this.oBrowse.$().attr("aria-invalid", "true");
 		}
 
@@ -1065,7 +1065,7 @@ sap.ui.define([
 		}
 
 		if (this.oBrowse.getDomRef()) {
-			if (sValueState == ValueState.Error) {
+			if (sValueState === ValueState.Error && this.getEnabled()) {
 				this.oBrowse.$().attr("aria-invalid", "true");
 			}else {
 				this.oBrowse.$().removeAttr("aria-invalid");
