@@ -612,19 +612,21 @@ sap.ui.define([
 		//Event handler for the class information Button
 		//Opens a QuickView with detailed information about the semantic parameter structure
 		onPressInformation: function (oEvent) {
-			var oButton = oEvent.getSource();
-			if (!this.byId("quickView")) {
-				Fragment.load({
-					id: this.getView().getId(),
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
+			if (!this._pQuickView) {
+				this._pQuickView = Fragment.load({
+					id: oView.getId(),
 					name: "sap.ui.demo.theming.view.QuickViewClass",
 					controller: this
 				}).then(function(oQuickView){
-					this.getView().addDependent(oQuickView);
-					oQuickView.openBy(oButton);
-				}.bind(this));
-			} else {
-				this.byId("quickView").openBy(oButton);
+					oView.addDependent(oQuickView);
+					return oQuickView;
+				});
 			}
+			this._pQuickView.then(function(oQuickView){
+				oQuickView.openBy(oButton);
+			});
 		},
 		//Sets the app to busy, when selecting a new theme
 		onAction: function (oEvt) {
