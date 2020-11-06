@@ -147,7 +147,7 @@ sap.ui.define(['sap/ui/base/Object', './OverflowToolbarButton', './OverflowToolb
 			"sap.m.ComboBox": {
 				canOverflow: true,
 				listenForEvents: [],
-				noInvalidationProps: ["enabled", "value", "selectedItemId", "selectedKey"]
+				noInvalidationProps: ["enabled", "value", "selectedItemId", "selectedKey", "open"]
 			},
 			"sap.m.SearchField": {
 				canOverflow: true,
