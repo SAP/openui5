@@ -72,49 +72,49 @@ sap.ui.define([
 		 * @public
 		 * @type {string}
 		 */
-		FLOOR: "floor",
+		FLOOR: "FLOOR",
 		/**
 		 * Rounding mode to round towards positive infinity
 		 * @public
 		 * @type {string}
 		 */
-		CEILING: "ceiling",
+		CEILING: "CEILING",
 		/**
 		 * Rounding mode to round towards zero
 		 * @public
 		 * @type {string}
 		 */
-		TOWARDS_ZERO: "towards_zero",
+		TOWARDS_ZERO: "TOWARDS_ZERO",
 		/**
 		 * Rounding mode to round away from zero
 		 * @public
 		 * @type {string}
 		 */
-		AWAY_FROM_ZERO: "away_from_zero",
+		AWAY_FROM_ZERO: "AWAY_FROM_ZERO",
 		/**
 		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards negative infinity.
 		 * @public
 		 * @type {string}
 		 */
-		HALF_FLOOR: "half_floor",
+		HALF_FLOOR: "HALF_FLOOR",
 		/**
 		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards positive infinity.
 		 * @public
 		 * @type {string}
 		 */
-		HALF_CEILING: "half_ceiling",
+		HALF_CEILING: "HALF_CEILING",
 		/**
 		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards zero.
 		 * @public
 		 * @type {string}
 		 */
-		HALF_TOWARDS_ZERO: "half_towards_zero",
+		HALF_TOWARDS_ZERO: "HALF_TOWARDS_ZERO",
 		/**
 		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round away from zero.
 		 * @public
 		 * @type {string}
 		 */
-		HALF_AWAY_FROM_ZERO: "half_away_from_zero"
+		HALF_AWAY_FROM_ZERO: "HALF_AWAY_FROM_ZERO"
 	};
 
 	var mRoundingFunction = {};
@@ -2082,6 +2082,14 @@ sap.ui.define([
 			// Support custom function for rounding the number
 			fValue = sRoundingMode(fValue, iMaxFractionDigits);
 		} else {
+			// The NumberFormat.RoundingMode had all values in lower case before and later changed all values to upper case
+			// to match the key according to the UI5 guideline for defining enum. Therefore it's needed to support both
+			// lower and upper cases. Here checks whether the value has only lower case letters and converts it all to upper
+			// case if so.
+			if (sRoundingMode.match(/^[a-z_]+$/)) {
+				sRoundingMode = sRoundingMode.toUpperCase();
+			}
+
 			if (!iMaxFractionDigits) {
 				return mRoundingFunction[sRoundingMode](fValue);
 			}

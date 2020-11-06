@@ -962,6 +962,22 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format(-.1236), "-0.123", "-.1236");
 	});
 
+	QUnit.test("float format with rounding mode: CEILING (via legacy all lower case letters: ceiling)", function (assert) {
+		var oFormat = NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+			roundingMode: "ceiling"
+		});
+
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.124", ".1234");
+		assert.equal(oFormat.format(.1235), "0.124", ".1235");
+		assert.equal(oFormat.format(.1239), "0.124", ".1239");
+		assert.equal(oFormat.format(2.1999), "2.2", "2.1999");
+		assert.equal(oFormat.format(2.11), "2.11", "2.11");
+		assert.equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		assert.equal(oFormat.format(-.1236), "-0.123", "-.1236");
+	});
+
 	QUnit.test("float format with rounding mode: CEILING with decimals set to a string which contains a number", function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
 			decimals: "3",
