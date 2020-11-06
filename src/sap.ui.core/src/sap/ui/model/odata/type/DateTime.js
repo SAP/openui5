@@ -81,6 +81,22 @@ sap.ui.define([
 		);
 
 	/**
+	 * @override
+	 * @see sap.ui.model.SimpleType
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	DateTime.prototype.getConstraints = function () {
+		var oConstraints = DateTimeBase.prototype.getConstraints.call(this);
+
+		if (oConstraints.isDateOnly) {
+			oConstraints.displayFormat = "Date";
+			delete oConstraints.isDateOnly;
+		}
+
+		return oConstraints;
+	};
+
+	/**
 	 * Returns the type's name.
 	 *
 	 * @returns {string}

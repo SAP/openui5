@@ -151,6 +151,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.SimpleType
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	DateTimeOffset.prototype.getConstraints = function () {
+		var oConstraints = DateTimeBase.prototype.getConstraints.call(this);
+
+		if (this.bV4) {
+			oConstraints.V4 = true;
+		}
+
+		return oConstraints;
+	};
+
+	/**
 	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
 	 * methods: <code>format</code> and <code>parse</code>.
 	 *

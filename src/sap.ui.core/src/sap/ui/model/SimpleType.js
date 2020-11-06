@@ -5,12 +5,14 @@
 // Provides the base implementation for all simple type implementations that are able to format,
 // parse and validate values
 sap.ui.define([
+	'sap/base/util/merge',
 	'sap/ui/base/DataType',
 	'./Type',
 	'./FormatException',
 	'./ParseException',
 	'./ValidateException'
-], function (DataType, Type /*, kept for compatibility with existing referrers: FormatException, ParseException, ValidateException*/) {
+], function (merge, DataType, Type /*, kept for compatibility with existing referrers:
+		FormatException, ParseException, ValidateException*/) {
 	"use strict";
 
 	// A formatter that returns the given value in <code>format</code> and <code>parse</code>
@@ -148,6 +150,23 @@ sap.ui.define([
 			return this.oInputFormat;
 		}
 		return oModelFormat;
+	};
+
+	/**
+	 * Returns a deep copy of the constraints of this type. The returned constraints can be used to
+	 * create a new instance of the type with equivalent constraints. Classes inheriting from
+	 * <code>sap.ui.model.SimpleType</code> may need to override this method in case the constraints
+	 * are not stored at <code>this.oConstraints</code> or if the constraints are stored in a format
+	 * that does not allow for creating an equivalent instance of the inheriting class.
+	 *
+	 * @return {object} The constraints of this type or an empty object
+	 *
+	 * @private
+	 * @since 1.85.0
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	SimpleType.prototype.getConstraints = function () {
+		return merge({}, this.oConstraints);
 	};
 
 	/**

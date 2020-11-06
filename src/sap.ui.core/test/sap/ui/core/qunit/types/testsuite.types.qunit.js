@@ -76,6 +76,12 @@ sap.ui.define(function () {
 				},
 				title: "QUnit Page for sap/ui/core/format/FileSizeFormat"
 			},
+			SimpleType: {
+				coverage : {
+					only : "sap/ui/model/SimpleType"
+				},
+				title: "QUnit Page for sap/ui/model/SimpleType"
+			},
 			Types: {
 				coverage : {
 					only : "[sap/ui/model/type/Boolean,sap/ui/model/type/String,sap/ui/model/type/Integer,sap/ui/model/type/Float,sap/ui/model/type/Currency,sap/ui/model/type/Unit,sap/ui/model/type/Date,sap/ui/model/type/Time,sap/ui/model/type/DateTime,sap/ui/model/type/DateInterval,sap/ui/model/type/TimeInverval,sap/ui/model/type/DateTimeInterval,sap/ui/model/type/FileSize]"
