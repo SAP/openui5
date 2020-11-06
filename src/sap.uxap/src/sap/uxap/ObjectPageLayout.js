@@ -4414,7 +4414,15 @@ sap.ui.define([
 		var oTitle = this.getHeaderTitle(),
 			oHeader = this.getHeaderContent();
 
-		return exists(oTitle) && oTitle.isDynamic() && oTitle.getVisible() && exists(oHeader) && oHeader.length > 0;
+		return this._hasVisibleDynamicTitle(oTitle) && this._hasVisibleHeaderContent(oHeader);
+	};
+
+	ObjectPageLayout.prototype._hasVisibleDynamicTitle = function(oTitle) {
+		return exists(oTitle) && oTitle.isDynamic() && oTitle.getVisible();
+	};
+
+	ObjectPageLayout.prototype._hasVisibleHeaderContent = function(oHeader) {
+		return exists(oHeader) && oHeader.length > 0 && this.getShowHeaderContent();
 	};
 
 	/**
