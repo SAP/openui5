@@ -56,16 +56,8 @@ sap.ui.define([
 		// shortcut for sap.m.SplitAppMode
 		var SplitAppMode = mobileLibrary.SplitAppMode;
 
-		var MAIN_WEB_PAGE_TITLE = "Demo Kit - SAPUI5 SDK";
-
-		var WEB_PAGE_TITLE = {
-			home: "Home - " + MAIN_WEB_PAGE_TITLE,
-			topic: "Documentation - " + MAIN_WEB_PAGE_TITLE,
-			api: "API Reference - " + MAIN_WEB_PAGE_TITLE,
-			controls: "Samples - " + MAIN_WEB_PAGE_TITLE,
-			demoapps: "Demo Apps - " + MAIN_WEB_PAGE_TITLE,
-			tools: "Tools - " + MAIN_WEB_PAGE_TITLE
-		};
+		var MAIN_WEB_PAGE_TITLE,
+		WEB_PAGE_TITLE;
 
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper,
@@ -137,7 +129,18 @@ sap.ui.define([
 				this.getOwnerComponent().loadVersionInfo().then(function () {
 					if (this.getModel("versionData").getProperty("/isOpenUI5")) {
 						this.MENU_LINKS_MAP["Terms of Use"] = "TermsOfUse.txt";
+						MAIN_WEB_PAGE_TITLE = "Demo Kit - OPENUI5 SDK";
+					} else {
+						MAIN_WEB_PAGE_TITLE = "Demo Kit - SAPUI5 SDK";
 					}
+
+					WEB_PAGE_TITLE = {
+						topic: "Documentation - " + MAIN_WEB_PAGE_TITLE,
+						api: "API Reference - " + MAIN_WEB_PAGE_TITLE,
+						controls: "Samples - " + MAIN_WEB_PAGE_TITLE,
+						demoapps: "Demo Apps - " + MAIN_WEB_PAGE_TITLE,
+						tools: "Tools - " + MAIN_WEB_PAGE_TITLE
+					};
 				}.bind(this));
 
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
