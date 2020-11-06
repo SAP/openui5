@@ -17,69 +17,71 @@ sap.ui.define([
 		},
 
 		onSelectDialogPress: function (oEvent) {
-			var oButton = oEvent.getSource();
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
 
-			if (!this._oDialog) {
-				Fragment.load({
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.SelectDialog.Dialog",
 					controller: this
 				}).then(function (oDialog){
-					this._oDialog = oDialog;
-					this._oDialog.setModel(this.getView().getModel());
-					// this.getView().addDependent(this._oDialog);
-					this._configDialog(oButton);
-					this._oDialog.open();
-				}.bind(this));
-			} else {
-				this._configDialog(oButton);
-				this._oDialog.open();
+					oDialog.setModel(oView.getModel());
+					return oDialog;
+				});
 			}
+
+			this._pDialog.then(function(oDialog){
+				this._configDialog(oButton, oDialog);
+				oDialog.open();
+			}.bind(this));
+
 		},
 
-		_configDialog: function (oButton) {
+		_configDialog: function (oButton, oDialog) {
 			// Multi-select if required
 			var bMultiSelect = !!oButton.data("multi");
-			this._oDialog.setMultiSelect(bMultiSelect);
+			oDialog.setMultiSelect(bMultiSelect);
 
 			var sCustomConfirmButtonText = oButton.data("confirmButtonText");
-			this._oDialog.setConfirmButtonText(sCustomConfirmButtonText);
+			oDialog.setConfirmButtonText(sCustomConfirmButtonText);
 
 			// Remember selections if required
 			var bRemember = !!oButton.data("remember");
-			this._oDialog.setRememberSelections(bRemember);
+			oDialog.setRememberSelections(bRemember);
 
 			//add Clear button if needed
 			var bShowClearButton = !!oButton.data("showClearButton");
-			this._oDialog.setShowClearButton(bShowClearButton);
+			oDialog.setShowClearButton(bShowClearButton);
 
 			// Set growing property
 			var bGrowing = oButton.data("growing");
-			this._oDialog.setGrowing(bGrowing == "true");
+			oDialog.setGrowing(bGrowing == "true");
 
 			// Set growing threshold
 			var sGrowingThreshold = oButton.data("threshold");
 			if (sGrowingThreshold) {
-				this._oDialog.setGrowingThreshold(parseInt(sGrowingThreshold));
+				oDialog.setGrowingThreshold(parseInt(sGrowingThreshold));
 			}
 
 			// Set draggable property
 			var bDraggable = !!oButton.data("draggable");
-			this._oDialog.setDraggable(bDraggable);
+			oDialog.setDraggable(bDraggable);
 
 			// Set draggable property
 			var bResizable = !!oButton.data("resizable");
-			this._oDialog.setResizable(bResizable);
+			oDialog.setResizable(bResizable);
 
 			// Set style classes
 			var sResponsiveStyleClasses = "sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer";
 			var bResponsivePadding = !!oButton.data("responsivePadding");
-			this._oDialog.toggleStyleClass(sResponsiveStyleClasses, bResponsivePadding);
+			oDialog.toggleStyleClass(sResponsiveStyleClasses, bResponsivePadding);
 
 			// clear the old search filter
-			this._oDialog.getBinding("items").filter([]);
+			oDialog.getBinding("items").filter([]);
 
 			// toggle compact style
-			syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
+			syncStyleClass("sapUiSizeCompact", this.getView(), oDialog);
 		},
 
 		onSearch: function (oEvent) {
@@ -100,20 +102,22 @@ sap.ui.define([
 		},
 
 		onValueHelpRequest: function () {
-			if (!this._oValueHelpDialog) {
-				Fragment.load({
+			var oView = this.getView();
+
+			if (!this._pValueHelpDialog) {
+				this._pValueHelpDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.SelectDialog.ValueHelpDialog",
 					controller: this
 				}).then(function (oValueHelpDialog){
-					this._oValueHelpDialog = oValueHelpDialog;
-					this.getView().addDependent(this._oValueHelpDialog);
-					this._configValueHelpDialog();
-					this._oValueHelpDialog.open();
-				}.bind(this));
-			} else {
-				this._configValueHelpDialog();
-				this._oValueHelpDialog.open();
+					oView.addDependent(oValueHelpDialog);
+					return oValueHelpDialog;
+				});
 			}
+			this._pValueHelpDialog.then(function(oValueHelpDialog){
+				this._configValueHelpDialog();
+				oValueHelpDialog.open();
+			}.bind(this));
 		},
 
 		_configValueHelpDialog: function () {
