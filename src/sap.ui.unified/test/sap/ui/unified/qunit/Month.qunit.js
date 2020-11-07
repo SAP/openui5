@@ -707,6 +707,72 @@ sap.ui.define([
 			oMonth.destroy();
 		});
 
+		QUnit.module("_isIntervalSelected function", {
+			beforeEach: function () {
+				this.oM = new Month();
+				this.oRangeSelection = new DateRange({
+					startDate: new Date(2018, 9, 14),
+					endDate: new Date(2018,9,24)
+				});
+			},
+			afterEach: function () {
+				this.oM.destroy();
+				this.oM = null;
+				this.oRangeSelection.destroy();
+				this.oRangeSelection = null;
+			}
+		});
+
+		QUnit.test("_isIntervalSelected function with missing selected date", function(assert){
+			//act
+			this.oM.addSelectedDate(new DateRange());
+
+			// Assert
+			assert.notOk(!!this.oM._isIntervalSelected(this.oRangeSelection),"Not same interval selected");
+		});
+
+		QUnit.test("_isIntervalSelected function with selected startDate and missing endDate", function(assert){
+			//act
+			this.oM.addSelectedDate(new DateRange({
+				startDate: new Date(2018,1,24)
+			}));
+
+			// Assert
+			assert.notOk(!!this.oM._isIntervalSelected(this.oRangeSelection),"Not same interval selected");
+		});
+
+		QUnit.test("_isIntervalSelected function with selected endDate and missng startDate", function(assert){
+			//act
+			this.oM.addSelectedDate(new DateRange({
+				endDate: new Date(2018,1,24)
+			}));
+
+			// Assert
+			assert.notOk(!!this.oM._isIntervalSelected(this.oRangeSelection), "Not same interval selected");
+		});
+
+		QUnit.test("_isIntervalSelected function with the different selected startDate, endDate and range selection date", function(assert){
+			//act
+			this.oM.addSelectedDate(new DateRange({
+				startDate: new Date(2018, 1, 14),
+				endDate: new Date(2018,1,24)
+			}));
+
+			// Assert
+			assert.notOk(!!this.oM._isIntervalSelected(this.oRangeSelection), "Not same interval selected");
+		});
+
+		QUnit.test("_isIntervalSelected function with the same startDate and endDate", function(assert){
+			//act
+			this.oM.addSelectedDate(new DateRange({
+				startDate: new Date(2018, 9, 14),
+				endDate: new Date(2018,9,24)
+			}));
+
+			// Assert
+			assert.ok(!!this.oM._isIntervalSelected(this.oRangeSelection), "Same interval selected");
+		});
+
 		QUnit.module("_getDateTypes function", {
 			beforeEach: function () {
 				this.oM = new Month({date: new Date(2017, 1, 1)}).placeAt("qunit-fixture");
