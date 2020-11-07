@@ -1721,8 +1721,10 @@ sap.ui.define([
 			aSelectedIntervalEndDate = aSelectedInterval && aSelectedInterval.getEndDate();
 
 		return aSelectedInterval
+			&& aSelectedInterval.getStartDate()
 			&& aSelectedInterval.getStartDate().getTime() === oDateRangeInterval.getStartDate().getTime()
 			&& aSelectedIntervalEndDate
+			&& aSelectedInterval.getEndDate()
 			&& aSelectedInterval.getEndDate().getTime() === oDateRangeInterval.getEndDate().getTime();
 	};
 
