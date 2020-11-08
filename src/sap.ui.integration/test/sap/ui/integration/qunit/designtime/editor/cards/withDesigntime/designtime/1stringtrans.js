@@ -8,7 +8,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					stringParameter: {
 						"manifestpath": "/sap.card/configuration/parameters/stringParameter/value",
 						"type": "string",
-						"label": "{i18n>StringLabelTrans}",
+						"label": "{i18n>STRINGLABELTRANS}",
 						"defaultValue": "StringLabelTransDefaultValue",
 						"translatable": true,
 						"description": "Description"

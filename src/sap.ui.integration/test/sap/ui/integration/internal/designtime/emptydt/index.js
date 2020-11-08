@@ -23,6 +23,12 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 				});
 				oCard.placeAt("card");
 				oBASCardEditor = new BASCardEditor({
+					createConfiguration: function (oEvent) {
+						//var mParameters = oEvent.getParameters();
+					},
+					error: function (oEvent) {
+						//var oError = oEvent.getParameters();
+					},
 					configurationChange: function (oEvent) {
 						var mParameters = oEvent.getParameters();
 						oCard.setManifest(mParameters.manifest);
@@ -88,9 +94,10 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 							}
 						}
 					},
-					baseUrl: sBaseUrl
+					baseUrl: sBaseUrl,
+					json: oManifest
 				});
-				oBASCardEditor.setJson(oManifest);
+				//oBASCardEditor.setJson(oManifest);
 				oBASCardEditor.placeAt("BASeditor");
 			});
 		});

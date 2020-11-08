@@ -1,6 +1,7 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap-ui-integration-editor",
 	"sap/ui/integration/designtime/editor/CardEditor",
 	"sap/ui/integration/Designtime",
 	"sap/ui/integration/Host",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ], function (
 	merge,
+	x,
 	CardEditor,
 	Designtime,
 	Host,
@@ -58,7 +60,7 @@ sap.ui.define([
 	}, function () {
 
 		QUnit.test("No configuration section (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -80,7 +82,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Empty configuration section (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "configuration": {} } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "configuration": {} } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -102,7 +104,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Empty parameters section (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "parameters": {} } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "parameters": {} } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -124,7 +126,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Empty destination section (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {} } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {} } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -146,7 +148,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Empty destination and parameters section (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {}, "parameters": {} } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {}, "parameters": {} } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -168,7 +170,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 string parameter and no label (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1string", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1string", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -184,7 +186,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 string parameter with values and no label (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringwithvalues", "type": "List", "configuration": { "parameters": { "stringParameterWithValues": { "type": "string" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringwithvalues", "type": "List", "configuration": { "parameters": { "stringParameterWithValues": { "type": "string" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -205,7 +207,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1stringWithRequestValues",
@@ -242,7 +245,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1stringarray",
@@ -275,7 +279,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1stringarraynovalues",
@@ -316,7 +321,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1stringArrayWithRequestValues",
@@ -347,7 +353,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 string parameter and label (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -395,7 +401,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -414,7 +420,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with Not Allow File (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -434,7 +440,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with Not Allow None (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -454,7 +460,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with Not Allow File and None (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFileAndNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFileAndNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -474,7 +480,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with image (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -493,7 +499,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with change to new icon (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -513,7 +519,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with change to file (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -533,7 +539,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -604,7 +610,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with NOT Allow None: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -667,7 +673,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with NOT Allow File: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -726,7 +732,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with NOT Allow None and NOT Allow File: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFileAndNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/iconWithNotAllowFileAndNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -787,7 +793,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with image: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -863,7 +869,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 icon parameter with image and Not Allow None: keyboard navigation (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -934,6 +940,41 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("1 string parameter and value trans (as json)", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value from Translate change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("1 string parameter and label trans (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
@@ -968,7 +1009,7 @@ sap.ui.define([
 
 
 		QUnit.test("1 integer parameter and no label no default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1integer", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1integer", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -984,7 +1025,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 integer parameter and no label with default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1integerWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties"  }, "sap.card": { "designtime": "designtime/1integerWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1000,7 +1041,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 integer parameter and label with default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1integerlabel", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1integerlabel", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1016,7 +1057,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 integer parameter and label with default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1integerlabelWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1integerlabelWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1032,7 +1073,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 number parameter and label with no default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1number", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1number", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1048,7 +1089,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 number parameter and label with default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1numberWithDefaultValue", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1numberWithDefaultValue", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1064,7 +1105,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 date parameter and label with no default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1088,7 +1129,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 date parameter and label with default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1dateWithDefaultValue", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1dateWithDefaultValue", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1104,7 +1145,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 datetime parameter and label with no default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1127,7 +1168,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 		QUnit.test("1 datetime parameter and label with default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1datetimeWithDefaultValue", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1datetimeWithDefaultValue", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1145,7 +1186,7 @@ sap.ui.define([
 
 
 		QUnit.test("1 boolean parameter and label with no default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1161,7 +1202,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 boolean parameter and label with default value true (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1booleanWithDefaultValueTrue", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1booleanWithDefaultValueTrue", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1177,7 +1218,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 boolean parameter and label with default value false (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1booleanWithDefaultValueFalse", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1booleanWithDefaultValueFalse", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1193,7 +1234,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 destination (as json)", function (assert) {
-			this.oCardEditor.setCard({ host: "host", manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
+			this.oCardEditor.setCard({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1211,7 +1252,7 @@ sap.ui.define([
 
 		QUnit.test("Start the editor in admin mode", function (assert) {
 			this.oCardEditor.setMode("admin");
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} }, "destinations": { "dest1": { "name": "Sample" } } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} }, "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1234,7 +1275,7 @@ sap.ui.define([
 
 		QUnit.test("Start the editor in content mode", function (assert) {
 			this.oCardEditor.setMode("content");
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1255,7 +1296,7 @@ sap.ui.define([
 
 			this.oCardEditor.setLanguage("fr");
 
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1278,6 +1319,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "", "Label: Has no label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1289,6 +1331,7 @@ sap.ui.define([
 				manifest: {
 					"sap.app": {
 						"id": "test.sample",
+						"i18n": "i18n/i18n.properties",
 						"type": "card",
 						"title": "Test Card for Parameters",
 						"subTitle": "Test Card for Parameters"
@@ -1329,7 +1372,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/previewAbstractLive",
@@ -1367,7 +1411,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/previewNone",
@@ -1398,7 +1443,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/previewLiveOwnImage",
@@ -1436,7 +1482,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/previewOwnImageLive",
@@ -1476,7 +1523,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/previewLive",
@@ -1514,7 +1562,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/previewAbstract",
@@ -1548,7 +1597,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Preview not scaled (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewNoScale", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/previewNoScale", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1572,7 +1621,7 @@ sap.ui.define([
 
 		// QUnit.test("Switch the theme light to dark and back", function (assert) {
 		// 	sap.ui.getCore().applyTheme("sap_fiori_3");
-		// 	this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+		// 	this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 		// 	return new Promise(function (resolve, reject) {
 		// 		this.oCardEditor.attachReady(function () {
 		// 			assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1589,7 +1638,7 @@ sap.ui.define([
 
 		// QUnit.test("Switch the theme dark to light and back", function (assert) {
 		// 	sap.ui.getCore().applyTheme("sap_fiori_3_dark");
-		// 	this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+		// 	this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/previewLiveOwnImage", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 		// 	return new Promise(function (resolve, reject) {
 		// 		this.oCardEditor.attachReady(function () {
 		// 			assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1652,7 +1701,7 @@ sap.ui.define([
 			}
 		};
 		QUnit.test("Empty Host Context", function (assert) {
-			this.oCardEditor.setCard({ host: "host", manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
+			this.oCardEditor.setCard({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					var oModel = this.oCardEditor.getModel("context");
@@ -1665,7 +1714,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Context Host checks to access context data async", function (assert) {
-			this.oCardEditor.setCard({ host: "contexthost", manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
+			this.oCardEditor.setCard({ host: "contexthost", manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					var oModel = this.oCardEditor.getModel("context");
@@ -1683,8 +1732,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Create a CardEditor with an existing Card instance", function (assert) {
-			var oCard1 = new Card({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
-			var oCard2 = new Card("card2", { baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			var oCard1 = new Card({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			var oCard2 = new Card("card2", { baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			this.oCardEditor.setCard(oCard1);
 			this.oCardEditor.setCard(oCard1);
 			this.oCardEditor.setCard(oCard2);
@@ -1705,7 +1754,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Check Description", function (assert) {
-			var oCard = new Card({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			var oCard = new Card({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			this.oCardEditor.setCard(oCard);
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
@@ -1766,7 +1815,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -1812,7 +1862,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -1862,7 +1913,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -1906,7 +1958,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -1953,7 +2006,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2004,7 +2058,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2055,7 +2110,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1stringtrans",
@@ -2122,7 +2178,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1stringtrans",
@@ -2191,7 +2248,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1stringtrans",
@@ -2248,7 +2306,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2295,7 +2354,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2346,7 +2406,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2391,7 +2452,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2481,7 +2543,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2526,7 +2589,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2570,7 +2634,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1stringtrans",
@@ -2614,7 +2679,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2654,7 +2720,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2699,7 +2766,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2748,7 +2816,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1stringtrans",
@@ -2804,7 +2873,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2830,6 +2900,759 @@ sap.ui.define([
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === false, "Field: Editable changed from admin change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in admin mode: change from admin", function (assert) {
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+			};
+			var translationchanges = {
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from Admin change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in content mode: change from admin", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+			};
+			var translationchanges = {
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from Admin change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in content mode: change from content", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+			};
+			var pagechanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Content",
+				":layer": 5,
+				":errors": false
+			};
+			var translationchanges = {
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value from Content change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in content mode: change from admin and content", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Content",
+				":layer": 5,
+				":errors": false
+			};
+			var translationchanges = {
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value from Content change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in Translation mode: change from admin", function (assert) {
+			this.oCardEditor.setMode("translation");
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+			};
+			var translationchanges = {
+			};
+
+			//TODO: check the log for the warning
+			this.oCardEditor.setLanguage("badlanguage");
+
+			this.oCardEditor.setLanguage("fr");
+
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
+					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
+					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
+
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
+					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Admin", "Field: Value from Admin change");
+
+					oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+					oField = this.oCardEditor.getAggregation("_formContent")[5];
+
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in Translation mode: change from content", function (assert) {
+			this.oCardEditor.setMode("translation");
+			var adminchanges = {
+			};
+			var pagechanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Content",
+				":layer": 0,
+				":errors": false
+			};
+			var translationchanges = {
+			};
+
+			//TODO: check the log for the warning
+			this.oCardEditor.setLanguage("badlanguage");
+
+			this.oCardEditor.setLanguage("fr");
+
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
+					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
+					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
+
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
+					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
+
+					oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+					oField = this.oCardEditor.getAggregation("_formContent")[5];
+
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in Translation mode: change from admin and content", function (assert) {
+			this.oCardEditor.setMode("translation");
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Content",
+				":layer": 5,
+				":errors": false
+			};
+			var translationchanges = {
+			};
+
+			//TODO: check the log for the warning
+			this.oCardEditor.setLanguage("badlanguage");
+
+			this.oCardEditor.setLanguage("fr");
+
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
+					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
+					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
+
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
+					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
+
+					oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+					oField = this.oCardEditor.getAggregation("_formContent")[5];
+
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in Translation mode: change from translate", function (assert) {
+			this.oCardEditor.setMode("translation");
+			var adminchanges = {
+			};
+			var pagechanges = {
+			};
+			var translationchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Translate",
+				":layer": 10,
+				":errors": false
+			};
+
+			//TODO: check the log for the warning
+			this.oCardEditor.setLanguage("badlanguage");
+
+			this.oCardEditor.setLanguage("fr");
+
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
+					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
+					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
+
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
+					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Translate", "Field: Value from Translate change");
+
+					oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+					oField = this.oCardEditor.getAggregation("_formContent")[5];
+
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in Translation mode: change from admin and translate", function (assert) {
+			this.oCardEditor.setMode("translation");
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+			};
+			var translationchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Translate",
+				":layer": 10,
+				":errors": false
+			};
+
+			//TODO: check the log for the warning
+			this.oCardEditor.setLanguage("badlanguage");
+
+			this.oCardEditor.setLanguage("fr");
+
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
+					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
+					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
+
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
+					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Admin", "Field: Value from Admin change");
+
+					oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+					oField = this.oCardEditor.getAggregation("_formContent")[5];
+
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in Translation mode: change from admin, content and translate", function (assert) {
+			this.oCardEditor.setMode("translation");
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Content",
+				":layer": 5,
+				":errors": false
+			};
+			var translationchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Translate",
+				":layer": 10,
+				":errors": false
+			};
+
+			//TODO: check the log for the warning
+			this.oCardEditor.setLanguage("badlanguage");
+
+			this.oCardEditor.setLanguage("fr");
+
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
+					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
+					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
+
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
+					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
+
+					oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+					oField = this.oCardEditor.getAggregation("_formContent")[5];
+
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in all mode: change from admin", function (assert) {
+			this.oCardEditor.setMode("all");
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+			};
+			var translationchanges = {
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from Admin change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in all mode: change from admin and content", function (assert) {
+			this.oCardEditor.setMode("all");
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Content",
+				":layer": 5,
+				":errors": false
+			};
+			var translationchanges = {
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value from Content change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changed value override translate in all mode: change from admin, content and translate", function (assert) {
+			this.oCardEditor.setMode("all");
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Admin",
+				":layer": 0,
+				":errors": false
+			};
+			var pagechanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Content",
+				":layer": 5,
+				":errors": false
+			};
+			var translationchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Translate",
+				":layer": 10,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, pagechanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2883,7 +3706,8 @@ sap.ui.define([
 				host: "contexthost",
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -2945,6 +3769,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
+
 		QUnit.test("With a dynamic value, remove and cancel", function (assert) {
 			this.oCardEditor.setMode("admin");
 			this.oCardEditor.setAllowSettings(true);
@@ -2959,7 +3784,8 @@ sap.ui.define([
 				host: "contexthost",
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -3023,6 +3849,137 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
+
+		QUnit.test("Reset: String value With a dynamic value change", function (assert) {
+			this.oCardEditor.setMode("admin");
+			this.oCardEditor.setAllowSettings(true);
+			this.oCardEditor.setAllowDynamicValues(true);
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "{{parameters.TODAY_ISO}}",
+				":layer": 0,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
+					assert.ok(oField.getAggregation("_field").getValue() === "{{parameters.TODAY_ISO}}", "Field: Value is correct");
+					//settings button
+					var oButton = oField.getAggregation("_settingsButton");
+					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+					assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon");
+					oButton.firePress();
+					oButton.focus();
+					setTimeout(function () {
+						//popup is opened
+						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
+						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
+						var testInterface = settingsClass._private();
+						var resetButton = testInterface.oPopover.getCustomHeader().getItems()[2];
+						resetButton.firePress();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value", "Field: Value is reset");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Reset: Translated value With a dynamic value change", function (assert) {
+			this.oCardEditor.setMode("admin");
+			this.oCardEditor.setAllowSettings(true);
+			this.oCardEditor.setAllowDynamicValues(true);
+			var adminchanges = {
+				"/sap.card/configuration/parameters/stringParameter/value": "{{parameters.TODAY_ISO}}",
+				":layer": 0,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{{STRINGPARAMETERVALUE}}"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
+					assert.ok(oField.getAggregation("_field").getValue() === "{{parameters.TODAY_ISO}}", "Field: Value is correct");
+					//settings button
+					var oButton = oField.getAggregation("_settingsButton");
+					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+					assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon");
+					oButton.firePress();
+					oButton.focus();
+					setTimeout(function () {
+						//popup is opened
+						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
+						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
+						var testInterface = settingsClass._private();
+						var resetButton = testInterface.oPopover.getCustomHeader().getItems()[2];
+						resetButton.firePress();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value is reset");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("Change visible in settings panel", function (assert) {
 			this.oCardEditor.setMode("admin");
 			this.oCardEditor.setAllowSettings(true);
@@ -3040,7 +3997,8 @@ sap.ui.define([
 				host: "contexthost",
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -3121,7 +4079,8 @@ sap.ui.define([
 				host: "contexthost",
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/1string",
@@ -3217,7 +4176,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("Visualization: default value", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/fieldEnhancemantVisualization", "type": "List", "header": {} } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/fieldEnhancemantVisualization", "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -3257,7 +4216,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantVisualization",
@@ -3315,7 +4275,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependenceForBoolean",
@@ -3361,7 +4322,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependenceForBoolean",
@@ -3411,7 +4373,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependenceForString",
@@ -3457,7 +4420,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependenceForString",
@@ -3507,7 +4471,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependenceForInteger",
@@ -3553,7 +4518,8 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: {
 					"sap.app": {
-						"id": "test.sample"
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
 						"designtime": "designtime/fieldEnhancemantDependenceForInteger",
@@ -3655,7 +4621,7 @@ sap.ui.define([
 			};
 
 			this.oCardEditor.setDesigntime(dt);
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -3695,7 +4661,7 @@ sap.ui.define([
 			};
 
 			this.oCardEditor.setDesigntime(dt);
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -3724,7 +4690,7 @@ sap.ui.define([
 			};
 
 			this.oCardEditor.setDesigntime(dt);
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -3785,7 +4751,7 @@ sap.ui.define([
 	}, function () {
 
 		QUnit.test("Check Loading animation on destination", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "MyDestination" } } }, "type": "List", "header": {} } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "MyDestination" } } }, "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");

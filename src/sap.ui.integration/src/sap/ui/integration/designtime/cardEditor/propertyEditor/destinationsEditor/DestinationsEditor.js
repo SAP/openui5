@@ -59,13 +59,6 @@ sap.ui.define([
 		}
 	});
 
-	DestinationsEditor.prototype.getDesigntimeProperties = function () {
-		return [].concat(
-			ComplexMapEditor.prototype.getDesigntimeProperties.call(this),
-			["label"]
-		);
-	};
-
 	DestinationsEditor.prototype.onBeforeConfigChange = function (oConfig) {
 		var oCustomConfig = {};
 

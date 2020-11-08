@@ -342,6 +342,7 @@ sap.ui.define([
 			}));
 		} else {
 			this._setCurrentProperty("value", oData.value);
+			this._setCurrentProperty("_changed", oData._changed);
 			this._hideDynamicField();
 		}
 		//apply settings

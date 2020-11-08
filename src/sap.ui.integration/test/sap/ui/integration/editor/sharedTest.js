@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-var baseUrl = document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/")),
+var baseUrl = document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/")+1),
 	localStorageKey = document.querySelector("script[localstoragekey]").getAttribute("localstoragekey"),
 	manifest = {
 		"sap.app": {
