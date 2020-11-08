@@ -517,6 +517,7 @@ sap.ui.define([
 			publicMethods: [],
 			defaultAggregation: "content"
 		},
+		renderer: FieldBaseRenderer,
 		_oManagedObjectModel: null
 	});
 

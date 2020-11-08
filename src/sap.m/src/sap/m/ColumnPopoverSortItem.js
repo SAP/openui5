@@ -37,8 +37,8 @@ sap.ui.define([
 	 */
 	var ColumnPopoverSortItem = ColumnPopoverItem.extend("sap.m.ColumnPopoverSortItem", /** @lends sap.m.ColumnPopoverSortItem.prototype */
 	{
-		library: "sap.m",
 		metadata: {
+			library: "sap.m",
 			properties: {
 				/**
 				 * check it later with Ux - it is not used now.

@@ -20,7 +20,6 @@ sap.ui.define([
 	var oURLParams = new SAPUriParameters(window.location.search);
 
 	var AdaptationController = ManagedObject.extend("sap.ui.mdc.AdaptationController", {
-		library: "sap.ui.mdc",
 		metadata: {
 			properties: {
 				/**

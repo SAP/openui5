@@ -47,7 +47,8 @@ sap.ui.define([
 					byValue: true
 				}
 			}
-		}
+		},
+		renderer: FieldMultiInputRenderer
 	});
 
 	return FieldMultiInput;
