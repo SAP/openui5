@@ -1405,4 +1405,34 @@ sap.ui.define([
 		assert.deepEqual(aStringifiedConditions, [{operator: "TODAY", values: [], validated: "NotValidated"}]);
 
 	});
+
+	QUnit.test("check filtersChange with variants", function (assert) {
+		var done = assert.async();
+		sinon.stub(oFilterBar, "getAssignedFilterNames").returns([]);
+
+		assert.ok(oFilterBar._oInitialFiltersAppliedPromise);
+		oFilterBar._oInitialFiltersAppliedPromise.then(function () {
+
+			var nCount = 0;
+			oFilterBar.attachFiltersChanged(function (oEvent) {
+				nCount++; // once triggered from initial handling
+				var bConditionBased = oEvent.getParameter("conditionsBased");
+				if (!bConditionBased) {
+					assert.equal(nCount, 3);
+					done();
+				} else {
+					assert.ok(nCount < 3);
+				}
+			});
+
+			oFilterBar._handleVariantSwitch({});
+			oFilterBar._handleVariantSwitch({createScenario: "saveAs"});
+
+			sinon.stub(oFilterBar, "_isChangeApplying").returns(true);
+			oFilterBar._handleVariantSwitch({createScenario: "saveAs"});
+			//simulate flex changes applied
+			oFilterBar._changesApplied();
+		});
+
+	});
 });

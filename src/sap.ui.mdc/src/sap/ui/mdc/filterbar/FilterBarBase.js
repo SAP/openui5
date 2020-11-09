@@ -556,8 +556,8 @@ sap.ui.define([
 		return this._getAssignedFiltersText();
 	};
 
-	FilterBarBase.prototype._reportModelChange = function(bTriggerSearch) {
-		this._handleAssignedFilterNames();
+	FilterBarBase.prototype._reportModelChange = function(bTriggerSearch, bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch) {
+		this._handleAssignedFilterNames(false, bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch);
 
 		if (this.getLiveMode() || bTriggerSearch) {
 			this.triggerSearch();
@@ -716,7 +716,7 @@ sap.ui.define([
 		return aResultConditions;
 	};
 
-	FilterBarBase.prototype._handleAssignedFilterNames = function(bFiltersAggregationChanged) {
+	FilterBarBase.prototype._handleAssignedFilterNames = function(bFiltersAggregationChanged, bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch) {
 		if (!this._oMetadataAppliedPromise) {
 			return;  // may occure when filterItems are added during pre processing.
 		}
@@ -725,7 +725,7 @@ sap.ui.define([
 
 			if (this._bIsBeingDestroyed) {
 				return;
-					}
+			}
 
 			if (!bFiltersAggregationChanged) {
 				if (this._btnAdapt) {
@@ -736,7 +736,7 @@ sap.ui.define([
 
 			var mTexts = this._getAssignedFiltersText();
 			var oObj = {
-				conditionsBased: !bFiltersAggregationChanged,
+				conditionsBased: (!bFiltersAggregationChanged && !bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch),
 				filtersText: mTexts.filtersText,
 				filtersTextExpanded: mTexts.filtersTextExpanded
 			};
@@ -755,6 +755,7 @@ sap.ui.define([
 	/**
 	 * Triggers the search.
 	 * @public
+	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
 		return this.valid(true);
@@ -1139,22 +1140,6 @@ sap.ui.define([
 
 	FilterBarBase.prototype._getXConditions = function () {
 		return this._getModelConditions(this._getConditionModel(), false);
-	};
-
-	FilterBarBase.prototype._storeChanges = function(aChanges) {
-		if (aChanges && aChanges.length) {
-			var bHasVariantManagement = FlexRuntimeInfoAPI.hasVariantManagement({element: this});
-
-			try {
-
-				ControlPersonalizationWriteAPI.add({
-					changes: aChanges,
-					ignoreVariantManagement: !bHasVariantManagement
-				});
-			} catch (ex) {
-				Log.error("error while saving changes - " + ex.message);
-			}
-		}
 	};
 
 
@@ -1575,8 +1560,11 @@ sap.ui.define([
 
 		// no changes exists, but variant switch occurs
 		// not relevant for applied default variant
-		if (!this._oFlexPromise && this._bInitialFiltersApplied) {
+		if (!this._isChangeApplying() && this._bInitialFiltersApplied) {
 			this._changesApplied();
+		} else if (this._isChangeApplying() && oVariant.hasOwnProperty("createScenario") && (oVariant.createScenario === "saveAs")) {
+			//during SaveAs a switch occurs but the processing of related variants based changes may still be ongoing
+			this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = true;
 		}
 	};
 
@@ -1596,10 +1584,9 @@ sap.ui.define([
 
 		this._bIgnoreChanges = false;
 
-		this._bIgnoreChanges = false;
-
-		this._reportModelChange(this._bExecuteOnSelect);
+		this._reportModelChange(this._bExecuteOnSelect, this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch);
 		this._bExecuteOnSelect = undefined;
+		this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = undefined;
 	};
 
 	FilterBarBase.prototype._getView = function() {
