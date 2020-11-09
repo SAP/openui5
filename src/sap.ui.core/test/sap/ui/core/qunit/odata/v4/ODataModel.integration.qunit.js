@@ -30049,6 +30049,69 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Context binding with nested list binding having another nested list binding with
+	// own cache. A new entry in the outer list binding is created (with bSkipRefresh=false). There
+	// are no requests for the inner list binding as long the new entity is not persisted. Once the
+	// entity is persisted, the data for the inner list binding is fetched.
+	// BCP: 2070459149
+	QUnit.test("BCP: 2070459149: transient context + nested ODLB w/ own cache", function (assert) {
+		var oContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'1\')}">\
+	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
+		<Text id="name" text="{Name}"/>\
+		<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$$ownRequest : true}, \
+			templateShareable : false}">\
+			<CustomListItem>\
+				<Text id="category" text="{Category}"/>\
+			</CustomListItem>\
+		</List>\
+	</Table>\
+</FlexBox>',
+		that = this;
+
+		this.expectRequest("TEAMS('1')?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+				Team_Id : "1",
+				TEAM_2_EMPLOYEES : []
+			})
+			.expectChange("name", [])
+			.expectChange("category", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("name", ["John Doe"]);
+
+			// code under test
+			oContext = that.oView.byId("employees").getBinding("items")
+				// bSkipRefresh=false to request EMPLOYEE_2_EQUIPMENTS once employee is created
+				.create({Name : "John Doe"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS('1')/TEAM_2_EMPLOYEES",
+					payload : {Name : "John Doe"}}
+				, {ID : "2", Name : "John Doe"})
+				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=ID,Name", {
+					ID : "2",
+					Name : "John Doe"
+				})
+				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_EQUIPMENTS"
+					+ "?$select=Category,ID&$skip=0&$top=100", {
+					value : [{Category : "Electronics", ID : "1"}]
+				})
+				.expectChange("category", ["Electronics"]);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				oContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: List binding with one kept-alive context outside of the collection. Refresh
 	// the list binding and see that the kept-alive context is also refreshed.
 	// JIRA: CPOUI5ODATAV4-488

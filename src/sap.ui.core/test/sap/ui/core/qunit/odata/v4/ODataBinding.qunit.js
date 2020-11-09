@@ -1457,6 +1457,43 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("createAndSetCache: relative, transient parent", function (assert) {
+		var oBinding = new ODataBinding({
+				oCache : undefined,
+				oModel : {
+					mUriParameters : {}
+				},
+				bRelative : true
+			}),
+			oContext = {
+				getProperty : function () {},
+				isTransient : function () {}
+			},
+			mMergedQueryOptions = {},
+			mQueryOptions = {};
+
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(mQueryOptions))
+			.returns(mMergedQueryOptions);
+		this.mock(oContext).expects("isTransient")
+			.withExactArgs()
+			.returns(true);
+		this.mock(oContext).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient")
+			.returns(true);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.createAndSetCache(mQueryOptions, "/resource/path", oContext),
+			null
+		);
+
+		assert.strictEqual(oBinding.mCacheQueryOptions, mMergedQueryOptions);
+		assert.strictEqual(oBinding.oCache, null);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("createAndSetCache: reuse cache", function (assert) {
 		var oBinding = new ODataBinding({
 				oModel : {
