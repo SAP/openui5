@@ -338,6 +338,7 @@ sap.ui.define([
 
 			this._pSettingsDialog.then(function (oSettingsDialog) {
 				syncStyleClass("sapUiSizeCompact", oView, oSettingsDialog);
+				oSettingsDialog.setContentWidth("42rem");
 				oSettingsDialog.open();
 			});
 		},
