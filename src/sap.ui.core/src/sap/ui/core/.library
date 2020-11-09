@@ -267,13 +267,21 @@
             <copyright>2011, John Resig</copyright>
             <pattern partial="true">sap/ui/Device.js</pattern>
         </lib>
-        <lib name="jquery_UI" displayName="jQuery UI" version="1.10.4" homepage="https://jqueryui.com">
+        <lib name="jquery_UI_1-8-17" displayName="jQuery UI 1.8" version="1.8.17" homepage="https://jqueryui.com">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>2014 jQuery Foundation and other contributors</copyright>
+            <pattern partial="true">sap/ui/dom/jquery/Selectors.js</pattern>
+        </lib>
+        <lib name="jquery_UI-1-10-4" displayName="jQuery UI 1.10" version="1.10.4" homepage="https://jqueryui.com">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2014 jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jqueryui/*</pattern>
             <pattern partial="true">jquery.sap.dom.js</pattern>
+        </lib>
+        <lib name="jquery_UI_1-11-1" displayName="jQuery UI 1.11" version="1.11.1" homepage="https://jqueryui.com">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>2014 jQuery Foundation and other contributors</copyright>
             <pattern partial="true">sap/ui/dom/jquery/zIndex.js</pattern>
-            <pattern partial="true">sap/ui/dom/jquery/Selectors.js</pattern>
         </lib>
         <lib name="qunit" displayName="QUnit" version="1.18.0" homepage="https://qunitjs.com">
             <license url="http://jQuery.org/license" type="MIT" />

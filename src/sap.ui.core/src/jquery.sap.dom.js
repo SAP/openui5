@@ -218,7 +218,7 @@ sap.ui.define([
 	jQuery.sap.denormalizeScrollBeginRTL = domDenormalizeScrollBeginRTL;
 
 	/*
-	 * The following code is taken from jQuery UI core but modified.
+	 * The following implementation of jQuery.support.selectstart is taken from jQuery UI core but modified.
 	 *
 	 * jQuery UI Core
 	 * http://jqueryui.com
