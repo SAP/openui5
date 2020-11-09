@@ -230,7 +230,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(300);
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 
 		oInput.$().trigger("focusout");
 		qutils.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
@@ -540,10 +540,10 @@ sap.ui.define([
 			oInput._$input.trigger("focus").val("abc").trigger("input");
 			this.clock.tick(300);
 
-			assert.ok(oInput._oSuggPopover && oInput._oSuggPopover._oPopover.isOpen && oInput._oSuggPopover._oPopover.isOpen(), "Suggestion Popup is open now");
+			assert.ok(oInput._oSuggPopover && oInput._oSuggPopover.getPopover().isOpen && oInput._oSuggPopover.getPopover().isOpen(), "Suggestion Popup is open now");
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
 			checkSubmit("Enter pressed on open Suggestions", true, true, "abcTom");
-			assert.ok(oInput._oSuggPopover && oInput._oSuggPopover._oPopover.isOpen && !oInput._oSuggPopover._oPopover.isOpen(), "Suggestion Popup should be closed");
+			assert.ok(oInput._oSuggPopover && oInput._oSuggPopover.getPopover().isOpen && !oInput._oSuggPopover.getPopover().isOpen(), "Suggestion Popup should be closed");
 		}
 
 		oInput.destroy();
@@ -892,7 +892,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput6._oSuggPopover._oPopover;
+		oPopup = oInput6._oSuggPopover.getPopover();
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
@@ -975,7 +975,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
@@ -1017,11 +1017,11 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		var oItem = oInput._oSuggPopover._oPopover.getContent()[0].getItems()[0];
+		var oItem = oInput._oSuggPopover.getPopover().getContent()[0].getItems()[0];
 		assert.ok(oItem, "Item should be created");
 
 		oItem.focus();
@@ -1069,7 +1069,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
@@ -1120,7 +1120,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
@@ -1156,7 +1156,7 @@ sap.ui.define([
 		oInput7._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(300);
-		oPopup1 = oInput7._oSuggPopover._oPopover;
+		oPopup1 = oInput7._oSuggPopover.getPopover();
 		aItems = oPopup1.getContent()[0].getItems();
 
 		assert.ok(oPopup1 instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
@@ -1223,7 +1223,7 @@ sap.ui.define([
 		oInput._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 
 		assert.ok(oPopup instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is open now");
@@ -1364,7 +1364,7 @@ sap.ui.define([
 		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
@@ -1436,7 +1436,7 @@ sap.ui.define([
 		});
 		this.clock.tick(500);
 
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
@@ -1513,7 +1513,7 @@ sap.ui.define([
 		});
 		this.clock.tick(500);
 
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 
 		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Tel, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input"); // BCP 1970125027
 
@@ -1568,7 +1568,7 @@ sap.ui.define([
 			}
 		});
 		this.clock.tick(500);
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 
 		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Text, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input - the default one ('Text')"); // BCP 1970125027
 
@@ -1677,7 +1677,7 @@ sap.ui.define([
 			}
 		});
 		this.clock.tick(500);
-		var oSpy = this.spy(oInput._oSuggPopover._oPopover, "invalidate");
+		var oSpy = this.spy(oInput._oSuggPopover.getPopover(), "invalidate");
 		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(400);
 
@@ -1803,7 +1803,7 @@ sap.ui.define([
 		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
@@ -1948,7 +1948,7 @@ sap.ui.define([
 		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 
 		// set up a spy on the dialog's renderer (the dialog should not be rerendered)
 		oInputRendererSpy = sinon.spy(InputRenderer, "render");
@@ -2137,7 +2137,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		assert.ok(!oInput._oSuggPopover._oPopover.getFooter(), "Suggestion Popup doesn't have Toolbar footer");
+		assert.ok(!oInput._oSuggPopover.getPopover().getFooter(), "Suggestion Popup doesn't have Toolbar footer");
 
 		oInput.destroy();
 	});
@@ -2280,7 +2280,7 @@ sap.ui.define([
 		});
 		this.clock.tick(300);
 
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
@@ -2459,7 +2459,7 @@ sap.ui.define([
 		oInput._$input.trigger("focus").val("25").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggPopover._oPopover;
+		oPopup = oInput._oSuggPopover.getPopover();
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
@@ -2553,7 +2553,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
-		oInput._oSuggPopover._oPopover.open();
+		oInput._oSuggPopover.getPopover().open();
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("p").trigger("input");
@@ -2578,7 +2578,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// assert
-		assert.notOk(oInput._oSuggPopover._oPopover.isOpen(), "Suggestion Popup should NOT be opened");
+		assert.notOk(oInput._oSuggPopover.getPopover().isOpen(), "Suggestion Popup should NOT be opened");
 		assert.equal(oSelectedRow2.getId(), oInput.getSelectedRow(), "SuggestionRow should be correctly set");
 
 		// clean up
@@ -2845,9 +2845,9 @@ sap.ui.define([
 		oInput.setShowSuggestion(true);
 
 		assert.ok(oInput._oSuggPopover._oList, "List instance is created");
-		assert.ok(oInput._oSuggPopover._oPopover, "Suggestion Popup instance is created");
-		assert.ok(oInput._oSuggPopover._oPopover.getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
-		assert.ok(oInput._oSuggPopover._oPopover.getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
+		assert.ok(oInput._oSuggPopover.getPopover(), "Suggestion Popup instance is created");
+		assert.ok(oInput._oSuggPopover.getPopover().getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
+		assert.ok(oInput._oSuggPopover.getPopover().getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
 
 		oInput.destroy();
 	});
@@ -2950,9 +2950,9 @@ sap.ui.define([
 		oInput.setShowSuggestion(true);
 
 		assert.ok(oInput._oSuggPopover._oList, "List instance is created");
-		assert.ok(oInput._oSuggPopover._oPopover, "Suggestion Popup instance is created");
-		assert.ok(oInput._oSuggPopover._oPopover.getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
-		assert.ok(oInput._oSuggPopover._oPopover.getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
+		assert.ok(oInput._oSuggPopover.getPopover(), "Suggestion Popup instance is created");
+		assert.ok(oInput._oSuggPopover.getPopover().getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
+		assert.ok(oInput._oSuggPopover.getPopover().getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
 
 		oInput.destroy();
 	});
@@ -2968,7 +2968,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		var $labels = oInput._oSuggPopover._oPopover.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
+		var $labels = oInput._oSuggPopover.getPopover().$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
 
 		assert.ok($labels[0].innerHTML.indexOf('<span') > -1, "Texts is highlighted");
 
@@ -3039,8 +3039,8 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(fnTriggerSuggestSpy.called, "Should have triggered suggest.");
-		assert.ok(oInput._oSuggPopover._oPopover, "Should have suggestions popover.");
-		assert.ok(oInput._oSuggPopover._oPopover.isOpen(), "Should have opened suggestions popover.");
+		assert.ok(oInput._oSuggPopover.getPopover(), "Should have suggestions popover.");
+		assert.ok(oInput._oSuggPopover.getPopover().isOpen(), "Should have opened suggestions popover.");
 		assert.ok(oInput._oSuggPopover._oList, "Should have created a list with suggestions.");
 
 		// Act
@@ -3055,7 +3055,7 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(fnTriggerSuggestSpy.called, "Should have NOT triggered suggest.");
-		assert.notOk(oInput._oSuggPopover._oPopover, "Should NOT have suggestions popover.");
+		assert.notOk(oInput._oSuggPopover.getPopover(), "Should NOT have suggestions popover.");
 		assert.notOk(oInput._oSuggPopover._oList, "Should have NOT created a list with suggestions.");
 
 		// Act
@@ -3070,8 +3070,8 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(fnTriggerSuggestSpy.called, "Should have triggered suggest.");
-		assert.ok(oInput._oSuggPopover._oPopover, "Should have suggestions popover.");
-		assert.ok(oInput._oSuggPopover._oPopover.isOpen(), "Should have opened suggestions popover.");
+		assert.ok(oInput._oSuggPopover.getPopover(), "Should have suggestions popover.");
+		assert.ok(oInput._oSuggPopover.getPopover().isOpen(), "Should have opened suggestions popover.");
 		assert.ok(oInput._oSuggPopover._oList, "Should have created a list with suggestions.");
 
 		// Cleanup
@@ -3202,7 +3202,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		var oItem = oInput._oSuggPopover._oPopover.getContent()[0].getItems()[0];
+		var oItem = oInput._oSuggPopover.getPopover().getContent()[0].getItems()[0];
 		assert.ok(oItem, "Item should be created");
 
 		oItem.focus();
@@ -3349,7 +3349,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.setShowSuggestion(true);
-		oSpy = sinon.spy(oInput._oSuggPopover._oPopover, "close");
+		oSpy = sinon.spy(oInput._oSuggPopover.getPopover(), "close");
 
 		// act
 		oInput.setSelectionItem(oItem, false);
@@ -3676,7 +3676,7 @@ sap.ui.define([
 		qutils.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
 
 		// simulate focus out
-		oInput._oSuggPopover._oPopover.close();
+		oInput._oSuggPopover.getPopover().close();
 
 		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
 		assert.equal(fnSuggestionItemSelectedCallback.callCount, 1, "suggestionItemSelected event is fired once");
@@ -3780,7 +3780,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		var $popover = oInput._oSuggPopover._oPopover.$();
+		var $popover = oInput._oSuggPopover.getPopover().$();
 		assert.ok($popover.attr('aria-labelledby'), 'popup ariaLabelledBy is set');
 
 		oInput.destroy();
@@ -4246,7 +4246,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oFakeKeydown = new jQuery.Event("keydown", { which: KeyCodes.P });
-		oInput._oSuggPopover._oPopover.open();
+		oInput._oSuggPopover.getPopover().open();
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("p").trigger("input");
@@ -4303,7 +4303,7 @@ sap.ui.define([
 		this.oInput.setMaxSuggestionWidth("50rem", bSuppressInvalidate);
 		this.oInput.setEnableSuggestionsHighlighting(false, bSuppressInvalidate);
 		this.oInput.setAutocomplete(false, bSuppressInvalidate);
-		this.oInput._oSuggPopover._oPopover.open();
+		this.oInput._oSuggPopover.getPopover().open();
 
 		// assert
 		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), this.oInput._oSuggPopover._sPopoverContentWidth, "Input and Popover widths should be the same.");
@@ -4442,7 +4442,7 @@ sap.ui.define([
 			return oMockFocus;
 		});
 
-		var oStubPopover = sinon.stub(oInput._oSuggPopover._oPopover, "isOpen", function () {
+		var oStubPopover = sinon.stub(oInput._oSuggPopover.getPopover(), "isOpen", function () {
 			return true;
 		});
 
@@ -4601,7 +4601,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
-		oPopover._oPopover.open();
+		oPopover.getPopover().open();
 		this.clock.tick(300);
 		oPopupInput.onfocusin();
 		oPopupInput._$input.trigger("focus").trigger("keydown").val("uni").trigger("input");
@@ -4611,7 +4611,7 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should be allowed when pressing 'B'.");
 		assert.strictEqual(oPopupInput.getValue(), "united Kingdom", "Input value should be autocompleted and character casing should be preserved.");
 		assert.strictEqual(oPopupInput.getSelectedText(), "ted Kingdom", "Suggested value should be selected");
-		assert.strictEqual(oPopover._oPopover.getContent()[1].getItems()[2].getSelected(), true, "Correct item in the Suggested list is selected");
+		assert.strictEqual(oPopover.getPopover().getContent()[1].getItems()[2].getSelected(), true, "Correct item in the Suggested list is selected");
 
 		// act
 		qutils.triggerKeydown(oPopupInput._$input, KeyCodes.ENTER);
@@ -4729,7 +4729,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
-		oInput._oSuggPopover._oPopover.open();
+		oInput._oSuggPopover.getPopover().open();
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("p").trigger("input");
@@ -4806,9 +4806,9 @@ sap.ui.define([
 		this.inputWithSuggestions.setValueState("Error");
 		this.inputWithSuggestions.setShowValueStateMessage(true);
 
-		assert.ok(this.inputWithSuggestions._oSuggPopover._oPopover, 'suggestions popover is initialized');
+		assert.ok(this.inputWithSuggestions._oSuggPopover.getPopover(), 'suggestions popover is initialized');
 		this.inputWithSuggestions.setShowSuggestion(false);
-		assert.notOk(this.inputWithSuggestions._oSuggPopover._oPopover, 'suggestions popover is not initialized');
+		assert.notOk(this.inputWithSuggestions._oSuggPopover.getPopover(), 'suggestions popover is not initialized');
 
 		this.inputWithSuggestions.openValueStateMessage();
 
@@ -4875,14 +4875,14 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// Assert
-		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.$().find(".sapMValueStateHeaderText").text(), "Some Error", "value state message is displayed in the suggestion popover");
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover().getPopover().$().find(".sapMValueStateHeaderText").text(), "Some Error", "value state message is displayed in the suggestion popover");
 
 		// Act
 		this.inputWithSuggestions.setValueStateText(sValueStateText);
 		this.clock.tick(300);
 
 		// Assert
-		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.$().find(".sapMValueStateHeaderText").text(), sValueStateText, "value state message is displayed in the suggestion popover");
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover().getPopover().$().find(".sapMValueStateHeaderText").text(), sValueStateText, "value state message is displayed in the suggestion popover");
 
 		var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
 
@@ -4949,14 +4949,14 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// Assert
-		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.getContent()[0].getText(), "Some Error", "value state message is displayed in the suggestion popover");
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover().getPopover().getContent()[0].getText(), "Some Error", "value state message is displayed in the suggestion popover");
 
 		// Act
 		this.inputWithSuggestions.setValueStateText(sValueStateText);
 		this.clock.tick(300);
 
 		// Assert
-		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.getContent()[0].getText(), sValueStateText, "value state message is displayed in the suggestion popover");
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover().getPopover().getContent()[0].getText(), sValueStateText, "value state message is displayed in the suggestion popover");
 
 		var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
 
@@ -5081,7 +5081,7 @@ sap.ui.define([
 		this.oInput._$input.trigger("focus").val("on").trigger("input");
 		this.clock.tick(300);
 
-		oSuggestionsPopoverHeader = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader();
+		oSuggestionsPopoverHeader = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader();
 
 		// Assert
 		assert.strictEqual(oSuggestionsPopoverHeader.$().text(), "Normal value state text", "Normal value state message is displayed in the suggestion popover");
@@ -5093,7 +5093,7 @@ sap.ui.define([
 		/* When value stage message containing a sap.m.FormattedText aggregation is set
 		it should override the standart plain value state text */
 
-		oSuggestionsPopoverHeader = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader().getFormattedText();
+		oSuggestionsPopoverHeader = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText();
 
 		// Assert
 		assert.strictEqual(oSuggestionsPopoverHeader.$().text(), "Value state message containing a link", "Formatted text value state message containing a link is displayed in the suggestion popover");
@@ -5294,7 +5294,7 @@ sap.ui.define([
 		this.oInput._openSuggestionsPopover();
 		this.clock.tick();
 
-		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader().getFormattedText().getDomRef().textContent;
+		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
 		assert.strictEqual(oSuggPopoverHeaderValueState, "Another value state message containing multiple links", "New FormattedText value state message is correcrtly set in the popover's value state header");
@@ -5321,7 +5321,7 @@ sap.ui.define([
 		this.oInput._openSuggestionsPopover();
 		this.clock.tick();
 
-		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader().getFormattedText().getDomRef().textContent;
+		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
 		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header");
@@ -5349,7 +5349,7 @@ sap.ui.define([
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
 		sap.ui.getCore().applyChanges();
-		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader().getFormattedText().getDomRef().textContent;
+		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
 		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header while it's open");
@@ -5392,7 +5392,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 
-		oHeaderValueFormattedText = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader().getFormattedText();
+		oHeaderValueFormattedText = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText();
 
 		// Assert
 		assert.ok(oHeaderValueFormattedText.$().hasClass("sapMPseudoFocus"), "Pseudo focus is on formatted text value state message");
@@ -5425,7 +5425,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 
-		oValueStateHeader = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader();
+		oValueStateHeader = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader();
 
 		// Assert
 		assert.ok(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is on the value state header");
@@ -5459,7 +5459,7 @@ sap.ui.define([
 		this.oInput._$input.trigger("focus").val("one").trigger("input");
 		this.clock.tick();
 
-		oValueStateHeader = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader();
+		oValueStateHeader = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader();
 
 		// Assert
 		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not the value state header");
@@ -5924,7 +5924,7 @@ sap.ui.define([
 		this.oInput._openSuggestionsPopover();
 		sap.ui.getCore().applyChanges();
 
-		oDialog = this.oInput._getSuggestionsPopover()._oPopover;
+		oDialog = this.oInput._getSuggestionsPopover().getPopover();
 		oCustomHeader = oDialog.getCustomHeader();
 
 		assert.ok(oCustomHeader.getContentMiddle()[0].isA("sap.m.Title"), "A title is added to the dialog");
@@ -5956,7 +5956,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oSuggPopover = this.oInput._getSuggestionsPopover();
-		oCloseButton = oSuggPopover._oPopover.getCustomHeader().getContentRight()[0];
+		oCloseButton = oSuggPopover.getPopover().getCustomHeader().getContentRight()[0];
 
 		oCloseButton.firePress();
 		this.clock.tick(400);
@@ -5983,7 +5983,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oSuggPopover = this.oInput._getSuggestionsPopover();
-		oOKButton = oSuggPopover._oPopover.getBeginButton();
+		oOKButton = oSuggPopover.getPopover().getBeginButton();
 
 		oOKButton.firePress();
 		this.clock.tick(400);
