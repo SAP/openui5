@@ -179,7 +179,7 @@ sap.ui.define([
 			return Promise.resolve(ChangesUtils.getChangeHandler(oChange, mControl, mPropertyBag))
 			.then(function(oChangeHandler) {
 				if (oChangeHandler && typeof oChangeHandler.getCondenserInfo === "function") {
-					return oChangeHandler.getCondenserInfo(oChange);
+					return oChangeHandler.getCondenserInfo(oChange, mPropertyBag);
 				}
 			});
 		}

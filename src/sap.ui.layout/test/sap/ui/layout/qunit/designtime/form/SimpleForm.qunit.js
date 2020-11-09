@@ -433,6 +433,54 @@ sap.ui.define([
 				afterUndo: confirmFieldIsRemoved.bind(null, "valueHelp"),
 				afterRedo : confirmFieldIsAdded.bind(null, "valueHelp")
 			});
+
+			elementActionTest("Checking condensing for add via delegate and move action with default delegate for SimpleForm with Layout=" + sSimpleFormLayout, {
+				xmlView: buildXMLForSimpleForm(),
+				model : new SomeModel(),
+				action: {
+					name: "move",
+					control: function(oView) {
+						return getGroup(getSimpleForm(oView));
+					},
+					parameter: function (oView) {
+						return {
+							movedElements: [{
+								element: oView.byId(oView.createId(NEW_CONTROL_ID)).getParent(),
+								sourceIndex: 1,
+								targetIndex: 0
+							}],
+							source: {
+								aggregation: "formElements",
+								parent: getGroup(getSimpleForm(oView))
+							},
+							target: {
+								aggregation: "formElements",
+								parent: getGroup(getSimpleForm(oView))
+							}
+						};
+					}
+				},
+				previousActions: [
+					{
+						name: ["add", "delegate"],
+						control: function(oView) {
+							return getGroup(getSimpleForm(oView));
+						},
+						parameter: function(oView) {
+							return {
+								index: 1,
+								newControlId: oView.createId(NEW_CONTROL_ID),
+								bindingString: "binding/path",
+								parentId: getGroup(getSimpleForm(oView)).getId(),
+								modelType: SomeModel.getMetadata().getName()
+							};
+						}
+					}
+				],
+				afterAction: confirmFieldIsAdded.bind(null, false),
+				afterUndo: confirmFieldIsRemoved.bind(null, false),
+				afterRedo : confirmFieldIsAdded.bind(null, false)
+			});
 		}
 
 		fnParameterizedTest(SimpleFormLayout.GridLayout);

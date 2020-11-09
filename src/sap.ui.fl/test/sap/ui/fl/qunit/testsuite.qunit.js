@@ -659,6 +659,17 @@ sap.ui.define([
 					}
 				}
 			},
+			"changeHandler/BaseAddViaDelegate": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/ui/fl/changeHandler/BaseAddViaDelegate"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
+				}
+			},
 			"changeHandler/BaseAddXml": {
 				group: "ChangeHandler",
 				coverage: {
