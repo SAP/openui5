@@ -14,7 +14,7 @@ describe('sap.m.Token', function() {
 
 	//Token not selected, not editable
 	it('should show token not editable', function () {
-		expect(takeScreenshot( element(by.id('tokenSelected3')))).toLookAs('token-not-selected-not-editable');
+		expect(takeScreenshot( element(by.id('tokenNotSelected3')))).toLookAs('token-not-selected-not-editable');
 	});
 
 	//Token selected, editable
@@ -25,5 +25,10 @@ describe('sap.m.Token', function() {
 	//Token selected, not editable
 	it('should show  selected token, not editable', function () {
 		expect(takeScreenshot( element(by.id('tokenSelected6')))).toLookAs('token-selected-not-editable');
+	});
+
+	//Token with textDirection: sap.ui.core.TextDirection.RTL
+	it('should show  selected token, not editable', function () {
+		expect(takeScreenshot( element(by.id("tokenRTL")))).toLookAs('token-in-rtl-mode');
 	});
 });
