@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<ResponsivePopover
+		id="myPopover"
 		title="{Name}"
 		class="sapUiPopupWithPadding"
 		placement="Bottom" >
