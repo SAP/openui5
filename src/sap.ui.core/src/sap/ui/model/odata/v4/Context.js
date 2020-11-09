@@ -33,7 +33,7 @@ sap.ui.define([
 	function fetchPrimitiveValue(oContext, sPath, bExternalFormat, bCached) {
 		var oError,
 			aPromises = [oContext.fetchValue(sPath, null, bCached)],
-			sResolvedPath = sPath[0] === "/" ? sPath : _Helper.buildPath(oContext.getPath(), sPath);
+			sResolvedPath = oContext.oModel.resolve(sPath, oContext);
 
 		if (bExternalFormat) {
 			aPromises.push(

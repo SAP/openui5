@@ -523,12 +523,17 @@ sap.ui.define([
 			var oBinding = {
 					checkSuspended : function () {}
 				},
-				oContext = Context.create(null, oBinding, "/foo"),
+				oModel = {
+					resolve : function () {}
+				},
+				oContext = Context.create(oModel, oBinding, "/foo"),
 				oSyncPromise = SyncPromise.resolve(vResult);
 
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 				.returns(oSyncPromise);
+			this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+				.returns("/foo/bar");
 
 			//code under test
 			assert.strictEqual(oContext.getProperty("bar"), vResult);
@@ -540,13 +545,17 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oContext = Context.create(null, oBinding, "/foo", 1),
+			oModel = {
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/foo", 1),
 			oSyncPromise = SyncPromise.resolve({});
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(_Helper).expects("buildPath").withExactArgs("/foo", "bar").returns("~");
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 			.returns(oSyncPromise);
+		this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+			.returns("~");
 
 		//code under test
 		assert.throws(function () {
@@ -559,12 +568,17 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oContext = Context.create(null, oBinding, "/foo"),
+			oModel = {
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/foo"),
 			oSyncPromise = SyncPromise.resolve(Promise.resolve(42));
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 			.returns(oSyncPromise);
+		this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+			.returns("/foo/bar");
 
 		//code under test
 		assert.strictEqual(oContext.getProperty("bar"), undefined);
@@ -576,12 +590,17 @@ sap.ui.define([
 				checkSuspended : function () {}
 			},
 			oError = new Error("Unexpected request: GET /foo/bar"),
-			oContext = Context.create(null, oBinding, "/foo");
+			oModel = {
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/foo");
 
 		oError.$cached = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 			.returns(SyncPromise.reject(oError));
+		this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+			.returns("/foo/bar");
 
 		// code under test
 		assert.strictEqual(oContext.getProperty("bar"), undefined);
@@ -592,7 +611,10 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oContext = Context.create(null, oBinding, "/foo"),
+			oModel = {
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/foo"),
 			sMessage = "read error",
 			oPromise = Promise.reject(new Error(sMessage)),
 			oSyncPromise = SyncPromise.resolve(oPromise);
@@ -600,6 +622,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 			.returns(oSyncPromise);
+		this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+			.returns("/foo/bar");
 		this.oLogMock.expects("warning")
 			.withExactArgs(sMessage, "bar", "sap.ui.model.odata.v4.Context");
 
@@ -621,7 +645,8 @@ sap.ui.define([
 				oModel = {
 					getMetaModel : function () {
 						return oMetaModel;
-					}
+					},
+					resolve : function() {}
 				},
 				oContext = Context.create(oModel, oBinding, "/foo", 42),
 				oType = {
@@ -632,9 +657,10 @@ sap.ui.define([
 				oSyncPromiseValue = SyncPromise.resolve(1234);
 
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
-			this.mock(_Helper).expects("buildPath").withExactArgs("/foo", "bar").returns("~");
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 				.returns(oSyncPromiseValue);
+			this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+				.returns("~");
 			this.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("~")
 				.returns(oSyncPromiseType);
 			if (bTypeIsResolved) {
@@ -655,8 +681,12 @@ sap.ui.define([
 				fetchIfChildCanUseCache : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
-			oContext = Context.create(null, oBinding, "/foo"),
-			oContextMock = this.mock(oContext);
+			oModel = {
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/foo"),
+			oContextMock = this.mock(oContext),
+			oModelMock = this.mock(oModel);
 
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("fetchIfChildCanUseCache")
@@ -672,9 +702,13 @@ sap.ui.define([
 		oContextMock.expects("fetchValue")
 			.withExactArgs("/resolved/bar", null, undefined)
 			.resolves(42); // no need to return a SyncPromise
+		oModelMock.expects("resolve").withExactArgs("/resolved/bar", sinon.match.same(oContext))
+			.returns("/resolved/bar");
 		oContextMock.expects("fetchValue")
 			.withExactArgs("/resolved/baz", null, undefined)
 			.resolves(null); // no need to return a SyncPromise
+		oModelMock.expects("resolve").withExactArgs("/resolved/baz", sinon.match.same(oContext))
+			.returns("/resolved/baz");
 
 		//code under test
 		return oContext.requestProperty(["bar", "baz"]).then(function (aActual) {
@@ -712,7 +746,10 @@ sap.ui.define([
 				checkSuspended : function () {},
 				fetchIfChildCanUseCache : function () {}
 			},
-			oContext = Context.create(null, oBinding, "/foo", 1);
+			oModel = {
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/foo", 1);
 
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
 			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
@@ -722,6 +759,9 @@ sap.ui.define([
 		this.mock(oContext).expects("fetchValue")
 			.withExactArgs("/resolved/path", null, undefined)
 			.resolves({}); // no need to return a SyncPromise
+		this.mock(oModel).expects("resolve").withExactArgs("/resolved/path",
+				sinon.match.same(oContext))
+			.returns("/resolved/path");
 
 		//code under test
 		return oContext.requestProperty("bar").then(function () {
@@ -743,7 +783,8 @@ sap.ui.define([
 			oModel = {
 				getMetaModel : function () {
 					return oMetaModel;
-				}
+				},
+				resolve : function () {}
 			},
 			oType = {
 				formatValue : function () {}
@@ -759,6 +800,9 @@ sap.ui.define([
 			.resolves("/resolved/path"); // no need to return a SyncPromise
 		this.mock(oContext).expects("fetchValue").withExactArgs("/resolved/path", null, undefined)
 			.returns(oSyncPromiseValue);
+		this.mock(oModel).expects("resolve").withExactArgs("/resolved/path",
+				sinon.match.same(oContext))
+			.returns("/resolved/path");
 		this.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("/resolved/path")
 			.returns(oSyncPromiseType);
 		this.mock(oType).expects("formatValue").withExactArgs(1234, "string")
