@@ -12,7 +12,10 @@ sap.ui.define([
 	'./RangeOperator',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/core/date/UniversalDateUtils'
+	'sap/ui/core/date/UniversalDate',
+	'sap/ui/core/date/UniversalDateUtils',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/model/json/JSONModel'
 ],
 
 function(
@@ -26,7 +29,10 @@ function(
 		RangeOperator,
 		BaseType,
 		ConditionValidated,
-		UniversalDateUtils
+		UniversalDate,
+		UniversalDateUtils,
+		DateFormat,
+		JSONModel
 	) {
 		"use strict";
 
@@ -200,30 +206,6 @@ function(
 							Operator.prototype.validate.apply(this, [aValues, oType]);
 						}
 					}),
-					betweenExclBoundaries: new Operator({
-						name: "BTEX",
-						filterOperator: ModelOperator.BT,
-						tokenParse: "^([^!].*)\\.\\.(.+)$", // TODO: does this work?? At least also matches crap like ".....". I guess validation of value types needs to get rid of those.
-						tokenFormat: "{0}..{1}",
-						valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
-						getModelFilter: function(oCondition, sFieldPath, oType) {
-							return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.GT, oCondition.values[0]),
-														  new Filter(sFieldPath, ModelOperator.LT, oCondition.values[1])],
-														  and: true});
-						},
-						validate: function(aValues, oType) {
-							// in Between 2 Values must be defined
-							// TODO: check if one greater than the other?
-							if (aValues.length < 2) {
-								throw new ValidateException("Between must have two values");
-							}
-							if (aValues[0] === aValues[1]) {
-								throw new ValidateException("Between must have two different values");
-							}
-
-							Operator.prototype.validate.apply(this, [aValues, oType]);
-						}
-					}),
 					notBetween: new Operator({
 						name: "NOTBT",
 						filterOperator: ModelOperator.NB,
@@ -231,31 +213,6 @@ function(
 						tokenFormat: "!({0}...{1})",
 						valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
 						exclude: true,
-						validate: function(aValues, oType) {
-							// in Between 2 Values must be defined
-							// TODO: check if one greater than the other?
-							if (aValues.length < 2) {
-								throw new ValidateException("NotBetween must have two values");
-							}
-							if (aValues[0] === aValues[1]) {
-								throw new ValidateException("NotBetween must have two different values");
-							}
-
-							Operator.prototype.validate.apply(this, [aValues, oType]);
-						}
-					}),
-					notBetweenExclBoundaries: new Operator({
-						name: "NOTBTEX",
-						filterOperator: ModelOperator.NB,
-						tokenParse: "^!(.+)\\.\\.(.+)$",
-						tokenFormat: "!({0}..{1})",
-						valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
-						exclude: true,
-						getModelFilter: function(oCondition, sFieldPath, oType) {
-							return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.LE, oCondition.values[0]),
-														  new Filter(sFieldPath, ModelOperator.GE, oCondition.values[1])],
-														  and: false});
-						},
 						validate: function(aValues, oType) {
 							// in Between 2 Values must be defined
 							// TODO: check if one greater than the other?
@@ -689,19 +646,94 @@ function(
 							return UniversalDateUtils.ranges.nextYears(iDuration);
 						}
 					}),
-					// month: new RangeOperator({
-					// 	name: "MONTH",
-					// 	valueTypes: ["sap.ui.model.type.Integer"],
-					// 	paramTypes: ["(\\d+)"],
-					// 	additionalInfo: "",
-					// 	calcRange: function(iDuration) {
-					// 		var iValue = parseInt(iDuration),
-					// 			oDate = new UniversalDate();
-					// 		oDate.setMonth(iValue);
-					// 		oDate = UniversalDateUtils.getMonthStartDate(oDate);
-					// 		return UniversalDateUtils.getRange(0, "MONTH", oDate);
-					// 	}
-					// }),
+					specificMonth: new RangeOperator({
+						name: "SPECIFICMONTH",
+						valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximun: 11 }}],
+						paramTypes: ["(.+)"],
+						additionalInfo: "",
+						calcRange: function(iDuration) {
+							var oDate = new UniversalDate();
+							oDate.setMonth(iDuration);
+							oDate = UniversalDateUtils.getMonthStartDate(oDate);
+							return UniversalDateUtils.getRange(0, "MONTH", oDate);
+						},
+						format: function(oCondition, oType, sDisplayFormat) {
+							var iValue = oCondition.values[0];
+							var sTokenText = this.tokenFormat;
+							var sReplace = this._oListFieldHelp.getTextForKey(iValue);
+
+							return sReplace == null ? null : sTokenText.replace(new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g"), sReplace);
+						},
+						getValues: function(sText, sDisplayFormat, bDefaultOperator) {
+							var aMatch = sText.match(this.tokenParseRegExp);
+							var aValues;
+							if (aMatch || (bDefaultOperator && sText)) {
+								aValues = [];
+								for (var i = 0; i < this.valueTypes.length; i++) {
+									var sValue;
+									if (aMatch) {
+										sValue = aMatch[i + 1];
+									}
+									aValues.push(sValue);
+								}
+							}
+
+							return [this._oListFieldHelp.getKeyForText(aValues[0])];
+						},
+						createControl: function(oType, sPath, iIndex, sId)  {
+
+							var getMonthItems = function() {
+								var oDate = new UniversalDate(),
+									oFormatter = DateFormat.getDateInstance({
+										pattern: "LLLL"
+									});
+								oDate.setDate(15);
+								oDate.setMonth(0);
+
+								var aMonthsItems = [];
+
+								for (var i = 0; i < 12; i++) {
+									aMonthsItems.push({
+										text: oFormatter.format(oDate),
+										key: i
+									});
+									oDate.setMonth(oDate.getMonth() + 1);
+								}
+								return aMonthsItems;
+							};
+
+							if (!this._oListFieldHelp) {
+								var ListFieldHelp = sap.ui.requireSync("sap/ui/mdc/field/ListFieldHelp");
+								var ListItem = sap.ui.requireSync("sap/ui/core/ListItem");
+								this._oListFieldHelp = new ListFieldHelp({
+									id: "LFHForSpecificMonth",
+									items: {
+										path: "$items>/",
+										template: new ListItem({
+											text: {
+												path: "$items>text"
+											},
+											key: {
+												path: "$items>key"
+											}
+										}),
+										templateShareable: false
+									}
+								}).setModel(new JSONModel(getMonthItems()), "$items");
+							}
+
+							var Field = sap.ui.requireSync("sap/ui/mdc/Field");
+							var oField = new Field(sId, {
+								value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
+								additionalValue: { path: sPath, formatter: function(iValue) { return this._oListFieldHelp.getTextForKey(iValue); }.bind(this), mode: 'OneWay' },
+								display: 'Description',
+								width: "100%",
+								fieldHelp: "LFHForSpecificMonth"
+							});
+
+							return oField;
+						}
+					}),
 					yearToDate: new RangeOperator({
 						name: "YEARTODATE",
 						valueTypes: [Operator.ValueType.Static],
@@ -1078,7 +1110,6 @@ function(
 				 FilterOperatorUtil._mOperators.contains,
 				 FilterOperatorUtil._mOperators.equal,
 				 FilterOperatorUtil._mOperators.between,
-				 //FilterOperatorUtil._mOperators.betweenExclBoundaries,
 				 FilterOperatorUtil._mOperators.startsWith,
 				 FilterOperatorUtil._mOperators.endsWith,
 				 FilterOperatorUtil._mOperators.empty,
@@ -1090,7 +1121,6 @@ function(
 				 FilterOperatorUtil._mOperators.notContains,
 				 FilterOperatorUtil._mOperators.notEqual,
 				 FilterOperatorUtil._mOperators.notBetween,
-				 //FilterOperatorUtil._mOperators.notBetweenExclBoundaries,
 				 FilterOperatorUtil._mOperators.notStartsWith,
 				 FilterOperatorUtil._mOperators.notEndsWith,
 				 FilterOperatorUtil._mOperators.notEmpty,
@@ -1098,8 +1128,8 @@ function(
 				 FilterOperatorUtil._mOperators.notLowerThan,
 				 FilterOperatorUtil._mOperators.notGreaterEqual,
 				 FilterOperatorUtil._mOperators.notGreaterThan
-				 ],
-				 FilterOperatorUtil._mOperators.equal
+				],
+				FilterOperatorUtil._mOperators.equal
 		);
 		FilterOperatorUtil.setOperatorsForType(
 				BaseType.Date,
@@ -1131,6 +1161,7 @@ function(
 				 FilterOperatorUtil._mOperators.nextWeek,
 				 FilterOperatorUtil._mOperators.nextWeeks,
 
+				 FilterOperatorUtil._mOperators.specificMonth,
 				 FilterOperatorUtil._mOperators.currentMonth,
 				 FilterOperatorUtil._mOperators.lastMonth,
 				 FilterOperatorUtil._mOperators.lastMonths,
@@ -1155,8 +1186,7 @@ function(
 				 FilterOperatorUtil._mOperators.nextYears,
 
 				 FilterOperatorUtil._mOperators.yearToDate
-				 // FilterOperatorUtil._mOperators.month  - currently not supported
-				 ]
+				]
 		);
 		FilterOperatorUtil.setOperatorsForType(
 				BaseType.DateTime,
@@ -1174,45 +1204,7 @@ function(
 				 FilterOperatorUtil._mOperators.notLowerThan,
 				 FilterOperatorUtil._mOperators.notGreaterEqual,
 				 FilterOperatorUtil._mOperators.notGreaterThan
-
-				 // FilterOperatorUtil._mOperators.lastDays,
-				 // FilterOperatorUtil._mOperators.yesterday,
-				 // FilterOperatorUtil._mOperators.today,
-				 // FilterOperatorUtil._mOperators.tomorrow,
-				 // FilterOperatorUtil._mOperators.nextDays,
-
-				 // FilterOperatorUtil._mOperators.lastWeeks,
-				 // FilterOperatorUtil._mOperators.lastWeek,
-				 // FilterOperatorUtil._mOperators.currentWeek,
-				 // FilterOperatorUtil._mOperators.nextWeek,
-				 // FilterOperatorUtil._mOperators.nextWeeks,
-
-				 // FilterOperatorUtil._mOperators.lastMonths,
-				 // FilterOperatorUtil._mOperators.lastMonth,
-				 // FilterOperatorUtil._mOperators.currentMonth,
-				 // FilterOperatorUtil._mOperators.nextMonth,
-				 // FilterOperatorUtil._mOperators.nextMonths,
-
-				 // FilterOperatorUtil._mOperators.lastQuarters,
-				 // FilterOperatorUtil._mOperators.lastQuarter,
-				 // FilterOperatorUtil._mOperators.currentQuarter,
-				 // FilterOperatorUtil._mOperators.nextQuarter,
-				 // FilterOperatorUtil._mOperators.nextQuarters,
-
-				 // FilterOperatorUtil._mOperators.firstQuarter,
-				 // FilterOperatorUtil._mOperators.secondQuarter,
-				 // FilterOperatorUtil._mOperators.thirdQuarter,
-				 // FilterOperatorUtil._mOperators.fourthQuarter,
-
-				 // FilterOperatorUtil._mOperators.lastYears,
-				 // FilterOperatorUtil._mOperators.lastYear,
-				 // FilterOperatorUtil._mOperators.currentYear,
-				 // FilterOperatorUtil._mOperators.nextYear,
-				 // FilterOperatorUtil._mOperators.nextYears,
-
-				 // FilterOperatorUtil._mOperators.yearToDate
-				 // FilterOperatorUtil._mOperators.month
-				 ]
+				]
 		);
 		FilterOperatorUtil.setOperatorsForType(
 				BaseType.Numeric,
@@ -1230,7 +1222,7 @@ function(
 				 FilterOperatorUtil._mOperators.notLowerThan,
 				 FilterOperatorUtil._mOperators.notGreaterEqual,
 				 FilterOperatorUtil._mOperators.notGreaterThan
-				 ]
+				]
 		);
 		FilterOperatorUtil.setOperatorsForType(
 				BaseType.Time,
@@ -1248,14 +1240,14 @@ function(
 				 FilterOperatorUtil._mOperators.notLowerThan,
 				 FilterOperatorUtil._mOperators.notGreaterEqual,
 				 FilterOperatorUtil._mOperators.notGreaterThan
-				 ]
+				]
 		);
 		FilterOperatorUtil.setOperatorsForType(
 				BaseType.Boolean,
 				[
 				 FilterOperatorUtil._mOperators.equal,
 				 FilterOperatorUtil._mOperators.notEqual
-				 ]
+				]
 		);
 
 		/**

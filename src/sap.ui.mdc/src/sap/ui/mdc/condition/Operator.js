@@ -225,13 +225,13 @@ sap.ui.define([
 			var key = sKey + (sType ? "." + sType : ""),
 				sText;
 
-			if (oMessageBundle.hasText(key)) {
-				sText = oMessageBundle.getText(key);
-			} else
-			if (sType) {
-				sText = oMessageBundle.getText(sKey);
-			} else {
-				sText = key;
+			sText = oMessageBundle.getText(key);
+			if (sText === key) {
+				if (sType) {
+					sText = oMessageBundle.getText(sKey);
+				} else {
+					sText = key;
+				}
 			}
 			return sText;
 
