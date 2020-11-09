@@ -36,6 +36,7 @@ sap.ui.define([
 
 		onIndividualPress: function(oEvent) {
 			var oEventSource = oEvent.getParameter("eventSource"),
+				oView = this.getView(),
 				oBindingInfo;
 
 			if (oEvent.getParameter("overflowButtonPressed")) {
@@ -43,21 +44,21 @@ sap.ui.define([
 			} else {
 				oBindingInfo = oEventSource.getBindingContext("items").getObject();
 
-				if (!this._oIndividuaLPopover) {
-					Fragment.load({
+				if (!this._pIndividualPopover) {
+					this._pIndividualPopover = Fragment.load({
+						id: oView.getId(),
 						name: "sap.f.sample.AvatarGroup.view.IndividualPopover",
 						controller: this
-					}).then(function(oPopover) {
-						this._oIndividuaLPopover = oPopover;
-						this.getView().addDependent(this._oIndividuaLPopover);
-						this.oIndividualModel.setData(this._getAvatarModel(oBindingInfo, oEventSource));
-						this._oIndividuaLPopover.openBy(oEventSource);
-					}.bind(this));
-				} else {
-					this._oIndividuaLPopover.close();
-					this.oIndividualModel.setData(this._getAvatarModel(oBindingInfo, oEventSource));
-					this._oIndividuaLPopover.openBy(oEventSource);
+					}).then(function(oIndividuaLPopover) {
+						oView.addDependent(oIndividuaLPopover);
+						return oIndividuaLPopover;
+					});
 				}
+
+				this._pIndividualPopover.then(function(oIndividuaLPopover){
+					this.oIndividualModel.setData(this._getAvatarModel(oBindingInfo, oEventSource));
+					oIndividuaLPopover.openBy(oEventSource);
+				}.bind(this));
 			}
 		},
 
@@ -65,6 +66,7 @@ sap.ui.define([
 			var iItemsCount = this.oModel.getProperty("/totalCount"),
 				sGroupType = oEvent.getParameter("groupType"),
 				iAvatarsDisplayed = oEvent.getParameter("avatarsDisplayed"),
+				oView = this.getView(),
 				oEventSource,
 				sTitle;
 
@@ -83,46 +85,42 @@ sap.ui.define([
 				"popoverTitle": sTitle
 			});
 
-			if (!this._oGroupPopover) {
-				Fragment.load({
-					id: "popoverNavCon",
+			if (!this._pGroupPopover) {
+				this._pGroupPopover = Fragment.load({
+					id: oView.getId(),
 					name: "sap.f.sample.AvatarGroup.view.GroupPopover",
 					controller: this
-				}).then(function(oPopover) {
-					this._oGroupPopover = oPopover;
-					this.getView().addDependent(this._oGroupPopover);
-					this._openGroupPopover(oEventSource, sGroupType, iAvatarsDisplayed);
-				}.bind(this));
-			} else {
-				this._oGroupPopover.close();
-				this._openGroupPopover(oEventSource, sGroupType, iAvatarsDisplayed);
+				}).then(function(oGroupPopover) {
+					oView.addDependent(oGroupPopover);
+					return oGroupPopover;
+				});
 			}
+			this._pGroupPopover.then(function(oGroupPopover){
+				var oNavCon = this.byId("navCon"),
+					oMainPage = this.byId("main"),
+					aContent = this._getContent(sGroupType, iAvatarsDisplayed),
+					iNumberOfAvatarsInPopover = aContent.length;
+
+				// Every cell has 68px height + 40px from Popover's header and 8px top margin of the VerticalColumnLayout
+				this._sGroupPopoverHeight = (Math.floor(iNumberOfAvatarsInPopover / 2) + iNumberOfAvatarsInPopover % 2) * 68 + 48 + "px";
+				this.oGroupModel.setData(aContent);
+				oGroupPopover.setContentHeight(this._sGroupPopoverHeight);
+				oNavCon.to(oMainPage);
+				oGroupPopover.openBy(oEventSource);
+			}.bind(this));
 		},
 
 		onAvatarPress: function (oEvent) {
 			var oBindingInfo = oEvent.getSource().getBindingContext("groupedAvatars").getObject(),
-				oNavCon =  Fragment.byId("popoverNavCon", "navCon"),
-				oDetailPage = Fragment.byId("popoverNavCon", "detail");
+				oNavCon = this.byId("navCon"),
+				oDetailPage = this.byId("detail"),
+				oGroupPopover = this.byId("groupPopover");
 
-			this._oGroupPopover.setContentHeight("375px");
-			this._oGroupPopover.setContentWidth("450px");
+			oGroupPopover.setContentHeight("375px");
+			oGroupPopover.setContentWidth("450px");
 			this.oIndividualModel.setData(oBindingInfo);
 			oNavCon.to(oDetailPage);
-			this._oGroupPopover.focus();
-		},
-
-		_openGroupPopover: function (oEventSource, sGroupType, iAvatarsDisplayed) {
-			var oNavCon = Fragment.byId("popoverNavCon", "navCon"),
-				oMainPage = Fragment.byId("popoverNavCon", "main"),
-				aContent = this._getContent(sGroupType, iAvatarsDisplayed),
-				iNumberOfAvatarsInPopover = aContent.length;
-
-			// Every cell has 68px height + 40px from Popover's header and 8px top margin of the VerticalColumnLayout
-			this._sGroupPopoverHeight = (Math.floor(iNumberOfAvatarsInPopover / 2) + iNumberOfAvatarsInPopover % 2) * 68 + 48 + "px";
-			this.oGroupModel.setData(aContent);
-			this._oGroupPopover.setContentHeight(this._sGroupPopoverHeight);
-			oNavCon.to(oMainPage);
-			this._oGroupPopover.openBy(oEventSource);
+			oGroupPopover.focus();
 		},
 
 		_getContent: function (sGroupType, iAvatarsDisplayed) {
@@ -157,9 +155,9 @@ sap.ui.define([
 		},
 
 		onNavBack: function () {
-			var oNavCon = Fragment.byId("popoverNavCon", "navCon");
+			var oNavCon = this.byId("navCon");
 
-			this._oGroupPopover.setContentHeight(this._sGroupPopoverHeight);
+			this.byId("groupPopover").setContentHeight(this._sGroupPopoverHeight);
 			oNavCon.back();
 		}
 	});

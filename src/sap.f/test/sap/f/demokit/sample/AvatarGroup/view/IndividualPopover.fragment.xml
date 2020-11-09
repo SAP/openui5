@@ -4,6 +4,7 @@
 	xmlns:f="sap.f"
 	xmlns:l="sap.ui.layout">
 	<Popover
+		id="individualPopover"
 		title="Business card"
 		titleAlignment="Center"
 		placement="Bottom"
