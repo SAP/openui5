@@ -28,7 +28,8 @@ sap.ui.define([
 		"number": "BASE_EDITOR.MAP.TYPES.NUMBER",
 		"integer": "BASE_EDITOR.MAP.TYPES.INTEGER",
 		"date": "BASE_EDITOR.MAP.TYPES.DATE",
-		"datetime": "BASE_EDITOR.MAP.TYPES.DATETIME"
+		"datetime": "BASE_EDITOR.MAP.TYPES.DATETIME",
+		"group": "BASE_EDITOR.MAP.TYPES.GROUP"
 	};
 
 	/**
@@ -297,6 +298,7 @@ sap.ui.define([
 					path: "value",
 					value: vValue,
 					type: sType && includes(this._getAllowedTypes(), sType) ? sType : this._getDefaultType(vValue),
+					visible: sType !== "group",
 					itemKey: sKey,
 					designtime: (oDesigntime || {}).value
 				}
@@ -484,6 +486,11 @@ sap.ui.define([
 					var sNewItemKey = sItemKey === sOldKey ? sNewKey : sItemKey;
 					oNewValue[sNewItemKey] = oEditorValue[sItemKey];
 				});
+				if (oNewValue[sNewKey]
+					&& oNewValue[sNewKey].type !== "group"
+					&& oNewValue[sNewKey].manifestpath) {
+						oNewValue[sNewKey].manifestpath = oNewValue[sNewKey].manifestpath.replace(sOldKey, sNewKey);
+				}
 
 				this._mTypes[sNewKey] = this._mTypes[sOldKey];
 				delete this._mTypes[sOldKey];
@@ -493,6 +500,12 @@ sap.ui.define([
 				var oDesigntime = _merge({}, this.getConfig().designtime);
 				if (oDesigntime.hasOwnProperty(sOldKey)) {
 					oDesigntime[sNewKey] = oDesigntime[sOldKey];
+					if (oDesigntime[sNewKey].__value
+						&& oDesigntime[sNewKey].__value.type
+						&& oDesigntime[sNewKey].__value.type !== "group"
+						&& oDesigntime[sNewKey].__value.manifestpath) {
+						oDesigntime[sNewKey].__value.manifestpath = oDesigntime[sNewKey].__value.manifestpath.replace(sOldKey, sNewKey);
+					}
 					delete oDesigntime[sOldKey];
 					this.setDesigntimeMetadata(oDesigntime);
 				}

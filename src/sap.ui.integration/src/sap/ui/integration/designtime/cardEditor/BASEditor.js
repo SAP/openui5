@@ -91,7 +91,9 @@ sap.ui.define([
 			if (oJson) {
 				//parameters content changed added, removed
 				var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
+				var mParametersInDesigntime = ObjectPath.get(["sap.card", "configuration", "parameters"], this._oDesigntimeMetadataModel.getData());
 				if (!mParameters) {
+					this._oDesigntimeJSConfig.form.items = {};
 					this._oCurrent = {
 						configuration: this._cleanConfig(this._oDesigntimeJSConfig),
 						manifest: this._cleanJson(),
@@ -105,9 +107,13 @@ sap.ui.define([
 				for (var n in oCopyConfig.form.items) {
 					oItem = merge({}, oCopyConfig.form.items[n]);
 					if (!mParameters[n]) {
-						//delete the item because it is not part of parameters anymore
-						delete oCopyConfig.form.items[n];
-						continue;
+						if (oItem.type === "group" && mParametersInDesigntime[n]) {
+							mParameters[n] = {};
+						} else {
+							//delete the item because it is not part of parameters anymore
+							delete oCopyConfig.form.items[n];
+							continue;
+						}
 					}
 					var iIndex = aCurrentKeys.indexOf(n);
 					if (iIndex > -1) {
@@ -121,6 +127,13 @@ sap.ui.define([
 					if (oViz) {
 						oCopyConfig.form.items[n].visualization = oViz;
 						oViz = null;
+					}
+					if (oItem.type === "group") {
+						delete oCopyConfig.form.items[n].manifestpath;
+					} else if (!oCopyConfig.form.items[n].manifestpath) {
+						mParametersInDesigntime[n].manifestpath = "/sap.card/configuration/parameters/" + n + "/value";
+						mParametersInDesigntime[n].__value.manifestpath = "/sap.card/configuration/parameters/" + n + "/value";
+						oCopyConfig.form.items[n].manifestpath = "/sap.card/configuration/parameters/" + n + "/value";
 					}
 				}
 				if (aCurrentKeys.length > 0) {
@@ -173,6 +186,10 @@ sap.ui.define([
 							oItem.visible = false;
 						}
 
+						if (oItem.type === "group") {
+							delete oItem.manifestpath;
+						}
+
 						if (oViz) {
 							oItem.visualization = oViz;
 							oViz = null;
@@ -199,10 +216,11 @@ sap.ui.define([
 			}.bind(this, this._oDesigntimeJSConfig);
 			this._oCurrent = {
 				configuration: this._cleanConfig(this._oDesigntimeJSConfig),
-				manifest: this._cleanJson(),
+				manifest: this._cleanJson(oJson),
 				configurationclass: this._fnDesigntime,
 				configurationstring: this._cleanConfig(this._oDesigntimeJSConfig, true)
 			};
+			this._oDataModel.setData(this._prepareData(oJson));
 			this.fireConfigurationChange(this._oCurrent);
 		}.bind(this), 500);
 	};
@@ -236,11 +254,19 @@ sap.ui.define([
 		}
 		oJson = deepClone(oJson);
 		var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
+
 		for (var n in mParameters) {
 			var oParam = mParameters[n];
-			if (oParam && oParam.manifestpath && !oParam.manifestpath.startsWith("/sap.card/configuration/parameters")) {
+			if (oParam && (oParam.type === "group" || oParam.manifestpath && !oParam.manifestpath.startsWith("/sap.card/configuration/parameters"))) {
 				delete mParameters[n];
 				continue;
+			}
+			if (this._oDesigntimeJSConfig && this._oDesigntimeJSConfig.form && this._oDesigntimeJSConfig.form.items) {
+				var oParamConfig = this._oDesigntimeJSConfig.form.items[n];
+				if (oParamConfig && (oParamConfig.type === "group" || oParamConfig.manifestpath && !oParamConfig.manifestpath.startsWith("/sap.card/configuration/parameters"))) {
+					delete mParameters[n];
+					continue;
+				}
 			}
 			mParameters[n] = {
 				value: mParameters[n].value
@@ -298,7 +324,7 @@ sap.ui.define([
 					oMetaItem.visualization = 1;
 				}
 
-				if (!oMetaItem.manifestpath.startsWith("/sap.card/configuration/parameters/") || !ObjectPath.get(aPath, this._oInitialJson)) {
+				if (oMetaItem.manifestpath && (!oMetaItem.manifestpath.startsWith("/sap.card/configuration/parameters/") || !ObjectPath.get(aPath, this._oInitialJson))) {
 					ObjectPath.set(aPath, oMetaItem, this._oInitialJson);
 				}
 				ObjectPath.set(aPath, oMetaItem, this._oInitialJson);
@@ -319,22 +345,24 @@ sap.ui.define([
 					});
 				}
 
-				if (!oMetaItem.hasOwnProperty("value")) {
-					var aOtherPath = oMetaItem.manifestpath.substring(1).split("/"),
-						vValue = ObjectPath.get(aOtherPath, this._oInitialJson);
-					if (vValue !== undefined) {
-						oMetaItem.value = vValue;
+				if (oMetaItem.type !== "group") {
+					if (!oMetaItem.hasOwnProperty("value")) {
+						var aOtherPath = oMetaItem.manifestpath.substring(1).split("/"),
+							vValue = ObjectPath.get(aOtherPath, this._oInitialJson);
+						if (vValue !== undefined) {
+							oMetaItem.value = vValue;
+						} else {
+							this._applyDefaultValue(oMetaItem);
+						}
 					} else {
 						this._applyDefaultValue(oMetaItem);
 					}
-				} else {
-					this._applyDefaultValue(oMetaItem);
-				}
 
-				if (ObjectPath.get(aPath, this._oInitialJson)) {
-					if (ObjectPath.get(aPath, this._oInitialJson).value === undefined) {
-						//set the value from the metadata to the original data
-						ObjectPath.get(aPath, this._oInitialJson).value = oMetaItem.value;
+					if (ObjectPath.get(aPath, this._oInitialJson)) {
+						if (ObjectPath.get(aPath, this._oInitialJson).value === undefined) {
+							//set the value from the metadata to the original data
+							ObjectPath.get(aPath, this._oInitialJson).value = oMetaItem.value;
+						}
 					}
 				}
 			}

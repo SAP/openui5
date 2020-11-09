@@ -364,6 +364,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/groupEditor/GroupEditor": {
+				group: "Base DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/groupEditor/GroupEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
