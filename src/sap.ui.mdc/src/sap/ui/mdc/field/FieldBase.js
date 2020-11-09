@@ -2245,7 +2245,7 @@ sap.ui.define([
 		this._bIsMeasure = true; // FieldHelp only on unit field
 
 		var Token = sap.ui.require("sap/m/Token"); // is loaded by MultiInput
-		var Input = sap.ui.require("sap/m/Input");
+		var Input = sap.ui.require("sap/ui/mdc/field/FieldInput");
 		var oConditionType = _getConditionType.call(this);
 		var aControls = [];
 		var oToken = new Token(sId + "-token", {
