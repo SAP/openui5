@@ -58,28 +58,28 @@
 					state="None"/>
 			<layout:VerticalLayout>
 				<m:Label text="PC, Unrestricted-Use Stock"/>
-				<m:ObjectNumber number="219" numberUnit="K"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="219" numberUnit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
 					<ObjectPageHeaderLayoutData visibleS="false"/>
 				</layout:layoutData>
 				<m:Label text="PC, Not in Small Size"/>
-				<m:ObjectNumber number="220" numberUnit="K"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="220" numberUnit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
 					<ObjectPageHeaderLayoutData visibleM="false" />
 				</layout:layoutData>
 				<m:Label text="PC, Not in Medium Size"/>
-				<m:ObjectNumber number="221" numberUnit="K"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="221" numberUnit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
 					<ObjectPageHeaderLayoutData visibleL="false"/>
 				</layout:layoutData>
 				<m:Label text="PC, Not in Large Size"/>
-				<m:ObjectNumber number="219" numberUnit="K"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="219" numberUnit="K"/>
 			</layout:VerticalLayout>
 			<m:ObjectAttribute title="Label" text="In Stock"/>
 			<m:Button icon="sap-icon://nurse" tooltip="nurse"/>
