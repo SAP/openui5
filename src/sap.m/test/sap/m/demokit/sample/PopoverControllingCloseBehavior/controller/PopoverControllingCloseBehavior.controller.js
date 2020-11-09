@@ -15,39 +15,32 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		onExit: function () {
-			if (this._oPopover) {
-				this._oPopover.destroy();
-			}
-		},
-
 		handlePopoverPress: function (oEvent) {
 			var oCtx = oEvent.getSource().getBindingContext(),
-				oControl = oEvent.getSource();
+				oControl = oEvent.getSource(),
+				oView = this.getView();
 
 			// create popover
-			if (!this._oPopover) {
-				Fragment.load({
-					id: "PopoverControllingCloseBehavior",
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.PopoverControllingCloseBehavior.view.Popover",
 					controller: this
 				}).then(function (oPopover) {
-					this._oPopover = oPopover;
-					this.getView().addDependent(this._oPopover);
-					this._oPopover.attachAfterOpen(function() {
+					oView.addDependent(oPopover);
+					oPopover.attachAfterOpen(function() {
 						this.disablePointerEvents();
 					}, this);
-					this._oPopover.attachAfterClose(function() {
+					oPopover.attachAfterClose(function() {
 						this.enablePointerEvents();
 					}, this);
-
-					this._oPopover.bindElement(oCtx.getPath());
-					this._oPopover.openBy(oControl);
+					return oPopover;
 				}.bind(this));
-			} else {
-				this._oPopover.bindElement(oCtx.getPath());
-				this._oPopover.openBy(oControl);
 			}
+			this._pPopover.then(function(oPopover) {
+				oPopover.bindElement(oCtx.getPath());
+				oPopover.openBy(oControl);
+			});
 		},
 
 		disablePointerEvents: function () {
@@ -59,7 +52,9 @@ sap.ui.define([
 		},
 
 		handleActionPress: function () {
-			this._oPopover.close();
+			// note: We don't need to chain to the _pPopover promise, since this event-handler
+			// is only called from within the loaded dialog itself.
+			this.byId("myPopover").close();
 			MessageToast.show("Action has been pressed");
 		},
 

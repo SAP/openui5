@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<Popover
+		id="myPopover"
 		showHeader="false"
 		contentWidth="320px"
 		contentHeight="500px"
