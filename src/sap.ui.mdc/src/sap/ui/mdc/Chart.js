@@ -384,6 +384,10 @@ sap.ui.define([
 		Chart.prototype.applySettings = function(mSettings, oScope) {
 			var aActions;
 
+			// Needs to be set in order to visualize busy indicator when binding happens very fast
+			this.setBusyIndicatorDelay(0);
+			this.setBusy(true);
+
 			// Note: In the mdc.Chart control metadata, the "action" aggregation
 			// is defined as a forwarded aggregation.
 			// However, the automatic forwarding of aggregations only works when
@@ -457,6 +461,10 @@ sap.ui.define([
 				_onSelectionMode.apply(this);
 			}
 
+			if (mSettings && mSettings.data) {
+				this._addBindingListener(mSettings.data, "change", this._onDataLoadComplete.bind(this));
+			}
+
 			return Control.prototype.applySettings.apply(this, arguments);
 		};
 
@@ -478,6 +486,29 @@ sap.ui.define([
 				return this;
 			}
 			return Control.prototype.bindAggregation.apply(this, arguments);
+		};
+
+		Chart.prototype._onDataLoadComplete = function(mEventParams) {
+			if (mEventParams.mParameters.reason === "change" && !mEventParams.mParameters.detailedReason) {
+				this.setBusy(false);
+			}
+		};
+
+		Chart.prototype._addBindingListener = function(oBindingInfo, sEventName, fHandler) {
+			if (!oBindingInfo.events) {
+				oBindingInfo.events = {};
+			}
+
+			if (!oBindingInfo.events[sEventName]) {
+				oBindingInfo.events[sEventName] = fHandler;
+			} else {
+				// Wrap the event handler of the other party to add our handler.
+				var fOriginalHandler = oBindingInfo.events[sEventName];
+				oBindingInfo.events[sEventName] = function() {
+					fHandler.apply(this, arguments);
+					fOriginalHandler.apply(this, arguments);
+				};
+			}
 		};
 
 		Chart.prototype.getBindingInfo = function (sName) {
@@ -881,6 +912,7 @@ sap.ui.define([
 		};
 
 		Chart.prototype._update = function (oChart, oChanges) {
+
 			var aItems = this.getItems(),
 				oVizItem,
 				oChartItem,
@@ -962,6 +994,7 @@ sap.ui.define([
 			if (DrillStackHandler && this.getAggregation("_breadcrumbs")) {
 				DrillStackHandler._updateDrillBreadcrumbs(this, this.getAggregation("_breadcrumbs"));
 			}
+
 		};
 
 		Chart.prototype._updateSemanticalPattern = function (oChart, aVisibleMeasures, mDataPoints) {
@@ -1092,6 +1125,7 @@ sap.ui.define([
 		};
 
 		Chart.prototype.rebind = function() {
+			this.setBusy(true);
 
 			if (!this.bDelegateInitialized) {
 				return;
