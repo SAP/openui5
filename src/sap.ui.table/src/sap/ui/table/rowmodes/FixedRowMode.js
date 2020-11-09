@@ -251,6 +251,10 @@ sap.ui.define([
 		var iRowCount = this.getRowCount();
 
 		if (iRowCount > 0) {
+			if (TableUtils.isVariableRowHeightEnabled(this.getTable())) {
+				iRowCount++;
+			}
+
 			this.initTableRowsAfterDataRequested(iRowCount);
 			this.getRowContexts(iRowCount, true); // Trigger data request.
 		}
