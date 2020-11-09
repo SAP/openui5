@@ -1928,7 +1928,9 @@ sap.ui.define([
 	};
 
 	Table.prototype._registerInnerFilter = function(oFilter) {
-		oFilter.attachSearch(this.rebind, this);
+		oFilter.attachSearch(function() {
+			this.rebind();
+		}, this);
 	};
 
 	Table.prototype._onFiltersChanged = function(oEvent) {
