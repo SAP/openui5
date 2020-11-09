@@ -97,55 +97,6 @@ sap.ui.define([
 
 	BasePanel.prototype._createUI = function(){
 
-		this._moveTopButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveToTop",{
-			type: "Transparent",
-			tooltip: this.getResourceText("p13nDialog.MOVE_TO_TOP"),
-			icon: "sap-icon://collapse-group",
-			press: [this._onPressButtonMoveToTop, this],
-			visible: false,
-			layoutData: new OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: "Low",
-				group: 2
-			})
-		});
-		this._moveUpButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveUp",{
-			type: "Transparent",
-			tooltip: this.getResourceText("p13nDialog.MOVE_UP"),
-			icon: "sap-icon://slim-arrow-up",
-			press: [this._onPressButtonMoveUp, this],
-			visible: false,
-			layoutData: new OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: "High",
-				group: 1
-			})
-		});
-		this._moveDownButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveDown",{
-			type: "Transparent",
-			tooltip: this.getResourceText("p13nDialog.MOVE_DOWN"),
-			icon: "sap-icon://slim-arrow-down",
-			press: [this._onPressButtonMoveDown, this],
-			visible: false,
-			layoutData: new OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: "High",
-				group: 1
-			})
-		});
-		this._moveBottomButton = new OverflowToolbarButton(this.getId() + "IDButtonMoveToBottom",{
-			type: "Transparent",
-			tooltip: this.getResourceText("p13nDialog.MOVE_TO_BOTTOM"),
-			icon: "sap-icon://expand-group",
-			press: [this._onPressButtonMoveToBottom, this],
-			visible: false,
-			layoutData: new OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: "Low",
-				group: 2
-			})
-		});
-
 		this._oDragDropInfo = new DragDropInfo({
 			enabled: false,
 			sourceAggregation: "items",
@@ -154,35 +105,120 @@ sap.ui.define([
 			drop: [this._onRearrange, this]
 		});
 
-		this.oReorderButton = new Button(this.getId() + "IDshowSelectedBtn",{
-			text: {
-				path: this.P13N_MODEL + ">/reorderMode",
-				formatter: function (bReorderMode) {
-					return bReorderMode ? this.getResourceText("p13nDialog.SELECT") : this.getResourceText("p13nDialog.REORDER");
-				}.bind(this)
-			},
-			press: [this._onPressToggleMode, this]
-		});
-
 		var oBasePanelUI = this._createInnerListControl();
 
 		return oBasePanelUI;
 	};
 
+	BasePanel.prototype._getMoveTopButton = function() {
+		if (!this._oMoveTopBtn) {
+			this._oMoveTopBtn = new OverflowToolbarButton(this.getId() + "-moveTopBtn",{
+				type: "Transparent",
+				tooltip: this.getResourceText("p13nDialog.MOVE_TO_TOP"),
+				icon: "sap-icon://collapse-group",
+				press: [this._onPressButtonMoveToTop, this],
+				visible: false,
+				layoutData: new OverflowToolbarLayoutData({
+					moveToOverflow: true,
+					priority: "Low",
+					group: 2
+				})
+			});
+			this.addDependent(this._oMoveTopBtn);
+		}
+
+		return this._oMoveTopBtn;
+	};
+
+	BasePanel.prototype._getMoveUpButton = function() {
+		if (!this._oMoveUpButton) {
+			this._oMoveUpButton = new OverflowToolbarButton(this.getId() + "-moveUpBtn",{
+				type: "Transparent",
+				tooltip: this.getResourceText("p13nDialog.MOVE_UP"),
+				icon: "sap-icon://slim-arrow-up",
+				press: [this._onPressButtonMoveUp, this],
+				visible: false,
+				layoutData: new OverflowToolbarLayoutData({
+					moveToOverflow: true,
+					priority: "High",
+					group: 1
+				})
+			});
+			this.addDependent(this._oMoveUpButton);
+		}
+
+		return this._oMoveUpButton;
+	};
+
+	BasePanel.prototype._getMoveDownButton = function() {
+		if (!this._oMoveDownButton) {
+			this._oMoveDownButton = new OverflowToolbarButton(this.getId() + "-moveDownpBtn",{
+				type: "Transparent",
+				tooltip: this.getResourceText("p13nDialog.MOVE_DOWN"),
+				icon: "sap-icon://slim-arrow-down",
+				press: [this._onPressButtonMoveDown, this],
+				visible: false,
+				layoutData: new OverflowToolbarLayoutData({
+					moveToOverflow: true,
+					priority: "High",
+					group: 1
+				})
+			});
+			this.addDependent(this._oMoveDownButton);
+		}
+
+		return this._oMoveDownButton;
+	};
+
+	BasePanel.prototype._getMoveBottomButton = function() {
+		if (!this._oMoveBottomButton) {
+			this._oMoveBottomButton = new OverflowToolbarButton(this.getId() + "-moveBottomBtn",{
+				type: "Transparent",
+				tooltip: this.getResourceText("p13nDialog.MOVE_TO_BOTTOM"),
+				icon: "sap-icon://expand-group",
+				press: [this._onPressButtonMoveToBottom, this],
+				visible: false,
+				layoutData: new OverflowToolbarLayoutData({
+					moveToOverflow: true,
+					priority: "Low",
+					group: 2
+				})
+			});
+			this.addDependent(this._oMoveBottomButton);
+		}
+
+		return this._oMoveBottomButton;
+	};
+
 	BasePanel.prototype._createInnerListControl = function() {
-		return new Table(this.getId() + "idBasePanelTable", Object.assign(this._getListControlConfig(), {
+		return new Table(this.getId() + "-innerP13nList", Object.assign(this._getListControlConfig(), {
 			headerToolbar: new OverflowToolbar({
 				content: [
 					this._getSearchField(),
 					new ToolbarSpacer(),
-					this._moveTopButton,
-					this._moveUpButton,
-					this._moveDownButton,
-					this._moveBottomButton,
-					this.oReorderButton
+					this._getMoveTopButton(),
+					this._getMoveUpButton(),
+					this._getMoveDownButton(),
+					this._getMoveBottomButton(),
+					this._getReorderButton()
 				]
 			})
 		}));
+	};
+
+	BasePanel.prototype._getReorderButton = function() {
+		if (!this.oReorderButton) {
+			this.oReorderButton = new Button(this.getId() + "-showSelectedBtn",{
+				text: {
+					path: this.P13N_MODEL + ">/reorderMode",
+					formatter: function (bReorderMode) {
+						return bReorderMode ? this.getResourceText("p13nDialog.SELECT") : this.getResourceText("p13nDialog.REORDER");
+					}.bind(this)
+				},
+				press: [this._onPressToggleMode, this]
+			});
+		}
+		return this.oReorderButton;
 	};
 
 	BasePanel.prototype._getListControlConfig = function() {
@@ -198,7 +234,7 @@ sap.ui.define([
 
 	BasePanel.prototype._getSearchField = function() {
 		if (!this._oSearchField) {
-			this._oSearchField = new SearchField(this.getId() + "IDSearchField",{
+			this._oSearchField = new SearchField(this.getId() + "-searchField",{
 				liveChange: [this._onSearchFieldLiveChange, this],
 				width: "100%",
 				layoutData: new OverflowToolbarLayoutData({
@@ -316,10 +352,10 @@ sap.ui.define([
 
 		// in case of 'deselect all', the move buttons for positioning are going to be disabled
 		if (bDeSelectAll) {
-			this._moveTopButton.setEnabled(false);
-			this._moveUpButton.setEnabled(false);
-			this._moveDownButton.setEnabled(false);
-			this._moveBottomButton.setEnabled(false);
+			this._getMoveTopButton().setEnabled(false);
+			this._getMoveUpButton().setEnabled(false);
+			this._getMoveDownButton().setEnabled(false);
+			this._getMoveBottomButton().setEnabled(false);
 		}
 	};
 
@@ -380,20 +416,20 @@ sap.ui.define([
 		// set the movement buttons to visible / invisible
 		this._setMoveButtonVisibility(bReorderMode);
 
-		this._moveTopButton.setEnabled(false);
-		this._moveUpButton.setEnabled(false);
-		this._moveDownButton.setEnabled(false);
-		this._moveBottomButton.setEnabled(false);
+		this._getMoveTopButton().setEnabled(false);
+		this._getMoveUpButton().setEnabled(false);
+		this._getMoveDownButton().setEnabled(false);
+		this._getMoveBottomButton().setEnabled(false);
 
 		//disable / enable d&d
 		this._oDragDropInfo.setEnabled(bReorderMode);
 	};
 
 	BasePanel.prototype._setMoveButtonVisibility = function(bVisible) {
-		this._moveTopButton.setVisible(bVisible);
-		this._moveUpButton.setVisible(bVisible);
-		this._moveDownButton.setVisible(bVisible);
-		this._moveBottomButton.setVisible(bVisible);
+		this._getMoveTopButton().setVisible(bVisible);
+		this._getMoveUpButton().setVisible(bVisible);
+		this._getMoveDownButton().setVisible(bVisible);
+		this._getMoveBottomButton().setVisible(bVisible);
 	};
 
 	BasePanel.prototype._updateModelItems = function() {
@@ -516,10 +552,10 @@ sap.ui.define([
 			// disable move buttons downwards, if the item is at the bottom
 			bDownEnabled = false;
 		}
-		this._moveTopButton.setEnabled(bUpEnabled);
-		this._moveUpButton.setEnabled(bUpEnabled);
-		this._moveDownButton.setEnabled(bDownEnabled);
-		this._moveBottomButton.setEnabled(bDownEnabled);
+		this._getMoveTopButton().setEnabled(bUpEnabled);
+		this._getMoveUpButton().setEnabled(bUpEnabled);
+		this._getMoveDownButton().setEnabled(bDownEnabled);
+		this._getMoveBottomButton().setEnabled(bDownEnabled);
 		oTableItem.focus();
 	};
 
@@ -527,10 +563,10 @@ sap.ui.define([
 		this._oSelectionBindingInfo = null;
 		this._oSelectedItem = null;
 		this._oListControl = null;
-		this._moveTopButton = null;
-		this._moveUpButton = null;
-		this._moveDownButton = null;
-		this._moveBottomButton = null;
+		this._oMoveTopBtn = null;
+		this._oMoveUpButton = null;
+		this._oMoveDownButton = null;
+		this._oMoveBottomButton = null;
 		this._oSearchField = null;
 	};
 

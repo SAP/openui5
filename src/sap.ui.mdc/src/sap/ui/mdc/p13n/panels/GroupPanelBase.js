@@ -40,8 +40,8 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GroupPanelBase = BasePanel.extend("sap.ui.mdc.p13n.panels.GroupPanelBase", {
-		library: "sap.ui.mdc",
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				/**
 				 * Can be used to provide a factory function to return a custom ListItemBase inheriting control.
@@ -158,6 +158,14 @@ sap.ui.define([
 
 	GroupPanelBase.prototype._setInnerLayout = function() {
 
+		var oContainer = this._createContainer();
+
+		this.addStyleClass("sapUiMDCGroupPanelBase");
+
+		this.setAggregation("_content", oContainer);
+	};
+
+	GroupPanelBase.prototype._getQuickFilter = function() {
 		if (!this._oGroupModeSelect) {
 			this._oGroupModeSelect = new Select({
 				items: [
@@ -182,6 +190,10 @@ sap.ui.define([
 			});
 		}
 
+		return this._oGroupModeSelect;
+	};
+
+	GroupPanelBase.prototype._getViewSwitch = function() {
 		if (!this._oViewSwitch) {
 			this._oViewSwitch = new SegmentedButton({
 				visible: false,
@@ -204,44 +216,41 @@ sap.ui.define([
 			});
 		}
 
-		var oContainer = this._createContainer();
-
-		this.addStyleClass("sapUiMDCGroupPanelBase");
-
-		this.setAggregation("_content", oContainer);
+		return this._oViewSwitch;
 	};
 
 	GroupPanelBase.prototype._createContainer = function() {
-		var oContainer = new Page({
-			showHeader: false,
-			content: [
-				new FixFlex({
-					minFlexSize: 1,
-					fixContent: [
-						new HBox({
-							justifyContent: "SpaceBetween",
-							items: [
-								/* wrapping FlexBox required for the custom view toggle
-								/* as the view switch will left align without a wrapper for the invisible control
-								*/
-								new HBox({
-									items: [
-										this._oGroupModeSelect
-									]
-								}),
-								this._oViewSwitch
-							]
-						}),
-						this._getSearchField()
-					],
-						flexContent: [
-						this._oListControl
-					]
-				})
-			]
-		});
+		if (!this._oContainer) {
+			this._oContainer = new Page({
+				showHeader: false,
+				content: [
+					new FixFlex({
+						minFlexSize: 1,
+						fixContent: [
+							new HBox({
+								justifyContent: "SpaceBetween",
+								items: [
+									/* wrapping FlexBox required for the custom view toggle
+									/* as the view switch will left align without a wrapper for the invisible control
+									*/
+									new HBox({
+										items: [
+											this._getQuickFilter()
+										]
+									}),
+									this._getViewSwitch()
+								]
+							}),
+							this._getSearchField()
+						]
+					})
+				]
+			});
+		}
 
-		return oContainer;
+		this._oContainer.getContent()[0].setFlexContent(this._oListControl);
+
+		return this._oContainer;
 	};
 
 	GroupPanelBase.prototype.setItemFactory = function (fnFactory) {
@@ -708,8 +717,8 @@ sap.ui.define([
 	GroupPanelBase.prototype._togglePanelMode = function() {
 
 		//TODO: Generify for any inner template --> Currently required as this may be destroyed due to the binding
-		if (this._moveTopButton.getParent()){
-			this._moveTopButton.getParent().removeAllItems();
+		if (this._oSelectedItem){
+			this._oSelectedItem.getCells()[1].removeAllItems();
 		}
 
 		var bReorderMode = !this.getPanelMode();
@@ -792,10 +801,10 @@ sap.ui.define([
 				var bVisible = !!that.getP13nModel().getProperty(this.getBindingContextPath()).isFiltered;
 				var oIcon = this.getCells()[1].getItems()[0];
 				if (that._oSelectedItem) {
-					that._oSelectedItem.getCells()[1].removeItem(that._moveTopButton);
-					that._oSelectedItem.getCells()[1].removeItem(that._moveUpButton);
-					that._oSelectedItem.getCells()[1].removeItem(that._moveDownButton);
-					that._oSelectedItem.getCells()[1].removeItem(that._moveBottomButton);
+					that._oSelectedItem.getCells()[1].removeItem(that._getMoveTopButton());
+					that._oSelectedItem.getCells()[1].removeItem(that._getMoveUpButton());
+					that._oSelectedItem.getCells()[1].removeItem(that._getMoveDownButton());
+					that._oSelectedItem.getCells()[1].removeItem(that._getMoveBottomButton());
 				}
 				oIcon.setVisible(bVisible);
 			});
@@ -810,10 +819,10 @@ sap.ui.define([
 		}
 		BasePanel.prototype._updateEnableOfMoveButtons.apply(this, arguments);
 		//oTableItem.getCells()[1].removeAllItems();
-		oTableItem.getCells()[1].addItem(this._moveTopButton);
-		oTableItem.getCells()[1].addItem(this._moveUpButton);
-		oTableItem.getCells()[1].addItem(this._moveDownButton);
-		oTableItem.getCells()[1].addItem(this._moveBottomButton);
+		oTableItem.getCells()[1].addItem(this._getMoveTopButton());
+		oTableItem.getCells()[1].addItem(this._getMoveUpButton());
+		oTableItem.getCells()[1].addItem(this._getMoveDownButton());
+		oTableItem.getCells()[1].addItem(this._getMoveBottomButton());
 	};
 
 	GroupPanelBase.prototype._checkAllPanels = function () {
