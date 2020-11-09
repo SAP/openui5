@@ -1,6 +1,7 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap-ui-integration-editor",
 	"sap/ui/integration/designtime/editor/CardEditor",
 	"sap/ui/integration/Designtime",
 	"sap/ui/integration/Host",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ], function (
 	merge,
+	x,
 	CardEditor,
 	Designtime,
 	Host,
@@ -1317,6 +1319,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "", "Label: Has no label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
 					resolve();
 				}.bind(this));
 			}.bind(this));

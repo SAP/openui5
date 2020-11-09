@@ -1011,11 +1011,8 @@ sap.ui.define([
 			return "";
 		}
 		if (typeof vI18n === "string") {
-			var sBase = this._oEditorCard.getBaseUrl();
-			if (!sBase.endsWith("/")) {
-				sBase = sBase + "/";
-			}
-			var oI18nURI = new URI(sBase + vI18n);
+			vI18n = this._oEditorCard._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + vI18n;
+			var oI18nURI = new URI(vI18n);
 			// load the ResourceBundle relative to the manifest
 			this._oTranslationBundle = new ResourceBundle(oI18nURI, sLanguage, false, false, [sLanguage], "", true);
 			return this._getCurrentLanguageSpecificText(sKey);
