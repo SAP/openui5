@@ -1141,11 +1141,14 @@ function(
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 
 		if (!FlexUtils.getUshellContainer()) {
-			var oReloadInfo = {
-				versionSwitch: true,
-				version: sVersion
-			};
-			return this._triggerHardReload(oReloadInfo);
+			if (!ReloadInfoAPI.hasVersionParameterWithValue({value: sVersion})) {
+				var oReloadInfo = {
+					versionSwitch: true,
+					version: sVersion
+				};
+				return this._triggerHardReload(oReloadInfo);
+			}
+			return this._reloadPage();
 		}
 		var mParsedHash = FlexUtils.getParsedURLHash();
 		VersionsAPI.loadVersionForApplication({
