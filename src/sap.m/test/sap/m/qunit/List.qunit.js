@@ -22,8 +22,10 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/m/ActionListItem",
 	"sap/m/Input",
-	"sap/ui/events/KeyCodes"
-], function(jQuery, Core, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Control",
+	"sap/m/ListItemBase"
+], function(jQuery, Core, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase) {
 	"use strict";
 	createAndAppendDiv("content");
 	var styleElement = document.createElement("style");
@@ -1979,6 +1981,131 @@ sap.ui.define([
 
 		//Cleanup
 		list.destroy();
+	});
+
+	QUnit.test("ListItemBase - getAccessibilityText", function(assert) {
+		var TestCtr = Control.extend("TestCtr", {
+			metadata : {
+				properties: {
+					"text" : "string"
+				}
+			},
+			renderer : {
+				apiVersion: 2,
+				render: function(oRm, oControl) {
+					oRm.openStart("div", oControl);
+					oRm.openEnd();
+					oRm.text(oControl.getText() || "");
+					oRm.close("div");
+				}
+			}
+		});
+
+		var oAccInfo = {};
+		var fGetAccessibilityInfo = function() {
+			return oAccInfo;
+		};
+		var fGetAccessibilityInfo2 = function() {
+			return {description: this.getText()};
+		};
+
+		var oCtr1 = new TestCtr(),
+			oCtr2 = new TestCtr({text: "UVW"}),
+			oCtr3 = new TestCtr({text: "XYZ"}),
+			oRb = Core.getLibraryResourceBundle("sap.m");
+
+		oCtr1.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.equal(ListItemBase.getAccessibilityText(), "", "Empty - no control");
+
+		oCtr1.setVisible(false);
+		Core.applyChanges();
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "", "Empty - invisble");
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1, true), oRb.getText("CONTROL_EMPTY"), "Empty - invisble + detect empty");
+
+		oCtr1.setVisible(true);
+		Core.applyChanges();
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "", "Empty - getDefaultAccessibilityInfo");
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1, true), oRb.getText("CONTROL_EMPTY"), "Empty - getDefaultAccessibilityInfo + detect empty");
+
+		oCtr1.setText("ABC");
+		Core.applyChanges();
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "ABC", "getDefaultAccessibilityInfo");
+
+		oCtr1.getAccessibilityInfo = fGetAccessibilityInfo;
+		oAccInfo = {
+			type: "Type"
+		};
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Type", "Type only");
+
+		oAccInfo = {
+			description: "Description"
+		};
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Description", "Description Only");
+
+		oAccInfo = {
+			type: "Type",
+			description: "Description"
+		};
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Type Description", "Type and Description");
+
+		oCtr1.setTooltip("Tooltip");
+		Core.applyChanges();
+		oAccInfo = {
+			description: "Description"
+		};
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Tooltip  Description", "Tooltip + Description");
+
+		oAccInfo = {
+			type: "Type",
+			description: "Description"
+		};
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Type Description", "Tooltip + Type + Description");
+
+		oAccInfo = {
+			description: "Description&Tooltip"
+		};
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Description&Tooltip", "Description contains Tooltip");
+
+		oCtr1.setTooltip(null);
+		Core.applyChanges();
+		oAccInfo = {
+			description: "Description",
+			enabled: false
+		};
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Description " + oRb.getText("CONTROL_DISABLED"), "Disabled");
+
+		oAccInfo = {
+			description: "Description",
+			editable: false
+		};
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Description " + oRb.getText("CONTROL_READONLY"), "Readonly");
+
+		oAccInfo = {
+			description: "Description",
+			editable: false,
+			children: [oCtr2, oCtr3]
+		};
+		oCtr2.getAccessibilityInfo = fGetAccessibilityInfo2;
+		oCtr3.getAccessibilityInfo = fGetAccessibilityInfo2;
+
+		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Description " + oRb.getText("CONTROL_READONLY") + " UVW XYZ", "Children");
+
+		oCtr1.destroy();
+		oCtr2.destroy();
+		oCtr3.destroy();
 	});
 
 });
