@@ -3660,5 +3660,54 @@
         ]
       }
     ]
+  },
+  "1.38.48": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "ed78db3b1c3fd0b4f4635dcc90030051246e0aa3",
+        "type": "FIX",
+        "text": " scrollLeftRTL: adapt to chrome behavior change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070328364"
+          }
+        ]
+      },
+      {
+        "id": "ffa259e3d46ee516e3c5f4878c7fed0092109733",
+        "type": "FIX",
+        "text": " handlebars: usage of latest version 4.7.6",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "ec2b3584988a1fabb8f2d2e0294368fa3a079899",
+        "type": "FIX",
+        "text": " jquery: prevent auto-detection of content type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "61d66c695210711a22f46a91417451bde6a04b67",
+        "type": "FIX",
+        "text": " sap/ui/thirdparty/jQuery: Prevent Object.prototype pollution",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
