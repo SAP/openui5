@@ -506,8 +506,7 @@
 											descriptionPath="text">
 											<mdcField:filterBar>
 												<mdc:FilterBar id="FH-FB-Country"
-													liveMode= "true"
-													supportP13N= "false">
+													liveMode= "true">
 													<mdc:FilterField
 														id="FF-CountryText"
 														label= "{/#Country/text/@sap:label}"
