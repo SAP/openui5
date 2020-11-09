@@ -166,11 +166,8 @@ sap.ui.define([
 				sPath = "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
 				oPathValue = {
 					complexBinding : bComplexBinding,
-					formatOptions : oFixture.input,
 					model : oMetaModel,
-					parameters : {$$noPatch : true},
 					path : sPath,
-					prefix : "",
 					value : "BusinessPartnerID"
 				},
 				oProperty = {
@@ -192,18 +189,15 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oPathValue), oPathValue.value, "Edm.String",
 					sinon.match.same(mConstraints))
 				.returns(undefined);
+			this.mock(Expression).expects("pathResult")
+				.withExactArgs(sinon.match.same(oPathValue), "Edm.String", oPathValue.value,
+					sinon.match.same(bComplexBinding ? mConstraints : undefined))
+				.returns("~result~");
 
 			// code under test
 			oResult = Expression.path(oPathValue).unwrap();
 
-			assert.deepEqual(oResult, {
-				constraints : bComplexBinding ? mConstraints : undefined,
-				formatOptions : oFixture.output,
-				parameters : oPathValue.parameters,
-				result : "binding",
-				type : "Edm.String",
-				value : oPathValue.value
-			});
+			assert.strictEqual(oResult, "~result~");
 			assert.strictEqual(JSON.stringify(oFixture.input), sFormatOptions, "unchanged");
 		});
 	});
@@ -218,7 +212,6 @@ sap.ui.define([
 			oPathValue = {
 				model : oModel,
 				path : "~path~",
-				prefix : "~prefix~",
 				value : "n/a" // sValue must be used instead!
 			};
 
@@ -248,6 +241,7 @@ sap.ui.define([
 			QUnit.test(sTitle, function (assert) {
 				var oBasicsMock = this.mock(Basics),
 					mConstraints = {},
+					oExpressionMock = this.mock(Expression),
 					oModel = {
 						fetchObject : function () {},
 						getConstraints : function () {},
@@ -266,7 +260,7 @@ sap.ui.define([
 						$Type : "~type1~"
 					},
 					mUnitOrCurrencyConstraints = {},
-					sValue = "~prefix~" + (bUnit ? "~unit~" : "~currency~");
+					sValue = (bUnit ? "~unit~" : "~currency~");
 
 				oModelMock.expects("getObject")
 					.withExactArgs("~path~@Org.OData.Measures.V1.Unit/$Path")
@@ -274,7 +268,7 @@ sap.ui.define([
 				oModelMock.expects("getObject")
 					.exactly(bUnit ? 0 : 1)
 					.withExactArgs("~path~@Org.OData.Measures.V1.ISOCurrency/$Path")
-					.returns(!bUnit ? "~currency~" : undefined);
+					.returns("~currency~");
 
 				sPathForFetchObject = bUnit
 					? "~path~@Org.OData.Measures.V1.Unit/$Path/$"
@@ -299,24 +293,22 @@ sap.ui.define([
 				oModelMock.expects("fetchObject")
 					.withExactArgs(sPathForFetchObject)
 					.returns(SyncPromise.resolve(oTarget));
+				oExpressionMock.expects("pathResult")
+					.withExactArgs(sinon.match.same(oPathValue), sType, "~value~",
+						sinon.match.same(mConstraints))
+					.returns("~pathResult~");
 				oBasicsMock.expects("resultToString")
-					.withExactArgs({
-							constraints : sinon.match.same(mConstraints),
-							result : "binding",
-							type : sType,
-							value : "~prefix~~value~"
-						}, false, true)
+					.withExactArgs("~pathResult~", false, true)
 					.returns("~binding0~");
 				oModelMock.expects("getConstraints")
 					.withExactArgs(sinon.match.same(oTarget), sPathForFetchObject.slice(0, -2))
 					.returns(mUnitOrCurrencyConstraints);
+				oExpressionMock.expects("pathResult")
+					.withExactArgs(sinon.match.same(oPathValue), "~type1~", sValue,
+						sinon.match.same(mUnitOrCurrencyConstraints))
+					.returns("~pathResultCurrencyOrUnit~");
 				oBasicsMock.expects("resultToString")
-					.withExactArgs({
-							constraints : sinon.match.same(mUnitOrCurrencyConstraints),
-							result : "binding",
-							type : "~type1~",
-							value : sValue
-						}, false, true)
+					.withExactArgs("~pathResultCurrencyOrUnit~", false, true)
 					.returns("~binding1~");
 
 				// code under test
@@ -380,7 +372,6 @@ sap.ui.define([
 			oPathValue = {
 				model : oMetaModel,
 				path : "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
-				prefix : "",
 				value : "BusinessPartnerID"
 			},
 			oResult,
@@ -415,10 +406,8 @@ sap.ui.define([
 				fetchObject : function () {}
 			},
 			oPathValue = {
-				formatOptions : {shortLimit : 1000, style : "short"},
 				model : oMetaModel,
 				path : "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
-				prefix : "",
 				value : "BusinessPartnerID"
 			},
 			oResult;
@@ -427,64 +416,52 @@ sap.ui.define([
 			.withExactArgs(oPathValue.path + "/$")
 			.returns(SyncPromise.resolve(Promise.reject(new Error("foo"))));
 		this.mock(Expression).expects("fetchCurrencyOrUnit").never();
+		this.mock(Expression).expects("pathResult")
+			.withExactArgs(sinon.match.same(oPathValue), undefined, /* "foo" not yet available */
+				oPathValue.value, undefined)
+			.returns("~result~");
 
 		// code under test
 		oResult = Expression.path(oPathValue).unwrap();
 
-		assert.deepEqual(oResult, {
-			constraints : undefined,
-			formatOptions : oPathValue.formatOptions,
-			parameters : undefined,
-			result : "binding",
-			type : undefined, // "foo" not yet available
-			value : oPathValue.value
-		});
+		assert.strictEqual(oResult, "~result~");
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bWithPrefix) {
-		QUnit.test("path asynchronous; with prefix: " + bWithPrefix, function (assert) {
-			var oMetaModel = {
-					fetchObject : function () {}
-				},
-				oPathValue = {
-					model : oMetaModel,
-					path : "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
-					prefix : bWithPrefix ? "~prefix~/" : "",
-					value : "BusinessPartnerID",
-					$$valueAsPromise : true
-				},
-				oPromise;
+	QUnit.test("path asynchronous", function (assert) {
+		var oMetaModel = {
+				fetchObject : function () {}
+			},
+			oPathValue = {
+				model : oMetaModel,
+				path : "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
+				value : "BusinessPartnerID",
+				$$valueAsPromise : true
+			},
+			oPromise;
 
-			this.mock(oMetaModel).expects("fetchObject")
-				.withExactArgs("/BusinessPartnerList/@UI.LineItem/0/Value/$Path/$")
-				.returns(SyncPromise.resolve(Promise.resolve({$Type : "Edm.Foo"})));
-			this.mock(Expression).expects("fetchCurrencyOrUnit").never();
+		this.mock(oMetaModel).expects("fetchObject")
+			.withExactArgs("/BusinessPartnerList/@UI.LineItem/0/Value/$Path/$")
+			.returns(SyncPromise.resolve(Promise.resolve({$Type : "Edm.Foo"})));
+		this.mock(Expression).expects("fetchCurrencyOrUnit").never();
+		this.mock(Expression).expects("pathResult")
+			.withExactArgs(sinon.match.same(oPathValue), "Edm.Foo", oPathValue.value, undefined)
+			.returns("~result~");
 
-			// code under test
-			oPromise = Expression.path(oPathValue).unwrap();
+		// code under test
+		oPromise = Expression.path(oPathValue).unwrap();
 
-			return oPromise.then(function (oResult) {
-				assert.deepEqual(oResult, {
-					constraints : undefined,
-					formatOptions : undefined,
-					parameters : undefined,
-					result : "binding",
-					type : "Edm.Foo",
-					value : bWithPrefix ? "~prefix~/BusinessPartnerID" : "BusinessPartnerID"
-				});
-			});
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, "~result~");
 		});
 	});
 
 	//*********************************************************************************************
 [{
 	sInputValue : "_it/_ShipToParty/isHidden",
-	sOutputValue : "~prefix~/_ShipToParty/isHidden",
 	sValue : "_ShipToParty/isHidden"
 }, {
 	sInputValue : "_its/_ShipToParty/isHidden",
-	sOutputValue : "~prefix~/_its/_ShipToParty/isHidden",
 	sValue : "_its/_ShipToParty/isHidden"
 // Note: AH.format is used for property bindings only, not for context bindings; thus an empty path
 // (behind the binding parameter's name) is not supported
@@ -506,7 +483,6 @@ sap.ui.define([
 				ignoreAsPrefix : "_it/",
 				model : oMetaModel,
 				path : "/T€AMS/name.space.OverloadedAction@Core.OperationAvailable/$Path",
-				prefix : "~prefix~/",
 				value : oFixture.sInputValue,
 				$$valueAsPromise : true
 			},
@@ -523,20 +499,69 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oPathValue), oFixture.sValue, "Edm.Foo",
 				sinon.match.same(mConstraints))
 			.returns(undefined); // no currency/unit found
+		this.mock(Expression).expects("pathResult")
+			.withExactArgs(sinon.match.same(oPathValue), "Edm.Foo", oFixture.sValue,
+				sinon.match.same(mConstraints))
+			.returns("~result~");
 
 		// code under test
 		oPromise = Expression.path(oPathValue).unwrap();
 
 		return oPromise.then(function (oResult) {
-			assert.deepEqual(oResult, {
-				constraints : mConstraints,
-				formatOptions : undefined,
-				parameters : undefined,
-				result : "binding",
-				type : "Edm.Foo",
-				value : oFixture.sOutputValue
-			});
+			assert.strictEqual(oResult, "~result~");
 		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("pathResult: not Edm.String", function (assert) {
+		var mConstraints = {},
+			oPathValue = {
+				formatOptions : {},
+				parameters : {},
+				prefix : "~prefix~"
+			},
+			oResult;
+
+		// code under test
+		oResult = Expression.pathResult(oPathValue, "Edm.SomeType", "path", mConstraints);
+
+		assert.strictEqual(oResult.constraints, mConstraints);
+		assert.strictEqual(oResult.formatOptions, oPathValue.formatOptions);
+		assert.strictEqual(oResult.parameters, oPathValue.parameters);
+		assert.strictEqual(oResult.result, "binding");
+		assert.strictEqual(oResult.type, "Edm.SomeType");
+		assert.strictEqual(oResult.value, oPathValue.prefix + "path");
+	});
+
+	//*********************************************************************************************
+[{
+	pathValue : undefined,
+	result : {parseKeepsEmptyString : true}
+}, {
+	pathValue : {foo : "bar"},
+	result : {foo : "bar", parseKeepsEmptyString : true}
+}, {
+	pathValue : {foo : "bar", parseKeepsEmptyString : false},
+	result : {foo : "bar", parseKeepsEmptyString : false}
+}].forEach(function (oFixture) {
+	QUnit.test("pathResult: Edm.String, " + oFixture.pathValue, function (assert) {
+		var mConstraints = {},
+			oPathValue = {
+				formatOptions : oFixture.pathValue,
+				parameters : {},
+				prefix : "~prefix~"
+			};
+
+		// code under test
+		var oResult = Expression.pathResult(oPathValue, "Edm.String", "path", mConstraints);
+
+		assert.strictEqual(oResult.constraints, mConstraints);
+		assert.deepEqual(oResult.formatOptions, oFixture.result);
+		assert.strictEqual(oResult.parameters, oPathValue.parameters);
+		assert.strictEqual(oResult.result, "binding");
+		assert.strictEqual(oResult.type, "Edm.String");
+		assert.strictEqual(oResult.value, oPathValue.prefix + "path");
 	});
 });
 
