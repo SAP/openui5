@@ -194,7 +194,7 @@ describe("sap.m.ComboBoxShowItems", function() {
 			comboButton = element(by.id("__xmlview0--btnMultiComboBox2"));
 
 		comboButton.click();
-		element.all(by.css('.sapMComboBoxBasePicker[style*="display: block"] li.sapMLIB')).get(20).click();
+		element.all(by.css('.sapMComboBoxBasePicker[style*="display: block"] li.sapMLIB')).get(7).click();
 		comboFilterButton.click();
 		expect(takeScreenshot()).toLookAs("mcbg-non-recomendation-selected");
 

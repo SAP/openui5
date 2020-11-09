@@ -23,7 +23,15 @@
 				xmlns="sap.m"
 				xmlns:f="sap.ui.layout.form">
 			<App>
-				<Page title="showItems() enabled controls">
+				<Page>
+					<customHeader>
+						<Toolbar>
+							<ToolbarSpacer/>
+							<Title text="showItems() enabled controls" level="H2"/>
+							<ToolbarSpacer/>
+							<Button text="Toggle custom CSS for visual test" press="applyCustomCss" />
+						</Toolbar>
+					</customHeader>
 					<f:Form width="100%">
 						<f:layout>
 							<f:ResponsiveGridLayout
@@ -293,6 +301,11 @@
 
 						oTargetControl.showItems(fnFilterItems);
 					},
+					applyCustomCss: function() {
+						var $body = jQuery("body");
+
+						$body.toggleClass("customClassForVisualTests");
+					},
 					_resolveButtonId: function (sId) {
 						return Object.keys(this._btnToControlMap).reduce(function (sAcc, sKey) {
 							if (sId.indexOf(sKey) > -1) {
@@ -335,6 +348,11 @@
 			});
 		});
 	</script>
+	<style type="text/css">
+		.customClassForVisualTests {
+			caret-color: transparent;
+		}
+	</style>
 </head>
 <body id='content' class='sapUiBody sapUiSizeCompact'></body>
 </html>
