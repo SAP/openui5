@@ -175,8 +175,10 @@ function(
 	}});
 
 	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty) {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 		if (!oControl || !oControl.getVisible || !oControl.getVisible()) {
-			return "";
+			return bDetectEmpty ? oBundle.getText("CONTROL_EMPTY") : "";
 		}
 
 		var oAccInfo;
@@ -193,8 +195,7 @@ function(
 			children: []
 		}, oAccInfo);
 
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-			sText = oAccInfo.type + " " + oAccInfo.description + " ",
+		var sText = oAccInfo.type + " " + oAccInfo.description + " ",
 			sTooltip = oControl.getTooltip_AsString();
 
 		if (oAccInfo.enabled === false) {
