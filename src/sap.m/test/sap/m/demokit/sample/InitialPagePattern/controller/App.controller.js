@@ -74,23 +74,24 @@ sap.ui.define([
 		},
 
 		handleInputValueHelpOpen : function () {
-			var sInputValue = this._oPurchaseInput.getValue();
+			var sInputValue = this._oPurchaseInput.getValue(),
+				oView = this.getView();
 
 			// create value help dialog
-			if (!this._oValueHelpDialog) {
-				Fragment.load({
+			if (!this._pValueHelpDialog) {
+				this._pValueHelpDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.InitialPagePattern.view.fragments.Dialog",
 					controller: this
 				}).then(function (oDialog) {
-					this._oValueHelpDialog = oDialog;
-
-					this.getView().addDependent(this._oValueHelpDialog);
-
-					this._filterAndOpenValueHelpDialog(sInputValue);
-				}.bind(this));
-			} else {
-				this._filterAndOpenValueHelpDialog(sInputValue);
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
+
+			this._pValueHelpDialog.then(function(oDialog) {
+				this._filterAndOpenValueHelpDialog(sInputValue, oDialog);
+			}.bind(this));
 		},
 
 		handleValueHelpConfirm : function (oEvent) {
@@ -103,21 +104,21 @@ sap.ui.define([
 		},
 
 		handleValueHelpSearch : function (oEvent) {
-			this._filterValueHelpDialog(oEvent.getParameter("value"));
+			this._filterValueHelpDialog(oEvent.getParameter("value"), this.byId("selectDialog"));
 		},
 
 		/*********************** Private methods **************************/
 
-		_filterAndOpenValueHelpDialog: function (sInputValue) {
+		_filterAndOpenValueHelpDialog: function (sInputValue, oDialog) {
 			// create a filter for the binding
-			this._filterValueHelpDialog(sInputValue);
+			this._filterValueHelpDialog(sInputValue, oDialog);
 
 			// open value help dialog filtered by the input value
-			this._oValueHelpDialog.open(sInputValue);
+			oDialog.open(sInputValue);
 		},
 
-		_filterValueHelpDialog: function(sInputValue) {
-			this._oValueHelpDialog.getBinding("items")
+		_filterValueHelpDialog: function(sInputValue, oDialog) {
+			oDialog.getBinding("items")
 				.filter(this._getCombinedFilter(sInputValue));
 		},
 
