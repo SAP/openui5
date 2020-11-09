@@ -501,6 +501,27 @@ sap.ui.define([
 		assert.equal(this.stepInput.getValueState(), "Error", "..should be set to 'Error'");
 	});
 
+	// BCP: 2070257404
+	QUnit.test("no complete re-rendering when the internal control changes on live change", function(assert) {
+		// arrange
+		var oInnerInput = this.stepInput._getInput(),
+			oDomRef1 = oInnerInput.getDomRef(),
+			oDomRef2;
+
+		oInnerInput.attachLiveChange(function() {
+			this.stepInput.setValueState(ValueState.Information);
+		}.bind(this));
+
+		// act
+		oInnerInput.fireLiveChange({ value: "0", newValue: "5" });
+		sap.ui.getCore().applyChanges();
+
+		oDomRef2 = oInnerInput.getDomRef();
+
+		// assert
+		assert.ok(oDomRef1 == oDomRef2, "no complete re-rendering");
+	});
+
 	QUnit.module("Operations", {
 		beforeEach: function () {
 			this.stepInput = new StepInput({
