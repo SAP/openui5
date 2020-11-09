@@ -83,7 +83,7 @@ Comment: these files belong to: jQuery 3
 Files: src/sap.ui.core/src/sap/ui/thirdparty/jqueryui/*
 Copyright: 2014 jQuery Foundation and other contributors
 License: MIT
-Comment: these files belong to: jQuery UI
+Comment: these files belong to: jQuery UI 1.10
 
 Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit.*
 Copyright: jQuery Foundation and other contributors

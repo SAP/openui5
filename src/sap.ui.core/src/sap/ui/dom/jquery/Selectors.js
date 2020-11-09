@@ -102,7 +102,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 		 *
 		 * http://docs.jquery.com/UI
 		 *
-		 * But since visible is modified, focusable is different too the jQuery UI version too.
+		 * But since visible is modified, focusable is different from the jQuery UI version too.
 		 */
 
 		/*
