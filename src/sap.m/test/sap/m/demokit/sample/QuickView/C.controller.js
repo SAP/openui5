@@ -21,12 +21,6 @@ sap.ui.define([
 				.setModel(oGenericModelNoHeader, "GenericModelNoHeader");
 		},
 
-		onExit: function () {
-			if (this._oQuickView) {
-				this._oQuickView.destroy();
-			}
-		},
-
 		onAfterRendering: function () {
 			var oButton = this.byId("showQuickView");
 			oButton.$().attr("aria-haspopup", true);
@@ -39,27 +33,23 @@ sap.ui.define([
 		},
 
 		openQuickView: function (oEvent, oModel) {
-			var oButton = oEvent.getSource();
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
 
-			if (!this._oQuickView) {
-				Fragment.load({
+			if (!this._pQuickView) {
+				this._pQuickView = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.QuickView.QuickView",
 					controller: this
 				}).then(function (oQuickView) {
-					this._oQuickView = oQuickView;
-					this._configQuickView(oModel);
-					this._oQuickView.openBy(oButton);
-				}.bind(this));
-			} else {
-				this._configQuickView(oModel);
-				this._oQuickView.openBy(oButton);
+					oView.addDependent(oQuickView);
+					return oQuickView;
+				});
 			}
-		},
-
-		_configQuickView: function (oModel) {
-			this.getView().addDependent(this._oQuickView);
-			this._oQuickView.close();
-			this._oQuickView.setModel(oModel);
+			this._pQuickView.then(function (oQuickView){
+				oQuickView.setModel(oModel);
+				oQuickView.openBy(oButton);
+			});
 		},
 
 		handleCompanyQuickViewPress: function (oEvent) {

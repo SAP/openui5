@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function (Fragment, Controller, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/m/MessageToast"
+], function (Fragment, Controller, JSONModel, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.QuickViewFallbackIcon.C", {
@@ -11,32 +12,29 @@ sap.ui.define([
 			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickViewFallbackIcon/model/data.json"));
 		},
 
-		onExit: function () {
-			if (this._oQuickView) {
-				this._oQuickView.destroy();
-			}
-		},
-
 		onAfterRendering: function () {
 			var oButton = this.byId("showQuickView");
 			oButton.$().attr("aria-haspopup", true);
 		},
 
 		handleButtonPress: function (oEvent) {
-			var oButton = oEvent.getSource();
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
 
-			if (!this._oQuickView) {
-				Fragment.load({
-					name: "sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon"
+			if (!this._pQuickView) {
+				this._pQuickView = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon",
+					controller: this
 				}).then(function (oQuickView) {
 					oQuickView.setModel(this.oModel);
-					this._oQuickView = oQuickView;
-					this.getView().addDependent(oQuickView);
-					oQuickView.openBy(oButton);
+					oView.addDependent(oQuickView);
+					return oQuickView;
 				}.bind(this));
-			} else {
-				this._oQuickView.openBy(oButton);
 			}
+			this._pQuickView.then(function(oQuickView) {
+				oQuickView.openBy(oButton);
+			});
 		}
 
 	});
