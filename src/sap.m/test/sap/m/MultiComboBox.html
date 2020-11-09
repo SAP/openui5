@@ -10,6 +10,11 @@
 	data-sap-ui-compatVersion="1.20">
 
 </script>
+<style type="text/css">
+	.customClassForVisualTests {
+		caret-color: transparent;
+	}
+</style>
 <script>
 	jQuery.sap.require("sap.m.MessageToast");
 	jQuery.sap.require("jquery.sap.xml");
@@ -910,10 +915,29 @@
 		]
 	});
 
+	// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
+	var oCustomCssButton = new sap.m.Button ("customCssButton",{
+			text: "Toggle custom CSS for visual test",
+			press: function() {
+				var $body = jQuery("body");
+
+				$body.toggleClass("customClassForVisualTests");
+			}
+	});
+
 	var oApp = new sap.m.App("myApp", {
 		initialPage : "page1"
 	});
 	oApp.addPage(new sap.m.Page("page1", {
+		headerContent: [
+				new sap.m.Title({
+					text: "sap.m.MultiComboBox"
+				}),
+				new sap.m.ToolbarSpacer({
+					width: "400px"
+				}),
+				oCustomCssButton,
+		],
 		content : [theCompactMode,oMultiComboBox2, oMultiComboBox, oMultiComboBox1,
 				oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
 				oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
