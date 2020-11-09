@@ -949,7 +949,7 @@ sap.ui.define([
 			}
 
 			this._oSuggestionPopover = this._createSuggestionsPopover();
-			oPicker = this._oSuggestionPopover._oPopover;
+			oPicker = this._oSuggestionPopover.getPopover();
 			// define a parent-child relationship between the control's and the picker pop-up (Popover or Dialog)
 			this.setAggregation("picker", oPicker, true);
 
