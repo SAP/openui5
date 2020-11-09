@@ -449,7 +449,7 @@ sap.ui.define([
 		assert.equal(oSlider.getModel("$field"), oField._oManagedObjectModel, "Slider has ManagedObjectModel of Field");
 		assert.equal(oSlider.getBindingPath("value"), "/conditions", "Slider value bound to Fields conditions");
 		assert.equal(oSlider.aBeforeDelegates.length, 1, "Delegate with keyboard handling added");
-		assert.equal(oField._oConditionsType, oConditionsType, "ConditionsType of Slider used in Field");
+		assert.equal(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of Slider used in Field");
 
 		oField.destroyContent();
 		sap.ui.getCore().applyChanges();
@@ -459,8 +459,8 @@ sap.ui.define([
 		assert.ok(oContent, "internal content exist");
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 		assert.equal(oSlider.aBeforeDelegates.length, 0, "Delegate with keyboard handling removed");
-		assert.notEqual(oField._oConditionsType, oConditionsType, "ConditionsType of Slider not used in Field");
-		assert.ok(oField._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
+		assert.notEqual(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of Slider not used in Field");
+		assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
 
 		oSlider = new Slider("S1");
 		oConditionsType = new ConditionsType();
@@ -496,14 +496,14 @@ sap.ui.define([
 		assert.equal(oProgressIndicator.getPercentValue(), 0, "Value of ProgressIndicator not taken from Field");
 		assert.notOk(oProgressIndicator.getModel("$field"), "ProgressIndicator not bound to ManagedObjectModel of Field as not rendered");
 		assert.equal(oProgressIndicator.getBindingPath("percentValue"), "/conditions", "ProgressIndicator value bound to Fields conditions");
-		assert.notEqual(oField._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator not used in Field");
-		assert.ok(oField._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
+		assert.notEqual(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator not used in Field");
+		assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
 
 		oField.setEditMode(EditMode.Display);
 		sap.ui.getCore().applyChanges();
 		assert.notOk(!!oField.getAggregation("_content"), "Field has no internal content");
 		assert.ok(oProgressIndicator.getDomRef(), "ProgressIndicator is rendered");
-		assert.equal(oField._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator used in Field");
+		assert.equal(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator used in Field");
 		assert.equal(oProgressIndicator.getPercentValue(), 70, "Value of ProgressIndicator");
 		assert.equal(oProgressIndicator.getModel("$field"), oField._oManagedObjectModel, "ProgressIndicator has ManagedObjectModel of Field");
 
@@ -543,7 +543,7 @@ sap.ui.define([
 		assert.equal(aItems.length, 2, "SegmentedButton has 2 items");
 		assert.equal(aItems[0].getText(), "A", "Text of Item0");
 		assert.equal(aItems[1].getText(), "B", "Text of Item1");
-		assert.equal(oField._oConditionType, oConditionType, "ConditionType of SegmentedButton used in Field");
+		assert.equal(oField._oContentFactory._oConditionType, oConditionType, "ConditionType of SegmentedButton used in Field");
 
 		oField.setEditMode(EditMode.Display);
 		sap.ui.getCore().applyChanges();
@@ -552,9 +552,9 @@ sap.ui.define([
 		assert.ok(oContent, "Field has internal content");
 		assert.equal(oContent && oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
 		assert.notOk(oSegmentedButton.getDomRef(), "SegmentedButton is not rendered");
-		assert.notEqual(oField._oConditionType, oConditionType, "ConditionType of SegmentedButton not used in Field");
-		assert.notOk(oField._oConditionType, "no ConditionType used");
-		assert.ok(oField._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
+		assert.notEqual(oField._oContentFactory._oConditionType, oConditionType, "ConditionType of SegmentedButton not used in Field");
+		assert.notOk(oField._oContentFactory._oConditionType, "no ConditionType used");
+		assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
 
 		oField.setEditMode(EditMode.Edit);
 		oField.destroyContentEdit();
@@ -657,8 +657,8 @@ sap.ui.define([
 		assert.equal(oContent1.getModel("$field"), oField._oManagedObjectModel, "MultiInput has ManagedObjectModel of Field");
 		assert.equal(oContent1.getBindingPath("tokens"), "/conditions", "MultiInput tokens bound to Field conditions");
 		assert.notOk(oContent1.getShowValueHelp(), "no valueHelp");
-		assert.equal(oField._oConditionType.oFormatOptions.valueType.oFormatOptions.showMeasure, false, "showMeasure set to false on internal type");
-		assert.equal(oField._oConditionType.oFormatOptions.valueType.oFormatOptions.strictParsing, true, "strictParsing set to true on internal type");
+		assert.equal(oField._oContentFactory._oConditionType.oFormatOptions.valueType.oFormatOptions.showMeasure, false, "showMeasure set to false on internal type");
+		assert.equal(oField._oContentFactory._oConditionType.oFormatOptions.valueType.oFormatOptions.strictParsing, true, "strictParsing set to true on internal type");
 
 		var oSuggestControl = oField.getControlForSuggestion();
 		assert.equal(oSuggestControl, oContent2, "Unit control is used for suggestion");
@@ -686,8 +686,8 @@ sap.ui.define([
 		assert.ok(oContent2 instanceof Input, "Input rendered");
 		assert.ok(oContent1.getEditable(), "MultiInput editable");
 		assert.notOk(oContent2.getEditable(), "Input not editable");
-		assert.equal(oField._oConditionType.oFormatOptions.valueType.oFormatOptions.showMeasure, false, "showMeasure set to false on internal type");
-		assert.equal(oField._oConditionType.oFormatOptions.valueType.oFormatOptions.strictParsing, true, "strictParsing set to true on internal type");
+		assert.equal(oField._oContentFactory._oConditionType.oFormatOptions.valueType.oFormatOptions.showMeasure, false, "showMeasure set to false on internal type");
+		assert.equal(oField._oContentFactory._oConditionType.oFormatOptions.valueType.oFormatOptions.strictParsing, true, "strictParsing set to true on internal type");
 
 		// if no unit should be displayed only one control should be rendered (original data type must be used, not changed by one with showMeagure=false)
 		oContent1 = undefined; oContent2 = undefined;
@@ -1912,14 +1912,14 @@ sap.ui.define([
 		var fnDone = assert.async();
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
-		sinon.spy(oField._oConditionType, "parseValue");
-		sinon.spy(oField._oConditionType, "validateValue");
+		sinon.spy(oField._oContentFactory._oConditionType, "parseValue");
+		sinon.spy(oField._oContentFactory._oConditionType, "validateValue");
 
 		oContent.focus();
 		oContent.fireChange({ value: "" }); // simulate clear value after invalid input
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
-			assert.ok(oField._oConditionType.parseValue.notCalled, "ConditionType parseValue not used");
-			assert.ok(oField._oConditionType.validateValue.notCalled, "ConditionType validateValue not used");
+			assert.ok(oField._oContentFactory._oConditionType.parseValue.notCalled, "ConditionType parseValue not used");
+			assert.ok(oField._oContentFactory._oConditionType.validateValue.notCalled, "ConditionType validateValue not used");
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
 			assert.equal(sValue, undefined, "change event value");
@@ -2168,8 +2168,8 @@ sap.ui.define([
 		jQuery(oContent.getFocusDomRef()).val("X"); // set something before it can be cleared
 		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-		sinon.spy(oField._oConditionsType, "parseValue");
-		sinon.spy(oField._oConditionsType, "validateValue");
+		sinon.spy(oField._oContentFactory._oConditionsType, "parseValue");
+		sinon.spy(oField._oContentFactory._oConditionsType, "validateValue");
 		iCount = 0;
 		sId = undefined;
 		sValue = undefined;
@@ -2177,8 +2177,8 @@ sap.ui.define([
 		jQuery(oContent.getFocusDomRef()).val("");
 		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
-			assert.ok(oField._oConditionsType.parseValue.called, "ConditionsType parseValue used");
-			assert.ok(oField._oConditionsType.validateValue.called, "ConditionsType validateValue used");
+			assert.ok(oField._oContentFactory._oConditionsType.parseValue.called, "ConditionsType parseValue used");
+			assert.ok(oField._oContentFactory._oConditionsType.validateValue.called, "ConditionsType validateValue used");
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
 			assert.equal(sValue, "", "change event value");

@@ -16,23 +16,23 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/MessageToast"
 ], function(
-		Controller,
-		Filter,
-		FilterOperator,
-		JSONModel,
-		ConditionModel,
-		Condition,
-		FilterConverter,
-		FilterOperatorUtil,
-		ConditionValidated,
-		EditMode,
-		Table,
-		ColumnListItem,
-		Column,
-		Label,
-		Text,
-		MessageToast
-		) {
+	Controller,
+	Filter,
+	FilterOperator,
+	JSONModel,
+	ConditionModel,
+	Condition,
+	FilterConverter,
+	FilterOperatorUtil,
+	ConditionValidated,
+	EditMode,
+	Table,
+	ColumnListItem,
+	Column,
+	Label,
+	Text,
+	MessageToast
+) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.base.sample.field.fieldBase.Test", {
@@ -92,8 +92,8 @@ sap.ui.define([
 			//set the model on your view
 			oView.setModel(oCM, "cm");
 
-			var fnFireChange = function(aConditions, bValid, vWrongValue, oPromise) {this.fireEvent("change", {conditions: aConditions, valid: bValid, promise: oPromise});};
-			var fnGetOperators = function() {return ["EQ"];};
+			var fnFireChange = function(aConditions, bValid, vWrongValue, oPromise) { this.fireEvent("change", { conditions: aConditions, valid: bValid, promise: oPromise }); };
+			var fnGetOperators = function() { return ["EQ"]; };
 			var oBaseField = oView.byId("FB1");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
@@ -185,8 +185,8 @@ sap.ui.define([
 
 		handleChange: function(oEvent) {
 			var oField = oEvent.getSource();
-//			var aConditions = oEvent.getParameter("conditions");
-//			var bValid = oEvent.getParameter("valid");
+			//			var aConditions = oEvent.getParameter("conditions");
+			//			var bValid = oEvent.getParameter("valid");
 			var oPromise = oEvent.getParameter("promise");
 			var oText = this.byId("MyText");
 			var oIcon = this.byId("MyIcon");
@@ -236,7 +236,7 @@ sap.ui.define([
 					for (var k = 0; k < aFields.length; k++) {
 						var oField = aFields[k];
 						if (oField.isA("sap.ui.mdc.field.FieldBase")) {
-							oDataTypes[oField.getFieldPath()] = {type: oField._oDataType};
+							oDataTypes[oField.getFieldPath()] = { type: oField._oContentFactory.getDataType() };
 						}
 					}
 				}
@@ -313,19 +313,19 @@ sap.ui.define([
 		handleStatusOpen: function(oEvent) {
 			var oFieldHelp = oEvent.oSource;
 			var oWrapper = oFieldHelp.getContent();
-			setTimeout(function () { // test async table assignment
+			setTimeout(function() { // test async table assignment
 				var oTable = oWrapper.getTable();
 				if (!oTable) {
 					var oItem = new ColumnListItem({
 						type: "Active",
-						cells: [new Text({text: "{StatusId}"}),
-						        new Text({text: "{Name}"})]
+						cells: [new Text({ text: "{StatusId}" }),
+						new Text({ text: "{Name}" })]
 					});
 					oTable = new Table("StatusTable", {
 						width: "20rem",
-						columns: [new Column({header: new Label({text: "{/#Status/StatusId/@sap:label}"}), width: "4rem"}),
-						          new Column({header: new Label({text: "{/#Status/Name/@sap:label}"})})],
-						          items: {path: '/StatusCollection', template: oItem}
+						columns: [new Column({ header: new Label({ text: "{/#Status/StatusId/@sap:label}" }), width: "4rem" }),
+						new Column({ header: new Label({ text: "{/#Status/Name/@sap:label}" }) })],
+						items: { path: '/StatusCollection', template: oItem }
 					});
 					oWrapper.setTable(oTable);
 				}

@@ -10,17 +10,17 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/ConditionValidated"
 ], function(
-		Controller,
-		Filter,
-		FilterOperator,
-		JSONModel,
-		ConditionModel,
-		Condition,
-		FilterConverter,
-		FilterOperatorUtil,
-		Operator,
-		ConditionValidated
-		) {
+	Controller,
+	Filter,
+	FilterOperator,
+	JSONModel,
+	ConditionModel,
+	Condition,
+	FilterConverter,
+	FilterOperatorUtil,
+	Operator,
+	ConditionValidated
+) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.base.sample.field.filterField.Test", {
@@ -87,16 +87,16 @@ sap.ui.define([
 				getModelFilter: function(oCondition, sFieldPath) {
 					var oFilter1 = new Filter({ path: sFieldPath, operator: "EQ", value1: "DE" });
 					var oFilter2 = new Filter({ path: sFieldPath, operator: "EQ", value1: "FR" });
-					return new Filter({filters: [oFilter1, oFilter2], and: false});
+					return new Filter({ filters: [oFilter1, oFilter2], and: false });
 				}
 			}));
 		},
 
 		handleChange: function(oEvent) {
 			var oField = oEvent.getSource();
-//			var sValue = oEvent.getParameter("value");
-//			var bValid = oEvent.getParameter("valid");
-//			var aConditions = oEvent.getParameter("conditions");
+			//			var sValue = oEvent.getParameter("value");
+			//			var bValid = oEvent.getParameter("valid");
+			//			var aConditions = oEvent.getParameter("conditions");
 			var oPromise = oEvent.getParameter("promise");
 			var oText = this.byId("MyText");
 			var oIcon = this.byId("MyIcon");
@@ -188,7 +188,7 @@ sap.ui.define([
 			for (var i = 0; i < aFormContent.length; i++) {
 				var oField = aFormContent[i];
 				if (oField.isA("sap.ui.mdc.field.FieldBase")) {
-					oDataTypes[oField.getFieldPath()] = {type: oField._oDataType};
+					oDataTypes[oField.getFieldPath()] = { type: oField._oContentFactory.getDataType() };
 				}
 			}
 
@@ -216,14 +216,14 @@ sap.ui.define([
 				oIcon.setSrc("sap-icon://sys-cancel");
 				oIcon.setColor("Warning");
 			}
-//		},
-//
-//		handleGo: function(oEvent) { // TODO: need trigger in FieldHelp
-//			var oFilterConditionModel = oEvent.oSource.getModel("filter");
-//			if (oFilterConditionModel) {
-//				var oFilter = oFilterConditionModel.getFilters();
-//				oFilterConditionModel._oListBinding.filter(oFilter); // TODO: function on CM
-//			}
+			//		},
+			//
+			//		handleGo: function(oEvent) { // TODO: need trigger in FieldHelp
+			//			var oFilterConditionModel = oEvent.oSource.getModel("filter");
+			//			if (oFilterConditionModel) {
+			//				var oFilter = oFilterConditionModel.getFilters();
+			//				oFilterConditionModel._oListBinding.filter(oFilter); // TODO: function on CM
+			//			}
 		},
 		clearFilters: function(oEvent) {
 			var oCM = this.getView().getModel("cm");

@@ -12,16 +12,14 @@ sap.ui.define([
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/enum/BaseType',
-	'sap/ui/mdc/util/DateUtil',
-	'sap/ui/core/library',
+	'sap/ui/mdc/field/content/ContentFactory',
 	'sap/ui/mdc/Control',
+	'sap/ui/core/library',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/message/MessageMixin',
-	'sap/base/util/ObjectPath',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
 	'sap/base/Log',
-	'sap/base/util/isEmptyObject',
 	'sap/ui/dom/containsOrEquals',
 	'sap/ui/model/Filter',
 	'sap/ui/model/BindingMode',
@@ -44,16 +42,14 @@ sap.ui.define([
 	ConditionType,
 	ConditionsType,
 	BaseType,
-	DateUtil,
-	coreLibrary,
+	ContentFactory,
 	Control,
+	coreLibrary,
 	LabelEnablement,
 	MessageMixin,
-	ObjectPath,
 	deepEqual,
 	merge,
 	Log,
-	isEmptyObject,
 	containsOrEquals,
 	Filter,
 	BindingMode,
@@ -69,7 +65,6 @@ sap.ui.define([
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
-	var CalendarType = coreLibrary.CalendarType;
 	var TextAlign = coreLibrary.TextAlign;
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -148,16 +143,6 @@ sap.ui.define([
 					group: "Data",
 					defaultValue: false
 				},
-
-//				/**
-//				 * Icon to be displayed as a graphical element before the field.
-//				 * This can be an image or an icon from the icon font.
-//				 */
-//				icon: {
-//					type: "sap.ui.core.URI",
-//					group: "Appearance",
-//					defaultValue: null
-//				},
 
 				/**
 				 * Defines whether the value and/or description of the field is shown and in what order.
@@ -317,7 +302,7 @@ sap.ui.define([
 					type: "object",
 					defaultValue: {
 						name: "sap/ui/mdc/field/FieldBaseDelegate",
-						payload : {}
+						payload: {}
 					}
 				},
 
@@ -474,22 +459,22 @@ sap.ui.define([
 				 *
 				 * <b>Note</b> This event is only triggered if the used content control has a <code>liveChange</code> event.
 				 */
-				liveChange : {
-					parameters : {
+				liveChange: {
+					parameters: {
 						/**
 						 * The new value of the input
 						 */
-						value : {type : "string"},
+						value: { type: "string" },
 
 						/**
 						 * Indicates that the ESC key triggered the event
 						 */
-						escPressed : {type : "boolean"},
+						escPressed: { type: "boolean" },
 
 						/**
 						 * The value of the input before pressing ESC key
 						 */
-						previousValue : {type : "string"}
+						previousValue: { type: "string" }
 					}
 				},
 				/**
@@ -504,8 +489,8 @@ sap.ui.define([
 				 *
 				 * @since 1.82.0
 				 */
-				submit : {
-					parameters : {
+				submit: {
+					parameters: {
 						/**
 						 * Returns a <code>Promise</code> for the change. The <code>Promise</code> returns the value if it is resolved.
 						 * If the last <code>change</code> event is synchronous, the <code>Promise</code> has already been resolved. If it is asynchronous,
@@ -525,120 +510,22 @@ sap.ui.define([
 	// apply the message mixin so all message on the input will get the associated label-texts injected
 	MessageMixin.call(FieldBase.prototype);
 
-	var mControlTypes = {
-			Default: {
-				edit: "sap/ui/mdc/field/FieldInput",
-				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
-				editMultiLine: "sap/m/TextArea",
-				display: "sap/m/Text",
-				createEdit: _createInputControl,
-				createEditMulti: _createMultiInputControl,
-				createEditMultiLine: _createTextAreaControl,
-				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: false}, // if no FieldHelp and multiple operators use default FieldHelp
-				defaultEnterHandler: true
-			},
-			Search: {
-				edit: "sap/m/SearchField",
-				//editMulti: "sap/m/SearchField", // not used
-				display: "sap/m/Text",
-				createEdit: _createSearchField,
-				//createEditMulti: _createSearchField, // not used
-				createDisplay: _createTextControl,
-				useDefaultFieldHelp: false, // no default field help
-				defaultEnterHandler: false
-			},
-			Date: {
-				edit: "sap/ui/mdc/field/FieldInput",
-				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], // FieldHelp needed to enter date
-				display: "sap/m/Text",
-				editOperator: {
-					"EQ": {name: "sap/m/DatePicker", create: _createDatePickerControl}, // TODO: how to check custom operators
-					"BT": {name: "sap/m/DateRangeSelection", create: _createDateRangePickerControl}
-				},
-				createEdit: _createInputControl,
-				createEditMulti: _createMultiInputControl, // FieldHelp needed to enter date
-				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true}, // if no FieldHelp and multiple operators use default FieldHelp
-				defaultEnterHandler: true
-			},
-			Time: {
-				edit: "sap/ui/mdc/field/FieldInput",
-				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], // FieldHelp needed to enter date
-				display: "sap/m/Text",
-				editOperator: {
-					"EQ": {name: "sap/m/TimePicker", create: _createDatePickerControl}  // as same API as DatePicker
-				},
-				createEdit: _createInputControl,
-				createEditMulti: _createMultiInputControl, // FieldHelp needed to enter date
-				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true}, // if no FieldHelp and multiple operators use default FieldHelp
-				defaultEnterHandler: true
-			},
-			DateTime: {
-				edit: "sap/ui/mdc/field/FieldInput",
-				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], // FieldHelp needed to enter date
-				display: "sap/m/Text",
-				editOperator: {
-					"EQ": {name: "sap/m/DateTimePicker", create: _createDatePickerControl} // as same API as DatePicker
-				},
-				createEdit: _createInputControl,
-				createEditMulti: _createMultiInputControl, // FieldHelp needed to enter date
-				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true}, // if no FieldHelp and multiple operators use default FieldHelp
-				defaultEnterHandler: true
-			},
-			Link: {
-				edit: "sap/ui/mdc/field/FieldInput",
-				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
-				editMultiLine: "sap/m/TextArea",
-				display: "sap/m/Link",
-				createEdit: _createInputControl,
-				createEditMulti: _createMultiInputControl,
-				createEditMultiLine: _createTextAreaControl,
-				createDisplay: _createLinkControl,
-				useDefaultFieldHelp: false, // no default field help
-				defaultEnterHandler: true
-			},
-			Boolean: {
-				edit: "sap/ui/mdc/field/FieldInput",
-				display: "sap/m/Text",
-				createEdit: _createBoolInputControl,
-				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "bool", oneOperatorSingle: true, oneOperatorMulti: true}, // if no FieldHelp and multiple operators use default FieldHelp
-				defaultEnterHandler: true
-			},
-			Unit: {
-				edit: "sap/ui/mdc/field/FieldInput",
-				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token"],
-				display: "sap/m/Text",
-				createEdit: _createUnitInputControls,
-				createEditMulti: _createUnitMultiInputControls,
-				createDisplay: _createTextControl,
-				useDefaultFieldHelp: false, // no default field help
-				defaultEnterHandler: true
-			}
-	};
-
 	var oContentEventDelegateBefore = {
-			onsapprevious: _handleKeybordEvent,
-			onsapnext: _handleKeybordEvent,
-			onsapup: _handleKeybordEvent,
-			onsapdown: _handleKeybordEvent,
-			onsapbackspace: _handleKeybordEvent
+		onsapprevious: _handleKeybordEvent,
+		onsapnext: _handleKeybordEvent,
+		onsapup: _handleKeybordEvent,
+		onsapdown: _handleKeybordEvent,
+		onsapbackspace: _handleKeybordEvent
 	};
 
 	var oContentEventDelegateAfter = {
-			onsapenter: _handleEnter
+		onsapenter: _handleEnter
 	};
 
-	var mControls;
 	var mDefaultHelps;
 
 	// private function to initialize globals for qUnit tests
 	FieldBase._init = function() {
-
-		mControls = {};
 
 		if (mDefaultHelps && mDefaultHelps.bool && mDefaultHelps.bool.control) {
 			mDefaultHelps.bool.control.destroy();
@@ -648,20 +535,20 @@ sap.ui.define([
 		}
 
 		mDefaultHelps = {
-				bool: {
-					name: "sap/ui/mdc/field/BoolFieldHelp",
-					id: "BoolDefaultHelp",
-					getDelegate: "getDefaultFieldHelpBaseDelegate",
-					properties: {},
-					control: undefined
-				},
-				defineConditions: {
-					name: "sap/ui/mdc/field/FieldValueHelp",
-					id: "Field-DefineConditions-Help",
-					getDelegate: "getDefaultFieldValueHelpDelegate",
-					properties: {showConditionPanel: true},
-					control: undefined
-				}
+			bool: {
+				name: "sap/ui/mdc/field/BoolFieldHelp",
+				id: "BoolDefaultHelp",
+				getDelegate: "getDefaultFieldHelpBaseDelegate",
+				properties: {},
+				control: undefined
+			},
+			defineConditions: {
+				name: "sap/ui/mdc/field/FieldValueHelp",
+				id: "Field-DefineConditions-Help",
+				getDelegate: "getDefaultFieldValueHelpDelegate",
+				properties: { showConditionPanel: true },
+				control: undefined
+			}
 		};
 
 	};
@@ -678,7 +565,7 @@ sap.ui.define([
 
 		this._oObserver.observe(this, {
 			properties: ["display", "editMode", "dataType", "dataTypeFormatOptions", "dataTypeConstraints",
-						"multipleLines", "maxConditions", "conditions", "delegate"],
+				"multipleLines", "maxConditions", "conditions", "delegate"],
 			aggregations: ["fieldInfo", "content", "contentEdit", "contentDisplay"],
 			associations: ["fieldHelp", "ariaLabelledBy"]
 		});
@@ -693,6 +580,15 @@ sap.ui.define([
 
 		this._bPreventGetDescription = false; // set in navigate or select from field help
 
+		this._oContentFactory = new ContentFactory(this.getId() + "-contentFactory", {
+			field: this,
+			handleTokenUpdate: _handleTokenUpdate.bind(this),
+			handleContentChange: _handleContentChange.bind(this),
+			handleContentLiveChange: _handleContentLiveChange.bind(this),
+			handleValueHelpRequest: _handleValueHelpRequest.bind(this),
+			handleEnter: _handleEnter.bind(this),
+			handleContentPress: _handleContentPress.bind(this)
+		});
 	};
 
 	FieldBase.prototype.exit = function() {
@@ -722,16 +618,6 @@ sap.ui.define([
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
 
-		if (this._oConditionType && this._oConditionType._bCreatedByField) {
-			this._oConditionType.destroy();
-			this._oConditionType = undefined;
-		}
-
-		if (this._oConditionsType && this._oConditionsType._bCreatedByField) {
-			this._oConditionsType.destroy();
-			this._oConditionsType = undefined;
-		}
-
 		var oFieldHelp = _getFieldHelp.call(this);
 		if (oFieldHelp) {
 			oFieldHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
@@ -739,6 +625,11 @@ sap.ui.define([
 				_handleDisconnect.call(this); // remove event listeners
 				oFieldHelp.connect(); // disconnect FieldHelp to remove callbacks
 			}
+		}
+
+		if (this._oContentFactory) {
+			this._oContentFactory.destroy();
+			this._oContentFactory = undefined;
 		}
 
 		// do not trigger async suggestion
@@ -752,6 +643,7 @@ sap.ui.define([
 		if (!this.bDelegateInitialized && !this.bDelegateLoading) {
 			this.initControlDelegate();
 		}
+
 		return this;
 	};
 
@@ -771,7 +663,7 @@ sap.ui.define([
 
 		if (!this.bDelegateInitialized) {
 			// wait until delegate is loaded
-			this.awaitControlDelegate().then(function() {_createInternalContent.call(this);}.bind(this));
+			this.awaitControlDelegate().then(function() { _createInternalContent.call(this); }.bind(this));
 			return;
 		}
 		_createInternalContent.call(this);
@@ -823,7 +715,7 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oSource = oEvent.srcControl;
 
-		if (oFieldHelp && (!this._bIsMeasure || oSource.getShowValueHelp())) {
+		if (oFieldHelp && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 			oFieldHelp.navigate(-1);
@@ -836,7 +728,7 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oSource = oEvent.srcControl;
 
-		if (oFieldHelp && (!this._bIsMeasure || oSource.getShowValueHelp())) {
+		if (oFieldHelp && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 			oFieldHelp.navigate(1);
@@ -973,7 +865,7 @@ sap.ui.define([
 
 		var sEditMode = this.getEditMode();
 
-		if (_getEditable(sEditMode) && (this.hasListeners("submit") || this._bPendingChange)) {
+		if (ContentFactory._getEditable(sEditMode) && (this.hasListeners("submit") || this._bPendingChange)) {
 			// collect all pending promises for ENTER, only if all resolved it's not pending. (Normally there should be only one.)
 			var oPromise = _getAsyncPromise.call(this);
 			var bPending = false;
@@ -994,173 +886,69 @@ sap.ui.define([
 				}
 			}
 
-			this.fireSubmit({promise: oPromise});
+			this.fireSubmit({ promise: oPromise });
 		}
-
-	}
-
-	function _getDataType() {
-
-		if (!this._oDataType) {
-			var sDataType = this.getDataType();
-			if (typeof sDataType === "string") {
-				this._oDataType = this.getTypeUtil().getDataTypeInstance(sDataType, this.getDataTypeFormatOptions(), this.getDataTypeConstraints());
-				this._oDataType._bCreatedByField = true;
-			}
-		}
-		return this._oDataType;
 
 	}
 
 	// to be enhanced by Field
 	FieldBase.prototype._initDataType = function() {
-
-		if (this._oDataType) {
-			this._oDataType.destroy();
-			this._oDataType = undefined;
+		if (this._oContentFactory.getDataType()) {
+			this._oContentFactory.getDataType().destroy();
+			this._oContentFactory.setDataType(undefined);
 		}
 
-		if (this._oDateOriginalType) {
-			if (this._oDateOriginalType._bCreatedByField) {
+		if (this._oContentFactory.getDateOriginalType()) {
+			if (this._oContentFactory.getDateOriginalType()._bCreatedByField) {
 				// do not destroy if used in Field binding
-				this._oDateOriginalType.destroy();
+				this._oContentFactory.getDateOriginalType().destroy();
 			}
-			this._oDateOriginalType = undefined;
+			this._oContentFactory.setDateOriginalType(undefined);
 		}
 
-		if (this._oUnitOriginalType) {
-			if (this._oUnitOriginalType._bCreatedByField) {
+		if (this._oContentFactory.getUnitOriginalType()) {
+			if (this._oContentFactory.getUnitOriginalType()._bCreatedByField) {
 				// do not destroy if used in Field binding
-				this._oUnitOriginalType.destroy();
+				this._oContentFactory.getUnitOriginalType().destroy();
 			}
-			this._oUnitOriginalType = undefined;
+			this._oContentFactory.getUnitOriginalType(undefined);
 		}
-
-		delete this._sDisplayFormat;
-		delete this._sValueFormat;
-		delete this._sCalendarType;
-
 	};
 
 	function _getDataTypeName() {
-
-		if (this._oDataType && typeof this._oDataType === "object") {
-			return this._oDataType.getMetadata().getName();
+		if (this._oContentFactory.getDataType() && typeof this._oContentFactory.getDataType() === "object") {
+			return this._oContentFactory.getDataType().getMetadata().getName();
 		} else if (this.bDelegateInitialized) {
 			return this.getControlDelegate().getDataTypeClass(this.getPayload(), this.getDataType());
 		} else {
 			return this.getDataType();
 		}
-
 	}
 
 	function _getDataTypeConstraints() {
-
-		if (this._oDataType && typeof this._oDataType === "object" && this._oDataType.oConstraints) {
-			return this._oDataType.oConstraints;
+		if (this._oContentFactory.getDataType() && typeof this._oContentFactory.getDataType() === "object" && this._oContentFactory.getDataType().oConstraints) {
+			return this._oContentFactory.getDataType().oConstraints;
 		} else {
 			return this.getDataTypeConstraints();
 		}
-
 	}
 
 	function _getDataTypeFormatOptions() {
-
-		if (this._oDataType && typeof this._oDataType === "object" && this._oDataType.oFormatOptions) {
-			return this._oDataType.oFormatOptions;
+		if (this._oContentFactory.getDataType() && typeof this._oContentFactory.getDataType() === "object" && this._oContentFactory.getDataType().oFormatOptions) {
+			return this._oContentFactory.getDataType().oFormatOptions;
 		} else {
 			return this.getDataTypeFormatOptions();
 		}
-
 	}
 
-	/*
-	 * To avoid data loss for DatePicker (e.g. in short Year number foe 1918) use ISO format as ValueFormat in DatePickers
-	 */
-	function _getDatePattern(sType, oFormatOptions, oConstraints) {
+	FieldBase.prototype.getBaseType = function() {
+		var sDataType = _getDataTypeName.call(this);
+		var oDataTypeConstraints = _getDataTypeConstraints.call(this);
+		var oDataTypeFormatOptions = _getDataTypeFormatOptions.call(this);
+		var sBaseType = this.getTypeUtil().getBaseType(sDataType, oDataTypeFormatOptions, oDataTypeConstraints);
 
-		var sBaseType = this.getTypeUtil().getBaseType(sType, oFormatOptions, oConstraints);
-
-		switch (sBaseType) {
-		case BaseType.Date:
-			this._sValueFormat = "yyyy-MM-dd";
-			break;
-
-		case BaseType.DateTime:
-			this._sValueFormat = "yyyy-MM-dd'T'HH:mm:ss";
-			break;
-
-		case BaseType.Time:
-			this._sValueFormat = "HH:mm:ss";
-			break;
-
-		default:
-			return;
-		}
-
-		// TODO: move this logic to delegate???
-		this._sDisplayFormat = "medium";
-		if (oFormatOptions) {
-			if (oFormatOptions.style) {
-				this._sDisplayFormat = oFormatOptions.style;
-			} else if (oFormatOptions.pattern) {
-				this._sDisplayFormat = oFormatOptions.pattern;
-			}
-			if (oFormatOptions.calendarType) {
-				this._sCalendarType = oFormatOptions.calendarType;
-			}
-		}
-
-	}
-
-	function _adjustDataTypeForDate() {
-
-		var oType = _getDataType.call(this);
-		var sName = oType.getMetadata().getName();
-		var oFormatOptions = oType.oFormatOptions;
-		var oConstraints = oType.oConstraints;
-
-		// if type is used from binding (Field) or format options are not set correctly -> create new type
-		_getDatePattern.call(this, sName, oFormatOptions, oConstraints); // to determine pattern
-		if (!oFormatOptions || oFormatOptions.style ||
-				!oFormatOptions.pattern || oFormatOptions.pattern !== this._sValueFormat ||
-				!oFormatOptions.calendarType || oFormatOptions.calendarType !== CalendarType.Gregorian) {
-			this._oDateOriginalType = this._oDataType;
-			this._oDataType = DateUtil.createInternalType(oType, this._sValueFormat);
-			_updateConditionType.call(this);
-		}
-
-	}
-
-	function _adjustDataTypeForUnit() {
-
-		var oType = _getDataType.call(this);
-		var sName = oType.getMetadata().getName();
-		var oFormatOptions = oType.oFormatOptions;
-		var oConstraints = isEmptyObject(oType.oConstraints) ? undefined : oType.oConstraints;
-
-		// if type is used from binding (Field) or format options are not set correctly -> create new type
-		if (!oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure) {
-			oFormatOptions = merge({}, oFormatOptions); // do not manipulate original object
-			oFormatOptions.showMeasure = false;
-			oFormatOptions.strictParsing = true; // do not allow to enter unit in number field
-			if (oType.hasOwnProperty("bParseAsString")) {
-				oFormatOptions.parseAsString = oType.bParseAsString; // as V4 types set it always to true and uses internal value
-			}
-			if (oFormatOptions.customCurrencies) {
-				delete oFormatOptions.customCurrencies; // cannot be set from outside
-			}
-			if (oFormatOptions.customUnits) {
-				delete oFormatOptions.customUnits; // cannot be set from outside
-			}
-			var TypeClass = ObjectPath.get(sName);
-			this._oUnitOriginalType = this._oDataType;
-			this._oDataType = new TypeClass(oFormatOptions, oConstraints);
-			this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._oDataType, this._oTypeInitialization);
-			_updateConditionType.call(this);
-		}
-
-	}
+		return sBaseType;
+	};
 
 	function _handleConditionsChange(aConditions, aConditionsOld) {
 
@@ -1192,46 +980,6 @@ sap.ui.define([
 		}
 
 	};
-
-	function _getEditable(sEditMode) {
-
-		if (sEditMode === EditMode.Editable || sEditMode === EditMode.EditableReadOnly || sEditMode === EditMode.EditableDisplay) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
-	function _getEditableUnit(sEditMode) {
-
-		if (sEditMode === EditMode.Editable) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
-	function _getEnabled(sEditMode) {
-
-		if (sEditMode && sEditMode !== EditMode.Disabled) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
-	function _getDisplayOnly(sEditMode) {
-
-		if (sEditMode && sEditMode !== EditMode.Editable) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
 
 	FieldBase.prototype._handleModelContextChange = function(oEvent) {
 
@@ -1268,7 +1016,7 @@ sap.ui.define([
 			if (this.getAggregation("_content", []).length > 0) {
 				if (!this.bDelegateInitialized) {
 					// wait until delegate is loaded
-					this.awaitControlDelegate().then(function() {_createInternalContent.call(this);}.bind(this));
+					this.awaitControlDelegate().then(function() { _createInternalContent.call(this); }.bind(this));
 				} else {
 					_createInternalContent.call(this);
 				}
@@ -1276,20 +1024,20 @@ sap.ui.define([
 		};
 
 		if (oChanges.name === "dataType") {
-			// check only if different type (in Field type might be already taken from biding)
-			if (this._oDataType) {
-				var fnCheck = function (sType) {
+			// check only if different type (in Field type might be already taken from binding)
+			if (this._oContentFactory.getDataType()) {
+				var fnCheck = function(sType) {
 					var oTypeClass = this.getTypeUtil().getDataTypeClass(oChanges.current);
-					if (!(this._oDataType instanceof oTypeClass)) {
+					if (!(this._oContentFactory.getDataType() instanceof oTypeClass)) {
 						// TODO: also compare FormatOptions and Constraints
 						this._initDataType();
 						this.destroyAggregation("_content");
-						_updateConditionType.call(this);
+						this._oContentFactory.updateConditionType();
 					}
 				}.bind(this);
 				if (!this.bDelegateInitialized) {
 					// wait until delegate is loaded
-					this.awaitControlDelegate().then(function() {fnCheck.call(this, oChanges.current);}.bind(this));
+					this.awaitControlDelegate().then(function() { fnCheck.call(this, oChanges.current); }.bind(this));
 					return;
 				}
 				fnCheck.call(this, oChanges.current);
@@ -1298,16 +1046,16 @@ sap.ui.define([
 
 		if (oChanges.name === "dataTypeFormatOptions" || oChanges.name === "dataTypeConstraints") {
 			// if type is not created right now nothing to do
-			if (this._oDataType) {
+			if (this._oContentFactory.getDataType()) {
 				this._initDataType();
 				this.destroyAggregation("_content");
-				_updateConditionType.call(this);
+				this._oContentFactory.updateConditionType();
 			}
 		}
 
 		if (oChanges.name === "maxConditions") {
 			fnUpdateInternalContent.call(this);
-			_updateConditionType.call(this);
+			this._oContentFactory.updateConditionType();
 		}
 
 		if (oChanges.name === "conditions") {
@@ -1337,12 +1085,12 @@ sap.ui.define([
 
 		if (oChanges.name === "display") {
 			_destroyInternalContent.call(this); // as bound property can change
-			_updateConditionType.call(this);
+			this._oContentFactory.updateConditionType();
 		}
 
 		if (oChanges.name === "fieldHelp" && oChanges.ids) {
 			_fieldHelpChanged.call(this, oChanges.ids, oChanges.mutation);
-			_updateConditionType.call(this);
+			this._oContentFactory.updateConditionType();
 		}
 
 		if (oChanges.name === "fieldInfo" && oChanges.child) {
@@ -1411,7 +1159,7 @@ sap.ui.define([
 
 		var aContent = this._getContent();
 		if (aContent.length > 0) {
-			if (this._bIsMeasure) {
+			if (this._oContentFactory.isMeasure()) {
 				return aContent[1];
 			} else {
 				return aContent[0];
@@ -1432,7 +1180,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.getMaxConditionsForHelp = function() {
 
-		if (this._bIsMeasure) {
+		if (this._oContentFactory.isMeasure()) {
 			return 1; // only one unit allowed in help
 		} else {
 			return this.getMaxConditions();
@@ -1450,16 +1198,16 @@ sap.ui.define([
 
 		if (bShowEmptyIndicator) {
 			return this._oResourceBundle.getText("field.EMPTY_INDICATOR"); // TODO: clarify accessibility support for semantic conected fields
-		} else if (this._bIsMeasure && this._oUnitOriginalType) {
+		} else if (this._oContentFactory.isMeasure() && this._oContentFactory.getUnitOriginalType()) {
 			// in unit case use original data type for formatting (as internal type hides unit)
 			var aValue = aConditions.length > 0 ? aConditions[0].values[0] : [0, null]; // TODO: support multiple conditions or other operator than EQ?
-			return this._oUnitOriginalType.formatValue(aValue, "string");
-		} else if (this._oDateOriginalType) {
+			return this._oContentFactory.getUnitOriginalType().formatValue(aValue, "string");
+		} else if (this._oContentFactory.getDateOriginalType()) {
 			// in date case use original data type for formatting (as internal type formats to ISO format)
 			var vValue = aConditions.length > 0 ? aConditions[0].values[0] : null; // TODO: support multiple conditions or other operator than EQ?
-			return this._oDateOriginalType.formatValue(vValue, "string");
+			return this._oContentFactory.getDateOriginalType().formatValue(vValue, "string");
 		} else {
-			var oConditionsType = _getConditionsType.call(this);
+			var oConditionsType = this._oContentFactory.getConditionsType();
 			return oConditionsType.formatValue(aConditions);
 		}
 
@@ -1495,7 +1243,7 @@ sap.ui.define([
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
-	FieldBase.prototype.getAccessibilityInfo = function () {
+	FieldBase.prototype.getAccessibilityInfo = function() {
 
 		var aContent = this._getContent();
 		if (aContent.length > 0 && aContent[0].getAccessibilityInfo) {
@@ -1539,20 +1287,9 @@ sap.ui.define([
 
 	}
 
-	function _setAriaLabelledBy(oContent) {
-
-		var aAriaLabelledBy = this.getAriaLabelledBy();
-
-		for (var i = 0; i < aAriaLabelledBy.length; i++) {
-			var sId = aAriaLabelledBy[i];
-			oContent.addAriaLabelledBy(sId);
-		}
-
-	}
-
 	function _setAriaAttributes(bOpen, sItemId) {
 
-		var oAttributes = {aria: {}};
+		var oAttributes = { aria: {} };
 		var oFieldHelp = _getFieldHelp.call(this);
 
 		if (oFieldHelp) {
@@ -1625,16 +1362,16 @@ sap.ui.define([
 			_detachContentHandlers.call(this, oContent);
 			_restoreKeyboardHandler.call(this, oContent);
 
-			if (this._oContentConditionTypes) {
-				delete this._oContentConditionTypes[sName];
+			if (this._oContentFactory.getContentConditionTypes()) {
+				delete this._oContentFactory.getContentConditionTypes()[sName];
 			}
 			oContent.setModel(null, "$field"); // remove binding to Field
 			// let the internal control be created on rendering
 		} else if (sMutation === "insert") {
-//			if (!oContent.isA("sap.ui.core.IFormContent")) {
-//				// TODO: allow different content than allowed in Form?
-//				throw new Error(oContent + " is not a valid content! Only use valid content in " + this);
-//			}
+			//	if (!oContent.isA("sap.ui.core.IFormContent")) {
+			//		// TODO: allow different content than allowed in Form?
+			//		throw new Error(oContent + " is not a valid content! Only use valid content in " + this);
+			//	}
 			_modifyKeyboardHandler.call(this, oContent, true);
 			_attachContentHandlers.call(this, oContent);
 			// bind to ManagedObjectModel at rendering to prevent unneded updates
@@ -1644,11 +1381,11 @@ sap.ui.define([
 			}
 
 			// as for edit and display different Types are possible switch them with edit mode
-			if (!this._oContentConditionTypes) {
-				this._oContentConditionTypes = {};
+			if (!this._oContentFactory.getContentConditionTypes()) {
+				this._oContentFactory.setContentConditionTypes({});
 			}
-			if (!this._oContentConditionTypes[sName]) {
-				this._oContentConditionTypes[sName] = {};
+			if (!this._oContentFactory.getContentConditionTypes()[sName]) {
+				this._oContentFactory.getContentConditionTypes()[sName] = {};
 			}
 
 			// find out what is bound to conditions
@@ -1658,18 +1395,18 @@ sap.ui.define([
 				if (oContent.getBindingPath(sProperty) === "/conditions") {
 					oBindingInfo = oContent.getBindingInfo(sProperty);
 					if (oBindingInfo && oBindingInfo.type && oBindingInfo.type instanceof ConditionsType) {
-						this._oContentConditionTypes[sName].oConditionsType = oBindingInfo.type;
+						this._oContentFactory.getContentConditionTypes()[sName].oConditionsType = oBindingInfo.type;
 					}
-					this._sBoundProperty = sProperty;
+					this._oContentFactory.setBoundProperty(sProperty);
 				}
 				if (sProperty === "editable" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: _getEditable });
+					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getEditable });
 				}
 				if (sProperty === "enabled" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: _getEnabled });
+					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getEnabled });
 				}
 				if (sProperty === "displayOnly" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: _getDisplayOnly });
+					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getDisplayOnly });
 				}
 				if (sProperty === "required" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
 					oContent.bindProperty(sProperty, { path: "$field>/required" });
@@ -1698,7 +1435,7 @@ sap.ui.define([
 						for (sProperty in oBindingInfo.template.getMetadata().getAllProperties()) {
 							var oTemplateBindingInfo = oBindingInfo.template.getBindingInfo(sProperty);
 							if (oTemplateBindingInfo && oTemplateBindingInfo.type && oTemplateBindingInfo.type instanceof ConditionType) {
-								this._oContentConditionTypes[sName].oConditionType = oTemplateBindingInfo.type;
+								this._oContentFactory.getContentConditionTypes()[sName].oConditionType = oTemplateBindingInfo.type;
 								break;
 							}
 						}
@@ -1711,7 +1448,7 @@ sap.ui.define([
 			}
 
 			if (oContent.getMetadata().getAllAssociations().ariaLabelledBy) {
-				_setAriaLabelledBy.call(this, oContent);
+				this._oContentFactory.setAriaLabelledBy(oContent);
 			}
 		}
 
@@ -1731,7 +1468,6 @@ sap.ui.define([
 			// content has press event -> attach handler
 			oContent.attachEvent("press", _handleContentPress, this);
 		}
-
 	}
 
 	function _detachContentHandlers(oContent) {
@@ -1748,68 +1484,20 @@ sap.ui.define([
 			// oldContent has press event -> detach handler
 			oContent.detachEvent("press", _handleContentPress, this);
 		}
-
-	}
-
-	function _setUsedConditionType() {
-
-		// remove external types
-		if (this._oConditionType && !this._oConditionType._bCreatedByField) {
-			this._oConditionType = undefined;
-		}
-		if (this._oConditionsType && !this._oConditionsType._bCreatedByField) {
-			this._oConditionsType = undefined;
-		}
-
-		// set types from current content (if external)
-		var sEditMode = this.getEditMode();
-		var oConditionType;
-		var oConditionsType;
-
-		if (this.getContent()) {
-			if (this._oContentConditionTypes.content) {
-				oConditionType = this._oContentConditionTypes.content.oConditionType;
-				oConditionsType = this._oContentConditionTypes.content.oConditionsType;
-			}
-		} else if (sEditMode === EditMode.Display && this.getContentDisplay()) {
-			if (this._oContentConditionTypes.contentDisplay) {
-				oConditionType = this._oContentConditionTypes.contentDisplay.oConditionType;
-				oConditionsType = this._oContentConditionTypes.contentDisplay.oConditionsType;
-			}
-		} else if (sEditMode !== EditMode.Display && this.getContentEdit()) {
-			if (this._oContentConditionTypes.contentEdit) {
-				oConditionType = this._oContentConditionTypes.contentEdit.oConditionType;
-				oConditionsType = this._oContentConditionTypes.contentEdit.oConditionsType;
-			}
-		}
-
-		if (oConditionType) {
-			if (this._oConditionType && this._oConditionType._bCreatedByField) {
-				this._oConditionType.destroy();
-			}
-			this._oConditionType = oConditionType;
-		}
-		if (oConditionsType) {
-			if (this._oConditionsType && this._oConditionsType._bCreatedByField) {
-				this._oConditionsType.destroy();
-			}
-			this._oConditionsType = oConditionsType;
-		}
-
-		_updateConditionType.call(this);
-
 	}
 
 	function _createInternalContent() {
+		var sEditMode = this.getEditMode();
+		var oContent = this.getContent();
 
-		_setUsedConditionType.call(this); // if external content use it's conditionType
+		this._oContentFactory._setUsedConditionType(oContent, sEditMode); // if external content use it's conditionType
 		_checkFieldHelpExist.call(this, this.getFieldHelp()); // as FieldHelp might be greated after ID is assigned to Field
 		_setAriaAttributes.call(this, false);
 
-		var sEditMode = this.getEditMode();
-		if (this.getContent() || this._bIsBeingDestroyed ||
-				(sEditMode === EditMode.Display && this.getContentDisplay()) ||
-				(sEditMode !== EditMode.Display && this.getContentEdit())) {
+
+		if (oContent || this._bIsBeingDestroyed ||
+			(sEditMode === EditMode.Display && this.getContentDisplay()) ||
+			(sEditMode !== EditMode.Display && this.getContentEdit())) {
 			_destroyInternalContent.call(this);
 			var aContent = this._getContent(); // external set content
 			if (aContent.length === 1) {
@@ -1818,71 +1506,28 @@ sap.ui.define([
 			return;
 		}
 
-		var sDataType = _getDataTypeName.call(this);
-		var oDataTypeConstraints = _getDataTypeConstraints.call(this);
-		var oDataTypeFormatOptions = _getDataTypeFormatOptions.call(this);
-		var sBaseType = this.getTypeUtil().getBaseType(sDataType, oDataTypeFormatOptions, oDataTypeConstraints);
+		// Moved to ContentFactory logic
 		var iMaxConditions = this.getMaxConditions();
 		var aOperators = this._getOperators();
-		var oControlType;
 		var sControlName;
-		var fnCreate;
 		var aContentOld = this.getAggregation("_content", []);
 		var oContentOld;
 		var sControlNameOld;
+
+		var bMultipleLines = this.getMultipleLines();
+		var bIsTriggerable = this._bTriggerable;
+		var oContentType = this._oContentFactory.getContentType(this.getBaseType(), this.getMaxConditions(), bIsTriggerable);
 
 		if (aContentOld.length > 0) {
 			oContentOld = aContentOld[0];
 			sControlNameOld = oContentOld.getMetadata().getName().replace(/\./g, "/");
 		}
 
-		oControlType = mControlTypes[sBaseType];
-		if (!oControlType) {
-			// use default
-			if (this.getFieldInfo() && this._bTriggerable) {
-				oControlType = mControlTypes.Link;
-			} else {
-				var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
-				if (regexp.test(this.getFieldPath()) && this.getMaxConditions() === 1) {
-					oControlType = mControlTypes.Search;
-				} else {
-					oControlType = mControlTypes.Default;
-				}
-			}
-		}
-
-		if (sEditMode === EditMode.Display) {
-			sControlName = oControlType.display;
-			fnCreate = oControlType.createDisplay;
-		} else if (iMaxConditions !== 1) {
-			sControlName = oControlType.editMulti;
-			fnCreate = oControlType.createEditMulti;
-		} else if (this.getMultipleLines()) {
-			sControlName = oControlType.editMultiLine;
-			fnCreate = oControlType.createEditMultiLine;
-		} else if (aOperators.length === 1 && oControlType.editOperator && oControlType.editOperator[aOperators[0]]) {
-			sControlName = oControlType.editOperator[aOperators[0]].name;
-			fnCreate = oControlType.editOperator[aOperators[0]].create;
-		} else {
-			sControlName = oControlType.edit;
-			fnCreate = oControlType.createEdit;
-		}
-
-		if (!sControlName) {
-			throw new Error("No control defined for type " + sDataType + " in " + this);
-		}
-
-		var aControlNames;
-		if (Array.isArray(sControlName)) {
-			// multiple controls needed
-			aControlNames = sControlName;
-			sControlName = aControlNames[0];
-		} else {
-			aControlNames = [sControlName];
-		}
-
+		var sContentMode = this._oContentFactory.getContentMode(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators);
+		var aControlNames = oContentType.getControlNames(sContentMode, aOperators[0]);
+		sControlName = aControlNames[0];
 		if (sControlName !== sControlNameOld) {
-			this._bHideOperator = _isOnlyOneSingleValue.call(this, aOperators); // in single value eq Field hide operator
+			this._oContentFactory.setHideOperator(_isOnlyOneSingleValue.call(this, aOperators)); // in single value eq Field hide operator
 
 			if (oContentOld) {
 				_destroyInternalContent.call(this);
@@ -1892,63 +1537,36 @@ sap.ui.define([
 					this._initDataType();
 				}
 
-				_updateConditionType.call(this);
+				this._oContentFactory.updateConditionType();
 			}
 
-			var MyControl;
-			var i = 0;
-			for (i = 0; i < aControlNames.length; i++) {
-				var sName = aControlNames[i];
-				if (!mControls[sName]) {
-					mControls[sName] = {};
-				}
-				if (!mControls[sName].control) {
-					mControls[sName].control = sap.ui.require(sName);
-					if (!mControls[sName].control) {
-						MyControl = undefined; // at least one control not loaded
-					}
-				}
-				if (i === 0) {
-					MyControl = mControls[sName].control;
-				}
-			}
-			if (!MyControl) {
-				if (mControls[sControlName].promise) {
-					mControls[sControlName].promise.then(_createInternalContent.bind(this));
-					return;
-				} else {
-					mControls[sControlName].promise = new Promise(function(fResolve) {
-						mControls[sControlName].resolve = fResolve;
-						sap.ui.require(aControlNames, _controlLoaded.bind(this));
-					}.bind(this)).then(_createInternalContent.bind(this));
-					return;
-				}
-			}
-
-			if (_useDefaultFieldHelp.call(this, oControlType, aOperators, sEditMode, iMaxConditions)) {
+			if (_useDefaultFieldHelp.call(this, oContentType, aOperators, sEditMode, iMaxConditions)) {
 				// use default field help
-				_createDefaultFieldHelp.call(this, oControlType.useDefaultFieldHelp.name);
+				_createDefaultFieldHelp.call(this, oContentType.getUseDefaultFieldHelp().name);
 			} else if (this._sDefaultFieldHelp) {
 				delete this._sDefaultFieldHelp; // do not destroy as might used on other Fields too
 			}
 
 			var sId = _getIdForInternalControl.call(this);
-			var aControls = fnCreate.call(this, MyControl, sId);
-			for (i = 0; i < aControls.length; i++) {
-				var oControl = aControls[i];
-				oControl.attachEvent("parseError", _handleParseError, this);
-				oControl.attachEvent("validationError", _handleValidationError, this);
-				_modifyKeyboardHandler.call(this, oControl, oControlType.defaultEnterHandler);
-				_setModelOnContent.call(this, oControl);
-				if (this._bConnected && ((i === 0 && !this._bIsMeasure) || (i === 1 && this._bIsMeasure))) {
-					_setFocusHandlingForFieldHelp.call(this, oControl);
+			this._oContentFactory.createContent(oContentType, sContentMode, sId).then(function(aControls) {
+				for (var iIndex = 0; iIndex < aControls.length; iIndex++) {
+					var oControl = aControls[iIndex];
+					oControl.attachEvent("parseError", _handleParseError, this);
+					oControl.attachEvent("validationError", _handleValidationError, this);
+					_modifyKeyboardHandler.call(this, oControl, oContentType.getUseDefaultEnterHandler());
+					_setModelOnContent.call(this, oControl);
+					if (this._bConnected && ((iIndex === 0 && !this._oContentFactory.isMeasure()) || (iIndex === 1 && this._oContentFactory.isMeasure()))) {
+						_setFocusHandlingForFieldHelp.call(this, oControl);
+					}
+					this.addAggregation("_content", oControl);
 				}
-				this.addAggregation("_content", oControl);
-			}
-			_refreshLabel.call(this);
-			if (aControls.length > 1) {
-				this.attachValidateFieldGroup(_validateFieldGroup, this);
-			}
+
+				_refreshLabel.call(this);
+
+				if (aControls.length > 1) {
+					this.attachValidateFieldGroup(_validateFieldGroup, this);
+				}
+			}.bind(this));
 		}
 	}
 
@@ -1968,12 +1586,12 @@ sap.ui.define([
 		// so new creation of control is using original data
 		this.destroyAggregation("_content");
 
-		if (this._oDateOriginalType) {
-			this._oDataType = this._oDateOriginalType;
-			this._oDateOriginalType = undefined;
-		} else if (this._oUnitOriginalType) {
-			this._oDataType = this._oUnitOriginalType;
-			this._oUnitOriginalType = undefined;
+		if (this._oContentFactory.getDateOriginalType()) {
+			this._oContentFactory.setDataType(this._oContentFactory.getDateOriginalType());
+			this._oContentFactory.setDateOriginalType(undefined);
+		} else if (this._oContentFactory.getUnitOriginalType()) {
+			this._oContentFactory.setDataType(this._oContentFactory.getUnitOriginalType());
+			this._oContentFactory.setUnitOriginalType(undefined);
 		}
 
 		if (this._bParseError) {
@@ -1982,394 +1600,14 @@ sap.ui.define([
 			_removeUIMessage.call(this);
 		}
 
-		if (this._bIsMeasure) {
-			this._bIsMeasure = false;
-		}
-
-	}
-
-	function _controlLoaded() {
-
-		for (var i = 0; i < arguments.length; i++) {
-			var fnControl = arguments[i];
-			var sControlName = fnControl.getMetadata().getName();
-			sControlName = sControlName.replace(/\./g, "/");
-			mControls[sControlName].control = fnControl;
-			if (mControls[sControlName].resolve) {
-				mControls[sControlName].resolve();
-				delete mControls[sControlName].resolve;
-			}
+		if (this._oContentFactory.isMeasure()) {
+			this._oContentFactory.setIsMeasure(false);
 		}
 
 	}
 
 	function _setModelOnContent(oContent) {
 		oContent.setModel(this._oManagedObjectModel, "$field");
-	}
-
-	function _createInputControl(Input, sId) {
-
-		var oConditionsType = _getConditionsType.call(this);
-		var oInput = new Input(sId, {
-			value: {path: "$field>/conditions", type: oConditionsType},
-			placeholder: "{$field>/placeholder}",
-			textAlign: "{$field>/textAlign}",
-			textDirection: "{$field>/textDirection}",
-			required: "{$field>/required}",
-			editable: { path: "$field>/editMode", formatter: _getEditable },
-			enabled: { path: "$field>/editMode", formatter: _getEnabled },
-			valueState: "{$field>/valueState}",
-			valueStateText: "{$field>/valueStateText}",
-			valueHelpIconSrc: _getFieldHelpIcon.call(this),
-			showValueHelp: "{$field>/_fieldHelpEnabled}",
-			ariaAttributes: "{$field>/_ariaAttributes}",
-			width: "100%",
-			tooltip: "{$field>/tooltip}",
-			change: _handleContentChange.bind(this),
-			liveChange: _handleContentLiveChange.bind(this),
-			valueHelpRequest: _handleValueHelpRequest.bind(this)
-		});
-
-		oInput._setPreferUserInteraction(true);
-		_setAriaLabelledBy.call(this, oInput);
-		this._sBoundProperty = "value";
-
-		return [oInput];
-
-	}
-
-	function _createSearchField(SearchField, sId) {
-
-		this._bHideOperator = true;
-		var oConditionsType = _getConditionsType.call(this);
-		_updateConditionType.call(this); // to update HideOperator
-
-		var oControl = new SearchField(sId, {
-			value: {path: "$field>/conditions", type: oConditionsType, mode: BindingMode.OneWay}, // oneWay as SearchField updates "value" while typing
-			placeholder: "{$field>/placeholder}",
-			width: "100%",
-			tooltip: "{$field>/tooltip}",
-			search:  _handleEnter.bind(this), // submit event should be fired on Enter and Search-button
-			change: _handleContentChange.bind(this),
-			liveChange: _handleContentLiveChange.bind(this)
-		});
-
-		_setAriaLabelledBy.call(this, oControl);
-		this._sBoundProperty = "value";
-
-		return [oControl];
-
-	}
-
-	function _createMultiInputControl(MultiInput, sId) {
-
-		var Token = sap.ui.require("sap/m/Token"); // is loaded by MultiInput
-		var oConditionType = _getConditionType.call(this);
-		var oToken = new Token(sId + "-token", {
-			text: {
-				path: '$field>',
-				type: oConditionType }
-		});
-
-		var oMultiInput = new MultiInput(sId, {
-			placeholder: "{$field>/placeholder}",
-			textAlign: "{$field>/textAlign}",
-			textDirection: "{$field>/textDirection}",
-			required: "{$field>/required}",
-			editable: { path: "$field>/editMode", formatter: _getEditable },
-			enabled: { path: "$field>/editMode", formatter: _getEnabled },
-			valueState: "{$field>/valueState}",
-			valueStateText: "{$field>/valueStateText}",
-			showValueHelp: "{$field>/_fieldHelpEnabled}",
-			valueHelpIconSrc: _getFieldHelpIcon.call(this),
-			ariaAttributes: "{$field>/_ariaAttributes}",
-			width: "100%",
-			tooltip: "{$field>/tooltip}",
-			tokens: {path: "$field>/conditions", template: oToken},
-			dependents: [oToken], // to destroy it if MultiInput is destroyed
-			change: _handleContentChange.bind(this),
-			liveChange: _handleContentLiveChange.bind(this),
-			tokenUpdate: _handleTokenUpdate.bind(this),
-			valueHelpRequest: _handleValueHelpRequest.bind(this)
-		});
-
-		oMultiInput._setPreferUserInteraction(true);
-		_setAriaLabelledBy.call(this, oMultiInput);
-
-		return [oMultiInput];
-
-	}
-
-	function _createTextAreaControl(TextArea, sId) {
-
-		var oConditionsType = _getConditionsType.call(this);
-		var oTextArea = new TextArea(sId, {
-			value: {path: "$field>/conditions", type: oConditionsType},
-			placeholder: "{$field>/placeholder}",
-			textAlign: "{$field>/textAlign}",
-			textDirection: "{$field>/textDirection}",
-			required: "{$field>/required}",
-			editable: { path: "$field>/editMode", formatter: _getEditable },
-			enabled: { path: "$field>/editMode", formatter: _getEnabled },
-			valueState: "{$field>/valueState}",
-			valueStateText: "{$field>/valueStateText}",
-			width: "100%",
-			rows: 4,
-			tooltip: "{$field>/tooltip}",
-			change: _handleContentChange.bind(this),
-			liveChange: _handleContentLiveChange.bind(this)
-		});
-
-		oTextArea._setPreferUserInteraction(true);
-		_setAriaLabelledBy.call(this, oTextArea);
-		this._sBoundProperty = "value";
-		return [oTextArea];
-
-	}
-
-	function _createTextControl(Text, sId) {
-
-		var oConditionsType = _getConditionsType.call(this);
-		var oText = new Text(sId, {
-			text: {path: "$field>/conditions", type: oConditionsType},
-			textAlign: "{$field>/textAlign}",
-			textDirection: "{$field>/textDirection}",
-			wrapping: "{$field>/multipleLines}",
-			width: "100%",
-			tooltip: "{$field>/tooltip}"
-		});
-
-		this._sBoundProperty = "text";
-		return [oText];
-	}
-
-	function _createDatePickerControl(DatePicker, sId) {
-
-		this._bHideOperator = true;
-		var oConditionsType = _getConditionsType.call(this);
-
-		_adjustDataTypeForDate.call(this);
-
-		var oDatePicker = new DatePicker(sId, {
-			value: {path: "$field>/conditions", type: oConditionsType},
-			displayFormat: this._sDisplayFormat,
-			valueFormat: this._sValueFormat,
-			placeholder: "{$field>/placeholder}",
-			textAlign: "{$field>/textAlign}",
-			textDirection: "{$field>/textDirection}",
-			required: "{$field>/required}",
-			editable: { path: "$field>/editMode", formatter: _getEditable },
-			enabled: { path: "$field>/editMode", formatter: _getEnabled },
-			valueState: "{$field>/valueState}", // TODO: own ValueState handling?
-			valueStateText: "{$field>/valueStateText}",
-			width: "100%",
-			tooltip: "{$field>/tooltip}",
-			change: _handleContentChange.bind(this)
-		});
-
-		if (oDatePicker.setDisplayFormatType) {
-			// TimePicker has no displayFormatType
-			oDatePicker.setDisplayFormatType(this._sCalendarType);
-		}
-
-		oDatePicker._setPreferUserInteraction(true);
-		_setAriaLabelledBy.call(this, oDatePicker);
-		this._sBoundProperty = "value";
-		return [oDatePicker];
-
-	}
-
-	function _createDateRangePickerControl(DateRangeSelection, sId) {
-
-		var oConditionsType = _getConditionsType.call(this);
-
-		_adjustDataTypeForDate.call(this);
-
-		var oDateRangeSelection = new DateRangeSelection(sId, {
-			value: {path: "$field>/conditions", type: oConditionsType},
-			displayFormat: this._sDisplayFormat,
-			valueFormat: this._sValueFormat,
-			delimiter: "...",
-			displayFormatType: this._sCalendarType,
-			placeholder: "{$field>/placeholder}",
-			textAlign: "{$field>/textAlign}",
-			textDirection: "{$field>/textDirection}",
-			required: "{$field>/required}",
-			editable: { path: "$field>/editMode", formatter: _getEditable },
-			enabled: { path: "$field>/editMode", formatter: _getEnabled },
-			valueState: "{$field>/valueState}", // TODO: own ValueState handling?
-			valueStateText: "{$field>/valueStateText}",
-			width: "100%",
-			tooltip: "{$field>/tooltip}",
-			change: _handleContentChange.bind(this)
-		});
-
-		oDateRangeSelection._setPreferUserInteraction(true);
-		_setAriaLabelledBy.call(this, oDateRangeSelection);
-		this._sBoundProperty = "value";
-		return [oDateRangeSelection];
-
-	}
-
-	function _createLinkControl(Link, sId) {
-
-		var oFieldInfo = this.getFieldInfo();
-		var oConditionsType = _getConditionsType.call(this);
-		// do no set width to open the FieldInfo ast the end of the Link
-		var oLink = new Link(sId, {
-			text: {path: "$field>/conditions", type: oConditionsType},
-			textAlign: "{$field>/textAlign}",
-			textDirection: "{$field>/textDirection}",
-			tooltip: "{$field>/tooltip}",
-			press: _handleContentPress.bind(this),
-			wrapping: true
-		});
-		if (oFieldInfo) {
-			oFieldInfo.getDirectLinkHrefAndTarget().then(_updateLink.bind(this));
-		}
-
-		_setAriaLabelledBy.call(this, oLink);
-
-		this._sBoundProperty = "text";
-		return [oLink];
-	}
-
-	function _createBoolInputControl(Input, sId) {
-
-		return _createInputControl.call(this, Input, sId);
-
-	}
-
-	function _createUnitInputControls(Input, sId) {
-
-		_adjustDataTypeForUnit.call(this);
-
-		this._bIsMeasure = true; // FieldHelp only on unit field
-		var oConditionsType = _getConditionsType.call(this);
-		var aControls = [];
-		var oInput1 = new Input(sId, {
-			value: {path: "$field>/conditions", type: oConditionsType},
-			placeholder: "{$field>/placeholder}",
-			textAlign: "{$field>/textAlign}",
-			textDirection: "{$field>/textDirection}",
-			valueHelpIconSrc: "sap-icon://slim-arrow-down",
-			required: "{$field>/required}",
-			editable: { path: "$field>/editMode", formatter: _getEditable },
-			enabled: { path: "$field>/editMode", formatter: _getEnabled },
-			valueState: "{$field>/valueState}",
-			valueStateText: "{$field>/valueStateText}",
-			showValueHelp: false,
-			width: "70%",
-			tooltip: "{$field>/tooltip}",
-			fieldGroupIds: [this.getId()], // use FieldGroup to fire change only if focus leaved complete Field
-			change: _handleContentChange.bind(this),
-			liveChange: _handleContentLiveChange.bind(this)
-		});
-		oInput1._setPreferUserInteraction(true);
-		_setAriaLabelledBy.call(this, oInput1);
-		aControls.push(oInput1);
-		aControls = _addUnitControl.call(this, aControls, sId, Input);
-
-		this._sBoundProperty = "value";
-
-		return aControls;
-
-	}
-
-	function _createUnitMultiInputControls(MultiInput, sId) {
-
-		_adjustDataTypeForUnit.call(this);
-		this._bIsMeasure = true; // FieldHelp only on unit field
-
-		var Token = sap.ui.require("sap/m/Token"); // is loaded by MultiInput
-		var Input = sap.ui.require("sap/ui/mdc/field/FieldInput");
-		var oConditionType = _getConditionType.call(this);
-		var aControls = [];
-		var oToken = new Token(sId + "-token", {
-			text: {
-				path: '$field>',
-				type: oConditionType }
-		});
-
-		var oFilter = new Filter({
-			path: "values",
-			test: function(aValues) {
-				// do not show tokens for units without measure
-				if (!Array.isArray(aValues[0]) || aValues[0][0]) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-		});
-
-		var oMultiInput = new MultiInput(sId, {
-			placeholder: "{$field>/placeholder}",
-			textAlign: "{$field>/textAlign}",
-			textDirection: "{$field>/textDirection}",
-			required: "{$field>/required}",
-			editable: { path: "$field>/editMode", formatter: _getEditable },
-			enabled: { path: "$field>/editMode", formatter: _getEnabled },
-			valueState: "{$field>/valueState}",
-			valueStateText: "{$field>/valueStateText}",
-			showValueHelp: false,
-			width: "70%",
-			tooltip: "{$field>/tooltip}",
-			fieldGroupIds: [this.getId()], // use FieldGroup to fire change only if focus leaved complete Field
-			tokens: {path: "$field>/conditions", template: oToken, filters: [oFilter]},
-			dependents: [oToken], // to destroy it if MultiInput is destroyed
-			change: _handleContentChange.bind(this),
-			liveChange: _handleContentLiveChange.bind(this),
-			tokenUpdate: _handleTokenUpdate.bind(this)
-		});
-		oMultiInput._setPreferUserInteraction(true);
-		_setAriaLabelledBy.call(this, oMultiInput);
-		aControls.push(oMultiInput);
-		aControls = _addUnitControl.call(this, aControls, sId, Input);
-
-		this._sBoundProperty = "value";
-
-		return aControls;
-
-	}
-
-	function _addUnitControl(aControls, sId, Input) {
-
-		var oUnitConditionsType = _getUnitConditionsType.call(this);
-
-		if (this.getEditMode() === EditMode.EditableDisplay) {
-			aControls[0].bindProperty("description", {path: "$field>/conditions", type: oUnitConditionsType});
-			aControls[0].setWidth("100%");
-			aControls[0].setFieldWidth("70%");
-		} else {
-			var oInput = new Input(sId + "-unit", {
-				value: {path: "$field>/conditions", type: oUnitConditionsType},
-				placeholder: "{$field>/placeholder}",
-				textAlign: "{$field>/textAlign}",
-				textDirection: "{$field>/textDirection}",
-				required: "{$field>/required}",
-				editable: { path: "$field>/editMode", formatter: _getEditableUnit },
-				enabled: { path: "$field>/editMode", formatter: _getEnabled },
-				valueState: "{$field>/valueState}",
-				valueHelpIconSrc: _getFieldHelpIcon.call(this),
-				valueStateText: "{$field>/valueStateText}",
-				showValueHelp: "{$field>/_fieldHelpEnabled}",
-				ariaAttributes: "{$field>/_ariaAttributes}",
-				width: "30%",
-				tooltip: "{$field>/tooltip}",
-				fieldGroupIds: [this.getId()], // use FieldGroup to fire change only if focus leaved complete Field
-				change: _handleContentChange.bind(this),
-				liveChange: _handleContentLiveChange.bind(this),
-				valueHelpRequest: _handleValueHelpRequest.bind(this)
-			});
-
-			oInput._setPreferUserInteraction(true);
-			_setAriaLabelledBy.call(this, oInput);
-			aControls.push(oInput);
-		}
-
-		return aControls;
-
 	}
 
 	function _handleKeybordEvent(oEvent) {
@@ -2383,25 +1621,25 @@ sap.ui.define([
 		} else if (oFieldHelp.isOpen()) {
 			// FieldHelp open, navigate always in FieldHelp
 			bPrevent = true;
-		}else {
+		} else {
 			// FieldHelp closed, prevent only arrow up and down as used to navigate
 			switch (oEvent.type) {
-			case "sapprevious":
-			case "sapup":
-				if (oEvent.keyCode === KeyCodes.ARROW_UP) {
-					bPrevent = true;
-				}
+				case "sapprevious":
+				case "sapup":
+					if (oEvent.keyCode === KeyCodes.ARROW_UP) {
+						bPrevent = true;
+					}
 
-				break;
-			case "sapnext":
-			case "sapdown":
-				if (oEvent.keyCode === KeyCodes.ARROW_DOWN) {
-					bPrevent = true;
-				}
+					break;
+				case "sapnext":
+				case "sapdown":
+					if (oEvent.keyCode === KeyCodes.ARROW_DOWN) {
+						bPrevent = true;
+					}
 
-				break;
-			default:
-				break;
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -2411,16 +1649,16 @@ sap.ui.define([
 
 			// call up and down handler directly
 			switch (oEvent.type) {
-			case "sapup":
-				this.onsapup(oEvent);
+				case "sapup":
+					this.onsapup(oEvent);
 
-				break;
-			case "sapdown":
-				this.onsapdown(oEvent);
+					break;
+				case "sapdown":
+					this.onsapdown(oEvent);
 
-				break;
-			default:
-				break;
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -2471,10 +1709,10 @@ sap.ui.define([
 			}
 			if (FieldHelp) {
 				var oDelegate = this.bDelegateInitialized && this.getControlDelegate()[mDefaultHelps[sType].getDelegate]();
-				var oProperties = merge({delegate: oDelegate}, mDefaultHelps[sType].properties);
+				var oProperties = merge({ delegate: oDelegate }, mDefaultHelps[sType].properties);
 				oFieldHelp = new FieldHelp(mDefaultHelps[sType].id, oProperties);
 				mDefaultHelps[sType].control = oFieldHelp;
-//				this.addDependent(oFieldHelp); // TODO: where to add to control tree
+				//				this.addDependent(oFieldHelp); // TODO: where to add to control tree
 				oFieldHelp.connect(this); // to forward dataType
 				if (mDefaultHelps[sType].resolve) {
 					mDefaultHelps[sType].resolve();
@@ -2495,24 +1733,24 @@ sap.ui.define([
 		_fieldHelpChanged.call(this, "BoolDefaultHelp", "insert");
 		var oControl = this.getAggregation("_content", [])[0];
 		if (oControl) {
-			oControl.setValueHelpIconSrc(_getFieldHelpIcon.call(this));
+			oControl.setValueHelpIconSrc(this._getFieldHelpIcon());
 		}
 
 	}
 
-	function _useDefaultFieldHelp(oControlType, aOperators, sEditMode, iMaxConditions) {
+	function _useDefaultFieldHelp(oContentType, aOperators, sEditMode, iMaxConditions) {
 
-		if (oControlType.useDefaultFieldHelp && !this.getFieldHelp() && sEditMode !== EditMode.Display) {
+		if (oContentType.getUseDefaultFieldHelp() && !this.getFieldHelp() && sEditMode !== EditMode.Display) {
 			if (aOperators.length === 1) {
 				var bIsSingleValue = _isOnlyOneSingleValue.call(this, aOperators); // if operator not exists unse no field help
 				// not if operator is handled by special control (like DatePicker)
 				if (iMaxConditions === 1) {
-					if (!(oControlType.editOperator && oControlType.editOperator[aOperators[0]]) &&
-							(oControlType.useDefaultFieldHelp.oneOperatorSingle || !bIsSingleValue)) {
+					if (!(oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) &&
+						(oContentType.getUseDefaultFieldHelp().oneOperatorSingle || !bIsSingleValue)) {
 						// "bool" case (always default field help) or operator needs more than one value (e.g. between)
 						return true;
 					}
-				} else if (oControlType.useDefaultFieldHelp.oneOperatorMulti || !bIsSingleValue) {
+				} else if (oContentType.getUseDefaultFieldHelp().oneOperatorMulti || !bIsSingleValue) {
 					// DatePicker case - in multi-value use default help to get DatePicker controls
 					return true;
 				}
@@ -2583,7 +1821,7 @@ sap.ui.define([
 
 	function _handleContentChange(oEvent) {
 
-		var oChangeEvent = {parameters: merge({}, oEvent.getParameters()), source: oEvent.getSource()};
+		var oChangeEvent = { parameters: merge({}, oEvent.getParameters()), source: oEvent.getSource() };
 		var iLength = this._aAsyncChanges.length;
 
 		if (iLength > 0 && !this._aAsyncChanges[iLength - 1].changeFired) {
@@ -2595,7 +1833,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oChange = {changeEvent: oChangeEvent};
+		var oChange = { changeEvent: oChangeEvent };
 
 		_performContentChange.call(this, oChange);
 
@@ -2622,7 +1860,8 @@ sap.ui.define([
 
 		// use parsed value of the condition, if possible
 		var bUpdateConditions = false;
-		var oBinding = this._sBoundProperty && oSource.getBinding(this._sBoundProperty);
+		var sBoundProperty = this._oContentFactory.getBoundProperty();
+		var oBinding = sBoundProperty && oSource.getBinding(sBoundProperty);
 		if (oBinding && oBinding.getBindingMode() !== BindingMode.OneWay && oBinding.getPath() === "/conditions" && bValid) {
 			oCondition = aConditions[0];
 			vValue = aConditions[0] && aConditions[0].values[0];
@@ -2661,7 +1900,7 @@ sap.ui.define([
 					// this happens after an invalid input was just cleared
 					return null;
 				} else {
-					oConditionType = _getConditionType.call(this);
+					oConditionType = this._oContentFactory.getConditionType();
 					var vResult = oConditionType.parseValue(vValue);
 					var iLength = this._aAsyncChanges.length;
 
@@ -2692,7 +1931,7 @@ sap.ui.define([
 						oMyChange.reject(oException);
 					}
 				} else if (bAsync) {
-					_triggerChange.call(this, aConditions, bValid, vWrongValue );
+					_triggerChange.call(this, aConditions, bValid, vWrongValue);
 				}
 			}.bind(this)).unwrap();
 
@@ -2722,14 +1961,14 @@ sap.ui.define([
 
 		if (this._oNavigateCondition) {
 			this._oNavigateCondition = undefined; // navigation now finished
-			_updateConditionType.call(this);
+			this._oContentFactory.updateConditionType();
 		}
 
 		if (oChange.resolve) {
 			// async promise needs to be resolved
 			_resolveAsyncChange.call(this, oChange);
 		} else if (!bAsync && bChanged) {
-			_triggerChange.call(this, aConditions, bValid, vWrongValue );
+			_triggerChange.call(this, aConditions, bValid, vWrongValue);
 		}
 
 	}
@@ -2747,12 +1986,12 @@ sap.ui.define([
 
 		if (oConditionType) {
 			// in navigation no validation needed
-				oConditionType.validateValue(oCondition);
+			oConditionType.validateValue(oCondition);
 		}
 
 		if (bValid) {
 			if (oCondition) {
-				if (this._bIsMeasure && aConditions.length === 1 && aConditions[0].values[0][0] === undefined) {
+				if (this._oContentFactory.isMeasure() && aConditions.length === 1 && aConditions[0].values[0][0] === undefined) {
 					// remove empty condition
 					aConditions = [];
 				}
@@ -2804,7 +2043,7 @@ sap.ui.define([
 		var oSource = oEvent.getSource();
 
 		this._oNavigateCondition = undefined; // navigation item is not longer valid
-		_updateConditionType.call(this);
+		this._oContentFactory.updateConditionType();
 
 		if ("value" in oEvent.getParameters()) {
 			vValue = oEvent.getParameter("value");
@@ -2828,7 +2067,7 @@ sap.ui.define([
 
 		var oFieldHelp = _getFieldHelp.call(this);
 
-		if (oFieldHelp && (!this._bIsMeasure || oSource.getShowValueHelp())) {
+		if (oFieldHelp && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
 			if (bEscPressed) {
 				// close FieldHelp if escape pressed and not repoen it for last typed characters
 				if (oFieldHelp.isOpen(true)) {
@@ -2875,8 +2114,8 @@ sap.ui.define([
 
 							var vOpenByTyping = oFieldHelp.openByTyping();
 							if (this._bConnected && this._getContent()[0] && vOpenByTyping && !(vOpenByTyping instanceof Promise) &&
-									(sap.ui.getCore().getCurrentFocusedControlId() === this._getContent()[0].getId() ||
-											(this._getContent()[1] && sap.ui.getCore().getCurrentFocusedControlId() === this._getContent()[1].getId()))) { // only if still connected and focussed
+								(sap.ui.getCore().getCurrentFocusedControlId() === this._getContent()[0].getId() ||
+									(this._getContent()[1] && sap.ui.getCore().getCurrentFocusedControlId() === this._getContent()[1].getId()))) { // only if still connected and focussed
 								oFieldHelp.setFilterValue(vFilter);
 								if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
 									// While single-suggestion no item is selected
@@ -2906,7 +2145,7 @@ sap.ui.define([
 			}
 		}
 
-		this.fireLiveChange({ value: vValue, escPressed: bEscPressed, previousValue: vPreviousValue});
+		this.fireLiveChange({ value: vValue, escPressed: bEscPressed, previousValue: vPreviousValue });
 
 	}
 
@@ -2924,8 +2163,8 @@ sap.ui.define([
 
 		var oFieldInfo = this.getFieldInfo();
 		if (oFieldInfo) {
-			oFieldInfo.getTriggerHref().then(function (sHref) {
-				if (!sHref){
+			oFieldInfo.getTriggerHref().then(function(sHref) {
+				if (!sHref) {
 					oFieldInfo.open(this._getContent()[0]);
 					_setAriaAttributes.call(this, true);
 				}
@@ -2953,20 +2192,20 @@ sap.ui.define([
 
 			for (i = aConditions.length - 1; i >= 0; i--) {
 				if (aConditions[i].delete) {
-					if (this._bIsMeasure) {
+					if (this._oContentFactory.isMeasure()) {
 						sUnit = aConditions[i].values[0][1];
 					}
 					aConditions.splice(i, 1);
 				}
 			}
 
-			if (this._bIsMeasure && sUnit && aConditions.length === 0) {
+			if (this._oContentFactory.isMeasure() && sUnit && aConditions.length === 0) {
 				// create dummy condition for unit
 				aConditions = [Condition.createItemCondition([undefined, sUnit], undefined)];
 			}
 
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole field
-			_executeChange.call(this, aConditions, true ); // removing Token don't need to wait for processing both fields in unit case
+			_executeChange.call(this, aConditions, true); // removing Token don't need to wait for processing both fields in unit case
 			oEvent.preventDefault(true);
 		}
 
@@ -3027,7 +2266,7 @@ sap.ui.define([
 			oFieldHelp = _getFieldHelp.call(this);
 		}
 
-		if (this._bIsMeasure) {
+		if (this._oContentFactory.isMeasure()) {
 			// for unit or curreny add only the unit/currency to FieldHelp
 			var aHelpConditions = [];
 			for (var i = 0; i < aConditions.length; i++) {
@@ -3078,7 +2317,7 @@ sap.ui.define([
 		var sDOMValue;
 		var i = 0;
 
-		if (this._bIsMeasure) {
+		if (this._oContentFactory.isMeasure()) {
 			if (aNewConditions.length > 1) {
 				throw new Error("Only one item must be selected! " + this);
 			}
@@ -3105,11 +2344,13 @@ sap.ui.define([
 				oCondition.values[0] = [undefined, oCondition.values[0]];
 				oCondition.values[1] = undefined;
 				aConditions.push(oCondition);
+				var oConditionType = this._oContentFactory.getConditionType();
+				var oConditionsType = this._oContentFactory.getConditionsType();
 				// TODO: format once to update current value in type (as empty condtions are not displayed as token)
-				if (this._oConditionType) {
-					sDOMValue = this._oConditionType.formatValue(oCondition);
-				} else if (this._oConditionsType) {
-					sDOMValue = this._oConditionsType.formatValue(aConditions);
+				if (oConditionType) {
+					sDOMValue = oConditionType.formatValue(oCondition);
+				} else if (oConditionsType) {
+					sDOMValue = oConditionsType.formatValue(aConditions);
 				}
 			}
 		} else {
@@ -3144,12 +2385,12 @@ sap.ui.define([
 				// the focus is still in the Field. The update of the inner control is done via ManagedObjectModel binding.
 				// The inner Input is configured to prefer user input in this case.
 				// so we need to set the DOM value here. Otherwise it is not updated or, if empty, selected.
-				if (this._bIsMeasure && this._oUnitConditionsType) {
-					sDOMValue = this._oUnitConditionsType.formatValue(aConditions);
-				} else if (this._oConditionType) {
-					sDOMValue = this._oConditionType.formatValue(aConditions[0]);
-				} else if (this._oConditionsType) {
-					sDOMValue = this._oConditionsType.formatValue(aConditions);
+				if (this._oContentFactory.isMeasure() && this._oContentFactory.getUnitConditionsType()) {
+					sDOMValue = this._oContentFactory.getUnitConditionsType().formatValue(aConditions);
+				} else if (this._oContentFactory.getConditionType()) {
+					sDOMValue = this._oContentFactory.getConditionType().formatValue(aConditions[0]);
+				} else if (this._oContentFactory.getConditionsType()) {
+					sDOMValue = this._oContentFactory.getConditionsType().formatValue(aConditions);
 				}
 
 				if (sDOMValue instanceof Promise) {
@@ -3179,7 +2420,7 @@ sap.ui.define([
 		var aConditionsOld = this.getConditions();
 		if (!deepEqual(aConditions, aConditionsOld)) {
 			this._oNavigateCondition = undefined;
-			_updateConditionType.call(this);
+			this._oContentFactory.updateConditionType();
 
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole field
 
@@ -3211,7 +2452,7 @@ sap.ui.define([
 			this._oNavigateCondition = Condition.createItemCondition(vKey, sValue);
 		}
 
-		if (this._bIsMeasure) {
+		if (this._oContentFactory.isMeasure()) {
 			var aConditions = this.getConditions();
 			// use number of first condition. In Multicase all conditions must be updated in change event
 			if (aConditions.length > 0) {
@@ -3228,7 +2469,7 @@ sap.ui.define([
 		}
 
 		this._bPreventGetDescription = true; // if no description in navigated condition, no description exist. Don't try to read one
-		_updateConditionType.call(this);
+		this._oContentFactory.updateConditionType();
 
 		// take what ever comes from field help as valid - even if it is an empty key
 		// TODO: what if field is required?
@@ -3244,12 +2485,12 @@ sap.ui.define([
 
 		if (oContent && oContent.setDOMValue) {
 			if (!sDOMValue) {
-				if (this._bIsMeasure && this._oUnitConditionsType && this._oNavigateCondition) {
-					sDOMValue = this._oUnitConditionsType.formatValue([this._oNavigateCondition]);
-				} else if (this._oConditionType && this._oNavigateCondition) {
-					sDOMValue = this._oConditionType.formatValue(this._oNavigateCondition);
-				} else if (this._oConditionsType && this._oNavigateCondition) {
-					sDOMValue = this._oConditionsType.formatValue([this._oNavigateCondition]);
+				if (this._oContentFactory.isMeasure() && this._oContentFactory.getUnitConditionsType() && this._oNavigateCondition) {
+					sDOMValue = this._oContentFactory.getUnitConditionsType().formatValue([this._oNavigateCondition]);
+				} else if (this._oContentFactory.getConditionType() && this._oNavigateCondition) {
+					sDOMValue = this._oContentFactory.getConditionType().formatValue(this._oNavigateCondition);
+				} else if (this._oContentFactory.getConditionsType() && this._oNavigateCondition) {
+					sDOMValue = this._oContentFactory.getConditionsType().formatValue([this._oNavigateCondition]);
 				} else {
 					sDOMValue = sValue || vKey;
 				}
@@ -3259,12 +2500,12 @@ sap.ui.define([
 		}
 
 		this._bPreventGetDescription = false; // back to default
-		_updateConditionType.call(this);
+		this._oContentFactory.updateConditionType();
 
 		_setAriaAttributes.call(this, true, sItemId);
 
 		this._bIgnoreInputValue = false; // use value for input
-		this.fireLiveChange({value: sNewValue});
+		this.fireLiveChange({ value: sNewValue });
 
 	}
 
@@ -3286,10 +2527,10 @@ sap.ui.define([
 		var isEditing = this.getEditMode() === EditMode.Editable && this._getContent().length > 0 &&
 			sap.ui.getCore().getCurrentFocusedControlId() === this._getContent()[0].getId();
 
-//		// also in display mode to get right text
-//		_handleConditionsChange.call(this, this.getConditions());
+		//		// also in display mode to get right text
+		//		_handleConditionsChange.call(this, this.getConditions());
 		if (!isEditing && !this._bPendingConditionUpdate && this.getConditions().length > 0 &&
-				(this.getMaxConditions() !== 1 || (this.getDisplay() !== FieldDisplay.Value && !this._bParseError))) {
+			(this.getMaxConditions() !== 1 || (this.getDisplay() !== FieldDisplay.Value && !this._bParseError))) {
 			// update tokens in MultiValue
 			// update text/value only if no parse error, otherwise wrong value would be removed
 			// don't update if contidions are outdated (updated async in Field)
@@ -3353,7 +2594,7 @@ sap.ui.define([
 
 	}
 
-	function _getFieldHelpIcon() {
+	FieldBase.prototype._getFieldHelpIcon = function() {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 
@@ -3361,7 +2602,7 @@ sap.ui.define([
 			return oFieldHelp.getIcon();
 		}
 
-	}
+	};
 
 	function _fieldInfoChanged(oFieldInfo, sMutation) {
 
@@ -3378,28 +2619,19 @@ sap.ui.define([
 
 		var oFieldInfo = this.getFieldInfo();
 		var that = this;
-		oFieldInfo.isTriggerable().then(function (bTriggerable) {
+		oFieldInfo.isTriggerable().then(function(bTriggerable) {
 			that._bTriggerable = bTriggerable;
 			if (that.getAggregation("_content", []).length > 0 && that.getEditMode() === EditMode.Display) {
 				_createInternalContent.call(that);
 				if (that._bTriggerable) {
-					oFieldInfo.getDirectLinkHrefAndTarget().then(_updateLink.bind(that));
+					var oLink = this.getAggregation("_content", [])[0];
+					oFieldInfo.getDirectLinkHrefAndTarget().then(function(oLinkItem) {
+						ContentFactory._updateLink(oLink, oLinkItem);
+					});
 				}
 			}
-		});
-
+		}.bind(this));
 	}
-
-	function _updateLink(oLinkItem) {
-
-		if (oLinkItem){
-			var oLink = this.getAggregation("_content", [])[0];
-			oLink.setHref(oLinkItem.href);
-			oLink.setTarget(oLinkItem.target);
-		}
-
-	}
-
 
 	// TODO: better API?
 	/**
@@ -3416,77 +2648,23 @@ sap.ui.define([
 		}
 
 		return {
-				valueType: _getDataType.call(this),
-				originalDateType: this._oDateOriginalType || this._oUnitOriginalType,
-				display: this._bIsMeasure ? FieldDisplay.Value : this.getDisplay(),
-				fieldHelpID: this._bIsMeasure ? undefined : this.getFieldHelp() || this._sDefaultFieldHelp,
-				operators: this._getOperators(),
-				hideOperator: this._bHideOperator,
-				maxConditions: this.getMaxConditions(),
-				bindingContext: this.getBindingContext(), // to dertmine text and key usding in/out-parameter using correct bindingContext (In Table FieldHelp might be connected to other row)
-				asyncParsing: this._asyncParsingCall,
-				navigateCondition: this._oNavigateCondition,
-				delegate: this.getControlDelegate(),
-				delegateName: this.getDelegate() && this.getDelegate().name,
-				payload: this.getPayload(),
-				preventGetDescription: this._bPreventGetDescription
-			};
+			valueType: this._oContentFactory.retrieveDataType(),
+			originalDateType: this._oContentFactory.getDateOriginalType() || this._oContentFactory.getUnitOriginalType(),
+			display: this._oContentFactory.isMeasure() ? FieldDisplay.Value : this.getDisplay(),
+			fieldHelpID: this._oContentFactory.isMeasure() ? undefined : this.getFieldHelp() || this._sDefaultFieldHelp,
+			operators: this._getOperators(),
+			hideOperator: this._oContentFactory.getHideOperator(),
+			maxConditions: this.getMaxConditions(),
+			bindingContext: this.getBindingContext(), // to dertmine text and key usding in/out-parameter using correct bindingContext (In Table FieldHelp might be connected to other row)
+			asyncParsing: this._asyncParsingCall,
+			navigateCondition: this._oNavigateCondition,
+			delegate: this.getControlDelegate(),
+			delegateName: this.getDelegate() && this.getDelegate().name,
+			payload: this.getPayload(),
+			preventGetDescription: this._bPreventGetDescription
+		};
 
 	};
-
-	function _updateConditionType() {
-
-		if (this._oConditionType || this._oConditionsType) {
-			var oFormatOptions = this._getFormatOptions();
-			if (this._oConditionType) {
-				this._oConditionType.setFormatOptions(oFormatOptions);
-			}
-			if (this._oConditionsType) {
-				this._oConditionsType.setFormatOptions(oFormatOptions);
-			}
-			if (this._oUnitConditionsType) {
-				oFormatOptions = _getUnitFormatOptions.call(this);
-				this._oUnitConditionsType.setFormatOptions(oFormatOptions);
-			}
-		}
-
-	}
-
-	/**
-	 * Updates the FormatOptions of the internal ConditionsType
-	 *
-	 * @private
-	 * @ui5-restricted FieldBase subclasses
-	 */
-	FieldBase.prototype._updateConditionType = function() {
-
-		_updateConditionType.call(this);
-
-	};
-
-	function _getConditionType() {
-
-		if (!this._oConditionType) {
-			var oFormatOptions = this._getFormatOptions();
-			this._oConditionType = new ConditionType(oFormatOptions);
-			this._oConditionType._bCreatedByField = true;
-		}
-
-		return this._oConditionType;
-
-	}
-
-	function _getConditionsType() {
-
-		if (!this._oConditionsType) {
-			var oFormatOptions = this._getFormatOptions();
-			this._oConditionsType = new ConditionsType(oFormatOptions);
-			this._oConditionsType._bCreatedByField = true;
-		}
-
-		return this._oConditionsType;
-
-	}
 
 	/**
 	 * If the value is the initial value of the type (String types) and
@@ -3494,7 +2672,7 @@ sap.ui.define([
 	 * must be set as the field is then empty.
 	 *
 	 * @param {any} vValue Value to be checked
- 	 * @returns {boolean} true if value is initial
+	 * @returns {boolean} true if value is initial
 	 * @private
 	 * @ui5-restricted FieldBase subclasses
 	 */
@@ -3505,7 +2683,7 @@ sap.ui.define([
 		}
 
 		if (vValue === "" || (typeof (vValue) === "string" && vValue.match(/^0+$/))) { // if String is dig-sequence, initial value contains only "0"s
-			var oType = _getDataType.call(this);
+			var oType = this._oContentFactory.retrieveDataType();
 			var vResult = oType.parseValue("", "string");
 			if (vResult === vValue) {
 				return true; // it's initial value
@@ -3532,19 +2710,7 @@ sap.ui.define([
 
 	};
 
-	function _getUnitConditionsType() {
-
-		if (!this._oUnitConditionsType) {
-			var oFormatOptions = _getUnitFormatOptions.call(this);
-			this._oUnitConditionsType = new ConditionsType(oFormatOptions);
-			this._oUnitConditionsType._bCreatedByField = true;
-		}
-
-		return this._oUnitConditionsType;
-
-	}
-
-	function _getUnitFormatOptions() {
+	FieldBase.prototype._getUnitFormatOptions = function() {
 
 		if (!this._asyncParsingCall) { //as variable to have the same function after each update of formatOptions. Otherwise it would be a change on FormatOption in ValueHelpPanel every time
 			this._asyncParsingCall = _asyncParsingCall.bind(this);
@@ -3552,7 +2718,7 @@ sap.ui.define([
 
 		return {
 			valueType: undefined, // use String as default
-			originalDateType: _getDataType.call(this), // use type of measure for currentValue
+			originalDateType: this._oContentFactory.retrieveDataType(), // use type of measure for currentValue
 			display: this.getDisplay(),
 			fieldHelpID: this.getFieldHelp() || this._sDefaultFieldHelp,
 			operators: ["EQ"],
@@ -3568,7 +2734,7 @@ sap.ui.define([
 			getConditions: this.getConditions.bind(this) // TODO: better solution to update unit in all conditions
 		};
 
-	}
+	};
 
 	function _asyncParsingCall(oPromise) {
 
@@ -3577,7 +2743,7 @@ sap.ui.define([
 		if (oFieldHelp && oFieldHelp.isOpen()) {
 			var oFocusedElement = document.activeElement;
 			if (oFocusedElement
-					&& (containsOrEquals(this.getDomRef(), oFocusedElement) || containsOrEquals(oFieldHelp.getDomRef(), oFocusedElement))) {
+				&& (containsOrEquals(this.getDomRef(), oFocusedElement) || containsOrEquals(oFieldHelp.getDomRef(), oFocusedElement))) {
 				oFieldHelp.close();
 			}
 		}
@@ -3678,10 +2844,7 @@ sap.ui.define([
 		}
 
 		// get default operators for type
-		var sDataType = _getDataTypeName.call(this);
-		var oConstraints = _getDataTypeConstraints.call(this);
-		var oFormatOptions = _getDataTypeFormatOptions.call(this);
-		var sBaseType = this.getTypeUtil().getBaseType(sDataType, oFormatOptions, oConstraints); // TODO what if delegate not loaded
+		var sBaseType = this.getBaseType(); // TODO what if delegate not loaded
 
 		if (sBaseType === BaseType.Unit) {
 			sBaseType = BaseType.Numeric;

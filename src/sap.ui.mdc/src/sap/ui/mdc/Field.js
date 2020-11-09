@@ -15,19 +15,19 @@ sap.ui.define([
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/Context'
 ], function(
-		ManagedObjectObserver,
-		FieldBase,
-		FieldBaseRenderer,
-		FieldDisplay,
-		Condition,
-		FilterOperatorUtil,
-		BaseType,
-		ConditionValidated,
-		deepEqual,
-		merge,
-		BindingMode,
-		Context
-	) {
+	ManagedObjectObserver,
+	FieldBase,
+	FieldBaseRenderer,
+	FieldDisplay,
+	Condition,
+	FilterOperatorUtil,
+	BaseType,
+	ConditionValidated,
+	deepEqual,
+	merge,
+	BindingMode,
+	Context
+) {
 	"use strict";
 
 	/**
@@ -156,13 +156,14 @@ sap.ui.define([
 
 		if (sName === "value" && !oBindingInfo.formatter) { // not if a formatter is used, as this needs to be executed
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
-			if (oBindingInfo.type && (!this._oDataType ||
-					this._oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
-					!deepEqual(this._oDataType.oFormatOptions, oBindingInfo.type.oFormatOptions) ||
-					!deepEqual(this._oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
-					this._oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
-				this._oDataType = oBindingInfo.type;
-				this._updateConditionType();
+			var oDataType = this._oContentFactory.getDataType();
+			if (oBindingInfo.type && (!oDataType ||
+				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
+				!deepEqual(oDataType.oFormatOptions, oBindingInfo.type.oFormatOptions) ||
+				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
+				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
+				this._oContentFactory.setDataType(oBindingInfo.type);
+				this._oContentFactory.updateConditionType();
 				this.invalidate(); // as new inner control might be needed
 			}
 		}
@@ -188,8 +189,8 @@ sap.ui.define([
 				}
 			}
 
-			if (!this._oDataType) {
-				this._oDataType = oBinding.getType();
+			if (!this._oContentFactory.getDataType()) {
+				this._oContentFactory.setDataType(oBinding.getType());
 				this.invalidate(); // as new inner control might be needed
 			}
 		}
@@ -202,7 +203,7 @@ sap.ui.define([
 
 		var oBinding = this.getBinding("value");
 		if (oBinding) {
-			this._oDataType = oBinding.getType();
+			this._oContentFactory.setDataType(oBinding.getType());
 		}
 
 	};
@@ -311,7 +312,7 @@ sap.ui.define([
 			var vOldValue = aConditions[0] && aConditions[0].values[0];
 			var sOldAdditionalValue = aConditions[0] && aConditions[0].values[1] ? aConditions[0].values[1] : null; // to compare with default value
 			if (!aConditions[0] || aConditions[0].operator !== "EQ" || !_compareValues.call(this, vOldValue, vValue) ||
-					sOldAdditionalValue !== vAdditionalValue) {
+				sOldAdditionalValue !== vAdditionalValue) {
 				// update conditions only if changed (keep out-parameter)
 				var oCondition = Condition.createItemCondition(vValue, vAdditionalValue);
 				oCondition.validated = ConditionValidated.Validated; // see every value set from outside as validated (to determine description, if needed)
@@ -323,10 +324,10 @@ sap.ui.define([
 
 	function _adjustValue(vValue, vOldValue) {
 
-		var sDataType = this._oDataType ? this._oDataType.getMetadata().getName() : this.getDataType(); // as type must not exist now
+		var sDataType = this._oContentFactory.getDataType() ? this._oContentFactory.getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
 
 		if (vValue && vOldValue && (sDataType === "sap.ui.model.odata.type.Unit" || sDataType === "sap.ui.model.odata.type.Currency")
-				&& !vValue[2] && vOldValue[2] !== undefined) {
+			&& !vValue[2] && vOldValue[2] !== undefined) {
 			// if no unit table was provided use the old one.
 			// As we cannot be sure that inner control is already rendered and dataType.formatValue was called with unit table.
 			vValue = merge([], vValue); // do not change original array.
@@ -355,7 +356,7 @@ sap.ui.define([
 	function _compareValues(vValue1, vValue2, bUpdateCheck) {
 
 		var bEqual = vValue1 === vValue2;
-		var sDataType = this._oDataType ? this._oDataType.getMetadata().getName() : this.getDataType(); // as type must not exist now
+		var sDataType = this._oContentFactory.getDataType() ? this._oContentFactory.getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
 
 		if (!bEqual && this.getTypeUtil().getBaseType(sDataType) === BaseType.Unit && Array.isArray(vValue1) && Array.isArray(vValue2)) {
 			// in unit type the unit table is in there setting the value but not after parsing
@@ -368,7 +369,7 @@ sap.ui.define([
 			var vCustomUnit2 = vValue2.length >= 3 ? vValue2[2] : null; // if no custom units are given handle it like null
 			// null and undefined are handled different in Unit type, so don't handle it as equal
 			if (vNumber1 === vNumber2 && vUnit1 === vUnit2
-					&& (((this._bUnitSet || bUpdateCheck) && (!vCustomUnit1 || !vCustomUnit2)) || deepEqual(vCustomUnit1, vCustomUnit2))) {
+				&& (((this._bUnitSet || bUpdateCheck) && (!vCustomUnit1 || !vCustomUnit2)) || deepEqual(vCustomUnit1, vCustomUnit2))) {
 				bEqual = true;
 			}
 			if ((vCustomUnit1 || vCustomUnit2) && !bUpdateCheck) {
@@ -394,12 +395,12 @@ sap.ui.define([
 			}
 
 			var oBinding = this.getBinding("value");
-			var oDataType = oBinding ? oBinding.getType() : this._oDataType; // use type from binding, not internal (might be a different one)
+			var oDataType = oBinding ? oBinding.getType() : this._oContentFactory.getDataType(); // use type from binding, not internal (might be a different one)
 			this._oTypeInitialization = this.getControlDelegate().initializeTypeFromBinding(this.getPayload(), oDataType, vValue);
 			this._bTypeInitialized = this._oTypeInitialization.bTypeInitialized;
-			if (this._bTypeInitialized && this._oUnitOriginalType) {
+			if (this._bTypeInitialized && this._oContentFactory.getUnitOriginalType()) {
 				// internal type already created, initialize it too
-				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._oDataType, this._oTypeInitialization);
+				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._oContentFactory.getDataType(), this._oTypeInitialization);
 			}
 		}
 
@@ -437,9 +438,9 @@ sap.ui.define([
 	Field.prototype._getResultForPromise = function(aConditions) {
 
 		var vValue;
-		if (aConditions.length === 0 && this._oDataType) {
+		if (aConditions.length === 0 && this._oContentFactory.getDataType()) {
 			// parse "" to get type specific initial value
-			vValue = this._oDataType.parseValue("", "string", []); // we need the empty array when the type is Unit
+			vValue = this._oContentFactory.getDataType().parseValue("", "string", []); // we need the empty array when the type is Unit
 		} else if (aConditions.length === 1) {
 			vValue = aConditions[0].values[0];
 		}

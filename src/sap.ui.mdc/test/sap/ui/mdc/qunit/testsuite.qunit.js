@@ -37,26 +37,6 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 			module: "./{name}.qunit"
 		},
 		tests: {
-			"BoolFieldHelp": {
-				group: "Field",
-				module: "./field/BoolFieldHelp.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			"ConditionFieldHelp": {
-				group: "Field",
-				module: "./field/ConditionFieldHelp.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
 			"ConditionModel": {
 				group: "Condition",
 				module: "./condition/ConditionModel.qunit",
@@ -72,84 +52,6 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 					only: "[sap/ui/mdc/condition]"
 				},
 				sinon: false
-			},
-			"ConditionType": {
-				group: "Field",
-				module: "./field/ConditionType.qunit"
-			},
-			"ConditionsType": {
-				group: "Field",
-				module: "./field/ConditionsType.qunit"
-			},
-			"DefineConditionPanel": {
-				group: "Field",
-				module: "./field/DefineConditionPanel.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				},
-				sinon: true
-			},
-			"Field": {
-				group: "Field",
-				module: "./field/Field.qunit",
-				sinon: true
-			},
-			"FieldBase": {
-				group: "Field",
-				module: "./field/FieldBase.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			"FieldHelp": {
-				group: "Field",
-				module: "./field/FieldHelp.qunit",
-				ui5: {
-					animationMode: "none"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			"FieldInfoBase": {
-				group: "Field",
-				module: "./field/FieldInfoBase.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				}
-			},
-			"FieldInfo": {
-				group: "Field",
-				module: "./field/FieldInfo.qunit",
-				sinon: false
-			},
-			"FieldValueHelp": {
-				group: "Field",
-				module: "./field/FieldValueHelp.qunit",
-				ui5: {
-					animationMode: "none"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			"FieldValueHelpMTableWrapper": {
-				group: "Field",
-				module: "./field/FieldValueHelpMTableWrapper.qunit",
-				ui5: {
-					animationMode: "none"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			"FilterField": {
-				group: "Field",
-				module: "./field/FilterField.qunit",
-				sinon: true
 			},
 			"ConditionConverter": {
 				group: "Condition",
@@ -167,20 +69,6 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 				},
 				sinon: false
 			},
-			"ListFieldHelp": {
-				group: "Field",
-				module: "./field/ListFieldHelp.qunit",
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			"ValueHelpPanel": {
-				group: "Field",
-				module: "./field/ValueHelpPanel.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				}
-			},
 			"ActionToolbar": {
 				group: "ActionToolbar",
 				coverage: {
@@ -189,6 +77,11 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 					branchTracking: true
 				},
 				module: "./actiontoolbar/ActionToolbar.qunit"
+			},
+			"Field Testsuite" : {
+				title: "Field Testsuite",
+				group: "Testsuite",
+				page: "test-resources/sap/ui/mdc/qunit/field/testsuite.field.qunit.html"
 			},
 			"Link Testsuite": {
 				title: "Link Testsuite",
