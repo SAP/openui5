@@ -3,12 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/base/util/ObjectPath",
-	"sap/base/util/isEmptyObject",
 	"sap/ui/fl/Change"
 ], function(
-	ObjectPath,
-	isEmptyObject,
 	Change
 ) {
 	"use strict";
@@ -55,7 +51,7 @@ sap.ui.define([
 	 * @since 1.83
 	 * @private
 	 * @ui5-restricted sap/ui/fl/apply/_internal/flexState/FlexState
-	 * @alias module:sap/ui/fl/apply/_internal/flexState/prepareChangesMap
+	 * @alias module:sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap
 	 *
 	 * @param {object} mPropertyBag - Contains additional data needed for preparing the map
 	 * @param {object} mPropertyBag.storageResponse - Storage response with the flex data

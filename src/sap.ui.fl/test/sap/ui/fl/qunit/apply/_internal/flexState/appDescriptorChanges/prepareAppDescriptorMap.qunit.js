@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap",
+	"sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	prepareAppDescriptorMap,

@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/prepareCompVariantsMap",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	prepareCompVariantsMap,

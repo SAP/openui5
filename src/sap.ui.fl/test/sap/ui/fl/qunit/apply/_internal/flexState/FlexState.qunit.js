@@ -36,13 +36,13 @@ sap.ui.define([
 
 	function _mockPrepareFunctions(sMapName) {
 		var oReturn = {};
-		if (sMapName === "appDescriptorMap") {
+		if (sMapName === "appDescriptorChanges") {
 			oReturn.appDescriptorChanges = sMapName;
-		} else if (sMapName === "changesMap") {
+		} else if (sMapName === "changes") {
 			oReturn.changes = sMapName;
-		} else if (sMapName === "variantsMap") {
+		} else if (sMapName === "variants") {
 			oReturn.variantsMap = sMapName;
-		} else if (sMapName === "compVariantsMap") {
+		} else if (sMapName === "compVariants") {
 			oReturn = {
 				map: sMapName + ".map",
 				byId: sMapName + ".byId"
@@ -51,14 +51,14 @@ sap.ui.define([
 		return oReturn;
 	}
 
-	QUnit.module("FlexState with loadFlexData, _callPrepareFunction and filtering stubbed", {
+	QUnit.module("FlexState with loadFlexData, callPrepareFunction and filtering stubbed", {
 		beforeEach: function() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(merge(mResponse,
 				{
 					changes: {}
 				}
 			));
-			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
+			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(_mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
 			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
@@ -80,12 +80,12 @@ sap.ui.define([
 				//real solution once the variants are prepared regularly
 				//assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "then prepare function was called once");
-				assert.ok(this.oCallPrepareFunctionStub.calledWith("variantsMap"), "then variants map was prepared");
+				assert.ok(this.oCallPrepareFunctionStub.calledWith("variants"), "then variants map was prepared");
 				assert.equal(this.oFilterStub.callCount, 0, "nothing got filtered");
 				return FlexState.getStorageResponse(sReference);
 			}.bind(this))
 			.then(function() {
-				assert.deepEqual(FlexState.getVariantsState(sReference), _mockPrepareFunctions("variantsMap"), "then variants map was prepared correctly");
+				assert.deepEqual(FlexState.getVariantsState(sReference), _mockPrepareFunctions("variants"), "then variants map was prepared correctly");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "variant prepare function was not called again");
 			}.bind(this));
 		});
@@ -194,33 +194,33 @@ sap.ui.define([
 				componentId: sComponentId
 			})
 			.then(function() {
-				assert.equal(FlexState.getAppDescriptorChanges(sReference), "appDescriptorMap", "the correct map is returned");
+				assert.equal(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
 				//real solution once the variants are prepared regularly
 				// assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was called twice");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "variant prepare function was as well called");
-				assert.equal(FlexState.getAppDescriptorChanges(sReference), "appDescriptorMap", "the correct map is returned");
+				assert.equal(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
 				//real solution once the variants are prepared regularly
 				//assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was not called again");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was not called again");
 
-				assert.equal(FlexState.getUIChanges(sReference), "changesMap", "the correct map is returned");
+				assert.equal(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
 				//real solution once the variants are prepared regularly
 				//assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was called once");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 3, "variant prepare function was as well called");
-				assert.equal(FlexState.getUIChanges(sReference), "changesMap", "the correct map is returned");
+				assert.equal(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
 				//assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was not called again");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was not called again");
 
-				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variantsMap"}, "the correct map is returned");
+				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variants"}, "the correct map is returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was called once");
-				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variantsMap"}, "the correct map is returned");
+				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variants"}, "the correct map is returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was not called again");
 
-				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariantsMap.map", "the correct map is returned");
+				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariants.map", "the correct map is returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was called once");
-				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariantsMap.map", "the correct map is returned");
+				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariants.map", "the correct map is returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was not called again");
-				assert.equal(FlexState.getCompEntitiesByIdMap(sReference), "compVariantsMap.byId", "the correct map is returned");
+				assert.equal(FlexState.getCompEntitiesByIdMap(sReference), "compVariants.byId", "the correct map is returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was not called again");
 			}.bind(this));
 		});
@@ -293,7 +293,7 @@ sap.ui.define([
 				assert.ok(FlexState.clearState.calledWith(sReference), "then state was cleared for reference1");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "then pre-existing variants map was prepared implicitly");
 				this.oCallPrepareFunctionStub.resetHistory();
-				assert.deepEqual(FlexState.getVariantsState(sReference), _mockPrepareFunctions("variantsMap"), "then the correct map result was returned");
+				assert.deepEqual(FlexState.getVariantsState(sReference), _mockPrepareFunctions("variants"), "then the correct map result was returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "then variants map was only prepared during the clearAndInitialize() call");
 			}.bind(this))
 			.then(FlexState.initialize.bind(null, {
@@ -308,16 +308,16 @@ sap.ui.define([
 				assert.ok(FlexState.clearState.calledWith(sReferenceComponent2), "then state was cleared for reference2.Component");
 				assert.ok(FlexState.clearState.calledWith(sReference2), "then state was cleared for reference2");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "then variants maps was prepared implicitly");
-				assert.deepEqual(FlexState.getVariantsState(sReferenceComponent2), _mockPrepareFunctions("variantsMap"), "then the correct map result was returned");
-				assert.deepEqual(FlexState.getVariantsState(sReference2), _mockPrepareFunctions("variantsMap"), "then the correct map result was returned");
+				assert.deepEqual(FlexState.getVariantsState(sReferenceComponent2), _mockPrepareFunctions("variants"), "then the correct map result was returned");
+				assert.deepEqual(FlexState.getVariantsState(sReference2), _mockPrepareFunctions("variants"), "then the correct map result was returned");
 			}.bind(this));
 		});
 	});
 
-	QUnit.module("FlexState with loadFlexData and _callPrepareFunction stubbed, filtering active", {
+	QUnit.module("FlexState with loadFlexData and callPrepareFunction stubbed, filtering active", {
 		beforeEach: function() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
-			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
+			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(_mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(true);
 			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
@@ -335,7 +335,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
-				assert.equal(this.oFilterStub.callCount, 5, "all filterable types got filtered");
+				assert.equal(this.oFilterStub.callCount, 9, "all filterable types got filtered");
 			}.bind(this))
 			.then(FlexState.initialize.bind(null, {
 				reference: sReference,
@@ -343,21 +343,18 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was not made again");
-				assert.equal(this.oFilterStub.callCount, 5, "no additional filtering happened");
+				assert.equal(this.oFilterStub.callCount, 9, "no additional filtering happened");
 			}.bind(this));
 		});
 
 		QUnit.test("when initialize is called twice with clearFilteredResponse() in between", function(assert) {
-			// TODO: Remove the following line after removing variant controller
-			Loader.loadFlexData.resolves(mResponse);
-
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
 			})
 			.then(function() {
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
-				assert.equal(this.oFilterStub.callCount, 5, "all filterable types got filtered");
+				assert.equal(this.oFilterStub.callCount, 9, "all filterable types got filtered");
 
 				var oVariantsMap = FlexState.getVariantsState(sReference);
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "then variants map preparation function was called once");
@@ -371,9 +368,9 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "then prepare map were called again");
-				assert.ok(this.oCallPrepareFunctionStub.calledWith("variantsMap"), "then variants map were prepared again");
+				assert.ok(this.oCallPrepareFunctionStub.calledWith("variants"), "then variants map were prepared again");
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 2, "the check was made again");
-				assert.equal(this.oFilterStub.callCount, 10, "everything was filtered again");
+				assert.equal(this.oFilterStub.callCount, 18, "everything was filtered again");
 			}.bind(this));
 		});
 	});
@@ -381,7 +378,7 @@ sap.ui.define([
 	QUnit.module("FlexState with a ushell container", {
 		beforeEach: function() {
 			sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
-			sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
+			sandbox.stub(FlexState, "callPrepareFunction").callsFake(_mockPrepareFunctions);
 			sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
 
 			this.oAppComponent = new UIComponent(sComponentId);
@@ -524,16 +521,16 @@ sap.ui.define([
 				reference: sReference,
 				componentId: sComponentId
 			})
-				.then(FlexState._callPrepareFunction.resetHistory.bind(FlexState._callPrepareFunction))
-				.then(FlexState.clearFilteredResponse.bind(this, sReference))
-				.then(FlexState.initialize.bind(null, {
-					reference: sReference,
-					componentId: sComponentId
-				}))
-				.then(function() {
-					assert.equal(FlexState._callPrepareFunction.callCount, 1, "then variants map was prepared again during initialize, since storage response was deleted");
-					assert.ok(FlexState._callPrepareFunction.calledWith("variantsMap"), "then variants map was prepared again");
-				});
+			.then(FlexState.callPrepareFunction.resetHistory.bind(FlexState.callPrepareFunction))
+			.then(FlexState.clearFilteredResponse.bind(this, sReference))
+			.then(FlexState.initialize.bind(null, {
+				reference: sReference,
+				componentId: sComponentId
+			}))
+			.then(function() {
+				assert.equal(FlexState.callPrepareFunction.callCount, 1, "then variants map was prepared again during initialize, since storage response was deleted");
+				assert.ok(FlexState.callPrepareFunction.calledWith("variants"), "then variants map was prepared again");
+			});
 		});
 	});
 
