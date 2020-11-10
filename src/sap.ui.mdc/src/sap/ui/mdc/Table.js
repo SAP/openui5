@@ -1373,7 +1373,7 @@ sap.ui.define([
 					var oProcessor = Promise.resolve();
 
 					if (mCustomConfig.includeFilterSettings) {
-						oProcessor = ExportUtils.parseFilterConfiguration(oRowBinding, oPropertyHelper.getLabel).then(function(oFilterConfig) {
+						oProcessor = ExportUtils.parseFilterConfiguration(oRowBinding, function(sProp){ return oPropertyHelper.getLabel(sProp); }).then(function(oFilterConfig) {
 							if (oFilterConfig) {
 								mExportSettings.workbook.context = {
 									metaSheetName: oFilterConfig.name,
