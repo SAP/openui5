@@ -253,7 +253,8 @@ sap.ui.define([
 				oStartOfDay,
 				oEndOfDay,
 				sMaxItemsPath,
-				aAppointmentsCurrentDay;
+				aAppointmentsCurrentDay,
+				oDateFormat = DateFormat.getDateTimeInstance();
 
 			if (oDate) {
 				oCurrentDate = oDate;
@@ -268,8 +269,8 @@ sap.ui.define([
 
 			oEndOfDay.setDate(oEndOfDay.getDate() + 1);
 			aAppointmentsCurrentDay = sItemPath ? this.getModel().getProperty(sItemPath).filter(function (oApp) {
-				var iStart = new Date(oApp.start).getTime(),
-					iEnd = new Date(oApp.end).getTime();
+				var iStart = oDateFormat.parse(oApp.start).getTime(),
+					iEnd = oDateFormat.parse(oApp.end).getTime();
 				if ((iStart >= oStartOfDay.getTime() && iStart < oEndOfDay.getTime()) ||
 					(iEnd >= oStartOfDay.getTime() && iEnd < oEndOfDay.getTime()) ||
 					(iStart <= oStartOfDay.getTime() && iEnd > oEndOfDay.getTime())) {
