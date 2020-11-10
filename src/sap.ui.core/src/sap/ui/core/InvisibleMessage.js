@@ -33,7 +33,6 @@ function (coreLibrary, ManagedObject, Log) {
 	 * @version ${version}
 	 * @hideconstructor
 	 * @public
-	 * @experimental Since 1.78. This class is experimental and the API might be changed in future.
 	 * @since 1.78
 	 * @alias sap.ui.core.InvisibleMessage
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
