@@ -9,7 +9,11 @@
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m, sap.ui.layout">
 	</script>
-
+	<style>
+		.sapMMsgStrip {
+			margin-top: 8px;
+		}
+	</style>
 	<script>
 		// This page is used for visualtesting
 
@@ -140,18 +144,8 @@
 				oMCWarning,
 				oMCWarningWithFormattedText,
 				oMCLongWordAndSmallWidth
-			],
-			footer: new sap.m.Bar({
-				contentMiddle: [
-					new sap.m.Button("margin-button", {
-						text: "Add 12px margin-top",
-						press: function () {
-							jQuery(".sapMMsgStrip").css("margin-top", "12px");
-						}
-					})
-				]
-			})
-		});
+			]
+		}).addStyleClass("sapUiContentPadding");
 
 		var oApp = new sap.m.App("myApp", {
 			initialPage: "no-layout",
