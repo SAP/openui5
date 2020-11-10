@@ -70,10 +70,10 @@ sap.ui.define([
 		});
 
 		//all buttons for movement should be disabled upon reordering
-		assert.equal(this.oBasePanel._moveTopButton.getEnabled(), false);
-		assert.equal(this.oBasePanel._moveUpButton.getEnabled(), false);
-		assert.equal(this.oBasePanel._moveDownButton.getEnabled(), false);
-		assert.equal(this.oBasePanel._moveBottomButton.getEnabled(), false);
+		assert.equal(this.oBasePanel._getMoveTopButton().getEnabled(), false);
+		assert.equal(this.oBasePanel._getMoveUpButton().getEnabled(), false);
+		assert.equal(this.oBasePanel._getMoveDownButton().getEnabled(), false);
+		assert.equal(this.oBasePanel._getMoveBottomButton().getEnabled(), false);
 
 		//Select mode
 		this.oBtnShowSelected.firePress();
@@ -140,10 +140,10 @@ sap.ui.define([
 			listItem: this.oBasePanel._oListControl.getItems()[0]
 		});
 
-		assert.equal(this.oBasePanel._moveTopButton.getEnabled(), false, "'move top' button is disabled (item is at the top)");
-		assert.equal(this.oBasePanel._moveUpButton.getEnabled(), false, "'move up' button is disabled (item is at the top)");
-		assert.equal(this.oBasePanel._moveDownButton.getEnabled(), true, "'move down' button is enabled");
-		assert.equal(this.oBasePanel._moveBottomButton.getEnabled(), true, "'move bottom' button is enabled");
+		assert.equal(this.oBasePanel._getMoveTopButton().getEnabled(), false, "'move top' button is disabled (item is at the top)");
+		assert.equal(this.oBasePanel._getMoveUpButton().getEnabled(), false, "'move up' button is disabled (item is at the top)");
+		assert.equal(this.oBasePanel._getMoveDownButton().getEnabled(), true, "'move down' button is enabled");
+		assert.equal(this.oBasePanel._getMoveBottomButton().getEnabled(), true, "'move bottom' button is enabled");
 	}.bind(this));
 
 	QUnit.test("press item and check the enablement of move buttons (item at the bottom)", function(assert) {
@@ -152,10 +152,10 @@ sap.ui.define([
 			listItem: this.oBasePanel._oListControl.getItems()[this.oBasePanel._oListControl.getItems().length - 1]
 		});
 
-		assert.equal(this.oBasePanel._moveTopButton.getEnabled(), true, "'move top' button is enabled");
-		assert.equal(this.oBasePanel._moveUpButton.getEnabled(), true, "'move up' button is enabled");
-		assert.equal(this.oBasePanel._moveDownButton.getEnabled(), false, "'move down' button is disabled (item is at the top)");
-		assert.equal(this.oBasePanel._moveBottomButton.getEnabled(), false, "'move bottom' button is disabled (item is at the top)");
+		assert.equal(this.oBasePanel._getMoveTopButton().getEnabled(), true, "'move top' button is enabled");
+		assert.equal(this.oBasePanel._getMoveUpButton().getEnabled(), true, "'move up' button is enabled");
+		assert.equal(this.oBasePanel._getMoveDownButton().getEnabled(), false, "'move down' button is disabled (item is at the top)");
+		assert.equal(this.oBasePanel._getMoveBottomButton().getEnabled(), false, "'move bottom' button is disabled (item is at the top)");
 	}.bind(this));
 
 	QUnit.test("press item and check the enablement of move buttons (item inbetween)", function(assert) {
@@ -164,10 +164,10 @@ sap.ui.define([
 			listItem: this.oBasePanel._oListControl.getItems()[1]
 		});
 
-		assert.equal(this.oBasePanel._moveTopButton.getEnabled(), true, "'move top' button is enabled");
-		assert.equal(this.oBasePanel._moveUpButton.getEnabled(), true, "'move up' button is enabled");
-		assert.equal(this.oBasePanel._moveDownButton.getEnabled(), true, "'move down' button is enabled");
-		assert.equal(this.oBasePanel._moveBottomButton.getEnabled(), true, "'move bottom' button is enabled");
+		assert.equal(this.oBasePanel._getMoveTopButton().getEnabled(), true, "'move top' button is enabled");
+		assert.equal(this.oBasePanel._getMoveUpButton().getEnabled(), true, "'move up' button is enabled");
+		assert.equal(this.oBasePanel._getMoveDownButton().getEnabled(), true, "'move down' button is enabled");
+		assert.equal(this.oBasePanel._getMoveBottomButton().getEnabled(), true, "'move bottom' button is enabled");
 
 		this.oBasePanel.destroy(); //TODO: consider to remodulize 'BasePanel.qunit'
 	}.bind(this));
