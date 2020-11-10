@@ -1,6 +1,6 @@
 /*global describe,it,element,by,takeScreenshot,expect, browser, protractor*/
 
-describe("sap.m.ContextMenuSupportIntegration", function() {
+describe("sap.ui.core.ContextMenuSupport", function() {
 	"use strict";
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.core.ContextMenuSupport';
@@ -10,7 +10,7 @@ describe("sap.m.ContextMenuSupportIntegration", function() {
 	var aTestElements = [
 		{
 			name: "Button",
-			id: "buttonSample"
+			id: "myButtonSample"
 		},
 		{
 			name: "First List Item",

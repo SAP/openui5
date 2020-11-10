@@ -8,8 +8,7 @@
 <script src="shared-config.js"></script>
 <script id="sap-ui-bootstrap"
 	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m,sap.ui.commons,sap.ui.unified">
-
+	data-sap-ui-libs="sap.m,sap.ui.unified">
 </script>
 
 <style type="text/css">
@@ -79,6 +78,7 @@
 	var oList = new sap.m.List({
 		items: [
 			new sap.m.StandardListItem({
+				id: "firstItem",
 				title: "Monitor Locking Cable",
 				description: "P1239123",
 				icon: "sap-icon://laptop",
@@ -99,6 +99,7 @@
 				icon: "sap-icon://e-learning",
 			}),
 			new sap.m.StandardListItem({
+				id: "lastItem",
 				title: "Laser Allround Pro",
 				description: "554325-423",
 				icon: "sap-icon://it-instance",
@@ -111,10 +112,12 @@
 	});
 
 	var oLeftDownButton = new sap.m.Button({
+		id: "leftDownBtn",
 		text: "Down Left"
 	}).addStyleClass("down-left");
 
 	var oRightDownButton = new sap.m.Button({
+		id: "rightDownBtn",
 		text: "Down Left"
 	}).addStyleClass("down-right");
 
@@ -123,6 +126,7 @@
 
 	var oApp = new sap.m.App();
 	var oPage = new sap.m.Page({
+		id: "testPage",
 		content: [
 			oButtonSample,
 			oBasicButton,
