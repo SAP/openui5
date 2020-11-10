@@ -113,8 +113,8 @@ function(
 		oButton.setIcon(sIcon || "");
 	}
 
-	Adaptation.prototype.formatDiscardDraftEnabled = function (nDisplayedVersion) {
-		return nDisplayedVersion === sap.ui.fl.Versions.Draft;
+	Adaptation.prototype.formatDiscardDraftVisible = function (nDisplayedVersion, bVersioningEnabled) {
+		return nDisplayedVersion === sap.ui.fl.Versions.Draft && bVersioningEnabled;
 	};
 
 	Adaptation.prototype.formatVersionButtonText = function (aVersions, nDisplayedVersion) {
@@ -348,7 +348,7 @@ function(
 			controller: {
 				activate: this._openVersionTitleDialog.bind(this),
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
-				formatDiscardDraftEnabled: this.formatDiscardDraftEnabled.bind(this),
+				formatDiscardDraftVisible: this.formatDiscardDraftVisible.bind(this),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
