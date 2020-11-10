@@ -2286,6 +2286,95 @@ sap.ui.define([
 		this.obj.setBindingContext(null);
 	});
 
+	QUnit.test("Throw an error in case of an invalid object binding configuration", function(assert){
+		assert.throws(
+			function () {
+				return new TestManagedObject("testObjectWithInvalidObjectBinding", {
+					objectBindings : function(){}
+				});
+			},
+			new Error("binding must be a string or simple object"),
+			"An error is thrown in case of an invalid object binding configuration"
+		);
+	});
+
+	QUnit.test("Create object with single object binding with string configuration - default model", function(assert){
+		var oTestManagedObject = new TestManagedObject("testObjectWithDefaultModelObjectBinding", {
+			objectBindings : "/list/0"
+		});
+		var mObjectBindingInfos = oTestManagedObject.mObjectBindingInfos;
+		assert.equal(Object.keys(mObjectBindingInfos).length, 1, "There is exactly one object binding defined.");
+		assert.ok(mObjectBindingInfos.hasOwnProperty("undefined"), "The defined object binding is pointing to the default model.");
+		assert.strictEqual(mObjectBindingInfos["undefined"].path, "/list/0", "The binding path is correct.");
+		assert.strictEqual(mObjectBindingInfos["undefined"].model, undefined, "The model is the default model.");
+
+		oTestManagedObject.destroy();
+	});
+
+	QUnit.test("Create object with single object binding with string configuration - named model", function(assert){
+		var oTestManagedObject = new TestManagedObject("testObjectWithNamedModelObjectBinding", {
+			objectBindings : "myModel>/list/0"
+		});
+		var mObjectBindingInfos = oTestManagedObject.mObjectBindingInfos;
+		assert.equal(Object.keys(mObjectBindingInfos).length, 1, "There is exactly one object binding defined.");
+		assert.ok(mObjectBindingInfos.hasOwnProperty("myModel"), "The defined object binding is pointing to the default model.");
+		assert.strictEqual(mObjectBindingInfos["myModel"].path, "/list/0", "The binding path is correct.");
+		assert.strictEqual(mObjectBindingInfos["myModel"].model, "myModel", "The model is the default model.");
+
+		oTestManagedObject.destroy();
+	});
+
+	QUnit.test("Create object with single object binding - default model", function(assert){
+		var oTestManagedObject = new TestManagedObject("testObjectWithDefaultModelObjectBinding", {
+			objectBindings : {
+				undefined: {path: "/list/0"}
+			}
+		});
+		var mObjectBindingInfos = oTestManagedObject.mObjectBindingInfos;
+		assert.equal(Object.keys(mObjectBindingInfos).length, 1, "There is exactly one object binding defined.");
+		assert.ok(mObjectBindingInfos.hasOwnProperty("undefined"), "The defined object binding is pointing to the default model.");
+		assert.strictEqual(mObjectBindingInfos["undefined"].path, "/list/0", "The binding path is correct.");
+		assert.strictEqual(mObjectBindingInfos["undefined"].model, undefined, "The model is the default model.");
+
+		oTestManagedObject.destroy();
+	});
+
+	QUnit.test("Create object with single object binding - named model", function(assert){
+		var oTestManagedObject = new TestManagedObject("testObjectWithNamedModelObjectBinding", {
+			objectBindings : {
+				myModel: {path: "/list/0"}
+			}
+		});
+		var mObjectBindingInfos = oTestManagedObject.mObjectBindingInfos;
+		assert.equal(Object.keys(mObjectBindingInfos).length, 1, "There is exactly one object binding defined.");
+		assert.ok(mObjectBindingInfos.hasOwnProperty("myModel"), "The defined object binding is pointing to the model named 'myModel'.");
+		assert.strictEqual(mObjectBindingInfos["myModel"].path, "/list/0", "The binding path is correct.");
+		assert.strictEqual(mObjectBindingInfos["myModel"].model, "myModel", "The model is named 'myModel'.");
+
+		oTestManagedObject.destroy();
+	});
+
+	QUnit.test("Create object with multiple object bindings", function(assert){
+		var oTestManagedObject = new TestManagedObject("testObjectWithMultipleObjectBindings", {
+			objectBindings : {
+				myModel: {path: "/list/0"},
+				undefined: {path: "/entity/123"}
+			}
+		});
+		var mObjectBindingInfos = oTestManagedObject.mObjectBindingInfos;
+		assert.equal(Object.keys(mObjectBindingInfos).length, 2, "There are exactly two object bindings defined.");
+
+		assert.ok(mObjectBindingInfos.hasOwnProperty("myModel"), "The defined object binding is pointing to the model named 'myModel'.");
+		assert.strictEqual(mObjectBindingInfos["myModel"].path, "/list/0", "The binding path is correct.");
+		assert.strictEqual(mObjectBindingInfos["myModel"].model, "myModel", "The model is named 'myModel'.");
+
+		assert.ok(mObjectBindingInfos.hasOwnProperty("undefined"), "The defined object binding is pointing to the default model.");
+		assert.strictEqual(mObjectBindingInfos["undefined"].path, "/entity/123", "The binding path is correct.");
+		assert.strictEqual(mObjectBindingInfos["undefined"].model, undefined, "The model is the default model.");
+
+		oTestManagedObject.destroy();
+	});
+
 	QUnit.module("ManagedObjectMetadata", {
 		beforeEach: function() {
 			this.obj = new TestManagedObject();
