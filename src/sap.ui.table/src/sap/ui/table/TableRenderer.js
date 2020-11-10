@@ -271,6 +271,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.close("div");
 
 		this.renderTabElement(rm, "sapUiTableCtrlAfter", bHasRows ? "0" : "-1");
+		this.renderTabElement(rm, null, "-1", oTable.getId() + "-focusDummy");
 
 		if (!oTable._getScrollExtension().isVerticalScrollbarExternal()) {
 			this.renderVSbBackground(rm, oTable);
@@ -1310,10 +1311,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	 * Renders an empty area with tabindex=0 and the given class and id.
 	 * @private
 	 */
-	TableRenderer.renderTabElement = function(rm, sClass, sTabIndex) {
+	TableRenderer.renderTabElement = function(rm, sClass, sTabIndex, sId) {
 		rm.openStart("div");
 		if (sClass) {
 			rm.class(sClass);
+		}
+		if (sId) {
+			rm.attr("id", sId);
 		}
 		rm.attr("tabindex", sTabIndex == null ? "0" : sTabIndex);
 		rm.openEnd().close("div");
