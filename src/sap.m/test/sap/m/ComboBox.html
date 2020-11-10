@@ -16,6 +16,9 @@
 				vertical-align: middle;
 				vertical-align: -webkit-baseline-middle;
 			}
+			.customClassForVisualTests {
+				caret-color: transparent;
+			}
 		</style>
 		<script>
 		sap.ui.getCore().attachInit(function () {
@@ -841,8 +844,26 @@
 					]
 				});
 
+				// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
+				var oCustomCssButton = new sap.m.Button ("customCssButton",{
+					text: "Toggle custom CSS for visual test",
+					press: function() {
+						var $body = jQuery("body");
+
+						$body.toggleClass("customClassForVisualTests");
+					}
+				});
+
 				var oPage = new sap.m.Page("page",{
-					title: "sap.m.ComboBox",
+					headerContent: [
+						new sap.m.Title({
+							text: "sap.m.ComboBox"
+						}),
+						new sap.m.ToolbarSpacer({
+							width: "600px"
+						}),
+						oCustomCssButton,
+					],
 					content: [
 						new HTML("title_default",{ content: "<h3>Default</h3>" }),
 						oComboBox,
