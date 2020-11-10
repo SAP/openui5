@@ -8,8 +8,7 @@
             "style": {
                 "fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
                 "spacingBottom": 10
-            },
-            "height": 400
+            }
         },
         "lang": {},
         "boost": {

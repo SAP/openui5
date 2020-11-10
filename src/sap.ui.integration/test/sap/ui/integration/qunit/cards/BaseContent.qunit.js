@@ -233,4 +233,22 @@ sap.ui.define([
 
 		assert.equal(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
 	});
+
+	QUnit.test("AnalyticsCloud card - default min height", function (assert) {
+		var sType = "AnalyticsCloud",
+		sExpectedMinHeight = "14rem",
+			oConfiguration = {};
+
+		assert.equal(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+	});
+
+	QUnit.test("AnalyticsCloud card - configuring min height", function (assert) {
+		var sType = "AnalyticsCloud",
+			sExpectedMinHeight = "20rem",
+			oConfiguration = {
+				minHeight: sExpectedMinHeight
+			};
+
+		assert.equal(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+	});
 });

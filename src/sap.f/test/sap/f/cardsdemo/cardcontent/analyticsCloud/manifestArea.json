@@ -33,11 +33,6 @@
 					"type": "string",
 					"value": "5744F2F3BD430A1FC3919E352F89F7B0"
 				},
-				"height": {
-					"label": "Height (px)",
-					"type": "integer",
-					"value": 500
-				},
 				"url": {
 					"value": "https://orcastarkiller-fpa10.orcastarkiller.canary.eu10.projectorca.cloud/sap/fpa/ui/app.html#;view_id=story",
 					"type": "string",
@@ -61,7 +56,6 @@
 				"url": "./cardsdemo/cardcontent/analyticsCloud/dataArea.json",
 				"parameters": {
 					"story": "{{parameters.storyId}}",
-					"height": "{{parameters.height}}",
 					"sap-language": "{{parameters.LOCALE}}"
 				},
 				"withCredentials": true
@@ -90,6 +84,7 @@
 			]
 		},
 		"content": {
+			"minHeight": "25rem",
 			"options": "{chart}"
 		}
 	}
