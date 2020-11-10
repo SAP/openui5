@@ -30,9 +30,6 @@ function(
 	var ToolbarDesign = library.ToolbarDesign,
 		ToolbarStyle = library.ToolbarStyle;
 
-	// shortcut for sap.ui.core.aria.HasPopup
-	var AriaHasPopup = coreLibrary.aria.HasPopup;
-
 	/**
 	 * Constructor for a new <code>Toolbar</code>.
 	 *
@@ -138,6 +135,7 @@ function(
 			 *
 			 * <b>Guidance for choosing appropriate value:</b>
 			 * <ul>
+			 * <li> We recommend that you use the {@link sap.ui.core.aria.HasPopup} enumeration.</li>
 			 * <li> If you use controls based on <code>sap.m.Popover</code> or <code>sap.m.Dialog</code>,
 			 * then you must use <code>AriaHasPopup.Dialog</code> (both <code>sap.m.Popover</code> and
 			 * <code>sap.m.Dialog</code> have role "dialog" assigned internally).</li>
@@ -147,7 +145,7 @@ function(
 			 *
 			 * @since 1.79.0
 			 */
-			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
+			ariaHasPopup : {type: "string", group : "Accessibility", defaultValue : null}
 		},
 		defaultAggregation : "content",
 		aggregations : {
