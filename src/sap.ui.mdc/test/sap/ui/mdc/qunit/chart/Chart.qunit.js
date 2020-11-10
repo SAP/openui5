@@ -897,4 +897,85 @@ function(
 		assert.ok(oBindingInfo.events.change, "Should create change event");
 	});
 
+	QUnit.module("sap.ui.mdc.Chart: AutoBindOnInit", {
+		beforeEach: function() {
+			var TestComponent = UIComponent.extend("test", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "",
+							"type": "application"
+						}
+					}
+				},
+				createContent: function() {
+					var oChart = new Chart("IDChart", {header: "Test Header",
+					autoBindOnInit: false,
+					noDataText: "No Data Test",
+					items: [
+						new DimensionItem({
+							key: "Name",
+							label: "Name",
+							role: "category"
+						})
+					]});
+					return oChart;
+				}
+			});
+			this.oUiComponent = new TestComponent("IDComponent");
+			this.oUiComponentContainer = new ComponentContainer({
+				component: this.oUiComponent,
+				async: false
+			});
+			this.oChart = this.oUiComponent.getRootControl();
+
+			this.oUiComponentContainer.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+			this.oUiComponent.destroy();
+		}
+	});
+
+	QUnit.test("Toolbar", function(assert) {
+		var oToolbar = this.oChart.getAggregation("_toolbar");
+		assert.ok(!oToolbar.getEnabled(), "toolbar should be disabled");
+		assert.equal(oToolbar.getBegin().length, 1, "Toolbar begin should contain only title");
+		assert.equal(oToolbar.getBegin()[0].getText(), "Test Header", "Toolbar header should contain correct text");
+		assert.ok(oToolbar.getEnd().length > 0, "Toolbar end should contain buttons");
+	});
+
+	QUnit.test("Inner Chart", function(assert) {
+		var oCreateChartSpy = sinon.spy(this.oChart, "_createChart");
+		var oInnerChart = this.oChart.getAggregation("_chart");
+
+		assert.ok(!oCreateChartSpy.called, "_createChart should not be called");
+		assert.ok(!oInnerChart, "Inner chart aggregation should not be created");
+	});
+
+	QUnit.test("No Data Text", function(assert) {
+		var oNoDataStruct = this.oChart.getAggregation("_noDataStruct");
+		assert.ok(oNoDataStruct, "NoDataStruct aggregation is set");
+		assert.equal(oNoDataStruct.getItems().length, 1, "Should contain no data text");
+		assert.equal(oNoDataStruct.getItems()[0].getText(), "No Data Test", "No data text should be set correctly");
+	});
+
+	QUnit.test("Bind the chart", function(assert) {
+		var done = assert.async();
+		var oCreateChartSpy = sinon.spy(this.oChart, "_createChart");
+		var oBindAggregationSpy = sinon.spy(this.oChart, "bindAggregation");
+		this.oChart.rebind();
+
+
+		this.oChart.done().then(function() {
+			assert.ok(oCreateChartSpy.calledOnce, "Create chart was called");
+			assert.ok(oBindAggregationSpy.calledOnce, "bindAggreagtion was called");
+			assert.ok(!this.oChart.getAggregation("_noDataStruct"), "No Data struct was destroyed");
+			assert.ok(this.oChart.getAggregation("_chart"), "Inner chart aggreagtion was created");
+			assert.ok(this.oChart.getAggregation("_toolbar").getEnabled(), "Toolbar was enabled");
+			done();
+		}.bind(this));
+	});
+
 });

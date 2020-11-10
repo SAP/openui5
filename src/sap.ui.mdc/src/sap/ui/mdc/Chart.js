@@ -18,7 +18,9 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/Device",
 	"sap/ui/mdc/chart/ToolbarHandler",
-	"sap/ui/mdc/mixin/FilterIntegrationMixin"
+	"sap/ui/mdc/mixin/FilterIntegrationMixin",
+	"sap/m/VBox",
+	"sap/m/Text"
 ],
 	function (
 		Core,
@@ -36,7 +38,9 @@ sap.ui.define([
 		deepEqual,
 		Device,
 		ToolbarHandler,
-		FilterIntegrationMixin
+		FilterIntegrationMixin,
+		VBox,
+		Text
 	) {
 		"use strict";
 
@@ -232,9 +236,16 @@ sap.ui.define([
 						type: "boolean",
 						group: "Misc",
 						defaultValue: true
-					// false
+					},
+					/*
+					 * Binds the chart automatically after the initial creation of the chart
+					 */
+					autoBindOnInit: {
+						type: "boolean",
+						group: "Misc",
+						defaultValue: true
 					}
-				},
+									},
 				aggregations: {
 					data: {
 						multiple: true
@@ -261,6 +272,10 @@ sap.ui.define([
 					},
 					_breadcrumbs: {
 						type: "sap.m.Breadcrumbs",
+						multiple: false
+					},
+					_noDataStruct: {
+						type: "sap.m.VBox",
 						multiple: false
 					},
 					selectionDetailsActions: {
@@ -425,10 +440,6 @@ sap.ui.define([
 		Chart.prototype.applySettings = function(mSettings, oScope) {
 			var aActions;
 
-			// Needs to be set in order to visualize busy indicator when binding happens very fast
-			this.setBusyIndicatorDelay(0);
-			this.setBusy(true);
-
 			// Note: In the mdc.Chart control metadata, the "action" aggregation
 			// is defined as a forwarded aggregation.
 			// However, the automatic forwarding of aggregations only works when
@@ -441,11 +452,70 @@ sap.ui.define([
 				delete mSettings.actions;
 			}
 
+			var oManagedObj = Control.prototype.applySettings.apply(this, arguments);
+			this._tempResolve;
+			this._tempReject;
+
+			this.oChartPromise = new SyncPromise(function(resolve, reject) {
+				this._tempResolve = resolve;
+				this._tempReject = reject;
+			}.bind(this));
+
+
+			if (this.getAutoBindOnInit()){
+				this._createChart(mSettings, aActions);
+			} else {
+				this._mStoredSettings = mSettings;
+				this._mStoredActions = aActions;
+
+				//Toolbar needs settings to be applied before creation to read properties like header/title
+				ToolbarHandler.createToolbar(this, aActions, true);
+				this._createTempNoData();
+			}
+
+			return oManagedObj;
+
+		};
+
+		/**
+		 * Create a temporary NoData structure in case inner chart is not created yet.
+		 * @private
+		 */
+		Chart.prototype._createTempNoData = function() {
+			var oNoDataText = new Text({
+				text: this.getProperty("noDataText")
+			});
+
+			var oNoDataStruct = new VBox({
+				items: [
+					oNoDataText
+				],
+				justifyContent: "Center",
+				alignItems: "Center",
+				height: "100%"
+			});
+
+			this.setAggregation("_noDataStruct", oNoDataStruct);
+		};
+
+		/**
+		 * Handles the creation of all chart components (inner chart, toolbar, delegate, ...)
+		 * @param {*} mSettings the settings to apply to this managed object
+		 * @param {*} aActions actions for toolbar
+		 *
+		 * @experimental
+		 * @private
+		 */
+		Chart.prototype._createChart = function(mSettings, aActions){
 			var oDelegateSettings = (mSettings && mSettings.delegate) || this.getDelegate();
 			var sDelegatePath = oDelegateSettings && oDelegateSettings.name;
 			var aModulesPaths = [ sDelegatePath ].concat(getModulesPaths());
 
-			this.oChartPromise = loadModules(aModulesPaths)
+			// Needs to be set in order to visualize busy indicator when binding happens very fast
+			this.setBusyIndicatorDelay(0);
+			this.setBusy(true);
+
+			loadModules(aModulesPaths)
 
 			.then(function onModulesLoaded(aModules) {
 				this.initModules(aModules);
@@ -473,25 +543,35 @@ sap.ui.define([
 					return SyncPromise.reject();
 				}
 
-				ToolbarHandler.createToolbar(this, aActions);
+				if (this.getAutoBindOnInit()){
+					ToolbarHandler.createToolbar(this, aActions);
+				} else {
+					ToolbarHandler.updateToolbar(this);
+				}
 
 				var mItems = {};
 				aProperties.forEach(function(oProperty) {
 					mItems[oProperty.name] = oProperty;
 				});
 
+				// make sure to destroy the temporary NoData structure before inserting the inner chart
+				if (this.getAggregation("_noDataStruct")) {
+					this.getAggregation("_noDataStruct").destroy();
+					this.setAggregation("_noDataStruct", null);
+				}
+
 				return this._createInnerChart(mSettings, mItems);
 			}.bind(this))
 
 			.then(function createDrillBreadcrumbs(oInnerChart) {
 				this._createDrillBreadcrumbs();
-
 				this._toggleChartTooltipVisibility(this.getShowChartTooltip());
+				this._tempResolve(oInnerChart);
 				return oInnerChart;
 			}.bind(this))
 
 			.catch(function applySettingsHandleException(oError) {
-
+				this._tempReject();
 				// only log an error in the console if the promise was not intentionally rejected
 				// by calling Promise.reject()
 				if (oError) {
@@ -508,7 +588,8 @@ sap.ui.define([
 				this._addBindingListener(mSettings.data, "change", this._onDataLoadComplete.bind(this));
 			}
 
-			return Control.prototype.applySettings.apply(this, arguments);
+			this._bInnerChartInitialized = true;
+			this.bindAggregation("data", this.oDataInfo);
 		};
 
 		/**
@@ -1071,7 +1152,7 @@ sap.ui.define([
 				mDataPoints = {};
 
 			if (oChanges.name === "ignoreToolbarActions" || oChanges.name === "p13nMode") {
-				ToolbarHandler.updateToolbar(this);
+				//ToolbarHandler.updateToolbar(this);
 				return;
 			}
 
@@ -1312,6 +1393,12 @@ sap.ui.define([
 		 */
 		Chart.prototype.rebind = function() {
 			this.setBusy(true);
+
+			//When autoBindOnInit = false, trigger everything on rebind
+			if (!this._bInnerChartInitialized) {
+				this._createChart(this._mStoredSettings, this._mStoredActions);
+				return;
+			}
 
 			if (!this.bDelegateInitialized) {
 				return;
