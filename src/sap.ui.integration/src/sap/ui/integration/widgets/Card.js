@@ -316,9 +316,16 @@ sap.ui.define([
 				 * Fired when the manifest is loaded.
 				 * @experimental since 1.72
 				 */
-				manifestReady: {
-					parameters: {}
-				}
+				manifestReady: {},
+
+				/**
+				 * Fired when card utilities (like <code>DataProviderFactory</code>) and the card elements (like header) are created and initialized.
+				 *
+				 * Note: The card's content may not be available yet because it may depend on other resources to load.
+				 *
+				 * @ui5-restricted
+				 */
+				manifestApplied: {}
 			},
 			associations: {
 
@@ -914,12 +921,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a clone of the initial manifest without any processing and without any changes applied to it.
+	 * @ui5-restricted
+	 * @returns {Object} A clone of the initial raw manifest json.
+	 */
+	Card.prototype.getManifestRawJson = function () {
+		if (!this._oCardManifest || !this._oCardManifest) {
+			Log.error("The manifest is not ready. Consider using the 'manifestReady' event.", "sap.ui.integration.widgets.Card");
+			return {};
+		}
+
+		return this._oCardManifest.getInitialJson();
+	};
+
+	/**
 	 * Returns a clone of the original manifest with all changes from the manifestChanges property applied on top.
 	 *
 	 * Use during designtime.
 	 *
-	 * @experimental Since 1.76 This API might be removed when a permanent solution for flexibility changes is implemented.
-	 * @returns {Object} A Clone of the manifest with applied changes.
+	 * @ui5-restricted
+	 * @returns {Object} A clone of the manifest with applied changes.
 	 */
 	Card.prototype.getManifestWithMergedChanges = function () {
 		if (!this._oCardManifest || !this._oCardManifest._oManifest) {
@@ -990,6 +1011,49 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the <code>DataProviderFactory</code> instance configured for the card.
+	 * @ui5-restricted
+	 * @returns {sap.ui.integration.util.DataProviderFactory} The data provider factory.
+	 */
+	Card.prototype.getDataProviderFactory = function () {
+		if (!this._oDataProviderFactory) {
+			Log.error("The DataProviderFactory instance is not ready yet. Consider using the event 'manifestApplied'.", "sap.ui.integration.widgets.Card");
+			return null;
+		}
+
+		return this._oDataProviderFactory;
+	};
+
+	/**
+	 * Resolves the given URL relative to the card's base URL during runtime.
+	 *
+	 * @example
+	 * oCard.getRuntimeUrl("images/Avatar.png") === "/sample/card/images/Avatar.png"
+	 *
+	 * @ui5-restricted
+	 * @param {string} sUrl The URL to resolve.
+	 * @returns {string} The resolved URL.
+	 */
+	Card.prototype.getRuntimeUrl = function (sUrl) {
+		var sAppId = this._sAppId,
+			sAppName,
+			sSanitizedUrl = sUrl && sUrl.trim().replace(/^\//, "");
+
+		if (sAppId === null) {
+			Log.error("The manifest is not ready so the URL can not be resolved. Consider using the 'manifestReady' event.", "sap.ui.integration.widgets.Card");
+			return null;
+		}
+
+		if (!sAppId) {
+			return sUrl;
+		}
+
+		sAppName = sAppId.replace(/\./g, "/");
+
+		return sap.ui.require.toUrl(sAppName + "/" + sSanitizedUrl);
+	};
+
+	/**
 	 * Initializes internal classes needed for the card, based on the ready manifest.
 	 *
 	 * @private
@@ -1048,6 +1112,8 @@ sap.ui.define([
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
 		this._applyContentManifestSettings();
+
+		this.fireManifestApplied();
 	};
 
 	Card.prototype._applyDataManifestSettings = function () {
@@ -1605,7 +1671,7 @@ sap.ui.define([
 	 * @public
 	 * @experimental since 1.79
 	 * @param {object} oConfiguration The configuration of the request.
-	 * @param {string} oConfiguration.url The URL of the resource.
+	 * @param {string} oConfiguration.URL The URL of the resource.
 	 * @param {string} [oConfiguration.mode="cors"] The mode of the request. Possible values are "cors", "no-cors", "same-origin".
 	 * @param {string} [oConfiguration.method="GET"] The HTTP method. Possible values are "GET", "POST".
 	 * @param {Object} [oConfiguration.parameters] The request parameters. If the method is "POST" the parameters will be put as key/value pairs into the body of the request.

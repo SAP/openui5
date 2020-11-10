@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/ui/core/UIComponent",
 	"sap/m/BadgeCustomData",
+	"sap/ui/integration/util/DataProviderFactory",
 	"sap/m/library"
 ],
 	function (
@@ -20,6 +21,7 @@ sap.ui.define([
 		Event,
 		UIComponent,
 		BadgeCustomData,
+		DataProviderFactory,
 		mLibrary
 	) {
 		"use strict";
@@ -823,6 +825,108 @@ sap.ui.define([
 
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Manifest works if it has very deep structure", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard,
+				oManifest = {
+					"sap.card": {
+						"type": "List",
+						"data": {
+
+						}
+					}
+				},
+				iDepth,
+				oCurrentLevel = oManifest["sap.card"].data;
+
+			for (iDepth = 0; iDepth < 200; iDepth++) {
+				oCurrentLevel.depthTest = {
+					level: iDepth
+				};
+
+				oCurrentLevel = oCurrentLevel.depthTest;
+			}
+
+			oCard.attachManifestReady(function () {
+				// Assert
+				assert.ok(true, "Manifest is set, there is no error.");
+				done();
+			});
+
+			// Act
+			oCard.setManifest(oManifest);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("getManifestRawJson", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard,
+				oManifest = oManifest_ListCard;
+
+			oCard.attachManifestReady(function () {
+				// Assert
+				assert.deepEqual(oCard.getManifestRawJson(), oManifest, "Method getManifestRawJson returns the original raw json.");
+				done();
+			});
+
+			// Act
+			oCard.setManifest(oManifest);
+			oCard.setManifestChanges([
+				{ content: { header: { title: "Changed title" } } }
+			]);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("getDataProviderFactory", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachManifestApplied(function () {
+				var oDataProviderFactory = oCard.getDataProviderFactory();
+
+				// Assert
+				assert.ok(oDataProviderFactory, "Method getDataProviderFactory returns the factory.");
+				assert.ok(oDataProviderFactory instanceof DataProviderFactory, "The result is of type sap.ui.integration.util.DataProviderFactory.");
+				done();
+			});
+
+			// Act
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("getRuntimeUrl", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard,
+				oManifest = {
+					"sap.app": {
+						"id": "sample.card"
+					}
+				},
+				mSamples = new Map([
+					["/", "resources/sample/card/"],
+					["/images/Avatar.png", "resources/sample/card/images/Avatar.png"]
+				]);
+
+			oCard.attachManifestReady(function () {
+				// Assert
+				mSamples.forEach(function (sExpectedResult, sUrl) {
+					var sResult = oCard.getRuntimeUrl(sUrl);
+
+					assert.strictEqual(sResult, sExpectedResult, "Result is correct for '" + sUrl + "'.");
+				});
+				done();
+			});
+
+			// Act
+			oCard.setManifest(oManifest);
+			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
 		QUnit.module("Card headers", {
@@ -1793,7 +1897,7 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.module("Events - 'manifestReady'", {
+		QUnit.module("Events", {
 			beforeEach: function () {
 				this.oCard = new Card();
 			},
@@ -1833,6 +1937,22 @@ sap.ui.define([
 			// Act
 			this.oCard.setManifest(oManifest_ListCard);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("'manifestApplied' event is fired.", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+				oCard.attachManifestApplied(function () {
+				// Assert
+				assert.ok(true, "Event 'manifestApplied' is fired.");
+				done();
+			});
+
+			// Act
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
 		QUnit.module("Property 'manifestChanges'", {
