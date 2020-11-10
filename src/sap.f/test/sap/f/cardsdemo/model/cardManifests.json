@@ -898,6 +898,7 @@
 				},
 				"content": {
 					"chartType": "Line",
+					"minHeight": "31.25rem",
 					"legend": {
 						"visible": true,
 						"position": "Right",

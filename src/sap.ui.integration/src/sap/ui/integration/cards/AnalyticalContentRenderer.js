@@ -11,16 +11,19 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	 * @namespace
 	 */
 	var AnalyticalContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.AnalyticalContentRenderer", {
-		apiVersion: 2
+		apiVersion: 2,
+		MIN_ANALYTICAL_CONTENT_HEIGHT: "14rem"
 	});
 
 	/**
 	 * @override
 	 */
 	AnalyticalContentRenderer.getMinHeight = function (oConfiguration, oContent) {
-		var MIN_ANALYTICAL_CONTENT_HEIGHT = "14rem";
+		if (oConfiguration.minHeight) {
+			return oConfiguration.minHeight;
+		}
 
-		return MIN_ANALYTICAL_CONTENT_HEIGHT;
+		return AnalyticalContentRenderer.MIN_ANALYTICAL_CONTENT_HEIGHT;
 	};
 
 	return AnalyticalContentRenderer;
