@@ -10,7 +10,9 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var AnalyticsCloudContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.AnalyticsCloudContentRenderer");
+	var AnalyticsCloudContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.AnalyticsCloudContentRenderer", {
+		apiVersion: 2
+	});
 
 	/**
 	 * @override

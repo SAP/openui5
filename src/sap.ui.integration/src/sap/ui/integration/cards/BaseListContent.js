@@ -39,7 +39,9 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration"
 		},
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	/**

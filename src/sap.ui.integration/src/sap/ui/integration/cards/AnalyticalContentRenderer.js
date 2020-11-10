@@ -10,7 +10,9 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var AnalyticalContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.AnalyticalContentRenderer");
+	var AnalyticalContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.AnalyticalContentRenderer", {
+		apiVersion: 2
+	});
 
 	/**
 	 * @override
