@@ -34,7 +34,9 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration"
 		},
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	ComponentContent.prototype.setConfiguration = function (oConfiguration) {

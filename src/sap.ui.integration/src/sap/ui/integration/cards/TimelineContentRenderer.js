@@ -10,7 +10,9 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var TimelineContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.TimelineContentRenderer");
+	var TimelineContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.TimelineContentRenderer", {
+		apiVersion: 2
+	});
 
 	/**
 	 * @override

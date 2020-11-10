@@ -10,7 +10,9 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var TableContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.TableContentRenderer");
+	var TableContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.TableContentRenderer", {
+		apiVersion: 2
+	});
 
 	/**
 	 * @override

@@ -11,8 +11,8 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 	 * @namespace
 	 */
 	var BaseContentRenderer = Renderer.extend("sap.ui.integration.cards.BaseContentRenderer", {
-			apiVersion: 2
-		});
+		apiVersion: 2
+	});
 
 	/**
 	 * Default min height for all content types.
