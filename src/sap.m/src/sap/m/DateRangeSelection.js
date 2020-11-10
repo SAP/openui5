@@ -84,7 +84,7 @@ sap.ui.define([
 	 *
 	 * The user can enter a date by:
 	 * <ul><li>Using the calendar that opens in a popup</li>
-	 * <li>Typing it in directly in the input field (not available for mobile devices)</li></ul>
+	 * <li>Typing it in directly in the input field</li></ul>
 	 *
 	 * On app level, there are two options to provide a date for the
 	 * <code>DateRangeSelection</code> - date range as a string to the
