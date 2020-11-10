@@ -24,6 +24,9 @@ describe("sap.m.MessagePopover", function () {
 			bPhone = response;
 		});
 
+		// Now the focus will always remain initially over the button. Also, we add custom CSS to ensure that, if we decide
+		// to add tests where messageitems are added, the problem with the cursor will not exist.
+		element(by.id("customCssButton")).click();
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
@@ -39,20 +42,16 @@ describe("sap.m.MessagePopover", function () {
 		});
 	});
 
-
 	it("should open MessagePopover with groupItems set to true", function () {
 		element(by.id(_resolveCloseButton())).click(); //Close the Popover/Dialog
 		element(by.id("mPopoverWithGroupingButton")).click();
 		expect(takeScreenshot(element(by.id(_resolvePopoverWithGrouping())))).toLookAs("mpopover-grouping");
 	});
 
-	["error", "warning", "success", "information", "all"].forEach(function (sMessageType) {
-		it("should open " + sMessageType + " messages.", function () {
-			element(by.id("mPopoverWithGrouping-messageView-" + sMessageType)).click();
-			expect(takeScreenshot(element(by.id(_resolvePopoverWithGrouping())))).toLookAs("mpopover-grouping-" + sMessageType);
-		});
+	it("should open error messages.", function () {
+		element(by.id("mPopoverWithGrouping-messageView-error")).click();
+		expect(takeScreenshot(element(by.id(_resolvePopoverWithGrouping())))).toLookAs("mpopover-grouping-error");
 	});
-
 
 	it("should open MessagePopover in compact mode", function () {
 		element(by.id(_resolveCloseButtonWithGrouping())).click(); //Close the Popover/Dialog
@@ -71,14 +70,8 @@ describe("sap.m.MessagePopover", function () {
 	it("should open MessagePopover with grouping in compact mode", function () {
 		element(by.id(_resolveCloseButton())).click(); //Close the Popover/Dialog
 		element(by.id("mPopoverWithGroupingButton")).click();
+		element(by.id("mPopoverWithGrouping-messageView-all")).click();
 		expect(takeScreenshot(element(by.id(_resolvePopoverWithGrouping())))).toLookAs("mpopover-grouping-compact");
+		element(by.id(_resolveCloseButtonWithGrouping())).click(); //Close the Popover/Dialog
 	});
-
-	["error", "warning", "success", "information", "all"].forEach(function (sMessageType) {
-		it("should open " + sMessageType + " messages in MessagePopover with grouping in compact mode.", function () {
-			element(by.id("mPopoverWithGrouping-messageView-" + sMessageType)).click();
-			expect(takeScreenshot(element(by.id(_resolvePopoverWithGrouping())))).toLookAs("mpopover-grouping-compact-" + sMessageType);
-		});
-	});
-
 });
