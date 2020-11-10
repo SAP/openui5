@@ -126,7 +126,7 @@ sap.ui.define([
 	 * @param {function} [mViewSettings.selectionChange] callback triggered by selecting a view - executed with the key as parameter
 	 *
 	 */
-	GroupPanelBase.prototype.addCustomView = function(mViewSettings) {
+	GroupPanelBase.prototype.addCustomView = function (mViewSettings) {
 		var oItem = mViewSettings.item;
 		var sKey = oItem.getKey();
 		var oContent = mViewSettings.content;
@@ -137,20 +137,29 @@ sap.ui.define([
 			throw new Error("Please provide an item of type sap.m.SegmentedButtonItem with a key");
 		}
 
-		if (fnOnSearch) {
-			this._getSearchField().attachLiveChange(function(oEvt){
-				fnOnSearch(oEvt.getSource().getValue());
-			});
+		if (this._oViewSwitch) {
+			this._oViewSwitch.attachSelectionChange(function (oEvt) {
+				if (fnSelectionChange) {
+					fnSelectionChange(oEvt.getParameter("item").getKey());
+				}
+				//Fire search if custom view is selected
+				if (this._isCustomView() && fnOnSearch) {
+					fnOnSearch(this._getSearchField().getValue());
+				}
+			}.bind(this));
 		}
 
-		if (fnSelectionChange && this._oViewSwitch) {
-			this._oViewSwitch.attachSelectionChange(function(oEvt){
-				fnSelectionChange(oEvt.getParameter("item").getKey());
-			});
+		if (fnOnSearch) {
+			this._getSearchField().attachLiveChange(function (oEvt) {
+				if (this._isCustomView()) {
+					//Fire search only while on the custom view
+					fnOnSearch(this._getSearchField().getValue());
+				}
+			}.bind(this));
 		}
 
 		this._mView[sKey] = oContent;
-		if (this._oViewSwitch && !this._oViewSwitch.getVisible()){
+		if (this._oViewSwitch && !this._oViewSwitch.getVisible()) {
 			this._oViewSwitch.setVisible(true);
 		}
 		this._oViewSwitch.addItem(oItem);
@@ -696,6 +705,7 @@ sap.ui.define([
 					this._togglePanelMode();
 				}
 			}
+			this._filterByModeAndSearch(true);
 		}
 
 		this._oGroupModeSelect.setVisible(bIsStandardView && this.getAllowSelection());
@@ -717,7 +727,6 @@ sap.ui.define([
 
 		this._createInnerListControl();
 		this._checkFirstGroup();
-		this._filterByModeAndSearch(true);
 
 		this._getSearchField().setVisible(true);
 	};

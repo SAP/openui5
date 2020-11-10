@@ -645,6 +645,27 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check 'addCustomView' searchcallback on view switch execution", function (assert) {
+        var done = assert.async();
+        var oItem = new SegmentedButtonItem({
+            key: "test",
+            icon: "sap-icon://bar-chart"
+        });
+        //add a custom view
+        this.oPanel.addCustomView({
+            item: oItem,
+            content: new List("myCustomList", {}),
+            search: function (sSearch) {
+                assert.equal(sSearch, "Test", "Callback executed with key");
+                done();
+            }
+        });
+        this.oPanel._getSearchField().setValue("Test");
+        this.oPanel._oViewSwitch.fireSelectionChange({
+            item: oItem
+        });
+    });
+
     QUnit.test("Check 'addCustomView' error if no key is provided", function(assert){
 
         assert.throws(
