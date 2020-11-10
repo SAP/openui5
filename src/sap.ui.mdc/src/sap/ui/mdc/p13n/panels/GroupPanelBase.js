@@ -88,7 +88,7 @@ sap.ui.define([
 				 * Determines the default view for the GroupPanel
 				 */
 				defaultView: {
-					type: "String"
+					type: "string"
 				}
 			},
 			aggregations: {

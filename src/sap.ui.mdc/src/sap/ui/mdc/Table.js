@@ -107,8 +107,8 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Table = Control.extend("sap.ui.mdc.Table", {
-		library: "sap.ui.mdc",
 		metadata: {
+			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/table/Table.designtime",
 			interfaces: [
 				"sap.ui.mdc.IFilterSource",

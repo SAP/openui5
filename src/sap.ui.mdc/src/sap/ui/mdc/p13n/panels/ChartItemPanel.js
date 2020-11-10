@@ -24,8 +24,9 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ChartItemPanel = BasePanel.extend("sap.ui.mdc.p13n.panels.ChartItemPanel", {
-		library: "sap.ui.mdc",
-		metadata: {},
+		metadata: {
+			library: "sap.ui.mdc"
+		},
 		init: function () {
 			// Initialize the BasePanel
 			BasePanel.prototype.init.apply(this, arguments);

@@ -26,8 +26,6 @@ sap.ui.define([
 	 */
 
 	var BasePanel = Control.extend("sap.ui.mdc.p13n.panels.BasePanel", {
-		library: "sap.ui.mdc",
-
 		metadata: {
 			library: "sap.ui.mdc",
 			associations: {},

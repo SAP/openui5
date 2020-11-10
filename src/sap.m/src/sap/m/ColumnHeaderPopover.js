@@ -38,8 +38,8 @@ sap.ui.define([
 	 */
 	var ColumnHeaderPopover = Control.extend("sap.m.ColumnHeaderPopover", /** @lends sap.m.ColumnHeaderPopover.prototype */
 		{
-			library: "sap.m",
 			metadata: {
+				library: "sap.m",
 				properties: {},
 				aggregations: {
 					/**
