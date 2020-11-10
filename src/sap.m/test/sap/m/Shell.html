@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html style="height:100%;">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<title>Shell test page</title>
+	<script id="sap-ui-bootstrap"
+		src="../../../resources/sap-ui-core.js"
+		data-sap-ui-libs="sap.ui.core, sap.m"
+		data-sap-ui-theme="sap_fiori_3"
+		data-sap-ui-async="true"
+		data-sap-ui-compatversion="edge"
+		data-sap-ui-excludejquerycompat="true"
+		data-sap-xx-waitfortheme="init">
+	</script>
+
+	<script>
+		(function() {
+			sap.ui.require([
+				"sap/ui/core/Core",
+				"sap/ui/core/mvc/XMLView",
+				"sap/ui/core/mvc/Controller"
+			], function(Core, XMLView, Controller) {
+				"use strict";
+
+				Controller.extend("myController", {
+					onInit() {
+						this.sTheme = "sap_fiori_3";
+					},
+					changeTheme: function() {
+						this.sTheme = this.sTheme == "sap_fiori_3_dark" ? "sap_fiori_3" : "sap_fiori_3_dark";
+						return sap.ui.getCore().applyTheme(this.sTheme);
+					}
+				});
+
+				Core.attachInit(function() {
+					XMLView.create({
+						definition: '<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" height="100%">' +
+							'<Shell xmlns="sap.m" logo="images/Woman_avatar_01.png" showLogout="false">' +
+								'<App autoFocus="false">' +
+									'<Button id="btnChangeTheme" press="changeTheme" text="Change Theme"></Button>' +
+								'</App>' +
+							'</Shell>' +
+						'</mvc:View>',
+					}).then(function(oView) {
+						oView.placeAt("content");
+					});
+				})
+			});
+		})();
+	</script>
+</head>
+
+<body id="content" class="sapUiBody"></body>
+
+</html>
