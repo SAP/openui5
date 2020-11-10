@@ -245,8 +245,8 @@ sap.ui.define([
 		 */
 		onFilter: function () {
 			// load asynchronous XML fragment
-			if (!this.byId("categoryFilterDialog")) {
-				Fragment.load({
+			if (!this._pCategoryFilterDialog) {
+				this._pCategoryFilterDialog = Fragment.load({
 					id: this.getView().getId(),
 					name: "sap.ui.demo.cart.view.CategoryFilterDialog",
 					controller: this
@@ -254,11 +254,12 @@ sap.ui.define([
 					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-					oDialog.open();
+					return oDialog;
 				}.bind(this));
-			} else {
-				this.byId("categoryFilterDialog").open();
 			}
+			this._pCategoryFilterDialog.then(function(oDialog) {
+				oDialog.open();
+			});
 		},
 
 		/**
