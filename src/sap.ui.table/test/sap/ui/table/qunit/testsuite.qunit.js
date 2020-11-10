@@ -290,6 +290,14 @@ sap.ui.define([
 					// Test has dependencies to sap.m modules
 					libs: ["sap.ui.table", "sap.m"]
 				}
+			},
+
+			"V4 aggregation plugin": {
+				group: "Plugins",
+				module: "./plugins/V4AggregationPlugin.qunit",
+				ui5: {
+					libs: ["sap.ui.table"]
+				}
 			}
 		}
 	};
