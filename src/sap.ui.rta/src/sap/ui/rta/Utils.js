@@ -115,7 +115,7 @@ function(
 						"sap/ui/fl/fieldExt/Access"
 					], function(Access) {
 						var oModel = oControl.getModel();
-						if (oModel) {
+						if (oModel && oModel.sServiceUrl) {
 							var bServiceOutdated = Access.isServiceOutdated(oModel.sServiceUrl);
 							if (bServiceOutdated) {
 								Access.setServiceValid(oModel.sServiceUrl);
