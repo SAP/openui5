@@ -145,8 +145,8 @@ sap.ui.define([
 				}
 			}
 			// load asynchronous XML fragment
-			if (!this.byId("viewSettingsDialog")) {
-				Fragment.load({
+			if (!this._pViewSettingsDialog) {
+				this._pViewSettingsDialog = Fragment.load({
 					id: this.getView().getId(),
 					name: "sap.ui.demo.masterdetail.view.ViewSettingsDialog",
 					controller: this
@@ -154,11 +154,12 @@ sap.ui.define([
 					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-					oDialog.open(sDialogTab);
+					return oDialog;
 				}.bind(this));
-			} else {
-				this.byId("viewSettingsDialog").open(sDialogTab);
 			}
+			this._pViewSettingsDialog.then(function(oDialog) {
+				oDialog.open(sDialogTab);
+			});
 		},
 
 		/**
