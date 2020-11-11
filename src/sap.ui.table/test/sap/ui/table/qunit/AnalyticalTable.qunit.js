@@ -668,6 +668,39 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Row#expand & Row#collapse", function(assert) {
+		var done = assert.async();
+		this.oModel.metadataLoaded().then(function() {
+			this.oTable = createTable.call(this);
+
+			var fnHandler1 = function() {
+				attachEventHandler(this.oTable, 1, fnHandler2, this);
+				this.oTable.getRows()[0].expand();
+			};
+
+			var fnHandler2 = function() {
+				assert.ok(this.oTable.isExpanded(0), "First row is now expanded");
+				var oContext = this.oTable.getContextByIndex(0);
+				var oSumContext = this.oTable.getContextByIndex(13);
+				assert.deepEqual(oContext, oSumContext, "Subtotal-Row context is correct");
+				assert.equal(this.oTable._getTotalRowCount(), 23, "Total row count");
+
+				attachEventHandler(this.oTable, 0, fnHandler3, this);
+				this.oTable.getRows()[0].collapse();
+			};
+
+			var fnHandler3 = function() {
+				assert.equal(this.oTable.isExpanded(0), false, "First row is now collapsed again");
+				assert.equal(this.oTable._getTotalRowCount(), 10, "Total row count");
+				done();
+			};
+
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
+			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
+
+		}.bind(this));
+	});
+
 	QUnit.test("ProvideGrandTotals = false: No Sum row available", function(assert) {
 		var done = assert.async();
 		this.oModel.metadataLoaded().then(function() {
