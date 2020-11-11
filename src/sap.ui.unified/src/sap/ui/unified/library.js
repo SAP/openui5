@@ -322,6 +322,41 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMo
 	};
 
 	/**
+	 * Types of a calendar appointment display mode
+	 *
+	 * @enum {string}
+	 * @private
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.CalendarAppointmentHeight = {
+
+		/**
+		 * HalfSize display mode.
+		 * @private
+		 */
+		HalfSize : "HalfSize",
+
+		/**
+		 * Regular display mode.
+		 * @private
+		 */
+		Regular : "Regular",
+
+		/**
+		 * Large display mode.
+		 * @private
+		 */
+		Large : "Large",
+
+		/**
+		 * Automatic display mode.
+		 * @private
+		 */
+		Automatic : "Automatic"
+
+	};
+
+	/**
 	 * Types of display mode for overlapping appointments.
 	 *
 	 * @enum {string}

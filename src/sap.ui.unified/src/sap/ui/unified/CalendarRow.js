@@ -48,6 +48,9 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = library.CalendarIntervalType;
 
+	// shortcut for sap.ui.unified.CalendarAppointmentHeight
+	var CalendarAppointmentHeight = library.CalendarAppointmentHeight;
+
 	/*
 	 * <code>UniversalDate</code> objects are used inside the <code>CalendarRow</code>, whereas JavaScript dates are used in the API.
 	 * So conversion must be done on API functions.
@@ -192,7 +195,15 @@ sap.ui.define([
 			 * <b>Note:</b> The real visualization depends on the used theme.
 			 * @since 1.40.0
 			 */
-			appointmentsVisualization : {type : "sap.ui.unified.CalendarAppointmentVisualization", group : "Appearance", defaultValue : CalendarAppointmentVisualization.Standard}
+			appointmentsVisualization : {type : "sap.ui.unified.CalendarAppointmentVisualization", group : "Appearance", defaultValue : CalendarAppointmentVisualization.Standard},
+
+			/**
+			 * Defines the height of the <code>CalendarAppoinment<code>
+			 * @private
+			 */
+			appointmentHeight: { type: "string", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular, visibility: "hidden"}
+
+
 		},
 		aggregations : {
 
@@ -476,14 +487,8 @@ sap.ui.define([
 
 	CalendarRow.prototype._getAppointmentReducedHeight = function(oAppointment){
 
-		var bReducedHeight = false;
-
-		if (!Device.system.phone && this.getAppointmentsReducedHeight() && !oAppointment.getText()) {
-			bReducedHeight = true;
-		}
-
+		var bReducedHeight = !Device.system.phone && this.getAppointmentsReducedHeight() && oAppointment.size === CalendarAppointmentHeight.Regular;
 		return bReducedHeight;
-
 	};
 
 	CalendarRow.prototype.onfocusin = function(oEvent) {
@@ -1192,7 +1197,7 @@ sap.ui.define([
 					continue;
 				}
 
-				aVisibleAppointments.push({appointment: oAppointment, begin: iBegin, end: iEnd, calculatedEnd: iEnd, level: iLevel});
+				aVisibleAppointments.push({appointment: oAppointment, begin: iBegin, end: iEnd, calculatedEnd: iEnd, level: iLevel, size: this.getProperty("appointmentHeight")});
 
 				if (this._sFocusedAppointmentId && this._sFocusedAppointmentId == oAppointment.getId()) {
 					bFocusIdFound = true;
@@ -1522,7 +1527,6 @@ sap.ui.define([
 		var iStaticHeight = 0;
 		var iLevels = 0;
 		var i = 0;
-		var bAppointmentsReducedHeight = !Device.system.phone && this.getAppointmentsReducedHeight();
 
 		if (this.getShowIntervalHeaders() && (this.getShowEmptyIntervalHeaders() || this._getVisibleIntervalHeaders().length > 0)) {
 			iStaticHeight = jQuery(this.$("AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0]).outerHeight(true);
@@ -1564,7 +1568,6 @@ sap.ui.define([
 			oAppointment = this._aVisibleAppointments[i];
 			$Appointment = oAppointment.appointment.$();
 			var oBlockedLevels = {};
-			var bTwoLevels = bAppointmentsReducedHeight && !this._getAppointmentReducedHeight(oAppointment.appointment);
 
 			if (oAppointment.level < 0) {
 				for (var j = 0; j < this._aVisibleAppointments.length; j++) {
@@ -1573,37 +1576,18 @@ sap.ui.define([
 							oAppointment.begin < (Math.floor(1000 * (100 - oVisibleAppointment.end)) / 1000) &&
 							(Math.floor(1000 * (100 - oAppointment.end)) / 1000) > oVisibleAppointment.begin &&
 							oVisibleAppointment.level >= 0) {
-						// if one appointment starts directly at the end of an other one place it at the same level
-						if (oBlockedLevels[oVisibleAppointment.level]) {
-							oBlockedLevels[oVisibleAppointment.level]++;
-						} else {
-							oBlockedLevels[oVisibleAppointment.level] = 1;
-						}
-
-						if (bAppointmentsReducedHeight && !this._getAppointmentReducedHeight(oVisibleAppointment.appointment)) {
-							// 2 levels used
-							if (oBlockedLevels[oVisibleAppointment.level + 1]) {
-								oBlockedLevels[oVisibleAppointment.level + 1]++;
-							} else {
-								oBlockedLevels[oVisibleAppointment.level + 1] = 1;
-							}
-						}
+								this._setBlockedLevelsForAppointment(oVisibleAppointment, oBlockedLevels);
 					}
 				}
 
-				oAppointment.level = 0;
-				while (oBlockedLevels[oAppointment.level] || (bTwoLevels && oBlockedLevels[oAppointment.level + 1])) {
-					oAppointment.level++;
-				}
+				oAppointment.level = this._getAppointmetLevel(oBlockedLevels, oAppointment);
 				$Appointment.attr("data-sap-level", oAppointment.level);
 			}
 
 			$Appointment.css("top", (iHeight * oAppointment.level + iStaticHeight) + "px");
 
 			var iAppointmentEndLevel = oAppointment.level;
-			if (bTwoLevels) {
-				iAppointmentEndLevel++;
-			}
+			iAppointmentEndLevel += this._getAppointmentRowCount(oAppointment) - 1;
 			if (iLevels < iAppointmentEndLevel) {
 				iLevels = iAppointmentEndLevel;
 			}
@@ -1628,6 +1612,69 @@ sap.ui.define([
 		$DummyApp.css("display", "none");
 
 	}
+
+	CalendarRow.prototype._setBlockedLevelsForAppointment = function (oVisibleAppointment, oBlockedLevels) {
+		var iBlockedLevels = this._getAppointmentRowCount(oVisibleAppointment);
+		for (var iLevels = 0; iLevels < iBlockedLevels; iLevels++) {
+			oBlockedLevels[oVisibleAppointment.level + iLevels] = true;
+		}
+		return oBlockedLevels;
+	};
+
+	CalendarRow.prototype._getAppointmentRowCount = function (oVisibleAppointment){
+		var iBlockedLevels,
+			bReducedHeight = this._getAppointmentReducedHeight(oVisibleAppointment);
+		switch (oVisibleAppointment.size) {
+			case CalendarAppointmentHeight.HalfSize :
+				iBlockedLevels = 1;
+				break;
+			case CalendarAppointmentHeight.Regular :
+				iBlockedLevels = 2;
+				if (bReducedHeight && !oVisibleAppointment.appointment.getText() && !oVisibleAppointment.appointment.getProperty("description") ) {
+					iBlockedLevels = 1;
+				}
+				break;
+			case CalendarAppointmentHeight.Large :
+				iBlockedLevels = 3;
+				break;
+			case CalendarAppointmentHeight.Automatic :
+				iBlockedLevels = 1;
+				if (oVisibleAppointment.appointment.getText()) {
+					iBlockedLevels += 1;
+				}
+				if (oVisibleAppointment.appointment.getProperty("description")) {
+					iBlockedLevels += 1;
+				}
+				break;
+		}
+
+		return iBlockedLevels;
+	};
+
+	CalendarRow.prototype._getAppointmetLevel = function (oBlockedLevels, oAppointment){
+		var iAppointmentLevel = 0;
+		var iNeedFreeLevel = this._getAppointmentRowCount(oAppointment);
+		var bFoundSlots = true;
+		while (bFoundSlots) {
+			bFoundSlots = this._isPosibleToPositionAppointment(iAppointmentLevel,oBlockedLevels, iNeedFreeLevel);
+			if (!bFoundSlots) {
+				bFoundSlots = true;
+				iAppointmentLevel += 1;
+			} else {
+				bFoundSlots = false;
+			}
+		}
+		return iAppointmentLevel;
+	};
+
+	CalendarRow.prototype._isPosibleToPositionAppointment = function(iAppointmentLevel, oBlockedLevels, iNeedFreeLevel){
+		for (var p = iAppointmentLevel; p < iNeedFreeLevel + iAppointmentLevel; p++) {
+			if (oBlockedLevels[p]) {
+				return false;
+			}
+		}
+		return true;
+	};
 
 	function _selectAppointment(oAppointment, bRemoveOldSelection) {
 

@@ -127,6 +127,9 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 
+	// shortcut for sap.ui.unified.CalendarAppointmentHeight
+	var CalendarAppointmentHeight = unifiedLibrary.CalendarAppointmentHeight;
+
 	var DRAG_DROP_CONFIG_NAME = "DragDropConfig";
 	var RESIZE_CONFIG_NAME = "ResizeConfig";
 	var CREATE_CONFIG_NAME = "CreateConfig";
@@ -278,6 +281,12 @@ sap.ui.define([
 				 * @since 1.38.0
 				 */
 				appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
+
+				/**
+				 * Determines the different possible sizes for appointments.
+				 * @private
+				 */
+				appointmentHeight: { type: "string", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular, visibility: "hidden"},
 
 				/**
 				 * Determines how the appointments are visualized depending on the used theme.
@@ -991,6 +1000,19 @@ sap.ui.define([
 		}
 
 		oColumnHeaders.style.top = iTop;
+
+		return this;
+	};
+
+	PlanningCalendar.prototype.setAppointmentHeight = function(sAppointmentHeight) {
+		var aRows = this.getRows(),
+			i;
+
+		this.setProperty("appointmentHeight", sAppointmentHeight,true);
+		for (i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			getRowTimeline(oRow).setProperty("appointmentHeight",sAppointmentHeight);
+		}
 
 		return this;
 	};
@@ -2941,6 +2963,7 @@ sap.ui.define([
 		oRowTimeline.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oRowTimeline.setLegend(this.getLegend());
 		oRowTimeline.setAppointmentsVisualization(this.getAppointmentsVisualization());
+		oRowTimeline.setProperty("appointmentHeight", this.getProperty("appointmentHeight"));
 		oRowTimeline.attachEvent("select", handleAppointmentSelect, this);
 		oRowTimeline.attachEvent("startDateChange", this._handleStartDateChange, this);
 		oRowTimeline.attachEvent("leaveRow", handleLeaveRow, this);
