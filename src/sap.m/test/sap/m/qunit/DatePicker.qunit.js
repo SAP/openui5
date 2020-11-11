@@ -17,10 +17,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/unified/library",
 	"sap/ui/unified/DateRange",
+	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendItem",
-	"sap/ui/core/date/UniversalDate",
 	"sap/ui/unified/calendar/CustomYearPicker",
 	"sap/ui/unified/calendar/CustomMonthPicker",
 	"jquery.sap.global"
@@ -41,10 +41,10 @@ sap.ui.define([
 	Device,
 	unifiedLibrary,
 	DateRange,
+	CalendarDate,
 	DateTypeRange,
 	CalendarLegend,
 	CalendarLegendItem,
-	UniversalDate,
 	CustomYearPicker,
 	CustomMonthPicker
 ) {
@@ -2002,8 +2002,8 @@ sap.ui.define([
 
 	QUnit.test("Aria in calendar with Secondary calendar type", function(assert) {
 		var oFormatSecondaryLong = DateFormat.getInstance({style: "long", calendarType: "Gregorian"}),
-			oSecondaryDay = UniversalDate.getInstance(new Date(2015, 10, 25, 0, 0, 0), "Gregorian"),
-			sAriaSecondaryDay = oFormatSecondaryLong.format(oSecondaryDay, true),
+			oSecondaryDay = new CalendarDate(2015, 10, 24, "Gregorian"),
+			sAriaSecondaryDay = oFormatSecondaryLong.format(oSecondaryDay.toUTCJSDate(), true),
 			sDayAriaText = jQuery("#DP5-inner").val(),
 			sExpectedAria = sDayAriaText + " " + sAriaSecondaryDay,
 			sAriaText = jQuery("#DP5-cal--Month0-20151124").attr('aria-label');
