@@ -194,6 +194,7 @@ sap.ui.define([
 			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
 		mChangeSpecificData.command = sCommand;
+		mChangeSpecificData.generator = "sap.ui.rta FlexCommand";
 		return ChangesWriteAPI.create({changeSpecificData: mChangeSpecificData, selector: this._validateControlForChange(mFlexSettings)})
 			.then(function(oChange) {
 				if (mFlexSettings && mFlexSettings.originalSelector) {

@@ -899,10 +899,6 @@ sap.ui.define([
 	ChangePersistence.prototype.resetChanges = function(sLayer, sGenerator, aSelectorIds, aChangeTypes) {
 		var bSelectorIdsProvided = aSelectorIds && aSelectorIds.length > 0;
 		var bChangeTypesProvided = aChangeTypes && aChangeTypes.length > 0;
-		if (!sGenerator && !bSelectorIdsProvided && !bChangeTypesProvided) {
-			Log.error("Of the generator, selector IDs and change types parameters at least one has to filled");
-			return Promise.reject("Of the generator, selector IDs and change types parameters at least one has to filled");
-		}
 
 		return this.getChangesForComponent({
 			currentLayer: sLayer,

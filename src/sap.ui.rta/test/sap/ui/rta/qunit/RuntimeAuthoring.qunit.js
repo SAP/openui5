@@ -1197,7 +1197,6 @@ sap.ui.define([
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
 					selector: oCompCont.getComponentInstance(),
-					generator: "Change.createInitialFileContent",
 					layer: Layer.CUSTOMER
 				}, "then the correct parameters were passed");
 				return Promise.resolve();
@@ -1216,7 +1215,6 @@ sap.ui.define([
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
 					selector: oCompCont.getComponentInstance(),
-					generator: "Change.createInitialFileContent",
 					layer: Layer.CUSTOMER
 				}, "then the correct generator and layer was passed");
 				return Promise.resolve();

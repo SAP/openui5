@@ -1360,8 +1360,7 @@ function(
 		var sLayer = this.getLayer();
 		return PersistenceWriteAPI.reset({
 			selector: FlexUtils.getAppComponentForControl(this.getRootControlInstance()),
-			layer: sLayer,
-			generator: "Change.createInitialFileContent"
+			layer: sLayer
 		}).then(function () {
 			var oReloadInfo = {
 				isDraftAvailable: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}),

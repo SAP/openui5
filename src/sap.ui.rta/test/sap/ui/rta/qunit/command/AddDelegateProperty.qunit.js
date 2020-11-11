@@ -81,7 +81,7 @@ function(
 		}
 	});
 
-	var ADD_PROPERTY_SPECIAL_SETTINGS_KEYS = ["changeType", "index", "newControlId", "bindingPath", "parentId", "modelType", "relevantContainerId", "oDataServiceVersion", "oDataInformation", "layer", "developerMode", "jsOnly", "command", "selector", "reference", "packageName"];
+	var ADD_PROPERTY_SPECIAL_SETTINGS_KEYS = ["changeType", "index", "newControlId", "bindingPath", "parentId", "modelType", "relevantContainerId", "oDataServiceVersion", "oDataInformation", "layer", "developerMode", "jsOnly", "command", "generator", "selector", "reference", "packageName"];
 
 	QUnit.test("when getting a AddDelegateProperty command for the change ...", function(assert) {
 		return CommandFactory.getCommandFor(
