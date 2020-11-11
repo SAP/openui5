@@ -12,6 +12,7 @@ sap.ui.define([], function () {
 	 */
 	return {
 		USER: "USER",
+		PUBLIC: "PUBLIC",
 		CUSTOMER: "CUSTOMER",
 		CUSTOMER_BASE: "CUSTOMER_BASE",
 		PARTNER: "PARTNER",

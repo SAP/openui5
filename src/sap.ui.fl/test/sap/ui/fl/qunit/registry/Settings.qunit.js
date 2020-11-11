@@ -23,6 +23,7 @@ sap.ui.define([
 				isKeyUser: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
+				isPublicLayerAvailable: false,
 				isAppVariantSaveAsEnabled: false,
 				features: {
 					addField: [Layer.CUSTOMER, Layer.VENDOR],
@@ -81,6 +82,22 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isVariantSharingEnabled, false);
 			var bIsVariantSharingEnabled = this.cut.isVariantSharingEnabled();
 			assert.equal(bIsVariantSharingEnabled, false);
+		});
+
+		QUnit.test("isPublicLayerAvailable is false by default", function(assert) {
+			assert.equal(this.cut._oSettings.isPublicLayerAvailable, false);
+			var bIsPublicLayerAvailable = this.cut.isPublicLayerAvailable();
+			assert.equal(bIsPublicLayerAvailable, false);
+		});
+
+		QUnit.test("isPublicLayerAvailable is set to true", function(assert) {
+			var oSettings = {
+				isPublicLayerAvailable: true
+			};
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut._oSettings.isPublicLayerAvailable, true);
+			var bIsPublicLayerAvailable = this.cut.isPublicLayerAvailable();
+			assert.equal(bIsPublicLayerAvailable, true);
 		});
 
 		QUnit.test("getSystem returns undefined when no system info is maintained in the settings", function(assert) {

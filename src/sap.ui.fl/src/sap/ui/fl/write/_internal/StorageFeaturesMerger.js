@@ -26,6 +26,7 @@ sap.ui.define([
 		isAtoEnabled: false,
 		versioning: {},
 		isProductiveSystem: true,
+		isPublicLayerAvailable: false,
 		isZeroDowntimeUpgradeRunning: false,
 		system: "",
 		client: ""

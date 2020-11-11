@@ -23,6 +23,7 @@ function(
 		Layer.PARTNER,
 		Layer.CUSTOMER_BASE,
 		Layer.CUSTOMER,
+		Layer.PUBLIC,
 		Layer.USER
 	];
 
@@ -78,7 +79,7 @@ function(
 		 * @public
 		 */
 		isCustomerDependentLayer : function(sLayerName) {
-			return ([Layer.CUSTOMER, Layer.CUSTOMER_BASE].indexOf(sLayerName) > -1);
+			return ([Layer.PUBLIC, Layer.CUSTOMER, Layer.CUSTOMER_BASE].indexOf(sLayerName) > -1);
 		},
 
 		/**
@@ -181,8 +182,7 @@ function(
 			}
 
 			var sLayer = getUrlParameter("sap-ui-layer") || "";
-			sLayer = sLayer.toUpperCase();
-			return sLayer || Layer.CUSTOMER;
+			return sLayer.toUpperCase() || Layer.CUSTOMER;
 		},
 
 		/**

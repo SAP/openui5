@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
+	"sap/base/util/UriParameters",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/ChangesController",
@@ -11,10 +12,11 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	UIComponent,
+	UriParameters,
 	FlexState,
 	ManifestUtils,
 	ChangesController,
@@ -24,7 +26,7 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	Change,
 	Layer,
-	LayerUtils,
+	Settings,
 	sinon
 ) {
 	"use strict";
@@ -42,6 +44,9 @@ sap.ui.define([
 	};
 
 	QUnit.module("getFlexObjects", {
+		before: function () {
+			return Settings.getInstance();
+		},
 		beforeEach: function() {
 			sandbox.stub(ChangesController, "getAppComponentForSelector").returns(oComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
@@ -120,7 +125,11 @@ sap.ui.define([
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(UriParameters, "fromQuery").returns({
+				get: function () {
+					return Layer.VENDOR;
+				}
+			});
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "pageVariant",
@@ -159,7 +168,6 @@ sap.ui.define([
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "pageVariant",

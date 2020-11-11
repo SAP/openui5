@@ -367,6 +367,7 @@ sap.ui.define([
 					USER: false
 				},
 				isProductiveSystem: true,
+				isPublicLayerAvailable: false,
 				isZeroDowntimeUpgradeRunning: false,
 				system: "",
 				client: ""
@@ -441,6 +442,7 @@ sap.ui.define([
 				isAtoEnabled: false,
 				draft: {},
 				isProductiveSystem: true,
+				isPublicLayerAvailable: false,
 				isZeroDowntimeUpgradeRunning: false,
 				system: "",
 				client: ""
