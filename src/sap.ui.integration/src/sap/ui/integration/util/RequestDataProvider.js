@@ -85,6 +85,9 @@ sap.ui.define([
 		var sMessage = "Invalid request";
 
 		return new Promise(function (resolve, reject) {
+			var vData,
+				oRequest,
+				vWithCredentials;
 
 			if (!oRequestConfig || !oRequestConfig.url) {
 				Log.error(sMessage);
@@ -96,14 +99,19 @@ sap.ui.define([
 				Log.error("To specify dataType property in the Request Configuration, first set allowCustomDataType to 'true'.");
 			}
 
-			var vData = oRequestConfig.parameters;
+			vData = oRequestConfig.parameters;
 
 			// if not 'application/x-www-form-urlencoded', data has to be serialized manually
 			if (this._hasHeader(oRequestConfig, "Content-Type", "application/json")) {
 				vData = JSON.stringify(oRequestConfig.parameters);
 			}
 
-			var oRequest = {
+			vWithCredentials = oRequestConfig.withCredentials;
+			if (vWithCredentials == null) {
+				vWithCredentials = true;
+			}
+
+			oRequest = {
 				"mode": oRequestConfig.mode || "cors",
 				"url": oRequestConfig.url,
 				"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
@@ -112,7 +120,7 @@ sap.ui.define([
 				"headers": oRequestConfig.headers,
 				"timeout": 15000,
 				"xhrFields": {
-					"withCredentials": !!oRequestConfig.withCredentials
+					"withCredentials": !!vWithCredentials
 				}
 			};
 

@@ -446,6 +446,45 @@ sap.ui.define([
 		this.oDataProvider.triggerDataUpdate();
 	});
 
+	QUnit.test("withCredentials is true by default", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url"
+			}
+		});
+
+		this.oServer.respondWith("GET", "/data/provider/test/url", function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.withCredentials, true, "withCredentials is true if not specified otherwise");
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("withCredentials is false if specified", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url",
+				withCredentials: false
+			}
+		});
+
+		this.oServer.respondWith("GET", "/data/provider/test/url", function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.withCredentials, false, "withCredentials is false if specified");
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
 	QUnit.module("ServiceDataProvider", {
 		beforeEach: function () {
 			var that = this;
