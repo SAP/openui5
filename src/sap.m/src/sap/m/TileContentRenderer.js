@@ -82,15 +82,11 @@ sap.ui.define(["sap/base/security/encodeCSS"],
 		}
 
 		var sColorClass = "sapMTileCntFooterTextColor" + oControl.getFooterColor();
-		var sTooltip = oControl.getTooltip_AsString();
 		var sFooterTxt = oControl._getFooterText(oRm, oControl);
 		// footer text div
 		oRm.openStart("div", oControl.getId() + "-footer-text");
 		oRm.class("sapMTileCntFtrTxt");
 		oRm.class(encodeCSS(sColorClass));
-		if (sTooltip.trim()) { // check for white space(s) needed since the IE11 renders it
-			oRm.attr("title", sTooltip);
-		}
 		oRm.openEnd();
 		oRm.text(sFooterTxt);
 		oRm.close("div");
