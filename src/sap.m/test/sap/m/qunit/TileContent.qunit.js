@@ -245,4 +245,53 @@ sap.ui.define([
 		assert.ok(!jQuery.sap.domById("tileContent-content"), "No content has been rendered.");
 	});
 
+	QUnit.module("testing tooltip", {
+		afterEach : function() {
+			this.oTileContent.destroy();
+		}
+	});
+
+	QUnit.test("when both content and tile have tooltip", function(assert) {
+		this.oTileContent =  new TileContent("tileContent", {
+			size : "Auto",
+			content : new FeedContent({
+				size : "Auto",
+				contentText : "content"
+			}),
+			tooltip: "fulltile"
+		});
+		this.oTileContent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		var tooltip = "fulltile" + "\n" + "content " + "\n";
+		//Assert
+		assert.equal(jQuery.sap.domById("tileContent").title,tooltip);
+	});
+
+	QUnit.test("when only content has tooltip", function(assert) {
+		this.oTileContent =  new TileContent("tileContent1", {
+			size : "Auto",
+			content : new FeedContent("feeditem", {
+				size : "Auto",
+				contentText : "content"
+			})
+		});
+		this.oTileContent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(jQuery.sap.domById("tileContent1").title,"content " + "\n");
+	});
+
+	QUnit.test("when only tile has tooltip", function(assert) {
+		this.oTileContent =  new TileContent("tileContent2", {
+			content : new FeedContent("feed2", {
+				size : "Auto"
+			}),
+			tooltip: "fulltile"
+		});
+		this.oTileContent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(jQuery.sap.domById("tileContent2").title,"fulltile");
+	});
+
 });

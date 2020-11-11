@@ -88,17 +88,40 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './TileContentRenderer'],
 		var oContent = this.getContent();
 		if (oContent) {
 			var thisRef = this.$();
-			if (!thisRef.attr("title")) {
-				var sCntTooltip = oContent.getTooltip_AsString();
-				var aTooltipEments = thisRef.find("*");
-				aTooltipEments.removeAttr("title");
+			var aTooltipEments = thisRef.find("*");
+			// tooltip of the entire tile
+			var sTileToolTip = thisRef.attr("title") || "";
+			// tooltip of the content if any
+			var sCntTooltip = oContent.getTooltip_AsString() || "";
+			// if both the tooltips are same, make tile tooltip as null
+			if (sTileToolTip === sCntTooltip) {
+				sTileToolTip = "";
+			}
+			var sInnerToolTip = '';
+			// looping through all the inner elements to concatenate
+			// their tooltips
+			aTooltipEments.toArray().forEach(function(el){
+				if (el.title) {
+						sInnerToolTip = sInnerToolTip.concat(el.title + " ");
+					}
+				});
+				// if inner tooltips exist, then concatenate with the content tooltip
+				if (sInnerToolTip.trim() !== 0) {
+					sCntTooltip = sCntTooltip + " " + sInnerToolTip;
+				}
 				if (sCntTooltip && sCntTooltip.trim().length !== 0) {
 					if (this._getFooterText().trim() !== 0) {
 						sCntTooltip = sCntTooltip + "\n" + this._getFooterText();
 					}
-					thisRef.attr("title", sCntTooltip);
+					// if tile tooltip exists concatenate tile tooltip
+					// and content tooltip with a newline
+					sTileToolTip.trim().length !== 0 ?
+						thisRef.attr("title", sTileToolTip + "\n" + sCntTooltip) :
+						thisRef.attr("title",  sCntTooltip);
 				}
-			}
+
+			// removing all inner elements tooltip om every mouse enter
+			aTooltipEments.removeAttr("title").off("mouseenter");
 		}
 	};
 
