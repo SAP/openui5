@@ -114,13 +114,13 @@
 			}
 
 			bindListData(data, oItemTemplate1, oList)
-//end of the list creation
+			//end of the list creation
 
-			var oBeginButton = new sap.m.Button({
+			var oBeginButton = new sap.m.Button("actionButton1",{
 				text: "Action1",
 				type: sap.m.ButtonType.Reject,
 				press: function(){
-					oResponsivePopover.setShowCloseButton(false);
+					oResponsivePopover.setShowCloseButton(true);
 				}
 			});
 
@@ -128,7 +128,7 @@
 				text: "Action2",
 				type: sap.m.ButtonType.Accept,
 				press: function(){
-					oResponsivePopover.setShowCloseButton(true);
+					oResponsivePopover.setShowCloseButton(false);
 				}
 			});
 
@@ -159,9 +159,6 @@
 				ariaLabelledBy: oInvisibleText.getId()
 			});
 
-			//uncomment this line when padding is needed in the content area
-			//oResponsivePopover.addStyleClass("sapUiPopupWithPadding");
-
 			var oButton = new sap.m.Button("btnPopoverBottom", {
 				text : "Popover Bottom",
 				press : function() {
@@ -177,10 +174,9 @@
 			/*     contains a footer, there's no footer on the popover.              */
 			/*=======================================================================*/
 
-			//begin: create the list
+			//create the list
 			var oList1 = new sap.m.List("listInPopover", {
 			});
-			//end: create the list
 
 			var oItemTemplate2 = new sap.m.StandardListItem({
 				title : "{title}",
@@ -200,12 +196,13 @@
 
 			var footer = new sap.m.Bar({
 				contentLeft: [],
-				contentMiddle: [new sap.m.Button({icon: "sap-icon://globe", tooltip: "Global Action 1"}),
-				                new sap.m.Button({icon: "sap-icon://globe", tooltip: "Global Action 2"}),
-				                new sap.m.Button({icon: "sap-icon://globe", tooltip: "Global Action 3"})],
+				contentMiddle: [
+					new sap.m.Button({icon: "sap-icon://globe", tooltip: "Global Action 1"}),
+					new sap.m.Button({icon: "sap-icon://globe", tooltip: "Global Action 2"}),
+					new sap.m.Button({icon: "sap-icon://globe", tooltip: "Global Action 3"})
+				],
 				contentRight: []
 			});
-
 
 			//begin: creating navContainer
 			var oNavContainer = new sap.m.NavContainer({
@@ -227,12 +224,14 @@
 				showHeader: true,
 				navButtonText: "listPage",
 				navButtonPress: function(){ oNavContainer.back(); },
-				content: [new sap.m.Button({
-					text: "Finish",
-					press: function(){
-						oNavContainer.back();
-					}
-				})]
+				content: [
+					new sap.m.Button("closeButton1", {
+						text: "Close",
+						press: function(){
+							oResponsivePopover1.close();
+						}
+					})
+				]
 			});
 
 			oNavContainer.addPage(oPage1).addPage(oPage2);
@@ -248,7 +247,6 @@
 				placement: sap.m.PlacementType.Bottom,
 				title: "I'm adaptive now",
 				showHeader: false,
-// 				modal: true,
 				contentWidth: "320px",
 				contentHeight: "400px",
 				beforeOpen: function(oEvent){
@@ -301,12 +299,20 @@
 			var oPage4 = new sap.m.Page("detailPage1", {
 				title: "Detail Page",
 				showHeader: false,
-				content: [new sap.m.Button({
-					text: "Finish",
-					press: function(){
-						oNavContainer1.back();
-					}
-				})]
+				content: [
+					new sap.m.Button({
+						text: "Navigate Back",
+						press: function(){
+							oNavContainer1.back();
+						}
+					}),
+					new sap.m.Button("closeButton2", {
+						text: "Close",
+						press: function(){
+							oResponsivePopover2.close();
+						}
+					})
+				]
 			});
 
 			var oNavContainer1 = new sap.m.NavContainer({
