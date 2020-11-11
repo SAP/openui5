@@ -14,48 +14,38 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		onExit : function () {
-			if (this._oPopover) {
-				this._oPopover.destroy();
-			}
-		},
-
-		_getResponsivePopover: function () {
-			if (!this._oPopover) {
-				return Fragment.load({
-					type: "XML",
-					name: "sap.m.sample.ObjectHeaderTitleSel.Popover",
-					controller: this
-				}).then(function (oPopover) {
-					this._oPopover = oPopover;
-				}.bind(this));
-			}
-			return this._oPopover;
-		},
-
 		handleItemSelect: function (oEvent) {
 			var oItem = oEvent.getParameter("listItem"),
 				oObjectHeader = this.byId("idObjectHeader");
 
 			oObjectHeader.setTitle(oItem.getTitle());
 			oObjectHeader.setBindingContext(oItem.getBindingContext());
-			this._oPopover.close();
+
+			// note: We don't need to chain to the _pPopover promise, since this event-handler
+			// is only called from within the loaded dialog itself.
+			this.byId("myPopover").close();
 		},
 
 		handleTitleSelectorPress: function (oEvent) {
-			var oPopoverFragment = this._getResponsivePopover(),
-				oSourceControl = oEvent.getSource(),
-				oControlDomRef = oEvent.getParameter("domRef");
+			var oSourceControl = oEvent.getSource(),
+				oControlDomRef = oEvent.getParameter("domRef"),
+				oView = this.getView();
 
-			if (oPopoverFragment instanceof Promise) {
-				oPopoverFragment.then(function(oPopover) {
-					this._oPopover.setModel(oSourceControl.getModel());
-					this._oPopover.openBy(oControlDomRef);
-				}.bind(this));
-			} else {
-				oPopoverFragment.setModel(oSourceControl.getModel());
-				oPopoverFragment.openBy(oControlDomRef);
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
+					type: "XML",
+					name: "sap.m.sample.ObjectHeaderTitleSel.Popover",
+					controller: this
+				}).then(function(oPopover) {
+					oView.addDependent(oPopover);
+					return oPopover;
+				});
 			}
+			this._pPopover.then(function(oPopover) {
+				oPopover.setModel(oSourceControl.getModel());
+				oPopover.openBy(oControlDomRef);
+			});
 		}
 
 	});

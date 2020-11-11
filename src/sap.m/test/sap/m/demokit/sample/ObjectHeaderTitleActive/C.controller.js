@@ -13,37 +13,24 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		onExit : function () {
-			if (this._oPopover) {
-				this._oPopover.destroy();
-			}
-		},
+		handleTitlePress : function (oEvent) {
+			var oDomRef = oEvent.getParameter("domRef"),
+				oView = this.getView();
 
-		_getPopover : function () {
-			if (!this._oPopover) {
-				return Fragment.load({
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
 					type: "XML",
 					name: "sap.m.sample.ObjectHeaderTitleActive.Popover",
 					controller: this
+				}).then(function(oPopover) {
+					oView.addDependent(oPopover);
+					return oPopover;
 				});
-			} else {
-				return this._oPopover;
 			}
-		},
-
-		handleTitlePress : function (oEvent) {
-			var domRef = oEvent.getParameter("domRef"),
-				oPopoverFragment = this._getPopover();
-
-			if (oPopoverFragment instanceof Promise) {
-				oPopoverFragment.then(function(oPopover) {
-					this._oPopover = oPopover;
-					this.getView().addDependent(this._oPopover);
-					oPopover.openBy(domRef);
-				}.bind(this));
-			} else {
-				oPopoverFragment.openBy(domRef);
-			}
+			this._pPopover.then(function(oPopover) {
+				oPopover.openBy(oDomRef);
+			});
 		}
 	});
 
