@@ -27,7 +27,7 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function() {
-			RtaPerformanceTestUtil.startRta(sap.ui.getCore().byId("HBox"));
+			window.fnResolve(RtaPerformanceTestUtil.startRta(sap.ui.getCore().byId("HBox")));
 		},
 
 		createContent: function () {

@@ -14,6 +14,10 @@ sap.ui.define([
 			manifest: "json"
 		},
 
+		onAfterRendering: function() {
+			window.fnResolve();
+		},
+
 		createContent: function () {
 			var oLayout = new VerticalLayout("visibleLayout");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout, 100);
