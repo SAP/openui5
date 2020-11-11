@@ -3627,6 +3627,22 @@ sap.ui.define([
 			$select : ['p1', 'p2']
 		});
 
+		// code under test
+		oCache.setLateQueryOptions({$expand : {n : {$select : 'p3'}}});
+
+		assert.deepEqual(oCache.mLateQueryOptions, {
+			$expand : {n : {$select : 'p3'}},
+			$select : undefined
+		});
+
+		// code under test
+		oCache.setLateQueryOptions({$select : ['p1', 'p2']});
+
+		assert.deepEqual(oCache.mLateQueryOptions, {
+			$expand : undefined,
+			$select : ['p1', 'p2']
+		});
+
 		assert.strictEqual(oCache.getLateQueryOptions(), oCache.mLateQueryOptions);
 
 		// code under test
@@ -7651,10 +7667,9 @@ sap.ui.define([
 				// read at least 10, at most 26
 				iFillLength = Math.min(Math.max(iLength || 0, 10), 26),
 				iFillStart = iStart < 10 ? 0 : iStart, // some old values due to previous paging
-				mQueryOptions = {},
 				iReceivedLength = oFixture.aValues.length,
 				sResourcePath = "TEAMS('42')/Foo",
-				oCache = this.createCache(sResourcePath, mQueryOptions, true),
+				oCache = this.createCache(sResourcePath, {}, true),
 				that = this,
 				i;
 
@@ -7681,6 +7696,7 @@ sap.ui.define([
 						mNavigationPropertyPaths = {},
 						aPaths = ["ROOM_ID"],
 						sPredicate,
+						mQueryOptions = {},
 						mQueryOptions0 = {
 							$apply : "A.P.P.L.E.",
 							$expand : {expand : null},
@@ -7737,6 +7753,10 @@ sap.ui.define([
 						? Object.keys(oCache.aElements.$byPredicate).length
 						: iReceivedLength + (oCreatedElement ? 1 : 0);
 					that.mock(oCache).expects("checkSharedRequest").withExactArgs();
+					that.mock(Object).expects("assign")
+						.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+							sinon.match.same(oCache.mLateQueryOptions))
+						.returns(mQueryOptions);
 					that.mock(_Helper).expects("intersectQueryOptions")
 						.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
@@ -7862,7 +7882,7 @@ sap.ui.define([
 			mQueryOptions = {},
 			sResourcePath = "TEAMS('42')/Foo",
 			mTypeForMetaPath = {},
-			oCache = this.createCache(sResourcePath, mQueryOptions, true);
+			oCache = this.createCache(sResourcePath, {}, true);
 
 		// cache preparation
 		oCache.aElements = aElements;
@@ -7872,8 +7892,12 @@ sap.ui.define([
 
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+				sinon.match.same(oCache.mLateQueryOptions))
+			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(mLateQueryOptions || mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
 			.returns(null); // "nothing to do"
@@ -7975,7 +7999,7 @@ sap.ui.define([
 			aPaths = ["n/a", "EMPLOYEE_2_TEAM", "EMPLOYEE"],
 			mQueryOptions = {},
 			sResourcePath = "TEAMS('42')/Foo",
-			oCache = this.createCache(sResourcePath, mQueryOptions, true),
+			oCache = this.createCache(sResourcePath, {}, true),
 			that = this;
 
 		// Note: fill cache with more than just "visible" rows
@@ -7988,6 +8012,10 @@ sap.ui.define([
 				};
 				that.mock(oCache).expects("fetchTypes").withExactArgs()
 					.returns(SyncPromise.resolve(mTypeForMetaPath));
+				that.mock(Object).expects("assign")
+					.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+						sinon.match.same(oCache.mLateQueryOptions))
+					.returns(mQueryOptions);
 				oHelperMock.expects("intersectQueryOptions")
 					.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 						sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
@@ -8042,7 +8070,7 @@ sap.ui.define([
 				aPaths = [],
 				mQueryOptions = {},
 				sResourcePath = "TEAMS('42')/Foo",
-				oCache = this.createCache(sResourcePath, mQueryOptions, true),
+				oCache = this.createCache(sResourcePath, {}, true),
 				that = this;
 
 			// Note: fill cache with more than just "visible" rows
@@ -8052,6 +8080,10 @@ sap.ui.define([
 
 					that.mock(oCache).expects("fetchTypes").withExactArgs()
 						.returns(SyncPromise.resolve(mTypeForMetaPath));
+					that.mock(Object).expects("assign")
+						.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+							sinon.match.same(oCache.mLateQueryOptions))
+						.returns(mQueryOptions);
 					that.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 							sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
@@ -8701,14 +8733,19 @@ sap.ui.define([
 				oOldValue = {},
 				aPaths = ["ROOM_ID"],
 				oPromise,
+				mQueryOptions = {},
 				mTypeForMetaPath = {},
 				oUpdateAllExpectation,
 				oVisitResponseExpectation;
 
 			oCache.oPromise = SyncPromise.resolve(oOldValue); // from previous #fetchValue
 			oCache.mLateQueryOptions = mLateQueryOptions;
+			this.mock(Object).expects("assign")
+				.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+					sinon.match.same(oCache.mLateQueryOptions))
+				.returns(mQueryOptions);
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-					sinon.match.same(mLateQueryOptions || oCache.mQueryOptions),
+					sinon.match.same(mQueryOptions),
 					sinon.match.same(aPaths),
 					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 					"/Employees", sinon.match.same(mNavigationPropertyPaths))
@@ -8794,12 +8831,17 @@ sap.ui.define([
 				}
 			},
 			aPaths = ["n/a", "EMPLOYEE_2_TEAM", "EMPLOYEE"],
+			mQueryOptions = {},
 			mTypeForMetaPath = {};
 
 		oCache.oPromise = {/*from previous #fetchValue*/};
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+				sinon.match.same(oCache.mLateQueryOptions))
+			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions")
-			.withExactArgs(sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/Employees", sinon.match.same(mNavigationPropertyPaths))
 			.returns(mMergedQueryOptions);
@@ -8861,11 +8903,16 @@ sap.ui.define([
 	QUnit.test("SingleCache#requestSideEffects: no need to GET anything", function (assert) {
 		var oCache = this.createSingle("Employees('42')"),
 			mNavigationPropertyPaths = {},
-			aPaths = ["ROOM_ID"];
+			aPaths = ["ROOM_ID"],
+			mQueryOptions = {};
 
 		oCache.oPromise = {/*from previous #fetchValue*/};
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+				sinon.match.same(oCache.mLateQueryOptions))
+			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/Employees", sinon.match.same(mNavigationPropertyPaths))
 			.returns(null);
@@ -8893,11 +8940,16 @@ sap.ui.define([
 			mNavigationPropertyPaths = {},
 			oOldValue = {},
 			aPaths = ["ROOM_ID"],
-			oPromise;
+			oPromise,
+			mQueryOptions = {};
 
 		oCache.oPromise = SyncPromise.resolve(oOldValue); // from previous #fetchValue
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+				sinon.match.same(oCache.mLateQueryOptions))
+			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/Employees", sinon.match.same(mNavigationPropertyPaths))
 			.returns(mMergedQueryOptions);
@@ -8945,11 +8997,16 @@ sap.ui.define([
 		var oCache = this.createSingle("Me"),
 			oError = new Error("Unsupported collection-valued navigation property /Me/B/C"),
 			mNavigationPropertyPaths = {},
-			aPaths = ["B/C"];
+			aPaths = ["B/C"],
+			mQueryOptions = {};
 
 		oCache.oPromise = {/*from previous #fetchValue*/};
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+				sinon.match.same(oCache.mLateQueryOptions))
+			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Me",
 				sinon.match.same(mNavigationPropertyPaths))
 			.throws(oError);

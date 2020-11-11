@@ -1408,6 +1408,7 @@ sap.ui.define([
 	Cache.prototype.setLateQueryOptions = function (mQueryOptions) {
 		if (mQueryOptions) {
 			this.mLateQueryOptions = {
+				// must contain both properties for requestSideEffects
 				// ensure that $select precedes $expand in the resulting query
 				$select : mQueryOptions.$select,
 				$expand : mQueryOptions.$expand
@@ -2490,7 +2491,7 @@ sap.ui.define([
 		}
 
 		mQueryOptions = _Helper.intersectQueryOptions(
-			this.mLateQueryOptions || this.mQueryOptions, aPaths,
+			Object.assign({}, this.mQueryOptions, this.mLateQueryOptions), aPaths,
 			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath,
 			mNavigationPropertyPaths, "", true);
 		if (!mQueryOptions) {
@@ -2901,7 +2902,7 @@ sap.ui.define([
 		this.checkSharedRequest();
 
 		mQueryOptions = oOldValuePromise && _Helper.intersectQueryOptions(
-			this.mLateQueryOptions || this.mQueryOptions, aPaths,
+			Object.assign({}, this.mQueryOptions, this.mLateQueryOptions), aPaths,
 			this.oRequestor.getModelInterface().fetchMetadata,
 			this.sMetaPath, mNavigationPropertyPaths);
 		if (!mQueryOptions) {
