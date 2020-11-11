@@ -166,7 +166,7 @@ sap.ui.define([
 			// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), the "apply" event is fired asynchronously.
 			var oFocusedElement = document.activeElement;
 
-			oFocusedElement.blur();
+			this._getTable().getDomRef("focusDummy").focus();
 			oEvent.setMarked();
 
 			window.setTimeout(function() {
