@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
-	"rta/performance/RtaPerformanceTestUtil" // needed for some test function that are defined
+	"rta/performance/RtaPerformanceTestUtil" // needed for some test functions that are defined there
 ], function(
 	PerformanceTestUtil,
 	UIComponent,
