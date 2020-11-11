@@ -244,7 +244,8 @@ sap.ui.define([
 				//check that only required information is present in the change content
 				var oChangeContent = aChanges[0].changeSpecificData.content;
 				var oPropertyHelper = this.oAdaptationController.getAdaptationControl().getPropertyHelper();
-				assert.equal(oChangeContent.name, oPropertyHelper.getName(oPropertyHelper.getProperties()[1]), "The stored key should be equal to the 'name' in property info (NOT PATH!)");
+				assert.equal(oChangeContent.name, oPropertyHelper.getProperties()[1].getName(),
+					"The stored key should be equal to the 'name' in property info (NOT PATH!)");
 				done();
 			}.bind(this));
 

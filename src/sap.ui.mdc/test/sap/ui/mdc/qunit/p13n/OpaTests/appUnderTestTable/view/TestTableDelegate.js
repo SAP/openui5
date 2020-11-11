@@ -5,6 +5,17 @@ sap.ui.define([
 
 	var oCustomDelegate = Object.assign({}, TableDelegate);
 
+	oCustomDelegate.fetchProperties = function(oTable) {
+		return TableDelegate.fetchProperties(oTable).then(function(aProperties) {
+			aProperties.push({
+				name: "created_complex",
+				label: "Created (Complex)",
+				propertyInfos: ["createdAt", "createdBy"]
+			});
+			return aProperties;
+		});
+	};
+
 	oCustomDelegate.addItem = function(sPropertyInfoName, oTable, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var sId = mPropertyBag.id + "--" + sPropertyInfoName;

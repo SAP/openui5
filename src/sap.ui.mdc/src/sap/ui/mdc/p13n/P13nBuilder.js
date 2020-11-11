@@ -2,12 +2,13 @@
 * ! ${copyright}
 */
 sap.ui.define([
+	"./PropertyHelper",
     "sap/m/Button",
     "sap/m/Bar",
     "sap/m/Title",
     "sap/base/util/merge",
     "sap/m/MessageBox"
-], function(Button, Bar, Title, merge, MessageBox) {
+], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox) {
     "use strict";
 
     var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -185,13 +186,17 @@ sap.ui.define([
         /**
          *
          * @param {object} oControlState Control state as defined in IxState interface <code>getCurrentState</code> method
-         * @param {array} aInfoData Array of property info objects
+         * @param {sap.ui.mdc.util.PropertyHelper|object[]} vProperties Either an array of properties or a PropertyHelper instance
          * @param {array} [aIgnoreAttributes] Optional array of key-value pairs to define ignored values <code>[{ignoreKey: "Key", ignoreValue:"Value"}]</code>
          * @param {string} [sP13nType] Optional p13n type definition - should not be used without AdaptationController
          *
          * @returns {object} Object structure to generate a p13n model
          */
-        prepareP13nData: function(oControlState, aInfoData, aIgnoreAttributes, sP13nType) {
+        prepareP13nData: function(oControlState, vProperties, aIgnoreAttributes, sP13nType) {
+
+			var oPropertyHelper =
+				vProperties.isA && vProperties.isA("sap.ui.mdc.util.PropertyHelper") ?
+				vProperties : new P13nPropertyHelper(vProperties);
 
             aIgnoreAttributes = aIgnoreAttributes ? aIgnoreAttributes : [];
             var aItems = [], mItemsGrouped = {};
@@ -202,24 +207,29 @@ sap.ui.define([
             var mExistingSorters = this.arrayToMap(aSortState);
             var mExistingFilters = oControlState.filter || {};
 
-            aInfoData.forEach(function (oProperty) {
+			oPropertyHelper.getProperties().forEach(function(oProperty) {
+				var oRawPropertyInfo = merge({}, oPropertyHelper.getRawProperty(oProperty.getName()), {
+					sortable: oProperty.isSortable(),
+					filterable: oProperty.isFilterable(),
+					visible: oProperty.isVisible()
+				});
                 var mItem = {};
 
-                if (P13nBuilder._isExcludeProperty(oProperty, aIgnoreAttributes)) {
+                if (P13nBuilder._isExcludeProperty(oRawPropertyInfo, aIgnoreAttributes)) {
                     return;
                 }
 
                 //use key for the item determiniation --> use the path as fallback
-                var sKey = oProperty.name;
+                var sKey = oProperty.getName();
                 var oExistingProperty = mExistingProperties[sKey];
 
                 //add general information
                 mItem.selected = oExistingProperty ? true : false;
                 mItem.position = oExistingProperty ? oExistingProperty.position : -1;
-                mItem = merge(mItem, oProperty, oExistingProperty);
-                mItem.label = oProperty.label || oProperty.name;
-                mItem.tooltip = oProperty.tooltip ? oProperty.tooltip : oProperty.label;
-                mItem.visibleInDialog = oProperty.hasOwnProperty("visibleInDialog") ? oProperty.visibleInDialog : true;
+                mItem = merge(mItem, oRawPropertyInfo, oExistingProperty);
+                mItem.label = oProperty.getLabel() || oProperty.getName();
+                mItem.tooltip = oRawPropertyInfo.tooltip ? oRawPropertyInfo.tooltip : oProperty.getLabel();
+                mItem.visibleInDialog = oRawPropertyInfo.hasOwnProperty("visibleInDialog") ? oRawPropertyInfo.visibleInDialog : true;
 
                 //Add sort info
                 if (sP13nType == "Sort"){//TODO: remove workaround for FlexUtil ungeneric changecontent check

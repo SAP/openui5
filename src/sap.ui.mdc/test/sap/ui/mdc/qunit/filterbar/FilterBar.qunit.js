@@ -578,7 +578,7 @@ sap.ui.define([
 			oFilterBar._oMetadataAppliedPromise.then(function () {
 
 				assert.ok(oFilterBar.getControlDelegate());
-				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getName(oPropertyHelper.getProperties()[0]), oFilterBar);
+				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getProperties()[0].getName(), oFilterBar);
 
 				oPromise.then(function (oFilterField) {
 
@@ -631,7 +631,7 @@ sap.ui.define([
 			oFilterBar._oMetadataAppliedPromise.then(function () {
 
 				assert.ok(oFilterBar.getControlDelegate());
-				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getName(oPropertyHelper.getProperties()[0]), oFilterBar);
+				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getProperties()[0].getName(), oFilterBar);
 
 				oPromise.then(function (oFilterField) {
 
@@ -685,7 +685,7 @@ sap.ui.define([
 
 				assert.ok(oFilterBar.getControlDelegate());
 
-				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getName(oPropertyHelper.getProperties()[0]), oFilterBar);
+				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getProperties()[0].getName(), oFilterBar);
 
 				oPromise.then(function (oFilterField) {
 
@@ -794,7 +794,7 @@ sap.ui.define([
 			oFilterBar._oMetadataAppliedPromise.then(function () {
 
 				assert.ok(oFilterBar.getControlDelegate());
-				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getName(oPropertyHelper.getProperties()[0]), oFilterBar);
+				var oPromise = oFilterBar.getControlDelegate().addItem(oPropertyHelper.getProperties()[0].getName(), oFilterBar);
 
 				oPromise.then(function (oFilterField) {
 

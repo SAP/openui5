@@ -431,8 +431,7 @@ sap.ui.define([
 		var aIgnoreValues = this._getTypeIgnoreValues(this.sP13nType);
 		var bSortData = this.getTypeConfig(this.sP13nType).sortData;
 
-		return P13nBuilder.prepareP13nData(oControlState, oPropertyHelper.getProperties(), aIgnoreValues, bSortData ? this.sP13nType : "generic");
-
+		return P13nBuilder.prepareP13nData(oControlState, oPropertyHelper, aIgnoreValues, bSortData ? this.sP13nType : "generic");
 	};
 
 	AdaptationController.prototype._getTypeIgnoreValues = function(sP13nType) {
@@ -683,7 +682,7 @@ sap.ui.define([
 		var oPropertyHelper = this.oPropertyHelper || this.getAdaptationControl().getPropertyHelper();
 		oPropertyHelper.getProperties().some(function(oProperty) {
 			//First check unique name
-			var bValid = oPropertyHelper.getName(oProperty) === sName || sName == "$search";
+			var bValid = oProperty.getName() === sName || sName == "$search";
 
 			if (bValid){
 				oInfo.valid = true;
