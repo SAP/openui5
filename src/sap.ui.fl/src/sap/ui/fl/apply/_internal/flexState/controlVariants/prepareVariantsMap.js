@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
 	"sap/base/util/ObjectPath",
 	"sap/base/Log",
 	"sap/ui/fl/Change",
@@ -13,10 +12,8 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/values",
 	"sap/base/util/merge",
-	"sap/ui/core/Component",
 	"sap/ui/fl/LayerUtils"
 ], function(
-	Utils,
 	ObjectPath,
 	Log,
 	Change,
@@ -26,7 +23,6 @@ sap.ui.define([
 	each,
 	values,
 	merge,
-	Component,
 	LayerUtils
 ) {
 	"use strict";
@@ -348,7 +344,7 @@ sap.ui.define([
 	 * @since 1.74
 	 * @private
 	 * @ui5-restricted
-	 * @alias module:sap/ui/fl/apply/_internal/flexState/prepareVariantsMap
+	 * @alias module:sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap
 	 */
 	return function(mPropertyBag) {
 		if (isEmptyObject(mPropertyBag) || !ObjectPath.get("storageResponse.changes.variants", mPropertyBag)) {

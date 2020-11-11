@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/prepareChangesMap",
+	"sap/ui/fl/apply/_internal/flexState/changes/prepareChangesMap",
 	"sap/ui/fl/Change"
 ], function (
 	prepareChangesMap,

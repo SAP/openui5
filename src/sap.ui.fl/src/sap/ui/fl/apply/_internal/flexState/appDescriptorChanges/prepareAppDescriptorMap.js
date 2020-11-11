@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @since 1.74
 	 * @private
 	 * @ui5-restricted
-	 * @alias module:sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap
+	 * @alias module:sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap
 	 */
 	return function(mPropertyBag) {
 		var aChangeDefinitions = mPropertyBag.storageResponse.changes.appDescriptorChanges || [];

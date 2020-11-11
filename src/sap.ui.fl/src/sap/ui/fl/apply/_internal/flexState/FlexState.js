@@ -3,33 +3,35 @@
  */
 
 sap.ui.define([
+	"sap/base/util/each",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
+	"sap/base/Log",
 	"sap/ui/core/Component",
-	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap",
+	"sap/ui/fl/apply/_internal/flexState/changes/prepareChangesMap",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap",
-	"sap/ui/fl/apply/_internal/flexState/prepareChangesMap",
-	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap",
-	"sap/ui/fl/apply/_internal/flexState/prepareCompVariantsMap",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils",
-	"sap/base/Log"
+	"sap/ui/fl/Utils"
 ], function(
+	each,
 	merge,
 	ObjectPath,
+	Log,
 	Component,
-	StorageUtils,
-	Loader,
-	ManifestUtils,
 	prepareAppDescriptorMap,
 	prepareChangesMap,
-	prepareVariantsMap,
 	prepareCompVariantsMap,
+	prepareVariantsMap,
+	Loader,
+	ManifestUtils,
+	StorageUtils,
 	LayerUtils,
-	Utils,
-	Log
+	Utils
 ) {
 	"use strict";
 
@@ -45,6 +47,12 @@ sap.ui.define([
 	 * 		storageResponse: {
 	 * 			changes: {
 	 * 				changes: [...],
+	 * 				comp: {
+	 * 					variants: [...],
+	 * 					changes: [...],
+	 * 					defaultVariants: [...],
+	 * 					standardVariants: [...]
+	 * 				}
 	 * 				variants: [...],
 	 * 				variantChanges: [...],
 	 * 				variantDependentControlChanges: [...],
@@ -69,11 +77,23 @@ sap.ui.define([
 	var _mInstances = {};
 	var _mNavigationHandlers = {};
 	var _mInitPromises = {};
-	var _mPrepareFunctions = {
-		appDescriptorMap: prepareAppDescriptorMap,
-		changesMap: prepareChangesMap,
-		variantsMap: prepareVariantsMap,
-		compVariantsMap: prepareCompVariantsMap
+	var _mFlexObjectInfo = {
+		appDescriptorChanges: {
+			prepareFunction: prepareAppDescriptorMap,
+			pathInResponse: []
+		},
+		changes: {
+			prepareFunction: prepareChangesMap,
+			pathInResponse: ["changes"]
+		},
+		variants: {
+			prepareFunction: prepareVariantsMap,
+			pathInResponse: ["variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"]
+		},
+		compVariants: {
+			prepareFunction: prepareCompVariantsMap,
+			pathInResponse: ["comp.variants", "comp.standardVariants", "comp.defaultVariants", "comp.changes"]
+		}
 	};
 
 	function updateComponentData(mPropertyBag) {
@@ -100,26 +120,26 @@ sap.ui.define([
 				componentId: _mInstances[sReference].componentId,
 				componentData: _mInstances[sReference].componentData
 			};
-			_mInstances[sReference].preparedMaps[sMapName] = FlexState._callPrepareFunction(sMapName, mPropertyBag);
+			_mInstances[sReference].preparedMaps[sMapName] = FlexState.callPrepareFunction(sMapName, mPropertyBag);
 		}
 
 		return _mInstances[sReference].preparedMaps[sMapName];
 	}
 
 	function getAppDescriptorMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "appDescriptorMap");
+		return getInstanceEntryOrThrowError(sReference, "appDescriptorChanges");
 	}
 
 	function getChangesMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "changesMap");
+		return getInstanceEntryOrThrowError(sReference, "changes");
 	}
 
 	function getVariantsMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "variantsMap");
+		return getInstanceEntryOrThrowError(sReference, "variants");
 	}
 
 	function getCompVariantsMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "compVariantsMap");
+		return getInstanceEntryOrThrowError(sReference, "compVariants");
 	}
 
 	function createSecondInstanceIfNecessary(mPropertyBag) {
@@ -138,14 +158,15 @@ sap.ui.define([
 		}
 	}
 
+	// TODO turn into utility or put it somewhere central
 	function filterByMaxLayer(mResponse) {
 		var mFilteredReturn = merge({}, mResponse);
 		var mFlexObjects = mFilteredReturn.changes;
-		// TODO turn into utility or put it somewhere central
-		var aFilterableTypes = ["changes", "variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"];
 		if (LayerUtils.isLayerFilteringRequired()) {
-			aFilterableTypes.forEach(function(sType) {
-				mFlexObjects[sType] = LayerUtils.filterChangeDefinitionsByMaxLayer(mFlexObjects[sType]);
+			each(_mFlexObjectInfo, function(iIndex, mFlexObjectInfo) {
+				mFlexObjectInfo.pathInResponse.forEach(function(sPath) {
+					ObjectPath.set(sPath, LayerUtils.filterChangeDefinitionsByMaxLayer(ObjectPath.get(sPath, mFlexObjects)), mFlexObjects);
+				});
 			});
 		}
 		return mFilteredReturn;
@@ -165,7 +186,7 @@ sap.ui.define([
 				// temporarily create an instance without '.Component'
 				// TODO remove as soon as both with and without '.Component' are harmonized
 				createSecondInstanceIfNecessary(mPropertyBag);
-				_registerMaxLayerHandler(mPropertyBag.reference);
+				registerMaxLayerHandler(mPropertyBag.reference);
 
 				// no further changes to storageResponse properties allowed
 				// TODO enable the Object.freeze as soon as its possible
@@ -177,14 +198,14 @@ sap.ui.define([
 		return _mInitPromises[mPropertyBag.reference];
 	}
 
-	function _registerMaxLayerHandler(sReference) {
+	function registerMaxLayerHandler(sReference) {
 		Utils.ifUShellContainerThen(function(aServices) {
-			_mNavigationHandlers[sReference] = _handleMaxLayerChange.bind(null, sReference);
+			_mNavigationHandlers[sReference] = handleMaxLayerChange.bind(null, sReference);
 			aServices[0].registerNavigationFilter(_mNavigationHandlers[sReference]);
 		}, ["ShellNavigation"]);
 	}
 
-	function _deRegisterMaxLayerHandler(sReference) {
+	function deRegisterMaxLayerHandler(sReference) {
 		Utils.ifUShellContainerThen(function(aServices) {
 			if (_mNavigationHandlers[sReference]) {
 				aServices[0].unregisterNavigationFilter(_mNavigationHandlers[sReference]);
@@ -193,7 +214,7 @@ sap.ui.define([
 		}, ["ShellNavigation"]);
 	}
 
-	function _handleMaxLayerChange(sReference, sNewHash, sOldHash) {
+	function handleMaxLayerChange(sReference, sNewHash, sOldHash) {
 		return Utils.ifUShellContainerThen(function(aServices) {
 			try {
 				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash);
@@ -209,7 +230,7 @@ sap.ui.define([
 		}, ["ShellNavigation"]);
 	}
 
-	function _clearPreparedMaps(sReference) {
+	function clearPreparedMaps(sReference) {
 		_mInstances[sReference].preparedMaps = {};
 	}
 
@@ -305,12 +326,12 @@ sap.ui.define([
 
 	FlexState.clearState = function(sReference) {
 		if (sReference) {
-			_deRegisterMaxLayerHandler(sReference);
+			deRegisterMaxLayerHandler(sReference);
 			delete _mInstances[sReference];
 			delete _mInitPromises[sReference];
 		} else {
 			Object.keys(_mInstances).forEach(function(sReference) {
-				_deRegisterMaxLayerHandler(sReference);
+				deRegisterMaxLayerHandler(sReference);
 			});
 			_mInstances = {};
 			_mInitPromises = {};
@@ -325,7 +346,7 @@ sap.ui.define([
 	 */
 	FlexState.clearFilteredResponse = function(sReference) {
 		if (_mInstances[sReference]) {
-			_clearPreparedMaps(sReference);
+			clearPreparedMaps(sReference);
 			delete _mInstances[sReference].storageResponse;
 		}
 	};
@@ -355,8 +376,8 @@ sap.ui.define([
 		return getCompVariantsMap(sReference).byId;
 	};
 
-	FlexState._callPrepareFunction = function(sMapName, mPropertyBag) {
-		return _mPrepareFunctions[sMapName](mPropertyBag);
+	FlexState.callPrepareFunction = function(sMapName, mPropertyBag) {
+		return _mFlexObjectInfo[sMapName].prepareFunction(mPropertyBag);
 	};
 
 	// temporary function until ChangePersistence.getChangesForComponent is gone

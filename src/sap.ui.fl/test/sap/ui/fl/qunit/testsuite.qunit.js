@@ -289,28 +289,28 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/ManifestUtils"]
 				}
 			},
-			"apply/_internal/flexState/prepareAppDescriptorMap": {
+			"apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap"]
+					only: ["sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap"]
 				}
 			},
-			"apply/_internal/flexState/prepareChangesMap": {
+			"apply/_internal/flexState/changes/prepareChangesMap": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/prepareChangesMap"]
+					only: ["sap/ui/fl/apply/_internal/flexState/changes/prepareChangesMap"]
 				}
 			},
-			"apply/_internal/flexState/prepareCompVariantsMap": {
+			"apply/_internal/flexState/compVariants/prepareCompVariantsMap": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/prepareCompVariantsMap"]
+					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap"]
 				}
 			},
-			"apply/_internal/flexState/prepareVariantsMap": {
+			"apply/_internal/flexState/controlVariants/prepareVariantsMap": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/prepareVariantsMap"]
+					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap"]
 				}
 			},
 			"apply/_internal/ChangesController": {

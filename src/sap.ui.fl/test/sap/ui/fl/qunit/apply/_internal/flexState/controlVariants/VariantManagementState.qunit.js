@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/values",

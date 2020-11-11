@@ -4,25 +4,15 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
-	"sap/base/Log",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/ChangesController"
 ], function(
 	_omit,
-	Log,
-	Layer,
-	LayerUtils,
 	Utils,
-	Change,
 	ChangePersistenceFactory,
-	CompVariantState,
 	ManifestUtils,
 	FlexState,
 	ChangesController
@@ -30,8 +20,6 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 *
-	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.FlexObjectState
 	 * @since 1.83
 	 * @version ${version}
