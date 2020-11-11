@@ -73,7 +73,12 @@ sap.ui.define([
 				) {
 					sSourceVReference = oModel.oData[sVMReference].originalCurrentVariant;
 					bVariantSwitch = true;
-					return oModel.updateCurrentVariant(sVMReference, sTargetVReference, oModel.oAppComponent, /*bInternallyCalled*/true);
+					return oModel.updateCurrentVariant({
+						variantManagementReference: sVMReference,
+						newVariantReference: sTargetVReference,
+						appComponent: oModel.oAppComponent,
+						internallyCalled: true
+					});
 				}
 			})
 			.then(function() {
@@ -191,7 +196,7 @@ sap.ui.define([
 			});
 	}
 
-	function switchVariantAndUpdateModel(mPropertyBag) {
+	function switchVariantAndUpdateModel(mPropertyBag, sScenario) {
 		return Switcher.switchVariant(mPropertyBag)
 			.then(function() {
 				// update current variant in model
@@ -206,7 +211,7 @@ sap.ui.define([
 				}
 
 				// tell listeners that variant switch has happened
-				this._callVariantSwitchListeners(mPropertyBag.vmReference, mPropertyBag.newVReference);
+				this._callVariantSwitchListeners(mPropertyBag.vmReference, mPropertyBag.newVReference, undefined, sScenario);
 
 				this.checkUpdate();
 			}.bind(this));
@@ -314,29 +319,31 @@ sap.ui.define([
 
 	/**
 	 * Updates the storage of the current variant for a given variant management control.
-	 * @param {String} sVariantManagementReference - Variant management reference
-	 * @param {String} sNewVariantReference - Newly selected variant reference
-	 * @param {sap.ui.core.Component} [oAppComponent] - Application component responsible for the variant management reference
-	 * @param {boolean} [bInternallyCalled] - If set variant model is not se to busy explicitly
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {String} mPropertyBag.variantManagementReference - Variant management reference
+	 * @param {String} mPropertyBag.newVariantReference - Newly selected variant reference
+	 * @param {sap.ui.core.Component} [mPropertyBag.appComponent] - Application component responsible for the variant management reference
+	 * @param {boolean} [mPropertyBag.internallyCalled] - If set variant model is not set to busy explicitly
+	 * @param {string} [mPropertyBag.scenario] - The current scenario, e.g. 'saveAs'
 	 *
 	 * @returns {Promise} Promise that resolves after the variant is updated
 	 * @private
 	 */
-	VariantModel.prototype.updateCurrentVariant = function(sVariantManagementReference, sNewVariantReference, oAppComponent, bInternallyCalled) {
-		var mPropertyBag = {
-			vmReference: sVariantManagementReference,
-			currentVReference: this.oData[sVariantManagementReference].originalCurrentVariant,
-			newVReference: sNewVariantReference,
+	VariantModel.prototype.updateCurrentVariant = function(mPropertyBag) {
+		var mProperties = {
+			vmReference: mPropertyBag.variantManagementReference,
+			currentVReference: this.oData[mPropertyBag.variantManagementReference].originalCurrentVariant,
+			newVReference: mPropertyBag.newVariantReference,
 			flexController: this.oFlexController,
-			appComponent: oAppComponent || this.oAppComponent,
+			appComponent: mPropertyBag.appComponent || this.oAppComponent,
 			modifier: JsControlTreeModifier,
 			reference: this.sFlexReference
 		};
 
-		if (bInternallyCalled) {
-			return switchVariantAndUpdateModel.call(this, mPropertyBag);
+		if (mPropertyBag.internallyCalled) {
+			return switchVariantAndUpdateModel.call(this, mProperties, mPropertyBag.scenario);
 		}
-		return _setVariantModelBusy(switchVariantAndUpdateModel.bind(this, mPropertyBag), this, sVariantManagementReference);
+		return _setVariantModelBusy(switchVariantAndUpdateModel.bind(this, mProperties, mPropertyBag.scenario), this, mPropertyBag.variantManagementReference);
 	};
 
 	/**
@@ -459,15 +466,18 @@ sap.ui.define([
 		}.bind(this, sVMReference, mPropertyBag));
 	};
 
-	VariantModel.prototype._callVariantSwitchListeners = function(sVMReference, sNewVariantReference, fnCallback) {
+	VariantModel.prototype._callVariantSwitchListeners = function(sVMReference, sNewVariantReference, fnCallback, sScenario) {
 		if (this._oVariantAppliedListeners[sVMReference]) {
 			var oVariant;
 			this.oData[sVMReference].variants.some(function(oCurrentVariant) {
 				if (oCurrentVariant.key === sNewVariantReference) {
-					oVariant = oCurrentVariant;
+					oVariant = merge({}, oCurrentVariant);
 					return true;
 				}
 			});
+			if (sScenario) {
+				oVariant.createScenario = sScenario;
+			}
 
 			if (fnCallback) {
 				fnCallback(oVariant);
@@ -648,10 +658,15 @@ sap.ui.define([
 
 		// Variant Model
 		this.oData[mPropertyBag.variantManagementReference].variants.splice(iIndex, 0, oVariantModelData);
-		return this.updateCurrentVariant(mPropertyBag.variantManagementReference, oVariant.getId(), mPropertyBag.appComponent, /*bInternallyCalled*/true)
-			.then(function() {
-				return aChanges;
-			});
+		return this.updateCurrentVariant({
+			variantManagementReference: mPropertyBag.variantManagementReference,
+			newVariantReference: oVariant.getId(),
+			appComponent: mPropertyBag.appComponent,
+			internallyCalled: true,
+			scenario: "saveAs"
+		}).then(function() {
+			return aChanges;
+		});
 	};
 
 	VariantModel.prototype.removeVariant = function(mPropertyBag) {
@@ -660,7 +675,11 @@ sap.ui.define([
 				oChange.getId() === mPropertyBag.variant.getId();
 		});
 
-		return this.updateCurrentVariant(mPropertyBag.variantManagementReference, mPropertyBag.sourceVariantReference, mPropertyBag.component).then(function() {
+		return this.updateCurrentVariant({
+			variantManagementReference: mPropertyBag.variantManagementReference,
+			newVariantReference: mPropertyBag.sourceVariantReference,
+			appComponent: mPropertyBag.component
+		}).then(function() {
 			// Variants State
 			var iIndex = VariantManagementState.removeVariantFromVariantManagement({
 				reference: this.sFlexReference,
@@ -856,7 +875,11 @@ sap.ui.define([
 				}
 
 				if (!bAddChange && oData[sVariantManagementReference].currentVariant !== mPropertyBag.defaultVariant) {
-					this.updateCurrentVariant(sVariantManagementReference, mPropertyBag.defaultVariant, mPropertyBag.appComponent);
+					this.updateCurrentVariant({
+						variantManagementReference: sVariantManagementReference,
+						newVariantReference: mPropertyBag.defaultVariant,
+						appComponent: mPropertyBag.appComponent
+					});
 				}
 				break;
 			default:
@@ -1180,10 +1203,12 @@ sap.ui.define([
 	VariantModel.prototype.switchToDefaultForVariantManagement = function(sVariantManagementReference) {
 		if (this.oData[sVariantManagementReference].currentVariant !== this.oData[sVariantManagementReference].defaultVariant) {
 			BusyIndicator.show(200);
-			this.updateCurrentVariant(sVariantManagementReference, this.oData[sVariantManagementReference].defaultVariant)
-				.then(function() {
-					BusyIndicator.hide();
-				});
+			this.updateCurrentVariant({
+				variantManagementReference: sVariantManagementReference,
+				newVariantReference: this.oData[sVariantManagementReference].defaultVariant
+			}).then(function() {
+				BusyIndicator.hide();
+			});
 		}
 	};
 

@@ -75,16 +75,22 @@ sap.ui.define([
 				})
 				.then(function() {
 					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 1, "then updateCurrentVariant after execute command is called once");
-					assert.equal(this.fnUpdateCurrentVariantStub.calledWithExactly(this.sVariantManagementReference, oSwitchCommandData.targetVariantReference, this.oMockedAppComponent), true,
-						"then updateCurrentVariant after execute command is called with the correct parameters");
+					assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(0).args[0], {
+						variantManagementReference: this.sVariantManagementReference,
+						newVariantReference: oSwitchCommandData.targetVariantReference,
+						appComponent: this.oMockedAppComponent
+					}, "then updateCurrentVariant after execute command is called with the correct parameters");
 				}.bind(this))
 				.then(function() {
 					return oSwitchCommand.undo();
 				})
 				.then(function() {
 					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
-					assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(1).args, [this.sVariantManagementReference, oSwitchCommandData.sourceVariantReference, this.oMockedAppComponent],
-						"then updateCurrentVariant after undo command is called with the correct parameters");
+					assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(1).args[0], {
+						variantManagementReference: this.sVariantManagementReference,
+						newVariantReference: oSwitchCommandData.sourceVariantReference,
+						appComponent: this.oMockedAppComponent
+					}, "then updateCurrentVariant after undo command is called with the correct parameters");
 				}.bind(this))
 				.catch(function (oError) {
 					assert.ok(false, 'catch must never be called - Error: ' + oError);
