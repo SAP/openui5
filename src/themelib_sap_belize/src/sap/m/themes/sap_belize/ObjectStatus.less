@@ -19,4 +19,20 @@
 .sapMObjStatusInverted .sapMObjStatusText,
 .sapMObjStatusInverted .sapMObjStatusIcon {
 	color: @sapUiContentContrastTextColor;
+	min-height: 1rem;
+	max-height: 1rem;
+}
+
+.sapMObjectStatusLarge {
+	.sapMObjStatusTitle,
+	.sapMObjStatusText,
+	.sapMObjStatusIcon {
+		font-size: 1.5rem;
+		line-height: 2rem;
+		min-height: 2rem;
+		max-height: 2rem;
+	}
+	.sapMObjStatusIcon > .sapUiIcon {
+		font-size: 1.5rem;
+	}
 }
