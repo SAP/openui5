@@ -168,7 +168,7 @@ sap.ui.define([
 	function setEventMarkedAndFireApplyAsync(oCreationRow, oEvent) {
 		var oFocusedElement = document.activeElement;
 
-		oFocusedElement.blur();
+		oCreationRow._getTable().getDomRef("focusDummy").focus();
 		oEvent.setMarked();
 
 		window.setTimeout(function() {

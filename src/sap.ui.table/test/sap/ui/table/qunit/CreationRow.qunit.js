@@ -283,10 +283,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Fire apply with Enter, CTRL+Enter", function(assert) {
-		var done = assert.async();
 		var oTable = this.oTable;
 		var oCreationRow = oTable.getCreationRow();
-		var oFormElement = oCreationRow.getCells()[0].getDomRef();
+		var oInput = oCreationRow.getCells()[0];
+		var oFormElement = oInput.getDomRef();
 		var oFireApplySpy = sinon.spy(oCreationRow, "_fireApply");
 		var aEvents = [];
 
@@ -299,7 +299,7 @@ sap.ui.define([
 				setTimeout(function() {
 					fnAssert();
 					resolve();
-				}, 10);
+				}, 20);
 			});
 		}
 
@@ -309,9 +309,7 @@ sap.ui.define([
 			});
 		}
 
-		oFormElement.focus();
-
-		oCreationRow.getCells()[0].addEventDelegate({
+		oInput.addEventDelegate({
 			onsapfocusleave: function() {
 				aEvents.push("sapfocusleave");
 			},
@@ -319,13 +317,29 @@ sap.ui.define([
 				aEvents.push("focusin");
 			}
 		});
+		oInput.setFieldGroupIds(["fieldGroup1"]);
+		oInput.attachValidateFieldGroup(function() {
+			aEvents.push("validateFieldGroup");
+		});
+		oCreationRow.attachEvent("apply", function() {
+			aEvents.push("apply");
+		});
 
-		test(function() {
-			expectKeyboardEventMarked("onsapenter", true);
-			qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, false);
-		}, function() {
-			assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
-			assert.deepEqual(aEvents, ["sapfocusleave", "focusin"], "The events on the form element were correctly fired");
+		oFormElement.focus();
+
+		return new Promise(function(resolve) {
+			setTimeout(function() {
+				resolve();
+			}, 0);
+		}).then(function() {
+			return test(function() {
+				expectKeyboardEventMarked("onsapenter", true);
+				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, false);
+			}, function() {
+				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
+				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"], "The events on the form element were correctly fired");
+
+			});
 
 		}).then(function() {
 			return test(function() {
@@ -333,7 +347,8 @@ sap.ui.define([
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 			}, function() {
 				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
-				assert.deepEqual(aEvents, ["sapfocusleave", "focusin"], "The events on the form element were correctly fired");
+				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"], "The events on the form element were correctly fired");
+
 			});
 
 		}).then(function() {
@@ -347,7 +362,9 @@ sap.ui.define([
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, false);
 			}, function() {
 				assert.ok(oFireApplySpy.notCalled, "CreationRow#_fireApply was not called because the input control handles the keydown event");
+
 			});
+
 		}).then(function() {
 			return test(function() {
 				oCreationRow.attachEventOnce("apply", function(oEvent) {
@@ -357,7 +374,7 @@ sap.ui.define([
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 			}, function() {
 				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
-				assert.deepEqual(aEvents, ["sapfocusleave", "focusin"], "The events on the form element were correctly fired");
+				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"], "The events on the form element were correctly fired");
 
 			});
 
@@ -369,7 +386,7 @@ sap.ui.define([
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, false);
 			}, function() {
 				assert.ok(oFireApplySpy.notCalled, "CreationRow#_fireApply was not called");
-				assert.deepEqual(aEvents, [], "The events on the form element were correctly fired");
+				assert.deepEqual(aEvents, [], "The events on the form element were not fired");
 
 			});
 
@@ -380,11 +397,11 @@ sap.ui.define([
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 			}, function() {
 				assert.ok(oFireApplySpy.notCalled, "CreationRow#_fireApply was not called");
-				assert.deepEqual(aEvents, [], "The events on the form element were correctly fired");
+				assert.deepEqual(aEvents, [], "The events on the form element were not fired");
 
 			});
 
-		}).then(done);
+		});
 	});
 
 	QUnit.module("Cells", {
