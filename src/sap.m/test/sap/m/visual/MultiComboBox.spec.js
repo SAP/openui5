@@ -101,14 +101,16 @@ describe('sap.m.MultiComboBox', function() {
 	it("should visualize a MultiComboBox - Error state", function(){
 		var errorStateMultiComboBox = element(by.id("MultiComboBoxError"));
 		errorStateMultiComboBox.click();
-		expect(takeScreenshot(errorStateMultiComboBox)).toLookAs("error_state");
+		//capture the whole page, in order to see the value state text
+		expect(takeScreenshot()).toLookAs("error_state");
 	});
 
 	//MultiComboBox - Error value state messaage with link
 	it("should visualize a MultiComboBox - Error state", function(){
 		var errorStateMultiComboBox = element(by.id("MultiComboBoxErrorWithLink"));
 		errorStateMultiComboBox.click();
-		expect(takeScreenshot(errorStateMultiComboBox)).toLookAs("error_state_with_link");
+		//capture the whole page, in order to see the value state text
+		expect(takeScreenshot()).toLookAs("error_state_with_link");
 	});
 
 	//MultiComboBox - Warning state
@@ -116,7 +118,8 @@ describe('sap.m.MultiComboBox', function() {
 		browser.executeScript('document.getElementById("MultiComboBoxWarning").scrollIntoView()').then(function() {
 			var warningStateMultiComboBox = element(by.id("MultiComboBoxWarning"));
 			warningStateMultiComboBox.click();
-			expect(takeScreenshot(warningStateMultiComboBox)).toLookAs("warning_state_with_long_value_state");
+			//capture the whole page, in order to see the value state text
+			expect(takeScreenshot()).toLookAs("warning_state_with_long_value_state");
 		});
 	});
 
@@ -125,7 +128,8 @@ describe('sap.m.MultiComboBox', function() {
 		browser.executeScript('document.getElementById("MultiComboBoxWarning").scrollIntoView()').then(function() {
 			var warningStateMultiComboBox = element(by.id("MultiComboBoxWarningWithLinks"));
 			warningStateMultiComboBox.click();
-			expect(takeScreenshot(warningStateMultiComboBox)).toLookAs("warning_state_with_link");
+			//capture the whole page, in order to see the value state text
+			expect(takeScreenshot()).toLookAs("warning_state_with_link");
 		});
 	});
 
@@ -141,10 +145,11 @@ describe('sap.m.MultiComboBox', function() {
 	//MultiComboBox - Binding
 	it("should visualize a MultiComboBox with binding", function(){
 		browser.executeScript('document.getElementById("MultiComboBoxBinding").scrollIntoView()').then(function() {
-			var bindingMultiComboBox = element(by.id("MultiComboBoxBinding"));
-			bindingMultiComboBox.click();
-			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			var bindingMultiComboBox = element(by.id("MultiComboBoxBinding")),
+				bindingMultiComboBoxArrow = element(by.id("MultiComboBoxBinding-arrow"));
+			bindingMultiComboBoxArrow.click();
 			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			bindingMultiComboBoxArrow.click();
 			expect(takeScreenshot(bindingMultiComboBox)).toLookAs("multiComboBox_binding_initially_selected");
 		});
 
