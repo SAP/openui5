@@ -167,6 +167,9 @@ sap.ui.define([
 	 * Both <code>{@link sap.ui.core.dnd.DropInfo}</code> and <code>{@link sap.f.dnd.GridDropInfo}</code> can be used to configure drag and drop.
 	 * The difference is that the <code>{@link sap.f.dnd.GridDropInfo}</code> will provide a drop indicator, which mimics the size of the dragged item and shows the potential drop position inside the grid.
 	 *
+	 * <h3>Keyboard Navigation:</h3>
+	 * <code>GridContainer</code> provides support for two-dimensional keyboard navigation through its contained controls. Navigating up/down or left/right using the arrow keys follows the logical "grid" as rendered on the page. This provides stable navigation paths in the cases when there are items of different sizes. When the user presses an arrow key in a direction outward of the <code>GridContainer</code>, a <code>borderReached</code> event will be fired, allowing the application to decide if the focus should change (e.g. go to another item in a neighboring <code>GridContainer</code>) or remain the same.
+	 *
 	 * @see {@link topic:cca5ee5d63ca44c89318f8496a58f9f2 Grid Container}
 	 * @see {@link topic:32d4b9c2b981425dbc374d3e9d5d0c2e Grid Controls}
 	 * @see {@link topic:5b46b03f024542ba802d99d67bc1a3f4 Cards}
