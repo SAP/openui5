@@ -182,7 +182,8 @@
 				<l:BlockLayoutCell
 					visible="{= ${/AllFontsLoaded/BusinessSuiteInAppSymbols} &amp;&amp; !${version>/isOpenUI5}}"
 					backgroundColorSet="ColorSet6"
-					backgroundColorShade="ShadeC">
+					backgroundColorShade="ShadeC"
+					class="BlockLayoutCellHeight">
 					<l:VerticalLayout>
 						<core:Icon
 							src="sap-icon://BusinessSuiteInAppSymbols/icon-display-ads"
