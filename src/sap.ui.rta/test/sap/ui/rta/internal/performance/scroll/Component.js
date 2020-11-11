@@ -27,7 +27,7 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function() {
-			RtaPerformanceTestUtil.startRta(sap.ui.getCore().byId("opLayout"));
+			window.fnResolve(RtaPerformanceTestUtil.startRta(sap.ui.getCore().byId("opLayout")));
 		},
 
 		createContent: function () {
