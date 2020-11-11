@@ -49,7 +49,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.Link
 	 * @since 1.74
 	 *
-	 * @experimental
+	 * @experimental As of version 1.74
 	 * @private
 	 * @ui5-restricted sap.fe
      * MDC_PUBLIC_CANDIDATE
