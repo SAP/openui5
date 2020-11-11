@@ -1,0 +1,34 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns:editor="sap.ui.codeeditor"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.ExtensionAndHost">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Extension and Host Usages" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<f:GridContainer >
+			<w:Card id="card1" manifest="./cardsDemo/bundles/cardWithExtension/manifest.json" action="onCardAction">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4"/>
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="card2" manifest="./cardsDemo/bundles/cardWithExtensionLegacyActions/manifest.json" action="onCardAction">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4"/>
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+
+		<Button text="Set new actions" press="onSetNewActionsPress"/>
+		<Button text="Set new extension formatters" press="onSetNewFormattersPress"/>
+
+	</Page>
+</mvc:View>

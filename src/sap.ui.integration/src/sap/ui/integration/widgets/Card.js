@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"../controls/ActionsToolbar",
 	"sap/ui/base/Interface",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
@@ -32,6 +33,7 @@ sap.ui.define([
 	"sap/ui/integration/util/FilterBarFactory",
 	"sap/ui/integration/util/CardActions"
 ], function (
+	ActionsToolbar,
 	Interface,
 	jQuery,
 	Core,
@@ -217,6 +219,21 @@ sap.ui.define([
 			aggregations: {
 
 				/**
+				 * Actions definitions from which actions in the header menu of the card are created.
+				 * <b>Note</b>: This aggregation is destroyed when the property <code>manifest</code> changes.
+				 * @experimental Since 1.85. Disclaimer: this aggregation is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+				 * @since 1.85
+				 */
+				actionDefinitions: {
+					type: "sap.ui.integration.ActionDefinition",
+					multiple: true,
+					forwarding: {
+						getter: "_getActionsToolbar",
+						aggregation: "actionDefinitions"
+					}
+				},
+
+				/**
 				 * Defines the header of the card.
 				 */
 				_header: {
@@ -224,7 +241,6 @@ sap.ui.define([
 					multiple: false,
 					visibility: "hidden"
 				},
-
 
 				/**
 				 * Defines the filters section of the card.
@@ -347,9 +363,16 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#getTranslatedText as getTranslatedText
 		 * @borrows sap.ui.integration.widgets.Card#getModel as getModel
 		 * @borrows sap.ui.integration.widgets.Card#triggerAction as triggerAction
+		 * @borrows sap.ui.integration.widgets.Card#addActionDefinition as addActionDefinition
+		 * @borrows sap.ui.integration.widgets.Card#removeActionDefinition as removeActionDefinition
+		 * @borrows sap.ui.integration.widgets.Card#insertActionDefinition as insertActionDefinition
+		 * @borrows sap.ui.integration.widgets.Card#getActionDefinition as getActionDefinition
+		 * @borrows sap.ui.integration.widgets.Card#indexOfActionDefinition as indexOfActionDefinition
+		 * @borrows sap.ui.integration.widgets.Card#destroyActionDefinition as destroyActionDefinition
 		 */
 		this._oLimitedInterface = new Interface(this, [
-			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getTranslatedText", "getModel", "triggerAction"
+			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getTranslatedText", "getModel", "triggerAction",
+			"addActionDefinition", "removeActionDefinition", "insertActionDefinition", "getActionDefinition", "indexOfActionDefinition", "destroyActionDefinition"
 		]);
 	};
 
@@ -416,10 +439,12 @@ sap.ui.define([
 
 		this._bApplyManifest = false;
 		this._bApplyParameters = false;
+		this._refreshActionsMenu();
 	};
 
 	Card.prototype.setManifest = function (vValue) {
 		this.setProperty("manifest", vValue);
+		this.destroyActionDefinitions();
 		this._bApplyManifest = true;
 		return this;
 	};
@@ -712,36 +737,25 @@ sap.ui.define([
 		var oCardHeader = this.getCardHeader(),
 			oHost = this.getHostInstance(),
 			oExtension = this.getAggregation("_extension"),
-			aActions = [],
-			oCurrentActionsToolbar,
-			oHeaderFactory,
-			oActionsToolbar;
+			aActions = [];
 
 		if (!oCardHeader) {
 			return;
 		}
 
-		oCurrentActionsToolbar = oCardHeader.getToolbar();
-		if (oCurrentActionsToolbar) {
-			if (oHost) {
-				aActions = aActions.concat(oHost.getActions() || []);
-			}
-
-			if (oExtension) {
-				aActions = aActions.concat(oExtension.getActions() || []);
-			}
-
-			if (deepEqual(aActions, oCurrentActionsToolbar._aActions)) {
-				return;
-			}
+		if (oHost) {
+			aActions = aActions.concat(oHost.getActions() || []);
 		}
 
-		oHeaderFactory = new HeaderFactory(this);
-		oActionsToolbar = oHeaderFactory._createActionsToolbar();
-
-		if (oActionsToolbar) {
-			oCardHeader.setToolbar(oActionsToolbar);
+		if (oExtension) {
+			aActions = aActions.concat(oExtension.getActions() || []);
 		}
+
+		if (deepEqual(aActions, this._getActionsToolbar()._aActions)) {
+			return;
+		}
+
+		this._getActionsToolbar().initializeContent(this);
 	};
 
 	Card.prototype.exit = function () {
@@ -751,6 +765,10 @@ sap.ui.define([
 		this.destroyManifest();
 		this._busyStates = null;
 		this._oContentFactory = null;
+		if (this._oActionsToolbar) {
+			this._oActionsToolbar.destroy();
+			this._oActionsToolbar = null;
+		}
 	};
 
 	/**
@@ -1147,6 +1165,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * If there is actions toolbar - return it.
+	 * If there isn't - create it.
+	 * @private
+	 * @returns {sap.ui.integration.controls.ActionsToolbar} The toolbar for the header
+	 */
+	Card.prototype._getActionsToolbar = function () {
+		if (!this._oActionsToolbar) {
+			this._oActionsToolbar = new ActionsToolbar();
+			this._oActionsToolbar.setCard(this);
+		}
+
+		return this._oActionsToolbar;
+	};
+
+	/**
 	 * Lazily load and create a specific type of card header based on sap.card/header part of the manifest
 	 *
 	 * @private
@@ -1252,7 +1285,7 @@ sap.ui.define([
 		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
 			oHeaderFactory = new HeaderFactory(this);
 
-		return oHeaderFactory.create(oManifestHeader);
+		return oHeaderFactory.create(oManifestHeader, this._getActionsToolbar() /** move the toolbar to the next header */);
 	};
 
 	Card.prototype.createFilterBar = function () {

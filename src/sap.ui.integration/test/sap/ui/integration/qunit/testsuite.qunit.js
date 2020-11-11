@@ -16,7 +16,6 @@ sap.ui.define(function () {
 				noConflict: true,
 				// preload: "auto",
 				"xx-waitForTheme": "init",
-				"xx-supportedLanguages": "",
 				resourceroots: {
 					"qunit": "test-resources/sap/ui/integration/qunit/"
 				}
@@ -219,6 +218,7 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"controls/ActionsToolbar": {},
 			"controls/ListContentItem": {},
 			"controls/Microchart": {},
 			"controls/MicrochartLegend": {},

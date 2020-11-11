@@ -10,7 +10,7 @@
 			<subHeader>
 				<Toolbar>
 					<ToolbarSpacer />
-					<Title text="Card layout use cases" />
+					<Title text="{i18n>appDescription}" />
 					<ToolbarSpacer />
 				</Toolbar>
 			</subHeader>

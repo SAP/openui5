@@ -1,0 +1,52 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "cardWithExtensionLegacyActions",
+		"dataSources": {
+			"products": {
+				"uri": "https://services.odata.org/V3/Northwind/Northwind.svc",
+				"type": "OData"
+			}
+		}
+	},
+	"sap.card": {
+		"extension": "./ListCardSampleExtensionLegacyActions",
+		"configuration": {
+			"parameters": {
+				"city": {
+					"value": "Sofia"
+				}
+			},
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind"
+				}
+			}
+		},
+		"data": {
+			"extension": {
+				"method": "getData",
+				"args": ["{{parameters.city}}", "arg2","arg3", "arg4"]
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "List Card - Legacy Extension Actions",
+			"subTitle": "City {{parameters.city}}",
+			"status": "100 of 200"
+		},
+		"content": {
+			"item": {
+				"title": "{city}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"city": "{city}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

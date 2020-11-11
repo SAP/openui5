@@ -1,22 +1,34 @@
-sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
+sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinition"], function (Extension, ActionDefinition) {
 	"use strict";
 
 	var CustomActionsExtension = Extension.extend("card.explorer.extension.customActions.CustomActionsExtension");
 
-	CustomActionsExtension.prototype.init = function () {
-		Extension.prototype.init.apply(this, arguments);
+	CustomActionsExtension.prototype.onCardReady = function () {
+		var oCard = this.getCard();
 
-		this.setActions([
-			{
-				type: "Navigation",
-				parameters: {
-					url: "https://training.sap.com/"
-				},
-				icon: "sap-icon://learning-assistant",
-				target: "_blank",
-				text: "Book 3rd party training"
+		oCard.addActionDefinition(new ActionDefinition({
+			type: "Custom",
+			text: "{i18n>reportActionText}",
+			enabled: true,
+			press: function (oEvent) {
+				var oReportAction = oEvent.getSource();
+				oReportAction.setEnabled(false);
 			}
-		]);
+		}));
+
+		// Actions can be added at any time, for example after response from a backend
+		oCard.request({
+				url: sap.ui.require.toUrl("card/explorer/extension/customActions/urlInfo.json")
+			}).then(function (oRes) {
+				oCard.addActionDefinition(new ActionDefinition({
+					type: "Navigation",
+					text: "{i18n>bookActionText}",
+					icon: "sap-icon://learning-assistant",
+					parameters: {
+						url: oRes.url
+					}
+				}));
+			});
 	};
 
 	return CustomActionsExtension;

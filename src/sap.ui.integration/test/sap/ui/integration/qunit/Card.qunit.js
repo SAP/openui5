@@ -45,6 +45,9 @@ sap.ui.define([
 		};
 
 		var oManifest_ListCard = {
+			"sap.app": {
+				"id": "my.card.qunit.test.ListCard"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -148,11 +151,11 @@ sap.ui.define([
 							"src": "{icon}"
 						},
 						"title": {
-							"label": "{{title_label}}",
+							"label": "Title",
 							"value": "{Name}"
 						},
 						"description": {
-							"label": "{{description_label}}",
+							"label": "Description",
 							"value": "{Description}"
 						},
 						"highlight": "{state}",
@@ -392,6 +395,9 @@ sap.ui.define([
 		};
 
 		var oManifest_TableCard = {
+			"sap.app": {
+				"id": "my.card.qunit.test.TableCard"
+			},
 			"sap.card": {
 				"type": "Table",
 				"header": {
@@ -2165,5 +2171,6 @@ sap.ui.define([
 			oCard.setManifest(oManifest_ListCard);
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
+
 	}
 );

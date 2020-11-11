@@ -7,8 +7,6 @@ sap.ui.define([
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
 	"sap/base/strings/formatMessage",
-	"sap/ui/integration/controls/ActionsToolbar",
-	"sap/ui/integration/util/BindingHelper",
 	"./CardActions"
 ], function (
 	library,
@@ -16,8 +14,6 @@ sap.ui.define([
 	NumericHeader,
 	Header,
 	formatMessage,
-	ActionsToolbar,
-	BindingHelper,
 	CardActions
 ) {
 	"use strict";
@@ -87,13 +83,12 @@ sap.ui.define([
 		}
 	});
 
-	HeaderFactory.prototype.create = function (mConfiguration) {
+	HeaderFactory.prototype.create = function (mConfiguration, oToolbar) {
 		var oHeader,
 			oCard = this._oCard,
-			oActions,
-			oActionsToolbar = this._createActionsToolbar();
+			oActions;
 
-		if (!mConfiguration && !oActionsToolbar) {
+		if (!mConfiguration && !oToolbar) {
 			return null;
 		}
 
@@ -108,10 +103,10 @@ sap.ui.define([
 
 		switch (mConfiguration.type) {
 			case "Numeric":
-				oHeader = new NumericHeader(mConfiguration, oActionsToolbar, oCard._sAppId);
+				oHeader = new NumericHeader(mConfiguration, oToolbar, oCard._sAppId);
 				break;
 			default:
-				oHeader = new Header(mConfiguration, oActionsToolbar, oCard._sAppId, oCard._oIconFormatter);
+				oHeader = new Header(mConfiguration, oToolbar, oCard._sAppId, oCard._oIconFormatter);
 				break;
 		}
 
@@ -133,27 +128,6 @@ sap.ui.define([
 		oHeader._oActions = oActions;
 
 		return oHeader;
-	};
-
-	HeaderFactory.prototype._createActionsToolbar = function () {
-		var oCard = this._oCard,
-			oHost = oCard.getHostInstance(),
-			oExtension = oCard.getAggregation("_extension"),
-			oActionsToolbar,
-			bHasActions;
-
-		if (!oHost && !oExtension) {
-			return null;
-		}
-
-		oActionsToolbar = new ActionsToolbar();
-		bHasActions = oActionsToolbar.initializeContent(oHost, oCard, oExtension);
-
-		if (bHasActions) {
-			return oActionsToolbar;
-		}
-
-		return null;
 	};
 
 	return HeaderFactory;

@@ -4,25 +4,31 @@
 
 // Provides control sap.ui.integration.controls.ActionsToolbar
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"./ActionsToolbarRenderer",
+	"sap/base/strings/capitalize",
 	"sap/ui/core/Control",
 	"sap/m/library",
 	"sap/m/Button",
 	"sap/m/ActionSheet",
-	"sap/ui/integration/util/CardActions",
-	"./ActionsToolbarRenderer"
-], function(
-	jQuery,
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/Core",
+	"sap/ui/integration/util/CardActions"
+
+], function (
+	ActionsToolbarRenderer,
+	capitalize,
 	Control,
-	library,
+	mLibrary,
 	Button,
 	ActionSheet,
-	CardActions,
-	ActionsToolbarRenderer
+	ManagedObjectObserver,
+	Core,
+	CardActions
 ) {
 	"use strict";
+	/* global Map */
 
-	var ButtonType = library.ButtonType;
+	var ButtonType = mLibrary.ButtonType;
 
 	function setButtonProperty(oButton, sPropertyName, oValue, oCard) {
 
@@ -70,19 +76,30 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.integration.controls.ActionsToolbar
 	 */
-	var ActionsToolbar = Control.extend("sap.ui.integration.controls.ActionsToolbar",  {
+	var ActionsToolbar = Control.extend("sap.ui.integration.controls.ActionsToolbar", {
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
 
 			},
 			aggregations: {
+				actionDefinitions: {
+					type: "sap.ui.integration.ActionDefinition",
+					multiple: true
+				},
+
 				/**
 				 * The toolbar.
 				 * @private
 				 */
 				_toolbar: {
 					type: "sap.ui.core.Control",
+					multiple: false,
+					visibility: "hidden"
+				},
+
+				_actionSheet: {
+					type: "sap.m.ActionSheet",
 					multiple: false,
 					visibility: "hidden"
 				}
@@ -106,32 +123,79 @@ sap.ui.define([
 		renderer: ActionsToolbarRenderer
 	});
 
-	ActionsToolbar.prototype._open = function () {
-		this._refreshButtons().then(function () {
-
-			this._oActionSheet.openBy(this._getToolbar());
-
-		}.bind(this));
+	ActionsToolbar.prototype.init = function () {
+		this.setAggregation("_actionSheet", new ActionSheet());
+		this._aActions = []; // holds actions from host and extension
+		this._mActionObservers = new Map();
+		this._oObserver = new ManagedObjectObserver(this._observeActionsAggregation.bind(this));
+		this._oObserver.observe(this, {
+			aggregations: [
+				"actionDefinitions"
+			]
+		});
 	};
 
-	ActionsToolbar.prototype._createActionButton = function (oHost, oCard, mActionConfig) {
+	ActionsToolbar.prototype.exit = function () {
+		this._oCard = null;
+		this._aActions = null;
+		this._oObserver.disconnect();
+		this._oObserver = null;
+		this._mActionObservers.clear();
+		this._mActionObservers = null;
+	};
 
-		return new Button({
-			icon: mActionConfig.icon,
-			text: mActionConfig.text,
-			tooltip: mActionConfig.tooltip,
-			type: mActionConfig.buttonType,
-			press: function (oEvent) {
-				CardActions.fireAction({
-					card: oCard,
-					host: oHost,
-					action: mActionConfig,
-					parameters: mActionConfig.parameters,
-					source: oEvent.getSource(),
-					url: mActionConfig.url
-				});
-			}
+	ActionsToolbar.prototype.onBeforeRendering = function () {
+		this._updateVisibility();
+	};
+
+	/**
+	 * Initializes the buttons which are added by Extension#setActions and Host#setActions.
+	 * @param {sap.ui.integration.widgets.Card} oCard The card which owns this toolbar
+	 */
+	ActionsToolbar.prototype.initializeContent = function (oCard) {
+		var that = this,
+			oActionButton,
+			aButtons = [],
+			aActions = [],
+			oActionSheet = this.getAggregation("_actionSheet"),
+			oHost = oCard.getHostInstance(),
+			oExtension = oCard.getAggregation("_extension");
+
+		if (oHost) {
+			aActions = aActions.concat(oHost.getActions() || []);
+		}
+
+		if (oExtension) {
+			aActions = aActions.concat(oExtension.getActions() || []);
+		}
+
+		this._aActions = aActions;
+
+		aActions.forEach(function (oAction) {
+			oActionButton = that._createActionButton(oAction, false);
+			aButtons.push(oActionButton);
 		});
+
+		if (this._aButtons) {
+			this._aButtons.forEach(function (oButton) {
+				oButton.destroy();
+			});
+		}
+		aButtons.forEach(oActionSheet.addButton, oActionSheet);
+		this._aButtons = aButtons;
+
+		// Make an initial check for 'visible' and 'enabled' for the buttons
+		this._refreshButtons().then(this._updateVisibility.bind(this));
+	};
+
+	ActionsToolbar.prototype.setCard = function (oCard) {
+		this._oCard = oCard;
+	};
+
+	ActionsToolbar.prototype._open = function () {
+		this._refreshButtons().then(function () {
+			this.getAggregation("_actionSheet").openBy(this._getToolbar());
+		}.bind(this));
 	};
 
 	ActionsToolbar.prototype._getToolbar = function () {
@@ -152,65 +216,10 @@ sap.ui.define([
 		return oToolbar;
 	};
 
-
-	ActionsToolbar.prototype.initializeContent = function (oHost, oCard, oExtension) {
-
-		var that = this,
-			oActionButton,
-			aButtons = [],
-			aActions = [];
-
-		this._oCard = oCard;
-
-		if (oHost) {
-			aActions = aActions.concat(oHost.getActions() || []);
-		}
-
-		if (oExtension) {
-			aActions = aActions.concat(oExtension.getActions() || []);
-		}
-
-		if (!aActions.length) {
-			return false;
-		}
-
-		this._aActions = aActions;
-
-		aActions.forEach(function (actionConfig) {
-			oActionButton = that._createActionButton(oHost, oCard, actionConfig);
-			aButtons.push(oActionButton);
-		});
-
-		if (this._oActionSheet) {
-			this._oActionSheet.destroy();
-		}
-
-		this._oActionSheet = new ActionSheet({
-			buttons: aButtons
-		});
-
-		// Make an initial check for 'visible' and 'enabled' for the buttons
-		this._refreshButtons().then(function () {
-			var aButtons = this._oActionSheet.getButtons(),
-				aVisibleButtons = aButtons.filter(function (oButton) {
-					return oButton.getVisible();
-				}),
-				bVisible = !!aVisibleButtons.length;
-
-			this.fireVisibilityChange({
-				visible: bVisible
-			});
-
-			this._getToolbar().setVisible(bVisible);
-		}.bind(this));
-
-		return true;
-	};
-
 	ActionsToolbar.prototype._refreshButtons = function () {
 		var aActions = this._aActions,
 			oCard = this._oCard,
-			aButtons = this._oActionSheet.getButtons(),
+			aButtons = this._aButtons,
 			mAction,
 			oButton,
 			i,
@@ -227,15 +236,110 @@ sap.ui.define([
 		return Promise.all(aPromises);
 	};
 
-	ActionsToolbar.prototype.exit = function () {
+	/**
+	 * @param {object} mActionConfig Action config object
+	 * @returns {sap.m.Button} Button, which will be displayed in the menu
+	 */
+	ActionsToolbar.prototype._createActionButton = function (vAction, bIsActionDefinition) {
+		var mSettings = bIsActionDefinition ? this._getActionConfig(vAction) : vAction;
 
-		this._oCard = null;
-		this._aActions = null;
+		var oBtn = new Button({
+				icon: mSettings.icon,
+				text: mSettings.text,
+				tooltip: mSettings.tooltip,
+				type: mSettings.buttonType,
+				visible: bIsActionDefinition ? mSettings.visible : false,
+				press: function (oEvent) {
+					var mCurrSettings = bIsActionDefinition ? this._getActionConfig(vAction) : vAction;
 
-		if (this._oActionSheet) {
-			this._oActionSheet.destroy();
-			this._oActionSheet = null;
+					CardActions.fireAction({
+						card: this._oCard,
+						host: this._oCard.getHostInstance(),
+						action: mCurrSettings,
+						parameters: mCurrSettings.parameters,
+						source: oEvent.getSource(),
+						url: mCurrSettings.url
+					});
+				}.bind(this)
+			});
+
+		if (bIsActionDefinition) {
+			oBtn.setEnabled(mSettings.enabled);
 		}
+
+		return oBtn;
+	};
+
+	ActionsToolbar.prototype._updateVisibility = function () {
+		var bVisible = this.getAggregation("_actionSheet").getButtons().some(function (oButton) {
+			return oButton.getVisible();
+		});
+
+		this.fireVisibilityChange({
+			visible: bVisible
+		});
+
+		this.setVisible(bVisible);
+	};
+
+	ActionsToolbar.prototype._getActionConfig = function (oActionDefinition) {
+		var mSettings = ["visible", "enabled", "icon", "text", "tooltip", "parameters", "buttonType", "type"].reduce(function (mAcc, sKey) {
+			mAcc[sKey] = oActionDefinition["get" + capitalize(sKey)]();
+			return mAcc;
+		}, {});
+
+		mSettings.action = function () {
+			oActionDefinition.firePress();
+		};
+
+		return mSettings;
+	};
+
+	/**
+	 * Maps <code>actions</code> aggregation to the buttons
+	 * @param {object} oChanges The mutation info
+	 */
+	ActionsToolbar.prototype._observeActionsAggregation = function (oChanges) {
+		var oActionDefinition = oChanges.child;
+
+		if (oChanges.mutation === "insert") {
+			var oButton = this._createActionButton(oActionDefinition, true);
+
+			this.getAggregation("_actionSheet").addButton(oButton);
+			oActionDefinition.setAssociation("_menuButton", oButton);
+
+			var oActionObserver = new ManagedObjectObserver(this._observeSingleAction.bind(this));
+			oActionObserver.observe(oActionDefinition, {
+				properties: true,
+				aggregations: ["tooltip"]
+			});
+			this._mActionObservers.set(oActionDefinition.getId(), oActionObserver);
+		} else if (oChanges.mutation === "remove") {
+			Core.byId(oActionDefinition.getAssociation("_menuButton")).destroy();
+			this._mActionObservers.get(oActionDefinition.getId()).disconnect();
+			this._mActionObservers.delete(oActionDefinition.getId());
+		}
+	};
+
+	ActionsToolbar.prototype._observeSingleAction = function (oChanges) {
+		var oActionDefinition = oChanges.object,
+			sName = oChanges.name,
+			oButton = Core.byId(oActionDefinition.getAssociation("_menuButton")),
+			vVal = oChanges.current;
+
+		if (["type", "parameters"].indexOf(sName) !== -1) {
+			return;
+		}
+
+		if (oChanges.type === "aggregation") {
+			vVal = oChanges.child;
+		}
+
+		if (sName === "buttonType") {
+			sName = "type";
+		}
+
+		oButton["set" + capitalize(sName)](vVal);
 	};
 
 	return ActionsToolbar;

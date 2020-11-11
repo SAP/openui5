@@ -21,7 +21,7 @@ function (
 			"id": "sap.ui.integration.test"
 		},
 		"sap.card": {
-			"extension": "./extensions/ExtensionSample",
+			"extension": "./testResources/extensions/ExtensionSample",
 			"type": "List",
 			"header": {
 				"title": "Header sample",
@@ -260,8 +260,11 @@ function (
 		this.oCard.attachEvent("_ready", function () {
 			var oHeader = this.oCard.getCardHeader(),
 				oToolbar = oHeader.getToolbar();
+
+			Core.applyChanges();
+
 			// Assert
-			assert.strictEqual(oToolbar._oActionSheet.getButtons()[0].getText(), "Test text", "The rendered action button text is the same as the host 'text' property");
+			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getText(), "Test text", "The rendered action button text is the same as the host 'text' property");
 			done();
 		}.bind(this));
 
@@ -281,8 +284,11 @@ function (
 		this.oCard.attachEvent("_ready", function () {
 			var oHeader = this.oCard.getCardHeader(),
 				oToolbar = oHeader.getToolbar();
+
+			Core.applyChanges();
+
 			// Assert
-			assert.strictEqual(oToolbar._oActionSheet.getButtons()[0].getType(), "Accept", "The rendered action button type is the same as the host 'buttonType' property");
+			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getType(), "Accept", "The rendered action button type is the same as the host 'buttonType' property");
 			done();
 		}.bind(this));
 
@@ -301,8 +307,11 @@ function (
 		this.oCard.attachEvent("_ready", function () {
 			var oHeader = this.oCard.getCardHeader(),
 				oToolbar = oHeader.getToolbar();
+
+			Core.applyChanges();
+
 			// Assert
-			assert.strictEqual(oToolbar._oActionSheet.getButtons()[0].getTooltip(), "Action button tooltip", "The rendered action button tooltip is the same as the host 'tooltip' property");
+			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getTooltip(), "Action button tooltip", "The rendered action button tooltip is the same as the host 'tooltip' property");
 			done();
 		}.bind(this));
 
@@ -322,8 +331,11 @@ function (
 		this.oCard.attachEvent("_ready", function () {
 			var oHeader = this.oCard.getCardHeader(),
 				oToolbar = oHeader.getToolbar();
+
+			Core.applyChanges();
+
 			// Assert
-			assert.strictEqual(oToolbar._oActionSheet.getButtons()[0].getIcon(), "sap-icon://help", "The rendered action button icon is the same as the host 'icon' property");
+			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getIcon(), "sap-icon://help", "The rendered action button icon is the same as the host 'icon' property");
 			done();
 		}.bind(this));
 
@@ -358,9 +370,9 @@ function (
 					QUnitUtils.triggerEvent("tap", oButton);
 					Core.applyChanges();
 
-					oToolbar._oActionSheet.attachEvent("afterOpen", function () {
+					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
 
-						QUnitUtils.triggerEvent("tap", oToolbar._oActionSheet.getButtons()[0]);
+						QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
 						// Assert
 						assert.ok(oSpyEnabled.called, "Host action is fired if host action is enabled.");
 						done();
@@ -399,9 +411,9 @@ function (
 					QUnitUtils.triggerEvent("tap", oButton);
 					Core.applyChanges();
 
-					oToolbar._oActionSheet.attachEvent("afterOpen", function () {
+					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
 
-						QUnitUtils.triggerEvent("tap", oToolbar._oActionSheet.getButtons()[0]);
+						QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
 
 						// Assert
 						assert.notOk(oSpyDisabled.called, "Host action is not fired if host action is disabled.");
@@ -443,11 +455,11 @@ function (
 					QUnitUtils.triggerEvent("tap", oButton);
 					Core.applyChanges();
 
-					oToolbar._oActionSheet.attachEvent("afterOpen", function () {
+					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
 
 						// Assert
-						assert.strictEqual(oToolbar._oActionSheet.getButtons()[0].getText(), "Visible", "If the host action property 'visible' is set to false the action button is rendered");
-						assert.strictEqual(oToolbar._oActionSheet.getButtons()[1].getDomRef(), null, "If the host action property 'visible' is set to false the action button is not rendered");
+						assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getText(), "Visible", "If the host action property 'visible' is set to false the action button is rendered");
+						assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[1].getDomRef(), null, "If the host action property 'visible' is set to false the action button is not rendered");
 
 						done();
 					});
@@ -483,10 +495,10 @@ function (
 					QUnitUtils.triggerEvent("tap", oButton);
 					Core.applyChanges();
 
-					oToolbar._oActionSheet.attachEvent("afterOpen", function () {
+					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
 
 						// Assert
-						QUnitUtils.triggerEvent("tap", oToolbar._oActionSheet.getButtons()[0]);
+						QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
 						assert.ok(oWindowOpenStub.calledWith("https://www.sap.com"), "Action triggered with host 'url' parameter");
 
 						//Cleanup
@@ -564,6 +576,7 @@ function (
 
 		this.oCard.attachEvent("_ready", function () {
 			var oHeader = this.oCard.getCardHeader();
+			Core.applyChanges();
 
 			assert.notOk(oHeader.getVisible(), "The header is not visible when all actions are not visible.");
 

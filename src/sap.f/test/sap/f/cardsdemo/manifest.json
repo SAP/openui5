@@ -220,6 +220,11 @@
 					"pattern": "filters",
 					"name": "filters",
 					"target": "filters"
+				},
+				{
+					"pattern": "extensionAndHost",
+					"name": "extensionAndHost",
+					"target": "extensionAndHost"
 				}
 			],
 			"targets": {
@@ -376,6 +381,11 @@
 				"filters": {
 					"viewId": "filters",
 					"viewName": "Filters",
+					"viewLevel": 1
+				},
+				"extensionAndHost": {
+					"viewId": "extensionAndHost",
+					"viewName": "ExtensionAndHost",
 					"viewLevel": 1
 				}
 			}

@@ -282,6 +282,37 @@ sap.ui.define([
 										key: 'View.view.xml'
 									}
 								]
+							},
+							{
+								title: 'Custom Actions',
+								key: 'customActions',
+								files: [
+									{
+										url: '/samples/component/customActions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/customActions/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/customActions/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									},
+									{
+										url: '/samples/component/customActions/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/component/customActions/Image.png',
+										name: 'Image.png',
+										key: 'Image.png'
+									}
+								]
 							}
 						]
 					},

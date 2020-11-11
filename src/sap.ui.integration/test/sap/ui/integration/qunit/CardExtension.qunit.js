@@ -36,7 +36,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./extensions/Extension1",
+				"extension": "./testResources/extensions/Extension1",
 				"data": {
 					"extension": {
 						"method": "getData"
@@ -123,7 +123,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./extensions/Extension1",
+				"extension": "./testResources/extensions/Extension1",
 				"data": {
 					"extension": {
 						"method": "getData"
@@ -158,7 +158,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./extensions/Extension1",
+				"extension": "./testResources/extensions/Extension1",
 				"header": {
 					"data": {
 						"extension": {
@@ -189,7 +189,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./extensions/Extension1",
+				"extension": "./testResources/extensions/Extension1",
 				"content": {
 					"data": {
 						"extension": {
@@ -242,7 +242,7 @@ sap.ui.define([
 					}
 				},
 				"type": "List",
-				"extension": "./extensions/Extension1",
+				"extension": "./testResources/extensions/Extension1",
 				"data": {
 					"extension": {
 						"method": "getData"
@@ -287,7 +287,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./extensions/Extension1",
+				"extension": "./testResources/extensions/Extension1",
 				"content": {
 					"data": {
 						"extension": {
@@ -318,8 +318,7 @@ sap.ui.define([
 		deferred.resolve(new DOMParser().parseFromString('<CitySet> <City Name="Paris"/> <City Name="Berlin" /> </CitySet>', "application/xml"));
 	});
 
-
-	QUnit.module("Actions", {
+	QUnit.module("Actions - Legacy", {
 		beforeEach: function () {
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/",
@@ -333,7 +332,7 @@ sap.ui.define([
 							"title": "Title",
 							"subTitle": "Sub Title"
 						},
-						"extension": "./extensions/Extension1"
+						"extension": "./testResources/extensions/ExtensionLegacy"
 					}
 				}
 			});
@@ -354,7 +353,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			oHeader = this.oCard.getCardHeader();
-			aActionButtons = oHeader.getToolbar()._oActionSheet.getButtons();
+			aActionButtons = oHeader.getToolbar().getAggregation("_actionSheet").getButtons();
 
 			assert.strictEqual(aActionButtons.length, 1, "there is 1 action");
 			assert.strictEqual(aActionButtons[0].getText(), "AutoOpen - SAP website - Extension", "action text is correct");
@@ -395,11 +394,12 @@ sap.ui.define([
 
 			// set new actions
 			this.oCard.getAggregation("_extension").setActions(aNewActions);
+			Core.applyChanges();
 
-			assert.notEqual(oToolbar, oHeader.getToolbar(), "there is a new actions toolbar");
+			assert.strictEqual(oToolbar, oHeader.getToolbar(), "The toolbar is kept the same");
 
 			oToolbar = oHeader.getToolbar();
-			aActionButtons = oToolbar._oActionSheet.getButtons();
+			aActionButtons = oToolbar.getAggregation("_actionSheet").getButtons();
 
 			assert.strictEqual(aActionButtons.length, 2, "there are 2 actions");
 			assert.strictEqual(aActionButtons[0].getText(), "Action 1", "action text is correct");
@@ -427,7 +427,7 @@ sap.ui.define([
 					},
 					"sap.card": {
 						"type": "List",
-						"extension": "./extensions/Extension1",
+						"extension": "./testResources/extensions/Extension1",
 						"data": {
 							"extension": {
 								"method": "getData"
@@ -499,7 +499,7 @@ sap.ui.define([
 					},
 					"sap.card": {
 						"type": "List",
-						"extension": "./extensions/Extension1"
+						"extension": "./testResources/extensions/ExtensionSample"
 					}
 				}
 			});
@@ -552,7 +552,7 @@ sap.ui.define([
 					},
 					"sap.card": {
 						"type": "List",
-						"extension": "./extensions/Extension1"
+						"extension": "./testResources/extensions/ExtensionSample"
 					}
 				}
 			});

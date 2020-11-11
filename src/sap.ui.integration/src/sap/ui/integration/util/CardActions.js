@@ -2,18 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/m/library",
-		"sap/ui/integration/library",
-		"sap/ui/base/ManagedObject",
-		"sap/base/Log",
-		"sap/ui/integration/util/BindingResolver",
-		"sap/ui/integration/util/DataProviderFactory"],
-	function (mLibrary,
-			  library,
-			  ManagedObject,
-			  Log,
-			  BindingResolver,
-			  DataProviderFactory) {
+	"./BindingResolver",
+	"../library",
+	"sap/base/Log",
+	"sap/m/library",
+	"sap/ui/base/ManagedObject"
+], function (
+	BindingResolver,
+	library,
+	Log,
+	mLibrary,
+	ManagedObject
+) {
 		"use strict";
 
 		function _getServiceName(vService) {
@@ -364,10 +364,12 @@ sap.ui.define([
 					type: oAction.type,
 					card: oCard,
 					actionSource: mConfig.source,
-					manifestParameters: mParameters, // for backward compatibility
 					parameters: mParameters
 				},
-				bActionResult = oCard.fireAction(mActionParams);
+				mActionParamsLegacy = Object.assign({}, mActionParams, {
+					manifestParameters: mParameters // for backward compatibility
+				}),
+				bActionResult = oCard.fireAction(mActionParamsLegacy);
 
 			if (!bActionResult) {
 				return false;
@@ -395,16 +397,18 @@ sap.ui.define([
 		CardActions._doPredefinedAction = function (mConfig) {
 			var oAction = mConfig.action,
 				mParameters = mConfig.parameters,
-				fnAction,
+				sType = oAction.type,
 				sUrl,
-				sTarget;
+				sTarget,
+				sParametersUrl,
+				sParametersTarget;
 
 			if (mParameters) {
-				var sParametersUrl = mParameters.url,
-					sParametersTarget = mParameters.target;
+				sParametersUrl = mParameters.url;
+				sParametersTarget = mParameters.target;
 			}
 
-			switch (oAction.type) {
+			switch (sType) {
 				case CardActionType.Navigation:
 					if (oAction.service) {
 						break;
@@ -417,9 +421,8 @@ sap.ui.define([
 					}
 					break;
 				case CardActionType.Custom:
-					fnAction = oAction.action;
-					if (typeof fnAction === "function") {
-						fnAction(mConfig.card, mConfig.source);
+					if (typeof oAction.action === "function") {
+						oAction.action(mConfig.card, mConfig.source);
 					}
 					break;
 				case CardActionType.Submit:
@@ -427,6 +430,7 @@ sap.ui.define([
 						CardActions.handleSubmitAction(mConfig);
 					}
 					break;
+				default: break;
 			}
 		};
 
