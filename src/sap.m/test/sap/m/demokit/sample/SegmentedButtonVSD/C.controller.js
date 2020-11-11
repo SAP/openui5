@@ -7,27 +7,23 @@ sap.ui.define([
 
 	return Controller.extend("sap.m.sample.SegmentedButtonVSD.C", {
 
-		onExit : function () {
-			if (this._oDialog) {
-				this._oDialog.destroy();
-			}
-		},
-
 		handleOpenDialog: function () {
-			if (!this._oDialog) {
-				Fragment.load({
-					id: "dialogFrag",
+			var oView = this.getView();
+
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.SegmentedButtonVSD.Dialog",
 					controller: this
-				}).then(function(oDialog){
-					this._oDialog = oDialog;
-					this._oDialog.setModel(this.getView().getModel());
-					this._oDialog.open();
-				}.bind(this));
-			} else {
-				this._oDialog.setModel(this.getView().getModel());
-				this._oDialog.open();
+				}).then(function(oDialog) {
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
+			this._pDialog.then(function(oDialog){
+				oDialog.setModel(oView.getModel());
+				oDialog.open();
+			});
 		},
 
 		handleConfirm: function (oEvent) {
