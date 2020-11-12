@@ -3,8 +3,9 @@
  */
 
 // Provides miscellaneous utility functions that might be useful for any script
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global','sap/ui/Device',
+		'sap/ui/thirdparty/URI'],
+	function(jQuery, Device, URI) {
 	"use strict";
 
 	/**
@@ -1145,6 +1146,84 @@ sap.ui.define(['jquery.sap.global'],
 		return target;
 	};
 
-	return jQuery;
+		/**
+		 * Helper that adds window features 'noopener noreferrer' when opening a
+		 * cross-origin address to ensure that no opener browsing context is forwarded.
+		 * If forwarding of the opener browsing context is needed, the native
+		 * <code>window.open</code> API should be used.
+		 *
+		 * @param {sap.ui.core.URI} sUrl URL of a document that should be loaded in the new window
+		 * @param {string} sWindowName Name of the new window
+		 * @returns {Window|null} The newly returned window object or null
+		 * @private
+		 * @ui5-restricted
+		 * @since 1.52.49
+		 */
+		jQuery.sap.openWindow = function(sUrl, sWindowName) {
+			var sWindowFeatures;
+			if (sWindowName !== "_self" && jQuery.sap.isCrossOriginURL(sUrl)) {
+				sWindowFeatures = "noopener,noreferrer";
+				// ensure that, in IE11, opener cannot be accessed by early code
+				if (Device.browser.msie) {
+					var oNewWindow = window.open("about:blank", sWindowName, sWindowFeatures);
+					if (oNewWindow) {
+						oNewWindow.opener = null;
+						oNewWindow.location.href = sUrl;
+					}
+					return null;
+				}
+			}
+			return window.open(sUrl, sWindowName, sWindowFeatures);
+		};
+
+		/**
+		 * Determines default link types for an &lt;a&gt; tag that comply with
+		 * best practices for cross-origin communication.
+		 *
+		 * When the target URL is a cross-origin URL and when it will be opened in a new window,
+		 * and when no other link types have been specified in the <code>rel</code> attribute,
+		 * "noopener noreferrer" will be returned.
+		 *
+		 * @param {string} sRel Caller defined link types for the <code>rel</code> attribute
+		 * @param {sap.ui.core.URI} sHref The target URL (might be relative to document.baseURI)
+		 * @param {string} sTarget Value of the <code>target</code> attribute
+		 * @returns {string} Value for the <code>rel</code> attribute of the &lt;a&gt; tag
+		 * @private
+		 * @ui5-restricted
+		 * @since 1.52.49
+		 */
+		jQuery.sap.defaultLinkTypes = function(sRel, sHref, sTarget) {
+			// trim rel and finally return the trimmed value
+			sRel = typeof sRel === "string" ? sRel.trim() : sRel;
+			// if the app already specified a non-empty value for rel, or when there's no need
+			// to restrict access to the opener, then leave rel unchanged
+			if (!sRel && sTarget && sTarget !== "_self" && jQuery.sap.isCrossOriginURL(sHref)) {
+				return "noopener noreferrer";
+			}
+			return sRel;
+		};
+
+		/**
+		 * If the given URL is cross-origin, checks whether its origin is different from
+		 * the origin of the current document.
+		 *
+		 * @param {sap.ui.core.URI} sHref The URL to check
+		 * @returns {boolean} Whether the URL is a cross-origin URL
+		 * @private
+		 * @ui5-restricted
+		 * @since 1.52.49
+		 */
+		jQuery.sap.isCrossOriginURL = function(sHref) {
+			// Code can be similfied during IE11 cleanup as URL API can handle URNs without errors:
+			// --> new URL("mailto:info.germany@sap.com', document.baseURI).toString()
+			var oURI = new URI(sHref),
+				oURI = oURI.is("relative") ? oURI.absoluteTo(document.baseURI) : oURI,
+				sOrigin = window.location.origin || new URI().origin();
+
+			return oURI.origin() !== sOrigin;
+		};
+
+
+		return jQuery;
 
 });

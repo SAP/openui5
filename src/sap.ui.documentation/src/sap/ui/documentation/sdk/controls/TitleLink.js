@@ -5,8 +5,9 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
-	'sap/m/Title'
-], function(coreLibrary, Device, Toolbar, Title) {
+	'sap/m/Title',
+	'jquery.sap.script'
+], function(coreLibrary, Device, Toolbar, Title, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -41,7 +42,16 @@ sap.ui.define([
 				/**
 				 * If set to true, the text will wrap to multiple lines, if not it will truncate on a single line
 				 */
-				wrap : {type : "boolean", group : "Behavior", defaultValue : true}
+				wrap : {type : "boolean", group : "Behavior", defaultValue : true},
+
+				/**
+				 * Specifies the value of the HTML <code>rel</code> attribute.
+				 *
+				 * <b>Note:</b> A default value of <code>noopener noreferrer</code> is set only to links that have a cross-origin URL
+				 * and a specified <code>target</code> with value other than <code>_self</code>
+				 * @since 1.52.49
+				 */
+				rel : {type : "string", group : "Behavior", defaultValue : null}
 			},
 			events: {
 				/**
@@ -116,11 +126,18 @@ sap.ui.define([
 		},
 
 		setTarget : function(sTarget){
+			var sRelToRender = jQuery.sap.defaultLinkTypes(this.getRel(), this.getHref(), this.getTarget());
 			this.setProperty("target", sTarget, true);
 			if (!sTarget) {
 				this.$().removeAttr("target");
 			} else {
 				this.$().attr("target", sTarget);
+			}
+
+			if (!sRelToRender) {
+				this.$().removeAttr("rel");
+			} else {
+				this.$().attr("rel", sRelToRender);
 			}
 			return this;
 		},
@@ -192,6 +209,10 @@ sap.ui.define([
 			oRm.writeAttributeEscaped("href", oTitle.getHref());
 			if (oTitle.getTarget()) {
 				oRm.writeAttributeEscaped("target", oTitle.getTarget());
+			}
+			var sRelToRender = jQuery.sap.defaultLinkTypes(oTitle.getRel(), oTitle.getHref(), oTitle.getTarget());
+			if (sRelToRender) {
+				oRm.writeAttributeEscaped("rel", sRelToRender);
 			}
 			oRm.writeClasses();
 			oRm.write(">");

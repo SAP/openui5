@@ -1806,6 +1806,51 @@ p.absoluteTo = function(base) {
     resolved.build();
     return resolved;
 };
+
+// ##### BEGIN: MODIFIED BY SAP
+// for the function isCrossOriginURL in jQuery.sap.script.js we need to extract the origin information
+// from the given URL. The accessor for origin is available in URI 1.19.1 and is borrowed for 1.11.2:
+
+/*!
+ * The following function is taken from
+ * URI.js - Mutating URLs
+ *
+ * Version: 1.19.1
+ *
+ * Author: Rodney Rehm
+ * Web: http://medialize.github.io/URI.js/
+ *
+ * Licensed under
+ * MIT License http://www.opensource.org/licenses/mit-license
+ *
+ */
+
+// compound accessor
+p.origin = function(v, build) {
+	if (this._parts.urn) {
+		return v === undefined ? '' : this;
+	}
+
+	if (v === undefined) {
+		var protocol = this.protocol();
+		var authority = this.authority();
+		if (!authority) {
+			return '';
+		}
+
+		return (protocol ? protocol + '://' : '') + this.authority();
+	} else {
+		var origin = URI(v);
+		this
+			.protocol(origin.protocol())
+			.authority(origin.authority())
+			.build(!build);
+		return this;
+	}
+};
+
+// ##### END: MODIFIED BY SAP
+
 p.relativeTo = function(base) {
     var relative = this.clone().normalize();
     var relativeParts, baseParts, common, relativePath, basePath;
