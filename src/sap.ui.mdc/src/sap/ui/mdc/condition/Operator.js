@@ -37,16 +37,16 @@ sap.ui.define([
 		 * If a function or property is initial, the default implementation is used.
 		 *
 		 * @extends sap.ui.base.Object
-		 * @param {object} [oConfiguration] Properties of the operator
-		 * @param {string} [oConfiguration.name] Name of the operator used in the condition
+		 * @param {object} oConfiguration Properties of the operator
+		 * @param {string} oConfiguration.name Name of the operator used in the condition
 		 * @param {string} [oConfiguration.filterOperator] The operator's default filter operator that is created as defined in <code>sap.ui.model.FilterOperator</code>
-		 * @param {string} [oConfiguration.tokenParse] The string representation of the regular expression that is used by the operator to parse a value
+		 * @param {string} oConfiguration.tokenParse The string representation of the regular expression that is used by the operator to parse a value
 		 *                 to eliminate the operator and get the data string. A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the
 		 *                 <code>oConfiguration.tokenText</code> property if given.
-		 * @param {string} [oConfiguration.tokenFormat] The string representation that is used by the operator to format a value
+		 * @param {string} oConfiguration.tokenFormat The string representation that is used by the operator to format a value
 		 *                 into an output string. For the value placeholder <code>{0}</code> and <code>{1}</code> are used.
 		 *                 A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the <code>oConfiguration.tokenText</code> property if given.
-		 * @param {string[]} [oConfiguration.valueTypes] Array of type to be used. The length of the array defines the number of values that
+		 * @param {string[]} oConfiguration.valueTypes Array of type to be used. The length of the array defines the number of values that
 		 *                 need to be entered with the operator.
 		 *                 If set to Operator.ValueType.Self the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.
 		 *                 If set to Operator.ValueType.Static a simple string type is used to display static text.
