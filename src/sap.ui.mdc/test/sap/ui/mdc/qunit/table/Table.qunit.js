@@ -264,23 +264,27 @@ sap.ui.define([
 
 		this.oTable.initialized().then(function() {
 			var sPath = "/foo";
-			this.oTable.bindRows({
-				path: sPath
+			var oTable = this.oTable;
+			// awaitPropertyHelper is required since "_updateColumnsBeforeBinding" is async
+			oTable.awaitPropertyHelper().then(function() {
+				oTable.bindRows({
+					path: sPath
+				}).then(function() {
+					assert.ok(oTable._oTable);
+					var aMDCColumns = oTable.getColumns();
+					var aInnerColumns = oTable._oTable.getColumns();
+					assert.equal(aMDCColumns.length, aInnerColumns.length);
+					assert.equal(aInnerColumns[0].getLabel().getText(), "Test");
+					assert.equal(aInnerColumns[1].getLabel().getText(), "Test2");
+					assert.equal(aInnerColumns[2].getLabel().getText(), "Test3");
+					assert.ok(oTable._oTable.isBound("rows"));
+
+					var oBindingInfo = oTable._oTable.getBindingInfo("rows");
+
+					assert.equal(oBindingInfo.path, sPath);
+					done();
+				});
 			});
-
-			assert.ok(this.oTable._oTable);
-			var aMDCColumns = this.oTable.getColumns();
-			var aInnerColumns = this.oTable._oTable.getColumns();
-			assert.equal(aMDCColumns.length, aInnerColumns.length);
-			assert.equal(aInnerColumns[0].getLabel().getText(), "Test");
-			assert.equal(aInnerColumns[1].getLabel().getText(), "Test2");
-			assert.equal(aInnerColumns[2].getLabel().getText(), "Test3");
-			assert.ok(this.oTable._oTable.isBound("rows"));
-
-			var oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
-
-			assert.equal(oBindingInfo.path, sPath);
-			done();
 		}.bind(this));
 	});
 
@@ -303,15 +307,17 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			// Initilaized has to be used again as the binding itself is done when the initialized Promise is fired
 			this.oTable.initialized().then(function() {
-				assert.ok(this.oTable._oTable);
-				assert.ok(this.oTable._bTableExists);
+				this.oTable.awaitPropertyHelper().then(function() {
+					assert.ok(this.oTable._oTable);
+					assert.ok(this.oTable._bTableExists);
 
-				assert.ok(this.oTable._oTable.isBound("rows"));
+					assert.ok(this.oTable._oTable.isBound("rows"));
 
-				var oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
+					var oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
 
-				assert.strictEqual(oBindingInfo.path, sCollectionPath);
-				done();
+					assert.strictEqual(oBindingInfo.path, sCollectionPath);
+					done();
+				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 	});
@@ -343,24 +349,26 @@ sap.ui.define([
 
 		this.oTable.initialized().then(function() {
 			var sPath = "/foo";
+			// awaitPropertyHelper is required since "_updateColumnsBeforeBinding" is async
+			this.oTable.awaitPropertyHelper().then(function() {
+				this.oTable.bindRows({
+					path: sPath
+				}).then(function() {
+					assert.ok(this.oTable._oTable);
+					var aMDCColumns = this.oTable.getColumns();
+					var aInnerColumns = this.oTable._oTable.getColumns();
+					assert.equal(aMDCColumns.length, aInnerColumns.length);
+					assert.equal(aInnerColumns[0].getLabel().getText(), "Test");
+					assert.equal(aInnerColumns[1].getLabel().getText(), "Test2");
+					assert.equal(aInnerColumns[2].getLabel().getText(), "Test3");
+					assert.ok(this.oTable._oTable.isBound("rows"));
 
-			this.oTable.bindRows({
-				path: sPath
-			});
+					var oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
 
-			assert.ok(this.oTable._oTable);
-			var aMDCColumns = this.oTable.getColumns();
-			var aInnerColumns = this.oTable._oTable.getColumns();
-			assert.equal(aMDCColumns.length, aInnerColumns.length);
-			assert.equal(aInnerColumns[0].getLabel().getText(), "Test");
-			assert.equal(aInnerColumns[1].getLabel().getText(), "Test2");
-			assert.equal(aInnerColumns[2].getLabel().getText(), "Test3");
-			assert.ok(this.oTable._oTable.isBound("rows"));
-
-			var oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
-
-			assert.equal(oBindingInfo.path, sPath);
-			done();
+					assert.equal(oBindingInfo.path, sPath);
+					done();
+			}.bind(this));
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -584,23 +592,25 @@ sap.ui.define([
 
 		this.oTable.initialized().then(function() {
 			var sPath = "/foo";
-			this.oTable.bindRows({
-				path: sPath
-			});
+			this.oTable.awaitPropertyHelper().then(function() {
+				this.oTable.bindRows({
+					path: sPath
+				}).then(function() {
+					assert.ok(this.oTable._oTable);
+					var aMDCColumns = this.oTable.getColumns();
+					var aInnerColumns = this.oTable._oTable.getColumns();
+					assert.equal(aMDCColumns.length, aInnerColumns.length);
+					assert.equal(aInnerColumns[0].getHeader().getText(), "Test");
+					assert.equal(aInnerColumns[1].getHeader().getText(), "Test2");
+					assert.equal(aInnerColumns[2].getHeader().getText(), "Test3");
+					assert.ok(this.oTable._oTable.isBound("items"));
 
-			assert.ok(this.oTable._oTable);
-			var aMDCColumns = this.oTable.getColumns();
-			var aInnerColumns = this.oTable._oTable.getColumns();
-			assert.equal(aMDCColumns.length, aInnerColumns.length);
-			assert.equal(aInnerColumns[0].getHeader().getText(), "Test");
-			assert.equal(aInnerColumns[1].getHeader().getText(), "Test2");
-			assert.equal(aInnerColumns[2].getHeader().getText(), "Test3");
-			assert.ok(this.oTable._oTable.isBound("items"));
+					var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
 
-			var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
-
-			assert.equal(oBindingInfo.path, sPath);
-			done();
+					assert.equal(oBindingInfo.path, sPath);
+					done();
+				}.bind(this));
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -629,14 +639,16 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			// Initilaized has to be used again as the binding itself is done when the initialized Promise is fired
 			this.oTable.initialized().then(function() {
-				assert.ok(this.oTable._oTable);
+				this.oTable.awaitPropertyHelper().then(function() {
+					assert.ok(this.oTable._oTable);
 
-				assert.ok(this.oTable._oTable.isBound("items"));
+					assert.ok(this.oTable._oTable.isBound("items"));
 
-				var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
+					var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
 
-				assert.strictEqual(oBindingInfo.path, sCollectionPath);
-				done();
+					assert.strictEqual(oBindingInfo.path, sCollectionPath);
+					done();
+				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 	});
@@ -679,23 +691,26 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			var sPath = "/foo";
 
-			this.oTable.bindRows({
-				path: sPath
-			});
+			// awaitPropertyHelper is required since "_updateColumnsBeforeBinding" is async
+			this.oTable.awaitPropertyHelper().then(function() {
+				this.oTable.bindRows({
+					path: sPath
+				}).then(function() {
+					assert.ok(this.oTable._oTable);
+					var aMDCColumns = this.oTable.getColumns();
+					var aInnerColumns = this.oTable._oTable.getColumns();
+					assert.equal(aMDCColumns.length, aInnerColumns.length);
+					assert.equal(aInnerColumns[0].getHeader().getText(), "Test");
+					assert.equal(aInnerColumns[1].getHeader().getText(), "Test2");
+					assert.equal(aInnerColumns[2].getHeader().getText(), "Test3");
+					assert.ok(this.oTable._oTable.isBound("items"));
 
-			assert.ok(this.oTable._oTable);
-			var aMDCColumns = this.oTable.getColumns();
-			var aInnerColumns = this.oTable._oTable.getColumns();
-			assert.equal(aMDCColumns.length, aInnerColumns.length);
-			assert.equal(aInnerColumns[0].getHeader().getText(), "Test");
-			assert.equal(aInnerColumns[1].getHeader().getText(), "Test2");
-			assert.equal(aInnerColumns[2].getHeader().getText(), "Test3");
-			assert.ok(this.oTable._oTable.isBound("items"));
+					var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
 
-			var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
-
-			assert.equal(oBindingInfo.path, sPath);
-			done();
+					assert.equal(oBindingInfo.path, sPath);
+					done();
+			}.bind(this));
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -998,40 +1013,43 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			var sPath = "/foo";
 
-			this.oTable.bindRows({
-				path: sPath
-			});
+			// awaitPropertyHelper is required since "_updateColumnsBeforeBinding" is async
+			this.oTable.awaitPropertyHelper().then(function() {
+				this.oTable.bindRows({
+					path: sPath
+				}).then(function() {
+					var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
 
-			var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
+					assert.equal(oBindingInfo.path, sPath);
 
-			assert.equal(oBindingInfo.path, sPath);
+					var fDataReceived = oBindingInfo.events["dataReceived"];
 
-			var fDataReceived = oBindingInfo.events["dataReceived"];
+					sinon.stub(this.oTable._oTable, "getBinding");
 
-			sinon.stub(this.oTable._oTable, "getBinding");
+					var iCurrentLength = 10;
+					var bIsLengthFinal = true;
+					var oRowBinding = {
+						getLength: function() {
+							return iCurrentLength;
+						},
+						isLengthFinal: function() {
+							return bIsLengthFinal;
+						}
+					};
+					this.oTable._oTable.getBinding.returns(oRowBinding);
 
-			var iCurrentLength = 10;
-			var bIsLengthFinal = true;
-			var oRowBinding = {
-				getLength: function() {
-					return iCurrentLength;
-				},
-				isLengthFinal: function() {
-					return bIsLengthFinal;
-				}
-			};
-			this.oTable._oTable.getBinding.returns(oRowBinding);
+					assert.equal(this.oTable._oTitle.getText(), "Test");
 
-			assert.equal(this.oTable._oTitle.getText(), "Test");
+					fDataReceived();
+					assert.equal(this.oTable._oTitle.getText(), "Test (10)");
 
-			fDataReceived();
-			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
+					bIsLengthFinal = false;
+					fDataReceived();
+					assert.equal(this.oTable._oTitle.getText(), "Test");
 
-			bIsLengthFinal = false;
-			fDataReceived();
-			assert.equal(this.oTable._oTitle.getText(), "Test");
-
-			done();
+					done();
+				}.bind(this));
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -1067,34 +1085,37 @@ sap.ui.define([
 			});
 			sinon.stub(this.oTable._oTable, "unbindRows");// TODO: remove ui.table seems to fail due to this
 
-			this.oTable.bindRows({
-				path: sPath,
-				events: {
-					dataReceived: fCustomDataReceived
-				}
-			});
+			// awaitPropertyHelper is required since "_updateColumnsBeforeBinding" is async
+			this.oTable.awaitPropertyHelper().then(function() {
+				this.oTable.bindRows({
+					path: sPath,
+					events: {
+						dataReceived: fCustomDataReceived
+					}
+				}).then(function() {
+					oGetBindingInfoStub.reset();
+					this.oTable._oTable.getBindingInfo = fnGetBindingInfo;
+					var oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
 
-			oGetBindingInfoStub.reset();
-			this.oTable._oTable.getBindingInfo = fnGetBindingInfo;
-			var oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
+					assert.equal(oBindingInfo.path, sPath);
 
-			assert.equal(oBindingInfo.path, sPath);
+					var fDataReceived = oBindingInfo.events["dataReceived"];
 
-			var fDataReceived = oBindingInfo.events["dataReceived"];
+					assert.equal(this.oTable._oTitle.getText(), "Test");
+					assert.ok(fCustomDataReceived.notCalled);
 
-			assert.equal(this.oTable._oTitle.getText(), "Test");
-			assert.ok(fCustomDataReceived.notCalled);
+					fDataReceived(new UI5Event("dataReceived", oRowBinding));
+					assert.equal(this.oTable._oTitle.getText(), "Test (10)");
+					assert.ok(fCustomDataReceived.calledOnce);
 
-			fDataReceived(new UI5Event("dataReceived", oRowBinding));
-			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
-			assert.ok(fCustomDataReceived.calledOnce);
+					oRowBinding.isLengthFinal.returns(false);
+					fDataReceived(new UI5Event("dataReceived", oRowBinding));
+					assert.equal(this.oTable._oTitle.getText(), "Test");
+					assert.ok(fCustomDataReceived.calledTwice);
 
-			oRowBinding.isLengthFinal.returns(false);
-			fDataReceived(new UI5Event("dataReceived", oRowBinding));
-			assert.equal(this.oTable._oTitle.getText(), "Test");
-			assert.ok(fCustomDataReceived.calledTwice);
-
-			done();
+					done();
+				}.bind(this));
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -1261,6 +1282,49 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("_getSorters should consider the 'path'", function(assert) {
+		var done = assert.async();
+
+		this.oTable.addColumn(new Column({
+			template: new Text(),
+			dataProperty: "name"
+		}));
+
+		this.oTable.addColumn(new Column({
+			template: new Text(),
+			dataProperty: "age"
+		}));
+
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+			{
+				name: "name",
+				label: "name",
+				path: "deepPath/name"
+			},
+			{
+				name: "age",
+				label: "age"
+			}
+		]);
+
+		this.oTable.initialized().then(function() {
+			var oTable = this.oTable,
+				oSortConditions = {
+					sorters: [
+						{name: "name", descending: false}
+					]
+				};
+
+			oTable.setSortConditions(oSortConditions);
+			oTable.awaitPropertyHelper().then(function() {
+				var aSorters = oTable._getSorters();
+				assert.strictEqual(aSorters.length, 1, "Exported sorters returned");
+				assert.strictEqual(aSorters[0].sPath, "deepPath/name", "path from the propertyInfo is set to the sorter");
+				done();
+			});
+		}.bind(this));
+	});
+
 	QUnit.test("sort indicator is set correctly at the inner mobile table columns", function(assert) {
 		var done = assert.async();
 
@@ -1346,9 +1410,7 @@ sap.ui.define([
 			oTable.setSortConditions(oSortConditions);
 			oTable.bindRows({
 				path: "/foo"
-			});
-
-			oTable.awaitPropertyHelper().then(function() {
+			}).then(function() {
 				assert.deepEqual(oTable.getSortConditions(), oSortConditions, "sortConditions property is correctly set");
 				var aInnerColumns = oTable._oTable.getColumns();
 				assert.equal(aInnerColumns[0].getSorted(), true);
@@ -1817,73 +1879,75 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			// Initilaized has to be used again as the binding itself is done when the initialized Promise is fired
 			this.oTable.initialized().then(function() {
-				assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-				assert.ok(this.oTable._oTable.isBound("items"));
-				assert.equal(this.oTable._oTable.getItems().length, 20, "Items available");
+				this.oTable.awaitPropertyHelper().then(function() {
+					assert.ok(this.oTable._oTable.isA("sap.m.Table"));
+					assert.ok(this.oTable._oTable.isBound("items"));
+					assert.equal(this.oTable._oTable.getItems().length, 20, "Items available");
 
-				var iSelectionCount = -1;
-				this.oTable.attachSelectionChange(function() {
-					iSelectionCount = this.oTable.getSelectedContexts().length;
-				}.bind(this));
+					var iSelectionCount = -1;
+					this.oTable.attachSelectionChange(function() {
+						iSelectionCount = this.oTable.getSelectedContexts().length;
+					}.bind(this));
 
-				assert.equal(this.oTable.getSelectionMode(), "None", "Selection Mode None - MDCTable");
-				assert.equal(this.oTable._oTable.getMode(), "None", "Selection Mode None - Inner Table");
-				Core.applyChanges();
-				selectItem(this.oTable._oTable.getItems()[0], false);
-				assert.equal(iSelectionCount, -1, "No selection change event");
-
-				this.oTable.setSelectionMode("Multi");
-				assert.equal(this.oTable.getSelectionMode(), "Multi", "Selection Mode Multi - MDCTable");
-				assert.equal(this.oTable._oTable.getMode(), "MultiSelect", "Selection Mode Multi - Inner Table");
-				Core.applyChanges();
-				checkSelectionMethods(this.oTable);
-				selectItem(this.oTable._oTable.getItems()[0], false);
-				assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
-				assert.equal(iSelectionCount, -1, "No selection change event");
-				selectItem(this.oTable._oTable.getItems()[1], true);
-				assert.equal(iSelectionCount, 2, "Selection change event");
-				selectItem(this.oTable._oTable.getItems()[2], true);
-				assert.equal(iSelectionCount, 3, "Selection change event");
-
-				iSelectionCount = -1;
-				this.oTable.clearSelection();
-				assert.equal(iSelectionCount, -1, "No selection change event");
-				assert.equal(this.oTable.getSelectedContexts().length, 0, "No Items selected");
-
-				this.oTable.setSelectionMode("Single");
-				assert.equal(this.oTable.getSelectionMode(), "Single", "Selection Mode Single - MDCTable");
-				assert.equal(this.oTable._oTable.getMode(), "SingleSelectLeft", "Selection Mode Single - Inner Table");
-				Core.applyChanges();
-				checkSelectionMethods(this.oTable);
-				selectItem(this.oTable._oTable.getItems()[0], false);
-				assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
-				assert.equal(iSelectionCount, -1, "No selection change event");
-				selectItem(this.oTable._oTable.getItems()[1], true);
-				assert.equal(iSelectionCount, 1, "Selection change event");
-
-				iSelectionCount = -1;
-				this.oTable.clearSelection();
-				assert.equal(iSelectionCount, -1, "No selection change event");
-				assert.equal(this.oTable.getSelectedContexts().length, 0, "No Items selected");
-
-				// Simulate message scenario via SelectAll
-				sap.ui.require([
-					"sap/m/MessageToast"
-				], function(MessageToast) {
-					var fMessageSpy = sinon.stub(MessageToast, "show");
-					assert.ok(fMessageSpy.notCalled);
+					assert.equal(this.oTable.getSelectionMode(), "None", "Selection Mode None - MDCTable");
+					assert.equal(this.oTable._oTable.getMode(), "None", "Selection Mode None - Inner Table");
+					Core.applyChanges();
+					selectItem(this.oTable._oTable.getItems()[0], false);
+					assert.equal(iSelectionCount, -1, "No selection change event");
 
 					this.oTable.setSelectionMode("Multi");
-					this.oTable._oTable.selectAll(true);
+					assert.equal(this.oTable.getSelectionMode(), "Multi", "Selection Mode Multi - MDCTable");
+					assert.equal(this.oTable._oTable.getMode(), "MultiSelect", "Selection Mode Multi - Inner Table");
+					Core.applyChanges();
+					checkSelectionMethods(this.oTable);
+					selectItem(this.oTable._oTable.getItems()[0], false);
+					assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
+					assert.equal(iSelectionCount, -1, "No selection change event");
+					selectItem(this.oTable._oTable.getItems()[1], true);
+					assert.equal(iSelectionCount, 2, "Selection change event");
+					selectItem(this.oTable._oTable.getItems()[2], true);
+					assert.equal(iSelectionCount, 3, "Selection change event");
 
-					assert.equal(iSelectionCount, 20, "Selection change event");
-					assert.equal(this.oTable.getSelectedContexts().length, 20, "Items selected");
-					// message is shown delayed due to a require
-					fMessageSpy.callsFake(function() {
-						assert.ok(fMessageSpy.calledOnce);
-						fMessageSpy.restore();
-						done();
-					});
+					iSelectionCount = -1;
+					this.oTable.clearSelection();
+					assert.equal(iSelectionCount, -1, "No selection change event");
+					assert.equal(this.oTable.getSelectedContexts().length, 0, "No Items selected");
+
+					this.oTable.setSelectionMode("Single");
+					assert.equal(this.oTable.getSelectionMode(), "Single", "Selection Mode Single - MDCTable");
+					assert.equal(this.oTable._oTable.getMode(), "SingleSelectLeft", "Selection Mode Single - Inner Table");
+					Core.applyChanges();
+					checkSelectionMethods(this.oTable);
+					selectItem(this.oTable._oTable.getItems()[0], false);
+					assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
+					assert.equal(iSelectionCount, -1, "No selection change event");
+					selectItem(this.oTable._oTable.getItems()[1], true);
+					assert.equal(iSelectionCount, 1, "Selection change event");
+
+					iSelectionCount = -1;
+					this.oTable.clearSelection();
+					assert.equal(iSelectionCount, -1, "No selection change event");
+					assert.equal(this.oTable.getSelectedContexts().length, 0, "No Items selected");
+
+					// Simulate message scenario via SelectAll
+					sap.ui.require([
+						"sap/m/MessageToast"
+					], function(MessageToast) {
+						var fMessageSpy = sinon.stub(MessageToast, "show");
+						assert.ok(fMessageSpy.notCalled);
+
+						this.oTable.setSelectionMode("Multi");
+						this.oTable._oTable.selectAll(true);
+
+						assert.equal(iSelectionCount, 20, "Selection change event");
+						assert.equal(this.oTable.getSelectedContexts().length, 20, "Items selected");
+						// message is shown delayed due to a require
+						fMessageSpy.callsFake(function() {
+							assert.ok(fMessageSpy.calledOnce);
+							fMessageSpy.restore();
+							done();
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
@@ -2350,23 +2414,25 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			// Initilaized has to be used again as the binding itself is done when the initialized Promise is fired
 			this.oTable.initialized().then(function() {
-				assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-				assert.ok(checkRowPress(true, this.oTable, this.oTable._oTable.getItems()[0]));
-				this.oTable.setType("Table");
-				this.oTable.initialized().then(function() {
-					assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-					this.oTable._oTable.attachEventOnce("_rowsUpdated", function() {
-						assert.ok(checkRowPress(false, this.oTable, this.oTable._oTable.getRows()[0]));
-						// no row action present
-						assert.ok(!checkRowActionPress(this.oTable));
+				this.oTable.awaitPropertyHelper().then(function() {
+					assert.ok(this.oTable._oTable.isA("sap.m.Table"));
+					assert.ok(checkRowPress(true, this.oTable, this.oTable._oTable.getItems()[0]));
+					this.oTable.setType("Table");
+					this.oTable.initialized().then(function() {
+						assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
+						this.oTable._oTable.attachEventOnce("_rowsUpdated", function() {
+							assert.ok(checkRowPress(false, this.oTable, this.oTable._oTable.getRows()[0]));
+							// no row action present
+							assert.ok(!checkRowActionPress(this.oTable));
 
-						this.oTable.setRowAction([
-							"Navigation"
-						]);
-						// row action triggers same rowPress event
-						assert.ok(checkRowActionPress(this.oTable, this.oTable._oTable.getRows()[1]));
-						done();
-					}, this);
+							this.oTable.setRowAction([
+								"Navigation"
+							]);
+							// row action triggers same rowPress event
+							assert.ok(checkRowActionPress(this.oTable, this.oTable._oTable.getRows()[1]));
+							done();
+						}, this);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
@@ -2450,25 +2516,27 @@ sap.ui.define([
 				// simulate search event
 				oFilter.fireSearch();
 
-				assert.strictEqual(this.oTable._oTable.getShowOverlay(), false);
-				assert.ok(fGetConditionsSpy.calledOnce);
-				assert.ok(fBindRowsStub.calledOnce);
+				this.oTable.awaitPropertyHelper().then(function() {
+					assert.strictEqual(this.oTable._oTable.getShowOverlay(), false);
+					assert.ok(fGetConditionsSpy.calledOnce);
+					assert.ok(fBindRowsStub.calledOnce);
 
-				// Test with empty
-				this.oTable.setFilter();
+					// Test with empty
+					this.oTable.setFilter();
 
-				assert.ok(!this.oTable.getFilter());
+					assert.ok(!this.oTable.getFilter());
 
-				// Test with invalid control
-				assert.throws(function() {
-					this.oTable.setFilter(new Control());
-				}.bind(this), function(oError) {
-					return oError instanceof Error && oError.message.indexOf("sap.ui.mdc.IFilter") > 0;
-				});
-				assert.ok(!this.oTable.getFilter());
+					// Test with invalid control
+					assert.throws(function() {
+						this.oTable.setFilter(new Control());
+					}.bind(this), function(oError) {
+						return oError instanceof Error && oError.message.indexOf("sap.ui.mdc.IFilter") > 0;
+					});
+					assert.ok(!this.oTable.getFilter());
 
-				// Finish
-				done();
+					// Finish
+					done();
+				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 	});
@@ -2500,14 +2568,15 @@ sap.ui.define([
 			// Initilaized has to be used again as the binding itself is done when the initialized Promise is fired
 			this.oTable.initialized().then(function() {
 				var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
-
-				sap.ui.require([
-					"sap/ui/mdc/FilterBar"
-				], function(FilterBar) {
-					var oFilter = new FilterBar();
-					this.oTable.setFilter(oFilter);
-					assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"), "'No data found. Try adjusting the filter settings.' is displayed");
-					done();
+				this.oTable.awaitPropertyHelper().then(function() {
+					sap.ui.require([
+						"sap/ui/mdc/FilterBar"
+					], function(FilterBar) {
+						var oFilter = new FilterBar();
+						this.oTable.setFilter(oFilter);
+						assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"), "'No data found. Try adjusting the filter settings.' is displayed");
+						done();
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
@@ -2533,9 +2602,11 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			// Initilaized has to be used again as the binding itself is done when the initialized Promise is fired
 			this.oTable.initialized().then(function() {
-				var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
-				assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"), "'No data found. Try adjusting the filter settings.' is displayed");
-				done();
+				this.oTable.awaitPropertyHelper().then(function() {
+					var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+					assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"), "'No data found. Try adjusting the filter settings.' is displayed");
+					done();
+				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 	});
@@ -4206,26 +4277,29 @@ sap.ui.define([
 		assert.ok(this.oType.getShowDetailsButton(), "showDetailsButton = true");
 
 		this.oTable.initialized().then(function() {
-			this.oTable.bindRows({
-				path: "/testPath"
-			});
-			assert.ok(this.oType._oShowDetailsButton, "button is created");
-			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
-			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
+			this.oTable.awaitPropertyHelper().then(function() {
+				this.oTable.bindRows({
+					path: "/testPath"
+				}).then(function() {
+					assert.ok(this.oType._oShowDetailsButton, "button is created");
+					assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
+					assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
 
-			this.oTable._oTable.setContextualWidth("Tablet");
-			clock.tick(1);
-			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
-			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
+					this.oTable._oTable.setContextualWidth("Tablet");
+					clock.tick(1);
+					assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+					assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
 
-			this.oType._oShowDetailsButton.firePress();
-			clock.tick(1);
-			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Hide Details", "correct text is set on the button");
+					this.oType._oShowDetailsButton.firePress();
+					clock.tick(1);
+					assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Hide Details", "correct text is set on the button");
 
-			this.oTable._oTable.setContextualWidth("4444px");
-			clock.tick(1);
-			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
-			done();
+					this.oTable._oTable.setContextualWidth("4444px");
+					clock.tick(1);
+					assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+					done();
+				}.bind(this));
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -4293,23 +4367,25 @@ sap.ui.define([
 			clock = sinon.useFakeTimers();
 
 		this.oTable.initialized().then(function() {
-			this.oTable.bindRows({
-				path: "/testPath"
-			});
+			this.oTable.awaitPropertyHelper().then(function() {
+				this.oTable.bindRows({
+					path: "/testPath"
+				}).then(function() {
+					this.oTable._oTable.setContextualWidth("Tablet");
+					clock.tick(1);
+					assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
 
-			this.oTable._oTable.setContextualWidth("Tablet");
-			clock.tick(1);
-			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+					this.oTable._oTable.getBinding("items").filter(new Filter("test", "EQ", "foo"));
+					clock.tick(1);
+					assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no visible items");
 
-			this.oTable._oTable.getBinding("items").filter(new Filter("test", "EQ", "foo"));
-			clock.tick(1);
-			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no visible items");
+					this.oTable._oTable.getBinding("items").filter();
+					clock.tick(1);
+					assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
 
-			this.oTable._oTable.getBinding("items").filter();
-			clock.tick(1);
-			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
-
-			done();
+					done();
+				}.bind(this));
+			}.bind(this));
 		}.bind(this));
 	});
 
