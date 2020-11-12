@@ -1315,6 +1315,35 @@ function (
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 	});
 
+	QUnit.test("DynamicPage _overridePreserveHeaderStateOnScroll() shows the header when 'headerExpanded' is 'true'", function (assert) {
+		// Arrange
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			oSpy = oSandBox.spy(oDynamicPage, "_setScrollPosition"),
+			done = assert.async();
+
+		// Act
+		oDynamicPage.addEventDelegate({
+			"onAfterRendering": function() {
+					// Act
+					oSandBox.stub(oDynamicPage, "_shouldOverridePreserveHeaderStateOnScroll", function () {
+						return true;
+					});
+					oSpy.reset();
+					oDynamicPage._overridePreserveHeaderStateOnScroll();
+
+					// Assert
+					assert.notOk(oSpy.called, "no scrolling when the header is expanded");
+
+					// Clean Up
+					oSandBox.restore();
+					done();
+			}
+		});
+
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
+	});
+
 	QUnit.test("DynamicPage _shouldOverridePreserveHeaderStateOnScroll() should return 'true' for Desktop when needed", function (assert) {
 		// Arrange
 		var oPreserveHeaderStateStub = this.stub(this.oDynamicPage, "_preserveHeaderStateOnScroll", function () {

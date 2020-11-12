@@ -585,7 +585,7 @@ sap.ui.define([
 
 		//move the header to content
 		if (this.getHeaderExpanded()) {
-			this._moveHeaderToContentArea(true);
+			this._moveHeaderToContentArea();
 		} else {
 			this._adjustSnap(); // moves the snapped header to content if possible
 		}
