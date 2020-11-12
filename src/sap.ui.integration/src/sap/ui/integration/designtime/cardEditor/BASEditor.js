@@ -246,31 +246,33 @@ sap.ui.define([
 		}
 	};
 
-	BASEditor.prototype._cleanJson = function (oJson) {
+	BASEditor.prototype._cleanJson = function (oJson, bCleanParameters) {
 		oJson = oJson || this.getJson();
 		var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
 		if (!sDesigntimePath) {
 			ObjectPath.set(["sap.card", "designtime"], "dt/configuration", oJson);
 		}
 		oJson = deepClone(oJson);
-		var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
-
-		for (var n in mParameters) {
-			var oParam = mParameters[n];
-			if (oParam && (oParam.type === "group" || oParam.manifestpath && !oParam.manifestpath.startsWith("/sap.card/configuration/parameters"))) {
-				delete mParameters[n];
-				continue;
-			}
-			if (this._oDesigntimeJSConfig && this._oDesigntimeJSConfig.form && this._oDesigntimeJSConfig.form.items) {
-				var oParamConfig = this._oDesigntimeJSConfig.form.items[n];
-				if (oParamConfig && (oParamConfig.type === "group" || oParamConfig.manifestpath && !oParamConfig.manifestpath.startsWith("/sap.card/configuration/parameters"))) {
+		var bCleanParameters = bCleanParameters !== false;
+		if (bCleanParameters) {
+			var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
+			for (var n in mParameters) {
+				var oParam = mParameters[n];
+				if (oParam && (oParam.type === "group" || oParam.manifestpath && !oParam.manifestpath.startsWith("/sap.card/configuration/parameters"))) {
 					delete mParameters[n];
 					continue;
 				}
+				if (this._oDesigntimeJSConfig && this._oDesigntimeJSConfig.form && this._oDesigntimeJSConfig.form.items) {
+					var oParamConfig = this._oDesigntimeJSConfig.form.items[n];
+					if (oParamConfig && (oParamConfig.type === "group" || oParamConfig.manifestpath && !oParamConfig.manifestpath.startsWith("/sap.card/configuration/parameters"))) {
+						delete mParameters[n];
+						continue;
+					}
+				}
+				mParameters[n] = {
+					value: mParameters[n].value
+				};
 			}
-			mParameters[n] = {
-				value: mParameters[n].value
-			};
 		}
 		if (this._i18n) {
 			ObjectPath.set(["sap.app", "i18n"], this._i18n, oJson);
@@ -406,7 +408,7 @@ sap.ui.define([
 				this.fireCreateConfiguration({
 					file: "dt/configuration.js",
 					content: sDesigntime,
-					manifest: this._cleanJson(oJson)
+					manifest: this._cleanJson(oJson, false)
 				});
 				return;
 			}
