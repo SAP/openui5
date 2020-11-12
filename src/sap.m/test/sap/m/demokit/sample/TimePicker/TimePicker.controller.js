@@ -6,8 +6,7 @@ sap.ui.define(['sap/m/library',
 	function(library, Controller, coreLibrary, Core, JSONModel) {
 		"use strict";
 
-		var TimePickerMaskMode = library.TimePickerMaskMode,
-			ValueState = coreLibrary.ValueState;
+		var ValueState = coreLibrary.ValueState;
 
 		return Controller.extend("sap.m.sample.TimePicker.TimePicker", {
 
@@ -15,13 +14,42 @@ sap.ui.define(['sap/m/library',
 				// create model
 				var oModel = new JSONModel();
 				oModel.setData({
-					dateValue: new Date()
+					"maskMode": {
+						"state": true
+					},
+					"timePickers": {
+						"TP1": {
+							"value": "19:15",
+							"format": "HH:mm",
+							"placeholder" :"Enter meeting start time"
+						},
+						"TP2": {
+							"format": "HH:mm:ss",
+							"placeholder" :"Enter meeting end time"
+						},
+						"TP3": {
+							"format": "hh:mm a",
+							"dateValue": new Date(),
+							"placeholder" :"Enter daily task deadline"
+						},
+						"TP4": {
+							"format": "hh:mm:ss a",
+							"placeholder" :"Enter time"
+						},
+						"TP5": {
+							"format": "hh:mm:ss a",
+							"initialFocusedDateValue": new Date(2017, 8, 9, 10, 11, 12),
+							"placeholder" :"Enter time"
+						},
+						"TP6": {
+							"format": "HH:mm:ss",
+							"support2400": true,
+							"value": "23:40:50",
+							"placeholder" :"Enter meeting start time"
+						}
+					}
 				});
 				this.getView().setModel(oModel);
-
-				this.byId("TP3").setDateValue(new Date());
-				this.byId("TP5").setInitialFocusedDateValue(new Date(2017, 8, 9, 10, 11, 12));
-
 				this._iEvent = 0;
 
 				// for the data binding example do not use the change event for check but the data binding parsing events
@@ -50,24 +78,15 @@ sap.ui.define(['sap/m/library',
 					sValue = oEvent.getParameter("value"),
 					bValid = oEvent.getParameter("valid");
 				this._iEvent++;
-				oText.setText("Change - Event " + this._iEvent + ": TimePicker " + oTP.getId() + ":" + sValue);
+				oText.setText("'change' Event #" + this._iEvent + " from TimePicker '" + oTP.getId() + "': " + sValue + (bValid ? ' (valid)' : ' (invalid)'));
 
 				if (bValid) {
 					oTP.setValueState(ValueState.None);
 				} else {
 					oTP.setValueState(ValueState.Error);
 				}
-			},
-
-			handleChangeMaskMode: function (oEvent) {
-				var sMaskMode = oEvent.getParameter("state") ? TimePickerMaskMode.On : TimePickerMaskMode.Off;
-
-				this.byId("TP1").setMaskMode(sMaskMode);
-				this.byId("TP2").setMaskMode(sMaskMode);
-				this.byId("TP3").setMaskMode(sMaskMode);
-				this.byId("TP4").setMaskMode(sMaskMode);
-				this.byId("TP5").setMaskMode(sMaskMode);
 			}
+
 		});
 
 	});
