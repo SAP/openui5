@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GrandTotalHelper"
 ], function (Log, _AggregationHelper, _GrandTotalHelper) {
 	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint camelcase: 0, no-warning-comments: 0 */
 	"use strict";
 
 	//*********************************************************************************************
@@ -43,9 +43,8 @@ sap.ui.define([
 
 		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation, mQueryOptions);
 		oAggregationHelperMock.expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregation), {
-				$count : bCount, $skip : 42, $top : 57, "sap-client" : "123"
-			}, 1, undefined)
+			.withExactArgs(sinon.match.same(oAggregation),
+				{$count : bCount, $skip : 42, $top : 57, "sap-client" : "123"}, 1, undefined)
 			.returns(mQueryOptionsWithApply);
 		oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oFirstLevelCache.sMetaPath, sinon.match.same(mQueryOptionsWithApply),
@@ -56,15 +55,11 @@ sap.ui.define([
 		sResourcePath = oFirstLevelCache.getResourcePathWithQuery(42, 99);
 
 		assert.strictEqual(sResourcePath, "SalesOrderList?$apply=1st");
-		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON,
-			"unmodified");
-		assert.strictEqual(oFirstLevelCache.bFollowUp, true, "next request is a follow-up");
-
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unmodified");
 
 		oAggregationHelperMock.expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregation), {
-				$count : bCount, $skip : 42, $top : 57, "sap-client" : "123"
-			}, 1, true)
+			.withExactArgs(sinon.match.same(oAggregation),
+				{$count : bCount, $skip : 42, $top : 57, "sap-client" : "123"}, 1, true)
 			.returns(mQueryOptionsWithApply);
 		oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oFirstLevelCache.sMetaPath, sinon.match.same(mQueryOptionsWithApply),
@@ -75,9 +70,7 @@ sap.ui.define([
 		sResourcePath = oFirstLevelCache.getResourcePathWithQuery(42, 99);
 
 		assert.strictEqual(sResourcePath, "SalesOrderList?$apply=2nd");
-		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON,
-			"unmodified");
-		assert.strictEqual(oFirstLevelCache.bFollowUp, true, "next request is still a follow-up");
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unmodified");
 	});
 
 	//*********************************************************************************************
