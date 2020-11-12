@@ -2633,8 +2633,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[null, "new value"].forEach(function (vValue) {
-	QUnit.test("setProperty: " + vValue, function (assert) {
+[undefined, true].forEach(function (bRetry) {
+	[null, "new value"].forEach(function (vValue) {
+
+	QUnit.test("setProperty: " + vValue + ", retry = " + bRetry, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
 				lockGroup : function () {}
@@ -2651,14 +2653,17 @@ sap.ui.define([
 		this.mock(oBinding).expects("lockGroup").withExactArgs("group", true, true)
 			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
-			.withExactArgs("some/relative/path", vValue, sinon.match.same(oGroupLock), true)
+			.withExactArgs("some/relative/path", vValue, sinon.match.same(oGroupLock), !bRetry)
 			// allow check that #withCache's result is propagated
 			.returns(SyncPromise.resolve(vWithCacheResult));
 
 		// code under test
-		return oContext.setProperty("some/relative/path", vValue, "group").then(function (vResult) {
-			assert.strictEqual(vResult, vWithCacheResult);
-		});
+		return oContext.setProperty("some/relative/path", vValue, "group", bRetry)
+			.then(function (vResult) {
+				assert.strictEqual(vResult, vWithCacheResult);
+			});
+	});
+
 	});
 });
 
