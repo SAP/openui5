@@ -165,24 +165,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for context
-	 * @param {Object} oContext the new context object
-	 * @param {string} [sDetailedReason]
+	 * Setter for a new context.
+	 *
+	 * @param {sap.ui.model.Context} oContext
+	 *   The new context object
+	 * @param {Object<string,any>} [mParameters]
+	 *   Additional map of binding specific parameters
+	 * @param {string} [mParameters.detailedReason]
 	 *   A detailed reason for the {@link #event:change change} event
+	 *
+	 * @private
 	 */
-	Binding.prototype.setContext = function (oContext, sDetailedReason) {
-		var mParameters;
+	Binding.prototype.setContext = function (oContext, mParameters) {
+		var mChangeParameters;
 
 		if (this.oContext != oContext) {
 			sap.ui.getCore().getMessageManager()
 				.removeMessages(this.getDataState().getControlMessages(), true);
 			this.oContext = oContext;
 			this.oDataState = null;
-			mParameters = {reason : ChangeReason.Context};
-			if (sDetailedReason) {
-				mParameters.detailedReason = sDetailedReason;
+			mChangeParameters = {reason : ChangeReason.Context};
+			if (mParameters && mParameters.detailedReason) {
+				mChangeParameters.detailedReason = mParameters.detailedReason;
 			}
-			this._fireChange(mParameters);
+			this._fireChange(mChangeParameters);
 		}
 	};
 
