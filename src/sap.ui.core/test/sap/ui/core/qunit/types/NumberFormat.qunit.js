@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/core/LocaleData", "sap/base/Log"], function (NumberFormat, Locale, LocaleData, Log) {
 	"use strict";
 
@@ -2488,6 +2488,29 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.parse("-12.345.678.901.123.456.345.678.901.123.456,78"), "-12345678901123456345678901123456.78",
 			"Ridiculously long number is parsed as string");
 
+	});
+
+	QUnit.module("Custom Options", {
+		beforeEach: function () {
+			this.oLogErrorSpy = sinon.spy(Log, "error");
+		},
+		afterEach: function () {
+			this.oLogErrorSpy.restore();
+		}
+	});
+
+	QUnit.test("parse format with custom separators", function (assert) {
+
+		var oFormat = NumberFormat.getFloatInstance({
+			parseAsString: true,
+			groupingSeparator: ".",
+			decimalSeparator: "."
+		});
+
+		assert.equal(oFormat.parse("100.000"), "100000", "number is parsed using grouping separator '.'");
+
+		assert.equal(this.oLogErrorSpy.callCount, 1, "called once");
+		assert.equal(this.oLogErrorSpy.getCall(0).args[0], "The grouping and decimal separator both have the same value '.'. They must be different from each other such that values can be parsed correctly.", "argument matches");
 	});
 
 	QUnit.module("Float Format");
