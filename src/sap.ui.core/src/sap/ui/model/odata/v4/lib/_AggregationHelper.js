@@ -16,6 +16,7 @@ sap.ui.define([
 			"min" : "boolean",
 			"name" : "string",
 			"subtotals" : "boolean",
+			"unit" : "string",
 			"with" : "string"
 		},
 		mAllowedAggregationKeys2Type = {
@@ -29,6 +30,36 @@ sap.ui.define([
 		rODataIdentifier = new RegExp("^" + _Parser.sODataIdentifier
 			+ "(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
 		_AggregationHelper;
+
+	/*
+	 * Process an aggregatable property including its optional unit.
+	 *
+	 * @param {object} oAggregation - An object holding the information needed for data aggregation
+	 * @param {string[]} aGroupBy - groupby((???),...) content
+	 * @param {string[]} aAggregate - aggregate(???) content
+	 * @param {string} sPrefix4Alias - A prefix in case an alias is used ("as")
+	 * @param {string} sAlias - An aggregatable property name/alias
+	 * @param {number} i - Index of sAlias in aAliases
+	 * @param {string[]} aAliases - Array of all applicable aggregatable property names/aliases
+	 */
+	function aggregate(oAggregation, aGroupBy, aAggregate, sPrefix4Alias, sAlias, i, aAliases) {
+		var oDetails = oAggregation.aggregate[sAlias],
+			sAggregate = oDetails.name || sAlias,
+			sUnit = oDetails.unit,
+			sWith = oDetails.with;
+
+		if (sWith) {
+			sAggregate += " with " + sWith + " as " + sPrefix4Alias + sAlias;
+		} else if (oDetails.name) {
+			sAggregate += " as " + sPrefix4Alias + sAlias;
+		}
+		aAggregate.push(sAggregate);
+
+		if (sUnit && aAggregate.indexOf(sUnit) < 0 && aAliases.indexOf(sUnit, i + 1) < 0
+				&& aGroupBy.indexOf(sUnit) < 0) {
+			aAggregate.push(sUnit);
+		}
+	}
 
 	/*
 	 * Checks that the given details object has only allowed keys.
@@ -83,6 +114,33 @@ sap.ui.define([
 		}
 	}
 
+	/*
+	 * Takes care of the $skip/$top system query options and returns the corresponding
+	 * transformation(s).
+	 * @param {object} mQueryOptions
+	 *   A modifiable map of key-value pairs representing the query string
+	 * @param {number} [mQueryOptions.$skip]
+	 *   The value for a "$skip" system query option; it is removed
+	 * @param {number} [mQueryOptions.$top]
+	 *   The value for a "$top" system query option; it is removed
+	 *
+	 * @returns {string} The transformation(s) corresponding to $skip/$top or "".
+	 */
+	function skipTop(mQueryOptions) {
+		var aTransformations = [];
+
+		if (mQueryOptions.$skip) {
+			aTransformations.push("skip(" + mQueryOptions.$skip + ")");
+		}
+		delete mQueryOptions.$skip; // delete 0 value even w/o skip(0)
+		if (mQueryOptions.$top < Infinity) { // ignore +Infinity, undefined, NaN, ...
+			aTransformations.push("top(" + mQueryOptions.$top + ")");
+		}
+		delete mQueryOptions.$top;
+
+		return aTransformations.join("/");
+	}
+
 	/**
 	 * Collection of helper methods for data aggregation.
 	 *
@@ -112,57 +170,28 @@ sap.ui.define([
 		 * "top()".
 		 *
 		 * @param {object} oAggregation
-		 *   An object holding the information needed for data aggregation; see also
-		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-		 *   Extension for Data Aggregation Version 4.0</a>; must be a clone which is normalized as
-		 *   a side effect to contain all optional maps/lists
-		 * @param {object} [oAggregation.aggregate]
-		 *   A map from aggregatable property names or aliases to objects containing the following
-		 *   details:
-		 *   <ul>
-		 *     <li> <code>grandTotal</code>: An optional boolean that tells whether a grand total
-		 *       for this aggregatable property is needed (since 1.59.0)
-		 *     <li> <code>min</code>: An optional boolean that tells whether the minimum value
-		 *       (ignoring currencies or units of measure) for this aggregatable property is needed
-		 *     <li> <code>max</code>: An optional boolean that tells whether the maximum value
-		 *       (ignoring currencies or units of measure) for this aggregatable property is needed
-		 *     <li> <code>subtotals</code>: An optional boolean that tells whether subtotals for
-		 *       this aggregatable property are needed
-		 *     <li> <code>with</code>: An optional string that provides the name of the method (for
-		 *       example "sum") used for aggregation of this aggregatable property; see
-		 *       "3.1.2 Keyword with".
-		 *     <li> <code>name</code>: An optional string that provides the original aggregatable
-		 *       property name in case a different alias is chosen as the name of the dynamic
-		 *       property used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
-		 *   </ul>
-		 * @param {object} [oAggregation.group]
-		 *   A map from groupable property names to empty objects
-		 * @param {string[]} [oAggregation.groupLevels]
-		 *   A list of groupable property names (which may, but don't need to be repeated in
-		 *   <code>oAggregation.group</code>) used to determine group levels
+		 *   An object holding the information needed for data aggregation; see
+		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
 		 * @param {object} [mQueryOptions={}]
-		 *   A map of key-value pairs representing the query string
+		 *   A map of key-value pairs representing the query string; it is not modified
 		 * @param {boolean} [mQueryOptions.$count]
-		 *   The value for a "$count" system query option; it is removed from the returned map,
-		 *   but not from <code>mQueryOptions</code> itself, for a follow-up request or in case it
-		 *   is turned into an aggregate "$count as UI5__count"
+		 *   The value for a "$count" system query option; it is removed from the returned map for a
+		 *   follow-up request or in case it is turned into an aggregate "$count as UI5__count"
 		 * @param {string} [mQueryOptions.$filter]
-		 *   The value for a "$filter" system query option; it is removed from the returned map, but
-		 *   not from <code>mQueryOptions</code> itself
+		 *   The value for a "$filter" system query option; it is removed from the returned map and
+		 *   turned into a "filter()" transformation
 		 * @param {string} [mQueryOptions.$$filterBeforeAggregate]
 		 *   The value for a filter which is applied before the aggregation; it is removed from the
-		 *   returned map, but not from <code>mQueryOptions</code> itself
+		 *   returned map and turned into a "filter()" transformation
 		 * @param {string} [mQueryOptions.$orderby]
-		 *   The value for a "$orderby" system query option; it is removed from the returned map,
-		 *   but not from <code>mQueryOptions</code> itself
+		 *   The value for a "$orderby" system query option; it is removed from the returned map and
+		 *   turned into an "orderby()" transformation
 		 * @param {number} [mQueryOptions.$skip]
-		 *   The value for a "$skip" system query option; it is removed from the returned map,
-		 *   but not from <code>mQueryOptions</code> itself, in case it is turned into a "skip()"
-		 *   transformation
+		 *   The value for a "$skip" system query option; it is removed from the returned map and
+		 *   turned into a "skip()" transformation
 		 * @param {number} [mQueryOptions.$top]
-		 *   The value for a "$top" system query option; it is removed from the returned map,
-		 *   but not from <code>mQueryOptions</code> itself, in case it is turned into a "top()"
-		 *   transformation
+		 *   The value for a "$top" system query option; it is removed from the returned map and
+		 *   turned into a "top()" transformation
 		 * @param {number} [iLevel=1]
 		 *   The current level
 		 * @param {boolean} [bFollowUp]
@@ -177,7 +206,7 @@ sap.ui.define([
 		 * @returns {object}
 		 *   A map of key-value pairs representing the query string, including a value for the
 		 *   "$apply" system query option if needed; it is a modified copy of
-		 *   <code>mQueryOptions</code>
+		 *   <code>mQueryOptions</code>, with values removed as described above
 		 * @throws {Error}
 		 *   If the given data aggregation object is unsupported
 		 *
@@ -185,64 +214,21 @@ sap.ui.define([
 		 */
 		buildApply : function (oAggregation, mQueryOptions, iLevel, bFollowUp,
 				mAlias2MeasureAndMethod) {
-			var aAggregate,
+			var aAliases,
 				sApply = "",
-				// concat(aggregate(???),.) content for grand totals (w/o unit)
-				aGrandTotalAggregate = [],
+				aGrandTotalAggregate = [], // concat(aggregate(???),.) content for grand totals
 				aGroupBy,
-				bHasGrandTotal,
 				bIsLeafLevel,
-				// concat(aggregate(???),.) content for min/max or count
-				aMinMaxAggregate = [],
-				sSkipTop;
-
-			/*
-			 * Returns the corresponding part of the "aggregate" term for an aggregatable property,
-			 * for example "AggregatableProperty with method as Alias".
-			 *
-			 * @param {string} sAlias - An aggregatable property name
-			 * @returns {string} - Part of the "aggregate" term
-			 */
-			function aggregate(sAlias) {
-				var oDetails = oAggregation.aggregate[sAlias],
-					sAggregate = oDetails.name || sAlias,
-					sWith = oDetails.with;
-
-				if (sWith) {
-					sAggregate += " with " + sWith + " as " + sAlias;
-				} else if (oDetails.name) {
-					sAggregate += " as " + sAlias;
-				}
-				return sAggregate;
-			}
-
-			/*
-			 * Process grand total for an aggregatable property.
-			 *
-			 * @param {string} sAlias - An aggregatable property name
-			 */
-			function aggregateGrandTotal(sAlias) {
-				var oDetails = oAggregation.aggregate[sAlias],
-					sGrandTotal = oDetails.name || sAlias,
-					sWith = oDetails.with;
-
-				if (oDetails.grandTotal && iLevel <= 1) {
-					bHasGrandTotal = true;
-					if (!mQueryOptions.$skip) {
-						if (sWith) {
-							sGrandTotal += " with " + sWith + " as UI5grand__" + sAlias;
-						}
-						aGrandTotalAggregate.push(sGrandTotal);
-					}
-				}
-			}
+				aMinMaxAggregate = [], // concat(aggregate(???),.) content for min/max or count
+				sSkipTop,
+				aSubtotalsAggregate = []; // groupby(.,aggregate(???)) content for subtotals/leaves
 
 			/*
 			 * Builds the min/max expression for the "concat" term (for example
 			 * "AggregatableProperty with min as UI5min__AggregatableProperty") and adds a
 			 * corresponding entry to the optional alias map if requested in the details.
 			 *
-			 * @param {string} sName - An aggregatable property name
+			 * @param {string} sName - An aggregatable property name/alias
 			 * @param {string} sMinOrMax - Either "min" or "max"
 			 */
 			function processMinOrMax(sName, sMinOrMax) {
@@ -262,50 +248,12 @@ sap.ui.define([
 				}
 			}
 
-			/*
-			 * Takes care of the $skip/$top system query options and returns the corresponding
-			 * transformation(s).
-			 *
-			 * @returns {string} The transformation(s) corresponding to $skip/$top or "".
-			 */
-			function skipTop() {
-				var aTransformations = [];
-
-				if (mQueryOptions.$skip) {
-					aTransformations.push("skip(" + mQueryOptions.$skip + ")");
-				}
-				delete mQueryOptions.$skip; // delete 0 value even w/o skip(0)
-				if (mQueryOptions.$top < Infinity) { // ignore +Infinity, undefined, NaN, ...
-					aTransformations.push("top(" + mQueryOptions.$top + ")");
-				}
-				delete mQueryOptions.$top;
-
-				return aTransformations.join("/");
-			}
-
 			mQueryOptions = Object.assign({}, mQueryOptions);
 			iLevel = iLevel || 1;
 
 			checkKeys(oAggregation, mAllowedAggregationKeys2Type);
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
 			bIsLeafLevel = iLevel > oAggregation.groupLevels.length;
-
-			oAggregation.aggregate = oAggregation.aggregate || {};
-			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
-			aAggregate = Object.keys(oAggregation.aggregate).sort();
-			aAggregate.forEach(aggregateGrandTotal);
-			if (!bFollowUp) {
-				aAggregate.forEach(function (sAlias) {
-					processMinOrMax(sAlias, "min");
-					processMinOrMax(sAlias, "max");
-				});
-			}
-			aAggregate = aAggregate.filter(function (sAlias) {
-				return bIsLeafLevel || oAggregation.aggregate[sAlias].subtotals;
-			}).map(aggregate);
-			if (aAggregate.length) {
-				sApply = "aggregate(" + aAggregate.join(",") + ")";
-			}
 
 			oAggregation.group = oAggregation.group || {};
 			checkKeys4AllDetails(oAggregation.group);
@@ -317,6 +265,32 @@ sap.ui.define([
 					return oAggregation.groupLevels.indexOf(sGroupable) < 0;
 				})
 				: [oAggregation.groupLevels[iLevel - 1]];
+
+			oAggregation.aggregate = oAggregation.aggregate || {};
+			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
+			aAliases = Object.keys(oAggregation.aggregate).sort();
+			if (iLevel <= 1 && !mQueryOptions.$skip) {
+				aAliases.filter(function (sAlias) {
+					return oAggregation.aggregate[sAlias].grandTotal;
+				}).forEach(
+					aggregate.bind(null, oAggregation, [], aGrandTotalAggregate, "UI5grand__")
+				);
+			}
+			if (!bFollowUp) {
+				aAliases.forEach(function (sAlias) {
+					processMinOrMax(sAlias, "min");
+					processMinOrMax(sAlias, "max");
+				});
+			}
+			aAliases.filter(function (sAlias) {
+				return bIsLeafLevel || oAggregation.aggregate[sAlias].subtotals;
+			}).forEach(
+				aggregate.bind(null, oAggregation, aGroupBy, aSubtotalsAggregate, "")
+			);
+			if (aSubtotalsAggregate.length) {
+				sApply = "aggregate(" + aSubtotalsAggregate.join(",") + ")";
+			}
+
 			if (aGroupBy.length) {
 				sApply = "groupby((" + aGroupBy.join(",") + (sApply ? ")," + sApply + ")" : "))");
 			}
@@ -336,7 +310,8 @@ sap.ui.define([
 				sApply += "/orderby(" + mQueryOptions.$orderby + ")";
 				delete mQueryOptions.$orderby;
 			}
-			if (bHasGrandTotal) { // account for grand total row
+			if (_AggregationHelper.hasGrandTotal(oAggregation.aggregate)) {
+				// account for grand total row
 				if (mQueryOptions.$skip) {
 					mQueryOptions.$skip -= 1;
 				} else {
@@ -344,7 +319,7 @@ sap.ui.define([
 					mQueryOptions.$top -= 1;
 				}
 			}
-			sSkipTop = skipTop();
+			sSkipTop = skipTop(mQueryOptions);
 			if (aMinMaxAggregate.length) {
 				sApply += "/concat(aggregate(" + aMinMaxAggregate.join(",") + "),"
 					+ (sSkipTop || "identity") + ")";
@@ -426,7 +401,7 @@ sap.ui.define([
 		 * Tells whether grand total values are needed for at least one aggregatable property.
 		 *
 		 * @param {object} [mAggregate]
-		 *   A map from aggregatable property names or aliases to details objects
+		 *   A map from aggregatable property names/aliases to details objects
 		 * @returns {boolean}
 		 *   Whether grand total values are needed for at least one aggregatable property.
 		 *
@@ -443,7 +418,7 @@ sap.ui.define([
 		 * property.
 		 *
 		 * @param {object} [mAggregate]
-		 *   A map from aggregatable property names or aliases to details objects
+		 *   A map from aggregatable property names/aliases to details objects
 		 * @returns {boolean}
 		 *   Whether minimum or maximum values are needed for at least one aggregatable
 		 *   property.

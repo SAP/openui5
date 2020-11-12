@@ -84,7 +84,7 @@ sap.ui.define([
 					SalesAmountSum : {
 						grandTotal : true,
 						name : "SalesAmount",
-						"with" : "sap.unit_sum"
+						"with" : "sum"
 					},
 					SalesNumber : {
 						grandTotal : true

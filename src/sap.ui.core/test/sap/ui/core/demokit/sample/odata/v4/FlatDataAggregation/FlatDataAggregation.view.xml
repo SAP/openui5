@@ -11,11 +11,10 @@
 			parameters : {
 				$$aggregation : {
 					aggregate : {
-						SalesAmount : {},
-						SalesNumber : {grandTotal : true}
+						SalesAmount : {grandTotal : true, unit : 'Currency'},
+						SalesNumber : {}
 					},
 					group : {
-						Currency : {},
 						Region : {}
 					}
 				},
@@ -64,8 +63,9 @@
 			parameters : {
 				$$aggregation : {
 					aggregate : {
-						SalesAmountLocalCurrencyMUH : {grandTotal : true},
-						SalesAmountMUH  : {grandTotal : true},
+						AmountPerSale : {grandTotal : true, unit : 'Currency'},
+						SalesAmount : {grandTotal : true, unit : 'Currency'},
+						SalesAmountLocalCurrency : {grandTotal : true, unit : 'LocalCurrency'},
 						SalesNumberSum : {grandTotal : true, name : 'SalesNumber', with : 'sum'}
 					},
 					group : {
@@ -91,33 +91,39 @@
 			<Label text="Region"/>
 		</table:Column>
 		<table:Column hAlign="End">
-			<Label text="Sales Amount"/>
+			<Label text="Amount Per Sale"/>
 			<table:template>
-				<Text text="{path : 'SalesAmountMUH', type : 'sap.ui.model.odata.type.Decimal'}" />
+				<Text text="{AmountPerSale}" />
 			</table:template>
 		</table:Column>
 		<table:Column>
 			<Label text="Currency"/>
 			<table:template>
-				<!-- TODO how to derive type of instance annotation? -->
-				<Text text="{path : 'SalesAmountMUH@Analytics.AggregatedAmountCurrency',
-					type : 'sap.ui.model.odata.type.String'}" />
+				<Text text="{Currency}" />
+			</table:template>
+		</table:Column>
+		<table:Column hAlign="End">
+			<Label text="Sales Amount"/>
+			<table:template>
+				<Text text="{SalesAmount}" />
+			</table:template>
+		</table:Column>
+		<table:Column>
+			<Label text="Currency"/>
+			<table:template>
+				<Text text="{Currency}" />
 			</table:template>
 		</table:Column>
 		<table:Column hAlign="End">
 			<Label text="Local Sales Amount"/>
 			<table:template>
-				<!-- TODO derive type from "SalesAmountLocalCurrencyMUH@odata.type" : "#Decimal" -->
-				<Text text="{path : 'SalesAmountLocalCurrencyMUH',
-					type : 'sap.ui.model.odata.type.Decimal'}" />
+				<Text text="{SalesAmountLocalCurrency}" />
 			</table:template>
 		</table:Column>
 		<table:Column>
-			<Label text="Currency"/>
+			<Label text="Local Currency"/>
 			<table:template>
-				<!-- TODO how to derive type of instance annotation? -->
-				<Text text="{path : 'SalesAmountLocalCurrencyMUH@Analytics.AggregatedAmountCurrency',
-					type : 'sap.ui.model.odata.type.String'}" />
+				<Text text="{LocalCurrency}" />
 			</table:template>
 		</table:Column>
 		<table:Column hAlign="End">

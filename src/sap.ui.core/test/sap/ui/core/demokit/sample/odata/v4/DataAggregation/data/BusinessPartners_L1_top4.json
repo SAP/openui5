@@ -1,10 +1,10 @@
 {
-	"@odata.context": "$metadata#BusinessPartners(Country,SalesAmount,UI5__count)",
 	"value": [
 		{
 			"@odata.id": null,
-			"SalesAmount@odata.type": "#Decimal",
-			"SalesAmount": "75790327"
+			"LocalCurrency" : null,
+			"SalesAmountLocalCurrency@odata.type": "#Decimal",
+			"SalesAmountLocalCurrency": "79443315"
 		},
 		{
 			"@odata.id" : null,
@@ -14,20 +14,23 @@
 		{
 			"@odata.id": null,
 			"Country": "United Kingdom",
-			"SalesAmount@odata.type": "#Decimal",
-			"SalesAmount": "16165258"
+			"LocalCurrency" : "GBP",
+			"SalesAmountLocalCurrency@odata.type": "#Decimal",
+			"SalesAmountLocalCurrency": "14548502"
 		},
 		{
 			"@odata.id": null,
 			"Country": "USA",
-			"SalesAmount@odata.type": "#Decimal",
-			"SalesAmount": "35135431"
+			"LocalCurrency" : "USD",
+			"SalesAmountLocalCurrency@odata.type": "#Decimal",
+			"SalesAmountLocalCurrency": "40405175"
 		},
 		{
 			"@odata.id": null,
 			"Country": "Germany",
-			"SalesAmount@odata.type": "#Decimal",
-			"SalesAmount": "24489638"
+			"LocalCurrency" : "EUR",
+			"SalesAmountLocalCurrency@odata.type": "#Decimal",
+			"SalesAmountLocalCurrency": "24489638"
 		}
 	]
 }

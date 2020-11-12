@@ -1,25 +1,26 @@
 {
-	"@odata.context": "$metadata#BusinessPartners(Segment,SalesAmount)",
-	"@odata.metadataEtag": "W/\"Duc//nz26REDKz1VewX3aHn97ENagrS7a7IXM958u4s=\"",
 	"@odata.count": 3,
 	"value": [
 		{
 			"@odata.id": null,
+			"LocalCurrency" : "EUR",
 			"Segment": "Large",
-			"SalesAmount@odata.type": "#Decimal",
-			"SalesAmount": 3765323
+			"SalesAmountLocalCurrency@odata.type": "#Decimal",
+			"SalesAmountLocalCurrency": 3765323
 		},
 		{
 			"@odata.id": null,
+			"LocalCurrency" : "EUR",
 			"Segment": "Mid-size",
-			"SalesAmount@odata.type": "#Decimal",
-			"SalesAmount": 526122
+			"SalesAmountLocalCurrency@odata.type": "#Decimal",
+			"SalesAmountLocalCurrency": 526122
 		},
 		{
 			"@odata.id": null,
+			"LocalCurrency" : "EUR",
 			"Segment": "Small",
-			"SalesAmount@odata.type": "#Decimal",
-			"SalesAmount": 125093
+			"SalesAmountLocalCurrency@odata.type": "#Decimal",
+			"SalesAmountLocalCurrency": 125093
 		}
 	]
 }

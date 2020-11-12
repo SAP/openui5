@@ -1,37 +1,40 @@
 {
-	"@odata.context" : "$metadata#BusinessPartners(Region,SalesAmount)",
-	"@odata.metadataEtag" : "W/\"Duc//nz26REDKz1VewX3aHn97ENagrS7a7IXM958u4s=\"",
 	"@odata.count" : 7,
 	"value" : [
 		{
 			"@odata.id" : null,
+			"LocalCurrency" : "EUR",
 			"Region" : "Saxony",
-			"SalesAmount@odata.type" : "#Decimal",
-			"SalesAmount" : 1161590
+			"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+			"SalesAmountLocalCurrency" : 1161590
 		},
 		{
 			"@odata.id" : null,
+			"LocalCurrency" : "EUR",
 			"Region" : "Lower Saxony",
-			"SalesAmount@odata.type": "#Decimal",
-			"SalesAmount": 3160739
+			"SalesAmountLocalCurrency@odata.type": "#Decimal",
+			"SalesAmountLocalCurrency": 3160739
 		},
 		{
 			"@odata.id": null,
+			"LocalCurrency" : "EUR",
 			"Region": "Hessia",
-			"SalesAmount@odata.type" : "#Decimal",
-			"SalesAmount" : 5913956
+			"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+			"SalesAmountLocalCurrency" : 5913956
 		},
 		{
 			"@odata.id" : null,
+			"LocalCurrency" : "EUR",
 			"Region" : "Hamburg",
-			"SalesAmount@odata.type" : "#Decimal",
-			"SalesAmount" : 2309561
+			"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+			"SalesAmountLocalCurrency" : 2309561
 		},
 		{
 			"@odata.id" : null,
+			"LocalCurrency" : "EUR",
 			"Region" : "Berlin",
-			"SalesAmount@odata.type" : "#Decimal",
-			"SalesAmount" : 1670139
+			"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+			"SalesAmountLocalCurrency" : 1670139
 		}
 	]
 }

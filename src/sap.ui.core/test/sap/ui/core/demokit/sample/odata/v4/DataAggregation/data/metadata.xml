@@ -251,6 +251,12 @@
 				<Annotation Term="Aggregation.CustomAggregate" Qualifier="NumberOfCustomers">
 					<String>Edm.Int32</String>
 				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="LocalCurrency">
+					<String>Edm.String</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="Currency">
+					<String>Edm.String</String>
+				</Annotation>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

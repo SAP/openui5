@@ -1471,14 +1471,18 @@ sap.ui.define([
 		expectResets : function (oTable, iRowCount, iMissingExpanded) {
 			var mValuesById = {
 					accountResponsible : null,
+					amountPerSale : undefined,
 					country : null,
+					currency : null,
 					grossAmount : undefined,
 					isExpanded : undefined,
 					isTotal : undefined,
 					level : undefined,
 					lifecycleStatus : null,
+					localCurrency : null,
 					region : null,
 					salesAmount : undefined,
+					salesAmountLocalCurrency : undefined,
 					salesNumber : null
 				},
 				that = this;
@@ -15241,14 +15245,16 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Data aggregation with grand total, but no visual grouping. Observe the node status.
 	// BCP: 2080089628
-	QUnit.test("Data Aggregation: $$aggregation w/ grand total", function (assert) {
+	// Use a unit for the grand total.
+	// JIRA: CPOUI5ODATAV4-583
+	QUnit.test("Data Aggregation: $$aggregation w/ grand total w/ unit", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table items="{path : \'/SalesOrderList\',\
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {\
-					GrossAmount : {grandTotal : true}\
+					GrossAmount : {grandTotal : true, unit : \'CurrencyCode\'}\
 				},\
 				group : {\
 					LifecycleStatus : {}\
@@ -15260,22 +15266,24 @@ sap.ui.define([
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
 	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
 	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
+	<Text id="currencyCode" text="{CurrencyCode}"/>\
 </Table>';
 
-		this.expectRequest("SalesOrderList?$apply=concat(aggregate(GrossAmount)"
-				+ ",groupby((LifecycleStatus),aggregate(GrossAmount))/top(99))", {
+		this.expectRequest("SalesOrderList?$apply=concat(aggregate(GrossAmount,CurrencyCode)"
+				+ ",groupby((LifecycleStatus),aggregate(GrossAmount,CurrencyCode))/top(99))", {
 				"@odata.count" : "26",
 				value : [
-					{GrossAmount : "12345"},
-					{GrossAmount : "1", LifecycleStatus : "Z"},
-					{GrossAmount : "2", LifecycleStatus : "Y"}
+					{CurrencyCode : null, GrossAmount : "12345"},
+					{CurrencyCode : "EUR", GrossAmount : "1", LifecycleStatus : "Z"},
+					{CurrencyCode : "GBP", GrossAmount : "2", LifecycleStatus : "Y"}
 				]
 			})
 			.expectChange("isExpanded", [true, undefined, undefined])
 			.expectChange("isTotal", [true, false, false])
 			.expectChange("level", [0 /* root node */, 1, 1])
+			.expectChange("lifecycleStatus", ["", "Z", "Y"])
 			.expectChange("grossAmount", ["12345", "1", "2"])
-			.expectChange("lifecycleStatus", ["", "Z", "Y"]);
+			.expectChange("currencyCode", ["", "EUR", "GBP"]);
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -15825,6 +15833,12 @@ sap.ui.define([
 	// Expand the last visible node and scroll to the last loaded leaf.
 	// JIRA: CPOUI5ODATAV4-255
 	// JIRA: CPOUI5ODATAV4-163
+	// Use grand total without subtotals.
+	// JIRA: CPOUI5ODATAV4-608
+	// Use a unit for the grand total and the subtotals. Use an "own" unit (that is, the unit must
+	// not appear for subtotals at all) for a grand total without subtotals to check for drill-down
+	// errors.
+	// JIRA: CPOUI5ODATAV4-583
 	QUnit.test("Data Aggregation: expand and paging to the last loaded leaf", function (assert) {
 		var oModel = createAggregationModel(),
 			oTable,
@@ -15833,60 +15847,115 @@ sap.ui.define([
 	parameters : {\
 		$$aggregation : {\
 			aggregate : {\
-				SalesAmount : {grandTotal : true, subtotals : true},\
+				AmountPerSale : {grandTotal : true, unit : \'Currency\'},\
+				SalesAmount : {grandTotal : true, unit : \'Currency\'},\
+				SalesAmountLocalCurrency\
+					: {grandTotal : true, subtotals : true, unit : \'LocalCurrency\'},\
 				SalesNumber : {grandTotal : true}\
 			},\
 			group : {\
-				AccountResponsible : {}\
+				Region : {}\
 			},\
-			groupLevels : [\'Region\']\
+			groupLevels : [\'Country\']\
 		},\
-		$orderby : \'Region desc,AccountResponsible\'\
+		$orderby : \'Country desc,Region\'\
 	}}" threshold="0" visibleRowCount="4">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
 	<Text id="region" text="{Region}"/>\
-	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="amountPerSale" text="{= %{AmountPerSale} }"/>\
 	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+	<Text id="currency" text="{Currency}"/>\
+	<Text id="salesAmountLocalCurrency" text="{= %{SalesAmountLocalCurrency} }"/>\
+	<Text id="localCurrency" text="{LocalCurrency}"/>\
 	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesAmount,SalesNumber)"
-				+ ",groupby((Region),aggregate(SalesAmount))/orderby(Region desc)"
-				+ "/concat(aggregate($count as UI5__count),top(3)))", {
-				value : [
+		this.expectRequest("BusinessPartners?$apply=concat(aggregate(AmountPerSale,Currency"
+				+ ",SalesAmount,SalesAmountLocalCurrency,LocalCurrency,SalesNumber)"
+				+ ",groupby((Country),aggregate(SalesAmountLocalCurrency,LocalCurrency))"
+				+ "/orderby(Country desc)/concat(aggregate($count as UI5__count),top(3)))", {
+				value : [{
+					AmountPerSale : "10",
+					Currency : "DEM",
+					SalesAmount : "38610", // + 10% ;-)
+					SalesAmountLocalCurrency : "35100", // 1/2 * 26 * 27 * 100
+					LocalCurrency : null,
 					// grand total for SalesNumber might be custom aggregate with min,
 					// falsy value is important edge case!
-					{SalesAmount : "35100", SalesNumber : 0},
-					{UI5__count : "26"},
-					{Region : "Z", SalesAmount : "100"},
-					{Region : "Y", SalesAmount : "200"},
-					{Region : "X", SalesAmount : "300"}
-				]
+					SalesNumber : 0
+				}, {
+					UI5__count : "26"
+				}, {
+					Country : "Z",
+					LocalCurrency : "GBP",
+					SalesAmountLocalCurrency : "100"
+				}, {
+					Country : "Y",
+					LocalCurrency : "USD",
+					SalesAmountLocalCurrency : "200"
+				}, {
+					Country : "X",
+					LocalCurrency : "EUR",
+					SalesAmountLocalCurrency : "300"
+				}]
 			})
 			.expectChange("isExpanded", [true, false, false, false])
 			.expectChange("isTotal", [true, true, true, true])
 			.expectChange("level", [0, 1, 1, 1])
-			.expectChange("region", ["", "Z", "Y", "X"])
-			.expectChange("accountResponsible", ["", "", "", ""])
-			.expectChange("salesAmount", ["35100", "100", "200", "300"])
+			.expectChange("country", ["", "Z", "Y", "X"])
+			.expectChange("region", ["", "", "", ""])
+			.expectChange("amountPerSale", ["10", null, null, null])
+			.expectChange("salesAmount", ["38610", null, null, null])
+			.expectChange("currency", ["DEM", "", "", ""])
+			.expectChange("salesAmountLocalCurrency", ["35100", "100", "200", "300"])
+			.expectChange("localCurrency", ["", "GBP", "USD", "EUR"])
 			.expectChange("salesNumber", ["0", null, null, null]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 
-			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'X')"
-					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "/orderby(AccountResponsible)&$count=true&$skip=0&$top=4", {
+			///TODO could we omit Currency here because it was non-null at parent?
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'X')/groupby((Region)"
+					+ ",aggregate(AmountPerSale,Currency,SalesAmount,SalesAmountLocalCurrency"
+					+ ",LocalCurrency,SalesNumber))/orderby(Region)&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "5",
-					value : [
-						{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1},
-						{AccountResponsible : "b", SalesAmount : "20", SalesNumber : 2},
-						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3},
-						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
-					]
+					value : [{
+						AmountPerSale : "10",
+						Currency : "DEM",
+						LocalCurrency : "USD",
+						Region : "a",
+						SalesAmount : "10.10",
+						SalesAmountLocalCurrency : "10",
+						SalesNumber : 1
+					}, {
+						AmountPerSale : "10",
+						Currency : "DEM",
+						LocalCurrency : "USD",
+						Region : "b",
+						SalesAmount : "20.20",
+						SalesAmountLocalCurrency : "20",
+						SalesNumber : 2
+					}, {
+						AmountPerSale : "10",
+						Currency : "DEM",
+						LocalCurrency : "USD",
+						Region : "c",
+						SalesAmount : "30.30",
+						SalesAmountLocalCurrency : "30",
+						SalesNumber : 3
+					}, {
+						AmountPerSale : "10",
+						Currency : "DEM",
+						LocalCurrency : "USD",
+						Region : "d",
+						SalesAmount : "40.40",
+						SalesAmountLocalCurrency : "40",
+						SalesNumber : 4
+					}]
 				})
 				.expectChange("isExpanded", [,,, true]);
 
@@ -15895,27 +15964,40 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand node 'X'");
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "/orderby(Region desc)/skip(3)/top(1)", {
-					value : [
-						{Region : "W", SalesAmount : "400"}
-					]
-				})
-				.expectRequest("BusinessPartners?$apply=filter(Region eq 'X')"
-					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "/orderby(AccountResponsible)&$count=true&$skip=4&$top=1", {
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'X')/groupby((Region)"
+					+ ",aggregate(AmountPerSale,Currency,SalesAmount,SalesAmountLocalCurrency"
+					+ ",LocalCurrency,SalesNumber))/orderby(Region)&$count=true&$skip=4&$top=1", {
 					"@odata.count" : "5",
-					value : [
-						{AccountResponsible : "e", SalesAmount : "50", SalesNumber : 5}
-					]
+					value : [{
+						AmountPerSale : "10",
+						Currency : "DEM",
+						LocalCurrency : "USD",
+						Region : "e",
+						SalesAmount : "50.50",
+						SalesAmountLocalCurrency : "50",
+						SalesNumber : 5
+					}]
+				})
+				.expectRequest("BusinessPartners?$apply=groupby((Country)"
+					+ ",aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Country desc)"
+					+ "/skip(3)/top(1)", {
+					value : [{
+						Country : "W",
+						LocalCurrency : "JPY",
+						SalesAmountLocalCurrency : "400"
+					}]
 				})
 				.expectResets(oTable, 4)
 				.expectChange("isExpanded", [,,,,,,,,, false])
 				.expectChange("isTotal", [,,,,,, false, false, false, true])
 				.expectChange("level", [,,,,,, 2, 2, 2, 1])
-				.expectChange("region", [,,,,,, "X", "X", "X", "W"])
-				.expectChange("accountResponsible", [,,,,,, "c", "d", "e", ""])
-				.expectChange("salesAmount", [,,,,,, "30", "40", "50", "400"])
+				.expectChange("country", [,,,,,, "X", "X", "X", "W"])
+				.expectChange("region", [,,,,,, "c", "d", "e", ""])
+				.expectChange("amountPerSale", [,,,,,, "10", "10", "10", null])
+				.expectChange("salesAmount", [,,,,,, "30.30", "40.40", "50.50", null])
+				.expectChange("currency", [,,,,,, "DEM", "DEM", "DEM", ""])
+				.expectChange("salesAmountLocalCurrency", [,,,,,, "30", "40", "50", "400"])
+				.expectChange("localCurrency", [,,,,,, "USD", "USD", "USD", "JPY"])
 				.expectChange("salesNumber", [,,,,,, "3", "4", "5", null]);
 
 			// code under test
@@ -16892,8 +16974,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
-	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
-	QUnit.test("Data Aggregation: $$aggregation grandTotal w/o groupLevels using with/as",
+	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418) and a unit (CPOUI5ODATAV4-583).
+	QUnit.test("Data Aggregation: $$aggregation grandTotal w/o groupLevels using with/as/unit",
 			function (assert) {
 		var oModel = createAggregationModel({autoExpandSelect : true}),
 			sView = '\
@@ -16904,7 +16986,8 @@ sap.ui.define([
 					SalesAmountSum : {\
 						grandTotal : true,\
 						name : \'SalesAmount\',\
-						with : \'sap.unit_sum\'\
+						unit : \'Currency\',\
+						with : \'sum\'\
 					},\
 					SalesNumber : {}\
 				},\
@@ -16918,47 +17001,46 @@ sap.ui.define([
 	<Text id="region" text="{Region}"/>\
 	<Text id="salesNumber" text="{SalesNumber}"/>\
 	<Text id="salesAmountSum" text="{= %{SalesAmountSum} }"/>\
-	<Text id="salesAmountCurrency"\
-		text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }"/>\
+	<Text id="currency" text="{Currency}"/>\
 </t:Table>';
 
 		this.expectRequest("BusinessPartners?$apply=concat("
-				+ "aggregate(SalesAmount with sap.unit_sum as UI5grand__SalesAmountSum)"
+				+ "aggregate(SalesAmount with sum as UI5grand__SalesAmountSum,Currency)"
 				+ ",groupby((Region)"
-				+ ",aggregate(SalesAmount with sap.unit_sum as SalesAmountSum,SalesNumber))"
+				+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency,SalesNumber))"
 				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)/top(4))", {
 				value : [{
+						Currency : "EUR",
 						UI5grand__SalesAmountSum : 351,
-						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR",
 						//TODO this should be used by auto type detection
 						"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
 					}, {
+						Currency : "EUR",
 						Region : "Z",
 						SalesNumber : 1,
-						SalesAmountSum : 1,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
+						SalesAmountSum : 1
 					}, {
+						Currency : "EUR",
 						Region : "Y",
 						SalesNumber : 2,
-						SalesAmountSum : 2,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
+						SalesAmountSum : 2
 					}, {
+						Currency : "EUR",
 						Region : "X",
 						SalesNumber : 3,
-						SalesAmountSum : 3,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
+						SalesAmountSum : 3
 					}, {
+						Currency : "EUR",
 						Region : "W",
 						SalesNumber : 4,
-						SalesAmountSum : 4,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
+						SalesAmountSum : 4
 					}
 				]
 			})
 			.expectChange("region", ["", "Z", "Y", "X", "W"])
 			.expectChange("salesNumber", [null, "1", "2", "3", "4"])
 			.expectChange("salesAmountSum", [351, 1, 2, 3, 4])
-			.expectChange("salesAmountCurrency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
+			.expectChange("currency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
 
 		return this.createView(assert, sView, oModel);
 	});
