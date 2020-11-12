@@ -80,6 +80,8 @@ sap.ui.define([
 					oMergedManifest;
 				mOptions.process = false;
 
+				this._oInitialJson = deepClone(oManifestJson, 500);
+
 				if (sBaseUrl) {
 					mOptions.baseUrl = sBaseUrl;
 					this._sBaseUrl = sBaseUrl;
@@ -104,6 +106,15 @@ sap.ui.define([
 	 */
 	Manifest.prototype.getJson = function () {
 		return this._unfreeze(this.oJson);
+	};
+
+	/**
+	 * Returns a clone of the initial manifest without the <code>manifestChanges</code> applied to it and without any processing.
+	 * @ui5-restricted
+	 * @returns {Object} A clone of the initial manifest json.
+	 */
+	Manifest.prototype.getInitialJson = function () {
+		return this._oInitialJson;
 	};
 
 	/**
@@ -193,6 +204,8 @@ sap.ui.define([
 			manifestUrl: mSettings.manifestUrl,
 			async: true,
 			processJson: function (oManifestJson) {
+
+				this._oInitialJson = deepClone(oManifestJson, 500);
 
 				if (this._aChanges) {
 					return CardMerger.mergeCardDelta(oManifestJson, this._aChanges);
@@ -529,7 +542,7 @@ sap.ui.define([
 			return oManifestParameters;
 		}
 
-		var oClonedManifestParams = deepClone(oManifestParameters, 20, 20),
+		var oClonedManifestParams = deepClone(oManifestParameters, 500),
 			oParamProps = Object.getOwnPropertyNames(oParameters),
 			oManifestParamsProps = Object.getOwnPropertyNames(oClonedManifestParams);
 
