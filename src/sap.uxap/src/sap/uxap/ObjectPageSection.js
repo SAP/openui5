@@ -208,7 +208,7 @@ sap.ui.define([
 	 * @returns {*} this
 	 */
 	ObjectPageSection.prototype._setSubSectionsFocusValues = function () {
-		var aSubSections = this.getSubSections() || [],
+		var aSubSections = this._getVisibleSubSections() || [],
 			sLastSelectedSubSectionId = this.getSelectedSubSection(),
 			bPreselectedSection;
 
@@ -295,6 +295,12 @@ sap.ui.define([
 		this._getShowHideAllButton()
 			.setVisible(this._getShouldDisplayShowHideAllButton())
 			.setText(this._getShowHideAllButtonText(bHide));
+	};
+
+	ObjectPageSection.prototype._getVisibleSubSections = function () {
+		return this.getSubSections().filter(function (oSubSection) {
+			return oSubSection.getVisible() && oSubSection._getInternalVisible();
+		});
 	};
 
 	ObjectPageSection.prototype._getShowHideAllButton = function () {
