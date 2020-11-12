@@ -358,7 +358,8 @@ sap.ui.define([
 			});
 		},
 		toMobileMode: function () {
-			$("html").removeClass("sapUiMedia-Std-Desktop")
+			$("html").removeClass("sapUiMedia-Std-Desktop-XL")
+					.removeClass("sapUiMedia-Std-Desktop")
 					.removeClass("sapUiMedia-Std-Tablet")
 					.addClass("sapUiMedia-Std-Phone");
 			sap.ui.Device.system.desktop = false;
@@ -366,7 +367,8 @@ sap.ui.define([
 			sap.ui.Device.system.phone = true;
 		},
 		toTabletMode: function () {
-			$("html").removeClass("sapUiMedia-Std-Desktop")
+			$("html").removeClass("sapUiMedia-Std-Desktop-XL")
+					.removeClass("sapUiMedia-Std-Desktop")
 					.removeClass("sapUiMedia-Std-Phone")
 					.addClass("sapUiMedia-Std-Tablet");
 			sap.ui.Device.system.desktop = false;
@@ -375,6 +377,16 @@ sap.ui.define([
 		},
 		toDesktopMode: function () {
 			$("html").addClass("sapUiMedia-Std-Desktop")
+					.removeClass("sapUiMedia-Std-Desktop-XL")
+					.removeClass("sapUiMedia-Std-Tablet")
+					.removeClass("sapUiMedia-Std-Phone");
+			sap.ui.Device.system.desktop = true;
+			sap.ui.Device.system.tablet = false;
+			sap.ui.Device.system.phone = false;
+		},
+		toDesktopModeXL: function () {
+			$("html").addClass("sapUiMedia-Std-Desktop-XL")
+					.removeClass("sapUiMedia-Std-Desktop")
 					.removeClass("sapUiMedia-Std-Tablet")
 					.removeClass("sapUiMedia-Std-Phone");
 			sap.ui.Device.system.desktop = true;
