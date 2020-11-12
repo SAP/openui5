@@ -92,7 +92,8 @@ sap.ui.define([
 					type: "string",
 					itemKey: "foo",
 					path: "value",
-					designtime: undefined
+					designtime: undefined,
+					visible: true
 				},
 				"Then the nested editor receives the correct config"
 			);

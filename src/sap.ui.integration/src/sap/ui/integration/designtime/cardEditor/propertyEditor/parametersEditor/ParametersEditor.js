@@ -64,13 +64,15 @@ sap.ui.define([
 	ParametersEditor.prototype.formatItemConfig = function (oConfigValue) {
 		var oMapItemConfig = MapEditor.prototype.formatItemConfig.apply(this, arguments);
 		var sKey = oConfigValue.key;
-		var sVisible = oConfigValue.value.visible !== false;
-		var sEditable = oConfigValue.value.editable !== false;
-		var sDescription = oConfigValue.value.description || "";
-		var bTranslatable = oConfigValue.value.translatable || false;
-		var bAllowSettings = oConfigValue.value.allowSettings || true;
-		var bAllowDynamicValues = oConfigValue.value.allowDynamicValues || true;
+		var sType = oConfigValue.value.type;
 		var vItemMetadata = this.getNestedDesigntimeMetadataValue(sKey);
+		var sVisible = (oConfigValue.value.visible || vItemMetadata.visible) !== false;
+		var sEditable = (oConfigValue.value.editable || vItemMetadata.editable) !== false;
+		var sManifestpath = oConfigValue.value.manifestpath || vItemMetadata.manifestpath || "";
+		var sDescription = oConfigValue.value.description || vItemMetadata.description || "";
+		var bTranslatable = (oConfigValue.value.translatable || vItemMetadata.translatable) === true;
+		var bAllowSettings = (oConfigValue.value.allowSettings || vItemMetadata.allowSettings) !== false;
+		var bAllowDynamicValues = (oConfigValue.value.allowDynamicValues || vItemMetadata.allowDynamicValues) !== false;
 		var sLabel = vItemMetadata.label;
 
 		oMapItemConfig.push(
@@ -88,6 +90,16 @@ sap.ui.define([
 				path: "description",
 				value: sDescription,
 				allowBindings: true,
+				visible: sType !== "group",
+				type: "string",
+				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("BASE_EDITOR.MAP.MANIFESTPATH"),
+				path: "manifestpath",
+				value: sManifestpath,
+				allowBindings: true,
+				visible: sType !== "group",
 				type: "string",
 				itemKey: sKey
 			},
@@ -105,6 +117,7 @@ sap.ui.define([
 				allowBindings: true,
 				value: sEditable,
 				enabled: true,
+				visible: sType !== "group",
 				type: "boolean",
 				itemKey: sKey
 			},
@@ -122,6 +135,7 @@ sap.ui.define([
 				allowBindings: true,
 				enabled: true,
 				value: bAllowDynamicValues,
+				visible: sType !== "group",
 				type: "boolean",
 				itemKey: sKey
 			},
@@ -130,6 +144,7 @@ sap.ui.define([
 				path: "allowSettings",
 				allowBindings: true,
 				value: bAllowSettings,
+				visible: sType !== "group",
 				type: "boolean",
 				itemKey: sKey
 			});

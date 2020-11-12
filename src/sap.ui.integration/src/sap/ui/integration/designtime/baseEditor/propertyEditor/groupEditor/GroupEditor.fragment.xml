@@ -1,0 +1,9 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<Title
+		text="{label}"
+		visible="{visible}"
+	/>
+</core:FragmentDefinition>
