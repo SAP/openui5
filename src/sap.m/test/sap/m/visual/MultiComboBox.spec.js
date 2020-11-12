@@ -36,6 +36,18 @@ describe('sap.m.MultiComboBox', function() {
 		defaultMultiComboBoxArrow.click();
 	});
 
+	//MultiComboBox - After arrow navigation
+	it("should visualize MultiComboBox after navigating between tokens with arrow key.", function(){
+		var defaultMultiComboBox = element(by.id("MultiComboBox1")),
+			defaultMultiComboBoxArrow = element(by.id("MultiComboBox1-arrow"));
+		defaultMultiComboBox.click();
+
+		browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+		expect(takeScreenshot()).toLookAs("multicombobox-after-left-arrow-navigation");
+		defaultMultiComboBoxArrow.click();
+	});
+
 	//MultiComboBox - Filtering
 	it("should open first MultiComboBox - Default", function() {
 		var defaultMultiComboBox = element(by.id("MultiComboBox0")),

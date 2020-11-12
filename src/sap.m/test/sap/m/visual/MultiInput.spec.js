@@ -155,6 +155,20 @@ describe('sap.m.MultiInput', function() {
 		});
 	});
 
+	//  MultiInput with one long token
+	it("Should truncate one long token and not show the n-more label", function () {
+		var oMultiInput = element(by.id("multiInputWithOneLongToken"));
+		browser.executeScript("document.getElementById('multiInputWithOneLongToken').scrollIntoView()").then(function() {
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token");
+
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token_focused_in");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+			expect(takeScreenshot()).toLookAs("MI_with_one_long_token_focused_with_arrowkey");
+		});
+	});
+
 	// MultiInput with sticky header suggestions
 	it("Should visualize multiInput with sticky header suggestions", function () {
 		var oMultiInput = element(by.id("multiInputWithStickySuggestions"));

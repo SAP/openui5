@@ -2423,6 +2423,7 @@ function(
 
 		if (oFocusedElement === oTokenizer || oTokenizer.$().find(oFocusedElement.$()).length > 0
 			&& this.getEditable()) {
+			oTokenizer.scrollToEnd();
 
 			// focus is on the tokenizer or on some descendant of the tokenizer and the event was not handled ->
 			// we therefore handle the event and focus the input element
