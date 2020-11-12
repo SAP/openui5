@@ -728,7 +728,7 @@ sap.ui.define([
 
 		//TODO: Generify for any inner template --> Currently required as this may be destroyed due to the binding
 		if (this._oSelectedItem){
-			this._oSelectedItem.getCells()[1].removeAllItems();
+			this._removeMoveButtons();
 		}
 
 		var bReorderMode = !this.getPanelMode();
@@ -810,16 +810,20 @@ sap.ui.define([
 				var bVisible = !!that.getP13nModel().getProperty(this.getBindingContextPath()).isFiltered;
 				var oIcon = this.getCells()[1].getItems()[0];
 				if (that._oSelectedItem) {
-					that._oSelectedItem.getCells()[1].removeItem(that._getMoveTopButton());
-					that._oSelectedItem.getCells()[1].removeItem(that._getMoveUpButton());
-					that._oSelectedItem.getCells()[1].removeItem(that._getMoveDownButton());
-					that._oSelectedItem.getCells()[1].removeItem(that._getMoveBottomButton());
+					that._removeMoveButtons();
 				}
 				oIcon.setVisible(bVisible);
 			});
 		}
 
 		return oP13nCellTemplate;
+	};
+
+	GroupPanelBase.prototype._removeMoveButtons = function() {
+		this._oSelectedItem.getCells()[1].removeItem(this._getMoveTopButton());
+		this._oSelectedItem.getCells()[1].removeItem(this._getMoveUpButton());
+		this._oSelectedItem.getCells()[1].removeItem(this._getMoveDownButton());
+		this._oSelectedItem.getCells()[1].removeItem(this._getMoveBottomButton());
 	};
 
 	GroupPanelBase.prototype._updateEnableOfMoveButtons = function(oTableItem) {
