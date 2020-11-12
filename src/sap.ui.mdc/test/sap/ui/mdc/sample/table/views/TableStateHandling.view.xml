@@ -27,7 +27,7 @@
 	<mdc:Table id="mdcTable"
 			   header="MDC Table without rowCount"
 			   showRowCount="false"
-			   delegate='\{ "name": "sap/ui/mdc/odata/v4/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
+			   delegate='\{ "name": "this/demokit/internal/sample/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
 			   type="ResponsiveTable"
 			   p13nMode="Column,Sort,Filter"
 			   selectionMode="Multi"

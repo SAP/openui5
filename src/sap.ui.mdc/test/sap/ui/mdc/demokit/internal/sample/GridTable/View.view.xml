@@ -13,7 +13,7 @@
 	</OverflowToolbar>
 	<mdc:Table id="mdcTable"
 			header="Products"
-			delegate='\{ "name": "sap/ui/mdc/odata/v4/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
+			delegate='\{ "name": "sap/ui/mdc/sample/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
 			selectionMode="Multi"
 			height="100%"
 			p13nMode="Column,Sort"
