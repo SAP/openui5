@@ -44,7 +44,11 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
+	 * @since 1.62.0
 	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase sap.fe
+	 * MDC_PUBLIC_CANDIDATE
+	 *
 	 * @param {object} [oFormatOptions] Formatting options
 	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting and parsing)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
@@ -63,7 +67,6 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.preventGetDescription] If set, description is not read by <code>formatValue</code> as it is known that no description exist or it might be set later
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionType
-	 * @since 1.62.0
 	 */
 	var ConditionType = SimpleType.extend("sap.ui.mdc.field.ConditionType", /** @lends sap.ui.mdc.field.ConditionType.prototype */ {
 

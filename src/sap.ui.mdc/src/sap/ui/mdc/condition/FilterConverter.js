@@ -28,8 +28,7 @@ function(
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @experimental
-	 * @ui5-restricted
+	 * @experimental As of version 1.78
 	 */
 	var FilterConverter = {
 

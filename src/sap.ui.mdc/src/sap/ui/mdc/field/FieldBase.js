@@ -91,13 +91,12 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @alias sap.ui.mdc.field.FieldBase
-	 * @author SAP SE
-	 * @version ${version}
 	 * @since 1.58.0
 	 * @abstract
 	 *
 	 * @private
-	 * @experimental
+	 * @ui5-restricted sap.ui.mdc
+	 * @experimental As of version 1.58
 	 */
 	var FieldBase = Control.extend("sap.ui.mdc.field.FieldBase", /* @lends sap.ui.mdc.field.FieldBase.prototype */ {
 		metadata: {
@@ -1555,7 +1554,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * MDC_PUBLIC_CANDIDATE
-	 * @experimental
+	 * @experimental As of version 1.62.0
 	 * @since 1.62.0 Disclaimer: this function is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

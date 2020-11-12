@@ -39,8 +39,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @alias sap.ui.mdc.field.ValueHelpPanel
-	 * @author SAP SE
-	 * @version ${version}
 	 * @since 1.58.0
 	 * @abstract
 	 *

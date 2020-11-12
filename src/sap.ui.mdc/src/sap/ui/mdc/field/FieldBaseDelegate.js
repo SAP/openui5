@@ -19,7 +19,8 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @private
-	 * @experimental
+	 * @ui5-restricted sap.ui.mdc
+	 * @experimental As of version 1.72
 	 * @since 1.72.0
 	 * @alias sap.ui.mdc.field.FieldBaseDelegate
 	 */
@@ -33,6 +34,7 @@ sap.ui.define([
 	 * @param {object} oPayload Payload for delegate
 	 * @param {string} sType Given EDM type
 	 * @returns {string} Data type name
+	 * @private
 	 * @deprecated please use sap.ui.mdc.util.TypeUtil.getDataTypeClass instead
 	 */
 	FieldBaseDelegate.getDataTypeClass = function(oPayload, sType) {
@@ -50,7 +52,8 @@ sap.ui.define([
 	 * @param {object} oFormatOptions Used <code>FormatOptions</code>
 	 * @param {object} oConstraints Used <code>Constraints</code>
 	 * @returns {sap.ui.mdc.condition.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
- 	 * @deprecated please use sap.ui.mdc.util.TypeUtil.getBaseType instead
+	 * @private
+	 * @deprecated please use sap.ui.mdc.util.TypeUtil.getBaseType instead
 	 */
 	FieldBaseDelegate.getBaseType = function(oPayload, sType, oFormatOptions, oConstraints) {
 		return TypeUtil.getBaseType(sType, oFormatOptions, oConstraints);
@@ -65,6 +68,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.SimpleType} oType Type from binding
 	 * @param {any} vValue Given value
 	 * @returns {object} Information needed to initialize internal type (needs to set bTypeInitialized to true if initialized)
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	FieldBaseDelegate.initializeTypeFromBinding = function(oPayload, oType, vValue) {
 
@@ -80,6 +85,8 @@ sap.ui.define([
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.model.SimpleType} oType Type from binding
 	 * @param {object} oTypeInitialization Information needed to initialize internal type
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	FieldBaseDelegate.initializeInternalUnitType = function(oPayload, oType, oTypeInitialization) {
 
@@ -92,6 +99,8 @@ sap.ui.define([
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.mdc.field.FieldHelpBase} oFieldHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
 	 * @returns {boolean} If <code>true</code>, the input is checked
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since: 1.78.0
 	 */
 	FieldBaseDelegate.isInputValidationEnabled = function(oPayload, oFieldHelp) {
@@ -111,6 +120,8 @@ sap.ui.define([
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.mdc.field.FieldHelpBase} oFieldHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
 	 * @returns {boolean} If <code>true</code>, invalid input is accepted
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since: 1.78.0
 	 */
 	FieldBaseDelegate.isInvalidInputAllowed = function(oPayload, oFieldHelp) {
@@ -149,6 +160,9 @@ sap.ui.define([
 	 * @returns {object|Promise} Object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if item cannot be determined
 	 * @since: 1.78.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	FieldBaseDelegate.getItemForValue = function(oPayload, oFieldHelp, vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription) {
 
@@ -179,6 +193,9 @@ sap.ui.define([
 	 * @returns {string|object|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if the description cannot be determined
 	 * @since: 1.78.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	FieldBaseDelegate.getDescription = function(oPayload, oFieldHelp, vKey, oInParameters, oOutParameters, oBindingContext) {
 
@@ -194,6 +211,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @returns {object} Delegate object with <code>name</code and <code>payload</code>
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.78.0
 	 */
 	FieldBaseDelegate.getDefaultFieldHelpBaseDelegate = function(oPayload) {
@@ -209,6 +228,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @returns {object} Delegate object with <code>name</code and <code>payload</code>
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.78.0
 	 */
 	FieldBaseDelegate.getDefaultFieldValueHelpDelegate = function(oPayload) {

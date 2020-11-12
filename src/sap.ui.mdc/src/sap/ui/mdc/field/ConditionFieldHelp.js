@@ -36,6 +36,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.82.0
 	 * @alias sap.ui.mdc.field.ConditionFieldHelp
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

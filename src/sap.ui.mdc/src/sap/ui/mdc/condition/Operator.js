@@ -76,7 +76,8 @@ sap.ui.define([
  		 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
 		 * @constructor
 		 * @private
-		 * @ui5-restricted sap.ui.mdc, sap.fe
+		 * @ui5-restricted sap.fe
+		 * MDC_PUBLIC_CANDIDATE
 		 * @alias sap.ui.mdc.condition.Operator
 		 * @version 1.73.0
 		 * @author SAP SE
@@ -197,7 +198,7 @@ sap.ui.define([
 		});
 
 		/**
-		 * Defines whyt type is used for parse or format the operation
+		 * Defines what type is used for parse or format the operation
 		 *
 		 * @enum {string}
 		 * @private
@@ -424,7 +425,7 @@ sap.ui.define([
 		 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 		 *
 		 * @private
-		 * ui5-restricted to be enhanced by operators inherit from operator
+		 * @ui5-restricted to be enhanced by operators inherit from operator
 		 */
 		Operator.prototype._parseValue = function(sValue, oType) { // needed in EQ operator to be accessed from outside
 

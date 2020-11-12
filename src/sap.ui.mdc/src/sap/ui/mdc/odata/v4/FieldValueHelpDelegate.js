@@ -24,7 +24,9 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @private
-	 * @experimental
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
+	 * @experimental As of version 1.77
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.odata.v4.FieldValueHelpDelegate
 	 */
