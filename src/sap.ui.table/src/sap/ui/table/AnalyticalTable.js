@@ -202,6 +202,8 @@ sap.ui.define([
 		TableUtils.Grouping.setGroupMode(this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenMenu, onOpenTableContextMenu, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
 	};
 
 	AnalyticalTable.prototype.exit = function() {
@@ -449,6 +451,14 @@ sap.ui.define([
 		oState.expanded = oNode.nodeState.expanded;
 		oState.contentHidden = oState.expanded && !oBindingInfo.parameters.sumOnTop;
 		oState.title = oState.type === oState.Type.GroupHeader ? oBinding.getGroupName(oNode.context, oNode.level) : "";
+	}
+
+	function expandRow(oRow) {
+		this.expand(oRow.getIndex());
+	}
+
+	function collapseRow(oRow) {
+		this.collapse(oRow.getIndex());
 	}
 
 	AnalyticalTable.prototype.onRowsUpdated = function(mParameters) {
