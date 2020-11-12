@@ -1023,7 +1023,7 @@ sap.ui.define([
 	 *     <code>oPromise.then(function () {...}, function () {...})</code>).
 	 * </ul>
 	 *
-	 * @param {object[]} aPathExpressions
+	 * @param {object[]|string[]} aPathExpressions
 	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *   "14.5.13 Expression edm:PropertyPath" objects describing which properties need to be
 	 *   loaded because they may have changed due to side effects of a previous update, for example
@@ -1038,7 +1038,7 @@ sap.ui.define([
 	 *   Since 1.82.0 absolute paths are supported. Absolute paths must start with the entity
 	 *   container (example "/com.sap.gateway.default.iwbep.tea_busi.v0001.Container/TEAMS") of the
 	 *   service. All (navigation) properties in the complete model matching such an absolute path
-	 *   are updated.
+	 *   are updated. Since 1.85.0, "14.4.11 Expression edm:String" is accepted as well.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used (since 1.69.0); if not specified, the update group ID for the
 	 *   context's binding is used, see {@link #getUpdateGroupId}. If a different group ID is
@@ -1053,8 +1053,9 @@ sap.ui.define([
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> <code>aPathExpressions</code> contains objects other than
-	 *       "14.5.11 Expression edm:NavigationPropertyPath" or
+	 *       "14.4.11 Expression edm:String", "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *       "14.5.13 Expression edm:PropertyPath"
+	 *     <li> a path contains a "*", except for a property path as its sole or last segment
 	 *     <li> this context is not supported
 	 *     <li> the root binding of this context's binding is suspended (see {@link #getBinding} and
 	 *       {@link sap.ui.model.odata.v4.ODataContextBinding#getRootBinding},
@@ -1119,18 +1120,20 @@ sap.ui.define([
 			throw new Error("Cannot request side effects of unresolved binding's context: " + this);
 		}
 
-		aPathExpressions.map(function (oPath) {
-			if (oPath && typeof oPath === "object") {
-				if (isPropertyPath(oPath.$PropertyPath)) {
-					return oPath.$PropertyPath;
+		aPathExpressions.map(function (vPath) {
+			if (vPath && typeof vPath === "object") {
+				if (isPropertyPath(vPath.$PropertyPath)) {
+					return vPath.$PropertyPath;
 				}
-				if (typeof oPath.$NavigationPropertyPath === "string"
-						&& !oPath.$NavigationPropertyPath.includes("*")) {
-					return oPath.$NavigationPropertyPath;
+				if (typeof vPath.$NavigationPropertyPath === "string"
+						&& !vPath.$NavigationPropertyPath.includes("*")) {
+					return vPath.$NavigationPropertyPath;
 				}
+			} else if (typeof vPath === "string" && (!vPath || isPropertyPath(vPath))) {
+				return vPath;
 			}
 			throw new Error("Not an edm:(Navigation)PropertyPath expression: "
-				+ JSON.stringify(oPath));
+				+ JSON.stringify(vPath));
 		}).forEach(function (sPath) {
 			if (sPath[0] === "/") {
 				aPathsForModel.push(sPath);

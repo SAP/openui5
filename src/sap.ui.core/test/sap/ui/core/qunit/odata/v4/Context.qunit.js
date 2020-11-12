@@ -1497,7 +1497,8 @@ sap.ui.define([
 
 		[
 			undefined,
-			"foo",
+			"fo*o",
+			"fo*o/*",
 			{},
 			{$AnnotationPath : "foo"},
 			{$If : [true, {$PropertyPath : "TEAM_ID"}]}, // "a near miss" ;-)
@@ -1598,7 +1599,11 @@ sap.ui.define([
 				{$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"},
 				{$PropertyPath : "Address/*"},
 				{$NavigationPropertyPath : ""},
-				{$PropertyPath : "*"}
+				{$PropertyPath : "*"},
+				"",
+				"*",
+				"EMPLOYEE_2_TEAM/*",
+				"MANAGER_ID"
 			],
 			oPromise,
 			oWaitPromise = oFixture.async ? Promise.resolve() : SyncPromise.resolve(),
@@ -1608,17 +1613,19 @@ sap.ui.define([
 			oExpectation = that.mock(oContext).expects("requestSideEffectsInternal")
 				// Note: $select not yet sorted
 				.withExactArgs(["/base/TEAM_ID", "/reduced/TEAM_ID", "/base/EMPLOYEE_2_MANAGER",
-					"/base/Address/*", "/base/", "/base/*"], sGroupId)
+					"/base/Address/*", "/base/", "/base/*", "/base/", "/base/*",
+					"/base/EMPLOYEE_2_TEAM/*", "/base/MANAGER_ID"], sGroupId)
 				.returns(SyncPromise.resolve({}));
 			that.mock(oModel).expects("requestSideEffects")
-				.withExactArgs(sGroupId, oFixture.absolute ? ["/foo", "/bar"] : [])
+				.withExactArgs(sGroupId, oFixture.absolute ? ["/foo", "/bar", "/baz"] : [])
 				.returns(SyncPromise.resolve({}));
 		}
 
 		if (oFixture.absolute) {
 			aPathExpressions = aPathExpressions.concat([
 				{$PropertyPath : "/foo"},
-				{$NavigationPropertyPath : "/bar"}
+				{$NavigationPropertyPath : "/bar"},
+				"/baz"
 			]);
 		}
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
@@ -1634,10 +1641,15 @@ sap.ui.define([
 			.returns(["/base/EMPLOYEE_2_MANAGER"]);
 		oMetaModelMock.expects("getAllPathReductions")
 			.withExactArgs("/EMPLOYEES('42')/Address/*", "/base").returns(["/base/Address/*"]);
-		oMetaModelMock.expects("getAllPathReductions")
+		oMetaModelMock.expects("getAllPathReductions").twice()
 			.withExactArgs("/EMPLOYEES('42')", "/base").returns(["/base/"]);
-		oMetaModelMock.expects("getAllPathReductions")
+		oMetaModelMock.expects("getAllPathReductions").twice()
 			.withExactArgs("/EMPLOYEES('42')/*", "/base").returns(["/base/*"]);
+		oMetaModelMock.expects("getAllPathReductions")
+			.withExactArgs("/EMPLOYEES('42')/MANAGER_ID", "/base").returns(["/base/MANAGER_ID"]);
+		oMetaModelMock.expects("getAllPathReductions")
+			.withExactArgs("/EMPLOYEES('42')/EMPLOYEE_2_TEAM/*", "/base")
+			.returns(["/base/EMPLOYEE_2_TEAM/*"]);
 		this.mock(oContext).expects("getUpdateGroupId").exactly(oFixture.group ? 0 : 1)
 			.withExactArgs().returns("any");
 		this.mock(oModel).expects("isAutoGroup").withExactArgs(sGroupId).returns(oFixture.auto);
