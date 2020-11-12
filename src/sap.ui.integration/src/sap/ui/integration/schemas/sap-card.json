@@ -1591,7 +1591,7 @@
           "oneOf": [
             {
               "type": "boolean",
-              "default": false
+              "default": true
             },
             {
               "$ref": "#/definitions/simpleBinding"
