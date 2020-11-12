@@ -92,22 +92,27 @@ sap.ui.define([
 		oAggregation : {
 			aggregate : { // Note: intentionally not sorted
 				Amount : {
-					"with" : "average" // Note: allowed, as long as no totals are requested
+					grandTotal : true,
+					"with" : "average"
 				},
 				NetAmountAggregate : {
 					name : "NetAmount"
 				},
-				GrossAmountSum : {
+				GrossAmountCount : {
+					grandTotal : true,
 					name : "GrossAmount",
-					"with" : "countdistinct" // Note: allowed, as long as no totals are requested
+					"with" : "countdistinct"
 				}
 			},
 			group : {
 				BillToParty : {}
 			}
 		},
-		sApply : "groupby((BillToParty),aggregate(Amount with average as Amount"
-			+ ",GrossAmount with countdistinct as GrossAmountSum,NetAmount as NetAmountAggregate))"
+		sApply : "concat(aggregate(Amount with average as UI5grand__Amount"
+			+ ",GrossAmount with countdistinct as UI5grand__GrossAmountCount)"
+			+ ",groupby((BillToParty),aggregate(Amount with average as Amount"
+			+ ",GrossAmount with countdistinct as GrossAmountCount"
+			+ ",NetAmount as NetAmountAggregate)))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -520,26 +525,6 @@ sap.ui.define([
 			groupLevels : {}
 		},
 		sError : "Not a array value for 'groupLevels'"
-	}, {
-		oAggregation : {
-			aggregate : {A : {grandTotal : true, "with" : "average"}}
-		},
-		sError : "Cannot aggregate totals with 'average'"
-	}, {
-		oAggregation : {
-			aggregate : {A : {grandTotal : true, "with" : "countdistinct"}}
-		},
-		sError : "Cannot aggregate totals with 'countdistinct'"
-	}, {
-		oAggregation : {
-			aggregate : {A : {subtotals : true, "with" : "average"}}
-		},
-		sError : "Cannot aggregate totals with 'average'"
-	}, {
-		oAggregation : {
-			aggregate : {A : {subtotals : true, "with" : "countdistinct"}}
-		},
-		sError : "Cannot aggregate totals with 'countdistinct'"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("buildApply: " + oFixture.sError, function (assert) {
 			assert.throws(function () {
