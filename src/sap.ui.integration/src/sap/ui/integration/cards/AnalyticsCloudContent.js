@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/core/HTML",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/base/Log",
-	"sap/ui/dom/includeScript"
-], function (AnalyticsCloudContentRenderer, BaseContent, library, HTML, BindingResolver, Log, includeScript) {
+	"sap/base/Log"
+], function (AnalyticsCloudContentRenderer, BaseContent, library, HTML, BindingResolver, Log) {
 	"use strict";
 
 	/**

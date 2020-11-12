@@ -11,8 +11,7 @@
 				"fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
 				"spacingBottom": 10
 			},
-			"type": "area",
-			"height": 400
+			"type": "area"
 		},
 		"colors": [
 			"#9674ae",
