@@ -583,6 +583,11 @@ sap.ui.define([
 				this._oGroupHeaderInvisibleText = null;
 			}
 
+			if (this._oSuggestionPopover) {
+				this._oSuggestionPopover.destroy();
+				this._oSuggestionPopover = null;
+			}
+
 			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
 			this.aMessageQueue = null;
 			this.fnFilter = null;

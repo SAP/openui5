@@ -732,15 +732,6 @@ sap.ui.define([
 			this._oSelectedItemBeforeOpen = null;
 			this._oLastFocusedListItem = null;
 
-			if (this._oSuggestionPopover) {
-				if (this._oPickerCustomHeader) {
-					this._oPickerCustomHeader.destroy();
-					this._oPickerCustomHeader = null;
-				}
-				this._oSuggestionPopover.destroy();
-				this._oSuggestionPopover = null;
-			}
-
 			if (this._oItemObserver) {
 				this._oItemObserver.disconnect();
 				this._oItemObserver = null;

@@ -3399,24 +3399,17 @@ function(
 	};
 
 	MultiComboBox.prototype.exit = function() {
-		var sInternalControls = [
-				"_oSuggestionPopover",
-				"_oToggleButton",
-				"_oPickerCustomHeader",
-				"_oCustomHeaderToolbar",
-				"_oPickerCloseButton"
-			],
-			that = this;
-
 		ComboBoxBase.prototype.exit.apply(this, arguments);
 		this._deregisterResizeHandler();
 
-		sInternalControls.forEach(function (sControlName) {
-			if (that[sControlName]) {
-				that[sControlName].destroy();
-				that[sControlName] = null;
-			}
-		});
+		if (this._oTokenizer) {
+			this._oTokenizer.destroy();
+			this._oTokenizer = null;
+		}
+
+		this._oRbC = null;
+		this._oRbM = null;
+		this._oListItemEnterEventDelegate = null;
 
 		this._sInitialValueState = null;
 	};
