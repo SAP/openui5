@@ -23,8 +23,8 @@ sap.ui.define([
 		 * If a function or property is initial, the default implementation is used
 		 *
 		 * @extends sap.ui.mdc.condition.Operator
-		 * @param {object} [oConfiguration]
-		 * @param {string} [oConfiguration.name] Name of the operator used in the condition
+		 * @param {object} oConfiguration
+		 * @param {string} oConfiguration.name Name of the operator used in the condition
 		 * @param {string} [oConfiguration.filterOperator] should not be set
 		 * @param {string} [oConfiguration.tokenParse]
 		 * @param {string} [oConfiguration.tokenFormat]
