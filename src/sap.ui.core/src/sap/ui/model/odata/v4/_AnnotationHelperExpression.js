@@ -496,12 +496,9 @@ sap.ui.define([
 				sTargetPath = oModel.getObject(sPath);
 
 			function getBinding(mConstraints0, sType0, sPath0) {
-				return Basics.resultToString({
-						constraints : mConstraints0,
-						result : "binding",
-						type : sType0,
-						value : oPathValue.prefix + sPath0
-					}, false, true);
+				return Basics.resultToString(
+					Expression.pathResult(oPathValue, sType0, sPath0, mConstraints0),
+					false, true);
 			}
 
 			if (!sTargetPath) {
@@ -796,19 +793,36 @@ sap.ui.define([
 					oCurrencyOrUnitPromise
 						= Expression.fetchCurrencyOrUnit(oPathValue, sValue, sType, mConstraints);
 				}
-				return oCurrencyOrUnitPromise || {
-					constraints : mConstraints,
-					formatOptions : sType === "Edm.String"
-						&& !(oPathValue.formatOptions
-							&& "parseKeepsEmptyString" in oPathValue.formatOptions)
-						? Object.assign({parseKeepsEmptyString : true}, oPathValue.formatOptions)
-						: oPathValue.formatOptions,
-					parameters : oPathValue.parameters,
-					result : "binding",
-					type : sType,
-					value : oPathValue.prefix + sValue
-				};
+				return oCurrencyOrUnitPromise
+					|| Expression.pathResult(oPathValue, sType, sValue, mConstraints);
 			});
+		},
+
+		/**
+		 * Returns the result of a path expression. Takes care of parseKeepsEmptyString.
+		 *
+		 * @param {object} oPathValue
+		 *   model, path and value information pointing to the path (see Expression object)
+		 * @param {string} sType
+		 *   the EDM type
+		 * @param {string} sPath
+		 *   the relative binding path
+		 * @param {object} mConstraints
+		 *   the type constraints for the property referenced by <code>sPath</code>
+		 * @returns {object}
+		 *   the result object
+		 */
+		pathResult : function (oPathValue, sType, sPath, mConstraints) {
+			return {
+				constraints : mConstraints,
+				formatOptions : sType === "Edm.String"
+					? Object.assign({parseKeepsEmptyString : true}, oPathValue.formatOptions)
+					: oPathValue.formatOptions,
+				parameters : oPathValue.parameters,
+				result : "binding",
+				type : sType,
+				value : oPathValue.prefix + sPath
+			};
 		},
 
 		/**

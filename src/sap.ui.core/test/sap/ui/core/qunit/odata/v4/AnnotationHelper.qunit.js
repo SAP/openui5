@@ -24,6 +24,18 @@ sap.ui.define([
 						"$Path" : "ID"
 					}
 				},
+				"tea_busi.Product" : {
+					"@UI.LineItem" : [{
+						"Value" : {
+							"$Path" : "Price"
+						}
+					}]
+				},
+				"tea_busi.Product/Price" : {
+					"@Org.OData.Measures.V1.ISOCurrency" : { // test requires full namespace
+						"$Path" : "Currency"
+					}
+				},
 				"tea_busi.TEAM" : {
 					"@UI.LineItem" : [{
 						"@UI.Importance" : {
@@ -93,12 +105,35 @@ sap.ui.define([
 					},
 					"$Type" : "tea_busi.Worker"
 				},
+				"Products" : {
+					"$kind" : "EntitySet",
+					"Type" : "tea_busi.Product"
+				},
 				"TEAMS" : {
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
 						"TEAM_2_EMPLOYEES" : "EMPLOYEES"
 					},
 					"$Type" : "tea_busi.TEAM"
+				}
+			},
+			"tea_busi.Product" : {
+				"$kind" : "EntityType",
+				"$Key" : ["Id"],
+				"Id" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String",
+					"$Nullable" : false
+				},
+				"Currency" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String",
+					"$Nullable" : false
+				},
+				"Price" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.Decimal",
+					"$Nullable" : false
 				}
 			},
 			"tea_busi.TEAM" : {
@@ -967,6 +1002,36 @@ sap.ui.define([
 			"{path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',"
 			+ "constraints:{'maxLength':10},formatOptions:{'parseKeepsEmptyString':true}}");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("format: ISOCurrency", function (assert) {
+		var oMetaModel = new ODataMetaModel(),
+			oContext = {
+				getModel : function () {
+					return oMetaModel;
+				},
+				getPath : function () {
+					return "/tea_busi.Product/@UI.LineItem/0/Value/";
+				}
+			},
+			vRawValue = {$Path: "Price"};
+
+		this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
+			.withExactArgs().returns(SyncPromise.resolve(mScope));
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.format(vRawValue, {
+				arguments : [{$$foo : "bar"}, {maxLength : 10}],
+				context : oContext
+			}),
+			"{mode:'TwoWay',parts:["
+			+ "{path:'Price',type:'sap.ui.model.odata.type.Decimal',constraints:{'nullable':false}"
+			+ ",formatOptions:{'maxLength':10},parameters:{'$$foo':'bar'}}"
+			+ ",{path:'Currency',type:'sap.ui.model.odata.type.String'"
+			+ ",constraints:{'nullable':false},formatOptions:{'parseKeepsEmptyString':true"
+			+ ",'maxLength':10},parameters:{'$$foo':'bar'}}"
+			+ ",{mode:'OneTime',path:'/##@@requestCurrencyCodes',targetType:'any'}]"
+			+ ",type:'sap.ui.model.odata.type.Currency'}");});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bIsBound) {
