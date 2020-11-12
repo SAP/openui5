@@ -31,8 +31,8 @@ sap.ui.define([
 	 * A mixin for a requestor using an OData V2 service.
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._V2Requestor
+	 * @constructor
 	 * @mixin
-	 *
 	 * @private
 	 */
 	function _V2Requestor() {}

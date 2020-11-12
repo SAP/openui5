@@ -158,11 +158,6 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_Requestor is an object, not a constructor function", function (assert) {
-		assert.strictEqual(typeof _Requestor, "object");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("constructor", function (assert) {
 		var mHeaders = {},
 			oHelperMock = this.mock(_Helper),

@@ -12,9 +12,10 @@ sap.ui.define([
 	/**
 	 * Creates a converter for V4 metadata.
 	 *
+	 * @alias sap.ui.model.odata.v4.lib._V4MetadataConverter
 	 * @constructor
 	 */
-	function V4MetadataConverter() {
+	function _V4MetadataConverter() {
 		this.enumType = null; // the current EnumType
 		this.enumTypeMemberCounter = 0; // the current EnumType member value counter
 		this.navigationProperty = null; // the current NavigationProperty
@@ -22,13 +23,13 @@ sap.ui.define([
 		_MetadataConverter.call(this);
 	}
 
-	V4MetadataConverter.prototype = Object.create(_MetadataConverter.prototype);
+	_V4MetadataConverter.prototype = Object.create(_MetadataConverter.prototype);
 
 	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.lib._MetadataConverter#finalize
 	 */
-	V4MetadataConverter.prototype.finalize = function () {
+	_V4MetadataConverter.prototype.finalize = function () {
 		if (this.result.$Version !== "4.0") {
 			throw new Error(this.url + ": Unsupported OData version " + this.result.$Version);
 		}
@@ -39,7 +40,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processActionOrFunction = function (oElement) {
+	_V4MetadataConverter.prototype.processActionOrFunction = function (oElement) {
 		var sKind = oElement.localName,
 			oOperation = {
 				$kind : sKind
@@ -92,7 +93,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processComplexType = function (oElement) {
+	_V4MetadataConverter.prototype.processComplexType = function (oElement) {
 		this.processType(oElement, {"$kind" : "ComplexType"});
 	};
 
@@ -101,7 +102,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processEdmx = function (oElement) {
+	_V4MetadataConverter.prototype.processEdmx = function (oElement) {
 		this.processAttributes(oElement, this.result, {
 			"Version" : this.setValue
 		});
@@ -114,7 +115,7 @@ sap.ui.define([
 	 * @param {function} [fnProcessor] The processor
 	 */
 	// @override sap.ui.model.odata.v4.lib._MetadataConverter#processElement
-	V4MetadataConverter.prototype.processElement = function (oElement, fnProcessor) {
+	_V4MetadataConverter.prototype.processElement = function (oElement, fnProcessor) {
 		if (fnProcessor) {
 			fnProcessor.call(this, oElement);
 		}
@@ -125,7 +126,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processEntityContainer = function (oElement) {
+	_V4MetadataConverter.prototype.processEntityContainer = function (oElement) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
 		this.entityContainer = {"$kind" : "EntityContainer"};
@@ -139,7 +140,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processEntitySet = function (oElement) {
+	_V4MetadataConverter.prototype.processEntitySet = function (oElement) {
 		var sName = oElement.getAttribute("Name");
 
 		this.entityContainer[sName] = this.entitySet = {
@@ -158,7 +159,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processEntityType = function (oElement) {
+	_V4MetadataConverter.prototype.processEntityType = function (oElement) {
 		this.processType(oElement, {
 			$kind : "EntityType"
 		});
@@ -169,7 +170,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processEntityTypeKeyPropertyRef = function (oElement) {
+	_V4MetadataConverter.prototype.processEntityTypeKeyPropertyRef = function (oElement) {
 		var sAlias = oElement.getAttribute("Alias"),
 			vKey,
 			sName = oElement.getAttribute("Name");
@@ -188,7 +189,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processEnumType = function (oElement) {
+	_V4MetadataConverter.prototype.processEnumType = function (oElement) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name"),
 			oEnumType = {
 				"$kind" : "EnumType"
@@ -212,7 +213,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processEnumTypeMember = function (oElement) {
+	_V4MetadataConverter.prototype.processEnumTypeMember = function (oElement) {
 		var sName = oElement.getAttribute("Name"),
 			sValue = oElement.getAttribute("Value"),
 			vValue;
@@ -237,7 +238,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 * @param {object} oResult The result object to fill
 	 */
-	V4MetadataConverter.prototype.processFacetAttributes = function (oElement, oResult) {
+	_V4MetadataConverter.prototype.processFacetAttributes = function (oElement, oResult) {
 		var that = this;
 
 		this.processAttributes(oElement, oResult, {
@@ -258,7 +259,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processImport = function (oElement) {
+	_V4MetadataConverter.prototype.processImport = function (oElement) {
 		var sKind = oElement.localName,
 			oImport = {
 				$kind : sKind
@@ -285,7 +286,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processNavigationPropertyBinding = function (oElement) {
+	_V4MetadataConverter.prototype.processNavigationPropertyBinding = function (oElement) {
 		var oNavigationPropertyBinding = this.getOrCreateObject(
 				this.entitySet, "$NavigationPropertyBinding");
 
@@ -298,7 +299,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processParameter = function (oElement) {
+	_V4MetadataConverter.prototype.processParameter = function (oElement) {
 		var oActionOrFunction = this.oOperation,
 			oParameter = {};
 
@@ -318,7 +319,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processReturnType = function (oElement) {
+	_V4MetadataConverter.prototype.processReturnType = function (oElement) {
 		var oActionOrFunction = this.oOperation,
 			oReturnType = {};
 
@@ -337,7 +338,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processSchema = function (oElement) {
+	_V4MetadataConverter.prototype.processSchema = function (oElement) {
 		this.namespace = oElement.getAttribute("Namespace") + ".";
 		this.schema = {"$kind" : "Schema"};
 		this.addToResult(this.namespace, this.schema);
@@ -349,7 +350,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processSingleton = function (oElement) {
+	_V4MetadataConverter.prototype.processSingleton = function (oElement) {
 		var sName = oElement.getAttribute("Name");
 
 		this.entityContainer[sName] = this.entitySet = {
@@ -364,7 +365,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processTerm = function (oElement) {
+	_V4MetadataConverter.prototype.processTerm = function (oElement) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name"),
 			oTerm = {
 				$kind : "Term"
@@ -390,7 +391,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 * @param {object} oType The initial typed result object
 	 */
-	V4MetadataConverter.prototype.processType = function (oElement, oType) {
+	_V4MetadataConverter.prototype.processType = function (oElement, oType) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name"),
 			that = this;
 
@@ -415,7 +416,7 @@ sap.ui.define([
 	 * @param {string} sType The type attribute from the Element
 	 * @param {object} oProperty The property attribute in the JSON
 	 */
-	V4MetadataConverter.prototype.processTypedCollection = function (sType, oProperty) {
+	_V4MetadataConverter.prototype.processTypedCollection = function (sType, oProperty) {
 		var aMatches = this.rCollection.exec(sType);
 
 		if (aMatches) {
@@ -430,7 +431,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processTypeDefinition = function (oElement) {
+	_V4MetadataConverter.prototype.processTypeDefinition = function (oElement) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name"),
 			oTypeDefinition = {
 				"$kind" : "TypeDefinition",
@@ -447,7 +448,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processTypeNavigationProperty = function (oElement) {
+	_V4MetadataConverter.prototype.processTypeNavigationProperty = function (oElement) {
 		var sName = oElement.getAttribute("Name"),
 			oProperty = {
 				$kind : "NavigationProperty"
@@ -469,7 +470,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processTypeNavigationPropertyOnDelete = function (oElement) {
+	_V4MetadataConverter.prototype.processTypeNavigationPropertyOnDelete = function (oElement) {
 		this.navigationProperty.$OnDelete = oElement.getAttribute("Action");
 		this.annotatable(this.navigationProperty, "$OnDelete");
 	};
@@ -479,7 +480,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processTypeNavigationPropertyReferentialConstraint
+	_V4MetadataConverter.prototype.processTypeNavigationPropertyReferentialConstraint
 			= function (oElement) {
 		var sProperty = oElement.getAttribute("Property"),
 			oReferentialConstraint = this.getOrCreateObject(
@@ -494,7 +495,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V4MetadataConverter.prototype.processTypeProperty = function (oElement) {
+	_V4MetadataConverter.prototype.processTypeProperty = function (oElement) {
 		var sName = oElement.getAttribute("Name"),
 			oProperty = {
 				"$kind" : "Property"
@@ -517,7 +518,7 @@ sap.ui.define([
 	 * @param {string} sPath The target path
 	 * @returns {string} The target path with the alias resolved (if there was one)
 	 */
-	V4MetadataConverter.prototype.resolveTargetPath = function (sPath) {
+	_V4MetadataConverter.prototype.resolveTargetPath = function (sPath) {
 		var iSlash;
 
 		if (!sPath) {
@@ -667,7 +668,7 @@ sap.ui.define([
 			}
 		};
 
-	})(V4MetadataConverter.prototype);
+	})(_V4MetadataConverter.prototype);
 
-	return V4MetadataConverter;
+	return _V4MetadataConverter;
 }, /* bExport= */false);

@@ -259,7 +259,7 @@ sap.ui.define([
 	 * Creates an annotatable that is able to consume V2 annotations and set V4 annotations for the
 	 * correct target. It ensures that the target for the annotations is only created when needed.
 	 *
-	 * @param {V2MetadataConverter} oConverter The converter
+	 * @param {_V2MetadataConverter} oConverter The converter
 	 * @param {string} sTarget
 	 *   The target name to which the V4 annotations shall be added. The target path is constructed
 	 *   from the path of the top annotatable of the stack in oConverter (if there is one yet) and
@@ -369,7 +369,7 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.lib._V2MetadataConverter
 	 * @constructor
 	 */
-	function V2MetadataConverter() {
+	function _V2MetadataConverter() {
 		this.association = null; // the current association
 		this.associations = {}; // maps qualified name -> association
 		this.associationSet = null; // the current associationSet
@@ -392,14 +392,14 @@ sap.ui.define([
 		_MetadataConverter.call(this);
 	}
 
-	V2MetadataConverter.prototype = Object.create(_MetadataConverter.prototype);
+	_V2MetadataConverter.prototype = Object.create(_MetadataConverter.prototype);
 
 	/**
 	 * Collects the element's SAP annotations in the aggregate.
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.collectSapAnnotations = function (oElement) {
+	_V2MetadataConverter.prototype.collectSapAnnotations = function (oElement) {
 		var oAttribute,
 			oAttributeList = oElement.attributes,
 			i, n;
@@ -421,7 +421,7 @@ sap.ui.define([
 	 * @param {string} sName The name
 	 * @returns {string} The value or <code>undefined</code>
 	 */
-	V2MetadataConverter.prototype.consumeSapAnnotation = function (sName) {
+	_V2MetadataConverter.prototype.consumeSapAnnotation = function (sName) {
 		var sValue = this.mSapAnnotations[sName];
 
 		delete this.mSapAnnotations[sName];
@@ -434,7 +434,7 @@ sap.ui.define([
 	 * @param {Annotatable} oAnnotatable The annotatable
 	 * @param {string} sName The name of the V2 annotation
 	 */
-	V2MetadataConverter.prototype.convertEntitySetAnnotation = function (oAnnotatable, sName) {
+	_V2MetadataConverter.prototype.convertEntitySetAnnotation = function (oAnnotatable, sName) {
 		var sConflictingV2Annotation, sValue;
 
 		switch (sName) {
@@ -494,7 +494,7 @@ sap.ui.define([
 	 *
 	 * @param {Annotatable} oAnnotatable The annotatable
 	 */
-	V2MetadataConverter.prototype.convertLabel = function (oAnnotatable) {
+	_V2MetadataConverter.prototype.convertLabel = function (oAnnotatable) {
 		oAnnotatable.convert("label", oAnnotatable.consume("label"));
 	};
 
@@ -504,7 +504,7 @@ sap.ui.define([
 	 * @param {Annotatable} oAnnotatable The annotatable
 	 * @param {string} sName The name of the V2 annotation
 	 */
-	V2MetadataConverter.prototype.convertPropertyAnnotation = function (oAnnotatable, sName) {
+	_V2MetadataConverter.prototype.convertPropertyAnnotation = function (oAnnotatable, sName) {
 		var sValue;
 
 		switch (sName) {
@@ -565,7 +565,7 @@ sap.ui.define([
 	 *
 	 * @param {Annotatable} oAnnotatable The annotatable
 	 */
-	V2MetadataConverter.prototype.convertPropertySemanticsAnnotation = function (oAnnotatable) {
+	_V2MetadataConverter.prototype.convertPropertySemanticsAnnotation = function (oAnnotatable) {
 		var oAnnotations,
 			sEnum,
 			oPath,
@@ -626,7 +626,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.lib._MetadataConverter#finalize
 	 */
-	V2MetadataConverter.prototype.finalize = function () {
+	_V2MetadataConverter.prototype.finalize = function () {
 		this.result.$Version = "4.0"; // The result of the conversion is a V4 streamlined JSON
 
 		this.setDefaultEntityContainer();
@@ -646,7 +646,7 @@ sap.ui.define([
 	 *   Maps annotatable path to a map of V4 annotations; V2 annotations are merged into this
 	 *   object
 	 */
-	V2MetadataConverter.prototype.mergeAnnotations = function (mConvertedV2Annotations,
+	_V2MetadataConverter.prototype.mergeAnnotations = function (mConvertedV2Annotations,
 			mV4Annotations) {
 		var sAnnotatablePath;
 
@@ -667,7 +667,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 * @param {any[]} aResult The results from child elements
 	 */
-	V2MetadataConverter.prototype.postProcessSchema = function (oElement, aResult) {
+	_V2MetadataConverter.prototype.postProcessSchema = function (oElement, aResult) {
 		var mAnnotations,
 			oEntityContainer,
 			sEntityContainerName,
@@ -706,7 +706,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processAssociation = function (oElement) {
+	_V2MetadataConverter.prototype.processAssociation = function (oElement) {
 		var sName = this.namespace + oElement.getAttribute("Name");
 
 		this.associations[sName] = this.association = {
@@ -720,7 +720,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processAssociationEnd = function (oElement) {
+	_V2MetadataConverter.prototype.processAssociationEnd = function (oElement) {
 		var sName = oElement.getAttribute("Role");
 
 		this.association.roles[sName] = {
@@ -735,7 +735,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processAssociationSet = function (oElement) {
+	_V2MetadataConverter.prototype.processAssociationSet = function (oElement) {
 		var oAssociationSet = {
 				associationName : this.resolveAlias(oElement.getAttribute("Association")),
 				ends : [],
@@ -755,7 +755,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processAssociationSetEnd = function (oElement) {
+	_V2MetadataConverter.prototype.processAssociationSetEnd = function (oElement) {
 		this.associationSet.ends.push({
 			entitySetName : oElement.getAttribute("EntitySet"),
 			roleName : oElement.getAttribute("Role")
@@ -767,7 +767,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processComplexType = function (oElement) {
+	_V2MetadataConverter.prototype.processComplexType = function (oElement) {
 		this.processType(oElement, {"$kind" : "ComplexType"});
 	};
 
@@ -776,7 +776,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processDataServices = function (oElement) {
+	_V2MetadataConverter.prototype.processDataServices = function (oElement) {
 		if (oElement.getAttributeNS(sMicrosoftNamespace, "DataServiceVersion") !== "2.0") {
 			throw new Error(this.url + ": expected DataServiceVersion=\"2.0\": "
 				+ serializeSingleElement(oElement));
@@ -788,7 +788,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processDependent = function (oElement) {
+	_V2MetadataConverter.prototype.processDependent = function (oElement) {
 		var oConstraint = this.association.referentialConstraint;
 
 		this.constraintRole = oConstraint.dependent = {
@@ -804,7 +804,7 @@ sap.ui.define([
 	 * @param {function} [fnProcessor] The processor
 	 */
 	// @override sap.ui.model.odata.v4.lib._MetadataConverter#processElement
-	V2MetadataConverter.prototype.processElement = function (oElement, fnProcessor) {
+	_V2MetadataConverter.prototype.processElement = function (oElement, fnProcessor) {
 		this.collectSapAnnotations(oElement);
 		if (fnProcessor) {
 			fnProcessor.call(this, oElement);
@@ -817,7 +817,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processEntityContainer = function (oElement) {
+	_V2MetadataConverter.prototype.processEntityContainer = function (oElement) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
 		this.mEntityContainersOfSchema[sQualifiedName]
@@ -834,7 +834,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processEntitySet = function (oElement) {
+	_V2MetadataConverter.prototype.processEntitySet = function (oElement) {
 		var oAnnotatable,
 			sName = oElement.getAttribute("Name");
 
@@ -861,7 +861,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processEntityType = function (oElement) {
+	_V2MetadataConverter.prototype.processEntityType = function (oElement) {
 		var oType = {
 				$kind : "EntityType"
 			},
@@ -883,7 +883,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processEntityTypeKeyPropertyRef = function (oElement) {
+	_V2MetadataConverter.prototype.processEntityTypeKeyPropertyRef = function (oElement) {
 		var sName = oElement.getAttribute("Name");
 
 		this.getOrCreateArray(this.type, "$Key").push(sName);
@@ -896,7 +896,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 * @param {object} oResult The result object to fill
 	 */
-	V2MetadataConverter.prototype.processFacetAttributes = function (oElement, oResult) {
+	_V2MetadataConverter.prototype.processFacetAttributes = function (oElement, oResult) {
 		var that = this;
 
 		this.processAttributes(oElement, oResult, {
@@ -919,7 +919,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processFunctionImport = function (oElement) {
+	_V2MetadataConverter.prototype.processFunctionImport = function (oElement) {
 		var sAnnotationActionFor,
 			sHttpMethod = oElement.getAttributeNS(sMicrosoftNamespace, "HttpMethod"),
 			sKind = sHttpMethod !== "GET" ? "Action" : "Function",
@@ -991,7 +991,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processParameter = function (oElement) {
+	_V2MetadataConverter.prototype.processParameter = function (oElement) {
 		var sLabel,
 			oOperation = this.oOperation,
 			oParameter = {
@@ -1014,7 +1014,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processPrincipal = function (oElement) {
+	_V2MetadataConverter.prototype.processPrincipal = function (oElement) {
 		var oConstraint = this.association.referentialConstraint;
 
 		this.constraintRole = oConstraint.principal = {
@@ -1027,7 +1027,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processReferentialConstraint = function (oElement) {
+	_V2MetadataConverter.prototype.processReferentialConstraint = function (oElement) {
 		this.association.referentialConstraint = {};
 	};
 
@@ -1036,7 +1036,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processReferentialConstraintPropertyRef = function (oElement) {
+	_V2MetadataConverter.prototype.processReferentialConstraintPropertyRef = function (oElement) {
 		this.constraintRole.propertyRef = oElement.getAttribute("Name");
 	};
 
@@ -1045,7 +1045,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processSchema = function (oElement) {
+	_V2MetadataConverter.prototype.processSchema = function (oElement) {
 		var sSchemaVersion = this.consumeSapAnnotation("schema-version");
 
 		this.namespace = oElement.getAttribute("Namespace") + ".";
@@ -1062,7 +1062,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 * @param {object} oType The initial typed result object
 	 */
-	V2MetadataConverter.prototype.processType = function (oElement, oType) {
+	_V2MetadataConverter.prototype.processType = function (oElement, oType) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
 		this.sTypeName = sQualifiedName;
@@ -1078,7 +1078,7 @@ sap.ui.define([
 	 * @param {string} sType The type attribute from the Element
 	 * @param {object} oProperty The property attribute in the JSON
 	 */
-	V2MetadataConverter.prototype.processTypedCollection = function (sType, oProperty) {
+	_V2MetadataConverter.prototype.processTypedCollection = function (sType, oProperty) {
 		var aMatches = this.rCollection.exec(sType);
 
 		if (aMatches) {
@@ -1118,7 +1118,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processTypeNavigationProperty = function (oElement) {
+	_V2MetadataConverter.prototype.processTypeNavigationProperty = function (oElement) {
 		var sCreatable = this.consumeSapAnnotation("creatable"),
 			sCreatablePath = this.consumeSapAnnotation("creatable-path"),
 			sFilterable = this.consumeSapAnnotation("filterable"),
@@ -1198,7 +1198,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.processTypeProperty = function (oElement) {
+	_V2MetadataConverter.prototype.processTypeProperty = function (oElement) {
 		var oAnnotatable,
 			sEnumMember,
 			sFilterRestriction,
@@ -1297,7 +1297,7 @@ sap.ui.define([
 	/**
 	 * Post-processing of all bound operations: key properties are removed from parameters.
 	 */
-	V2MetadataConverter.prototype.processBoundOperations = function () {
+	_V2MetadataConverter.prototype.processBoundOperations = function () {
 		var that = this;
 
 		this.aBoundOperations.forEach(function (oOperation) {
@@ -1321,7 +1321,7 @@ sap.ui.define([
 	 * sap:semantics="currency-code". The unit property can be in a different type thus the
 	 * conversion can only happen in pass 3.
 	 */
-	V2MetadataConverter.prototype.processUnitConversion = function () {
+	_V2MetadataConverter.prototype.processUnitConversion = function () {
 		var that = this;
 
 		Object.keys(this.mProperty2Unit).forEach(function (sPropertyPath) {
@@ -1393,7 +1393,7 @@ sap.ui.define([
 	/**
 	 * Sets $EntityContainer to the default entity container (or the only one).
 	 */
-	V2MetadataConverter.prototype.setDefaultEntityContainer = function () {
+	_V2MetadataConverter.prototype.setDefaultEntityContainer = function () {
 		var sDefaultEntityContainer = this.defaultEntityContainer,
 			aEntityContainers,
 			oResult = this.result;
@@ -1416,7 +1416,7 @@ sap.ui.define([
 	 * from the associations. Iterates over the aggregated association set and tries to create
 	 * navigation property bindings for both directions.
 	 */
-	V2MetadataConverter.prototype.updateNavigationPropertiesAndCreateBindings = function () {
+	_V2MetadataConverter.prototype.updateNavigationPropertiesAndCreateBindings = function () {
 		var that = this;
 
 		this.navigationProperties.forEach(function (oNavigationPropertyData) {
@@ -1483,7 +1483,7 @@ sap.ui.define([
 	 * @returns {Annotatable}
 	 *   The created annotatable
 	 */
-	V2MetadataConverter.prototype.v2annotatable = function (sName, fnProcessV2Annotatable) {
+	_V2MetadataConverter.prototype.v2annotatable = function (sName, fnProcessV2Annotatable) {
 		var oAnnotatable = new Annotatable(this, sName);
 
 		this.oAnnotatable = oAnnotatable;
@@ -1502,7 +1502,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oElement The element
 	 */
-	V2MetadataConverter.prototype.warnUnsupportedSapAnnotations = function (oElement) {
+	_V2MetadataConverter.prototype.warnUnsupportedSapAnnotations = function (oElement) {
 		Object.keys(this.mSapAnnotations).forEach(function (sName) {
 			Log.warning("Unsupported annotation 'sap:" + sName + "'",
 				serializeSingleElement(oElement), sClassName);
@@ -1607,7 +1607,7 @@ sap.ui.define([
 			}
 		};
 
-	})(V2MetadataConverter.prototype);
+	})(_V2MetadataConverter.prototype);
 
-	return V2MetadataConverter;
+	return _V2MetadataConverter;
 }, /* bExport= */false);
