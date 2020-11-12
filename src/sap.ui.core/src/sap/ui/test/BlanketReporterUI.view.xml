@@ -58,7 +58,7 @@
 					<Text text="Missed"/>
 				</table:label>
 				<table:template>
-					<Text text="{path : 'lines/missed', type : 'sap.ui.model.data.type.Int32'}"/>
+					<Text text="{path : 'lines/missed', type : 'sap.ui.model.odata.type.Int32'}"/>
 				</table:template>
 			</table:Column>
 			<table:Column width="5em" hAlign="Right" sortProperty="lines/coverage">
