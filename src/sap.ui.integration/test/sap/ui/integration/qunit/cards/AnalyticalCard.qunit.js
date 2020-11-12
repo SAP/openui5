@@ -6,14 +6,13 @@ sap.ui.define([
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/CardActions",
 	"../services/SampleServices"
-	],
-	function (
-		Card,
-		Core,
-		ContentFactory,
-		CardActions,
-		SampleServices
-	) {
+], function (
+	Card,
+	Core,
+	ContentFactory,
+	CardActions,
+	SampleServices
+) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -661,15 +660,18 @@ sap.ui.define([
 		});
 	}
 
-	var oContentFactory = new ContentFactory();
+	QUnit.module("Init");
+
+	var oCard = new Card(),
+		oContentFactory = new ContentFactory(oCard);
+
 	return oContentFactory.create({
 		cardType: "Analytical"
 	}).then(function () {
-
-		QUnit.module("Init");
 		QUnit.test("Initialization - AnalyticalContent", function (assert) {
 			testContentInitialization(oManifest_AnalyticalCard, assert);
 		});
+
 		QUnit.module("Analytical Card", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -684,6 +686,7 @@ sap.ui.define([
 				this.oCard = null;
 			}
 		});
+
 		QUnit.test("Using manifest", function (assert) {
 			testChartCreation(this.oCard, oManifest_AnalyticalCard, assert);
 		});
@@ -704,12 +707,15 @@ sap.ui.define([
 				this.oCard = null;
 			}
 		});
+
 		QUnit.test("Analytical content should be actionable - service ", function (assert) {
 			testActionOnContentService(oManifest_Analytical_Service, assert);
 		});
+
 		QUnit.test("Analytical Card should be actionable - url", function (assert) {
 			testActionOnContentUrl(oManifest_Analytical_Url, assert);
 		});
+
 		QUnit.test("Analytical Card should be not actionable", function (assert) {
 			// Arrange
 			var done = assert.async(),
@@ -738,10 +744,12 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		}).catch(function (sError) {
-			QUnit.test("Analytical not supported", function (assert) {
-				assert.strictEqual(sError, "Analytical content type is not available with this distribution.");
-			});
+	}).catch(function (sError) {
+		QUnit.test("Analytical not supported", function (assert) {
+			assert.strictEqual(sError, "Analytical content type is not available with this distribution.");
 		});
-	}
-);
+	}).finally(function () {
+		oCard.destroy();
+	});
+
+});

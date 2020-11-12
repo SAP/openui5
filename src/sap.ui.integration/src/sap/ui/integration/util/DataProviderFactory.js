@@ -82,7 +82,7 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, Ex
 		}
 
 		oConfig = {
-			"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings)
+			"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings, oCard.getBindingNamespaces())
 		};
 
 		if (oDataSettings.request) {
@@ -97,10 +97,8 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, Ex
 			return null;
 		}
 
-		if (oCard) {
-			BindingHelper.copyModels(this._oCard, oDataProvider);
-			oDataProvider.bindObject("/");
-		}
+		BindingHelper.copyModels(oCard, oDataProvider);
+		oDataProvider.bindObject("/");
 
 		oDataProvider.setDestinations(this._oDestinations);
 

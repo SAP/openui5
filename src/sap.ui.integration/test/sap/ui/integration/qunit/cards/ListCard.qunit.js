@@ -22,7 +22,8 @@ sap.ui.define([
 	var AvatarColor = mLibrary.AvatarColor;
 
 	var pIfMicrochartsAvailable = new Promise(function (resolve, reject) {
-		var oContentFactory = new ContentFactory();
+		var oCard = new Card(),
+			oContentFactory = new ContentFactory(oCard);
 		return oContentFactory.create({
 				cardType: "List",
 				contentManifest: {
@@ -32,7 +33,8 @@ sap.ui.define([
 				}
 			})
 			.then(resolve)
-			.catch(reject);
+			.catch(reject)
+			.finally(oCard.destroy);
 	});
 
 	var oManifest_ListCard = {

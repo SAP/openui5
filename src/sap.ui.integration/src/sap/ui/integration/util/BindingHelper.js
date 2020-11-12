@@ -68,9 +68,10 @@ sap.ui.define([
 	 * Resolves expression bindings with our formatters. Also creates binding infos, if there is a binding syntax.
 	 *
 	 * @param {any} vValue The value with binding.
+	 * @param {object} mLocalBindingNamespaces Local binding functions
 	 * @returns {object|undefined} Created binding info or undefined if there is no binding.
 	 */
-	BindingHelper.extractBindingInfo = function (vValue) {
+	BindingHelper.extractBindingInfo = function (vValue, mLocalBindingNamespaces) {
 		vValue = BindingHelper.escapeCardPlaceholders(vValue);
 
 		return BindingParser.complexParser(
@@ -80,7 +81,7 @@ sap.ui.define([
 			undefined, // bTolerateFunctionsNotFound
 			undefined, // bStaticContext
 			undefined, // bPreferContext
-			BindingHelper.mLocals // mLocals - functions which will be used in expression binding
+			extend({}, BindingHelper.mLocals, mLocalBindingNamespaces) // mLocals - functions which will be used in expression binding
 		);
 	};
 
@@ -90,29 +91,34 @@ sap.ui.define([
 	 * If any there is any left string value containing placeholders, e.g '{{parameters.city}} it will be escaped.
 	 *
 	 * @param {*} vItem Object, Array, or any other type.
+	 * @param {object} mLocalBindingNamespaces Local binding functions
 	 * @returns {*} Processed variant of vItem which is turned to binding info(s).
 	 */
-	BindingHelper.createBindingInfos = function (vItem) {
+	BindingHelper.createBindingInfos = function (vItem, mLocalBindingNamespaces) {
 
 		if (!vItem) {
 			return vItem;
 		}
 
 		if (Array.isArray(vItem)) {
-			return vItem.map(BindingHelper.createBindingInfos);
+			return vItem.map(function (vItem) {
+				return BindingHelper.createBindingInfos(vItem, mLocalBindingNamespaces);
+			});
 		}
 
 		if (typeof vItem === "object") {
 			var oItemCopy = {};
 
 			for (var sKey in vItem) {
-				oItemCopy[sKey] = BindingHelper.createBindingInfos(vItem[sKey]);
+				oItemCopy[sKey] = BindingHelper.createBindingInfos(vItem[sKey], mLocalBindingNamespaces);
 			}
 
 			return oItemCopy;
 		}
 
-		return BindingHelper.escapeParametersAndDataSources(BindingHelper.extractBindingInfo(vItem) || vItem);
+		var oBindingInfo = BindingHelper.extractBindingInfo(vItem, mLocalBindingNamespaces);
+
+		return BindingHelper.escapeParametersAndDataSources(oBindingInfo || vItem);
 	};
 
 	/**
@@ -176,15 +182,6 @@ sap.ui.define([
 		}
 
 		return vValue.replace(rCardParametersPattern, "\\{\\{$1\\}\\}").replace(rCardDataSourcesPattern, "\\{\\{$1\\}\\}");
-	};
-
-	/**
-	 * Adds new functions in the given namespace, which can be used in expression binding.
-	 * @param {string} sNamespace The namespace.
-	 * @param {object} oValue The functions, that will be available in this namespace.
-	 */
-	BindingHelper.addNamespace = function (sNamespace, oValue) {
-		BindingHelper.mLocals[sNamespace] = oValue;
 	};
 
 	BindingHelper.isAbsolutePath = function (sPath) {

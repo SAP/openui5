@@ -36,16 +36,17 @@ sap.ui.define([
 	 * Creates a json with binding infos from the given object.
 	 * Can be used to resolve in depth data binding for objects with unknown structure.
 	 *
-	 * @param {Object} oValue The object for which we want to create binding infos.
+	 * @param {object} oValue The object for which we want to create binding infos.
+	 * @param {object} mLocalBindingNamespaces Local binding functions
 	 * @return {string} The json stringified object with the binding infos.
 	 */
-	JSONBindingHelper.createJsonWithBindingInfos = function (oValue) {
+	JSONBindingHelper.createJsonWithBindingInfos = function (oValue, mLocalBindingNamespaces) {
 		if (!oValue) {
 			return oValue;
 		}
 
 		var sJson = this._createBindableJson(oValue),
-			vBindingInfos = BindingHelper.createBindingInfos(sJson);
+			vBindingInfos = BindingHelper.createBindingInfos(sJson, mLocalBindingNamespaces);
 
 		// if there is no binding, the result is string, but the json is not escaped anymore.
 		if (typeof vBindingInfos === "string") {

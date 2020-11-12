@@ -2,22 +2,22 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/base/util/extend',
+	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericHeaderRenderer",
-	"sap/ui/integration/util/BindingHelper",
 	"sap/f/cards/NumericSideIndicator",
-	'sap/ui/model/json/JSONModel',
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/LoadingProvider"
-], function (extend,
-			 isEmptyObject,
-			 FNumericHeader,
-			 FNumericHeaderRenderer,
-			 BindingHelper,
-			 NumericSideIndicator,
-			 JSONModel,
-			 LoadingProvider) {
+], function (
+	extend,
+	isEmptyObject,
+	FNumericHeader,
+	FNumericHeaderRenderer,
+	NumericSideIndicator,
+	JSONModel,
+	LoadingProvider
+) {
 	"use strict";
 
 
@@ -54,7 +54,7 @@ sap.ui.define([
 				subtitle: mConfiguration.subTitle
 			};
 
-			if (mConfiguration.status && typeof mConfiguration.status.text === "string") {
+			if (mConfiguration.status && mConfiguration.status.text && !mConfiguration.status.text.format) {
 				mSettings.statusText = mConfiguration.status.text;
 			}
 
@@ -69,8 +69,6 @@ sap.ui.define([
 				mSettings.trend = mConfiguration.mainIndicator.trend;
 				mSettings.state = mConfiguration.mainIndicator.state; // TODO convert ValueState to ValueColor
 			}
-
-			mSettings = BindingHelper.createBindingInfos(mSettings);
 
 			if (mConfiguration.sideIndicators) {
 				mSettings.sideIndicators = mConfiguration.sideIndicators.map(function (mIndicator) { // TODO validate that it is an array and with no more than 2 elements

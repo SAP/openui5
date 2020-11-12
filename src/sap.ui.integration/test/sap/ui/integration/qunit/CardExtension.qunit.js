@@ -487,6 +487,46 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.test("Formatters are local to card instance", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oCard2 = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				manifest: {
+					"sap.app": {
+						"id": "sap.ui.integration.test.card2"
+					},
+					"sap.card": {
+						"type": "List",
+						"extension": "./testResources/extensions/Extension2",
+						"content": {
+							"item": {
+								"title": "{= extension.formatters.toUpperCase2(${city}) }"
+							}
+						}
+					}
+				}
+			});
+
+		this.oCard.attachEventOnce("_ready", function () {
+			var oBindingNamespaces = this.oCard.getBindingNamespaces();
+
+			oCard2.attachEventOnce("_ready", function () {
+				// assert
+				assert.notDeepEqual(oBindingNamespaces, oCard2.getBindingNamespaces(), "Namespaces contain different functions for both cards");
+				assert.deepEqual(this.oCard.getBindingNamespaces(), oBindingNamespaces, "Namespace of the first card remains unchanged");
+
+				done();
+			}.bind(this));
+
+			// act 2
+			oCard2.placeAt(DOM_RENDER_LOCATION);
+		}.bind(this));
+
+		// act 1
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.module("Life-cycle method onCardReady", {
 		beforeEach: function () {
 			this.fnOnCardReadyStub = sinon.stub(Extension.prototype, "onCardReady");
