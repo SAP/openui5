@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
 	"sap/base/strings/escapeRegExp",
-	"sap/m/inputUtils/highlightDOMElements"
+	"sap/m/inputUtils/highlightDOMElements",
+	"sap/m/inputUtils/ListHelpers"
 ],
 	function(
 		Dialog,
@@ -40,7 +41,8 @@ sap.ui.define([
 		jQuery,
 		encodeXML,
 		escapeRegExp,
-		highlightDOMElements
+		highlightDOMElements,
+		ListHelpers
 	) {
 		"use strict";
 		// shortcut for sap.m.ListType
@@ -433,38 +435,6 @@ sap.ui.define([
 			return this._oGroupHeaderInvisibleText;
 		};
 
-
-		/**
-		 * Gets the item corresponding to given list item.
-		 *
-		 * @param {sap.m.StandardListItem | null} oListItem The given list item
-		 * @return {sap.ui.core.Item} The corresponding item
-		 * @private
-		 */
-		ComboBoxBase.prototype._getItemByListItem = function(oListItem) {
-			return this._getItemBy(oListItem, "ListItem");
-		};
-
-		/**
-		 * Gets the item corresponding to given data object.
-		 *
-		 * @param {Object | null} oDataObject The given object
-		 * @param {string} sDataName The data name
-		 * @return {sap.ui.core.Item} The corresponding item
-		 * @private
-		 */
-		ComboBoxBase.prototype._getItemBy = function(oDataObject, sDataName) {
-			sDataName = this.getRenderer().CSS_CLASS_COMBOBOXBASE + sDataName;
-
-			for ( var i = 0, aItems = this.getItems(), iItemsLength = aItems.length; i < iItemsLength; i++) {
-				if (aItems[i].data(sDataName) === oDataObject) {
-					return aItems[i];
-				}
-			}
-
-			return null;
-		};
-
 		/**
 		 * Checks if the list is in suggestions mode.
 		 *
@@ -473,19 +443,8 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype._isListInSuggestMode = function() {
 			return this._getList().getItems().some(function(oListItem) {
-				return !oListItem.getVisible() && this._getItemByListItem(oListItem).getEnabled();
+				return !oListItem.getVisible() && ListHelpers.getItemByListItem(this.getItems(), oListItem).getEnabled();
 			}, this);
-		};
-
-		/**
-		 * Gets the control's ListItem.
-		 *
-		 * @param {sap.ui.core.Item} oItem The item
-		 * @returns {sap.m.StandardListItem | null} The ListItem
-		 * @private
-		 */
-		ComboBoxBase.prototype.getListItem = function(oItem) {
-			return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem") : null;
 		};
 
 		/**
@@ -1034,7 +993,7 @@ sap.ui.define([
 			}
 
 			oItem._bSelectable = bSelectable;
-			var oListItem = this.getListItem(oItem);
+			var oListItem = ListHelpers.getListItem(oItem);
 
 			if (oListItem) {
 				oListItem.setVisible(bSelectable);
@@ -1213,7 +1172,7 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype.getVisibleItems = function() {
 			for (var i = 0, oListItem, aItems = this.getItems(), aVisibleItems = []; i < aItems.length; i++) {
-				oListItem = this.getListItem(aItems[i]);
+				oListItem = ListHelpers.getListItem(aItems[i]);
 
 				if (oListItem && oListItem.getVisible()) {
 					aVisibleItems.push(aItems[i]);
@@ -1258,7 +1217,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Item[]} An array containing the selectables items.
 		 */
 		ComboBoxBase.prototype.getSelectableItems = function() {
-			return this.getEnabledItems(this.getVisibleItems());
+			return ListHelpers.getEnabledItems(this.getVisibleItems());
 		};
 
 		/**
@@ -1301,7 +1260,7 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype.clearFilter = function() {
 			this.getItems().forEach(function(oItem) {
-				var oListItem = this.getListItem(oItem);
+				var oListItem = ListHelpers.getListItem(oItem);
 
 				if (oListItem) {
 					oListItem.setVisible(oItem.getEnabled() && this.getSelectable(oItem));
@@ -1417,21 +1376,6 @@ sap.ui.define([
 		ComboBoxBase.prototype.getLastItem = function() {
 			var aItems = this.getItems();
 			return aItems[aItems.length - 1] || null;
-		};
-
-		/**
-		 * Gets the enabled items from the aggregation named <code>items</code>.
-		 *
-		 * @param {sap.ui.core.Item[]} [aItems=getItems()] Items to filter.
-		 * @returns {sap.ui.core.Item[]} An array containing the enabled items.
-		 * @public
-		 */
-		ComboBoxBase.prototype.getEnabledItems = function(aItems) {
-			aItems = aItems || this.getItems();
-
-			return aItems.filter(function(oItem) {
-				return oItem.getEnabled();
-			});
 		};
 
 		/**

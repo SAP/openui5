@@ -1,9 +1,9 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/Device'
+sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/inputUtils/ListHelpers'
 ],
-	function(ComboBoxBaseRenderer, Renderer) {
+	function(ComboBoxBaseRenderer, Renderer, ListHelpers) {
 		"use strict";
 
 		/**
@@ -68,7 +68,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/Device'
 		 */
 		ComboBoxRenderer.writeInnerAttributes = function(oRm, oControl) {
 			var oSelectedItem = oControl.getSelectedItem(),
-				oSelectedListItem = oSelectedItem && oControl.getListItem(oSelectedItem),
+				oSelectedListItem = oSelectedItem && ListHelpers.getListItem(oSelectedItem),
 				bOpen = oControl.isOpen(),
 				bFormattedTextHeaderFocused = oControl.getProperty("formattedTextFocused");
 

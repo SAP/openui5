@@ -35,7 +35,8 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/m/ObjectIdentifier"
+	"sap/m/ObjectIdentifier",
+	"sap/m/inputUtils/ListHelpers"
 ],
 function(Press,
 		 Button,
@@ -72,7 +73,8 @@ function(Press,
 		 Ancestor,
 		 Log,
 		 $,
-		 ObjectIdentifier
+		 ObjectIdentifier,
+		 ListHelpers
 ){
 	"use strict";
 
@@ -634,7 +636,7 @@ function(Press,
 		assert.equal(oOpenPickerDomRef.css("display"), "block", "Checking Popover's display css property");
 
 		var oPressItem = new Press();
-		oPressItem.executeOn(this.oComboBox.getListItem(this.oComboBox.getItems()[1]));
+		oPressItem.executeOn(ListHelpers.getListItem(this.oComboBox.getItems()[1]));
 
 		this.clock.tick(500);
 
