@@ -2464,9 +2464,7 @@ sap.ui.define([
 				.expectChange("longitude3", "8.710000000000");
 
 			return Promise.all([
-				oFormContext.requestSideEffects([
-					{$PropertyPath : "Address"}
-				]),
+				oFormContext.requestSideEffects([{$PropertyPath : "Address"}]),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -2965,10 +2963,7 @@ sap.ui.define([
 
 			// see that requestSideEffects updates AGE, too
 			return Promise.all([
-				oTable.getBinding("items").getHeaderContext().requestSideEffects([
-					{$PropertyPath : "AGE"},
-					{$PropertyPath : "Name"}
-				]),
+				oTable.getBinding("items").getHeaderContext().requestSideEffects(["AGE", "Name"]),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -5521,8 +5516,7 @@ sap.ui.define([
 
 			return Promise.all([
 				resolveLater(function () {
-					return oRowContext.requestSideEffects(
-						[{$NavigationPropertyPath : "SO_2_SOITEM"}]);
+					return oRowContext.requestSideEffects(["SO_2_SOITEM"]);
 				}, 0),
 				that.oView.byId("detail").setBindingContext(oRowContext),
 				that.waitForChanges(assert)
@@ -6205,12 +6199,10 @@ sap.ui.define([
 			aCreatedContexts.push(oBinding.create({Note : "new4"}, /*bSkipRefresh*/true));
 			aCreatedContexts.push(oBinding.create({Note : "new5"}, /*bSkipRefresh*/true));
 
-			oBinding.getHeaderContext().requestSideEffects([{$NavigationPropertyPath : ""}])
-				.catch(function (oError0) {
-					assert.strictEqual(oError0.message,
-						"HTTP request was not processed because the previous request failed");
-					assert.strictEqual(oError0.cause.message,
-						sCreateError);
+			oBinding.getHeaderContext().requestSideEffects([""]).catch(function (oError0) {
+				assert.strictEqual(oError0.message,
+					"HTTP request was not processed because the previous request failed");
+				assert.strictEqual(oError0.cause.message, sCreateError);
 			});
 
 			return that.waitForChanges(assert,
@@ -11570,8 +11562,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oTable.getBinding("items").getHeaderContext()
-					.requestSideEffects([{$PropertyPath : "LOCATION"}]),
+				oTable.getBinding("items").getHeaderContext().requestSideEffects(["LOCATION"]),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -18042,11 +18033,7 @@ sap.ui.define([
 
 				return Promise.all([
 					// code under test
-					oInactiveArtistContext.requestSideEffects([{
-						$PropertyPath : "Address/City"
-					}, {
-						$PropertyPath : "Name"
-					}]),
+					oInactiveArtistContext.requestSideEffects(["Address/City", "Name"]),
 					that.waitForChanges(assert)
 				]);
 			}).then(function () {
@@ -18505,10 +18492,7 @@ sap.ui.define([
 				.expectChange("artistName", "The Beatles");
 
 			return Promise.all([
-				oReturnValueContext.requestSideEffects([
-					{$PropertyPath : "*"},
-					{$NavigationPropertyPath : "_Publication"}
-				]),
+				oReturnValueContext.requestSideEffects(["*", "_Publication"]),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -18649,10 +18633,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				oReturnValueContext.requestSideEffects([
-					{$PropertyPath : "*"},
-					{$NavigationPropertyPath : "BestFriend"},
-					{$NavigationPropertyPath : "_Publication"}]),
+				oReturnValueContext.requestSideEffects(["*", "BestFriend", "_Publication"]),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -21389,9 +21370,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oView.byId("form").getBindingContext().requestSideEffects([{
-					$NavigationPropertyPath : "SO_2_BP"
-				}]),
+				that.oView.byId("form").getBindingContext().requestSideEffects(["SO_2_BP"]),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -21415,9 +21394,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oView.byId("form").getBindingContext().requestSideEffects([{
-					$NavigationPropertyPath : "SO_2_BP"
-				}]),
+				that.oView.byId("form").getBindingContext().requestSideEffects(["SO_2_BP"]),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -22006,11 +21983,10 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oView.byId("form").getBindingContext().requestSideEffects([{
-					$PropertyPath : "BestFriend/_Publication/Price"
-				}, {
-					$PropertyPath : "BestFriend/_Publication/DraftAdministrativeData/InProcessByUser"
-				}]),
+				that.oView.byId("form").getBindingContext().requestSideEffects([
+					"BestFriend/_Publication/Price",
+					"BestFriend/_Publication/DraftAdministrativeData/InProcessByUser"
+				]),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -22076,9 +22052,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				o2ndRowContext.requestSideEffects([{
-					$NavigationPropertyPath : ""
-				}]),
+				o2ndRowContext.requestSideEffects([{$NavigationPropertyPath : ""}]),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -22156,9 +22130,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test: request side effects on "not-created" entity from server
-				oTable.getRows()[1].getBindingContext().requestSideEffects([{
-					$PropertyPath : "Price"
-				}]),
+				oTable.getRows()[1].getBindingContext().requestSideEffects(["Price"]),
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
@@ -22172,9 +22144,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test: request side effects on non-transient created entity
-				oTable.getRows()[0].getBindingContext().requestSideEffects([{
-					$NavigationPropertyPath : ""
-				}]),
+				oTable.getRows()[0].getBindingContext().requestSideEffects([""]),
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
@@ -22206,9 +22176,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test: call on header context loads side effects for the whole binding
-				oTable.getBinding("rows").getHeaderContext().requestSideEffects([{
-					$PropertyPath : "Price"
-				}]),
+				oTable.getBinding("rows").getHeaderContext().requestSideEffects(["Price"]),
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
@@ -22410,12 +22378,11 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oBestFriendBox.getBindingContext()
-					.requestSideEffects([{
-						$PropertyPath : "BestPublication/CurrencyCode"
-					}, {
-						$PropertyPath : "Name"
-					}]),
+				oBestFriendBox.getBindingContext().requestSideEffects([{
+					$PropertyPath : "BestPublication/CurrencyCode"
+				}, {
+					$PropertyPath : "Name"
+				}]),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -22442,9 +22409,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oBestPublicationBox.getBindingContext().requestSideEffects([{
-					$PropertyPath : "CurrencyCode"
-				}]),
+				oBestPublicationBox.getBindingContext().requestSideEffects(["CurrencyCode"]),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -22492,9 +22457,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oView.byId("innerName").getBindingContext().requestSideEffects([{
-					$PropertyPath : "Name"
-				}]),
+				that.oView.byId("innerName").getBindingContext().requestSideEffects(["Name"]),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -22541,13 +22504,11 @@ sap.ui.define([
 			oTableBinding = oTable.getBinding("items");
 
 			return Promise.all([
-				oTableBinding.getHeaderContext()
-					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
-						function () {
-							assert.ok(false, "unexpected success");
-						}, function () {
-							assert.ok(true, "requestSideEffects failed as expected");
-						}),
+				oTableBinding.getHeaderContext().requestSideEffects([""]).then(function () {
+					assert.ok(false, "unexpected success");
+				}, function () {
+					assert.ok(true, "requestSideEffects failed as expected");
+				}),
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
@@ -22613,13 +22574,11 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				oTableBinding.getHeaderContext()
-					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
-						function () {
-							assert.ok(false, "unexpected success");
-						}, function () {
-							assert.ok(true, "requestSideEffects failed as expected");
-						}),
+				oTableBinding.getHeaderContext().requestSideEffects([""]).then(function () {
+					assert.ok(false, "unexpected success");
+				}, function () {
+					assert.ok(true, "requestSideEffects failed as expected");
+				}),
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
@@ -22734,8 +22693,7 @@ sap.ui.define([
 				})
 				.expectChange("note", "Note updated");
 
-			oPromise = oBinding.getBoundContext()
-				.requestSideEffects([{$NavigationPropertyPath : ""}]);
+			oPromise = oBinding.getBoundContext().requestSideEffects([""]);
 			oBinding.changeParameters({foo : "bar"});
 
 			return Promise.all([
@@ -22860,15 +22818,11 @@ sap.ui.define([
 				.expectChange("pos", ["0010*"]);
 
 			return Promise.all([
-				that.oView.byId("form").getBindingContext().requestSideEffects([
-					{$NavigationPropertyPath : "SO_2_SOITEM"}
-				]),
-
+				that.oView.byId("form").getBindingContext().requestSideEffects(["SO_2_SOITEM"]),
 				Promise.resolve().then(function () {
 					// code under test - execute while requestSideEffects is already being processed
 					return that.oView.byId("action").getObjectBinding().execute();
 				}),
-
 				that.waitForChanges(assert)
 			]);
 		});
@@ -25582,9 +25536,7 @@ sap.ui.define([
 
 			// code under test: requestSideEffects promise resolves, "creationRow::note" unchanged
 			return Promise.all([
-				oTableBinding.getContext().requestSideEffects([{
-					$NavigationPropertyPath : "SO_2_SOITEM"
-				}]),
+				oTableBinding.getContext().requestSideEffects(["SO_2_SOITEM"]),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -26165,9 +26117,7 @@ sap.ui.define([
 			// expect no requests as fnRespond not invoked yet
 
 			// code under test - requestSideEffects has to wait for POST to finish
-			oRequestSideEffectsPromise = oFormContext.requestSideEffects([{
-				$NavigationPropertyPath : "BP_2_SO"
-			}]);
+			oRequestSideEffectsPromise = oFormContext.requestSideEffects(["BP_2_SO"]);
 
 			return that.waitForChanges(assert); // no real changes but for sake of consistency
 		}).then(function () {
@@ -26269,9 +26219,7 @@ sap.ui.define([
 			// expect no requests as fnRespond not invoked yet
 
 			// code under test - requestSideEffects has to wait for POST to finish
-			oRequestSideEffectsPromise = oFormContext.requestSideEffects([{
-				$NavigationPropertyPath : ""
-			}]);
+			oRequestSideEffectsPromise = oFormContext.requestSideEffects([""]);
 
 			return that.waitForChanges(assert); // no real changes but for sake of consistency
 		}).then(function () {
@@ -26567,10 +26515,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oContext.requestSideEffects([
-					{$PropertyPath : "BtoA/AValue"},
-					{$PropertyPath : "BValue"}
-				]),
+				oContext.requestSideEffects(["BtoA/AValue", "BValue"]),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -27430,8 +27375,7 @@ sap.ui.define([
 						});
 					}));
 
-			oPromise
-				= oInput.getBindingContext().requestSideEffects([{$NavigationPropertyPath : ""}]);
+			oPromise = oInput.getBindingContext().requestSideEffects([""]);
 
 			// 2nd, switch to different context
 			that.expectRequest("TEAMS('TEAM_02')?$select=Name,Team_Id", {
@@ -27506,8 +27450,7 @@ sap.ui.define([
 						});
 					}));
 
-			oPromise = oTable.getBinding("items").getHeaderContext()
-				.requestSideEffects([{$NavigationPropertyPath : ""}]);
+			oPromise = oTable.getBinding("items").getHeaderContext().requestSideEffects([""]);
 
 			// 2nd, switch to different context
 			that.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$select=ID,Name"
@@ -27582,8 +27525,7 @@ sap.ui.define([
 						});
 					}));
 
-			oPromise = oTable.getBinding("items").getHeaderContext()
-				.requestSideEffects([{$NavigationPropertyPath : ""}]);
+			oPromise = oTable.getBinding("items").getHeaderContext().requestSideEffects([""]);
 
 			// 2nd, switch to different context
 			that.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$select=ID,Name"
@@ -27838,12 +27780,11 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oContext.requestSideEffects([{$PropertyPath : "BestFriend/*"}])
-					.then(function () {
-						assert.ok(false, "unexpected success");
-					}, function (oError) {
-						assert.strictEqual(oError.message, sError);
-					}),
+				oContext.requestSideEffects(["BestFriend/*"]).then(function () {
+					assert.ok(false, "unexpected success");
+				}, function (oError) {
+					assert.strictEqual(oError.message, sError);
+				}),
 				that.waitForChanges(assert, "BestFriend/*")
 			]);
 		}).then(function () {
@@ -27876,9 +27817,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oContext.requestSideEffects([{
-					$PropertyPath : "BestFriend/BestFriend/BestPublication/*"
-				}]),
+				oContext.requestSideEffects(["BestFriend/BestFriend/BestPublication/*"]),
 				that.waitForChanges(assert, "BestFriend/BestFriend/BestPublication/*")
 			]);
 		}).then(function () {
@@ -28070,8 +28009,7 @@ sap.ui.define([
 
 			return Promise.all([
 				that.oView.byId("action").getElementBinding().execute(),
-				that.oView.byId("form").getBindingContext()
-					.requestSideEffects([{$PropertyPath : "LifecycleStatus"}]),
+				that.oView.byId("form").getBindingContext().requestSideEffects(["LifecycleStatus"]),
 				that.waitForChanges(assert)
 			]);
 		});
