@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, Filter, FilterOperator, _AggregationHelper, _Helper) {
 	/*global QUnit*/
-	/*eslint no-warning-comments: 0 */
+	/*eslint camelcase: 0, no-warning-comments: 0 */
 	"use strict";
 
 	//*********************************************************************************************
