@@ -99,6 +99,20 @@ function(
 			});
 		});
 
+		QUnit.test("Given extensibility enabled and a bound control without serviceurl on model when 'isServiceUpToDate' is called", function(assert) {
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated").returns(false);
+			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			var oBoundModel = oBoundControl.getModel();
+			var sServiceUrl = oBoundModel.sServiceUrl;
+			delete oBoundModel.sServiceUrl;
+			return Utils.isServiceUpToDate(oBoundControl).then(function() {
+				assert.ok(true, "then the service is recognized as up to date");
+				assert.equal(isServiceOutdatedStub.callCount, 0, "then service is asked to be invalid");
+				oBoundModel.sServiceUrl = sServiceUrl;
+			});
+		});
+
 		QUnit.test("Given extensibility enabled and a bound control and an outdated service when isServiceUpToDate is called", function(assert) {
 			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 			sandbox.stub(Access, "isServiceOutdated").returns(true);

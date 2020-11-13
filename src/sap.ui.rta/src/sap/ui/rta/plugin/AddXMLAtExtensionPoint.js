@@ -112,6 +112,14 @@ sap.ui.define([
 		return aElementOverlays.length === 1;
 	};
 
+	AddXMLAtExtensionPoint.prototype.isAvailable = function (aOverlays) {
+		if (isDesignMode()) {
+			var oElement = aOverlays[0].getElement();
+			return hasExtensionPoints(oElement);
+		}
+		return false;
+	};
+
 	function handleAddXmlAtExtensionPointCommand(oElement, mExtensionData, oCompositeCommand) {
 		var sExtensionPointName = mExtensionData.extensionPointName;
 		var oView = FlUtils.getViewForControl(oElement);

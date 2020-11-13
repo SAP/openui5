@@ -48,6 +48,11 @@ sap.ui.define([
 				'<core:ExtensionPoint name="ExtensionPoint3" />' +
 			'</content>' +
 		'</Panel>' +
+		'<Panel id="invisiblePanel" width="0" height="0">' +
+			'<content>' +
+				'<core:ExtensionPoint name="ExtensionPoint4" />' +
+			'</content>' +
+		'</Panel>' +
 	'</mvc:View>';
 
 	function createComponent() {
@@ -77,6 +82,7 @@ sap.ui.define([
 				this.oXmlView = oXmlView;
 				this.oPanel = oXmlView.getContent()[0];
 				this.oPanelWithoutId = oXmlView.getContent()[1];
+				this.oInvisiblePanel = oXmlView.getContent()[2];
 				this.oLabel = this.oPanel.getContent()[1];
 				oXmlView.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -99,6 +105,7 @@ sap.ui.define([
 					this.oDesignTime.attachEventOnce("synced", function() {
 						this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
 						this.oPanelWithoutIdOverlay = OverlayRegistry.getOverlay(this.oPanelWithoutId);
+						this.oInvisiblePanelOverlay = OverlayRegistry.getOverlay(this.oInvisiblePanel);
 						this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
 						resolve();
 					}.bind(this));
@@ -140,6 +147,13 @@ sap.ui.define([
 				.then(function(bEditable) {
 					assert.strictEqual(bEditable, true, "then the overlay is editable");
 				});
+		});
+
+		QUnit.test("when an invisible overlay with extensionpoints available is given", function(assert) {
+			assert.strictEqual(this.oAddXmlAtExtensionPointPlugin.isAvailable([this.oInvisiblePanelOverlay]), true, "isAvailable is called and returns true");
+			assert.strictEqual(this.oAddXmlAtExtensionPointPlugin.isEnabled([this.oInvisiblePanelOverlay]), true, "isEnabled is called and returns true");
+			var aPluginList = this.oInvisiblePanelOverlay.getEditableByPlugins();
+			assert.strictEqual(aPluginList.indexOf("sap.ui.rta.plugin.AddXMLAtExtensionPoint"), -1, "then overlay is not marked as editable for addXmlAtExtensionPoint action");
 		});
 
 		QUnit.test("when an overlay with extensionpoints but without stable ID available is given", function(assert) {
@@ -211,7 +225,7 @@ sap.ui.define([
 					assert.ok(Array.isArray(aPassedExtensionPointObjects),
 						"then the fragment handler function is called with array of ExtensionPointInformations as second parameter");
 					assert.deepEqual(aPassedExtensionPointObjects.map(function (oExtensionPoint) { return oExtensionPoint.name; }),
-						["ExtensionPoint1", "ExtensionPoint2", "ExtensionPoint3"],
+						["ExtensionPoint1", "ExtensionPoint2", "ExtensionPoint3", "ExtensionPoint4"],
 						"then the expected extension points for the view are returned");
 					fnDone();
 				}.bind(this));
