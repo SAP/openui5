@@ -51,15 +51,22 @@
 				a designtime.js file in this new folder.<br> Add the following inital module setup into the js file.
 			</p>
 			<pre class="prettyprint lang-js">
-sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
-"use strict";
-	var Designtime = BaseDesigntime.extend();
-	Designtime.prototype.create = function () {
-		return {
-			//here goes the configuration
-		}
-	}
-	return Designtime
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		return new Designtime({
+			form: {
+				items: {
+					//here goes the configuration
+				}
+			},
+			preview: {
+				modes: "Abstract"
+			}
+		});
+	};
 });</pre>
 			<p>
 				Similar to a Card Extension, the design-time module is registered in the manifest. As soon as the Card

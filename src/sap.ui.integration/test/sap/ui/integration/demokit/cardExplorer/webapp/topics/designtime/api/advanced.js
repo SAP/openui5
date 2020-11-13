@@ -1,10 +1,9 @@
-sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch"
-], function (Designtime, Slider, Switch) {
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
 	"use strict";
-
-	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
-	AdvancedDesigntime.prototype.create = function () {
-		return {
+	return function () {
+		return new Designtime({
 			form: {
 				items: {
 					"integer": {
@@ -12,7 +11,7 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch"
 						"defaultValue": 1,
 						"type": "integer",
 						"visualization": {
-							"type": Slider,
+							"type": "sap/m/Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -29,7 +28,7 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch"
 						"defaultValue": false,
 						"type": "boolean",
 						"visualization": {
-							"type": Switch,
+							"type": "sap/m/Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
@@ -42,10 +41,6 @@ sap.ui.define(["sap/ui/integration/Designtime", "sap/m/Slider", "sap/m/Switch"
 			preview: {
 				modes: "Abstract"
 			}
-		};
+		});
 	};
-	return AdvancedDesigntime;
 });
-
-
-
