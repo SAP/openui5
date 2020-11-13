@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/f/AvatarGroup",
 	"sap/f/AvatarGroupItem",
 	"sap/ui/core/Core",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/Device"
 ],
 function (
 	AvatarGroup,
 	AvatarGroupItem,
 	Core,
-	KeyCodes
+	KeyCodes,
+	Device
 ) {
 	"use strict";
 
@@ -293,11 +295,26 @@ function (
 				M: 0.125,
 				L: 0.125,
 				XL: 0.25
+			},
+			oAvatarGroupMarginsIE = {
+				XS: 0.75,
+				S: 1.25,
+				M: 1.62,
+				L: 2,
+				XL: 2.75
+			},
+			oAvatarIndividualMarginsIE = {
+				XS: 0.06,
+				S: 0.12,
+				M: 0.12,
+				L: 0.12,
+				XL: 0.25
 			};
 
 		// Assert
 		for (var sKey in oAvatarGroupMargins) {
-			assert.strictEqual(this.oAvatarGroup._getAvatarMargin(sKey),oAvatarGroupMargins[sKey],
+			assert.strictEqual(this.oAvatarGroup._getAvatarMargin(sKey),
+				Device.browser.internet_explorer ? oAvatarGroupMarginsIE[sKey] : oAvatarGroupMargins[sKey],
 				"Avatar margin in Group mode with " + sKey + " size is returned correctly");
 		}
 
@@ -306,7 +323,8 @@ function (
 
 		// Assert
 		for (var sKey in oAvatarIndividualMargins) {
-			assert.strictEqual(this.oAvatarGroup._getAvatarMargin(sKey),oAvatarIndividualMargins[sKey],
+			assert.strictEqual(this.oAvatarGroup._getAvatarMargin(sKey),
+				Device.browser.internet_explorer ? oAvatarIndividualMarginsIE[sKey] : oAvatarIndividualMargins[sKey],
 				"Avatar margin in Group mode with " + sKey + " size is returned correctly");
 		}
 	});
