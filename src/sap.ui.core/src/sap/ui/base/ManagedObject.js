@@ -1118,8 +1118,8 @@ sap.ui.define([
 			if ( typeof mSettings.objectBindings === "string" || mSettings.objectBindings.path ) { // excludes "path" as model name
 				this.bindObject(mSettings.objectBindings);
 			} else {
-				for (var sKey in mSettings.objectBindings ) {
-					mSettings.objectBindings.model = sKey;
+				for (sKey in mSettings.objectBindings ) {
+					mSettings.objectBindings[sKey].model = sKey === "undefined" ? undefined : sKey;
 					this.bindObject(mSettings.objectBindings[sKey]);
 				}
 			}
