@@ -326,7 +326,6 @@ sap.ui.define([
 		// invalidate only the IconTabHeader if a property change
 		// doesn't affect the IconTabBar content
 		switch (sPropertyName) {
-			case 'enabled':
 			case 'textDirection':
 			case 'text':
 			case 'count':
