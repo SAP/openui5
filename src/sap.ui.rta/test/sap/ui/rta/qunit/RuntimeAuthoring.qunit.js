@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
+	"sap/base/util/isEmptyObject",
 	"qunit/RtaQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -59,6 +60,7 @@ sap.ui.define([
 	EventProvider,
 	Log,
 	UriParameters,
+	isEmptyObject,
 	RtaQunitUtils,
 	QUnitUtils,
 	PersistenceWriteAPI,
@@ -84,11 +86,17 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
 		beforeEach : function() {
+			this.oFlexSettings = {
+				layer: Layer.CUSTOMER,
+				developerMode: true,
+				qunitTestParameter: "qunitTestParameter"
+			};
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp
+				rootControl : oComp,
+				flexSettings: this.oFlexSettings
 			});
 
-			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
+			this.oPreparePluginsSpy = sinon.spy(this.oRta.getPluginManager(), "preparePlugins");
 			return RtaQunitUtils.clear()
 			.then(this.oRta.start.bind(this.oRta))
 			.then(function() {
@@ -138,33 +146,14 @@ sap.ui.define([
 		QUnit.test("when RTA is stopped and destroyed, the default plugins get created and destroyed", function(assert) {
 			var done = assert.async();
 
-			assert.ok(this.oRta.getPlugins()['contextMenu'], " then the default ContextMenuPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['contextMenu'].bIsDestroyed, " and the default ContextMenuPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['dragDrop'], " and the default DragDropPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['dragDrop'].bIsDestroyed, " and the default DragDropPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['cutPaste'], " and the default CutPastePlugin is set");
-			assert.notOk(this.oRta.getPlugins()['cutPaste'].bIsDestroyed, " and the default CutPastePlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['remove'], " and the default RemovePlugin is set");
-			assert.notOk(this.oRta.getPlugins()['remove'].bIsDestroyed, " and the default RemovePlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['additionalElements'], " and the default AdditionalElementsPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['additionalElements'].bIsDestroyed, " and the default AdditionalElementsPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['rename'], " and the default RenamePlugin is set");
-			assert.notOk(this.oRta.getPlugins()['rename'].bIsDestroyed, " and the default RenamePlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['selection'], " and the default SelectionPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['selection'].bIsDestroyed, " and the default SelectionPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['settings'], " and the default SettingsPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['settings'].bIsDestroyed, " and the default SettingsPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['createContainer'], " and the default CreateContainerPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['createContainer'].bIsDestroyed, " and the default CreateContainerPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['tabHandling'], " and the default TabHandlingPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['tabHandling'].bIsDestroyed, " and the default TabHandlingPlugin is not destroyed");
+			assert.equal(this.oPreparePluginsSpy.callCount, 1, " and getPluginManager.preparePlugins() have been called 1 time on oRta.start()");
+			assert.ok(!isEmptyObject(this.oRta.getPlugins()), "then plugins are created on start");
 
 			this.oRta.attachStop(function() {
 				assert.ok(true, "the 'stop' event was fired");
 
 				this.oRta.destroy();
 				assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 0, "... and Toolbar is destroyed.");
-				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
 				done();
 			}.bind(this));
 			this.oRta.stop().then(function() {
@@ -694,15 +683,15 @@ sap.ui.define([
 		QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert) {
 			var done = assert.async();
 
-			var fnFireElementModifiedSpy = sandbox.spy(this.oRta._mDefaultPlugins["createContainer"], "fireElementModified");
+			var fnFireElementModifiedSpy = sandbox.spy(this.oRta.getPluginManager().getDefaultPlugins()["createContainer"], "fireElementModified");
 
 			var oSimpleForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
 			var oSimpleFormOverlay = OverlayRegistry.getOverlay(oSimpleForm.getAggregation("form").getId());
 
-			sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
+			sandbox.stub(this.oRta.getPluginManager().getDefaultPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
 				sap.ui.getCore().applyChanges();
 				var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
-				var sNewControlContainerId = this.oRta._mDefaultPlugins["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
+				var sNewControlContainerId = this.oRta.getPluginManager().getDefaultPlugins()["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
 				assert.ok(fnFireElementModifiedSpy.calledOnce, "then 'fireElementModified' from the createContainer plugin is called once");
 				assert.ok(true, "then the new container starts the edit for rename");
 				assert.strictEqual(oNewContainerOverlay.getElement().getId(), sNewControlContainerId, "then rename is called with the new container's overlay");
@@ -717,14 +706,14 @@ sap.ui.define([
 		QUnit.test("when _handleElementModified is called if a create container command was executed on a smart form", function(assert) {
 			var done = assert.async();
 
-			var fnFireElementModifiedSpy = sinon.spy(this.oRta._mDefaultPlugins["createContainer"], "fireElementModified");
+			var fnFireElementModifiedSpy = sinon.spy(this.oRta.getPluginManager().getDefaultPlugins()["createContainer"], "fireElementModified");
 
 			var oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
 			var oSmartFormOverlay = OverlayRegistry.getOverlay(oSmartForm.getId());
 
 			sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
 				var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
-				var sNewControlContainerId = this.oRta._mDefaultPlugins["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
+				var sNewControlContainerId = this.oRta.getPluginManager().getDefaultPlugins()["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
 				sap.ui.getCore().applyChanges();
 				assert.ok(true, "then the new container starts the edit for rename");
 				assert.strictEqual(oNewContainerOverlay.getElement().getId(), sNewControlContainerId, "then rename is called with the new container's overlay");
@@ -888,51 +877,6 @@ sap.ui.define([
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isApplicationVariant() got called");
 				assert.equal(fnGetResetAndPublishInfoStub.callCount, 1, "then the status of publish and reset button is evaluated");
 			});
-		});
-	});
-
-	QUnit.module("Given that RuntimeAuthoring is started with different plugin sets...", {
-		beforeEach : function() {
-			var oCommandFactory = new CommandFactory();
-
-			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
-			this.oRemovePlugin = new Remove({
-				id : "nonDefaultRemovePlugin",
-				commandFactory : oCommandFactory
-			});
-
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl"),
-				showToolbars : false,
-				plugins : {
-					remove : this.oRemovePlugin,
-					contextMenu : this.oContextMenuPlugin
-				}
-			});
-
-			this.fnDestroy = sandbox.spy(this.oRta, "_destroyDefaultPlugins");
-
-			return RtaQunitUtils.clear()
-			.then(this.oRta.start.bind(this.oRta));
-		},
-		afterEach : function() {
-			this.oContextMenuPlugin.destroy();
-			this.oRemovePlugin.destroy();
-			this.oRta.destroy();
-			sandbox.restore();
-			return RtaQunitUtils.clear();
-		}
-	}, function() {
-		QUnit.test("when RTA gets initialized with custom plugins only", function(assert) {
-			assert.ok(this.oRta, " then RuntimeAuthoring is created");
-			assert.equal(this.oRta.getPlugins()['contextMenu'], this.oContextMenuPlugin, " and the custom ContextMenuPlugin is set");
-			assert.equal(this.oRta.getPlugins()['rename'], undefined, " and the default plugins are not loaded");
-			assert.equal(this.fnDestroy.callCount, 1, " and _destroyDefaultPlugins have been called 1 time after oRta.start()");
-
-			return this.oRta.stop(false).then(function() {
-				this.oRta.destroy();
-				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
-			}.bind(this));
 		});
 	});
 

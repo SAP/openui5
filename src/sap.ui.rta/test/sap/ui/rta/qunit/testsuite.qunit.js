@@ -548,6 +548,11 @@ sap.ui.define([
 						}
 					}
 				},
+				"util/PluginManager": {
+					coverage: {
+						only: ["sap/ui/rta/util/PluginManager"]
+					}
+				},
 				"util/PopupManager": {
 					coverage: {
 						only: ["sap/ui/rta/util/PopupManager"]

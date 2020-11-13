@@ -13,27 +13,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/Overlay",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/LREPSerializer",
-	"sap/ui/rta/plugin/Rename",
-	"sap/ui/rta/plugin/DragDrop",
-	"sap/ui/rta/plugin/RTAElementMover",
-	"sap/ui/rta/plugin/CutPaste",
-	"sap/ui/rta/plugin/Remove",
-	"sap/ui/rta/plugin/CreateContainer",
-	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
-	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
-	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-	"sap/ui/rta/plugin/Combine",
-	"sap/ui/rta/plugin/Split",
-	"sap/ui/rta/plugin/Selection",
-	"sap/ui/rta/plugin/Settings",
-	"sap/ui/rta/plugin/Stretch",
-	"sap/ui/rta/plugin/ControlVariant",
-	"sap/ui/rta/plugin/iframe/AddIFrame",
-	"sap/ui/dt/plugin/ToolHooks",
-	"sap/ui/dt/plugin/ContextMenu",
-	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/Util",
 	"sap/ui/dt/ElementUtil",
@@ -47,6 +27,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
+	"sap/ui/rta/util/PluginManager",
 	"sap/ui/rta/util/PopupManager",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/dt/DOMUtil",
@@ -75,27 +56,7 @@ function(
 	DesignTime,
 	Overlay,
 	CommandStack,
-	CommandFactory,
 	LREPSerializer,
-	RTARenamePlugin,
-	RTADragDropPlugin,
-	RTAElementMover,
-	CutPastePlugin,
-	RemovePlugin,
-	CreateContainerPlugin,
-	AdditionalElementsPlugin,
-	AdditionalElementsDialog,
-	AdditionalElementsAnalyzer,
-	CombinePlugin,
-	SplitPlugin,
-	SelectionPlugin,
-	SettingsPlugin,
-	StretchPlugin,
-	ControlVariantPlugin,
-	AddIFramePlugin,
-	ToolHooksPlugin,
-	ContextMenuPlugin,
-	TabHandlingPlugin,
 	Utils,
 	DtUtil,
 	ElementUtil,
@@ -109,6 +70,7 @@ function(
 	PersistenceWriteAPI,
 	MessageBox,
 	MessageToast,
+	PluginManager,
 	PopupManager,
 	BusyIndicator,
 	DOMUtil,
@@ -190,12 +152,6 @@ function(
 					type: "any"
 				},
 
-				/** Map indicating plugins in to be loaded or in use by RuntimeAuthoring and DesignTime */
-				plugins: {
-					type: "any",
-					defaultValue: {}
-				},
-
 				/**
 				 * Map with flex-related settings
 				 * @experimental
@@ -267,9 +223,9 @@ function(
 			this._dependents = {};
 			this._mServices = {};
 			this._mCustomServicesDictinary = {};
-			this.iEditableOverlaysCount = 0;
 
-			this.addDependent(new PopupManager(), 'popupManager');
+			this.addDependent(new PluginManager(), "pluginManager");
+			this.addDependent(new PopupManager(), "popupManager");
 
 			if (this.getShowToolbars()) {
 				this.getPopupManager().attachOpen(this.onPopupOpen, this);
@@ -277,7 +233,7 @@ function(
 			}
 
 			if (window.parent !== window) {
-				this.startService('receiver');
+				this.startService("receiver");
 			}
 
 			if (this._shouldValidateFlexEnabled()) {
@@ -303,123 +259,11 @@ function(
 		return bShouldValidateFlexEnabled;
 	};
 
-	/**
-	 * Returns (and creates) the default plugins of RuntimeAuthoring
-	 *
-	 * These are AdditionalElements, ContextMenu, CreateContainer, CutPaste,
-	 * DragDrop, Remove, Rename, Selection, Settings, TabHandling
-	 *
-	 * Method uses a local cache to hold the default plugins: Then on multiple access
-	 * always the same instances get returned.
-	 *
-	 * @public
-	 * @return {Object<string,sap.ui.rta.plugin.Plugin>} Map with plugins
-	 */
-	RuntimeAuthoring.prototype.getDefaultPlugins = function() {
-		if (!this._mDefaultPlugins) {
-			var oCommandFactory = new CommandFactory({
-				flexSettings: this.getFlexSettings()
-			});
-
-			// Initialize local cache
-			this._mDefaultPlugins = {};
-
-			// Selection
-			this._mDefaultPlugins["selection"] = new SelectionPlugin({
-				commandFactory: oCommandFactory,
-				multiSelectionRequiredPlugins: [
-					CombinePlugin.getMetadata().getName(),
-					RemovePlugin.getMetadata().getName()
-				],
-				elementEditableChange: this._onElementEditableChange.bind(this)
-			});
-
-			// Drag drop plugin
-			var oRTAElementMover = new RTAElementMover({
-				commandFactory: oCommandFactory
-			});
-
-			this._mDefaultPlugins["dragDrop"] = new RTADragDropPlugin({
-				elementMover: oRTAElementMover,
-				commandFactory: oCommandFactory,
-				dragStarted: this._handleStopCutPaste.bind(this)
-			});
-
-			// Rename
-			this._mDefaultPlugins["rename"] = new RTARenamePlugin({
-				commandFactory: oCommandFactory,
-				editable: this._handleStopCutPaste.bind(this)
-			});
-
-			// Additional elements
-			this._mDefaultPlugins["additionalElements"] = new AdditionalElementsPlugin({
-				commandFactory: oCommandFactory,
-				analyzer: AdditionalElementsAnalyzer,
-				dialog: new AdditionalElementsDialog()
-			});
-
-			// Create container
-			this._mDefaultPlugins["createContainer"] = new CreateContainerPlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Remove
-			this._mDefaultPlugins["remove"] = new RemovePlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Cut paste
-			this._mDefaultPlugins["cutPaste"] = new CutPastePlugin({
-				elementMover: oRTAElementMover,
-				commandFactory: oCommandFactory
-			});
-
-			// Settings
-			this._mDefaultPlugins["settings"] = new SettingsPlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Combine
-			this._mDefaultPlugins["combine"] = new CombinePlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Split
-			this._mDefaultPlugins["split"] = new SplitPlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Context Menu (context menu)
-			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin();
-
-			// Tab Handling
-			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
-
-			// Stretching
-			this._mDefaultPlugins["stretch"] = new StretchPlugin();
-
-			//Control Variant
-			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Add IFrame
-			this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
-				commandFactory: oCommandFactory
-			});
-
-			//ToolHooks
-			this._mDefaultPlugins["toolHooks"] = new ToolHooksPlugin();
-		}
-
-		return jQuery.extend({}, this._mDefaultPlugins);
-	};
-
 	RuntimeAuthoring.prototype.addDependent = function (oObject, sName, bCreateGetter) {
-		bCreateGetter = typeof bCreateGetter === 'undefined' ? true : !!bCreateGetter;
+		bCreateGetter = typeof bCreateGetter === "undefined" ? true : !!bCreateGetter;
 		if (!(sName in this._dependents)) {
 			if (sName && bCreateGetter) {
-				this['get' + capitalize(sName, 0)] = this.getDependent.bind(this, sName);
+				this["get" + capitalize(sName, 0)] = this.getDependent.bind(this, sName);
 			}
 			this._dependents[sName || oObject.getId()] = oObject;
 		} else {
@@ -443,32 +287,6 @@ function(
 		delete this._dependents[sName];
 	};
 
-	/**
-	 * In order to clear the cache and to destroy the default plugins on exit use
-	 * _destroyDefaultPlugins()
-	 *
-	 * In order to destroy default plugins not used, because replaced or removed,
-	 * pass the list of active plugins: _destroyDefaultPlugins( mPluginsToKeep ).
-	 *
-	 * @param {map} mPluginsToKeep - list of active plugins to keep in _mDefaultPlugins
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._destroyDefaultPlugins = function (mPluginsToKeep) {
-		// Destroy default plugins and clear cache
-		// ... but keep those in mPluginsToKeep
-		for (var sDefaultPluginName in this._mDefaultPlugins) {
-			var oDefaultPlugin = this._mDefaultPlugins[sDefaultPluginName];
-
-			if (oDefaultPlugin && !oDefaultPlugin.bIsDestroyed) {
-				if (!mPluginsToKeep || mPluginsToKeep[sDefaultPluginName] !== oDefaultPlugin) {
-					oDefaultPlugin.destroy();
-				}
-			}
-		}
-		if (!mPluginsToKeep) {
-			this._mDefaultPlugins = null;
-		}
-	};
 
 	RuntimeAuthoring.prototype.onPopupOpen = function(oEvent) {
 		var oOpenedPopup = oEvent.getParameters().getSource();
@@ -487,11 +305,41 @@ function(
 		}
 	};
 
+	/**
+	 * Setter method for plugins. Plugins can't be set when runtime authoring is started.
+	 * @param {object} mPlugins - map of plugins
+	 */
 	RuntimeAuthoring.prototype.setPlugins = function(mPlugins) {
 		if (this._oDesignTime) {
-			throw new Error('Cannot replace plugins: runtime authoring already started');
+			throw new Error("Cannot replace plugins: runtime authoring already started");
 		}
-		this.setProperty("plugins", mPlugins);
+		this.getPluginManager().setPlugins(mPlugins);
+	};
+
+	/**
+	 * Getter method for plugins.
+	 * @returns {object<sap.ui.rta.plugin.Plugin>} map with plugins
+	 */
+	RuntimeAuthoring.prototype.getPlugins = function () {
+		return this.getPluginManager
+			&& this.getPluginManager()
+			&& this.getPluginManager().getPlugins();
+	};
+
+	/**
+	 * Returns (and creates) the default plugins of RuntimeAuthoring
+	 *
+	 * These are AdditionalElements, ContextMenu, CreateContainer, CutPaste,
+	 * DragDrop, Remove, Rename, Selection, Settings, TabHandling
+	 *
+	 * Method uses a local cache to hold the default plugins: Then on multiple access
+	 * always the same instances get returned.
+	 *
+	 * @public
+	 * @return {Object<string,sap.ui.rta.plugin.Plugin>} Map with plugins
+	 */
+	RuntimeAuthoring.prototype.getDefaultPlugins = function () {
+		return this.getPluginManager().getDefaultPlugins(this.getFlexSettings());
 	};
 
 	/**
@@ -588,32 +436,15 @@ function(
 					return Promise.reject("Reload triggered");
 				}
 
-				// Take default plugins if no plugins handed over
-				if (!this.getPlugins() || !Object.keys(this.getPlugins()).length) {
-					this.setPlugins(this.getDefaultPlugins());
-				}
-
-				// Destroy default plugins instantiated but not in use
-				this._destroyDefaultPlugins(this.getPlugins());
-
-				Object.keys(this.getPlugins()).forEach(function(sPluginName) {
-					if (this.getPlugins()[sPluginName].attachElementModified) {
-						this.getPlugins()[sPluginName].attachElementModified(this._handleElementModified, this);
-					}
-				}.bind(this));
-
-				// Hand over currrent command stack to settings plugin
-				if (this.getPlugins()["settings"]) {
-					this.getPlugins()["settings"].setCommandStack(this.getCommandStack());
-				}
-
 				this._oSerializer = new LREPSerializer({commandStack: this.getCommandStack(), rootControl: this.getRootControl()});
 
-				// Create design time
-				var aKeys = Object.keys(this.getPlugins());
-				var aPlugins = aKeys.map(function(sKey) {
-					return this.getPlugins()[sKey];
-				}, this);
+				this.getPluginManager().preparePlugins(
+					this.getFlexSettings(),
+					this._handleElementModified.bind(this),
+					this.getCommandStack()
+				);
+
+				var aPlugins = this.getPluginManager().getPluginList();
 
 				oDesignTimePromise = new Promise(function (fnResolve, fnReject) {
 					Measurement.start("rta.dt.startup", "Measurement of RTA: DesignTime start up");
@@ -672,9 +503,9 @@ function(
 			.then(function () {
 				// non-blocking style loading
 				StylesLoader
-				.loadStyles('InPageStyles')
+				.loadStyles("InPageStyles")
 				.then(function (sData) {
-					var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
+					var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + "px");
 					DOMUtil.insertStyles(sStyles, Overlay.getOverlayContainer().get(0));
 				});
 			})
@@ -695,7 +526,7 @@ function(
 				if (Device.browser.name === "ff") {
 					// in FF shift+f10 also opens a browser context menu.
 					// It seems that the only way to get rid of it is to completely turn off context menu in ff..
-					jQuery(document).on('contextmenu', _ffContextMenuHandler);
+					jQuery(document).on("contextmenu", _ffContextMenuHandler);
 				}
 			})
 			.then(function() {
@@ -711,7 +542,7 @@ function(
 			.then(function () {
 				this._sStatus = STARTED;
 				this.fireStart({
-					editablePluginsCount: this.iEditableOverlaysCount
+					editablePluginsCount: this.getPluginManager().getEditableOverlaysCount()
 				});
 			}.bind(this))
 			.catch(function (vError) {
@@ -797,8 +628,8 @@ function(
 			oCommandStack.attachModified(this._onStackModified, this);
 		}
 
-		if (this.getPlugins() && this.getPlugins()["settings"]) {
-			this.getPlugins()["settings"].setCommandStack(oCommandStack);
+		if (this.getPluginManager && this.getPluginManager()) {
+			this.getPluginManager().provideCommandStack("settings", oCommandStack);
 		}
 
 		return oResult;
@@ -965,7 +796,7 @@ function(
 			}
 		});
 		var bFocusOnBody = document.body === document.activeElement;
-		var bFocusInsideRenameField = jQuery(document.activeElement).parents('.sapUiRtaEditableField').length > 0;
+		var bFocusInsideRenameField = jQuery(document.activeElement).parents(".sapUiRtaEditableField").length > 0;
 
 		if ((bFocusInsideOverlayContainer || bFocusInsideRtaToolbar || bFocusOnContextMenu || bFocusOnBody) && !bFocusInsideRenameField) {
 			// OSX: replace CTRL with CMD
@@ -1025,12 +856,12 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onUndo = function() {
-		this._handleStopCutPaste();
+		this.getPluginManager().handleStopCutPaste();
 		return this.getCommandStack().undo();
 	};
 
 	RuntimeAuthoring.prototype._onRedo = function() {
-		this._handleStopCutPaste();
+		this.getPluginManager().handleStopCutPaste();
 		return this.getCommandStack().redo();
 	};
 
@@ -1172,7 +1003,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
-		if (!this.getDependent('toolbar')) {
+		if (!this.getDependent("toolbar")) {
 			var ToolbarConstructor;
 
 			if (this.getLayer() === Layer.USER) {
@@ -1210,7 +1041,7 @@ function(
 					switchVersion: this._onSwitchVersion.bind(this)
 				});
 			}
-			this.addDependent(oToolbar, 'toolbar');
+			this.addDependent(oToolbar, "toolbar");
 
 			return oToolbar.onFragmentLoaded().then(function() {
 				var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
@@ -1253,7 +1084,7 @@ function(
 	RuntimeAuthoring.prototype._onGetAppVariantOverview = function(oEvent) {
 		var oItem = oEvent.getParameter("item");
 
-		var bTriggeredForKeyUser = oItem.getId() === 'keyUser';
+		var bTriggeredForKeyUser = oItem.getId() === "keyUser";
 		return RtaAppVariantFeature.onGetOverview(bTriggeredForKeyUser, this.getLayer());
 	};
 
@@ -1279,11 +1110,6 @@ function(
 
 			// detach browser events
 			jQuery(document).off("keydown", this.fnKeyDown);
-			// Destroy default plugins
-			this._destroyDefaultPlugins();
-			// plugins have been destroyed as _oDesignTime.destroy()
-			// plugins are set to defaultValue if parameter is null
-			this.setPlugins(null);
 		}
 
 		if (this._$RootControl) {
@@ -1312,7 +1138,7 @@ function(
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._onTransport = function() {
-		this._handleStopCutPaste();
+		this.getPluginManager().handleStopCutPaste();
 
 		BusyIndicator.show(500);
 		return this._serializeToLrep().then(function () {
@@ -1346,7 +1172,7 @@ function(
 							}
 						}.bind(this));
 				}.bind(this));
-		}.bind(this))['catch'](fnShowTechnicalError);
+		}.bind(this))["catch"](fnShowTechnicalError);
 	};
 
 	/**
@@ -1452,7 +1278,7 @@ function(
 			? this._getTextResources().getText("BTN_RESTORE")
 			: this._getTextResources().getText("FORM_PERS_RESET_TITLE");
 
-		this._handleStopCutPaste();
+		this.getPluginManager().handleStopCutPaste();
 
 		return Utils.showMessageBox("warning", sMessage, {
 			titleKey: sTitle,
@@ -1502,7 +1328,7 @@ function(
 			// the control can be set to visible, but still have no size when we do the check
 			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
 			if (!oElementOverlay.getGeometry() || !oElementOverlay.getGeometry().visible) {
-				oElementOverlay.attachEvent('geometryChanged', onGeometryChanged);
+				oElementOverlay.attachEvent("geometryChanged", onGeometryChanged);
 			} else {
 				fnCallback(oElementOverlay);
 			}
@@ -1513,7 +1339,7 @@ function(
 			if (oNewOverlay.isRendered()) {
 				onGeometryCheck(oNewOverlay);
 			} else {
-				oNewOverlay.attachEventOnce('afterRendering', function (oEvent) {
+				oNewOverlay.attachEventOnce("afterRendering", function (oEvent) {
 					onGeometryCheck(oEvent.getSource());
 				});
 			}
@@ -1529,12 +1355,12 @@ function(
 	RuntimeAuthoring.prototype._scheduleRenameOnCreatedContainer = function(vAction, sNewControlID) {
 		var fnStartEdit = function (oElementOverlay) {
 			oElementOverlay.setSelected(true);
-			this.getPlugins()["rename"].startEdit(oElementOverlay);
+			this.getPluginManager().getPlugin("rename").startEdit(oElementOverlay);
 		}.bind(this);
 
 		this._scheduleOnCreatedAndVisible(sNewControlID, function (oElementOverlay) {
 			// get container of the new control for rename
-			var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, oElementOverlay.getElement().getId());
+			var sNewContainerID = this.getPluginManager().getPlugin("createContainer").getCreatedContainerId(vAction, oElementOverlay.getElement().getId());
 			var oContainerElementOverlay = OverlayRegistry.getOverlay(sNewContainerID);
 			if (oContainerElementOverlay) {
 				fnStartEdit(oContainerElementOverlay);
@@ -1552,7 +1378,7 @@ function(
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {
-		this._handleStopCutPaste();
+		this.getPluginManager().handleStopCutPaste();
 
 		var vAction = oEvent.getParameter("action");
 		var sNewControlID = oEvent.getParameter("newControlId");
@@ -1581,31 +1407,6 @@ function(
 			});
 		}
 		return Promise.resolve();
-	};
-
-	/**
-	 * Increases or decreases the current number of editable Overlays.
-	 * @param  {sap.ui.base.Event} oEvent Event triggered by the 'editable' property change
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._onElementEditableChange = function(oEvent) {
-		var bEditable = oEvent.getParameter("editable");
-		if (bEditable) {
-			this.iEditableOverlaysCount += 1;
-		} else {
-			this.iEditableOverlaysCount -= 1;
-		}
-	};
-
-	/**
-	 * Handler function to stop cut and paste, because some other operation has started.
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleStopCutPaste = function() {
-		if (this.getPlugins()["cutPaste"]) {
-			this.getPlugins()["cutPaste"].stopCutAndPaste();
-		}
 	};
 
 	/**
@@ -1881,11 +1682,11 @@ function(
 	 */
 	RuntimeAuthoring.prototype.setMode = function (sNewMode) {
 		if (this.getMode() !== sNewMode) {
-			var bOverlaysEnabled = sNewMode === 'adaptation';
+			var bOverlaysEnabled = sNewMode === "adaptation";
 			this._oDesignTime.setEnabled(bOverlaysEnabled);
-			this.getPlugins()['tabHandling'][bOverlaysEnabled ? 'removeTabIndex' : 'restoreTabIndex']();
+			this.getPluginManager().getPlugin("tabHandling")[bOverlaysEnabled ? "removeTabIndex" : "restoreTabIndex"]();
 			this._oToolbarControlsModel.setProperty("/modeSwitcher", sNewMode);
-			this.setProperty('mode', sNewMode);
+			this.setProperty("mode", sNewMode);
 			this.fireModeChanged({mode: sNewMode});
 		}
 	};
@@ -1902,12 +1703,12 @@ function(
 			return;
 		}
 
-		this.setProperty('metadataScope', sScope);
+		this.setProperty("metadataScope", sScope);
 	};
 
 	function resolveServiceLocation(sName) {
 		if (ServicesIndex.hasOwnProperty(sName)) {
-			return ServicesIndex[sName].replace(/\./g, '/');
+			return ServicesIndex[sName].replace(/\./g, "/");
 		}
 	}
 
@@ -1919,8 +1720,8 @@ function(
 	RuntimeAuthoring.prototype.startService = function (sName) {
 		if (this._sStatus !== STARTED) {
 			return new Promise(function (fnResolve, fnReject) {
-				this.attachEventOnce('start', fnResolve);
-				this.attachEventOnce('failed', fnReject);
+				this.attachEventOnce("start", fnResolve);
+				this.attachEventOnce("failed", fnReject);
 			}.bind(this))
 			.then(
 				function () {

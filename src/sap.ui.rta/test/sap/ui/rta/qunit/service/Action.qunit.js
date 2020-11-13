@@ -73,7 +73,8 @@ function (
 							}
 						}
 					}));
-					this.oRta._mDefaultPlugins["remove"].evaluateEditable([this.oButtonOverlay], { onRegistration: false });
+					var oRemovePlugin = this.oRta.getDefaultPlugins()["remove"];
+					oRemovePlugin.evaluateEditable([this.oButtonOverlay], { onRegistration: false });
 				}.bind(this));
 			}.bind(this));
 		},

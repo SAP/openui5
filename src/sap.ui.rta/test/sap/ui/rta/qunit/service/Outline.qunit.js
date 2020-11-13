@@ -351,9 +351,9 @@ sap.ui.define([
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oComp,
-				showToolbars: false,
-				plugins: { testPlugin: oPlugin }
+				showToolbars: false
 			});
+			this.oRta.setPlugins({ testPlugin: oPlugin });
 			sandbox.stub(this.oRta, "_determineReload").resolves(false);
 
 			this.oRta.getService("outline").then(function (oService) {
