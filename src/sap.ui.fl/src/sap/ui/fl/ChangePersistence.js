@@ -213,8 +213,7 @@ sap.ui.define([
 			var bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
 			var fnFilter = function() { return true; };
 			if (sCurrentLayer) {
-				fnFilter = this._filterChangeForCurrentLayer.bind(this, sCurrentLayer);
-				aChanges = aChanges.filter(fnFilter);
+				aChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aChanges, sCurrentLayer);
 			} else if (LayerUtils.isLayerFilteringRequired() && bFilterMaxLayer) {
 				fnFilter = this._filterChangeForMaxLayer.bind(this);
 				//If layer filtering required, excludes changes in higher layer than the max layer
@@ -249,10 +248,6 @@ sap.ui.define([
 			return false;
 		}
 		return true;
-	};
-
-	ChangePersistence.prototype._filterChangeForCurrentLayer = function(sLayer, oChangeOrChangeContent) {
-		return sLayer === this._getLayerFromChangeOrChangeContent(oChangeOrChangeContent);
 	};
 
 	ChangePersistence.prototype._getLayerFromChangeOrChangeContent = function(oChangeOrChangeContent) {

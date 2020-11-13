@@ -1,13 +1,14 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
+	Change,
 	Layer,
 	LayerUtils,
 	Utils,
@@ -93,10 +94,7 @@ function(
 		});
 	});
 
-	QUnit.module("LayerUtils.isCustomerDependentLayer", {
-		beforeEach: function () {},
-		afterEach: function () {}
-	}, function() {
+	QUnit.module("LayerUtils.isCustomerDependentLayer", function() {
 		QUnit.test("isCustomerDependentLayer", function(assert) {
 			assert.ok(LayerUtils.isCustomerDependentLayer(Layer.CUSTOMER), "'CUSTOMER' layer is detected as customer dependent");
 			assert.ok(LayerUtils.isCustomerDependentLayer(Layer.CUSTOMER_BASE), "'CUSTOMER_BASE' layer is detected as customer dependent");
@@ -152,13 +150,7 @@ function(
 		});
 	});
 
-	QUnit.module("LayerUtils.isOverLayer", {
-		beforeEach: function () {
-		},
-		afterEach: function () {
-			sandbox.restore();
-		}
-	}, function() {
+	QUnit.module("LayerUtils.isOverLayer", function() {
 		QUnit.test("compare CUSTOMER with layer BASE", function (assert) {
 			assert.equal(LayerUtils.isOverLayer(Layer.BASE, Layer.CUSTOMER), false, "false");
 		});
@@ -272,7 +264,29 @@ function(
 		});
 	});
 
+	QUnit.module("LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer", {
+		beforeEach: function() {
+			this.vChanges = [
+				{layer: Layer.USER},
+				{layer: Layer.CUSTOMER},
+				new Change({layer: Layer.USER}),
+				new Change({layer: Layer.CUSTOMER})
+			];
+		}
+	}, function() {
+		QUnit.test("without current layer passed", function(assert) {
+			assert.deepEqual(LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(this.vChanges), this.vChanges, "the changes were returned without filtering");
+		});
+
+		QUnit.test("with current layer passed", function(assert) {
+			var aExpectedChanges1 = [this.vChanges[0], this.vChanges[2]];
+			var aExpectedChanges2 = [this.vChanges[1], this.vChanges[3]];
+			assert.deepEqual(LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(this.vChanges, Layer.USER), aExpectedChanges1, "the changes were returned with filtering");
+			assert.deepEqual(LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(this.vChanges, Layer.CUSTOMER), aExpectedChanges2, "the changes were returned with filtering");
+		});
+	});
+
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		jQuery("#qunit-fixture").hide();
 	});
 });

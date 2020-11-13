@@ -4,18 +4,20 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/ChangesController"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Utils"
 ], function(
 	_omit,
-	Utils,
-	ChangePersistenceFactory,
-	ManifestUtils,
 	FlexState,
-	ChangesController
+	ManifestUtils,
+	ChangesController,
+	ChangePersistenceFactory,
+	LayerUtils,
+	Utils
 ) {
 	"use strict";
 
@@ -41,9 +43,10 @@ sap.ui.define([
 
 	function getCompVariantEntities(mPropertyBag) {
 		var mCompEntities = FlexState.getCompEntitiesByIdMap(mPropertyBag.reference);
-		return Object.keys(mCompEntities).map(function (sKey) {
+		var aEntities = Object.keys(mCompEntities).map(function (sKey) {
 			return mCompEntities[sKey];
 		});
+		return LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aEntities, mPropertyBag.currentLayer);
 	}
 
 	function getChangePersistence(mPropertyBag) {

@@ -32,6 +32,10 @@ function(
 		mLayersIndex[sLayer] = iIndex;
 	});
 
+	function getUrlParameter(sParameter) {
+		return UriParameters.fromQuery(window.location.search).get(sParameter);
+	}
+
 	/**
 	 * Provides utility functions for the SAPUI5 flexibility library
 	 *
@@ -98,7 +102,7 @@ function(
 		 */
 		getMaxLayer: function () {
 			var sParseMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(hasher.getHash());
-			return sParseMaxLayer || LayerUtils.getUrlParameter(this.FL_MAX_LAYER_PARAM) || LayerUtils._sTopLayer;
+			return sParseMaxLayer || getUrlParameter(this.FL_MAX_LAYER_PARAM) || LayerUtils._sTopLayer;
 		},
 
 		/**
@@ -176,7 +180,7 @@ function(
 				return Layer.USER;
 			}
 
-			var sLayer = this.getUrlParameter("sap-ui-layer") || "";
+			var sLayer = getUrlParameter("sap-ui-layer") || "";
 			sLayer = sLayer.toUpperCase();
 			return sLayer || Layer.CUSTOMER;
 		},
@@ -197,15 +201,21 @@ function(
 		},
 
 		/**
-		 * Returns the value of the specified url parameter of the current url
+		 * Filters the passed Changes or change definitions and returns only the ones in the current layer
 		 *
-		 * @param {String} sParameterName Name of the url parameter
-		 * @returns {string} url parameter
-		 * @private
-		 * @ui5-restricted
+		 * @param {sap.ui.fl.Change|object[]} - aChanges Array of Changes or ChangeDefinitions
+		 * @param {string} - sCurrentLayer Current Layer
+		 * @returns {sap.ui.fl.Change|object[]} Array of filtered Changes
 		 */
-		getUrlParameter: function (sParameterName) {
-			return UriParameters.fromQuery(window.location.search).get(sParameterName);
+		filterChangeOrChangeDefinitionsByCurrentLayer: function(aChanges, sCurrentLayer) {
+			if (!sCurrentLayer) {
+				return aChanges;
+			}
+
+			return aChanges.filter(function(oChangeOrChangeContent) {
+				var sChangeLayer = oChangeOrChangeContent.getLayer && oChangeOrChangeContent.getLayer() || oChangeOrChangeContent.layer;
+				return sCurrentLayer === sChangeLayer;
+			});
 		},
 
 		/**
