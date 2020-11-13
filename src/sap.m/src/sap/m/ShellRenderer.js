@@ -81,7 +81,7 @@ function(coreLibrary, library, Device) {
 		rm.openEnd();
 		rm.close("div");
 		// logo
-		ShellRenderer.getLogoImageHtml(rm, oControl);
+		ShellRenderer.renderLogoImage(rm, oControl);
 
 		// header title
 		if (oControl.getTitle()) {
@@ -134,7 +134,7 @@ function(coreLibrary, library, Device) {
 		rm.close("div");
 	};
 
-	ShellRenderer.getLogoImageHtml = function(rm, oControl) {
+	ShellRenderer.renderLogoImage = function(rm, oControl) {
 		var sImage = oControl.getLogo(); // configured logo
 		if (!sImage) {
 			//TODO: global jquery call found

@@ -154,8 +154,8 @@ sap.ui.define([
 				if ($hdr.length) {
 					$hdr.find(".sapMShellLogo").remove(); // remove old logo, if present
 					var rm = Core.createRenderManager();
-					var html = ShellRenderer.getLogoImageHtml(rm, this);
-					$hdr.prepend(jQuery(html)); // insert new logo
+					ShellRenderer.renderLogoImage(rm, this);
+					rm.flush($hdr[0], true, 1);
 				}
 			}, this));
 
