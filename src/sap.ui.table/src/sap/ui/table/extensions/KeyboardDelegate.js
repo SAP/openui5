@@ -283,7 +283,7 @@ sap.ui.define([
 		var bAllowSapFocusLeave = bActionMode && oCellInfo.isOfType(CellType.DATACELL);
 
 		if (bAllowSapFocusLeave) {
-			document.activeElement.blur();
+			oTable._getKeyboardExtension()._setSilentFocus(oTable.getDomRef("focusDummy"));
 			setTimeout(function() {
 				oTable._getScrollExtension().scrollVertically(bDown === true, bPage);
 			}, 0);
