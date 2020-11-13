@@ -1933,38 +1933,42 @@ sap.ui.define([
 		return this._oTable ? this._oTable.isBound(this._bMobileTable ? "items" : "rows") : false;
 	};
 
+	/**
+	 * Defines the rows/items aggregation binding
+	 * @param {object} oBindingInfo binding info
+	 * @returns {Promise} Returns a <code>Promise</code>
+	 * @private
+	 */
 	Table.prototype.bindRows = function(oBindingInfo) {
 
 		if (!this.bDelegateInitialized || !this._oTable) {
 			return;
 		}
-		// update path from the delegate
-		this.getControlDelegate().updateBindingInfo(this, this.getPayload(), oBindingInfo);
-		if (oBindingInfo && oBindingInfo.path) {
-			this._oTable.setShowOverlay(false);
-			if (this._bMobileTable && this._oTemplate) {
-				oBindingInfo.template = this._oTemplate;
-			} else {
-				delete oBindingInfo.template;
+		return this.awaitPropertyHelper().then(function() {
+			this.getControlDelegate().updateBindingInfo(this, this.getPayload(), oBindingInfo);
+			if (oBindingInfo && oBindingInfo.path) {
+				this._oTable.setShowOverlay(false);
+				if (this._bMobileTable && this._oTemplate) {
+					oBindingInfo.template = this._oTemplate;
+				} else {
+					delete oBindingInfo.template;
+				}
+
+				if (!oBindingInfo.parameters) {
+					oBindingInfo.parameters = {};
+				}
+				// Update sorters
+				oBindingInfo.sorter = this._getSorters();
+
+				if (this.getShowRowCount()) {
+					Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
+					Table._addBindingListener(oBindingInfo, "change", this._updateHeaderText.bind(this));
+				}
+				this._updateColumnsBeforeBinding(oBindingInfo);
+				this.getControlDelegate().rebindTable(this, oBindingInfo);
+				this._updateInnerTableNoDataText();
 			}
-
-			if (!oBindingInfo.parameters) {
-				oBindingInfo.parameters = {};
-			}
-			// Update sorters
-			oBindingInfo.sorter = this._getSorters();
-
-			if (this.getShowRowCount()) {
-				Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
-				Table._addBindingListener(oBindingInfo, "change", this._updateHeaderText.bind(this));
-			}
-			this._updateColumnsBeforeBinding(oBindingInfo);
-			this.getControlDelegate().rebindTable(this, oBindingInfo);
-			this._updateInnerTableNoDataText();
-		}
-
-
-		return this;
+		}.bind(this));
 	};
 
 	/**
@@ -2003,27 +2007,26 @@ sap.ui.define([
 		var aSorters = [].concat(oBindingInfo.sorter || []);
 		var aMDCColumns = this.getColumns();
 		var bMobileTable = this._bMobileTable;
+		var oPropertyHelper = this.getPropertyHelper();
 
-		this.awaitPropertyHelper().then(function(oPropertyHelper) {
-			aMDCColumns.forEach(function(oMDCColumn) {
-				var oInnerColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
-				var aSortablePaths = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
-					return oProperty.getPath();
-				});
-
-				if (aSortablePaths.length > 0) {
-					var oSorter = aSorters.find(function(oSorter) {
-						return aSortablePaths.indexOf(oSorter.sPath) > -1;
-					});
-					var sSortOrder = oSorter && oSorter.bDescending ? "Descending" : "Ascending";
-
-					if (bMobileTable) {
-						oInnerColumn.setSortIndicator(oSorter ? sSortOrder : "None");
-					} else {
-						oInnerColumn.setSorted(!!oSorter).setSortOrder(sSortOrder);
-					}
-				}
+		aMDCColumns.forEach(function(oMDCColumn) {
+			var oInnerColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
+			var aSortablePaths = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
+				return oProperty.getPath();
 			});
+
+			if (aSortablePaths.length > 0) {
+				var oSorter = aSorters.find(function(oSorter) {
+					return aSortablePaths.indexOf(oSorter.sPath) > -1;
+				});
+				var sSortOrder = oSorter && oSorter.bDescending ? "Descending" : "Ascending";
+
+				if (bMobileTable) {
+					oInnerColumn.setSortIndicator(oSorter ? sSortOrder : "None");
+				} else {
+					oInnerColumn.setSorted(!!oSorter).setSortOrder(sSortOrder);
+				}
+			}
 		});
 	};
 
@@ -2139,10 +2142,12 @@ sap.ui.define([
 	Table.prototype._getSorters = function() {
 		var aSorterProperties = this.getSortConditions() ? this.getSortConditions().sorters : [];
 
-		var aSorters = [];
+		var aSorters = [],
+			oPropertyHelper = this.getPropertyHelper();
 
 		aSorterProperties.forEach(function(oSorter) {
-			aSorters.push(new Sorter(oSorter.name, oSorter.descending));
+			var sPath = oPropertyHelper.getPath(oSorter.name);
+			aSorters.push(new Sorter(sPath, oSorter.descending));
 		});
 
 		return aSorters;
