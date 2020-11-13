@@ -149,6 +149,6 @@ sap.ui.define([
 		var sResult  = formatter.pictureUrl("sap/ui/demo/mock/images/foo.jpg");
 
 		//Assert
-		assert.strictEqual(sResult, "./../../../../ui/documentation/sdk/images/foo.jpg", "The formatter returned the correct URL");
+		assert.strictEqual(sResult, "./../../localService/mockdata/images/foo.jpg", "The formatter returned the correct URL");
 	});
 });
