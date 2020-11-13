@@ -31,8 +31,8 @@ sap.ui.define([
 	 * @param {object} oAggregation
 	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
-	 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
+	 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
+	 *   {@link _AggregationHelper.buildApply}
 	 * @param {boolean} bHasGrandTotal
 	 *   Whether a grand total is needed
 	 * @param {object} mQueryOptions
@@ -66,7 +66,7 @@ sap.ui.define([
 		} else { // grand total w/o visual grouping
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mQueryOptions, true);
 			_GrandTotalHelper.enhanceCacheWithGrandTotal(this.oFirstLevel, oAggregation,
-				mQueryOptions, Object.keys(oAggregation.group));
+				mQueryOptions);
 		}
 	}
 
@@ -160,7 +160,7 @@ sap.ui.define([
 	 * Creates the first level cache if there is no parent group node.
 	 *
 	 * @param {object} [oParentGroupNode]
-	 *   The parent group node or undefined for the first level cache
+	 *   The parent group node or <code>undefined</code> for the first level cache
 	 * @param {boolean} [bHasGrandTotal]
 	 *   Whether a grand total is needed (use only for the first level cache!)
 	 * @returns {sap.ui.model.odata.v4.lib._CollectionCache}
@@ -170,48 +170,45 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.createGroupLevelCache = function (oParentGroupNode,
 			bHasGrandTotal) {
-		var oCache, oFilteredAggregation, sFilteredOrderby, aGroupBy, bLeaf, iLevel, aMissing,
-			mQueryOptions, bTotal;
+		var oAggregation = this.oAggregation,
+			aAllProperties, oCache, sFilteredOrderby, aGroupBy, bLeaf, iLevel, mQueryOptions,
+			bTotal;
 
 		iLevel = oParentGroupNode ? oParentGroupNode["@$ui5.node.level"] + 1 : 1;
-
-		oFilteredAggregation = _AggregationHelper.filterAggregation(this.oAggregation, iLevel);
-		aGroupBy = oFilteredAggregation.$groupBy;
-		delete oFilteredAggregation.$groupBy;
-		aMissing = oFilteredAggregation.$missing;
-		delete oFilteredAggregation.$missing;
+		bLeaf = iLevel > oAggregation.groupLevels.length;
+		aGroupBy = bLeaf
+			? oAggregation.groupLevels.concat(Object.keys(oAggregation.group).sort())
+			: oAggregation.groupLevels.slice(0, iLevel);
+		aAllProperties
+			= Object.keys(oAggregation.aggregate).concat(Object.keys(oAggregation.group));
 
 		mQueryOptions = Object.assign({}, this.mQueryOptions);
 		sFilteredOrderby
-			= _AggregationHelper.filterOrderby(this.mQueryOptions.$orderby, oFilteredAggregation);
+			= _AggregationHelper.filterOrderby(mQueryOptions.$orderby, oAggregation, iLevel);
 		if (sFilteredOrderby) {
 			mQueryOptions.$orderby = sFilteredOrderby;
 		} else {
 			delete mQueryOptions.$orderby;
 		}
+		bTotal = !bLeaf && Object.keys(oAggregation.aggregate).some(function (sAlias) {
+			return oAggregation.aggregate[sAlias].subtotals;
+		});
+
 		if (oParentGroupNode) {
 			mQueryOptions.$$filterBeforeAggregate
 				= _Helper.getPrivateAnnotation(oParentGroupNode, "filter");
 		}
-
-		if (bHasGrandTotal) {
-			mQueryOptions.$count = true;
-			oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
-			_GrandTotalHelper.enhanceCacheWithGrandTotal(oCache, oFilteredAggregation,
-				mQueryOptions, aGroupBy.concat(aMissing));
-		} else {
+		if (!bHasGrandTotal) {
 			delete mQueryOptions.$count;
-			mQueryOptions = _AggregationHelper.buildApply(oFilteredAggregation, mQueryOptions,
-				iLevel);
-			mQueryOptions.$count = true;
-
-			oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
+			mQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions, iLevel);
 		}
-
-		bLeaf = !oFilteredAggregation.groupLevels.length;
-		bTotal = !bLeaf && Object.keys(oFilteredAggregation.aggregate).length > 0;
+		mQueryOptions.$count = true;
+		oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
+		if (bHasGrandTotal) {
+			_GrandTotalHelper.enhanceCacheWithGrandTotal(oCache, oAggregation, mQueryOptions);
+		}
 		oCache.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate.bind(null,
-			oParentGroupNode, aGroupBy, aMissing, bLeaf, bTotal, this.aElements.$byPredicate);
+			oParentGroupNode, aGroupBy, aAllProperties, bLeaf, bTotal, this.aElements.$byPredicate);
 
 		return oCache;
 	};
@@ -541,9 +538,9 @@ sap.ui.define([
 	 * @param {string[]} aGroupBy
 	 *   The ordered list of properties by which this element is grouped; used for the key predicate
 	 *   and the filter
-	 * @param {string[]} aMissing
-	 *   A list of properties that are not grouped or aggregated and thus missing in the result, so
-	 *   they have to be nulled to avoid drill-down errors
+	 * @param {string[]} aAllProperties
+	 *   A list of all properties that might be missing in the result and thus have to be nulled to
+	 *   avoid drill-down errors
 	 * @param {boolean} bLeaf
 	 *   Whether this element is a leaf
 	 * @param {boolean} bTotal
@@ -560,8 +557,8 @@ sap.ui.define([
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#calculateKeyPredicate
-	_AggregationCache.calculateKeyPredicate = function (oGroupNode, aGroupBy, aMissing,
-			bLeaf, bTotal, mByPredicate, oElement, mTypeForMetaPath, sMetaPath) {
+	_AggregationCache.calculateKeyPredicate = function (oGroupNode, aGroupBy, aAllProperties, bLeaf,
+			bTotal, mByPredicate, oElement, mTypeForMetaPath, sMetaPath) {
 		var sPredicate;
 
 		/*
@@ -574,16 +571,12 @@ sap.ui.define([
 			return JSON.stringify(_Helper.publicClone(o));
 		}
 
-		// set grouping values for the levels above and below
+		// set grouping values for the levels above
 		aGroupBy.forEach(function (sName) {
 			if (!(sName in oElement)) {
 				oElement[sName] = oGroupNode[sName];
 			}
 		});
-		aMissing.forEach(function (sName) {
-			oElement[sName] = null; // avoid drill-down errors
-		});
-
 		sPredicate = _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath, aGroupBy, true);
 		if (sPredicate in mByPredicate) {
 			throw new Error("Multi-unit situation detected: " + stringify(oElement) + " vs. "
@@ -598,9 +591,8 @@ sap.ui.define([
 
 		// set the node values - except for the grand total element
 		if (oElement["@$ui5.node.level"] !== 0) {
-			oElement["@$ui5.node.isExpanded"] = bLeaf ? undefined : false;
-			oElement["@$ui5.node.isTotal"] = bTotal;
-			oElement["@$ui5.node.level"] = oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1;
+			_AggregationHelper.setAnnotations(oElement, bLeaf ? undefined : false, bTotal,
+				oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1, aAllProperties);
 		}
 	};
 
@@ -618,8 +610,8 @@ sap.ui.define([
 	 * @param {object} oAggregation
 	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
-	 *   <code>aggregate</code>
+	 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
+	 *   {@link _AggregationHelper.buildApply}
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string

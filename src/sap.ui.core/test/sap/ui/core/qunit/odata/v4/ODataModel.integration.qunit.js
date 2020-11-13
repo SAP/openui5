@@ -15789,7 +15789,7 @@ sap.ui.define([
 		$$aggregation : {\
 			aggregate : {\
 				SalesAmount : {grandTotal : true, subtotals : true},\
-				SalesNumber : {}\
+				SalesNumber : {grandTotal : true}\
 			},\
 			group : {\
 				AccountResponsible : {}\
@@ -15808,11 +15808,13 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesAmount)"
+		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesAmount,SalesNumber)"
 				+ ",groupby((Region),aggregate(SalesAmount))/orderby(Region desc)"
 				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [
-					{SalesAmount : "35100"},
+					// grand total for SalesNumber might be custom aggregate with min,
+					// falsy value is important edge case!
+					{SalesAmount : "35100", SalesNumber : 0},
 					{UI5__count : "26"},
 					{Region : "Z", SalesAmount : "100"},
 					{Region : "Y", SalesAmount : "200"},
@@ -15825,7 +15827,7 @@ sap.ui.define([
 			.expectChange("region", ["", "Z", "Y", "X"])
 			.expectChange("accountResponsible", ["", "", "", ""])
 			.expectChange("salesAmount", ["35100", "100", "200", "300"])
-			.expectChange("salesNumber", [null, null, null, null]);
+			.expectChange("salesNumber", ["0", null, null, null]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
@@ -15958,11 +15960,10 @@ sap.ui.define([
 
 			assert.strictEqual(oTable.getBinding("rows").getContexts().length, 2);
 
-			that.oLogMock.expects("error").withExactArgs(
-				"Failed to drill-down into (Country='UK',Region='Z')/Region, " +
-				"invalid segment: (Country='UK',Region='Z')",
-				"/aggregation/BusinessPartners?$apply=groupby((Country,Region)," +
-				"aggregate(SalesAmount))", "sap.ui.model.odata.v4.lib._Cache");
+			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into"
+				+ " (Country='UK',Region='Z')/Region, invalid segment: (Country='UK',Region='Z')",
+				"/aggregation/BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))",
+				"sap.ui.model.odata.v4.lib._Cache");
 
 			// code under test
 			assert.strictEqual(oThirdRow.getProperty("Region"), undefined,
@@ -17087,7 +17088,7 @@ sap.ui.define([
 				.expectChange("grossAmount", ["1"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
-				// w/o min/max: no _AggregationCache, system query options are used
+				// w/o min/max: no _MinMaxHelper, system query options are used
 				that.expectRequest("SalesOrderList?" + (bCount ? "$count=true&" : "")
 					+ "$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
 						"@odata.count" : "1",
