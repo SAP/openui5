@@ -1438,12 +1438,6 @@ function(
 			assert.equal(this.oChangePersistence._aDirtyChanges[1], oVENDORChange3, "which is the third change");
 		});
 
-		QUnit.test("when calling resetChanges without generator, selector IDs and change types specified", function(assert) {
-			sandbox.stub(Log, "error");
-			this.oChangePersistence.resetChanges(Layer.VENDOR);
-			assert.ok(Log.error.calledWith("Of the generator, selector IDs and change types parameters at least one has to filled"), "then Log.error() is called with an error");
-		});
-
 		QUnit.test("when calling resetChanges without aSelectorIds and aChangeTypes (application reset)", function(assert) {
 			var done = assert.async();
 			// changes for the component
