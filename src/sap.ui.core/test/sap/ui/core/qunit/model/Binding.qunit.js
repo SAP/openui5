@@ -44,25 +44,33 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setContext: sDetailedReason", function (assert) {
+[{
+	mParameters : undefined,
+	mChangeParameters : {reason : ChangeReason.Context}
+}, {
+	mParameters : {foo : "bar"},
+	mChangeParameters : {reason : ChangeReason.Context}
+}, {
+	mParameters : {detailedReason : "sDetailedReason"},
+	mChangeParameters : {detailedReason : "sDetailedReason", reason : ChangeReason.Context}
+}].forEach(function (oFixture, i) {
+	QUnit.test("setContext: parameter detailedReason, " + i, function (assert) {
 		var oBinding = new Binding(/*oModel*/null, "some/path"),
 			oContext = {};
 
 		assert.strictEqual(oBinding.getContext(), undefined);
 
-		this.mock(oBinding).expects("_fireChange").withExactArgs({
-			detailedReason : "sDetailedReason",
-			reason : ChangeReason.Context
-		});
+		this.mock(oBinding).expects("_fireChange").withExactArgs(oFixture.mChangeParameters);
 
 		// code under test
-		oBinding.setContext(oContext, "sDetailedReason");
+		oBinding.setContext(oContext, oFixture.mParameters);
 
 		assert.strictEqual(oBinding.getContext(), oContext);
 
 		// code under test: no new event
 		oBinding.setContext(oContext);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("setIgnoreMessages and constructor", function (assert) {

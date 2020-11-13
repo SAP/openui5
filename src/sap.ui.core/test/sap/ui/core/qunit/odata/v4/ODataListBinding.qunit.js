@@ -2001,7 +2001,7 @@ sap.ui.define([
 				"/bar/Suppliers")
 			.returns(oNewHeaderContext);
 		this.mock(Binding.prototype).expects("setContext").on(oBinding)
-			.withExactArgs(sinon.match.same(oContext), "sChangeReason");
+			.withExactArgs(sinon.match.same(oContext), {detailedReason : "sChangeReason"});
 
 		// code under test
 		oBinding.setContext(oContext);

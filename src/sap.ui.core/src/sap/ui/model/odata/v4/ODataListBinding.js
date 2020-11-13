@@ -2723,7 +2723,8 @@ sap.ui.define([
 					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
-				Binding.prototype.setContext.call(this, oContext, this.sChangeReason);
+				Binding.prototype.setContext.call(this, oContext,
+					{detailedReason : this.sChangeReason});
 			} else {
 				// remember context even if no "change" fired
 				this.oContext = oContext;
