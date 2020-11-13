@@ -29,6 +29,8 @@ sap.ui.define([
 		"integer": "BASE_EDITOR.MAP.TYPES.INTEGER",
 		"date": "BASE_EDITOR.MAP.TYPES.DATE",
 		"datetime": "BASE_EDITOR.MAP.TYPES.DATETIME",
+		"icon": "BASE_EDITOR.MAP.TYPES.ICON",
+		"simpleicon": "BASE_EDITOR.MAP.TYPES.SIMPLEICON",
 		"group": "BASE_EDITOR.MAP.TYPES.GROUP"
 	};
 
@@ -519,14 +521,24 @@ sap.ui.define([
 			}
 
 			var oEditorValue = _merge({}, this.getValue());
-			var sNewType =  oEvent.getParameter("value");
+			var sNewType = oEvent.getParameter("value");
+			var sOldType = oEvent.getParameter("previousValue");
 
-			var oItemToEdit = this.processInputValue(oEditorValue[sKey]);
-			oItemToEdit.type = sNewType;
-			oEditorValue[sKey] = this.processOutputValue(oItemToEdit);
+			if (sNewType !== sOldType) {
+				var oItemToEdit = this.processInputValue(oEditorValue[sKey]);
+				oItemToEdit.type = sNewType;
+				oEditorValue[sKey] = this.processOutputValue(oItemToEdit);
 
-			this._mTypes[sKey] = sNewType;
-			this.setValue(oEditorValue);
+				this._mTypes[sKey] = sNewType;
+				this.setValue(oEditorValue);
+
+				var oDesigntime = _merge({}, this.getConfig().designtime);
+				if (oDesigntime.hasOwnProperty(sKey)) {
+					delete oDesigntime[sKey].__value.visualization;
+					oDesigntime[sKey].__value.type = sNewType;
+					this.setDesigntimeMetadata(oDesigntime);
+				}
+			}
 		},
 
 		// Generic field change

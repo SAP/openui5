@@ -109,6 +109,29 @@ sap.ui.define([
 					if (!mParameters[n]) {
 						if (oItem.type === "group" && mParametersInDesigntime[n]) {
 							mParameters[n] = {};
+						} else if (oItem.manifestpath && !oItem.manifestpath.startsWith("/sap.card/configuration/parameters")) {
+							var sPath = oItem.manifestpath;
+							if (sPath.startsWith("/")) {
+								sPath = sPath.substring(1);
+							}
+							/*
+							var aPaths = sPath.split("/");
+							var vValue = ObjectPath.get(aPaths, oJson) || oItem.defaultValue || "";
+							if (oItem.visualization && oItem.visualization.type === "IconSelect") {
+								mParameters[n] = {
+									value: {
+										src: vValue
+									}
+								};
+							} else {
+								mParameters[n] = {
+									value: vValue
+								};
+							}*/
+							var vValue = ObjectPath.get(sPath.split("/"), oJson) || oItem.defaultValue || "";
+							mParameters[n] = {
+								value: vValue
+							};
 						} else {
 							//delete the item because it is not part of parameters anymore
 							delete oCopyConfig.form.items[n];
@@ -162,13 +185,13 @@ sap.ui.define([
 						if (!n.startsWith("sap.card/configuration/parameters")) {
 							continue;
 						}
-						var oOriginalItem = oCopyConfig.form.items[sKey];
+						var oOriginalItem = oCopyConfig.form.items[sKey] || {};
 						var oViz;
 						if (oOriginalItem.visualization) {
 							oViz = oOriginalItem.visualization;
 						}
 
-						oItem = merge(oOriginalItem || {}, mParameters[sKey]);
+						oItem = merge(oOriginalItem, mParameters[sKey]);
 						if (oMetaItem.hasOwnProperty("label")) {
 							oItem.label = oMetaItem.label;
 						}
@@ -191,7 +214,11 @@ sap.ui.define([
 						}
 
 						if (oViz) {
-							oItem.visualization = oViz;
+							if (oMetaItem.hasOwnProperty("visualization")) {
+								oItem.visualization = oViz;
+							} else {
+								delete oItem.visualization;
+							}
 							oViz = null;
 						}
 						oItem.__key = sKey;
@@ -237,10 +264,16 @@ sap.ui.define([
 	BASEditor.prototype._applyDefaultValue = function (oItem) {
 		if (oItem.value === undefined || oItem.value === null) {
 			switch (oItem.type) {
-				case "boolean": oItem.value = oItem.defaultValue || false; break;
+				case "boolean":
+					oItem.value = oItem.defaultValue || false;
+					break;
 				case "integer":
-				case "number": oItem.value = oItem.defaultValue || 0; break;
-				case "string[]": oItem.value = oItem.defaultValue || []; break;
+				case "number":
+					oItem.value = oItem.defaultValue || 0;
+					break;
+				case "string[]":
+					oItem.value = oItem.defaultValue || [];
+					break;
 				default: oItem.value = oItem.defaultValue || "";
 			}
 		}
@@ -258,13 +291,25 @@ sap.ui.define([
 			var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
 			for (var n in mParameters) {
 				var oParam = mParameters[n];
-				if (oParam && (oParam.type === "group" || oParam.manifestpath && !oParam.manifestpath.startsWith("/sap.card/configuration/parameters"))) {
+				if (oParam && oParam.type === "group") {
 					delete mParameters[n];
 					continue;
 				}
 				if (this._oDesigntimeJSConfig && this._oDesigntimeJSConfig.form && this._oDesigntimeJSConfig.form.items) {
-					var oParamConfig = this._oDesigntimeJSConfig.form.items[n];
-					if (oParamConfig && (oParamConfig.type === "group" || oParamConfig.manifestpath && !oParamConfig.manifestpath.startsWith("/sap.card/configuration/parameters"))) {
+					var oParamConfig = this._oDesigntimeJSConfig.form.items[n] || {};
+					if (oParamConfig.type === "group") {
+						delete mParameters[n];
+						continue;
+					}
+					if (oParamConfig.manifestpath && !oParamConfig.manifestpath.startsWith("/sap.card/configuration/parameters")) {
+						var sPath = oParamConfig.manifestpath;
+						if (sPath.startsWith("/")) {
+							sPath = sPath.substring(1);
+						}
+						if (oParamConfig.type === "simpleicon") {
+							oParamConfig.type = "string";
+						}
+						ObjectPath.set(sPath.split("/"), oParamConfig.value, oJson);
 						delete mParameters[n];
 						continue;
 					}
@@ -284,21 +329,20 @@ sap.ui.define([
 		var oConfig = merge({}, oConfig);
 		for (var n in oConfig.form.items) {
 			var oItem = oConfig.form.items[n];
-			delete oItem.value;
-			if (oItem.visualization &&
-				oItem.visualization.type &&
-				typeof oItem.visualization.type === "function") {
-				if (oItem.visualization.type.getMetadata && oItem.visualization.type.getMetadata()) {
-					var sClass = oItem.visualization.type.getMetadata().getName().replace(/\./g, "/");
-					if (bString) {
-						var iIndex = sClass.lastIndexOf("/");
-						sClass = iIndex > 0 ? sClass.substring(iIndex + 1) : sClass;
-						oItem.visualization.type = "$$" + sClass + "$$";
-					} else {
-						oItem.visualization.type = oItem.visualization.type.getMetadata().getName().replace(/\./g, "/");
-					}
+			//If is icon
+			if (oItem.type === "simpleicon") {
+				if (!oItem.visualization) {
+					oItem.visualization = {
+						"type": "IconSelect",
+						"settings": {
+							"value": "{currentSettings>value}",
+							"editable": "{currentSettings>editable}"
+						}
+					};
 				}
+				oItem.type = "string";
 			}
+			delete oItem.value;
 		}
 		if (bString) {
 			var sConfig = JSON.stringify(oConfig, null, "\t");
@@ -323,6 +367,10 @@ sap.ui.define([
 				oMetaItem = oMetadata[sPath];
 				oMetaItem.position = i++;
 				if (oMetaItem.visualization) {
+					//If is icon
+					if (oMetaItem.visualization.type === "IconSelect") {
+						oMetaItem.type = "simpleicon";
+					}
 					oMetaItem.visualization = 1;
 				}
 
@@ -359,7 +407,6 @@ sap.ui.define([
 					} else {
 						this._applyDefaultValue(oMetaItem);
 					}
-
 					if (ObjectPath.get(aPath, this._oInitialJson)) {
 						if (ObjectPath.get(aPath, this._oInitialJson).value === undefined) {
 							//set the value from the metadata to the original data
