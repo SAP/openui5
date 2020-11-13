@@ -1908,6 +1908,7 @@ function (
 		// Assert
 		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Tablet"), "Tablet class is applied");
 		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop"), "Desktop class is removed");
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop-XL"), "Desktop-XL class is removed");
 		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Phone"), "Phone class is removed");
 		assert.deepEqual(oSpy.getCall(0).args[0], oContextualSettings, "Contextual settings object is passed");
 
@@ -1918,6 +1919,16 @@ function (
 		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Phone"), "Phone class is applied");
 		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Tablet"), "Tablet class is removed");
 		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop"), "Desktop class is removed");
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop-XL"), "Desktop-XL class is removed");
+
+		// Act
+		this.oDynamicPage._applyContextualSettings({contextualWidth: 1440});
+
+		// Assert
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Phone"), "Phone class is removed");
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Tablet"), "Tablet class is removed");
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop"), "Desktop class is removed");
+		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop-XL"), "Desktop-XL class is applied");
 	});
 
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */

@@ -313,6 +313,7 @@ sap.ui.define([
 	DynamicPage.HEADER_MAX_ALLOWED_NON_SROLLABLE_ON_MOBILE = 0.3;
 
 	DynamicPage.BREAK_POINTS = {
+		DESKTOP: 1439,
 		TABLET: 1024,
 		PHONE: 600
 	};
@@ -331,7 +332,8 @@ sap.ui.define([
 	DynamicPage.MEDIA = {
 		PHONE: "sapFDynamicPage-Std-Phone",
 		TABLET: "sapFDynamicPage-Std-Tablet",
-		DESKTOP: "sapFDynamicPage-Std-Desktop"
+		DESKTOP: "sapFDynamicPage-Std-Desktop",
+		DESKTOP_XL: "sapFDynamicPage-Std-Desktop-XL"
 	};
 
 	DynamicPage.RESIZE_HANDLER_ID = {
@@ -1381,8 +1383,10 @@ sap.ui.define([
 			this._updateMediaStyle(DynamicPage.MEDIA.PHONE);
 		} else if (iWidth <= DynamicPage.BREAK_POINTS.TABLET) {
 			this._updateMediaStyle(DynamicPage.MEDIA.TABLET);
-		} else {
+		} else if (iWidth <= DynamicPage.BREAK_POINTS.DESKTOP) {
 			this._updateMediaStyle(DynamicPage.MEDIA.DESKTOP);
+		} else {
+			this._updateMediaStyle(DynamicPage.MEDIA.DESKTOP_XL);
 		}
 	};
 
