@@ -14,13 +14,16 @@ Common Compact/Cozy
 }
 
 .sapUxAPAnchorBar.sapMTB {
-	padding-left: 0;
+	padding-left: 2rem;
 	box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor;
 }
 
 /* M, L or splitview paddings */
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB {
-	padding-left: 2rem;
+.sapUxAPObjectPageLayout-Std-Phone,
+html .sapUiContainer-Narrow {
+	.sapUxAPAnchorBar.sapMTB {
+		padding-left: 0;
+	}
 }
 
 .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBar.sapMTB,
@@ -35,35 +38,22 @@ html .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB {
 
 .sapUxAPAnchorBar {
 	vertical-align: middle;
+	position: relative;
+	width: 100%;
+	padding: 0;
 }
 
 .sapUxAPAnchorBarScrollContainer {
 	width: 100%;
 }
 
-/* navigation arrows for desktop and tablet only */
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar,
-.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBar,
-html .sapUiContainer-Wide .sapUxAPAnchorBar,
-html .sapUiContainer-Medium .sapUxAPAnchorBar {
-	position: relative;
-	width: 100%;
-	padding: 0;
-}
-
 /* leave space for the overflow button to the right */
-.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBarOverflow,
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBarOverflow,
-html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow,
-html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow {
+.sapUxAPAnchorBarOverflow {
 	padding-right: 4rem;
 }
 
 /* not display the select if the bar does not overflow */
-.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
-html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
-html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect {
+.sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect {
 	display: none;
 }
 

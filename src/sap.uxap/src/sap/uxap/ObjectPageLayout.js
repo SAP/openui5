@@ -487,6 +487,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.BREAK_POINTS = {
+		DESKTOP: 1439,
 		TABLET: 1024,
 		PHONE: 600
 	};
@@ -494,13 +495,15 @@ sap.ui.define([
 	ObjectPageLayout.MEDIA = {
 		PHONE: "sapUxAPObjectPageLayout-Std-Phone",
 		TABLET: "sapUxAPObjectPageLayout-Std-Tablet",
-		DESKTOP: "sapUxAPObjectPageLayout-Std-Desktop"
+		DESKTOP: "sapUxAPObjectPageLayout-Std-Desktop",
+		DESKTOP_XL: "sapUxAPObjectPageLayout-Std-Desktop-XL"
 	};
 
 	ObjectPageLayout.DYNAMIC_HEADERS_MEDIA = {
 		PHONE: "sapFDynamicPage-Std-Phone",
 		TABLET: "sapFDynamicPage-Std-Tablet",
-		DESKTOP: "sapFDynamicPage-Std-Desktop"
+		DESKTOP: "sapFDynamicPage-Std-Desktop",
+		DESKTOP_XL: "sapFDynamicPage-Std-Desktop-XL"
 	};
 
 	ObjectPageLayout.DIV = "div";
@@ -2356,8 +2359,10 @@ sap.ui.define([
 			fnUpdateMediaStyleClass(oMedia.PHONE);
 		} else if (iWidth <= mBreakpoints.TABLET) {
 			fnUpdateMediaStyleClass(oMedia.TABLET);
-		} else {
+		} else if (iWidth <= mBreakpoints.DESKTOP) {
 			fnUpdateMediaStyleClass(oMedia.DESKTOP);
+		} else {
+			fnUpdateMediaStyleClass(oMedia.DESKTOP_XL);
 		}
 	};
 
