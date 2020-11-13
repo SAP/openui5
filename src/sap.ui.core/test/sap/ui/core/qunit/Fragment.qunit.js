@@ -1015,4 +1015,24 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.test("Load fragment using own fragment type", function(assert) {
+		Fragment.registerType("CUSTOM", {
+			init: function () {
+				assert.ok("Fragment.init was called");
+				return Fragment.getType("XML").init.apply(this, arguments);
+			},
+			load: function () {
+				assert.ok("Fragment.load was called");
+				return Fragment.getType("XML").load.apply(this, arguments);
+			}
+		});
+
+		return Fragment.load({
+			type: "CUSTOM",
+			name: "testdata.fragments.XMLTestFragmentNoController"
+		}).then(function (oControl) {
+			assert.ok(oControl instanceof sap.ui.layout.HorizontalLayout, "Correct fragment content loaded");
+		});
+	});
 });

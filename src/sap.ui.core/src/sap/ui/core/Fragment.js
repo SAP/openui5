@@ -134,7 +134,9 @@ function(
 	 * Registers a new Fragment type
 	 *
 	 * @param {string} sType the Fragment type. Types "XML", "HTML" and JS" are built-in and always available.
-	 * @param {object} oFragmentImpl an object having a property "init" of type "function" which is called on Fragment instantiation with the settings map as argument
+	 * @param {object} oFragmentImpl an object having the properties "init" and "load".
+	 * @param {function} oFragmentImpl.init Called on Fragment instantiation with the settings map as argument. Function needs to return a promise which resolves with sap.ui.core.Control|sap.ui.core.Control[]
+	 * @param {function} oFragmentImpl.load Called to load the fragment content. Must return a Promise which resolves with the loaded resource. This resource is passed as 'fragmentContent' to the init() function via a parameter object.
 	 * @public
 	 */
 	Fragment.registerType = function(sType, oFragmentImpl) {
@@ -172,17 +174,19 @@ function(
 		// if the containing view (or fragment) has a scoped runWithOnwer function we need to propagate this to the nested Fragment (only for async case)
 		this.fnScopedRunWithOwner = mSettings.containingView && mSettings.containingView.fnScopedRunWithOwner;
 
-        if (!this.fnScopedRunWithOwner && this._sOwnerId) {
+		if (!this.fnScopedRunWithOwner && this._sOwnerId) {
 			var oOwnerComponent = Component.get(this._sOwnerId);
 			this.fnScopedRunWithOwner = function(fnCallbackToBeScoped) {
-			    return oOwnerComponent.runAsOwner(fnCallbackToBeScoped);
+				return oOwnerComponent.runAsOwner(fnCallbackToBeScoped);
 			};
-        }
+		}
 
-		var oFragmentImpl = mTypes[mSettings.type];
+		var oFragmentImpl = Fragment.getType(mSettings.type);
 		if (oFragmentImpl) {
-			oFragmentImpl.init.apply(this, [mSettings]);
-
+			this._pContentPromise = oFragmentImpl.init.apply(this, [mSettings]);
+			if (!this._pContentPromise) { // TODO Remove this if after sap.fe changed there custom fragment implementation
+				this._pContentPromise = Promise.resolve(this._aContent);
+			}
 		} else { // Fragment type not found
 			throw new Error("No type for the fragment has been specified: " + mSettings.type);
 		}
@@ -365,7 +369,6 @@ function(
 			}
 
 			if (mSettings.async) {
-
 				var fnCreateInstance = function () {
 					var oOwnerComponent = Component.get(mSettings.sOwnerId);
 					if (oOwnerComponent) {
@@ -376,35 +379,20 @@ function(
 					return new Fragment(mSettings);
 				};
 
-				if (mSettings.fragmentName) {
-					var sFragmentPath = mSettings.fragmentName.replace(/\./g, "/") + ".fragment";
+				var oType = Fragment.getType(mSettings.type);
 
+				if (mSettings.fragmentName && mSettings.fragmentContent) {
+					delete mSettings.fragmentName;
+				}
+
+				if (mSettings.fragmentName && typeof oType.load == "function") {
 					return new Promise(function(resolve, reject) {
-						switch (mSettings.type) {
-							case "XML":
-							default:
-								// type "XML"
-								XMLTemplateProcessor.loadTemplatePromise(mSettings.fragmentName, "fragment").then(function(documentElement) {
-									mSettings.fragmentContent = documentElement;
-									resolve(fnCreateInstance());
-								});
-								break;
-							case "JS":
-								// type "JS"
-								sap.ui.require([sFragmentPath], function(content) {
-									mSettings.fragmentContent = content;
-									resolve(fnCreateInstance());
-								}, reject);
-								break;
-							case "HTML":
-								LoaderExtensions.loadResource(sFragmentPath + ".html", {async: true}).then(function(oContent) {
-									mSettings.fragmentContent = oContent;
-									resolve(fnCreateInstance());
-								});
-								break;
-						}
+						oType.load(mSettings).then(function (vContent) {
+							mSettings.fragmentContent = vContent;
+							resolve(fnCreateInstance());
+						});
 					});
-				} else { // in case there is no 'fragmentName' but a 'definition' for the fragment provided
+				} else { // in case there is no 'fragmentName' but a 'definition' for the fragment provided or in case there is no load function available (sync use case)
 					return Promise.resolve(fnCreateInstance());
 				}
 			}
@@ -491,8 +479,8 @@ function(
 		mParameters.processingMode = "sequential";
 
 		// map new parameter names to classic API, delete new names to avoid assertion failures
-		mParameters.fragmentName = mParameters.name;
-		mParameters.fragmentContent = mParameters.definition;
+		mParameters.fragmentName = mParameters.fragmentName || mParameters.name;
+		mParameters.fragmentContent = mParameters.fragmentContent || mParameters.definition;
 		mParameters.oController = mParameters.controller;
 		mParameters.sOwnerId = ManagedObject._sOwnerId;
 		delete mParameters.name;
@@ -504,6 +492,19 @@ function(
 		return pFragment.then(function(oFragment) {
 			return oFragment._parsed();
 		});
+	};
+
+	/**
+	 * Get the implementation of the init and the load function for the requested fragment type.
+	 * @param {string} sType Name of the fragment type
+	 * @returns {object} returns an object containing the init and the load function of requested fragment type
+	 * @since 1.86
+	 * @static
+	 * @private
+	 * @ui5-restricted sap.fe
+	 */
+	Fragment.getType = function (sType) {
+		return mTypes[sType];
 	};
 
 	/**
@@ -746,8 +747,13 @@ function(
 
 
 	// ###   XML Fragments   ###
-
 	Fragment.registerType("XML" , {
+		load: function(mSettings) {
+			// type "XML"
+			return XMLTemplateProcessor.loadTemplatePromise(mSettings.fragmentName, "fragment").then(function(documentElement) {
+				return documentElement;
+			});
+		},
 		init: function(mSettings) {
 			this._aContent = [];
 			// use specified content or load the content definition
@@ -787,14 +793,11 @@ function(
 				}
 			};
 
-			// we take over the scoped owner component from our containing view (if any)
-			this.fnScopedRunWithOwner = this._oContainingView.fnScopedRunWithOwner;
-
 			// finally trigger the actual XML processing and control creation
 			// IMPORTANT:
 			// this call can be triggered with both "async = true" and "async = false"
 			// In case of sync processing, the XMLTemplateProcessor makes sure to only use SyncPromises.
-			this._pContentPromise = XMLTemplateProcessor.parseTemplatePromise(this._xContent, this, this._bAsync, oParseConfig).then(function(aContent) {
+			return XMLTemplateProcessor.parseTemplatePromise(this._xContent, this, this._bAsync, oParseConfig).then(function(aContent) {
 				this._aContent = aContent;
 				/*
 				 * If content was parsed and an objectBinding at the fragment was defined
@@ -820,6 +823,14 @@ function(
 	// ###   JS Fragments   ###
 
 	Fragment.registerType("JS", {
+		load: function(mSettings) {
+			var sFragmentPath = mSettings.fragmentName.replace(/\./g, "/") + ".fragment";
+			return new Promise(function(resolve, reject) {
+				sap.ui.require([sFragmentPath], function(content) {
+					resolve(content);
+				}, reject);
+			});
+		},
 		init: function(mSettings) {
 			this._aContent = [];
 
@@ -837,7 +848,7 @@ function(
 			this._oContainingView = mSettings.containingView || this;
 
 			// unset any preprocessors (e.g. from an enclosing JSON view)
-			ManagedObject.runWithPreprocessors(function() {
+			return ManagedObject.runWithPreprocessors(function() {
 				var vContent;
 				if (this.fnScopedRunWithOwner) {
 					this.fnScopedRunWithOwner(function () {
@@ -849,13 +860,13 @@ function(
 
 				// createContent might return a Promise too
 				if (vContent instanceof Promise) {
-					this._pContentPromise = vContent.then(function(aContent) {
+					return vContent.then(function(aContent) {
 						this._aContent = this._aContent.concat(aContent);
 						return this._aContent.length > 1 ? this._aContent : this._aContent[0];
 					}.bind(this));
 				} else {
 					// vContent is not a Promise, but a synchronously processed array of controls
-					this._pContentPromise = new Promise(function (resolve, reject) {
+					return new Promise(function (resolve, reject) {
 						this._aContent = this._aContent.concat(vContent);
 						resolve(this._aContent.length > 1 ? this._aContent : this._aContent[0]);
 					}.bind(this));
@@ -904,6 +915,12 @@ function(
 		};
 
 		Fragment.registerType("HTML", {
+			load: function(mSettings) {
+				var sFragmentPath = mSettings.fragmentName.replace(/\./g, "/") + ".fragment";
+				return LoaderExtensions.loadResource(sFragmentPath + ".html", {async: true}).then(function(oContent) {
+					return oContent;
+				});
+			},
 			init: function(mSettings) {
 				// DeclarativeSupport automatically uses set/getContent, but Fragment should not have such an aggregation and should not be parent of any control
 				// FIXME: the other aggregation methods are not implemented. They are currently not used, but who knows...
@@ -963,7 +980,7 @@ function(
 				}
 
 				// unset any preprocessors (e.g. from an enclosing HTML view)
-				ManagedObject.runWithPreprocessors(function() {
+				return ManagedObject.runWithPreprocessors(function() {
 					if (this.fnScopedRunWithOwner) {
 						this.fnScopedRunWithOwner(function () {
 							DeclarativeSupport.compile(this._oTemplate, this);
@@ -976,7 +993,7 @@ function(
 					var content = this.getContent();
 					if (content && content.length === 1) {
 						this._aContent = [content[0]];
-						this._pContentPromise = new Promise(function(resolve, reject) {
+						return new Promise(function(resolve, reject) {
 							resolve(this._aContent[0]);
 						}.bind(this));
 					}// else {
