@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"ui5loader",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
@@ -24,6 +25,7 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters"
 ], function (
+	ui5loader,
 	Control,
 	Core,
 	deepClone,
@@ -738,11 +740,13 @@ sap.ui.define([
 			oIcon.addStyleClass("sapUiIntegrationCardEditorDescriptionIcon");
 			oLabel.addDependent(oIcon);
 			oIcon.onmouseover = function () {
-				this._getPopover().getContent()[0].setText(oConfig.description);
+				this._getPopover().getContent()[0].applySettings({ text: oConfig.description });
 				this._getPopover().openBy(oIcon);
+				oIcon.addDependent(this._getPopover());
 			}.bind(this);
 			oIcon.onmouseout = function () {
 				this._getPopover().close();
+				oIcon.removeDependent(this._getPopover());
 			}.bind(this);
 		}
 		return oLabel;
@@ -781,7 +785,7 @@ sap.ui.define([
 			var oCurrentCard = this._oProviderCard;
 			this._oProviderCard = new Card({
 				manifest: oManifestData,
-				baseUrl: this._oProviderCard.getBaseUrl(),
+				baseUrl: this._getBaseUrl(),
 				host: this._oProviderCard.getHost()
 			});
 			this._oProviderCard.setManifestChanges([this.getCurrentSettings()]);
@@ -951,11 +955,13 @@ sap.ui.define([
 			//force a 2 column layout in the form, remember the original to reset
 
 			oConfig.cols = 1;
+
 			//create a configuration clone. map the _settingspath setting to _language, and set it to not editable
 			var origLangField = deepClone(oConfig, 10);
 			origLangField._settingspath += "/_language";
 			origLangField.editable = false;
 			origLangField.required = false;
+			origLangField.value = origLangField._beforeValue;
 			if (!origLangField.value) {
 				//the original language field shows only a text control. If empty we show a dash to avoid empty text.
 				origLangField.value = "-";
@@ -1011,13 +1017,30 @@ sap.ui.define([
 			return "";
 		}
 		if (typeof vI18n === "string") {
-			vI18n = this._oEditorCard._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + vI18n;
-			var oI18nURI = new URI(vI18n);
+			var aFallbacks = [sLanguage];
+			if (sLanguage.indexOf("_") > -1) {
+				aFallbacks.push(sLanguage.substring(0, sLanguage.indexOf("_")));
+			}
 			// load the ResourceBundle relative to the manifest
-			this._oTranslationBundle = new ResourceBundle(oI18nURI, sLanguage, false, false, [sLanguage], "", true);
+			this._oTranslationBundle = ResourceBundle.create({
+				url: this._getBaseUrl() + vI18n,
+				async: false,
+				locale: sLanguage,
+				supportedLocales: aFallbacks,
+				fallbackLocales: ""
+			});
+
 			return this._getCurrentLanguageSpecificText(sKey);
 		}
 	};
+
+	CardEditor.prototype._getBaseUrl = function () {
+		if (this._oEditorCard && this._oEditorCard.isReady()) {
+			return this._oEditorCard.getBaseUrl() || this.oCardEditor._oEditorCard._oCardManifest.getUrl();
+		}
+		return "";
+	};
+
 	/**
 	 * Starts the editor, creates the fields and preview
 	 */
@@ -1085,7 +1108,6 @@ sap.ui.define([
 								}
 							}
 						}
-
 						if (this.getMode() === "translation") {
 							if (this._isValueWithHandlebarsTranslation(oItem.label)) {
 								oItem._translatedLabel = this._getCurrentLanguageSpecificText(oItem.label.substring(2, oItem.label.length - 2), true);
