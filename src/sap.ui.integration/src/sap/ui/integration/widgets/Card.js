@@ -422,6 +422,17 @@ sap.ui.define([
 			return;
 		}
 
+		this.startManifestProcessing();
+	};
+
+	/**
+	 * Starts the card's manifest processing. It will load the manifest and apply the settings written in it.
+	 * This method can be called if the card needs to be used without rendering.
+	 * When card is rendered it starts automatically.
+	 * @private
+	 * @ui5-restricted
+	 */
+	Card.prototype.startManifestProcessing = function () {
 		if (this._bApplyManifest || this._bApplyParameters) {
 			this._clearReadyState();
 			this._initReadyState();
