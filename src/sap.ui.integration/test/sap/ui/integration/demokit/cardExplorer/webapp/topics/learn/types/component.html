@@ -17,9 +17,10 @@
 				Component Card
 			</h1>
 			<p>
-				With this card type, the developer can display a whole UI5 Component as a content.
+				With this card type, card developers can display a whole
+				UI5 <a data-demokit-href="/api/sap.ui.core.Component">Component</a> as content for the card.
 				The card itself will load the specified component and display it.
-				It allows a huge flexibility and so the developer is responsible to follow the guidelines to achieve
+				This allows great flexibility and as such, the developer is responsible to follow the guidelines to achieve
 				consistent user experience.
 			</p>
 			<h2 id="usage">Usage</h2>
@@ -42,6 +43,29 @@
 					also this <a href="../../../index.html#/explore/destinations/component" target="_parent">Component
 						Card Destinations Sample</a>.</li>
 			</ul>
+			<h2 id="properties">Properties</h2>
+			<p>The Component Card allows configuration of the content.</p>
+			<h4>Content properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>minHeight</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines the minimum height of the content in <a data-demokit-href="/api/sap.ui.core.CSSSize" target="_blank">sap.ui.core.CSSSize</a> units.</td>
+						<td>1.29.0</td>
+						<td>1.85</td>
+					</tr>
+				</table>
+			</div>
 			<h2 id="example">Example</h2>
 			<p>Create a card manifest and include the manifest for the component in the same file:
 			</p>
@@ -80,6 +104,7 @@
 			<div><a href="#overview">Component Card</a></div>
 			<div><a href="#usage">Usage</a></div>
 			<div><a href="#lifeCycleAndApi">Lifecycle and API</a></div>
+			<div><a href="#properties">Properties</a></div>
 			<div><a href="#example">Example</a></div>
 		</div>
 	</div>

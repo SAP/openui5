@@ -50,7 +50,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "14rem", "Min height in compact must be 14rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "14rem", "Min height in compact must be 14rem");
 	});
 
 	QUnit.test("List card - min height in compact mode NO icon or description", function (assert) {
@@ -62,7 +62,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "14rem", "Min height in compact must be 14rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "14rem", "Min height in compact must be 14rem");
 	});
 
 	QUnit.test("List card - min height in compact mode with description", function (assert) {
@@ -76,7 +76,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in compact must be 35rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in compact must be 35rem");
 	});
 
 	QUnit.test("List card - min height in compact mode with chart", function (assert) {
@@ -90,7 +90,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in compact must be 35rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in compact must be 35rem");
 	});
 
 	QUnit.test("List card - min height in compact mode with chart and description", function (assert) {
@@ -105,7 +105,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "42rem", "Min height in compact must be 42rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "42rem", "Min height in compact must be 42rem");
 	});
 
 	QUnit.test("Table card - min height in compact mode", function (assert) {
@@ -117,7 +117,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "16rem", "Min height in compact must be 16rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "16rem", "Min height in compact must be 16rem");
 	});
 
 	QUnit.test("TimeLine card - min height in compact mode", function (assert) {
@@ -129,7 +129,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "28rem", "Min height in compact must be 28rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "28rem", "Min height in compact must be 28rem");
 	});
 
 	QUnit.module("Cozy min height", {
@@ -163,7 +163,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "19.25rem", "Min height in cozy must be 19.25rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "19.25rem", "Min height in cozy must be 19.25rem");
 	});
 
 	QUnit.test("List card  - min height in cozy mode no icon or description", function (assert) {
@@ -175,7 +175,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "19.25rem", "Min height in cozy must be 19.25rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "19.25rem", "Min height in cozy must be 19.25rem");
 	});
 
 	QUnit.test("List card - min height in cozy mode with icon or description", function (assert) {
@@ -189,7 +189,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in cozy must be 35rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in cozy must be 35rem");
 	});
 
 	QUnit.test("Table card  - min height in cozy mode", function (assert) {
@@ -201,7 +201,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "22rem", "Min height in cozy must be 22rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "22rem", "Min height in cozy must be 22rem");
 	});
 
 	QUnit.test("TimeLine card  - min height in cozy mode", function (assert) {
@@ -213,7 +213,7 @@ sap.ui.define([
 			};
 
 		//Assert
-		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in cozy must be 35rem");
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in cozy must be 35rem");
 	});
 
 	QUnit.test("Analytical card - configuring min height", function (assert) {
@@ -223,7 +223,7 @@ sap.ui.define([
 				minHeight: sExpectedMinHeight
 			};
 
-		assert.equal(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
 	});
 
 	QUnit.test("Analytical card - default min height", function (assert) {
@@ -231,7 +231,7 @@ sap.ui.define([
 			sExpectedMinHeight = "14rem",
 			oConfiguration = {};
 
-		assert.equal(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
 	});
 
 	QUnit.test("AnalyticsCloud card - default min height", function (assert) {
@@ -239,7 +239,7 @@ sap.ui.define([
 		sExpectedMinHeight = "14rem",
 			oConfiguration = {};
 
-		assert.equal(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
 	});
 
 	QUnit.test("AnalyticsCloud card - configuring min height", function (assert) {
@@ -249,6 +249,24 @@ sap.ui.define([
 				minHeight: sExpectedMinHeight
 			};
 
-		assert.equal(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+	});
+
+	QUnit.test("Component card - default min height", function (assert) {
+		var sType = "Component",
+		sExpectedMinHeight = "5rem",
+			oConfiguration = {};
+
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+	});
+
+	QUnit.test("Component card - configuring min height", function (assert) {
+		var sType = "AnalyticsCloud",
+			sExpectedMinHeight = "20rem",
+			oConfiguration = {
+				minHeight: sExpectedMinHeight
+			};
+
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
 	});
 });

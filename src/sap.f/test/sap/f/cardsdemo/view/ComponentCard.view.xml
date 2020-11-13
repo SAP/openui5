@@ -28,7 +28,6 @@
 				id="comp"
 				manifest="./cardsdemo/cardcontent/componentCard/allInOne/manifest.json"
 				width="300px"
-				height="300px"
 				class="sapUiTinyMargin" />
 			<w:Card
 				id="ticket"

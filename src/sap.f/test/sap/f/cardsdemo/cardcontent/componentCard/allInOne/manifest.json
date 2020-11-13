@@ -26,6 +26,9 @@
 		"headerPosition": "Bottom",
 		"header": {
 			"title": "Header Text - Bottom Position"
+		},
+		"content": {
+			"minHeight": "10rem"
 		}
 	}
 }

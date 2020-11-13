@@ -234,9 +234,7 @@
         {
           "properties": {
             "content": {
-              "enum": [
-                "null"
-              ]
+                "$ref": "#/definitions/ContentType.Component"
             }
           }
         }
@@ -456,6 +454,16 @@
         }
       }
     },
+    "ContentType.Component": {
+      "description": "Represents configuration for a Component card's content.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minHeight": {
+          "$ref": "#/definitions/minHeight"
+        }
+      }
+    },
     "ContentType.List": {
       "description": "Represents list content attributes",
       "type": "object",
@@ -580,8 +588,7 @@
           ]
         },
         "minHeight": {
-          "description": "Defines the minHeight of the chart as a CSS value.",
-          "type": "string"
+          "$ref": "#/definitions/minHeight"
         },
         "legend": {
           "$ref": "#/definitions/ContentType.Analytical.Legend"
@@ -1383,6 +1390,10 @@
           "$ref": "#/definitions/iconBackgroundColor"
         }
       }
+    },
+    "minHeight": {
+      "description": "Defines the min-height of the Content as a CSS value.",
+      "type": "string"
     },
     "icon": {
       "description": "Represents icon attributes",
