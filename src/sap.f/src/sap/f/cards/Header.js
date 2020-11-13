@@ -139,6 +139,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Header.prototype.init = function () {
+		BaseHeader.prototype.init.apply(this, arguments);
+
 		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
@@ -148,6 +150,8 @@ sap.ui.define([
 	};
 
 	Header.prototype.exit = function () {
+		BaseHeader.prototype.exit.apply(this, arguments);
+
 		if (this._oAriaAvatarText) {
 			this._oAriaAvatarText.destroy();
 			this._oAriaAvatarText = null;

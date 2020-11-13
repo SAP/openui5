@@ -50,6 +50,7 @@
 				<w:Card id="kpicard2" manifest="{manifests>/kpiManifests/kpicard2}" />
 				<w:Card id="kpicard3" manifest="{manifests>/kpiManifests/kpicard3}" />
 				<w:Card id="kpicard4" manifest="{manifests>/kpiManifests/kpicard4}" />
+				<w:Card id="kpicard5" manifest="{manifests>/kpiManifests/kpicard5}" />
 				<w:Card id="tablecard1" manifest="{manifests>/kpiManifests/tablecard1}" />
 				<w:Card id="tablecard123" manifest="{manifests>/kpiManifests/tablecard123}" />
 			</grid:CSSGrid>

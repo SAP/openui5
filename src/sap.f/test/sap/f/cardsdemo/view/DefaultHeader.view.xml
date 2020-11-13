@@ -62,6 +62,11 @@
 				width="320px"
 				class="sapUiSmallMargin" />
 			<w:Card
+				id="defaultDataTimestamp"
+				manifest="{manifests>/defaultHeader/card8}"
+				width="320px"
+				class="sapUiSmallMargin" />
+			<w:Card
 				id="stackedBar"
 				manifest="{manifests>/defaultHeader/stackedBar}"
 				height="500px"

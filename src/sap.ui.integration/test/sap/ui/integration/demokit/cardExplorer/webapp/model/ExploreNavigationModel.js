@@ -1244,6 +1244,34 @@ sap.ui.define([
 								key: 'i18n/i18n_en.properties'
 							}
 						]
+					},
+					{
+						key: 'dataTimestamp',
+						target: 'exploreSamples',
+						title: 'Data Timestamp',
+						experimental: true,
+						subSamples: [
+							{
+								title: 'Default Header',
+								key: 'defaultHeader',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								manifestUrl: '/samples/dataTimestamp/default.json'
+							},
+							{
+								title: 'Numeric Header',
+								key: 'numericHeader',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								manifestUrl: '/samples/dataTimestamp/numeric.json'
+							}
+						]
 					}
 				]
 			},

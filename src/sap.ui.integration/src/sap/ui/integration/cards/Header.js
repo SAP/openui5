@@ -54,7 +54,8 @@ sap.ui.define([
 
 			var mSettings = {
 				title: mConfiguration.title,
-				subtitle: mConfiguration.subTitle
+				subtitle: mConfiguration.subTitle,
+				dataTimestamp: mConfiguration.dataTimestamp
 			};
 
 			if (mConfiguration.status && mConfiguration.status.text && !mConfiguration.status.text.format) {

@@ -94,13 +94,11 @@
 			position: relative;
 			white-space: normal;
 			word-wrap: break-word;
-			text-align: left;
 		}
 	}
 
 	.sapFCardSubtitle {
 		position: relative;
-		margin: 0.25rem 0 0 0;
 		font-family: @sapUiFontFamily;
 		font-size: @sapMFontMediumSize;
 		font-weight: normal;
@@ -108,8 +106,7 @@
 		min-height: 1rem;
 		white-space: normal;
 		word-wrap: break-word;
-		text-align: left;
-		width: 100%;
+		flex-grow: 1;
 	}
 
 	.sapFCardStatus {
@@ -129,6 +126,24 @@
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
+	}
+
+  	.sapFCardHeaderTextSecondLine {
+		margin-top: 0.25rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+	}
+
+	.sapFCardDataTimestamp {
+		color: @sapUiTileTextColor;
+		font-size: @sapMFontSmallSize;
+		margin-left: auto;
+		flex-shrink: 0;
+	}
+
+	.sapFCardHeaderLineIncludesDataTimestamp .sapFCardSubtitle {
+		margin-right: 1rem;
 	}
 
 	.sapFCardHeaderToolbarCont .sapFCardHeaderToolbar {
@@ -181,13 +196,6 @@
 		color: @sapUiTileTextColor;
 	}
 
-	.sapFCardHeaderDetails {
-		margin-top: 0.25rem;
-		font-size: @sapMFontSmallSize;
-		color: @sapUiTileTextColor;
-		position: relative;
-	}
-
 	.sapFCardHeaderIndicators {
 		margin-top: 0.25rem;
 		display: flex;
@@ -221,6 +229,24 @@
 				margin-right: 0;
 			}
 		}
+	}
+
+	.sapFCardHeaderDetailsWrapper {
+		margin-top: 0.25rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+	}
+
+	.sapFCardHeaderDetails {
+		font-size: @sapMFontSmallSize;
+		color: @sapUiTileTextColor;
+		position: relative;
+		flex-grow: 1;
+	}
+
+	.sapFCardHeaderLineIncludesDataTimestamp .sapFCardHeaderDetails {
+		margin-right: 1rem;
 	}
 }
 

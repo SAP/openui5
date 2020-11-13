@@ -317,7 +317,7 @@ describe("sap.f.Card", function () {
 
 	it("Default Header", function () {
 		navigateTo("Default Header");
-		var aCardIds = ["default", "default1x1", "default2x1", "default4x1", "default2x2", "default4x2", "default4x4"];
+		var aCardIds = ["default", "default1x1", "default2x1", "default4x1", "default2x2", "default4x2", "default4x4", "defaultDataTimestamp"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
@@ -335,7 +335,7 @@ describe("sap.f.Card", function () {
 
 	it("Numeric Header", function () {
 		navigateTo("Numeric Header");
-		var aCardIds = ["fcard1", "kpicard1", "kpicard2", "kpicard3", "kpicard4", "tablecard1", "tablecard123"];
+		var aCardIds = ["fcard1", "kpicard1", "kpicard2", "kpicard3", "kpicard4", "kpicard5", "tablecard1", "tablecard123"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
