@@ -190,7 +190,7 @@ sap.ui.define([
 			},
 			/**
 			 * This event gets fired when the user pastes content from the clipboard to the table.
-			 * Pasting can be done via the context menu or the standard paste keyboard shortcut, if the focus is inside the table.
+			 * Pasting can be done with the standard keyboard shortcut, if the focus is inside the table.
 			 * @since 1.60
 			 */
 			paste : {
