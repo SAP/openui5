@@ -1,5 +1,5 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -42,6 +42,8 @@ sap.ui.define([
 	ObjectHeader,
 	Device
 ) {
+	"use strict";
+
 	// shortcut for sap.m.IconTabDensityMode
 	var IconTabDensityMode = mobileLibrary.IconTabDensityMode;
 
@@ -1392,7 +1394,6 @@ sap.ui.define([
 
 	QUnit.test("no flexbox support", function(assert) {
 		var	$FlexChild,
-			iFlexChildWidth,
 			iFlexChildHeight;
 
 		// Arrange
@@ -1992,7 +1993,6 @@ sap.ui.define([
 
 	QUnit.test("SPACE", function(assert) {
 		var oSelectSpy = sinon.spy(IconTabBar.prototype, "fireSelect");
-		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 		$tab2.focus(); // set focus on second filter
@@ -2007,7 +2007,6 @@ sap.ui.define([
 
 	QUnit.test("ENTER", function(assert) {
 		var oSelectSpy = sinon.spy(IconTabBar.prototype, "fireSelect");
-		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 		$tab2.focus(); // set focus on second filter
@@ -2446,57 +2445,75 @@ sap.ui.define([
 		oIconTabHeader.destroy();
 	});
 
-	QUnit.module("tabs");
+	QUnit.module("Tabs", {
+		beforeEach: function () {
+			this.oIconTabBar = new IconTabBar({
+				items: [
+					new IconTabFilter({
+						text: "Lorem",
+						count: "3",
+						content: [
+							new Button({ text: "Text 1" })
+						]
+					}),
+					new IconTabFilter({
+						text: "Ipsum",
+						count: "1",
+						content: [
+							new Button({ text: "Text 2" })
+						]
+					}),
+					new IconTabFilter({
+						text: "Lorem",
+						count: "Count",
+						content: [
+							new Button({ text: "Text 3" })
+						]
+					})
+				]
+			});
 
-	QUnit.test("remove selected tab", function(assert) {
+			this.oIconTabBar.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oIconTabBar.destroy();
+		}
+	});
 
-		// create
-		var oIconTabBar = new IconTabBar({
-			items: [
-				new IconTabFilter({
-					text: "Lorem",
-					count: "3",
-					content: [
-						new Button({ text: "Text 1" })
-					]
-				}),
-				new IconTabFilter({
-					text: "Ipsum",
-					count: "1",
-					content: [
-						new Button({ text: "Text 2" })
-					]
-				}),
-				new IconTabFilter({
-					text: "Lorem",
-					count: "Count",
-					content: [
-						new Button({ text: "Text 3" })
-					]
-				})
-			]
-		});
-
-		// System under Test
-		oIconTabBar.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
+	QUnit.test("Remove selected tab", function(assert) {
+		var oButton = this.oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
 
 		// Assert
 		assert.ok(jQuery(oButton).text().indexOf("Text 1") > -1, "First button is displayed");
 
 		// remove first tab
-		var aItems = oIconTabBar.getItems();
-		oIconTabBar.removeItem(aItems[0]);
+		var aItems = this.oIconTabBar.getItems();
+		this.oIconTabBar.removeItem(aItems[0]);
 
-		oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
+		oButton = this.oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
 
 		// Assert
 		assert.ok(jQuery(oButton).text().indexOf("Text 2") > -1, "Second button is displayed");
+	});
 
-		// Clean up
-		oIconTabBar.destroy();
+	QUnit.test("Enabled state of the tab should be propagated to its content", function(assert) {
+		// Arrange
+		var oItem = this.oIconTabBar.getItems()[0],
+			oButton = oItem.getContent()[0];
+
+		// Assert
+		assert.notOk(oButton.$().hasClass("sapMBtnDisabled"), "Content is initially enabled");
+
+		// Act & Assert
+		oItem.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oButton.$().hasClass("sapMBtnDisabled"), "Content is disabled when the tab is disabled");
+
+		// Act & Assert
+		oItem.setEnabled(true);
+		sap.ui.getCore().applyChanges();
+		assert.notOk(oButton.$().hasClass("sapMBtnDisabled"), "Content is enabled when the tab is enabled again");
 	});
 
 	function getIconTabBarWithOverflowList() {
@@ -2623,7 +2640,6 @@ sap.ui.define([
 			sContentSelector = ".sapMITBContainerContent > .sapMITBContent",
 			sResponsiveSize = (Device.resize.width <= 599 ? "0px" : (Device.resize.width <= 1023 ? "16px" : "16px 32px")), // eslint-disable-line no-nested-ternary
 			aResponsiveSize = sResponsiveSize.split(" "),
-			$container,
 			$containerContent;
 
 		// Act
