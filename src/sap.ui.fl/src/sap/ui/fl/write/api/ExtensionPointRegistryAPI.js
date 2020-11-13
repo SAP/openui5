@@ -32,11 +32,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the extension point information by view ID.
+		 * @param {string} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.viewId - ID of the view
+		 * @returns {object} map of extension points
+		 */
+		getExtensionPointInfoByViewId: function (mPropertyBag) {
+			return ExtensionPointRegistry.getExtensionPointInfoByViewId(mPropertyBag.viewId);
+		},
+
+		/**
 		 * Returns the extension point information by parent ID.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.parentId - ID of the extension point parent control
-		 * @returns {object[]} Extension point information
+		 * @returns {Array} Array of extension point information
 		 */
 		getExtensionPointInfoByParentId: function (mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfoByParentId(mPropertyBag.parentId);

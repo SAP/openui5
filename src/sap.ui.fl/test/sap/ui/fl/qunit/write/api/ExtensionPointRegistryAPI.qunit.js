@@ -103,6 +103,33 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given ExtensionPointRegistryAPI.getExtensionPointInfoByViewId is called", {
+		before: function () {
+			this.oView1 = createFakeControl("FakeViewId1");
+			this.oTargetControl2 = new HBox("FakeTargetControlId2");
+			this.sExtensionPointName2 = "ExtensionPoint2";
+			this.sExtensionPointName3 = "ExtensionPoint3";
+			this.mExtensionPointInfo2 = createAndRegisterExtensionPoint(this.oView1, this.sExtensionPointName2, this.oTargetControl2, "content", 0);
+			this.mExtensionPointInfo3 = createAndRegisterExtensionPoint(this.oView1, this.sExtensionPointName3, this.oTargetControl2, "content", 1);
+		},
+		after: function afterTestModule() {
+			this.oTargetControl2.destroy();
+			ExtensionPointRegistry.clear();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with valid parameters", function(assert) {
+			var mExtensionPointInfoMap = ExtensionPointRegistryAPI.getExtensionPointInfoByViewId({viewId: this.oView1.getId()});
+			assert.deepEqual(Object.keys(mExtensionPointInfoMap), [this.sExtensionPointName2, this.sExtensionPointName3],
+				"the correct extension point info into an map is returned");
+		});
+
+		QUnit.test("with invalid view id as parameter", function(assert) {
+			assert.deepEqual(ExtensionPointRegistryAPI.getExtensionPointInfoByViewId({viewId: "invalidViewId"}),
+				{}, "then an empty map is returned");
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 		sandbox.restore();

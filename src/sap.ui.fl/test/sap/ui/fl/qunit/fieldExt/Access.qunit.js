@@ -320,6 +320,10 @@ sap.ui.define([
 			unMockAccessJs(oUnchangedAccess);
 		});
 
+		QUnit.test("Test 'isServiceOutdated' with undefined service", function (assert) {
+			assert.notOk(Access.isServiceOutdated(undefined), "then false is returned");
+		});
+
 		QUnit.test("Test expiration date", function(assert) {
 			var oUnchangedAccess = mockAccessJs();
 			var service = {
