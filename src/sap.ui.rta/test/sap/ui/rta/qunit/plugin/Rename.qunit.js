@@ -320,6 +320,16 @@ function(
 					assert.strictEqual(bEditable, false, "then rename is not editable for the overlay");
 				});
 		});
+
+		QUnit.test("when isEnabled are called with designTime with a domRef function pointing to nothing", function(assert) {
+			sandbox.stub(this.oFormContainerOverlay.getDesignTimeMetadata(), "getAssociatedDomRef").callsFake(function() {
+				return jQuery();
+			});
+			this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
+			this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
+
+			assert.strictEqual(this.oRenamePlugin.isEnabled([this.oFormContainerOverlay]), false, "then rename is not enabled for the overlay");
+		});
 	});
 
 	QUnit.module("Given a designTime and rename plugin are instantiated", {
@@ -447,7 +457,7 @@ function(
 			assert.equal(bIsEnabled, false, "then the menu item was disabled");
 		});
 
-		QUnit.test("when retrieving an action on target overlay with an invalid dom ref, with an enabled action on the responsible element", function(assert) {
+		QUnit.test("when retrieving an action on target overlay with no dom ref in DT, with an enabled action on the responsible element", function(assert) {
 			var oLayoutDesignTimeMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
 			addResponsibleElement(oLayoutDesignTimeMetadata, this.oVerticalLayout, this.oButton);
 			oLayoutDesignTimeMetadata.getData().actions.rename.domRef = undefined;

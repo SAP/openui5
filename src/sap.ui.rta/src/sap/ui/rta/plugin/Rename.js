@@ -136,7 +136,8 @@ sap.ui.define([
 
 		if (bIsEnabled) {
 			var oDesignTimeMetadata = oTargetOverlay.getDesignTimeMetadata();
-			if (!oDesignTimeMetadata.getAssociatedDomRef(oTargetOverlay.getElement(), oTargetOverlayAction.domRef)) {
+			var oAssociatedDomRef = oDesignTimeMetadata.getAssociatedDomRef(oTargetOverlay.getElement(), oTargetOverlayAction.domRef);
+			if (!(oAssociatedDomRef && oAssociatedDomRef.get(0))) {
 				bIsEnabled = false;
 			}
 		}
