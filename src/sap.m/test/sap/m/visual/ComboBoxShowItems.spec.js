@@ -7,6 +7,7 @@ describe("sap.m.ComboBoxShowItems", function() {
 
 	// check initial
 	it("Should load the showItems test page",function() {
+		element(by.id("__xmlview0--customCssButton")).click();
 		expect(takeScreenshot()).toLookAs("showItems-initial");
 	});
 
