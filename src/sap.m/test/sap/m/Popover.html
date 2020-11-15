@@ -10,7 +10,7 @@
 			overflow: hidden;
 		}
 
-		/*			bottom */
+		/* bottom */
 		.positioned {
 			position: absolute !important;
 			top: 10px;
@@ -22,7 +22,7 @@
 			right: auto;
 		}
 
-		/* 			right */
+		/* right */
 		.positioned1 {
 			position: absolute !important;
 			top: 25px;
@@ -34,7 +34,7 @@
 			right: 25px;
 		}
 
-		/*			left */
+		/* left */
 		.positioned2 {
 			position: absolute !important;
 			top: 80px;
@@ -46,7 +46,7 @@
 			right: auto;
 		}
 
-		/*			top */
+		/* top */
 		.positioned3 {
 			position: absolute !important;
 			bottom: 10px;
@@ -58,7 +58,7 @@
 			right: 100px;
 		}
 
-		/* 			vertical bottom */
+		/* vertical bottom */
 		.positioned4 {
 			position: absolute !important;
 			top: 150px;
@@ -70,7 +70,7 @@
 			right: auto;
 		}
 
-		/* 			vertical top */
+		/* vertical top */
 		.positioned5 {
 			position: absolute !important;
 			bottom: 100px;
@@ -82,7 +82,7 @@
 			right: 100px;
 		}
 
-		/* 			horizontal left */
+		/* horizontal left */
 		.positioned6 {
 			position: absolute !important;
 			top: 200px;
@@ -105,7 +105,7 @@
 			right: auto;
 		}
 
-		/* 			horizontal right */
+		/* horizontal right */
 		.positioned7 {
 			position: absolute !important;
 			top: 350px;
@@ -117,7 +117,7 @@
 			right: 100px;
 		}
 
-		/* 			auto 1 */
+		/* auto 1 */
 		.positioned8 {
 			position: absolute !important;
 			top: 200px;
@@ -129,7 +129,7 @@
 			right: auto;
 		}
 
-		/* 			auto 2 */
+		/* auto 2 */
 		.positioned9 {
 			position: absolute !important;
 			bottom: 200px;
@@ -194,6 +194,10 @@
 		html[dir="rtl"] .vbox {
 			left: auto;
 			right: 10px;
+		}
+
+		.customClassForVisualTests {
+			caret-color: transparent;
 		}
 
 	</style>
@@ -308,21 +312,11 @@
 		bindListData(data, oItemTemplate1, oList2);
 		//end of the list creation
 
-		//create the scrollContainer
-		// 			var oScrollContainer = new sap.m.ScrollContainer({
-		//  				height: "100%",
-		// 				horizontal: false,
-		// 				vertical: true,
-		// 				content: oList2
-		// 			});
-
-
 		var oBeginButton = new sap.m.Button({
 			text: "Modal",
 			type: sap.m.ButtonType.Reject,
 			press: function () {
 				oPopover.setModal(!oPopover.getModal());
-// 					oPopover.setLeftButton(null);
 			}
 		});
 
@@ -332,7 +326,6 @@
 			type: sap.m.ButtonType.Accept,
 			press: function () {
 				oPopover.close();
-// 					oPopover.setRightButton(null);
 			}
 		});
 
@@ -366,9 +359,6 @@
 			initialFocus: "focusInput"
 		});
 
-		//uncomment this line when padding is needed in content area
-		//oPopover.addStyleClass("sapUiPopupWithPadding");
-
 		oPopover.setTitle("New Popover with long title");
 
 		var oPopover2 = new sap.m.Popover("pop2", {
@@ -383,7 +373,6 @@
 					})
 				]
 			}),
-			//modal : true,
 			verticalScrolling: true,
 			horizontalScrolling: false,
 			content: [
@@ -395,7 +384,6 @@
 			placement: sap.m.PlacementType.Horizontal,
 			title: "Popover3",
 			showHeader: true,
-			//modal : true,
 			verticalScrolling: false,
 			horizontalScrolling: true,
 			content: [
@@ -462,7 +450,6 @@
 		var oButton6 = new sap.m.Button("btn6", {
 			text: "Popover Horizontal",
 			press: function () {
-				//oPopover.setPlacement(sap.m.PlacementType.Horizontal);
 				oPopover3.openBy(this);
 			}
 		});
@@ -471,7 +458,6 @@
 		var oButton7 = new sap.m.Button("btn7", {
 			text: "Popover Horizontal",
 			press: function () {
-				//oPopover.setPlacement(sap.m.PlacementType.Horizontal);
 				oPopover2.openBy(this);
 			}
 		});
@@ -694,8 +680,25 @@
 		});
 		oOverflowingPopover.addStyleClass("positioned11");
 
+		// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
+		var oCustomCssButton = new sap.m.Button ("customCssButton",{
+			text: "Toggle custom CSS for visual test",
+			press: function() {
+				var $body = jQuery("body");
+
+				$body.toggleClass("customClassForVisualTests");
+			}
+		});
 		var page1 = new sap.m.Page("page1", {
-			title: "Page 1",
+			headerContent: [
+				new sap.m.Title({
+					text: "sap.m.Popover"
+				}),
+				new sap.m.ToolbarSpacer({
+					width: "600px"
+				}),
+				oCustomCssButton,
+			],
 			content: [
 				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oButton15, oChangeToFioriTheme, oChangeToBelizeTheme
 			]
