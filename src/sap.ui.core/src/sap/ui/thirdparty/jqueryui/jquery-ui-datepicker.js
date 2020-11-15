@@ -173,8 +173,12 @@ $.extend(Datepicker.prototype, {
 			return;
 		}
 		this._attachments(input, inst);
-		input.addClass(this.markerClassName).keydown(this._doKeyDown).
-			keypress(this._doKeyPress).keyup(this._doKeyUp);
+		// ##### BEGIN: MODIFIED BY SAP
+		//input.addClass(this.markerClassName).keydown(this._doKeyDown).
+		//	keypress(this._doKeyPress).keyup(this._doKeyUp);
+		input.addClass(this.markerClassName).on("keydown", this._doKeyDown).
+			keypress(this._doKeyPress).on("keyup", this._doKeyUp);
+		// ##### END: MODIFIED BY SAP
 		this._autoSize(inst);
 		$.data(target, PROP_NAME, inst);
 		//If disabled option is true, disable the datepicker once it has been attached to the input (see ticket #5665)
@@ -197,7 +201,10 @@ $.extend(Datepicker.prototype, {
 			input[isRTL ? "before" : "after"](inst.append);
 		}
 
-		input.unbind("focus", this._showDatepicker);
+		// ##### BEGIN: MODIFIED BY SAP
+		// input.unbind("focus", this._showDatepicker);
+		input.off("focus", this._showDatepicker);
+		// ##### END: MODIFIED BY SAP
 
 		if (inst.trigger) {
 			inst.trigger.remove();
@@ -205,7 +212,10 @@ $.extend(Datepicker.prototype, {
 
 		showOn = this._get(inst, "showOn");
 		if (showOn === "focus" || showOn === "both") { // pop-up date picker when in the marked field
-			input.focus(this._showDatepicker);
+			// ##### BEGIN: MODIFIED BY SAP
+			// input.focus(this._showDatepicker);
+			input.on("focus", this._showDatepicker);
+			// ##### END: MODIFIED BY SAP
 		}
 		if (showOn === "button" || showOn === "both") { // pop-up date picker when button clicked
 			buttonText = this._get(inst, "buttonText");
@@ -298,7 +308,10 @@ $.extend(Datepicker.prototype, {
 			id = "dp" + this.uuid;
 			this._dialogInput = $("<input type='text' id='" + id +
 				"' style='position: absolute; top: -100px; width: 0px;'/>");
-			this._dialogInput.keydown(this._doKeyDown);
+			// ##### BEGIN: MODIFIED BY SAP
+			// this._dialogInput.keydown(this._doKeyDown);
+			this._dialogInput.on("keydown", this._doKeyDown);
+			// ##### END: MODIFIED BY SAP
 			$("body").append(this._dialogInput);
 			inst = this._dialogInst = this._newInst(this._dialogInput, false);
 			inst.settings = {};
@@ -892,7 +905,10 @@ $.extend(Datepicker.prototype, {
 
 	/* Tidy up after a dialog display. */
 	_tidyDialog: function(inst) {
-		inst.dpDiv.removeClass(this._dialogClass).unbind(".ui-datepicker-calendar");
+		// ##### BEGIN: MODIFIED BY SAP
+		// inst.dpDiv.removeClass(this._dialogClass).unbind(".ui-datepicker-calendar");
+		inst.dpDiv.removeClass(this._dialogClass).off(".ui-datepicker-calendar");
+		// ##### END: MODIFIED BY SAP
 	},
 
 	/* Close date picker if clicked elsewhere. */
@@ -1574,7 +1590,10 @@ $.extend(Datepicker.prototype, {
 					return false;
 				}
 			};
-			$(this).bind(this.getAttribute("data-event"), handler[this.getAttribute("data-handler")]);
+			// ##### BEGIN: MODIFIED BY SAP
+			// $(this).bind(this.getAttribute("data-event"), handler[this.getAttribute("data-handler")]);
+			$(this).on(this.getAttribute("data-event"), handler[this.getAttribute("data-handler")]);
+			// ##### END: MODIFIED BY SAP
 		});
 	},
 
@@ -2004,7 +2023,10 @@ $.fn.datepicker = function(options){
 
 	/* Initialise the date picker. */
 	if (!$.datepicker.initialized) {
-		$(document).mousedown($.datepicker._checkExternalClick);
+		// ##### BEGIN: MODIFIED BY SAP
+		// $(document).mousedown($.datepicker._checkExternalClick);
+		$(document).on("mousedown", $.datepicker._checkExternalClick);
+		// ##### END: MODIFIED BY SAP
 		$.datepicker.initialized = true;
 	}
 

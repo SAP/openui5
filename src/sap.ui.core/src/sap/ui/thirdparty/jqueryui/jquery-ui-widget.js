@@ -39,7 +39,10 @@ $.widget = function( name, base, prototype ) {
 	}
 
 	// create selector for plugin
-	$.expr[ ":" ][ fullName.toLowerCase() ] = function( elem ) {
+	// ##### BEGIN: MODIFIED BY SAP
+	// $.expr[ ":" ][ fullName.toLowerCase() ] = function( elem ) {
+	$.expr.pseudos[ fullName.toLowerCase() ] = function( elem ) {
+	// ##### END: MODIFIED BY SAP
 		return !!$.data( elem, fullName );
 	};
 
@@ -74,7 +77,10 @@ $.widget = function( name, base, prototype ) {
 	// inheriting from
 	basePrototype.options = $.widget.extend( {}, basePrototype.options );
 	$.each( prototype, function( prop, value ) {
-		if ( !$.isFunction( value ) ) {
+		// ##### BEGIN: MODIFIED BY SAP
+		// if ( !$.isFunction( value ) ) {
+		if ( typeof value !== "function" ) {
+		// ##### END: MODIFIED BY SAP
 			proxiedPrototype[ prop ] = value;
 			return;
 		}
@@ -182,7 +188,10 @@ $.widget.bridge = function( name, object ) {
 					return $.error( "cannot call methods on " + name + " prior to initialization; " +
 						"attempted to call method '" + options + "'" );
 				}
-				if ( !$.isFunction( instance[options] ) || options.charAt( 0 ) === "_" ) {
+				// ##### BEGIN: MODIFIED BY SAP
+				// if ( !$.isFunction( instance[options] ) || options.charAt( 0 ) === "_" ) {
+				if ( typeof instance[options] !== "function" || options.charAt( 0 ) === "_" ) {
+				// ##### END: MODIFIED BY SAP
 					return $.error( "no such method '" + options + "' for " + name + " widget instance" );
 				}
 				methodValue = instance[ options ].apply( instance, args );
@@ -266,7 +275,10 @@ $.Widget.prototype = {
 		// we can probably remove the unbind calls in 2.0
 		// all event bindings should go through this._on()
 		this.element
-			.unbind( this.eventNamespace )
+			// ##### BEGIN: MODIFIED BY SAP
+			// .unbind( this.eventNamespace )
+			.off( this.eventNamespace )
+			// ##### END: MODIFIED BY SAP
 			// 1.9 BC for #7810
 			// TODO remove dual storage
 			.removeData( this.widgetName )
@@ -275,14 +287,20 @@ $.Widget.prototype = {
 			// http://bugs.jquery.com/ticket/9413
 			.removeData( $.camelCase( this.widgetFullName ) );
 		this.widget()
-			.unbind( this.eventNamespace )
+			// ##### BEGIN: MODIFIED BY SAP
+			// .unbind( this.eventNamespace )
+			.off( this.eventNamespace )
+			// ##### END: MODIFIED BY SAP
 			.removeAttr( "aria-disabled" )
 			.removeClass(
 				this.widgetFullName + "-disabled " +
 				"ui-state-disabled" );
 
 		// clean up events and states
-		this.bindings.unbind( this.eventNamespace );
+		// ##### BEGIN: MODIFIED BY SAP
+		// this.bindings.unbind( this.eventNamespace );
+		this.bindings.off( this.eventNamespace );
+		// ##### END: MODIFIED BY SAP
 		this.hoverable.removeClass( "ui-state-hover" );
 		this.focusable.removeClass( "ui-state-focus" );
 	},
@@ -409,14 +427,20 @@ $.Widget.prototype = {
 			if ( selector ) {
 				delegateElement.delegate( selector, eventName, handlerProxy );
 			} else {
-				element.bind( eventName, handlerProxy );
+				// ##### BEGIN: MODIFIED BY SAP
+				// element.bind( eventName, handlerProxy );
+				element.on( eventName, handlerProxy );
+				// ##### END: MODIFIED BY SAP
 			}
 		});
 	},
 
 	_off: function( element, eventName ) {
 		eventName = (eventName || "").split( " " ).join( this.eventNamespace + " " ) + this.eventNamespace;
-		element.unbind( eventName ).undelegate( eventName );
+		// ##### BEGIN: MODIFIED BY SAP
+		// element.unbind( eventName ).undelegate( eventName );
+		element.off( eventName ).undelegate( eventName );
+		// ##### END: MODIFIED BY SAP
 	},
 
 	_delay: function( handler, delay ) {
@@ -476,7 +500,10 @@ $.Widget.prototype = {
 		}
 
 		this.element.trigger( event, data );
-		return !( $.isFunction( callback ) &&
+		// ##### BEGIN: MODIFIED BY SAP
+		// return !( $.isFunction( callback ) &&
+		return !( typeof callback === "function" &&
+		// ##### END: MODIFIED BY SAP
 			callback.apply( this.element[0], [ event ].concat( data ) ) === false ||
 			event.isDefaultPrevented() );
 	}
