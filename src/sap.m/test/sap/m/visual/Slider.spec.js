@@ -26,7 +26,7 @@ describe("sap.m.Slider", function() {
 	});
 
 	it("should show Slider with tooltip", function() {
-		element(by.id("__slider7-handle")).click();
+		element(by.id("__slider8-handle")).click();
 		expect(takeScreenshot()).toLookAs("slider-tooltip");
 	});
 
