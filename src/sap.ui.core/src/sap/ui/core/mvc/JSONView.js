@@ -34,6 +34,11 @@ sap.ui.define([
 	/**
 	 * Constructor for a new mvc/JSONView.
 	 *
+	 * <strong>Note:</strong> Application code shouldn't call the constructor directly, but rather use the factory
+	 * {@link sap.ui.core.mvc.JSONView.create JSONView.create} or {@link sap.ui.core.mvc.View.create View.create}
+	 * with type {@link sap.ui.core.mvc.ViewType.JSON JSON}. The factory simplifies asynchronous loading of a view
+	 * and future features might be added to the factory only.
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *

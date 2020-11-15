@@ -31,7 +31,12 @@ sap.ui.define([
 	var ViewType = library.mvc.ViewType;
 
 	/**
-	 * Constructor for a new mvc/HTMLView.
+	 * Constructor for a new <code>HTMLView</code>.
+	 *
+	 * <strong>Note:</strong> Application code shouldn't call the constructor directly, but rather use the factory
+	 * {@link sap.ui.core.mvc.HTMLView.create HTMLView.create} or {@link sap.ui.core.mvc.View.create View.create}
+	 * with type {@link sap.ui.core.mvc.ViewType.HTML HTML}. The factory simplifies asynchronous loading of a view
+	 * and future features might be added to the factory only.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control

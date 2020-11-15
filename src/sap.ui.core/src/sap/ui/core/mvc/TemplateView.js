@@ -19,6 +19,10 @@ function(library, View, TemplateViewRenderer, Log) {
 	/**
 	 * Constructor for a new mvc/TemplateView.
 	 *
+	 * <strong>Note:</strong> Application code shouldn't call the constructor directly, but rather use the
+	 * factory {@link sap.ui.templateview} or {@link sap.ui.core.mvc.View.create View.create} with type
+	 * {@link sap.ui.core.mvc.ViewType.Template Template}.
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *

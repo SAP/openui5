@@ -38,10 +38,11 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Constructor for a new View.
+	 * Constructor for a new <code>View</code>.
 	 *
-	 * Applications should not call the constructor directly, but use one of the view factories instead,
-	 * e.g. {@link #.create View.create}.
+	 * As <code>View</code> is an abstract base class for views, applications should not call the constructor,
+	 * but rather use one of the view factories instead, e.g. {@link #.create View.create}, to create an instance
+	 * of a concrete subclass (e.g. <code>XMLView</code>).
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -61,14 +62,15 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.View
+	 * @abstract
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var View = Control.extend("sap.ui.core.mvc.View", /** @lends sap.ui.core.mvc.View.prototype */ {
 		metadata : {
-
 			interfaces: [
 				"sap.ui.core.IDScope"
 			],
+			"abstract": true,
 			library : "sap.ui.core",
 			properties : {
 

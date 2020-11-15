@@ -49,13 +49,19 @@ sap.ui.define([
 
 
 	/**
-	 * Constructor for a new mvc/XMLView.
+	 * Constructor for a new <code>XMLView</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * <strong>Note:</strong> Application code shouldn't call the constructor directly, but rather use the factory
+	 * {@link sap.ui.core.mvc.XMLView.create XMLView.create} or {@link sap.ui.core.mvc.View.create View.create}
+	 * with type {@link sap.ui.core.mvc.ViewType.XML XML}. The factory provides more features than the
+	 * constructor (e.g. caching and preprocessing) and simplifies asynchronous loading of a view.
+	 * Future features might only be available when using the factory.
+	 *
+	 * @param {string} [sId] ID for the new view, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new view
 	 *
 	 * @class
-	 * A View defined using (P)XML and HTML markup.
+	 * A View defined using XML and, optionally, pure HTML markup.
 	 *
 	 * <strong>Note:</strong><br>
 	 * Be aware that modifications of the content aggregation of this control are not supported due to technical reasons.
