@@ -1310,7 +1310,7 @@ function(
 	 */
 	Input.prototype.onsapfocusleave = function(oEvent) {
 		var oSuggPopover = this._oSuggPopover,
-			oPopup = oSuggPopover && oSuggPopover._oPopover,
+			oPopup = oSuggPopover && oSuggPopover.getPopover(),
 			oFocusedControl = oEvent.relatedControlId && sap.ui.getCore().byId(oEvent.relatedControlId),
 			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
 			bHasAutocompleteProposedText = oSuggPopover && oSuggPopover._sProposedItemText && this.getAutocomplete(),
@@ -1363,7 +1363,7 @@ function(
 	Input.prototype._deregisterEvents = function() {
 		this._deregisterPopupResize();
 
-		if (this.isMobileDevice() && this._oSuggPopover && this._oSuggPopover._oPopover) {
+		if (this.isMobileDevice() && this._oSuggPopover && this._oSuggPopover.getPopover()) {
 			this.$().off("click");
 		}
 	};
@@ -1474,7 +1474,7 @@ function(
 			if (bValue) {
 				this._oSuggPopover = this._getSuggestionsPopover();
 				this._oSuggPopover._iPopupListSelectedIndex = -1;
-				if (!this._oSuggPopover._oPopover) {
+				if (!this._oSuggPopover.getPopover()) {
 					this._createSuggestionsPopoverPopup();
 					this._synchronizeSuggestions();
 					this._createSuggestionPopupContent();
@@ -1511,7 +1511,7 @@ function(
 		Input.prototype.setShowTableSuggestionValueHelp = function(bValue) {
 			this.setProperty("showTableSuggestionValueHelp", bValue, true);
 
-			if (!(this._oSuggPopover && this._oSuggPopover._oPopover)) {
+			if (!(this._oSuggPopover && this._oSuggPopover.getPopover())) {
 				return this;
 			}
 
@@ -1639,7 +1639,7 @@ function(
 		 * @private
 		 */
 		Input.prototype._hideSuggestionPopup = function () {
-			var oPopup = this._oSuggPopover._oPopover;
+			var oPopup = this._oSuggPopover.getPopover();
 
 			// The IE moves the cursor position at the beginning when there is a binding and delay from the back-end
 			// The workaround is to save the focus info which includes position and reset it after updating the DOM
@@ -1945,7 +1945,7 @@ function(
 			if (this._oSuggPopover) {
 				this._bShouldRefreshListItems = false;
 				this.cancelPendingSuggest();
-				this._isSuggestionsPopoverOpen() && this._oSuggPopover._oPopover.close();
+				this._isSuggestionsPopoverOpen() && this._oSuggPopover.getPopover().close();
 
 				// Ensure the valueStateMessage is opened after the suggestion popup is closed.
 				// Only do this for desktop (not required for mobile) when the focus is on the input.
@@ -2346,7 +2346,7 @@ function(
 	 * @param{boolean} [bTabular] optional parameter to force override the tabular suggestions check
 	 */
 	Input.prototype._addShowMoreButton = function(bTabular) {
-		var oPopup = this._oSuggPopover && this._oSuggPopover._oPopover;
+		var oPopup = this._oSuggPopover && this._oSuggPopover.getPopover();
 
 		if (!oPopup || !bTabular && !this._hasTabularSuggestions()) {
 			return;
@@ -2369,7 +2369,7 @@ function(
 	 * @private
 	 */
 	Input.prototype._removeShowMoreButton = function() {
-		var oPopup = this._oSuggPopover && this._oSuggPopover._oPopover;
+		var oPopup = this._oSuggPopover && this._oSuggPopover.getPopover();
 
 		if (!oPopup || !this._hasTabularSuggestions()) {
 			return;
@@ -2561,7 +2561,7 @@ function(
 		var oPopover;
 		oSuggPopover._createSuggestionPopup({ showSelectedButton: this._hasShowSelectedButton() });
 
-		oPopover = oSuggPopover._oPopover;
+		oPopover = oSuggPopover.getPopover();
 		oPopover.attachBeforeOpen(function () {
 			this._updateSuggestionsPopoverValueState();
 		}, this);
@@ -2744,7 +2744,7 @@ function(
 	Input.prototype._openSuggestionsPopover = function() {
 		this.closeValueStateMessage();
 		this._updateSuggestionsPopoverValueState();
-		this._oSuggPopover._oPopover.open();
+		this._oSuggPopover.getPopover().open();
 	};
 
 	/**
