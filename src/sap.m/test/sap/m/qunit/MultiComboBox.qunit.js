@@ -5454,7 +5454,7 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBox-content");
 
 		// assert
-		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_TOKEN"), "'MultiComboBox may contain tokens' text is set.");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_NO_TOKENS"), "'MultiComboBox no tokens' text is set.");
 
 		// act
 		oMultiComboBox.setSelectedKeys(["Item1"]);
@@ -5472,7 +5472,7 @@ sap.ui.define([
 		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", 2), "'MultiComboBox contains N tokens' text is set.");
 
 		//arrange
-		sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
+		var sInvisibleTextId1 = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
 
 		// act
 		oMultiComboBox.setEditable(false);
@@ -5482,7 +5482,8 @@ sap.ui.define([
 		this.clock.tick(nPopoverAnimationTick);
 
 		//assert
-		assert.ok(oMultiComboBox.getFocusDomRef().getAttribute('aria-labelledBy').indexOf(sInvisibleTextId) !== -1, "Input has aria-labelledby attribute to indicate Enter press possibility");
+		assert.ok(oMultiComboBox.getFocusDomRef().getAttribute('aria-describedby').indexOf(sInvisibleTextId1) !== -1, "Input has aria-describedby attribute to indicate Enter press possibility");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute('aria-describedby'), sInvisibleTextId + " " + sInvisibleTextId1, "Both references are added to the aria-describedby attribute");
 
 		// destroy
 		oItem1.destroy();
@@ -5507,7 +5508,7 @@ sap.ui.define([
 
 			//assert
 			assert.ok(oMultiComboBox.$("inner").attr("aria-describedby").length > 0, "Property aria-describedby should exist");
-			assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_TOKEN") , "'MultiComboBox may contain tokens' text is announced.");
+			assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_NO_TOKENS") , "'MultiComboBox may contain tokens' text is announced.");
 			assert.strictEqual(oInvisibleText1.getText(), oResourceBundle.getText("ACC_CTR_TYPE_COMBO") , "'Combobox' is announced");
 
 			// destroy

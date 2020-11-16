@@ -1541,32 +1541,32 @@ function(
 	};
 
 	/**
-	 * Adds or removes aria-labelledby attribute to indicate that you can interact with Nmore.
+	 * Adds or removes aria-describedby attribute to indicate that you can interact with Nmore.
 	 *
 	 * @private
 	 */
 	MultiInput.prototype._handleNMoreAccessibility = function () {
 		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER"),
 			oFocusDomRef = this.getFocusDomRef(),
-			sAriaLabeledBy = (oFocusDomRef && oFocusDomRef.getAttribute("aria-labelledby")),
-			aAriaLabeledBy = sAriaLabeledBy ? sAriaLabeledBy.split(" ") : [],
-			iNMoreIndex = aAriaLabeledBy.indexOf(sInvisibleTextId),
+			sAriaDescribedBy = (oFocusDomRef && oFocusDomRef.getAttribute("aria-describedby")),
+			aAriaDescribedBy = sAriaDescribedBy ? sAriaDescribedBy.split(" ") : [],
+			iNMoreIndex = aAriaDescribedBy.indexOf(sInvisibleTextId),
 			bEnabled = this.getEnabled(),
 			bNMoreAriaRequirements = !this.getEditable() && this.getAggregation("tokenizer").getHiddenTokensCount();
 
 		// if the control is readonly and has a visible n-more, provide the respective aria attributes
 		if (bNMoreAriaRequirements && iNMoreIndex === -1) {
-			aAriaLabeledBy.push(sInvisibleTextId);
+			aAriaDescribedBy.push(sInvisibleTextId);
 			bEnabled && this.getFocusDomRef().setAttribute("aria-keyshortcuts", "Enter");
 		// if the control is no longer readonly or the n-more is not visible, make sure to clear out the attributes
 		} else if (iNMoreIndex !== -1 && !bNMoreAriaRequirements) {
-			aAriaLabeledBy.splice(iNMoreIndex, 1);
+			aAriaDescribedBy.splice(iNMoreIndex, 1);
 			this.getFocusDomRef().removeAttribute("aria-keyshortcuts");
 		}
 
-		// set the aria-labelledby with the updated array
-		if (oFocusDomRef && aAriaLabeledBy.length) {
-			oFocusDomRef.setAttribute("aria-labelledby", aAriaLabeledBy.join(" ").trim());
+		// set the aria-describedby with the updated array
+		if (oFocusDomRef && aAriaDescribedBy.length) {
+			oFocusDomRef.setAttribute("aria-describedby", aAriaDescribedBy.join(" ").trim());
 		}
 	};
 

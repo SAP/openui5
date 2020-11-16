@@ -2148,7 +2148,7 @@ sap.ui.define([
 			oInvisibleText = Core.byId(sInvisibleTextId);
 
 		// assert
-		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_TOKEN"), "'MultiInput may contain tokens' text is set.");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_NO_TOKENS"), "'MultiInput no tokens' text is set.");
 
 		// act
 		this.multiInput1.addToken(new Token({text: "Token1"}));
@@ -2170,7 +2170,7 @@ sap.ui.define([
 		assert.ok(this.multiInput1.getFocusDomRef().getAttribute('aria-describedby').indexOf(oInvisibleText.getId()) !== -1, "Tokens information is added to the input");
 
 		//arrange
-		sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
+		var sInvisibleTextId1 = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
 
 		// act
 		this.multiInput1.getFocusDomRef().blur();
@@ -2182,7 +2182,8 @@ sap.ui.define([
 		this.clock.tick();
 
 		//assert
-		assert.strictEqual(this.multiInput1.getFocusDomRef().getAttribute('aria-labelledby'), sInvisibleTextId, "Input has aria-labelledby attribute to indicate Enter press possibility");
+		assert.ok(this.multiInput1.getFocusDomRef().getAttribute('aria-describedby').indexOf(sInvisibleTextId1) !== -1, "Input has aria-describedby attribute to indicate Enter press possibility");
+		assert.strictEqual(this.multiInput1.getFocusDomRef().getAttribute('aria-describedby'), sInvisibleTextId + " " + sInvisibleTextId1, "Both references are added to the aria-describedby attribute");
 	});
 
 	QUnit.test("aria-keyshortcuts attribute", function(assert) {
