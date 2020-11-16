@@ -71,7 +71,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("No configuration section (as file)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "noconfig.json" });
+			this.oCardEditor.setCard({ manifest: sBaseUrl + "noconfig.json" });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1025,7 +1025,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 integer parameter and no label with default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties"  }, "sap.card": { "designtime": "designtime/1integerWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1integerWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -3342,6 +3342,7 @@ sap.ui.define([
 					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
 					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
 					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+
 					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
 					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
 					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
@@ -3351,8 +3352,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-
-					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Translate", "Field: Value from Translate change");
+					assert.ok(oField.getAggregation("_field").getText() === "StringParameter Value Trans in i18n", "Field: Value from Translate change");
 
 					oLabel = this.oCardEditor.getAggregation("_formContent")[4];
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
