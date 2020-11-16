@@ -1,0 +1,217 @@
+<mvc:View
+	controllerName="sap.f.sample.GridContainersNavigation.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
+	xmlns:core="sap.ui.core"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	height="100%">
+	<ScrollContainer
+		height="100%"
+		width="100%"
+		vertical="true">
+		<ToggleButton
+			id="revealGrid"
+			text="Reveal Grids"
+			press="onRevealGrid"
+			class="sapUiSmallMargin" />
+		<HBox>
+			<Panel headerText="Group 1" height="100%">
+				<layoutData>
+					<FlexItemData baseSize="50%" maxWidth="400px" />
+				</layoutData>
+				<f:GridContainer id="grid1"
+								 borderReached=".onBorderReached">
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="1 1x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="2" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="2 1x2" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="2" columns="2" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="3 2x2" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="4 1x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="5 1x1" />
+						</f:header>
+					</f:Card>
+				</f:GridContainer>
+			</Panel>
+			<Panel headerText="Group 2" height="100%">
+				<layoutData>
+					<FlexItemData baseSize="50%" maxWidth="400px" />
+				</layoutData>
+				<f:GridContainer id="grid2"
+								 borderReached=".onBorderReached">
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="2" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="1 2x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="2 1x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="2" columns="2" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="3 2x2" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="4 1x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="3" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="5 1x3" />
+						</f:header>
+					</f:Card>
+				</f:GridContainer>
+			</Panel>
+		</HBox>
+		<HBox>
+			<Panel headerText="Group 3" height="100%">
+				<layoutData>
+					<FlexItemData baseSize="50%" maxWidth="400px" />
+				</layoutData>
+				<f:GridContainer id="grid3"
+								 borderReached=".onBorderReached">
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="3" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="1 1x3" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="2" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="2 2x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="2" columns="2" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="3 2x2" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="4 1x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="5 1x1" />
+						</f:header>
+					</f:Card>
+				</f:GridContainer>
+			</Panel>
+			<Panel headerText="Group 4" height="100%">
+				<layoutData>
+					<FlexItemData baseSize="50%" maxWidth="400px" />
+				</layoutData>
+				<f:GridContainer id="grid4"
+								 borderReached=".onBorderReached">
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="1 1x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="2 1x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="2" columns="2" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="3 2x2" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="4 1x1" />
+						</f:header>
+					</f:Card>
+					<f:Card height="100%">
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="1" columns="1" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="5 1x1" />
+						</f:header>
+					</f:Card>
+				</f:GridContainer>
+			</Panel>
+		</HBox>
+	</ScrollContainer>
+</mvc:View>

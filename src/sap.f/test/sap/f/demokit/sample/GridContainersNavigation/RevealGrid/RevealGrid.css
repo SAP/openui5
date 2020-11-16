@@ -1,0 +1,18 @@
+.sapSampleRevealGridWrapper {
+	position: relative;
+	pointer-events: none;
+}
+
+.sapSampleRevealGridItem {
+	border: 0.0625rem dashed rgb(255, 0, 255);
+	pointer-events: none;
+}
+
+.sapSampleRevealGridOverlay {
+	z-index: 10;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	pointer-events: none;
+}

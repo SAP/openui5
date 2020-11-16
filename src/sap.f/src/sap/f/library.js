@@ -526,6 +526,41 @@ sap.ui.define(["sap/ui/base/DataType",
 		Bottom: "Bottom"
 	};
 
+	/**
+	 * Enumeration for different navigation directions.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.85
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.NavigationDirection = {
+		/**
+		 * The direction is up.
+		 *
+		 * @public
+		 */
+		Up: "Up",
+		/**
+		 * The direction is down.
+		 *
+		 * @public
+		 */
+		Down: "Down",
+		/**
+		 * The direction is left.
+		 *
+		 * @public
+		 */
+		Left: "Left",
+		/**
+		 * The direction is right.
+		 *
+		 * @public
+		 */
+		Right: "Right"
+	};
+
 	return thisLib;
 
 });

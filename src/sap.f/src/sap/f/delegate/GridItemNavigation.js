@@ -5,14 +5,19 @@ sap.ui.define([
 	"sap/f/GridContainerUtils",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/f/library"
 ], function (
 	GridContainerUtils,
 	ItemNavigation,
 	KeyCodes,
-	Log
+	Log,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.f.NavigationDirection
+	var NavigationDirection = library.NavigationDirection;
 
 	/**
 	 * Constructor for a new <code>sap.f.delegate.GridItemNavigation</code>.
@@ -96,139 +101,151 @@ sap.ui.define([
 		var oCurrentItem = oEvent.target,
 			oGridControl = oEvent.srcControl,
 			aMatrix = GridContainerUtils.makeMatrix(oGridControl),
-			oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem),
-			oNextFocusItem;
+			oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem);
 
 		if (!this._mCurrentPosition) {
 			this._mCurrentPosition = {
-				col: oStartPosition.col,
+				column: oStartPosition.column,
 				row: oStartPosition.row
 			};
 		}
 
 		switch (oEvent.keyCode) {
 			case KeyCodes.ARROW_DOWN:
-				this._moveFocusDown(oStartPosition, aMatrix, oCurrentItem, oGridControl, oEvent, oNextFocusItem, aItemDomRefs);
+				this._moveFocusDown(oStartPosition, aMatrix, oCurrentItem, oEvent);
 				break;
 			case KeyCodes.ARROW_RIGHT:
-				this._moveFocusRight(oStartPosition, aMatrix, oCurrentItem, oGridControl, oEvent, oNextFocusItem, aItemDomRefs);
+				this._moveFocusRight(oStartPosition, aMatrix, oCurrentItem, oEvent);
 				break;
 			case KeyCodes.ARROW_UP:
-				this._moveFocusUp(oStartPosition, aMatrix, oCurrentItem, oGridControl, oEvent, oNextFocusItem, aItemDomRefs);
+				this._moveFocusUp(oStartPosition, aMatrix, oCurrentItem, oEvent);
 				break;
 			case KeyCodes.ARROW_LEFT:
-				this._moveFocusLeft(oStartPosition, aMatrix, oCurrentItem, oGridControl, oEvent, oNextFocusItem, aItemDomRefs);
+				this._moveFocusLeft(oStartPosition, aMatrix, oCurrentItem, oEvent);
 				break;
 			default:
 				break;
 		}
 	};
 
-	GridItemNavigation.prototype._moveFocusDown = function (oStartPosition, aMatrix, oCurrentItem, oGridControl, oEvent, oNextFocusItem, aItemDomRefs) {
-		oStartPosition.col = this._mCurrentPosition.col;
+	GridItemNavigation.prototype._moveFocusDown = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
+
+		var aItemDomRefs = this.getItemDomRefs(),
+			oNextFocusItem;
+
+		oStartPosition.column = this._mCurrentPosition.column;
 
 		while (oStartPosition.row < aMatrix.length &&
-			(aMatrix[oStartPosition.row][oStartPosition.col] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.col] === false)) {
+			(aMatrix[oStartPosition.row][oStartPosition.column] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.column] === false)) {
 			oStartPosition.row += 1;
 		}
 
 		if (oStartPosition.row >= aMatrix.length) {
-			this._mCurrentPosition = null;
-			oGridControl._onItemNavigationBorderReached(oEvent);
+			this._onBorderReached(oEvent);
 			return;
 		}
 
-		if (oStartPosition.row < aMatrix.length) {
-		Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.col);
-			oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.col];
-			if (oNextFocusItem) {
-				this._mCurrentPosition = oStartPosition;
-				this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
-				return;
-			} else {
-				this._mCurrentPosition = null;
-				oGridControl._onItemNavigationBorderReached(oEvent);
-			}
-		}
+		Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.column);
 
+		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
+		if (oNextFocusItem) {
+			this._mCurrentPosition = oStartPosition;
+			this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
+		} else {
+			this._onBorderReached(oEvent);
+		}
 	};
 
-	GridItemNavigation.prototype._moveFocusRight = function (oStartPosition, aMatrix, oCurrentItem, oGridControl, oEvent, oNextFocusItem, aItemDomRefs) {
+	GridItemNavigation.prototype._moveFocusRight = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
+		var aItemDomRefs = this.getItemDomRefs(),
+			oNextFocusItem;
+
 		oStartPosition.row = this._mCurrentPosition.row;
-		while (oStartPosition.col < aMatrix[oStartPosition.row].length &&
-			(aMatrix[oStartPosition.row][oStartPosition.col] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.col] === false)) {
-			oStartPosition.col += 1;
+
+		while (oStartPosition.column < aMatrix[oStartPosition.row].length &&
+			(aMatrix[oStartPosition.row][oStartPosition.column] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.column] === false)) {
+			oStartPosition.column += 1;
 		}
 
+		if (oStartPosition.column >= aMatrix[oStartPosition.row].length) {
+			this._onBorderReached(oEvent);
+			return;
+		}
 
-		if (oStartPosition.row < aMatrix.length) {
-			Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.col);
+		Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.column);
 
-			oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.col];
-			if (oNextFocusItem) {
-				this._mCurrentPosition = oStartPosition;
-				this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
-				return;
-			} else {
-				this._mCurrentPosition = null;
-				var oLastItemDomRef = aItemDomRefs[aItemDomRefs.length - 1];
-				if (oLastItemDomRef === oCurrentItem) {
-					oGridControl._onItemNavigationBorderReached(oEvent);
-					return;
-				}
-			}
+		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
+		if (oNextFocusItem) {
+			this._mCurrentPosition = oStartPosition;
+			this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
+		} else {
+			this._onBorderReached(oEvent);
 		}
 	};
 
-	GridItemNavigation.prototype._moveFocusUp = function (oStartPosition, aMatrix, oCurrentItem, oGridControl, oEvent, oNextFocusItem, aItemDomRefs) {
+	GridItemNavigation.prototype._moveFocusUp = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
+		var aItemDomRefs = this.getItemDomRefs(),
+			oNextFocusItem;
 
-		oStartPosition.col = this._mCurrentPosition.col;
-		while (oStartPosition.row > 0 && (aMatrix[oStartPosition.row][oStartPosition.col] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.col] === false)) {
+		oStartPosition.column = this._mCurrentPosition.column;
+
+		while (oStartPosition.row >= 0 &&
+			(aMatrix[oStartPosition.row][oStartPosition.column] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.column] === false)) {
 			oStartPosition.row -= 1;
 		}
 
-		if (oStartPosition.row <= 0) {
-			this._mCurrentPosition = null;
-			oGridControl._onItemNavigationBorderReached(oEvent);
+		if (oStartPosition.row < 0) {
+			this._onBorderReached(oEvent);
 			return;
 		}
-		if (oStartPosition.row > 0) {
-			Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.col);
 
-			oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.col];
-			if (oNextFocusItem) {
-				this._mCurrentPosition = oStartPosition;
-				this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
-				return;
-			} else {
-				this._mCurrentPosition = null;
-				oGridControl._onItemNavigationBorderReached(oEvent);
+		Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.column);
+
+		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
+		if (oNextFocusItem) {
+
+			// move to the upper top row index
+			while (oStartPosition.row > 0 && aMatrix[oStartPosition.row - 1][oStartPosition.column] === oNextFocusItem) {
+				oStartPosition.row -= 1;
 			}
+
+			this._mCurrentPosition = oStartPosition;
+			this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
+		} else {
+			this._onBorderReached(oEvent);
 		}
 	};
 
-	GridItemNavigation.prototype._moveFocusLeft = function (oStartPosition, aMatrix, oCurrentItem, oGridControl, oEvent, oNextFocusItem, aItemDomRefs) {
+	GridItemNavigation.prototype._moveFocusLeft = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
+		var aItemDomRefs = this.getItemDomRefs(),
+			oNextFocusItem;
 
 		oStartPosition.row = this._mCurrentPosition.row;
 
-		while (oStartPosition.col >= 0 && (aMatrix[oStartPosition.row][oStartPosition.col] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.col] === false)) {
-			oStartPosition.col -= 1;
+		while (oStartPosition.column >= 0 &&
+			(aMatrix[oStartPosition.row][oStartPosition.column] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.column] === false)) {
+			oStartPosition.column -= 1;
 		}
 
-		if (oStartPosition.row >= 0) {
-			Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.col);
+		if (oStartPosition.column < 0) {
+			this._onBorderReached(oEvent);
+			return;
+		}
 
-			oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.col];
-			if (oNextFocusItem) {
-				this._mCurrentPosition = oStartPosition;
-				this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
-				return;
-			} else {
-				this._mCurrentPosition = null;
-				if (aMatrix[0][0] === oCurrentItem) {
-					oGridControl._onItemNavigationBorderReached(oEvent);
-				}
+		Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.column);
+
+		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
+		if (oNextFocusItem) {
+
+			// move to the most left column index
+			while (oStartPosition.column > 0 && aMatrix[oStartPosition.row][oStartPosition.column - 1] === oNextFocusItem) {
+				oStartPosition.column -= 1;
 			}
+
+			this._mCurrentPosition = oStartPosition;
+			this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
+		} else {
+			this._onBorderReached(oEvent);
 		}
 	};
 
@@ -243,12 +260,107 @@ sap.ui.define([
 			if (iRowIndex !== -1) {
 				oMatrixPositions = {};
 				oMatrixPositions.row = iColumnIndex;
-				oMatrixPositions.col = iRowIndex;
+				oMatrixPositions.column = iRowIndex;
 				return true;
 			}
 			return false;
 		});
 		return oMatrixPositions;
+	};
+
+	GridItemNavigation.prototype._onBorderReached = function (oEvent) {
+		var oGridControl = oEvent.srcControl,
+			sDirection;
+
+		switch (oEvent.keyCode) {
+			case KeyCodes.ARROW_RIGHT:
+				sDirection = NavigationDirection.Right;
+				break;
+			case KeyCodes.ARROW_LEFT:
+				sDirection = NavigationDirection.Left;
+				break;
+			case KeyCodes.ARROW_DOWN:
+				sDirection = NavigationDirection.Down;
+				break;
+			case KeyCodes.ARROW_UP:
+				sDirection = NavigationDirection.Up;
+				break;
+		}
+
+		oGridControl.onItemNavigationBorderReached({
+			event: oEvent,
+			row: this._mCurrentPosition.row,
+			column: this._mCurrentPosition.column,
+			direction: sDirection
+		});
+	};
+
+	GridItemNavigation.prototype.focusItemByDirection = function (oGrid, sDirection, iRow, iColumn) {
+		var oCurrentItem,
+			aMatrix = GridContainerUtils.makeMatrix(oGrid),
+			aRow,
+			iRowIndex,
+			iColIndex;
+
+		switch (sDirection) {
+			case NavigationDirection.Right:
+				iRowIndex = iRow;
+				iColIndex = -1;
+				aRow = aMatrix[iRow];
+
+				if (aRow) {
+					do {
+						oCurrentItem = aRow[++iColIndex];
+					} while (!oCurrentItem);
+				}
+				break;
+			case NavigationDirection.Left:
+				iRowIndex = iRow;
+				iColIndex = aMatrix[0].length;
+				aRow = aMatrix[iRow];
+
+				if (aRow) {
+					do {
+						oCurrentItem = aRow[--iColIndex];
+					} while (!oCurrentItem);
+				}
+				// move to the most left column index
+				while (oCurrentItem && iColIndex > 0 && aMatrix[iRow][iColIndex - 1] === oCurrentItem) {
+					iColIndex--;
+				}
+
+				break;
+			case NavigationDirection.Down:
+				iRowIndex = -1;
+				iColIndex = iColumn;
+				do {
+					oCurrentItem = aMatrix[++iRowIndex][iColumn];
+				} while (!oCurrentItem);
+				break;
+			case NavigationDirection.Up:
+				iRowIndex = aMatrix.length;
+				iColIndex = iColumn;
+				do {
+					oCurrentItem = aMatrix[--iRowIndex][iColumn];
+				} while (!oCurrentItem);
+
+				// move to the upper top row index
+				while (oCurrentItem && iRowIndex > 0 && aMatrix[iRowIndex - 1][iColumn] === oCurrentItem) {
+					iRowIndex--;
+				}
+				break;
+		}
+
+		if (!oCurrentItem) {
+			return;
+		}
+
+		this._mCurrentPosition = {
+			column: iColIndex,
+			row: iRowIndex
+		};
+
+		oCurrentItem.focus();
 	};
 
 	return GridItemNavigation;
