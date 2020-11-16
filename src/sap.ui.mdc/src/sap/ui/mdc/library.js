@@ -154,8 +154,8 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @experimental
-	 * @ui5-restricted
+	 * @ui5-restricted sap.fe
+	 * @experimental As of version 1.54 Disclaimer: Usage Restrictions: The components of this library are under development and documented as private. Their APIs are subject to change and should not be used in productive scenarios without further agreement.
 	 */
 	var thisLib = sap.ui.mdc;
 	/* eslint-enable no-undef */

@@ -33,7 +33,7 @@
 		<documentation xmlns="http://www.sap.com/ui5/buildext/documentation" indexUrl="../../../../test-resources/sap/ui/mdc/demokit/docuindex.json" resolve="lib" />
 		<releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes" url="../../../../test-resources/sap/ui/mdc/relnotes/changes-{major}.{minor}.json" resolve="lib" />
 		<ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
-			<component>CA-UI5-CMP</component>
+			<component>CA-UI5-MDC</component>
 			<component>
 				<name>CA-UI5-TBL</name>
 				<modules>

@@ -8,11 +8,12 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 	 * <b>Note:</b>
 	 * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
 	 * @author SAP SE
-	 * @protected
+	 * @private
 	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @experimental
+	 * @experimental As of version 1.74
 	 * @since 1.74
 	 * @alias sap.ui.mdc.LinkDelegate
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	var LinkDelegate = Object.assign({}, BaseDelegate, {
 		/**

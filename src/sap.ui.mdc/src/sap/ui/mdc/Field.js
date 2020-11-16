@@ -51,9 +51,11 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.54.0
+	 * @experimental As of version 1.54
 	 *
 	 * @private
-	 * @experimental
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	var Field = FieldBase.extend("sap.ui.mdc.Field", /* @lends sap.ui.mdc.Field.prototype */ {
 		metadata: {
