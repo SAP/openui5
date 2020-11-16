@@ -3,6 +3,37 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "7156cd210c3c07e801a275bce702a2df48df9280",
+        "type": "FIX",
+        "text": " ManagedObject: Add model name to the correct objectBindings object"
+      },
+      {
+        "id": "7b71a7749889d169b4c1080db77b299e95916945",
+        "type": "FIX",
+        "text": " CustomizingConfiguration: respect owner component for configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005374432020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070417704"
+          }
+        ]
+      },
+      {
+        "id": "7b6f6a19c75d185a27dae871e4eb8bb95ee2da70",
+        "type": "FIX",
+        "text": " NumberFormat: make NumberFormat.RoundingMode guideline compliant",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870335948"
+          }
+        ]
+      },
+      {
         "id": "c4b47983d6396bf7384f4d5c0a383e30412c51d3",
         "type": "FIX",
         "text": " sap/ui/util/isCrossOriginURL: only make relative URLs absolute",

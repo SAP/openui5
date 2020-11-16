@@ -17,17 +17,6 @@
         "id": "0a553ef507800c3cc494619178b53ddd815118f7",
         "type": "FEATURE",
         "text": " fl.VariantManagement: New checkbox text for standard variant"
-      },
-      {
-        "id": "53cdbc6e3895e6ed6d178e46142c086b6959b634",
-        "type": "FIX",
-        "text": " fl.VariantManagement: manage dialog with a content width",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080175146"
-          }
-        ]
       }
     ]
   }

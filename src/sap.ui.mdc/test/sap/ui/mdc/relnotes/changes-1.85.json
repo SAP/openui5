@@ -3,6 +3,17 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "63e2201a434ac1877c17983baec4cae2dae07ccc",
+        "type": "FIX",
+        "text": " FilterBarBase: filtersChange event after variant creation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070293088"
+          }
+        ]
+      },
+      {
         "id": "616ce9ae25118ec9b1435e065aa3d141aa539ec4",
         "type": "FIX",
         "text": " FieldValueHelp: Filter in FilterBar not working",

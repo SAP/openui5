@@ -3,6 +3,99 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "8d637c1beb98b989d31d32d7fa48633873f878c8",
+        "type": "FIX",
+        "text": " sap.m.Table, sap.ui.table.Table: Paste event API documentation fixed"
+      },
+      {
+        "id": "25c25e009130b59f7c27b3a2b9019395caad1eb4",
+        "type": "FIX",
+        "text": " sap.m.IconTabFilter: Enabled state is now propagated correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005864442020"
+          }
+        ]
+      },
+      {
+        "id": "4faf2b2da4bea71934720eb82f3a8326403e2d7c",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: When hovered now have four borders",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070474574"
+          }
+        ]
+      },
+      {
+        "id": "77882c7079948ecb4863d02b0847965ec0893228",
+        "type": "FIX",
+        "text": " sap.m.Shell: Correctly re-renders the logo on themeChanged",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070456412"
+          }
+        ]
+      },
+      {
+        "id": "96953d9d6be7952edbe34266223c801aa6eaa8b0",
+        "type": "FIX",
+        "text": " sap.m.Link: fixed vertical misalignment of a link inside FormattedText (Chinese)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070460939"
+          }
+        ]
+      },
+      {
+        "id": "fb186f3ef794031a603be04e898ffd53551a486d",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: All tests are now working on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070459087"
+          }
+        ]
+      },
+      {
+        "id": "0814d832b840264212136198a235d70eac17ad1f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Fixing height of object status text and icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070436175"
+          }
+        ]
+      },
+      {
+        "id": "0c46772c27921c48cdf3f6e05e497ffcde1f01ea",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Corrected title wrapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070473123"
+          }
+        ]
+      },
+      {
+        "id": "8bd00e4f41367e63e19d605c7231ec323ddfae63",
+        "type": "FIX",
+        "text": " sap.m.Table: Invisible cell content should be announced as \"empty\" by Screenreader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007184972020"
+          }
+        ]
+      },
+      {
         "id": "e0d8de2a82a83d1f1aeeff02988ba08ae60354fd",
         "type": "FIX",
         "text": " sap.m.ComboBox, sap.m.MultiComboBox: Update disabled items documentation",

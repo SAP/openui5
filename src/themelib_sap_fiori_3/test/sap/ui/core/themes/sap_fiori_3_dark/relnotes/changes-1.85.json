@@ -3,6 +3,22 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "0361c60c9fb39b037f77a6d5bb887e184d3af4e5",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Special dates visualisation in Month view"
+      },
+      {
+        "id": "0814d832b840264212136198a235d70eac17ad1f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Fixing height of object status text and icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070436175"
+          }
+        ]
+      },
+      {
         "id": "db6b74e8b811f657a4383635c8be7c47898c0521",
         "type": "FIX",
         "text": " sap.m.InputBase, sap.m.ComboBox: Interactive states CSS fixes",
@@ -39,17 +55,6 @@
         "id": "0f96705e16efd98ff05facdeaccf641497f6abb1",
         "type": "FEATURE",
         "text": " sap.m.Bar, other controls: added title alignment functionality"
-      },
-      {
-        "id": "96dfb778703aac68e5e65164bdaf6d9f434e135d",
-        "type": "FIX",
-        "text": " sap.m.WizardProgressNavigator: Adjust selection bar according to spec",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070401296"
-          }
-        ]
       }
     ]
   }
