@@ -2,183 +2,182 @@
  * ${copyright}
  */
 
-sap.ui.define([ "sap/ui/Device"],
-	function(Device) {
-		"use strict";
-		/* global Map */
+sap.ui.define([], function () {
+	"use strict";
+	/*global Map */
 
-		/**
-		 * GridContainer renderer
-		 * @namespace
-		 */
-		var GridContainerRenderer = {
-			apiVersion: 2
-		};
+	/**
+	 * GridContainer renderer
+	 * @namespace
+	 */
+	var GridContainerRenderer = {
+		apiVersion: 2
+	};
 
-		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} control an object representation of the control that should be rendered
-		 */
-		GridContainerRenderer.render = function(rm, control) {
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 */
+	GridContainerRenderer.render = function (oRM, oControl) {
+		var sId = oControl.getId(),
+			aItems = oControl.getItems(),
+			sTooltip = oControl.getTooltip_AsString();
 
-			rm.openStart('div', control);
+		oRM.openStart("div", oControl).class("sapFGridContainer");
 
-			rm.accessibilityState(control, {
-				role: "list",
-				roledescription: control._oRb.getText("GRIDCONTAINER_ROLEDESCRIPTION")
-			});
-			rm.class("sapFGridContainer");
+		this.setGridStyles(oRM, oControl._getActiveGridStyles());
 
-			if (control.getSnapToRow()) {
-				rm.class("sapFGridContainerSnapToRow");
-			}
+		oRM.accessibilityState(oControl, {
+			role: "list",
+			roledescription: oControl._oRb.getText("GRIDCONTAINER_ROLEDESCRIPTION")
+		});
 
-			if (control.getAllowDenseFill()) {
-				rm.class("sapFGridContainerDenseFill");
-			}
+		if (oControl.getSnapToRow()) {
+			oRM.class("sapFGridContainerSnapToRow");
+		}
 
-			// Add inline styles
-			if (control.getWidth()) {
-				rm.style("width", control.getWidth());
-			}
-			if (control.getMinHeight()) {
-				rm.style("min-height", control.getMinHeight());
-			}
+		if (oControl.getAllowDenseFill()) {
+			oRM.class("sapFGridContainerDenseFill");
+		}
 
-			this.addGridStyles(rm, control);
+		if (oControl.getWidth()) {
+			oRM.style("width", oControl.getWidth());
+		}
 
-			// Add tooltip
-			var tooltip = control.getTooltip_AsString();
-			if (tooltip) {
-				rm.attr("title", tooltip);
-			}
+		if (oControl.getMinHeight()) {
+			oRM.style("min-height", oControl.getMinHeight());
+		}
 
-			// Close opening tag
-			rm.openEnd();
+		if (sTooltip) {
+			oRM.attr("title", sTooltip);
+		}
 
-			// dummy keyboard handling area
-			this.renderDummyArea(rm, control, "before", -1);
+		oRM.openEnd();
 
-			var iIndex = 0,
-				aItems = control.getItems();
+		this.renderDummyArea(oRM, sId, "before");
 
-			for (iIndex = 0; iIndex < aItems.length; iIndex++) {
-				 this.renderItem(rm, aItems[iIndex], control, iIndex, aItems.length);
-			}
+		aItems.forEach(function (oItem, iIndex) {
+			this.renderItem(oRM, oItem, oControl, iIndex);
+		}.bind(this));
 
-			// dummy keyboard handling area
-			this.renderDummyArea(rm, control, "after", -1);
+		this.renderDummyArea(oRM, sId, "after");
 
-			rm.close("div");
-		};
+		oRM.close("div");
+	};
 
-		/**
-		 * Adds grid styles depending on the layout settings
-		 *
-		 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-		 */
-		GridContainerRenderer.addGridStyles = function(rm, oControl) {
-			var mStyles = oControl._getActiveGridStyles();
-			for (var sName in mStyles) {
-				rm.style(sName, mStyles[sName]);
-			}
-		};
+	/**
+	 * Adds grid styles depending on the layout settings
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
+	 * @param {object} mStyles The current grid related CSS styles
+	 */
+	GridContainerRenderer.setGridStyles = function (oRM, mStyles) {
+		for (var sName in mStyles) {
+			oRM.style(sName, mStyles[sName]);
+		}
+	};
 
-		/**
-		 * Renders a single item in the grid.
-		 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oItem The grid item
-		 * @param {sap.ui.core.Control} oControl The grid
-		 */
-		GridContainerRenderer.renderItem = function(rm, oItem, oControl, iIndex, iSize) {
-			var mStylesInfo = GridContainerRenderer.getStylesForItemWrapper(oItem, oControl),
-				mStyles = mStylesInfo.styles,
-				aClasses = mStylesInfo.classes;
+	/**
+	 * Renders a single item in the grid.
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oItem The grid item
+	 * @param {sap.ui.core.Control} oControl The control
+	 * @param {int} iIndex The index of the grid item
+	 */
+	GridContainerRenderer.renderItem = function (oRM, oItem, oControl, iIndex) {
+		var mStylesInfo = this.getStylesForItemWrapper(oItem, oControl),
+			mStyles = mStylesInfo.styles,
+			aClasses = mStylesInfo.classes;
 
-			rm.openStart("div", oControl.getId() + "-item-" + iIndex);
-
-			rm.accessibilityState(oControl, {
+		oRM.openStart("div", oControl.getId() + "-item-" + iIndex)
+			.attr("tabindex", "0")
+			.accessibilityState(oControl, {
 				role: "listitem",
 				labelledby: oItem.getId()
 			});
 
-			mStyles.forEach(function (sValue, sKey) {
-				rm.style(sKey, sValue);
-			});
+		mStyles.forEach(function (sValue, sKey) {
+			oRM.style(sKey, sValue);
+		});
 
-			aClasses.forEach(function (sValue) {
-				rm.class(sValue);
-			});
+		aClasses.forEach(function (sValue) {
+			oRM.class(sValue);
+		});
 
-			rm.attr("tabindex", "0");
-			rm.openEnd();
+		oRM.openEnd();
 
-			oItem.addStyleClass("sapFGridContainerItemInnerWrapper");
+		oItem.addStyleClass("sapFGridContainerItemInnerWrapper");
+		oRM.renderControl(oItem);
 
-			rm.renderControl(oItem);
-			rm.close("div");
-		};
+		oRM.close("div");
+	};
 
-		/**
-		 * Gets styles and classes which has to be applied to an item's wrapper element.
-		 * @param {sap.ui.core.Control} oItem The grid item
-		 * @param {sap.ui.core.Control} oControl The grid
-		 * @returns {object} An object containing styles and classes
-		 */
-		GridContainerRenderer.getStylesForItemWrapper = function(oItem, oControl) {
-			var mStyles = new Map(),
-				aClasses = ["sapFGridContainerItemWrapper"];
+	/**
+	 * Gets styles and classes which has to be applied to an item's wrapper element.
+	 * @param {sap.ui.core.Control} oItem The grid item
+	 * @param {sap.ui.core.Control} oControl The grid
+	 * @returns {object} An object containing styles and classes
+	 */
+	GridContainerRenderer.getStylesForItemWrapper = function (oItem, oControl) {
+		var mStyles = new Map(),
+			aClasses = ["sapFGridContainerItemWrapper"],
+			oLayoutData = oItem.getLayoutData(),
+			iItemColumns,
+			iTotalColumns;
 
-			var oLayoutData = oItem.getLayoutData();
-			if (oLayoutData) {
-				var iItemColumns = oLayoutData.getColumns(),
-					iTotalColumns = oControl.getActiveLayoutSettings().getColumns();
+		if (oLayoutData) {
+			iItemColumns = oLayoutData.getColumns();
+			iTotalColumns = oControl.getActiveLayoutSettings().getColumns();
 
-				if (iItemColumns && iTotalColumns) {
-					// do not allow items to have more columns than total columns, else the layout brakes
-					iItemColumns = Math.min(iItemColumns, iTotalColumns);
-				}
-
-				if (iItemColumns) {
-					mStyles.set("grid-column", "span " + iItemColumns);
-				}
-
-				if (oControl.getInlineBlockLayout()) {
-					mStyles.set("grid-row", "span 1");
-				} else if (oLayoutData.getRows() || oLayoutData.getMinRows()) {
-					mStyles.set("grid-row", "span " + oLayoutData.getActualRows());
-				}
-
-				if (!oLayoutData.hasAutoHeight()) {
-					aClasses.push("sapFGridContainerItemFixedRows");
-				}
+			if (iItemColumns && iTotalColumns) {
+				// do not allow items to have more columns than total columns, else the layout breaks
+				iItemColumns = Math.min(iItemColumns, iTotalColumns);
 			}
 
-			if (!oItem.getVisible()) {
-				aClasses.push("sapFGridContainerInvisiblePlaceholder");
+			if (iItemColumns) {
+				mStyles.set("grid-column", "span " + iItemColumns);
 			}
 
-			if (oControl._hasOwnVisualFocus(oItem)) {
-				aClasses.push("sapFGridContainerItemWrapperNoVisualFocus");
+			if (oControl.getInlineBlockLayout()) {
+				mStyles.set("grid-row", "span 1");
+			} else if (oLayoutData.getRows() || oLayoutData.getMinRows()) {
+				mStyles.set("grid-row", "span " + oLayoutData.getActualRows());
 			}
 
-			return {
-				styles: mStyles,
-				classes: aClasses
-			};
+			if (!oLayoutData.hasAutoHeight()) {
+				aClasses.push("sapFGridContainerItemFixedRows");
+			}
+		}
+
+		if (!oItem.getVisible()) {
+			aClasses.push("sapFGridContainerInvisiblePlaceholder");
+		}
+
+		if (oControl._hasOwnVisualFocus(oItem)) {
+			aClasses.push("sapFGridContainerItemWrapperNoVisualFocus");
+		}
+
+		return {
+			styles: mStyles,
+			classes: aClasses
 		};
+	};
 
-		GridContainerRenderer.renderDummyArea = function(rm, control, sAreaId, iTabIndex) {
-			rm.openStart("div", control.getId() + "-" + sAreaId);
-			rm.attr("tabindex", iTabIndex);
-			rm.class("sapFGridContainerDummyArea");
-			rm.openEnd();
-			rm.close("div");
-		};
+	/**
+	 * Renders a dummy area for keyboard handling purposes
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
+	 * @param {string} sControlId the ID of the control
+	 * @param {string} sAreaId the ID of the dummy area (either, "before" or "after")
+	 */
+	GridContainerRenderer.renderDummyArea = function (oRM, sControlId, sAreaId) {
+		oRM.openStart("div", sControlId + "-" + sAreaId)
+			.class("sapFGridContainerDummyArea")
+			.attr("tabindex", "-1")
+			.openEnd()
+			.close("div");
+	};
 
-		return GridContainerRenderer;
-
-	}, /* bExport= */ true);
+	return GridContainerRenderer;
+}, /* bExport= */ true);

@@ -43,12 +43,6 @@ sap.ui.define([
 	var isRtl = Core.getConfiguration().getRTL();
 
 	/**
-	 * Indicates the version of Microsoft Edge browser that has support for the display grid.
-	 * @type {number}
-	 */
-	var EDGE_VERSION_WITH_GRID_SUPPORT = 16;
-
-	/**
 	 * For these controls the grid item visual focus should be displayed from the control inside.
 	 */
 	var aOwnVisualFocusControls = [
@@ -56,15 +50,6 @@ sap.ui.define([
 		"sap.ui.integration.widgets.Card",
 		"sap.m.GenericTile"
 	];
-
-	/**
-	 * Indicates whether the grid is supported by the browser.
-	 * @private
-	 * @returns {boolean} If native grid is supported by the browser
-	 */
-	function isGridSupportedByBrowser() {
-		return !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
-	}
 
 	/**
 	 * Gets the column-span property from the item's layout data.
@@ -359,7 +344,7 @@ sap.ui.define([
 
 		// The item just became invisible. In such cases there won't be _onAfterItemRendering,
 		// so we have to to schedule the polyfill here.
-		if (oContainer._reflectItemVisibilityToWrapper(this) && !isGridSupportedByBrowser()) {
+		if (oContainer._reflectItemVisibilityToWrapper(this) && !GridContainerUtils.isGridSupportedByBrowser()) {
 			oContainer._scheduleIEPolyfill();
 		}
 	};
@@ -388,7 +373,7 @@ sap.ui.define([
 
 		container._setItemNavigationItems();
 
-		if (!isGridSupportedByBrowser()) {
+		if (!GridContainerUtils.isGridSupportedByBrowser()) {
 			container._scheduleIEPolyfill();
 			return;
 		}
@@ -406,7 +391,7 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._reflectItemVisibilityToWrapper = function (oItem) {
 
-		var oItemWrapper = this._getItemWrapper(oItem),
+		var oItemWrapper = this.getItemWrapper(oItem),
 			$oItemWrapper;
 
 		if (!oItemWrapper) {
@@ -586,7 +571,7 @@ sap.ui.define([
 
 		this._resizeItemHandler = this._resizeItem.bind(this);
 
-		if (!isGridSupportedByBrowser()) {
+		if (!GridContainerUtils.isGridSupportedByBrowser()) {
 			this._attachDndPolyfill();
 		}
 	};
@@ -604,7 +589,7 @@ sap.ui.define([
 	GridContainer.prototype.insertItem = function (oItem, iIndex) {
 		this.insertAggregation("items", oItem, iIndex, true);
 
-		if (!this.getDomRef() || !isGridSupportedByBrowser() || !oItem.getVisible()) {
+		if (!this.getDomRef() || !GridContainerUtils.isGridSupportedByBrowser() || !oItem.getVisible()) {
 			// if not rendered, not supported or an invisible item - we need to invalidate
 			this.invalidate();
 			return this;
@@ -616,7 +601,7 @@ sap.ui.define([
 			oGridRef = this.getDomRef();
 
 		if (oNextItem) {
-			oGridRef.insertBefore(oWrapper, this._getItemWrapper(oNextItem));
+			oGridRef.insertBefore(oWrapper, this.getItemWrapper(oNextItem));
 		} else {
 			oGridRef.insertBefore(oWrapper, oGridRef.lastChild);
 		}
@@ -640,7 +625,7 @@ sap.ui.define([
 			oGridRef = this.getDomRef(),
 			oItemRef = oRemovedItem.getDomRef();
 
-		if (!oGridRef || !oItemRef || !isGridSupportedByBrowser()) {
+		if (!oGridRef || !oItemRef || !GridContainerUtils.isGridSupportedByBrowser()) {
 			this.invalidate();
 			return oRemovedItem;
 		}
@@ -704,7 +689,7 @@ sap.ui.define([
 			this._oItemNavigation = null;
 		}
 
-		if (!isGridSupportedByBrowser()) {
+		if (!GridContainerUtils.isGridSupportedByBrowser()) {
 			this._detachDndPolyfill();
 		}
 
@@ -781,7 +766,7 @@ sap.ui.define([
 	 * @param {Object} oEvent ResizeHandler resize event
 	 */
 	GridContainer.prototype._resizeItem = function (oEvent) {
-		if (!isGridSupportedByBrowser()) {
+		if (!GridContainerUtils.isGridSupportedByBrowser()) {
 			// don't re-arrange the items if currently dragging one of the items from this container in another container
 			if (!this._bDraggingInAnotherContainer) {
 				this._scheduleIEPolyfill();
@@ -804,7 +789,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (!isGridSupportedByBrowser()) {
+		if (!GridContainerUtils.isGridSupportedByBrowser()) {
 			this._scheduleIEPolyfill(bSettingsAreChanged);
 			return;
 		}
@@ -861,7 +846,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.getItems().forEach(function(oItem) {
+		this.getItems().forEach(function (oItem) {
 			// if item has more columns than total columns, it brakes the whole layout
 			oItem.$().parent().css("grid-column", "span " + Math.min(getItemColumnCount(oItem), iMaxColumns));
 		});
@@ -1049,7 +1034,7 @@ sap.ui.define([
 		});
 
 		this.virtualGrid = virtualGrid;
-		this.IeColumns = virtualGrid.numberOfCols - 1;
+		this.IeColumns = virtualGrid.numberOfCols;
 		this.IeRows = virtualGrid.virtualGridMatrix.length;
 
 
@@ -1286,7 +1271,7 @@ sap.ui.define([
 
 	GridContainer.prototype._getClosestItemBelowInThisContainer = function (oItem) {
 		var aItemsBelow = this.getItems()
-							.map(this._getItemWrapper)
+							.map(this.getItemWrapper)
 							.filter(function (oWrapper) {
 								return GridContainerUtils.isBelow(oItem, oWrapper);
 							});
@@ -1325,7 +1310,7 @@ sap.ui.define([
 
 		var aItemsInClosestContainer = [];
 
-		jQuery(oClosestGridContainer).control(0).getItems().forEach(function(oItem) {
+		jQuery(oClosestGridContainer).control(0).getItems().forEach(function (oItem) {
 			aItemsInClosestContainer.push(oItem.getDomRef());
 		});
 
@@ -1339,7 +1324,7 @@ sap.ui.define([
 
 	GridContainer.prototype._getClosestItemAboveInThisContainer = function (oItem) {
 		var aItemsAbove = this.getItems()
-							.map(this._getItemWrapper)
+							.map(this.getItemWrapper)
 							.filter(function (oWrapper) {
 								return GridContainerUtils.isAbove(oItem, oWrapper);
 							});
@@ -1380,7 +1365,7 @@ sap.ui.define([
 
 		var aItemsInClosestContainer = [];
 
-		jQuery(oClosestGridContainer).control(0).getItems().forEach(function(oItem) {
+		jQuery(oClosestGridContainer).control(0).getItems().forEach(function (oItem) {
 			aItemsInClosestContainer.push(oItem.getDomRef());
 		});
 
@@ -1422,7 +1407,15 @@ sap.ui.define([
 		return oElement.classList.contains("sapFGridContainerItemWrapper");
 	};
 
-	GridContainer.prototype._getItemWrapper = function (oItem) {
+	/**
+	 * Returns the wrapper DomRef of a control.
+	 *
+	 * @param {sap.ui.core.Control} oItem Instance from the <code>items</code> aggregation.
+	 * @returns {HTMLElement} oDomRef the wrapper's DomRef
+	 * @private
+	 * @ui5-restricted
+	 */
+	GridContainer.prototype.getItemWrapper = function (oItem) {
 		var oItemDomRef = oItem.getDomRef(),
 			oInvisibleSpan;
 
@@ -1437,71 +1430,6 @@ sap.ui.define([
 		}
 
 		return null;
-	};
-
-	GridContainer.prototype._makeMatrix = function () {
-
-		var mGridStyles = window.getComputedStyle(this.getDomRef()),
-			sRows = mGridStyles.gridTemplateRows,
-			sColumns = mGridStyles.gridTemplateColumns,
-			oSettings = this.getActiveLayoutSettings(),
-			iColumnSize = oSettings.getMinColumnSizeInPx() || oSettings.getColumnSizeInPx(),
-			iRowSize = oSettings.getRowSizeInPx(),
-			iGapSize = oSettings.getGapInPx(),
-			iRows =  isGridSupportedByBrowser() ? sRows.split(/\s+/).length : this.IeColumns,
-			iColumns =  isGridSupportedByBrowser() ? sColumns.split(/\s+/).length : this.IeRows,
-			aMatrix = new Array(iRows),
-			aItems = this.getItems(),
-			iGridX = this.getDomRef().getBoundingClientRect().left,
-			iGridY = this.getDomRef().getBoundingClientRect().top;
-
-		for (var i = 0; i < aMatrix.length; i++) {
-			aMatrix[i] = new Array(iColumns);
-			aMatrix[i].fill(false);
-		}
-
-		if (aItems.length) {
-			aItems.forEach(function(oItem) {
-				var oDomRef = oItem.getDomRef().parentElement,
-					iItemWidth = oDomRef.getBoundingClientRect().width,
-					iItemHeight = oDomRef.getBoundingClientRect().height,
-					iColsInItem = oSettings.calculateColumnsForItem(iItemWidth),
-					iRowsInItem = oSettings.calculateRowsForItem(iItemHeight),
-
-					iItemX = oDomRef.getBoundingClientRect().left,
-					iItemY = oDomRef.getBoundingClientRect().top,
-					iStartRow = Math.floor((iItemY - iGridY) / (iRowSize + iGapSize)),
-					iStartCol = Math.floor((iItemX - iGridX) / (iColumnSize + iGapSize)),
-					iEndRow = iRowsInItem,
-					iEndCol = iColsInItem,
-					row,
-					col;
-				if (isGridSupportedByBrowser()) {
-					for (row = iStartRow; row < iEndRow + iStartRow; row++) {
-						for (col = iStartCol; col < iEndCol + iStartCol; col++) {
-							aMatrix[row][col] = oDomRef;
-						}
-					}
-				} else {
-					var virtualGridMatrix = this.virtualGrid.virtualGridMatrix;
-					aMatrix = new Array(virtualGridMatrix.length);
-					for (var i = 0; i < aMatrix.length; i++) {
-						aMatrix[i] = new Array(virtualGridMatrix[0].length);
-						aMatrix[i].fill(false);
-					}
-					for (row = 0; row < virtualGridMatrix.length; row++) {
-						for (col = 0; col < virtualGridMatrix[row].length; col++) {
-
-							aMatrix[row][col] = this._getItemWrapper(aItems[virtualGridMatrix[row][col]]);
-							if (virtualGridMatrix[row][col] === 0) {
-								aMatrix[row][col] = false;
-							}
-						}
-					}
-				}
-			}.bind(this));
-		}
-		return aMatrix;
 	};
 
 	return GridContainer;
