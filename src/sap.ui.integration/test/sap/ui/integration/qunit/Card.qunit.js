@@ -2292,5 +2292,34 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.module("Card without rendering", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Full manifest processing is done by calling the method 'startManifestProcessing'", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEvent("_ready", function () {
+				var aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+				// Assert
+				assert.ok(true, "Card processing was done even without rendering.");
+				assert.strictEqual(aItems.length, 8, "The content has 8 items in its aggregation.");
+				done();
+			}.bind(this));
+
+			// Act
+			oCard.setManifest(oManifest_ListCard);
+			oCard.startManifestProcessing();
+		});
+
 	}
 );
