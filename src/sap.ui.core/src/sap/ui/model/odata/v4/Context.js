@@ -218,7 +218,7 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise that is resolved without data when the entity represented by this context
-	 * has been created in the backend and all selected properties of this entity are available.
+	 * has been created in the back end and all selected properties of this entity are available.
 	 * Expanded navigation properties are only available if the context's binding is refreshable.
 	 * {@link sap.ui.model.odata.v4.ODataBinding#refresh} describes which bindings are refreshable.
 	 *
@@ -230,9 +230,9 @@ sap.ui.define([
 	 *
 	 * @returns {Promise}
 	 *   A promise that is resolved without data when the entity represented by this context has
-	 *   been created in the backend. It is rejected with an <code>Error</code> instance where
+	 *   been created in the back end. It is rejected with an <code>Error</code> instance where
 	 *   <code>oError.canceled === true</code> if the transient entity is deleted before it is
-	 *   created in the backend, for example via {@link sap.ui.model.odata.v4.Context#delete},
+	 *   created in the back end, for example via {@link sap.ui.model.odata.v4.Context#delete},
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or
 	 *   {@link sap.ui.model.odata.v4.ODataModel#resetChanges}. It is rejected with an
 	 *   <code>Error</code> instance without <code>oError.canceled</code> if loading of $metadata

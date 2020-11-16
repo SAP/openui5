@@ -23872,7 +23872,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Display a measure with unit using the customizing loaded from the backend
+	// Scenario: Display a measure with unit using the customizing loaded from the back end
 	// based on the "com.sap.vocabularies.CodeList.v1.UnitsOfMeasure" on the service's entity
 	// container.
 	// CPOUI5UISERVICESV3-1711
@@ -24021,7 +24021,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Display an amount with currency using the customizing loaded from the backend
+	// Scenario: Display an amount with currency using the customizing loaded from the back end
 	// based on the "com.sap.vocabularies.CodeList.v1.CurrencyCodes" on the service's entity
 	// container.
 	// CPOUI5UISERVICESV3-1733

@@ -68,12 +68,12 @@ sap.ui.define([
 
 			// Test scenario:
 			// Partial POST failure: Create two new entities without save in between, save, second
-			// POST leads to a backend error, "fix" second entity, save
+			// POST leads to a back-end error, "fix" second entity, save
 
 			// Create two entities without saving
 			iCreated = 2; // in order to reuse mock data for #3+#4 which are deleted in between
 			createTwice(false);
-			// Add special note to force backend error and try to save it
+			// Add special note to force back-end error and try to save it
 			When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheMessagePopover.close();

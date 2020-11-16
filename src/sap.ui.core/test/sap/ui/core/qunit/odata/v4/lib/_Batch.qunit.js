@@ -1333,7 +1333,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 	});
 
 	//*********************************************************************************************
-	// Integration Tests with real backend
+	// Integration Tests with real back end
 	if (TestUtils.isRealOData()) {
 		// integration tests serialization/deserialization
 		// --------------------------------------------
@@ -1389,7 +1389,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				// Nowadays for POST we have to provide all properties, hence we need a new employee
 				// with initial values for all properties as gateway strictly checks now that all
 				// properties are available
-				// -> we may reduce properties again if back-end provides defaulting
+				// -> we may reduce properties again if the back end provides defaulting
 				body : {
 					"ID" : "7",
 					"Name" : "Egon",
