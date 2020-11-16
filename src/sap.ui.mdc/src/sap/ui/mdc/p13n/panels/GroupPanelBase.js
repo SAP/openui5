@@ -390,6 +390,7 @@ sap.ui.define([
 
 		var oP13nCellTemplate = new CustomListItem({
 			visible: "{" + this.P13N_MODEL + ">groupVisible}",
+			accDescription: "{" + this.P13N_MODEL + ">groupLabel}", //Do not read the whole content
 			content: [
 				oInnerTemplate
 			]
