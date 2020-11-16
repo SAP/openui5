@@ -17,6 +17,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
+	 * @ui5-restricted sap.fe
+	 * @experimental As of version 1.54
 	 * @since 1.54.0
 	 * @alias sap.ui.mdc.field.CustomFieldInfo
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

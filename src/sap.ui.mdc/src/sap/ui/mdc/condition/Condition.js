@@ -25,11 +25,13 @@ sap.ui.define([
 		 *
 		 * @author SAP SE
 		 * @version ${version}
+		 * @since 1.61.0
 		 * @alias sap.ui.mdc.condition.Condition
 		 *
 		 * @private
-		 * @experimental
-		 * @ui5-restricted
+		 * @experimental As of version 1.61
+		 * @ui5-restricted sap.ui.fe
+		 * MDC_PUBLIC_CANDIDATE
 		 */
 		var Condition = {
 

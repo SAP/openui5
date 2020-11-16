@@ -81,8 +81,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @alias sap.ui.mdc.field.DefineConditionPanel
-	 * @author SAP SE
-	 * @version ${version}
 	 * @since 1.58.0
 	 * @abstract
 	 *

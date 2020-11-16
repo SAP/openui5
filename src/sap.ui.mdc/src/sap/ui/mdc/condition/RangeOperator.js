@@ -33,7 +33,8 @@ sap.ui.define([
 		 * @param {function} [oConfiguration.formatRange] function to format the date range.
 		 * @constructor
 		 * @private
-		 * @ui5-restricted sap.ui.mdc, sap.fe
+		 * @ui5-restricted sap.fe
+		 * MDC_PUBLIC_CANDIDATE
 		 * @alias sap.ui.mdc.condition.RangeOperator
 		 * @version 1.74.0
 		 * @author SAP SE
@@ -98,7 +99,7 @@ sap.ui.define([
 		/**
 		 * Creates the static text of the operator
 		 *
- 		 * @param {sap.ui.model.Type} oType data type of the used filterfield
+ 		 * @param {sap.ui.model.Type} oType data type of the used <code>FilterField</code>
 		 * @return {string} static text
 		 *
 		 * @private

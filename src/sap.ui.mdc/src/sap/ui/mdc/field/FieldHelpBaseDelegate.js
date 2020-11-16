@@ -16,7 +16,7 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
 	 * @experimental
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.field.FieldHelpBaseDelegate
@@ -36,6 +36,9 @@ sap.ui.define([
 			 * @param {sap.ui.mdc.base.FieldHelpBase} oFieldHelp Field help instance
 			 * @param {boolean} bSuggestion Field help is called for suggestion
 			 * @returns {Promise} Promise that is resolved if all content is available
+			 * @private
+			 * @ui5-restricted sap.fe
+			 * MDC_PUBLIC_CANDIDATE
 			 */
 			contentRequest: function(oPayload, oFieldHelp, bSuggestion) {
 

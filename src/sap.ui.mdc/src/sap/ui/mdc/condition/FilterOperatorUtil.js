@@ -45,8 +45,9 @@ function(
 		 * @alias sap.ui.mdc.condition.FilterOperatorUtil
 		 *
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
-		 * @experimental
+		 * @ui5-restricted sap.fe
+		 * MDC_PUBLIC_CANDIDATE
+		 * @experimental As of version 1.73
 		 */
 		var FilterOperatorUtil = {
 
@@ -751,7 +752,8 @@ function(
 				 * @param {sap.ui.mdc.condition.Operator} oOperator Operator
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc, sap.fe
+				 * @ui5-restricted sap.fe
+				 * MDC_PUBLIC_CANDIDATE
 				 */
 				addOperator: function(oOperator) {
 
@@ -767,7 +769,8 @@ function(
 				 * @param {sap.ui.mdc.condition.Operator} oDefaultOperator Default operator
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc, sap.fe
+				 * @ui5-restricted sap.fe
+				 * MDC_PUBLIC_CANDIDATE
 				 */
 				setOperatorsForType: function(sType, aOperators, oDefaultOperator) {
 					var aOps = [];
@@ -800,7 +803,8 @@ function(
 				 * @returns {string[]} an array with the supported filter operators
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc, sap.fe
+				 * @ui5-restricted ap.fe
+				 * MDC_PUBLIC_CANDIDATE
 				 */
 				getOperatorsForType: function(sType) {
 
@@ -822,7 +826,8 @@ function(
 				 * @returns {sap.ui.mdc.condition.Operator} the default filter operator for the given type
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc, sap.fe
+				 * @ui5-restricted sap.fe
+				 * MDC_PUBLIC_CANDIDATE
 				 */
 				getDefaultOperator: function(sType) {
 
@@ -864,7 +869,8 @@ function(
 				 * @returns {sap.ui.mdc.condition.Operator} the operator object, or undefined if the operator with the requested name does not exist
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc, sap.fe
+				 * @ui5-restricted sap.fe
+				 * MDC_PUBLIC_CANDIDATE
 				 */
 				getOperator: function(sOperator) {
 
@@ -942,6 +948,9 @@ function(
 				 * Updates the value range to have the correct number of entries for an array of conditions
 				 *
 				 * @param {object[]} aConditions Conditions
+				 * @since: 1.75.0
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 */
 				updateConditionsValues: function(aConditions) {
 
