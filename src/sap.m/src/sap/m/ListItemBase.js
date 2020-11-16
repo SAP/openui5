@@ -451,6 +451,10 @@ function(
 			aOutput.push(oBundle.getText("LIST_ITEM_NAVIGATED"));
 		}
 
+		if (this._bAnnounceNotSelected && this.isSelectable() && !this.getSelected()) {
+			aOutput.push(oBundle.getText("LIST_ITEM_NOT_SELECTED"));
+		}
+
 		//The dot is added  so the screenreader can pause
 		return aOutput.join(" . ");
 	};
