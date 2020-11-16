@@ -75,7 +75,7 @@ sap.ui.define([
 			});
 		};
 
-		var sLayerType = LayerUtils.getCurrentLayer(false);
+		var sLayerType = LayerUtils.getCurrentLayer();
 		//First check the current layer
 		if (sLayerType && ((sLayerType === Layer.CUSTOMER) || (sLayerType === Layer.CUSTOMER_BASE))) {
 			//CUSTOMER layer --> retrieve the settings and check if ATO is enabled

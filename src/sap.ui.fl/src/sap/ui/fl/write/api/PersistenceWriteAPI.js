@@ -103,7 +103,7 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		hasHigherLayerChanges: function (mPropertyBag) {
-			mPropertyBag.upToLayer = mPropertyBag.upToLayer || LayerUtils.getCurrentLayer(false);
+			mPropertyBag.upToLayer = mPropertyBag.upToLayer || LayerUtils.getCurrentLayer();
 
 			return FlexObjectState.getFlexObjects(mPropertyBag)
 				.then(function (aFlexObjects) {

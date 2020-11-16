@@ -627,7 +627,7 @@ sap.ui.define([
 	 */
 	Change.prototype._isReadOnlyDueToLayer = function () {
 		var sCurrentLayer;
-		sCurrentLayer = LayerUtils.getCurrentLayer(this._bUserDependent);
+		sCurrentLayer = this._bUserDependent ? Layer.USER : LayerUtils.getCurrentLayer();
 		return (this._oDefinition.layer !== sCurrentLayer);
 	};
 
@@ -1075,7 +1075,7 @@ sap.ui.define([
 			content: oPropertyBag.content || {},
 			// TODO: Is an empty selector allowed?
 			selector: oPropertyBag.selector || { id: "" },
-			layer: oPropertyBag.layer || LayerUtils.getCurrentLayer(oPropertyBag.isUserDependent),
+			layer: oPropertyBag.layer || (oPropertyBag.isUserDependent ? Layer.USER : LayerUtils.getCurrentLayer()),
 			texts: oPropertyBag.texts || {},
 			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "changes"), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 			projectId: oPropertyBag.projectId || (oPropertyBag.reference && oPropertyBag.reference.replace(".Component", "")) || "",

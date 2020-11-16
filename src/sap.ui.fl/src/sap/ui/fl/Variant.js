@@ -383,7 +383,7 @@ sap.ui.define([
 	 */
 	Variant.prototype._isReadOnlyDueToLayer = function () {
 		var sCurrentLayer;
-		sCurrentLayer = LayerUtils.getCurrentLayer(this._bUserDependent);
+		sCurrentLayer = this._bUserDependent ? Layer.USER : LayerUtils.getCurrentLayer();
 		return (this._oDefinition.content.layer !== sCurrentLayer);
 	};
 
@@ -608,7 +608,7 @@ sap.ui.define([
 				packageName: oPropertyBag.content.packageName || "",
 				content: {title: oPropertyBag.content.content.title || ""},
 				self: sNamespace + sFileName + "." + "ctrl_variant",
-				layer: oPropertyBag.content.layer || LayerUtils.getCurrentLayer(oPropertyBag.isUserDependent),
+				layer: oPropertyBag.content.layer || (oPropertyBag.isUserDependent ? Layer.USER : LayerUtils.getCurrentLayer()),
 				texts: oPropertyBag.content.texts || {},
 				namespace: sNamespace, //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 				creation: "",
