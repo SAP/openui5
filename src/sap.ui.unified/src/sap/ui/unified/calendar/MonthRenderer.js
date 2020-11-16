@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/CalendarLegend', 'sap/ui/unified/CalendarLegendRenderer',
-	'sap/ui/core/library', 'sap/ui/unified/library', "sap/base/Log", 'sap/ui/core/InvisibleText'],
-	function(CalendarUtils, CalendarDate, CalendarLegend, CalendarLegendRenderer, coreLibrary, library, Log, InvisibleText) {
+	'sap/ui/core/library', 'sap/ui/unified/library', "sap/base/Log", 'sap/ui/core/InvisibleText', "sap/ui/core/format/DateFormat", "sap/ui/core/Locale"],
+	function(CalendarUtils, CalendarDate, CalendarLegend, CalendarLegendRenderer, coreLibrary, library, Log, InvisibleText, DateFormat, Locale) {
 	"use strict";
 
 
@@ -268,7 +268,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 				oRm.openEnd();
 
 				if (bWeekNum) {
-					this._renderWeekNumber(oRm, aDays[i], oHelper);
+					this._renderWeekNumber(oRm, aDays[i], oHelper, oMonth);
 				}
 			}
 
@@ -328,6 +328,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 				oToday: CalendarDate.fromLocalJSDate(new Date(), oMonth.getPrimaryCalendarType()),
 				sId: oMonth.getId(),
 				oFormatLong: oMonth._getFormatLong(),
+				sPrimaryCalendarType: oMonth.getPrimaryCalendarType(),
 				sSecondaryCalendarType: oMonth._getSecondaryCalendarType(),
 				oLegend: undefined
 			};
@@ -552,9 +553,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		return sText;
 	};
 
-	MonthRenderer._renderWeekNumber = function(oRm, oDay, oHelper) {
-		var iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toUTCJSDate(), oHelper.iYear, oHelper.sLocale, oHelper.oLocaleData),
-			sId = oHelper.sId + "-WNum-" + iWeekNumber;
+	MonthRenderer._renderWeekNumber = function(oRm, oDay, oHelper, oMonth) {
+		var iWeekNumber = oMonth._calculateWeekNumber(oDay);
+		var sId = oHelper.sId + "-WNum-" + iWeekNumber;
 
 		// add week number - inside first day of the week to allow better position and make it easier for ItemNavigation
 		oRm.openStart("div", sId);
