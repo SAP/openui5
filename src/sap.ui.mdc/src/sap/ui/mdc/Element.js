@@ -26,6 +26,9 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPayload as getPayload
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeUtil as getTypeUtil
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.initControlDelegate as initControlDelegate
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin.initPropertyHelper as initPropertyHelper
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin.awaitPropertyHelper as awaitPropertyHelper
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPropertyHelper as getPropertyHelper
 	 *
 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.retrieveAdaptationController as retrieveAdaptationController
 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.enhanceAdaptationConfig as enhanceAdaptationConfig

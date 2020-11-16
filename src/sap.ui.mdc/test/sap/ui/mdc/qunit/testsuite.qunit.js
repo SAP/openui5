@@ -249,6 +249,15 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 				},
 				module: "./table/PropertyHelper.qunit"
 			},
+			"TablePropertyHelper - V4Analytics": {
+				group: "Table",
+				coverage: {
+					only: "[sap/ui/mdc]",
+					never: "[sap/ui/mdc/qunit]",
+					branchTracking: true
+				},
+				module: "./table/V4AnalyticsPropertyHelper.qunit"
+			},
 			"Chart": {
 				skip: EnvHelper.isOpenUI5,
 				group: "Chart",

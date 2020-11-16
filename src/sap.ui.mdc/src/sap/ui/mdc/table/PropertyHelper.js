@@ -81,7 +81,7 @@ sap.ui.define([
 		var oAdditionalColumnExportSettings;
 
 		if (oProperty.isComplex()) {
-			aPropertiesFromComplexProperty = oProperty.getPropertiesFromComplexProperty();
+			aPropertiesFromComplexProperty = oProperty.getReferencedProperties();
 			if (!bSplitCells && oExportSettings) {
 				oColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oProperty, oExportSettings);
 				aPropertiesFromComplexProperty.forEach(function(oProperty) {

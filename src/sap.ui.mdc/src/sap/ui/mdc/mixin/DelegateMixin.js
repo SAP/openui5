@@ -217,7 +217,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 	 */
 	DelegateMixin.initPropertyHelper = function(CustomPropertyHelper) {
 		if (CustomPropertyHelper && (!CustomPropertyHelper.getMetadata || !CustomPropertyHelper.getMetadata().isA("sap.ui.mdc.util.PropertyHelper"))) {
-			throw new Error("The custom property helper must be sap.ui.mdc.util.PropertyHelper or a subclass of it.");
+			throw new Error("The custom property helper class must be sap.ui.mdc.util.PropertyHelper or a subclass of it.");
 		}
 
 		if (!this.bIsDestroyed && !this._oPropertyHelper && !this._bPropertyHelperIsBeingInitialized) {
@@ -226,19 +226,12 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 				if (this.bIsDestroyed) {
 					return;
 				}
-				return Promise.all([
-					CustomPropertyHelper || loadModules("sap/ui/mdc/util/PropertyHelper"),
-					oDelegate.fetchProperties(this)
-				]);
-			}.bind(this)).then(function(aResult) {
-				if (this.bIsDestroyed) {
-					return;
+
+				if (typeof oDelegate.initPropertyHelper === "function") {
+					return initPropertyHelperFromDelegate(this, oDelegate, CustomPropertyHelper);
 				}
-				var PropertyHelper = aResult[0][0] ? aResult[0][0]/* default class */ : aResult[0]/* custom class */;
-				var aProperties = aResult[1];
-				this._oPropertyHelper = new PropertyHelper(aProperties, this);
-				this._bPropertyHelperIsBeingInitialized = false;
-				this._fnResolveInitPropertyHelper(this._oPropertyHelper);
+
+				return initPropertyHelperFromClass(this, oDelegate, CustomPropertyHelper);
 			}.bind(this)).catch(function(oError) {
 				this._fnRejectInitPropertyHelper(oError);
 			}.bind(this));
@@ -246,6 +239,44 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 
 		return this._pInitPropertyHelper;
 	};
+
+	function initPropertyHelperFromDelegate(oControl, oDelegate, CustomPropertyHelper) {
+		return oDelegate.initPropertyHelper(oControl).then(function(oPropertyHelper) {
+			if (oControl.bIsDestroyed) {
+				return;
+			}
+
+			if (CustomPropertyHelper) {
+				if (!(oPropertyHelper instanceof CustomPropertyHelper)) {
+					throw new Error("The property helper must be an instance of " + CustomPropertyHelper.getMetadata().getName() + ".");
+				}
+			} else if (!oPropertyHelper || !oPropertyHelper.isA || !oPropertyHelper.isA("sap.ui.mdc.util.PropertyHelper")) {
+				throw new Error("The property helper must be an instance of sap.ui.mdc.util.PropertyHelper.");
+			}
+
+			finalizePropertyHelperInitialization(oControl, oPropertyHelper);
+		});
+	}
+
+	function initPropertyHelperFromClass(oControl, oDelegate, CustomPropertyHelper) {
+		return Promise.all([
+			CustomPropertyHelper || loadModules("sap/ui/mdc/util/PropertyHelper"),
+			oDelegate.fetchProperties(oControl)
+		]).then(function(aResult) {
+			if (oControl.bIsDestroyed) {
+				return;
+			}
+			var PropertyHelper = aResult[0][0] ? aResult[0][0]/* default class */ : aResult[0]/* custom class */;
+			var aProperties = aResult[1];
+			finalizePropertyHelperInitialization(oControl, new PropertyHelper(aProperties, oControl));
+		});
+	}
+
+	function finalizePropertyHelperInitialization(oControl, oPropertyHelper) {
+		oControl._oPropertyHelper = oPropertyHelper;
+		oControl._bPropertyHelperIsBeingInitialized = false;
+		oControl._fnResolveInitPropertyHelper(oPropertyHelper);
+	}
 
 	/**
 	 * Provides access to the property helper initialization <code>Promise</code>.
