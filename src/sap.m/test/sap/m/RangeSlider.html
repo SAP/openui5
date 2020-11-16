@@ -1,263 +1,163 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <title>sap.m.RangeSlider Playground</title>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>sap.m.RangeSlider Playground</title>
 
-        <script src="shared-config.js"></script>
-        <script src="../../../resources/sap-ui-core.js"
-                id="sap-ui-bootstrap"
-                data-sap-ui-libs="sap.m">
-        </script>
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m">
+		</script>
 
-        <script>
-            new sap.m.RangeSlider({
-                range: [0, 100],
-                showAdvancedTooltip: true,
-                liveChange: function (oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change: function (oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                }
-            }).placeAt("content1");
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/ui/core/HTML",
+					"sap/m/App",
+					"sap/m/Page",
+					"sap/m/RangeSlider",
+					"sap/m/ResponsiveScale"
+				], function (HTML, App, Page, RangeSlider, ResponsiveScale){
+					var oDefaultTitle = new HTML({ content: "<h2>Default RangeSlider</h2>" }),
+						oRangeSlider1 = new RangeSlider("rangeSlider1", {
+							range: [0, 100],
+							liveChange: function (oControlEvent) {
+								jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
+							},
+							change: function (oControlEvent) {
+								jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
+							}
+						}),
 
-            new sap.m.RangeSlider({
-                showHandleTooltip: false,
-                showAdvancedTooltip: true,
-                range: [50,100],
-                min: 50,
-                max: 150,
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                }
-            }).placeAt("content1");
+						oRangeSlider2 = new RangeSlider("rangeSlider2", {
+							showAdvancedTooltip: true,
+							range: [50,100],
+							min: 50,
+							max: 150,
+							liveChange: function(oControlEvent) {
+								jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
+							},
+							change : function(oControlEvent) {
+								jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
+							}
+						}),
 
-            new sap.m.RangeSlider("RangeSlider1", {
-                width: "50%",
-                min: 100,
-                showAdvancedTooltip: true,
-                max: 399,
-                range: [100, 200],
-                showHandleTooltip: false
-            }).placeAt("content1");
+						oRangeSlider3 = new RangeSlider("rangeSlider3", {
+							width: "70%",
+							showAdvancedTooltip: true,
+							enabled: false,
+							liveChange: function(oControlEvent) {
+								jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
+							},
+							change : function(oControlEvent) {
+								jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
+							},
+							showHandleTooltip: false
+						});
 
-            new sap.m.RangeSlider("RangeSlider2", {
-                width: "80%",
-                min: -100,
-                showAdvancedTooltip: true,
-                max: 200,
-                range: [-50, 100],
-                showHandleTooltip: false,
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                }
-            }).placeAt("content1");
+				var oStepsTitle = new HTML({ content: "<h2>RangeSlider with steps</h2>" }),
+					oRangeSlider4 = new sap.m.RangeSlider("rangeSlider4", {
+						width: "100%",
+						step: 5,
+						showAdvancedTooltip: true,
+						min: -50,
+						max: 50,
+						range: [-45, 45],
+						liveChange: function(oControlEvent) {
+							jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
+						},
+						change : function(oControlEvent) {
+							jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
+						},
+						showHandleTooltip: false
+					});
 
-            var oRangeSlider3 = new sap.m.RangeSlider("RangeSlider3", {
-                showAdvancedTooltip: true,
-                width: "80%"
-            });
-            oRangeSlider3.setRange([20, 80]);
-            oRangeSlider3.placeAt("content1");
+				var oInputsTitle = new HTML({ content: "<h2>RangeSlider with inputs</h2>" }),
+					oRangeSlider5 = new RangeSlider("rangeSlider5", {
+						width: "100%",
+						showAdvancedTooltip: true,
+						min: -100,
+						max: 100,
+						range: [-35, 40],
+						liveChange: function(oControlEvent) {
+							jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
+						},
+						change : function(oControlEvent) {
+							jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
+						},
+						showHandleTooltip: false,
+						inputsAsTooltips: true,
+						name: "RangeSlider10"
+					});
 
-            new sap.m.RangeSlider("RangeSlider4", {
-                width: "70%",
-                showAdvancedTooltip: true,
-                enabled: false,
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                showHandleTooltip: false
-            }).placeAt("content1");
+				var oDecimalNumbersTitle = new HTML({ content: "<h2>RangeSlider with decimal numbers</h2>" }),
+					oRangeSlider6 = new RangeSlider("rangeSlider6", {
+						width: "100%",
+						showAdvancedTooltip: true,
+						min: -100,
+						max: 100,
+						range: [-35.5, 40],
+						liveChange: function(oControlEvent) {
+							jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
+						},
+						change : function(oControlEvent) {
+							jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
+						},
+						showHandleTooltip: false,
+						name: "RangeSlider11",
+						step: 0.5
+					});
 
-            new sap.m.RangeSlider("RangeSlider5", {
-                width: "100%",
-                step: 5,
-                showAdvancedTooltip: true,
-                min: -50,
-                max: 50,
-                range: [-45, 45],
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                showHandleTooltip: false
-            }).placeAt("content2");
+				var oTickmarksTitle = new HTML({ content: "<h2>RangeSlider with tickmarks</h2>" }),
+					oRangeSlider7 = new RangeSlider("rangeSlider7", {
+						showAdvancedTooltip: true,
+						showHandleTooltip: false,
+						inputsAsTooltips: true,
+						enableTickmarks: true
+					});
 
-            new sap.m.RangeSlider("RangeSlider6", {
-                width: "100%",
-                showAdvancedTooltip: true,
-                step: 5,
-                min: 4,
-                max: 27,
-                range: [4, 27],
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                showHandleTooltip: false
-            }).placeAt("content2");
+				var oTickmarksAndLabelsTitle = new HTML({ content: "<h2>RangeSlider with tickmarks and labels</h2>" }),
+					oRangeSlider8 = new RangeSlider("rangeSlider8", {
+						showAdvancedTooltip: true,
+						showHandleTooltip: false,
+						inputsAsTooltips: true,
+						enableTickmarks: true,
+						scale: new ResponsiveScale({tickmarksBetweenLabels: 5})
+					});
 
-            new sap.m.RangeSlider("RangeSlider7", {
-                width: "50%",
-                step: 2,
-                showAdvancedTooltip: true,
-                min: 1,
-                max: 17,
-                range: [2, 15],
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                showHandleTooltip: false
-            }).placeAt("content2");
+					var oPage = new Page("page", {
+						title: "sap.m.RangeSlider",
+						content: [
+							oDefaultTitle,
+							oRangeSlider1,
+							oRangeSlider2,
+							oRangeSlider3,
+							oStepsTitle,
+							oRangeSlider4,
+							oInputsTitle,
+							oRangeSlider5,
+							oDecimalNumbersTitle,
+							oRangeSlider6,
+							oTickmarksTitle,
+							oRangeSlider7,
+							oTickmarksAndLabelsTitle,
+							oRangeSlider8,
+						]
+					}).addStyleClass("sapUiContentPadding");
 
-            var oRangeSlider8 = new sap.m.RangeSlider("RangeSlider8", {
-                width: "100%",
-                step: 20,
-                min: -200000,
-                showAdvancedTooltip: true,
-                max: 200000,
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                showHandleTooltip: false
-            });
-            oRangeSlider8.placeAt("content1");
-            oRangeSlider8.setRange([-100000,100000]);
+					var oApp = new App("myApp", {
+						initialPage: "page"
+					});
 
-            new sap.m.RangeSlider({
-                width: "50%",
-                showAdvancedTooltip: true,
-                min: -100,
-                max: 100,
-                range: [-35, 40],
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                showHandleTooltip: false,
-                name: "RangeSlider9"
-            }).placeAt("content1");
-
-            new sap.m.RangeSlider({
-                width: "100%",
-                showAdvancedTooltip: true,
-                min: -100,
-                max: 100,
-                range: [-35, 40],
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                showHandleTooltip: false,
-                inputsAsTooltips: true,
-                name: "RangeSlider10"
-            }).placeAt("content3");
-
-            new sap.m.RangeSlider({
-                width: "100%",
-                showAdvancedTooltip: true,
-                min: -100,
-                max: 100,
-                range: [-35.5, 40],
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                showHandleTooltip: false,
-                name: "RangeSlider11",
-                step: 0.5
-            }).placeAt("content4");
-
-            new sap.m.RangeSlider({
-                width: "100%",
-                showAdvancedTooltip: true,
-                min: -10,
-                max: 10,
-                range: [-5.05, 3],
-                liveChange: function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                change : function(oControlEvent) {
-                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
-                },
-                showHandleTooltip: false,
-                inputsAsTooltips: true,
-                name: "RangeSlider12",
-                step: 0.05
-            }).placeAt("content4");
-
-            new sap.m.RangeSlider({
-                showAdvancedTooltip: true,
-                showHandleTooltip: false,
-                inputsAsTooltips: true,
-                enableTickmarks: true}).placeAt("content5");
-
-            new sap.m.RangeSlider({
-                showAdvancedTooltip: true,
-                showHandleTooltip: false,
-                inputsAsTooltips: true,
-	            enableTickmarks: true,
-	            scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 5})
-            }).placeAt("content6");
-        </script>
-    </head>
-    <body class="sapUiBody">
-        <div id="container">
-            <h2>
-                Default RangeSlider
-            </h2>
-            <div id="content1"></div>
-
-            <h2>
-                RangeSlider with steps
-            </h2>
-            <div id="content2"></div>
-
-            <h2>
-                RangeSlider with inputs
-            </h2>
-            <div id="content3"></div>
-
-            <h2>
-                RangeSlider with decimal numbers
-            </h2>
-            <div id="content4"></div>
-
-            <h2>RangeSlider with tickmarks</h2>
-            <div id="content5"></div>
-
-            <h2>RangeSlider with tickmarks and labels</h2>
-            <div id="content6"></div>
-            <div id="scrollToBottom" style="padding:25px;"></div>
-        </div>
-    </body>
+					oApp.addPage(oPage);
+					oApp.placeAt("body");
+				});
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
 </html>
