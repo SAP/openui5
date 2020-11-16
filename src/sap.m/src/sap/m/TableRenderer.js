@@ -125,8 +125,8 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		if (bHeaderHidden) {
 			rm.class("sapMListTblHeaderNone");
 		} else {
-			rm.class("sapMListTblRow").class("sapMLIBFocusable").class("sapMListTbl" + type + "er");
-			ColumnListItemRenderer.addLegacyOutlineClass.call(ColumnListItemRenderer, rm);
+			rm.class("sapMListTblRow").class("sapMListTbl" + type + "er");
+			ColumnListItemRenderer.addFocusableClasses(rm, oTable);
 		}
 
 		rm.openEnd();
@@ -247,7 +247,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		createBlankCell("NavigatedCol", type + "Navigated", true);
 
 		if (!hasPopin && bShouldRenderDummyColumn) {
-			createBlankCell("DummyCol", type + "DummyCol", true);
+			createBlankCell("DummyCell", type + "DummyCell", true);
 		}
 
 		rm.close("tr");
@@ -330,14 +330,16 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		rm.openStart("tr", oControl.getId("nodata"));
 		rm.attr("tabindex", oControl.getKeyboardMode() == ListKeyboardMode.Navigation ? -1 : 0);
 		rm.class("sapMLIB").class("sapMListTblRow").class("sapMLIBTypeInactive");
-		ColumnListItemRenderer.addFocusableClasses.call(ColumnListItemRenderer, rm);
+		ColumnListItemRenderer.addFocusableClasses(rm, oControl);
 		if (!oControl._headerHidden || (!oControl.getHeaderText() && !oControl.getHeaderToolbar())) {
 			rm.class("sapMLIBShowSeparator");
 		}
 		rm.openEnd();
 
+		var bRenderDummyColumn = !oControl.hasPopin() && oControl.shouldRenderDummyColumn();
+
 		rm.openStart("td", oControl.getId("nodata-text"));
-		rm.attr("colspan", oControl.getColCount());
+		rm.attr("colspan", oControl.getColCount() - bRenderDummyColumn);
 		rm.class("sapMListTblCell").class("sapMListTblCellNoData");
 		rm.openEnd();
 
@@ -348,6 +350,11 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		}
 
 		rm.close("td");
+
+		if (bRenderDummyColumn) {
+			ColumnListItemRenderer.renderDummyCell(rm, oControl);
+		}
+
 		rm.close("tr");
 	};
 
