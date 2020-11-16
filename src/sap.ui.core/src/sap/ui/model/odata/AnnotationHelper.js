@@ -132,33 +132,33 @@ sap.ui.define([
 				aParts = aParts.slice(); // shallow copy to avoid changes visible to caller
 				aParts.forEach(function (vPart, i) {
 					switch (typeof vPart) {
-					case "boolean":
-					case "number":
-					case "undefined":
-						bMergeNeeded = true;
-						break;
-
-					case "string":
-						vPropertySetting = BindingParser.complexParser(vPart, null, true, true);
-						if (vPropertySetting !== undefined) {
-							if (vPropertySetting.functionsNotFound) {
-								throw new Error("Function name(s) "
-									+ vPropertySetting.functionsNotFound.join(", ")
-									+  " not found");
-							}
-							aParts[i] = vPart = vPropertySetting;
-						}
-						// falls through
-					case "object":
-						// merge is needed if some parts are constants or again have parts
-						// Note: a binding info object has either "path" or "parts"
-						if (!vPart || typeof vPart !== "object" || !("path" in vPart)) {
+						case "boolean":
+						case "number":
+						case "undefined":
 							bMergeNeeded = true;
-						}
-						break;
+							break;
 
-					default:
-						throw new Error("Unsupported part: " + vPart);
+						case "string":
+							vPropertySetting = BindingParser.complexParser(vPart, null, true, true);
+							if (vPropertySetting !== undefined) {
+								if (vPropertySetting.functionsNotFound) {
+									throw new Error("Function name(s) "
+										+ vPropertySetting.functionsNotFound.join(", ")
+										+  " not found");
+								}
+								aParts[i] = vPart = vPropertySetting;
+							}
+							// falls through
+						case "object":
+							// merge is needed if some parts are constants or again have parts
+							// Note: a binding info object has either "path" or "parts"
+							if (!vPart || typeof vPart !== "object" || !("path" in vPart)) {
+								bMergeNeeded = true;
+							}
+							break;
+
+						default:
+							throw new Error("Unsupported part: " + vPart);
 					}
 				});
 

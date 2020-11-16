@@ -182,20 +182,20 @@ sap.ui.define([
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
-		case "any":
-			return sValue;
-		case "float":
-		case "int":
-			sErrorText = checkValueRange(this, sValue, oSafeRange);
-			if (sErrorText) {
-				throw new FormatException(sErrorText);
-			}
-			return parseInt(sValue);
-		case "string":
-			return getFormatter(this).format(sValue);
-		default:
-			throw new FormatException("Don't know how to format " + this.getName() + " to "
-				+ sTargetType);
+			case "any":
+				return sValue;
+			case "float":
+			case "int":
+				sErrorText = checkValueRange(this, sValue, oSafeRange);
+				if (sErrorText) {
+					throw new FormatException(sErrorText);
+				}
+				return parseInt(sValue);
+			case "string":
+				return getFormatter(this).format(sValue);
+			default:
+				throw new FormatException("Don't know how to format " + this.getName() + " to "
+					+ sTargetType);
 		}
 	};
 
@@ -244,22 +244,22 @@ sap.ui.define([
 			return null;
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
-		case "string":
-			sResult = getFormatter(this).parse(vValue);
-			if (!sResult) {
-				throw new ParseException(getText("EnterInt"));
-			}
-			break;
-		case "int":
-		case "float":
-			sResult = NumberFormat.getIntegerInstance({
-					maxIntegerDigits : Infinity,
-					groupingEnabled : false
-				}).format(vValue);
-			break;
-		default:
-			throw new ParseException("Don't know how to parse " + this.getName() + " from "
-				+ sSourceType);
+			case "string":
+				sResult = getFormatter(this).parse(vValue);
+				if (!sResult) {
+					throw new ParseException(getText("EnterInt"));
+				}
+				break;
+			case "int":
+			case "float":
+				sResult = NumberFormat.getIntegerInstance({
+						maxIntegerDigits : Infinity,
+						groupingEnabled : false
+					}).format(vValue);
+				break;
+			default:
+				throw new ParseException("Don't know how to parse " + this.getName() + " from "
+					+ sSourceType);
 		}
 		return sResult;
 	};
