@@ -58,6 +58,7 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_beliz
 .sapUiDemoIconExplorer .BlockLayoutFirstRow {
 	position:relative;
 	width:100vw;
+	max-height: 444px; /* height of the background image */
 }
 .BlockLayoutFlex {
 	display: flex;
