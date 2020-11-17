@@ -3053,6 +3053,37 @@ function (
 		assert.ok(!this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelectSecondSubSection), "the first visible subSection is correct");
 	});
 
+	QUnit.test("resize of empty page", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSandbox = sinon.sandbox.create(),
+			oSelectSpy = oSandbox.spy(oObjectPage, "_selectFirstVisibleSection"),
+			done = assert.async();
+
+		// Setup
+		this.oObjectPage.setUseIconTabBar(true);
+		this.oObjectPage.removeAllSections(); //ensure no first visible section
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oSelectSpy.reset();
+
+			// Act: update height from 0 to greater than 0
+			oObjectPage._onUpdateScreenSize({
+				oldSize: {width: 1000, height:0},
+				size: { width: 1000, height:1000}
+			});
+
+			setTimeout(function() {
+				assert.equal(oSelectSpy.callCount, 1, "reset of selected section is called");
+				assert.ok(oSelectSpy.returned(undefined), "the function returned");
+				oSandbox.restore();
+				done();
+			}, oObjectPage._getDOMCalculationDelay());
+
+		});
+
+		helpers.renderObject(this.oObjectPage);
+	});
+
 	QUnit.module("ScrollDelegate", {
 
 		beforeEach: function () {
