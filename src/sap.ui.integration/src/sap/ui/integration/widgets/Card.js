@@ -1386,8 +1386,10 @@ sap.ui.define([
 			return null;
 		}
 
-		if (!oContentManifest && bIsComponent) {
-			oContentManifest = this._oCardManifest.getJson();
+		if (bIsComponent) {
+			oContentManifest = merge(oContentManifest, {
+				componentManifest: this._oCardManifest.getJson()
+			});
 		}
 
 		return oContentManifest;

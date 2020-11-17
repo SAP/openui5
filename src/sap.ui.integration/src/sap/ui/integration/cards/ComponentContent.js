@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/integration/cards/BaseContent",
+	"./ComponentContentRenderer",
 	"sap/ui/core/ComponentContainer"
 ], function (
 	BaseContent,
+	ComponentContentRenderer,
 	ComponentContainer
 ) {
 	"use strict";
@@ -34,9 +36,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration"
 		},
-		renderer: {
-			apiVersion: 2
-		}
+		renderer: ComponentContentRenderer
 	});
 
 	ComponentContent.prototype.setConfiguration = function (oConfiguration) {
@@ -47,7 +47,7 @@ sap.ui.define([
 		}
 
 		var oContainer = new ComponentContainer({
-			manifest: oConfiguration,
+			manifest: oConfiguration.componentManifest,
 			async: true,
 			componentCreated: function (oEvent) {
 				var oComponent = oEvent.getParameter("component"),
