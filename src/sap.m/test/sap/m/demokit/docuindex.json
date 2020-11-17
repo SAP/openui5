@@ -3159,17 +3159,17 @@
 		{
 		  "id": "sap.m.sample.ContainerNoPadding",
 		  "name": "No Container Content Padding",
-		  "description": "Many UI5 containers support the standard container content padding CSS classes. Apply the CSS class 'sapUiNoContentPadding' on a UI5 container control (e.g. Panel, IconTabBar, ...) to remove the default padding around the container content area."
+		  "description": "Many UI5 containers support the standard container content padding CSS classes. Apply the CSS class 'sapUiNoContentPadding' on a UI5 container control to remove the default padding around the container content area."
 		},
 		{
 		  "id": "sap.m.sample.ContainerPadding",
 		  "name": "Container Content Padding",
-		  "description": "Apply the CSS class 'sapUiContentPadding' on a UI5 container control (e.g. Page, List, Dialog, Popover, ...) to add a default padding of 1rem (16px) around the container content area."
+		  "description": "Apply the CSS class 'sapUiContentPadding' on a UI5 container control to add a default padding of 1rem (16px) around the container content area."
 		},
 		{
 		  "id": "sap.m.sample.ContainerResponsivePadding",
 		  "name": "Responsive Container Content Padding",
-		  "description": "Apply the CSS class 'sapUiResponsiveContentPadding' on a UI5 container control (e.g. Page, List, Dialog, Popover, ...) to add a responsive padding based on the screen size around the container content area."
+		  "description": "Apply the CSS class 'sapUiResponsiveContentPadding' on a UI5 container control to add a responsive padding based on the screen size around the container content area."
 		},
 		{
 		  "id": "sap.m.sample.ContainerPaddingAndMargin",
