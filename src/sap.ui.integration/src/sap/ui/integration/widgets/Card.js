@@ -563,9 +563,6 @@ sap.ui.define([
 				oExtension._setCard(this, this._oLimitedInterface);
 				this.setAggregation("_extension", oExtension); // the framework validates that the subclass extends "sap.ui.integration.Extension"
 
-				BindingHelper.addNamespace("extension", {
-					formatters: oExtension.getFormatters()
-				});
 				resolve();
 			}.bind(this), function (vErr) {
 				Log.error("Failed to load " + sExtensionPath + ". Check if the path is correct.");
@@ -1751,6 +1748,24 @@ sap.ui.define([
 
 		this._bApplyManifest = true;
 		this.invalidate();
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 * @returns {object} Local binding functions for this card
+	 */
+	Card.prototype.getBindingNamespaces = function () {
+		var mNamespaces = {},
+			oExtension = this.getAggregation("_extension");
+
+		if (oExtension) {
+			mNamespaces.extension = {
+				formatters: oExtension.getFormatters()
+			};
+		}
+
+		return mNamespaces;
 	};
 
 	return Card;

@@ -2,10 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"./BindingHelper",
+	"./BaseFactory",
 	"./CardActions",
-	"sap/ui/base/Object",
-	"sap/base/util/merge",
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/AnalyticalContent",
 	"sap/ui/integration/cards/AnalyticsCloudContent",
@@ -16,10 +14,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/TableContent",
 	"sap/ui/integration/cards/TimelineContent"
 ], function (
-	BindingHelper,
+	BaseFactory,
 	CardActions,
-	BaseObject,
-	merge,
 	AdaptiveContent,
 	AnalyticalContent,
 	AnalyticsCloudContent,
@@ -37,7 +33,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 *
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.integration.util.BaseFactory
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -46,13 +42,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.integration.util.ContentFactory
 	 */
-	var ContentFactory = BaseObject.extend("sap.ui.integration.util.ContentFactory", {
-		constructor: function (oCard) {
-			BaseObject.call(this);
-
-			this._oCard = oCard;
-		}
-	});
+	var ContentFactory = BaseFactory.extend("sap.ui.integration.util.ContentFactory");
 
 	ContentFactory.prototype.create = function (mConfig) {
 		var oCard = this._oCard,
@@ -95,7 +85,7 @@ sap.ui.define([
 					oContent.setActions(oActions);
 
 					if (sType.toLowerCase() !== "adaptivecard") {
-						oContent.setConfiguration(this._createBindingInfos(mConfig.contentManifest), sType);
+						oContent.setConfiguration(this.createBindingInfos(mConfig.contentManifest), sType);
 					} else {
 						oContent.setConfiguration(mConfig.contentManifest);
 					}
@@ -135,20 +125,6 @@ sap.ui.define([
 			default:
 				return null;
 		}
-	};
-
-	ContentFactory.prototype._createBindingInfos = function (oContentManifest) {
-		var oResult = merge({}, oContentManifest),
-			oDataSettings = oResult.data;
-
-		// do not create binding info for data at this point, it will be done later
-		delete oResult.data;
-		oResult = BindingHelper.createBindingInfos(oResult);
-		if (oDataSettings) {
-			oResult.data = oDataSettings;
-		}
-
-		return oResult;
 	};
 
 	return ContentFactory;

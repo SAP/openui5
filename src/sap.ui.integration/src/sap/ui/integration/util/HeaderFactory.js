@@ -2,19 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./BaseFactory",
+	"./CardActions",
 	"sap/ui/integration/library",
-	"sap/ui/base/Object",
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
-	"sap/base/strings/formatMessage",
-	"./CardActions"
+	"sap/base/strings/formatMessage"
 ], function (
+	BaseFactory,
+	CardActions,
 	library,
-	BaseObject,
 	NumericHeader,
 	Header,
-	formatMessage,
-	CardActions
+	formatMessage
 ) {
 	"use strict";
 
@@ -63,7 +63,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 *
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.integration.util.BaseFactory
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -72,21 +72,14 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.integration.util.HeaderFactory
 	 */
-	var HeaderFactory = BaseObject.extend("sap.ui.integration.util.HeaderFactory", {
-		metadata: {
-			library: "sap.ui.integration"
-		},
-		constructor: function (oCard) {
-			BaseObject.call(this);
-
-			this._oCard = oCard;
-		}
-	});
+	var HeaderFactory = BaseFactory.extend("sap.ui.integration.util.HeaderFactory");
 
 	HeaderFactory.prototype.create = function (mConfiguration, oToolbar) {
 		var oHeader,
 			oCard = this._oCard,
 			oActions;
+
+		mConfiguration = this.createBindingInfos(mConfiguration, oCard.getBindingNamespaces());
 
 		if (!mConfiguration && !oToolbar) {
 			return null;

@@ -56,7 +56,7 @@ sap.ui.define([
 				subtitle: mConfiguration.subTitle
 			};
 
-			if (mConfiguration.status && typeof mConfiguration.status.text === "string") {
+			if (mConfiguration.status && mConfiguration.status.text && !mConfiguration.status.text.format) {
 				mSettings.statusText = mConfiguration.status.text;
 			}
 
@@ -67,8 +67,6 @@ sap.ui.define([
 				mSettings.iconAlt = mConfiguration.icon.alt;
 				mSettings.iconBackgroundColor = mConfiguration.icon.backgroundColor || (mConfiguration.icon.text ? AvatarColor.Accent6 : AvatarColor.Transparent);
 			}
-
-			mSettings = BindingHelper.createBindingInfos(mSettings);
 
 			if (mSettings.iconSrc) {
 				mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {

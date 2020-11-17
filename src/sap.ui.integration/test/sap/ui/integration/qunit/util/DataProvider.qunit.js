@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/ui/integration/util/DataProvider",
-	"sap/ui/integration/util/RequestDataProvider"
+	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/integration/widgets/Card"
 ], function (
 	DataProviderFactory,
 	ServiceDataProvider,
 	DataProvider,
-	RequestDataProvider
+	RequestDataProvider,
+	Card
 ) {
 	"use strict";
 
@@ -38,13 +40,15 @@ sap.ui.define([
 
 	QUnit.module("DataProviderFactory", {
 		beforeEach: function () {
-			this.oDataProviderFactory = new DataProviderFactory();
+			this.oCard = new Card();
+			this.oDataProviderFactory = new DataProviderFactory(null, null, this.oCard);
 			sinon.stub(DataProvider.prototype, "setSettings");
 		},
 		afterEach: function () {
 			DataProvider.prototype.setSettings.restore();
 			this.oDataProviderFactory.destroy();
 			this.oDataProviderFactory = null;
+			this.oCard.destroy();
 		}
 	});
 

@@ -791,4 +791,170 @@ function (
 		});
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
+
+	QUnit.module("Data request depending on filter", {
+		beforeEach: function () {
+			var fnFake = function () {
+				return Promise.resolve(this.oData);
+			}.bind(this);
+
+			this.oCard = new Card();
+			this.oData = {
+				title: "Hello World"
+			};
+			this._fnRequestStub = sinon.stub(RequestDataProvider.prototype, "getData").callsFake(fnFake);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this._fnRequestStub.restore();
+		}
+	});
+
+	QUnit.test("Data request with filter on card level", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oRequestedURL = this.oCard._oDataProvider.getSettings().request.url;
+
+			// Assert
+			assert.strictEqual(oRequestedURL, "someurl/data", "Filter value in the url is properly resolved on card level");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.data.handling"
+			},
+			"sap.card": {
+				"configuration": {
+					"filters": {
+						"f": {
+							"value": "data",
+							"items": [{
+								"title": "Filter 1",
+								"key": "data"
+							}]
+						}
+					}
+				},
+				"type": "List",
+				"data": {
+					"request": {
+						"url": "someurl/{filters>/f/value}"
+					}
+				},
+				"header": {
+					"title": "{/title}"
+				},
+				"content": {
+					"item": {
+						"title": "{/title}"
+					}
+				}
+			}
+		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Data request with filter on header level", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oRequestedURL = this.oCard.getCardHeader()._oDataProvider.getSettings().request.url;
+
+			// Assert
+			assert.strictEqual(oRequestedURL, "someurl/data", "Filter value in the url is properly resolved on header level");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.data.handling"
+			},
+			"sap.card": {
+				"configuration": {
+					"filters": {
+						"f": {
+							"value": "data",
+							"items": [{
+								"title": "Filter 1",
+								"key": "data"
+							}]
+						}
+					}
+				},
+				"type": "List",
+				"header": {
+					"data": {
+						"request": {
+							"url": "someurl/{filters>/f/value}"
+						}
+					},
+					"title": "{/title}"
+				},
+				"content": {
+					"item": {
+						"title": "Hello World"
+					}
+				}
+			}
+		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Data request with filter on content level", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oRequestedURL = this.oCard.getCardContent()._oDataProvider.getSettings().request.url;
+
+			// Assert
+			assert.strictEqual(oRequestedURL, "someurl/data", "Filter value in the url is properly resolved on header level");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.data.handling"
+			},
+			"sap.card": {
+				"configuration": {
+					"filters": {
+						"f": {
+							"value": "data",
+							"items": [{
+								"title": "Filter 1",
+								"key": "data"
+							}]
+						}
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Hello World"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "someurl/{filters>/f/value}"
+						}
+					},
+					"item": {
+						"title": "Hello World"
+					}
+				}
+			}
+		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 });

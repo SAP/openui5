@@ -725,7 +725,6 @@ sap.ui.define([
 			testContentInitialization(oManifest_ListCard, assert);
 		});
 
-
 		QUnit.test("Initialization - TableContent", function (assert) {
 			testContentInitialization(oManifest_TableCard, assert);
 		});
@@ -929,9 +928,9 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.module("Card headers", {
+		QUnit.module("Default Header", {
 			beforeEach: function () {
-				this.oCard = new Card("somecard", {
+				this.oCard = new Card({
 					width: "400px",
 					height: "600px"
 				});
@@ -1000,22 +999,6 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_AvatarHeader);
 		});
 
-		QUnit.module("Default Header", {
-			beforeEach: function () {
-				this.oCard = new Card({
-					width: "400px",
-					height: "600px"
-				});
-
-				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
-			},
-			afterEach: function () {
-				this.oCard.destroy();
-				this.oCard = null;
-			}
-		});
-
 		QUnit.test("'backgroundColor' when there is icon src", function (assert) {
 			// Arrange
 			var done = assert.async();
@@ -1067,6 +1050,93 @@ sap.ui.define([
 					}
 				}
 			});
+		});
+
+		QUnit.test("'statusText' set with binding", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oManifest = {
+					"sap.app": {
+						"id": "my.card.test"
+					},
+					"sap.card": {
+						"type": "List",
+						"header": {
+							"data": {
+								"json": {
+									"statusText": "2 of 10"
+								}
+							},
+							"status": {
+								"text": "{/statusText}"
+							}
+						}
+					}
+				};
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oHeader = this.oCard.getCardHeader();
+
+				// Assert
+				assert.strictEqual(oHeader.getStatusText(), oManifest["sap.card"].header.data.json.statusText, "Background should be default value when there are initials.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest(oManifest);
+		});
+
+		QUnit.module("Numeric Header", {
+			beforeEach: function () {
+				this.oCard = new Card("somecard", {
+					width: "400px",
+					height: "600px"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("'statusText' set with binding", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oManifest = {
+					"sap.app": {
+						"id": "my.card.test"
+					},
+					"sap.card": {
+						"type": "List",
+						"header": {
+							"type": "Numeric",
+							"data": {
+								"json": {
+									"statusText": "2 of 10"
+								}
+							},
+							"status": {
+								"text": "{/statusText}"
+							}
+						}
+					}
+				};
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oHeader = this.oCard.getCardHeader();
+
+				// Assert
+				assert.strictEqual(oHeader.getStatusText(),  oManifest["sap.card"].header.data.json.statusText, "Background should be default value when there are initials.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest(oManifest);
 		});
 
 		QUnit.test("Numeric Header generic", function (assert) {
