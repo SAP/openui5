@@ -3823,8 +3823,8 @@ sap.ui.define([
 
 
 		// Assert
-		assert.ok(oErrorComboBox._oSuggestionPopover._oPopover.hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ValueState"), "Header has value state class");
-		assert.ok(oErrorComboBox._oSuggestionPopover._oPopover.hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ErrorState"), "Header has error value state class");
+		assert.ok(oErrorComboBox._oSuggestionPopover.getPopover().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ValueState"), "Header has value state class");
+		assert.ok(oErrorComboBox._oSuggestionPopover.getPopover().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ErrorState"), "Header has error value state class");
 
 		// Cleanup
 		oErrorComboBox.destroy();
@@ -3850,7 +3850,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oErrorComboBox._getSuggestionsPopover()._oPopover.getCustomHeader().getText(), "custom", "text should be custom");
+		assert.strictEqual(oErrorComboBox._getSuggestionsPopover().getPopover().getCustomHeader().getText(), "custom", "text should be custom");
 
 		// Cleanup
 		oErrorComboBox.destroy();
