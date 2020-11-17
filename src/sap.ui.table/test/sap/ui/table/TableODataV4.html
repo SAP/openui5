@@ -137,9 +137,9 @@
 			label: new sap.m.Text({text: "Sales Amount"}),
 			template: new sap.m.HBox({
 				items: [
-					new sap.m.Text({text: "{SalesAmount}", wrapping: false}),
+					new sap.m.Text({text: "{SalesAmount}", wrapping: false})
 					// TODO: Provide callback or event for app to adjust bindings, e.g. if different properties are needed for normal/group/summary rows?
-					new sap.m.Text({text: ", Min: {= %{SalesAmountMin} }", wrapping: false})
+					//new sap.m.Text({text: ", Min: {= %{SalesAmountMin} }", wrapping: false})
 				]
 			}),
 			sortProperty: "SalesAmount",
@@ -213,7 +213,92 @@
 			}
 		});
 
+		function fnRegionFormatter(oContext, sPath) {
+			return "Region/Land: " + oContext.getValue(sPath);
+		}
+
 		window.V4Plugin = new V4Aggregation();
+
+		window.V4Plugin.setPropertyInfos([
+			{
+				name: "Id",
+				path: "Id",
+				key: true,
+				groupable: true
+			},
+			{
+				name: "Name",
+				path: "Name",
+				groupable: true
+			},
+			{
+				name: "Country",
+				path: "Country",
+				groupable: true
+			},
+			{
+				name: "Region",
+				path: "Region",
+				groupable: true,
+				groupingDetails: {
+					formatter: fnRegionFormatter
+				}
+			},
+			{
+				name: "Segment",
+				path: "Segment",
+				groupable: true
+			},
+			{
+				name: "Industry",
+				path: "Industry",
+				groupable: true
+			},
+			{
+				name: "AccountResponsible",
+				path: "AccountResponsible",
+				groupable: true
+			},
+			{
+				name: "SalesNumber",
+				path: "SalesNumber",
+				aggregatable: true
+			},
+			{
+				name: "SalesAmount",
+				path: "SalesAmount",
+				aggregatable: true
+			},
+			{
+				name: "SalesAmountLocalCurrency",
+				path: "SalesAmountLocalCurrency",
+				aggregatable: true
+			},
+			{
+				name: "AmountPerSale",
+				path: "AmountPerSale",
+				aggregatable: true
+			},
+			{
+				name: "Currency",
+				path: "Currency",
+				groupable: true
+			},
+			{
+				name: "LocalCurrency",
+				path: "LocalCurrency",
+				groupable: true
+			}
+		]);
+
+		var oAggregationInfo = {
+			visible: ["Name", "Country", "Region", "Currency", "LocalCurrency", "SalesAmount", "SalesAmountLocalCurrency", "Industry"],
+			subtotals: [],
+			grandTotal: [],
+			groupLevels: []
+		};
+
+		window.V4Plugin.setAggregationInfo(oAggregationInfo);
 
 		// TODO: The "plugins" aggregation is currently of type sap.ui.table.plugins.SelectionPlugin
 		oTable.addDependent(window.V4Plugin);
@@ -258,10 +343,79 @@
 			oTable.unbindRows();
 		}
 
+		function onGroupChanged(oEvent) {
+			switch (oEvent.getParameters().selectedItem.getProperty("key")) {
+				case "1":
+					oAggregationInfo.groupLevels = ["Country"];
+					break;
+
+				case "2":
+					oAggregationInfo.groupLevels = ["Country", "Region"];
+					break;
+
+				default:
+					oAggregationInfo.groupLevels = [];
+			}
+
+			window.V4Plugin.setAggregationInfo(oAggregationInfo);
+		}
+
+		function onTotalChanged(oEvent) {
+			switch (oEvent.getParameters().selectedItem.getProperty("key")) {
+				case "1":
+					oAggregationInfo.grandTotal = ["SalesAmountLocalCurrency", "SalesAmount"];
+					oAggregationInfo.subtotals = [];
+					break;
+
+				case "2":
+					oAggregationInfo.grandTotal = ["SalesAmountLocalCurrency", "SalesAmount"];
+					oAggregationInfo.subtotals = ["SalesAmountLocalCurrency", "SalesAmount"];
+					break;
+
+				default:
+					oAggregationInfo.grandTotal = [];
+					oAggregationInfo.subtotals = [];
+			}
+
+			window.V4Plugin.setAggregationInfo(oAggregationInfo);
+		}
+
+		var oSelectGroup = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({text: "No visual grouping", key: 0}),
+				new sap.ui.core.Item({text: "Group on country", key: 1}),
+				new sap.ui.core.Item({text: "Group on country and region", key: 2})
+			],
+			change: onGroupChanged
+		});
+
+		var oSelectTotal = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({text: "No totals", key: 0}),
+				new sap.ui.core.Item({text: "Grand total only", key: 1}),
+				new sap.ui.core.Item({text: "Grand total and subtotals", key: 2})
+			],
+			change: onTotalChanged
+		});
+
 		new sap.m.VBox({
 			width: "100%",
 			items: [
 				oTable.setLayoutData(new sap.m.FlexItemData({growFactor: 1})),
+				new sap.m.HBox({
+					alignItems: sap.m.FlexAlignItems.Center,
+					items: [
+						new sap.m.Label({text: "Visual grouping: "}),
+						oSelectGroup
+					]
+				}),
+				new sap.m.HBox({
+					alignItems: sap.m.FlexAlignItems.Center,
+					items: [
+						new sap.m.Label({text: "Totals: "}),
+						oSelectTotal
+					]
+				}),
 				new sap.m.Button({text: "Just a Button after"})
 			]
 		}).placeAt("content");
