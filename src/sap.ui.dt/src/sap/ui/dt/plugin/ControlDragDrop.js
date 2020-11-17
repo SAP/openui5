@@ -5,10 +5,12 @@
 // Provides class sap.ui.dt.plugin.ControlDragDrop.
 sap.ui.define([
 	"sap/ui/dt/plugin/DragDrop",
-	"sap/ui/dt/plugin/ElementMover"
+	"sap/ui/dt/plugin/ElementMover",
+	"sap/ui/dt/ElementUtil"
 ], function(
 	DragDrop,
-	ElementMover
+	ElementMover,
+	ElementUtil
 ) {
 	"use strict";
 
@@ -157,10 +159,14 @@ sap.ui.define([
 	 * @override
 	 */
 	ControlDragDrop.prototype.onAggregationDragEnter = function(oAggregationOverlay) {
-		delete this._oPreviousTarget;
+		var sAggregationName = oAggregationOverlay.getAggregationName();
+		var oElement = oAggregationOverlay.getElement();
+		if (ElementUtil.getAggregation(oElement, sAggregationName).length === 0) {
+			delete this._oPreviousTarget;
 
-		var oDraggedOverlay = this.getDraggedOverlay();
-		this.getElementMover().insertInto(oDraggedOverlay, oAggregationOverlay, this.getInsertAfterElement());
+			var oDraggedOverlay = this.getDraggedOverlay();
+			this.getElementMover().insertInto(oDraggedOverlay, oAggregationOverlay, this.getInsertAfterElement());
+		}
 	};
 
 	return ControlDragDrop;
