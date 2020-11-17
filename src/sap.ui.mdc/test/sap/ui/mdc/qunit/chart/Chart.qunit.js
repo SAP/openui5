@@ -791,4 +791,79 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.module("sap.ui.mdc.Chart: Busy Indication", {
+		beforeEach: function() {
+
+			var TestComponent = UIComponent.extend("test", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "",
+							"type": "application"
+						}
+					}
+				},
+				createContent: function() {
+					return new Chart("IDChart", {
+						chartType: "bullet",
+						items: [],
+						data: {path: "/Test"}
+					});
+				}
+			});
+
+			this.oUiComponent = new TestComponent("IDComponent");
+			this.oUiComponentContainer = new ComponentContainer({
+				component: this.oUiComponent,
+				async: false
+			});
+			this.oChart = this.oUiComponent.getRootControl();
+
+			this.oUiComponentContainer.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+			this.oUiComponent.destroy();
+		}
+	});
+
+	QUnit.test("SetBusy False on data load complete", function(assert) {
+		var mEventParams = {mParameters: {reason: "change"}};
+
+		this.oChart.setBusy(true);
+		this.oChart._onDataLoadComplete(mEventParams);
+		assert.ok(!this.oChart.getBusy(), "Busy indication is not active");
+
+	});
+
+	QUnit.test("SetBusy True on data load not complete", function(assert) {
+		var mEventParams = {mParameters: {reason: "change", detailedReason: "test"}};
+
+		this.oChart.setBusy(true);
+		this.oChart._onDataLoadComplete(mEventParams);
+		assert.ok(this.oChart.getBusy(), "Busy indication is active");
+
+	});
+
+	QUnit.test("SetBusy in applySettings", function(assert) {
+		var mSettings = {data: {path: "/Test"}};
+		var oAddBindingListener = sinon.spy(this.oChart, "_addBindingListener");
+
+		this.oChart.applySettings(mSettings);
+
+		assert.ok(this.oChart.getBusy(), "Busy indication is active");
+		assert.ok(oAddBindingListener.calledOnce, "_addBindingListener was called once");
+
+	});
+
+	QUnit.test("_addBindingListener behaviour", function(assert) {
+		var oBindingInfo = {path: "/Test"};
+
+		this.oChart._addBindingListener(oBindingInfo, "change", this.oChart._onDataLoadComplete);
+
+		assert.ok(oBindingInfo.events, "Should create event field");
+		assert.ok(oBindingInfo.events.change, "Should create change event");
+	});
+
 });
