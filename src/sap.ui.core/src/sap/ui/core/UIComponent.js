@@ -85,7 +85,7 @@ sap.ui.define([
 				bCreated = true;
 			} finally {
 				if (!bCreated) {
-					this._destroyRoutingArtefacts();
+					this._destroyCreatedInstances();
 				}
 			}
 
@@ -369,11 +369,13 @@ sap.ui.define([
 		if (typeof UIComponent._fnOnInstanceDestroy === "function") {
 			UIComponent._fnOnInstanceDestroy(this);
 		}
+		// destroy the router
+		this._destroyCreatedInstances();
 		// make sure that the component is destroyed properly
 		Component.prototype.destroy.apply(this, arguments);
 	};
 
-	UIComponent.prototype._destroyRoutingArtefacts = function() {
+	UIComponent.prototype._destroyCreatedInstances = function () {
 		if (this._oRouter) { // destroy the router
 			// the _oTargets and _oViews will be destroyed
 			// internally in the _oRouter
@@ -385,16 +387,13 @@ sap.ui.define([
 				this._oTargets.destroy();
 				this._oTargets = null;
 			}
+
 			if (this._oViews) {
 				this._oViews.destroy();
 				this._oViews = null;
 			}
 		}
-	};
 
-	UIComponent.prototype._exitCompositeSupport = function() {
-		//destroy the router 'after' models destroy done by ManagedObject
-		this._destroyRoutingArtefacts();
 	};
 
 	/**
