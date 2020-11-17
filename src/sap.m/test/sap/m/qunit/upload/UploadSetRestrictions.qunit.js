@@ -73,14 +73,14 @@ sap.ui.define([
 		assert.equal(oJpgItem._isRestricted() && oMp4Item._isRestricted(), true, "After changing file type restriction both files should now be restricted.");
 		assert.equal(getItemRestrictionMask(oJpgItem), "1000", "Only 'file type' restriction should be flagged.");
 		this.oUploadSet.setFileTypes(["doc", "jpg"]);
-		assert.equal(oJpgItem._isRestricted(), false, "After enlarging white list with JPG, picture file should again not be restricted.");
-		assert.equal(oMp4Item._isRestricted(), true, "After enlarging white list with JPG, video file should still be restricted.");
+		assert.equal(oJpgItem._isRestricted(), false, "After enlarging include list with JPG, picture file should again not be restricted.");
+		assert.equal(oMp4Item._isRestricted(), true, "After enlarging include list with JPG, video file should still be restricted.");
 
 		// Messing with type of the files
 		oJpgItem.setFileName("NotAPictureAnymore.xls");
-		assert.equal(oJpgItem._isRestricted(), true, "After moving its type out of white list file should be again restricted.");
+		assert.equal(oJpgItem._isRestricted(), true, "After moving its type out of include list file should be again restricted.");
 		oMp4Item.setFileName("VideoTurnedDocument.doc");
-		assert.equal(oMp4Item._isRestricted(), false, "After moving its type back to white list file should not be restricted.");
+		assert.equal(oMp4Item._isRestricted(), false, "After moving its type back to include list file should not be restricted.");
 
 		// Final null
 		this.oUploadSet.setFileTypes(null);
@@ -194,18 +194,18 @@ sap.ui.define([
 		assert.equal(oJpgItem._isRestricted() && oMp4Item._isRestricted(), true, "After changing mime type restriction both files should now be restricted.");
 		assert.equal(getItemRestrictionMask(oJpgItem), "0001", "Only 'mime type' restriction should be flagged.");
 		this.oUploadSet.setMediaTypes(["application/msword", "image/jpg"]);
-		assert.equal(oJpgItem._isRestricted(), false, "After enlarging white list with JPG, picture file should again not be restricted.");
-		assert.equal(oMp4Item._isRestricted(), true, "After enlarging white list with JPG, video file should still be restricted.");
+		assert.equal(oJpgItem._isRestricted(), false, "After enlarging include list with JPG, picture file should again not be restricted.");
+		assert.equal(oMp4Item._isRestricted(), true, "After enlarging include list with JPG, video file should still be restricted.");
 
 		// Messing with type of the files
 		oJpgItem._setFileObject({
 			type: "text/plain"
 		});
-		assert.equal(oJpgItem._isRestricted(), true, "After moving its mime type out of white list file should be again restricted.");
+		assert.equal(oJpgItem._isRestricted(), true, "After moving its mime type out of include list file should be again restricted.");
 		oMp4Item._setFileObject({
 			type: "application/msword"
 		});
-		assert.equal(oMp4Item._isRestricted(), false, "After moving its mime type back to white list file should not be restricted.");
+		assert.equal(oMp4Item._isRestricted(), false, "After moving its mime type back to include list file should not be restricted.");
 
 		// Final null
 		this.oUploadSet.setMediaTypes(null);

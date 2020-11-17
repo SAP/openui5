@@ -4,7 +4,7 @@
 sap.ui.define(["sap/ui/core/Renderer", "sap/m/ListItemBaseRenderer"], function(Renderer, ListItemBaseRenderer) {
 	"use strict";
 
-	var TAG_WHITELIST = {
+	var TAG_INCLUDELIST = {
 		"svg": {
 			attributes: ["width", "height", "focusable", "preserveAspectRatio"]
 		},
@@ -59,7 +59,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/m/ListItemBaseRenderer"], function(R
 			return true;
 		}
 		var sTagName = oNode.tagName.toLowerCase(),
-			oTag = TAG_WHITELIST[sTagName],
+			oTag = TAG_INCLUDELIST[sTagName],
 			bTagsValid;
 		if (!oTag) {
 			return false;
