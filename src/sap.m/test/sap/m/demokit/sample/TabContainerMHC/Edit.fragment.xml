@@ -3,7 +3,7 @@
 		xmlns:f="sap.ui.layout.form"
 		xmlns:core="sap.ui.core">
 
-		<f:SimpleForm editable="true"
+		<f:SimpleForm id="myForm" editable="true"
 			    layout="ResponsiveGridLayout">
 				<Label text="Name"/>
 				<Input value="{/Name}" type="Text" />

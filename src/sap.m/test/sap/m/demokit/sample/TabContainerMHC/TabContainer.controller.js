@@ -17,8 +17,6 @@ sap.ui.define([
 		function fnNavBackButton() {
 			var sMessage, oTabContainer,
 				fnGoBackToTablePage = function () {
-					this.oPageTabContainer.destroyContent();
-					this.oPageAddItem.destroyContent();
 					this.oNavCon.back();
 					var bButtonState = this.oPageTable.getSelectedItems().length > 0;
 					this.oView.byId("idOpenSelected").setVisible(bButtonState);
@@ -63,7 +61,7 @@ sap.ui.define([
 			this.oPageTable = this.oView.byId("idProductsTable");
 			this.oPageTabContainer = this.oView.byId("tabContainerPage");
 			this.oPageAddItem = this.oView.byId("addItemPage");
-
+			this._mDialogs = {};
 
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			oModel.setSizeLimit(200);
@@ -85,8 +83,8 @@ sap.ui.define([
 
 
 			this.oPageTable.detachSelectionChange(fnTableSelectionChange, this);
-			this.oPageTabContainer.detachNavButtonPress(fnNavBackButton, this).destroyContent();
-			this.oPageAddItem.detachNavButtonPress(fnNavBackButton, this).destroyContent();
+			this.oPageTabContainer.detachNavButtonPress(fnNavBackButton, this);
+			this.oPageAddItem.detachNavButtonPress(fnNavBackButton, this);
 
 			this.oPageAddItem = null;
 			this.oPageTabContainer = null;
@@ -97,8 +95,7 @@ sap.ui.define([
 		TCController.prototype.openSelectedItems = function () {
 			var oTabContainer, oTabContainerItemsTemplate,
 				aFilters = [],
-				aSelectedRows = this.oPageTable.getSelectedContexts(),
-				oTabContainerItemContent = this._getFragment("Display");
+				aSelectedRows = this.oPageTable.getSelectedContexts();
 
 			this.oNavCon.to(this.oPageTabContainer);
 
@@ -106,33 +103,11 @@ sap.ui.define([
 				aFilters.push(new Filter("ProductId", FilterOperator.EQ, oRow.getProperty("ProductId")));
 			});
 
-			if (oTabContainerItemContent instanceof Promise) {
-				oTabContainerItemContent.then(function(oContent) {
-					oTabContainerItemsTemplate = new TabContainerItem({
-						name: "{Name}",
-						content: [
-							oContent
-						]
-					});
-					oTabContainer = new TabContainer({
-						showAddNewButton: true,
-						addNewButtonPress: this._handleTabContainerAddNewButtonPress.bind(this),
-						itemClose: this._handleTabContainerItemClose.bind(this),
-						itemSelect: this._handleTabContainerItemSelect.bind(this),
-						items: {
-							path: '/ProductCollection',
-							filters: aFilters,
-							template: oTabContainerItemsTemplate
-						}
-					});
-
-					this.oPageTabContainer.insertContent(oTabContainer);
-				}.bind(this));
-			} else {
+			this._getFragment("Display").then(function(oObjectHeader) {
 				oTabContainerItemsTemplate = new TabContainerItem({
 					name: "{Name}",
 					content: [
-						oTabContainerItemContent
+						oObjectHeader
 					]
 				});
 				oTabContainer = new TabContainer({
@@ -146,9 +121,9 @@ sap.ui.define([
 						template: oTabContainerItemsTemplate
 					}
 				});
-
+				this.oPageTabContainer.removeAllContent();
 				this.oPageTabContainer.insertContent(oTabContainer);
-			}
+			}.bind(this));
 		};
 
 		TCController.prototype._handleTabContainerItemSelect = function (oEvent) {
@@ -211,52 +186,39 @@ sap.ui.define([
 		 * Add new item page
 		 */
 		TCController.prototype.handleNewItemAdd = function () {
-			var oEditModel = new JSONModel({ProductId: Math.random(), CurrencyCode: "EUR"}),
-				oEditFragment = this._getFragment("Edit");
+			var oEditModel = new JSONModel({ProductId: Math.random(), CurrencyCode: "EUR"});
 
 			this.oNavCon.to(this.oPageAddItem);
 			this._bEditMode = true;
 
-			if (oEditFragment instanceof Promise) {
-				oEditFragment.then(function(oFragment) {
-					this._oEditFragment = oFragment;
-					this._oEditFragment.setModel(oEditModel);
-
-					this.oPageAddItem.destroyContent();
-					this.oPageAddItem.insertContent(this._oEditFragment);
-				}.bind(this));
-			} else {
-				this._oEditFragment.setModel(oEditModel);
-
-				this.oPageAddItem.destroyContent();
-				this.oPageAddItem.insertContent(this._oEditFragment);
-			}
+			this._getFragment("Edit").then(function(oSimpleForm) {
+				oSimpleForm.setModel(oEditModel);
+				this.oPageAddItem.removeAllContent();
+				this.oPageAddItem.insertContent(oSimpleForm);
+			}.bind(this));
 		};
 
 		TCController.prototype.handleNewItemCancel = function () {
 			this._bEditMode = false;
-			this._oEditFragment = null;
 			fnNavBackButton.apply(this, arguments);
 		};
 
 		TCController.prototype.handleNewItemSave = function () {
 			var oModel = this.oView.getModel(),
 				oData = oModel.getProperty("/ProductCollection"),
-				oFormData = this._oEditFragment.getModel().getData();
+				oFormData = this.byId("myForm").getModel().getData();
 
 			oData.push(oFormData);
 			oModel.setProperty("/ProductCollection", oData);
 
 			this._bEditMode = false;
-			this._oEditFragment = null;
 			fnNavBackButton.apply(this, arguments);
 		};
 
 
 		TCController.prototype.handleTabContainerEditItem = function () {
 			var oBindingContext, oEditModel,
-				oSelectedItem = this._getTabContainerSelectedItem(),
-				oEditFragment = this._getFragment("Edit");
+				oSelectedItem = this._getTabContainerSelectedItem();
 
 			if (!oSelectedItem) {
 				return;
@@ -267,28 +229,18 @@ sap.ui.define([
 			oBindingContext = oSelectedItem.getBindingContext();
 			oEditModel = new JSONModel(deepExtend({}, oBindingContext.getProperty(oBindingContext.getPath())));
 
-			if (oEditFragment instanceof Promise) {
-				oEditFragment.then(function(oFragment) {
-					this._oEditFragment = oFragment;
-					this._oEditFragment.setModel(oEditModel);
-
-					oSelectedItem.destroyContent();
-					oSelectedItem.insertContent(this._oEditFragment);
-				}.bind(this));
-			} else {
-				oEditFragment.setModel(oEditModel);
-
-				oSelectedItem.destroyContent();
-				oSelectedItem.insertContent(oEditFragment);
-			}
+			this._getFragment("Edit").then(function(oSimpleForm) {
+				oSimpleForm.setModel(oEditModel);
+				oSelectedItem.removeAllContent();
+				oSelectedItem.insertContent(oSimpleForm);
+			});
 
 			this._setButtonsState({edit: false, save: true, cancel: true});
 		};
 
 		TCController.prototype.handleTabContainerCancelUpdate = function () {
 			var oSelectedItem = this._getTabContainerSelectedItem(),
-				sProductId = oSelectedItem && oSelectedItem.getBindingContext().getProperty("ProductId"),
-				oSelectItemContent = this._getFragment("Display");
+				sProductId = oSelectedItem && oSelectedItem.getBindingContext().getProperty("ProductId");
 
 			this._setButtonsState({edit: true, save: false, cancel: false});
 
@@ -296,14 +248,10 @@ sap.ui.define([
 				this._closeItemInTabContainer(oSelectedItem);
 			} else if (sProductId) {
 				oSelectedItem.setModified(false);
-				oSelectedItem.destroyContent();
-				if (oSelectItemContent instanceof Promise) {
-					oSelectItemContent.then(function(oContent) {
-						oSelectedItem.insertContent(oContent);
-					});
-				} else {
-					oSelectedItem.insertContent(oSelectItemContent);
-				}
+				this._getFragment("Display").then(function(oObjectHeader) {
+					oSelectedItem.removeAllContent();
+					oSelectedItem.insertContent(oObjectHeader);
+				});
 			}
 		};
 
@@ -311,8 +259,7 @@ sap.ui.define([
 			var oFragmentData,
 				oSelectedItem = this._getTabContainerSelectedItem(),
 				oBindingContext = oSelectedItem.getBindingContext(),
-				oEditFragment = oSelectedItem.getContent()[0],
-				oSelectItemContent = this._getFragment("Display");
+				oEditFragment = oSelectedItem.getContent()[0];
 
 			this._setButtonsState({edit: true, save: false, cancel: false});
 
@@ -330,14 +277,10 @@ sap.ui.define([
 				deepExtend(oBindingContext.getProperty(oBindingContext.getPath()), oFragmentData)
 			);
 
-			oSelectedItem.destroyContent();
-			if (oSelectItemContent instanceof Promise) {
-				oSelectItemContent.then(function(oContent) {
-					oSelectedItem.insertContent(oContent);
-				});
-			} else {
-				oSelectedItem.insertContent(oSelectItemContent);
-			}
+			this._getFragment("Display").then(function(oObjectHeader) {
+				oSelectedItem.removeAllContent();
+				oSelectedItem.insertContent(oObjectHeader);
+			});
 		};
 
 		TCController.prototype._closeItemInTabContainer = function (oItem) {
@@ -360,7 +303,6 @@ sap.ui.define([
 
 			for (i = 0; i < aAppliedFilters.length; i++) {
 				if (aAppliedFilters[i].oValue1 === sItemId) {
-					aAppliedFilters[i].destroy();
 					aAppliedFilters.splice(i, 1);
 					break;
 				}
@@ -376,15 +318,17 @@ sap.ui.define([
 		};
 
 		TCController.prototype._getFragment = function (sFragmentName) {
-			if (!this._oDialog) {
-				return Fragment.load({
+			var oView = this.getView();
+
+			if (!this._mDialogs[sFragmentName]) {
+				this._mDialogs[sFragmentName] = Fragment.load({
+					id: oView.getId(),
 					type: "XML",
 					name: "sap.m.sample.TabContainerMHC." + sFragmentName,
 					controller: this
 				});
-			} else {
-				return this._oDialog;
 			}
+			return this._mDialogs[sFragmentName];
 		};
 
 		TCController.prototype._getTabContainerSelectedItem = function () {
