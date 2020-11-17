@@ -10,34 +10,30 @@ sap.ui.define([
 		filterResetValue: 50,
 		filterPreviousValue: 50,
 
-		onExit : function () {
-			if (this._oDialog) {
-				this._oDialog.destroy();
-			}
-		},
-
 		handleViewSettingsDialogPress: function () {
-			if (!this._oDialog) {
-				Fragment.load({
+			var oView = this.getView();
+
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.ViewSettingsDialogCustom.Dialog",
 					controller: this
 				}).then(function(oDialog){
-					this._oDialog = oDialog;
 					// Set initial and reset value for Slider in custom control
-					var oSlider = this._oDialog.getFilterItems()[0].getCustomControl();
+					var oSlider = oDialog.getFilterItems()[0].getCustomControl();
 					oSlider.setValue(this.filterResetValue);
-					this._oDialog.setModel(this.getView().getModel());
-					this._oDialog.open();
+					return oDialog;
 				}.bind(this));
-			} else {
-				this._oDialog.setModel(this.getView().getModel());
-				this._oDialog.open();
 			}
+			this._pDialog.then(function(oDialog){
+				oDialog.setModel(oView.getModel());
+				oDialog.open();
+			});
 		},
 
 		handleSliderChange: function (oEvent) {
 			var oNewValue = oEvent.getParameter("value"),
-				oCustomFilter = this._oDialog.getFilterItems()[0];
+				oCustomFilter = this.byId("settingsDialog").getFilterItems()[0];
 
 			// Set the custom filter's count and selected properties
 			// if the value has changed
@@ -51,7 +47,7 @@ sap.ui.define([
 		},
 
 		handleConfirm: function (oEvent) {
-			var oSlider = this._oDialog.getFilterItems()[0].getCustomControl();
+			var oSlider = this.byId("settingsDialog").getFilterItems()[0].getCustomControl();
 			this.filterPreviousValue = oSlider.getValue();
 			if (oEvent.getParameters().filterString) {
 				MessageToast.show(oEvent.getParameters().filterString + " Value is " + oSlider.getValue());
@@ -59,7 +55,7 @@ sap.ui.define([
 		},
 
 		handleCancel: function () {
-			var oCustomFilter = this._oDialog.getFilterItems()[0],
+			var oCustomFilter = this.byId("settingsDialog").getFilterItems()[0],
 				oSlider = oCustomFilter.getCustomControl();
 
 			oSlider.setValue(this.filterPreviousValue);
@@ -74,7 +70,7 @@ sap.ui.define([
 		},
 
 		handleResetFilters: function () {
-			var oCustomFilter = this._oDialog.getFilterItems()[0],
+			var oCustomFilter = this.byId("settingsDialog").getFilterItems()[0],
 				oSlider = oCustomFilter.getCustomControl();
 			oSlider.setValue(this.filterResetValue);
 			oCustomFilter.setFilterCount(0);

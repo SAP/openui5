@@ -8,68 +8,48 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.ViewSettingsDialogCustomFilterDetails.C", {
 
 		_getDialog : function () {
-			if (!this._oDialog) {
-				return Fragment.load({
-					type: "XML",
+			var oView = this.getView();
+
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
 					name: "sap.m.sample.ViewSettingsDialogCustomFilterDetails.Dialog",
 					controller: this
+				}).then(function(oDialog){
+					oView.addDependent(oDialog);
+					return oDialog;
 				});
-			} else {
-				return this._oDialog;
 			}
+			return this._pDialog;
 		},
+
 		handleOpenDialogSearchContains: function () {
-			var oDialogFragment = this._getDialog();
-
-			if (oDialogFragment instanceof Promise) {
-				oDialogFragment.then(function(oDialog) {
-					this.getView().addDependent(this._oPopover);
-					oDialog
-						.setFilterSearchCallback(null)
-						.setFilterSearchOperator(mLibrary.StringFilterOperator.Contains)
-						.open();
-				}.bind(this));
-			} else {
-				oDialogFragment
-					.setFilterSearchCallback(null)
-					.setFilterSearchOperator(mLibrary.StringFilterOperator.Contains)
-					.open();
-			}
+			this._getDialog().then(function(oDialog) {
+			oDialog
+				.setFilterSearchCallback(null)
+				.setFilterSearchOperator(mLibrary.StringFilterOperator.Contains)
+				.open();
+			});
 		},
-		handleOpenDialogCustomSearch: function() {
-			var oDialogFragment = this._getDialog();
 
-			if (oDialogFragment instanceof Promise) {
-				oDialogFragment.then(function(oDialog) {
-					this.getView().addDependent(this._oPopover);
-					oDialog
-						.setFilterSearchCallback(this.caseSensitiveStringContains)
-						.open();
-				}.bind(this));
-			} else {
-				oDialogFragment
+		handleOpenDialogCustomSearch: function() {
+			this._getDialog().then(function(oDialog) {
+				oDialog
 					.setFilterSearchCallback(this.caseSensitiveStringContains)
 					.open();
-			}
+			}.bind(this));
 		},
-		handleOpenDialogSearchWordsStartWith: function() {
-			var oDialogFragment = this._getDialog();
 
-			if (oDialogFragment instanceof Promise) {
-				oDialogFragment.then(function(oDialog) {
-					this.getView().addDependent(this._oPopover);
-					oDialog
-						.setFilterSearchCallback(null)
-						.setFilterSearchOperator(mLibrary.StringFilterOperator.AnyWordStartsWith)
-						.open();
-				}.bind(this));
-			} else {
-				oDialogFragment
+
+		handleOpenDialogSearchWordsStartWith: function() {
+			this._getDialog().then(function(oDialog) {
+				oDialog
 					.setFilterSearchCallback(null)
 					.setFilterSearchOperator(mLibrary.StringFilterOperator.AnyWordStartsWith)
 					.open();
-			}
+			});
 		},
+
 		caseSensitiveStringContains: function (sQuery, sItemText) {
 			return sItemText.indexOf(sQuery) > -1;
 		}

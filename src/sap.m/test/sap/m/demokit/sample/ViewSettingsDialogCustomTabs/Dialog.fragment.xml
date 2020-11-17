@@ -1,7 +1,7 @@
 <core:FragmentDefinition
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core">
-	<ViewSettingsDialog
+	<ViewSettingsDialog id="settingsDialog"
 			confirm="handleConfirm">
 		<sortItems>
 			<ViewSettingsItem text="Field 1" key="1" selected="true" />

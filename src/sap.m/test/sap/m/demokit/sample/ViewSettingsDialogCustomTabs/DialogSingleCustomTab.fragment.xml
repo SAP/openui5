@@ -1,7 +1,7 @@
 <core:FragmentDefinition
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core">
-	<ViewSettingsDialog
+	<ViewSettingsDialog id="settingsDialogCustomTab"
 			confirm="handleConfirm">
 		<customTabs>
 			<ViewSettingsCustomTab id="app-settings" icon="sap-icon://action-settings" title="Settings" tooltip="Application Settings">

@@ -6,53 +6,30 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.m.sample.ViewSettingsDialogCustomTabs.C", {
-		onExit: function () {
-			if (this._oDialog) {
-				this._oDialog.destroy();
-			}
-			if (this._oDialogSingleCustomTab) {
-				this._oDialogSingleCustomTab.destroy();
-			}
-		},
 
 		handleOpenDialog: function () {
-			if (this._oDialogSingleCustomTab) {
-				this._oDialogSingleCustomTab.destroy();
-				this._oDialogSingleCustomTab = null;
-			}
-			if (!this._oDialog) {
-				Fragment.load({
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
 					name: "sap.m.sample.ViewSettingsDialogCustomTabs.Dialog",
 					controller: this
-				}).then(function(oDialog){
-					this._oDialog = oDialog;
-					this._oDialog.setModel(this.getView().getModel());
-					this._oDialog.open();
-				}.bind(this));
-			} else {
-				this._oDialog.setModel(this.getView().getModel());
-				this._oDialog.open();
+				});
 			}
+			this._pDialog.then(function(oDialog) {
+				oDialog.open();
+			});
 		},
 
 		handleOpenDialogSingleCustomTab: function () {
-			if (this._oDialog) {
-				this._oDialog.destroy();
-				this._oDialog = null;
-			}
-			if (!this._oDialogSingleCustomTab) {
-				Fragment.load({
+			if (!this._pDialogSingleCustomTab) {
+				this._pDialogSingleCustomTab = Fragment.load({
+					id: "dialogSingleCustomTab",
 					name: "sap.m.sample.ViewSettingsDialogCustomTabs.DialogSingleCustomTab",
 					controller: this
-				}).then(function(oDialog){
-					this._oDialogSingleCustomTab = oDialog;
-					this._oDialogSingleCustomTab.setModel(this.getView().getModel());
-					this._oDialogSingleCustomTab.open();
-				}.bind(this));
-			} else {
-				this._oDialogSingleCustomTab.setModel(this.getView().getModel());
-				this._oDialogSingleCustomTab.open();
+				});
 			}
+			this._pDialogSingleCustomTab.then(function(oDialogSingleCustomTab) {
+				oDialogSingleCustomTab.open();
+			});
 		},
 
 		handleConfirm: function (oEvent) {
