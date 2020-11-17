@@ -123,7 +123,7 @@
 					setTimeout(function() {
 						console.log('validate this url', config.url);
 
-						// simulated answer from whitelist service: relative URLs are fine
+						// simulated answer from URL validator service: relative URLs are fine
 						var allowed = config.url.lastIndexOf("http", 0) < 0;
 
 						config.promise.resolve({
