@@ -3,7 +3,7 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:f="sap.ui.layout.form"
 		xmlns:core="sap.ui.core">
-	<Dialog title="Title">
+	<Dialog id="modifyDialog" title="Title">
 		<beginButton>
 			<Button text="OK" type="Emphasized" press="handleDialogOkButton"/>
 		</beginButton>
