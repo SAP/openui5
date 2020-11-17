@@ -509,6 +509,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * A method to refresh the kept-alive element.
+	 * Does nothing, because aggregation cache has no kept-alive element.
+	 */
+	_AggregationCache.prototype.refreshKeptElement = function () {
+	};
+
+	/**
 	 * Returns the cache's URL (ignoring dynamic parameters $skip/$top).
 	 *
 	 * @returns {string} The URL

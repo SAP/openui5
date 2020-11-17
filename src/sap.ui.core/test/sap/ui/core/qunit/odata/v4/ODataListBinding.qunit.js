@@ -2100,14 +2100,14 @@ sap.ui.define([
 	QUnit.test("refreshInternal: relative with own cache, success=" + bSuccess, function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataListBinding.prototype),
-			oCache0 = {
-				setActive : function () {}
-			},
-			oCache1 = {},
+			oCache0 = {setActive : function () {}},
+			oCache1 = {refreshKeptElement : function () {}},
 			oCache = oCache0,
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
 			oError = new Error(),
 			sPath = {/*TEAMS('1')*/},
+			oRefreshKeptElementGroupLock = {},
+			oRefreshKeptElementPromise = SyncPromise.resolve({}),
 			oRefreshResult;
 
 		// fetchCache is called once from applyParameters before oBinding.oContext is set
@@ -2126,6 +2126,11 @@ sap.ui.define([
 		oCache = oCache1;
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false);
+		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup")
+			.returns(oRefreshKeptElementGroupLock);
+		this.mock(oCache1).expects("refreshKeptElement")
+			.withExactArgs(sinon.match.same(oRefreshKeptElementGroupLock))
+			.returns(oRefreshKeptElementPromise);
 		this.mock(oBinding).expects("removeCachesAndMessages")
 			.withExactArgs(sinon.match.same(sPath));
 		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().callThrough();
@@ -2136,9 +2141,10 @@ sap.ui.define([
 		// simulate getContexts
 		oBinding.resolveRefreshPromise(bSuccess || Promise.reject(oError));
 
-		return oRefreshResult.then(function () {
+		return oRefreshResult.then(function (oResult) {
 			assert.ok(bSuccess);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), oCache1);
+			assert.strictEqual(oResult[1], oRefreshKeptElementPromise.getResult());
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
 		});
@@ -2249,7 +2255,7 @@ sap.ui.define([
 				{$$ownRequest : true}),
 			oError = new Error(),
 			bIsRoot = "false,true",
-			oNewCache = {},
+			oNewCache = {refreshKeptElement : function () {}},
 			oOldCache = oBinding.oCachePromise.getResult(),
 			oRefreshPromise = Promise.reject(oError),
 			oYetAnotherError = new Error(),

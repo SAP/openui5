@@ -2380,6 +2380,63 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes the kept-alive element.
+	 * This needs to be called before the cache has filled the collection. In that state the
+	 * $byPredicate contains only the kept element.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or <code>undefined</code> if there is no
+	 *   kept element, or rejecting with an error if the refresh fails.
+	 *
+	 * @public
+	 */
+	_CollectionCache.prototype.refreshKeptElement = function (oGroupLock) {
+		var mTypes, that = this;
+
+		/**
+		 * Calculates a query to request the kept-alive element.
+		 *
+		 * @returns {string}
+		 *   A query to request the kept-alive element
+		 */
+		function calculateKeptElementQuery() {
+			var sKey,
+				mQueryOptions = Object.assign({}, that.mQueryOptions);
+
+			delete mQueryOptions.$count;
+			delete mQueryOptions.$orderby;
+			delete mQueryOptions.$search;
+
+			// Note: at this time only kept-alive elements are in the cache
+			sKey = Object.keys(that.aElements.$byPredicate)[0];
+			mQueryOptions.$filter =
+				_Helper.getKeyFilter(that.aElements.$byPredicate[sKey], that.sMetaPath, mTypes);
+
+			return that.sResourcePath
+				+ that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions);
+		}
+
+		if (isEmptyObject(this.aElements.$byPredicate)) {
+			return undefined;
+		}
+
+		mTypes = this.fetchTypes().getResult(); // in this stage the promise is resolved
+
+		return this.oRequestor.request("GET", calculateKeptElementQuery(mTypes), oGroupLock)
+			.then(function (oResponse) {
+				var oElement = oResponse.value[0],
+					sPredicate;
+
+				that.visitResponse(oResponse, mTypes, undefined, undefined,	undefined, 0);
+				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+				_Helper.updateAll(that.mChangeListeners, sPredicate,
+					that.aElements.$byPredicate[sPredicate], oElement);
+			});
+	};
+
+	/**
 	 * Requests the elements in the given range and places them into the aElements list. Calculates
 	 * the key predicates for all entities in the result before the promise is resolved. While the
 	 * request is running, all indices in this range contain the Promise.

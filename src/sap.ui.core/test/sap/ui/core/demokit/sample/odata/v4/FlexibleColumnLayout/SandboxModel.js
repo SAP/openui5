@@ -72,6 +72,15 @@ sap.ui.define([
 				},
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$count=true&$top=0" : {
 					source : "SalesOrderList('0500000000')-SO_2_SOITEM_requestCount.json"
+				},
+				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000004'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+					source : "SalesOrderList('0500000004')-Refresh_Existence.json"
+				},
+				//TODO The following request contains unnecessary properties, should look like:
+				// "SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5"
+				// CPOUI5ODATAV4-544
+				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
+					source : "SalesOrderList_Refresh_with_GrossAmount_GT_1000.json"
 				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",

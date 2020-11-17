@@ -115,7 +115,23 @@ sap.ui.define([
 		},
 
 		onRefreshSalesOrder : function (oEvent) {
-			this.byId("objectPage").getBindingContext().refresh(undefined, true);
+			var oBinding = this.byId("objectPage").getBindingContext();
+
+			if (this.hasPendingChanges(oBinding, "Cannot refresh due to unsaved changes; save or " +
+				"reset changes before refreshing")) {
+				return;
+			}
+			oBinding.refresh(undefined, true);
+		},
+
+		onRefreshSalesOrderList : function (oEvent) {
+			var oBinding = this.byId("SalesOrderList").getBinding("items");
+
+			if (this.hasPendingChanges(oBinding, "Cannot refresh due to unsaved changes; save or " +
+				"reset changes before refreshing")) {
+				return;
+			}
+			oBinding.refresh();
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {

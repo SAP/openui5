@@ -2153,7 +2153,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
 			bCheckUpdate, bKeepCacheOnError) {
-		var that = this;
+		var oKeptElementPromise, that = this;
 
 		// calls refreshInternal on all given bindings and returns an array of promises
 		function refreshAll(aBindings) {
@@ -2182,6 +2182,9 @@ sap.ui.define([
 			if (oCache && !oPromise) { // do not refresh twice
 				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext);
+				oKeptElementPromise = that.oCachePromise.then(function (oNewCache) {
+					return oNewCache.refreshKeptElement(that.lockGroup(sGroupId));
+				});
 				oPromise = that.createRefreshPromise();
 				if (bKeepCacheOnError) {
 					oPromise = oPromise.catch(function (oError) {
@@ -2201,7 +2204,9 @@ sap.ui.define([
 			// Note: after reset the dependent bindings cannot be found any more
 			aDependentBindings = that.getDependentBindings();
 			that.reset(ChangeReason.Refresh); // this may reset that.oRefreshPromise
-			return SyncPromise.all(refreshAll(aDependentBindings).concat(oPromise));
+			return SyncPromise.all(
+				refreshAll(aDependentBindings).concat(oPromise, oKeptElementPromise)
+			);
 		});
 	};
 

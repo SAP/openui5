@@ -29622,4 +29622,62 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: List binding with one kept-alive context outside of the collection. Refresh
+	// the list binding and see that the kept-alive context is also refreshed.
+	// JIRA: CPOUI5ODATAV4-488
+	QUnit.test("CPOUI5ODATAV4-488: Refresh w/ kept-alive context", function (assert) {
+		var oListBinding,
+			that = this;
+
+		return this.createKeepAliveScenario(assert, true).then(function (oKeptContext) {
+			oListBinding = oKeptContext.getBinding();
+
+			that.expectRequest({
+					batchNo : 4,
+					method : "GET",
+					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,Note,SalesOrderID"
+				}, {
+					value : [{
+						GrossAmount : "50",
+						Note : "After refresh",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("objectPageGrossAmount", "50.00")
+				.expectChange("objectPageNote", "After refresh")
+				.expectRequest({
+					batchNo : 4,
+					method : "GET",
+					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123"
+						+ "&$select=GrossAmount,Note,SalesOrderID&$skip=0&$top=2"
+				}, {
+					"@odata.count" : "27",
+					value : [{
+						GrossAmount : "149.1",
+						Note : "Note 2",
+						SalesOrderID : "2"
+					}, {
+						GrossAmount : "789.1",
+						Note : "Note 3",
+						SalesOrderID : "3"
+					}]
+				})
+				.expectChange("grossAmount", ["149.10", "789.10"])
+				.expectRequest({
+					batchNo : 4,
+					method : "GET",
+					url : "SalesOrderList('1')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
+				}, {
+					value : [/*does not matter*/]
+				});
+
+			oListBinding.refresh();
+
+			return that.waitForChanges(assert, "Step 1: Refresh the list");
+		});
+	});
 });

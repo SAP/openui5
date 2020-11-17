@@ -1966,4 +1966,16 @@ sap.ui.define([
 			oCache.addElements([{}, {}], 1, oGroupLevelCache, 0);
 		}, new Error("Array index out of bounds: 2"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshKeptElement", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group: {},
+				groupLevels : []
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
+
+		assert.strictEqual(oCache.refreshKeptElement(), undefined);
+	});
 });

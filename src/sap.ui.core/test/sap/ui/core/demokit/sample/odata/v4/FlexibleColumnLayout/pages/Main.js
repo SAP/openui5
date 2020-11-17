@@ -100,6 +100,9 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				refresh : function () {
+					return Helper.pressButton(this, sViewName, "refreshSalesOrderList");
+				},
 				selectSalesOrder : function (iRow) {
 					return this.waitFor({
 						actions : new Press(),
