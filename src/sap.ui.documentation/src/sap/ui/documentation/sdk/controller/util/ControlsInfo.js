@@ -169,7 +169,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 							return;
 						}
 
-						// check category white list
+						// check category allowlist
 						if (aCategoryAllowList.indexOf(oEnt.category) === -1) {
 							Log.error("explored: cannot register entity '" + oEnt.id + "'. category '" + oEnt.category + "' is not allowed");
 							return;

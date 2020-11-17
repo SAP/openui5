@@ -457,7 +457,7 @@ sap.ui.define([
 				oQuery.tab = this._oPreviousQueryContext.tab;
 			}
 
-			// check tab value against a whitelist
+			// check tab value against an allowlist
 			var aValidKeys = ["details", "grid", "visual", "favorites"];
 			if (aValidKeys.indexOf(oQuery.tab) < 0) {
 				oQuery.tab = "grid";
