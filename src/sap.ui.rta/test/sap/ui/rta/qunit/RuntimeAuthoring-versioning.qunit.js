@@ -698,7 +698,7 @@ sap.ui.define([
 				}.bind(this))
 				.then(function () {
 					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
-					assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_AND_CREATE_NEW_DIALOG", "then the message is correct");
+					assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_DIALOG", "then the message is correct");
 					assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
 					assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
 					assert.equal(oRemoveAllCommandsStub.callCount, 1, "and all commands were removed");
@@ -878,6 +878,11 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
+		QUnit.test("when the user modifies the stack while the displayed version is the Original App", function(assert) {
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_DISCARD_AND_CREATE_NEW_DIALOG", assert);
+			return this.oRta._onStackModified();
+		});
+
 		QUnit.test("when the user confirms the discarding", function(assert) {
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
 			var oModifyStackStub = sandbox.stub(this.oRta, "_modifyStack");

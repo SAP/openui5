@@ -840,7 +840,7 @@ function(
 		}
 
 		// warn the user: the existing draft would be discarded in case the user saves
-		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_DIALOG", {
+		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_AND_CREATE_NEW_DIALOG", {
 			titleKey: "TIT_DRAFT_DISCARD_DIALOG",
 			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 			emphasizedAction: MessageBox.Action.OK
@@ -1088,7 +1088,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onDiscardDraft = function() {
-		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_AND_CREATE_NEW_DIALOG", {
+		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_DIALOG", {
 			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 			emphasizedAction: MessageBox.Action.OK
 		})
