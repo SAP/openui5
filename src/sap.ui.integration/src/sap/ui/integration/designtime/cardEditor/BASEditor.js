@@ -144,7 +144,7 @@ sap.ui.define([
 					}
 					var oViz;
 					if (oCopyConfig.form.items[n].visualization) {
-						oViz = oCopyConfig.form.items[n].visualization;
+						oViz = mParameters[n].visualization;
 					}
 					oCopyConfig.form.items[n] = merge(oItem, mParameters[n]);
 					if (oViz) {
@@ -238,11 +238,12 @@ sap.ui.define([
 				}
 			}
 			this._oDesigntimeJSConfig = oCopyConfig;
+			var oCleanConfig = this._cleanConfig(this._oDesigntimeJSConfig);
 			this._fnDesigntime = function (o) {
 				return new Designtime(o);
-			}.bind(this, this._oDesigntimeJSConfig);
+			}.bind(this, oCleanConfig);
 			this._oCurrent = {
-				configuration: this._cleanConfig(this._oDesigntimeJSConfig),
+				configuration: oCleanConfig,
 				manifest: this._cleanJson(oJson),
 				configurationclass: this._fnDesigntime,
 				configurationstring: this._cleanConfig(this._oDesigntimeJSConfig, true)
@@ -276,6 +277,14 @@ sap.ui.define([
 					break;
 				default: oItem.value = oItem.defaultValue || "";
 			}
+		}
+	};
+
+	BASEditor.prototype.getJson  = function (bCleanJson) {
+		if (bCleanJson === true) {
+			return this._cleanJson();
+		} else {
+			return BaseEditor.prototype.getJson.apply(this, arguments);
 		}
 	};
 
@@ -371,7 +380,6 @@ sap.ui.define([
 					if (oMetaItem.visualization.type === "IconSelect") {
 						oMetaItem.type = "simpleicon";
 					}
-					oMetaItem.visualization = 1;
 				}
 
 				if (oMetaItem.manifestpath && (!oMetaItem.manifestpath.startsWith("/sap.card/configuration/parameters/") || !ObjectPath.get(aPath, this._oInitialJson))) {
@@ -544,6 +552,11 @@ sap.ui.define([
 
 	BASEditor.prototype.getConfigurationTemplate = function () {
 		return configurationTemplate;
+	};
+
+	BASEditor.prototype.updateDesigntimeMetadata = function (oDesigntimeJSConfig, bIsInitialMetadata) {
+		var oDesigntimeMetadata = this._generateMetadataFromJSConfig(oDesigntimeJSConfig);
+		this.setDesigntimeMetadata(formatImportedDesigntimeMetadata(oDesigntimeMetadata), bIsInitialMetadata);
 	};
 
 	function formatImportedDesigntimeMetadata(oFlatMetadata) {

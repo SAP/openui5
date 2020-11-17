@@ -528,13 +528,34 @@ sap.ui.define([
 				var oItemToEdit = this.processInputValue(oEditorValue[sKey]);
 				oItemToEdit.type = sNewType;
 				oEditorValue[sKey] = this.processOutputValue(oItemToEdit);
+				if (sNewType === "simpleicon") {
+					oEditorValue[sKey].visualization = {
+						"type": "IconSelect",
+						"settings": {
+							"value": "{currentSettings>value}",
+							"editable": "{currentSettings>editable}"
+						}
+					};
+				} else {
+					delete oEditorValue[sKey].visualization;
+				}
 
 				this._mTypes[sKey] = sNewType;
 				this.setValue(oEditorValue);
 
 				var oDesigntime = _merge({}, this.getConfig().designtime);
 				if (oDesigntime.hasOwnProperty(sKey)) {
-					delete oDesigntime[sKey].__value.visualization;
+					if (sNewType === "simpleicon") {
+						oDesigntime[sKey].__value.visualization = {
+							"type": "IconSelect",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						};
+					} else {
+						delete oDesigntime[sKey].__value.visualization;
+					}
 					oDesigntime[sKey].__value.type = sNewType;
 					this.setDesigntimeMetadata(oDesigntime);
 				}

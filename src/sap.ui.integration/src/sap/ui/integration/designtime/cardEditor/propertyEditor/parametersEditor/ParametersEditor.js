@@ -73,6 +73,7 @@ sap.ui.define([
 		var bTranslatable = (oConfigValue.value.translatable || vItemMetadata.translatable) === true;
 		var bAllowSettings = (oConfigValue.value.allowSettings || vItemMetadata.allowSettings) !== false;
 		var bAllowDynamicValues = (oConfigValue.value.allowDynamicValues || vItemMetadata.allowDynamicValues) !== false;
+		var oVisualization = oConfigValue.value.visualization || vItemMetadata.visualization;
 		var sLabel = vItemMetadata.label;
 
 		oMapItemConfig.push(
@@ -147,7 +148,18 @@ sap.ui.define([
 				visible: sType !== "group",
 				type: "boolean",
 				itemKey: sKey
-			});
+			},
+			{
+				label: this.getI18nProperty("BASE_EDITOR.MAP.VISUALIZATION"),
+				path: "visualization",
+				allowBindings: true,
+				value: oVisualization,
+				visible: sType !== "group",
+				placeholder: this.getI18nProperty("BASE_EDITOR.MAP.VISUALIZATION.PLACEHOLDER"),
+				type: "textArea",
+				itemKey: sKey
+			}
+		);
 		return oMapItemConfig;
 	};
 
