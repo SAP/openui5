@@ -48,7 +48,8 @@ sap.ui.define([
 					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
-					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
+					"textArea": "sap/ui/integration/designtime/baseEditor/propertyEditor/textAreaEditor/TextAreaEditor"
 				}
 			};
 			var mJson = {
@@ -221,7 +222,8 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
 					"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
-					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
+					"textArea": "sap/ui/integration/designtime/baseEditor/propertyEditor/textAreaEditor/TextAreaEditor"
 				}
 			});
 
@@ -257,7 +259,8 @@ sap.ui.define([
 				},
 				"propertyEditors": {
 					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"textArea": "sap/ui/integration/designtime/baseEditor/propertyEditor/textAreaEditor/TextAreaEditor"
 				}
 			});
 
@@ -300,7 +303,8 @@ sap.ui.define([
 						"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 						"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 						"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
-						"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
+						"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
+						"textArea": "sap/ui/integration/designtime/baseEditor/propertyEditor/textAreaEditor/TextAreaEditor"
 					}
 				},
 				json: {
