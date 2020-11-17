@@ -876,6 +876,10 @@ sap.ui.define([
 
 	QUnit.test("paste multiple values", function(assert) {
 
+		var oFormatOptions = merge({}, oDefineConditionPanelView.getFormatOptions());
+		oFormatOptions.maxConditions = 3;
+		oDefineConditionPanelView.setFormatOptions(oFormatOptions); // to test with maxConditions
+
 		var fnDone = assert.async();
 		setTimeout(function () { // as model update is async
 			sap.ui.getCore().applyChanges();
@@ -894,18 +898,17 @@ sap.ui.define([
 			};
 
 			if (window.clipboardData) {
-				window.clipboardData.setData("text", "AA\nBB\nC	D");
+				window.clipboardData.setData("text", "AA\nBB\nC	D\nEE");
 			}
 
 			qutils.triggerEvent("paste", oControl.getFocusDomRef(), {clipboardData: oFakeClipboardData});
 			setTimeout(function () { // as past handling is async
 				var aConditions = oModel.getConditions("Name");
-				assert.equal(aConditions.length, 4, "4 Conditions exist");
-				assert.equal(aConditions[0].values[0], null, "First Condfition is empty");
-				assert.equal(aConditions[1].values[0], "AA", "2. Condfition");
-				assert.equal(aConditions[2].values[0], "BB", "3. Condfition");
-				assert.equal(aConditions[3].values[0], "C", "4. Condfition - from");
-				assert.equal(aConditions[3].values[1], "D", "4. Condfition - to");
+				assert.equal(aConditions.length, 3, "3 Conditions exist");
+				assert.equal(aConditions[0].values[0], "AA", "1. Condition");
+				assert.equal(aConditions[1].values[0], "BB", "2. Condition");
+				assert.equal(aConditions[2].values[0], "C", "3. Condition - from");
+				assert.equal(aConditions[2].values[1], "D", "3. Condition - to");
 
 				fnDone();
 			}, 0);
