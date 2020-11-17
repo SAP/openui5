@@ -1172,6 +1172,7 @@ sap.ui.define([
 				this._oCalendar.attachCancel(_cancel, this);
 				this._oCalendar.attachEvent("_renderMonth", _resizeCalendar, this);
 				this._oCalendar.setPopupMode(true);
+				this._oCalendar._markPopover();
 				this._oPopup._getButtonFooter().setVisible(this.getShowFooter());
 				this._getCalendar()._bSkipCancelButtonRendering = true;
 				this._oPopup.addContent(this._getCalendar());

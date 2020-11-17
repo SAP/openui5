@@ -1900,6 +1900,25 @@ sap.ui.define([
 		assert.strictEqual(sAriaText, sExpectedAria, "Aria contains text for the secondary calendar type");
 	});
 
+	QUnit.test("Calendar instance: aria-role dialog", function(assert) {
+		// prepare
+		var oCalendarDomRef,
+			oDatePicker = new DatePicker();
+		oDatePicker.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oDatePicker.toggleOpen();
+		oCalendarDomRef = oDatePicker._getCalendar().getDomRef();
+
+		// assert
+		assert.notOk(oCalendarDomRef.getAttribute("aria-modal"), "Calendar instance doesn't have 'aria-modal' attribute");
+		assert.notOk(oCalendarDomRef.getAttribute("role", "Calendar instance doesn't have 'role' attribute"));
+
+		// clear
+		oDatePicker.destroy();
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oDP = new DatePicker("EDP").placeAt("uiArea6");
