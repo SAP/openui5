@@ -2,9 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/integration/library",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject"
-], function (Log,
+], function (library,
+			 Log,
 			 ManagedObject) {
 	"use strict";
 
