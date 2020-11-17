@@ -1517,7 +1517,14 @@ sap.ui.define([
 
 		// set the focus in a fields of the newly added condition
 		setTimeout(function() {
-			oConditionGrid.keyField.focus();
+			if (oConditionGrid.keyField.getVisible()) {
+				oConditionGrid.keyField.focus();
+				return;
+			}
+
+			if (oConditionGrid.operation.getVisible()) {
+				oConditionGrid.operation.focus();
+			}
 		});
 
 		this._updatePaginatorToolbar();
@@ -3070,6 +3077,7 @@ sap.ui.define([
 				})
 			);
 		}
+		oControl.setVisible(bVisible);
 	};
 
 	P13nConditionPanel._getGridConstructor = function(){
