@@ -160,7 +160,7 @@ sap.ui.define([
 		var bMatchIdentifier = eMessage.data._frameIdentifier === this._frame.identifier;
 		// remove relative paths (if the frame src is relative to the parent)
 		var iFrameUrlQuery = this._frame.url.indexOf("?");
-		var sFrameUrl = this._frame.url.substr(0, iFrameUrlQuery).replace(/\.\.\//g, "") + this._frame.url.substr(iFrameUrlQuery);
+		var sFrameUrl = this._frame.url.substr(0, iFrameUrlQuery).replace(/\.\.\//g, "").replace(/\.\//g, "") + this._frame.url.substr(iFrameUrlQuery);
 		var bMatchUrl = eMessage.data._origin.indexOf(sFrameUrl) > -1;
 
 		return bMatchOrigin && bMatchIdentifier && bMatchUrl;
