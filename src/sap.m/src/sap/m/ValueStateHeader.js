@@ -150,8 +150,6 @@ sap.ui.define(
 			var oPopup = this._getAssociatedPopupObject();
 
 			if (oPopup) {
-				this.getDomRef().style.width = oPopup.getDomRef().getBoundingClientRect().width + "px";
-
 				// schedule reposition after header rendering
 				if (oPopup.isA("sap.m.Popover")) {
 					setTimeout(function () {
