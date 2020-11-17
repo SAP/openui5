@@ -260,17 +260,17 @@ sap.ui.define([
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
-		case "any":
-			return sValue;
-		case "float":
-			return parseFloat(sValue);
-		case "int":
-			return Math.floor(parseFloat(sValue));
-		case "string":
-			return getFormatter(this).format(removeTrailingZeroes(String(sValue)));
-		default:
-			throw new FormatException("Don't know how to format " + this.getName() + " to "
-				+ sTargetType);
+			case "any":
+				return sValue;
+			case "float":
+				return parseFloat(sValue);
+			case "int":
+				return Math.floor(parseFloat(sValue));
+			case "string":
+				return getFormatter(this).format(removeTrailingZeroes(String(sValue)));
+			default:
+				throw new FormatException("Don't know how to format " + this.getName() + " to "
+					+ sTargetType);
 		}
 	};
 
@@ -300,26 +300,26 @@ sap.ui.define([
 			return null;
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
-		case "string":
-			sResult = getFormatter(this).parse(vValue);
-			if (!sResult) {
-				throw new ParseException(sap.ui.getCore().getLibraryResourceBundle()
-					.getText("EnterNumber"));
-			}
-			// NumberFormat.parse does not remove trailing decimal zeroes and separator
-			sResult = removeTrailingZeroes(sResult);
-			break;
-		case "int":
-		case "float":
-			sResult = NumberFormat.getFloatInstance({
-				maxIntegerDigits: Infinity,
-				decimalSeparator: ".",
-				groupingEnabled: false
-			}).format(vValue);
-			break;
-		default:
-			throw new ParseException("Don't know how to parse " + this.getName() + " from "
-				+ sSourceType);
+			case "string":
+				sResult = getFormatter(this).parse(vValue);
+				if (!sResult) {
+					throw new ParseException(sap.ui.getCore().getLibraryResourceBundle()
+						.getText("EnterNumber"));
+				}
+				// NumberFormat.parse does not remove trailing decimal zeroes and separator
+				sResult = removeTrailingZeroes(sResult);
+				break;
+			case "int":
+			case "float":
+				sResult = NumberFormat.getFloatInstance({
+					maxIntegerDigits: Infinity,
+					decimalSeparator: ".",
+					groupingEnabled: false
+				}).format(vValue);
+				break;
+			default:
+				throw new ParseException("Don't know how to parse " + this.getName() + " from "
+					+ sSourceType);
 		}
 		return sResult;
 	};

@@ -59,6 +59,7 @@ sap.ui.define(function () {
 			"lib/_V4MetadataConverter" : {},
 			// the following tests set autostart=false because they require modules asynchronously
 			// and start QUnit on their own
+			// the following tests must all be named "OPA.*" so that 1Ring ignores them
 			"OPA.DataAggregation" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/DataAggregation/Opa.qunit"]

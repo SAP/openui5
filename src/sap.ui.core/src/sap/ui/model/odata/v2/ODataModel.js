@@ -5940,18 +5940,18 @@ sap.ui.define([
 	ODataModel.prototype._isHeaderPrivate = function(sHeaderName) {
 		// case sensitive check needed to make sure private headers cannot be overridden by difference in the upper/lower case (e.g. accept and Accept).
 		switch (sHeaderName.toLowerCase()) {
-		case "accept":
-		case "accept-language":
-		case "maxdataserviceversion":
-		case "dataserviceversion":
-			return true;
-		case "x-csrf-token":
-			return this.bTokenHandling;
-		case "sap-contextid-accept":
-		case "sap-contextid":
-			return !this.bDisableSoftStateHeader;
-		default:
-			return false;
+			case "accept":
+			case "accept-language":
+			case "maxdataserviceversion":
+			case "dataserviceversion":
+				return true;
+			case "x-csrf-token":
+				return this.bTokenHandling;
+			case "sap-contextid-accept":
+			case "sap-contextid":
+				return !this.bDisableSoftStateHeader;
+			default:
+				return false;
 		}
 	};
 
