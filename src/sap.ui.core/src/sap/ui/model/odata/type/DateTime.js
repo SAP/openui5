@@ -23,14 +23,14 @@ sap.ui.define([
 
 		if (oConstraints) {
 			switch (oConstraints.displayFormat) {
-			case "Date":
-				oAdjustedConstraints.isDateOnly = true;
-				break;
-			case undefined:
-				break;
-			default:
-				Log.warning("Illegal displayFormat: " + oConstraints.displayFormat,
-					null, oType.getName());
+				case "Date":
+					oAdjustedConstraints.isDateOnly = true;
+					break;
+				case undefined:
+					break;
+				default:
+					Log.warning("Illegal displayFormat: " + oConstraints.displayFormat,
+						null, oType.getName());
 			}
 			oAdjustedConstraints.nullable = oConstraints.nullable;
 		}

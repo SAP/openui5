@@ -384,37 +384,37 @@ sap.ui.define([
 			}
 
 			switch (oResult.result) {
-			case "binding":
-				if (bExpression) {
-					return (bRaw ? "%" : "$") + binding(bWithType);
-				}
-				return binding(bWithType);
-
-			case "composite":
-				if (bExpression) {
-					throw new Error(
-						"Trying to embed a composite binding into an expression binding");
-				}
-				return vValue; // Note: it's already a composite binding string
-
-			case "constant":
-				if (oResult.type === "edm:Null") {
-					if (oResult.value === undefined) {
-						return bExpression ? "undefined" : undefined;
+				case "binding":
+					if (bExpression) {
+						return (bRaw ? "%" : "$") + binding(bWithType);
 					}
-					return bExpression ? "null" : null;
-				}
-				if (bExpression) {
-					return constant(oResult);
-				}
-				return typeof vValue === "string"
-					? BindingParser.complexParser.escape(vValue)
-					: String(vValue);
+					return binding(bWithType);
 
-			case "expression":
-				return bExpression ? vValue : "{=" + vValue + "}";
+				case "composite":
+					if (bExpression) {
+						throw new Error(
+							"Trying to embed a composite binding into an expression binding");
+					}
+					return vValue; // Note: it's already a composite binding string
 
-			// no default
+				case "constant":
+					if (oResult.type === "edm:Null") {
+						if (oResult.value === undefined) {
+							return bExpression ? "undefined" : undefined;
+						}
+						return bExpression ? "null" : null;
+					}
+					if (bExpression) {
+						return constant(oResult);
+					}
+					return typeof vValue === "string"
+						? BindingParser.complexParser.escape(vValue)
+						: String(vValue);
+
+				case "expression":
+					return bExpression ? vValue : "{=" + vValue + "}";
+
+				// no default
 			}
 		},
 

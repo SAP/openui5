@@ -163,18 +163,18 @@ sap.ui.define([
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
-		case "any":
-			return vValue;
-		case "object":
-			return vValue instanceof Date
-				? new Date(vValue.getUTCFullYear(), vValue.getUTCMonth(), vValue.getUTCDate())
-				: getModelFormatter().parse(vValue, false);
-		case "string":
-			oDate = vValue instanceof Date ? vValue : getModelFormatter().parse(vValue);
-			return oDate ? getFormatter(this).format(oDate) : vValue;
-		default:
-			throw new FormatException("Don't know how to format " + this.getName() + " to "
-				+ sTargetType);
+			case "any":
+				return vValue;
+			case "object":
+				return vValue instanceof Date
+					? new Date(vValue.getUTCFullYear(), vValue.getUTCMonth(), vValue.getUTCDate())
+					: getModelFormatter().parse(vValue, false);
+			case "string":
+				oDate = vValue instanceof Date ? vValue : getModelFormatter().parse(vValue);
+				return oDate ? getFormatter(this).format(oDate) : vValue;
+			default:
+				throw new FormatException("Don't know how to format " + this.getName() + " to "
+					+ sTargetType);
 		}
 	};
 
@@ -228,17 +228,17 @@ sap.ui.define([
 			return null;
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
-		case "object":
-			return getModelFormatter().format(vValue, false);
-		case "string":
-			oResult = getFormatter(this).parse(vValue);
-			if (!oResult) {
-				throw new ParseException(getErrorMessage(this));
-			}
-			return getModelFormatter().format(oResult);
-		default:
-			throw new ParseException("Don't know how to parse " + this.getName() + " from "
-				+ sSourceType);
+			case "object":
+				return getModelFormatter().format(vValue, false);
+			case "string":
+				oResult = getFormatter(this).parse(vValue);
+				if (!oResult) {
+					throw new ParseException(getErrorMessage(this));
+				}
+				return getModelFormatter().format(oResult);
+			default:
+				throw new ParseException("Don't know how to parse " + this.getName() + " from "
+					+ sSourceType);
 		}
 	};
 

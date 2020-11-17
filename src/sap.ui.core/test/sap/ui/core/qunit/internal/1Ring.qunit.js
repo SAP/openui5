@@ -15,25 +15,24 @@ sap.ui.require([
 
 	// Note: cannot require these above as data-sap-ui-resourceroots is ignored until boot
 	sap.ui.require([
-		// alphabetic sort order according to module names
-		// base
-		"sap/ui/core/qunit/util/SyncPromise.qunit",
-		// core
-		"sap/ui/core/qunit/util/XMLPreprocessor.qunit",
-		// OData V4
-		"sap/ui/core/qunit/internal/ODataV4.qunit",
-		// test
-		"sap/ui/test/qunit/TestUtils.qunit"
-	], function () {
-		function start() {
-			Core.detachThemeChanged(start);
-			QUnit.start();
-		}
+		"sap/ui/core/qunit/internal/testsuite.feature-odata-v4.qunit",
+		"sap/ui/core/qunit/internal/ODataV4.qunit"
+	], function (oTestsuite) {
+		var aModules = Object.keys(oTestsuite.tests).map(function (sTest) {
+				return oTestsuite.tests[sTest].module[0];
+			});
 
-		if (Core.isThemeApplied()) {
-			QUnit.start();
-		} else {
-			Core.attachThemeChanged(start);
-		}
+		sap.ui.require(aModules, function () {
+			function start() {
+				Core.detachThemeChanged(start);
+				QUnit.start();
+			}
+
+			if (Core.isThemeApplied()) {
+				QUnit.start();
+			} else {
+				Core.attachThemeChanged(start);
+			}
+		});
 	});
 });

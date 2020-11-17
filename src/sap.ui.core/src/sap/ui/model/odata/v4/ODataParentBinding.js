@@ -251,23 +251,23 @@ sap.ui.define([
 				// merge $count, $expand and $select; check that all others equal the aggregate
 				&& Object.keys(mQueryOptions0).every(function (sName) {
 					switch (sName) {
-					case "$count":
-						if (mQueryOptions0.$count) {
-							mAggregatedQueryOptions.$count = true;
-						}
-						return true;
-					case "$expand":
-						mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
-						return Object.keys(mQueryOptions0.$expand).every(mergeExpandPath);
-					case "$select":
-						mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
-						return mQueryOptions0.$select.every(mergeSelectPath);
-					default:
-						if (bAdd) {
-							mAggregatedQueryOptions[sName] = mQueryOptions0[sName];
+						case "$count":
+							if (mQueryOptions0.$count) {
+								mAggregatedQueryOptions.$count = true;
+							}
 							return true;
-						}
-						return mQueryOptions0[sName] === mAggregatedQueryOptions[sName];
+						case "$expand":
+							mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
+							return Object.keys(mQueryOptions0.$expand).every(mergeExpandPath);
+						case "$select":
+							mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
+							return mQueryOptions0.$select.every(mergeSelectPath);
+						default:
+							if (bAdd) {
+								mAggregatedQueryOptions[sName] = mQueryOptions0[sName];
+								return true;
+							}
+							return mQueryOptions0[sName] === mAggregatedQueryOptions[sName];
 					}
 				});
 		}

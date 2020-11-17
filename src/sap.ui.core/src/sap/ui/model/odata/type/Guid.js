@@ -103,12 +103,12 @@ sap.ui.define([
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
-		case "any":
-		case "string":
-			return sValue;
-		default:
-			throw new FormatException("Don't know how to format " + this.getName() + " to "
-				+ sTargetType);
+			case "any":
+			case "string":
+				return sValue;
+			default:
+				throw new FormatException("Don't know how to format " + this.getName() + " to "
+					+ sTargetType);
 		}
 	};
 
