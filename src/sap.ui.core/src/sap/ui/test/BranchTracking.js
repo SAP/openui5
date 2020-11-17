@@ -591,7 +591,7 @@
 		 * Listener for "unhandledrejection" events to keep track of "Uncaught (in promise)".
 		 */
 		window.addEventListener("unhandledrejection", function (oEvent) {
-			if (oEvent.reason.$uncaughtInPromise) { // ignore exceptional cases
+			if (oEvent.reason && oEvent.reason.$uncaughtInPromise) { // ignore exceptional cases
 				return;
 			}
 
