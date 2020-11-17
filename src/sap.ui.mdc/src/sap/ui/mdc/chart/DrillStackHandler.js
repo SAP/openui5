@@ -83,6 +83,14 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Creates a drill down popover
+	 * @param oChart
+	 * @returns the popover object
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	DrillStackHandler.createDrillDownPopover = function(oChart) {
 
 		var oList = new List({
@@ -144,7 +152,11 @@ sap.ui.define([
 
 	/**
 	 * Shows the drill-down popover on the toolbar button of an mdc.Chart instance
-	 * @param oChart
+	 * @param {sap.ui.mdc.Chart} oChart
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	DrillStackHandler.showDrillDownPopover = function(oChart) {
 		var oFetchPropertiesPromise = oChart.getControlDelegate().fetchProperties(oChart);
@@ -199,6 +211,15 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Creates and sets breadcrumps on the MDC chart for the current drill level
+	 *
+	 * @param {sap.ui.mdc.Chart} oChart
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-protected sap.ui.mdc
+	 */
 	DrillStackHandler.createDrillBreadcrumbs = function(oChart) {
 
 		return new Promise(function(resolve, reject) {
@@ -221,6 +242,17 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 * Creates a breadcrump with given settings
+	 * @param oChart the chart the breadcrump is for
+	 * @param oCrumbSettings settings for the breadcrump
+	 *
+	 * @returns the created breadcrump
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	DrillStackHandler.createCrumb = function(oChart, oCrumbSettings) {
 		var oInnerChart = oChart.getAggregation("_chart");
 
@@ -259,6 +291,16 @@ sap.ui.define([
 		return oCrumb;
 	};
 
+	/**
+	 * Updates the breadcrumps shown on the MDC Chart
+	 *
+	 * @param {sap.ui.mdc.Chart} oChart the MDC Chart to update the breadcrumps on
+	 * @param {*} oDrillBreadcrumbs the breadcrumps to show
+	 *
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	DrillStackHandler._updateDrillBreadcrumbs = function(oChart, oDrillBreadcrumbs) {
 
 		return new Promise(function(resolve, reject) {

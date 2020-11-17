@@ -334,6 +334,13 @@ sap.ui.define([
 
 		FilterIntegrationMixin.call(Chart.prototype);
 
+		/**
+		 * Initialises the MDC Chart
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
 		Chart.prototype.init = function() {
 			this._oObserver = new ManagedObjectObserver(this.update.bind(this));
 			this._oAdaptationController = null;
@@ -368,6 +375,14 @@ sap.ui.define([
 			});
 		};
 
+		/**
+		 * Initializes modules needed for MDC Chart
+		 *
+		 * @param {array} aModules Modules to initialize
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
 		Chart.prototype.initModules = function(aModules) {
 			this.initControlDelegate(aModules[0]);
 			ChartClass = aModules[1];
@@ -383,6 +398,15 @@ sap.ui.define([
 			];
 		}
 
+		/**
+		 * Applies given settings onto the MDC Chart and initialized it
+		 *
+		 * @param {*} mSettings settings to apply
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
 		Chart.prototype.applySettings = function(mSettings, oScope) {
 			var aActions;
 
@@ -470,6 +494,17 @@ sap.ui.define([
 			return Control.prototype.applySettings.apply(this, arguments);
 		};
 
+		/**
+		 * Calls the Delegates to bind the aggregation onto the inner chart
+		 *
+		 * @param {string} sName name of the aggregation
+		 * @param oBindingInfo binding info for the aggregation
+		 * @param sSearchText search text (optional)
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype.bindAggregation = function (sName, oBindingInfo, sSearchText) {
 
 			if (sName == "data") {
@@ -513,6 +548,13 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Gets information about the current data binding
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
+		 */
 		Chart.prototype.getBindingInfo = function (sName) {
 
 			if (sName == "data") {
@@ -522,6 +564,14 @@ sap.ui.define([
 			return Control.prototype.getBindingInfo.apply(this, arguments);
 		};
 
+		/**
+		 * Sets the visibility of the legend
+		 * @param {bool} bVisible true to show legend, false to hide
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
+		 */
 		Chart.prototype.setLegendVisible = function (bVisible) {
 
 			// inherited from vizFrame
@@ -537,6 +587,13 @@ sap.ui.define([
 			return this.setProperty("legendVisible", bVisible);
 		};
 
+		/**
+		 *  Creates inner chart
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
 		Chart.prototype._createInnerChart = function (mSettings, mItems) {
 			mSettings = mSettings || {};
 
@@ -653,6 +710,14 @@ sap.ui.define([
 			}.bind(this));
 		};
 
+		/**
+		* Sets the <code>selectionMode</code> property
+		* @param {object} vValue the selection mode to set the chart to
+		* @returns {sap.mdc.Chart} reference to <code>this</code> for method chaining
+		*
+		* @private
+		* @ui5-restricted Fiori Elements
+		*/
 		Chart.prototype.setSelectionMode = function (vValue) {
 			this.setProperty("selectionMode", vValue, true);
 			vValue = this.getSelectionMode();
@@ -664,8 +729,11 @@ sap.ui.define([
 		 * Adds a Item to the chart
 		 *
 		 * @param {sap.ui.mdc.chart.Item} oItem a chart Item
-		 * @param bSuppressInvalidate Suppress invalidation of the control
-		 * @returns {sap.ui.mdc.Chart} the chart
+		 * @param {bool} bSuppressInvalidate Suppress invalidation of the control
+		 *
+		 * @private
+		 * @experimental
+		 * @ui5-restricted Fiori Elements
 		 */
 		Chart.prototype.addItem = function (oItem, bSuppressInvalidate) {
 			var oChart = this.getAggregation("_chart");
@@ -691,11 +759,14 @@ sap.ui.define([
 		};
 
 		/**
-		 * Inserts a Item into the chart+
+		 * Inserts an Item into the chart
 		 * @param {sap.ui.mdc.chart.Item} oItem a chart Item
 		 * @param {int} iIndex the index
-		 * @param bSuppressInvalidate Suppress invalidation of the control
-		 * @returns {sap.ui.mdc.Chart} the chart
+		 * @param {bool} bSuppressInvalidate Suppress invalidation of the control
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
 		 */
 		Chart.prototype.insertItem = function (oItem, iIndex, bSuppressInvalidate) {
 
@@ -728,9 +799,13 @@ sap.ui.define([
 		/**
 		 * Removes the chart item
 		 *
-		 * @param oItem {sap.ui.mdc.chart.Item} oItem a chart Item
+		 * @param {sap.ui.mdc.chart.Item} oItem oItem a chart Item
 		 * @param bSuppressInvalidate Suppress invalidation of the control
 		 * @returns {*}
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
 		 */
 		Chart.prototype.removeItem = function (oItem, bSuppressInvalidate) {
 			this._oObserver.unobserve(oItem);
@@ -756,6 +831,10 @@ sap.ui.define([
 		 *
 		 * @param {array} aItemKeys The item keys that specify the item to be retrieved
 		 * @returns {array} Array containing the matching items
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
 		 */
 		Chart.prototype.getItemsByKeys = function(aItemKeys) {
 			var aFilteredItems = [],
@@ -775,7 +854,10 @@ sap.ui.define([
 
 		/**
 		 * shows the drill-down popover for selection a dimension to drill down to.
+		 *
+		 * @experimental
 		 * @private
+		 * @ui5-restricted Fiori Elements
 		 */
 		Chart.prototype._showDrillDown = function() {
 
@@ -804,7 +886,10 @@ sap.ui.define([
 
 		/**
 		 * shows the Breadcrumbs for current drill-path and drilling up.
+		 *
+		 * @experimental
 		 * @private
+		 * @ui5-restricted Fiori Elements
 		 */
 		Chart.prototype._createDrillBreadcrumbs = function() {
 
@@ -850,6 +935,15 @@ sap.ui.define([
 			}.bind(this));
 		};
 
+		/**
+		 * Gets the available chart types for the current state of the inner chart
+		 *
+		 * @returns {array} Array containing the available chart types
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype.getAvailableChartTypes = function () {
 			var aChartTypes = [];
 			var oChart = this.getAggregation("_chart");
@@ -876,6 +970,21 @@ sap.ui.define([
 			return aChartTypes;
 		};
 
+		/**
+		 * @typedef {Object} mInfo
+		 * @property {string} icon - The icon of the selected chart type
+		 * @property {string} text - Tooltip containing the current chart type
+		 */
+		/**
+		 * Gets information about the current chart type
+		 *
+		 * @returns {mInfo} Object containing information about the chart type
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 *
+		 */
 		Chart.prototype.getTypeInfo = function() {
 			var sType = this.getChartType(),
 				oMDCResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
@@ -891,13 +1000,25 @@ sap.ui.define([
 		};
 
 		/**
-		 *
+		 * Gets the managed object model
 		 * @return {oModel} the managed object model
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
 		 */
 		Chart.prototype.getManagedObjectModel = function () {
 			return this._oManagedObjectModel;
 		};
 
+		/**
+		 * Updates the inner chart
+		 * @param {object} oChanges Object containing the changes to update with
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype.update = function (oChanges) {
 			var oChart = this.getAggregation("_chart");
 
@@ -913,6 +1034,15 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Updates the inner chart
+		 * @param {sap.chart.Chart} oChart the inner chart to update
+		 * @param {object} oChanges Object containing the changes to update with
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
+		 */
 		Chart.prototype._update = function (oChart, oChanges) {
 
 			var aItems = this.getItems(),
@@ -999,6 +1129,17 @@ sap.ui.define([
 
 		};
 
+		/**
+		 * Updates the semantical pattern for given measures
+		 *
+		 * @param {sap.chart.Chart} oChart the inner chart
+		 * @param {array} aVisibleMeasures array containing the visible measures on the inner chart
+		 * @param {*} mDataPoints data points of the inner chart
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
+		 */
 		Chart.prototype._updateSemanticalPattern = function (oChart, aVisibleMeasures, mDataPoints) {
 
 			for (var k = 0; k < aVisibleMeasures.length; k++) {
@@ -1041,6 +1182,16 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Updates the coloring on the inner chart
+		 * @param {sap.chart.Chart} oChart inner chart
+		 * @param {array} aVisibleDimensions visible dimensions for inner chart
+		 * @param {array} aVisibleMeasures visible measures for inner chart
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype._updateColoring = function (oChart, aVisibleDimensions, aVisibleMeasures, mDataPoints) {
 			var oColoring = this.getProperty("_colorings"), k;
 
@@ -1104,6 +1255,15 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Returns sorters available for the data
+		 *
+		 * @returns {array} Array containing available sorters
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
 		Chart.prototype._getSorters = function () {
 			var aSorters;
             var aSorterProperties = this.getSortConditions() ? this.getSortConditions().sorters : [];
@@ -1126,6 +1286,13 @@ sap.ui.define([
 
 		};
 
+		/**
+		 * Updates the delegate binding info and updates inner chart if necessary
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
+		 */
 		Chart.prototype.rebind = function() {
 			this.setBusy(true);
 
@@ -1159,16 +1326,41 @@ sap.ui.define([
 			this._renderOverlay(false);
 		};
 
+		/**
+		 * Checks whether inner chart is bound
+		 *
+		 * @returns {boolean} true if bound, false if not
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype.isInnerChartBound = function() {
 			return this.getAggregation("_chart") ? this.getAggregation("_chart").isBound("data") : false;
 		};
 
+		/**
+		 * Callback for when fuilters changed
+		 * Activates the overlay on the MDC Chart
+		 *
+		 * @param oEvent filter changed event
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
+		 */
 		Chart.prototype._onFiltersChanged = function(oEvent) {
 			if (this.isInnerChartBound() && oEvent.getParameter("conditionsBased")) {
 				this._renderOverlay(true);
 			}
 		};
 
+		/**
+		 * Adds/Removes the overlay shown above the inner chart
+		 * @param {bool} bShow true to show overlay, false to hide
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
+		 */
 		Chart.prototype._renderOverlay = function(bShow) {
 
 			if (this.getAggregation("_chart")) {
@@ -1183,6 +1375,16 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Sets the text shown for when there is no data for the chart
+		 *
+		 * @param {string} sNoData text to show when no data is shown
+		 * @returns {*} reference to <code>this</code> for method chaining
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype.setNoDataText = function(sNoData) {
 			this.setProperty("noDataText", sNoData, true);
 			this._updateInnerChartNoDataText();
@@ -1194,6 +1396,13 @@ sap.ui.define([
 			this._updateInnerChartNoDataText();
 		};
 
+		/**
+		 * Updates the text shown when there is no data for the inner chart
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
 		Chart.prototype._updateInnerChartNoDataText = function() {
 
 			var oInnerChart = this.getAggregation("_chart");
@@ -1207,6 +1416,13 @@ sap.ui.define([
 			});
 		};
 
+		/**
+		 * Gets the text shown for when there is no data on the inner chart
+		 *
+		 * @experimental
+		 * @returns {string} text shown when data is missing
+		 * @ui5-restricted sap.ui.mdc
+		 */
 		Chart.prototype._getNoDataText = function() {
 			var sNoDataText = this.getNoDataText();
 			if (sNoDataText) {
@@ -1225,6 +1441,15 @@ sap.ui.define([
 			return oRb.getText("chart.NO_RESULTS");
 		};
 
+		/**
+		 * Adds criticality to an item
+		 *
+		 * @param oItem item to add criticality to
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
 		Chart.prototype._addCriticality = function (oItem) {
 			var oColoring = this.getProperty("_colorings");
 
@@ -1259,16 +1484,41 @@ sap.ui.define([
 			this.setProperty("_colorings", oColoring);
 		};
 
+		/**
+		 * Gets the collection model from the binding information
+		 * @returns {object} Object containing the binding information
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype.getCollectionModel = function () {
 			var oBindingInfo = this.getBindingInfo("data");
 			return oBindingInfo ? this.getModel(oBindingInfo.model) : null;
 		};
 
+		/**
+		 * Gets the collection path from the binding information
+		 * @returns {string} path to collection
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype.getCollectionPath = function () {
 			var oBindingInfo = this.getBindingInfo("data");
 			return oBindingInfo ? oBindingInfo.path : null;
 		};
 
+		/**
+		 * Returns a Promise that resolves after the chart has been initialized after being created and after changing the type.
+		 *
+		 * @returns {Promise} A Promise that resolves after the chart has been initialized
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype.done = function () {
 			return this.oChartPromise;
 		};
@@ -1277,7 +1527,10 @@ sap.ui.define([
 		 * Returns a Promise that resolves after the chart has been initialized after being created and after changing the type.
 		 *
 		 * @returns {Promise} A Promise that resolves after the chart has been initialized
-		 * @public
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
 		 */
 		Chart.prototype.initialized = function() {
 			return this.oChartPromise;
@@ -1301,6 +1554,13 @@ sap.ui.define([
 			return oChart.getSortConditions() ? oChart.getSortConditions().sorters : [];
 		};
 
+		/**
+		 * Gets whether filtering is enabled for p13n
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
+		 */
 		Chart.prototype.isFilteringEnabled = function() {
 			var aP13nMode = this.getP13nMode() || [];
 			return aP13nMode.indexOf("Filter");
@@ -1309,8 +1569,10 @@ sap.ui.define([
 		/**
 		 * Fetches the current state of the chart (as a JSON)
 		 *
-		 * @protected
+		 * @experimental
+		 * @private
 		 * @returns {Object} Current state of the chart
+		 * @ui5-restricted Fiori Elements
 		 */
 		Chart.prototype.getCurrentState = function() {
 			var oState = {};
