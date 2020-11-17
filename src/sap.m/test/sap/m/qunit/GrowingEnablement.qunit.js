@@ -565,9 +565,6 @@ sap.ui.define([
 				})
 			});
 
-			// enable dummy column rendering
-			this.oTable.bRenderDummyColumn = true;
-
 			this.oPage = new Page({
 				title: "Table Page",
 				content: this.oTable
@@ -584,8 +581,8 @@ sap.ui.define([
 	QUnit.test("Trigger button size should be adapted with dummy column is rendered", function(assert) {
 		var oTableDomRef = this.oTable.getDomRef(),
 			oTriggerDomRef = this.oTable.getDomRef("trigger"),
-			oDummyColDomRef = this.oTable.getDomRef("tblHeadDummyCol");
-		assert.equal(oTriggerDomRef.clientWidth, oTableDomRef.clientWidth - oDummyColDomRef.clientWidth, "Trigger button width correctly adapted");
+			oDummyColDomRef = this.oTable.getDomRef("tblHeadDummyCell");
+		assert.ok(oTriggerDomRef.clientWidth - oTableDomRef.clientWidth - oDummyColDomRef.clientWidth < 2, "Trigger button width correctly adapted");
 	});
 
 	QUnit.test("Trigger button size should take the full table width when table has popins and dummy column", function(assert) {

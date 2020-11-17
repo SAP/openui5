@@ -233,7 +233,7 @@ sap.ui.define([
 		}, this);
 	};
 
-	ColumnListItemRenderer.renderDummyCell = function(rm, oLI) {
+	ColumnListItemRenderer.renderDummyCell = function(rm, oTable) {
 		rm.openStart("td");
 		rm.class("sapMListTblDummyCell");
 		rm.attr("role", "presentation");
@@ -370,6 +370,10 @@ sap.ui.define([
 	 * @param {sap.m.ListItemBase} [oLI] List item
 	 */
 	ColumnListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
+		var oTable = oLI.isA("sap.m.Table") ? oLI : oLI.getTable();
+		if (oTable && !oTable.hasPopin() && oTable.shouldRenderDummyColumn()) {
+			rm.class("sapMTableRowCustomFocus");
+		}
 	};
 
 	ColumnListItemRenderer.renderContentLatter = function(rm, oLI) {
@@ -378,9 +382,9 @@ sap.ui.define([
 		if (oTable && oTable.shouldRenderDummyColumn()) {
 			if (!oTable.hasPopin()) {
 				ListItemBaseRenderer.renderContentLatter.apply(this, arguments);
-				this.renderDummyCell(rm, oLI);
+				ColumnListItemRenderer.renderDummyCell(rm, oTable);
 			} else {
-				this.renderDummyCell(rm, oLI);
+				ColumnListItemRenderer.renderDummyCell(rm, oTable);
 				ListItemBaseRenderer.renderContentLatter.apply(this, arguments);
 			}
 		} else {

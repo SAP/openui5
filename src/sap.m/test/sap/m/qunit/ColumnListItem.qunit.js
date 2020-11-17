@@ -246,8 +246,6 @@ sap.ui.define([
 				items : this.sut
 			});
 
-			// enable dummy column rendering
-			this.table.bRenderDummyColumn = true;
 
 			this.table.placeAt("qunit-fixture");
 			Core.applyChanges();

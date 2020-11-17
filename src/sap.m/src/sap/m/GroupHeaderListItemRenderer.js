@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRenderer"],
-	function(coreLibrary, Renderer, ListItemBaseRenderer) {
+sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRenderer", "./ColumnListItemRenderer"],
+	function(coreLibrary, Renderer, ListItemBaseRenderer, ColumnListItemRenderer) {
 	"use strict";
 
 
@@ -19,52 +19,17 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	GroupHeaderListItemRenderer.apiVersion = 2;
 
 	GroupHeaderListItemRenderer.renderType = function(rm, oLI) {
-		var oTable = oLI.getTable();
-
-		// for table render navigation column always
-		if (oTable) {
-			if (oTable.hasPopin()) {
-				this.renderDummyCell(rm, oTable);
-			}
-
-			this.renderCell(rm, "sapMListTblNavCol");
-		}
-
-		ListItemBaseRenderer.renderType.apply(this, arguments);
-
-		if (oTable) {
-			rm.close("td");
-		}
+		var fnBase = oLI.getTable() ? ColumnListItemRenderer : ListItemBaseRenderer;
+		fnBase.renderType.apply(this, arguments);
 	};
 
 	GroupHeaderListItemRenderer.renderNavigated = function(rm, oLI) {
-		var oTable = oLI.getTable();
-
-		if (oTable) {
-			this.renderCell(rm, "sapMListTblNavigatedCol");
-		}
-
-		ListItemBaseRenderer.renderNavigated.apply(this, arguments);
-
-		if (oTable) {
-			rm.close("td");
-		}
+		var fnBase = oLI.getTable() ? ColumnListItemRenderer : ListItemBaseRenderer;
+		fnBase.renderNavigated.apply(this, arguments);
 	};
 
-	GroupHeaderListItemRenderer.renderDummyCell = function(rm, oTable) {
-		if (oTable.shouldRenderDummyColumn()) {
-			this.renderCell(rm, "sapMListTblDummyCell");
-			rm.close("td");
-		}
-	};
-
-	GroupHeaderListItemRenderer.renderCell = function(rm, sClassName) {
-		rm.openStart("td");
-		rm.class(sClassName);
-		rm.attr("role", "presentation");
-		rm.attr("aria-hidden", "true");
-		rm.openEnd();
-	};
+	// for dummy cell rendering position inherit from ColumnListItemRenderer
+	GroupHeaderListItemRenderer.renderContentLatter = ColumnListItemRenderer.renderContentLatter;
 
 	// GroupHeaderListItem does not respect counter property of the LIB
 	GroupHeaderListItemRenderer.renderCounter = function(rm, oLI) {
@@ -110,9 +75,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 		if (oTable) {
 			rm.openStart("td");
 			rm.class("sapMGHLICell");
-
 			rm.attr("colspan", oTable.getColSpan());
-
 			rm.openEnd();
 		}
 
@@ -147,9 +110,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	};
 
 	GroupHeaderListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
-		if (!oLI.getTable()) {
-			ListItemBaseRenderer.addLegacyOutlineClass.apply(this, arguments);
-		}
+		var fnBase = oLI.getTable() ? ColumnListItemRenderer : ListItemBaseRenderer;
+		fnBase.addLegacyOutlineClass.apply(this, arguments);
 	};
 
 	GroupHeaderListItemRenderer.getAriaRole = function(oLI) {

@@ -311,7 +311,6 @@ sap.ui.define([
 		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation & navigated columns");
 		assert.strictEqual(sut.getColSpan(), 5, "navigation & navigated colums are ignored from the col span since they are always rendered by the table");
 
-		sut.bRenderDummyColumn = true;
 		sut.getColumns().forEach(function(oColumn) {
 			oColumn.setWidth("10rem");
 		});
@@ -2102,23 +2101,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Check if dummy column should be rendered, bRenderDummyColumn=false", function(assert) {
-		assert.notOk(this.sut.shouldRenderDummyColumn(), "bRenderDummyColumn=false, so no dummy column");
-
-		// apply static widths to all columns
-		this.sut.getColumns().forEach(function(oColumn) {
-			oColumn.setWidth("15rem");
-		});
+	QUnit.test("Check if dummy column should be rendered", function(assert) {
 		Core.applyChanges();
 
-		assert.notOk(this.sut.shouldRenderDummyColumn(), "bRenderDummyColumn=false, so no dummy column even though static widths are applied to the columns");
-	});
-
-	QUnit.test("Check if dummy column should be rendered, bRenderDummyColumn=true", function(assert) {
-		this.sut.bRenderDummyColumn = true;
-		Core.applyChanges();
-
-		assert.notOk(this.sut.shouldRenderDummyColumn(), "bRenderDummyColumn=true, but no dummy column since dynamic column width is available");
+		assert.notOk(this.sut.shouldRenderDummyColumn(), "no dummy column since dynamic column width is available");
 
 		// apply static widths to all columns
 		this.sut.getColumns().forEach(function(oColumn) {
@@ -2127,7 +2113,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.equal(this.sut.shouldRenderDummyColumn(), true, "No Dynamic column available");
-		assert.equal(this.sut.$("tblHeadDummyCol").length, 1, "DummyCol rendered");
+		assert.equal(this.sut.$("tblHeadDummyCell").length, 1, "DummyCol rendered");
 
 		// Dummy column should be removed when a column width is changed to a dynamic width
 		// remove the width
@@ -2135,25 +2121,24 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.equal(this.sut.shouldRenderDummyColumn(), false, "Dynamic column is available");
-		assert.equal(this.sut.$("tblHeadDummyCol").length, 0, "DummyCol rendered");
+		assert.equal(this.sut.$("tblHeadDummyCell").length, 0, "DummyCol rendered");
 
 		this.sut.getColumns()[0].setWidth("10%");
 		Core.applyChanges();
 
 		assert.equal(this.sut.shouldRenderDummyColumn(), true, "Dynamic column is available, since all the columns have a width defined");
-		assert.equal(this.sut.$("tblHeadDummyCol").length, 1, "DummyCol rendered");
+		assert.equal(this.sut.$("tblHeadDummyCell").length, 1, "DummyCol rendered");
 
 		// add static width back to the column
 		this.sut.getColumns()[0].setWidth();
 		Core.applyChanges();
 
 		assert.equal(this.sut.shouldRenderDummyColumn(), false, "Column found that does not have a width defined, hence dummy column not required");
-		assert.equal(this.sut.$("tblHeadDummyCol").length, 0, "DummyCol not rendered");
+		assert.equal(this.sut.$("tblHeadDummyCell").length, 0, "DummyCol not rendered");
 	});
 
 	QUnit.test("Dummy column should not be created with fixedLayout=false", function(assert) {
 		this.sut.setFixedLayout(false);
-		this.sut.bRenderDummyColumn = true;
 
 		// apply static widths to all columns
 		this.sut.getColumns().forEach(function(oColumn) {
@@ -2165,7 +2150,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Dummy column position when table does not have popins", function(assert) {
-		this.sut.bRenderDummyColumn = true;
 
 		// apply static widths to all columns
 		this.sut.getColumns().forEach(function(oColumn) {
@@ -2175,11 +2159,10 @@ sap.ui.define([
 
 		assert.notOk(this.sut.hasPopin(), "Table does not contain popins");
 		var aTHElements = this.sut.$("tblHeader").children();
-		assert.ok(aTHElements[aTHElements.length - 1].classList.contains("sapMListTblDummyCol"), "Dummy column rendered as the last TH element since table does not have popins");
+		assert.ok(aTHElements[aTHElements.length - 1].classList.contains("sapMListTblDummyCell"), "Dummy column rendered as the last TH element since table does not have popins");
 	});
 
 	QUnit.test("Dummy column position when table does has popins", function(assert) {
-		this.sut.bRenderDummyColumn = true;
 
 		// apply static widths to all columns
 		this.sut.getColumns().forEach(function(oColumn, iIndex) {
@@ -2197,7 +2180,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Dummy cell test for GroupHeaderListItem", function(assert) {
-		this.sut.bRenderDummyColumn = true;
 
 		var oSorter = new Sorter("name", false, true);
 		this.sut.getBinding("items").sort(oSorter);
@@ -2214,6 +2196,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 		assert.ok(oGHLI.getDomRef().classList.contains("sapMListTblRowHasDummyCell"), "GroupHeaderListItem contains DummyCell class added");
+		assert.ok(oGHLI.getDomRef().classList.contains("sapMTableRowCustomFocus"), "GroupHeaderListItem contains sapMTableRowCustomFocus class");
 	});
 
 	QUnit.module("popinChanged event", {
