@@ -1,6 +1,16 @@
 /*!
  * ${copyright}
  */
+
+/**
+ * This module is overall:
+ * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * but is partly inspired by "BooleanExpressionEvaluator":
+ * SPDX-FileCopyrightText: 2015 unnikked
+ * SPDX-License-Identifier: MIT
+ */
 sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/mdc/condition/Condition"],
 	function(jQuery, ManagedObject, Condition) {
 		"use strict";
@@ -16,6 +26,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/mdc/con
 		var BoolExprTool = function(sDefaultOperation) {};
 
 		BoolExprTool.booleanExprParser = function(parseText, oConditionModel) {
+			// inspired by https://unnikked.ga/how-to-build-a-boolean-expression-evaluator-518e9e068a65
 			// <expression>::= <term>{<or><term>}
 			// <term>::= <factor>{<and><factor>}
 			// <factor>::=<complexvalue>|<not><factor>|(<expression>)

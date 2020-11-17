@@ -470,6 +470,15 @@ License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/designtime/thirdparty/ajv.js
 
 
+Library: sap.ui.mdc:
+
+Component: BooleanExpressionEvaluator, version: master-18530acbf3
+Copyright: 2015 unnikked
+License: MIT
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+Contained in: src/sap.ui.mdc/test/sap/ui/mdc/sample/field/filterfieldwithoperators/BoolExprTool.js
+
+
 Outside of Libraries:
 
 Component: LESS, version: 1.6.3
