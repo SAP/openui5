@@ -350,6 +350,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getConstraints", function (assert) {
+		var oType = new DateTime(undefined, {});
+
+		// code under test
+		assert.deepEqual(oType.getConstraints(), {});
+
+		oType = new DateTime(undefined, {displayFormat : "Date"});
+
+		// code under test
+		assert.deepEqual(oType.getConstraints(), {displayFormat : "Date"});
+	});
+
+	//*********************************************************************************************
 	[
 		{oFormatOptions : {},  oExpected : {strictParsing : true}},
 		{oFormatOptions : undefined, oExpected : {strictParsing : true}},
@@ -452,6 +465,16 @@ sap.ui.define([
 			oType = new DateTimeOffset({}, oFixture.i);
 			assert.deepEqual(oType.oConstraints, oFixture.o);
 			assert.deepEqual(oType.bV4, !!oFixture.i.V4);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bV4) {
+		QUnit.test("getConstraints: {V4 : " + bV4 + "}", function (assert) {
+			var oType = new DateTimeOffset(undefined, {V4 : bV4});
+
+			// code under test
+			assert.deepEqual(oType.getConstraints(), bV4 ? {V4 : bV4} : {});
 		});
 	});
 

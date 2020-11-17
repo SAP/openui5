@@ -180,6 +180,7 @@ sap.ui.require([
 		// sap.ui.model.type.* - tests are contained in testsuite.types.qunit.js
 		// ***************************************************************************************
 		"sap/ui/core/qunit/types/CompositeType.qunit",
+		"sap/ui/core/qunit/types/SimpleType.qunit",
 		"sap/ui/core/qunit/types/Types.qunit",
 
 		// ***************************************************************************************
