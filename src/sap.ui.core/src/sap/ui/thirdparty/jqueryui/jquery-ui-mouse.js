@@ -14,7 +14,10 @@
 (function( $, undefined ) {
 
 var mouseHandled = false;
-$( document ).mouseup( function() {
+// ##### BEGIN: MODIFIED BY SAP
+// $( document ).mouseup( function() {
+$( document ).on("mouseup", function() {
+// ##### END: MODIFIED BY SAP
 	mouseHandled = false;
 });
 
@@ -29,10 +32,16 @@ $.widget("ui.mouse", {
 		var that = this;
 
 		this.element
-			.bind("mousedown."+this.widgetName, function(event) {
+			// ##### BEGIN: MODIFIED BY SAP
+			// .bind("mousedown."+this.widgetName, function(event) {
+			.on("mousedown."+this.widgetName, function(event) {
+			// ##### END: MODIFIED BY SAP
 				return that._mouseDown(event);
 			})
-			.bind("click."+this.widgetName, function(event) {
+			// ##### BEGIN: MODIFIED BY SAP
+			// .bind("click."+this.widgetName, function(event) {
+			.on("click."+this.widgetName, function(event) {
+			// ##### END: MODIFIED BY SAP
 				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
 					$.removeData(event.target, that.widgetName + ".preventClickEvent");
 					event.stopImmediatePropagation();
@@ -46,11 +55,18 @@ $.widget("ui.mouse", {
 	// TODO: make sure destroying one instance of mouse doesn't mess with
 	// other instances of mouse
 	_mouseDestroy: function() {
-		this.element.unbind("."+this.widgetName);
+		// ##### BEGIN: MODIFIED BY SAP
+		// this.element.unbind("."+this.widgetName);
+		this.element.off("."+this.widgetName);
+		// ##### END: MODIFIED BY SAP
 		if ( this._mouseMoveDelegate ) {
 			$(document)
-				.unbind("mousemove."+this.widgetName, this._mouseMoveDelegate)
-				.unbind("mouseup."+this.widgetName, this._mouseUpDelegate);
+				// ##### BEGIN: MODIFIED BY SAP
+				//.unbind("mousemove."+this.widgetName, this._mouseMoveDelegate)
+				//.unbind("mouseup."+this.widgetName, this._mouseUpDelegate);
+				.off("mousemove."+this.widgetName, this._mouseMoveDelegate)
+				.off("mouseup."+this.widgetName, this._mouseUpDelegate);
+				// ##### END: MODIFIED BY SAP
 		}
 	},
 
@@ -100,8 +116,12 @@ $.widget("ui.mouse", {
 			return that._mouseUp(event);
 		};
 		$(document)
-			.bind("mousemove."+this.widgetName, this._mouseMoveDelegate)
-			.bind("mouseup."+this.widgetName, this._mouseUpDelegate);
+			// ##### BEGIN: MODIFIED BY SAP
+			//.bind("mousemove."+this.widgetName, this._mouseMoveDelegate)
+			//.bind("mouseup."+this.widgetName, this._mouseUpDelegate);
+			.on("mousemove."+this.widgetName, this._mouseMoveDelegate)
+			.on("mouseup."+this.widgetName, this._mouseUpDelegate);
+			// ##### END: MODIFIED BY SAP
 
 		event.preventDefault();
 
@@ -131,8 +151,12 @@ $.widget("ui.mouse", {
 
 	_mouseUp: function(event) {
 		$(document)
-			.unbind("mousemove."+this.widgetName, this._mouseMoveDelegate)
-			.unbind("mouseup."+this.widgetName, this._mouseUpDelegate);
+			// ##### BEGIN: MODIFIED BY SAP
+			//.unbind("mousemove."+this.widgetName, this._mouseMoveDelegate)
+			//.unbind("mouseup."+this.widgetName, this._mouseUpDelegate);
+			.off("mousemove."+this.widgetName, this._mouseMoveDelegate)
+			.off("mouseup."+this.widgetName, this._mouseUpDelegate);
+			// ##### END: MODIFIED BY SAP
 
 		if (this._mouseStarted) {
 			this._mouseStarted = false;

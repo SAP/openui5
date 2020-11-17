@@ -117,7 +117,10 @@ $.widget("ui.resizable", $.ui.mouse, {
 
 			for(i = 0; i < n.length; i++) {
 
-				handle = $.trim(n[i]);
+				// ##### BEGIN: MODIFIED BY SAP
+				// handle = $.trim(n[i]);
+				handle = n[i].trim();
+				// ##### END: MODIFIED BY SAP
 				hname = "ui-resizable-"+handle;
 				axis = $("<div class='ui-resizable-handle " + hname + "'></div>");
 
@@ -227,7 +230,10 @@ $.widget("ui.resizable", $.ui.mouse, {
 		var wrapper,
 			_destroy = function(exp) {
 				$(exp).removeClass("ui-resizable ui-resizable-disabled ui-resizable-resizing")
-					.removeData("resizable").removeData("ui-resizable").unbind(".resizable").find(".ui-resizable-handle").remove();
+					// ##### BEGIN: MODIFIED BY SAP
+					// .removeData("resizable").removeData("ui-resizable").unbind(".resizable").find(".ui-resizable-handle").remove();
+					.removeData("resizable").removeData("ui-resizable").off(".resizable").find(".ui-resizable-handle").remove();
+					// ##### END: MODIFIED BY SAP
 			};
 
 		//TODO: Unwrap at same DOM position
