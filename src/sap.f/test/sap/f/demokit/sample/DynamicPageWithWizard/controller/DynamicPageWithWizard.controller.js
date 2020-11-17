@@ -17,14 +17,6 @@ sap.ui.define([
 			this._oNavContainer = this.byId("navContainer");
 			this._oDynamicPage = this.getPage();
 
-			Fragment.load({
-				name: "sap.f.sample.DynamicPageWithWizard.view.ReviewPage",
-				controller: this
-			}).then(function (oWizardReviewPage) {
-				this._oWizardReviewPage = oWizardReviewPage;
-				this._oNavContainer.addPage(this._oWizardReviewPage);
-			}.bind(this));
-
 			this.model = new JSONModel();
 			this.model.attachRequestCompleted(null, function () {
 				this.model.getData().ProductCollection.splice(5, this.model.getData().ProductCollection.length);
@@ -43,11 +35,6 @@ sap.ui.define([
 		},
 		getPage: function () {
 			return this.byId("dynamicPage");
-		},
-		onExit: function () {
-			if (this._oWizardReviewPage) {
-				this._oWizardReviewPage.destroy();
-			}
 		},
 		calcTotal: function () {
 			var data = this.model.getData().ProductCollection;
@@ -184,7 +171,7 @@ sap.ui.define([
 		},
 
 		completedHandler: function () {
-			this._oNavContainer.to(this._oWizardReviewPage);
+			this._oNavContainer.to(this.byId("wizardBranchingReviewPage"));
 		},
 
 		_handleMessageBoxOpen: function (sMessage, sMessageBoxType) {

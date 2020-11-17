@@ -4,6 +4,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout">
 	<Popover
+		id="groupPopover"
 		showHeader="false"
 		contentWidth="450px"
 		contentHeight="600px"

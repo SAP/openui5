@@ -22,7 +22,6 @@
 				"files": [
 					"controller/DynamicPageWithWizard.controller.js",
 					"view/DynamicPageWithWizard.view.xml",
-					"view/ReviewPage.fragment.xml",
 					"manifest.json"
 				]
 			}
