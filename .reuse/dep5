@@ -357,6 +357,14 @@ License: MIT
 Comment: these files belong to: ajv
 
 
+# Library: sap.ui.mdc:
+
+Files: src/sap.ui.mdc/test/sap/ui/mdc/sample/field/filterfieldwithoperators/BoolExprTool.js
+Copyright: 2015 unnikked
+License: MIT
+Comment: these files belong to: BooleanExpressionEvaluator
+
+
 # Outside of Libraries:
 
 Files: src/testsuite-utils/src/main/resources/META-INF/less/less.js
