@@ -180,6 +180,12 @@ sap.ui.define(function () {
 					only: ['sap/ui/dt/plugin/DragDrop']
 				}
 			},
+			"plugin/ControlDragDrop": {
+				group: "Plugin",
+				coverage: {
+					only: ['sap/ui/dt/plugin/ControlDragDrop']
+				}
+			},
 			"plugin/ElementMover": {
 				group: "Plugin",
 				coverage: {

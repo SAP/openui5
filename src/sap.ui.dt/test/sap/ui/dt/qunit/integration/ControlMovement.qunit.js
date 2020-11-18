@@ -81,8 +81,10 @@ function (
 					this.oNotMovableButton
 				]
 			});
+			this.oEmptyLayout = new VerticalLayout();
+			this.oParentLayout = new VerticalLayout({content : [this.oLayout, this.oEmptyLayout]});
 
-			this.oLayout.placeAt("qunit-fixture");
+			this.oParentLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oControlDragDrop = new ControlDragDrop({
@@ -104,7 +106,7 @@ function (
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
-					this.oLayout
+					this.oParentLayout
 				],
 				plugins: [
 					this.oControlDragDrop, this.oCutPaste
@@ -116,6 +118,8 @@ function (
 
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
 				this.oLayoutAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
+				this.oEmptyLayoutOverlay = OverlayRegistry.getOverlay(this.oEmptyLayout);
+				this.oEmptyLayoutAggregationOverlay = this.oEmptyLayoutOverlay.getAggregationOverlay("content");
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oNotMovableButtonOverlay = OverlayRegistry.getOverlay(this.oNotMovableButton);
 				this.oObjectAttributeOverlay = OverlayRegistry.getOverlay(this.oObjectAttribute);
@@ -127,7 +131,7 @@ function (
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
-			this.oLayout.destroy();
+			this.oParentLayout.destroy();
 			this.checkMovableDragStub.restore();
 			this.checkMovableCutStub.restore();
 		}
@@ -253,57 +257,57 @@ function (
 		QUnit.test("while dragging the object attribute when dragenter is triggered on the layout content aggregation overlay,", function(assert) {
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
 
-			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oLayoutAggregationOverlay));
+			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oEmptyLayoutAggregationOverlay));
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
-			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "object header is now at 2. position");
-			assert.equal(this.oLayout.getContent()[2].getId(), this.oButton.getId(), "button is now at 3. position");
-			assert.equal(this.oLayout.getContent()[3].getId(), this.oNotMovableButton.getId(), "not movable button is now at 4. position");
+			assert.equal(this.oEmptyLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position in the empty Layout");
+			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is now at 1. position");
+			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is now at 2. position");
+			assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is now at 3. position");
 		});
 
 		QUnit.test("while dragging the object attribute when dragenter is triggered on the layout content aggregation overlay and InsertAfterElement is TRUE,", function(assert) {
 			this.oControlDragDrop.setInsertAfterElement(true);
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
 
-			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oLayoutAggregationOverlay));
+			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oEmptyLayoutAggregationOverlay));
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
 			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is now at 1. position");
 			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is now at 2. position");
 			assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is now at 3. position");
-			assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 4. position");
+			assert.equal(this.oEmptyLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position into the empty layout");
 		});
 
-		QUnit.test("while dragging the object attribute on the layout content aggregation overlay  when dragend is triggered,", function(assert) {
+		QUnit.test("while dragging the object attribute on the layout content aggregation overlay when dragend is triggered,", function(assert) {
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
 
-			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oLayoutAggregationOverlay));
+			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oEmptyLayoutAggregationOverlay));
 
-			this.oControlDragDrop._onDragEnd(stubEventFor(this.oLayoutAggregationOverlay));
+			this.oControlDragDrop._onDragEnd(stubEventFor(this.oEmptyLayoutAggregationOverlay));
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
-			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "object header is now at 2. position");
-			assert.equal(this.oLayout.getContent()[2].getId(), this.oButton.getId(), "button is now at 3. position");
-			assert.equal(this.oLayout.getContent()[3].getId(), this.oNotMovableButton.getId(), "not movable button is now at 4. position");
+			assert.equal(this.oEmptyLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position into the empty layout");
+			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is now at 1. position");
+			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is now at 2. position");
+			assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is now at 3. position");
 
 			assert.ok(!this.oControlDragDrop.getElementMover()._getSource(), "source information should be deleted after move has finished");
 		});
 
-		QUnit.test("while dragging the object attribute on the layout content aggregation overlay  when dragend is triggered and InsertAfterElement is TRUE,", function(assert) {
+		QUnit.test("while dragging the object attribute on the layout content aggregation overlay when dragend is triggered and InsertAfterElement is TRUE,", function(assert) {
 			this.oControlDragDrop.setInsertAfterElement(true);
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
 
-			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oLayoutAggregationOverlay));
+			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oEmptyLayoutAggregationOverlay));
 
-			this.oControlDragDrop._onDragEnd(stubEventFor(this.oLayoutAggregationOverlay));
+			this.oControlDragDrop._onDragEnd(stubEventFor(this.oEmptyLayoutAggregationOverlay));
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
 			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is now at 1. position");
 			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is now at 2. position");
 			assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is now at 3. position");
-			assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 4. position");
+			assert.equal(this.oEmptyLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position into the empty layout");
 
 			assert.ok(!this.oControlDragDrop.getElementMover()._getSource(), "source information should be deleted after move has finished");
 		});
@@ -476,9 +480,9 @@ function (
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oPage1Overlay));
 			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oSplitContainerMasterPagesAggregationOverlay));
 
-			assert.equal(this.oSplitContainer.getMasterPages().length, 2, "then the page is again in the masterPages aggregation");
-			assert.strictEqual(this.oSplitContainer.getMasterPages()[0], this.oPage1, "and is the first control on the right position");
-			assert.strictEqual(this.oSplitContainer.getMasterPages()[1], this.oPage2, "and is the 2. control on the right position");
+			assert.equal(this.oSplitContainer.getMasterPages().length, 1, "then just one page is in the masterPages aggregation");
+			assert.strictEqual(this.oSplitContainer.getMasterPages()[0], this.oPage2, "and the second control is on the first position into the master pages");
+			assert.strictEqual(this.oSplitContainer.getDetailPages()[0], this.oPage1, "and the first control is on the first position into the detail pages");
 		});
 
 		QUnit.test("when the cut is triggered on the page overlay, that fit into both aggregations", function(assert) {
