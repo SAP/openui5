@@ -2196,7 +2196,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 		assert.ok(oGHLI.getDomRef().classList.contains("sapMListTblRowHasDummyCell"), "GroupHeaderListItem contains DummyCell class added");
-		assert.ok(oGHLI.getDomRef().classList.contains("sapMTableRowCustomFocus"), "GroupHeaderListItem contains sapMTableRowCustomFocus class");
+		assert[Device.browser.msie ? "notOk" : "ok"](oGHLI.getDomRef().classList.contains("sapMTableRowCustomFocus"), "GroupHeaderListItem contains sapMTableRowCustomFocus class");
 	});
 
 	QUnit.module("popinChanged event", {

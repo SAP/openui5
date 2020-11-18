@@ -370,6 +370,10 @@ sap.ui.define([
 	 * @param {sap.m.ListItemBase} [oLI] List item
 	 */
 	ColumnListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
+		if (Device.browser.msie) {
+			return;
+		}
+
 		var oTable = oLI.isA("sap.m.Table") ? oLI : oLI.getTable();
 		if (oTable && !oTable.hasPopin() && oTable.shouldRenderDummyColumn()) {
 			rm.class("sapMTableRowCustomFocus");
