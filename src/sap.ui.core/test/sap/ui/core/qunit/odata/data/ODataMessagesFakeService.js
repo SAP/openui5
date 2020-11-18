@@ -198,12 +198,6 @@ var mPredefinedServiceResponses = {
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
 					break;
 
-				case "fakeservice://testdata/odata/technical-errors/Error(900)":
-					iStatus = 900;
-					sAnswer = bJson ? mPredefinedServiceResponses.technicalError900Json : mPredefinedServiceResponses.technicalError900Xml;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
-					break;
-
 				case "fakeservice://testdata/odata/technical-errors/$metadata":
 					iStatus = 200;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
@@ -3302,7 +3296,7 @@ mPredefinedServiceResponses.technicalError400Xml = '\
 </error>';
 
 
-mPredefinedServiceResponses.technicalError500Xml = mPredefinedServiceResponses.technicalError900Xml = mPredefinedServiceResponses.technicalError400Xml;
+mPredefinedServiceResponses.technicalError500Xml = mPredefinedServiceResponses.technicalError400Xml;
 
 mPredefinedServiceResponses.technicalError400Json = '\
 {\

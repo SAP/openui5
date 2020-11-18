@@ -1732,6 +1732,7 @@ sap.ui.define([
 [false, true].forEach(function (bStatusCodeAsString) {
 	QUnit.test("parse: unsupported status code, " + bStatusCodeAsString, function (assert) {
 		var oODataMessageParser = {
+				_addGenericError : function () {},
 				_parseBody : function () {},
 				_parseHeader : function () {},
 				_propagateMessages : function () {}
@@ -1746,10 +1747,14 @@ sap.ui.define([
 
 		this.mock(oODataMessageParser).expects("_parseBody").never();
 		this.mock(oODataMessageParser).expects("_parseHeader").never();
-		this.oLogMock.expects("warning")
-			.withExactArgs("No rule to parse OData response with status 301 for messages");
+		this.mock(oODataMessageParser).expects("_addGenericError")
+			.withExactArgs([], mRequestInfo)
+			.callsFake(function (aMessages, mRequestInfo) {
+				aMessages.push("~genericMessage");
+			});
 		this.mock(oODataMessageParser).expects("_propagateMessages")
-			.withExactArgs([], mRequestInfo, "~mGetEntities", "~mChangeEntities", false);
+			.withExactArgs(["~genericMessage"], mRequestInfo, "~mGetEntities", "~mChangeEntities",
+				false);
 
 		// code under test
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,

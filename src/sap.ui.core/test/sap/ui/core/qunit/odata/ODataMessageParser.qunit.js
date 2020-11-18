@@ -239,14 +239,14 @@ sap.ui.define([
 	var fnTestTechnicalErrors = function(bJson, assert) {
 		var done = assert.async();
 
-		assert.expect(20);
+		assert.expect(19);
 
 		var oModel = new ODataModel("fakeservice://testdata/odata/technical-errors/", {
 			useBatch: false,
 			json: bJson
 		});
 
-		var iStartCounter = 4;
+		var iStartCounter = 3;
 		var fnStart = function() {
 			if (!--iStartCounter) {
 				oModel.destroy();
@@ -330,19 +330,6 @@ sap.ui.define([
 				},
 				error: fnCheckAddedMessages2
 			});
-
-			oModel.read("/Error(900)", {
-				success: function() {
-					assert.ok(false, "This should return an error from the server and thus fail");
-				},
-				error: function() {
-					var aMessages = oMessageModel.getProperty("/");
-					assert.equal(aMessages.length, iExpectedMessages, "There should be no extra error messages for status 900");
-
-					fnStart();
-				}
-			});
-
 		});
 	};
 
@@ -352,14 +339,14 @@ sap.ui.define([
 	var fnTestLongtextUrl = function(bJson, assert) {
 		var done = assert.async();
 
-		assert.expect(15);
+		assert.expect(14);
 
 		var oModel = new ODataModel("fakeservice://testdata/odata/technical-errors/", {
 			useBatch: false,
 			json: bJson
 		});
 
-		var iStartCounter = 4;
+		var iStartCounter = 3;
 		var fnStart = function() {
 			if (!--iStartCounter) {
 				oModel.destroy();
@@ -423,19 +410,6 @@ sap.ui.define([
 				},
 				error: fnCheckAddedMessages2
 			});
-
-			oModel.read("/Error(900)", {
-				success: function() {
-					assert.ok(false, "This should return an error from the server and thus fail");
-				},
-				error: function() {
-					var aMessages = oMessageModel.getProperty("/");
-					assert.equal(aMessages.length, iExpectedMessages, "There should be no extra error messages for status 900");
-
-					fnStart();
-				}
-			});
-
 		});
 	};
 

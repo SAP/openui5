@@ -841,7 +841,9 @@ sap.ui.define([
 						oResponse = {
 							statusCode : 204
 						};
-					} else if (oExpectedResponse && oExpectedResponse.statusCode >= 400) {
+					} else if (oExpectedResponse
+							&& (oExpectedResponse.statusCode < 200
+								|| oExpectedResponse.statusCode >= 300)) {
 						oResponse = {
 							response : oExpectedResponse
 						};
@@ -908,7 +910,7 @@ sap.ui.define([
 				}
 
 				return Promise.resolve(oResponse).then(function (oResponseBody) {
-					if (oResponseBody.statusCode < 300) {
+					if (oResponseBody.statusCode >= 200 && oResponseBody.statusCode < 300) {
 						return fnSuccess({}, oResponseBody);
 					} else {
 						return fnError(oResponseBody);
@@ -1538,6 +1540,72 @@ sap.ui.define([
 		this.oLogMock.expects("error")
 			.withExactArgs("HTTP request failed (400 FAILED): " + oErrorResponse.body, undefined,
 				sODataModelClassName);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: If network connection is lost, browsers may send status code 0; in that case a
+	// generic, technical message is added to the message model.
+	QUnit.test("$batch error handling: no network connection - generic error", function (assert) {
+		var oErrorResponse = {
+				body : "",
+				crashBatch : true,
+				headers : [],
+				statusCode : 0,
+				statusText : ""
+			},
+			oEventHandlers = {
+				batchCompleted : function () {},
+				batchFailed : function () {},
+				batchSent : function () {},
+				requestCompleted : function () {},
+				requestFailed : function () {},
+				requestSent : function () {}
+			},
+			oModel = createSalesOrdersModel({useBatch : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}" />\
+</FlexBox>\
+<Table id="table" items="{/SalesOrderSet}">\
+	<Text text="{SalesOrderID}" />\
+</Table>';
+
+		this.mock(sap.ui.getCore().getLibraryResourceBundle()).expects("getText")
+			.atLeast(1)
+			.callsFake(function (sKey) {
+				return sKey;
+			});
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", oErrorResponse)
+			.expectRequest("SalesOrderSet?$skip=0&$top=100" /* response not relevant */)
+			.expectMessages([{
+				code : "",
+				description : "",
+				message : "CommunicationError",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}]);
+
+		// don't care about passed arguments
+		this.mock(oEventHandlers).expects("batchCompleted");
+		this.mock(oEventHandlers).expects("batchFailed");
+		this.mock(oEventHandlers).expects("batchSent");
+		this.mock(oEventHandlers).expects("requestCompleted").twice();
+		this.mock(oEventHandlers).expects("requestFailed").twice();
+		this.mock(oEventHandlers).expects("requestSent").twice();
+		oModel.attachBatchRequestCompleted(oEventHandlers.batchCompleted);
+		oModel.attachBatchRequestFailed(oEventHandlers.batchFailed);
+		oModel.attachBatchRequestSent(oEventHandlers.batchSent);
+		oModel.attachRequestCompleted(oEventHandlers.requestCompleted);
+		oModel.attachRequestFailed(oEventHandlers.requestFailed);
+		oModel.attachRequestSent(oEventHandlers.requestSent);
+		this.oLogMock.expects("error")
+			.withExactArgs("HTTP request failed (0 ): ", undefined, sODataModelClassName);
 
 		// code under test
 		return this.createView(assert, sView, oModel);
