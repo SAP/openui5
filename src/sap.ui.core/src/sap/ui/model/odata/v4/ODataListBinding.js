@@ -669,7 +669,7 @@ sap.ui.define([
 	 * <code>oInitialData</code> and modified via property bindings. Properties that are not part of
 	 * the initial data show the default value from the service metadata on the UI, but they are not
 	 * sent to the server. If there is no default value, <code>null</code> is used instead, even if
-	 * the property is not <code>Nullable</code>.
+	 * the property is not <code>Nullable</code>. The initial data may contain instance annotations.
 	 *
 	 * Note: If a server requires a property in the request, you must supply this property in the
 	 * initial data, for example if the server requires a unit for an amount. This also applies if

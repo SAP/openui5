@@ -497,7 +497,8 @@ sap.ui.define([
 						return invalidSegment(sSegment);
 					}
 					if (oProperty.$Type === "Edm.Stream") {
-						sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
+						sReadLink = oValue[sSegment + "@odata.mediaReadLink"]
+							|| oValue[sSegment + "@mediaReadLink"];
 						sServiceUrl = that.oRequestor.getServiceUrl();
 						return sReadLink
 							|| _Helper.buildPath(sServiceUrl + that.sResourcePath, sPropertyPath);
@@ -1849,7 +1850,8 @@ sap.ui.define([
 					vPropertyValue = oInstance[sProperty],
 					sPropertyPath = _Helper.buildPath(sInstancePath, sProperty);
 
-				if (sProperty.endsWith("@odata.mediaReadLink")) {
+				if (sProperty.endsWith("@odata.mediaReadLink")
+						|| sProperty.endsWith("@mediaReadLink")) {
 					oInstance[sProperty] = _Helper.makeAbsolute(vPropertyValue, sContextUrl);
 				}
 				if (sProperty.includes("@")) { // ignore other annotations
