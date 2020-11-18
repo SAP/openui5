@@ -603,7 +603,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 	 * @returns {jQuery|null} The jQuery ref of the control which is on this position
 	 */
 	GridDragOver.prototype._findItemFromPoint = function(iPageX, iPageY) {
-		var oOverElement = document.elementFromPoint(iPageX, iPageY),
+		var oOverElement = document.elementFromPoint(iPageX - window.pageXOffset, iPageY - window.pageYOffset),
 			$closestItem = jQuery(oOverElement).closest(".sapUiDnDGridControl, .sapUiDnDGridIndicator");
 
 		if ($closestItem.hasClass("sapUiDnDGridIndicator")) {
@@ -687,7 +687,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 	 * @param {jQuery.Event} oEvent The jQuery dragleave event.
 	 */
 	GridDragOver.prototype._onDragLeave = function(oEvent) {
-		var oElement = document.elementFromPoint(oEvent.pageX, oEvent.pageY),
+		var oElement = document.elementFromPoint(oEvent.pageX - window.pageXOffset, oEvent.pageY - window.pageYOffset),
 			bIsElementWithinDropContainer = this._oDropContainer.getDomRef().contains(oElement);
 
 		// Check if element from point is inside the drop container, because dragleave
