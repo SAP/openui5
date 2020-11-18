@@ -6,6 +6,7 @@
 sap.ui.define(function () {
 	"use strict";
 
+	// noinspection UnnecessaryLocalVariableJS
 	/**
 	 * Modes to control the use of batch requests for a group ID.
 	 *
@@ -13,7 +14,7 @@ sap.ui.define(function () {
 	 * @public
 	 * @alias sap.ui.model.odata.v4.SubmitMode
 	 */
-	var SubmitMode = {
+	var SubmitMode = { // keep the var for JSDoc generation
 		/**
 		 * Requests associated with the group ID are sent in a batch request via
 		 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.

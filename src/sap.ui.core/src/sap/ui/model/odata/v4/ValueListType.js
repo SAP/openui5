@@ -6,6 +6,7 @@
 sap.ui.define(function () {
 	"use strict";
 
+	// noinspection UnnecessaryLocalVariableJS
 	/**
 	 * Specifies the value list type of a property.
 	 *

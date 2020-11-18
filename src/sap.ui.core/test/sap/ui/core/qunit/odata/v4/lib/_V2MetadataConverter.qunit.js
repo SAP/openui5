@@ -2271,7 +2271,7 @@ sap.ui.define([
 	QUnit.test("collectSapAnnotations/warnUnusedSapAnnotations", function (assert) {
 		var oLogMock = this.oLogMock;
 
-		function warn(rElement, sName, sValue) {
+		function warn(rElement, sName) {
 			oLogMock.expects("warning").withExactArgs("Unsupported annotation 'sap:" + sName + "'",
 				sinon.match(rElement), sClassName);
 		}

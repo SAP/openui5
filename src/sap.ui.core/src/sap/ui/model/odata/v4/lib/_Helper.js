@@ -9,9 +9,8 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
-	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/URI"
-], function (Log, deepEqual, isEmptyObject, merge, uid, SyncPromise, URI) {
+], function (Log, deepEqual, isEmptyObject, merge, uid, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
@@ -683,7 +682,7 @@ sap.ui.define([
 			if (!mKey2Value) {
 				return undefined;
 			}
-			aKeyProperties = Object.keys(mKey2Value).map(function (sAlias, iIndex, aKeys) {
+			aKeyProperties = Object.keys(mKey2Value).map(function (sAlias, _iIndex, aKeys) {
 				var vValue = encodeURIComponent(mKey2Value[sAlias]);
 
 				return bKeepSingleProperty || aKeys.length > 1
@@ -984,7 +983,7 @@ sap.ui.define([
 			function filterStructural(bSkipFirstSegment, sMetaPath) {
 				var aSegments = sMetaPath.split("/");
 
-				return aSegments.every(function (sSegment, i) {
+				return aSegments.every(function (_sSegment, i) {
 					return i === 0 && bSkipFirstSegment
 						|| fnFetchMetadata(
 								sRootMetaPath + "/" + aSegments.slice(0, i + 1).join("/")

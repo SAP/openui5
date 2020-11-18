@@ -10,15 +10,11 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
-	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/ODataContextBinding",
-	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
@@ -27,9 +23,8 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/library"
 ], function (Log, SyncPromise, Element, Message, Binding, BindingMode, BaseContext, Model,
-		ODataUtils, OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding,
-		ODataMetaModel, ODataModel, ODataPropertyBinding, SubmitMode, _Helper, _MetadataRequestor,
-		_Parser, _Requestor, TestUtils, library) {
+		OperationMode, TypeString, Context, ODataMetaModel, ODataModel, SubmitMode, _Helper,
+		_MetadataRequestor, _Parser, _Requestor, TestUtils, library) {
 	/*global QUnit, setTimeout, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";

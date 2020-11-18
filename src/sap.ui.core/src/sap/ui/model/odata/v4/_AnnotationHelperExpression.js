@@ -195,7 +195,7 @@ sap.ui.define([
 
 			// needed so that we can safely call Array#map
 			Basics.expectType(oPathValue, "array");
-			aPromises = oPathValue.value.map(function (oUnused, i) {
+			aPromises = oPathValue.value.map(function (_oValue, i) {
 				return Expression.expression(
 					Basics.descend(oPathValue, i, true/*"as expression"*/),
 					/*bInCollection*/true);
@@ -226,7 +226,7 @@ sap.ui.define([
 
 			// needed so that we can safely call Array#map
 			Basics.expectType(oPathValue, "array");
-			aPromises = oPathValue.value.map(function (oUnused, i) {
+			aPromises = oPathValue.value.map(function (_oValue, i) {
 				// an embedded concat must use expression binding
 				return Expression.parameter(oPathValue, i);
 			});

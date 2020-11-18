@@ -140,8 +140,8 @@ sap.ui.define([
 		},
 		sApply : "concat(aggregate(Name as Alias,GrossAmount,Currency,NetAmount)"
 			+ ",groupby((BillToParty),aggregate(Name as Alias,GrossAmount,Currency,NetAmount)))",
-		sFollowUpApply
-			: "groupby((BillToParty),aggregate(Name as Alias,GrossAmount,Currency,NetAmount))"
+		sFollowUpApply :
+			"groupby((BillToParty),aggregate(Name as Alias,GrossAmount,Currency,NetAmount))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -598,7 +598,7 @@ sap.ui.define([
 			groupLevels : {}
 		},
 		sError : "Not a array value for 'groupLevels'"
-	}].forEach(function (oFixture, i) {
+	}].forEach(function (oFixture) {
 		QUnit.test("buildApply: " + oFixture.sError, function (assert) {
 			assert.throws(function () {
 				// code under test

@@ -192,7 +192,7 @@ sap.ui.define([
 
 		mQueryOptions = this.convertQueryOptions(sMetaPath, mQueryOptions, false, true);
 		sResourcePath = sResourcePath.replace(rSystemQueryOptionWithPlaceholder,
-			function (unused, sOption) {
+			function (_sString, sOption) {
 				var sValue = mQueryOptions[sOption];
 
 				delete mQueryOptions[sOption];
@@ -694,7 +694,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData response payload
-	 * @param {string} [sMetaPath]
+	 * @param {string} [_sMetaPath]
 	 *   The meta path corresponding to the resource path; needed in case V2 response does not
 	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
 	 *   Request"
@@ -703,7 +703,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
+	_Requestor.prototype.doConvertResponse = function (oResponsePayload, _sMetaPath) {
 		return oResponsePayload;
 	};
 
@@ -712,7 +712,7 @@ sap.ui.define([
 	 * other parameters and placeholders are simply passed through.
 	 * May be overwritten for other OData service versions.
 	 *
-	 * @param {string} sMetaPath
+	 * @param {string} _sMetaPath
 	 *   The meta path corresponding to the resource path
 	 * @param {object} mQueryOptions The query options
 	 * @param {function (string,any)} fnResultHandler
@@ -724,7 +724,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.doConvertSystemQueryOptions = function (sMetaPath, mQueryOptions,
+	_Requestor.prototype.doConvertSystemQueryOptions = function (_sMetaPath, mQueryOptions,
 			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
 		var that = this;
 
@@ -1251,7 +1251,7 @@ sap.ui.define([
 				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
 					method : "HEAD",
 					headers : Object.assign({}, that.mHeaders, {"X-CSRF-Token" : "Fetch"})
-				}).then(function (oData, sTextStatus, jqXHR) {
+				}).then(function (_oData, _sTextStatus, jqXHR) {
 					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
 
 					if (sCsrfToken) {
@@ -1607,7 +1607,7 @@ sap.ui.define([
 						that.mHeaders,
 						_Helper.resolveIfMatchHeader(mHeaders)),
 					method : sMethod
-				}).then(function (/*{object|string}*/vResponse, sTextStatus, jqXHR) {
+				}).then(function (/*{object|string}*/vResponse, _sTextStatus, jqXHR) {
 					var sETag = jqXHR.getResponseHeader("ETag"),
 						sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
 

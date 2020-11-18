@@ -1883,7 +1883,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						headers : {
 							"X-CSRF-Token" : "Fetch"
 						}
-					}).then(function (oData, sTextStatus, jqXHR) {
+					}).then(function (_oData, _sTextStatus, jqXHR) {
 						var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token"),
 							oBatchHeaders = {
 								"Content-Type" : oBatchRequestContent.headers["Content-Type"],
@@ -1899,7 +1899,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 							method : "POST",
 							headers : oBatchHeaders,
 							data : oBatchRequestContent.body
-						}).then(function (oData, sTextStatus, jqXHR) {
+						}).then(function (oData, _sTextStatus, jqXHR) {
 							var aResponses;
 
 							assert.strictEqual(jqXHR.status, 200);
@@ -1911,7 +1911,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 							TestUtils.deepContains(aResponses, oFixture.expectedResponses);
 							done();
 						});
-					}, function (jqXHR, sTextStatus, sErrorMessage) {
+					}, function (_jqXHR, _sTextStatus, sErrorMessage) {
 						assert.ok(false, sErrorMessage);
 						done();
 					});
@@ -1938,7 +1938,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					headers : {
 						"X-CSRF-Token" : "Fetch"
 					}
-				}).then(function (oData, sTextStatus, jqXHR) {
+				}).then(function (_oData, _sTextStatus, jqXHR) {
 					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
 					jQuery.ajax(sResolvedServiceUrl + '$batch', {
 						method : "POST",
@@ -1948,7 +1948,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 							"X-CSRF-Token" : sCsrfToken
 						},
 						data : oBatchRequestContent.body
-					}).then(function (oData, sTextStatus, jqXHR) {
+					}).then(function (oData, _sTextStatus, jqXHR) {
 						var aResponses, oResponse;
 
 						assert.strictEqual(jqXHR.status, 200);
@@ -1962,7 +1962,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						assert.ok(oResponse.headers["content-language"]);
 						done();
 					});
-				}, function (jqXHR, sTextStatus, sErrorMessage) {
+				}, function (_jqXHR, _sTextStatus, sErrorMessage) {
 					assert.ok(false, sErrorMessage);
 					done();
 				});

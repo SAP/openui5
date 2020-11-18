@@ -365,7 +365,7 @@ sap.ui.define([
 			sResourcePath = sResourcePath.slice(0, iIndex);
 		}
 		aSegments = sResourcePath.split("/");
-		return aSegments.map(function (sSegment, i) {
+		return aSegments.map(function (sSegment) {
 			var aMatches = rSegmentWithPredicate.exec(sSegment);
 
 			iSubPathLength += sSegment.length + 1;
@@ -521,7 +521,7 @@ sap.ui.define([
 	 *   search by header name
 	 * @param {string} sResourcePath
 	 *   The resource path of the request
-	 * @param {boolean} [bVersionOptional=false]
+	 * @param {boolean} [_bVersionOptional=false]
 	 *   Indicates whether the OData service version is optional, which is the case for all OData V2
 	 *   responses. So this parameter is ignored.
 	 * @throws {Error} If the "DataServiceVersion" header is neither "1.0" nor "2.0" nor not set at
@@ -531,7 +531,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.odata.v4.lib._Requestor#doCheckVersionHeader
 	_V2Requestor.prototype.doCheckVersionHeader = function (fnGetHeader, sResourcePath,
-			bVersionOptional) {
+			_bVersionOptional) {
 		var sDataServiceVersion = fnGetHeader("DataServiceVersion"),
 			vODataVersion = !sDataServiceVersion && fnGetHeader("OData-Version");
 

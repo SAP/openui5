@@ -7,11 +7,10 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/_AnnotationHelperExpression"
-], function (Log, SyncPromise, InvisibleText, BaseContext, JSONModel, Basics, AnnotationHelper,
+], function (Log, SyncPromise, InvisibleText, BaseContext, JSONModel, AnnotationHelper,
 		ODataMetaModel, Expression) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -486,7 +485,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("value: 14.5.3.1.2 Function odata.fillUriTemplate", function (assert) {
 		var oMetaModel = {
-				fetchObject : function (sPath) {}
+				fetchObject : function () {}
 			},
 			oMetaModelMock = this.mock(oMetaModel),
 			oModel = new JSONModel({
@@ -1196,7 +1195,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("value: $If w/o else as direct child of $Collection", function (assert) {
 		var oMetaModel = {
-				fetchObject : function (sPath) {}
+				fetchObject : function () {}
 			},
 			sPath
 				= "/EMPLOYEES/ROOM_ID/@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
@@ -1244,7 +1243,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("value: $If w/o else, but no direct child of $Collection", function (assert) {
 		var oMetaModel = {
-				fetchObject : function (sPath) {}
+				fetchObject : function () {}
 			},
 			sPath
 				= "/EMPLOYEES/ROOM_ID/@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",

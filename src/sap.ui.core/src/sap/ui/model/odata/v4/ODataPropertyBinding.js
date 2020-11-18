@@ -358,7 +358,7 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.deregisterChange = function () {
 		var that = this;
 
-		this.withCache(function (oCache, sPath, oBinding) {
+		this.withCache(function (_oCache, sPath, oBinding) {
 			oBinding.doDeregisterChangeListener(sPath, that);
 		}).catch(function (oError) {
 			that.oModel.reportError("Error in deregisterChange", sClassName, oError);
@@ -500,7 +500,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataPropertyBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
+	ODataPropertyBinding.prototype.refreshInternal = function (_sResourcePathPrefix, sGroupId,
 			bCheckUpdate/*, bKeepCacheOnError*/) {
 		if (this.isRootBindingSuspended()) {
 			this.sResumeChangeReason = ChangeReason.Refresh;

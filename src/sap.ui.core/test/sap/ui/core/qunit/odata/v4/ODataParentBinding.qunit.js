@@ -8,12 +8,11 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataBinding",
-	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, ODataModel,
-		asODataParentBinding, SubmitMode, _Helper) {
+], function (Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, asODataParentBinding,
+	SubmitMode, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
@@ -1940,7 +1939,7 @@ sap.ui.define([
 	},
 	success : false,
 	title : "new $expand, collection"
-}].forEach(function (oFixture, i) {
+}].forEach(function (oFixture) {
 	QUnit.test("aggregateQueryOptions: cache is immutable, " + oFixture.title, function (assert) {
 		var mAggregatedQueryOptions = {},
 			oMetaModel = {
@@ -2144,7 +2143,7 @@ sap.ui.define([
 				.returns(oDependent1Promise);
 
 			// code under test
-			return oBinding.checkUpdateInternal().then(function (oResult) {
+			return oBinding.checkUpdateInternal().then(function () {
 				assert.strictEqual(bDependent0Refreshed, true);
 				assert.strictEqual(bDependent1Refreshed, true);
 			});
@@ -2269,7 +2268,7 @@ sap.ui.define([
 			.returns(oDependent1Promise);
 
 		// code under test
-		return oBinding.checkUpdateInternal().then(function (oResult) {
+		return oBinding.checkUpdateInternal().then(function () {
 			assert.strictEqual(bDependent0Refreshed, true);
 			assert.strictEqual(bDependent1Refreshed, true);
 		});
@@ -2462,10 +2461,11 @@ sap.ui.define([
 			var oBinding = new ODataParentBinding({
 					bAggregatedQueryOptionsInitial : oFixture.initial,
 					mAggregatedQueryOptions : oFixture.aggregated
-				}),
-				fnDestroy = function () {this.mAggregatedQueryOptions = undefined;};
+				});
 
-			oBinding.destroy = fnDestroy;
+			oBinding.destroy = function () {
+				this.mAggregatedQueryOptions = undefined;
+			};
 
 			// code under test
 			assert.deepEqual(oBinding.updateAggregatedQueryOptions(oFixture.current),
@@ -2567,7 +2567,7 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oPromise,
 			fnResolve,
-			oResumePromise = new SyncPromise(function (resolve, reject) {
+			oResumePromise = new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			});
 
@@ -2626,7 +2626,7 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			fnResolve,
-			oResumePromise = new SyncPromise(function (resolve, reject) {
+			oResumePromise = new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			});
 
@@ -2736,7 +2736,7 @@ sap.ui.define([
 			fnReject,
 			oResult;
 
-		oBinding.oResumePromise = new SyncPromise(function (resolve, reject) {
+		oBinding.oResumePromise = new SyncPromise(function (_resolve, reject) {
 			fnReject = reject;
 		});
 		this.mock(oBinding).expects("_resume").withExactArgs(true);

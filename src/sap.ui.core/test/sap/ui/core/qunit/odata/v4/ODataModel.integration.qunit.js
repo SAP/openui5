@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
-	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
@@ -26,8 +25,8 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, uid, ColumnListItem, CustomListItem, Text, Device, EventProvider, SyncPromise,
-		Controller, View, ChangeReason, Filter, FilterOperator, Sorter, OperationMode,
-		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
+		Controller, View, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
+		ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
@@ -6106,7 +6105,7 @@ sap.ui.define([
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "bar"}
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (_resolve, reject) {
 					fnRejectPost = reject;
 				}))
 				.expectChange("note", ["bar", "foo"])
@@ -6146,7 +6145,7 @@ sap.ui.define([
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "baz"}
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (resolve) {
 					fnResolvePost = resolve;
 				}))
 				.expectChange("note", ["baz"]);
@@ -9417,7 +9416,7 @@ sap.ui.define([
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "ETag0"},
 					payload : {Note : "Changed Note"}
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (resolve) {
 					fnRespond = resolve.bind(null, {
 						"@odata.etag" : "ETag1",
 						Note : "Changed Note From Server"
@@ -9492,7 +9491,7 @@ sap.ui.define([
 					url : "EMPLOYEES('1')",
 					headers : {"If-Match" : "ETag0"},
 					payload : {Name : "Jonathan Mueller"}
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (resolve) {
 					fnRespond = resolve.bind(null, {
 						"@odata.etag" : "ETag1",
 						Name : "Jonathan Mueller"
@@ -9565,7 +9564,7 @@ sap.ui.define([
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "ETag0"},
 					payload : {Note : "Changed Note"}
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (resolve) {
 					fnRespond = resolve.bind(null, {
 						"@odata.etag" : "ETag1",
 						Note : "Changed Note From Server"
@@ -9684,7 +9683,7 @@ sap.ui.define([
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "42ETag0"},
 					payload : {Note : "42Changed Note"}
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (resolve) {
 					fnRespond42 = resolve.bind(null, {
 						"@odata.etag" : "42ETag1",
 						Note : "42Changed Note From Server"
@@ -9818,7 +9817,7 @@ sap.ui.define([
 						url : "SalesOrderList('42')",
 						headers : {"If-Match" : "ETag0"},
 						payload : {Note : "Changed Note"}
-					}, new Promise(function (resolve, reject) {
+					}, new Promise(function (_resolve, reject) {
 						fnReject = reject;
 					}))
 					.expectChange("note", "Changed Note");
@@ -9869,7 +9868,7 @@ sap.ui.define([
 							LifecycleStatus : "P",
 							Note : "Changed Note"
 						}
-					}, new Promise(function (resolve, reject) {
+					}, new Promise(function (resolve) {
 						fnRespond = resolve.bind(null, {
 							"@odata.etag" : "ETag1",
 							LifecycleStatus : "P",
@@ -11166,7 +11165,7 @@ sap.ui.define([
 		}).then(function () {
 			// JIRA: CPOUI5ODATAV4-459
 			return that.setInvalidBudgetCurrency(assert);
-		}).then(function (oInput) {
+		}).then(function () {
 			that.expectRequest("TEAMS('TEAM_02')?$select=Budget,Name",
 					{Budget : "789", Name : "Team #2"})
 				.expectChange("text1", "Team #2")
@@ -12487,7 +12486,7 @@ sap.ui.define([
 </Table>';
 
 		this.mock(ODataListBinding.prototype).expects("getContexts").atLeast(1).callsFake(
-			function (iStart, iLength, iMaximumPrefetchSize) {
+			function (iStart, iLength) {
 				// this is how the call by sap.chart.Chart should look like --> GET w/o $top!
 				return fnGetContexts.call(this, iStart, iLength, Infinity);
 			});
@@ -12576,7 +12575,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// wait until change event is processed
-				new Promise(function (resolve, reject) {
+				new Promise(function (resolve) {
 					fnDone = resolve;
 				}),
 				// Increase the timeout for this test to 12 seconds to run also in IE
@@ -19892,7 +19891,7 @@ sap.ui.define([
 				that.oView.byId("action").getObjectBinding().execute(),
 				that.waitForChanges(assert)
 			]);
-		}).then(function (aResults) {
+		}).then(function () {
 			// TODO return value context not supported here
 			// assert.strictEqual(aResults[0].getPath(),
 			// 	"Artists(ArtistID='2',IsActiveEntity=false)");
@@ -23515,7 +23514,7 @@ sap.ui.define([
 							AGE : 67,
 							ROOM_ID : "42"
 						}
-					}, new Promise(function (resolve, reject) {
+					}, new Promise(function (_resolve, reject) {
 						fnReject = reject;
 					}));
 
@@ -23617,7 +23616,7 @@ sap.ui.define([
 						AGE : 67,
 						ROOM_ID : "42"
 					}
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (_resolve, reject) {
 					fnReject = reject;
 				}));
 
@@ -24871,7 +24870,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$skip=0&$top=100", new Promise(function (resolve, reject) {
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100", new Promise(function (resolve) {
 				fnRespond = resolve.bind(null, {value : []});
 			}));
 
@@ -24954,7 +24953,7 @@ sap.ui.define([
 					method : "POST",
 					payload : {},
 					url : "BusinessPartnerList"
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (resolve) {
 					fnRespond = resolve.bind(null, {
 						BusinessPartnerID : "4710",
 						CompanyName : "Baz"
@@ -25423,7 +25422,7 @@ sap.ui.define([
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
-		}).then(function (oError) {
+		}).then(function () {
 			assert.strictEqual(oContext.getProperty("Name"), "Foo");
 			assert.ok(that.oModel.hasPendingChanges("update"));
 			assert.strictEqual(iPatchSent, 1);
@@ -26606,7 +26605,7 @@ sap.ui.define([
 					method : "POST",
 					payload : {Note : "Created"},
 					url : "BusinessPartnerList('4711')/BP_2_SO"
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (_resolve, reject) {
 					fnRespond = reject.bind(null, createError()); // take care of timing
 				}))
 				.expectChange("id", ["", "0500000001"])
@@ -26705,7 +26704,7 @@ sap.ui.define([
 					method : "PATCH",
 					payload : {CompanyName : "SAP SE"},
 					url : "BusinessPartnerList('4711')"
-				}, new Promise(function (resolve, reject) {
+				}, new Promise(function (_resolve, reject) {
 					fnRespond = reject.bind(null, createError()); // take care of timing
 				}))
 				.expectChange("name", "SAP SE");
@@ -27801,7 +27800,7 @@ sap.ui.define([
 					.getBoundContext());
 
 			that.expectRequest("MANAGERS('1')?$expand=Manager_to_Team",
-					new Promise(function (resolve, reject) {
+					new Promise(function (resolve) {
 						fnRespond = resolve.bind(null, {
 							ID : "1",
 							Manager_to_Team : {
@@ -27867,7 +27866,7 @@ sap.ui.define([
 
 			// 1st, request side effects
 			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id",
-					new Promise(function (resolve, reject) {
+					new Promise(function (resolve) {
 						fnRespond = resolve.bind(null, {
 							Name : "Team #1",
 							Team_Id : "TEAM_01"
@@ -27943,7 +27942,7 @@ sap.ui.define([
 			// 1st, request side effects
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100",
-					new Promise(function (resolve, reject) {
+					new Promise(function (resolve) {
 						fnRespond = resolve.bind(null, {
 							value : [{ID : "1", Name : "Jonathan Smith"}]
 						});
@@ -28018,7 +28017,7 @@ sap.ui.define([
 			// 1st, request side effects
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100",
-					new Promise(function (resolve, reject) {
+					new Promise(function (resolve) {
 						fnRespond = resolve.bind(null, {
 							value : [{ID : "1", Name : "Darth Vader"}]
 						});

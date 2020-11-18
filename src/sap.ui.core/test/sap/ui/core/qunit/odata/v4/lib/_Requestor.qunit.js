@@ -387,7 +387,7 @@ sap.ui.define([
 					headers : mResolvedHeaders,
 					method : "FOO"
 				}))
-				.callsFake(function (sUrl, oSettings) {
+				.callsFake(function (_sUrl, oSettings) {
 					var jqXHR;
 
 					if (o.bRequestSucceeds === true
@@ -414,7 +414,7 @@ sap.ui.define([
 			if (o.bRequestSucceeds !== undefined) {
 				oExpectation.never();
 			} else {
-				oExpectation.callsFake(function (sOldSecurityToken) {
+				oExpectation.callsFake(function () {
 					return new Promise(function (fnResolve, fnReject) {
 						setTimeout(function () {
 							if (o.bReadFails) { // reading of CSRF token fails
@@ -454,10 +454,10 @@ sap.ui.define([
 			var oPromise,
 				oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
 				oResult = {},
-				oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
+				oSecurityTokenPromise = new Promise(function (resolve) {
 					setTimeout(function () {
 						oRequestor.mHeaders["X-CSRF-Token"] = "abc123";
-						fnResolve();
+						resolve();
 					}, 0);
 				});
 
@@ -497,7 +497,7 @@ sap.ui.define([
 
 		// code under test
 		return oRequestor.sendRequest("GET", "Employees")
-			.then(function (result) {
+			.then(function () {
 				assert.notOk("Unexpected success");
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
@@ -682,10 +682,10 @@ sap.ui.define([
 			iHeadRequestCount = 0,
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		this.mock(jQuery).expects("ajax").atLeast(1).callsFake(function (sUrl0, oSettings) {
+		this.mock(jQuery).expects("ajax").atLeast(1).callsFake(function (_sUrl, oSettings) {
 			var jqXHR,
 				oTokenRequiredResponse = {
-					getResponseHeader : function (sName) {
+					getResponseHeader : function () {
 						return "required";
 					},
 					"status" : 403
@@ -988,7 +988,7 @@ sap.ui.define([
 
 		// code under test
 		return oRequestor.request("GET", "Employees")
-			.then(function (result) {
+			.then(function () {
 				assert.notOk("Unexpected success");
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
@@ -1843,7 +1843,7 @@ sap.ui.define([
 			assert.ok(false);
 		}
 
-		function assertError(oResultError, sMessage) {
+		function assertError(oResultError) {
 			assert.ok(oResultError instanceof Error);
 			assert.deepEqual(oResultError.error, oError.error);
 			assert.strictEqual(oResultError.message, oError.error.message);
@@ -1895,7 +1895,7 @@ sap.ui.define([
 			aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		function assertError(oResultError, sMessage) {
+		function assertError(oResultError) {
 			assert.ok(oResultError instanceof Error);
 			assert.strictEqual(oResultError.message, "400 Bad Request");
 			assert.strictEqual(oResultError.status, 400);

@@ -7,12 +7,11 @@ sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/v4/_AnnotationHelperExpression",
 	"sap/ui/performance/Measurement"
-], function (Log, deepEqual, BindingParser, ManagedObject, SyncPromise, JSONModel, Basics,
-		Expression, Measurement) {
+], function (Log, deepEqual, BindingParser, ManagedObject, SyncPromise, Basics, Expression,
+		Measurement) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";

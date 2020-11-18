@@ -2078,7 +2078,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesForPath
 	 */
-	ODataListBinding.prototype.hasPendingChangesForPath = function (sPath) {
+	ODataListBinding.prototype.hasPendingChangesForPath = function (_sPath) {
 		if (this.oCache === undefined) {
 			// as long as cache is not yet known there can be only changes caused by created
 			// entities; sPath does not matter
@@ -2176,7 +2176,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
-			bCheckUpdate, bKeepCacheOnError) {
+			_bCheckUpdate, bKeepCacheOnError) {
 		var oKeptElementPromise, that = this;
 
 		function onRemove(sPredicate) {
@@ -2276,7 +2276,7 @@ sap.ui.define([
 			throw new Error("Unsupported header context: " + oContext);
 		}
 
-		return this.withCache(function (oCache, sPath, oBinding) {
+		return this.withCache(function (oCache, sPath, _oBinding) {
 			var bDataRequested = false,
 				bDestroyed = false,
 				bKeepAlive = oContext.isKeepAlive(),
@@ -2603,7 +2603,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
 	 */
-	ODataListBinding.prototype.resumeInternal = function (bCheckUpdate, bParentHasChanges) {
+	ODataListBinding.prototype.resumeInternal = function (_bCheckUpdate, bParentHasChanges) {
 		var aBindings = this.getDependentBindings(),
 			sResumeChangeReason = this.sResumeChangeReason,
 			bRefresh = bParentHasChanges || sResumeChangeReason;
