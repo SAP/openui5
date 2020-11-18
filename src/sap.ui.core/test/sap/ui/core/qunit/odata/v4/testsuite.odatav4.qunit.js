@@ -62,11 +62,13 @@ sap.ui.define(function () {
 			// the following tests must all be named "OPA.*" so that 1Ring ignores them
 			"OPA.DataAggregation" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/DataAggregation/Opa.qunit"]
+				module : ["sap/ui/core/sample/odata/v4/DataAggregation/Opa.qunit"],
+				realOData : false // requires stable test data
 			},
 			"OPA.FlexibleColumnLayout" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/FlexibleColumnLayout/Opa.qunit"]
+				module : ["sap/ui/core/sample/odata/v4/FlexibleColumnLayout/Opa.qunit"],
+				realOData : false // requires stable test data
 			},
 			"OPA.LateProperties" : {
 				autostart : false,
@@ -82,11 +84,16 @@ sap.ui.define(function () {
 			},
 			"OPA.Products" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/Products/Opa.qunit"]
+				module : ["sap/ui/core/sample/odata/v4/Products/Opa.qunit"],
+				realOData : false // requires stable test data
 			},
 			"OPA.SalesOrders" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/SalesOrders/Opa.qunit"]
+			},
+			"OPA.SalesOrdersRTATest" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/SalesOrdersRTATest/Opa.qunit"]
 			},
 			"OPA.SalesOrdersTemplate" : {
 				autostart : false,
@@ -94,11 +101,13 @@ sap.ui.define(function () {
 			},
 			"OPA.SalesOrderTP100_V2" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit"]
+				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit"],
+				realOData : false // different back end
 			},
 			"OPA.SalesOrderTP100_V4" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit"]
+				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit"],
+				realOData : false // different back end
 			},
 			"OPA.ServerDrivenPaging" : {
 				autostart : false,
@@ -106,7 +115,8 @@ sap.ui.define(function () {
 			},
 			"OPA.Sticky" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/Sticky/Opa.qunit"]
+				module : ["sap/ui/core/sample/odata/v4/Sticky/Opa.qunit"],
+				realOData : false // requires stable test data
 			},
 			"OPA.ViewTemplate.Types" : {
 				autostart : false,

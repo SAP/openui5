@@ -1,13 +1,15 @@
 <!DOCTYPE HTML>
 <!--
-  Test page that runs all (QUnit and OPA) tests of the OData V4 team within an inline frame.
+  Test page that runs all (QUnit and OPA) tests of a team within an inline frame.
 -->
 <html lang="en">
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
 
-		<title>OData V4: Before Push Tests</title>
+		<title>Before Push Tests</title>
+
+		<base href="../../../../../../">
 
 		<style>
 			.failed {background-color: red;}
@@ -18,11 +20,16 @@
 			i {font-size: smaller}
 			#results {font-family: sans-serif; font-size: small}
 		</style>
-		<script src="BeforePush.ODataV4.js"></script>
-		<script src="BeforePush.js"></script>
+		<!-- IE 11 support -->
+		<script nomodule src="resources/sap/ui/thirdparty/baseuri.js"></script>
+		<script src="resources/sap/ui/thirdparty/es6-promise.js"></script>
+		<script nomodule src="resources/sap/ui/thirdparty/es6-shim-nopromise.js"></script>
+		<!-- UI5 loader for the config module -->
+		<script src="resources/ui5loader.js"></script>
+		<script src="test-resources/sap/ui/core/qunit/internal/BeforePush.js"></script>
 	</head>
 	<body>
-		<h1>OData V4: Before Push Tests</h1>
+		<h1 id="h1">Before Push Tests</h1>
 		<p id="buttons">
 			<input id="run" type="button" value="Run">
 			<input id="runWithoutRealOData" type="button" value="w/o realOData">
