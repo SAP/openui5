@@ -834,10 +834,12 @@ sap.ui.define([
 	 * @static
 	 * @constant
 	 * @typedef {Object} sap.ui.mdc.field.FieldHelpItem
-	 * @property {any} key - Key of the item
-	 * @property {string} description - Description of the item
-	 * @property {object} [inParameters] - In parameters of the item. For each field path a value is stored
-	 * @property {object} [outParameters] - Out parameters of the item. For each field path a value is stored
+	 * @property {any} key Key of the item
+	 * @property {string} description Description of the item
+	 * @property {object} [inParameters] In parameters of the item. For each field path a value is stored
+	 * @property {object} [outParameters] Out parameters of the item. For each field path a value is stored
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 	 */
 
 	/**
