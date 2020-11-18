@@ -24826,11 +24826,16 @@ sap.ui.define([
 	// Scenario: View contains a form for an entity. Context#setProperty is called. Property binding
 	// is updated and PATCH request is sent via update group ID. Server returns a bound message.
 	// JIRA: CPOUI5UISERVICESV3-1790
+	// BCP: 2070480907 (bRetry)
 	QUnit.test("Context#setProperty: read/write", function (assert) {
-		var oModel = createTeaBusiModel({
+		var oBinding,
+			oContext,
+			oModel = createTeaBusiModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
+			iPatchCompleted = 0,
+			iPatchSent = 0,
 			oPromise,
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
@@ -24847,7 +24852,8 @@ sap.ui.define([
 			.expectChange("name", "Team #1");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("form").getObjectBinding().getBoundContext();
+			oBinding = that.oView.byId("form").getObjectBinding();
+			oContext = oBinding.getBoundContext();
 
 			that.expectChange("name", "Best Team Ever");
 
@@ -24880,12 +24886,70 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				that.oModel.submitBatch("update"),
+				oModel.submitBatch("update"),
 				oPromise,
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
 			return that.checkValueState(assert, "name", "Warning", "What a stupid name!");
+		}).then(function () {
+			that.expectChange("name", "Foo")
+				.expectRequest({
+					method : "PATCH",
+					payload : {Name : "Foo"},
+					url : "TEAMS('TEAM_01')"
+				}, createError({
+					message : "something went wrong"
+				}))
+				.expectMessages([{
+					message : "something went wrong",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to update path /TEAMS('TEAM_01')/Name",
+					sinon.match("something went wrong"), "sap.ui.model.odata.v4.Context");
+
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+			oBinding.attachPatchSent(function () {
+				iPatchSent += 1;
+			});
+			oBinding.attachPatchCompleted(function (oEvent) {
+				iPatchCompleted += 1;
+				assert.strictEqual(oEvent.getParameter("success"), iPatchCompleted === 2);
+			});
+
+			// code under test
+			oPromise = oContext.setProperty("Name", "Foo", undefined, true);
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (oError) {
+			assert.strictEqual(oContext.getProperty("Name"), "Foo");
+			assert.ok(oModel.hasPendingChanges("update"));
+			assert.strictEqual(iPatchSent, 1);
+			assert.strictEqual(iPatchCompleted, 1);
+
+			that.expectRequest({
+					method : "PATCH",
+					payload : {Name : "Foo"},
+					url : "TEAMS('TEAM_01')"
+				});
+
+			return Promise.all([
+				// code under test
+				oModel.submitBatch("update"),
+				oPromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.notOk(oModel.hasPendingChanges("update"));
+			assert.strictEqual(iPatchSent, 2);
+			assert.strictEqual(iPatchCompleted, 2);
 		});
 	});
 

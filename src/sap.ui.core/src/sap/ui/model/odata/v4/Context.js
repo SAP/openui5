@@ -1304,19 +1304,46 @@ sap.ui.define([
 	 *   The group ID to be used for the PATCH request; if not specified, the update group ID for
 	 *   the context's binding is used, see {@link #getUpdateGroupId}. Since 1.74.0, you can use
 	 *   <code>null</code> to prevent the PATCH request.
+	 * @param {boolean} [bRetry]
+	 *   Since 1.85.0, if <code>true</code> the property is not reset if the PATCH request failed.
+	 *   It contributes to the pending changes instead (see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#hasPendingChanges},
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding#hasPendingChanges} and
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#hasPendingChanges}) and can be reset via the
+	 *   corresponding <code>resetChanges</code> methods.
+	 *
+	 *   The PATCH is automatically repeated with the next call of
+	 *   {@link sap.ui.model.odata.v4.ODataModel#submitBatch} if the group ID has
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.API}. Otherwise it is repeated when the property is
+	 *   modified again.
+	 *
+	 *   Each time the PATCH request is sent to the server, a 'patchSent' event is fired on the
+	 *   binding sending the request. When the response for this request is received, a
+	 *   'patchCompleted' with a boolean parameter 'success' is fired.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, for example if the annotation belongs to
-	 *   the read-only namespace "@$ui5.*"
+	 *   the read-only namespace "@$ui5.*". With <code>bRetry</code> it is only rejected with an
+	 *   <code>Error</code> instance where <code>oError.canceled === true</code> when the property
+	 *   has been reset via the methods
+	 *   <ul>
+	 *     <li> {@link sap.ui.model.odata.v4.ODataModel#resetChanges}
+	 *     <li> {@link sap.ui.model.odata.v4.ODataContextBinding#resetChanges} or
+	 *     <li> {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges}.
+	 *   </ul>
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended, for invalid group IDs, or if the new value is
 	 *   not primitive
 	 *
 	 * @public
 	 * @see #getProperty
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#event:patchSent
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#event:patchCompleted
+	 * @see sap.ui.model.odata.v4.ODataListBinding#event:patchSent
+	 * @see sap.ui.model.odata.v4.ODataListBinding#event:patchCompleted
 	 * @since 1.67.0
 	 */
-	Context.prototype.setProperty = function (sPath, vValue, sGroupId) {
+	Context.prototype.setProperty = function (sPath, vValue, sGroupId, bRetry) {
 		var oGroupLock = null;
 
 		this.oBinding.checkSuspended();
@@ -1328,7 +1355,7 @@ sap.ui.define([
 			oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
 		}
 
-		return Promise.resolve(this.doSetProperty(sPath, vValue, oGroupLock, true))
+		return Promise.resolve(this.doSetProperty(sPath, vValue, oGroupLock, !bRetry))
 			.catch(function (oError) {
 				if (oGroupLock) {
 					oGroupLock.unlock(true);
