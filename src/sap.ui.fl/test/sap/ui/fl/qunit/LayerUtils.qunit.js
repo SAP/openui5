@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/Settings",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -12,6 +13,7 @@ sap.ui.define([
 	Layer,
 	LayerUtils,
 	Utils,
+	Settings,
 	UriParameters,
 	sinon
 ) {
@@ -34,6 +36,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.fl.LayerUtils", {
+		beforeEach: function () {
+			Settings._instance = new Settings({});
+		},
 		afterEach: function () {
 			sandbox.restore();
 		}
@@ -50,13 +55,13 @@ sap.ui.define([
 			assert.equal(sLayer, Layer.VENDOR);
 		});
 
-		QUnit.test("getCurrentLayer shall return USER layer if endUser flag is set ", function (assert) {
+		QUnit.test("getCurrentLayer shall return USER layer if endUser flag is set", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 			var sLayer = LayerUtils.getCurrentLayer(true);
 			assert.equal(sLayer, Layer.USER);
 		});
 
-		QUnit.test("getCurrentLayer shall return default CUSTOMER layer ", function (assert) {
+		QUnit.test("getCurrentLayer shall return default CUSTOMER layer", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(null);
 			var sLayer = LayerUtils.getCurrentLayer(false);
 			assert.equal(sLayer, Layer.CUSTOMER);

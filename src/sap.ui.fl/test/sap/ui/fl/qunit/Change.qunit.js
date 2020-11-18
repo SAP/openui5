@@ -77,8 +77,6 @@ function(
 					}
 				}
 			};
-
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 		},
 		afterEach: function() {
 			sap.ushell = this.ushellStore;
@@ -330,6 +328,8 @@ function(
 		});
 
 		QUnit.test("Change._isReadOnlyDueToLayer", function(assert) {
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
+
 			// check for different layer
 			this.oChangeDef.layer = Layer.CUSTOMER;
 			var oInstance = new Change(this.oChangeDef);

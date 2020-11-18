@@ -5,14 +5,18 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	UIComponent,
 	CompVariantState,
 	FlexState,
 	Storage,
+	Settings,
 	Change,
+	Layer,
 	sinon
 ) {
 	"use strict";
@@ -25,19 +29,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("add", {
-		before: function () {
+		beforeEach: function () {
 			this.appComponent = new UIComponent(sComponentId);
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sComponentId
+			return Settings.getInstance()
+			.then(function () {
+				return FlexState.initialize({
+					componentId: sComponentId,
+					reference: sComponentId
+				});
 			});
 		},
-		beforeEach: function() {},
 		afterEach: function() {
-			sandbox.restore();
-		},
-		after: function () {
 			FlexState.clearState(sComponentId);
+			sandbox.restore();
 			this.appComponent.destroy();
 		}
 	}, function() {
@@ -46,24 +50,80 @@ sap.ui.define([
 		});
 
 		[{
-			testName: "Given a change is added",
+			testName: "Given a non-user dependent change is added and a public layer is available",
 			propertyBag: {
 				changeSpecificData: {
-					type: "addFavorite"
+					type: "addFavorite",
+					isUserDependent: false
 				},
 				reference: sComponentId
 			},
-			targetCategory: "changes"
+			targetCategory: "changes",
+			publicLayerAvailable: true,
+			expectedLayer: Layer.CUSTOMER
 		}, {
-			testName: "Given a variant is added",
+			testName: "Given a non-user dependent change is added and a public layer is unavailable",
+			propertyBag: {
+				changeSpecificData: {
+					type: "addFavorite",
+					isUserDependent: false
+				},
+				reference: sComponentId
+			},
+			targetCategory: "changes",
+			publicLayerAvailable: false,
+			expectedLayer: Layer.CUSTOMER
+		}, {
+			testName: "Given a user dependent change is added",
+			propertyBag: {
+				changeSpecificData: {
+					type: "addFavorite",
+					isUserDependent: true
+				},
+				reference: sComponentId
+			},
+			targetCategory: "changes",
+			publicLayerAvailable: true,
+			expectedLayer: Layer.USER
+		}, {
+			testName: "Given a non-user dependent variant is added and a public layer is available",
 			propertyBag: {
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true
+					isVariant: true,
+					isUserDependent: false
 				},
 				reference: sComponentId
 			},
-			targetCategory: "variants"
+			targetCategory: "variants",
+			publicLayerAvailable: true,
+			expectedLayer: Layer.PUBLIC
+		}, {
+			testName: "Given a non-user dependent variant is added and a public layer is unavailable",
+			propertyBag: {
+				changeSpecificData: {
+					type: "pageVariant",
+					isVariant: true,
+					isUserDependent: false
+				},
+				reference: sComponentId
+			},
+			targetCategory: "variants",
+			publicLayerAvailable: false,
+			expectedLayer: Layer.CUSTOMER
+		}, {
+			testName: "Given a user dependent variant is added",
+			propertyBag: {
+				changeSpecificData: {
+					type: "pageVariant",
+					isVariant: true,
+					isUserDependent: true
+				},
+				reference: sComponentId
+			},
+			targetCategory: "variants",
+			publicLayerAvailable: true,
+			expectedLayer: Layer.USER
 		}].forEach(function (oTestData) {
 			QUnit.test(oTestData.testName, function(assert) {
 				var sPersistencyKey = "persistency.key";
@@ -71,12 +131,15 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				}, oTestData.propertyBag);
 
+				sandbox.stub(Settings.getInstanceOrUndef(), "isPublicLayerAvailable").returns(oTestData.publicLayerAvailable);
+
 				var sAddedObjectId = CompVariantState.add(mPropertyBag);
 				var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 				var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
 
 				assert.equal(mCompVariantsMapForPersistencyKey[oTestData.targetCategory].length, 1, "then one entity was stored");
 				assert.equal(mCompVariantsMapForPersistencyKey[oTestData.targetCategory][0].getId(), sAddedObjectId, "which is the returned entity");
+				assert.equal(mCompVariantsMapForPersistencyKey[oTestData.targetCategory][0].getLayer(), oTestData.expectedLayer, "which is in the correct layer");
 			});
 		});
 	});

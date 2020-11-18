@@ -3,16 +3,20 @@
  */
 
 sap.ui.define([
+	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage"
 ], function(
+	UriParameters,
 	Layer,
 	Change,
 	Utils,
 	FlexState,
+	Settings,
 	Storage
 ) {
 	"use strict";
@@ -219,6 +223,26 @@ sap.ui.define([
 		return mInternalTexts;
 	}
 
+	function determineLayer(oChangeSpecificData) {
+		if (oChangeSpecificData.isUserDependent) {
+			return Layer.USER;
+		}
+
+		var sLayer = UriParameters.fromQuery(window.location.search).get("sap-ui-layer") || "";
+		sLayer = sLayer.toUpperCase();
+		if (sLayer) {
+			return sLayer;
+		}
+
+		// PUBLIC is only used for "public" variants
+		if (!oChangeSpecificData.isVariant) {
+			return Layer.CUSTOMER;
+		}
+
+		var bPublicLayerAvailable = Settings.getInstanceOrUndef().isPublicLayerAvailable();
+		return bPublicLayerAvailable ? Layer.PUBLIC : Layer.CUSTOMER;
+	}
+
 	/**
 	 * CompVariant state class to handle the state of the compVariants and its changes.
 	 * This class is in charge of updating the maps stored in the <code>sap.ui.fl.apply._internal.flexState.FlexState</code>.
@@ -302,7 +326,7 @@ sap.ui.define([
 			reference: mPropertyBag.reference,
 			isVariant: oChangeSpecificData.isVariant,
 			packageName: oChangeSpecificData.packageName,
-			isUserDependent: oChangeSpecificData.isUserDependent,
+			layer: determineLayer(oChangeSpecificData),
 			selector: {
 				persistencyKey: mPropertyBag.persistencyKey
 			},

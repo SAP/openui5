@@ -31,6 +31,7 @@ sap.ui.define([
 				VENDOR: true,
 				CUSTOMER_BASE: true,
 				CUSTOMER: true,
+				PUBLIC: false,
 				USER: false
 			};
 		}
@@ -41,6 +42,7 @@ sap.ui.define([
 				VENDOR: true,
 				CUSTOMER_BASE: true,
 				CUSTOMER: false,
+				PUBLIC: false,
 				USER: false
 			};
 		}
@@ -112,12 +114,12 @@ sap.ui.define([
 					isAtoEnabled: false,
 					isAppVariantSaveAsEnabled: false,
 					isProductiveSystem: true,
+					isPublicLayerAvailable: false,
 					versioning: {},
 					_bFlexChangeMode: false,
 					_bFlexibilityAdaptationButtonAllowed: false
 				};
 			}
-
 			return Settings._storeInstance(oSettings);
 		});
 		Settings._oLoadSettingsPromise = oLoadingPromise;
@@ -147,11 +149,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Settings.getInstanceOrUndef = function() {
-		var oSettings;
-		if (Settings._instance) {
-			oSettings = Settings._instance;
-		}
-		return oSettings;
+		return Settings._instance;
 	};
 
 	/**
@@ -173,6 +171,16 @@ sap.ui.define([
 	 */
 	Settings.prototype.isKeyUser = function() {
 		return this._getBooleanProperty("isKeyUser");
+	};
+
+	/**
+	 * Returns the information if a back end supports the PUBLIC layer.
+	 *
+	 * @returns {boolean} true if the PUBLIC layer is supported.
+	 * @public
+	 */
+	Settings.prototype.isPublicLayerAvailable = function() {
+		return this._getBooleanProperty("isPublicLayerAvailable");
 	};
 
 	/**

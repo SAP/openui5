@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
@@ -24,6 +25,7 @@ sap.ui.define([
 	Utils,
 	Layer,
 	LayerUtils,
+	ChangeRegistry,
 	ChangeHandlerRegistration,
 	VariantModel,
 	ControlPersonalizationWriteAPI,
@@ -352,7 +354,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' where one change content has variantReference set", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.stub(ChangeRegistry.getInstance(), "_isRegistryItemValidForLayer").returns(true); //needed as some ChangeHandlers are not available for USER layer
+
 			sandbox.spy(ControlPersonalizationAPI, "_getVariantManagement");
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
@@ -372,7 +375,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with a change outside of a variant management control", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.stub(ChangeRegistry.getInstance(), "_isRegistryItemValidForLayer").returns(true); //needed as some ChangeHandlers are not available for USER layer
 			var oButton = sap.ui.getCore().byId("testComponent---mockview--Button");
 			var oChangeData = {
 				selectorElement: oButton,
@@ -400,7 +403,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and a variant model", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.stub(ChangeRegistry.getInstance(), "_isRegistryItemValidForLayer").returns(true); //needed as some ChangeHandlers are not available for USER layer
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2],
@@ -419,7 +422,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and no variant model", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.stub(ChangeRegistry.getInstance(), "_isRegistryItemValidForLayer").returns(true); //needed as some ChangeHandlers are not available for USER layer
 			sandbox.stub(this.oComp, "getModel")
 				.callThrough()
 				.withArgs(Utils.VARIANT_MODEL_NAME)

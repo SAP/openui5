@@ -41,7 +41,8 @@ sap.ui.define([
 	QUnit.module("getGroupedFlexObjects (including getEmptyFlexDataResponse)", {
 		beforeEach: function() {
 			this.oEmptyResponse = {
-				USER: getEmptyFlexDataWithIndex(5),
+				USER: getEmptyFlexDataWithIndex(6),
+				PUBLIC: getEmptyFlexDataWithIndex(5),
 				CUSTOMER: getEmptyFlexDataWithIndex(4),
 				CUSTOMER_BASE: getEmptyFlexDataWithIndex(3),
 				PARTNER: getEmptyFlexDataWithIndex(2),

@@ -268,7 +268,7 @@ sap.ui.define([
 		addPersonalizationChanges: function(mPropertyBag) {
 			var aAddedChanges = [];
 			var aSuccessfulChanges = [];
-			var sLayer = LayerUtils.getCurrentLayer(true);
+			var sLayer = Layer.USER;
 			var aPromises = [];
 
 			function fnCheckAndCreateChange(oChange, mChangeSpecificData) {
