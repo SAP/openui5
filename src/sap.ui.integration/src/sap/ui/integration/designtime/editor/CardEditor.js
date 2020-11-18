@@ -911,8 +911,8 @@ sap.ui.define([
 	 */
 	CardEditor.prototype._addItem = function (oConfig) {
 		var sMode = this.getMode();
-		//force to turn off features for settings and dynamic values
-		if (this.getAllowDynamicValues() === false) {
+		//force to turn off features for settings and dynamic values and set the default if not configured
+		if (this.getAllowDynamicValues() === false || !oConfig.allowDynamicValues) {
 			oConfig.allowDynamicValues = false;
 		}
 		if (this.getAllowSettings() === false) {
@@ -1027,7 +1027,7 @@ sap.ui.define([
 				async: false,
 				locale: sLanguage,
 				supportedLocales: aFallbacks,
-				fallbackLocales: ""
+				fallbackLocale: ""
 			});
 
 			return this._getCurrentLanguageSpecificText(sKey);
