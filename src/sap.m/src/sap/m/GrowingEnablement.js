@@ -674,12 +674,16 @@ sap.ui.define([
 
 					// adapt trigger button width if dummy col is rendered
 					if (oControl.isA("sap.m.Table") && !oControl.hasPopin() && oControl.shouldRenderDummyColumn()) {
-						var sWidth = Array.from(oControl.getDomRef("tblHeader").childNodes).slice(0, -1).map(function(oDomRef) {
-                            return oDomRef.getAttribute("data-sap-width") || oDomRef.getBoundingClientRect().width + "px";
+						var sCalWidth = Array.from(oControl.getDomRef("tblHeader").childNodes).slice(0, -1).map(function(oDomRef) {
+							var sWidth = oDomRef.getAttribute("data-sap-width");
+							if (!sWidth || !sWidth.includes("%")) {
+								return oDomRef.getBoundingClientRect().width + "px";
+							} else {
+								return sWidth;
+							}
 						}).join(" + ");
-						// 0.5rem is paddingLeft applied to the <th> element next to the highLight col
 						// 1px is borderLeft of the dummyCell
-						oTriggerDomRef.style.width = "calc(" + sWidth + " + 0.5rem + 1px)";
+						oTriggerDomRef.style.width = "calc(" + sCalWidth + " + 1px)";
 						oTriggerDomRef.classList.add("sapMGrowingListDummyColumn");
 					}
 				}

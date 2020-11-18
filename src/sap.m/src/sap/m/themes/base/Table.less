@@ -411,35 +411,41 @@ html[data-sap-ui-browser^="sf"] .sapMSticky > .sapMListTbl {
 	pointer-events: none;
 }
 
-.sapMTableRowCustomFocus:focus,
 .sapMTableRowCustomFocus:focus {
 	outline: none;
+
+	.sapMListTblCell > * {
+		position: relative;
+	}
 
 	& > :not(.sapMListTblDummyCell) {
 		position: relative;
 	}
 
-	& > :not(.sapMListTblDummyCell)::after {
+	& > :not(.sapMListTblDummyCell)::before {
 		content: "";
 		position: absolute;
-		// ~ is used to escape "-" else the calc does not result in correct value
-		// -1px height is done so that the focus border is clear visible on all sides
-		height: calc(100% ~"-" 1px);
-		width: calc(100% ~"-" 1px);
-		top: 0;
 		left: 0;
+		right: 0;
+		top: 1px; // mimics outline-offset: -1px
+		bottom: 1px; // mimics outline-offset: -1px
 		border-top: 1px dotted @sapUiContentFocusColor;
 		border-bottom: 1px dotted @sapUiContentFocusColor;
-		box-sizing: border-box;
+		margin-right: 1px; // 1px is set so that the focus border is clearly visible on all sides
 	}
 
-	& > .sapMTblFirstVisibleCell::after {
+	& > .sapMTblFirstVisibleCell::before {
 		border-left: 1px dotted @sapUiContentFocusColor;
+		margin-left: 1px; // mimics outline-offset: -1px
 	}
 
-	& > .sapMTblLastVisibleCell::after {
+	& > .sapMTblLastVisibleCell::before {
 		border-right: 1px dotted @sapUiContentFocusColor;
 	}
+}
+
+html[data-sap-ui-browser^='ff'] .sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell)::before {
+	margin-right: 0; // firefox seems fine with rendering borders clearly without additional margin
 }
 
 /********** COMPACT DESIGN ************/
