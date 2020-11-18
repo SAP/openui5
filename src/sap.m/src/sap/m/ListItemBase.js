@@ -423,7 +423,10 @@ function(
 			}
 		}
 
-		aOutput.push(this.getGroupAnnouncement() || "");
+		var sGroupAnnouncement = this.getGroupAnnouncement() || "";
+		if (sGroupAnnouncement) {
+			aOutput.push(sGroupAnnouncement);
+		}
 
 		if (this.getContentAnnouncement) {
 			aOutput.push((this.getContentAnnouncement(oBundle) || "").trim());
@@ -431,6 +434,10 @@ function(
 
 		if (sTooltip) {
 			aOutput.push(sTooltip);
+		}
+
+		if (this._bAnnounceNotSelected && this.isSelectable() && !this.getSelected()) {
+			aOutput.push(oBundle.getText("LIST_ITEM_NOT_SELECTED"));
 		}
 
 		return aOutput.join(" ");
