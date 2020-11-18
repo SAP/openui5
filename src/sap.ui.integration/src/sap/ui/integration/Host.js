@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
+	"sap/ui/integration/library",
 	'sap/ui/core/Element'
-],
-	function (jQuery, Element) {
+], function (library,
+			 Element) {
 		"use strict";
 
 		/**
