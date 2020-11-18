@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
+ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.script'],
 	function(jQuery, Renderer) {
 	"use strict";
 
@@ -26,7 +26,8 @@
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
 			oAccAttributes =  {
 				role: 'link'
-			};
+			},
+			sRel = jQuery.sap.defaultLinkTypes(oControl.getRel(), oControl.getHref(), oControl.getTarget());
 
 		// Link is rendered as a "<a>" element
 		oRm.write("<a");
@@ -83,6 +84,10 @@
 
 		if (oControl.getTarget()) {
 			oRm.writeAttributeEscaped("target", oControl.getTarget());
+		}
+
+		if (sRel) {
+			oRm.writeAttributeEscaped("rel", sRel);
 		}
 
 		if (oControl.getWidth()) {

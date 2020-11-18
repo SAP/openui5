@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested class: jquery.sap.promise
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Test Page for jquery.sap.openWindow</title>
+	<script>
+		//Ensure that custom API is populated to global namespace for testimng purposes
+		window.sap = {__ui5PublishPromisePolyfill : true};
+	</script>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Initialization -->
+	<script>
+		/*global QUnit */
+		sap.ui.define(['jquery.sap.script'], function(jQuery) {
+			"use strict";
+			QUnit.module("jQuery.sap.openWindow");
+
+			QUnit.test("Noopener noreferrer", function(assert) {
+				assert.equal(jQuery.sap.openWindow("https://www.sap.com", "newWindow"), null, "Reference to the newly open window object is" +
+						"broken");
+			});
+		});
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: jquery.sap.promise</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>
