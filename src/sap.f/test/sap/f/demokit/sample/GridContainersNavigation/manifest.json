@@ -32,6 +32,7 @@
 					"V.view.xml",
 					"C.controller.js",
 					"manifest.json",
+					"cardManifests.json",
 					"RevealGrid/RevealGrid.js",
 					"RevealGrid/RevealGrid.css"
 				]

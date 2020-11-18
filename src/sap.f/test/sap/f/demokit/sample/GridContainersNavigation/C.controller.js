@@ -1,18 +1,23 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/f/sample/GridContainer/RevealGrid/RevealGrid",
+	"sap/ui/model/json/JSONModel",
+	"sap/f/sample/GridContainersNavigation/RevealGrid/RevealGrid",
 	"sap/ui/events/KeyCodes",
 	"sap/m/MessageToast"
-], function (Controller,
-			 RevealGrid,
-			 KeyCodes,
-			 MessageToast) {
+], function (
+	Controller,
+	JSONModel,
+	RevealGrid,
+	KeyCodes,
+	MessageToast
+) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.GridContainersNavigation.C", {
 
 		onInit: function () {
-
+			var oCardManifests = new JSONModel(sap.ui.require.toUrl("sap/f/sample/GridContainersNavigation/cardManifests.json"));
+			this.getView().setModel(oCardManifests, "manifests");
 		},
 
 		onBorderReached: function (oEvent) {
@@ -21,7 +26,7 @@ sap.ui.define([
 				iColumn = oEvent.getParameter("column"),
 				sDirection = oEvent.getParameter("direction");
 
-			MessageToast.show(oEvent.getSource().getParent().getHeaderText() + " border reached", { duration: 6000 });
+			MessageToast.show(oEvent.getSource().getParent().getHeaderText() + " border reached");
 
 			if (oNextGrid) {
 				oNextGrid.focusItemByDirection(sDirection, iRow, iColumn);
@@ -29,17 +34,11 @@ sap.ui.define([
 		},
 
 		onRevealGrid: function () {
-			RevealGrid.toggle("grid1", this.getView());
-			RevealGrid.toggle("grid2", this.getView());
-			RevealGrid.toggle("grid3", this.getView());
-			RevealGrid.toggle("grid4", this.getView());
+			RevealGrid.toggle(["grid1", "grid2", "grid3", "grid4"] , this.getView());
 		},
 
 		onExit: function () {
-			RevealGrid.destroy("grid1", this.getView());
-			RevealGrid.destroy("grid2", this.getView());
-			RevealGrid.destroy("grid3", this.getView());
-			RevealGrid.destroy("grid4", this.getView());
+			RevealGrid.destroy(["grid1", "grid2", "grid3", "grid4"] , this.getView());
 		},
 
 		_findNextGrid: function (oEvent) {
@@ -97,10 +96,14 @@ sap.ui.define([
 		},
 
 		_getAllGrids: function () {
-			return [this.getView().byId("grid1"),
-				this.getView().byId("grid2"),
-				this.getView().byId("grid3"),
-				this.getView().byId("grid4")];
+			var oView = this.getView();
+
+			return [
+				oView.byId("grid1"),
+				oView.byId("grid2"),
+				oView.byId("grid3"),
+				oView.byId("grid4")
+			];
 		}
 	});
 });
