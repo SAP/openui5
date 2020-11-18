@@ -828,7 +828,7 @@ sap.ui.define([
 	/**
 	 * Sets the focus to the stored focus DOM reference
 	 *
-	 * @param {object} oFocusInfo
+	 * @param {object} [oFocusInfo={}]
 	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
 	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
 	 * @public
