@@ -15,6 +15,8 @@ describe("sap.m.Popover", function () {
 			bPhone = response;
 		});
 
+		//click over a button that hides the caret when a popover is opened from an input
+		element(by.id("customCssButton")).click();
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
