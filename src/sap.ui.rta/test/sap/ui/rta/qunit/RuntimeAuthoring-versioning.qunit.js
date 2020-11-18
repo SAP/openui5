@@ -370,7 +370,7 @@ sap.ui.define([
 
 		QUnit.test("a higher layer changes exist but no dirty draft changes", function (assert) {
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 			return this.oRta._handleReloadOnExit()
 				.then(function (oReloadInfo) {
 					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");
@@ -381,7 +381,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
 			this.oRta._oVersionsModel.setProperty("/draftAvailable", true);
 			this.oRta._oVersionsModel.setProperty("/dirtyChanges", true);
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_VIEWS_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
 			return this.oRta._handleReloadOnExit()
 				.then(function (oReloadInfo) {
 					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");

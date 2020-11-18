@@ -301,7 +301,7 @@ sap.ui.define([
 			whenHigherLayerChangesExist();
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(Promise.resolve(false));
-			whenUserConfirmsMessage.call(this, "MSG_PERSONALIZATION_EXISTS", assert);
+			whenUserConfirmsMessage.call(this, "MSG_PERSONALIZATION_OR_PUBLIC_VIEWS_EXISTS", assert);
 
 			return this.oRta._determineReload().then(function() {
 				assert.equal(this.fnEnableRestartSpy.calledOnce,
@@ -549,7 +549,7 @@ sap.ui.define([
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenHigherLayerChangesExist();
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount,
@@ -582,7 +582,7 @@ sap.ui.define([
 			whenAppDescriptorChangesExist(this.oRta);
 			whenHigherLayerChangesExist();
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
@@ -604,7 +604,7 @@ sap.ui.define([
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			fnNeedsReloadStub.onFirstCall().resolves(false);
 			fnNeedsReloadStub.onSecondCall().resolves(true);
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._serializeToLrep()
 			.then(this.oRta._handleReloadOnExit.bind(this.oRta))
@@ -624,7 +624,7 @@ sap.ui.define([
 			whenAppDescriptorChangesExist(this.oRta);
 			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._serializeToLrep()
 			.then(this.oRta._handleReloadOnExit.bind(this.oRta))
@@ -644,7 +644,7 @@ sap.ui.define([
 			whenAppDescriptorChangesExist(this.oRta);
 			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._handleReloadOnExit()
 			.then(function(oReloadInfo) {
@@ -660,7 +660,7 @@ sap.ui.define([
 		QUnit.test("when there are no personalized and appDescriptor changes and _handleReloadOnExit() is called", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount,
@@ -676,7 +676,7 @@ sap.ui.define([
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount,
@@ -692,7 +692,7 @@ sap.ui.define([
 
 			sandbox.spy(this.oRta, "_handleReloadOnExit");
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta.stop().then(function() {
 				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
@@ -804,7 +804,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			whenHigherLayerChangesExist();
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
@@ -820,7 +820,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_VIEWS_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
@@ -836,7 +836,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,

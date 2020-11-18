@@ -1704,9 +1704,9 @@ function(
 		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
 
 		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.isDraftAvailable) {
-			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_AND_DRAFT_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS";
+			sReason = bIsCustomerLayer ? "MSG_VIEWS_OR_PERSONALIZATION_AND_DRAFT_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS";
 		} else if (oReloadInfo.hasHigherLayerChanges) {
-			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
+			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_OR_PUBLIC_VIEWS_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
 		} else if (oReloadInfo.isDraftAvailable) {
 			sReason = "MSG_DRAFT_EXISTS";
 		} // TODO add app descr changes case for start?
@@ -1734,9 +1734,9 @@ function(
 				return "MSG_RELOAD_WITH_ALL_CHANGES";
 			}
 			if (oReloadInfo.isDraftAvailable) {
-				return "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT";
+				return "MSG_RELOAD_WITH_VIEWS_PERSONALIZATION_AND_WITHOUT_DRAFT";
 			}
-			return "MSG_RELOAD_WITH_PERSONALIZATION";
+			return "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS";
 		}
 
 		if (oReloadInfo.initialDraftGotActivated) {
