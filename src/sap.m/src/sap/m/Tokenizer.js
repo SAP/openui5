@@ -252,7 +252,7 @@ sap.ui.define([
 
 		if (Core.getConfiguration().getAccessibility()) {
 			var sAriaTokenizerContainToken = new InvisibleText({
-				text: oRb.getText("TOKENIZER_ARIA_CONTAIN_TOKEN")
+				text: oRb.getText("TOKENIZER_ARIA_NO_TOKENS")
 			});
 
 			this.setAggregation("_tokensInfo", sAriaTokenizerContainToken);
@@ -1513,7 +1513,7 @@ sap.ui.define([
 		var sTokenizerAria = "";
 		var sTranslation = "";
 		var oTranslationMapping = {
-			0: "TOKENIZER_ARIA_CONTAIN_TOKEN",
+			0: "TOKENIZER_ARIA_NO_TOKENS",
 			1: "TOKENIZER_ARIA_CONTAIN_ONE_TOKEN"
 		};
 
