@@ -3427,7 +3427,7 @@ sap.ui.define([
 		oMultiInput._$input.trigger("focus").val("A").trigger("input");
 		this.clock.tick(300);
 
-		aVisibleItems = oMultiInput._getSuggestionsPopoverInstance()._oList.getItems().filter(function(oItem){
+		aVisibleItems = oMultiInput._getSuggestionsPopoverInstance().getItemsContainer().getItems().filter(function(oItem){
 			return oItem.getVisible();
 		});
 		oGroupHeader = aVisibleItems[0];
@@ -3674,7 +3674,7 @@ sap.ui.define([
 		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
-		assert.ok(oMultiInput._getSuggestionsPopoverInstance()._oList.getVisible(), true, "List should be visible");
+		assert.ok(oMultiInput._getSuggestionsPopoverInstance().getItemsContainer().getVisible(), true, "List should be visible");
 
 		oMultiInput.destroy();
 	});

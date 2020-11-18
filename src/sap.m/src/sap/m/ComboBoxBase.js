@@ -45,8 +45,6 @@ sap.ui.define([
 		ListHelpers
 	) {
 		"use strict";
-		// shortcut for sap.m.ListType
-		var ListType = library.ListType;
 
 		// shortcut for sap.m.PlacementType
 		var PlacementType = library.PlacementType;
@@ -548,11 +546,6 @@ sap.ui.define([
 		ComboBoxBase.prototype.exit = function() {
 			ComboBoxTextField.prototype.exit.apply(this, arguments);
 
-			if (this._getList()) {
-				this._getList().destroy();
-				this._oList = null;
-			}
-
 			if (this._getGroupHeaderInvisibleText()) {
 				this._getGroupHeaderInvisibleText().destroy();
 				this._oGroupHeaderInvisibleText = null;
@@ -726,11 +719,13 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBoxBase.prototype._getList = function() {
-			if (this.bIsDestroyed) {
+			var oList = this._oSuggestionPopover && this._oSuggestionPopover.getItemsContainer();
+
+			if (this.bIsDestroyed || !oList) {
 				return null;
 			}
 
-			return this._oList;
+			return oList;
 		};
 
 		/**
@@ -927,14 +922,11 @@ sap.ui.define([
 			}
 
 			// Creates the internal controls of the <code>SuggestionsPopover</code>
-			oSuggPopover._createSuggestionPopup({showSelectedButton: this._hasShowSelectedButton()});
-			oSuggPopover._createSuggestionPopupContent(false);
+			oSuggPopover.createSuggestionPopup({showSelectedButton: this._hasShowSelectedButton()});
+			oSuggPopover.initContent();
 			this.forwardEventHandlersToSuggPopover(oSuggPopover);
 
-			// Amends the suggestions popovers list
-			// this._oList is used by the ComboBoxBase
-			this._oList = oSuggPopover._oList;
-			this._configureList(this._oList);
+			this._configureList(oSuggPopover.getItemsContainer());
 
 			return oSuggPopover;
 		};
@@ -1391,26 +1383,6 @@ sap.ui.define([
 			}
 
 			return oHeader;
-		};
-
-		/**
-		 * Maps an item type of sap.ui.core.SeparatorItem to an item type of sap.m.GroupHeaderListItem.
-		 *
-		 * @param {sap.ui.core.SeparatorItem} oSeparatorItem The item to be matched
-		 * @param {sap.ui.core.Renderer} oControlRenderer The controls renderer
-		 * @returns {sap.m.GroupHeaderListItem} The matched GroupHeaderListItem
-		 * @private
-		 */
-		ComboBoxBase.prototype._mapSeparatorItemToGroupHeader = function (oSeparatorItem) {
-			var oGroupHeaderListItem = new GroupHeaderListItem({
-				title: oSeparatorItem.getText(),
-				ariaLabelledBy: this._getGroupHeaderInvisibleText().getId(),
-				type: ListType.Inactive
-			});
-
-			oGroupHeaderListItem.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem");
-
-			return oGroupHeaderListItem;
 		};
 
 		/**

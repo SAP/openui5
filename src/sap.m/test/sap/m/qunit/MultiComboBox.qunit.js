@@ -7956,8 +7956,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 5, "Shows all items");
+		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._getList().getItems()).length, 5, "Shows all items");
 	});
 
 	QUnit.test("Should filter the items", function (assert) {
@@ -7975,8 +7975,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 1, "Only the matching items are visible");
+		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._getList().getItems()).length, 1, "Only the matching items are visible");
 	});
 
 	QUnit.test("Should call toggleIconPressedState correctly in the process of showing items", function (assert) {
@@ -8059,15 +8059,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 1, "Only the matching items are visible");
+		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._getList().getItems()).length, 1, "Only the matching items are visible");
 
 		// Act
 		this.oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 5, "All items are visible");
+		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._getList().getItems()).length, 5, "All items are visible");
 	});
 
 	QUnit.test("Should not open the Popover in case of 0 items.", function (assert) {

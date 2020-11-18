@@ -687,7 +687,8 @@ function(
 		}
 
 		var sKey = this.getSelectedKey(),
-			bHasSelectedItem;
+			bHasSelectedItem,
+			oList = this._oSuggPopover && this._oSuggPopover.getItemsContainer();
 
 		if (sKey === '') {
 			return;
@@ -696,7 +697,7 @@ function(
 		if (this._hasTabularSuggestions()) {
 			bHasSelectedItem = this._oSuggestionTable && !!this._oSuggestionTable.getSelectedItem();
 		} else {
-			bHasSelectedItem = this._oSuggPopover._oList && !!this._oSuggPopover._oList.getSelectedItem();
+			bHasSelectedItem = oList && !!oList.getSelectedItem();
 		}
 
 		if (bHasSelectedItem) {
@@ -724,7 +725,9 @@ function(
 			return false;
 		}
 
-		var oSelectedItem = this._oSuggPopover._oList.getSelectedItem();
+		var oList = this._oSuggPopover.getItemsContainer(),
+			oSelectedItem = oList && oList.getSelectedItem();
+
 		if (oSelectedItem) {
 			if (this._hasTabularSuggestions()) {
 				this.setSelectionRow(oSelectedItem, true);
@@ -1416,6 +1419,7 @@ function(
 	 * @param {string} sValue User input.
 	 */
 	Input.prototype._triggerSuggest = function(sValue) {
+		var oList = this._oSuggPopover.getItemsContainer();
 
 		this.cancelPendingSuggest();
 		this._bShouldRefreshListItems = true;
@@ -1446,11 +1450,11 @@ function(
 				}
 			}.bind(this), 300);
 		} else if (this.isMobileDevice()) {
-			if (this._oSuggPopover._oList instanceof Table) {
+			if (oList instanceof Table) {
 				// CSN# 1421140/2014: hide the table for empty/initial results to not show the table columns
-				this._oSuggPopover._oList.addStyleClass("sapMInputSuggestionTableHidden");
-			} else if (this._oSuggPopover._oList && this._oSuggPopover._oList.destroyItems) {
-				this._oSuggPopover._oList.destroyItems();
+				oList.addStyleClass("sapMInputSuggestionTableHidden");
+			} else if (oList && oList.destroyItems) {
+				oList.destroyItems();
 			}
 		} else if (this._isSuggestionsPopoverOpen()) {
 
@@ -1579,12 +1583,12 @@ function(
 			// Because suggest event should only be fired by the input in dialog when runs on the phone.
 			if (this.getShowSuggestion() && !this.isMobileDevice()) {
 				oSuggestionsPopover = this._getSuggestionsPopover();
-				oList = oSuggestionsPopover._oList;
+				oList = oSuggestionsPopover.getItemsContainer();
 				this._triggerSuggest(sValue);
 
 				// If the visual focus is on a selected item, or if it is on a value state containing a link
 				if (oList && !oSuggestionsPopover.bMessageValueStateActive) {
-					oSelectedItem = oList.getSelectedItem();
+					oSelectedItem = oList && oList.getSelectedItem();
 					oList.removeStyleClass("sapMListFocus");
 					oSelectedItem && oSelectedItem.removeStyleClass("sapMLIBFocused");
 				} else if (oSuggestionsPopover.bMessageValueStateActive && document.activeElement.tagName !== "A") {
@@ -1632,16 +1636,17 @@ function(
 		 * @private
 		 */
 		Input.prototype._clearSuggestionPopupItems = function () {
-			if (!this._oSuggPopover._oList) {
+			var oList = this._oSuggPopover.getItemsContainer();
+			if (!oList) {
 				return;
 			}
 
 			// only destroy items in simple suggestion mode
-			if (this._oSuggPopover._oList instanceof Table) {
-				this._oSuggPopover._oList.removeSelections(true);
+			if (oList instanceof Table) {
+				oList.removeSelections(true);
 			} else {
 				// TODO: avoid flickering when !bFilter
-				this._oSuggPopover._oList.destroyItems();
+				oList.destroyItems();
 			}
 		};
 
@@ -1650,7 +1655,8 @@ function(
 		 * @private
 		 */
 		Input.prototype._hideSuggestionPopup = function () {
-			var oPopup = this._oSuggPopover.getPopover();
+			var oPopup = this._oSuggPopover.getPopover(),
+				oList = this._oSuggPopover.getItemsContainer();
 
 			// The IE moves the cursor position at the beginning when there is a binding and delay from the back-end
 			// The workaround is to save the focus info which includes position and reset it after updating the DOM
@@ -1677,8 +1683,8 @@ function(
 						oPopup.close();
 					}.bind(this), 0);
 				}
-			} else if (this._hasTabularSuggestions() && this._oSuggPopover._oList) { // hide table on phone when there are no items to display
-				this._oSuggPopover._oList.addStyleClass("sapMInputSuggestionTableHidden");
+			} else if (this._hasTabularSuggestions() && oList) { // hide table on phone when there are no items to display
+				oList.addStyleClass("sapMInputSuggestionTableHidden");
 			}
 
 			this.$("SuggDescr").text(""); // clear suggestion text
@@ -2501,43 +2507,81 @@ function(
 	/**
 	 * Helper function that creates content for the suggestion popup.
 	 *
-	 * @param {boolean|null} bTabular Determines whether the popup content is a table or a list.
+	 * @param {boolean} bTabular Determines whether the popup content is a table or a list.
 	 * @private
 	 */
 	Input.prototype._createSuggestionPopupContent = function(bTabular) {
 		// only initialize the content once
-		if (this._bIsBeingDestroyed || this._getSuggestionsPopover()._oList) {
+		if (this._bIsBeingDestroyed || this._getSuggestionsPopover().getItemsContainer()) {
 			return;
 		}
 
-		this._oSuggPopover._createSuggestionPopupContent(bTabular);
+		this._oSuggPopover.initContent(bTabular ? this._getSuggestionsTable() : null);
 
 		if (!this._hasTabularSuggestions() && !bTabular) {
-			this._oSuggPopover._oList.attachItemPress(function (oEvent) {
-				if (Device.system.desktop) {
-					this.focus();
-				}
-				var oListItem = oEvent.getParameter("listItem");
-
-				if (!oListItem.isA("sap.m.GroupHeaderListItem")) {
-					this.setSelectionItem(ListHelpers.getItemByListItem(this.getSuggestionItems(), oListItem), true);
-				}
-			}, this);
+			this._decorateSuggestionsPopoverList(this._getSuggestionsPopover().getItemsContainer());
 		} else {
-			// tabular suggestions
-			// if no custom filter is set we replace the default filter function here
-			if (this._fnFilter === inputsDefaultFilter) {
-				this._fnFilter = Input._DEFAULTFILTER_TABULAR;
-			}
+			this._decorateSuggestionsPopoverTable();
+		}
+	};
 
-			// if not custom row result function is set we set the default one
-			if (!this._fnRowResultFilter) {
-				this._fnRowResultFilter = Input._DEFAULTRESULT_TABULAR;
-			}
+	/**
+	 * Decorates SuggestionsPopover list.
+	 *
+	 * @param oList {sap.m.List}
+	 * @private
+	 */
+	Input.prototype._decorateSuggestionsPopoverList = function (oList) {
+		if (!oList || !oList.isA("sap.m.List")) {
+			return;
+		}
+		oList.addEventDelegate({
+			onAfterRendering: function () {
+				var aListItemsDomRef, sInputValue;
 
-			if (this.getShowTableSuggestionValueHelp()) {
-				this._addShowMoreButton(bTabular);
+				if (!this.getEnableSuggestionsHighlighting()) {
+					return;
+				}
+
+				aListItemsDomRef = oList.$().find('.sapMSLIInfo, .sapMSLITitleOnly');
+				sInputValue = this._bDoTypeAhead ? this._sTypedInValue : this.getValue();
+				sInputValue = (sInputValue || "").toLowerCase();
+
+				highlightDOMElements(aListItemsDomRef, sInputValue);
 			}
+		}, this);
+
+		oList.attachItemPress(function (oEvent) {
+			if (Device.system.desktop) {
+				this.focus();
+			}
+			var oListItem = oEvent.getParameter("listItem");
+
+			if (!oListItem.isA("sap.m.GroupHeaderListItem")) {
+				this.setSelectionItem(ListHelpers.getItemByListItem(this.getSuggestionItems(), oListItem), true);
+			}
+		}, this);
+	};
+
+	/**
+	 * Decorates SuggestionsPopover table and makes adjustments to the formatting functions.
+	 *
+	 * @private
+	 */
+	Input.prototype._decorateSuggestionsPopoverTable = function () {
+		// tabular suggestions
+		// if no custom filter is set we replace the default filter function here
+		if (this._fnFilter === inputsDefaultFilter) {
+			this._fnFilter = Input._DEFAULTFILTER_TABULAR;
+		}
+
+		// if not custom row result function is set we set the default one
+		if (!this._fnRowResultFilter) {
+			this._fnRowResultFilter = Input._DEFAULTRESULT_TABULAR;
+		}
+
+		if (this.getShowTableSuggestionValueHelp()) {
+			this._addShowMoreButton(true);
 		}
 	};
 
@@ -2663,7 +2707,7 @@ function(
 
 		var oSuggPopover = this._oSuggPopover;
 		var oPopover;
-		oSuggPopover._createSuggestionPopup({ showSelectedButton: this._hasShowSelectedButton() });
+		oSuggPopover.createSuggestionPopup({ showSelectedButton: this._hasShowSelectedButton() });
 
 		oPopover = oSuggPopover.getPopover();
 		oPopover.attachBeforeOpen(function () {
@@ -2684,7 +2728,7 @@ function(
 					this.onChange();
 				}, this)
 				.attachAfterClose(function() {
-					var oList = oSuggPopover._oList;
+					var oList = oSuggPopover.getItemsContainer();
 
 					if (!oList) {
 						return;
@@ -2713,7 +2757,7 @@ function(
 
 					this._updateSelectionFromList();
 
-					var oList = oSuggPopover._oList,
+					var oList = oSuggPopover.getItemsContainer(),
 						oSelectedItem = oList.getSelectedItem();
 
 					if (!oList) {
@@ -2732,7 +2776,6 @@ function(
 				}, this)
 				.attachBeforeOpen(function () {
 					oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
-					oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
 					oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
 
 					this._sBeforeSuggest = this.getValue();
@@ -2916,12 +2959,13 @@ function(
 	Input.prototype._getFilteredSuggestionItems = function (sValue) {
 		var oFilterResults,
 			aItems = this.getSuggestionItems(),
-			aTabularRows = this.getSuggestionRows();
+			aTabularRows = this.getSuggestionRows(),
+			oList = this._oSuggPopover.getItemsContainer();
 
 		if (this._hasTabularSuggestions()) {
 			// show list on phone (is hidden when search string is empty)
-			if (this.isMobileDevice() && this._oSuggPopover._oList) {
-				this._oSuggPopover._oList.removeStyleClass("sapMInputSuggestionTableHidden");
+			if (this.isMobileDevice() && oList) {
+				oList.removeStyleClass("sapMInputSuggestionTableHidden");
 			}
 
 			oFilterResults = this.filterTabularItems(aTabularRows, sValue);
@@ -3000,10 +3044,13 @@ function(
 		var aItems = oFilterResults.items,
 			aGroups = oFilterResults.groups,
 			bIsAnySuggestionAlreadySelected = false,
+			oSuggestionsPopover = this._oSuggPopover,
+			oList = oSuggestionsPopover && oSuggestionsPopover.getItemsContainer(),
 			oListItem;
 
 		for (var i = 0; i < aItems.length; i++) {
-			oListItem = this._mapItemToListItem(aItems[i]);
+			oListItem = ListHelpers.createListItemFromCoreItem(aItems[i], true);
+			oList.addItem(oListItem);
 
 			if (!bIsAnySuggestionAlreadySelected && this._sProposedItemText === aItems[i].getText()) {
 				oListItem.setSelected(true);
@@ -3015,42 +3062,6 @@ function(
 			oListItem = ListHelpers.getListItem(oGroupItem.header);
 			oListItem && oListItem.setVisible(oGroupItem.visible);
 		});
-	};
-
-	/**
-	 * Maps items of <code>sap.ui.core.Item</code> type to <code>sap.m.StandardListItem</code> items.
-	 * Maps items of <code>sap.ui.core.SeparatorItem<code> type to <code>sap.m.GroupHeaderListItem</code> items.
-	 *
-	 * @param {sap.ui.core.Item} oItem The item to be matched
-	 * @returns {sap.m.StandardListItem | sap.m.GroupHeaderListItem | null} The matched StandardListItem
-	 * @private
-	 */
-	Input.prototype._mapItemToListItem = function (oItem) {
-		var oListItem,
-			oSuggestionsPopover = this._oSuggPopover,
-			oList = oSuggestionsPopover && oSuggestionsPopover._oList;
-
-		if (oItem.isA("sap.ui.core.SeparatorItem")) {
-			oListItem = new GroupHeaderListItem({
-				title: oItem.getText(),
-				type: ListType.Inactive
-			});
-		} else {
-			oListItem = new StandardListItem({
-				title: oItem.getText(),
-				type: ListType.Active,
-				info: oItem.getAdditionalText && oItem.getAdditionalText()
-			}).addEventDelegate({
-				ontouchstart : function(oEvent) {
-					(oEvent.originalEvent || oEvent)._sapui_cancelAutoClose = true;
-				}
-			});
-		}
-
-		oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
-		oList.addItem(oListItem);
-
-		return oListItem;
 	};
 
 	return Input;
