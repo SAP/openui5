@@ -3,6 +3,11 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "c5827126286daca34bc0f3e58498507d43241204",
+        "type": "FEATURE",
+        "text": " Table: Dummy column to fill up free space"
+      },
+      {
         "id": "0361c60c9fb39b037f77a6d5bb887e184d3af4e5",
         "type": "FEATURE",
         "text": " sap.m.SinglePlanningCalendar: Special dates visualisation in Month view"

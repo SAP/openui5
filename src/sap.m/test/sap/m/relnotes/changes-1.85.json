@@ -3,9 +3,47 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "fb27e05be5676386349a530e70fb41d890372611",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: now \"All\" checkbox is aligned to other checkboxes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070478382"
+          }
+        ]
+      },
+      {
+        "id": "9b80cf453fa9dda1d1fef4d1c1e86e944294be6d",
+        "type": "FIX",
+        "text": " P13nConditionPanel: set the focus to the operation field",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070460316"
+          }
+        ]
+      },
+      {
+        "id": "c5827126286daca34bc0f3e58498507d43241204",
+        "type": "FEATURE",
+        "text": " Table: Dummy column to fill up free space"
+      },
+      {
         "id": "8d637c1beb98b989d31d32d7fa48633873f878c8",
         "type": "FIX",
         "text": " sap.m.Table, sap.ui.table.Table: Paste event API documentation fixed"
+      },
+      {
+        "id": "1666d6b7d67416bd9bf0429f795c8407c675afd4",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Title now breaks on words",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070466558"
+          }
+        ]
       },
       {
         "id": "25c25e009130b59f7c27b3a2b9019395caad1eb4",

@@ -3,6 +3,17 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "63d8858df633c430b67432fa47f0b9810e47b867",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPickerPopover: fixed Demokit liveChange sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "9d9792a731ed9ecd843fed4a1b1dc2a020a0cc85",
         "type": "FIX",
         "text": " sap.ui.unified.Month: Runtime error on click on week",
