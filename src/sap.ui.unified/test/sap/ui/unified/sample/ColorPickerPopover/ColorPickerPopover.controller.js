@@ -115,12 +115,6 @@ sap.ui.define([
 
 			oInput.setValue(oEvent.getParameter("colorString"));
 			oInput.setValueState(ValueState.None);
-			oInput.getDomRef().firstChild.style.backgroundColor = "rgba(" + [
-				oEvent.getParameter("r"),
-				oEvent.getParameter("g"),
-				oEvent.getParameter("b"),
-				oEvent.getParameter("alpha")
-			].join(", ") + ")";
 		}
 	});
 
