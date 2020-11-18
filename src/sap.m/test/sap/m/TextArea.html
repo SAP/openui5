@@ -14,196 +14,133 @@
 			data-sap-ui-compatVersion="edge"
 	>
 	</script>
+	<style type="text/css">
+		.customClassForVisualTests {
+				caret-color: transparent;
+		}
 
+		#textAreaFiftyPercentWidth,
+		.sapMInputBaseState,
+		.sapMInputBaseReadonly {
+			margin-right: 1rem;
+		}
+	</style>
 	<script>
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
-				"sap/m/Dialog",
 				"sap/m/Button",
+				"sap/m/Dialog",
+				"sap/m/Page",
 				"sap/m/TextArea"
-			], function (Shell, ComponentContainer) {
-				/* Possible TextArea options
-				 new sap.m.TextArea({
-				 rows : 10,
-				 cols : 50,
-				 width : "300px",
-				 height : "100px",
-				 value : "TextArea",
-				 enabled : true,
-				 visible : true,
-				 maxLength : 100,
-				 valueState : "None",
-				 placeholder : "TextArea",
-				 wrapping : "None"
-				 })
-				 */
+			], function (Button, Dialog, Page, TextArea) {
+
 				var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
 
-				var dialog = new sap.m.Dialog({
-					title: "Approve",
-					content: [taComment = new sap.m.TextArea({
-						placeholder: "Please add your comment",
-						rows: 6,
-						growing: true,
-						growingMaxLines: 15,
-						value: lorem,
-						width: "100%"
-					})],
-					leftButton: new sap.m.Button({
-						text: "Reject",
-						type: sap.m.ButtonType.Reject,
-						press: function () {
-							dialog.close();
-						}
-					}),
-					rightButton: new sap.m.Button({
-						text: "Accept",
-						type: sap.m.ButtonType.Accept,
-						press: function () {
-							dialog.close();
-						}
-					})
-				});
-
-				var page = new sap.m.Page({
+				var oPage = new Page({
 					title: "TextArea Controls",
 					enableScrolling: true,
-					headerContent: new sap.m.Button({
-						text: "Approve",
+					headerContent: new Button("customCssButton", {
+						text: "Toggle custom CSS for visual test",
 						press: function () {
-							dialog.open();
+							var $body = jQuery("body");
+
+							$body.toggleClass("customClassForVisualTests");
 						}
 					}),
 					content: [
-						ta00 = new sap.m.TextArea({
+						oTextArea1 = new TextArea("textAreaFiftyPercentWidth", {
 							value : "%50 width TextArea:\n\n" + lorem + lorem,
 							width : "50%",
 							rows : 4
 						}),
 
-						ta001 = new sap.m.TextArea({
+						oTextArea2 = new TextArea("textAreaOverLimit", {
 							value: "This is text",
 							maxLength: 6,
 							showExceededText: true
 						}),
-						ta01 = new sap.m.TextArea({
-							placeholder: "{/placeholder}",
+
+						oTextArea3 = new TextArea("textAreaGrowing", {
 							showExceededText: true,
-							value: lorem,
-							editable: true,
+							value: lorem + lorem,
 							width: "100%",
 							growing: true,
 							maxLength: 40
 						}),
-						ta011 = new sap.m.TextArea({
-							placeholder: "{/placeholder}",
+						oTextArea4 = new TextArea("textAreaWithoutGrowing",{
+							placeholder: "This is a placeholder text",
 							showExceededText: true,
-							editable: true,
 							width: "100%",
 							maxLength: 40
 						}),
-						ta0111 = new sap.m.TextArea({
-							placeholder: "{/placeholder}",
-							showExceededText: true,
-							value: "This is text",
-							editable: true,
-							width: "100%",
-							rows: 8,
-							maxLength: 40
-						}),
-						ta012 = new sap.m.TextArea({
-							placeholder: "{/placeholder}",
-							showExceededText: true,
-							value: "This is text",
-							editable: true,
-							width: "100%",
-							maxLength: 40,
-							height: "100px"
-						}),
-						ta0 = new sap.m.TextArea({
+						oTextArea5 = new TextArea("textAreaWarningState", {
 							value : "Default textarea rows: 2, cols: 20",
-							valueState : "Warning"
-						}),
-						ta1 = new sap.m.TextArea({
-							value : "%90 width TextArea:\n\n" + lorem + lorem,
-							width : "90%",
-							rows : 4
-						}),
-						ta2 = new sap.m.TextArea({
-							value : "Disabled Textarea:\n\n" + lorem + lorem,
-							enabled : false,
-							editable : false,
-							width : "99%",
-							rows : 4
-						}),
-						ta3 = new sap.m.TextArea({
-							value : "ValueState : Warning \n\n" + lorem + lorem,
 							valueState : "Warning",
-							width : "100%",
-							rows : 3
+							valueStateText: "Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2 Extra long text used as a warning message - 3..",
+							width : "30%"
 						}),
-						ta4 = new sap.m.TextArea({
-							value : "ValueState : Error \r\n\n" + lorem + lorem,
+						oTextArea6 = new TextArea("textAreaErrorState", {
+							value : "ValueState : Error",
 							valueState : "Error",
-							width : "90%",
-							rows : 3
+							formattedValueStateText: new sap.m.FormattedText({
+								htmlText: "Error value state message with formatted text containing %%0 and a %%1",
+								controls: [
+									new sap.m.Link({
+										text: "link",
+										href: "#",
+										press: function() {
+											sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+										}
+									}),
+									new sap.m.Link({
+										text: "second link",
+										href: "#",
+										press: function() {
+											sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+										}
+									})
+								]
+							}),
 						}),
-						ta5 = new sap.m.TextArea({
-							value : "Wrapping: Off Scroll horizontal --- " + lorem,
-							wrapping : "Off",
-							width : "90%",
-							rows : 3
+						oTextArea6 = new TextArea("textAreaSuccessState", {
+							value : "ValueState : Error",
+							valueState : "Success",
 						}),
-						ta6 = new sap.m.TextArea({
+						oTextArea6 = new TextArea("textAreaInformationState", {
+							value : "ValueState : Error",
+							valueState : "Information",
+						}),
+						oTextArea7 = new TextArea("textAreaReadOnly", {
 							value : "Not Editable: " + lorem,
 							editable : false,
-							width : "100%",
+							width : "50%",
 							rows : 3
 						}),
-						ta7 = new sap.m.TextArea({
-							placeholder : "Max Length : 5",
-							maxLength : 5,
-							rows : 2
+						oTextArea8 = new TextArea("textAreaDisabled", {
+							value : "Disabled Textarea:\n\n" + lorem + lorem,
+							enabled : false,
+							width : "40%",
+							rows : 4
 						}),
-						ta8 = new sap.m.TextArea({
-							value: "Growing TextArea:\n\n" + lorem + lorem,
-							width: "100%",
-							growing: true,
+						oTextArea9 = new TextArea("textAreaWithoutWrapping", {
+							value : "Wrapping: Off Scroll horizontal --- " + lorem,
+							wrapping : "Off",
+							width : "40%",
+							rows : 3
 						}),
-						ta9 = new sap.m.TextArea({
-							value: new Array(1000).join("text "),
-							growing: true,
-							width: "100%"
-						}),
-						ta10 = new sap.m.TextArea({
-							growing: true,
-							width: "100%"
-						}),
-						ta11 = new sap.m.TextArea({
-							rows: 5,
-							growing: true,
-							width: "100%"
-						}),
-						ta12 = new sap.m.TextArea({
-							id: "showExceededTextWithHeight",
+						oTextArea10 = new TextArea("showExceededTextWithHeight", {
 							showExceededText: true,
 							maxLength: 50,
 							value: 'This is some text to test the showExceededText + height',
 							width: '100%',
 							height: '100px'
-						}),
-						ta13 = new sap.m.TextArea({
-							maxLength: 50,
-							value: 'This is some text to test the upper textArea',
-							width: '100%',
-						}),
+						})
 					]
-				});
+				}).addStyleClass("sapUiContentPadding");
 
-				new sap.m.App().addPage(page).placeAt("body");
+				new sap.m.App().addPage(oPage).placeAt("body");
 			})
-				}
-		);
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
