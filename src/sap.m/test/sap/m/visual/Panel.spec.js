@@ -17,7 +17,7 @@ describe("sap.m.Panel", function() {
 		expect(takeScreenshot(element(by.id("panel2")))).toLookAs("panel-defined-size");
 	});
 
-	it("should show Panel with header and info toolbar", function() {
+	it("should show Panel with header and active info toolbar", function() {
 		element(by.id("panel4")).click();
 		expect(takeScreenshot(element(by.id("panel3")))).toLookAs("panel-header-toolbar");
 	});
@@ -50,5 +50,4 @@ describe("sap.m.Panel", function() {
 	it("should show Panel with a button not expanded", function() {
 		expect(takeScreenshot(element(by.id("panel16")))).toLookAs("panel-not-expanded2");
 	});
-
 });
