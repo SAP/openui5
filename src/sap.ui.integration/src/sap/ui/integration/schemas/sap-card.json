@@ -80,6 +80,7 @@
       "enum": [
         "List",
         "Analytical",
+        "AnalyticsCloud",
         "Table",
         "Object",
         "Timeline",
@@ -155,6 +156,26 @@
           "properties": {
             "content": {
               "$ref": "#/definitions/ContentType.Analytical"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "AnalyticsCloud"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/ContentType.AnalyticsCloud"
             }
           }
         }
@@ -305,11 +326,11 @@
           ]
         },
         "title": {
-          "description": "Represents language-dependent title.",
+          "description": "The title of the header",
           "type": "string"
         },
         "subTitle": {
-          "description": "Represents language-dependent additional information to the title.",
+          "description": "A subtitle to the title",
           "type": "string"
         },
         "actions": {
@@ -348,11 +369,11 @@
           ]
         },
         "title": {
-          "description": "Represents language-dependent title.",
+          "description": "The title of the header",
           "type": "string"
         },
         "subTitle": {
-          "description": "Represents language-dependent additional information to the title.",
+          "description": "A subtitle to the title",
           "type": "string"
         },
         "actions": {
@@ -441,7 +462,7 @@
       "additionalProperties": false,
       "properties": {
         "title": {
-          "description": "Represents language-dependent title of the side indicator",
+          "description": "The title of the side indicator",
           "type": "string"
         },
         "number": {
@@ -748,6 +769,37 @@
         }
       }
     },
+    "ContentType.AnalyticsCloud": {
+      "description": "Represents Analytics Cloud content attributes",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/data"
+        },
+        "minHeight": {
+          "$ref": "#/definitions/minHeight"
+        },
+        "actions": {
+          "description": "Defines actions that can be applied on the content.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/action"
+          }
+        },
+        "options": {
+          "description": "Options of the chart",
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        }
+      }
+    },
     "ContentType.Timeline": {
       "description": "Represents time related content",
       "type": "object",
@@ -838,7 +890,7 @@
       "additionalProperties": false,
       "properties": {
         "title": {
-          "description": "Defines language-dependent title of the object group.",
+          "description": "The title of this group",
           "type": "string"
         },
         "items": {
@@ -962,7 +1014,7 @@
       "additionalProperties": false,
       "properties": {
         "title": {
-          "description": "Defines language-dependent title of the column.",
+          "description": "The title of the column",
           "type": "string"
         },
         "width": {
@@ -1517,7 +1569,7 @@
           "description": "The path from the JSON to be used as root",
           "type": "string",
           "default": "/",
-          "pattern": "^[a-zA-Z0-9_\\.\\-/|\\@\\#]*$"
+          "pattern": "^[a-zA-Z0-9_\\.\\-/|@#]*$"
         },
         "json": {
           "description": "The data to be used directly. Without making requests.",
@@ -1638,7 +1690,7 @@
       "additionalProperties": false,
       "properties": {
         "label": {
-          "description": "Represents language-dependent label of the field",
+          "description": "Represents a label of the field",
           "type": "string"
         },
         "value": {
@@ -1871,7 +1923,7 @@
               "description": "Defines the path to the structure holding the data about the items.",
               "type": "string",
               "default": "/",
-              "pattern": "^[a-zA-Z0-9_\\.\\-/|\\@\\#]*$"
+              "pattern": "^[a-zA-Z0-9_\\.\\-/|@#]*$"
             }
           }
         }
