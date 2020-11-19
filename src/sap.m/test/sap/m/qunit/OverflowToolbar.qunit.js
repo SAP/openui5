@@ -2906,6 +2906,24 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.test("Adding tolerance on content size for fixing rounding issues", function (assert) {
+		// Arrange
+		var oTestButton = new Button({width: "240px"}),
+			oTestButton2 = new Button({width: "248.5px"}),
+			oOTB = createOverflowToolbar({width: "504px"}, [oTestButton, oTestButton2]),
+			oOverflowButton;
+
+		oOTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		oOverflowButton = oOTB._getOverflowButton();
+		assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible");
+
+		// Clean up
+		oOTB.destroy();
+	});
+
 	QUnit.module("Focusing", {
 		beforeEach: function () {
 			this.oButtonUnderTest = new Button({
