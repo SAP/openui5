@@ -475,7 +475,7 @@ sap.ui.define([
 			oFrameEl.src = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/samples/" + sSample + "/index.html");
 			oFrameEl.width = "100%";
 			oFrameEl.className = "sapUiTopicsIframe";
-			oFrameEl.sandbox = "allow-forms allow-modals allow-pointer-lock allow-popups allow-scripts";
+			oFrameEl.sandbox = "allow-same-origin allow-forms allow-modals allow-pointer-lock allow-popups allow-scripts";
 			return oFrameEl;
 		},
 
