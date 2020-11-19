@@ -530,42 +530,41 @@ html.sap-tablet .sapUiCalYearPicker .sapUiCalItemSel:not(:focus) {
 
 /* Special days */
 .dayColorMixIn(@class, @color) {
-  .@{class}.sapUiCalItemSel:not(.sapUiCalItemNow) > .sapUiCalItemText {
-	box-shadow: inset 0 -0.25rem 0 @color;
-  }
+	.@{class}.sapUiCalItemSel:not(.sapUiCalItemNow) > .sapUiCalItemText {
+		box-shadow: inset 0 -0.25rem 0 @color;
+	}
 
-  .@{class}:not(.sapUiCalItemSel):not(.sapUiCalItemNow) > .sapUiCalItemText {
-	box-shadow: inset 0 -0.25rem 0 @color;
-  }
+	.@{class}:not(.sapUiCalItemSel):not(.sapUiCalItemNow) > .sapUiCalItemText {
+		box-shadow: inset 0 -0.25rem 0 @color;
+	}
 
-  .sapMSinglePCColumnHeader .@{class}.sapUiCalItemSel:not(.sapUiCalItemNow) > .sapUiCalItemText,
-  .sapMSinglePCColumnHeader .@{class}:not(.sapUiCalItemSel):not(.sapUiCalItemNow) > .sapUiCalItemText {
-	  box-shadow: none;
-  }
+	.sapMSinglePCColumnHeader .@{class}.sapUiCalItemSel:not(.sapUiCalItemNow) > .sapUiCalItemText,
+	.sapMSinglePCColumnHeader .@{class}:not(.sapUiCalItemSel):not(.sapUiCalItemNow) > .sapUiCalItemText {
+		box-shadow: none;
+	}
 
-  .@{class}.sapUiCalItemSel:not(.sapUiCalItemNow):hover  > .sapUiCalItemText {
-	box-shadow: none;
-  }
-  //end: not today, focused
+	.@{class}.sapUiCalItemSel:not(.sapUiCalItemNow):hover > .sapUiCalItemText {
+		box-shadow: none;
+	}
 }
 
-.dayColorMixIn(sapUiCalItemType01, @sapUiAccent1);
-.dayColorMixIn(sapUiCalItemType02, @sapUiAccent2);
-.dayColorMixIn(sapUiCalItemType03, @sapUiAccent3);
-.dayColorMixIn(sapUiCalItemType04, darken(saturate(@sapUiAccent2, 70), 5));
-.dayColorMixIn(sapUiCalItemType05, @sapUiAccent4);
-.dayColorMixIn(sapUiCalItemType06, @sapUiAccent6);
-.dayColorMixIn(sapUiCalItemType07, @sapUiAccent7);
-.dayColorMixIn(sapUiCalItemType08, @sapUiAccent8);
-.dayColorMixIn(sapUiCalItemType09, darken(@sapUiAccent6, 15));
-.dayColorMixIn(sapUiCalItemType10, darken(desaturate(@sapUiAccent4, 40), 2));
-.dayColorMixIn(sapUiCalItemType11, lighten(saturate(@sapUiAccent1,15),20));
-.dayColorMixIn(sapUiCalItemType12, lighten(desaturate(@sapUiAccent2,50),10));
-.dayColorMixIn(sapUiCalItemType13, lighten(saturate(@sapUiAccent3,50),5));
-.dayColorMixIn(sapUiCalItemType14, lighten(saturate(@sapUiAccent2,30),15));
-.dayColorMixIn(sapUiCalItemType15, lighten(saturate(@sapUiAccent4,50),20));
-.dayColorMixIn(sapUiCalItemType16, desaturate(@sapUiAccent1,20));
-.dayColorMixIn(sapUiCalItemType17, lighten(saturate(@sapUiAccent7,30),15));
-.dayColorMixIn(sapUiCalItemType18, darken(desaturate(@sapUiAccent8,50),15));
-.dayColorMixIn(sapUiCalItemType19, lighten(desaturate(@sapUiAccent6,30),10));
-.dayColorMixIn(sapUiCalItemType20, saturate(@sapUiAccent5,70));
+.dayColorMixIn(sapUiCalItemType01, @_sap_ui_unified_Calendar_sapUiCalItemType01);
+.dayColorMixIn(sapUiCalItemType02, @_sap_ui_unified_Calendar_sapUiCalItemType02);
+.dayColorMixIn(sapUiCalItemType03, @_sap_ui_unified_Calendar_sapUiCalItemType03);
+.dayColorMixIn(sapUiCalItemType04, @_sap_ui_unified_Calendar_sapUiCalItemType04);
+.dayColorMixIn(sapUiCalItemType05, @_sap_ui_unified_Calendar_sapUiCalItemType05);
+.dayColorMixIn(sapUiCalItemType06, @_sap_ui_unified_Calendar_sapUiCalItemType06);
+.dayColorMixIn(sapUiCalItemType07, @_sap_ui_unified_Calendar_sapUiCalItemType07);
+.dayColorMixIn(sapUiCalItemType08, @_sap_ui_unified_Calendar_sapUiCalItemType08);
+.dayColorMixIn(sapUiCalItemType09, @_sap_ui_unified_Calendar_sapUiCalItemType09);
+.dayColorMixIn(sapUiCalItemType10, @_sap_ui_unified_Calendar_sapUiCalItemType10);
+.dayColorMixIn(sapUiCalItemType11, @_sap_ui_unified_Calendar_sapUiCalItemType11);
+.dayColorMixIn(sapUiCalItemType12, @_sap_ui_unified_Calendar_sapUiCalItemType12);
+.dayColorMixIn(sapUiCalItemType13, @_sap_ui_unified_Calendar_sapUiCalItemType13);
+.dayColorMixIn(sapUiCalItemType14, @_sap_ui_unified_Calendar_sapUiCalItemType14);
+.dayColorMixIn(sapUiCalItemType15, @_sap_ui_unified_Calendar_sapUiCalItemType15);
+.dayColorMixIn(sapUiCalItemType16, @_sap_ui_unified_Calendar_sapUiCalItemType16);
+.dayColorMixIn(sapUiCalItemType17, @_sap_ui_unified_Calendar_sapUiCalItemType17);
+.dayColorMixIn(sapUiCalItemType18, @_sap_ui_unified_Calendar_sapUiCalItemType18);
+.dayColorMixIn(sapUiCalItemType19, @_sap_ui_unified_Calendar_sapUiCalItemType19);
+.dayColorMixIn(sapUiCalItemType20, @_sap_ui_unified_Calendar_sapUiCalItemType20);
