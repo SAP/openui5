@@ -155,7 +155,7 @@ sap.ui.define([
 	ODataFilterBarDelegate._createFilterField = function(oProperty, oFilterBar, mPropertyBag) {
 		var oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
 		var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : FlUtils.getAppComponentForControl(oFilterBar);
-		var oView = mPropertyBag ? mPropertyBag.view : FlUtils.getViewForControl(oFilterBar);
+		var oView = (mPropertyBag && mPropertyBag.view ) ? mPropertyBag.view : FlUtils.getViewForControl(oFilterBar);
 		var sViewId = mPropertyBag ? mPropertyBag.viewId : null;
 		var sName = oProperty.path || oProperty.name;
 		var oSelector = {};
