@@ -2114,7 +2114,7 @@ sap.ui.define([
 
 		var aConditions = this.getConditions();
 		aConditions = Condition._removeEmptyConditions(aConditions);
-		FilterOperatorUtil.updateConditionsValues(aConditions, this._getFormatOptions().operators); // to remove static text from static conditions
+		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
 
 		this._bNoConditionModelUpdate = true;
 		this.setProperty("conditions", aConditions, true); // do not invalidate whole FieldHelp
