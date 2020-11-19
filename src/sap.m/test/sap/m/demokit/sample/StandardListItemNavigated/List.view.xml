@@ -15,6 +15,13 @@
 			<StandardListItem
 				type="Active"
 				title="{Name}"
+				navigated="{
+					parts: [
+						'settings>/navigatedItem',
+						'ProductId'
+					],
+					formatter: '.isNavigated'
+				}"
 				press="onPress" />
 		</items>
 	</List>

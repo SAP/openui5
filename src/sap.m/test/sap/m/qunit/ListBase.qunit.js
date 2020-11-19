@@ -2329,14 +2329,12 @@ sap.ui.define([
 			}).placeAt("qunit-fixture");
 			Core.applyChanges();
 			assert.notOk(oLI.$().find(".sapMLIBNavigated").length > 0, "navigated property is not enabled, hence class is not rendered");
+			assert.equal(oLI.$().attr("aria-current"), undefined, "ARIA attribute aria-current is not set");
 
 			oLI.setNavigated(true);
 			Core.applyChanges();
 			assert.ok(oLI.$().find(".sapMLIBNavigated").length > 0, "navigated property is set correctly and class is also rendered");
-
-			// accessibility
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
-			assert.ok(oLI.getAccessibilityInfo().description.indexOf(oResourceBundle.getText("LIST_ITEM_NAVIGATED")) > -1, "Navigated info added to the accessibility announcement");
+			assert.ok(oLI.$().attr("aria-current"), "ARIA attribute aria-current is set");
 
 			oLI.destroy();
 		});
@@ -2355,14 +2353,17 @@ sap.ui.define([
 			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 			assert.notOk(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "Navigated class is not added as navigated property is not enabled");
+			assert.equal(oListItem1.$().attr("aria-current"), undefined, "ARIA attribute aria-current is not set");
 
 			oListItem2.setNavigated(true);
 			Core.applyChanges();
 			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "List informed to add navigated class");
+			assert.ok(oListItem2.$().attr("aria-current"), "ARIA attribute aria-current is set");
 
 			oListItem2.setNavigated(false);
 			Core.applyChanges();
 			assert.notOk(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "Navigated class is removed, as non of the items are navigated");
+			assert.equal(oListItem2.$().attr("aria-current"), undefined, "ARIA attribute aria-current is not set");
 
 			oList.destroy();
 		});
@@ -2559,7 +2560,7 @@ sap.ui.define([
 			oListItem.setHighlight("Information");
 			oListItem.setNavigated(true);
 			oListItem.setType("Active");
-			assert.strictEqual(oListItem.getAccessibilityInfo().description,oBundle.getText("LIST_ITEM_SELECTED") + " . " + oListItem.getHighlight() + " . " + oBundle.getText("LIST_ITEM_ACTIVE") + " . " + "Title . Description . " + oBundle.getText("LIST_ITEM_NAVIGATED"),  "Content annoucement for Standard List Item with Punctuation" );
+			assert.strictEqual(oListItem.getAccessibilityInfo().description,oBundle.getText("LIST_ITEM_SELECTED") + " . " + oListItem.getHighlight() + " . " + oBundle.getText("LIST_ITEM_ACTIVE") + " . " + "Title . Description",  "Content announcement for Standard List Item with Punctuation" );
 		});
 
 		QUnit.test("Accessibility Text for Input List Item", function(assert) {
@@ -2576,7 +2577,7 @@ sap.ui.define([
 			oInputListItem.setHighlight("Information");
 			oInputListItem.setNavigated(true);
 			oInputListItem.setType("Active");
-			assert.strictEqual(oInputListItem.getAccessibilityInfo().description,oBundle.getText("LIST_ITEM_SELECTED") + " . " + oInputListItem.getHighlight() + " . " + oBundle.getText("LIST_ITEM_ACTIVE") + " . " + "Label . Input Content . " + oBundle.getText("LIST_ITEM_NAVIGATED"),  "Content annoucement for Standard List Item with Punctuation" );
+			assert.strictEqual(oInputListItem.getAccessibilityInfo().description,oBundle.getText("LIST_ITEM_SELECTED") + " . " + oInputListItem.getHighlight() + " . " + oBundle.getText("LIST_ITEM_ACTIVE") + " . " + "Label . Input Content",  "Content announcement for Standard List Item with Punctuation" );
 		});
 
 		QUnit.test("InputListItem: inner control should have ariaLabelledBy association", function(assert) {

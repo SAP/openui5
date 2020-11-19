@@ -307,6 +307,10 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 			};
 		}
 
+		if (oLI.getNavigated()) {
+			mAccessibilityState.current = true;
+		}
+
 		return mAccessibilityState;
 	};
 

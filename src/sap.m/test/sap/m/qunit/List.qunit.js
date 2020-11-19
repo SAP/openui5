@@ -2194,17 +2194,12 @@ sap.ui.define([
 		aState.splice(1, 0, "<TOOLTIP>");
 		check("Content + Tooltip");
 
-		oItem.setNavigated(true);
-		aState.splice(2, 0, oRb.getText("LIST_ITEM_NAVIGATED"));
-		check("Content + Tooltip + Navigated");
-
 		oItem._bAnnounceNotSelected = true;
 		aState.splice(3, 0, oRb.getText("LIST_ITEM_NOT_SELECTED"));
-		check("Enhanced Selection (Item Selectable, Not Selected): Content + Tooltip + Navigated + Not Selected");
+		check("Enhanced Selection (Item Selectable, Not Selected): Content + Tooltip + Not Selected");
 
 		oItem.setSelected(true);
 		oItem.setTooltip(null);
-		oItem.setNavigated(false);
 		aState = [oRb.getText("LIST_ITEM_SELECTED"), sContent];
 		check("Enhanced Selection (Item Selectable, Selected): Selection + Content");
 
