@@ -720,7 +720,7 @@
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem type="Active">
-												<m:Text text="{countryId}"></m:Text>
+												<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
 												<m:Text text="{text}"></m:Text>
 											</m:ColumnListItem>
 										</m:items>
@@ -747,11 +747,11 @@
 								keyPath="regionId"
 								descriptionPath="text">
 								<mdcField:inParameters>
-									<mdcField:InParameter id="IOFVHRegion_In-Country" value="{CountryId}" helpPath="countryId"/>
+									<mdcField:InParameter id="IOFVHRegion_In-Country" value="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}" helpPath="countryId"/>
 								</mdcField:inParameters>
 								<mdcField:outParameters>
-									<mdcField:OutParameter id="IOFVHRegion_Out-Country" value="{CountryId}" helpPath="countryId"/>
-									<mdcField:OutParameter id="IOFVHRegion_Out-City" value="{CityId}" fixedValue=""/>
+									<mdcField:OutParameter id="IOFVHRegion_Out-Country" value="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}" helpPath="countryId"/>
+									<mdcField:OutParameter id="IOFVHRegion_Out-City" value="{path: 'CityId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}" fixedValue=""/>
 								</mdcField:outParameters>
 								<mdcField:filterBar>
 									<vhfb:FilterBar
@@ -762,6 +762,7 @@
 											editMode= "Editable"
 											display= "ValueDescription"
 											dataType="sap.ui.model.type.String"
+											dataTypeConstraints="{maxLength: 3}"
 											width="100%"
 											conditions="{$filters>/conditions/countryId}"
 											fieldHelp="IOFVHCountry">
@@ -783,9 +784,9 @@
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem type="Active">
-												<m:Text text="{regionId}"></m:Text>
+												<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"></m:Text>
 												<m:Text text="{text}"></m:Text>
-												<m:Text text="{countryId}"></m:Text>
+												<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
 											</m:ColumnListItem>
 										</m:items>
 									</m:Table>
@@ -811,12 +812,14 @@
 								keyPath="cityId"
 								descriptionPath="text">
 								<mdcField:inParameters>
-									<mdcField:InParameter id="IOFVHCity_In-Country" value="{CountryId}" helpPath="countryId"/>
-									<mdcField:InParameter id="IOFVHCity_In-Region" value="{RegionId}" helpPath="regionId"/>
+									<mdcField:InParameter id="IOFVHCity_In-Country" value="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}" helpPath="countryId"/>
+									<mdcField:InParameter id="IOFVHCity_In-Region" value="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}" helpPath="regionId"/>
+									<mdcField:InParameter id="IOFVHCity_In-Info" value="{path: 'CityInfo', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}" helpPath="info" initialValueFilterEmpty="true"/>
 								</mdcField:inParameters>
 								<mdcField:outParameters>
-									<mdcField:OutParameter id="IOFVHCity_Out-Country" value="{CountryId}" helpPath="countryId" mode="Always"/>
-									<mdcField:OutParameter id="IOFVHCity_Out-Region" value="{RegionId}" helpPath="regionId" mode="Always"/>
+									<mdcField:OutParameter id="IOFVHCity_Out-Country" value="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}" helpPath="countryId" mode="Always"/>
+									<mdcField:OutParameter id="IOFVHCity_Out-Region" value="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}" helpPath="regionId" mode="Always"/>
+									<mdcField:OutParameter id="IOFVHCity_Out-Info" value="{path: 'CityInfo', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}" helpPath="info" mode="Always"/>
 								</mdcField:outParameters>
 								<mdcField:filterBar>
 									<vhfb:FilterBar
@@ -827,6 +830,7 @@
 											editMode= "Editable"
 											display= "ValueDescription"
 											dataType="sap.ui.model.type.String"
+											dataTypeConstraints="{maxLength: 3}"
 											width="100%"
 											conditions="{$filters>/conditions/countryId}"
 											fieldHelp="IOFVHCountry">
@@ -837,8 +841,20 @@
 											editMode= "Editable"
 											display= "ValueDescription"
 											dataType="sap.ui.model.type.String"
+											dataTypeConstraints="{maxLength: 2, search: '^(|[0-9])+$'}"
 											width="100%"
 											conditions="{$filters>/conditions/regionId}">
+										</mdc:FilterField>
+										<mdc:FilterField
+											id="VHFBTextFFInfo2"
+											label= "{/#City/info/@sap:label}"
+											editMode= "Editable"
+											display= "Value"
+											dataType="sap.ui.model.odata.type.String"
+											dataTypeFormatOptions="{parseKeepsEmptyString: true}"
+											dataTypeConstraints="{maxLength: 100, nullable: false}"
+											width="100%"
+											conditions="{$filters>/conditions/info}">
 										</mdc:FilterField>
 									</vhfb:FilterBar>
 								</mdcField:filterBar>
@@ -857,13 +873,17 @@
 											<m:Column>
 												<m:Label text="{/#City/regionId/@sap:label}"/>
 											</m:Column>
+											<m:Column>
+												<m:Label text="{/#City/info/@sap:label}"></m:Label>
+											</m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem type="Active">
-												<m:Text text="{cityId}"></m:Text>
-												<m:Text text="{text}"></m:Text>
-												<m:Text text="{countryId}"></m:Text>
-												<m:Text text="{regionId}"></m:Text>
+												<m:Text text="{path: 'cityId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"/>
+												<m:Text text="{text}"/>
+												<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+												<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
+												<m:Text text="{path: 'info', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}"/>
 											</m:ColumnListItem>
 										</m:items>
 									</m:Table>
@@ -871,6 +891,9 @@
 							</mdcField:FieldValueHelp>
 					</mdc:dependents>
 				</mdc:Field>
+
+				<m:Label text="Info (InParameter for City)"></m:Label>
+				<mdc:Field id="IOFInfo" value="{path: 'CityInfo', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 
 			</form:SimpleForm>
 		</m:Page>

@@ -47,7 +47,21 @@ function(
 				for (var sFieldPath in oConditions) {
 					if (oFilterBar) {
 						var oPropertyInfo = oFilterBar._getPropertyByName(sFieldPath);
-						var oDataType = oPropertyInfo && oPropertyInfo.typeConfig && oPropertyInfo.typeConfig.typeInstance;
+						var oDataType;
+						if (oPropertyInfo && oPropertyInfo.typeConfig) {
+							oDataType = oPropertyInfo.typeConfig.typeInstance;
+						} else {
+							// try to find missing type from FilterField
+							var oFilterField = oFilterBar._getFilterField(sFieldPath); // TODO: use official API
+							if (oFilterField) {
+								var oFormatOptions = oFilterField._getFormatOptions();
+								if (oFormatOptions.originalDateType) {
+									oDataType = oFormatOptions.originalDateType;
+								} else {
+									oDataType = oFormatOptions.valueType;
+								}
+							}
+						}
 						oResult[sFieldPath] = {type : oDataType};
 					}
 				}

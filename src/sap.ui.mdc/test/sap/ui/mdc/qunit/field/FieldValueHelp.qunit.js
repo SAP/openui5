@@ -1044,6 +1044,34 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("FilterValue in suggestion with empty inParameter", function(assert) {
+
+		oModel.setData(merge({testIn1: "", testIn2: ""}, oModelData));
+		var oType = new StringType({}, {maxLength: 10});
+		oFieldHelp.setFilterValue("It");
+		var oInParameter1 = new InParameter({value: {path: "\testIn1", type: oType}, helpPath: "In1"});
+		oFieldHelp.addInParameter(oInParameter1);
+		var oInParameter2 = new InParameter({value: {path: "\testIn2", type: oType}, helpPath: "In2", initialValueFilterEmpty: true});
+		oFieldHelp.addInParameter(oInParameter2);
+		var oEmpty = FilterOperatorUtil.getOperator("Empty");
+		sinon.spy(oEmpty, "getModelFilter");
+
+		oFieldHelp.open(true);
+
+		oClock.tick(iPopoverDuration); // fake opening time
+		assert.ok(oWrapper.getFilterEnabled.called, "Wrapper.getFilterEnabled is called");
+		assert.notOk(oWrapper.getListBinding.called, "Wrapper.getListBinding is not called");
+		assert.ok(oWrapper.applyFilters.called, "Wrapper.applyFilters is called");
+		assert.notOk(sSearch, "No $search used");
+		var oCheckFilters = {text: [{operator: "StartsWith", value: "It", value2: undefined}], additionalText: [{operator: "StartsWith", value: "It", value2: undefined}], In2: [{operator: "EQ", value: "", value2: undefined}]};
+		assert.deepEqual(oFilters, oCheckFilters, "Filters used");
+		assert.ok(oEmpty.getModelFilter.calledOnceWith({operator: "Empty", values: [], isEmpty: false, validated: undefined}, "In2", oType), "Empty operator used to create fiter");
+
+		oFieldHelp.close();
+		oClock.tick(iPopoverDuration); // fake closing time
+
+	});
+
 	QUnit.test("FilterValue in suggestion using $search (with async loading of ConditionModel)", function(assert) {
 
 		var oStub = sinon.stub(sap.ui, "require");

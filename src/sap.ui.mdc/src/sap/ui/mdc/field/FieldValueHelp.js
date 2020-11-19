@@ -720,10 +720,10 @@ sap.ui.define([
 			}
 		} else if (oChanges.object.isA("sap.ui.mdc.field.InParameter")){
 			if (oChanges.name === "value") {
-				_inParameterValueChanged.call(this, oChanges.object.getHelpPath(), oChanges.current, oChanges.old, oChanges.object.getUseConditions());
+				_inParameterValueChanged.call(this, oChanges.object.getHelpPath(), oChanges.current, oChanges.old, oChanges.object.getUseConditions(), oChanges.object.getInitialValueFilterEmpty());
 			}
 			if (oChanges.name === "helpPath") {
-				_inParameterPathChanged.call(this, oChanges.current, oChanges.old, oChanges.object.getValue(), oChanges.object.getUseConditions());
+				_inParameterPathChanged.call(this, oChanges.current, oChanges.old, oChanges.object.getValue(), oChanges.object.getUseConditions(), oChanges.object.getInitialValueFilterEmpty());
 			}
 		}
 
@@ -1280,8 +1280,9 @@ sap.ui.define([
 			if (this._getField() && this.isOpen()) {
 				var vValue = oInParameter.getValue();
 				var bUseConditions = oInParameter.getUseConditions();
+				var bInitialValueFilterEmpty = oInParameter.getInitialValueFilterEmpty();
 				bUpdate = _removeInFilter.call(this, sFilterPath); // if exist, remove old filter
-				bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions) || bUpdate;
+				bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate;
 				_updateSelectedItems.call(this); // as mapping of in-parameters could change
 			}
 		}
@@ -1290,12 +1291,12 @@ sap.ui.define([
 
 	}
 
-	function _addInFilter(sFilterPath, vValue, bUseConditions) {
+	function _addInFilter(sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) {
 
 		var oCondition;
 		var bUpdate = false;
 
-		if (sFilterPath && vValue) { // TODO: support boolean?
+		if (sFilterPath && (vValue || (bInitialValueFilterEmpty && !bUseConditions))) { // TODO: support boolean?
 			if (bUseConditions) {
 				if (Array.isArray(vValue)) {
 					for (var i = 0; i < vValue.length; i++) {
@@ -1313,11 +1314,16 @@ sap.ui.define([
 					}
 				}
 			} else {
-				// TODO: way to provide description on InParameter
-				// validated to let FilterField determine description if visible on FilterBar.
-				// Also to show it as selected on table in FieldHelp of FilterField.
-				oCondition = Condition.createItemCondition(vValue);
-				oCondition.validated = ConditionValidated.Validated;
+				if (!vValue && bInitialValueFilterEmpty) {
+					oCondition = Condition.createCondition("Empty", []);
+					oCondition.isEmpty = false; // no explicit check needed
+				} else {
+					// TODO: way to provide description on InParameter
+					// validated to let FilterField determine description if visible on FilterBar.
+					// Also to show it as selected on table in FieldHelp of FilterField.
+					oCondition = Condition.createItemCondition(vValue);
+					oCondition.validated = ConditionValidated.Validated;
+				}
 				_addCondition.call(this, sFilterPath, oCondition);
 				bUpdate = true;
 			}
@@ -1340,7 +1346,7 @@ sap.ui.define([
 
 	}
 
-	function _inParameterValueChanged(sFilterPath, vValue, vOldValue, bUseConditions) {
+	function _inParameterValueChanged(sFilterPath, vValue, vOldValue, bUseConditions, bInitialValueFilterEmpty) {
 
 		if (this._bNoInOutFilterUpdate) {
 			// just a updaste of BindingContext during formatting/parsing -> do not update Filter as it will changed back soon.
@@ -1361,14 +1367,14 @@ sap.ui.define([
 		var bUpdate = false;
 
 		bUpdate = _removeInFilter.call(this, sFilterPath); // if exist, remove old filter
-		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions) || bUpdate;
+		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate;
 		_updateSelectedItems.call(this); // as default in-parameters could change
 
 		_applyFilters.call(this, true); // call async to handle more inParamers at one time
 
 	}
 
-	function _inParameterPathChanged(sFilterPath, sOldFilterPath, vValue, bUseConditions) {
+	function _inParameterPathChanged(sFilterPath, sOldFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) {
 
 		if (!this._getField() || !this.isOpen()) {
 			return;
@@ -1377,7 +1383,7 @@ sap.ui.define([
 		var bUpdate = false;
 
 		bUpdate = _removeInFilter.call(this, sOldFilterPath); // if exist, remove old filter
-		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions) || bUpdate;
+		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate;
 
 		_applyFilters.call(this, true); // call async to handle more inParamers at one time
 
@@ -1393,8 +1399,9 @@ sap.ui.define([
 			var sFilterPath = oInParameter.getHelpPath();
 			var vValue = oInParameter.getValue();
 			var bUseConditions = oInParameter.getUseConditions();
+			var bInitialValueFilterEmpty = oInParameter.getInitialValueFilterEmpty();
 			bUpdate = _removeInFilter.call(this, sFilterPath) || bUpdate; // if exist, remove old filter
-			bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions) || bUpdate;
+			bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate;
 		}
 
 		if (bUpdate || (this._bApplyFilter && this._bPendingFilterUpdate)) {
@@ -1607,7 +1614,7 @@ sap.ui.define([
 							}
 						}
 
-						if (sHelpPath && vValue) {
+						if (sHelpPath) { // also add empty values to InParameter to allow comparison
 							if (!oHelpParameters) {
 								oHelpParameters = {};
 							}
@@ -1696,7 +1703,7 @@ sap.ui.define([
 				oConditions = this._oConditions;
 			}
 
-			var oConditionTypes = FilterConverter.createConditionTypesMapFromFilterBar( oConditions, oFilterBar);
+			var oConditionTypes = _getTypesForConditions.call(this, oConditions);
 			var oFilter = FilterConverter.createFilters( oConditions, oConditionTypes);
 			var aFilters = [];
 			var aSearchConditions = oConditions["$search"];
@@ -1712,6 +1719,40 @@ sap.ui.define([
 
 			oWrapper.applyFilters(aFilters, sSearch);
 		}
+
+	}
+
+	function _getTypesForConditions(oConditions) {
+
+		var oFilterBar = this.getFilterBar();
+		var aInParameters = this.getInParameters();
+		var oConditionTypes;
+		var sFieldPath;
+
+		if (oFilterBar) {
+			oConditionTypes = FilterConverter.createConditionTypesMapFromFilterBar( oConditions, oFilterBar);
+		} else {
+			// collect condition Fieldpaths here
+			oConditionTypes = {};
+			for (sFieldPath in oConditions) {
+				oConditionTypes[sFieldPath] = {type: null};
+			}
+		}
+
+		// try to find missing type from InParameter
+		for (sFieldPath in oConditionTypes) {
+			if (!oConditionTypes[sFieldPath].type) {
+				for (var i = 0; i < aInParameters.length; i++) {
+					var oInParameter = aInParameters[i];
+					if (oInParameter.getHelpPath() === sFieldPath) {
+						oConditionTypes[sFieldPath].type = oInParameter.getDataType();
+						break;
+					}
+				}
+			}
+		}
+
+		return oConditionTypes;
 
 	}
 
@@ -2211,7 +2252,7 @@ sap.ui.define([
 		oConditions[sFieldPath].push(oCondition); // use FieldHelp paths in FilterBar too
 
 		if (oFilterBar) {
-			oConditions = oFilterBar.setInternalConditions(oConditions);
+			oFilterBar.setInternalConditions(oConditions);
 		}
 
 	}

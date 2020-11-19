@@ -3,72 +3,84 @@
 		"countryId" : "DE",
 		"regionId": "01",
 		"cityId": "01",
-		"text": "Mannheim"
+		"text": "Mannheim",
+		"info": "Test"
 	},
 	{
 		"countryId" : "DE",
 		"regionId": "01",
 		"cityId": "02",
-		"text": "Stuttgart"
+		"text": "Stuttgart",
+		"info": "state capital"
 	},
 	{
 		"countryId" : "DE",
 		"regionId": "02",
 		"cityId": "01",
-		"text": "München"
+		"text": "München",
+		"info": "state capital"
 	},
 	{
 		"countryId" : "DE",
 		"regionId": "02",
 		"cityId": "02",
-		"text": "Ulm"
+		"text": "Ulm",
+		"info": ""
 	},
 	{
 		"countryId" : "DE",
 		"regionId": "03",
 		"cityId": "01",
-		"text": "Frankfurt"
+		"text": "Frankfurt",
+		"info": ""
 	},
 	{
 		"countryId" : "DE",
 		"regionId": "03",
 		"cityId": "02",
-		"text": "Kassel"
+		"text": "Kassel",
+		"info": ""
 	},
 	{
 		"countryId" : "FR",
 		"regionId": "01",
 		"cityId": "01",
-		"text": "Strassburg"
+		"text": "Strassburg",
+		"info": ""
 	},
 	{
 		"countryId" : "FR",
 		"regionId": "02",
 		"cityId": "01",
-		"text": "Brest"
+		"text": "Brest",
+		"info": ""
 	},
 	{
 		"countryId" : "USA",
 		"regionId": "01",
 		"cityId": "01",
-		"text": "Los Angeles"
+		"text": "Los Angeles",
+		"info": ""
 	},
 	{
 		"countryId" : "USA",
 		"regionId": "01",
 		"cityId": "02",
-		"text": "San Francisco"
+		"text": "San Francisco",
+		"info": ""
 	},
 	{
 		"countryId" : "USA",
 		"regionId": "02",
 		"cityId": "01",
-		"text": "Dallas"
+		"text": "Dallas",
+		"info": ""
 	},
 	{
 		"countryId" : "USA",
 		"regionId": "02",
 		"cityId": "02",
-		"text": "Housten"
+		"text": "Housten",
+		"info": ""
 	}
 ]
