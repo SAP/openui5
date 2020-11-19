@@ -54,8 +54,7 @@ function (
 	var NavigationDirection = library.NavigationDirection;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture",
-		EDGE_VERSION_WITH_GRID_SUPPORT = 16,
-		bIsGridSupported = !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
+		bIsGridSupported = !Device.browser.msie;
 
 	function createFakeKeydownEvent (sType) {
 		var oEvent = new jQuery.Event("sapincreasemodifiers");
@@ -1841,7 +1840,7 @@ function (
 		var aMatrix = GridContainerUtils.makeMatrix(this.oGrid);
 
 		// Assert
-		assert.strictEqual(aMatrix.length, 6, "Matrix created with the expected number of rows");
+		assert.strictEqual(aMatrix.length, bIsGridSupported ? 6 : 8, "Matrix created with the expected number of rows");
 		assert.strictEqual(aMatrix[0].length, 6, "Matrix created with the expected number of columns");
 	});
 
@@ -1852,7 +1851,7 @@ function (
 		var aMatrix = GridContainerUtils.makeMatrix(this.oGrid);
 
 		// Assert
-		assert.strictEqual(aMatrix.length, 2, "Matrix created with the expected number of rows");
+		assert.strictEqual(aMatrix.length, bIsGridSupported ? 2 : 8, "Matrix created with the expected number of rows");
 		assert.strictEqual(aMatrix[0].length, 6, "Matrix created with the expected number of columns");
 	});
 
