@@ -1718,7 +1718,7 @@ function(
 	 *
 	 * @param  {object}  oReloadInfo - Contains the information needed to return the correct reload message
 	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if sap-ui-fl-max-layer parameter is present in the url
-	 * @param  {boolean} oReloadInfo.hasDraft - Indicates if a draft is available
+	 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 	 * @param  {boolean} oReloadInfo.changesNeedReload - Indicates if app descriptor changes need hard reload
 	 * @param  {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when entering UI adaptation
 
@@ -1743,7 +1743,7 @@ function(
 			return "MSG_RELOAD_ACTIVATED_DRAFT";
 		}
 
-		if (oReloadInfo.hasDraft) {
+		if (oReloadInfo.isDraftAvailable) {
 			return "MSG_RELOAD_WITHOUT_DRAFT";
 		}
 
