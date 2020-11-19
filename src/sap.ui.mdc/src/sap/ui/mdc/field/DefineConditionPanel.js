@@ -336,7 +336,12 @@ sap.ui.define([
 		},
 
 		onPaste: function(oEvent) {
-			var sOriginalText, oSource = oEvent.srcControl;
+			var sOriginalText;
+			var oSource = oEvent.srcControl;
+			var oFormatOptions = this.getFormatOptions();
+			var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+			var sConditionPath = oSource.getBindingContext("$condition").getPath(); // Path to condition of the active control
+			var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition - to remove before adding new ones
 
 			// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
 			if (window.clipboardData) {
@@ -350,7 +355,6 @@ sap.ui.define([
 
 			if (aSeparatedText && aSeparatedText.length > 1) {
 				setTimeout(function() {
-					var aOperators = _getOperators.call(this);
 					var oType = _getType.call(this);
 					var sType = _getBaseType.call(this, oType);
 
@@ -373,17 +377,29 @@ sap.ui.define([
 								var oCondition = oOperator.getCondition(sValue, oType, FieldDisplay.Value, true);
 								if (oCondition) {
 									oCondition.validated = ConditionValidated.NotValidated;
-									FilterOperatorUtil.checkConditionsEmpty(oCondition, aOperators);
-									aConditions.push(oCondition);
+									if (aConditions.length > iIndex) {
+										// overwrite existing condition
+										aConditions.splice(iIndex, 1, oCondition);
+									} else {
+										// add new condition
+										aConditions.push(oCondition);
+									}
+									iIndex++;
 								}
 							}
 						}
 					}
-					this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+
+					if (iMaxConditions >= 0 && aConditions.length > iMaxConditions) {
+						aConditions.splice(iMaxConditions, aConditions.length - iMaxConditions);
+					}
 
 					if (oSource.setDOMValue) {
-						oSource.setDOMValue("");
+						oSource.setDOMValue(""); // otherwise binding update will be ignored
 					}
+
+					FilterOperatorUtil.checkConditionsEmpty(aConditions);
+					this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
 
 				}.bind(this), 0);
 			}
