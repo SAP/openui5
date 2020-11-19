@@ -758,6 +758,7 @@ function(
 	 */
 	MultiInput.prototype.onkeydown = function (oEvent) {
 		var oTokenizer = this.getAggregation("tokenizer");
+		Input.prototype.onkeydown.apply(this, arguments);
 
 		if (!this.getEnabled()) {
 			return;

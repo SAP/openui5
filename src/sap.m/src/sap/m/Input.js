@@ -28,6 +28,8 @@ sap.ui.define([
 	"sap/m/inputUtils/wordStartsWithValue",
 	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/m/inputUtils/highlightDOMElements",
+	"sap/m/inputUtils/typeAhead",
+	"sap/ui/events/KeyCodes",
 	"sap/m/inputUtils/filterItems",
 	"sap/m/inputUtils/ListHelpers",
 	"./InputRenderer",
@@ -60,6 +62,8 @@ function(
 	wordStartsWithValue,
 	inputsDefaultFilter,
 	highlightDOMElements,
+	typeAhead,
+	KeyCodes,
 	filterItems,
 	ListHelpers,
 	InputRenderer,
@@ -528,6 +532,9 @@ function(
 		// Counter for concurrent issues with setValue:
 		this._iSetCount = 0;
 
+		// TypeAhead's suggested text. It's always executed in the context of the "root" Input and never in the Dialog's instance!
+		this._sProposedItemText = null;
+
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	};
 
@@ -599,8 +606,6 @@ function(
 		}
 
 		if (this.getShowSuggestion()) {
-
-			this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
 			if (this.getShowTableSuggestionValueHelp()) {
 				this._addShowMoreButton();
 			} else {
@@ -627,9 +632,7 @@ function(
 			this.setProperty("width", "100%", true);
 		}
 
-		if (this._oSuggPopover) {
-			this._oSuggPopover._resetTypeAhead();
-		}
+		this._resetTypeAhead();
 
 		if (bSuggestionsPopoverIsOpen && ((this.getValueStateText() && sValueStateHeaderText !== this.getValueStateText()) ||
 			(this.getValueState() !== sValueStateHeaderValueState) ||
@@ -984,7 +987,7 @@ function(
 			if (oItem) {
 				sNewValue = this._getDisplayText(oItem);
 			} else {
-				sNewValue = this._fnRowResultFilter ? this._fnRowResultFilter(oListItem) : SuggestionsPopover._DEFAULTRESULT_TABULAR(oListItem);
+				sNewValue = this._fnRowResultFilter ? this._fnRowResultFilter(oListItem) : Input._DEFAULTRESULT_TABULAR(oListItem);
 			}
 		}
 
@@ -1092,7 +1095,7 @@ function(
 		var sTypedInValue = "";
 
 		if (this.getShowSuggestion() && this._oSuggPopover) {
-			sTypedInValue = this._oSuggPopover._sTypedInValue || "";
+			sTypedInValue = this._sTypedInValue || "";
 		} else {
 			sTypedInValue = this.getDOMValue();
 		}
@@ -1176,7 +1179,7 @@ function(
 
 		// reset to default function when calling with null or undefined
 		if (fnFilter === null || fnFilter === undefined) {
-			this._fnRowResultFilter = SuggestionsPopover._DEFAULTRESULT_TABULAR;
+			this._fnRowResultFilter = Input._DEFAULTRESULT_TABULAR;
 			return this;
 		}
 		// set custom function
@@ -1283,13 +1286,15 @@ function(
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onsapenter = function(oEvent) {
-
+		var iValueLength;
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
 		this.cancelPendingSuggest();
 
 		if (this._isSuggestionsPopoverOpen()) {
 			if (!this._updateSelectionFromList() && !this.isComposingCharacter()) {
 				this._closeSuggestionPopup();
+				iValueLength = this.getDOMValue().length;
+				this.selectText(iValueLength, iValueLength); // Remove text selection
 			}
 		}
 
@@ -1313,7 +1318,6 @@ function(
 			oPopup = oSuggPopover && oSuggPopover.getPopover(),
 			oFocusedControl = oEvent.relatedControlId && sap.ui.getCore().byId(oEvent.relatedControlId),
 			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
-			bHasAutocompleteProposedText = oSuggPopover && oSuggPopover._sProposedItemText && this.getAutocomplete(),
 			bFocusInPopup = oPopup
 				&& oFocusDomRef
 				&& containsOrEquals(oPopup.getDomRef(), oFocusDomRef);
@@ -1337,7 +1341,7 @@ function(
 		}
 
 		// Inform InputBase to fire the change event on Input only when focus doesn't go into the suggestion popup
-		if (!bFocusInPopup && !bHasAutocompleteProposedText) {
+		if (!bFocusInPopup) {
 			InputBase.prototype.onsapfocusleave.apply(this, arguments);
 		}
 
@@ -1587,6 +1591,13 @@ function(
 					oSuggestionsPopover._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
 				}
 			}
+
+			this._handleTypeAhead(this);
+		};
+
+		Input.prototype.onkeydown = function (oEvent) {
+			// disable the typeahead feature for android devices due to an issue on android soft keyboard, which always returns keyCode 229
+			this._bDoTypeAhead = !Device.os.android && this.getAutocomplete() && (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
 		};
 
 		/**
@@ -1643,13 +1654,12 @@ function(
 
 			// The IE moves the cursor position at the beginning when there is a binding and delay from the back-end
 			// The workaround is to save the focus info which includes position and reset it after updating the DOM
-			function setDomValue() {
+			function _setDomValue(sValue) {
+				var oFocusInfo = this.getFocusInfo();
+				this.setDOMValue(sValue);
+
 				if (Device.browser.internet_explorer) {
-					var oFocusInfo = this.getFocusInfo();
-					this.setDOMValue(this._oSuggPopover._sTypedInValue);
 					this.applyFocusInfo(oFocusInfo);
-				} else {
-					this.setDOMValue(this._oSuggPopover._sTypedInValue);
 				}
 			}
 
@@ -1661,10 +1671,9 @@ function(
 							this._oSuggPopover._iPopupListSelectedIndex = -1;
 						}
 						this.cancelPendingSuggest();
-						if (this._oSuggPopover._sTypedInValue) {
-							setDomValue.call(this);
+						if (this._sTypedInValue) {
+							_setDomValue.call(this, this._sTypedInValue);
 						}
-						this._oSuggPopover._oProposedItem = null;
 						oPopup.close();
 					}.bind(this), 0);
 				}
@@ -1747,7 +1756,7 @@ function(
 		 */
 		Input.prototype._refreshListItems = function () {
 			var bShowSuggestion = this.getShowSuggestion(),
-				sTypedChars = this._oSuggPopover._sTypedInValue || this.getDOMValue() || "",
+				sTypedChars = this._bDoTypeAhead ? this._sTypedInValue : (this.getDOMValue() || ""),
 				oFilterResults,
 				iSuggestionsLength;
 
@@ -2031,8 +2040,97 @@ function(
 	Input.prototype.oncompositionend = function (oEvent) {
 		InputBase.prototype.oncompositionend.apply(this, arguments);
 
-		if (this._oSuggPopover && !Device.browser.edge && !Device.browser.firefox) {
-			this._oSuggPopover._handleTypeAhead();
+		if (!Device.browser.edge && !Device.browser.firefox) {
+			this._handleTypeAhead(this);
+		}
+	};
+
+	/**
+	 * Handles Input's specific type ahead logic.
+	 *
+	 * @param oInput {sap.m.Input} Input's instance to which the type ahead would be applied. For example: this OR Dialog's Input instance.
+	 * @private
+	 */
+	Input.prototype._handleTypeAhead = function (oInput) {
+		var sValue = this.getValue();
+
+		this._sTypedInValue = sValue;
+		oInput._sProposedItemText = null;
+
+		if (!this._bDoTypeAhead || sValue === "" ||
+			sValue.length < this.getStartSuggestion() || document.activeElement !== this.getFocusDomRef()) {
+
+			return;
+		}
+
+		var bHasTabularSuggestions = oInput._hasTabularSuggestions(),
+			aItems = bHasTabularSuggestions ? oInput.getSuggestionRows() : oInput.getSuggestionItems(),
+			fnExtractText = function (oItem) {
+				if (!oItem) {
+					return "";
+				}
+				return bHasTabularSuggestions ? this._fnRowResultFilter(oItem) : oItem.getText();
+			}.bind(this);
+
+		var aItemsToSelect = typeAhead(sValue, this, aItems, function (oItem) {
+			return this._formatTypedAheadValue(fnExtractText(oItem));
+		}.bind(this));
+
+		oInput._sProposedItemText = fnExtractText(aItemsToSelect[0]);
+	};
+
+	/**
+	 * Resets properties, that are related to type ahead, to their initial state.
+	 *
+	 * @param oInput {sap.m.Input} The _sProposedItemText property is always attached to the "root" input and the one in the Dialog should consider root's property.
+	 * @private
+	 */
+	Input.prototype._resetTypeAhead = function (oInput) {
+		oInput = oInput || this;
+
+		oInput._sProposedItemText = null;
+		this._sTypedInValue = '';
+	};
+
+	/**
+	 * Finalizes autocomplete and fires liveChange event eventually.
+	 *
+	 * @protected
+	 * @override
+	 */
+	Input.prototype.onsapright = function () {
+		var sValue = this.getValue();
+
+		if (!this.getAutocomplete()) {
+			return;
+		}
+
+		if (this._sTypedInValue !== sValue) {
+			this._sTypedInValue = sValue;
+
+			this.fireLiveChange({
+				value: sValue,
+				// backwards compatibility
+				newValue: sValue
+			});
+		}
+	};
+
+	/**
+	 * Formats the input value
+	 * in a way that it preserves character casings typed by the user
+	 * and appends suggested value with casings as they are in the
+	 * corresponding suggestion item.
+	 *
+	 * @private
+	 * @param {string} sNewValue Value which will be formatted.
+	 * @returns {string} The new formatted value.
+	 */
+	Input.prototype._formatTypedAheadValue = function (sNewValue) {
+		if (sNewValue.toLowerCase().indexOf(this._sTypedInValue.toLowerCase()) === 0) {
+			return this._sTypedInValue.concat(sNewValue.substring(this._sTypedInValue.length, sNewValue.length));
+		} else {
+			return sNewValue;
 		}
 	};
 
@@ -2111,7 +2209,6 @@ function(
 					if (Device.system.desktop) {
 						this.focus();
 					}
-					this._oSuggPopover._bSuggestionItemTapped = true;
 					var oSelectedListItem = oEvent.getParameter("listItem");
 					this.setSelectionRow(oSelectedListItem, true);
 				}.bind(this),
@@ -2127,11 +2224,11 @@ function(
 					}
 
 					aTableCellsDomRef = this._oSuggestionTable.$().find('tbody .sapMLabel');
-					sInputValue = (this._sTypedInValue || this.getValue()).toLowerCase();
+					sInputValue = this.getValue().toLowerCase();
 
 					highlightDOMElements(aTableCellsDomRef, sInputValue);
-				}.bind(this)
-			});
+				}
+			}, this);
 
 			// initially hide the table on phone
 			if (this.isMobileDevice()) {
@@ -2324,13 +2421,13 @@ function(
 		if (this.getShowTableSuggestionValueHelp()) {
 
 			// request for value help interrupts autocomplete
-			if (this._oSuggPopover._sTypedInValue) {
-				sTypedInValue = this._oSuggPopover._sTypedInValue;
+			if (this._sTypedInValue) {
+				sTypedInValue = this._sTypedInValue;
 				this.updateDomValue(sTypedInValue);
-				this._oSuggPopover._resetTypeAhead();
+				this._resetTypeAhead();
 				// Resetting the Suggestions popover clears the typed in value.
 				// However, we need to keep it in this case as the fireValueHelpRequest will need to pass this information.
-				this._oSuggPopover._sTypedInValue =  sTypedInValue;
+				this._sTypedInValue =  sTypedInValue;
 			}
 
 			this._fireValueHelpRequest(true);
@@ -2423,7 +2520,6 @@ function(
 				var oListItem = oEvent.getParameter("listItem");
 
 				if (!oListItem.isA("sap.m.GroupHeaderListItem")) {
-					this._oSuggPopover._bSuggestionItemTapped = true;
 					this.setSelectionItem(ListHelpers.getItemByListItem(this.getSuggestionItems(), oListItem), true);
 				}
 			}, this);
@@ -2483,20 +2579,32 @@ function(
 			}.bind(this)
 		});
 
-		return oPopupInput;
+		return this._modifyPopupInput(oPopupInput);
 	};
 
-	Input.prototype._modifyPopupInput = function (oPopupInput) {
-		oPopupInput.addEventDelegate({
+	/**
+	 * Modifies Dialog's Input instance
+	 *
+	 * @param oInput {sap.m.Input}
+	 * @returns {sap.m.Input}
+	 * @private
+	 */
+	Input.prototype._modifyPopupInput = function (oInput) {
+		oInput._handleTypeAhead = function () {
+			Input.prototype._handleTypeAhead.call(oInput, this);
+		}.bind(this);
+
+		oInput._resetTypeAhead = function () {
+			Input.prototype._resetTypeAhead.call(oInput, this);
+		}.bind(this);
+
+		oInput.addEventDelegate({
 			onsapenter: function () {
-				if (this.getAutocomplete()) {
-					this._oSuggPopover._finalizeAutocomplete();
-				}
-				this._closeSuggestionPopup();
+				this.setValue(this._sProposedItemText);
 			}
 		}, this);
 
-		return oPopupInput;
+		return oInput;
 	};
 
 	Input.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
@@ -2515,16 +2623,13 @@ function(
 			var oSuggPopover = this._oSuggPopover = new SuggestionsPopover(this);
 
 			if (this.isMobileDevice()) {
-				var oInput = this._createPopupInput();
-				oSuggPopover._oPopupInput = this._modifyPopupInput(oInput);
+				oSuggPopover._oPopupInput = this._createPopupInput();
 			}
 
 			this._oSuggPopover.setInputLabels(this.getLabels.bind(this));
 			this._createSuggestionsPopoverPopup();
 
 			this.forwardEventHandlersToSuggPopover(oSuggPopover);
-
-			oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
 
 			oSuggPopover.attachEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, function (oEvent) {
 				var sNewValue = oEvent.getParameter("newValue");
@@ -2541,7 +2646,6 @@ function(
 			if (this.getShowTableSuggestionValueHelp()) {
 				this._addShowMoreButton();
 			}
-
 		}
 
 		return this._oSuggPopover;
@@ -2629,7 +2733,6 @@ function(
 				.attachBeforeOpen(function () {
 					oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
 					oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
-					oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
 					oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
 
 					this._sBeforeSuggest = this.getValue();
@@ -2864,7 +2967,7 @@ function(
 				oTabularRow.setVisible(bShowItem);
 				bShowItem && aFilteredItems.push(oTabularRow);
 
-				if (!bIsAnySuggestionAlreadySelected && bShowItem && this._oSuggPopover._sProposedItemText === this._fnRowResultFilter(oTabularRow)) {
+				if (!bIsAnySuggestionAlreadySelected && bShowItem && this._sProposedItemText === this._fnRowResultFilter(oTabularRow)) {
 					oTabularRow.setSelected(true);
 					bIsAnySuggestionAlreadySelected = true;
 				}
@@ -2896,14 +2999,13 @@ function(
 	Input.prototype._mapItems = function (oFilterResults) {
 		var aItems = oFilterResults.items,
 			aGroups = oFilterResults.groups,
-			oSuggestionsPopover = this._oSuggPopover,
 			bIsAnySuggestionAlreadySelected = false,
 			oListItem;
 
 		for (var i = 0; i < aItems.length; i++) {
 			oListItem = this._mapItemToListItem(aItems[i]);
 
-			if (!bIsAnySuggestionAlreadySelected && oSuggestionsPopover._sProposedItemText === aItems[i].getText()) {
+			if (!bIsAnySuggestionAlreadySelected && this._sProposedItemText === aItems[i].getText()) {
 				oListItem.setSelected(true);
 				bIsAnySuggestionAlreadySelected = true;
 			}

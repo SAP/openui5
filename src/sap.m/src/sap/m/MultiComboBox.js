@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/m/inputUtils/completeTextSelected",
 	"sap/m/inputUtils/inputsDefaultFilter",
+	"sap/m/inputUtils/typeAhead",
 	"sap/m/inputUtils/ListHelpers",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
@@ -59,6 +60,7 @@ function(
 	containsOrEquals,
 	completeTextSelected,
 	inputsDefaultFilter,
+	typeAhead,
 	ListHelpers,
 	KeyCodes,
 	deepEqual,
@@ -3238,22 +3240,18 @@ function(
 	 */
 	MultiComboBox.prototype._handleTypeAhead = function (sValue, aItems, oInput) {
 		// type ahead, if there is an matching unselected item in the list
-		var aSelectedItems = this.getSelectedItems();
-		var aItemsUnselected = aItems.filter(function (oItem) {
-			if (oItem.isA("sap.ui.core.SeparatorItem")) {
-				return false;
-			}
+		var aSelectedItems, aFilteredItems;
 
+		if (!this._bDoTypeAhead) {
+			return;
+		}
+
+		aSelectedItems = this.getSelectedItems();
+		aFilteredItems = aItems.filter(function (oItem) {
 			return aSelectedItems.indexOf(oItem) === -1;
 		});
 
-		if (this._bDoTypeAhead && aItemsUnselected.length) {
-			oInput.updateDomValue(aItemsUnselected[0].getText());
-
-			if (document.activeElement === oInput.getFocusDomRef()) {
-				oInput.selectText(sValue.length, oInput.getValue().length);
-			}
-		}
+		typeAhead(sValue, oInput, aFilteredItems);
 	};
 
 	/**

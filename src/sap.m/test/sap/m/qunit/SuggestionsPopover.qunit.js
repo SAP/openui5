@@ -48,7 +48,6 @@ sap.ui.define([
 
 		// Arrange
 		this.oSuggestionsPopover._createSuggestionPopup();
-		this.oSuggestionsPopover._createSuggestionPopupContent();
 		this.oSuggestionsPopover._getValueStateHeader();
 
 		// Assert
@@ -78,28 +77,6 @@ sap.ui.define([
 			this.oSuggestionsPopover.destroy();
 			this.oSuggestionsPopover = null;
 		}
-	});
-
-	QUnit.test("Using tabular suggestions", function (assert) {
-		//Act
-		var fnGetSuggestionsTableSpy = this.spy(Input.prototype, "_getSuggestionsTable");
-		this.oSuggestionsPopover._createSuggestionPopupContent(true);
-
-		//Assert
-		assert.strictEqual(this.oSuggestionsPopover._bHasTabularSuggestions, true, "The value is updated correctly");
-		assert.strictEqual(fnGetSuggestionsTableSpy.callCount, 1, "The input has tabular suggestions");
-
-		//Clean up
-		fnGetSuggestionsTableSpy.restore();
-	});
-
-	QUnit.test("Using regular suggestions", function (assert) {
-		//Act
-		this.oSuggestionsPopover._createSuggestionPopupContent(false);
-
-		//Assert
-		assert.strictEqual(this.oSuggestionsPopover._bHasTabularSuggestions, false, "The value is updated correctly");
-		assert.ok(this.oSuggestionsPopover._oList instanceof List, "The suggestions type is ListItem");
 	});
 
 	QUnit.test("_onsaparrowkey should not be called when we have composition characters", function (assert) {
@@ -134,7 +111,7 @@ sap.ui.define([
 	QUnit.module("mobile");
 
 	QUnit.test("On mobile the sapUiNoContentPadding class is added to the picker.", function (assert) {
-		var oComboBox, oSuggestionsPopover, oRegisterAutocompleteStub;
+		var oComboBox, oSuggestionsPopover;
 
 		// Arrange
 		this.stub(Device, "system", {
@@ -148,8 +125,6 @@ sap.ui.define([
 		oSuggestionsPopover = new SuggestionsPopover(oComboBox);
 		oSuggestionsPopover._bUseDialog = true;
 
-		oRegisterAutocompleteStub = sinon.stub(oSuggestionsPopover, "_registerAutocomplete", function () {});
-
 		sap.ui.getCore().applyChanges();
 
 		//Act
@@ -159,7 +134,6 @@ sap.ui.define([
 		assert.ok(oSuggestionsPopover._oPopover.hasStyleClass("sapUiNoContentPadding"), "The sapUiNoContentPadding class is added");
 
 		// cleanup
-		oRegisterAutocompleteStub.restore();
 		oComboBox.destroy();
 		oSuggestionsPopover.destroy();
 	});

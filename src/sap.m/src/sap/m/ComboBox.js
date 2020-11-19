@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/m/inputUtils/scrollToItem",
 	"sap/m/inputUtils/inputsDefaultFilter",
+	"sap/m/inputUtils/typeAhead",
 	"sap/m/inputUtils/filterItems",
 	"sap/m/inputUtils/ListHelpers",
 	"sap/ui/events/KeyCodes",
@@ -38,6 +39,7 @@ sap.ui.define([
 		containsOrEquals,
 		scrollToItem,
 		inputsDefaultFilter,
+		typeAhead,
 		filterItems,
 		ListHelpers,
 		KeyCodes,
@@ -281,12 +283,6 @@ sap.ui.define([
 			}
 
 			scrollToItem(oListItem, oControl.getPicker());
-		}
-
-		function fnSelectTextIfFocused(iStart, iEnd) {
-			if (document.activeElement === this.getFocusDomRef()) {
-				this.selectText(iStart, iEnd);
-			}
 		}
 
 		function fnSelectedItemOnViewPort(bIsListHidden) {
@@ -977,7 +973,7 @@ sap.ui.define([
 			}
 
 			this.loadItems(function() {
-				this.handleInputValidation(oEvent, this.isComposingCharacter());
+				this.handleInputValidation(oEvent);
 			}, {
 					name: "input",
 					busyIndicator: false
@@ -1010,10 +1006,9 @@ sap.ui.define([
 		 * Handles the input event on the input field.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
-		 * @param {boolean} bCompositionEvent True if the control is in composing state
 		 * @private
 		 */
-		ComboBox.prototype.handleInputValidation = function (oEvent, bCompositionEvent) {
+		ComboBox.prototype.handleInputValidation = function (oEvent) {
 			var aVisibleItems, aCommonStartsWithItems, oFirstVisibleItem, bCurrentlySelectedItemVisible,
 				bHasValueAndVisibleItems,
 				oSelectedItem = this.getSelectedItem(),
@@ -1052,7 +1047,7 @@ sap.ui.define([
 			}
 
 			if (bHasValueAndVisibleItems && oControl && oControl._bDoTypeAhead) {
-				this.handleTypeAhead(oControl, aVisibleItems, sValue, bCompositionEvent);
+				this.handleTypeAhead(oControl, aVisibleItems, sValue);
 			} else if (bHasValueAndVisibleItems && sValue === aCommonStartsWithItems[0].getText()) {
 				this.setSelection(aCommonStartsWithItems[0]);
 			} else {
@@ -1094,36 +1089,23 @@ sap.ui.define([
 		/**
 		 * Handles the type ahead functionality on the input field.
 		 *
-		 * @param {sap.m.ComboBoxTextField} oInput The input control
+		 * @param {sap.m.Input} oInput The input control
 		 * @param {sap.ui.core.Item[]} aItems The array of items
 		 * @param {string} sValue The input text value
-		 * @param {boolean} bCompositionEvent True if the control is in composing state
 		 * @private
 		 */
-		ComboBox.prototype.handleTypeAhead = function (oInput, aItems, sValue, bCompositionEvent) {
-			// filtered items intersercted with starts with items by text
-			aItems = this.getNonSeparatorSelectableItems(aItems);
-			var aCommonStartsWithItems = this.intersectItems(this._filterStartsWithItems(sValue, 'getText'), aItems);
-			var bSearchBoth = this.getFilterSecondaryValues();
-			var bDesktopPlatform = Device.system.desktop;
-			var aCommonAdditionalTextItems = this.intersectItems(this._filterStartsWithItems(sValue, 'getAdditionalText'), aItems);
+		ComboBox.prototype.handleTypeAhead = function (oInput, aItems, sValue) {
+			var aItemTexts,
+				bSearchBoth = this.getFilterSecondaryValues(),
+				aMatchingItems = typeAhead(sValue, oInput, aItems, function (oItem) {
+					aItemTexts = [oItem.getText()];
+					if (bSearchBoth) {
+						aItemTexts.push(oItem.getAdditionalText());
+					}
+					return aItemTexts;
+				});
 
-			if (bSearchBoth && !aCommonStartsWithItems[0] && aCommonAdditionalTextItems[0]) {
-
-				!bCompositionEvent && oInput.updateDomValue(aCommonAdditionalTextItems[0].getAdditionalText());
-				this.setSelection(aCommonAdditionalTextItems[0]);
-
-			} else if (aCommonStartsWithItems[0]) {
-				!bCompositionEvent && oInput.updateDomValue(aCommonStartsWithItems[0].getText());
-				this.setSelection(aCommonStartsWithItems[0]);
-			}
-
-			if (bDesktopPlatform) {
-				fnSelectTextIfFocused.call(oInput, sValue.length, oInput.getValue().length);
-			} else {
-				// timeout required for an Android and Windows Phone bug
-				setTimeout(fnSelectTextIfFocused.bind(oInput, sValue.length, oInput.getValue().length), 0);
-			}
+			this.setSelection(aMatchingItems[0]);
 
 			// always focus input field when typing in it
 			this.addStyleClass("sapMFocus");
