@@ -218,7 +218,8 @@ sap.ui.define([
 	}
 
 	function isVariantValidForRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet) {
-		if ((oVariant.layer === LayerUtils.getCurrentLayer(!bDesignTimeModeToBeSet)) && (oVariant.key !== sVariantManagementReference)) {
+		var sLayer = bDesignTimeModeToBeSet ? LayerUtils.getCurrentLayer() : Layer.USER;
+		if ((oVariant.layer === sLayer) && (oVariant.key !== sVariantManagementReference)) {
 			return true;
 		}
 		return false;
@@ -1065,7 +1066,7 @@ sap.ui.define([
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
 				oVariant.remove = isVariantValidForRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
 				// Check for end-user variant
-				if (oVariant.layer === LayerUtils.getCurrentLayer(true)) {
+				if (oVariant.layer === Layer.USER) {
 					oVariant.rename = true;
 					oVariant.change = true;
 				} else {
@@ -1093,7 +1094,7 @@ sap.ui.define([
 			if (!this.oFlexController || !VariantManagementState.getContent(this.sFlexReference)) {
 				return;
 			}
-			var aConfigurationChangesContent = this.collectModelChanges(oData.variantManagementReference, LayerUtils.getCurrentLayer(true));
+			var aConfigurationChangesContent = this.collectModelChanges(oData.variantManagementReference, Layer.USER);
 			var aChanges = [];
 			aConfigurationChangesContent.forEach(function(oChangeProperties) {
 				oChangeProperties.appComponent = this.oAppComponent;
@@ -1134,7 +1135,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				variantManagementReference: sVariantManagementReference,
 				appComponent: oAppComponent,
-				layer: LayerUtils.getCurrentLayer(true),
+				layer: Layer.USER,
 				title: mParameters["name"],
 				sourceVariantReference: sSourceVariantReference,
 				newVariantReference: sNewVariantReference
@@ -1148,7 +1149,7 @@ sap.ui.define([
 							defaultVariant: sNewVariantReference,
 							originalDefaultVariant: this.oData[sVariantManagementReference].defaultVariant,
 							appComponent: oAppComponent,
-							layer: LayerUtils.getCurrentLayer(true),
+							layer: Layer.USER,
 							variantManagementReference: sVariantManagementReference
 						};
 						var oSetDefaultChange = this.setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);
@@ -1160,7 +1161,7 @@ sap.ui.define([
 							executeOnSelect: true,
 							variantReference: sNewVariantReference,
 							appComponent: oAppComponent,
-							layer: LayerUtils.getCurrentLayer(true),
+							layer: Layer.USER,
 							variantManagementReference: sVariantManagementReference
 						};
 						var oSetExecuteChange = this.setVariantProperties(sVariantManagementReference, mPropertyBagSetExecute, true);

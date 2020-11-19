@@ -962,9 +962,8 @@ sap.ui.define([
 			assert.equal(oDuplicateVariant.controlChanges.length, 1, "then only one change duplicated");
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oSourceVariant.controlChanges[0].getDefinition().fileName, "then the fileName of the origin change is written to support object");
-			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), LayerUtils.getCurrentLayer(true), "then only the change with the same layer is duplicated");
+			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), Layer.USER, "then only the change with the same layer is duplicated");
 			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
-			sinon.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant with no layer", function(assert) {
@@ -1005,7 +1004,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from USER layer with reference to a variant with no layer", function(assert) {
-			LayerUtils.getCurrentLayer.restore();
 			var oSourceVariant = {
 				content: {
 					fileName: "variant0",
@@ -1040,7 +1038,6 @@ sap.ui.define([
 			oSourceVariantCopy.content.layer = Layer.USER;
 
 			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-			sinon.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on the same layer", function(assert) {
@@ -1440,7 +1437,7 @@ sap.ui.define([
 					assert.equal(this.oModel.copyVariant.called, 1, "then copyVariant() was called once");
 					assert.ok(this.oModel.copyVariant.calledWith({
 						appComponent: this.oComponent,
-						layer: LayerUtils.getCurrentLayer(),
+						layer: Layer.USER,
 						newVariantReference: sNewVariantReference,
 						sourceVariantReference: oCopiedVariant.getVariantReference(),
 						title: "Test",

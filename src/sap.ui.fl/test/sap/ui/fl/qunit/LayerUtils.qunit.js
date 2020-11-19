@@ -55,15 +55,9 @@ sap.ui.define([
 			assert.equal(sLayer, Layer.VENDOR);
 		});
 
-		QUnit.test("getCurrentLayer shall return USER layer if endUser flag is set", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
-			var sLayer = LayerUtils.getCurrentLayer(true);
-			assert.equal(sLayer, Layer.USER);
-		});
-
 		QUnit.test("getCurrentLayer shall return default CUSTOMER layer", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(null);
-			var sLayer = LayerUtils.getCurrentLayer(false);
+			var sLayer = LayerUtils.getCurrentLayer();
 			assert.equal(sLayer, Layer.CUSTOMER);
 		});
 
@@ -207,27 +201,32 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with current layer VENDOR", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.VENDOR);
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), true, "return true");
 		});
 
 		QUnit.test("with current layer PARTNER", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.PARTNER);
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.PARTNER);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), true, "return true");
 		});
 
 		QUnit.test("with current layer CUSTOMER_BASE", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.CUSTOMER_BASE);
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER_BASE);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), true, "return true");
 		});
 
 		QUnit.test("with current layer CUSTOMER", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.CUSTOMER);
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
+			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), false, "return false");
+		});
+
+		QUnit.test("with current layer PUBLIC", function (assert) {
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.PUBLIC);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), false, "return false");
 		});
 
 		QUnit.test("with current layer USER", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.USER);
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.USER);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), false, "return false");
 		});
 	});

@@ -50,31 +50,7 @@ sap.ui.define([
 		});
 
 		[{
-			testName: "Given a non-user dependent change is added and a public layer is available",
-			propertyBag: {
-				changeSpecificData: {
-					type: "addFavorite",
-					isUserDependent: false
-				},
-				reference: sComponentId
-			},
-			targetCategory: "changes",
-			publicLayerAvailable: true,
-			expectedLayer: Layer.CUSTOMER
-		}, {
-			testName: "Given a non-user dependent change is added and a public layer is unavailable",
-			propertyBag: {
-				changeSpecificData: {
-					type: "addFavorite",
-					isUserDependent: false
-				},
-				reference: sComponentId
-			},
-			targetCategory: "changes",
-			publicLayerAvailable: false,
-			expectedLayer: Layer.CUSTOMER
-		}, {
-			testName: "Given a user dependent change is added",
+			testName: "Given a change is added",
 			propertyBag: {
 				changeSpecificData: {
 					type: "addFavorite",

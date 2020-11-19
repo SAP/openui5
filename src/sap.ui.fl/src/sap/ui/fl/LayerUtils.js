@@ -68,7 +68,7 @@ function(
 		 * @public
 		 */
 		isVendorLayer: function () {
-			return this.getCurrentLayer(false) === Layer.VENDOR;
+			return this.getCurrentLayer() === Layer.VENDOR;
 		},
 
 		/**
@@ -91,7 +91,7 @@ function(
 		 * @public
 		 */
 		doesCurrentLayerRequirePackage: function () {
-			var sCurrentLayer = this.getCurrentLayer(false);
+			var sCurrentLayer = this.getCurrentLayer();
 			return (sCurrentLayer === Layer.VENDOR) || (sCurrentLayer === Layer.PARTNER) || (sCurrentLayer === Layer.CUSTOMER_BASE);
 		},
 
@@ -149,7 +149,7 @@ function(
 		 * @public
 		 */
 		compareAgainstCurrentLayer: function(sLayer, sCurrentLayer) {
-			var sCurrent = sCurrentLayer || LayerUtils.getCurrentLayer(false);
+			var sCurrent = sCurrentLayer || LayerUtils.getCurrentLayer();
 			// If sLayer is undefined, it is assumed it be on the lowest layer
 			if ((this.getLayerIndex(sCurrent) > this.getLayerIndex(sLayer)) || !sLayer) {
 				return -1;
@@ -172,15 +172,10 @@ function(
 		/**
 		 * Returns the current layer as defined by the url parameter; if the end user flag is set, it always returns "USER".
 		 *
-		 * @param {boolean} bIsEndUser the end user flag
 		 * @returns {string} the current layer
 		 * @public
 		 */
-		getCurrentLayer: function (bIsEndUser) {
-			if (bIsEndUser) {
-				return Layer.USER;
-			}
-
+		getCurrentLayer: function () {
 			var sLayer = getUrlParameter("sap-ui-layer") || "";
 			return sLayer.toUpperCase() || Layer.CUSTOMER;
 		},
