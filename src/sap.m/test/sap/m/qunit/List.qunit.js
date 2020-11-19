@@ -2108,4 +2108,121 @@ sap.ui.define([
 		oCtr3.destroy();
 	});
 
+	QUnit.test("ListItemBase - getAccessibilityDescription", function(assert) {
+		var oItem = new ListItemBase(),
+			oRb = Core.getLibraryResourceBundle("sap.m"),
+			aState = [],
+			sContent = "<CONTENT>", sGroup = "", bShowUnread = false, bSelectable = true;
+
+		oItem.getContentAnnouncement = function() { return sContent; };
+		oItem.getGroupAnnouncement = function() { return sGroup; };
+		oItem.getListProperty = function(sPropertyName) {
+			if (sPropertyName === "showUnread") {
+				return bShowUnread;
+			}
+			return ListItemBase.prototype.getListProperty.apply(this, arguments);
+		};
+
+		oItem.isSelectable = function() { return bSelectable; };
+
+		function check(sDescription) {
+			var sAccText = oItem.getAccessibilityDescription(oRb);
+			assert.equal(sAccText, aState.join(" . "), sDescription + ": '" + sAccText + "'");
+		}
+
+		aState = [sContent];
+		check("Content only");
+
+		oItem.setHighlightText("<HIGHLIGHT>");
+		check("Content only + HighlightText only");
+
+		oItem.setHighlight("Error");
+		aState.splice(0, 0, "<HIGHLIGHT>");
+		check("Highlight with Text + Content");
+
+		oItem.setHighlightText(null);
+		aState.splice(0, 1, oRb.getText("LIST_ITEM_STATE_ERROR"));
+		check("Highlight + Content");
+
+		oItem.setSelected(true);
+		aState.splice(0, 0, oRb.getText("LIST_ITEM_SELECTED"));
+		check("Selected + Highlight + Content");
+
+		oItem.setUnread(true);
+		check("Selected + Highlight + Unread (showUnread = false) + Content");
+
+		bShowUnread = true;
+		aState.splice(2, 0, oRb.getText("LIST_ITEM_UNREAD"));
+		check("Selected + Highlight + Unread (showUnread = true) + Content");
+
+		oItem.setCounter(5);
+		aState.splice(3, 0, oRb.getText("LIST_ITEM_COUNTER", 5));
+		check("Selected + Highlight + Unread (showUnread = true) + Counter + Content");
+
+		oItem.setType("Active");
+		aState.splice(4, 0, oRb.getText("LIST_ITEM_ACTIVE"));
+		check("Selected + Highlight + Unread (showUnread = true) + Counter + Type (Active) + Content");
+
+		oItem.setType("Navigation");
+		aState.splice(4, 1, oRb.getText("LIST_ITEM_NAVIGATION"));
+		check("Selected + Highlight + Unread (showUnread = true) + Counter + Type (Navigation) + Content");
+
+		oItem.setType("Detail");
+		aState.splice(4, 1, oRb.getText("LIST_ITEM_DETAIL"));
+		check("Selected + Highlight + Unread (showUnread = true) + Counter + Type (Detail) + Content");
+
+		oItem.setType("DetailAndActive");
+		aState.splice(5, 0, oRb.getText("LIST_ITEM_ACTIVE"));
+		check("Selected + Highlight + Unread (showUnread = true) + Counter + Type (DetailAndActive) + Content");
+
+		sGroup = "<GROUP>";
+		aState.splice(6, 0, sGroup);
+		check("Selected + Highlight + Unread (showUnread = true) + Counter + Type (DetailAndActive) + Group + Content");
+
+		//Reset
+		oItem.setType("Inactive");
+		oItem.setCounter(null);
+		oItem.setHighlight("None");
+		oItem.setSelected(false);
+		oItem.setUnread(false);
+		sGroup = "";
+		bShowUnread = false;
+		aState = [sContent];
+		check("Content only");
+
+		oItem.setTooltip("<TOOLTIP>");
+		aState.splice(1, 0, "<TOOLTIP>");
+		check("Content + Tooltip");
+
+		oItem.setNavigated(true);
+		aState.splice(2, 0, oRb.getText("LIST_ITEM_NAVIGATED"));
+		check("Content + Tooltip + Navigated");
+
+		oItem._bAnnounceNotSelected = true;
+		aState.splice(3, 0, oRb.getText("LIST_ITEM_NOT_SELECTED"));
+		check("Enhanced Selection (Item Selectable, Not Selected): Content + Tooltip + Navigated + Not Selected");
+
+		oItem.setSelected(true);
+		oItem.setTooltip(null);
+		oItem.setNavigated(false);
+		aState = [oRb.getText("LIST_ITEM_SELECTED"), sContent];
+		check("Enhanced Selection (Item Selectable, Selected): Selection + Content");
+
+		bSelectable = false;
+		aState = [sContent];
+		check("Enhanced Selection (Item Not Selectable, Selected): Content");
+
+		bSelectable = false;
+		aState = [sContent];
+		oItem.setSelected(false);
+		check("Enhanced Selection (Item Not Selectable, Not Selected): Content");
+
+		bSelectable = true;
+		oItem.setSelected(false);
+		aState = [sContent, oRb.getText("LIST_ITEM_NOT_SELECTED")];
+		check("Enhanced Selection (Item Selectable, Not Selected): Content + Not Selected");
+
+		oItem.destroy();
+	});
+
 });

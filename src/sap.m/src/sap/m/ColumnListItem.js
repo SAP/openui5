@@ -113,6 +113,9 @@ sap.ui.define([
 	// defines tag name
 	ColumnListItem.prototype.TagName = "tr";
 
+	// enable the ACC announcement for "not selected"
+	ColumnListItem.prototype._bAnnounceNotSelected = true;
+
 	ColumnListItem.prototype.init = function() {
 		ListItemBase.prototype.init.call(this);
 		this._bNeedsTypeColumn = false;
