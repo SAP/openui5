@@ -40,6 +40,23 @@ sap.ui.define([
 		},
 
 		/**
+		 * Interface called to write new flex data; This method is called with a list of entities like changes, variants,
+		 * control variants, variant changes and variant management changes.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object[]} mPropertyBag.flexObjects Map of condensed changes
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer in which the data should be stored
+		 * @param {string} [mPropertyBag.transport] The transport ID
+		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
+		 * @param {string} [mPropertyBag.url] Configured url for the connector
+		 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
+		 * @returns {Promise} Resolves as soon as the writing is completed without data
+		 */
+		condense: function (/* mPropertyBag */) {
+			return Promise.reject("condense is not implemented");
+		},
+
+		/**
 		 * Interface called to update an existing flex data.
 		 *
 		 * @param {object} mPropertyBag Property bag

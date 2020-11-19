@@ -113,6 +113,7 @@ sap.ui.define([
 					isAtoAvailable: false,
 					isAtoEnabled: false,
 					isAppVariantSaveAsEnabled: false,
+					isCondensingEnabled: false,
 					isProductiveSystem: true,
 					isPublicLayerAvailable: false,
 					versioning: {},
@@ -253,6 +254,16 @@ sap.ui.define([
 	 */
 	Settings.prototype.isVariantSharingEnabled = function() {
 		return this._getBooleanProperty("isVariantSharingEnabled");
+	};
+
+	/**
+	 * Checks whether condensing of changes is enabled for the used backend.
+	 *
+	 * @public
+	 * @returns {boolean} true if condensing of changes is enabled
+	 */
+	Settings.prototype.isCondensingEnabled = function() {
+		return this._getBooleanProperty("isCondensingEnabled");
 	};
 
 	/**

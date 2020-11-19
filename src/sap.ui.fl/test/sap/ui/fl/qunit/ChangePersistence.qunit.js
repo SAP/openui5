@@ -1847,6 +1847,7 @@ function(
 			});
 
 			this.oWriteStub = sandbox.stub(WriteStorage, "write").resolves();
+			this.oCondenseStub = sandbox.stub(WriteStorage, "condense").resolves();
 			this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves();
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 
@@ -1874,6 +1875,22 @@ function(
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called with only one change");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall call the condense route of the storage in case of enabled condensing on the backend", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			setURLParameterForCondensing("true");
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenseStub.callCount, 1, "the condense route of the storage is called");
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 			}.bind(this));
 		});
 

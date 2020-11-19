@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
@@ -18,6 +19,7 @@ sap.ui.define([
 ], function(
 	sinon,
 	Layer,
+	Change,
 	Storage,
 	StorageUtils,
 	InitialUtils,
@@ -321,6 +323,260 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.callCount, 1, "sendRequest is called once");
 				assert.equal(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
 				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
+			});
+		});
+	});
+
+	function createChangesAndSetState(aStates, aDependentSelectors) {
+		var aChanges = [];
+		aStates.forEach(function(sState, i) {
+			aChanges[i] = new Change({
+				fileType: "change",
+				layer: Layer.CUSTOMER,
+				fileName: i.toString(),
+				namespace: "a.name.space",
+				changeType: "labelChange",
+				reference: "",
+				selector: {},
+				dependentSelector: aDependentSelectors && aDependentSelectors[i] || {},
+				content: {
+					prop: "some Content " + i
+				}
+			});
+			aChanges[i].condenserState = sState;
+		});
+		return aChanges;
+	}
+
+	QUnit.module("Given Storage when condense is called", {
+		beforeEach: function () {
+			this.sLayer = Layer.CUSTOMER;
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and no layer is provided", function (assert) {
+			var aAllChanges = createChangesAndSetState(["delete", "delete", "select"]);
+			var mPropertyBag = {
+				allChanges: aAllChanges,
+				condensedChanges: [aAllChanges[2]],
+				reference: "reference"
+			};
+
+			return Storage.condense(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
+			});
+		});
+
+		QUnit.test("and no array with changes is provided", function (assert) {
+			var mPropertyBag = {
+				layer: this.sLayer,
+				reference: "reference"
+			};
+
+			return Storage.condense(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No changes were provided", "then an Error is thrown");
+			});
+		});
+
+		QUnit.test("then it calls condense of the connector", function(assert) {
+			var aAllChanges = createChangesAndSetState(["delete", "delete", "select"]);
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				"delete": {
+					change: ["0", "1"]
+				},
+				update: {
+					change: []
+				},
+				reorder: {
+					change: []
+				},
+				create: {
+					change: [{2: {
+						fileType: "change",
+						layer: this.sLayer,
+						fileName: "2",
+						namespace: "a.name.space",
+						changeType: "labelChange",
+						reference: "",
+						selector: {},
+						dependentSelector: {},
+						content: {
+							prop: "some Content 2"
+						}
+					}}]
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [aAllChanges[2]]
+			};
+			var sUrl = "/some/url";
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", url: sUrl}
+			]);
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				assert.equal(oWriteStub.callCount, 1, "the write was triggered once");
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.equal(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "the flexObject was passed in the property bag");
+			});
+		});
+
+		QUnit.test("and the changes are reordered by condenser", function (assert) {
+			var aAllChanges = createChangesAndSetState(["delete", "select", "select"]);
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				"delete": {
+					change: ["0"]
+				},
+				update: {
+					change: []
+				},
+				reorder: {
+					change: ["2", "1"]
+				},
+				create: {
+					change: [
+						{1: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "1",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 1"
+							}}
+						},
+						{2: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "2",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 2"
+							}}
+						}
+					]
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [aAllChanges[2], aAllChanges[1]],
+				reference: "reference"
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
+			});
+		});
+
+		QUnit.test("and no condensed changes are returned by condenser", function (assert) {
+			var aAllChanges = createChangesAndSetState(["delete", "delete", "delete"]);
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				"delete": {
+					change: ["0", "1", "2"]
+				},
+				update: {
+					change: []
+				},
+				reorder: {
+					change: []
+				},
+				create: {
+					change: []
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [],
+				reference: "reference"
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
+			});
+		});
+
+		QUnit.test("and the changes are updated by condenser", function (assert) {
+			var aAllChanges = createChangesAndSetState(["update", "update", "select"]);
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				"delete": {
+					change: []
+				},
+				update: {
+					change: [
+						{0: {
+							content: {
+								prop: "some Content 0"
+							}
+						}},
+						{1: {
+							content: {
+								prop: "some Content 1"
+							}
+						}}
+					]
+				},
+				reorder: {
+					change: []
+				},
+				create: {
+					change: [
+						{2: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "2",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 2"
+							}}
+						}
+					]
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [aAllChanges[0], aAllChanges[1], aAllChanges[2]],
+				reference: "reference"
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
 			});
 		});
 	});

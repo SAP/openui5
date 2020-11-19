@@ -43,6 +43,7 @@ sap.ui.define([
 		FLEX_INFO: "/flex/info/",
 		PUBLISH: "/actions/make_changes_transportable/",
 		CHANGES: "/changes/",
+		CONDENSE: "/actions/condense/",
 		VARIANTS: "/variants/",
 		SETTINGS: "/flex/settings",
 		TOKEN: "/actions/getcsrftoken/",
@@ -72,6 +73,8 @@ sap.ui.define([
 			sRoute = ROUTES.VARIANTS;
 		} else if (mPropertyBag.isAppVariant) {
 			sRoute = ROUTES.APPVARIANTS;
+		} else if (mPropertyBag.isCondensingEnabled) {
+			sRoute = ROUTES.CONDENSE;
 		} else {
 			sRoute = ROUTES.CHANGES;
 		}
@@ -337,8 +340,25 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
-		write:function (mPropertyBag) {
+		write: function (mPropertyBag) {
 			mPropertyBag.method = "POST";
+			return _doWrite(mPropertyBag);
+		},
+
+		/**
+		 * Write flex data into LRep back end; This method is called with a map of condensed changes
+		 * that also condense the stored changes on the backend.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object} mPropertyBag.flexObjects Map of condensed changes
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @param {string} [mPropertyBag.transport] The transport ID
+		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
+		 * @returns {Promise} Promise resolves as soon as the writing was completed
+		 */
+		condense: function (mPropertyBag) {
+			mPropertyBag.method = "POST";
+			mPropertyBag.isCondensingEnabled = true;
 			return _doWrite(mPropertyBag);
 		},
 

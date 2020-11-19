@@ -241,6 +241,7 @@ sap.ui.define([
 						if (sSubtypeKey !== sap.ui.fl.condenser.Classification.Destroy) {
 							aCondenserChanges.forEach(function(oCondenserChange) {
 								oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
+								oCondenserChange.change.condenserState = "select";
 							});
 						}
 					});
@@ -264,6 +265,11 @@ sap.ui.define([
 				aTargetElementIds.forEach(function(sTargetElementId) {
 					var mTypes = mReducedChanges[sTargetElementId];
 					if (mTypes !== undefined) {
+						each(mTypes[Utils.INDEX_RELEVANT], function(sClassification, aCondenserInfos) {
+							aCondenserInfos.forEach(function(oCondenserInfo) {
+								oCondenserInfo.change.condenserState = "delete";
+							});
+						});
 						delete mTypes[Utils.INDEX_RELEVANT];
 					}
 				});

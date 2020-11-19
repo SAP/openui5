@@ -36,11 +36,17 @@ sap.ui.define([
 			each(mObjects[sUniqueKey], function(sKey, aReverseChanges) {
 				aReverseChanges.reverse();
 				var oChange;
-				aReverseChanges.forEach(function(oCurrentChange) {
+				aReverseChanges.forEach(function(oCurrentChange, index) {
 					if (oChange && oChange.getChangeType() !== oCurrentChange.getChangeType()) {
 						oChange = null;
+						aReverseChanges[index].condenserState = "delete";
+						aReverseChanges[index - 1].condenserState = "delete";
 					} else {
 						oChange = oCurrentChange;
+						if (index > 0) {
+							aReverseChanges[index - 1].condenserState = "delete";
+						}
+						aReverseChanges[index].condenserState = "select";
 					}
 				});
 

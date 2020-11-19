@@ -25,6 +25,7 @@ sap.ui.define([
 				isAtoEnabled: false,
 				isPublicLayerAvailable: false,
 				isAppVariantSaveAsEnabled: false,
+				isCondensingEnabled: false,
 				features: {
 					addField: [Layer.CUSTOMER, Layer.VENDOR],
 					changeTypeOnlyForUser: [Layer.USER],
@@ -54,6 +55,12 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isAppVariantSaveAsEnabled, false);
 			var bIsAppVariantSaveAsEnabled = this.cut.isAppVariantSaveAsEnabled();
 			assert.equal(bIsAppVariantSaveAsEnabled, false);
+		});
+
+		QUnit.test("isCondensingEnabled", function(assert) {
+			assert.equal(this.cut._oSettings.isCondensingEnabled, false);
+			var bIsCondensingEnabled = this.cut.isCondensingEnabled();
+			assert.equal(bIsCondensingEnabled, false);
 		});
 
 		QUnit.test("isModelS", function(assert) {
