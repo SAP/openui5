@@ -101,7 +101,8 @@
 					parameters : {
 						$count : true,
 						$filter : 'SO_2_BP/CompanyName ge \'M\'',
-						$select : ['BuyerID', 'Messages']
+						$select : ['BuyerID', 'Messages'],
+						$$patchWithoutSideEffects : true
 					},
 					events : {
 						dataReceived : '.onDataEvents',

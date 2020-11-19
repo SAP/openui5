@@ -1579,7 +1579,8 @@ sap.ui.define([
 			}
 
 			function patch(oPatchGroupLock, bAtFront) {
-				var oRequestLock;
+				var mHeaders = {"If-Match" : oEntity},
+					oRequestLock;
 
 				/*
 				 * Synchronous callback called when the request is put on the wire. Locks the group
@@ -1593,8 +1594,11 @@ sap.ui.define([
 					}
 				}
 
+				if (bPatchWithoutSideEffects) {
+					mHeaders.Prefer = "return=minimal";
+				}
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
-					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
+					mHeaders, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
 					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath),
 					bAtFront);
 				_Helper.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);

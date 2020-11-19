@@ -376,20 +376,6 @@ sap.ui.define([
 					ifMatch : /{"Note":"RAISE_ERROR"}/g,
 					source : "PATCH-SalesOrderList('0500000004').Error.json"
 				}],
-				"PATCH SalesOrderList('0500000001')?custom-option=value" : [{
-					code : 204,
-					headers : {"ETag" : "New ETag"},
-					ifMatch : /{"Note":"204"}/g
-				}, {
-					headers : {"ETag" : "New ETag"},
-					ifMatch : /{"Note":"ETag"}/g,
-					message : {"Note" : "Sending ETag header..."}
-				}, {
-					ifMatch : function (oRequest) {
-						return oRequest.requestHeaders["If-Match"] === "New ETag";
-					},
-					message : {"Note" : "You have used the new ETag!"}
-				}],
 				"PATCH SalesOrderList('050000006')/SO_2_SOITEM(SalesOrderID='0500000006',ItemPosition='0000000010')?custom-option=value" : [{
 					code : 204,
 					ifMatch : /{"Note":"EPM DG: SO ID 0500000006 Item 0000000010"}/g,

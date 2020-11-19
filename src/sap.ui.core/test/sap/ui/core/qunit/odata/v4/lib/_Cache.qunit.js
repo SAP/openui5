@@ -1547,7 +1547,8 @@ sap.ui.define([
 				.returns("~");
 			oRequestCall = this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
-					sinon.match.same(oGroupLock), {"If-Match" : oEntityMatcher},
+					sinon.match.same(oGroupLock), Object.assign({"If-Match" : oEntityMatcher},
+						oFixture.$$patchWithoutSideEffects && {Prefer : "return=minimal"}),
 					sinon.match.same(oUpdateData), sinon.match.func, sinon.match.func, undefined,
 					"~", undefined)
 				.returns(oPatchPromise);
