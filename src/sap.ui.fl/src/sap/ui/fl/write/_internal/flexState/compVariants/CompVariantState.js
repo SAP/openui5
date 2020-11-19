@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/Variant",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/registry/Settings",
@@ -14,6 +15,7 @@ sap.ui.define([
 	UriParameters,
 	Layer,
 	Change,
+	Variant,
 	Utils,
 	FlexState,
 	Settings,
@@ -86,7 +88,7 @@ sap.ui.define([
 			FlexState.getCompEntitiesByIdMap(mPropertyBag.reference)[oChange.getId()] = oChange;
 		}
 
-		//TODO: react accordingly on layering as soon as non-User layers are possible
+		//TODO: react accordingly on layering as soon as an update is not possible (versioning / different layer)
 		mCompVariantsByIdMap[sChangeType].setContent(oContent);
 
 		return mCompVariantsByIdMap[sChangeType];
@@ -324,7 +326,7 @@ sap.ui.define([
 			service: oChangeSpecificData.ODataService,
 			content: oChangeSpecificData.content,
 			reference: mPropertyBag.reference,
-			isVariant: oChangeSpecificData.isVariant,
+			fileType: oChangeSpecificData.isVariant ? "variant" : "change",
 			packageName: oChangeSpecificData.packageName,
 			layer: determineLayer(oChangeSpecificData),
 			selector: {
@@ -334,7 +336,9 @@ sap.ui.define([
 		};
 
 		var oFile = Change.createInitialFileContent(oInfo);
-		var oFlexObject = new Change(oFile); // the class is sap.ui.fl.Change but it may be of the fileType variant
+
+		var oClass = oChangeSpecificData.isVariant ? Variant : Change;
+		var oFlexObject = new oClass(oFile);
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);

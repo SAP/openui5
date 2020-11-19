@@ -235,6 +235,12 @@ sap.ui.define([
 					}
 				}
 			},
+			"apply/_internal/flexObjects/Variant": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/Variant"]
+				}
+			},
 			"apply/_internal/flexState/changes/DependencyHandler": {
 				group: "Apply Internal",
 				coverage: {

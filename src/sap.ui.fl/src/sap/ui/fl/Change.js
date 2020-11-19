@@ -575,6 +575,7 @@ sap.ui.define([
 	 * Returns <code>true</code> if the current layer is the same as the layer in which the change was created, or if the change is from the end-user layer and was ceated for this user.
 	 * @returns {boolean} <code>true</code> if the change file is read only
 	 *
+	 * @deprecated
 	 * @public
 	 */
 	Change.prototype.isReadOnly = function () {
@@ -585,6 +586,7 @@ sap.ui.define([
 	 * Checks if the change is read only, because the current user is not a key user and the change is "shared".
 	 * @returns {boolean} <code>true</code> if the change is read only
 	 *
+	 * @deprecated
 	 * @private
 	 */
 	Change.prototype._isReadOnlyWhenNotKeyUser = function () {
@@ -610,6 +612,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} <code>true</code> if the label is read only
 	 *
+	 * @deprecated
 	 * @public
 	 */
 	Change.prototype.isLabelReadOnly = function () {
@@ -623,6 +626,7 @@ sap.ui.define([
 	 * Checks if the layer allows modifying the file.
 	 * @returns {boolean} <code>true</code> if the change is read only
 	 *
+	 * @deprecated
 	 * @private
 	 */
 	Change.prototype._isReadOnlyDueToLayer = function () {
@@ -635,6 +639,7 @@ sap.ui.define([
 	 * Checks if change is read only because of its source system.
 	 * @returns {boolean} <code>true</code> if the change is from another system
 	 *
+	 * @deprecated
 	 * @public
 	 */
 	Change.prototype.isChangeFromOtherSystem = function () {
@@ -660,6 +665,7 @@ sap.ui.define([
 	 * Returns <code>false</code> if the current language does not equal the original language of the change file.
 	 * Returns <code>false</code> if the original language is initial.
 	 *
+	 * @deprecated
 	 * @returns {boolean} <code>true</code> if the current logon language equals the original language of the change file
 	 *
 	 * @private
