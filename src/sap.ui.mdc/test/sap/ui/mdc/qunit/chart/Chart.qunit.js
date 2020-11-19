@@ -337,6 +337,37 @@ function(
 		});
 	});
 
+	QUnit.test("tooltips set on initialization", function(assert) {
+		//arrange
+		var done = assert.async();
+		var oToggleChartTooltipVisibilitySpy = sinon.spy(this.oChart, "_toggleChartTooltipVisibility");
+
+		//assert
+		this.oChart.done().then(function() {
+			assert.ok(this.oChart.getShowChartTooltip(), "default value should be true for showChartTooltip property");
+			assert.ok(oToggleChartTooltipVisibilitySpy.calledOnce, "_toggleChartTooltipVisibility was called");
+			assert.ok(this.oChart._vizTooltip, "Tooltip object should be created");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("tooltips can be disabled", function(assert) {
+		//arrange
+		var done = assert.async();
+		var oSetChartTooltipVisiblitySpy = sinon.spy(this.oChart, "_setChartTooltipVisiblity");
+
+		this.oChart.done().then(function() {
+			//act
+			this.oChart._toggleChartTooltipVisibility(false);
+
+			//assert
+			assert.ok(oSetChartTooltipVisiblitySpy.calledTwice, "_setChartTooltipVisiblity should be called twice");
+			assert.ok(this.oChart._vizTooltip.bIsDestroyed, "VizTooltip should be destroyed");
+			done();
+		}.bind(this));
+
+	});
+
 	QUnit.module("sap.ui.mdc.Chart: Items", {
 		beforeEach: function() {
 			var TestComponent = UIComponent.extend("test", {
