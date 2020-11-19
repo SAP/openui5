@@ -10,13 +10,12 @@ sap.ui.define([
 	"use strict";
 
 	return UIComponent.extend("sap.ui.rta.qunitrta.Component", {
-
 		metadata: {
 			manifest: "json"
 		},
 
 		init : function() {
-			this._bShowAdaptButton = this.getComponentData().showAdaptButton ? this.getComponentData().showAdaptButton : false;
+			this._bShowAdaptButton = !!this.getComponentData().showAdaptButton;
 			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
 		},
 

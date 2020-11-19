@@ -1,0 +1,31 @@
+
+{
+	"d" : {
+		"results": [
+			{
+				"__metadata": {
+				"type": "AdditionalElementsTest.EntityType02"
+				},
+				"EntityType02_Property01": "EntityType02Property01Value",
+				"UnusualFieldControl" : 1,
+				"EntityType02_Complex": {
+					"__metadata": {
+						"type": "AdditionalElementsTest.ComplexType"
+					},
+					"ComplexProperty01" : "ComplexProperty01Value",
+					"ComplexProperty02" : "ComplexProperty02Value",
+					"ComplexProperty03" : "ComplexProperty03Value",
+					"ComplexUxFcThatMakeFieldInvisible": 0
+				},
+				"EntityType02_Property02": "EntityType02Property02Value",
+				"EntityType02_Property03": "EntityType02_Property03Value",
+				"EntityType02_Property04_Dynamically_Invisible_By_FieldControl": "EntityType02_Property04_Dynamically_Invisible_By_FieldControl",
+				"UxFcThatMakeFieldInvisible": 0,
+				"EntityType02_Property05": "EntityType02_Property05Value-Partially-Visible",
+				"EntityType02_Property06": "EntityType02_Property06Value-Partially-Invisible",
+				"EntityType02_Property07_with_implicit_nav" :"EntityType02_Property07Value_with_implicit_nav",
+				"CommonPropertyName" : "Property on EntityType02"
+			}
+		]
+	}
+}
