@@ -29812,4 +29812,73 @@ sap.ui.define([
 			return that.waitForChanges(assert, "Step 1: Refresh the list");
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario:
+	// Refresh list with a kept-alive context that is part of the collection; after refresh the
+	// entity is deleted.
+	// JIRA: CPOUI5ODATAV4-578
+	QUnit.test("CPOUI5ODATAV4-578: kept-alive entity of object page deleted", function (assert) {
+		var oError = createError({message : "Not found"}),
+			fnOnBeforeDestroy = sinon.stub(),
+			that = this;
+
+		return this.createKeepAliveScenario(assert, false, fnOnBeforeDestroy)
+			.then(function (oKeptContext) {
+				that.oLogMock.expects("error")
+					.withExactArgs("Failed to get contexts for "
+						+ sSalesOrderService + "SalesOrderList('1')/SO_2_SOITEM"
+						+ " with start index 0 and length 100",
+						sinon.match("Not found"), "sap.ui.model.odata.v4.ODataListBinding");
+
+				that.expectRequest({
+						batchNo : 3,
+						method : "GET",
+						url : "SalesOrderList?$filter=SalesOrderID eq '1'"
+							+ "&$select=GrossAmount,Note,SalesOrderID"
+					}, {
+						value : []
+					})
+					.expectChange("objectPageGrossAmount", null)
+					.expectChange("objectPageNote", null)
+					.expectRequest({
+						batchNo : 3,
+						method : "GET",
+						url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
+							+ "&$select=GrossAmount,Note,SalesOrderID&$skip=0&$top=2"
+					}, {
+						"@odata.count" : "41",
+						value : [{
+							GrossAmount : 149.1,
+							Note : "Note 2",
+							SalesOrderID : "2"
+						}, {
+							GrossAmount : 99,
+							Note : "Note 3",
+							SalesOrderID : "3"
+						}]
+					})
+					.expectChange("id", [, "3"])
+					.expectChange("grossAmount", ["149.10", "99.00"])
+					.expectRequest({
+						batchNo : 3,
+						method : "GET",
+						url : "SalesOrderList('1')/SO_2_SOITEM"
+							+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
+					}, oError)
+					.expectMessages([{
+						message : "Not found",
+						persistent : true,
+						technical : true,
+						type : "Error"
+					}]);
+
+				// code under test
+				oKeptContext.getBinding().refresh();
+
+				return that.waitForChanges(assert, "(3) refresh the list");
+		}).then(function () {
+			sinon.assert.called(fnOnBeforeDestroy);
+		});
+	});
 });

@@ -2096,8 +2096,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bSuccess) {
-	QUnit.test("refreshInternal: relative with own cache, success=" + bSuccess, function (assert) {
+[
+	{onRemoveCalled : true, success : true},
+	{onRemoveCalled : false, success : true},
+	{onRemoveCalled : false, success : false}
+	/*{removeCalled : true, success : false} not possible as the refresh promise rejects*/
+].forEach(function (oFixture) {
+		var sTitle = "refreshInternal: relative with own cache, success=" + oFixture.success
+				+ ", remove called = " + oFixture.onRemoveCalled;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataListBinding.prototype),
 			oCache0 = {setActive : function () {}},
@@ -2105,10 +2113,13 @@ sap.ui.define([
 			oCache = oCache0,
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
 			oError = new Error(),
+			oKeptContext = {resetKeepAlive : function() {}},
 			sPath = {/*TEAMS('1')*/},
+			oRefreshKeptElementCall,
 			oRefreshKeptElementGroupLock = {},
 			oRefreshKeptElementPromise = SyncPromise.resolve({}),
-			oRefreshResult;
+			oRefreshResult,
+			that = this;
 
 		// fetchCache is called once from applyParameters before oBinding.oContext is set
 		oBindingMock.expects("fetchCache").withExactArgs(undefined).callsFake(function () {
@@ -2123,13 +2134,17 @@ sap.ui.define([
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
 			{$$groupId : "group"});
 
+		oBinding.mPreviousContextsByPath = {
+			"/resolved/path('42')" : oKeptContext
+		};
+
 		oCache = oCache1;
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false);
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup")
 			.returns(oRefreshKeptElementGroupLock);
-		this.mock(oCache1).expects("refreshKeptElement")
-			.withExactArgs(sinon.match.same(oRefreshKeptElementGroupLock))
+		oRefreshKeptElementCall = this.mock(oCache1).expects("refreshKeptElement")
+			.withExactArgs(sinon.match.same(oRefreshKeptElementGroupLock), sinon.match.func)
 			.returns(oRefreshKeptElementPromise);
 		this.mock(oBinding).expects("removeCachesAndMessages")
 			.withExactArgs(sinon.match.same(sPath));
@@ -2139,12 +2154,24 @@ sap.ui.define([
 		// code under test
 		oRefreshResult = oBinding.refreshInternal(sPath, "myGroup", false);
 		// simulate getContexts
-		oBinding.resolveRefreshPromise(bSuccess || Promise.reject(oError));
+		oBinding.resolveRefreshPromise(oFixture.success || Promise.reject(oError));
 
 		return oRefreshResult.then(function (oResult) {
-			assert.ok(bSuccess);
+			if (oFixture.onRemoveCalled) {
+				that.mock(oBinding.oModel).expects("resolve")
+					.withExactArgs("TEAM_2_EMPLOYEES", sinon.match.same(oContext))
+					.returns("/resolved/path");
+				that.mock(oKeptContext).expects("resetKeepAlive").withExactArgs();
+
+				// code under test
+				oRefreshKeptElementCall.firstCall.args[1]("('42')");
+			}
+
+			assert.ok(oFixture.success);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), oCache1);
 			assert.strictEqual(oResult[1], oRefreshKeptElementPromise.getResult());
+			assert.strictEqual(oBinding.mPreviousContextsByPath["/resolved/path('42')"],
+				oKeptContext);
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
 		});

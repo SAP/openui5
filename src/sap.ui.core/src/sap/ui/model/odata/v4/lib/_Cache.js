@@ -2388,13 +2388,15 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
+	 * @param {function} fnOnRemove
+	 *   A function which is called if the kept element does no longer exist
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or <code>undefined</code> if there is no
 	 *   kept element, or rejecting with an error if the refresh fails.
 	 *
 	 * @public
 	 */
-	_CollectionCache.prototype.refreshKeptElement = function (oGroupLock) {
+	_CollectionCache.prototype.refreshKeptElement = function (oGroupLock, fnOnRemove) {
 		var mTypes, that = this;
 
 		/**
@@ -2431,10 +2433,16 @@ sap.ui.define([
 				var oElement = oResponse.value[0],
 					sPredicate;
 
-				that.visitResponse(oResponse, mTypes, undefined, undefined,	undefined, 0);
-				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-				_Helper.updateAll(that.mChangeListeners, sPredicate,
-					that.aElements.$byPredicate[sPredicate], oElement);
+				if (oElement) {
+					that.visitResponse(oResponse, mTypes, undefined, undefined, undefined, 0);
+					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+					_Helper.updateAll(that.mChangeListeners, sPredicate,
+						that.aElements.$byPredicate[sPredicate], oElement);
+				} else {
+					sPredicate = Object.keys(that.aElements.$byPredicate)[0];
+					delete that.aElements.$byPredicate[sPredicate];
+					fnOnRemove(sPredicate);
+				}
 			});
 	};
 
