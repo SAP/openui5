@@ -702,6 +702,13 @@ sap.ui.define([
 		return oModel;
 	};
 
+	BaseEditor.prototype.getI18nProperty = function (sName, aPlaceholders) {
+		if (this.getModel("i18n")) {
+			return this.getModel("i18n").getResourceBundle().getText(sName, aPlaceholders);
+		}
+		return sName;
+	};
+
 	/**
 	 * Loads i18n bundles.
 	 *
