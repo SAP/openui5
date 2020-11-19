@@ -1512,6 +1512,7 @@ function(
 		 */
 		Select.prototype.onmousedown = function (oEvent) {
 			oEvent.preventDefault();
+			this._getHiddenSelect().focus();
 		};
 
 		/**
