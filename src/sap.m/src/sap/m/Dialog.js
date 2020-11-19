@@ -243,7 +243,7 @@ function(
 					 * The function allows you to define custom behavior which will be executed when the Escape key is pressed. By default, when the Escape key is pressed, the Dialog is immediately closed.
 					 * @since 1.44
 					 */
-					escapeHandler : {type: "any", group: "Behavior", defaultValue: null},
+					escapeHandler : {type: "function", group: "Behavior", defaultValue: null},
 
 					/**
 					 * Specifies the ARIA role of the Dialog. If the state of the control is "Error" or "Warning" the role will be "AlertDialog" regardless of what is set.
