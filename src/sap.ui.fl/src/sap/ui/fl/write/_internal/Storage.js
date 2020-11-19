@@ -104,9 +104,10 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
-	function _evaluateCondensing(mPropertyBag) {
+	function evaluateCondensing(mPropertyBag) {
 		var mCondense;
-		if (mPropertyBag.allChanges
+		if (
+			mPropertyBag.allChanges
 			&& mPropertyBag.allChanges.length
 			&& mPropertyBag.condensedChanges
 		) {
@@ -206,7 +207,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
 	Storage.condense = function(mPropertyBag) {
-		mPropertyBag.flexObjects = _evaluateCondensing(mPropertyBag);
+		mPropertyBag.flexObjects = evaluateCondensing(mPropertyBag);
 		if (!mPropertyBag.flexObjects) {
 			return Promise.reject("No changes were provided");
 		}
