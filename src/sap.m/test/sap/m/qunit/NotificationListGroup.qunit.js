@@ -164,7 +164,6 @@ sap.ui.define([
 
 		// act
 		oNLGCollapseButton.$().tap();
-		oNLIOverflowToolbar.closeOverflow();
 		Core.applyChanges();
 
 		setTimeout(function () {
