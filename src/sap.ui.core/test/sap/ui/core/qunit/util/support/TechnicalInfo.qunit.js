@@ -51,11 +51,7 @@ sap.ui.define([
 	QUnit.test("URL Validation", function(assert) {
 		var aValidValues = [
 				"https://sapui5.hana.ondemand.com/resources/sap/ui/support/",
-				"http://my.server:12345/some/deep/path/sap/ui/support/",
-				"https://www.sap.com:8080/sap/ui/support/",
-				"http://www.sap.com:8080/sap/ui/support/",
-				"http://120.128.20.5:8080/sap/ui/support/",
-				"http://localhost:8080/testsuite/resources/sap/ui/support/"
+				"https://www.sap.com:8080/sap/ui/support/"
 			],
 			aInvalidValues = [
 				"ohSnapThisWontWork/sap/ui/support/,",
@@ -69,11 +65,17 @@ sap.ui.define([
 				"http://sap.com",
 				"htt://www.sap.com",
 				"://www.sap.com",
-				"http://www.124.532.324.5",
-				"120.128.20.5:8080/sap/ui/support/",
-				"120.128.20.5/sap/ui/support/",
+				"http://www.0.0.0.0",
+				"0.0.0.0:8080/sap/ui/support/",
+				"0.0.0.0/sap/ui/support/",
 				"localhost:80808/sap/ui/support/"
-			];
+			],
+			aValues = window.location.protocol !== "https:" ? aValidValues : aInvalidValues;
+
+		aValues.push("http://my.server:12345/some/deep/path/sap/ui/support/");
+		aValues.push("http://www.sap.com:8080/sap/ui/support/");
+		aValues.push("http://0.0.0.0:8080/sap/ui/support/");
+		aValues.push("http://localhost:8080/testsuite/resources/sap/ui/support/");
 
 		aValidValues.forEach(function (sValue) {
 			assert.ok(TechnicalInfo._validateValue(sValue), "URL '" + sValue + "' is a valid custom bootstrap URL");
