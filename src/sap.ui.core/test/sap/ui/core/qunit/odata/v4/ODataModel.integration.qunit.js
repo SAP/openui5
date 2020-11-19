@@ -985,6 +985,33 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a view with a property used for Context#setProperty tests and returns a promise
+		 * on the context to work with. The view contains an input control to visualize changes and
+		 * messages.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @returns {Promise<sap.ui.model.odata.v4.Context>} A promise on the context
+		 */
+		createSetPropertyScenario : function (assert) {
+			var oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+				sView = '\
+<FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
+	<Input id="name" value="{Name}"/>\
+</FlexBox>',
+				that = this;
+
+			this.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id", {
+					Name : "Team #1",
+					Team_Id : "TEAM_01"
+				})
+				.expectChange("name", "Team #1");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				return that.oView.byId("form").getObjectBinding().getBoundContext();
+			});
+		},
+
+		/**
 		 * Creates the view and attaches it to the model. Checks that the expected requests (see
 		 * {@link #expectRequest} are fired and the controls got the expected changes (see
 		 * {@link #expectChange}).
@@ -24923,38 +24950,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: View contains a form for an entity. Context#setProperty is called. Property binding
-	// is updated and PATCH request is sent via update group ID. Server returns a bound message.
+	// Scenario: Call Context#setProperty for a property that is bound and has already been read
+	// from the back end. The property binding is updated and a PATCH request is sent via update
+	// group ID. The Server returns a bound message.
 	// JIRA: CPOUI5UISERVICESV3-1790
-	// BCP: 2070480907 (bRetry)
 	QUnit.test("Context#setProperty: read/write", function (assert) {
-		var oBinding,
-			oContext,
-			oModel = createTeaBusiModel({
-				autoExpandSelect : true,
-				updateGroupId : "update"
-			}),
-			iPatchCompleted = 0,
-			iPatchSent = 0,
-			oPromise,
-			sView = '\
-<FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
-	<Text id="id" text="{Team_Id}"/>\
-	<Input id="name" value="{Name}"/>\
-</FlexBox>',
-			that = this;
+		var oPromise, that = this;
 
-		this.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id", {
-				Name : "Team #1",
-				Team_Id : "TEAM_01"
-			})
-			.expectChange("id", "TEAM_01")
-			.expectChange("name", "Team #1");
-
-		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("form").getObjectBinding();
-			oContext = oBinding.getBoundContext();
-
+		return this.createSetPropertyScenario(assert).then(function (oContext) {
 			that.expectChange("name", "Best Team Ever");
 
 			// code under test
@@ -24986,13 +24989,72 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				oModel.submitBatch("update"),
+				that.oModel.submitBatch("update"),
 				oPromise,
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
 			return that.checkValueState(assert, "name", "Warning", "What a stupid name!");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Call Context#setProperty for a property that is bound and has already been read
+	// from the back end. The request fails and property and binding are reset.
+	// BCP: 2070481590
+	QUnit.test("Context#setProperty: rejected", function (assert) {
+		var oContext, oPromise, that = this;
+
+		return this.createSetPropertyScenario(assert).then(function (oContext0) {
+			that.expectChange("name", "Best Team Ever");
+
+			// code under test
+			oContext = oContext0;
+			oPromise = oContext.setProperty("Name", "Best Team Ever");
+
+			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					payload : {Name : "Best Team Ever"},
+					url : "TEAMS('TEAM_01')"
+				}, createError({
+					message : "something went wrong"
+				}))
+				.expectChange("name", "Team #1");
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				oPromise.then(function () {
+					assert.ok(false);
+				}, function (oError) {
+					assert.strictEqual(oError.message, "something went wrong");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oContext.getProperty("Name"), "Team #1");
+			assert.notOk(that.oModel.hasPendingChanges("update"));
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Call Context#setProperty with bRetry for a property that is bound and has already
+	// been read from the back end. The first request fails. When calling submitBatch again, a
+	// second request is sent and succeeds.
+	// BCP: 2070480907
+	QUnit.test("Context#setProperty: bRetry", function (assert) {
+		var oBinding,
+			oContext,
+			iPatchCompleted = 0,
+			iPatchSent = 0,
+			oPromise,
+			that = this;
+
+		return this.createSetPropertyScenario(assert).then(function (oContext0) {
+			oContext = oContext0;
+			oBinding = oContext.getBinding();
+
 			that.expectChange("name", "Foo")
 				.expectRequest({
 					method : "PATCH",
@@ -25012,7 +25074,6 @@ sap.ui.define([
 				.withExactArgs("Failed to update path /TEAMS('TEAM_01')/Name",
 					sinon.match("something went wrong"), "sap.ui.model.odata.v4.Context");
 
-			sap.ui.getCore().getMessageManager().removeAllMessages();
 			oBinding.attachPatchSent(function () {
 				iPatchSent += 1;
 			});
@@ -25025,12 +25086,12 @@ sap.ui.define([
 			oPromise = oContext.setProperty("Name", "Foo", undefined, true);
 
 			return Promise.all([
-				oModel.submitBatch("update"),
+				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (oError) {
 			assert.strictEqual(oContext.getProperty("Name"), "Foo");
-			assert.ok(oModel.hasPendingChanges("update"));
+			assert.ok(that.oModel.hasPendingChanges("update"));
 			assert.strictEqual(iPatchSent, 1);
 			assert.strictEqual(iPatchCompleted, 1);
 
@@ -25042,12 +25103,12 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oModel.submitBatch("update"),
+				that.oModel.submitBatch("update"),
 				oPromise,
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.notOk(oModel.hasPendingChanges("update"));
+			assert.notOk(that.oModel.hasPendingChanges("update"));
 			assert.strictEqual(iPatchSent, 2);
 			assert.strictEqual(iPatchCompleted, 2);
 		});

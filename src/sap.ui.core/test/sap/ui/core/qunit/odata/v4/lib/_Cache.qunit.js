@@ -1941,8 +1941,14 @@ sap.ui.define([
 				oUpdateData, sinon.match.func, sinon.match.func, undefined,
 				oCache.sResourcePath + "('0')/path/to/entity", undefined)
 			.returns(oPatchPromise);
+		this.mock(_Helper).expects("addByPath")
+			.withExactArgs(sinon.match.same(oCache.mPatchRequests),
+				"('0')/path/to/entity/Address/City", sinon.match.same(oPatchPromise));
 		this.oRequestorMock.expects("getGroupSubmitMode")
 			.withExactArgs("group").returns("Direct");
+		this.mock(_Helper).expects("removeByPath")
+			.withExactArgs(sinon.match.same(oCache.mPatchRequests),
+				"('0')/path/to/entity/Address/City", sinon.match.same(oPatchPromise));
 
 		oPatchPromise.catch(function () {
 			that.mock(oRequestLock).expects("unlock").withExactArgs();
@@ -1998,7 +2004,16 @@ sap.ui.define([
 				oUpdateData, sinon.match.func, sinon.match.func, undefined,
 				oCache.sResourcePath + "('0')/path/to/entity", undefined)
 			.returns(oPatchPromise);
+		this.mock(_Helper).expects("addByPath")
+			.withExactArgs(sinon.match.same(oCache.mPatchRequests),
+				"('0')/path/to/entity/Address/City", sinon.match.same(oPatchPromise));
 		this.oRequestorMock.expects("getGroupSubmitMode").never();
+		this.mock(_Helper).expects("updateExisting")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('0')/path/to/entity",
+				sinon.match.same(oEntity), {Address : {City : "Heidelberg"}});
+		this.mock(_Helper).expects("removeByPath")
+			.withExactArgs(sinon.match.same(oCache.mPatchRequests),
+				"('0')/path/to/entity/Address/City", sinon.match.same(oPatchPromise));
 
 		// code under test
 		return oCache.update(oGroupLock, "Address/City", "Walldorf",

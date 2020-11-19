@@ -1538,8 +1538,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-			sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent) {
+	_Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback,
+			sEditUrl, sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent) {
 		var oPromise,
 			aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
@@ -1621,8 +1621,12 @@ sap.ui.define([
 				}, function (oError) {
 					var sRetryGroupId = sGroupId;
 
+					if (!fnErrorCallback) {
+						onCancel();
+						throw oError;
+					}
 					_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-					if (!fnErrorCallback || oError.canceled) {
+					if (oError.canceled) {
 						throw oError;
 					}
 
