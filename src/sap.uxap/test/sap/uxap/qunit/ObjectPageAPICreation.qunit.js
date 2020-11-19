@@ -2255,9 +2255,10 @@ function (
 			oAdjustHeaderHeightsSpy,
 			oRequestAdjustLayoutSpy,
 			oHeaderContentRenderSpy,
+			oUpdateTitleVisualStateSpy,
 			done = assert.async();
 
-		assert.expect(4);
+		assert.expect(6);
 		helpers.renderObject(oObjectPage);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
@@ -2267,10 +2268,12 @@ function (
 
 			oAdjustHeaderHeightsSpy = sinon.spy(oObjectPage, "_adjustHeaderHeights");
 			oRequestAdjustLayoutSpy = sinon.spy(oObjectPage, "_requestAdjustLayout");
+			oUpdateTitleVisualStateSpy = sinon.spy(oObjectPage, "_updateTitleVisualState");
 			oHeaderContentRenderSpy = sinon.spy(oObjectPage._getHeaderContent(), "invalidate");
 
 			// Act
 			oObjectPage.setShowHeaderContent(false);
+			Core.applyChanges();
 
 			setTimeout(function() {
 				// Assert
@@ -2278,10 +2281,20 @@ function (
 				assert.equal(oHeaderContentRenderSpy.callCount, 1, "headerContent is rerendered");
 				assert.equal(oAdjustHeaderHeightsSpy.callCount, 1, "_adjustHeaderHeights is called once");
 				assert.equal(oRequestAdjustLayoutSpy.callCount, 1, "_requestAdjustLayout is called once");
+				assert.equal(oUpdateTitleVisualStateSpy.callCount, 1, "_updateTitleVisualState is called once when the showHeaderContent property is changed");
 
-				// Clean up
-				oObjectPage.destroy();
-				done();
+				oUpdateTitleVisualStateSpy.reset();
+				oObjectPage.setShowHeaderContent(true);
+				Core.applyChanges();
+
+				setTimeout(function() {
+					// Assert
+					assert.equal(oUpdateTitleVisualStateSpy.callCount, 1, "_updateTitleVisualState is called once when the showHeaderContent property is changed");
+
+					// Clean up
+					oObjectPage.destroy();
+					done();
+				}, 500);
 			}, 500);
 		});
 	});
