@@ -24,22 +24,17 @@ as well as a number of [sample applications](https://openui5.hana.ondemand.com/#
 
 Get it!
 -------
-Go to the [download page](https://openui5.org/releases/) and get the complete UI5 runtime
+Go to the [**download page**](https://openui5.org/releases/) and get the complete UI5 runtime
 and the UI5 SDK containing the documentation and many example apps as well as the complete runtime.
 
-You can also consume OpenUI5 using the [UI5 Tooling](https://sap.github.io/ui5-tooling/). **Get started [here](https://sap.github.io/ui5-tooling/pages/GettingStarted/)!**
-
-Alternatively, you can also download [every OpenUI5 library](https://www.npmjs.com/org/openui5) individually via [npm](https://docs.npmjs.com/getting-started/what-is-npm), for example: `npm install @openui5/sap.ui.core @openui5/sap.m @openui5/themelib_sap_fiori_3 [...]`.
-
-Preload packages for components and libraries can be built using the [UI5 Tooling](https://github.com/SAP/ui5-tooling).
-See also: [CLI usage](https://sap.github.io/ui5-tooling/pages/CLI/#usagesyntax).
+Or use [**UI5 Tooling**](https://sap.github.io/ui5-tooling/), the recommended tool for working with OpenUI5! It allows you to manage your framework dependencies and to build optimized packages for all applications, components and libraries. **Get started [here](https://sap.github.io/ui5-tooling/pages/GettingStarted/).**
 
 Get started!
 ------------
 Try the [Hello World](https://openui5.org/), read
 the [Developer Guide](https://openui5.hana.ondemand.com/topic)
 and refer to the [API Reference](https://openui5.hana.ondemand.com/api).
-Use [App Templates](https://openui5.hana.ondemand.com/topic/a460a7348a6c431a8bd967ab9fb8d918) as a foundation for your developments (available in SAP Web IDE or here on [GitHub](https://github.com/SAP?q=openui5-worklist-app%20OR%20openui5-masterdetail-app%20OR%20openui5-sample-app)).
+Use [App Templates](https://openui5.hana.ondemand.com/topic/a460a7348a6c431a8bd967ab9fb8d918) as a foundation for your developments (available in SAP Business Application Studio or here on [GitHub](https://github.com/SAP?q=openui5-worklist-app%20OR%20openui5-masterdetail-app%20OR%20openui5-sample-app)).
 Check out the [SAP Community Forum](https://answers.sap.com/tags/500983881501772639608291559920477) for 20,000+ questions and answers and
 [stackoverflow](http://stackoverflow.com/questions/tagged/sapui5) (use the tag "sapui5") to discuss code-related problems and questions. Or join the [OpenUI5 Slack](https://ui5-slack-invite.cfapps.eu10.hana.ondemand.com/). 
 
