@@ -8619,4 +8619,37 @@ sap.ui.define([
 		// cleanup
 		this.oMultiComboBox.destroy();
 	});
+
+	QUnit.module("Rendering");
+
+	QUnit.test("Should not create suggestion popover on CTRL + I when the input doesn't have tokens", function (assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({
+				items: [
+				new Item({text: "Token 1", key: "token1"}),
+				new Item({text: "Token 2", key: "token2"}),
+				new Item({text: "Token 3", key: "token3"})
+			]
+		});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiComboBox.setSelectedKeys(["token1"]);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), true, "Should contain 'sapMMultiComboBoxHasToken' class when there are tokens");
+
+		// Act
+		oMultiComboBox.setSelectedKeys([]);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), false, "Should not contain 'sapMMultiComboBoxHasToken' class when there are no tokens");
+
+		// Clean
+		oMultiComboBox.destroy();
+	});
 });
