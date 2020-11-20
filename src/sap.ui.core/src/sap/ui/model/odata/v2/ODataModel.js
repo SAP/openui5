@@ -4349,14 +4349,13 @@ sap.ui.define([
 	 * Error handling for requests.
 	 *
 	 * @param {object} oError The error object
-	 * @param {object} oRequest The request object
+	 * @param {object} [oRequest] The request object
 	 * @returns {map} A map of error information
 	 * @private
 	 */
 	ODataModel.prototype._handleError = function(oError, oRequest) {
-		var sErrorMsg,
-			mParameters = {message : oError.message},
-			sToken;
+		var sErrorDetails, sErrorMsg, sToken,
+			mParameters = {message : oError.message};
 
 		if (oError.response) {
 			if (!oError.$reported) {
@@ -4372,9 +4371,11 @@ sap.ui.define([
 						this.resetSecurityToken();
 					}
 				}
-				sErrorMsg = oError.message + " (" + oError.response.statusCode + " "
-					+ oError.response.statusText + "): "
-					+ oError.response.body;
+				sErrorMsg = oRequest
+					? "'" + oError.message + "' while processing " + oRequest.method + " "
+						+ oRequest.requestUri
+					: oError.message;
+				sErrorDetails = JSON.stringify(oError.response);
 			}
 			mParameters.statusCode = oError.response.statusCode;
 			mParameters.statusText = oError.response.statusText;
@@ -4384,7 +4385,7 @@ sap.ui.define([
 			sErrorMsg = "The following problem occurred: " + oError.message;
 		}
 		if (!oError.$reported) {
-			Log.error(sErrorMsg, undefined, sClassName);
+			Log.error(sErrorMsg, sErrorDetails, sClassName);
 		}
 		oError.$reported = true;
 

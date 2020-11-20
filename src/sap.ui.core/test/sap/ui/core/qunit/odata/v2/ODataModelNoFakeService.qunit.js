@@ -2456,7 +2456,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bReported) {
-	QUnit.test("_handleError: $reported = " + bReported, function (assert) {
+	[false, true].forEach(function (bWithRequestObject) {
+	var sTitle = "_handleError: $reported = " + bReported
+			+ (bWithRequestObject ? "; no request given" : "");
+
+	QUnit.test(sTitle, function (assert) {
 		var oError = {
 				$reported : bReported,
 				message : "~message",
@@ -2470,14 +2474,17 @@ sap.ui.define([
 			oModel = {
 				_parseResponse : function () {}
 			},
-			oRequest = "~oRequest",
+			oRequest = bWithRequestObject ? {method : "~method", requestUri : "~uri"} : undefined,
 			oResult;
 
 		this.mock(oModel).expects("_parseResponse").exactly(bReported ? 0 : 1)
-			.withExactArgs(sinon.match.same(oError.response), "~oRequest");
+			.withExactArgs(sinon.match.same(oError.response), sinon.match.same(oRequest));
 		this.oLogMock.expects("error").exactly(bReported ? 0 : 1)
-			.withExactArgs("~message (~code ~statusText): ~body",
-				undefined, sClassName);
+			.withExactArgs(
+				bWithRequestObject ? "'~message' while processing ~method ~uri" : "~message",
+				'{"body":"~body","headers":"~headers","statusCode":"~code",'
+					+ '"statusText":"~statusText"}',
+				sClassName);
 
 		// code under test
 		oResult = ODataModel.prototype._handleError.call(oModel, oError, oRequest);
@@ -2490,6 +2497,7 @@ sap.ui.define([
 			statusText : "~statusText"
 		});
 		assert.strictEqual(oError.$reported, true);
+	});
 	});
 });
 
