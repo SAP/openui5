@@ -81,14 +81,6 @@ sap.ui.define([
 
 		mConfiguration = this.createBindingInfos(mConfiguration, oCard.getBindingNamespaces());
 
-		if (!mConfiguration && !oToolbar) {
-			return null;
-		}
-
-		if (!mConfiguration) {
-			mConfiguration = {};
-		}
-
 		oActions = new CardActions({
 			card: oCard,
 			areaType: AreaType.Header
@@ -119,6 +111,10 @@ sap.ui.define([
 
 		oActions.attach(mConfiguration, oHeader);
 		oHeader._oActions = oActions;
+
+		if (oHeader._bIsEmpty) {
+			oHeader.setVisible(oToolbar.getVisible());
+		}
 
 		return oHeader;
 	};

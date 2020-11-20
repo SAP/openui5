@@ -31,6 +31,7 @@ sap.ui.define([
 			"sap.ui.integration.controls.ListContentItem"
 		],
 		elements: [
+			"sap.ui.integration.ActionDefinition",
 			"sap.ui.integration.Host"
 		],
 		// define the custom elements that can be used in this library
