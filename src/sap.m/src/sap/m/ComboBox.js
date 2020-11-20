@@ -1048,7 +1048,7 @@ sap.ui.define([
 
 			if (bHasValueAndVisibleItems && oControl && oControl._bDoTypeAhead) {
 				this.handleTypeAhead(oControl, aVisibleItems, sValue);
-			} else if (bHasValueAndVisibleItems && sValue === aCommonStartsWithItems[0].getText()) {
+			} else if (bHasValueAndVisibleItems && aCommonStartsWithItems[0] && sValue === aCommonStartsWithItems[0].getText()) {
 				this.setSelection(aCommonStartsWithItems[0]);
 			} else {
 				this.setSelection(null);
