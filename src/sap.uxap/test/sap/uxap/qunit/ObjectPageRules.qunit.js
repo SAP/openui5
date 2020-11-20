@@ -7,19 +7,22 @@ function($, Core, XMLView, App) {
 	"use strict";
 
 	var BREAK_POINTS = {
-		TABLET: 1024,
-		PHONE: 600,
-		DESKTOP: 2000
+		DESKTOP_XL: 1440,
+		DESKTOP: 1439,
+		TABLET: 1023,
+		PHONE: 599
 	},
 	MEDIA = {
 		PHONE: "sapUxAPObjectPageLayout-Std-Phone",
 		TABLET: "sapUxAPObjectPageLayout-Std-Tablet",
-		DESKTOP: "sapUxAPObjectPageLayout-Std-Desktop"
+		DESKTOP: "sapUxAPObjectPageLayout-Std-Desktop",
+		DESKTOP_XL: "sapUxAPObjectPageLayout-Std-Desktop-XL"
 	},
 	DYNAMIC_HEADERS_MEDIA = {
 		PHONE: "sapFDynamicPage-Std-Phone",
 		TABLET: "sapFDynamicPage-Std-Tablet",
-		DESKTOP: "sapFDynamicPage-Std-Desktop"
+		DESKTOP: "sapFDynamicPage-Std-Desktop",
+		DESKTOP_XL: "sapFDynamicPage-Std-Desktop-XL"
 	};
 
 	QUnit.module("aat_UxAP-ManageDisplay", {
@@ -122,7 +125,7 @@ function($, Core, XMLView, App) {
 	});
 
 	QUnit.test("ObjectPage _updateMedia: correct media class is applied", function (assert) {
-		assert.expect(18);
+		assert.expect(32);
 
 		var oObjectPage = this.referencedObjectPage2,
 			fnCheckMediaClasses = function(sMediaClass, oMedia) {
@@ -143,6 +146,9 @@ function($, Core, XMLView, App) {
 		oObjectPage._updateMedia(BREAK_POINTS.DESKTOP, MEDIA);
 		fnCheckMediaClasses(MEDIA.DESKTOP, MEDIA);
 
+		oObjectPage._updateMedia(BREAK_POINTS.DESKTOP_XL, MEDIA);
+		fnCheckMediaClasses(MEDIA.DESKTOP_XL, MEDIA);
+
 		oObjectPage._updateMedia(BREAK_POINTS.PHONE, DYNAMIC_HEADERS_MEDIA);
 		fnCheckMediaClasses(DYNAMIC_HEADERS_MEDIA.PHONE, DYNAMIC_HEADERS_MEDIA);
 
@@ -151,6 +157,9 @@ function($, Core, XMLView, App) {
 
 		oObjectPage._updateMedia(BREAK_POINTS.DESKTOP, DYNAMIC_HEADERS_MEDIA);
 		fnCheckMediaClasses(DYNAMIC_HEADERS_MEDIA.DESKTOP, DYNAMIC_HEADERS_MEDIA);
+
+		oObjectPage._updateMedia(BREAK_POINTS.DESKTOP_XL, DYNAMIC_HEADERS_MEDIA);
+		fnCheckMediaClasses(DYNAMIC_HEADERS_MEDIA.DESKTOP_XL, DYNAMIC_HEADERS_MEDIA);
 	});
 
 	QUnit.module("ObjectPage with DynamicHeaderTitle", {

@@ -171,24 +171,36 @@ function (
 			},
 			toPhoneMode: function (oObjectPage) {
 				oObjectPage.$().removeClass("sapUxAPObjectPageLayout-Std-Desktop")
-						.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
-						.addClass("sapUxAPObjectPageLayout-Std-Phone");
-				sap.ui.Device.system.desktop = false;
-				sap.ui.Device.system.tablet = false;
-				sap.ui.Device.system.phone = true;
-			},
-			toTabletMode: function (oObjectPage) {
-				oObjectPage.$().removeClass("sapUxAPObjectPageLayout-Std-Desktop")
-						.removeClass("sapUxAPObjectPageLayout-Std-Phone")
-						.addClass("sapUxAPObjectPageLayout-Std-Tablet");
-				sap.ui.Device.system.desktop = false;
-				sap.ui.Device.system.phone = false;
-				sap.ui.Device.system.tablet = true;
-			},
-			toDesktopMode: function (oObjectPage) {
-				oObjectPage.$().addClass("sapUxAPObjectPageLayout-Std-Desktop")
-						.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
-						.removeClass("sapUxAPObjectPageLayout-Std-Phone");
+				.removeClass("sapUxAPObjectPageLayout-Std-Desktop-XL")
+				.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
+				.addClass("sapUxAPObjectPageLayout-Std-Phone");
+		sap.ui.Device.system.desktop = false;
+		sap.ui.Device.system.tablet = false;
+		sap.ui.Device.system.phone = true;
+	},
+	toTabletMode: function (oObjectPage) {
+		oObjectPage.$().removeClass("sapUxAPObjectPageLayout-Std-Desktop")
+				.removeClass("sapUxAPObjectPageLayout-Std-Desktop-XL")
+				.removeClass("sapUxAPObjectPageLayout-Std-Phone")
+				.addClass("sapUxAPObjectPageLayout-Std-Tablet");
+		sap.ui.Device.system.desktop = false;
+		sap.ui.Device.system.phone = false;
+		sap.ui.Device.system.tablet = true;
+	},
+	toDesktopMode: function (oObjectPage) {
+		oObjectPage.$().addClass("sapUxAPObjectPageLayout-Std-Desktop")
+				.removeClass("sapUxAPObjectPageLayout-Std-Desktop-XL")
+				.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
+				.removeClass("sapUxAPObjectPageLayout-Std-Phone");
+		sap.ui.Device.system.desktop = true;
+		sap.ui.Device.system.tablet = false;
+		sap.ui.Device.system.phone = false;
+	},
+	toDesktopXLMode: function (oObjectPage) {
+		oObjectPage.$().addClass("sapUxAPObjectPageLayout-Std-Desktop-XL")
+				.removeClass("sapUxAPObjectPageLayout-Std-Desktop")
+				.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
+				.removeClass("sapUxAPObjectPageLayout-Std-Phone");
 				sap.ui.Device.system.desktop = true;
 				sap.ui.Device.system.tablet = false;
 				sap.ui.Device.system.phone = false;
@@ -3401,6 +3413,7 @@ function (
 
 		// Assert
 		assert.ok(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Tablet"), "Tablet class is applied");
+		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop-XL"), "Desktop XL class is removed");
 		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop"), "Desktop class is removed");
 		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Phone"), "Phone class is removed");
 		assert.deepEqual(oSpy.getCall(0).args[0], oContextualSettings, "Contextual settings object is passed");
@@ -3412,6 +3425,16 @@ function (
 		assert.ok(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Phone"), "Phone class is applied");
 		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Tablet"), "Tablet class is removed");
 		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop"), "Desktop class is removed");
+		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop-XL"), "Desktop XL class is removed");
+
+		// Act
+		oObjectPage._applyContextualSettings({contextualWidth: 1440});
+
+		// Assert
+		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Phone"), "Phone class is removed");
+		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Tablet"), "Tablet class is removed");
+		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop"), "Desktop class is removed");
+		assert.ok(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop-XL"), "Desktop XL class is applied");
     });
 
 

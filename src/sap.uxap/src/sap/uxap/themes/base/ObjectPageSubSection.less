@@ -70,47 +70,51 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	padding: 1rem 1.25rem 0 2rem;
 }
 
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout {
-	box-sizing: border-box;
-	width: 25%;
-	margin-right: 0;
-	display: inline-block;
-	vertical-align: top;
-	overflow: visible;
-}
+/* Those styles apply Desktop and Desktop-XL.
+Instead of writing 
+".sapUxAPObjectPageLayout.sapUxAPObjectPageLayout-Std-Desktop,
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayout-Std-Desktop-XL",
+we exclude the phone and tablet breakpoints.
+Doing so will result in less generated CSS, as well as less future maintanance if Desktop-XXL is implemented.
+*/
 
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
-	width: -webkit-calc(~"75% - 4rem");
-	width: calc(~"75% - 4rem");
-	box-sizing: border-box;
-	display: inline-block;
-	margin-left: 0;
-}
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayout-Std-Phone):not(.sapUxAPObjectPageLayout-Std-Tablet) {
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout {
+		box-sizing: border-box;
+		width: 25%;
+		margin-right: 0;
+		display: inline-block;
+		vertical-align: top;
+		overflow: visible;
+	}
 
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
-	width: -webkit-calc(~"75% - 2rem");
-	width: calc(~"75% - 2rem");
-}
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
+		width: -webkit-calc(~"75% - 2rem");
+		width: calc(~"75% - 2rem");
+		box-sizing: border-box;
+		display: inline-block;
+		margin-left: 0;
+	}
 
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderTitle {
-	height: auto;
-	white-space: normal;
-	word-wrap: break-word;
-	line-height: normal;
-	padding-top: 1rem;
-}
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderTitle {
+		height: auto;
+		white-space: normal;
+		word-wrap: break-word;
+		line-height: normal;
+		padding-top: 1rem;
+	}
 
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions {
-	float: none;
-	display: inline-block;
-	margin-left: 0;
-	width: 100%;
-}
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions {
+		float: none;
+		display: inline-block;
+		margin-left: 0;
+		width: 100%;
+	}
 
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn:first-child {
-	margin-left: 0;
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn:first-child {
+		margin-left: 0;
+	}
 }
-
 /* remove the padding of form content, since form itself is already in a grid-cell that provides the required extra spacing */
 /* (1) if the direct child is a form container with a title, a more specific selector is needed: */
 .sapUxAPBlockContainer .sapUiFormCLContainer > div.sapUiFormContainerTitle {
@@ -136,7 +140,7 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	}
 }
 
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+.sapUxAPBlockContainer {
 	padding: 1rem 2rem 3rem 2rem;
 }
 .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer {
@@ -200,7 +204,7 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 		height: 2rem;
 		line-height: 2rem;
 	}
-	.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+	.sapUxAPBlockContainer {
 		padding: 1rem 2rem 2rem 2rem;
 	}
 	.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
