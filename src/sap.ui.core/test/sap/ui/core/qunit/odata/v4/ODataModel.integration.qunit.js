@@ -334,6 +334,8 @@ sap.ui.define([
 					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "odata/v4/data/metadata.xml"},
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=123"
+					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=en"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
@@ -2368,9 +2370,10 @@ sap.ui.define([
 	// multiple bindings and controller code request it in parallel. See that is written to the
 	// cache. See that it is updated via requestSideEffects.
 	// JIRA: CPOUI5UISERVICESV3-1878
+	// BCP: 2070470932: see that sap-client is handled properly
 	QUnit.test("ODCB: late property", function (assert) {
 		var oFormContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = createModel(sSalesOrderService + "?sap-client=123",{autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_BP}">\
 	<Text id="city" text="{Address/City}"/>\
@@ -2380,7 +2383,8 @@ sap.ui.define([
 <Text id="longitude3" text="{Address/GeoLocation/Longitude}"/>',
 			that = this;
 
-		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=Address/City,BusinessPartnerID", {
+		this.expectRequest("SalesOrderList('1')/SO_2_BP?sap-client=123"
+				+ "&$select=Address/City,BusinessPartnerID", {
 				"@odata.etag" : "etag",
 				Address : {
 					City : "Heidelberg"
@@ -2396,8 +2400,8 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
 
-			that.expectRequest("SalesOrderList('1')/SO_2_BP"
-				+ "?$select=Address/GeoLocation/Longitude,BusinessPartnerID", {
+			that.expectRequest("SalesOrderList('1')/SO_2_BP?sap-client=123"
+					+ "&$select=Address/GeoLocation/Longitude,BusinessPartnerID", {
 					"@odata.etag" : "etag",
 					Address : {
 						GeoLocation : {
@@ -2427,8 +2431,8 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			// late property request
-			that.expectRequest("SalesOrderList('1')/SO_2_BP?$select=BusinessPartnerID,CompanyName",
-				{
+			that.expectRequest("SalesOrderList('1')/SO_2_BP?sap-client=123"
+					+ "&$select=BusinessPartnerID,CompanyName", {
 					"@odata.etag" : "etag",
 					BusinessPartnerID : "2",
 					CompanyName : "SAP"
@@ -2446,8 +2450,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList('1')/SO_2_BP"
-				+ "?$select=Address/City,Address/GeoLocation/Longitude,BusinessPartnerID", {
+			that.expectRequest("SalesOrderList('1')/SO_2_BP?sap-client=123"
+					+ "&$select=Address/City,Address/GeoLocation/Longitude,BusinessPartnerID", {
 					"@odata.etag" : "etag",
 					Address : {
 						City : "Heidelberg",
@@ -2803,16 +2807,18 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-23 see that a late property for a nested entity (within $expand) is
 	// fetched
 	// JIRA: CPOUI5ODATAV4-27 see that two late property requests are merged
+	// BCP: 2070470932: see that sap-client and system query options are handled properly
 	QUnit.test("ODLB: late property", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = createModel(sTeaBusi + "?sap-client=123", {autoExpandSelect : true}),
 			oRowContext,
 			oTable,
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'1\')}">\
 	<Table id="table" growing="true" growingThreshold="2"\
 			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true,\
-				$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
+				$search : \'foo\', $select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<Text id="name" text="{Name}"/>\
+		<Text id="manager" text="{EMPLOYEE_2_MANAGER/ID}"/>\
 	</Table>\
 </FlexBox>\
 <Input id="age1" value="{AGE}"/>\
@@ -2821,14 +2827,23 @@ sap.ui.define([
 <Input id="budget" value="{EMPLOYEE_2_TEAM/Budget}"/>',
 			that = this;
 
-		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES"
-				+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=2", {
-				value : [
-					{"@odata.etag" : "etag0", ID : "2", Name : "Frederic Fall"},
-					{"@odata.etag" : "etag0", ID : "3", Name : "Jonathan Smith"}
-				]
+		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$search=foo"
+				+ "&$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
+				+ "&$expand=EMPLOYEE_2_MANAGER($select=ID)&$skip=0&$top=2", {
+				value : [{
+					"@odata.etag" : "etag0",
+					ID : "2",
+					Name : "Frederic Fall",
+					EMPLOYEE_2_MANAGER : {ID : "5"}
+				}, {
+					"@odata.etag" : "etag0",
+					ID : "3",
+					Name : "Jonathan Smith",
+					EMPLOYEE_2_MANAGER : {ID : "5"}
+				}]
 			})
 			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
+			.expectChange("manager", ["5", "5"])
 			.expectChange("age1")
 			.expectChange("age2")
 			.expectChange("team")
@@ -2838,8 +2853,8 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 
 			// two late property requests (one had only a $expand, so EMPLOYEE_2_TEAM is selected)
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE,EMPLOYEE_2_TEAM"
-					+ "&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?sap-client=123"
+					+ "&$select=AGE,EMPLOYEE_2_TEAM&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
 					+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))", {
 					"@odata.etag" : "etag0",
 					AGE : 42,
@@ -2868,7 +2883,7 @@ sap.ui.define([
 				.expectRequest({
 					method : "PATCH",
 					headers : {"If-Match" : "etag0"},
-					url : "EMPLOYEES('2')",
+					url : "EMPLOYEES('2')?sap-client=123",
 					payload : {AGE : 18}
 				}, {
 					"@odata.etag" : "etag23",
@@ -2902,7 +2917,7 @@ sap.ui.define([
 				.expectRequest({
 					method : "PATCH",
 					headers : {"If-Match" : "ETag"},
-					url : "MANAGERS('5')",
+					url : "MANAGERS('5')?sap-client=123",
 					payload : {TEAM_ID : "changed"}
 				});
 
@@ -2912,7 +2927,8 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest(
-				"TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM?$select=Budget,Team_Id", {
+				"TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM?sap-client=123"
+					+ "&$select=Budget,Team_Id", {
 					"@odata.etag" : "etag1",
 					Budget : "12.45",
 					Team_Id : "1"
@@ -2931,20 +2947,22 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES"
-				+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=2&$top=2", {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$search=foo"
+				+ "&$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
+				+ "&$expand=EMPLOYEE_2_MANAGER($select=ID)&$skip=2&$top=2", {
 					value : [
-						{ID : "4", Name : "Peter Burke"}
+						{ID : "4", Name : "Peter Burke", EMPLOYEE_2_MANAGER : {ID : "5"}}
 					]
 				})
-				.expectChange("name", [,, "Peter Burke"]);
+				.expectChange("name", [,, "Peter Burke"])
+				.expectChange("manager", [,, "5"]);
 
 			// code under test - AGE must not be requested when paging
 			that.oView.byId("table-trigger").firePress();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name" +
 				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
 					value : [
 						{AGE : 43, ID : "2", Name : "Frederic Fall *"},
@@ -2970,7 +2988,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name" +
 				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
 					value : [
 						{AGE : 44, ID : "2", Name : "Frederic Fall **"},
