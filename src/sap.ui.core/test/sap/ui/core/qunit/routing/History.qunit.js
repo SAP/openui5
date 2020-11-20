@@ -13,15 +13,16 @@ sap.ui.define([
 
 	var fnBeforeHistoryModule = function(){
 		bInitialHistoryUsePushState = History._bUsePushState;
-		if (Device.browser.safari) {
+		if (Device.browser.safari || Device.browser.firefox) {
 			// Safari has a restriction that the push state API can't be used more than 100 times in 30 seconds.
-			// The tests below break the restriction therefore we need to turn off push state for Safari.
+			// Firefox has a restriction that the push state API can't be used more than 200 times in 10 seconds.
+			// The tests below break the restriction therefore we need to turn off push state for Safari and Firefox.
 			History._bUsePushState = false;
 		}
 	};
 
 	var fnAfterHistoryModule = function(){
-		if (Device.browser.safari) {
+		if (Device.browser.safari || Device.browser.firefox) {
 			History._bUsePushState = bInitialHistoryUsePushState;
 		}
 	};
