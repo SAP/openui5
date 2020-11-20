@@ -11558,6 +11558,27 @@ sap.ui.define([
 		assert.strictEqual(this.oComboBox.getSelectedKey(), "", "Selected key should be reset");
 	});
 
+	QUnit.test("handleInputValidation shouldn't throw an error and reset the selection", function (assert) {
+		var oFakeEvent = {
+			target: {
+				value: "k"
+			},
+			srcControl: this.oComboBox
+		},
+			oSetSelectionSpy = sinon.spy(this.oComboBox, "setSelection");
+
+		// Arrange
+		this.oComboBox._bDoTypeAhead = false;
+
+		// Act
+		this.oComboBox.handleInputValidation(oFakeEvent, false);
+
+		// Assert
+		assert.ok(oSetSelectionSpy.calledWith(null), "Selected key should be reset");
+
+		oSetSelectionSpy.restore();
+	});
+
 	QUnit.module("Input Text Selecting without data binding", {
 		beforeEach: function () {
 			this.comboBox = new ComboBox({
