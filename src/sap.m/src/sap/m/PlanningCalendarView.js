@@ -10,6 +10,9 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 
+	// shortcut for sap.ui.unified.CalendarAppointmentHeight
+	var CalendarAppointmentHeight = unifiedLibrary.CalendarAppointmentHeight;
+
 	/**
 	 * Constructor for a new <code>PlanningCalendarView</code>.
 	 *
@@ -80,7 +83,13 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 			 * <li>Day subintervals for interval type <code>Month</code>.</li>
 			 * </ul>
 			 */
-			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false}
+			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Determines the different possible sizes for appointments.
+			 * @private
+			 */
+			appointmentHeight: { type: "string", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular, visibility: "hidden"}
 
 		}
 	}});
