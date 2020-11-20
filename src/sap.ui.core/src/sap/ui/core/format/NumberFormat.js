@@ -308,10 +308,10 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
@@ -363,10 +363,10 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=false] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
@@ -460,10 +460,10 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
@@ -550,10 +550,10 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
 	 * @param {Object<string,object>} [oFormatOptions.customUnits] defines a set of custom units, e.g. {"electric-inductance": {
 				"displayName": "henry",
 				"unitPattern-count-one": "{0} H",
@@ -615,10 +615,10 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {string} [oFormatOptions.percentSign] defines the used percent symbol
@@ -1378,6 +1378,11 @@ sap.ui.define([
 			} else {
 				return vEmptyParseValue;
 			}
+		}
+
+		if (oOptions.groupingSeparator === oOptions.decimalSeparator) {
+			Log.error("The grouping and decimal separator both have the same value '" + oOptions.groupingSeparator + "'. " +
+				"They must be different from each other such that values can be parsed correctly.");
 		}
 
 		sPercentPattern = oOptions.type === mNumberType.PERCENT ? oOptions.pattern : this.oLocaleData.getPercentPattern();
