@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
@@ -391,6 +391,25 @@ sap.ui.define([
 
 		// assert
 		assert.ok(this.oActionSelect.getSelectedItem().$().hasClass("sapMActionSelectItemWithoutFocus"), "Item should not be focused");
+	});
+
+	QUnit.test("onfocusinList shouldn't set the focus only phone devices", function (assert) {
+		// arrange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oFocusSpy = sinon.spy(this.oActionSelect, "focus");
+
+		// act
+		this.oActionSelect.onfocusinList();
+
+		// assert
+		assert.notOk(oFocusSpy.called, "The focus shouldn't be called");
+
+		//clear
+		oFocusSpy.restore();
 	});
 
 	QUnit.module("Accessibility", {
