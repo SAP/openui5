@@ -78,7 +78,7 @@ sap.ui.define([
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
-		sandbox.stub(Utils, "showMessageBox").callsFake(
+		return sandbox.stub(Utils, "showMessageBox").callsFake(
 			function (oMessageType, sMessageKey) {
 				assert.equal(sMessageKey, sExpectedMessageKey, "then expected message is shown");
 				return Promise.resolve();
@@ -400,10 +400,13 @@ sap.ui.define([
 		QUnit.test("and draft changes exist", function (assert) {
 			this.oRta._oVersionsModel.setProperty("/draftAvailable", true);
 			this.oRta._oVersionsModel.setProperty("/dirtyChanges", true);
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
+			var oShowMessageBoxStub = whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
+
 			return this.oRta._handleReloadOnExit()
 				.then(function (oReloadInfo) {
+					assert.equal(oShowMessageBoxStub.calledOnce, true, "A Popup was shown");
 					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");
+					assert.equal(oReloadInfo.isDraftAvailable, true, "Reload reason for isDraftAvailable is true");
 				});
 		});
 
