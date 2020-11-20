@@ -29,7 +29,7 @@ sap.ui.define([
 		return oEvent;
 	}
 
-	QUnit.module("#fireDnDByKeyboard - different DropInfo and DragInfo properties", {
+	QUnit.module("#fireDnD - different DropInfo and DragInfo properties", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer({
 				items: [
@@ -51,9 +51,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("#fireDnDByKeyboard when the item is draggable and  the container is droppable", function (assert) {
+	QUnit.test("#fireDnD when the item is draggable and the container is droppable", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy();
+		var oSpy = sinon.spy(),
+			oDropConfig = {
+				grid: this.oGrid,
+				item: this.oDroppedControl,
+				dropPosition: "Before"
+			};
 
 		this.oGrid.addDragDropConfig(new DragInfo({
 			sourceAggregation: "items"
@@ -67,15 +72,20 @@ sap.ui.define([
 		}));
 
 		// Act
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(this.oDraggedControl, this.oDroppedControl, "Before", createFakeKeydownEvent());
+		GridKeyboardDragAndDrop.fireDnD(this.oDraggedControl, [oDropConfig], createFakeKeydownEvent());
 
 		// Assert
 		assert.ok(oSpy.called, "Drop event is fired");
 	});
 
-	QUnit.test("#fireDnDByKeyboard when the item and the container are NOT draggable (no DragInfo)", function (assert) {
+	QUnit.test("#fireDnD when the item and the container are NOT draggable (no DragInfo)", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy();
+		var oSpy = sinon.spy(),
+			oDropConfig = {
+				grid: this.oGrid,
+				item: this.oDroppedControl,
+				dropPosition: "Before"
+			};
 
 		// Don't add DragInfo in order to make the container not draggable
 
@@ -87,15 +97,20 @@ sap.ui.define([
 		}));
 
 		// Act
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(this.oDraggedControl, this.oDroppedControl, "Before", createFakeKeydownEvent());
+		GridKeyboardDragAndDrop.fireDnD(this.oDraggedControl, [oDropConfig], createFakeKeydownEvent());
 
 		// Assert
 		assert.ok(oSpy.notCalled, "Drop event is NOT fired");
 	});
 
-	QUnit.test("#fireDnDByKeyboard when the item and the container are NOT draggable (DragInfo 'enabled=false')", function (assert) {
+	QUnit.test("#fireDnD when the item and the container are NOT draggable (DragInfo 'enabled=false')", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy();
+		var oSpy = sinon.spy(),
+			oDropConfig = {
+				grid: this.oGrid,
+				item: this.oDroppedControl,
+				dropPosition: "Before"
+			};
 
 		this.oGrid.addDragDropConfig(new DragInfo({
 			sourceAggregation: "items",
@@ -110,15 +125,20 @@ sap.ui.define([
 		}));
 
 		// Act
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(this.oDraggedControl, this.oDroppedControl, "Before", createFakeKeydownEvent());
+		GridKeyboardDragAndDrop.fireDnD(this.oDraggedControl, [oDropConfig], createFakeKeydownEvent());
 
 		// Assert
 		assert.ok(oSpy.notCalled, "Drop event is NOT fired");
 	});
 
-	QUnit.test("#fireDnDByKeyboard when dragged item has different 'groupName' than the dropped item", function (assert) {
+	QUnit.test("#fireDnD when dragged item has different 'groupName' than the dropped item", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy();
+		var oSpy = sinon.spy(),
+			oDropConfig = {
+				grid: this.oGrid,
+				item: this.oDroppedControl,
+				dropPosition: "Before"
+			};
 
 		this.oGrid.addDragDropConfig(new DragInfo({
 			sourceAggregation: "items",
@@ -134,15 +154,15 @@ sap.ui.define([
 		}));
 
 		// Act
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(this.oDraggedControl, this.oDroppedControl, "Before", createFakeKeydownEvent());
+		GridKeyboardDragAndDrop.fireDnD(this.oDraggedControl, [oDropConfig], createFakeKeydownEvent());
 
 		// Assert
 		assert.ok(oSpy.notCalled, "Drop event is NOT fired");
 	});
 
-	QUnit.module("fireDnDByKeyboard between 2 containers");
+	QUnit.module("#fireDnD between 2 containers");
 
-	QUnit.test("#fireDnDByKeyboard when the drag and drop containers are different", function (assert) {
+	QUnit.test("#fireDnD when the drag and drop containers are different", function (assert) {
 		// Arrange
 		var oDropSpy1 = sinon.spy(),
 			oDropSpy2 = sinon.spy(),
@@ -176,14 +196,19 @@ sap.ui.define([
 						drop: oDropSpy2
 					})
 				]
-			});
+			}),
+			oDropConfig = {
+				grid: oDropContainer,
+				item: oDroppedControl,
+				dropPosition: "Before"
+			};
 
 		oDragContainer.placeAt(DOM_RENDER_LOCATION);
 		oDropContainer.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// Act
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(oDraggedControl, oDroppedControl, "Before", createFakeKeydownEvent());
+		GridKeyboardDragAndDrop.fireDnD(oDraggedControl, [oDropConfig], createFakeKeydownEvent());
 
 		// Assert
 		assert.ok(oDropSpy1.notCalled, "Drop event is NOT fired on the wrong container");
@@ -194,7 +219,7 @@ sap.ui.define([
 		oDropContainer.destroy();
 	});
 
-	QUnit.test("#fireDnDByKeyboard when the drop container doesn't allow dropping", function (assert) {
+	QUnit.test("#fireDnD when the drop container doesn't allow dropping", function (assert) {
 		// Arrange
 		var oSpy = sinon.spy(),
 			oDraggedControl = new Text({ text: "item1" }),
@@ -227,14 +252,19 @@ sap.ui.define([
 						enabled: false
 					})
 				]
-			});
+			}),
+			oDropConfig = {
+				grid: oDropContainer,
+				item: oDroppedControl,
+				dropPosition: "Before"
+			};
 
 		oDragContainer.placeAt(DOM_RENDER_LOCATION);
 		oDropContainer.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// Act
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(oDraggedControl, oDroppedControl, "Before", createFakeKeydownEvent());
+		GridKeyboardDragAndDrop.fireDnD(oDraggedControl, [oDropConfig], createFakeKeydownEvent());
 
 		// Assert
 		assert.ok(oSpy.notCalled, "Drop event is NOT fired");
@@ -244,7 +274,64 @@ sap.ui.define([
 		oDropContainer.destroy();
 	});
 
-	QUnit.module("#fireDnDByKeyboard - preventDefault on different events", {
+	QUnit.test("Simulate Keyboard Drag&Drop into an empty container", function (assert) {
+
+		// Arrange
+		var oDropSpy1 = sinon.spy(),
+			oDropSpy2 = sinon.spy(),
+			oDraggedControl = new Text({
+				text: "Text 1"
+			}),
+			oDragContainer = new GridContainer({
+				items: [
+					oDraggedControl
+				],
+				dragDropConfig: [
+					new DragInfo({
+						sourceAggregation: "items"
+					}),
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						drop: oDropSpy1
+					})
+				]
+			}),
+			oDropContainer = new GridContainer({
+				items: [], // no items, it should be empty
+				dragDropConfig: [
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						drop: oDropSpy2
+					})
+				]
+			}),
+			oDropConfig = {
+				grid: oDropContainer,
+				item: null,
+				dropPosition: "Before"
+			};
+
+		oDragContainer.placeAt(DOM_RENDER_LOCATION);
+		oDropContainer.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		GridKeyboardDragAndDrop.fireDnD(oDraggedControl, [oDropConfig], createFakeKeydownEvent());
+
+		// Assert
+		assert.ok(oDropSpy1.notCalled, "Drop event is NOT fired on the wrong container");
+		assert.ok(oDropSpy2.called, "Drop event is fired on the correct container");
+
+		// Clean up
+		oDragContainer.destroy();
+		oDropContainer.destroy();
+	});
+
+	QUnit.module("#fireDnD - preventDefault on different events", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer({
 				items: [
@@ -268,7 +355,12 @@ sap.ui.define([
 
 	QUnit.test("'preventDefault' called on 'dragStart' event of DragInfo", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy();
+		var oSpy = sinon.spy(),
+			oDropConfig = {
+				grid: this.oGrid,
+				item: this.oDroppedControl,
+				dropPosition: "Before"
+			};
 
 		this.oGrid.addDragDropConfig(new DragInfo({
 			sourceAggregation: "items",
@@ -285,7 +377,7 @@ sap.ui.define([
 		}));
 
 		// Act
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(this.oDraggedControl, this.oDroppedControl, "Before", createFakeKeydownEvent());
+		GridKeyboardDragAndDrop.fireDnD(this.oDraggedControl, [oDropConfig], createFakeKeydownEvent());
 
 		// Assert
 		assert.ok(oSpy.notCalled, "Drop event is not fired");
@@ -293,7 +385,12 @@ sap.ui.define([
 
 	QUnit.test("'preventDefault' called on 'dragEnter' event of DropInfo", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy();
+		var oSpy = sinon.spy(),
+			oDropConfig = {
+				grid: this.oGrid,
+				item: this.oDroppedControl,
+				dropPosition: "Before"
+			};
 
 		this.oGrid.addDragDropConfig(new DragInfo({
 			sourceAggregation: "items"
@@ -310,10 +407,88 @@ sap.ui.define([
 		}));
 
 		// Act
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(this.oDraggedControl, this.oDroppedControl, "Before", createFakeKeydownEvent());
+		GridKeyboardDragAndDrop.fireDnD(this.oDraggedControl, [oDropConfig], createFakeKeydownEvent());
 
 		// Assert
 		assert.ok(oSpy.notCalled, "Drop event is not fired");
+	});
+
+	QUnit.module("#fireDnD between multiple containers with different 'groupName'");
+
+	QUnit.test("#fireDnD skips drop containers with different 'groupName'", function (assert) {
+		// Arrange
+		var oDropSpy1 = sinon.spy(),
+			oDropSpy2 = sinon.spy(),
+			oDraggedControl = new Text({ text: "item1" }),
+			oDragContainer = new GridContainer({
+				items: [
+					oDraggedControl
+				],
+				dragDropConfig: [
+					new DragInfo({
+						sourceAggregation: "items"
+					}),
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal"
+					})
+				]
+			}),
+			oDropContainer1 = new GridContainer({
+				dragDropConfig: [
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						groupName: "DifferentGroup",
+						drop: oDropSpy1
+					})
+				]
+			}),
+			oDroppedControl = new Text(),
+			oDropContainer2 = new GridContainer({
+				items: [
+					oDroppedControl
+				],
+				dragDropConfig: [
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						drop: oDropSpy2
+					})
+				]
+			}),
+			aDropConfigs = [
+				{
+					grid: oDropContainer1,
+					item: oDroppedControl,
+					dropPosition: "Before"
+				},
+				{
+					grid: oDropContainer2,
+					item: oDroppedControl,
+					dropPosition: "Before"
+				}
+			];
+
+		oDragContainer.placeAt(DOM_RENDER_LOCATION);
+		oDropContainer1.placeAt(DOM_RENDER_LOCATION);
+		oDropContainer2.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		GridKeyboardDragAndDrop.fireDnD(oDraggedControl, aDropConfigs, createFakeKeydownEvent());
+
+		// Assert
+		assert.ok(oDropSpy1.notCalled, "Drop event is NOT fired on the first container (with different 'groupName')");
+		assert.ok(oDropSpy2.called, "Drop event is fired on the second container");
+
+		// Clean up
+		oDragContainer.destroy();
+		oDropContainer1.destroy();
+		oDropContainer2.destroy();
 	});
 
 });

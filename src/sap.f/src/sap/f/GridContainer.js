@@ -13,8 +13,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/delegate/ItemNavigation",
-	"sap/ui/core/InvisibleRenderer",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/layout/cssgrid/VirtualGrid",
@@ -31,8 +29,6 @@ sap.ui.define([
 	Control,
 	Core,
 	ResizeHandler,
-	ItemNavigation,
-	InvisibleRenderer,
 	Device,
 	KeyCodes,
 	VirtualGrid,
@@ -405,7 +401,7 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._reflectItemVisibilityToWrapper = function (oItem) {
 
-		var oItemWrapper = this.getItemWrapper(oItem),
+		var oItemWrapper = GridContainerUtils.getItemWrapper(oItem),
 			$oItemWrapper;
 
 		if (!oItemWrapper) {
@@ -614,7 +610,7 @@ sap.ui.define([
 			oGridRef = this.getDomRef();
 
 		if (oNextItem) {
-			oGridRef.insertBefore(oWrapper, this.getItemWrapper(oNextItem));
+			oGridRef.insertBefore(oWrapper, GridContainerUtils.getItemWrapper(oNextItem));
 		} else {
 			oGridRef.insertBefore(oWrapper, oGridRef.lastChild);
 		}
@@ -1209,62 +1205,47 @@ sap.ui.define([
 			iLength = this.getItems().length,
 			iItemIndex = this.indexOfItem(oItem),
 			iInsertAt = -1,
-			oInsertAround = null,
-			sDropPosition = "After";
+			oCfg,
+			aDropConfigs = [];
 
 		switch (oEvent.keyCode) {
 			case KeyCodes.ARROW_RIGHT:
 				iInsertAt = Core.getConfiguration().getRTL() ? iItemIndex - 1 : iItemIndex + 1;
 
 				if (iInsertAt >= 0 && iInsertAt < iLength) {
-					oInsertAround = this.getItems()[iInsertAt];
+					oCfg = GridContainerUtils.createConfig(this, this.getItems()[iInsertAt]);
+					oCfg.dropPosition = "After";
+					aDropConfigs = [oCfg];
 				}
 				break;
 			case KeyCodes.ARROW_LEFT:
 				iInsertAt = Core.getConfiguration().getRTL() ? iItemIndex + 1 : iItemIndex - 1;
 
 				if (iInsertAt >= 0 && iInsertAt < iLength) {
-					oInsertAround = this.getItems()[iInsertAt];
+					oCfg = GridContainerUtils.createConfig(this, this.getItems()[iInsertAt]);
+					oCfg.dropPosition = "Before";
+					aDropConfigs = [oCfg];
 				}
 				break;
 			case KeyCodes.ARROW_UP:
-				oInsertAround = this._getClosestItemAbove(oItem);
-
-				if (!oInsertAround || (oInsertAround.isA("sap.f.GridContainer") && !oInsertAround.getItems().length)) {
-					break;
-				}
-
-				if (this !== oInsertAround.getParent()) {
-					sDropPosition = "Before";
-				}
+				aDropConfigs = GridContainerUtils.findDropTargetsAbove(this, oItem);
+				aDropConfigs.forEach(function (oCfg) {
+					oCfg.dropPosition = "Before";
+				});
 				break;
 			case KeyCodes.ARROW_DOWN:
-				oInsertAround = this._getClosestItemBelow(oItem);
-				if (!oInsertAround || (oInsertAround.isA("sap.f.GridContainer") && !oInsertAround.getItems().length)) {
-					break;
-				}
-
-				if (this !== oInsertAround.getParent()) {
-					sDropPosition = "Before";
-				}
+				aDropConfigs = GridContainerUtils.findDropTargetsBelow(this, oItem);
+				aDropConfigs.forEach(function (oCfg) {
+					oCfg.dropPosition = (this.indexOfItem(oCfg.item) !== -1) ? "After" : "Before";
+				}.bind(this));
 				break;
 			default: break;
-		}
-
-		iInsertAt = this.indexOfItem(oInsertAround);
-
-		if (!oInsertAround) {
-			return;
 		}
 
 		// sap.m.ScrollEnablement scrolls every time Ctrl + arrow are pressed, so stop propagation here.
 		oEvent.stopPropagation();
 
-		if (!oInsertAround.isA("sap.f.GridContainer") && this === oInsertAround.getParent() &&  iInsertAt < iItemIndex) {
-			sDropPosition = "Before";
-		}
-
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(oItem, oInsertAround, sDropPosition, oEvent);
+		GridKeyboardDragAndDrop.fireDnD(oItem, aDropConfigs, oEvent);
 		this._setItemNavigationItems();
 	};
 
@@ -1281,114 +1262,6 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent
 	 */
 	GridContainer.prototype.onsapdecreasemodifiers = GridContainer.prototype._moveItem;
-
-	GridContainer.prototype._getClosestItemBelowInThisContainer = function (oItem) {
-		var aItemsBelow = this.getItems()
-							.map(this.getItemWrapper)
-							.filter(function (oWrapper) {
-								return GridContainerUtils.isBelow(oItem, oWrapper);
-							});
-
-		// find the item which is closest to this one (shortest distance between the top left corners)
-		var oClosestItem = GridContainerUtils.findClosest(oItem, aItemsBelow);
-
-		if (oClosestItem) {
-			return jQuery(oClosestItem.firstElementChild).control(0);
-		}
-
-		return null;
-	};
-
-	/**
-	 * Searches for the closest item below the given one.
-	 * Tries to find it in the same container first, if there is no success, all other GridContainers below are being searched.
-	 * @param {sap.ui.core.Control} oItem The item.
-	 * @returns {sap.ui.core.Control} The found item or null.
-	 */
-	GridContainer.prototype._getClosestItemBelow = function (oItem) {
-		var oClosestItem = this._getClosestItemBelowInThisContainer(oItem);
-
-		if (oClosestItem) {
-			return oClosestItem;
-		}
-		var aGridContainersBelow = Array.from(document.querySelectorAll(".sapFGridContainer")).filter(function (oGridContainerElement) {
-			return GridContainerUtils.isBelow(oItem, oGridContainerElement);
-		});
-
-		var oClosestGridContainer = GridContainerUtils.findClosestGridContainer(oItem, aGridContainersBelow);
-
-		if (!oClosestGridContainer) {
-			return null;
-		}
-
-		var aItemsInClosestContainer = [];
-
-		jQuery(oClosestGridContainer).control(0).getItems().forEach(function (oItem) {
-			aItemsInClosestContainer.push(oItem.getDomRef());
-		});
-
-		if (aItemsInClosestContainer.length) {
-			oClosestItem = GridContainerUtils.findClosest(oItem, aItemsInClosestContainer);
-			return jQuery(oClosestItem).control(0);
-		}
-
-		return jQuery(oClosestGridContainer).control(0);
-	};
-
-	GridContainer.prototype._getClosestItemAboveInThisContainer = function (oItem) {
-		var aItemsAbove = this.getItems()
-							.map(this.getItemWrapper)
-							.filter(function (oWrapper) {
-								return GridContainerUtils.isAbove(oItem, oWrapper);
-							});
-
-		// find the item which is closest to this one (shortest distance between the top left corners)
-		var oClosestItem = GridContainerUtils.findClosest(oItem, aItemsAbove);
-
-		if (oClosestItem) {
-			return jQuery(oClosestItem.firstElementChild).control(0);
-		}
-
-		return null;
-	};
-
-	/**
-	 * Searches for the closest item above the given one.
-	 * Tries to find it in the same container first, if there is no success, all other GridContainers above are being searched.
-	 * @param {sap.ui.core.Control} oItem The item.
-	 * @returns {sap.ui.core.Control} The found item or null.
-	 */
-	GridContainer.prototype._getClosestItemAbove = function (oItem) {
-		// find the item which is closest to this one (shortest distance between the top left corners)
-		var oClosestItem = this._getClosestItemAboveInThisContainer(oItem);
-
-		if (oClosestItem) {
-			return oClosestItem;
-		}
-
-		var aGridContainersAbove = Array.from(document.querySelectorAll(".sapFGridContainer")).filter(function (oGridContainerElement) {
-			return GridContainerUtils.isAbove(oItem, oGridContainerElement);
-		});
-
-		var oClosestGridContainer = GridContainerUtils.findClosestGridContainer(oItem, aGridContainersAbove);
-
-		if (!oClosestGridContainer) {
-			return null;
-		}
-
-		var aItemsInClosestContainer = [];
-
-		jQuery(oClosestGridContainer).control(0).getItems().forEach(function (oItem) {
-			aItemsInClosestContainer.push(oItem.getDomRef());
-		});
-
-		if (aItemsInClosestContainer.length) {
-			oClosestItem = GridContainerUtils.findClosest(oItem, aItemsInClosestContainer);
-			return jQuery(oClosestItem).control(0);
-		}
-
-		return jQuery(oClosestGridContainer).control(0);
-	};
 
 	/**
 	 * Focuses the item on the given index. Should be called after successful drop operation.
@@ -1416,7 +1289,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
 	 * Focuses an item in the given direction - up, down, left or right,
 	 * from the starting position specified by row and column.
@@ -1441,31 +1313,6 @@ sap.ui.define([
 
 	GridContainer.prototype._isItemWrapper = function (oElement) {
 		return oElement.classList.contains("sapFGridContainerItemWrapper");
-	};
-
-	/**
-	 * Returns the wrapper DomRef of a control.
-	 *
-	 * @param {sap.ui.core.Control} oItem Instance from the <code>items</code> aggregation.
-	 * @returns {HTMLElement} oDomRef the wrapper's DomRef
-	 * @private
-	 * @ui5-restricted
-	 */
-	GridContainer.prototype.getItemWrapper = function (oItem) {
-		var oItemDomRef = oItem.getDomRef(),
-			oInvisibleSpan;
-
-		if (oItemDomRef) {
-			return oItemDomRef.parentElement;
-		}
-
-		oInvisibleSpan = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oItem));
-
-		if (oInvisibleSpan) {
-			return oInvisibleSpan.parentElement;
-		}
-
-		return null;
 	};
 
 	return GridContainer;
