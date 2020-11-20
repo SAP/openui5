@@ -6,6 +6,7 @@
             showHeader="false"
             placement="Bottom" >
         <List
+                class="sapUiRtaVersionsList"
                 visible="{path: 'versions>/versions/length', formatter: '.formatVersionTableVisibility'}"
                 items="{versions>/versions}" >
             <FeedListItem
