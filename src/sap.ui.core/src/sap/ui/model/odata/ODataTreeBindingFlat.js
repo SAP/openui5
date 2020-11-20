@@ -1869,6 +1869,23 @@ sap.ui.define([
 		return !(oNode && oNode.nodeState.isLeaf);
 	};
 
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v2.ODataTreeBinding
+	 */
+	ODataTreeBindingFlat.prototype._hasChangedEntity = function (mChangedEntities) {
+		var bChangeDetected = false;
+
+		this._map(function (oNode, oRecursionBreaker) {
+			if (oNode.key in mChangedEntities) {
+				bChangeDetected = true;
+				oRecursionBreaker.broken = true;
+			}
+		});
+
+		return bChangeDetected;
+	};
+
 	//*************************************************
 	//*               Selection-Handling              *
 	//************************************************/

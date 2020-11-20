@@ -401,4 +401,53 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.oContext, oNewContext, "context unchanged");
 	});
+
+	//*********************************************************************************************
+[{"~changedEntityKey" : true}, {Foo : true}, {}, undefined].forEach(function (mChangedEntities, i) {
+	QUnit.test("_refresh: test with given mChangedEntities: " + i, function (assert) {
+		var oBinding = {
+				_hasChangedEntity : function () {},
+				_fireRefresh : function () {},
+				resetData : function () {},
+				oKeys : {
+					"~nodeKeys" : ["~changedEntityKey"]
+				}
+			},
+			bExpectChange = !mChangedEntities || mChangedEntities["~changedEntityKey"];
+
+		this.mock(oBinding).expects("_hasChangedEntity")
+			.withExactArgs(mChangedEntities)
+			.returns(bExpectChange ? true : false)
+			.exactly(mChangedEntities ? 1 : 0);
+		this.mock(oBinding).expects("resetData").exactly(bExpectChange ? 1 : 0);
+		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason: ChangeReason.Refresh})
+			.exactly(bExpectChange ? 1 : 0);
+
+		// code under test
+		ODataTreeBinding.prototype._refresh.call(oBinding, /*bForceUpdate*/undefined,
+			mChangedEntities, /*mEntityTypes*/undefined);
+
+		assert.strictEqual(oBinding.bNeedsUpdate, bExpectChange ? false : undefined);
+		assert.strictEqual(oBinding.bRefresh, bExpectChange ? true : undefined);
+	});
+});
+
+	//*********************************************************************************************
+[{"~changedEntityKey" : true}, {Foo : true}, {}].forEach(function (mChangedEntities, i) {
+	QUnit.test("_hasChangedEntity: " + i, function (assert) {
+		var oBinding = {
+				oKeys : {
+					"foo" : ["baz", "bar"],
+					"~nodeKeys" : ["foobar", "~changedEntityKey"]
+				}
+			},
+			bExpectChange = mChangedEntities["~changedEntityKey"],
+			bResult;
+
+		// code under test
+		bResult = ODataTreeBinding.prototype._hasChangedEntity.call(oBinding, mChangedEntities);
+
+		assert.strictEqual(bResult, bExpectChange ? true : false);
+	});
+});
 });
