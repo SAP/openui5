@@ -314,6 +314,7 @@ sap.ui.define([
 				aggregations: ["tooltip"]
 			});
 			this._mActionObservers.set(oActionDefinition.getId(), oActionObserver);
+			this._updateVisibility();
 		} else if (oChanges.mutation === "remove") {
 			Core.byId(oActionDefinition.getAssociation("_menuButton")).destroy();
 			this._mActionObservers.get(oActionDefinition.getId()).disconnect();
@@ -340,6 +341,7 @@ sap.ui.define([
 		}
 
 		oButton["set" + capitalize(sName)](vVal);
+		this._updateVisibility();
 	};
 
 	return ActionsToolbar;
