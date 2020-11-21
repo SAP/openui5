@@ -54,14 +54,6 @@
 		}).addStyleClass("border");
 		btn13.placeAt('contentCozy');
 
-		var btn14 = new sap.m.HBox({
-			items: [
-				new sap.m.ComboBox({}),
-				new sap.m.ComboBox({description: "description (Cozy)"})
-			]
-		}).addStyleClass("border");
-		btn14.placeAt('contentCozy');
-
 		var btn21 = new sap.m.HBox({
 			items: [
 				new sap.m.Input({}),
@@ -86,14 +78,6 @@
 		}).addStyleClass("border");
 		btn23.placeAt('contentCompact');
 
-		var btn24 = new sap.m.HBox({
-			items: [
-				new sap.m.ComboBox({}),
-				new sap.m.ComboBox({description: "description (Compact)"})
-			]
-		}).addStyleClass("border");
-		btn24.placeAt('contentCompact');
-
 		var btn31 = new sap.m.HBox({
 			items: [
 				new sap.m.Input({}),
@@ -116,15 +100,7 @@
 				new sap.m.StepInput({description: "description (Condesed)"})
 			]
 		}).addStyleClass("border");
-		btn33.placeAt('contentCondesed');
-
-		var btn34 = new sap.m.HBox({
-			items: [
-				new sap.m.ComboBox({}),
-				new sap.m.ComboBox({description: "description (Condesed)"})
-			]
-		}).addStyleClass("border");
-		btn34.placeAt('contentCondesed');
+		btn33.placeAt('contentCondesed')
 
 		// Same samples without HBox containers
 		new sap.m.Input({width: "150px"}).placeAt('contentCozy');
@@ -136,9 +112,6 @@
 		new sap.m.StepInput({width: "150px"}).placeAt('contentCozy');
 		new sap.m.StepInput({width: "150px", description: "description (Cozy)"}).placeAt('contentCozy');
 
-		new sap.m.ComboBox({width: "150px"}).placeAt('contentCozy');
-		new sap.m.ComboBox({width: "150px", description: "description (Cozy)"}).placeAt('contentCozy');
-
 		new sap.m.Input({width: "150px"}).placeAt('contentCompact');
 		new sap.m.Input({width: "150px", description: "description (Compact)"}).placeAt('contentCompact');
 
@@ -146,10 +119,7 @@
 		new sap.m.MultiInput({width: "150px", description: "description (Compact)"}).placeAt('contentCompact');
 
 		new sap.m.StepInput({width: "150px"}).placeAt('contentCompact');
-		new sap.m.StepInput({width: "150px", description: "description (Compact)"}).placeAt('contentCompact');
-
-		new sap.m.ComboBox({}).placeAt('contentCompact');
-		new sap.m.ComboBox({description: "description (Compact)"}).placeAt('contentCompact');
+		new sap.m.StepInput({width: "150px", description: "description (Compact)"}).placeAt('contentCompact')
 
 		new sap.m.Input({width: "150px"}).placeAt('contentCondesed');
 		new sap.m.Input({width: "150px", description: "description (Condesed)"}).placeAt('contentCondesed');
@@ -159,9 +129,6 @@
 
 		new sap.m.StepInput({width: "150px"}).placeAt('contentCondesed');
 		new sap.m.StepInput({width: "150px", description: "description (Condesed)"}).placeAt('contentCondesed');
-
-		new sap.m.ComboBox({width: "150px"}).placeAt('contentCondesed');
-		new sap.m.ComboBox("last", {width: "150px", description: "description (Condesed)"}).placeAt('contentCondesed');
 	</script>
 
 	</head>
