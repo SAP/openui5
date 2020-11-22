@@ -490,8 +490,9 @@ sap.ui.define([
 				});
 				if (oNewValue[sNewKey]
 					&& oNewValue[sNewKey].type !== "group"
-					&& oNewValue[sNewKey].manifestpath) {
-						oNewValue[sNewKey].manifestpath = oNewValue[sNewKey].manifestpath.replace(sOldKey, sNewKey);
+					&& oNewValue[sNewKey].manifestpath
+					&& oNewValue[sNewKey].manifestpath.startsWith("/sap.card/configuration/parameters/")) {
+						oNewValue[sNewKey].manifestpath = "/sap.card/configuration/parameters/" + sNewKey + "/value";
 				}
 
 				this._mTypes[sNewKey] = this._mTypes[sOldKey];

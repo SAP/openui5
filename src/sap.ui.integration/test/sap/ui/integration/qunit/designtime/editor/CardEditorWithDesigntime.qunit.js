@@ -207,7 +207,7 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Select"), "Field: Editor is Select");
-					assert.ok(oField.getAggregation("_field").getItems().length === 3, "Field: Select items lenght is OK");
+					assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: Select items lenght is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -244,7 +244,7 @@ sap.ui.define([
 						assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.Select"), "Field: Editor is Select");
-						assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: Select items lenght is OK");
+						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: Select items lenght is OK");
 						resolve();
 					}.bind(this), 500);
 				}.bind(this));
@@ -279,7 +279,7 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-					assert.ok(oField.getAggregation("_field").getItems().length === 3, "Field: MultiComboBox items lenght is OK");
+					assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: MultiComboBox items lenght is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -356,7 +356,7 @@ sap.ui.define([
 						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-						assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: MultiComboBox items lenght is OK");
+						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: MultiComboBox items lenght is OK");
 						resolve();
 					}.bind(this), 500);
 				}.bind(this));

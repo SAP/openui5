@@ -872,6 +872,9 @@ sap.ui.define([
 	 * @param {BaseField} oField
 	 */
 	CardEditor.prototype._addValueListModel = function (oConfig, oField, bIgnore) {
+		if (oConfig.enum && oConfig.enum.length > 0 && oConfig.enum[0] !== "") {
+			oConfig.enum = [""].concat(oConfig.enum);
+		}
 		if (oConfig.values && oConfig.values.data && this._oProviderCard && this._oProviderCard._oDataProviderFactory) {
 			var oValueModel = new JSONModel({}),
 				oPromise = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data).getData();
@@ -881,6 +884,7 @@ sap.ui.define([
 					oConfig._values = [];
 					return;
 				}
+				oData = [{}].concat(oData);
 				oConfig._values = oData;
 				oValueModel.setData(oData);
 				oValueModel.checkUpdate(true);
