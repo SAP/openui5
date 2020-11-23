@@ -328,6 +328,7 @@
             <license url="https://github.com/cubiq/iscroll/blob/master/LICENSE" type="MIT" />
             <copyright>2011 Matteo Spinelli</copyright>
             <pattern>sap/ui/thirdparty/iscroll-lite.js</pattern>
+            <!-- not in PPMS because it is a sub-module of iScroll -->
         </lib>
         <lib name="swipeview" displayName="cubiq.org - swipeview" version="1.0" homepage="https://github.com/cubiq/SwipeView/">
             <license url="https://github.com/cubiq/SwipeView/blob/master/license.txt" type="MIT" />
