@@ -44,9 +44,8 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', './library', 
 
 			/**
 			 * Description of the appointment.
-			 * @private
 			 */
-			description: {type: "string", group: "Data", visibility: "hidden"},
+			description: {type: "string", group: "Data"},
 
 			/**
 			 * Icon of the Appointment. (e.g. picture of the person)
