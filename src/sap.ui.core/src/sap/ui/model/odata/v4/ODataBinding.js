@@ -1046,8 +1046,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.resetInvalidDataState = function () {
-	};
+	ODataBinding.prototype.resetInvalidDataState = function () {};
 
 	/**
 	 * Sets the change reason that {@link #resume} fires. If there are multiple changes, the

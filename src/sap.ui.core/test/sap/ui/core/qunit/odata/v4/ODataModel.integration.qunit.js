@@ -132,6 +132,16 @@ sap.ui.define([
 	}
 
 	/**
+	 * Returns the binding context's path for a given managed object.
+	 *
+	 * @param {sap.ui.model.ManagedObject} oManagedObject - A managed object
+	 * @returns {string} The binding context's path
+	 */
+	function getBindingContextPath(oManagedObject) {
+		return oManagedObject.getBindingContext().getPath();
+	}
+
+	/**
 	 * Returns the given context's path.
 	 *
 	 * @param {sap.ui.model.Context} oContext - A context
@@ -16219,6 +16229,127 @@ sap.ui.define([
 			oTable.setFirstVisibleRow(6);
 
 			return that.waitForChanges(assert, "scroll to 'X-c'");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: sap.ui.table.Table with aggregation, no visual grouping, and grand total at both
+	// top and bottom - or at bottom only.
+	// JIRA: CPOUI5ODATAV4-558
+[false, true].forEach(function (bGrandTotalAtBottomOnly) {
+	var sTitle = "Data Aggregation: grandTotalAtBottomOnly=" + bGrandTotalAtBottomOnly;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createAggregationModel(),
+			sView = '\
+<t:Table fixedBottomRowCount="1" fixedRowCount="' + (bGrandTotalAtBottomOnly ? 0 : 1) + '"\
+	id="table" rows="{path : \'/BusinessPartners\', parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				SalesNumber : {grandTotal : true}\
+			},\
+			grandTotalAtBottomOnly : ' + bGrandTotalAtBottomOnly + ',\
+			group : {Country : {}}\
+		}\
+	}}" threshold="0" visibleRowCount="' + (bGrandTotalAtBottomOnly ? 4 : 5) + '">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+				+ ",groupby((Country),aggregate(SalesNumber))"
+				+ "/concat(aggregate($count as UI5__count),top(3)))", {
+				value : [{
+					SalesNumber : 0 // think "min" here ;-)
+				}, {
+					UI5__count : "7" // avoid ",,,,,,,,,,,,,,,,,,,,,,," hell
+				}, {
+					Country : "Z",
+					SalesNumber : 26
+				}, {
+					Country : "Y",
+					SalesNumber : 25
+				}, {
+					Country : "X",
+					SalesNumber : 24
+				}]
+			});
+		if (bGrandTotalAtBottomOnly) {
+			this.expectChange("isExpanded", [undefined, undefined, undefined,,,,, true])
+				.expectChange("isTotal", [false, false, false,,,,, true])
+				.expectChange("level", [1, 1, 1,,,,, 0])
+				.expectChange("country", ["Z", "Y", "X",,,,, ""])
+				.expectChange("salesNumber", ["26", "25", "24",,,,, "0"]);
+		} else {
+			this.expectChange("isExpanded", [true, undefined, undefined, undefined,,,,, undefined])
+				.expectChange("isTotal", [true, false, false, false,,,,, true])
+				.expectChange("level", [0, 1, 1, 1,,,,, 0])
+				.expectChange("country", ["", "Z", "Y", "X",,,,, ""])
+				.expectChange("salesNumber", ["0", "26", "25", "24",,,,, "0"]);
+		}
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aExpectedPaths = [
+					"/BusinessPartners(Country='Z')",
+					"/BusinessPartners(Country='Y')",
+					"/BusinessPartners(Country='X')"
+				],
+				oTable = that.oView.byId("table");
+
+			if (bGrandTotalAtBottomOnly) {
+				aExpectedPaths.push("/BusinessPartners()");
+			} else {
+				aExpectedPaths.unshift("/BusinessPartners()");
+				aExpectedPaths.push("/BusinessPartners($isTotal=true)");
+			}
+			assert.deepEqual(oTable.getRows().map(getBindingContextPath), aExpectedPaths);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: sap.ui.table.Table with aggregation, visual grouping, and grand total at bottom
+	// only while just two rows are visible at all: do not confuse data row with grand total row!
+	// JIRA: CPOUI5ODATAV4-558
+	QUnit.test("Data Aggregation: grandTotalAtBottomOnly=true, just two rows", function (assert) {
+		var oModel = createAggregationModel(),
+			sView = '\
+<t:Table fixedBottomRowCount="1" id="table" rows="{path : \'/BusinessPartners\', parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				SalesNumber : {grandTotal : true}\
+			},\
+			grandTotalAtBottomOnly : true,\
+			groupLevels : [\'Country\',\'Region\']\
+		}\
+	}}" visibleRowCount="2">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+				+ ",groupby((Country))/concat(aggregate($count as UI5__count),top(101)))", {
+				value : [{SalesNumber : 0}, {UI5__count : "1"}, {Country : "Z"}]
+			})
+			.expectChange("isExpanded", [false, true])
+			.expectChange("isTotal", [false, true])
+			.expectChange("level", [1, 0])
+			.expectChange("country", ["Z", ""])
+			.expectChange("salesNumber", [null, "0"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.deepEqual(that.oView.byId("table").getRows().map(getBindingContextPath), [
+				"/BusinessPartners(Country='Z')",
+				"/BusinessPartners()"
+			]);
 		});
 	});
 

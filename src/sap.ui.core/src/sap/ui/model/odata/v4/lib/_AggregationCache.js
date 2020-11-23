@@ -47,8 +47,7 @@ sap.ui.define([
 	 */
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, bHasGrandTotal,
 			mQueryOptions) {
-		var fnResolve,
-			that = this;
+		var that = this;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 
@@ -67,20 +66,30 @@ sap.ui.define([
 		this.aElements.$count = undefined;
 		this.aElements.$created = 0; // required for _Cache#drillDown (see _Cache.from$skip)
 		this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal);
-		this.bHasGrandTotal = bHasGrandTotal; // @see #read
+		this.oGrandTotalPromise = undefined;
 		if (bHasGrandTotal) {
-			this.aElements[0] = new SyncPromise(function (resolve) {
-				fnResolve = resolve;
+			this.oGrandTotalPromise = new SyncPromise(function (resolve) {
+				_GrandTotalHelper.enhanceCacheWithGrandTotal(that.oFirstLevel, oAggregation,
+					function (oGrandTotal) {
+						var oGrandTotalCopy;
+
+						_AggregationHelper.setAnnotations(oGrandTotal, true, true, 0,
+							_AggregationHelper.getAllProperties(oAggregation));
+
+						if (oAggregation.grandTotalAtBottomOnly === false) {
+							// Note: make shallow copy *before* there are private annotations!
+							oGrandTotalCopy = Object.assign({}, oGrandTotal, {
+									"@$ui5.node.isExpanded" : undefined // treat copy as a leaf
+								});
+							_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
+							_Helper.setPrivateAnnotation(oGrandTotalCopy, "predicate",
+								"($isTotal=true)");
+						}
+						_Helper.setPrivateAnnotation(oGrandTotal, "predicate", "()");
+
+						resolve(oGrandTotal);
+					});
 			});
-			_GrandTotalHelper.enhanceCacheWithGrandTotal(this.oFirstLevel, oAggregation,
-				function (oGrandTotal) {
-					_AggregationHelper.setAnnotations(oGrandTotal, true, true, 0,
-						_AggregationHelper.getAllProperties(oAggregation));
-					_Helper.setPrivateAnnotation(oGrandTotal, "predicate", "()");
-					that.aElements[0] = oGrandTotal;
-					that.aElements.$byPredicate["()"] = oGrandTotal;
-					fnResolve();
-				});
 		}
 	}
 
@@ -90,27 +99,26 @@ sap.ui.define([
 	/**
 	 * Copies the given elements from a cache read into <code>this.aElements</code>.
 	 *
-	 * @param {object[]} aReadElements
-	 *   The elements from a cache read
+	 * @param {object|object[]} vReadElements
+	 *   The elements from a cache read, or just a single one
 	 * @param {number} iOffset
 	 *   The offset within aElements
-	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
-	 *   The group level cache which the given elements have been read from
-	 * @param {number} iStart
-	 *   The index of the first element within the cache's collection
+	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} [oCache]
+	 *   The group level cache which the given elements have been read from; omit it only for grand
+	 *   totals
+	 * @param {number} [iStart]
+	 *   The index of the first element within the cache's collection; omit it only if no group
+	 *   level cache is given
 	 * @throws {Error}
 	 *   In case an unexpected element or placeholder would be overwritten, if the given offset is
 	 *   negative, if a resulting array index is out of bounds, or in case of a duplicate predicate
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.addElements = function (aReadElements, iOffset, oCache, iStart) {
+	_AggregationCache.prototype.addElements = function (vReadElements, iOffset, oCache, iStart) {
 		var aElements = this.aElements;
 
-		if (iOffset < 0) {
-			throw new Error("Illegal offset: " + iOffset);
-		}
-		aReadElements.forEach(function (oElement, i) {
+		function addElement(oElement, i) {
 			var oOldElement = aElements[iOffset + i],
 				oParent,
 				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
@@ -137,7 +145,16 @@ sap.ui.define([
 
 			aElements[iOffset + i] = oElement;
 			aElements.$byPredicate[sPredicate] = oElement;
-		});
+		}
+
+		if (iOffset < 0) {
+			throw new Error("Illegal offset: " + iOffset);
+		}
+		if (Array.isArray(vReadElements)) {
+			vReadElements.forEach(addElement);
+		} else {
+			addElement(vReadElements, 0);
+		}
 	};
 
 	/**
@@ -412,6 +429,9 @@ sap.ui.define([
 			iFirstLevelLength = iLength,
 			oGapParent,
 			iGapStart,
+			bHasGrandTotal = !!this.oGrandTotalPromise,
+			bHasGrandTotalAtTop = bHasGrandTotal
+				&& this.oAggregation.grandTotalAtBottomOnly !== true,
 			aReadPromises = [],
 			i, n,
 			that = this;
@@ -461,15 +481,18 @@ sap.ui.define([
 					}));
 		}
 
-		if (this.bHasGrandTotal && !iIndex && iLength === 1) {
+		if (bHasGrandTotalAtTop && !iIndex && iLength === 1) {
 			if (iPrefetchLength !== 0) {
 				throw new Error("Unsupported prefetch length: " + iPrefetchLength);
 			}
-			aReadPromises.push(this.aElements[0]);
 			oGroupLock.unlock();
+
+			return this.oGrandTotalPromise.then(function (oGrandTotal) {
+				return {value : [oGrandTotal]};
+			});
 		} else if (this.aElements.$count === undefined) {
 			this.iReadLength = iLength + iPrefetchLength;
-			if (this.bHasGrandTotal) { // account for grand total row
+			if (bHasGrandTotalAtTop) { // account for grand total row at top
 				if (iFirstLevelIndex) {
 					iFirstLevelIndex -= 1;
 				} else {
@@ -481,11 +504,40 @@ sap.ui.define([
 				this.oFirstLevel.read(iFirstLevelIndex, iFirstLevelLength, iPrefetchLength,
 						oGroupLock, fnDataRequested)
 					.then(function (oResult) {
-						var iOffset = that.bHasGrandTotal ? 1 : 0,
+						// Note: this code must be idempotent, it might well run twice!
+						var oGrandTotal,
+							oGrandTotalCopy,
+							iOffset = 0, // offset for 1st level data rows
 							j;
 
-						that.aElements.length = that.aElements.$count
-							= oResult.value.$count + iOffset;
+						that.aElements.length = that.aElements.$count = oResult.value.$count;
+
+						if (bHasGrandTotal) {
+							that.aElements.$count += 1;
+							that.aElements.length += 1;
+							oGrandTotal = that.oGrandTotalPromise.getResult();
+
+							switch (that.oAggregation.grandTotalAtBottomOnly) {
+								case false: // top & bottom
+									iOffset = 1;
+									that.aElements.$count += 1;
+									that.aElements.length += 1;
+									that.addElements(oGrandTotal, 0);
+									oGrandTotalCopy
+										= _Helper.getPrivateAnnotation(oGrandTotal, "copy");
+									that.addElements(oGrandTotalCopy, that.aElements.length - 1);
+									break;
+
+								case true: // bottom
+									that.addElements(oGrandTotal, that.aElements.length - 1);
+									break;
+
+								default: // top
+									iOffset = 1;
+									that.addElements(oGrandTotal, 0);
+							}
+						}
+
 						that.addElements(oResult.value, iFirstLevelIndex + iOffset,
 							that.oFirstLevel, iFirstLevelIndex);
 						for (j = 0; j < that.aElements.$count; j += 1) {

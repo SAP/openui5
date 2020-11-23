@@ -105,10 +105,10 @@
 					<td>&nbsp;</td>
 				</tr>
 			</table>
-		<h3>1. Expand the fourth node</h3>
+		<h3>1. Expand <code>Germany</code> (no region)</h3>
 		<ol>
-			<li>Click on the expand button in the fourth row with country <code>Germany</code>.</li>
-			<li><b>Check:</b> One new row appears below the fourth row with country
+			<li>Click on the expand button in the row with country <code>Germany</code>.</li>
+			<li><b>Check:</b> One new row appears below that row, with country
 				<code>Germany</code> and region <code>Saxony</code>.
 			</li>
 		</ol>
@@ -116,25 +116,26 @@
 		<ol>
 			<li>Click on any <code>Germany</code> to move the focus to the table.</li>
 			<li>Press CTRL-END to scroll to	the end of the table.</li>
-			<li><b>Check:</b> The row with the country <code>Germany</code> and region
-				<code>Hessia</code> is displayed at the top.
+			<li><b>Check:</b> The grand total row is still displayed at the top, and the row with
+				country <code>Germany</code> and region <code>Hamburg</code> is displayed next.
 			</li>
 		</ol>
 		<h3>3. Expand the last visible node</h3>
 		<ol>
-			<li>Click on the expand button of the last visible row with the region
-				<code>Baden-W&uuml;rttemberg</code>.
+			<li>Click on the expand button of the last visible row (with region
+				<code>Baden-W&uuml;rttemberg</code>).
 			</li>
 			<li><b>Check:</b> The scrollbar of the table has changed.</li>
 			<li>Click on any <code>Germany</code> to move the focus to the table.</li>
 			<li>Press CTRL-END to scroll to the end of the table.</li>
-			<li><b>Check:</b> The first visible row has country <code>Germany</code> and region
-				<code>Bavaria</code>.
+			<li><b>Check:</b> The grand total row is still displayed at the top, and the row with
+				country <code>Germany</code> and region <code>Baden-W&uuml;rttemberg</code> is
+				displayed next.
 			</li>
 		</ol>
 		<h3>4. Expand the last visible node</h3>
 		<ol>
-			<li>Click on the expand button of the last visible row with the region
+			<li>Click on the expand button of the last visible row with region
 				<code>Baden-W&uuml;rttemberg</code> and the segment <code>Small</code>.
 			</li>
 			<li><b>Check:</b> The scrollbar of the table has changed.</li>
@@ -156,14 +157,14 @@
 						<th>Subtotal</th>
 					</tr>
 					<tr>
-						<td>3</td>
-						<td>Expand</td>
-						<td>Germany</td>
-						<td>Baden-W&uuml;rttemberg</td>
-						<td>Large</td>
+						<td>0</td>
+						<td>Collapse</td>
 						<td></td>
-						<td>3,765,323</td>
-						<td>EUR</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td>79,443,315</td>
+						<td></td>
 						<td></td>
 						<td><input type="checkbox" checked/></td>
 					</tr>
@@ -218,21 +219,44 @@
 				</table>
 			</li>
 		</ol>
-		<h3>5. Collapse the fourth node</h3>
+		<h3>5. Collapse <code>Germany</code> (no region)</h3>
 		<ol>
 			<li>Press CTRL-HOME to scroll to the start of the table.</li>
-			<li>Click on the expand button of the fourth visible row with the country
-				<code>Germany</code>.
+			<li>Click on the collapse button of the row with country <code>Germany</code> and no
+				region.
 			</li>
 			<li><b>Check:</b> The table should have the same content as initially.</li>
 		</ol>
 
-		<h3>6. Expand the fourth node again</h3>
+		<h3>6. Expand <code>Germany</code> (no region) again</h3>
 		<ol>
-			<li>Click on the expand button in the fourth row with country <code>Germany</code>.</li>
+			<li>Click on the expand button in the row with country <code>Germany</code> and no
+				region.
+			</li>
 			<li>Click on any <code>Germany</code> to move the focus to the table.</li>
 			<li>Press CTRL-END to scroll to the end of the table.</li>
 			<li><b>Check:</b> The table should have the same content as described in #4.4.</li>
+		</ol>
+
+		<h3>7. Grand Total at Bottom Only</h3>
+		<ol>
+			<li>Add the URL parameter <code>&grandTotalAtBottomOnly=true</code> to the original URL
+				and repeat the above steps 0 through 6.
+			</li>
+			<li><b>Check:</b> The grand total row (the one with level 0) is now displayed at the
+				bottom only (instead of the top), but everything else works the same.
+			</li>
+		</ol>
+
+		<h3>8. Grand Total at Top and Bottom</h3>
+		<ol>
+			<li>Add the URL parameters <code>&grandTotalAtBottomOnly=false&visibleRowCount=6</code>
+				to the original URL and repeat the above steps 0 through 6.
+			</li>
+			<li><b>Check:</b> The grand total row (the one with level 0) is now displayed both at
+				the top and bottom, but everything else works the same.
+			</li>
+			<li><b>Check:</b>The grand total row copy at the bottom is shown as a leaf.</li>
 		</ol>
 	</body>
 </html>
