@@ -847,5 +847,36 @@
         ]
       }
     ]
+  },
+  "1.71.24": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "2d7d655225f70574a1818687977d88aa64b753c0",
+        "type": "FIX",
+        "text": " XMLView: use correct 'resourceBundleAlias' when loading async",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070025547"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070378472"
+          }
+        ]
+      },
+      {
+        "id": "e2c1ca753889f6cc2d8c65f319a9f7a8b12ccc71",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#increaseLaundering: skip laundering if oChangedEntity is not an object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006738672020"
+          }
+        ]
+      }
+    ]
   }
 }

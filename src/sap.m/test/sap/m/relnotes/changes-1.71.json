@@ -2095,5 +2095,109 @@
         ]
       }
     ]
+  },
+  "1.71.24": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "fe2e319864bb03b4932482369210c1836d84766f",
+        "type": "FIX",
+        "text": " ResponsiveTable: Enable Screenreader announcement for \"Not Selected\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007410172020"
+          }
+        ]
+      },
+      {
+        "id": "33208b32811446080ff11f1a9c94fff24f0a7493",
+        "type": "FIX",
+        "text": " sap.m.Select: Problem with changing selection is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070308334"
+          }
+        ]
+      },
+      {
+        "id": "1d697839c145aef51c24449d793aa503d4d5fa5f",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Default Aria-label contains 'GenericTile' info which is not required.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002994992020"
+          }
+        ]
+      },
+      {
+        "id": "3eb7329b885661cc8b506b4cac1339fa51f9b1e0",
+        "type": "FIX",
+        "text": " sap.m.IconTabFilter: Enabled state is now propagated correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005864442020"
+          }
+        ]
+      },
+      {
+        "id": "ae39f8d0690a472225b40bd5de43d43fe0006dfa",
+        "type": "FIX",
+        "text": " sap.m.Table: Invisible cell content should be announced as \"empty\" by Screenreader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007184972020"
+          }
+        ]
+      },
+      {
+        "id": "9b5f0663262f3c60c49e468f788c6089f2502bf0",
+        "type": "FIX",
+        "text": " sap.m.ComboBox, sap.m.MultiComboBox: Update disabled items documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007598172020"
+          }
+        ]
+      },
+      {
+        "id": "f9f3ae03e9475576b2bad5763997c357db2b5dd2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selected date is in visible range after navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080272605"
+          }
+        ]
+      },
+      {
+        "id": "2a09f6772b7413844134dc4a8fcd6a2cd84db020",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Paste value behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070423726"
+          }
+        ]
+      },
+      {
+        "id": "4909a99f384e809e5e3683baed32c28513c6fb9a",
+        "type": "FIX",
+        "text": " Fiori 3.0 shadow levels & GenericTile focus/hover/active states",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      }
+    ]
   }
 }

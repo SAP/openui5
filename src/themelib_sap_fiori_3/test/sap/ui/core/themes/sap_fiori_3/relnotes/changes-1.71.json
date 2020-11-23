@@ -291,5 +291,21 @@
         ]
       }
     ]
+  },
+  "1.71.24": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "4909a99f384e809e5e3683baed32c28513c6fb9a",
+        "type": "FIX",
+        "text": " Fiori 3.0 shadow levels & GenericTile focus/hover/active states",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      }
+    ]
   }
 }
