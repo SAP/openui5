@@ -67,6 +67,7 @@
         <license url="https://datatables.net/license/" type="MIT" />
         <copyright>2016 SpryMedia Ltd</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/*</pattern>
+        <!-- not in PPMS because it is a sub-module of DataTables -->
       </lib>
     </thirdparty>
 	<!-- TO BE DONE
