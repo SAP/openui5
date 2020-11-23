@@ -45,7 +45,7 @@ sap.ui.define([
 			var oFieldHelp = oEvent.getSource();
 
 			if (!oFieldHelp.getFilterBar()) {
-				var oFilterBar = new sap.ui.mdc.FilterBar({
+				var oFilterBar = new sap.ui.mdc.filterbar.vh.FilterBar({
 					liveMode: false,
 					filterItems: [
 						new sap.ui.mdc.FilterField({
