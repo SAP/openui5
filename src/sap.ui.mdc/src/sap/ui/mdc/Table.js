@@ -1582,7 +1582,7 @@ sap.ui.define([
 		this.awaitPropertyHelper().then(function(oPropertyHelper) {
 			var aSortItems = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
 				return new Item({
-					text: oProperty.getName(),
+					text: oProperty.getLabel(),
 					key: oProperty.getName()
 				});
 			});

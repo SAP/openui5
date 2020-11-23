@@ -2200,9 +2200,11 @@ sap.ui.define([
 		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "test",
+				label: "Test",
 				sortable: false
 			}, {
 				name: "test2",
+				label: "Test 2",
 				sortable: true
 			}, {
 				name: "testComplex",
@@ -2231,7 +2233,7 @@ sap.ui.define([
 					assert.strictEqual(this.oTable._oPopover.getItems().length, 1, "Sort item button created");
 					var aSortItem = this.oTable._oPopover.getItems()[0].getItems();
 					assert.strictEqual(aSortItem.length, 1, "Sort item button created");
-					assert.strictEqual(aSortItem[0].getText(), "test2", "Sortable dataProperty added as sort item");
+					assert.strictEqual(aSortItem[0].getText(), "Test 2", "Sortable dataProperty added as sort item");
 					fColumnPressSpy.restore();
 					done();
 				}.bind(this));
