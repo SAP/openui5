@@ -9535,15 +9535,15 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
-		QUnit.test('title alignment is handled by dialog', function (assert) {
+		QUnit.test('title alignment is handled properly', function (assert) {
 			fnToMobileMode();
 
 			// setup
-			var fnDialogAlignmentSpy = this.spy(Dialog.prototype, "_setupBarTitleAlignment"),
-				oSelect = new Select();
+			var oSelect = new Select(),
+				oHeader = oSelect.getPicker()._getAnyHeader();
 
 			// assert
-			assert.strictEqual(fnDialogAlignmentSpy.called, true, 'Title alignment is handled correctly');
+			assert.equal(oHeader.getTitleAlignment(), mobileLibrary.TitleAlignment.Auto, 'Title alignment is set correctly to "Auto"');
 
 			// cleanup
 			oSelect.destroy();

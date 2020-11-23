@@ -2258,47 +2258,42 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("TitleAlignmentMixin Test", {
-		beforeEach: function() {
-			this.oDialog = new Dialog({
-				title: "Header",
-				buttons: [ new Button() ]
-			});
-		},
-		afterEach: function() {
-			this.oDialog.destroy();
-		}
-	});
+	QUnit.module("Title Alignment");
 
 	QUnit.test("setTitleAlignment test", function (assert) {
 
-		var initialTheme = Core.getConfiguration().getTheme(),
-			themeAlignment = sap.ui.core.theming.Parameters.get("sapMTitleAlignment"),
-			themeAlignmentName = themeAlignment ? themeAlignment : 'not defined',
-			haveStartClass = themeAlignment === "Start" ? true : false,
-			startClass = "sapMBarTitleStart",
-			setTitleAlignmentSpy = this.spy(this.oDialog, "setTitleAlignment");
+		var oDialog = new Dialog({
+				title: "Header",
+				buttons: [ new Button() ]
+			}),
+			oCore = sap.ui.getCore(),
+			sAlignmentClass = "sapMBarTitleAlign",
+			setTitleAlignmentSpy = this.spy(oDialog, "setTitleAlignment"),
+			sInitialAlignment,
+			sAlignment;
 
-		this.oDialog.open();
+		oDialog.open();
+		oCore.applyChanges();
+		sInitialAlignment = oDialog.getTitleAlignment();
 
 		// initial titleAlignment test depending on theme
-		assert.equal(this.oDialog._header.hasStyleClass(startClass), haveStartClass, "'" + initialTheme + "' theme detected, the default theme alignment is '" + themeAlignmentName + "', so there is " + (haveStartClass ? '' : 'no') + " class '" + startClass + "' applied to the Header");
+		assert.ok(oDialog._header.hasStyleClass(sAlignmentClass + sInitialAlignment),
+					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
-		// set titleAlignment to Start
-		this.oDialog.setTitleAlignment("Start");
-		assert.equal(this.oDialog._header.hasStyleClass(startClass), true, "titleAlignment is set to 'Start', there is class '" + startClass + "' applied to the Header");
-
-		// set titleAlignment to Center
-		this.oDialog.setTitleAlignment("Center");
-		assert.equal(this.oDialog._header.hasStyleClass(startClass), false, "titleAlignment is set to 'Center', there is no class '" + startClass + "' applied to the Header");
-
-		// set titleAlignment to Auto
-		this.oDialog.setTitleAlignment("Auto");
-		assert.equal(this.oDialog._header.hasStyleClass(startClass), haveStartClass, "'" + initialTheme + "' theme detected, the default theme alignment is '" + themeAlignmentName + "', so there is " + (haveStartClass ? '' : 'no') + " class '" + startClass + "' applied to the Header");
+		// check if all types of alignment lead to apply the proper CSS class
+		for (sAlignment in sap.m.TitleAlignment) {
+			oDialog.setTitleAlignment(sAlignment);
+			oCore.applyChanges();
+			assert.ok(oDialog._header.hasStyleClass(sAlignmentClass + sAlignment),
+						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
+		}
 
 		// check how many times setTitleAlignment method is called
-		assert.equal(setTitleAlignmentSpy.callCount, 3, "'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
+		// cleanup
+		oDialog.destroy();
 	});
 
 	QUnit.module("Responsive padding support");

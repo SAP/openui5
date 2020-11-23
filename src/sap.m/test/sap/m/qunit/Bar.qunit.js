@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/BarRenderer",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/InvisibleText"
 ], function(
 	Bar,
@@ -24,6 +25,7 @@ sap.ui.define([
 	BarRenderer,
 	Device,
 	ResizeHandler,
+	Parameters,
 	InvisibleText
 ) {
 	QUnit.module("rendering");
@@ -971,4 +973,39 @@ sap.ui.define([
 	QUnit.test("aria-level should not be set", function(assert) {
 		assert.strictEqual(this.Bar.$().attr("aria-level"), undefined, "aria-level is not set");
 	});
+
+	QUnit.module("Title Alignment");
+
+	QUnit.test("setTitleAlignment test", function (assert) {
+
+		var oBar = new Bar({
+				contentMiddle: new sap.m.Title({
+					text: "Header"
+				})
+			}),
+			oCore = sap.ui.getCore(),
+			sAlignmentClass = "sapMBarTitleAlign",
+			sInitialAlignment,
+			sAlignment;
+
+		oBar.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		sInitialAlignment = oBar.getTitleAlignment();
+
+		// initial titleAlignment test (when titleAlignment is None)
+		assert.ok(oBar.hasStyleClass(sAlignmentClass + sInitialAlignment),
+					"The default titleAlignment is '" + sInitialAlignment + "', so there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Bar");
+
+		// check if all types of alignment lead to apply the proper CSS class
+		for (sAlignment in sap.m.TitleAlignment) {
+			oBar.setTitleAlignment(sAlignment);
+			oCore.applyChanges();
+			assert.ok(oBar.hasStyleClass(sAlignmentClass + sAlignment),
+						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Bar");
+		}
+
+		// cleanup
+		oBar.destroy();
+	});
+
 });

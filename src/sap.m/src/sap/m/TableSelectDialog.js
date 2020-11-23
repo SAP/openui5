@@ -9,7 +9,6 @@ sap.ui.define([
 	'./SearchField',
 	'./Table',
 	'./library',
-	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
@@ -25,7 +24,6 @@ sap.ui.define([
 	SearchField,
 	Table,
 	library,
-	TitleAlignmentMixin,
 	Control,
 	Device,
 	Toolbar,
@@ -412,6 +410,7 @@ sap.ui.define([
 		});
 
 		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
+			titleAlignment: this.getTitleAlignment(),
 			contentMiddle: [
 				new Title(this.getId()  + "-dialog-title", {
 					level: "H2"
@@ -419,12 +418,10 @@ sap.ui.define([
 			]
 		});
 
-		// call the method that registers this Bar for alignment
-		this._setupBarTitleAlignment(oCustomHeader, this.getId() + "_customHeader");
-
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
 			customHeader: oCustomHeader,
+			titleAlignment: this.getTitleAlignment(),
 			stretch: Device.system.phone,
 			contentHeight: "2000px",
 			subHeader: this._oSubHeader,
@@ -729,6 +726,14 @@ sap.ui.define([
 	TableSelectDialog.prototype.setTitle = function (sTitle) {
 		this.setProperty("title", sTitle, true);
 		this._oDialog.getCustomHeader().getAggregation("contentMiddle")[0].setText(sTitle);
+		return this;
+	};
+
+	TableSelectDialog.prototype.setTitleAlignment = function (sAlignment) {
+		this.setProperty("titleAlignment", sAlignment);
+		if (this._oDialog) {
+			this._oDialog.setTitleAlignment(sAlignment);
+		}
 		return this;
 	};
 
@@ -1273,9 +1278,6 @@ sap.ui.define([
 	/* =========================================================== */
 	/*           end: internal methods                             */
 	/* =========================================================== */
-
-	// enrich the control functionality with TitleAlignmentMixin
-	TitleAlignmentMixin.mixInto(TableSelectDialog.prototype);
 
 	return TableSelectDialog;
 
