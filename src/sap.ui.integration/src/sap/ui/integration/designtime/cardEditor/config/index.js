@@ -127,7 +127,7 @@ sap.ui.define([
 					"label": "{i18n>CARD_EDITOR.PARAMETERS}",
 					"path": "configuration/parameters",
 					"type": "parameters",
-					"allowedTypes": ["string", "number", "boolean", "integer", "date", "datetime"]
+					"allowedTypes": ["string", "number", "boolean", "integer", "date", "datetime", "group", "simpleicon"]
 				},
 				"destinations": {
 					"tags": ["general"],
@@ -163,6 +163,8 @@ sap.ui.define([
 			"list": "sap/ui/integration/designtime/baseEditor/propertyEditor/listEditor/ListEditor",
 			"datetime": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor",
 			"date": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor",
+			"group": "sap/ui/integration/designtime/baseEditor/propertyEditor/groupEditor/GroupEditor",
+			"textArea": "sap/ui/integration/designtime/baseEditor/propertyEditor/textAreaEditor/TextAreaEditor",
 			// card editors
 			"icon": "sap/ui/integration/designtime/cardEditor/propertyEditor/iconEditor/IconEditor",
 			"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",

@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/i18n/ResourceBundle"
 ], function (
 	merge,
 	x,
@@ -22,7 +23,8 @@ sap.ui.define([
 	Core,
 	Card,
 	QUnitUtils,
-	KeyCodes
+	KeyCodes,
+	ResourceBundle
 ) {
 	"use strict";
 
@@ -30,6 +32,15 @@ sap.ui.define([
 	QUnit.config.reorder = false;
 
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/designtime/editor/cards/withDesigntime/";
+
+	var oldVoter = ResourceBundle.create({
+		url: "test-resources/sap/ui/integration/qunit/designtime/editor/cards/withDesigntime/i18n/i18n_fr.properties",
+		async: false,
+		locale: "",
+		supportedLocales: [],
+		fallbackLocale: ""
+	}).getText("STRINGLABEL") !== "STRINGLABEL";
+
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 	QUnit.module("Create an editor based on card with designtime module", {
 		beforeEach: function () {
@@ -71,7 +82,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("No configuration section (as file)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "noconfig.json" });
+			this.oCardEditor.setCard({ manifest: sBaseUrl + "noconfig.json" });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -196,7 +207,7 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Select"), "Field: Editor is Select");
-					assert.ok(oField.getAggregation("_field").getItems().length === 3, "Field: Select items lenght is OK");
+					assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: Select items lenght is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -233,7 +244,7 @@ sap.ui.define([
 						assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.Select"), "Field: Editor is Select");
-						assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: Select items lenght is OK");
+						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: Select items lenght is OK");
 						resolve();
 					}.bind(this), 500);
 				}.bind(this));
@@ -268,7 +279,7 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-					assert.ok(oField.getAggregation("_field").getItems().length === 3, "Field: MultiComboBox items lenght is OK");
+					assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: MultiComboBox items lenght is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -345,7 +356,7 @@ sap.ui.define([
 						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-						assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: MultiComboBox items lenght is OK");
+						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: MultiComboBox items lenght is OK");
 						resolve();
 					}.bind(this), 500);
 				}.bind(this));
@@ -1025,7 +1036,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("1 integer parameter and no label with default value (as json)", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties"  }, "sap.card": { "designtime": "designtime/1integerWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1integerWithDefaultValue", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -1317,7 +1328,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
 					resolve();
@@ -2147,7 +2160,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));
@@ -2214,7 +2229,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));
@@ -2284,7 +2301,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
 					resolve();
@@ -2851,7 +2870,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Input not changed by the Admin change for editable");
 					resolve();
 				}.bind(this));
@@ -3151,7 +3172,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
 					resolve();
@@ -3219,7 +3242,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
 					resolve();
@@ -3290,7 +3315,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
 					resolve();
@@ -3342,6 +3369,7 @@ sap.ui.define([
 					var oTitle1 = this.oCardEditor.getAggregation("_formContent")[0];
 					var oTitle2 = this.oCardEditor.getAggregation("_formContent")[1];
 					assert.ok(oTitle1.isA("sap.m.Title"), "Title1: Form content contains a Group Title");
+
 					assert.ok(oTitle1.getText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG"), "Title2: has the correct text CARDEDITOR_ORIGINALLANG");
 					assert.ok(oTitle2.isA("sap.m.Title"), "Title2: Form content contains a Group Title");
 					assert.ok(oTitle2.getText() === CardEditor._languages[this.oCardEditor.getLanguage()], "Title2: has the correct text (language)");
@@ -3351,14 +3379,15 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-
-					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Translate", "Field: Value from Translate change");
+					assert.ok(oField.getAggregation("_field").getText() === "StringParameter Value Trans in i18n", "Field: Value from Translate change");
 
 					oLabel = this.oCardEditor.getAggregation("_formContent")[4];
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
 					resolve();
@@ -3429,7 +3458,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
 					resolve();
@@ -3503,7 +3534,9 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[5];
 
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					if (!oldVoter) {
+						assert.ok(oLabel.getText() === "", "Label: Has no label text");
+					}
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
 					resolve();

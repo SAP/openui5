@@ -43,15 +43,22 @@
 				Add the following inital module setup into the js file.
 			</p>
 			<pre class="prettyprint lang-js">
-sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
-"use strict";
-	var Designtime = BaseDesigntime.extend();
-	Designtime.prototype.create = function () {
-		return {
-			//here goes the configuration
-		}
-	}
-	return Designtime
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		return new Designtime({
+			form: {
+				items: {
+					//here goes the configuration
+				}
+			},
+			preview: {
+				modes: "Abstract"
+			}
+		});
+	};
 });</pre>
 			<p>
 				Similar to a Card Extension, the design-time module is registered in the manifest. As soon as the Card
@@ -73,20 +80,23 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 			<table style="background-color: transparent; border:none;">
 				<tr>
 					<td style="vertical-align: top;background-color: transparent; border:none;">
-						<pre class="prettyprint lang-js" lines="6-10" style="font-weight:normal">
-sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
-"use strict";
-	var Designtime = BaseDesigntime.extend();
-	Designtime.prototype.create = function () {
-		return {
+						<pre class="prettyprint lang-js" lines="7-11" style="font-weight:normal">
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		return new Designtime({
 			form: {
 				items: {
 
 				}
+			},
+			preview: {
+				modes: "Abstract"
 			}
-		}
-	}
-	return Designtime
+		});
+	};
 });</pre>
 					</td>
 					<td style="vertical-align: top;background-color: transparent; border:none;">

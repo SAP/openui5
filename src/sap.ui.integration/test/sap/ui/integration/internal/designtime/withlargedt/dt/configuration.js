@@ -9,6 +9,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 		return new Designtime({
 			form: {
 				items: {
+					"group": {
+						"label": "Dependent",
+						"type": "group"
+					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"defaultValue": "StringValue",

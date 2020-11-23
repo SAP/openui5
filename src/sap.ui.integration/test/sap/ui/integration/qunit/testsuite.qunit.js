@@ -16,7 +16,6 @@ sap.ui.define(function () {
 				noConflict: true,
 				// preload: "auto",
 				"xx-waitForTheme": "init",
-				"xx-supportedLanguages": "",
 				resourceroots: {
 					"qunit": "test-resources/sap/ui/integration/qunit/"
 				}
@@ -364,6 +363,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/groupEditor/GroupEditor": {
+				group: "Base DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/groupEditor/GroupEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -658,6 +666,15 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/editor/CardEditorWithDesigntime": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/CardEditorWithDesigntimeTrans": {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [

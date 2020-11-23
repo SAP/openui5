@@ -38,12 +38,13 @@
 			<table style="background-color: transparent; border:none;">
 				<tr>
 					<td style="vertical-align: top;background-color: transparent; border:none;">
-						<pre class="prettyprint lang-js " lines="11-13">
-sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
+						<pre class="prettyprint lang-js " lines="12-14">
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
 	"use strict";
-	var Designtime = BaseDesigntime.extend();
-	Designtime.prototype.create = function () {
-		return {
+	return function () {
+		return new Designtime({
 			form: {
 				items: {
 
@@ -52,9 +53,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 			preview: {
 
 			}
-		}
-	}
-	return Designtime
+		});
+	};
 });</pre>
 					</td>
 					<td style="vertical-align: top;background-color: transparent; border:none;">
@@ -162,13 +162,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 
 			After creation of the image save it with the Card sources, ideally in the design-time folder, and refer to
 			the image in the preview section's src property.
-			<pre class="prettyprint lang-js collapsed" lines="11-13"
+			<pre class="prettyprint lang-js collapsed" lines="12-14"
 				caption="Custom image within preview section designtime.js">
-sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
-"use strict";
-	var Designtime = BaseDesigntime.extend();
-	Designtime.prototype.create = function () {
-		return {
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		return new Designtime({
 			form: {
 				items: {
 
@@ -177,10 +178,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (BaseDesigntime) {
 			preview: {
 				src: "dt/preview.png"
 			}
-		}
-	}
-	return Designtime
-});</pre>
+		});
+	};
+});
+</pre>
 			<br><br>
 			<a class="try-button" href="../../index.html#/explore/designtimePreview" target="_parent">Try it Out</a>
 			<br>

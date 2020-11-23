@@ -291,7 +291,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Showing a Slider for an integer field<br>Please require the sap/m/Slider module in your
+						<td>Showing a Slider for an integer field<br>Please define "sap/m/Slider" as type in your
 							designtime.js file.</td>
 
 
@@ -299,44 +299,40 @@
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" lines="2,4,17-26" sample>sap.ui.define(["sap/ui/integration/Designtime",
-	"sap/m/Slider"],
-function (Designtime,
-	Slider
-	) {
+							<pre class="prettyprint lang-js" lines="12-23" sample>
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
 	"use strict";
-
-	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
-
-	AdvancedDesigntime.prototype.create = function () {
-		return {
+	return function () {
+		return new Designtime({
 			form: {
 				items: {
 					manifestpath: "/sap.card/.../boolean/value",
 					defaultValue: false,
 					type: "boolean",
 					visualization: {
-						type: Slider,
-							settings: {
-								value: "{currentSettings>value}",
-								min: 0,
-								max: 10,
-								width: "100%",
-								showAdvancedTooltip: true,
-								showHandleTooltip: false,
-								inputsAsTooltips: true
-							}
+						type: "sap/m/Slider",
+						settings: {
+							value: "{currentSettings>value}",
+							min: 0,
+							max: 10,
+							width: "100%",
+							showAdvancedTooltip: true,
+							showHandleTooltip: false,
+							inputsAsTooltips: true
 						}
 					}
 				}
 			}
-		}
-	}
-}</pre>
+		});
+	};
+});
+</pre>
 						</td>
 					</tr>
 					<tr>
-						<td>Showing a Switch for an integer field.<br>Please require the sap/m/Switch module in your
+						<td>Showing a Switch for an integer field.<br>Please define "sap/m/Switch" as type in your
 							designtime.js file.</td>
 
 
@@ -344,24 +340,20 @@ function (Designtime,
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample lines="2,4,18-22" style="height:250px">sap.ui.define(["sap/ui/integration/Designtime",
-	"sap/m/Switch"],
-function (Designtime,
-	Switch
-	) {
+							<pre class="prettyprint lang-js" sample lines="12-19" style="height:250px">
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
 	"use strict";
-
-	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
-
-	AdvancedDesigntime.prototype.create = function () {
-		return {
+	return function () {
+		return new Designtime({
 			form: {
 				items: {
 					manifestpath: "/sap.card/.../boolean/value",
 					defaultValue: false,
 					type: "boolean",
 					visualization: {
-						type: Switch,
+						type: "sap/m/Switch",
 						settings: {
 							state: "{currentSettings>value}",
 							customTextOn: "Yes",
@@ -370,9 +362,9 @@ function (Designtime,
 					}
 				}
 			}
-		}
-	}
-}</pre>
+		});
+	};
+});</pre>
 						</td>
 					</tr>
 				</table>

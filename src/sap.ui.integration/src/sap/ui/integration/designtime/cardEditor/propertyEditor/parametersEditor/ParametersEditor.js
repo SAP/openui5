@@ -64,13 +64,16 @@ sap.ui.define([
 	ParametersEditor.prototype.formatItemConfig = function (oConfigValue) {
 		var oMapItemConfig = MapEditor.prototype.formatItemConfig.apply(this, arguments);
 		var sKey = oConfigValue.key;
-		var sVisible = oConfigValue.value.visible !== false;
-		var sEditable = oConfigValue.value.editable !== false;
-		var sDescription = oConfigValue.value.description || "";
-		var bTranslatable = oConfigValue.value.translatable || false;
-		var bAllowSettings = oConfigValue.value.allowSettings || true;
-		var bAllowDynamicValues = oConfigValue.value.allowDynamicValues || true;
+		var sType = oConfigValue.value.type;
 		var vItemMetadata = this.getNestedDesigntimeMetadataValue(sKey);
+		var sVisible = (oConfigValue.value.visible || vItemMetadata.visible) !== false;
+		var sEditable = (oConfigValue.value.editable || vItemMetadata.editable) !== false;
+		var sManifestpath = oConfigValue.value.manifestpath || vItemMetadata.manifestpath || "";
+		var sDescription = oConfigValue.value.description || vItemMetadata.description || "";
+		var bTranslatable = (oConfigValue.value.translatable || vItemMetadata.translatable) === true;
+		var bAllowSettings = (oConfigValue.value.allowSettings || vItemMetadata.allowSettings) === true;
+		var bAllowDynamicValues = (oConfigValue.value.allowDynamicValues || vItemMetadata.allowDynamicValues) === true;
+		var oVisualization = oConfigValue.value.visualization || vItemMetadata.visualization;
 		var sLabel = vItemMetadata.label;
 
 		oMapItemConfig.push(
@@ -84,15 +87,25 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: "Description",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.DESCRIPTION"),
 				path: "description",
 				value: sDescription,
 				allowBindings: true,
+				visible: sType !== "group",
 				type: "string",
 				itemKey: sKey
 			},
 			{
-				label: "Visible in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.MANIFESTPATH"),
+				path: "manifestpath",
+				value: sManifestpath,
+				allowBindings: true,
+				visible: sType !== "group",
+				type: "string",
+				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISIBLE"),
 				path: "visible",
 				value: sVisible,
 				allowBindings: true,
@@ -100,16 +113,17 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: "Editable in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.EDITABLE"),
 				path: "editable",
 				allowBindings: true,
 				value: sEditable,
 				enabled: true,
+				visible: sType !== "group",
 				type: "boolean",
 				itemKey: sKey
 			},
 			{
-				label: "Translatable in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.TRANSLATABLE"),
 				path: "translatable",
 				value: bTranslatable,
 				enabled: true,
@@ -117,22 +131,35 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: "Allow Dynamic Values in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.ALLOWDYNAMICVALUES"),
 				path: "allowDynamicValues",
 				allowBindings: true,
 				enabled: true,
 				value: bAllowDynamicValues,
+				visible: sType !== "group",
 				type: "boolean",
 				itemKey: sKey
 			},
 			{
-				label: "Allow Settings in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.ALLOWSETTINGS"),
 				path: "allowSettings",
 				allowBindings: true,
 				value: bAllowSettings,
+				visible: sType !== "group",
 				type: "boolean",
 				itemKey: sKey
-			});
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISUALIZATION"),
+				path: "visualization",
+				allowBindings: true,
+				value: oVisualization,
+				visible: sType !== "group",
+				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISUALIZATION.PLACEHOLDER"),
+				type: "textArea",
+				itemKey: sKey
+			}
+		);
 		return oMapItemConfig;
 	};
 

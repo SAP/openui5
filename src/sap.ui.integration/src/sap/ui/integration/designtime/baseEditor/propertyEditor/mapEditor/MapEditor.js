@@ -28,7 +28,10 @@ sap.ui.define([
 		"number": "BASE_EDITOR.MAP.TYPES.NUMBER",
 		"integer": "BASE_EDITOR.MAP.TYPES.INTEGER",
 		"date": "BASE_EDITOR.MAP.TYPES.DATE",
-		"datetime": "BASE_EDITOR.MAP.TYPES.DATETIME"
+		"datetime": "BASE_EDITOR.MAP.TYPES.DATETIME",
+		"icon": "BASE_EDITOR.MAP.TYPES.ICON",
+		"simpleicon": "BASE_EDITOR.MAP.TYPES.SIMPLEICON",
+		"group": "BASE_EDITOR.MAP.TYPES.GROUP"
 	};
 
 	/**
@@ -297,6 +300,7 @@ sap.ui.define([
 					path: "value",
 					value: vValue,
 					type: sType && includes(this._getAllowedTypes(), sType) ? sType : this._getDefaultType(vValue),
+					visible: sType !== "group",
 					itemKey: sKey,
 					designtime: (oDesigntime || {}).value
 				}
@@ -484,6 +488,12 @@ sap.ui.define([
 					var sNewItemKey = sItemKey === sOldKey ? sNewKey : sItemKey;
 					oNewValue[sNewItemKey] = oEditorValue[sItemKey];
 				});
+				if (oNewValue[sNewKey]
+					&& oNewValue[sNewKey].type !== "group"
+					&& oNewValue[sNewKey].manifestpath
+					&& oNewValue[sNewKey].manifestpath.startsWith("/sap.card/configuration/parameters/")) {
+						oNewValue[sNewKey].manifestpath = "/sap.card/configuration/parameters/" + sNewKey + "/value";
+				}
 
 				this._mTypes[sNewKey] = this._mTypes[sOldKey];
 				delete this._mTypes[sOldKey];
@@ -493,6 +503,12 @@ sap.ui.define([
 				var oDesigntime = _merge({}, this.getConfig().designtime);
 				if (oDesigntime.hasOwnProperty(sOldKey)) {
 					oDesigntime[sNewKey] = oDesigntime[sOldKey];
+					if (oDesigntime[sNewKey].__value
+						&& oDesigntime[sNewKey].__value.type
+						&& oDesigntime[sNewKey].__value.type !== "group"
+						&& oDesigntime[sNewKey].__value.manifestpath) {
+						oDesigntime[sNewKey].__value.manifestpath = oDesigntime[sNewKey].__value.manifestpath.replace(sOldKey, sNewKey);
+					}
 					delete oDesigntime[sOldKey];
 					this.setDesigntimeMetadata(oDesigntime);
 				}
@@ -506,14 +522,45 @@ sap.ui.define([
 			}
 
 			var oEditorValue = _merge({}, this.getValue());
-			var sNewType =  oEvent.getParameter("value");
+			var sNewType = oEvent.getParameter("value");
+			var sOldType = oEvent.getParameter("previousValue");
 
-			var oItemToEdit = this.processInputValue(oEditorValue[sKey]);
-			oItemToEdit.type = sNewType;
-			oEditorValue[sKey] = this.processOutputValue(oItemToEdit);
+			if (sNewType !== sOldType) {
+				var oItemToEdit = this.processInputValue(oEditorValue[sKey]);
+				oItemToEdit.type = sNewType;
+				oEditorValue[sKey] = this.processOutputValue(oItemToEdit);
+				if (sNewType === "simpleicon") {
+					oEditorValue[sKey].visualization = {
+						"type": "IconSelect",
+						"settings": {
+							"value": "{currentSettings>value}",
+							"editable": "{currentSettings>editable}"
+						}
+					};
+				} else {
+					delete oEditorValue[sKey].visualization;
+				}
 
-			this._mTypes[sKey] = sNewType;
-			this.setValue(oEditorValue);
+				this._mTypes[sKey] = sNewType;
+				this.setValue(oEditorValue);
+
+				var oDesigntime = _merge({}, this.getConfig().designtime);
+				if (oDesigntime.hasOwnProperty(sKey)) {
+					if (sNewType === "simpleicon") {
+						oDesigntime[sKey].__value.visualization = {
+							"type": "IconSelect",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						};
+					} else {
+						delete oDesigntime[sKey].__value.visualization;
+					}
+					oDesigntime[sKey].__value.type = sNewType;
+					this.setDesigntimeMetadata(oDesigntime);
+				}
+			}
 		},
 
 		// Generic field change

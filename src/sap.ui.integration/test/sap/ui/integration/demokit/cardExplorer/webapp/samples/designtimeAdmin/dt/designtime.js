@@ -1,13 +1,9 @@
-sap.ui.define([
-	"sap/ui/integration/Designtime",
-	"sap/ui/integration/designtime/editor/fields/viz/IconSelect",
-	"sap/m/Slider"
-], function (Designtime, IconSelect, Slider) {
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
 	"use strict";
-
-	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
-	AdvancedDesigntime.prototype.create = function () {
-		return {
+	return function () {
+		return new Designtime({
 			form: {
 				items: {
 					"groupheader1": {
@@ -19,14 +15,16 @@ sap.ui.define([
 						"type": "string",
 						"translatable": true,
 						"label": "Card Title",
-						"cols": 1
+						"cols": 1,
+						"allowDynamicValues": true
 					},
 					"subtitle": {
 						"manifestpath": "/sap.card/header/subTitle",
 						"type": "string",
 						"translatable": true,
 						"label": "Card Subtitle",
-						"cols": 1
+						"cols": 1,
+						"allowDynamicValues": true
 					},
 					"headericon": {
 						"manifestpath": "/sap.card/header/icon/src",
@@ -36,7 +34,7 @@ sap.ui.define([
 						"allowDynamicValues": false,
 						"allowSettings": false,
 						"visualization": {
-							"type": IconSelect,
+							"type": "IconSelect",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}"
@@ -50,7 +48,7 @@ sap.ui.define([
 						"allowDynamicValues": false,
 						"allowSettings": false,
 						"visualization": {
-							"type": Slider,
+							"type": "sap/m/Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -68,9 +66,6 @@ sap.ui.define([
 			preview: {
 				modes: "AbstractLive"
 			}
-		};
+		});
 	};
-	return AdvancedDesigntime;
 });
-
-

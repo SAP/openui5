@@ -91,7 +91,9 @@ sap.ui.define([
 			if (oJson) {
 				//parameters content changed added, removed
 				var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
+				var mParametersInDesigntime = ObjectPath.get(["sap.card", "configuration", "parameters"], this._oDesigntimeMetadataModel.getData());
 				if (!mParameters) {
+					this._oDesigntimeJSConfig.form.items = {};
 					this._oCurrent = {
 						configuration: this._cleanConfig(this._oDesigntimeJSConfig),
 						manifest: this._cleanJson(),
@@ -105,9 +107,24 @@ sap.ui.define([
 				for (var n in oCopyConfig.form.items) {
 					oItem = merge({}, oCopyConfig.form.items[n]);
 					if (!mParameters[n]) {
-						//delete the item because it is not part of parameters anymore
-						delete oCopyConfig.form.items[n];
-						continue;
+						if (mParametersInDesigntime[n]) {
+							if (oItem.type === "group") {
+								mParameters[n] = {};
+							} else if (oItem.manifestpath && !oItem.manifestpath.startsWith("/sap.card/configuration/parameters")) {
+								var sPath = oItem.manifestpath;
+								if (sPath.startsWith("/")) {
+									sPath = sPath.substring(1);
+								}
+								var vValue = ObjectPath.get(sPath.split("/"), oJson) || oItem.defaultValue || "";
+								mParameters[n] = {
+									value: vValue
+								};
+							}
+						} else {
+							//delete the item because it is not part of parameters anymore
+							delete oCopyConfig.form.items[n];
+							continue;
+						}
 					}
 					var iIndex = aCurrentKeys.indexOf(n);
 					if (iIndex > -1) {
@@ -115,12 +132,19 @@ sap.ui.define([
 					}
 					var oViz;
 					if (oCopyConfig.form.items[n].visualization) {
-						oViz = oCopyConfig.form.items[n].visualization;
+						oViz = mParameters[n].visualization;
 					}
 					oCopyConfig.form.items[n] = merge(oItem, mParameters[n]);
 					if (oViz) {
 						oCopyConfig.form.items[n].visualization = oViz;
 						oViz = null;
+					}
+					if (oItem.type === "group") {
+						delete oCopyConfig.form.items[n].manifestpath;
+					} else if (!oCopyConfig.form.items[n].manifestpath) {
+						mParametersInDesigntime[n].manifestpath = "/sap.card/configuration/parameters/" + n + "/value";
+						mParametersInDesigntime[n].__value.manifestpath = "/sap.card/configuration/parameters/" + n + "/value";
+						oCopyConfig.form.items[n].manifestpath = "/sap.card/configuration/parameters/" + n + "/value";
 					}
 				}
 				if (aCurrentKeys.length > 0) {
@@ -149,13 +173,13 @@ sap.ui.define([
 						if (!n.startsWith("sap.card/configuration/parameters")) {
 							continue;
 						}
-						var oOriginalItem = oCopyConfig.form.items[sKey];
+						var oOriginalItem = oCopyConfig.form.items[sKey] || {};
 						var oViz;
 						if (oOriginalItem.visualization) {
 							oViz = oOriginalItem.visualization;
 						}
 
-						oItem = merge(oOriginalItem || {}, mParameters[sKey]);
+						oItem = merge(oOriginalItem, mParameters[sKey]);
 						if (oMetaItem.hasOwnProperty("label")) {
 							oItem.label = oMetaItem.label;
 						}
@@ -173,8 +197,16 @@ sap.ui.define([
 							oItem.visible = false;
 						}
 
+						if (oItem.type === "group") {
+							delete oItem.manifestpath;
+						}
+
 						if (oViz) {
-							oItem.visualization = oViz;
+							if (oMetaItem.hasOwnProperty("visualization")) {
+								oItem.visualization = oViz;
+							} else {
+								delete oItem.visualization;
+							}
 							oViz = null;
 						}
 						oItem.__key = sKey;
@@ -194,15 +226,17 @@ sap.ui.define([
 				}
 			}
 			this._oDesigntimeJSConfig = oCopyConfig;
+			var oCleanConfig = this._cleanConfig(this._oDesigntimeJSConfig);
 			this._fnDesigntime = function (o) {
 				return new Designtime(o);
-			}.bind(this, this._oDesigntimeJSConfig);
+			}.bind(this, oCleanConfig);
 			this._oCurrent = {
-				configuration: this._cleanConfig(this._oDesigntimeJSConfig),
-				manifest: this._cleanJson(),
+				configuration: oCleanConfig,
+				manifest: this._cleanJson(oJson),
 				configurationclass: this._fnDesigntime,
 				configurationstring: this._cleanConfig(this._oDesigntimeJSConfig, true)
 			};
+			this._oDataModel.setData(this._prepareData(oJson));
 			this.fireConfigurationChange(this._oCurrent);
 		}.bind(this), 500);
 	};
@@ -219,32 +253,68 @@ sap.ui.define([
 	BASEditor.prototype._applyDefaultValue = function (oItem) {
 		if (oItem.value === undefined || oItem.value === null) {
 			switch (oItem.type) {
-				case "boolean": oItem.value = oItem.defaultValue || false; break;
+				case "boolean":
+					oItem.value = oItem.defaultValue || false;
+					break;
 				case "integer":
-				case "number": oItem.value = oItem.defaultValue || 0; break;
-				case "string[]": oItem.value = oItem.defaultValue || []; break;
+				case "number":
+					oItem.value = oItem.defaultValue || 0;
+					break;
+				case "string[]":
+					oItem.value = oItem.defaultValue || [];
+					break;
 				default: oItem.value = oItem.defaultValue || "";
 			}
 		}
 	};
 
-	BASEditor.prototype._cleanJson = function (oJson) {
+	BASEditor.prototype.getJson  = function (bCleanJson) {
+		if (bCleanJson === true) {
+			return this._cleanJson();
+		} else {
+			return BaseEditor.prototype.getJson.apply(this, arguments);
+		}
+	};
+
+	BASEditor.prototype._cleanJson = function (oJson, bCleanParameters) {
 		oJson = oJson || this.getJson();
 		var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
 		if (!sDesigntimePath) {
 			ObjectPath.set(["sap.card", "designtime"], "dt/configuration", oJson);
 		}
 		oJson = deepClone(oJson);
-		var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
-		for (var n in mParameters) {
-			var oParam = mParameters[n];
-			if (oParam && oParam.manifestpath && !oParam.manifestpath.startsWith("/sap.card/configuration/parameters")) {
-				delete mParameters[n];
-				continue;
+		var bCleanParameters = bCleanParameters !== false;
+		if (bCleanParameters) {
+			var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
+			for (var n in mParameters) {
+				var oParam = mParameters[n];
+				if (oParam && oParam.type === "group") {
+					delete mParameters[n];
+					continue;
+				}
+				if (this._oDesigntimeJSConfig && this._oDesigntimeJSConfig.form && this._oDesigntimeJSConfig.form.items) {
+					var oParamConfig = this._oDesigntimeJSConfig.form.items[n] || {};
+					if (oParamConfig.type === "group") {
+						delete mParameters[n];
+						continue;
+					}
+					if (oParamConfig.manifestpath && !oParamConfig.manifestpath.startsWith("/sap.card/configuration/parameters")) {
+						var sPath = oParamConfig.manifestpath;
+						if (sPath.startsWith("/")) {
+							sPath = sPath.substring(1);
+						}
+						if (oParamConfig.type === "simpleicon") {
+							oParamConfig.type = "string";
+						}
+						ObjectPath.set(sPath.split("/"), oParamConfig.value, oJson);
+						delete mParameters[n];
+						continue;
+					}
+				}
+				mParameters[n] = {
+					value: mParameters[n].value
+				};
 			}
-			mParameters[n] = {
-				value: mParameters[n].value
-			};
 		}
 		if (this._i18n) {
 			ObjectPath.set(["sap.app", "i18n"], this._i18n, oJson);
@@ -256,21 +326,20 @@ sap.ui.define([
 		var oConfig = merge({}, oConfig);
 		for (var n in oConfig.form.items) {
 			var oItem = oConfig.form.items[n];
-			delete oItem.value;
-			if (oItem.visualization &&
-				oItem.visualization.type &&
-				typeof oItem.visualization.type === "function") {
-				if (oItem.visualization.type.getMetadata && oItem.visualization.type.getMetadata()) {
-					var sClass = oItem.visualization.type.getMetadata().getName().replace(/\./g, "/");
-					if (bString) {
-						var iIndex = sClass.lastIndexOf("/");
-						sClass = iIndex > 0 ? sClass.substring(iIndex + 1) : sClass;
-						oItem.visualization.type = "$$" + sClass + "$$";
-					} else {
-						oItem.visualization.type = oItem.visualization.type.getMetadata().getName().replace(/\./g, "/");
-					}
+			//If is icon
+			if (oItem.type === "simpleicon") {
+				if (!oItem.visualization) {
+					oItem.visualization = {
+						"type": "IconSelect",
+						"settings": {
+							"value": "{currentSettings>value}",
+							"editable": "{currentSettings>editable}"
+						}
+					};
 				}
+				oItem.type = "string";
 			}
+			delete oItem.value;
 		}
 		if (bString) {
 			var sConfig = JSON.stringify(oConfig, null, "\t");
@@ -295,10 +364,13 @@ sap.ui.define([
 				oMetaItem = oMetadata[sPath];
 				oMetaItem.position = i++;
 				if (oMetaItem.visualization) {
-					oMetaItem.visualization = 1;
+					//If is icon
+					if (oMetaItem.visualization.type === "IconSelect") {
+						oMetaItem.type = "simpleicon";
+					}
 				}
 
-				if (!oMetaItem.manifestpath.startsWith("/sap.card/configuration/parameters/") || !ObjectPath.get(aPath, this._oInitialJson)) {
+				if (oMetaItem.manifestpath && (!oMetaItem.manifestpath.startsWith("/sap.card/configuration/parameters/") || !ObjectPath.get(aPath, this._oInitialJson))) {
 					ObjectPath.set(aPath, oMetaItem, this._oInitialJson);
 				}
 				ObjectPath.set(aPath, oMetaItem, this._oInitialJson);
@@ -319,22 +391,23 @@ sap.ui.define([
 					});
 				}
 
-				if (!oMetaItem.hasOwnProperty("value")) {
-					var aOtherPath = oMetaItem.manifestpath.substring(1).split("/"),
-						vValue = ObjectPath.get(aOtherPath, this._oInitialJson);
-					if (vValue !== undefined) {
-						oMetaItem.value = vValue;
+				if (oMetaItem.type !== "group") {
+					if (!oMetaItem.hasOwnProperty("value")) {
+						var aOtherPath = oMetaItem.manifestpath.substring(1).split("/"),
+							vValue = ObjectPath.get(aOtherPath, this._oInitialJson);
+						if (vValue !== undefined) {
+							oMetaItem.value = vValue;
+						} else {
+							this._applyDefaultValue(oMetaItem);
+						}
 					} else {
 						this._applyDefaultValue(oMetaItem);
 					}
-				} else {
-					this._applyDefaultValue(oMetaItem);
-				}
-
-				if (ObjectPath.get(aPath, this._oInitialJson)) {
-					if (ObjectPath.get(aPath, this._oInitialJson).value === undefined) {
-						//set the value from the metadata to the original data
-						ObjectPath.get(aPath, this._oInitialJson).value = oMetaItem.value;
+					if (ObjectPath.get(aPath, this._oInitialJson)) {
+						if (ObjectPath.get(aPath, this._oInitialJson).value === undefined) {
+							//set the value from the metadata to the original data
+							ObjectPath.get(aPath, this._oInitialJson).value = oMetaItem.value;
+						}
 					}
 				}
 			}
@@ -378,7 +451,7 @@ sap.ui.define([
 				this.fireCreateConfiguration({
 					file: "dt/configuration.js",
 					content: sDesigntime,
-					manifest: this._cleanJson(oJson)
+					manifest: this._cleanJson(oJson, false)
 				});
 				return;
 			}
@@ -467,6 +540,11 @@ sap.ui.define([
 
 	BASEditor.prototype.getConfigurationTemplate = function () {
 		return configurationTemplate;
+	};
+
+	BASEditor.prototype.updateDesigntimeMetadata = function (oDesigntimeJSConfig, bIsInitialMetadata) {
+		var oDesigntimeMetadata = this._generateMetadataFromJSConfig(oDesigntimeJSConfig);
+		this.setDesigntimeMetadata(formatImportedDesigntimeMetadata(oDesigntimeMetadata), bIsInitialMetadata);
 	};
 
 	function formatImportedDesigntimeMetadata(oFlatMetadata) {
