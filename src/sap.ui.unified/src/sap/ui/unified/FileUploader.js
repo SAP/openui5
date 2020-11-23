@@ -718,6 +718,9 @@ sap.ui.define([
 			var aFiles = this.oFileUpload.files;
 			this._clearInputField();
 			this._prepareFileUpload();
+
+			// Register change event listener for the new input field
+			jQuery(this.oFileUpload).on("change", this.handlechange.bind(this));
 			// Reattach files to the input field if already selected
 			/*eslint strict: [2, "never"]*/
 			this.oFileUpload.files = aFiles;
