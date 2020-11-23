@@ -585,6 +585,7 @@ sap.ui.define([
 
 				// Find symbol utility method
 				function findSymbol (a, sTopicId) {
+					oSymbol = null;
 					return a.some(function (o) {
 						var bFound = o.name === sTopicId;
 						if (!bFound && o.nodes) {
