@@ -181,6 +181,13 @@ sap.ui.define([
 			: oAggregation.groupLevels.slice(0, iLevel);
 		aAllProperties
 			= Object.keys(oAggregation.aggregate).concat(Object.keys(oAggregation.group));
+		Object.keys(oAggregation.aggregate).forEach(function (sAlias) {
+			var sUnit = oAggregation.aggregate[sAlias].unit;
+
+			if (sUnit) {
+				aAllProperties.push(sUnit);
+			}
+		});
 
 		mQueryOptions = Object.assign({}, this.mQueryOptions);
 		sFilteredOrderby

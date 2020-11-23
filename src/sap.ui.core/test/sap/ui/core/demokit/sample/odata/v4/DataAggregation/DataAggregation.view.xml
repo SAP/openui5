@@ -12,7 +12,8 @@
 			parameters : {
 				$$aggregation : {
 					aggregate : {
-						SalesAmount : {grandTotal : true, subtotals : true},
+						SalesAmountLocalCurrency
+							: {grandTotal : true, subtotals : true, unit : 'LocalCurrency'},
 						SalesNumber : {}
 					},
 					group : {
@@ -68,8 +69,11 @@
 		<Column template="AccountResponsible">
 			<m:Label text="Account Responsible"/>
 		</Column>
-		<Column hAlign="End" template="SalesAmount">
+		<Column hAlign="End" template="SalesAmountLocalCurrency">
 			<m:Label text="Sales Amount"/>
+		</Column>
+		<Column template="LocalCurrency">
+			<m:Label text="Local Currency"/>
 		</Column>
 		<Column hAlign="End" template="SalesNumber">
 			<m:Label text="Sales Number"/>

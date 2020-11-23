@@ -86,17 +86,21 @@ sap.ui.define([
 									"Row " + iRowIndex + ": Account Responsible is "
 										+ aCells[5].getText());
 								Opa5.assert.strictEqual(aCells[6].getText(),
-									oExpected.salesAmount,
+									oExpected.salesAmountLocalCurrency,
 									"Row " + iRowIndex + ": Sales Amount is "
 										+ aCells[6].getText());
 								Opa5.assert.strictEqual(aCells[7].getText(),
+									oExpected.localCurrency,
+									"Row " + iRowIndex + ": Local Currency is "
+										+ aCells[7].getText());
+								Opa5.assert.strictEqual(aCells[8].getText(),
 									oExpected.salesNumber,
 									"Row " + iRowIndex + ": Sales Number is "
-										+ aCells[7].getText());
-								Opa5.assert.strictEqual(aCells[8].getSelected(),
+										+ aCells[8].getText());
+								Opa5.assert.strictEqual(aCells[9].getSelected(),
 									oExpected.subtotal,
 									"Row " + iRowIndex + ": Subtotal is "
-										+ aCells[8].getSelected());
+										+ aCells[9].getSelected());
 							});
 						},
 						viewName : sViewName

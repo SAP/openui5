@@ -308,7 +308,8 @@ sap.ui.define([
 						subtotals : oPICT.bSubtotals
 					},
 					y : {
-						grandTotal : oPICT.bHasGrandTotal
+						grandTotal : oPICT.bHasGrandTotal,
+						unit : "UnitY"
 					}
 				},
 				group: {
@@ -384,7 +385,7 @@ sap.ui.define([
 		this.mock(_AggregationCache).expects("calculateKeyPredicate").on(null)
 			.withExactArgs(sinon.match.same(oPICT.oParentGroupNode), aGroupBy,
 				// Note: order does not matter for aAllProperties
-				["x", "y", "c", "a", "b"], oPICT.bLeaf, oPICT.bSubtotals,
+				["x", "y", "c", "a", "b", "UnitY"], oPICT.bLeaf, oPICT.bSubtotals,
 				sinon.match.same(oAggregationCache.aElements.$byPredicate),
 				"~oElement~", "~mTypeForMetaPath~", "~metapath~");
 

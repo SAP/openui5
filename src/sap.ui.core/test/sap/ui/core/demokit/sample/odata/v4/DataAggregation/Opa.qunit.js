@@ -38,7 +38,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "75,790,327",
+				salesAmountLocalCurrency : "79,443,315",
+				localCurrency : "",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -48,7 +49,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "16,165,258",
+				salesAmountLocalCurrency : "14,548,502",
+				localCurrency : "GBP",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -58,7 +60,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "35,135,431",
+				salesAmountLocalCurrency : "40,405,175",
+				localCurrency : "USD",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -68,7 +71,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "24,489,638",
+				salesAmountLocalCurrency : "24,489,638",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}];
@@ -82,7 +86,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "75,790,327",
+				salesAmountLocalCurrency : "79,443,315",
+				localCurrency : "",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -92,7 +97,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "16,165,258",
+				salesAmountLocalCurrency : "14,548,502",
+				localCurrency : "GBP",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -102,7 +108,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "35,135,431",
+				salesAmountLocalCurrency : "40,405,175",
+				localCurrency : "USD",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -112,7 +119,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "24,489,638",
+				salesAmountLocalCurrency : "24,489,638",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -122,7 +130,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Saxony",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "1,161,590",
+				salesAmountLocalCurrency : "1,161,590",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}]);
@@ -135,7 +144,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Hessia",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "5,913,956",
+				salesAmountLocalCurrency : "5,913,956",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -145,7 +155,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Hamburg",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "2,309,561",
+				salesAmountLocalCurrency : "2,309,561",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -155,7 +166,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Berlin",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "1,670,139",
+				salesAmountLocalCurrency : "1,670,139",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -165,7 +177,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Bavaria",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "5,857,115",
+				salesAmountLocalCurrency : "5,857,115",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -175,7 +188,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "4,416,538",
+				salesAmountLocalCurrency : "4,416,538",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}]);
@@ -189,7 +203,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Bavaria",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "5,857,115",
+				salesAmountLocalCurrency : "5,857,115",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -199,7 +214,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "",
 				accountResponsible : "",
-				salesAmount : "4,416,538",
+				salesAmountLocalCurrency : "4,416,538",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -209,7 +225,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "Large",
 				accountResponsible : "",
-				salesAmount : "3,765,323",
+				salesAmountLocalCurrency : "3,765,323",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -219,7 +236,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "Mid-size",
 				accountResponsible : "",
-				salesAmount : "526,122",
+				salesAmountLocalCurrency : "526,122",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -229,7 +247,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "Small",
 				accountResponsible : "",
-				salesAmount : "125,093",
+				salesAmountLocalCurrency : "125,093",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}]);
@@ -243,7 +262,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "Large",
 				accountResponsible : "",
-				salesAmount : "3,765,323",
+				salesAmountLocalCurrency : "3,765,323",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -253,7 +273,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "Mid-size",
 				accountResponsible : "",
-				salesAmount : "526,122",
+				salesAmountLocalCurrency : "526,122",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -263,7 +284,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "Small",
 				accountResponsible : "",
-				salesAmount : "125,093",
+				salesAmountLocalCurrency : "125,093",
+				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
 			}, {
@@ -273,7 +295,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "Small",
 				accountResponsible : "Erwin Fischer",
-				salesAmount : "61,632",
+				salesAmountLocalCurrency : "61,632",
+				localCurrency : "EUR",
 				salesNumber : "1,032",
 				subtotal : false
 			}, {
@@ -283,7 +306,8 @@ sap.ui.getCore().attachInit(function () {
 				region : "Baden-Württemberg",
 				segment : "Small",
 				accountResponsible : "Winfried Maier",
-				salesAmount : "63,461",
+				salesAmountLocalCurrency : "63,461",
+				localCurrency : "EUR",
 				salesNumber : "1,178",
 				subtotal : false
 			}];

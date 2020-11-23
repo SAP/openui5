@@ -2632,14 +2632,18 @@ sap.ui.define([
 	 *     <li> <code>name</code>: An optional string that provides the original aggregatable
 	 *       property name in case a different alias is chosen as the name of the dynamic property
 	 *       used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
+	 *      <li> <code>unit</code>: An optional string that provides the name of the custom
+	 *       aggregate for a currency or unit of measure corresponding to this aggregatable property
+	 *       (since 1.85.0). The custom aggregate must return the single value of that unit in case
+	 *       there is only one, or <code>null</code> otherwise ("multi-unit situation"). (SQL
+	 *       suggestion: <code>CASE WHEN min(Unit) = max(Unit) THEN min(Unit) END</code>)
 	 *   </ul>
 	 * @param {object} [oAggregation.group]
 	 *   A map from groupable property names to empty objects
 	 * @param {string[]} [oAggregation.groupLevels]
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
-	 *   filtering, with the system query option <code>$count</code>, or with an aggregatable
-	 *   property for which a grand total is needed.
+	 *   filtering or with the system query option <code>$count</code>.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, or if there are pending changes
@@ -2651,9 +2655,11 @@ sap.ui.define([
 	 *     aggregate : {
 	 *       AverageNetAmountInTransactionCurrency : {
 	 *         name : "NetAmountInTransactionCurrency", // original name
-	 *         with : "average" // aggregation method
+	 *         "with" : "average", // aggregation method
+	 *         unit : "TransactionCurrency"
 	 *       },
-	 *       NetAmountInDisplayCurrency : {subtotals : true}
+	 *       NetAmountInDisplayCurrency : {subtotals : true, unit : "DisplayCurrency"},
+	 *       SalesNumber : {grandTotal : true}
 	 *     },
 	 *     group : {
 	 *       ProductCategory : {}, // optional

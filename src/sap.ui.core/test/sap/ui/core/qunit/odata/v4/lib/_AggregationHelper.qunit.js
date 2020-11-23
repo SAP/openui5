@@ -93,9 +93,10 @@ sap.ui.define([
 			aggregate : { // Note: intentionally not sorted
 				Amount : {
 					grandTotal : true,
+					unit : "Currency",
 					"with" : "average"
 				},
-				NetAmountAggregate : {
+				NetAmountAggregate : { // Note: intentionally no "with", although spec requires it
 					name : "NetAmount"
 				},
 				GrossAmountCount : {
@@ -108,12 +109,76 @@ sap.ui.define([
 				BillToParty : {}
 			}
 		},
-		sApply : "concat(aggregate(Amount with average as UI5grand__Amount"
+		sApply : "concat(aggregate(Amount with average as UI5grand__Amount,Currency"
 			+ ",GrossAmount with countdistinct as UI5grand__GrossAmountCount)"
-			+ ",groupby((BillToParty),aggregate(Amount with average as Amount"
+			+ ",groupby((BillToParty),aggregate(Amount with average as Amount,Currency"
 			+ ",GrossAmount with countdistinct as GrossAmountCount"
 			+ ",NetAmount as NetAmountAggregate)))"
 	}, {
+		oAggregation : {
+			aggregate : {
+				Alias : { // Note: intentionally no "with", although spec requires it
+					grandTotal : true,
+					name : "Name"
+				},
+				GrossAmount : {
+					grandTotal : true,
+					unit : "Currency"
+				},
+				NetAmount : {
+					grandTotal : true,
+					unit : "Currency"
+				}
+			},
+			group : {
+				BillToParty : {}
+			}
+		},
+		sApply : "concat(aggregate(Name as UI5grand__Alias,GrossAmount,Currency,NetAmount)"
+			+ ",groupby((BillToParty),aggregate(Name as Alias,GrossAmount,Currency,NetAmount)))"
+		}, {
+			oAggregation : {
+				aggregate : {
+					Amount : {
+						grandTotal : true,
+						unit : "Currency"
+					}
+				},
+				group : {
+					Currency : {}
+				}
+			},
+			sApply : "concat(aggregate(Amount,Currency),groupby((Currency),aggregate(Amount)))"
+		}, {
+			oAggregation : {
+				aggregate : {
+					Amount : {
+						grandTotal : true,
+						subtotals : true,
+						unit : "Currency"
+					}
+				},
+				groupLevels : ['Currency']
+			},
+			sApply : "concat(aggregate(Amount,Currency),groupby((Currency),aggregate(Amount)))"
+		}, {
+			oAggregation : {
+				aggregate : {
+					Amount : {
+						grandTotal : true,
+						subtotals : true,
+						unit : "Currency"
+					},
+					Currency : {
+						grandTotal : true,
+						subtotals : true
+					}
+				},
+				groupLevels : ['Country']
+			},
+			sApply : "concat(aggregate(Amount,Currency)"
+				+ ",groupby((Country),aggregate(Amount,Currency)))"
+		}, {
 		oAggregation : {
 			aggregate : {
 				GrossAmountInTransactionCurrency : {},
@@ -345,6 +410,8 @@ sap.ui.define([
 			+ ",aggregate(Amount1 with average as Amount1Avg,Amount2))"
 			+ "/concat(aggregate(Amount1Avg with min as UI5min__Amount1Avg,"
 			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
+		sFollowUpApply : "groupby((BillToParty)"
+			+ ",aggregate(Amount1 with average as Amount1Avg,Amount2))",
 		mExpectedAlias2MeasureAndMethod : {
 			UI5min__Amount1Avg : {measure : "Amount1Avg", method : "min"},
 			UI5min__Amount2 : {measure : "Amount2", method : "min"},
@@ -367,6 +434,7 @@ sap.ui.define([
 		sApply : "aggregate(Amount1 with average as Amount1Avg,Amount2)"
 			+ "/concat(aggregate(Amount1Avg with min as UI5min__Amount1Avg,"
 			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
+		sFollowUpApply : "aggregate(Amount1 with average as Amount1Avg,Amount2)",
 		mExpectedAlias2MeasureAndMethod : {
 			UI5min__Amount1Avg : {measure : "Amount1Avg", method : "min"},
 			UI5min__Amount2 : {measure : "Amount2", method : "min"},
@@ -403,6 +471,7 @@ sap.ui.define([
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {},
+				sFollowUpApply = oFixture.sFollowUpApply || oFixture.sApply,
 				sQueryOptionsJSON = JSON.stringify(oFixture.mQueryOptions),
 				mResult;
 
@@ -411,21 +480,17 @@ sap.ui.define([
 				oFixture.iLevel, false, mAlias2MeasureAndMethod);
 
 			assert.deepEqual(mResult, {$apply : oFixture.sApply}, "sApply");
-			if (oFixture.mExpectedAlias2MeasureAndMethod) {
-				assert.deepEqual(mAlias2MeasureAndMethod, oFixture.mExpectedAlias2MeasureAndMethod,
-					"mAlias2MeasureAndMethod");
-			}
+			assert.deepEqual(mAlias2MeasureAndMethod,
+				oFixture.mExpectedAlias2MeasureAndMethod || {}, "mAlias2MeasureAndMethod");
 
-			if (oFixture.sFollowUpApply) {
-				mAlias2MeasureAndMethod = {};
+			mAlias2MeasureAndMethod = {};
 
-				// code under test
-				mResult = _AggregationHelper.buildApply(oFixture.oAggregation,
-					oFixture.mQueryOptions, oFixture.iLevel, true, mAlias2MeasureAndMethod);
+			// code under test
+			mResult = _AggregationHelper.buildApply(oFixture.oAggregation,
+				oFixture.mQueryOptions, oFixture.iLevel, true, mAlias2MeasureAndMethod);
 
-				assert.deepEqual(mResult, {$apply : oFixture.sFollowUpApply}, "sFollowUpApply");
-				assert.deepEqual(mAlias2MeasureAndMethod, {}, "mAlias2MeasureAndMethod");
-			}
+			assert.deepEqual(mResult, {$apply : sFollowUpApply}, "sFollowUpApply");
+			assert.deepEqual(mAlias2MeasureAndMethod, {}, "mAlias2MeasureAndMethod");
 
 			assert.strictEqual(JSON.stringify(oFixture.mQueryOptions), sQueryOptionsJSON,
 				"original mQueryOptions unchanged");
