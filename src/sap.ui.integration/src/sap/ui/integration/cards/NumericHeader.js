@@ -237,8 +237,11 @@ sap.ui.define([
 	NumericHeader.prototype._handleToolbarVisibilityChange = function (oEvent) {
 		var bToolbarVisible = oEvent.getParameter("visible");
 
-		if (this._bIsEmpty) {
+		if (this._bIsEmpty && this.getVisible() !== bToolbarVisible) {
 			this.setVisible(bToolbarVisible);
+			setTimeout(function () {
+				this.invalidate();
+			}.bind(this), 0);
 		}
 	};
 

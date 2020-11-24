@@ -270,6 +270,120 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_ListCard_NoHeader = {
+			"sap.app": {
+				"id": "my.card.qunit.test.ListCard"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Information",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+
+							},
+							{
+								"Name": "Notebook Basic 18",
+								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1002",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Warning",
+								"info": "9.45 EUR",
+								"infoState": "Error"
+							},
+							{
+								"Name": "Notebook Basic 19",
+								"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1003",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Error",
+								"info": "9.45 EUR",
+								"infoState": "Error"
+							},
+							{
+								"Name": "ITelO Vault",
+								"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+								"Id": "HT-1007",
+								"SubCategoryId": "PDAs & Organizers",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Professional 15",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1010",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Professional 26",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1022",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Professional 27",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1024",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							}
+						]
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "Title",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "Description",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		};
+
 		var oManifest_DefaultParameters = {
 			"sap.card": {
 				"configuration": {
@@ -727,6 +841,33 @@ sap.ui.define([
 
 		QUnit.test("Initialization - TableContent", function (assert) {
 			testContentInitialization(oManifest_TableCard, assert);
+		});
+
+		QUnit.test("Empty header", function (assert) {
+			var done = assert.async();
+
+			var oCard = new Card("somecard", {
+				manifest: oManifest_ListCard_NoHeader,
+				width: "400px",
+				height: "600px"
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				setTimeout(function () {
+					assert.notOk(oCard.getAggregation("_header").getDomRef(), "Card header should not be rendered.");
+
+					// Cleanup
+					oCard.destroy();
+					done();
+				}, 100);
+			});
 		});
 
 		QUnit.module("Methods", {
