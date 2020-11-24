@@ -408,4 +408,16 @@ sap.ui.define([
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		oControl.destroy();
 	});
+
+	QUnit.test("Rel attribute derived properly", function(assert) {
+		var oLink = new Link({
+			target: "_blank",
+			href: "https://www.sap.com"
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oLink.getDomRef().rel, "noopener noreferrer", "oLink rel is set based on blank target and " +
+			"cross-origin URL");
+
+		oLink.destroy();
+	});
 });

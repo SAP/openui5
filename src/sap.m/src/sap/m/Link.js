@@ -13,7 +13,7 @@ sap.ui.define([
 	'./LinkRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-		"sap/base/security/URLWhitelist"
+	"sap/base/security/URLWhitelist"
 ],
 function(
 	library,
@@ -111,6 +111,15 @@ function(
 			 * Alternatively, a frame name can be entered. This property is only used when the <code>href</code> property is set.
 			 */
 			target : {type : "string", group : "Behavior", defaultValue : null},
+
+			/**
+			 * Specifies the value of the HTML <code>rel<code> attribute.
+			 *
+			 * <b>Note:</b> A default value of <code>noopener noreferrer<code> is set only to links that have a cross-origin URL
+			 * and a specified <code>target</code> with value other than <code>_self</code>.
+			 * @since 1.60.33
+			 */
+			rel : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
 			 * Determines the width of the link (CSS-size such as % or px). When it is set, this is the exact size.

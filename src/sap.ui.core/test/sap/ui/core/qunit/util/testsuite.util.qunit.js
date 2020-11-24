@@ -127,6 +127,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"jquery.sap.xml": {
 				group: "jQuery plugins"
 			},
+			"jQuery.sap.openWindow": {
+				group: "jQuery plugins"
+			},
 			LabelEnablement: {},
 			Mobile: {},
 			Popup: {

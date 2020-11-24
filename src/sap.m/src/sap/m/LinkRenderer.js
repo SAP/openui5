@@ -2,8 +2,9 @@
  * ${copyright}
  */
 
- sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library'],
-	function(Renderer, LabelEnablement, coreLibrary) {
+ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library',
+		 "jquery.sap.script"],
+	function(Renderer, LabelEnablement, coreLibrary, jQuery) {
 	"use strict";
 
 
@@ -37,6 +38,7 @@
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
 			},
 			sHref = oControl.getHref(),
+			sRel = jQuery.sap.defaultLinkTypes(oControl.getRel(), sHref, oControl.getTarget()),
 			bIsValid = sHref && oControl._isHrefValid(sHref),
 			bEnabled = oControl.getEnabled();
 
@@ -89,6 +91,10 @@
 
 		if (oControl.getTarget()) {
 			oRm.writeAttributeEscaped("target", oControl.getTarget());
+		}
+
+		if (sRel) {
+			oRm.writeAttributeEscaped("rel", sRel);
 		}
 
 		if (oControl.getWidth()) {
