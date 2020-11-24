@@ -11,7 +11,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"values": {
 							"data": {
 								"request": {
-									"url": "test-resources/sap/ui/integration/qunit/designtime/editor/cards/withDesigntime/1stringWithRequestValues.json"
+									"url": "./1stringWithRequestValues.json"
 								},
 								"path": "/"
 							},

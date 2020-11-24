@@ -23,7 +23,7 @@
 		"type": "AdaptiveCard",
 		"data": {
 			"request": {
-				"url": "./samples/adaptive/data-json.json"
+				"url": "./data-json.json"
 			}
 		},
 		"header": {

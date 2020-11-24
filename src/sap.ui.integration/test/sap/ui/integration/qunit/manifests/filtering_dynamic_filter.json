@@ -15,7 +15,7 @@
 				"availability": {
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/dynamic_filter_fake_response.json"
+							"url": "./dynamic_filter_fake_response.json"
 						},
 						"path": "/d/Availability"
 					},
@@ -35,7 +35,7 @@
 		},
 		"data": {
 			"request": {
-				"url": "test-resources/sap/ui/integration/qunit/manifests/items_{filters>/availability/value}.json"
+				"url": "./items_{filters>/availability/value}.json"
 			}
 		},
 		"type": "List",

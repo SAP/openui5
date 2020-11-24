@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Card</title>
+	<script type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-libs="sap.m, sap.f, sap.ui.integration"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-theme="sap_fiori_3"
+			data-sap-ui-language="en">
+	</script>
+
+	<script id="myXml" type="text/xmldata">
+			<mvc:View xmlns:mvc="sap.ui.core.mvc"
+			 			xmlns="sap.m"
+			 			xmlns:f="sap.f"
+			 			xmlns:card="sap.ui.integration.widgets"
+			 			controllerName="myController"
+			 			displayBlock="true">
+				<App>
+					<Page title="Cards">
+						<f:GridContainer>
+							<card:Card baseUrl="./bundle/"
+										manifest="./bundle/manifestWithData.json">
+								<card:layoutData>
+									<f:GridContainerItemLayoutData columns="4" />
+								</card:layoutData>
+							</card:Card>
+						</f:GridContainer>
+						<f:GridContainer>
+							<card:Card baseUrl="./bundle/"
+										manifest="./bundle/manifest.json">
+								<card:layoutData>
+									<f:GridContainerItemLayoutData columns="4" />
+								</card:layoutData>
+							</card:Card>
+						</f:GridContainer>
+					</Page>
+				</App>
+			</mvc:View>
+		</script>
+
+	<script>
+		sap.ui.controller("myController", {
+			onInit: function() {
+
+			}
+		});
+		sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
+	</script>
+</head>
+<body id="content" class="sapUiBody">
+</body>
+</html>

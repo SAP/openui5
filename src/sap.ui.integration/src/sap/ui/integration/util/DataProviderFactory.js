@@ -82,6 +82,7 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, Ex
 		}
 
 		oConfig = {
+			"card": oCard,
 			"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings, oCard.getBindingNamespaces())
 		};
 

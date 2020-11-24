@@ -96,7 +96,13 @@ sap.ui.define([
 				Log.error("To specify dataType property in the Request Configuration, first set allowCustomDataType to 'true'.");
 			}
 
-			var vData = oRequestConfig.parameters;
+			var vData = oRequestConfig.parameters,
+				oCard = this.getCard(),
+				sUrl = oRequestConfig.url;
+
+			if (oCard && !sUrl.startsWith("/")) {
+				sUrl = oCard.getRuntimeUrl(oRequestConfig.url);
+			}
 
 			// if not 'application/x-www-form-urlencoded', data has to be serialized manually
 			if (this._hasHeader(oRequestConfig, "Content-Type", "application/json")) {
@@ -105,7 +111,7 @@ sap.ui.define([
 
 			var oRequest = {
 				"mode": oRequestConfig.mode || "cors",
-				"url": oRequestConfig.url,
+				"url": sUrl,
 				"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
 				"dataType": (this.getAllowCustomDataType() && oRequestConfig.dataType) || "json",
 				"data": vData,

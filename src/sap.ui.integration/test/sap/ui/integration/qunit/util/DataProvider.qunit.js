@@ -1,12 +1,14 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/widgets/Card"
 ], function (
+	Core,
 	DataProviderFactory,
 	ServiceDataProvider,
 	DataProvider,
@@ -448,6 +450,72 @@ sap.ui.define([
 
 		// Act
 		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.module("RequestDataProvider - Resolve Relative Url", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/manifests/"
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("Resolve relative url", function (assert) {
+
+		var done = assert.async();
+
+		// Arrange
+		this.oCard.attachEventOnce("_ready", function () {
+
+			Core.applyChanges();
+
+			assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, 8, "the data is resolved correctly");
+
+			done();
+
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "card1"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "List Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./relativeData.json"
+						}
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"value": "{Name}"
+						},
+						"description": {
+							"value": "{Description}"
+						},
+						"highlight": "{highlight}"
+					}
+				}
+			}
+		});
+
+		this.oCard.placeAt("qunit-fixture");
 	});
 
 	QUnit.module("ServiceDataProvider", {

@@ -1050,8 +1050,21 @@ sap.ui.define([
 					}
 				},
 				mSamples = new Map([
+					["", "resources/sample/card/"],
+
+					["//some.json", "//some.json"],
+
+					["./", "resources/sample/card/./"],
+					["./images/Avatar.png", "resources/sample/card/./images/Avatar.png"],
+
 					["/", "resources/sample/card/"],
-					["/images/Avatar.png", "resources/sample/card/images/Avatar.png"]
+					["/some.json", "resources/sample/card/some.json"],
+
+					["http://sap.com", "http://sap.com"],
+					["https://sap.com", "https://sap.com"],
+
+					["../some.json", "resources/sample/card/../some.json"],
+					["some.json", "resources/sample/card/some.json"]
 				]);
 
 			oCard.attachManifestReady(function () {

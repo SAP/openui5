@@ -32,7 +32,7 @@ sap.ui.define([
 				sMetadataUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/localService/SEPMRA_PROD_MAN/metadata.xml");
 
 			oMockServer = new MockServer({
-				rootUri: "./SEPMRA_PROD_MAN/"
+				rootUri: "/SEPMRA_PROD_MAN/"
 			});
 
 			// simulate all requests using mock data

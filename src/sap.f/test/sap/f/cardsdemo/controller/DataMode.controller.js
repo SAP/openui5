@@ -7,6 +7,7 @@ sap.ui.define([
 	var oCardManifest = {
 		"_version": "1.8.0",
 		"sap.app": {
+			"id": "dataMode1",
 			"type": "card",
 			"i18n": "i18n/i18n.properties"
 		},
@@ -23,7 +24,7 @@ sap.ui.define([
 				"type": "Numeric",
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/kpi.json"
+						"url": "../kpi.json"
 					},
 					"path": "/kpiInfos/kpi"
 				},

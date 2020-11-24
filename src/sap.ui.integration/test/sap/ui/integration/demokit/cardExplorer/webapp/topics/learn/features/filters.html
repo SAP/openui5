@@ -238,7 +238,7 @@
 		},
 		"data": {
 			"request": {
-				"url": "./SEPMRA_PROD_MAN/SEPMRA_C_PD_Product",
+				"url": "/SEPMRA_PROD_MAN/SEPMRA_C_PD_Product",
 				"parameters": {
 					"$filter": "{= ${filters>/productCategory/value} !== 'all' ? 'ProductCategory eq ' + ${filters>/productCategory/value} + ' and ' : ''}AverageRatingValue gt 3",
 					"$orderby": "AverageRatingValue desc",
