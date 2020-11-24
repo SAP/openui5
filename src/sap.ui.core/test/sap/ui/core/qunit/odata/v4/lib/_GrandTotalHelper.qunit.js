@@ -107,10 +107,10 @@ sap.ui.define([
 			},
 			oGrandTotalRow = {
 				"@odata.id" : null,
-				UI5grand__SalesAmountSum : "351",
-				"UI5grand__SalesAmountSum@odata.type" : "#Decimal",
-				UI5grand__SalesNumber : 0,
-				"UI5grand__SalesNumber@odata.type" : "#Decimal"
+				SalesAmountSum : "351",
+				"SalesAmountSum@odata.type" : "#Decimal",
+				SalesNumber : 0,
+				"SalesNumber@odata.type" : "#Decimal"
 			},
 			fnHandleResponse = oFirstLevelCache.handleResponse,
 			oResult = bCount
@@ -143,13 +143,7 @@ sap.ui.define([
 			assert.notOk("@odata.count" in oResult, "@odata.count");
 		}
 		assert.strictEqual(oResult.value.length, 2, "data still includes grand total row");
-		assert.deepEqual(oResult.value[0], {
-			"@odata.id" : null,
-			SalesAmountSum : "351",
-			"SalesAmountSum@odata.type" : "#Decimal",
-			SalesNumber : 0,
-			"SalesNumber@odata.type": "#Decimal"
-		});
+		assert.strictEqual(oResult.value[0], oGrandTotalRow);
 		assert.strictEqual(oResult.value[1], oDataRow);
 	});
 });

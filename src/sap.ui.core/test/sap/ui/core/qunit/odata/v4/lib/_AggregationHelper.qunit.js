@@ -109,8 +109,8 @@ sap.ui.define([
 				BillToParty : {}
 			}
 		},
-		sApply : "concat(aggregate(Amount with average as UI5grand__Amount,Currency"
-			+ ",GrossAmount with countdistinct as UI5grand__GrossAmountCount)"
+		sApply : "concat(aggregate(Amount with average as Amount,Currency"
+			+ ",GrossAmount with countdistinct as GrossAmountCount)"
 			+ ",groupby((BillToParty),aggregate(Amount with average as Amount,Currency"
 			+ ",GrossAmount with countdistinct as GrossAmountCount"
 			+ ",NetAmount as NetAmountAggregate)))"
@@ -134,7 +134,7 @@ sap.ui.define([
 				BillToParty : {}
 			}
 		},
-		sApply : "concat(aggregate(Name as UI5grand__Alias,GrossAmount,Currency,NetAmount)"
+		sApply : "concat(aggregate(Name as Alias,GrossAmount,Currency,NetAmount)"
 			+ ",groupby((BillToParty),aggregate(Name as Alias,GrossAmount,Currency,NetAmount)))"
 		}, {
 			oAggregation : {
@@ -264,7 +264,7 @@ sap.ui.define([
 			}
 		},
 		iLevel : 1, // include grandTotal
-		sApply : "concat(aggregate(SalesNumber with sum as UI5grand__SalesNumberSum)"
+		sApply : "concat(aggregate(SalesNumber with sum as SalesNumberSum)"
 			+ ",groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum)))"
 	}, {
 		oAggregation : {

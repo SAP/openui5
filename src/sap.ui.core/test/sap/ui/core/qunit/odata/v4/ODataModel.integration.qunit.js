@@ -17032,15 +17032,15 @@ sap.ui.define([
 </t:Table>';
 
 		this.expectRequest("BusinessPartners?$apply=concat("
-				+ "aggregate(SalesAmount with sum as UI5grand__SalesAmountSum,Currency)"
+				+ "aggregate(SalesAmount with sum as SalesAmountSum,Currency)"
 				+ ",groupby((Region)"
 				+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency,SalesNumber))"
 				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)/top(4))", {
 				value : [{
 						Currency : "EUR",
-						UI5grand__SalesAmountSum : 351,
+						SalesAmountSum : 351,
 						//TODO this should be used by auto type detection
-						"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
+						"SalesAmountSum@odata.type" : "#Decimal"
 					}, {
 						Currency : "EUR",
 						Region : "Z",

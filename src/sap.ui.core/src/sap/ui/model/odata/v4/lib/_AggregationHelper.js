@@ -37,21 +37,20 @@ sap.ui.define([
 	 * @param {object} oAggregation - An object holding the information needed for data aggregation
 	 * @param {string[]} aGroupBy - groupby((???),...) content
 	 * @param {string[]} aAggregate - aggregate(???) content
-	 * @param {string} sPrefix4Alias - A prefix in case an alias is used ("as")
 	 * @param {string} sAlias - An aggregatable property name/alias
 	 * @param {number} i - Index of sAlias in aAliases
 	 * @param {string[]} aAliases - Array of all applicable aggregatable property names/aliases
 	 */
-	function aggregate(oAggregation, aGroupBy, aAggregate, sPrefix4Alias, sAlias, i, aAliases) {
+	function aggregate(oAggregation, aGroupBy, aAggregate, sAlias, i, aAliases) {
 		var oDetails = oAggregation.aggregate[sAlias],
 			sAggregate = oDetails.name || sAlias,
 			sUnit = oDetails.unit,
 			sWith = oDetails.with;
 
 		if (sWith) {
-			sAggregate += " with " + sWith + " as " + sPrefix4Alias + sAlias;
+			sAggregate += " with " + sWith + " as " + sAlias;
 		} else if (oDetails.name) {
-			sAggregate += " as " + sPrefix4Alias + sAlias;
+			sAggregate += " as " + sAlias;
 		}
 		aAggregate.push(sAggregate);
 
@@ -273,7 +272,7 @@ sap.ui.define([
 				aAliases.filter(function (sAlias) {
 					return oAggregation.aggregate[sAlias].grandTotal;
 				}).forEach(
-					aggregate.bind(null, oAggregation, [], aGrandTotalAggregate, "UI5grand__")
+					aggregate.bind(null, oAggregation, [], aGrandTotalAggregate)
 				);
 			}
 			if (!bFollowUp) {
@@ -285,7 +284,7 @@ sap.ui.define([
 			aAliases.filter(function (sAlias) {
 				return bIsLeafLevel || oAggregation.aggregate[sAlias].subtotals;
 			}).forEach(
-				aggregate.bind(null, oAggregation, aGroupBy, aSubtotalsAggregate, "")
+				aggregate.bind(null, oAggregation, aGroupBy, aSubtotalsAggregate)
 			);
 			if (aSubtotalsAggregate.length) {
 				sApply = "aggregate(" + aSubtotalsAggregate.join(",") + ")";

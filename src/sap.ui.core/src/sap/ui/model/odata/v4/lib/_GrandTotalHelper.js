@@ -88,15 +88,9 @@ sap.ui.define([
 				} else if (oResult.value.length > 1 && "UI5__count" in oResult.value[1]) {
 					handleCount(1);
 				}
-				if (iStart === 0) { // grand total row: rename measures, add null values, annotate
+				if (iStart === 0) { // grand total row: add null values, annotate
 					_AggregationHelper
 						.setAnnotations(oGrandTotalElement, true, true, 0, aAllProperties);
-					Object.keys(oGrandTotalElement).forEach(function (sKey) {
-						if (sKey.startsWith("UI5grand__")) {
-							oGrandTotalElement[sKey.slice(10)] = oGrandTotalElement[sKey];
-							delete oGrandTotalElement[sKey];
-						}
-					});
 				}
 
 				fnHandleResponse.call(this, iStart, iEnd, oResult, mTypeForMetaPath);
