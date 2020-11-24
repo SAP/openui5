@@ -166,10 +166,9 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		// Status us 4XX or 5XX - parse body
 		this._parseBody(/* ref: */ aMessages, oResponse, mRequestInfo);
 	} else {
-		// Status neither ok nor error - I don't know what to do
-		Log.warning(
-			"No rule to parse OData response with status " + oResponse.statusCode + " for messages"
-		);
+		// Status neither ok nor error, may happen if no network connection is available (some
+		// browsers use status code 0 in that case)
+		this._addGenericError(aMessages, mRequestInfo);
 	}
 
 	this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities,
