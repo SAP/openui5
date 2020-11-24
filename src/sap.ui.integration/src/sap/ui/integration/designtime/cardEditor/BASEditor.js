@@ -202,11 +202,7 @@ sap.ui.define([
 						}
 
 						if (oViz) {
-							if (oMetaItem.hasOwnProperty("visualization")) {
-								oItem.visualization = oViz;
-							} else {
-								delete oItem.visualization;
-							}
+							oItem.visualization = oViz;
 							oViz = null;
 						}
 						oItem.__key = sKey;

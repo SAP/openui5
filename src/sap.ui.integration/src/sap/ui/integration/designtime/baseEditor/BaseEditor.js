@@ -491,7 +491,7 @@ sap.ui.define([
 	}
 
 	BaseEditor.prototype.setDesigntimeMetadata = function (oDesigntimeMetadata, bIsInitialMetadata) {
-		var oNextMetadata = deepClone(oDesigntimeMetadata);
+		var oNextMetadata = deepClone(oDesigntimeMetadata, 15);
 		if (!deepEqual(oNextMetadata, this.getDesigntimeMetadata())) {
 			this.setProperty("designtimeMetadata", oNextMetadata);
 			this._oDesigntimeMetadataModel.setData(oNextMetadata);
