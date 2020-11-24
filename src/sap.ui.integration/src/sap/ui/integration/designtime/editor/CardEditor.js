@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/core/Icon",
 	"sap/m/ResponsivePopover",
+	"sap/m/Popover",
 	"sap/m/Text",
 	"sap/base/Log",
 	"sap/ui/core/Popup",
@@ -38,6 +39,7 @@ sap.ui.define([
 	Title,
 	Icon,
 	RPopover,
+	Popover,
 	Text,
 	Log,
 	Popup,
@@ -48,6 +50,23 @@ sap.ui.define([
 	Parameters
 ) {
 	"use strict";
+
+
+	//workaround issue of orientation change fired that reapplies position and closes the popup
+	//issue is not predictable and depends on host environment. Solution - apply all, simply do not close for position changes.
+	var popoverInit = Popover.prototype.init;
+	Popover.prototype.init = function () {
+		popoverInit.apply(this, arguments);
+		var fn = this.oPopup._applyPosition,
+			that = this;
+		this.oPopup._applyPosition = function () {
+			var fnClose = that.close;
+			that.close = function () { };
+			fn.apply(this, arguments);
+			that.close = fnClose;
+		};
+	};
+
 	function getHigherZIndex(source) {
 		if (source && source.nodeType !== 1) {
 			return 0;
@@ -853,6 +872,9 @@ sap.ui.define([
 	 * @param {BaseField} oField
 	 */
 	CardEditor.prototype._addValueListModel = function (oConfig, oField, bIgnore) {
+		if (oConfig.enum && oConfig.enum.length > 0 && oConfig.enum[0] !== "") {
+			oConfig.enum = [""].concat(oConfig.enum);
+		}
 		if (oConfig.values && oConfig.values.data && this._oProviderCard && this._oProviderCard._oDataProviderFactory) {
 			var oValueModel = new JSONModel({}),
 				oPromise = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data).getData();
@@ -862,6 +884,7 @@ sap.ui.define([
 					oConfig._values = [];
 					return;
 				}
+				oData = [{}].concat(oData);
 				oConfig._values = oData;
 				oValueModel.setData(oData);
 				oValueModel.checkUpdate(true);
@@ -1003,8 +1026,8 @@ sap.ui.define([
 	CardEditor.prototype._getCurrentLanguageSpecificText = function (sKey) {
 		var sLanguage = this._language;
 		if (this._oTranslationBundle) {
-			var sText = this._oTranslationBundle.getText(sKey);
-			if (sText === sKey) {
+			var sText = this._oTranslationBundle.getText(sKey, [], true);
+			if (sText === undefined) {
 				return "";
 			}
 			return sText;

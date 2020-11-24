@@ -93,22 +93,82 @@ sap.ui.define([
 				this.oBASEditor.setJson(this.oBaseJson);
 			}.bind(this));
 		});
-/*
+
 		QUnit.test("Not Exist dt file defined in manifest", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oBASEditor.attachEvent("createConfiguration", function (oEvent) {
+				this.oBASEditor.attachEvent("error", function (oEvent) {
 					var mParameters = oEvent.getParameters();
 					assert.ok(!this.oBASEditor.isReady(), "BAS Card Editor is not ready");
-					assert.ok(mParameters.file === "dt/configuration.js", "DT file path/name correct");
-					var sDesigntime = this.oBASEditor.getConfigurationTemplate();
-					assert.ok(mParameters.content === sDesigntime, "DT file content correct");
+					assert.ok(mParameters.name === "Designtime Error", "Error name correct");
+					assert.ok(mParameters.detail.message.indexOf("failed to load") === 0, "Error message correct");
 					resolve();
 				}.bind(this));
 				this.oBASEditor.setBaseUrl(sBaseUrl);
 				this.oBaseJson = getBaseJson("NotExist");
 				this.oBASEditor.setJson(this.oBaseJson);
 			}.bind(this));
-		});*/
+		});
+
+		QUnit.test("Correct dt file defined in manifest", function (assert) {
+			return new Promise(function (resolve, reject) {
+				this.oBASEditor.attachEvent("configurationChange", function (oEvent) {
+					var mParameters = oEvent.getParameters();
+					assert.deepEqual(mParameters.configuration.form.items.myParameter1, {
+						"manifestpath": "/sap.card/configuration/parameters/myParameter1/value",
+						"type": "string",
+						"defaultValue": "myParameter1DefaultValue"
+					}, "myParameter1 configuration correct");
+					assert.deepEqual(mParameters.configuration.form.items.myParameter2, {
+						"manifestpath": "/sap.card/configuration/parameters/myParameter2/value",
+						"type": "int",
+						"defaultValue": 6
+					}, "myParameter2 configuration correct");
+					resolve();
+				});
+				this.oBASEditor.setBaseUrl(sBaseUrl);
+				this.oBaseJson = getBaseJson("designtime/dt");
+				this.oBASEditor.setJson(this.oBaseJson);
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("General Test", {
+		beforeEach: function() {
+			this.oBASEditor = new BASEditor();
+			this.oBASEditor.setBaseUrl(sBaseUrl);
+			this.oBaseJson = getBaseJson("designtime/dt");
+			this.oBASEditor.setJson(this.oBaseJson);
+		},
+		afterEach: function() {
+			this.oBASEditor.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Correct dt after update DesigntimeMetadata", function (assert) {
+			var fnDone = assert.async();
+			return this.oBASEditor.ready().then(function () {
+				setTimeout(function () {
+					this.oBASEditor.attachEvent("configurationChange", function (oEvent) {
+						var mParameters = oEvent.getParameters();
+						assert.deepEqual(mParameters.configuration.form.items.myParameter1, {
+							"manifestpath": "/sap.card/configuration/parameters/myParameter1/value",
+							"type": "string",
+							"defaultValue": "myParameter1DefaultValue",
+							"label": "new Label"
+						}, "myParameter1 configuration correct");
+						assert.deepEqual(mParameters.configuration.form.items.myParameter2, {
+							"manifestpath": "/sap.card/configuration/parameters/myParameter2/value",
+							"type": "int",
+							"defaultValue": 6
+						}, "myParameter2 configuration correct");
+						fnDone();
+					});
+					var oConfiguration = this.oBASEditor.getConfiguration();
+					oConfiguration.form.items.myParameter1.label = "new Label";
+					this.oBASEditor.updateDesigntimeMetadata(oConfiguration);
+				}.bind(this), 1000);
+			}.bind(this));
+		});
 	});
 
 	QUnit.done(function () {

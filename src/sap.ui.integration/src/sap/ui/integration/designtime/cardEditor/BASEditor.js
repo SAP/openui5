@@ -107,31 +107,19 @@ sap.ui.define([
 				for (var n in oCopyConfig.form.items) {
 					oItem = merge({}, oCopyConfig.form.items[n]);
 					if (!mParameters[n]) {
-						if (oItem.type === "group" && mParametersInDesigntime[n]) {
-							mParameters[n] = {};
-						} else if (oItem.manifestpath && !oItem.manifestpath.startsWith("/sap.card/configuration/parameters")) {
-							var sPath = oItem.manifestpath;
-							if (sPath.startsWith("/")) {
-								sPath = sPath.substring(1);
-							}
-							/*
-							var aPaths = sPath.split("/");
-							var vValue = ObjectPath.get(aPaths, oJson) || oItem.defaultValue || "";
-							if (oItem.visualization && oItem.visualization.type === "IconSelect") {
-								mParameters[n] = {
-									value: {
-										src: vValue
-									}
-								};
-							} else {
+						if (mParametersInDesigntime[n]) {
+							if (oItem.type === "group") {
+								mParameters[n] = {};
+							} else if (oItem.manifestpath && !oItem.manifestpath.startsWith("/sap.card/configuration/parameters")) {
+								var sPath = oItem.manifestpath;
+								if (sPath.startsWith("/")) {
+									sPath = sPath.substring(1);
+								}
+								var vValue = ObjectPath.get(sPath.split("/"), oJson) || oItem.defaultValue || "";
 								mParameters[n] = {
 									value: vValue
 								};
-							}*/
-							var vValue = ObjectPath.get(sPath.split("/"), oJson) || oItem.defaultValue || "";
-							mParameters[n] = {
-								value: vValue
-							};
+							}
 						} else {
 							//delete the item because it is not part of parameters anymore
 							delete oCopyConfig.form.items[n];
@@ -214,11 +202,7 @@ sap.ui.define([
 						}
 
 						if (oViz) {
-							if (oMetaItem.hasOwnProperty("visualization")) {
-								oItem.visualization = oViz;
-							} else {
-								delete oItem.visualization;
-							}
+							oItem.visualization = oViz;
 							oViz = null;
 						}
 						oItem.__key = sKey;
@@ -363,8 +347,11 @@ sap.ui.define([
 		return oConfig;
 	};
 
-	BASEditor.prototype._generateMetadataFromJSConfig = function () {
+	BASEditor.prototype._generateMetadataFromJSConfig = function (oDesigntimeJSConfig) {
 		var oMetadata = {};
+		if (oDesigntimeJSConfig) {
+			this._oDesigntimeJSConfig = merge(this._oDesigntimeJSConfig, oDesigntimeJSConfig);
+		}
 		if (this._oDesigntimeJSConfig) {
 			var mItems = this._oDesigntimeJSConfig.form.items;
 			var i = 0;
@@ -503,7 +490,7 @@ sap.ui.define([
 							var oDesigntime = new DesigntimeClass();
 							that._oDesigntimeJSConfig = oDesigntime.getSettings();
 							that._fnDesigntime = DesigntimeClass;
-							var oMetadata = that._generateMetadataFromJSConfig(that._oDesigntimeJSConfig);
+							var oMetadata = that._generateMetadataFromJSConfig();
 							DesigntimeClass = oDesigntime.getMetadata().getClass();
 							fnResolve(oMetadata);
 						}

@@ -491,7 +491,7 @@ sap.ui.define([
 	}
 
 	BaseEditor.prototype.setDesigntimeMetadata = function (oDesigntimeMetadata, bIsInitialMetadata) {
-		var oNextMetadata = deepClone(oDesigntimeMetadata);
+		var oNextMetadata = deepClone(oDesigntimeMetadata, 15);
 		if (!deepEqual(oNextMetadata, this.getDesigntimeMetadata())) {
 			this.setProperty("designtimeMetadata", oNextMetadata);
 			this._oDesigntimeMetadataModel.setData(oNextMetadata);
@@ -700,6 +700,13 @@ sap.ui.define([
 		var oModel = new JSONModel();
 		oModel.setDefaultBindingMode("OneWay");
 		return oModel;
+	};
+
+	BaseEditor.prototype.getI18nProperty = function (sName, aPlaceholders) {
+		if (this.getModel("i18n")) {
+			return this.getModel("i18n").getResourceBundle().getText(sName, aPlaceholders);
+		}
+		return sName;
 	};
 
 	/**

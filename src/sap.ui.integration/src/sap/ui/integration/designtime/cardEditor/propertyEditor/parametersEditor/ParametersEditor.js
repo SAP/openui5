@@ -87,7 +87,7 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: "Description",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.DESCRIPTION"),
 				path: "description",
 				value: sDescription,
 				allowBindings: true,
@@ -96,7 +96,7 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: this.getI18nProperty("BASE_EDITOR.MAP.MANIFESTPATH"),
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.MANIFESTPATH"),
 				path: "manifestpath",
 				value: sManifestpath,
 				allowBindings: true,
@@ -105,7 +105,7 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: "Visible in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISIBLE"),
 				path: "visible",
 				value: sVisible,
 				allowBindings: true,
@@ -113,7 +113,7 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: "Editable in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.EDITABLE"),
 				path: "editable",
 				allowBindings: true,
 				value: sEditable,
@@ -123,7 +123,7 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: "Translatable in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.TRANSLATABLE"),
 				path: "translatable",
 				value: bTranslatable,
 				enabled: true,
@@ -131,7 +131,7 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: "Allow Dynamic Values in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.ALLOWDYNAMICVALUES"),
 				path: "allowDynamicValues",
 				allowBindings: true,
 				enabled: true,
@@ -141,7 +141,7 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: "Allow Settings in Configuration",
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.ALLOWSETTINGS"),
 				path: "allowSettings",
 				allowBindings: true,
 				value: bAllowSettings,
@@ -150,12 +150,12 @@ sap.ui.define([
 				itemKey: sKey
 			},
 			{
-				label: this.getI18nProperty("BASE_EDITOR.MAP.VISUALIZATION"),
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISUALIZATION"),
 				path: "visualization",
 				allowBindings: true,
 				value: oVisualization,
 				visible: sType !== "group",
-				placeholder: this.getI18nProperty("BASE_EDITOR.MAP.VISUALIZATION.PLACEHOLDER"),
+				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISUALIZATION.PLACEHOLDER"),
 				type: "textArea",
 				itemKey: sKey
 			}
