@@ -370,22 +370,40 @@ sap.ui.define([
 	};
 
 	/**
-	* Returns the value for the property with the given <code>sPropertyName</code>
-	*
-	* @param {string} sPath the path to the property
-	* @param {sap.ui.model.Context} [oContext=null] the context which will be used to retrieve the property
-	* @return {any} the value of the property
-	* @public
-	*/
+	 * Returns the value for the property with the given path and context.
+	 *
+	 * @param {string} sPath
+	 *   The path to the property
+	 * @param {sap.ui.model.Context} [oContext=null]
+	 *   The context which will be used to retrieve the property
+	 * @return {any}
+	 *   The value of the property. If the property is not found, <code>null</code> or
+	 *   <code>undefined</code> is returned.
+	 * @public
+	 */
 	JSONModel.prototype.getProperty = function(sPath, oContext) {
 		return this._getObject(sPath, oContext);
 
 	};
 
 	/**
+	 * Returns the value for the property with the given path and context.
+	 *
 	 * @param {string} sPath
+	 *   The path to the property
 	 * @param {object|sap.ui.model.Context} [oContext]
-	 * @returns {any} the node of the specified path/context
+	 *   The context or a JSON object
+	 * @returns {any}
+	 *   The value of the property. If the property path derived from the given path and context is
+	 *   absolute (starts with a "/") but does not lead to a property in the data structure,
+	 *   <code>undefined</code> is returned. If the property path is not absolute, <code>null</code>
+	 *   is returned.
+	 *
+	 *   Note: If a JSON object is given instead of a context, the value of the property is taken
+	 *   from the JSON object. If the given path does not lead to a property, <code>undefined</code>
+	 *   is returned. If the given path represents a falsy JavaScript value, the given JSON object
+	 *   is returned.
+	 * @private
 	 */
 	JSONModel.prototype._getObject = function (sPath, oContext) {
 		var oNode = this.isLegacySyntax() ? this.oData : null;
