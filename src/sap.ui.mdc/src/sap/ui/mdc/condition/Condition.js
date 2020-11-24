@@ -36,6 +36,24 @@ sap.ui.define([
 		var Condition = {
 
 				/**
+				 * Condition object type.
+				 *
+				 * @type {sap.ui.mdc.condition.ConditionObject}
+				 * @static
+				 * @constant
+				 * @typedef {object} sap.ui.mdc.condition.ConditionObject
+				 * @property {string} operator Operator of the condition
+				 * @property {any[]} values Array of values of the condition. Depending on the <code>operator</code>, this contains one or more entries
+				 * @property {object} [inParameters] In parameters of the condition. For each field path, a value is stored
+				 * @property {object} [outParameters] Out parameters of the condition. For each field path, a value is stored
+				 * @property {boolean} [isEmpty] If set, the condition is empty (used as dummy condition in <code>DefineConditionPanel</code>)
+				 * @property {sap.ui.mdc.util.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the <code>DefineConditionPanel</code> control
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * MDC_PUBLIC_CANDIDATE
+				 */
+
+				/**
 				 * Creates a condition instance for a strict equal condition.
 				 *
 				 * This is a "strict equal" condition with key and description. It is used for entries selected in the value help
@@ -45,7 +63,7 @@ sap.ui.define([
 				 * @param {string} sDescription Description of the operator
 				 * @param {object} oInParameters In parameters of the condition
 				 * @param {object} oOutParameters Out parameters of the condition
-				 * @returns {object} The new condition object with the given operator EQ along with sKey and sDescription as aValues
+				 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the EQ operator along with <code>sKey</code> and <code>sDescription</code> as <code>aValues</code>
 				 * @private
 				 * @ui5-restricted sap.fe
 				 * MDC_PUBLIC_CANDIDATE
@@ -69,8 +87,8 @@ sap.ui.define([
 				 * @param {any[]} aValues Array of values for the condition
 				 * @param {object} oInParameters In parameters of the condition
 				 * @param {object} oOutParameters Out parameters of the condition
-				 * @param {sap.ui.mdc.enum.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by field help) and not shown in <code>DefineConditionPanel</code> control
-				 * @returns {object} The new condition object with the given operator and values
+				 * @param {sap.ui.mdc.enum.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the <code>DefineConditionPanel</code> control
+				 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the given operator and values
 				 * @private
 				 * @ui5-restricted sap.fe
 				 * MDC_PUBLIC_CANDIDATE

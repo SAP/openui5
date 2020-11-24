@@ -924,7 +924,7 @@ function(
 				 *
 				 * Modifies the <code>isEmpty</code> parameter of the conditions.
 				 *
-				 * @param {object[]} aConditions Conditions
+				 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Conditions
 				 *
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
@@ -947,7 +947,7 @@ function(
 				/**
 				 * Updates the value range to have the correct number of entries for an array of conditions
 				 *
-				 * @param {object[]} aConditions Conditions
+				 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Conditions
 				 * @since: 1.75.0
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
@@ -965,9 +965,9 @@ function(
 				},
 
 				/**
-				 * updates the value range to have the right number of entries for one condition
+				 * Updates the value range to have the right number of entries for one condition.
 				 *
-				 * @param {object} oCondition condition
+				 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 				 * @since: 1.75.0
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
@@ -1010,8 +1010,8 @@ function(
 				 *
 				 * <b>Note:</b> If two or more identical conditions are in the array, the index is the first hit.
 				 *
-				 * @param {object} oCondition Condition to check
-				 * @param {object[]} aConditions Array of conditions
+				 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition to check
+				 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Array of conditions
 				 * @returns {int} Index of the condition, -1 if not found
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
@@ -1039,9 +1039,9 @@ function(
 				 * For EQ conditions, only the key part of the values is compared as the text part
 				 * might be different (if the translation is missing, for example).
 				 *
-				 * @param {object} oCondition1 Condition to check
-				 * @param {object} oCondition2 Condition to check
-				 * @returns {boolean} True if conditions are equal
+				 * @param {sap.ui.mdc.condition.ConditionObject} oCondition1 Condition to check
+				 * @param {sap.ui.mdc.condition.ConditionObject} oCondition2 Condition to check
+				 * @returns {boolean} <code>true</code> if conditions are equal
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.76.0
@@ -1068,9 +1068,9 @@ function(
 				 * For EQ conditions only the key part of the values is compared as the text part
 				 * might be different (translation missing...)
 				 *
-				 * @param {object[]} aConditions1 Conditions to check
-				 * @param {object[]} aConditions2 Conditions to check
-				 * @returns {boolean} True if conditions are equal
+				 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions1 Conditions to check
+				 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions2 Conditions to check
+				 * @returns {boolean} <code>true</code> if conditions are equal
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.76.0
@@ -1097,7 +1097,7 @@ function(
 				 *
 				 * For EQ set <code>validated</code> flag if a description is given.
 				 *
-				 * @param {object} oCondition condition to check
+				 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition to check
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.78.0
