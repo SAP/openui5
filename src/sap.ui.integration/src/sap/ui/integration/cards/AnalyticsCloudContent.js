@@ -81,7 +81,7 @@ sap.ui.define([
 	/**
 	 * @inheritdoc
 	 */
-	AnalyticsCloudContent.prototype.loadDependencies = function () {
+	AnalyticsCloudContent.prototype.loadDependencies = function (oCardManifest) {
 		return this._loadHighcharts();
 	};
 

@@ -6,16 +6,6 @@ sap.ui.define([
 		"sap/ui/core/library",
 		"sap/ui/dom/includeScript",
 		"sap/ui/integration/cards/BaseContent",
-		"sap/ui/integration/thirdparty/adaptivecards",
-		"sap/ui/integration/thirdparty/adaptivecards-templating",
-		"sap/ui/integration/thirdparty/markdown-it",
-		"sap/ui/integration/cards/adaptivecards/elements/UI5InputText",
-		"sap/ui/integration/cards/adaptivecards/elements/UI5InputNumber",
-		"sap/ui/integration/cards/adaptivecards/elements/UI5InputChoiceSet",
-		"sap/ui/integration/cards/adaptivecards/elements/UI5InputTime",
-		"sap/ui/integration/cards/adaptivecards/elements/UI5InputDate",
-		"sap/ui/integration/cards/adaptivecards/elements/UI5InputToggle",
-		"sap/ui/integration/cards/adaptivecards/overwrites/ActionRender",
 		"sap/ui/integration/cards/adaptivecards/elements/hostConfig",
 		"sap/m/VBox",
 		"sap/m/MessageStrip",
@@ -26,10 +16,12 @@ sap.ui.define([
 		"sap/ui/integration/util/LoadingProvider",
 		"sap/ui/Device"
 	],
-	function (library, coreLibrary, includeScript, BaseContent, AdaptiveCards, ACData, Markdown,
-			UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig,
+	function (library, coreLibrary, includeScript, BaseContent, HostConfig,
 			VBox, MessageStrip, HTML, Core, JSONModel, Log, LoadingProvider, Device) {
 		"use strict";
+
+		// lazy dependencies, loaded on demand
+		var AdaptiveCards, ACData, Markdown, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender;
 
 		// shortcut for sap.ui.core.MessageType
 		var MessageType = coreLibrary.MessageType;
@@ -71,13 +63,69 @@ sap.ui.define([
 			this.setComponentsReady(false);
 			this._bAdaptiveCardElementsReady = false;
 			this._setupCardContent();
-			this._setupAdaptiveCardDependency();
-			this._loadDependencies();
 			this._oLoadingProvider = new LoadingProvider();
 		};
 
 		AdaptiveContent.prototype.onAfterRendering = function () {
 			this._renderMSCardContent(this._oCardTemplate || this._oCardConfig);
+		};
+
+		/**
+		 * @override
+		 */
+		AdaptiveContent.prototype.loadDependencies = function (oCardManifest) {
+			this._loadWebcomponents();
+			var aPromises = [];
+
+			// load adaptivecards and modules that depend on it here
+			aPromises.push(new Promise(function (resolve, reject) {
+				sap.ui.require([
+						"sap/ui/integration/thirdparty/adaptivecards",
+						"sap/ui/integration/thirdparty/adaptivecards-templating",
+						"sap/ui/integration/cards/adaptivecards/elements/UI5InputText",
+						"sap/ui/integration/cards/adaptivecards/elements/UI5InputNumber",
+						"sap/ui/integration/cards/adaptivecards/elements/UI5InputChoiceSet",
+						"sap/ui/integration/cards/adaptivecards/elements/UI5InputTime",
+						"sap/ui/integration/cards/adaptivecards/elements/UI5InputDate",
+						"sap/ui/integration/cards/adaptivecards/elements/UI5InputToggle",
+						"sap/ui/integration/cards/adaptivecards/overwrites/ActionRender"
+					], function (
+						_AdaptiveCards,
+						_ACData,
+						_UI5InputText,
+						_UI5InputNumber,
+						_UI5InputChoiceSet,
+						_UI5InputTime,
+						_UI5InputDate,
+						_UI5InputToggle,
+						_ActionRender
+					) {
+						AdaptiveCards = _AdaptiveCards;
+						ACData = _ACData;
+						UI5InputText = _UI5InputText;
+						UI5InputNumber = _UI5InputNumber;
+						UI5InputChoiceSet = _UI5InputChoiceSet;
+						UI5InputTime = _UI5InputTime;
+						UI5InputDate = _UI5InputDate;
+						UI5InputToggle = _UI5InputToggle;
+						ActionRender = _ActionRender;
+						this._setupAdaptiveCardDependency();
+						resolve();
+					}.bind(this), reject);
+				}.bind(this))
+			);
+
+			// load markdown-it if needed
+			if (oCardManifest.get("/sap.card/configuration/enableMarkdown")) {
+				aPromises.push(new Promise(function (resolve, reject) {
+					sap.ui.require(["sap/ui/integration/thirdparty/markdown-it"], function (_Markdown) {
+						Markdown = _Markdown;
+						resolve();
+					}, reject);
+				}));
+			}
+
+			return Promise.all(aPromises);
 		};
 
 		/**
@@ -103,7 +151,7 @@ sap.ui.define([
 		 * Setter for configuring a <code>sap.ui.integration.cards.AdaptiveContent</code>.
 		 *
 		 * @public
-		 * @param {Object} oConfiguration Configuration object used to create the internal list.
+		 * @param {Object} oConfiguration Configuration object used to create Adaptive card.
 		 */
 		AdaptiveContent.prototype.setConfiguration = function (oConfiguration) {
 			this._oCardConfig = oConfiguration;
@@ -435,7 +483,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		AdaptiveContent.prototype._loadDependencies = function () {
+		AdaptiveContent.prototype._loadWebcomponents = function () {
 			// Check weather the WebComponents are already loaded. We don't need to fetch the scripts again
 			if (this.getComponentsReady()) {
 				Log.debug("WebComponents were already loaded");

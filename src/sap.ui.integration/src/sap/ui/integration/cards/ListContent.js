@@ -107,12 +107,12 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ListContent.prototype.loadDependencies = function (oConfiguration) {
-		if (!oConfiguration || !oConfiguration.item || !oConfiguration.item.chart) {
-			return Promise.resolve();
+	ListContent.prototype.loadDependencies = function (oCardManifest) {
+		if (oCardManifest.get("/sap.card/content/item/chart")) {
+			return Microchart.loadDependencies();
 		}
 
-		return Microchart.loadDependencies();
+		return Promise.resolve();
 	};
 
 	/**

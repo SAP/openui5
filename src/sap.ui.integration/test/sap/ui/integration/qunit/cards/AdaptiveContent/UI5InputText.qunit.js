@@ -62,8 +62,6 @@ function (
 		beforeEach: function () {
 			this.oAdaptiveContent = new AdaptiveContent();
 			this.oAdaptiveContent._oCardConfig = oManifest;
-			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oAdaptiveContent.destroy();
@@ -72,67 +70,120 @@ function (
 	});
 
 	QUnit.test("type: Text, isMultiline: false", function (assert) {
-		//Arrange
-		var oTextInput = document.getElementById("TextInput");
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oTextInput = document.getElementById("TextInput");
 
-		//Assert
-		assert.strictEqual(oTextInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
-		assert.ok(oTextInput, "The text input is created");
-		assert.strictEqual(oTextInput.placeholder, "", "The placeholder is not specified");
-		assert.strictEqual(oTextInput.type, "Text", "The input type is text");
-		assert.strictEqual(oTextInput.maxlength, 40, "The maximum length is set.");
-		assert.strictEqual(oTextInput.value, "Some text", "The initial value is correct");
+			//Assert
+			assert.strictEqual(oTextInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
+			assert.ok(oTextInput, "The text input is created");
+			assert.strictEqual(oTextInput.placeholder, "", "The placeholder is not specified");
+			assert.strictEqual(oTextInput.type, "Text", "The input type is text");
+			assert.strictEqual(oTextInput.maxlength, 40, "The maximum length is set.");
+			assert.strictEqual(oTextInput.value, "Some text", "The initial value is correct");
+
+			done();
+		}.bind(this));
 	});
 
 
 	QUnit.test("type: Text, isMultiline: true", function (assert) {
-		//Arrange
-		var oTextArea = document.getElementById("TextArea");
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oTextArea.tagName.toLowerCase(), "ui5-textarea", "ui5-textarea webcomponent is rendered");
-		assert.ok(oTextArea, "The text input is created");
-		assert.strictEqual(oTextArea.placeholder, "Comments", "The placeholder is mapped correctly");
-		assert.strictEqual(oTextArea.maxlength, null, "The maximum length is  not specified.");
-		assert.strictEqual(oTextArea.value, "", "There is no value set initially");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oTextArea = document.getElementById("TextArea");
+
+			//Assert
+			assert.strictEqual(oTextArea.tagName.toLowerCase(), "ui5-textarea", "ui5-textarea webcomponent is rendered");
+			assert.ok(oTextArea, "The text input is created");
+			assert.strictEqual(oTextArea.placeholder, "Comments", "The placeholder is mapped correctly");
+			assert.strictEqual(oTextArea.maxlength, null, "The maximum length is  not specified.");
+			assert.strictEqual(oTextArea.value, "", "There is no value set initially");
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("type: Tel", function (assert) {
-		//Arrange
-		var oTelInput = document.getElementById("TelVal");
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oTelInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
-		assert.ok(oTelInput, "The text input is created");
-		assert.strictEqual(oTelInput.placeholder, "Phone", "The placeholder is mapped correctly");
-		assert.strictEqual(oTelInput.value, "123456789", "The initial value is correct");
-		assert.strictEqual(oTelInput.type, "Tel", "Tel is the type of the input");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oTelInput = document.getElementById("TelVal");
 
+			//Assert
+			assert.strictEqual(oTelInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
+			assert.ok(oTelInput, "The text input is created");
+			assert.strictEqual(oTelInput.placeholder, "Phone", "The placeholder is mapped correctly");
+			assert.strictEqual(oTelInput.value, "123456789", "The initial value is correct");
+			assert.strictEqual(oTelInput.type, "Tel", "Tel is the type of the input");
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("type: Url", function (assert) {
-		//Arrange
-		var oUrlInput = document.getElementById("UrlVal");
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oUrlInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
-		assert.ok(oUrlInput, "The text input is created");
-		assert.strictEqual(oUrlInput.placeholder, "Homepage", "The placeholder is mapped correctly");
-		assert.strictEqual(oUrlInput.value, "https://www.google.com", "The initial value is correct");
-		assert.strictEqual(oUrlInput.type, "URL", "Url is the type of the input");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oUrlInput = document.getElementById("UrlVal");
+
+			//Assert
+			assert.strictEqual(oUrlInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
+			assert.ok(oUrlInput, "The text input is created");
+			assert.strictEqual(oUrlInput.placeholder, "Homepage", "The placeholder is mapped correctly");
+			assert.strictEqual(oUrlInput.value, "https://www.google.com", "The initial value is correct");
+			assert.strictEqual(oUrlInput.type, "URL", "Url is the type of the input");
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("type: Email", function (assert) {
-		//Arrange
-		var oUrlInput = document.getElementById("EmailVal");
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oUrlInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
-		assert.ok(oUrlInput, "The text input is created");
-		assert.strictEqual(oUrlInput.placeholder, "Email", "The placeholder is mapped correctly");
-		assert.strictEqual(oUrlInput.value, "123@gmail.com", "The initial value is correct");
-		assert.strictEqual(oUrlInput.type, "Email", "Email is the type of the input");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oUrlInput = document.getElementById("EmailVal");
+
+			//Assert
+			assert.strictEqual(oUrlInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
+			assert.ok(oUrlInput, "The text input is created");
+			assert.strictEqual(oUrlInput.placeholder, "Email", "The placeholder is mapped correctly");
+			assert.strictEqual(oUrlInput.value, "123@gmail.com", "The initial value is correct");
+			assert.strictEqual(oUrlInput.type, "Email", "Email is the type of the input");
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("internalRender", function (assert) {

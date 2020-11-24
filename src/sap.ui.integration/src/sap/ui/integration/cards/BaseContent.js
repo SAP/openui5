@@ -137,10 +137,10 @@ sap.ui.define([
 
 	/**
 	 * Can be used in subclasses to load lazy dependencies.
-	 * @param {object} oConfiguration The manifest configuration for the content.
+	 * @param {sap.ui.integration.util.Manifest} oCardManifest The card manifest.
 	 * @returns {Promise} A promise that would be resolved in case of successful loading or rejected with error message.
 	 */
-	BaseContent.prototype.loadDependencies = function (oConfiguration) {
+	BaseContent.prototype.loadDependencies = function (oCardManifest) {
 		return Promise.resolve();
 	};
 

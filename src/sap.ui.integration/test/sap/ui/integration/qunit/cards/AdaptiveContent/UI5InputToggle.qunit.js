@@ -40,8 +40,6 @@ function (
 		beforeEach: function () {
 			this.oAdaptiveContent = new AdaptiveContent();
 			this.oAdaptiveContent._oCardConfig = oManifest;
-			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oAdaptiveContent.destroy();
@@ -50,19 +48,30 @@ function (
 	});
 
 	QUnit.test("Properties mapping", function (assert) {
-		//Arrange
-		var oUncheckedToggleInput = document.getElementById("ValueOffValueOn"),
-			oCheckedToggleInput = document.getElementById("Checked");
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oUncheckedToggleInput.tagName.toLowerCase(), "ui5-checkbox", "ui5-checkbox webcomponent is rendered");
-		assert.ok(oUncheckedToggleInput, "The toggle input is created");
-		assert.strictEqual(oUncheckedToggleInput.text, "Unchecked toggle input with value 'Truethy value' when checked and 'Falsy value' when not", "The title is mapped correctly");
-		assert.strictEqual(oUncheckedToggleInput.checked, false, "The checkbox is not checked, since value is different from valueOn.");
-		assert.strictEqual(oUncheckedToggleInput.wrap, false, "Wrapping is not set initally, so the text should truncate at some point.");
-		assert.strictEqual(oCheckedToggleInput.wrap, true, "The checkbox label should wrap at some point.");
-		assert.strictEqual(oCheckedToggleInput.checked, true, "The checkbox is not checked, since value is the same as valueOn.");
-		assert.strictEqual(oCheckedToggleInput.text, "", "There is no text set initially.");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oUncheckedToggleInput = document.getElementById("ValueOffValueOn"),
+				oCheckedToggleInput = document.getElementById("Checked");
+
+			//Assert
+			assert.strictEqual(oUncheckedToggleInput.tagName.toLowerCase(), "ui5-checkbox", "ui5-checkbox webcomponent is rendered");
+			assert.ok(oUncheckedToggleInput, "The toggle input is created");
+			assert.strictEqual(oUncheckedToggleInput.text, "Unchecked toggle input with value 'Truethy value' when checked and 'Falsy value' when not", "The title is mapped correctly");
+			assert.strictEqual(oUncheckedToggleInput.checked, false, "The checkbox is not checked, since value is different from valueOn.");
+			assert.strictEqual(oUncheckedToggleInput.wrap, false, "Wrapping is not set initally, so the text should truncate at some point.");
+			assert.strictEqual(oCheckedToggleInput.wrap, true, "The checkbox label should wrap at some point.");
+			assert.strictEqual(oCheckedToggleInput.checked, true, "The checkbox is not checked, since value is the same as valueOn.");
+			assert.strictEqual(oCheckedToggleInput.text, "", "There is no text set initially.");
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("internalRender", function (assert) {

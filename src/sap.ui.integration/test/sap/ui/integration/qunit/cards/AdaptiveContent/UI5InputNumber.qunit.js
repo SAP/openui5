@@ -37,8 +37,6 @@ function (
 		beforeEach: function () {
 			this.oAdaptiveContent = new AdaptiveContent();
 			this.oAdaptiveContent._oCardConfig = oManifest;
-			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oAdaptiveContent.destroy();
@@ -47,19 +45,30 @@ function (
 	});
 
 	QUnit.test("type: Number", function (assert) {
-		//Arrange
-		var oNumberInput = document.getElementById("WithValue");
-		var oNumInputWithoutValue = document.getElementById("ValueNotSpecified");
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
+
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oNumberInput = document.getElementById("WithValue");
+			var oNumInputWithoutValue = document.getElementById("ValueNotSpecified");
 
 
-		//Assert
-		assert.strictEqual(oNumberInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
-		assert.ok(oNumberInput, "The number input is created");
-		assert.strictEqual(oNumberInput.placeholder, "", "The placeholder is not specified");
-		assert.strictEqual(oNumberInput.type, "Number", "The input type is number");
-		assert.strictEqual(oNumberInput.value, "1", "The initial value is correct");
-		assert.strictEqual(oNumInputWithoutValue.value, "", "There is no initial value set.");
-		assert.strictEqual(oNumInputWithoutValue.placeholder, "Quantity", "The placeholder is correct.");
+			//Assert
+			assert.strictEqual(oNumberInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
+			assert.ok(oNumberInput, "The number input is created");
+			assert.strictEqual(oNumberInput.placeholder, "", "The placeholder is not specified");
+			assert.strictEqual(oNumberInput.type, "Number", "The input type is number");
+			assert.strictEqual(oNumberInput.value, "1", "The initial value is correct");
+			assert.strictEqual(oNumInputWithoutValue.value, "", "There is no initial value set.");
+			assert.strictEqual(oNumInputWithoutValue.placeholder, "Quantity", "The placeholder is correct.");
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("internalRender", function (assert) {

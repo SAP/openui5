@@ -84,7 +84,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	AnalyticalContent.prototype.loadDependencies = function (oConfig) {
+	AnalyticalContent.prototype.loadDependencies = function (oCardManifest) {
 		return new Promise(function (resolve, reject) {
 			Core.loadLibrary("sap.viz", { async: true })
 				.then(function () {

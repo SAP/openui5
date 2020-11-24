@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
-	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/CardActions",
 	"../services/SampleServices"
 ], function (
 	Card,
 	Core,
-	ContentFactory,
 	CardActions,
 	SampleServices
 ) {
@@ -662,12 +660,7 @@ sap.ui.define([
 
 	QUnit.module("Init");
 
-	var oCard = new Card(),
-		oContentFactory = new ContentFactory(oCard);
-
-	return oContentFactory.create({
-		cardType: "Analytical"
-	}).then(function () {
+	return Core.loadLibrary("sap.viz", { async: true }).then(function () {
 		QUnit.test("Initialization - AnalyticalContent", function (assert) {
 			testContentInitialization(oManifest_AnalyticalCard, assert);
 		});
@@ -744,12 +737,10 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-	}).catch(function (sError) {
+	}).catch(function () {
 		QUnit.test("Analytical not supported", function (assert) {
-			assert.strictEqual(sError, "Analytical content type is not available with this distribution.");
+			assert.ok(true, "Analytical content type is not available with this distribution.");
 		});
-	}).finally(function () {
-		oCard.destroy();
 	});
 
 });

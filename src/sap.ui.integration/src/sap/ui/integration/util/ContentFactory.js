@@ -65,7 +65,7 @@ sap.ui.define([
 				oContent.setCardDataProvider(oCard._oDataProvider);
 			}
 
-			oContent.loadDependencies(mConfig.contentManifest)
+			oContent.loadDependencies(mConfig.cardManifest)
 				.then(function () {
 					if ((mConfig.cardManifest && mConfig.cardManifest.isDestroyed()) ||
 						(mConfig.dataProviderFactory && mConfig.dataProviderFactory.isDestroyed())) {
