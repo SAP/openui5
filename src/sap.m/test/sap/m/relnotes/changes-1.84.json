@@ -58,5 +58,98 @@
         ]
       }
     ]
+  },
+  "1.84.1": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "9a41453dcc0f6f71ff5d89b589dbcb52044768aa",
+        "type": "FIX",
+        "text": " P13nConditionPanel: set the focus to the operation field",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070460316"
+          }
+        ]
+      },
+      {
+        "id": "00cc535475120a661d3d9cd02610b17ca857b5c9",
+        "type": "FIX",
+        "text": " ResponsiveTable: Enable Screenreader announcement for \"Not Selected\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007410172020"
+          }
+        ]
+      },
+      {
+        "id": "1a95271b9894842f297cb7829e8ece10d0635e2f",
+        "type": "FIX",
+        "text": " sap.m.Bar, other controls: added title alignment functionality",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007376692020"
+          }
+        ]
+      },
+      {
+        "id": "ccec8841ef90e6a3c7a49124026c155b74708f55",
+        "type": "FIX",
+        "text": " sap.m.IconTabFilter: Enabled state is now propagated correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005864442020"
+          }
+        ]
+      },
+      {
+        "id": "97cc0a00648e126c6420ebf3d3e2c05cc4012d7a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Fixing height of object status text and icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070436175"
+          }
+        ]
+      },
+      {
+        "id": "19d471036f579bf6f00af9e12d192ac5e51c1d15",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent closing of Popover when deleting token from n more popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070382503"
+          }
+        ]
+      },
+      {
+        "id": "ea1a6023a5a451e9ef6c73ad851a61dba7e7a881",
+        "type": "FIX",
+        "text": " sap.m.Table: Invisible cell content should be announced as \"empty\" by Screenreader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007184972020"
+          }
+        ]
+      },
+      {
+        "id": "79d2426eb144b0a95828aba0783b0da3961a7248",
+        "type": "FIX",
+        "text": " sap.m.ComboBox, sap.m.MultiComboBox: Update disabled items documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007598172020"
+          }
+        ]
+      }
+    ]
   }
 }

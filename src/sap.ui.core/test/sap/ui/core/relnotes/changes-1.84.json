@@ -25,5 +25,36 @@
         ]
       }
     ]
+  },
+  "1.84.1": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "8d079c7212c3e94f4ad3ca60e2c0816e5edca6e7",
+        "type": "FIX",
+        "text": " CustomizingConfiguration: respect owner component for configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005374432020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070417704"
+          }
+        ]
+      },
+      {
+        "id": "eef0167c3ba6e8ac2c1866911095343b6cad4231",
+        "type": "FIX",
+        "text": " ManagedObject: Add model name to the correct objectBindings object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

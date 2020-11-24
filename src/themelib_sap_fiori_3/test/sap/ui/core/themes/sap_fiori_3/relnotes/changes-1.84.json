@@ -112,5 +112,32 @@
         ]
       }
     ]
+  },
+  "1.84.1": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "1a95271b9894842f297cb7829e8ece10d0635e2f",
+        "type": "FIX",
+        "text": " sap.m.Bar, other controls: added title alignment functionality",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007376692020"
+          }
+        ]
+      },
+      {
+        "id": "97cc0a00648e126c6420ebf3d3e2c05cc4012d7a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Fixing height of object status text and icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070436175"
+          }
+        ]
+      }
+    ]
   }
 }

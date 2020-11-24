@@ -36,5 +36,21 @@
         ]
       }
     ]
+  },
+  "1.84.1": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "ddbb04dceaf4b6163ef4669f3ecfc246c2c85c57",
+        "type": "FIX",
+        "text": " FieldValueHelp: Filter in FilterBar not working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070442004"
+          }
+        ]
+      }
+    ]
   }
 }

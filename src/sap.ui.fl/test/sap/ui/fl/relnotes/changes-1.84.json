@@ -25,5 +25,21 @@
         ]
       }
     ]
+  },
+  "1.84.1": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "a14f7e545d702030b2f6c34328e4b1209ef16a73",
+        "type": "FIX",
+        "text": " sap.ui.fl: Extension point registry handles aggregations correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070448933"
+          }
+        ]
+      }
+    ]
   }
 }
