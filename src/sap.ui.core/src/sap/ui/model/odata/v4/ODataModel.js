@@ -526,9 +526,9 @@ sap.ui.define([
 	 *   <code>true</code> is allowed.
 	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
 	 *   Whether implicit loading of side effects via PATCH requests is switched off; only the value
-	 *   <code>true</code> is allowed. This requires the service to return an ETag header even for
-	 *   "204 No Content" responses (for example, if the "return=minimal" preference is used). If
-	 *   not specified, the value of the parent binding is used.
+	 *   <code>true</code> is allowed. This sets the preference "return=minimal" and requires the
+	 *   service to return an ETag header for "204 No Content" responses. If not specified, the
+	 *   value of the parent binding is used.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -639,9 +639,9 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} is called.
 	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
 	 *   Whether implicit loading of side effects via PATCH requests is switched off; only the value
-	 *   <code>true</code> is allowed. This requires the service to return an ETag header even for
-	 *   "204 No Content" responses (for example, if the "return=minimal" preference is used). If
-	 *   not specified, the value of the parent binding is used.
+	 *   <code>true</code> is allowed. This sets the preference "return=minimal" and requires the
+	 *   service to return an ETag header for "204 No Content" responses. If not specified, the
+	 *   value of the parent binding is used.
 	 * @param {boolean} [mParameters.$$ownRequest]
 	 *   Whether the binding always uses an own service request to read its data; only the value
 	 *   <code>true</code> is allowed.

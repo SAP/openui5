@@ -18372,6 +18372,7 @@ sap.ui.define([
 			return action("EditAction", "42");
 		}).then(function () {
 			that.expectRequest({
+					headers : {Prefer : "return=minimal"},
 					method : "PATCH",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)",
 					payload : {Name : "The Beatles (modified)"}
@@ -18581,6 +18582,7 @@ sap.ui.define([
 
 			that.expectChange("name", "The Beatles (modified)")
 				.expectRequest({
+					headers : {"Prefer" : "return=minimal"},
 					method : "PATCH",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)",
 					payload : {Name : "The Beatles (modified)"}
@@ -18598,6 +18600,7 @@ sap.ui.define([
 
 			that.expectChange("bestFriend", "Sgt. Pepper (modified)")
 				.expectRequest({
+					headers : {"Prefer" : "return=minimal"},
 					method : "PATCH",
 					url : "Artists(ArtistID='23',IsActiveEntity=true)",
 					payload : {Name : "Sgt. Pepper (modified)"}
@@ -21128,7 +21131,7 @@ sap.ui.define([
 					batchNo : 1,
 					method : "PATCH",
 					url : "SalesOrderList('42')?sap-client=123",
-					headers : {"If-Match" : "ETag0"},
+					headers : {"If-Match" : "ETag0", Prefer : "return=minimal"},
 					payload : {NetAmount : "-1"}
 				}, createError({code : "CODE", message : "Value -1 not allowed"}))
 				.expectRequest({
@@ -21172,7 +21175,7 @@ sap.ui.define([
 					batchNo : 2,
 					method : "PATCH",
 					url : "SalesOrderList('42')?sap-client=123",
-					headers : {"If-Match" : "ETag0"},
+					headers : {"If-Match" : "ETag0", Prefer : "return=minimal"},
 					payload : {NetAmount : "200"}
 				}, {
 					"@odata.etag" : "ETag1",
@@ -21209,7 +21212,7 @@ sap.ui.define([
 					batchNo : 3,
 					method : "PATCH",
 					url : "SalesOrderList('42')?sap-client=123",
-					headers : {"If-Match" : "ETag1"}, // new ETag is used!
+					headers : {"If-Match" : "ETag1", Prefer : "return=minimal"},// new ETag is used!
 					payload : {NetAmount : "0"}
 				}, {
 //					"@odata.etag" : "ETag2", // not ignored, but unused by the rest of this test
@@ -21296,7 +21299,7 @@ sap.ui.define([
 				.expectRequest({
 					method : "PATCH",
 					url : "SalesOrderList('42')",
-					headers : {"If-Match" : "ETag0"},
+					headers : {"If-Match" : "ETag0", Prefer : "return=minimal"},
 					payload : {Note : "Note (entered)"}
 				}, {
 					"@odata.etag" : "ETag1",
@@ -21325,7 +21328,7 @@ sap.ui.define([
 				.expectRequest({
 					method : "PATCH",
 					url : "SalesOrderList('42')",
-					headers : {"If-Match" : "ETag1"},
+					headers : {"If-Match" : "ETag1", Prefer : "return=minimal"},
 					payload : {Note : "Note (entered)"}
 				}, {
 					"@odata.etag" : "ETag2",
