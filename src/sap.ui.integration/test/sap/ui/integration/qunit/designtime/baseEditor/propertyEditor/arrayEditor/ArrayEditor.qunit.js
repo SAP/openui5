@@ -14,7 +14,10 @@ sap.ui.define([
 	EditorQunitUtils
 ) {
 	"use strict";
-
+	var isIE = false;
+	if (navigator.userAgent.toLowerCase().indexOf("trident") > 0) {
+		isIE = true;
+	}
 	function _getArrayEditorElements(oEditor) {
 		var oArrayEditorContent = oEditor.getContent().getItems();
 		return oEditor.getConfig().collapsibleItems === false
@@ -315,103 +318,105 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("tap", oMoveDownButton.getDomRef());
 		});
 
-		QUnit.test("when a property in an array item has a visibility binding against another property in the item", function (assert) {
-			var fnDone = assert.async();
+		if (!isIE) {
+			QUnit.test("when a property in an array item has a visibility binding against another property in the item", function (assert) {
+				var fnDone = assert.async();
 
-			var oConfig = {
-				"label": "Array Editor",
-				"path": "/foo",
-				"type": "array",
-				"template": {
-					"prop1": {
-						"label": "Prop1",
-						"type": "select",
-						"path": "prop1",
-						"items": [
-							{ "key": "Value1" },
-							{ "key": "Value2" },
-							{ "key": "Value3" }
-						]
-					},
-					"prop2": {
-						"label": "Prop2",
-						"type": "string",
-						"path": "prop2",
-						"visible": "{= ${prop1} === 'Value2'}"
+				var oConfig = {
+					"label": "Array Editor",
+					"path": "/foo",
+					"type": "array",
+					"template": {
+						"prop1": {
+							"label": "Prop1",
+							"type": "select",
+							"path": "prop1",
+							"items": [
+								{ "key": "Value1" },
+								{ "key": "Value2" },
+								{ "key": "Value3" }
+							]
+						},
+						"prop2": {
+							"label": "Prop2",
+							"type": "string",
+							"path": "prop2",
+							"visible": "{= ${prop1} === 'Value2'}"
+						}
 					}
-				}
-			};
+				};
 
-			this.oBaseEditor.setJson({
-				foo: [
-					{
-						prop1: "Value1",
-						prop2: ""
-					},
-					{
-						prop1: "Value2",
-						prop2: ""
-					}
-				]
+				this.oBaseEditor.setJson({
+					foo: [
+						{
+							prop1: "Value1",
+							prop2: ""
+						},
+						{
+							prop1: "Value2",
+							prop2: ""
+						}
+					]
+				});
+
+				this.oArrayEditor.setConfig(oConfig);
+				this.oArrayEditor.ready().then(function () {
+					var aArrayElements = _getArrayEditorElements(this.oArrayEditor).items;
+					assert.strictEqual(aArrayElements[0].editors[1].getConfig().visible, false, "then prop2 is invisible for 1st array item");
+					assert.strictEqual(aArrayElements[1].editors[1].getConfig().visible, true, "then prop2 is visible for 2nd array item");
+					fnDone();
+				}.bind(this));
 			});
 
-			this.oArrayEditor.setConfig(oConfig);
-			this.oArrayEditor.ready().then(function () {
-				var aArrayElements = _getArrayEditorElements(this.oArrayEditor).items;
-				assert.strictEqual(aArrayElements[0].editors[1].getConfig().visible, false, "then prop2 is invisible for 1st array item");
-				assert.strictEqual(aArrayElements[1].editors[1].getConfig().visible, true, "then prop2 is visible for 2nd array item");
-				fnDone();
-			}.bind(this));
-		});
+			QUnit.test("when a property in an array item has a visibility binding against another property in the item (defaultValue usecase)", function (assert) {
+				var fnDone = assert.async();
 
-		QUnit.test("when a property in an array item has a visibility binding against another property in the item (defaultValue usecase)", function (assert) {
-			var fnDone = assert.async();
-
-			var oConfig = {
-				"label": "Array Editor",
-				"path": "/foo",
-				"type": "array",
-				"template": {
-					"prop1": {
-						"label": "Prop1",
-						"type": "select",
-						"path": "prop1",
-						"items": [
-							{ "key": "Value1" },
-							{ "key": "Value2" },
-							{ "key": "Value3" }
-						],
-						defaultValue: "Value2"
-					},
-					"prop2": {
-						"label": "Prop2",
-						"type": "string",
-						"path": "prop2",
-						"visible": "{= ${prop1} === 'Value2'}"
+				var oConfig = {
+					"label": "Array Editor",
+					"path": "/foo",
+					"type": "array",
+					"template": {
+						"prop1": {
+							"label": "Prop1",
+							"type": "select",
+							"path": "prop1",
+							"items": [
+								{ "key": "Value1" },
+								{ "key": "Value2" },
+								{ "key": "Value3" }
+							],
+							defaultValue: "Value2"
+						},
+						"prop2": {
+							"label": "Prop2",
+							"type": "string",
+							"path": "prop2",
+							"visible": "{= ${prop1} === 'Value2'}"
+						}
 					}
-				}
-			};
+				};
 
-			this.oBaseEditor.setJson({
-				foo: [
-					{
-						prop2: ""
-					},
-					{
-						prop1: "Value2",
-						prop2: ""
-					}
-				]
+				this.oBaseEditor.setJson({
+					foo: [
+						{
+							prop2: ""
+						},
+						{
+							prop1: "Value2",
+							prop2: ""
+						}
+					]
+				});
+
+				this.oArrayEditor.setConfig(oConfig);
+				this.oArrayEditor.ready().then(function () {
+					var aArrayElements = _getArrayEditorElements(this.oArrayEditor).items;
+					assert.strictEqual(aArrayElements[0].editors[1].getConfig().visible, true, "then prop2 is visible for 1st array item");
+					assert.strictEqual(aArrayElements[1].editors[1].getConfig().visible, true, "then prop2 is visible for 2nd array item");
+					fnDone();
+				}.bind(this));
 			});
-
-			this.oArrayEditor.setConfig(oConfig);
-			this.oArrayEditor.ready().then(function () {
-				var aArrayElements = _getArrayEditorElements(this.oArrayEditor).items;
-				assert.strictEqual(aArrayElements[0].editors[1].getConfig().visible, true, "then prop2 is visible for 1st array item");
-				assert.strictEqual(aArrayElements[1].editors[1].getConfig().visible, true, "then prop2 is visible for 2nd array item");
-				fnDone();
-			}.bind(this));
-		});
+		}
 	};
 
 	QUnit.module("Collapsible Array Editor: Given an editor config", {
