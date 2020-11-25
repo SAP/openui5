@@ -708,7 +708,7 @@ var Flexie = (function (win, doc) {
 		}
 	}
 
-	// ##### BEGIN: SAP modification
+	// ##### BEGIN: MODIFIED BY SAP
 	// Added to incorporate SAPUI5 FlexBox elements into regular Flexie setup
 	function addFlexboxElement(params) {
 		var target = params.target,
@@ -726,7 +726,7 @@ var Flexie = (function (win, doc) {
 		FLEX_BOXES[target.FLX_DOM_ID] = getParams(params);
 		FLEX_BOXES[target.FLX_DOM_ID].target.setAttribute(FLX_PARENT_ATTR, TRUE);
 	}
-	// ##### END: SAP modification
+	// ##### END: MODIFIED BY SAP
 
 	function calcPx(element, props, dir) {
 		var dim = dir.replace(dir.charAt(0), dir.charAt(0).toUpperCase()),
