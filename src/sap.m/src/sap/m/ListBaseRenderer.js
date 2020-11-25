@@ -325,6 +325,9 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 
 		if (Device.system.desktop) {
 			rm.class("sapMListDummyArea");
+			if (sAreaId == "after") {
+				rm.class("sapMListDummyAreaSticky");
+			}
 		}
 
 		rm.openEnd().close("div");
