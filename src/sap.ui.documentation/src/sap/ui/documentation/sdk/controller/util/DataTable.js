@@ -199,15 +199,12 @@ sap.ui.define([
 			}
 
 			switch (true) {
+				case oChangedFilterControl.hasStyleClass(DataTable.FILTER_TYPES.REGEX):
 				case oChangedFilterControl.hasStyleClass(DataTable.FILTER_TYPES.NORMAL):
 				case oChangedFilterControl.hasStyleClass(DataTable.FILTER_TYPES.ALPHA_NUMERIC):
 				case oChangedFilterControl.hasStyleClass(DataTable.FILTER_TYPES.NUMBER):
 					// filter if string is contained
 					bShow = sEntryValue.toLowerCase().indexOf(oChangedFilterValue.toLowerCase()) > -1;
-					break;
-
-				case oChangedFilterControl.hasStyleClass(DataTable.FILTER_TYPES.REGEX):
-					// bShow = sEntryValue.match(new RegExp(oChangedFilterValue)); // TODO
 					break;
 
 				case oChangedFilterControl.hasStyleClass(DataTable.FILTER_TYPES.NUMBER_RANGE):
