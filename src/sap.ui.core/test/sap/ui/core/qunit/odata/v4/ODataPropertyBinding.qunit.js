@@ -332,6 +332,39 @@ sap.ui.define([
 	//TODO cache promise is NOT always fulfilled
 
 	//*********************************************************************************************
+[false, true].forEach(function (bHasMessages) {
+	var sTitle = "checkUpdataInternal(undefined) consider data state control messages"
+		+ ", bHasMessages =" + bHasMessages;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext = Context.create(this.oModel, {/*list binding*/}, "/..."),
+			oBinding = this.oModel.bindProperty("relative", oContext),
+			oDataState = {getControlMessages : function () {}};
+
+		oBinding.vValue = 42; // internal value in the model
+
+		this.mock(oBinding).expects("getDataState").withExactArgs()
+			.returns(oDataState);
+		this.mock(oDataState).expects("getControlMessages").withExactArgs()
+			.returns(bHasMessages ? ["invalid data state"] : []);
+		// Note: it is important that automatic type determination runs as soon as possible
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+			.withExactArgs("/.../relative")
+			.returns(SyncPromise.resolve());
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs("/.../relative", sinon.match.same(oBinding))
+			.returns(SyncPromise.resolve(42)); // no change
+		this.mock(oBinding).expects("_fireChange").exactly(bHasMessages ? 1 : 0)
+			.withExactArgs({reason : ChangeReason.Change});
+		// checkDataState is called independently of bForceUpdate
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
+
+		// code under test
+		return oBinding.checkUpdateInternal(undefined);
+	});
+});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bForceUpdate) {
 		QUnit.test("checkUpdateInternal(" + bForceUpdate + "): unchanged", function (assert) {
 			var that = this;
@@ -642,6 +675,9 @@ sap.ui.define([
 
 		this.createTextBinding(assert).then(function (oBinding) {
 			that.mock(oBinding).expects("deregisterChange").withExactArgs();
+			that.mock(oBinding).expects("checkUpdateInternal")
+				.withExactArgs(undefined, ChangeReason.Context)
+				.callThrough();
 			assert.strictEqual(oBinding.getValue(), "value", "value before context reset");
 			oBinding.attachChange(fnChangeHandler, oBinding);
 			//TODO code under test? how does this fit the title?
@@ -1881,7 +1917,7 @@ sap.ui.define([
 		oBinding.setContext(oContext);
 
 		oBindingMock.expects("checkUpdateInternal")
-			.withExactArgs(false, ChangeReason.Refresh, "myGroup")
+			.withExactArgs(undefined, ChangeReason.Refresh, "myGroup")
 			.returns(oCheckUpdatePromise);
 
 		// code under test
@@ -2077,25 +2113,33 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[true, false].forEach(function (bCheckUpdate) {
-		QUnit.test("resumeInternal: bCheckUpdate=" + bCheckUpdate, function (assert) {
-			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
-				oBinding = this.oModel.bindProperty("Category", oContext),
-				oBindingMock = this.mock(oBinding),
-				sResumeChangeReason = {/*change or refresh*/};
+[
+	{checkUpdate : false, parentHasChanges : {/*true or false*/}},
+	{checkUpdate : true, parentHasChanges : false},
+	{checkUpdate : true, parentHasChanges : true}
+].forEach(function (oFixture) {
+	var sTitle = "resumeInternal: bCheckUpdate=" + oFixture.checkUpdate + " parentHasChanges ="
+		+ oFixture.parentHasChanges;
 
-			oBinding.sResumeChangeReason = sResumeChangeReason;
-			oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
-			oBindingMock.expects("checkUpdateInternal").exactly(bCheckUpdate ? 1 : 0)
-				.withExactArgs(false, sinon.match.same(sResumeChangeReason))
-				.callsFake(function () {
-					assert.strictEqual(oBinding.sResumeChangeReason, undefined);
-				});
+	QUnit.test(sTitle, function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
+			oBinding = this.oModel.bindProperty("Category", oContext),
+			oBindingMock = this.mock(oBinding),
+			bForceUpdate = oFixture.parentHasChanges ? undefined : false,
+			sResumeChangeReason = {/*change or refresh*/};
 
-			// code under test
-			oBinding.resumeInternal(bCheckUpdate);
-		});
+		oBinding.sResumeChangeReason = sResumeChangeReason;
+		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+		oBindingMock.expects("checkUpdateInternal").exactly(oFixture.checkUpdate ? 1 : 0)
+			.withExactArgs(bForceUpdate, sinon.match.same(sResumeChangeReason))
+			.callsFake(function () {
+				assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+			});
+
+		// code under test
+		oBinding.resumeInternal(oFixture.checkUpdate, oFixture.parentHasChanges);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getDependentBindings", function (assert) {
@@ -2152,7 +2196,7 @@ sap.ui.define([
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
 			oPromise;
 
-		this.mock(oBinding).expects("checkUpdateInternal")
+		this.mock(oBinding).expects("checkUpdateInternal").withExactArgs(false)
 			.returns(SyncPromise.resolve(Promise.resolve()));
 		this.mock(oBinding).expects("getValue").returns("42");
 
