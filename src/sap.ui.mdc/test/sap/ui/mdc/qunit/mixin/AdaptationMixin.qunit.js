@@ -185,7 +185,9 @@ sap.ui.define(
                     adaptationConfig: oExampleAdaptationConfig
                 });
 
-                return oSomeInstance.retrieveAdaptationController();
+                return oSomeInstance.retrieveAdaptationController().then(function(){
+                    return oSomeInstance.retrieveInbuiltFilter();
+                });
             },
             afterEach: function () {
                 fnCleanup();
@@ -243,6 +245,11 @@ sap.ui.define(
                 "destroy"
             );
 
+            var oAdaptationFilterBarDestroySpy = sinon.spy(
+                oSomeInstance._oP13nFilter,
+                "destroy"
+            );
+
             oSomeInstance.destroy();
 
             assert.ok(
@@ -254,12 +261,21 @@ sap.ui.define(
                 "The member field should be reset."
             );
             assert.ok(
+                oAdaptationFilterBarDestroySpy.calledOnce,
+                "The adaptation filterbar should be destroyed."
+            );
+            assert.ok(
+                !oSomeInstance._oP13nFilter,
+                "The member field should be reset."
+            );
+            assert.ok(
                 oExitSpy.calledOnce,
                 " an existing exit method should be called"
             );
 
             oExitSpy.restore();
             oAdaptationControllerDestroySpy.restore();
+            oAdaptationFilterBarDestroySpy.restore();
         });
     }
 );
