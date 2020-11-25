@@ -1359,6 +1359,7 @@ sap.ui.define([
 	VariantManagement.prototype._createManagementDialog = function() {
 		if (!this.oManagementDialog || this.oManagementDialog.bIsDestroyed) {
 			this.oManagementTable = new Table(this.getId() + "-managementTable", {
+				contextualWidth: "Auto",
 				growing: true,
 				columns: [
 					new Column({
@@ -1377,9 +1378,9 @@ sap.ui.define([
 							text: this._oRb.getText("VARIANT_MANAGEMENT_DEFAULT"),
 							wrappingType: "Hyphenated"
 						}),
-						width: "4rem",
+						hAlign: TextAlign.Begin,
 						demandPopin: true,
-						popinDisplay: PopinDisplay.Inline,
+						popinDisplay: PopinDisplay.Block,
 						minScreenWidth: ScreenSize.Tablet,
 						visible: {
 							path: "/showSetAsDefault",
@@ -1390,11 +1391,10 @@ sap.ui.define([
 							text: this._oRb.getText("VARIANT_MANAGEMENT_EXECUTEONSELECT"),
 							wrappingType: "Hyphenated"
 						}),
-						width: "6rem",
 						hAlign: TextAlign.Center,
 						demandPopin: true,
-						popinDisplay: PopinDisplay.Inline,
-						minScreenWidth: "800px",
+						popinDisplay: PopinDisplay.Block,
+						minScreenWidth: ScreenSize.Tablet,
 						visible: {
 							path: "/showExecuteOnSelection",
 							model: VariantManagement.INNER_MODEL_NAME
@@ -1403,12 +1403,10 @@ sap.ui.define([
 						header: new Text({
 							text: this._oRb.getText("VARIANT_MANAGEMENT_AUTHOR")
 						}),
-						width: "8rem",
 						demandPopin: true,
-						popinDisplay: PopinDisplay.Inline,
-						minScreenWidth: "900px"
+						popinDisplay: PopinDisplay.Block,
+						minScreenWidth: ScreenSize.Tablet
 					}), new Column({
-						width: "2rem",
 						hAlign: TextAlign.Center
 					}), new Column({
 						visible: false
@@ -1435,7 +1433,7 @@ sap.ui.define([
 			});
 
 			this.oManagementDialog = new Dialog(this.getId() + "-managementdialog", {
-				contentWidth: "40%",
+				contentWidth: "64%",
 				resizable: true,
 				draggable: true,
 //				customHeader: new Bar(this.getId() + "-managementHeader", {
