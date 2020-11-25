@@ -90,6 +90,10 @@ sap.ui.define([
 			 * If a <code>Title</code> element it used, the style of the title can be set.
 			 *
 			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
+			 *
+			 * <b>Note:</b> If the title is provided as a string, the title is rendered with a theme-dependent default level.
+			 * As the <code>Form</code> control cannot know the structure of the page, this might not fit the page structure.
+			 * In this case provide the title using a <code>Title</code> element and set its {@link sap.ui.core.Title#setLevel level} to the needed value.
 			 */
 			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
 
