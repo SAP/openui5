@@ -1,0 +1,8 @@
+{
+	"@odata.context" : "$metadata#ContactList(ContactGUID,EmailAddress,FirstName,LastName)/$entity",
+	"@odata.metadataEtag" : "W/\"20201124164648\"",
+	"ContactGUID" : "42010aef-0de5-1eea-af8f-5bce865f0879",
+	"FirstName" : "Karl",
+	"LastName" : "Müller",
+	"EmailAddress" : "customer-do.not.reply@sap.com"
+}

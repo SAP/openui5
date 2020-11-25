@@ -419,8 +419,9 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Adds a task that is guaranteed to run once, just before the next rendering. Triggers a
-	 * rendering request, so that this happens as soon as possible.
+	 * Adds a task that is guaranteed to run once, just before the next rendering without triggering
+	 * a rendering request. A watchdog ensures that the task is executed soon, even if no rendering
+	 * occurs.
 	 *
 	 * @param {function} fnPrerenderingTask
 	 *   A function that is called before the rendering
@@ -429,16 +430,29 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.addPrerenderingTask = function (fnPrerenderingTask, bFirst) {
-		var that = this;
+		var fnRunTasks, iTimeoutId, that = this;
+
+		function runTasks(aTasks) {
+			clearTimeout(iTimeoutId);
+			while (aTasks.length) {
+				aTasks.shift()();
+			}
+			if (that.aPrerenderingTasks === aTasks) {
+				that.aPrerenderingTasks = null;
+			}
+		}
 
 		if (!this.aPrerenderingTasks) {
 			this.aPrerenderingTasks = [];
-			sap.ui.getCore().addPrerenderingTask(function () {
-				while (that.aPrerenderingTasks.length) {
-					that.aPrerenderingTasks.shift()();
-				}
-				that.aPrerenderingTasks = null;
-			});
+			fnRunTasks = runTasks.bind(null, this.aPrerenderingTasks);
+			sap.ui.getCore().addPrerenderingTask(fnRunTasks);
+			// Add a watchdog to run the tasks in case there is no rendering. Ensure that the task
+			// runs after all setTimeout(0) tasks scheduled from within the current task, even those
+			// that were scheduled afterwards. A simple setTimeout(n) with n > 0 is not sufficient
+			// because this doesn't help if the current task runs very long.
+			iTimeoutId = setTimeout(function() {
+				iTimeoutId = setTimeout(fnRunTasks, 0);
+			}, 0);
 		}
 		if (bFirst) {
 			this.aPrerenderingTasks.unshift(fnPrerenderingTask);

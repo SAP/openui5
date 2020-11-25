@@ -32,6 +32,7 @@ sap.ui.define([
 		rODataHeaders = /^(OData-Version|DataServiceVersion)$/,
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
 		bRealOData = bProxy || sRealOData === "direct",
+		iRequestCount = 0,
 		bSupportAssistant = oUriParameters.get("supportAssistant") === "true",
 		TestUtils;
 
@@ -270,6 +271,7 @@ sap.ui.define([
 				var oMultipart = multipart(sServiceBase, oRequest.requestBody),
 					mODataHeaders = getODataHeaders(oRequest);
 
+				iRequestCount += 1;
 				oRequest.respond(200,
 					jQuery.extend({}, mODataHeaders, {
 						"Content-Type" : "multipart/mixed;boundary=" + oMultipart.boundary
@@ -620,6 +622,7 @@ sap.ui.define([
 			function respondFromFixture(oRequest) {
 				var oResponse = getResponseFromFixture(oRequest);
 
+				iRequestCount += 1;
 				oRequest.respond(oResponse.code, oResponse.headers, oResponse.message);
 			}
 
@@ -782,6 +785,16 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the number of server requests within {@link .useFakeServer} since the latest
+		 * {@link #resetRequestCount}.
+		 *
+		 * @returns {number} The number of requests
+		 */
+		getRequestCount : function () {
+			return iRequestCount;
+		},
+
+		/**
 		 * Adjusts the given absolute path so that (in case of "realOData=proxy" or
 		 * "realOData=true") the request is passed through the SimpleProxyServlet.
 		 *
@@ -801,6 +814,13 @@ sap.ui.define([
 			sProxyUrl = sap.ui.require.toUrl("sap/ui").replace("resources/sap/ui", "proxy");
 			return new URI(sProxyUrl + sAbsolutePath, document.baseURI).pathname().toString()
 				+ (iQueryPos >= 0 ? sAbsolutePath.slice(iQueryPos) : "");
+		},
+
+		/**
+		 * Resets the counter for server requests within {@link .useFakeServer}.
+		 */
+		resetRequestCount : function () {
+			iRequestCount = 0;
 		},
 
 		/**
