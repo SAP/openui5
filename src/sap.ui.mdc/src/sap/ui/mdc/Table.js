@@ -63,9 +63,7 @@ sap.ui.define([
 	var TableType = library.TableType;
 	var RowAction = library.RowAction;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
-
 	var sFilterInterface = "sap.ui.mdc.IFilter";
-
 	var internalMap = new window.WeakMap();
 	var internal = function(oTable) {
 		if (!internalMap.has(oTable)) {
@@ -963,11 +961,26 @@ sap.ui.define([
 		return this;
 	};
 
-	// FilterIntegrationMixin hook
-	Table.prototype._onFilterProvided = function() {
+	// Start: FilterIntegrationMixin hooks
+	Table.prototype._onFilterProvided = function(oFilter) {
 		this._updateInnerTableNoDataText();
-		this._attachFilterSearchEvent();
 	};
+
+	Table.prototype._onFilterRemoved = function(oFilter) {
+		this._updateInnerTableNoDataText();
+	};
+
+	Table.prototype._onFiltersChanged = function(oEvent) {
+		if (this.isTableBound() && oEvent.getParameter("conditionsBased")) {
+			this._oTable.setShowOverlay(true);
+		}
+	};
+
+	Table.prototype._onFilterSearch = function(oEvent) {
+		this._bIgnoreChange = true;
+		this._bAnnounceTableUpdate = true;
+	};
+	// End: FilterIntegrationMixin hooks
 
 	Table.prototype.setNoDataText = function(sNoData) {
 		this.setProperty("noDataText", sNoData, true);
@@ -1003,25 +1016,6 @@ sap.ui.define([
 		}
 
 		return oRb.getText("table.NO_RESULTS");
-	};
-
-	Table.prototype._attachFilterSearchEvent = function() {
-		/**
-		 * The FilterIntegrationMixin handles the setter for the 'filter' association of the mdc.Table.
-		 * Because this function is called after FilterIntegrationMixin.setFilter is performed we need to
-		 * store the 'filter' association in order to detach its 'search' event in case the association gets removed.
- 		 */
-		var oFilter = Core.byId(this.getFilter());
-
-		if (this._oFilter && this._oFilter !== oFilter) {
-			this._oFilter.detachSearch(this._onSearch, this);
-		}
-
-		if (oFilter) {
-			oFilter.attachSearch(this._onSearch, this);
-		}
-
-		this._oFilter = oFilter;
 	};
 
 	Table.prototype._updateRowAction = function() {
@@ -1983,12 +1977,6 @@ sap.ui.define([
 		}, this);
 	};
 
-	Table.prototype._onFiltersChanged = function(oEvent) {
-		if (this.isTableBound() && oEvent.getParameter("conditionsBased")) {
-			this._oTable.setShowOverlay(true);
-		}
-	};
-
 	Table.prototype.isTableBound = function() {
 		return this._oTable ? this._oTable.isBound(this._bMobileTable ? "items" : "rows") : false;
 	};
@@ -2062,16 +2050,6 @@ sap.ui.define([
 			return;
 		}
 		this._updateHeaderText();
-	};
-
-	/**
-	 * Event handler for 'search' event of {@link sap.ui.mdc.IFilter} .
-	 *
-	 * @private
-	 */
-	Table.prototype._onSearch = function() {
-		this._bIgnoreChange = true;
-		this._bAnnounceTableUpdate = true;
 	};
 
 	Table.prototype._updateHeaderText = function() {
@@ -2315,7 +2293,6 @@ sap.ui.define([
 		this._pFullInitialize = null;
 		this._fnRejectFullInit = null;
 		this._fnResolveFullInit = null;
-		this._oFilter = null;
 
 		Control.prototype.exit.apply(this, arguments);
 	};
