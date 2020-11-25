@@ -164,7 +164,8 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 			this.oControlTree.renderDelayed();
 		}
 
-		window.addEventListener("unload", function(oEvent) {
+		var terminationEvent = "onpagehide" in window ? "pagehide" : "unload";
+		window.addEventListener(terminationEvent, function(oEvent) {
 			this.oControlTree.exit();
 			this.oPropertyList.exit();
 		}.bind(this));

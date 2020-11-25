@@ -73,7 +73,8 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 				case mTypes.TOOL:
 					this._oRemoteWindow = window.opener;
 					this._sRemoteOrigin = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-support-origin");
-					jQuery(window).on("unload", function(oEvent){
+					var terminationEvent = "onpagehide" in window ? "pagehide" : "unload";
+					jQuery(window).on(terminationEvent, function(oEvent){
 						that.sendEvent(mEvents.TEAR_DOWN);
 						Support.exitPlugins(that, true);
 					});

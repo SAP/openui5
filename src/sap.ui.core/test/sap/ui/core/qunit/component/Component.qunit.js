@@ -1963,7 +1963,8 @@ sap.ui.define([
 		this.oComponent = new MyOnWindowUnloadComponent();
 
 		assert.equal(typeof this.oComponent._fnWindowUnloadHandler, "function", "Handler has been created");
-		sinon.assert.calledWithExactly(this.addEventListenerSpy, "unload", this.oComponent._fnWindowUnloadHandler);
+		var terminationEvent = "onpagehide" in window ? "pagehide" : "unload";
+		sinon.assert.calledWithExactly(this.addEventListenerSpy, terminationEvent, this.oComponent._fnWindowUnloadHandler);
 		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
 
 		var oFakeEvent = {};
@@ -1977,7 +1978,7 @@ sap.ui.define([
 		this.oComponent.destroy();
 
 		assert.equal(this.oComponent._fnWindowUnloadHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "unload", handler);
+		sinon.assert.calledWithExactly(this.removeEventListenerSpy, terminationEvent, handler);
 		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
 	});
 

@@ -666,7 +666,8 @@ sap.ui.define([
 		if (this.onWindowUnload) {
 
 			this._fnWindowUnloadHandler = this.onWindowUnload.bind(this);
-			window.addEventListener("unload", this._fnWindowUnloadHandler);
+			var terminationEvent = "onpagehide" in window ? "pagehide" : "unload";
+			window.addEventListener(terminationEvent, this._fnWindowUnloadHandler);
 		}
 
 	};
@@ -700,7 +701,8 @@ sap.ui.define([
 			delete this._fnWindowBeforeUnloadHandler;
 		}
 		if (this._fnWindowUnloadHandler) {
-			window.removeEventListener("unload", this._fnWindowUnloadHandler);
+			var terminationEvent = "onpagehide" in window ? "pagehide" : "unload";
+			window.removeEventListener(terminationEvent, this._fnWindowUnloadHandler);
 			delete this._fnWindowUnloadHandler;
 		}
 
