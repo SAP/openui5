@@ -49,6 +49,12 @@
 	position: fixed; /* keep it in the visible viewport, so that IE does not scroll on focus */
 }
 
+.sapMListDummyAreaSticky {
+	position: sticky; /* keep it in the scrollable area, so that browser does not scroll on focus */
+	height: 0.1px; /* webkit needs height for the sticky elements */
+	bottom: 0px;
+}
+
 /* swipe animations */
 @-webkit-keyframes sapMListSwpInAnim {
 	0% {
