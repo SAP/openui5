@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change"
+	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/Variant"
 ], function(
-	Change
+	Change,
+	Variant
 ) {
 	"use strict";
 
@@ -21,10 +23,11 @@ sap.ui.define([
 	}
 
 	function buildSectionMap(mCompSection, sSubSection, mById, mCompVariants) {
+		var oClass = sSubSection === "variants" ? Variant : Change;
 		var aFlexObjects = mCompSection[sSubSection].map(function (oCompVariantChangeDefinition) {
-			var oChange = new Change(oCompVariantChangeDefinition);
-			oChange.setState(Change.states.PERSISTED); // prevent persisting these anew
-			return oChange;
+			var oFlexObject = new oClass(oCompVariantChangeDefinition);
+			oFlexObject.setState(Change.states.PERSISTED); // prevent persisting these anew
+			return oFlexObject;
 		});
 
 		aFlexObjects.forEach(function (oFlexObject) {
