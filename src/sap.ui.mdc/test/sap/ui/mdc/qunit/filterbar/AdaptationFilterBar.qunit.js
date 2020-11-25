@@ -202,15 +202,12 @@ sap.ui.define([
 
 			this.oAddStub = sinon.stub(AggregationBaseDelegate, "addItem");
 
-			this.oRemoveStub = sinon.stub(AggregationBaseDelegate, "removeItem");
-
 			oAdaptationFilterBar.setAdaptationControl(this.oParent);
 		},
 		afterEach: function () {
 			AggregationBaseDelegate.fetchProperties.restore();
 			AggregationBaseDelegate.getFilterDelegate.restore();
 			AggregationBaseDelegate.addItem.restore();
-			AggregationBaseDelegate.removeItem.restore();
 			oAdaptationFilterBar.destroy();
 			this.oParent = null;
 			this.oParentAC = null;
@@ -315,15 +312,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Check 'advanvedMode' - check 'remove' hook executions", function(assert){
-		var done = assert.async(2);
+	QUnit.test("Check 'advancedMode' - check 'remove' hook executions", function(assert){
+		var done = assert.async();
+		var oRemoveSpy = sinon.spy(AggregationBaseDelegate, "removeItem");
 
 		this.oAddStub.callsFake(this.addItem);
-
-		this.oRemoveStub.callsFake(function(){
-			assert.ok(true, "remove hook called");
-			done(2);
-		});
 
 		oAdaptationFilterBar.setAdvancedMode(true);
 
@@ -360,20 +353,17 @@ sap.ui.define([
 			oAdaptationFilterBar.createFilterFields().then(function(){
 				assert.ok(oAdaptationFilterBar.getFilterItems().length, 3, "FilterFields have been created");
 				oAdaptationFilterBar._executeRequestedRemoves();
+				assert.equal(oRemoveSpy.callCount, 2, "Correct amount of removes triggered");
+				AggregationBaseDelegate.removeItem.restore();
+				done();
 			});
 		});
 	});
 
 	QUnit.test("Check 'advanvedMode' - check 'remove' hook executions, but change the selection before", function(assert){
 		var done = assert.async(1);
-
+		var oRemoveSpy = sinon.spy(AggregationBaseDelegate, "removeItem");
 		this.oAddStub.callsFake(this.addItem);
-
-		this.oRemoveStub.callsFake(function(){
-			assert.ok(true, "remove hook called");
-			done(1);
-		});
-
 		oAdaptationFilterBar.setAdvancedMode(true);
 
 		this.oParent.getFilterItems = function() {
@@ -409,10 +399,16 @@ sap.ui.define([
 
 			oAdaptationFilterBar.createFilterFields().then(function(){
 				assert.ok(oAdaptationFilterBar.getFilterItems().length, 3, "FilterFields have been created");
-				oAdaptationFilterBar._executeRequestedRemoves();
 
-				//Call it again --> no more hooks should be executed
-				oAdaptationFilterBar._executeRequestedRemoves();
+				//manually execute removes
+				oAdaptationFilterBar._executeRequestedRemoves().then(function(){
+
+					//Call it again --> no more hooks should be executed
+					oAdaptationFilterBar._executeRequestedRemoves();
+					assert.equal(oRemoveSpy.callCount, 1, "Correct amount of removes triggered");
+					AggregationBaseDelegate.removeItem.restore();
+					done();
+				});
 			});
 		});
 	});
