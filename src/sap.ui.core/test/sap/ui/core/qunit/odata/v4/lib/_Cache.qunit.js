@@ -9651,7 +9651,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshKeptElements", function (assert) {
+[false, true].forEach(function (bDeleted) {
+	var sTitle = "refreshKeptElements" + (bDeleted ? ";after refresh kept element is deleted" : "");
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = _Cache.create(this.oRequestor, "Employees", {}),
 			oCacheMock = this.mock(oCache),
 			oElement = {},
@@ -9662,11 +9665,13 @@ sap.ui.define([
 				$search : "~search~"
 			},
 			oGroupLock = {},
-			oResponse = {value : [oElement]},
+			fnOnRemove = sinon.spy(),
+			oResponse = {value : bDeleted ? [] : [oElement]},
 			mTypes = {};
 
 		oCache.aElements.$byPredicate = {
-			"('Foo')" : oEntity
+			"('Foo')" : oEntity,
+			"('Fux')" : "untouched"
 		};
 
 		// calculateKeptElementQuerry
@@ -9692,20 +9697,29 @@ sap.ui.define([
 			.withExactArgs("GET", "Employees?$filter=~filter~", sinon.match.same(oGroupLock))
 			.returns(Promise.resolve(oResponse));
 		oCacheMock.expects("visitResponse")
+			.exactly(bDeleted ? 0 : 1)
 			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypes), undefined,
 				undefined, undefined, 0);
 		this.mock(_Helper).expects("getPrivateAnnotation")
+			.exactly(bDeleted ? 0 : 1)
 			.withExactArgs(sinon.match.same(oElement), "predicate")
 			.returns("('Foo')");
 		this.mock(_Helper).expects("updateAll")
+			.exactly(bDeleted ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('Foo')",
 				sinon.match.same(oEntity), sinon.match.same(oElement));
 
 		// code under test
-		return oCache.refreshKeptElement(oGroupLock).then(function (oResult) {
+		return oCache.refreshKeptElement(oGroupLock, fnOnRemove).then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
+			if (bDeleted) {
+				sinon.assert.calledOnce(fnOnRemove);
+				sinon.assert.calledWithExactly(fnOnRemove, "('Foo')");
+				assert.deepEqual(oCache.aElements.$byPredicate, {"('Fux')" : "untouched"});
+			}
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("refreshKeptElement w/o kept-alive element", function (assert) {

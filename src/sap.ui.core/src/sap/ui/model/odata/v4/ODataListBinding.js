@@ -2155,6 +2155,11 @@ sap.ui.define([
 			bCheckUpdate, bKeepCacheOnError) {
 		var oKeptElementPromise, that = this;
 
+		function onRemove(sPredicate) {
+			var sPath = that.oModel.resolve(that.sPath, that.oContext);
+			that.mPreviousContextsByPath[sPath + sPredicate].resetKeepAlive();
+		}
+
 		// calls refreshInternal on all given bindings and returns an array of promises
 		function refreshAll(aBindings) {
 			return aBindings.map(function (oBinding) {
@@ -2183,7 +2188,7 @@ sap.ui.define([
 				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext);
 				oKeptElementPromise = that.oCachePromise.then(function (oNewCache) {
-					return oNewCache.refreshKeptElement(that.lockGroup(sGroupId));
+					return oNewCache.refreshKeptElement(that.lockGroup(sGroupId), onRemove);
 				});
 				oPromise = that.createRefreshPromise();
 				if (bKeepCacheOnError) {
