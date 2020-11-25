@@ -26,7 +26,9 @@ sap.ui.define([
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
 
-	var sComponent = "sap.ui.model.odata.ODataMetaModel",
+	var sCapabilitiesV1 = "Org.OData.Capabilities.V1.",
+		sCommonV1 = "com.sap.vocabularies.Common.v1.",
+		sComponent = "sap.ui.model.odata.ODataMetaModel",
 		sMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
@@ -149,6 +151,55 @@ sap.ui.define([
 						</Record>\
 				</Annotation>\
 			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
+		', sMetadataWith2Schemas = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="SPECIAL_SETS" xml:lang="en" sap:schema-version="0000">\
+			<EntityContainer Name="SPECIAL_Entities"\
+				m:IsDefaultEntityContainer="true" sap:use-batch="false">\
+				<EntitySet Name="BusinessPartnerSet" EntityType="SPECIAL.BusinessPartner"\
+					sap:deletable-path="Deletable" sap:topable="false"\
+					sap:updatable-path="Updatable" sap:requires-filter="true"\
+					sap:content-version="1" />\
+				<AssociationSet Name="Assoc_FooSet" Association="SPECIAL.Assoc_Foo" \
+					sap:creatable="false">\
+					<End EntitySet="BusinessPartnerSet" Role="FromRole_Foo"/>\
+					<End EntitySet="BusinessPartnerSet" Role="ToRole_Foo"/>\
+				</AssociationSet>\
+				<FunctionImport Name="Foo" ReturnType="SPECIAL.BusinessPartner" \
+					EntitySet="BusinessPartnerSet" m:HttpMethod="POST" \
+					sap:action-for="SPECIAL.BusinessPartner">\
+					<Parameter Name="BusinessPartnerID" Type="Edm.String" Mode="In" MaxLength="10" \
+						sap:label="ID"/>\
+				</FunctionImport>\
+			</EntityContainer>\
+		</Schema>\
+		<Schema Namespace="SPECIAL" xml:lang="en" sap:schema-version="0000">\
+			<EntityType Name="BusinessPartner" sap:content-version="1">\
+				<Property Name="BusinessPartnerID" Type="Edm.String" \
+					Nullable="false" MaxLength="10" sap:label="Bus. Part. ID" \
+					sap:creatable="false" sap:filter-restriction="multi-value" \
+					sap:text="AnyProperty" sap:updatable="false" \
+					sap:sortable="false" sap:required-in-filter ="true" \
+					sap:display-format="UpperCase" >\
+				</Property>\
+				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false" \
+					sap:heading="No Filter" sap:quickinfo="No Filtering" />\
+				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" \
+					FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="false"/>\
+			</EntityType>\
+			<Association Name="Assoc_Foo" sap:content-version="1">\
+				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1" Role="FromRole_Foo"/>\
+				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="*" Role="ToRole_Foo"/>\
+			</Association>\
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
@@ -590,6 +641,7 @@ sap.ui.define([
 			"/fake/emptySchemaWithAnnotations/$metadata" :
 				{headers : mHeaders, message : sEmptySchemaWithAnnotations},
 			"/fake/service/$metadata" : {headers : mHeaders, message : sMetadata},
+			"/fake/special/$metadata" : {headers : mHeaders, message : sMetadataWith2Schemas},
 			"/fake/annotations" : {headers : mHeaders, message : sAnnotations},
 			"/fake/annotations2" : {headers : mHeaders, message : sAnnotations2},
 			"/fake/emptyAnnotations" : {headers : mHeaders, message : sEmptyAnnotations},
@@ -2049,6 +2101,77 @@ sap.ui.define([
 				assert.deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 				assert.notStrictEqual(oMetaModelData, oMetadata, "is clone");
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaModel: multiple schemas separating types from sets", function (assert) {
+		return withGivenService(assert, "/fake/special", null, function (oMetaModel, oModel) {
+			var oMetaModelData = oMetaModel.getObject("/"),
+				oSpecialSchema = oMetaModelData.dataServices.schema[1],
+				oSpecialSetsSchema = oMetaModelData.dataServices.schema[0],
+				oEntityContainer = oSpecialSetsSchema.entityContainer[0],
+				oAssociation = oSpecialSchema.association[0],
+				oAssociationSet = oEntityContainer.associationSet[0],
+				oBusinessPartner = oSpecialSchema.entityType[0],
+				oBusinessPartnerId = oBusinessPartner.property[0],
+				oBusinessPartnerSet = oEntityContainer.entitySet[0],
+				oFunctionImport = oEntityContainer.functionImport[0];
+
+			assert.ok(oModel.getServiceMetadata(), "metadata is loaded");
+			assert.strictEqual(oSpecialSchema.$path, "/dataServices/schema/1");
+			assert.strictEqual(oSpecialSetsSchema.$path, "/dataServices/schema/0");
+			assert.strictEqual(oAssociation.$path, "/dataServices/schema/1/association/0");
+			assert.strictEqual(oAssociation.namespace, "SPECIAL");
+			assert.strictEqual(oAssociationSet["sap:creatable"], "false");
+			assert.strictEqual(oEntityContainer.$path, "/dataServices/schema/0/entityContainer/0");
+			assert.strictEqual(oEntityContainer.namespace, "SPECIAL_SETS");
+			assert.strictEqual(oEntityContainer["sap:use-batch"], "false");
+			assert.strictEqual(oFunctionImport["sap:action-for"], "SPECIAL.BusinessPartner");
+			assert.strictEqual(oBusinessPartner.$path, "/dataServices/schema/1/entityType/0");
+			assert.strictEqual(oBusinessPartner.name, "BusinessPartner");
+			assert.strictEqual(oBusinessPartner.namespace, "SPECIAL");
+			assert.strictEqual(oBusinessPartnerId.name, "BusinessPartnerID");
+			assert.strictEqual(oBusinessPartnerId["sap:sortable"], "false");
+			assert.strictEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
+			assert.strictEqual(oBusinessPartnerSet["sap:content-version"], "1");
+			assert.strictEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
+			assert.strictEqual(oBusinessPartnerSet["sap:topable"], "false");
+			assert.deepEqual(oBusinessPartnerSet[sCapabilitiesV1 + "TopSupported"],
+					{"Bool" : "false"}, "oBusinessPartnerSet not TopSupported");
+			assert.deepEqual(oBusinessPartnerSet[sCapabilitiesV1 + "SortRestrictions"],
+				{"NonSortableProperties": [{"PropertyPath" : "BusinessPartnerID"}]},
+				"BusinessPartnerSet not searchable");
+			assert.deepEqual(
+				oBusinessPartnerSet[sCapabilitiesV1 + "FilterRestrictions"]
+					["NonFilterableProperties"],
+				[
+					{"PropertyPath" : "NonFilterable"},
+					{"PropertyPath" : "ToFoo"} // deprecated but still converted
+				],
+				"BusinessPartnerSet not filterable");
+			assert.deepEqual(oBusinessPartnerSet[sCapabilitiesV1 + "NavigationRestrictions"],
+				{
+					"RestrictedProperties" : [{
+						"NavigationProperty" : {"NavigationPropertyPath" : "ToFoo"},
+						"FilterRestrictions" : {
+							"Filterable": {"Bool" : "false"}
+						}
+					}]
+				},
+				"Non filterable navigation property");
+			assert.deepEqual(oBusinessPartnerSet[sCapabilitiesV1 + "FilterRestrictions"]
+					["RequiredProperties"],
+				[{"PropertyPath" : "BusinessPartnerID"}], "BusinessPartnerSet filter restrictions");
+			assert.deepEqual(oBusinessPartnerSet[sCapabilitiesV1 + "DeleteRestrictions"],
+				{"Deletable" : {"Path" : "Deletable"}}, "deletable-path");
+			assert.deepEqual(oBusinessPartnerSet[sCommonV1 + "FilterExpressionRestrictions"],
+				[{
+					"Property" : { "PropertyPath" : "BusinessPartnerID" },
+					"AllowedExpressions" : {
+						"EnumMember" : sCommonV1 + "FilterExpressionType/MultiValue"
+					}
+				}], "filter-restriction at BusinessPartnerSet");
 		});
 	});
 
