@@ -54,11 +54,6 @@ sap.ui.define([
 		unit: NumberFormatter.unit
 	};
 
-	/**
-	 * @const {Array} The default models used in a card.
-	 */
-	BindingHelper.DEFAULT_CARD_MODELS = ["i18n", "parameters", "filters", "context"];
-
 	BindingHelper.mLocals = {
 		"format": mFormatters,
 		"dateRange": DateRange
@@ -216,12 +211,14 @@ sap.ui.define([
 
 	/**
 	 * Copy the models from one managed object into another.
+	 *
+	 * Note: This method will overwrite models which already exist in the target object with corresponding models from the source.
 	 * @param {sap.ui.base.ManagedObject} oSource Copy from this managed object.
 	 * @param {sap.ui.base.ManagedObject} oTarget The object which will receive the models.
-	 * @param {Array} [aModelsToCopy] List of model names to copy. Default is <code>["i18n", "parameters", "filters", "context"]</code>
 	 */
-	BindingHelper.copyModels = function (oSource, oTarget, aModelsToCopy) {
-		var aModelsNames = aModelsToCopy || BindingHelper.DEFAULT_CARD_MODELS, // @todo find a way to get list of all models
+	BindingHelper.propagateModels = function (oSource, oTarget) {
+		var oSourceModels = extend({}, oSource.oPropagatedProperties.oModels, oSource.oModels),
+			aModelsNames = Object.keys(oSourceModels),
 			oDefaultModel = oSource.getModel();
 
 		if (oDefaultModel) {
@@ -229,6 +226,11 @@ sap.ui.define([
 		}
 
 		aModelsNames.forEach(function (sModelName) {
+			if (sModelName === "undefined") {
+				// "undefined" is used for the propagated default model, we have already copied it
+				return;
+			}
+
 			var oModel = oSource.getModel(sModelName);
 
 			if (oModel) {

@@ -97,7 +97,7 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, Ex
 			return null;
 		}
 
-		BindingHelper.copyModels(oCard, oDataProvider);
+		BindingHelper.propagateModels(oCard, oDataProvider);
 		oDataProvider.bindObject("/");
 
 		oDataProvider.setDestinations(this._oDestinations);

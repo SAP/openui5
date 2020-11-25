@@ -108,7 +108,7 @@ sap.ui.define([
 			if (vModelOrObject instanceof Model) {
 				oSimpleControl.setModel(vModelOrObject);
 			} else {
-				BindingHelper.copyModels(vModelOrObject, oSimpleControl);
+				BindingHelper.propagateModels(vModelOrObject, oSimpleControl);
 			}
 
 			oSimpleControl.bindObject(sPath);

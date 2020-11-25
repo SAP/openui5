@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/m/HBox"
 ],
 function (
 	BindingHelper,
 	ManagedObject,
-	JSONModel
+	JSONModel,
+	HBox
 ) {
 	"use strict";
 
@@ -315,7 +317,7 @@ function (
 		oSpy.restore();
 	});
 
-	QUnit.module("Static method #copyModels");
+	QUnit.module("Static method #propagateModels");
 
 	QUnit.test("Copying models", function (assert) {
 		// arrange
@@ -330,7 +332,7 @@ function (
 		oSource.setModel(oModel3, "model3");
 
 		// act
-		BindingHelper.copyModels(oSource, oTarget, ["model2", "model3"]);
+		BindingHelper.propagateModels(oSource, oTarget);
 
 		// assert
 		assert.strictEqual(oTarget.getModel(), oModel1, "Model 1 is copied.");
@@ -355,7 +357,7 @@ function (
 		oSource.setModel(oModelI18n, "i18n");
 
 		// act
-		BindingHelper.copyModels(oSource, oTarget);
+		BindingHelper.propagateModels(oSource, oTarget);
 
 		// assert
 		assert.strictEqual(oTarget.getModel(), oModel, "Default model is copied.");
@@ -363,6 +365,33 @@ function (
 		assert.strictEqual(oTarget.getModel("parameters"), oModelParameters, "Parameters model is copied.");
 		assert.strictEqual(oTarget.getModel("context"), oModelContext, "Context model is copied.");
 		assert.strictEqual(oTarget.getModel("i18n"), oModelI18n, "I18n model is copied.");
+	});
+
+	QUnit.test("Copying models which are propagated from parent to child", function (assert) {
+		// arrange
+		var oSource = new HBox(),
+			oSourceParent = new HBox({
+				items: [oSource]
+			}),
+			oTarget = new ManagedObject(),
+			oModel = new JSONModel(),
+			oModelI18n = new JSONModel(),
+			oModelParameters = new JSONModel();
+
+		// set models on the parent
+		oSourceParent.setModel(oModel);
+		oSourceParent.setModel(oModelI18n, "i18n");
+
+		// set models on the child
+		oSource.setModel(oModelParameters, "parameters");
+
+		// act - copy models from child to the target
+		BindingHelper.propagateModels(oSource, oTarget);
+
+		// assert
+		assert.strictEqual(oTarget.getModel(), oModel, "Default model is copied.");
+		assert.strictEqual(oTarget.getModel("i18n"), oModelI18n, "I18n model is copied.");
+		assert.strictEqual(oTarget.getModel("parameters"), oModelParameters, "Parameters model is copied.");
 	});
 
 });
