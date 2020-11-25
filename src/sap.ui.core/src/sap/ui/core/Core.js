@@ -4107,8 +4107,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds a task that is guaranteed to run once, just before the next rendering. Triggers a
-	 * rendering request, so that this happens as soon as possible.
+	 * Adds a task that is guaranteed to run once, just before the next rendering. A rendering
+	 * request is not triggered.
 	 *
 	 * @param {function} fnPrerenderingTask
 	 *   A function that is called before the rendering
@@ -4122,7 +4122,6 @@ sap.ui.define([
 		} else {
 			this.aPrerenderingTasks.push(fnPrerenderingTask);
 		}
-		this.addInvalidatedUIArea(); // to trigger rendering
 	};
 
 	/**

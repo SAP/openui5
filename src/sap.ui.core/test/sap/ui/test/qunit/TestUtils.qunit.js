@@ -345,12 +345,14 @@ sap.ui.define([
 			this.oLogMock.expects("info").withExactArgs(oFixture.method + " " + oFixture.url,
 				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 
+			TestUtils.resetRequestCount();
 			return request(oFixture.method, oFixture.url, mHeaders, oFixture.requestBody
 			).then(function (oXHR) {
 				assert.strictEqual(oXHR.status, oFixture.status, "status");
 				assert.strictEqual(oXHR.responseText, oFixture.responseBody || "", "body");
 				assert.strictEqual(oXHR.getAllResponseHeaders(),
 					headerString(oFixture.responseHeaders), "headers");
+				assert.strictEqual(TestUtils.getRequestCount(), 1);
 			});
 		});
 
@@ -374,6 +376,7 @@ sap.ui.define([
 			this.oLogMock.expects("info").withExactArgs(oFixture.method + " " + oFixture.url,
 				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 
+			TestUtils.resetRequestCount();
 			return request("POST", "/Foo/$batch", mInitialHeaders,
 				"--batch_id-0123456789012-345\r\n"
 				+ "Content-Type: application/http\r\n"
@@ -402,6 +405,7 @@ sap.ui.define([
 				);
 				assert.strictEqual(oXHR.getAllResponseHeaders(), headerString(mBatchHeaders),
 					"batch headers");
+				assert.strictEqual(TestUtils.getRequestCount(), 1);
 			});
 		});
 	});
@@ -450,6 +454,7 @@ sap.ui.define([
 		this.oLogMock.expects("info").withExactArgs("PATCH /Foo/bar", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
 
+		TestUtils.resetRequestCount();
 		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
 			"--batch_id-1538663822135-19",
 			"Content-Type: multipart/mixed;boundary=changeset_id-1538663822135-20",
@@ -507,6 +512,7 @@ sap.ui.define([
 				"--batch_id-1538663822135-19--",
 				""
 			].join("\r\n"));
+			assert.strictEqual(TestUtils.getRequestCount(), 1);
 		});
 	});
 
@@ -518,6 +524,7 @@ sap.ui.define([
 		this.oLogMock.expects("info").withExactArgs("POST /Foo/baz", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
 
+		TestUtils.resetRequestCount();
 		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
 			"--batch_id-1538663822135-19",
 			"Content-Type: multipart/mixed;boundary=changeset_id-1538663822135-20",
@@ -561,6 +568,7 @@ sap.ui.define([
 				"--batch_id-1538663822135-19--",
 				""
 			].join("\r\n"));
+			assert.strictEqual(TestUtils.getRequestCount(), 1);
 		});
 	});
 

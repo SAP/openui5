@@ -541,14 +541,11 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
-			if (sap.ui.getCore().getUIDirty()
+			if (sap.ui.getCore().getUIDirty() || this.oModel.aPrerenderingTasks
 					|| sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
 						< this.aMessages.length) {
 				setTimeout(this.checkFinish.bind(this, assert), 10);
-
-				return;
-			}
-			if (this.resolve) {
+			} else if (this.resolve) {
 				this.resolve();
 				this.resolve = null;
 			}
@@ -2340,13 +2337,16 @@ sap.ui.define([
 			.expectChange("note", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			// avoid that the metadata request disturbs the timing
+			return oModel.getMetaModel().requestObject("/");
+		}).then(function () {
 			var oBinding = that.oView.byId("table").getBinding("rows");
 
 			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList|", [
 					[, "change", {detailedReason : "AddVirtualContext", reason : "context"}],
+					[, "dataRequested"],
 					[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
 					[, "refresh", {reason : "refresh"}],
-					[, "dataRequested"],
 					[, "change", {reason : "change"}],
 					[, "dataReceived", {data : {}}]
 				]).expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
@@ -3041,10 +3041,13 @@ sap.ui.define([
 				.expectChange("team_id", "2*")
 				.expectChange("manager_id", "3*");
 
-			// code under test
-			that.oView.byId("form").getBindingContext().requestSideEffects([
-				{$NavigationPropertyPath : "EMPLOYEE_2_EQUIPMENT"}, // must be ignored
-				{$NavigationPropertyPath : "EMPLOYEE_2_TEAM"}
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([
+					{$NavigationPropertyPath : "EMPLOYEE_2_EQUIPMENT"}, // must be ignored
+					{$NavigationPropertyPath : "EMPLOYEE_2_TEAM"}
+				]),
+				that.waitForChanges(assert)
 			]);
 		});
 	});
@@ -3092,12 +3095,15 @@ sap.ui.define([
 				.expectChange("team_id", ["2*"])
 				.expectChange("manager_id", ["3*"]);
 
-			// code under test
-			that.oView.byId("table").getItems()[0].getBindingContext()
-				.requestSideEffects([
-					{$NavigationPropertyPath : "EMPLOYEE_2_EQUIPMENT"}, // must be ignored
-					{$NavigationPropertyPath : "EMPLOYEE_2_TEAM"}
-				]);
+			return Promise.all([
+				// code under test
+				that.oView.byId("table").getItems()[0].getBindingContext()
+					.requestSideEffects([
+						{$NavigationPropertyPath : "EMPLOYEE_2_EQUIPMENT"}, // must be ignored
+						{$NavigationPropertyPath : "EMPLOYEE_2_TEAM"}
+					]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -3347,7 +3353,7 @@ sap.ui.define([
 			that.oView.byId("businessPartner").setBindingContext(
 				that.oView.byId("table").getItems()[0].getBindingContext());
 
-			that.waitForChanges(assert);
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -3505,7 +3511,10 @@ sap.ui.define([
 				assert.notOk(oListBindingWithoutUI.hasPendingChanges());
 				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
 
-				return that.checkCanceled(assert, oCreatedPromise);
+				return Promise.all([
+					that.checkCanceled(assert, oCreatedPromise),
+					that.waitForChanges(assert) // to get all group locks unlocked
+				]);
 			});
 		});
 	});
@@ -6280,6 +6289,7 @@ sap.ui.define([
 				.expectChange("note", ["foo"])
 				// companyName is embedded in a context binding; index not considered in test
 				// framework
+				.ignoreNullChanges("companyName")
 				.expectChange("companyName", "SAP");
 
 			return this.createView(assert, sView, oModel).then(function () {
@@ -7600,7 +7610,8 @@ sap.ui.define([
 			return Promise.all([
 				oBinding.resetChanges(),
 				that.checkCanceled(assert, oCreatedContext1.created()),
-				that.checkCanceled(assert, oCreatedContext2.created())
+				that.checkCanceled(assert, oCreatedContext2.created()),
+				that.waitForChanges(assert) // to get all group locks unlocked
 			]);
 		}).then(function () {
 			var aItems = oTable.getItems();
@@ -11246,11 +11257,14 @@ sap.ui.define([
 		this.expectChange("text", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			// avoid that the metadata request disturbs the timing
+			return oModel.getMetaModel().requestObject("/");
+		}).then(function () {
 			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
 					[, "change", {detailedReason : "AddVirtualContext", reason : "change"}],
+					[, "dataRequested"],
 					[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
 					[, "refresh", {reason : "refresh"}],
-					[, "dataRequested"],
 					[, "change", {reason : "change"}],
 					[, "dataReceived", {data : {}}]
 				])
@@ -17088,6 +17102,8 @@ sap.ui.define([
 				that.oView.byId("table").getBinding("rows").setAggregation({
 					aggregate : {GrossAmount : {}}
 				});
+
+				return that.waitForChanges(assert);
 			});
 		});
 	});
@@ -26825,7 +26841,10 @@ sap.ui.define([
 				assert.notOk(oListBindingWithoutUI.hasPendingChanges());
 				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
 
-				return that.checkCanceled(assert, oCreatedPromise);
+				return Promise.all([
+					that.checkCanceled(assert, oCreatedPromise),
+					that.waitForChanges(assert) // to get all group locks unlocked
+				]);
 			});
 		});
 	});
