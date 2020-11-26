@@ -401,6 +401,8 @@ sap.ui.define([
 
 		oVariantModifiedText.setVisible(false);
 
+		this.oVariantModifiedText = oVariantModifiedText;
+
 		this.oVariantInvisibleText.toStatic();
 
 		this.addDependent(this.oVariantLayout);
@@ -665,18 +667,29 @@ sap.ui.define([
 			path: 'currentVariant',
 			model: this._sModelName,
 			formatter: function(sKey) {
-				var sText = this.getSelectedVariantText(sKey);
+				var sText = "";
+				if (sKey) {
+					sText = this.getSelectedVariantText(sKey);
+					this._setInvisibleText(sText, this.getModified());
+				}
+
 				return sText;
 			}.bind(this)
 		});
 
-		this.oVariantText.unbindProperty("visible");
-		this.oVariantText.bindProperty("visible", {
+		this.oVariantModifiedText.unbindProperty("visible");
+		this.oVariantModifiedText.bindProperty("visible", {
 			path: "modified",
 			model: this._sModelName,
 			formatter: function(bValue) {
-				return (bValue === null || bValue === undefined) ? false : bValue;
-			}
+				var sKey = this.getCurrentVariantKey();
+
+				if (sKey) {
+					this._setInvisibleText(this.getSelectedVariantText(sKey), bValue);
+				}
+
+				return ((bValue === null) || (bValue === undefined)) ? false : bValue;
+			}.bind(this)
 		});
 	};
 
@@ -2032,6 +2045,7 @@ sap.ui.define([
 		this.oVariantSelectionPage = undefined;
 		this.oVariantLayout = undefined;
 		this.oVariantText = undefined;
+		this.oVariantModifiedText = undefined;
 		this.oVariantPopoverTrigger = undefined;
 		this._oSearchField = undefined;
 		this._oSearchFieldOnMgmtDialog = undefined;
