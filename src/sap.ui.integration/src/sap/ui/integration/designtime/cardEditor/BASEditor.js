@@ -125,6 +125,19 @@ sap.ui.define([
 							delete oCopyConfig.form.items[n];
 							continue;
 						}
+					}  else if (oItem.manifestpath && !oItem.manifestpath.startsWith("/sap.card/configuration/parameters")) {
+						var sPath = oItem.manifestpath;
+						if (sPath.startsWith("/")) {
+							sPath = sPath.substring(1);
+						}
+						var aPath = sPath.split("/");
+						var vValue = ObjectPath.get(aPath, oJson);
+						var vInitialValue = ObjectPath.get(aPath, this._oInitialJson);
+						if (!_isEqual(vValue, vInitialValue)) {
+							mParameters[n].value = vValue;
+						} else {
+							ObjectPath.set(aPath, mParameters[n].value, oJson);
+						}
 					}
 					var iIndex = aCurrentKeys.indexOf(n);
 					if (iIndex > -1) {
@@ -234,6 +247,7 @@ sap.ui.define([
 			};
 			this._oDataModel.setData(this._prepareData(oJson));
 			this.fireConfigurationChange(this._oCurrent);
+			this._oInitialJson = oJson;
 		}.bind(this), 500);
 	};
 
