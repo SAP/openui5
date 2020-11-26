@@ -1287,6 +1287,7 @@ function(
 		};
 
 		Select.prototype.onBeforeRendering = function() {
+			var bIconOnly = this.getType() === SelectType.IconOnly;
 
 			// rendering phase is started
 			this.bRenderingPhase = true;
@@ -1298,6 +1299,10 @@ function(
 			this._updatePickerValueStateContentText();
 			this._updatePickerValueStateContentStyles();
 			this._detachHiddenSelectHandlers();
+
+			if (bIconOnly) {
+				this.setAutoAdjustWidth(true);
+			}
 
 		};
 
