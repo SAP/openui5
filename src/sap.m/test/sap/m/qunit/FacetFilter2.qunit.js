@@ -1990,8 +1990,8 @@ sap.ui.define([
 			// Then the Add Filter button
 			$currentlyTestedButton = this.oFF.getAggregation("addFacetButton").$();
 			aAriaDescribedByIds = $currentlyTestedButton.attr("aria-describedby").split(" ");
-			assert.equal(aAriaDescribedByIds.length, 2,
-				"There should be 2 IDs (positioning label & tooltip) in aria-describedby for the Add Filter button");
+			assert.equal(aAriaDescribedByIds.length, 1,
+				"There should be 1 ID (positioning label) in aria-describedby for the Add Filter button");
 
 			$positioningLabel = jQuery("#" + aAriaDescribedByIds[0]); // Positioning label should be the first reference
 			sExpectedLabelText = "Facet Filter " + iTotalSize + " of " + iTotalSize;

@@ -346,7 +346,8 @@ sap.ui.define([
 			sTooltip = oButton._getTooltip(),
 			sTooltipId = oButton.getId() + "-tooltip", // Icon-only buttons will always have a tooltip
 			sAccessibilityType = oButton._determineAccessibilityType(),
-			mAccProps = {};
+			mAccProps = {},
+			sDescription;
 
 		switch (sAccessibilityType) {
 			case ButtonAccessibilityType.Default:
@@ -354,7 +355,9 @@ sap.ui.define([
 				break;
 			case ButtonAccessibilityType.Described:
 				mAccProps["label"] = { value: sTooltip, append: true };
-				mAccProps["describedby"] = { value: (sTooltipId + " " + sTypeId + " " + sBadgeTextId).trim(), append: true };
+
+				sDescription = (sTypeId + " " + sBadgeTextId).trim();
+				sDescription && (mAccProps["describedby"] = { value: sDescription, append: true });
 				break;
 			case ButtonAccessibilityType.Labelled:
 				mAccProps["describedby"] = { value: sTooltipId, append: true };
