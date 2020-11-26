@@ -24,16 +24,21 @@ sap.ui.define([
 	 *
 	 * Metadata information:
 	 * - type
-	 *     Any type that is also allowed for a control property.
-	 *     Examples: "string", "string[]", "sap.ui.mdc.MyEnum", "any"
-	 * - mandatory (optional, default=false)
+	 *     Can be any type that is also allowed for a control property, plus "PropertyReference" for references to simple properties.
+	 *     Complex types can be specified with an object that describes sub-attributes.
+	 *     Examples: "string", "string[]", "sap.ui.mdc.MyEnum", "any", "PropertyReference",
+	 *               {
+	 *                   subAttribute: {type: "string", defaultValue: "myDefaultValue"}
+	 *                   ...
+	 *               }
+	 * - mandatory (optional, default=false, only for top-level attribute)
 	 *     Whether this attribute must be provided.
 	 * - allowedForComplexProperty (optional, default=false)
 	 *     Whether it is allowed to provide this attribute for a complex property.
 	 * - defaultValue (optional):
 	 *     This can either be a value, or a reference to another attribute in the form "attribute:x", with x being the name of the other
 	 *     attribute. The default value of this attribute is then the value of the other attribute. This works only one level deep.
-	 *     Examples: "attribute:name"
+	 *     Examples: "attribute:name", "attribute:attributeName.subAttributeName"
 	 */
 	var mAttributeMetadata = {
 		name: {
@@ -50,32 +55,13 @@ sap.ui.define([
 			type: "string",
 			defaultValue: "attribute:name"
 		},
-		groupLabel: {
-			type: "string",
-			defaultValue: "",
-			allowedForComplexProperty: true
+		key: {
+			type: "boolean"
 		},
 		visible: {
 			type: "boolean",
 			defaultValue: true,
 			allowedForComplexProperty: true
-		},
-		propertyInfos: {
-			type: "string[]",
-			allowedForComplexProperty: true
-		},
-		exportSettings: {
-			type: "object",
-			defaultValue: null,
-			allowedForComplexProperty: true
-		},
-		typeConfig: {
-			type: "object",
-			defaultValue: null
-		},
-		maxConditions: {
-			type: "int",
-			defaultValue: null
 		},
 		filterable: {
 			type: "boolean",
@@ -85,9 +71,33 @@ sap.ui.define([
 			type: "boolean",
 			defaultValue: true
 		},
-		fieldHelp: {
+		groupable: {
+			type: "boolean"
+		},
+		propertyInfos: {
+			type: "PropertyReference[]",
+			allowedForComplexProperty: true
+		},
+		unit: {
+			type: "PropertyReference"
+		},
+		groupLabel: {
 			type: "string",
-			defaultValue: ""
+			allowedForComplexProperty: true
+		},
+		exportSettings: {
+			type: "object",
+			allowedForComplexProperty: true
+		},
+		typeConfig: {
+			type: "object"
+		},
+		maxConditions: {
+			type: "int",
+			defaultValue: -1
+		},
+		fieldHelp: {
+			type: "string"
 		}
 	};
 
@@ -121,7 +131,7 @@ sap.ui.define([
 		});
 	}
 
-	function createPropertyFacades(aProperties, oPropertyHelper) {
+	function createPropertyFacades(oPropertyHelper, aProperties) {
 		var aPropertyFacades = aProperties.map(function(oProperty) {
 			var oFacade = {};
 
@@ -139,7 +149,7 @@ sap.ui.define([
 		return Object.freeze(aPropertyFacades);
 	}
 
-	function finalizePropertyFacades(aFacades, oPropertyHelper) {
+	function finalizePropertyFacades(oPropertyHelper, aFacades) {
 		aFacades.forEach(function(oFacade) {
 			oPropertyHelper.onCreatePropertyFacade(oFacade);
 			Object.freeze(oFacade);
@@ -151,10 +161,13 @@ sap.ui.define([
 
 		for (var i = 0; i < aKeys.length; i++) {
 			var vValue = oObject[aKeys[i]];
+			var bValueIsArray = Array.isArray(vValue);
 
-			if (isPlainObject(vValue) || Array.isArray(vValue)) {
-				if (aKeys[i] === "_relatedProperties") {
-					Object.freeze(vValue);
+			if (isPlainObject(vValue) || bValueIsArray) {
+				if (aKeys[i].startsWith("_")) {
+					if (bValueIsArray) {
+						Object.freeze(vValue);
+					}
 				} else {
 					deepFreeze(vValue);
 				}
@@ -164,46 +177,137 @@ sap.ui.define([
 		return Object.freeze(oObject);
 	}
 
-	function prepareProperties(aProperties, mProperties, oPropertyHelper) {
+	function deepFind(oObject, sPath) {
+		if (!sPath) {
+			return oObject;
+		}
+
+		return sPath.split(".").reduce(function(oCurrent, sSection) {
+			return oCurrent && oCurrent[sSection] ? oCurrent[sSection] : null;
+		}, oObject);
+	}
+
+	function getAttributeDataType(mAttributeSection) {
+		var sType;
+
+		if (typeof mAttributeSection.type === "object") {
+			sType = "object";
+		} else {
+			sType = mAttributeSection.type.replace("PropertyReference", "string");
+		}
+
+		return DataType.getType(sType);
+	}
+
+	function prepareProperties(oPropertyHelper, aProperties, mProperties) {
 		aProperties.forEach(function(oProperty) {
-			var aDependenciesForDefaults = [];
-			var bIsComplex = oPropertyHelper.isPropertyComplex(oProperty);
-
-			for (var sAttributeName in mAttributeMetadata) {
-				var mAttribute = mAttributeMetadata[sAttributeName];
-
-				if (bIsComplex && !mAttribute.allowedForComplexProperty) {
-					continue;
-				}
-
-				if ("defaultValue" in mAttribute && oProperty[sAttributeName] == null) {
-					if (typeof mAttribute.defaultValue === "string" && mAttribute.defaultValue.startsWith("attribute:")) {
-						// Attributes that reference another attribute for the default value need to be processed in a second step.
-						// This is only supported 1 level deep.
-						aDependenciesForDefaults.push({
-							source: mAttribute.defaultValue.substring(mAttribute.defaultValue.indexOf(":") + 1),
-							target: sAttributeName
-						});
-					} else {
-						oProperty[sAttributeName] = mAttribute.defaultValue;
-					}
-				}
-			}
+			var aDependenciesForDefaults = preparePropertyDeep(oPropertyHelper, oProperty, mProperties);
 
 			aDependenciesForDefaults.forEach(function(mDependency) {
-				oProperty[mDependency.target] = oProperty[mDependency.source];
-			});
+				var oPropertySection = deepFind(oProperty, mDependency.targetPath);
 
-			if (bIsComplex) {
-				Object.defineProperty(oProperty, "_relatedProperties", {
-					value: oProperty.propertyInfos.map(function(sKey) {
-						return mProperties[sKey];
-					})
-				});
-			}
+				if (oPropertySection) {
+					oPropertySection[mDependency.targetAttribute] = deepFind(oProperty, mDependency.source);
+
+					if (mDependency.isPropertyReference) {
+						preparePropertyReferences(oPropertySection, mDependency.targetAttribute, mProperties);
+					}
+				}
+			});
 
 			deepFreeze(oProperty);
 		});
+	}
+
+	function preparePropertyDeep(oPropertyHelper, oProperty, mProperties, sPath, oPropertySection, mAttributeSection) {
+		var bTopLevel = sPath == null;
+		var aDependenciesForDefaults = [];
+		var bIsComplex = oPropertyHelper.isPropertyComplex(oProperty);
+
+		if (bTopLevel) {
+			mAttributeSection = _private.get(oPropertyHelper).mAttributeMetadata;
+			oPropertySection = oProperty;
+		}
+
+		if (!oPropertySection) {
+			return [];
+		}
+
+		for (var sAttribute in mAttributeSection) {
+			var mAttribute = mAttributeSection[sAttribute];
+			var sAttributePath = bTopLevel ? sAttribute : sPath + "." + sAttribute;
+			var vValue = oPropertySection[sAttribute];
+
+			if (bIsComplex && !mAttribute.allowedForComplexProperty) {
+				continue;
+			}
+
+			if (vValue != null && typeof mAttribute.type === "string" && mAttribute.type.startsWith("PropertyReference")
+				|| sAttributePath === "propertyInfos") {
+
+				if (bIsComplex || sAttributePath !== "propertyInfos") {
+					preparePropertyReferences(oPropertySection, sAttribute, mProperties);
+				}
+
+				continue;
+			}
+
+			if (vValue == null) {
+				setAttributeDefault(oPropertySection, mAttribute, sPath, sAttribute, aDependenciesForDefaults);
+			}
+
+			if (typeof mAttribute.type === "object") {
+				aDependenciesForDefaults = aDependenciesForDefaults.concat(preparePropertyDeep(
+					oPropertyHelper, oProperty, mProperties, sAttributePath, oPropertySection[sAttribute], mAttribute.type
+				));
+			}
+		}
+
+		return aDependenciesForDefaults;
+	}
+
+	function preparePropertyReferences(oPropertySection, sAttribute, mProperties) {
+		var vPropertyReference = oPropertySection[sAttribute];
+		var vProperties;
+
+		if (Array.isArray(vPropertyReference)) {
+			vProperties = vPropertyReference.map(function(sName) {
+				return mProperties[sName];
+			});
+		} else {
+			vProperties = mProperties[vPropertyReference];
+		}
+
+		Object.defineProperty(oPropertySection, "_" + sAttribute, {
+			value: vProperties
+		});
+	}
+
+	function setAttributeDefault(oPropertySection, mAttributeSection, sSection, sAttribute, aDependenciesForDefaults) {
+		if ("defaultValue" in mAttributeSection) {
+			if (typeof mAttributeSection.defaultValue === "string" && mAttributeSection.defaultValue.startsWith("attribute:")) {
+				// Attributes that reference another attribute for the default value need to be processed in a second step.
+				// This is only supported 1 level deep.
+				aDependenciesForDefaults.push({
+					source: mAttributeSection.defaultValue.substring(mAttributeSection.defaultValue.indexOf(":") + 1),
+					targetPath: sSection,
+					targetAttribute: sAttribute,
+					isPropertyReference: typeof mAttributeSection.type === "string" && mAttributeSection.type.startsWith("PropertyReference")
+				});
+			} else if (typeof mAttributeSection.defaultValue === "object" && mAttributeSection.defaultValue !== null) {
+				oPropertySection[sAttribute] = merge({}, mAttributeSection.defaultValue);
+			} else {
+				oPropertySection[sAttribute] = mAttributeSection.defaultValue;
+			}
+		} else {
+			var oDataType = getAttributeDataType(mAttributeSection);
+
+			if (oDataType.isArrayType()) {
+				oPropertySection[sAttribute] = oDataType.getBaseType().getDefaultValue();
+			} else {
+				oPropertySection[sAttribute] = oDataType.getDefaultValue();
+			}
+		}
 	}
 
 	function createPropertyMap(aProperties, aFacades) {
@@ -224,7 +328,7 @@ sap.ui.define([
 		}
 
 		if (oProperty.isComplex()) {
-			return oProperty.getPropertiesFromComplexProperty().filter(function(oProperty) {
+			return oProperty.getReferencedProperties().filter(function(oProperty) {
 				return fnFilter.call(oPropertyHelper, oProperty.getName());
 			});
 		} else if (fnFilter.call(oPropertyHelper, oProperty.getName())) {
@@ -239,6 +343,9 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aProperties The properties to process in this helper
 	 * @param {sap.ui.base.ManagedObject} [oParent] A reference to an instance that will act as the parent of this helper
+	 * @param {object} [mAttributeMetadataExtension]
+	 *      Attribute metadata for additional property information in an <code>extension</code> attribute. The property infos may contain an
+	 *      <code>extension</code> attribute only attribute metadata is provided for it.
 	 *
 	 * @class
 	 * Property helpers give this library a consistent and standardized view on properties and their attributes.
@@ -258,32 +365,51 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PropertyHelper = BaseObject.extend("sap.ui.mdc.util.PropertyHelper", {
-		constructor: function(aProperties, oParent) {
+		constructor: function(aProperties, oParent, mAttributeMetadataExtension) {
 			BaseObject.call(this);
 
 			var bParentIsValid = BaseObject.isA(oParent, ["sap.ui.base.ManagedObject"]);
+			var mPrivate = {};
 
 			if (oParent && !bParentIsValid) {
 				throw new Error("The type of the parent is invalid");
 			}
 
+			_private.set(this, mPrivate);
+
+			if (mAttributeMetadataExtension) {
+				mPrivate.mAttributeMetadata = Object.assign({
+					extension: {
+						type: mAttributeMetadataExtension,
+						mandatory: true,
+						allowedForComplexProperty: true
+					}
+				}, mAttributeMetadata);
+				mPrivate.aMandatoryAttributes = aMandatoryAttributes.concat("extension");
+				mPrivate.aMandatoryExtensionAttributes = Object.keys(mAttributeMetadataExtension).filter(function(sAttribute) {
+					return mAttributeMetadataExtension[sAttribute].mandatory;
+				});
+			} else {
+				mPrivate.mAttributeMetadata = mAttributeMetadata;
+				mPrivate.aMandatoryAttributes = aMandatoryAttributes;
+				mPrivate.aMandatoryExtensionAttributes = [];
+			}
+
 			this.validateProperties(aProperties);
 
 			var aClonedProperties = cloneProperties(aProperties);
-			var aPropertyFacades = createPropertyFacades(aClonedProperties, this);
+			var aPropertyFacades = createPropertyFacades(this, aClonedProperties);
 			var mProperties = createPropertyMap(aClonedProperties);
 			var mPropertyFacades = createPropertyMap(aClonedProperties, aPropertyFacades);
 
-			_private.set(this, {
-				oParent: oParent || null,
-				aProperties: aClonedProperties,
-				mProperties: mProperties,
-				aPropertyFacades: aPropertyFacades,
-				mPropertyFacades: mPropertyFacades
-			});
+			mPrivate.oParent = oParent || null;
+			mPrivate.aProperties = aClonedProperties;
+			mPrivate.mProperties = mProperties;
+			mPrivate.aPropertyFacades = aPropertyFacades;
+			mPrivate.mPropertyFacades = mPropertyFacades;
 
-			prepareProperties(aClonedProperties, mPropertyFacades, this);
-			finalizePropertyFacades(aPropertyFacades, this);
+			prepareProperties(this, aClonedProperties, mPropertyFacades);
+			finalizePropertyFacades(this, aPropertyFacades);
 		}
 	});
 
@@ -332,53 +458,88 @@ sap.ui.define([
 			throwInvalidPropertyError("Property info must be a plain object.", oProperty);
 		}
 
-		var sAttribute;
-		var bIsComplex = this.isPropertyComplex(oProperty);
+		validatePropertyDeep(this, oProperty, aProperties);
 
-		for (sAttribute in oProperty) {
-			if (!(sAttribute in mAttributeMetadata)) {
-				reportInvalidProperty("Property contains invalid attribute '" + sAttribute + "'.", oProperty);
-			} else if (bIsComplex && !mAttributeMetadata[sAttribute].allowedForComplexProperty) {
-				reportInvalidProperty("Complex property contains invalid attribute '" + sAttribute + "'.", oProperty);
-			} else if (!DataType.getType(mAttributeMetadata[sAttribute].type).isValid(oProperty[sAttribute])
-					   && (mAttributeMetadata[sAttribute].mandatory || oProperty[sAttribute] != null)) {
-				// Optional attributes may have null or undefined as value.
-				throwInvalidPropertyError("The value of '" + sAttribute + "' is invalid.", oProperty);
+		if (this.isPropertyComplex(oProperty)) {
+			if (oProperty.propertyInfos.length === 0) {
+				throwInvalidPropertyError("Complex property does not reference existing properties.", oProperty);
 			}
 		}
 
-		aMandatoryAttributes.forEach(function(sMandatoryAttribute) {
+		_private.get(this).aMandatoryAttributes.forEach(function(sMandatoryAttribute) {
 			if (!(sMandatoryAttribute in oProperty)) {
 				reportInvalidProperty("Property does not contain mandatory attribute '" + sMandatoryAttribute + "'.", oProperty);
+			} else if (oProperty[sMandatoryAttribute] == null) {
+				throwInvalidPropertyError("Property does not contain mandatory attribute '" + sMandatoryAttribute + "'.", oProperty);
 			}
 		});
 
-		if (bIsComplex) {
-			var aSimpleProperties = oProperty.propertyInfos;
-			var oUniquePropertiesSet = new Set(aSimpleProperties);
-
-			if (aSimpleProperties.length === 0) {
-				throwInvalidPropertyError("Complex property does not reference existing properties", aSimpleProperties);
+		_private.get(this).aMandatoryExtensionAttributes.forEach(function(sMandatoryAttribute) {
+			if (!(sMandatoryAttribute in oProperty.extension)) {
+				reportInvalidProperty("Property does not contain mandatory attribute 'extension." + sMandatoryAttribute + "'.", oProperty);
+			} else if (oProperty.extension[sMandatoryAttribute] == null) {
+				throwInvalidPropertyError("Property does not contain mandatory attribute 'extension." + sMandatoryAttribute + "'.", oProperty);
 			}
+		});
+	};
 
-			if (oUniquePropertiesSet.size !== aSimpleProperties.length) {
-				throwInvalidPropertyError("Complex property contains duplicate keys in the 'propertyInfos' attribute.", aSimpleProperties);
-			}
+	function validatePropertyDeep(oPropertyHelper, oProperty, aProperties, sPath, oPropertySection, mAttributeSection) {
+		var bTopLevel = sPath == null;
 
-			aProperties.forEach(function(oCurrentProperty) {
-				if (oUniquePropertiesSet.has(oCurrentProperty.name)) {
-					if (this.isPropertyComplex(oCurrentProperty)) {
-						throwInvalidPropertyError("Complex property references other complex properties.", oCurrentProperty);
-					}
-					oUniquePropertiesSet.delete(oCurrentProperty.name);
-				}
-			}.bind(this));
+		if (bTopLevel) {
+			mAttributeSection = _private.get(oPropertyHelper).mAttributeMetadata;
+			oPropertySection = oProperty;
+		}
 
-			if (oUniquePropertiesSet.size > 0) {
-				throwInvalidPropertyError("Complex property references non-existing properties.", oProperty);
+		for (var sAttribute in oPropertySection) {
+			var mAttribute = mAttributeSection[sAttribute];
+			var sAttributePath = bTopLevel ? sAttribute : sPath + "." + sAttribute;
+			var vValue = oPropertySection[sAttribute];
+
+			if (!mAttribute) {
+				reportInvalidProperty("Property contains invalid attribute '" + sAttributePath + "'.", oProperty);
+			} else if (oPropertyHelper.isPropertyComplex(oProperty) && !mAttribute.allowedForComplexProperty) {
+				reportInvalidProperty("Complex property contains invalid attribute '" + sAttributePath + "'.", oProperty);
+			} else if (typeof mAttribute.type === "object" && vValue && typeof vValue === "object") {
+				validatePropertyDeep(
+					oPropertyHelper, oProperty, aProperties, sAttributePath, vValue, mAttribute.type
+				);
+			} else if (vValue != null && !getAttributeDataType(mAttribute).isValid(vValue)) {
+				// Optional attributes may have null or undefined as value.
+				throwInvalidPropertyError("The value of '" + sAttributePath + "' is invalid.", oProperty);
+			} else if (vValue && typeof mAttribute.type === "string" && mAttribute.type.startsWith("PropertyReference")) {
+				validatePropertyReferences(
+					oPropertyHelper, oProperty, aProperties, sAttributePath, vValue, mAttribute
+				);
 			}
 		}
-	};
+	}
+
+	function validatePropertyReferences(oPropertyHelper, oProperty, aProperties, sPath, oPropertySection, mAttributeSection) {
+		var aPropertyNames = mAttributeSection.type.endsWith("[]") ? oPropertySection : [oPropertySection];
+		var oUniquePropertiesSet = new Set(aPropertyNames);
+
+		if (aPropertyNames.indexOf(oProperty.name) > -1) {
+			throwInvalidPropertyError("Property references itself in the '" + sPath + "' attribute", oProperty);
+		}
+
+		if (oUniquePropertiesSet.size !== aPropertyNames.length) {
+			throwInvalidPropertyError("Property contains duplicate names in the '" + sPath + "' attribute.", oProperty);
+		}
+
+		for (var i = 0; i < aProperties.length; i++) {
+			if (oUniquePropertiesSet.has(aProperties[i].name)) {
+				if (oPropertyHelper.isPropertyComplex(aProperties[i])) {
+					throwInvalidPropertyError("Property references complex properties in the '" + sPath + "' attribute.", oProperty);
+				}
+				oUniquePropertiesSet.delete(aProperties[i].name);
+			}
+		}
+
+		if (oUniquePropertiesSet.size > 0) {
+			throwInvalidPropertyError("Property references non-existing properties in the '" + sPath + "' attribute.", oProperty);
+		}
+	}
 
 	/**
 	 * If available, it gets the instance that acts as the parent of this helper. This may not reflect the UI5 object relationship tree.
@@ -475,39 +636,36 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets all property names referenced by a complex property.
-	 *
-	 * @param {string} sName Name of a complex property
-	 * @returns {string[]} The names of the properties the complex property references
-	 * @public
-	 */
-	PropertyHelper.prototype.getKeysFromComplexProperty = function(sName) {
-		var oRawProperty = this.getRawProperty(sName);
-		return (oRawProperty && oRawProperty.propertyInfos) || [];
-	};
-	aPropertyFacadeMethods.push("getKeysFromComplexProperty");
-
-	/**
 	 * Gets all properties referenced by a complex property.
 	 *
 	 * @param {string} sName Name of a complex property
 	 * @returns {object[]} The properties the complex property references
 	 * @public
 	 */
-	PropertyHelper.prototype.getPropertiesFromComplexProperty = function(sName) {
+	PropertyHelper.prototype.getReferencedProperties = function(sName) {
 		var oRawProperty = this.getRawProperty(sName);
-		return (oRawProperty && oRawProperty._relatedProperties) || [];
+		return (oRawProperty && oRawProperty._propertyInfos) || [];
 	};
-	aPropertyFacadeMethods.push("getPropertiesFromComplexProperty");
+	aPropertyFacadeMethods.push("getReferencedProperties");
+
+	/**
+	 * Gets the unit property.
+	 *
+	 * @param {string} sName Name of a property
+	 * @returns {object|null} The unit property, or <code>null</code> if it is unknown
+	 * @public
+	 */
+	PropertyHelper.prototype.getUnitProperty = function(sName) {
+		var oRawProperty = this.getRawProperty(sName);
+		return (oRawProperty && oRawProperty._unit) || null;
+	};
+	aPropertyFacadeMethods.push("getUnitProperty");
 
 	/**
 	 * Checks whether a property is sortable.
 	 *
 	 * @param {string} sName Name of a property
-	 * @returns {boolean|null}
-	 *     Whether the property is sortable.
-	 *     Returns <code>false</code> for complex properties.
-	 *     Returns <code>null</code> if the property is unknown.
+	 * @returns {boolean|null} Whether the property is sortable, or <code>null</code> if it is unknown
 	 * @public
 	 */
 	PropertyHelper.prototype.isSortable = function(sName) {
@@ -522,7 +680,7 @@ sap.ui.define([
 	aPropertyFacadeMethods.push("isSortable");
 
 	/**
-	 * Gets all sortable properties referenced by a complex property. For convenience, a non-complex property can be given that is then
+	 * Gets all sortable properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
 	 * returned if it is sortable.
 	 *
 	 * @param {string} sName Name of a property
@@ -550,10 +708,7 @@ sap.ui.define([
 	 * Checks whether a property is filterable.
 	 *
 	 * @param {string} sName Name of a property
-	 * @returns {boolean|null}
-	 *     Whether the property is filterable.
-	 *     Returns <code>true</code> for complex properties.
-	 *     Returns <code>null</code> if the property is unknown.
+	 * @returns {boolean|null} Whether the property is filterable, or <code>null</code> if it is unknown
 	 * @public
 	 */
 	PropertyHelper.prototype.isFilterable = function(sName) {
@@ -568,7 +723,7 @@ sap.ui.define([
 	aPropertyFacadeMethods.push("isFilterable");
 
 	/**
-	 * Gets all filterable properties referenced by a complex property. For convenience, a non-complex property can be given that is then
+	 * Gets all filterable properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
 	 * returned if it is filterable.
 	 *
 	 * @param {string} sName Name of a property
@@ -589,6 +744,50 @@ sap.ui.define([
 	PropertyHelper.prototype.getAllFilterableProperties = function() {
 		return this.getProperties().filter(function(oProperty) {
 			return oProperty.isFilterable();
+		});
+	};
+
+
+	/**
+	 * Checks whether a property is goupable.
+	 *
+	 * @param {string} sName Name of a property
+	 * @returns {boolean|null} Whether the property is groupable, or <code>null</code> if it is unknown
+	 * @public
+	 */
+	PropertyHelper.prototype.isGroupable = function(sName) {
+		var oProperty = this.getProperty(sName);
+
+		if (oProperty) {
+			return oProperty.isComplex() ? false : this.getRawProperty(sName).groupable;
+		}
+
+		return null;
+	};
+	aPropertyFacadeMethods.push("isGroupable");
+
+	/**
+	 * Gets all groupable properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
+	 * returned if it is groupable.
+	 *
+	 * @param {string} sName Name of a property
+	 * @returns {object[]} The groupable properties
+	 * @public
+	 */
+	PropertyHelper.prototype.getGroupableProperties = function(sName) {
+		return extractProperties(this, sName, this.isGroupable);
+	};
+	aPropertyFacadeMethods.push("getGroupableProperties");
+
+	/**
+	 * Gets all groupable properties.
+	 *
+	 * @returns {object[]} All groupable properties
+	 * @public
+	 */
+	PropertyHelper.prototype.getAllGroupableProperties = function() {
+		return this.getProperties().filter(function(oProperty) {
+			return oProperty.isGroupable();
 		});
 	};
 
@@ -637,6 +836,36 @@ sap.ui.define([
 	aPropertyFacadeMethods.push("getPath");
 
 	/**
+	 * Checks whether a property is part of the key of its entity.
+	 *
+	 * @param {string} sName Name of a property
+	 * @returns {string|null} Whether it is a key property, or <code>null</code> if it is unknown
+	 * @public
+	 */
+	PropertyHelper.prototype.isKey = function(sName) {
+		var oProperty = this.getProperty(sName);
+
+		if (oProperty) {
+			return oProperty.isComplex() ? false : this.getRawProperty(sName).key;
+		}
+
+		return null;
+	};
+	aPropertyFacadeMethods.push("isKey");
+
+	/**
+	 * Gets all key properties.
+	 *
+	 * @returns {object[]} All key properties
+	 * @public
+	 */
+	PropertyHelper.prototype.getAllKeyProperties = function() {
+		return this.getProperties().filter(function(oProperty) {
+			return oProperty.isKey();
+		});
+	};
+
+	/**
 	 * Checks whether a property is visible.
 	 *
 	 * @param {string} sName Name of a property
@@ -650,7 +879,7 @@ sap.ui.define([
 	aPropertyFacadeMethods.push("isVisible");
 
 	/**
-	 * Gets all visible properties referenced by a complex property. For convenience, a non-complex property can be given that is then
+	 * Gets all visible properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
 	 * returned if it is visible.
 	 *
 	 * @param {string} sName Name of a property

@@ -456,6 +456,7 @@ sap.ui.define([
 		},
 		constructor: function() {
 			this._oTableReady = new Promise(this._resolveTable.bind(this));
+			this._pFullInitialize = new Promise(this._resolveFullInitialization.bind(this));
 			this._oAdaptationController = null;
 			Control.apply(this, arguments);
 			this.bCreated = true;
@@ -572,6 +573,15 @@ sap.ui.define([
 		this._fReject = reject;
 	};
 
+	Table.prototype._fullyInitialized = function() {
+		return this._pFullInitialize;
+	};
+
+	Table.prototype._resolveFullInitialization = function(resolve, reject) {
+		this._fnResolveFullInit = resolve;
+		this._fnRejectFullInit = reject;
+	};
+
 	// ----Type----
 	Table.prototype._getStringType = function(oTypeInput) {
 		var sType, oType = sType = oTypeInput || this.getType();
@@ -658,6 +668,7 @@ sap.ui.define([
 			} else {
 				// reject any pending promise
 				this._onAfterTableCreated();
+				this._onAfterFullInitialization();
 			}
 			if (this._oTemplate) {
 				this._oTemplate.destroy();
@@ -665,6 +676,8 @@ sap.ui.define([
 			}
 			// recreate the promise when switching table
 			this._oTableReady = new Promise(this._resolveTable.bind(this));
+			this._bFullyInitialized = false;
+			this._pFullInitialize = new Promise(this._resolveFullInitialization.bind(this));
 			this._initializeContent();
 		}
 		return this;
@@ -845,9 +858,9 @@ sap.ui.define([
 			return;
 		}
 
-		oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
+		oTable._fullyInitialized().then(function() {
 			var aPropertyLabels = aFilteredProperties.map(function(sPropertyName) {
-				return oPropertyHelper.getLabel(sPropertyName);
+				return oTable.getPropertyHelper().getLabel(sPropertyName);
 			});
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			var oListFormat = ListFormat.getInstance();
@@ -1048,6 +1061,14 @@ sap.ui.define([
 			if (this.bIsDestroyed) {
 				return;
 			}
+
+			var oDelegate = this.getControlDelegate();
+			if (oDelegate.preInit) {
+				// Call after libraries are loaded, but before initializing controls.
+				// This allows the delegate to load additional modules, e.g. from previously loaded libraries, in parallel.
+				this._pDelegatePreInit = oDelegate.preInit(this);
+			}
+
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
 			if (!this._bTableExists && sType === this._getStringType()) {
 				this._bMobileTable = sType === "ResponsiveTable";
@@ -1075,22 +1096,25 @@ sap.ui.define([
 		delete this._fReject;
 	};
 
+	Table.prototype._onAfterFullInitialization = function(bResult) {
+		if (bResult && this._fnResolveFullInit) {
+			this._fnResolveFullInit(this);
+		} else if (this._fnRejectFullInit) {
+			this._fnRejectFullInit(this);
+		}
+		delete this._fnResolveFullInit;
+		delete this._fnRejectFullInit;
+	};
+
 	Table.prototype._createContent = function() {
 		this._createToolbar();
 		this._createTable();
-
 		this._updateRowAction();
-
-		var aMDCColumns = this.getColumns();
-
-		aMDCColumns.forEach(this._insertInnerColumn, this);
-
+		this.getColumns().forEach(this._insertInnerColumn, this);
 		this.setAggregation("_content", this._oTable);
+		this._onAfterTableCreated(true); // Resolve any pending promise if table exists
 
-		// Resolve any pending promise if table exists
-		this._onAfterTableCreated(true);
-
-		this.initialized().then(function() {
+		var pTableInit = this.initialized().then(function() {
 			this.initPropertyHelper(PropertyHelper);
 
 			// add this to the micro task execution queue to enable consumers to handle this correctly
@@ -1098,11 +1122,22 @@ sap.ui.define([
 			if (oCreationRow) {
 				oCreationRow.update();
 			}
+
 			if (this.getAutoBindOnInit()) {
 				this.checkAndRebind();
 			}
+
+			return this.awaitPropertyHelper();
 		}.bind(this));
 
+		Promise.all([
+			pTableInit,
+			this._pDelegatePreInit
+		]).then(function() {
+			delete this._pDelegatePreInit;
+			this._bFullyInitialized = true;
+			this._onAfterFullInitialization(true);
+		}.bind(this));
 	};
 
 	Table.prototype.setHeader = function(sText) {
@@ -1348,7 +1383,8 @@ sap.ui.define([
 		var bSplitCells = mCustomConfig && mCustomConfig.splitCells;
 		var aColumns = this.getColumns();
 
-		return this.awaitPropertyHelper().then(function(oPropertyHelper) {
+		return this._fullyInitialized().then(function() {
+			var oPropertyHelper = this.getPropertyHelper();
 			var aSheetColumns = [];
 
 			aColumns.forEach(function(oColumn) {
@@ -1395,7 +1431,9 @@ sap.ui.define([
 					var oProcessor = Promise.resolve();
 
 					if (mCustomConfig.includeFilterSettings) {
-						oProcessor = ExportUtils.parseFilterConfiguration(oRowBinding, function(sProp){ return oPropertyHelper.getLabel(sProp); }).then(function(oFilterConfig) {
+						oProcessor = ExportUtils.parseFilterConfiguration(oRowBinding, function(sPropertyName) {
+							return oPropertyHelper.getLabel(sPropertyName);
+						}).then(function(oFilterConfig) {
 							if (oFilterConfig) {
 								mExportSettings.workbook.context = {
 									metaSheetName: oFilterConfig.name,
@@ -1601,8 +1639,8 @@ sap.ui.define([
 
 		oMDCColumn = this.getColumns()[iIndex];
 
-		this.awaitPropertyHelper().then(function(oPropertyHelper) {
-			var aSortItems = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
+		this._fullyInitialized().then(function() {
+			var aSortItems = this.getPropertyHelper().getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
 				return new Item({
 					text: oProperty.getLabel(),
 					key: oProperty.getName()
@@ -1962,35 +2000,34 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.bindRows = function(oBindingInfo) {
-
 		if (!this.bDelegateInitialized || !this._oTable) {
 			return;
 		}
-		return this.awaitPropertyHelper().then(function() {
-			this.getControlDelegate().updateBindingInfo(this, this.getPayload(), oBindingInfo);
-			if (oBindingInfo && oBindingInfo.path) {
-				this._oTable.setShowOverlay(false);
-				if (this._bMobileTable && this._oTemplate) {
-					oBindingInfo.template = this._oTemplate;
-				} else {
-					delete oBindingInfo.template;
-				}
 
-				if (!oBindingInfo.parameters) {
-					oBindingInfo.parameters = {};
-				}
-				// Update sorters
-				oBindingInfo.sorter = this._getSorters();
+		this.getControlDelegate().updateBindingInfo(this, this.getPayload(), oBindingInfo);
 
-				Table._addBindingListener(oBindingInfo, "dataRequested", this._onDataRequested.bind(this));
-			    Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
-			    Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
-
-				this._updateColumnsBeforeBinding(oBindingInfo);
-				this.getControlDelegate().rebindTable(this, oBindingInfo);
-				this._updateInnerTableNoDataText();
+		if (oBindingInfo && oBindingInfo.path) {
+			this._oTable.setShowOverlay(false);
+			if (this._bMobileTable && this._oTemplate) {
+				oBindingInfo.template = this._oTemplate;
+			} else {
+				delete oBindingInfo.template;
 			}
-		}.bind(this));
+
+			if (!oBindingInfo.parameters) {
+				oBindingInfo.parameters = {};
+			}
+			// Update sorters
+			oBindingInfo.sorter = this._getSorters();
+
+			Table._addBindingListener(oBindingInfo, "dataRequested", this._onDataRequested.bind(this));
+			Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
+			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
+
+			this._updateColumnsBeforeBinding(oBindingInfo);
+			this.getControlDelegate().rebindTable(this, oBindingInfo);
+			this._updateInnerTableNoDataText();
+		}
 	};
 
 	/**
@@ -2200,11 +2237,10 @@ sap.ui.define([
 
 	Table.prototype.rebind = function() {
 		// Bind the rows/items of the table, only once it is initialized.
-		// This also ensures bind happens after the table is initialized
-		if (this._bTableExists) {
+		if (this._bFullyInitialized) {
 			this.bindRows(this.getRowsBindingInfo() || {});
 		} else {
-			this.initialized().then(this.rebind.bind(this));
+			this._fullyInitialized().then(this.rebind.bind(this));
 		}
 	};
 
@@ -2276,6 +2312,9 @@ sap.ui.define([
 		this._oTableReady = null;
 		this._fReject = null;
 		this._fResolve = null;
+		this._pFullInitialize = null;
+		this._fnRejectFullInit = null;
+		this._fnResolveFullInit = null;
 		this._oFilter = null;
 
 		Control.prototype.exit.apply(this, arguments);
