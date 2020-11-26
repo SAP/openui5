@@ -187,6 +187,12 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 			clearInterval(this._iIntervalId);
 			this._iIntervalId = null;
 		}
+
+		if (this._iDataUpdateCallId) {
+			clearTimeout(this._iDataUpdateCallId);
+			this._iDataUpdateCallId = null;
+		}
+
 		this._oSettings = null;
 		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
