@@ -1173,7 +1173,7 @@ sap.ui.define([
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-label"), "Add", "Tooltip is added in aria-label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
-		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Only description is added in aria-describedby");
 	});
 
 	QUnit.test("Described (via semantic type)", function (assert) {
@@ -1184,7 +1184,7 @@ sap.ui.define([
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-label"), "Add", "Tooltip is added in aria-label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
-		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Only type is added in aria-describedby");
 	});
 
 	QUnit.test("Labelled (via association)", function (assert) {
