@@ -5,14 +5,17 @@
   Test page that runs all QUnit and OPA tests of a team within a hidden inline frame (well, not
   actually hidden, but out of sight).
 
-  The page has two modes. As a default ("full mode") it runs all tests. For 1Ring.qunit.html the
-  test coverage is measured. A coverage of 100% is expected.
+  The configuration must be given using the query option "team" which is expanded to a module name
+  "BeforePush.<team>" in the same folder as this script. This module is expected to return a map of
+  test files to 'full', 'integration' or 'both'.
 
-  With "integrationTestsOnly", only the OPA tests and ODataModel.integration.qunit.html (which is
-  part of 1Ring in full mode) are run. Coverage is measured for all tests, but no specific coverage
-  is expected. This mode can be used to see which code is actually tested via integration tests. It
-  can also be used to verify a POC (probably in combination with realOData=true to overcome
-  "No Mockdata found" errors)
+  The page has two modes. As a default ("full mode") all tests are run except those with
+  'integration'.
+
+  With "integrationTestsOnly", all tests are run except those with 'full'. Coverage is measured for
+  all tests, but no specific coverage is expected. This mode can be used to see which code is
+  actually covered via integration tests. It can also be used to verify a POC (probably in
+  combination with realOData=true to overcome "No Mockdata found" errors)
 
   Many of our tests can (and will) be run with "realOData=true" and perform tests against a back-end
   server using the SimpleProxy servlet. If BeforePush is called w/o realOData URL parameter, this
@@ -20,8 +23,8 @@
   themselves later run through without login popups. If this fails, the tests with "realOData=true"
   can be skipped.
 
-  With "realOData=true" run only tests having "realOData=true" in URL.
-  With "realOData=false" run all tests with stripped off "realOData=true".
+  With "realOData=true" only tests having "realOData=true" in the URL are run.
+  With "realOData=false" all tests are run with "realOData=true" stripped off.
 
   With "frames=n" you can run several tests in parallel to speed it up. When running only the
   verification "frames=4" seems a valid option in Chrome and Firefox. In IE and Edge you should not
@@ -34,16 +37,10 @@
 */
 (function () {
 	"use strict";
-	/*global BeforePush*/
-
-	// Map of tests must be prepared in a separated config file (e.g. BeforePush.ODataV4.js). Modes:
-	// 'full': full mode only
-	// 'integration': integration test mode only
-	// everything else: full & integration test mode
-	var mTests = BeforePush.tests;
+	var mParameters = getQueryParameters();
 
 	// returns an array of tests according to the given flags
-	function filterTests(bIntegration, bRealOData) {
+	function filterTests(mTests, bIntegration, bRealOData) {
 		var sUnwanted = bIntegration ? "full" : "integration",
 			aTests,
 			mFilter = {};
@@ -81,34 +78,48 @@
 	}
 
 	function getFrameCount() {
-		var iCount,
-			aMatches = /[?&]frames=(\d+)(&|$)/.exec(location.search);
+		var iCount;
 
-		if (!aMatches) {
+		if (!mParameters.frames) {
 			return 0;
 		}
-		iCount = parseInt(aMatches[1]);
-		if (iCount < 1 || iCount > 4) {
+		iCount = parseInt(mParameters.frames);
+		if (!(iCount >= 1 && iCount <= 4)) { // this includes NaN
 			setStatus("Frames set to 1. Use 1 up to 4 frames.");
 			iCount = 1;
 		}
 		return iCount;
 	}
 
+	// parses the query parameters into a map
+	function getQueryParameters() {
+		var mParameters = {};
+
+		location.search.slice(1).split("&").forEach(function (sParameter) {
+			var aParts = sParameter.split("=", 2);
+
+			mParameters[aParts[0]] = aParts[1] || true;
+		});
+
+		return mParameters;
+	}
+
 	/**
 	 * Runs the tests.
 	 *
+	 * @param {object} mTests
+	 *   the map of test files to 'full', 'integration' or 'both'
 	 * @param {boolean} [bRealOData]
 	 *   if undefined, run all tests; if true, run only tests with "realOData=true"; if false, run
 	 *   all tests without realOData (it is stripped off)
 	 */
-	function runTests(bRealOData) {
+	function runTests(mTests, bRealOData) {
 		var oFirstFailedTest,
 			iFrames,
 			iRunningTests = 0,
 			oSelectedTest,
 			iStart = Date.now(),
-			aTests = filterTests(/integrationTestsOnly/i.test(location.href), bRealOData),
+			aTests = filterTests(mTests, mParameters.integrationTestsOnly, bRealOData),
 			iTop = 10000,
 			oTotal,
 			bVisible;
@@ -169,7 +180,7 @@
 					if (oDetails.status === "failed") {
 						oTest.element.firstChild.classList.add("failed");
 						oFirstFailedTest = oFirstFailedTest || oTest;
-					} else if (!/keepResults/i.test(location.href)) {
+					} else if (mParameters.keepResults) {
 						// remove iframe in order to free memory
 						document.body.removeChild(oTest.frame);
 						oTest.frame = undefined;
@@ -265,7 +276,7 @@
 		document.getElementById("buttons").classList.add("hidden");
 		document.getElementById("list").classList.remove("hidden");
 		aTests = aTests.map(function (sUrl) {
-			return createTest(sUrl, "../../" + sUrl);
+			return createTest(sUrl, "test-resources/sap/ui/core/" + sUrl);
 		});
 		oTotal = createTest("Finished");
 		oTotal.testCounts = {
@@ -296,17 +307,25 @@
 		}
 	}
 
+	function setTitle(sTeam) {
+		var oElement = document.getElementById("h1"),
+			sTitle = document.title + ": " + sTeam;
+
+		document.title = sTitle;
+		oElement.firstChild.textContent = sTitle;
+	}
+
 	// For the onload handler and the button "Run"
-	function verifyConnectionAndRun() {
+	function verifyConnectionAndRun(mTests) {
 		var oLoginRequest = new XMLHttpRequest();
 
 		// send a request to the service document from the v4 sample service to ensure that
 		// the credentials are known before running the test suite.
-		oLoginRequest.open("GET", "../../../../../../proxy/sap/opu/odata4/sap/zui5_testv4/default/"
-			+ "sap/zui5_epm_sample/0002/");
+		oLoginRequest.open("GET",
+			"proxy/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
 		oLoginRequest.addEventListener("load", function () {
 			if (oLoginRequest.status === 200) {
-				runTests();
+				runTests(mTests);
 			} else {
 				setStatus("Could not access the real OData server: "
 					+ oLoginRequest.status + " " + oLoginRequest.statusText);
@@ -315,18 +334,33 @@
 		oLoginRequest.send();
 	}
 
-	window.addEventListener("load", function () {
-		var aMatches, bRealOData;
-
-		document.getElementById("run").addEventListener("click", verifyConnectionAndRun);
-		document.getElementById("runWithoutRealOData")
-			.addEventListener("click", runTests.bind(null, false));
-		aMatches = /realOData=(\w+)/.exec(location.search);
-		bRealOData = aMatches && aMatches[1] === "true";
-		if (bRealOData === null) { // no realOData given
-			verifyConnectionAndRun();
-		} else {
-			runTests(bRealOData);
+	// configure the UI5 loader
+	sap.ui.loader.config({
+		baseUrl : "resources",
+		paths : {
+			"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit",
+			"sap/ui/test/qunit" : "test-resources/sap/ui/test/qunit"
 		}
+	});
+
+	window.addEventListener("load", function () {
+		var sTestsScript = "sap/ui/core/qunit/internal/BeforePush." + mParameters.team;
+
+		if (!mParameters.team) {
+			setStatus("missing 'team' parameter");
+			return;
+		}
+		setTitle(mParameters.team);
+		sap.ui.require([sTestsScript], function (mTests) {
+			document.getElementById("run")
+				.addEventListener("click", verifyConnectionAndRun.bind(null, mTests));
+			document.getElementById("runWithoutRealOData")
+				.addEventListener("click", runTests.bind(null, mTests, false));
+			if ("realOData" in mParameters) {
+				runTests(mTests, mParameters.realOData === "true");
+			} else {
+				verifyConnectionAndRun(mTests);
+			}
+		});
 	});
 }());

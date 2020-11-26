@@ -18,7 +18,9 @@ sap.ui.require([
 		"sap/ui/core/qunit/internal/testsuite.feature-odata-v4.qunit",
 		"sap/ui/core/qunit/internal/ODataV4.qunit"
 	], function (oTestsuite) {
-		var aModules = Object.keys(oTestsuite.tests).map(function (sTest) {
+		var aModules = Object.keys(oTestsuite.tests).filter(function (sTest) {
+				return !sTest.startsWith("OPA.");
+			}).map(function (sTest) {
 				return oTestsuite.tests[sTest].module[0];
 			});
 

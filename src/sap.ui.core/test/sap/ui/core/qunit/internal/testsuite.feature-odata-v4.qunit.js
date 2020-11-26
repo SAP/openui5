@@ -25,6 +25,7 @@ sap.ui.define(function () {
 			loader : {
 				paths : {
 					"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit",
+					"sap/ui/core/sample" : "test-resources/sap/ui/core/demokit/sample",
 					"sap/ui/test/qunit" : "test-resources/sap/ui/test/qunit"
 				}
 			},
@@ -39,6 +40,13 @@ sap.ui.define(function () {
 			},
 			"XMLPreprocessor" : {
 				module : ["sap/ui/core/qunit/util/XMLPreprocessor.qunit"]
+			},
+			// the following tests set autostart=false because they require modules asynchronously
+			// and start QUnit on their own
+			// the following tests must all be named "OPA.*" so that 1Ring ignores them
+			"OPA.ViewTemplate" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/ViewTemplate/scenario/Opa.qunit"]
 			}
 		}
 	};
