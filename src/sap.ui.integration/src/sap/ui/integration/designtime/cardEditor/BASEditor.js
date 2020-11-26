@@ -202,11 +202,7 @@ sap.ui.define([
 						}
 
 						if (oViz) {
-							if (oMetaItem.hasOwnProperty("visualization")) {
-								oItem.visualization = oViz;
-							} else {
-								delete oItem.visualization;
-							}
+							oItem.visualization = oViz;
 							oViz = null;
 						}
 						oItem.__key = sKey;
@@ -351,8 +347,11 @@ sap.ui.define([
 		return oConfig;
 	};
 
-	BASEditor.prototype._generateMetadataFromJSConfig = function () {
+	BASEditor.prototype._generateMetadataFromJSConfig = function (oDesigntimeJSConfig) {
 		var oMetadata = {};
+		if (oDesigntimeJSConfig) {
+			this._oDesigntimeJSConfig = merge(this._oDesigntimeJSConfig, oDesigntimeJSConfig);
+		}
 		if (this._oDesigntimeJSConfig) {
 			var mItems = this._oDesigntimeJSConfig.form.items;
 			var i = 0;
@@ -491,7 +490,7 @@ sap.ui.define([
 							var oDesigntime = new DesigntimeClass();
 							that._oDesigntimeJSConfig = oDesigntime.getSettings();
 							that._fnDesigntime = DesigntimeClass;
-							var oMetadata = that._generateMetadataFromJSConfig(that._oDesigntimeJSConfig);
+							var oMetadata = that._generateMetadataFromJSConfig();
 							DesigntimeClass = oDesigntime.getMetadata().getClass();
 							fnResolve(oMetadata);
 						}
