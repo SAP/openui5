@@ -262,12 +262,7 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if the element is an instance of the type
 		 */
 		_isInstanceOf: function(oElement, sType) {
-			var oInstance = ObjectPath.get(sType);
-			if (typeof oInstance === "function") {
-				return oElement instanceof oInstance;
-			} else {
-				return false;
-			}
+			return oElement.isA(sType);
 		},
 
 		/**

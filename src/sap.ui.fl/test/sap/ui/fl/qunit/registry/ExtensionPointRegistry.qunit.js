@@ -39,7 +39,8 @@ sap.ui.define([
 			name: sExtensionPointName,
 			targetControl: oParent,
 			aggregationName: sAggregationName,
-			index: iIndex
+			index: iIndex,
+			viewId: oView.getId()
 		};
 	}
 

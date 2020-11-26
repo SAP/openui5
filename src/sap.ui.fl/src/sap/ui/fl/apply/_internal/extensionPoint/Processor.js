@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/ExtensionPointRegistry",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/Log"
 ],
 function(
 	ChangePersistenceFactory,
@@ -19,9 +20,27 @@ function(
 	Utils,
 	ExtensionPointRegistry,
 	JsControlTreeModifier,
-	merge
+	merge,
+	Log
 ) {
 	'use strict';
+
+	function getViewId(mExtensionPointInfo) {
+		var oViewId;
+		if (mExtensionPointInfo.view.isA("sap.ui.core.Fragment")) {
+			var oController = mExtensionPointInfo.view.getController();
+			var oControllerView = oController && oController.getView();
+			oViewId = oControllerView && oControllerView.getId();
+			if (!oViewId) {
+				Log.error("Could not find responsible view on fragment containing extension points. "
+					+ "Please provide controller with attached view on fragment instantiation! Fragment name: "
+					+ mExtensionPointInfo.view.getId()
+					+ " / extension point name: "
+					+ mExtensionPointInfo.name);
+			}
+		}
+		return oViewId || mExtensionPointInfo.view.getId();
+	}
 
 	/**
 	 * Implements the <code>Extension Points</code> provider by SAPUI5 flexibility that can be hooked in the <code>sap.ui.core.ExtensionPoint</code> life cycle.
@@ -39,12 +58,15 @@ function(
 			var mPropertyBag = {};
 			mPropertyBag.appComponent = oAppComponent;
 			mPropertyBag.modifier = JsControlTreeModifier;
-			mPropertyBag.viewId = oExtensionPoint.view.getId();
 			mPropertyBag.name = oExtensionPoint.name;
 			mPropertyBag.componentId = oAppComponent.getId();
 
 			var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
 			var mExtensionPointInfo = merge({defaultContent: []}, oExtensionPoint);
+
+			var oViewId = getViewId(oExtensionPoint);
+			mPropertyBag.viewId = oViewId;
+			mExtensionPointInfo.viewId = oViewId;
 			oExtensionPointRegistry.registerExtensionPoints(mExtensionPointInfo);
 
 			var oPromise = FlexState.initialize(mPropertyBag)
