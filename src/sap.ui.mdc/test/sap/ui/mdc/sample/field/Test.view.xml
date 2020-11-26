@@ -3,6 +3,7 @@
 	xmlns:m="sap.m"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:c="sap.ui.core"
@@ -535,7 +536,7 @@
 
 
 				<c:Title text="In/Out Example"></c:Title>
-				<m:Label text="Material"></m:Label>
+				<m:Label text="{/#Product/MatrId/@sap:label}"></m:Label>
 				<mdc:Field
 					id="IOF1"
 					value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 10, search: '^(|[0-9])+$', nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"
@@ -557,13 +558,13 @@
 									<m:Table items="{path: '/MaterialCollection'}" width="26rem">
 										<m:columns>
 											<m:Column>
-												<m:Label text="id"></m:Label>
+												<m:Label text="{/#MaterialCollection/MatrId/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="Desciption"></m:Label>
+												<m:Label text="{/#MaterialCollection/Text/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="def. Unit"></m:Label>
+												<m:Label text="{/#MaterialCollection/defaultUnit/@sap:label}"/>
 											</m:Column>
 										</m:columns>
 										<m:items>
@@ -579,12 +580,12 @@
 					</mdc:dependents>
 				</mdc:Field>
 
-				<m:Label text="Quantity"></m:Label>
+				<m:Label text="{/#Product/MatrQuantity/@sap:label}"></m:Label>
 				<mdc:Field
 					id="IOF2"
 					value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit'}"
 					delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}"
-					placeholder="{/#Product/WeightMeasure/@sap:label}"
+					placeholder="{/#Product/MatrQuantity/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
 					submit="handleSubmit"
@@ -602,33 +603,33 @@
 									<mdcField:OutParameter id="FVH-WeightUnit4_Out-Material" value="{MatrId}" helpPath="MatrId"/>
 								</mdcField:outParameters>
 								<mdcField:filterBar>
-									<mdc:FilterBar
+									<vhfb:FilterBar
 										liveMode= "true">
 										<mdc:FilterField
 											id="VHFBTextFF"
-											label= "Matr Id"
+											label= "{/#weightODataUnits/MatrId/@sap:label}"
 											editMode= "Editable"
 											display= "ValueDescription"
 											dataType="sap.ui.model.type.String"
 											width="100%"
 											conditions="{$filters>/conditions/MatrId}">
 										</mdc:FilterField>
-									</mdc:FilterBar>
+									</vhfb:FilterBar>
 								</mdcField:filterBar>
 								<mdcField:FieldValueHelpMTableWrapper>
 									<m:Table items="{/weightODataUnits}" width="26rem">
 										<m:columns>
 											<m:Column width="10rem">
-												<m:Label text="Matr Id"></m:Label>
+												<m:Label text="{/#weightODataUnits/MatrId/@sap:label}"/>
 											</m:Column>
 											<m:Column width="3rem">
-												<m:Label text="ID"></m:Label>
+												<m:Label text="{/#weightODataUnits/id/@sap:label}"/>
 											</m:Column>
 											<m:Column width="3rem">
-												<m:Label text="Unit"></m:Label>
+												<m:Label text="{/#weightODataUnits/unit/@sap:label}"/>
 											</m:Column>
 											<m:Column >
-												<m:Label text="Text"></m:Label>
+												<m:Label text="{/#weightODataUnits/text/@sap:label}"/>
 											</m:Column>
 										</m:columns>
 										<m:items>
@@ -666,10 +667,10 @@
 									<m:Table items="{path: '/CountryCollection', suspended: true}" width="26rem">
 										<m:columns>
 											<m:Column>
-												<m:Label text="Country"></m:Label>
+												<m:Label text="{/#CountryCollection/countryId/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="Name"></m:Label>
+												<m:Label text="{/#CountryCollection/text/@sap:label}"/>
 											</m:Column>
 										</m:columns>
 										<m:items>
@@ -708,11 +709,11 @@
 									<mdcField:OutParameter id="IOFVHRegion_Out-City" value="{CityId}" fixedValue=""/>
 								</mdcField:outParameters>
 								<mdcField:filterBar>
-									<mdc:FilterBar
+									<vhfb:FilterBar
 										liveMode= "false">
 										<mdc:FilterField
 											id="VHFBTextFFCountry"
-											label= "Country"
+											label= "{/#RegionCollection/countryId/@sap:label}"
 											editMode= "Editable"
 											display= "ValueDescription"
 											dataType="sap.ui.model.type.String"
@@ -720,19 +721,19 @@
 											conditions="{$filters>/conditions/countryId}"
 											fieldHelp="IOFVHCountry">
 										</mdc:FilterField>
-									</mdc:FilterBar>
+									</vhfb:FilterBar>
 								</mdcField:filterBar>
 								<mdcField:FieldValueHelpMTableWrapper>
 									<m:Table items="{path: '/RegionCollection', suspended: true}" width="26rem">
 										<m:columns>
 											<m:Column>
-												<m:Label text="Region"></m:Label>
+												<m:Label text="{/#RegionCollection/regionId/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="Name"></m:Label>
+												<m:Label text="{/#RegionCollection/text/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="Country"></m:Label>
+												<m:Label text="{/#RegionCollection/countryId/@sap:label}"/>
 											</m:Column>
 										</m:columns>
 										<m:items>
@@ -773,11 +774,11 @@
 									<mdcField:OutParameter id="IOFVHCity_Out-Region" value="{RegionId}" helpPath="regionId" mode="Always"/>
 								</mdcField:outParameters>
 								<mdcField:filterBar>
-									<mdc:FilterBar
+									<vhfb:FilterBar
 										liveMode= "true">
 										<mdc:FilterField
 											id="VHFBTextFFCountry2"
-											label= "Country"
+											label= "{/#CityCollection/countryId/@sap:label}"
 											editMode= "Editable"
 											display= "ValueDescription"
 											dataType="sap.ui.model.type.String"
@@ -787,29 +788,29 @@
 										</mdc:FilterField>
 										<mdc:FilterField
 											id="VHFBTextFFRegion2"
-											label= "Region"
+											label= "{/#CityCollection/regionId/@sap:label}"
 											editMode= "Editable"
 											display= "ValueDescription"
 											dataType="sap.ui.model.type.String"
 											width="100%"
 											conditions="{$filters>/conditions/regionId}">
 										</mdc:FilterField>
-									</mdc:FilterBar>
+									</vhfb:FilterBar>
 								</mdcField:filterBar>
 								<mdcField:FieldValueHelpMTableWrapper>
 									<m:Table items="{path: '/CityCollection', suspended: true}" width="26rem">
 										<m:columns>
 											<m:Column>
-												<m:Label text="City"></m:Label>
+												<m:Label text="{/#CityCollection/cityId/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="Name"></m:Label>
+												<m:Label text="{/#CityCollection/text/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="Country"></m:Label>
+												<m:Label text="{/#CityCollection/countryId/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="Region"></m:Label>
+												<m:Label text="{/#CityCollection/regionId/@sap:label}"/>
 											</m:Column>
 										</m:columns>
 										<m:items>

@@ -177,7 +177,7 @@
 					<PropertyRef Name="countryId" />
 				</Key>
 				<Property Name="countryId" Type="Edm.String" Nullable="false"
-					MaxLength="3" sap:label="ID"
+					MaxLength="3" sap:label="Country"
 					sap:sortable="true"
 					sap:filterable="true" />
 				<Property Name="text" Type="Edm.String" Nullable="false"
@@ -193,11 +193,11 @@
 					<PropertyRef Name="regionId" />
 				</Key>
 				<Property Name="countryId" Type="Edm.String" Nullable="false"
-					MaxLength="3" sap:label="ID"
+					MaxLength="3" sap:label="Country"
 					sap:sortable="true"
 					sap:filterable="true" />
 				<Property Name="regionId" Type="Edm.String" Nullable="false"
-					MaxLength="3"  sap:label="ID"
+					MaxLength="3"  sap:label="Region"
 					sap:sortable="true"
 					sap:filterable="true" />
 				<Property Name="text" Type="Edm.String" Nullable="false"
@@ -214,15 +214,15 @@
 					<PropertyRef Name="cityId" />
 				</Key>
 				<Property Name="countryId" Type="Edm.String" Nullable="false"
-					MaxLength="3"  sap:label="ID"
+					MaxLength="3"  sap:label="Country"
 					sap:sortable="true"
 					sap:filterable="true" />
 				<Property Name="regionId" Type="Edm.String" Nullable="false"
-					MaxLength="3"  sap:label="ID"
+					MaxLength="3"  sap:label="Region"
 					sap:sortable="true"
 					sap:filterable="true" />
 				<Property Name="cityId" Type="Edm.String" Nullable="false"
-					MaxLength="3"  sap:label="ID"
+					MaxLength="3"  sap:label="City"
 					sap:sortable="true"
 					sap:filterable="true" />
 				<Property Name="text" Type="Edm.String" Nullable="false"

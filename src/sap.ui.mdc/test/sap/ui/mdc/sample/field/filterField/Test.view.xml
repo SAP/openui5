@@ -3,6 +3,7 @@
 	xmlns:m="sap.m"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:c="sap.ui.core"
@@ -402,7 +403,7 @@
 					</mdc:FilterField>
 
 					<c:Title text="In/Out Example"></c:Title>
-					<m:Label text="Country"></m:Label>
+					<m:Label text="{/#Product/CountryId/@sap:label}"></m:Label>
 					<mdc:FilterField
 						id="IOFFCountry"
 						conditions="{cm>/conditions/CountryId}"
@@ -424,10 +425,10 @@
 										<m:Table items="{path: '/CountryCollection', suspended: true}" width="26rem">
 											<m:columns>
 												<m:Column>
-													<m:Label text="Country"></m:Label>
+													<m:Label text="{/#CountryCollection/countryId/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="Name"></m:Label>
+												<m:Label text="{/#CountryCollection/text/@sap:label}"/>
 												</m:Column>
 											</m:columns>
 											<m:items>
@@ -442,7 +443,7 @@
 						</mdc:dependents>
 					</mdc:FilterField>
 
-					<m:Label text="Region"></m:Label>
+					<m:Label text="{/#Product/RegionId/@sap:label}"></m:Label>
 					<mdc:FilterField
 						id="IOFFRegion"
 						conditions="{cm>/conditions/RegionId}"
@@ -466,11 +467,11 @@
 										<mdcField:OutParameter id="IOFFVHRegion-Out-Country" value="{cm>/conditions/CountryId}" helpPath="countryId"/>
 									</mdcField:outParameters>
 									<mdcField:filterBar>
-										<mdc:FilterBar
+										<vhfb:FilterBar
 											liveMode= "true">
 											<mdc:FilterField
 												id="VHFFBTextFFCountry"
-												label= "Country"
+												label= "{/#RegionCollection/countryId/@sap:label}"
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
@@ -478,19 +479,19 @@
 												conditions="{$filters>/conditions/countryId}"
 												operators="EQ,NE,EUROPE">
 											</mdc:FilterField>
-										</mdc:FilterBar>
+										</vhfb:FilterBar>
 									</mdcField:filterBar>
 									<mdcField:FieldValueHelpMTableWrapper>
 										<m:Table items="{path: '/RegionCollection', suspended: true}" width="26rem">
 											<m:columns>
 												<m:Column>
-													<m:Label text="Region"></m:Label>
+													<m:Label text="{/#RegionCollection/regionId/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="Name"></m:Label>
+													<m:Label text="{/#RegionCollection/text/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="Country"></m:Label>
+													<m:Label text="{/#RegionCollection/countryId/@sap:label}"/>
 												</m:Column>
 											</m:columns>
 											<m:items>
@@ -506,7 +507,7 @@
 						</mdc:dependents>
 					</mdc:FilterField>
 
-					<m:Label text="City"></m:Label>
+					<m:Label text="{/#Product/CityId/@sap:label}"></m:Label>
 					<mdc:FilterField
 						id="IOFFCity"
 						conditions="{cm>/conditions/CityId}"
@@ -532,11 +533,11 @@
 										<mdcField:OutParameter id="IOFFVHCity_Out-Region" value="{cm>/conditions/RegionId}" helpPath="regionId" mode="Always"/>
 									</mdcField:outParameters>
 									<mdcField:filterBar>
-										<mdc:FilterBar
+										<vhfb:FilterBar
 											liveMode= "false">
 											<mdc:FilterField
 												id="VHFFBTextFFCountry2"
-												label= "Country"
+												label= "{/#CityCollection/countryId/@sap:label}"
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
@@ -546,7 +547,7 @@
 											</mdc:FilterField>
 											<mdc:FilterField
 												id="VHFFBTextFFRegion2"
-												label= "Region"
+												label= "{/#CityCollection/regionId/@sap:label}"
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
@@ -571,13 +572,13 @@
 																<m:Table items="{path: '/RegionCollection', suspended: true}" width="26rem">
 																	<m:columns>
 																		<m:Column>
-																			<m:Label text="Region"></m:Label>
+																			<m:Label text="{/#RegionCollection/regionId/@sap:label}"/>
 																		</m:Column>
 																		<m:Column>
-																			<m:Label text="Name"></m:Label>
+																			<m:Label text="{/#RegionCollection/text/@sap:label}"/>
 																		</m:Column>
 																		<m:Column>
-																			<m:Label text="Country"></m:Label>
+																			<m:Label text="{/#RegionCollection/countryId/@sap:label}"/>
 																		</m:Column>
 																	</m:columns>
 																	<m:items>
@@ -592,22 +593,22 @@
 														</mdcField:FieldValueHelp>
 												</mdc:dependents>
 											</mdc:FilterField>
-										</mdc:FilterBar>
+										</vhfb:FilterBar>
 									</mdcField:filterBar>
 									<mdcField:FieldValueHelpMTableWrapper>
 										<m:Table items="{path: '/CityCollection', suspended: true}" width="26rem">
 											<m:columns>
 												<m:Column>
-													<m:Label text="City"></m:Label>
+													<m:Label text="{/#CityCollection/cityId/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="Name"></m:Label>
+													<m:Label text="{/#CityCollection/text/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="Country"></m:Label>
+													<m:Label text="{/#CityCollection/countryId/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="Region"></m:Label>
+													<m:Label text="{/#CityCollection/regionId/@sap:label}"/>
 												</m:Column>
 											</m:columns>
 											<m:items>

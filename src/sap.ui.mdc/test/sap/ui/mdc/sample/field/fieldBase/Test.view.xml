@@ -3,6 +3,7 @@
 	xmlns:m="sap.m"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:c="sap.ui.core"
@@ -62,7 +63,7 @@
 											</mdcField:FieldValueHelpMTableWrapper>
 										</mdcField:content>
 										<mdcField:filterBar>
-											<mdc:FilterBar id="FilterBar1" liveMode= "false">
+											<vhfb:FilterBar id="FilterBar1" liveMode= "false">
 												<mdc:FilterField id="FilterBar1-F1"
 													label="{/#Product/ProductId/@sap:label}"
 													conditions="{$filters>/conditions/ProductId}"
@@ -75,7 +76,7 @@
 													maxConditions="5"
 													placeholder="{/#Product/Name/@sap:label}">
 												</mdc:FilterField>
-											</mdc:FilterBar>
+											</vhfb:FilterBar>
 										</mdcField:filterBar>
 									</mdcField:FieldValueHelp>
 								</mdcField:dependents>
@@ -157,7 +158,7 @@
 											</mdcField:FieldValueHelpMTableWrapper>
 										</mdcField:content>
 										<mdcField:filterBar>
-											<mdc:FilterBar id="FilterBar2"  liveMode= "true">
+											<mdc:FilterBar id="FilterBar2"  liveMode= "true"> <!-- Test with standard FilterBar - should not break -->
 												<mdc:FilterField id="FilterBar2-F1"
 													label="{/#Product/ProductId/@sap:label}"
 													conditions="{$filters>/conditions/ProductId}"
@@ -505,7 +506,7 @@
 											keyPath="countryId"
 											descriptionPath="text">
 											<mdcField:filterBar>
-												<mdc:FilterBar id="FH-FB-Country"
+												<vhfb:FilterBar id="FH-FB-Country"
 													liveMode= "true">
 													<mdc:FilterField
 														id="FF-CountryText"
@@ -516,16 +517,16 @@
 														width="100%"
 														conditions="{$filters>/conditions/text}">
 													</mdc:FilterField>
-												</mdc:FilterBar>
+												</vhfb:FilterBar>
 											</mdcField:filterBar>
 											<mdcField:FieldValueHelpMTableWrapper>
 												<m:Table items="{path: '/CountryCollection'}" width="26rem">
 													<m:columns>
 														<m:Column>
-															<m:Label text="Country"></m:Label>
+															<m:Label text="{/#CountryCollection/countryId/@sap:label}"/>
 														</m:Column>
 														<m:Column>
-															<m:Label text="Name"></m:Label>
+															<m:Label text="{/#CountryCollection/text/@sap:label}"/>
 														</m:Column>
 													</m:columns>
 													<m:items>
