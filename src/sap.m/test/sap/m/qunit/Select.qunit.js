@@ -523,6 +523,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// assert
+			assert.ok(oSelect.$().is(":sapFocusable"), "Select's root DomRef is with pseudo selector 'sapFocusable'.");
 			assert.strictEqual(oSelect.getName(), "", 'Default name is ""');
 			assert.strictEqual(oSelect.getVisible(), true, "By default the Select control is visible");
 			assert.strictEqual(oSelect.getEnabled(), true, "By default the Select control is enabled");
