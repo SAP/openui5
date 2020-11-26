@@ -96,7 +96,7 @@ sap.ui.define([
 			 */
 			onDownloadButtonPress: function (oEvent) {
 				var isOpenUI5 = this.getView().getModel("welcomeView").getProperty("/isOpenUI5"),
-					sUrl = isOpenUI5 ? "http://openui5.org/download.html" : "https://tools.hana.ondemand.com/#sapui5";
+					sUrl = isOpenUI5 ? "https://openui5.org/releases/" : "https://tools.hana.ondemand.com/#sapui5";
 				window.open(sUrl, "_blank");
 			},
 
