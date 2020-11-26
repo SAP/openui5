@@ -80,13 +80,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(10);
+		assert.expect(11);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 			var oPanel = oView.byId("Panel");
 			var aPanelContent = oPanel.getContent();
+			var aViewContent = oView.getContent();
 			assert.strictEqual(aPanelContent.length, 7, "ExtensionView content added to view");
 
 			assert.strictEqual(aPanelContent[0].getId(), "ExtComponent---mainView--customFragment--customButton1", "EP1 content is in correct order"); // EP1
@@ -96,6 +97,7 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[aViewContent.length - 1].getId(), "ExtComponent---mainView--F1--extEPButton", "Main.view content is in correct order"); // Main
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -104,13 +106,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("ExtensionPoint on top-level of XMLView", function(assert) {
-		assert.expect(27);
+		assert.expect(28);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 15, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 16, "Correct # of controls inside View content aggregation");
 
 			// View Content Aggregation
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 content is in correct order"); // EP0
@@ -145,6 +147,7 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[aViewContent.length - 1].getId(), "ExtComponent---mainView--F1--extEPButton", "Main.view content is in correct order"); // Main
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -158,13 +161,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(23);
+		assert.expect(24);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.strictEqual(ExtensionPoint._fnExtensionProvider(), undefined, "ExtensionPointProvider exists, but no module returned");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 13, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 14, "Correct # of controls inside View content aggregation");
 
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 			assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -195,6 +198,7 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[2].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[3].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[aViewContent.length - 1].getId(), "ExtComponent---mainView--F1--extEPButton", "Main.view content is in correct order"); // Main
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -207,13 +211,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(23);
+		assert.expect(24);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(!ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 13, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 14, "Correct # of controls inside View content aggregation");
 
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 			assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -244,6 +248,7 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[2].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[3].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[aViewContent.length - 1].getId(), "ExtComponent---mainView--F1--extEPButton", "Main.view content is in correct order"); // Main
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -257,13 +262,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(10);
+		assert.expect(11);
 		var done = assert.async();
 
 		var oView = oComponent.getRootControl();
 
 		var fnAssert = function() {
 			var oPanel = oView.byId("Panel");
+			var aViewContent = oView.getContent();
 			var aPanelContent = oPanel.getContent();
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
@@ -276,6 +282,7 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[aViewContent.length - 1].getId(), "ExtComponent---mainView--F1--extEPButton", "Main.view content is in correct order"); // Main
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -295,7 +302,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ExtensionPoint on top-level of XMLView", function(assert) {
-		assert.expect(27);
+		assert.expect(28);
 		var done = assert.async();
 
 		var oView = oComponent.getRootControl();
@@ -304,7 +311,7 @@ sap.ui.define([
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider was added");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 15, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 16, "Correct # of controls inside View content aggregation");
 
 			// View Content Aggregation
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 content is in correct order"); // EP0
@@ -340,6 +347,7 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[aViewContent.length - 1].getId(), "ExtComponent---mainView--F1--extEPButton", "Main.view content is in correct order"); // Main
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -350,7 +358,7 @@ sap.ui.define([
 		// we poll for the panels aggregation content until all ExtensionPoints have been resolved
 		var iPoll = setInterval(function() {
 			var aPanelContent = oView.getContent();
-			if (aPanelContent.length == 15) {
+			if (aPanelContent.length == 16) {
 				fnAssert();
 				clearInterval(iPoll);
 			}
@@ -369,13 +377,13 @@ sap.ui.define([
 	 * since the default content in this test is inserted sync anyway.
 	 */
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(23);
+		assert.expect(24);
 		var oView = oComponent.getRootControl();
 
 		assert.strictEqual(ExtensionPoint._fnExtensionProvider(), undefined, "ExtensionPointProvider exists, but no module returned");
 
 		var aViewContent = oView.getContent();
-		assert.strictEqual(aViewContent.length, 13, "Correct # of controls inside View content aggregation");
+		assert.strictEqual(aViewContent.length, 14, "Correct # of controls inside View content aggregation");
 
 		assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 		assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -406,6 +414,7 @@ sap.ui.define([
 		assert.strictEqual(aPanelContent[2].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 		assert.strictEqual(aPanelContent[3].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 		assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[aViewContent.length - 1].getId(), "ExtComponent---mainView--F1--extEPButton", "Main.view content is in correct order"); // Main
 
 		var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 		assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -423,13 +432,13 @@ sap.ui.define([
 	 * since the default content in this test is inserted sync anyway.
 	 */
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(23);
+		assert.expect(24);
 		var oView = oComponent.getRootControl();
 
 		assert.ok(!ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 		var aViewContent = oView.getContent();
-		assert.strictEqual(aViewContent.length, 13, "Correct # of controls inside View content aggregation");
+		assert.strictEqual(aViewContent.length, 14, "Correct # of controls inside View content aggregation");
 
 		assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 		assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -460,6 +469,7 @@ sap.ui.define([
 		assert.strictEqual(aPanelContent[2].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 		assert.strictEqual(aPanelContent[3].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 		assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[aViewContent.length - 1].getId(), "ExtComponent---mainView--F1--extEPButton", "Main.view content is in correct order"); // Main
 
 		var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 		assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
