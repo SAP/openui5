@@ -71,11 +71,14 @@ sap.ui.define([
 			qunit: {
 				reorder: false // to ensure that _XHRWaiter tests are executed last
 			},
-			sinon: {
-				version: 1,
-				qunitBridge: true
-			},
 			loader: {
+				map: {
+					// test will be executed with edge sinon (v4).
+					// sap/ui/core/util/MockServer requires sinon v1 -> load sinon v4 instead
+					'*': {
+						'sap/ui/thirdparty/sinon': 'sap/ui/thirdparty/sinon-4'
+					}
+				},
 				paths: {
 					"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
 				}
