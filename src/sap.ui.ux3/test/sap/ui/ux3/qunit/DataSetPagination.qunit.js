@@ -6,7 +6,8 @@ sap.ui.define([
     "sap/ui/ux3/DataSetItem",
     "sap/ui/ux3/DataSetSimpleView",
     "sap/ui/commons/TextField",
-    "sap/ui/thirdparty/jquery"
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
     createAndAppendDiv,
 	JSONModel,
@@ -14,7 +15,8 @@ sap.ui.define([
 	DataSetItem,
 	DataSetSimpleView,
 	TextField,
-	jQuery
+	jQuery,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -152,4 +154,6 @@ sap.ui.define([
 			done();
 		}, 1000);
 	});
+
+	return waitForThemeApplied();
 });
