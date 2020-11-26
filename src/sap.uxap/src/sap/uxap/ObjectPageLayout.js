@@ -1420,7 +1420,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._selectFirstVisibleSection = function () {
-		if (this.getUseIconTabBar()) {
+		if (this.getUseIconTabBar() && this._oFirstVisibleSection) {
 			this._adjustSelectedSectionByUXRules();
 			this._setCurrentTabSection(this._oFirstVisibleSection);
 			this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(this._oFirstVisibleSection);
