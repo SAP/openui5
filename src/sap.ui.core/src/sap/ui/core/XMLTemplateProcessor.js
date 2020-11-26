@@ -317,8 +317,10 @@ function(
 	 */
 	XMLTemplateProcessor.parseTemplatePromise = function(xmlNode, oView, bAsync, oParseConfig) {
 		return parseTemplate(xmlNode, oView, false, bAsync, oParseConfig).then(function() {
-			var p = SyncPromise.resolve();
-
+			var p = SyncPromise.resolve(arguments[0]);
+			if (oView.isA("sap.ui.core.Fragment")) {
+				return p;
+			}
 			// args is the result array of the XMLTP's parsing.
 			// It contains strings like "tabs/linebreaks/..." AND control instances
 			// Additionally it also includes ExtensionPoint placeholder objects if an ExtensionPoint is present in the top-level of the View.
