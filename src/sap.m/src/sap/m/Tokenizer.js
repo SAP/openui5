@@ -49,6 +49,7 @@ sap.ui.define([
 	var RenderMode = library.TokenizerRenderMode;
 	var PlacementType = library.PlacementType;
 	var ListMode = library.ListMode;
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new Tokenizer.
@@ -438,6 +439,7 @@ sap.ui.define([
 		if (Device.system.phone) {
 			this._oPopup.setEndButton(new Button({
 				text: oRb.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON"),
+				type: ButtonType.Emphasized,
 				press: function () {
 					this._oPopup.close();
 				}.bind(this)
