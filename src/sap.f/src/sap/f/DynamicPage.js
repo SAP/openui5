@@ -1135,7 +1135,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getSnappingHeight = function () {
-		var iSnappingHeight = Math.ceil(this._getHeaderHeight() || this._getTitleHeight()) - this._iHeaderContentPaddingBottom;
+		var iSnappingHeight = Math.ceil(this._getHeaderHeight()) - this._iHeaderContentPaddingBottom;
 
 		return iSnappingHeight > 0 ? iSnappingHeight : 0;
 	};
@@ -2031,7 +2031,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._titleExpandCollapseWhenAllowed = function (bUserInteraction) {
-		var bAllowAppendHeaderToTitle;
+		var bAllowAppendHeaderToTitle, iSnappingHeight;
 
 		if (this._bPinned && !bUserInteraction) { // operation not allowed
 			return this;
@@ -2064,7 +2064,8 @@ sap.ui.define([
 			var bMoveHeaderToContent = this._bHeaderInTitleArea;
 			this._snapHeader(bMoveHeaderToContent, bUserInteraction);
 			if (!bMoveHeaderToContent) {
-				this._setScrollPosition(this._getSnappingHeight() + this._iHeaderContentPaddingBottom);
+				iSnappingHeight = this._getSnappingHeight();
+				this._setScrollPosition(iSnappingHeight ? (iSnappingHeight + this._iHeaderContentPaddingBottom) : 0);
 			}
 		}
 	};

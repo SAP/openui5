@@ -595,6 +595,15 @@ function (
 			"The DynamicPage Header is empty and has Title only - sapFDynamicPageTitleOnly is added");
 	});
 
+	QUnit.test("No scroll to snap empty header", function (assert) {
+		var oDynamicPage = this.oDynamicPageWithEmptyHeader,
+			oScrollSpy = this.spy(oDynamicPage, "_setScrollPosition");
+
+		oDynamicPage.setHeaderExpanded(false);
+
+		assert.ok(oScrollSpy.alwaysCalledWithMatch(0), "No scroll to snap empty header");
+	});
+
 	QUnit.module("DynamicPage - Rendering - No Title and No Header", {
 		beforeEach: function () {
 			this.oDynamicPageNoTitleAndHeader = oFactory.getDynamicPageNoTitleAndHeader();
