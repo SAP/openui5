@@ -415,7 +415,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
 			return this.oRta._handleReloadOnExit()
 				.then(function (oReloadInfo) {
-					assert.equal(oReloadInfo.reloadMethod, "HARD_RELOAD", "then a cross app is triggered");
+					assert.equal(oReloadInfo.reloadMethod, "HARD_RELOAD", "then a hard reload is triggered");
 				});
 		});
 	});

@@ -114,6 +114,7 @@ sap.ui.define([
 		 * @param  {string} oReloadInfo.parameters - The URL parameters to be modified
 		 * @param  {string} oReloadInfo.versionSwitch - Indicates if we are in a version switch scenario
 		 * @param  {string} oReloadInfo.version - Version we want to switch to
+		 * @param  {boolean} [oReloadInfo.onExit=false] - Indicates if we are in a save+exit case/flow to not add the version=0 parameter
 		 *
 		 * @returns {string} The modified URL
 		 */
@@ -127,7 +128,7 @@ sap.ui.define([
 			oReloadInfo.parameters = oReloadInfo.parameters.replace(oVersionRegExp, "");
 
 			// startup reload due to draft
-			if (oReloadInfo.isDraftAvailable) {
+			if (oReloadInfo.isDraftAvailable && !oReloadInfo.onExit) {
 				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, sap.ui.fl.Versions.UrlParameter, sap.ui.fl.Versions.Draft);
 			}
 
