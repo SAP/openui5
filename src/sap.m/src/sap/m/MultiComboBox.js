@@ -2369,6 +2369,9 @@ function(
 		if (document.activeElement === this.getFocusDomRef()) {
 			aTokens[aTokens.length - 1] && aTokens[aTokens.length - 1].focus();
 		}
+
+		// Prevent the backspace key from navigating back
+		oEvent.preventDefault();
 	};
 
 	MultiComboBox.prototype._removeAllTokens = function () {
