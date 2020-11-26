@@ -19,22 +19,18 @@ sap.ui.define([
 		 *   An object holding the information needed for data aggregation; see also
 		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 		 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
-	 	 *   {@link _AggregationHelper.buildApply}
-		 * @param {object} mQueryOptions
-		 *   A map of key-value pairs representing the aggregation cache's original query string
+		 *   {@link _AggregationHelper.buildApply}
+		 * @param {function} fnGrandTotal
+		 *   Callback for the grand total response
 		 */
-		enhanceCacheWithGrandTotal : function (oCache, oAggregation, mQueryOptions) {
-			var aAllProperties
-				= Object.keys(oAggregation.aggregate).concat(Object.keys(oAggregation.group)),
-				bFollowUp,
-				fnHandleResponse = oCache.handleResponse;
+		enhanceCacheWithGrandTotal : function (oCache, oAggregation, fnGrandTotal) {
+			var bFollowUp;
 
 			/**
 			 * Returns the resource path including the query string with "$apply" which includes the
 			 * aggregation functions for count and grand total, minimum or maximum values and
 			 * "skip()/top()" as transformations. Follow-up requests do not aggregate the count and
-			 * minimum or maximum values again. Grand total values are requested only for
-			 * <code>iStart === 0</code>.
+			 * grand total, minimum or maximum values again.
 			 *
 			 * This function is used to replace <code>getResourcePathWithQuery</code> of the first
 			 * level cache and needs to be called on the first level cache.
@@ -45,19 +41,19 @@ sap.ui.define([
 			 *   The index after the last element
 			 * @returns {string} The resource path including the query string
 			 */
-			// @override sap.ui.model.odata.v4.lib._Cache#getResourcePathWithQuery
+			// @override sap.ui.model.odata.v4.lib._CollectionCache#getResourcePathWithQuery
+			// Note: same as in _MinMaxHelper
 			oCache.getResourcePathWithQuery = function (iStart, iEnd) {
-				var mNewQueryOptions = Object.assign({}, mQueryOptions, {
-						$skip : iStart,
-						$top : iEnd - iStart
-					});
+				var mQueryOptionsWithApply = _AggregationHelper.buildApply(oAggregation,
+						Object.assign({}, this.mQueryOptions, {
+							$skip : iStart,
+							$top : iEnd - iStart
+						}), 1, bFollowUp);
 
-				mNewQueryOptions = _AggregationHelper.buildApply(oAggregation, mNewQueryOptions, 1,
-					bFollowUp);
 				bFollowUp = true; // next request is a follow-up
 
-				return this.sResourcePath
-				+ this.oRequestor.buildQueryString(this.sMetaPath, mNewQueryOptions, false, true);
+				return this.sResourcePath + this.oRequestor.buildQueryString(this.sMetaPath,
+					mQueryOptionsWithApply, false, true);
 			};
 
 			/**
@@ -74,26 +70,14 @@ sap.ui.define([
 			 */
 			// @override sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
 			oCache.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
-				var oGrandTotalElement = oResult.value[0],
-					that = this;
+				fnGrandTotal(oResult.value.shift());
 
-				function handleCount(iIndex) {
-					that.iLeafCount = parseInt(oResult.value[iIndex].UI5__count);
-					oResult["@odata.count"] = that.iLeafCount + 1;
-					oResult.value.splice(iIndex, 1); // drop row with UI5__count only
-				}
+				// Note: drop row with UI5__count only
+				oResult["@odata.count"] = oResult.value.shift().UI5__count;
 
-				if ("UI5__count" in oGrandTotalElement) {
-					handleCount(0);
-				} else if (oResult.value.length > 1 && "UI5__count" in oResult.value[1]) {
-					handleCount(1);
-				}
-				if (iStart === 0) { // grand total row: add null values, annotate
-					_AggregationHelper
-						.setAnnotations(oGrandTotalElement, true, true, 0, aAllProperties);
-				}
-
-				fnHandleResponse.call(this, iStart, iEnd, oResult, mTypeForMetaPath);
+				// revert to prototype and call it
+				delete this.handleResponse;
+				this.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);
 			};
 		}
 	};

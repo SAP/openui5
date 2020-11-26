@@ -2639,7 +2639,7 @@ sap.ui.define([
 	 *       used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
 	 *      <li> <code>unit</code>: An optional string that provides the name of the custom
 	 *       aggregate for a currency or unit of measure corresponding to this aggregatable property
-	 *       (since 1.85.0). The custom aggregate must return the single value of that unit in case
+	 *       (since 1.86.0). The custom aggregate must return the single value of that unit in case
 	 *       there is only one, or <code>null</code> otherwise ("multi-unit situation"). (SQL
 	 *       suggestion: <code>CASE WHEN min(Unit) = max(Unit) THEN min(Unit) END</code>)
 	 *   </ul>

@@ -38,6 +38,7 @@ sap.ui.define([
 			// handleResponse must be at the prototype
 			oCache = Object.assign(Object.create({handleResponse : sinon.stub()}), {
 					sMetaPath : "/meta/path",
+					mQueryOptions : {$count : "~count~", "sap-client" : "123"},
 					oRequestor : {
 						buildQueryString : function () {}
 					},
@@ -56,7 +57,7 @@ sap.ui.define([
 					max : 10
 				}
 			},
-			mQueryOptions = {$count : "~count~", "sap-client" : "123"},
+			mQueryOptions = oCache.mQueryOptions,
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions),
 			oRequestor = oCache.oRequestor,
 			oRequestorMock = this.mock(oRequestor),
@@ -79,7 +80,8 @@ sap.ui.define([
 			mTypeForMetaPath = {/*fetchTypes result*/};
 
 		this.mock(_Cache).expects("create")
-			.withExactArgs(sinon.match.same(oRequestor), "resource/path", {}, true)
+			.withExactArgs(sinon.match.same(oRequestor), "resource/path",
+				sinon.match.same(mQueryOptions), true)
 			.returns(oCache);
 
 		assert.strictEqual(

@@ -15426,17 +15426,18 @@ sap.ui.define([
 </Table>';
 
 		this.expectRequest("SalesOrderList?$apply=concat(aggregate(GrossAmount,CurrencyCode)"
-				+ ",groupby((LifecycleStatus),aggregate(GrossAmount,CurrencyCode))/top(99))", {
-				"@odata.count" : "26",
+				+ ",groupby((LifecycleStatus),aggregate(GrossAmount,CurrencyCode))"
+				+ "/concat(aggregate($count as UI5__count),top(99)))", {
 				value : [
 					{CurrencyCode : null, GrossAmount : "12345"},
+					{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"},
 					{CurrencyCode : "EUR", GrossAmount : "1", LifecycleStatus : "Z"},
 					{CurrencyCode : "GBP", GrossAmount : "2", LifecycleStatus : "Y"}
 				]
 			})
 			.expectChange("isExpanded", [true, undefined, undefined])
 			.expectChange("isTotal", [true, false, false])
-			.expectChange("level", [0 /* root node */, 1, 1])
+			.expectChange("level", [0, 1, 1])
 			.expectChange("lifecycleStatus", ["", "Z", "Y"])
 			.expectChange("grossAmount", ["12345", "1", "2"])
 			.expectChange("currencyCode", ["", "EUR", "GBP"]);
@@ -16044,7 +16045,8 @@ sap.ui.define([
 					// falsy value is important edge case!
 					SalesNumber : 0
 				}, {
-					UI5__count : "26"
+					UI5__count : "26",
+					"UI5__count@odata.type" : "#Decimal"
 				}, {
 					Country : "Z",
 					LocalCurrency : "GBP",
@@ -16908,11 +16910,16 @@ sap.ui.define([
 				+ bCount + "; autoExpandSelect : " + bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
-			var aGrandTotalResponse = [{
-					SalesNumber : 351,
-					"SalesNumber@odata.type" : "#Decimal"
-				}],
+			var oListBinding,
 				oModel = createAggregationModel({autoExpandSelect : bAutoExpandSelect}),
+				aResponse = [
+					{SalesNumber : 351, "SalesNumber@odata.type" : "#Decimal"},
+					{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"},
+					{Country : "b", Region : "Y", SalesNumber : 2},
+					{Country : "c", Region : "X", SalesNumber : 3},
+					{Country : "d", Region : "W", SalesNumber : 4},
+					{Country : "e", Region : "V", SalesNumber : 5}
+				],
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
@@ -16937,29 +16944,11 @@ sap.ui.define([
 </t:Table>',
 				that = this;
 
-			if (bCount) {
-				aGrandTotalResponse.push({
-					"UI5__count" : "26",
-					"UI5__count@odata.type" : "#Decimal"
-				});
-			}
 			this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
 					+ ",groupby((Country,Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/"
-					+ (bCount ? "concat(aggregate($count as UI5__count)," : "")
-					+ "top(0))"
-					+ (bCount ? ")" : ""), {
-					value : aGrandTotalResponse
-				})
-				.expectRequest("BusinessPartners?$apply="
-					+ "groupby((Country,Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/skip(1)/top(4)", {
-					value : [
-						{Country : "b", Region : "Y", SalesNumber : 2},
-						{Country : "c", Region : "X", SalesNumber : 3},
-						{Country : "d", Region : "W", SalesNumber : 4},
-						{Country : "e", Region : "V", SalesNumber : 5}
-					]
+					+ "/filter(SalesNumber gt 0)/orderby(Region desc)"
+					+ "/concat(aggregate($count as UI5__count),skip(1)/top(4)))", {
+					value : aResponse
 				})
 				.expectChange("count")
 				.expectChange("country", ["",, "b", "c", "d", "e"])
@@ -16967,36 +16956,25 @@ sap.ui.define([
 				.expectChange("salesNumber", ["351",, "2", "3", "4", "5"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
-				var oListBinding;
-
 				oTable = that.oView.byId("table");
 				oListBinding = oTable.getBinding("rows");
 
-				if (bCount) {
-					assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
-					assert.strictEqual(oListBinding.getLength(), 27,
-						"length includes grand total row");
-
-					// Note: header context gives count of leaves (w/o grand total)
-					that.expectChange("count", "26");
-				} else {
-					assert.strictEqual(oListBinding.isLengthFinal(), false, "length unknown");
-					assert.strictEqual(oListBinding.getLength(), 1 + 5 + 10, "estimated length");
-
-					that.expectChange("count", null); // initialization due to #setContext
-					that.oLogMock.expects("error").withExactArgs(
-						"Failed to drill-down into $count, invalid segment: $count",
-						// Note: toString() shows realistic (first) request w/o skip/top
-						"/aggregation/BusinessPartners?$apply=concat(aggregate(SalesNumber)"
-							+ ",groupby((Country,Region),aggregate(SalesNumber))"
-							+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc))",
-						"sap.ui.model.odata.v4.lib._Cache");
-				}
+				assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+				assert.strictEqual(oListBinding.getLength(), 27, "length includes grand total row");
+				// Note: header context gives count of leaves (w/o grand total)
+				that.expectChange("count", "26");
 
 				that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
 
 				return that.waitForChanges(assert);
 			}).then(function () {
+				assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
+					"/BusinessPartners(Country='b',Region='Y')",
+					"/BusinessPartners(Country='c',Region='X')",
+					"/BusinessPartners(Country='d',Region='W')",
+					"/BusinessPartners(Country='e',Region='V')"
+				]);
+
 				that.expectRequest("BusinessPartners?$apply="
 					+ "groupby((Country,Region),aggregate(SalesNumber))"
 					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/top(1)", {
@@ -17014,6 +16992,14 @@ sap.ui.define([
 				oTable.setFirstVisibleRow(0);
 
 				return that.waitForChanges(assert);
+			}).then(function () {
+				assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
+					"/BusinessPartners()",
+					"/BusinessPartners(Country='a',Region='Z')",
+					"/BusinessPartners(Country='b',Region='Y')",
+					"/BusinessPartners(Country='c',Region='X')",
+					"/BusinessPartners(Country='d',Region='W')"
+				]);
 			});
 		});
 	});
@@ -17028,9 +17014,12 @@ sap.ui.define([
 				+ bCount + "; grandTotal row not fixed";
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = createAggregationModel({autoExpandSelect : true}),
+			var oListBinding,
+				oModel = createAggregationModel({autoExpandSelect : true}),
 				oTable,
 				aValues = [
+					{SalesNumber : 351, "SalesNumber@odata.type" : "#Decimal"},
+					{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
 					{Country : "a", Region : "Z", SalesNumber : 1},
 					{Country : "b", Region : "Y", SalesNumber : 2},
 					{Country : "c", Region : "X", SalesNumber : 3},
@@ -17060,15 +17049,9 @@ sap.ui.define([
 </t:Table>',
 				that = this;
 
-			if (bCount) {
-				aValues.unshift({UI5__count : "26", "UI5__count@odata.type" : "#Decimal"});
-			}
-			this.expectRequest("BusinessPartners?$apply="
-					+ "groupby((Country,Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/"
-					+ (bCount ? "concat(aggregate($count as UI5__count)," : "")
-					+ "top(5)"
-					+ (bCount ? ")" : ""),
+			this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+					+ ",groupby((Country,Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
+					+ "/orderby(Region desc)/concat(aggregate($count as UI5__count),top(5)))",
 					{value : aValues})
 				.expectChange("count")
 				.expectChange("country", [, "a", "b", "c", "d", "e"])
@@ -17076,54 +17059,42 @@ sap.ui.define([
 				.expectChange("salesNumber", [, "1", "2", "3", "4", "5"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
-				var oListBinding;
-
 				oTable = that.oView.byId("table");
 				oListBinding = oTable.getBinding("rows");
 
-				if (bCount) {
-					assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
-					assert.strictEqual(oListBinding.getLength(), 27,
-						"length includes grand total row");
-
-					// Note: header context gives count of leaves (w/o grand total)
-					that.expectChange("count", "26");
-				} else {
-					assert.strictEqual(oListBinding.isLengthFinal(), false, "length unknown");
-					assert.strictEqual(oListBinding.getLength(), 1 + 5 + 10, "estimated length");
-
-					that.expectChange("count", null); // initialization due to #setContext
-					that.oLogMock.expects("error").withExactArgs(
-						"Failed to drill-down into $count, invalid segment: $count",
-						// Note: toString() shows realistic (first) request w/o skip/top
-						"/aggregation/BusinessPartners?$apply=concat(aggregate(SalesNumber)"
-						+ ",groupby((Country,Region),aggregate(SalesNumber))"
-						+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc))",
-						"sap.ui.model.odata.v4.lib._Cache");
-				}
+				assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+				assert.strictEqual(oListBinding.getLength(), 27, "length includes grand total row");
+				// Note: header context gives count of leaves (w/o grand total)
+				that.expectChange("count", "26");
 
 				that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				that.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
-						+ ",groupby((Country,Region),aggregate(SalesNumber))"
-						+ "/filter(SalesNumber gt 0)/orderby(Region desc)/top(0))", {
-						value : [{
-							SalesNumber : 351,
-							"SalesNumber@odata.type" : "#Decimal"
-						}]
-					})
-					.expectChange("country", null, null)
-					.expectChange("region", null, null)
-					.expectChange("salesNumber", null, null)
-					.expectChange("country", ["", "a", "b", "c", "d"])
+				assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
+					"/BusinessPartners(Country='a',Region='Z')",
+					"/BusinessPartners(Country='b',Region='Y')",
+					"/BusinessPartners(Country='c',Region='X')",
+					"/BusinessPartners(Country='d',Region='W')",
+					"/BusinessPartners(Country='e',Region='V')"
+				]);
+
+				// Note: no request, grand total row already available
+				that.expectChange("country", ["", "a", "b", "c", "d"])
 					.expectChange("region", ["", "Z", "Y", "X", "W"])
 					.expectChange("salesNumber", ["351", "1", "2", "3", "4"]);
 
 				oTable.setFirstVisibleRow(0);
 
 				return that.waitForChanges(assert);
+			}).then(function () {
+				assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
+					"/BusinessPartners()",
+					"/BusinessPartners(Country='a',Region='Z')",
+					"/BusinessPartners(Country='b',Region='Y')",
+					"/BusinessPartners(Country='c',Region='X')",
+					"/BusinessPartners(Country='d',Region='W')"
+				]);
 			});
 		});
 	});
@@ -17164,12 +17135,16 @@ sap.ui.define([
 				+ "aggregate(SalesAmount with sum as SalesAmountSum,Currency)"
 				+ ",groupby((Region)"
 				+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency,SalesNumber))"
-				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)/top(4))", {
+				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)"
+				+ "/concat(aggregate($count as UI5__count),top(4)))", {
 				value : [{
 						Currency : "EUR",
 						SalesAmountSum : 351,
 						//TODO this should be used by auto type detection
 						"SalesAmountSum@odata.type" : "#Decimal"
+					}, {
+						UI5__count : "26",
+						"UI5__count@odata.type" : "#Decimal"
 					}, {
 						Currency : "EUR",
 						Region : "Z",
@@ -17229,7 +17204,7 @@ sap.ui.define([
 			]);
 
 			// code under test
-			oListBinding.sort(new Sorter("Name"));
+			oListBinding.sort(new Sorter("SalesNumber"));
 
 			// code under test
 			oListBinding.changeParameters({custom : "foo"});
@@ -17239,8 +17214,13 @@ sap.ui.define([
 
 			that.expectRequest("BusinessPartners?custom=foo&$apply=filter(Name eq 'Foo')"
 				+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
-				+ "/filter(SalesNumber gt 0)/orderby(Name)/top(99))",
-				{value : [{/* response does not matter here */}]});
+				+ "/filter(SalesNumber gt 0)/orderby(SalesNumber)"
+				+ "/concat(aggregate($count as UI5__count),top(99)))", {
+					value : [
+						{SalesNumber : 0},
+						{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"}
+					]
+				});
 
 			return Promise.all([
 				oListBinding.requestContexts(),
@@ -17278,8 +17258,13 @@ sap.ui.define([
 
 			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
 				+ "/concat(aggregate(SalesNumber)"
-				+ ",groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)/top(99))",
-				{value : [{}]});
+				+ ",groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
+				+ "/concat(aggregate($count as UI5__count),top(99)))", {
+					value : [
+						{SalesNumber : 0},
+						{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"}
+					]
+				});
 
 			return Promise.all([
 				oListBinding.requestContexts(),
@@ -17336,12 +17321,15 @@ sap.ui.define([
 				+ bCount;
 
 		QUnit.test(sTitle, function (assert) {
-			var oMinMaxElement = {
+			var oListBinding,
+				oMinMaxElement = {
 					UI5min__AGE : 42,
 					UI5max__AGE : 77
 				},
 				oModel = createSalesOrdersModel({autoExpandSelect : true}),
+				oTable,
 				sView = '\
+<Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
 			$$aggregation : {\
@@ -17359,7 +17347,7 @@ sap.ui.define([
 				that = this;
 
 			if (bCount) {
-				oMinMaxElement["UI5__count"] = "1";
+				oMinMaxElement["UI5__count"] = "26";
 				oMinMaxElement["UI5__count@odata.type"] = "#Decimal";
 			}
 			this.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)"
@@ -17368,20 +17356,47 @@ sap.ui.define([
 					+ (bCount ? ",$count as UI5__count" : "") + "),top(1))", {
 					value : [oMinMaxElement, {GrossAmount : "1"}]
 				})
+				.expectChange("count")
 				.expectChange("grossAmount", ["1"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
+				oTable = that.oView.byId("table");
+				oListBinding = oTable.getBinding("rows");
+
+				if (bCount) {
+					assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+					assert.strictEqual(oListBinding.getLength(), 26);
+
+					that.expectChange("count", "26");
+
+					that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+				}
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oResponse = {
+						value : [{GrossAmount : "2"}]
+					};
+
+				if (bCount) {
+					oResponse["@odata.count"] = "13";
+					that.expectChange("count", "13");
+				}
 				// w/o min/max: no _MinMaxHelper, system query options are used
 				that.expectRequest("SalesOrderList?" + (bCount ? "$count=true&" : "")
-					+ "$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
-						"@odata.count" : "1",
-						value : [{GrossAmount : "2"}]
-					})
+					+ "$apply=aggregate(GrossAmount)&$skip=0&$top=1", oResponse)
 					.expectChange("grossAmount", ["2"]);
 
-				that.oView.byId("table").getBinding("rows").setAggregation({
+				oTable.getBinding("rows").setAggregation({
 					aggregate : {GrossAmount : {}}
 				});
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				if (bCount) {
+					assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+					assert.strictEqual(oListBinding.getLength(), 13);
+				}
 			});
 		});
 	});

@@ -47,8 +47,10 @@ sap.ui.define([
 	 */
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, bHasGrandTotal,
 			mQueryOptions) {
+		var fnResolve,
+			that = this;
+
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
-		this.oAggregation = oAggregation;
 
 		if (oAggregation.groupLevels.length) {
 			if (mQueryOptions.$count) {
@@ -57,16 +59,28 @@ sap.ui.define([
 			if (mQueryOptions.$filter) {
 				throw new Error("Unsupported system query option: $filter");
 			}
+		}
 
-			this.aElements = [];
-			this.aElements.$byPredicate = {};
-			this.aElements.$count = undefined;
-			this.aElements.$created = 0; // required for _Cache#drillDown (see _Cache.from$skip)
-			this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal);
-		} else { // grand total w/o visual grouping
-			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mQueryOptions, true);
+		this.oAggregation = oAggregation;
+		this.aElements = [];
+		this.aElements.$byPredicate = {};
+		this.aElements.$count = undefined;
+		this.aElements.$created = 0; // required for _Cache#drillDown (see _Cache.from$skip)
+		this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal);
+		this.bHasGrandTotal = bHasGrandTotal; // @see #read
+		if (bHasGrandTotal) {
+			this.aElements[0] = new SyncPromise(function (resolve) {
+				fnResolve = resolve;
+			});
 			_GrandTotalHelper.enhanceCacheWithGrandTotal(this.oFirstLevel, oAggregation,
-				mQueryOptions);
+				function (oGrandTotal) {
+					_AggregationHelper.setAnnotations(oGrandTotal, true, true, 0,
+						_AggregationHelper.getAllProperties(oAggregation));
+					_Helper.setPrivateAnnotation(oGrandTotal, "predicate", "()");
+					that.aElements[0] = oGrandTotal;
+					that.aElements.$byPredicate["()"] = oGrandTotal;
+					fnResolve();
+				});
 		}
 	}
 
@@ -86,7 +100,7 @@ sap.ui.define([
 	 *   The index of the first element within the cache's collection
 	 * @throws {Error}
 	 *   In case an unexpected element or placeholder would be overwritten, if the given offset is
-	 *   negative, or if a resulting array index is out of bounds
+	 *   negative, if a resulting array index is out of bounds, or in case of a duplicate predicate
 	 *
 	 * @private
 	 */
@@ -110,11 +124,15 @@ sap.ui.define([
 					throw new Error("Unexpected element");
 				}
 				if (oParent !== oCache
-					|| _Helper.getPrivateAnnotation(oOldElement, "index") !== iStart + i) {
+						|| _Helper.getPrivateAnnotation(oOldElement, "index") !== iStart + i) {
 					throw new Error("Wrong placeholder");
 				}
 			} else if (iOffset + i >= aElements.length) {
 				throw new Error("Array index out of bounds: " + (iOffset + i));
+			}
+			if (sPredicate in aElements.$byPredicate
+					&& aElements.$byPredicate[sPredicate] !== oElement) {
+				throw new Error("Duplicate predicate: " + sPredicate);
 			}
 
 			aElements[iOffset + i] = oElement;
@@ -171,23 +189,14 @@ sap.ui.define([
 	_AggregationCache.prototype.createGroupLevelCache = function (oParentGroupNode,
 			bHasGrandTotal) {
 		var oAggregation = this.oAggregation,
-			aAllProperties, oCache, sFilteredOrderby, aGroupBy, bLeaf, iLevel, mQueryOptions,
-			bTotal;
+			aAllProperties = _AggregationHelper.getAllProperties(oAggregation),
+			oCache, sFilteredOrderby, aGroupBy, bLeaf, iLevel, mQueryOptions, bTotal;
 
 		iLevel = oParentGroupNode ? oParentGroupNode["@$ui5.node.level"] + 1 : 1;
 		bLeaf = iLevel > oAggregation.groupLevels.length;
 		aGroupBy = bLeaf
 			? oAggregation.groupLevels.concat(Object.keys(oAggregation.group).sort())
 			: oAggregation.groupLevels.slice(0, iLevel);
-		aAllProperties
-			= Object.keys(oAggregation.aggregate).concat(Object.keys(oAggregation.group));
-		Object.keys(oAggregation.aggregate).forEach(function (sAlias) {
-			var sUnit = oAggregation.aggregate[sAlias].unit;
-
-			if (sUnit) {
-				aAllProperties.push(sUnit);
-			}
-		});
 
 		mQueryOptions = Object.assign({}, this.mQueryOptions);
 		sFilteredOrderby
@@ -205,17 +214,14 @@ sap.ui.define([
 			mQueryOptions.$$filterBeforeAggregate
 				= _Helper.getPrivateAnnotation(oParentGroupNode, "filter");
 		}
-		if (!bHasGrandTotal) {
+		if (!bHasGrandTotal) { // Note: UI5__count currently handled only by _GrandTotalHelper!
 			delete mQueryOptions.$count;
 			mQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions, iLevel);
 		}
 		mQueryOptions.$count = true;
 		oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
-		if (bHasGrandTotal) {
-			_GrandTotalHelper.enhanceCacheWithGrandTotal(oCache, oAggregation, mQueryOptions);
-		}
 		oCache.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate.bind(null,
-			oParentGroupNode, aGroupBy, aAllProperties, bLeaf, bTotal, this.aElements.$byPredicate);
+			oParentGroupNode, aGroupBy, aAllProperties, bLeaf, bTotal);
 
 		return oCache;
 	};
@@ -344,27 +350,24 @@ sap.ui.define([
 	 *   "$count" in cases where it does not reflect the leaf count.
 	 *
 	 * @public
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#fetchValue
 	 */
-	// @override sap.ui.model.odata.v4.lib._CollectionCache#fetchValue
 	_AggregationCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
 			oListener) {
-		var that = this;
-
 		if (sPath === "$count") {
-			if (!this.mQueryOptions.$count) {
+			if (this.oAggregation.groupLevels.length) {
 				Log.error("Failed to drill-down into $count, invalid segment: $count",
 					this.toString(), "sap.ui.model.odata.v4.lib._Cache");
+
 				return SyncPromise.resolve();
 			}
-			return this.oFirstLevel.fetchValue(oGroupLock, sPath).then(function () {
-					return that.oFirstLevel.iLeafCount;
-				});
+
+			return this.oFirstLevel.fetchValue(oGroupLock, sPath, fnDataRequested, oListener);
 		}
-		if (this.oAggregation.groupLevels.length) {
-			this.registerChange(sPath, oListener);
-			return this.drillDown(this.aElements, sPath, oGroupLock);
-		}
-		return this.oFirstLevel.fetchValue(oGroupLock, sPath, fnDataRequested, oListener);
+
+		this.registerChange(sPath, oListener);
+
+		return this.drillDown(this.aElements, sPath, oGroupLock);
 	};
 
 	/**
@@ -396,20 +399,21 @@ sap.ui.define([
 	 *   The promise is rejected if a conflicting {@link #collapse} happens before the response
 	 *   arrives, in this case the error has the property <code>canceled</code> with value
 	 *   <code>true</code>.
-	 * @throws {Error} If given index or length is less than 0
+	 * @throws {Error} If given index or length is less than 0, or if
+	 *   <code>iPrefetchLength !== 0</code> is used while reading a grand total row separately
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.lib._Requestor#request
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#read
 	 */
-	// @override sap.ui.model.odata.v4.lib._CollectionCache#read
 	_AggregationCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
-		var i, n,
-			oCurrentParent,
+		var oCurrentParent,
+			iFirstLevelIndex = iIndex,
+			iFirstLevelLength = iLength,
 			oGapParent,
 			iGapStart,
-			bHasGroupLevels = this.oAggregation.groupLevels.length,
 			aReadPromises = [],
+			i, n,
 			that = this;
 
 		/**
@@ -427,18 +431,18 @@ sap.ui.define([
 			aReadPromises.push(
 				oGapParent.read(iStart, iGapEnd - iGapStart, 0, oGroupLock.getUnlockedCopy(),
 						fnDataRequested)
-					.then(function (oReadResult) {
+					.then(function (oResult) {
 						var bGapHasMoved = false,
 							oError;
 
 						// Note: aElements[iGapStart] may have changed by a parallel operation
 						if (oStartElement !== that.aElements[iGapStart]
-								&& oReadResult.value[0] !== that.aElements[iGapStart]) {
+								&& oResult.value[0] !== that.aElements[iGapStart]) {
 							// start of the gap has moved meanwhile
 							bGapHasMoved = true;
 							iGapStart = that.aElements.indexOf(oStartElement);
 							if (iGapStart < 0) {
-								iGapStart = that.aElements.indexOf(oReadResult.value[0]);
+								iGapStart = that.aElements.indexOf(oResult.value[0]);
 								if (iGapStart < 0) {
 									oError = new Error("Collapse before read has finished");
 									oError.canceled = true;
@@ -447,18 +451,51 @@ sap.ui.define([
 							}
 						}
 
-						that.addElements(oReadResult.value, iGapStart, oCache, iStart);
+						that.addElements(oResult.value, iGapStart, oCache, iStart);
 
 						if (bGapHasMoved) {
 							oError = new Error("Collapse or expand before read has finished");
 							oError.canceled = true;
 							throw oError;
 						}
-					})
-			);
+					}));
 		}
 
-		if (bHasGroupLevels && this.aElements.length) {
+		if (this.bHasGrandTotal && !iIndex && iLength === 1) {
+			if (iPrefetchLength !== 0) {
+				throw new Error("Unsupported prefetch length: " + iPrefetchLength);
+			}
+			aReadPromises.push(this.aElements[0]);
+			oGroupLock.unlock();
+		} else if (this.aElements.$count === undefined) {
+			this.iReadLength = iLength + iPrefetchLength;
+			if (this.bHasGrandTotal) { // account for grand total row
+				if (iFirstLevelIndex) {
+					iFirstLevelIndex -= 1;
+				} else {
+					iFirstLevelLength -= 1;
+				}
+			}
+
+			aReadPromises.push(
+				this.oFirstLevel.read(iFirstLevelIndex, iFirstLevelLength, iPrefetchLength,
+						oGroupLock, fnDataRequested)
+					.then(function (oResult) {
+						var iOffset = that.bHasGrandTotal ? 1 : 0,
+							j;
+
+						that.aElements.length = that.aElements.$count
+							= oResult.value.$count + iOffset;
+						that.addElements(oResult.value, iFirstLevelIndex + iOffset,
+							that.oFirstLevel, iFirstLevelIndex);
+						for (j = 0; j < that.aElements.$count; j += 1) {
+							if (!that.aElements[j]) {
+								that.aElements[j] = _AggregationHelper.createPlaceholder(1,
+									j - iOffset, that.oFirstLevel);
+							}
+						}
+					}));
+		} else {
 			for (i = iIndex, n = Math.min(iIndex + iLength, this.aElements.length); i < n; i += 1) {
 				oCurrentParent = _Helper.getPrivateAnnotation(this.aElements[i], "parent");
 				if (oCurrentParent !== oGapParent) {
@@ -476,51 +513,24 @@ sap.ui.define([
 				readGap(iGapStart, i);
 			}
 			oGroupLock.unlock();
-
-			return SyncPromise.all(aReadPromises).then(function () {
-				var aElements = that.aElements.slice(iIndex, iIndex + iLength);
-
-				aElements.$count = that.aElements.$count;
-
-				return {value : aElements};
-			});
 		}
 
-		return this.oFirstLevel.read(iIndex, iLength, iPrefetchLength, oGroupLock, fnDataRequested)
-		.then(function (oResult) {
-			var j;
+		return SyncPromise.all(aReadPromises).then(function () {
+			var aElements = that.aElements.slice(iIndex, iIndex + iLength);
 
-			if (bHasGroupLevels) {
-				that.aElements.length = that.aElements.$count = oResult.value.$count;
-				that.addElements(oResult.value, iIndex, that.oFirstLevel, iIndex);
-				// create placeholders
-				for (j = 0; j < that.aElements.$count; j += 1) {
-					if (!that.aElements[j]) {
-						that.aElements[j]
-							= _AggregationHelper.createPlaceholder(0, j, that.oFirstLevel);
-					}
-				}
-				that.iReadLength = iLength + iPrefetchLength;
-			} else {
-				oResult.value.forEach(function (oElement) {
-					if (!("@$ui5.node.level" in oElement)) {
-						oElement["@$ui5.node.isExpanded"] = undefined;
-						oElement["@$ui5.node.isTotal"] = false;
-						oElement["@$ui5.node.level"] = 1;
-					}
-				});
-			}
+			aElements.$count = that.aElements.$count;
 
-			return oResult;
+			return {value : aElements};
 		});
 	};
 
 	/**
-	 * A method to refresh the kept-alive element.
-	 * Does nothing, because aggregation cache has no kept-alive element.
+	 * Refreshes the kept-alive element. Nothing to do here, we have no kept-alive element.
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElement
 	 */
-	_AggregationCache.prototype.refreshKeptElement = function () {
-	};
+	_AggregationCache.prototype.refreshKeptElement = function () {};
 
 	/**
 	 * Returns the cache's URL (ignoring dynamic parameters $skip/$top).
@@ -559,55 +569,40 @@ sap.ui.define([
 	 *   Whether this element is a leaf
 	 * @param {boolean} bTotal
 	 *   Whether this element is a (sub)total
-	 * @param {object} mByPredicate A map of group nodes by key predicates, used to detect
-	 *   collisions
-	 * @param {object} oElement The element
-	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
-	 *   {@link #fetchTypes})
-	 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
-	 * @throws {Error}
-	 *   In case a multi-unit situation is detected via a collision of key predicates
+	 * @param {object} oInstance
+	 *   The instance for which to calculate the key predicate
+	 * @param {object} mTypeForMetaPath
+	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
+	 * @param {string} sMetaPath
+	 *   The meta path for the entity
+	 * @returns {string}
+	 *   The key predicate or <code>undefined</code>, if key predicate cannot be determined
 	 *
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#calculateKeyPredicate
 	_AggregationCache.calculateKeyPredicate = function (oGroupNode, aGroupBy, aAllProperties, bLeaf,
-			bTotal, mByPredicate, oElement, mTypeForMetaPath, sMetaPath) {
+			bTotal, oInstance, mTypeForMetaPath, sMetaPath) {
 		var sPredicate;
-
-		/*
-		 * Returns a JSON string representation of the given object, but w/o the private namespace.
-		 *
-		 * @param {object} o
-		 * @returns {string}
-		 */
-		function stringify(o) {
-			return JSON.stringify(_Helper.publicClone(o));
-		}
 
 		// set grouping values for the levels above
 		aGroupBy.forEach(function (sName) {
-			if (!(sName in oElement)) {
-				oElement[sName] = oGroupNode[sName];
+			if (!(sName in oInstance)) {
+				oInstance[sName] = oGroupNode[sName];
 			}
 		});
-		sPredicate = _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath, aGroupBy, true);
-		if (sPredicate in mByPredicate) {
-			throw new Error("Multi-unit situation detected: " + stringify(oElement) + " vs. "
-				+ stringify(mByPredicate[sPredicate]));
-		}
-		_Helper.setPrivateAnnotation(oElement, "predicate", sPredicate);
-
+		sPredicate
+			= _Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath, aGroupBy, true);
+		_Helper.setPrivateAnnotation(oInstance, "predicate", sPredicate);
 		if (!bLeaf) {
-			_Helper.setPrivateAnnotation(oElement, "filter",
-				_Helper.getKeyFilter(oElement, sMetaPath, mTypeForMetaPath, aGroupBy));
+			_Helper.setPrivateAnnotation(oInstance, "filter",
+				_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath, aGroupBy));
 		}
+		// set the node values
+		_AggregationHelper.setAnnotations(oInstance, bLeaf ? undefined : false, bTotal,
+			oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1, aAllProperties);
 
-		// set the node values - except for the grand total element
-		if (oElement["@$ui5.node.level"] !== 0) {
-			_AggregationHelper.setAnnotations(oElement, bLeaf ? undefined : false, bTotal,
-				oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1, aAllProperties);
-		}
+		return sPredicate;
 	};
 
 	/**
