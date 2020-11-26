@@ -10,7 +10,10 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-
+	var isIE = false;
+	if (navigator.userAgent.toLowerCase().indexOf("trident") > 0) {
+		isIE = true;
+	}
 	var sandbox = sinon.sandbox.create();
 
 	function _getComplexMapEditors (oEditor) {
@@ -150,29 +153,31 @@ sap.ui.define([
 			this.oBaseEditor.destroy();
 		}
 	}, function () {
-		QUnit.test("When allowed values are set", function (assert) {
-			var mConfig = _createBaseEditorConfig({
-				allowKeyChange: false,
-				allowedValues: ["abc", "def"]
-			});
-			this.oBaseEditor.setConfig(mConfig);
+		if (!isIE) {
+			QUnit.test("When allowed values are set", function (assert) {
+				var mConfig = _createBaseEditorConfig({
+					allowKeyChange: false,
+					allowedValues: ["abc", "def"]
+				});
+				this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDestination").then(function (aPropertyEditor) {
-				var oDestinationsEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
-				var oNestedArrayEditor = oDestinationsEditor.getContent();
-				return oNestedArrayEditor.ready().then(function () {
-					var oComplexEditors = _getComplexMapEditors(oNestedArrayEditor)[0];
-					assert.deepEqual(Object.keys(oComplexEditors), ["name"], "Then only the name field is editable");
+				return this.oBaseEditor.getPropertyEditorsByName("sampleDestination").then(function (aPropertyEditor) {
+					var oDestinationsEditor = aPropertyEditor[0];
+					sap.ui.getCore().applyChanges();
+					var oNestedArrayEditor = oDestinationsEditor.getContent();
+					return oNestedArrayEditor.ready().then(function () {
+						var oComplexEditors = _getComplexMapEditors(oNestedArrayEditor)[0];
+						assert.deepEqual(Object.keys(oComplexEditors), ["name"], "Then only the name field is editable");
 
-					assert.deepEqual(
-						oComplexEditors.name.getConfig().items,
-						mConfig.properties.sampleDestination.allowedValues.map(function(sKey){ return { key: sKey }; }),
-						"Then only the allowed destinations are available in the name selection"
-					);
+						assert.deepEqual(
+							oComplexEditors.name.getConfig().items,
+							mConfig.properties.sampleDestination.allowedValues.map(function(sKey){ return { key: sKey }; }),
+							"Then only the allowed destinations are available in the name selection"
+						);
+					});
 				});
 			});
-		});
+		}
 	});
 
 	QUnit.done(function () {

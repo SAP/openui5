@@ -1666,60 +1666,58 @@ sap.ui.define([
 		// 		}.bind(this));
 		// 	}.bind(this));
 		// });
-		var oDefaultContextModel = {
-			"card.internal": {
-				"currentLanguage": {
-					"customize": [
-						"languageFormatters"
-					],
-					"description": "Current Language",
-					"label": "Current Language",
-					"placeholder": "Current Language",
-					"tags": [
-						"technical"
-					],
-					"type": "string",
-					"value": "{{parameters.LOCALE}}"
+
+		function getDefaultContextModel(oResourceBundle) {
+
+			return {
+				empty: {
+					label: oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_VAL"),
+					type: "string",
+					description: oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_DESC"),
+					placeholder: "",
+					value: ""
 				},
-				"label": "Other Values",
-				"nowIso": {
-					"customize": [
-						"dateFormatters"
-					],
-					"description": "The current date and time can be used for filters or strings",
-					"label": "Now, date and time",
-					"placeholder": "Now, date and time",
-					"tags": [],
-					"type": "string",
-					"value": "{{parameters.NOW_ISO}}"
-				},
-				"todayIso": {
-					"customize": [
-						"format.dataTime"
-					],
-					"description": "The current date can be used for filters or strings.",
-					"label": "Current date",
-					"placeholder": "Current date",
-					"tags": [],
-					"type": "string",
-					"value": "{{parameters.TODAY_ISO}}"
+				"card.internal": {
+					label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_INTERNAL_VAL"),
+					todayIso: {
+						type: "string",
+						label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
+						description: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_DESC"),
+						tags: [],
+						placeholder: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
+						customize: ["format.dataTime"],
+						value: "{{parameters.TODAY_ISO}}"
+					},
+					nowIso: {
+						type: "string",
+						label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
+						description: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_DESC"),
+						tags: [],
+						placeholder: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
+						customize: ["dateFormatters"],
+						value: "{{parameters.NOW_ISO}}"
+					},
+					currentLanguage: {
+						type: "string",
+						label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+						description: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+						tags: ["technical"],
+						customize: ["languageFormatters"],
+						placeholder: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+						value: "{{parameters.LOCALE}}"
+					}
 				}
-			},
-			"empty": {
-				"description": "Select a dynamic value from the list",
-				"label": "None",
-				"placeholder": "",
-				"type": "string",
-				"value": ""
-			}
-		};
+			};
+		}
+
 		QUnit.test("Empty Host Context", function (assert) {
+
 			this.oCardEditor.setCard({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					var oModel = this.oCardEditor.getModel("context");
 					assert.ok(oModel !== null, "Card Editor has a context model");
-					assert.deepEqual(oModel.getData(), oDefaultContextModel, "Card Editor has a default context model");
+					assert.deepEqual(oModel.getData(), getDefaultContextModel(this.oCardEditor._oResourceBundle), "Card Editor has a default context model");
 					assert.ok(oModel.getProperty("/sap.workzone/currentUser/id") === undefined, "Card Editor context /sap.workzone/currentUser/id is undefned");
 					resolve();
 				}.bind(this));

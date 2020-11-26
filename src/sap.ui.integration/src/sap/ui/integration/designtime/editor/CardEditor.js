@@ -671,7 +671,7 @@ sap.ui.define([
 				oData[n] = oContextData[n];
 			}
 			//card internal
-			oData["card.internal"] = CardEditor._contextEntries.cardinternal;
+			oData["card.internal"] = CardEditor._contextEntries["card.internal"];
 			oContextModel.setData(oData);
 			oFlatContextModel.setData(flattenData(oData, "label"));
 		});
@@ -1404,7 +1404,7 @@ sap.ui.define([
 			placeholder: "",
 			value: ""
 		},
-		cardinternal: {
+		"card.internal": {
 			label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_INTERNAL_VAL"),
 			todayIso: {
 				type: "string",

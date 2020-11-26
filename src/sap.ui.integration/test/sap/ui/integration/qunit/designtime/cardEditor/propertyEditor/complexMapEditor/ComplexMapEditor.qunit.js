@@ -14,7 +14,10 @@ sap.ui.define([
 	values
 ) {
 	"use strict";
-
+	var isIE = false;
+	if (navigator.userAgent.toLowerCase().indexOf("trident") > 0) {
+		isIE = true;
+	}
 	var sandbox = sinon.sandbox.create();
 
 	function _getComplexMapEditors (oEditor) {
@@ -113,92 +116,94 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("When a ComplexMapEditor is created", function (assert) {
-			var oComplexMapEditorDomRef = this.oComplexMapEditor.getDomRef();
-			assert.ok(oComplexMapEditorDomRef instanceof HTMLElement, "Then it is rendered correctly (1/3)");
-			assert.ok(oComplexMapEditorDomRef.offsetHeight > 0, "Then it is rendered correctly (2/3)");
-			assert.ok(oComplexMapEditorDomRef.offsetWidth > 0, "Then it is rendered correctly (3/3)");
-		});
-
-		QUnit.test("When config and json data were set", function (assert) {
-			assert.deepEqual(
-				this.oNestedArrayEditor.getValue(),
-				[
-					{
-						uri: "https://example.com",
-						settings: {
-							odataVersion: "4.0"
-						},
-						key: "sampleDataSource"
-					},
-					{ key: "anotherDataSource" }
-				],
-				"Then the editor value is properly converted to an array"
-			);
-		});
-
-		QUnit.test("When a complex map item is modified in the editor", function (assert) {
-			var fnDone = assert.async();
-
-			this.oComplexMapEditor.attachValueChange(function (oEvent) {
-				assert.deepEqual(
-					oEvent.getParameter("value"),
-					{
-						anotherDataSource: {},
-						sampleDataSource: {
-							uri: "https://example.com/foobar",
-							settings: {
-								odataVersion: "4.0"
-							}
-						}
-					},
-					"Then it is properly updated"
-				);
-				fnDone();
+		if (!isIE) {
+			QUnit.test("When a ComplexMapEditor is created", function (assert) {
+				var oComplexMapEditorDomRef = this.oComplexMapEditor.getDomRef();
+				assert.ok(oComplexMapEditorDomRef instanceof HTMLElement, "Then it is rendered correctly (1/3)");
+				assert.ok(oComplexMapEditorDomRef.offsetHeight > 0, "Then it is rendered correctly (2/3)");
+				assert.ok(oComplexMapEditorDomRef.offsetWidth > 0, "Then it is rendered correctly (3/3)");
 			});
 
-			var aDataSourceEditors = _getComplexMapEditors(this.oNestedArrayEditor)[0];
-			EditorQunitUtils.setInputValue(aDataSourceEditors["uri"], "https://example.com/foobar");
-		});
-
-		QUnit.test("When the add button is clicked twice", function (assert) {
-			var fnDone = assert.async();
-
-			var oStub = sinon.stub();
-			this.oComplexMapEditor.attachValueChange(oStub);
-
-			oStub.onSecondCall().callsFake(function (oEvent) {
-				var oValue = oEvent.getParameter("value");
-				assert.strictEqual(Object.keys(oValue).length, 4, "Then two data sources with unique keys are added");
+			QUnit.test("When config and json data were set", function (assert) {
 				assert.deepEqual(
-					values(oValue),
-					[].concat(values(this.oComplexMap.datasource), {}, {}),
-					"Then two empty data sources are initialized and the original data source is not touched"
+					this.oNestedArrayEditor.getValue(),
+					[
+						{
+							uri: "https://example.com",
+							settings: {
+								odataVersion: "4.0"
+							},
+							key: "sampleDataSource"
+						},
+						{ key: "anotherDataSource" }
+					],
+					"Then the editor value is properly converted to an array"
 				);
-				fnDone();
-			}.bind(this));
+			});
 
-			var oAddButton = this.oNestedArrayEditor.getContent().getItems()[1];
-			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
-			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
-		});
+			QUnit.test("When a complex map item is modified in the editor", function (assert) {
+				var fnDone = assert.async();
 
-		QUnit.test("When a duplicate key is provided", function (assert) {
-			var oSpy = sandbox.spy();
-			this.oComplexMapEditor.attachValueChange(oSpy);
+				this.oComplexMapEditor.attachValueChange(function (oEvent) {
+					assert.deepEqual(
+						oEvent.getParameter("value"),
+						{
+							anotherDataSource: {},
+							sampleDataSource: {
+								uri: "https://example.com/foobar",
+								settings: {
+									odataVersion: "4.0"
+								}
+							}
+						},
+						"Then it is properly updated"
+					);
+					fnDone();
+				});
 
-			var aDataSourceEditors = _getComplexMapEditors(this.oNestedArrayEditor)[1];
-			EditorQunitUtils.setInputValue(aDataSourceEditors["key"], "sampleDataSource");
+				var aDataSourceEditors = _getComplexMapEditors(this.oNestedArrayEditor)[0];
+				EditorQunitUtils.setInputValue(aDataSourceEditors["uri"], "https://example.com/foobar");
+			});
 
-			assert.strictEqual(aDataSourceEditors["key"].getValueState(), "Error", "Then the error is displayed");
+			QUnit.test("When the add button is clicked twice", function (assert) {
+				var fnDone = assert.async();
 
-			assert.ok(oSpy.notCalled, "Then no value change is triggered");
-			assert.deepEqual(
-				this.oComplexMapEditor.getValue(),
-				this.oComplexMap.datasource,
-				"Then the editor value is not updated"
-			);
-		});
+				var oStub = sinon.stub();
+				this.oComplexMapEditor.attachValueChange(oStub);
+
+				oStub.onSecondCall().callsFake(function (oEvent) {
+					var oValue = oEvent.getParameter("value");
+					assert.strictEqual(Object.keys(oValue).length, 4, "Then two data sources with unique keys are added");
+					assert.deepEqual(
+						values(oValue),
+						[].concat(values(this.oComplexMap.datasource), {}, {}),
+						"Then two empty data sources are initialized and the original data source is not touched"
+					);
+					fnDone();
+				}.bind(this));
+
+				var oAddButton = this.oNestedArrayEditor.getContent().getItems()[1];
+				QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+				QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+			});
+
+			QUnit.test("When a duplicate key is provided", function (assert) {
+				var oSpy = sandbox.spy();
+				this.oComplexMapEditor.attachValueChange(oSpy);
+
+				var aDataSourceEditors = _getComplexMapEditors(this.oNestedArrayEditor)[1];
+				EditorQunitUtils.setInputValue(aDataSourceEditors["key"], "sampleDataSource");
+
+				assert.strictEqual(aDataSourceEditors["key"].getValueState(), "Error", "Then the error is displayed");
+
+				assert.ok(oSpy.notCalled, "Then no value change is triggered");
+				assert.deepEqual(
+					this.oComplexMapEditor.getValue(),
+					this.oComplexMap.datasource,
+					"Then the editor value is not updated"
+				);
+			});
+		}
 	});
 
 	QUnit.module("Configuration options", {
@@ -223,40 +228,42 @@ sap.ui.define([
 			this.oBaseEditor.destroy();
 		}
 	}, function () {
-		QUnit.test("When key changes are forbidden", function (assert) {
-			var mConfig = _createBaseEditorConfig({
-				allowKeyChange: false
-			});
-			this.oBaseEditor.setConfig(mConfig);
+		if (!isIE) {
+			QUnit.test("When key changes are forbidden", function (assert) {
+				var mConfig = _createBaseEditorConfig({
+					allowKeyChange: false
+				});
+				this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
-				var oComplexMapEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
-				var oNestedArrayEditor = oComplexMapEditor.getContent();
-				return oNestedArrayEditor.ready().then(function () {
-					var mEditors = _getComplexMapEditors(oNestedArrayEditor)[0];
-					assert.notOk(mEditors.hasOwnProperty("key"), "Then the key field is disabled");
+				return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
+					var oComplexMapEditor = aPropertyEditor[0];
+					sap.ui.getCore().applyChanges();
+					var oNestedArrayEditor = oComplexMapEditor.getContent();
+					return oNestedArrayEditor.ready().then(function () {
+						var mEditors = _getComplexMapEditors(oNestedArrayEditor)[0];
+						assert.notOk(mEditors.hasOwnProperty("key"), "Then the key field is disabled");
+					});
 				});
 			});
-		});
 
-		QUnit.test("When a custom key label is set", function (assert) {
-			var mConfig = _createBaseEditorConfig({
-				keyLabel: "Custom label"
-			});
-			this.oBaseEditor.setConfig(mConfig);
+			QUnit.test("When a custom key label is set", function (assert) {
+				var mConfig = _createBaseEditorConfig({
+					keyLabel: "Custom label"
+				});
+				this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
-				var oComplexMapEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
-				var oNestedArrayEditor = oComplexMapEditor.getContent();
-				assert.strictEqual(
-					oNestedArrayEditor.getConfig().template.key.label,
-					"Custom label",
-					"Then the label is overriden"
-				);
+				return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
+					var oComplexMapEditor = aPropertyEditor[0];
+					sap.ui.getCore().applyChanges();
+					var oNestedArrayEditor = oComplexMapEditor.getContent();
+					assert.strictEqual(
+						oNestedArrayEditor.getConfig().template.key.label,
+						"Custom label",
+						"Then the label is overriden"
+					);
+				});
 			});
-		});
+		}
 	});
 
 	QUnit.done(function () {
