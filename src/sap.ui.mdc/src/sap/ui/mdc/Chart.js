@@ -45,6 +45,7 @@ sap.ui.define([
 			DrillStackHandler,
 			ChartTypeButton,
 			MeasureItemClass,
+			VizTooltip,
 			FILTER_INTERFACE = "sap.ui.mdc.IFilter";
 
 		/**
@@ -220,6 +221,18 @@ sap.ui.define([
 					 */
 					sortConditions: {
 						type: "object"
+					},
+					/**
+					 * Controls the visibility of the chart tooltip. If set to <code>true </code>, an instance of sap.viz.ui5.controls.VizTooltip will
+					 * be created and shown when hovering over a data point.
+					 *
+					 * @since 1.86
+					 */
+					showChartTooltip: {
+						type: "boolean",
+						group: "Misc",
+						defaultValue: true
+					// false
 					}
 				},
 				aggregations: {
@@ -388,13 +401,15 @@ sap.ui.define([
 			ChartClass = aModules[1];
 			ChartTypeButton = aModules[2];
 			MeasureItemClass = aModules[3];
+			VizTooltip = aModules[4];
 		};
 
 		function getModulesPaths() {
 			return [
 				"sap/chart/Chart",
 				"sap/ui/mdc/chart/ChartTypeButton",
-				"sap/ui/mdc/chart/MeasureItem"
+				"sap/ui/mdc/chart/MeasureItem",
+				"sap/viz/ui5/controls/VizTooltip"
 			];
 		}
 
@@ -470,6 +485,8 @@ sap.ui.define([
 
 			.then(function createDrillBreadcrumbs(oInnerChart) {
 				this._createDrillBreadcrumbs();
+
+				this._toggleChartTooltipVisibility(this.getShowChartTooltip());
 				return oInnerChart;
 			}.bind(this))
 
@@ -1590,6 +1607,43 @@ sap.ui.define([
 			}
 
 			return oState;
+		};
+
+		/**
+		 * Sets the ShowChartTooltip Property
+		 * @param {bool} bValue new value
+		*/
+		Chart.prototype.setShowChartTooltip = function (bValue) {
+			this.setProperty("showChartTooltip", bValue);
+			this._toggleChartTooltipVisibility(bValue);
+			return this;
+		};
+
+		Chart.prototype._toggleChartTooltipVisibility = function(bFlag) {
+
+			var oChart = this.getAggregation("_chart");
+
+			if (oChart) {
+				this._setChartTooltipVisiblity(oChart, bFlag);
+			} else if (this.oChartPromise){
+				this.oChartPromise.then(function (oChart) {
+					this._setChartTooltipVisiblity(oChart, bFlag);
+				}.bind(this));
+			}
+		};
+
+		Chart.prototype._setChartTooltipVisiblity = function(oChart, bFlag) {
+			if (bFlag) {
+				if (!this._vizTooltip) {
+					this._vizTooltip = new VizTooltip();
+				}
+				// Make this dynamic for setter calls
+				this._vizTooltip.connect(oChart.getVizUid());
+			} else {
+				if (this._vizTooltip) {
+					this._vizTooltip.destroy();
+				}
+			}
 		};
 
 		return Chart;
