@@ -4,6 +4,7 @@
 sap.ui.define([
 	"./BaseListContent",
 	"./ListContentRenderer",
+	"sap/ui/util/openWindow",
 	"sap/m/library",
 	"sap/m/List",
 	"sap/ui/integration/library",
@@ -14,6 +15,7 @@ sap.ui.define([
 ], function (
 	BaseListContent,
 	ListContentRenderer,
+	openWindow,
 	mLibrary,
 	List,
 	library,
@@ -278,7 +280,7 @@ sap.ui.define([
 
 				if (oItem.action.url) {
 					oListItem.attachPress(function () {
-						window.open(oItem.action.url, oItem.target || "_blank");
+						openWindow(oItem.action.url, oItem.target || "_blank");
 					});
 				}
 			}

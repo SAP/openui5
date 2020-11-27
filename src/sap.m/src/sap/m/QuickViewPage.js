@@ -578,7 +578,7 @@ sap.ui.define([
 					URLHelper.redirect(href);
 				}
 			} else  if (that.getTitleUrl()) {
-				window.open(that.getTitleUrl(), "_blank");
+				URLHelper.redirect(that.getTitleUrl(), true);
 			}
 		};
 	};

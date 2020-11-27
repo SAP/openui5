@@ -1,19 +1,18 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./isCrossOriginURL'], function(isCrossOriginURL) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
 	 * Determines default link types for an &lt;a&gt; tag that comply with
 	 * best practices for cross-origin communication.
 	 *
-	 * When the target URL is a cross-origin URL and when it will be opened in a new window,
+	 * When the target will be opened in a new window,
 	 * and when no other link types have been specified in the <code>rel</code> attribute,
 	 * "noopener noreferrer" will be returned.
 	 *
 	 * @param {string} sRel Caller defined link types for the <code>rel</code> attribute
-	 * @param {sap.ui.core.URI} sHref The target URL (might be relative to document.baseURI)
 	 * @param {string} sTarget Value of the <code>target</code> attribute
 	 * @returns {string} Value for the <code>rel</code> attribute of the &lt;a&gt; tag
 	 * @private
@@ -21,12 +20,12 @@ sap.ui.define(['./isCrossOriginURL'], function(isCrossOriginURL) {
 	 * @alias module:sap/ui/util/defaultLinkTypes
 	 * @since 1.84
 	 */
-	var fnDerive = function defaultLinkTypes(sRel, sHref, sTarget) {
+	var fnDerive = function defaultLinkTypes(sRel, sTarget) {
 		// trim rel and finally return the trimmed value
 		sRel = typeof sRel === "string" ? sRel.trim() : sRel;
 		// if the app already specified a non-empty value for rel, or when there's no need
 		// to restrict access to the opener, then leave rel unchanged
-		if (!sRel && sTarget && sTarget !== "_self" && isCrossOriginURL(sHref)) {
+		if (!sRel && sTarget && sTarget !== "_self") {
 			return "noopener noreferrer";
 		}
 		return sRel;
