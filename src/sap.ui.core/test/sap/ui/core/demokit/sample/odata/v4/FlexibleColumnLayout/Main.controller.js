@@ -34,9 +34,11 @@ sap.ui.define([
 			return {bDescending : bDescending, sNewIcon : sNewIcon};
 		},
 
-		hasPendingChanges : function (oBinding, sMessage) {
+		hasPendingChanges : function (oBinding, sVerb) {
 			if (oBinding.hasPendingChanges()) {
-				MessageBox.error(sMessage);
+				MessageBox.error("There are unsaved changes; save or reset changes before "
+					+ sVerb);
+
 				return true;
 			}
 			return false;
@@ -88,8 +90,7 @@ sap.ui.define([
 			var oBinding = this.byId("SalesOrderList").getBinding("items"),
 				sQuery = oEvent.getParameter("query");
 
-			if (this.hasPendingChanges(oBinding, "Cannot filter due to unsaved changes; save or " +
-				"reset changes before filtering")) {
+			if (this.hasPendingChanges(oBinding, "filtering")) {
 				return;
 			}
 
@@ -117,8 +118,7 @@ sap.ui.define([
 		onRefreshSalesOrder : function (oEvent) {
 			var oBinding = this.byId("objectPage").getBindingContext();
 
-			if (this.hasPendingChanges(oBinding, "Cannot refresh due to unsaved changes; save or " +
-				"reset changes before refreshing")) {
+			if (this.hasPendingChanges(oBinding, "refreshing")) {
 				return;
 			}
 			oBinding.refresh(undefined, true);
@@ -127,8 +127,7 @@ sap.ui.define([
 		onRefreshSalesOrderList : function (oEvent) {
 			var oBinding = this.byId("SalesOrderList").getBinding("items");
 
-			if (this.hasPendingChanges(oBinding, "Cannot refresh due to unsaved changes; save or " +
-				"reset changes before refreshing")) {
+			if (this.hasPendingChanges(oBinding, "refreshing")) {
 				return;
 			}
 			oBinding.refresh();
@@ -169,8 +168,7 @@ sap.ui.define([
 				bDescending = this.oUIModel.getProperty("/bSortGrossAmountDescending"),
 				oSortOrder;
 
-			if (this.hasPendingChanges(oBinding, "Cannot sort due to unsaved changes; save or reset"
-				+ " changes before sorting")) {
+			if (this.hasPendingChanges(oBinding, "sorting")) {
 				return;
 			}
 
@@ -189,8 +187,7 @@ sap.ui.define([
 				bDescending = this.oUIModel.getProperty("/bSortSalesOrderIDDescending"),
 				oSortOrder;
 
-			if (this.hasPendingChanges(oBinding, "Cannot change parameters due to unsaved changes; "
-				+ "save or reset changes before sorting")) {
+			if (this.hasPendingChanges(oBinding, "sorting")) {
 				return;
 			}
 
