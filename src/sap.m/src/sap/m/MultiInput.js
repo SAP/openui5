@@ -714,6 +714,13 @@ function(
 		var aTokens = this.getTokens();
 		var oTokenToFocus = aTokens[aTokens.length - 1];
 
+		if (!this.getEnabled() || !this.getEditable()) {
+
+			// Prevent the backspace key from navigating back
+			oEvent.preventDefault();
+			return;
+		}
+
 		if (sValue === "" && isFocused && oTokenToFocus && oEvent.srcControl === this) {
 			var bAllTokensSelected = aTokens.filter(function(oToken) {
 				return oToken.getSelected();

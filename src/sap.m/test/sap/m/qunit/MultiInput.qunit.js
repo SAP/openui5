@@ -1203,9 +1203,42 @@ sap.ui.define([
 		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
 		Core.applyChanges();
 
-		assert.ok(oMI.getTokens().length, 2, "One Token should be deleted");
+		assert.strictEqual(oMI.getTokens().length, 2, "One Token should be deleted");
 		assert.ok(oSpy.called, "Fire Token Update is called");
 
+		oMI.destroy();
+	});
+
+	QUnit.test("Backspace should not delete token and fire tokenUpdate when not editable", function (assert) {
+		// Arrange
+		var oMI = new MultiInput({
+			editable: false,
+			tokens: [
+				new Token({ text: "Token 1"}),
+				new Token({ text: "Token 2"}),
+				new Token({ text: "Token 3"})
+			]
+		}).placeAt("content");
+		Core.applyChanges();
+
+		var oSpy = this.spy(oMI, "fireTokenUpdate");
+
+		// Act
+		oMI.focus();
+
+		// focus last token
+		qutils.triggerKeydown(oMI.getDomRef(), KeyCodes.BACKSPACE);
+		Core.applyChanges();
+
+		// delete last token
+		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oMI.getTokens().length, 3, "None tokens should be deleted.");
+		assert.notOk(oSpy.called, "Fire Token Update should not be called.");
+
+		// Clean up
 		oMI.destroy();
 	});
 
