@@ -448,6 +448,9 @@ function(
 	 *     });
 	 * });
 	 *
+	 * <b>Note:</b> If the Fragment contains ExtensionPoints you have to pass the optional controller instance of the view
+	 * in which the fragment content will be inserted.
+	 *
 	 * @param {object} mOptions options map
 	 * @param {string} [mOptions.name] must be supplied if no "definition" parameter is given. The Fragment name must correspond to an XML Fragment which
 	 *    can be loaded via the module system
