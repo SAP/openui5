@@ -3,8 +3,9 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/test/Opa5',
 	'sap/ui/core/routing/HashChanger',
+	'../utils/sinon',
 	'samples/components/button/Component'
-], function ($, Opa5, HashChanger) {
+], function ($, Opa5, HashChanger, sinonUtils) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -40,7 +41,7 @@ sap.ui.define([
 	QUnit.test("Should increase timeout to 40 seconds", function(assert) {
 		// System under Test
 		var oOpa5 = new Opa5();
-		var stub = this.stub(oOpa5, "waitFor", function(){});
+		var stub = sinonUtils.createStub(oOpa5, "waitFor", function(){});
 
 		oOpa5.iStartMyUIComponent({
 			componentConfig: {

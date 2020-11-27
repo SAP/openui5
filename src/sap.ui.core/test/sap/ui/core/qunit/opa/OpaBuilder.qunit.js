@@ -6,7 +6,8 @@ sap.ui.define(
         "sap/ui/test/actions/Press",
         "sap/ui/test/actions/EnterText",
         "sap/base/strings/formatMessage",
-        "sap/ui/model/json/JSONModel"
+        "sap/ui/model/json/JSONModel",
+        "./utils/sinon"
     ],
     function(
         Opa5,
@@ -14,7 +15,8 @@ sap.ui.define(
         Press,
         EnterText,
         formatMessage,
-        JSONModel
+        JSONModel,
+        sinonUtils
     ) {
         "use strict";
 
@@ -538,7 +540,7 @@ sap.ui.define(
                 oDummyControl2 = { match: true},
                 oDummyParent = { dummyParent: true },
                 oAncestorSpy = this.spy(OpaBuilder.Matchers.TRUE),
-                oAncestorStub = this.stub(OpaBuilder.Matchers, "ancestor", oAncestorSpy),
+                oAncestorStub = sinonUtils.createStub(OpaBuilder.Matchers, "ancestor", oAncestorSpy),
                 oMatcherSpy = this.spy(function(oObject) {
                     return oObject.match;
                 }),
@@ -556,9 +558,9 @@ sap.ui.define(
                         getMatchingControls: oGetMatchingControlsSpy
                     };
                 }),
-                oPluginStub = this.stub(Opa5, "getPlugin", oGetPluginSpy),
+                oPluginStub = sinonUtils.createStub(Opa5, "getPlugin", oGetPluginSpy),
                 oWaitForSpy = this.spy(),
-                oWaitForStub = this.stub(Opa5.prototype, "waitFor", oWaitForSpy);
+                oWaitForStub = sinonUtils.createStub(Opa5.prototype, "waitFor", oWaitForSpy);
 
             assert.strictEqual(oOpaBuilder.doOnChildren(oMatcherSpy, oActionSpy, true), oOpaBuilder, "builder instance returned");
             oOpaBuilder.build().actions[0](oDummyParent);
@@ -606,7 +608,7 @@ sap.ui.define(
         QUnit.test("Should call 'Opa5.waitFor' with the defined options when using 'execute'", function(assert) {
             var oOpaBuilder = new OpaBuilder(),
                 oWaitForSpy = this.spy(),
-                oWaitForStub = this.stub(Opa5.prototype, "waitFor", oWaitForSpy),
+                oWaitForStub = sinonUtils.createStub(Opa5.prototype, "waitFor", oWaitForSpy),
                 oOptions = oOpaBuilder
                     .hasId("myId")
                     .hasType("sap.m.Button")
@@ -758,7 +760,7 @@ sap.ui.define(
                 oDummyControl2 = { match: true},
                 oDummyParent = { dummyParent: true },
                 oAncestorSpy = this.spy(OpaBuilder.Matchers.TRUE),
-                oAncestorStub = this.stub(OpaBuilder.Matchers, "ancestor", oAncestorSpy),
+                oAncestorStub = sinonUtils.createStub(OpaBuilder.Matchers, "ancestor", oAncestorSpy),
                 oMatcherSpy = this.spy(function(oObject) {
                     return oObject.match;
                 }),
@@ -776,7 +778,7 @@ sap.ui.define(
                         getMatchingControls: oGetMatchingControlsSpy
                     };
                 }),
-                oPluginStub = this.stub(Opa5, "getPlugin", oGetPluginSpy);
+                oPluginStub = sinonUtils.createStub(Opa5, "getPlugin", oGetPluginSpy);
 
             fnChildren = OpaBuilder.Matchers.children(oMatcherSpy, true);
             assert.deepEqual(fnChildren(oDummyParent), []);
@@ -818,7 +820,7 @@ sap.ui.define(
                 oDummyControl2 = { match: true},
                 oDummyParent = { dummyParent: true },
                 oAncestorSpy = this.spy(OpaBuilder.Matchers.TRUE),
-                oAncestorStub = this.stub(OpaBuilder.Matchers, "ancestor", oAncestorSpy),
+                oAncestorStub = sinonUtils.createStub(OpaBuilder.Matchers, "ancestor", oAncestorSpy),
                 oMatcherSpy = this.spy(function(oObject) {
                     return oObject.match;
                 }),
@@ -836,7 +838,7 @@ sap.ui.define(
                         getMatchingControls: oGetMatchingControlsSpy
                     };
                 }),
-                oPluginStub = this.stub(Opa5, "getPlugin", oGetPluginSpy);
+                oPluginStub = sinonUtils.createStub(Opa5, "getPlugin", oGetPluginSpy);
 
             fnChildMatcher = OpaBuilder.Matchers.childrenMatcher(oMatcherSpy, true);
             assert.strictEqual(fnChildMatcher(oDummyParent), false);
@@ -1008,7 +1010,7 @@ sap.ui.define(
 
         QUnit.test("'resourceBundle' should return a matcher that validates the given property against a token text of a library message bundle", function(assert) {
             var fnResourceBundle = OpaBuilder.Matchers.resourceBundle("text", "my.test.lib", "I_AM_A_TOKEN", "first", "second"),
-                fnBundleStub = this.stub(sap.ui.getCore(), "getLibraryResourceBundle",function () {
+                fnBundleStub = sinonUtils.createStub(sap.ui.getCore(), "getLibraryResourceBundle",function () {
                     return {
                         getText: function(sToken, aParams) {
                             return formatMessage(mDummyContextData[sToken], aParams);

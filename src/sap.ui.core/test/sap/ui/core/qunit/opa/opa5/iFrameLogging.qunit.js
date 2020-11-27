@@ -49,7 +49,7 @@ sap.ui.define([
 			oOpa5.iTeardownMyAppFrame();
 
 			oOpa5.emptyQueue().done(function () {
-				sinon.assert.calledOnce(fnOnErrorSpy, "Should call iFrame onerror once");
+				sinon.assert.calledOnce(fnOnErrorSpy);
 				sinon.assert.calledWithMatch(fnOnErrorSpy, "TestUncaughtError");
 				// restore window objects before test end
 				window.onerror = fnOriginalOnError;

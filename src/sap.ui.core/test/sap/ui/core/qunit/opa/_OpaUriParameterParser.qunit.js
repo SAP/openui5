@@ -1,13 +1,14 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
     "sap/ui/thirdparty/URI",
-    "sap/ui/test/_OpaUriParameterParser"
-], function (URI, _OpaUriParameterParser) {
+    "sap/ui/test/_OpaUriParameterParser",
+    "./utils/sinon"
+], function (URI, _OpaUriParameterParser, sinonUtils) {
 	"use strict";
 
     function stubUri(mParams) {
         var fnOrig = URI.prototype.search;
-        return sinon.stub(URI.prototype, "search", function (query) {
+        return sinonUtils.createStub(URI.prototype, "search", function (query) {
             if (query === true) {
                 return mParams;
             }

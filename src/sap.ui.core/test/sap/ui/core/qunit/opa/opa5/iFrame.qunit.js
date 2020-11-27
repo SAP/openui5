@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/test/Opa",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/test/_OpaUriParameterParser"
-], function (Opa5, Opa, URI, $, _OpaUriParameterParser) {
+	"sap/ui/test/_OpaUriParameterParser",
+	"../utils/sinon"
+], function (Opa5, Opa, URI, $, _OpaUriParameterParser, sinonUtils) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -208,7 +209,7 @@ sap.ui.define([
 	QUnit.test("Should apply iFrame width and height from URI params", function (assert) {
 		var fnDone = assert.async();
 		var fnOrig = URI.prototype.search;
-		var oStub = sinon.stub(URI.prototype, "search", function (query) {
+		var oStub = sinonUtils.createStub(URI.prototype, "search", function (query) {
 			if (query === true) {
 				return {
 					opaFrameWidth: "600",

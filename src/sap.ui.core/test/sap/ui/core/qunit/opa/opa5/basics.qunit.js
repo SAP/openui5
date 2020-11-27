@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/test/_OpaUriParameterParser",
-	"sap/ui/test/autowaiter/_autoWaiter"
-], function (Opa, Opa5, opaTest, $, Button, URI, _OpaUriParameterParser, _autoWaiter) {
+	"sap/ui/test/autowaiter/_autoWaiter",
+	"../utils/sinon"
+], function (Opa, Opa5, opaTest, $, Button, URI, _OpaUriParameterParser, _autoWaiter, sinonUtils) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -73,7 +74,7 @@ sap.ui.define([
 
 	QUnit.test("Should read application config from URL parameters", function (assert) {
 		var fnOrig = URI.prototype.search;
-		var oStub = sinon.stub(URI.prototype, "search", function (query) {
+		var oStub = sinonUtils.createStub(URI.prototype, "search", function (query) {
 			if ( query === true ) {
 				return {
 					"newKey": "value",		// include unprefixed params
