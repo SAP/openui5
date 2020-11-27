@@ -13,8 +13,10 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/core/Icon",
 	"sap/ui/Device",
-	"./library"
+	"./library",
+	"jquery.sap.script"
 ], function (Link, Select, Text, Control, ResizeHandler, ItemNavigation, Item, Icon, Device, library) {
+
 	"use strict";
 
 	/**
@@ -219,7 +221,7 @@ sap.ui.define([
 			if (sLinkHref) {
 				sLinkTarget = oControl.getTarget();
 				if (sLinkTarget) {
-					window.open(sLinkHref, sLinkTarget);
+					jQuery.sap.openWindow(sLinkHref, sLinkTarget);
 				} else {
 					window.location.href = sLinkHref;
 				}

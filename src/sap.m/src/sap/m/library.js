@@ -2800,13 +2800,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			 * @function
 			 */
 			redirect : function (sURL, bNewWindow) {
+				var oWindow;
 				$.sap.assert(isValidString(sURL), this + "#redirect: URL must be a string" );
 				this.fireEvent("redirect", sURL);
 				if (!bNewWindow) {
 					window.location.href = sURL;
 				} else {
-					var oWindow = window.open(sURL, "_blank");
-					if (!oWindow) {
+					oWindow = window.open(sURL, "_blank");
+					if (oWindow) {
+						oWindow.opener = null;
+					} else {
 						$.sap.log.error(this + "#redirect: Could not open " + sURL);
 						if (Device.os.windows_phone || (Device.browser.edge && Device.browser.mobile)) {
 							jQuery.sap.log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");

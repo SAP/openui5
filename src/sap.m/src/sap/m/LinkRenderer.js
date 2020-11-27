@@ -27,7 +27,7 @@
 			oAccAttributes =  {
 				role: 'link'
 			},
-			sRel = jQuery.sap.defaultLinkTypes(oControl.getRel(), oControl.getHref(), oControl.getTarget());
+			sRel = jQuery.sap.defaultLinkTypes(oControl.getRel(), oControl.getTarget());
 
 		// Link is rendered as a "<a>" element
 		oRm.write("<a");

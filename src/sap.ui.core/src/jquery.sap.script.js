@@ -1145,8 +1145,8 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device',
 	};
 
 		/**
-		 * Helper that adds window features 'noopener noreferrer' when opening a
-		 * cross-origin address to ensure that no opener browsing context is forwarded.
+		 * Helper that adds window features 'noopener noreferrer' when opening an
+		 * address to ensure that no opener browsing context is forwarded.
 		 * If forwarding of the opener browsing context is needed, the native
 		 * <code>window.open</code> API should be used.
 		 *
@@ -1158,19 +1158,21 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device',
 		 * @since 1.38.49
 		 */
 		jQuery.sap.openWindow = function(sUrl, sWindowName) {
-			var sWindowFeatures;
-			if (sWindowName !== "_self" && jQuery.sap.isCrossOriginURL(sUrl)) {
-				sWindowFeatures = "noopener,noreferrer";
-				// ensure that, in IE11, opener cannot be accessed by early code
-				if (Device.browser.msie || Device.browser.edge) {
-					var oNewWindow = window.open("about:blank", sWindowName, sWindowFeatures);
-					if (oNewWindow) {
-						oNewWindow.opener = null;
-						oNewWindow.location.href = sUrl;
-					}
-					return null;
+
+			var sWindowFeatures = "noopener,noreferrer";
+
+			// ensure that, in IE11 or Edge, opener cannot be accessed by early code
+			if (Device.browser.msie || Device.browser.edge) {
+				var oNewWindow = window.open("about:blank", sWindowName, sWindowFeatures);
+
+				if (oNewWindow) {
+					oNewWindow.opener = null;
+					oNewWindow.location.href = sUrl;
 				}
+
+				return null;
 			}
+
 			return window.open(sUrl, sWindowName, sWindowFeatures);
 		};
 
@@ -1178,7 +1180,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device',
 		 * Determines default link types for an &lt;a&gt; tag that comply with
 		 * best practices for cross-origin communication.
 		 *
-		 * When the target URL is a cross-origin URL and when it will be opened in a new window,
+		 * When the target will be opened in a new window,
 		 * and when no other link types have been specified in the <code>rel</code> attribute,
 		 * "noopener noreferrer" will be returned.
 		 *
@@ -1190,12 +1192,12 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device',
 		 * @ui5-restricted
 		 * @since 1.38.49
 		 */
-		jQuery.sap.defaultLinkTypes = function(sRel, sHref, sTarget) {
+		jQuery.sap.defaultLinkTypes = function(sRel, sTarget) {
 			// trim rel and finally return the trimmed value
 			sRel = typeof sRel === "string" ? sRel.trim() : sRel;
 			// if the app already specified a non-empty value for rel, or when there's no need
 			// to restrict access to the opener, then leave rel unchanged
-			if (!sRel && sTarget && sTarget !== "_self" && jQuery.sap.isCrossOriginURL(sHref)) {
+			if (!sRel && sTarget && sTarget !== "_self") {
 				return "noopener noreferrer";
 			}
 			return sRel;
