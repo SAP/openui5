@@ -20,7 +20,7 @@ sap.ui.define([
 			});
 
 			// simulate
-			var sPath = "../localService/";
+			var sPath = "../localService";
 			oMockServer.simulate(sPath + "/metadata.xml", sPath + "/mockdata");
 
 			// start
