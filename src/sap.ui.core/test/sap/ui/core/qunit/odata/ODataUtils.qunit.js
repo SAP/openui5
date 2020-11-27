@@ -487,4 +487,31 @@ sap.ui.define([
 		var sFilterString = ODataUtils.createFilterParams(aFilters);
 		assert.equal(sFilterString, "$filter=Customer%20eq%20test0%20and%20CollectionSegment%20eq%20test1%20and%20CompanyCode%20eq%20test2", "Filter string should be returned.");
 	});
+
+	QUnit.test("createFilterParams: Create filter params with empty filter", function(assert) {
+		var oFilter1, oFilter2, sFilterString;
+
+		oFilter1 = new Filter({});
+		oFilter2 = new Filter({});
+
+		sFilterString = ODataUtils.createFilterParams([oFilter1, oFilter2]);
+		assert.equal(sFilterString, "$filter=true%20or%20true", "Filter string should be returned.");
+
+		oFilter1 = new Filter({
+			filters: []
+		});
+		oFilter2 = new Filter({
+			filters: []
+		});
+
+		sFilterString = ODataUtils.createFilterParams([oFilter1, oFilter2]);
+		assert.equal(sFilterString, "$filter=false%20and%20false", "Filter string should be returned.");
+
+		oFilter1 = new Filter({
+			filters: []
+		});
+
+		sFilterString = ODataUtils.createFilterParams(oFilter1);
+		assert.equal(sFilterString, "$filter=false", "Filter string should be returned.");
+	});
 });

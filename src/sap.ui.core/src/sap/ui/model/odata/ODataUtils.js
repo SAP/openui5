@@ -128,6 +128,10 @@ sap.ui.define([
 				bAnd = !!oMultiFilter.bAnd,
 				sFilter = "";
 
+			if (aFilters.length === 0) {
+				return bAnd ? "true" : "false";
+			}
+
 			if (aFilters.length === 1) {
 				if (aFilters[0]._bMultiFilter) {
 					return create(aFilters[0]);
