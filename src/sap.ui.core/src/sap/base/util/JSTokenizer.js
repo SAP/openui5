@@ -25,7 +25,7 @@ sap.ui.define([], function() {
 	 * (http://www.json.org/ > JavaScript > json-2). The code contains
 	 * local modifications.
 	 *
-	 * Git URL: https://github.com/douglascrockford/JSON-js/blob/42c18c621a411c3f39a81bb0a387fc50dcd738d9/json_parse.js
+	 * Git URL: https://github.com/douglascrockford/JSON-js/blob/ff55d8d4513b149e2511aee01c3a61d372837d1f/json_parse.js
 	 */
 
 	/**
