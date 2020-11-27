@@ -434,6 +434,10 @@ sap.ui.define([
 		// Needs update in order to determine its visibility by visibility of its content.
 		this._updateTopAreaVisibility();
 
+		if (this._getFocusSpan().is(":focus")) {
+			this._addFocusClass();
+		}
+
 		if (!this._oInvisibleMessage) {
 			this._oInvisibleMessage = InvisibleMessage.getInstance();
 		}
@@ -1198,6 +1202,10 @@ sap.ui.define([
 	 */
 	DynamicPageTitle.prototype._getWidth = function () {
 		return this.$().outerWidth();
+	};
+
+	DynamicPageTitle.prototype.getFocusDomRef = function() {
+		return this._getFocusSpan()[0] || null;
 	};
 
 	/**
