@@ -39,7 +39,6 @@ sap.ui.define([
 
 	"use strict";
 
-
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.m",
@@ -3978,6 +3977,8 @@ sap.ui.define([
 							Log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
 							window.location.href = sURL;
 						}
+					} else {
+						oWindow.opener = null;
 					}
 				}
 			},

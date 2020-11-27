@@ -128,7 +128,7 @@ sap.ui.define([
 		},
 
 		setTarget : function(sTarget){
-			var sRelToRender = defaultLinkTypes(this.getRel(), this.getHref(), this.getTarget());
+			var sRelToRender = defaultLinkTypes(this.getRel(), this.getTarget());
 			this.setProperty("target", sTarget, true);
 			if (!sTarget) {
 				this.$().removeAttr("target");
@@ -212,7 +212,7 @@ sap.ui.define([
 			if (oTitle.getTarget()) {
 				oRm.writeAttributeEscaped("target", oTitle.getTarget());
 			}
-			var sRelToRender = defaultLinkTypes(oTitle.getRel(), oTitle.getHref(), oTitle.getTarget());
+			var sRelToRender = defaultLinkTypes(oTitle.getRel(), oTitle.getTarget());
 			if (sRelToRender) {
 				oRm.writeAttributeEscaped("rel", sRelToRender);
 			}
