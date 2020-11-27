@@ -143,14 +143,9 @@ sap.ui.define([
 					if (iIndex > -1) {
 						aCurrentKeys.splice(iIndex, 1);
 					}
-					var oViz;
-					if (oCopyConfig.form.items[n].visualization) {
-						oViz = mParameters[n].visualization;
-					}
 					oCopyConfig.form.items[n] = merge(oItem, mParameters[n]);
-					if (oViz) {
-						oCopyConfig.form.items[n].visualization = oViz;
-						oViz = null;
+					if (!mParametersInDesigntime[n].__value.visualization) {
+						delete oCopyConfig.form.items[n].visualization;
 					}
 					if (oItem.type === "group") {
 						delete oCopyConfig.form.items[n].manifestpath;
