@@ -1162,7 +1162,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device',
 			if (sWindowName !== "_self" && jQuery.sap.isCrossOriginURL(sUrl)) {
 				sWindowFeatures = "noopener,noreferrer";
 				// ensure that, in IE11, opener cannot be accessed by early code
-				if (Device.browser.msie) {
+				if (Device.browser.msie || Device.browser.edge) {
 					var oNewWindow = window.open("about:blank", sWindowName, sWindowFeatures);
 					if (oNewWindow) {
 						oNewWindow.opener = null;
