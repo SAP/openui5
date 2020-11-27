@@ -1199,7 +1199,7 @@ sap.ui.define([
 	 * @returns {boolean} True if the field help can be opened synchronously
 	 * @private
 	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
-	 * @sincs 1.77.0
+	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._fireOpen = function(bSuggestion, fnCallback) {
@@ -1227,7 +1227,7 @@ sap.ui.define([
 	 * @returns {boolean} True if the field help can be opened synchronously
 	 * @private
 	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
-	 * @sincs 1.77.0
+	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._callContentRequest = function(bSuggestion, fnCallback) {
