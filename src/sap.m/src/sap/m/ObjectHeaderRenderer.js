@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/base/Log",
 	'sap/m/Link',
 	'sap/m/Text',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/defaultLinkTypes"
 ],
-	function(Control, coreLibrary, library, Device, Log, Link, Text, jQuery) {
+	function(Control, coreLibrary, library, Device, Log, Link, Text, jQuery, defaultLinkTypes) {
 	"use strict";
 
 
@@ -493,6 +494,7 @@ sap.ui.define([
 					oRM.writeAttributeEscaped("href", oOH.getTitleHref());
 					if (oOH.getTitleTarget()) {
 						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+						oRM.writeAttribute("rel", defaultLinkTypes('', oOH.getTitleTarget()));
 					}
 				}
 
@@ -1300,6 +1302,7 @@ sap.ui.define([
 				oRM.writeAttributeEscaped("href", oOH.getTitleHref());
 				if (oOH.getTitleTarget()) {
 					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+					oRM.writeAttribute("rel", defaultLinkTypes('', oOH.getTitleTarget()));
 				}
 			}
 

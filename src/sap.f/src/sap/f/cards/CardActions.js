@@ -5,11 +5,13 @@ sap.ui.define([
 		"sap/f/library",
 		"sap/ui/base/ManagedObject",
 		"sap/base/Log",
-		"sap/f/cards/BindingResolver"],
+		"sap/f/cards/BindingResolver",
+		"sap/ui/util/openWindow"],
 	function (library,
 			  ManagedObject,
 			  Log,
-			  BindingResolver) {
+			  BindingResolver,
+			  openWindow) {
 		"use strict";
 
 		function _getServiceName(vService) {
@@ -328,7 +330,7 @@ sap.ui.define([
 		};
 
 		CardActions.prototype.openUrl = function (sUrl, oAction) {
-			window.open(sUrl, oAction.target || "_blank");
+			openWindow(sUrl, oAction.target || "_blank");
 		};
 
 		CardActions.prototype._fireAction = function (oSource, oActionParams, oModel, sPath) {

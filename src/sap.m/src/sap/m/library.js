@@ -4185,6 +4185,8 @@ sap.ui.define([
 							Log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
 							window.location.href = sURL;
 						}
+					} else {
+						oWindow.opener = null;
 					}
 				}
 			},
