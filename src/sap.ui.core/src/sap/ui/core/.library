@@ -256,12 +256,6 @@
             <pattern>sap/ui/thirdparty/jquery.js</pattern>
             <pattern partial="true">sap/base/util/isPlainObject.js</pattern>
         </lib>
-        <lib name="jquery-2" displayName="jQuery 2" version="2.2.3" homepage="https://jquery.com">
-            <license url="http://jQuery.org/license" type="MIT"/>
-            <copyright>jQuery Foundation and other contributors</copyright>
-            <pattern partial="true">sap/base/util/_merge.js</pattern>
-            <pattern partial="true">jquery.sap.script.js</pattern>
-        </lib>
         <lib name="jquery-1" displayName="jQuery 1" version="1.7.1" homepage="https://jquery.com">
             <license url="http://jQuery.org/license" type="MIT"/>
             <copyright>2011, John Resig</copyright>
@@ -460,7 +454,7 @@
             <copyright>2008-2013 Matsuza &lt;matsuza@gmail.com&gt;, Bjarke Walling &lt;bwp@bwp.dk&gt;</copyright>
             <pattern>sap/ui/thirdparty/unorm*</pattern>
         </lib>
-        <lib name="json-in-js" displayName="JSON in JS" version="unknown" homepage="">
+        <lib name="json-in-js" displayName="JSON in JS" version="ff55d8d451" homepage="">
             <license url="https://github.com/douglascrockford/JSON-js/blob/master/json2.js" type="LicenseRef-JSONinJSPublicDomain" />
             <copyright>Douglas Crockford</copyright>
             <pattern partial="true">sap/base/util/JSTokenizer.js</pattern>

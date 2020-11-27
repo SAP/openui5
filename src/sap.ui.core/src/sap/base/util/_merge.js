@@ -7,8 +7,8 @@
  * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
  * SPDX-License-Identifier: Apache-2.0
  *
- * but contains code taken from jQuery 2.2.3 (see the respective comment):
- * SPDX-FileCopyrightText: jQuery Foundation and other contributors
+ * but contains code taken from jQuery 3.5.1 (see the respective comment):
+ * SPDX-FileCopyrightText: JS Foundation and other contributors
  * SPDX-License-Identifier: MIT
  */
 
@@ -35,14 +35,14 @@ sap.ui.define(["./isPlainObject"], function(isPlainObject) {
 	 */
 	var fnMerge = function() {
 		/*
-		 * The code in this function is taken from jQuery 2.2.3 "jQuery.extend" and got modified.
+		 * The code in this function is taken from jQuery 3.5.1 "jQuery.extend" and got modified.
 		 *
-		 * jQuery JavaScript Library v2.2.3
-		 * http://jquery.com/
+		 * jQuery JavaScript Library v3.5.1
+		 * https://jquery.com/
 		 *
-		 * Copyright jQuery Foundation and other contributors
+		 * Copyright JS Foundation and other contributors
 		 * Released under the MIT license
-		 * http://jquery.org/license
+		 * https://jquery.org/license
 		 */
 		var src, copyIsArray, copy, name, options, clone,
 			target = arguments[2] || {},

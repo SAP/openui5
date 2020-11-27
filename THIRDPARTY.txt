@@ -37,13 +37,6 @@ License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jquery.js
 	src/sap.ui.core/src/sap/base/util/isPlainObject.js
 
-Component: jQuery 2, version: 2.2.3
-Copyright: jQuery Foundation and other contributors
-License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/base/util/_merge.js
-	src/sap.ui.core/src/jquery.sap.script.js
-
 Component: jQuery 1, version: 1.7.1
 Copyright: 2011, John Resig
 License: MIT
@@ -273,7 +266,7 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/unorm*
 
-Component: JSON in JS
+Component: JSON in JS, version: ff55d8d451
 Copyright: Douglas Crockford
 License: LicenseRef-JSONinJSPublicDomain
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/LicenseRef-JSONinJSPublicDomain.txt
