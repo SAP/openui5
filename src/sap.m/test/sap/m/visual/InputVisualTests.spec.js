@@ -59,6 +59,7 @@ describe("sap.m.InputVisualTests", function() {
 	it("Should visualize input with suggestions", function () {
 		var oInput = element(by.id("inputWithSuggestions"));
 		browser.executeScript("document.getElementById('inputWithSuggestions').scrollIntoView()").then(function() {
+			element(by.id("customCssButton")).click();
 			oInput.click();
 			expect(takeScreenshot(oInput)).toLookAs("input_with_suggestions_focused");
 

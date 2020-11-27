@@ -184,8 +184,25 @@ sap.ui.require([
 			})
 		});
 
+		var oCustomCssButton = new sap.m.Button("customCssButton",{
+			text: "Toggle custom CSS for visual test",
+			press: function() {
+				var $body = jQuery("body");
+
+				$body.toggleClass("customClassForVisualTests");
+			}
+		});
+
 		var initialPage = new Page("inpPage", {
-			showHeader: false,
+			headerContent: [
+				new sap.m.Title({
+					text: "sap.m.Input"
+				}),
+				new sap.m.ToolbarSpacer({
+					width: "600px"
+				}),
+				oCustomCssButton
+			],
 			content: [
 				new HBox({
 					wrap: "Wrap",
@@ -227,7 +244,11 @@ sap.ui.require([
 										new RadioButton("rb9", {text: "Visible", select: handleDescriptionChange}),
 										new RadioButton("rb10", {text: "None", select: handleDescriptionChange})
 									]
-								}),
+								})
+							]
+						}),
+						new VBox({
+							items: [
 								new Title({text: "Input Value Help:"}).addStyleClass("sapUiSmallMargin"),
 								new RadioButtonGroup({
 									selectedIndex: 1,
@@ -235,7 +256,11 @@ sap.ui.require([
 										new RadioButton("rb11", {text: "Visible", select: handleValueHelpChange}),
 										new RadioButton("rb12", {text: "None", select: handleValueHelpChange})
 									]
-								}),
+								})
+							]
+						}),
+						new VBox({
+							items: [
 								new Title({text: "Input Text Direction:"}).addStyleClass("sapUiSmallMargin"),
 								new RadioButtonGroup({
 									selectedIndex: 0,
