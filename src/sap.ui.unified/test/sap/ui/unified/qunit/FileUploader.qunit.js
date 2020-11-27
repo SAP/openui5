@@ -908,7 +908,7 @@ sap.ui.define([
 
 		// act
 		oFileUploader.setMultiple(false);
-		oFileUploader.oFileUpload.dispatchEvent(new Event("change"));
+		oFileUploader.oFileUpload.dispatchEvent(createNewEvent("change"));
 
 		// assert
 		assert.ok(oChangeHandlerSpy.calledOnce, "Change handler is attached");
@@ -1351,4 +1351,16 @@ sap.ui.define([
 		//Clean
 		oFileUploader.destroy();
 	});
+
+	//IE has no Event constructor
+	function createNewEvent(eventName) {
+		var oEvent;
+		if (typeof (Event) === 'function') {
+			oEvent = new Event(eventName);
+		} else {
+			oEvent = document.createEvent('Event');
+			oEvent.initEvent(eventName, true, true);
+		}
+		return oEvent;
+	}
 });
