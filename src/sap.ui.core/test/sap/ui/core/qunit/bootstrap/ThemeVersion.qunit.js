@@ -92,9 +92,23 @@ sap.ui.define([
 		// trigger loading library-parameters.json files
 		Parameters.get();
 
-		assert.equal(this.oServer.requests.length, 1,
-			"Loading the parameters should trigger one request.");
+		if (sap.ui.getCore().getConfiguration().getTheme() === "customcss") {
+			// the following asserts are relevant for the 'withCredentials' probing.
+			// Since the requests goes against the UI5 bootstrap origin, the first request is done without credentials.
+			// The second request re-tries with credentials.
+			assert.equal(this.oServer.requests.length, 2,
+				"Loading the parameters should trigger two requests, as library-parameters.json file does not exist.");
 
+			assert.equal(this.oServer.requests[0].withCredentials, false,
+				"library-parameters.json should be requested with 'withCredentials: false'");
+
+			assert.equal(this.oServer.requests[1].withCredentials, true,
+				"library-parameters.json should be requested with 'withCredentials: true'");
+
+		} else {
+			assert.equal(this.oServer.requests.length, 1,
+				"Loading the parameters should trigger one request.");
+		}
 		var oRequest = this.oServer.requests[0];
 		var oUri = new URI(oRequest.url);
 		var mParameters = oUri.query(true);
@@ -108,7 +122,6 @@ sap.ui.define([
 		} else {
 			assert.equal(oUri.query(), "", "'sap.ui.core' library-parameters.json should not contain version parameters.");
 		}
-
 	});
 
 	QUnit.test("Theme Change", function(assert) {
