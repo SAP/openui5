@@ -4100,7 +4100,7 @@ sap.ui.define([
 			sPath = "@",
 			aSorters = [];
 
-		// avoid request to backend during initialization
+		// avoid request to back end during initialization
 		this.oMetaModelMock.expects("fetchObject").returns(SyncPromise.resolve());
 
 		// code under test
@@ -4122,7 +4122,7 @@ sap.ui.define([
 			aContexts = [],
 			sPath = "path";
 
-		// avoid request to backend during initialization
+		// avoid request to back end during initialization
 		this.oMetaModelMock.expects("fetchObject").returns(SyncPromise.resolve());
 
 		oBinding = this.oMetaModel.bindList(sPath, oContext);
@@ -4148,7 +4148,7 @@ sap.ui.define([
 			aContexts = [{}],
 			sPath = "path";
 
-		// avoid request to backend during initialization
+		// avoid request to back end during initialization
 		this.oMetaModelMock.expects("fetchObject").returns(SyncPromise.resolve());
 
 		oBinding = this.oMetaModel.bindList(sPath, oContext);
@@ -4182,7 +4182,7 @@ sap.ui.define([
 			}),
 			aResult;
 
-		// avoid request to backend during initialization
+		// avoid request to back end during initialization
 		this.oMetaModelMock.expects("fetchObject").returns(SyncPromise.resolve());
 
 		oBinding = this.oMetaModel.bindList(sPath, oContext);
@@ -4217,7 +4217,7 @@ sap.ui.define([
 			oContext = this.oMetaModel.getContext("/"),
 			sPath = "";
 
-		// avoid request to backend during initialization
+		// avoid request to back end during initialization
 		this.oMetaModelMock.expects("fetchObject").returns(SyncPromise.resolve());
 
 		oBinding = this.oMetaModel.bindList(sPath, oContext);

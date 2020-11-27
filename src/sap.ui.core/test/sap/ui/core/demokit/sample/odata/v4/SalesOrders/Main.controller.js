@@ -496,7 +496,7 @@ sap.ui.define([
 		/**
 		 * Update the favorite product's name by replacing it with the current time (hour/minute).
 		 * This shows a somehow useful update, you should be able to see changes on the UI quite
-		 * frequently, but not too many backend requests.
+		 * frequently, but not too many back-end requests.
 		 */
 		onUpdateFavoriteProduct : function (/*oEvent*/) {
 			var oBinding = this.byId("favoriteProduct").getBinding("value");
@@ -592,7 +592,7 @@ sap.ui.define([
 			} else if (oSalesOrderContext.isTransient()) {
 				// TODO: eliminate this workaround:
 				// to ensure that no dependent data for the newly created SO is fetched
-				// unless it is persisted in backend
+				// unless it is persisted in the back end
 				oSalesOrderContext = undefined;
 			}
 			this.byId("objectPage").setBindingContext(oSalesOrderContext);
@@ -621,7 +621,7 @@ sap.ui.define([
 			} else if (oSalesOrderLineItemContext.isTransient()) {
 				// TODO: eliminate this workaround:
 				// to ensure that no dependent data for the newly created SO is fetched
-				// unless it is persisted in backend (see: CPOUI5UISERVICESV3-649)
+				// unless it is persisted in the back end (see: CPOUI5UISERVICESV3-649)
 				oSalesOrderLineItemContext = undefined;
 			}
 			this.byId("BP_2_CONTACT").setBindingContext(oSalesOrderLineItemContext);

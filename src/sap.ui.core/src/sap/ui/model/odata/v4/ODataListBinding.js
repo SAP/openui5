@@ -415,7 +415,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'createCompleted' event is fired when the backend has responded to a POST request
+	 * The 'createCompleted' event is fired when the back end has responded to a POST request
 	 * triggered for a {@link #create} on this binding. For each 'createSent' event, a
 	 * 'createCompleted' event is fired.
 	 *
@@ -436,7 +436,7 @@ sap.ui.define([
 
 	/**
 	 * The 'createSent' event is fired when a POST request triggered for a {@link #create} on this
-	 * binding is sent to the backend. For each 'createSent' event, a 'createCompleted' event is
+	 * binding is sent to the back end. For each 'createSent' event, a 'createCompleted' event is
 	 * fired.
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
@@ -482,7 +482,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
 	 * It is only fired for GET requests. The 'dataRequested' event is to be used by applications
 	 * for example to switch on a busy indicator. Registered event handlers are called without
 	 * parameters.
@@ -496,7 +496,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'patchCompleted' event is fired when the backend has responded to the last PATCH request
+	 * The 'patchCompleted' event is fired when the back end has responded to the last PATCH request
 	 * for this binding. If there is more than one PATCH request in a $batch, the event is fired
 	 * only once. Only bindings using an own data service request fire a 'patchCompleted' event.
 	 * For each 'patchSent' event, a 'patchCompleted' event is fired.
@@ -515,7 +515,7 @@ sap.ui.define([
 
 	/**
 	 * The 'patchSent' event is fired when the first PATCH request for this binding is sent to the
-	 * backend. If there is more than one PATCH request in a $batch, the event is fired only once.
+	 * back end. If there is more than one PATCH request in a $batch, the event is fired only once.
 	 * Only bindings using an own data service request fire a 'patchSent' event. For each
 	 * 'patchSent' event, a 'patchCompleted' event is fired.
 	 *

@@ -253,7 +253,7 @@ sap.ui.define([
 
 			if (bRealOData) {
 				// primitive sorter and filter tasks,
-				// -> probably not dependent on current sales orders in back end
+				// -> probably not dependent on current sales orders in the back end
 				When.onTheMainPage.sortBySalesOrderID(); // sort via ID ascending (initial order)
 				When.onTheMainPage.firstSalesOrderIsVisible(); //-> we expect first order on POS 0
 				When.onTheMainPage.sortBySalesOrderID(); // sort via ID descending

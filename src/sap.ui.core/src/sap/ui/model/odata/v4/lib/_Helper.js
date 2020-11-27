@@ -379,7 +379,7 @@ sap.ui.define([
 				}
 			}
 			// We don't need the original message for internal errors (errors NOT returned from the
-			// back-end, but raised within our framework)
+			// back end, but raised within our framework)
 			if (!(oOriginalMessage instanceof Error)) {
 				Object.defineProperty(oTechnicalDetails, "originalMessage", {
 					enumerable : true,

@@ -1538,7 +1538,7 @@ sap.ui.define([
 	 *   Maps a cache-relative path with key predicates or indices to an array of messages with the
 	 *   following properties. Each message is passed to the "technicalDetails" (see
 	 *   _Helper.createTechnicalDetails). Currently the "technicalDetails" only contain an attribute
-	 *   named "originalMessage" that contains the message that is received from back-end.
+	 *   named "originalMessage" that contains the message that is received from the back end.
 	 *   {string} code
 	 *     The error code
 	 *   {string} [longtextUrl]
@@ -1623,7 +1623,7 @@ sap.ui.define([
 	 *   The error, for example created by {@link sap.ui.model.odata.v4.lib._Helper.createError}
 	 * @param {boolean|string} [oError.canceled]
 	 *   A boolean value indicates whether the error is not reported but just logged to the
-	 *   console with level DEBUG; example: errors caused by cancellation of backend requests.
+	 *   console with level DEBUG; example: errors caused by cancellation of back-end requests.
 	 *   For the string value "noDebugLog", the method does nothing; example: errors caused by
 	 *   suspended bindings.
 	 * @param {object} [oError.error]
@@ -1661,7 +1661,7 @@ sap.ui.define([
 					numericSeverity : iNumericSeverity,
 					technical : bTechnical || oMessage.technical,
 					// use "@$ui5." prefix to overcome name collisions with instance annotations
-					// returned from back-end.
+					// returned from back end.
 					"@$ui5.error" : oError,
 					"@$ui5.originalMessage" : oMessage
 				};
@@ -1741,7 +1741,7 @@ sap.ui.define([
 	 *   The array of messages as contained in the <code>sap-messages</code> response header with
 	 *   the following properties. Each message is passed to the "technicalDetails" (see
 	 *   _Helper.createTechnicalDetails). Currently the "technicalDetails" only contain an attribute
-	 *   named "originalMessage" that contains the message that is received from back-end.
+	 *   named "originalMessage" that contains the message that is received from the back end.
 	 *   {string} code
 	 *     The error code
 	 *   {string} [longtextUrl]

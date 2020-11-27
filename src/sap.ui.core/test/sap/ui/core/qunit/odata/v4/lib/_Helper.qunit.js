@@ -952,7 +952,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Integration tests with real backend
+	// Integration tests with real back end
 	if (TestUtils.isRealOData()) {
 		QUnit.test("Integration test for formatLiteral", function (assert) {
 			var done = assert.async(),

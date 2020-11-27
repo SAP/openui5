@@ -51,7 +51,7 @@ sap.ui.define([
 			},
 			/**
 			 * Creates the OData V4 Model. For the "non-realOData" case, a mock server for the
-			 * backend requests is set up. Takes care about restoring the mock server once the model
+			 * back-end requests is set up. Takes care about restoring the mock server once the model
 			 * is destroyed.
 			 *
 			 * @param {object} mModelParameters

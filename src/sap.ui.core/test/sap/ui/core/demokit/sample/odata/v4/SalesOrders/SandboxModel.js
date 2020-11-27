@@ -4,7 +4,7 @@
 // The SandboxModel is used in the manifest instead of OData V4 model for the following purposes:
 // For the "realOData" case, the URL is adapted to a proxy URL and certain constructor parameters
 // are taken from URL parameters.
-// For the "non-realOData" case, a mock server for the backend requests is set up.
+// For the "non-realOData" case, a mock server for the back-end requests is set up.
 sap.ui.define([
 	"sap/ui/core/sample/common/SandboxModelHelper",
 	"sap/ui/model/odata/v4/ODataModel",

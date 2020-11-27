@@ -159,7 +159,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
 	 * It is only fired for GET requests. The 'dataRequested' event is to be used by applications
 	 * for example to switch on a busy indicator. Registered event handlers are called without
 	 * parameters.

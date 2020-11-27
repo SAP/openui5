@@ -231,7 +231,7 @@ sap.ui.define([
 	/**
 	 * Destroys the element context and, if available, the return value context, and fires a
 	 * change. The method is called by #_delete, possibly at another context binding for the same
-	 * entity, after the successful deletion in the back-end.
+	 * entity, after the successful deletion in the back end.
 	 *
 	 * @private
 	 */
@@ -516,7 +516,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a back-end.
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
 	 * It is only fired for GET requests. The 'dataRequested' event is to be used by
 	 * applications, for example to switch on a busy indicator. Registered event handlers are
 	 * called without parameters. In case of a deferred operation binding, 'dataRequested' is not
@@ -532,7 +532,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'patchCompleted' event is fired when the back-end has responded to the last PATCH
+	 * The 'patchCompleted' event is fired when the back end has responded to the last PATCH
 	 * request for this binding. If there is more than one PATCH request in a $batch, the event is
 	 * fired only once. Only bindings using an own data service request fire a 'patchCompleted'
 	 * event. For each 'patchSent' event, a 'patchCompleted' event is fired.
@@ -551,7 +551,7 @@ sap.ui.define([
 
 	/**
 	 * The 'patchSent' event is fired when the first PATCH request for this binding is sent to the
-	 * back-end. If there is more than one PATCH request in a $batch, the event is fired only once.
+	 * back end. If there is more than one PATCH request in a $batch, the event is fired only once.
 	 * Only bindings using an own data service request fire a 'patchSent' event. For each
 	 * 'patchSent' event, a 'patchCompleted' event is fired.
 	 *
