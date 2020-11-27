@@ -363,7 +363,8 @@ sap.ui.define([
 						if (this._getTabStrip()._oItemNavigation) {
 							this._getTabStrip()._oItemNavigation.focusItem(iNextIndex);
 						}
-					};
+					},
+					aActiveElementClasses = document.activeElement.classList;
 
 			// Selection (causes invalidation)
 			if (bSetAsSelected) {
@@ -372,7 +373,8 @@ sap.ui.define([
 				this.fireItemSelect({item: oNextItem});
 			}
 			// Focus (force to wait until invalidated)
-			if (document.activeElement.classList.contains('sapMTabStripSelectListItemCloseBtn')) {
+			if (aActiveElementClasses.contains('sapMTabStripSelectListItemCloseBtn')
+				|| aActiveElementClasses.contains('sapMTabStripItem')) {
 				setTimeout(fnFocusCallback.bind(this), 0);
 			}
 		};
