@@ -46,6 +46,8 @@ sap.ui.define([
 	var ManagedObjectModel;
 	var FilterBar;
 	var FilterField;
+	var CollectiveSearchSelect;
+	var Item;
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
@@ -242,6 +244,21 @@ sap.ui.define([
 					type: "sap.ui.mdc.filterbar.FilterBarBase",
 					multiple: false,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Items for collective searches.
+				 *
+				 * If used, a field to switch value helps will be shown. If the value help is switched, the
+				 * <code>contentRequest</code> function of the delegate is called and the chosen key is provided.
+				 *
+				 * <b>Note:</b> Icons are not supported.
+				 * @since 1.87.0
+				 */
+				collectiveSearchItems: {
+					type: "sap.ui.core.Item",
+					multiple: true,
+					singularName : "collectiveSearchItem"
 				}
 			},
 			defaultAggregation: "content",
@@ -281,7 +298,7 @@ sap.ui.define([
 
 		this._oObserver.observe(this, {
 			properties: ["filterValue", "conditions", "showConditionPanel", "filterFields"],
-			aggregations: ["content", "filterBar", "_filterBar", "inParameters"]
+			aggregations: ["content", "filterBar", "_filterBar", "inParameters", "collectiveSearchItems"]
 		});
 
 		this.setBindingContext(null); // don't inherit from parent as this could have a invalid BindingContent to read InParameters...
@@ -317,6 +334,11 @@ sap.ui.define([
 		if (this._iSearchFieldTimer) {
 			clearTimeout(this._iSearchFieldTimer);
 			this._iSearchFieldTimer = null;
+		}
+
+		if (this._oCollectiveSearchSelect) {
+			this._oCollectiveSearchSelect.destroy();
+			delete this._oCollectiveSearchSelect;
 		}
 
 	};
@@ -515,6 +537,9 @@ sap.ui.define([
 				// create SearchField if needed
 				_initializeSearchField.call(this);
 
+				// add collectiveSearch if needed
+				_assignCollectiveSearch.call(this, true);
+
 				// use FilterBar filters
 				_updateFiltersFromFilterBar.call(this);
 
@@ -693,6 +718,7 @@ sap.ui.define([
 			if (oChanges.name === "filterBar") {
 				if (oChanges.mutation === "insert" && this.getAggregation("_filterBar")) {
 					this.destroyAggregation("_filterBar");
+					delete this._oSearchField; // as SearchField is destroyed too
 				}
 				_updateFilterBar.call(this, oChanges.mutation, oChanges.child, false);
 			}
@@ -732,6 +758,10 @@ sap.ui.define([
 
 			if (oChanges.name === "inParameters") {
 				_inParametersChanged.call(this, oChanges.child, oChanges.mutation);
+			}
+
+			if (oChanges.name === "collectiveSearchItems") {
+				_assignCollectiveSearch.call(this, false);
 			}
 		} else if (oChanges.object.isA("sap.ui.mdc.field.InParameter")){
 			if (oChanges.name === "value") {
@@ -1897,7 +1927,7 @@ sap.ui.define([
 
 		var oDialog;
 
-		if ((!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel || !ManagedObjectModel || !FilterBar || !FilterField) && !this._bDialogRequested) {
+		if ((!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel || !ManagedObjectModel || !FilterBar || !FilterField || !CollectiveSearchSelect || !Item) && !this._bDialogRequested) {
 			Dialog = sap.ui.require("sap/m/Dialog");
 			Button = sap.ui.require("sap/m/Button");
 			ValueHelpPanel = sap.ui.require("sap/ui/mdc/field/ValueHelpPanel");
@@ -1905,14 +1935,17 @@ sap.ui.define([
 			ManagedObjectModel = sap.ui.require("sap/ui/model/base/ManagedObjectModel");
 			FilterBar = sap.ui.require("sap/ui/mdc/filterbar/vh/FilterBar");
 			FilterField = sap.ui.require("sap/ui/mdc/FilterField");
-			if (!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel || !ManagedObjectModel || !FilterBar || !FilterField) {
+			CollectiveSearchSelect = sap.ui.require("sap/ui/mdc/filterbar/vh/CollectiveSearchSelect");
+			Item = sap.ui.require("sap/ui/core/Item");
+			if (!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel || !ManagedObjectModel || !FilterBar || !FilterField || !CollectiveSearchSelect || !Item) {
 				sap.ui.require(["sap/m/Dialog", "sap/m/Button", "sap/ui/mdc/field/ValueHelpPanel",
 				                "sap/ui/mdc/field/DefineConditionPanel", "sap/ui/model/base/ManagedObjectModel",
-				                "sap/ui/mdc/filterbar/vh/FilterBar", "sap/ui/mdc/FilterField"], _DialogLoaded.bind(this));
+				                "sap/ui/mdc/filterbar/vh/FilterBar", "sap/ui/mdc/FilterField",
+				                "sap/ui/mdc/filterbar/vh/CollectiveSearchSelect", "sap/ui/core/Item"], _DialogLoaded.bind(this));
 				this._bDialogRequested = true;
 			}
 		}
-		if (Dialog && Button && ValueHelpPanel && DefineConditionPanel && ManagedObjectModel && FilterBar && FilterField && !this._bDialogRequested) {
+		if (Dialog && Button && ValueHelpPanel && DefineConditionPanel && ManagedObjectModel && FilterBar && FilterField && CollectiveSearchSelect && Item && !this._bDialogRequested) {
 			if (!this._oResourceBundle) {
 				this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 			}
@@ -1980,7 +2013,7 @@ sap.ui.define([
 		}
 	}
 
-	function _DialogLoaded(fnDialog, fnButton, fnValueHelpPanel, fnDefineConditionPanel, fnManagedObjectModel, fnFilterBar, fnFilterField) {
+	function _DialogLoaded(fnDialog, fnButton, fnValueHelpPanel, fnDefineConditionPanel, fnManagedObjectModel, fnFilterBar, fnFilterField, fnCollectiveSearchSelect, fnItem) {
 
 		Dialog = fnDialog;
 		Button = fnButton;
@@ -1989,6 +2022,8 @@ sap.ui.define([
 		ManagedObjectModel = fnManagedObjectModel;
 		FilterBar = fnFilterBar;
 		FilterField = fnFilterField;
+		CollectiveSearchSelect = fnCollectiveSearchSelect;
+		Item = fnItem;
 		this._bDialogRequested = false;
 
 		if (!this._bIsBeingDestroyed) {
@@ -2166,15 +2201,18 @@ sap.ui.define([
 			oFilterBar.detachEvent("search", _updateFiltersFromFilterBar, this);
 			if (!bInternalFilterBar) { // internal FilterBar is completely destroyed
 				var oSearchField = oFilterBar.getBasicSearchField();
-				if (oSearchField && oSearchField._bCreadedByFVH) { // destroy own SearchField
-					oFilterBar.setBasicSearchField(); // as rendeing-parent of SearchField might not be Filterbar remove it from FilterBar
-					oSearchField.destroy(); // destroy is outside of FilterBar as destroyBasicSearchField would run into issues as FieldPath of SearchField can not be determined any longer
+				if (oSearchField && oSearchField._bCreadedByFVH) { // remove own SearchField
+					oFilterBar.setBasicSearchField();
+				}
+				if (oFilterBar.getCollectiveSearch && oFilterBar.getCollectiveSearch()) { // remove collectiveSearch
+					oFilterBar.setCollectiveSearch();
 				}
 			}
 
 			oFilterBar = undefined;
 		} else {
 			oFilterBar.attachEvent("search", _updateFiltersFromFilterBar, this);
+			_assignCollectiveSearch.call(this, false);
 		}
 
 		var oDialog = this.getAggregation("_dialog");
@@ -2335,18 +2373,27 @@ sap.ui.define([
 			}
 
 			if (!oFilterBar.getBasicSearchField()) {
-				var oSearchField = new FilterField(this.getId() + "-search", {
-					conditions: "{$filters>/conditions/" + sFilterFields + "}",
-					placeholder:"{$i18n>filterbar.SEARCH}",
-					label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
-					maxConditions: 1,
-					width: "50%"
-				});
-				oSearchField._bCreadedByFVH = true; // to only remove own SearchFields
+				if (!this._oSearchField) { // reuse SearchField if just FilterBar switched (CollectiveSearch case)
+					this._oSearchField = new FilterField(this.getId() + "-search", {
+						conditions: "{$filters>/conditions/" + sFilterFields + "}",
+						placeholder:"{$i18n>filterbar.SEARCH}",
+						label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
+						maxConditions: 1,
+						width: "50%"
+					});
+					this._oSearchField._bCreadedByFVH = true; // to only remove own SearchFields
+				} else {
+					this._oSearchField.setConditions([]); // initialize
+				}
 
-				oFilterBar.setBasicSearchField(oSearchField);
+				oFilterBar.setBasicSearchField(this._oSearchField);
 			}
+		}
 
+		if (this._oSearchField && !this._oSearchField.getParent()) {
+			// not longer needed -> destroy
+			this._oSearchField.destroy();
+			delete this._oSearchField;
 		}
 
 	}
@@ -2420,6 +2467,87 @@ sap.ui.define([
 		}
 
 	};
+
+	FieldValueHelp.prototype._getContenRequestProperties = function(bSuggestion) {
+
+		var oProperties = {};
+		var aCollectiveSearchItems = this.getCollectiveSearchItems();
+
+		if (aCollectiveSearchItems.length > 0) {
+			var oDialog = this.getAggregation("_dialog");
+			if (oDialog && oDialog.isOpen() && this._oCollectiveSearchSelect) {
+				var vKey = this._oCollectiveSearchSelect.getSelectedItemKey();
+				oProperties.collectiveSearchKey = vKey;
+			} else {
+				// use first item
+				oProperties.collectiveSearchKey = aCollectiveSearchItems[0].getKey();
+			}
+		}
+
+		return oProperties;
+
+	};
+
+	function _createCollectiveSearch() {
+
+		if (!this._oCollectiveSearchSelect) {
+			// check if collective search is supported
+			var oItemTemplate = new Item(this.getId() + "-collSearchItem", {
+				key: "{$help>key}",
+				text: "{$help>text}",
+				enabled: "{$help>enabled}",
+				textDirection: "{$help>textDirection}"
+			});
+
+			this._oCollectiveSearchSelect = new CollectiveSearchSelect(this.getId() + "-collSearch", {
+				title:"{$i18n>COL_SEARCH_SEL_TITLE}",
+				items: {path: "$help>/collectiveSearchItems", template: oItemTemplate},
+				select: _handleCollectiveSearchSelect.bind(this)
+			}).setModel(this._oManagedObjectModel, "$help");
+		}
+
+		return this._oCollectiveSearchSelect;
+
+	}
+
+	function _handleCollectiveSearchSelect(oEvent) {
+
+		var fnCallback = function() {
+			// apply Filters after change of Table and/or FilterBar
+			_applyFilters.call(this, true);
+		}.bind(this);
+
+		this.setProperty("filterValue", "", true); // initialize SearchField
+		var bSync = this._callContentRequest(false, fnCallback);
+
+		if (bSync) {
+			fnCallback();
+		}
+
+	}
+
+	function _assignCollectiveSearch(bInitializeKey) {
+
+		var oDialog = this.getAggregation("_dialog");
+		var oFilterBar = _getFilterBar.call(this);
+		if (oDialog && oFilterBar) {
+			var aCollectiveSearchItems = this.getCollectiveSearchItems();
+			if (aCollectiveSearchItems.length <= 1) {
+				if (oFilterBar.getCollectiveSearch && oFilterBar.getCollectiveSearch()) {
+					oFilterBar.setCollectiveSearch(); // no items or only one item -> no collective search
+				}
+			} else {
+				if (oFilterBar.getCollectiveSearch && !oFilterBar.getCollectiveSearch()) {
+					oFilterBar.setCollectiveSearch(_createCollectiveSearch.call(this));
+				}
+				if (bInitializeKey && this._oCollectiveSearchSelect) {
+					//reset collectiveSearch to first item
+					this._oCollectiveSearchSelect.setSelectedItemKey(aCollectiveSearchItems[0].getKey());
+				}
+			}
+		}
+
+	}
 
 	return FieldValueHelp;
 

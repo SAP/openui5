@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/EditMode",
 	"sap/m/library",
-	"sap/m/MessageToast"
-], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, mobileLibrary, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/mdc/field/FieldHelpBaseDelegate"
+], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, mobileLibrary, MessageToast, FieldHelpBaseDelegate) {
 	"use strict";
 
 	var ButtonType = mobileLibrary.ButtonType;
@@ -44,9 +45,51 @@ sap.ui.define([
 				field: {
 					value: "22134T",
 					additionalValue: null
-				}
+				},
+				collectiveSearch: [
+				                   {key: "1", description: "Search 1"},
+				                   {key: "2", description: "Search 2"}
+				                   ]
 			});
 			this.getView().setModel(oViewModel, "view");
+
+			// fake own delegate implementation
+			FieldHelpBaseDelegate.contentRequest = function(oPayload, oFieldHelp, bSuggestion, oProperties) {
+				if (oFieldHelp === this.getView().byId("FVH-CollSearch")) {
+					var sKey = !bSuggestion && oProperties && oProperties.collectiveSearchKey;
+					var oTable;
+					var oFilterBar;
+
+					switch (sKey) {
+					case "1":
+						oTable = this.getView().byId("FVH-CollSearch-T1");
+						oFilterBar = this.getView().byId("FVH-CollSearch-FB1");
+						break;
+
+					case "2":
+						oTable = this.getView().byId("FVH-CollSearch-T2");
+						oFilterBar = this.getView().byId("FVH-CollSearch-FB2");
+						break;
+
+					default:
+						oTable = this.getView().byId("FVH-CollSearch-T1");
+						oFilterBar = this.getView().byId("FVH-CollSearch-FB1");
+					break;
+					}
+
+					var oWrapper = oFieldHelp.getContent();
+					var oCurrentTable = oWrapper.getTable();
+					var oCurrentFilterBar = oFieldHelp.getFilterBar();
+					if (oTable !== oCurrentTable) {
+						oWrapper.setTable(oTable);
+						oWrapper.addDependent(oCurrentTable);
+					}
+					if (oFilterBar !== oCurrentFilterBar) {
+						oFieldHelp.setFilterBar(oFilterBar);
+						oFieldHelp.addDependent(oCurrentFilterBar);
+					}
+				}
+			}.bind(this);
 
 		},
 

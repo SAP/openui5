@@ -898,6 +898,98 @@
 				<m:Label text="Info (InParameter for City)"></m:Label>
 				<mdc:Field id="IOFInfo" value="{path: 'CityInfo', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 
+				<c:Title text="CollectiveSearch"></c:Title>
+				<m:Label text="using collective search"></m:Label>
+				<mdc:Field
+					id="F2-CollSearch"
+					value="870394932"
+					display="Description"
+					change="handleChange"
+					liveChange="handleLiveChange"
+					submit="handleSubmit"
+					fieldHelp="FVH-CollSearch">
+					<mdc:dependents>
+							<mdcField:FieldValueHelp id="FVH-CollSearch"
+								title="Product"
+								filterFields="*ProductId,Name*"
+								keyPath="ProductId"
+								descriptionPath="Name"
+								collectiveSearchItems="{path: 'view>/collectiveSearch'}">
+								<mdcField:collectiveSearchItems>
+									<c:Item text="{view>description}" key="{view>key}"/>
+								</mdcField:collectiveSearchItems>
+								<mdcField:FieldValueHelpMTableWrapper id="FVH-CollSearch-W">
+									<mdcField:dependents>
+										<m:Table id="FVH-CollSearch-T1" items="{path: '/ProductCollection'}" width="26rem">
+											<m:columns>
+												<m:Column>
+													<m:Label text="{/#Product/ProductId/@sap:label}"></m:Label>
+												</m:Column>
+												<m:Column width="10rem">
+													<m:Label text="{/#Product/Name/@sap:label}"></m:Label>
+												</m:Column>
+												<m:Column width="10rem">
+													<m:Label text="{/#Product/Category/@sap:label}"></m:Label>
+												</m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem type="Active">
+													<m:Text text="{ProductId}"></m:Text>
+													<m:Text text="{Name}"></m:Text>
+													<m:Text text="{Category}"></m:Text>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+										<m:Table id="FVH-CollSearch-T2" items="{path: '/ProductCollection'}" width="26rem">
+											<m:columns>
+												<m:Column>
+													<m:Label text="{/#Product/ProductId/@sap:label}"></m:Label>
+												</m:Column>
+												<m:Column width="10rem">
+													<m:Label text="{/#Product/Name/@sap:label}"></m:Label>
+												</m:Column>
+												<m:Column width="10rem">
+													<m:Label text="{/#Product/SupplierName/@sap:label}"></m:Label>
+												</m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem type="Active">
+													<m:Text text="{ProductId}"></m:Text>
+													<m:Text text="{Name}"></m:Text>
+													<m:Text text="{SupplierName}"></m:Text>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+									</mdcField:dependents>
+								</mdcField:FieldValueHelpMTableWrapper>
+								<mdcField:dependents>
+									<vhfb:FilterBar id="FVH-CollSearch-FB1" liveMode= "false">
+										<mdc:FilterField
+											id="FVH-CollSearch-FB1-Category"
+											label= "{/#Product/Category/@sap:label}"
+											editMode= "Editable"
+											display= "Value"
+											dataType="sap.ui.model.type.String"
+											width="100%"
+											conditions="{$filters>/conditions/Category}">
+										</mdc:FilterField>
+									</vhfb:FilterBar>
+									<vhfb:FilterBar id="FVH-CollSearch-FB2" liveMode= "false">
+										<mdc:FilterField
+											id="FVH-CollSearch-FB1-SupplierName"
+											label= "{/#Product/SupplierName/@sap:label}"
+											editMode= "Editable"
+											display= "Value"
+											dataType="sap.ui.model.type.String"
+											width="100%"
+											conditions="{$filters>/conditions/SupplierName}">
+										</mdc:FilterField>
+									</vhfb:FilterBar>
+								</mdcField:dependents>
+							</mdcField:FieldValueHelp>
+					</mdc:dependents>
+				</mdc:Field>
+
 			</form:SimpleForm>
 		</m:Page>
 		<m:Page id="P2" title="Fields with FiledInfo" titleLevel="H1">

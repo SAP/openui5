@@ -35,12 +35,13 @@ sap.ui.define([
 			 * @param {object} oPayload Payload for delegate
 			 * @param {sap.ui.mdc.base.FieldHelpBase} oFieldHelp Field help instance
 			 * @param {boolean} bSuggestion Field help is called for suggestion
+			 * @param {object} oProperties Properties depending on the used FieldHelp (e.g. FieldValueHelp)
 			 * @returns {Promise} Promise that is resolved if all content is available
 			 * @private
 			 * @ui5-restricted sap.fe
 			 * @MDC_PUBLIC_CANDIDATE
 			 */
-			contentRequest: function(oPayload, oFieldHelp, bSuggestion) {
+			contentRequest: function(oPayload, oFieldHelp, bSuggestion, oProperties) {
 
 			}
 

@@ -21,10 +21,12 @@ sap.ui.define([
 	"sap/ui/mdc/field/ValueHelpPanel",
 	"sap/ui/mdc/field/DefineConditionPanel",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/FilterBar",
 	"sap/ui/mdc/FilterBarDelegate",
 	"sap/ui/core/Icon",
+	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
 	"sap/ui/Device",
@@ -51,10 +53,12 @@ sap.ui.define([
 		ValueHelpPanel,
 		DefineConditionPanel,
 		VHFilterBar,
+		CollectiveSearchSelect,
 		FilterField,
 		FilterBar,
 		FilterBarDelegate,
 		Icon,
+		Item,
 		JSONModel,
 		StringType,
 		Device,
@@ -2730,7 +2734,6 @@ sap.ui.define([
 
 		sinon.spy(oSearchField, "destroy");
 		oFieldHelp.setFilterBar();
-		assert.ok(oSearchField.destroy.called, "SearchField destroyed after FilterBar removed");
 		oFilterBar.destroy();
 
 		oClock.tick(1); // As internal Filterbar is created async
@@ -2738,8 +2741,7 @@ sap.ui.define([
 		var oInternalFilterBar = oFieldHelp.getAggregation("_filterBar");
 		assert.ok(oInternalFilterBar, "internal Filterbar created");
 		assert.ok(oInternalFilterBar.isA("sap.ui.mdc.filterbar.vh.FilterBar"), "Filterbar is VH-FilterBar");
-		oSearchField = oInternalFilterBar && oInternalFilterBar.getBasicSearchField();
-		assert.ok(oSearchField, "SearchField created");
+		assert.equal(oSearchField, oInternalFilterBar.getBasicSearchField(), "existing SearchField assigned to internal FilterBar");
 
 		oFieldHelp.close();
 		oClock.tick(iDialogDuration); // fake closing time
@@ -3189,6 +3191,148 @@ sap.ui.define([
 				fnDone();
 			}, 0);
 		}, 0);
+
+	});
+
+	QUnit.module("CollectiveSearch", {
+		beforeEach: function() {
+			_initFieldHelp();
+			oFieldHelp.addCollectiveSearchItem(new Item("Item1", {key: "K1", text: "Search 1"}));
+			oFieldHelp.addCollectiveSearchItem(new Item("Item2", {key: "K2", text: "Search 2"}));
+			oClock = sinon.useFakeTimers();
+		},
+		afterEach: _teardown
+	});
+
+	QUnit.test("show CollectiveSearch", function(assert) {
+
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var sTitle = oResourceBundle.getText("COL_SEARCH_SEL_TITLE");
+
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+
+		var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		var oCollectiveSearch = oFilterBar && oFilterBar.getCollectiveSearch();
+		assert.ok(oCollectiveSearch, "CollectiveSearch assigned to FilterBar");
+		assert.ok(oFieldHelp._oCollectiveSearchSelect, "CollectiveSearch stored in FieldHelp");
+		if (oCollectiveSearch) {
+			var aCollectiveSearchItems = oFieldHelp.getCollectiveSearchItems();
+			var aItems = oCollectiveSearch.getItems();
+			assert.equal(oCollectiveSearch.getItems().length, aCollectiveSearchItems.length, "Items assigned to CollectiveSearch");
+			for (var i = 0; i < aCollectiveSearchItems.length; i++) {
+				assert.equal(aItems[i].getKey(), aCollectiveSearchItems[i].getKey(), "Item" + i + " key");
+				assert.equal(aItems[i].getText(), aCollectiveSearchItems[i].getText(), "Item" + i + " text");
+			}
+			assert.equal(oCollectiveSearch.getSelectedItemKey(), "K1", "SelectedItemKey of CollectedSearch");
+			assert.equal(oCollectiveSearch.getTitle(), sTitle, "CollectedSearch Title");
+		}
+		oFieldHelp.close();
+		oClock.tick(iDialogDuration); // fake closing time
+
+		// remove one item to have only one left
+		var oItem = oFieldHelp.getCollectiveSearchItems()[1];
+		oItem.destroy();
+
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+		oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		oCollectiveSearch = oFilterBar && oFilterBar.getCollectiveSearch();
+		assert.notOk(oCollectiveSearch, "CollectiveSearch not assigned to FilterBar");
+		assert.ok(oFieldHelp._oCollectiveSearchSelect, "CollectiveSearch still stored in FieldHelp");
+
+		oFieldHelp.close();
+		oClock.tick(iDialogDuration); // fake closing time
+
+	});
+
+	QUnit.test("don't show CollectiveSearch", function(assert) {
+
+		// remove one item to have only one left
+		var oItem = oFieldHelp.getCollectiveSearchItems()[1];
+		oItem.destroy();
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+
+		var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		var oCollectiveSearch = oFilterBar && oFilterBar.getCollectiveSearch();
+		assert.notOk(oCollectiveSearch, "CollectiveSearch not assigned to FilterBar");
+		assert.notOk(oFieldHelp._oCollectiveSearchSelect, "no CollectiveSearch stored in FieldHelp");
+
+		oFieldHelp.close();
+		oClock.tick(iDialogDuration); // fake closing time
+
+	});
+
+	QUnit.test("change collectiveSearchItem", function(assert) {
+
+		sinon.spy(FieldValueHelpDelegate, "contentRequest");
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+
+		var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		var oCollectiveSearch = oFilterBar && oFilterBar.getCollectiveSearch();
+		assert.ok(FieldValueHelpDelegate.contentRequest.calledWith(undefined, oFieldHelp, false, {collectiveSearchKey: "K1"}), "contentRequest called with 1. collective search");
+		FieldValueHelpDelegate.contentRequest.reset();
+
+		// change item (fake user interaction)
+		oCollectiveSearch.setSelectedItemKey("K2");
+		oCollectiveSearch.fireSelect({key: "K2"});
+		assert.ok(FieldValueHelpDelegate.contentRequest.calledWith(undefined, oFieldHelp, false, {collectiveSearchKey: "K2"}), "contentRequest called with selected collective search");
+		FieldValueHelpDelegate.contentRequest.reset();
+
+		oFieldHelp.close();
+		oClock.tick(iDialogDuration); // fake closing time
+
+		// reopen
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+		assert.ok(FieldValueHelpDelegate.contentRequest.calledWith(undefined, oFieldHelp, false, {collectiveSearchKey: "K1"}), "contentRequest called with 1. collective search");
+		FieldValueHelpDelegate.contentRequest.reset();
+
+		oFieldHelp.close();
+		oClock.tick(iDialogDuration); // fake closing time
+		FieldValueHelpDelegate.contentRequest.restore();
+
+	});
+
+	QUnit.test("open as Suggestion", function(assert) {
+
+		sinon.spy(FieldValueHelpDelegate, "contentRequest");
+		oFieldHelp.open(true);
+		oClock.tick(iPopoverDuration); // fake opening time
+
+		assert.ok(FieldValueHelpDelegate.contentRequest.calledWith(undefined, oFieldHelp, true, {collectiveSearchKey: "K1"}), "contentRequest called with 1. collective search");
+
+		oFieldHelp.close();
+		oClock.tick(iPopoverDuration); // fake closing time
+		FieldValueHelpDelegate.contentRequest.restore();
+
+	});
+
+	QUnit.test("use own FilterBar", function(assert) {
+
+		oFilterBar = new VHFilterBar("MyFilterBar", {
+			liveMode: false
+		});
+
+		oFieldHelp.setFilterBar(oFilterBar);
+
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+
+		var oCollectiveSearch = oFilterBar.getCollectiveSearch();
+		assert.ok(oCollectiveSearch, "CollectiveSearch assigned to FilterBar");
+
+		oFieldHelp.close();
+		oClock.tick(iDialogDuration); // fake closing time
+
+		oFieldHelp.setFilterBar();
+		var oCollectiveSearch = oFilterBar.getCollectiveSearch();
+		assert.notOk(oCollectiveSearch, "CollectiveSearch not longer assigned to FilterBar");
+		assert.ok(oFieldHelp._oCollectiveSearchSelect, "CollectiveSearch still stored in FieldHelp");
+
+		oFilterBar.destroy();
 
 	});
 
