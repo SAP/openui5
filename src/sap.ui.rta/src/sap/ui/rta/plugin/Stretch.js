@@ -408,12 +408,21 @@ function (
 	};
 
 	Stretch.prototype._toggleStyleClass = function (oOverlay, bAddClass) {
-		var $Element = oOverlay.getAssociatedDomRef();
-		if ($Element) {
+		var oElement = oOverlay.getElement();
+		if (oElement.addStyleClass && oElement.removeStyleClass) {
 			if (bAddClass) {
-				$Element.addClass(Stretch.STRETCHSTYLECLASS);
+				oElement.addStyleClass(Stretch.STRETCHSTYLECLASS);
 			} else {
-				$Element.removeClass(Stretch.STRETCHSTYLECLASS);
+				oElement.removeStyleClass(Stretch.STRETCHSTYLECLASS);
+			}
+		} else {
+			var $Element = oOverlay.getAssociatedDomRef();
+			if ($Element) {
+				if (bAddClass) {
+					$Element.addClass(Stretch.STRETCHSTYLECLASS);
+				} else {
+					$Element.removeClass(Stretch.STRETCHSTYLECLASS);
+				}
 			}
 		}
 	};
