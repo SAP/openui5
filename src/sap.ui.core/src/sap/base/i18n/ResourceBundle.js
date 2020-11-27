@@ -352,10 +352,10 @@ sap.ui.define([
 			return sValue;
 		}
 
-		assert(false, "could not find any translatable text for key '" + sKey + "' in bundle '" + this.oUrlInfo.url + "'");
-		if (bIgnoreKeyFallback){
+		if (bIgnoreKeyFallback) {
 			return undefined;
 		} else {
+			assert(false, "could not find any translatable text for key '" + sKey + "' in bundle '" + this.oUrlInfo.url + "'");
 			return this._formatValue(sKey, sKey, aArgs);
 		}
 	};
