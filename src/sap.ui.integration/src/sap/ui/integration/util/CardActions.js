@@ -6,12 +6,14 @@ sap.ui.define([
 	"../library",
 	"sap/base/Log",
 	"sap/m/library",
+	"sap/ui/util/openWindow",
 	"sap/ui/base/ManagedObject"
 ], function (
 	BindingResolver,
 	library,
 	Log,
 	mLibrary,
+	openWindow,
 	ManagedObject
 ) {
 		"use strict";
@@ -452,7 +454,7 @@ sap.ui.define([
 		 * @private
 		 */
 		CardActions.openUrl = function (sUrl, sTarget) {
-			window.open(sUrl, sTarget);
+			openWindow(sUrl, sTarget);
 		};
 
 		/**

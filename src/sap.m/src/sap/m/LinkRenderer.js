@@ -37,7 +37,7 @@
 			bShouldHaveOwnLabelledBy = oControl._determineSelfReferencePresence(),
 			sHasPopupType = oControl.getAriaHasPopup(),
 			sHref = oControl.getHref(),
-			sRel = defaultLinkTypes(oControl.getRel(), sHref, oControl.getTarget()),
+			sRel = defaultLinkTypes(oControl.getRel(), oControl.getTarget()),
 			oAccAttributes =  {
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined,
 				haspopup: (sHasPopupType === AriaHasPopup.None) ? null : sHasPopupType.toLowerCase()
