@@ -7,13 +7,15 @@ sap.ui.define([
 		"sap/ui/base/ManagedObject",
 		"sap/base/Log",
 		"sap/ui/integration/util/BindingResolver",
-		"sap/ui/integration/util/DataProviderFactory"],
+		"sap/ui/integration/util/DataProviderFactory",
+		"sap/ui/util/openWindow"],
 	function (mLibrary,
 			  library,
 			  ManagedObject,
 			  Log,
 			  BindingResolver,
-			  DataProviderFactory) {
+			  DataProviderFactory,
+			  openWindow) {
 		"use strict";
 
 		function _getServiceName(vService) {
@@ -403,7 +405,7 @@ sap.ui.define([
 					sUrl = mConfig.url || mParameters.url;
 					sTarget = oAction.target || mParameters.target || "_blank";
 					if (sUrl) {
-						window.open(sUrl, sTarget);
+						openWindow(sUrl, sTarget);
 					}
 					break;
 				case CardActionType.Custom:

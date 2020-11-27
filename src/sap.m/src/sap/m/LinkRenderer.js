@@ -31,7 +31,7 @@
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
 			bShouldHaveOwnLabelledBy = oControl._determineSelfReferencePresence(),
 			sHref = oControl.getHref(),
-			sRel = defaultLinkTypes(oControl.getRel(), sHref, oControl.getTarget()),
+			sRel = defaultLinkTypes(oControl.getRel(), oControl.getTarget()),
 			oAccAttributes =  {
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
 			},
