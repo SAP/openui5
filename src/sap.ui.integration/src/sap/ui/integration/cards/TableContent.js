@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/integration/util/BindingHelper"
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/util/openWindow"
 ], function (
 	BaseListContent,
 	TableContentRenderer,
@@ -35,7 +36,8 @@ sap.ui.define([
 	coreLibrary,
 	mobileLibrary,
 	BindingResolver,
-	BindingHelper
+	BindingHelper,
+	openWindow
 ) {
 	"use strict";
 
@@ -218,7 +220,7 @@ sap.ui.define([
 
 				if (oAction.url) {
 					oItem.attachPress(function () {
-						window.open(oAction.url, oAction.target || "_blank");
+						openWindow(oAction.url, oAction.target || "_blank");
 					});
 				}
 			}
@@ -282,7 +284,7 @@ sap.ui.define([
 					sTarget = BindingResolver.resolveValue(oColumn.identifier.target, oSource, sPath);
 
 					if (sUrl) {
-						window.open(sUrl, sTarget || "_blank");
+						openWindow(sUrl, sTarget || "_blank");
 					}
 				});
 			}

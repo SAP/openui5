@@ -4,12 +4,14 @@
 sap.ui.define([
 		"sap/m/library",
 		"sap/ui/integration/library",
+		"sap/ui/util/openWindow",
 		"sap/ui/base/ManagedObject",
 		"sap/base/Log",
 		"sap/ui/integration/util/BindingResolver",
 		"sap/ui/integration/util/DataProviderFactory"],
 	function (mLibrary,
 			  library,
+			  openWindow,
 			  ManagedObject,
 			  Log,
 			  BindingResolver,
@@ -438,7 +440,7 @@ sap.ui.define([
 		 * @private
 		 */
 		CardActions.openUrl = function (sUrl, sTarget) {
-			window.open(sUrl, sTarget);
+			openWindow(sUrl, sTarget);
 		};
 
 		/**
