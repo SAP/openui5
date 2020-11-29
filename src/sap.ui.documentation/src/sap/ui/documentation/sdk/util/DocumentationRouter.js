@@ -247,9 +247,9 @@ sap.ui.define([
 		}
 
 		oAnchorElement = getClosestParentLink(oElement);
-		// The links from the documentation are already preprocessed at build-time
+		// The links from the static documentation are already preprocessed at build-time
 		// to the correct format, so we do not need to adjust them here at run-time
-		if (oAnchorElement.classList.contains('sap-doc')) {
+		if (window['sap-ui-documentation-static'] && oAnchorElement.classList.contains('sap-doc')) {
 			return;
 		}
 		sTarget = getHref(oAnchorElement);
@@ -294,9 +294,9 @@ sap.ui.define([
 			sTargetHref;
 
 		if (oAnchorElement) {
-			// The links from the documentation are already preprocessed at build-time
+			// The links from the static documentation are already preprocessed at build-time
 			// to the correct format, so we do not need to adjust them here at run-time
-			if (oAnchorElement.classList.contains('sap-doc')) {
+			if (window['sap-ui-documentation-static'] && oAnchorElement.classList.contains('sap-doc')) {
 				return;
 			}
 			sTargetHref = getHref(oAnchorElement);
