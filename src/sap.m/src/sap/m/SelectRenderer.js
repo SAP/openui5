@@ -418,7 +418,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 				labelledby: (bIconOnly || oAriaLabelledBy.value === "") ? undefined : oAriaLabelledBy,
 				describedby: sAriaDescribedBy,
 				activedescendant: sActiveDescendant,
-				haspopup: "listbox"
+				haspopup: oSelect.getEditable() ? "listbox" : undefined
 			});
 		};
 
