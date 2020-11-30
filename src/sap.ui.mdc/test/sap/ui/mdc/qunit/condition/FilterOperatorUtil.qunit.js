@@ -889,6 +889,7 @@ sap.ui.define([
 						formatArgs: [Condition.createCondition("Empty", [])],
 						formatValue: "<empty>",
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition("Empty", [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						filter: {path: "test", operator: "EQ", value1: ""},
@@ -899,6 +900,7 @@ sap.ui.define([
 						formatArgs: [Condition.createCondition("Empty", [])],
 						formatValue: "<empty>",
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition("Empty", [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						filter: {path: undefined, operator: undefined, value1: undefined, value2: undefined},
@@ -911,10 +913,23 @@ sap.ui.define([
 						formatValue: "!(<empty>)", // TODO: right text?
 						parseArgs: ["!<empty>"],
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition("NotEmpty", [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						filter: {path: "test", operator: "NE", value1: ""},
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition("NotEmpty", [])],
+						formatValue: "!(<empty>)",
+						parseArgs: ["!<empty>"],
+						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition("NotEmpty", [], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						filter: {path: undefined, operator: undefined, value1: undefined, value2: undefined},
+						isSingleValue: true,
+						oType: new StringType({}, {nullable: true})
 					}
 				],
 				"MyOperator": [{
