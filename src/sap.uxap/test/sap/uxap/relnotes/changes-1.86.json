@@ -1,0 +1,18 @@
+{
+  "1.86.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "eb993f49e0d2a62df614f5d7dc7f40f308628bc2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent console error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070494606"
+          }
+        ]
+      }
+    ]
+  }
+}

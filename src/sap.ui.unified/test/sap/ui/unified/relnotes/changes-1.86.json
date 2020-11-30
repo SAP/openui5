@@ -3,6 +3,11 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "60fb73e58b2386ea0faf3cae28055a69a6636b3b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: change event listener reattached"
+      },
+      {
         "id": "63d8858df633c430b67432fa47f0b9810e47b867",
         "type": "FIX",
         "text": " sap.ui.unified.ColorPickerPopover: fixed Demokit liveChange sample",

@@ -3,6 +3,17 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "ef25a4c310d8c97a4e64ad4e9f12cd760b3b26ef",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Overlaping when not enough space prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080382626"
+          }
+        ]
+      },
+      {
         "id": "c5827126286daca34bc0f3e58498507d43241204",
         "type": "FEATURE",
         "text": " Table: Dummy column to fill up free space"

@@ -3,6 +3,87 @@
     "date": "November 2020",
     "notes": [
       {
+        "id": "6c0992bd7d20ee55bbedc94685e97a1d9d0a172b",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Text in cell is now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070478357"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070474983"
+          }
+        ]
+      },
+      {
+        "id": "34a2ac41d3afc102cf767d00ed48a636de51fcf9",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Restores focus after deleting an item with DEL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070360483"
+          }
+        ]
+      },
+      {
+        "id": "bf488e6e957b7c402db2e1b8dcc50d835ed3ecd4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Deletion of tokens when not editable prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070502155"
+          }
+        ]
+      },
+      {
+        "id": "ed48adadbcdbf8a082d84ab85760a680884826ca",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent browser navigation when pressing backspace",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080383855"
+          }
+        ]
+      },
+      {
+        "id": "a38d677d3f5de522dcef37c3831a5998093a3c9f",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Fixed RadioButton position in table cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080386246"
+          }
+        ]
+      },
+      {
+        "id": "3546b385df0d6dba7269d5b09042cc3be75dbb5b",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Unnecessary scrolling on tab",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070285377"
+          }
+        ]
+      },
+      {
+        "id": "40daf03599d22137e551e5ab5277ba78d033cc48",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Failing QUnit on IE is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070469581"
+          }
+        ]
+      },
+      {
         "id": "bc66d79098cb7893d21a196588e3c1f5b377dd4c",
         "type": "FEATURE",
         "text": " ResponsiveTable: Enable Screenreader announcement for \"Not Selected\"",
