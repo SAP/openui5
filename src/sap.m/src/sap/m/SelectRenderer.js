@@ -94,6 +94,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 				}
 			}
 
+			if (bEnabled) {
+				oRm.attr("tabindex", "-1");
+			}
+
 			oRm.openEnd();
 			this.renderHiddenSelect(oRm, oSelect);
 			this.renderLabel(oRm, oSelect);
